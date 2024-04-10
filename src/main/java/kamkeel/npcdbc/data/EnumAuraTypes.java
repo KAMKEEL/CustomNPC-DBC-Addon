@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.data;
 
 public enum EnumAuraTypes {
-
     None,
     GoD,
     GoDToppo,

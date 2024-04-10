@@ -4,13 +4,21 @@ import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import kamkeel.npcdbc.api.AbstractDBCAPI;
+import kamkeel.npcdbc.api.IDBCAddon;
 import kamkeel.npcdbc.api.IDBCStats;
 import kamkeel.npcdbc.api.IKiAttack;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.mixin.INPCStats;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import noppes.npcs.api.entity.ICustomNpc;
+import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
+import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.util.ValueUtil;
+
+import java.util.Iterator;
+import java.util.Set;
 
 public class DBCAPI extends AbstractDBCAPI {
     private static AbstractDBCAPI Instance;

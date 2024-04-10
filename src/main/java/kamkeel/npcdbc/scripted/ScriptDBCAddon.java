@@ -58,7 +58,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public float getBodyPerc() {
+    public float getBodyPercentage() {
         return DBCUtils.bodyPerc(player);
     }
 

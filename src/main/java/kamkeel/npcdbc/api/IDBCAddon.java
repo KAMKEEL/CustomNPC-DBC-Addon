@@ -11,7 +11,7 @@ public interface IDBCAddon extends IDBCPlayer {
 
     int getMaxHP();
 
-    float getBodyPerc();
+    float getBodyPercentage();
 
     int getMaxKi();
 
