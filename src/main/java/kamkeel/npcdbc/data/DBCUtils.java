@@ -413,8 +413,12 @@ public class DBCUtils {
 		int st = JRMCoreH.getFormID(formName, race, true);
 		double max = getMaxFormMasteryLvl(st, race);
 		double fm = getFormMasteryValue(p, race, formName);
-		return fm >= u.perc(max, perc);
+		return fm >= perc(max, perc);
 	}
+
+    public static double perc(double n, double perc) {
+        return n / 100 * perc;
+    }
 
 	public static boolean isFMMax(EntityPlayer p, String formName, int race) {
 		return isFM(p, formName, race, 100);
