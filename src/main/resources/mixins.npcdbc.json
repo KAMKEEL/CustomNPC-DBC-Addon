@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.7.11",
+  "package": "kamkeel.npcdbc.mixin.impl",
+  "refmap": "mixins.npcdbc.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinDBCAddon",
+    "MixinDBCStats",
+    "MixinDBCDisplay"
+  ],
+  "client": [
+    "MixinDBCClient"
+  ],
+  "server": []
+}

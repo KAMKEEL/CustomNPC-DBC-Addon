@@ -1,0 +1,21 @@
+{
+	"modListVersion": 2,
+	"modList": [{
+		"modid": "${modId}",
+		"name": "${modName}",
+		"description": "A mod that is made for integrating Armorer's Workshop and CustomNPC",
+		"version": "${modVersion}",
+		"mcversion": "${minecraftVersion}",
+		"url": "TODO",
+		"updateUrl": "",
+		"authorList": ["KAMKEEL"],
+		"credits": "",
+		"logoFile": "",
+		"screenshots": [],
+		"parent": "",
+		"requiredMods": [],
+		"dependencies": [],
+		"dependants": [],
+		"useDependencyInformation": false
+	}]
+}

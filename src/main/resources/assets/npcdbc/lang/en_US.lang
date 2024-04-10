@@ -1,0 +1,11 @@
+stats.dbcsettings=DBC Settings
+
+stats.dbc=DBC Settings
+stats.ignoreDex=Ignore Dex
+stats.ignoreBlock=Ignore Block
+stats.ignoreEndurance=Ignore Endurance
+stats.ignoreKiDamage=Ignore Ki Protection
+stats.ignoreFormDefense=Ignore Form Defense
+
+stats.hasDefensePenetration=Has Defense Penetration
+stats.defensePenetration=Defense Penetration
