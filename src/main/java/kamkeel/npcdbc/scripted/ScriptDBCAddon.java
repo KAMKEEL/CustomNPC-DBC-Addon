@@ -3,10 +3,10 @@ package kamkeel.npcdbc.scripted;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.JGPlayerMP;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
+import kamkeel.npcdbc.api.IDBCAddon;
 import kamkeel.npcdbc.data.DBCUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.scripted.entity.ScriptPlayer;
@@ -14,7 +14,7 @@ import noppes.npcs.scripted.entity.ScriptPlayer;
 import java.util.ArrayList;
 
 // Implemented by Kam, Ported from Goatee Design
-public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T> {
+public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T> implements IDBCAddon {
     public T player;
     public NBTTagCompound nbt;
 
@@ -24,6 +24,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         this.nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
     }
 
+    @Override
     public int[] getAllFullStats() {
         int[] fullstats = new int[6];
         JGPlayerMP JG = new JGPlayerMP(player);
@@ -39,24 +40,29 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return fullstats;
     }
 
+    @Override
     public void setFlight(boolean bo) {
         if (this.getRelease() > 0) {
             nbt.setBoolean("isFlying", bo);
         }
     }
 
+    @Override
     public int getMaxBody() {
         return DBCUtils.getMaxStat(player, 2);
     }
 
+    @Override
     public int getMaxHP() {
-        return DBCUtils.getMaxStat(player, 2);
+        return getMaxBody();
     }
 
+    @Override
     public float getBodyPerc() {
         return DBCUtils.bodyPerc(player);
     }
 
+    @Override
     public int getMaxKi() {
         int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(player);
         JGPlayerMP JG = new JGPlayerMP(player);
@@ -67,6 +73,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return JG.getEnergyMax(rce, cls, pwr, PlyrAttrbts, JRMCoreH.SklLvl_KiBs(player, pwr));
     }
 
+    @Override
     public int getMaxStamina() {
         int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(player);
         JGPlayerMP JG = new JGPlayerMP(player);
@@ -78,6 +85,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return JG.getStaminaMax(rce, cls, pwr, PlyrAttrbts);
     }
 
+    @Override
     public void changeDBCAnim(int i) {
         if (i == 1 || i == 2) {
             JRMCoreH.Anim(i);
@@ -86,6 +94,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         }
     }
 
+    @Override
     public int[] getAllStats() {
         int[] stats = new int[6];
         NBTTagCompound nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
@@ -99,7 +108,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return stats;
     }
 
-    public void addAllStats(int[] Stats, boolean multiplyaddedStats, double multiValue) {
+    @Override
+    public void modifyAllStats(int[] Stats, boolean multiplyaddedStats, double multiValue) {
         if (Stats.length == 6) {
             int[] stats = getAllStats();
             double multi = multiValue;
@@ -119,11 +129,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         }
     }
 
-    public void addAllStats(int Num, boolean setStatsToNum) {
+    @Override
+    public void modifyAllStats(int Num, boolean setStatsToNum) {
 
         int[] num = new int[] { Num, Num, Num, Num, Num, Num };
         if (!setStatsToNum) {
-            addAllStats(num, false, 1);
+            modifyAllStats(num, false, 1);
         } else {
             for (int i = 0; i < num.length; i++) {
                 nbt.setInteger(JRMCoreH.AttrbtNbtI[i], num[i]);
@@ -134,10 +145,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         }
     }
 
-    public void addAllStats(int[] stats, boolean setStats) {
+    @Override
+    public void modifyAllStats(int[] stats, boolean setStats) {
         if (stats.length == 6) {
             if (!setStats) {
-                addAllStats(stats, false, 1);
+                modifyAllStats(stats, false, 1);
             } else {
                 for (int i = 0; i < stats.length; i++) {
                     nbt.setInteger(JRMCoreH.AttrbtNbtI[i], stats[i]);
@@ -150,6 +162,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     // 0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
+    @Override
     public void multiplyStat(int statid, double multi) {
         if (multi == 0)
             multi = 1.0;
@@ -170,6 +183,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         }
     }
 
+    @Override
     public void multiplyAllStats(double multi) {
         int[] stats = getAllStats();
         if (multi == 0) {
@@ -186,6 +200,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     // str 0, dex 1, con 2, wil 3, mnd 4, spi 5
+    @Override
     public int getFullStat(int statid) {
         JGPlayerMP JG = new JGPlayerMP(player);
         NBTTagCompound nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
@@ -193,6 +208,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return JG.getAttribute(statid);
     }
 
+    @Override
     public String getRaceName(int race) {
         if (race >= 0 && race <= 5) {
             return JRMCoreH.Races[race];
@@ -200,6 +216,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return null;
     }
 
+    @Override
     public String getRaceName() {
         if (this.getRace() >= 0 && this.getRace() <= 5) {
             return JRMCoreH.Races[this.getRace()];
@@ -207,11 +224,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return null;
     }
 
+    @Override
     public String getFormName(int race, int form) {
         CustomNPCsException c = new CustomNPCsException("Invalid \nform ID for race " + JRMCoreH.Races[race], new Object[0]);
         CustomNPCsException r = new CustomNPCsException("Invalid Race : \nValid Races are \n0 Human, 1 Saiyan\n 2 Half-Saiyan, 3 Namekian\n4 Arcosian, 5 Majin", new Object[1]);
         if (form >= 0) {
-            if (race > 5 || race < 0) {
+            if (race > 5) {
                 throw r;
             } else {
                 switch (race) {
@@ -246,12 +264,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return JRMCoreH.trans[race][form];
     }
 
+    @Override
     public String getCurrentFormName() {
         int race = this.getRace();
         int form = (int) this.getForm();
         return getFormName(race, form);
     }
 
+    @Override
     public void changeFormMastery(String formName, double amount, boolean add) {
         JGPlayerMP JG = new JGPlayerMP(player);
         NBTTagCompound nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
@@ -342,6 +362,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         }
     }
 
+    @Override
     public double getFormMasteryValue(String formName) {
 
         JGPlayerMP JG = new JGPlayerMP(player);
@@ -398,6 +419,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         throw new CustomNPCsException("Form Mastery value is -1.0", new Object[3]);
     }
 
+    @Override
     public String getAllFormMasteries() {
         return JRMCoreH.getFormMasteryData(player);
     }
@@ -508,6 +530,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         }
     }
 
+    @Override
     public String[] getAllFormMasteryData(int race, int formId) {
         ArrayList<String> data = new ArrayList<>();
         data.add(JGConfigDBCFormMastery.getString(race, formId, JGConfigDBCFormMastery.DATA_ID_MAX_LEVEL, 0));
@@ -519,6 +542,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return data.toArray(new String[0]);
     }
 
+    @Override
     public int getAllFormsLength(int race, boolean nonRacial) {
         if (race < 0 || race > 5) {
             throw new CustomNPCsException("Races are from 0 to 5", new Object[0]);
@@ -529,6 +553,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return JRMCoreH.trans[race].length;
     }
 
+    @Override
     public String[] getAllForms(int race, boolean nonRacial) {
         if (race < 0 || race > 5) {
             throw new CustomNPCsException("Races are from 0 to 5", new Object[0]);
@@ -540,11 +565,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return JRMCoreH.trans[race];
     }
 
+    @Override
     public boolean isDBCFusionSpectator() {
         return JRMCoreH.isFusionSpectator(player);
     }
 
-
+    @Override
     public int getSkillLevel(String skillname) {
         int i;
         String[] playerskills = nbt.getString("jrmcSSlts").split(",");
@@ -573,14 +599,17 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return 0;
     }
 
+    @Override
     public int getMaxStat(int attribute) {
         return DBCUtils.getMaxStat(player, attribute);
     }
 
+    @Override
     public int getCurrentStat(int attribute) {
         return (int) (getMaxStat(attribute) * this.getRelease() * 100F);
     }
 
+    @Override
     public double getCurrentFormMultiplier() {
         double str = this.getStat("str");
         double maxstr = getFullStat(0);
@@ -588,6 +617,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return (Math.max(maxstr, str)) / str;
     }
 
+    @Override
     public boolean isMUI() {
         return DBCUtils.isMUI(player);
     }
