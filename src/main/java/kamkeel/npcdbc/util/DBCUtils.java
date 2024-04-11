@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.*;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
+import kamkeel.npcdbc.api.IDBCStats;
 import kamkeel.npcdbc.data.DBCStats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity.EnumEntitySize;
@@ -642,7 +643,7 @@ public class DBCUtils {
 		}
 	}
 
-    public static int doDBCDamage(EntityPlayer player, int damageAmount, DBCStats dbcStats) {
+    public static int doDBCDamage(EntityPlayer player, int damageAmount, IDBCStats dbcStats) {
         if (!player.worldObj.isRemote && dbcStats != null && damageAmount > 0) {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);

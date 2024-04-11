@@ -2,6 +2,7 @@ package kamkeel.npcdbc.api;
 
 import cpw.mods.fml.common.Loader;
 import noppes.npcs.api.entity.ICustomNpc;
+import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
 
 public abstract class AbstractDBCAPI {
@@ -37,6 +38,16 @@ public abstract class AbstractDBCAPI {
      * @param npc NPC
      */
     public abstract IDBCStats getDBCData(ICustomNpc<EntityNPCInterface> npc);
+
+    /**
+     * Performs DBC Damage based on the DBC Stats
+     * sent in
+     *
+     * @param player Player (Target of DBC Damage)
+     * @param stats DBC Stats / Settings to Simulate
+     * @param damage Damage to simulate
+     */
+    public abstract void doDBCDamage(IPlayer player, IDBCStats stats, int damage);
 
     /**
      * @return Name of race ID
