@@ -26,6 +26,9 @@ public class SubGuiDBCProperties extends SubGuiInterface implements ITextfieldLi
         addButton(new GuiNpcButtonYesNo(0, guiLeft + 170, y, 50, 20, getDBCData(npc).enabled));
 
         if(getDBCData(npc).enabled){
+            addLabel(new GuiNpcLabel(8,"stats.friendlyFist", guiLeft + 5, y+=22));
+            addButton(new GuiNpcButtonYesNo(8, guiLeft + 170, y, 50, 20, getDBCData(npc).isFriendlyFist()));
+
             addLabel(new GuiNpcLabel(1,"stats.ignoreDex", guiLeft + 5, y+=22));
             addButton(new GuiNpcButtonYesNo(1, guiLeft + 170, y, 50, 20, getDBCData(npc).isIgnoreDex()));
 
@@ -84,6 +87,10 @@ public class SubGuiDBCProperties extends SubGuiInterface implements ITextfieldLi
         }
         if (button.id == 7) {
             getDBCData(npc).setIgnoreFormReduction(((GuiNpcButtonYesNo) button).getBoolean());
+            initGui();
+        }
+        if (button.id == 8) {
+            getDBCData(npc).setFriendlyFist(((GuiNpcButtonYesNo) button).getBoolean());
             initGui();
         }
         if(button.id == 66)

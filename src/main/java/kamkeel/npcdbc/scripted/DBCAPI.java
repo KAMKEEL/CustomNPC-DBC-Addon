@@ -7,6 +7,7 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import kamkeel.npcdbc.api.AbstractDBCAPI;
 import kamkeel.npcdbc.api.IDBCStats;
 import kamkeel.npcdbc.api.IKiAttack;
+import kamkeel.npcdbc.data.DBCStats;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.mixin.INPCStats;
 import noppes.npcs.api.entity.ICustomNpc;
@@ -27,6 +28,13 @@ public class DBCAPI extends AbstractDBCAPI {
             Instance = new DBCAPI();
         }
         return Instance;
+    }
+
+    @Override
+    public IDBCStats abstractDBCData(){
+        DBCStats dbcStats = new DBCStats();
+        dbcStats.enabled = true;
+        return dbcStats;
     }
 
     @Override

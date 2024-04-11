@@ -3,7 +3,7 @@ package kamkeel.npcdbc.scripted;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.JGPlayerMP;
 import kamkeel.npcdbc.api.IDBCAddon;
-import kamkeel.npcdbc.data.DBCUtils;
+import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;

@@ -6,19 +6,19 @@ import net.minecraft.nbt.NBTTagCompound;
 public class DBCStats implements IDBCStats {
     public boolean enabled = false;
 
+    private boolean friendlyFist = false;
     private boolean ignoreDex = false;
     private boolean ignoreBlock = false;
     private boolean ignoreEndurance = false;
     private boolean ignoreKiProtection = false;
-
     private boolean ignoreFormReduction = false;
-
     private boolean hasDefensePenetration = false;
-    private int defensePenetration = 10; // Default for Entities
+    private int defensePenetration = 10;
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         nbttagcompound.setBoolean("DBCEnabled", enabled);
         if(enabled){
+            nbttagcompound.setBoolean("DBCFriendlyFist", friendlyFist);
             nbttagcompound.setBoolean("DBCIgnoreDex", ignoreDex);
             nbttagcompound.setBoolean("DBCIgnoreBlock", ignoreBlock);
             nbttagcompound.setBoolean("DBCIgnoreEndurance", ignoreEndurance);
@@ -33,6 +33,7 @@ public class DBCStats implements IDBCStats {
     public void readFromNBT(NBTTagCompound nbttagcompound) {
         enabled = nbttagcompound.getBoolean("DBCEnabled");
         if(enabled) {
+            friendlyFist = nbttagcompound.getBoolean("DBCFriendlyFist");
             ignoreDex = nbttagcompound.getBoolean("DBCIgnoreDex");
             ignoreBlock = nbttagcompound.getBoolean("DBCIgnoreBlock");
             ignoreEndurance = nbttagcompound.getBoolean("DBCIgnoreEndurance");
@@ -41,6 +42,26 @@ public class DBCStats implements IDBCStats {
             hasDefensePenetration = nbttagcompound.getBoolean("DBCIsDefensePen");
             defensePenetration = nbttagcompound.getInteger("DBCDefensePen");
         }
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public boolean isFriendlyFist() {
+        return friendlyFist;
+    }
+
+    @Override
+    public void setFriendlyFist(boolean friendlyFist) {
+        this.friendlyFist = friendlyFist;
     }
 
     @Override

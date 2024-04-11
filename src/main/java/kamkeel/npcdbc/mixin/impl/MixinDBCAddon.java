@@ -4,7 +4,7 @@ import kamkeel.addon.DBCAddon;
 import kamkeel.npcdbc.data.DBCStats;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.INPCStats;
-import kamkeel.npcdbc.util.DBCHelper;
+import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,6 +34,7 @@ public class MixinDBCAddon {
             INPCDisplay display = (INPCDisplay) npc.display;
             INPCDisplay receiverDisplay =  (INPCDisplay) receiverNPC.display;
 
+            receiverStats.getDBCStats().setFriendlyFist(stats.getDBCStats().isFriendlyFist());
             receiverStats.getDBCStats().setIgnoreDex(stats.getDBCStats().isIgnoreDex());
             receiverStats.getDBCStats().setIgnoreBlock(stats.getDBCStats().isIgnoreBlock());
             receiverStats.getDBCStats().setIgnoreEndurance(stats.getDBCStats().isIgnoreEndurance());
@@ -71,6 +72,9 @@ public class MixinDBCAddon {
         if(!(receiver instanceof EntityPlayer player))
             return;
 
-        DBCHelper.calculateDamage(player, (int) attackStrength, npc);
+        if(npc.stats instanceof INPCStats){
+            DBCStats dbcStats = ((INPCStats) npc.stats).getDBCStats();
+            DBCUtils.doDBCDamage(player, (int) attackStrength, dbcStats);
+        }
     }
 }

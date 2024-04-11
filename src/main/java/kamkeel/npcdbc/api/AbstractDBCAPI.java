@@ -27,6 +27,15 @@ public abstract class AbstractDBCAPI {
         }
     }
 
+    /**
+     * @return Fake DBC Data for Simulating Damage
+     */
+    public abstract IDBCStats abstractDBCData();
+
+    /**
+     * @return DBC Data attached to an NPC
+     * @param npc NPC
+     */
     public abstract IDBCStats getDBCData(ICustomNpc<EntityNPCInterface> npc);
 
     /**

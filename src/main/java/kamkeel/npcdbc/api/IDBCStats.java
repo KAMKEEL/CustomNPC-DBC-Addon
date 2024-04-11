@@ -1,6 +1,14 @@
 package kamkeel.npcdbc.api;
 
 public interface IDBCStats {
+    boolean isEnabled();
+
+    void setEnabled(boolean enabled);
+
+    boolean isFriendlyFist();
+
+    void setFriendlyFist(boolean friendlyFist);
+
     boolean isIgnoreDex();
 
     void setIgnoreDex(boolean ignoreDex);

@@ -1,10 +1,11 @@
-package kamkeel.npcdbc.data;
+package kamkeel.npcdbc.util;
 
 import JinRyuu.DragonBC.common.DBCConfig;
 import JinRyuu.JRMCore.*;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
+import kamkeel.npcdbc.data.DBCStats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity.EnumEntitySize;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,6 +18,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static JinRyuu.JRMCore.JRMCoreH.*;
+import static JinRyuu.JRMCore.JRMCoreH.setInt;
 
 // Created by Goatee
 public class DBCUtils {
@@ -638,195 +642,188 @@ public class DBCUtils {
 		}
 	}
 
-	public static void damagePlayer(int dbcA, Entity attacker, EntityPlayer attacked) {
-		boolean dse = attacker instanceof EntityPlayer; // if attacker is also player
-		ExtendedPlayer props = ExtendedPlayer.get(attacked);
-		boolean block = (props.getBlocking() == 1); // is player blocking?
-		int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(attacked);
-		NBTTagCompound nbt = JRMCoreH.nbt(attacked, "pres");
-		byte state = nbt.getByte("jrmcState");
-		byte state2 = nbt.getByte("jrmcState2");
-		String sklx = JRMCoreH.getString(attacked, "jrmcSSltX");
-		int t = JRMCoreH.SklLvl(4, attacked); // gets endurance skill level
-		byte race = nbt.getByte("jrmcRace");
-		byte powerType = nbt.getByte("jrmcPwrtyp");
-		byte classID = nbt.getByte("jrmcClass");
-		byte release = JRMCoreH.getByte(attacked, "jrmcRelease");
-		int resrv = JRMCoreH.getInt(attacked, "jrmcArcRsrv");
-		String absorption = JRMCoreH.getString(attacked, "jrmcMajinAbsorptionData");
-		int currStamina = JRMCoreH.getInt(attacked, "jrmcStamina");
-		int currEnergy = JRMCoreH.getInt(attacked, "jrmcEnrgy");
-		String ste = JRMCoreH.getString(attacked, "jrmcStatusEff");
-		boolean mj = JRMCoreH.StusEfcts(12, ste);
-		boolean lg = JRMCoreH.StusEfcts(14, ste);
-		boolean mc = JRMCoreH.StusEfcts(13, ste);
-		boolean kk = JRMCoreH.StusEfcts(5, ste);
-		boolean mn = JRMCoreH.StusEfcts(19, ste);
-		boolean gd = JRMCoreH.StusEfcts(20, ste);
+    public static int doDBCDamage(EntityPlayer player, int damageAmount, DBCStats dbcStats) {
+        if (!player.worldObj.isRemote && dbcStats != null && damageAmount > 0) {
+            if (!player.capabilities.isCreativeMode) {
+                ExtendedPlayer props = ExtendedPlayer.get(player);
+                boolean block = props.getBlocking() == 1;
 
-		boolean lf = false;
+                int[] attributes = PlyrAttrbts(player);
+                String[] playerSkills = PlyrSkills(player);
 
-		int DEX = PlyrAttrbts[1];
-		int CON = PlyrAttrbts[2];
-		String[] ps = JRMCoreH.PlyrSkills(attacked); // all player skills
-		double per = 1.0D;
-		int def = 0;
-		String x = JRMCoreH.getString(attacked, "jrmcStatusEff");
-		boolean c = (JRMCoreH.StusEfcts(10, x) || JRMCoreH.StusEfcts(11, x));
-		if (powerType != 3 && powerType > 0) {
-			DEX = JRMCoreH.getPlayerAttribute(attacked, PlyrAttrbts, 1, state, state2, race, sklx, release, resrv, lg,
-					mj, kk, mc, mn, gd, powerType, ps, c, absorption);
-		}
+                NBTTagCompound nbt = nbt(player, "pres");
+                byte state = nbt.getByte("jrmcState");
+                byte state2 = nbt.getByte("jrmcState2");
+                String racialSkill = getString(player, "jrmcSSltX");
+                byte race = nbt.getByte("jrmcRace");
+                byte powerType = nbt.getByte("jrmcPwrtyp");
+                byte classID = nbt.getByte("jrmcClass");
+                byte release = getByte(player, "jrmcRelease");
+                int arcoPP = getInt(player, "jrmcArcRsrv");
+                String absorption = getString(player, "jrmcMajinAbsorptionData");
+                int currStamina = getInt(player, "jrmcStamina");
+                int currEnergy = getInt(player, "jrmcEnrgy");
 
-		int kiProtection = 0;
-		int kiProtectionCost = 0;
-		boolean kiProtectOn = false;
+                String statusEffects = getString(player, "jrmcStatusEff");
+                boolean isMajin = StusEfcts(12, statusEffects);
+                boolean isMystic = StusEfcts(13, statusEffects);
+                boolean isLegendary = StusEfcts(14, statusEffects);
+                boolean isKK = StusEfcts(5, statusEffects);
+                boolean isUI = StusEfcts(19, statusEffects);
+                boolean isGoD = StusEfcts(20, statusEffects);
+                boolean isFused = JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects);
 
-		if (JRMCoreH.pwr_ki(powerType)) { // if dbc
+                int DEX = 0;
+                int CON = attributes[2];
 
-			int maxCON = JRMCoreH.getPlayerAttribute(attacked, PlyrAttrbts, 2, state, state2, race, sklx, release,
-					resrv, lg, mj, kk, mc, mn, gd, powerType, ps, c, absorption);
+                // Dex Calculation
+                if(!dbcStats.isIgnoreDex())
+                    DEX = getPlayerAttribute(player, attributes, 1, state, state2, race, racialSkill, release, arcoPP, isLegendary, isMajin, isKK, isMystic, isUI, isGoD, powerType, playerSkills, isFused, absorption);
 
-			per = (double) ((maxCON > CON) ? maxCON : CON) / CON * 1.0D;
-			def = JRMCoreH.stat(attacked, 1, powerType, 1, DEX, race, classID, 0.0F);
-			int SPI = PlyrAttrbts[5];
-			int energyPool = JRMCoreH.stat(attacked, 5, powerType, 5, SPI, race, classID,
-					JRMCoreH.SklLvl_KiBs(ps, powerType));
-			def = (int) (def * release * 0.01D * JRMCoreH.weightPerc(1, attacked));
+                int def = 0;
+                // KI STUFF
+                boolean kiProtectOn = !PlyrSettingsB((EntityPlayer)player, 10);
+                int kiProtection = 0;
+                int kiProtectionCost = 0;
+                int maxKiPool = JRMCoreH.stat(player, 5, powerType, 5, attributes[5], race, classID, JRMCoreH.SklLvl_KiBs(playerSkills, powerType));
+                int kiProtectLevel = JRMCoreH.SklLvl(11, playerSkills);;
 
-			kiProtectOn = !JRMCoreH.PlyrSettingsB(attacked, 10);
-			int kiProtectLevel = JRMCoreH.SklLvl(11, ps);
-			if (kiProtectOn) {
-				kiProtection = (int) (kiProtectLevel * 0.005D * energyPool * release * 0.01D);
-				if (kiProtection < 1)
-					kiProtection = 1;
-				kiProtection = (int) (kiProtection * DBCConfig.cnfKDd);
-				float damage = dbcA / 3.0F / (dbcA + "").length();
-				if (damage < 1.0F)
-					damage = 1.0F;
-				kiProtectionCost = (int) (kiProtectLevel * release * 0.01D * damage);
-				if (kiProtectionCost < 1)
-					kiProtectionCost = 1;
-				kiProtectionCost = (int) (kiProtectionCost * DBCConfig.cnfKDc);
-			}
-			def += kiProtection;
-		} else if (JRMCoreH.pwr_cha(powerType)) { // some naruto shit
-			int ta = JRMCoreH.SklLvl(0, 2, ps);
-			def = JRMCoreH.stat(attacked, 1, powerType, 1, DEX, race, classID, ta * 0.04F + state * 0.25F);
-			def = (int) ((def * release) * 0.01D);
-			if (classID == 2) {
-				String StE = nbt.getString("jrmcStatusEff");
-				if (JRMCoreH.StusEfcts(16, StE)) {
-					int WIL = PlyrAttrbts[3];
-					int statWIL = JRMCoreH.stat(attacked, 3, powerType, 5, WIL, race, classID, 0.0F);
-					def += (int) (statWIL * 0.25D * release * 0.01D);
-				}
-			}
-		} else if (JRMCoreH.pwr_sa(powerType)) { // some SAO shit
-			def = 0;
-		} else { // if pwrtyp is 0?
-			def = JRMCoreH.stat(attacked, 1, powerType, 1, DEX, race, classID, 0.0F);
-		}
-		int staminaCost = (int) ((def - kiProtection) * 0.05F);
-		if (block && currStamina >= staminaCost) { // if has enough stamina and blocking
-			int id = (int) (Math.random() * 2.0D) + 1;
-			attacked.worldObj.playSoundAtEntity(attacked, "jinryuudragonbc:DBC4.block" + id, 0.5F,
-					0.9F / (attacked.worldObj.rand.nextFloat() * 0.6F + 0.9F));
-			JRMCoreH.setInt((currStamina - staminaCost < 0) ? 0 : (currStamina - staminaCost), attacked, "jrmcStamina");
-		} else {
-			def = (int) (((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
-		}
-		if (currEnergy >= kiProtectionCost) { // if has enough ki for kiprot cost
-			JRMCoreH.setInt(Math.max(currEnergy - kiProtectionCost, 0), attacked,
-					"jrmcEnrgy");
-		} else {
-			def -= kiProtection;
-		}
-		if (JRMCoreConfig.DebugInfo
-				|| (!JRMCoreH.difp.isEmpty() && attacked.getCommandSenderName().equalsIgnoreCase(JRMCoreH.difp))) {
-			mod_JRMCore.logger.info(attacked.getCommandSenderName() + " receives Damage: Original=" + dbcA);
-		}
-		int defensePenetration = 0;
-		if (dse) { // get attacker def pen
-			String[] ops = JRMCoreH.PlyrSkills((EntityPlayer) attacker); // gets attacker skills
-			defensePenetration = JRMCoreH.SklLvl(14, 1, ops); // get df level
-		} else if (attacker instanceof EntityLivingBase) {// set non player attacker df
-			defensePenetration = 10;
-		}
+                double formDamageReduction = 1;
+                if(!dbcStats.isIgnoreFormReduction()){
+                    int formDecimal = getPlayerAttribute(player, attributes, 2, state, state2, race, racialSkill, release, arcoPP, isLegendary, isMajin, isKK, isMystic, isUI, isGoD, powerType, playerSkills, isFused, absorption);
+                    formDamageReduction = (double)(Math.max(formDecimal, CON)) / ((double) CON);
+                }
 
-		int dbcAO = dbcA;
-		int defense = lf ? 0 : def;
-		int defensePen2 = (int) ((defense * defensePenetration) * 0.01F);
-		double e = (1.0F - 0.03F * t);
-		String ss = "A=" + defense + ((defensePen2 > 0) ? ("-" + defensePenetration + "%") : "") + ", SEM="
-				+ (1.0F - 0.03F * t);
-		dbcA = (int) ((dbcA - defense - defensePen2) * e);
+                def = stat(player, 1, powerType, 1, DEX, race, classID, 0.0F);
+                def = (int)((double)def * (double)release * 0.01 * (double)weightPerc(1, player));
 
-		dbcA = Math.max(dbcA, 1);
-		if (((dbcAO * defensePenetration) * 0.01F) * e > dbcA)
-			dbcA = (int) (((dbcAO * defensePenetration) * 0.01F) * e);
-		// System.out.println("per is " + per); //current form & se multiplier
-		int maxdef = DBCUtils.getMaxStat(attacked, 1);
-		float dmgred = 100 - JRMCoreH.getFloat(attacked, "dmgred");
+                if (kiProtectOn) {
+                    ////////////////////
+                    //// IF KI PROTECTION IGNORE
+                    // kiProtection = 0
+                    if(!dbcStats.isIgnoreKiProtection()){
+                        kiProtection = (int)((double)kiProtectLevel * 0.005 * maxKiPool * (double)release * 0.01);
+                        if (kiProtection < 1) {
+                            kiProtection = 1;
+                        }
 
-		// System.out.println("dba bef is" + dbcA);
-		dbcA = (int) (dbcA - (maxdef * release * 0.01F)); // per is attacked player's form multiplier
-		dbcA = (int) (dbcA * dmgred / 100F);
-		// System.out.println("dba after is" + dbcA);
+                        // Ki Protection
+                        kiProtection = (int)((double)kiProtection * DBCConfig.cnfKDd);
+                        float kiProtectDamage = (float)damageAmount / 3.0F / (float)(damageAmount + "").length();
+                        if (kiProtectDamage < 1.0F) {
+                            kiProtectDamage = 1.0F;
+                        }
+                        ////////////////////
 
-		if (JRMCoreConfig.DebugInfo
-				|| (JRMCoreH.difp.length() > 0 && attacked.getCommandSenderName().equalsIgnoreCase(JRMCoreH.difp))) {
-			mod_JRMCore.logger.info(attacked.getCommandSenderName() + " DM: A=" + dbcA + ", DF Div:" + per + ", " + ss);
-		}
-		// System.out.println(player.getCommandSenderName() + " DM: A=" + dbcA + ", DF
-		// Div:" + per + ", " + ss);
-		if (JRMCoreH.DBC()) { // damage weights
-			ItemStack stackbody = (ExtendedPlayer.get(attacked)).inventory.getStackInSlot(1);
-			ItemStack stackhead = (ExtendedPlayer.get(attacked)).inventory.getStackInSlot(2);
-			if (stackbody != null)
-				stackbody.damageItem(1, attacked);
-			if (stackhead != null)
-				stackhead.damageItem(1, attacked);
+                        ////////////////////
+                        // Cost Ki Protection
+                        kiProtectionCost = (int)((double)kiProtectLevel * (double)release * 0.01 * (double)kiProtectDamage);
+                        if (kiProtectionCost < 1) {
+                            kiProtectionCost = 1;
+                        }
+                        kiProtectionCost = (int)((double)kiProtectionCost * DBCConfig.cnfKDc);
+                        ////////////////////
+                    }
+                }
+                def += kiProtection;
 
-		}
-		dbcA = dbcA <= 0 ? 1 : dbcA;
-		int curBody = JRMCoreH.getInt(attacked, "jrmcBdy");
-		int all = curBody - dbcA;
-		// System.out.println("all is" + all);
-		// System.out.println("dba is" + dbcA);
 
-		int set = (all < 0) ? 0 : all; // if curbody after dam < 0, set it to 0, else do nothing
-		if (dse) { // friendly fist handler
-			boolean friendlyFist = JRMCoreH.PlyrSettingsB((EntityPlayer) attacker, 12);
-			if (friendlyFist && !attacker.equals(attacker)) { // KO handler
-				int ko = JRMCoreH.getInt(attacked, "jrmcHar4va");
-				set = (all < 20) ? 20 : all;
-				if (ko <= 0 && set == 20) {
-					JRMCoreH.setInt(6, attacked, "jrmcHar4va");
-					JRMCoreH.setByte((race == 4) ? ((state < 4) ? state : 4) : 0, attacked, "jrmcState");
-					JRMCoreH.setByte(0, attacked, "jrmcState2");
-					JRMCoreH.setByte(0, attacked, "jrmcRelease");
-					JRMCoreH.setInt(0, attacked, "jrmcStamina");
-					JRMCoreH.StusEfcts(19, ste, attacked, false);
+                int staminaCost = (int)((float)(def - kiProtection) * 0.05F);
+                ////////////////////
+                ////// EFFECT STAMINA BOOL
+                // Reduce Stamina
+                if (block && !dbcStats.isIgnoreBlock() && currStamina >= staminaCost) {
+                    if (!isInCreativeMode(player)) {
+                        setInt(Math.max(currStamina - staminaCost, 0), player, "jrmcStamina");
+                    }
+                } else {
+                    // Passive Dex
+                    def = (int)((float)((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
+                }
+                ////////////////////
 
-				}
-			}
-			JRMCoreH.setInt(set, attacked, "jrmcBdy");
-		}
-	}
+                ////////////////////
+                ////// EFFECT KI BOOL
+                // Reduce Energy
+                if (currEnergy >= kiProtectionCost) {
+                    if (!isInCreativeMode(player)) {
+                        setInt(Math.max(currEnergy - kiProtectionCost, 0), player, "jrmcEnrgy");
+                    }
+                } else {
+                    def -= kiProtection;
+                }
+                ////////////////////
 
-	public static void damageEntity(EntityLivingBase targetEntity, float amount) { // responsible for all nonplayer
-																					// entity damagae
-		if (targetEntity.isEntityInvulnerable() || amount <= 0.0F)
-			return;
+                // Damage Amount before any calculations modify it
+                int rawDamage = damageAmount;
 
-		JRMCoreH.jrmctAll(4, targetEntity.getEntityId() + ";take;" + amount);
-		float dmgred = 100 - JRMCoreH.nbt(targetEntity).getFloat("dmgred");
-		amount = amount * dmgred / 100F;
-		float f2 = targetEntity.getHealth();
-		targetEntity.setHealth(f2 - amount);
-		targetEntity.setAbsorptionAmount(targetEntity.getAbsorptionAmount() - amount);
+                // Defense after Ki Protection / Dex calculations
+                int rawDefense = def;
 
-	}
+                double enduranceReduction = 1;
+                if(!dbcStats.isIgnoreEndurance()){
+                    int enduranceLevel = SklLvl(4, player);
 
+                    // Calculates the Amount to Reduce the Damage with Endurance Level
+                    enduranceReduction = (double)(1.0F - 0.03F * (float)enduranceLevel);
+                }
+
+                double damageBreakThrough = damageAmount;
+                // Default Penetration of the NPC
+                // By default all entities are 10. Players have their own
+                // default penetration skill. Based on if they are in Legendary
+                int npcDefensePenetration = dbcStats.getDefensePenetration();
+                if(dbcStats.hasDefensePenetration()){
+                    // Defense Penetrated = RawDefense * (defensePen * 0.01%)
+                    // Defense Pen of 10 --> RawDefense * 0.1 -- 10% Penetrated
+                    // Defense Pen of 50 --> RawDefense * 0.5 -- 50% Penetrated
+                    // Defense Pen of 100 --> RawDefense * 1 -- 100% Penetrated
+                    int defensePenetrated = (int)((float)(rawDefense * npcDefensePenetration) * 0.01F);
+
+                    // The Amount of Damage that will break through based on defensePenetrated
+                    damageBreakThrough = (double)(damageAmount - (rawDefense - defensePenetrated));
+                }
+
+                // Damage after Reduction
+                damageAmount = (int)(damageBreakThrough * enduranceReduction);
+
+                // Prevents Negative Damages
+                damageAmount = Math.max(damageAmount, 1);
+
+                if(dbcStats.hasDefensePenetration()){
+                    // Guarantee Damage is dealt with Defense Penetration
+                    if ((double)((float)(rawDamage * npcDefensePenetration) * 0.01F) * enduranceReduction > (double)damageAmount) {
+                        damageAmount = (int)((double)((float)(rawDamage * npcDefensePenetration) * 0.01F) * enduranceReduction);
+                    }
+                }
+
+                // Consider Stamina Cost or Con on the Damage Amount
+                damageAmount = (int)((double)damageAmount / formDamageReduction);
+
+                int playerHP = getInt(player, "jrmcBdy");
+                int reducedHP = playerHP - damageAmount;
+                int newHP = Math.max(reducedHP, 0);
+
+                boolean friendlyFist = dbcStats.isFriendlyFist();
+                if (friendlyFist) {
+                    int ko = getInt(player, "jrmcHar4va");
+                    newHP = Math.max(reducedHP, 20);
+                    if (ko <= 0 && newHP == 20) {
+                        setInt((int)6, player, "jrmcHar4va");
+                        setByte(race == 4 ? (state < 4 ? state : 4) : 0, player, "jrmcState");
+                        setByte((int)0, player, "jrmcState2");
+                        setByte((int)0, player, "jrmcRelease");
+                        setInt((int)0, player, "jrmcStamina");
+                        StusEfcts(19, statusEffects, (EntityPlayer)player, false);
+                    }
+                    damageAmount -= reducedHP;
+                }
+
+                if (!isInCreativeMode(player)) {
+                    setInt(newHP, player, "jrmcBdy");
+                }
+            }
+        }
+        return damageAmount;
+    }
 }
