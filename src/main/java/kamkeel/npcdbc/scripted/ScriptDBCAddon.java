@@ -2,15 +2,12 @@ package kamkeel.npcdbc.scripted;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.JGPlayerMP;
-import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import kamkeel.npcdbc.api.IDBCAddon;
 import kamkeel.npcdbc.data.DBCUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
-
-import java.util.ArrayList;
 
 // Implemented by Kam, Ported from Goatee Design
 public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T> implements IDBCAddon {
@@ -239,18 +236,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     * @return Name of race ID
-     * @param race 0 to 5
-     */
-    @Override
-    public String getRaceName(int race) {
-        if (race >= 0 && race <= 5) {
-            return JRMCoreH.Races[race];
-        }
-        return null;
-    }
-
-    /**
      * @return Player's race name
      */
     @Override
@@ -262,58 +247,13 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     * @param race ID (0 to 5),
-     * @param form ID (0 to 3 for humans/namekians, 0 to 14 for Saiyans/Half, 0 to 7 for arcosians, 0 to 4 for majins)
-     * @return form name i.e "SSFullPow"
-     */
-    @Override
-    public String getFormName(int race, int form) {
-        CustomNPCsException c = new CustomNPCsException("Invalid \nform ID for race " + JRMCoreH.Races[race], new Object[0]);
-        CustomNPCsException r = new CustomNPCsException("Invalid Race : \nValid Races are \n0 Human, 1 Saiyan\n 2 Half-Saiyan, 3 Namekian\n4 Arcosian, 5 Majin", new Object[1]);
-        if (form >= 0) {
-            if (race > 5) {
-                throw r;
-            } else {
-                switch (race) {
-                    case 0:
-                    case 3:
-                        if (form > 3) {
-                            throw c;
-                        }
-                        break;
-                    case 1:
-                    case 2:
-                        if (form > 20) {
-                            throw c;
-                        }
-                        break;
-
-                    case 4:
-                        if (form > 7) {
-                            throw c;
-                        }
-                        break;
-                    case 5:
-                        if (form > 4) {
-                            throw c;
-                        }
-                        break;
-                }
-            }
-        } else {
-            throw c;
-        }
-        return JRMCoreH.trans[race][form];
-    }
-
-    /**
      * @return Name of form player is currently in
      */
     @Override
     public String getCurrentFormName() {
         int race = this.getRace();
         int form = (int) this.getForm();
-        return getFormName(race, form);
+        return DBCAPI.Instance().getFormName(race, form);
     }
 
     /**
@@ -473,56 +413,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public String getAllFormMasteries() {
         return JRMCoreH.getFormMasteryData(player);
-    }
-
-    /**
-     * @param raceid Race ID
-     * @param formId Form ID
-     * @return All  config data for a Form Mastery i.e Max Level, Instant Transform Unlock, Required Masteries
-     */
-    @Override
-    public String[] getAllFormMasteryData(int raceid, int formId) {
-        ArrayList<String> data = new ArrayList<>();
-        data.add(JGConfigDBCFormMastery.getString(raceid, formId, JGConfigDBCFormMastery.DATA_ID_MAX_LEVEL, 0));
-        data.add(JGConfigDBCFormMastery.getString(raceid, formId, JGConfigDBCFormMastery.DATA_ID_INSTANT_TRANSFORM_UNLOCK, 0));
-        data.add(JGConfigDBCFormMastery.getString(raceid, formId, JGConfigDBCFormMastery.DATA_ID_REQUIRED_MASTERIES, 0));
-        data.add(JGConfigDBCFormMastery.getString(raceid, formId, JGConfigDBCFormMastery.DATA_ID_AUTO_LEARN_ON_LEVEL, 0));
-        data.add(JGConfigDBCFormMastery.getString(raceid, formId, JGConfigDBCFormMastery.DATA_ID_GAIN_TO_OTHER_MASTERIES, 0));
-
-        return data.toArray(new String[0]);
-    }
-
-    /**
-     * @param race Race ID
-     * @param nonRacial nonRacial forms are Kaioken/UI/Mystic/GOD
-     * @return Number of forms a race has, i.e Saiyan has 14 racial and 4 non racial
-     */
-    @Override
-    public int getAllFormsLength(int race, boolean nonRacial) {
-        if (race < 0 || race > 5) {
-            throw new CustomNPCsException("Races are from 0 to 5", new Object[0]);
-        }
-        if (nonRacial) {
-            return JRMCoreH.transNonRacial.length;
-        }
-        return JRMCoreH.trans[race].length;
-    }
-
-    /**
-     * @param race Race ID
-     * @param nonRacial check getAllFormsLength(int race, boolean nonRacial)
-     * @return An array containing all forms the race has
-     */
-    @Override
-    public String[] getAllForms(int race, boolean nonRacial) {
-        if (race < 0 || race > 5) {
-            throw new CustomNPCsException("Races are from 0 to 5", new Object[0]);
-        }
-        if (nonRacial) {
-            return JRMCoreH.transNonRacial;
-
-        }
-        return JRMCoreH.trans[race];
     }
 
     /**

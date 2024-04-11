@@ -3,6 +3,7 @@ package kamkeel.npcdbc.scripted;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import kamkeel.npcdbc.api.AbstractDBCAPI;
 import kamkeel.npcdbc.api.IDBCStats;
 import kamkeel.npcdbc.api.IKiAttack;
@@ -10,7 +11,10 @@ import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.mixin.INPCStats;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
+import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
+
+import java.util.ArrayList;
 
 public class DBCAPI extends AbstractDBCAPI {
     private static AbstractDBCAPI Instance;
@@ -32,16 +36,148 @@ public class DBCAPI extends AbstractDBCAPI {
         return null;
     }
 
+    /**
+     * @return Name of race ID
+     * @param race 0 to 5
+     */
+    @Override
+    public String getRaceName(int race) {
+        if (race >= 0 && race <= 5) {
+            return JRMCoreH.Races[race];
+        }
+        return null;
+    }
+
+    /**
+     * @param race ID (0 to 5),
+     * @param form ID (0 to 3 for humans/namekians, 0 to 14 for Saiyans/Half, 0 to 7 for arcosians, 0 to 4 for majins)
+     * @return form name i.e "SSFullPow"
+     */
+    @Override
+    public String getFormName(int race, int form) {
+        CustomNPCsException c = new CustomNPCsException("Invalid \nform ID for race " + JRMCoreH.Races[race], new Object[0]);
+        CustomNPCsException r = new CustomNPCsException("Invalid Race : \nValid Races are \n0 Human, 1 Saiyan\n 2 Half-Saiyan, 3 Namekian\n4 Arcosian, 5 Majin", new Object[1]);
+        if (form >= 0) {
+            if (race > 5) {
+                throw r;
+            } else {
+                switch (race) {
+                    case 0:
+                    case 3:
+                        if (form > 3) {
+                            throw c;
+                        }
+                        break;
+                    case 1:
+                    case 2:
+                        if (form > 20) {
+                            throw c;
+                        }
+                        break;
+
+                    case 4:
+                        if (form > 7) {
+                            throw c;
+                        }
+                        break;
+                    case 5:
+                        if (form > 4) {
+                            throw c;
+                        }
+                        break;
+                }
+            }
+        } else {
+            throw c;
+        }
+        return JRMCoreH.trans[race][form];
+    }
+
+    /**
+     * @param raceid Race ID
+     * @param formId Form ID
+     * @return All config data for a Form Mastery i.e Max Level, Instant Transform Unlock, Required Masteries
+     */
+    @Override
+    public String[] getAllFormMasteryData(int raceid, int formId) {
+        ArrayList<String> data = new ArrayList<>();
+        data.add(JGConfigDBCFormMastery.getString(raceid, formId, JGConfigDBCFormMastery.DATA_ID_MAX_LEVEL, 0));
+        data.add(JGConfigDBCFormMastery.getString(raceid, formId, JGConfigDBCFormMastery.DATA_ID_INSTANT_TRANSFORM_UNLOCK, 0));
+        data.add(JGConfigDBCFormMastery.getString(raceid, formId, JGConfigDBCFormMastery.DATA_ID_REQUIRED_MASTERIES, 0));
+        data.add(JGConfigDBCFormMastery.getString(raceid, formId, JGConfigDBCFormMastery.DATA_ID_AUTO_LEARN_ON_LEVEL, 0));
+        data.add(JGConfigDBCFormMastery.getString(raceid, formId, JGConfigDBCFormMastery.DATA_ID_GAIN_TO_OTHER_MASTERIES, 0));
+
+        return data.toArray(new String[0]);
+    }
+
+    /**
+     * @param race Race ID
+     * @param nonRacial nonRacial forms are Kaioken/UI/Mystic/GOD
+     * @return Number of forms a race has, i.e Saiyan has 14 racial and 4 non racial
+     */
+    @Override
+    public int getAllFormsLength(int race, boolean nonRacial) {
+        if (race < 0 || race > 5) {
+            throw new CustomNPCsException("Races are from 0 to 5", new Object[0]);
+        }
+        if (nonRacial) {
+            return JRMCoreH.transNonRacial.length;
+        }
+        return JRMCoreH.trans[race].length;
+    }
+
+    /**
+     * @param race Race ID
+     * @param nonRacial check getAllFormsLength(int race, boolean nonRacial)
+     * @return An array containing all forms the race has
+     */
+    @Override
+    public String[] getAllForms(int race, boolean nonRacial) {
+        if (race < 0 || race > 5) {
+            throw new CustomNPCsException("Races are from 0 to 5", new Object[0]);
+        }
+        if (nonRacial) {
+            return JRMCoreH.transNonRacial;
+
+        }
+        return JRMCoreH.trans[race];
+    }
+
+    /**
+     * @return IKiAttack Object
+     */
     @Override
     public IKiAttack createKiAttack() {
         return new KiAttack();
     }
 
+    /**
+     * @param type Type of Ki Attack [0 - 8] "Wave", "Blast", "Disk", "Laser", "Spiral", "BigBlast", "Barrage", "Shield", "Explosion"
+     * @param speed Speed of Ki Attack [0 - 100]
+     * @param damage Damage for Ki Attack
+     * @param hasEffect True for Explosion
+     * @param color Color of Ki Attack [0 - 30] -> "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
+     * @param density Density of Ki Attack > 0
+     * @param hasSound Play Impact Sound of Ki Attack
+     * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
+     * @return IKiAttack Object with Set Values
+     */
     @Override
     public IKiAttack createKiAttack(byte type, byte speed, int damage, boolean hasEffect, byte color, byte density, boolean hasSound, byte chargePercent) {
         return new KiAttack(type, speed, damage, hasEffect, color, density, hasSound, chargePercent);
     }
 
+    /**
+     * Fires a Ki Attack with the Following Params
+     * @param type Type of Ki Attack [0 - 8] "Wave", "Blast", "Disk", "Laser", "Spiral", "BigBlast", "Barrage", "Shield", "Explosion"
+     * @param speed Speed of Ki Attack [0 - 100]
+     * @param damage Damage for Ki Attack
+     * @param hasEffect True for Explosion
+     * @param color Color of Ki Attack [0 - 30] -> "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
+     * @param density Density of Ki Attack > 0
+     * @param hasSound Play Impact Sound of Ki Attack
+     * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
+     */
     @Override
     public void fireKiAttack(ICustomNpc<EntityNPCInterface> npc, byte type, byte speed, int damage, boolean hasEffect, byte color, byte density, boolean hasSound, byte chargePercent) {
         if (npc == null)
@@ -54,7 +190,7 @@ public class DBCAPI extends AbstractDBCAPI {
         try {
             if (JRMCoreConfig.dat5695[type]) {
                 type = ValueUtil.clamp(type, (byte) 0, (byte) 8);
-                speed = ValueUtil.clamp(speed, (byte) 0, (byte) 8);
+                speed = ValueUtil.clamp(speed, (byte) 0, (byte) 100);
                 if (damage < 0) {
                     damage = 0;
                 }
@@ -76,6 +212,9 @@ public class DBCAPI extends AbstractDBCAPI {
         }
     }
 
+    /**
+     * Fires an IKiAttack with its internal params
+     */
     @Override
     public void fireKiAttack(ICustomNpc<EntityNPCInterface> npc, IKiAttack kiAttack) {
         if (npc == null || npc.getMCEntity() == null || kiAttack == null)

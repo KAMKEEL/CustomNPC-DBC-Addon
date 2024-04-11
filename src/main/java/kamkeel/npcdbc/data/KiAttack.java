@@ -42,7 +42,7 @@ public class KiAttack implements IKiAttack {
     }
 
     public void setSpeed(byte speed) {
-        this.speed = ValueUtil.clamp(speed, (byte) 0, (byte) 8);
+        this.speed = ValueUtil.clamp(speed, (byte) 0 , (byte) 100);
     }
 
     public int getDamage() {

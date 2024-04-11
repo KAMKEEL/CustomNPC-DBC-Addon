@@ -80,22 +80,9 @@ public interface IDBCAddon extends IDBCPlayer {
     int getFullStat(int statid);
 
     /**
-     * @return Name of race ID
-     * @param race 0 to 5
-     */
-    String getRaceName(int race);
-
-    /**
      * @return Player's race name
      */
     String getRaceName();
-
-    /**
-     * @param race ID (0 to 5),
-     * @param form ID (0 to 3 for humans/namekians, 0 to 14 for Saiyans/Half, 0 to 7 for arcosians, 0 to 4 for majins)
-     * @return form name i.e "SSFullPow"
-     */
-    String getFormName(int race, int form);
 
     /**
      * @return Name of form player is currently in
@@ -119,27 +106,6 @@ public interface IDBCAddon extends IDBCPlayer {
      * @return Entire form mastery NBT string, aka data32
      */
     String getAllFormMasteries();
-
-    /**
-     * @param raceid Race ID
-     * @param formId Form ID
-     * @return All  config data for a Form Mastery i.e Max Level, Instant Transform Unlock, Required Masteries
-     */
-    String[] getAllFormMasteryData(int raceid, int formId);
-
-    /**
-     * @param race Race ID
-     * @param nonRacial nonRacial forms are Kaioken/UI/Mystic/GOD
-     * @return Number of forms a race has, i.e Saiyan has 14 racial and 4 non racial
-     */
-    int getAllFormsLength(int race, boolean nonRacial);
-
-    /**
-     * @param race Race ID
-     * @param nonRacial check getAllFormsLength(int race, boolean nonRacial)
-     * @return An array containing all forms the race has
-     */
-    String[] getAllForms(int race, boolean nonRacial);
 
     /**
      * @return True if player is fused and spectator
