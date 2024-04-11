@@ -8,7 +8,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 @Mod(modid = "npcdbc",
     name = "CustomNPC+ DBC Addon",
     version = "1.0",
-    dependencies = "after:customnpcs;after:jinryuujrmcore;")
+    dependencies = "after:customnpcs;after:jinryuujrmcore;after:jinryuudragonblockc;")
 public class CustomNpcPlusDBC {
 
     @SidedProxy(clientSide = "kamkeel.npcdbc.client.ClientProxy", serverSide = "kamkeel.npcdbc.CommonProxy")
