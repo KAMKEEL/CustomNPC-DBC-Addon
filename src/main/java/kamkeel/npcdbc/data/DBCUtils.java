@@ -217,9 +217,6 @@ public class DBCUtils {
 		boolean[] haircol = JGConfigUltraInstinct.CONFIG_UI_HAIR_WHITE;
 		boolean is = false;
 		for (int i = 0; i < curLvl; i++) {
-			System.out.println(i + 1);
-			System.out.println("st2 " + JRMCoreH.State2);
-
 			if (haircol[i])
 				if (i + 1 == JRMCoreH.State2)
 					is = true;

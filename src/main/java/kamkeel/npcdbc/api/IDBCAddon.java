@@ -19,18 +19,18 @@ public interface IDBCAddon extends IDBCPlayer {
 
     void changeDBCAnim(int i);
 
-    int[] getAllStats();
+    int[] getAllAttributes();
 
-    void modifyAllStats(int[] Stats, boolean multiplyaddedStats, double multiValue);
+    void modifyAllAttributes(int[] Stats, boolean multiplyaddedStats, double multiValue);
 
-    void modifyAllStats(int Num, boolean setStatsToNum);
+    void modifyAllAttributes(int Num, boolean setStatsToNum);
 
-    void modifyAllStats(int[] stats, boolean setStats);
+    void modifyAllAttributes(int[] stats, boolean setStats);
 
     // 0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
-    void multiplyStat(int statid, double multi);
+    void multiplyAttribute(int statid, double multi);
 
-    void multiplyAllStats(double multi);
+    void multiplyAllAttributes(double multi);
 
     // str 0, dex 1, con 2, wil 3, mnd 4, spi 5
     int getFullStat(int statid);
