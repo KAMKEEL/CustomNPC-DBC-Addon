@@ -2,6 +2,7 @@ package kamkeel.npcdbc.api;
 
 import cpw.mods.fml.common.Loader;
 import noppes.npcs.api.entity.ICustomNpc;
+import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
 
 public abstract class AbstractDBCAPI {

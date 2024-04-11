@@ -7,6 +7,7 @@ import kamkeel.npcdbc.api.IDBCAddon;
 import kamkeel.npcdbc.data.DBCUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.scripted.entity.ScriptPlayer;
@@ -41,17 +42,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     * Was designed for my mod, so doesn't do anything here
-     */
-    @Override
-    @Deprecated
-    public void setFlight(boolean bo) {
-        if (this.getRelease() > 0) {
-            nbt.setBoolean("isFlying", bo);
-        }
-    }
-
-    /**
      * @return Player's max body
      */
     @Override
@@ -59,13 +49,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return DBCUtils.getMaxStat(player, 2);
     }
 
+    /**
+     * @return Player's max hp (body)
+     */
     @Override
     public int getMaxHP() {
         return getMaxBody();
     }
 
     /**
-     * @return Current body as a percentage of max body
+     * @return Current body as a percentage of max hp (body)
      */
     @Override
     public float getBodyPercentage() {
@@ -99,21 +92,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         byte cls = JRMCoreH.getByte(player, "jrmcClass");
 
         return JG.getStaminaMax(rce, cls, pwr, PlyrAttrbts);
-    }
-
-    /**
-     * Changes the players animation, but doesn't work as any change through this method gets auto-corrected next tick by JRMCoreComTickH, you can remove it if you want
-     *
-     * @param i 1 for Flight animation and 1 for normal standing
-     */
-    @Deprecated
-    @Override
-    public void changeDBCAnim(int i) {
-        if (i == 1 || i == 2) {
-            JRMCoreH.Anim(i);
-        } else {
-            throw new CustomNPCsException("Invalid Animation ID : " + i + "\nValid IDs are: 1 for Flight \nand 2 for Standing", new Object[0]);
-        }
     }
 
     /**
@@ -182,18 +160,18 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     *
-     * @param a Adds all attributes by array of attributes respectively i.e atr 0 gets added to index 0 of a
-     * @param setStats sets all attributes to a array
+     * If not setStats, then it will ADD submitted[0] to stats[0]. Submitted must be length of 6
+     * @param submitted Adds all attributes by array of attributes respectively i.e atr 0 gets added to index 0 of a
+     * @param setStats sets all attributes to submitted array
      */
     @Override
-    public void modifyAllAttributes(int[] a, boolean setStats) {
-        if (a.length == 6) {
+    public void modifyAllAttributes(int[] submitted, boolean setStats) {
+        if (submitted.length == 6) {
             if (!setStats) {
-                modifyAllAttributes(a, false, 1);
+                modifyAllAttributes(submitted, false, 1);
             } else {
-                for (int i = 0; i < a.length; i++) {
-                    nbt.setInteger(JRMCoreH.AttrbtNbtI[i], a[i]);
+                for (int i = 0; i < submitted.length; i++) {
+                    nbt.setInteger(JRMCoreH.AttrbtNbtI[i], submitted[i]);
                 }
                 this.setBody(getMaxBody());
                 this.setKi(getMaxKi());
@@ -207,7 +185,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      * @param statid statID to multiply
      * @param multi value to multi by
      */
-
     @Override
     public void multiplyAttribute(int statid, double multi) {
         if (multi == 0) multi = 1.0;
@@ -249,9 +226,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     * A "Full" stat is a stat that has all form multipliers calculated. i.e if base Strength is 10,000, returns 10,000. if SSJ form multi is 20x and is SSJ, returns 200,000. LSSJ returns 350,000, LSSJ Kaioken x40 returns 1,000,000 and so on
-     * @param statid
-     * 
+     * A "Full" stat is a stat that has all form multipliers calculated. i.e if base Strength is 10,000, returns 10,000.
+     *  if SSJ form multi is 20x and is SSJ, returns 200,000. LSSJ returns 350,000, LSSJ Kaioken x40 returns 1,000,000 and so on
+     *  0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
+     * @param statid ID of Stat
+     * @return stat value
      */
     @Override
     public int getFullStat(int statid) {
@@ -433,7 +412,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     * @param formName
+     * @param formName name of form
      * @return Form mastery value
      */
     @Override
@@ -499,117 +478,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     * Adds form mastery values of two players to player controller, or both if addForBoth. You can remove this since this was intended for my fusion script
-     */
-    public void addFusionFormMasteries(ScriptPlayer<T> Controller, ScriptPlayer<T> Spectator, boolean multiplyaddedStats, double multiValue, boolean addForBoth) {
-        double multi = multiValue;
-        if (multiValue == 0 || !multiplyaddedStats) {
-            multi = 1.0;
-        }
-
-        T controller = Controller.player;
-        NBTTagCompound cnbt = controller.getEntityData().getCompoundTag("PlayerPersisted");
-        int crace = Controller.getDBCPlayer().getRace();
-        String cracial = cnbt.getString("jrmcFormMasteryRacial_" + JRMCoreH.Races[crace]);
-        String cnonracial = cnbt.getString("jrmcFormMasteryNonRacial");
-
-        T spectator = Spectator.player;
-        NBTTagCompound snbt = spectator.getEntityData().getCompoundTag("PlayerPersisted");
-        int srace = Spectator.getDBCPlayer().getRace();
-        String sracial = snbt.getString("jrmcFormMasteryRacial_" + JRMCoreH.Races[srace]);
-        String snonracial = snbt.getString("jrmcFormMasteryNonRacial");
-
-        boolean samerace = false;
-        if (crace == srace) {
-            samerace = true;
-        }
-        String[] cnonracialmasteries = cnonracial.split(";");
-        String[] snonracialmasteries = snonracial.split(";");
-        int lengthnr = cnonracialmasteries.length;
-        int slengthnr = snonracialmasteries.length;
-
-        String[] cracialmasteries = cracial.split(";");
-        String[] sracialmasteries = sracial.split(";");
-        int lengthr = cracialmasteries.length;
-        int slengthr = sracialmasteries.length;
-
-        String newmasteriesnr = "";
-        String newmasteriesr = "";
-        String snewmasteriesnr = "";
-        String snewmasteriesr = "";
-
-        boolean done = false;
-        if (samerace) {
-            for (int i = 0; i < lengthnr; i++) {
-                String[] cmasteryvaluesnr = cnonracialmasteries[i].split(",");
-                String[] smasteryvaluesnr = snonracialmasteries[i].split(",");
-
-                // name , string( double(value1)+double(value2) ) ;
-                newmasteriesnr += cmasteryvaluesnr[0] + "," + Double.toString((Double.parseDouble(cmasteryvaluesnr[1]) + Double.parseDouble(smasteryvaluesnr[1])) * multi) + ";";
-
-            }
-            for (int i = 0; i < lengthr; i++) {
-                String[] cmasteryvaluesr = cracialmasteries[i].split(",");
-                String[] smasteryvaluesr = sracialmasteries[i].split(",");
-
-                newmasteriesr += cmasteryvaluesr[0] + "," + Double.toString((Double.parseDouble(cmasteryvaluesr[1]) + Double.parseDouble(smasteryvaluesr[1])) * multi) + ";";
-                done = true;
-            }
-
-        } else {
-            if (multiValue == 0) {
-                multiValue = 2.0;
-            }
-            multi = multiValue;
-            for (int i = 0; i < lengthnr; i++) {
-                String[] cmasteryvaluesnr = cnonracialmasteries[i].split(",");
-                newmasteriesnr += cmasteryvaluesnr[0] + "," + Double.toString(Double.parseDouble(cmasteryvaluesnr[1]) * multi) + ";";
-
-            }
-            for (int i = 0; i < lengthr; i++) {
-                String[] cmasteryvaluesr = cracialmasteries[i].split(",");
-                newmasteriesr += cmasteryvaluesr[0] + "," + Double.toString(Double.parseDouble(cmasteryvaluesr[1]) * multi) + ";";
-                done = true;
-
-            }
-
-            for (int i = 0; i < slengthnr; i++) {
-                String[] smasteryvaluesnr = snonracialmasteries[i].split(",");
-                snewmasteriesnr += smasteryvaluesnr[0] + "," + Double.toString(Double.parseDouble(smasteryvaluesnr[1]) * multi) + ";";
-            }
-            for (int i = 0; i < slengthr; i++) {
-                String[] smasteryvaluesr = snonracialmasteries[i].split(",");
-                snewmasteriesr += smasteryvaluesr[0] + "," + Double.toString(Double.parseDouble(smasteryvaluesr[1]) * multi) + ";";
-                done = true;
-            }
-
-        }
-
-        newmasteriesnr.substring(0, lengthnr - 2);
-        cnbt.setString("jrmcFormMasteryNonRacial", newmasteriesnr);
-
-        newmasteriesr.substring(0, lengthr - 2);
-        cnbt.setString("jrmcFormMasteryRacial_" + JRMCoreH.Races[crace], newmasteriesr);
-        if (addForBoth) {
-            if (samerace) {
-                snbt.setString("jrmcFormMasteryNonRacial", newmasteriesnr);
-                snbt.setString("jrmcFormMasteryRacial_" + JRMCoreH.Races[crace], newmasteriesr);
-            } else {
-                snewmasteriesnr.substring(0, snonracialmasteries.length - 2);
-                snbt.setString("jrmcFormMasteryNonRacial", snewmasteriesnr);
-                snewmasteriesr.substring(0, sracialmasteries.length - 2);
-                snbt.setString("jrmcFormMasteryRacial_" + JRMCoreH.Races[srace], snewmasteriesr);
-            }
-        }
-
-        if (!done) {
-            throw new CustomNPCsException("Invalid arguments", new Object[0]);
-        }
-    }
-
-    /**
-     * @param raceid
-     * @param formId
+     * @param raceid Race ID
+     * @param formId Form ID
      * @return All  config data for a Form Mastery i.e Max Level, Instant Transform Unlock, Required Masteries
      */
     @Override
@@ -625,7 +495,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     * @param race
+     * @param race Race ID
      * @param nonRacial nonRacial forms are Kaioken/UI/Mystic/GOD
      * @return Number of forms a race has, i.e Saiyan has 14 racial and 4 non racial
      */
@@ -641,7 +511,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     * @param race
+     * @param race Race ID
      * @param nonRacial check getAllFormsLength(int race, boolean nonRacial)
      * @return An array containing all forms the race has
      */
@@ -701,7 +571,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      * @return Player's stat, NOT attributes i.e Melee Dmg, not STR
      */
     @Override
-
     public int getMaxStat(int attribute) {
         return DBCUtils.getMaxStat(player, attribute);
     }
