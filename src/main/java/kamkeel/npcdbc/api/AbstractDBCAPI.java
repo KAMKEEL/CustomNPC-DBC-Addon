@@ -73,7 +73,10 @@ public abstract class AbstractDBCAPI {
      * @param speed Speed of Ki Attack [0 - 100]
      * @param damage Damage for Ki Attack
      * @param hasEffect True for Explosion
-     * @param color Color of Ki Attack [0 - 30] -> "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
+     * @param color Color of Ki Attack [0 - 30] ->
+     *              0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
+     *              11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
+     *              21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
      * @param density Density of Ki Attack > 0
      * @param hasSound Play Impact Sound of Ki Attack
      * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
@@ -82,12 +85,15 @@ public abstract class AbstractDBCAPI {
     public abstract IKiAttack createKiAttack(byte type, byte speed, int damage, boolean hasEffect, byte color, byte density, boolean hasSound, byte chargePercent);
 
     /**
-     * Fires a Ki Attack with the Following Params
+     * Fires a Ki Attack in the Head Direction of the NPC
      * @param type Type of Ki Attack [0 - 8] "Wave", "Blast", "Disk", "Laser", "Spiral", "BigBlast", "Barrage", "Shield", "Explosion"
      * @param speed Speed of Ki Attack [0 - 100]
      * @param damage Damage for Ki Attack
      * @param hasEffect True for Explosion
-     * @param color Color of Ki Attack [0 - 30] -> "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
+     * @param color Color of Ki Attack [0 - 30] ->
+     *              0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
+     *              11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
+     *              21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
      * @param density Density of Ki Attack > 0
      * @param hasSound Play Impact Sound of Ki Attack
      * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
