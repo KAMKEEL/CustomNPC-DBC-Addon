@@ -201,17 +201,4 @@ public class DBCHelper {
         }
         return damageAmount;
     }
-
-    public int getKiProtectionReduction(DBCStats dbcStats, int kiProtectLevel, int maxKiPool, int release){
-        int kiProtection = 0;
-        if(!dbcStats.isIgnoreKiProtection()){
-            kiProtection = (int)((double)kiProtectLevel * 0.005 * maxKiPool * (double)release * 0.01);
-            if (kiProtection < 1) {
-                kiProtection = 1;
-            }
-            // Ki Protection
-            kiProtection = (int)((double)kiProtection * DBCConfig.cnfKDd);
-        }
-        return kiProtection;
-    }
 }
