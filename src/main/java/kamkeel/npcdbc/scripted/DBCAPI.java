@@ -52,7 +52,7 @@ public class DBCAPI extends AbstractDBCAPI {
         if(player == null || stats == null)
             return;
 
-        if(!stats.isEnabled())
+        if(!stats.isEnabled() || !(player.getMCEntity() instanceof EntityPlayer))
             return;
 
         EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
