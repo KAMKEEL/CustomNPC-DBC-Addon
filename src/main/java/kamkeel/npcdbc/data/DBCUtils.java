@@ -1,15 +1,7 @@
 package kamkeel.npcdbc.data;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import JinRyuu.DragonBC.common.DBCConfig;
-import JinRyuu.JRMCore.ComJrmcaBonus;
-import JinRyuu.JRMCore.JRMCoreConfig;
-import JinRyuu.JRMCore.JRMCoreH;
-import JinRyuu.JRMCore.JRMCoreHDBC;
-import JinRyuu.JRMCore.mod_JRMCore;
+import JinRyuu.JRMCore.*;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
@@ -20,6 +12,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 // Created by Goatee
 public class DBCUtils {

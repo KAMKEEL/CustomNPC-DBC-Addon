@@ -8,12 +8,8 @@ import kamkeel.npcdbc.api.IDBCStats;
 import kamkeel.npcdbc.api.IKiAttack;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.mixin.INPCStats;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.api.entity.ICustomNpc;
-import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
-import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
 public class DBCAPI extends AbstractDBCAPI {

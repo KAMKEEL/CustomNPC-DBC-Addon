@@ -1,8 +1,7 @@
 package kamkeel.npcdbc.client;
 
-import kamkeel.npcdbc.CommonProxy;
-
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import kamkeel.npcdbc.CommonProxy;
 
 
 public class ClientProxy extends CommonProxy {

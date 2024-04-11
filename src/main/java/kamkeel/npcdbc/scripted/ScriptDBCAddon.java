@@ -7,10 +7,8 @@ import kamkeel.npcdbc.api.IDBCAddon;
 import kamkeel.npcdbc.data.DBCUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
-import noppes.npcs.scripted.entity.ScriptPlayer;
 
 import java.util.ArrayList;
 

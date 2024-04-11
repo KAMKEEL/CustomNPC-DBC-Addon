@@ -3,7 +3,6 @@ package kamkeel.npcdbc.mixin.impl;
 import kamkeel.addon.client.DBCClient;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.gui.SubGuiDBCProperties;
-import kamkeel.npcdbc.data.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.entity.EntityLivingBase;
 import noppes.npcs.client.gui.mainmenu.GuiNpcStats;

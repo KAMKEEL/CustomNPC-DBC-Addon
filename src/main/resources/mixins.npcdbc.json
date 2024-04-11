@@ -7,8 +7,8 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinDBCAddon",
-    "MixinDBCStats",
     "MixinDBCDisplay",
+    "MixinDBCStats",
     "MixinScriptPlayer"
   ],
   "client": [
