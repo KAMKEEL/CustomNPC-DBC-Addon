@@ -53,7 +53,7 @@ public class KiAttack implements IKiAttack {
         this.damage = Math.max(damage, 0);
     }
 
-    public boolean isHasEffect() {
+    public boolean hasEffect() {
         return hasEffect;
     }
 
@@ -77,7 +77,7 @@ public class KiAttack implements IKiAttack {
         this.density = density < 0 ? 0 : density;
     }
 
-    public boolean isHasSound() {
+    public boolean hasSound() {
         return hasSound;
     }
 
