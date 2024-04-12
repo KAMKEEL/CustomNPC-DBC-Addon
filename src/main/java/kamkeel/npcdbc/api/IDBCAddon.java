@@ -139,4 +139,9 @@ public interface IDBCAddon extends IDBCPlayer {
      * @return True if player is transformed into white MUI
      */
     boolean isMUI();
+
+    /**
+     * @return True if player is currently KO
+     */
+    boolean isKO();
 }

@@ -9,6 +9,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 
+import static JinRyuu.JRMCore.JRMCoreH.getInt;
+
 // Implemented by Kam, Ported from Goatee Design
 public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T> implements IDBCAddon {
     public T player;
@@ -489,5 +491,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public boolean isMUI() {
         return DBCUtils.isMUI(player);
+    }
+
+    /**
+     * @return True if player is currently KO
+     */
+    @Override
+    public boolean isKO(){
+        int currentKO = getInt(player, "jrmcHar4va");
+        return currentKO > 0;
     }
 }

@@ -52,10 +52,9 @@ public class DBCAPI extends AbstractDBCAPI {
         if(player == null || stats == null)
             return;
 
-        if(!stats.isEnabled() || !(player.getMCEntity() instanceof EntityPlayer))
+        if(!stats.isEnabled() || !(player.getMCEntity() instanceof EntityPlayer entityPlayer))
             return;
 
-        EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
         DBCUtils.doDBCDamage(entityPlayer, damage, stats);
     }
 
