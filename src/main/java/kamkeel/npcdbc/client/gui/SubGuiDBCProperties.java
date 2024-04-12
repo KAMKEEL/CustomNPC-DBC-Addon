@@ -26,36 +26,36 @@ public class SubGuiDBCProperties extends SubGuiInterface implements ITextfieldLi
         addButton(new GuiNpcButtonYesNo(0, guiLeft + 170, y, 50, 20, getDBCData(npc).enabled));
 
         if(getDBCData(npc).enabled){
-            addLabel(new GuiNpcLabel(8,"stats.friendlyFist", guiLeft + 5, y+=22));
-            addButton(new GuiNpcButtonYesNo(8, guiLeft + 170, y, 50, 20, getDBCData(npc).isFriendlyFist()));
+            addButton(new GuiNpcButtonYesNo(8, guiLeft + 170, y+=22, 50, 20, getDBCData(npc).isFriendlyFist()));
+            addLabel(new GuiNpcLabel(8,"stats.friendlyFist", guiLeft + 5, y + 5));
 
-            addLabel(new GuiNpcLabel(1,"stats.ignoreDex", guiLeft + 5, y+=22));
-            addButton(new GuiNpcButtonYesNo(1, guiLeft + 170, y, 50, 20, getDBCData(npc).isIgnoreDex()));
+            addButton(new GuiNpcButtonYesNo(1, guiLeft + 170, y+=22, 50, 20, getDBCData(npc).isIgnoreDex()));
+            addLabel(new GuiNpcLabel(1,"stats.ignoreDex", guiLeft + 5, y + 5));
 
-            addLabel(new GuiNpcLabel(2,"stats.ignoreBlock", guiLeft + 5, y+=22));
-            addButton(new GuiNpcButtonYesNo(2, guiLeft + 170, y, 50, 20, getDBCData(npc).isIgnoreBlock()));
+            addButton(new GuiNpcButtonYesNo(2, guiLeft + 170, y+=22, 50, 20, getDBCData(npc).isIgnoreBlock()));
+            addLabel(new GuiNpcLabel(2,"stats.ignoreBlock", guiLeft + 5, y + 5));
 
-            addLabel(new GuiNpcLabel(3,"stats.ignoreEndurance", guiLeft + 5, y+=22));
-            addButton(new GuiNpcButtonYesNo(3, guiLeft + 170, y, 50, 20, getDBCData(npc).isIgnoreEndurance()));
+            addButton(new GuiNpcButtonYesNo(3, guiLeft + 170, y+=22, 50, 20, getDBCData(npc).isIgnoreEndurance()));
+            addLabel(new GuiNpcLabel(3,"stats.ignoreEndurance", guiLeft + 5, y + 5));
 
-            addLabel(new GuiNpcLabel(4,"stats.ignoreKiDamage",guiLeft + 5, y+=22));
-            addButton(new GuiNpcButtonYesNo(4, guiLeft + 170, y, 50, 20, getDBCData(npc).isIgnoreKiProtection()));
+            addButton(new GuiNpcButtonYesNo(4, guiLeft + 170, y+=22, 50, 20, getDBCData(npc).isIgnoreKiProtection()));
+            addLabel(new GuiNpcLabel(4,"stats.ignoreKiDamage",guiLeft + 5, y + 5));
 
-            addLabel(new GuiNpcLabel(7,"stats.ignoreFormDefense",guiLeft + 5, y+=22));
-            addButton(new GuiNpcButtonYesNo(7, guiLeft + 170, y, 50, 20, getDBCData(npc).isIgnoreFormReduction()));
+            addButton(new GuiNpcButtonYesNo(7, guiLeft + 170, y+=22, 50, 20, getDBCData(npc).isIgnoreFormReduction()));
+            addLabel(new GuiNpcLabel(7,"stats.ignoreFormDefense",guiLeft + 5, y + 5));
 
-            addLabel(new GuiNpcLabel(5,"stats.hasDefensePenetration",guiLeft + 5, y+=22));
-            addButton(new GuiNpcButtonYesNo(5, guiLeft + 170, y, 50, 20, getDBCData(npc).hasDefensePenetration()));
+            addButton(new GuiNpcButtonYesNo(5, guiLeft + 170, y+=22, 50, 20, getDBCData(npc).hasDefensePenetration()));
+            addLabel(new GuiNpcLabel(5,"stats.hasDefensePenetration",guiLeft + 5, y + 5));
 
             if(getDBCData(npc).hasDefensePenetration()){
-                addLabel(new GuiNpcLabel(6,"stats.defensePenetration",guiLeft + 5, y+=22));
-                addTextField(new GuiNpcTextField(6, this, fontRendererObj, guiLeft + 170, y, 50, 20, getDBCData(npc).getDefensePenetration() + ""));
+                addTextField(new GuiNpcTextField(6, this, fontRendererObj, guiLeft + 170, y+=22, 50, 20, getDBCData(npc).getDefensePenetration() + ""));
+                addLabel(new GuiNpcLabel(6,"stats.defensePenetration",guiLeft + 5, y + 5));
                 getTextField(6).integersOnly = true;
                 getTextField(6).setMinMaxDefault(0, 100, 10);
             }
         }
 
-		addButton(new GuiNpcButton(66, guiLeft + 190, guiTop + 190, 60, 20, "gui.done"));
+		addButton(new GuiNpcButton(66, guiLeft + 230, guiTop + 190, 20, 20, "X"));
     }
 
 	protected void actionPerformed(GuiButton guibutton)
