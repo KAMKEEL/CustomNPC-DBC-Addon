@@ -2,9 +2,13 @@ package kamkeel.npcdbc.data;
 
 import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.controllers.FormController;
+import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.controllers.AnimationController;
 
 public class CustomForm implements ICustomForm {
 
+    public int id = -1; // Only for internal usage
     public String name;
     public int race = DBCRace.HUMAN;
     public float allMulti = 1.0f;
@@ -18,7 +22,11 @@ public class CustomForm implements ICustomForm {
 
     public int auraColor = 1;
 
-    public CustomForm(String name) {
+
+    public CustomForm(){}
+
+    public CustomForm(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 
@@ -134,5 +142,42 @@ public class CustomForm implements ICustomForm {
         this.auraColor = auraColor;
     }
 
+    @Override
+    public int getID() {
+        return id;
+    }
 
+    @Override
+    public void setID(int newID) {
+        id = newID;
+    }
+
+    public void readFromNBT(NBTTagCompound compound){
+        if(compound.hasKey("ID")){
+            id = compound.getInteger("ID");
+        }
+        else if (AnimationController.Instance != null) {
+            id = FormController.Instance.getUnusedId();
+        }
+        name = compound.getString("Name");
+
+        // ADD REST
+
+    }
+
+    public NBTTagCompound writeToNBT(){
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger("ID", id);
+        compound.setString("Name", name);
+
+        // ADD REST
+
+
+        return compound;
+    }
+
+    @Override
+    public ICustomForm save() {
+        return FormController.Instance.saveForm(this);
+    }
 }

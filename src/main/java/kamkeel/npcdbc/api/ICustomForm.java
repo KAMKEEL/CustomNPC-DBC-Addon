@@ -45,4 +45,13 @@ public interface ICustomForm {
     int getAuraColor();
 
     void setAuraColor(int auraColor);
+
+    int getID();
+
+    /**
+     * Do not use this unless you know what you are changing. Dangerous to change.
+     */
+    void setID(int newID);
+
+    ICustomForm save();
 }

@@ -4,6 +4,9 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
+import kamkeel.npcdbc.controllers.FormController;
+import noppes.npcs.controllers.AnimationController;
 
 @Mod(modid = "npcdbc",
     name = "CustomNPC+ DBC Addon",
@@ -25,5 +28,10 @@ public class CustomNpcPlusDBC {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event){
         proxy.init(event);
+    }
+
+    @Mod.EventHandler
+    public void setAboutToStart(FMLServerAboutToStartEvent event) {
+        new FormController();
     }
 }
