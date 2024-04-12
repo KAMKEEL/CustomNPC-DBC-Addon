@@ -74,10 +74,10 @@ public interface IDBCAddon extends IDBCPlayer {
      * if SSJ form multi is 20x and is SSJ, returns 200,000. LSSJ returns 350,000, LSSJ Kaioken x40 returns 1,000,000 and so on
      * 0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
      *
-     * @param statid ID of Stat
-     * @return stat value
+     * @param statid ID of attribute
+     * @return attribute value
      */
-    int getFullStat(int statid);
+    int getFullAttribute(int statid);
 
     /**
      * @return Player's race name
@@ -174,4 +174,6 @@ public interface IDBCAddon extends IDBCPlayer {
      * @return True if Divine
      */
     boolean isDivine();
+
+    boolean isMajin();
 }

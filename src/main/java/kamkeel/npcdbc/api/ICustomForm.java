@@ -14,37 +14,33 @@ public interface ICustomForm {
 
     void setAllMulti(float allMulti);
 
-    float getStrengthMulti();
+    /**
+     * @param id    0 for Strength, 1 for Dex, 3 for Willpower
+     * @param multi
+     */
+    void setAttributeMulti(int id, float multi);
 
-    void setStrengthMulti(float strengthMulti);
+    /**
+     * @param id 0 for Strength, 1 for Dex, 3 for Willpower
+     */
+    float getAttributeMulti(int id);
 
-    float getDexMulti();
 
-    void setDexMulti(float dexMulti);
+    boolean isKaiokenStackable();
 
-    float getWillMulti();
+    boolean isUIStackable();
 
-    void setWillMulti(float willMulti);
+    void stackKaioken(boolean canStackKaioken);
 
-    float getConMulti();
-
-    void setConMulti(float conMulti);
-
-    float getMindMulti();
-
-    void setMindMulti(float mindMulti);
-
-    float getSpiritMulti();
-
-    void setSpiritMulti(float spiritMulti);
-
-    boolean isCanKaioken();
-
-    void setCanKaioken(boolean canKaioken);
+    void stackUI(boolean canStackUI);
 
     float getKaiokenMulti();
 
     void setKaiokenMulti(float kaiokenMulti);
+
+    float getUIMulti();
+
+    void setUIMulti(float UIMulti);
 
     int getAuraColor();
 

@@ -230,7 +230,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      * @return stat value
      */
     @Override
-    public int getFullStat(int statid) {
+    public int getFullAttribute(int statid) {
         JGPlayerMP JG = new JGPlayerMP(player);
         NBTTagCompound nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
         JG.setNBT(nbt);
@@ -480,7 +480,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public double getCurrentFormMultiplier() {
         double str = this.getStat("str");
-        double maxstr = getFullStat(0);
+        double maxstr = getFullAttribute(0);
 
         return (Math.max(maxstr, str)) / str;
     }
@@ -526,5 +526,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     public boolean isDivine() {
         return JRMCoreH.StusEfcts(17, nbt.getString("jrmcStatusEff"));
+    }
+    public boolean isMajin(){
+        return JRMCoreH.StusEfcts(12, nbt.getString("jrmcStatusEff"));
     }
 }
