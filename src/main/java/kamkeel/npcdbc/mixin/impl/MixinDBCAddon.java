@@ -13,6 +13,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import static JinRyuu.JRMCore.JRMCoreH.getInt;
+
 @Mixin(DBCAddon.class)
 public class MixinDBCAddon {
 
@@ -76,5 +78,24 @@ public class MixinDBCAddon {
             DBCStats dbcStats = ((INPCStats) npc.stats).getDBCStats();
             DBCUtils.doDBCDamage(player, (int) attackStrength, dbcStats);
         }
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Performs DBC Damage Calculations
+     */
+    @Overwrite(remap = false)
+    public boolean isKO(EntityNPCInterface npc, EntityPlayer player) {
+        if(npc.isRemote())
+            return false;
+
+        if(npc.stats instanceof INPCStats){
+            DBCStats dbcStats = ((INPCStats) npc.stats).getDBCStats();
+            if(dbcStats.enabled && dbcStats.isFriendlyFist()){
+                int currentKO = getInt(player, "jrmcHar4va");
+                return currentKO > 0;
+            }
+        }
+        return false;
     }
 }
