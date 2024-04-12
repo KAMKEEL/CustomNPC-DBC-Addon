@@ -150,13 +150,28 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     boolean isUI();
 
+    /**
+     * @return True if Mystic
+     */
     boolean isMystic();
 
+    /**
+     * @return True if in Kaioken
+     */
     boolean isKaioken();
 
+    /**
+     * @return True if in GoD
+     */
     boolean isGOD();
 
+    /**
+     * @return True if in Legendary
+     */
     boolean isLegendary();
 
+    /**
+     * @return True if Divine
+     */
     boolean isDivine();
 }
