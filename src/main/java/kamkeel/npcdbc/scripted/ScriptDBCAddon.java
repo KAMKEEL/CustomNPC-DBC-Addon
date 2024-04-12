@@ -501,4 +501,30 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         int currentKO = getInt(player, "jrmcHar4va");
         return currentKO > 0;
     }
+    /**
+     * @return True if either MUI or UI Omen
+     */
+    public boolean isUI() {
+        return JRMCoreH.StusEfcts(19, nbt.getString("jrmcStatusEff"));
+    }
+
+    public boolean isMystic() {
+        return JRMCoreH.StusEfcts(13, nbt.getString("jrmcStatusEff"));
+    }
+
+    public boolean isKaioken() {
+        return JRMCoreH.StusEfcts(5, nbt.getString("jrmcStatusEff"));
+    }
+
+    public boolean isGOD() {
+        return JRMCoreH.StusEfcts(20, nbt.getString("jrmcStatusEff"));
+    }
+
+    public boolean isLegendary() {
+        return JRMCoreH.StusEfcts(14, nbt.getString("jrmcStatusEff"));
+    }
+
+    public boolean isDivine() {
+        return JRMCoreH.StusEfcts(17, nbt.getString("jrmcStatusEff"));
+    }
 }

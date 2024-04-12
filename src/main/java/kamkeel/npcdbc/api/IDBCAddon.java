@@ -36,44 +36,44 @@ public interface IDBCAddon extends IDBCPlayer {
     int[] getAllAttributes();
 
     /**
-     *
-     * @param attri adds attri to player stats
+     * @param attri               adds attri to player stats
      * @param multiplyAddedAttris if true, adds first then multiplies by multivalue
-     * @param multiValue  value to multiply with
+     * @param multiValue          value to multiply with
      */
     void modifyAllAttributes(int[] attri, boolean multiplyAddedAttris, double multiValue);
 
     /**
-     *
-     * @param Num adds all attributes by Num
+     * @param Num           adds all attributes by Num
      * @param setStatsToNum sets all attributes by Num
      */
     void modifyAllAttributes(int Num, boolean setStatsToNum);
 
     /**
      * If not setStats, then it will ADD submitted[0] to stats[0]. Submitted must be length of 6
+     *
      * @param submitted Adds all attributes by array of attributes respectively i.e atr 0 gets added to index 0 of a
-     * @param setStats sets all attributes to submitted array
+     * @param setStats  sets all attributes to submitted array
      */
     void modifyAllAttributes(int[] submitted, boolean setStats);
 
     /**
-     *  0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
+     * 0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
+     *
      * @param statid statID to multiply
-     * @param multi value to multi by
+     * @param multi  value to multi by
      */
     void multiplyAttribute(int statid, double multi);
 
     /**
-     *
      * @param multi multiplies all attributes by multi
      */
     void multiplyAllAttributes(double multi);
 
     /**
      * A "Full" stat is a stat that has all form multipliers calculated. i.e if base Strength is 10,000, returns 10,000.
-     *  if SSJ form multi is 20x and is SSJ, returns 200,000. LSSJ returns 350,000, LSSJ Kaioken x40 returns 1,000,000 and so on
-     *  0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
+     * if SSJ form multi is 20x and is SSJ, returns 200,000. LSSJ returns 350,000, LSSJ Kaioken x40 returns 1,000,000 and so on
+     * 0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
+     *
      * @param statid ID of Stat
      * @return stat value
      */
@@ -144,4 +144,19 @@ public interface IDBCAddon extends IDBCPlayer {
      * @return True if player is currently KO
      */
     boolean isKO();
+
+    /**
+     * @return True if either MUI or UI Omen
+     */
+    boolean isUI();
+
+    boolean isMystic();
+
+    boolean isKaioken();
+
+    boolean isGOD();
+
+    boolean isLegendary();
+
+    boolean isDivine();
 }
