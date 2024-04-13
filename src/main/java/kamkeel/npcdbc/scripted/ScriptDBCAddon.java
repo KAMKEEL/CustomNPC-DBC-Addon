@@ -2,7 +2,11 @@ package kamkeel.npcdbc.scripted;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.JGPlayerMP;
+import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.api.IDBCAddon;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.SyncedData.CustomFormData;
+import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -109,10 +113,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     *
-     * @param attri adds attri to player stats
+     * @param attri               adds attri to player stats
      * @param multiplyAddedAttris if true, adds first then multiplies by multivalue
-     * @param multiValue  value to multiply with
+     * @param multiValue          value to multiply with
      */
     @Override
     public void modifyAllAttributes(int[] attri, boolean multiplyAddedAttris, double multiValue) {
@@ -136,8 +139,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     *
-     * @param Num adds all attributes by Num
+     * @param Num           adds all attributes by Num
      * @param setStatsToNum sets all attributes by Num
      */
     @Override
@@ -158,8 +160,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     /**
      * If not setStats, then it will ADD submitted[0] to stats[0]. Submitted must be length of 6
+     *
      * @param submitted Adds all attributes by array of attributes respectively i.e atr 0 gets added to index 0 of a
-     * @param setStats sets all attributes to submitted array
+     * @param setStats  sets all attributes to submitted array
      */
     @Override
     public void modifyAllAttributes(int[] submitted, boolean setStats) {
@@ -178,13 +181,15 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     *  0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
+     * 0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
+     *
      * @param statid statID to multiply
-     * @param multi value to multi by
+     * @param multi  value to multi by
      */
     @Override
     public void multiplyAttribute(int statid, double multi) {
-        if (multi == 0) multi = 1.0;
+        if (multi == 0)
+            multi = 1.0;
 
         int[] stats = getAllAttributes();
 
@@ -203,7 +208,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     *
      * @param multi multiplies all attributes by multi
      */
     @Override
@@ -224,8 +228,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     /**
      * A "Full" stat is a stat that has all form multipliers calculated. i.e if base Strength is 10,000, returns 10,000.
-     *  if SSJ form multi is 20x and is SSJ, returns 200,000. LSSJ returns 350,000, LSSJ Kaioken x40 returns 1,000,000 and so on
-     *  0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
+     * if SSJ form multi is 20x and is SSJ, returns 200,000. LSSJ returns 350,000, LSSJ Kaioken x40 returns 1,000,000 and so on
+     * 0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
+     *
      * @param statid ID of Stat
      * @return stat value
      */
@@ -497,10 +502,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      * @return True if player is currently KO
      */
     @Override
-    public boolean isKO(){
+    public boolean isKO() {
         int currentKO = getInt(player, "jrmcHar4va");
         return currentKO > 0;
     }
+
     /**
      * @return True if either MUI or UI Omen
      */
@@ -527,7 +533,39 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public boolean isDivine() {
         return JRMCoreH.StusEfcts(17, nbt.getString("jrmcStatusEff"));
     }
-    public boolean isMajin(){
+
+    public boolean isMajin() {
         return JRMCoreH.StusEfcts(12, nbt.getString("jrmcStatusEff"));
+    }
+
+    public void setCustomForm(String formname) {
+        ICustomForm f = FormController.Instance.get(formname);
+        CustomFormData c = CustomFormData.get(player);
+        if (c.hasForm(formname)) {
+            c.setInt("currentForm", f.getID());
+            DBCData d = DBCData.get(player);
+            d.state1 = 0;
+            if (d.state2 > 0 && JRMCoreH.StusEfcts(5, d.SE) && !f.isKaiokenStackable()) {
+                d.state2 = 0;
+                JRMCoreH.StusEfcts(5, player, false); //removes status effect KK and updates NBT
+            }
+            if (d.state2 > 0 && JRMCoreH.StusEfcts(19, d.SE) && !f.isUIStackable()) {
+                d.state2 = 0;
+                JRMCoreH.StusEfcts(19, player, false); //removes status effect UI and updates NBT
+            }
+
+            c.saveFields();
+        } else
+            throw new CustomNPCsException("Player doesn't have form " + formname + " unlocked!");
+    }
+
+    public void giveCustomForm(String formname) {
+        ICustomForm f = FormController.Instance.get(formname);
+        f.assignToPlayer(player);
+    }
+
+    public void removeCustomForm(String formname) {
+        ICustomForm f = FormController.Instance.get(formname);
+        f.removeFromPlayer(player);
     }
 }

@@ -55,9 +55,13 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
     public void removeForm(String name) {
         if (accessibleForms.contains(name)) {
             accessibleForms.remove(name);
-            saveNBTData(null);
+            saveFields();
             this.save(true);
         }
+    }
+
+    public boolean hasForm(String name) {
+        return accessibleForms.contains(name);
     }
 
     @Override

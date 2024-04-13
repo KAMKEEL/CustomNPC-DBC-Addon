@@ -176,4 +176,10 @@ public interface IDBCAddon extends IDBCPlayer {
     boolean isDivine();
 
     boolean isMajin();
+
+    void setCustomForm(String formname);
+
+    void giveCustomForm(String formname);
+
+    void removeCustomForm(String formname);
 }

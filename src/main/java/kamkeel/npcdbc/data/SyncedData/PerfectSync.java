@@ -89,6 +89,10 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
     public void init(Entity entity, World world) {
     }
 
+    public void saveFields() {
+        saveNBTData(null);
+    }
+
     @Override
     public void saveNBTData(NBTTagCompound compound) {
     }
@@ -104,7 +108,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
         if (u.isServer()) {
             NBTTagCompound data = compound();
             loadNBTData(data);
-          //  System.out.println(compound());
+            //  System.out.println(compound());
             if (!saveClient)
                 return;
 
