@@ -33,6 +33,10 @@ public class PacketTellServer extends AbstractServerMessage<PacketTellServer> {
             if (idString.startsWith("Transform:")) {
             }
         }
+        if (idString.startsWith("createForm")){
+            System.out.println("yee");
+        }
+
 
     }
 

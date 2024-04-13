@@ -50,5 +50,9 @@ public class u {
         return null;
 
     }
+    public static void printStackTrace() {
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace())
+            System.out.println(ste);
+    }
 
 }

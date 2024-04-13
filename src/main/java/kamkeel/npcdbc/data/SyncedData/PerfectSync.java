@@ -40,14 +40,13 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
 
     // registers all datas for entity IF they are eligible for it (check DBCData.eligibleForDBC), add datas here
     public static void registerAllDatas(Entity p) {
-        PerfectSync.register(p, DBCData.dn, p instanceof EntityPlayer);
+        if (p instanceof EntityPlayer)
+            PerfectSync.register(p, DBCData.dn, true);
 
     }
 
     // register all implementations individually here
     public static void register(Entity p, String dn, boolean registerClient) {
-
-
         if (dn.equals(DBCData.dn) && DBCData.eligibleForDBC(p) && !DBCData.has(p)) {
             p.registerExtendedProperties(DBCData.dn, new DBCData(p));
             if (registerClient)
@@ -57,7 +56,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
     }
 
     public static void registerClient(Entity p, String dn) {
-        PacketRegistry.syncData(p, "register" + ";" + dn, null); // register;CMData
+        PacketRegistry.syncData(p, "register" + ";" + dn, new NBTTagCompound()); // register;CMData
 
     }
 
@@ -155,7 +154,6 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
                 cmpd = new NBTTagCompound();
             nbt = cmpd;
         }
-        DBCData.get(p).setInt("jrmcStrI",100);
         return nbt;
     }
 
