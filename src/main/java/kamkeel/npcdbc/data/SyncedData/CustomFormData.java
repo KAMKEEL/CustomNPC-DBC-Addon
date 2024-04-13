@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.data.SyncedData;
 
+import kamkeel.npcdbc.api.ICustomForm;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.util.u;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -64,6 +66,21 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
         return accessibleForms.contains(name);
     }
 
+    public boolean isInCustomForm() {
+        return currentForm > 0;
+    }
+
+    public boolean isInForm(String formName) {
+        ICustomForm f = FormController.Instance.get(formName);
+        return currentForm == f.getID();
+    }
+
+    public ICustomForm getCurrentForm() {
+        if (currentForm > 0)
+            return FormController.Instance.get(currentForm);
+        return null;
+    }
+
     @Override
     public void saveNBTData(NBTTagCompound compound) {
         NBTTagCompound c = compound(p, dn);
@@ -99,4 +116,6 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
 
 
     }
+
+
 }

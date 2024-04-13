@@ -257,7 +257,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      * @return Name of form player is currently in
      */
     @Override
-    public String getCurrentFormName() {
+    public String getCurrentformName() {
         int race = this.getRace();
         int form = (int) this.getForm();
         return DBCAPI.Instance().getFormName(race, form);
@@ -352,7 +352,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         }
 
         if (!found) {
-            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getFormName(int race, int form) or getCurrentFormName()", new Object[2]);
+            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getformName(int race, int form) or getCurrentformName()", new Object[2]);
         }
     }
 
@@ -409,7 +409,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             }
         }
         if (!found) {
-            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getFormName(int race, int form) or getCurrentFormName()", new Object[2]);
+            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getformName(int race, int form) or getCurrentformName()", new Object[2]);
         }
         throw new CustomNPCsException("Form Mastery value is -1.0", new Object[3]);
     }
@@ -538,10 +538,10 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return JRMCoreH.StusEfcts(12, nbt.getString("jrmcStatusEff"));
     }
 
-    public void setCustomForm(String formname) {
-        ICustomForm f = FormController.Instance.get(formname);
+    public void setCustomForm(String formName) {
+        ICustomForm f = FormController.Instance.get(formName);
         CustomFormData c = CustomFormData.get(player);
-        if (c.hasForm(formname)) {
+        if (c.hasForm(formName)) {
             c.setInt("currentForm", f.getID());
             DBCData d = DBCData.get(player);
             d.state1 = 0;
@@ -556,16 +556,27 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
             c.saveFields();
         } else
-            throw new CustomNPCsException("Player doesn't have form " + formname + " unlocked!");
+            throw new CustomNPCsException("Player doesn't have form " + formName + " unlocked!");
     }
 
-    public void giveCustomForm(String formname) {
-        ICustomForm f = FormController.Instance.get(formname);
+    public void giveCustomForm(String formName) {
+        ICustomForm f = FormController.Instance.get(formName);
         f.assignToPlayer(player);
     }
 
-    public void removeCustomForm(String formname) {
-        ICustomForm f = FormController.Instance.get(formname);
+    public void removeCustomForm(String formName) {
+        ICustomForm f = FormController.Instance.get(formName);
         f.removeFromPlayer(player);
+    }
+
+    public boolean isInCustomForm(){
+        return CustomFormData.get(player).isInCustomForm();
+    }
+    public boolean isInCustomForm(String formName) {
+        return CustomFormData.get(player).isInForm(formName);
+    }
+
+    public ICustomForm getCurrentCustomForm() {
+        return CustomFormData.get(player).getCurrentForm();
     }
 }

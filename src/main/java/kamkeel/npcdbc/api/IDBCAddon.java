@@ -87,7 +87,7 @@ public interface IDBCAddon extends IDBCPlayer {
     /**
      * @return Name of form player is currently in
      */
-    String getCurrentFormName();
+    String getCurrentformName();
 
     /**
      * @param formName name of form to change mastery of
@@ -177,9 +177,23 @@ public interface IDBCAddon extends IDBCPlayer {
 
     boolean isMajin();
 
-    void setCustomForm(String formname);
+    void setCustomForm(String formName);
 
-    void giveCustomForm(String formname);
+    void giveCustomForm(String formName);
 
-    void removeCustomForm(String formname);
+    void removeCustomForm(String formName);
+
+    /**
+     * @return True if player is in any CNPC+ custom form
+     */
+    boolean isInCustomForm();
+
+    /**
+     * @param formName
+     * @return True if player is in formName
+     */
+    boolean isInCustomForm(String formName);
+
+    ICustomForm getCurrentCustomForm();
+
 }
