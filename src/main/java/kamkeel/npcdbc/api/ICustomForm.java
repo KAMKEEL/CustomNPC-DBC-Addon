@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.api;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 
 public interface ICustomForm {
 
@@ -48,9 +48,13 @@ public interface ICustomForm {
 
     void setAuraColor(int auraColor);
 
-    void assignToPlayer(Entity p);
+    void assignToPlayer(EntityPlayer p);
 
-    void removeFromPlayer(Entity p);
+    void removeFromPlayer(EntityPlayer p);
+
+    void assignToPlayer(String name);
+
+    void removeFromPlayer(String name);
 
     int getID();
 

@@ -1,10 +1,10 @@
 package kamkeel.npcdbc.data;
 
-import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
-import net.minecraft.entity.Entity;
+import kamkeel.npcdbc.data.SyncedData.CustomFormData;
+import kamkeel.npcdbc.data.SyncedData.DBCData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.controllers.AnimationController;
@@ -30,7 +30,7 @@ public class CustomForm implements ICustomForm {
     public int auraColor = 1;
 
     //players who have form unlocked in their accessibleForms NBT tag
-    public List<Entity> playersWithForm = new ArrayList<>();
+    public List<String> playersWithForm = new ArrayList<>();
 
 
     public CustomForm() {
@@ -154,24 +154,35 @@ public class CustomForm implements ICustomForm {
     }
 
     @Override
-    public void assignToPlayer(Entity p) {
-        if (race == JRMCoreH.getByte((EntityPlayer) p, "jrmcRace")) {
-            FormController.Instance.assignToPlayer(p, name);
-            if (!playersWithForm.contains(p))
-                playersWithForm.add(p);
-            save();
+    public void assignToPlayer(EntityPlayer p) {
+        if (race == DBCData.get(p).race) {
+            CustomFormData.get(p).addForm(name);
+            if (!playersWithForm.contains(p.getCommandSenderName())) {
+                playersWithForm.add(p.getCommandSenderName());
+                save();
+            }
         }
     }
 
+    public void assignToPlayer(String name) {
+        assignToPlayer(NpcAPI.Instance().getPlayer(name).getMCEntity());
+    }
+
+
     @Override
-    public void removeFromPlayer(Entity p) {
-        if (race == JRMCoreH.getByte((EntityPlayer) p, "jrmcRace")) {
-            FormController.Instance.removeFromPlayer(p, name);
-            if (playersWithForm.contains(p))
-                playersWithForm.remove(p);
-            save();
+    public void removeFromPlayer(EntityPlayer p) {
+        if (race == DBCData.get(p).race) {
+            CustomFormData.get(p).removeForm(name);
+            if (playersWithForm.contains(p.getCommandSenderName())) {
+                playersWithForm.remove(p.getCommandSenderName());
+                save();
+            }
         }
 
+    }
+
+    public void removeFromPlayer(String name) {
+        removeFromPlayer(NpcAPI.Instance().getPlayer(name).getMCEntity());
     }
 
     @Override
@@ -203,16 +214,17 @@ public class CustomForm implements ICustomForm {
         auraColor = compound.getInteger("auraColor");
 
         String s = compound.getString("playersWithForm");
-        List<Entity> newPlayers = new ArrayList<>();
+        List<String> newPlayers = new ArrayList<>();
         if (s.contains(",")) {
             String[] forms = s.split(",");
             for (String str : forms)
-                newPlayers.add(NpcAPI.Instance().getPlayer(str).getMCEntity());
+                newPlayers.add(str);
         } else if (s.isEmpty())
             newPlayers.clear();
         else
-            newPlayers.add(NpcAPI.Instance().getPlayer(s).getMCEntity());
+            newPlayers.add(s);
         playersWithForm = newPlayers;
+
         // ADD REST
 
     }
@@ -234,13 +246,13 @@ public class CustomForm implements ICustomForm {
 
         if (!playersWithForm.isEmpty()) {
             StringBuilder sb = new StringBuilder();
-            for (Entity e : playersWithForm) {
-                String s = e.getCommandSenderName();
+            for (String s : playersWithForm) {
                 sb.append(s + ",");
             }
             compound.setString("playersWithForm", sb.toString().substring(0, sb.length() - 1)); //removes the last ,
         } else
             compound.setString("playersWithForm", "");
+
         // ADD REST
 
 
