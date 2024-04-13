@@ -155,7 +155,7 @@ public class CustomForm implements ICustomForm {
 
     @Override
     public void assignToPlayer(EntityPlayer p) {
-        if (race == DBCData.get(p).race) {
+        if (race == DBCData.get(p).Race) {
             CustomFormData.get(p).addForm(name);
             if (!playersWithForm.contains(p.getCommandSenderName())) {
                 playersWithForm.add(p.getCommandSenderName());
@@ -171,7 +171,7 @@ public class CustomForm implements ICustomForm {
 
     @Override
     public void removeFromPlayer(EntityPlayer p) {
-        if (race == DBCData.get(p).race) {
+        if (race == DBCData.get(p).Race) {
             CustomFormData.get(p).removeForm(name);
             if (playersWithForm.contains(p.getCommandSenderName())) {
                 playersWithForm.remove(p.getCommandSenderName());
@@ -183,6 +183,19 @@ public class CustomForm implements ICustomForm {
 
     public void removeFromPlayer(String name) {
         removeFromPlayer(NpcAPI.Instance().getPlayer(name).getMCEntity());
+    }
+
+    public List<EntityPlayer> getPlayersWithForm() {
+        List<EntityPlayer> plyrs = new ArrayList<>();
+        for (String s : playersWithForm) {
+            if (!s.isEmpty()) {
+                EntityPlayer p = (EntityPlayer) NpcAPI.Instance().getPlayer("s");
+                if (p != null)
+                    plyrs.add(p);
+            }
+        }
+
+        return plyrs;
     }
 
     @Override

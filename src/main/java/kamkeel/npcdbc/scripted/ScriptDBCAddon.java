@@ -544,13 +544,13 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         if (c.hasForm(formName)) {
             c.setInt("currentForm", f.getID());
             DBCData d = DBCData.get(player);
-            d.state1 = 0;
-            if (d.state2 > 0 && JRMCoreH.StusEfcts(5, d.SE) && !f.isKaiokenStackable()) {
-                d.state2 = 0;
+            d.Form1 = 0;
+            if (d.Form2 > 0 && JRMCoreH.StusEfcts(5, d.StatusEffects) && !f.isKaiokenStackable()) {
+                d.Form2 = 0;
                 JRMCoreH.StusEfcts(5, player, false); //removes status effect KK and updates NBT
             }
-            if (d.state2 > 0 && JRMCoreH.StusEfcts(19, d.SE) && !f.isUIStackable()) {
-                d.state2 = 0;
+            if (d.Form2 > 0 && JRMCoreH.StusEfcts(19, d.StatusEffects) && !f.isUIStackable()) {
+                d.Form2 = 0;
                 JRMCoreH.StusEfcts(19, player, false); //removes status effect UI and updates NBT
             }
 

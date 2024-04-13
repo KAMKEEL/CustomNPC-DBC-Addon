@@ -6,17 +6,15 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import kamkeel.npcdbc.controllers.FormController;
-import noppes.npcs.controllers.AnimationController;
 
-@Mod(modid = "npcdbc",
-    name = "CustomNPC+ DBC Addon",
-    version = "1.0",
-    dependencies = "after:customnpcs;after:jinryuujrmcore;after:jinryuudragonblockc;")
+@Mod(modid = CustomNpcPlusDBC.ID, name = CustomNpcPlusDBC.name, version = CustomNpcPlusDBC.version, dependencies = "after:customnpcs;after:jinryuujrmcore;after:jinryuudragonblockc;")
 public class CustomNpcPlusDBC {
 
+    public static final String name = "CustomNPC+ DBC Addon";
+    public static final String version = "1.0";
+    public static final String ID = "npcdbc";
     @SidedProxy(clientSide = "kamkeel.npcdbc.client.ClientProxy", serverSide = "kamkeel.npcdbc.CommonProxy")
     public static CommonProxy proxy;
-
     @Mod.Instance
     public static CustomNpcPlusDBC instance;
 
@@ -26,7 +24,7 @@ public class CustomNpcPlusDBC {
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent event){
+    public void init(FMLInitializationEvent event) {
         proxy.init(event);
     }
 

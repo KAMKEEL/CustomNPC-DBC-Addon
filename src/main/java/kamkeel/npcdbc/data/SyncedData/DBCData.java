@@ -11,7 +11,7 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 /**
  * DBCData is basically all relevant DBC/JRMC tags in the PlayerPersisted compound tag. This get synced from server to client, so client always has access
  * to the latest version of the fields below
- *
+ * <p>
  * Example usage:
  * DBCData.get(p).setInt("jrmcStrI",100)
  * Sets the jrmcStrI int tag of entity p's PlayerPersisted compound to 100<
@@ -19,10 +19,10 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProperties {
     public static String dn = "PlayerPersisted";
 
-    public int str, dex, con, wil, mnd, spi, tp, body, ki, stamina, koForXTicks;
-    public byte clss, race, pwrtype, state1, state2, release;
-    public boolean alive, ko;
-    public String skills, racialSkill, SE, settings, FMR, FMNR;
+    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks;
+    public byte Class, Race, Powertype, Form1, Form2, Release;
+    public boolean Alive, isKO;
+    public String Skills, RacialSkills, StatusEffects, Settings, FormMasteryRacial, FormMasteryNR;
 
     public DBCData(Entity player) {
         super(player);
@@ -49,30 +49,30 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     public void saveNBTData(NBTTagCompound compound) { // save all fields to compound
         NBTTagCompound c = compound(p, dn);
 
-        c.setInteger("jrmcStrI", str);
-        c.setInteger("jrmcDexI", dex);
-        c.setInteger("jrmcConI", con);
-        c.setInteger("jrmcWilI", wil);
-        c.setInteger("jrmcIntI", mnd);
-        c.setInteger("jrmcCncI", spi);
-        c.setInteger("jrmcEnrgy", ki);
-        c.setInteger("jrmcStamina", stamina);
-        c.setInteger("jrmcBdy", body);
-        c.setInteger("jrmcHar4va", koForXTicks);
+        c.setInteger("jrmcStrI", STR);
+        c.setInteger("jrmcDexI", DEX);
+        c.setInteger("jrmcConI", CON);
+        c.setInteger("jrmcWilI", WIL);
+        c.setInteger("jrmcIntI", MND);
+        c.setInteger("jrmcCncI", SPI);
+        c.setInteger("jrmcEnrgy", Ki);
+        c.setInteger("jrmcStamina", Stamina);
+        c.setInteger("jrmcBdy", Body);
+        c.setInteger("jrmcHar4va", KOforXTicks);
 
-        c.setByte("jrmcState1", state1);
-        c.setByte("jrmcState2", state2);
-        c.setByte("jrmcRelease", release);
-        c.setByte("jrmcPwrtyp", pwrtype);
-        c.setByte("jrmcRace", race);
-        c.setByte("jrmcClass", clss);
+        c.setByte("jrmcState1", Form1);
+        c.setByte("jrmcState2", Form2);
+        c.setByte("jrmcRelease", Release);
+        c.setByte("jrmcPwrtyp", Powertype);
+        c.setByte("jrmcRace", Race);
+        c.setByte("jrmcClass", Class);
 
-        c.setString("jrmcStatusEff", SE);
-        c.setString("jrmcSSltX", racialSkill);
-        c.setString("jrmcSSlts", skills);
-        c.setString("jrmcSettings", settings);
-        c.setString("jrmcFormMasteryRacial_" + JRMCoreH.Races[race], FMR);
-        c.setString("jrmcFormMasteryNonRacial", FMNR);
+        c.setString("jrmcStatusEff", StatusEffects);
+        c.setString("jrmcSSltX", RacialSkills);
+        c.setString("jrmcSSlts", Skills);
+        c.setString("jrmcSettings", Settings);
+        c.setString("jrmcFormMasteryRacial_" + JRMCoreH.Races[Race], FormMasteryRacial);
+        c.setString("jrmcFormMasteryNonRacial", FormMasteryNR);
 
         compound = c;
     }
@@ -81,31 +81,31 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     public void loadNBTData(NBTTagCompound compound) { // compound has all synced data,load all fields from compound
         NBTTagCompound c = u.isServer() ? compound(p, dn) : compound;
 
-        str = c.getInteger("jrmcStrI");
-        dex = c.getInteger("jrmcDexI");
-        con = c.getInteger("jrmcConI");
-        wil = c.getInteger("jrmcWilI");
-        mnd = c.getInteger("jrmcIntI");
-        spi = c.getInteger("jrmcCncI");
-        ki = c.getInteger("jrmcEnrgy");
-        stamina = c.getInteger("jrmcStamina");
-        body = c.getInteger("jrmcBdy");
-        koForXTicks = c.getInteger("jrmcHar4va");
+        STR = c.getInteger("jrmcStrI");
+        DEX = c.getInteger("jrmcDexI");
+        CON = c.getInteger("jrmcConI");
+        WIL = c.getInteger("jrmcWilI");
+        MND = c.getInteger("jrmcIntI");
+        SPI = c.getInteger("jrmcCncI");
+        Ki = c.getInteger("jrmcEnrgy");
+        Stamina = c.getInteger("jrmcStamina");
+        Body = c.getInteger("jrmcBdy");
+        KOforXTicks = c.getInteger("jrmcHar4va");
 
-        ko = c.getInteger("jrmcHar4va") > 0;
-        state1 = c.getByte("jrmcState1");
-        state2 = c.getByte("jrmcState2");
-        release = c.getByte("jrmcRelease");
-        pwrtype = c.getByte("jrmcPwrtyp");
-        race = c.getByte("jrmcRace");
-        clss = c.getByte("jrmcClass");
+        isKO = c.getInteger("jrmcHar4va") > 0;
+        Form1 = c.getByte("jrmcState1");
+        Form2 = c.getByte("jrmcState2");
+        Release = c.getByte("jrmcRelease");
+        Powertype = c.getByte("jrmcPwrtyp");
+        Race = c.getByte("jrmcRace");
+        Class = c.getByte("jrmcClass");
 
-        SE = c.getString("jrmcStatusEff");
-        racialSkill = c.getString("jrmcSSltX");
-        skills = c.getString("jrmcSSlts");
-        settings = c.getString("jrmcSettings");
-        FMR = c.getString("jrmcFormMasteryRacial_" + JRMCoreH.Races[race]);
-        FMNR = c.getString("jrmcFormMasteryNonRacial");
+        StatusEffects = c.getString("jrmcStatusEff");
+        RacialSkills = c.getString("jrmcSSltX");
+        Skills = c.getString("jrmcSSlts");
+        Settings = c.getString("jrmcSettings");
+        FormMasteryRacial = c.getString("jrmcFormMasteryRacial_" + JRMCoreH.Races[Race]);
+        FormMasteryNR = c.getString("jrmcFormMasteryNonRacial");
 
         cmpd = c;
 

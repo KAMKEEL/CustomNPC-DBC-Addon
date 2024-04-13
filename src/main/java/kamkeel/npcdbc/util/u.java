@@ -25,7 +25,8 @@ public class u {
                 return u.getEntityByUUID(w, s.split(",")[0]);
             else
                 return w.getEntityByID(Integer.parseInt(s.split(",")[0]));
-        } return null;
+        }
+        return null;
 
     }
 
@@ -50,9 +51,22 @@ public class u {
         return null;
 
     }
+
     public static void printStackTrace() {
         for (StackTraceElement ste : Thread.currentThread().getStackTrace())
             System.out.println(ste);
+    }
+
+    public static double perc(double n, double perc) {
+        return n / 100 * perc;
+    }
+
+    public static float perc(int n, float perc) {
+        return n / 100 * perc;
+    }
+
+    public static boolean percBetween(double n, double maxN, double minPerc, double maxPerc) {
+        return n >= u.perc(maxN, minPerc) && n < u.perc(maxN, maxPerc);
     }
 
 }
