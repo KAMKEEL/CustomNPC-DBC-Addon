@@ -34,7 +34,7 @@ public class ServerEvents {
             if (p instanceof EntityPlayer) {// checks if player is eligible for data or not, incase they weren't before
                 PerfectSync.registerAllDatas(p);
                 if (DBCData.has(p))
-                    DBCData.get(p).save(true); // saved seperately,im not in control of when this changes unlike others
+                    DBCData.get(p).save(true); // saved every tick instead of X ticks, as multiple sources can change PlayerPersisted outside of this mod
 
             }
         }

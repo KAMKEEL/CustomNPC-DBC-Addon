@@ -24,7 +24,7 @@ public class u {
             if (Boolean.parseBoolean(s.split(",")[1])) //if player
                 return u.getEntityByUUID(w, s.split(",")[0]);
             else
-                return w.getEntityByID(Integer.parseInt(s.split(",")[0]))
+                return w.getEntityByID(Integer.parseInt(s.split(",")[0]));
         } return null;
 
     }

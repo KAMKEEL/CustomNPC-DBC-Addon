@@ -25,7 +25,6 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
         if (u.isServer()) {
             if (!s.contains("Entity")) // player
                 this.data = data;
-            else this.data = data;
         }
     }
 
@@ -35,10 +34,12 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
             updateServerData(p);
 
         } else {
-            if (s.contains("register")) registerClient(p);
+            if (s.contains("register"))
+                registerClient(p);
 
             else if (!s.contains("Entity")) { // player
-                if (s.contains("updateDBCData")) DBCData.get(p).loadNBTData(data);
+                if (s.contains("updateDBCData"))
+                    DBCData.get(p).loadNBTData(data);
 
             } else {// non player entity
                 Entity e = u.getEntityFromID(p.worldObj, s.split(":")[1]);
@@ -50,7 +51,8 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
     }
 
     public void updateServerData(EntityPlayer p) {
-        if (!s.contains("updateServer")) return;
+        if (!s.contains("updateServer"))
+            return;
         String[] d = s.split(";");
         String dn = d[1];
         String tag = d[2];
@@ -60,13 +62,20 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
         Entity e = s.contains("Entity") ? u.getEntityFromID(p.worldObj, s.split(";")[5]) : p;
         NBTTagCompound cmpd = PerfectSync.get(e, dn).compound();
 
-        if (type.equals("Int")) cmpd.setInteger(tag, Integer.parseInt(value));
-        else if (type.equals("Float")) cmpd.setFloat(tag, Float.parseFloat(value));
-        else if (type.equals("Double")) cmpd.setDouble(tag, Double.parseDouble(value));
-        else if (type.equals("Long")) cmpd.setLong(tag, Long.parseLong(value));
-        else if (type.equals("Byte")) cmpd.setByte(tag, Byte.parseByte(value));
-        else if (type.equals("Boolean")) cmpd.setBoolean(tag, Boolean.parseBoolean(value));
-        else if (type.equals("String")) cmpd.setString(tag, value);
+        if (type.equals("Int"))
+            cmpd.setInteger(tag, Integer.parseInt(value));
+        else if (type.equals("Float"))
+            cmpd.setFloat(tag, Float.parseFloat(value));
+        else if (type.equals("Double"))
+            cmpd.setDouble(tag, Double.parseDouble(value));
+        else if (type.equals("Long"))
+            cmpd.setLong(tag, Long.parseLong(value));
+        else if (type.equals("Byte"))
+            cmpd.setByte(tag, Byte.parseByte(value));
+        else if (type.equals("Boolean"))
+            cmpd.setBoolean(tag, Boolean.parseBoolean(value));
+        else if (type.equals("String"))
+            cmpd.setString(tag, value);
 
         PerfectSync.get(e, dn).save(false);
 
@@ -78,7 +87,8 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
         String dn = d[1];
 
 
-        if (dn.equals(DBCData.dn) && !DBCData.has(p)) p.registerExtendedProperties(DBCData.dn, new DBCData(p));
+        if (dn.equals(DBCData.dn) && !DBCData.has(p))
+            p.registerExtendedProperties(DBCData.dn, new DBCData(p));
     }
 
     @Override

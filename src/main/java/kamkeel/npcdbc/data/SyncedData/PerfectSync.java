@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.data.SyncedData;
 
-//import com.goatee.tutorial.packets.PR;
 
 import kamkeel.npcdbc.packets.PacketRegistry;
 import kamkeel.npcdbc.util.u;
@@ -10,6 +9,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
 
+/**
+ * Automatically syncs any NBT compound of choice to client every SaveEveryXTicks,
+ * so the latest version of said compound is always available on client.
+ * <p>
+ * Usage: extend this class, set DATA_NAME to name of compound you want to sync, then create fields equivalent
+ * to tags in compound inside new class, or can skip this step and use the tags from compound directly.
+ * Finally, add the save/load NBT data methods.
+ * Check DBCData for a concrete implementation
+ */
 public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtendedEntityProperties {
     public static int SaveEveryXTicks = 200;
     public String DATA_NAME;
@@ -22,17 +30,21 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
         this.w = p.worldObj;
     }
 
+    //saves all datas for entity, add datas here
     public static void saveAllDatas(Entity p, boolean saveClient) {
-
-
+        if (p instanceof EntityPlayer) {
+            if (DBCData.has(p))
+                DBCData.get(p).save(true);
+        }
     }
 
+    // registers all datas for entity IF they are eligible for it (check DBCData.eligibleForDBC), add datas here
     public static void registerAllDatas(Entity p) {
-
         PerfectSync.register(p, DBCData.dn, p instanceof EntityPlayer);
 
     }
 
+    // register all implementations individually here
     public static void register(Entity p, String dn, boolean registerClient) {
 
 
@@ -56,6 +68,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
 
     }
 
+    //checks if entity has their own data registered
     public static boolean has(Entity p, String dn) {
         return get(p, dn) != null;
     }
@@ -124,6 +137,10 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
 
     }
 
+    /**
+     * @return The entire compound
+     */
+
     public NBTTagCompound compound() {
         NBTTagCompound nbt = null;
         if (u.isServer()) {
@@ -138,8 +155,13 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
                 cmpd = new NBTTagCompound();
             nbt = cmpd;
         }
+        DBCData.get(p).setInt("jrmcStrI",100);
         return nbt;
     }
+
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    // Tag getters and setters
 
     public int getInt(String string) {
         return compound().getInteger(string);
@@ -172,9 +194,9 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
     public void setInt(String string, int s) {
         compound().setInteger(string, s);
         if (u.isServer())
-            save(true);
+            save(true); //syncs updated tag to client
         else
-            saveServer(string, "Int");
+            saveServer(string, "Int"); //if tag changed on client, syncs it to server
 
     }
 
