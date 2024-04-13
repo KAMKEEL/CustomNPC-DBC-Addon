@@ -35,13 +35,17 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
         if (p instanceof EntityPlayer) {
             if (DBCData.has(p))
                 DBCData.get(p).save(true);
+            if (CustomFormData.has(p))
+                CustomFormData.get(p).save(true);
         }
     }
 
     // registers all datas for entity IF they are eligible for it (check DBCData.eligibleForDBC), add datas here
     public static void registerAllDatas(Entity p) {
-        if (p instanceof EntityPlayer)
+        if (p instanceof EntityPlayer) {
             PerfectSync.register(p, DBCData.dn, true);
+            PerfectSync.register(p, CustomFormData.dn, true);
+        }
 
     }
 

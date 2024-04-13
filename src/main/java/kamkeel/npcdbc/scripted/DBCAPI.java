@@ -5,8 +5,10 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import kamkeel.npcdbc.api.AbstractDBCAPI;
+import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.api.IDBCStats;
 import kamkeel.npcdbc.api.IKiAttack;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.DBCStats;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.mixin.INPCStats;
@@ -33,8 +35,12 @@ public class DBCAPI extends AbstractDBCAPI {
         return Instance;
     }
 
+    public ICustomForm createCustomForm(String name) {
+        return FormController.getInstance().createForm(name);
+    }
+
     @Override
-    public IDBCStats abstractDBCData(){
+    public IDBCStats abstractDBCData() {
         DBCStats dbcStats = new DBCStats();
         dbcStats.enabled = true;
         return dbcStats;
@@ -49,18 +55,18 @@ public class DBCAPI extends AbstractDBCAPI {
 
     @Override
     public void doDBCDamage(IPlayer player, IDBCStats stats, int damage) {
-        if(player == null || stats == null)
+        if (player == null || stats == null)
             return;
 
-        if(!stats.isEnabled() || !(player.getMCEntity() instanceof EntityPlayer entityPlayer))
+        if (!stats.isEnabled() || !(player.getMCEntity() instanceof EntityPlayer entityPlayer))
             return;
 
         DBCUtils.doDBCDamage(entityPlayer, damage, stats);
     }
 
     /**
-     * @return Name of race ID
      * @param race 0 to 5
+     * @return Name of race ID
      */
     @Override
     public String getRaceName(int race) {
@@ -133,7 +139,7 @@ public class DBCAPI extends AbstractDBCAPI {
     }
 
     /**
-     * @param race Race ID
+     * @param race      Race ID
      * @param nonRacial nonRacial forms are Kaioken/UI/Mystic/GOD
      * @return Number of forms a race has, i.e Saiyan has 14 racial and 4 non racial
      */
@@ -149,7 +155,7 @@ public class DBCAPI extends AbstractDBCAPI {
     }
 
     /**
-     * @param race Race ID
+     * @param race      Race ID
      * @param nonRacial check getAllFormsLength(int race, boolean nonRacial)
      * @return An array containing all forms the race has
      */
@@ -174,16 +180,16 @@ public class DBCAPI extends AbstractDBCAPI {
     }
 
     /**
-     * @param type Type of Ki Attack [0 - 8] "Wave", "Blast", "Disk", "Laser", "Spiral", "BigBlast", "Barrage", "Shield", "Explosion"
-     * @param speed Speed of Ki Attack [0 - 100]
-     * @param damage Damage for Ki Attack
-     * @param hasEffect True for Explosion
-     * @param color Color of Ki Attack [0 - 30] ->
-     *              0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
-     *              11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
-     *              21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
-     * @param density Density of Ki Attack > 0
-     * @param hasSound Play Impact Sound of Ki Attack
+     * @param type          Type of Ki Attack [0 - 8] "Wave", "Blast", "Disk", "Laser", "Spiral", "BigBlast", "Barrage", "Shield", "Explosion"
+     * @param speed         Speed of Ki Attack [0 - 100]
+     * @param damage        Damage for Ki Attack
+     * @param hasEffect     True for Explosion
+     * @param color         Color of Ki Attack [0 - 30] ->
+     *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
+     *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
+     *                      21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
+     * @param density       Density of Ki Attack > 0
+     * @param hasSound      Play Impact Sound of Ki Attack
      * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
      * @return IKiAttack Object with Set Values
      */
@@ -194,16 +200,17 @@ public class DBCAPI extends AbstractDBCAPI {
 
     /**
      * Fires a Ki Attack with the Following Params
-     * @param type Type of Ki Attack [0 - 8] "Wave", "Blast", "Disk", "Laser", "Spiral", "BigBlast", "Barrage", "Shield", "Explosion"
-     * @param speed Speed of Ki Attack [0 - 100]
-     * @param damage Damage for Ki Attack
-     * @param hasEffect True for Explosion
-     * @param color Color of Ki Attack [0 - 30] ->
-     *              0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
-     *              11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
-     *              21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
-     * @param density Density of Ki Attack > 0
-     * @param hasSound Play Impact Sound of Ki Attack
+     *
+     * @param type          Type of Ki Attack [0 - 8] "Wave", "Blast", "Disk", "Laser", "Spiral", "BigBlast", "Barrage", "Shield", "Explosion"
+     * @param speed         Speed of Ki Attack [0 - 100]
+     * @param damage        Damage for Ki Attack
+     * @param hasEffect     True for Explosion
+     * @param color         Color of Ki Attack [0 - 30] ->
+     *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
+     *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
+     *                      21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
+     * @param density       Density of Ki Attack > 0
+     * @param hasSound      Play Impact Sound of Ki Attack
      * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
      */
     @Override

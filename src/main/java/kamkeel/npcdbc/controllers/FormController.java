@@ -3,6 +3,8 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.api.IFormHandler;
 import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.SyncedData.CustomFormData;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -40,6 +42,46 @@ public class FormController implements IFormHandler {
         LogWriter.info("Done loading custom forms.");
     }
 
+    public void assignToPlayer(Entity p, String name) {
+        CustomFormData.get(p).addForm(name);
+    }
+
+    public void removeFromPlayer(Entity p, String name) {
+        CustomFormData.get(p).removeForm(name);
+    }
+
+    public ICustomForm createForm(String name) {
+        if (hasName(name))
+            return get(name);
+        else {
+            CustomForm form = new CustomForm();
+            form.name = name;
+
+            if (form.id == -1) {
+                form.id = getUnusedId();
+            }
+
+            int originalID = form.id;
+            int setID = form.id;
+            while (bootOrder.containsKey(setID) || customForms.containsKey(setID)) {
+                if (bootOrder.containsKey(setID))
+                    if (bootOrder.get(setID).equals(form.name))
+                        break;
+
+                setID++;
+            }
+
+            form.id = setID;
+            if (originalID != setID) {
+                LogWriter.info("Found Custom Form ID Mismatch: " + form.name + ", New ID: " + setID);
+                form.save();
+            }
+
+            customForms.put(form.id, form);
+            return form;
+        }
+    }
+
     private void loadForms() {
         customForms.clear();
 
@@ -48,31 +90,10 @@ public class FormController implements IFormHandler {
             dir.mkdir();
         } else {
             for (File file : dir.listFiles()) {
-                if (!file.isFile() || !file.getName().endsWith(".json")) continue;
+                if (!file.isFile() || !file.getName().endsWith(".json"))
+                    continue;
                 try {
-                    CustomForm form = new CustomForm();
-                    form.readFromNBT(NBTJsonUtil.LoadFile(file));
-                    form.name = file.getName().substring(0, file.getName().length() - 5);
-
-                    if (form.id == -1) {
-                        form.id = getUnusedId();
-                    }
-
-                    int originalID = form.id;
-                    int setID = form.id;
-                    while (bootOrder.containsKey(setID) || customForms.containsKey(setID)) {
-                        if (bootOrder.containsKey(setID)) if (bootOrder.get(setID).equals(form.name)) break;
-
-                        setID++;
-                    }
-
-                    form.id = setID;
-                    if (originalID != setID) {
-                        LogWriter.info("Found Custom Form ID Mismatch: " + form.name + ", New ID: " + setID);
-                        form.save();
-                    }
-
-                    customForms.put(form.id, form);
+                    createForm(file.getName().substring(0, file.getName().length() - 5));
                 } catch (Exception e) {
                     LogWriter.error("Error loading: " + file.getAbsolutePath(), e);
                 }
@@ -89,7 +110,8 @@ public class FormController implements IFormHandler {
     public int getUnusedId() {
         if (lastUsedID == 0) {
             for (int catid : customForms.keySet()) {
-                if (catid > lastUsedID) lastUsedID = catid;
+                if (catid > lastUsedID)
+                    lastUsedID = catid;
             }
 
         }
@@ -100,10 +122,13 @@ public class FormController implements IFormHandler {
     public ICustomForm saveForm(ICustomForm customForm) {
         if (customForm.getID() < 0) {
             customForm.setID(getUnusedId());
-            while (hasName(customForm.getName())) customForm.setName(customForm.getName() + "_");
+            while (hasName(customForm.getName()))
+                customForm.setName(customForm.getName() + "_");
         } else {
             CustomForm existing = customForms.get(customForm.getID());
-            if (existing != null && !existing.name.equals(customForm.getName())) while (hasName(customForm.getName())) customForm.setName(customForm.getName() + "_");
+            if (existing != null && !existing.name.equals(customForm.getName()))
+                while (hasName(customForm.getName()))
+                    customForm.setName(customForm.getName() + "_");
         }
 
         customForms.remove(customForm.getID());
@@ -113,14 +138,16 @@ public class FormController implements IFormHandler {
 
         // Save CustomForm File
         File dir = this.getDir();
-        if (!dir.exists()) dir.mkdirs();
+        if (!dir.exists())
+            dir.mkdirs();
 
         File file = new File(dir, customForm.getName() + ".json_new");
         File file2 = new File(dir, customForm.getName() + ".json");
 
         try {
             NBTJsonUtil.SaveFile(file, ((CustomForm) customForm).writeToNBT());
-            if (file2.exists()) file2.delete();
+            if (file2.exists())
+                file2.delete();
             file.renameTo(file2);
         } catch (Exception e) {
             LogWriter.except(e);
@@ -129,9 +156,11 @@ public class FormController implements IFormHandler {
     }
 
     public boolean hasName(String newName) {
-        if (newName.trim().isEmpty()) return true;
+        if (newName.trim().isEmpty())
+            return true;
         for (CustomForm form : customForms.values())
-            if (form.name.equals(newName)) return true;
+            if (form.name.equals(newName))
+                return true;
         return false;
     }
 
@@ -142,7 +171,8 @@ public class FormController implements IFormHandler {
             if (foundForm != null && foundForm.name != null) {
                 File dir = this.getDir();
                 for (File file : dir.listFiles()) {
-                    if (!file.isFile() || !file.getName().endsWith(".json")) continue;
+                    if (!file.isFile() || !file.getName().endsWith(".json"))
+                        continue;
                     if (file.getName().equals(foundForm.name + ".json")) {
                         file.delete();
                         break;
@@ -155,13 +185,15 @@ public class FormController implements IFormHandler {
     }
 
     public void delete(int id) {
-        if (!this.customForms.containsKey(id)) return;
+        if (!this.customForms.containsKey(id))
+            return;
 
         CustomForm foundForm = this.customForms.remove(id);
         if (foundForm != null && foundForm.name != null) {
             File dir = this.getDir();
             for (File file : dir.listFiles()) {
-                if (!file.isFile() || !file.getName().endsWith(".json")) continue;
+                if (!file.isFile() || !file.getName().endsWith(".json"))
+                    continue;
                 if (file.getName().equals(foundForm.name + ".json")) {
                     file.delete();
                     break;
@@ -216,7 +248,8 @@ public class FormController implements IFormHandler {
 
     public File getMapDir() {
         File dir = CustomNpcs.getWorldSaveDirectory();
-        if (!dir.exists()) dir.mkdir();
+        if (!dir.exists())
+            dir.mkdir();
         return dir;
     }
 

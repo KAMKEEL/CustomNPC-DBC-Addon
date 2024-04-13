@@ -14,7 +14,7 @@ import net.minecraftforge.common.IExtendedEntityProperties;
  *
  * Example usage:
  * DBCData.get(p).setInt("jrmcStrI",100)
- * Sets the jrmcStrI int tag of entity p's PlayerPersisted compound to 100
+ * Sets the jrmcStrI int tag of entity p's PlayerPersisted compound to 100<
  */
 public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProperties {
     public static String dn = "PlayerPersisted";

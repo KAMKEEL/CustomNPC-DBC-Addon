@@ -2,7 +2,9 @@ package kamkeel.npcdbc.packets;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.packets.AbstractMessage.AbstractServerMessage;
+import kamkeel.npcdbc.scripted.DBCAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,7 +36,9 @@ public class PacketTellServer extends AbstractServerMessage<PacketTellServer> {
             }
         }
         if (idString.startsWith("createForm")){
-            System.out.println("yee");
+           ICustomForm f = DBCAPI.Instance().createCustomForm("Super Saiyan Green");
+           f.save();
+
         }
 
 

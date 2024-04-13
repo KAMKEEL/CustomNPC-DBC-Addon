@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data;
 import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.controllers.AnimationController;
 
@@ -18,7 +19,7 @@ public class CustomForm implements ICustomForm {
     public float willMulti = 1.0f;
 
     public boolean kaiokenStackable = true, uiStackable = true;
-    public float kaiokenMulti = 1.0f, UIMulti = 1.0f;
+    public float kaiokenMulti = 1.0f, uiMulti = 1.0f;
 
     public int auraColor = 1;
 
@@ -124,13 +125,13 @@ public class CustomForm implements ICustomForm {
     }
 
     @Override
-    public float getUIMulti() {
-        return UIMulti;
+    public float getUiMulti() {
+        return uiMulti;
     }
 
     @Override
-    public void setUIMulti(float UIMulti) {
-        this.UIMulti = UIMulti;
+    public void setUiMulti(float uiMulti) {
+        this.uiMulti = uiMulti;
     }
 
     @Override
@@ -141,6 +142,17 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setAuraColor(int auraColor) {
         this.auraColor = auraColor;
+    }
+
+    @Override
+    public void assignToPlayer(Entity p) {
+        FormController.Instance.assignToPlayer(p, name);
+    }
+
+    @Override
+    public void removeFromPlayer(Entity p) {
+        FormController.Instance.removeFromPlayer(p, name);
+
     }
 
     @Override
@@ -160,6 +172,15 @@ public class CustomForm implements ICustomForm {
             id = FormController.Instance.getUnusedId();
         }
         name = compound.getString("Name");
+        allMulti = Float.parseFloat(compound.getString("allMulti"));
+        strengthMulti = Float.parseFloat(compound.getString("strengthMulti"));
+        dexMulti = Float.parseFloat(compound.getString("dexMulti"));
+        willMulti = Float.parseFloat(compound.getString("willMulti"));
+        kaiokenMulti = Float.parseFloat(compound.getString("kaiokenMulti"));
+        uiMulti = Float.parseFloat(compound.getString("uiMulti"));
+        kaiokenStackable = Boolean.parseBoolean(compound.getString("kaiokenStackable"));
+        uiStackable = Boolean.parseBoolean(compound.getString("uiStackable"));
+        auraColor = Integer.parseInt(compound.getString("auraColor"));
 
         // ADD REST
 
@@ -169,6 +190,15 @@ public class CustomForm implements ICustomForm {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger("ID", id);
         compound.setString("Name", name);
+        compound.setFloat("allMulti", allMulti);
+        compound.setFloat("strengthMulti", strengthMulti);
+        compound.setFloat("dexMulti", dexMulti);
+        compound.setFloat("willMulti", willMulti);
+        compound.setFloat("kaiokenMulti", kaiokenMulti);
+        compound.setFloat("uiMulti", uiMulti);
+        compound.setBoolean("kaiokenStackable", kaiokenStackable);
+        compound.setBoolean("uiStackable", uiStackable);
+        compound.setInteger("auraColor", auraColor);
 
         // ADD REST
 
