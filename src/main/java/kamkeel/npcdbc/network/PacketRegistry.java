@@ -1,10 +1,13 @@
-package kamkeel.npcdbc.packets;
+package kamkeel.npcdbc.network;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.network.packets.PacketSyncData;
+import kamkeel.npcdbc.network.packets.PacketTellClient;
+import kamkeel.npcdbc.network.packets.PacketTellServer;
 import kamkeel.npcdbc.util.u;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityTracker;

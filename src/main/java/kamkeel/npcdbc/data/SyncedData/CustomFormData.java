@@ -43,12 +43,13 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
         return get(p, dn) != null;
     }
 
-    public void addForm(String name) {
+    public void addForm(String name) { //add form to player
         if (!accessibleForms.contains(name)) {
             accessibleForms.add(name);
             saveNBTData(null);
             this.save(true);
         }
+
     }
 
     public void removeForm(String name) {
@@ -65,11 +66,13 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
 
         c.setInteger("currentForm", currentForm);
 
-        StringBuilder sb = new StringBuilder();
-        for (String s : accessibleForms)
-            sb.append(s + ";");
-        c.setString("accessibleForms", sb.toString().substring(0, sb.length() - 1)); //removes the last ;
-
+        if (!accessibleForms.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (String s : accessibleForms)
+                sb.append(s + ",");
+            c.setString("accessibleForms", sb.toString().substring(0, sb.length() - 1)); //removes the last ,
+        } else
+            c.setString("accessibleForms", "");
 
     }
 
@@ -80,11 +83,13 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
 
         String s = c.getString("accessibleForms");
         List<String> newForms = new ArrayList<>();
-        if (s.contains(";")) {
-            String[] forms = s.split(";");
+        if (s.contains(",")) {
+            String[] forms = s.split(",");
             for (String str : forms)
                 newForms.add(str);
-        } else
+        } else if (s.isEmpty())
+            newForms.clear();
+        else
             newForms.add(s);
         accessibleForms = newForms;
 

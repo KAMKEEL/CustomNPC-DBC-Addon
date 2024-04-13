@@ -2,7 +2,8 @@ package kamkeel.npcdbc.client;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent.KeyInputEvent;
-import kamkeel.npcdbc.packets.PacketRegistry;
+import kamkeel.npcdbc.data.SyncedData.CustomFormData;
+import kamkeel.npcdbc.network.PacketRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import org.lwjgl.input.Keyboard;
@@ -19,10 +20,14 @@ public class ClientEvents {
     }
 
     public void handleGrab(KeyInputEvent e, EntityClientPlayerMP p) {
-        if (Keyboard.isKeyDown(50)) {
-            System.out.println("yo");
+        if (Keyboard.isKeyDown(50)) { //M
             PacketRegistry.tellServer("createForm");
         }
+        if (Keyboard.isKeyDown(51)) { //,
+            System.out.println(CustomFormData.get(p).accessibleForms);
+            //CustomFormData.get(p).setString("accessibleForms", "Super Saiyan Green");
+        }
+
 
     }
 }

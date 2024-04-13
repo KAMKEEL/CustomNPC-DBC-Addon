@@ -6,7 +6,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import kamkeel.npcdbc.api.AbstractDBCAPI;
 import kamkeel.npcdbc.events.ServerEvents;
-import kamkeel.npcdbc.packets.PacketRegistry;
+import kamkeel.npcdbc.network.PacketRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import noppes.npcs.scripted.NpcAPI;

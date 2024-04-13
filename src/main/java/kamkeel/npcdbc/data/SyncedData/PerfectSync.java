@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.data.SyncedData;
 
 
-import kamkeel.npcdbc.packets.PacketRegistry;
+import kamkeel.npcdbc.network.PacketRegistry;
 import kamkeel.npcdbc.util.u;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,6 +55,11 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
             p.registerExtendedProperties(DBCData.dn, new DBCData(p));
             if (registerClient)
                 registerClient(p, dn);
+        } else if (dn.equals(CustomFormData.dn) && CustomFormData.eligibleForCustomForms(p) && !CustomFormData.has(p)) {
+            p.registerExtendedProperties(CustomFormData.dn, new CustomFormData(p));
+            if (registerClient)
+                registerClient(p, dn);
+
         }
 
     }
@@ -99,12 +104,11 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
         if (u.isServer()) {
             NBTTagCompound data = compound();
             loadNBTData(data);
-
+          //  System.out.println(compound());
             if (!saveClient)
                 return;
 
-            String s = DATA_NAME.equals(DBCData.dn) ? "DBCData" : "";
-
+            String s = DATA_NAME.equals(DBCData.dn) ? "DBCData" : DATA_NAME.equals(CustomFormData.dn) ? CustomFormData.dn : "";
             if (p instanceof EntityPlayer)
                 PacketRegistry.syncData(p, "update" + s, data);
             else

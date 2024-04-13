@@ -1,9 +1,9 @@
-package kamkeel.npcdbc.packets;
+package kamkeel.npcdbc.network.packets;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.ICustomForm;
-import kamkeel.npcdbc.packets.AbstractMessage.AbstractServerMessage;
+import kamkeel.npcdbc.network.AbstractMessage.AbstractServerMessage;
 import kamkeel.npcdbc.scripted.DBCAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -31,13 +31,15 @@ public class PacketTellServer extends AbstractServerMessage<PacketTellServer> {
     }
 
     public void goThroughStringIDs(String idString, NBTTagCompound nbt, EntityPlayerMP p) {
-        if (idString.contains(":")) {
-            if (idString.startsWith("Transform:")) {
-            }
-        }
-        if (idString.startsWith("createForm")){
-           ICustomForm f = DBCAPI.Instance().createCustomForm("Super Saiyan Green");
-           f.save();
+        if (idString.startsWith("createForm")) {
+
+            ICustomForm f = DBCAPI.Instance().createCustomForm("Super Saiyan Green");
+            ICustomForm f1 = DBCAPI.Instance().createCustomForm("Super Saiyan Yellow");
+
+            //f.assignToPlayer(p);
+            f.removeFromPlayer(p);
+            f.save();
+
 
         }
 

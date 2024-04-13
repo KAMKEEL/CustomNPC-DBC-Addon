@@ -1,17 +1,23 @@
 package kamkeel.npcdbc.data;
 
+import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.controllers.AnimationController;
+import noppes.npcs.scripted.NpcAPI;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomForm implements ICustomForm {
 
     public int id = -1; // Only for internal usage
     public String name;
-    public int race = DBCRace.HUMAN;
+    public int race = DBCRace.SAIYAN;
     public float allMulti = 1.0f;
 
     public float strengthMulti = 1.0f;
@@ -22,6 +28,9 @@ public class CustomForm implements ICustomForm {
     public float kaiokenMulti = 1.0f, uiMulti = 1.0f;
 
     public int auraColor = 1;
+
+    //players who have form unlocked in their accessibleForms NBT tag
+    public List<Entity> playersWithForm = new ArrayList<>();
 
 
     public CustomForm() {
@@ -146,12 +155,22 @@ public class CustomForm implements ICustomForm {
 
     @Override
     public void assignToPlayer(Entity p) {
-        FormController.Instance.assignToPlayer(p, name);
+        if (race == JRMCoreH.getByte((EntityPlayer) p, "jrmcRace")) {
+            FormController.Instance.assignToPlayer(p, name);
+            if (!playersWithForm.contains(p))
+                playersWithForm.add(p);
+            save();
+        }
     }
 
     @Override
     public void removeFromPlayer(Entity p) {
-        FormController.Instance.removeFromPlayer(p, name);
+        if (race == JRMCoreH.getByte((EntityPlayer) p, "jrmcRace")) {
+            FormController.Instance.removeFromPlayer(p, name);
+            if (playersWithForm.contains(p))
+                playersWithForm.remove(p);
+            save();
+        }
 
     }
 
@@ -166,22 +185,34 @@ public class CustomForm implements ICustomForm {
     }
 
     public void readFromNBT(NBTTagCompound compound) {
-        if (compound.hasKey("ID")) {
+        if (compound.hasKey("ID"))
             id = compound.getInteger("ID");
-        } else if (AnimationController.Instance != null) {
+        else if (AnimationController.Instance != null)
             id = FormController.Instance.getUnusedId();
-        }
-        name = compound.getString("Name");
-        allMulti = Float.parseFloat(compound.getString("allMulti"));
-        strengthMulti = Float.parseFloat(compound.getString("strengthMulti"));
-        dexMulti = Float.parseFloat(compound.getString("dexMulti"));
-        willMulti = Float.parseFloat(compound.getString("willMulti"));
-        kaiokenMulti = Float.parseFloat(compound.getString("kaiokenMulti"));
-        uiMulti = Float.parseFloat(compound.getString("uiMulti"));
-        kaiokenStackable = Boolean.parseBoolean(compound.getString("kaiokenStackable"));
-        uiStackable = Boolean.parseBoolean(compound.getString("uiStackable"));
-        auraColor = Integer.parseInt(compound.getString("auraColor"));
 
+        name = compound.getString("Name");
+        race = compound.getInteger("race");
+        allMulti = compound.getFloat("allMulti");
+        strengthMulti = compound.getFloat("strengthMulti");
+        dexMulti = compound.getFloat("dexMulti");
+        willMulti = compound.getFloat("willMulti");
+        kaiokenMulti = compound.getFloat("kaiokenMulti");
+        uiMulti = compound.getFloat("uiMulti");
+        kaiokenStackable = compound.getBoolean("kaiokenStackable");
+        uiStackable = compound.getBoolean("uiStackable");
+        auraColor = compound.getInteger("auraColor");
+
+        String s = compound.getString("playersWithForm");
+        List<Entity> newPlayers = new ArrayList<>();
+        if (s.contains(",")) {
+            String[] forms = s.split(",");
+            for (String str : forms)
+                newPlayers.add(NpcAPI.Instance().getPlayer(str).getMCEntity());
+        } else if (s.isEmpty())
+            newPlayers.clear();
+        else
+            newPlayers.add(NpcAPI.Instance().getPlayer(s).getMCEntity());
+        playersWithForm = newPlayers;
         // ADD REST
 
     }
@@ -189,7 +220,8 @@ public class CustomForm implements ICustomForm {
     public NBTTagCompound writeToNBT() {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger("ID", id);
-        compound.setString("Name", name);
+        compound.setString("name", name);
+        compound.setInteger("race", race);
         compound.setFloat("allMulti", allMulti);
         compound.setFloat("strengthMulti", strengthMulti);
         compound.setFloat("dexMulti", dexMulti);
@@ -200,6 +232,15 @@ public class CustomForm implements ICustomForm {
         compound.setBoolean("uiStackable", uiStackable);
         compound.setInteger("auraColor", auraColor);
 
+        if (!playersWithForm.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (Entity e : playersWithForm) {
+                String s = e.getCommandSenderName();
+                sb.append(s + ",");
+            }
+            compound.setString("playersWithForm", sb.toString().substring(0, sb.length() - 1)); //removes the last ,
+        } else
+            compound.setString("playersWithForm", "");
         // ADD REST
 
 

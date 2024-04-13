@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.packets;
+package kamkeel.npcdbc.network;
 
 import com.google.common.base.Throwables;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;

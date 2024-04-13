@@ -1,8 +1,8 @@
-package kamkeel.npcdbc.packets;
+package kamkeel.npcdbc.network.packets;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
-import kamkeel.npcdbc.packets.AbstractMessage.AbstractClientMessage;
+import kamkeel.npcdbc.network.AbstractMessage.AbstractClientMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 
