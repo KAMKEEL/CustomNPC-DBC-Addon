@@ -23,7 +23,8 @@ public class CustomForm implements ICustomForm {
     public int auraColor = 1;
 
 
-    public CustomForm(){}
+    public CustomForm() {
+    }
 
     public CustomForm(int id, String name) {
         this.id = id;
@@ -152,11 +153,10 @@ public class CustomForm implements ICustomForm {
         id = newID;
     }
 
-    public void readFromNBT(NBTTagCompound compound){
-        if(compound.hasKey("ID")){
+    public void readFromNBT(NBTTagCompound compound) {
+        if (compound.hasKey("ID")) {
             id = compound.getInteger("ID");
-        }
-        else if (AnimationController.Instance != null) {
+        } else if (AnimationController.Instance != null) {
             id = FormController.Instance.getUnusedId();
         }
         name = compound.getString("Name");
@@ -165,7 +165,7 @@ public class CustomForm implements ICustomForm {
 
     }
 
-    public NBTTagCompound writeToNBT(){
+    public NBTTagCompound writeToNBT() {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger("ID", id);
         compound.setString("Name", name);

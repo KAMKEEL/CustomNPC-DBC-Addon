@@ -1,0 +1,13 @@
+working on: CustomForms
+
+to-do:
+
+make a custom form: 
+assign custom form to player:
+check if player is in customform:
+
+
+add form multiplier functionality:
+
+add kk/ui stackability
+

@@ -17,30 +17,30 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 public class FormController implements IFormHandler {
+    public static FormController Instance;
     public HashMap<Integer, CustomForm> customForms;
     private HashMap<Integer, String> bootOrder;
-
-    public static FormController Instance;
     private int lastUsedID = 0;
 
     public FormController() {
         Instance = this;
         customForms = new HashMap<>();
+        bootOrder = new HashMap<>();
         load();
     }
 
-    public static FormController getInstance(){
+    public static FormController getInstance() {
         return Instance;
     }
 
-    public void load(){
+    public void load() {
         LogWriter.info("Loading custom forms...");
         readCustomFormMap();
         loadForms();
         LogWriter.info("Done loading custom forms.");
     }
 
-    private void loadForms(){
+    private void loadForms() {
         customForms.clear();
 
         File dir = getDir();
@@ -48,35 +48,32 @@ public class FormController implements IFormHandler {
             dir.mkdir();
         } else {
             for (File file : dir.listFiles()) {
-                if (!file.isFile() || !file.getName().endsWith(".json"))
-                    continue;
+                if (!file.isFile() || !file.getName().endsWith(".json")) continue;
                 try {
                     CustomForm form = new CustomForm();
                     form.readFromNBT(NBTJsonUtil.LoadFile(file));
                     form.name = file.getName().substring(0, file.getName().length() - 5);
 
-                    if(form.id == -1){
+                    if (form.id == -1) {
                         form.id = getUnusedId();
                     }
 
                     int originalID = form.id;
                     int setID = form.id;
-                    while (bootOrder.containsKey(setID) || customForms.containsKey(setID)){
-                        if(bootOrder.containsKey(setID))
-                            if(bootOrder.get(setID).equals(form.name))
-                                break;
+                    while (bootOrder.containsKey(setID) || customForms.containsKey(setID)) {
+                        if (bootOrder.containsKey(setID)) if (bootOrder.get(setID).equals(form.name)) break;
 
                         setID++;
                     }
 
                     form.id = setID;
-                    if(originalID != setID){
+                    if (originalID != setID) {
                         LogWriter.info("Found Custom Form ID Mismatch: " + form.name + ", New ID: " + setID);
                         form.save();
                     }
 
                     customForms.put(form.id, form);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     LogWriter.error("Error loading: " + file.getAbsolutePath(), e);
                 }
             }
@@ -89,11 +86,10 @@ public class FormController implements IFormHandler {
         return new File(CustomNpcs.getWorldSaveDirectory(), "customforms");
     }
 
-    public int getUnusedId(){
-        if(lastUsedID == 0){
-            for(int catid : customForms.keySet()){
-                if(catid > lastUsedID)
-                    lastUsedID = catid;
+    public int getUnusedId() {
+        if (lastUsedID == 0) {
+            for (int catid : customForms.keySet()) {
+                if (catid > lastUsedID) lastUsedID = catid;
             }
 
         }
@@ -101,17 +97,13 @@ public class FormController implements IFormHandler {
         return lastUsedID;
     }
 
-    public ICustomForm saveForm(ICustomForm customForm){
-        if(customForm.getID() < 0){
+    public ICustomForm saveForm(ICustomForm customForm) {
+        if (customForm.getID() < 0) {
             customForm.setID(getUnusedId());
-            while(hasName(customForm.getName()))
-                customForm.setName(customForm.getName() + "_");
-        }
-        else{
+            while (hasName(customForm.getName())) customForm.setName(customForm.getName() + "_");
+        } else {
             CustomForm existing = customForms.get(customForm.getID());
-            if(existing != null && !existing.name.equals(customForm.getName()))
-                while(hasName(customForm.getName()))
-                    customForm.setName(customForm.getName() + "_");
+            if (existing != null && !existing.name.equals(customForm.getName())) while (hasName(customForm.getName())) customForm.setName(customForm.getName() + "_");
         }
 
         customForms.remove(customForm.getID());
@@ -121,16 +113,14 @@ public class FormController implements IFormHandler {
 
         // Save CustomForm File
         File dir = this.getDir();
-        if(!dir.exists())
-            dir.mkdirs();
+        if (!dir.exists()) dir.mkdirs();
 
         File file = new File(dir, customForm.getName() + ".json_new");
-        File file2 = new File(dir, customForm.getName() +  ".json");
+        File file2 = new File(dir, customForm.getName() + ".json");
 
         try {
-            NBTJsonUtil.SaveFile(file, ((CustomForm)customForm).writeToNBT());
-            if(file2.exists())
-                file2.delete();
+            NBTJsonUtil.SaveFile(file, ((CustomForm) customForm).writeToNBT());
+            if (file2.exists()) file2.delete();
             file.renameTo(file2);
         } catch (Exception e) {
             LogWriter.except(e);
@@ -139,24 +129,21 @@ public class FormController implements IFormHandler {
     }
 
     public boolean hasName(String newName) {
-        if(newName.trim().isEmpty())
-            return true;
-        for(CustomForm form : customForms.values())
-            if(form.name.equals(newName))
-                return true;
+        if (newName.trim().isEmpty()) return true;
+        for (CustomForm form : customForms.values())
+            if (form.name.equals(newName)) return true;
         return false;
     }
 
     public void delete(String name) {
-        CustomForm delete =  getFormFromName(name);
-        if(delete != null){
+        CustomForm delete = getFormFromName(name);
+        if (delete != null) {
             CustomForm foundForm = this.customForms.remove(delete.getID());
-            if(foundForm != null && foundForm.name != null){
+            if (foundForm != null && foundForm.name != null) {
                 File dir = this.getDir();
                 for (File file : dir.listFiles()) {
-                    if (!file.isFile() || !file.getName().endsWith(".json"))
-                        continue;
-                    if (file.getName().equals(foundForm.name+".json")) {
+                    if (!file.isFile() || !file.getName().endsWith(".json")) continue;
+                    if (file.getName().equals(foundForm.name + ".json")) {
                         file.delete();
                         break;
                     }
@@ -168,16 +155,14 @@ public class FormController implements IFormHandler {
     }
 
     public void delete(int id) {
-        if(!this.customForms.containsKey(id))
-            return;
+        if (!this.customForms.containsKey(id)) return;
 
         CustomForm foundForm = this.customForms.remove(id);
-        if(foundForm != null && foundForm.name != null){
+        if (foundForm != null && foundForm.name != null) {
             File dir = this.getDir();
             for (File file : dir.listFiles()) {
-                if (!file.isFile() || !file.getName().endsWith(".json"))
-                    continue;
-                if (file.getName().equals(foundForm.name+".json")) {
+                if (!file.isFile() || !file.getName().endsWith(".json")) continue;
+                if (file.getName().equals(foundForm.name + ".json")) {
                     file.delete();
                     break;
                 }
@@ -204,9 +189,9 @@ public class FormController implements IFormHandler {
         return customForms.toArray(new ICustomForm[0]);
     }
 
-    public CustomForm getFormFromName(String formName){
-        for (Map.Entry<Integer,CustomForm> entryForm : FormController.getInstance().customForms.entrySet()){
-            if (entryForm.getValue().name.equalsIgnoreCase(formName)){
+    public CustomForm getFormFromName(String formName) {
+        for (Map.Entry<Integer, CustomForm> entryForm : FormController.getInstance().customForms.entrySet()) {
+            if (entryForm.getValue().name.equalsIgnoreCase(formName)) {
                 return entryForm.getValue();
             }
         }
@@ -216,7 +201,7 @@ public class FormController implements IFormHandler {
     public String[] getNames() {
         String[] names = new String[customForms.size()];
         int i = 0;
-        for(CustomForm customForm : customForms.values()){
+        for (CustomForm customForm : customForms.values()) {
             names[i] = customForm.name.toLowerCase();
             i++;
         }
@@ -229,37 +214,37 @@ public class FormController implements IFormHandler {
     // CUSTOM FORM MAP
     // Used to keep load order of Forms
 
-    public File getMapDir(){
+    public File getMapDir() {
         File dir = CustomNpcs.getWorldSaveDirectory();
-        if(!dir.exists())
-            dir.mkdir();
+        if (!dir.exists()) dir.mkdir();
         return dir;
     }
 
-    public void readCustomFormMap(){
+    public void readCustomFormMap() {
         bootOrder.clear();
 
         try {
             File file = new File(getMapDir(), "customforms.dat");
-            if(file.exists()){
+            if (file.exists()) {
                 loadCustomFormMap(file);
             }
         } catch (Exception e) {
             try {
                 File file = new File(getMapDir(), "customforms.dat_old");
-                if(file.exists()){
+                if (file.exists()) {
                     loadCustomFormMap(file);
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
     }
 
-    public NBTTagCompound writeMapNBT(){
+    public NBTTagCompound writeMapNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         NBTTagList formList = new NBTTagList();
-        for(Integer key: customForms.keySet()){
+        for (Integer key : customForms.keySet()) {
             CustomForm customForm = customForms.get(key);
-            if(!customForm.getName().isEmpty()){
+            if (!customForm.getName().isEmpty()) {
                 NBTTagCompound formCompound = new NBTTagCompound();
                 formCompound.setString("Name", customForm.getName());
                 formCompound.setInteger("ID", key);
@@ -271,11 +256,10 @@ public class FormController implements IFormHandler {
         return nbt;
     }
 
-    public void readMapNBT(NBTTagCompound compound){
+    public void readMapNBT(NBTTagCompound compound) {
         NBTTagList list = compound.getTagList("CustomForms", 10);
-        if(list != null){
-            for(int i = 0; i < list.tagCount(); i++)
-            {
+        if (list != null) {
+            for (int i = 0; i < list.tagCount(); i++) {
                 NBTTagCompound nbttagcompound = list.getCompoundTagAt(i);
                 String formName = nbttagcompound.getString("Name");
                 Integer key = nbttagcompound.getInteger("ID");
@@ -290,30 +274,27 @@ public class FormController implements IFormHandler {
         var1.close();
     }
 
-    public void readCustomFormMap(DataInputStream stream) throws IOException{
+    public void readCustomFormMap(DataInputStream stream) throws IOException {
         NBTTagCompound nbtCompound = CompressedStreamTools.read(stream);
         this.readMapNBT(nbtCompound);
     }
 
-    public void saveFormLoadMap(){
+    public void saveFormLoadMap() {
         try {
             File saveDir = getMapDir();
             File file = new File(saveDir, "customforms.dat_new");
             File file1 = new File(saveDir, "customforms.dat_old");
             File file2 = new File(saveDir, "customforms.dat");
             CompressedStreamTools.writeCompressed(this.writeMapNBT(), new FileOutputStream(file));
-            if(file1.exists())
-            {
+            if (file1.exists()) {
                 file1.delete();
             }
             file2.renameTo(file1);
-            if(file2.exists())
-            {
+            if (file2.exists()) {
                 file2.delete();
             }
             file.renameTo(file2);
-            if(file.exists())
-            {
+            if (file.exists()) {
                 file.delete();
             }
         } catch (Exception e) {
