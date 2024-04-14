@@ -4,6 +4,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.JGPlayerMP;
 import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.api.IDBCAddon;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.SyncedData.CustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
@@ -544,14 +545,20 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         if (c.hasForm(formName)) {
             c.setInt("currentForm", f.getID());
             DBCData d = DBCData.get(player);
-            d.Form1 = 0;
-            if (d.Form2 > 0 && JRMCoreH.StusEfcts(5, d.StatusEffects) && !f.isKaiokenStackable()) {
-                d.Form2 = 0;
-                JRMCoreH.StusEfcts(5, player, false); //removes status effect KK and updates NBT
+            d.State1 = 0;
+            if (d.isForm(DBCForm.Kaioken) && !f.isFormStackable(DBCForm.Kaioken)) {
+                d.State2 = 0;
+                d.setForm(DBCForm.Kaioken, false);//reverts player from Kaioken
             }
-            if (d.Form2 > 0 && JRMCoreH.StusEfcts(19, d.StatusEffects) && !f.isUIStackable()) {
-                d.Form2 = 0;
-                JRMCoreH.StusEfcts(19, player, false); //removes status effect UI and updates NBT
+            if (d.isForm(DBCForm.UltraInstinct) && !f.isFormStackable(DBCForm.UltraInstinct)) {
+                d.State2 = 0;
+                d.setForm(DBCForm.UltraInstinct, false);
+            }
+            if (d.isForm(DBCForm.GodOfDestruction) && !f.isFormStackable(DBCForm.GodOfDestruction)) {
+                d.setForm(DBCForm.GodOfDestruction, false);
+            }
+            if (d.isForm(DBCForm.Mystic) && !f.isFormStackable(DBCForm.Mystic)) {
+                d.setForm(DBCForm.Mystic, false);
             }
 
             c.saveFields();
@@ -569,9 +576,10 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         f.removeFromPlayer(player);
     }
 
-    public boolean isInCustomForm(){
+    public boolean isInCustomForm() {
         return CustomFormData.get(player).isInCustomForm();
     }
+
     public boolean isInCustomForm(String formName) {
         return CustomFormData.get(player).isInForm(formName);
     }

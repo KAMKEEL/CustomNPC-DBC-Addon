@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.SyncedData;
 
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.util.u;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,13 +21,14 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     public static String dn = "PlayerPersisted";
 
     public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks;
-    public byte Class, Race, Powertype, Form1, Form2, Release;
+    public byte Class, Race, Powertype, State1, State2, Release;
     public boolean Alive, isKO;
     public String Skills, RacialSkills, StatusEffects, Settings, FormMasteryRacial, FormMasteryNR;
 
     public DBCData(Entity player) {
         super(player);
         this.DATA_NAME = dn;
+        p = (EntityPlayer) player;
 
     }
 
@@ -41,13 +43,83 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
 
     }
 
+    public static DBCData getClient() {
+        return getClient(dn);
+
+    }
+
     public static boolean has(Entity p) {
         return get(p, dn) != null;
     }
 
+    public boolean isForm(int dbcForm) {
+        switch (dbcForm) {
+            case DBCForm.Kaioken:
+                return State2 > 0 && JRMCoreH.StusEfcts(5, StatusEffects);
+            case DBCForm.UltraInstinct:
+                return State2 > 0 && JRMCoreH.StusEfcts(19, StatusEffects);
+            case DBCForm.GodOfDestruction:
+                return JRMCoreH.StusEfcts(20, StatusEffects);
+            case DBCForm.Mystic:
+                return JRMCoreH.StusEfcts(13, StatusEffects);
+            default:
+                return false;
+        }
+    }
+
+    public boolean containsSE(int id) {
+        return JRMCoreH.StusEfcts(id, StatusEffects);
+    }
+
+    public void setSE(int id, boolean bo) {
+        JRMCoreH.StusEfcts(id, StatusEffects, p, bo);
+    }
+
+    public void setForm(int dbcForm, boolean on) {
+        switch (dbcForm) {
+            case DBCForm.Kaioken:
+                setForm(5, on);
+                if (on)
+                    State2 = 1;
+                break;
+            case DBCForm.UltraInstinct:
+                setForm(19, on);
+                if (on)
+                    State2 = 1;
+                break;
+            case DBCForm.GodOfDestruction:
+                setForm(20, on);
+                break;
+            case DBCForm.Mystic:
+                setForm(13, on);
+                break;
+
+        }
+        saveFields();
+    }
+
+    public boolean settingOn(int id) {
+        return u.isServer() ? JRMCoreH.PlyrSettingsB(p, id) : JRMCoreH.PlyrSettingsB(id);
+    }
+
+    public boolean formSettingOn(int dbcForm) {
+        switch (dbcForm) {
+            case DBCForm.Kaioken:
+                return settingOn(0);
+            case DBCForm.UltraInstinct:
+                return settingOn(11);
+            case DBCForm.GodOfDestruction:
+                return settingOn(16);
+            case DBCForm.Mystic:
+                return settingOn(6);
+            default:
+                return false;
+        }
+    }
+
     @Override
     public void saveNBTData(NBTTagCompound compound) { // save all fields to compound
-        NBTTagCompound c = compound(p, dn);
+        NBTTagCompound c = compound(e, dn);
 
         c.setInteger("jrmcStrI", STR);
         c.setInteger("jrmcDexI", DEX);
@@ -60,8 +132,8 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         c.setInteger("jrmcBdy", Body);
         c.setInteger("jrmcHar4va", KOforXTicks);
 
-        c.setByte("jrmcState1", Form1);
-        c.setByte("jrmcState2", Form2);
+        c.setByte("jrmcState1", State1);
+        c.setByte("jrmcState2", State2);
         c.setByte("jrmcRelease", Release);
         c.setByte("jrmcPwrtyp", Powertype);
         c.setByte("jrmcRace", Race);
@@ -79,7 +151,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
 
     @Override
     public void loadNBTData(NBTTagCompound compound) { // compound has all synced data,load all fields from compound
-        NBTTagCompound c = u.isServer() ? compound(p, dn) : compound;
+        NBTTagCompound c = u.isServer() ? compound(e, dn) : compound;
 
         STR = c.getInteger("jrmcStrI");
         DEX = c.getInteger("jrmcDexI");
@@ -93,8 +165,8 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         KOforXTicks = c.getInteger("jrmcHar4va");
 
         isKO = c.getInteger("jrmcHar4va") > 0;
-        Form1 = c.getByte("jrmcState1");
-        Form2 = c.getByte("jrmcState2");
+        State1 = c.getByte("jrmcState1");
+        State2 = c.getByte("jrmcState2");
         Release = c.getByte("jrmcRelease");
         Powertype = c.getByte("jrmcPwrtyp");
         Race = c.getByte("jrmcRace");

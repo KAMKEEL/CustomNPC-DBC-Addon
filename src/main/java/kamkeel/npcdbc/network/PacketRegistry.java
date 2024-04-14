@@ -61,6 +61,7 @@ public class PacketRegistry {
         } else
             tellServer(new PacketSyncData(e, id, data));
 
+
     }
 
     public static void sendToAll(IMessage message) {

@@ -2,6 +2,8 @@ package kamkeel.npcdbc.data.SyncedData;
 
 import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.network.PacketRegistry;
 import kamkeel.npcdbc.util.u;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,17 +19,27 @@ import java.util.List;
 public class CustomFormData extends PerfectSync<CustomFormData> implements IExtendedEntityProperties {
     public static String dn = "CustomFormData";
 
-    // 0 for any non CNPC+ custom form, form ID if player is in custom form
+    // id of form player is currently in, 0 if non CNPC custom form,
     public int currentForm = 0;
+    // name of form to be entered upon transformation
+    public String selectedForm;
 
-    //forms given to player/player has unlocked
+
+    //names of forms given to player/player has unlocked
     public List<String> accessibleForms;
+    //accessibleForms as objects
+    public List<CustomForm> forms = new ArrayList<>();
 
 
     public CustomFormData(Entity player) {
         super(player);
         this.DATA_NAME = dn;
         accessibleForms = new ArrayList<>();
+
+        p = (EntityPlayer) player;
+        if (!u.isServer())  //request accessibleForms objects from server
+            PacketRegistry.syncData(p, "loadForms", null);
+
     }
 
     public static CustomFormData get(Entity player) {
@@ -35,6 +47,11 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
 
     }
 
+    public static CustomFormData getClient() {
+        return getClient(dn);
+    }
+
+    //add conditions here
     public static boolean eligibleForCustomForms(Entity p) {
         if (p instanceof EntityPlayer)
             return true;
@@ -54,7 +71,7 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
 
     }
 
-    public void removeForm(String name) {
+    public void removeForm(String name) { //removes form from player
         if (accessibleForms.contains(name)) {
             accessibleForms.remove(name);
             saveFields();
@@ -71,21 +88,26 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
     }
 
     public boolean isInForm(String formName) {
-        ICustomForm f = FormController.Instance.get(formName);
-        return currentForm == f.getID();
+        return getCurrentForm().getName().equals(formName);
     }
 
     public ICustomForm getCurrentForm() {
         if (currentForm > 0)
-            return FormController.Instance.get(currentForm);
+            return u.isServer() ? FormController.Instance.get(currentForm) : getFormClient(currentForm);
+
         return null;
+    }
+
+    public ICustomForm getSelectedForm() {
+        return u.isServer() ? FormController.Instance.get(selectedForm) : getFormClient(selectedForm);
     }
 
     @Override
     public void saveNBTData(NBTTagCompound compound) {
-        NBTTagCompound c = compound(p, dn);
+        NBTTagCompound c = compound(e, dn);
 
         c.setInteger("currentForm", currentForm);
+        c.setString("selectedForm", selectedForm);
 
         if (!accessibleForms.isEmpty()) {
             StringBuilder sb = new StringBuilder();
@@ -98,9 +120,10 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
     }
 
     public void loadNBTData(NBTTagCompound compound) {
-        NBTTagCompound c = u.isServer() ? compound(p, dn) : compound;
+        NBTTagCompound c = u.isServer() ? compound(e, dn) : compound;
 
         currentForm = c.getInteger("currentForm");
+        selectedForm = c.getString("selectedForm");
 
         String s = c.getString("accessibleForms");
         List<String> newForms = new ArrayList<>();
@@ -117,5 +140,48 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
 
     }
 
+    ////////////////////////
+    ////////////////////////
+    // Client side CustomForm object loading
 
+    public void load() { //sends all accessibleForm objects from server to client
+        for (String e : accessibleForms) {
+            FormController.Instance.loadToClient(p, (CustomForm) FormController.Instance.get(e));
+        }
+    }
+
+    public void loadForm(NBTTagCompound data) {
+        CustomForm f = new CustomForm();
+        f.readFromNBT(data);
+        for (CustomForm v : forms)
+            if (v.name.equals(f.name))
+                v.readFromNBT(data); //update form if exists
+
+        forms.add(f);
+    }
+
+    public void unloadForm(NBTTagCompound data) {
+        CustomForm f = new CustomForm();
+        f.readFromNBT(data);
+        for (CustomForm v : forms)
+            if (v.name.equals(f.name))
+                forms.remove(v);
+
+    }
+
+    public ICustomForm getFormClient(String name) {
+        for (CustomForm f : forms) {
+            if (f.name.equals(name))
+                return f;
+        }
+        return null;
+    }
+
+    public ICustomForm getFormClient(int id) {
+        for (CustomForm f : forms) {
+            if (f.id == id)
+                return f;
+        }
+        return null;
+    }
 }

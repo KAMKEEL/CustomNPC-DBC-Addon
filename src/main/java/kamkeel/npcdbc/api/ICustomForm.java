@@ -27,22 +27,27 @@ public interface ICustomForm {
      */
     float getAttributeMulti(int id);
 
+    /**
+     * @param DBCForm Non-racial DBC Forms, 20 Kaioken, 21 Mystic, 22 UI, 23 GoD
+     * @return True if can stack DBCForm on Custom Form
+     */
+    boolean isFormStackable(int DBCForm);
 
-    boolean isKaiokenStackable();
+    /**
+     * @param DBCForm Non-racial DBC Forms, 20 Kaioken, 21 Mystic, 22 UI, 23 GoD
+     */
+    void stackForm(int DBCForm, boolean stackForm);
 
-    boolean isUIStackable();
+    /**
+     * @param DBCForm Non-racial DBC Forms, 20 Kaioken, 21 Mystic, 22 UI, 23 GoD
+     */
+    void setFormMulti(int DBCForm, float multi);
 
-    void stackKaioken(boolean canStackKaioken);
-
-    void stackUI(boolean canStackUI);
-
-    float getKaiokenMulti();
-
-    void setKaiokenMulti(float kaiokenMulti);
-
-    float getUiMulti();
-
-    void setUiMulti(float uiMulti);
+    /**
+     * @param DBCForm Non-racial DBC Forms, 20 Kaioken, 21 Mystic, 22 UI, 23 GoD
+     * @return DBCForm's multi
+     */
+    float getFormMulti(int DBCForm);
 
     int getAuraColor();
 
@@ -57,7 +62,6 @@ public interface ICustomForm {
     void removeFromPlayer(String name);
 
 
-
     int getID();
 
     /**
@@ -65,5 +69,7 @@ public interface ICustomForm {
      */
     void setID(int newID);
 
+
     ICustomForm save();
+
 }

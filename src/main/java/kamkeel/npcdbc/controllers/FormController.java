@@ -3,6 +3,8 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.api.IFormHandler;
 import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.network.PacketRegistry;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -40,6 +42,15 @@ public class FormController implements IFormHandler {
         LogWriter.info("Done loading custom forms.");
     }
 
+    public void loadToClient(EntityPlayer p, CustomForm f) { //loads a CustomForm object to p's client
+        PacketRegistry.syncData(p, "loadForm", f.writeToNBT());
+
+    }
+
+    public void unloadFromClient(EntityPlayer p, CustomForm f) {
+        PacketRegistry.syncData(p, "unloadForm", f.writeToNBT());
+
+    }
 
     public ICustomForm createForm(String name) {
         if (hasName(name))

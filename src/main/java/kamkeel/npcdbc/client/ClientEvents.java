@@ -10,16 +10,19 @@ import org.lwjgl.input.Keyboard;
 
 //mostly for testing stuff
 public class ClientEvents {
+    /**
+     * For testing purposes
+     */
     @SubscribeEvent
     public void onKeyPress(KeyInputEvent e) {
         if (Minecraft.getMinecraft().thePlayer != null) {
             EntityClientPlayerMP p = Minecraft.getMinecraft().thePlayer;
-            handleGrab(e, p);
+            createForm(e, p);
         }
 
     }
 
-    public void handleGrab(KeyInputEvent e, EntityClientPlayerMP p) {
+    public void createForm(KeyInputEvent e, EntityClientPlayerMP p) {
         if (Keyboard.isKeyDown(50)) { //M
             PacketRegistry.tellServer("createForm");
         }

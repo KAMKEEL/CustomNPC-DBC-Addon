@@ -34,16 +34,21 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
     public void process(EntityPlayer p, Side side) {
         if (side == Side.SERVER) {
             updateServerData(p);
-
+            if (s.contains("loadForms"))
+                CustomFormData.get(p).load();
         } else {
             if (s.contains("register"))
                 registerClient(p);
-
             else if (!s.contains("Entity")) { // player
                 if (s.contains("DBCData"))
                     DBCData.get(p).loadNBTData(data);
-                if (s.contains("CustomFormData"))
+                else if (s.contains("CustomFormData"))
                     CustomFormData.get(p).loadNBTData(data);
+
+                else if (s.contains("loadForm"))
+                    CustomFormData.get(p).loadForm(data);
+                else if (s.contains("unloadForm"))
+                    CustomFormData.get(p).unloadForm(data);
 
             } else {// non player entity
                 Entity e = u.getEntityFromID(p.worldObj, s.split(":")[1]);
@@ -89,13 +94,14 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
         String[] d = s.split(";");
         String dn = d[1];
 
-
         if (dn.equals(DBCData.dn) && !DBCData.has(p))
             p.registerExtendedProperties(DBCData.dn, new DBCData(p));
         else if (dn.equals(CustomFormData.dn) && !CustomFormData.has(p))
             p.registerExtendedProperties(CustomFormData.dn, new CustomFormData(p));
 
+
     }
+
 
     @Override
     public void read(PacketBuffer buffer) throws IOException {

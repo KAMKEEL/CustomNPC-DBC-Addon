@@ -10,9 +10,11 @@
     "MixinDBCDisplay",
     "MixinDBCStats",
     "MixinScriptPlayer"
+    //"MixinJRMCoreH"
   ],
   "client": [
-    "MixinDBCClient"
+    "MixinDBCClient",
+    "MixinDBCKiTech"
   ],
   "server": []
 }

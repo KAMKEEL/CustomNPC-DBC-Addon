@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data;
 
 import kamkeel.npcdbc.api.ICustomForm;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.SyncedData.CustomFormData;
@@ -24,8 +25,8 @@ public class CustomForm implements ICustomForm {
     public float dexMulti = 1.0f;
     public float willMulti = 1.0f;
 
-    public boolean kaiokenStackable = true, uiStackable = true;
-    public float kaiokenMulti = 1.0f, uiMulti = 1.0f;
+    public boolean kaiokenStackable = false, uiStackable = false, godStackable = false, mysticStackable = false;
+    public float kaiokenMulti = 1.0f, uiMulti = 1.0f, godMulti = 1.0f, mysticMulti = 1.0f;
 
     public int auraColor = 1;
 
@@ -83,7 +84,6 @@ public class CustomForm implements ICustomForm {
             case 3:
                 willMulti = multi;
                 break;
-
         }
     }
 
@@ -101,46 +101,69 @@ public class CustomForm implements ICustomForm {
         return 1.0f;
     }
 
-
-    @Override
-    public boolean isKaiokenStackable() {
-        return kaiokenStackable;
+    public boolean isFormStackable(int dbcForm) {
+        switch (dbcForm) {
+            case DBCForm.Kaioken:
+                return kaiokenStackable;
+            case DBCForm.UltraInstinct:
+                return uiStackable;
+            case DBCForm.GodOfDestruction:
+                return godStackable;
+            case DBCForm.Mystic:
+                return mysticStackable;
+            default:
+                return false;
+        }
     }
 
 
-    @Override
-    public boolean isUIStackable() {
-        return uiStackable;
+    public void stackForm(int dbcForm, boolean stackForm) {
+        switch (dbcForm) {
+            case DBCForm.Kaioken:
+                kaiokenStackable = stackForm;
+                break;
+            case DBCForm.UltraInstinct:
+                uiStackable = stackForm;
+                break;
+            case DBCForm.GodOfDestruction:
+                godStackable = stackForm;
+                break;
+            case DBCForm.Mystic:
+                mysticStackable = stackForm;
+                break;
+        }
     }
 
-    @Override
-    public void stackKaioken(boolean stackKaioken) {
-        kaiokenStackable = stackKaioken;
+    public void setFormMulti(int dbcForm, float multi) {
+        switch (dbcForm) {
+            case DBCForm.Kaioken:
+                kaiokenMulti = multi;
+                break;
+            case DBCForm.UltraInstinct:
+                uiMulti = multi;
+                break;
+            case DBCForm.GodOfDestruction:
+                godMulti = multi;
+                break;
+            case DBCForm.Mystic:
+                mysticMulti = multi;
+                break;
+        }
     }
 
-    @Override
-    public void stackUI(boolean stackUI) {
-        uiStackable = stackUI;
-    }
-
-    @Override
-    public float getKaiokenMulti() {
-        return kaiokenMulti;
-    }
-
-    @Override
-    public void setKaiokenMulti(float kaiokenMulti) {
-        this.kaiokenMulti = kaiokenMulti;
-    }
-
-    @Override
-    public float getUiMulti() {
-        return uiMulti;
-    }
-
-    @Override
-    public void setUiMulti(float uiMulti) {
-        this.uiMulti = uiMulti;
+    public float getFormMulti(int dbcForm) {
+        switch (dbcForm) {
+            case DBCForm.Kaioken:
+                return kaiokenMulti;
+            case DBCForm.UltraInstinct:
+                return uiMulti;
+            case DBCForm.GodOfDestruction:
+                return godMulti;
+            case DBCForm.Mystic:
+                return mysticMulti;
+            default:
+                return 1.0f;
+        }
     }
 
     @Override
@@ -159,6 +182,7 @@ public class CustomForm implements ICustomForm {
             CustomFormData.get(p).addForm(name);
             if (!playersWithForm.contains(p.getCommandSenderName())) {
                 playersWithForm.add(p.getCommandSenderName());
+                FormController.Instance.loadToClient(p, this);
                 save();
             }
         }
@@ -175,6 +199,7 @@ public class CustomForm implements ICustomForm {
             CustomFormData.get(p).removeForm(name);
             if (playersWithForm.contains(p.getCommandSenderName())) {
                 playersWithForm.remove(p.getCommandSenderName());
+                FormController.Instance.unloadFromClient(p, this);
                 save();
             }
         }
@@ -214,7 +239,7 @@ public class CustomForm implements ICustomForm {
         else if (AnimationController.Instance != null)
             id = FormController.Instance.getUnusedId();
 
-        name = compound.getString("Name");
+        name = compound.getString("name");
         race = compound.getInteger("race");
         allMulti = compound.getFloat("allMulti");
         strengthMulti = compound.getFloat("strengthMulti");
