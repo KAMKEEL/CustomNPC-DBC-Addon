@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 public interface ICustomForm {
 
     String getName();
-
+    String getMenuName();
     void setName(String name);
 
     int getRace();

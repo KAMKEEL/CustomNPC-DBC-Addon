@@ -545,7 +545,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         if (c.hasForm(formName)) {
             c.setInt("currentForm", f.getID());
             DBCData d = DBCData.get(player);
-            d.State1 = 0;
+            d.State = 0;
             if (d.isForm(DBCForm.Kaioken) && !f.isFormStackable(DBCForm.Kaioken)) {
                 d.State2 = 0;
                 d.setForm(DBCForm.Kaioken, false);//reverts player from Kaioken

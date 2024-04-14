@@ -18,6 +18,8 @@ public class CustomForm implements ICustomForm {
 
     public int id = -1; // Only for internal usage
     public String name;
+    //name to be displayed in DBC GUI after "Form: ", preferably short as space is narrow
+    public String menuName = "§a§8lForm";
     public int race = DBCRace.SAIYAN;
     public float allMulti = 1.0f;
 
@@ -50,6 +52,11 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getMenuName() {
+        return menuName;
     }
 
     @Override
@@ -240,6 +247,7 @@ public class CustomForm implements ICustomForm {
             id = FormController.Instance.getUnusedId();
 
         name = compound.getString("name");
+        menuName = compound.getString("menuName");
         race = compound.getInteger("race");
         allMulti = compound.getFloat("allMulti");
         strengthMulti = compound.getFloat("strengthMulti");
@@ -271,6 +279,7 @@ public class CustomForm implements ICustomForm {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger("ID", id);
         compound.setString("name", name);
+        compound.setString("menuName", menuName);
         compound.setInteger("race", race);
         compound.setFloat("allMulti", allMulti);
         compound.setFloat("strengthMulti", strengthMulti);

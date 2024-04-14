@@ -42,7 +42,7 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
 
     }
 
-    public static CustomFormData get(Entity player) {
+    public static CustomFormData get(Entity player) { 
         return get(player, dn);
 
     }

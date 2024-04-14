@@ -21,7 +21,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     public static String dn = "PlayerPersisted";
 
     public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks;
-    public byte Class, Race, Powertype, State1, State2, Release;
+    public byte Class, Race, Powertype, State, State2, Release;
     public boolean Alive, isKO;
     public String Skills, RacialSkills, StatusEffects, Settings, FormMasteryRacial, FormMasteryNR;
 
@@ -62,9 +62,24 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
                 return JRMCoreH.StusEfcts(20, StatusEffects);
             case DBCForm.Mystic:
                 return JRMCoreH.StusEfcts(13, StatusEffects);
+            //the following doesn't count as "forms" but they can be checked from this method as well
+            case DBCForm.Legendary:
+                return JRMCoreH.StusEfcts(14, StatusEffects);
+            case DBCForm.Divine:
+                return JRMCoreH.StusEfcts(17, StatusEffects);
+            case DBCForm.Majin:
+                return JRMCoreH.StusEfcts(12, StatusEffects);
             default:
                 return false;
         }
+    }
+
+    public boolean isDivine() {
+        return JRMCoreH.StusEfctsMe(17);
+    }
+
+    public boolean isLegendary() {
+        return JRMCoreH.StusEfctsMe(17);
     }
 
     public boolean containsSE(int id) {
@@ -78,22 +93,30 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     public void setForm(int dbcForm, boolean on) {
         switch (dbcForm) {
             case DBCForm.Kaioken:
-                setForm(5, on);
+                setSE(5, on);
                 if (on)
                     State2 = 1;
                 break;
             case DBCForm.UltraInstinct:
-                setForm(19, on);
+                setSE(19, on);
                 if (on)
                     State2 = 1;
                 break;
             case DBCForm.GodOfDestruction:
-                setForm(20, on);
+                setSE(20, on);
                 break;
             case DBCForm.Mystic:
-                setForm(13, on);
+                setSE(13, on);
                 break;
-
+            case DBCForm.Legendary:
+                setSE(14, on);
+                break;
+            case DBCForm.Divine:
+                setSE(17, on);
+                break;
+            case DBCForm.Majin:
+                setSE(12, on);
+                break;
         }
         saveFields();
     }
@@ -132,7 +155,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         c.setInteger("jrmcBdy", Body);
         c.setInteger("jrmcHar4va", KOforXTicks);
 
-        c.setByte("jrmcState1", State1);
+        c.setByte("jrmcState", State);
         c.setByte("jrmcState2", State2);
         c.setByte("jrmcRelease", Release);
         c.setByte("jrmcPwrtyp", Powertype);
@@ -165,7 +188,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         KOforXTicks = c.getInteger("jrmcHar4va");
 
         isKO = c.getInteger("jrmcHar4va") > 0;
-        State1 = c.getByte("jrmcState1");
+        State = c.getByte("jrmcState");
         State2 = c.getByte("jrmcState2");
         Release = c.getByte("jrmcRelease");
         Powertype = c.getByte("jrmcPwrtyp");

@@ -14,7 +14,9 @@
   ],
   "client": [
     "MixinDBCClient",
-    "MixinDBCKiTech"
+    "MixinDBCKiTech",
+    "MixinJRMCoreGuiBars",
+    "MixinJRMCoreGuiScreen"
   ],
   "server": []
 }
