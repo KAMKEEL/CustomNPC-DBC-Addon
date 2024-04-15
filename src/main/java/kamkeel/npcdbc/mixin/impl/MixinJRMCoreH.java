@@ -17,16 +17,14 @@ public class MixinJRMCoreH {
         int result = info.getReturnValue();
 
         // Inject your code here to manipulate the result variable as needed
-
         // Set the manipulated result back to the return value
         CustomFormData c = Utility.isServer() ? CustomFormData.get(player) : CustomFormData.getClient();
-        //  System.out.println("hi " + result);
-        if (c.isInCustomForm()) {
+        //System.out.println("hi " + result);
+        if (c != null && c.isInCustomForm()) {
             //  System.out.println("hi2 " + c.getCurrentForm().getAllMulti());
             result *= c.getCurrentForm().getAllMulti();
             // System.out.println("Res " + result);
         }
-
         result = (int) ((double) result > Double.MAX_VALUE ? Double.MAX_VALUE : (double) result);
         info.setReturnValue(result);
     }

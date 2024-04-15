@@ -13,9 +13,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @ModifyVariable(method = "renderEquippedItemsJBRA", at = @At(value = "STORE"), name = "rg", remap = false)
     public int modifyRage(int original) {
-        System.out.println("hiiii " + original);
         original = Transform.rage > 0 ? (int) Transform.rage : original;
-
         return original;
     }
 }
