@@ -8,7 +8,7 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.network.packets.PacketSyncData;
 import kamkeel.npcdbc.network.packets.PacketTellClient;
 import kamkeel.npcdbc.network.packets.PacketTellServer;
-import kamkeel.npcdbc.util.u;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.player.EntityPlayer;
@@ -53,7 +53,7 @@ public class PacketRegistry {
     }
 
     public static void syncData(Entity e, String id, NBTTagCompound data) {
-        if (u.isServer()) {
+        if (Utility.isServer()) {
             if (!id.contains("Entity")) //if player
                 tellClient((EntityPlayer) e, new PacketSyncData(e, id, data));
             else

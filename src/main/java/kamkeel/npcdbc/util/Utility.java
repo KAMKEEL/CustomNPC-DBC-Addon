@@ -9,8 +9,7 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-//basically utilities, and 'u' is as short as it gets (i am lazy)
-public class u {
+public class Utility {
     public static boolean isServer() {
         return FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER;
     }
@@ -22,7 +21,7 @@ public class u {
     public static Entity getEntityFromID(World w, String s) { //s is basically getEntityID
         if (!s.isEmpty()) {
             if (Boolean.parseBoolean(s.split(",")[1])) //if player
-                return u.getEntityByUUID(w, s.split(",")[0]);
+                return Utility.getEntityByUUID(w, s.split(",")[0]);
             else
                 return w.getEntityByID(Integer.parseInt(s.split(",")[0]));
         }
@@ -57,16 +56,16 @@ public class u {
             System.out.println(ste);
     }
 
-    public static double perc(double n, double perc) {
+    public static double percent(double n, double perc) {
         return n / 100 * perc;
     }
 
-    public static float perc(int n, float perc) {
+    public static float percent(int n, float perc) {
         return n / 100 * perc;
     }
 
-    public static boolean percBetween(double n, double maxN, double minPerc, double maxPerc) {
-        return n >= u.perc(maxN, minPerc) && n < u.perc(maxN, maxPerc);
+    public static boolean percentBetween(double n, double maxN, double minPerc, double maxPerc) {
+        return n >= Utility.percent(maxN, minPerc) && n < Utility.percent(maxN, maxPerc);
     }
 
 }

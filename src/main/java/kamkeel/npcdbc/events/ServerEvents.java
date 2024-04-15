@@ -6,7 +6,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.data.SyncedData.PerfectSync;
-import kamkeel.npcdbc.util.u;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
@@ -27,7 +27,7 @@ public class ServerEvents {
     @SideOnly(Side.SERVER)
     @SubscribeEvent
     public void worldTick(TickEvent.WorldTickEvent e) {
-        if (!u.isServer())
+        if (!Utility.isServer())
             return;
         if (!e.phase.equals(TickEvent.Phase.END))
             return;

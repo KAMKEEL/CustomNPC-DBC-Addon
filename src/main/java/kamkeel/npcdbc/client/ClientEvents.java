@@ -28,9 +28,6 @@ public class ClientEvents {
         }
         if (Keyboard.isKeyDown(51)) { //,
             CustomFormData c = CustomFormData.get(p);
-            System.out.println("cmpd " + c.cmpd);
         }
-
-
     }
 }

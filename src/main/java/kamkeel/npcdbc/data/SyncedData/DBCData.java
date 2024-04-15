@@ -3,7 +3,7 @@ package kamkeel.npcdbc.data.SyncedData;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.util.u;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,7 +28,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     public DBCData(Entity player) {
         super(player);
         this.DATA_NAME = dn;
-        p = (EntityPlayer) player;
+        this.player = (EntityPlayer) player;
     }
 
     public static boolean eligibleForDBC(Entity p) {
@@ -86,7 +86,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     }
 
     public void setSE(int id, boolean bo) {
-        JRMCoreH.StusEfcts(id, StatusEffects, p, bo);
+        JRMCoreH.StusEfcts(id, StatusEffects, player, bo);
     }
 
     public void setForm(int dbcForm, boolean on) {
@@ -121,7 +121,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     }
 
     public boolean settingOn(int id) {
-        return u.isServer() ? JRMCoreH.PlyrSettingsB(p, id) : JRMCoreH.PlyrSettingsB(id);
+        return Utility.isServer() ? JRMCoreH.PlyrSettingsB(player, id) : JRMCoreH.PlyrSettingsB(id);
     }
 
     public boolean formSettingOn(int dbcForm) {
@@ -142,7 +142,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
 
     @Override
     public void saveNBTData(NBTTagCompound compound) { // save all fields to compound
-        NBTTagCompound c = compound(e, dn);
+        NBTTagCompound c = compound(entity, dn);
 
 
         c.setInteger("jrmcStrI", STR);
@@ -176,7 +176,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
 
     @Override
     public void loadNBTData(NBTTagCompound compound) { // compound has all synced data,load all fields from compound
-        NBTTagCompound c = u.isServer() ? compound(e, dn) : compound;
+        NBTTagCompound c = Utility.isServer() ? compound(entity, dn) : compound;
         STR = c.getInteger("jrmcStrI");
         DEX = c.getInteger("jrmcDexI");
         CON = c.getInteger("jrmcConI");
@@ -203,7 +203,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         FormMasteryRacial = c.getString("jrmcFormMasteryRacial_" + JRMCoreH.Races[Race]);
         FormMasteryNR = c.getString("jrmcFormMasteryNonRacial");
 
-        cmpd = c;
+        nbt = c;
 
     }
 

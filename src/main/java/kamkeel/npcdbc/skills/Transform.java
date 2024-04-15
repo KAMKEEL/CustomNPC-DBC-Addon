@@ -9,7 +9,7 @@ import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.SyncedData.CustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.network.PacketRegistry;
-import kamkeel.npcdbc.util.u;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 public class Transform {
@@ -109,27 +109,27 @@ public class Transform {
         double fm = 10;//getFormMasteryValue(k);
         double maxfm = 100;//getMaxFormMasteryValue(k);
 
-        if (u.percBetween(fm, maxfm, 0, 5))
+        if (Utility.percentBetween(fm, maxfm, 0, 5))
             return 3;
-        else if (u.percBetween(fm, maxfm, 5, 10))
+        else if (Utility.percentBetween(fm, maxfm, 5, 10))
             return 6;
-        else if (u.percBetween(fm, maxfm, 10, 20))
+        else if (Utility.percentBetween(fm, maxfm, 10, 20))
             return 10;
-        else if (u.percBetween(fm, maxfm, 20, 30))
+        else if (Utility.percentBetween(fm, maxfm, 20, 30))
             return 15;
-        else if (u.percBetween(fm, maxfm, 30, 40))
+        else if (Utility.percentBetween(fm, maxfm, 30, 40))
             return 20;
-        else if (u.percBetween(fm, maxfm, 40, 50))
+        else if (Utility.percentBetween(fm, maxfm, 40, 50))
             return 25;
-        else if (u.percBetween(fm, maxfm, 50, 60))
+        else if (Utility.percentBetween(fm, maxfm, 50, 60))
             return 30;
-        else if (u.percBetween(fm, maxfm, 60, 70))
+        else if (Utility.percentBetween(fm, maxfm, 60, 70))
             return 35;
-        else if (u.percBetween(fm, maxfm, 70, 80))
+        else if (Utility.percentBetween(fm, maxfm, 70, 80))
             return 40;
-        else if (u.percBetween(fm, maxfm, 80, 90))
+        else if (Utility.percentBetween(fm, maxfm, 80, 90))
             return 45;
-        else if (u.percBetween(fm, maxfm, 90, 100))
+        else if (Utility.percentBetween(fm, maxfm, 90, 100))
             return 50;
         else if (fm >= maxfm)
             return 100;
@@ -148,7 +148,7 @@ public class Transform {
             if (d.State > 0)
                 d.State = 0;
             d.saveToNBT(true);
-            u.sendMessage(p, "§aTransformed to§r " + c.getCurrentForm().getMenuName());
+            Utility.sendMessage(p, "§aTransformed to§r " + c.getCurrentForm().getMenuName());
 
         }
         c.saveToNBT(true);
@@ -178,7 +178,7 @@ public class Transform {
             d.setForm(DBCForm.GodOfDestruction, false);
 
         else if (c.isInCustomForm()) {
-            u.sendMessage(p, "§cDescended from§r " + c.getCurrentForm().getMenuName());
+            Utility.sendMessage(p, "§cDescended from§r " + c.getCurrentForm().getMenuName());
             c.currentForm = 0;
             c.saveToNBT(true);
         }

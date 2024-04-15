@@ -18,8 +18,8 @@ import java.util.List;
 @Mixin(value = JRMCoreGuiScreen.class, remap = false)
 
 public class MixinJRMCoreGuiScreen extends GuiScreen {
-    @Shadow
-    protected static List<Object[]> detailList;
+
+    @Shadow protected static List<Object[]> detailList;
 
     /**
      * For displaying Custom Form name in DBC GUI

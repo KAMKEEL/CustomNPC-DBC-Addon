@@ -4,7 +4,7 @@ import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.network.PacketRegistry;
-import kamkeel.npcdbc.util.u;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,7 +17,7 @@ import java.util.List;
  * Store all player CustomForms Data here
  */
 public class CustomFormData extends PerfectSync<CustomFormData> implements IExtendedEntityProperties {
-    public static String dn = "CustomFormData";
+    public static String NAME = "CustomFormData";
 
     // id of form player is currently in, 0 if non CNPC custom form,
     public int currentForm = 0;
@@ -33,22 +33,22 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
 
     public CustomFormData(Entity player) {
         super(player);
-        this.DATA_NAME = dn;
+        this.DATA_NAME = NAME;
         accessibleForms = new ArrayList<>();
 
-        p = (EntityPlayer) player;
-        if (!u.isServer())  //request accessibleForms objects from server
-            PacketRegistry.syncData(p, "loadForms", null);
+        this.player = (EntityPlayer) player;
+        if (!Utility.isServer())  //request accessibleForms objects from server
+            PacketRegistry.syncData(this.player, "loadForms", null);
 
     }
 
     public static CustomFormData get(Entity player) {
-        return get(player, dn);
+        return get(player, NAME);
 
     }
 
     public static CustomFormData getClient() {
-        return getClient(dn);
+        return getClient(NAME);
     }
 
     //add conditions here
@@ -59,7 +59,7 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
     }
 
     public static boolean has(Entity p) {
-        return get(p, dn) != null;
+        return get(p, NAME) != null;
     }
 
     public void addForm(String name) { //add form to player
@@ -91,18 +91,18 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
 
     public CustomForm getCurrentForm() {
         if (currentForm > 0)
-            return (CustomForm) (u.isServer() ? FormController.Instance.get(currentForm) : getFormClient(currentForm));
+            return (CustomForm) (Utility.isServer() ? FormController.Instance.get(currentForm) : getFormClient(currentForm));
 
         return null;
     }
 
     public CustomForm getSelectedForm() {
-        return (CustomForm) (u.isServer() ? FormController.Instance.get(selectedForm) : getFormClient(selectedForm));
+        return (CustomForm) (Utility.isServer() ? FormController.Instance.get(selectedForm) : getFormClient(selectedForm));
     }
 
     @Override
     public void saveNBTData(NBTTagCompound compound) {
-        NBTTagCompound c = compound(e, dn);
+        NBTTagCompound c = compound(entity, NAME);
 
         c.setInteger("currentForm", currentForm);
         c.setString("selectedForm", selectedForm);
@@ -123,7 +123,7 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
     }
 
     public void loadNBTData(NBTTagCompound compound) {
-        NBTTagCompound c = u.isServer() ? compound(e, dn) : compound;
+        NBTTagCompound c = Utility.isServer() ? compound(entity, NAME) : compound;
 
         currentForm = c.getInteger("currentForm");
         selectedForm = c.getString("selectedForm");
@@ -142,7 +142,7 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
         accessibleForms = newForms;
 
 
-        cmpd = c;
+        nbt = c;
 
     }
 
@@ -152,7 +152,7 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
 
     public void loadAllAccessibleForms() { //sends all accessibleForm objects from server to client
         for (String e : accessibleForms) {
-            FormController.Instance.loadToClient(p, (CustomForm) FormController.Instance.get(e));
+            FormController.Instance.loadToClient(player, (CustomForm) FormController.Instance.get(e));
         }
     }
 

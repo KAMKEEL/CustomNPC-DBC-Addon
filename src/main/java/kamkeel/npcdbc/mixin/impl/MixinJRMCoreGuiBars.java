@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(value = JRMCoreGuiBars.class, remap = false)
 public class MixinJRMCoreGuiBars extends Gui {
-    @Shadow
-    Minecraft mc;
+
+    @Shadow Minecraft mc;
 
     /**
      * For transformation rage bar

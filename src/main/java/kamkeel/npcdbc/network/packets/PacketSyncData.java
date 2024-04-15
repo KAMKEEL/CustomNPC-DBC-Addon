@@ -6,7 +6,7 @@ import kamkeel.npcdbc.data.SyncedData.CustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.data.SyncedData.PerfectSync;
 import kamkeel.npcdbc.network.AbstractMessage;
-import kamkeel.npcdbc.util.u;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +24,7 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
 
     public PacketSyncData(Entity p, String id, NBTTagCompound data) {
         s = id;
-        if (u.isServer()) {
+        if (Utility.isServer()) {
             if (!s.contains("Entity")) // player
                 this.data = data;
         }
@@ -50,7 +50,7 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
                 else if (s.contains("unloadForm"))
                     CustomFormData.get(p).unloadForm(data);
             } else {// non player entity
-                Entity e = u.getEntityFromID(p.worldObj, s.split(":")[1]);
+                Entity e = Utility.getEntityFromID(p.worldObj, s.split(":")[1]);
                 if (e != null) {
 
                 }
@@ -67,7 +67,7 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
         String type = d[3];
         String value = d[4];
 
-        Entity e = s.contains("Entity") ? u.getEntityFromID(p.worldObj, s.split(";")[5]) : p;
+        Entity e = s.contains("Entity") ? Utility.getEntityFromID(p.worldObj, s.split(";")[5]) : p;
         NBTTagCompound cmpd = PerfectSync.get(e, dn).compound();
 
         if (type.equals("Int"))
@@ -95,12 +95,11 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
 
         if (dn.equals(DBCData.dn) && !DBCData.has(p))
             p.registerExtendedProperties(DBCData.dn, new DBCData(p));
-        else if (dn.equals(CustomFormData.dn) && !CustomFormData.has(p))
-            p.registerExtendedProperties(CustomFormData.dn, new CustomFormData(p));
+        else if (dn.equals(CustomFormData.NAME) && !CustomFormData.has(p))
+            p.registerExtendedProperties(CustomFormData.NAME, new CustomFormData(p));
 
 
     }
-
 
     @Override
     public void read(PacketBuffer buffer) throws IOException {
@@ -113,5 +112,4 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
         ByteBufUtils.writeUTF8String(buffer, s);
         buffer.writeNBTTagCompoundToBuffer(data);
     }
-
 }

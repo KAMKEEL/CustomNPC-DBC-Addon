@@ -9,21 +9,19 @@ import net.minecraft.network.PacketBuffer;
 import java.io.IOException;
 
 public class PacketTellClient extends AbstractClientMessage<PacketTellClient> {
-    private String s;
+    private String packet_id;
 
     public PacketTellClient() {
     }
 
     public PacketTellClient(EntityPlayer p, String id) {
-        s = id;
-
-
+        packet_id = id;
     }
 
     @Override
     public void process(EntityPlayer p, Side side) {
         p.worldObj.getEntityByID(0);
-        goThroughStringIDs(p, s);
+        goThroughStringIDs(p, packet_id);
 
     }
 
@@ -33,22 +31,18 @@ public class PacketTellClient extends AbstractClientMessage<PacketTellClient> {
             if (idString.startsWith("")) {
 
             }
-
-
         }
-
-
     }
 
     @Override
     public void read(PacketBuffer buffer) throws IOException {
-        s = ByteBufUtils.readUTF8String(buffer);
+        packet_id = ByteBufUtils.readUTF8String(buffer);
 
     }
 
     @Override
     public void write(PacketBuffer buffer) throws IOException {
-        ByteBufUtils.writeUTF8String(buffer, s);
+        ByteBufUtils.writeUTF8String(buffer, packet_id);
 
 
     }
