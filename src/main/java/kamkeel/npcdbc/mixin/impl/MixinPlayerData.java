@@ -11,11 +11,9 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(PlayerData.class)
 public abstract class MixinPlayerData implements IPlayerFormData {
-    @Shadow
-    public EntityPlayer player;
 
     @Unique
-    public PlayerCustomFormData customFormData = new PlayerCustomFormData(player);
+    public PlayerCustomFormData customFormData = new PlayerCustomFormData((PlayerData)(Object)this);
 
     @Unique
     public PlayerCustomFormData getCustomFormData(){

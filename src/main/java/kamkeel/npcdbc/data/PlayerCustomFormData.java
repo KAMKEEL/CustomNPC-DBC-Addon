@@ -14,15 +14,13 @@ import java.util.HashMap;
  * Store all player CustomForms Data here
  */
 public class PlayerCustomFormData {
-    public EntityPlayer player;
-    public PlayerData playerData;
+    public PlayerData parent;
     public int currentForm = 0;
     public int selectedForm = -1;
     public HashMap<Integer, String> unlockedForms = new HashMap<Integer, String>();
 
-    public PlayerCustomFormData(EntityPlayer p) {
-        this.player = p;
-
+    public PlayerCustomFormData(PlayerData parent) {
+        this.parent = parent;
     }
 
     //add conditions here
@@ -70,10 +68,7 @@ public class PlayerCustomFormData {
     }
 
     public void updateClient() {
-        //  System.out.println("player " + player);
-        PlayerDataController.Instance.getPlayerData(player).updateClient = true;
-
-        //  playerData.updateClient = true;
+        parent.updateClient = true;
     }
 
     public void saveNBTData(NBTTagCompound compound) {
