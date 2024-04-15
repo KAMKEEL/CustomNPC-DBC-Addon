@@ -13,6 +13,7 @@ import kamkeel.npcdbc.data.DBCStats;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.mixin.INPCStats;
 import kamkeel.npcdbc.util.DBCUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IPlayer;
@@ -63,9 +64,10 @@ public class DBCAPI extends AbstractDBCAPI {
         if (player == null || stats == null)
             return;
 
-        if (!stats.isEnabled() || !(player.getMCEntity() instanceof EntityPlayer entityPlayer))
+        if (!stats.isEnabled() || !(player.getMCEntity() instanceof EntityPlayer))
             return;
 
+        EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
         DBCUtils.doDBCDamage(entityPlayer, damage, stats);
     }
 

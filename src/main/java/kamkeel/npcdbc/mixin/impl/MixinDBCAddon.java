@@ -29,7 +29,9 @@ public class MixinDBCAddon {
         if(!supportEnabled)
             return;
 
-        if (entity instanceof EntityNPCInterface receiverNPC && copied instanceof EntityNPCInterface npc) {
+        if (entity instanceof EntityNPCInterface && copied instanceof EntityNPCInterface) {
+            EntityNPCInterface receiverNPC = (EntityNPCInterface) entity;
+            EntityNPCInterface npc = (EntityNPCInterface) copied;
             INPCStats stats = (INPCStats) npc.stats;
             INPCStats receiverStats =  (INPCStats) receiverNPC.stats;
 
@@ -71,10 +73,11 @@ public class MixinDBCAddon {
         if(attackStrength <= 0)
             return;
 
-        if(!(receiver instanceof EntityPlayer player))
+        if(!(receiver instanceof EntityPlayer))
             return;
 
         if(npc.stats instanceof INPCStats){
+            EntityPlayer player = (EntityPlayer) receiver;
             DBCStats dbcStats = ((INPCStats) npc.stats).getDBCStats();
             DBCUtils.doDBCDamage(player, (int) attackStrength, dbcStats);
         }
