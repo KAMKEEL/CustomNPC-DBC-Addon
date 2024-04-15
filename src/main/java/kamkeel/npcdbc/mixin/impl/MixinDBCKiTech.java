@@ -49,4 +49,12 @@ public class MixinDBCKiTech {
             }
         }
     }
+
+    /**
+     * Descends from custom form when DBC descend key is pressed
+     */
+    @Inject(method = "Descend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;kiInSuper:I", shift = At.Shift.AFTER), cancellable = true)
+    private static void DescendModified(KeyBinding K, CallbackInfo ci) {
+
+    }
 }
