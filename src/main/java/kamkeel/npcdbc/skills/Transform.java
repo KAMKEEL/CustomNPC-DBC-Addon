@@ -23,7 +23,7 @@ public class Transform {
     //////////////////////////////////////////////////
     // Client  side handling
 
-    //WIP, only 85% done, but is functional and wont break
+    //WIP, only 85% done, but is functional and won't break
     @SideOnly(Side.CLIENT)
     public static void Ascend(CustomForm form) {
         if (cantTransform || (rage > 0 && transformed) || (CustomFormData.getClient().getCurrentForm() != null && CustomFormData.getClient().getCurrentForm().getID() == form.id))
@@ -66,7 +66,6 @@ public class Transform {
             transformed = true;
 
         }
-
 
     }
 

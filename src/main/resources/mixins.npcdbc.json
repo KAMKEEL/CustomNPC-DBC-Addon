@@ -9,14 +9,16 @@
     "MixinDBCAddon",
     "MixinDBCDisplay",
     "MixinDBCStats",
-    "MixinScriptPlayer",
-    "MixinJRMCoreH"
+    "MixinJGPlayerMP",
+    "MixinJRMCoreH",
+    "MixinScriptPlayer"
   ],
   "client": [
     "MixinDBCClient",
     "MixinDBCKiTech",
     "MixinJRMCoreGuiBars",
-    "MixinJRMCoreGuiScreen"
+    "MixinJRMCoreGuiScreen",
+    "MixinRenderPlayerJBRA"
   ],
   "server": []
 }

@@ -9,9 +9,11 @@ import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
@@ -19,35 +21,9 @@ import java.util.List;
 
 public class MixinJRMCoreGuiScreen extends GuiScreen {
 
-    @Shadow protected static List<Object[]> detailList;
+    @Shadow
+    protected static List<Object[]> detailList;
 
-    /**
-     * For displaying Custom Form name in DBC GUI
-     *
-     * @author
-     * @reason
-     */
-    @Overwrite
-    private static void drawDetails(String s1, String s2, int xpos, int ypos, int x, int y, FontRenderer var8) {
-        if (s1.contains(JRMCoreH.trl("jrmc", "TRState") + ":")) {
-            final String TRState2 = JRMCoreH.trl("jrmc", "TRState"); // "Form : SS4"
-            s1 = TRState2 + ":" + getFormName();
-            String[] e = s1.split(":");
-            String e0 = e[0] + ": ";
-            int pos = var8.getStringWidth(e0);
-            var8.drawString(e0 + "", xpos, ypos, 0);
-            var8.drawString(e[1], xpos + pos, ypos, DBCUtils.getCurrentFormColor());
-        } else {
-
-            var8.drawString(s1, xpos, ypos, 0);
-        }
-        int wpos = var8.getStringWidth(s1);
-        if (xpos < x && xpos + wpos > x && ypos - 3 < y && ypos + 10 > y) {
-            int ll = 200;
-            Object[] txt = new Object[]{s2, "§8", 0, true, x + 5, y + 5, Integer.valueOf(ll)};
-            detailList.add(txt);
-        }
-    }
 
     @Unique
     private static String getFormName() {
@@ -61,5 +37,25 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
         }
 
         return name;
+    }
+
+    @Inject(method = "drawDetails", at = @At("HEAD"), remap = false, cancellable = true)
+    private static void onDrawDetails(String s1, String s2, int xpos, int ypos, int x, int y, FontRenderer var8, CallbackInfo ci) {
+        if (s1.contains(JRMCoreH.trl("jrmc", "TRState") + ":")) {
+            final String TRState2 = JRMCoreH.trl("jrmc", "TRState"); // "Form : SS4"
+            s1 = TRState2 + ":" + getFormName();
+            String[] e = s1.split(":");
+            String e0 = e[0] + ": ";
+            int pos = var8.getStringWidth(e0);
+            var8.drawString(e0 + "", xpos, ypos, 0);
+            var8.drawString(e[1], xpos + pos, ypos, DBCUtils.getCurrentFormColor());
+            int wpos = var8.getStringWidth(s1);
+            if (xpos < x && xpos + wpos > x && ypos - 3 < y && ypos + 10 > y) {
+                int ll = 200;
+                Object[] txt = new Object[]{s2, "§8", 0, true, x + 5, y + 5, Integer.valueOf(ll)};
+                detailList.add(txt);
+            }
+            ci.cancel();
+        }
     }
 }
