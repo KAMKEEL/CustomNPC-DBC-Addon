@@ -95,10 +95,6 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
 
         if (dn.equals(DBCData.dn) && !DBCData.has(p))
             p.registerExtendedProperties(DBCData.dn, new DBCData(p));
-        else if (dn.equals(CustomFormData.NAME) && !CustomFormData.has(p))
-            p.registerExtendedProperties(CustomFormData.NAME, new CustomFormData(p));
-
-
     }
 
     @Override

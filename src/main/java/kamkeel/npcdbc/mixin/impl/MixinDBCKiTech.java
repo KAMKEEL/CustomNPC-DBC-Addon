@@ -4,7 +4,6 @@ import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.SyncedData.CustomFormData;
 import kamkeel.npcdbc.network.PacketRegistry;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
