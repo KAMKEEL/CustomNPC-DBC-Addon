@@ -22,15 +22,15 @@ public class MixinDBCKiTech {
     @Inject(method = "Ascend", at = @At("HEAD"), cancellable = true)
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
         if (K.getIsKeyPressed()) {
-            PlayerCustomFormData playerCustomFormData = Utility.getClientFormData(Minecraft.getMinecraft().thePlayer);
-            if(playerCustomFormData.isInCustomForm()){
-                if (JRMCoreH.PlyrSettingsB(0) && playerCustomFormData.getCurrentForm().isFormStackable(DBCForm.Kaioken)) {
+            PlayerCustomFormData formData = Utility.getClientFormData(Minecraft.getMinecraft().thePlayer);
+            if(formData.isInCustomForm()){
+                if (JRMCoreH.PlyrSettingsB(0) && formData.getCurrentForm().isFormStackable(DBCForm.Kaioken)) {
                 }
-                if (JRMCoreH.PlyrSettingsB(11) && playerCustomFormData.getCurrentForm().isFormStackable(DBCForm.UltraInstinct)) {
+                if (JRMCoreH.PlyrSettingsB(11) && formData.getCurrentForm().isFormStackable(DBCForm.UltraInstinct)) {
                 }
-                if (JRMCoreH.PlyrSettingsB(16) && playerCustomFormData.getCurrentForm().isFormStackable(DBCForm.GodOfDestruction)) {
+                if (JRMCoreH.PlyrSettingsB(16) && formData.getCurrentForm().isFormStackable(DBCForm.GodOfDestruction)) {
                 }
-                if (JRMCoreH.PlyrSettingsB(6) && playerCustomFormData.getCurrentForm().isFormStackable(DBCForm.Mystic)) {
+                if (JRMCoreH.PlyrSettingsB(6) && formData.getCurrentForm().isFormStackable(DBCForm.Mystic)) {
                 } else
                     ci.cancel();
             }
@@ -43,10 +43,10 @@ public class MixinDBCKiTech {
     @Inject(method = "Descend", at = @At("HEAD"), cancellable = true)
     private static void Descend(KeyBinding K, CallbackInfo ci) {
         if (K.getIsKeyPressed()) {
-            PlayerCustomFormData playerCustomFormData = Utility.getClientFormData(Minecraft.getMinecraft().thePlayer);
-            if(playerCustomFormData.isInCustomForm()){
+            PlayerCustomFormData formData = Utility.getClientFormData(Minecraft.getMinecraft().thePlayer);
+            if(formData.isInCustomForm()){
                 PacketRegistry.tellServer("Descend");
-                DBCKiTech.soundAsc(CustomFormData.getClient().getCurrentForm().getDescendSound());
+                DBCKiTech.soundAsc(formData.getCurrentForm().getDescendSound());
                 ci.cancel();
             }
         }
