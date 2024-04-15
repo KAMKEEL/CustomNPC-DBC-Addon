@@ -9,7 +9,7 @@ import noppes.npcs.entity.EntityNPCInterface;
 public class ParticleFormHandler {
     public static void spawnParticle(EntityNPCInterface npc, EnumAuraTypes types){
         switch (types){
-            case GoD -> {
+            case GoD:
                 if (npc.worldObj.isRemote && JGConfigClientSettings.CLIENT_DA8) {
                     for(int k = 0; k < JGConfigClientSettings.get_da1(); ++k) {
                         for(int i = 0; i < 5; ++i) {
@@ -27,8 +27,7 @@ public class ParticleFormHandler {
                     }
                 }
                 break;
-            }
-            case GoDToppo -> {
+            case GoDToppo:
                 if (npc.worldObj.isRemote && JGConfigClientSettings.CLIENT_DA8) {
                     for(int r = 0; r < JGConfigClientSettings.get_da1(); ++r) {
                         for(int i = 0; i < 3; ++i) {
@@ -46,8 +45,7 @@ public class ParticleFormHandler {
                     }
                 }
                 break;
-            }
-            case SaiyanRose -> {
+            case SaiyanRose:
                 if (npc.worldObj.isRemote && JGConfigClientSettings.CLIENT_DA8) {
                     for(int k = 0; k < JGConfigClientSettings.get_da1(); ++k) {
                         float out = 1.6F;
@@ -104,8 +102,8 @@ public class ParticleFormHandler {
                         entity.worldObj.spawnEntityInWorld(entity2);
                     }
                 }
-            }
-            case UI -> {
+                break;
+            case UI:
                 for(int k = 0; k < JGConfigClientSettings.get_da1(); ++k) {
                     if (JGConfigClientSettings.CLIENT_DA8) {
                         double posXOth = npc.posX;
@@ -146,8 +144,7 @@ public class ParticleFormHandler {
                     }
                 }
                 break;
-            }
-            case Golden -> {
+            case Golden:
                 if (npc.worldObj.isRemote && JGConfigClientSettings.CLIENT_DA8) {
                     float out = 1.6F;
                     float life = 0.8F * npc.height;
@@ -197,8 +194,7 @@ public class ParticleFormHandler {
                     }
                 }
                 break;
-            }
-            case Legendary -> {
+            case Legendary:
                 if (npc.worldObj.isRemote && JGConfigClientSettings.CLIENT_DA8) {
                     for(int k = 0; k < JGConfigClientSettings.get_da1(); ++k) {
                         for(int i = 0; i < 5; ++i) {
@@ -222,8 +218,7 @@ public class ParticleFormHandler {
                     }
                 }
                 break;
-            }
-            case SaiyanSuper -> {
+            case SaiyanSuper:
                 if (npc.worldObj.isRemote && JGConfigClientSettings.CLIENT_DA8) {
                     for(int k = 0; k < JGConfigClientSettings.get_da1(); ++k) {
                         for(int i = 0; i < 5; ++i) {
@@ -247,8 +242,7 @@ public class ParticleFormHandler {
                     }
                 }
                 break;
-            }
-            case SaiyanGod -> {
+            case SaiyanGod:
                 if (npc.worldObj.isRemote && JGConfigClientSettings.CLIENT_DA8) {
                     float life = 0.8F * npc.height;
                     for(int k = 0; k < JGConfigClientSettings.get_da1(); ++k) {
@@ -291,8 +285,7 @@ public class ParticleFormHandler {
                     }
                 }
                 break;
-            }
-            case SaiyanBlue -> {
+            case SaiyanBlue:
                 if (npc.worldObj.isRemote && JGConfigClientSettings.CLIENT_DA8) {
                     float life = 0.8F * npc.height;
                     for(int k = 0; k < JGConfigClientSettings.get_da1(); ++k) {
@@ -335,8 +328,7 @@ public class ParticleFormHandler {
                     }
                 }
                 break;
-            }
-            case Jiren -> {
+            case Jiren:
                 if (npc.worldObj.isRemote && JGConfigClientSettings.CLIENT_DA8) {
                     for(int k = 0; k < JGConfigClientSettings.get_da1(); ++k) {
                         boolean bol4a = true;
@@ -456,7 +448,6 @@ public class ParticleFormHandler {
                     }
                 }
                 break;
-            }
         }
     }
 
