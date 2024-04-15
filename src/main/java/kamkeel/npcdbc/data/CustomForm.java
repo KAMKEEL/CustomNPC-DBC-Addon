@@ -57,6 +57,7 @@ public class CustomForm implements ICustomForm {
         this.strengthMulti = allMulti;
         this.dexMulti = allMulti;
         this.willMulti = allMulti;
+        save();
     }
 
     @Override
@@ -67,6 +68,7 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setName(String name) {
         this.name = name;
+        save();
     }
 
     @Override
@@ -80,6 +82,7 @@ public class CustomForm implements ICustomForm {
             name = name.replace("&", "§");
 
         this.menuName = name;
+        save();
     }
 
 
@@ -91,6 +94,7 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setRace(int race) {
         this.race = race;
+        save();
     }
 
     @Override
@@ -106,6 +110,8 @@ public class CustomForm implements ICustomForm {
                 willMulti = multi;
                 break;
         }
+        save();
+
     }
 
     @Override
@@ -153,6 +159,8 @@ public class CustomForm implements ICustomForm {
                 mysticStackable = stackForm;
                 break;
         }
+        save();
+
     }
 
     public void setFormMulti(int dbcForm, float multi) {
@@ -170,6 +178,8 @@ public class CustomForm implements ICustomForm {
                 mysticMulti = multi;
                 break;
         }
+        save();
+
     }
 
     public float getFormMulti(int dbcForm) {
@@ -195,6 +205,8 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setAuraColor(int auraColor) {
         this.auraColor = auraColor;
+        save();
+
     }
 
     @Override
@@ -205,8 +217,8 @@ public class CustomForm implements ICustomForm {
             if (!playersWithForm.contains(p.getCommandSenderName())) {
                 playersWithForm.add(p.getCommandSenderName());
                 playerData.updateClient = true;
-                save();
             }
+            save();
         }
     }
 
@@ -223,8 +235,8 @@ public class CustomForm implements ICustomForm {
             if (playersWithForm.contains(p.getCommandSenderName())) {
                 playersWithForm.remove(p.getCommandSenderName());
                 playerData.updateClient = true;
-                save();
             }
+            save();
         }
 
     }
@@ -241,6 +253,7 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setAscendSound(String directory) {
         ascendSound = directory;
+        save();
     }
 
     @Override
@@ -251,6 +264,7 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setDescendSound(String directory) {
         descendSound = directory;
+        save();
     }
 
     public List<EntityPlayer> getPlayersWithForm() {
@@ -274,6 +288,7 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setID(int newID) {
         id = newID;
+        save();
     }
 
     public void readFromNBT(NBTTagCompound compound) {

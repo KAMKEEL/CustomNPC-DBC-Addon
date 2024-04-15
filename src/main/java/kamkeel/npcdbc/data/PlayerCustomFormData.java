@@ -1,28 +1,29 @@
 package kamkeel.npcdbc.data;
 
-import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
+import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * Store all player CustomForms Data here
  */
 public class PlayerCustomFormData {
+    public EntityPlayer player;
+    public PlayerData playerData;
     public int currentForm = 0;
     public int selectedForm = -1;
-    public HashMap<Integer, String> unlockedForms = new HashMap<Integer, String> ();
+    public HashMap<Integer, String> unlockedForms = new HashMap<Integer, String>();
 
-    public PlayerCustomFormData() {}
+    public PlayerCustomFormData(EntityPlayer p) {
+        this.player = p;
+
+    }
 
     //add conditions here
     public static boolean eligibleForCustomForms(Entity p) {
@@ -66,6 +67,13 @@ public class PlayerCustomFormData {
 
     public CustomForm getSelectedForm() {
         return (CustomForm) FormController.Instance.get(selectedForm);
+    }
+
+    public void updateClient() {
+        //  System.out.println("player " + player);
+        PlayerDataController.Instance.getPlayerData(player).updateClient = true;
+
+        //  playerData.updateClient = true;
     }
 
     public void saveNBTData(NBTTagCompound compound) {

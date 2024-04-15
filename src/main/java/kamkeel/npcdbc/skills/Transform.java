@@ -146,11 +146,12 @@ public class Transform {
             c.currentForm = formID;
             if (d.State > 0)
                 d.State = 0;
+            c.updateClient();
             d.saveToNBT(true);
             Utility.sendMessage(p, "§aTransformed to§r " + c.getCurrentForm().getMenuName());
 
         }
-       // c.saveToNBT(true);
+        // c.saveToNBT(true);
 
     }
 
@@ -179,7 +180,7 @@ public class Transform {
         else if (c.isInCustomForm()) {
             Utility.sendMessage(p, "§cDescended from§r " + c.getCurrentForm().getMenuName());
             c.currentForm = 0;
-           // c.saveToNBT(true);
+            c.updateClient();
         }
         d.saveToNBT(true);
 

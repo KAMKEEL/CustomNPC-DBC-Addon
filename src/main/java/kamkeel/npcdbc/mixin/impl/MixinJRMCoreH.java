@@ -20,17 +20,18 @@ public class MixinJRMCoreH {
         // Set the manipulated result back to the return value
         PlayerCustomFormData formData = Utility.isServer() ? Utility.getFormData(player) : Utility.getFormDataClient();
 
-        System.out.println("hi " + result);
+        // System.out.println("hi " + result);
         if (formData != null && formData.isInCustomForm()) {
             float[] multis = formData.getCurrentForm().getAllMulti();
-             System.out.println("hi2 " + formData.getCurrentForm().getAllMulti());
+            //  System.out.println("multis " + multis[0]+ multis[1]+ multis[2]);
+            //  System.out.println("hi2 " + formData.getCurrentForm().getAllMulti());
             if (attribute == 0) //str
                 result *= multis[0];
             if (attribute == 1) //dex
                 result *= multis[1];
             if (attribute == 3) //will
                 result *= multis[2];
-             System.out.println("Res " + result);
+            // System.out.println("Res " + result);
         }
         result = (int) ((double) result > Double.MAX_VALUE ? Double.MAX_VALUE : (double) result);
         info.setReturnValue(result);
