@@ -3,9 +3,12 @@ package kamkeel.npcdbc.mixin.impl;
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.data.SyncedData.CustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,8 +32,9 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
     private static String getFormName() {
         boolean ui = JRMCoreH.StusEfctsMe(19);
         String name = null;
-        if (CustomFormData.getClient().isInCustomForm())
-            name = CustomFormData.getClient().getCurrentForm().getMenuName();
+        PlayerCustomFormData formData = Utility.getClientFormData(Minecraft.getMinecraft().thePlayer);
+        if (formData.isInCustomForm())
+            name = formData.getCurrentForm().getMenuName();
         else {
             DBCData d = DBCData.getClient();
             name = DBCUtils.getCurrentFormFullName(d.Race, d.State, d.isForm(DBCForm.Legendary), d.isForm(DBCForm.Divine), JRMCoreH.StusEfctsMe(13), ui, DBCUtils.isUIWhite(ui, JRMCoreH.State2), JRMCoreH.StusEfctsMe(20));
