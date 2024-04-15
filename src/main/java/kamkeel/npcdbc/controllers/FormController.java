@@ -8,6 +8,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
+import noppes.npcs.Server;
+import noppes.npcs.constants.EnumPacketClient;
+import noppes.npcs.constants.SyncType;
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.*;
@@ -135,10 +138,12 @@ public class FormController implements IFormHandler {
         File file2 = new File(dir, customForm.getName() + ".json");
 
         try {
-            NBTJsonUtil.SaveFile(file, ((CustomForm) customForm).writeToNBT());
+            NBTTagCompound nbtTagCompound = ((CustomForm) customForm).writeToNBT();
+            NBTJsonUtil.SaveFile(file, nbtTagCompound );
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
+            Server.sendToAll(EnumPacketClient.SYNC_UPDATE, SyncType.CUSTOM_FORM, nbtTagCompound, customForm.getID());
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -165,10 +170,10 @@ public class FormController implements IFormHandler {
                         continue;
                     if (file.getName().equals(foundForm.name + ".json")) {
                         file.delete();
+                        Server.sendToAll(EnumPacketClient.SYNC_REMOVE, SyncType.CUSTOM_FORM, foundForm);
                         break;
                     }
                 }
-
                 saveFormLoadMap();
             }
         }
@@ -186,10 +191,10 @@ public class FormController implements IFormHandler {
                     continue;
                 if (file.getName().equals(foundForm.name + ".json")) {
                     file.delete();
+                    Server.sendToAll(EnumPacketClient.SYNC_REMOVE, SyncType.CUSTOM_FORM, foundForm);
                     break;
                 }
             }
-
             saveFormLoadMap();
         }
     }
@@ -233,7 +238,6 @@ public class FormController implements IFormHandler {
         }
         return names;
     }
-
 
     ////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////
