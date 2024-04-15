@@ -15,19 +15,19 @@ import net.minecraft.network.PacketBuffer;
 import java.io.IOException;
 
 public class PacketTellServer extends AbstractServerMessage<PacketTellServer> {
-    private String idString;
+    private String packet_id;
 
     public PacketTellServer() {
     }
 
     public PacketTellServer(String info) {
-        idString = info;
+        packet_id = info;
     }
 
     @Override
     public void process(EntityPlayer p, Side side) {
         NBTTagCompound nbt = p.getEntityData().getCompoundTag("PlayerPersisted");
-        goThroughStringIDs(idString, nbt, (EntityPlayerMP) p);
+        goThroughStringIDs(packet_id, nbt, (EntityPlayerMP) p);
 
 
     }
@@ -54,13 +54,13 @@ public class PacketTellServer extends AbstractServerMessage<PacketTellServer> {
 
     @Override
     public void read(PacketBuffer buffer) throws IOException {
-        idString = ByteBufUtils.readUTF8String(buffer);
+        packet_id = ByteBufUtils.readUTF8String(buffer);
 
     }
 
     @Override
     public void write(PacketBuffer buffer) throws IOException {
-        ByteBufUtils.writeUTF8String(buffer, idString);
+        ByteBufUtils.writeUTF8String(buffer, packet_id);
     }
 
 }
