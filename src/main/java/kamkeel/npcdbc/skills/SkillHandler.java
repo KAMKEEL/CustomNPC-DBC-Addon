@@ -28,7 +28,7 @@ public class SkillHandler {
     }
 
     private void AscendKey() {
-        if (Keyboard.isKeyDown(KeyHandler.Ascend.getKeyCode())) {
+        if (Keyboard.isKeyDown(KeyHandler.AscendKey.getKeyCode())) {
             if (CustomFormData.getClient().getSelectedForm() != null) {
                 Transform.Ascend(CustomFormData.getClient().getSelectedForm());
             } else {
