@@ -3,7 +3,6 @@ package kamkeel.npcdbc.util;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.SyncedData.CustomFormData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -80,5 +79,9 @@ public class Utility {
 
     public static PlayerCustomFormData getClientFormData(EntityPlayer p) {
         return ((IPlayerFormData) PlayerData.get(p)).getCustomFormData();
+    }
+
+    public static PlayerCustomFormData getFormData(PlayerData playerData) {
+        return ((IPlayerFormData) playerData).getCustomFormData();
     }
 }

@@ -5,11 +5,13 @@ import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.SyncedData.CustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.controllers.AnimationController;
+import noppes.npcs.controllers.PlayerDataController;
+import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.scripted.NpcAPI;
 
 import java.util.ArrayList;
@@ -197,10 +199,11 @@ public class CustomForm implements ICustomForm {
     @Override
     public void assignToPlayer(EntityPlayer p) {
         if (race == DBCData.get(p).Race) {
-            CustomFormData.get(p).addForm(name);
+            PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
+            Utility.getFormData(playerData).addForm(this);
             if (!playersWithForm.contains(p.getCommandSenderName())) {
                 playersWithForm.add(p.getCommandSenderName());
-                FormController.Instance.loadToClient(p, this);
+                playerData.updateClient = true;
                 save();
             }
         }
@@ -214,10 +217,11 @@ public class CustomForm implements ICustomForm {
     @Override
     public void removeFromPlayer(EntityPlayer p) {
         if (race == DBCData.get(p).Race) {
-            CustomFormData.get(p).removeForm(name);
+            PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
+            Utility.getFormData(playerData).removeForm(this);
             if (playersWithForm.contains(p.getCommandSenderName())) {
                 playersWithForm.remove(p.getCommandSenderName());
-                FormController.Instance.unloadFromClient(p, this);
+                playerData.updateClient = true;
                 save();
             }
         }

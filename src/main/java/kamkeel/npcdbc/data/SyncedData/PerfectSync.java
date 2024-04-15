@@ -39,8 +39,6 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
         if (e instanceof EntityPlayer) {
             if (DBCData.has(e))
                 DBCData.get(e).loadFromNBT(true);
-            if (CustomFormData.has(e))
-                CustomFormData.get(e).loadFromNBT(true);
         }
     }
 
@@ -48,9 +46,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
     public static void registerAllDatas(Entity e) {
         if (e instanceof EntityPlayer) {
             PerfectSync.register(e, DBCData.dn, true);
-            PerfectSync.register(e, CustomFormData.NAME, true);
         }
-
     }
 
     // register all implementations individually here
@@ -60,13 +56,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
             DBCData.get(e).loadFromNBT(false); // initial loading of fields from server NBTs
             if (registerClient)
                 registerClient(e, dn);
-        } else if (dn.equals(CustomFormData.NAME) && CustomFormData.eligibleForCustomForms(e) && !CustomFormData.has(e)) {
-            e.registerExtendedProperties(CustomFormData.NAME, new CustomFormData(e));
-            CustomFormData.get(e).loadFromNBT(false);
-            if (registerClient)
-                registerClient(e, dn);
         }
-
     }
 
     public static void registerClient(Entity e, String dn) {

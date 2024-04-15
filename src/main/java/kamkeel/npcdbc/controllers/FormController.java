@@ -43,14 +43,6 @@ public class FormController implements IFormHandler {
         LogWriter.info("Done loading custom forms.");
     }
 
-    public void loadToClient(EntityPlayer p, CustomForm f) { //loads a CustomForm object to p's client
-        PacketRegistry.syncData(p, "loadForm", f.writeToNBT());
-    }
-
-    public void unloadFromClient(EntityPlayer p, CustomForm f) {
-        PacketRegistry.syncData(p, "unloadForm", f.writeToNBT());
-    }
-
     public ICustomForm createForm(String name) {
         if (hasName(name))
             return get(name);
