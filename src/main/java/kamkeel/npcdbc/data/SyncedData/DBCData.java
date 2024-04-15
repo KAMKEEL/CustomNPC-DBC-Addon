@@ -23,13 +23,12 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks;
     public byte Class, Race, Powertype, State, State2, Release;
     public boolean Alive, isKO;
-    public String Skills, RacialSkills, StatusEffects, Settings, FormMasteryRacial, FormMasteryNR;
+    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "";
 
     public DBCData(Entity player) {
         super(player);
         this.DATA_NAME = dn;
         p = (EntityPlayer) player;
-
     }
 
     public static boolean eligibleForDBC(Entity p) {
@@ -118,7 +117,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
                 setSE(12, on);
                 break;
         }
-        saveFields();
+        saveToNBT(true);
     }
 
     public boolean settingOn(int id) {
@@ -140,9 +139,11 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         }
     }
 
+
     @Override
     public void saveNBTData(NBTTagCompound compound) { // save all fields to compound
         NBTTagCompound c = compound(e, dn);
+
 
         c.setInteger("jrmcStrI", STR);
         c.setInteger("jrmcDexI", DEX);
@@ -159,8 +160,10 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         c.setByte("jrmcState2", State2);
         c.setByte("jrmcRelease", Release);
         c.setByte("jrmcPwrtyp", Powertype);
+
+
         c.setByte("jrmcRace", Race);
-        c.setByte("jrmcClass", Class);
+
 
         c.setString("jrmcStatusEff", StatusEffects);
         c.setString("jrmcSSltX", RacialSkills);
@@ -169,13 +172,11 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         c.setString("jrmcFormMasteryRacial_" + JRMCoreH.Races[Race], FormMasteryRacial);
         c.setString("jrmcFormMasteryNonRacial", FormMasteryNR);
 
-        compound = c;
     }
 
     @Override
     public void loadNBTData(NBTTagCompound compound) { // compound has all synced data,load all fields from compound
         NBTTagCompound c = u.isServer() ? compound(e, dn) : compound;
-
         STR = c.getInteger("jrmcStrI");
         DEX = c.getInteger("jrmcDexI");
         CON = c.getInteger("jrmcConI");
@@ -205,5 +206,6 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         cmpd = c;
 
     }
+
 
 }

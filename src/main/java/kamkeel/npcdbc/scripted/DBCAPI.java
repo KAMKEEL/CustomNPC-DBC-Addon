@@ -40,6 +40,11 @@ public class DBCAPI extends AbstractDBCAPI {
     }
 
     @Override
+    public ICustomForm getCustomForm(String name) {
+        return FormController.getInstance().get(name);
+    }
+
+    @Override
     public IDBCStats abstractDBCData() {
         DBCStats dbcStats = new DBCStats();
         dbcStats.enabled = true;

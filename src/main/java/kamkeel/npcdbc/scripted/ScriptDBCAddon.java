@@ -561,9 +561,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                 d.setForm(DBCForm.Mystic, false);
             }
 
-            c.saveFields();
+            c.saveToNBT(true);
         } else
             throw new CustomNPCsException("Player doesn't have form " + formName + " unlocked!");
+    }
+
+    @Override
+    public void setCustomForm(ICustomForm form) {
+        setCustomForm(form.getName());
     }
 
     public void giveCustomForm(String formName) {
@@ -571,9 +576,43 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         f.assignToPlayer(player);
     }
 
+    @Override
+    public void giveCustomForm(ICustomForm form) {
+        giveCustomForm(form.getName());
+    }
+
     public void removeCustomForm(String formName) {
         ICustomForm f = FormController.Instance.get(formName);
         f.removeFromPlayer(player);
+    }
+
+    @Override
+    public void removeCustomForm(ICustomForm form) {
+        removeCustomForm(form.getName());
+    }
+
+    @Override
+    public void setSelectedCustomForm(ICustomForm form) {
+        setSelectedCustomForm(form.getName());
+
+    }
+
+
+    @Override
+    public void setSelectedCustomForm(String form) {
+        CustomFormData c = CustomFormData.get(player);
+        if (FormController.getInstance().has(form)) {
+            c.selectedForm = form;
+            c.saveToNBT(true);
+        }
+    }
+
+    @Override
+    public void removeSelectedCustomForm() {
+        CustomFormData c = CustomFormData.get(player);
+        c.selectedForm = "";
+        c.saveToNBT(true);
+
     }
 
     public boolean isInCustomForm() {

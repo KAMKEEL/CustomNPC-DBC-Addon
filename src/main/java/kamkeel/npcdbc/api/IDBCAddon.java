@@ -179,9 +179,23 @@ public interface IDBCAddon extends IDBCPlayer {
 
     void setCustomForm(String formName);
 
+    void setCustomForm(ICustomForm form);
+
     void giveCustomForm(String formName);
 
+    void giveCustomForm(ICustomForm form);
+
     void removeCustomForm(String formName);
+
+    void removeCustomForm(ICustomForm form);
+
+    //form player transforms to on transformation
+    void setSelectedCustomForm(ICustomForm form);
+
+
+    void setSelectedCustomForm(String form);
+
+    void removeSelectedCustomForm();
 
     /**
      * @return True if player is in any CNPC+ custom form

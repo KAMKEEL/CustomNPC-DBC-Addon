@@ -138,7 +138,7 @@ public class Transform {
         CustomFormData c = CustomFormData.get(p);
         if (c.currentForm != formID)
             c.currentForm = formID;
-        c.saveFields();
+        c.saveToNBT(true);
 
     }
 
@@ -166,9 +166,9 @@ public class Transform {
 
         else if (c.isInCustomForm()) {
             c.currentForm = 0;
-            c.saveFields();
+            c.saveToNBT(true);
         }
-        d.saveFields();
+        d.saveToNBT(true);
 
     }
 }

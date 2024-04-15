@@ -22,7 +22,7 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
     // id of form player is currently in, 0 if non CNPC custom form,
     public int currentForm = 0;
     // name of form to be entered upon transformation
-    public String selectedForm;
+    public String selectedForm = "";
 
 
     //names of forms given to player/player has unlocked
@@ -42,7 +42,7 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
 
     }
 
-    public static CustomFormData get(Entity player) { 
+    public static CustomFormData get(Entity player) {
         return get(player, dn);
 
     }
@@ -65,8 +65,7 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
     public void addForm(String name) { //add form to player
         if (!accessibleForms.contains(name)) {
             accessibleForms.add(name);
-            saveNBTData(null);
-            this.save(true);
+            this.saveToNBT(true);
         }
 
     }
@@ -74,8 +73,7 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
     public void removeForm(String name) { //removes form from player
         if (accessibleForms.contains(name)) {
             accessibleForms.remove(name);
-            saveFields();
-            this.save(true);
+            this.saveToNBT(true);
         }
     }
 
@@ -109,13 +107,18 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
         c.setInteger("currentForm", currentForm);
         c.setString("selectedForm", selectedForm);
 
+
         if (!accessibleForms.isEmpty()) {
+
             StringBuilder sb = new StringBuilder();
             for (String s : accessibleForms)
                 sb.append(s + ",");
-            c.setString("accessibleForms", sb.toString().substring(0, sb.length() - 1)); //removes the last ,
-        } else
+            String st = sb.toString().substring(0, sb.length() - 1);
+            c.setString("accessibleForms", st); //removes the last ,
+        } else {
             c.setString("accessibleForms", "");
+        }
+
 
     }
 
@@ -124,6 +127,7 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
 
         currentForm = c.getInteger("currentForm");
         selectedForm = c.getString("selectedForm");
+
 
         String s = c.getString("accessibleForms");
         List<String> newForms = new ArrayList<>();
@@ -138,13 +142,15 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
         accessibleForms = newForms;
 
 
+        cmpd = c;
+
     }
 
-    ////////////////////////
-    ////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
     // Client side CustomForm object loading
 
-    public void load() { //sends all accessibleForm objects from server to client
+    public void loadAllAccessibleForms() { //sends all accessibleForm objects from server to client
         for (String e : accessibleForms) {
             FormController.Instance.loadToClient(p, (CustomForm) FormController.Instance.get(e));
         }
@@ -184,4 +190,6 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
         }
         return null;
     }
+
+
 }

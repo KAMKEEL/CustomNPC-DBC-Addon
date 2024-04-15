@@ -15,7 +15,7 @@ public class SkillHandler {
     EntityPlayer p;
     int id = 0;
 
-    //WIP, not finished
+    //WIP
     @SubscribeEvent
     public void onSkill(ClientTickEvent e) {
 
@@ -24,13 +24,14 @@ public class SkillHandler {
             return;
 
         // Transform.decrementDescTimer();
-        Transform.decrementRage();
+        //Transform.decrementRage();
         AscendKey();
     }
 
     private void AscendKey() {
         if (Keyboard.isKeyDown(KeyHandler.Ascend.getKeyCode()) && CustomFormData.getClient().getSelectedForm() != null) {
             Transform.Ascend(CustomFormData.getClient().getSelectedForm().getID());
+            System.out.println("transforming");
         }
 
     }

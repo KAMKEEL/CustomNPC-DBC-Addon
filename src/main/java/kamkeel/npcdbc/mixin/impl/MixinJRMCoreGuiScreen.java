@@ -58,11 +58,8 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
         else {
             DBCData d = DBCData.getClient();
             name = DBCUtils.getCurrentFormFullName(d.Race, d.State, d.isForm(DBCForm.Legendary), d.isForm(DBCForm.Divine), JRMCoreH.StusEfctsMe(13), ui, DBCUtils.isUIWhite(ui, JRMCoreH.State2), JRMCoreH.StusEfctsMe(20));
-            System.out.println(d.State);
-            System.out.println("2 " + d.State2);
-
-            // System.out.println(d.cmpd);
         }
+
         return name;
     }
 }

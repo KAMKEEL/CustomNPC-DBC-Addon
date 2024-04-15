@@ -27,8 +27,8 @@ public class ClientEvents {
             PacketRegistry.tellServer("createForm");
         }
         if (Keyboard.isKeyDown(51)) { //,
-            System.out.println(CustomFormData.get(p).accessibleForms);
-            //CustomFormData.get(p).setString("accessibleForms", "Super Saiyan Green");
+            CustomFormData c = CustomFormData.get(p);
+            System.out.println("cmpd " + c.cmpd);
         }
 
 

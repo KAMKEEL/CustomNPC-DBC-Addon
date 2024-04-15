@@ -16,14 +16,13 @@ public class ServerEvents {
     @SideOnly(Side.SERVER)
     @SubscribeEvent
     public void sAmkp2(EntityConstructing e) {
-        if (!(e.entity instanceof EntityPlayer)) {
+        if (!(e.entity instanceof EntityPlayer))
             PerfectSync.registerAllDatas(e.entity); // entity registry
-        }
 
     }
 
     /**
-     * Saves/registers all PerfectSync datas
+     * loads/registers all PerfectSync datas from server NBTs
      */
     @SideOnly(Side.SERVER)
     @SubscribeEvent
@@ -40,7 +39,7 @@ public class ServerEvents {
             if (p instanceof EntityPlayer) {// checks if player is eligible for data or not, incase they weren't before
                 PerfectSync.registerAllDatas(p);
                 if (DBCData.has(p))
-                    DBCData.get(p).save(true); // saved every tick instead of X ticks, as multiple sources can change PlayerPersisted outside of this mod
+                    DBCData.get(p).loadFromNBT(true); // loaded from server NBT every tick instead of X ticks, as multiple sources can change PlayerPersisted outside of this mod
             }
 
             if (p.ticksExisted == 1) {

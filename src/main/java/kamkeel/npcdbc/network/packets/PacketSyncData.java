@@ -35,7 +35,7 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
         if (side == Side.SERVER) {
             updateServerData(p);
             if (s.contains("loadForms"))
-                CustomFormData.get(p).load();
+                CustomFormData.get(p).loadAllAccessibleForms();
         } else {
             if (s.contains("register"))
                 registerClient(p);
@@ -49,7 +49,6 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
                     CustomFormData.get(p).loadForm(data);
                 else if (s.contains("unloadForm"))
                     CustomFormData.get(p).unloadForm(data);
-
             } else {// non player entity
                 Entity e = u.getEntityFromID(p.worldObj, s.split(":")[1]);
                 if (e != null) {
@@ -86,7 +85,7 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
         else if (type.equals("String"))
             cmpd.setString(tag, value);
 
-        PerfectSync.get(e, dn).save(false);
+        PerfectSync.get(e, dn).loadFromNBT(false);
 
     }
 

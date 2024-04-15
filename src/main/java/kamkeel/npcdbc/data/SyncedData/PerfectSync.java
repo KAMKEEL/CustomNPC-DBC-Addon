@@ -38,9 +38,9 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
     public static void saveAllDatas(Entity e, boolean saveClient) {
         if (e instanceof EntityPlayer) {
             if (DBCData.has(e))
-                DBCData.get(e).save(true);
+                DBCData.get(e).loadFromNBT(true);
             if (CustomFormData.has(e))
-                CustomFormData.get(e).save(true);
+                CustomFormData.get(e).loadFromNBT(true);
         }
     }
 
@@ -57,10 +57,12 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
     public static void register(Entity e, String dn, boolean registerClient) {
         if (dn.equals(DBCData.dn) && DBCData.eligibleForDBC(e) && !DBCData.has(e)) {
             e.registerExtendedProperties(DBCData.dn, new DBCData(e));
+            DBCData.get(e).loadFromNBT(false); // initial loading of fields from server NBTs
             if (registerClient)
                 registerClient(e, dn);
         } else if (dn.equals(CustomFormData.dn) && CustomFormData.eligibleForCustomForms(e) && !CustomFormData.has(e)) {
             e.registerExtendedProperties(CustomFormData.dn, new CustomFormData(e));
+            CustomFormData.get(e).loadFromNBT(false);
             if (registerClient)
                 registerClient(e, dn);
         }
@@ -93,32 +95,46 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
         return get(Minecraft.getMinecraft().thePlayer, s);
     }
 
-    @Override
     public void init(Entity entity, World world) {
     }
 
-    public void saveFields() {
-        saveNBTData(null);
-    }
 
-    @Override
     public void saveNBTData(NBTTagCompound compound) {
     }
 
-    @Override
+    /**
+     * Loads fields from server NBT compound
+     */
+    public void loadFromNBT(boolean saveClient) {
+        if (u.isServer()) {
+            loadNBTData(null);
+            if (!saveClient)
+                return;
+            NBTTagCompound data = compound();
+            String s = DATA_NAME.equals(DBCData.dn) ? "DBCData" : DATA_NAME.equals(CustomFormData.dn) ? CustomFormData.dn : "";
+            if (e instanceof EntityPlayer)
+                PacketRegistry.syncData(e, "update" + s, data);
+            else
+                PacketRegistry.syncData(e, "updateEntity" + s + ":" + u.getEntityID(e), data);
+
+        }
+    }
+
     public void loadNBTData(NBTTagCompound compound) {
     }
 
-    public void save(boolean saveClient) { // saves to client from server
-        if (w == null)
-            w = e.worldObj;
+    /**
+     * Saves field values to server NBT compound
+     *
+     * @param saveClient
+     */
+    public void saveToNBT(boolean saveClient) {
 
         if (u.isServer()) {
-            NBTTagCompound data = compound();
-            loadNBTData(data);
+            saveNBTData(null);
             if (!saveClient)
                 return;
-
+            NBTTagCompound data = compound();
             String s = DATA_NAME.equals(DBCData.dn) ? "DBCData" : DATA_NAME.equals(CustomFormData.dn) ? CustomFormData.dn : "";
             if (e instanceof EntityPlayer)
                 PacketRegistry.syncData(e, "update" + s, data);
@@ -211,7 +227,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
     public void setInt(String string, int s) {
         compound().setInteger(string, s);
         if (u.isServer())
-            save(true); //syncs updated tag to client
+            loadFromNBT(true); //syncs updated tag to client
         else
             saveServer(string, "Int"); //if tag changed on client, syncs it to server
 
@@ -220,7 +236,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
     public void setFloat(String string, float s) {
         compound().setFloat(string, s);
         if (u.isServer())
-            save(true);
+            loadFromNBT(true);
         else
             saveServer(string, "Float");
 
@@ -229,7 +245,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
     public void setDouble(String string, double s) {
         compound().setDouble(string, s);
         if (u.isServer())
-            save(true);
+            loadFromNBT(true);
         else
             saveServer(string, "Double");
 
@@ -238,7 +254,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
     public void setLong(String string, long s) {
         compound().setLong(string, s);
         if (u.isServer())
-            save(true);
+            loadFromNBT(true);
         else
             saveServer(string, "Long");
     }
@@ -246,7 +262,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
     public void setByte(String string, byte s) {
         compound().setByte(string, s);
         if (u.isServer())
-            save(true);
+            loadFromNBT(true);
         else
             saveServer(string, "Byte");
 
@@ -255,7 +271,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
     public void setBoolean(String string, boolean s) {
         compound().setBoolean(string, s);
         if (u.isServer())
-            save(true);
+            loadFromNBT(true);
         else
             saveServer(string, "Boolean");
 
@@ -264,7 +280,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
     public void setString(String string, String s) {
         compound().setString(string, s);
         if (u.isServer())
-            save(true);
+            loadFromNBT(true);
         else
             saveServer(string, "String");
 

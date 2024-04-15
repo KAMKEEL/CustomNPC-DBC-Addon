@@ -29,6 +29,7 @@ public abstract class AbstractDBCAPI {
     }
 
     public abstract ICustomForm createCustomForm(String name);
+    public abstract ICustomForm getCustomForm(String name);
 
     /**
      * @return Fake DBC Data for Simulating Damage
