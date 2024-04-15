@@ -6,15 +6,13 @@ import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.api.IDBCAddon;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.SyncedData.CustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.controllers.PlayerDataController;
-import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 
@@ -544,10 +542,10 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     public void setCustomForm(String formName) {
-        ICustomForm f = FormController.Instance.get(formName);
-        CustomFormData c = CustomFormData.get(player);
-        if (c.hasForm(formName)) {
-            c.setInt("currentForm", f.getID());
+        CustomForm f = (CustomForm) FormController.Instance.get(formName);
+        PlayerCustomFormData c = Utility.getFormData(player);
+        if (c.hasForm(f)) {
+            // c.setInt("currentForm", f.getID());
             DBCData d = DBCData.get(player);
             d.State = 0;
             if (d.isForm(DBCForm.Kaioken) && !f.isFormStackable(DBCForm.Kaioken)) {
@@ -565,7 +563,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                 d.setForm(DBCForm.Mystic, false);
             }
 
-            c.saveToNBT(true);
+            //  c.saveToNBT(true);
         } else
             throw new CustomNPCsException("Player doesn't have form " + formName + " unlocked!");
     }
@@ -597,37 +595,37 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setSelectedCustomForm(ICustomForm form) {
-        setSelectedCustomForm(form.getName());
+        setSelectedCustomForm(form.getID());
 
     }
 
 
     @Override
     public void setSelectedCustomForm(int formid) {
-        PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
-        PlayerCustomFormData c = Utility.getFormData(playerData);
+        PlayerCustomFormData c = Utility.getFormData(player);
         if (FormController.getInstance().has(formid)) {
             c.selectedForm = formid;
-            // c.saveToNBT(true);
+            //set here
         }
     }
 
     @Override
     public void removeSelectedCustomForm() {
-        PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
-        PlayerCustomFormData c = Utility.getFormData(playerData);
+        PlayerCustomFormData c = Utility.getFormData(player);
         c.selectedForm = -1;
+        //remove here
+
     }
 
     public boolean isInCustomForm() {
-        return CustomFormData.get(player).isInCustomForm();
+        return Utility.getFormData(player).isInCustomForm();
     }
 
     public boolean isInCustomForm(String formName) {
-        return CustomFormData.get(player).isInForm(formName);
+        return Utility.getFormData(player).isInForm(formName);
     }
 
     public ICustomForm getCurrentCustomForm() {
-        return CustomFormData.get(player).getCurrentForm();
+        return Utility.getFormData(player).getCurrentForm();
     }
 }

@@ -101,7 +101,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
             if (!saveClient)
                 return;
             NBTTagCompound data = compound();
-            String s = DATA_NAME.equals(DBCData.dn) ? "DBCData" : DATA_NAME.equals(CustomFormData.NAME) ? CustomFormData.NAME : "";
+            String s = DATA_NAME.equals(DBCData.dn) ? "DBCData" : "";
             if (entity instanceof EntityPlayer)
                 PacketRegistry.syncData(entity, "update" + s, data);
             else
@@ -125,7 +125,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
             if (!saveClient)
                 return;
             NBTTagCompound data = compound();
-            String s = DATA_NAME.equals(DBCData.dn) ? "DBCData" : DATA_NAME.equals(CustomFormData.NAME) ? CustomFormData.NAME : "";
+            String s = DATA_NAME.equals(DBCData.dn) ? "DBCData" : "";
             if (entity instanceof EntityPlayer)
                 PacketRegistry.syncData(entity, "update" + s, data);
             else

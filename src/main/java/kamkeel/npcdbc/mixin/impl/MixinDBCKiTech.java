@@ -6,7 +6,6 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.network.PacketRegistry;
 import kamkeel.npcdbc.util.Utility;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,8 +20,8 @@ public class MixinDBCKiTech {
     @Inject(method = "Ascend", at = @At("HEAD"), cancellable = true)
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
         if (K.getIsKeyPressed()) {
-            PlayerCustomFormData formData = Utility.getClientFormData(Minecraft.getMinecraft().thePlayer);
-            if(formData.isInCustomForm()){
+            PlayerCustomFormData formData = Utility.getFormDataClient();
+            if (formData.isInCustomForm()) {
                 if (JRMCoreH.PlyrSettingsB(0) && formData.getCurrentForm().isFormStackable(DBCForm.Kaioken)) {
                 }
                 if (JRMCoreH.PlyrSettingsB(11) && formData.getCurrentForm().isFormStackable(DBCForm.UltraInstinct)) {
@@ -42,8 +41,8 @@ public class MixinDBCKiTech {
     @Inject(method = "Descend", at = @At("HEAD"), cancellable = true)
     private static void Descend(KeyBinding K, CallbackInfo ci) {
         if (K.getIsKeyPressed()) {
-            PlayerCustomFormData formData = Utility.getClientFormData(Minecraft.getMinecraft().thePlayer);
-            if(formData.isInCustomForm()){
+            PlayerCustomFormData formData = Utility.getFormDataClient();
+            if (formData.isInCustomForm()) {
                 PacketRegistry.tellServer("Descend");
                 DBCKiTech.soundAsc(formData.getCurrentForm().getDescendSound());
                 ci.cancel();

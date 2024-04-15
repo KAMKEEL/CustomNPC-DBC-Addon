@@ -6,7 +6,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.CustomForm;
-import kamkeel.npcdbc.data.SyncedData.CustomFormData;
+import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.network.PacketRegistry;
 import kamkeel.npcdbc.util.Utility;
@@ -26,7 +26,7 @@ public class Transform {
     //WIP, only 85% done, but is functional and won't break
     @SideOnly(Side.CLIENT)
     public static void Ascend(CustomForm form) {
-        if (cantTransform || (rage > 0 && transformed) || (CustomFormData.getClient().getCurrentForm() != null && CustomFormData.getClient().getCurrentForm().getID() == form.id))
+        if (cantTransform || (rage > 0 && transformed) || (Utility.getFormDataClient().getCurrentForm() != null && Utility.getFormDataClient().getCurrentForm().getID() == form.id))
             return;
 
         time++;
@@ -140,7 +140,7 @@ public class Transform {
     // Server side handling
 
     public static void handleCustomFormAscend(EntityPlayerMP p, int formID) {
-        CustomFormData c = CustomFormData.get(p);
+        PlayerCustomFormData c = Utility.getFormData(p);
         if (c.currentForm != formID) {
             DBCData d = DBCData.get(p);
             c.currentForm = formID;
@@ -150,13 +150,13 @@ public class Transform {
             Utility.sendMessage(p, "§aTransformed to§r " + c.getCurrentForm().getMenuName());
 
         }
-        c.saveToNBT(true);
+       // c.saveToNBT(true);
 
     }
 
     public static void handleDescend(EntityPlayerMP p) {
         DBCData d = DBCData.get(p);
-        CustomFormData c = CustomFormData.get(p);
+        PlayerCustomFormData c = Utility.getFormData(p);
         if (d.isForm(DBCForm.Kaioken) && d.formSettingOn(DBCForm.Kaioken)) {
             if (d.State2 - 1 > 0)
                 d.State2--;
@@ -179,7 +179,7 @@ public class Transform {
         else if (c.isInCustomForm()) {
             Utility.sendMessage(p, "§cDescended from§r " + c.getCurrentForm().getMenuName());
             c.currentForm = 0;
-            c.saveToNBT(true);
+           // c.saveToNBT(true);
         }
         d.saveToNBT(true);
 

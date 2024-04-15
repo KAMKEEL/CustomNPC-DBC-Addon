@@ -3,14 +3,11 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.api.IFormHandler;
 import kamkeel.npcdbc.data.CustomForm;
-import kamkeel.npcdbc.network.PacketRegistry;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
-import noppes.npcs.controllers.data.Faction;
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.*;
@@ -199,6 +196,10 @@ public class FormController implements IFormHandler {
 
     public boolean has(String name) {
         return getFormFromName(name) != null;
+    }
+
+    public boolean has(int id) {
+        return get(id) != null;
     }
 
     public ICustomForm get(String name) {

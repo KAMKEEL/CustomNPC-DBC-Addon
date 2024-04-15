@@ -2,13 +2,16 @@ package kamkeel.npcdbc.util;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.scripted.NpcAPI;
 
@@ -77,8 +80,14 @@ public class Utility {
         return (IPlayer) NpcAPI.Instance().getIEntity(p);
     }
 
-    public static PlayerCustomFormData getClientFormData(EntityPlayer p) {
-        return ((IPlayerFormData) PlayerData.get(p)).getCustomFormData();
+    @SideOnly(Side.CLIENT)
+    public static PlayerCustomFormData getFormDataClient() {
+        return ((IPlayerFormData) PlayerData.get(Minecraft.getMinecraft().thePlayer)).getCustomFormData();
+    }
+
+    public static PlayerCustomFormData getFormData(EntityPlayer p) {
+        return Utility.getFormData(PlayerDataController.Instance.getPlayerData(p));
+
     }
 
     public static PlayerCustomFormData getFormData(PlayerData playerData) {

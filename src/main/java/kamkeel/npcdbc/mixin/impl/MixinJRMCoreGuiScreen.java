@@ -31,7 +31,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
     private static String getFormName() {
         boolean ui = JRMCoreH.StusEfctsMe(19);
         String name = null;
-        PlayerCustomFormData formData = Utility.getClientFormData(Minecraft.getMinecraft().thePlayer);
+        PlayerCustomFormData formData = Utility.getFormDataClient();
         if (formData.isInCustomForm())
             name = formData.getCurrentForm().getMenuName();
         else {

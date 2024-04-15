@@ -2,8 +2,9 @@ package kamkeel.npcdbc.client;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent.KeyInputEvent;
-import kamkeel.npcdbc.data.SyncedData.CustomFormData;
+import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.network.PacketRegistry;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import org.lwjgl.input.Keyboard;
@@ -27,7 +28,7 @@ public class ClientEvents {
             PacketRegistry.tellServer("createForm");
         }
         if (Keyboard.isKeyDown(51)) { //,
-            CustomFormData c = CustomFormData.get(p);
+            PlayerCustomFormData formData = Utility.getFormDataClient();
         }
     }
 }

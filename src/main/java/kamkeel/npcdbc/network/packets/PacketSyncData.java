@@ -2,7 +2,6 @@ package kamkeel.npcdbc.network.packets;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
-import kamkeel.npcdbc.data.SyncedData.CustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.data.SyncedData.PerfectSync;
 import kamkeel.npcdbc.network.AbstractMessage;
@@ -34,21 +33,14 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
     public void process(EntityPlayer p, Side side) {
         if (side == Side.SERVER) {
             updateServerData(p);
-            if (s.contains("loadForms"))
-                CustomFormData.get(p).loadAllAccessibleForms();
+
         } else {
             if (s.contains("register"))
                 registerClient(p);
             else if (!s.contains("Entity")) { // player
                 if (s.contains("DBCData"))
                     DBCData.get(p).loadNBTData(data);
-                else if (s.contains("CustomFormData"))
-                    CustomFormData.get(p).loadNBTData(data);
 
-                else if (s.contains("loadForm"))
-                    CustomFormData.get(p).loadForm(data);
-                else if (s.contains("unloadForm"))
-                    CustomFormData.get(p).unloadForm(data);
             } else {// non player entity
                 Entity e = Utility.getEntityFromID(p.worldObj, s.split(":")[1]);
                 if (e != null) {
@@ -95,6 +87,8 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
 
         if (dn.equals(DBCData.dn) && !DBCData.has(p))
             p.registerExtendedProperties(DBCData.dn, new DBCData(p));
+
+
     }
 
     @Override

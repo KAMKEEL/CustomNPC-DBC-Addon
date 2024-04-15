@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.mixin.impl;
 
 import JinRyuu.JRMCore.JRMCoreH;
-import kamkeel.npcdbc.data.SyncedData.CustomFormData;
+import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,11 +18,12 @@ public class MixinJRMCoreH {
 
         // Inject your code here to manipulate the result variable as needed
         // Set the manipulated result back to the return value
-        CustomFormData c = Utility.isServer() ? CustomFormData.get(player) : CustomFormData.getClient();
+        PlayerCustomFormData formData = Utility.isServer() ? Utility.getFormData(player) : Utility.getFormDataClient();
+
         //System.out.println("hi " + result);
-        if (c != null && c.isInCustomForm()) {
-            //  System.out.println("hi2 " + c.getCurrentForm().getAllMulti());
-            result *= c.getCurrentForm().getAllMulti();
+        if (formData != null && formData.isInCustomForm()) {
+            //  System.out.println("hi2 " + formData.getCurrentForm().getAllMulti());
+            result *= formData.getCurrentForm().getAllMulti();
             // System.out.println("Res " + result);
         }
         result = (int) ((double) result > Double.MAX_VALUE ? Double.MAX_VALUE : (double) result);
