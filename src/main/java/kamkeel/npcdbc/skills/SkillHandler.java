@@ -32,7 +32,7 @@ public class SkillHandler {
             if (CustomFormData.getClient().getSelectedForm() != null) {
                 Transform.Ascend(CustomFormData.getClient().getSelectedForm());
             } else {
-                u.sendMessage(p, "§c§lYou have not selected a custom form!");
+                u.sendMessage(p, "§cYou have not selected a custom form!");
             }
 
         } else

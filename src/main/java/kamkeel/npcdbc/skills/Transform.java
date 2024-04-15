@@ -26,17 +26,17 @@ public class Transform {
     //WIP, only 85% done, but is functional and wont break
     @SideOnly(Side.CLIENT)
     public static void Ascend(CustomForm form) {
-        if (cantTransform || (rage > 0 && transformed))
+        if (cantTransform || (rage > 0 && transformed) || (CustomFormData.getClient().getCurrentForm() != null && CustomFormData.getClient().getCurrentForm().getID() == form.id))
             return;
 
         time++;
         releaseTime++;
         soundTime++;
         Transform.setAscending(true);
-        rageValue = getRageMeter();
+        rageValue = getRageMeterIncrementation();
 
-        if (soundTime == 0 || soundTime >= 33) { //plays aura sound every 33 ticks
-            if (soundTime != 0)
+        if (soundTime == 1 || soundTime >= 33) { //plays aura sound every 33 ticks
+            if (soundTime != 1)
                 soundTime = 0;
             String ar = "jinryuudragonbc:DBC.aura";
             DBCKiTech.soundAsc(ar);
@@ -105,7 +105,7 @@ public class Transform {
     }
 
     @SideOnly(Side.CLIENT)
-    public static int getRageMeter() {
+    public static int getRageMeterIncrementation() {
         double fm = 10;//getFormMasteryValue(k);
         double maxfm = 100;//getMaxFormMasteryValue(k);
 
