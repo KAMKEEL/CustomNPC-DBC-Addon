@@ -193,7 +193,7 @@ public interface IDBCAddon extends IDBCPlayer {
     void setSelectedCustomForm(ICustomForm form);
 
 
-    void setSelectedCustomForm(String form);
+    void setSelectedCustomForm(int formid);
 
     void removeSelectedCustomForm();
 

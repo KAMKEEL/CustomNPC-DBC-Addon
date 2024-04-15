@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class PlayerCustomFormData {
     public int currentForm = 0;
-    public int selectedForm = 0;
+    public int selectedForm = -1;
     public HashMap<Integer, String> unlockedForms = new HashMap<Integer, String> ();
 
     public PlayerCustomFormData() {}
