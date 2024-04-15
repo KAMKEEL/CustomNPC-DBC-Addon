@@ -3,7 +3,7 @@
 	"modList": [{
 		"modid": "${modId}",
 		"name": "${modName}",
-		"description": "A mod that is made for integrating Armorer's Workshop and CustomNPC",
+		"description": "A mod that is made for integrating DBC and CNPC+",
 		"version": "${modVersion}",
 		"mcversion": "${minecraftVersion}",
 		"url": "TODO",
