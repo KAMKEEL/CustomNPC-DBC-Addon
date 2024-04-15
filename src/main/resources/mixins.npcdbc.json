@@ -9,8 +9,8 @@
     "MixinDBCAddon",
     "MixinDBCDisplay",
     "MixinDBCStats",
-    "MixinScriptPlayer"
-    //"MixinJRMCoreH"
+    "MixinScriptPlayer",
+    "MixinJRMCoreH"
   ],
   "client": [
     "MixinDBCClient",

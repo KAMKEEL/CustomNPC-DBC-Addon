@@ -15,10 +15,9 @@ import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 public class ServerEvents {
     @SideOnly(Side.SERVER)
     @SubscribeEvent
-    public void sAmkp2(EntityConstructing e) {
-        if (!(e.entity instanceof EntityPlayer))
-            PerfectSync.registerAllDatas(e.entity); // entity registry
-
+    public void registerExtended(EntityConstructing event) {
+        if (!(event.entity instanceof EntityPlayer))
+            PerfectSync.registerAllDatas(event.entity); // entity registry
     }
 
     /**
@@ -26,31 +25,27 @@ public class ServerEvents {
      */
     @SideOnly(Side.SERVER)
     @SubscribeEvent
-    public void worldTick(TickEvent.WorldTickEvent e) {
+    public void worldTick(TickEvent.WorldTickEvent event) {
         if (!Utility.isServer())
             return;
-        if (!e.phase.equals(TickEvent.Phase.END))
+        if (!event.phase.equals(TickEvent.Phase.END))
             return;
 
-        World w = e.world;
+        World w = event.world;
         for (Object en : w.loadedEntityList) {
-            Entity p = (Entity) en;
+            Entity player = (Entity) en;
 
-            if (p instanceof EntityPlayer) {// checks if player is eligible for data or not, incase they weren't before
-                PerfectSync.registerAllDatas(p);
-                if (DBCData.has(p))
-                    DBCData.get(p).loadFromNBT(true); // loaded from server NBT every tick instead of X ticks, as multiple sources can change PlayerPersisted outside of this mod
+            if (player instanceof EntityPlayer) {// checks if player is eligible for data or not, incase they weren't before
+                PerfectSync.registerAllDatas(player);
+                if (DBCData.has(player))
+                    DBCData.get(player).loadFromNBT(true); // loaded from server NBT every tick instead of X ticks, as multiple sources can change PlayerPersisted outside of this mod
             }
 
-            if (p.ticksExisted == 1) {
-                PerfectSync.saveAllDatas(p, true); // initial save
+            if (player.ticksExisted == 1) {
+                PerfectSync.saveAllDatas(player, true); // initial save
             }
-            if (p.ticksExisted % PerfectSync.SaveEveryXTicks == 0) //saves once every SaveEveryXTicks
-                PerfectSync.saveAllDatas(p, true);
-
-
+            if (player.ticksExisted % PerfectSync.SaveEveryXTicks == 0) //saves once every SaveEveryXTicks
+                PerfectSync.saveAllDatas(player, true);
         }
-
     }
-
 }
