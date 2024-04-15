@@ -30,6 +30,6 @@ public class CustomNpcPlusDBC {
 
     @Mod.EventHandler
     public void setAboutToStart(FMLServerAboutToStartEvent event) {
-        new FormController();
+        FormController.getInstance().load();
     }
 }

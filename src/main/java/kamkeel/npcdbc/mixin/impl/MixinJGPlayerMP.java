@@ -33,6 +33,4 @@ public class MixinJGPlayerMP {
         if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), DBCData.get(player).State, value)))
             ci.cancel();
     }
-
-
 }

@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
+import noppes.npcs.controllers.data.Faction;
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.*;
@@ -19,7 +20,8 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 public class FormController implements IFormHandler {
-    public static FormController Instance;
+    public static FormController Instance = new FormController();
+    public HashMap<Integer, CustomForm> customFormsSync = new HashMap();
     public HashMap<Integer, CustomForm> customForms;
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
@@ -28,7 +30,6 @@ public class FormController implements IFormHandler {
         Instance = this;
         customForms = new HashMap<>();
         bootOrder = new HashMap<>();
-        load();
     }
 
     public static FormController getInstance() {
@@ -44,12 +45,10 @@ public class FormController implements IFormHandler {
 
     public void loadToClient(EntityPlayer p, CustomForm f) { //loads a CustomForm object to p's client
         PacketRegistry.syncData(p, "loadForm", f.writeToNBT());
-
     }
 
     public void unloadFromClient(EntityPlayer p, CustomForm f) {
         PacketRegistry.syncData(p, "unloadForm", f.writeToNBT());
-
     }
 
     public ICustomForm createForm(String name) {

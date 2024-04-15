@@ -1,17 +1,30 @@
 package kamkeel.npcdbc.mixin.impl;
 
+import io.netty.buffer.ByteBuf;
 import kamkeel.addon.DBCAddon;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCStats;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.INPCStats;
+import kamkeel.npcdbc.mixin.IPlayerFormData;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import noppes.npcs.Server;
+import noppes.npcs.constants.EnumPacketClient;
+import noppes.npcs.constants.SyncType;
+import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.HashMap;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
 
@@ -100,5 +113,85 @@ public class MixinDBCAddon {
             }
         }
         return false;
+    }
+
+
+    /**
+     * @author Kamkeel
+     * @reason Writes Custom Form Player Data
+     */
+    @Overwrite(remap = false)
+    public void writeToNBT(PlayerData playerData, NBTTagCompound nbtTagCompound) {
+        ((IPlayerFormData) playerData).getCustomFormData().saveNBTData(nbtTagCompound);
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Reads Custom Form Player Data
+     */
+    @Overwrite(remap = false)
+    public void readFromNBT(PlayerData playerData, NBTTagCompound nbtTagCompound) {
+        ((IPlayerFormData) playerData).getCustomFormData().loadNBTData(nbtTagCompound);
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Performs Syncing | SyncController. Sent by Server to Client
+     */
+    @Overwrite(remap = false)
+    public void syncPlayer(EntityPlayerMP playerMP){
+        NBTTagList list = new NBTTagList();
+        NBTTagCompound compound = new NBTTagCompound();
+        for(CustomForm customForm : FormController.getInstance().customForms.values()){
+            list.appendTag(customForm.writeToNBT());
+            if(list.tagCount() > 10){
+                compound = new NBTTagCompound();
+                compound.setTag("Data", list);
+                Server.sendData(playerMP, EnumPacketClient.SYNC_ADD, SyncType.CUSTOM_FORM, compound);
+                list = new NBTTagList();
+            }
+        }
+        compound = new NBTTagCompound();
+        compound.setTag("Data", list);
+        Server.sendData(playerMP, EnumPacketClient.SYNC_END, SyncType.CUSTOM_FORM, compound);
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Performs Syncing | SyncController
+     */
+    @Overwrite(remap = false)
+    public void clientSync(NBTTagCompound compound, boolean syncEnd){
+        NBTTagList list = compound.getTagList("Data", 10);
+        for(int i = 0; i < list.tagCount(); i++)
+        {
+            CustomForm form = new CustomForm();
+            form.readFromNBT(list.getCompoundTagAt(i));
+            FormController.getInstance().customFormsSync.put(form.id, form);
+        }
+        if(syncEnd){
+            FormController.getInstance().customForms = FormController.getInstance().customFormsSync;
+            FormController.getInstance().customFormsSync = new HashMap<Integer, CustomForm>();
+        }
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Performs Syncing | SyncController
+     */
+    @Overwrite(remap = false)
+    public void syncUpdate(NBTTagCompound compound, ByteBuf buffer){
+        CustomForm form = new CustomForm();
+        form.readFromNBT(compound);
+        FormController.getInstance().customForms.put(form.id, form);
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Performs Syncing | SyncController
+     */
+    @Overwrite(remap = false)
+    public void syncRemove(int id){
+        CustomForm form = FormController.Instance.customForms.remove(id);
     }
 }
