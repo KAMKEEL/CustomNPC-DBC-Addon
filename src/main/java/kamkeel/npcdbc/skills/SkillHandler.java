@@ -13,7 +13,6 @@ import org.lwjgl.input.Keyboard;
 public class SkillHandler {
     private static Minecraft mc = Minecraft.getMinecraft();
     EntityPlayer player;
-    int id = 0;
 
     //WIP
     @SubscribeEvent

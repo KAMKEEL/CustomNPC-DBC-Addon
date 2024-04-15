@@ -7,7 +7,6 @@ import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -50,12 +49,12 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
             String[] e = s1.split(":");
             String e0 = e[0] + ": ";
             int pos = var8.getStringWidth(e0);
-            var8.drawString(e0 + "", xpos, ypos, 0);
+            var8.drawString(e0 , xpos, ypos, 0);
             var8.drawString(e[1], xpos + pos, ypos, DBCUtils.getCurrentFormColor());
             int wpos = var8.getStringWidth(s1);
             if (xpos < x && xpos + wpos > x && ypos - 3 < y && ypos + 10 > y) {
                 int ll = 200;
-                Object[] txt = new Object[]{s2, "§8", 0, true, x + 5, y + 5, Integer.valueOf(ll)};
+                Object[] txt = new Object[]{s2, "§8", 0, true, x + 5, y + 5, ll};
                 detailList.add(txt);
             }
             ci.cancel();

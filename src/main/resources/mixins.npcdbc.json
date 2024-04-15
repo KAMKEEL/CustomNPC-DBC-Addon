@@ -11,6 +11,7 @@
     "MixinDBCStats",
     "MixinJGPlayerMP",
     "MixinJRMCoreH",
+    "MixinPlayerData",
     "MixinScriptPlayer"
   ],
   "client": [

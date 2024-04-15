@@ -16,7 +16,10 @@ public interface ICustomForm {
 
     void setRace(int race);
 
-    float getAllMulti();
+    /**
+     * @return index 0 is strengthMulti,1 dexMulti, 2 willMulti
+     */
+    float[] getAllMulti();
 
     void setAllMulti(float allMulti);
 

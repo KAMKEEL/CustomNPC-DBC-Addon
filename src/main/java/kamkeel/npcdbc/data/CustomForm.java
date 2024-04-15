@@ -24,7 +24,6 @@ public class CustomForm implements ICustomForm {
     //name to be displayed in DBC GUI after "Form: ", preferably short as space is narrow
     public String menuName = "§2§lCustom Form";
     public int race = DBCRace.SAIYAN;
-    public float allMulti = 1.0f;
 
     public float strengthMulti = 1.0f;
     public float dexMulti = 1.0f;
@@ -47,6 +46,17 @@ public class CustomForm implements ICustomForm {
     public CustomForm(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public float[] getAllMulti() {
+        return new float[]{strengthMulti, dexMulti, willMulti};
+    }
+
+    @Override
+    public void setAllMulti(float allMulti) {
+        this.strengthMulti = allMulti;
+        this.dexMulti = allMulti;
+        this.willMulti = allMulti;
     }
 
     @Override
@@ -72,6 +82,7 @@ public class CustomForm implements ICustomForm {
         this.menuName = name;
     }
 
+
     @Override
     public int getRace() {
         return race;
@@ -80,16 +91,6 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setRace(int race) {
         this.race = race;
-    }
-
-    @Override
-    public float getAllMulti() {
-        return allMulti;
-    }
-
-    @Override
-    public void setAllMulti(float allMulti) {
-        this.allMulti = allMulti;
     }
 
     @Override
@@ -286,7 +287,6 @@ public class CustomForm implements ICustomForm {
         ascendSound = compound.getString("ascendSound");
         descendSound = compound.getString("descendSound");
         race = compound.getInteger("race");
-        allMulti = compound.getFloat("allMulti");
         strengthMulti = compound.getFloat("strengthMulti");
         dexMulti = compound.getFloat("dexMulti");
         willMulti = compound.getFloat("willMulti");
@@ -321,7 +321,6 @@ public class CustomForm implements ICustomForm {
         compound.setString("ascendSound", ascendSound);
         compound.setString("descendSound", descendSound);
         compound.setInteger("race", race);
-        compound.setFloat("allMulti", allMulti);
         compound.setFloat("strengthMulti", strengthMulti);
         compound.setFloat("dexMulti", dexMulti);
         compound.setFloat("willMulti", willMulti);
