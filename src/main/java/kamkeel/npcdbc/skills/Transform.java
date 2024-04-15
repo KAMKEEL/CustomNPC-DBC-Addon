@@ -2,17 +2,18 @@ package kamkeel.npcdbc.skills;
 
 import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreH;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.SyncedData.CustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.network.PacketRegistry;
 import kamkeel.npcdbc.util.u;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 public class Transform {
 
-    private static final Minecraft mc = Minecraft.getMinecraft();
     public static int s, id, time, releaseTime, soundTime;
     public static boolean ascending, cantTransform, transformed;
     public static String ascendSound, descendSound;
@@ -22,8 +23,9 @@ public class Transform {
     //////////////////////////////////////////////////
     // Client  side handling
 
-    //WIP, still working on
-    public static void Ascend(int id) {
+    //WIP, only 85% done, but is functional and wont break
+    @SideOnly(Side.CLIENT)
+    public static void Ascend(CustomForm form) {
         if (cantTransform || (rage > 0 && transformed))
             return;
 
@@ -33,12 +35,13 @@ public class Transform {
         Transform.setAscending(true);
         rageValue = getRageMeter();
 
-        if (soundTime >= 33) {
-            soundTime = 0;
+        if (soundTime == 0 || soundTime >= 33) { //plays aura sound every 33 ticks
+            if (soundTime != 0)
+                soundTime = 0;
             String ar = "jinryuudragonbc:DBC.aura";
             DBCKiTech.soundAsc(ar);
         }
-        if (time >= 6) {
+        if (time >= 6) { //increments rage meter and drain ki cost every 6 ticks
             time = 0;
             int cost = JRMCoreH.maxEnergy / 20;
             if (JRMCoreH.curEnergy < cost)
@@ -46,7 +49,7 @@ public class Transform {
             JRMCoreH.Cost(cost);
             rage += rageValue;
         }
-        if (JRMCoreH.curRelease < 50 && releaseTime >= 10) {
+        if (JRMCoreH.curRelease < 50 && releaseTime >= 10) { //if release is less than 50%, increment it until it is so
             float en = 100.0F / JRMCoreH.maxEnergy * JRMCoreH.curEnergy;
             float re = JRMCoreH.curRelease;
             en = en > 75.0F ? 75.0F : en;
@@ -55,9 +58,9 @@ public class Transform {
             releaseTime = 0;
 
         }
-        if (rage >= 100) {
-            PacketRegistry.tellServer("Transform:" + id);
-            //DBCKiTech.soundAsc(GuiTKeys.getAscendSound(k));
+        if (rage >= 100) { //transform when rage meter reaches 100 (max)
+            PacketRegistry.tellServer("Transform:" + form.getID());
+            DBCKiTech.soundAsc(form.getAscendSound());
             resetTimers();
             cantTransform = true;
             transformed = true;
@@ -67,7 +70,7 @@ public class Transform {
 
     }
 
-
+    @SideOnly(Side.CLIENT)
     public static void decrementRage() {
         if (rage > 0) {
             if (rage > 100)
@@ -84,6 +87,7 @@ public class Transform {
 
     }
 
+    @SideOnly(Side.CLIENT)
     public static void setAscending(boolean bo) {
         ascending = bo;
         JRMCoreH.Skll((byte) 5, bo ? (byte) 0 : 1, (byte) 1);
@@ -93,12 +97,14 @@ public class Transform {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public static void resetTimers() {
         time = 0;
         releaseTime = 0;
         soundTime = 0;
     }
 
+    @SideOnly(Side.CLIENT)
     public static int getRageMeter() {
         double fm = 10;//getFormMasteryValue(k);
         double maxfm = 100;//getMaxFormMasteryValue(k);
@@ -136,8 +142,15 @@ public class Transform {
 
     public static void handleCustomFormAscend(EntityPlayerMP p, int formID) {
         CustomFormData c = CustomFormData.get(p);
-        if (c.currentForm != formID)
+        if (c.currentForm != formID) {
+            DBCData d = DBCData.get(p);
             c.currentForm = formID;
+            if (d.State > 0)
+                d.State = 0;
+            d.saveToNBT(true);
+            u.sendMessage(p, "§aTransformed to§r " + c.getCurrentForm().getMenuName());
+
+        }
         c.saveToNBT(true);
 
     }
@@ -165,6 +178,7 @@ public class Transform {
             d.setForm(DBCForm.GodOfDestruction, false);
 
         else if (c.isInCustomForm()) {
+            u.sendMessage(p, "§cDescended from§r " + c.getCurrentForm().getMenuName());
             c.currentForm = 0;
             c.saveToNBT(true);
         }

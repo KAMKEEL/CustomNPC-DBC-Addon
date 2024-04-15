@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data;
 
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -19,7 +20,7 @@ public class CustomForm implements ICustomForm {
     public int id = -1; // Only for internal usage
     public String name;
     //name to be displayed in DBC GUI after "Form: ", preferably short as space is narrow
-    public String menuName = "§a§8lForm";
+    public String menuName = "§2§lCustom Form";
     public int race = DBCRace.SAIYAN;
     public float allMulti = 1.0f;
 
@@ -31,6 +32,8 @@ public class CustomForm implements ICustomForm {
     public float kaiokenMulti = 1.0f, uiMulti = 1.0f, godMulti = 1.0f, mysticMulti = 1.0f;
 
     public int auraColor = 1;
+
+    public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
     //players who have form unlocked in their accessibleForms NBT tag
     public List<String> playersWithForm = new ArrayList<>();
@@ -57,6 +60,14 @@ public class CustomForm implements ICustomForm {
     @Override
     public String getMenuName() {
         return menuName;
+    }
+
+    @Override
+    public void setMenuName(String name) {
+        if (name.contains("&"))
+            name = name.replace("&", "§");
+
+        this.menuName = name;
     }
 
     @Override
@@ -217,6 +228,26 @@ public class CustomForm implements ICustomForm {
         removeFromPlayer(NpcAPI.Instance().getPlayer(name).getMCEntity());
     }
 
+    @Override
+    public String getAscendSound() {
+        return ascendSound;
+    }
+
+    @Override
+    public void setAscendSound(String directory) {
+        ascendSound = directory;
+    }
+
+    @Override
+    public String getDescendSound() {
+        return descendSound;
+    }
+
+    @Override
+    public void setDescendSound(String directory) {
+        descendSound = directory;
+    }
+
     public List<EntityPlayer> getPlayersWithForm() {
         List<EntityPlayer> plyrs = new ArrayList<>();
         for (String s : playersWithForm) {
@@ -248,6 +279,8 @@ public class CustomForm implements ICustomForm {
 
         name = compound.getString("name");
         menuName = compound.getString("menuName");
+        ascendSound = compound.getString("ascendSound");
+        descendSound = compound.getString("descendSound");
         race = compound.getInteger("race");
         allMulti = compound.getFloat("allMulti");
         strengthMulti = compound.getFloat("strengthMulti");
@@ -258,6 +291,7 @@ public class CustomForm implements ICustomForm {
         kaiokenStackable = compound.getBoolean("kaiokenStackable");
         uiStackable = compound.getBoolean("uiStackable");
         auraColor = compound.getInteger("auraColor");
+
 
         String s = compound.getString("playersWithForm");
         List<String> newPlayers = new ArrayList<>();
@@ -280,6 +314,8 @@ public class CustomForm implements ICustomForm {
         compound.setInteger("ID", id);
         compound.setString("name", name);
         compound.setString("menuName", menuName);
+        compound.setString("ascendSound", ascendSound);
+        compound.setString("descendSound", descendSound);
         compound.setInteger("race", race);
         compound.setFloat("allMulti", allMulti);
         compound.setFloat("strengthMulti", strengthMulti);

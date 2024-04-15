@@ -5,8 +5,12 @@ import net.minecraft.entity.player.EntityPlayer;
 public interface ICustomForm {
 
     String getName();
-    String getMenuName();
+
     void setName(String name);
+
+    String getMenuName();
+
+    void setMenuName(String name);
 
     int getRace();
 
@@ -61,6 +65,13 @@ public interface ICustomForm {
 
     void removeFromPlayer(String name);
 
+    String getAscendSound();
+
+    void setAscendSound(String directory);
+
+    String getDescendSound();
+
+    void setDescendSound(String directory);
 
     int getID();
 

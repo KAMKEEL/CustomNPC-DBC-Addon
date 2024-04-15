@@ -5,6 +5,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.data.SyncedData.CustomFormData;
+import kamkeel.npcdbc.util.u;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.input.Keyboard;
@@ -23,16 +24,18 @@ public class SkillHandler {
         if (p == null || !e.phase.equals(TickEvent.Phase.START))
             return;
 
-        // Transform.decrementDescTimer();
-        //Transform.decrementRage();
         AscendKey();
     }
 
     private void AscendKey() {
-        if (Keyboard.isKeyDown(KeyHandler.Ascend.getKeyCode()) && CustomFormData.getClient().getSelectedForm() != null) {
-            Transform.Ascend(CustomFormData.getClient().getSelectedForm().getID());
-            System.out.println("transforming");
-        }
+        if (Keyboard.isKeyDown(KeyHandler.Ascend.getKeyCode())) {
+            if (CustomFormData.getClient().getSelectedForm() != null) {
+                Transform.Ascend(CustomFormData.getClient().getSelectedForm());
+            } else {
+                u.sendMessage(p, "§c§lYou have not selected a custom form!");
+            }
 
+        } else
+            Transform.decrementRage();
     }
 }

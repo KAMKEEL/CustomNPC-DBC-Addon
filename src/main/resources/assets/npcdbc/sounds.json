@@ -1,0 +1,14 @@
+{
+"aura.ssbaura":{"category":"neutral","sounds":["aura/SSBAura"]},
+"aura.newauram":{"category":"neutral","sounds":["aura/newauram"]},
+"aura.ssbeaura":{"category":"neutral","sounds":["aura/SSBEAura"]},
+"aura.ssj3aura":{"category":"neutral","sounds":["aura/SSJ3Aura"]},
+"aura.ssjgaura":{"category":"neutral","sounds":["aura/SSJGAura"]},
+"transformationSounds.MUIAscend":{"category":"neutral","sounds":["transformationSounds/MUIAscend"]},
+"transformationSounds.UIAscend":{"category":"neutral","sounds":["transformationSounds/UIAscend"]},
+"transformationSounds.SSJ3Ascend":{"category":"neutral","sounds":["transformationSounds/SSJ3Ascend"]},
+"transformationSounds.GodAscend":{"category":"neutral","sounds":["transformationSounds/GodAscend"]},
+"transformationSounds.GodDescend":{"category":"neutral","sounds":["transformationSounds/GodDescend"]},
+"misc.roar":{"category":"neutral","sounds":["misc/roar"]},
+"misc.potara":{"category":"neutral","sounds":["misc/potara"]}
+}

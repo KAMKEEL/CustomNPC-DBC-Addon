@@ -38,6 +38,7 @@ public class MixinDBCKiTech {
     private static void Descend(KeyBinding K, CallbackInfo ci) {
         if (K.getIsKeyPressed() && CustomFormData.getClient().isInCustomForm()) {
             PacketRegistry.tellServer("Descend");
+            DBCKiTech.soundAsc(CustomFormData.getClient().getCurrentForm().getDescendSound());
             ci.cancel();
         }
     }

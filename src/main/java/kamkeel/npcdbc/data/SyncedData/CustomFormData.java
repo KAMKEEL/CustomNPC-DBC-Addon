@@ -89,15 +89,15 @@ public class CustomFormData extends PerfectSync<CustomFormData> implements IExte
         return getCurrentForm().getName().equals(formName);
     }
 
-    public ICustomForm getCurrentForm() {
+    public CustomForm getCurrentForm() {
         if (currentForm > 0)
-            return u.isServer() ? FormController.Instance.get(currentForm) : getFormClient(currentForm);
+            return (CustomForm) (u.isServer() ? FormController.Instance.get(currentForm) : getFormClient(currentForm));
 
         return null;
     }
 
-    public ICustomForm getSelectedForm() {
-        return u.isServer() ? FormController.Instance.get(selectedForm) : getFormClient(selectedForm);
+    public CustomForm getSelectedForm() {
+        return (CustomForm) (u.isServer() ? FormController.Instance.get(selectedForm) : getFormClient(selectedForm));
     }
 
     @Override
