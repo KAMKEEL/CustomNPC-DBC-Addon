@@ -140,49 +140,46 @@ public class Transform {
     // Server side handling
 
     public static void handleCustomFormAscend(EntityPlayerMP p, int formID) {
-        PlayerCustomFormData c = Utility.getFormData(p);
-        if (c.currentForm != formID) {
-            DBCData d = DBCData.get(p);
-            c.currentForm = formID;
-            if (d.State > 0)
-                d.State = 0;
-            c.updateClient();
-            d.saveToNBT(true);
-            Utility.sendMessage(p, "§aTransformed to§r " + c.getCurrentForm().getMenuName());
-
+        PlayerCustomFormData formData = Utility.getFormData(p);
+        if (formData.currentForm != formID) {
+            DBCData dbcData = DBCData.get(p);
+            formData.currentForm = formID;
+            if (dbcData.State > 0)
+                dbcData.State = 0;
+            formData.updateClient();
+            dbcData.saveToNBT(true);
+            Utility.sendMessage(p, "§aTransformed to§r " + formData.getCurrentForm().getMenuName());
         }
-        // c.saveToNBT(true);
-
     }
 
     public static void handleDescend(EntityPlayerMP p) {
-        DBCData d = DBCData.get(p);
-        PlayerCustomFormData c = Utility.getFormData(p);
-        if (d.isForm(DBCForm.Kaioken) && d.formSettingOn(DBCForm.Kaioken)) {
-            if (d.State2 - 1 > 0)
-                d.State2--;
-            else if (d.State2 - 1 == 0) {
-                d.State2--;
-                d.setForm(DBCForm.Kaioken, false);
+        DBCData dbcData = DBCData.get(p);
+        PlayerCustomFormData formData = Utility.getFormData(p);
+        if (dbcData.isForm(DBCForm.Kaioken) && dbcData.formSettingOn(DBCForm.Kaioken)) {
+            if (dbcData.State2 - 1 > 0)
+                dbcData.State2--;
+            else if (dbcData.State2 - 1 == 0) {
+                dbcData.State2--;
+                dbcData.setForm(DBCForm.Kaioken, false);
             }
-        } else if (d.isForm(DBCForm.UltraInstinct) && d.formSettingOn(DBCForm.UltraInstinct)) {
-            if (d.State2 - 1 > 0)
-                d.State2--;
-            else if (d.State2 - 1 == 0) {
-                d.State2--;
-                d.setForm(DBCForm.UltraInstinct, false);
+        } else if (dbcData.isForm(DBCForm.UltraInstinct) && dbcData.formSettingOn(DBCForm.UltraInstinct)) {
+            if (dbcData.State2 - 1 > 0)
+                dbcData.State2--;
+            else if (dbcData.State2 - 1 == 0) {
+                dbcData.State2--;
+                dbcData.setForm(DBCForm.UltraInstinct, false);
             }
-        } else if (d.isForm(DBCForm.Mystic) && d.formSettingOn(DBCForm.Mystic))
-            d.setForm(DBCForm.Mystic, false);
-        else if (d.isForm(DBCForm.GodOfDestruction) && d.formSettingOn(DBCForm.GodOfDestruction))
-            d.setForm(DBCForm.GodOfDestruction, false);
+        } else if (dbcData.isForm(DBCForm.Mystic) && dbcData.formSettingOn(DBCForm.Mystic))
+            dbcData.setForm(DBCForm.Mystic, false);
+        else if (dbcData.isForm(DBCForm.GodOfDestruction) && dbcData.formSettingOn(DBCForm.GodOfDestruction))
+            dbcData.setForm(DBCForm.GodOfDestruction, false);
 
-        else if (c.isInCustomForm()) {
-            Utility.sendMessage(p, "§cDescended from§r " + c.getCurrentForm().getMenuName());
-            c.currentForm = 0;
-            c.updateClient();
+        else if (formData.isInCustomForm()) {
+            Utility.sendMessage(p, "§cDescended from§r " + formData.getCurrentForm().getMenuName());
+            formData.currentForm = 0;
+            formData.updateClient();
         }
-        d.saveToNBT(true);
+        dbcData.saveToNBT(true);
 
     }
 }

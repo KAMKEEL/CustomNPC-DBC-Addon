@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data;
 
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.mixin.IPlayerFormData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -67,10 +68,6 @@ public class PlayerCustomFormData {
         return (CustomForm) FormController.Instance.get(selectedForm);
     }
 
-    public void updateClient() {
-        parent.updateClient = true;
-    }
-
     public void saveNBTData(NBTTagCompound compound) {
         compound.setInteger("CurrentForm", currentForm);
         compound.setInteger("SelectedForm", selectedForm);
@@ -81,5 +78,9 @@ public class PlayerCustomFormData {
         currentForm = compound.getInteger("CurrentForm");
         selectedForm = compound.getInteger("SelectedForm");
         unlockedForms = NBTTags.getIntegerStringMap(compound.getTagList("UnlockedForms", 10));
+    }
+
+    public void updateClient() {
+        ((IPlayerFormData) parent).updateFormInfo();
     }
 }

@@ -119,7 +119,6 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
      * @param saveClient
      */
     public void saveToNBT(boolean saveClient) {
-
         if (Utility.isServer()) {
             saveNBTData(null);
             if (!saveClient)
@@ -130,7 +129,6 @@ public abstract class PerfectSync<T extends PerfectSync<T>> implements IExtended
                 PacketRegistry.syncData(entity, "update" + s, data);
             else
                 PacketRegistry.syncData(entity, "updateEntity" + s + ":" + Utility.getEntityID(entity), data);
-
         }
     }
 
