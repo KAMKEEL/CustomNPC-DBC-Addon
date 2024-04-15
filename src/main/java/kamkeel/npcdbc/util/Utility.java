@@ -6,6 +6,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
+import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.scripted.NpcAPI;
 
 import java.util.List;
 
@@ -68,4 +70,7 @@ public class Utility {
         return n >= Utility.percent(maxN, minPerc) && n < Utility.percent(maxN, maxPerc);
     }
 
+    public static IPlayer getIPlayer(EntityPlayer p) {
+        return (IPlayer) NpcAPI.Instance().getIEntity(p);
+    }
 }
