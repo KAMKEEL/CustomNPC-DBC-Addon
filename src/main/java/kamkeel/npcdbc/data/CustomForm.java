@@ -14,9 +14,6 @@ import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.scripted.NpcAPI;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class CustomForm implements ICustomForm {
 
     public int id = -1; // Only for internal usage
@@ -35,10 +32,6 @@ public class CustomForm implements ICustomForm {
     public int auraColor = 1;
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
-
-    //players who have form unlocked in their accessibleForms NBT tag
-    public List<String> playersWithForm = new ArrayList<>();
-
 
     public CustomForm() {
     }
@@ -111,7 +104,6 @@ public class CustomForm implements ICustomForm {
                 break;
         }
         save();
-
     }
 
     @Override
@@ -206,7 +198,6 @@ public class CustomForm implements ICustomForm {
     public void setAuraColor(int auraColor) {
         this.auraColor = auraColor;
         save();
-
     }
 
     @Override
@@ -214,11 +205,7 @@ public class CustomForm implements ICustomForm {
         if (race == DBCData.get(p).Race) {
             PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
             Utility.getFormData(playerData).addForm(this);
-            if (!playersWithForm.contains(p.getCommandSenderName())) {
-                playersWithForm.add(p.getCommandSenderName());
-                playerData.updateClient = true;
-            }
-            save();
+            playerData.updateClient = true;
         }
     }
 
@@ -232,13 +219,8 @@ public class CustomForm implements ICustomForm {
         if (race == DBCData.get(p).Race) {
             PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
             Utility.getFormData(playerData).removeForm(this);
-            if (playersWithForm.contains(p.getCommandSenderName())) {
-                playersWithForm.remove(p.getCommandSenderName());
-                playerData.updateClient = true;
-            }
-            save();
+            playerData.updateClient = true;
         }
-
     }
 
     public void removeFromPlayer(String name) {
@@ -265,19 +247,6 @@ public class CustomForm implements ICustomForm {
     public void setDescendSound(String directory) {
         descendSound = directory;
         save();
-    }
-
-    public List<EntityPlayer> getPlayersWithForm() {
-        List<EntityPlayer> plyrs = new ArrayList<>();
-        for (String s : playersWithForm) {
-            if (!s.isEmpty()) {
-                EntityPlayer p = (EntityPlayer) NpcAPI.Instance().getPlayer("s");
-                if (p != null)
-                    plyrs.add(p);
-            }
-        }
-
-        return plyrs;
     }
 
     @Override
@@ -310,22 +279,6 @@ public class CustomForm implements ICustomForm {
         kaiokenStackable = compound.getBoolean("kaiokenStackable");
         uiStackable = compound.getBoolean("uiStackable");
         auraColor = compound.getInteger("auraColor");
-
-
-        String s = compound.getString("playersWithForm");
-        List<String> newPlayers = new ArrayList<>();
-        if (s.contains(",")) {
-            String[] forms = s.split(",");
-            for (String str : forms)
-                newPlayers.add(str);
-        } else if (s.isEmpty())
-            newPlayers.clear();
-        else
-            newPlayers.add(s);
-        playersWithForm = newPlayers;
-
-        // ADD REST
-
     }
 
     public NBTTagCompound writeToNBT() {
@@ -344,19 +297,6 @@ public class CustomForm implements ICustomForm {
         compound.setBoolean("kaiokenStackable", kaiokenStackable);
         compound.setBoolean("uiStackable", uiStackable);
         compound.setInteger("auraColor", auraColor);
-
-        if (!playersWithForm.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (String s : playersWithForm) {
-                sb.append(s + ",");
-            }
-            compound.setString("playersWithForm", sb.toString().substring(0, sb.length() - 1)); //removes the last ,
-        } else
-            compound.setString("playersWithForm", "");
-
-        // ADD REST
-
-
         return compound;
     }
 
