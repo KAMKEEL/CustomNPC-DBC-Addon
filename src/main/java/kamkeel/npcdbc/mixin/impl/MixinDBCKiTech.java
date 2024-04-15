@@ -3,8 +3,11 @@ package kamkeel.npcdbc.mixin.impl;
 import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.data.SyncedData.CustomFormData;
 import kamkeel.npcdbc.network.PacketRegistry;
+import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,16 +21,19 @@ public class MixinDBCKiTech {
      */
     @Inject(method = "Ascend", at = @At("HEAD"), cancellable = true)
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
-        if (K.getIsKeyPressed() && CustomFormData.getClient().isInCustomForm()) {
-            if (JRMCoreH.PlyrSettingsB(0) && CustomFormData.getClient().getCurrentForm().isFormStackable(DBCForm.Kaioken)) {
+        if (K.getIsKeyPressed()) {
+            PlayerCustomFormData playerCustomFormData = Utility.getClientFormData(Minecraft.getMinecraft().thePlayer);
+            if(playerCustomFormData.isInCustomForm()){
+                if (JRMCoreH.PlyrSettingsB(0) && playerCustomFormData.getCurrentForm().isFormStackable(DBCForm.Kaioken)) {
+                }
+                if (JRMCoreH.PlyrSettingsB(11) && playerCustomFormData.getCurrentForm().isFormStackable(DBCForm.UltraInstinct)) {
+                }
+                if (JRMCoreH.PlyrSettingsB(16) && playerCustomFormData.getCurrentForm().isFormStackable(DBCForm.GodOfDestruction)) {
+                }
+                if (JRMCoreH.PlyrSettingsB(6) && playerCustomFormData.getCurrentForm().isFormStackable(DBCForm.Mystic)) {
+                } else
+                    ci.cancel();
             }
-            if (JRMCoreH.PlyrSettingsB(11) && CustomFormData.getClient().getCurrentForm().isFormStackable(DBCForm.UltraInstinct)) {
-            }
-            if (JRMCoreH.PlyrSettingsB(16) && CustomFormData.getClient().getCurrentForm().isFormStackable(DBCForm.GodOfDestruction)) {
-            }
-            if (JRMCoreH.PlyrSettingsB(6) && CustomFormData.getClient().getCurrentForm().isFormStackable(DBCForm.Mystic)) {
-            } else
-                ci.cancel();
         }
     }
 
@@ -36,10 +42,13 @@ public class MixinDBCKiTech {
      */
     @Inject(method = "Descend", at = @At("HEAD"), cancellable = true)
     private static void Descend(KeyBinding K, CallbackInfo ci) {
-        if (K.getIsKeyPressed() && CustomFormData.getClient().isInCustomForm()) {
-            PacketRegistry.tellServer("Descend");
-            DBCKiTech.soundAsc(CustomFormData.getClient().getCurrentForm().getDescendSound());
-            ci.cancel();
+        if (K.getIsKeyPressed()) {
+            PlayerCustomFormData playerCustomFormData = Utility.getClientFormData(Minecraft.getMinecraft().thePlayer);
+            if(playerCustomFormData.isInCustomForm()){
+                PacketRegistry.tellServer("Descend");
+                DBCKiTech.soundAsc(CustomFormData.getClient().getCurrentForm().getDescendSound());
+                ci.cancel();
+            }
         }
     }
 }
