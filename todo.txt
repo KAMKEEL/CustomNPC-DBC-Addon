@@ -8,7 +8,7 @@ DONE - assign custom form to player: 4/13
 
 DONE - check if player is in customform: 4/13
 
-100% COMPLETE add transformation mechanism: 
+100% COMPLETE add transformation mechanism:
 	-DONE - CF ascension key 4/13
 	-DONE - Rage meter injection including hair spiking when ascending 4/14
 	-DONE - Displaying form menuName in DBC V menu 4/14
@@ -17,20 +17,25 @@ DONE - check if player is in customform: 4/13
 	-make Ki bar the same color as form
 
 DONE - add form multiplier functionality: 4/15
-	
+
+DONE- add kk/ui stackability
+	-DONE - make forms stackable 4/15
+	-DONE - need to work on logic of attribute multis 4/15
+	-DONE - add UI && KK state2 > 1+ multis, as all state2s of these forms will have same multi 4/16
+
 90% - DBCFormChange event
 	-DONE - checking change of racial forms 4/14
 	-missing - checking the change of non racial forms KK/UI/GOD/MYSTIC
 
-90% - add kk/ui stackability
-	-DONE - make forms stackable 4/15
-	-DONE - need to work on logic of attribute multis 4/15 
-	-DONE - add UI && KK state2 > 1+ multis, as all state2s of these forms will have same multi 4/16
 
-add form mastery, timer, freeze player's DBCKiTech, DBCDamage event, Form selection GUI
+WIP - Form Selection GUI:
+	-Make scrollable list with all forms player has
 
 
-bugs: 
+add form mastery, timer, freeze player's DBCKiTech, DBCDamage event,
+
+
+bugs:
 can't descend from God/Mystic when its selected - FIXED
 when KK selected and is 0, reverting causes rls to 0% instead of reverting CF - FIXED
 
@@ -38,4 +43,4 @@ disconnecting while in assigned form i.e SSJ Green turns to default "CustomForm"
 
 
 mixin cheatsheet:
-when trying to inject with value="INVOKE" and shift up or down, you are cannot shift outside the scope you injected in 
+when trying to inject with value="INVOKE" and shift up or down, you are cannot shift outside the scope you injected in

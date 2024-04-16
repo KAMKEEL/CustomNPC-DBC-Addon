@@ -29,6 +29,7 @@ public class SkillHandler {
                 Transform.Ascend(Utility.getFormDataClient().getSelectedForm());
             } else {
                 Utility.sendMessage(player, "§cYou have not selected a custom form!");
+                //make this a single time text
             }
         } else
             Transform.decrementRage();
