@@ -2,11 +2,13 @@ package kamkeel.npcdbc.mixin.impl;
 
 import kamkeel.addon.client.DBCClient;
 import kamkeel.npcdbc.client.ParticleFormHandler;
+import kamkeel.npcdbc.client.gui.GuiDBC;
 import kamkeel.npcdbc.client.gui.GuiNPCManageCustomForms;
 import kamkeel.npcdbc.client.gui.SubGuiDBCProperties;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.entity.EntityLivingBase;
 import noppes.npcs.client.gui.mainmenu.GuiNpcStats;
+import noppes.npcs.client.gui.player.inventory.GuiCNPCInventory;
 import noppes.npcs.client.gui.util.GuiNPCInterface2;
 import noppes.npcs.client.gui.util.GuiNpcButton;
 import noppes.npcs.client.gui.util.GuiNpcLabel;
@@ -66,4 +68,14 @@ public class MixinDBCClient {
      */
     @Overwrite(remap = false)
     public GuiNPCInterface2 manageCustomForms(EntityNPCInterface npcInterface){ return new GuiNPCManageCustomForms(npcInterface); }
+
+
+    /**
+     * @author Kam
+     * @reason Inventory GUI for DBC
+     */
+    @Overwrite
+    public GuiCNPCInventory inventoryGUI() {
+        return new GuiDBC();
+    }
 }
