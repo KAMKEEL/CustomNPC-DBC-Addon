@@ -74,7 +74,7 @@ public class MixinDBCClient {
      * @author Kam
      * @reason Inventory GUI for DBC
      */
-    @Overwrite
+    @Overwrite(remap = false)
     public GuiCNPCInventory inventoryGUI() {
         return new GuiDBC();
     }
