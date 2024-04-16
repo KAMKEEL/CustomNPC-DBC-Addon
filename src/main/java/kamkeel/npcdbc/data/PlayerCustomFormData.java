@@ -44,7 +44,7 @@ public class PlayerCustomFormData {
     }
 
     public boolean isInCustomForm() {
-        return currentForm > 0;
+        return currentForm > 0 && getCurrentForm() != null;
     }
 
     public String getFormColorCode(CustomForm f) {
@@ -64,6 +64,7 @@ public class PlayerCustomFormData {
     public CustomForm getCurrentForm() {
         if (currentForm > 0)
             return (CustomForm) FormController.Instance.get(currentForm);
+
 
         return null;
     }
@@ -92,7 +93,7 @@ public class PlayerCustomFormData {
 
     public void addFormMastery(int formID, int amount) {
         CustomForm form = FormController.getInstance().customForms.get(formID);
-        if(form != null){
+        if (form != null) {
             int current = formMastery.get(formID);
             int updated = Math.max(current + amount, form.maxMastery);
             formMastery.put(formID, updated);
@@ -101,7 +102,7 @@ public class PlayerCustomFormData {
 
     public void removeFormMastery(int formID, int amount) {
         CustomForm form = FormController.getInstance().customForms.get(formID);
-        if(form != null){
+        if (form != null) {
             int current = formMastery.get(formID);
             int updated = Math.max(current - amount, 0);
             formMastery.put(formID, updated);
