@@ -25,7 +25,7 @@ DONE - add form multiplier functionality: 4/15
 90% - add kk/ui stackability
 	-DONE - make forms stackable 4/15
 	-DONE - need to work on logic of attribute multis 4/15 
-		-add UI && KK state2 > 1+ multis, as all state2s of these forms will have same multi
+	-DONE - add UI && KK state2 > 1+ multis, as all state2s of these forms will have same multi 4/16
 
 add form mastery, timer, freeze player's DBCKiTech, DBCDamage event, Form selection GUI
 
