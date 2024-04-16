@@ -101,12 +101,9 @@ public class FormController implements IFormHandler {
     }
 
     public int getUnusedId() {
-        if (lastUsedID == 0) {
-            for (int catid : customForms.keySet()) {
-                if (catid > lastUsedID)
-                    lastUsedID = catid;
-            }
-
+        for (int catid : customForms.keySet()) {
+            if (catid > lastUsedID)
+                lastUsedID = catid;
         }
         lastUsedID++;
         return lastUsedID;
@@ -284,10 +281,12 @@ public class FormController implements IFormHandler {
             }
         }
         nbt.setTag("CustomForms", formList);
+        nbt.setInteger("lastID", lastUsedID);
         return nbt;
     }
 
     public void readMapNBT(NBTTagCompound compound) {
+        lastUsedID = compound.getInteger("lastID");
         NBTTagList list = compound.getTagList("CustomForms", 10);
         if (list != null) {
             for (int i = 0; i < list.tagCount(); i++) {
