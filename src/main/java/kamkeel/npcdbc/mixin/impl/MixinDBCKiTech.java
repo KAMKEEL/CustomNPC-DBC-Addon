@@ -4,6 +4,7 @@ import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
+import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.network.PacketRegistry;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.settings.KeyBinding;
@@ -23,12 +24,9 @@ public class MixinDBCKiTech {
             PlayerCustomFormData formData = Utility.getFormDataClient();
             if (formData.isInCustomForm()) {
                 if (JRMCoreH.PlyrSettingsB(0) && formData.getCurrentForm().isFormStackable(DBCForm.Kaioken)) {
-                }
-                if (JRMCoreH.PlyrSettingsB(11) && formData.getCurrentForm().isFormStackable(DBCForm.UltraInstinct)) {
-                }
-                if (JRMCoreH.PlyrSettingsB(16) && formData.getCurrentForm().isFormStackable(DBCForm.GodOfDestruction)) {
-                }
-                if (JRMCoreH.PlyrSettingsB(6) && formData.getCurrentForm().isFormStackable(DBCForm.Mystic)) {
+                } else if (JRMCoreH.PlyrSettingsB(11) && formData.getCurrentForm().isFormStackable(DBCForm.UltraInstinct)) {
+                } else if (JRMCoreH.PlyrSettingsB(16) && formData.getCurrentForm().isFormStackable(DBCForm.GodOfDestruction)) {
+                } else if (JRMCoreH.PlyrSettingsB(6) && formData.getCurrentForm().isFormStackable(DBCForm.Mystic)) {
                 } else
                     ci.cancel();
             }
@@ -41,10 +39,29 @@ public class MixinDBCKiTech {
     @Inject(method = "Descend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;kiInSuper:I", shift = At.Shift.AFTER), cancellable = true)
     private static void DescendModified(KeyBinding K, CallbackInfo ci) {
         PlayerCustomFormData formData = Utility.getFormDataClient();
+        DBCData d = DBCData.getClient();
+        boolean returnEarly = true;
         if (formData.isInCustomForm()) {
-            PacketRegistry.tellServer("Descend");
-            DBCKiTech.soundAsc(formData.getCurrentForm().getDescendSound());
-            ci.cancel();
+            if (d.formSettingOn(DBCForm.Kaioken)) {
+                if (d.isForm(DBCForm.Kaioken))
+                    returnEarly = false;
+            } else if (d.formSettingOn(DBCForm.UltraInstinct)) {
+                if (d.isForm(DBCForm.UltraInstinct))
+                    returnEarly = false;
+            } else if (d.formSettingOn(DBCForm.GodOfDestruction)) {
+                if (d.isForm(DBCForm.GodOfDestruction))
+                    returnEarly = false;
+            } else if (d.formSettingOn(DBCForm.Mystic))
+                if (d.isForm(DBCForm.Mystic))
+                    returnEarly = false;
+
+
+            if (returnEarly) {
+                PacketRegistry.tellServer("Descend");
+                DBCKiTech.soundAsc(formData.getCurrentForm().getDescendSound());
+                ci.cancel();
+            }
         }
     }
+
 }

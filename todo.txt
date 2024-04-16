@@ -8,22 +8,34 @@ DONE - assign custom form to player:
 
 DONE - check if player is in customform:
 
-90% - DBCFormChange event
-	-DONE - checking change of racial forms
-	-missing - checking the change of non racial forms KK/UI/GOD/MYSTIC
-
 100% COMPLETE add transformation mechanism: 
 	-DONE - CF ascension key
 	-DONE - Rage meter injection including hair spiking when ascending
 	-DONE - Displaying form menuName in DBC V menu
 	-DONE - preventing ascension into other non-stackable transformations when in form
-	-DONE- DBCKiTech.Descend injection
+	-DONE - DBCKiTech.Descend injection
+	-make Ki bar the same color as form
 
 DONE - add form multiplier functionality:
+	
+90% - DBCFormChange event
+	-DONE - checking change of racial forms
+	-missing - checking the change of non racial forms KK/UI/GOD/MYSTIC
 
-
-add kk/ui stackability
+90% - add kk/ui stackability
+	-DONE - make forms stackable
+	-DONE - need to work on logic of attribute multis 
+		-add UI && KK state2 > 1+ multis, as all state2s of these forms will have same multi
 
 add form mastery, timer, freeze player's DBCKiTech, DBCDamage event, Form selection GUI
 
 
+bugs: 
+can't descend from God/Mystic when its selected - FIXED
+when KK selected and is 0, reverting causes rls to 0% instead of reverting CF - FIXED
+
+disconnecting while in assigned form i.e SSJ Green turns to default "CustomForm" on reconnecting, because SelectedForm = "SSJ Green" gets reset
+
+
+mixin cheatsheet:
+when trying to inject with value="INVOKE" and shift up or down, you are cannot shift outside the scope you injected in 

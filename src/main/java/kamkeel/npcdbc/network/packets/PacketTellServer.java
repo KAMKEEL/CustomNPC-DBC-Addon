@@ -47,7 +47,7 @@ public class PacketTellServer extends AbstractServerMessage<PacketTellServer> {
         if (idString.startsWith("Transform:"))
             Transform.handleCustomFormAscend(p, Integer.parseInt(idString.split(":")[1]));
         if (idString.contains("Descend"))
-            Transform.handleDescend(p);
+            Transform.handleCustomFormDescend(p);
 
 
     }

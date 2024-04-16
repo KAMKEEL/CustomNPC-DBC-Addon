@@ -4,7 +4,6 @@ import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
@@ -105,7 +104,7 @@ public class Transform {
 
     @SideOnly(Side.CLIENT)
     public static int getRageMeterIncrementation() {
-        double fm = 10;//getFormMasteryValue(k);
+        double fm = 90;//getFormMasteryValue(k);
         double maxfm = 100;//getMaxFormMasteryValue(k);
 
         if (Utility.percentBetween(fm, maxfm, 0, 5))
@@ -152,34 +151,13 @@ public class Transform {
         }
     }
 
-    public static void handleDescend(EntityPlayerMP p) {
-        DBCData dbcData = DBCData.get(p);
+    public static void handleCustomFormDescend(EntityPlayerMP p) {
         PlayerCustomFormData formData = Utility.getFormData(p);
-        if (dbcData.isForm(DBCForm.Kaioken) && dbcData.formSettingOn(DBCForm.Kaioken)) {
-            if (dbcData.State2 - 1 > 0)
-                dbcData.State2--;
-            else if (dbcData.State2 - 1 == 0) {
-                dbcData.State2--;
-                dbcData.setForm(DBCForm.Kaioken, false);
-            }
-        } else if (dbcData.isForm(DBCForm.UltraInstinct) && dbcData.formSettingOn(DBCForm.UltraInstinct)) {
-            if (dbcData.State2 - 1 > 0)
-                dbcData.State2--;
-            else if (dbcData.State2 - 1 == 0) {
-                dbcData.State2--;
-                dbcData.setForm(DBCForm.UltraInstinct, false);
-            }
-        } else if (dbcData.isForm(DBCForm.Mystic) && dbcData.formSettingOn(DBCForm.Mystic))
-            dbcData.setForm(DBCForm.Mystic, false);
-        else if (dbcData.isForm(DBCForm.GodOfDestruction) && dbcData.formSettingOn(DBCForm.GodOfDestruction))
-            dbcData.setForm(DBCForm.GodOfDestruction, false);
-
-        else if (formData.isInCustomForm()) {
+        if (formData.isInCustomForm()) {
             Utility.sendMessage(p, "§cDescended from§r " + formData.getCurrentForm().getMenuName());
             formData.currentForm = 0;
             formData.updateClient();
         }
-        dbcData.saveToNBT(true);
 
     }
 }

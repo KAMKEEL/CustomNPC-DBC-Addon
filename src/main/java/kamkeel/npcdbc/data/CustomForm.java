@@ -26,8 +26,8 @@ public class CustomForm implements ICustomForm {
     public float dexMulti = 1.0f;
     public float willMulti = 1.0f;
 
-    public boolean kaiokenStackable = false, uiStackable = false, godStackable = false, mysticStackable = false;
-    public float kaiokenMulti = 1.0f, uiMulti = 1.0f, godMulti = 1.0f, mysticMulti = 1.0f;
+    public boolean kaiokenStackable = true, uiStackable = true, godStackable = true, mysticStackable = true;
+    public float kaiokenStrength = 1.2f, uiStrength = 3.0f, godStrength = 3.0f, mysticStrength = 1.8f;
 
     public int auraColor = 1;
 
@@ -158,16 +158,16 @@ public class CustomForm implements ICustomForm {
     public void setFormMulti(int dbcForm, float multi) {
         switch (dbcForm) {
             case DBCForm.Kaioken:
-                kaiokenMulti = multi;
+                kaiokenStrength = multi;
                 break;
             case DBCForm.UltraInstinct:
-                uiMulti = multi;
+                uiStrength = multi;
                 break;
             case DBCForm.GodOfDestruction:
-                godMulti = multi;
+                godStrength = multi;
                 break;
             case DBCForm.Mystic:
-                mysticMulti = multi;
+                mysticStrength = multi;
                 break;
         }
         save();
@@ -177,13 +177,13 @@ public class CustomForm implements ICustomForm {
     public float getFormMulti(int dbcForm) {
         switch (dbcForm) {
             case DBCForm.Kaioken:
-                return kaiokenMulti;
+                return kaiokenStrength;
             case DBCForm.UltraInstinct:
-                return uiMulti;
+                return uiStrength;
             case DBCForm.GodOfDestruction:
-                return godMulti;
+                return godStrength;
             case DBCForm.Mystic:
-                return mysticMulti;
+                return mysticStrength;
             default:
                 return 1.0f;
         }
@@ -274,10 +274,14 @@ public class CustomForm implements ICustomForm {
         strengthMulti = compound.getFloat("strengthMulti");
         dexMulti = compound.getFloat("dexMulti");
         willMulti = compound.getFloat("willMulti");
-        kaiokenMulti = compound.getFloat("kaiokenMulti");
-        uiMulti = compound.getFloat("uiMulti");
+        kaiokenStrength = compound.getFloat("kaiokenStrength");
+        uiStrength = compound.getFloat("uiStrength");
+        godStrength = compound.getFloat("godStrength");
+        mysticStrength = compound.getFloat("mysticStrength");
         kaiokenStackable = compound.getBoolean("kaiokenStackable");
         uiStackable = compound.getBoolean("uiStackable");
+        godStackable = compound.getBoolean("godStackable");
+        mysticStackable = compound.getBoolean("mysticStackable");
         auraColor = compound.getInteger("auraColor");
     }
 
@@ -292,10 +296,14 @@ public class CustomForm implements ICustomForm {
         compound.setFloat("strengthMulti", strengthMulti);
         compound.setFloat("dexMulti", dexMulti);
         compound.setFloat("willMulti", willMulti);
-        compound.setFloat("kaiokenMulti", kaiokenMulti);
-        compound.setFloat("uiMulti", uiMulti);
+        compound.setFloat("kaiokenStrength", kaiokenStrength);
+        compound.setFloat("uiStrength", uiStrength);
+        compound.setFloat("godStrength", godStrength);
+        compound.setFloat("mysticStrength", mysticStrength);
         compound.setBoolean("kaiokenStackable", kaiokenStackable);
         compound.setBoolean("uiStackable", uiStackable);
+        compound.setBoolean("godStackable", godStackable);
+        compound.setBoolean("mysticStackable", mysticStackable);
         compound.setInteger("auraColor", auraColor);
         return compound;
     }

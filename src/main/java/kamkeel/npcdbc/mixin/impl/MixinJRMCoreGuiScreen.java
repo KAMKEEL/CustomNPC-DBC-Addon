@@ -74,6 +74,8 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                 s1 = s1.replace(originalColor, c.getFormColorCode(c.getCurrentForm()));
             } else if (s1.contains("CON:")) { // adds the "xMulti" after CON: AttributeValue
                 float multi = (float) DBCUtils.getCurFormMulti(Minecraft.getMinecraft().thePlayer);
+                if (s1.contains("x"))
+                    s1 = s1.substring(0, s1.indexOf("x") - 1);
                 s1 = s1 + (JRMCoreH.round(multi, 1) != 1.0 ? c.getFormColorCode(c.getCurrentForm()) + " x" + JRMCoreH.round(multi, 1) : "");
             }
             int wpos = var8.getStringWidth(s1);
