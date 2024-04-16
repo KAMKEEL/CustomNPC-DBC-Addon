@@ -6,7 +6,7 @@
  *       Available at runtime but not compiletime for mods depending on this mod
  *  - compileOnly("g:n:v:c"): if the mod you're building doesn't need this dependency during runtime at all, e.g. for optional mods
  *       Not available at all for mods depending on this mod, only visible at compiletime for this mod
- *  - compileOnlyApi("g:n:v:c"): like compileOnly, but also visible at compiletime for mods depending on this mod
+ *  - compileOnlyApi("g:n:v:c"): like compileOnly, but also visible at compiletime for mods depending on this mo    d
  *       Available at compiletime but not runtime for mods depending on this mod
  *  - runtimeOnlyNonPublishable("g:n:v:c"): if you want to include a mod in this mod's runClient/runServer runs, but not publish it as a dependency
  *       Not available at all for mods depending on this mod, only visible at runtime for this mod
