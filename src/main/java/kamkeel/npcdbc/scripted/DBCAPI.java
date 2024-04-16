@@ -4,13 +4,11 @@ import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
-import kamkeel.npcdbc.api.AbstractDBCAPI;
-import kamkeel.npcdbc.api.ICustomForm;
-import kamkeel.npcdbc.api.IDBCStats;
-import kamkeel.npcdbc.api.IKiAttack;
+import kamkeel.npcdbc.api.*;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.DBCStats;
 import kamkeel.npcdbc.data.KiAttack;
+import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.INPCStats;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -55,6 +53,13 @@ public class DBCAPI extends AbstractDBCAPI {
     public IDBCStats getDBCData(ICustomNpc<EntityNPCInterface> npc) {
         if (npc.getMCEntity() instanceof EntityNPCInterface)
             return ((INPCStats) npc.getMCEntity().stats).getDBCStats();
+        return null;
+    }
+
+    @Override
+    public IDBCDisplay getDBCDisplay(ICustomNpc<EntityNPCInterface> npc) {
+        if (npc.getMCEntity() instanceof EntityNPCInterface)
+            return ((INPCDisplay) npc.getMCEntity().display).getDBCDisplay();
         return null;
     }
 

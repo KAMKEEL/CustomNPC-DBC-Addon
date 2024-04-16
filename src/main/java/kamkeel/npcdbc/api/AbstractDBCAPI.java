@@ -42,6 +42,8 @@ public abstract class AbstractDBCAPI {
      */
     public abstract IDBCStats getDBCData(ICustomNpc<EntityNPCInterface> npc);
 
+    public abstract IDBCDisplay getDBCDisplay(ICustomNpc<EntityNPCInterface> npc);
+
     /**
      * Performs DBC Damage based on the DBC Stats
      * sent in
