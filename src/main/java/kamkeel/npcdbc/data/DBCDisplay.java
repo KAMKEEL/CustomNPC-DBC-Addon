@@ -4,6 +4,7 @@ import kamkeel.npcdbc.api.IDBCDisplay;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class DBCDisplay implements IDBCDisplay {
+
     public boolean enabled = false;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
 
@@ -22,11 +23,27 @@ public class DBCDisplay implements IDBCDisplay {
         }
     }
 
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
     public EnumAuraTypes getFormAuraTypes() {
         return enumAuraTypes;
     }
 
     public void setFormAuraTypes(EnumAuraTypes enumAuraTypes) {
         this.enumAuraTypes = enumAuraTypes;
+    }
+
+    @Override
+    public void setFormAuraTypes(String type) {
+        this.enumAuraTypes = EnumAuraTypes.valueOf(type);
     }
 }
