@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.Iterator;
 import java.util.Set;
 
-@Mixin(ScriptPlayer.class)
+@Mixin(value = ScriptPlayer.class, remap = false)
 public class MixinScriptPlayer<T extends EntityPlayerMP>  extends ScriptLivingBase<T> {
 
     @Shadow public T player;

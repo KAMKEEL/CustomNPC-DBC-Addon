@@ -3,28 +3,20 @@ package kamkeel.npcdbc.util;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.controllers.AnimationController;
+import noppes.npcs.client.gui.util.GuiNPCInterface;
 import noppes.npcs.controllers.PlayerDataController;
-import noppes.npcs.controllers.data.Animation;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.scripted.NpcAPI;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static noppes.npcs.NoppesUtilServer.sendScrollData;
 
 public class Utility {
     public static boolean isServer() {
@@ -101,5 +93,21 @@ public class Utility {
 
     public static PlayerCustomFormData getFormData(PlayerData playerData) {
         return ((IPlayerFormData) playerData).getCustomFormData();
+    }
+
+    public static int guiX(GuiNPCInterface gui, double i) {
+        return gui.guiLeft + (int) (gui.xSize * i);
+    }
+
+    public static int guiY(GuiNPCInterface gui, double i) {
+        return gui.guiTop + (int) (gui.ySize * i);
+    }
+
+    public static int guiWidth(GuiNPCInterface gui, double i) {
+        return (int) (gui.xSize * i);
+    }
+
+    public static int guiHeight(GuiNPCInterface gui, double i) {
+        return (int) (gui.ySize * i);
     }
 }

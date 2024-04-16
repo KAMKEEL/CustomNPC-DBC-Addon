@@ -6,7 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.controllers.data.PlayerData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Store all player CustomForms Data here
@@ -66,6 +68,23 @@ public class PlayerCustomFormData {
             return (CustomForm) FormController.Instance.get(currentForm);
 
 
+        return null;
+    }
+
+    public List<String> getAllForms() {
+        List<String> list = new ArrayList<>();
+        for (Integer id : unlockedForms.keySet()) {
+            CustomForm f = getUnlockedForm(id);
+            if (!list.contains(f.getMenuName()))
+                list.add(f.getMenuName());
+
+        }
+        return list;
+    }
+
+    public CustomForm getUnlockedForm(int id) {
+        if (unlockedForms.containsKey(id))
+            return (CustomForm) FormController.Instance.get(unlockedForms.get(id));
         return null;
     }
 
