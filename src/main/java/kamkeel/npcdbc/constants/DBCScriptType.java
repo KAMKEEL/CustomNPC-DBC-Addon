@@ -1,7 +1,5 @@
 package kamkeel.npcdbc.constants;
 
-import noppes.npcs.constants.EnumScriptType;
-
 public enum DBCScriptType {
 
     FORMCHANGE("formChange");

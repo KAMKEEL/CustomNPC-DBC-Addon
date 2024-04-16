@@ -6,7 +6,6 @@ import kamkeel.npcdbc.events.DBCEventHooks;
 import kamkeel.npcdbc.events.DBCPlayerEvent;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,8 +17,6 @@ public class MixinJGPlayerMP {
 
     @Shadow
     public EntityPlayer player;
-    @Shadow
-    private NBTTagCompound nbt;
 
 
     @Inject(method = "setState", at = @At("HEAD"), remap = false, cancellable = true)

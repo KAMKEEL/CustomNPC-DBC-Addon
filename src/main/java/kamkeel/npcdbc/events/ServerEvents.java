@@ -11,23 +11,12 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
-import noppes.npcs.CustomItems;
-import noppes.npcs.EventHooks;
-import noppes.npcs.NoppesUtilPlayer;
 import noppes.npcs.NoppesUtilServer;
-import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.constants.EnumQuestType;
 import noppes.npcs.controllers.PlayerDataController;
-import noppes.npcs.controllers.ScriptController;
-import noppes.npcs.controllers.data.*;
-import noppes.npcs.scripted.NpcAPI;
-import noppes.npcs.scripted.item.ScriptCustomItem;
-
-import static noppes.npcs.config.ConfigMain.TrackedQuestUpdateFrequency;
+import noppes.npcs.controllers.data.PlayerData;
 
 public class ServerEvents {
     @SideOnly(Side.SERVER)
