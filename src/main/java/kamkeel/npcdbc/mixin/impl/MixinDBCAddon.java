@@ -8,6 +8,7 @@ import kamkeel.npcdbc.data.DBCStats;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.INPCStats;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
+import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,15 +16,19 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.Server;
 import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.constants.SyncType;
+import noppes.npcs.controllers.AnimationController;
+import noppes.npcs.controllers.data.Animation;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
@@ -193,5 +198,50 @@ public class MixinDBCAddon {
     @Overwrite(remap = false)
     public void syncRemove(int id){
         CustomForm form = FormController.Instance.customForms.remove(id);
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Performs Syncing | SyncController
+     */
+    @Overwrite(remap = false)
+    public void formPacketGet(EntityPlayer player, ByteBuf buffer){
+        CustomForm customForm = (CustomForm) FormController.getInstance().get(buffer.readInt());
+        NBTTagCompound compound = customForm.writeToNBT();
+        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Performs Syncing | SyncController
+     */
+    @Overwrite(remap = false)
+    public void formPacketGets(EntityPlayer player, ByteBuf buffer){
+        NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Performs Syncing | SyncController
+     */
+    @Overwrite(remap = false)
+    public void formPacketRemove(EntityPlayer player, ByteBuf buffer){
+        FormController.getInstance().delete(buffer.readInt());
+        NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
+        NBTTagCompound compound = (new CustomForm()).writeToNBT();
+        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Performs Syncing | SyncController
+     */
+    @Overwrite(remap = false)
+    public void formPacketSave(EntityPlayer player, ByteBuf buffer) throws IOException {
+        CustomForm customForm = new CustomForm();
+        customForm.readFromNBT(Server.readNBT(buffer));
+        FormController.getInstance().saveForm(customForm);
+        NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
+        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, customForm.writeToNBT());
     }
 }
