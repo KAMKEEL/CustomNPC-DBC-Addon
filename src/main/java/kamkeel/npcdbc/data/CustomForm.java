@@ -33,6 +33,8 @@ public class CustomForm implements ICustomForm {
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
+    int maxMastery = 100;
+
     public CustomForm() {
     }
 
