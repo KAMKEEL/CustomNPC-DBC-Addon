@@ -32,7 +32,7 @@ WIP - Form Selection GUI:
 	-Make scrollable list with all forms player has
 
 
-add form mastery, timer, freeze player's DBCKiTech, DBCDamage event,
+add form mastery, changeable DNS components, timer, freeze player's DBCKiTech, DBCDamage event,
 
 
 bugs:

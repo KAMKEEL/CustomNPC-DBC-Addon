@@ -29,7 +29,7 @@ public class CustomForm implements ICustomForm {
     public boolean kaiokenStackable = true, uiStackable = true, godStackable = true, mysticStackable = true;
     public float kaiokenStrength = 1.2f, uiStrength = 3.0f, godStrength = 3.0f, mysticStrength = 1.8f;
 
-    public int auraColor = 1;
+    public int auraColor = 1, hairColor, eyeColor, bodyCM, bodyC1, bodyC2, bodyC3;
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
     public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
@@ -311,6 +311,13 @@ public class CustomForm implements ICustomForm {
         godStackable = compound.getBoolean("godStackable");
         mysticStackable = compound.getBoolean("mysticStackable");
         auraColor = compound.getInteger("auraColor");
+        eyeColor = compound.getInteger("eyeColor");
+        hairColor = compound.getInteger("hairColor");
+        bodyCM = compound.getInteger("bodyCM");
+        bodyC1 = compound.getInteger("bodyC1");
+        bodyC2 = compound.getInteger("bodyC2");
+        bodyC3 = compound.getInteger("bodyC3");
+
     }
 
     public NBTTagCompound writeToNBT() {
@@ -335,6 +342,14 @@ public class CustomForm implements ICustomForm {
         compound.setBoolean("godStackable", godStackable);
         compound.setBoolean("mysticStackable", mysticStackable);
         compound.setInteger("auraColor", auraColor);
+        compound.setInteger("eyeColor", eyeColor);
+        compound.setInteger("hairColor", hairColor);
+        compound.setInteger("bodyCM", bodyCM);
+        compound.setInteger("bodyC1", bodyC1);
+        compound.setInteger("bodyC2", bodyC2);
+        compound.setInteger("bodyC3", bodyC3);
+
+
         return compound;
     }
 

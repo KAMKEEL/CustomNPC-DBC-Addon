@@ -2,21 +2,13 @@ package kamkeel.npcdbc.client.gui;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import noppes.npcs.NoppesUtilPlayer;
-import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.gui.player.inventory.GuiCNPCInventory;
-import noppes.npcs.client.gui.util.GuiButtonNextPage;
 import noppes.npcs.client.gui.util.IGuiData;
 import noppes.npcs.constants.EnumPlayerPacket;
-import noppes.npcs.controllers.data.Faction;
-import noppes.npcs.controllers.data.PlayerFactionData;
 import org.lwjgl.opengl.GL11;
 import tconstruct.client.tabs.AbstractTab;
-
-import java.util.ArrayList;
 
 public class GuiDBC extends GuiCNPCInventory implements IGuiData {
 
@@ -64,6 +56,8 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData {
             super.actionPerformed(guibutton);
             return;
         }
+
+
     }
 
     protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {}

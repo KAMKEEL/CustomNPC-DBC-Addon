@@ -57,18 +57,20 @@ public class MixinJRMCoreH {
 
                 if (d.isForm(DBCForm.Kaioken) && d.State2 > 1)
                     stackableMulti += stackableMulti * f.getState2Factor(DBCForm.Kaioken) * d.State2 / (JRMCoreH.TransKaiDmg.length - 1);
-                if (d.isForm(DBCForm.UltraInstinct) && d.State2 > 1)
+                else if (d.isForm(DBCForm.UltraInstinct) && d.State2 > 1)
                     stackableMulti += stackableMulti * f.getState2Factor(DBCForm.UltraInstinct) * d.State2 / JGConfigUltraInstinct.CONFIG_UI_LEVELS;
 
                 if (attribute == 0) //str
                     result *= multis[0];
-                if (attribute == 1) //dex
+                else if (attribute == 1) //dex
                     result *= multis[1];
-                if (attribute == 3) //will
+                else if (attribute == 3) //will
                     result *= multis[2];
-                result *= stackableMulti;
-                result = (int) ((double) result > Double.MAX_VALUE ? Double.MAX_VALUE : (double) result);
 
+                if (attribute == 0 || attribute == 1 || attribute == 3)
+                    result *= stackableMulti;
+
+                result = (int) ((double) result > Double.MAX_VALUE ? Double.MAX_VALUE : (double) result);
                 info.setReturnValue(result);
             }
         }
