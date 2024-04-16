@@ -16,6 +16,7 @@ public class PlayerCustomFormData {
     public int currentForm = 0;
     public int selectedForm = -1;
     public HashMap<Integer, String> unlockedForms = new HashMap<Integer, String>();
+    public HashMap<Integer, Integer> formMastery = new HashMap<Integer, Integer>();
 
     public PlayerCustomFormData(PlayerData parent) {
         this.parent = parent;
@@ -24,14 +25,17 @@ public class PlayerCustomFormData {
     public void addForm(CustomForm form) {
         if (!unlockedForms.containsKey(form.id)) {
             unlockedForms.put(form.id, form.name);
+            formMastery.put(form.id, 0);
         }
     }
 
     public String removeForm(CustomForm form) {
+        formMastery.remove(form.id);
         return unlockedForms.remove(form.id);
     }
 
     public String removeForm(int id) {
+        formMastery.remove(id);
         return unlockedForms.remove(id);
     }
 
@@ -72,15 +76,35 @@ public class PlayerCustomFormData {
         compound.setInteger("CurrentForm", currentForm);
         compound.setInteger("SelectedForm", selectedForm);
         compound.setTag("UnlockedForms", NBTTags.nbtIntegerStringMap(unlockedForms));
+        compound.setTag("FormMastery", NBTTags.nbtIntegerIntegerMap(formMastery));
     }
 
     public void loadNBTData(NBTTagCompound compound) {
         currentForm = compound.getInteger("CurrentForm");
         selectedForm = compound.getInteger("SelectedForm");
         unlockedForms = NBTTags.getIntegerStringMap(compound.getTagList("UnlockedForms", 10));
+        formMastery = NBTTags.getIntegerIntegerMap(compound.getTagList("FormMastery", 10));
     }
 
     public void updateClient() {
         ((IPlayerFormData) parent).updateFormInfo();
+    }
+
+    public void addFormMastery(int formID, int amount) {
+        CustomForm form = FormController.getInstance().customForms.get(formID);
+        if(form != null){
+            int current = formMastery.get(formID);
+            int updated = Math.max(current + amount, form.maxMastery);
+            formMastery.put(formID, updated);
+        }
+    }
+
+    public void removeFormMastery(int formID, int amount) {
+        CustomForm form = FormController.getInstance().customForms.get(formID);
+        if(form != null){
+            int current = formMastery.get(formID);
+            int updated = Math.max(current - amount, 0);
+            formMastery.put(formID, updated);
+        }
     }
 }
