@@ -135,6 +135,14 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     double getCurrentFormMultiplier();
 
+    int getMajinAbsorptionRace();
+
+    void setMajinAbsorptionRace(int race);
+
+    int getMajinAbsorptionPower();
+
+    void setMajinAbsorptionPower(int power);
+
     /**
      * @return True if player is transformed into white MUI
      */

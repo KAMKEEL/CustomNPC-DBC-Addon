@@ -493,6 +493,52 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return (Math.max(maxstr, str)) / str;
     }
 
+    @Override
+    public int getMajinAbsorptionRace() {
+        if (getRace() != 5)
+            return 0;
+        String s = nbt.getString("jrmcMajinAbsorptionData");
+        String[] data = s.split(",");
+        String value = data.length >= 3 ? data[1] : "0";
+        return Integer.parseInt(value);
+    }
+
+    @Override
+    public void setMajinAbsorptionRace(int race) {
+        if (getRace() != 5)
+            return;
+
+        String[] data = nbt.getString("jrmcMajinAbsorptionData").split(",");
+        String s = race + ",";
+        for (int i = 1; i < data.length; i++)
+            s += data + ",";
+
+        s = s.substring(0, s.length() - 1);
+        nbt.setString("jrmcMajinAbsorptionData", s);
+    }
+
+    @Override
+    public int getMajinAbsorptionPower() {
+        if (getRace() != 5)
+            return 0;
+        String s = nbt.getString("jrmcMajinAbsorptionData");
+        return JRMCoreH.getMajinAbsorptionValueS(s);
+    }
+
+    @Override
+    public void setMajinAbsorptionPower(int power) {
+        if (getRace() != 5)
+            return;
+
+        String[] data = nbt.getString("jrmcMajinAbsorptionData").split(",");
+        String s = power + ",";
+        for (int i = 1; i < data.length; i++)
+            s += data + ",";
+
+        s = s.substring(0, s.length() - 1);
+        nbt.setString("jrmcMajinAbsorptionData", s);
+    }
+
     /**
      * @return True if player is transformed into white MUI
      */
