@@ -38,23 +38,29 @@ public class MixinDBCKiTech {
     /**
      * Descends from custom form when DBC descend key is pressed
      */
-    @Inject(method = "Descend", at = @At("HEAD"), cancellable = true)
-    private static void Descend(KeyBinding K, CallbackInfo ci) {
-        if (K.getIsKeyPressed()) {
-            PlayerCustomFormData formData = Utility.getFormDataClient();
-            if (formData.isInCustomForm()) {
-                PacketRegistry.tellServer("Descend");
-                DBCKiTech.soundAsc(formData.getCurrentForm().getDescendSound());
-                ci.cancel();
-            }
-        }
-    }
+//    @Inject(method = "Descend", at = @At("HEAD"), cancellable = true)
+//    private static void Descend(KeyBinding K, CallbackInfo ci) {
+//        if (K.getIsKeyPressed()) {
+//            PlayerCustomFormData formData = Utility.getFormDataClient();
+//            if (formData.isInCustomForm()) {
+//                PacketRegistry.tellServer("Descend");
+//                DBCKiTech.soundAsc(formData.getCurrentForm().getDescendSound());
+//                ci.cancel();
+//            }
+//        }
+//    }
 
     /**
      * Descends from custom form when DBC descend key is pressed
      */
     @Inject(method = "Descend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;kiInSuper:I", shift = At.Shift.AFTER), cancellable = true)
     private static void DescendModified(KeyBinding K, CallbackInfo ci) {
-
+        System.out.println("hiii");
+        PlayerCustomFormData formData = Utility.getFormDataClient();
+        if (formData.isInCustomForm()) {
+            PacketRegistry.tellServer("Descend");
+            DBCKiTech.soundAsc(formData.getCurrentForm().getDescendSound());
+            ci.cancel();
+        }
     }
 }

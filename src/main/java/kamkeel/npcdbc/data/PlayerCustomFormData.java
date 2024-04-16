@@ -2,11 +2,8 @@ package kamkeel.npcdbc.data;
 
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
-import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 
 import java.util.HashMap;
@@ -22,13 +19,6 @@ public class PlayerCustomFormData {
 
     public PlayerCustomFormData(PlayerData parent) {
         this.parent = parent;
-    }
-
-    //add conditions here
-    public static boolean eligibleForCustomForms(Entity p) {
-        if (p instanceof EntityPlayer)
-            return true;
-        return false;
     }
 
     public void addForm(CustomForm form) {
@@ -51,6 +41,16 @@ public class PlayerCustomFormData {
 
     public boolean isInCustomForm() {
         return currentForm > 0;
+    }
+
+    public String getFormColorCode(CustomForm f) {
+        // §2§lHi
+        if (f.getMenuName().contains("§")) {
+            String s = f.getMenuName();
+            int i = s.indexOf("§");
+            return s.substring(i, 2);
+        }
+        return "";
     }
 
     public boolean isInForm(String formName) {

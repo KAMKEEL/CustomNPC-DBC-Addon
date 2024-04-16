@@ -1,13 +1,29 @@
-working on: CustomForms
+working on: CustomForms CF
 
 to-do:
 
-make a custom form: 
-assign custom form to player:
-check if player is in customform:
+DONE - make a custom form: 
 
+DONE - assign custom form to player: 
 
-add form multiplier functionality:
+DONE - check if player is in customform:
+
+90% - DBCFormChange event
+	-DONE - checking change of racial forms
+	-missing - checking the change of non racial forms KK/UI/GOD/MYSTIC
+
+100% COMPLETE add transformation mechanism: 
+	-DONE - CF ascension key
+	-DONE - Rage meter injection including hair spiking when ascending
+	-DONE - Displaying form menuName in DBC V menu
+	-DONE - preventing ascension into other non-stackable transformations when in form
+	-DONE- DBCKiTech.Descend injection
+
+DONE - add form multiplier functionality:
+
 
 add kk/ui stackability
+
+add form mastery, timer, freeze player's DBCKiTech, DBCDamage event, Form selection GUI
+
 
