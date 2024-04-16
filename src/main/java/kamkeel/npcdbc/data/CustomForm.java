@@ -32,7 +32,7 @@ public class CustomForm implements ICustomForm {
     public int auraColor = 1;
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
-
+    public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
     int maxMastery = 100;
 
     public CustomForm() {
@@ -41,6 +41,30 @@ public class CustomForm implements ICustomForm {
     public CustomForm(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+
+    public void setState2Factor(int dbcForm, float factor) {
+        switch (dbcForm) {
+            case DBCForm.Kaioken:
+                kaiokenState2Factor = factor;
+                break;
+            case DBCForm.UltraInstinct:
+                uiState2Factor = factor;
+                break;
+        }
+        save();
+    }
+
+    public float getState2Factor(int dbcForm) {
+        switch (dbcForm) {
+            case DBCForm.Kaioken:
+                return kaiokenState2Factor;
+            case DBCForm.UltraInstinct:
+                return uiState2Factor;
+            default:
+                return 1.0f;
+        }
     }
 
     public float[] getAllMulti() {
@@ -280,6 +304,8 @@ public class CustomForm implements ICustomForm {
         uiStrength = compound.getFloat("uiStrength");
         godStrength = compound.getFloat("godStrength");
         mysticStrength = compound.getFloat("mysticStrength");
+        kaiokenState2Factor = compound.getFloat("kaiokenState2Factor");
+        uiState2Factor = compound.getFloat("uiState2Factor");
         kaiokenStackable = compound.getBoolean("kaiokenStackable");
         uiStackable = compound.getBoolean("uiStackable");
         godStackable = compound.getBoolean("godStackable");
@@ -302,6 +328,8 @@ public class CustomForm implements ICustomForm {
         compound.setFloat("uiStrength", uiStrength);
         compound.setFloat("godStrength", godStrength);
         compound.setFloat("mysticStrength", mysticStrength);
+        compound.setFloat("kaiokenState2Factor", kaiokenState2Factor);
+        compound.setFloat("uiState2Factor", uiState2Factor);
         compound.setBoolean("kaiokenStackable", kaiokenStackable);
         compound.setBoolean("uiStackable", uiStackable);
         compound.setBoolean("godStackable", godStackable);
