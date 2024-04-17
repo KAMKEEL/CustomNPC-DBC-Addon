@@ -21,7 +21,7 @@ public class CustomForm implements ICustomForm {
     public String name = "";
     //name to be displayed in DBC GUI after "Form: ", preferably short as space is narrow
     public String menuName = "§2§lCustom Form";
-    public int race = DBCRace.SAIYAN;
+    public int race = DBCRace.ALL;
 
     public float strengthMulti = 1.0f;
     public float dexMulti = 1.0f;
@@ -230,7 +230,7 @@ public class CustomForm implements ICustomForm {
 
     @Override
     public void assignToPlayer(EntityPlayer p) {
-        if (race == DBCData.get(p).Race) {
+        if (race == DBCRace.ALL || race == DBCData.get(p).Race) {
             PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
             Utility.getFormData(playerData).addForm(this);
             playerData.updateClient = true;
@@ -244,11 +244,9 @@ public class CustomForm implements ICustomForm {
 
     @Override
     public void removeFromPlayer(EntityPlayer p) {
-        if (race == DBCData.get(p).Race) {
-            PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
-            Utility.getFormData(playerData).removeForm(this);
-            playerData.updateClient = true;
-        }
+        PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
+        Utility.getFormData(playerData).removeForm(this);
+        playerData.updateClient = true;
     }
 
     public void removeFromPlayer(String name) {
