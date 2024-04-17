@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.items;
 
 import kamkeel.npcdbc.LocalizationHelper;
+import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.EnumKiCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -99,7 +100,7 @@ public class KiCapsule extends Item {
         if(CapsuleController.lastUsedKiCapsule.containsKey(playerUUID))
             lastUsed = CapsuleController.lastUsedKiCapsule.get(playerUUID);
 
-        if(currentTime - lastUsed > kiCapsules.getCooldown() * 1000L){
+        if(!ConfigCapsules.EnableCapsuleCooldowns || currentTime - lastUsed > kiCapsules.getCooldown() * 1000L){
             // Percentage of Ki to Restore
             int kiRestored = kiCapsules.getStrength();
 
