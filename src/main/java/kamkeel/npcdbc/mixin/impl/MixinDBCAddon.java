@@ -58,6 +58,7 @@ public class MixinDBCAddon {
             INPCDisplay display = (INPCDisplay) npc.display;
             INPCDisplay receiverDisplay = (INPCDisplay) receiverNPC.display;
 
+            receiverStats.getDBCStats().setEnabled(stats.getDBCStats().isEnabled());
             receiverStats.getDBCStats().setFriendlyFist(stats.getDBCStats().isFriendlyFist());
             receiverStats.getDBCStats().setIgnoreDex(stats.getDBCStats().isIgnoreDex());
             receiverStats.getDBCStats().setIgnoreBlock(stats.getDBCStats().isIgnoreBlock());
@@ -66,6 +67,9 @@ public class MixinDBCAddon {
             receiverStats.getDBCStats().setIgnoreFormReduction(stats.getDBCStats().isIgnoreFormReduction());
             receiverStats.getDBCStats().setHasDefensePenetration(stats.getDBCStats().hasDefensePenetration());
             receiverStats.getDBCStats().setDefensePenetration(stats.getDBCStats().getDefensePenetration());
+
+            receiverDisplay.getDBCDisplay().setEnabled(display.getDBCDisplay().isEnabled());
+            receiverDisplay.getDBCDisplay().setFormAuraTypes(display.getDBCDisplay().getFormAuraTypes());
         }
     }
 
