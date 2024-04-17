@@ -6,6 +6,7 @@ import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
+import JinRyuu.JRMCore.server.JGPlayerMP;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.api.IDBCStats;
@@ -808,5 +809,30 @@ public class DBCUtils {
             }
         }
         return damageAmount;
+    }
+
+    public static int getMaxKi(EntityPlayer player) {
+        int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(player);
+        JGPlayerMP JG = new JGPlayerMP(player);
+        JG.connectBaseNBT();
+        byte pwr = JRMCoreH.getByte(player, "jrmcPwrtyp");
+        byte rce = JRMCoreH.getByte(player, "jrmcRace");
+        byte cls = JRMCoreH.getByte(player, "jrmcClass");
+        return JG.getEnergyMax(rce, cls, pwr, PlyrAttrbts, JRMCoreH.SklLvl_KiBs(player, pwr));
+    }
+
+    public static int getMaxStamina(EntityPlayer player) {
+        int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(player);
+        JGPlayerMP JG = new JGPlayerMP(player);
+        JG.connectBaseNBT();
+        byte pwr = JRMCoreH.getByte(player, "jrmcPwrtyp");
+        byte rce = JRMCoreH.getByte(player, "jrmcRace");
+        byte cls = JRMCoreH.getByte(player, "jrmcClass");
+
+        return JG.getStaminaMax(rce, cls, pwr, PlyrAttrbts);
+    }
+
+    public static int getMaxBody(EntityPlayer player) {
+        return DBCUtils.getMaxStat(player, 2);
     }
 }

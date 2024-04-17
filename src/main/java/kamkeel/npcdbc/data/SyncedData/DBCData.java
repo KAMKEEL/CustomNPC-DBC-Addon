@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.SyncedData;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -49,6 +50,35 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
 
     public static boolean has(Entity p) {
         return get(p, dn) != null;
+    }
+
+    //negative percToRestore will drain instead
+    public void restoreKiPercent(float percToRestore) {
+        int maxKi = DBCUtils.getMaxKi(player);
+        int newKi = (int) (maxKi * (percToRestore / 100));
+        DBCUtils.kiCost(player, newKi);
+
+        Ki += newKi;
+        Ki = Ki > maxKi ? maxKi : Ki;
+        saveToNBT(true);
+    }
+
+    public void restoreHealthPercent(float percToRestore) {
+        int maxBody = DBCUtils.getMaxBody(player);
+        int newBody = (int) (maxBody * (-percToRestore / 100));
+
+        Body += newBody;
+        Body = Body > maxBody ? maxBody : Body;
+        saveToNBT(true);
+    }
+
+    public void restoreStaminaPercent(float percToRestore) {
+        int maxSta = DBCUtils.getMaxStamina(player);
+        int nweSta = (int) (maxSta * (-percToRestore / 100));
+
+        Stamina += nweSta;
+        Stamina = Stamina > maxSta ? maxSta : Stamina;
+        saveToNBT(true);
     }
 
     public boolean isForm(int dbcForm) {
@@ -138,7 +168,6 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
                 return false;
         }
     }
-
 
     @Override
     public void saveNBTData(NBTTagCompound compound) { // save all fields to compound
