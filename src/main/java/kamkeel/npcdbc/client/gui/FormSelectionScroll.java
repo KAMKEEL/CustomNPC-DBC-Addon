@@ -1,16 +1,25 @@
 package kamkeel.npcdbc.client.gui;
 
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.CustomForm;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.util.GuiCustomScroll;
 import org.lwjgl.opengl.GL11;
 
+import java.util.HashMap;
+
 public class FormSelectionScroll extends GuiCustomScroll {
+    private final HashMap<String, String> formDisplays = new HashMap<>();
     int hoverColor;
 
     public FormSelectionScroll(GuiScreen parent, int id) {
         super(parent, id);
         visible = true;
+
+        for(CustomForm allForms : FormController.getInstance().customForms.values()){
+            formDisplays.put(allForms.getName(), allForms.getMenuName());
+        }
     }
 
     @Override
@@ -20,7 +29,10 @@ public class FormSelectionScroll extends GuiCustomScroll {
             int k = (14 * i + 4) - scrollY;
             if (k >= 4 && k + 12 < ySize) {
                 int xOffset = scrollHeight < ySize - 8 ? 0 : 10;
-                String displayString = StatCollector.translateToLocal(list.get(i));
+                String menuName = formDisplays.get(list.get(i));
+                if(menuName.isEmpty())
+                    menuName = "Missing";
+                String displayString = StatCollector.translateToLocal(menuName);
                 String text = "";
                 float maxWidth = (xSize + xOffset - 8) * 0.8f;
 

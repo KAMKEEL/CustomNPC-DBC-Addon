@@ -232,7 +232,9 @@ public class CustomForm implements ICustomForm {
     public void assignToPlayer(EntityPlayer p) {
         if (race == DBCRace.ALL || race == DBCData.get(p).Race) {
             PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
-            Utility.getFormData(playerData).addForm(this);
+            PlayerCustomFormData formData = Utility.getFormData(playerData);
+            formData.addForm(this);
+            formData.updateClient();
             playerData.updateClient = true;
             playerData.save();
         }
@@ -246,7 +248,9 @@ public class CustomForm implements ICustomForm {
     @Override
     public void removeFromPlayer(EntityPlayer p) {
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
-        Utility.getFormData(playerData).removeForm(this);
+        PlayerCustomFormData formData = Utility.getFormData(playerData);
+        formData.removeForm(this);
+        formData.updateClient();
         playerData.updateClient = true;
         playerData.save();
     }

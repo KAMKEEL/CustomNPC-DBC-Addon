@@ -114,7 +114,7 @@ public class Utility {
         for(int formID :data.unlockedForms.keySet()){
             CustomForm form = (CustomForm) FormController.getInstance().get(formID);
             if(form != null){
-                map.put(form.menuName, form.id);
+                map.put(form.name, form.id);
             }
         }
         sendScrollData(player, map);

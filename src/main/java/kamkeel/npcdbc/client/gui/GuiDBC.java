@@ -1,8 +1,7 @@
 package kamkeel.npcdbc.client.gui;
 
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.CustomForm;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -22,12 +21,11 @@ import java.util.Vector;
 
 public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollListener, IScrollData {
     private final ResourceLocation resource = new ResourceLocation("customnpcs", "textures/gui/standardbg.png");
-    PlayerCustomFormData playerFormData;
     private FormSelectionScroll formSelectionScroll;
     private String selected = null;
     private String search = "";
     private CustomForm selectedForm;
-    private HashMap<String, Integer> formData = new HashMap<String, Integer>();
+    private HashMap<String, Integer> unlockedForms = new HashMap<String, Integer>();
 
     public GuiDBC() {
         super();
@@ -61,7 +59,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
 
         // Add Details
         if (selectedForm != null) {
-            setSelected(playerFormData.getColoredName(selectedForm));
+
         }
     }
 
@@ -99,8 +97,8 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
 
         if (guibutton.id == 1) {
             if (selected != null) {
-
-                Client.sendData(EnumPacketServer.CustomFormSet, formData.get(selected));
+                int formID = unlockedForms.get(selected);
+                Client.sendData(EnumPacketServer.CustomFormSet, formID);
             }
         } else if (guibutton.id == 2) {
             Client.sendData(EnumPacketServer.CustomFormSet, -1);
@@ -123,8 +121,6 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             search = getTextField(55).getText().toLowerCase();
             formSelectionScroll.resetScroll();
             formSelectionScroll.setList(getFormSearch());
-            setSelected(playerFormData.getColoredName(selectedForm));
-
         }
     }
 
@@ -139,13 +135,13 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         super.mouseClicked(i, j, k);
     }
 
-    private List<String> getFormSearch() {
-        if (search.isEmpty()) {
-            return playerFormData.getAllForms();
+    private List<String> getFormSearch(){
+        if(search.isEmpty()){
+            return new ArrayList<String>(this.unlockedForms.keySet());
         }
         List<String> list = new ArrayList<String>();
-        for (String name : playerFormData.getAllForms()) {
-            if (name.toLowerCase().contains(search))
+        for(String name : this.unlockedForms.keySet()){
+            if(name.toLowerCase().contains(search))
                 list.add(name);
         }
         return list;
@@ -155,13 +151,10 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
     @Override
     public void setData(Vector<String> list, HashMap<String, Integer> data) {
         String name = formSelectionScroll.getSelected();
-        this.formData = data;
-        playerFormData = Utility.getFormDataClient();
+        this.unlockedForms = data;
         formSelectionScroll.setList(getFormSearch());
-
         if (name != null)
             formSelectionScroll.setSelected(name);
-
         initGui();
     }
 
