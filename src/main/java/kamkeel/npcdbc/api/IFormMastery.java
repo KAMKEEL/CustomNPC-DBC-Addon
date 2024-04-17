@@ -5,6 +5,11 @@ package kamkeel.npcdbc.api;
  * get a better understanding on how this interface functions
  */
 public interface IFormMastery {
+    /**
+     * @param type 3 Legal: "flat", "perlevel", "max"
+     * @return value of specified type
+     */
+    float getAttributeMulti(String type);
 
     /**
      * @param type  3 Legal: "flat", "perlevel", "max"
@@ -20,17 +25,12 @@ public interface IFormMastery {
     void setGain(String eventType, String type, float value);
 
     /**
-     * @param type 3 Legal: "flat", "perlevel", "max"
-     * @return value of specified type
-     */
-    float getAttributeMulti(String type);
-
-    /**
      * @param eventType 4 Legal: "update", "attack", "damaged", "fireki"
      * @param type      4 Legal: "gain", "flat", "permind", "max"
      * @return the value of specified type within eventType
      */
     float getGain(String eventType, String type);
+
 
     /**
      * @param type 3 Legal: "flat", "perlevel", "MinOrMax"
@@ -68,8 +68,17 @@ public interface IFormMastery {
      */
     float getStrainMulti(String type);
 
+    float getMaxLevel();
+
+    void setMaxLevel(float value);
+
+    float getInstantTransformationUnlockLevel();
+
+    void setInstantTransformationUnlockLevel(float value);
+
     /**
      * Saves CustomForm with the New Form Mastery Modifications
+     *
      * @return IFormMastery self object
      */
     IFormMastery save();
