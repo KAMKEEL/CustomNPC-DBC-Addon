@@ -29,7 +29,8 @@ DONE- add kk/ui stackability
 
 
 WIP - Form Selection GUI:
-	-Make scrollable list with all forms player has
+	-DONE - Make scrollable list with all forms player has 4/16
+	-Make GUI that displays Form Data to player
 
 
 add form mastery, changeable DNS components, timer, freeze player's DBCKiTech, DBCDamage event,

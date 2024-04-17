@@ -2,6 +2,7 @@ package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.api.IFormHandler;
+import kamkeel.npcdbc.api.IFormMastery;
 import kamkeel.npcdbc.data.CustomForm;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -109,6 +110,10 @@ public class FormController implements IFormHandler {
         return lastUsedID;
     }
 
+    public IFormMastery saveFormMastery(IFormMastery formMastery) {
+        return null;
+    }
+
     public ICustomForm saveForm(ICustomForm customForm) {
         if (customForm.getID() < 0) {
             customForm.setID(getUnusedId());
@@ -136,7 +141,7 @@ public class FormController implements IFormHandler {
 
         try {
             NBTTagCompound nbtTagCompound = ((CustomForm) customForm).writeToNBT();
-            NBTJsonUtil.SaveFile(file, nbtTagCompound );
+            NBTJsonUtil.SaveFile(file, nbtTagCompound);
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
