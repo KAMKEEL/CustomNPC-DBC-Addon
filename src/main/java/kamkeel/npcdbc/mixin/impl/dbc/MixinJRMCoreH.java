@@ -54,12 +54,22 @@ public class MixinJRMCoreH {
                 CustomForm f = formData.getCurrentForm();
                 float[] multis = f.getAllMulti();
                 float stackableMulti = d.isForm(DBCForm.Kaioken) ? f.getFormMulti(DBCForm.Kaioken) : d.isForm(DBCForm.UltraInstinct) ? f.getFormMulti(DBCForm.UltraInstinct) : d.isForm(DBCForm.GodOfDestruction) ? f.getFormMulti(DBCForm.GodOfDestruction) : d.isForm(DBCForm.Mystic) ? f.getFormMulti(DBCForm.Mystic) : 1.0f;
+                double fmvalue = 1.0f;
 
-                if (d.isForm(DBCForm.Kaioken) && d.State2 > 1)
+                //don't forget to multiply this by legend/divine/majin multis
+                if (d.isForm(DBCForm.Kaioken) && d.State2 > 1) {
+                    fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Kaioken", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
                     stackableMulti += stackableMulti * f.getState2Factor(DBCForm.Kaioken) * d.State2 / (JRMCoreH.TransKaiDmg.length - 1);
-                else if (d.isForm(DBCForm.UltraInstinct) && d.State2 > 1)
+                } else if (d.isForm(DBCForm.UltraInstinct) && d.State2 > 1) {
+                    fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "UltraInstict", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
                     stackableMulti += stackableMulti * f.getState2Factor(DBCForm.UltraInstinct) * d.State2 / JGConfigUltraInstinct.CONFIG_UI_LEVELS;
+                } else if (d.isForm(DBCForm.GodOfDestruction))
+                    fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "GodOfDestruction", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
+                else if (d.isForm(DBCForm.Mystic))
+                    fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Mystic", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
 
+
+                stackableMulti *= fmvalue;
                 if (attribute == 0) //str
                     result *= multis[0];
                 else if (attribute == 1) //dex
@@ -68,7 +78,7 @@ public class MixinJRMCoreH {
                     result *= multis[2];
 
                 if (attribute == 0 || attribute == 1 || attribute == 3)
-                    result *= stackableMulti;
+                    result *= stackableMulti * f.getFM().calculateAttributeMulti(formData.getCurrentLevel());
 
                 result = (int) ((double) result > Double.MAX_VALUE ? Double.MAX_VALUE : (double) result);
                 info.setReturnValue(result);

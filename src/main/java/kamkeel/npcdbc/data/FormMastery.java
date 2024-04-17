@@ -386,6 +386,14 @@ public class FormMastery implements IFormMastery {
         return 1.0f;
     }
 
+    public float calculateAttributeMulti(float playerLevel) {
+        float flat = getAttributeMulti("flat");
+        float perlevel = getAttributeMulti("perlevel");
+        float max = getAttributeMulti("max");
+        float value = perlevel * playerLevel + flat;
+        return value > max ? max : value;
+
+    }
 
     @Override
     public IFormMastery save() {

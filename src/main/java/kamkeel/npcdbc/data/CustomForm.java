@@ -37,7 +37,8 @@ public class CustomForm implements ICustomForm {
 
     public FormMastery formMastery = new FormMastery(this);
 
-    public CustomForm() {}
+    public CustomForm() {
+    }
 
     public CustomForm(int id, String name) {
         this.id = id;
@@ -289,6 +290,11 @@ public class CustomForm implements ICustomForm {
 
     @Override
     public IFormMastery getFormMastery() {
+        return formMastery;
+    }
+
+    //internal usage
+    public FormMastery getFM() {
         return formMastery;
     }
 
