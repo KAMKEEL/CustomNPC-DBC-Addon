@@ -52,7 +52,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         return get(p, dn) != null;
     }
 
-    //negative percToRestore will drain instead
+    // Negative Values will Drain instead
     public void restoreKiPercent(float percToRestore) {
         int maxKi = DBCUtils.getMaxKi(player);
         int newKi = (int) (maxKi * (percToRestore / 100));

@@ -2,7 +2,7 @@ package kamkeel.npcdbc.items;
 
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
-import kamkeel.npcdbc.constants.EnumKiCapsules;
+import kamkeel.npcdbc.constants.EnumStaminaCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -18,12 +18,12 @@ import noppes.npcs.CustomItems;
 import java.util.List;
 import java.util.UUID;
 
-public class KiCapsule extends Item {
+public class StaminaCapsule extends Item {
 
     protected IIcon[] icons;
 
-    public KiCapsule() {
-        this.setMaxStackSize(ConfigCapsules.KiCapsuleMaxStack);
+    public StaminaCapsule() {
+        this.setMaxStackSize(ConfigCapsules.StaminaCapsuleMaxStack);
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
         this.setCreativeTab(CustomItems.tabMisc);
@@ -33,25 +33,25 @@ public class KiCapsule extends Item {
     public String getUnlocalizedName(ItemStack stack) {
 
         int metadata = stack.getItemDamage();
-        EnumKiCapsules kicapsules = EnumKiCapsules.values()[metadata];
-        return LocalizationHelper.ITEM_PREFIX + kicapsules.getName().toLowerCase() + "_kicapsule";
+        EnumStaminaCapsules staminacapsules = EnumStaminaCapsules.values()[metadata];
+        return LocalizationHelper.ITEM_PREFIX + staminacapsules.getName().toLowerCase() + "_staminacapsule";
     }
 
     @Override
     public void registerIcons(IIconRegister reg) {
 
-        icons = new IIcon[EnumKiCapsules.count()];
-        String prefix = "npcdbc:kicapsules/";
+        icons = new IIcon[EnumStaminaCapsules.count()];
+        String prefix = "npcdbc:staminacapsules/";
 
-        for (EnumKiCapsules kiCapsule : EnumKiCapsules.values()) {
-            icons[kiCapsule.getMeta()] = reg.registerIcon(prefix + kiCapsule.getName().toLowerCase());
+        for (EnumStaminaCapsules staminaCapsule : EnumStaminaCapsules.values()) {
+            icons[staminaCapsule.getMeta()] = reg.registerIcon(prefix + staminaCapsule.getName().toLowerCase());
         }
     }
 
     @Override
     public IIcon getIconFromDamage(int meta) {
 
-        if (meta >= 0 && meta < EnumKiCapsules.count()) {
+        if (meta >= 0 && meta < EnumStaminaCapsules.count()) {
             return icons[meta];
         }
         return null;
@@ -76,8 +76,8 @@ public class KiCapsule extends Item {
      */
     @Override
     public void getSubItems(Item item, CreativeTabs tab, List list) {
-        for (EnumKiCapsules kiCapsules : EnumKiCapsules.values()) {
-            list.add(new ItemStack(item, 1, kiCapsules.getMeta()));
+        for (EnumStaminaCapsules staminaCapsules : EnumStaminaCapsules.values()) {
+            list.add(new ItemStack(item, 1, staminaCapsules.getMeta()));
         }
     }
 
@@ -87,17 +87,17 @@ public class KiCapsule extends Item {
             return itemStack;
 
         int meta = itemStack.getItemDamage();
-        if (meta < 0 || meta > EnumKiCapsules.count())
+        if (meta < 0 || meta > EnumStaminaCapsules.count())
             meta = 0;
 
-        EnumKiCapsules kiCapsules = EnumKiCapsules.values()[meta];
+        EnumStaminaCapsules staminaCapsules = EnumStaminaCapsules.values()[meta];
         UUID playerUUID = player.getUniqueID();
-        if (CapsuleController.canUseKiCapsule(playerUUID, meta)) {
-            // Percentage of Ki to Restore
-            int kiRestored = kiCapsules.getStrength();
+        if (CapsuleController.canUseStaminaCapsule(playerUUID, meta)) {
+            // Percentage of Stamina to Restore
+            int staminaRestored = staminaCapsules.getStrength();
 
-            // Restore X Amount of KI
-            DBCData.get(player).restoreKiPercent(kiRestored);
+            // Restore X Amount of Stamina
+            DBCData.get(player).restoreStaminaPercent(staminaRestored);
 
             // Removes 1 Item
             itemStack.splitStack(1);
@@ -105,7 +105,7 @@ public class KiCapsule extends Item {
                 player.destroyCurrentEquippedItem();
 
             // Set Cooldown
-            CapsuleController.setKiCapsule(playerUUID, meta);
+            CapsuleController.setStaminaCapsule(playerUUID, meta);
         }
 
         return itemStack;
