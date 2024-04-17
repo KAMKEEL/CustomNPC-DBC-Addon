@@ -59,6 +59,10 @@ public class PlayerCustomFormData {
         return "";
     }
 
+    public String getColoredName(CustomForm f) {
+        return getFormColorCode(f) + f.getName();
+    }
+
     public boolean isInForm(String formName) {
         return getCurrentForm().getName().equals(formName);
     }
@@ -75,8 +79,8 @@ public class PlayerCustomFormData {
         List<String> list = new ArrayList<>();
         for (Integer id : unlockedForms.keySet()) {
             CustomForm f = getUnlockedForm(id);
-            if (!list.contains(f.getMenuName()))
-                list.add(f.getMenuName());
+            if (!list.contains(getColoredName(f)))
+                list.add(getColoredName(f));
 
         }
         return list;
