@@ -233,6 +233,7 @@ public class CustomForm implements ICustomForm {
             PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
             Utility.getFormData(playerData).addForm(this);
             playerData.updateClient = true;
+            playerData.save();
         }
     }
 
@@ -246,6 +247,7 @@ public class CustomForm implements ICustomForm {
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
         Utility.getFormData(playerData).removeForm(this);
         playerData.updateClient = true;
+        playerData.save();
     }
 
     public void removeFromPlayer(String name) {
