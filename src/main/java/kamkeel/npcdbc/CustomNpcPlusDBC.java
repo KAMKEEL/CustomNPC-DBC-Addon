@@ -5,7 +5,13 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
+import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.items.ModItems;
+
+import java.io.File;
+
+import static noppes.npcs.CustomNpcs.configPath;
 
 @Mod(modid = CustomNpcPlusDBC.ID, name = CustomNpcPlusDBC.name, version = CustomNpcPlusDBC.version, dependencies = "after:customnpcs;after:jinryuujrmcore;after:jinryuudragonblockc;")
 public class CustomNpcPlusDBC {
@@ -21,6 +27,8 @@ public class CustomNpcPlusDBC {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
         proxy.preInit(ev);
+        LoadConfiguration.init(configPath);
+        ModItems.init();
     }
 
     @Mod.EventHandler
