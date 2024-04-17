@@ -23,6 +23,10 @@ DONE- add kk/ui stackability
 	-DONE - need to work on logic of attribute multis 4/15
 	-DONE - add UI && KK state2 > 1+ multis, as all state2s of these forms will have same multi 4/16
 
+DONE - form mastery
+	-DONE - IFormMastery 4/17
+	-Done - injecting all gains in their appropriate DBC events 4/17
+
 90% - DBCFormChange event
 	-DONE - checking change of racial forms 4/14
 	-missing - checking the change of non racial forms KK/UI/GOD/MYSTIC
@@ -33,7 +37,7 @@ WIP - Form Selection GUI:
 	-Make GUI that displays Form Data to player
 
 
-add form mastery, changeable DNS components, timer, freeze player's DBCKiTech, DBCDamage event,
+add changeable DNS components, timer, freeze player's DBCKiTech, DBCDamage event,
 
 
 bugs:

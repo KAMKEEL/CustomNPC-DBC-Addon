@@ -129,7 +129,6 @@ public class PlayerCustomFormData {
         float fullGain = fm.calculateFullGain(gainType, playerLevel, DBCData.get(parent.player).MND);
 
         playerLevel = Math.min(playerLevel + fullGain, fm.maxLevel); //updated level
-
         // System.out.println("newlevel " + playerLevel + " type " + gainType + " " + parent.player);
         formLevels.put(f.id, playerLevel);
         updateClient();

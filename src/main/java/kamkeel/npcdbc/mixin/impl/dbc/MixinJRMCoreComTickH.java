@@ -2,7 +2,6 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreComTickH;
 import JinRyuu.JRMCore.JRMCoreH;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -21,8 +20,7 @@ public class MixinJRMCoreComTickH {
         for (int playerID = 0; playerID < playersCount; ++playerID) {
             String usernames = server.getAllUsernames()[playerID];
             EntityPlayerMP player = JRMCoreH.getPlayerForUsername(server, usernames);
-            PlayerCustomFormData c = Utility.getFormData(player);
-            c.updateCurrentFormMastery("update");
+            Utility.getFormData(player).updateCurrentFormMastery("update");
         }
     }
 }

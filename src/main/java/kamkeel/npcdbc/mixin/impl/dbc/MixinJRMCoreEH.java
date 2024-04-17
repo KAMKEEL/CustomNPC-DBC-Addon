@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreEH;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -20,14 +19,12 @@ public class MixinJRMCoreEH {
      */
     @Inject(method = "SdajrR", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/server/config/dbc/JGConfigDBCFormMastery;FM_Enabled:Z", ordinal = 0, shift = At.Shift.BEFORE), remap = false)
     public void onFMAttackGain(LivingAttackEvent event, CallbackInfo ci) {
-        PlayerCustomFormData c = Utility.getFormData((EntityPlayer) event.entity);
-        c.updateCurrentFormMastery("damaged");
-        //this gets method is called twice, should be once only
+        Utility.getFormData((EntityPlayer) event.entity).updateCurrentFormMastery("damaged");
+        //this method is called twice, should be once only
     }
 
     @Inject(method = "Sd35MR", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/server/config/dbc/JGConfigDBCFormMastery;FM_Enabled:Z", shift = At.Shift.BEFORE), remap = false)
     public void onFMDamagedGain(LivingHurtEvent event, CallbackInfo ci) {
-        PlayerCustomFormData c = Utility.getFormData((EntityPlayer) event.source.getEntity());
-        c.updateCurrentFormMastery("attack");
+        Utility.getFormData((EntityPlayer) event.source.getEntity()).updateCurrentFormMastery("attack");
     }
 }
