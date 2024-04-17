@@ -18,7 +18,6 @@ public class ClientEvents {
             EntityClientPlayerMP p = Minecraft.getMinecraft().thePlayer;
             createForm(e, p);
         }
-
     }
 
     public void createForm(KeyInputEvent e, EntityClientPlayerMP p) {
