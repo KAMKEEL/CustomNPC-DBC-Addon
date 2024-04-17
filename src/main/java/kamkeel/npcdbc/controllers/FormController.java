@@ -49,8 +49,7 @@ public class FormController implements IFormHandler {
             return get(name);
         else {
             CustomForm form = new CustomForm();
-            FormMastery fm = new FormMastery(form);
-            form.formMastery = fm;
+            form.formMastery =  new FormMastery(form);
             form.name = name;
 
             if (form.id == -1) {
