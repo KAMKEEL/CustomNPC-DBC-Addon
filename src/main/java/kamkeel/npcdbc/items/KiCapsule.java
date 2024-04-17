@@ -105,6 +105,10 @@ public class KiCapsule extends Item {
 
             // Restore X Amount of KI
 
+            // Removes 1 Item
+            itemStack.splitStack(1);
+
+            // Sets Cooldown
             CapsuleController.lastUsedKiCapsule.put(playerUUID, currentTime);
         }
 
