@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.mixin.impl;
+package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;

@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.mixin.impl;
+package kamkeel.npcdbc.mixin.impl.npc;
 
 import kamkeel.addon.DBCAddon;
 import kamkeel.npcdbc.data.PlayerCustomFormData;

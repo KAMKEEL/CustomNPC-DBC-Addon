@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.mixin.impl;
+package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;

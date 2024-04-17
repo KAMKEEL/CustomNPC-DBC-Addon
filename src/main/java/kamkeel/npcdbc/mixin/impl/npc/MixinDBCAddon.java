@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.mixin.impl;
+package kamkeel.npcdbc.mixin.impl.npc;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.addon.DBCAddon;

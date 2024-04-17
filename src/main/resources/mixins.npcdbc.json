@@ -6,20 +6,20 @@
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinDBCAddon",
-    "MixinDBCDisplay",
-    "MixinDBCStats",
-    "MixinJGPlayerMP",
-    "MixinJRMCoreH",
-    "MixinPlayerData",
-    "MixinScriptPlayer"
+    "npc.MixinDBCAddon",
+    "npc.MixinDBCDisplay",
+    "dbc.MixinDBCStats",
+    "dbc.MixinJGPlayerMP",
+    "dbc.MixinJRMCoreH",
+    "npc.MixinPlayerData",
+    "npc.MixinScriptPlayer"
   ],
   "client": [
-    "MixinDBCClient",
-    "MixinDBCKiTech",
-    "MixinJRMCoreGuiBars",
-    "MixinJRMCoreGuiScreen",
-    "MixinRenderPlayerJBRA"
+    "npc.MixinDBCClient",
+    "dbc.MixinDBCKiTech",
+    "dbc.MixinJRMCoreGuiBars",
+    "dbc.MixinJRMCoreGuiScreen",
+    "dbc.MixinRenderPlayerJBRA"
   ],
   "server": []
 }

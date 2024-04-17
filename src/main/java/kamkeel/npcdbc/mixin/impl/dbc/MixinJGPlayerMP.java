@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.mixin.impl;
+package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.server.JGPlayerMP;
 import kamkeel.npcdbc.data.SyncedData.DBCData;

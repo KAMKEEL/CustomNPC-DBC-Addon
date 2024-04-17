@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.mixin.impl;
+package kamkeel.npcdbc.mixin.impl.npc;
 
 import kamkeel.npcdbc.scripted.ScriptDBCAddon;
 import net.minecraft.entity.player.EntityPlayerMP;

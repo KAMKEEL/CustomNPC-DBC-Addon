@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.mixin.impl;
+package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import kamkeel.npcdbc.skills.Transform;

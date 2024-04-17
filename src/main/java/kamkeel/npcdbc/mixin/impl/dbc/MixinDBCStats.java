@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.mixin.impl;
+package kamkeel.npcdbc.mixin.impl.dbc;
 
 import kamkeel.npcdbc.data.DBCStats;
 import kamkeel.npcdbc.mixin.INPCStats;
