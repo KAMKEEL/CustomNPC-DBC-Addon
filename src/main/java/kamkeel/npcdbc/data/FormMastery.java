@@ -20,19 +20,6 @@ public class FormMastery implements IFormMastery {
         this.parent = parent;
     }
 
-    public float calculateMulti(String type, float playerLevel) {
-        float flat = getMulti(type, "flat");
-        float perlevel = getMulti(type, "perlevel");
-        float minormax = getMulti(type, "minormax");
-        float value = perlevel * playerLevel + flat;
-
-        boolean downwards = perlevel < 0.0;
-        if (downwards ? value < minormax : value > minormax)
-            value = minormax;
-
-        return value;
-
-    }
 
     public float getMulti(String type, String type1) {
         switch (type.toLowerCase()) {
@@ -241,12 +228,10 @@ public class FormMastery implements IFormMastery {
 
     }
 
-    @Override
     public float getMaxLevel() {
         return maxLevel;
     }
 
-    @Override
     public void setMaxLevel(float value) {
         maxLevel = value;
     }
@@ -259,6 +244,30 @@ public class FormMastery implements IFormMastery {
         this.instantTransformationUnlockLevel = value;
     }
 
+    public float calculateMulti(String type, float playerLevel) {
+        float flat = getMulti(type, "flat");
+        float perLevel = getMulti(type, "perlevel");
+        float minOrMax = getMulti(type, "minormax");
+        float value = perLevel * playerLevel + flat;
+
+        boolean downwards = perLevel < 0.0;
+        if (downwards ? value < minOrMax : value > minOrMax)
+            value = minOrMax;
+
+        return value;
+    }
+
+    public double calculateGainMindMulti(String type, int playerMind) {
+        double max = getGain(type, "max");
+        if (max <= 0.0)
+            return max;
+
+        double flat = getGain(type, "flat");
+        double perMind = getGain(type, "permind");
+        double multi = playerMind * perMind + flat;
+
+        return multi > max ? max : multi;
+    }
 
     public void readFromNBT(NBTTagCompound compound) {
         NBTTagCompound formMastery = compound.getCompoundTag("formMastery");
@@ -372,7 +381,6 @@ public class FormMastery implements IFormMastery {
         return formMastery;
     }
 
-    @Override
     public IFormMastery save() {
         if (parent != null)
             parent.save();
