@@ -22,13 +22,12 @@ import java.util.Vector;
 
 public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollListener, IScrollData {
     private final ResourceLocation resource = new ResourceLocation("customnpcs", "textures/gui/standardbg.png");
-
+    PlayerCustomFormData playerFormData;
     private FormSelectionScroll formSelectionScroll;
     private String selected = null;
     private String search = "";
     private CustomForm selectedForm;
     private HashMap<String, Integer> formData = new HashMap<String, Integer>();
-    PlayerCustomFormData playerFormData;
 
     public GuiDBC() {
         super();
@@ -113,18 +112,31 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
 
     @Override
     public void keyTyped(char c, int i) {
-        if (i == 1 || isInventoryKey(i))
+        if ((i == 1 || isInventoryKey(i)) && !getTextField(55).isFocused())
             close();
+        if (getTextField(55).isFocused() && i == 1) //empties search field on escape
+            getTextField(55).setText("");
         super.keyTyped(c, i);
-        if (getTextField(55) != null) {
-            if (getTextField(55).isFocused()) {
-                if (search.equals(getTextField(55).getText()))
-                    return;
-                search = getTextField(55).getText().toLowerCase();
-                formSelectionScroll.resetScroll();
-                formSelectionScroll.setList(getFormSearch());
-            }
+        if (getTextField(55) != null && getTextField(55).isFocused()) {
+            if (search.equals(getTextField(55).getText()))
+                return;
+            search = getTextField(55).getText().toLowerCase();
+            formSelectionScroll.resetScroll();
+            formSelectionScroll.setList(getFormSearch());
+            setSelected(playerFormData.getColoredName(selectedForm));
+
         }
+    }
+
+    public void mouseClicked(int i, int j, int k) {
+        if (getTextField(55).isFocused() && k == 1) { //empty search field on right click
+            getTextField(55).setText("");
+            search = "";
+            formSelectionScroll.setList(getFormSearch());
+            setSelected(selected);
+        }
+
+        super.mouseClicked(i, j, k);
     }
 
     private List<String> getFormSearch() {
@@ -176,9 +188,6 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                     return;
                 }
             }
-
-
-            // status.label = "";
             selected = formSelectionScroll.getSelected();
         }
     }
