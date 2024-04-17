@@ -78,7 +78,7 @@ public class MixinJRMCoreH {
                     result *= multis[2];
 
                 if (attribute == 0 || attribute == 1 || attribute == 3)
-                    result *= stackableMulti * f.getFM().calculateAttributeMulti(formData.getCurrentLevel());
+                    result *= stackableMulti * f.getFM().calculateMulti("attribute", formData.getCurrentLevel());
 
                 result = (int) ((double) result > Double.MAX_VALUE ? Double.MAX_VALUE : (double) result);
                 info.setReturnValue(result);

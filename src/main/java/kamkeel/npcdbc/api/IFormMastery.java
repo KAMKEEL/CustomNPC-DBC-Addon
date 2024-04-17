@@ -9,20 +9,20 @@ public interface IFormMastery {
      * @param type 3 Legal: "flat", "perlevel", "max"
      * @return value of specified type
      */
-    float getAttributeMulti(String type);
 
     /**
-     * @param type  3 Legal: "flat", "perlevel", "max"
-     * @param value amount to change type by
+     * @param type  4 Legal: "attribute","kidrain","strain","healthrequirement"
+     * @param type1 3 Legal: "flat", "perlevel", "minormax"
+     * @return value of specified type
      */
-    void setAttributeMulti(String type, float value);
+    float getMulti(String type, String type1);
 
     /**
-     * @param eventType 4 Legal: "update", "attack", "damaged", "fireki"
-     * @param type      4 Legal: "gain", "flat", "permind", "max"
-     * @param value     amount to change type by within eventType
+     * @param type  4 Legal: "attribute","kidrain","strain","healthrequirement"
+     * @param type1 3 Legal: "flat", "perlevel", "minormax"
+     * @param value amount to change type1 of type by
      */
-    void setGain(String eventType, String type, float value);
+    void setMulti(String type, String type1, float value);
 
     /**
      * @param eventType 4 Legal: "update", "attack", "damaged", "fireki"
@@ -31,42 +31,12 @@ public interface IFormMastery {
      */
     float getGain(String eventType, String type);
 
-
     /**
-     * @param type 3 Legal: "flat", "perlevel", "MinOrMax"
-     * @return value of specified type
+     * @param eventType 4 Legal: "update", "attack", "damaged", "fireki"
+     * @param type      4 Legal: "gain", "flat", "permind", "max"
+     * @param value     amount to change type by within eventType
      */
-    float getKiDrainMulti(String type);
-
-    /**
-     * @param type  3 Legal: "flat", "perlevel", "MinOrMax"
-     * @param value amount to change type by
-     */
-    void setKiDrainMulti(String type, float value);
-
-    /**
-     * @param type  3 Legal: "flat", "perlevel", "MinOrMax"
-     * @param value amount to change type by
-     */
-    void setHealthRequirementMulti(String type, float value);
-
-    /**
-     * @param type 3 Legal: "flat", "perlevel", "MinOrMax"
-     * @return value of specified type
-     */
-    float getHealthRequirementMulti(String type);
-
-    /**
-     * @param type  3 Legal: "flat", "perlevel", "MinOrMax"
-     * @param value amount to change type by
-     */
-    void setStrainMulti(String type, float value);
-
-    /**
-     * @param type 3 Legal: "flat", "perlevel", "MinOrMax"
-     * @return value of specified type
-     */
-    float getStrainMulti(String type);
+    void setGain(String eventType, String type, float value);
 
     float getMaxLevel();
 
