@@ -49,12 +49,9 @@ public class FormController implements IFormHandler {
         else {
             CustomForm form = new CustomForm();
             form.name = name;
-
             if (form.id == -1) {
                 form.id = getUnusedId();
             }
-
-            int originalID = form.id;
             int setID = form.id;
             while (bootOrder.containsKey(setID) || customForms.containsKey(setID)) {
                 if (bootOrder.containsKey(setID))
@@ -63,19 +60,13 @@ public class FormController implements IFormHandler {
 
                 setID++;
             }
-
-            form.id = setID;
-            if (originalID != setID) {
-                LogWriter.info("Found Custom Form ID Mismatch: " + form.name + ", New ID: " + setID);
-                form.save();
-            }
-
             customForms.put(form.id, form);
+            form.save();
             return form;
         }
     }
 
-    private void loadForms() {
+    private void loadForms(){
         customForms.clear();
 
         File dir = getDir();
@@ -86,13 +77,36 @@ public class FormController implements IFormHandler {
                 if (!file.isFile() || !file.getName().endsWith(".json"))
                     continue;
                 try {
-                    createForm(file.getName().substring(0, file.getName().length() - 5));
-                } catch (Exception e) {
+                    CustomForm form = new CustomForm();
+                    form.readFromNBT(NBTJsonUtil.LoadFile(file));
+                    form.name = file.getName().substring(0, file.getName().length() - 5);
+
+                    if(form.id == -1){
+                        form.id = getUnusedId();
+                    }
+
+                    int originalID = form.id;
+                    int setID = form.id;
+                    while (bootOrder.containsKey(setID) || customForms.containsKey(setID)){
+                        if(bootOrder.containsKey(setID))
+                            if(bootOrder.get(setID).equals(form.name))
+                                break;
+
+                        setID++;
+                    }
+
+                    form.id = setID;
+                    if(originalID != setID){
+                        LogWriter.info("Found Custom Form ID Mismatch: " + form.name + ", New ID: " + setID);
+                        form.save();
+                    }
+
+                    customForms.put(form.id, form);
+                } catch(Exception e) {
                     LogWriter.error("Error loading: " + file.getAbsolutePath(), e);
                 }
             }
         }
-
         saveFormLoadMap();
     }
 
