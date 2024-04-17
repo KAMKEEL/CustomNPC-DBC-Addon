@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data;
 
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
@@ -114,12 +115,33 @@ public class PlayerCustomFormData {
         ((IPlayerFormData) parent).updateFormInfo();
     }
 
+    public void updateCurrentFormMastery(String gainType) {
+        updateFormMastery(currentForm, gainType);
+    }
+
+    public void updateFormMastery(int formID, String gainType) {
+        CustomForm f = FormController.getInstance().customForms.get(formID);
+        if (f == null || !isInCustomForm())
+            return;
+
+        FormMastery fm = f.getFM();
+        float playerLevel = formLevels.get(f.id);
+        float fullGain = fm.calculateFullGain(gainType, playerLevel, DBCData.get(parent.player).MND);
+
+        playerLevel = Math.min(playerLevel + fullGain, fm.maxLevel); //updated level
+
+        // System.out.println("newlevel " + playerLevel + " type " + gainType + " " + parent.player);
+        formLevels.put(f.id, playerLevel);
+        updateClient();
+    }
+
     public void addFormMastery(int formID, int amount) {
         CustomForm form = FormController.getInstance().customForms.get(formID);
         if (form != null) {
             float current = formLevels.get(formID);
-            float updated = Math.max(current + amount, form.getFM().maxLevel);
+            float updated = Math.min(current + amount, form.getFM().maxLevel);
             formLevels.put(formID, updated);
+            updateClient();
         }
     }
 
@@ -129,6 +151,7 @@ public class PlayerCustomFormData {
             float current = formLevels.get(formID);
             float updated = Math.max(current - amount, 0);
             formLevels.put(formID, updated);
+            updateClient();
         }
     }
 

@@ -7,10 +7,10 @@ public class FormMastery implements IFormMastery {
 
     public float maxLevel = 100, instantTransformationUnlockLevel = 50;
     public float attributeMultiFlat = 1.0f, attributeMultiPerLevel = 0.01f, attributeMultiMinOrMax = 1.5f;
-    public float updateGain = 0.01f, updateMindBonusFlat = 1.0f, updateMindBonusPerMind = 0.001f, updateMindBonusMax = 1.5f;
-    public float attackGain = 0.03f, attackMindBonusFlat = 1.0f, attackMindBonusPerMind = 0.001f, attackMindBonusMax = 1.5f;
-    public float damagedGain = 0.03f, damagedMindBonusFlat = 1.0f, damagedMindBonusPerMind = 0.001f, damagedMindBonusMax = 1.5f;
-    public float fireKiGain = 0.03f, fireKiMindBonusFlat = 1.0f, fireKiMindBonusPerMind = 0.001f, fireKiMindBonusMax = 1.5f;
+    public float updateGain = 0.01f, updateMultiDivPlus = 100, updateMindBonusFlat = 1.0f, updateMindBonusPerMind = 0.001f, updateMindBonusMax = 1.5f;
+    public float attackGain = 0.03f, attackMultiDivPlus = 100, attackMindBonusFlat = 1.0f, attackMindBonusPerMind = 0.001f, attackMindBonusMax = 1.5f;
+    public float damagedGain = 0.03f, damagedMultiDivPlus = 100, damagedMindBonusFlat = 1.0f, damagedMindBonusPerMind = 0.001f, damagedMindBonusMax = 1.5f;
+    public float fireKiGain = 0.03f, fireKiMultiDivPlus = 100, fireKiMindBonusFlat = 1.0f, fireKiMindBonusPerMind = 0.001f, fireKiMindBonusMax = 1.5f;
     public float kiDrainMultiFlat = 1.0f, kiDrainMultiPerLevel = -0.01f, kiDrainMultiMinOrMax = 0.5f;
     public float strainMultiFlat = 1.0f, strainMultiPerLevel = -0.01f, strainMultiMinOrMax = 0.5f;
     public float healthRequirementMultiFlat = 1.0f, healthRequirementMultiPerLevel = 0.01f, healthRequirementMultiMinOrMax = 1.5f;
@@ -112,6 +112,8 @@ public class FormMastery implements IFormMastery {
                 switch (type.toLowerCase()) {
                     case "gain":
                         return updateGain;
+                    case "multidivplus":
+                        return updateMultiDivPlus;
                     case "flat":
                         return updateMindBonusFlat;
                     case "permind":
@@ -123,6 +125,8 @@ public class FormMastery implements IFormMastery {
                 switch (type.toLowerCase()) {
                     case "gain":
                         return attackGain;
+                    case "multidivplus":
+                        return attackMultiDivPlus;
                     case "flat":
                         return attackMindBonusFlat;
                     case "permind":
@@ -134,6 +138,8 @@ public class FormMastery implements IFormMastery {
                 switch (type.toLowerCase()) {
                     case "gain":
                         return damagedGain;
+                    case "multidivplus":
+                        return damagedMultiDivPlus;
                     case "flat":
                         return damagedMindBonusFlat;
                     case "permind":
@@ -145,6 +151,8 @@ public class FormMastery implements IFormMastery {
                 switch (type.toLowerCase()) {
                     case "gain":
                         return fireKiGain;
+                    case "multidivplus":
+                        return fireKiMultiDivPlus;
                     case "flat":
                         return fireKiMindBonusFlat;
                     case "permind":
@@ -164,6 +172,9 @@ public class FormMastery implements IFormMastery {
                     case "gain":
                         updateGain = value;
                         break;
+                    case "multidivplus":
+                        updateMultiDivPlus = value;
+                        break;
                     case "flat":
                         updateMindBonusFlat = value;
                         break;
@@ -179,6 +190,9 @@ public class FormMastery implements IFormMastery {
                 switch (type.toLowerCase()) {
                     case "gain":
                         attackGain = value;
+                        break;
+                    case "multidivplus":
+                        attackMultiDivPlus = value;
                         break;
                     case "flat":
                         attackMindBonusFlat = value;
@@ -196,6 +210,9 @@ public class FormMastery implements IFormMastery {
                     case "gain":
                         damagedGain = value;
                         break;
+                    case "multidivplus":
+                        damagedMultiDivPlus = value;
+                        break;
                     case "flat":
                         damagedMindBonusFlat = value;
                         break;
@@ -211,6 +228,9 @@ public class FormMastery implements IFormMastery {
                 switch (type.toLowerCase()) {
                     case "gain":
                         fireKiGain = value;
+                        break;
+                    case "multidivplus":
+                        fireKiMultiDivPlus = value;
                         break;
                     case "flat":
                         fireKiMindBonusFlat = value;
@@ -257,16 +277,31 @@ public class FormMastery implements IFormMastery {
         return value;
     }
 
-    public double calculateGainMindMulti(String type, int playerMind) {
-        double max = getGain(type, "max");
+    public float calculateGainMindMulti(String type, int playerMind) {
+        float max = getGain(type, "max");
         if (max <= 0.0)
             return max;
 
-        double flat = getGain(type, "flat");
-        double perMind = getGain(type, "permind");
-        double multi = playerMind * perMind + flat;
+        float flat = getGain(type, "flat");
+        float perMind = getGain(type, "permind");
+        float multi = playerMind * perMind + flat;
 
         return multi > max ? max : multi;
+    }
+
+    public float calculateMultipliedGain(String type, float playerLevel) {
+        float gain = getGain(type, "gain");
+        float multiDivPlus = getGain(type, "multidivplus");
+        if (multiDivPlus != 0.0 && gain != 0.0) {
+            float lossFromLevel = playerLevel / (playerLevel + multiDivPlus);
+            return gain - gain * lossFromLevel;
+        }
+        return gain;
+
+    }
+
+    public float calculateFullGain(String type, float playerLevel, int playerMind) {
+        return calculateMultipliedGain(type, playerLevel) * calculateGainMindMulti(type, playerMind);
     }
 
     public void readFromNBT(NBTTagCompound compound) {
@@ -297,24 +332,28 @@ public class FormMastery implements IFormMastery {
 
         NBTTagCompound update = formMastery.getCompoundTag("update");
         updateGain = update.getFloat("gain");
+        updateMultiDivPlus = update.getFloat("multiDivPlus");
         updateMindBonusFlat = update.getFloat("flat");
         updateMindBonusPerMind = update.getFloat("perMind");
         updateMindBonusMax = update.getFloat("max");
 
         NBTTagCompound attack = formMastery.getCompoundTag("attack");
         attackGain = attack.getFloat("gain");
+        attackMultiDivPlus = attack.getFloat("multiDivPlus");
         attackMindBonusFlat = attack.getFloat("flat");
         attackMindBonusPerMind = attack.getFloat("perMind");
         attackMindBonusMax = attack.getFloat("max");
 
         NBTTagCompound damaged = formMastery.getCompoundTag("damaged");
         damagedGain = damaged.getFloat("gain");
+        damagedMultiDivPlus = damaged.getFloat("multiDivPlus");
         damagedMindBonusFlat = damaged.getFloat("flat");
         damagedMindBonusPerMind = damaged.getFloat("perMind");
         damagedMindBonusMax = damaged.getFloat("max");
 
         NBTTagCompound fireKi = formMastery.getCompoundTag("fireKi");
         fireKiGain = fireKi.getFloat("gain");
+        fireKiMultiDivPlus = fireKi.getFloat("multiDivPlus");
         fireKiMindBonusFlat = fireKi.getFloat("flat");
         fireKiMindBonusPerMind = fireKi.getFloat("perMind");
         fireKiMindBonusMax = fireKi.getFloat("max");
@@ -354,6 +393,7 @@ public class FormMastery implements IFormMastery {
         NBTTagCompound update = new NBTTagCompound();
         formMastery.setTag("update", update);
         update.setFloat("gain", updateGain);
+        update.setFloat("multiDivPlus", updateMultiDivPlus);
         update.setFloat("flat", updateMindBonusFlat);
         update.setFloat("perMind", updateMindBonusPerMind);
         update.setFloat("max", updateMindBonusMax);
@@ -361,6 +401,7 @@ public class FormMastery implements IFormMastery {
         NBTTagCompound attack = new NBTTagCompound();
         formMastery.setTag("attack", attack);
         attack.setFloat("gain", attackGain);
+        attack.setFloat("multiDivPlus", attackMultiDivPlus);
         attack.setFloat("flat", attackMindBonusFlat);
         attack.setFloat("perMind", attackMindBonusPerMind);
         attack.setFloat("max", attackMindBonusMax);
@@ -368,6 +409,7 @@ public class FormMastery implements IFormMastery {
         NBTTagCompound damaged = new NBTTagCompound();
         formMastery.setTag("damaged", damaged);
         damaged.setFloat("gain", damagedGain);
+        damaged.setFloat("multiDivPlus", damagedMultiDivPlus);
         damaged.setFloat("flat", damagedMindBonusFlat);
         damaged.setFloat("perMind", damagedMindBonusPerMind);
         damaged.setFloat("max", damagedMindBonusMax);
@@ -375,6 +417,7 @@ public class FormMastery implements IFormMastery {
         NBTTagCompound fireKi = new NBTTagCompound();
         formMastery.setTag("fireKi", fireKi);
         fireKi.setFloat("gain", fireKiGain);
+        fireKi.setFloat("multiDivPlus", fireKiMultiDivPlus);
         fireKi.setFloat("flat", fireKiMindBonusFlat);
         fireKi.setFloat("perMind", fireKiMindBonusPerMind);
         fireKi.setFloat("max", fireKiMindBonusMax);
