@@ -10,3 +10,6 @@ stats.ignoreFormDefense=Ignore Form Defense
 
 stats.hasDefensePenetration=Has Defense Penetration
 stats.defensePenetration=Defense Penetration
+
+form.clear=Clear
+form.select=Select

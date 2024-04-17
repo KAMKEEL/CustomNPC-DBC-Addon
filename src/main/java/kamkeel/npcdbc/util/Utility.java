@@ -3,20 +3,32 @@ package kamkeel.npcdbc.util;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
+import noppes.npcs.Server;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.client.gui.util.GuiNPCInterface;
+import noppes.npcs.constants.EnumPacketClient;
+import noppes.npcs.controllers.FactionController;
 import noppes.npcs.controllers.PlayerDataController;
+import noppes.npcs.controllers.data.Faction;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.scripted.NpcAPI;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static noppes.npcs.NoppesUtilServer.sendScrollData;
 
 public class Utility {
     public static boolean isServer() {
@@ -93,6 +105,19 @@ public class Utility {
 
     public static PlayerCustomFormData getFormData(PlayerData playerData) {
         return ((IPlayerFormData) playerData).getCustomFormData();
+    }
+
+    public static void sendPlayerFormData(EntityPlayerMP player) {
+        PlayerCustomFormData data = ((IPlayerFormData) PlayerDataController.Instance.getPlayerData(player)).getCustomFormData();
+
+        Map<String,Integer> map = new HashMap<String,Integer>();
+        for(int formID :data.unlockedForms.keySet()){
+            CustomForm form = (CustomForm) FormController.getInstance().get(formID);
+            if(form != null){
+                map.put(form.menuName, form.id);
+            }
+        }
+        sendScrollData(player, map);
     }
 
     public static int guiX(GuiNPCInterface gui, double i) {

@@ -6,11 +6,13 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCStats;
 import kamkeel.npcdbc.data.FormMastery;
+import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.INPCStats;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +22,7 @@ import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.Server;
 import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.constants.SyncType;
+import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
@@ -247,5 +250,53 @@ public class MixinDBCAddon {
         FormController.getInstance().saveForm(customForm);
         NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
         Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, customForm.writeToNBT());
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Sets the Selected Form to the Player
+     */
+    @Overwrite(remap = false)
+    public void formPacketSet(EntityPlayer player, ByteBuf buffer) throws IOException {
+        int formID = buffer.readInt();
+        PlayerCustomFormData data = ((IPlayerFormData) PlayerDataController.Instance.getPlayerData(player)).getCustomFormData();
+        if(data == null)
+            return;
+
+        if(formID > -1){
+            if(data.selectedForm != formID && data.unlockedForms.containsKey(formID)){
+                CustomForm customForm = (CustomForm) FormController.getInstance().get(formID);
+                NBTTagCompound compound = new NBTTagCompound();
+                if(customForm != null){
+                    data.selectedForm = formID;
+                    compound = customForm.writeToNBT();
+                } else {
+                    data.selectedForm = -1;
+                }
+                Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+            }
+        }
+        else {
+            data.selectedForm = -1;
+            NBTTagCompound compound = new NBTTagCompound();
+            Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+        }
+    }
+
+    /**
+     * @author Kamkeel
+     * @reason Give the Player their Form Information
+     */
+    @Overwrite(remap = false)
+    public void formPacketPlayers(EntityPlayer player){
+        Utility.sendPlayerFormData((EntityPlayerMP) player);
+        PlayerCustomFormData data = ((IPlayerFormData) PlayerDataController.Instance.getPlayerData(player)).getCustomFormData();
+        NBTTagCompound compound = new NBTTagCompound();
+        if(data != null &&  data.selectedForm != -1){
+            CustomForm customForm = (CustomForm) FormController.getInstance().get(data.selectedForm);
+            if(customForm != null)
+                compound = customForm.writeToNBT();
+        }
+        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
     }
 }

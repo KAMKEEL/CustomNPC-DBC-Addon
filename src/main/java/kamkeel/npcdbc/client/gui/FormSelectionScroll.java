@@ -1,161 +1,19 @@
 package kamkeel.npcdbc.client.gui;
 
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.CustomForm;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.util.GuiCustomScroll;
-import noppes.npcs.client.gui.util.GuiNpcButton;
-import noppes.npcs.client.gui.util.GuiNpcLabel;
-import noppes.npcs.client.gui.util.GuiNpcTextField;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class FormSelectionScroll extends GuiCustomScroll {
-    public GuiNpcLabel status;
-    public String selectedTemp;
-    public String search;
     int hoverColor;
-    GuiNpcButton btnSelectForm;
-    GuiNpcButton btnDeselectForm;
-    GuiNpcTextField searchField;
-    GuiDBC parent;
 
-    PlayerCustomFormData formData;
-
-    public FormSelectionScroll(GuiDBC parent, int id) {
+    public FormSelectionScroll(GuiScreen parent, int id) {
         super(parent, id);
-        this.parent = parent;
-        guiLeft = parent.guiLeft + 5;
-        guiTop = parent.guiTop + 5;
-        setSize(135, 150);
         visible = true;
-
-        formData = Utility.getFormDataClient();
-        //sets scroll selection to actual selected form
-        if (formData.selectedForm > -1 && formData.getSelectedForm() != null)
-            setSelected(formData.getColoredName(formData.getSelectedForm()));
-        setList(formData.getAllForms());
-
-        btnSelectForm = new GuiNpcButton(101, guiLeft, parent.guiTop + parent.ySize - 24, "Select Form");
-        btnSelectForm.width = 66;
-
-        btnDeselectForm = new GuiNpcButton(102, btnSelectForm.xPosition + btnSelectForm.width + 3, parent.guiTop + parent.ySize - 24, "Clear");
-        btnDeselectForm.width = 66;
-
-        //this keeps nulling idk why
-        searchField = new GuiNpcTextField(103, this, this.fontRendererObj, parent.guiLeft + 5, parent.guiTop + parent.ySize - 10, btnSelectForm.height, 65, "kjk");
-
-        status = new GuiNpcLabel(104, "I want to center this", guiLeft + 67, btnSelectForm.yPosition + btnSelectForm.height + 3);
-        status.center(1);
-
-
-        parent.addScroll(this);
-        parent.addButton(btnSelectForm);
-        parent.addButton(btnDeselectForm);
-        parent.addLabel(status);
-
-        //parent.addTextField(searchField);         commented this out
     }
 
-
-    public void mouseClicked(int k) {
-        if (searchField.isFocused() && k == 1) { //empty search field on right click
-            searchField.setText("");
-            search = "";
-            setList(search());
-            setSelected(selectedTemp);
-        }
-    }
-
-    //clicking selected item unselects it in scroll (this does not unselect the actual form, just the item in list)
-    public void customScrollClicked(int i, int j, int k) {
-
-        if (selectedTemp != null) {
-            if (selectedTemp.equals(getSelected())) {
-                selectedTemp = "";
-                selected = -1;
-                return;
-            }
-        }
-
-        this.selectedTemp = getSelected();
-        status.label = "";
-
-
-    }
-
-    public void actionPerformed(GuiNpcButton button) {
-        if (isSelectedFormValid()) {
-            CustomForm selectedF = getSelectedForm();
-            if (button.id == btnSelectForm.id) {
-                if (selectedF != formData.getSelectedForm()) {
-                    formData.selectedForm = selectedF.id;
-                    status.label = "§aSelected " + formData.getColoredName(selectedF) + "§a!";
-                    //open form GUI here
-                    // mc.displayGuiScreen(new GuiFormData(parent,formData.getSelectedForm()));
-                    //add packet here
-                } else {
-                    formData.selectedForm = -1;
-                    status.label = "§cDeselected " + formData.getColoredName(selectedF) + "§c!";
-                    //add packet he/**/re
-                }
-
-            } else if (button.id == btnDeselectForm.id) {
-                formData.selectedForm = -1;
-                //packet here
-                status.label = "§cDeselected " + formData.getColoredName(selectedF) + "§c!";
-                selectedTemp = "";
-                selected = -1;
-            }
-        }
-
-    }
-
-    public void keyTyped(char c, int i) {
-        if (searchField.isFocused() && i == 1) //empties search field on escape
-            searchField.setText("");
-        if (searchField.isFocused()) {
-            search = searchField.getText().toLowerCase();
-            setList(search());
-            setSelected(selectedTemp);
-
-        }
-    }
-
-    private List<String> search() {
-        if (search.isEmpty())
-            return formData.getAllForms();
-        List<String> list = new ArrayList<>();
-        for (String str : formData.getAllForms()) {
-            if (str.toLowerCase().contains(search)) {
-                if (getSelected() != null && str.toLowerCase().equals(getSelected().toLowerCase()))
-                    this.selectedTemp = getSelected();
-                list.add(str);
-            }
-        }
-        return list;
-
-    }
-
-    public boolean isSelectedFormValid() {
-        return getSelectedForm() != null;
-    }
-
-    //the form from the item selected in the scroll
-    public CustomForm getSelectedForm() {
-        for (CustomForm f : FormController.Instance.customForms.values()) {
-            String name = formData.getColoredName(f);
-            if (name.equals(getSelected()))
-                return f;
-        }
-        return null;
-    }
-
-    //altered a bunch of stuff in here
+    @Override
     protected void drawItems() {
         for (int i = 0; i < list.size(); i++) {
             int j = 4;
