@@ -56,7 +56,6 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     public void restoreKiPercent(float percToRestore) {
         int maxKi = DBCUtils.getMaxKi(player);
         int newKi = (int) (maxKi * (percToRestore / 100));
-        DBCUtils.kiCost(player, newKi);
 
         Ki += newKi;
         Ki = Ki > maxKi ? maxKi : Ki;
