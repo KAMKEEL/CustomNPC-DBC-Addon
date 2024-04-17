@@ -35,10 +35,9 @@ public class CustomForm implements ICustomForm {
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
     public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
 
-    public FormMastery formMastery;
+    public FormMastery formMastery = new FormMastery(this);
 
-    public CustomForm() {
-    }
+    public CustomForm() {}
 
     public CustomForm(int id, String name) {
         this.id = id;

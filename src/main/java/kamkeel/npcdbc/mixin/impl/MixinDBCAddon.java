@@ -172,7 +172,6 @@ public class MixinDBCAddon {
         NBTTagList list = compound.getTagList("Data", 10);
         for (int i = 0; i < list.tagCount(); i++) {
             CustomForm form = new CustomForm();
-            form.formMastery = new FormMastery(form);
             form.readFromNBT(list.getCompoundTagAt(i));
             FormController.getInstance().customFormsSync.put(form.id, form);
         }
@@ -189,7 +188,6 @@ public class MixinDBCAddon {
     @Overwrite(remap = false)
     public void syncUpdate(NBTTagCompound compound, ByteBuf buffer) {
         CustomForm form = new CustomForm();
-        form.formMastery = new FormMastery(form);
         form.readFromNBT(compound);
         FormController.getInstance().customForms.put(form.id, form);
     }
@@ -242,7 +240,6 @@ public class MixinDBCAddon {
     @Overwrite(remap = false)
     public void formPacketSave(EntityPlayer player, ByteBuf buffer) throws IOException {
         CustomForm customForm = new CustomForm();
-        customForm.formMastery = new FormMastery(customForm);
         customForm.readFromNBT(Server.readNBT(buffer));
         FormController.getInstance().saveForm(customForm);
         NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);

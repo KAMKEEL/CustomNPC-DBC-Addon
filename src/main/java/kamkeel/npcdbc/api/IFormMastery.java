@@ -5,7 +5,6 @@ package kamkeel.npcdbc.api;
  * get a better understanding on how this interface functions
  */
 public interface IFormMastery {
-    public IFormMastery save();
 
     /**
      * @param type  3 Legal: "flat", "perlevel", "max"
@@ -68,4 +67,10 @@ public interface IFormMastery {
      * @return value of specified type
      */
     float getStrainMulti(String type);
+
+    /**
+     * Saves CustomForm with the New Form Mastery Modifications
+     * @return IFormMastery self object
+     */
+    IFormMastery save();
 }
