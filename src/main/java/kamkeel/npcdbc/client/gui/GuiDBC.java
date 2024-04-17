@@ -97,12 +97,14 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
 
         if (guibutton.id == 1) {
             if (selected != null) {
-                int formID = unlockedForms.get(selected);
-                Client.sendData(EnumPacketServer.CustomFormSet, formID);
+                if(unlockedForms.containsKey(selected)){
+                    int formID = unlockedForms.get(selected);
+                    Client.sendData(EnumPacketServer.CustomFormSet, formID);
+                }
             }
         } else if (guibutton.id == 2) {
             Client.sendData(EnumPacketServer.CustomFormSet, -1);
-            selected = "";
+            selected = null;
             formSelectionScroll.selected = -1;
         }
     }
@@ -122,17 +124,6 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             formSelectionScroll.resetScroll();
             formSelectionScroll.setList(getFormSearch());
         }
-    }
-
-    public void mouseClicked(int i, int j, int k) {
-        if (getTextField(55).isFocused() && k == 1) { //empty search field on right click
-            getTextField(55).setText("");
-            search = "";
-            formSelectionScroll.setList(getFormSearch());
-            setSelected(selected);
-        }
-
-        super.mouseClicked(i, j, k);
     }
 
     private List<String> getFormSearch(){
@@ -162,26 +153,21 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
     public void setGuiData(NBTTagCompound compound) {
         if (compound.hasNoTags()) {
             this.selectedForm = null;
-            setSelected(null);
+            selected = null;
+            setSelected(selected);
         } else {
             this.selectedForm = new CustomForm();
             selectedForm.readFromNBT(compound);
-            setSelected(selectedForm.menuName);
+            setSelected(selectedForm.name);
         }
         initGui();
     }
 
     @Override
     public void customScrollClicked(int i, int j, int k, GuiCustomScroll guiCustomScroll) {
-        if (guiCustomScroll.id == 0) {
-            if (selected != null) {
-                if (selected.equals(formSelectionScroll.getSelected())) {
-                    selected = "";
-                    formSelectionScroll.selected = -1;
-                    return;
-                }
-            }
+        if (guiCustomScroll.id == 0 && formSelectionScroll != null) {
             selected = formSelectionScroll.getSelected();
+            initGui();
         }
     }
 

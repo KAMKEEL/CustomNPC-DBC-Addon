@@ -25,6 +25,7 @@ import noppes.npcs.constants.SyncType;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
+import org.lwjgl.Sys;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -257,7 +258,8 @@ public class MixinDBCAddon {
     @Overwrite(remap = false)
     public void formPacketSet(EntityPlayer player, ByteBuf buffer) throws IOException {
         int formID = buffer.readInt();
-        PlayerCustomFormData data = ((IPlayerFormData) PlayerDataController.Instance.getPlayerData(player)).getCustomFormData();
+        PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
+        PlayerCustomFormData data = ((IPlayerFormData) playerData).getCustomFormData();
         if(data == null)
             return;
 
@@ -271,11 +273,17 @@ public class MixinDBCAddon {
                 } else {
                     data.selectedForm = -1;
                 }
+                System.out.println("Tried to set Custom Form");
+                data.updateClient();
+                playerData.save();
+                System.out.println(((IPlayerFormData) PlayerDataController.Instance.getPlayerData(player)).getCustomFormData().getSelectedForm().id);
                 Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
             }
         }
         else {
             data.selectedForm = -1;
+            data.updateClient();
+            playerData.save();
             NBTTagCompound compound = new NBTTagCompound();
             Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
         }

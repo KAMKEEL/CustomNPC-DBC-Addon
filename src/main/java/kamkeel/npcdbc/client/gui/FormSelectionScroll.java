@@ -16,7 +16,7 @@ public class FormSelectionScroll extends GuiCustomScroll {
     public FormSelectionScroll(GuiScreen parent, int id) {
         super(parent, id);
         visible = true;
-
+        multipleSelection = false;
         for(CustomForm allForms : FormController.getInstance().customForms.values()){
             formDisplays.put(allForms.getName(), allForms.getMenuName());
         }
@@ -29,6 +29,7 @@ public class FormSelectionScroll extends GuiCustomScroll {
             int k = (14 * i + 4) - scrollY;
             if (k >= 4 && k + 12 < ySize) {
                 int xOffset = scrollHeight < ySize - 8 ? 0 : 10;
+                String rawName = list.get(i);
                 String menuName = formDisplays.get(list.get(i));
                 if(menuName.isEmpty())
                     menuName = "Missing";
@@ -53,7 +54,7 @@ public class FormSelectionScroll extends GuiCustomScroll {
                     drawHorizontalLine(j - 2, j + xSize - 18 + xOffset, k - 3, 0xffffffff);
                     drawHorizontalLine(j - 2, j + xSize - 18 + xOffset, k + 10, 0xffffffff);
                     fontRendererObj.drawString(text, j, k, 16777215);
-                    setSelected(text);
+                    setSelected(rawName);
                 } else if (i == hover) { //if hovering over
                     GL11.glPushMatrix();
                     fontRendererObj.drawString(text, j, k, hoverColor);
