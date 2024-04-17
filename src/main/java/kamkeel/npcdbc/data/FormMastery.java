@@ -1,10 +1,10 @@
 package kamkeel.npcdbc.data;
 
 import kamkeel.npcdbc.api.IFormMastery;
-import kamkeel.npcdbc.controllers.FormController;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class FormMastery implements IFormMastery {
+
     public int maxLevel = 100, instantTransformationUnlockLevel = 50;
     CustomForm form;
 
@@ -13,20 +13,23 @@ public class FormMastery implements IFormMastery {
     }
 
     public void readFromNBT(NBTTagCompound compound) {
-        maxLevel = compound.getInteger("maxLevel");
-        instantTransformationUnlockLevel = compound.getInteger("instantTransformationUnlockLevel");
+        NBTTagCompound formMastery = compound.getCompoundTag("formMastery");
+        maxLevel = formMastery.getInteger("maxLevel");
+        instantTransformationUnlockLevel = formMastery.getInteger("instantTransformationUnlockLevel");
     }
 
-    public NBTTagCompound writeToNBT() {
-        NBTTagCompound c = new NBTTagCompound();
-        c.setInteger("maxLevel", maxLevel);
-        c.setInteger("instantTransformationUnlockLevel", instantTransformationUnlockLevel);
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        NBTTagCompound formMastery = new NBTTagCompound();
+        compound.setTag("formMastery", formMastery);
+        formMastery.setInteger("maxLevel", maxLevel);
+        formMastery.setInteger("instantTransformationUnlockLevel", instantTransformationUnlockLevel);
 
-        return c;
+        return formMastery;
     }
 
     @Override
     public IFormMastery save() {
-        return FormController.Instance.saveFormMastery(this);
+        form.save();
+        return this;
     }
 }

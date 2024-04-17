@@ -95,6 +95,7 @@ public interface ICustomForm {
      */
     void setID(int newID);
 
+    public IFormMastery getFormMastery();
 
     ICustomForm save();
 

@@ -2,7 +2,6 @@ package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.api.IFormHandler;
-import kamkeel.npcdbc.api.IFormMastery;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.FormMastery;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -25,7 +24,6 @@ public class FormController implements IFormHandler {
     public static FormController Instance = new FormController();
     public HashMap<Integer, CustomForm> customFormsSync = new HashMap();
     public HashMap<Integer, CustomForm> customForms;
-    public HashMap<CustomForm, FormMastery> formMasteries;
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
 
@@ -76,7 +74,6 @@ public class FormController implements IFormHandler {
             }
 
             customForms.put(form.id, form);
-            formMasteries.put(form, fm);
             return form;
         }
     }

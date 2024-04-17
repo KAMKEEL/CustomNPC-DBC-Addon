@@ -5,6 +5,7 @@ import kamkeel.addon.DBCAddon;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCStats;
+import kamkeel.npcdbc.data.FormMastery;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.INPCStats;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
@@ -16,12 +17,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.Server;
 import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.constants.SyncType;
-import noppes.npcs.controllers.AnimationController;
-import noppes.npcs.controllers.data.Animation;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,7 +34,8 @@ import static JinRyuu.JRMCore.JRMCoreH.getInt;
 @Mixin(DBCAddon.class)
 public class MixinDBCAddon {
 
-    @Shadow(remap = false) public boolean supportEnabled;
+    @Shadow(remap = false)
+    public boolean supportEnabled;
 
     /**
      * @author Kamkeel
@@ -44,17 +43,17 @@ public class MixinDBCAddon {
      */
     @Overwrite(remap = false)
     public void dbcCopyData(EntityLivingBase copied, EntityLivingBase entity) {
-        if(!supportEnabled)
+        if (!supportEnabled)
             return;
 
         if (entity instanceof EntityNPCInterface && copied instanceof EntityNPCInterface) {
             EntityNPCInterface receiverNPC = (EntityNPCInterface) entity;
             EntityNPCInterface npc = (EntityNPCInterface) copied;
             INPCStats stats = (INPCStats) npc.stats;
-            INPCStats receiverStats =  (INPCStats) receiverNPC.stats;
+            INPCStats receiverStats = (INPCStats) receiverNPC.stats;
 
             INPCDisplay display = (INPCDisplay) npc.display;
-            INPCDisplay receiverDisplay =  (INPCDisplay) receiverNPC.display;
+            INPCDisplay receiverDisplay = (INPCDisplay) receiverNPC.display;
 
             receiverStats.getDBCStats().setFriendlyFist(stats.getDBCStats().isFriendlyFist());
             receiverStats.getDBCStats().setIgnoreDex(stats.getDBCStats().isIgnoreDex());
@@ -73,7 +72,7 @@ public class MixinDBCAddon {
      */
     @Overwrite(remap = false)
     public boolean canDBCAttack(EntityNPCInterface npc, float attackStrength, Entity receiver) {
-        if(!supportEnabled)
+        if (!supportEnabled)
             return false;
         DBCStats dbcStats = ((INPCStats) npc.stats).getDBCStats();
         return dbcStats.enabled && receiver instanceof EntityPlayer && attackStrength > 0;
@@ -85,16 +84,16 @@ public class MixinDBCAddon {
      */
     @Overwrite(remap = false)
     public void doDBCDamage(EntityNPCInterface npc, float attackStrength, Entity receiver) {
-        if(npc.isRemote())
+        if (npc.isRemote())
             return;
 
-        if(attackStrength <= 0)
+        if (attackStrength <= 0)
             return;
 
-        if(!(receiver instanceof EntityPlayer))
+        if (!(receiver instanceof EntityPlayer))
             return;
 
-        if(npc.stats instanceof INPCStats){
+        if (npc.stats instanceof INPCStats) {
             EntityPlayer player = (EntityPlayer) receiver;
             DBCStats dbcStats = ((INPCStats) npc.stats).getDBCStats();
             DBCUtils.doDBCDamage(player, (int) attackStrength, dbcStats);
@@ -107,12 +106,12 @@ public class MixinDBCAddon {
      */
     @Overwrite(remap = false)
     public boolean isKO(EntityNPCInterface npc, EntityPlayer player) {
-        if(npc.isRemote())
+        if (npc.isRemote())
             return false;
 
-        if(npc.stats instanceof INPCStats){
+        if (npc.stats instanceof INPCStats) {
             DBCStats dbcStats = ((INPCStats) npc.stats).getDBCStats();
-            if(dbcStats.enabled && dbcStats.isFriendlyFist()){
+            if (dbcStats.enabled && dbcStats.isFriendlyFist()) {
                 int currentKO = getInt(player, "jrmcHar4va");
                 return currentKO > 0;
             }
@@ -144,12 +143,12 @@ public class MixinDBCAddon {
      * @reason Performs Syncing | SyncController. Sent by Server to Client
      */
     @Overwrite(remap = false)
-    public void syncPlayer(EntityPlayerMP playerMP){
+    public void syncPlayer(EntityPlayerMP playerMP) {
         NBTTagList list = new NBTTagList();
         NBTTagCompound compound = new NBTTagCompound();
-        for(CustomForm customForm : FormController.getInstance().customForms.values()){
+        for (CustomForm customForm : FormController.getInstance().customForms.values()) {
             list.appendTag(customForm.writeToNBT());
-            if(list.tagCount() > 10){
+            if (list.tagCount() > 10) {
                 compound = new NBTTagCompound();
                 compound.setTag("Data", list);
                 Server.sendData(playerMP, EnumPacketClient.SYNC_ADD, SyncType.CUSTOM_FORM, compound);
@@ -166,15 +165,16 @@ public class MixinDBCAddon {
      * @reason Performs Syncing | SyncController
      */
     @Overwrite(remap = false)
-    public void clientSync(NBTTagCompound compound, boolean syncEnd){
+    public void clientSync(NBTTagCompound compound, boolean syncEnd) {
         NBTTagList list = compound.getTagList("Data", 10);
-        for(int i = 0; i < list.tagCount(); i++)
-        {
+        for (int i = 0; i < list.tagCount(); i++) {
             CustomForm form = new CustomForm();
+            FormMastery formMastery = new FormMastery(form);
+            form.formMastery = formMastery;
             form.readFromNBT(list.getCompoundTagAt(i));
             FormController.getInstance().customFormsSync.put(form.id, form);
         }
-        if(syncEnd){
+        if (syncEnd) {
             FormController.getInstance().customForms = FormController.getInstance().customFormsSync;
             FormController.getInstance().customFormsSync = new HashMap<Integer, CustomForm>();
         }
@@ -185,8 +185,10 @@ public class MixinDBCAddon {
      * @reason Performs Syncing | SyncController
      */
     @Overwrite(remap = false)
-    public void syncUpdate(NBTTagCompound compound, ByteBuf buffer){
+    public void syncUpdate(NBTTagCompound compound, ByteBuf buffer) {
         CustomForm form = new CustomForm();
+        FormMastery formMastery = new FormMastery(form);
+        form.formMastery = formMastery;
         form.readFromNBT(compound);
         FormController.getInstance().customForms.put(form.id, form);
     }
@@ -196,7 +198,7 @@ public class MixinDBCAddon {
      * @reason Performs Syncing | SyncController
      */
     @Overwrite(remap = false)
-    public void syncRemove(int id){
+    public void syncRemove(int id) {
         CustomForm form = FormController.Instance.customForms.remove(id);
     }
 
@@ -205,7 +207,7 @@ public class MixinDBCAddon {
      * @reason Performs Syncing | SyncController
      */
     @Overwrite(remap = false)
-    public void formPacketGet(EntityPlayer player, ByteBuf buffer){
+    public void formPacketGet(EntityPlayer player, ByteBuf buffer) {
         CustomForm customForm = (CustomForm) FormController.getInstance().get(buffer.readInt());
         NBTTagCompound compound = customForm.writeToNBT();
         Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
@@ -216,7 +218,7 @@ public class MixinDBCAddon {
      * @reason Performs Syncing | SyncController
      */
     @Overwrite(remap = false)
-    public void formPacketGets(EntityPlayer player, ByteBuf buffer){
+    public void formPacketGets(EntityPlayer player, ByteBuf buffer) {
         NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
     }
 
@@ -225,7 +227,7 @@ public class MixinDBCAddon {
      * @reason Performs Syncing | SyncController
      */
     @Overwrite(remap = false)
-    public void formPacketRemove(EntityPlayer player, ByteBuf buffer){
+    public void formPacketRemove(EntityPlayer player, ByteBuf buffer) {
         FormController.getInstance().delete(buffer.readInt());
         NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
         NBTTagCompound compound = (new CustomForm()).writeToNBT();
@@ -239,6 +241,8 @@ public class MixinDBCAddon {
     @Overwrite(remap = false)
     public void formPacketSave(EntityPlayer player, ByteBuf buffer) throws IOException {
         CustomForm customForm = new CustomForm();
+        FormMastery formMastery = new FormMastery(customForm);
+        customForm.formMastery = formMastery;
         customForm.readFromNBT(Server.readNBT(buffer));
         FormController.getInstance().saveForm(customForm);
         NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);

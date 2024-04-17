@@ -114,21 +114,21 @@ public class PlayerCustomFormData {
         ((IPlayerFormData) parent).updateFormInfo();
     }
 
-    public void addFormMastery(int formID, int amount) {
-        CustomForm form = FormController.getInstance().customForms.get(formID);
-        if (form != null) {
-            int current = formMastery.get(formID);
-            int updated = Math.max(current + amount, form.maxMastery);
-            formMastery.put(formID, updated);
-        }
-    }
-
-    public void removeFormMastery(int formID, int amount) {
-        CustomForm form = FormController.getInstance().customForms.get(formID);
-        if (form != null) {
-            int current = formMastery.get(formID);
-            int updated = Math.max(current - amount, 0);
-            formMastery.put(formID, updated);
-        }
-    }
+//    public void addFormMastery(int formID, int amount) {
+//        CustomForm form = FormController.getInstance().customForms.get(formID);
+//        if (form != null) {
+//            int current = formMastery.get(formID);
+//            int updated = Math.max(current + amount, form.maxMastery);
+//            formMastery.put(formID, updated);
+//        }
+//    }
+//
+//    public void removeFormMastery(int formID, int amount) {
+//        CustomForm form = FormController.getInstance().customForms.get(formID);
+//        if (form != null) {
+//            int current = formMastery.get(formID);
+//            int updated = Math.max(current - amount, 0);
+//            formMastery.put(formID, updated);
+//        }
+//    }
 }
