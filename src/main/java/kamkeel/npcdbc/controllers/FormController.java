@@ -4,6 +4,7 @@ import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.api.IFormHandler;
 import kamkeel.npcdbc.api.IFormMastery;
 import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.FormMastery;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -24,6 +25,7 @@ public class FormController implements IFormHandler {
     public static FormController Instance = new FormController();
     public HashMap<Integer, CustomForm> customFormsSync = new HashMap();
     public HashMap<Integer, CustomForm> customForms;
+    public HashMap<CustomForm, FormMastery> formMasteries;
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
 
@@ -49,6 +51,8 @@ public class FormController implements IFormHandler {
             return get(name);
         else {
             CustomForm form = new CustomForm();
+            FormMastery fm = new FormMastery(form);
+            form.formMastery = fm;
             form.name = name;
 
             if (form.id == -1) {
@@ -72,6 +76,7 @@ public class FormController implements IFormHandler {
             }
 
             customForms.put(form.id, form);
+            formMasteries.put(form, fm);
             return form;
         }
     }
@@ -110,9 +115,6 @@ public class FormController implements IFormHandler {
         return lastUsedID;
     }
 
-    public IFormMastery saveFormMastery(IFormMastery formMastery) {
-        return null;
-    }
 
     public ICustomForm saveForm(ICustomForm customForm) {
         if (customForm.getID() < 0) {

@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.ICustomForm;
+import kamkeel.npcdbc.api.IFormMastery;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
@@ -33,7 +34,8 @@ public class CustomForm implements ICustomForm {
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
     public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
-    int maxMastery = 100;
+
+    public FormMastery formMastery;
 
     public CustomForm() {
     }
@@ -286,6 +288,11 @@ public class CustomForm implements ICustomForm {
         save();
     }
 
+    @Override
+    public IFormMastery getFormMastery() {
+        return formMastery;
+    }
+
     public void readFromNBT(NBTTagCompound compound) {
         if (compound.hasKey("ID"))
             id = compound.getInteger("ID");
@@ -294,30 +301,40 @@ public class CustomForm implements ICustomForm {
 
         name = compound.getString("name");
         menuName = compound.getString("menuName");
-        ascendSound = compound.getString("ascendSound");
-        descendSound = compound.getString("descendSound");
         race = compound.getInteger("race");
-        strengthMulti = compound.getFloat("strengthMulti");
-        dexMulti = compound.getFloat("dexMulti");
-        willMulti = compound.getFloat("willMulti");
-        kaiokenStrength = compound.getFloat("kaiokenStrength");
-        uiStrength = compound.getFloat("uiStrength");
-        godStrength = compound.getFloat("godStrength");
-        mysticStrength = compound.getFloat("mysticStrength");
-        kaiokenState2Factor = compound.getFloat("kaiokenState2Factor");
-        uiState2Factor = compound.getFloat("uiState2Factor");
-        kaiokenStackable = compound.getBoolean("kaiokenStackable");
-        uiStackable = compound.getBoolean("uiStackable");
-        godStackable = compound.getBoolean("godStackable");
-        mysticStackable = compound.getBoolean("mysticStackable");
-        auraColor = compound.getInteger("auraColor");
-        eyeColor = compound.getInteger("eyeColor");
-        hairColor = compound.getInteger("hairColor");
-        bodyCM = compound.getInteger("bodyCM");
-        bodyC1 = compound.getInteger("bodyC1");
-        bodyC2 = compound.getInteger("bodyC2");
-        bodyC3 = compound.getInteger("bodyC3");
 
+        NBTTagCompound attributes = compound.getCompoundTag("attributes");
+        strengthMulti = attributes.getFloat("strMulti");
+        dexMulti = attributes.getFloat("dexMulti");
+        willMulti = attributes.getFloat("willMulti");
+
+        NBTTagCompound stack = compound.getCompoundTag("stackableForms");
+        kaiokenStrength = stack.getFloat("kaiokenStrength");
+        kaiokenStackable = stack.getBoolean("kaiokenStackable");
+        kaiokenState2Factor = stack.getFloat("kaiokenState2Factor");
+        uiStrength = stack.getFloat("uiStrength");
+        uiStackable = stack.getBoolean("uiStackable");
+        uiState2Factor = stack.getFloat("uiState2Factor");
+        godStrength = stack.getFloat("godStrength");
+        godStackable = stack.getBoolean("godStackable");
+        mysticStrength = stack.getFloat("mysticStrength");
+        mysticStackable = stack.getBoolean("mysticStackable");
+
+
+        NBTTagCompound rendering = compound.getCompoundTag("rendering");
+        auraColor = rendering.getInteger("auraColor");
+        eyeColor = rendering.getInteger("eyeColor");
+        hairColor = rendering.getInteger("hairColor");
+        bodyCM = rendering.getInteger("bodyCM");
+        bodyC1 = rendering.getInteger("bodyC1");
+        bodyC2 = rendering.getInteger("bodyC2");
+        bodyC3 = rendering.getInteger("bodyC3");
+
+        NBTTagCompound sounds = compound.getCompoundTag("sounds");
+        ascendSound = sounds.getString("ascendSound");
+        descendSound = sounds.getString("descendSound");
+
+        formMastery.readFromNBT(compound);
     }
 
     public NBTTagCompound writeToNBT() {
@@ -325,31 +342,43 @@ public class CustomForm implements ICustomForm {
         compound.setInteger("ID", id);
         compound.setString("name", name);
         compound.setString("menuName", menuName);
-        compound.setString("ascendSound", ascendSound);
-        compound.setString("descendSound", descendSound);
         compound.setInteger("race", race);
-        compound.setFloat("strengthMulti", strengthMulti);
-        compound.setFloat("dexMulti", dexMulti);
-        compound.setFloat("willMulti", willMulti);
-        compound.setFloat("kaiokenStrength", kaiokenStrength);
-        compound.setFloat("uiStrength", uiStrength);
-        compound.setFloat("godStrength", godStrength);
-        compound.setFloat("mysticStrength", mysticStrength);
-        compound.setFloat("kaiokenState2Factor", kaiokenState2Factor);
-        compound.setFloat("uiState2Factor", uiState2Factor);
-        compound.setBoolean("kaiokenStackable", kaiokenStackable);
-        compound.setBoolean("uiStackable", uiStackable);
-        compound.setBoolean("godStackable", godStackable);
-        compound.setBoolean("mysticStackable", mysticStackable);
-        compound.setInteger("auraColor", auraColor);
-        compound.setInteger("eyeColor", eyeColor);
-        compound.setInteger("hairColor", hairColor);
-        compound.setInteger("bodyCM", bodyCM);
-        compound.setInteger("bodyC1", bodyC1);
-        compound.setInteger("bodyC2", bodyC2);
-        compound.setInteger("bodyC3", bodyC3);
 
+        NBTTagCompound attributes = new NBTTagCompound();
+        compound.setTag("attributes", attributes);
+        attributes.setFloat("strMulti", strengthMulti);
+        attributes.setFloat("dexMulti", dexMulti);
+        attributes.setFloat("willMulti", willMulti);
 
+        NBTTagCompound stack = new NBTTagCompound();
+        compound.setTag("stackableForms", stack);
+        stack.setFloat("kaiokenStrength", kaiokenStrength);
+        stack.setBoolean("kaiokenStackable", kaiokenStackable);
+        stack.setFloat("kaiokenState2Factor", kaiokenState2Factor);
+        stack.setFloat("uiStrength", uiStrength);
+        stack.setBoolean("uiStackable", uiStackable);
+        stack.setFloat("uiState2Factor", uiState2Factor);
+        stack.setFloat("godStrength", godStrength);
+        stack.setBoolean("godStackable", godStackable);
+        stack.setFloat("mysticStrength", mysticStrength);
+        stack.setBoolean("mysticStackable", mysticStackable);
+
+        NBTTagCompound rendering = new NBTTagCompound();
+        compound.setTag("rendering", rendering);
+        rendering.setInteger("auraColor", auraColor);
+        rendering.setInteger("eyeColor", eyeColor);
+        rendering.setInteger("hairColor", hairColor);
+        rendering.setInteger("bodyCM", bodyCM);
+        rendering.setInteger("bodyC1", bodyC1);
+        rendering.setInteger("bodyC2", bodyC2);
+        rendering.setInteger("bodyC3", bodyC3);
+
+        NBTTagCompound sounds = new NBTTagCompound();
+        compound.setTag("sounds", sounds);
+        sounds.setString("ascendSound", ascendSound);
+        sounds.setString("descendSound", descendSound);
+
+        formMastery.writeToNBT(compound);
         return compound;
     }
 
