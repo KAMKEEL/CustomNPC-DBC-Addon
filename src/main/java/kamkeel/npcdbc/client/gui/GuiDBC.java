@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.client.gui;
 
-import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.CustomForm;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
@@ -59,7 +58,6 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
 
         // Add Details
         if (selectedForm != null) {
-
         }
     }
 
@@ -97,8 +95,12 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
 
         if (guibutton.id == 1) {
             if (selected != null) {
-                if(unlockedForms.containsKey(selected)){
+                if (unlockedForms.containsKey(selected)) {
+                    System.out.println(unlockedForms.keySet());
+                    System.out.println(selected + " sds");
                     int formID = unlockedForms.get(selected);
+                    System.out.println("id " + formID);
+                    //the formID is correct for each form, but it still doesn't set it on client side
                     Client.sendData(EnumPacketServer.CustomFormSet, formID);
                 }
             }
@@ -123,16 +125,29 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             search = getTextField(55).getText().toLowerCase();
             formSelectionScroll.resetScroll();
             formSelectionScroll.setList(getFormSearch());
+            setSelected(selectedForm.name); //so list keeps selectedForm highlighted despite search
+
         }
     }
 
-    private List<String> getFormSearch(){
-        if(search.isEmpty()){
+    public void mouseClicked(int i, int j, int k) {
+        if (getTextField(55).isFocused() && k == 1) { //empty search field on right click
+            getTextField(55).setText("");
+            search = "";
+            formSelectionScroll.setList(getFormSearch());
+            setSelected(selected);
+        }
+
+        super.mouseClicked(i, j, k);
+    }
+
+    private List<String> getFormSearch() {
+        if (search.isEmpty()) {
             return new ArrayList<String>(this.unlockedForms.keySet());
         }
         List<String> list = new ArrayList<String>();
-        for(String name : this.unlockedForms.keySet()){
-            if(name.toLowerCase().contains(search))
+        for (String name : this.unlockedForms.keySet()) {
+            if (name.toLowerCase().contains(search))
                 list.add(name);
         }
         return list;
@@ -143,7 +158,8 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
     public void setData(Vector<String> list, HashMap<String, Integer> data) {
         String name = formSelectionScroll.getSelected();
         this.unlockedForms = data;
-        formSelectionScroll.setList(getFormSearch());
+        if (formSelectionScroll != null)
+            formSelectionScroll.setList(getFormSearch());
         if (name != null)
             formSelectionScroll.setSelected(name);
         initGui();
@@ -165,7 +181,14 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
 
     @Override
     public void customScrollClicked(int i, int j, int k, GuiCustomScroll guiCustomScroll) {
-        if (guiCustomScroll.id == 0 && formSelectionScroll != null) {
+        if (guiCustomScroll.id == formSelectionScroll.id && formSelectionScroll != null) {
+            //clicking a selected item in list deselects it (super unnecessary but my neurodivergent brain requires this level of detail)
+            if (selected != null && selected.equals(formSelectionScroll.getSelected())) {
+                selected = "";
+                formSelectionScroll.selected = -1;
+                return;
+            }
+
             selected = formSelectionScroll.getSelected();
             initGui();
         }
