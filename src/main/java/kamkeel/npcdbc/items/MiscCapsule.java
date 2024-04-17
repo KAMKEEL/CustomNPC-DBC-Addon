@@ -102,15 +102,16 @@ public class MiscCapsule extends Item {
         if(meta == EnumMiscCapsules.KO.getMeta()){
             int currentKO = getInt(player, "jrmcHar4va");
             if (currentKO <= 0) {
-                player.addChatComponentMessage(new ChatComponentText("§aYou are not ko'd"));
+                player.addChatComponentMessage(new ChatComponentText("§cYou are not ko'd"));
                 return itemStack;
             }
             JRMCoreH.setInt(0, player, "jrmcHar4va");
+            player.addChatComponentMessage(new ChatComponentText("§aYou are no longer ko'd!"));
         }
         else if(meta == EnumMiscCapsules.Revive.getMeta()){
             int playerTime = JRMCoreH.getInt(player, "jrmcReviveTmer");
             if (playerTime <= 0) {
-                player.addChatComponentMessage(new ChatComponentText("§aYou are not dead"));
+                player.addChatComponentMessage(new ChatComponentText("§cYou are not dead"));
                 return itemStack;
             }
 
@@ -118,7 +119,7 @@ public class MiscCapsule extends Item {
             player.addChatComponentMessage(new ChatComponentText("§eYou are now able to revive!"));
         }
         else if(meta == EnumMiscCapsules.Heat.getMeta()){
-
+            // Add Heat Capsule
         }
 
         itemStack.splitStack(1);
