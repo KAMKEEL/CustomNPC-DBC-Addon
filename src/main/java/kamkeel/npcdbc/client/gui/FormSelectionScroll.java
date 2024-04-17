@@ -18,7 +18,7 @@ public class FormSelectionScroll extends GuiCustomScroll {
     public GuiNpcLabel status;
     public String selectedTemp;
     public String search;
-    int hovercolor;
+    int hoverColor;
     GuiNpcButton btnSelectForm;
     GuiNpcButton btnDeselectForm;
     GuiNpcTextField searchField;
@@ -56,7 +56,7 @@ public class FormSelectionScroll extends GuiCustomScroll {
         parent.addButton(btnSelectForm);
         parent.addButton(btnDeselectForm);
         parent.addLabel(status);
-        parent.addTextField(searchField);
+        //parent.addTextField(searchField);
     }
 
 
@@ -91,6 +91,8 @@ public class FormSelectionScroll extends GuiCustomScroll {
                 if (getSelectedForm() != formData.getSelectedForm()) {
                     formData.selectedForm = getSelectedForm().id;
                     status.label = "§aSelected " + formData.getColoredName(getSelectedForm()) + "§a!";
+                    //open form GUI here
+                   // mc.displayGuiScreen(new GuiFormData(parent,formData.getSelectedForm()));
                     //add packet here
                 } else {
                     formData.selectedForm = -1;
@@ -179,7 +181,7 @@ public class FormSelectionScroll extends GuiCustomScroll {
                     setSelected(text);
                 } else if (i == hover) { //if hovering over
                     GL11.glPushMatrix();
-                    fontRendererObj.drawString(text, j, k, hovercolor);
+                    fontRendererObj.drawString(text, j, k, hoverColor);
                     GL11.glPopMatrix();
                 } else { //everything else
                     GL11.glPushMatrix();
