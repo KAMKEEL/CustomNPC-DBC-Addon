@@ -108,6 +108,8 @@ public class KiCapsule extends Item {
 
             // Removes 1 Item
             itemStack.splitStack(1);
+            if(itemStack.stackSize <= 0)
+                player.destroyCurrentEquippedItem();
 
             // Sets Cooldown
             CapsuleController.lastUsedKiCapsule.put(playerUUID, currentTime);
