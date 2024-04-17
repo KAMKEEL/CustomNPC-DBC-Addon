@@ -8,6 +8,7 @@ public class ModItems {
     public static Item KiCapsules;
     public static Item HealthCapsules;
     public static Item StaminaCapsules;
+    public static Item MiscCapsules;
 
     /**
      * Declare and register items. Do NOT add recipes here!
@@ -25,6 +26,10 @@ public class ModItems {
             if(ConfigCapsules.EnableStaminaCapsule){
                 StaminaCapsules = new StaminaCapsule();
                 GameRegistry.registerItem(StaminaCapsules, "staminacapsule");
+            }
+            if(ConfigCapsules.EnableMiscCapsule){
+                MiscCapsules = new MiscCapsule();
+                GameRegistry.registerItem(MiscCapsules, "misccapsule");
             }
         }
     }

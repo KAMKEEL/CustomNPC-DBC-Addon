@@ -3,12 +3,15 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.EnumHealthCapsules;
 import kamkeel.npcdbc.constants.EnumKiCapsules;
+import kamkeel.npcdbc.constants.EnumMiscCapsules;
 import kamkeel.npcdbc.constants.EnumStaminaCapsules;
 
 import java.util.HashMap;
 import java.util.UUID;
 
 public class CapsuleController {
+
+    public static HashMap<UUID, HashMap<Integer, Long>> miscCapsuleCooldown = new HashMap<>();
 
     public static HashMap<UUID, Long> lastUsedKiCapsule = new HashMap<>();
     public static HashMap<UUID, Long> lastUsedHealthCapsule = new HashMap<>();
@@ -17,6 +20,43 @@ public class CapsuleController {
     public static HashMap<UUID, HashMap<Integer, Long>> lastAlternateKiCapsule = new HashMap<>();
     public static HashMap<UUID, HashMap<Integer, Long>> lastAlternateHealthCapsule = new HashMap<>();
     public static HashMap<UUID, HashMap<Integer, Long>> lastAlternateStaminaCapsule = new HashMap<>();
+
+    public static void setMiscCapsule(UUID playerUUID, int type){
+        if(ConfigCapsules.EnableCapsuleCooldowns){
+            if (type < 0 || type > EnumMiscCapsules.count())
+                type = 0;
+
+            EnumMiscCapsules miscCapsules = EnumMiscCapsules.values()[type];
+            long freedomTime = System.currentTimeMillis() + (miscCapsules.getCooldown() * 1000L);
+
+            if (!CapsuleController.miscCapsuleCooldown.containsKey(playerUUID))
+                CapsuleController.miscCapsuleCooldown.put(playerUUID, new HashMap<>());
+
+            HashMap<Integer, Long> tierTime = CapsuleController.miscCapsuleCooldown.get(playerUUID);
+            tierTime.put(type, freedomTime);
+            CapsuleController.miscCapsuleCooldown.put(playerUUID, tierTime);
+        }
+    }
+
+    public static boolean canUseMiscCapsule(UUID playerUUID, int type){
+        if(ConfigCapsules.EnableCapsuleCooldowns){
+            if (type < 0 || type > EnumMiscCapsules.count())
+                type = 0;
+
+            long currentTime = System.currentTimeMillis();
+            long freedomTime = 0;
+
+            if (!CapsuleController.miscCapsuleCooldown.containsKey(playerUUID))
+                CapsuleController.miscCapsuleCooldown.put(playerUUID, new HashMap<>());
+
+            HashMap<Integer, Long> tierTime = CapsuleController.miscCapsuleCooldown.get(playerUUID);
+            if (tierTime.containsKey(type))
+                freedomTime = tierTime.get(type);
+
+            return currentTime > freedomTime;
+        }
+        return true;
+    }
 
     public static void setKiCapsule(UUID playerUUID, int type){
         if(ConfigCapsules.EnableCapsuleCooldowns){

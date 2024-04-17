@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.config;
 
 import cpw.mods.fml.common.FMLLog;
+import kamkeel.npcdbc.items.MiscCapsule;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import noppes.npcs.util.ValueUtil;
@@ -17,6 +18,7 @@ public class ConfigCapsules
     public final static String KI = "Ki";
     public final static String HEALTH = "Health";
     public final static String STAMINA = "Stamina";
+    public final static String MISC = "Misc";
 
     /**
      *  General Properties
@@ -53,6 +55,12 @@ public class ConfigCapsules
 
     public static Property StaminaCapsuleMaxStackProperty;
     public static int StaminaCapsuleMaxStack = 16;
+
+    public static Property EnableMiscCapsuleProperty;
+    public static boolean EnableMiscCapsule = true;
+
+    public static Property MiscCapsuleMaxStackProperty;
+    public static int MiscCapsuleMaxStack = 16;
 
 
     /**
@@ -154,6 +162,18 @@ public class ConfigCapsules
     public static Property StaminaMasterCooldownProperty;
     public static int StaminaMasterCooldown = 10;
 
+    /**
+     *  Misc Properties
+     **/
+    public static Property KOCooldownProperty;
+    public static int KOCooldown = 10;
+
+    public static Property ReviveCooldownProperty;
+    public static int ReviveCooldown = 10;
+
+    public static Property HeatCooldownProperty;
+    public static int HeatCooldown = 10;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -166,8 +186,14 @@ public class ConfigCapsules
             EnableCapsulesProperty = config.get(CAPSULES, "Enable Capsules", true);
             EnableCapsules = EnableCapsulesProperty.getBoolean(true);
 
-            EnableCapsuleCooldownsProperty = config.get(CAPSULES, "Enable Capsule Cooldowns", true);
+            EnableCapsuleCooldownsProperty = config.get(CAPSULES, "Enable Capsule Cooldowns", true, "All Cooldowns are in SECONDS");
             EnableCapsuleCooldowns = EnableCapsuleCooldownsProperty.getBoolean(true);
+
+            EnableMiscCapsuleProperty = config.get(CAPSULES, "Misc Capsules", true, "Misc Capsules: Revive, Heat, KO");
+            EnableMiscCapsule = EnableMiscCapsuleProperty.getBoolean(true);
+
+            MiscCapsuleMaxStackProperty = config.get(CAPSULES, "Misc Capsule Max Stack Size", 16, "Max Stack Size per Misc Capsules");
+            MiscCapsuleMaxStack = MiscCapsuleMaxStackProperty.getInt(16);
 
             EnableKiCapsuleProperty = config.get(CAPSULES, "Ki Capsules", true, "Enable Ki Capsules");
             EnableKiCapsule = EnableKiCapsuleProperty.getBoolean(true);
@@ -296,6 +322,16 @@ public class ConfigCapsules
             StaminaMasterStrength = StaminaMasterStrengthProperty.getInt(100);
             StaminaMasterCooldownProperty = config.get(STAMINA, "6. Master Stamina Cooldown", 10);
             StaminaMasterCooldown = StaminaMasterCooldownProperty.getInt(10);
+
+            // Misc Capsules
+            KOCooldownProperty = config.get(MISC, "Ko Cooldown", 10);
+            KOCooldown = KOCooldownProperty.getInt(10);
+
+            ReviveCooldownProperty = config.get(MISC, "Revive Cooldown", 10);
+            ReviveCooldown = ReviveCooldownProperty.getInt(10);
+
+            HeatCooldownProperty = config.get(MISC, "Heat Cooldown", 10);
+            HeatCooldown = HeatCooldownProperty.getInt(10);
         }
         catch (Exception e)
         {
