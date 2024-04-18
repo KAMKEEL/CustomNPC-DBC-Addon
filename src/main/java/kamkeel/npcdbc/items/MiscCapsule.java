@@ -96,8 +96,11 @@ public class MiscCapsule extends Item {
             meta = 0;
 
         UUID playerUUID = player.getUniqueID();
-        if(!CapsuleController.canUseMiscCapsule(playerUUID, meta))
+        long remainingTime = CapsuleController.canUseMiscCapsule(playerUUID, meta);
+        if(remainingTime > 0){
+            player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
+        }
 
         if(meta == EnumMiscCapsules.KO.getMeta()){
             int currentKO = getInt(player, "jrmcHar4va");
@@ -119,7 +122,9 @@ public class MiscCapsule extends Item {
             player.addChatComponentMessage(new ChatComponentText("§eYou are now able to revive!"));
         }
         else if(meta == EnumMiscCapsules.Heat.getMeta()){
-            // Add Heat Capsule
+            // Restore 100 Amount of Heat
+            DBCData.get(player).restoreUIHeat(100);
+            player.addChatComponentMessage(new ChatComponentText("§7UI Heat Restored"));
         }
 
         itemStack.splitStack(1);

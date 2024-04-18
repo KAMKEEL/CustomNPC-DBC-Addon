@@ -38,7 +38,7 @@ public class CapsuleController {
         }
     }
 
-    public static boolean canUseMiscCapsule(UUID playerUUID, int type){
+    public static long canUseMiscCapsule(UUID playerUUID, int type){
         if(ConfigCapsules.EnableCapsuleCooldowns){
             if (type < 0 || type > EnumMiscCapsules.count())
                 type = 0;
@@ -53,9 +53,13 @@ public class CapsuleController {
             if (tierTime.containsKey(type))
                 freedomTime = tierTime.get(type);
 
-            return currentTime > freedomTime;
+            // Calculate remaining time in milliseconds
+            long remainingTimeMillis = freedomTime - currentTime;
+
+            // Return remaining time in seconds
+            return (remainingTimeMillis + 999) / 1000;
         }
-        return true;
+        return 0;
     }
 
     public static void setKiCapsule(UUID playerUUID, int type){
