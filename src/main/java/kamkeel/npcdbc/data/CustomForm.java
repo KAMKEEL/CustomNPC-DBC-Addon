@@ -32,7 +32,7 @@ public class CustomForm implements ICustomForm {
     public float kaiokenStrength = 1.2f, uiStrength = 3.0f, godStrength = 3.0f, mysticStrength = 1.8f;
 
     public String hairCode = "", hairType = "ssj";
-    public int auraColor = 1, hairColor, eyeColor, bodyCM, bodyC1, bodyC2, bodyC3;
+    public int auraColor = 1, hairColor, eyeColor, bodyCM, bodyC1, bodyC2, bodyC3, furColor;
     public boolean hasAuraColor = true, hasHairColor = true, hasEyeColor = true, hasBodyCM = false, hasBodyC1 = false, hasBodyC2 = false, hasBodyC3 = false;
 
 
@@ -468,6 +468,7 @@ public class CustomForm implements ICustomForm {
         auraColor = rendering.getInteger("auraColor");
         eyeColor = rendering.getInteger("eyeColor");
         hairColor = rendering.getInteger("hairColor");
+        furColor = rendering.getInteger("furColor");
         bodyCM = rendering.getInteger("bodyCM");
         bodyC1 = rendering.getInteger("bodyC1");
         bodyC2 = rendering.getInteger("bodyC2");
