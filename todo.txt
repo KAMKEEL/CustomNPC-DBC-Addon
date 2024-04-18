@@ -49,7 +49,6 @@ DONE - changeable DNS components:
 ACTUAL TO-DO:
 add timer, freeze player's DBCKiTech, DBCDamage event, replace Transform.rage with jrmcSaiRg, prevent ascension when release 0
 
--reset form on resetchar method
 -get the hair of ssj/ssj2/ssj3 as form hairs, setHairType() ssj,ssj2,ssj3,ssj4,oozaru
 -Make form trees SSRed ->SSRed2 ->SSRed3
 
@@ -81,3 +80,4 @@ UI Heat(int jrmcEf8slc/double jrmcEf8slcD):
 -Custom Status Effects: JRMCoreGuiBars.drawIcon for individual icons, JRMCoreGuiBars.showSE for all SE icon rewndering
 	-Status effecticons are stored in assets/jinryuumodscore/icons4.png, each icon is 16x16 pixels, resourceID is icon number in icons4.png, starts from 0
 
+-Form Auras are stored in DBCKiTech.chargepart

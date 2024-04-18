@@ -118,7 +118,7 @@ public class Transform {
 
     @SideOnly(Side.CLIENT)
     public static int getRageMeterIncrementation() {
-        double fm = 20;//getFormMasteryValue(k);
+        double fm = 90;//getFormMasteryValue(k);
         double maxfm = 100;//getMaxFormMasteryValue(k);
 
         if (Utility.percentBetween(fm, maxfm, 0, 5))

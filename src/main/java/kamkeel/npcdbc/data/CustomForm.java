@@ -31,7 +31,7 @@ public class CustomForm implements ICustomForm {
     public boolean kaiokenStackable = true, uiStackable = true, godStackable = true, mysticStackable = true;
     public float kaiokenStrength = 1.2f, uiStrength = 3.0f, godStrength = 3.0f, mysticStrength = 1.8f;
 
-    public String hairCode = "";
+    public String hairCode = "", hairType = "ssj";
     public int auraColor = 1, hairColor, eyeColor, bodyCM, bodyC1, bodyC2, bodyC3;
     public boolean hasAuraColor = true, hasHairColor = true, hasEyeColor = true, hasBodyCM = false, hasBodyC1 = false, hasBodyC2 = false, hasBodyC3 = false;
 
@@ -57,6 +57,7 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setHairCode(String hairCode) {
         this.hairCode = hairCode;
+        save();
     }
 
     @Override
@@ -105,6 +106,7 @@ public class CustomForm implements ICustomForm {
                 hasBodyC3 = has;
                 break;
         }
+        save();
     }
 
     public void setColor(String type, int color) {
@@ -131,6 +133,29 @@ public class CustomForm implements ICustomForm {
                 bodyC3 = color;
                 break;
         }
+        save();
+    }
+
+    @Override
+    public void setHairType(String type) {
+        String s = type.toLowerCase();
+        if (s.equals("base") || s.equals("ssj") || s.equals("ssj2") || s.equals("ssj3") || s.equals("ssj4") || s.equals("oozaru") || s.equals("")) {
+            hairType = s;
+
+        } else {
+            hairType = "";
+            throw new CustomNPCsException("Invalid type!");
+        }
+        save();
+    }
+
+    @Override
+    public String getHairType(String type) {
+        String s = type.toLowerCase();
+        if (s.equals("base") || s.equals("ssj") || s.equals("ssj2") || s.equals("ssj3") || s.equals("ssj4") || s.equals("oozaru") || s.equals(""))
+            return hairType;
+        else
+            throw new CustomNPCsException("Invalid type!");
     }
 
     public int getColor(String type) {
@@ -447,6 +472,8 @@ public class CustomForm implements ICustomForm {
         bodyC1 = rendering.getInteger("bodyC1");
         bodyC2 = rendering.getInteger("bodyC2");
         bodyC3 = rendering.getInteger("bodyC3");
+        hairCode = rendering.getString("hairCode");
+        hairType = rendering.getString("hairType");
 
         NBTTagCompound sounds = compound.getCompoundTag("sounds");
         ascendSound = sounds.getString("ascendSound");
@@ -486,6 +513,8 @@ public class CustomForm implements ICustomForm {
         rendering.setInteger("auraColor", auraColor);
         rendering.setInteger("eyeColor", eyeColor);
         rendering.setInteger("hairColor", hairColor);
+        rendering.setString("hairCode", hairCode);
+        rendering.setString("hairType", hairType);
         rendering.setInteger("bodyCM", bodyCM);
         rendering.setInteger("bodyC1", bodyC1);
         rendering.setInteger("bodyC2", bodyC2);

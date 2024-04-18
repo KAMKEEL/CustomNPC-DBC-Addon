@@ -22,6 +22,7 @@
     "dbc.MixinDBCKiTech",
     "dbc.MixinJRMCoreGuiBars",
     "dbc.MixinJRMCoreGuiScreen",
+    "dbc.MixinModelBipedDBC",
     "dbc.MixinRenderPlayerJBRA",
     "npc.MixinDBCClient"
   ],

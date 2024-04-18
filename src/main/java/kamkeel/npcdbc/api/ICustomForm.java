@@ -36,6 +36,16 @@ public interface ICustomForm {
     void setColor(String type, int color);
 
     /**
+     * @param type Legal types: "base", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
+     */
+    void setHairType(String type);
+
+    /**
+     * @param type Legal types: "base", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
+     */
+    String getHairType(String type);
+
+    /**
      * @param type Legal types: aura, hair, eye, bodyMain, body1, body2, body3
      * @return True if form has the "hasTypeColor" field to true,
      * useful for Namekians and Arcosians multi body color setting
