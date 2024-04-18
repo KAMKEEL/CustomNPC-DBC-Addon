@@ -25,7 +25,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks, Heat;
     public byte Class, Race, Powertype, State, State2, Release;
     public boolean Alive, isKO;
-    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "";
+    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS;
 
     public DBCData(Entity player) {
         super(player);
@@ -51,6 +51,80 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
 
     public static boolean has(Entity p) {
         return get(p, dn) != null;
+    }
+
+    public void setEyeColorLeft(int color) {
+        int i = 42;
+        if (DNS != null && DNS.length() > i)
+            return;
+
+        String hexCol = JRMCoreH.numToLet5(color);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        saveToNBT(true);
+    }
+
+    public void setEyeColorRight(int color) {
+        int i = 47;
+        if (DNS != null && DNS.length() > i)
+            return;
+
+        String hexCol = JRMCoreH.numToLet5(color);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        saveToNBT(true);
+    }
+
+    public void setHairColor(int color) {
+        int i = 7;
+        if (DNS != null && DNS.length() > i)
+            return;
+
+        String hexCol = JRMCoreH.numToLet5(color);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        saveToNBT(true);
+    }
+
+    //main color for humans/saiyans/majins
+    public void setBodyColorMain(int color) {
+        int i = 16;
+        if (DNS != null && DNS.length() > i)
+            return;
+
+        String hexCol = JRMCoreH.numToLet5(color);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        saveToNBT(true);
+    }
+
+    //saiyan oozaru and arco/nameks
+    public void setBodyColor1(int color) {
+        int i = 21;
+        if (DNS != null && DNS.length() > i)
+            return;
+
+        String hexCol = JRMCoreH.numToLet5(color);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        saveToNBT(true);
+    }
+
+    // namekian/arco
+    public void setBodyColor2(int color) {
+        int i = 26;
+        if (DNS != null && DNS.length() > i)
+            return;
+
+        String hexCol = JRMCoreH.numToLet5(color);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        saveToNBT(true);
+    }
+
+    //only arco
+    public void setBodyColor3(int color) {
+        int i = 31;
+        if (DNS != null && DNS.length() > i)
+            return;
+
+        String hexCol = JRMCoreH.numToLet5(color);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        saveToNBT(true);
     }
 
     // Negative Values will Drain instead

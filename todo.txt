@@ -36,6 +36,8 @@ WIP - Form Selection GUI:
 	-DONE - Make scrollable list with all forms player has 4/16
 	-Make GUI that displays Form Data to player
 
+WIP - changeable DNS components:
+	-find the JRMCoreH methods to change each component invidividually in DNS string
 
 add changeable DNS components, timer, freeze player's DBCKiTech, DBCDamage event,
 
