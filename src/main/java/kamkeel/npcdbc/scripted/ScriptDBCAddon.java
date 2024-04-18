@@ -641,17 +641,19 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setSelectedCustomForm(ICustomForm form) {
-        setSelectedCustomForm(form.getID());
+        setSelectedCustomForm(form != null ? form.getID() : -1);
     }
 
 
     @Override
     public void setSelectedCustomForm(int formid) {
         PlayerCustomFormData c = Utility.getFormData(player);
-        if (FormController.getInstance().has(formid)) {
+        if (FormController.getInstance().has(formid))
             c.selectedForm = formid;
-            c.updateClient();
-        }
+        else
+            c.selectedForm = -1;
+
+        c.updateClient();
     }
 
     @Override

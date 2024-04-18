@@ -357,8 +357,10 @@ public class CustomForm implements ICustomForm {
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
         PlayerCustomFormData formData = Utility.getFormData(playerData);
         formData.removeForm(this);
+        if (formData.selectedForm == this.id)
+            formData.selectedForm = -1;
+
         formData.updateClient();
-        playerData.updateClient = true;
         playerData.save();
     }
 
