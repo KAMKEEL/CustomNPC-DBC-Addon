@@ -21,9 +21,9 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
     }
 
 
-    public PacketSyncData(Entity p, String id, NBTTagCompound data) {
+    public PacketSyncData(Entity entity, String id, NBTTagCompound data) {
         s = id;
-        if (Utility.isServer()) {
+        if (entity != null && entity.worldObj != null && !entity.worldObj.isRemote) {
             if (!s.contains("Entity")) // player
                 this.data = data;
         }
