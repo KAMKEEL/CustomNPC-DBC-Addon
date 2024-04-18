@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
+import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
@@ -39,7 +40,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     float currentBodyPerc;
 
-    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE), remap = false)
     private void renderSSJ4(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
         if (Utility.getFormDataClient().isInCustomForm()) {
            // System.out.println("im in");
@@ -55,10 +56,31 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
 
     }
-    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "NEW", target = "Lnet/minecraft/util/ResourceLocation"))
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/RenderPlayerJBRA;bindTexture(Lnet/minecraft/util/ResourceLocation;)V", ordinal = 50,  shift = At.Shift.AFTER), remap = false)
     private void fixSSJ3Eyebrows(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
-     //   Minecraft.getMinecraft().renderEngine
-
+        // IF UNDER CERTAIN CONDITIONS
+        if(true){
+            // Bind New Texture after SSJ3 Bind
+            String[] s = JRMCoreH.data1[pl].split(";");
+            String[] dummy = new String[]{"0", "0", "0"};
+            String dns = s[1];
+            boolean gd = JRMCoreH.StusEfctsClient(20, pl);
+            int skintype = JRMCoreH.dnsSkinT(dns);
+            int gen = JRMCoreH.dnsGender(dns);
+            int eyes = skintype == 0 ? 0 : JRMCoreH.dnsEyes(dns);
+            String[] state = JRMCoreH.data2 == null ? dummy : JRMCoreH.data2[pl].split(";");
+            boolean b3;
+            if (gd) {
+                b3 = true;
+            } else if (race != 1 && race != 2) {
+                b3 = false;
+            } else if (Integer.parseInt(state[0]) != 6) {
+                b3 = false;
+            } else {
+                b3 = true;
+            }
+            this.bindTexture(new ResourceLocation("jinryuumodscore", "cc/" + (b3 ? "ssj3eyebrow/" : "") + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
+        }
     }
 
     @Unique
