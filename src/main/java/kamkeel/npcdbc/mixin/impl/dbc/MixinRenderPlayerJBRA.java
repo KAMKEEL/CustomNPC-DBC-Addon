@@ -55,6 +55,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
 
     }
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "NEW", target = "Lnet/minecraft/util/ResourceLocation"))
+    private void fixSSJ3Eyebrows(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
+     //   Minecraft.getMinecraft().renderEngine
+
+    }
 
     @Unique
     private void renderSSJ4Face(int col, int bodycm) {
