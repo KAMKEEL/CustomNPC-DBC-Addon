@@ -42,7 +42,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
     private void renderSSJ4(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
         if (Utility.getFormDataClient().isInCustomForm()) {
-           // System.out.println("im in");
+            // System.out.println("im in");
             PlayerCustomFormData formData = Utility.getFormDataClient();
             CustomForm f = formData.getCurrentForm();
             if (f.hairType.equals("ssj4")) {
@@ -53,11 +53,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 renderOozaru(f.bodyCM, f.furColor, formData.parent.player);
             }
         }
-
-    }
-    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "NEW", target = "Lnet/minecraft/util/ResourceLocation"))
-    private void fixSSJ3Eyebrows(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
-     //   Minecraft.getMinecraft().renderEngine
 
     }
 

@@ -1,8 +1,10 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JBRA.ModelBipedDBC;
+import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
 import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -34,13 +36,15 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     public void disableFaceRendering(float par1, String hair, String anim, CallbackInfoReturnable<String> ci) {
         if (Utility.getFormDataClient().isInCustomForm()) {
             CustomForm f = Utility.getFormDataClient().getCurrentForm();
+            DBCData dbcData = DBCData.getClient();
             if (f.hairType.equals("ssj4")) {
                 if (hair.contains("FACENOSE") || hair.contains("EYEBASE") || hair.contains("FACEMOUTH") || hair.contains("EYEBROW") || hair.contains("EYEBASE") || hair.contains("EYELEFT") || hair.contains("EYERIGHT"))
                     ci.setReturnValue("");
             } else if (f.hairType.equals("ssj3"))
                 if (hair.contains("EYEBROW")) {
-                    Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" : "") + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
-                   // ci.setReturnValue("");
+                    int gen = JRMCoreH.dnsGender(dbcData.DNS);
+                    int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
+                    Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
                 }
 
         }
