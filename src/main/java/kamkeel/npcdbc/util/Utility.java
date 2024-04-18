@@ -96,7 +96,10 @@ public class Utility {
 
     @SideOnly(Side.CLIENT)
     public static PlayerCustomFormData getFormDataClient() {
-        return ((IPlayerFormData) PlayerData.get(Minecraft.getMinecraft().thePlayer)).getCustomFormData();
+        if (Minecraft.getMinecraft().thePlayer != null)
+            return ((IPlayerFormData) PlayerData.get(Minecraft.getMinecraft().thePlayer)).getCustomFormData();
+        else
+            return null;
     }
 
     public static PlayerCustomFormData getFormData(EntityPlayer p) {
