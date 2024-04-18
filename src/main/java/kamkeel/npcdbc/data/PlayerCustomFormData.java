@@ -123,12 +123,15 @@ public class PlayerCustomFormData {
 
     public void updateFormMastery(int formID, String gainType) {
         CustomForm f = FormController.getInstance().customForms.get(formID);
-        if (f == null || !isInCustomForm())
+        if (f == null || !isInCustomForm() || parent.player == null)
             return;
 
+        DBCData data = DBCData.get(parent.player);
+        if(data == null)
+            return;
         FormMastery fm = f.getFM();
         float playerLevel = formLevels.get(f.id);
-        float fullGain = fm.calculateFullGain(gainType, playerLevel, DBCData.get(parent.player).MND);
+        float fullGain = fm.calculateFullGain(gainType, playerLevel, data.MND);
 
         playerLevel = Math.min(playerLevel + fullGain, fm.maxLevel); //updated level
         formLevels.put(f.id, playerLevel);
