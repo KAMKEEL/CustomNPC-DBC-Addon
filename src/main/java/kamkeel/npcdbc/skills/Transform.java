@@ -192,8 +192,12 @@ public class Transform {
 
         if (form.hasColor("hair")) {
             dbcData.setHairColor(form.hairColor);
-            if (race == 1 || race == 2)
-                dbcData.setBodyColor1(form.hairColor);
+            if (race == 1 || race == 2) {
+                if (form.hairType.equals("ssj4") || form.hairType.equals("oozaru"))
+                    dbcData.setBodyColor1(form.furColor);
+                else
+                    dbcData.setBodyColor1(form.hairColor);
+            }
         }
 
         if (form.hasColor("eye")) {
@@ -215,9 +219,10 @@ public class Transform {
                 dbcData.setBodyColor2(form.bodyC2);
             if (form.hasColor("body3"))
                 dbcData.setBodyColor3(form.bodyC3);
-        } else if (form.hairType.equals("ssj3"))
+        } else if (form.hairType.equals("ssj3")) {
+            //dbcData.setNosePreset(99);
             dbcData.setHairPreset(0xb);
-        else if (!form.hairCode.isEmpty())
+        } else if (!form.hairCode.isEmpty())
             dbcData.setString("jrmcDNSH", form.hairCode);
 
     }

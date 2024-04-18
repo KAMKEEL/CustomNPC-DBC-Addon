@@ -5,7 +5,9 @@ import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.util.Utility;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = ModelBipedDBC.class, remap = false)
 public class MixinModelBipedDBC {
@@ -23,5 +25,13 @@ public class MixinModelBipedDBC {
         }
 
         return s;
+    }
+
+    @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At("HEAD"), cancellable = true)
+    public void disableFaceRendering(float par1, String hair, String anim, CallbackInfoReturnable<String> ci) {
+        if (hair.contains("FACENOSE")) {
+            ci.setReturnValue("");
+        }
+
     }
 }

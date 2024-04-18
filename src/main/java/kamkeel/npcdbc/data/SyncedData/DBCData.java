@@ -134,6 +134,15 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         saveToNBT(true);
     }
 
+    public void setNosePreset(int preset) {
+        int i = 36;
+        if (DNS == null || DNS.length() < i)
+            return;
+
+        DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
+        saveToNBT(true);
+    }
+
     // Negative Values will Drain instead
     public void restoreKiPercent(float percToRestore) {
         int maxKi = DBCUtils.getMaxKi(player);
