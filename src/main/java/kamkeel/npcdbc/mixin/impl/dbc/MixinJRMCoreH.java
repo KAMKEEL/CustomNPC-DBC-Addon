@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = JRMCoreH.class, remap = false)
@@ -84,6 +85,12 @@ public class MixinJRMCoreH {
                 info.setReturnValue(result);
             }
         }
+    }
+
+    @Inject(method = "Rls", at = @At("HEAD"), cancellable = true)
+    private static void fixRelease(byte b, CallbackInfo ci) {
+        if (Utility.getFormDataClient().isInCustomForm())
+            ci.cancel();
     }
 }
 
