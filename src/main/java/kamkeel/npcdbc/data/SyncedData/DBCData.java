@@ -22,7 +22,7 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProperties {
     public static String dn = "PlayerPersisted";
 
-    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks,Rage, Heat, AuraColor, preCustomAuraColor;
+    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks, Rage, Heat, AuraColor, preCustomAuraColor;
     public byte Class, Race, Powertype, State, State2, Release;
     public boolean Alive, isKO;
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS, DNSHair, preCustomFormDNS, preCustomFormDNSHair;
@@ -122,6 +122,15 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
             return;
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
+        saveToNBT(true);
+    }
+
+    public void setHairPreset(int preset) {
+        int i = 3;
+        if (DNS == null || DNS.length() < i)
+            return;
+
+        DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
         saveToNBT(true);
     }
 

@@ -215,7 +215,9 @@ public class Transform {
                 dbcData.setBodyColor2(form.bodyC2);
             if (form.hasColor("body3"))
                 dbcData.setBodyColor3(form.bodyC3);
-        } else if (!form.hairCode.isEmpty())
+        } else if (form.hairType.equals("ssj3"))
+            dbcData.setHairPreset(0xb);
+        else if (!form.hairCode.isEmpty())
             dbcData.setString("jrmcDNSH", form.hairCode);
 
     }
