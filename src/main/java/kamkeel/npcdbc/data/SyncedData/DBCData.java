@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.SyncedData;
 
 
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
@@ -21,7 +22,7 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProperties {
     public static String dn = "PlayerPersisted";
 
-    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks;
+    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks, Heat;
     public byte Class, Race, Powertype, State, State2, Release;
     public boolean Alive, isKO;
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "";
@@ -55,29 +56,42 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     // Negative Values will Drain instead
     public void restoreKiPercent(float percToRestore) {
         int maxKi = DBCUtils.getMaxKi(player);
-        int newKi = (int) (maxKi * (percToRestore / 100));
+        int toAdd = (int) (maxKi * (percToRestore / 100));
 
-        Ki += newKi;
+        Ki += toAdd;
         Ki = Ki > maxKi ? maxKi : Ki;
         saveToNBT(true);
     }
 
     public void restoreHealthPercent(float percToRestore) {
         int maxBody = DBCUtils.getMaxBody(player);
-        int newBody = (int) (maxBody * (-percToRestore / 100));
+        int toAdd = (int) (maxBody * (percToRestore / 100));
 
-        Body += newBody;
+        Body += toAdd;
         Body = Body > maxBody ? maxBody : Body;
         saveToNBT(true);
     }
 
     public void restoreStaminaPercent(float percToRestore) {
         int maxSta = DBCUtils.getMaxStamina(player);
-        int nweSta = (int) (maxSta * (-percToRestore / 100));
+        int toAdd = (int) (maxSta * (percToRestore / 100));
 
-        Stamina += nweSta;
+        Stamina += toAdd;
         Stamina = Stamina > maxSta ? maxSta : Stamina;
         saveToNBT(true);
+    }
+
+    //Negative value will add instead
+    public void restoreUIHeat(float percToRestore) {
+        if (!isForm(DBCForm.UltraInstinct))
+            return;
+
+        int maxHeat = JGConfigUltraInstinct.CONFIG_UI_HEAT_DURATION[State2];
+        int toAdd = (int) (maxHeat * (percToRestore / 100));
+
+        Heat = Math.max(Heat - toAdd, 0);
+        saveToNBT(true);
+
     }
 
     public boolean isForm(int dbcForm) {
@@ -183,6 +197,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         c.setInteger("jrmcStamina", Stamina);
         c.setInteger("jrmcBdy", Body);
         c.setInteger("jrmcHar4va", KOforXTicks);
+        c.setInteger("jrmcEf8slc", Heat);
 
         c.setByte("jrmcState", State);
         c.setByte("jrmcState2", State2);
@@ -215,8 +230,9 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         Stamina = c.getInteger("jrmcStamina");
         Body = c.getInteger("jrmcBdy");
         KOforXTicks = c.getInteger("jrmcHar4va");
-
+        Heat = c.getInteger("jrmcEf8slc");
         isKO = c.getInteger("jrmcHar4va") > 0;
+
         State = c.getByte("jrmcState");
         State2 = c.getByte("jrmcState2");
         Release = c.getByte("jrmcRelease");

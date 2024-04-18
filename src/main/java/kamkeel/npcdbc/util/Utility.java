@@ -11,16 +11,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
-import noppes.npcs.Server;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.client.gui.util.GuiNPCInterface;
-import noppes.npcs.constants.EnumPacketClient;
-import noppes.npcs.controllers.FactionController;
 import noppes.npcs.controllers.PlayerDataController;
-import noppes.npcs.controllers.data.Faction;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.scripted.NpcAPI;
 
@@ -110,10 +105,10 @@ public class Utility {
     public static void sendPlayerFormData(EntityPlayerMP player) {
         PlayerCustomFormData data = ((IPlayerFormData) PlayerDataController.Instance.getPlayerData(player)).getCustomFormData();
 
-        Map<String,Integer> map = new HashMap<String,Integer>();
-        for(int formID :data.unlockedForms.keySet()){
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        for (int formID : data.unlockedForms.keySet()) {
             CustomForm form = (CustomForm) FormController.getInstance().get(formID);
-            if(form != null){
+            if (form != null) {
                 map.put(form.name, form.id);
             }
         }

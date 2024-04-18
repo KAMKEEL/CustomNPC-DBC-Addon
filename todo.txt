@@ -49,3 +49,20 @@ disconnecting while in assigned form i.e SSJ Green turns to default "CustomForm"
 
 mixin cheatsheet:
 when trying to inject with value="INVOKE" and shift up or down, you are cannot shift outside the scope you injected in
+
+UI Heat(int jrmcEf8slc/double jrmcEf8slcD):
+
+	-If heat bar full, player reverts from UI & gets Pain(jrmcGyJ7dp) SE
+
+	-Heat bar -> the blue bar when UI, rendered in JRMCoreGuiBars.rendera()
+
+	-default heat gain is 1 every JRMCoreComTickH player update tick
+
+	-jrmcEf8slcD is double of jrmcEf8slc, used to calculate the gain for the heat Form Mastery(UI Heat Multi)
+
+	-jrmcUIStateReach is the highest UI state2 player has ever entered, not the current state2
+
+
+-Custom Status Effects: JRMCoreGuiBars.drawIcon for individual icons, JRMCoreGuiBars.showSE for all SE icon rewndering
+	-Status effecticons are stored in assets/jinryuumodscore/icons4.png, each icon is 16x16 pixels, resourceID is icon number in icons4.png, starts from 0
+

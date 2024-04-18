@@ -19,12 +19,14 @@ public class MixinJRMCoreEH {
      */
     @Inject(method = "SdajrR", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/server/config/dbc/JGConfigDBCFormMastery;FM_Enabled:Z", ordinal = 0, shift = At.Shift.BEFORE), remap = false)
     public void onFMAttackGain(LivingAttackEvent event, CallbackInfo ci) {
-        Utility.getFormData((EntityPlayer) event.entity).updateCurrentFormMastery("damaged");
+        if (event.entity instanceof EntityPlayer)
+            Utility.getFormData((EntityPlayer) event.entity).updateCurrentFormMastery("damaged");
         //this method is called twice, should be once only
     }
 
     @Inject(method = "Sd35MR", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/server/config/dbc/JGConfigDBCFormMastery;FM_Enabled:Z", shift = At.Shift.BEFORE), remap = false)
     public void onFMDamagedGain(LivingHurtEvent event, CallbackInfo ci) {
-        Utility.getFormData((EntityPlayer) event.source.getEntity()).updateCurrentFormMastery("attack");
+        if (event.source.getEntity() instanceof EntityPlayer)
+            Utility.getFormData((EntityPlayer) event.source.getEntity()).updateCurrentFormMastery("attack");
     }
 }
