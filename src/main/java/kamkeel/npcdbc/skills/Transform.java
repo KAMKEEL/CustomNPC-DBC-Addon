@@ -147,17 +147,55 @@ public class Transform {
                 dbcData.State = 0;
             formData.updateClient();
             dbcData.saveToNBT(true);
+
             Utility.sendMessage(p, "§aTransformed to§r " + formData.getCurrentForm().getMenuName());
+            setCustomFormRenderingData(p, formData, dbcData);
         }
     }
 
     public static void handleCustomFormDescend(EntityPlayerMP p) {
         PlayerCustomFormData formData = Utility.getFormData(p);
         if (formData.isInCustomForm()) {
+            DBCData dbcData = DBCData.get(p);
             Utility.sendMessage(p, "§cDescended from§r " + formData.getCurrentForm().getMenuName());
             formData.currentForm = 0;
             formData.updateClient();
+
+            dbcData.setString("jrmcDNS", dbcData.preCustomFormDNS); //sets original DNS back
+            dbcData.setInt("jrmcAuraColor", dbcData.preCustomAuraColor); //sets original aura back
         }
+
+    }
+
+    public static void setCustomFormRenderingData(EntityPlayerMP p, PlayerCustomFormData formData, DBCData dbcData) {
+        dbcData.setString("preCustomFormDNS", dbcData.DNS); //store pre transformation DNS
+        CustomForm f = formData.getCurrentForm();
+
+
+        if (f.hasColor("hair"))
+            dbcData.setHairColor(f.hairColor);
+
+        if (f.hasColor("eye")) {
+            dbcData.setEyeColorLeft(f.eyeColor);
+            dbcData.setEyeColorRight(f.eyeColor);
+        }
+        if (f.hasColor("aura"))
+            dbcData.setInt("jrmcAuraColor", f.auraColor);
+
+        byte race = dbcData.Race;
+        boolean b = race == 0 || race == 1 || race == 2 || race == 5; //if human, saiyans or majin
+        if (f.hasColor("bodyMain"))
+            dbcData.setBodyColorMain(f.bodyCM);
+        if (f.hasColor("body1"))
+            dbcData.setBodyColor1(f.bodyC1);
+
+        if (!b) {
+            if (f.hasColor("body2"))
+                dbcData.setBodyColor2(f.bodyC2);
+            if (f.hasColor("body3"))
+                dbcData.setBodyColor3(f.bodyC3);
+        }
+
 
     }
 }

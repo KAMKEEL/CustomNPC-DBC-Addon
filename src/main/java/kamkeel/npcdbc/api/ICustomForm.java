@@ -16,6 +16,31 @@ public interface ICustomForm {
 
     void setRace(int race);
 
+    /**
+     * @param type Legal types: aura, hair, eye, bodyMain, body1, body2, body3
+     * @return Decimal color of type
+     */
+    int getColor(String type);
+
+    /**
+     * @param type  Legal types: aura, hair, eye, bodyMain, body1, body2, body3
+     * @param color Decimal color to set type as
+     */
+    void setColor(String type, int color);
+
+    /**
+     * @param type Legal types: aura, hair, eye, bodyMain, body1, body2, body3
+     * @return True if form has the "hasTypeColor" field to true,
+     * useful for Namekians and Arcosians multi body color setting
+     */
+    boolean hasColor(String type);
+
+    /**
+     * @param type Legal types: aura, hair, eye, bodyMain, body1, body2, body3
+     * @param has  True if form should have color of type
+     */
+    void setHasColor(String type, boolean has);
+
     void setState2Factor(int dbcForm, float factor);
 
     /**
@@ -23,7 +48,6 @@ public interface ICustomForm {
      * @return how higher a stackable form's multi gets as you go up in state2
      * i.e. If KK form multi is 10x and State2Factor is 1x, very first KK form multi will be 10x, second KK form multi is 13.3x, final KK form will be 20x
      * if State2Factor is 2x, first is 10x, second is 16.6, final KK form will be 30 and so on.
-     *
      * This value scales off as a factor of the form's multiplier
      */
     float getState2Factor(int dbcForm);

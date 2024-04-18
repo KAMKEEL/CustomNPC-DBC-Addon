@@ -22,10 +22,10 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProperties {
     public static String dn = "PlayerPersisted";
 
-    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks, Heat;
+    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks, Heat, preCustomAuraColor;
     public byte Class, Race, Powertype, State, State2, Release;
     public boolean Alive, isKO;
-    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS;
+    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS, preCustomFormDNS;
 
     public DBCData(Entity player) {
         super(player);
@@ -55,75 +55,73 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
 
     public void setEyeColorLeft(int color) {
         int i = 42;
-        if (DNS != null && DNS.length() > i)
+        if (DNS == null || DNS.length() < i)
             return;
 
         String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         saveToNBT(true);
     }
 
     public void setEyeColorRight(int color) {
         int i = 47;
-        if (DNS != null && DNS.length() > i)
+        if (DNS == null || DNS.length() < i)
             return;
 
         String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         saveToNBT(true);
     }
 
     public void setHairColor(int color) {
         int i = 7;
-        if (DNS != null && DNS.length() > i)
+        if (DNS == null || DNS.length() < i)
             return;
 
         String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         saveToNBT(true);
     }
 
     //main color for humans/saiyans/majins
     public void setBodyColorMain(int color) {
         int i = 16;
-        if (DNS != null && DNS.length() > i)
+        if (DNS == null || DNS.length() < i)
             return;
 
         String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         saveToNBT(true);
     }
 
     //saiyan oozaru and arco/nameks
     public void setBodyColor1(int color) {
         int i = 21;
-        if (DNS != null && DNS.length() > i)
+        if (DNS == null || DNS.length() < i)
             return;
 
         String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         saveToNBT(true);
     }
 
     // namekian/arco
     public void setBodyColor2(int color) {
         int i = 26;
-        if (DNS != null && DNS.length() > i)
+        if (DNS == null || DNS.length() < i)
             return;
-
         String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         saveToNBT(true);
     }
 
     //only arco
     public void setBodyColor3(int color) {
         int i = 31;
-        if (DNS != null && DNS.length() > i)
+        if (DNS == null || DNS.length() < i)
             return;
-
         String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 1);
+        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         saveToNBT(true);
     }
 
@@ -272,6 +270,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         c.setInteger("jrmcBdy", Body);
         c.setInteger("jrmcHar4va", KOforXTicks);
         c.setInteger("jrmcEf8slc", Heat);
+        c.setInteger("preCustomAuraColor", preCustomAuraColor);
 
         c.setByte("jrmcState", State);
         c.setByte("jrmcState2", State2);
@@ -288,6 +287,8 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         c.setString("jrmcSettings", Settings);
         c.setString("jrmcFormMasteryRacial_" + JRMCoreH.Races[Race], FormMasteryRacial);
         c.setString("jrmcFormMasteryNonRacial", FormMasteryNR);
+        c.setString("jrmcDNS", DNS);
+        c.setString("preCustomFormDNS", preCustomFormDNS);
 
     }
 
@@ -306,6 +307,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         KOforXTicks = c.getInteger("jrmcHar4va");
         Heat = c.getInteger("jrmcEf8slc");
         isKO = c.getInteger("jrmcHar4va") > 0;
+        preCustomAuraColor = c.getInteger("preCustomAuraColor");
 
         State = c.getByte("jrmcState");
         State2 = c.getByte("jrmcState2");
@@ -320,6 +322,8 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         Settings = c.getString("jrmcSettings");
         FormMasteryRacial = c.getString("jrmcFormMasteryRacial_" + JRMCoreH.Races[Race]);
         FormMasteryNR = c.getString("jrmcFormMasteryNonRacial");
+        DNS = c.getString("jrmcDNS");
+        preCustomFormDNS = c.getString("preCustomFormDNS");
 
         nbt = c;
 

@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.controllers.AnimationController;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
+import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.NpcAPI;
 
 public class CustomForm implements ICustomForm {
@@ -31,6 +32,7 @@ public class CustomForm implements ICustomForm {
     public float kaiokenStrength = 1.2f, uiStrength = 3.0f, godStrength = 3.0f, mysticStrength = 1.8f;
 
     public int auraColor = 1, hairColor, eyeColor, bodyCM, bodyC1, bodyC2, bodyC3;
+    public boolean hasAuraColor = true, hasHairColor = true, hasEyeColor = true, hasBodyCM = false, hasBodyC1 = false, hasBodyC2 = false, hasBodyC3 = false;
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
     public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
@@ -45,6 +47,99 @@ public class CustomForm implements ICustomForm {
         this.name = name;
     }
 
+    @Override
+    public boolean hasColor(String type) {
+        switch (type.toLowerCase()) {
+            case "aura":
+                return hasAuraColor;
+            case "hair":
+                return hasHairColor;
+            case "eye":
+                return hasEyeColor;
+            case "bodymain":
+                return hasBodyCM;
+            case "body1":
+                return hasBodyC1;
+            case "body2":
+                return hasBodyC2;
+            case "body3":
+                return hasBodyC3;
+
+        }
+        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3");
+    }
+
+    public void setHasColor(String type, boolean has) {
+        switch (type.toLowerCase()) {
+            case "aura":
+                hasAuraColor = has;
+                break;
+            case "hair":
+                hasHairColor = has;
+                break;
+            case "eye":
+                hasEyeColor = has;
+                break;
+            case "bodymain":
+                hasBodyCM = has;
+                break;
+            case "body1":
+                hasBodyC1 = has;
+                break;
+            case "body2":
+                hasBodyC2 = has;
+                break;
+            case "body3":
+                hasBodyC3 = has;
+                break;
+        }
+    }
+
+    public void setColor(String type, int color) {
+        switch (type.toLowerCase()) {
+            case "aura":
+                auraColor = color;
+                break;
+            case "hair":
+                hairColor = color;
+                break;
+            case "eye":
+                eyeColor = color;
+                break;
+            case "bodymain":
+                bodyCM = color;
+                break;
+            case "body1":
+                bodyC1 = color;
+                break;
+            case "body2":
+                bodyC2 = color;
+                break;
+            case "body3":
+                bodyC3 = color;
+                break;
+        }
+    }
+
+    public int getColor(String type) {
+        switch (type.toLowerCase()) {
+            case "aura":
+                return auraColor;
+            case "hair":
+                return hairColor;
+            case "eye":
+                return eyeColor;
+            case "bodymain":
+                return bodyCM;
+            case "body1":
+                return bodyC1;
+            case "body2":
+                return bodyC2;
+            case "body3":
+                return bodyC3;
+        }
+        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3");
+    }
 
     public void setState2Factor(int dbcForm, float factor) {
         switch (dbcForm) {
@@ -395,4 +490,6 @@ public class CustomForm implements ICustomForm {
     public ICustomForm save() {
         return FormController.Instance.saveForm(this);
     }
+
+
 }
