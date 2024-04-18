@@ -28,4 +28,5 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
     public float modifyVar22(float original) {
         return maxPerc * (Transform.rage > 0 ? Transform.rage : JRMCoreH.TransSaiCurRg);
     }
+
 }

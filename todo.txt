@@ -36,10 +36,21 @@ WIP - Form Selection GUI:
 	-DONE - Make scrollable list with all forms player has 4/16
 	-Make GUI that displays Form Data to player
 
-WIP - changeable DNS components:
-	-find the JRMCoreH methods to change each component invidividually in DNS string
+DONE - changeable DNS components:
+	-find the JRMCoreH methods to change each component invidividually in DNS string - IMPOSSIBLE (they do not exist)
+	-DONE - make my own methods to do the above
+	-DONE - implement hair/eyes/aura/all 4 body colors functionality upon ascend/descend
+	-OPTIONAL - add custom ssj4/oozaru forms
 
-add changeable DNS components, timer, freeze player's DBCKiTech, DBCDamage event,
+
+
+
+
+ACTUAL TO-DO:
+add timer, freeze player's DBCKiTech, DBCDamage event,
+
+
+
 
 
 bugs:

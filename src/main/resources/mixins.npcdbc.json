@@ -12,6 +12,7 @@
     "dbc.MixinJRMCoreComTickH",
     "dbc.MixinJRMCoreEH",
     "dbc.MixinJRMCoreH",
+    "dbc.MixinJRMCoreHDBC",
     "npc.MixinDBCAddon",
     "npc.MixinDBCDisplay",
     "npc.MixinPlayerData",

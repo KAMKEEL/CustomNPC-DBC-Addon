@@ -14,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.client.gui.util.GuiNPCInterface;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.scripted.NpcAPI;
@@ -72,6 +71,13 @@ public class Utility {
             System.out.println(ste);
     }
 
+    public static boolean stackTraceContains(String text) {
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace())
+            if (ste.toString().toLowerCase().contains(text.toLowerCase()))
+                return true;
+        return false;
+    }
+
     public static double percent(double n, double perc) {
         return n / 100 * perc;
     }
@@ -115,19 +121,4 @@ public class Utility {
         sendScrollData(player, map);
     }
 
-    public static int guiX(GuiNPCInterface gui, double i) {
-        return gui.guiLeft + (int) (gui.xSize * i);
-    }
-
-    public static int guiY(GuiNPCInterface gui, double i) {
-        return gui.guiTop + (int) (gui.ySize * i);
-    }
-
-    public static int guiWidth(GuiNPCInterface gui, double i) {
-        return (int) (gui.xSize * i);
-    }
-
-    public static int guiHeight(GuiNPCInterface gui, double i) {
-        return (int) (gui.ySize * i);
-    }
 }
