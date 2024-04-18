@@ -3,6 +3,8 @@ package kamkeel.npcdbc.data;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
+import kamkeel.npcdbc.skills.Transform;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.controllers.data.PlayerData;
@@ -47,7 +49,7 @@ public class PlayerCustomFormData {
     }
 
     public boolean isInCustomForm() {
-        return currentForm > 0 && getCurrentForm() != null;
+        return currentForm > -1 && getCurrentForm() != null;
     }
 
     public String getFormColorCode(CustomForm f) {
@@ -129,7 +131,6 @@ public class PlayerCustomFormData {
         float fullGain = fm.calculateFullGain(gainType, playerLevel, DBCData.get(parent.player).MND);
 
         playerLevel = Math.min(playerLevel + fullGain, fm.maxLevel); //updated level
-        // System.out.println("newlevel " + playerLevel + " type " + gainType + " " + parent.player);
         formLevels.put(f.id, playerLevel);
         updateClient();
     }
@@ -162,5 +163,14 @@ public class PlayerCustomFormData {
 
     public float getCurrentLevel() {
         return getFormLevel(currentForm);
+    }
+
+    public void resetAll() {
+        Transform.handleCustomFormDescend((EntityPlayerMP) parent.player);
+        currentForm = -1;
+        selectedForm = -1;
+        unlockedForms = new HashMap();
+        formLevels = new HashMap();
+        updateClient();
     }
 }

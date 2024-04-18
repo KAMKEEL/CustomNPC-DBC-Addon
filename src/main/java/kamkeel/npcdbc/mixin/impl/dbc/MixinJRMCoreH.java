@@ -92,5 +92,10 @@ public class MixinJRMCoreH {
         if (Utility.getFormDataClient().isInCustomForm())
             ci.cancel();
     }
+
+    @Inject(method = "resetChar(Lnet/minecraft/entity/player/EntityPlayer;ZZZF)V", at = @At("HEAD"), cancellable = true)
+    private static void resetChar(EntityPlayer p, boolean keepSkills, boolean keepTechs, boolean keepMasteries, float perc, CallbackInfo ci) {
+        Utility.getFormData(p).resetAll();
+    }
 }
 

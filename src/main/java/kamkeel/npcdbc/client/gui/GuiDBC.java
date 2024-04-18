@@ -96,10 +96,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         if (guibutton.id == 1) {
             if (selected != null) {
                 if (unlockedForms.containsKey(selected)) {
-                    System.out.println(unlockedForms.keySet());
-                    System.out.println(selected + " sds");
                     int formID = unlockedForms.get(selected);
-                    System.out.println("id " + formID);
                     //the formID is correct for each form, but it still doesn't set it on client side
                     Client.sendData(EnumPacketServer.CustomFormSet, formID);
                 }
