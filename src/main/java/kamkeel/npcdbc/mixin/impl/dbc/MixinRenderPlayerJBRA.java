@@ -10,9 +10,5 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(value = RenderPlayerJBRA.class, remap = false)
 public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
-    @ModifyVariable(method = "renderEquippedItemsJBRA", at = @At(value = "STORE"), name = "rg", remap = false)
-    public int modifyRage(int original) {
-        original = Transform.rage > 0 ? (int) Transform.rage : original;
-        return original;
-    }
+
 }

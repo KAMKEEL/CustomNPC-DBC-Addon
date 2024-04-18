@@ -49,7 +49,9 @@ DONE - changeable DNS components:
 ACTUAL TO-DO:
 add timer, freeze player's DBCKiTech, DBCDamage event, replace Transform.rage with jrmcSaiRg, prevent ascension when release 0
 
-
+-reset form on resetchar method
+-get the hair of ssj/ssj2/ssj3 as form hairs, setHairType() ssj,ssj2,ssj3,ssj4,oozaru
+-Make form trees SSRed ->SSRed2 ->SSRed3
 
 
 

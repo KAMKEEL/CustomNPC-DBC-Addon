@@ -22,7 +22,7 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProperties {
     public static String dn = "PlayerPersisted";
 
-    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks, Heat, AuraColor, preCustomAuraColor;
+    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks,Rage, Heat, AuraColor, preCustomAuraColor;
     public byte Class, Race, Powertype, State, State2, Release;
     public boolean Alive, isKO;
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS, DNSHair, preCustomFormDNS, preCustomFormDNSHair;
@@ -269,6 +269,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         c.setInteger("jrmcStamina", Stamina);
         c.setInteger("jrmcBdy", Body);
         c.setInteger("jrmcHar4va", KOforXTicks);
+        c.setInteger("jrmcSaiRg", Rage);
         c.setInteger("jrmcEf8slc", Heat);
         c.setInteger("jrmcAuraColor", AuraColor);
         c.setInteger("preCustomAuraColor", preCustomAuraColor);
@@ -307,6 +308,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         Stamina = c.getInteger("jrmcStamina");
         Body = c.getInteger("jrmcBdy");
         KOforXTicks = c.getInteger("jrmcHar4va");
+        Rage = c.getInteger("jrmcSaiRg");
         Heat = c.getInteger("jrmcEf8slc");
         isKO = c.getInteger("jrmcHar4va") > 0;
         AuraColor = c.getInteger("jrmcAuraColor");

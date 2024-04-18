@@ -17,7 +17,7 @@ public class Transform {
     public static boolean ascending, cantTransform, transformed;
     public static String ascendSound, descendSound;
     public static float rage, rageValue;
-
+    public static DBCData dbcData;
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
     // Client  side handling
@@ -26,6 +26,9 @@ public class Transform {
     @SideOnly(Side.CLIENT)
     public static void Ascend(CustomForm form) {
         if (cantTransform || (rage > 0 && transformed) || (Utility.getFormDataClient().getCurrentForm() != null && Utility.getFormDataClient().getCurrentForm().getID() == form.id))
+            return;
+        dbcData = DBCData.getClient();
+        if (dbcData == null)
             return;
 
         time++;
@@ -66,10 +69,18 @@ public class Transform {
 
         }
 
+        //dbcData.Rage = (int) rage;
+        JRMCoreH.TransSaiCurRg = (byte) rage;
+        dbcData.setInt("jrmcSaiRg", (int) rage);
+
     }
 
     @SideOnly(Side.CLIENT)
     public static void decrementRage() {
+        dbcData = DBCData.getClient();
+        if (dbcData == null || rage == 0)
+            return;
+
         if (rage > 0) {
             if (rage > 100)
                 rage = 100;
@@ -82,6 +93,9 @@ public class Transform {
         }
         if (rage == 0 && (JRMCoreH.StusEfctsMe(1) || cantTransform || transformed || ascending))
             setAscending(false);
+
+        JRMCoreH.TransSaiCurRg = (byte) rage;
+        dbcData.setInt("jrmcSaiRg", (int) rage);
 
     }
 
@@ -104,7 +118,7 @@ public class Transform {
 
     @SideOnly(Side.CLIENT)
     public static int getRageMeterIncrementation() {
-        double fm = 90;//getFormMasteryValue(k);
+        double fm = 20;//getFormMasteryValue(k);
         double maxfm = 100;//getMaxFormMasteryValue(k);
 
         if (Utility.percentBetween(fm, maxfm, 0, 5))
