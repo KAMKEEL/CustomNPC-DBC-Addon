@@ -169,31 +169,34 @@ public class Transform {
 
     public static void setCustomFormRenderingData(EntityPlayerMP p, PlayerCustomFormData formData, DBCData dbcData) {
         dbcData.setString("preCustomFormDNS", dbcData.DNS); //store pre transformation DNS
-        CustomForm f = formData.getCurrentForm();
-
-
-        if (f.hasColor("hair"))
-            dbcData.setHairColor(f.hairColor);
-
-        if (f.hasColor("eye")) {
-            dbcData.setEyeColorLeft(f.eyeColor);
-            dbcData.setEyeColorRight(f.eyeColor);
-        }
-        if (f.hasColor("aura"))
-            dbcData.setInt("jrmcAuraColor", f.auraColor);
-
+        CustomForm form = formData.getCurrentForm();
         byte race = dbcData.Race;
+
+        if (form.hasColor("hair")) {
+            dbcData.setHairColor(form.hairColor);
+            if (race == 1 || race == 2)
+                dbcData.setBodyColor1(form.hairColor);
+        }
+
+        if (form.hasColor("eye")) {
+            dbcData.setEyeColorLeft(form.eyeColor);
+            dbcData.setEyeColorRight(form.eyeColor);
+        }
+        if (form.hasColor("aura"))
+            dbcData.setInt("jrmcAuraColor", form.auraColor);
+
+
         boolean b = race == 0 || race == 1 || race == 2 || race == 5; //if human, saiyans or majin
-        if (f.hasColor("bodyMain"))
-            dbcData.setBodyColorMain(f.bodyCM);
-        if (f.hasColor("body1"))
-            dbcData.setBodyColor1(f.bodyC1);
+        if (form.hasColor("bodyMain"))
+            dbcData.setBodyColorMain(form.bodyCM);
+        if (form.hasColor("body1"))
+            dbcData.setBodyColor1(form.bodyC1);
 
         if (!b) {
-            if (f.hasColor("body2"))
-                dbcData.setBodyColor2(f.bodyC2);
-            if (f.hasColor("body3"))
-                dbcData.setBodyColor3(f.bodyC3);
+            if (form.hasColor("body2"))
+                dbcData.setBodyColor2(form.bodyC2);
+            if (form.hasColor("body3"))
+                dbcData.setBodyColor3(form.bodyC3);
         }
 
 
