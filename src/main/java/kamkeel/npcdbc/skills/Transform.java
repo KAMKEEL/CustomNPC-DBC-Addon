@@ -67,6 +67,7 @@ public class Transform {
             cantTransform = true;
             transformed = true;
 
+
         }
 
         //dbcData.Rage = (int) rage;
@@ -182,6 +183,7 @@ public class Transform {
 
     }
 
+    //this method is a bit slow, will eventually have to move all of this to MixinRenderPlayerJBRA
     public static void setCustomFormRenderingData(EntityPlayerMP p, PlayerCustomFormData formData, DBCData dbcData) {
         dbcData.setString("preCustomFormDNS", dbcData.DNS); //store pre transformation DNS
         dbcData.setInt("preCustomAuraColor", dbcData.AuraColor);
@@ -190,12 +192,20 @@ public class Transform {
         CustomForm form = formData.getCurrentForm();
         byte race = dbcData.Race;
 
+        if (form.hasColor("fur")) { // ssj4 tail color
+            if (race == 1 || race == 2) {
+                if (form.hairType.equals("ssj4") || form.hairType.equals("oozaru")) {
+                    dbcData.setBodyColor1(form.furColor);
+                   // dbcData.DNSHair = "";
+                }
+            }
+        }
         if (form.hasColor("hair")) {
             dbcData.setHairColor(form.hairColor);
             if (race == 1 || race == 2) {
-                if (form.hairType.equals("ssj4") || form.hairType.equals("oozaru"))
+                if (form.hairType.equals("ssj4") || form.hairType.equals("oozaru")) {
                     dbcData.setBodyColor1(form.furColor);
-                else
+                } else
                     dbcData.setBodyColor1(form.hairColor);
             }
         }
@@ -225,5 +235,6 @@ public class Transform {
         } else if (!form.hairCode.isEmpty())
             dbcData.setString("jrmcDNSH", form.hairCode);
 
+        dbcData.saveToNBT(true);
     }
 }

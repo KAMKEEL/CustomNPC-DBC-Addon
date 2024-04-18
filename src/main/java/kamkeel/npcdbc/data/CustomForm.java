@@ -33,7 +33,7 @@ public class CustomForm implements ICustomForm {
 
     public String hairCode = "", hairType = "ssj";
     public int auraColor = 1, hairColor, eyeColor, bodyCM, bodyC1, bodyC2, bodyC3, furColor = 14292268;
-    public boolean hasAuraColor = true, hasHairColor = true, hasEyeColor = true, hasBodyCM = false, hasBodyC1 = false, hasBodyC2 = false, hasBodyC3 = false;
+    public boolean hasAuraColor = true, hasHairColor = true, hasEyeColor = true, hasBodyCM = false, hasBodyC1 = false, hasBodyC2 = false, hasBodyC3 = false, hasFurColor = true;
 
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
@@ -77,9 +77,11 @@ public class CustomForm implements ICustomForm {
                 return hasBodyC2;
             case "body3":
                 return hasBodyC3;
+            case "fur":
+                return hasFurColor;
 
         }
-        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3");
+        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3, fur");
     }
 
     public void setHasColor(String type, boolean has) {
@@ -105,6 +107,9 @@ public class CustomForm implements ICustomForm {
             case "body3":
                 hasBodyC3 = has;
                 break;
+            case "fur":
+                hasFurColor = has;
+                break;
         }
         save();
     }
@@ -120,6 +125,7 @@ public class CustomForm implements ICustomForm {
             case "eye":
                 eyeColor = color;
                 break;
+
             case "bodymain":
                 bodyCM = color;
                 break;
@@ -131,6 +137,9 @@ public class CustomForm implements ICustomForm {
                 break;
             case "body3":
                 bodyC3 = color;
+                break;
+            case "fur":
+                furColor = color;
                 break;
         }
         save();
@@ -174,8 +183,10 @@ public class CustomForm implements ICustomForm {
                 return bodyC2;
             case "body3":
                 return bodyC3;
+            case "fur":
+                return furColor;
         }
-        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3");
+        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3, fur");
     }
 
     public void setState2Factor(int dbcForm, float factor) {
@@ -520,6 +531,7 @@ public class CustomForm implements ICustomForm {
         rendering.setInteger("bodyC1", bodyC1);
         rendering.setInteger("bodyC2", bodyC2);
         rendering.setInteger("bodyC3", bodyC3);
+        rendering.setInteger("furColor", furColor);
 
         NBTTagCompound sounds = new NBTTagCompound();
         compound.setTag("sounds", sounds);

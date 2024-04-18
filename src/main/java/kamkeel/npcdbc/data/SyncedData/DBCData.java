@@ -60,7 +60,6 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
 
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        saveToNBT(true);
     }
 
     public void setEyeColorRight(int color) {
@@ -70,7 +69,6 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
 
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        saveToNBT(true);
     }
 
     public void setHairColor(int color) {
@@ -80,7 +78,6 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
 
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        saveToNBT(true);
     }
 
     //main color for humans/saiyans/majins
@@ -91,7 +88,6 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
 
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        saveToNBT(true);
     }
 
     //saiyan oozaru and arco/nameks
@@ -102,7 +98,6 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
 
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        saveToNBT(true);
     }
 
     // namekian/arco
@@ -112,7 +107,6 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
             return;
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        saveToNBT(true);
     }
 
     //only arco
@@ -122,7 +116,6 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
             return;
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        saveToNBT(true);
     }
 
     public void setHairPreset(int preset) {
@@ -131,7 +124,6 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
             return;
 
         DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
-        saveToNBT(true);
     }
 
     public void setNosePreset(int preset) {
@@ -140,7 +132,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
             return;
 
         DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
-        saveToNBT(true);
+
     }
 
     // Negative Values will Drain instead

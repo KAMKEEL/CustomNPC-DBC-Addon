@@ -8,6 +8,7 @@ import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -96,8 +97,13 @@ public class Utility {
 
     @SideOnly(Side.CLIENT)
     public static PlayerCustomFormData getFormDataClient() {
+        return getFormDataClient(Minecraft.getMinecraft().thePlayer);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static PlayerCustomFormData getFormDataClient(AbstractClientPlayer player) {
         if (Minecraft.getMinecraft().thePlayer != null)
-            return ((IPlayerFormData) PlayerData.get(Minecraft.getMinecraft().thePlayer)).getCustomFormData();
+            return ((IPlayerFormData) PlayerData.get(player)).getCustomFormData();
         else
             return null;
     }

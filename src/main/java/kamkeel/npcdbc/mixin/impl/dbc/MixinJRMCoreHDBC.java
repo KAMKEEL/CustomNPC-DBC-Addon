@@ -16,7 +16,10 @@ public class MixinJRMCoreHDBC {
         if (!Utility.stackTraceContains("RenderPlayerJBRA")) {
             PlayerCustomFormData formData = Utility.getFormDataClient();
             if (formData.isInCustomForm())
-                ci.setReturnValue(formData.getCurrentForm().hairColor);
+                if (formData.getCurrentForm().hairType.equals("ssj4"))
+                    ci.setReturnValue(formData.getCurrentForm().furColor);
+                else
+                    ci.setReturnValue(formData.getCurrentForm().hairColor);
         }
     }
 }
