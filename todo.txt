@@ -47,7 +47,7 @@ DONE - changeable DNS components:
 
 
 ACTUAL TO-DO:
-add timer, freeze player's DBCKiTech, DBCDamage event,
+add timer, freeze player's DBCKiTech, DBCDamage event, replace Transform.rage with jrmcSaiRg, prevent ascension when release 0
 
 
 
