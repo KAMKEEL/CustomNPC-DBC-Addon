@@ -163,12 +163,16 @@ public class Transform {
 
             dbcData.setString("jrmcDNS", dbcData.preCustomFormDNS); //sets original DNS back
             dbcData.setInt("jrmcAuraColor", dbcData.preCustomAuraColor); //sets original aura back
+            dbcData.setString("jrmcDNSH", dbcData.preCustomFormDNSHair);
         }
 
     }
 
     public static void setCustomFormRenderingData(EntityPlayerMP p, PlayerCustomFormData formData, DBCData dbcData) {
         dbcData.setString("preCustomFormDNS", dbcData.DNS); //store pre transformation DNS
+        dbcData.setInt("preCustomAuraColor", dbcData.AuraColor);
+        dbcData.setString("preCustomFormDNSH", dbcData.DNSHair); //store pre transformation DNS
+
         CustomForm form = formData.getCurrentForm();
         byte race = dbcData.Race;
 
@@ -197,8 +201,8 @@ public class Transform {
                 dbcData.setBodyColor2(form.bodyC2);
             if (form.hasColor("body3"))
                 dbcData.setBodyColor3(form.bodyC3);
-        }
-
+        } else if (!form.hairCode.isEmpty())
+            dbcData.setString("jrmcDNSH", form.hairCode);
 
     }
 }

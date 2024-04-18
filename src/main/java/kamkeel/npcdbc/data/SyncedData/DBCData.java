@@ -22,10 +22,10 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProperties {
     public static String dn = "PlayerPersisted";
 
-    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks, Heat, preCustomAuraColor;
+    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks, Heat, AuraColor, preCustomAuraColor;
     public byte Class, Race, Powertype, State, State2, Release;
     public boolean Alive, isKO;
-    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS, preCustomFormDNS;
+    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS, DNSHair, preCustomFormDNS, preCustomFormDNSHair;
 
     public DBCData(Entity player) {
         super(player);
@@ -270,6 +270,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         c.setInteger("jrmcBdy", Body);
         c.setInteger("jrmcHar4va", KOforXTicks);
         c.setInteger("jrmcEf8slc", Heat);
+        c.setInteger("jrmcAuraColor", AuraColor);
         c.setInteger("preCustomAuraColor", preCustomAuraColor);
 
         c.setByte("jrmcState", State);
@@ -289,7 +290,8 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         c.setString("jrmcFormMasteryNonRacial", FormMasteryNR);
         c.setString("jrmcDNS", DNS);
         c.setString("preCustomFormDNS", preCustomFormDNS);
-
+        c.setString("jrmcDNSH", DNSHair);
+        c.setString("preCustomFormDNSH", preCustomFormDNSHair);
     }
 
     @Override
@@ -307,6 +309,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         KOforXTicks = c.getInteger("jrmcHar4va");
         Heat = c.getInteger("jrmcEf8slc");
         isKO = c.getInteger("jrmcHar4va") > 0;
+        AuraColor = c.getInteger("jrmcAuraColor");
         preCustomAuraColor = c.getInteger("preCustomAuraColor");
 
         State = c.getByte("jrmcState");
@@ -323,8 +326,10 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         FormMasteryRacial = c.getString("jrmcFormMasteryRacial_" + JRMCoreH.Races[Race]);
         FormMasteryNR = c.getString("jrmcFormMasteryNonRacial");
         DNS = c.getString("jrmcDNS");
-        preCustomFormDNS = c.getString("preCustomFormDNS");
+        DNSHair = c.getString("jrmcDNSH");
 
+        preCustomFormDNS = c.getString("preCustomFormDNS");
+        preCustomFormDNSHair = c.getString("preCustomFormDNSH");
         nbt = c;
 
     }

@@ -16,6 +16,13 @@ public interface ICustomForm {
 
     void setRace(int race);
 
+    String getHairCode();
+
+    /**
+     * @param hairCode The hair code to set transformation's hair to, usually gotten from the JinGames Hair Salon
+     */
+    void setHairCode(String hairCode);
+
     /**
      * @param type Legal types: aura, hair, eye, bodyMain, body1, body2, body3
      * @return Decimal color of type

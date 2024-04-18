@@ -31,12 +31,14 @@ public class CustomForm implements ICustomForm {
     public boolean kaiokenStackable = true, uiStackable = true, godStackable = true, mysticStackable = true;
     public float kaiokenStrength = 1.2f, uiStrength = 3.0f, godStrength = 3.0f, mysticStrength = 1.8f;
 
+    public String hairCode = "";
     public int auraColor = 1, hairColor, eyeColor, bodyCM, bodyC1, bodyC2, bodyC3;
     public boolean hasAuraColor = true, hasHairColor = true, hasEyeColor = true, hasBodyCM = false, hasBodyC1 = false, hasBodyC2 = false, hasBodyC3 = false;
 
-    public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
-    public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
 
+    public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
+
+    public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
     public FormMastery formMastery = new FormMastery(this);
 
     public CustomForm() {
@@ -45,6 +47,16 @@ public class CustomForm implements ICustomForm {
     public CustomForm(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    @Override
+    public String getHairCode() {
+        return hairCode;
+    }
+
+    @Override
+    public void setHairCode(String hairCode) {
+        this.hairCode = hairCode;
     }
 
     @Override
