@@ -4,6 +4,7 @@ import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
+import com.llamalad7.mixinextras.sugar.Local;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
@@ -39,13 +40,16 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Unique
     int playerID;
+
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void renderSSJ4(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, int pl) {
+    private void renderSSJ4(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(ordinal = 0) int pl) {
         if (Utility.getFormDataClient().isInCustomForm()) {
-            // System.out.println("im in");
+            DBCData dbcData = DBCData.getClient();
+            if (pl != DBCUtils.getPlayerID(dbcData.player))
+                ci.cancel();
             PlayerCustomFormData formData = Utility.getFormDataClient(par1AbstractClientPlayer);
             CustomForm f = formData.getCurrentForm();
-            DBCData dbcData = DBCData.getClient();
+            dbcData = DBCData.getClient();
             int playerBodyCM = JRMCoreH.dnsBodyCM(dbcData.DNS);
             if (f.hairType.equals("ssj4")) {
                 renderSSJ4Face(f.hairColor, f.furColor, f.eyeColor, playerBodyCM);

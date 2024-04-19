@@ -53,12 +53,9 @@ public class PacketRegistry {
     }
 
     public static void syncData(Entity e, String id, NBTTagCompound data) {
-        if (Utility.isServer()) {
-            if (!id.contains("Entity")) //if player
-                tellClient((EntityPlayer) e, new PacketSyncData(e, id, data));
-            else
-                sendToAllTracking(e, new PacketSyncData(e, id, data));
-        } else
+        if (Utility.isServer())
+            sendToAllTracking((EntityPlayer) e, new PacketSyncData(e, id, data));
+        else
             tellServer(new PacketSyncData(e, id, data));
 
 

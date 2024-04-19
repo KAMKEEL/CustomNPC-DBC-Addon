@@ -4,12 +4,12 @@ package kamkeel.npcdbc.data.SyncedData;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.IExtendedEntityProperties;
 
 /**
  * DBCData is basically all relevant DBC/JRMC tags in the PlayerPersisted compound tag. This get synced from server to client, so client always has access
@@ -19,7 +19,8 @@ import net.minecraftforge.common.IExtendedEntityProperties;
  * DBCData.get(p).setInt("jrmcStrI",100)
  * Sets the jrmcStrI int tag of entity p's PlayerPersisted compound to 100<
  */
-public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProperties {
+public class DBCData extends PerfectSync<DBCData> {
+
     public static String dn = "PlayerPersisted";
 
     public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks, Rage, Heat, AuraColor, preCustomAuraColor;
@@ -27,30 +28,12 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     public boolean Alive, isKO;
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS, DNSHair, preCustomFormDNS, preCustomFormDNSHair;
 
+    public int currentCustomForm;
+
     public DBCData(Entity player) {
         super(player);
         this.DATA_NAME = dn;
         this.player = (EntityPlayer) player;
-    }
-
-    public static boolean eligibleForDBC(Entity p) {
-        if (p instanceof EntityPlayer)
-            return true;
-        return false;
-    }
-
-    public static DBCData get(Entity player) {
-        return get(player, dn);
-
-    }
-
-    public static DBCData getClient() {
-        return getClient(dn);
-
-    }
-
-    public static boolean has(Entity p) {
-        return get(p, dn) != null;
     }
 
     public void setEyeColorLeft(int color) {
@@ -268,6 +251,8 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
     public void saveNBTData(NBTTagCompound compound) { // save all fields to compound
         NBTTagCompound c = compound(entity, dn);
 
+        PlayerCustomFormData formData = Utility.getFormData(player);
+        c.setInteger("currentCustomForm", formData.currentForm);
 
         c.setInteger("jrmcStrI", STR);
         c.setInteger("jrmcDexI", DEX);
@@ -283,6 +268,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         c.setInteger("jrmcEf8slc", Heat);
         c.setInteger("jrmcAuraColor", AuraColor);
         c.setInteger("preCustomAuraColor", preCustomAuraColor);
+
 
         c.setByte("jrmcState", State);
         c.setByte("jrmcState2", State2);
@@ -323,6 +309,7 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         isKO = c.getInteger("jrmcHar4va") > 0;
         AuraColor = c.getInteger("jrmcAuraColor");
         preCustomAuraColor = c.getInteger("preCustomAuraColor");
+        currentCustomForm = c.getInteger("currentCustomForm");
 
         State = c.getByte("jrmcState");
         State2 = c.getByte("jrmcState2");
@@ -344,7 +331,28 @@ public class DBCData extends PerfectSync<DBCData> implements IExtendedEntityProp
         preCustomFormDNSHair = c.getString("preCustomFormDNSH");
         nbt = c;
 
+
     }
 
+
+    public static boolean eligibleForDBC(Entity p) {
+        if (p instanceof EntityPlayer)
+            return true;
+        return false;
+    }
+
+    public static DBCData get(Entity player) {
+        return get(player, dn);
+
+    }
+
+    public static DBCData getClient() {
+        return getClient(dn);
+
+    }
+
+    public static boolean has(Entity p) {
+        return get(p, dn) != null;
+    }
 
 }
