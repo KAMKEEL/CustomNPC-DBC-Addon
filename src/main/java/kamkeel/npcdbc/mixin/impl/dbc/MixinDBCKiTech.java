@@ -42,7 +42,7 @@ public class MixinDBCKiTech {
         PlayerCustomFormData formData = Utility.getSelfData();
         DBCData d = DBCData.getClient();
         boolean returnEarly = true;
-        if (formData != null && formData.isInCustomForm()) {
+        if (d != null && formData != null && formData.isInCustomForm()) {
             if (d.formSettingOn(DBCForm.Kaioken)) {
                 if (d.isForm(DBCForm.Kaioken))
                     returnEarly = false;

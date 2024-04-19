@@ -36,7 +36,9 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
             name = formData.getCurrentForm().getMenuName();
         else {
             DBCData d = DBCData.getClient();
-            name = DBCUtils.getCurrentFormFullName(d.Race, d.State, d.isForm(DBCForm.Legendary), d.isForm(DBCForm.Divine), JRMCoreH.StusEfctsMe(13), ui, DBCUtils.isUIWhite(ui, JRMCoreH.State2), JRMCoreH.StusEfctsMe(20));
+            if(d != null){
+                name = DBCUtils.getCurrentFormFullName(d.Race, d.State, d.isForm(DBCForm.Legendary), d.isForm(DBCForm.Divine), JRMCoreH.StusEfctsMe(13), ui, DBCUtils.isUIWhite(ui, JRMCoreH.State2), JRMCoreH.StusEfctsMe(20));
+            }
         }
 
         return name;

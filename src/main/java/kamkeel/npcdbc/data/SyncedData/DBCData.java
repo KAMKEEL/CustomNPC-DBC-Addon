@@ -7,6 +7,7 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -355,6 +356,8 @@ public class DBCData extends PerfectSync<DBCData> {
     }
 
     public static DBCData getClient() {
+        if(Minecraft.getMinecraft().thePlayer == null)
+            return null;
         return getClient(DBCPersisted);
 
     }
