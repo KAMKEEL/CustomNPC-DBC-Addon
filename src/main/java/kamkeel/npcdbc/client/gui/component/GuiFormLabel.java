@@ -1,20 +1,21 @@
-package kamkeel.npcdbc.client.gui;
+package kamkeel.npcdbc.client.gui.component;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.client.gui.inventory.GuiDBC;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.Utility;
 import noppes.npcs.client.gui.util.GuiNpcLabel;
 
-public class GuiFormData extends GuiDBC {
+public class GuiFormLabel extends GuiDBC {
     public PlayerCustomFormData formData;
     GuiDBC parent;
     CustomForm form;
 
     int formDataID = 200;
 
-    public GuiFormData(GuiDBC parent, CustomForm form) {
+    public GuiFormLabel(GuiDBC parent, CustomForm form) {
         this.parent = parent;
         this.form = form;
         xSize = 135;
