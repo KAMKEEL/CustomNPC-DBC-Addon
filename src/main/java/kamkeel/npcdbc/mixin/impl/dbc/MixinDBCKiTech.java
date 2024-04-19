@@ -22,8 +22,8 @@ public class MixinDBCKiTech {
     @Inject(method = "Ascend", at = @At("HEAD"), cancellable = true)
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
         if (K.getIsKeyPressed()) {
-            PlayerCustomFormData formData = Utility.getFormDataClient();
-            if (formData.isInCustomForm()) {
+            PlayerCustomFormData formData = Utility.getSelfData();
+            if (formData != null && formData.isInCustomForm()) {
                 if (JRMCoreH.PlyrSettingsB(0) && formData.getCurrentForm().isFormStackable(DBCForm.Kaioken)) {
                 } else if (JRMCoreH.PlyrSettingsB(11) && formData.getCurrentForm().isFormStackable(DBCForm.UltraInstinct)) {
                 } else if (JRMCoreH.PlyrSettingsB(16) && formData.getCurrentForm().isFormStackable(DBCForm.GodOfDestruction)) {
@@ -39,10 +39,10 @@ public class MixinDBCKiTech {
      */
     @Inject(method = "Descend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;kiInSuper:I", shift = At.Shift.AFTER), cancellable = true)
     private static void DescendModified(KeyBinding K, CallbackInfo ci) {
-        PlayerCustomFormData formData = Utility.getFormDataClient();
+        PlayerCustomFormData formData = Utility.getSelfData();
         DBCData d = DBCData.getClient();
         boolean returnEarly = true;
-        if (formData.isInCustomForm()) {
+        if (formData != null && formData.isInCustomForm()) {
             if (d.formSettingOn(DBCForm.Kaioken)) {
                 if (d.isForm(DBCForm.Kaioken))
                     returnEarly = false;
@@ -70,6 +70,4 @@ public class MixinDBCKiTech {
         if (i == 1 && j == 1 && k == 100 && TransformController.ascending)
             ci.cancel();
     }
-
-
 }

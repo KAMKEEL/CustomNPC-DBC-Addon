@@ -43,7 +43,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> {
     }
 
     public void syncClient() {
-        String dataName = DATA_NAME.equals(DBCData.dn) ? "DBCData" : "";
+        String dataName = DATA_NAME.equals(DBCData.DBCPersisted) ? "DBCData" : "";
         PacketRegistry.syncData(entity, dataName + ":" + entity.getCommandSenderName(), compound());
     }
 
@@ -233,13 +233,13 @@ public abstract class PerfectSync<T extends PerfectSync<T>> {
     // registers all datas for entity IF they are eligible for it (check DBCData.eligibleForDBC), add datas here
     public static void registerAllDatas(Entity e) {
         if (e instanceof EntityPlayer) {
-            PerfectSync.register(e, DBCData.dn);
+            PerfectSync.register(e, DBCData.DBCPersisted);
         }
     }
 
     // register all implementations individually here
     public static void register(Entity e, String dn) {
-        if (dn.equals(DBCData.dn) && DBCData.eligibleForDBC(e) && !DBCData.has(e)) {
+        if (dn.equals(DBCData.DBCPersisted) && DBCData.eligibleForDBC(e) && !DBCData.has(e)) {
             putCache(e.getCommandSenderName(), new DBCData(e));
             DBCData.get(e).loadFromNBT(true); // initial loading of fields from server NBTs
         }

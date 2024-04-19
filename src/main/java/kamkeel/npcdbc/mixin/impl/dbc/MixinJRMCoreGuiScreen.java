@@ -31,8 +31,8 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
     private static String getFormName() {
         boolean ui = JRMCoreH.StusEfctsMe(19);
         String name = null;
-        PlayerCustomFormData formData = Utility.getFormDataClient();
-        if (formData.isInCustomForm())
+        PlayerCustomFormData formData = Utility.getSelfData();
+        if (formData != null && formData.isInCustomForm())
             name = formData.getCurrentForm().getMenuName();
         else {
             DBCData d = DBCData.getClient();
@@ -59,8 +59,8 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                 detailList.add(txt);
             }
             ci.cancel();
-        } else if (Utility.getFormDataClient().isInCustomForm()) {
-            PlayerCustomFormData c = Utility.getFormDataClient();
+        } else if (Utility.getSelfData() != null && Utility.getSelfData().isInCustomForm()) {
+            PlayerCustomFormData formData = Utility.getSelfData();
             if ((s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§")) { //adds the form color to STR,DEX and WIL attribute values
                 int secondIndex = 0;
                 for (int i = 0; i < s1.length(); i++) {
@@ -71,12 +71,12 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                 }
 
                 String originalColor = s1.substring(secondIndex, secondIndex + 2);
-                s1 = s1.replace(originalColor, c.getFormColorCode(c.getCurrentForm()));
+                s1 = s1.replace(originalColor, formData.getFormColorCode(formData.getCurrentForm()));
             } else if (s1.contains("CON:")) { // adds the "xMulti" after CON: AttributeValue
                 float multi = (float) DBCUtils.getCurFormMulti(Minecraft.getMinecraft().thePlayer);
                 if (s1.contains("x"))
                     s1 = s1.substring(0, s1.indexOf("x") - 1);
-                s1 = s1 + (JRMCoreH.round(multi, 1) != 1.0 ? c.getFormColorCode(c.getCurrentForm()) + " x" + JRMCoreH.round(multi, 1) : "");
+                s1 = s1 + (JRMCoreH.round(multi, 1) != 1.0 ? formData.getFormColorCode(formData.getCurrentForm()) + " x" + JRMCoreH.round(multi, 1) : "");
             }
             int wpos = var8.getStringWidth(s1);
             var8.drawString(s1, xpos, ypos, 0);
@@ -86,8 +86,6 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                 detailList.add(txt);
             }
             ci.cancel();
-
-
         }
     }
 }

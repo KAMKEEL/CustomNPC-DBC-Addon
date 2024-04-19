@@ -25,7 +25,7 @@ public class TransformController {
     //WIP, only 85% done, but is functional and won't break
     @SideOnly(Side.CLIENT)
     public static void Ascend(CustomForm form) {
-        if (cantTransform || (rage > 0 && transformed) || (Utility.getFormDataClient().getCurrentForm() != null && Utility.getFormDataClient().getCurrentForm().getID() == form.id))
+        if (cantTransform || (rage > 0 && transformed) || (Utility.getSelfData() != null && Utility.getSelfData().getCurrentForm() != null && Utility.getSelfData().getCurrentForm().getID() == form.id))
             return;
         dbcData = DBCData.getClient();
         if (dbcData == null)

@@ -36,9 +36,7 @@ public class ServerEventHandler {
             if (player instanceof EntityPlayer){
                 PerfectSync.registerAllDatas(player);
                 if (player.ticksExisted % 10 == 0) {
-                    // Load DBC Data Every 10 Ticks (0.5s)
-                    if (DBCData.has(player))
-                        DBCData.get(player).loadFromNBT(true);
+                    DBCData.get(player).loadFromNBT(true);
                 }
             }
 

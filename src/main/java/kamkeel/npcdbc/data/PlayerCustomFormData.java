@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class PlayerCustomFormData {
     public PlayerData parent;
-    public int currentForm = 0;
+    public int currentForm = -1;
     public int selectedForm = -1;
     public HashMap<Integer, String> unlockedForms = new HashMap<Integer, String>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
@@ -73,8 +73,6 @@ public class PlayerCustomFormData {
     public CustomForm getCurrentForm() {
         if (currentForm > 0)
             return (CustomForm) FormController.Instance.get(currentForm);
-
-
         return null;
     }
 
@@ -159,7 +157,7 @@ public class PlayerCustomFormData {
     }
 
     public float getFormLevel(int formID) {
-        if (formLevels.containsKey(formID))
+        if (formID != -1 && formLevels.containsKey(formID))
             return formLevels.get(formID);
         return 0f;
     }
