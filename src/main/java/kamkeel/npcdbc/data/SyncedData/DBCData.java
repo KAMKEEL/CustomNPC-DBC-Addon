@@ -24,7 +24,7 @@ public class DBCData extends PerfectSync<DBCData> {
 
     public static String DBCPersisted = "PlayerPersisted";
 
-    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks, Rage, Heat, AuraColor, preCustomAuraColor;
+    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXSeconds, Rage, Heat, AuraColor, preCustomAuraColor;
     public byte Class, Race, Powertype, State, State2, Release;
     public boolean Alive, isKO;
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", preCustomFormDNS = "", preCustomFormDNSHair = "";
@@ -264,7 +264,7 @@ public class DBCData extends PerfectSync<DBCData> {
         c.setInteger("jrmcEnrgy", Ki);
         c.setInteger("jrmcStamina", Stamina);
         c.setInteger("jrmcBdy", Body);
-        c.setInteger("jrmcHar4va", KOforXTicks);
+        c.setInteger("jrmcHar4va", KOforXSeconds);
         c.setInteger("jrmcSaiRg", Rage);
         c.setInteger("jrmcEf8slc", Heat);
         c.setInteger("jrmcAuraColor", AuraColor);
@@ -297,7 +297,7 @@ public class DBCData extends PerfectSync<DBCData> {
         Ki = c.getInteger("jrmcEnrgy");
         Stamina = c.getInteger("jrmcStamina");
         Body = c.getInteger("jrmcBdy");
-        KOforXTicks = c.getInteger("jrmcHar4va");
+        KOforXSeconds = c.getInteger("jrmcHar4va");
         Rage = c.getInteger("jrmcSaiRg");
         Heat = c.getInteger("jrmcEf8slc");
         isKO = c.getInteger("jrmcHar4va") > 0;
@@ -339,7 +339,7 @@ public class DBCData extends PerfectSync<DBCData> {
         c.setInteger("jrmcEnrgy", Ki);
         c.setInteger("jrmcStamina", Stamina);
         c.setInteger("jrmcBdy", Body);
-        c.setInteger("jrmcHar4va", KOforXTicks);
+        c.setInteger("jrmcHar4va", KOforXSeconds);
         c.setInteger("jrmcSaiRg", Rage);
         c.setInteger("jrmcEf8slc", Heat);
         c.setInteger("jrmcAuraColor", AuraColor);
@@ -376,7 +376,7 @@ public class DBCData extends PerfectSync<DBCData> {
         Ki = c.getInteger("jrmcEnrgy");
         Stamina = c.getInteger("jrmcStamina");
         Body = c.getInteger("jrmcBdy");
-        KOforXTicks = c.getInteger("jrmcHar4va");
+        KOforXSeconds = c.getInteger("jrmcHar4va");
         Rage = c.getInteger("jrmcSaiRg");
         Heat = c.getInteger("jrmcEf8slc");
         isKO = c.getInteger("jrmcHar4va") > 0;
