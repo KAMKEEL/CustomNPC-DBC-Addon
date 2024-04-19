@@ -240,12 +240,21 @@ public abstract class PerfectSync<T extends PerfectSync<T>> {
     // register all implementations individually here
     public static void register(Entity e, String dn) {
         if (dn.equals(DBCData.dn) && DBCData.eligibleForDBC(e) && !DBCData.has(e)) {
-            registerToMap(e.getCommandSenderName(), new DBCData(e));
+            putCache(e.getCommandSenderName(), new DBCData(e));
             DBCData.get(e).loadFromNBT(true); // initial loading of fields from server NBTs
         }
     }
 
-    public static void registerToMap(String playerName, PerfectSync dat) {
+    public static <T extends PerfectSync<T>> T getCache(Entity e, String dataName) {
+        if (e == null)
+            return null;
+
+        PerfectSync search = getCache(e.getCommandSenderName(), dataName);
+        return (T) search;
+    }
+
+
+    public static void putCache(String playerName, PerfectSync dat) {
         synchronized (playerDataCache) {
             if (!playerDataCache.containsKey(playerName))
                 playerDataCache.put(playerName, new CacheHashMap.CachedObject<>(new ArrayList<>()));
@@ -254,16 +263,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> {
         }
     }
 
-
-    public static <T extends PerfectSync<T>> T get(Entity e, String dataName) {
-        if (e == null)
-            return null;
-
-        PerfectSync search = get(e.getCommandSenderName(), dataName);
-        return (T) search;
-    }
-
-    public static <T extends PerfectSync<T>> T get(String playerName, String dataName) {
+    public static <T extends PerfectSync<T>> T getCache(String playerName, String dataName) {
         synchronized (playerDataCache) {
             if (playerDataCache.containsKey(playerName))
                 for (PerfectSync dat : playerDataCache.get(playerName).getObject())
@@ -276,20 +276,20 @@ public abstract class PerfectSync<T extends PerfectSync<T>> {
 
     //checks if entity has their own data registered
     public static boolean has(Entity e, String dn) {
-        return get(e, dn) != null;
+        return getCache(e, dn) != null;
     }
 
     public static boolean has(String playerName, String dataName) {
-        return get(playerName, dataName) != null;
+        return getCache(playerName, dataName) != null;
     }
 
     public static NBTTagCompound compound(Entity e, String dn) {
-        return PerfectSync.get(e, dn).compound();
+        return PerfectSync.getCache(e, dn).compound();
     }
 
     @SideOnly(Side.CLIENT)
     public static <T extends PerfectSync<T>> T getClient(String s) {
-        return get(Minecraft.getMinecraft().thePlayer, s);
+        return getCache(Minecraft.getMinecraft().thePlayer, s);
     }
 
 }

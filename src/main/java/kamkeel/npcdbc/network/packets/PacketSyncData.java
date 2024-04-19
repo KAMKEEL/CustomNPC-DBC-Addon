@@ -36,7 +36,7 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
             if (s.contains("DBCData")) {
                 String playerName = s.split(":")[1];
                 if (!DBCData.has(playerName))
-                    DBCData.registerToMap(playerName, new DBCData(Utility.getFromNameClient(playerName)));
+                    DBCData.putCache(playerName, new DBCData(Utility.getFromNameClient(playerName)));
                 DBCData.get(playerName).loadNBTData(data);
             }
         }
@@ -53,7 +53,7 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
         String tagValue = data[4];
 
         Entity e = s.contains("Entity") ? Utility.getEntityFromID(p.worldObj, s.split(";")[5]) : p;
-        NBTTagCompound cmpd = PerfectSync.get(e, dataName).compound();
+        NBTTagCompound cmpd = PerfectSync.getCache(e, dataName).compound();
 
         if (tagType.equals("Int"))
             cmpd.setInteger(nbtTag, Integer.parseInt(tagValue));
@@ -70,7 +70,7 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
         else if (tagType.equals("String"))
             cmpd.setString(nbtTag, tagValue);
 
-        PerfectSync.get(e, dataName).loadFromNBT(false);
+        PerfectSync.getCache(e, dataName).loadFromNBT(false);
 
     }
 

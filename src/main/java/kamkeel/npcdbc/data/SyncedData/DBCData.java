@@ -348,12 +348,12 @@ public class DBCData extends PerfectSync<DBCData> {
     }
 
     public static DBCData get(Entity player) {
-        return get(player, dn);
+        return getCache(player, dn);
 
     }
 
     public static DBCData get(String playerName) {
-        return get(playerName, dn);
+        return getCache(playerName, dn);
 
     }
 
@@ -363,11 +363,11 @@ public class DBCData extends PerfectSync<DBCData> {
     }
 
     public static boolean has(Entity p) {
-        return get(p, dn) != null;
+        return getCache(p, dn) != null;
     }
 
     public static boolean has(String name) {
-        return get(name, dn) != null;
+        return getCache(name, dn) != null;
     }
 
 }
