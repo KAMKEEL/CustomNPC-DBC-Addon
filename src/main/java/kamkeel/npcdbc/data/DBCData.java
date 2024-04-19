@@ -146,7 +146,7 @@ public class DBCData implements IExtendedEntityProperties {
         nbt.setFloat("customFormLevel", currentCustomFormLevel);
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 
-        syncClient();
+        syncAllClients();
     }
 
     @Override
@@ -163,7 +163,7 @@ public class DBCData implements IExtendedEntityProperties {
         preCustomFormDNSHair = dbc.getString("preCustomFormDNSH");
     }
 
-    public void syncClient() {
+    public void syncAllClients() {
         PacketHandler.Instance.sendToAll(new PingPacket(this).generatePacket());
     }
 

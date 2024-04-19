@@ -23,7 +23,7 @@ public class ServerEventHandler {
     public void loginEvent(cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event) {
         DBCData dbcData = DBCData.get(event.player);
         dbcData.loadNBTData(null);
-        dbcData.syncClient();
+        dbcData.syncAllClients();
     }
 
     @SubscribeEvent
@@ -47,7 +47,7 @@ public class ServerEventHandler {
             if (player.ticksExisted % 10 == 0) {
                 DBCData dbcData = DBCData.get(player);
                 dbcData.loadNBTData(null);
-                dbcData.syncClient();
+                // dbcData.syncAllClients();
             }
         }
     }
