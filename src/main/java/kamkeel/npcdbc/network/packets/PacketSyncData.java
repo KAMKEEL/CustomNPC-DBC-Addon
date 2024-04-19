@@ -24,30 +24,21 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
 
     public PacketSyncData(Entity entity, String id, NBTTagCompound data) {
         s = id;
-        if (entity != null && entity.worldObj != null && !entity.worldObj.isRemote) {
-            if (!s.contains("Entity")) // player
-                this.data = data;
-        }
+        if (Utility.isServer(entity))
+            this.data = data;
+
     }
 
     @Override
     public void process(EntityPlayer p, Side side) {
         if (side == Side.SERVER) {
             updateServerData(p);
-
         } else {
-            if (s.contains("register"))
-                registerClient(p);
-            else if (!s.contains("Entity")) { // player
-                if (s.contains("DBCData"))
-                    DBCData.get(p).loadNBTData(data);
-
-
-            } else {// non player entity
-                Entity e = Utility.getEntityFromID(p.worldObj, s.split(":")[1]);
-                if (e != null) {
-
-                }
+            if (s.contains("DBCData")) {
+                UUID id = UUID.fromString(s.split(":")[1]);
+                if (!DBCData.has(id))
+                    DBCData.registerToMap(id, new DBCData(Utility.getFromUUID(id, p.worldObj)));
+                DBCData.get(id).loadNBTData(data);
             }
         }
     }
@@ -55,45 +46,34 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
     public void updateServerData(EntityPlayer p) {
         if (!s.contains("updateServer"))
             return;
-        String[] d = s.split(";");
-        String dn = d[1];
-        String tag = d[2];
-        String type = d[3];
-        String value = d[4];
+        String[] data = s.split(";");
+        String dataName = data[1];
+        String nbtTag = data[2];
+        String tagType = data[3];
+        String tagValue = data[4];
 
         Entity e = s.contains("Entity") ? Utility.getEntityFromID(p.worldObj, s.split(";")[5]) : p;
-        NBTTagCompound cmpd = PerfectSync.get(e, dn).compound();
+        NBTTagCompound cmpd = PerfectSync.get(e, dataName).compound();
 
-        if (type.equals("Int"))
-            cmpd.setInteger(tag, Integer.parseInt(value));
-        else if (type.equals("Float"))
-            cmpd.setFloat(tag, Float.parseFloat(value));
-        else if (type.equals("Double"))
-            cmpd.setDouble(tag, Double.parseDouble(value));
-        else if (type.equals("Long"))
-            cmpd.setLong(tag, Long.parseLong(value));
-        else if (type.equals("Byte"))
-            cmpd.setByte(tag, Byte.parseByte(value));
-        else if (type.equals("Boolean"))
-            cmpd.setBoolean(tag, Boolean.parseBoolean(value));
-        else if (type.equals("String"))
-            cmpd.setString(tag, value);
+        if (tagType.equals("Int"))
+            cmpd.setInteger(nbtTag, Integer.parseInt(tagValue));
+        else if (tagType.equals("Float"))
+            cmpd.setFloat(nbtTag, Float.parseFloat(tagValue));
+        else if (tagType.equals("Double"))
+            cmpd.setDouble(nbtTag, Double.parseDouble(tagValue));
+        else if (tagType.equals("Long"))
+            cmpd.setLong(nbtTag, Long.parseLong(tagValue));
+        else if (tagType.equals("Byte"))
+            cmpd.setByte(nbtTag, Byte.parseByte(tagValue));
+        else if (tagType.equals("Boolean"))
+            cmpd.setBoolean(nbtTag, Boolean.parseBoolean(tagValue));
+        else if (tagType.equals("String"))
+            cmpd.setString(nbtTag, tagValue);
 
-        PerfectSync.get(e, dn).loadFromNBT(false);
-
-    }
-
-    public void registerClient(EntityPlayer p) {
-        String[] d = s.split(";");
-        String dn = d[1];
-
-        UUID id = p.getGameProfile().getId();
-
-        if (dn.equals(DBCData.dn) && !DBCData.has(p))
-            DBCData.addToMap(id, new DBCData(p));
-
+        PerfectSync.get(e, dataName).loadFromNBT(false);
 
     }
+
 
     @Override
     public void read(PacketBuffer buffer) throws IOException {

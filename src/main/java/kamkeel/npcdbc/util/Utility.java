@@ -22,12 +22,21 @@ import noppes.npcs.scripted.NpcAPI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static noppes.npcs.NoppesUtilServer.sendScrollData;
 
 public class Utility {
     public static boolean isServer() {
         return FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER;
+    }
+
+    public static boolean isServer(Entity entity) {
+        return entity != null && entity.worldObj != null && !entity.worldObj.isRemote;
+    }
+
+    public static boolean isServer(World worldObj) {
+        return worldObj != null && !worldObj.isRemote;
     }
 
     public static void sendMessage(EntityPlayer player, String message) {
@@ -52,6 +61,22 @@ public class Utility {
             return p.getEntityId() + ",false";
         else
             return "";
+    }
+
+    public static UUID getUUID(Entity entity) {
+        return entity instanceof EntityPlayer ? ((EntityPlayer) entity).getGameProfile().getId() : entity.getUniqueID();
+    }
+
+    public static Entity getFromUUID(UUID id, World w) {
+        List<Entity> allEntity = w.loadedEntityList;
+        for (Entity entity : allEntity)
+            if (entity instanceof EntityPlayer) {
+                if (((EntityPlayer) entity).getGameProfile().getId().equals(id))
+                    return entity;
+            } else if (entity.getUniqueID().equals(id))
+                return entity;
+
+        return null;
     }
 
     public static Entity getEntityByUUID(World w, String s) {

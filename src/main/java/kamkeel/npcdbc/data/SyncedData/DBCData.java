@@ -11,6 +11,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.UUID;
+
 /**
  * DBCData is basically all relevant DBC/JRMC tags in the PlayerPersisted compound tag. This get synced from server to client, so client always has access
  * to the latest version of the fields below
@@ -346,6 +348,11 @@ public class DBCData extends PerfectSync<DBCData> {
 
     }
 
+    public static DBCData get(UUID id) {
+        return get(id, dn);
+
+    }
+
     public static DBCData getClient() {
         return getClient(dn);
 
@@ -355,4 +362,7 @@ public class DBCData extends PerfectSync<DBCData> {
         return get(p, dn) != null;
     }
 
+    public static boolean has(UUID id) {
+        return get(id, dn) != null;
+    }
 }
