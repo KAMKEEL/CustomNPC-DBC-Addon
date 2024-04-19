@@ -43,21 +43,21 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void renderSSJ4(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(ordinal = 0) int pl) {
         CustomForm form = Utility.getFormClient(par1AbstractClientPlayer);
-        if(form != null){
-            DBCExtended dbcExtended = DBCExtended.get(par1AbstractClientPlayer);
-            int playerBodyCM = JRMCoreH.dnsBodyCM(dbcExtended.DNS);
+        if (form != null) {
+            DBCExtended dbcData = DBCExtended.get(par1AbstractClientPlayer);
+            int playerBodyCM = JRMCoreH.dnsBodyCM(dbcData.DNS);
             if (form.hairType.equals("ssj4")) {
-                renderSSJ4Face(form.hairColor, form.furColor, form.eyeColor, playerBodyCM);
-                renderSSJ4Hair(form.hairColor, form.hairCode, dbcExtended.Race, DBCUtils.getPlayerID(dbcExtended.player));
+                renderSSJ4Face(form.hairColor, form.furColor, form.eyeColor, playerBodyCM, dbcData.DNS);
+                renderSSJ4Hair(form.hairColor, form.hairCode, dbcData.Race, DBCUtils.getPlayerID(dbcData.player));
                 renderSSJ4Fur(form.furColor);
             } else if (form.hairType.equals("oozaru")) {
                 renderOozaru(form.bodyCM, form.furColor, par1AbstractClientPlayer);
-            }
+            } else if (form.hairType.equals("ssj3"))
+                this.modelMain.renderHairs(0.0625F, "" + JRMCoreH.HairsT[6] + JRMCoreH.Hairs[0]);
         }
     }
-
     @Unique
-    private void renderSSJ4Face(int hairColor, int furColor, int eyeColor, int bodyCM) {
+    private void renderSSJ4Face(int hairColor, int furColor, int eyeColor, int bodyCM, String DNS) {
         GL11.glColor3f(1.0F + getR(), 1.0F + getG(), 1.0F + getB());
         this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/ssj4eyewhite.png"));
         this.modelMain.renderBody(1F / 16F);
@@ -75,6 +75,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         this.modelMain.renderBody(1F / 16F);
         this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/ssj4shade.png"));
         this.modelMain.renderBody(0.0625F);
+        int gender = JRMCoreH.dnsGender(DNS);
+        int nose = JRMCoreH.dnsFaceN(DNS);
+        this.bindTexture(new ResourceLocation("jinryuumodscore", "cc/" + (gender == 1 ? "f" : "") + "humn" + nose + ".png"));
+        this.modelMain.renderHairs(0.0625F, "FACENOSE");
     }
 
     @Unique

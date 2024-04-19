@@ -109,6 +109,8 @@ public class CustomForm implements ICustomForm {
             case "fur":
                 hasFurColor = has;
                 break;
+            default:
+                throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3, fur");
         }
         save();
     }
@@ -140,6 +142,8 @@ public class CustomForm implements ICustomForm {
             case "fur":
                 furColor = color;
                 break;
+            default:
+                throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3, fur");
         }
         save();
     }
@@ -483,6 +487,10 @@ public class CustomForm implements ICustomForm {
         bodyC1 = rendering.getInteger("bodyC1");
         bodyC2 = rendering.getInteger("bodyC2");
         bodyC3 = rendering.getInteger("bodyC3");
+        hasBodyCM = rendering.getBoolean("hasBodyCM");
+        hasBodyC1 = rendering.getBoolean("hasBodyC1");
+        hasBodyC2 = rendering.getBoolean("hasBodyC2");
+        hasBodyC3 = rendering.getBoolean("hasBodyC3");
         hairCode = rendering.getString("hairCode");
         hairType = rendering.getString("hairType");
 
@@ -526,16 +534,20 @@ public class CustomForm implements ICustomForm {
         rendering.setInteger("hairColor", hairColor);
         rendering.setString("hairCode", hairCode);
         rendering.setString("hairType", hairType);
+        rendering.setInteger("furColor", furColor);
         rendering.setInteger("bodyCM", bodyCM);
         rendering.setInteger("bodyC1", bodyC1);
         rendering.setInteger("bodyC2", bodyC2);
         rendering.setInteger("bodyC3", bodyC3);
-        rendering.setInteger("furColor", furColor);
+        rendering.setBoolean("hasBodyCM", hasBodyCM);
+        rendering.setBoolean("hasBodyC1", hasBodyC1);
+        rendering.setBoolean("hasBodyC2", hasBodyC2);
+        rendering.setBoolean("hasBodyC3", hasBodyC3);
 
         NBTTagCompound sounds = new NBTTagCompound();
-        compound.setTag("sounds", sounds);
         sounds.setString("ascendSound", ascendSound);
         sounds.setString("descendSound", descendSound);
+        compound.setTag("sounds", sounds);
 
         formMastery.writeToNBT(compound);
         return compound;

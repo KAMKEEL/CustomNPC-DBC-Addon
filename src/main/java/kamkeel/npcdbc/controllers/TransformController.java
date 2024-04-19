@@ -189,48 +189,21 @@ public class TransformController {
 
         CustomForm form = formData.getCurrentForm();
         byte race = dbcExtended.Race;
-
-        if (form.hasColor("fur")) { // ssj4 tail color
-            if (race == 1 || race == 2) {
-                if (form.hairType.equals("ssj4") || form.hairType.equals("oozaru")) {
-                    dbcExtended.setBodyColor1(form.furColor);
-                    // dbcData.DNSHair = "";
-                }
-            }
-        }
-        if (form.hasColor("hair")) {
-            dbcExtended.setHairColor(form.hairColor);
-            if (race == 1 || race == 2) {
-                if (form.hairType.equals("ssj4") || form.hairType.equals("oozaru")) {
-                    dbcExtended.setBodyColor1(form.furColor);
-                } else
-                    dbcExtended.setBodyColor1(form.hairColor);
-            }
-        }
-
-        if (form.hasColor("eye")) {
-            dbcExtended.setEyeColorLeft(form.eyeColor);
-            dbcExtended.setEyeColorRight(form.eyeColor);
-        }
         if (form.hasColor("aura"))
             dbcExtended.getRawCompound().setInteger("jrmcAuraColor", form.auraColor);
 
-
-        boolean b = race == 0 || race == 1 || race == 2 || race == 5; //if human, saiyans or majin
-        if (form.hasColor("bodyMain"))
+        boolean b = race == 0 || race == 1 || race == 2 || race == 5; //if Human, Saiyan, Majin
+        if (form.hasBodyCM)
             dbcExtended.setBodyColorMain(form.bodyCM);
-        if (form.hasColor("body1"))
+
+        if (form.hasBodyC1)
             dbcExtended.setBodyColor1(form.bodyC1);
 
         if (!b) {
-            if (form.hasColor("body2"))
+            if (form.hasBodyC2)
                 dbcExtended.setBodyColor2(form.bodyC2);
-            if (form.hasColor("body3"))
+            if (form.hasBodyC3)
                 dbcExtended.setBodyColor3(form.bodyC3);
-        } else if (form.hairType.equals("ssj3")) {
-            //dbcData.setNosePreset(99);
-            dbcExtended.setHairPreset(0xb);
-        } else if (!form.hairCode.isEmpty())
-            dbcExtended.getRawCompound().setString("jrmcDNSH", form.hairCode);
+        }
     }
 }

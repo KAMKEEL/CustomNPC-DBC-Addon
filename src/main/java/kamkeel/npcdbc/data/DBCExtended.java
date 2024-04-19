@@ -178,6 +178,7 @@ public class DBCExtended implements IExtendedEntityProperties {
 
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
+        getRawCompound().setString("jrmcDNS", DNS);
         saveNBTData(null);
     }
 
@@ -188,6 +189,7 @@ public class DBCExtended implements IExtendedEntityProperties {
 
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
+        getRawCompound().setString("jrmcDNS", DNS);
         saveNBTData(null);
     }
 
@@ -198,6 +200,7 @@ public class DBCExtended implements IExtendedEntityProperties {
 
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
+        getRawCompound().setString("jrmcDNS", DNS);
         saveNBTData(null);
     }
 
@@ -209,6 +212,7 @@ public class DBCExtended implements IExtendedEntityProperties {
 
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
+        getRawCompound().setString("jrmcDNS", DNS);
         saveNBTData(null);
     }
 
@@ -220,6 +224,7 @@ public class DBCExtended implements IExtendedEntityProperties {
 
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
+        getRawCompound().setString("jrmcDNS", DNS);
         saveNBTData(null);
     }
 
@@ -230,6 +235,7 @@ public class DBCExtended implements IExtendedEntityProperties {
             return;
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
+        getRawCompound().setString("jrmcDNS", DNS);
         saveNBTData(null);
     }
 
@@ -240,6 +246,7 @@ public class DBCExtended implements IExtendedEntityProperties {
             return;
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
+        getRawCompound().setString("jrmcDNS", DNS);
         saveNBTData(null);
     }
 
@@ -249,6 +256,7 @@ public class DBCExtended implements IExtendedEntityProperties {
             return;
 
         DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
+        getRawCompound().setString("jrmcDNS", DNS);
         saveNBTData(null);
     }
 
@@ -258,6 +266,7 @@ public class DBCExtended implements IExtendedEntityProperties {
             return;
 
         DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
+        getRawCompound().setString("jrmcDNS", DNS);
         saveNBTData(null);
     }
 
