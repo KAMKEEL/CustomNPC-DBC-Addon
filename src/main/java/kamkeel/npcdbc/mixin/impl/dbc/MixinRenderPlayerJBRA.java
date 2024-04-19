@@ -8,13 +8,16 @@ import com.llamalad7.mixinextras.sugar.Local;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import noppes.npcs.client.ClientEventHandler;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -42,23 +45,18 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void renderSSJ4(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(ordinal = 0) int pl) {
-
-        if (pl != DBCUtils.getPlayerID(par1AbstractClientPlayer))
-            ci.cancel();
-
-        DBCData dbcData = DBCData.get(par1AbstractClientPlayer.getCommandSenderName());
-        CustomForm f = (CustomForm) FormController.Instance.get(dbcData.currentCustomForm);
-        if (f != null) {
+        CustomForm form = Utility.getFormClient(par1AbstractClientPlayer);
+        if(form != null){
+            DBCData dbcData = DBCData.get(par1AbstractClientPlayer.getCommandSenderName());
             int playerBodyCM = JRMCoreH.dnsBodyCM(dbcData.DNS);
-            if (f.hairType.equals("ssj4")) {
-                renderSSJ4Face(f.hairColor, f.furColor, f.eyeColor, playerBodyCM);
-                renderSSJ4Hair(f.hairColor, f.hairCode, dbcData.Race, DBCUtils.getPlayerID(dbcData.player));
-                renderSSJ4Fur(f.furColor);
-            } else if (f.hairType.equals("oozaru")) {
-                renderOozaru(f.bodyCM, f.furColor, par1AbstractClientPlayer);
+            if (form.hairType.equals("ssj4")) {
+                renderSSJ4Face(form.hairColor, form.furColor, form.eyeColor, playerBodyCM);
+                renderSSJ4Hair(form.hairColor, form.hairCode, dbcData.Race, DBCUtils.getPlayerID(dbcData.player));
+                renderSSJ4Fur(form.furColor);
+            } else if (form.hairType.equals("oozaru")) {
+                renderOozaru(form.bodyCM, form.furColor, par1AbstractClientPlayer);
             }
         }
-
     }
 
     @Unique
@@ -97,8 +95,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         this.modelMain.renderBody(0.0625F);
         this.bindTexture(new ResourceLocation("jinryuudragonbc:cc/ss4b.png"));
         this.modelMain.renderBody(0.0625F);
-
-
     }
 
     @Unique
