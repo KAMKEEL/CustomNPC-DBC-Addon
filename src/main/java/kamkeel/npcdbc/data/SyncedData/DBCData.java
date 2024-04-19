@@ -251,8 +251,10 @@ public class DBCData extends PerfectSync<DBCData> {
     public void saveNBTData(NBTTagCompound compound) { // save all fields to compound
         NBTTagCompound c = compound(entity, dn);
 
-        PlayerCustomFormData formData = Utility.getFormData(player);
-        c.setInteger("currentCustomForm", formData.currentForm);
+        if (Utility.isServer(world)) {
+            PlayerCustomFormData formData = Utility.getFormData(player);
+            c.setInteger("currentCustomForm", formData.currentForm);
+        }
 
         c.setInteger("jrmcStrI", STR);
         c.setInteger("jrmcDexI", DEX);
@@ -310,8 +312,10 @@ public class DBCData extends PerfectSync<DBCData> {
         AuraColor = c.getInteger("jrmcAuraColor");
         preCustomAuraColor = c.getInteger("preCustomAuraColor");
 
-        PlayerCustomFormData formData = Utility.getFormData(player);
-        currentCustomForm = formData.currentForm;
+        if (Utility.isServer(world)) {
+            PlayerCustomFormData formData = Utility.getFormData(player);
+            currentCustomForm = formData.currentForm;
+        }
 
         State = c.getByte("jrmcState");
         State2 = c.getByte("jrmcState2");
