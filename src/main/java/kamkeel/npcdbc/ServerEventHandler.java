@@ -33,19 +33,12 @@ public class ServerEventHandler {
 
         EntityPlayer player = event.player;
         if (event.side == Side.SERVER && event.phase == TickEvent.Phase.START) {
-            if (player instanceof EntityPlayer) {// checks if player is eligible for data or not, incase they weren't before
+            if (player instanceof EntityPlayer){
                 PerfectSync.registerAllDatas(player);
-
-                // Test Without - IF works. Remove
-//                if (player.ticksExisted == 1) {
-//                    PerfectSync.saveAllDatas(player, true); // initial save
-//                }
-//                if (player.ticksExisted % PerfectSync.SaveEveryXTicks == 0) //saves once every SaveEveryXTicks
-//                    PerfectSync.saveAllDatas(player, true);
-
                 if (player.ticksExisted % 10 == 0) {
+                    // Load DBC Data Every 10 Ticks (0.5s)
                     if (DBCData.has(player))
-                        DBCData.get(player).loadFromNBT(true); // loaded from server NBT every tick instead of X ticks, as multiple sources can change PlayerPersisted outside of this mod
+                        DBCData.get(player).loadFromNBT(true);
                 }
             }
 
