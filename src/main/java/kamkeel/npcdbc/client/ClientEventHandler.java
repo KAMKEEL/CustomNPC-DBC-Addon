@@ -1,10 +1,11 @@
-package kamkeel.npcdbc.skills;
+package kamkeel.npcdbc.client;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.client.KeyHandler;
+import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 
@@ -20,14 +21,14 @@ public class ClientEventHandler {
             if (mc.currentScreen == null && KeyHandler.AscendKey.getIsKeyPressed()) {
                 performAscend();
             } else {
-                Transform.decrementRage();
+                TransformController.decrementRage();
             }
         }
     }
 
     private void performAscend() {
         if (Utility.getFormDataClient().selectedForm > -1)
-            Transform.Ascend(Utility.getFormDataClient().getSelectedForm());
+            TransformController.Ascend(Utility.getFormDataClient().getSelectedForm());
 
     }
 

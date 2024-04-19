@@ -3,7 +3,7 @@ package kamkeel.npcdbc.data;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
-import kamkeel.npcdbc.skills.Transform;
+import kamkeel.npcdbc.controllers.TransformController;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
@@ -169,7 +169,7 @@ public class PlayerCustomFormData {
     }
 
     public void resetAll() {
-        Transform.handleCustomFormDescend((EntityPlayerMP) parent.player);
+        TransformController.handleCustomFormDescend((EntityPlayerMP) parent.player);
         currentForm = -1;
         selectedForm = -1;
         unlockedForms = new HashMap();

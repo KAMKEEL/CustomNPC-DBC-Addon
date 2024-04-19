@@ -6,7 +6,7 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.network.PacketRegistry;
-import kamkeel.npcdbc.skills.Transform;
+import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.settings.KeyBinding;
 import org.spongepowered.asm.mixin.Mixin;
@@ -67,7 +67,7 @@ public class MixinDBCKiTech {
 
     @Inject(method = "triForce", at = @At("HEAD"), cancellable = true)
     private static void fixRage(int i, int j, int k, CallbackInfo ci) {
-        if (i == 1 && j == 1 && k == 100 && Transform.ascending)
+        if (i == 1 && j == 1 && k == 100 && TransformController.ascending)
             ci.cancel();
     }
 

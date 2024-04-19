@@ -5,7 +5,7 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.ICustomForm;
 import kamkeel.npcdbc.network.AbstractMessage.AbstractServerMessage;
 import kamkeel.npcdbc.scripted.DBCAPI;
-import kamkeel.npcdbc.skills.Transform;
+import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -45,9 +45,9 @@ public class PacketTellServer extends AbstractServerMessage<PacketTellServer> {
         }
 
         if (idString.startsWith("Transform:"))
-            Transform.handleCustomFormAscend(p, Integer.parseInt(idString.split(":")[1]));
+            TransformController.handleCustomFormAscend(p, Integer.parseInt(idString.split(":")[1]));
         if (idString.contains("Descend"))
-            Transform.handleCustomFormDescend(p);
+            TransformController.handleCustomFormDescend(p);
 
 
     }

@@ -2,8 +2,8 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.server.JGPlayerMP;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
-import kamkeel.npcdbc.events.DBCEventHooks;
-import kamkeel.npcdbc.events.DBCPlayerEvent;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
