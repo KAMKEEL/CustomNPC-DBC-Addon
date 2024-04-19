@@ -14,8 +14,6 @@ import net.minecraftforge.common.MinecraftForge;
 public class ClientProxy extends CommonProxy {
 
     public static void eventsInit() {
-        FMLCommonHandler.instance().bus().register(new ClientEvents());
-        MinecraftForge.EVENT_BUS.register(new ClientEvents());
         FMLCommonHandler.instance().bus().register(new SkillHandler());
         MinecraftForge.EVENT_BUS.register(new SkillHandler());
 
