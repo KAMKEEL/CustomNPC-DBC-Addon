@@ -29,7 +29,7 @@ public final class PingPacket extends AbstractPacket {
     @Override
     public void sendData(ByteBuf out) throws IOException {
         ByteBufUtils.writeUTF8String(out,this.data.player.getCommandSenderName());
-        ByteBufUtils.writeNBT(out,this.data.getNBT(new NBTTagCompound()));
+        ByteBufUtils.writeNBT(out,this.data.saveNBT(new NBTTagCompound()));
     }
 
     @Override

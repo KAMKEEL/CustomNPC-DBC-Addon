@@ -60,7 +60,7 @@ public class DBCExtended implements IExtendedEntityProperties {
         loadNBTData(null);
     }
 
-    public NBTTagCompound getNBT(NBTTagCompound c){
+    public NBTTagCompound saveNBT(NBTTagCompound c){
         c.setInteger("jrmcStrI", STR);
         c.setInteger("jrmcDexI", DEX);
         c.setInteger("jrmcConI", CON);
@@ -137,7 +137,7 @@ public class DBCExtended implements IExtendedEntityProperties {
 
     @Override
     public void saveNBTData(NBTTagCompound compound){
-        NBTTagCompound nbt = this.getNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
+        NBTTagCompound nbt = this.saveNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
 
         PlayerCustomFormData formData = Utility.getFormData(player);
         currentCustomForm = formData.currentForm;
