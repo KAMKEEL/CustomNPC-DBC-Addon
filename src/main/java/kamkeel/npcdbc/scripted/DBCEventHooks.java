@@ -1,12 +1,9 @@
-package kamkeel.npcdbc.events;
+package kamkeel.npcdbc.scripted;
 
 import kamkeel.npcdbc.constants.DBCScriptType;
-import net.minecraft.entity.player.EntityPlayer;
-import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.ScriptController;
 import noppes.npcs.controllers.data.PlayerDataScript;
 import noppes.npcs.scripted.NpcAPI;
-import noppes.npcs.scripted.event.DialogEvent;
 
 public class DBCEventHooks {
 

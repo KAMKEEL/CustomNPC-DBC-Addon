@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.events;
+package kamkeel.npcdbc;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -17,7 +17,7 @@ import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 
-public class ServerEvents {
+public class ServerEventHandler {
     @SideOnly(Side.SERVER)
     @SubscribeEvent
     public void registerExtended(EntityConstructing event) {

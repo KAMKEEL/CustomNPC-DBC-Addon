@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.events;
+package kamkeel.npcdbc.scripted;
 
 
 import cpw.mods.fml.common.eventhandler.Cancelable;

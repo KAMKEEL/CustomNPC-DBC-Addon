@@ -2,7 +2,7 @@ package kamkeel.npcdbc.items;
 
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
-import kamkeel.npcdbc.constants.EnumHealthCapsules;
+import kamkeel.npcdbc.constants.enums.EnumHealthCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import net.minecraft.client.renderer.texture.IIconRegister;

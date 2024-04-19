@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.skills;
+package kamkeel.npcdbc.controllers;
 
 import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreH;
@@ -11,7 +11,7 @@ import kamkeel.npcdbc.network.PacketRegistry;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayerMP;
 
-public class Transform {
+public class TransformController {
 
     public static int s, id, time, releaseTime, soundTime;
     public static boolean ascending, cantTransform, transformed;
@@ -34,7 +34,7 @@ public class Transform {
         time++;
         releaseTime++;
         soundTime++;
-        Transform.setAscending(true);
+        TransformController.setAscending(true);
         rageValue = getRageMeterIncrementation();
 
         if (soundTime == 1 || soundTime >= 33) { //plays aura sound every 33 ticks

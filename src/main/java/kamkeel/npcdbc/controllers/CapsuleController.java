@@ -1,10 +1,10 @@
 package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.config.ConfigCapsules;
-import kamkeel.npcdbc.constants.EnumHealthCapsules;
-import kamkeel.npcdbc.constants.EnumKiCapsules;
-import kamkeel.npcdbc.constants.EnumMiscCapsules;
-import kamkeel.npcdbc.constants.EnumStaminaCapsules;
+import kamkeel.npcdbc.constants.enums.EnumHealthCapsules;
+import kamkeel.npcdbc.constants.enums.EnumKiCapsules;
+import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
+import kamkeel.npcdbc.constants.enums.EnumStaminaCapsules;
 
 import java.util.HashMap;
 import java.util.UUID;

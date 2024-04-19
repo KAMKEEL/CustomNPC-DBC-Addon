@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.constants;
+package kamkeel.npcdbc.constants.enums;
 
 import static kamkeel.npcdbc.config.ConfigCapsules.*;
 
