@@ -22,7 +22,7 @@ public class GuiFormLabel extends GuiDBC {
         ySize = 150;
         guiLeft = parent.guiLeft + 5;
         guiTop = parent.guiTop + 5;
-        formData = Utility.getFormDataClient();
+        formData = Utility.getSelfData();
 
     }
 

@@ -57,8 +57,6 @@ public class PacketRegistry {
             sendToAllTracking(e, new PacketSyncData(e, id, data));
         } else
             tellServer(new PacketSyncData(e, id, data));
-
-
     }
 
     public static void sendToAll(IMessage message) {

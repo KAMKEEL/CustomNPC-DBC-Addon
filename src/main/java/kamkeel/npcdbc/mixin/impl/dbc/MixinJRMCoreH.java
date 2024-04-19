@@ -7,6 +7,7 @@ import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,8 +21,24 @@ public class MixinJRMCoreH {
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onGetPlayerAttribute(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info) {
         {
-            PlayerCustomFormData formData = null;// Utility.isServer() && player != null ? Utility.getFormData(player) : Utility.getFormDataClient(); //
-            if (formData != null && formData.isInCustomForm()) {
+            CustomForm form = null;
+            float currentFormLevel = 0f;
+            if(player == null)
+                return;
+
+            if(Utility.isServer()){
+                PlayerCustomFormData formData = Utility.getFormData(player);
+                if(formData != null && formData.isInCustomForm()){
+                    currentFormLevel = formData.getCurrentLevel();
+                    form = formData.getCurrentForm();
+                }
+            }
+            else {
+                form = Utility.getFormClient((AbstractClientPlayer) player);
+                currentFormLevel = Utility.getFormLevelClient((AbstractClientPlayer) player);
+            }
+
+            if(form != null) {
                 int skillX = powerType == 1 ? JRMCoreH.SklLvlX(1, SklX) - 1 : 0;
                 int mysticLvl = powerType == 1 ? JRMCoreH.SklLvl(10, 1, Skls) : 0;
                 int result = 0;
@@ -52,18 +69,17 @@ public class MixinJRMCoreH {
                 }
 
                 DBCData d = DBCData.get(player);
-                CustomForm f = formData.getCurrentForm();
-                float[] multis = f.getAllMulti();
-                float stackableMulti = d.isForm(DBCForm.Kaioken) ? f.getFormMulti(DBCForm.Kaioken) : d.isForm(DBCForm.UltraInstinct) ? f.getFormMulti(DBCForm.UltraInstinct) : d.isForm(DBCForm.GodOfDestruction) ? f.getFormMulti(DBCForm.GodOfDestruction) : d.isForm(DBCForm.Mystic) ? f.getFormMulti(DBCForm.Mystic) : 1.0f;
+                float[] multis = form.getAllMulti();
+                float stackableMulti = d.isForm(DBCForm.Kaioken) ? form.getFormMulti(DBCForm.Kaioken) : d.isForm(DBCForm.UltraInstinct) ? form.getFormMulti(DBCForm.UltraInstinct) : d.isForm(DBCForm.GodOfDestruction) ? form.getFormMulti(DBCForm.GodOfDestruction) : d.isForm(DBCForm.Mystic) ? form.getFormMulti(DBCForm.Mystic) : 1.0f;
                 double fmvalue = 1.0f;
 
                 //don't forget to multiply this by legend/divine/majin multis
                 if (d.isForm(DBCForm.Kaioken) && d.State2 > 1) {
                     fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Kaioken", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
-                    stackableMulti += stackableMulti * f.getState2Factor(DBCForm.Kaioken) * d.State2 / (JRMCoreH.TransKaiDmg.length - 1);
+                    stackableMulti += stackableMulti * form.getState2Factor(DBCForm.Kaioken) * d.State2 / (JRMCoreH.TransKaiDmg.length - 1);
                 } else if (d.isForm(DBCForm.UltraInstinct) && d.State2 > 1) {
                     fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "UltraInstict", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
-                    stackableMulti += stackableMulti * f.getState2Factor(DBCForm.UltraInstinct) * d.State2 / JGConfigUltraInstinct.CONFIG_UI_LEVELS;
+                    stackableMulti += stackableMulti * form.getState2Factor(DBCForm.UltraInstinct) * d.State2 / JGConfigUltraInstinct.CONFIG_UI_LEVELS;
                 } else if (d.isForm(DBCForm.GodOfDestruction))
                     fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "GodOfDestruction", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
                 else if (d.isForm(DBCForm.Mystic))
@@ -79,9 +95,9 @@ public class MixinJRMCoreH {
                     result *= multis[2];
 
                 if (attribute == 0 || attribute == 1 || attribute == 3)
-                    result *= stackableMulti * f.getFM().calculateMulti("attribute", formData.getCurrentLevel());
+                    result *= stackableMulti * form.getFM().calculateMulti("attribute", currentFormLevel);
 
-                result = (int) ((double) result > Double.MAX_VALUE ? Double.MAX_VALUE : (double) result);
+                result = (int) (Math.min((double) result, Double.MAX_VALUE));
                 info.setReturnValue(result);
             }
         }
@@ -89,7 +105,8 @@ public class MixinJRMCoreH {
 
     @Inject(method = "Rls", at = @At("HEAD"), cancellable = true)
     private static void fixRelease(byte b, CallbackInfo ci) {
-        if (Utility.getFormDataClient().isInCustomForm())
+        PlayerCustomFormData formData = Utility.getSelfData();
+        if (formData != null && formData.isInCustomForm())
             ci.cancel();
     }
 

@@ -21,7 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class DBCData extends PerfectSync<DBCData> {
 
-    public static String dn = "PlayerPersisted";
+    public static String DBCPersisted = "PlayerPersisted";
 
     public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks, Rage, Heat, AuraColor, preCustomAuraColor;
     public byte Class, Race, Powertype, State, State2, Release;
@@ -29,10 +29,11 @@ public class DBCData extends PerfectSync<DBCData> {
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS, DNSHair, preCustomFormDNS, preCustomFormDNSHair;
 
     public int currentCustomForm;
+    public float currentCustomFormLevel;
 
     public DBCData(Entity player) {
         super(player);
-        this.DATA_NAME = dn;
+        this.DATA_NAME = DBCPersisted;
         this.player = (EntityPlayer) player;
     }
 
@@ -124,7 +125,7 @@ public class DBCData extends PerfectSync<DBCData> {
         int toAdd = (int) (maxKi * (percToRestore / 100));
 
         Ki += toAdd;
-        Ki = Ki > maxKi ? maxKi : Ki;
+        Ki = Math.min(Ki, maxKi);
         saveToNBT(true);
     }
 
@@ -133,7 +134,7 @@ public class DBCData extends PerfectSync<DBCData> {
         int toAdd = (int) (maxBody * (percToRestore / 100));
 
         Body += toAdd;
-        Body = Body > maxBody ? maxBody : Body;
+        Body = Math.min(Body, maxBody);
         saveToNBT(true);
     }
 
@@ -142,7 +143,7 @@ public class DBCData extends PerfectSync<DBCData> {
         int toAdd = (int) (maxSta * (percToRestore / 100));
 
         Stamina += toAdd;
-        Stamina = Stamina > maxSta ? maxSta : Stamina;
+        Stamina = Math.min(Stamina, maxSta);
         saveToNBT(true);
     }
 
@@ -249,13 +250,10 @@ public class DBCData extends PerfectSync<DBCData> {
 
     @Override
     public void saveNBTData(NBTTagCompound compound) { // save all fields to compound
-        NBTTagCompound c = compound(entity, dn);
-
-        if (Utility.isServer(world)) {
-            PlayerCustomFormData formData = Utility.getFormData(player);
-            c.setInteger("currentCustomForm", formData.currentForm);
-        }
-
+        NBTTagCompound c = compound(entity, DBCPersisted);
+        PlayerCustomFormData formData = Utility.getFormData(player);
+        c.setInteger("customFormID", formData.currentForm);
+        c.setFloat("customFormLevel", formData.getCurrentLevel());
         c.setInteger("jrmcStrI", STR);
         c.setInteger("jrmcDexI", DEX);
         c.setInteger("jrmcConI", CON);
@@ -271,15 +269,12 @@ public class DBCData extends PerfectSync<DBCData> {
         c.setInteger("jrmcAuraColor", AuraColor);
         c.setInteger("preCustomAuraColor", preCustomAuraColor);
 
-
         c.setByte("jrmcState", State);
         c.setByte("jrmcState2", State2);
         c.setByte("jrmcRelease", Release);
         c.setByte("jrmcPwrtyp", Powertype);
 
-
         c.setByte("jrmcRace", Race);
-
 
         c.setString("jrmcStatusEff", StatusEffects);
         c.setString("jrmcSSltX", RacialSkills);
@@ -295,7 +290,7 @@ public class DBCData extends PerfectSync<DBCData> {
 
     @Override
     public void loadNBTData(NBTTagCompound compound) { // compound has all synced data,load all fields from compound
-        NBTTagCompound c = Utility.isServer() ? compound(entity, dn) : compound;
+        NBTTagCompound c = Utility.isServer() ? compound(entity, DBCPersisted) : compound;
         STR = c.getInteger("jrmcStrI");
         DEX = c.getInteger("jrmcDexI");
         CON = c.getInteger("jrmcConI");
@@ -315,6 +310,10 @@ public class DBCData extends PerfectSync<DBCData> {
         if (Utility.isServer(world)) {
             PlayerCustomFormData formData = Utility.getFormData(player);
             currentCustomForm = formData.currentForm;
+            currentCustomFormLevel = formData.getCurrentLevel();
+        } else {
+            currentCustomForm = c.getInteger("customFormID");
+            currentCustomFormLevel = c.getFloat("customFormLevel");
         }
 
         State = c.getByte("jrmcState");
@@ -336,8 +335,6 @@ public class DBCData extends PerfectSync<DBCData> {
         preCustomFormDNS = c.getString("preCustomFormDNS");
         preCustomFormDNSHair = c.getString("preCustomFormDNSH");
         nbt = c;
-
-
     }
 
 
@@ -348,26 +345,26 @@ public class DBCData extends PerfectSync<DBCData> {
     }
 
     public static DBCData get(Entity player) {
-        return getCache(player, dn);
+        return getCache(player, DBCPersisted);
 
     }
 
     public static DBCData get(String playerName) {
-        return getCache(playerName, dn);
+        return getCache(playerName, DBCPersisted);
 
     }
 
     public static DBCData getClient() {
-        return getClient(dn);
+        return getClient(DBCPersisted);
 
     }
 
     public static boolean has(Entity p) {
-        return getCache(p, dn) != null;
+        return getCache(p, DBCPersisted) != null;
     }
 
     public static boolean has(String name) {
-        return getCache(name, dn) != null;
+        return getCache(name, DBCPersisted) != null;
     }
 
 }

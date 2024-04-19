@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
+import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -136,21 +137,39 @@ public class Utility {
     }
 
     @SideOnly(Side.CLIENT)
-    public static PlayerCustomFormData getFormDataClient() {
-        return getFormDataClient(Minecraft.getMinecraft().thePlayer);
+    public static PlayerCustomFormData getSelfData() {
+        if(Minecraft.getMinecraft().thePlayer == null)
+            return null;
+        IPlayerFormData formData = (IPlayerFormData) PlayerData.get(Minecraft.getMinecraft().thePlayer);
+        if(formData == null)
+            return null;
+        return formData.getCustomFormData();
     }
 
     @SideOnly(Side.CLIENT)
-    public static PlayerCustomFormData getFormDataClient(AbstractClientPlayer player) {
-        if (Minecraft.getMinecraft().thePlayer != null)
-            return ((IPlayerFormData) PlayerData.get(player)).getCustomFormData();
-        else
+    public static CustomForm getFormClient(AbstractClientPlayer player) {
+        DBCData dbcData = DBCData.get(player);
+        if(dbcData == null)
             return null;
+
+        int form = dbcData.currentCustomForm;
+        if(form == -1)
+            return null;
+
+        return (CustomForm) FormController.getInstance().get(form);
     }
 
-    public static PlayerCustomFormData getFormData(EntityPlayer p) {
-        return Utility.getFormData(PlayerDataController.Instance.getPlayerData(p));
+    @SideOnly(Side.CLIENT)
+    public static float getFormLevelClient(AbstractClientPlayer player) {
+        DBCData dbcData = DBCData.get(player);
+        if(dbcData == null)
+            return 0f;
 
+        return dbcData.currentCustomFormLevel;
+    }
+
+    public static PlayerCustomFormData getFormData(EntityPlayer player) {
+        return Utility.getFormData(PlayerDataController.Instance.getPlayerData(player));
     }
 
     public static PlayerCustomFormData getFormData(PlayerData playerData) {
