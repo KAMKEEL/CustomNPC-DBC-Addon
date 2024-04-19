@@ -48,7 +48,7 @@ public class DBCExtended implements IExtendedEntityProperties {
 
     public static DBCExtended get(EntityPlayer player) {
         synchronized (dbcDataCache) {
-            if (dbcDataCache.containsKey(player.getCommandSenderName())) {
+            if (!dbcDataCache.containsKey(player.getCommandSenderName())) {
                 dbcDataCache.put(player.getCommandSenderName(),  new CacheHashMap.CachedObject<>(new DBCExtended(player)));
             }
             return dbcDataCache.get(player.getCommandSenderName()).getObject();
@@ -60,8 +60,7 @@ public class DBCExtended implements IExtendedEntityProperties {
         loadNBTData(null);
     }
 
-    public NBTTagCompound getNBT(){
-        NBTTagCompound c = new NBTTagCompound();
+    public NBTTagCompound getNBT(NBTTagCompound c){
         c.setInteger("jrmcStrI", STR);
         c.setInteger("jrmcDexI", DEX);
         c.setInteger("jrmcConI", CON);
@@ -129,9 +128,8 @@ public class DBCExtended implements IExtendedEntityProperties {
         DNSHair = c.getString("jrmcDNSH");
 
         // DBC Addon
-        PlayerCustomFormData formData = Utility.getFormData(player);
-        currentCustomForm = formData.currentForm;
-        currentCustomFormLevel = formData.getCurrentLevel();
+        currentCustomForm =  c.getInteger("customFormID");
+        currentCustomFormLevel = c.getInteger("customFormLevel");
         preCustomAuraColor = c.getInteger("preCustomAuraColor");
         preCustomFormDNS = c.getString("preCustomFormDNS");
         preCustomFormDNSHair = c.getString("preCustomFormDNSH");
@@ -139,7 +137,7 @@ public class DBCExtended implements IExtendedEntityProperties {
 
     @Override
     public void saveNBTData(NBTTagCompound compound){
-        NBTTagCompound nbt = this.getNBT();
+        NBTTagCompound nbt = this.getNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
 
         PlayerCustomFormData formData = Utility.getFormData(player);
         currentCustomForm = formData.currentForm;
@@ -163,8 +161,6 @@ public class DBCExtended implements IExtendedEntityProperties {
         preCustomAuraColor = dbc.getInteger("preCustomAuraColor");
         preCustomFormDNS = dbc.getString("preCustomFormDNS");
         preCustomFormDNSHair = dbc.getString("preCustomFormDNSH");
-
-        syncClient();
     }
 
     public void syncClient() {

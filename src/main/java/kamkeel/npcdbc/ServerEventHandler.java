@@ -4,6 +4,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.DBCExtended;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import kamkeel.npcdbc.network.PacketHandler;
@@ -22,8 +23,11 @@ public class ServerEventHandler {
     @SideOnly(Side.SERVER)
     @SubscribeEvent
     public void registerExtended(EntityConstructing event) {
-        if ((event.entity instanceof EntityPlayer))
-            DBCExtended.get((EntityPlayer) event.entity).loadNBTData(null);
+        if ((event.entity instanceof EntityPlayer)){
+            DBCExtended dbcExtended = DBCExtended.get((EntityPlayer) event.entity);
+            dbcExtended.loadNBTData(null);
+            dbcExtended.syncClient();
+        }
     }
 
     @SubscribeEvent
@@ -45,7 +49,9 @@ public class ServerEventHandler {
             }
 
             if (player.ticksExisted % 10 == 0) {
-                DBCExtended.get(player).loadNBTData(null);
+                DBCExtended dbcExtended = DBCExtended.get(player);
+                dbcExtended.loadNBTData(null);
+                dbcExtended.syncClient();
             }
         }
     }
@@ -58,6 +64,7 @@ public class ServerEventHandler {
             if (data == null) {
                 return;
             }
+            data.loadNBTData(null);
             PacketHandler.Instance.sendToPlayer(new PingPacket(data).generatePacket(),
                 ((EntityPlayerMP)event.entityPlayer));
         }

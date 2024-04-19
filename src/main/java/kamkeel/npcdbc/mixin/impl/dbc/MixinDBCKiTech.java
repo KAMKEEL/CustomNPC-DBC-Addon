@@ -5,8 +5,9 @@ import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.data.DBCExtended;
-import kamkeel.npcdbc.network.PacketRegistry;
+import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -59,7 +60,7 @@ public class MixinDBCKiTech {
 
 
             if (returnEarly) {
-                PacketRegistry.tellServer("Descend");
+                PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false).generatePacket());
                 DBCKiTech.soundAsc(formData.getCurrentForm().getDescendSound());
                 ci.cancel();
             }

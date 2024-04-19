@@ -148,6 +148,9 @@ public class Utility {
 
     @SideOnly(Side.CLIENT)
     public static CustomForm getFormClient(AbstractClientPlayer player) {
+        if(player == null)
+            return null;
+
         DBCExtended dbcExtended = DBCExtended.get(player);
         if(dbcExtended == null)
             return null;

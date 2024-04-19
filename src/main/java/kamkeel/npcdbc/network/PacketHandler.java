@@ -8,6 +8,7 @@ import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.network.packets.PingPacket;
+import kamkeel.npcdbc.network.packets.TransformPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -23,6 +24,7 @@ public final class PacketHandler {
 
     public PacketHandler() {
         map.put(PingPacket.packetName, new PingPacket());
+        map.put(TransformPacket.packetName, new TransformPacket());
         this.register();
     }
 

@@ -7,6 +7,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.data.DBCExtended;
+import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.PingPacket;
+import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -62,7 +65,7 @@ public class TransformController {
 
         }
         if (rage >= 100) { //transform when rage meter reaches 100 (max)
-            PacketRegistry.tellServer("Transform:" + form.getID());
+            PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getID(), true).generatePacket());
             DBCKiTech.soundAsc(form.getAscendSound());
             resetTimers();
             cantTransform = true;
@@ -158,10 +161,9 @@ public class TransformController {
             if (dbcExtended.State > 0)
                 dbcExtended.State = 0;
             formData.updateClient();
-            dbcExtended.saveNBTData(null);
-
             Utility.sendMessage(p, "§aTransformed to§r " + formData.getCurrentForm().getMenuName());
             setCustomFormRenderingData(p, formData, dbcExtended);
+            dbcExtended.saveNBTData(null);
         }
     }
 
@@ -172,12 +174,11 @@ public class TransformController {
             Utility.sendMessage(p, "§cDescended from§r " + formData.getCurrentForm().getMenuName());
             formData.currentForm = -1;
             formData.updateClient();
-
             dbcExtended.getRawCompound().setString("jrmcDNS", dbcExtended.preCustomFormDNS); //sets original DNS back
             dbcExtended.getRawCompound().setInteger("jrmcAuraColor", dbcExtended.preCustomAuraColor); //sets original aura back
             dbcExtended.getRawCompound().setString("jrmcDNSH", dbcExtended.preCustomFormDNSHair);
+            dbcExtended.saveNBTData(null);
         }
-
     }
 
     //this method is a bit slow, will eventually have to move all of this to MixinRenderPlayerJBRA
@@ -231,7 +232,5 @@ public class TransformController {
             dbcExtended.setHairPreset(0xb);
         } else if (!form.hairCode.isEmpty())
             dbcExtended.getRawCompound().setString("jrmcDNSH", form.hairCode);
-
-        dbcExtended.saveNBTData(null);
     }
 }
