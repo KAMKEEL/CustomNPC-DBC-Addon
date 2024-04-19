@@ -13,7 +13,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.PlayerDataController;
@@ -22,12 +21,10 @@ import noppes.npcs.controllers.data.PlayerData;
 public class ServerEventHandler {
     @SideOnly(Side.SERVER)
     @SubscribeEvent
-    public void registerExtended(EntityConstructing event) {
-        if ((event.entity instanceof EntityPlayer)){
-            DBCExtended dbcExtended = DBCExtended.get((EntityPlayer) event.entity);
-            dbcExtended.loadNBTData(null);
-            dbcExtended.syncClient();
-        }
+    public void loginEvent(cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event) {
+        DBCExtended dbcExtended = DBCExtended.get(event.player);
+        dbcExtended.loadNBTData(null);
+        dbcExtended.syncClient();
     }
 
     @SubscribeEvent
