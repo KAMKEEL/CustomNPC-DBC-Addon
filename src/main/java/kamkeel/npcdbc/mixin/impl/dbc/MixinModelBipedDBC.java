@@ -6,7 +6,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.SyncedData.DBCData;
+import kamkeel.npcdbc.data.DBCExtended;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -63,7 +63,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             }
 
             if (form != null) {
-                DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
+                DBCExtended dbcExtended = DBCExtended.get(ClientEventHandler.renderingPlayer);
                 if (form.hairType.equals("ssj4")) { //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
                     if (hair.contains("FACENOSE") || hair.contains("EYEBASE") || hair.contains("FACEMOUTH") || hair.contains("EYEBROW") || hair.contains("EYEBASE") || hair.contains("EYELEFT") || hair.contains("EYERIGHT"))
                         ci.setReturnValue("");
@@ -74,8 +74,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 } else if (form.hairType.equals("ssj3"))
                     if (hair.contains("EYEBROW")) { //bind ssj3 eyebrow texture to ssj3 hair type
-                        int gen = JRMCoreH.dnsGender(dbcData.DNS);
-                        int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
+                        int gen = JRMCoreH.dnsGender(dbcExtended.DNS);
+                        int eyes = JRMCoreH.dnsEyes(dbcExtended.DNS);
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
                     }
             }

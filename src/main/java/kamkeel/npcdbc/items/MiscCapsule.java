@@ -5,7 +5,7 @@ import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.data.SyncedData.DBCData;
+import kamkeel.npcdbc.data.DBCExtended;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -122,7 +122,7 @@ public class MiscCapsule extends Item {
         }
         else if(meta == EnumMiscCapsules.Heat.getMeta()){
             // Restore 100 Amount of Heat
-            DBCData.get(player).restoreUIHeat(100);
+            DBCExtended.get(player).restoreUIHeat(100);
             player.addChatComponentMessage(new ChatComponentText("§7UI Heat Restored"));
         }
 

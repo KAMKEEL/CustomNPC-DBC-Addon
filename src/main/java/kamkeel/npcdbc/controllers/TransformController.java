@@ -6,9 +6,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.SyncedData.DBCData;
-import kamkeel.npcdbc.network.PacketRegistry;
+import kamkeel.npcdbc.data.DBCExtended;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 public class TransformController {
@@ -17,7 +17,8 @@ public class TransformController {
     public static boolean ascending, cantTransform, transformed;
     public static String ascendSound, descendSound;
     public static float rage, rageValue;
-    public static DBCData dbcData;
+    public static DBCExtended dbcExtended;
+
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
     // Client  side handling
@@ -27,8 +28,8 @@ public class TransformController {
     public static void Ascend(CustomForm form) {
         if (cantTransform || (rage > 0 && transformed) || (Utility.getSelfData() != null && Utility.getSelfData().getCurrentForm() != null && Utility.getSelfData().getCurrentForm().getID() == form.id))
             return;
-        dbcData = DBCData.getClient();
-        if (dbcData == null)
+        dbcExtended = DBCExtended.get(Minecraft.getMinecraft().thePlayer);
+        if (dbcExtended == null)
             return;
 
         time++;
@@ -66,20 +67,17 @@ public class TransformController {
             resetTimers();
             cantTransform = true;
             transformed = true;
-
-
         }
 
         //dbcData.Rage = (int) rage;
         JRMCoreH.TransSaiCurRg = (byte) rage;
-        dbcData.setInt("jrmcSaiRg", (int) rage);
-
+        dbcExtended.getRawCompound().setInteger("jrmcSaiRg", (int) rage);
     }
 
     @SideOnly(Side.CLIENT)
     public static void decrementRage() {
-        dbcData = DBCData.getClient();
-        if (dbcData == null || rage == 0)
+        dbcExtended = DBCExtended.get(Minecraft.getMinecraft().thePlayer);
+        if (dbcExtended == null || rage == 0)
             return;
 
         if (rage > 0) {
@@ -96,8 +94,7 @@ public class TransformController {
             setAscending(false);
 
         JRMCoreH.TransSaiCurRg = (byte) rage;
-        dbcData.setInt("jrmcSaiRg", (int) rage);
-
+        dbcExtended.getRawCompound().setInteger("jrmcSaiRg", (int) rage);
     }
 
     @SideOnly(Side.CLIENT)
@@ -156,85 +153,85 @@ public class TransformController {
     public static void handleCustomFormAscend(EntityPlayerMP p, int formID) {
         PlayerCustomFormData formData = Utility.getFormData(p);
         if (formData.currentForm != formID) {
-            DBCData dbcData = DBCData.get(p);
+            DBCExtended dbcExtended = DBCExtended.get(p);
             formData.currentForm = formID;
-            if (dbcData.State > 0)
-                dbcData.State = 0;
+            if (dbcExtended.State > 0)
+                dbcExtended.State = 0;
             formData.updateClient();
-            dbcData.saveToNBT(true);
+            dbcExtended.saveNBTData(null);
 
             Utility.sendMessage(p, "§aTransformed to§r " + formData.getCurrentForm().getMenuName());
-            setCustomFormRenderingData(p, formData, dbcData);
+            setCustomFormRenderingData(p, formData, dbcExtended);
         }
     }
 
     public static void handleCustomFormDescend(EntityPlayerMP p) {
         PlayerCustomFormData formData = Utility.getFormData(p);
         if (formData.isInCustomForm()) {
-            DBCData dbcData = DBCData.get(p);
+            DBCExtended dbcExtended = DBCExtended.get(p);
             Utility.sendMessage(p, "§cDescended from§r " + formData.getCurrentForm().getMenuName());
             formData.currentForm = -1;
             formData.updateClient();
 
-            dbcData.setString("jrmcDNS", dbcData.preCustomFormDNS); //sets original DNS back
-            dbcData.setInt("jrmcAuraColor", dbcData.preCustomAuraColor); //sets original aura back
-            dbcData.setString("jrmcDNSH", dbcData.preCustomFormDNSHair);
+            dbcExtended.getRawCompound().setString("jrmcDNS", dbcExtended.preCustomFormDNS); //sets original DNS back
+            dbcExtended.getRawCompound().setInteger("jrmcAuraColor", dbcExtended.preCustomAuraColor); //sets original aura back
+            dbcExtended.getRawCompound().setString("jrmcDNSH", dbcExtended.preCustomFormDNSHair);
         }
 
     }
 
     //this method is a bit slow, will eventually have to move all of this to MixinRenderPlayerJBRA
-    public static void setCustomFormRenderingData(EntityPlayerMP p, PlayerCustomFormData formData, DBCData dbcData) {
-        dbcData.setString("preCustomFormDNS", dbcData.DNS); //store pre transformation DNS
-        dbcData.setInt("preCustomAuraColor", dbcData.AuraColor);
-        dbcData.setString("preCustomFormDNSH", dbcData.DNSHair); //store pre transformation DNS
+    public static void setCustomFormRenderingData(EntityPlayerMP p, PlayerCustomFormData formData, DBCExtended dbcExtended) {
+        dbcExtended.getRawCompound().setString("preCustomFormDNS", dbcExtended.DNS); //store pre transformation DNS
+        dbcExtended.getRawCompound().setInteger("preCustomAuraColor", dbcExtended.AuraColor);
+        dbcExtended.getRawCompound().setString("preCustomFormDNSH", dbcExtended.DNSHair); //store pre transformation DNS
 
         CustomForm form = formData.getCurrentForm();
-        byte race = dbcData.Race;
+        byte race = dbcExtended.Race;
 
         if (form.hasColor("fur")) { // ssj4 tail color
             if (race == 1 || race == 2) {
                 if (form.hairType.equals("ssj4") || form.hairType.equals("oozaru")) {
-                    dbcData.setBodyColor1(form.furColor);
+                    dbcExtended.setBodyColor1(form.furColor);
                     // dbcData.DNSHair = "";
                 }
             }
         }
         if (form.hasColor("hair")) {
-            dbcData.setHairColor(form.hairColor);
+            dbcExtended.setHairColor(form.hairColor);
             if (race == 1 || race == 2) {
                 if (form.hairType.equals("ssj4") || form.hairType.equals("oozaru")) {
-                    dbcData.setBodyColor1(form.furColor);
+                    dbcExtended.setBodyColor1(form.furColor);
                 } else
-                    dbcData.setBodyColor1(form.hairColor);
+                    dbcExtended.setBodyColor1(form.hairColor);
             }
         }
 
         if (form.hasColor("eye")) {
-            dbcData.setEyeColorLeft(form.eyeColor);
-            dbcData.setEyeColorRight(form.eyeColor);
+            dbcExtended.setEyeColorLeft(form.eyeColor);
+            dbcExtended.setEyeColorRight(form.eyeColor);
         }
         if (form.hasColor("aura"))
-            dbcData.setInt("jrmcAuraColor", form.auraColor);
+            dbcExtended.getRawCompound().setInteger("jrmcAuraColor", form.auraColor);
 
 
         boolean b = race == 0 || race == 1 || race == 2 || race == 5; //if human, saiyans or majin
         if (form.hasColor("bodyMain"))
-            dbcData.setBodyColorMain(form.bodyCM);
+            dbcExtended.setBodyColorMain(form.bodyCM);
         if (form.hasColor("body1"))
-            dbcData.setBodyColor1(form.bodyC1);
+            dbcExtended.setBodyColor1(form.bodyC1);
 
         if (!b) {
             if (form.hasColor("body2"))
-                dbcData.setBodyColor2(form.bodyC2);
+                dbcExtended.setBodyColor2(form.bodyC2);
             if (form.hasColor("body3"))
-                dbcData.setBodyColor3(form.bodyC3);
+                dbcExtended.setBodyColor3(form.bodyC3);
         } else if (form.hairType.equals("ssj3")) {
             //dbcData.setNosePreset(99);
-            dbcData.setHairPreset(0xb);
+            dbcExtended.setHairPreset(0xb);
         } else if (!form.hairCode.isEmpty())
-            dbcData.setString("jrmcDNSH", form.hairCode);
+            dbcExtended.getRawCompound().setString("jrmcDNSH", form.hairCode);
 
-        dbcData.saveToNBT(true);
+        dbcExtended.saveNBTData(null);
     }
 }

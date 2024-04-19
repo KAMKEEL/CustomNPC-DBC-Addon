@@ -6,10 +6,8 @@ import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.CustomForm;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.SyncedData.DBCData;
+import kamkeel.npcdbc.data.DBCExtended;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -17,7 +15,6 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import noppes.npcs.client.ClientEventHandler;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -47,11 +44,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private void renderSSJ4(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(ordinal = 0) int pl) {
         CustomForm form = Utility.getFormClient(par1AbstractClientPlayer);
         if(form != null){
-            DBCData dbcData = DBCData.get(par1AbstractClientPlayer.getCommandSenderName());
-            int playerBodyCM = JRMCoreH.dnsBodyCM(dbcData.DNS);
+            DBCExtended dbcExtended = DBCExtended.get(par1AbstractClientPlayer);
+            int playerBodyCM = JRMCoreH.dnsBodyCM(dbcExtended.DNS);
             if (form.hairType.equals("ssj4")) {
                 renderSSJ4Face(form.hairColor, form.furColor, form.eyeColor, playerBodyCM);
-                renderSSJ4Hair(form.hairColor, form.hairCode, dbcData.Race, DBCUtils.getPlayerID(dbcData.player));
+                renderSSJ4Hair(form.hairColor, form.hairCode, dbcExtended.Race, DBCUtils.getPlayerID(dbcExtended.player));
                 renderSSJ4Fur(form.furColor);
             } else if (form.hairType.equals("oozaru")) {
                 renderOozaru(form.bodyCM, form.furColor, par1AbstractClientPlayer);

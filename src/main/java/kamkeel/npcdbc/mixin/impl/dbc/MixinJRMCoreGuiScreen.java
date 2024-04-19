@@ -4,7 +4,7 @@ import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.SyncedData.DBCData;
+import kamkeel.npcdbc.data.DBCExtended;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -35,7 +35,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
         if (formData != null && formData.isInCustomForm())
             name = formData.getCurrentForm().getMenuName();
         else {
-            DBCData d = DBCData.getClient();
+            DBCExtended d = DBCExtended.get(Minecraft.getMinecraft().thePlayer);
             if(d != null){
                 name = DBCUtils.getCurrentFormFullName(d.Race, d.State, d.isForm(DBCForm.Legendary), d.isForm(DBCForm.Divine), JRMCoreH.StusEfctsMe(13), ui, DBCUtils.isUIWhite(ui, JRMCoreH.State2), JRMCoreH.StusEfctsMe(20));
             }

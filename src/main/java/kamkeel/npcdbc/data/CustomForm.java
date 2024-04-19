@@ -6,7 +6,6 @@ import kamkeel.npcdbc.api.IFormMastery;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -373,7 +372,7 @@ public class CustomForm implements ICustomForm {
 
     @Override
     public void assignToPlayer(EntityPlayer p) {
-        if (race == DBCRace.ALL || race == DBCData.get(p).Race) {
+        if (race == DBCRace.ALL || race == DBCExtended.get(p).Race) {
             PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
             PlayerCustomFormData formData = Utility.getFormData(playerData);
             formData.addForm(this);

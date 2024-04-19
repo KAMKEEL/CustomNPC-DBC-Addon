@@ -6,7 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.SyncedData.DBCData;
+import kamkeel.npcdbc.data.DBCExtended;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -148,11 +148,11 @@ public class Utility {
 
     @SideOnly(Side.CLIENT)
     public static CustomForm getFormClient(AbstractClientPlayer player) {
-        DBCData dbcData = DBCData.get(player);
-        if(dbcData == null)
+        DBCExtended dbcExtended = DBCExtended.get(player);
+        if(dbcExtended == null)
             return null;
 
-        int form = dbcData.currentCustomForm;
+        int form = dbcExtended.currentCustomForm;
         if(form == -1)
             return null;
 
@@ -161,11 +161,11 @@ public class Utility {
 
     @SideOnly(Side.CLIENT)
     public static float getFormLevelClient(AbstractClientPlayer player) {
-        DBCData dbcData = DBCData.get(player);
-        if(dbcData == null)
+        DBCExtended dbcExtended = DBCExtended.get(player);
+        if(dbcExtended == null)
             return 0f;
 
-        return dbcData.currentCustomFormLevel;
+        return dbcExtended.currentCustomFormLevel;
     }
 
     public static PlayerCustomFormData getFormData(EntityPlayer player) {

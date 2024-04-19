@@ -4,10 +4,11 @@ import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.SyncedData.DBCData;
+import kamkeel.npcdbc.data.DBCExtended;
 import kamkeel.npcdbc.network.PacketRegistry;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -40,7 +41,7 @@ public class MixinDBCKiTech {
     @Inject(method = "Descend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;kiInSuper:I", shift = At.Shift.AFTER), cancellable = true)
     private static void DescendModified(KeyBinding K, CallbackInfo ci) {
         PlayerCustomFormData formData = Utility.getSelfData();
-        DBCData d = DBCData.getClient();
+        DBCExtended d = DBCExtended.get(Minecraft.getMinecraft().thePlayer);
         boolean returnEarly = true;
         if (d != null && formData != null && formData.isInCustomForm()) {
             if (d.formSettingOn(DBCForm.Kaioken)) {

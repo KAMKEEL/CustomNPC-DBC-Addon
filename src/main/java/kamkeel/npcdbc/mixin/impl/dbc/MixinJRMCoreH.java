@@ -5,7 +5,7 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.SyncedData.DBCData;
+import kamkeel.npcdbc.data.DBCExtended;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -68,7 +68,7 @@ public class MixinJRMCoreH {
                         result = currAttributes[attribute];
                 }
 
-                DBCData d = DBCData.get(player);
+                DBCExtended d = DBCExtended.get(player);
                 float[] multis = form.getAllMulti();
                 float stackableMulti = d.isForm(DBCForm.Kaioken) ? form.getFormMulti(DBCForm.Kaioken) : d.isForm(DBCForm.UltraInstinct) ? form.getFormMulti(DBCForm.UltraInstinct) : d.isForm(DBCForm.GodOfDestruction) ? form.getFormMulti(DBCForm.GodOfDestruction) : d.isForm(DBCForm.Mystic) ? form.getFormMulti(DBCForm.Mystic) : 1.0f;
                 double fmvalue = 1.0f;

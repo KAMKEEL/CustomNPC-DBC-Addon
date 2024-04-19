@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.data;
 
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import kamkeel.npcdbc.controllers.TransformController;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -124,7 +123,7 @@ public class PlayerCustomFormData {
         if (f == null || !isInCustomForm() || parent.player == null)
             return;
 
-        DBCData data = DBCData.get(parent.player);
+        DBCExtended data = DBCExtended.get(parent.player);
         if(data == null)
             return;
         FormMastery fm = f.getFM();

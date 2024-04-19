@@ -1,13 +1,17 @@
 package kamkeel.npcdbc;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
+import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.items.ModItems;
+import kamkeel.npcdbc.network.PacketHandler;
 
 import java.io.File;
 
@@ -39,5 +43,15 @@ public class CustomNpcPlusDBC {
     @Mod.EventHandler
     public void setAboutToStart(FMLServerAboutToStartEvent event) {
         FormController.getInstance().load();
+    }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        PacketHandler.Instance = new PacketHandler();
+        PacketHandler.Instance.register();
+    }
+
+    public static Side side() {
+        return FMLCommonHandler.instance().getEffectiveSide();
     }
 }
