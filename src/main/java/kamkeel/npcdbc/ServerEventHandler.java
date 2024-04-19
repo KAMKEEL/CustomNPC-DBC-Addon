@@ -36,11 +36,12 @@ public class ServerEventHandler {
             if (player instanceof EntityPlayer) {// checks if player is eligible for data or not, incase they weren't before
                 PerfectSync.registerAllDatas(player);
 
-                if (player.ticksExisted == 1) {
-                    PerfectSync.saveAllDatas(player, true); // initial save
-                }
-                if (player.ticksExisted % PerfectSync.SaveEveryXTicks == 0) //saves once every SaveEveryXTicks
-                    PerfectSync.saveAllDatas(player, true);
+                // Test Without - IF works. Remove
+//                if (player.ticksExisted == 1) {
+//                    PerfectSync.saveAllDatas(player, true); // initial save
+//                }
+//                if (player.ticksExisted % PerfectSync.SaveEveryXTicks == 0) //saves once every SaveEveryXTicks
+//                    PerfectSync.saveAllDatas(player, true);
 
                 if (player.ticksExisted % 10 == 0) {
                     if (DBCData.has(player))
@@ -58,12 +59,5 @@ public class ServerEventHandler {
                 }
             }
         }
-    }
-
-    @SubscribeEvent
-    public void onEntityTracking(PlayerEvent.StopTracking e) {
-        Entity tracked = e.entity;
-        String packetID = "deleteMe:" + tracked.getCommandSenderName();
-       // PacketRegistry.sendToAllTracking(tracked, new PacketSyncData(null, packetID, null));
     }
 }
