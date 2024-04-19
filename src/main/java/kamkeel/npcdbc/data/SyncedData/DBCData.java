@@ -27,7 +27,7 @@ public class DBCData extends PerfectSync<DBCData> {
     public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXTicks, Rage, Heat, AuraColor, preCustomAuraColor;
     public byte Class, Race, Powertype, State, State2, Release;
     public boolean Alive, isKO;
-    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS, DNSHair, preCustomFormDNS, preCustomFormDNSHair;
+    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", preCustomFormDNS = "", preCustomFormDNSHair = "";
 
     public int currentCustomForm;
     public float currentCustomFormLevel;
@@ -247,6 +247,81 @@ public class DBCData extends PerfectSync<DBCData> {
             default:
                 return false;
         }
+    }
+
+    // RUN FROM SERVER
+    public NBTTagCompound getNBT(){
+        NBTTagCompound c = new NBTTagCompound();
+        PlayerCustomFormData formData = Utility.getFormData(player);
+        c.setInteger("customFormID", formData.currentForm);
+        c.setFloat("customFormLevel", formData.getCurrentLevel());
+        c.setInteger("jrmcStrI", STR);
+        c.setInteger("jrmcDexI", DEX);
+        c.setInteger("jrmcConI", CON);
+        c.setInteger("jrmcWilI", WIL);
+        c.setInteger("jrmcIntI", MND);
+        c.setInteger("jrmcCncI", SPI);
+        c.setInteger("jrmcEnrgy", Ki);
+        c.setInteger("jrmcStamina", Stamina);
+        c.setInteger("jrmcBdy", Body);
+        c.setInteger("jrmcHar4va", KOforXTicks);
+        c.setInteger("jrmcSaiRg", Rage);
+        c.setInteger("jrmcEf8slc", Heat);
+        c.setInteger("jrmcAuraColor", AuraColor);
+        c.setInteger("preCustomAuraColor", preCustomAuraColor);
+        c.setByte("jrmcState", State);
+        c.setByte("jrmcState2", State2);
+        c.setByte("jrmcRelease", Release);
+        c.setByte("jrmcPwrtyp", Powertype);
+        c.setByte("jrmcRace", Race);
+        c.setString("jrmcStatusEff", StatusEffects);
+        c.setString("jrmcSSltX", RacialSkills);
+        c.setString("jrmcSSlts", Skills);
+        c.setString("jrmcSettings", Settings);
+        c.setString("jrmcFormMasteryRacial_" + JRMCoreH.Races[Race], FormMasteryRacial);
+        c.setString("jrmcFormMasteryNonRacial", FormMasteryNR);
+        c.setString("jrmcDNS", DNS);
+        c.setString("preCustomFormDNS", preCustomFormDNS);
+        c.setString("jrmcDNSH", DNSHair);
+        c.setString("preCustomFormDNSH", preCustomFormDNSHair);
+        return c;
+    }
+
+    public void setNBT(NBTTagCompound c){
+        STR = c.getInteger("jrmcStrI");
+        DEX = c.getInteger("jrmcDexI");
+        CON = c.getInteger("jrmcConI");
+        WIL = c.getInteger("jrmcWilI");
+        MND = c.getInteger("jrmcIntI");
+        SPI = c.getInteger("jrmcCncI");
+        Ki = c.getInteger("jrmcEnrgy");
+        Stamina = c.getInteger("jrmcStamina");
+        Body = c.getInteger("jrmcBdy");
+        KOforXTicks = c.getInteger("jrmcHar4va");
+        Rage = c.getInteger("jrmcSaiRg");
+        Heat = c.getInteger("jrmcEf8slc");
+        isKO = c.getInteger("jrmcHar4va") > 0;
+        AuraColor = c.getInteger("jrmcAuraColor");
+        preCustomAuraColor = c.getInteger("preCustomAuraColor");
+        currentCustomForm = c.getInteger("customFormID");
+        currentCustomFormLevel = c.getFloat("customFormLevel");
+        State = c.getByte("jrmcState");
+        State2 = c.getByte("jrmcState2");
+        Release = c.getByte("jrmcRelease");
+        Powertype = c.getByte("jrmcPwrtyp");
+        Race = c.getByte("jrmcRace");
+        Class = c.getByte("jrmcClass");
+        StatusEffects = c.getString("jrmcStatusEff");
+        RacialSkills = c.getString("jrmcSSltX");
+        Skills = c.getString("jrmcSSlts");
+        Settings = c.getString("jrmcSettings");
+        FormMasteryRacial = c.getString("jrmcFormMasteryRacial_" + JRMCoreH.Races[Race]);
+        FormMasteryNR = c.getString("jrmcFormMasteryNonRacial");
+        DNS = c.getString("jrmcDNS");
+        DNSHair = c.getString("jrmcDNSH");
+        preCustomFormDNS = c.getString("preCustomFormDNS");
+        preCustomFormDNSHair = c.getString("preCustomFormDNSH");
+        nbt = c;
     }
 
     @Override

@@ -23,9 +23,7 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
 
     public PacketSyncData(Entity entity, String id, NBTTagCompound data) {
         s = id;
-        if (Utility.isServer(entity))
-            this.data = data;
-
+        this.data = data;
     }
 
     @Override
@@ -37,7 +35,7 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
                 String playerName = s.split(":")[1];
                 if (!DBCData.has(playerName))
                     DBCData.putCache(playerName, new DBCData(Utility.getFromNameClient(playerName)));
-                DBCData.get(playerName).loadNBTData(data);
+                DBCData.get(playerName).setNBT(data);
             }
         }
     }

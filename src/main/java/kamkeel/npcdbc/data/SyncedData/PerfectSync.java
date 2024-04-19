@@ -107,11 +107,8 @@ public abstract class PerfectSync<T extends PerfectSync<T>> {
     public NBTTagCompound compound() {
         NBTTagCompound nbt = null;
         if (Utility.isServer()) {
-            if (!entity.getEntityData().hasKey(DATA_NAME)) {
-                nbt = new NBTTagCompound();
-                entity.getEntityData().setTag(DATA_NAME, nbt);
-            }
-            nbt = entity.getEntityData().getCompoundTag(DATA_NAME);
+            if (DBCData.has(entity))
+                nbt = (DBCData.get(entity)).getNBT();
         } else {
             if (this.nbt == null)
                 this.nbt = new NBTTagCompound();
