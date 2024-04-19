@@ -4,7 +4,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.DBCExtended;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import kamkeel.npcdbc.network.PacketHandler;
