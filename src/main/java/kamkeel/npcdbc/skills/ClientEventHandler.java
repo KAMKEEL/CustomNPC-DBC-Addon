@@ -9,7 +9,7 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 
 
-public class SkillHandler {
+public class ClientEventHandler {
     @SubscribeEvent
     public void onSkill(TickEvent.PlayerTickEvent event) {
         if (event.side == Side.SERVER || event.player == null)

@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.client.gui;
+package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.CustomForm;
@@ -9,11 +9,11 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 
-public class FormSelectionScroll extends GuiCustomScroll {
+public class GuiFormScroll extends GuiCustomScroll {
     private final HashMap<String, String> formDisplays = new HashMap<>();
     int hoverColor;
 
-    public FormSelectionScroll(GuiScreen parent, int id) {
+    public GuiFormScroll(GuiScreen parent, int id) {
         super(parent, id);
         visible = true;
         multipleSelection = false;
