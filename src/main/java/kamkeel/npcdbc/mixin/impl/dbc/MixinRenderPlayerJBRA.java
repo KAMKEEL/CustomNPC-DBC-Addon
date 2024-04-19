@@ -6,11 +6,10 @@ import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.CustomForm;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -43,20 +42,20 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void renderSSJ4(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(ordinal = 0) int pl) {
-        if (Utility.getFormDataClient().isInCustomForm()) {
-            DBCData dbcData = DBCData.getClient();
-            if (pl != DBCUtils.getPlayerID(dbcData.player))
-                ci.cancel();
-            PlayerCustomFormData formData = Utility.getFormDataClient(par1AbstractClientPlayer);
-            CustomForm f = formData.getCurrentForm();
-            dbcData = DBCData.getClient();
+
+        if (pl != DBCUtils.getPlayerID(par1AbstractClientPlayer))
+            ci.cancel();
+
+        DBCData dbcData = DBCData.get(par1AbstractClientPlayer.getCommandSenderName());
+        CustomForm f = (CustomForm) FormController.Instance.get(dbcData.currentCustomForm);
+        if (f != null) {
             int playerBodyCM = JRMCoreH.dnsBodyCM(dbcData.DNS);
             if (f.hairType.equals("ssj4")) {
                 renderSSJ4Face(f.hairColor, f.furColor, f.eyeColor, playerBodyCM);
                 renderSSJ4Hair(f.hairColor, f.hairCode, dbcData.Race, DBCUtils.getPlayerID(dbcData.player));
                 renderSSJ4Fur(f.furColor);
             } else if (f.hairType.equals("oozaru")) {
-                renderOozaru(f.bodyCM, f.furColor, formData.parent.player);
+                renderOozaru(f.bodyCM, f.furColor, par1AbstractClientPlayer);
             }
         }
 

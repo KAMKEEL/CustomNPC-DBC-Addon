@@ -25,7 +25,6 @@ public class ClientEvents {
             PacketRegistry.tellServer("createForm");
         }
         if (Keyboard.isKeyDown(51)) { //,
-            // PlayerCustomFormData formData = Utility.getFormDataClient();
         }
     }
 

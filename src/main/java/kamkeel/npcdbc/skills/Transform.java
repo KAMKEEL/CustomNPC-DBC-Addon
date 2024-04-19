@@ -173,7 +173,7 @@ public class Transform {
         if (formData.isInCustomForm()) {
             DBCData dbcData = DBCData.get(p);
             Utility.sendMessage(p, "§cDescended from§r " + formData.getCurrentForm().getMenuName());
-            formData.currentForm = 0;
+            formData.currentForm = -1;
             formData.updateClient();
 
             dbcData.setString("jrmcDNS", dbcData.preCustomFormDNS); //sets original DNS back
@@ -196,7 +196,7 @@ public class Transform {
             if (race == 1 || race == 2) {
                 if (form.hairType.equals("ssj4") || form.hairType.equals("oozaru")) {
                     dbcData.setBodyColor1(form.furColor);
-                   // dbcData.DNSHair = "";
+                    // dbcData.DNSHair = "";
                 }
             }
         }
