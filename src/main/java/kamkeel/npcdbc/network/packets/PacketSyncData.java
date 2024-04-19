@@ -12,7 +12,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
 import java.io.IOException;
-import java.util.UUID;
 
 public class PacketSyncData extends AbstractMessage<PacketSyncData> {
     private String s;
@@ -35,13 +34,14 @@ public class PacketSyncData extends AbstractMessage<PacketSyncData> {
             updateServerData(p);
         } else {
             if (s.contains("DBCData")) {
-                UUID id = UUID.fromString(s.split(":")[1]);
-                if (!DBCData.has(id))
-                    DBCData.registerToMap(id, new DBCData(Utility.getFromUUID(id, p.worldObj)));
-                DBCData.get(id).loadNBTData(data);
+                String playerName = s.split(":")[1];
+                if (!DBCData.has(playerName))
+                    DBCData.registerToMap(playerName, new DBCData(Utility.getFromNameClient(playerName)));
+                DBCData.get(playerName).loadNBTData(data);
             }
         }
     }
+
 
     public void updateServerData(EntityPlayer p) {
         if (!s.contains("updateServer"))

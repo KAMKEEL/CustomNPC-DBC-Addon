@@ -10,11 +10,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import noppes.npcs.config.ConfigClient;
+import noppes.npcs.util.CacheHashMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Automatically syncs any NBT compound of choice to client every SaveEveryXTicks,
@@ -26,9 +26,7 @@ import java.util.UUID;
  * Check DBCData for a concrete implementation
  */
 public abstract class PerfectSync<T extends PerfectSync<T>> {
-    //only entities that are eligible for subclasses of PerfectSync get registed
-    public static HashMap<UUID, List<PerfectSync>> data = new HashMap<>();
-
+    public static final CacheHashMap<String, CacheHashMap.CachedObject<List<PerfectSync>>> playerDataCache = new CacheHashMap<>((long) ConfigClient.CacheLife * 60 * 1000);
     public static int SaveEveryXTicks = 60;
     public String DATA_NAME;
     public Entity entity;
@@ -44,11 +42,9 @@ public abstract class PerfectSync<T extends PerfectSync<T>> {
     public void init(Entity entity, World world) {
     }
 
-
     public void syncClient() {
-        NBTTagCompound data = compound();
-        String s = DATA_NAME.equals(DBCData.dn) ? "DBCData" : "";
-        PacketRegistry.syncData(entity, "update" + s + ":" + Utility.getUUID(entity), data);
+        String dataName = DATA_NAME.equals(DBCData.dn) ? "DBCData" : "";
+        PacketRegistry.syncData(entity, dataName + ":" + entity.getCommandSenderName(), compound());
     }
 
     /**
@@ -63,7 +59,6 @@ public abstract class PerfectSync<T extends PerfectSync<T>> {
         }
     }
 
-
     /**
      * Saves field values to server NBT compound
      *
@@ -77,7 +72,6 @@ public abstract class PerfectSync<T extends PerfectSync<T>> {
                 syncClient();
         }
     }
-
 
     public void saveServer(String tag, String type) {// saves to server from client
 
@@ -172,10 +166,6 @@ public abstract class PerfectSync<T extends PerfectSync<T>> {
 
     }
 
-    ////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////
-    // Tag getters and setters
-
     public void setDouble(String string, double s) {
         compound().setDouble(string, s);
         if (Utility.isServer())
@@ -184,6 +174,10 @@ public abstract class PerfectSync<T extends PerfectSync<T>> {
             saveServer(string, "Double");
 
     }
+
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    // Tag getters and setters
 
     public void setLong(String string, long s) {
         compound().setLong(string, s);
@@ -227,6 +221,7 @@ public abstract class PerfectSync<T extends PerfectSync<T>> {
     public void loadNBTData(NBTTagCompound compound) {
     }
 
+
     //saves all datas for entity, add datas here
     public static void saveAllDatas(Entity e, boolean saveClient) {
         if (e instanceof EntityPlayer) {
@@ -244,48 +239,48 @@ public abstract class PerfectSync<T extends PerfectSync<T>> {
 
     // register all implementations individually here
     public static void register(Entity e, String dn) {
-        UUID id = e instanceof EntityPlayer ? ((EntityPlayer) e).getGameProfile().getId() : e.getUniqueID();
-
         if (dn.equals(DBCData.dn) && DBCData.eligibleForDBC(e) && !DBCData.has(e)) {
-            registerToMap(id, new DBCData(e));
-            DBCData.get(e).loadFromNBT(false); // initial loading of fields from server NBTs
+            registerToMap(e.getCommandSenderName(), new DBCData(e));
+            DBCData.get(e).loadFromNBT(true); // initial loading of fields from server NBTs
         }
     }
 
-    public static void registerToMap(UUID id, PerfectSync dat) {
-        if (!data.containsKey(id))
-            data.put(id, new ArrayList<>());
+    public static void registerToMap(String playerName, PerfectSync dat) {
+        synchronized (playerDataCache) {
+            if (!playerDataCache.containsKey(playerName))
+                playerDataCache.put(playerName, new CacheHashMap.CachedObject<>(new ArrayList<>()));
 
-        data.get(id).add(dat);
+            playerDataCache.get(playerName).getObject().add(dat);
+        }
     }
 
 
-    public static <T extends PerfectSync<T>> T get(Entity e, String s) {
+    public static <T extends PerfectSync<T>> T get(Entity e, String dataName) {
         if (e == null)
             return null;
 
-        UUID id = e instanceof EntityPlayer ? ((EntityPlayer) e).getGameProfile().getId() : e.getUniqueID();
-
-        PerfectSync search = get(id, s);
-        return search != null ? (T) search : null;
+        PerfectSync search = get(e.getCommandSenderName(), dataName);
+        return (T) search;
     }
 
-    public static <T extends PerfectSync<T>> T get(UUID id, String s) {
-        if (data.containsKey(id))
-            for (PerfectSync d : data.get(id))
-                if (d.DATA_NAME.equals(s))
-                    return (T) d;
-
+    public static <T extends PerfectSync<T>> T get(String playerName, String dataName) {
+        synchronized (playerDataCache) {
+            if (playerDataCache.containsKey(playerName))
+                for (PerfectSync dat : playerDataCache.get(playerName).getObject())
+                    if (dat.DATA_NAME.equals(dataName))
+                        return (T) dat;
+        }
         return null;
     }
+
 
     //checks if entity has their own data registered
     public static boolean has(Entity e, String dn) {
         return get(e, dn) != null;
     }
 
-    public static boolean has(UUID id, String dn) {
-        return get(id, dn) != null;
+    public static boolean has(String playerName, String dataName) {
+        return get(playerName, dataName) != null;
     }
 
     public static NBTTagCompound compound(Entity e, String dn) {

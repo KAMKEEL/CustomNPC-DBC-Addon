@@ -7,10 +7,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.data.SyncedData.DBCData;
 import kamkeel.npcdbc.data.SyncedData.PerfectSync;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
@@ -34,7 +36,6 @@ public class ServerEvents {
             if (player instanceof EntityPlayer) {// checks if player is eligible for data or not, incase they weren't before
                 PerfectSync.registerAllDatas(player);
 
-
                 if (player.ticksExisted == 1) {
                     PerfectSync.saveAllDatas(player, true); // initial save
                 }
@@ -57,5 +58,12 @@ public class ServerEvents {
                 }
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onEntityTracking(PlayerEvent.StopTracking e) {
+        Entity tracked = e.entity;
+        String packetID = "deleteMe:" + tracked.getCommandSenderName();
+       // PacketRegistry.sendToAllTracking(tracked, new PacketSyncData(null, packetID, null));
     }
 }

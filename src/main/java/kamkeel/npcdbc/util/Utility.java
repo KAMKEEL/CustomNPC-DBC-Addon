@@ -79,6 +79,21 @@ public class Utility {
         return null;
     }
 
+    @SideOnly(Side.CLIENT)
+    public static Entity getFromNameClient(String name) {
+        return getFromName(name, Minecraft.getMinecraft().theWorld);
+    }
+
+    public static Entity getFromName(String name, World w) {
+        List<Entity> allEntity = w.loadedEntityList;
+        for (Entity entity : allEntity)
+            if (entity.getCommandSenderName().equals(name))
+                return entity;
+
+
+        return null;
+    }
+
     public static Entity getEntityByUUID(World w, String s) {
         if (s == null)
             return null;
