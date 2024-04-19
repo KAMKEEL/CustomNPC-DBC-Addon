@@ -123,7 +123,7 @@ public class PlayerCustomFormData {
         if (f == null || !isInCustomForm() || parent.player == null)
             return;
 
-        DBCExtended data = DBCExtended.get(parent.player);
+        DBCData data = DBCData.get(parent.player);
         if(data == null)
             return;
         FormMastery fm = f.getFM();

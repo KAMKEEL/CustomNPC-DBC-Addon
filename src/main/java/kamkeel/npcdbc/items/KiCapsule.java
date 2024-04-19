@@ -4,7 +4,7 @@ import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.enums.EnumKiCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.data.DBCExtended;
+import kamkeel.npcdbc.data.DBCData;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -97,7 +97,7 @@ public class KiCapsule extends Item {
             int kiRestored = kiCapsules.getStrength();
 
             // Restore X Amount of KI
-            DBCExtended.get(player).restoreKiPercent(kiRestored);
+            DBCData.get(player).restoreKiPercent(kiRestored);
 
             // Removes 1 Item
             itemStack.splitStack(1);

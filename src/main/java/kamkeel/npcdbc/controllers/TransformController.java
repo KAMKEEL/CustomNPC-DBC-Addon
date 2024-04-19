@@ -4,11 +4,12 @@ import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.DBCExtended;
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.PingPacket;
+import kamkeel.npcdbc.network.packets.DBCFixInt;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -20,7 +21,7 @@ public class TransformController {
     public static boolean ascending, cantTransform, transformed;
     public static String ascendSound, descendSound;
     public static float rage, rageValue;
-    public static DBCExtended dbcExtended;
+    public static DBCData dbcData;
 
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
@@ -31,8 +32,8 @@ public class TransformController {
     public static void Ascend(CustomForm form) {
         if (cantTransform || (rage > 0 && transformed) || (Utility.getSelfData() != null && Utility.getSelfData().getCurrentForm() != null && Utility.getSelfData().getCurrentForm().getID() == form.id))
             return;
-        dbcExtended = DBCExtended.get(Minecraft.getMinecraft().thePlayer);
-        if (dbcExtended == null)
+        dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
+        if (dbcData == null)
             return;
 
         time++;
@@ -72,15 +73,14 @@ public class TransformController {
             transformed = true;
         }
 
-        //dbcData.Rage = (int) rage;
         JRMCoreH.TransSaiCurRg = (byte) rage;
-        dbcExtended.getRawCompound().setInteger("jrmcSaiRg", (int) rage);
+        PacketHandler.Instance.sendToServer(new DBCFixInt(CustomNpcPlusDBC.proxy.getClientPlayer(), "jrmcSaiRg", (int) rage).generatePacket());
     }
 
     @SideOnly(Side.CLIENT)
     public static void decrementRage() {
-        dbcExtended = DBCExtended.get(Minecraft.getMinecraft().thePlayer);
-        if (dbcExtended == null || rage == 0)
+        dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
+        if (dbcData == null || rage == 0)
             return;
 
         if (rage > 0) {
@@ -97,7 +97,7 @@ public class TransformController {
             setAscending(false);
 
         JRMCoreH.TransSaiCurRg = (byte) rage;
-        dbcExtended.getRawCompound().setInteger("jrmcSaiRg", (int) rage);
+        dbcData.getRawCompound().setInteger("jrmcSaiRg", (int) rage);
     }
 
     @SideOnly(Side.CLIENT)
@@ -119,7 +119,7 @@ public class TransformController {
 
     @SideOnly(Side.CLIENT)
     public static int getRageMeterIncrementation() {
-        double fm = 90;//getFormMasteryValue(k);
+        double fm = 30;//getFormMasteryValue(k);
         double maxfm = 100;//getMaxFormMasteryValue(k);
 
         if (Utility.percentBetween(fm, maxfm, 0, 5))
@@ -156,54 +156,54 @@ public class TransformController {
     public static void handleCustomFormAscend(EntityPlayerMP p, int formID) {
         PlayerCustomFormData formData = Utility.getFormData(p);
         if (formData.currentForm != formID) {
-            DBCExtended dbcExtended = DBCExtended.get(p);
+            DBCData dbcData = DBCData.get(p);
             formData.currentForm = formID;
-            if (dbcExtended.State > 0)
-                dbcExtended.State = 0;
+            if (dbcData.State > 0)
+                dbcData.State = 0;
             formData.updateClient();
             Utility.sendMessage(p, "§aTransformed to§r " + formData.getCurrentForm().getMenuName());
-            setCustomFormRenderingData(p, formData, dbcExtended);
-            dbcExtended.saveNBTData(null);
+            setCustomFormRenderingData(p, formData, dbcData);
+            dbcData.saveNBTData(null);
         }
     }
 
     public static void handleCustomFormDescend(EntityPlayerMP p) {
         PlayerCustomFormData formData = Utility.getFormData(p);
         if (formData.isInCustomForm()) {
-            DBCExtended dbcExtended = DBCExtended.get(p);
+            DBCData dbcData = DBCData.get(p);
             Utility.sendMessage(p, "§cDescended from§r " + formData.getCurrentForm().getMenuName());
             formData.currentForm = -1;
             formData.updateClient();
-            dbcExtended.getRawCompound().setString("jrmcDNS", dbcExtended.preCustomFormDNS); //sets original DNS back
-            dbcExtended.getRawCompound().setInteger("jrmcAuraColor", dbcExtended.preCustomAuraColor); //sets original aura back
-            dbcExtended.getRawCompound().setString("jrmcDNSH", dbcExtended.preCustomFormDNSHair);
-            dbcExtended.saveNBTData(null);
+            dbcData.getRawCompound().setString("jrmcDNS", dbcData.preCustomFormDNS); //sets original DNS back
+            dbcData.getRawCompound().setInteger("jrmcAuraColor", dbcData.preCustomAuraColor); //sets original aura back
+            dbcData.getRawCompound().setString("jrmcDNSH", dbcData.preCustomFormDNSHair);
+            dbcData.saveNBTData(null);
         }
     }
 
     //this method is a bit slow, will eventually have to move all of this to MixinRenderPlayerJBRA
-    public static void setCustomFormRenderingData(EntityPlayerMP p, PlayerCustomFormData formData, DBCExtended dbcExtended) {
-        dbcExtended.getRawCompound().setString("preCustomFormDNS", dbcExtended.DNS); //store pre transformation DNS
-        dbcExtended.getRawCompound().setInteger("preCustomAuraColor", dbcExtended.AuraColor);
-        dbcExtended.getRawCompound().setString("preCustomFormDNSH", dbcExtended.DNSHair); //store pre transformation DNS
+    public static void setCustomFormRenderingData(EntityPlayerMP p, PlayerCustomFormData formData, DBCData dbcData) {
+        dbcData.getRawCompound().setString("preCustomFormDNS", dbcData.DNS); //store pre transformation DNS
+        dbcData.getRawCompound().setInteger("preCustomAuraColor", dbcData.AuraColor);
+        dbcData.getRawCompound().setString("preCustomFormDNSH", dbcData.DNSHair); //store pre transformation DNS
 
         CustomForm form = formData.getCurrentForm();
-        byte race = dbcExtended.Race;
+        byte race = dbcData.Race;
         if (form.hasColor("aura"))
-            dbcExtended.getRawCompound().setInteger("jrmcAuraColor", form.auraColor);
+            dbcData.getRawCompound().setInteger("jrmcAuraColor", form.auraColor);
 
         boolean b = race == 0 || race == 1 || race == 2 || race == 5; //if Human, Saiyan, Majin
         if (form.hasBodyCM)
-            dbcExtended.setBodyColorMain(form.bodyCM);
+            dbcData.setBodyColorMain(form.bodyCM);
 
         if (form.hasBodyC1)
-            dbcExtended.setBodyColor1(form.bodyC1);
+            dbcData.setBodyColor1(form.bodyC1);
 
         if (!b) {
             if (form.hasBodyC2)
-                dbcExtended.setBodyColor2(form.bodyC2);
+                dbcData.setBodyColor2(form.bodyC2);
             if (form.hasBodyC3)
-                dbcExtended.setBodyColor3(form.bodyC3);
+                dbcData.setBodyColor3(form.bodyC3);
         }
     }
 }

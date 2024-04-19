@@ -4,7 +4,7 @@ import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.enums.EnumStaminaCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.data.DBCExtended;
+import kamkeel.npcdbc.data.DBCData;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -97,7 +97,7 @@ public class StaminaCapsule extends Item {
             int staminaRestored = staminaCapsules.getStrength();
 
             // Restore X Amount of Stamina
-            DBCExtended.get(player).restoreStaminaPercent(staminaRestored);
+            DBCData.get(player).restoreStaminaPercent(staminaRestored);
 
             // Removes 1 Item
             itemStack.splitStack(1);

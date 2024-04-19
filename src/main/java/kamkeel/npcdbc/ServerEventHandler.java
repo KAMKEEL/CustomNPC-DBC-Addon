@@ -4,7 +4,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.data.DBCExtended;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
@@ -21,9 +21,9 @@ public class ServerEventHandler {
     @SideOnly(Side.SERVER)
     @SubscribeEvent
     public void loginEvent(cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event) {
-        DBCExtended dbcExtended = DBCExtended.get(event.player);
-        dbcExtended.loadNBTData(null);
-        dbcExtended.syncClient();
+        DBCData dbcData = DBCData.get(event.player);
+        dbcData.loadNBTData(null);
+        dbcData.syncClient();
     }
 
     @SubscribeEvent
@@ -45,9 +45,9 @@ public class ServerEventHandler {
             }
 
             if (player.ticksExisted % 10 == 0) {
-                DBCExtended dbcExtended = DBCExtended.get(player);
-                dbcExtended.loadNBTData(null);
-                dbcExtended.syncClient();
+                DBCData dbcData = DBCData.get(player);
+                dbcData.loadNBTData(null);
+                dbcData.syncClient();
             }
         }
     }
@@ -56,7 +56,7 @@ public class ServerEventHandler {
     @SubscribeEvent
     public void addTracking(PlayerEvent.StartTracking event){
         if(event.target instanceof EntityPlayer && !(event.target instanceof FakePlayer)){
-            DBCExtended data = DBCExtended.get((EntityPlayer) event.target);
+            DBCData data = DBCData.get((EntityPlayer) event.target);
             if (data == null) {
                 return;
             }

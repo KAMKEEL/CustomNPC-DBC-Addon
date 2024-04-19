@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.server.JGPlayerMP;
-import kamkeel.npcdbc.data.DBCExtended;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.Utility;
@@ -21,13 +21,13 @@ public class MixinJGPlayerMP {
 
     @Inject(method = "setState", at = @At("HEAD"), remap = false, cancellable = true)
     public void setState(int value, CallbackInfo ci) {
-        if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), DBCExtended.get(player).State, value)))
+        if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), DBCData.get(player).State, value)))
             ci.cancel();
     }
 
     @Inject(method = "setState2", at = @At("HEAD"), remap = false, cancellable = true)
     public void setState2(int value, CallbackInfo ci) {
-        if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), DBCExtended.get(player).State, value)))
+        if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), DBCData.get(player).State, value)))
             ci.cancel();
     }
 }

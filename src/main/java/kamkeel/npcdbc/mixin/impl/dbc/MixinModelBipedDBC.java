@@ -5,8 +5,7 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
 import kamkeel.npcdbc.data.CustomForm;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.DBCExtended;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -44,7 +43,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
         if (ClientEventHandler.renderingPlayer != null) {
             CustomForm form = Utility.getFormClient((AbstractClientPlayer) ClientEventHandler.renderingPlayer);
             if (form != null) {
-                DBCExtended dbcData = DBCExtended.get(ClientEventHandler.renderingPlayer);
+                DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
 
                 if (form.hairType.equals("ssj4")) { //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
                     disableFace(hair, ci);

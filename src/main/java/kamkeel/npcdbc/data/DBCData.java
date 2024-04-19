@@ -17,9 +17,9 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
 
-public class DBCExtended implements IExtendedEntityProperties {
+public class DBCData implements IExtendedEntityProperties {
 
-    public static final CacheHashMap<String, CacheHashMap.CachedObject<DBCExtended>> dbcDataCache = new CacheHashMap<>((long) ConfigClient.CacheLife * 60 * 1000);
+    public static final CacheHashMap<String, CacheHashMap.CachedObject<DBCData>> dbcDataCache = new CacheHashMap<>((long) ConfigClient.CacheLife * 60 * 1000);
 
     public static String DBCPersisted = "PlayerPersisted";
     public final Side side;
@@ -37,19 +37,19 @@ public class DBCExtended implements IExtendedEntityProperties {
     public int currentCustomForm;
     public float currentCustomFormLevel;
 
-    public DBCExtended() {
+    public DBCData() {
         this.side = Side.SERVER;
     }
 
-    public DBCExtended(EntityPlayer player) {
+    public DBCData(EntityPlayer player) {
         this.player = player;
         this.side = player.worldObj.isRemote ? Side.CLIENT : Side.SERVER;
     }
 
-    public static DBCExtended get(EntityPlayer player) {
+    public static DBCData get(EntityPlayer player) {
         synchronized (dbcDataCache) {
             if (!dbcDataCache.containsKey(player.getCommandSenderName())) {
-                dbcDataCache.put(player.getCommandSenderName(),  new CacheHashMap.CachedObject<>(new DBCExtended(player)));
+                dbcDataCache.put(player.getCommandSenderName(),  new CacheHashMap.CachedObject<>(new DBCData(player)));
             }
             return dbcDataCache.get(player.getCommandSenderName()).getObject();
         }

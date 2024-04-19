@@ -4,7 +4,7 @@ import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.enums.EnumHealthCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.data.DBCExtended;
+import kamkeel.npcdbc.data.DBCData;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -97,7 +97,7 @@ public class HealthCapsule extends Item {
             int healthRestored = healthCapsules.getStrength();
 
             // Restore X Amount of Health
-            DBCExtended.get(player).restoreHealthPercent(healthRestored);
+            DBCData.get(player).restoreHealthPercent(healthRestored);
 
             // Removes 1 Item
             itemStack.splitStack(1);

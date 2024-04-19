@@ -7,8 +7,8 @@ import kamkeel.npcdbc.api.IDBCAddon;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.DBCExtended;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -592,7 +592,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         PlayerCustomFormData c = Utility.getFormData(player);
         if (c.hasForm(f)) {
             // c.setInt("currentForm", f.getID());
-            DBCExtended d = DBCExtended.get(player);
+            DBCData d = DBCData.get(player);
             d.State = 0;
             if (d.isForm(DBCForm.Kaioken) && !f.isFormStackable(DBCForm.Kaioken)) {
                 d.State2 = 0;

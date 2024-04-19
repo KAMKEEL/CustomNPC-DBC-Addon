@@ -7,7 +7,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.CustomForm;
-import kamkeel.npcdbc.data.DBCExtended;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -44,7 +44,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private void renderSSJ4(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(ordinal = 0) int pl) {
         CustomForm form = Utility.getFormClient(par1AbstractClientPlayer);
         if (form != null) {
-            DBCExtended dbcData = DBCExtended.get(par1AbstractClientPlayer);
+            DBCData dbcData = DBCData.get(par1AbstractClientPlayer);
             int playerBodyCM = JRMCoreH.dnsBodyCM(dbcData.DNS);
             if (form.hairType.equals("ssj4")) {
                 renderSSJ4Face(form.hairColor, form.furColor, form.eyeColor, playerBodyCM, dbcData.DNS);

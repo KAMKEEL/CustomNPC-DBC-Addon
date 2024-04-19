@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.network.packets;
 
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.data.DBCExtended;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.client.Minecraft;
@@ -12,12 +12,12 @@ import java.io.IOException;
 
 public final class PingPacket extends AbstractPacket {
     public static final String packetName = "NPCDBC|Ping";
-    private DBCExtended data;
+    private DBCData data;
 
     public PingPacket() {
     }
 
-    public PingPacket(DBCExtended data) {
+    public PingPacket(DBCData data) {
         this.data = data;
     }
 
@@ -37,7 +37,7 @@ public final class PingPacket extends AbstractPacket {
         String playerName = ByteBufUtils.readUTF8String(in);
         EntityPlayer sendingPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(playerName);
         if (sendingPlayer != null) {
-            data = DBCExtended.get(sendingPlayer);
+            data = DBCData.get(sendingPlayer);
         }
 
         if (data == null) {
