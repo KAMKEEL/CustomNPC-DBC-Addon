@@ -1,8 +1,8 @@
 package kamkeel.npcdbc.data;
 
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.mixin.IPlayerFormData;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.mixin.IPlayerFormData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
@@ -31,6 +31,10 @@ public class PlayerCustomFormData {
             unlockedForms.put(form.id, form.name);
             formLevels.put(form.id, 0f);
         }
+    }
+
+    public boolean hasUnlocked(int id) {
+        return unlockedForms.containsKey(id);
     }
 
     public String removeForm(CustomForm form) {
@@ -124,7 +128,7 @@ public class PlayerCustomFormData {
             return;
 
         DBCData data = DBCData.get(parent.player);
-        if(data == null)
+        if (data == null)
             return;
         FormMastery fm = f.getFM();
         float playerLevel = formLevels.get(f.id);

@@ -8,6 +8,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.CustomAura;
+import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.network.PacketHandler;
@@ -50,6 +51,7 @@ public class MixinDBCKiTech {
         DBCData d = DBCData.get(Minecraft.getMinecraft().thePlayer);
         boolean returnEarly = true;
         if (d != null && formData != null && formData.isInCustomForm()) {
+            CustomForm form = formData.getCurrentForm();
             if (d.formSettingOn(DBCForm.Kaioken)) {
                 if (d.isForm(DBCForm.Kaioken))
                     returnEarly = false;
@@ -65,8 +67,11 @@ public class MixinDBCKiTech {
 
 
             if (returnEarly) {
-                PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false).generatePacket());
-                DBCKiTech.soundAsc(formData.getCurrentForm().getDescendSound());
+                if (form.hasParent() && formData.hasUnlocked(form.getParentID()))
+                    PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getParentID(), false).generatePacket());
+                else
+                    PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false).generatePacket());
+                DBCKiTech.soundAsc(form.getDescendSound());
                 ci.cancel();
             }
         }

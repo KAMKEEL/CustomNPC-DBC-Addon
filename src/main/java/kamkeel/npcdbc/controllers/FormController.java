@@ -103,14 +103,16 @@ public class FormController implements IFormHandler {
                 }
             }
         }
-        verifyLinkedForms();
+        verifyFormTree();
         saveFormLoadMap();
     }
 
-    private void verifyLinkedForms() {
+    private void verifyFormTree() {
         for (CustomForm form : customForms.values()) {
-            if (!has(form.linkedID))
-                form.linkedID = -1;
+            if (!has(form.childID))
+                form.childID = -1;
+            if (!has(form.parentID))
+                form.parentID = -1;
         }
     }
 

@@ -156,23 +156,54 @@ public interface ICustomForm {
     void setID(int newID);
 
     /**
-     * @param formID form ID to link to this form. i.e linking SSJ2 Red to SSJ Red
+     * @return ID of form linked to this
      */
-    void linkForm(int formID);
+    int getChildID();
 
-    void linkForm(ICustomForm form);
+    boolean hasChild();
 
     /**
-     * @return form that is linked to this form i.e if SSJ2 Red is linked to SSJ Red(this), returns SSJ2 Red
+     * @param formID form ID to of child to this form. i.e linking SSJ2 Red to SSJ Red
      */
-    ICustomForm getLinkedForm();
+    void linkChild(int formID);
 
-    int getLinkedFormID();
+    void linkChild(ICustomForm form);
 
     /**
-     * removes the form linked to this form
+     * @return the child of this form i.e if SSJ2 Red is child of SSJ Red(this), returns SSJ2 Red
      */
-    void removeLinkedForm();
+    ICustomForm getChild();
+
+
+    /**
+     * removes the child of this form
+     */
+    void removeChildForm();
+
+    /**
+     * @return ID of form's parent i.e SSJ Red is parent of SSJ2 Red
+     */
+    int getParentID();
+
+    boolean hasParent();
+
+    /**
+     * @param formID ID of parent of to link to this form.
+     */
+    void linkParent(int formID);
+
+    void linkParent(ICustomForm form);
+
+    /**
+     * @return the parent of this form i.e if SSJ2 Red is Parent of SSJ Red(this), returns SSJ2 Red
+     */
+    ICustomForm getParent();
+
+
+    /**
+     * removes the form's parent
+     */
+    void removeParentForm();
 
     public IFormMastery getFormMastery();
 

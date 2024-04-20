@@ -5,6 +5,7 @@ import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -29,9 +30,16 @@ public class ClientEventHandler {
 
     private void performAscend() {
         PlayerCustomFormData formData = Utility.getSelfData();
-        if (formData != null && formData.selectedForm > -1)
-            TransformController.Ascend(Utility.getSelfData().getSelectedForm());
+        if (formData != null && formData.selectedForm > -1) {
 
+            if (formData.isInCustomForm()) {
+                CustomForm form = formData.getCurrentForm();
+                if (form.hasChild() && formData.hasUnlocked(form.getChildID()))
+                    TransformController.Ascend(form.getC());
+            } else
+                TransformController.Ascend(formData.getSelectedForm());
+
+        }
     }
 
     @SubscribeEvent
@@ -39,8 +47,15 @@ public class ClientEventHandler {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.currentScreen == null && KeyHandler.AscendKey.getIsKeyPressed()) {
             PlayerCustomFormData formData = Utility.getSelfData();
-            if (formData != null && formData.selectedForm == -1)
-                Utility.sendMessage(mc.thePlayer, "§cYou have not selected a custom form!");
+            if (formData != null) {
+                if (formData.selectedForm == -1)
+                    Utility.sendMessage(mc.thePlayer, "§cYou have not selected a custom form!");
+                else if (formData.isInCustomForm()) {
+                    CustomForm form = formData.getCurrentForm();
+                    if (form.hasChild() && !formData.hasUnlocked(form.getChildID()))
+                        Utility.sendMessage(mc.thePlayer, "§cYou do not have the next transformation unlocked!");
+                }
+            }
         }
     }
 }

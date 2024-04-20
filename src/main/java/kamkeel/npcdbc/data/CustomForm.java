@@ -23,6 +23,9 @@ public class CustomForm implements ICustomForm {
     public String menuName = "§2§lCustom Form";
     public int race = DBCRace.ALL;
 
+    public boolean hasSize = false;
+    public float formSize = 1.0f;
+
     public float strengthMulti = 1.0f;
     public float dexMulti = 1.0f;
     public float willMulti = 1.0f;
@@ -34,9 +37,7 @@ public class CustomForm implements ICustomForm {
     public String hairCode = "", hairType = "ssj";
     public int auraColor = 1, hairColor, eyeColor, bodyCM, bodyC1, bodyC2, bodyC3, furColor = 14292268;
     public boolean hasAuraColor = true, hasHairColor = true, hasEyeColor = true, hasBodyCM = false, hasBodyC1 = false, hasBodyC2 = false, hasBodyC3 = false, hasFurColor = true;
-    public boolean hasSize = true;
 
-    public float formSize = 20.0f;
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
@@ -45,7 +46,7 @@ public class CustomForm implements ICustomForm {
     /**
      * ID of form to link to this
      */
-    public int linkedID = -1;
+    public int childID = -1, parentID = -1;
 
 
     public CustomForm() {
@@ -471,33 +472,83 @@ public class CustomForm implements ICustomForm {
     }
 
     @Override
-    public void linkForm(int formID) {
-        if (FormController.getInstance().has(formID))
-            linkedID = formID;
+    public void linkChild(int formID) {
+        if (FormController.getInstance().has(formID)) {
+            childID = formID;
+            getChild().linkParent(id);
+            save();
+        }
+
     }
 
     @Override
-    public void linkForm(ICustomForm form) {
-        if (form != null)
-            linkedID = form.getID();
+    public void linkChild(ICustomForm form) {
+        linkChild(form.getID());
     }
 
-    public ICustomForm getLinkedForm() {
-        return FormController.Instance.get(linkedID);
+    public ICustomForm getChild() {
+        return FormController.Instance.get(childID);
     }
 
     //internal
-    public CustomForm getLinked() {
-        return (CustomForm) FormController.Instance.get(linkedID);
+    public CustomForm getC() {
+        return (CustomForm) FormController.Instance.get(childID);
     }
 
     @Override
-    public int getLinkedFormID() {
-        return linkedID;
+    public int getChildID() {
+        return childID;
     }
 
-    public void removeLinkedForm() {
-        linkedID = -1;
+    @Override
+    public boolean hasChild() {
+        return childID != -1;
+    }
+
+
+    public void removeChildForm() {
+        childID = -1;
+        save();
+    }
+
+    @Override
+    public void linkParent(int formID) {
+        if (FormController.getInstance().has(formID)) {
+            parentID = formID;
+            getParent().linkChild(id);
+            save();
+        }
+
+    }
+
+    @Override
+    public void linkParent(ICustomForm form) {
+        linkParent(form.getID());
+    }
+
+    public ICustomForm getParent() {
+        return FormController.Instance.get(parentID);
+    }
+
+    //internal
+    public CustomForm getP() {
+        return (CustomForm) FormController.Instance.get(parentID);
+    }
+
+    @Override
+    public int getParentID() {
+        return parentID;
+    }
+
+    @Override
+    public boolean hasParent() {
+        return parentID != -1;
+    }
+
+
+    public void removeParentForm() {
+        parentID = -1;
+        save();
     }
 
     @Override
@@ -521,7 +572,8 @@ public class CustomForm implements ICustomForm {
         race = compound.getInteger("race");
         formSize = compound.getFloat("formSize");
         hasSize = compound.getBoolean("hasSize");
-        linkedID = compound.getInteger("linkedID");
+        childID = compound.getInteger("childID");
+        parentID = compound.getInteger("parentID");
 
         NBTTagCompound attributes = compound.getCompoundTag("attributes");
         strengthMulti = attributes.getFloat("strMulti");
@@ -572,7 +624,8 @@ public class CustomForm implements ICustomForm {
         compound.setInteger("race", race);
         compound.setFloat("formSize", formSize);
         compound.setBoolean("hasSize", hasSize);
-        compound.setInteger("linkedID", linkedID);
+        compound.setInteger("childID", childID);
+        compound.setInteger("parentID", parentID);
 
         NBTTagCompound attributes = new NBTTagCompound();
         compound.setTag("attributes", attributes);
