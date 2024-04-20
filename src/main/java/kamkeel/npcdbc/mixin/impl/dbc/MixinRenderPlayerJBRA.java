@@ -27,9 +27,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Shadow
     ModelBipedDBC modelMain;
 
-    @Unique
-    int id;
-
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
     private void changeFormData(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "st") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
@@ -47,18 +44,46 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
     }
 
+    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER))
+    private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "State") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
+        CustomForm form = Utility.getFormClient((AbstractClientPlayer) par1EntityPlayer);
+        if (form != null) {
+            st.set(0);
+            if (form.hasBodyCM)
+                bodyCM.set(form.bodyCM);
+            if (form.hasBodyC1)
+                bodyC1.set(form.bodyC1);
+            if (form.hasBodyC2)
+                bodyC2.set(form.bodyC2);
+            if (form.hasBodyC3)
+                bodyC3.set(form.bodyC3);
+        }
+    }
+
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
-    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "pl") LocalIntRef pl, @Local(name = "race") LocalIntRef race, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
+    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
         CustomForm form = Utility.getFormClient(par1AbstractClientPlayer);
         if (form != null) {
             if (form.hairType.equals("ssj4")) {
-                renderSSJ4Face(form.hairColor, form.furColor, form.eyeColor, form.bodyCM, gender.get(), nose.get());
+                renderSSJ4Face(form.hairColor, form.furColor, form.eyeColor, bodyCM.get(), gender.get(), nose.get());
                 renderSSJ4Hair(form.hairColor, form.hairCode, race.get(), pl.get());
                 renderSSJ4Fur(form.furColor);
             } else if (form.hairType.equals("oozaru")) {
-                renderOozaru(form.bodyCM, form.furColor, par1AbstractClientPlayer);
+                renderOozaru(bodyCM.get(), form.eyeColor, form.furColor, par1AbstractClientPlayer);
             } else if (form.hairType.equals("ssj3"))
                 this.modelMain.renderHairs(0.0625F, "" + JRMCoreH.HairsT[6] + JRMCoreH.Hairs[0]);
+        }
+    }
+
+    @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 0, shift = At.Shift.BEFORE))
+    private void renderSaiyanArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM) {
+        CustomForm form = Utility.getFormClient((AbstractClientPlayer) par1EntityPlayer);
+        if (form != null) {
+            if (form.hairType.equals("ssj4")) {
+                renderSSJ4Arm(form.furColor, par1EntityPlayer, id.get());
+            } else if (form.hairType.equals("oozaru")) {
+                renderOozaruArm(bodyCM.get(), form.furColor, par1EntityPlayer, id.get());
+            }
         }
     }
 
@@ -104,7 +129,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
 
     @Unique
-    private void renderSSJ4Arm(int furColor, EntityPlayer p) {
+    private void renderSSJ4Arm(int furColor, EntityPlayer p, int id) {
         JRMCoreClient.mc.getTextureManager().bindTexture(new ResourceLocation("jinryuudragonbc:cc/ss4b.png"));
         RenderPlayerJBRA.glColor3f(furColor);
         this.modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, p);
@@ -118,25 +143,26 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
 
     @Unique
-    private void renderOozaru(int bodyCM, int furColor, EntityPlayer player) {
-        ResourceLocation bdyskn = new ResourceLocation("jinryuudragonbc:cc/oozaru1.png");
+    private void renderOozaru(int bodyCM, int eyeColor, int furColor, EntityPlayer player) {
+        ResourceLocation bdyskn = new ResourceLocation("jinryuudragonbc:cc/oozaru1.png"); //human hairless face
         this.bindTexture(bdyskn);
         RenderPlayerJBRA.glColor3f(bodyCM);
         this.modelMain.renderBody(0.0625F);
-        bdyskn = new ResourceLocation("jinryuudragonbc:cc/oozaru2.png");
+        bdyskn = new ResourceLocation("jinryuudragonbc:cc/oozaru2.png"); //the fur
         this.bindTexture(bdyskn);
         RenderPlayerJBRA.glColor3f(furColor);
         this.modelMain.renderBody(0.0625F);
-        this.bindTexture(new ResourceLocation("jinryuudragonbc:cc/oozaru0.png"));
-        GL11.glColor3f(1.0F + getR(), 1.0F + getG(), 1.0F + getB());
+        this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/oozarueyes.png")); //eyes
+        RenderPlayerJBRA.glColor3f(eyeColor);
+
         this.modelMain.renderHairs(0.0625F, "EYEBASE");
-        RenderPlayerJBRA.glColor3f(bodyCM);
+        RenderPlayerJBRA.glColor3f(bodyCM); //
         this.modelMain.renderHairs(0.0625F, "OOZARU");
     }
 
 
     @Unique
-    private void renderOozaruArm(int bodyCM, int furColor, EntityPlayer player) {
+    private void renderOozaruArm(int bodyCM, int furColor, EntityPlayer player, int id) {
         ResourceLocation bdyskn = new ResourceLocation("jinryuudragonbc:cc/oozaru1.png");
         JRMCoreClient.mc.getTextureManager().bindTexture(bdyskn);
         RenderPlayerJBRA.glColor3f(bodyCM);
@@ -148,7 +174,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             this.func_aam2(this.modelMain.RA, this.modelMain.LA, id, true);
         }
 
-
+        bdyskn = new ResourceLocation("jinryuudragonbc:cc/oozaru2.png");
         JRMCoreClient.mc.getTextureManager().bindTexture(bdyskn);
         RenderPlayerJBRA.glColor3f(furColor);
         this.modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, player);

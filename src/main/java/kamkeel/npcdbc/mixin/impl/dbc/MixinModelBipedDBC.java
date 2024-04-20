@@ -9,9 +9,11 @@ import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientEventHandler;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,6 +23,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = ModelBipedDBC.class, remap = false)
 public class MixinModelBipedDBC extends ModelBipedBody {
+
+    @Shadow
+    public ModelRenderer hairc71;
 
     @ModifyVariable(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At("HEAD"), ordinal = 0, name = "s", argsOnly = true)
     private int renderHairsS(int s) {
@@ -46,8 +51,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
 
                 if (form.hairType.equals("ssj4")) { //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
-                    disableFace(true,hair, ci);
-                    disableHairPresets(false, hair, ci);
+                    disableFace(true, false, hair, ci); disableHairPresets(false, hair, ci);
                     if (hair.contains("SJT")) { //render tail color
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
                         RenderPlayerJBRA.glColor3f(form.furColor);
@@ -62,6 +66,13 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                         int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
                     }
+                } else if (form.hairType.equals("oozaru")) {
+                    disableFace(false, true, hair, ci);
+                    disableHairPresets(false, hair, ci);
+                    if (hair.contains("SJT")) { //render tail color
+                        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
+                        RenderPlayerJBRA.glColor3f(form.furColor);
+                    }
                 }
             }
         }
@@ -74,7 +85,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             if (form != null) {
                 //disable other hair rendering when ssj4 hair type
                 boolean isCorrectHair = h.equals(form.hairCode) || h.startsWith("373852546750347428545480");
-                if ((form.hairType.equals("ssj4") && !isCorrectHair) || form.hairType.equals("ssj3"))
+                if ((form.hairType.equals("ssj4") && !isCorrectHair) || form.hairType.equals("ssj3") || form.hairType.equals("oozaru"))
                     ci.cancel();
 
                 RenderPlayerJBRA.glColor3f(form.hairColor);
@@ -84,8 +95,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     }
 
     @Unique
-    public void disableFace(boolean customSSJ4, String faceType, CallbackInfoReturnable<String> ci) {
-        if ((faceType.contains("FACENOSE") && !customSSJ4) || faceType.contains("FACEMOUTH") || faceType.contains("EYEBROW") || faceType.contains("EYEBASE") || faceType.contains("EYELEFT") || faceType.contains("EYERIGHT"))
+    public void disableFace(boolean customSSJ4, boolean customOozaru, String faceType, CallbackInfoReturnable<String> ci) {
+        if ((faceType.contains("FACENOSE") && !customSSJ4) || faceType.contains("FACEMOUTH") || faceType.contains("EYEBROW") || (faceType.contains("EYEBASE") && !Utility.stackTraceContains("renderOozaru")) || faceType.contains("EYELEFT") || faceType.contains("EYERIGHT"))
             ci.setReturnValue("");
     }
 
