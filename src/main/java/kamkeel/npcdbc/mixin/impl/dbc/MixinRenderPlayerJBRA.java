@@ -5,10 +5,9 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.CustomForm;
-import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
@@ -22,7 +21,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(value = RenderPlayerJBRA.class, remap = false)
 public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
@@ -32,23 +30,30 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     int id;
 
-    @Unique
-    int faceM;
-    @Unique
-    float currentBodyPerc;
 
-    @Unique
-    int playerID;
-
-    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void renderSSJ4(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(ordinal = 0) int pl) {
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
+    private void changeFormData(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "st") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
         CustomForm form = Utility.getFormClient(par1AbstractClientPlayer);
         if (form != null) {
-            DBCData dbcData = DBCData.get(par1AbstractClientPlayer);
-            int playerBodyCM = JRMCoreH.dnsBodyCM(dbcData.DNS);
+            st.set(0);
+            if (form.hasBodyCM)
+                bodyCM.set(form.bodyCM);
+            if (form.hasBodyC1)
+                bodyC1.set(form.bodyC1);
+            if (form.hasBodyC2)
+                bodyC2.set(form.bodyC2);
+            if (form.hasBodyC3)
+                bodyC3.set(form.bodyC3);
+        }
+    }
+
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
+    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "pl") LocalIntRef pl, @Local(name = "race") LocalIntRef race, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
+        CustomForm form = Utility.getFormClient(par1AbstractClientPlayer);
+        if (form != null) {
             if (form.hairType.equals("ssj4")) {
-                renderSSJ4Face(form.hairColor, form.furColor, form.eyeColor, playerBodyCM, dbcData.DNS);
-                renderSSJ4Hair(form.hairColor, form.hairCode, dbcData.Race, DBCUtils.getPlayerID(dbcData.player));
+                renderSSJ4Face(form.hairColor, form.furColor, form.eyeColor, form.bodyCM, gender.get(), nose.get());
+                renderSSJ4Hair(form.hairColor, form.hairCode, race.get(), pl.get());
                 renderSSJ4Fur(form.furColor);
             } else if (form.hairType.equals("oozaru")) {
                 renderOozaru(form.bodyCM, form.furColor, par1AbstractClientPlayer);
@@ -56,8 +61,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 this.modelMain.renderHairs(0.0625F, "" + JRMCoreH.HairsT[6] + JRMCoreH.Hairs[0]);
         }
     }
+
     @Unique
-    private void renderSSJ4Face(int hairColor, int furColor, int eyeColor, int bodyCM, String DNS) {
+    private void renderSSJ4Face(int hairColor, int furColor, int eyeColor, int bodyCM, int gender, int nose) {
         GL11.glColor3f(1.0F + getR(), 1.0F + getG(), 1.0F + getB());
         this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/ssj4eyewhite.png"));
         this.modelMain.renderBody(1F / 16F);
@@ -71,12 +77,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/ssj4brows2.png"));
         this.modelMain.renderBody(1F / 16F);
         RenderPlayerJBRA.glColor3f(bodyCM);
-        this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/ssj4mouth" + getSSJ4Mouth() + ".png"));
+        this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/ssj4mouth0.png"));
         this.modelMain.renderBody(1F / 16F);
         this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/ssj4shade.png"));
         this.modelMain.renderBody(0.0625F);
-        int gender = JRMCoreH.dnsGender(DNS);
-        int nose = JRMCoreH.dnsFaceN(DNS);
         this.bindTexture(new ResourceLocation("jinryuumodscore", "cc/" + (gender == 1 ? "f" : "") + "humn" + nose + ".png"));
         this.modelMain.renderHairs(0.0625F, "FACENOSE");
     }
@@ -98,19 +102,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         this.modelMain.renderBody(0.0625F);
     }
 
-    @Unique
-    private int getSSJ4Mouth() {
-        if (faceM == 3 || faceM == 4)
-            if (currentBodyPerc > 60)
-                return 0;
-            else if (currentBodyPerc < 70 && currentBodyPerc > 50)
-                return 1;
-            else
-                return 2;
-        else
-            return 2;
-
-    }
 
     @Unique
     private void renderSSJ4Arm(int furColor, EntityPlayer p) {
@@ -168,6 +159,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             this.func_aam2(this.modelMain.RA, this.modelMain.LA, id, true);
         }
     }
+
 
     @Shadow
     private void func_aam(ModelRenderer ra, ModelRenderer lA, int id, boolean c) {

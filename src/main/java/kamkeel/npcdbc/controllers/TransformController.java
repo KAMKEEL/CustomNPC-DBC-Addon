@@ -119,7 +119,7 @@ public class TransformController {
 
     @SideOnly(Side.CLIENT)
     public static int getRageMeterIncrementation() {
-        double fm = 30;//getFormMasteryValue(k);
+        double fm = 90;//getFormMasteryValue(k);
         double maxfm = 100;//getMaxFormMasteryValue(k);
 
         if (Utility.percentBetween(fm, maxfm, 0, 5))
@@ -188,22 +188,8 @@ public class TransformController {
         dbcData.getRawCompound().setString("preCustomFormDNSH", dbcData.DNSHair); //store pre transformation DNS
 
         CustomForm form = formData.getCurrentForm();
-        byte race = dbcData.Race;
         if (form.hasColor("aura"))
             dbcData.getRawCompound().setInteger("jrmcAuraColor", form.auraColor);
 
-        boolean b = race == 0 || race == 1 || race == 2 || race == 5; //if Human, Saiyan, Majin
-        if (form.hasBodyCM)
-            dbcData.setBodyColorMain(form.bodyCM);
-
-        if (form.hasBodyC1)
-            dbcData.setBodyColor1(form.bodyC1);
-
-        if (!b) {
-            if (form.hasBodyC2)
-                dbcData.setBodyColor2(form.bodyC2);
-            if (form.hasBodyC3)
-                dbcData.setBodyColor3(form.bodyC3);
-        }
     }
 }

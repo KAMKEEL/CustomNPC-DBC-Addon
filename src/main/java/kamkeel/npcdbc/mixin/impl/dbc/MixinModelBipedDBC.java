@@ -46,7 +46,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
 
                 if (form.hairType.equals("ssj4")) { //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
-                    disableFace(hair, ci);
+                    disableFace(true,hair, ci);
                     disableHairPresets(false, hair, ci);
                     if (hair.contains("SJT")) { //render tail color
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
@@ -84,8 +84,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     }
 
     @Unique
-    public void disableFace(String faceType, CallbackInfoReturnable<String> ci) {
-        if (faceType.contains("FACENOSE") || faceType.contains("FACEMOUTH") || faceType.contains("EYEBROW") || faceType.contains("EYEBASE") || faceType.contains("EYELEFT") || faceType.contains("EYERIGHT"))
+    public void disableFace(boolean customSSJ4, String faceType, CallbackInfoReturnable<String> ci) {
+        if ((faceType.contains("FACENOSE") && !customSSJ4) || faceType.contains("FACEMOUTH") || faceType.contains("EYEBROW") || faceType.contains("EYEBASE") || faceType.contains("EYELEFT") || faceType.contains("EYERIGHT"))
             ci.setReturnValue("");
     }
 
