@@ -155,6 +155,25 @@ public interface ICustomForm {
      */
     void setID(int newID);
 
+    /**
+     * @param formID form ID to link to this form. i.e linking SSJ2 Red to SSJ Red
+     */
+    void linkForm(int formID);
+
+    void linkForm(ICustomForm form);
+
+    /**
+     * @return form that is linked to this form i.e if SSJ2 Red is linked to SSJ Red(this), returns SSJ2 Red
+     */
+    ICustomForm getLinkedForm();
+
+    int getLinkedFormID();
+
+    /**
+     * removes the form linked to this form
+     */
+    void removeLinkedForm();
+
     public IFormMastery getFormMastery();
 
     ICustomForm save();

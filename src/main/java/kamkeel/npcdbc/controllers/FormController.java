@@ -32,10 +32,6 @@ public class FormController implements IFormHandler {
         bootOrder = new HashMap<>();
     }
 
-    public static FormController getInstance() {
-        return Instance;
-    }
-
     public void load() {
         LogWriter.info("Loading custom forms...");
         readCustomFormMap();
@@ -66,7 +62,7 @@ public class FormController implements IFormHandler {
         }
     }
 
-    private void loadForms(){
+    private void loadForms() {
         customForms.clear();
 
         File dir = getDir();
@@ -81,33 +77,41 @@ public class FormController implements IFormHandler {
                     form.readFromNBT(NBTJsonUtil.LoadFile(file));
                     form.name = file.getName().substring(0, file.getName().length() - 5);
 
-                    if(form.id == -1){
+                    if (form.id == -1) {
                         form.id = getUnusedId();
                     }
 
                     int originalID = form.id;
                     int setID = form.id;
-                    while (bootOrder.containsKey(setID) || customForms.containsKey(setID)){
-                        if(bootOrder.containsKey(setID))
-                            if(bootOrder.get(setID).equals(form.name))
+                    while (bootOrder.containsKey(setID) || customForms.containsKey(setID)) {
+                        if (bootOrder.containsKey(setID))
+                            if (bootOrder.get(setID).equals(form.name))
                                 break;
 
                         setID++;
                     }
 
                     form.id = setID;
-                    if(originalID != setID){
+                    if (originalID != setID) {
                         LogWriter.info("Found Custom Form ID Mismatch: " + form.name + ", New ID: " + setID);
                         form.save();
                     }
 
                     customForms.put(form.id, form);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     LogWriter.error("Error loading: " + file.getAbsolutePath(), e);
                 }
             }
         }
+        verifyLinkedForms();
         saveFormLoadMap();
+    }
+
+    private void verifyLinkedForms() {
+        for (CustomForm form : customForms.values()) {
+            if (!has(form.linkedID))
+                form.linkedID = -1;
+        }
     }
 
     private File getDir() {
@@ -122,7 +126,6 @@ public class FormController implements IFormHandler {
         lastUsedID++;
         return lastUsedID;
     }
-
 
     public ICustomForm saveForm(ICustomForm customForm) {
         if (customForm.getID() < 0) {
@@ -251,17 +254,17 @@ public class FormController implements IFormHandler {
         return names;
     }
 
-    ////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////
-    // CUSTOM FORM MAP
-    // Used to keep load order of Forms
-
     public File getMapDir() {
         File dir = CustomNpcs.getWorldSaveDirectory();
         if (!dir.exists())
             dir.mkdir();
         return dir;
     }
+
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    // CUSTOM FORM MAP
+    // Used to keep load order of Forms
 
     public void readCustomFormMap() {
         bootOrder.clear();
@@ -345,6 +348,10 @@ public class FormController implements IFormHandler {
         } catch (Exception e) {
             LogWriter.except(e);
         }
+    }
+
+    public static FormController getInstance() {
+        return Instance;
     }
 
     ////////////////////////////////////////////////////////

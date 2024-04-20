@@ -29,6 +29,7 @@ public class CustomForm implements ICustomForm {
 
     public boolean kaiokenStackable = true, uiStackable = true, godStackable = true, mysticStackable = true;
     public float kaiokenStrength = 1.2f, uiStrength = 3.0f, godStrength = 3.0f, mysticStrength = 1.8f;
+    public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
 
     public String hairCode = "", hairType = "ssj";
     public int auraColor = 1, hairColor, eyeColor, bodyCM, bodyC1, bodyC2, bodyC3, furColor = 14292268;
@@ -39,8 +40,13 @@ public class CustomForm implements ICustomForm {
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
-    public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
+
     public FormMastery formMastery = new FormMastery(this);
+    /**
+     * ID of form to link to this
+     */
+    public int linkedID = -1;
+
 
     public CustomForm() {
     }
@@ -465,6 +471,36 @@ public class CustomForm implements ICustomForm {
     }
 
     @Override
+    public void linkForm(int formID) {
+        if (FormController.getInstance().has(formID))
+            linkedID = formID;
+    }
+
+    @Override
+    public void linkForm(ICustomForm form) {
+        if (form != null)
+            linkedID = form.getID();
+    }
+
+    public ICustomForm getLinkedForm() {
+        return FormController.Instance.get(linkedID);
+    }
+
+    //internal
+    public CustomForm getLinked() {
+        return (CustomForm) FormController.Instance.get(linkedID);
+    }
+
+    @Override
+    public int getLinkedFormID() {
+        return linkedID;
+    }
+
+    public void removeLinkedForm() {
+        linkedID = -1;
+    }
+
+    @Override
     public IFormMastery getFormMastery() {
         return formMastery;
     }
@@ -485,6 +521,7 @@ public class CustomForm implements ICustomForm {
         race = compound.getInteger("race");
         formSize = compound.getFloat("formSize");
         hasSize = compound.getBoolean("hasSize");
+        linkedID = compound.getInteger("linkedID");
 
         NBTTagCompound attributes = compound.getCompoundTag("attributes");
         strengthMulti = attributes.getFloat("strMulti");
@@ -535,6 +572,7 @@ public class CustomForm implements ICustomForm {
         compound.setInteger("race", race);
         compound.setFloat("formSize", formSize);
         compound.setBoolean("hasSize", hasSize);
+        compound.setInteger("linkedID", linkedID);
 
         NBTTagCompound attributes = new NBTTagCompound();
         compound.setTag("attributes", attributes);
