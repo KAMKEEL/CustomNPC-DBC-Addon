@@ -9,11 +9,9 @@ import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientEventHandler;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,9 +21,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = ModelBipedDBC.class, remap = false)
 public class MixinModelBipedDBC extends ModelBipedBody {
-
-    @Shadow
-    public ModelRenderer hairc71;
 
     @ModifyVariable(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At("HEAD"), ordinal = 0, name = "s", argsOnly = true)
     private int renderHairsS(int s) {
@@ -49,31 +44,33 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             CustomForm form = Utility.getFormClient((AbstractClientPlayer) ClientEventHandler.renderingPlayer);
             if (form != null) {
                 DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
-
+                boolean fur = form.hairType.equals("ssj4") || form.hairType.equals("oozaru");
                 if (form.hairType.equals("ssj4")) { //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
-                    disableFace(true, false, hair, ci); disableHairPresets(false, hair, ci);
-                    if (hair.contains("SJT")) { //render tail color
-                        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
-                        RenderPlayerJBRA.glColor3f(form.furColor);
-                    }
-                } else if (hair.contains("EYELEFT") || hair.contains("EYERIGHT"))  //eye colors for ALL forms except ssj4
-                    RenderPlayerJBRA.glColor3f(form.eyeColor);
-
-                if (form.hairType.equals("ssj3")) {
+                    disableFace(true, false, hair, ci);
+                    disableHairPresets(false, hair, ci);
+                } else if (form.hairType.equals("ssj3")) {
                     disableHairPresets(true, hair, ci);
                     if (hair.contains("EYEBROW")) { //bind ssj3 eyebrow texture to ssj3 hair type
                         int gen = JRMCoreH.dnsGender(dbcData.DNS);
                         int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
-                    }
+                    } else if (hair.contains("D"))
+                        RenderPlayerJBRA.glColor3f(form.hairColor);
+
                 } else if (form.hairType.equals("oozaru")) {
                     disableFace(false, true, hair, ci);
                     disableHairPresets(false, hair, ci);
-                    if (hair.contains("SJT")) { //render tail color
-                        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
-                        RenderPlayerJBRA.glColor3f(form.furColor);
-                    }
                 }
+
+                if (hair.contains("EYEBROW"))
+                    RenderPlayerJBRA.glColor3f(form.hairColor);
+                if (!form.hairType.equals("ssj4") && (hair.contains("EYELEFT") || hair.contains("EYERIGHT")))  //eye colors for ALL forms except ssj4
+                    RenderPlayerJBRA.glColor3f(form.eyeColor);
+                if (hair.contains("SJT")) { //render tail color
+                    Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
+                    RenderPlayerJBRA.glColor3f(fur ? form.furColor : form.hairColor);
+                }
+
             }
         }
     }

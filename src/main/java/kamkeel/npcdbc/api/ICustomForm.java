@@ -70,6 +70,25 @@ public interface ICustomForm {
     float getState2Factor(int dbcForm);
 
     /**
+     * @return form's size, default is 1.0f of player's current size
+     */
+    float getSize();
+
+    /**
+     * @param size size to set form to. 2.0f sets the player to 2x their normal size. Max: 50.0
+     */
+    void setSize(float size);
+
+    boolean hasSize();
+
+    /**
+     * Must be set to true in order for formSize to be enabled
+     *
+     * @param hasSize
+     */
+    void setHasSize(boolean hasSize);
+
+    /**
      * @return index 0 is strengthMulti,1 dexMulti, 2 willMulti
      */
     float[] getAllMulti();

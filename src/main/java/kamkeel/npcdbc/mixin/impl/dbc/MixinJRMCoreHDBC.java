@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreHDBC;
+import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.Utility;
@@ -21,11 +22,31 @@ public class MixinJRMCoreHDBC {
                 CustomForm form = formData.getCurrentForm();
                 if (Utility.stackTraceContains("chargePart"))
                     ci.setReturnValue(form.auraColor);
-                else if (formData.getCurrentForm().hairType.equals("ssj4"))
+                else if (form.hairType.equals("ssj4") || form.hairType.equals("oozaru"))
                     ci.setReturnValue(form.furColor);
                 else
                     ci.setReturnValue(form.hairColor);
             }
         }
     }
+
+    @Inject(method = "DBCsizeBasedOnRace2(IIZ)F", at = @At("HEAD"), cancellable = true)
+    private static void DBCsizeBasedOnRace2(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir) {
+        if (CommonProxy.CurrentJRMCTickPlayer != null) {
+            CustomForm form = null;
+
+            if (Utility.isServer()) {
+                PlayerCustomFormData data = Utility.getFormData(CommonProxy.CurrentJRMCTickPlayer);
+                if (data != null)
+                    form = data.getCurrentForm();
+            } else
+                form = Utility.getFormClient(CommonProxy.CurrentJRMCTickPlayer);
+            if (form != null) {
+                if (form.hasSize) {
+                    cir.setReturnValue(form.formSize);
+                }
+            }
+        }
+    }
+
 }

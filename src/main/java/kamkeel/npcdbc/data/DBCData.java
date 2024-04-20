@@ -9,15 +9,12 @@ import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
-import net.minecraftforge.common.IExtendedEntityProperties;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
 
-public class DBCData implements IExtendedEntityProperties {
+public class DBCData {
 
     public static final CacheHashMap<String, CacheHashMap.CachedObject<DBCData>> dbcDataCache = new CacheHashMap<>((long) ConfigClient.CacheLife * 60 * 1000);
 
@@ -44,23 +41,12 @@ public class DBCData implements IExtendedEntityProperties {
     public DBCData(EntityPlayer player) {
         this.player = player;
         this.side = player.worldObj.isRemote ? Side.CLIENT : Side.SERVER;
-    }
-
-    public static DBCData get(EntityPlayer player) {
-        synchronized (dbcDataCache) {
-            if (!dbcDataCache.containsKey(player.getCommandSenderName())) {
-                dbcDataCache.put(player.getCommandSenderName(),  new CacheHashMap.CachedObject<>(new DBCData(player)));
-            }
-            return dbcDataCache.get(player.getCommandSenderName()).getObject();
-        }
-    }
-
-    @Override
-    public void init(Entity entity, World world) {
         loadNBTData(null);
     }
 
-    public NBTTagCompound saveNBT(NBTTagCompound c){
+
+
+    public NBTTagCompound saveNBT(NBTTagCompound c) {
         c.setInteger("jrmcStrI", STR);
         c.setInteger("jrmcDexI", DEX);
         c.setInteger("jrmcConI", CON);
@@ -97,7 +83,7 @@ public class DBCData implements IExtendedEntityProperties {
         return c;
     }
 
-    public void setNBT(NBTTagCompound c){
+    public void setNBT(NBTTagCompound c) {
         STR = c.getInteger("jrmcStrI");
         DEX = c.getInteger("jrmcDexI");
         CON = c.getInteger("jrmcConI");
@@ -128,15 +114,15 @@ public class DBCData implements IExtendedEntityProperties {
         DNSHair = c.getString("jrmcDNSH");
 
         // DBC Addon
-        currentCustomForm =  c.getInteger("customFormID");
+        currentCustomForm = c.getInteger("customFormID");
         currentCustomFormLevel = c.getInteger("customFormLevel");
         preCustomAuraColor = c.getInteger("preCustomAuraColor");
         preCustomFormDNS = c.getString("preCustomFormDNS");
         preCustomFormDNSHair = c.getString("preCustomFormDNSH");
     }
 
-    @Override
-    public void saveNBTData(NBTTagCompound compound){
+
+    public void saveNBTData(NBTTagCompound compound) {
         NBTTagCompound nbt = this.saveNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
 
         PlayerCustomFormData formData = Utility.getFormData(player);
@@ -149,8 +135,7 @@ public class DBCData implements IExtendedEntityProperties {
         syncAllClients();
     }
 
-    @Override
-    public void loadNBTData(NBTTagCompound compound){
+    public void loadNBTData(NBTTagCompound compound) {
         NBTTagCompound dbc = this.player.getEntityData().getCompoundTag(DBCPersisted);
         setNBT(dbc);
 
@@ -161,6 +146,8 @@ public class DBCData implements IExtendedEntityProperties {
         preCustomAuraColor = dbc.getInteger("preCustomAuraColor");
         preCustomFormDNS = dbc.getString("preCustomFormDNS");
         preCustomFormDNSHair = dbc.getString("preCustomFormDNSH");
+
+        syncAllClients();
     }
 
     public void syncAllClients() {
@@ -397,6 +384,15 @@ public class DBCData implements IExtendedEntityProperties {
                 return settingOn(6);
             default:
                 return false;
+        }
+    }
+
+    public static DBCData get(EntityPlayer player) {
+        synchronized (dbcDataCache) {
+            if (!dbcDataCache.containsKey(player.getCommandSenderName())) {
+                dbcDataCache.put(player.getCommandSenderName(), new CacheHashMap.CachedObject<>(new DBCData(player)));
+            }
+            return dbcDataCache.get(player.getCommandSenderName()).getObject();
         }
     }
 }

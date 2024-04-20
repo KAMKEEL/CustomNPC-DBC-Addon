@@ -11,11 +11,7 @@ import net.minecraftforge.common.MinecraftForge;
 import noppes.npcs.scripted.NpcAPI;
 
 public class CommonProxy {
-
-    public static void eventsInit() {
-        FMLCommonHandler.instance().bus().register(new ServerEventHandler());
-        MinecraftForge.EVENT_BUS.register(new ServerEventHandler());
-    }
+    public static EntityPlayer CurrentJRMCTickPlayer = null;
 
     public void preInit(FMLPreInitializationEvent ev) {
         eventsInit();
@@ -35,5 +31,10 @@ public class CommonProxy {
 
     public World getClientWorld() {
         return null;
+    }
+
+    public static void eventsInit() {
+        FMLCommonHandler.instance().bus().register(new ServerEventHandler());
+        MinecraftForge.EVENT_BUS.register(new ServerEventHandler());
     }
 }

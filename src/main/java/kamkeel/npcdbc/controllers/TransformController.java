@@ -41,7 +41,7 @@ public class TransformController {
         soundTime++;
         TransformController.setAscending(true);
         rageValue = getRageMeterIncrementation();
-
+        rage += rageValue;
         if (soundTime == 1 || soundTime >= 33) { //plays aura sound every 33 ticks
             if (soundTime != 1)
                 soundTime = 0;
@@ -54,7 +54,7 @@ public class TransformController {
             if (JRMCoreH.curEnergy < cost)
                 return;
             JRMCoreH.Cost(cost);
-            rage += rageValue;
+
         }
         if (JRMCoreH.curRelease < 50 && releaseTime >= 10) { //if release is less than 50%, increment it until it is so
             float en = 100.0F / JRMCoreH.maxEnergy * JRMCoreH.curEnergy;
@@ -86,8 +86,8 @@ public class TransformController {
         if (rage > 0) {
             if (rage > 100)
                 rage = 100;
-            if (rage - (rageValue / 12) >= 0)
-                rage -= (rageValue / 12);
+            if (rage - (rageValue) >= 0)
+                rage -= (rageValue);
             else
                 rage = 0;
             if (rage <= 50 && JRMCoreH.StusEfctsMe(1))
@@ -118,14 +118,14 @@ public class TransformController {
     }
 
     @SideOnly(Side.CLIENT)
-    public static int getRageMeterIncrementation() {
-        double fm = 90;//getFormMasteryValue(k);
+    public static float getRageMeterIncrementation() {
+        double fm = 6;//getFormMasteryValue(k);
         double maxfm = 100;//getMaxFormMasteryValue(k);
 
         if (Utility.percentBetween(fm, maxfm, 0, 5))
             return 3;
         else if (Utility.percentBetween(fm, maxfm, 5, 10))
-            return 6;
+            return 6f;
         else if (Utility.percentBetween(fm, maxfm, 10, 20))
             return 10;
         else if (Utility.percentBetween(fm, maxfm, 20, 30))
@@ -172,6 +172,8 @@ public class TransformController {
             Utility.sendMessage(p, "§cDescended from§r " + formData.getCurrentForm().getMenuName());
             formData.currentForm = -1;
             formData.updateClient();
+            JRMCoreH.setByte(0, p, "jrmcSaiRg");
+            DBCData.get(p).saveNBTData(null);
         }
     }
 

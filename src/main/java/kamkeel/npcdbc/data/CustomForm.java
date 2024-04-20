@@ -33,7 +33,9 @@ public class CustomForm implements ICustomForm {
     public String hairCode = "", hairType = "ssj";
     public int auraColor = 1, hairColor, eyeColor, bodyCM, bodyC1, bodyC2, bodyC3, furColor = 14292268;
     public boolean hasAuraColor = true, hasHairColor = true, hasEyeColor = true, hasBodyCM = false, hasBodyC1 = false, hasBodyC2 = false, hasBodyC3 = false, hasFurColor = true;
+    public boolean hasSize = true;
 
+    public float formSize = 20.0f;
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
@@ -213,6 +215,28 @@ public class CustomForm implements ICustomForm {
             default:
                 return 1.0f;
         }
+    }
+
+    @Override
+    public float getSize() {
+        return formSize;
+    }
+
+    @Override
+    public void setSize(float size) {
+        formSize = Math.min(size, 50);
+        save();
+    }
+
+    @Override
+    public boolean hasSize() {
+        return hasSize;
+    }
+
+    @Override
+    public void setHasSize(boolean hasSize) {
+        this.hasSize = hasSize;
+        save();
     }
 
     public float[] getAllMulti() {
@@ -459,6 +483,8 @@ public class CustomForm implements ICustomForm {
         name = compound.getString("name");
         menuName = compound.getString("menuName");
         race = compound.getInteger("race");
+        formSize = compound.getFloat("formSize");
+        hasSize = compound.getBoolean("hasSize");
 
         NBTTagCompound attributes = compound.getCompoundTag("attributes");
         strengthMulti = attributes.getFloat("strMulti");
@@ -507,6 +533,8 @@ public class CustomForm implements ICustomForm {
         compound.setString("name", name);
         compound.setString("menuName", menuName);
         compound.setInteger("race", race);
+        compound.setFloat("formSize", formSize);
+        compound.setBoolean("hasSize", hasSize);
 
         NBTTagCompound attributes = new NBTTagCompound();
         compound.setTag("attributes", attributes);

@@ -6,7 +6,9 @@ import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -27,10 +29,17 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Shadow
     ModelBipedDBC modelMain;
 
+    @Inject(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE))
+    public void changeSize1(AbstractClientPlayer p, float p_77041_2_, CallbackInfo ci) {
+        CommonProxy.CurrentJRMCTickPlayer = p;
+
+    }
+
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
-    private void changeFormData(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "st") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
+    private void changeFormData(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "rg") LocalIntRef rg, @Local(name = "st") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
         CustomForm form = Utility.getFormClient(par1AbstractClientPlayer);
+        rg.set((int) TransformController.rage > 0 && !TransformController.transformed ? (int) TransformController.rage : rg.get());
         if (form != null) {
             st.set(0);
             if (form.hasBodyCM)
@@ -41,6 +50,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 bodyC2.set(form.bodyC2);
             if (form.hasBodyC3)
                 bodyC3.set(form.bodyC3);
+
+
         }
     }
 

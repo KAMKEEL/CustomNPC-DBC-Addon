@@ -21,12 +21,13 @@
   ],
   "client": [
     "dbc.MixinDBCKiTech",
+    "dbc.MixinJRMCoreCliTickH",
     "dbc.MixinJRMCoreGuiBars",
     "dbc.MixinJRMCoreGuiScreen",
     "dbc.MixinModelBipedDBC",
+    "dbc.MixinRenderAura2",
     "dbc.MixinRenderPlayerJBRA",
-    "npc.MixinDBCClient",
-    "dbc.MixinRenderAura2"
+    "npc.MixinDBCClient"
   ],
   "server": []
 }

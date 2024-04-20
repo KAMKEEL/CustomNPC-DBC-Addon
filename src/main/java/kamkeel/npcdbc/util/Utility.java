@@ -10,6 +10,7 @@ import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -138,25 +139,25 @@ public class Utility {
 
     @SideOnly(Side.CLIENT)
     public static PlayerCustomFormData getSelfData() {
-        if(Minecraft.getMinecraft().thePlayer == null)
+        if (Minecraft.getMinecraft().thePlayer == null)
             return null;
         IPlayerFormData formData = (IPlayerFormData) PlayerData.get(Minecraft.getMinecraft().thePlayer);
-        if(formData == null)
+        if (formData == null)
             return null;
         return formData.getCustomFormData();
     }
 
     @SideOnly(Side.CLIENT)
-    public static CustomForm getFormClient(AbstractClientPlayer player) {
-        if(player == null)
+    public static CustomForm getFormClient(EntityPlayer player) {
+        if (player == null)
             return null;
 
         DBCData dbcData = DBCData.get(player);
-        if(dbcData == null)
+        if (dbcData == null)
             return null;
 
         int form = dbcData.currentCustomForm;
-        if(form == -1)
+        if (form == -1)
             return null;
 
         return (CustomForm) FormController.getInstance().get(form);
@@ -165,7 +166,7 @@ public class Utility {
     @SideOnly(Side.CLIENT)
     public static float getFormLevelClient(AbstractClientPlayer player) {
         DBCData dbcData = DBCData.get(player);
-        if(dbcData == null)
+        if (dbcData == null)
             return 0f;
 
         return dbcData.currentCustomFormLevel;
@@ -192,4 +193,7 @@ public class Utility {
         sendScrollData(player, map);
     }
 
+    public static boolean isInventoryOpen() {
+        return Minecraft.getMinecraft().currentScreen instanceof GuiInventory;
+    }
 }

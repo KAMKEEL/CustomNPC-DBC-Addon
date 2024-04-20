@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 
 
 public class ClientEventHandler {
+
     @SubscribeEvent
     public void onSkill(TickEvent.PlayerTickEvent event) {
         if (event.side == Side.SERVER || event.player == null)
@@ -28,7 +29,7 @@ public class ClientEventHandler {
 
     private void performAscend() {
         PlayerCustomFormData formData = Utility.getSelfData();
-        if(formData != null && formData.selectedForm > -1)
+        if (formData != null && formData.selectedForm > -1)
             TransformController.Ascend(Utility.getSelfData().getSelectedForm());
 
     }
@@ -36,9 +37,9 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent e) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.currentScreen == null && KeyHandler.AscendKey.getIsKeyPressed()){
+        if (mc.currentScreen == null && KeyHandler.AscendKey.getIsKeyPressed()) {
             PlayerCustomFormData formData = Utility.getSelfData();
-            if(formData != null && formData.selectedForm == -1)
+            if (formData != null && formData.selectedForm == -1)
                 Utility.sendMessage(mc.thePlayer, "§cYou have not selected a custom form!");
         }
     }
