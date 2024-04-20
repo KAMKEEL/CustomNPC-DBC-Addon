@@ -8,6 +8,7 @@
   "mixins": [
     "dbc.MixinDBCPacketHandlerServer",
     "dbc.MixinDBCStats",
+    "dbc.MixinEntityAura2",
     "dbc.MixinJGPlayerMP",
     "dbc.MixinJRMCoreComTickH",
     "dbc.MixinJRMCoreEH",
@@ -24,7 +25,8 @@
     "dbc.MixinJRMCoreGuiScreen",
     "dbc.MixinModelBipedDBC",
     "dbc.MixinRenderPlayerJBRA",
-    "npc.MixinDBCClient"
+    "npc.MixinDBCClient",
+    "dbc.MixinRenderAura2"
   ],
   "server": []
 }

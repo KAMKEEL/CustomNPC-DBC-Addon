@@ -82,6 +82,7 @@ UI Heat(int jrmcEf8slc/double jrmcEf8slcD):
 
 -Custom Auras:
 	
-	-Form Auras are stored in DBCKiTech.chargepart, aura is for state and aura2 is ssbkk, cr is current rls, sacol is alignment/ki bar clr/aura clr, w is (dashing or swooping || dynamic flight && jrmcStnd.contains 1 && not charging  ki || 
+	-Form Auras are stored in DBCKiTech.chargepart,  aura2 is ssbkk, cr is current rls, sacol is alignment/ki bar clr/aura clr, w is (dashing or swooping || dynamic flight && jrmcStnd.contains 1 && not charging  ki || 
 	-For lightning, set EntityAura2.state(jrmcState, except ssgod 0, ssb 0, ssbe 3, 21 oozaru, 24 ssj ooz) to 5-6 
+	-bol17 is majin || kk, bol, only for red lightning rendering
 	

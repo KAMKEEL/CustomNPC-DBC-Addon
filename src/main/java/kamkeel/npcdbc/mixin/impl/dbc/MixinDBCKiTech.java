@@ -2,8 +2,12 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreH;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.data.CustomAura;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.network.PacketHandler;
@@ -11,6 +15,7 @@ import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -73,8 +78,32 @@ public class MixinDBCKiTech {
             ci.cancel();
     }
 
-//    @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
-//    private static void chargePart(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "pl") LocalIntRef pl){
+    @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/settings/GameSettings;thirdPersonView:I", ordinal = 0, shift = At.Shift.AFTER))
+    private static void chargePart(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "state") LocalFloatRef state, @Local(name = "state2") LocalFloatRef state2, @Local(name = "kk") LocalBooleanRef kk, @Local(name = "ssb") LocalBooleanRef ssb, @Local(name = "ssg") LocalBooleanRef ssg, @Local(name = "ssbs") LocalBooleanRef ssbs, @Local(name = "v") LocalBooleanRef divine, @Local(name = "oozar") LocalBooleanRef oozaru, @Local(name = "ui") LocalBooleanRef ui, @Local(name = "gd") LocalBooleanRef godestruction) {
+        CustomAura aura = null; //pls make the framework for this
+        if (aura != null) {
+            if (aura.type.equals("ssg"))
+                ssg.set(true);
+            else if (aura.type.equals("ssb"))
+                ssb.set(true);
+            else if (aura.type.equals("ssbkk")) {
+                kk.set(true);
+                ssb.set(true);
+            } else if (aura.type.equals("ssbevo"))
+                ssbs.set(true);
+            else if (aura.type.equals("ssrose")) {
+                ssb.set(true);
+                divine.set(true);
+            } else if (aura.type.equals("ssroseevo")) {
+                ssbs.set(true);
+                divine.set(true);
+            } else if (aura.type.equals("ui"))
+                ui.set(true);
+            else if (aura.type.equals("godofdestruction"))
+                godestruction.set(true);
+
+        }
+    }
 
 
 }

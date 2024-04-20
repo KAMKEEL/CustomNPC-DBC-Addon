@@ -35,9 +35,17 @@ public interface ICustomAura {
 
     boolean hasLightning();
 
-    float getSpeed();
+    int getLightningColor();
 
-    void setSpeed(float speed);
+    void setLightningColor(int color);
+
+    int getLightningAlpha();
+
+    void setLightningAlpha(int alpha);
+
+    int getSpeed();
+
+    void setSpeed(int speed);
 
     /**
      * @param textureType Legal types: texture1, texture2, texture3
