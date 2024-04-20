@@ -41,5 +41,4 @@ dependencies {
     devOnlyNonPublishable(rfg.deobf(project.files("lib/DragonBlockC-v1.4.85.jar")))
     devOnlyNonPublishable(rfg.deobf(project.files("lib/JBRA-Client-v1.6.52.jar")))
     implementation rfg.deobf(name: "CustomNPC-Plus-1.9.3")
-    // implementation name: "Armourers-Workshop-1.7.10-0.48.5"
 }
