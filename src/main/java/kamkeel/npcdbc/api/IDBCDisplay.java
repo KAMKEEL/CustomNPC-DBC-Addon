@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.api;
 
-import kamkeel.npcdbc.data.EnumAuraTypes;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 
 public interface IDBCDisplay {
     boolean isEnabled();

@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.data;
+package kamkeel.npcdbc.constants.enums;
 
 public enum EnumAuraTypes {
     None,

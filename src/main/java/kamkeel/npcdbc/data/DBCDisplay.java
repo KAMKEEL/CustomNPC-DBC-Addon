@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data;
 
 import kamkeel.npcdbc.api.IDBCDisplay;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class DBCDisplay implements IDBCDisplay {

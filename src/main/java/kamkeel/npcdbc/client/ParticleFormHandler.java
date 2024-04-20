@@ -2,7 +2,7 @@ package kamkeel.npcdbc.client;
 
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import JinRyuu.JRMCore.entity.EntityCusPar;
-import kamkeel.npcdbc.data.EnumAuraTypes;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 import net.minecraft.entity.Entity;
 import noppes.npcs.entity.EntityNPCInterface;
 
