@@ -6,27 +6,26 @@ import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
-import noppes.npcs.constants.EnumPacketClient;
 
 import java.io.IOException;
 
 import static noppes.npcs.NoppesUtilServer.getPlayerByName;
 
-public final class DBCSetValue extends AbstractPacket {
+public final class DBCSetValPacket extends AbstractPacket {
     public static final String packetName = "NPCDBC|SetValue";
     private EnumNBTType type;
     private EntityPlayer player;
     private String tag;
     private Object value;
 
-    public DBCSetValue(EntityPlayer player, EnumNBTType type, String tag, Object value) {
+    public DBCSetValPacket(EntityPlayer player, EnumNBTType type, String tag, Object value) {
         this.player = player;
         this.type = type;
         this.tag = tag;
         this.value = value;
     }
 
-    public DBCSetValue() {}
+    public DBCSetValPacket() {}
 
     @Override
     public String getChannel() {

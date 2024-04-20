@@ -10,7 +10,7 @@ import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.DBCSetValue;
+import kamkeel.npcdbc.network.packets.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -75,7 +75,7 @@ public class TransformController {
         }
 
         JRMCoreH.TransSaiCurRg = (byte) rage;
-        PacketHandler.Instance.sendToServer(new DBCSetValue(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
     }
 
     @SideOnly(Side.CLIENT)
