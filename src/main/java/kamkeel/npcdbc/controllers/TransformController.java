@@ -5,11 +5,12 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.DBCFixInt;
+import kamkeel.npcdbc.network.packets.DBCSetValue;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -74,7 +75,7 @@ public class TransformController {
         }
 
         JRMCoreH.TransSaiCurRg = (byte) rage;
-        PacketHandler.Instance.sendToServer(new DBCFixInt(CustomNpcPlusDBC.proxy.getClientPlayer(), "jrmcSaiRg", (int) rage).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCSetValue(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
     }
 
     @SideOnly(Side.CLIENT)

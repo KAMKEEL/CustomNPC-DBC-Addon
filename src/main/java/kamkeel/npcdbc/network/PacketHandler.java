@@ -7,7 +7,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.network.packets.DBCFixInt;
+import kamkeel.npcdbc.network.packets.DBCSetValue;
 import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import net.minecraft.entity.Entity;
@@ -26,7 +26,7 @@ public final class PacketHandler {
     public PacketHandler() {
         map.put(PingPacket.packetName, new PingPacket());
         map.put(TransformPacket.packetName, new TransformPacket());
-        map.put(DBCFixInt.packetName, new DBCFixInt());
+        map.put(DBCSetValue.packetName, new DBCSetValue());
         this.register();
     }
 
