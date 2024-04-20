@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreHDBC;
+import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.Utility;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,11 +17,15 @@ public class MixinJRMCoreHDBC {
         // To be improved by kAM
         if (!Utility.stackTraceContains("RenderPlayerJBRA")) {
             PlayerCustomFormData formData = Utility.getSelfData();
-            if (formData != null && formData.isInCustomForm())
-                if (formData.getCurrentForm().hairType.equals("ssj4"))
-                    ci.setReturnValue(formData.getCurrentForm().furColor);
+            if (formData != null && formData.isInCustomForm()) {
+                CustomForm form = formData.getCurrentForm();
+                if (Utility.stackTraceContains("chargePart"))
+                    ci.setReturnValue(form.auraColor);
+                else if (formData.getCurrentForm().hairType.equals("ssj4"))
+                    ci.setReturnValue(form.furColor);
                 else
-                    ci.setReturnValue(formData.getCurrentForm().hairColor);
+                    ci.setReturnValue(form.hairColor);
+            }
         }
     }
 }

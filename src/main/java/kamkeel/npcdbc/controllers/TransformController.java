@@ -162,7 +162,6 @@ public class TransformController {
                 dbcData.State = 0;
             formData.updateClient();
             Utility.sendMessage(p, "§aTransformed to§r " + formData.getCurrentForm().getMenuName());
-            setCustomFormRenderingData(p, formData, dbcData);
             dbcData.saveNBTData(null);
         }
     }
@@ -170,26 +169,11 @@ public class TransformController {
     public static void handleCustomFormDescend(EntityPlayerMP p) {
         PlayerCustomFormData formData = Utility.getFormData(p);
         if (formData.isInCustomForm()) {
-            DBCData dbcData = DBCData.get(p);
             Utility.sendMessage(p, "§cDescended from§r " + formData.getCurrentForm().getMenuName());
             formData.currentForm = -1;
             formData.updateClient();
-            dbcData.getRawCompound().setString("jrmcDNS", dbcData.preCustomFormDNS); //sets original DNS back
-            dbcData.getRawCompound().setInteger("jrmcAuraColor", dbcData.preCustomAuraColor); //sets original aura back
-            dbcData.getRawCompound().setString("jrmcDNSH", dbcData.preCustomFormDNSHair);
-            dbcData.saveNBTData(null);
         }
     }
 
-    //this method is a bit slow, will eventually have to move all of this to MixinRenderPlayerJBRA
-    public static void setCustomFormRenderingData(EntityPlayerMP p, PlayerCustomFormData formData, DBCData dbcData) {
-        dbcData.getRawCompound().setString("preCustomFormDNS", dbcData.DNS); //store pre transformation DNS
-        dbcData.getRawCompound().setInteger("preCustomAuraColor", dbcData.AuraColor);
-        dbcData.getRawCompound().setString("preCustomFormDNSH", dbcData.DNSHair); //store pre transformation DNS
 
-        CustomForm form = formData.getCurrentForm();
-        if (form.hasColor("aura"))
-            dbcData.getRawCompound().setInteger("jrmcAuraColor", form.auraColor);
-
-    }
 }

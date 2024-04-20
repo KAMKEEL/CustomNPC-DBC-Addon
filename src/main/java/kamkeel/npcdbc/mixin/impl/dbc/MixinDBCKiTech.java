@@ -3,10 +3,10 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
-import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.PlayerCustomFormData;
+import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -72,4 +72,9 @@ public class MixinDBCKiTech {
         if (i == 1 && j == 1 && k == 100 && TransformController.ascending)
             ci.cancel();
     }
+
+//    @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
+//    private static void chargePart(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "pl") LocalIntRef pl){
+
+
 }
