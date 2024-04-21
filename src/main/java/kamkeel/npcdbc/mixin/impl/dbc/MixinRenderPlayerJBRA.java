@@ -62,8 +62,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 bodyC2.set(form.bodyC2);
             if (form.hasBodyC3)
                 bodyC3.set(form.bodyC3);
-
-
         }
     }
 
