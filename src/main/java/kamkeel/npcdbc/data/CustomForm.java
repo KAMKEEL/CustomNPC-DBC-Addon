@@ -44,7 +44,7 @@ public class CustomForm implements ICustomForm {
 
     public FormMastery formMastery = new FormMastery(this);
     /**
-     * ID of form to link to this
+     * ID of parent and child forms of this
      */
     public int childID = -1, parentID = -1;
 
@@ -168,6 +168,13 @@ public class CustomForm implements ICustomForm {
             throw new CustomNPCsException("Invalid type!");
         }
         save();
+    }
+
+    public int getNameColor() {
+        if (hairType.equals("ssj4") || hairType.equals("oozaru"))
+            return furColor;
+        else
+            return hairColor;
     }
 
     @Override
@@ -475,7 +482,8 @@ public class CustomForm implements ICustomForm {
     public void linkChild(int formID) {
         if (FormController.getInstance().has(formID)) {
             childID = formID;
-            getChild().linkParent(id);
+            if (getChild().getParentID() != this.id)
+                getChild().linkParent(id);
             save();
         }
 
@@ -515,7 +523,8 @@ public class CustomForm implements ICustomForm {
     public void linkParent(int formID) {
         if (FormController.getInstance().has(formID)) {
             parentID = formID;
-            getParent().linkChild(id);
+            if (getParent().getChildID() != this.id)
+                getParent().linkChild(id);
             save();
         }
 
