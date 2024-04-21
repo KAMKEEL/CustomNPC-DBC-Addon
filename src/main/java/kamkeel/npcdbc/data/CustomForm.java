@@ -31,7 +31,7 @@ public class CustomForm implements ICustomForm {
     public float willMulti = 1.0f;
 
     public boolean kaiokenStackable = true, uiStackable = true, godStackable = true, mysticStackable = true;
-    public float kaiokenStrength = 1.2f, uiStrength = 3.0f, godStrength = 3.0f, mysticStrength = 1.8f;
+    public float kaiokenStrength = 1.0f, uiStrength = 1.0f, godStrength = 1.0f, mysticStrength = 1.0f;
     public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
 
     public String hairCode = "", hairType = "";
