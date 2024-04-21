@@ -16,6 +16,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 
+import java.util.Arrays;
+
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
 
 // Implemented by Kam, Ported from Goatee Design
@@ -309,7 +311,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         }
         if (found) {
             String nonracial = nbt.getString("jrmcFormMasteryNonRacial");
-            String masteries[] = nonracial.split(";");
+            String[] masteries = nonracial.split(";");
             int foundatindex;
             String newnonracial = "";
             for (int i = 0; i < masteries.length; i++) {
@@ -389,7 +391,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         }
         if (found) {
             String nonracial = nbt.getString("jrmcFormMasteryNonRacial");
-            String masteries[] = nonracial.split(";");
+            String[] masteries = nonracial.split(";");
             for (String mastery : masteries) {
                 if (mastery.toLowerCase().contains(formName.toLowerCase())) {
                     String[] masteryvalues = mastery.split(",");
@@ -399,7 +401,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             }
         } else {
             String racial = nbt.getString("jrmcFormMasteryRacial_" + JRMCoreH.Races[race]);
-            String masteries[] = racial.split(";");
+            String[] masteries = racial.split(";");
             for (String mastery : masteries) {
                 if (mastery.toLowerCase().contains(formName.toLowerCase())) {
                     String[] masteryvalues = mastery.split(",");
@@ -509,12 +511,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             return;
 
         String[] data = nbt.getString("jrmcMajinAbsorptionData").split(",");
-        String s = race + ",";
+        StringBuilder str = new StringBuilder(race + ",");
         for (int i = 1; i < data.length; i++)
-            s += data + ",";
+            str.append(Arrays.toString(data)).append(",");
 
-        s = s.substring(0, s.length() - 1);
-        nbt.setString("jrmcMajinAbsorptionData", s);
+        str = new StringBuilder(str.substring(0, str.length() - 1));
+        nbt.setString("jrmcMajinAbsorptionData", str.toString());
     }
 
     @Override
@@ -531,12 +533,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             return;
 
         String[] data = nbt.getString("jrmcMajinAbsorptionData").split(",");
-        String s = power + ",";
+        String str = power + ",";
         for (int i = 1; i < data.length; i++)
-            s += data + ",";
+            str += data + ",";
 
-        s = s.substring(0, s.length() - 1);
-        nbt.setString("jrmcMajinAbsorptionData", s);
+        str = str.substring(0, str.length() - 1);
+        nbt.setString("jrmcMajinAbsorptionData", str);
     }
 
     /**
@@ -591,12 +593,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         CustomForm f = (CustomForm) FormController.Instance.get(formName);
         PlayerCustomFormData c = Utility.getFormData(player);
         if (c.hasForm(f)) {
-            // c.setInt("currentForm", f.getID());
             DBCData d = DBCData.get(player);
             d.State = 0;
             if (d.isForm(DBCForm.Kaioken) && !f.isFormStackable(DBCForm.Kaioken)) {
                 d.State2 = 0;
-                d.setForm(DBCForm.Kaioken, false);//reverts player from Kaioken
+                d.setForm(DBCForm.Kaioken, false);
             }
             if (d.isForm(DBCForm.UltraInstinct) && !f.isFormStackable(DBCForm.UltraInstinct)) {
                 d.State2 = 0;
@@ -620,8 +621,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     public void giveCustomForm(String formName) {
-        ICustomForm f = FormController.Instance.get(formName);
-        f.assignToPlayer(player);
+        ICustomForm form = FormController.Instance.get(formName);
+        form.assignToPlayer(player);
     }
 
     @Override
@@ -658,9 +659,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void removeSelectedCustomForm() {
-        PlayerCustomFormData c = Utility.getFormData(player);
-        c.selectedForm = -1;
-        c.updateClient();
+        PlayerCustomFormData formData = Utility.getFormData(player);
+        formData.selectedForm = -1;
+        formData.updateClient();
     }
 
     public boolean isInCustomForm() {
