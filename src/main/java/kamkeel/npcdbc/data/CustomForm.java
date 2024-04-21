@@ -65,7 +65,6 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setHairCode(String hairCode) {
         this.hairCode = hairCode;
-        save();
     }
 
     @Override
@@ -121,7 +120,6 @@ public class CustomForm implements ICustomForm {
             default:
                 throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3, fur");
         }
-        save();
     }
 
     public void setColor(String type, int color) {
@@ -154,7 +152,6 @@ public class CustomForm implements ICustomForm {
             default:
                 throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3, fur");
         }
-        save();
     }
 
     @Override
@@ -167,7 +164,6 @@ public class CustomForm implements ICustomForm {
             hairType = "";
             throw new CustomNPCsException("Invalid type!");
         }
-        save();
     }
 
     public int getNameColor() {
@@ -217,7 +213,6 @@ public class CustomForm implements ICustomForm {
                 uiState2Factor = factor;
                 break;
         }
-        save();
     }
 
     public float getState2Factor(int dbcForm) {
@@ -239,7 +234,6 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setSize(float size) {
         formSize = Math.min(size, 50);
-        save();
     }
 
     @Override
@@ -250,7 +244,6 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setHasSize(boolean hasSize) {
         this.hasSize = hasSize;
-        save();
     }
 
     public float[] getAllMulti() {
@@ -262,7 +255,6 @@ public class CustomForm implements ICustomForm {
         this.strengthMulti = allMulti;
         this.dexMulti = allMulti;
         this.willMulti = allMulti;
-        save();
     }
 
     @Override
@@ -273,7 +265,6 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setName(String name) {
         this.name = name;
-        save();
     }
 
     @Override
@@ -287,7 +278,6 @@ public class CustomForm implements ICustomForm {
             name = name.replace("&", "§");
 
         this.menuName = name;
-        save();
     }
 
 
@@ -299,7 +289,6 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setRace(int race) {
         this.race = race;
-        save();
     }
 
     @Override
@@ -315,7 +304,6 @@ public class CustomForm implements ICustomForm {
                 willMulti = multi;
                 break;
         }
-        save();
     }
 
     @Override
@@ -363,8 +351,6 @@ public class CustomForm implements ICustomForm {
                 mysticStackable = stackForm;
                 break;
         }
-        save();
-
     }
 
     public void setFormMulti(int dbcForm, float multi) {
@@ -382,8 +368,6 @@ public class CustomForm implements ICustomForm {
                 mysticStrength = multi;
                 break;
         }
-        save();
-
     }
 
     public float getFormMulti(int dbcForm) {
@@ -409,7 +393,6 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setAuraColor(int auraColor) {
         this.auraColor = auraColor;
-        save();
     }
 
     @Override
@@ -453,7 +436,6 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setAscendSound(String directory) {
         ascendSound = directory;
-        save();
     }
 
     @Override
@@ -464,7 +446,6 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setDescendSound(String directory) {
         descendSound = directory;
-        save();
     }
 
     @Override
@@ -475,24 +456,40 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setID(int newID) {
         id = newID;
-        save();
     }
 
     @Override
     public void linkChild(int formID) {
-        if (FormController.getInstance().has(formID)) {
-            childID = formID;
-            if (getChild().getParentID() != this.id)
-                getChild().linkParent(id);
-            save();
-        }
+        if(formID == this.id)
+            return;
 
+        CustomForm form = (CustomForm) FormController.getInstance().get(formID);
+        if(form != null){
+            childID = formID;
+            form.parentID = this.id;
+        }
     }
 
     @Override
-    public void linkChild(ICustomForm form) {
-        linkChild(form.getID());
+    public void linkChild(ICustomForm form) { linkChild(form.getID()); }
+
+    @Override
+    public void linkParent(int formID) {
+        if(formID == this.id)
+            return;
+
+        CustomForm form = (CustomForm) FormController.getInstance().get(formID);
+        if(form != null){
+            parentID = formID;
+            form.childID = this.id;
+        }
     }
+
+    @Override
+    public void linkParent(ICustomForm form) {
+        linkParent(form.getID());
+    }
+
 
     public ICustomForm getChild() {
         return FormController.Instance.get(childID);
@@ -514,25 +511,9 @@ public class CustomForm implements ICustomForm {
     }
 
 
-    public void removeChildForm() {
+    public void removeChildForm(){
         childID = -1;
         save();
-    }
-
-    @Override
-    public void linkParent(int formID) {
-        if (FormController.getInstance().has(formID)) {
-            parentID = formID;
-            if (getParent().getChildID() != this.id)
-                getParent().linkChild(id);
-            save();
-        }
-
-    }
-
-    @Override
-    public void linkParent(ICustomForm form) {
-        linkParent(form.getID());
     }
 
     public ICustomForm getParent() {
@@ -553,7 +534,6 @@ public class CustomForm implements ICustomForm {
     public boolean hasParent() {
         return parentID != -1;
     }
-
 
     public void removeParentForm() {
         parentID = -1;
@@ -685,6 +665,4 @@ public class CustomForm implements ICustomForm {
     public ICustomForm save() {
         return FormController.Instance.saveForm(this);
     }
-
-
 }
