@@ -23,8 +23,6 @@ public class MixinEntityAura2 {
     private boolean bol4a;
     private boolean bol7;
 
-
-
     @Inject(method = "<init>(Lnet/minecraft/world/World;Ljava/lang/String;IFFI)V", at = @At("TAIL"))
     public void onCustomAura(World par1World, String dbcCharger, int c, float s, float s2, int cr, CallbackInfo ci) {
         CustomAura aura = null; //pls make the framework for this

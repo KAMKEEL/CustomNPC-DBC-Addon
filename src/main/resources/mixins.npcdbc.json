@@ -7,7 +7,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "dbc.MixinDBCPacketHandlerServer",
-    "dbc.MixinDBCStats",
+    "npc.MixinDBCStats",
     "dbc.MixinEntityAura2",
     "dbc.MixinJGPlayerMP",
     "dbc.MixinJRMCoreComTickH",
