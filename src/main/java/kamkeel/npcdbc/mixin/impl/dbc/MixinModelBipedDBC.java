@@ -54,21 +54,24 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                         int gen = JRMCoreH.dnsGender(dbcData.DNS);
                         int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
-                    } else if (hair.contains("D"))
-                        RenderPlayerJBRA.glColor3f(form.hairColor);
+                    } else if (hair.contains("D") && form.hairColor != -1)
+                            RenderPlayerJBRA.glColor3f(form.hairColor);
 
                 } else if (form.hairType.equals("oozaru")) {
                     disableFace(false, true, hair, ci);
                     disableHairPresets(false, hair, ci);
                 }
 
-                if (hair.contains("EYEBROW"))
+                if (form.hairColor != -1 && hair.contains("EYEBROW"))
                     RenderPlayerJBRA.glColor3f(form.hairColor);
-                if (!form.hairType.equals("ssj4") && (hair.contains("EYELEFT") || hair.contains("EYERIGHT")))  //eye colors for ALL forms except ssj4
+                if (form.eyeColor != -1 && !form.hairType.equals("ssj4") && (hair.contains("EYELEFT") || hair.contains("EYERIGHT")))  //eye colors for ALL forms except ssj4
                     RenderPlayerJBRA.glColor3f(form.eyeColor);
-                if (hair.contains("SJT")) { //render tail color
-                    Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
-                    RenderPlayerJBRA.glColor3f(fur ? form.furColor : form.hairColor);
+                if (hair.contains("SJT")) { // Tail Color
+                    int color = fur ? form.furColor : form.hairColor;
+                    if(color != -1){
+                        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
+                        RenderPlayerJBRA.glColor3f(color);
+                    }
                 }
 
             }
@@ -85,8 +88,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 if ((form.hairType.equals("ssj4") && !isCorrectHair) || form.hairType.equals("ssj3") || form.hairType.equals("oozaru"))
                     ci.cancel();
 
-                RenderPlayerJBRA.glColor3f(form.hairColor);
-
+                if(form.hairColor != -1)
+                    RenderPlayerJBRA.glColor3f(form.hairColor);
             }
         }
     }

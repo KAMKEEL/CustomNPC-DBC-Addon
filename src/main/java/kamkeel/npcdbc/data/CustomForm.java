@@ -35,9 +35,7 @@ public class CustomForm implements ICustomForm {
     public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
 
     public String hairCode = "", hairType = "";
-    public int auraColor = 1, hairColor, eyeColor, bodyCM, bodyC1, bodyC2, bodyC3, furColor = 14292268;
-    public boolean hasAuraColor = true, hasHairColor = true, hasEyeColor = true, hasBodyCM = false, hasBodyC1 = false, hasBodyC2 = false, hasBodyC3 = false, hasFurColor = true;
-
+    public int auraColor = -1, hairColor = -1, eyeColor = -1, bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
@@ -71,55 +69,24 @@ public class CustomForm implements ICustomForm {
     public boolean hasColor(String type) {
         switch (type.toLowerCase()) {
             case "aura":
-                return hasAuraColor;
+                return auraColor != -1;
             case "hair":
-                return hasHairColor;
+                return hairColor != -1;
             case "eye":
-                return hasEyeColor;
-            case "bodymain":
-                return hasBodyCM;
-            case "body1":
-                return hasBodyC1;
-            case "body2":
-                return hasBodyC2;
-            case "body3":
-                return hasBodyC3;
+                return eyeColor != -1;
+            case "bodycm":
+                return bodyCM != -1;
+            case "bodyc1":
+                return bodyC1 != -1;
+            case "bodyc2":
+                return bodyC2 != -1;
+            case "bodyc3":
+                return bodyC3 != -1;
             case "fur":
-                return hasFurColor;
+                return furColor != -1;
 
         }
-        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3, fur");
-    }
-
-    public void setHasColor(String type, boolean has) {
-        switch (type.toLowerCase()) {
-            case "aura":
-                hasAuraColor = has;
-                break;
-            case "hair":
-                hasHairColor = has;
-                break;
-            case "eye":
-                hasEyeColor = has;
-                break;
-            case "bodymain":
-                hasBodyCM = has;
-                break;
-            case "body1":
-                hasBodyC1 = has;
-                break;
-            case "body2":
-                hasBodyC2 = has;
-                break;
-            case "body3":
-                hasBodyC3 = has;
-                break;
-            case "fur":
-                hasFurColor = has;
-                break;
-            default:
-                throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3, fur");
-        }
+        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
 
     public void setColor(String type, int color) {
@@ -133,24 +100,23 @@ public class CustomForm implements ICustomForm {
             case "eye":
                 eyeColor = color;
                 break;
-
-            case "bodymain":
+            case "bodycm":
                 bodyCM = color;
                 break;
-            case "body1":
+            case "bodyc1":
                 bodyC1 = color;
                 break;
-            case "body2":
+            case "bodyc2":
                 bodyC2 = color;
                 break;
-            case "body3":
+            case "bodyc3":
                 bodyC3 = color;
                 break;
             case "fur":
                 furColor = color;
                 break;
             default:
-                throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3, fur");
+                throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
         }
     }
 
@@ -190,18 +156,18 @@ public class CustomForm implements ICustomForm {
                 return hairColor;
             case "eye":
                 return eyeColor;
-            case "bodymain":
+            case "bodycm":
                 return bodyCM;
-            case "body1":
+            case "bodyc1":
                 return bodyC1;
-            case "body2":
+            case "bodyc2":
                 return bodyC2;
-            case "body3":
+            case "bodyc3":
                 return bodyC3;
             case "fur":
                 return furColor;
         }
-        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodyMain, body1, body2, body3, fur");
+        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
 
     public void setState2Factor(int dbcForm, float factor) {
@@ -587,16 +553,12 @@ public class CustomForm implements ICustomForm {
         eyeColor = rendering.getInteger("eyeColor");
         hairColor = rendering.getInteger("hairColor");
         furColor = rendering.getInteger("furColor");
+        hairCode = rendering.getString("hairCode");
+        hairType = rendering.getString("hairType");
         bodyCM = rendering.getInteger("bodyCM");
         bodyC1 = rendering.getInteger("bodyC1");
         bodyC2 = rendering.getInteger("bodyC2");
         bodyC3 = rendering.getInteger("bodyC3");
-        hasBodyCM = rendering.getBoolean("hasBodyCM");
-        hasBodyC1 = rendering.getBoolean("hasBodyC1");
-        hasBodyC2 = rendering.getBoolean("hasBodyC2");
-        hasBodyC3 = rendering.getBoolean("hasBodyC3");
-        hairCode = rendering.getString("hairCode");
-        hairType = rendering.getString("hairType");
 
         NBTTagCompound sounds = compound.getCompoundTag("sounds");
         ascendSound = sounds.getString("ascendSound");
@@ -647,10 +609,6 @@ public class CustomForm implements ICustomForm {
         rendering.setInteger("bodyC1", bodyC1);
         rendering.setInteger("bodyC2", bodyC2);
         rendering.setInteger("bodyC3", bodyC3);
-        rendering.setBoolean("hasBodyCM", hasBodyCM);
-        rendering.setBoolean("hasBodyC1", hasBodyC1);
-        rendering.setBoolean("hasBodyC2", hasBodyC2);
-        rendering.setBoolean("hasBodyC3", hasBodyC3);
 
         NBTTagCompound sounds = new NBTTagCompound();
         sounds.setString("ascendSound", ascendSound);

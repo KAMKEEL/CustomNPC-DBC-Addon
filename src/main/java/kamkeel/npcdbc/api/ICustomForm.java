@@ -24,13 +24,13 @@ public interface ICustomForm {
     void setHairCode(String hairCode);
 
     /**
-     * @param type Legal types: aura, hair, eye, bodyMain, body1, body2, body3
+     * @param type Legal types: aura, hair, eye, bodycm, body1, body2, body3
      * @return Decimal color of type
      */
     int getColor(String type);
 
     /**
-     * @param type  Legal types: aura, hair, eye, bodyMain, body1, body2, body3
+     * @param type  Legal types: aura, hair, eye, bodycm, body1, body2, body3
      * @param color Decimal color to set type as
      */
     void setColor(String type, int color);
@@ -46,17 +46,11 @@ public interface ICustomForm {
     String getHairType(String type);
 
     /**
-     * @param type Legal types: aura, hair, eye, bodyMain, body1, body2, body3
+     * @param type Legal types: aura, hair, eye, bodycm, body1, body2, body3
      * @return True if form has the "hasTypeColor" field to true,
      * useful for Namekians and Arcosians multi body color setting
      */
     boolean hasColor(String type);
-
-    /**
-     * @param type Legal types: aura, hair, eye, bodyMain, body1, body2, body3
-     * @param has  True if form should have color of type
-     */
-    void setHasColor(String type, boolean has);
 
     void setState2Factor(int dbcForm, float factor);
 

@@ -54,13 +54,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
         if (form != null) {
             st.set(0);
-            if (form.hasBodyCM)
+            if (form.hasColor("bodycm"))
                 bodyCM.set(form.bodyCM);
-            if (form.hasBodyC1)
+            if (form.hasColor("bodyC1"))
                 bodyC1.set(form.bodyC1);
-            if (form.hasBodyC2)
+            if (form.hasColor("bodyC2"))
                 bodyC2.set(form.bodyC2);
-            if (form.hasBodyC3)
+            if (form.hasColor("bodyC3"))
                 bodyC3.set(form.bodyC3);
         }
     }
@@ -71,13 +71,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         CustomForm form = Utility.getFormClient((AbstractClientPlayer) par1EntityPlayer);
         if (form != null) {
             st.set(0);
-            if (form.hasBodyCM)
+            if (form.hasColor("bodycm"))
                 bodyCM.set(form.bodyCM);
-            if (form.hasBodyC1)
+            if (form.hasColor("bodyC1"))
                 bodyC1.set(form.bodyC1);
-            if (form.hasBodyC2)
+            if (form.hasColor("bodyC2"))
                 bodyC2.set(form.bodyC2);
-            if (form.hasBodyC3)
+            if (form.hasColor("bodyC3"))
                 bodyC3.set(form.bodyC3);
         }
 

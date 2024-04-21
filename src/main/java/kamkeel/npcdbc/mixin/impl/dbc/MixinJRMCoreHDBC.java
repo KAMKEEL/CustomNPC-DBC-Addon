@@ -20,11 +20,11 @@ public class MixinJRMCoreHDBC {
             PlayerCustomFormData formData = Utility.getSelfData();
             if (formData != null && formData.isInCustomForm()) {
                 CustomForm form = formData.getCurrentForm();
-                if (Utility.stackTraceContains("chargePart"))
+                if (form.auraColor != -1 && Utility.stackTraceContains("chargePart"))
                     ci.setReturnValue(form.auraColor);
-                else if (form.hairType.equals("ssj4") || form.hairType.equals("oozaru"))
+                else if (form.furColor != -1 && (form.hairType.equals("ssj4") || form.hairType.equals("oozaru")))
                     ci.setReturnValue(form.furColor);
-                else
+                else if(form.hairColor != -1)
                     ci.setReturnValue(form.hairColor);
             }
         }
