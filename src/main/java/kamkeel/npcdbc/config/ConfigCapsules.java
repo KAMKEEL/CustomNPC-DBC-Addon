@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.config;
 
 import cpw.mods.fml.common.FMLLog;
-import kamkeel.npcdbc.items.MiscCapsule;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import noppes.npcs.util.ValueUtil;

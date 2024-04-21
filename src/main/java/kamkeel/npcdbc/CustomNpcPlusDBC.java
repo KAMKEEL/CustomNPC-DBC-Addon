@@ -13,8 +13,6 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.PacketHandler;
 
-import java.io.File;
-
 import static noppes.npcs.CustomNpcs.configPath;
 
 @Mod(modid = CustomNpcPlusDBC.ID, name = CustomNpcPlusDBC.name, version = CustomNpcPlusDBC.version, dependencies = "after:customnpcs;after:jinryuujrmcore;after:jinryuudragonblockc;")

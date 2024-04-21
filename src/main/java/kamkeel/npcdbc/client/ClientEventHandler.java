@@ -7,7 +7,6 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.CustomForm;
-import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
