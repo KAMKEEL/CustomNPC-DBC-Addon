@@ -66,7 +66,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void logoutEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
-        DBCData.dbcDataCache.clear();
+        ClientCache.clientDataCache.clear();
     }
 
 }

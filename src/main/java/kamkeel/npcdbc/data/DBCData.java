@@ -4,6 +4,7 @@ package kamkeel.npcdbc.data;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
@@ -375,12 +376,7 @@ public class DBCData {
         }
     }
 
-    /**
-     * A terrible bug in where on SP, EntityClientPlayerMP that HAS NO ENTITY DATA is put first due to client init being faster than server init.
-     * This causes player.getEntityData().getCompoundTag("PlayerPersisted") to ALWAYS be empty.
-     * Need to check for server side.
-     */
-    public static DBCData get(EntityPlayer player) {
+    public static DBCData getData(EntityPlayer player){
         synchronized (dbcDataCache) {
             if (!dbcDataCache.containsKey(player.getCommandSenderName()))
                 dbcDataCache.put(player.getCommandSenderName(), new CacheHashMap.CachedObject<>(new DBCData(player)));
@@ -388,4 +384,14 @@ public class DBCData {
         }
     }
 
+    public static DBCData get(EntityPlayer player) {
+        DBCData data;
+        if (player.worldObj.isRemote) {
+            data = ClientCache.getClientData(player);
+        } else {
+            data = getData(player);
+        }
+        data.player = player;
+        return data;
+    }
 }
