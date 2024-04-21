@@ -4,6 +4,8 @@ import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.util.Utility;
@@ -21,6 +23,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = ModelBipedDBC.class, remap = false)
 public class MixinModelBipedDBC extends ModelBipedBody {
+    /**
+     * there's a bug where if you go ssj2 then revert to ssj1 then try to go ssj2 again,
+     * the ssj1 won't animate into ssj2. Fixed it for custom forms, but it still happens for DBC forms
+     */
+    @Inject(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE))
+    public void fixSSJtoSSJ2RageAnim(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(name = "trTime") LocalIntRef trTime) {
+        if (ClientEventHandler.renderingPlayer != null) {
+            String playerName = JRMCoreH.plyrs[pl];
+            CustomForm form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
+            if (form != null && rp.getState(playerName) != s) {
+                rp.setState(s, playerName);
+            }
+        }
+    }
 
     @ModifyVariable(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At("HEAD"), ordinal = 0, name = "s", argsOnly = true)
     private int renderHairsS(int s) {
@@ -55,7 +71,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                         int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
                     } else if (hair.contains("D") && form.hairColor != -1)
-                            RenderPlayerJBRA.glColor3f(form.hairColor);
+                        RenderPlayerJBRA.glColor3f(form.hairColor);
 
                 } else if (form.hairType.equals("oozaru")) {
                     disableFace(false, true, hair, ci);
@@ -68,7 +84,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     RenderPlayerJBRA.glColor3f(form.eyeColor);
                 if (hair.contains("SJT")) { // Tail Color
                     int color = fur ? form.furColor : form.hairColor;
-                    if(color != -1){
+                    if (color != -1) {
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
                         RenderPlayerJBRA.glColor3f(color);
                     }
@@ -88,7 +104,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 if ((form.hairType.equals("ssj4") && !isCorrectHair) || form.hairType.equals("ssj3") || form.hairType.equals("oozaru"))
                     ci.cancel();
 
-                if(form.hairColor != -1)
+                if (form.hairColor != -1)
                     RenderPlayerJBRA.glColor3f(form.hairColor);
             }
         }

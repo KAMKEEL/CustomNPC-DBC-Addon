@@ -45,6 +45,9 @@ public class TransformController {
         TransformController.setAscending(true);
         rageValue = getRageMeterIncrementation();
         rage += rageValue;
+        JRMCoreH.TransSaiCurRg = (byte) rage;
+        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
+
         if (soundTime == 1 || soundTime >= 33) { //plays aura sound every 33 ticks
             if (soundTime != 1)
                 soundTime = 0;
@@ -77,8 +80,7 @@ public class TransformController {
             transformedInto = form;
         }
 
-        JRMCoreH.TransSaiCurRg = (byte) rage;
-        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
+
     }
 
     @SideOnly(Side.CLIENT)

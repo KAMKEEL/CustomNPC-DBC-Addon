@@ -55,9 +55,9 @@ add timer
 
 
 
-freeze player's DBCKiTech, DBCDamage 
+freeze player's DBCKiTech, DBCDamage
 event, prevent ascension when release 0
-fix how ids are processed 
+fix how ids are processed
 
 bugs:
 can't descend from God/Mystic when its selected - FIXED
@@ -88,8 +88,7 @@ UI Heat(int jrmcEf8slc/double jrmcEf8slcD):
 	-Status effecticons are stored in assets/jinryuumodscore/icons4.png, each icon is 16x16 pixels, resourceID is icon number in icons4.png, starts from 0
 
 -Custom Auras:
-	
-	-Form Auras are stored in DBCKiTech.chargepart,  aura2 is ssbkk, cr is current rls, sacol is alignment/ki bar clr/aura clr, w is (dashing or swooping || dynamic flight && jrmcStnd.contains 1 && not charging  ki || 
-	-For lightning, set EntityAura2.state(jrmcState, except ssgod 0, ssb 0, ssbe 3, 21 oozaru, 24 ssj ooz) to 5-6 
+
+	-Form Auras are stored in DBCKiTech.chargepart,  aura2 is ssbkk, cr is current rls, sacol is alignment/ki bar clr/aura clr, w is (dashing or swooping || dynamic flight && jrmcStnd.contains 1 && not charging  ki ||
+	-For lightning, set EntityAura2.state(jrmcState, except ssgod 0, ssb 0, ssbe 3, 21 oozaru, 24 ssj ooz) to 5-6
 	-bol17 is majin || kk, bol, only for red lightning rendering
-	

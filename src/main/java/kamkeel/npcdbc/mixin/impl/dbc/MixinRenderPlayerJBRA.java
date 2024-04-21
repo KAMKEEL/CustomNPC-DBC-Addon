@@ -42,13 +42,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private void changeFormData(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "rg") LocalIntRef rg, @Local(name = "st") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
 
         CustomForm form = Utility.getFormClient(par1AbstractClientPlayer);
+        //this prevents ssj2 hair animating immediately into ssj1 when going into ssj1 type forms from base
         if (TransformController.rage > 0) {
             if (TransformController.transformedInto != null) { //if just transformed into ssj type, dont display ssj2 hair
                 if (TransformController.transformedInto.hairType.equals("ssj"))
                     rg.set(0);
-            } else {
+            } else
                 rg.set((int) TransformController.rage);
-            }
 
 
         }
@@ -84,8 +84,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
-    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm")
-    LocalIntRef bodyCM, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
+    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
         CustomForm form = Utility.getFormClient(par1AbstractClientPlayer);
         if (form != null) {
             if (form.hairType.equals("ssj4")) {
@@ -115,7 +114,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Unique
     private void renderSSJ4Face(int hairColor, int furColor, int eyeColor, int bodyCM, int gender, int nose) {
-        if(ConfigDBCClient.EnableHDTextures){
+        if (ConfigDBCClient.EnableHDTextures) {
             GL11.glColor3f(1.0F + getR(), 1.0F + getG(), 1.0F + getB());
             this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/hd/faces/ssj4/ssj4eyewhite.png"));
             this.modelMain.renderBody(1F / 16F);
@@ -133,8 +132,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             this.modelMain.renderBody(1F / 16F);
             this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/hd/faces/ssj4/ssj4shade.png"));
             this.modelMain.renderBody(0.0625F);
-        }
-        else {
+        } else {
 
         }
         this.bindTexture(new ResourceLocation("jinryuumodscore", "cc/" + (gender == 1 ? "f" : "") + "humn" + nose + ".png"));
@@ -183,7 +181,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         this.bindTexture(bdyskn);
         RenderPlayerJBRA.glColor3f(furColor);
         this.modelMain.renderBody(0.0625F);
-        if(ConfigDBCClient.EnableHDTextures){
+        if (ConfigDBCClient.EnableHDTextures) {
             this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/hd/faces/oozaru/oozarueyes.png")); //eyes
             RenderPlayerJBRA.glColor3f(eyeColor);
             this.modelMain.renderHairs(0.0625F, "EYEBASE");

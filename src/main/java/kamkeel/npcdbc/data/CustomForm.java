@@ -479,7 +479,6 @@ public class CustomForm implements ICustomForm {
 
     public void removeChildForm(){
         childID = -1;
-        save();
     }
 
     public ICustomForm getParent() {
@@ -503,7 +502,6 @@ public class CustomForm implements ICustomForm {
 
     public void removeParentForm() {
         parentID = -1;
-        save();
     }
 
     @Override
