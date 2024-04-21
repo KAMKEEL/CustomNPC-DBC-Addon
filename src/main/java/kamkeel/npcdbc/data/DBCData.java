@@ -10,6 +10,7 @@ import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
@@ -29,10 +30,10 @@ public class DBCData {
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "";
 
     // Custom Form
-    public String preCustomFormDNS = "", preCustomFormDNSHair = "";
-    public int preCustomAuraColor;
     public int currentCustomForm;
     public float currentCustomFormLevel;
+
+    public NBTTagCompound loadedCompound;
 
     public DBCData() {
         this.side = Side.SERVER;
@@ -41,12 +42,11 @@ public class DBCData {
     public DBCData(EntityPlayer player) {
         this.player = player;
         this.side = player.worldObj.isRemote ? Side.CLIENT : Side.SERVER;
-        loadNBTData(null);
+        loadNBTData();
     }
 
 
-
-    public NBTTagCompound saveNBT(NBTTagCompound c) {
+    public NBTTagCompound saveToNBT(NBTTagCompound c) {
         c.setInteger("jrmcStrI", STR);
         c.setInteger("jrmcDexI", DEX);
         c.setInteger("jrmcConI", CON);
@@ -77,13 +77,10 @@ public class DBCData {
         // DBC Addon
         c.setInteger("customFormID", currentCustomForm);
         c.setFloat("customFormLevel", currentCustomFormLevel);
-        c.setInteger("preCustomAuraColor", preCustomAuraColor);
-        c.setString("preCustomFormDNSH", preCustomFormDNSHair);
-        c.setString("preCustomFormDNS", preCustomFormDNS);
         return c;
     }
 
-    public void setNBT(NBTTagCompound c) {
+    public void loadFromNBT(NBTTagCompound c) {
         STR = c.getInteger("jrmcStrI");
         DEX = c.getInteger("jrmcDexI");
         CON = c.getInteger("jrmcConI");
@@ -115,15 +112,14 @@ public class DBCData {
 
         // DBC Addon
         currentCustomForm = c.getInteger("customFormID");
-        currentCustomFormLevel = c.getInteger("customFormLevel");
-        preCustomAuraColor = c.getInteger("preCustomAuraColor");
-        preCustomFormDNS = c.getString("preCustomFormDNS");
-        preCustomFormDNSHair = c.getString("preCustomFormDNSH");
+        currentCustomFormLevel = c.getFloat("customFormLevel");
+
+
     }
 
 
-    public void saveNBTData(NBTTagCompound compound) {
-        NBTTagCompound nbt = this.saveNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
+    public void saveNBTData() {
+        NBTTagCompound nbt = this.saveToNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
 
         PlayerCustomFormData formData = Utility.getFormData(player);
         currentCustomForm = formData.currentForm;
@@ -135,18 +131,17 @@ public class DBCData {
         syncAllClients();
     }
 
-    public void loadNBTData(NBTTagCompound compound) {
+    public void loadNBTData() {
         NBTTagCompound dbc = this.player.getEntityData().getCompoundTag(DBCPersisted);
-        setNBT(dbc);
 
-        // DBC Addon
+        // Save the DBC Addon tags to PlayerPersisted before loading it to fields
         PlayerCustomFormData formData = Utility.getFormData(player);
-        currentCustomForm = formData.currentForm;
-        currentCustomFormLevel = formData.getCurrentLevel();
-        preCustomAuraColor = dbc.getInteger("preCustomAuraColor");
-        preCustomFormDNS = dbc.getString("preCustomFormDNS");
-        preCustomFormDNSHair = dbc.getString("preCustomFormDNSH");
+        dbc.setInteger("customFormID", formData.currentForm);
+        dbc.setFloat("customFormLevel", formData.getCurrentLevel());
 
+
+        loadFromNBT(dbc);
+        loadedCompound = dbc;
         syncAllClients();
     }
 
@@ -166,7 +161,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void setEyeColorRight(int color) {
@@ -177,7 +172,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void setHairColor(int color) {
@@ -188,7 +183,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     //main color for humans/saiyans/majins
@@ -200,7 +195,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     //saiyan oozaru and arco/nameks
@@ -212,7 +207,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     // namekian/arco
@@ -223,7 +218,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     //only arco
@@ -234,7 +229,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void setHairPreset(int preset) {
@@ -244,7 +239,7 @@ public class DBCData {
 
         DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void setNosePreset(int preset) {
@@ -254,7 +249,7 @@ public class DBCData {
 
         DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     // Negative Values will Drain instead
@@ -264,7 +259,7 @@ public class DBCData {
 
         Ki += toAdd;
         Ki = Math.min(Ki, maxKi);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void restoreHealthPercent(float percToRestore) {
@@ -273,7 +268,7 @@ public class DBCData {
 
         Body += toAdd;
         Body = Math.min(Body, maxBody);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void restoreStaminaPercent(float percToRestore) {
@@ -282,7 +277,7 @@ public class DBCData {
 
         Stamina += toAdd;
         Stamina = Math.min(Stamina, maxSta);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     //Negative value will add instead
@@ -294,7 +289,7 @@ public class DBCData {
         int toAdd = (int) (maxHeat * (percToRestore / 100));
 
         Heat = Math.max(Heat - toAdd, 0);
-        saveNBTData(null);
+        saveNBTData();
 
     }
 
@@ -334,7 +329,7 @@ public class DBCData {
 
     public void setSE(int id, boolean bo) {
         JRMCoreH.StusEfcts(id, StatusEffects, player, bo);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void setForm(int dbcForm, boolean on) {
@@ -365,7 +360,7 @@ public class DBCData {
                 setSE(12, on);
                 break;
         }
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public boolean settingOn(int id) {
@@ -387,11 +382,21 @@ public class DBCData {
         }
     }
 
+    /**
+     * A terrible bug in where on SP, EntityClientPlayerMP that HAS NO ENTITY DATA is put first due to client init being faster than server init.
+     * This causes player.getEntityData().getCompoundTag("PlayerPersisted") to ALWAYS be empty.
+     * Need to check for server side.
+     */
     public static DBCData get(EntityPlayer player) {
         synchronized (dbcDataCache) {
             if (!dbcDataCache.containsKey(player.getCommandSenderName())) {
-                dbcDataCache.put(player.getCommandSenderName(), new CacheHashMap.CachedObject<>(new DBCData(player)));
+                if (player.worldObj.isRemote) {
+                    if (player instanceof EntityPlayerMP)
+                        dbcDataCache.put(player.getCommandSenderName(), new CacheHashMap.CachedObject<>(new DBCData(player)));
+                } else
+                    dbcDataCache.put(player.getCommandSenderName(), new CacheHashMap.CachedObject<>(new DBCData(player)));
             }
+
             return dbcDataCache.get(player.getCommandSenderName()).getObject();
         }
     }
