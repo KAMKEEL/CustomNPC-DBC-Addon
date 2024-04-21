@@ -3,8 +3,6 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 import JinRyuu.JRMCore.JRMCoreComTickH;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.JGPlayerMP;
-import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalByteRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,7 +28,7 @@ public class MixinJRMCoreComTickH {
     }
 
     @Inject(method = "updatePlayersData", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE))
-    public void changeSize1(MinecraftServer server, int playerID, EntityPlayerMP player, JGPlayerMP jgPlayer, NBTTagCompound nbt, CallbackInfo ci, @Local(name = "state") LocalByteRef st) {
+    public void setCurrentTickPlayerServer(MinecraftServer server, int playerID, EntityPlayerMP player, JGPlayerMP jgPlayer, NBTTagCompound nbt, CallbackInfo ci) {
         CommonProxy.CurrentJRMCTickPlayer = player;
     }
 

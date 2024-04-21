@@ -10,7 +10,6 @@ import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -109,6 +108,13 @@ public class Utility {
 
     }
 
+    public static CustomForm getCurrentForm(EntityPlayer p) {
+        if (isServer(p))
+            return Utility.getFormData(p) != null ? Utility.getFormData(p).getCurrentForm() : null;
+        else
+            return getFormClient(p);
+    }
+
     public static void printStackTrace() {
         for (StackTraceElement ste : Thread.currentThread().getStackTrace())
             System.out.println(ste);
@@ -137,6 +143,11 @@ public class Utility {
         return (IPlayer) NpcAPI.Instance().getIEntity(p);
     }
 
+    /**
+     * doesn't work, returned playerdata is out of sync
+     *
+     * @return
+     */
     @SideOnly(Side.CLIENT)
     public static PlayerCustomFormData getSelfData() {
         if (Minecraft.getMinecraft().thePlayer == null)
@@ -147,18 +158,18 @@ public class Utility {
         return formData.getCustomFormData();
     }
 
-    @SideOnly(Side.CLIENT)
     public static CustomForm getFormClient(EntityPlayer player) {
         if (player == null)
             return null;
 
         DBCData dbcData = DBCData.get(player);
-        if (dbcData == null)
+        if (dbcData == null)//(dbcData.Release <= 0 || dbcData.Ki <= 0)
             return null;
 
         int form = dbcData.currentCustomForm;
         if (form == -1)
             return null;
+
 
         return (CustomForm) FormController.getInstance().get(form);
     }
@@ -193,7 +204,4 @@ public class Utility {
         sendScrollData(player, map);
     }
 
-    public static boolean isInventoryOpen() {
-        return Minecraft.getMinecraft().currentScreen instanceof GuiInventory;
-    }
 }

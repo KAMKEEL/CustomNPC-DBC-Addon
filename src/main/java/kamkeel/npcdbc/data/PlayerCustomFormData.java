@@ -47,6 +47,10 @@ public class PlayerCustomFormData {
         return unlockedForms.remove(id);
     }
 
+    public boolean hasSelectedForm() {
+        return selectedForm > -1 && getSelectedForm() != null;
+    }
+
     public boolean hasForm(CustomForm form) {
         return unlockedForms.containsKey(form.id);
     }

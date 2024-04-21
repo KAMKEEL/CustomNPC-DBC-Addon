@@ -5,6 +5,7 @@ import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,9 +18,8 @@ public class MixinJRMCoreHDBC {
         //if this method is not called by RenderPlayerJBRA, as rendering data is already handled, and this method is heavily used in rendering in DBC
         // To be improved by kAM
         if (!Utility.stackTraceContains("RenderPlayerJBRA")) {
-            PlayerCustomFormData formData = Utility.getSelfData();
-            if (formData != null && formData.isInCustomForm()) {
-                CustomForm form = formData.getCurrentForm();
+            CustomForm form = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
+            if (form != null) {
                 if (Utility.stackTraceContains("chargePart"))
                     ci.setReturnValue(form.auraColor);
                 else if (form.hairType.equals("ssj4") || form.hairType.equals("oozaru"))
@@ -31,7 +31,7 @@ public class MixinJRMCoreHDBC {
     }
 
     @Inject(method = "DBCsizeBasedOnRace2(IIZ)F", at = @At("HEAD"), cancellable = true)
-    private static void DBCsizeBasedOnRace2(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir) {
+    private static void setCustomFormSize(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir) {
         if (CommonProxy.CurrentJRMCTickPlayer != null) {
             CustomForm form = null;
 

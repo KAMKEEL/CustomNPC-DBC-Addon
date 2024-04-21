@@ -30,8 +30,7 @@ public class ClientEventHandler {
 
     private void performAscend() {
         PlayerCustomFormData formData = Utility.getSelfData();
-        if (formData != null && formData.selectedForm > -1) {
-
+        if (formData != null && formData.hasSelectedForm()) {
             if (formData.isInCustomForm()) {
                 CustomForm form = formData.getCurrentForm();
                 if (form.hasChild() && formData.hasUnlocked(form.getChildID()))
@@ -45,12 +44,16 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent e) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.currentScreen == null && KeyHandler.AscendKey.getIsKeyPressed()) {
+        if (mc.currentScreen == null && KeyHandler.AscendKey.isPressed()) {
             PlayerCustomFormData formData = Utility.getSelfData();
             if (formData != null) {
                 if (formData.selectedForm == -1)
                     Utility.sendMessage(mc.thePlayer, "§cYou have not selected a custom form!");
                 else if (formData.isInCustomForm()) {
+                    if (TransformController.rage > 0 && TransformController.transformed) {
+                        Utility.sendMessage(mc.thePlayer, "§cYou need to cool down!");
+                        return;
+                    }
                     CustomForm form = formData.getCurrentForm();
                     if (form.hasChild() && !formData.hasUnlocked(form.getChildID()))
                         Utility.sendMessage(mc.thePlayer, "§cYou do not have the next transformation unlocked!");

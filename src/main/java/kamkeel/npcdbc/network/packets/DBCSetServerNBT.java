@@ -10,19 +10,19 @@ import java.io.IOException;
 
 import static noppes.npcs.NoppesUtilServer.getPlayerByName;
 
-public final class DBCFixInt extends AbstractPacket {
+public final class DBCSetServerNBT extends AbstractPacket {
     public static final String packetName = "DBO|FixInt";
     private EntityPlayer player;
     private String tag;
     private int value;
 
-    public DBCFixInt(EntityPlayer player, String tag, int value) {
+    public DBCSetServerNBT(EntityPlayer player, String tag, int value) {
         this.player = player;
         this.tag = tag;
         this.value = value;
     }
 
-    public DBCFixInt() {}
+    public DBCSetServerNBT() {}
 
     @Override
     public String getChannel() {

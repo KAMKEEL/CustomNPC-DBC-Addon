@@ -23,7 +23,8 @@ public final class TransformPacket extends AbstractPacket {
         this.ascend = ascend;
     }
 
-    public TransformPacket() {}
+    public TransformPacket() {
+    }
 
     @Override
     public String getChannel() {
@@ -32,7 +33,7 @@ public final class TransformPacket extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        ByteBufUtils.writeUTF8String(out,this.player.getCommandSenderName());
+        ByteBufUtils.writeUTF8String(out, this.player.getCommandSenderName());
         out.writeInt(this.state);
         out.writeBoolean(ascend);
     }
@@ -46,11 +47,10 @@ public final class TransformPacket extends AbstractPacket {
 
         int state = in.readInt();
         boolean ascend = in.readBoolean();
-        if(ascend){
+        if (ascend)
             TransformController.handleCustomFormAscend((EntityPlayerMP) sendingPlayer, state);
-        }
-        else {
+        else
             TransformController.handleCustomFormDescend((EntityPlayerMP) sendingPlayer);
-        }
+
     }
 }
