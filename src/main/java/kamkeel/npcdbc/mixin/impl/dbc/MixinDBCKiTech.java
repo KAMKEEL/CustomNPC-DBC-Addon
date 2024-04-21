@@ -10,6 +10,7 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.CustomAura;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.Utility;
@@ -29,14 +30,17 @@ public class MixinDBCKiTech {
     @Inject(method = "Ascend", at = @At("HEAD"), cancellable = true)
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
         if (K.getIsKeyPressed()) {
-            CustomForm form = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
-            if (form != null) {
-                if (JRMCoreH.PlyrSettingsB(0) && form.isFormStackable(DBCForm.Kaioken)) {
-                } else if (JRMCoreH.PlyrSettingsB(11) && form.isFormStackable(DBCForm.UltraInstinct)) {
-                } else if (JRMCoreH.PlyrSettingsB(16) && form.isFormStackable(DBCForm.GodOfDestruction)) {
-                } else if (JRMCoreH.PlyrSettingsB(6) && form.isFormStackable(DBCForm.Mystic)) {
-                } else
-                    ci.cancel();
+            PlayerCustomFormData formData = Utility.getSelfData();
+            if (formData != null && formData.isInCustomForm()) {
+                CustomForm form = formData.getCurrentForm();
+                if (form != null) {
+                    if (JRMCoreH.PlyrSettingsB(0) && form.isFormStackable(DBCForm.Kaioken)) {
+                    } else if (JRMCoreH.PlyrSettingsB(11) && form.isFormStackable(DBCForm.UltraInstinct)) {
+                    } else if (JRMCoreH.PlyrSettingsB(16) && form.isFormStackable(DBCForm.GodOfDestruction)) {
+                    } else if (JRMCoreH.PlyrSettingsB(6) && form.isFormStackable(DBCForm.Mystic)) {
+                    } else
+                        ci.cancel();
+                }
             }
         }
     }
@@ -46,10 +50,11 @@ public class MixinDBCKiTech {
      */
     @Inject(method = "Descend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;kiInSuper:I", shift = At.Shift.AFTER), cancellable = true)
     private static void DescendModified(KeyBinding K, CallbackInfo ci) {
-        CustomForm form = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
+        PlayerCustomFormData formData = Utility.getSelfData();
         DBCData d = DBCData.get(Minecraft.getMinecraft().thePlayer);
         boolean returnEarly = true;
-        if (form != null) {
+        if (d != null && formData != null && formData.isInCustomForm()) {
+            CustomForm form = formData.getCurrentForm();
             if (d.formSettingOn(DBCForm.Kaioken)) {
                 if (d.isForm(DBCForm.Kaioken))
                     returnEarly = false;

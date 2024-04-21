@@ -34,7 +34,7 @@ public class MixinJRMCoreH {
                     form = formData.getCurrentForm();
                 }
             } else {
-                form = Utility.getFormClient((AbstractClientPlayer) player);
+                form = Utility.getFormClient(player);
                 currentFormLevel = Utility.getFormLevelClient((AbstractClientPlayer) player);
             }
 
@@ -105,10 +105,11 @@ public class MixinJRMCoreH {
 
     @Inject(method = "Rls", at = @At("HEAD"), cancellable = true)
     private static void fixRelease(byte b, CallbackInfo ci) {
-        CustomForm form = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
-        if (form != null)
+        PlayerCustomFormData formData = Utility.getSelfData();
+        if (formData != null && formData.isInCustomForm())
             ci.cancel();
     }
+
 
     @Inject(method = "resetChar(Lnet/minecraft/entity/player/EntityPlayer;ZZZF)V", at = @At("HEAD"), cancellable = true)
     private static void resetChar(EntityPlayer p, boolean keepSkills, boolean keepTechs, boolean keepMasteries, float perc, CallbackInfo ci) {

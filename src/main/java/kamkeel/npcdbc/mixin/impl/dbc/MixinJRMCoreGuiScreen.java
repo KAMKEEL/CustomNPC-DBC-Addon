@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -31,9 +32,9 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
     private static String getFormName() {
         boolean ui = JRMCoreH.StusEfctsMe(19);
         String name = null;
-        CustomForm form = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
-        if (form != null)
-            name = form.getMenuName();
+        PlayerCustomFormData formData = Utility.getSelfData();
+        if (formData != null && formData.isInCustomForm())
+            name = formData.getCurrentForm().getMenuName();
         else {
             DBCData d = DBCData.get(Minecraft.getMinecraft().thePlayer);
             if (d != null) {
@@ -61,8 +62,8 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                 detailList.add(txt);
             }
             ci.cancel();
-        } else if (Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer) != null ) {
-            CustomForm form = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
+        } else if (Utility.getSelfData() != null && Utility.getSelfData().isInCustomForm()) {
+            CustomForm form = Utility.getSelfData().getCurrentForm();
             int color = 0;
             if ((s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§")) { //adds the form color to STR,DEX and WIL attribute values
                 int secondIndex = 0;

@@ -18,8 +18,9 @@ public class MixinJRMCoreHDBC {
         //if this method is not called by RenderPlayerJBRA, as rendering data is already handled, and this method is heavily used in rendering in DBC
         // To be improved by kAM
         if (!Utility.stackTraceContains("RenderPlayerJBRA")) {
-            CustomForm form = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
-            if (form != null) {
+            PlayerCustomFormData formData = Utility.getSelfData();
+            if (formData != null && formData.isInCustomForm()) {
+                CustomForm form = formData.getCurrentForm();
                 if (Utility.stackTraceContains("chargePart"))
                     ci.setReturnValue(form.auraColor);
                 else if (form.hairType.equals("ssj4") || form.hairType.equals("oozaru"))
