@@ -23,7 +23,6 @@ public class CustomForm implements ICustomForm {
     public String menuName = "§2§lCustom Form";
     public int race = DBCRace.ALL;
 
-    public boolean hasSize = false;
     public float formSize = 1.0f;
 
     public float strengthMulti = 1.0f;
@@ -199,18 +198,14 @@ public class CustomForm implements ICustomForm {
 
     @Override
     public void setSize(float size) {
-        formSize = Math.min(size, 50);
+        formSize = Math.max(Math.min(size, 10), 0.05f);
     }
 
     @Override
     public boolean hasSize() {
-        return hasSize;
+        return formSize != 1f;
     }
 
-    @Override
-    public void setHasSize(boolean hasSize) {
-        this.hasSize = hasSize;
-    }
 
     public float[] getAllMulti() {
         return new float[]{strengthMulti, dexMulti, willMulti};
@@ -426,26 +421,28 @@ public class CustomForm implements ICustomForm {
 
     @Override
     public void linkChild(int formID) {
-        if(formID == this.id)
+        if (formID == this.id)
             return;
 
         CustomForm form = (CustomForm) FormController.getInstance().get(formID);
-        if(form != null){
+        if (form != null) {
             childID = formID;
             form.parentID = this.id;
         }
     }
 
     @Override
-    public void linkChild(ICustomForm form) { linkChild(form.getID()); }
+    public void linkChild(ICustomForm form) {
+        linkChild(form.getID());
+    }
 
     @Override
     public void linkParent(int formID) {
-        if(formID == this.id)
+        if (formID == this.id)
             return;
 
         CustomForm form = (CustomForm) FormController.getInstance().get(formID);
-        if(form != null){
+        if (form != null) {
             parentID = formID;
             form.childID = this.id;
         }
@@ -477,7 +474,7 @@ public class CustomForm implements ICustomForm {
     }
 
 
-    public void removeChildForm(){
+    public void removeChildForm() {
         childID = -1;
     }
 
@@ -524,7 +521,6 @@ public class CustomForm implements ICustomForm {
         menuName = compound.getString("menuName");
         race = compound.getInteger("race");
         formSize = compound.getFloat("formSize");
-        hasSize = compound.getBoolean("hasSize");
         childID = compound.getInteger("childID");
         parentID = compound.getInteger("parentID");
 
@@ -572,7 +568,6 @@ public class CustomForm implements ICustomForm {
         compound.setString("menuName", menuName);
         compound.setInteger("race", race);
         compound.setFloat("formSize", formSize);
-        compound.setBoolean("hasSize", hasSize);
         compound.setInteger("childID", childID);
         compound.setInteger("parentID", parentID);
 

@@ -24,7 +24,7 @@ public class MixinJRMCoreHDBC {
                     ci.setReturnValue(form.auraColor);
                 else if (form.furColor != -1 && (form.hairType.equals("ssj4") || form.hairType.equals("oozaru")))
                     ci.setReturnValue(form.furColor);
-                else if(form.hairColor != -1)
+                else if (form.hairColor != -1)
                     ci.setReturnValue(form.hairColor);
             }
         }
@@ -42,9 +42,7 @@ public class MixinJRMCoreHDBC {
             } else
                 form = Utility.getFormClient(CommonProxy.CurrentJRMCTickPlayer);
             if (form != null) {
-                if (form.hasSize) {
-                    cir.setReturnValue(form.formSize);
-                }
+                cir.setReturnValue(form.formSize);
             }
         }
     }

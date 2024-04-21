@@ -75,12 +75,6 @@ public interface ICustomForm {
 
     boolean hasSize();
 
-    /**
-     * Must be set to true in order for formSize to be enabled
-     *
-     * @param hasSize
-     */
-    void setHasSize(boolean hasSize);
 
     /**
      * @return index 0 is strengthMulti,1 dexMulti, 2 willMulti

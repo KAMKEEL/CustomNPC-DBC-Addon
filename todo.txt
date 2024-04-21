@@ -1,4 +1,4 @@
-working on: CustomForms CF
+working on: CustomForms
 
 to-do:
 
@@ -47,9 +47,6 @@ DONE - changeable DNS components:
 DONE - Form link tree (i.e SSJ Red 1 > SSJ Red 2> SSJ Red God) 4/20
 
 
-
-
-
 ACTUAL TO-DO:
 add timer
 
@@ -68,12 +65,10 @@ disconnecting while in assigned form i.e SSJ Green turns to default "CustomForm"
 -selectedForm is set to 0 in creation of PlayerCustomFormData instead of -1
 
 
-mixin cheatsheet:
-when trying to inject with value="INVOKE" and shift up or down, you are cannot shift outside the scope you injected in
+add form multiplier functionality:
 
-UI Heat(int jrmcEf8slc/double jrmcEf8slcD):
+add kk/ui stackability
 
-	-If heat bar full, player reverts from UI & gets Pain(jrmcGyJ7dp) SE
 
 	-Heat bar -> the blue bar when UI, rendered in JRMCoreGuiBars.rendera()
 

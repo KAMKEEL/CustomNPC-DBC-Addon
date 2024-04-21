@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinModelBipedDBC extends ModelBipedBody {
     /**
      * there's a bug where if you go ssj2 then revert to ssj1 then try to go ssj2 again,
-     * the ssj1 won't animate into ssj2. Fixed it for custom forms, but it still happens for DBC forms
+     * the ssj1 hair won't animate into ssj2. Fixed it for custom forms, but it still happens for DBC forms
      */
     @Inject(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE))
     public void fixSSJtoSSJ2RageAnim(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(name = "trTime") LocalIntRef trTime) {
