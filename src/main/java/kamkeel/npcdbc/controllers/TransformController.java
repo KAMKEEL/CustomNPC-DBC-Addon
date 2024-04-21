@@ -163,7 +163,7 @@ public class TransformController {
                 dbcData.State = 0;
             formData.updateClient();
             Utility.sendMessage(p, "§aTransformed to§r " + formData.getCurrentForm().getMenuName());
-            dbcData.saveNBTData(null);
+            dbcData.saveNBTData();
         }
     }
 
@@ -174,9 +174,7 @@ public class TransformController {
             formData.currentForm = -1;
             formData.updateClient();
             JRMCoreH.setByte(0, p, "jrmcSaiRg");
-            DBCData.get(p).saveNBTData(null);
+            DBCData.get(p).saveNBTData();
         }
     }
-
-
 }

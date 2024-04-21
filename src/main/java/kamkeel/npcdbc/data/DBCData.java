@@ -10,6 +10,7 @@ import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
@@ -29,8 +30,6 @@ public class DBCData {
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "";
 
     // Custom Form
-    public String preCustomFormDNS = "", preCustomFormDNSHair = "";
-    public int preCustomAuraColor;
     public int currentCustomForm;
     public float currentCustomFormLevel;
 
@@ -41,49 +40,45 @@ public class DBCData {
     public DBCData(EntityPlayer player) {
         this.player = player;
         this.side = player.worldObj.isRemote ? Side.CLIENT : Side.SERVER;
-        loadNBTData(null);
+        loadNBTData();
     }
 
 
-
-    public NBTTagCompound saveNBT(NBTTagCompound c) {
-        c.setInteger("jrmcStrI", STR);
-        c.setInteger("jrmcDexI", DEX);
-        c.setInteger("jrmcConI", CON);
-        c.setInteger("jrmcWilI", WIL);
-        c.setInteger("jrmcIntI", MND);
-        c.setInteger("jrmcCncI", SPI);
-        c.setInteger("jrmcEnrgy", Ki);
-        c.setInteger("jrmcStamina", Stamina);
-        c.setInteger("jrmcBdy", Body);
-        c.setInteger("jrmcHar4va", KOforXSeconds);
-        c.setInteger("jrmcSaiRg", Rage);
-        c.setInteger("jrmcEf8slc", Heat);
-        c.setInteger("jrmcAuraColor", AuraColor);
-        c.setByte("jrmcState", State);
-        c.setByte("jrmcState2", State2);
-        c.setByte("jrmcRelease", Release);
-        c.setByte("jrmcPwrtyp", Powertype);
-        c.setByte("jrmcRace", Race);
-        c.setString("jrmcStatusEff", StatusEffects);
-        c.setString("jrmcSSltX", RacialSkills);
-        c.setString("jrmcSSlts", Skills);
-        c.setString("jrmcSettings", Settings);
-        c.setString("jrmcFormMasteryRacial_" + JRMCoreH.Races[Race], FormMasteryRacial);
-        c.setString("jrmcFormMasteryNonRacial", FormMasteryNR);
-        c.setString("jrmcDNS", DNS);
-        c.setString("jrmcDNSH", DNSHair);
+    public NBTTagCompound saveFromNBT(NBTTagCompound comp) {
+        comp.setInteger("jrmcStrI", STR);
+        comp.setInteger("jrmcDexI", DEX);
+        comp.setInteger("jrmcConI", CON);
+        comp.setInteger("jrmcWilI", WIL);
+        comp.setInteger("jrmcIntI", MND);
+        comp.setInteger("jrmcCncI", SPI);
+        comp.setInteger("jrmcEnrgy", Ki);
+        comp.setInteger("jrmcStamina", Stamina);
+        comp.setInteger("jrmcBdy", Body);
+        comp.setInteger("jrmcHar4va", KOforXSeconds);
+        comp.setInteger("jrmcSaiRg", Rage);
+        comp.setInteger("jrmcEf8slc", Heat);
+        comp.setInteger("jrmcAuraColor", AuraColor);
+        comp.setByte("jrmcState", State);
+        comp.setByte("jrmcState2", State2);
+        comp.setByte("jrmcRelease", Release);
+        comp.setByte("jrmcPwrtyp", Powertype);
+        comp.setByte("jrmcRace", Race);
+        comp.setString("jrmcStatusEff", StatusEffects);
+        comp.setString("jrmcSSltX", RacialSkills);
+        comp.setString("jrmcSSlts", Skills);
+        comp.setString("jrmcSettings", Settings);
+        comp.setString("jrmcFormMasteryRacial_" + JRMCoreH.Races[Race], FormMasteryRacial);
+        comp.setString("jrmcFormMasteryNonRacial", FormMasteryNR);
+        comp.setString("jrmcDNS", DNS);
+        comp.setString("jrmcDNSH", DNSHair);
 
         // DBC Addon
-        c.setInteger("customFormID", currentCustomForm);
-        c.setFloat("customFormLevel", currentCustomFormLevel);
-        c.setInteger("preCustomAuraColor", preCustomAuraColor);
-        c.setString("preCustomFormDNSH", preCustomFormDNSHair);
-        c.setString("preCustomFormDNS", preCustomFormDNS);
-        return c;
+        comp.setInteger("customFormID", currentCustomForm);
+        comp.setFloat("customFormLevel", currentCustomFormLevel);
+        return comp;
     }
 
-    public void setNBT(NBTTagCompound c) {
+    public void loadFromNBT(NBTTagCompound c) {
         STR = c.getInteger("jrmcStrI");
         DEX = c.getInteger("jrmcDexI");
         CON = c.getInteger("jrmcConI");
@@ -115,15 +110,12 @@ public class DBCData {
 
         // DBC Addon
         currentCustomForm = c.getInteger("customFormID");
-        currentCustomFormLevel = c.getInteger("customFormLevel");
-        preCustomAuraColor = c.getInteger("preCustomAuraColor");
-        preCustomFormDNS = c.getString("preCustomFormDNS");
-        preCustomFormDNSHair = c.getString("preCustomFormDNSH");
+        currentCustomFormLevel = c.getFloat("customFormLevel");
     }
 
 
-    public void saveNBTData(NBTTagCompound compound) {
-        NBTTagCompound nbt = this.saveNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
+    public void saveNBTData() {
+        NBTTagCompound nbt = this.saveFromNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
 
         PlayerCustomFormData formData = Utility.getFormData(player);
         currentCustomForm = formData.currentForm;
@@ -135,18 +127,15 @@ public class DBCData {
         syncAllClients();
     }
 
-    public void loadNBTData(NBTTagCompound compound) {
+    public void loadNBTData() {
         NBTTagCompound dbc = this.player.getEntityData().getCompoundTag(DBCPersisted);
-        setNBT(dbc);
 
-        // DBC Addon
+        // Save the DBC Addon tags to PlayerPersisted before loading it to fields
         PlayerCustomFormData formData = Utility.getFormData(player);
-        currentCustomForm = formData.currentForm;
-        currentCustomFormLevel = formData.getCurrentLevel();
-        preCustomAuraColor = dbc.getInteger("preCustomAuraColor");
-        preCustomFormDNS = dbc.getString("preCustomFormDNS");
-        preCustomFormDNSHair = dbc.getString("preCustomFormDNSH");
+        dbc.setInteger("customFormID", formData.currentForm);
+        dbc.setFloat("customFormLevel", formData.getCurrentLevel());
 
+        loadFromNBT(dbc);
         syncAllClients();
     }
 
@@ -166,7 +155,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void setEyeColorRight(int color) {
@@ -177,7 +166,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void setHairColor(int color) {
@@ -188,7 +177,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     //main color for humans/saiyans/majins
@@ -200,7 +189,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     //saiyan oozaru and arco/nameks
@@ -212,7 +201,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     // namekian/arco
@@ -223,7 +212,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     //only arco
@@ -234,7 +223,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void setHairPreset(int preset) {
@@ -244,7 +233,7 @@ public class DBCData {
 
         DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void setNosePreset(int preset) {
@@ -254,7 +243,7 @@ public class DBCData {
 
         DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     // Negative Values will Drain instead
@@ -264,7 +253,7 @@ public class DBCData {
 
         Ki += toAdd;
         Ki = Math.min(Ki, maxKi);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void restoreHealthPercent(float percToRestore) {
@@ -273,7 +262,7 @@ public class DBCData {
 
         Body += toAdd;
         Body = Math.min(Body, maxBody);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void restoreStaminaPercent(float percToRestore) {
@@ -282,7 +271,7 @@ public class DBCData {
 
         Stamina += toAdd;
         Stamina = Math.min(Stamina, maxSta);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     //Negative value will add instead
@@ -294,7 +283,7 @@ public class DBCData {
         int toAdd = (int) (maxHeat * (percToRestore / 100));
 
         Heat = Math.max(Heat - toAdd, 0);
-        saveNBTData(null);
+        saveNBTData();
 
     }
 
@@ -334,7 +323,7 @@ public class DBCData {
 
     public void setSE(int id, boolean bo) {
         JRMCoreH.StusEfcts(id, StatusEffects, player, bo);
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public void setForm(int dbcForm, boolean on) {
@@ -365,7 +354,7 @@ public class DBCData {
                 setSE(12, on);
                 break;
         }
-        saveNBTData(null);
+        saveNBTData();
     }
 
     public boolean settingOn(int id) {
@@ -387,6 +376,11 @@ public class DBCData {
         }
     }
 
+    /**
+     * A terrible bug in where on SP, EntityClientPlayerMP that HAS NO ENTITY DATA is put first due to client init being faster than server init.
+     * This causes player.getEntityData().getCompoundTag("PlayerPersisted") to ALWAYS be empty.
+     * Need to check for server side.
+     */
     public static DBCData get(EntityPlayer player) {
         synchronized (dbcDataCache) {
             if (!dbcDataCache.containsKey(player.getCommandSenderName())) {

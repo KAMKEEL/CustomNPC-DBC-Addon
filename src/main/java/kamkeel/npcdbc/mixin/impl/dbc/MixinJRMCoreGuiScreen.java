@@ -3,8 +3,8 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -31,12 +31,12 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
     private static String getFormName() {
         boolean ui = JRMCoreH.StusEfctsMe(19);
         String name = null;
-        PlayerCustomFormData formData = Utility.getSelfData();
-        if (formData != null && formData.isInCustomForm())
-            name = formData.getCurrentForm().getMenuName();
+        CustomForm form = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
+        if (form != null)
+            name = form.getMenuName();
         else {
             DBCData d = DBCData.get(Minecraft.getMinecraft().thePlayer);
-            if(d != null){
+            if (d != null) {
                 name = DBCUtils.getCurrentFormFullName(d.Race, d.State, d.isForm(DBCForm.Legendary), d.isForm(DBCForm.Divine), JRMCoreH.StusEfctsMe(13), ui, DBCUtils.isUIWhite(ui, JRMCoreH.State2), JRMCoreH.StusEfctsMe(20));
             }
         }
@@ -61,8 +61,9 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                 detailList.add(txt);
             }
             ci.cancel();
-        } else if (Utility.getSelfData() != null && Utility.getSelfData().isInCustomForm()) {
-            PlayerCustomFormData formData = Utility.getSelfData();
+        } else if (Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer) != null ) {
+            CustomForm form = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
+            int color = 0;
             if ((s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§")) { //adds the form color to STR,DEX and WIL attribute values
                 int secondIndex = 0;
                 for (int i = 0; i < s1.length(); i++) {
@@ -73,15 +74,16 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                 }
 
                 String originalColor = s1.substring(secondIndex, secondIndex + 2);
-                s1 = s1.replace(originalColor, formData.getFormColorCode(formData.getCurrentForm()));
+                s1 = s1.replace(originalColor, "");
+                color = form.getNameColor();
             } else if (s1.contains("CON:")) { // adds the "xMulti" after CON: AttributeValue
                 float multi = (float) DBCUtils.getCurFormMulti(Minecraft.getMinecraft().thePlayer);
                 if (s1.contains("x"))
                     s1 = s1.substring(0, s1.indexOf("x") - 1);
-                s1 = s1 + (JRMCoreH.round(multi, 1) != 1.0 ? formData.getFormColorCode(formData.getCurrentForm()) + " x" + JRMCoreH.round(multi, 1) : "");
+                s1 = s1 + (JRMCoreH.round(multi, 1) != 1.0 ? " x" + JRMCoreH.round(multi, 1) : "");
             }
             int wpos = var8.getStringWidth(s1);
-            var8.drawString(s1, xpos, ypos, 0);
+            var8.drawString(s1, xpos, ypos, color);
             if (xpos < x && xpos + wpos > x && ypos - 3 < y && ypos + 10 > y) {
                 int ll = 200;
                 Object[] txt = new Object[]{s2, "§8", 0, true, x + 5, y + 5, ll};

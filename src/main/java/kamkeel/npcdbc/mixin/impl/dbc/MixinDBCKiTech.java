@@ -10,7 +10,6 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.CustomAura;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.Utility;
@@ -30,12 +29,12 @@ public class MixinDBCKiTech {
     @Inject(method = "Ascend", at = @At("HEAD"), cancellable = true)
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
         if (K.getIsKeyPressed()) {
-            PlayerCustomFormData formData = Utility.getSelfData();
-            if (formData != null && formData.isInCustomForm()) {
-                if (JRMCoreH.PlyrSettingsB(0) && formData.getCurrentForm().isFormStackable(DBCForm.Kaioken)) {
-                } else if (JRMCoreH.PlyrSettingsB(11) && formData.getCurrentForm().isFormStackable(DBCForm.UltraInstinct)) {
-                } else if (JRMCoreH.PlyrSettingsB(16) && formData.getCurrentForm().isFormStackable(DBCForm.GodOfDestruction)) {
-                } else if (JRMCoreH.PlyrSettingsB(6) && formData.getCurrentForm().isFormStackable(DBCForm.Mystic)) {
+            CustomForm form = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
+            if (form != null) {
+                if (JRMCoreH.PlyrSettingsB(0) && form.isFormStackable(DBCForm.Kaioken)) {
+                } else if (JRMCoreH.PlyrSettingsB(11) && form.isFormStackable(DBCForm.UltraInstinct)) {
+                } else if (JRMCoreH.PlyrSettingsB(16) && form.isFormStackable(DBCForm.GodOfDestruction)) {
+                } else if (JRMCoreH.PlyrSettingsB(6) && form.isFormStackable(DBCForm.Mystic)) {
                 } else
                     ci.cancel();
             }
@@ -47,11 +46,10 @@ public class MixinDBCKiTech {
      */
     @Inject(method = "Descend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;kiInSuper:I", shift = At.Shift.AFTER), cancellable = true)
     private static void DescendModified(KeyBinding K, CallbackInfo ci) {
-        PlayerCustomFormData formData = Utility.getSelfData();
+        CustomForm form = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
         DBCData d = DBCData.get(Minecraft.getMinecraft().thePlayer);
         boolean returnEarly = true;
-        if (d != null && formData != null && formData.isInCustomForm()) {
-            CustomForm form = formData.getCurrentForm();
+        if (form != null) {
             if (d.formSettingOn(DBCForm.Kaioken)) {
                 if (d.isForm(DBCForm.Kaioken))
                     returnEarly = false;
@@ -67,7 +65,7 @@ public class MixinDBCKiTech {
 
 
             if (returnEarly) {
-                if (form.hasParent() && formData.hasUnlocked(form.getParentID()))
+                if (form.hasParent())
                     PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getParentID(), false).generatePacket());
                 else
                     PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false).generatePacket());
@@ -76,6 +74,7 @@ public class MixinDBCKiTech {
             }
         }
     }
+
 
     @Inject(method = "triForce", at = @At("HEAD"), cancellable = true)
     private static void fixRage(int i, int j, int k, CallbackInfo ci) {
@@ -108,5 +107,13 @@ public class MixinDBCKiTech {
                 godestruction.set(true);
 
         }
+    }
+
+    @Inject(method = "Descend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;Rls(B)V", shift = At.Shift.AFTER), cancellable = true)
+    private static void descendOn0Release(KeyBinding K, CallbackInfo ci) {
+        CustomForm form = Utility.getSelfData() != null ? Utility.getSelfData().getCurrentForm() : null;
+        if (form != null)
+            PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false).generatePacket());
+
     }
 }

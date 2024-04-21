@@ -14,13 +14,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinJRMCoreCliTickH {
 
     @Inject(method = "onTickInGame", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data1:[Ljava/lang/String;", ordinal = 0, shift = At.Shift.BEFORE))
-    public void capturePlayer(CallbackInfo ci, @Local(name = "plyr") LocalRef<EntityPlayer> plyr) {
+    public void setCurrentTickPlayerClientMain(CallbackInfo ci, @Local(name = "plyr") LocalRef<EntityPlayer> plyr) {
         CommonProxy.CurrentJRMCTickPlayer = plyr.get();
 
     }
 
     @Inject(method = "onTickInGame", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;data(Ljava/lang/String;ILjava/lang/String;)Ljava/lang/String;", ordinal = 0, shift = At.Shift.BEFORE))
-    public void changeSize1(CallbackInfo ci, @Local(name = "plyr1") LocalRef<EntityPlayer> plyr1) {
+    public void setCurrentTickPlayerClientOthers(CallbackInfo ci, @Local(name = "plyr1") LocalRef<EntityPlayer> plyr1) {
         CommonProxy.CurrentJRMCTickPlayer = plyr1.get();
 
     }
