@@ -34,7 +34,7 @@ public class CustomForm implements ICustomForm {
     public float kaiokenStrength = 1.2f, uiStrength = 3.0f, godStrength = 3.0f, mysticStrength = 1.8f;
     public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
 
-    public String hairCode = "", hairType = "ssj";
+    public String hairCode = "", hairType = "";
     public int auraColor = 1, hairColor, eyeColor, bodyCM, bodyC1, bodyC2, bodyC3, furColor = 14292268;
     public boolean hasAuraColor = true, hasHairColor = true, hasEyeColor = true, hasBodyCM = false, hasBodyC1 = false, hasBodyC2 = false, hasBodyC3 = false, hasFurColor = true;
 
