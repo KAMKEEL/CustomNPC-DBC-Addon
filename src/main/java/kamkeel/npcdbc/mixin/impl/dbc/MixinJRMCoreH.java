@@ -7,7 +7,6 @@ import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.Utility;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -103,19 +102,23 @@ public class MixinJRMCoreH {
         }
     }
 
+    // fix for descending from a CF sets release to 0 as game registers you as base in a CF
     @Inject(method = "Rls", at = @At("HEAD"), cancellable = true)
-    private static void fixRelease(byte b, CallbackInfo ci) {
-        PlayerCustomFormData formData = Utility.getSelfData();
-        if (formData != null && formData.isInCustomForm())
-            ci.cancel();
+    private static void fix0ReleaseOnCFDescend(byte b, CallbackInfo ci) {
+        if (b == 0) {
+            PlayerCustomFormData formData = Utility.getSelfData();
+            if (formData != null && formData.isInCustomForm())
+                ci.cancel();
+        }
     }
 
-
+    //delete all player CF data on jrmc startnew
     @Inject(method = "resetChar(Lnet/minecraft/entity/player/EntityPlayer;ZZZF)V", at = @At("HEAD"), cancellable = true)
     private static void resetChar(EntityPlayer p, boolean keepSkills, boolean keepTechs, boolean keepMasteries, float perc, CallbackInfo ci) {
         Utility.getFormData(p).resetAll();
     }
 
+    //if release becomes 0%, force descend player from CF on server side
     @Inject(method = "setByte(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
     private static void descendOn0Release(int s, EntityPlayer Player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcRelease")) {
@@ -128,6 +131,7 @@ public class MixinJRMCoreH {
         }
     }
 
+    //if ki becomes 0, force descend player from CF on server side
     @Inject(method = "setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
     private static void descendOn0Ki(int s, EntityPlayer Player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcEnrgy")) {

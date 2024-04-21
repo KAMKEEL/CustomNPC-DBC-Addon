@@ -3,9 +3,11 @@ package kamkeel.npcdbc.client;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -61,4 +63,10 @@ public class ClientEventHandler {
             }
         }
     }
+
+    @SubscribeEvent
+    public void logoutEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
+        DBCData.dbcDataCache.clear();
+    }
+
 }

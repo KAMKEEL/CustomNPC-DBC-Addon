@@ -70,7 +70,7 @@ public class MixinDBCKiTech {
 
 
             if (returnEarly) {
-                if (form.hasParent())
+                if (form.hasParent() && formData.hasUnlocked(form.getParentID()))
                     PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getParentID(), false).generatePacket());
                 else
                     PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false).generatePacket());
@@ -114,11 +114,10 @@ public class MixinDBCKiTech {
         }
     }
 
-    @Inject(method = "Descend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;Rls(B)V", shift = At.Shift.AFTER), cancellable = true)
-    private static void descendOn0Release(KeyBinding K, CallbackInfo ci) {
-        CustomForm form = Utility.getSelfData() != null ? Utility.getSelfData().getCurrentForm() : null;
-        if (form != null)
-            PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false).generatePacket());
-
-    }
+//    @Inject(method = "Descend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;Rls(B)V", shift = At.Shift.AFTER), cancellable = true)
+//    private static void fix0ReleaseOnDescend(KeyBinding K, CallbackInfo ci) {
+//        CustomForm form = Utility.getSelfData() != null ? Utility.getSelfData().getCurrentForm() : null;
+//        if (form != null)
+//            ci.cancel();
+//    }
 }

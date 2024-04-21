@@ -29,6 +29,7 @@ public class ServerEventHandler {
         dbcData.syncAllClients();
     }
 
+
     @SubscribeEvent
     public void onServerTick(TickEvent.PlayerTickEvent event) {
         if (event.player == null || event.player.worldObj == null || event.player.worldObj.isRemote || event.player instanceof FakePlayer)
