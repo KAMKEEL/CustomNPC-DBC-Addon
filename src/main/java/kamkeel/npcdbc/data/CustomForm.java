@@ -34,7 +34,7 @@ public class CustomForm implements ICustomForm {
     public float kaiokenStrength = 1.0f, uiStrength = 1.0f, godStrength = 1.0f, mysticStrength = 1.0f;
     public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
 
-    public String hairCode = "", hairType = "";
+    public String hairCode = "", hairType = "", bodyType = "";
     public int auraColor = -1, hairColor = -1, eyeColor = -1, bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
