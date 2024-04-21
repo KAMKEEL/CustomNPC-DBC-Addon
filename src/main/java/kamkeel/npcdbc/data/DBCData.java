@@ -10,7 +10,6 @@ import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
@@ -383,9 +382,8 @@ public class DBCData {
      */
     public static DBCData get(EntityPlayer player) {
         synchronized (dbcDataCache) {
-            if (!dbcDataCache.containsKey(player.getCommandSenderName())) {
+            if (!dbcDataCache.containsKey(player.getCommandSenderName()))
                 dbcDataCache.put(player.getCommandSenderName(), new CacheHashMap.CachedObject<>(new DBCData(player)));
-            }
             return dbcDataCache.get(player.getCommandSenderName()).getObject();
         }
     }

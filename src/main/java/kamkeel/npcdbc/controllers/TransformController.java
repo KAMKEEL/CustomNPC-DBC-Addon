@@ -23,6 +23,7 @@ public class TransformController {
     public static String ascendSound, descendSound;
     public static float rage, rageValue;
     public static DBCData dbcData;
+    public static CustomForm transformedInto;
 
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
@@ -31,10 +32,11 @@ public class TransformController {
     //WIP, only 85% done, but is functional and won't break
     @SideOnly(Side.CLIENT)
     public static void Ascend(CustomForm form) {
-        if (cantTransform || (rage > 0 && transformed) || (Utility.getSelfData() != null && Utility.getSelfData().getCurrentForm() != null && Utility.getSelfData().getCurrentForm().getID() == form.id))
+        CustomForm currentForm = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
+        if (cantTransform || (rage > 0 && transformed) || currentForm != null && currentForm.getID() == form.id)
             return;
         dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
-        if (dbcData == null)
+        if (dbcData == null || JRMCoreH.curRelease <= 0 || JRMCoreH.curEnergy <= 0)
             return;
 
         time++;
@@ -72,6 +74,7 @@ public class TransformController {
             resetTimers();
             cantTransform = true;
             transformed = true;
+            transformedInto = form;
         }
 
         JRMCoreH.TransSaiCurRg = (byte) rage;
@@ -89,8 +92,10 @@ public class TransformController {
                 rage = 100;
             if (rage - (rageValue) >= 0)
                 rage -= (rageValue);
-            else
+            else {
                 rage = 0;
+                transformedInto = null;
+            }
             if (rage <= 50 && JRMCoreH.StusEfctsMe(1))
                 JRMCoreH.Skll((byte) 5, (byte) 1, (byte) 1);
         }
@@ -98,16 +103,18 @@ public class TransformController {
             setAscending(false);
 
         JRMCoreH.TransSaiCurRg = (byte) rage;
-        dbcData.getRawCompound().setInteger("jrmcSaiRg", (int) rage);
+        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
     }
 
     @SideOnly(Side.CLIENT)
     public static void setAscending(boolean bo) {
         ascending = bo;
-        JRMCoreH.Skll((byte) 5, bo ? (byte) 0 : 1, (byte) 1);
+        if (time == 1 || !bo)
+            JRMCoreH.Skll((byte) 5, bo ? (byte) 0 : 1, (byte) 1);
         if (!bo) {
             cantTransform = false;
             transformed = false;
+            transformedInto = null;
         }
     }
 
@@ -170,8 +177,15 @@ public class TransformController {
     public static void handleCustomFormDescend(EntityPlayerMP p) {
         PlayerCustomFormData formData = Utility.getFormData(p);
         if (formData.isInCustomForm()) {
-            Utility.sendMessage(p, "§cDescended from§r " + formData.getCurrentForm().getMenuName());
-            formData.currentForm = -1;
+            CustomForm form = formData.getCurrentForm();
+            if (form.hasParent() && formData.hasUnlocked(form.getParentID())) {
+                Utility.sendMessage(p, "§cDescended into§r " + form.getParent().getMenuName());
+                formData.currentForm = form.getParentID();
+            } else {
+                Utility.sendMessage(p, "§cDescended from§r " + form.getMenuName());
+                formData.currentForm = -1;
+            }
+
             formData.updateClient();
             JRMCoreH.setByte(0, p, "jrmcSaiRg");
             DBCData.get(p).saveNBTData();
