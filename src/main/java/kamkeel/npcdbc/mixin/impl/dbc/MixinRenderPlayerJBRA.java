@@ -26,8 +26,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = RenderPlayerJBRA.class, remap = false)
 public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
+
     @Shadow
-    ModelBipedDBC modelMain;
+    public ModelBipedDBC modelMain;
 
     @Inject(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE))
     public void changeSize1(AbstractClientPlayer p, float p_77041_2_, CallbackInfo ci) {
