@@ -273,10 +273,8 @@ public class MixinDBCAddon {
                 } else {
                     data.selectedForm = -1;
                 }
-                System.out.println("Tried to set Custom Form");
                 data.updateClient();
                 playerData.save();
-                System.out.println(((IPlayerFormData) PlayerDataController.Instance.getPlayerData(player)).getCustomFormData().getSelectedForm().id);
                 Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
             }
         }
