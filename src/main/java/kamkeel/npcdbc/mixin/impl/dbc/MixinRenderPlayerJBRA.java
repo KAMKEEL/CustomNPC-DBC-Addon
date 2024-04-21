@@ -8,6 +8,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.util.Utility;
@@ -85,8 +86,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
-    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
-
+    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm")
+    LocalIntRef bodyCM, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
         CustomForm form = Utility.getFormClient(par1AbstractClientPlayer);
         if (form != null) {
             if (form.hairType.equals("ssj4")) {
@@ -94,7 +95,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 renderSSJ4Hair(form.hairColor, form.hairCode, race.get(), pl.get());
                 renderSSJ4Fur(form.furColor);
             } else if (form.hairType.equals("oozaru")) {
-                renderOozaru(bodyCM.get(), form.eyeColor, form.furColor, par1AbstractClientPlayer);
+                renderOozaru(bodyCM.get(), form.eyeColor, form.furColor);
             } else if (form.hairType.equals("ssj3"))
                 this.modelMain.renderHairs(0.0625F, "" + JRMCoreH.HairsT[6] + JRMCoreH.Hairs[0]);
 
@@ -111,29 +112,33 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             } else if (form.hairType.equals("oozaru")) {
                 renderOozaruArm(bodyCM.get(), form.furColor, par1EntityPlayer, id.get());
             }
-
         }
     }
 
     @Unique
     private void renderSSJ4Face(int hairColor, int furColor, int eyeColor, int bodyCM, int gender, int nose) {
-        GL11.glColor3f(1.0F + getR(), 1.0F + getG(), 1.0F + getB());
-        this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/ssj4eyewhite.png"));
-        this.modelMain.renderBody(1F / 16F);
-        RenderPlayerJBRA.glColor3f(eyeColor);
-        this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/ssj4pupils.png"));
-        this.modelMain.renderBody(0.0625F);
-        RenderPlayerJBRA.glColor3f(furColor);
-        this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/ssj4brows.png"));
-        this.modelMain.renderBody(1F / 16F);
-        RenderPlayerJBRA.glColor3f(hairColor);
-        this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/ssj4brows2.png"));
-        this.modelMain.renderBody(1F / 16F);
-        RenderPlayerJBRA.glColor3f(bodyCM);
-        this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/ssj4mouth0.png"));
-        this.modelMain.renderBody(1F / 16F);
-        this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/ssj4shade.png"));
-        this.modelMain.renderBody(0.0625F);
+        if(ConfigDBCClient.EnableHDTextures){
+            GL11.glColor3f(1.0F + getR(), 1.0F + getG(), 1.0F + getB());
+            this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/hd/faces/ssj4/ssj4eyewhite.png"));
+            this.modelMain.renderBody(1F / 16F);
+            RenderPlayerJBRA.glColor3f(eyeColor);
+            this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/hd/faces/ssj4/ssj4pupils.png"));
+            this.modelMain.renderBody(0.0625F);
+            RenderPlayerJBRA.glColor3f(furColor);
+            this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/hd/faces/ssj4/ssj4brows.png"));
+            this.modelMain.renderBody(1F / 16F);
+            RenderPlayerJBRA.glColor3f(hairColor);
+            this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/hd/faces/ssj4/ssj4brows2.png"));
+            this.modelMain.renderBody(1F / 16F);
+            RenderPlayerJBRA.glColor3f(bodyCM);
+            this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/hd/faces/ssj4/ssj4mouth0.png"));
+            this.modelMain.renderBody(1F / 16F);
+            this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/hd/faces/ssj4/ssj4shade.png"));
+            this.modelMain.renderBody(0.0625F);
+        }
+        else {
+
+        }
         this.bindTexture(new ResourceLocation("jinryuumodscore", "cc/" + (gender == 1 ? "f" : "") + "humn" + nose + ".png"));
         this.modelMain.renderHairs(0.0625F, "FACENOSE");
     }
@@ -171,7 +176,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
 
     @Unique
-    private void renderOozaru(int bodyCM, int eyeColor, int furColor, EntityPlayer player) {
+    private void renderOozaru(int bodyCM, int eyeColor, int furColor) {
         ResourceLocation bdyskn = new ResourceLocation("jinryuudragonbc:cc/oozaru1.png"); //human hairless face
         this.bindTexture(bdyskn);
         RenderPlayerJBRA.glColor3f(bodyCM);
@@ -180,12 +185,15 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         this.bindTexture(bdyskn);
         RenderPlayerJBRA.glColor3f(furColor);
         this.modelMain.renderBody(0.0625F);
-        this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/faces/ss4/oozarueyes.png")); //eyes
-        RenderPlayerJBRA.glColor3f(eyeColor);
+        if(ConfigDBCClient.EnableHDTextures){
+            this.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/hd/faces/oozaru/oozarueyes.png")); //eyes
+            RenderPlayerJBRA.glColor3f(eyeColor);
+            this.modelMain.renderHairs(0.0625F, "EYEBASE");
+            RenderPlayerJBRA.glColor3f(bodyCM); //
+            this.modelMain.renderHairs(0.0625F, "OOZARU");
+        } else {
 
-        this.modelMain.renderHairs(0.0625F, "EYEBASE");
-        RenderPlayerJBRA.glColor3f(bodyCM); //
-        this.modelMain.renderHairs(0.0625F, "OOZARU");
+        }
     }
 
 
