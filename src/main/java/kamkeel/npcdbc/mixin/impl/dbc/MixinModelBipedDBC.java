@@ -6,6 +6,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.util.Utility;
@@ -95,7 +96,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     }
 
     @Inject(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At("HEAD"), cancellable = true)
-    public void disableHairRendering(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci) {
+    public void disableHairRendering(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(ordinal = 0) LocalRef<String> hair) {
         if (ClientEventHandler.renderingPlayer != null) {
             CustomForm form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
             if (form != null) {
@@ -106,6 +107,9 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 if (form.hairColor != -1)
                     RenderPlayerJBRA.glColor3f(form.hairColor);
+
+                if (form.hairCode.length() > 5)
+                    hair.set(form.hairCode);
             }
         }
     }
