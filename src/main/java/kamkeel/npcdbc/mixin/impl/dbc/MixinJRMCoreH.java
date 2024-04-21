@@ -7,6 +7,7 @@ import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,22 +24,21 @@ public class MixinJRMCoreH {
         {
             CustomForm form = null;
             float currentFormLevel = 0f;
-            if(player == null)
+            if (player == null)
                 return;
 
-            if(Utility.isServer()){
+            if (Utility.isServer()) {
                 PlayerCustomFormData formData = Utility.getFormData(player);
-                if(formData != null && formData.isInCustomForm()){
+                if (formData != null && formData.isInCustomForm()) {
                     currentFormLevel = formData.getCurrentLevel();
                     form = formData.getCurrentForm();
                 }
-            }
-            else {
+            } else {
                 form = Utility.getFormClient((AbstractClientPlayer) player);
                 currentFormLevel = Utility.getFormLevelClient((AbstractClientPlayer) player);
             }
 
-            if(form != null) {
+            if (form != null) {
                 int skillX = powerType == 1 ? JRMCoreH.SklLvlX(1, SklX) - 1 : 0;
                 int mysticLvl = powerType == 1 ? JRMCoreH.SklLvl(10, 1, Skls) : 0;
                 int result = 0;
@@ -105,14 +105,38 @@ public class MixinJRMCoreH {
 
     @Inject(method = "Rls", at = @At("HEAD"), cancellable = true)
     private static void fixRelease(byte b, CallbackInfo ci) {
-        PlayerCustomFormData formData = Utility.getSelfData();
-        if (formData != null && formData.isInCustomForm())
+        CustomForm form = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
+        if (form != null)
             ci.cancel();
     }
 
     @Inject(method = "resetChar(Lnet/minecraft/entity/player/EntityPlayer;ZZZF)V", at = @At("HEAD"), cancellable = true)
     private static void resetChar(EntityPlayer p, boolean keepSkills, boolean keepTechs, boolean keepMasteries, float perc, CallbackInfo ci) {
         Utility.getFormData(p).resetAll();
+    }
+
+    @Inject(method = "setByte(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
+    private static void descendOn0Release(int s, EntityPlayer Player, String string, CallbackInfo ci) {
+        if (s == 0 && string.equals("jrmcRelease")) {
+            PlayerCustomFormData formData = Utility.getFormData(Player);
+            CustomForm form = Utility.getCurrentForm(Player);
+            if (form != null) {
+                formData.currentForm = -1;
+                formData.updateClient();
+            }
+        }
+    }
+
+    @Inject(method = "setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
+    private static void descendOn0Ki(int s, EntityPlayer Player, String string, CallbackInfo ci) {
+        if (s == 0 && string.equals("jrmcEnrgy")) {
+            PlayerCustomFormData formData = Utility.getFormData(Player);
+            CustomForm form = Utility.getCurrentForm(Player);
+            if (form != null) {
+                formData.currentForm = -1;
+                formData.updateClient();
+            }
+        }
     }
 }
 

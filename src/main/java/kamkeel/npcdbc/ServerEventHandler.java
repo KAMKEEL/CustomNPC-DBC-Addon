@@ -5,9 +5,11 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,13 +24,13 @@ public class ServerEventHandler {
     @SubscribeEvent
     public void loginEvent(cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event) {
         DBCData dbcData = DBCData.get(event.player);
-        dbcData.loadNBTData(null);
+        dbcData.loadNBTData();
         dbcData.syncAllClients();
     }
 
     @SubscribeEvent
     public void onServerTick(TickEvent.PlayerTickEvent event) {
-        if (event.player == null || event.player.worldObj == null)
+        if (event.player == null || event.player.worldObj == null || event.player.worldObj.isRemote)
             return;
 
         EntityPlayer player = event.player;
@@ -46,23 +48,29 @@ public class ServerEventHandler {
 
             if (player.ticksExisted % 10 == 0) {
                 DBCData dbcData = DBCData.get(player);
-                dbcData.loadNBTData(null);
-                // dbcData.syncAllClients();
+                dbcData.loadNBTData();
+
+                //reverts player from CF when ki or release are 0
+                if (Utility.getCurrentForm(player) != null && (dbcData.Release <= 0 || dbcData.Ki <= 0)) {
+                    PlayerCustomFormData formData = Utility.getFormData(player);
+                    formData.currentForm = -1;
+                    formData.updateClient();
+                    dbcData.loadNBTData();
+                }
             }
         }
     }
 
 
     @SubscribeEvent
-    public void addTracking(PlayerEvent.StartTracking event){
-        if(event.target instanceof EntityPlayer && !(event.target instanceof FakePlayer)){
+    public void addTracking(PlayerEvent.StartTracking event) {
+        if (event.target instanceof EntityPlayer && !(event.target instanceof FakePlayer)) {
             DBCData data = DBCData.get((EntityPlayer) event.target);
             if (data == null) {
                 return;
             }
-            data.loadNBTData(null);
-            PacketHandler.Instance.sendToPlayer(new PingPacket(data).generatePacket(),
-                ((EntityPlayerMP)event.entityPlayer));
+            data.loadNBTData();
+            PacketHandler.Instance.sendToPlayer(new PingPacket(data).generatePacket(), ((EntityPlayerMP) event.entityPlayer));
         }
     }
 }
