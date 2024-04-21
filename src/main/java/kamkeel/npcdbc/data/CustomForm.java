@@ -35,7 +35,7 @@ public class CustomForm implements ICustomForm {
 
     public String hairCode = "", hairType = "", bodyType = "";
     public int auraColor = -1, hairColor = -1, eyeColor = -1, bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
-
+    public boolean hasMask = false;
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
 
@@ -62,6 +62,19 @@ public class CustomForm implements ICustomForm {
     @Override
     public void setHairCode(String hairCode) {
         this.hairCode = hairCode;
+    }
+
+    public String getBodyType() {
+        return bodyType;
+    }
+
+    public void setBodyType(String type) {
+        String s = type.toLowerCase();
+        if (s.equals("firstform") || s.equals("secondform") || s.equals("thirdform") || s.equals("finalform") || s.equals("ultimatecooler") || s.equals(""))
+            bodyType = s;
+        else
+            throw new CustomNPCsException("Invalid type! Legal: firstform, secondform, thirdform, finalform, ultimatecooler");
+
     }
 
     @Override
@@ -549,10 +562,12 @@ public class CustomForm implements ICustomForm {
         furColor = rendering.getInteger("furColor");
         hairCode = rendering.getString("hairCode");
         hairType = rendering.getString("hairType");
+        bodyType = rendering.getString("bodyType");
         bodyCM = rendering.getInteger("bodyCM");
         bodyC1 = rendering.getInteger("bodyC1");
         bodyC2 = rendering.getInteger("bodyC2");
         bodyC3 = rendering.getInteger("bodyC3");
+        hasMask = rendering.getBoolean("hasMask");
 
         NBTTagCompound sounds = compound.getCompoundTag("sounds");
         ascendSound = sounds.getString("ascendSound");
@@ -597,11 +612,13 @@ public class CustomForm implements ICustomForm {
         rendering.setInteger("hairColor", hairColor);
         rendering.setString("hairCode", hairCode);
         rendering.setString("hairType", hairType);
+        rendering.setString("bodyType", bodyType);
         rendering.setInteger("furColor", furColor);
         rendering.setInteger("bodyCM", bodyCM);
         rendering.setInteger("bodyC1", bodyC1);
         rendering.setInteger("bodyC2", bodyC2);
         rendering.setInteger("bodyC3", bodyC3);
+        rendering.setBoolean("hasMask", hasMask);
 
         NBTTagCompound sounds = new NBTTagCompound();
         sounds.setString("ascendSound", ascendSound);
@@ -615,5 +632,15 @@ public class CustomForm implements ICustomForm {
     @Override
     public ICustomForm save() {
         return FormController.Instance.saveForm(this);
+    }
+
+    @Override
+    public boolean hasMask() {
+        return hasMask;
+    }
+
+    @Override
+    public void hasMask(boolean hasMask) {
+        this.hasMask = hasMask;
     }
 }

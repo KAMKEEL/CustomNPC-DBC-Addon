@@ -6,16 +6,14 @@
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "dbc.MixinDBCPacketHandlerServer",
-    "npc.MixinDBCStats",
     "dbc.MixinEntityAura2",
     "dbc.MixinJGPlayerMP",
     "dbc.MixinJRMCoreComTickH",
-    "dbc.MixinJRMCoreEH",
     "dbc.MixinJRMCoreH",
     "dbc.MixinJRMCoreHDBC",
     "npc.MixinDBCAddon",
     "npc.MixinDBCDisplay",
+    "npc.MixinDBCStats",
     "npc.MixinPlayerData",
     "npc.MixinScriptPlayer"
   ],

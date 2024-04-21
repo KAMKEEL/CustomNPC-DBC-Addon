@@ -5,6 +5,7 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
@@ -39,7 +40,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
-    private void changeFormData(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "rg") LocalIntRef rg, @Local(name = "st") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
+    private void changeFormData(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "rg") LocalIntRef rg, @Local(name = "st") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3, @Local(name = "msk") LocalBooleanRef mask) {
 
         CustomForm form = Utility.getFormClient(par1AbstractClientPlayer);
         //this prevents ssj2 hair animating immediately into ssj1 when going into ssj1 type forms from base
@@ -62,6 +63,25 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 bodyC2.set(form.bodyC2);
             if (form.hasColor("bodyC3"))
                 bodyC3.set(form.bodyC3);
+
+            if (race.get() == 4) {
+                if (form.bodyType.equals("firstform"))
+                    st.set(0);
+                else if (form.bodyType.equals("secondform"))
+                    st.set(2);
+                else if (form.bodyType.equals("thirdform"))
+                    st.set(3);
+                else if (form.bodyType.equals("finalform"))
+                    st.set(4);
+                else if (form.bodyType.equals("ultimatecooler"))
+                    st.set(5);
+
+                if (form.hasMask())
+                    mask.set(true);
+                else
+                    mask.set(false);
+
+            }
         }
     }
 

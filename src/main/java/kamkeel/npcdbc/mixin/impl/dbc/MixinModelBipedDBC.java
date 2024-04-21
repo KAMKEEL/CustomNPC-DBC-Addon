@@ -18,7 +18,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -37,22 +36,6 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 rp.setState(s, playerName);
             }
         }
-    }
-
-    @ModifyVariable(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At("HEAD"), ordinal = 0, name = "s", argsOnly = true)
-    private int renderHairsS(int s) {
-        if (ClientEventHandler.renderingPlayer != null) {
-            CustomForm form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
-            if (form != null) {
-                if (form.hairType.equals("base"))
-                    s = 0;
-                else if (form.hairType.equals("ssj"))
-                    s = 1;
-                else if (form.hairType.equals("ssj2"))
-                    s = 5;
-            }
-        }
-        return s;
     }
 
     @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At("HEAD"), cancellable = true)
@@ -96,20 +79,30 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     }
 
     @Inject(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At("HEAD"), cancellable = true)
-    public void disableHairRendering(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(ordinal = 0) LocalRef<String> hair) {
+    public void disableHairRendering(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(ordinal = 0) LocalRef<String> hair, @Local(ordinal = 0) LocalIntRef st) {
         if (ClientEventHandler.renderingPlayer != null) {
             CustomForm form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
             if (form != null) {
-                //disable other hair rendering when ssj4 hair type
-                boolean isCorrectHair = h.equals(form.hairCode) || h.startsWith("373852546750347428545480");
-                if ((form.hairType.equals("ssj4") && !isCorrectHair) || form.hairType.equals("ssj3") || form.hairType.equals("oozaru"))
-                    ci.cancel();
+
+                if (form.hairType.equals("base"))
+                    st.set(0);
+                else if (form.hairType.equals("ssj"))
+                    st.set(4);
+                else if (form.hairType.equals("ssj2"))
+                    st.set(5);
 
                 if (form.hairColor != -1)
                     RenderPlayerJBRA.glColor3f(form.hairColor);
 
                 if (form.hairCode.length() > 5)
                     hair.set(form.hairCode);
+
+                //disable other hair rendering when ssj4 hair type
+                boolean isCorrectHair = h.equals(form.hairCode) || h.startsWith("373852546750347428545480");
+                if ((form.hairType.equals("ssj4") && !isCorrectHair) || form.hairType.equals("ssj3") || form.hairType.equals("oozaru"))
+                    ci.cancel();
+
+
             }
         }
     }

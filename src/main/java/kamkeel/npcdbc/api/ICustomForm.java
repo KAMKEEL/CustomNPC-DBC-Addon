@@ -52,7 +52,16 @@ public interface ICustomForm {
      */
     boolean hasColor(String type);
 
+
     void setState2Factor(int dbcForm, float factor);
+
+
+    String getBodyType();
+
+    /**
+     * @param type Legal: firstform, secondform, thirdform, finalform, ultimatecooler
+     */
+    void setBodyType(String type);
 
     /**
      * @param dbcForm Legal args: 20 Kaioken, 21 UltraInstinct
@@ -197,4 +206,7 @@ public interface ICustomForm {
 
     ICustomForm save();
 
+    public boolean hasMask();
+
+    void hasMask(boolean hasMask);
 }
