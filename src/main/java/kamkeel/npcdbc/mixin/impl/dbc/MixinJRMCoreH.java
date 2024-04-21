@@ -143,5 +143,18 @@ public class MixinJRMCoreH {
             }
         }
     }
+
+    @Inject(method = "addToFormMasteriesValue(Lnet/minecraft/entity/player/EntityPlayer;DDIIIZZZZI)V", at = @At("HEAD"), cancellable = true)
+    private static void addFormMasteries(EntityPlayer player, double value, double valueKK, int race, int state, int state2, boolean isKaiokenOn, boolean isMysticOn, boolean isUltraInstinctOn, boolean isGoDOn, int gainMultiID, CallbackInfo ci) {
+        if (gainMultiID == 0)
+            Utility.getFormData(player).updateCurrentFormMastery("update");
+        else if (gainMultiID == 1)
+            Utility.getFormData(player).updateCurrentFormMastery("attack");
+        else if (gainMultiID == 2)
+            Utility.getFormData(player).updateCurrentFormMastery("damaged");
+        else if (gainMultiID == 3)
+            Utility.getFormData(player).updateCurrentFormMastery("fireki");
+
+    }
 }
 
