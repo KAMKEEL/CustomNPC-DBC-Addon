@@ -44,17 +44,20 @@ DONE - changeable DNS components:
 	-DONE - get the hair of ssj/ssj2/ssj3 as form hairs, setHairType() ssj,ssj2,ssj3,ssj4,oozaru 4/18
 	-Done - add custom form sizes 4/20
 
+DONE - Form link tree (i.e SSJ Red 1 > SSJ Red 2> SSJ Red God) 4/20
+
 
 
 
 
 ACTUAL TO-DO:
-add timer, freeze player's DBCKiTech, DBCDamage 
+add timer
 
--Make form trees SSRed ->SSRed2 ->SSRed3
 
+
+freeze player's DBCKiTech, DBCDamage 
 event, prevent ascension when release 0
-
+fix how ids are processed 
 
 bugs:
 can't descend from God/Mystic when its selected - FIXED
