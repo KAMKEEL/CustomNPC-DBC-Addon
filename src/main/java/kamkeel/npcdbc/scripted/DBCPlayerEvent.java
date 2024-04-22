@@ -17,21 +17,26 @@ public class DBCPlayerEvent extends PlayerEvent {
     @Cancelable
     public static class FormChangeEvent extends DBCPlayerEvent {
 
-        private final int formBefore;
-        private final int formAfter;
+        private final int formBeforeID;
+        private final boolean isBeforeCustom;
 
-        public FormChangeEvent(IPlayer player, int formBefore, int formAfter) {
+        private final int formAfterID;
+        private final boolean isAfterCustom;
+
+        public FormChangeEvent(IPlayer player, boolean isBeforeCustom, int formBeforeID, boolean isAfterCustom, int formAfterID) {
             super(player);
-            this.formBefore = formBefore;
-            this.formAfter = formAfter;
+            this.formBeforeID = formBeforeID;
+            this.isBeforeCustom = isBeforeCustom;
+            this.formAfterID = formAfterID;
+            this.isAfterCustom = isAfterCustom;
         }
 
-        public int getFormBefore() {
-            return formBefore;
+        public int getFormBeforeID() {
+            return formBeforeID;
         }
 
-        public int getFormAfter() {
-            return formAfter;
+        public int getFormAfterID() {
+            return formAfterID;
         }
     }
 }

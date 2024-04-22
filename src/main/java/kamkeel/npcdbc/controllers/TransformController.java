@@ -6,12 +6,14 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerFormData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.TransformPacket;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -163,34 +165,47 @@ public class TransformController {
     //////////////////////////////////////////////////
     // Server side handling
 
-    public static void handleFormAscend(EntityPlayerMP p, int formID) {
-        PlayerFormData formData = Utility.getFormData(p);
+    public static void handleFormAscend(EntityPlayerMP player, int formID) {
+        PlayerFormData formData = Utility.getFormData(player);
         if (formData.currentForm != formID) {
-            DBCData dbcData = DBCData.get(p);
-            formData.currentForm = formID;
+            DBCData dbcData = DBCData.get(player);
+
+            int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
+            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), formData.currentForm != 1, prevID, true, formID)))
+                return;
+
             if (dbcData.State > 0)
                 dbcData.State = 0;
+
+            formData.currentForm = formID;
             formData.updateClient();
-            Utility.sendMessage(p, "§aTransformed to§r " + formData.getCurrentForm().getMenuName());
+            Utility.sendMessage(player, "§aTransformed to§r " + formData.getCurrentForm().getMenuName());
             dbcData.saveNBTData();
         }
     }
 
-    public static void handleFormDescend(EntityPlayerMP p) {
-        PlayerFormData formData = Utility.getFormData(p);
+    public static void handleFormDescend(EntityPlayerMP player) {
+        PlayerFormData formData = Utility.getFormData(player);
         if (formData.isInCustomForm()) {
             Form form = formData.getCurrentForm();
-            if (form.hasParent() && formData.hasUnlocked(form.getParentID())) {
-                Utility.sendMessage(p, "§cDescended into§r " + form.getParent().getMenuName());
+            DBCData dbcData = DBCData.get(player);
+            boolean intoParent = form.hasParent() && formData.hasUnlocked(form.getParentID());
+
+            int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
+            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), formData.currentForm != 1, prevID, true, intoParent ? form.getParentID() : -1)))
+                return;
+
+            if (intoParent) {
+                Utility.sendMessage(player, "§cDescended into§r " + form.getParent().getMenuName());
                 formData.currentForm = form.getParentID();
             } else {
-                Utility.sendMessage(p, "§cDescended from§r " + form.getMenuName());
+                Utility.sendMessage(player, "§cDescended from§r " + form.getMenuName());
                 formData.currentForm = -1;
             }
 
             formData.updateClient();
-            JRMCoreH.setByte(0, p, "jrmcSaiRg");
-            DBCData.get(p).saveNBTData();
+            JRMCoreH.setByte(0, player, "jrmcSaiRg");
+            DBCData.get(player).saveNBTData();
         }
     }
 }

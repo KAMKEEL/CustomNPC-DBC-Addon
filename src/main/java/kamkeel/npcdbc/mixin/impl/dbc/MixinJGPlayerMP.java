@@ -21,13 +21,13 @@ public class MixinJGPlayerMP {
 
     @Inject(method = "setState", at = @At("HEAD"), remap = false, cancellable = true)
     public void setState(int value, CallbackInfo ci) {
-        if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), DBCData.get(player).State, value)))
+        if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), false, DBCData.get(player).State, false, value)))
             ci.cancel();
     }
 
     @Inject(method = "setState2", at = @At("HEAD"), remap = false, cancellable = true)
     public void setState2(int value, CallbackInfo ci) {
-        if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), DBCData.get(player).State, value)))
+        if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), false, DBCData.get(player).State, false, value)))
             ci.cancel();
     }
 }
