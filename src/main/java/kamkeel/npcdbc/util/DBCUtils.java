@@ -947,24 +947,11 @@ public class DBCUtils {
                 if (dse) {
                     boolean friendlyFist = PlyrSettingsB((EntityPlayer) s.getEntity(), 12);
                     if (friendlyFist && !s.getDamageType().equals("MajinAbsorption") && !s.getEntity().equals(Player)) {
-                        int ko = getInt(player, "jrmcHar4va");
                         set = all < 20 ? 20 : (int) all;
-                        if (ko <= 0 && set == 20) {
-                            setInt(6, player, "jrmcHar4va");
-                            setByte(race == 4 ? (state < 4 ? state : 4) : 0, player, "jrmcState");
-                            setByte(0, player, "jrmcState2");
-                            setByte(0, player, "jrmcRelease");
-                            setInt(0, player, "jrmcStamina");
-                            StusEfcts(19, ste, player, false);
-                        }
-
-                        dbcA -= all;
                     }
                 }
 
-                if (!isInCreativeMode(player)) {
-                    setInt(set, player, "jrmcBdy");
-                }
+                return curBody - set;
             }
         }
 

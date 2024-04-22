@@ -187,5 +187,15 @@ public abstract class MixinJRMCoreH {
             lastSetDamage = -1;
         }
     }
+
+//    @Inject(method = "setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"))
+//    private static void setInt(int s, EntityPlayer Player, String string, CallbackInfo ci, @Local(ordinal = 0) LocalIntRef set) {
+//        if(lastSetDamage != -1 && string.equals("jrmcBdy")){
+//            int curBody = getInt(Player, "jrmcBdy");
+//            int newHealth = curBody - lastSetDamage;
+//            set.set(Math.max(0, newHealth));
+//            lastSetDamage = -1;
+//        }
+//    }
 }
 

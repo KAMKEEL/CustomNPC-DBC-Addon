@@ -73,6 +73,13 @@ public class DBCPlayerEvent extends PlayerEvent {
             return damage;
         }
 
+        /**
+         * @param damage The new damage value
+         */
+        public void setDamage(float damage){
+            this.damage = damage;
+        }
+
         public IDamageSource getDamageSource() {
             return damageSource;
         }

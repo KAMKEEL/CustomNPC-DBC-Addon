@@ -40,7 +40,9 @@ public class DBCData {
     public DBCData(EntityPlayer player) {
         this.player = player;
         this.side = player.worldObj.isRemote ? Side.CLIENT : Side.SERVER;
-        loadNBTData();
+
+        if(side == Side.SERVER)
+            loadNBTData();
     }
 
 

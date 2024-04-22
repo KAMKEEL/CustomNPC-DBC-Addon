@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -21,7 +22,7 @@ public class MixinJRMCoreEH {
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;B)I", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcKiAttack0(LivingHurtEvent event, CallbackInfo ci, @Local(name = "dam") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
         int damage = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), damageSource.get());
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent((IPlayer) targetPlayer, damage, damageSource.get());
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(Utility.getIPlayer(targetPlayer.get()), damage, damageSource.get());
         if (DBCEventHooks.onDamagedEvent(damagedEvent))
             ci.cancel();
 
@@ -32,7 +33,7 @@ public class MixinJRMCoreEH {
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;B)I", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcKiAttack1(LivingHurtEvent event, CallbackInfo ci, @Local(name = "amount") LocalFloatRef amount, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
         int damage = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), amount.get(), damageSource.get());
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent((IPlayer) targetPlayer, damage, damageSource.get());
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(Utility.getIPlayer(targetPlayer.get()), damage, damageSource.get());
         if (DBCEventHooks.onDamagedEvent(damagedEvent))
             ci.cancel();
 
@@ -43,7 +44,7 @@ public class MixinJRMCoreEH {
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcPlayerAttack0(LivingHurtEvent event, CallbackInfo ci, @Local(name = "dam") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
         int damage = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), damageSource.get());
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent((IPlayer) targetPlayer, damage, damageSource.get());
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(Utility.getIPlayer(targetPlayer.get()), damage, damageSource.get());
         if (DBCEventHooks.onDamagedEvent(damagedEvent))
             ci.cancel();
 
@@ -54,7 +55,7 @@ public class MixinJRMCoreEH {
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcPlayerAttack1(LivingHurtEvent event, CallbackInfo ci, @Local(name = "dam") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
         int damage = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), damageSource.get());
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent((IPlayer) targetPlayer, damage, damageSource.get());
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(Utility.getIPlayer(targetPlayer.get()), damage, damageSource.get());
         if (DBCEventHooks.onDamagedEvent(damagedEvent))
             ci.cancel();
 
@@ -66,7 +67,7 @@ public class MixinJRMCoreEH {
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", ordinal = 2, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcPlayerAttack2(LivingHurtEvent event, CallbackInfo ci, @Local(name = "amount") LocalFloatRef amount, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
         int damage = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), amount.get(), damageSource.get());
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent((IPlayer) targetPlayer, damage, damageSource.get());
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(Utility.getIPlayer(targetPlayer.get()), damage, damageSource.get());
         if (DBCEventHooks.onDamagedEvent(damagedEvent))
             ci.cancel();
 
@@ -77,7 +78,7 @@ public class MixinJRMCoreEH {
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", ordinal = 3, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcPlayerAttack3(LivingHurtEvent event, CallbackInfo ci, @Local(name = "amount") LocalFloatRef amount, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
         int damage = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), amount.get(), damageSource.get());
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent((IPlayer) targetPlayer, damage, damageSource.get());
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(Utility.getIPlayer(targetPlayer.get()), damage, damageSource.get());
         if (DBCEventHooks.onDamagedEvent(damagedEvent))
             ci.cancel();
 
