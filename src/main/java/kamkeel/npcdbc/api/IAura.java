@@ -1,6 +1,16 @@
 package kamkeel.npcdbc.api;
 
-public interface ICustomAura {
+public interface IAura {
+
+    String getName();
+
+    void setName(String name);
+
+    String getMenuName();
+
+    void setMenuName(String name);
+
+
     /**
      * @return legal types: SSJ, SSGod, SSB ,SSBEvo , SSRose, SSRoseEvo, UI, GodOfDestruction, God
      */
@@ -63,4 +73,12 @@ public interface ICustomAura {
 
     void setAlpha(float alpha);
 
+    int getID();
+
+    /**
+     * Do not use this unless you know what you are changing. Dangerous to change.
+     */
+    void setID(int newID);
+
+    IAura save();
 }

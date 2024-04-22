@@ -7,7 +7,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.TransformController;
-import kamkeel.npcdbc.data.CustomAura;
+import kamkeel.npcdbc.data.Aura;
 import kamkeel.npcdbc.data.PlayerFormData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCData;
@@ -89,7 +89,7 @@ public class MixinDBCKiTech {
 
     @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/settings/GameSettings;thirdPersonView:I", ordinal = 0, shift = At.Shift.AFTER))
     private static void chargePart(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "state") LocalFloatRef state, @Local(name = "state2") LocalFloatRef state2, @Local(name = "kk") LocalBooleanRef kk, @Local(name = "ssb") LocalBooleanRef ssb, @Local(name = "ssg") LocalBooleanRef ssg, @Local(name = "ssbs") LocalBooleanRef ssbs, @Local(name = "v") LocalBooleanRef divine, @Local(name = "oozar") LocalBooleanRef oozaru, @Local(name = "ui") LocalBooleanRef ui, @Local(name = "gd") LocalBooleanRef godestruction) {
-        CustomAura aura = null; //pls make the framework for this
+        Aura aura = null; //pls make the framework for this
         if (aura != null) {
             if (aura.type.equals("ssg"))
                 ssg.set(true);
