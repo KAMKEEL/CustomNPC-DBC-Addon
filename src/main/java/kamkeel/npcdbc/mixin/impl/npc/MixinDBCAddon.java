@@ -2,6 +2,7 @@ package kamkeel.npcdbc.mixin.impl.npc;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.addon.DBCAddon;
+import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerFormData;
 import kamkeel.npcdbc.data.form.Form;
@@ -10,6 +11,8 @@ import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.INPCStats;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import kamkeel.npcdbc.network.NetworkUtility;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
@@ -18,6 +21,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.DamageSource;
+import noppes.npcs.NpcDamageSource;
 import noppes.npcs.Server;
 import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.constants.SyncType;
@@ -102,7 +107,16 @@ public class MixinDBCAddon {
         if (npc.stats instanceof INPCStats) {
             EntityPlayer player = (EntityPlayer) receiver;
             DBCStats dbcStats = ((INPCStats) npc.stats).getDBCStats();
-            DBCUtils.doDBCDamage(player, (int) attackStrength, dbcStats);
+
+            // Calculate DBC Damage
+            int damageToHP = DBCUtils.calculateDBCStatDamage(player, (int) attackStrength, dbcStats);
+            DamageSource damageSource = new NpcDamageSource("mob", npc);
+            DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(Utility.getIPlayer(player), damageToHP, damageSource, DBCDamageSource.NPC);
+            if (DBCEventHooks.onDBCDamageEvent(damagedEvent))
+                return;
+
+            DBCUtils.lastSetDamage = (int) damagedEvent.damage;
+            DBCUtils.doDBCDamage(player, damageToHP, dbcStats);
         }
     }
 

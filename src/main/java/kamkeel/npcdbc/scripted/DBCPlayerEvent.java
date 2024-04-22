@@ -3,6 +3,7 @@ package kamkeel.npcdbc.scripted;
 
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import cpw.mods.fml.common.eventhandler.Cancelable;
+import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.api.IDamageSource;
@@ -61,12 +62,14 @@ public class DBCPlayerEvent extends PlayerEvent {
     public static class DamagedEvent extends DBCPlayerEvent {
 
         public final IDamageSource damageSource;
+        public final int sourceType;
         public float damage;
 
-        public DamagedEvent(IPlayer player, float damage, DamageSource damageSource) {
+        public DamagedEvent(IPlayer player, float damage, DamageSource damageSource, int type) {
             super(player);
             this.damage = damage;
             this.damageSource = NpcAPI.Instance().getIDamageSource(damageSource);
+            this.sourceType = type;
         }
 
         public float getDamage() {
@@ -85,7 +88,11 @@ public class DBCPlayerEvent extends PlayerEvent {
         }
 
         public boolean isDamageSourceKiAttack() {
-            return damageSource.getMCDamageSource().getDamageType().equals("EnergyAttack") && damageSource.getMCDamageSource().getSourceOfDamage() instanceof EntityEnergyAtt;
+            return sourceType == DBCDamageSource.KIATTACK;
+        }
+
+        public float getType() {
+            return sourceType;
         }
 
         public String getHookName() {
