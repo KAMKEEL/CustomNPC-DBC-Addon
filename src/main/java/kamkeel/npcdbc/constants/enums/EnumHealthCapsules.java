@@ -8,7 +8,7 @@ public enum EnumHealthCapsules {
     Super(1, "Super", HealthSuperStrength,HealthSuperCooldown),
     Mega(2, "Mega", HealthMegaStrength,HealthMegaCooldown),
     Giga(3, "Giga", HealthGigaStrength,HealthGigaCooldown),
-    Supreme(4, "Supreme", HealthSuperStrength,HealthSupremeCooldown),
+    Superior(4, "Superior", HealthSuperiorStrength, HealthSuperiorCooldown),
     Master(5, "Master", HealthMasterStrength,HealthMasterCooldown);
 
     private final int meta;

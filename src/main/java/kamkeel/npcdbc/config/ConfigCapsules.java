@@ -85,10 +85,10 @@ public class ConfigCapsules
     public static Property KiGigaCooldownProperty;
     public static int KiGigaCooldown = 10;
 
-    public static Property KiSupremeStrengthProperty;
-    public static int KiSupremeStrength = 75;
-    public static Property KiSupremeCooldownProperty;
-    public static int KiSupremeCooldown = 10;
+    public static Property KiSuperiorStrengthProperty;
+    public static int KiSuperiorStrength = 75;
+    public static Property KiSuperiorCooldownProperty;
+    public static int KiSuperiorCooldown = 10;
 
     public static Property KiMasterStrengthProperty;
     public static int KiMasterStrength = 100;
@@ -118,10 +118,10 @@ public class ConfigCapsules
     public static Property HealthGigaCooldownProperty;
     public static int HealthGigaCooldown = 10;
 
-    public static Property HealthSupremeStrengthProperty;
-    public static int HealthSupremeStrength = 75;
-    public static Property HealthSupremeCooldownProperty;
-    public static int HealthSupremeCooldown = 10;
+    public static Property HealthSuperiorStrengthProperty;
+    public static int HealthSuperiorStrength = 75;
+    public static Property HealthSuperiorCooldownProperty;
+    public static int HealthSuperiorCooldown = 10;
 
     public static Property HealthMasterStrengthProperty;
     public static int HealthMasterStrength = 100;
@@ -151,10 +151,10 @@ public class ConfigCapsules
     public static Property StaminaGigaCooldownProperty;
     public static int StaminaGigaCooldown = 10;
 
-    public static Property StaminaSupremeStrengthProperty;
-    public static int StaminaSupremeStrength = 75;
-    public static Property StaminaSupremeCooldownProperty;
-    public static int StaminaSupremeCooldown = 10;
+    public static Property StaminaSuperiorStrengthProperty;
+    public static int StaminaSuperiorStrength = 75;
+    public static Property StaminaSuperiorCooldownProperty;
+    public static int StaminaSuperiorCooldown = 10;
 
     public static Property StaminaMasterStrengthProperty;
     public static int StaminaMasterStrength = 100;
@@ -250,10 +250,10 @@ public class ConfigCapsules
             KiGigaCooldownProperty = config.get(KI, "4. Giga Ki Cooldown", 10);
             KiGigaCooldown = KiGigaCooldownProperty.getInt(10);
 
-            KiSupremeStrengthProperty = config.get(KI, "5. Supreme Ki Strength", 75);
-            KiSupremeStrength = KiSupremeStrengthProperty.getInt(75);
-            KiSupremeCooldownProperty = config.get(KI, "5. Supreme Ki Cooldown", 10);
-            KiSupremeCooldown = KiSupremeCooldownProperty.getInt(10);
+            KiSuperiorStrengthProperty = config.get(KI, "5. Superior Ki Strength", 75);
+            KiSuperiorStrength = KiSuperiorStrengthProperty.getInt(75);
+            KiSuperiorCooldownProperty = config.get(KI, "5. Superior Ki Cooldown", 10);
+            KiSuperiorCooldown = KiSuperiorCooldownProperty.getInt(10);
 
             KiMasterStrengthProperty = config.get(KI, "6. Master Ki Strength", 100);
             KiMasterStrength = KiMasterStrengthProperty.getInt(100);
@@ -281,10 +281,10 @@ public class ConfigCapsules
             HealthGigaCooldownProperty = config.get(HEALTH, "4. Giga Health Cooldown", 10);
             HealthGigaCooldown = HealthGigaCooldownProperty.getInt(10);
 
-            HealthSupremeStrengthProperty = config.get(HEALTH, "5. Supreme Health Strength", 75);
-            HealthSupremeStrength = HealthSupremeStrengthProperty.getInt(75);
-            HealthSupremeCooldownProperty = config.get(HEALTH, "5. Supreme Health Cooldown", 10);
-            HealthSupremeCooldown = HealthSupremeCooldownProperty.getInt(10);
+            HealthSuperiorStrengthProperty = config.get(HEALTH, "5. Superior Health Strength", 75);
+            HealthSuperiorStrength = HealthSuperiorStrengthProperty.getInt(75);
+            HealthSuperiorCooldownProperty = config.get(HEALTH, "5. Superior Health Cooldown", 10);
+            HealthSuperiorCooldown = HealthSuperiorCooldownProperty.getInt(10);
 
             HealthMasterStrengthProperty = config.get(HEALTH, "6. Master Health Strength", 100);
             HealthMasterStrength = HealthMasterStrengthProperty.getInt(100);
@@ -312,10 +312,10 @@ public class ConfigCapsules
             StaminaGigaCooldownProperty = config.get(STAMINA, "4. Giga Stamina Cooldown", 10);
             StaminaGigaCooldown = StaminaGigaCooldownProperty.getInt(10);
 
-            StaminaSupremeStrengthProperty = config.get(STAMINA, "5. Supreme Stamina Strength", 75);
-            StaminaSupremeStrength = StaminaSupremeStrengthProperty.getInt(75);
-            StaminaSupremeCooldownProperty = config.get(STAMINA, "5. Supreme Stamina Cooldown", 10);
-            StaminaSupremeCooldown = StaminaSupremeCooldownProperty.getInt(10);
+            StaminaSuperiorStrengthProperty = config.get(STAMINA, "5. Superior Stamina Strength", 75);
+            StaminaSuperiorStrength = StaminaSuperiorStrengthProperty.getInt(75);
+            StaminaSuperiorCooldownProperty = config.get(STAMINA, "5. Superior Stamina Cooldown", 10);
+            StaminaSuperiorCooldown = StaminaSuperiorCooldownProperty.getInt(10);
 
             StaminaMasterStrengthProperty = config.get(STAMINA, "6. Master Stamina Strength", 100);
             StaminaMasterStrength = StaminaMasterStrengthProperty.getInt(100);

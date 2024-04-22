@@ -8,7 +8,7 @@ public enum EnumKiCapsules {
     Super(1, "Super", KiSuperStrength,KiSuperCooldown),
     Mega(2, "Mega", KiMegaStrength,KiMegaCooldown),
     Giga(3, "Giga", KiGigaStrength,KiGigaCooldown),
-    Supreme(4, "Supreme", KiSuperStrength,KiSupremeCooldown),
+    Superior(4, "Superior", KiSuperiorStrength, KiSuperiorCooldown),
     Master(5, "Master", KiMasterStrength,KiMasterCooldown);
 
     private final int meta;

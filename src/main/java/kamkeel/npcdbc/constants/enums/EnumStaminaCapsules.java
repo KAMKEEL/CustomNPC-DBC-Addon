@@ -8,7 +8,7 @@ public enum EnumStaminaCapsules {
     Super(1, "Super", StaminaSuperStrength,StaminaSuperCooldown),
     Mega(2, "Mega", StaminaMegaStrength,StaminaMegaCooldown),
     Giga(3, "Giga", StaminaGigaStrength,StaminaGigaCooldown),
-    Supreme(4, "Supreme", StaminaSuperStrength,StaminaSupremeCooldown),
+    Superior(4, "Superior", StaminaSuperiorStrength, StaminaSuperiorCooldown),
     Master(5, "Master", StaminaMasterStrength,StaminaMasterCooldown);
 
     private final int meta;
