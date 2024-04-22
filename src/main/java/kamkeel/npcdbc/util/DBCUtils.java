@@ -788,7 +788,6 @@ public class DBCUtils {
         return damageAmount;
     }
 
-
     public static int lastSetDamage = -1;
     public static int calculateDBCDamageFromSource(Entity Player, float dbcA, DamageSource s) {
         if (!Player.worldObj.isRemote && Player instanceof EntityPlayer) {

@@ -20,8 +20,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import static JinRyuu.JRMCore.JRMCoreH.*;
 import static kamkeel.npcdbc.util.DBCUtils.lastSetDamage;
@@ -178,24 +180,15 @@ public abstract class MixinJRMCoreH {
 
     }
 
-    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", ordinal = 4, shift = At.Shift.BEFORE), remap = false)
-    private static void setDamage(Entity player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir, @Local(name = "set") LocalIntRef set) {
-        if(lastSetDamage != -1){
-            int curBody = getInt((EntityPlayer) player, "jrmcBdy");
+    @ModifyArgs(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
+    private static void setDamage(Args args) {
+        String type = args.get(2);
+        if(lastSetDamage != -1 && type.equals("jrmcBdy")){
+            int curBody = getInt(args.get(1), "jrmcBdy");
             int newHealth = curBody - lastSetDamage;
-            set.set(Math.max(0, newHealth));
+            args.set(0, Math.max(0, newHealth));
             lastSetDamage = -1;
         }
     }
-
-//    @Inject(method = "setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"))
-//    private static void setInt(int s, EntityPlayer Player, String string, CallbackInfo ci, @Local(ordinal = 0) LocalIntRef set) {
-//        if(lastSetDamage != -1 && string.equals("jrmcBdy")){
-//            int curBody = getInt(Player, "jrmcBdy");
-//            int newHealth = curBody - lastSetDamage;
-//            set.set(Math.max(0, newHealth));
-//            lastSetDamage = -1;
-//        }
-//    }
 }
 

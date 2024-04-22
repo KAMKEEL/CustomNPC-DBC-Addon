@@ -85,6 +85,4 @@ public class MixinJRMCoreEH {
         // Last Set Damage
         DBCUtils.lastSetDamage = (int) damagedEvent.damage;
     }
-
-
 }
