@@ -21,8 +21,8 @@ public class Form implements IForm {
 
     public int id = -1; // Only for internal usage
     public String name = "";
-    //name to be displayed in DBC GUI after "Form: ", preferably short as space is narrow
-    public String menuName = "§2§lCustom Form";
+
+    public String menuName = "§aNEW";
     public int race = DBCRace.ALL;
 
     public FormMastery mastery = new FormMastery(this);
