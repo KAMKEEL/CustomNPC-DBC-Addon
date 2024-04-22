@@ -38,6 +38,8 @@ public class Form implements IForm {
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
+    public int timer = -1;
+
     /**
      * ID of parent and child forms of this
      */
@@ -60,6 +62,7 @@ public class Form implements IForm {
         name = compound.getString("name");
         menuName = compound.getString("menuName");
         race = compound.getInteger("race");
+        timer = compound.getInteger("timer");
         childID = compound.getInteger("childID");
         parentID = compound.getInteger("parentID");
 
@@ -97,6 +100,8 @@ public class Form implements IForm {
         compound.setInteger("race", race);
         compound.setInteger("childID", childID);
         compound.setInteger("parentID", parentID);
+        compound.setInteger("timer", timer);
+
 
         NBTTagCompound attributes = new NBTTagCompound();
         compound.setTag("attributes", attributes);
@@ -413,6 +418,22 @@ public class Form implements IForm {
 
     public IForm getParent() {
         return FormController.Instance.get(parentID);
+    }
+
+
+    @Override
+    public int getTimer() {
+        return timer;
+    }
+
+    @Override
+    public void setTimer(int timeInTicks) {
+        timer = timeInTicks;
+    }
+
+    @Override
+    public boolean hasTimer() {
+        return timer > 0;
     }
 
     //internal

@@ -137,6 +137,12 @@ public interface IForm {
     IForm getParent();
 
 
+    int getTimer();
+
+    void setTimer(int timeInTicks);
+
+    boolean hasTimer();
+
     /**
      * removes the form's parent
      */

@@ -5,6 +5,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
@@ -51,18 +52,33 @@ public class ServerEventHandler {
             if (player.ticksExisted % 10 == 0) {
                 DBCData dbcData = DBCData.get(player);
                 dbcData.loadNBTData();
-
-                //reverts player from CF when ki or release are 0
-                if (Utility.getCurrentForm(player) != null && (dbcData.Release <= 0 || dbcData.Ki <= 0)) {
-                    PlayerFormData formData = Utility.getFormData(player);
-                    formData.currentForm = -1;
-                    formData.updateClient();
-                    dbcData.loadNBTData();
-                }
             }
+
+            handleFormProcesses(player);
         }
     }
 
+    public void handleFormProcesses(EntityPlayer player) {
+        Form form = Utility.getCurrentForm(player);
+        if (form != null) {
+            PlayerFormData formData = Utility.getFormData(player);
+            DBCData dbcData = DBCData.get(player);
+
+            if (dbcData.Release <= 0 || dbcData.Ki <= 0) { //reverts player from CF when ki or release are 0
+                formData.currentForm = -1;
+                formData.updateClient();
+                dbcData.loadNBTData();
+            }
+
+            if (formData.hasTimer(form.id)) {
+                formData.decrementTimer(form.id);
+                if (player.ticksExisted % 20 == 0)
+                    formData.updateClient();
+            }
+        }
+
+
+    }
 
     @SubscribeEvent
     public void addTracking(PlayerEvent.StartTracking event) {

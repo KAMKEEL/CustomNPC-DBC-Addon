@@ -16,7 +16,7 @@ import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class TransformController {
 
@@ -165,7 +165,7 @@ public class TransformController {
     //////////////////////////////////////////////////
     // Server side handling
 
-    public static void handleFormAscend(EntityPlayerMP player, int formID) {
+    public static void handleFormAscend(EntityPlayer player, int formID) {
         PlayerFormData formData = Utility.getFormData(player);
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
@@ -178,13 +178,16 @@ public class TransformController {
                 dbcData.State = 0;
 
             formData.currentForm = formID;
+            if (formData.getForm(formID).hasTimer())
+                formData.addTimer(formID, formData.getForm(id).getTimer());
+
             formData.updateClient();
             Utility.sendMessage(player, "§aTransformed to§r " + formData.getCurrentForm().getMenuName());
             dbcData.saveNBTData();
         }
     }
 
-    public static void handleFormDescend(EntityPlayerMP player) {
+    public static void handleFormDescend(EntityPlayer player) {
         PlayerFormData formData = Utility.getFormData(player);
         if (formData.isInCustomForm()) {
             Form form = formData.getCurrentForm();
@@ -198,6 +201,8 @@ public class TransformController {
             if (intoParent) {
                 Utility.sendMessage(player, "§cDescended into§r " + form.getParent().getMenuName());
                 formData.currentForm = form.getParentID();
+            } else if (formData.getTimer(form.id) == 0) {
+                Utility.sendMessage(player, "§cTimer for§r " + form.getMenuName() + "§c has ran out!");
             } else {
                 Utility.sendMessage(player, "§cDescended from§r " + form.getMenuName());
                 formData.currentForm = -1;

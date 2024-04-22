@@ -23,6 +23,7 @@ public class PlayerFormData {
     public int selectedForm = -1;
     public HashMap<Integer, String> unlockedForms = new HashMap<Integer, String>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
+    public HashMap<Integer, Integer> formTimers = new HashMap<>();
 
     public PlayerFormData(PlayerData parent) {
         this.parent = parent;
@@ -47,6 +48,13 @@ public class PlayerFormData {
     public String removeForm(int id) {
         formLevels.remove(id);
         return unlockedForms.remove(id);
+    }
+
+    public Form getForm(int id) {
+        if (unlockedForms.containsKey(id))
+            return (Form) FormController.getInstance().get(id);
+
+        return null;
     }
 
     public boolean hasSelectedForm() {
@@ -106,19 +114,6 @@ public class PlayerFormData {
         return (Form) FormController.Instance.get(selectedForm);
     }
 
-    public void saveNBTData(NBTTagCompound compound) {
-        compound.setInteger("CurrentForm", currentForm);
-        compound.setInteger("SelectedForm", selectedForm);
-        compound.setTag("UnlockedForms", NBTTags.nbtIntegerStringMap(unlockedForms));
-        compound.setTag("FormMastery", NBTTags.nbtIntegerFloatMap(formLevels));
-    }
-
-    public void loadNBTData(NBTTagCompound compound) {
-        currentForm = compound.getInteger("CurrentForm");
-        selectedForm = compound.getInteger("SelectedForm");
-        unlockedForms = NBTTags.getIntegerStringMap(compound.getTagList("UnlockedForms", 10));
-        formLevels = NBTTags.getIntegerFloatMap(compound.getTagList("FormMastery", 10));
-    }
 
     public void updateClient() {
         ((IPlayerFormData) parent).updateFormInfo();
@@ -182,5 +177,55 @@ public class PlayerFormData {
         unlockedForms = new HashMap();
         formLevels = new HashMap();
         updateClient();
+    }
+
+    public void addTimer(int formid, int timeInTicks) {
+        if (!formTimers.containsKey(formid))
+            formTimers.put(formid, timeInTicks);
+
+        formTimers.replace(formid, timeInTicks);
+
+    }
+
+    public void decrementTimer(int formid) {
+        if (formTimers.containsKey(formid)) {
+            int currentTime = formTimers.get(formid);
+            if (currentTime > 0)
+                formTimers.replace(formid, currentTime - 1);
+            else if (currentTime == 0) {
+                TransformController.handleFormDescend(parent.player);
+                formTimers.remove(formid);
+            }
+        }
+    }
+
+    public int getTimer(int formid) {
+        if (formTimers.containsKey(formid))
+            return formTimers.get(formid);
+        return -1;
+
+    }
+
+    public boolean hasTimer(int formid) {
+        if (formTimers.containsKey(formid))
+            return formTimers.get(formid) > -1;
+        return false;
+
+    }
+
+    public void saveNBTData(NBTTagCompound compound) {
+        compound.setInteger("CurrentForm", currentForm);
+        compound.setInteger("SelectedForm", selectedForm);
+        compound.setTag("UnlockedForms", NBTTags.nbtIntegerStringMap(unlockedForms));
+        compound.setTag("FormMastery", NBTTags.nbtIntegerFloatMap(formLevels));
+        compound.setTag("FormTimers", NBTTags.nbtIntegerIntegerMap(formTimers));
+    }
+
+    public void loadNBTData(NBTTagCompound compound) {
+        currentForm = compound.getInteger("CurrentForm");
+        selectedForm = compound.getInteger("SelectedForm");
+        unlockedForms = NBTTags.getIntegerStringMap(compound.getTagList("UnlockedForms", 10));
+        formLevels = NBTTags.getIntegerFloatMap(compound.getTagList("FormMastery", 10));
+        formTimers = NBTTags.getIntegerIntegerMap(compound.getTagList("FormTimers", 10));
     }
 }
