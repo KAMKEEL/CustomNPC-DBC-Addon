@@ -1,18 +1,17 @@
 package kamkeel.npcdbc.scripted;
 
 
-import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import cpw.mods.fml.common.eventhandler.Cancelable;
+import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.api.IDamageSource;
 import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.constants.EnumScriptType;
 import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.scripted.event.PlayerEvent;
 
-public class DBCPlayerEvent extends PlayerEvent {
+public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
 
     public DBCPlayerEvent(IPlayer player) {
         super(player);
@@ -22,7 +21,7 @@ public class DBCPlayerEvent extends PlayerEvent {
      * formChange
      */
     @Cancelable
-    public static class FormChangeEvent extends DBCPlayerEvent {
+    public static class FormChangeEvent extends DBCPlayerEvent implements IDBCEvent.FormChangeEvent {
 
         private final int formBeforeID;
         private final boolean isBeforeCustom;
@@ -38,18 +37,22 @@ public class DBCPlayerEvent extends PlayerEvent {
             this.isAfterCustom = isAfterCustom;
         }
 
+        @Override
         public int getFormBeforeID() {
             return formBeforeID;
         }
 
+        @Override
         public int getFormAfterID() {
             return formAfterID;
         }
 
+        @Override
         public boolean isFormBeforeCustom() {
             return isBeforeCustom;
         }
 
+        @Override
         public boolean isFormAfterCustom() {
             return isAfterCustom;
         }
@@ -59,7 +62,7 @@ public class DBCPlayerEvent extends PlayerEvent {
         }
     }
 
-    public static class DamagedEvent extends DBCPlayerEvent {
+    public static class DamagedEvent extends DBCPlayerEvent implements IDBCEvent.DamagedEvent {
 
         public final IDamageSource damageSource;
         public final int sourceType;
@@ -72,6 +75,7 @@ public class DBCPlayerEvent extends PlayerEvent {
             this.sourceType = type;
         }
 
+        @Override
         public float getDamage() {
             return damage;
         }
@@ -79,18 +83,22 @@ public class DBCPlayerEvent extends PlayerEvent {
         /**
          * @param damage The new damage value
          */
+        @Override
         public void setDamage(float damage){
             this.damage = damage;
         }
 
+        @Override
         public IDamageSource getDamageSource() {
             return damageSource;
         }
 
+        @Override
         public boolean isDamageSourceKiAttack() {
             return sourceType == DBCDamageSource.KIATTACK;
         }
 
+        @Override
         public float getType() {
             return sourceType;
         }
