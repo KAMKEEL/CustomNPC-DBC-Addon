@@ -6,8 +6,8 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.controllers.TransformController;
-import kamkeel.npcdbc.data.CustomForm;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
+import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 
@@ -30,10 +30,10 @@ public class ClientEventHandler {
     }
 
     private void performAscend() {
-        PlayerCustomFormData formData = Utility.getSelfData();
+        PlayerFormData formData = Utility.getSelfData();
         if (formData != null && formData.hasSelectedForm()) {
             if (formData.isInCustomForm()) {
-                CustomForm form = formData.getCurrentForm();
+                Form form = formData.getCurrentForm();
                 if (form.hasChild() && formData.hasUnlocked(form.getChildID()))
                     TransformController.Ascend(form.getC());
             } else
@@ -46,7 +46,7 @@ public class ClientEventHandler {
     public void onKeyPress(InputEvent.KeyInputEvent e) {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.currentScreen == null && KeyHandler.AscendKey.isPressed()) {
-            PlayerCustomFormData formData = Utility.getSelfData();
+            PlayerFormData formData = Utility.getSelfData();
             if (formData != null) {
                 if (formData.selectedForm == -1)
                     Utility.sendMessage(mc.thePlayer, "§cYou have not selected a custom form!");
@@ -55,7 +55,7 @@ public class ClientEventHandler {
                         Utility.sendMessage(mc.thePlayer, "§cYou need to cool down!");
                         return;
                     }
-                    CustomForm form = formData.getCurrentForm();
+                    Form form = formData.getCurrentForm();
                     if (form.hasChild() && !formData.hasUnlocked(form.getChildID()))
                         Utility.sendMessage(mc.thePlayer, "§cYou do not have the next transformation unlocked!");
                 }

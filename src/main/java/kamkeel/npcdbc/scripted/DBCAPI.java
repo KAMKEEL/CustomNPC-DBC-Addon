@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import kamkeel.npcdbc.api.*;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.DBCStats;
 import kamkeel.npcdbc.data.KiAttack;
@@ -33,12 +34,12 @@ public class DBCAPI extends AbstractDBCAPI {
         return Instance;
     }
 
-    public ICustomForm createCustomForm(String name) {
+    public IForm createForm(String name) {
         return FormController.getInstance().createForm(name);
     }
 
     @Override
-    public ICustomForm getCustomForm(String name) {
+    public IForm getForm(String name) {
         return FormController.getInstance().get(name);
     }
 

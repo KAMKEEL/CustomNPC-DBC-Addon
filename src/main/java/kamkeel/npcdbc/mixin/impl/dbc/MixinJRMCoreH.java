@@ -3,9 +3,10 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
+import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,13 +22,13 @@ public class MixinJRMCoreH {
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onGetPlayerAttribute(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info) {
         {
-            CustomForm form = null;
+            Form form = null;
             float currentFormLevel = 0f;
             if (player == null)
                 return;
 
             if (Utility.isServer()) {
-                PlayerCustomFormData formData = Utility.getFormData(player);
+                PlayerFormData formData = Utility.getFormData(player);
                 if (formData != null && formData.isInCustomForm()) {
                     currentFormLevel = formData.getCurrentLevel();
                     form = formData.getCurrentForm();
@@ -94,7 +95,7 @@ public class MixinJRMCoreH {
                     result *= multis[2];
 
                 if (attribute == 0 || attribute == 1 || attribute == 3)
-                    result *= stackableMulti * form.getFM().calculateMulti("attribute", currentFormLevel);
+                    result *= (int) (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
 
                 result = (int) (Math.min((double) result, Double.MAX_VALUE));
                 info.setReturnValue(result);
@@ -106,7 +107,7 @@ public class MixinJRMCoreH {
     @Inject(method = "Rls", at = @At("HEAD"), cancellable = true)
     private static void fix0ReleaseOnCFDescend(byte b, CallbackInfo ci) {
         if (b == 0) {
-            PlayerCustomFormData formData = Utility.getSelfData();
+            PlayerFormData formData = Utility.getSelfData();
             if (formData != null && formData.isInCustomForm())
                 ci.cancel();
         }
@@ -122,8 +123,8 @@ public class MixinJRMCoreH {
     @Inject(method = "setByte(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
     private static void descendOn0Release(int s, EntityPlayer Player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcRelease")) {
-            PlayerCustomFormData formData = Utility.getFormData(Player);
-            CustomForm form = Utility.getCurrentForm(Player);
+            PlayerFormData formData = Utility.getFormData(Player);
+            Form form = Utility.getCurrentForm(Player);
             if (form != null) {
                 formData.currentForm = -1;
                 formData.updateClient();
@@ -135,8 +136,8 @@ public class MixinJRMCoreH {
     @Inject(method = "setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
     private static void descendOn0Ki(int s, EntityPlayer Player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcEnrgy")) {
-            PlayerCustomFormData formData = Utility.getFormData(Player);
-            CustomForm form = Utility.getCurrentForm(Player);
+            PlayerFormData formData = Utility.getFormData(Player);
+            Form form = Utility.getCurrentForm(Player);
             if (form != null) {
                 formData.currentForm = -1;
                 formData.updateClient();

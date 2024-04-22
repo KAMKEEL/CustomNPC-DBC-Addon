@@ -8,9 +8,9 @@ import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.CustomAura;
-import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.Utility;
@@ -30,9 +30,9 @@ public class MixinDBCKiTech {
     @Inject(method = "Ascend", at = @At("HEAD"), cancellable = true)
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
         if (K.getIsKeyPressed()) {
-            PlayerCustomFormData formData = Utility.getSelfData();
+            PlayerFormData formData = Utility.getSelfData();
             if (formData != null && formData.isInCustomForm()) {
-                CustomForm form = formData.getCurrentForm();
+                Form form = formData.getCurrentForm();
                 if (form != null) {
                     if (JRMCoreH.PlyrSettingsB(0) && form.isFormStackable(DBCForm.Kaioken)) {
                     } else if (JRMCoreH.PlyrSettingsB(11) && form.isFormStackable(DBCForm.UltraInstinct)) {
@@ -50,11 +50,11 @@ public class MixinDBCKiTech {
      */
     @Inject(method = "Descend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;kiInSuper:I", shift = At.Shift.AFTER), cancellable = true)
     private static void DescendModified(KeyBinding K, CallbackInfo ci) {
-        PlayerCustomFormData formData = Utility.getSelfData();
+        PlayerFormData formData = Utility.getSelfData();
         DBCData d = DBCData.get(Minecraft.getMinecraft().thePlayer);
         boolean returnEarly = true;
         if (d != null && formData != null && formData.isInCustomForm()) {
-            CustomForm form = formData.getCurrentForm();
+            Form form = formData.getCurrentForm();
             if (d.formSettingOn(DBCForm.Kaioken)) {
                 if (d.isForm(DBCForm.Kaioken))
                     returnEarly = false;

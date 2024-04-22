@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.api;
 
+import kamkeel.npcdbc.api.form.IForm;
 import noppes.npcs.api.entity.IDBCPlayer;
 
 public interface IDBCAddon extends IDBCPlayer {
@@ -187,18 +188,18 @@ public interface IDBCAddon extends IDBCPlayer {
 
     void setCustomForm(String formName);
 
-    void setCustomForm(ICustomForm form);
+    void setCustomForm(IForm form);
 
     void giveCustomForm(String formName);
 
-    void giveCustomForm(ICustomForm form);
+    void giveCustomForm(IForm form);
 
     void removeCustomForm(String formName);
 
-    void removeCustomForm(ICustomForm form);
+    void removeCustomForm(IForm form);
 
     //form player transforms to on transformation
-    void setSelectedCustomForm(ICustomForm form);
+    void setSelectedCustomForm(IForm form);
 
 
     void setSelectedCustomForm(int formid);
@@ -216,6 +217,6 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     boolean isInCustomForm(String formName);
 
-    ICustomForm getCurrentCustomForm();
+    IForm getCurrentCustomForm();
 
 }

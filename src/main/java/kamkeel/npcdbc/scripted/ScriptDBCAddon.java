@@ -2,13 +2,13 @@ package kamkeel.npcdbc.scripted;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.JGPlayerMP;
-import kamkeel.npcdbc.api.ICustomForm;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.IDBCAddon;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
+import kamkeel.npcdbc.data.PlayerFormData;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -590,8 +590,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     public void setCustomForm(String formName) {
-        CustomForm f = (CustomForm) FormController.Instance.get(formName);
-        PlayerCustomFormData c = Utility.getFormData(player);
+        Form f = (Form) FormController.Instance.get(formName);
+        PlayerFormData c = Utility.getFormData(player);
         if (c.hasForm(f)) {
             DBCData d = DBCData.get(player);
             d.State = 0;
@@ -616,39 +616,39 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public void setCustomForm(ICustomForm form) {
+    public void setCustomForm(IForm form) {
         setCustomForm(form.getName());
     }
 
     public void giveCustomForm(String formName) {
-        ICustomForm form = FormController.Instance.get(formName);
+        IForm form = FormController.Instance.get(formName);
         form.assignToPlayer(player);
     }
 
     @Override
-    public void giveCustomForm(ICustomForm form) {
+    public void giveCustomForm(IForm form) {
         giveCustomForm(form.getName());
     }
 
     public void removeCustomForm(String formName) {
-        ICustomForm f = FormController.Instance.get(formName);
+        IForm f = FormController.Instance.get(formName);
         f.removeFromPlayer(player);
     }
 
     @Override
-    public void removeCustomForm(ICustomForm form) {
+    public void removeCustomForm(IForm form) {
         removeCustomForm(form.getName());
     }
 
     @Override
-    public void setSelectedCustomForm(ICustomForm form) {
+    public void setSelectedCustomForm(IForm form) {
         setSelectedCustomForm(form != null ? form.getID() : -1);
     }
 
 
     @Override
     public void setSelectedCustomForm(int formid) {
-        PlayerCustomFormData c = Utility.getFormData(player);
+        PlayerFormData c = Utility.getFormData(player);
         if (FormController.getInstance().has(formid))
             c.selectedForm = formid;
         else
@@ -659,7 +659,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void removeSelectedCustomForm() {
-        PlayerCustomFormData formData = Utility.getFormData(player);
+        PlayerFormData formData = Utility.getFormData(player);
         formData.selectedForm = -1;
         formData.updateClient();
     }
@@ -672,7 +672,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return Utility.getFormData(player).isInForm(formName);
     }
 
-    public ICustomForm getCurrentCustomForm() {
+    public IForm getCurrentCustomForm() {
         return Utility.getFormData(player).getCurrentForm();
     }
 }

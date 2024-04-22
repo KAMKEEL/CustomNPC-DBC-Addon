@@ -3,9 +3,9 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -32,7 +32,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
     private static String getFormName() {
         boolean ui = JRMCoreH.StusEfctsMe(19);
         String name = null;
-        PlayerCustomFormData formData = Utility.getSelfData();
+        PlayerFormData formData = Utility.getSelfData();
         if (formData != null && formData.isInCustomForm())
             name = formData.getCurrentForm().getMenuName();
         else {
@@ -63,7 +63,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
             }
             ci.cancel();
         } else if (Utility.getSelfData() != null && Utility.getSelfData().isInCustomForm()) {
-            CustomForm form = Utility.getSelfData().getCurrentForm();
+            Form form = Utility.getSelfData().getCurrentForm();
             int color = 0;
             if ((s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§")) { //adds the form color to STR,DEX and WIL attribute values
                 int secondIndex = 0;
@@ -76,7 +76,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
 
                 String originalColor = s1.substring(secondIndex, secondIndex + 2);
                 s1 = s1.replace(originalColor, "");
-                color = form.getNameColor();
+                color = form.display.getNameColor();
             } else if (s1.contains("CON:")) { // adds the "xMulti" after CON: AttributeValue
                 float multi = (float) DBCUtils.getCurFormMulti(Minecraft.getMinecraft().thePlayer);
                 if (s1.contains("x"))

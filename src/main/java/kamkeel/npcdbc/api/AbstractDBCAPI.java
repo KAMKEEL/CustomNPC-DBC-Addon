@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.api;
 
 import cpw.mods.fml.common.Loader;
+import kamkeel.npcdbc.api.form.IForm;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -28,8 +29,8 @@ public abstract class AbstractDBCAPI {
         }
     }
 
-    public abstract ICustomForm createCustomForm(String name);
-    public abstract ICustomForm getCustomForm(String name);
+    public abstract IForm createForm(String name);
+    public abstract IForm getForm(String name);
 
     /**
      * @return Fake DBC Data for Simulating Damage

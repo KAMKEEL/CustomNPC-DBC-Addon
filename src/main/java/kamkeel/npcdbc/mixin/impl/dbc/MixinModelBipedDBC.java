@@ -9,7 +9,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.config.ConfigDBCClient;
-import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -40,7 +40,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     public void fixSSJtoSSJ2RageAnim(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(name = "trTime") LocalIntRef trTime) {
         if (ClientEventHandler.renderingPlayer != null) {
             String playerName = JRMCoreH.plyrs[pl];
-            CustomForm form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
+            Form form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
             if (form != null && rp.getState(playerName) != s) {
                 rp.setState(s, playerName);
             }
@@ -50,38 +50,38 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At("HEAD"), cancellable = true)
     public void renderFormFace(float par1, String hair, String anim, CallbackInfoReturnable<String> ci) {
         if (ClientEventHandler.renderingPlayer != null) {
-            CustomForm form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
+            Form form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
             if (form != null) {
                 DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
-                boolean isMonke = form.hairType.equals("ssj4") || form.hairType.equals("oozaru");
+                boolean isMonke = form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru");
                 HD = ConfigDBCClient.EnableHDTextures;
 
-                if (form.hairType.equals("ssj4")) { //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
+                if (form.display.hairType.equals("ssj4")) { //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
                     if (HD)
                         disableFace(true, false, hair, ci);
                     disableHairPresets(false, hair, ci);
-                } else if (form.hairType.equals("ssj3")) {
+                } else if (form.display.hairType.equals("ssj3")) {
                     disableHairPresets(true, hair, ci);
                     if (hair.contains("EYEBROW")) { //bind ssj3 eyebrow texture to ssj3 hair type
                         int gen = JRMCoreH.dnsGender(dbcData.DNS);
                         int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
-                    } else if (hair.contains("D") && form.hairColor != -1)
-                        RenderPlayerJBRA.glColor3f(form.hairColor);
+                    } else if (hair.contains("D") && form.display.hairColor != -1)
+                        RenderPlayerJBRA.glColor3f(form.display.hairColor);
 
-                } else if (form.hairType.equals("oozaru")) {
+                } else if (form.display.hairType.equals("oozaru")) {
                     disableFace(false, true, hair, ci);
                     disableHairPresets(false, hair, ci);
                 }
 
-                if (form.hairColor != -1 && hair.contains("EYEBROW"))
-                    RenderPlayerJBRA.glColor3f(form.hairColor);
-                if (form.eyeColor != -1 && (hair.contains("EYELEFT") || hair.contains("EYERIGHT")))  //eye colors for ALL forms except ssj4
-                    if (form.hairType.equals("ssj4") && HD) {
+                if (form.display.hairColor != -1 && hair.contains("EYEBROW"))
+                    RenderPlayerJBRA.glColor3f(form.display.hairColor);
+                if (form.display.eyeColor != -1 && (hair.contains("EYELEFT") || hair.contains("EYERIGHT")))  //eye colors for ALL forms except ssj4
+                    if (form.display.hairType.equals("ssj4") && HD) {
                     } else
-                        RenderPlayerJBRA.glColor3f(form.eyeColor);
+                        RenderPlayerJBRA.glColor3f(form.display.eyeColor);
                 if (hair.contains("SJT")) { // Tail Color
-                    int color = isMonke ? form.furColor : form.hairColor;
+                    int color = isMonke ? form.display.furColor : form.display.hairColor;
                     if (color != -1) {
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
                         RenderPlayerJBRA.glColor3f(color);
@@ -99,25 +99,25 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     @Inject(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At("HEAD"), cancellable = true)
     public void disableHairRendering(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(ordinal = 0) LocalRef<String> hair, @Local(ordinal = 0) LocalIntRef st) {
         if (ClientEventHandler.renderingPlayer != null) {
-            CustomForm form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
+            Form form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
             if (form != null) {
 
-                if (form.hairType.equals("base"))
+                if (form.display.hairType.equals("base"))
                     st.set(0);
-                else if (form.hairType.equals("ssj"))
+                else if (form.display.hairType.equals("ssj"))
                     st.set(4);
-                else if (form.hairType.equals("ssj2"))
+                else if (form.display.hairType.equals("ssj2"))
                     st.set(5);
 
-                if (form.hairColor != -1)
-                    RenderPlayerJBRA.glColor3f(form.hairColor);
+                if (form.display.hairColor != -1)
+                    RenderPlayerJBRA.glColor3f(form.display.hairColor);
 
-                if (form.hairCode.length() > 5)
-                    hair.set(form.hairCode);
+                if (form.display.hairCode.length() > 5)
+                    hair.set(form.display.hairCode);
 
                 //disable other hair rendering when ssj4 hair type
-                boolean isCorrectHair = h.equals(form.hairCode) || h.startsWith("373852546750347428545480");
-                if ((form.hairType.equals("ssj4") && !isCorrectHair) || form.hairType.equals("ssj3") || form.hairType.equals("oozaru"))
+                boolean isCorrectHair = h.equals(form.display.hairCode) || h.startsWith("373852546750347428545480");
+                if ((form.display.hairType.equals("ssj4") && !isCorrectHair) || form.display.hairType.equals("ssj3") || form.display.hairType.equals("oozaru"))
                     ci.cancel();
 
 

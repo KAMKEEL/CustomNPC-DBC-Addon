@@ -30,8 +30,8 @@ public class DBCData {
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "";
 
     // Custom Form
-    public int currentCustomForm;
-    public float currentCustomFormLevel;
+    public int addonFormID;
+    public float addonFormLevel;
 
     public DBCData() {
         this.side = Side.SERVER;
@@ -73,8 +73,8 @@ public class DBCData {
         comp.setString("jrmcDNSH", DNSHair);
 
         // DBC Addon
-        comp.setInteger("customFormID", currentCustomForm);
-        comp.setFloat("customFormLevel", currentCustomFormLevel);
+        comp.setInteger("addonFormID", addonFormID);
+        comp.setFloat("addonFormLevel", addonFormLevel);
         return comp;
     }
 
@@ -109,19 +109,19 @@ public class DBCData {
         DNSHair = c.getString("jrmcDNSH");
 
         // DBC Addon
-        currentCustomForm = c.getInteger("customFormID");
-        currentCustomFormLevel = c.getFloat("customFormLevel");
+        addonFormID = c.getInteger("addonFormID");
+        addonFormLevel = c.getFloat("addonFormLevel");
     }
 
 
     public void saveNBTData() {
         NBTTagCompound nbt = this.saveFromNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
 
-        PlayerCustomFormData formData = Utility.getFormData(player);
-        currentCustomForm = formData.currentForm;
-        currentCustomFormLevel = formData.getCurrentLevel();
-        nbt.setInteger("customFormID", currentCustomForm);
-        nbt.setFloat("customFormLevel", currentCustomFormLevel);
+        PlayerFormData formData = Utility.getFormData(player);
+        addonFormID = formData.currentForm;
+        addonFormLevel = formData.getCurrentLevel();
+        nbt.setInteger("addonFormID", addonFormID);
+        nbt.setFloat("addonFormLevel", addonFormLevel);
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 
         syncAllClients();
@@ -131,9 +131,9 @@ public class DBCData {
         NBTTagCompound dbc = this.player.getEntityData().getCompoundTag(DBCPersisted);
 
         // Save the DBC Addon tags to PlayerPersisted before loading it to fields
-        PlayerCustomFormData formData = Utility.getFormData(player);
-        dbc.setInteger("customFormID", formData.currentForm);
-        dbc.setFloat("customFormLevel", formData.getCurrentLevel());
+        PlayerFormData formData = Utility.getFormData(player);
+        dbc.setInteger("addonFormID", formData.currentForm);
+        dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
 
         loadFromNBT(dbc);
         syncAllClients();

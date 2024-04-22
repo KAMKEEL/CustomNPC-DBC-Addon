@@ -6,9 +6,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
-import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.TransformPacket;
@@ -23,7 +23,7 @@ public class TransformController {
     public static String ascendSound, descendSound;
     public static float rage, rageValue;
     public static DBCData dbcData;
-    public static CustomForm transformedInto;
+    public static Form transformedInto;
 
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
@@ -31,8 +31,8 @@ public class TransformController {
 
     //WIP, only 85% done, but is functional and won't break
     @SideOnly(Side.CLIENT)
-    public static void Ascend(CustomForm form) {
-        CustomForm currentForm = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
+    public static void Ascend(Form form) {
+        Form currentForm = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
         if (cantTransform || (rage > 0 && transformed) || currentForm != null && currentForm.getID() == form.id)
             return;
         dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
@@ -163,8 +163,8 @@ public class TransformController {
     //////////////////////////////////////////////////
     // Server side handling
 
-    public static void handleCustomFormAscend(EntityPlayerMP p, int formID) {
-        PlayerCustomFormData formData = Utility.getFormData(p);
+    public static void handleFormAscend(EntityPlayerMP p, int formID) {
+        PlayerFormData formData = Utility.getFormData(p);
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(p);
             formData.currentForm = formID;
@@ -176,10 +176,10 @@ public class TransformController {
         }
     }
 
-    public static void handleCustomFormDescend(EntityPlayerMP p) {
-        PlayerCustomFormData formData = Utility.getFormData(p);
+    public static void handleFormDescend(EntityPlayerMP p) {
+        PlayerFormData formData = Utility.getFormData(p);
         if (formData.isInCustomForm()) {
-            CustomForm form = formData.getCurrentForm();
+            Form form = formData.getCurrentForm();
             if (form.hasParent() && formData.hasUnlocked(form.getParentID())) {
                 Utility.sendMessage(p, "§cDescended into§r " + form.getParent().getMenuName());
                 formData.currentForm = form.getParentID();

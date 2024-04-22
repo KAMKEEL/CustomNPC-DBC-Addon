@@ -48,9 +48,9 @@ public final class TransformPacket extends AbstractPacket {
         int state = in.readInt();
         boolean ascend = in.readBoolean();
         if (ascend)
-            TransformController.handleCustomFormAscend((EntityPlayerMP) sendingPlayer, state);
+            TransformController.handleFormAscend((EntityPlayerMP) sendingPlayer, state);
         else
-            TransformController.handleCustomFormDescend((EntityPlayerMP) sendingPlayer);
+            TransformController.handleFormDescend((EntityPlayerMP) sendingPlayer);
 
     }
 }

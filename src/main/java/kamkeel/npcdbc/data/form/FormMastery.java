@@ -1,11 +1,11 @@
-package kamkeel.npcdbc.data;
+package kamkeel.npcdbc.data.form;
 
-import kamkeel.npcdbc.api.IFormMastery;
+import kamkeel.npcdbc.api.form.IFormMastery;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class FormMastery implements IFormMastery {
 
-    private CustomForm parent;
+    private Form parent;
 
     public float maxLevel = 100, instantTransformationUnlockLevel = 50;
     public float attributeMultiFlat = 1.0f, attributeMultiPerLevel = 0.01f, attributeMultiMinOrMax = 1.5f;
@@ -17,7 +17,7 @@ public class FormMastery implements IFormMastery {
     public float strainMultiFlat = 1.0f, strainMultiPerLevel = -0.01f, strainMultiMinOrMax = 0.5f;
     public float healthRequirementMultiFlat = 1.0f, healthRequirementMultiPerLevel = 0.01f, healthRequirementMultiMinOrMax = 1.5f;
 
-    public FormMastery(CustomForm parent) {
+    public FormMastery(Form parent) {
         this.parent = parent;
     }
 

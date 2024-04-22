@@ -4,9 +4,9 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -108,7 +108,7 @@ public class Utility {
 
     }
 
-    public static CustomForm getCurrentForm(EntityPlayer p) {
+    public static Form getCurrentForm(EntityPlayer p) {
         if (isServer(p))
             return Utility.getFormData(p) != null ? Utility.getFormData(p).getCurrentForm() : null;
         else
@@ -149,16 +149,16 @@ public class Utility {
      * @return
      */
     @SideOnly(Side.CLIENT)
-    public static PlayerCustomFormData getSelfData() {
+    public static PlayerFormData getSelfData() {
         if (Minecraft.getMinecraft().thePlayer == null)
             return null;
         IPlayerFormData formData = (IPlayerFormData) PlayerData.get(Minecraft.getMinecraft().thePlayer);
         if (formData == null)
             return null;
-        return formData.getCustomFormData();
+        return formData.getPlayerFormData();
     }
 
-    public static CustomForm getFormClient(EntityPlayer player) {
+    public static Form getFormClient(EntityPlayer player) {
         if (player == null)
             return null;
 
@@ -166,12 +166,12 @@ public class Utility {
         if (dbcData == null)//(dbcData.Release <= 0 || dbcData.Ki <= 0)
             return null;
 
-        int form = dbcData.currentCustomForm;
+        int form = dbcData.addonFormID;
         if (form == -1)
             return null;
 
 
-        return (CustomForm) FormController.getInstance().get(form);
+        return (Form) FormController.getInstance().get(form);
     }
 
     @SideOnly(Side.CLIENT)
@@ -180,23 +180,23 @@ public class Utility {
         if (dbcData == null)
             return 0f;
 
-        return dbcData.currentCustomFormLevel;
+        return dbcData.addonFormLevel;
     }
 
-    public static PlayerCustomFormData getFormData(EntityPlayer player) {
+    public static PlayerFormData getFormData(EntityPlayer player) {
         return Utility.getFormData(PlayerDataController.Instance.getPlayerData(player));
     }
 
-    public static PlayerCustomFormData getFormData(PlayerData playerData) {
-        return ((IPlayerFormData) playerData).getCustomFormData();
+    public static PlayerFormData getFormData(PlayerData playerData) {
+        return ((IPlayerFormData) playerData).getPlayerFormData();
     }
 
     public static void sendPlayerFormData(EntityPlayerMP player) {
-        PlayerCustomFormData data = ((IPlayerFormData) PlayerDataController.Instance.getPlayerData(player)).getCustomFormData();
+        PlayerFormData data = ((IPlayerFormData) PlayerDataController.Instance.getPlayerData(player)).getPlayerFormData();
 
         Map<String, Integer> map = new HashMap<String, Integer>();
         for (int formID : data.unlockedForms.keySet()) {
-            CustomForm form = (CustomForm) FormController.getInstance().get(formID);
+            Form form = (Form) FormController.getInstance().get(formID);
             if (form != null) {
                 map.put(form.name, form.id);
             }

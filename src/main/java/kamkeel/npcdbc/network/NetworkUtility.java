@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.network;
 
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ public class NetworkUtility {
 
     public static void sendCustomFormDataAll(EntityPlayerMP player) {
         Map<String,Integer> map = new HashMap<String,Integer>();
-        for(CustomForm customForm : FormController.getInstance().customForms.values()){
+        for(Form customForm : FormController.getInstance().customForms.values()){
             map.put(customForm.name, customForm.id);
         }
         sendScrollData(player, map);

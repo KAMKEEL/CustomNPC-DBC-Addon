@@ -1,9 +1,9 @@
 package kamkeel.npcdbc.mixin;
 
-import kamkeel.npcdbc.data.PlayerCustomFormData;
+import kamkeel.npcdbc.data.PlayerFormData;
 
 public interface IPlayerFormData {
-    PlayerCustomFormData getCustomFormData();
+    PlayerFormData getPlayerFormData();
 
     boolean getFormUpdate();
 

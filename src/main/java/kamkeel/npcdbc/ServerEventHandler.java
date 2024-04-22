@@ -4,7 +4,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
+import kamkeel.npcdbc.data.PlayerFormData;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
@@ -54,7 +54,7 @@ public class ServerEventHandler {
 
                 //reverts player from CF when ki or release are 0
                 if (Utility.getCurrentForm(player) != null && (dbcData.Release <= 0 || dbcData.Ki <= 0)) {
-                    PlayerCustomFormData formData = Utility.getFormData(player);
+                    PlayerFormData formData = Utility.getFormData(player);
                     formData.currentForm = -1;
                     formData.updateClient();
                     dbcData.loadNBTData();

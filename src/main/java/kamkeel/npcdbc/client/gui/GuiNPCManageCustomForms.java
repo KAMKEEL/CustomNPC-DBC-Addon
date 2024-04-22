@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.client.gui;
 
-import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
@@ -21,7 +21,7 @@ import java.util.Vector;
 public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScrollData, ICustomScrollListener, ITextfieldListener, IGuiData, ISubGuiListener, GuiYesNoCallback {
     private GuiCustomScroll scrollForms;
     private HashMap<String, Integer> data = new HashMap<String, Integer>();
-    private CustomForm customForm = new CustomForm();
+    private Form customForm = new Form();
     private String selected = null;
     private String search = "";
 
@@ -64,7 +64,7 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
             String name = "New";
             while (data.containsKey(name))
                 name += "_";
-            CustomForm faction = new CustomForm(-1, name);
+            Form faction = new Form(-1, name);
 
             NBTTagCompound compound = faction.writeToNBT();
             Client.sendData(EnumPacketServer.CustomFormSave, compound);
@@ -79,7 +79,7 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
 
     @Override
     public void setGuiData(NBTTagCompound compound) {
-        this.customForm = new CustomForm();
+        this.customForm = new Form();
         customForm.readFromNBT(compound);
 
         setSelected(customForm.name);
@@ -179,7 +179,7 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
             if (data.containsKey(scrollForms.getSelected())) {
                 Client.sendData(EnumPacketServer.CustomFormRemove, data.get(selected));
                 scrollForms.clear();
-                customForm = new CustomForm();
+                customForm = new Form();
                 initGui();
             }
         }

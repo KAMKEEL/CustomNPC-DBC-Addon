@@ -2,6 +2,8 @@ package kamkeel.npcdbc.data;
 
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,20 +15,20 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Store all player CustomForms Data here
+ * Store all player Addon Form Data here
  */
-public class PlayerCustomFormData {
+public class PlayerFormData {
     public PlayerData parent;
     public int currentForm = -1;
     public int selectedForm = -1;
     public HashMap<Integer, String> unlockedForms = new HashMap<Integer, String>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
 
-    public PlayerCustomFormData(PlayerData parent) {
+    public PlayerFormData(PlayerData parent) {
         this.parent = parent;
     }
 
-    public void addForm(CustomForm form) {
+    public void addForm(Form form) {
         if (!unlockedForms.containsKey(form.id)) {
             unlockedForms.put(form.id, form.name);
             formLevels.put(form.id, 0f);
@@ -37,7 +39,7 @@ public class PlayerCustomFormData {
         return unlockedForms.containsKey(id);
     }
 
-    public String removeForm(CustomForm form) {
+    public String removeForm(Form form) {
         formLevels.remove(form.id);
         return unlockedForms.remove(form.id);
     }
@@ -51,7 +53,7 @@ public class PlayerCustomFormData {
         return selectedForm > -1 && getSelectedForm() != null;
     }
 
-    public boolean hasForm(CustomForm form) {
+    public boolean hasForm(Form form) {
         return unlockedForms.containsKey(form.id);
     }
 
@@ -59,7 +61,7 @@ public class PlayerCustomFormData {
         return currentForm > -1 && getCurrentForm() != null;
     }
 
-    public String getFormColorCode(CustomForm f) {
+    public String getFormColorCode(Form f) {
         // §2§lHi
         if (f.getMenuName().contains("§")) {
             String s = f.getMenuName();
@@ -69,7 +71,7 @@ public class PlayerCustomFormData {
         return "";
     }
 
-    public String getColoredName(CustomForm f) {
+    public String getColoredName(Form f) {
         return getFormColorCode(f) + f.getName();
     }
 
@@ -77,16 +79,16 @@ public class PlayerCustomFormData {
         return getCurrentForm().getName().equals(formName);
     }
 
-    public CustomForm getCurrentForm() {
+    public Form getCurrentForm() {
         if (currentForm > 0)
-            return (CustomForm) FormController.Instance.get(currentForm);
+            return (Form) FormController.Instance.get(currentForm);
         return null;
     }
 
     public List<String> getAllForms() {
         List<String> list = new ArrayList<>();
         for (Integer id : unlockedForms.keySet()) {
-            CustomForm f = getUnlockedForm(id);
+            Form f = getUnlockedForm(id);
             if (!list.contains(getColoredName(f)))
                 list.add(getColoredName(f));
 
@@ -94,14 +96,14 @@ public class PlayerCustomFormData {
         return list;
     }
 
-    public CustomForm getUnlockedForm(int id) {
+    public Form getUnlockedForm(int id) {
         if (unlockedForms.containsKey(id))
-            return (CustomForm) FormController.Instance.get(unlockedForms.get(id));
+            return (Form) FormController.Instance.get(unlockedForms.get(id));
         return null;
     }
 
-    public CustomForm getSelectedForm() {
-        return (CustomForm) FormController.Instance.get(selectedForm);
+    public Form getSelectedForm() {
+        return (Form) FormController.Instance.get(selectedForm);
     }
 
     public void saveNBTData(NBTTagCompound compound) {
@@ -127,14 +129,14 @@ public class PlayerCustomFormData {
     }
 
     public void updateFormMastery(int formID, String gainType) {
-        CustomForm f = FormController.getInstance().customForms.get(formID);
+        Form f = FormController.getInstance().customForms.get(formID);
         if (f == null || !isInCustomForm() || parent.player == null)
             return;
 
         DBCData data = DBCData.get(parent.player);
         if (data == null)
             return;
-        FormMastery fm = f.getFM();
+        FormMastery fm = (FormMastery) f.getMastery();
         float playerLevel = formLevels.get(f.id);
         float fullGain = fm.calculateFullGain(gainType, playerLevel, data.MND);
 
@@ -144,17 +146,17 @@ public class PlayerCustomFormData {
     }
 
     public void addFormMastery(int formID, int amount) {
-        CustomForm form = FormController.getInstance().customForms.get(formID);
+        Form form = FormController.getInstance().customForms.get(formID);
         if (form != null) {
             float current = formLevels.get(formID);
-            float updated = Math.min(current + amount, form.getFM().maxLevel);
+            float updated = Math.min(current + amount, ((FormMastery) form.getMastery()).maxLevel);
             formLevels.put(formID, updated);
             updateClient();
         }
     }
 
     public void removeFormMastery(int formID, int amount) {
-        CustomForm form = FormController.getInstance().customForms.get(formID);
+        Form form = FormController.getInstance().customForms.get(formID);
         if (form != null) {
             float current = formLevels.get(formID);
             float updated = Math.max(current - amount, 0);
@@ -174,7 +176,7 @@ public class PlayerCustomFormData {
     }
 
     public void resetAll() {
-        TransformController.handleCustomFormDescend((EntityPlayerMP) parent.player);
+        TransformController.handleFormDescend((EntityPlayerMP) parent.player);
         currentForm = -1;
         selectedForm = -1;
         unlockedForms = new HashMap();

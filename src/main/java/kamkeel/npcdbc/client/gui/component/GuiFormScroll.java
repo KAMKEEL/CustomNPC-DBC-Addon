@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.util.GuiCustomScroll;
@@ -17,7 +17,7 @@ public class GuiFormScroll extends GuiCustomScroll {
         super(parent, id);
         visible = true;
         multipleSelection = false;
-        for(CustomForm allForms : FormController.getInstance().customForms.values()){
+        for(Form allForms : FormController.getInstance().customForms.values()){
             formDisplays.put(allForms.getName(), allForms.getMenuName());
         }
     }

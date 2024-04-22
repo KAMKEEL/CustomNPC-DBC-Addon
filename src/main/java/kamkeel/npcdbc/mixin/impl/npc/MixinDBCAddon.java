@@ -3,9 +3,9 @@ package kamkeel.npcdbc.mixin.impl.npc;
 import io.netty.buffer.ByteBuf;
 import kamkeel.addon.DBCAddon;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCStats;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.INPCStats;
 import kamkeel.npcdbc.mixin.IPlayerFormData;
@@ -132,7 +132,7 @@ public class MixinDBCAddon {
      */
     @Overwrite(remap = false)
     public void writeToNBT(PlayerData playerData, NBTTagCompound nbtTagCompound) {
-        ((IPlayerFormData) playerData).getCustomFormData().saveNBTData(nbtTagCompound);
+        ((IPlayerFormData) playerData).getPlayerFormData().saveNBTData(nbtTagCompound);
     }
 
     /**
@@ -141,7 +141,7 @@ public class MixinDBCAddon {
      */
     @Overwrite(remap = false)
     public void readFromNBT(PlayerData playerData, NBTTagCompound nbtTagCompound) {
-        ((IPlayerFormData) playerData).getCustomFormData().loadNBTData(nbtTagCompound);
+        ((IPlayerFormData) playerData).getPlayerFormData().loadNBTData(nbtTagCompound);
     }
 
     /**
@@ -152,7 +152,7 @@ public class MixinDBCAddon {
     public void syncPlayer(EntityPlayerMP playerMP) {
         NBTTagList list = new NBTTagList();
         NBTTagCompound compound = new NBTTagCompound();
-        for (CustomForm customForm : FormController.getInstance().customForms.values()) {
+        for (Form customForm : FormController.getInstance().customForms.values()) {
             list.appendTag(customForm.writeToNBT());
             if (list.tagCount() > 10) {
                 compound = new NBTTagCompound();
@@ -174,13 +174,13 @@ public class MixinDBCAddon {
     public void clientSync(NBTTagCompound compound, boolean syncEnd) {
         NBTTagList list = compound.getTagList("Data", 10);
         for (int i = 0; i < list.tagCount(); i++) {
-            CustomForm form = new CustomForm();
+            Form form = new Form();
             form.readFromNBT(list.getCompoundTagAt(i));
             FormController.getInstance().customFormsSync.put(form.id, form);
         }
         if (syncEnd) {
             FormController.getInstance().customForms = FormController.getInstance().customFormsSync;
-            FormController.getInstance().customFormsSync = new HashMap<Integer, CustomForm>();
+            FormController.getInstance().customFormsSync = new HashMap<Integer, Form>();
         }
     }
 
@@ -190,7 +190,7 @@ public class MixinDBCAddon {
      */
     @Overwrite(remap = false)
     public void syncUpdate(NBTTagCompound compound, ByteBuf buffer) {
-        CustomForm form = new CustomForm();
+        Form form = new Form();
         form.readFromNBT(compound);
         FormController.getInstance().customForms.put(form.id, form);
     }
@@ -201,7 +201,7 @@ public class MixinDBCAddon {
      */
     @Overwrite(remap = false)
     public void syncRemove(int id) {
-        CustomForm form = FormController.Instance.customForms.remove(id);
+        Form form = FormController.Instance.customForms.remove(id);
     }
 
     /**
@@ -210,7 +210,7 @@ public class MixinDBCAddon {
      */
     @Overwrite(remap = false)
     public void formPacketGet(EntityPlayer player, ByteBuf buffer) {
-        CustomForm customForm = (CustomForm) FormController.getInstance().get(buffer.readInt());
+        Form customForm = (Form) FormController.getInstance().get(buffer.readInt());
         NBTTagCompound compound = customForm.writeToNBT();
         Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
     }
@@ -232,7 +232,7 @@ public class MixinDBCAddon {
     public void formPacketRemove(EntityPlayer player, ByteBuf buffer) {
         FormController.getInstance().delete(buffer.readInt());
         NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
-        NBTTagCompound compound = (new CustomForm()).writeToNBT();
+        NBTTagCompound compound = (new Form()).writeToNBT();
         Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
     }
 
@@ -242,7 +242,7 @@ public class MixinDBCAddon {
      */
     @Overwrite(remap = false)
     public void formPacketSave(EntityPlayer player, ByteBuf buffer) throws IOException {
-        CustomForm customForm = new CustomForm();
+        Form customForm = new Form();
         customForm.readFromNBT(Server.readNBT(buffer));
         FormController.getInstance().saveForm(customForm);
         NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
@@ -257,13 +257,13 @@ public class MixinDBCAddon {
     public void formPacketSet(EntityPlayer player, ByteBuf buffer) throws IOException {
         int formID = buffer.readInt();
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
-        PlayerCustomFormData data = ((IPlayerFormData) playerData).getCustomFormData();
+        PlayerFormData data = ((IPlayerFormData) playerData).getPlayerFormData();
         if(data == null)
             return;
 
         if(formID > -1){
             if(data.selectedForm != formID && data.unlockedForms.containsKey(formID)){
-                CustomForm customForm = (CustomForm) FormController.getInstance().get(formID);
+                Form customForm = (Form) FormController.getInstance().get(formID);
                 NBTTagCompound compound = new NBTTagCompound();
                 if(customForm != null){
                     data.selectedForm = formID;
@@ -292,10 +292,10 @@ public class MixinDBCAddon {
     @Overwrite(remap = false)
     public void formPacketPlayers(EntityPlayer player){
         Utility.sendPlayerFormData((EntityPlayerMP) player);
-        PlayerCustomFormData data = ((IPlayerFormData) PlayerDataController.Instance.getPlayerData(player)).getCustomFormData();
+        PlayerFormData data = ((IPlayerFormData) PlayerDataController.Instance.getPlayerData(player)).getPlayerFormData();
         NBTTagCompound compound = new NBTTagCompound();
         if(data != null &&  data.selectedForm != -1){
-            CustomForm customForm = (CustomForm) FormController.getInstance().get(data.selectedForm);
+            Form customForm = (Form) FormController.getInstance().get(data.selectedForm);
             if(customForm != null)
                 compound = customForm.writeToNBT();
         }

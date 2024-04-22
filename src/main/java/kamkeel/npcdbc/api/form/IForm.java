@@ -1,8 +1,8 @@
-package kamkeel.npcdbc.api;
+package kamkeel.npcdbc.api.form;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-public interface ICustomForm {
+public interface IForm {
 
     String getName();
 
@@ -16,52 +16,8 @@ public interface ICustomForm {
 
     void setRace(int race);
 
-    String getHairCode();
-
-    /**
-     * @param hairCode The hair code to set transformation's hair to, usually gotten from the JinGames Hair Salon
-     */
-    void setHairCode(String hairCode);
-
-    /**
-     * @param type Legal types: aura, hair, eye, bodycm, body1, body2, body3
-     * @return Decimal color of type
-     */
-    int getColor(String type);
-
-    /**
-     * @param type  Legal types: aura, hair, eye, bodycm, body1, body2, body3
-     * @param color Decimal color to set type as
-     */
-    void setColor(String type, int color);
-
-    /**
-     * @param type Legal types: "base", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
-     */
-    void setHairType(String type);
-
-    /**
-     * @param type Legal types: "base", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
-     */
-    String getHairType(String type);
-
-    /**
-     * @param type Legal types: aura, hair, eye, bodycm, body1, body2, body3
-     * @return True if form has the "hasTypeColor" field to true,
-     * useful for Namekians and Arcosians multi body color setting
-     */
-    boolean hasColor(String type);
-
 
     void setState2Factor(int dbcForm, float factor);
-
-
-    String getBodyType();
-
-    /**
-     * @param type Legal: firstform, secondform, thirdform, finalform, ultimatecooler
-     */
-    void setBodyType(String type);
 
     /**
      * @param dbcForm Legal args: 20 Kaioken, 21 UltraInstinct
@@ -71,18 +27,6 @@ public interface ICustomForm {
      * This value scales off as a factor of the form's multiplier
      */
     float getState2Factor(int dbcForm);
-
-    /**
-     * @return form's size, default is 1.0f of player's current size
-     */
-    float getSize();
-
-    /**
-     * @param size size to set form to. 2.0f sets the player to 2x their normal size. Max: 50.0
-     */
-    void setSize(float size);
-
-    boolean hasSize();
 
 
     /**
@@ -125,10 +69,6 @@ public interface ICustomForm {
      */
     float getFormMulti(int DBCForm);
 
-    int getAuraColor();
-
-    void setAuraColor(int auraColor);
-
     void assignToPlayer(EntityPlayer p);
 
     void removeFromPlayer(EntityPlayer p);
@@ -164,12 +104,12 @@ public interface ICustomForm {
      */
     void linkChild(int formID);
 
-    void linkChild(ICustomForm form);
+    void linkChild(IForm form);
 
     /**
      * @return the child of this form i.e if SSJ2 Red is child of SSJ Red(this), returns SSJ2 Red
      */
-    ICustomForm getChild();
+    IForm getChild();
 
 
     /**
@@ -189,12 +129,12 @@ public interface ICustomForm {
      */
     void linkParent(int formID);
 
-    void linkParent(ICustomForm form);
+    void linkParent(IForm form);
 
     /**
      * @return the parent of this form i.e if SSJ2 Red is Parent of SSJ Red(this), returns SSJ2 Red
      */
-    ICustomForm getParent();
+    IForm getParent();
 
 
     /**
@@ -202,11 +142,9 @@ public interface ICustomForm {
      */
     void removeParentForm();
 
-    public IFormMastery getFormMastery();
+    public IFormMastery getMastery();
 
-    ICustomForm save();
+    IFormDisplay getDisplay();
 
-    public boolean hasMask();
-
-    void hasMask(boolean hasMask);
+    IForm save();
 }

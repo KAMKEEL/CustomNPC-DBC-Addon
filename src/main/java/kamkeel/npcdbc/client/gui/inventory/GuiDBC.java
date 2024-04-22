@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.client.gui.inventory;
 
 import kamkeel.npcdbc.client.gui.component.GuiFormScroll;
-import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -24,7 +24,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
     private GuiFormScroll guiFormScroll;
     private String selected = null;
     private String search = "";
-    private CustomForm selectedForm;
+    private Form selectedForm;
     private HashMap<String, Integer> unlockedForms = new HashMap<String, Integer>();
 
     public GuiDBC() {
@@ -170,7 +170,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             selected = null;
             setSelected(selected);
         } else {
-            this.selectedForm = new CustomForm();
+            this.selectedForm = new Form();
             selectedForm.readFromNBT(compound);
             setSelected(selectedForm.name);
         }

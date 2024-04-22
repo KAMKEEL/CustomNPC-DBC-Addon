@@ -1,8 +1,8 @@
 package kamkeel.npcdbc.controllers;
 
-import kamkeel.npcdbc.api.ICustomForm;
-import kamkeel.npcdbc.api.IFormHandler;
-import kamkeel.npcdbc.data.CustomForm;
+import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.api.form.IFormHandler;
+import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -21,8 +21,8 @@ import java.util.zip.GZIPInputStream;
 
 public class FormController implements IFormHandler {
     public static FormController Instance = new FormController();
-    public HashMap<Integer, CustomForm> customFormsSync = new HashMap();
-    public HashMap<Integer, CustomForm> customForms;
+    public HashMap<Integer, Form> customFormsSync = new HashMap();
+    public HashMap<Integer, Form> customForms;
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
 
@@ -39,11 +39,11 @@ public class FormController implements IFormHandler {
         LogWriter.info("Done loading custom forms.");
     }
 
-    public ICustomForm createForm(String name) {
+    public IForm createForm(String name) {
         if (hasName(name))
             return get(name);
         else {
-            CustomForm form = new CustomForm();
+            Form form = new Form();
             form.name = name;
             if (form.id == -1) {
                 form.id = getUnusedId();
@@ -73,7 +73,7 @@ public class FormController implements IFormHandler {
                 if (!file.isFile() || !file.getName().endsWith(".json"))
                     continue;
                 try {
-                    CustomForm form = new CustomForm();
+                    Form form = new Form();
                     form.readFromNBT(NBTJsonUtil.LoadFile(file));
                     form.name = file.getName().substring(0, file.getName().length() - 5);
 
@@ -108,7 +108,7 @@ public class FormController implements IFormHandler {
     }
 
     private void verifyFormTree() {
-        for (CustomForm form : customForms.values()) {
+        for (Form form : customForms.values()) {
             if (!has(form.childID))
                 form.childID = -1;
             if (!has(form.parentID))
@@ -129,20 +129,20 @@ public class FormController implements IFormHandler {
         return lastUsedID;
     }
 
-    public ICustomForm saveForm(ICustomForm customForm) {
+    public IForm saveForm(IForm customForm) {
         if (customForm.getID() < 0) {
             customForm.setID(getUnusedId());
             while (hasName(customForm.getName()))
                 customForm.setName(customForm.getName() + "_");
         } else {
-            CustomForm existing = customForms.get(customForm.getID());
+            Form existing = customForms.get(customForm.getID());
             if (existing != null && !existing.name.equals(customForm.getName()))
                 while (hasName(customForm.getName()))
                     customForm.setName(customForm.getName() + "_");
         }
 
         customForms.remove(customForm.getID());
-        customForms.put(customForm.getID(), (CustomForm) customForm);
+        customForms.put(customForm.getID(), (Form) customForm);
 
         saveFormLoadMap();
 
@@ -155,7 +155,7 @@ public class FormController implements IFormHandler {
         File file2 = new File(dir, customForm.getName() + ".json");
 
         try {
-            NBTTagCompound nbtTagCompound = ((CustomForm) customForm).writeToNBT();
+            NBTTagCompound nbtTagCompound = ((Form) customForm).writeToNBT();
             NBTJsonUtil.SaveFile(file, nbtTagCompound);
             if (file2.exists())
                 file2.delete();
@@ -170,16 +170,16 @@ public class FormController implements IFormHandler {
     public boolean hasName(String newName) {
         if (newName.trim().isEmpty())
             return true;
-        for (CustomForm form : customForms.values())
+        for (Form form : customForms.values())
             if (form.name.equals(newName))
                 return true;
         return false;
     }
 
     public void delete(String name) {
-        CustomForm delete = getFormFromName(name);
+        Form delete = getFormFromName(name);
         if (delete != null) {
-            CustomForm foundForm = this.customForms.remove(delete.getID());
+            Form foundForm = this.customForms.remove(delete.getID());
             if (foundForm != null && foundForm.name != null) {
                 File dir = this.getDir();
                 for (File file : dir.listFiles()) {
@@ -200,7 +200,7 @@ public class FormController implements IFormHandler {
         if (!this.customForms.containsKey(id))
             return;
 
-        CustomForm foundForm = this.customForms.remove(id);
+        Form foundForm = this.customForms.remove(id);
         if (foundForm != null && foundForm.name != null) {
             File dir = this.getDir();
             for (File file : dir.listFiles()) {
@@ -224,21 +224,21 @@ public class FormController implements IFormHandler {
         return get(id) != null;
     }
 
-    public ICustomForm get(String name) {
+    public IForm get(String name) {
         return getFormFromName(name);
     }
 
-    public ICustomForm get(int id) {
+    public IForm get(int id) {
         return this.customForms.get(id);
     }
 
-    public ICustomForm[] getForms() {
-        ArrayList<ICustomForm> customForms = new ArrayList<>(this.customForms.values());
-        return customForms.toArray(new ICustomForm[0]);
+    public IForm[] getForms() {
+        ArrayList<IForm> customForms = new ArrayList<>(this.customForms.values());
+        return customForms.toArray(new IForm[0]);
     }
 
-    public CustomForm getFormFromName(String formName) {
-        for (Map.Entry<Integer, CustomForm> entryForm : FormController.getInstance().customForms.entrySet()) {
+    public Form getFormFromName(String formName) {
+        for (Map.Entry<Integer, Form> entryForm : FormController.getInstance().customForms.entrySet()) {
             if (entryForm.getValue().name.equalsIgnoreCase(formName)) {
                 return entryForm.getValue();
             }
@@ -249,7 +249,7 @@ public class FormController implements IFormHandler {
     public String[] getNames() {
         String[] names = new String[customForms.size()];
         int i = 0;
-        for (CustomForm customForm : customForms.values()) {
+        for (Form customForm : customForms.values()) {
             names[i] = customForm.name.toLowerCase();
             i++;
         }
@@ -291,7 +291,7 @@ public class FormController implements IFormHandler {
         NBTTagCompound nbt = new NBTTagCompound();
         NBTTagList formList = new NBTTagList();
         for (Integer key : customForms.keySet()) {
-            CustomForm customForm = customForms.get(key);
+            Form customForm = customForms.get(key);
             if (!customForm.getName().isEmpty()) {
                 NBTTagCompound formCompound = new NBTTagCompound();
                 formCompound.setString("Name", customForm.getName());

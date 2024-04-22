@@ -2,8 +2,8 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import kamkeel.npcdbc.CommonProxy;
-import kamkeel.npcdbc.data.CustomForm;
-import kamkeel.npcdbc.data.PlayerCustomFormData;
+import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.PlayerFormData;
 import kamkeel.npcdbc.util.Utility;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,15 +17,15 @@ public class MixinJRMCoreHDBC {
         //if this method is not called by RenderPlayerJBRA, as rendering data is already handled, and this method is heavily used in rendering in DBC
         // To be improved by kAM
         if (!Utility.stackTraceContains("RenderPlayerJBRA")) {
-            PlayerCustomFormData formData = Utility.getSelfData();
+            PlayerFormData formData = Utility.getSelfData();
             if (formData != null && formData.isInCustomForm()) {
-                CustomForm form = formData.getCurrentForm();
-                if (form.auraColor != -1 && Utility.stackTraceContains("chargePart"))
-                    ci.setReturnValue(form.auraColor);
-                else if (form.furColor != -1 && (form.hairType.equals("ssj4") || form.hairType.equals("oozaru")))
-                    ci.setReturnValue(form.furColor);
-                else if (form.hairColor != -1)
-                    ci.setReturnValue(form.hairColor);
+                Form form = formData.getCurrentForm();
+                if (form.display.auraColor != -1 && Utility.stackTraceContains("chargePart"))
+                    ci.setReturnValue(form.display.auraColor);
+                else if (form.display.furColor != -1 && (form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")))
+                    ci.setReturnValue(form.display.furColor);
+                else if (form.display.hairColor != -1)
+                    ci.setReturnValue(form.display.hairColor);
             }
         }
     }
@@ -33,16 +33,16 @@ public class MixinJRMCoreHDBC {
     @Inject(method = "DBCsizeBasedOnRace2(IIZ)F", at = @At("HEAD"), cancellable = true)
     private static void setCustomFormSize(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir) {
         if (CommonProxy.CurrentJRMCTickPlayer != null) {
-            CustomForm form = null;
+            Form form = null;
 
             if (Utility.isServer()) {
-                PlayerCustomFormData data = Utility.getFormData(CommonProxy.CurrentJRMCTickPlayer);
+                PlayerFormData data = Utility.getFormData(CommonProxy.CurrentJRMCTickPlayer);
                 if (data != null)
                     form = data.getCurrentForm();
             } else
                 form = Utility.getFormClient(CommonProxy.CurrentJRMCTickPlayer);
             if (form != null) {
-                cir.setReturnValue(form.formSize);
+                cir.setReturnValue(form.display.formSize);
             }
         }
     }
