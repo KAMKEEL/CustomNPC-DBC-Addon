@@ -13,6 +13,12 @@ public class DBCEventHooks {
         return NpcAPI.EVENT_BUS.post(formChangeEvent);
     }
 
+    public static boolean onDamagedEvent(DBCPlayerEvent.DamagedEvent damagedEvent) {
+        PlayerDataScript handler = ScriptController.Instance.playerScripts;
+        handler.callScript(DBCScriptType.DAMAGED.function, damagedEvent);
+        return NpcAPI.EVENT_BUS.post(damagedEvent);
+    }
+
     // HOW TO CANCEL AN EVENT. Must be @Cancelable
     // This will post it as well as call the script.
 //    public static void something(){

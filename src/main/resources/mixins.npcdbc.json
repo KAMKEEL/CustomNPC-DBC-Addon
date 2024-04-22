@@ -9,6 +9,7 @@
     "dbc.MixinEntityAura2",
     "dbc.MixinJGPlayerMP",
     "dbc.MixinJRMCoreComTickH",
+    "dbc.MixinJRMCoreEH",
     "dbc.MixinJRMCoreH",
     "dbc.MixinJRMCoreHDBC",
     "npc.MixinDBCAddon",
