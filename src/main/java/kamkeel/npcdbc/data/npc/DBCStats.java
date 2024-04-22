@@ -1,6 +1,6 @@
-package kamkeel.npcdbc.data;
+package kamkeel.npcdbc.data.npc;
 
-import kamkeel.npcdbc.api.IDBCStats;
+import kamkeel.npcdbc.api.npc.IDBCStats;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class DBCStats implements IDBCStats {

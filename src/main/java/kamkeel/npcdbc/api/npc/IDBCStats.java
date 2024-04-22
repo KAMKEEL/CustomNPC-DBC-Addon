@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.api;
+package kamkeel.npcdbc.api.npc;
 
 public interface IDBCStats {
     boolean isEnabled();

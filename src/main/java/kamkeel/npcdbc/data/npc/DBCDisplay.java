@@ -1,6 +1,6 @@
-package kamkeel.npcdbc.data;
+package kamkeel.npcdbc.data.npc;
 
-import kamkeel.npcdbc.api.IDBCDisplay;
+import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 import net.minecraft.nbt.NBTTagCompound;
 

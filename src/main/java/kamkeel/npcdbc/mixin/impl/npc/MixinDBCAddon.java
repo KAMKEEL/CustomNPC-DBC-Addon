@@ -5,7 +5,7 @@ import kamkeel.addon.DBCAddon;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerFormData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.DBCStats;
+import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.INPCStats;
 import kamkeel.npcdbc.mixin.IPlayerFormData;

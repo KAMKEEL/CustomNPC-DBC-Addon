@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.mixin.impl.npc;
 
-import kamkeel.npcdbc.data.DBCDisplay;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.DataDisplay;

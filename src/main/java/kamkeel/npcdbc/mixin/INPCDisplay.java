@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.mixin;
 
-import kamkeel.npcdbc.data.DBCDisplay;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
 
 public interface INPCDisplay {
     DBCDisplay getDBCDisplay();

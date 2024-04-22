@@ -2,6 +2,8 @@ package kamkeel.npcdbc.api;
 
 import cpw.mods.fml.common.Loader;
 import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.api.npc.IDBCDisplay;
+import kamkeel.npcdbc.api.npc.IDBCStats;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
