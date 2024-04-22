@@ -9,8 +9,8 @@ import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.config.ConfigDBCClient;
-import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -48,7 +48,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     }
 
     @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At("HEAD"), cancellable = true)
-    public void renderFormFace(float par1, String hair, String anim, CallbackInfoReturnable<String> ci) {
+    public void formRendering(float par1, String hair, String anim, CallbackInfoReturnable<String> ci) {
         if (ClientEventHandler.renderingPlayer != null) {
             Form form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
             if (form != null) {
@@ -58,28 +58,33 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 if (form.display.hairType.equals("ssj4")) { //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
                     if (HD)
-                        disableFace(true, false, hair, ci);
-                    disableHairPresets(false, hair, ci);
+                        disableFace(hair, ci);
+                    if (isHairPreset(hair))
+                        ci.cancel();
                 } else if (form.display.hairType.equals("ssj3")) {
-                    disableHairPresets(true, hair, ci);
+                    if (isHairPreset(hair) && !hair.startsWith("D"))
+                        ci.cancel();
                     if (hair.contains("EYEBROW")) { //bind ssj3 eyebrow texture to ssj3 hair type
                         int gen = JRMCoreH.dnsGender(dbcData.DNS);
                         int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
-                    } else if (hair.contains("D") && form.display.hairColor != -1)
-                        RenderPlayerJBRA.glColor3f(form.display.hairColor);
+                    }
 
                 } else if (form.display.hairType.equals("oozaru")) {
-                    disableFace(false, true, hair, ci);
-                    disableHairPresets(false, hair, ci);
+                    disableFace(hair, ci);
+                    if (isHairPreset(hair))
+                        ci.cancel();
                 }
 
-                if (form.display.hairColor != -1 && hair.contains("EYEBROW"))
+                if (form.display.hairColor != -1 && (isHairPreset(hair) || hair.contains("EYEBROW")))
                     RenderPlayerJBRA.glColor3f(form.display.hairColor);
-                if (form.display.eyeColor != -1 && (hair.contains("EYELEFT") || hair.contains("EYERIGHT")))  //eye colors for ALL forms except ssj4
+
+                if (form.display.eyeColor != -1 && (hair.contains("EYELEFT") || hair.contains("EYERIGHT"))) {  //eye colors for ALL forms except ssj4
                     if (form.display.hairType.equals("ssj4") && HD) {
                     } else
                         RenderPlayerJBRA.glColor3f(form.display.eyeColor);
+                }
+
                 if (hair.contains("SJT")) { // Tail Color
                     int color = isMonke ? form.display.furColor : form.display.hairColor;
                     if (color != -1) {
@@ -97,10 +102,11 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     }
 
     @Inject(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At("HEAD"), cancellable = true)
-    public void disableHairRendering(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(ordinal = 0) LocalRef<String> hair, @Local(ordinal = 0) LocalIntRef st) {
+    public void DNSHairRendering(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(ordinal = 0) LocalRef<String> hair, @Local(ordinal = 0) LocalIntRef st) {
         if (ClientEventHandler.renderingPlayer != null) {
             Form form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
             if (form != null) {
+                HD = ConfigDBCClient.EnableHDTextures;
 
                 if (form.display.hairType.equals("base"))
                     st.set(0);
@@ -108,16 +114,25 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     st.set(4);
                 else if (form.display.hairType.equals("ssj2"))
                     st.set(5);
+                else if (form.display.hairType.equals("ssj4")) {
+                    String hairTexture = "normall.png";
+                    Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + hairTexture));
+                }
 
                 if (form.display.hairColor != -1)
                     RenderPlayerJBRA.glColor3f(form.display.hairColor);
 
-                if (form.display.hairCode.length() > 5)
-                    hair.set(form.display.hairCode);
+                if (form.display.hairType.toLowerCase().equals("bald"))
+                    hair.set("");
+                else {
+                    if (form.display.hairCode.length() > 5) //if valid hair
+                        hair.set(form.display.hairCode);
+                    else if (form.display.hairCode.length() < 5 && form.display.hairType.equals("ssj4"))  //if hairCode empty && ssj4, set to default ssj4 hair
+                        hair.set("373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820");
+                }
 
-                //disable other hair rendering when ssj4 hair type
-                boolean isCorrectHair = h.equals(form.display.hairCode) || h.startsWith("373852546750347428545480");
-                if ((form.display.hairType.equals("ssj4") && !isCorrectHair) || form.display.hairType.equals("ssj3") || form.display.hairType.equals("oozaru"))
+
+                if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("oozaru"))
                     ci.cancel();
 
 
@@ -126,15 +141,15 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     }
 
     @Unique
-    public void disableFace(boolean customSSJ4, boolean customOozaru, String faceType, CallbackInfoReturnable<String> ci) {
-        if ((faceType.contains("FACENOSE") && !customSSJ4) || faceType.contains("FACEMOUTH") || faceType.contains("EYEBROW") || (faceType.contains("EYEBASE") && !Utility.stackTraceContains("renderOozaru")) || faceType.contains("EYELEFT") || faceType.contains("EYERIGHT"))
+    public void disableFace(String faceType, CallbackInfoReturnable<String> ci) {
+        if ((faceType.contains("FACENOSE") && !Utility.stackTraceContains("renderSSJ4Face")) || faceType.contains("FACEMOUTH") || faceType.contains("EYEBROW") || (faceType.contains("EYEBASE") && !Utility.stackTraceContains("renderOozaru")) || faceType.contains("EYELEFT") || faceType.contains("EYERIGHT"))
             ci.setReturnValue("");
     }
 
     @Unique
-    public void disableHairPresets(boolean customSSJ3, String faceType, CallbackInfoReturnable<String> ci) {
-        if (faceType.startsWith("A") || faceType.startsWith("B") || faceType.startsWith("C") || faceType.contains("12") || (!customSSJ3 && faceType.startsWith("D"))) {
-            ci.setReturnValue("");
-        }
+    public boolean isHairPreset(String hair) {
+        return hair.startsWith("A") || hair.startsWith("B") || hair.startsWith("C") || hair.contains("12") || hair.startsWith("D");
+
     }
 }
+
