@@ -26,7 +26,8 @@
     "dbc.MixinModelBipedDBC",
     "dbc.MixinRenderAura2",
     "dbc.MixinRenderPlayerJBRA",
-    "npc.MixinDBCClient"
+    "npc.client.MixinGuiScriptPlayers",
+    "npc.client.MixinDBCClient"
   ],
   "server": []
 }

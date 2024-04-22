@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.mixin.impl.npc;
+package kamkeel.npcdbc.mixin.impl.npc.client;
 
 import kamkeel.addon.client.DBCClient;
 import kamkeel.npcdbc.client.ParticleFormHandler;
