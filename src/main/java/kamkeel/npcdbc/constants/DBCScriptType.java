@@ -2,8 +2,8 @@ package kamkeel.npcdbc.constants;
 
 public enum DBCScriptType {
 
-    FORMCHANGE("formChange"),
-    DAMAGED("damaged");
+    FORMCHANGE("dbcFormChange"),
+    DAMAGED("dbcDamaged");
 
     public String function;
 

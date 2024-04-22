@@ -21,9 +21,13 @@ public class MixinJRMCoreEH {
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;B)I", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcKiAttack0(LivingHurtEvent event, CallbackInfo ci, @Local(name = "dam") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
         int damage = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), damageSource.get());
-        if (DBCEventHooks.onDamagedEvent(new DBCPlayerEvent.DamagedEvent((IPlayer) targetPlayer, damage, damageSource.get())))
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent((IPlayer) targetPlayer, damage, damageSource.get());
+        boolean cancel = DBCEventHooks.onDamagedEvent(damagedEvent);
+        if (cancel)
             ci.cancel();
 
+        // Set Variable - Damage Dealth to
+        int dealt = (int) damagedEvent.damage;
     }
 
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;B)I", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
