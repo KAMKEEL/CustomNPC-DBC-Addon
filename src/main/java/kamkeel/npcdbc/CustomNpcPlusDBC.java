@@ -9,6 +9,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.LoadConfiguration;
+import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.PacketHandler;
@@ -41,6 +42,7 @@ public class CustomNpcPlusDBC {
     @Mod.EventHandler
     public void setAboutToStart(FMLServerAboutToStartEvent event) {
         FormController.getInstance().load();
+        AuraController.getInstance().load();
     }
 
     @Mod.EventHandler
