@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
+
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -10,14 +11,18 @@ import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static JinRyuu.JRMCore.JRMCoreH.*;
+
 @Mixin(value = JRMCoreH.class, remap = false)
-public class MixinJRMCoreH {
+public abstract class MixinJRMCoreH {
+
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onGetPlayerAttribute(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info) {
@@ -114,9 +119,15 @@ public class MixinJRMCoreH {
     }
 
     //delete all player CF data on jrmc startnew
-    @Inject(method = "resetChar(Lnet/minecraft/entity/player/EntityPlayer;ZZZF)V", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "resetChar(Lnet/minecraft/entity/player/EntityPlayer;ZZZF)V", at = @At("TAIL"))
     private static void resetChar(EntityPlayer p, boolean keepSkills, boolean keepTechs, boolean keepMasteries, float perc, CallbackInfo ci) {
         Utility.getFormData(p).resetAll();
+        if (!keepMasteries) {
+            NBTTagCompound PlayerPersisted = nbt(p);
+            for (int i = 0; i < Races.length; i++)
+                if (PlayerPersisted.hasKey(getNBTFormMasteryRacialKey(i)) && i != getByte(p, "jrmcRace")) //remove all form mastery tags that are not player's race
+                    PlayerPersisted.removeTag(getNBTFormMasteryRacialKey(i));
+        }
     }
 
     //if release becomes 0%, force descend player from CF on server side
