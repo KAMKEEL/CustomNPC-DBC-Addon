@@ -9,7 +9,9 @@ import net.minecraft.client.renderer.Tessellator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.awt.*;
 
@@ -24,6 +26,22 @@ public class MixinRenderAura2 {
                 Color col = Color.decode(aura.lightningColor + "");
                 tessellator.get().setColorRGBA(col.getRed(), col.getGreen(), col.getBlue(), aura.lightningAlpha);
             }
+        }
+    }
+
+    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 0))
+    private void auraSize(Args args) {
+        Aura aura = null;//add here
+
+        if (aura.hasSize()) {
+            float xSize = (float) args.get(0) * aura.getSize();
+            float ySize = (float) args.get(1) * aura.getSize();
+            float zSize = (float) args.get(2) * aura.getSize();
+
+            args.set(0, xSize);
+            args.set(1, ySize);
+            args.set(2, zSize);
+
         }
     }
 }

@@ -12,6 +12,7 @@ public class Aura implements IAura {
     public String type, texture1, texture2, texture3;
     public int color1, color2, color3, alpha = 255, lightningColor, lightningAlpha = 255, speed;
     public boolean hasLightning, hasSpeed, hasAlpha, hasColor1, hasColor2, hasColor3, hasTexture1, hasTexture2, hasTexture3;
+    public float size = 1.0f;
 
     @Override
     public String getType() {
@@ -71,6 +72,11 @@ public class Aura implements IAura {
     @Override
     public boolean hasLightning() {
         return false;
+    }
+
+    @Override
+    public boolean hasSize() {
+        return size != 1.0f;
     }
 
     @Override
@@ -159,5 +165,10 @@ public class Aura implements IAura {
     @Override
     public IAura save() {
         return AuraController.Instance.saveAura(this);
+    }
+
+    @Override
+    public float getSize() {
+        return size;
     }
 }

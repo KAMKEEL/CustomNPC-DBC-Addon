@@ -45,6 +45,8 @@ public interface IAura {
 
     boolean hasLightning();
 
+    boolean hasSize();
+
     int getLightningColor();
 
     void setLightningColor(int color);
@@ -81,4 +83,6 @@ public interface IAura {
     void setID(int newID);
 
     IAura save();
+
+    float getSize();
 }

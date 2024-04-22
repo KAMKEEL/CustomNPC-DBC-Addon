@@ -26,7 +26,7 @@ public class MixinEntityAura2 {
     @Inject(method = "<init>(Lnet/minecraft/world/World;Ljava/lang/String;IFFI)V", at = @At("TAIL"))
     public void onCustomAura(World par1World, String dbcCharger, int c, float s, float s2, int cr, CallbackInfo ci) {
         Aura aura = null; //pls make the framework for this
-        state = 5;
+      //  state = 5;
         bol7 = true;
         if (aura != null) {
             if (aura.hasLightning)

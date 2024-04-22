@@ -2,8 +2,8 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import kamkeel.npcdbc.CommonProxy;
-import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.Utility;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,11 +18,21 @@ public class MixinJRMCoreHDBC {
         // To be improved by kAM
         if (!Utility.stackTraceContains("RenderPlayerJBRA")) {
             PlayerFormData formData = Utility.getSelfData();
-            if (formData != null && formData.isInCustomForm()) {
+            if (Utility.stackTraceContains("chargePart")) {
+                formData = Utility.getFormData(CommonProxy.CurrentJRMCTickPlayer);
                 Form form = formData.getCurrentForm();
-                if (form.display.auraColor != -1 && Utility.stackTraceContains("chargePart"))
+                form = formData != null ? formData.getCurrentForm() : null;
+                if (form != null && form.display.auraColor != -1)
                     ci.setReturnValue(form.display.auraColor);
-                else if (form.display.furColor != -1 && (form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")))
+            }
+            if (formData != null && formData.getCurrentForm() != null) {
+                Form form = formData.getCurrentForm();
+                if (Utility.stackTraceContains("chargePart")) {
+                    formData = Utility.getFormData(CommonProxy.CurrentJRMCTickPlayer);
+                    form = formData.getCurrentForm();
+                    if (form.display.auraColor != -1)
+                        ci.setReturnValue(form.display.auraColor);
+                } else if (form.display.furColor != -1 && (form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")))
                     ci.setReturnValue(form.display.furColor);
                 else if (form.display.hairColor != -1)
                     ci.setReturnValue(form.display.hairColor);
