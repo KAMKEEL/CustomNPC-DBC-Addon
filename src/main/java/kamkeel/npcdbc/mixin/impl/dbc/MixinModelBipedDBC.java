@@ -7,6 +7,8 @@ import JinRyuu.JRMCore.entity.ModelBipedBody;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.CustomForm;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.util.Utility;
@@ -23,6 +25,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = ModelBipedDBC.class, remap = false)
 public class MixinModelBipedDBC extends ModelBipedBody {
+    @Unique
+    boolean HD;
+    @Unique
+    String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
+    @Unique
+    String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+
     /**
      * there's a bug where if you go ssj2 then revert to ssj1 then try to go ssj2 again,
      * the ssj1 hair won't animate into ssj2. Fixed it for custom forms, but it still happens for DBC forms
@@ -44,9 +53,12 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             CustomForm form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
             if (form != null) {
                 DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
-                boolean fur = form.hairType.equals("ssj4") || form.hairType.equals("oozaru");
+                boolean isMonke = form.hairType.equals("ssj4") || form.hairType.equals("oozaru");
+                HD = ConfigDBCClient.EnableHDTextures;
+
                 if (form.hairType.equals("ssj4")) { //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
-                    disableFace(true, false, hair, ci);
+                    if (HD)
+                        disableFace(true, false, hair, ci);
                     disableHairPresets(false, hair, ci);
                 } else if (form.hairType.equals("ssj3")) {
                     disableHairPresets(true, hair, ci);
@@ -64,13 +76,19 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 if (form.hairColor != -1 && hair.contains("EYEBROW"))
                     RenderPlayerJBRA.glColor3f(form.hairColor);
-                if (form.eyeColor != -1 && !form.hairType.equals("ssj4") && (hair.contains("EYELEFT") || hair.contains("EYERIGHT")))  //eye colors for ALL forms except ssj4
-                    RenderPlayerJBRA.glColor3f(form.eyeColor);
+                if (form.eyeColor != -1 && (hair.contains("EYELEFT") || hair.contains("EYERIGHT")))  //eye colors for ALL forms except ssj4
+                    if (form.hairType.equals("ssj4") && HD) {
+                    } else
+                        RenderPlayerJBRA.glColor3f(form.eyeColor);
                 if (hair.contains("SJT")) { // Tail Color
-                    int color = fur ? form.furColor : form.hairColor;
+                    int color = isMonke ? form.furColor : form.hairColor;
                     if (color != -1) {
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
                         RenderPlayerJBRA.glColor3f(color);
+                    }
+                    if (isMonke) {
+                        String tailTexture = "allw.png";
+                        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuudragonbc:gui/") + tailTexture));
                     }
                 }
 
