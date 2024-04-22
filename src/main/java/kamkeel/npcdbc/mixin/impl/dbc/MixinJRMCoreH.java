@@ -3,6 +3,8 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerFormData;
@@ -10,19 +12,26 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import static JinRyuu.JRMCore.JRMCoreH.*;
+import static kamkeel.npcdbc.util.DBCUtils.lastSetDamage;
 
 @Mixin(value = JRMCoreH.class, remap = false)
 public abstract class MixinJRMCoreH {
 
+
+    @Shadow
+    public static int curBody;
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onGetPlayerAttribute(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info) {
@@ -167,6 +176,16 @@ public abstract class MixinJRMCoreH {
         else if (gainMultiID == 3)
             Utility.getFormData(player).updateCurrentFormMastery("fireki");
 
+    }
+
+    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", ordinal = 4, shift = At.Shift.BEFORE), remap = false)
+    private static void setDamage(Entity player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir, @Local(name = "set") LocalIntRef set) {
+        if(lastSetDamage != -1){
+            int curBody = getInt((EntityPlayer) player, "jrmcBdy");
+            int newHealth = curBody - lastSetDamage;
+            set.set(Math.max(0, newHealth));
+            lastSetDamage = -1;
+        }
     }
 }
 
