@@ -16,7 +16,7 @@ import kamkeel.npcdbc.network.PacketHandler;
 
 import static noppes.npcs.CustomNpcs.configPath;
 
-@Mod(modid = CustomNpcPlusDBC.ID, name = CustomNpcPlusDBC.name, version = CustomNpcPlusDBC.version, dependencies = "after:customnpcs;after:jinryuujrmcore;after:jinryuudragonblockc;")
+@Mod(modid = CustomNpcPlusDBC.ID, name = CustomNpcPlusDBC.name, version = CustomNpcPlusDBC.version, dependencies = "required-after:customnpcs;required-after:jinryuujrmcore;required-after:jinryuudragonblockc;")
 public class CustomNpcPlusDBC {
 
     public static final String name = "CustomNPC+ DBC Addon";
