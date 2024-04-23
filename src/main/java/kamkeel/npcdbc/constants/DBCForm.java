@@ -1,7 +1,9 @@
 package kamkeel.npcdbc.constants;
 
 public class DBCForm {
-    //Racial forms
+    ////////////////////////////////
+    ////////////////////////////////
+    // Saiyan forms
     public static final int SuperSaiyan = 1;
     public static final int SuperSaiyanG2 = 2; //ssj grade 2
     public static final int SuperSaiyanG3 = 3;
@@ -11,9 +13,9 @@ public class DBCForm {
     public static final int SuperSaiyan4 = 14;
     public static final int GreatApe = 7;
     public static final int SuperGreatApe = 8;
-    public static final int SuperSaiyanGod = 9;
-    public static final int SuperSaiyanBlue = 10;
-    public static final int SuperSaiyanBlueEvolved = 15;
+    public static final int SaiyanGod = 9;
+    public static final int SaiyanBlue = 10;
+    public static final int Shinka = 15; // SSJ Blue Evolved
 
     ////////////////////////////////
     ////////////////////////////////

@@ -66,7 +66,7 @@ public class FormStackable implements IFormStackable {
     }
 
     @Override
-    public void stackForm(int dbcForm, boolean stackForm) {
+    public void allowStackForm(int dbcForm, boolean stackForm) {
         switch (dbcForm) {
             case DBCForm.Kaioken:
                 kaiokenStackable = stackForm;
