@@ -48,14 +48,16 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 rp.setState(s, playerName);
 
             //fixes human/majin hair not going from ssj state "B" to base state "A"
-            if (!JRMCoreH.HairsT(rp.getState(playerName), "A") && JRMCoreH.HairsT(s, "A")) {
-                if ((!JRMCoreH.HairsT(rp.getState(playerName), s) || rg == 0) && rp.getStateChange(playerName) > 0) {
+            int hairState = rc == 5 ? 0 : s;
+            boolean b = JRMCoreH.HairsT(s, "A");
+            if (!JRMCoreH.HairsT(rp.getState(playerName), "A") && JRMCoreH.HairsT(hairState, "A")) {
+                if ((!JRMCoreH.HairsT(rp.getState(playerName), hairState) || rg == 0) && rp.getStateChange(playerName) > 0) {
                     rp.setStateChange(rp.getStateChange(playerName) - trTime.get(), playerName);
                 }
 
                 if (rp.getStateChange(playerName) <= 0) {
                     rp.setStateChange(0, playerName);
-                    rp.setState(s, playerName);
+                    rp.setState(hairState, playerName);
                 }
             }
         }
