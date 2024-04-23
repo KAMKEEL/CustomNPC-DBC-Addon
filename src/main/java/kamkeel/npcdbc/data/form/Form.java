@@ -322,10 +322,6 @@ public class Form implements IForm {
         return FormController.Instance.get(childID);
     }
 
-    //internal
-    public Form getC() {
-        return (Form) FormController.Instance.get(childID);
-    }
 
     @Override
     public int getChildID() {

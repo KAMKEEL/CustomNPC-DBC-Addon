@@ -83,8 +83,6 @@ public class TransformController {
             transformed = true;
             transformedInto = form;
         }
-
-
     }
 
     @SideOnly(Side.CLIENT)
@@ -154,11 +152,13 @@ public class TransformController {
     // Server side handling
 
     public static void handleFormAscend(EntityPlayer player, int formID) {
+        Form form = (Form) FormController.getInstance().get(formID);
+        if(form == null)
+            return;
+
         PlayerDBCInfo formData = Utility.getFormData(player);
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
-
-            Form form = (Form) FormController.getInstance().get(formID);
 
             // Check for in Required DBC Form before Transforming
             if(form.requiredForm.containsKey((int) dbcData.Race)){
