@@ -276,7 +276,7 @@ public class MixinDBCAddon {
             return;
 
         if(formID > -1){
-            if(data.selectedForm != formID && data.unlockedForms.containsKey(formID)){
+            if(data.selectedForm != formID && data.unlockedForms.contains(formID)){
                 Form customForm = (Form) FormController.getInstance().get(formID);
                 NBTTagCompound compound = new NBTTagCompound();
                 if(customForm != null){

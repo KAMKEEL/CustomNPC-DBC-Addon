@@ -195,7 +195,7 @@ public class Utility {
         PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
 
         Map<String, Integer> map = new HashMap<String, Integer>();
-        for (int formID : data.unlockedForms.keySet()) {
+        for (int formID : data.unlockedForms) {
             Form form = (Form) FormController.getInstance().get(formID);
             if (form != null) {
                 map.put(form.name, form.id);

@@ -12,6 +12,7 @@ import noppes.npcs.controllers.data.PlayerData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -22,7 +23,11 @@ public class PlayerDBCInfo {
     public int currentForm = -1;
     public int selectedForm = -1;
 
-    public HashMap<Integer, String> unlockedForms = new HashMap<Integer, String>();
+    public int currentAura = -1;
+    public int selectedAura = -1;
+    public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
+
+    public HashSet<Integer> unlockedForms = new HashSet<Integer>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
 
@@ -31,28 +36,28 @@ public class PlayerDBCInfo {
     }
 
     public void addForm(Form form) {
-        if (!unlockedForms.containsKey(form.id)) {
-            unlockedForms.put(form.id, form.name);
+        if (!unlockedForms.contains(form.id)) {
+            unlockedForms.add(form.id);
             formLevels.put(form.id, 0f);
         }
     }
 
     public boolean hasUnlocked(int id) {
-        return unlockedForms.containsKey(id);
+        return unlockedForms.contains(id);
     }
 
-    public String removeForm(Form form) {
+    public boolean removeForm(Form form) {
         formLevels.remove(form.id);
         return unlockedForms.remove(form.id);
     }
 
-    public String removeForm(int id) {
+    public boolean removeForm(int id) {
         formLevels.remove(id);
         return unlockedForms.remove(id);
     }
 
     public Form getForm(int id) {
-        if (unlockedForms.containsKey(id))
+        if (unlockedForms.contains(id))
             return (Form) FormController.getInstance().get(id);
 
         return null;
@@ -63,7 +68,7 @@ public class PlayerDBCInfo {
     }
 
     public boolean hasForm(Form form) {
-        return unlockedForms.containsKey(form.id);
+        return unlockedForms.contains(form.id);
     }
 
     public boolean isInCustomForm() {
@@ -93,20 +98,9 @@ public class PlayerDBCInfo {
         return null;
     }
 
-    public List<String> getAllForms() {
-        List<String> list = new ArrayList<>();
-        for (Integer id : unlockedForms.keySet()) {
-            Form f = getUnlockedForm(id);
-            if (!list.contains(getColoredName(f)))
-                list.add(getColoredName(f));
-
-        }
-        return list;
-    }
-
     public Form getUnlockedForm(int id) {
-        if (unlockedForms.containsKey(id))
-            return (Form) FormController.Instance.get(unlockedForms.get(id));
+        if (unlockedForms.contains(id))
+            return (Form) FormController.Instance.get(id);
         return null;
     }
 
@@ -181,7 +175,7 @@ public class PlayerDBCInfo {
         TransformController.handleFormDescend((EntityPlayerMP) parent.player);
         currentForm = -1;
         selectedForm = -1;
-        unlockedForms = new HashMap();
+        unlockedForms = new HashSet<>();
         formLevels = new HashMap();
         updateClient();
     }
@@ -223,7 +217,7 @@ public class PlayerDBCInfo {
     public void saveNBTData(NBTTagCompound compound) {
         compound.setInteger("CurrentForm", currentForm);
         compound.setInteger("SelectedForm", selectedForm);
-        compound.setTag("UnlockedForms", NBTTags.nbtIntegerStringMap(unlockedForms));
+        compound.setTag("UnlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
         compound.setTag("FormMastery", NBTTags.nbtIntegerFloatMap(formLevels));
         compound.setTag("FormTimers", NBTTags.nbtIntegerIntegerMap(formTimers));
     }
@@ -231,7 +225,7 @@ public class PlayerDBCInfo {
     public void loadNBTData(NBTTagCompound compound) {
         currentForm = compound.getInteger("CurrentForm");
         selectedForm = compound.getInteger("SelectedForm");
-        unlockedForms = NBTTags.getIntegerStringMap(compound.getTagList("UnlockedForms", 10));
+        unlockedForms = NBTTags.getIntegerSet(compound.getTagList("UnlockedForms", 10));
         formLevels = NBTTags.getIntegerFloatMap(compound.getTagList("FormMastery", 10));
         formTimers = NBTTags.getIntegerIntegerMap(compound.getTagList("FormTimers", 10));
     }
