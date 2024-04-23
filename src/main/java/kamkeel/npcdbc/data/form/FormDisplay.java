@@ -6,21 +6,19 @@ import noppes.npcs.scripted.CustomNPCsException;
 
 public class FormDisplay implements IFormDisplay {
 
-    private Form parent;
-
     public float formSize = 1.0f;
+    public boolean keepOriginalSize = true;
 
     public String hairCode = "";
     public String hairType = "";
     public int hairColor = -1;
-
     public int eyeColor = -1;
     public int auraColor = -1;
-
     public String bodyType = "";
     public int bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
     public boolean hasArcoMask = false;
     public boolean effectMajinHair = false;
+    private Form parent;
 
     public FormDisplay(Form parent) {
         this.parent = parent;
@@ -42,6 +40,7 @@ public class FormDisplay implements IFormDisplay {
         hasArcoMask = rendering.getBoolean("hasArcoMask");
         effectMajinHair = rendering.getBoolean("effectMajinHair");
         formSize = rendering.getFloat("formSize");
+        keepOriginalSize = rendering.getBoolean("keepOriginalSize");
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -60,8 +59,20 @@ public class FormDisplay implements IFormDisplay {
         rendering.setBoolean("hasArcoMask", hasArcoMask);
         rendering.setBoolean("effectMajinHair", effectMajinHair);
         rendering.setFloat("formSize", formSize);
+        rendering.setBoolean("keepOriginalSize", keepOriginalSize);
+
         compound.setTag("rendering", rendering);
         return compound;
+    }
+
+    @Override
+    public boolean getKeepOriginalSize() {
+        return this.keepOriginalSize;
+    }
+
+    @Override
+    public void setKeepOriginalSize(boolean keepOriginalSize) {
+        this.keepOriginalSize = keepOriginalSize;
     }
 
     @Override

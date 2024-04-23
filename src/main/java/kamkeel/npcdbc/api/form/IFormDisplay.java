@@ -6,6 +6,7 @@ package kamkeel.npcdbc.api.form;
  */
 public interface IFormDisplay {
 
+
     String getHairCode();
 
     /**
@@ -55,18 +56,29 @@ public interface IFormDisplay {
      */
     void setSize(float size);
 
-    boolean hasSize();
+    boolean getKeepOriginalSize();
 
     /**
-     * @param type Legal: firstform, secondform, thirdform, finalform, ultimatecooler
+     * @param keepOriginalSize True if you want CustomForm to maintain vanilla DBC size when stacking forms.
+     *                         <p>
+     *                         i.e if Giant form has a size of 3.0x normal minecraft steve size, enabling this
+     *                         and setting formSize to 2.0 will cause the effective size to be 6.0x steve size.
+     *                         Disabling it overrides vanilla DBC sizes this way a formSize of 2.0 will always be 2.0x steve size
      */
-    void setBodyType(String type);
+    void setKeepOriginalSize(boolean keepOriginalSize);
+
+    boolean hasSize();
 
     int getAuraColor();
 
     void setAuraColor(int auraColor);
 
     String getBodyType();
+
+    /**
+     * @param type Legal: firstform, secondform, thirdform, finalform, ultimatecooler
+     */
+    void setBodyType(String type);
 
     public boolean hasArcoMask();
 
