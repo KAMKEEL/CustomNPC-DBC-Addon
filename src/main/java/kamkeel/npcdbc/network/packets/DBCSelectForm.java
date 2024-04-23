@@ -45,10 +45,10 @@ public final class DBCSelectForm extends AbstractPacket {
         if (formID != -1 && FormController.getInstance().has(formID)){
             if(formData.hasUnlocked(formID)){
                 formData.selectedForm = formID;
-                Utility.sendMessage(player, String.format("§cForm %s §cSelected", FormController.getInstance().get(formID).getMenuName()));
+                Utility.sendMessage(player, String.format("§aForm %s §aSelected", FormController.getInstance().get(formID).getMenuName()));
             }
         } else {
-            Utility.sendMessage(player, "§Cleared form selection");
+            Utility.sendMessage(player, "§cCleared form selection");
         }
         formData.updateClient();
     }
