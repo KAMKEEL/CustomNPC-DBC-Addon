@@ -22,6 +22,7 @@ public class MixinRenderAura2 {
     private void renderLightning(EntityAura2 e, double par2, double par4, double par6, float par9, float var20, float var13, boolean rot, CallbackInfo ci, @Local(name = "tessellator2") LocalRef<Tessellator> tessellator) {
         Aura aura = null;//add here
         if (aura != null) {
+
             if (aura.hasLightning() && aura.lightningColor != 0) {
                 Color col = Color.decode(aura.lightningColor + "");
                 tessellator.get().setColorRGBA(col.getRed(), col.getGreen(), col.getBlue(), aura.lightningAlpha);

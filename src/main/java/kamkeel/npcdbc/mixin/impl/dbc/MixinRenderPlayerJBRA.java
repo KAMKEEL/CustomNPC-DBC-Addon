@@ -93,15 +93,17 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         Form form = Utility.getFormClient(par1AbstractClientPlayer);
         if (form != null) {
             HD = ConfigDBCClient.EnableHDTextures;
-            if (form.display.hairType.equals("ssj4")) {
-                renderSSJ4Fur(form, gender.get(), bodyCM.get());
-                renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get());
-                if (hairback.get() != 12)
-                    this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
-            } else if (form.display.hairType.equals("oozaru")) {
-                renderOozaru(bodyCM.get(), form.display.eyeColor, form.display.furColor);
-            } else if (form.display.hairType.equals("ssj3"))
-                this.modelMain.renderHairs(0.0625F, "" + JRMCoreH.HairsT[6] + JRMCoreH.Hairs[0]);
+            if (race.get() == 1 || race.get() == 2) {
+                if (form.display.hairType.equals("ssj4")) {
+                    renderSSJ4Fur(form, gender.get(), bodyCM.get());
+                    renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get());
+                    if (hairback.get() != 12)
+                        this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
+                } else if (form.display.hairType.equals("oozaru")) {
+                    renderOozaru(bodyCM.get(), form.display.eyeColor, form.display.furColor);
+                } else if (form.display.hairType.equals("ssj3"))
+                    this.modelMain.renderHairs(0.0625F, "" + JRMCoreH.HairsT[6] + JRMCoreH.Hairs[0]);
+            }
         }
     }
 
@@ -195,14 +197,16 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 0, shift = At.Shift.BEFORE), remap = true)
-    private void renderSaiyanArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
+    private void renderSaiyanArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
 
         Form form = Utility.getFormClient(par1EntityPlayer);
         if (form != null) {
-            if (form.display.hairType.equals("ssj4")) {
-                renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get());
-            } else if (form.display.hairType.equals("oozaru")) {
-                renderOozaruArm(form.display.furColor, par1EntityPlayer, id.get(), bodyCM.get());
+            if (race.get() == 1 || race.get() == 2) {
+                if (form.display.hairType.equals("ssj4")) {
+                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get());
+                } else if (form.display.hairType.equals("oozaru")) {
+                    renderOozaruArm(form.display.furColor, par1EntityPlayer, id.get(), bodyCM.get());
+                }
             }
         }
     }
