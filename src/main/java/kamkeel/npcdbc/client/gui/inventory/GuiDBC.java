@@ -11,11 +11,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.NoppesUtilPlayer;
 import noppes.npcs.client.Client;
+import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.gui.player.inventory.GuiCNPCInventory;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.constants.EnumPacketServer;
 import noppes.npcs.constants.EnumPlayerPacket;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import tconstruct.client.tabs.AbstractTab;
 
 import java.util.ArrayList;
@@ -60,10 +62,6 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         GuiNpcButton clearButton = new GuiNpcButton(2, guiLeft + 75, guiTop + ySize - 11, "form.clear");
         clearButton.width = 65;
         this.addButton(clearButton);
-
-        // Add Details
-        if (selectedForm != null) {
-        }
     }
 
     @Override
@@ -85,7 +83,37 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
     }
 
     private void renderScreen() {
-        int size = 10;
+        drawGradientRect(guiLeft + 140, guiTop + 4, guiLeft + xSize + 36 ,guiTop + 25, 0x50101010, 0x80101010);
+        drawHorizontalLine(guiLeft + 140, guiLeft + xSize + 35, guiTop + 25, 0xFF000000 + CustomNpcResourceListener.DefaultTextColor);
+        String drawString = "§fNo Form Selected";
+        if (selectedForm != null) {
+            drawString = selectedForm.getMenuName();
+        }
+        int textWidth = getStringWidthWithoutColor(drawString);
+        int centerX = guiLeft + 140 + ((xSize - textWidth + 30 - 140) / 2); // Adjusted centerX calculation
+        GL11.glPushMatrix();
+        fontRendererObj.drawString(drawString, centerX, guiTop + 10, CustomNpcResourceListener.DefaultTextColor);
+        GL11.glPopMatrix();
+    }
+
+
+    public int getStringWidthWithoutColor(String text) {
+        int width = 0;
+        boolean isFormattingCode = false;
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            if (c == '§') {
+                if (i < text.length() - 1) {
+                    i += 1;
+                }
+            } else {
+                // If not a color code, calculate the width
+                width += fontRendererObj.getCharWidth(c);
+            }
+        }
+        return width;
     }
 
     @Override

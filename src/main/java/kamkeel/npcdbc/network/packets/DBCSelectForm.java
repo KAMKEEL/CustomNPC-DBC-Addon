@@ -5,10 +5,15 @@ import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.Server;
+import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 
@@ -42,14 +47,20 @@ public final class DBCSelectForm extends AbstractPacket {
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
         PlayerDBCInfo formData = Utility.getFormData(playerData);
         formData.selectedForm = -1;
+        NBTTagCompound compound = new NBTTagCompound();
         if (formID != -1 && FormController.getInstance().has(formID)){
             if(formData.hasUnlocked(formID)){
+                Form form = (Form) FormController.getInstance().get(formID);
                 formData.selectedForm = formID;
-                Utility.sendMessage(player, String.format("§aForm %s §aSelected", FormController.getInstance().get(formID).getMenuName()));
+                Utility.sendMessage(player, String.format("§aForm %s §aSelected", form.getMenuName()));
+                compound = form.writeToNBT();
             }
         } else {
             Utility.sendMessage(player, "§cCleared form selection");
         }
+
         formData.updateClient();
+        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+
     }
 }
