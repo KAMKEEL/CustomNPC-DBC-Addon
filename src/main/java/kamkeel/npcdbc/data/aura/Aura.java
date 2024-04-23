@@ -3,8 +3,12 @@ package kamkeel.npcdbc.data.aura;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.util.Utility;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.controllers.AnimationController;
+import noppes.npcs.scripted.NpcAPI;
 
 public class Aura implements IAura {
     public String name, menuName;
@@ -71,6 +75,34 @@ public class Aura implements IAura {
         id = newID;
     }
 
+    @Override
+    public void assignToPlayer(EntityPlayer p) {
+
+        PlayerDBCInfo formData = Utility.getFormData(p);
+        formData.addAura(this);
+        formData.updateClient();
+
+
+    }
+
+    public void assignToPlayer(String name) {
+        assignToPlayer(NpcAPI.Instance().getPlayer(name).getMCEntity());
+    }
+
+
+    @Override
+    public void removeFromPlayer(EntityPlayer p) {
+        PlayerDBCInfo formData = Utility.getFormData(p);
+        formData.removeAura(this);
+        if (formData.selectedAura == this.id)
+            formData.selectedAura = -1;
+
+        formData.updateClient();
+    }
+
+    public void removeFromPlayer(String name) {
+        removeFromPlayer(NpcAPI.Instance().getPlayer(name).getMCEntity());
+    }
 
     @Override
     public IAura save() {

@@ -14,8 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.controllers.AnimationController;
-import noppes.npcs.controllers.PlayerDataController;
-import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.scripted.NpcAPI;
 
 import java.util.HashMap;
@@ -196,12 +194,9 @@ public class Form implements IForm {
     @Override
     public void assignToPlayer(EntityPlayer p) {
         if (race == DBCRace.ALL || race == DBCData.get(p).Race) {
-            PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
-            PlayerDBCInfo formData = Utility.getFormData(playerData);
+            PlayerDBCInfo formData = Utility.getFormData(p);
             formData.addForm(this);
             formData.updateClient();
-            playerData.updateClient = true;
-            playerData.save();
         }
     }
 
@@ -212,14 +207,13 @@ public class Form implements IForm {
 
     @Override
     public void removeFromPlayer(EntityPlayer p) {
-        PlayerData playerData = PlayerDataController.Instance.getPlayerData(p);
-        PlayerDBCInfo formData = Utility.getFormData(playerData);
+        PlayerDBCInfo formData = Utility.getFormData(p);
         formData.removeForm(this);
         if (formData.selectedForm == this.id)
             formData.selectedForm = -1;
 
         formData.updateClient();
-        playerData.save();
+
     }
 
     public void removeFromPlayer(String name) {
@@ -291,18 +285,18 @@ public class Form implements IForm {
     }
 
     @Override
-    public boolean isFromParentOnly(){
+    public boolean isFromParentOnly() {
         return fromParentOnly;
     }
 
     @Override
-    public void setFromParentOnly(boolean set){
+    public void setFromParentOnly(boolean set) {
         fromParentOnly = set;
     }
 
     @Override
-    public void addFormRequirement(int race, byte state){
-        if(race > 5 || race < 0)
+    public void addFormRequirement(int race, byte state) {
+        if (race > 5 || race < 0)
             return;
 
         // Add some kind of validate State Index Here
@@ -312,8 +306,8 @@ public class Form implements IForm {
     }
 
     @Override
-    public int getFormRequirement(int race){
-        if(!requiredForm.containsKey(race))
+    public int getFormRequirement(int race) {
+        if (!requiredForm.containsKey(race))
             return -1;
 
         return requiredForm.get(race);
@@ -386,7 +380,9 @@ public class Form implements IForm {
     }
 
     @Override
-    public IFormStackable getStackable() { return stackable; }
+    public IFormStackable getStackable() {
+        return stackable;
+    }
 
     @Override
     public IForm save() {
