@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.api;
 
 import cpw.mods.fml.common.Loader;
+import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
@@ -32,6 +33,11 @@ public abstract class AbstractDBCAPI {
     }
 
     public abstract IForm createForm(String name);
+
+    public abstract IAura createAura(String name);
+
+    public abstract IAura getAura(String name);
+
     public abstract IForm getForm(String name);
 
     /**

@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.api;
 
+import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import noppes.npcs.api.entity.IDBCPlayer;
 
@@ -206,6 +207,25 @@ public interface IDBCAddon extends IDBCPlayer {
 
     void removeSelectedCustomForm();
 
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    // Aura stuff
+    void setAura(String auraName);
+
+    void setAura(IAura Aura);
+
+    void giveAura(IAura Aura);
+
+    void removeAura(String AuraName);
+
+    void removeAura(IAura Aura);
+
+    void setSelectedAura(IAura Aura);
+
+    void setSelectedAura(int formid);
+
+    void removeSelectedAura();
+
     /**
      * @return True if player is in any CNPC+ custom form
      */
@@ -227,4 +247,7 @@ public interface IDBCAddon extends IDBCPlayer {
 
     IForm getCurrentCustomForm();
 
+    boolean isInAura();
+
+    boolean isInAura(String auraName);
 }

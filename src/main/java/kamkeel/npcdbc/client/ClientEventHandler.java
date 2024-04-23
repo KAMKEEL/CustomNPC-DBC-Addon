@@ -36,7 +36,7 @@ public class ClientEventHandler {
         if (formData != null && formData.hasSelectedForm()) {
             if (formData.isInCustomForm()) {
                 Form form = formData.getCurrentForm();
-                if (form.hasChild() && formData.hasUnlocked(form.getChildID())){
+                if (form.hasChild() && formData.hasFormUnlocked(form.getChildID())){
                     IForm child = form.getChild();
                     if(verifyFormTransform((Form) child))
                         TransformController.Ascend((Form) child);
@@ -90,7 +90,7 @@ public class ClientEventHandler {
                         return;
                     }
                     Form form = formData.getCurrentForm();
-                    if (form.hasChild() && !formData.hasUnlocked(form.getChildID()))
+                    if (form.hasChild() && !formData.hasFormUnlocked(form.getChildID()))
                         Utility.sendMessage(mc.thePlayer, "§cYou do not have the next transformation unlocked!");
                 }
             }

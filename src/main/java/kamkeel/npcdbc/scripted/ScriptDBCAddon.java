@@ -3,11 +3,14 @@ package kamkeel.npcdbc.scripted;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.JGPlayerMP;
 import kamkeel.npcdbc.api.IDBCAddon;
+import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
@@ -193,7 +196,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public void multiplyAttribute(int statid, double multi) {
-        if (multi == 0) multi = 1.0;
+        if (multi == 0)
+            multi = 1.0;
 
         int[] stats = getAllAttributes();
 
@@ -496,7 +500,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public int getMajinAbsorptionRace() {
-        if (getRace() != 5) return 0;
+        if (getRace() != 5)
+            return 0;
         String s = nbt.getString("jrmcMajinAbsorptionData");
         String[] data = s.split(",");
         String value = data.length >= 3 ? data[1] : "0";
@@ -505,7 +510,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setMajinAbsorptionRace(int race) {
-        if (getRace() != 5) return;
+        if (getRace() != 5)
+            return;
 
         String[] data = nbt.getString("jrmcMajinAbsorptionData").split(",");
         StringBuilder str = new StringBuilder(race + ",");
@@ -518,14 +524,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public int getMajinAbsorptionPower() {
-        if (getRace() != 5) return 0;
+        if (getRace() != 5)
+            return 0;
         String s = nbt.getString("jrmcMajinAbsorptionData");
         return JRMCoreH.getMajinAbsorptionValueS(s);
     }
 
     @Override
     public void setMajinAbsorptionPower(int power) {
-        if (getRace() != 5) return;
+        if (getRace() != 5)
+            return;
 
         String[] data = nbt.getString("jrmcMajinAbsorptionData").split(",");
         String str = power + ",";
@@ -584,6 +592,10 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return JRMCoreH.StusEfcts(12, nbt.getString("jrmcStatusEff"));
     }
 
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    // Form stuff
+
     public void setCustomForm(String formName) {
         Form f = (Form) FormController.Instance.get(formName);
         PlayerDBCInfo c = Utility.getFormData(player);
@@ -606,7 +618,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             }
 
             //  c.saveToNBT(true);
-        } else throw new CustomNPCsException("Player doesn't have form " + formName + " unlocked!");
+        } else
+            throw new CustomNPCsException("Player doesn't have form " + formName + " unlocked!");
     }
 
     @Override
@@ -643,8 +656,10 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void setSelectedCustomForm(int formid) {
         PlayerDBCInfo c = Utility.getFormData(player);
-        if (FormController.getInstance().has(formid)) c.selectedForm = formid;
-        else c.selectedForm = -1;
+        if (FormController.getInstance().has(formid))
+            c.selectedForm = formid;
+        else
+            c.selectedForm = -1;
 
         c.updateClient();
     }
@@ -656,6 +671,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         formData.updateClient();
     }
 
+
     public boolean isInCustomForm() {
         return Utility.getFormData(player).isInCustomForm();
     }
@@ -664,10 +680,13 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return Utility.getFormData(player).isInForm(formName);
     }
 
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    // Form Mastery stuff
     @Override
     public void setCustomMastery(int formid, float value) {
         PlayerDBCInfo formData = Utility.getFormData(player);
-        if (formData.hasUnlocked(formid)) {
+        if (formData.hasFormUnlocked(formid)) {
             formData.setFormLevel(formid, value);
             formData.updateClient();
         }
@@ -677,7 +696,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void addCustomMastery(int formid, float value) {
         PlayerDBCInfo formData = Utility.getFormData(player);
-        if (formData.hasUnlocked(formid)) {
+        if (formData.hasFormUnlocked(formid)) {
             formData.addFormLevel(formid, value);
             formData.updateClient();
         }
@@ -686,7 +705,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void getCustomMastery(int formid) {
         PlayerDBCInfo formData = Utility.getFormData(player);
-        if (formData.hasUnlocked(formid)) {
+        if (formData.hasFormUnlocked(formid)) {
             formData.getFormLevel(formid);
             formData.updateClient();
         }
@@ -695,7 +714,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void removeCustomMastery(int formid) {
         PlayerDBCInfo formData = Utility.getFormData(player);
-        if (formData.hasUnlocked(formid)) {
+        if (formData.hasFormUnlocked(formid)) {
             formData.removeFormMastery(formid);
             formData.updateClient();
         }
@@ -704,4 +723,80 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public IForm getCurrentCustomForm() {
         return Utility.getFormData(player).getCurrentForm();
     }
+
+
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    // Aura stuff
+    @Override
+    public void setAura(String auraName) {
+        Aura aura = (Aura) AuraController.Instance.get(auraName);
+        PlayerDBCInfo c = Utility.getFormData(player);
+        if (c.hasAura(aura)) {
+            //  c.saveToNBT(true);
+        } else
+            throw new CustomNPCsException("Player doesn't have aura " + auraName + " unlocked!");
+    }
+
+    @Override
+    public void setAura(IAura Aura) {
+        setAura(Aura.getName());
+    }
+
+
+    @Override
+    public void giveAura(IAura Aura) {
+        giveAura(Aura.getName());
+    }
+
+    public void giveAura(String AuraName) {
+        IAura aura = AuraController.Instance.get(AuraName);
+        aura.assignToPlayer(player);
+    }
+
+    @Override
+    public void removeAura(String AuraName) {
+        IAura aura = AuraController.Instance.get(AuraName);
+        aura.removeFromPlayer(player);
+    }
+
+    @Override
+    public void removeAura(IAura Aura) {
+        removeAura(Aura.getName());
+    }
+
+    @Override
+    public void setSelectedAura(IAura Aura) {
+        setSelectedAura(Aura != null ? Aura.getID() : -1);
+    }
+
+    @Override
+    public void setSelectedAura(int Auraid) {
+        PlayerDBCInfo c = Utility.getFormData(player);
+        if (AuraController.getInstance().has(Auraid))
+            c.selectedAura = Auraid;
+        else
+            c.selectedAura = -1;
+
+        c.updateClient();
+    }
+
+    @Override
+    public void removeSelectedAura() {
+        PlayerDBCInfo AuraData = Utility.getFormData(player);
+        AuraData.selectedAura = -1;
+        AuraData.updateClient();
+    }
+
+    @Override
+    public boolean isInAura() {
+        return Utility.getFormData(player).isInCustomAura();
+    }
+
+    @Override
+    public boolean isInAura(String auraName) {
+        return Utility.getFormData(player).isInAura(auraName);
+    }
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
 }

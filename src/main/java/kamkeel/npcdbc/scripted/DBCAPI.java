@@ -4,13 +4,16 @@ import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
-import kamkeel.npcdbc.api.*;
+import kamkeel.npcdbc.api.AbstractDBCAPI;
+import kamkeel.npcdbc.api.IKiAttack;
+import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
+import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.data.KiAttack;
+import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.INPCStats;
 import kamkeel.npcdbc.util.DBCUtils;
@@ -44,6 +47,17 @@ public class DBCAPI extends AbstractDBCAPI {
     public IForm getForm(String name) {
         return FormController.getInstance().get(name);
     }
+
+    @Override
+    public IAura createAura(String name) {
+        return AuraController.getInstance().createAura(name);
+    }
+
+    @Override
+    public IAura getAura(String name) {
+        return AuraController.getInstance().get(name);
+    }
+
 
     @Override
     public IDBCStats abstractDBCData() {

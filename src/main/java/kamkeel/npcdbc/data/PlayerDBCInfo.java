@@ -1,7 +1,9 @@
 package kamkeel.npcdbc.data;
 
+import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
@@ -41,7 +43,7 @@ public class PlayerDBCInfo {
         }
     }
 
-    public boolean hasUnlocked(int id) {
+    public boolean hasFormUnlocked(int id) {
         return unlockedForms.contains(id);
     }
 
@@ -107,11 +109,18 @@ public class PlayerDBCInfo {
         return (Form) FormController.Instance.get(selectedForm);
     }
 
-
-    public void updateClient() {
-        ((IPlayerDBCInfo) parent).updateDBCInfo();
+    public void resetAllForm() {
+        TransformController.handleFormDescend((EntityPlayerMP) parent.player);
+        currentForm = -1;
+        selectedForm = -1;
+        unlockedForms = new HashSet<>();
+        formLevels = new HashMap();
+        updateClient();
     }
 
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // Form mastery stuff
     public void updateCurrentFormMastery(String gainType) {
         updateFormMastery(currentForm, gainType);
     }
@@ -170,15 +179,9 @@ public class PlayerDBCInfo {
         return getFormLevel(currentForm);
     }
 
-    public void resetAll() {
-        TransformController.handleFormDescend((EntityPlayerMP) parent.player);
-        currentForm = -1;
-        selectedForm = -1;
-        unlockedForms = new HashSet<>();
-        formLevels = new HashMap();
-        updateClient();
-    }
-
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // Form timer stuff
     public void addTimer(int formid, int timeInTicks) {
         if (!formTimers.containsKey(formid))
             formTimers.put(formid, timeInTicks);
@@ -211,6 +214,75 @@ public class PlayerDBCInfo {
             return formTimers.get(formid) > -1;
         return false;
 
+    }
+
+
+    ///////////////////////////////////////////
+    ///////////////////////////////////////////
+    // Aura stuff
+
+    public void addAura(Aura Aura) {
+        if (!unlockedAuras.contains(Aura.id)) {
+            unlockedAuras.add(Aura.id);
+        }
+    }
+
+    public boolean hasAuraUnlocked(int id) {
+        return unlockedAuras.contains(id);
+    }
+
+    public boolean removeAura(Aura Aura) {
+        return unlockedAuras.remove(Aura.id);
+    }
+
+    public boolean removeAura(int id) {
+        return unlockedAuras.remove(id);
+    }
+
+    public Aura getAura(int id) {
+        if (unlockedAuras.contains(id))
+            return (Aura) AuraController.getInstance().get(id);
+
+        return null;
+    }
+
+    public boolean hasSelectedAura() {
+        return selectedAura > -1 && getSelectedAura() != null;
+    }
+
+    public boolean hasAura(Aura Aura) {
+        return unlockedAuras.contains(Aura.id);
+    }
+
+    public boolean isInCustomAura() {
+        return currentAura > -1 && getCurrentAura() != null;
+    }
+
+    public boolean isInAura(String AuraName) {
+        return getCurrentAura().getName().equals(AuraName);
+    }
+
+    public Aura getCurrentAura() {
+        if (currentAura > 0)
+            return (Aura) AuraController.Instance.get(currentAura);
+        return null;
+    }
+
+    public Aura getUnlockedAura(int id) {
+        if (unlockedAuras.contains(id))
+            return (Aura) AuraController.Instance.get(id);
+        return null;
+    }
+
+    public Aura getSelectedAura() {
+        return (Aura) AuraController.Instance.get(selectedAura);
+    }
+
+    ///////////////////////////////////////////
+    ///////////////////////////////////////////
+    // Data handler
+    public void updateClient() {
+        ((IPlayerDBCInfo) parent).updateDBCInfo();
     }
 
     public void saveNBTData(NBTTagCompound compound) {

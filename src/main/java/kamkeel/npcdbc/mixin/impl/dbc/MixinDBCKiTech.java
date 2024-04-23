@@ -70,7 +70,7 @@ public class MixinDBCKiTech {
 
 
             if (returnEarly) {
-                if (form.hasParent() && formData.hasUnlocked(form.getParentID()))
+                if (form.hasParent() && formData.hasFormUnlocked(form.getParentID()))
                     PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getParentID(), false).generatePacket());
                 else
                     PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false).generatePacket());

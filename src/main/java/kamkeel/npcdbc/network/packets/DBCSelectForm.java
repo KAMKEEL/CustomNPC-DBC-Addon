@@ -1,13 +1,10 @@
 package kamkeel.npcdbc.network.packets;
 
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.AbstractPacket;
-import kamkeel.npcdbc.util.ByteBufUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -18,8 +15,6 @@ import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 
 import java.io.IOException;
-
-import static noppes.npcs.NoppesUtilServer.getPlayerByName;
 
 public final class DBCSelectForm extends AbstractPacket {
     public static final String packetName = "NPCDBC|SelectForm";
@@ -49,7 +44,7 @@ public final class DBCSelectForm extends AbstractPacket {
         formData.selectedForm = -1;
         NBTTagCompound compound = new NBTTagCompound();
         if (formID != -1 && FormController.getInstance().has(formID)){
-            if(formData.hasUnlocked(formID)){
+            if(formData.hasFormUnlocked(formID)){
                 Form form = (Form) FormController.getInstance().get(formID);
                 formData.selectedForm = formID;
                 Utility.sendMessage(player, String.format("§aForm %s §aSelected", form.getMenuName()));
