@@ -49,7 +49,6 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
             //fixes human/majin hair not going from ssj state "B" to base state "A"
             int hairState = rc == 5 ? 0 : s;
-            boolean b = JRMCoreH.HairsT(s, "A");
             if (!JRMCoreH.HairsT(rp.getState(playerName), "A") && JRMCoreH.HairsT(hairState, "A")) {
                 if ((!JRMCoreH.HairsT(rp.getState(playerName), hairState) || rg == 0) && rp.getStateChange(playerName) > 0) {
                     rp.setStateChange(rp.getStateChange(playerName) - trTime.get(), playerName);
@@ -75,7 +74,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 boolean isSaiyan = dbcData.Race == 1 || dbcData.Race == 2;
 
                 if (isSaiyan) {
-                    if (form.display.hairType.equals("ssj4")) { //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
+                    //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
+                    if (form.display.hairType.equals("ssj4")) {
                         if (HD)
                             disableFace(hair, ci);
                         if (isHairPreset(hair))
@@ -91,7 +91,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                         Hair.set("" + JRMCoreH.HairsT[6] + JRMCoreH.Hairs[0]);
 
                     //render brows
-                    if (hair.contains("EYEBROW")) { //bind ssj3 eyebrow texture to ssj3 hair type
+                    if (hair.contains("EYEBROW") && dbcData.Race != 3) { //bind ssj3 eyebrow texture to ssj3 hair type
                         int gen = JRMCoreH.dnsGender(dbcData.DNS);
                         int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
@@ -103,7 +103,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 //eye colors for ALL forms except ssj4
                 if (form.display.eyeColor != -1 && (hair.contains("EYELEFT") || hair.contains("EYERIGHT"))) {
-                    if (form.display.hairType.equals("ssj4") && HD) {
+                    if (form.display.hairType.equals("ssj4") && isSaiyan && HD) {
                     } else
                         RenderPlayerJBRA.glColor3f(form.display.eyeColor);
                 }
