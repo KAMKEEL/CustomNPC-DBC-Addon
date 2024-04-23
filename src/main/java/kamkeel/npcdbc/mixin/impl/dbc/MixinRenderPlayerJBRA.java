@@ -24,7 +24,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(value = RenderPlayerJBRA.class, remap = false)
 public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
@@ -209,7 +211,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 }
             }
         }
+
     }
+
 
     @Unique
     private void renderSSJ4Arm(Form form, EntityPlayer player, int id, int gender, int bodyCM) {
@@ -257,6 +261,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Shadow
     private void func_aam2(ModelRenderer ra, ModelRenderer la, int id, boolean c) {
     }
+
 
 
 }

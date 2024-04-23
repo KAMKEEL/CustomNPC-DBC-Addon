@@ -48,7 +48,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     }
 
     @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At("HEAD"), cancellable = true)
-    public void formRendering(float par1, String hair, String anim, CallbackInfoReturnable<String> ci) {
+    public void formRendering(float par1, String hair, String anim, CallbackInfoReturnable<String> ci, @Local(ordinal = 0) LocalRef<String> Hair) {
         if (ClientEventHandler.renderingPlayer != null) {
             Form form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
             if (form != null) {
@@ -84,7 +84,17 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     } else
                         RenderPlayerJBRA.glColor3f(form.display.eyeColor);
                 }
+                if (isHairPreset(hair)) {
+                    String oldHair = Hair.get();
+                    if (form.display.hairType.equals("base"))
+                        oldHair = oldHair.replace(oldHair.charAt(0), 'A');
+                    else if (form.display.hairType.equals("ssj"))
+                        oldHair = oldHair.replace(oldHair.charAt(0), 'B');
+                    else if (form.display.hairType.equals("ssj2"))
+                        oldHair = oldHair.replace(oldHair.charAt(0), 'C');
+                    Hair.set(oldHair);
 
+                }
                 if (hair.contains("SJT")) { // Tail Color
                     int color = isMonke ? form.display.furColor : form.display.hairColor;
                     if (color != -1) {
