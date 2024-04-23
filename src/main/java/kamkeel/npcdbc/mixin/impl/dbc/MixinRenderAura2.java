@@ -33,7 +33,7 @@ public class MixinRenderAura2 {
     private void auraSize(Args args) {
         Aura aura = null;//add here
 
-        if (aura.hasSize()) {
+        if (aura != null && aura.hasSize()) {
             float xSize = (float) args.get(0) * aura.getSize();
             float ySize = (float) args.get(1) * aura.getSize();
             float zSize = (float) args.get(2) * aura.getSize();
