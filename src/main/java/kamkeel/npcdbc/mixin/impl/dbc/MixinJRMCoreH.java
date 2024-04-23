@@ -132,8 +132,12 @@ public abstract class MixinJRMCoreH {
         if (!keepMasteries) {
             NBTTagCompound PlayerPersisted = nbt(p);
             for (int i = 0; i < Races.length; i++)
-                if (PlayerPersisted.hasKey(getNBTFormMasteryRacialKey(i)) && i != getByte(p, "jrmcRace")) //remove all form mastery tags that are not player's race
+                if (PlayerPersisted.hasKey(getNBTFormMasteryRacialKey(i))) //remove all form mastery tags that are not player's race
                     PlayerPersisted.removeTag(getNBTFormMasteryRacialKey(i));
+
+            if (PlayerPersisted.hasKey("jrmcFormMasteryNonRacial"))
+                PlayerPersisted.removeTag("jrmcFormMasteryNonRacial");
+
         }
     }
 
@@ -179,7 +183,7 @@ public abstract class MixinJRMCoreH {
     @ModifyArgs(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
     private static void setDamage(Args args) {
         String type = args.get(2);
-        if(lastSetDamage != -1 && type.equals("jrmcBdy")){
+        if (lastSetDamage != -1 && type.equals("jrmcBdy")) {
             int curBody = getInt(args.get(1), "jrmcBdy");
             int newHealth = curBody - lastSetDamage;
             args.set(0, Math.max(0, newHealth));
