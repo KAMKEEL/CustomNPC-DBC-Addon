@@ -138,12 +138,12 @@ public class TransformController {
 
         if (form.getMastery().hasInstantTransformationUnlockLevel())
             if (curLevel >= form.getMastery().getInstantTransformationUnlockLevel())
-                return 50;
+                return 15;
 
         if (Utility.percentBetween(curLevel, maxLevel, 0, 5))
-            return 2;
+            return 1;
         else if (Utility.percentBetween(curLevel, maxLevel, 5, 101))
-            return 50 * ratio;
+            return 15 * ratio;
         return 0;
     }
 
