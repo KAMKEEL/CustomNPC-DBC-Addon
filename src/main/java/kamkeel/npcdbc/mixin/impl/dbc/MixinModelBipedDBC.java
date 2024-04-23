@@ -158,6 +158,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
             if (form != null) {
                 HD = ConfigDBCClient.EnableHDTextures;
+                boolean isSaiyan = rc == 1 || rc == 2;
 
                 String hairTexture = "normall.png";
                 TextureManager texMan = Minecraft.getMinecraft().renderEngine;
@@ -178,6 +179,9 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     texMan.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + hairTexture));
                 } else if (form.display.hairType.equals("ssj4")) {
                     texMan.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + hairTexture));
+                } else if (form.display.hairType.equals("oozaru")) {
+                    st.set(0);
+                    race.set(1);
                 }
 
                 //color CH
@@ -195,9 +199,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 }
 
                 //remove CH if SSJ3/Oozaru
-                if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("oozaru"))
+                if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("oozaru") && (isSaiyan))
                     ci.cancel();
-
 
             }
         }
