@@ -5,9 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class FormMastery implements IFormMastery {
 
-    private Form parent;
-
-    public float maxLevel = 100, instantTransformationUnlockLevel = 50;
+    public float maxLevel = 100, instantTransformationUnlockLevel = -1;
     public float attributeMultiFlat = 1.0f, attributeMultiPerLevel = 0.01f, attributeMultiMinOrMax = 1.5f;
     public float updateGain = 0.01f, updateMultiDivPlus = 100, updateMindBonusFlat = 1.0f, updateMindBonusPerMind = 0.001f, updateMindBonusMax = 1.5f;
     public float attackGain = 0.03f, attackMultiDivPlus = 100, attackMindBonusFlat = 1.0f, attackMindBonusPerMind = 0.001f, attackMindBonusMax = 1.5f;
@@ -16,6 +14,7 @@ public class FormMastery implements IFormMastery {
     public float kiDrainMultiFlat = 1.0f, kiDrainMultiPerLevel = -0.01f, kiDrainMultiMinOrMax = 0.5f;
     public float strainMultiFlat = 1.0f, strainMultiPerLevel = -0.01f, strainMultiMinOrMax = 0.5f;
     public float healthRequirementMultiFlat = 1.0f, healthRequirementMultiPerLevel = 0.01f, healthRequirementMultiMinOrMax = 1.5f;
+    private Form parent;
 
     public FormMastery(Form parent) {
         this.parent = parent;
@@ -263,6 +262,11 @@ public class FormMastery implements IFormMastery {
 
     public void setInstantTransformationUnlockLevel(float value) {
         this.instantTransformationUnlockLevel = value;
+    }
+
+    @Override
+    public boolean hasInstantTransformationUnlockLevel() {
+        return instantTransformationUnlockLevel > -1;
     }
 
     public float calculateMulti(String type, float playerLevel) {

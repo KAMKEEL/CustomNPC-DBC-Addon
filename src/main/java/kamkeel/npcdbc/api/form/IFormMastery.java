@@ -46,6 +46,8 @@ public interface IFormMastery {
 
     void setInstantTransformationUnlockLevel(float value);
 
+    boolean hasInstantTransformationUnlockLevel();
+
     /**
      * Saves CustomForm with the New Form Mastery Modifications
      *

@@ -45,7 +45,7 @@ public class TransformController {
         releaseTime++;
         soundTime++;
         TransformController.setAscending(true);
-        rageValue = getRageMeterIncrementation();
+        rageValue = getRageMeterIncrementation(form);
         rage += rageValue;
         JRMCoreH.TransSaiCurRg = (byte) rage;
         PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
@@ -130,34 +130,20 @@ public class TransformController {
     }
 
     @SideOnly(Side.CLIENT)
-    public static float getRageMeterIncrementation() {
-        double fm = 6;//getFormMasteryValue(k);
-        double maxfm = 100;//getMaxFormMasteryValue(k);
+    public static float getRageMeterIncrementation(Form form) {
+        PlayerFormData formData = Utility.getSelfData();
+        float curLevel = formData.getFormLevel(form.id);
+        float maxLevel = form.getMastery().getMaxLevel();
+        float ratio = curLevel / maxLevel;
 
-        if (Utility.percentBetween(fm, maxfm, 0, 5))
-            return 3;
-        else if (Utility.percentBetween(fm, maxfm, 5, 10))
-            return 6f;
-        else if (Utility.percentBetween(fm, maxfm, 10, 20))
-            return 10;
-        else if (Utility.percentBetween(fm, maxfm, 20, 30))
-            return 15;
-        else if (Utility.percentBetween(fm, maxfm, 30, 40))
-            return 20;
-        else if (Utility.percentBetween(fm, maxfm, 40, 50))
-            return 25;
-        else if (Utility.percentBetween(fm, maxfm, 50, 60))
-            return 30;
-        else if (Utility.percentBetween(fm, maxfm, 60, 70))
-            return 35;
-        else if (Utility.percentBetween(fm, maxfm, 70, 80))
-            return 40;
-        else if (Utility.percentBetween(fm, maxfm, 80, 90))
-            return 45;
-        else if (Utility.percentBetween(fm, maxfm, 90, 100))
-            return 50;
-        else if (fm >= maxfm)
-            return 100;
+        if (form.getMastery().hasInstantTransformationUnlockLevel())
+            if (curLevel >= form.getMastery().getInstantTransformationUnlockLevel())
+                return 50;
+
+        if (Utility.percentBetween(curLevel, maxLevel, 0, 5))
+            return 2;
+        else if (Utility.percentBetween(curLevel, maxLevel, 5, 101))
+            return 50 * ratio;
         return 0;
     }
 
