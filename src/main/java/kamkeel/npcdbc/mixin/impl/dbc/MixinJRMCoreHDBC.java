@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreHDBC;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
@@ -39,8 +41,8 @@ public class MixinJRMCoreHDBC {
         }
     }
 
-    @Inject(method = "DBCsizeBasedOnRace2(IIZ)F", at = @At("HEAD"), cancellable = true)
-    private static void setCustomFormSize(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir) {
+    @Inject(method = "DBCsizeBasedOnRace2(IIZ)F", at = @At(value = "TAIL"), cancellable = true)
+    private static void setCustomFormSize(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir, @Local(name = "f3") LocalFloatRef size) {
         if (CommonProxy.CurrentJRMCTickPlayer != null) {
             Form form = null;
 
@@ -50,8 +52,11 @@ public class MixinJRMCoreHDBC {
                     form = data.getCurrentForm();
             } else
                 form = Utility.getFormClient(CommonProxy.CurrentJRMCTickPlayer);
-            if (form != null) {
-                cir.setReturnValue(form.display.formSize);
+            if (form != null && form.display.hasSize()) {
+                if (form.display.keepOriginalSize)
+                    cir.setReturnValue(size.get() * form.display.formSize);
+                else
+                    cir.setReturnValue(form.display.formSize);
             }
         }
     }

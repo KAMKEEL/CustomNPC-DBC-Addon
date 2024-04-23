@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class FormStackable implements IFormStackable {
 
-    private Form parent;
+    private final Form parent;
 
     public boolean vanillaStackable = false;
     public boolean kaiokenStackable = true, uiStackable = true, godStackable = true, mysticStackable = true;

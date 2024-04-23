@@ -59,7 +59,7 @@ public class ClientEventHandler {
         if(formData == null)
             return false;
 
-        DBCData dbcData = DBCData.getData(mc.thePlayer);
+        DBCData dbcData = DBCData.getClient();
         // Check for in Required DBC Form before Transforming
         if(form.requiredForm.containsKey((int) dbcData.Race)){
             if(form.requiredForm.get((int) dbcData.Race) != dbcData.State){
