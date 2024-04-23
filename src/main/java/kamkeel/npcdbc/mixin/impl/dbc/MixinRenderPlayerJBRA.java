@@ -130,7 +130,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     }
 
-}
 
     @Unique
     private void renderSSJ4Fur(Form form, int gender, int bodyCM) {
