@@ -18,7 +18,8 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
-import static JinRyuu.JRMCore.JRMCoreH.*;
+import static JinRyuu.JRMCore.JRMCoreH.isInBaseForm;
+import static JinRyuu.JRMCore.JRMCoreH.rc_arc;
 
 public class TransformController {
 
@@ -157,28 +158,18 @@ public class TransformController {
         PlayerDBCInfo formData = Utility.getFormData(player);
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
-
             Form form = (Form) FormController.getInstance().get(formID);
-
-            // Check for in Required DBC Form before Transforming
-            if(form.requiredForm.containsKey((int) dbcData.Race)){
-                if(form.requiredForm.get((int) dbcData.Race) != dbcData.State)
-                    return;
-            } else {
-                // Must be in Parent Form to Transform
-                if(form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm)
-                    return;
-            }
 
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), formData.currentForm != 1, prevID, true, formID)))
                 return;
 
             if (!isInBaseForm(dbcData.Race, dbcData.State) && !form.stackable.vanillaStackable) {
-                if (rc_arc(dbcData.Race) && dbcData.State >=4)
-                    dbcData.State = 4;
-                else
-                    dbcData.State = 0;
+                if (!formData.getForm(formID).stackable.vanillaStackable)
+                    if (rc_arc(dbcData.Race) && dbcData.State >= 4)
+                        dbcData.State = 4;
+                    else
+                        dbcData.State = 0;
             }
 
             formData.currentForm = formID;

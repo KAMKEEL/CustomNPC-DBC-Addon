@@ -4,12 +4,14 @@ package kamkeel.npcdbc.data;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.config.ConfigClient;
@@ -41,10 +43,33 @@ public class DBCData {
         this.player = player;
         this.side = player.worldObj.isRemote ? Side.CLIENT : Side.SERVER;
 
-        if(side == Side.SERVER)
+        if (side == Side.SERVER)
             loadNBTData();
     }
 
+    public static DBCData getData(EntityPlayer player) {
+        synchronized (dbcDataCache) {
+            if (!dbcDataCache.containsKey(player.getCommandSenderName()))
+                dbcDataCache.put(player.getCommandSenderName(), new CacheHashMap.CachedObject<>(new DBCData(player)));
+            return dbcDataCache.get(player.getCommandSenderName()).getObject();
+        }
+    }
+
+    public static DBCData get(EntityPlayer player) {
+        DBCData data;
+        if (player.worldObj.isRemote) {
+            data = ClientCache.getClientData(player);
+        } else {
+            data = getData(player);
+        }
+        data.player = player;
+        return data;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static DBCData getClient() {
+        return get(Minecraft.getMinecraft().thePlayer);
+    }
 
     public NBTTagCompound saveFromNBT(NBTTagCompound comp) {
         comp.setInteger("jrmcStrI", STR);
@@ -114,7 +139,6 @@ public class DBCData {
         addonFormID = c.getInteger("addonFormID");
         addonFormLevel = c.getFloat("addonFormLevel");
     }
-
 
     public void saveNBTData() {
         NBTTagCompound nbt = this.saveFromNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
@@ -376,24 +400,5 @@ public class DBCData {
             default:
                 return false;
         }
-    }
-
-    public static DBCData getData(EntityPlayer player){
-        synchronized (dbcDataCache) {
-            if (!dbcDataCache.containsKey(player.getCommandSenderName()))
-                dbcDataCache.put(player.getCommandSenderName(), new CacheHashMap.CachedObject<>(new DBCData(player)));
-            return dbcDataCache.get(player.getCommandSenderName()).getObject();
-        }
-    }
-
-    public static DBCData get(EntityPlayer player) {
-        DBCData data;
-        if (player.worldObj.isRemote) {
-            data = ClientCache.getClientData(player);
-        } else {
-            data = getData(player);
-        }
-        data.player = player;
-        return data;
     }
 }

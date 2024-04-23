@@ -6,6 +6,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.Utility;
@@ -34,6 +35,18 @@ public class ClientEventHandler {
         if (formData != null && formData.hasSelectedForm()) {
             if (formData.isInCustomForm()) {
                 Form form = formData.getCurrentForm();
+                DBCData dbcData = DBCData.getClient();
+
+                // Check for in Required DBC Form before Transforming
+                if (form.requiredForm.containsKey((int)dbcData.Race )) {
+                    if (form.requiredForm.get((int) dbcData.Race) != dbcData.State)
+                        return;
+                } else {
+                    // Must be in Parent Form to Transform
+                    if (form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm)
+                        return;
+                }
+
                 if (form.hasChild() && formData.hasUnlocked(form.getChildID()))
                     TransformController.Ascend(form.getC());
             } else
