@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
-import kamkeel.npcdbc.data.Aura;
+import kamkeel.npcdbc.data.aura.Aura;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,24 +29,24 @@ public class MixinEntityAura2 {
       //  state = 5;
         bol7 = true;
         if (aura != null) {
-            if (aura.hasLightning)
+            if (aura.display.hasLightning)
                 state = 5;
-            if (aura.hasColor1)
-                color = aura.color1;
-            if (aura.hasColor2)
-                colorl2 = aura.color2;
-            if (aura.hasColor3)
-                colorl3 = aura.color3;
-            if (aura.hasTexture1)
-                tex = aura.texture1;
-            if (aura.hasTexture2)
-                texl2 = aura.texture2;
-            if (aura.hasTexture3)
-                texl3 = aura.texture3;
-            if (aura.hasSpeed)
-                speed = aura.speed;
-            if (aura.hasAlpha)
-                alpha = aura.alpha;
+            if (aura.display.hasColor("color1"))
+                color = aura.display.color1;
+            if (aura.display.hasColor("color2"))
+                colorl2 = aura.display.color2;
+            if (aura.display.hasColor("color3"))
+                colorl3 = aura.display.color3;
+//            if (aura.display.hasTexture1)
+//                tex = aura.display.texture1;
+//            if (aura.display.hasTexture2)
+//                texl2 = aura.display.texture2;
+//            if (aura.display.hasTexture3)
+//                texl3 = aura.display.texture3;
+            if (aura.display.hasSpeed())
+                speed = (int) aura.display.speed;
+            if (aura.display.hasAlpha("lightning"))
+                alpha = aura.display.alpha;
         }
     }
 

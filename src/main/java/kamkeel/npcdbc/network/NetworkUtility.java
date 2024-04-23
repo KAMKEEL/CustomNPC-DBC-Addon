@@ -2,7 +2,7 @@ package kamkeel.npcdbc.network;
 
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.Aura;
+import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.entity.player.EntityPlayerMP;
 
