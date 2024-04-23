@@ -25,7 +25,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(value = RenderPlayerJBRA.class, remap = false)
 public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
@@ -58,7 +57,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
         }
         if (form != null) {
-            st.set(0);
             if (form.display.hasColor("bodycm"))
                 bodyCM.set(form.display.bodyCM);
             if (form.display.hasColor("bodyC1"))
@@ -168,10 +166,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER), remap = true)
-    private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "State") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
+    private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "State") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
         Form form = Utility.getFormClient(par1EntityPlayer);
         if (form != null) {
-            st.set(0);
             if (form.display.hasColor("bodycm"))
                 bodyCM.set(form.display.bodyCM);
             if (form.display.hasColor("bodyC1"))
@@ -180,6 +177,20 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 bodyC2.set(form.display.bodyC2);
             if (form.display.hasColor("bodyC3"))
                 bodyC3.set(form.display.bodyC3);
+
+            if (race.get() == 4) {
+                if (form.display.bodyType.equals("firstform"))
+                    st.set(0);
+                else if (form.display.bodyType.equals("secondform"))
+                    st.set(2);
+                else if (form.display.bodyType.equals("thirdform"))
+                    st.set(3);
+                else if (form.display.bodyType.equals("finalform"))
+                    st.set(4);
+                else if (form.display.bodyType.equals("ultimatecooler"))
+                    st.set(5);
+
+            }
         }
     }
 
