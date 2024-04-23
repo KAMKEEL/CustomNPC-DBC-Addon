@@ -20,8 +20,7 @@ public class MixinJRMCoreHDBC {
             PlayerFormData formData = Utility.getSelfData();
             if (Utility.stackTraceContains("chargePart")) {
                 formData = Utility.getFormData(CommonProxy.CurrentJRMCTickPlayer);
-                Form form = formData.getCurrentForm();
-                form = formData != null ? formData.getCurrentForm() : null;
+                Form form = formData != null ? formData.getCurrentForm() : null;
                 if (form != null && form.display.auraColor != -1)
                     ci.setReturnValue(form.display.auraColor);
             }

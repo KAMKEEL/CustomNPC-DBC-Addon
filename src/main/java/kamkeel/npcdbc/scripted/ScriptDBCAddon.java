@@ -2,13 +2,13 @@ package kamkeel.npcdbc.scripted;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.JGPlayerMP;
-import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.IDBCAddon;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -193,8 +193,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public void multiplyAttribute(int statid, double multi) {
-        if (multi == 0)
-            multi = 1.0;
+        if (multi == 0) multi = 1.0;
 
         int[] stats = getAllAttributes();
 
@@ -497,8 +496,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public int getMajinAbsorptionRace() {
-        if (getRace() != 5)
-            return 0;
+        if (getRace() != 5) return 0;
         String s = nbt.getString("jrmcMajinAbsorptionData");
         String[] data = s.split(",");
         String value = data.length >= 3 ? data[1] : "0";
@@ -507,8 +505,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setMajinAbsorptionRace(int race) {
-        if (getRace() != 5)
-            return;
+        if (getRace() != 5) return;
 
         String[] data = nbt.getString("jrmcMajinAbsorptionData").split(",");
         StringBuilder str = new StringBuilder(race + ",");
@@ -521,16 +518,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public int getMajinAbsorptionPower() {
-        if (getRace() != 5)
-            return 0;
+        if (getRace() != 5) return 0;
         String s = nbt.getString("jrmcMajinAbsorptionData");
         return JRMCoreH.getMajinAbsorptionValueS(s);
     }
 
     @Override
     public void setMajinAbsorptionPower(int power) {
-        if (getRace() != 5)
-            return;
+        if (getRace() != 5) return;
 
         String[] data = nbt.getString("jrmcMajinAbsorptionData").split(",");
         String str = power + ",";
@@ -611,8 +606,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             }
 
             //  c.saveToNBT(true);
-        } else
-            throw new CustomNPCsException("Player doesn't have form " + formName + " unlocked!");
+        } else throw new CustomNPCsException("Player doesn't have form " + formName + " unlocked!");
     }
 
     @Override
@@ -649,10 +643,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void setSelectedCustomForm(int formid) {
         PlayerFormData c = Utility.getFormData(player);
-        if (FormController.getInstance().has(formid))
-            c.selectedForm = formid;
-        else
-            c.selectedForm = -1;
+        if (FormController.getInstance().has(formid)) c.selectedForm = formid;
+        else c.selectedForm = -1;
 
         c.updateClient();
     }
@@ -670,6 +662,43 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     public boolean isInCustomForm(String formName) {
         return Utility.getFormData(player).isInForm(formName);
+    }
+
+    @Override
+    public void setCustomMastery(int formid, float value) {
+        PlayerFormData formData = Utility.getFormData(player);
+        if (formData.hasUnlocked(formid)) {
+            formData.setFormLevel(formid, value);
+            formData.updateClient();
+        }
+
+    }
+
+    @Override
+    public void addCustomMastery(int formid, float value) {
+        PlayerFormData formData = Utility.getFormData(player);
+        if (formData.hasUnlocked(formid)) {
+            formData.addFormLevel(formid, value);
+            formData.updateClient();
+        }
+    }
+
+    @Override
+    public void getCustomMastery(int formid) {
+        PlayerFormData formData = Utility.getFormData(player);
+        if (formData.hasUnlocked(formid)) {
+            formData.getFormLevel(formid);
+            formData.updateClient();
+        }
+    }
+
+    @Override
+    public void removeCustomMastery(int formid) {
+        PlayerFormData formData = Utility.getFormData(player);
+        if (formData.hasUnlocked(formid)) {
+            formData.removeFormMastery(formid);
+            formData.updateClient();
+        }
     }
 
     public IForm getCurrentCustomForm() {

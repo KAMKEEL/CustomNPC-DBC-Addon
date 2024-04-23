@@ -217,6 +217,14 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     boolean isInCustomForm(String formName);
 
+    void setCustomMastery(int formid, float value);
+
+    void addCustomMastery(int formid, float value);
+
+    void getCustomMastery(int formid);
+
+    void removeCustomMastery(int formid);
+
     IForm getCurrentCustomForm();
 
 }

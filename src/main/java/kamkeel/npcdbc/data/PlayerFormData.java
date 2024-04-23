@@ -140,7 +140,7 @@ public class PlayerFormData {
         updateClient();
     }
 
-    public void addFormMastery(int formID, int amount) {
+    public void addFormLevel(int formID, float amount) {
         Form form = FormController.getInstance().customForms.get(formID);
         if (form != null) {
             float current = formLevels.get(formID);
@@ -150,12 +150,19 @@ public class PlayerFormData {
         }
     }
 
-    public void removeFormMastery(int formID, int amount) {
+    public void setFormLevel(int formID, float amount) {
         Form form = FormController.getInstance().customForms.get(formID);
         if (form != null) {
-            float current = formLevels.get(formID);
-            float updated = Math.max(current - amount, 0);
+            float updated = Math.min(amount, ((FormMastery) form.getMastery()).maxLevel);
             formLevels.put(formID, updated);
+            updateClient();
+        }
+    }
+
+    public void removeFormMastery(int formID) {
+        Form form = FormController.getInstance().customForms.get(formID);
+        if (form != null) {
+            formLevels.remove(formID);
             updateClient();
         }
     }
