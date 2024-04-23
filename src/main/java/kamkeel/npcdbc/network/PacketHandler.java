@@ -7,6 +7,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.network.packets.DBCInfoSync;
 import kamkeel.npcdbc.network.packets.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.network.packets.TransformPacket;
@@ -27,6 +28,7 @@ public final class PacketHandler {
         map.put(PingPacket.packetName, new PingPacket());
         map.put(TransformPacket.packetName, new TransformPacket());
         map.put(DBCSetValPacket.packetName, new DBCSetValPacket());
+        map.put(DBCInfoSync.packetName, new DBCInfoSync());
         this.register();
     }
 
