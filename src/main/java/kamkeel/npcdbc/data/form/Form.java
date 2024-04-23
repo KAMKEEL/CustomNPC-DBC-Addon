@@ -5,7 +5,6 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormDisplay;
 import kamkeel.npcdbc.api.form.IFormMastery;
 import kamkeel.npcdbc.api.form.IFormStackable;
-import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.DBCData;
@@ -43,6 +42,7 @@ public class Form implements IForm {
      * ID of parent and child forms of this
      */
     public int childID = -1, parentID = -1;
+    public boolean fromParentOnly = true;
 
     public float strengthMulti = 1.0f;
     public float dexMulti = 1.0f;
@@ -71,6 +71,7 @@ public class Form implements IForm {
         timer = compound.getInteger("timer");
         childID = compound.getInteger("childID");
         parentID = compound.getInteger("parentID");
+        fromParentOnly = compound.getBoolean("fromParentOnly");
         requiredForm = NBTTags.getIntegerIntegerMap(compound.getTagList("requiredForm", 10));
 
         NBTTagCompound attributes = compound.getCompoundTag("attributes");
@@ -92,9 +93,10 @@ public class Form implements IForm {
         compound.setString("name", name);
         compound.setString("menuName", menuName);
         compound.setInteger("race", race);
+        compound.setInteger("timer", timer);
         compound.setInteger("childID", childID);
         compound.setInteger("parentID", parentID);
-        compound.setInteger("timer", timer);
+        compound.setBoolean("fromParentOnly", fromParentOnly);
         compound.setTag("requiredForm", NBTTags.nbtIntegerIntegerMap(requiredForm));
 
         NBTTagCompound attributes = new NBTTagCompound();
@@ -284,6 +286,16 @@ public class Form implements IForm {
     @Override
     public void linkParent(IForm form) {
         linkParent(form.getID());
+    }
+
+    @Override
+    public boolean isFromParentOnly(){
+        return fromParentOnly;
+    }
+
+    @Override
+    public void setFromParentOnly(boolean set){
+        fromParentOnly = set;
     }
 
     @Override
