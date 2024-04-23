@@ -1,8 +1,8 @@
 package kamkeel.npcdbc.controllers;
 
-import kamkeel.npcdbc.api.IAura;
+import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.constants.DBCSyncType;
-import kamkeel.npcdbc.data.Aura;
+import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCInfoSync;
 import net.minecraft.nbt.CompressedStreamTools;

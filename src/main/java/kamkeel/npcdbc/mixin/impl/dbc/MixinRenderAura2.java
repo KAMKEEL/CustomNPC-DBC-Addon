@@ -4,7 +4,7 @@ import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.DragonBC.common.Npcs.RenderAura2;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import kamkeel.npcdbc.data.Aura;
+import kamkeel.npcdbc.data.aura.Aura;
 import net.minecraft.client.renderer.Tessellator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,9 +23,9 @@ public class MixinRenderAura2 {
         Aura aura = null;//add here
         if (aura != null) {
 
-            if (aura.hasLightning() && aura.lightningColor != 0) {
-                Color col = Color.decode(aura.lightningColor + "");
-                tessellator.get().setColorRGBA(col.getRed(), col.getGreen(), col.getBlue(), aura.lightningAlpha);
+            if (aura.display.getHasLightning() && aura.display.lightningColor != 0) {
+                Color col = Color.decode(aura.display.lightningColor + "");
+                tessellator.get().setColorRGBA(col.getRed(), col.getGreen(), col.getBlue(), aura.display.lightningAlpha);
             }
         }
     }
@@ -34,10 +34,10 @@ public class MixinRenderAura2 {
     private void auraSize(Args args) {
         Aura aura = null;//add here
 
-        if (aura != null && aura.hasSize()) {
-            float xSize = (float) args.get(0) * aura.getSize();
-            float ySize = (float) args.get(1) * aura.getSize();
-            float zSize = (float) args.get(2) * aura.getSize();
+        if (aura != null && aura.display.hasSize()) {
+            float xSize = (float) args.get(0) * aura.display.getSize();
+            float ySize = (float) args.get(1) * aura.display.getSize();
+            float zSize = (float) args.get(2) * aura.display.getSize();
 
             args.set(0, xSize);
             args.set(1, ySize);

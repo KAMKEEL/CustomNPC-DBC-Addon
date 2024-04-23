@@ -10,16 +10,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.controllers.data.PlayerData;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * Store all player Addon DBC Info here
  */
 public class PlayerDBCInfo {
     public PlayerData parent;
+
     public int currentForm = -1;
     public int selectedForm = -1;
 
