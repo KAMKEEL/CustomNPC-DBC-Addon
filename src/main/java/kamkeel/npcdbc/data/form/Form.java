@@ -435,11 +435,7 @@ public class Form implements IForm {
     public boolean hasTimer() {
         return timer > 0;
     }
-
-    //internal
-    public Form getP() {
-        return (Form) FormController.Instance.get(parentID);
-    }
+    
 
     @Override
     public int getParentID() {
