@@ -196,25 +196,34 @@ public class TransformController {
         if (formData.isInCustomForm()) {
             Form form = formData.getCurrentForm();
             DBCData dbcData = DBCData.get(player);
-            boolean intoParent = form.hasParent() && formData.hasUnlocked(form.getParentID());
+
+            Form parent = FormController.getInstance().customForms.get(form.getParentID());
+            boolean intoParent = parent != null && formData.hasUnlocked(form.getParentID());
 
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), formData.currentForm != 1, prevID, true, intoParent ? form.getParentID() : -1)))
                 return;
 
-            if (intoParent) {
-                Utility.sendMessage(player, "§cDescended into§r " + form.getParent().getMenuName());
-                formData.currentForm = form.getParentID();
-            } else if (formData.getTimer(form.id) == 0) {
-                Utility.sendMessage(player, "§cTimer for§r " + form.getMenuName() + "§c has ran out!");
-            } else {
-                Utility.sendMessage(player, "§cDescended from§r " + form.getMenuName());
+            if(form.requiredForm.containsKey((int) dbcData.Race)){
                 formData.currentForm = -1;
+                Utility.sendMessage(player, "§cDescended from§r " + form.getMenuName());
+                dbcData.State = form.requiredForm.get((int) dbcData.Race);
+            }
+            else {
+                if (intoParent) {
+                    Utility.sendMessage(player, "§cDescended into§r " + form.getParent().getMenuName());
+                    formData.currentForm = form.getParentID();
+                } else if (formData.getTimer(form.id) == 0) {
+                    Utility.sendMessage(player, "§cTimer for§r " + form.getMenuName() + "§c has ran out!");
+                } else {
+                    Utility.sendMessage(player, "§cDescended from§r " + form.getMenuName());
+                    formData.currentForm = -1;
+                }
             }
 
             formData.updateClient();
             JRMCoreH.setByte(0, player, "jrmcSaiRg");
-            DBCData.get(player).saveNBTData();
+            dbcData.saveNBTData();
         }
     }
 }

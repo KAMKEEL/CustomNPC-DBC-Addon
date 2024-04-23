@@ -36,7 +36,7 @@ public class Form implements IForm {
     /**
      * ID of parent and child forms of this
      */
-    public HashMap<Integer, Integer> requiredForm = new HashMap<>();
+    public HashMap<Integer, Byte> requiredForm = new HashMap<>();
 
     /**
      * ID of parent and child forms of this
@@ -72,7 +72,7 @@ public class Form implements IForm {
         childID = compound.getInteger("childID");
         parentID = compound.getInteger("parentID");
         fromParentOnly = compound.getBoolean("fromParentOnly");
-        requiredForm = NBTTags.getIntegerIntegerMap(compound.getTagList("requiredForm", 10));
+        requiredForm = NBTTags.getIntegerByteMap(compound.getTagList("requiredForm", 10));
 
         NBTTagCompound attributes = compound.getCompoundTag("attributes");
         strengthMulti = attributes.getFloat("strMulti");
@@ -97,7 +97,7 @@ public class Form implements IForm {
         compound.setInteger("childID", childID);
         compound.setInteger("parentID", parentID);
         compound.setBoolean("fromParentOnly", fromParentOnly);
-        compound.setTag("requiredForm", NBTTags.nbtIntegerIntegerMap(requiredForm));
+        compound.setTag("requiredForm", NBTTags.nbtIntegerByteMap(requiredForm));
 
         NBTTagCompound attributes = new NBTTagCompound();
         attributes.setFloat("strMulti", strengthMulti);
@@ -299,7 +299,7 @@ public class Form implements IForm {
     }
 
     @Override
-    public void addFormRequirement(int race, int state){
+    public void addFormRequirement(int race, byte state){
         if(race > 5 || race < 0)
             return;
 
