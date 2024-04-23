@@ -23,10 +23,14 @@ public interface IFormStackable {
      */
     boolean isFormStackable(int DBCForm);
 
+    boolean isVanillaStackable();
+
+    void setVanillaStackable(boolean vanillaStackable);
+
     /**
      * @param DBCForm Non-racial DBC Forms, 20 Kaioken, 21 Mystic, 22 UI, 23 GoD
      */
-    void stackForm(int DBCForm, boolean stackForm);
+    void allowStackForm(int DBCForm, boolean stackForm);
 
 
     void setState2Factor(int dbcForm, float factor);

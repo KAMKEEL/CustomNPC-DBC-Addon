@@ -73,6 +73,10 @@ public interface IForm {
 
     void linkChild(IForm form);
 
+    boolean isFromParentOnly();
+
+    void setFromParentOnly(boolean set);
+
     void addFormRequirement(int race, int state);
 
     int getFormRequirement(int race);
