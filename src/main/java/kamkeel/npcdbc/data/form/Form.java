@@ -4,6 +4,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormDisplay;
 import kamkeel.npcdbc.api.form.IFormMastery;
+import kamkeel.npcdbc.api.form.IFormStackable;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
@@ -31,6 +32,7 @@ public class Form implements IForm {
 
     public FormMastery mastery = new FormMastery(this);
     public FormDisplay display = new FormDisplay(this);
+    public FormStackable stackable = new FormStackable(this);
 
     /**
      * ID of parent and child forms of this
@@ -46,13 +48,6 @@ public class Form implements IForm {
     public float dexMulti = 1.0f;
     public float willMulti = 1.0f;
 
-
-    /**
-     * Customization
-     */
-    public boolean kaiokenStackable = true, uiStackable = true, godStackable = true, mysticStackable = true;
-    public float kaiokenStrength = 1.0f, uiStrength = 1.0f, godStrength = 1.0f, mysticStrength = 1.0f;
-    public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
@@ -83,19 +78,6 @@ public class Form implements IForm {
         dexMulti = attributes.getFloat("dexMulti");
         willMulti = attributes.getFloat("willMulti");
 
-        NBTTagCompound stack = compound.getCompoundTag("stackableForms");
-        kaiokenStrength = stack.getFloat("kaiokenStrength");
-        kaiokenStackable = stack.getBoolean("kaiokenStackable");
-        kaiokenState2Factor = stack.getFloat("kaiokenState2Factor");
-        uiStrength = stack.getFloat("uiStrength");
-        uiStackable = stack.getBoolean("uiStackable");
-        uiState2Factor = stack.getFloat("uiState2Factor");
-        godStrength = stack.getFloat("godStrength");
-        godStackable = stack.getBoolean("godStackable");
-        mysticStrength = stack.getFloat("mysticStrength");
-        mysticStackable = stack.getBoolean("mysticStackable");
-
-
         NBTTagCompound sounds = compound.getCompoundTag("sounds");
         ascendSound = sounds.getString("ascendSound");
         descendSound = sounds.getString("descendSound");
@@ -116,23 +98,10 @@ public class Form implements IForm {
         compound.setTag("requiredForm", NBTTags.nbtIntegerIntegerMap(requiredForm));
 
         NBTTagCompound attributes = new NBTTagCompound();
-        compound.setTag("attributes", attributes);
         attributes.setFloat("strMulti", strengthMulti);
         attributes.setFloat("dexMulti", dexMulti);
         attributes.setFloat("willMulti", willMulti);
-
-        NBTTagCompound stack = new NBTTagCompound();
-        compound.setTag("stackableForms", stack);
-        stack.setFloat("kaiokenStrength", kaiokenStrength);
-        stack.setBoolean("kaiokenStackable", kaiokenStackable);
-        stack.setFloat("kaiokenState2Factor", kaiokenState2Factor);
-        stack.setFloat("uiStrength", uiStrength);
-        stack.setBoolean("uiStackable", uiStackable);
-        stack.setFloat("uiState2Factor", uiState2Factor);
-        stack.setFloat("godStrength", godStrength);
-        stack.setBoolean("godStackable", godStackable);
-        stack.setFloat("mysticStrength", mysticStrength);
-        stack.setBoolean("mysticStackable", mysticStackable);
+        compound.setTag("attributes", attributes);
 
         NBTTagCompound sounds = new NBTTagCompound();
         sounds.setString("ascendSound", ascendSound);
@@ -142,28 +111,6 @@ public class Form implements IForm {
         mastery.writeToNBT(compound);
         display.writeToNBT(compound);
         return compound;
-    }
-
-    public void setState2Factor(int dbcForm, float factor) {
-        switch (dbcForm) {
-            case DBCForm.Kaioken:
-                kaiokenState2Factor = factor;
-                break;
-            case DBCForm.UltraInstinct:
-                uiState2Factor = factor;
-                break;
-        }
-    }
-
-    public float getState2Factor(int dbcForm) {
-        switch (dbcForm) {
-            case DBCForm.Kaioken:
-                return kaiokenState2Factor;
-            case DBCForm.UltraInstinct:
-                return uiState2Factor;
-            default:
-                return 1.0f;
-        }
     }
 
 
@@ -241,70 +188,6 @@ public class Form implements IForm {
         return 1.0f;
     }
 
-    public boolean isFormStackable(int dbcForm) {
-        switch (dbcForm) {
-            case DBCForm.Kaioken:
-                return kaiokenStackable;
-            case DBCForm.UltraInstinct:
-                return uiStackable;
-            case DBCForm.GodOfDestruction:
-                return godStackable;
-            case DBCForm.Mystic:
-                return mysticStackable;
-            default:
-                return false;
-        }
-    }
-
-
-    public void stackForm(int dbcForm, boolean stackForm) {
-        switch (dbcForm) {
-            case DBCForm.Kaioken:
-                kaiokenStackable = stackForm;
-                break;
-            case DBCForm.UltraInstinct:
-                uiStackable = stackForm;
-                break;
-            case DBCForm.GodOfDestruction:
-                godStackable = stackForm;
-                break;
-            case DBCForm.Mystic:
-                mysticStackable = stackForm;
-                break;
-        }
-    }
-
-    public void setFormMulti(int dbcForm, float multi) {
-        switch (dbcForm) {
-            case DBCForm.Kaioken:
-                kaiokenStrength = multi;
-                break;
-            case DBCForm.UltraInstinct:
-                uiStrength = multi;
-                break;
-            case DBCForm.GodOfDestruction:
-                godStrength = multi;
-                break;
-            case DBCForm.Mystic:
-                mysticStrength = multi;
-                break;
-        }
-    }
-
-    public float getFormMulti(int dbcForm) {
-        switch (dbcForm) {
-            case DBCForm.Kaioken:
-                return kaiokenStrength;
-            case DBCForm.UltraInstinct:
-                return uiStrength;
-            case DBCForm.GodOfDestruction:
-                return godStrength;
-            case DBCForm.Mystic:
-                return mysticStrength;
-            default:
-                return 1.0f;
-        }
-    }
 
     @Override
     public void assignToPlayer(EntityPlayer p) {
@@ -492,6 +375,8 @@ public class Form implements IForm {
         return display;
     }
 
+    @Override
+    public IFormStackable getStackable() { return stackable; }
 
     @Override
     public IForm save() {

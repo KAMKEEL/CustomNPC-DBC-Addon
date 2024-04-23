@@ -367,67 +367,67 @@ public class FormMastery implements IFormMastery {
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound formMastery = new NBTTagCompound();
-        compound.setTag("formMastery", formMastery);
-
         formMastery.setFloat("maxLevel", maxLevel);
         formMastery.setFloat("instantTransformationUnlockLevel", instantTransformationUnlockLevel);
 
         NBTTagCompound attributeMulti = new NBTTagCompound();
-        formMastery.setTag("attributeMulti", attributeMulti);
         attributeMulti.setFloat("flat", attributeMultiFlat);
         attributeMulti.setFloat("perLevel", attributeMultiPerLevel);
         attributeMulti.setFloat("max", attributeMultiMinOrMax);
+        formMastery.setTag("attributeMulti", attributeMulti);
 
         NBTTagCompound kiDrainMulti = new NBTTagCompound();
-        formMastery.setTag("kiDrainMulti", kiDrainMulti);
         kiDrainMulti.setFloat("flat", kiDrainMultiFlat);
         kiDrainMulti.setFloat("perLevel", kiDrainMultiPerLevel);
         kiDrainMulti.setFloat("minOrMax", kiDrainMultiMinOrMax);
+        formMastery.setTag("kiDrainMulti", kiDrainMulti);
 
         NBTTagCompound strainMulti = new NBTTagCompound();
-        formMastery.setTag("strainMulti", strainMulti);
         strainMulti.setFloat("flat", strainMultiFlat);
         strainMulti.setFloat("perLevel", strainMultiPerLevel);
         strainMulti.setFloat("minOrMax", strainMultiMinOrMax);
+        formMastery.setTag("strainMulti", strainMulti);
 
         NBTTagCompound healthRequirementMulti = new NBTTagCompound();
-        formMastery.setTag("healthRequirementMulti", healthRequirementMulti);
         healthRequirementMulti.setFloat("flat", healthRequirementMultiFlat);
         healthRequirementMulti.setFloat("perLevel", healthRequirementMultiPerLevel);
         healthRequirementMulti.setFloat("minOrMax", healthRequirementMultiMinOrMax);
+        formMastery.setTag("healthRequirementMulti", healthRequirementMulti);
 
         NBTTagCompound update = new NBTTagCompound();
-        formMastery.setTag("update", update);
         update.setFloat("gain", updateGain);
         update.setFloat("multiDivPlus", updateMultiDivPlus);
         update.setFloat("flat", updateMindBonusFlat);
         update.setFloat("perMind", updateMindBonusPerMind);
         update.setFloat("max", updateMindBonusMax);
+        formMastery.setTag("update", update);
 
         NBTTagCompound attack = new NBTTagCompound();
-        formMastery.setTag("attack", attack);
         attack.setFloat("gain", attackGain);
         attack.setFloat("multiDivPlus", attackMultiDivPlus);
         attack.setFloat("flat", attackMindBonusFlat);
         attack.setFloat("perMind", attackMindBonusPerMind);
         attack.setFloat("max", attackMindBonusMax);
+        formMastery.setTag("attack", attack);
 
         NBTTagCompound damaged = new NBTTagCompound();
-        formMastery.setTag("damaged", damaged);
         damaged.setFloat("gain", damagedGain);
         damaged.setFloat("multiDivPlus", damagedMultiDivPlus);
         damaged.setFloat("flat", damagedMindBonusFlat);
         damaged.setFloat("perMind", damagedMindBonusPerMind);
         damaged.setFloat("max", damagedMindBonusMax);
+        formMastery.setTag("damaged", damaged);
 
         NBTTagCompound fireKi = new NBTTagCompound();
-        formMastery.setTag("fireKi", fireKi);
         fireKi.setFloat("gain", fireKiGain);
         fireKi.setFloat("multiDivPlus", fireKiMultiDivPlus);
         fireKi.setFloat("flat", fireKiMindBonusFlat);
         fireKi.setFloat("perMind", fireKiMindBonusPerMind);
         fireKi.setFloat("max", fireKiMindBonusMax);
-        return formMastery;
+        formMastery.setTag("fireKi", fireKi);
+
+        compound.setTag("formMastery", formMastery);
+        return compound;
     }
 
     public IFormMastery save() {

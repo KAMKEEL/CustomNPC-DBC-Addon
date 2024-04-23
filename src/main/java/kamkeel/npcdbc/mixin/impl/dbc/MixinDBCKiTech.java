@@ -34,10 +34,10 @@ public class MixinDBCKiTech {
             if (formData != null && formData.isInCustomForm()) {
                 Form form = formData.getCurrentForm();
                 if (form != null) {
-                    if (JRMCoreH.PlyrSettingsB(0) && form.isFormStackable(DBCForm.Kaioken)) {
-                    } else if (JRMCoreH.PlyrSettingsB(11) && form.isFormStackable(DBCForm.UltraInstinct)) {
-                    } else if (JRMCoreH.PlyrSettingsB(16) && form.isFormStackable(DBCForm.GodOfDestruction)) {
-                    } else if (JRMCoreH.PlyrSettingsB(6) && form.isFormStackable(DBCForm.Mystic)) {
+                    if (JRMCoreH.PlyrSettingsB(0) && form.stackable.isFormStackable(DBCForm.Kaioken)) {
+                    } else if (JRMCoreH.PlyrSettingsB(11) && form.stackable.isFormStackable(DBCForm.UltraInstinct)) {
+                    } else if (JRMCoreH.PlyrSettingsB(16) && form.stackable.isFormStackable(DBCForm.GodOfDestruction)) {
+                    } else if (JRMCoreH.PlyrSettingsB(6) && form.stackable.isFormStackable(DBCForm.Mystic)) {
                     } else
                         ci.cancel();
                 }

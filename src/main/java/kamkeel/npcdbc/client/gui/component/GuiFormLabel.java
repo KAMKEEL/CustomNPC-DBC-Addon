@@ -43,13 +43,13 @@ public class GuiFormLabel extends GuiDBC {
         y += 15;
         parent.addLabel(new GuiNpcLabel(++formDataID, "Stackable Forms", guiLeft + 8, guiTop + 14 + y));
         y += 15;
-        parent.addLabel(new GuiNpcLabel(++formDataID, "Kaioken: " + form.isFormStackable(DBCForm.Kaioken), guiLeft + 8, guiTop + 14 + y));
+        parent.addLabel(new GuiNpcLabel(++formDataID, "Kaioken: " + form.stackable.isFormStackable(DBCForm.Kaioken), guiLeft + 8, guiTop + 14 + y));
         y += 15;
-        parent.addLabel(new GuiNpcLabel(++formDataID, "Mystic: " + form.isFormStackable(DBCForm.Mystic), guiLeft + 8, guiTop + 14 + y));
+        parent.addLabel(new GuiNpcLabel(++formDataID, "Mystic: " + form.stackable.isFormStackable(DBCForm.Mystic), guiLeft + 8, guiTop + 14 + y));
         y += 15;
-        parent.addLabel(new GuiNpcLabel(++formDataID, "Ultra Instinct: " + form.isFormStackable(DBCForm.UltraInstinct), guiLeft + 8, guiTop + 14 + y));
+        parent.addLabel(new GuiNpcLabel(++formDataID, "Ultra Instinct: " + form.stackable.isFormStackable(DBCForm.UltraInstinct), guiLeft + 8, guiTop + 14 + y));
         y += 15;
-        parent.addLabel(new GuiNpcLabel(++formDataID, "God Of Destruction:  " + form.isFormStackable(DBCForm.GodOfDestruction), guiLeft + 8, guiTop + 14 + y));
+        parent.addLabel(new GuiNpcLabel(++formDataID, "God Of Destruction:  " + form.stackable.isFormStackable(DBCForm.GodOfDestruction), guiLeft + 8, guiTop + 14 + y));
 
     }
 

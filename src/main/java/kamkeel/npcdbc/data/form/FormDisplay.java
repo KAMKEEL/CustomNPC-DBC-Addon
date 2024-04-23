@@ -46,7 +46,6 @@ public class FormDisplay implements IFormDisplay {
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound rendering = new NBTTagCompound();
-        compound.setTag("rendering", rendering);
         rendering.setInteger("auraColor", auraColor);
         rendering.setInteger("eyeColor", eyeColor);
         rendering.setInteger("hairColor", hairColor);
@@ -61,7 +60,8 @@ public class FormDisplay implements IFormDisplay {
         rendering.setBoolean("hasArcoMask", hasArcoMask);
         rendering.setBoolean("effectMajinHair", effectMajinHair);
         rendering.setFloat("formSize", formSize);
-        return rendering;
+        compound.setTag("rendering", rendering);
+        return compound;
     }
 
     @Override
