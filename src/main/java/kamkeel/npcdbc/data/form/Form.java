@@ -85,6 +85,7 @@ public class Form implements IForm {
 
         mastery.readFromNBT(compound);
         display.readFromNBT(compound);
+        stackable.readFromNBT(compound);
     }
 
     public NBTTagCompound writeToNBT() {
@@ -112,6 +113,7 @@ public class Form implements IForm {
 
         mastery.writeToNBT(compound);
         display.writeToNBT(compound);
+        stackable.writeToNBT(compound);
         return compound;
     }
 
