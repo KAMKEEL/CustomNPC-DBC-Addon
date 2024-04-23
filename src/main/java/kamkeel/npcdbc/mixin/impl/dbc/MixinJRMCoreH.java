@@ -59,22 +59,22 @@ public abstract class MixinJRMCoreH {
                 GoDOn = false;
                 switch (race) {
                     case 0:
-                        result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, st, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                        result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, 0, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
                         break;
                     case 1:
-                        result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, st, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                        result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, 0, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
                         break;
                     case 2:
-                        result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, st, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                        result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, 0, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
                         break;
                     case 3:
-                        result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, st, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                        result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, 0, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
                         break;
                     case 4:
-                        result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, st, currRelease, arcRel, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                        result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, 0, currRelease, arcRel, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
                         break;
                     case 5:
-                        result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, st, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn, majinAbs);
+                        result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, 0, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn, majinAbs);
                         break;
                     default:
                         result = currAttributes[attribute];

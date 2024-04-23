@@ -18,6 +18,8 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
+import static JinRyuu.JRMCore.JRMCoreH.*;
+
 public class TransformController {
 
     public static int s, id, time, releaseTime, soundTime;
@@ -160,8 +162,10 @@ public class TransformController {
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), formData.currentForm != 1, prevID, true, formID)))
                 return;
 
-            if (dbcData.State > 0)
-                dbcData.State = 0;
+            if (!isInBaseForm(dbcData.Race, dbcData.State)) {
+               // if (!rc_arc(dbcData.Race) && !rc_maj(dbcData.Race) &&)
+                   // dbcData.State = 0;
+            }
 
             formData.currentForm = formID;
             if (formData.getForm(formID).hasTimer())
