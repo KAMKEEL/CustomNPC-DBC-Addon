@@ -175,11 +175,12 @@ public class TransformController {
                 return;
 
             if (!isInBaseForm(dbcData.Race, dbcData.State)) {
-                if (!formData.getForm(formID).stackable.vanillaStackable)
+                if (!form.stackable.vanillaStackable){
                     if (rc_arc(dbcData.Race) && dbcData.State >= 4)
                         dbcData.State = 4;
                     else
                         dbcData.State = 0;
+                }
             }
 
             formData.currentForm = formID;
