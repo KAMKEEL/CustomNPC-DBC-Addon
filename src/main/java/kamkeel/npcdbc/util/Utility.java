@@ -205,12 +205,11 @@ public class Utility {
     }
 
     public static String removeBoldColorCode(String s) {
-        for (int i = 0; i < s.length(); i++)
-            if (s.charAt(i) == '§' && (s.charAt(i + 1) == 'l'))
+        for (int i = 0; i < s.length() - 2; i++) {
+            if (s.charAt(i) == '§' && (s.charAt(i + 1) == 'l')) {
                 return s.substring(0, i) + s.substring(i + 2);
-
-
+            }
+        }
         return s;
-
     }
 }

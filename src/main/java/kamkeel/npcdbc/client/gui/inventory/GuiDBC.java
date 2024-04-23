@@ -2,6 +2,10 @@ package kamkeel.npcdbc.client.gui.inventory;
 
 import kamkeel.npcdbc.client.gui.component.GuiFormScroll;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.DBCSelectForm;
+import kamkeel.npcdbc.network.packets.TransformPacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -98,12 +102,11 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             if (selected != null) {
                 if (unlockedForms.containsKey(selected)) {
                     int formID = unlockedForms.get(selected);
-                    //the formID is correct for each form, but it still doesn't set it on client side
-                    Client.sendData(EnumPacketServer.CustomFormSet, formID);
+                    PacketHandler.Instance.sendToServer(new DBCSelectForm(formID).generatePacket());
                 }
             }
         } else if (guibutton.id == 2) {
-            Client.sendData(EnumPacketServer.CustomFormSet, -1);
+            PacketHandler.Instance.sendToServer(new DBCSelectForm(-1).generatePacket());
             selected = null;
             guiFormScroll.selected = -1;
         }

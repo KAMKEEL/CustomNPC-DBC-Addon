@@ -34,7 +34,6 @@ public class DBCData {
     // Custom Form
     public int addonFormID;
     public float addonFormLevel;
-
     public DBCData() {
         this.side = Side.SERVER;
     }
