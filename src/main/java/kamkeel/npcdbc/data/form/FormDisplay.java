@@ -19,7 +19,8 @@ public class FormDisplay implements IFormDisplay {
 
     public String bodyType = "";
     public int bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
-    public boolean hasMask = false;
+    public boolean hasArcoMask = false;
+    public boolean effectMajinHair = false;
 
     public FormDisplay(Form parent) {
         this.parent = parent;
@@ -38,7 +39,8 @@ public class FormDisplay implements IFormDisplay {
         bodyC1 = rendering.getInteger("bodyC1");
         bodyC2 = rendering.getInteger("bodyC2");
         bodyC3 = rendering.getInteger("bodyC3");
-        hasMask = rendering.getBoolean("hasMask");
+        hasArcoMask = rendering.getBoolean("hasArcoMask");
+        effectMajinHair = rendering.getBoolean("effectMajinHair");
         formSize = rendering.getFloat("formSize");
     }
 
@@ -56,7 +58,8 @@ public class FormDisplay implements IFormDisplay {
         rendering.setInteger("bodyC1", bodyC1);
         rendering.setInteger("bodyC2", bodyC2);
         rendering.setInteger("bodyC3", bodyC3);
-        rendering.setBoolean("hasMask", hasMask);
+        rendering.setBoolean("hasArcoMask", hasArcoMask);
+        rendering.setBoolean("effectMajinHair", effectMajinHair);
         rendering.setFloat("formSize", formSize);
         return rendering;
     }
@@ -220,13 +223,23 @@ public class FormDisplay implements IFormDisplay {
     }
 
     @Override
-    public boolean hasMask() {
-        return hasMask;
+    public boolean hasArcoMask() {
+        return hasArcoMask;
     }
 
     @Override
-    public void hasMask(boolean hasMask) {
-        this.hasMask = hasMask;
+    public void hasArcoMask(boolean hasMask) {
+        this.hasArcoMask = hasMask;
+    }
+
+    @Override
+    public boolean effectMajinHair() {
+        return effectMajinHair;
+    }
+
+    @Override
+    public void setEffectMajinHair(boolean effect) {
+        this.effectMajinHair = effect;
     }
 
 

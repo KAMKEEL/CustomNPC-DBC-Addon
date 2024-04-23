@@ -68,9 +68,13 @@ public interface IFormDisplay {
 
     String getBodyType();
 
-    public boolean hasMask();
+    public boolean hasArcoMask();
 
-    void hasMask(boolean hasMask);
+    void hasArcoMask(boolean hasMask);
+
+    boolean effectMajinHair();
+
+    void setEffectMajinHair(boolean effect);
 
     /**
      * Saves CustomForm with the New Form Display Modifications

@@ -81,7 +81,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 else if (form.display.bodyType.equals("ultimatecooler"))
                     st.set(5);
 
-                if (form.display.hasMask())
+                if (form.display.hasArcoMask())
                     mask.set(true);
                 else
                     mask.set(false);
