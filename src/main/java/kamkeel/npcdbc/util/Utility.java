@@ -4,9 +4,9 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -204,4 +204,13 @@ public class Utility {
         sendScrollData(player, map);
     }
 
+    public static String removeBoldColorCode(String s) {
+        for (int i = 0; i < s.length(); i++)
+            if (s.charAt(i) == '§' && (s.charAt(i + 1) == 'l'))
+                return s.substring(0, i) + s.substring(i + 2);
+
+
+        return s;
+
+    }
 }

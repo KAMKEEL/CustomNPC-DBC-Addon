@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
+import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -16,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 @Mixin(value = JRMCoreGuiScreen.class, remap = false)
@@ -60,6 +62,20 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                 var8.drawString(e0, xpos, ypos, 0);
                 var8.drawString(e[1], xpos + pos, ypos, DBCUtils.getCurrentFormColor());
                 int wpos = var8.getStringWidth(s1);
+
+                //Form Mastery
+                DecimalFormat formatter = new DecimalFormat("#.##");
+                float curLevel = formData.getFormLevel(formData.currentForm);
+
+                boolean removeBase = s2.contains(JRMCoreH.trl("jrmc", "Base"));
+                boolean isInKaioken = JRMCoreH.StusEfctsMe(5);
+                int kaiokenID = JRMCoreH.getFormID("Kaioken", JRMCoreH.Race);
+                double kaiokenLevel = JRMCoreH.getFormMasteryValue(JRMCoreClient.mc.thePlayer, kaiokenID);
+                String kaiokenString = "\n" + JRMCoreH.cldgy + "§cKaioken Mastery §8Lvl: " + JRMCoreH.cldr + formatter.format(kaiokenLevel);
+
+
+                s2 = Utility.removeBoldColorCode(name) + " §8Mastery Lvl: §4" + formatter.format(curLevel) + (removeBase ? (isInKaioken ? kaiokenString : "") : "\n§8" + s2);
+
                 if (xpos < x && xpos + wpos > x && ypos - 3 < y && ypos + 10 > y) {
                     int ll = 200;
                     Object[] txt = new Object[]{s2, "§8", 0, true, x + 5, y + 5, ll};

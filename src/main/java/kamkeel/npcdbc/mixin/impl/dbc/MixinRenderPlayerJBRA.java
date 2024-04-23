@@ -2,7 +2,6 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
-import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
@@ -232,16 +231,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                                          bodyCM, @Local(name = "gen") LocalIntRef gender) {
 
         Form form = Utility.getFormClient(par1EntityPlayer);
-        if (form != null) {
-            if (race.get() == 1 || race.get() == 2) {
-                if (form.display.hairType.equals("ssj4")) {
-                    //ssj4 arm
-                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get());
-                } else if (form.display.hairType.equals("oozaru")) {
-                    //oozaru arm
-                    renderOozaruArm(form.display.furColor, par1EntityPlayer, id.get(), bodyCM.get());
-                }
+        if (form != null && (race.get() == 1 || race.get() == 2)) {
+            if (form.display.hairType.equals("ssj4")) {
+                renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get());
+            } else if (form.display.hairType.equals("oozaru")) {
+                renderOozaruArm(form.display.furColor, par1EntityPlayer, id.get(), bodyCM.get());
             }
+
         }
 
     }
@@ -254,7 +250,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         RenderPlayerJBRA.glColor3f(bodyCM);
         renderArm(id, player);
 
-        JRMCoreClient.mc.getTextureManager().bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
+        this.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
         RenderPlayerJBRA.glColor3f(form.display.furColor);
         renderArm(id, player);
 
@@ -264,12 +260,12 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     private void renderOozaruArm(int furColor, EntityPlayer player, int id, int bodyCM) {
         ResourceLocation bdyskn = new ResourceLocation((HD ? HDDir + "oozaru/" : "jinryuudragonbc:cc/") + "oozaru1.png");
-        JRMCoreClient.mc.getTextureManager().bindTexture(bdyskn);
+        this.bindTexture(bdyskn);
         RenderPlayerJBRA.glColor3f(bodyCM);
         renderArm(id, player);
 
         bdyskn = new ResourceLocation((HD ? HDDir + "oozaru/" : "jinryuudragonbc:cc/") + "oozaru2.png");
-        JRMCoreClient.mc.getTextureManager().bindTexture(bdyskn);
+        this.bindTexture(bdyskn);
         RenderPlayerJBRA.glColor3f(furColor);
         renderArm(id, player);
     }
