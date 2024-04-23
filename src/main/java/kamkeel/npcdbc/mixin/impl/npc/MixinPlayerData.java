@@ -1,35 +1,35 @@
 package kamkeel.npcdbc.mixin.impl.npc;
 
-import kamkeel.npcdbc.data.PlayerFormData;
-import kamkeel.npcdbc.mixin.IPlayerFormData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import noppes.npcs.controllers.data.PlayerData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 
 @Mixin(PlayerData.class)
-public abstract class MixinPlayerData implements IPlayerFormData {
+public abstract class MixinPlayerData implements IPlayerDBCInfo {
 
     @Unique
-    public PlayerFormData formData = new PlayerFormData((PlayerData)(Object)this);
+    public PlayerDBCInfo formData = new PlayerDBCInfo((PlayerData)(Object)this);
 
     @Unique
     public boolean formUpdate = false;
 
     @Unique
-    public PlayerFormData getPlayerFormData(){
+    public PlayerDBCInfo getPlayerDBCInfo(){
         return formData;
     }
 
     @Unique
     @Override
-    public boolean getFormUpdate(){ return formUpdate;}
+    public boolean getDBCInfoUpdate(){ return formUpdate;}
 
     @Unique
     @Override
-    public void updateFormInfo(){ formUpdate = true;}
+    public void updateDBCInfo(){ formUpdate = true;}
 
     @Unique
     @Override
-    public void finishFormInfo(){ formUpdate = false;}
+    public void endDBCInfo(){ formUpdate = false;}
 }

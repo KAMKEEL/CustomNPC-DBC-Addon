@@ -7,7 +7,7 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
@@ -586,7 +586,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     public void setCustomForm(String formName) {
         Form f = (Form) FormController.Instance.get(formName);
-        PlayerFormData c = Utility.getFormData(player);
+        PlayerDBCInfo c = Utility.getFormData(player);
         if (c.hasForm(f)) {
             DBCData d = DBCData.get(player);
             d.State = 0;
@@ -642,7 +642,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setSelectedCustomForm(int formid) {
-        PlayerFormData c = Utility.getFormData(player);
+        PlayerDBCInfo c = Utility.getFormData(player);
         if (FormController.getInstance().has(formid)) c.selectedForm = formid;
         else c.selectedForm = -1;
 
@@ -651,7 +651,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void removeSelectedCustomForm() {
-        PlayerFormData formData = Utility.getFormData(player);
+        PlayerDBCInfo formData = Utility.getFormData(player);
         formData.selectedForm = -1;
         formData.updateClient();
     }
@@ -666,7 +666,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setCustomMastery(int formid, float value) {
-        PlayerFormData formData = Utility.getFormData(player);
+        PlayerDBCInfo formData = Utility.getFormData(player);
         if (formData.hasUnlocked(formid)) {
             formData.setFormLevel(formid, value);
             formData.updateClient();
@@ -676,7 +676,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void addCustomMastery(int formid, float value) {
-        PlayerFormData formData = Utility.getFormData(player);
+        PlayerDBCInfo formData = Utility.getFormData(player);
         if (formData.hasUnlocked(formid)) {
             formData.addFormLevel(formid, value);
             formData.updateClient();
@@ -685,7 +685,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void getCustomMastery(int formid) {
-        PlayerFormData formData = Utility.getFormData(player);
+        PlayerDBCInfo formData = Utility.getFormData(player);
         if (formData.hasUnlocked(formid)) {
             formData.getFormLevel(formid);
             formData.updateClient();
@@ -694,7 +694,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void removeCustomMastery(int formid) {
-        PlayerFormData formData = Utility.getFormData(player);
+        PlayerDBCInfo formData = Utility.getFormData(player);
         if (formData.hasUnlocked(formid)) {
             formData.removeFormMastery(formid);
             formData.updateClient();

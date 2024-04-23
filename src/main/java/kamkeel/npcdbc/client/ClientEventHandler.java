@@ -6,7 +6,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.controllers.TransformController;
-import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -30,7 +30,7 @@ public class ClientEventHandler {
     }
 
     private void performAscend() {
-        PlayerFormData formData = Utility.getSelfData();
+        PlayerDBCInfo formData = Utility.getSelfData();
         if (formData != null && formData.hasSelectedForm()) {
             if (formData.isInCustomForm()) {
                 Form form = formData.getCurrentForm();
@@ -46,7 +46,7 @@ public class ClientEventHandler {
     public void onKeyPress(InputEvent.KeyInputEvent e) {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.currentScreen == null && KeyHandler.AscendKey.isPressed()) {
-            PlayerFormData formData = Utility.getSelfData();
+            PlayerDBCInfo formData = Utility.getSelfData();
             if (formData != null) {
                 if (formData.selectedForm == -1)
                     Utility.sendMessage(mc.thePlayer, "§cYou have not selected a custom form!");

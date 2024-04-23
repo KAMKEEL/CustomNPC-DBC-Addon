@@ -119,7 +119,7 @@ public class DBCData {
     public void saveNBTData() {
         NBTTagCompound nbt = this.saveFromNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
 
-        PlayerFormData formData = Utility.getFormData(player);
+        PlayerDBCInfo formData = Utility.getFormData(player);
         addonFormID = formData.currentForm;
         addonFormLevel = formData.getCurrentLevel();
         nbt.setInteger("addonFormID", addonFormID);
@@ -133,7 +133,7 @@ public class DBCData {
         NBTTagCompound dbc = this.player.getEntityData().getCompoundTag(DBCPersisted);
 
         // Save the DBC Addon tags to PlayerPersisted before loading it to fields
-        PlayerFormData formData = Utility.getFormData(player);
+        PlayerDBCInfo formData = Utility.getFormData(player);
         dbc.setInteger("addonFormID", formData.currentForm);
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
 

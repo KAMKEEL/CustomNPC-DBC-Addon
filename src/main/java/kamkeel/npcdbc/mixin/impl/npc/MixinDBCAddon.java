@@ -4,12 +4,12 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.addon.DBCAddon;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.INPCStats;
-import kamkeel.npcdbc.mixin.IPlayerFormData;
+import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
@@ -146,7 +146,7 @@ public class MixinDBCAddon {
      */
     @Overwrite(remap = false)
     public void writeToNBT(PlayerData playerData, NBTTagCompound nbtTagCompound) {
-        ((IPlayerFormData) playerData).getPlayerFormData().saveNBTData(nbtTagCompound);
+        ((IPlayerDBCInfo) playerData).getPlayerDBCInfo().saveNBTData(nbtTagCompound);
     }
 
     /**
@@ -155,7 +155,7 @@ public class MixinDBCAddon {
      */
     @Overwrite(remap = false)
     public void readFromNBT(PlayerData playerData, NBTTagCompound nbtTagCompound) {
-        ((IPlayerFormData) playerData).getPlayerFormData().loadNBTData(nbtTagCompound);
+        ((IPlayerDBCInfo) playerData).getPlayerDBCInfo().loadNBTData(nbtTagCompound);
     }
 
     /**
@@ -271,7 +271,7 @@ public class MixinDBCAddon {
     public void formPacketSet(EntityPlayer player, ByteBuf buffer) throws IOException {
         int formID = buffer.readInt();
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
-        PlayerFormData data = ((IPlayerFormData) playerData).getPlayerFormData();
+        PlayerDBCInfo data = ((IPlayerDBCInfo) playerData).getPlayerDBCInfo();
         if(data == null)
             return;
 
@@ -306,7 +306,7 @@ public class MixinDBCAddon {
     @Overwrite(remap = false)
     public void formPacketPlayers(EntityPlayer player){
         Utility.sendPlayerFormData((EntityPlayerMP) player);
-        PlayerFormData data = ((IPlayerFormData) PlayerDataController.Instance.getPlayerData(player)).getPlayerFormData();
+        PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
         NBTTagCompound compound = new NBTTagCompound();
         if(data != null &&  data.selectedForm != -1){
             Form customForm = (Form) FormController.getInstance().get(data.selectedForm);

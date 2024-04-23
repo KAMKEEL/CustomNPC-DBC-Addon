@@ -4,12 +4,12 @@ import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.gui.inventory.GuiDBC;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.util.Utility;
 import noppes.npcs.client.gui.util.GuiNpcLabel;
 
 public class GuiFormLabel extends GuiDBC {
-    public PlayerFormData formData;
+    public PlayerDBCInfo formData;
     GuiDBC parent;
     Form form;
 

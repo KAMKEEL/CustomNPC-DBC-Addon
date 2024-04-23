@@ -4,7 +4,7 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
-import kamkeel.npcdbc.mixin.IPlayerFormData;
+import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
@@ -15,17 +15,18 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Store all player Addon Form Data here
+ * Store all player Addon DBC Info here
  */
-public class PlayerFormData {
+public class PlayerDBCInfo {
     public PlayerData parent;
     public int currentForm = -1;
     public int selectedForm = -1;
+
     public HashMap<Integer, String> unlockedForms = new HashMap<Integer, String>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
 
-    public PlayerFormData(PlayerData parent) {
+    public PlayerDBCInfo(PlayerData parent) {
         this.parent = parent;
     }
 
@@ -70,7 +71,6 @@ public class PlayerFormData {
     }
 
     public String getFormColorCode(Form f) {
-        // §2§lHi
         if (f.getMenuName().contains("§")) {
             String s = f.getMenuName();
             int i = s.indexOf("§");
@@ -116,7 +116,7 @@ public class PlayerFormData {
 
 
     public void updateClient() {
-        ((IPlayerFormData) parent).updateFormInfo();
+        ((IPlayerDBCInfo) parent).updateDBCInfo();
     }
 
     public void updateCurrentFormMastery(String gainType) {

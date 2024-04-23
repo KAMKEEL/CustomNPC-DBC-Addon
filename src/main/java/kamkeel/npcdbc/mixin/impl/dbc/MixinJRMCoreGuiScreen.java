@@ -2,7 +2,7 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
-import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
@@ -32,7 +32,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
         // REMOVED FOR NOW
         //  boolean ui = JRMCoreH.StusEfctsMe(19);
         String name = null;
-        PlayerFormData formData = Utility.getSelfData();
+        PlayerDBCInfo formData = Utility.getSelfData();
         if (formData != null && formData.isInCustomForm())
             name = formData.getCurrentForm().getMenuName();
 //        else {
@@ -49,7 +49,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
     private static void onDrawDetails(String s1, String s2, int xpos, int ypos, int x, int y, FontRenderer var8, CallbackInfo ci) {
         if (s1.contains(JRMCoreH.trl("jrmc", "TRState") + ":")) {
             final String TRState2 = JRMCoreH.trl("jrmc", "TRState"); // "Form : SS4"
-            PlayerFormData formData = Utility.getSelfData();
+            PlayerDBCInfo formData = Utility.getSelfData();
             if (formData != null && formData.isInCustomForm()) {
                 String name = formData.getCurrentForm().getMenuName();
                 s1 = TRState2 + ":" + name;
@@ -70,7 +70,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
             }
         } else if (Utility.getSelfData() != null && Utility.getSelfData().isInCustomForm()) {
             Form form = Utility.getSelfData().getCurrentForm();
-            PlayerFormData formData = Utility.getSelfData();
+            PlayerDBCInfo formData = Utility.getSelfData();
             if ((s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§")) { //adds the form color to STR,DEX and WIL attribute values
                 int secondIndex = 0;
                 for (int i = 0; i < s1.length(); i++) {

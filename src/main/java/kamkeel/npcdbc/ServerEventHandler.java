@@ -4,9 +4,9 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.mixin.IPlayerFormData;
+import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.Utility;
@@ -41,11 +41,11 @@ public class ServerEventHandler {
             // Send Form Information
             if (PlayerDataController.Instance != null) {
                 PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
-                if (((IPlayerFormData) playerData).getFormUpdate()) {
+                if (((IPlayerDBCInfo) playerData).getDBCInfoUpdate()) {
                     NBTTagCompound formCompound = new NBTTagCompound();
                     playerData.getDBCSync(formCompound);
                     NoppesUtilServer.sendDBCCompound((EntityPlayerMP) player, formCompound);
-                    ((IPlayerFormData) playerData).finishFormInfo();
+                    ((IPlayerDBCInfo) playerData).endDBCInfo();
                 }
             }
 
@@ -61,7 +61,7 @@ public class ServerEventHandler {
     public void handleFormProcesses(EntityPlayer player) {
         Form form = Utility.getCurrentForm(player);
         if (form != null) {
-            PlayerFormData formData = Utility.getFormData(player);
+            PlayerDBCInfo formData = Utility.getFormData(player);
             DBCData dbcData = DBCData.get(player);
 
             if (dbcData.Release <= 0 || dbcData.Ki <= 0) { //reverts player from CF when ki or release are 0

@@ -4,10 +4,10 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.mixin.IPlayerFormData;
+import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.Entity;
@@ -149,13 +149,13 @@ public class Utility {
      * @return
      */
     @SideOnly(Side.CLIENT)
-    public static PlayerFormData getSelfData() {
+    public static PlayerDBCInfo getSelfData() {
         if (Minecraft.getMinecraft().thePlayer == null)
             return null;
-        IPlayerFormData formData = (IPlayerFormData) PlayerData.get(Minecraft.getMinecraft().thePlayer);
+        IPlayerDBCInfo formData = (IPlayerDBCInfo) PlayerData.get(Minecraft.getMinecraft().thePlayer);
         if (formData == null)
             return null;
-        return formData.getPlayerFormData();
+        return formData.getPlayerDBCInfo();
     }
 
     public static Form getFormClient(EntityPlayer player) {
@@ -183,16 +183,16 @@ public class Utility {
         return dbcData.addonFormLevel;
     }
 
-    public static PlayerFormData getFormData(EntityPlayer player) {
+    public static PlayerDBCInfo getFormData(EntityPlayer player) {
         return Utility.getFormData(PlayerDataController.Instance.getPlayerData(player));
     }
 
-    public static PlayerFormData getFormData(PlayerData playerData) {
-        return ((IPlayerFormData) playerData).getPlayerFormData();
+    public static PlayerDBCInfo getFormData(PlayerData playerData) {
+        return ((IPlayerDBCInfo) playerData).getPlayerDBCInfo();
     }
 
     public static void sendPlayerFormData(EntityPlayerMP player) {
-        PlayerFormData data = ((IPlayerFormData) PlayerDataController.Instance.getPlayerData(player)).getPlayerFormData();
+        PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
 
         Map<String, Integer> map = new HashMap<String, Integer>();
         for (int formID : data.unlockedForms.keySet()) {

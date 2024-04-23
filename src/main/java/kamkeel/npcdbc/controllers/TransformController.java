@@ -7,7 +7,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetValPacket;
@@ -133,7 +133,7 @@ public class TransformController {
 
     @SideOnly(Side.CLIENT)
     public static float getRageMeterIncrementation(Form form) {
-        PlayerFormData formData = Utility.getSelfData();
+        PlayerDBCInfo formData = Utility.getSelfData();
         float curLevel = formData.getFormLevel(form.id);
         float maxLevel = form.getMastery().getMaxLevel();
         float ratio = curLevel / maxLevel;
@@ -154,7 +154,7 @@ public class TransformController {
     // Server side handling
 
     public static void handleFormAscend(EntityPlayer player, int formID) {
-        PlayerFormData formData = Utility.getFormData(player);
+        PlayerDBCInfo formData = Utility.getFormData(player);
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
 
@@ -178,7 +178,7 @@ public class TransformController {
     }
 
     public static void handleFormDescend(EntityPlayer player) {
-        PlayerFormData formData = Utility.getFormData(player);
+        PlayerDBCInfo formData = Utility.getFormData(player);
         if (formData.isInCustomForm()) {
             Form form = formData.getCurrentForm();
             DBCData dbcData = DBCData.get(player);

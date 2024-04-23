@@ -5,7 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.util.Utility;
@@ -40,7 +40,7 @@ public abstract class MixinJRMCoreH {
                 return;
 
             if (Utility.isServer()) {
-                PlayerFormData formData = Utility.getFormData(player);
+                PlayerDBCInfo formData = Utility.getFormData(player);
                 if (formData != null && formData.isInCustomForm()) {
                     currentFormLevel = formData.getCurrentLevel();
                     form = formData.getCurrentForm();
@@ -119,7 +119,7 @@ public abstract class MixinJRMCoreH {
     @Inject(method = "Rls", at = @At("HEAD"), cancellable = true)
     private static void fix0ReleaseOnCFDescend(byte b, CallbackInfo ci) {
         if (b == 0) {
-            PlayerFormData formData = Utility.getSelfData();
+            PlayerDBCInfo formData = Utility.getSelfData();
             if (formData != null && formData.isInCustomForm())
                 ci.cancel();
         }
@@ -145,7 +145,7 @@ public abstract class MixinJRMCoreH {
     @Inject(method = "setByte(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
     private static void descendOn0Release(int s, EntityPlayer Player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcRelease")) {
-            PlayerFormData formData = Utility.getFormData(Player);
+            PlayerDBCInfo formData = Utility.getFormData(Player);
             Form form = Utility.getCurrentForm(Player);
             if (form != null) {
                 formData.currentForm = -1;
@@ -158,7 +158,7 @@ public abstract class MixinJRMCoreH {
     @Inject(method = "setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
     private static void descendOn0Ki(int s, EntityPlayer Player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcEnrgy")) {
-            PlayerFormData formData = Utility.getFormData(Player);
+            PlayerDBCInfo formData = Utility.getFormData(Player);
             Form form = Utility.getCurrentForm(Player);
             if (form != null) {
                 formData.currentForm = -1;

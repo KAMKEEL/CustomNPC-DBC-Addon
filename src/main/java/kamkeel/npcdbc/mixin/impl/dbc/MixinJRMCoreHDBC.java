@@ -2,7 +2,7 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import kamkeel.npcdbc.CommonProxy;
-import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.Utility;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +17,7 @@ public class MixinJRMCoreHDBC {
         //if this method is not called by RenderPlayerJBRA, as rendering data is already handled, and this method is heavily used in rendering in DBC
         // To be improved by kAM
         if (!Utility.stackTraceContains("RenderPlayerJBRA")) {
-            PlayerFormData formData = Utility.getSelfData();
+            PlayerDBCInfo formData = Utility.getSelfData();
             if (Utility.stackTraceContains("chargePart")) {
                 formData = Utility.getFormData(CommonProxy.CurrentJRMCTickPlayer);
                 Form form = formData != null ? formData.getCurrentForm() : null;
@@ -45,7 +45,7 @@ public class MixinJRMCoreHDBC {
             Form form = null;
 
             if (Utility.isServer()) {
-                PlayerFormData data = Utility.getFormData(CommonProxy.CurrentJRMCTickPlayer);
+                PlayerDBCInfo data = Utility.getFormData(CommonProxy.CurrentJRMCTickPlayer);
                 if (data != null)
                     form = data.getCurrentForm();
             } else

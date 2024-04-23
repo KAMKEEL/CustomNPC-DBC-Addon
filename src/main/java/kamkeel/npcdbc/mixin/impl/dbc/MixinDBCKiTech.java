@@ -8,7 +8,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.Aura;
-import kamkeel.npcdbc.data.PlayerFormData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.network.PacketHandler;
@@ -30,7 +30,7 @@ public class MixinDBCKiTech {
     @Inject(method = "Ascend", at = @At("HEAD"), cancellable = true)
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
         if (K.getIsKeyPressed()) {
-            PlayerFormData formData = Utility.getSelfData();
+            PlayerDBCInfo formData = Utility.getSelfData();
             if (formData != null && formData.isInCustomForm()) {
                 Form form = formData.getCurrentForm();
                 if (form != null) {
@@ -50,7 +50,7 @@ public class MixinDBCKiTech {
      */
     @Inject(method = "Descend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;kiInSuper:I", shift = At.Shift.AFTER), cancellable = true)
     private static void DescendModified(KeyBinding K, CallbackInfo ci) {
-        PlayerFormData formData = Utility.getSelfData();
+        PlayerDBCInfo formData = Utility.getSelfData();
         DBCData d = DBCData.get(Minecraft.getMinecraft().thePlayer);
         boolean returnEarly = true;
         if (d != null && formData != null && formData.isInCustomForm()) {
