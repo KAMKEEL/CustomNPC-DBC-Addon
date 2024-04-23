@@ -66,6 +66,16 @@ public class FormStackable implements IFormStackable {
     }
 
     @Override
+    public boolean isVanillaStackable() {
+        return vanillaStackable;
+    }
+
+    @Override
+    public void setVanillaStackable(boolean vanillaStackable) {
+        this.vanillaStackable = vanillaStackable;
+    }
+
+    @Override
     public void allowStackForm(int dbcForm, boolean stackForm) {
         switch (dbcForm) {
             case DBCForm.Kaioken:
