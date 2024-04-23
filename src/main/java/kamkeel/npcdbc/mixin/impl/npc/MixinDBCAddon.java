@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixin.impl.npc;
 import io.netty.buffer.ByteBuf;
 import kamkeel.addon.DBCAddon;
 import kamkeel.npcdbc.constants.DBCDamageSource;
+import kamkeel.npcdbc.controllers.DBCSyncController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
@@ -164,58 +165,7 @@ public class MixinDBCAddon {
      */
     @Overwrite(remap = false)
     public void syncPlayer(EntityPlayerMP playerMP) {
-        NBTTagList list = new NBTTagList();
-        NBTTagCompound compound = new NBTTagCompound();
-        for (Form customForm : FormController.getInstance().customForms.values()) {
-            list.appendTag(customForm.writeToNBT());
-            if (list.tagCount() > 10) {
-                compound = new NBTTagCompound();
-                compound.setTag("Data", list);
-                Server.sendData(playerMP, EnumPacketClient.SYNC_ADD, SyncType.CUSTOM_FORM, compound);
-                list = new NBTTagList();
-            }
-        }
-        compound = new NBTTagCompound();
-        compound.setTag("Data", list);
-        Server.sendData(playerMP, EnumPacketClient.SYNC_END, SyncType.CUSTOM_FORM, compound);
-    }
-
-    /**
-     * @author Kamkeel
-     * @reason Performs Syncing | SyncController
-     */
-    @Overwrite(remap = false)
-    public void clientSync(NBTTagCompound compound, boolean syncEnd) {
-        NBTTagList list = compound.getTagList("Data", 10);
-        for (int i = 0; i < list.tagCount(); i++) {
-            Form form = new Form();
-            form.readFromNBT(list.getCompoundTagAt(i));
-            FormController.getInstance().customFormsSync.put(form.id, form);
-        }
-        if (syncEnd) {
-            FormController.getInstance().customForms = FormController.getInstance().customFormsSync;
-            FormController.getInstance().customFormsSync = new HashMap<Integer, Form>();
-        }
-    }
-
-    /**
-     * @author Kamkeel
-     * @reason Performs Syncing | SyncController
-     */
-    @Overwrite(remap = false)
-    public void syncUpdate(NBTTagCompound compound, ByteBuf buffer) {
-        Form form = new Form();
-        form.readFromNBT(compound);
-        FormController.getInstance().customForms.put(form.id, form);
-    }
-
-    /**
-     * @author Kamkeel
-     * @reason Performs Syncing | SyncController
-     */
-    @Overwrite(remap = false)
-    public void syncRemove(int id) {
-        Form form = FormController.Instance.customForms.remove(id);
+        DBCSyncController.syncPlayer(playerMP);
     }
 
     /**

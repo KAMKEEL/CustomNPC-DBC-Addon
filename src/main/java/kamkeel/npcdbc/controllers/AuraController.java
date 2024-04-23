@@ -1,15 +1,16 @@
 package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.api.IAura;
+import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.Aura;
+import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.DBCInfoSync;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
-import noppes.npcs.Server;
 import noppes.npcs.constants.EnumPacketClient;
-import noppes.npcs.constants.SyncType;
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.*;
@@ -20,6 +21,7 @@ import java.util.zip.GZIPInputStream;
 
 public class AuraController {
     public static AuraController Instance = new AuraController();
+    public HashMap<Integer, Aura> customAurasSync = new HashMap();
     public HashMap<Integer, Aura> customAuras;
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
@@ -31,10 +33,35 @@ public class AuraController {
     }
 
     public void load() {
+        customAuras = new HashMap<>();
+        bootOrder = new HashMap<>();
         LogWriter.info("Loading custom auras...");
         readCustomAuraMap();
         loadAuras();
         LogWriter.info("Done loading custom auras.");
+    }
+
+    public IAura createAura(String name) {
+        if (hasName(name))
+            return get(name);
+        else {
+            Aura aura = new Aura();
+            aura.name = name;
+            if (aura.id == -1) {
+                aura.id = getUnusedId();
+            }
+            int setID = aura.id;
+            while (bootOrder.containsKey(setID) || customAuras.containsKey(setID)) {
+                if (bootOrder.containsKey(setID))
+                    if (bootOrder.get(setID).equals(aura.name))
+                        break;
+
+                setID++;
+            }
+            customAuras.put(aura.id, aura);
+            aura.save();
+            return aura;
+        }
     }
 
     public IAura saveAura(IAura customAura) {
@@ -67,7 +94,7 @@ public class AuraController {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            Server.sendToAll(EnumPacketClient.SYNC_UPDATE, SyncType.CUSTOM_FORM, nbtTagCompound, customAura.getID()); //add aura sync type here
+            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1).generatePacket());
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -156,7 +183,7 @@ public class AuraController {
                     continue;
                 if (file.getName().equals(foundAura.name + ".json")) {
                     file.delete();
-                    Server.sendToAll(EnumPacketClient.SYNC_REMOVE, SyncType.CUSTOM_FORM, foundAura); //add aura sync type here
+                    PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundAura.getID()).generatePacket());
                     break;
                 }
             }
@@ -175,7 +202,7 @@ public class AuraController {
                         continue;
                     if (file.getName().equals(foundAura.name + ".json")) {
                         file.delete();
-                        Server.sendToAll(EnumPacketClient.SYNC_REMOVE, SyncType.CUSTOM_FORM, foundAura); //add aura sync type here
+                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundAura.getID()).generatePacket());
                         break;
                     }
                 }

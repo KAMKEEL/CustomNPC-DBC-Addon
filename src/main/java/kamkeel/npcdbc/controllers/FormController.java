@@ -2,7 +2,10 @@ package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
+import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.DBCInfoSync;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -33,6 +36,8 @@ public class FormController implements IFormHandler {
     }
 
     public void load() {
+        customForms = new HashMap<>();
+        bootOrder = new HashMap<>();
         LogWriter.info("Loading custom forms...");
         readCustomFormMap();
         loadForms();
@@ -160,7 +165,7 @@ public class FormController implements IFormHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            Server.sendToAll(EnumPacketClient.SYNC_UPDATE, SyncType.CUSTOM_FORM, nbtTagCompound, customForm.getID());
+            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1).generatePacket());
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -187,7 +192,7 @@ public class FormController implements IFormHandler {
                         continue;
                     if (file.getName().equals(foundForm.name + ".json")) {
                         file.delete();
-                        Server.sendToAll(EnumPacketClient.SYNC_REMOVE, SyncType.CUSTOM_FORM, foundForm);
+                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundForm.getID()).generatePacket());
                         break;
                     }
                 }
@@ -208,7 +213,7 @@ public class FormController implements IFormHandler {
                     continue;
                 if (file.getName().equals(foundForm.name + ".json")) {
                     file.delete();
-                    Server.sendToAll(EnumPacketClient.SYNC_REMOVE, SyncType.CUSTOM_FORM, foundForm);
+                    PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundForm.getID()).generatePacket());
                     break;
                 }
             }
