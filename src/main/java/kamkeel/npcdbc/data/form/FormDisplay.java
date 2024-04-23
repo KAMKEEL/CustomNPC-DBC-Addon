@@ -6,6 +6,8 @@ import noppes.npcs.scripted.CustomNPCsException;
 
 public class FormDisplay implements IFormDisplay {
 
+    private final Form parent;
+
     public float formSize = 1.0f;
     public boolean keepOriginalSize = true;
 
@@ -18,7 +20,6 @@ public class FormDisplay implements IFormDisplay {
     public int bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
     public boolean hasArcoMask = false;
     public boolean effectMajinHair = false;
-    private Form parent;
 
     public FormDisplay(Form parent) {
         this.parent = parent;

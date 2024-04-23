@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class FormMastery implements IFormMastery {
 
-    private Form parent;
+    private final Form parent;
 
     public float maxLevel = 100, instantTransformationUnlockLevel = -1;
     public float attributeMultiFlat = 1.0f, attributeMultiPerLevel = 0.01f, attributeMultiMinOrMax = 1.5f;
@@ -20,7 +20,6 @@ public class FormMastery implements IFormMastery {
     public FormMastery(Form parent) {
         this.parent = parent;
     }
-
 
     public float getMulti(String type, String type1) {
         switch (type.toLowerCase()) {

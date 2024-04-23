@@ -77,7 +77,7 @@ public interface IForm {
 
     void setFromParentOnly(boolean set);
 
-    void addFormRequirement(int race, int state);
+    void addFormRequirement(int race, byte state);
 
     int getFormRequirement(int race);
 

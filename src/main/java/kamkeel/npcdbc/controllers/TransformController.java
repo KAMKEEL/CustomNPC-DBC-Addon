@@ -84,8 +84,6 @@ public class TransformController {
             transformed = true;
             transformedInto = form;
         }
-
-
     }
 
     @SideOnly(Side.CLIENT)
@@ -155,21 +153,34 @@ public class TransformController {
     // Server side handling
 
     public static void handleFormAscend(EntityPlayer player, int formID) {
+        Form form = (Form) FormController.getInstance().get(formID);
+        if(form == null)
+            return;
+
         PlayerDBCInfo formData = Utility.getFormData(player);
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
-            Form form = (Form) FormController.getInstance().get(formID);
+            // Check for in Required DBC Form before Transforming
+            if(form.requiredForm.containsKey((int) dbcData.Race)){
+                if(form.requiredForm.get((int) dbcData.Race) != dbcData.State)
+                    return;
+            } else {
+                // Must be in Parent Form to Transform
+                if(form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm)
+                    return;
+            }
 
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), formData.currentForm != 1, prevID, true, formID)))
                 return;
 
-            if (!isInBaseForm(dbcData.Race, dbcData.State) && !form.stackable.vanillaStackable) {
-                if (!formData.getForm(formID).stackable.vanillaStackable)
+            if (!isInBaseForm(dbcData.Race, dbcData.State)) {
+                if (!form.stackable.vanillaStackable){
                     if (rc_arc(dbcData.Race) && dbcData.State >= 4)
                         dbcData.State = 4;
                     else
                         dbcData.State = 0;
+                }
             }
 
             formData.currentForm = formID;
@@ -187,25 +198,34 @@ public class TransformController {
         if (formData.isInCustomForm()) {
             Form form = formData.getCurrentForm();
             DBCData dbcData = DBCData.get(player);
-            boolean intoParent = form.hasParent() && formData.hasUnlocked(form.getParentID());
+
+            Form parent = FormController.getInstance().customForms.get(form.getParentID());
+            boolean intoParent = parent != null && formData.hasUnlocked(form.getParentID());
 
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), formData.currentForm != 1, prevID, true, intoParent ? form.getParentID() : -1)))
                 return;
 
-            if (intoParent) {
-                Utility.sendMessage(player, "§cDescended into§r " + form.getParent().getMenuName());
-                formData.currentForm = form.getParentID();
-            } else if (formData.getTimer(form.id) == 0) {
-                Utility.sendMessage(player, "§cTimer for§r " + form.getMenuName() + "§c has ran out!");
-            } else {
-                Utility.sendMessage(player, "§cDescended from§r " + form.getMenuName());
+            if(form.requiredForm.containsKey((int) dbcData.Race)){
                 formData.currentForm = -1;
+                Utility.sendMessage(player, "§cDescended from§r " + form.getMenuName());
+                dbcData.State = form.requiredForm.get((int) dbcData.Race);
+            }
+            else {
+                if (intoParent) {
+                    Utility.sendMessage(player, "§cDescended into§r " + form.getParent().getMenuName());
+                    formData.currentForm = form.getParentID();
+                } else if (formData.getTimer(form.id) == 0) {
+                    Utility.sendMessage(player, "§cTimer for§r " + form.getMenuName() + "§c has ran out!");
+                } else {
+                    Utility.sendMessage(player, "§cDescended from§r " + form.getMenuName());
+                    formData.currentForm = -1;
+                }
             }
 
             formData.updateClient();
             JRMCoreH.setByte(0, player, "jrmcSaiRg");
-            DBCData.get(player).saveNBTData();
+            dbcData.saveNBTData();
         }
     }
 }

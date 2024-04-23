@@ -5,6 +5,7 @@ import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -35,24 +36,44 @@ public class ClientEventHandler {
         if (formData != null && formData.hasSelectedForm()) {
             if (formData.isInCustomForm()) {
                 Form form = formData.getCurrentForm();
-                DBCData dbcData = DBCData.getClient();
-
-                // Check for in Required DBC Form before Transforming
-                if (form.requiredForm.containsKey((int)dbcData.Race )) {
-                    if (form.requiredForm.get((int) dbcData.Race) != dbcData.State)
-                        return;
-                } else {
-                    // Must be in Parent Form to Transform
-                    if (form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm)
-                        return;
+                if (form.hasChild() && formData.hasUnlocked(form.getChildID())){
+                    IForm child = form.getChild();
+                    if(verifyFormTransform((Form) child))
+                        TransformController.Ascend((Form) child);
                 }
-
-                if (form.hasChild() && formData.hasUnlocked(form.getChildID()))
-                    TransformController.Ascend(form.getC());
             } else
-                TransformController.Ascend(formData.getSelectedForm());
-
+                if(verifyFormTransform(formData.getSelectedForm()))
+                    TransformController.Ascend(formData.getSelectedForm());
         }
+    }
+
+    private boolean verifyFormTransform(Form form){
+        if(form == null)
+            return false;
+
+        Minecraft mc = Minecraft.getMinecraft();
+        if(mc.thePlayer == null)
+            return false;
+
+        PlayerDBCInfo formData = Utility.getSelfData();
+        if(formData == null)
+            return false;
+
+        DBCData dbcData = DBCData.getClient();
+        // Check for in Required DBC Form before Transforming
+        if(form.requiredForm.containsKey((int) dbcData.Race)){
+            if(form.requiredForm.get((int) dbcData.Race) != dbcData.State){
+                Utility.sendMessage(mc.thePlayer, "§cYou are not in the right DBC form");
+                return false;
+            }
+        } else {
+            // Must be in Parent Form to Transform
+            if(form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm){
+                Utility.sendMessage(mc.thePlayer, "§cYou are not in the correct parent form");
+                return false;
+            }
+        }
+        return true;
     }
 
     @SubscribeEvent
