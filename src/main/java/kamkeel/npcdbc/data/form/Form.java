@@ -42,7 +42,7 @@ public class Form implements IForm {
      * ID of parent and child forms of this
      */
     public int childID = -1, parentID = -1;
-    public boolean fromParentOnly = false;
+    public boolean fromParentOnly = true;
 
     public float strengthMulti = 1.0f;
     public float dexMulti = 1.0f;
