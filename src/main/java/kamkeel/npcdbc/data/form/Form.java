@@ -12,10 +12,13 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.NBTTags;
 import noppes.npcs.controllers.AnimationController;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.scripted.NpcAPI;
+
+import java.util.HashMap;
 
 public class Form implements IForm {
 
@@ -24,26 +27,34 @@ public class Form implements IForm {
 
     public String menuName = "§aNEW";
     public int race = DBCRace.ALL;
+    public int timer = -1;
 
     public FormMastery mastery = new FormMastery(this);
     public FormDisplay display = new FormDisplay(this);
 
-    public float strengthMulti = 1.0f;
-    public float dexMulti = 1.0f;
-    public float willMulti = 1.0f;
-
-    public boolean kaiokenStackable = true, uiStackable = true, godStackable = true, mysticStackable = true;
-    public float kaiokenStrength = 1.0f, uiStrength = 1.0f, godStrength = 1.0f, mysticStrength = 1.0f;
-    public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
-
-    public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
-
-    public int timer = -1;
+    /**
+     * ID of parent and child forms of this
+     */
+    public HashMap<Integer, Integer> requiredForm = new HashMap<>();
 
     /**
      * ID of parent and child forms of this
      */
     public int childID = -1, parentID = -1;
+
+    public float strengthMulti = 1.0f;
+    public float dexMulti = 1.0f;
+    public float willMulti = 1.0f;
+
+
+    /**
+     * Customization
+     */
+    public boolean kaiokenStackable = true, uiStackable = true, godStackable = true, mysticStackable = true;
+    public float kaiokenStrength = 1.0f, uiStrength = 1.0f, godStrength = 1.0f, mysticStrength = 1.0f;
+    public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
+
+    public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
     public Form() {
     }
@@ -65,6 +76,7 @@ public class Form implements IForm {
         timer = compound.getInteger("timer");
         childID = compound.getInteger("childID");
         parentID = compound.getInteger("parentID");
+        requiredForm = NBTTags.getIntegerIntegerMap(compound.getTagList("requiredForm", 10));
 
         NBTTagCompound attributes = compound.getCompoundTag("attributes");
         strengthMulti = attributes.getFloat("strMulti");
@@ -101,7 +113,7 @@ public class Form implements IForm {
         compound.setInteger("childID", childID);
         compound.setInteger("parentID", parentID);
         compound.setInteger("timer", timer);
-
+        compound.setTag("requiredForm", NBTTags.nbtIntegerIntegerMap(requiredForm));
 
         NBTTagCompound attributes = new NBTTagCompound();
         compound.setTag("attributes", attributes);
@@ -389,6 +401,25 @@ public class Form implements IForm {
     @Override
     public void linkParent(IForm form) {
         linkParent(form.getID());
+    }
+
+    @Override
+    public void addFormRequirement(int race, int state){
+        if(race > 5 || race < 0)
+            return;
+
+        // Add some kind of validate State Index Here
+        // Goatee
+
+        requiredForm.put(race, state);
+    }
+
+    @Override
+    public int getFormRequirement(int race){
+        if(!requiredForm.containsKey(race))
+            return -1;
+
+        return requiredForm.get(race);
     }
 
 

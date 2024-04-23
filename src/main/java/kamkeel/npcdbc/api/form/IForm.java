@@ -106,6 +106,10 @@ public interface IForm {
 
     void linkChild(IForm form);
 
+    void addFormRequirement(int race, int state);
+
+    int getFormRequirement(int race);
+
     /**
      * @return the child of this form i.e if SSJ2 Red is child of SSJ Red(this), returns SSJ2 Red
      */
