@@ -424,7 +424,7 @@ public class DBCData {
         return null;
     }
 
-    public boolean isCharging(){
+    public boolean isChargingKiAttack(){
         return DBCUtils.isChargingKiAttack(player);
     }
 }
