@@ -89,7 +89,8 @@ public class DBCAPI extends AbstractDBCAPI {
             return;
 
         EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
-        DBCUtils.doDBCDamage(entityPlayer, damage, stats);
+        int damageToHP = DBCUtils.calculateDBCStatDamage(entityPlayer, (int) damage, stats);
+        DBCUtils.doDBCDamage(entityPlayer, damageToHP, stats);
     }
 
     /**
