@@ -232,12 +232,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
         Form form = Utility.getFormClient(par1EntityPlayer);
         if (form != null && (race.get() == 1 || race.get() == 2)) {
-            if (form.display.hairType.equals("ssj4")) {
-                renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get());
-            } else if (form.display.hairType.equals("oozaru")) {
-                renderOozaruArm(form.display.furColor, par1EntityPlayer, id.get(), bodyCM.get());
+            if (this.renderManager != null && this.renderManager.renderEngine != null) {
+                if (form.display.hairType.equals("ssj4")) {
+                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get());
+                } else if (form.display.hairType.equals("oozaru")) {
+                    renderOozaruArm(form.display.furColor, par1EntityPlayer, id.get(), bodyCM.get());
+                }
             }
-
         }
 
     }

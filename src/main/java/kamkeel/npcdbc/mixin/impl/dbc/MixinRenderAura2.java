@@ -4,17 +4,8 @@ import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.DragonBC.common.Npcs.RenderAura2;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import kamkeel.npcdbc.CommonProxy;
-import kamkeel.npcdbc.api.form.IForm;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.data.aura.Aura;
-import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IEntityAura;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.renderer.Tessellator;
-import noppes.npcs.client.ClientEventHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,8 +28,8 @@ public class MixinRenderAura2 {
     }
 
     @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 0))
-    private void auraSize(Args args, @Local(ordinal = 0)LocalRef<EntityAura2> entityAura) {
-        IEntityAura aura = (IEntityAura) entityAura;
+    private void auraSize(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura) {
+        IEntityAura aura = (IEntityAura) entityAura.get();
         if (aura.getSize() != 1f) {
             float xSize = (float) args.get(0) * aura.getSize();
             float ySize = (float) args.get(1) * aura.getSize();
