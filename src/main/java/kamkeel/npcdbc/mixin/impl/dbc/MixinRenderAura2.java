@@ -23,9 +23,11 @@ public class MixinRenderAura2 {
     @Inject(method = "lightning", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/Tessellator;setColorRGBA_F(FFFF)V", ordinal = -1, shift = At.Shift.AFTER))
     private void renderLightning(EntityAura2 e, double par2, double par4, double par6, float par9, float var20, float var13, boolean rot, CallbackInfo ci, @Local(name = "tessellator2") LocalRef<Tessellator> tessellator) {
         PlayerDBCInfo formData = Utility.getSelfData();
-        if (formData != null && formData.getCurrentAura() != null) {
-            Aura aura = formData.getCurrentAura();
+        if (formData == null)
+            return;
 
+        Aura aura = formData.getCurrentAura();
+        if (aura != null) {
             if (aura.display.getHasLightning() && aura.display.lightningColor != 0) {
                 Color col = Color.decode(aura.display.lightningColor + "");
                 tessellator.get().setColorRGBA(col.getRed(), col.getGreen(), col.getBlue(), aura.display.hasAlpha("lightning") ? aura.display.alpha : 255);
@@ -36,8 +38,11 @@ public class MixinRenderAura2 {
     @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 0))
     private void auraSize(Args args) {
         PlayerDBCInfo formData = Utility.getSelfData();
-        if (formData != null && formData.getCurrentAura() != null) {
-            Aura aura = formData.getCurrentAura();
+        if (formData == null)
+            return;
+
+        Aura aura = formData.getCurrentAura();
+        if (aura != null) {
 
             if (aura.display.hasSize()) {
                 float xSize = (float) args.get(0) * aura.display.getSize();

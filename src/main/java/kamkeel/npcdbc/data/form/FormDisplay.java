@@ -1,6 +1,9 @@
 package kamkeel.npcdbc.data.form;
 
+import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IFormDisplay;
+import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.data.aura.Aura;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
 
@@ -21,6 +24,8 @@ public class FormDisplay implements IFormDisplay {
     public boolean hasArcoMask = false;
     public boolean effectMajinHair = false;
 
+    public int auraID = -1;
+
     public FormDisplay(Form parent) {
         this.parent = parent;
     }
@@ -30,18 +35,24 @@ public class FormDisplay implements IFormDisplay {
         auraColor = rendering.getInteger("auraColor");
         eyeColor = rendering.getInteger("eyeColor");
         hairColor = rendering.getInteger("hairColor");
+
         furColor = rendering.getInteger("furColor");
         hairCode = rendering.getString("hairCode");
         hairType = rendering.getString("hairType");
+
         bodyType = rendering.getString("bodyType");
         bodyCM = rendering.getInteger("bodyCM");
         bodyC1 = rendering.getInteger("bodyC1");
         bodyC2 = rendering.getInteger("bodyC2");
         bodyC3 = rendering.getInteger("bodyC3");
+
         hasArcoMask = rendering.getBoolean("hasArcoMask");
         effectMajinHair = rendering.getBoolean("effectMajinHair");
+
         formSize = rendering.getFloat("formSize");
         keepOriginalSize = rendering.getBoolean("keepOriginalSize");
+
+        auraID = rendering.getInteger("auraID");
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -49,18 +60,24 @@ public class FormDisplay implements IFormDisplay {
         rendering.setInteger("auraColor", auraColor);
         rendering.setInteger("eyeColor", eyeColor);
         rendering.setInteger("hairColor", hairColor);
+
         rendering.setString("hairCode", hairCode);
         rendering.setString("hairType", hairType);
         rendering.setString("bodyType", bodyType);
+
         rendering.setInteger("furColor", furColor);
         rendering.setInteger("bodyCM", bodyCM);
         rendering.setInteger("bodyC1", bodyC1);
         rendering.setInteger("bodyC2", bodyC2);
         rendering.setInteger("bodyC3", bodyC3);
+
         rendering.setBoolean("hasArcoMask", hasArcoMask);
         rendering.setBoolean("effectMajinHair", effectMajinHair);
+
         rendering.setFloat("formSize", formSize);
         rendering.setBoolean("keepOriginalSize", keepOriginalSize);
+
+        rendering.setInteger("auraID", auraID);
 
         compound.setTag("rendering", rendering);
         return compound;
@@ -254,6 +271,33 @@ public class FormDisplay implements IFormDisplay {
         this.effectMajinHair = effect;
     }
 
+    @Override
+    public boolean hasAura() {
+        boolean has = AuraController.getInstance().has(auraID);
+        if (!has && auraID > -1)
+            auraID = -1;
+        return has;
+    }
+
+    @Override
+    public IAura getAura() {
+        return AuraController.getInstance().get(auraID);
+    }
+
+    @Override
+    public void setAura(IAura aura) {
+        this.auraID = aura.getID();
+    }
+
+    @Override
+    public void setAura(int auraID) {
+        this.auraID = auraID;
+    }
+
+    //internal usage
+    public Aura getAur() {
+        return (Aura) AuraController.getInstance().get(auraID);
+    }
 
     public IFormDisplay save() {
         if (parent != null)

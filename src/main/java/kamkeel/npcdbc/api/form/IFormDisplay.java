@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.api.form;
 
+import kamkeel.npcdbc.api.aura.IAura;
+
 /**
  * This interface is heavily based on how DBC calculates its form masteries. Please check any race's form_mastery.cfg config to
  * get a better understanding on how this interface functions
@@ -87,6 +89,14 @@ public interface IFormDisplay {
     boolean effectMajinHair();
 
     void setEffectMajinHair(boolean effect);
+
+    boolean hasAura();
+
+    IAura getAura();
+
+    void setAura(IAura aura);
+
+    void setAura(int auraID);
 
     /**
      * Saves CustomForm with the New Form Display Modifications

@@ -28,9 +28,11 @@ public class MixinEntityAura2 {
     @Inject(method = "<init>(Lnet/minecraft/world/World;Ljava/lang/String;IFFI)V", at = @At("TAIL"))
     public void onCustomAura(World par1World, String dbcCharger, int c, float s, float s2, int cr, CallbackInfo ci) {
         PlayerDBCInfo formData = Utility.getSelfData();
-        if (formData != null && formData.getCurrentAura() != null) {
-            Aura aura = formData.getCurrentAura();
+        if (formData == null)
+            return;
 
+        Aura aura = formData.getCurrentAura();
+        if (aura != null) {
             if (aura.display.hasLightning)
                 state = 5;
         }

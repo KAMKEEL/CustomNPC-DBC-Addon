@@ -121,10 +121,12 @@ public class MixinDBCKiTech {
 
     @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", shift = At.Shift.BEFORE))
     private static void setAuraFields(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "aura") LocalRef<Entity> Aura) {
-
         PlayerDBCInfo formData = Utility.getSelfData();
-        if (formData != null && formData.getCurrentAura() != null) {
-            Aura aura = formData.getCurrentAura();
+        if (formData == null)
+            return;
+
+        Aura aura = formData.getCurrentAura();
+        if (aura != null) {
 
             EntityAura2 aur = (EntityAura2) Aura.get();
             if (aura.display.hasColor("color1"))

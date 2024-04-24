@@ -263,8 +263,13 @@ public class PlayerDBCInfo {
     }
 
     public Aura getCurrentAura() {
-        if (currentAura > -1)
+        Form form = getCurrentForm();
+
+        if (form != null && form.display.hasAura())
+            return form.display.getAur();
+        else if (currentAura > -1)
             return (Aura) AuraController.Instance.get(currentAura);
+
         return null;
     }
 
