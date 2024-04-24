@@ -53,11 +53,11 @@ public final class AuraPacket extends AbstractPacket {
         PlayerDBCInfo formData = Utility.getData(player);
 
         if (enable) {
-            formData.currentForm = auraID;
-            Utility.sendMessage(player, "§aToggled on§r " + formData.getCurrentAura().getMenuName());
+            formData.currentAura = auraID;
+            Utility.sendMessage(player, "§aToggled on§r " + formData.getAura(auraID).getMenuName());
         } else {
-            formData.currentForm = -1;
-            Utility.sendMessage(player, "§cToggled off§r " + formData.getCurrentAura().getMenuName());
+            formData.currentAura = -1;
+            Utility.sendMessage(player, "§cToggled off§r " + formData.getAura(auraID).getMenuName());
         }
 
         formData.updateClient();

@@ -263,7 +263,7 @@ public class PlayerDBCInfo {
     }
 
     public Aura getCurrentAura() {
-        if (currentAura > 0)
+        if (currentAura > -1)
             return (Aura) AuraController.Instance.get(currentAura);
         return null;
     }

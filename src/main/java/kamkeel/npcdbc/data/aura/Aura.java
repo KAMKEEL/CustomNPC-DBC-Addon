@@ -11,8 +11,8 @@ import noppes.npcs.controllers.AnimationController;
 import noppes.npcs.scripted.NpcAPI;
 
 public class Aura implements IAura {
-    public String name, menuName;
-    public int id;
+    public int id = -1;
+    public String name = "", menuName = "§aNEW";
 
     public AuraDisplay display = new AuraDisplay(this);
 
@@ -78,7 +78,7 @@ public class Aura implements IAura {
     @Override
     public void assignToPlayer(EntityPlayer p) {
 
-        PlayerDBCInfo formData = Utility.getFormData(p);
+        PlayerDBCInfo formData = Utility.getData(p);
         formData.addAura(this);
         formData.updateClient();
 
@@ -92,7 +92,7 @@ public class Aura implements IAura {
 
     @Override
     public void removeFromPlayer(EntityPlayer p) {
-        PlayerDBCInfo formData = Utility.getFormData(p);
+        PlayerDBCInfo formData = Utility.getData(p);
         formData.removeAura(this);
         if (formData.selectedAura == this.id)
             formData.selectedAura = -1;

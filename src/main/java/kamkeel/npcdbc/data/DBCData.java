@@ -32,8 +32,9 @@ public class DBCData {
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "";
 
     // Custom Form
-    public int addonFormID;
+    public int addonFormID, auraID;
     public float addonFormLevel;
+
     public DBCData() {
         this.side = Side.SERVER;
     }
@@ -100,6 +101,7 @@ public class DBCData {
 
         // DBC Addon
         comp.setInteger("addonFormID", addonFormID);
+        comp.setInteger("auraID", auraID);
         comp.setFloat("addonFormLevel", addonFormLevel);
         return comp;
     }
@@ -137,15 +139,18 @@ public class DBCData {
         // DBC Addon
         addonFormID = c.getInteger("addonFormID");
         addonFormLevel = c.getFloat("addonFormLevel");
+        auraID = c.getInteger("auraID");
     }
 
     public void saveNBTData() {
         NBTTagCompound nbt = this.saveFromNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
 
-        PlayerDBCInfo formData = Utility.getFormData(player);
+        PlayerDBCInfo formData = Utility.getData(player);
         addonFormID = formData.currentForm;
         addonFormLevel = formData.getCurrentLevel();
+        auraID = formData.currentAura;
         nbt.setInteger("addonFormID", addonFormID);
+        nbt.setInteger("auraID", auraID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 
@@ -156,8 +161,9 @@ public class DBCData {
         NBTTagCompound dbc = this.player.getEntityData().getCompoundTag(DBCPersisted);
 
         // Save the DBC Addon tags to PlayerPersisted before loading it to fields
-        PlayerDBCInfo formData = Utility.getFormData(player);
+        PlayerDBCInfo formData = Utility.getData(player);
         dbc.setInteger("addonFormID", formData.currentForm);
+        dbc.setInteger("auraID", formData.currentAura);
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
 
         loadFromNBT(dbc);

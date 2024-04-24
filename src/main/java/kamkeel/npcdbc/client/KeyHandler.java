@@ -6,7 +6,10 @@ import org.lwjgl.input.Keyboard;
 
 public class KeyHandler {
     public static KeyBinding AscendKey = new KeyBinding("Custom Form Ascend", Keyboard.KEY_P, "key.categories.customnpc");
-    public static void registerKeys(){
+    public static KeyBinding AuraKey = new KeyBinding("Toggle Custom Aura", Keyboard.KEY_COMMA, "key.categories.customnpc");
+
+    public static void registerKeys() {
         ClientRegistry.registerKeyBinding(AscendKey);
+        ClientRegistry.registerKeyBinding(AuraKey);
     }
 }

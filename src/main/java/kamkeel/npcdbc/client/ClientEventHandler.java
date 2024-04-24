@@ -10,6 +10,8 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.AuraPacket;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 
@@ -36,39 +38,38 @@ public class ClientEventHandler {
         if (formData != null && formData.hasSelectedForm()) {
             if (formData.isInCustomForm()) {
                 Form form = formData.getCurrentForm();
-                if (form.hasChild() && formData.hasFormUnlocked(form.getChildID())){
+                if (form.hasChild() && formData.hasFormUnlocked(form.getChildID())) {
                     IForm child = form.getChild();
-                    if(verifyFormTransform((Form) child))
+                    if (verifyFormTransform((Form) child))
                         TransformController.Ascend((Form) child);
                 }
-            } else
-                if(verifyFormTransform(formData.getSelectedForm()))
-                    TransformController.Ascend(formData.getSelectedForm());
+            } else if (verifyFormTransform(formData.getSelectedForm()))
+                TransformController.Ascend(formData.getSelectedForm());
         }
     }
 
-    private boolean verifyFormTransform(Form form){
-        if(form == null)
+    private boolean verifyFormTransform(Form form) {
+        if (form == null)
             return false;
 
         Minecraft mc = Minecraft.getMinecraft();
-        if(mc.thePlayer == null)
+        if (mc.thePlayer == null)
             return false;
 
         PlayerDBCInfo formData = Utility.getSelfData();
-        if(formData == null)
+        if (formData == null)
             return false;
 
         DBCData dbcData = DBCData.getClient();
         // Check for in Required DBC Form before Transforming
-        if(form.requiredForm.containsKey((int) dbcData.Race)){
-            if(form.requiredForm.get((int) dbcData.Race) != dbcData.State){
+        if (form.requiredForm.containsKey((int) dbcData.Race)) {
+            if (form.requiredForm.get((int) dbcData.Race) != dbcData.State) {
                 Utility.sendMessage(mc.thePlayer, "§cYou are not in the right DBC form");
                 return false;
             }
         } else {
             // Must be in Parent Form to Transform
-            if(form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm){
+            if (form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm) {
                 Utility.sendMessage(mc.thePlayer, "§cYou are not in the correct parent form");
                 return false;
             }
@@ -79,22 +80,35 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent e) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.currentScreen == null && KeyHandler.AscendKey.isPressed()) {
+        if (mc.currentScreen == null) {
             PlayerDBCInfo formData = Utility.getSelfData();
             if (formData != null) {
-                if (formData.selectedForm == -1)
-                    Utility.sendMessage(mc.thePlayer, "§cYou have not selected a custom form!");
-                else if (formData.isInCustomForm()) {
-                    if (TransformController.rage > 0 && TransformController.transformed) {
-                        Utility.sendMessage(mc.thePlayer, "§cYou need to cool down!");
-                        return;
+                if (KeyHandler.AscendKey.isPressed()) {
+                    if (formData.selectedForm == -1)
+                        Utility.sendMessage(mc.thePlayer, "§cYou have not selected a custom form!");
+                    else if (formData.isInCustomForm()) {
+                        if (TransformController.rage > 0 && TransformController.transformed) {
+                            Utility.sendMessage(mc.thePlayer, "§cYou need to cool down!");
+                            return;
+                        }
+                        Form form = formData.getCurrentForm();
+                        if (form.hasChild() && !formData.hasFormUnlocked(form.getChildID()))
+                            Utility.sendMessage(mc.thePlayer, "§cYou do not have the next transformation unlocked!");
                     }
-                    Form form = formData.getCurrentForm();
-                    if (form.hasChild() && !formData.hasFormUnlocked(form.getChildID()))
-                        Utility.sendMessage(mc.thePlayer, "§cYou do not have the next transformation unlocked!");
+
+                } else if (KeyHandler.AuraKey.isPressed()) {
+                    if (formData.selectedAura == -1)
+                        Utility.sendMessage(mc.thePlayer, "§cYou have not selected an aura!");
+                    else if (formData.isInCustomAura()) {
+                        PacketHandler.Instance.sendToServer(new AuraPacket(Minecraft.getMinecraft().thePlayer, formData.currentAura, false).generatePacket());
+                    } else {
+                        PacketHandler.Instance.sendToServer(new AuraPacket(Minecraft.getMinecraft().thePlayer, formData.selectedAura, true).generatePacket());
+
+                    }
                 }
             }
         }
+
     }
 
     @SubscribeEvent
