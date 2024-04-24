@@ -33,22 +33,6 @@ public class MixinEntityAura2 {
 
             if (aura.display.hasLightning)
                 state = 5;
-            if (aura.display.hasColor("color1"))
-                color = aura.display.color1;
-            if (aura.display.hasColor("color2"))
-                colorl2 = aura.display.color2;
-            if (aura.display.hasColor("color3"))
-                colorl3 = aura.display.color3;
-//            if (aura.display.hasTexture1)
-//                tex = aura.display.texture1;
-//            if (aura.display.hasTexture2)
-//                texl2 = aura.display.texture2;
-//            if (aura.display.hasTexture3)
-//                texl3 = aura.display.texture3;
-            if (aura.display.hasSpeed())
-                speed = (int) aura.display.speed;
-            if (aura.display.hasAlpha("lightning"))
-                alpha = aura.display.alpha;
         }
     }
 

@@ -8,12 +8,12 @@ public class AuraDisplay implements IAuraDisplay {
     public Aura parent;
 
     public String type = "", texture1 = "", texture2 = "", texture3 = "";
-    public int color1 = -1, color2 = -1, color3 = -1, alpha = 255;
+    public int color1 = -1, color2 = -1, color3 = -1, alpha = -1;
     public float size = 1.0f, speed = 1.0f;
 
 
     public boolean hasLightning = false;
-    public int lightningColor = -1, lightningAlpha = 255;
+    public int lightningColor = -1, lightningAlpha = -1;
 
 
     public AuraDisplay(Aura parent) {
@@ -73,10 +73,10 @@ public class AuraDisplay implements IAuraDisplay {
     @Override
     public void setType(String type) {
         String s = type.toLowerCase();
-        if (s.equals("ssj") || s.equals("ssgod") || s.equals("ssb") || s.equals("ssbevo") || s.equals("ssrose") || s.equals("ssroseevo") || s.equals("ui") || s.equals("godofdestruction") || s.equals(""))
+        if (s.equals("ssgod") || s.equals("ssb") || s.equals("ssbevo") || s.equals("ssrose") || s.equals("ssroseevo") || s.equals("ui") || s.equals("godofdestruction") || s.equals(""))
             this.type = s;
         else
-            throw new CustomNPCsException("Invalid type! Legal types: SSJ, SSGod, SSB ,SSBEvo , SSRose, SSRoseEvo, UI, GodOfDestruction");
+            throw new CustomNPCsException("Invalid type! Legal types: SSGod, SSB ,SSBEvo , SSRose, SSRoseEvo, UI, GodOfDestruction");
 
     }
 
@@ -91,15 +91,15 @@ public class AuraDisplay implements IAuraDisplay {
     }
 
     @Override
-    public boolean hasColor(String type) {
-        switch (type.toLowerCase()) {
+    public boolean hasColor(String colorType) {
+        switch (colorType.toLowerCase()) {
             case "color1":
                 return color1 != -1;
             case "color2":
                 return color2 != -1;
             case "color3":
                 return color3 != -1;
-            case "lightningColor":
+            case "lightning":
                 return lightningColor != -1;
 
         }
@@ -108,17 +108,21 @@ public class AuraDisplay implements IAuraDisplay {
 
     @Override
     public void setColor(String colorType, int color) {
-        switch (type.toLowerCase()) {
+        switch (colorType.toLowerCase()) {
             case "color1":
                 color1 = color;
+                break;
             case "color2":
                 color2 = color;
+                break;
             case "color3":
                 color3 = color;
-            case "lightningColor":
+                break;
+            case "lightning":
                 lightningColor = color;
+                break;
             default:
-                throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
+                throw new CustomNPCsException("Invalid type! Legal types: color1, color2, color3, lightning");
 
         }
 
@@ -127,14 +131,14 @@ public class AuraDisplay implements IAuraDisplay {
 
     @Override
     public int getColor(String colorType) {
-        switch (type.toLowerCase()) {
+        switch (colorType.toLowerCase()) {
             case "color1":
                 return color1;
             case "color2":
                 return color2;
             case "color3":
                 return color3;
-            case "lightningColor":
+            case "lightning":
                 return lightningColor;
         }
         throw new CustomNPCsException("Invalid type! Legal types: color1, color2, color3, lightningColor");
@@ -205,7 +209,7 @@ public class AuraDisplay implements IAuraDisplay {
 
     @Override
     public boolean hasSpeed() {
-        return speed != -1;
+        return speed != 1.0f;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.aura;
 
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.api.aura.IAuraDisplay;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -102,6 +103,11 @@ public class Aura implements IAura {
 
     public void removeFromPlayer(String name) {
         removeFromPlayer(NpcAPI.Instance().getPlayer(name).getMCEntity());
+    }
+
+    @Override
+    public IAuraDisplay getDisplay() {
+        return this.display;
     }
 
     @Override
