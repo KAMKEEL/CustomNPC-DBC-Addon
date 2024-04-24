@@ -20,16 +20,10 @@ public class MixinJRMCoreHDBC {
         // To be improved by kAM
         if (!Utility.stackTraceContains("RenderPlayerJBRA")) {
             PlayerDBCInfo formData = Utility.getSelfData();
-            if (Utility.stackTraceContains("chargePart")) {
-                formData = Utility.getData(CommonProxy.CurrentJRMCTickPlayer);
-                Form form = formData != null ? formData.getCurrentForm() : null;
-                if (form != null && form.display.auraColor != -1)
-                    ci.setReturnValue(form.display.auraColor);
-            }
             if (formData != null && formData.getCurrentForm() != null) {
                 Form form = formData.getCurrentForm();
                 if (Utility.stackTraceContains("chargePart")) {
-                    formData = Utility.getData(CommonProxy.CurrentJRMCTickPlayer);
+                    // formData = Utility.getData(CommonProxy.CurrentJRMCTickPlayer);
                     form = formData.getCurrentForm();
                     if (form.display.auraColor != -1)
                         ci.setReturnValue(form.display.auraColor);

@@ -12,7 +12,7 @@ import noppes.npcs.scripted.NpcAPI;
 
 public class CommonProxy {
     public static EntityPlayer CurrentJRMCTickPlayer = null;
-
+    public static EntityPlayer CurrentAuraPlayer = null;
     public void preInit(FMLPreInitializationEvent ev) {
         eventsInit();
     }
