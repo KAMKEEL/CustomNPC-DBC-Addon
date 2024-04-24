@@ -8,11 +8,8 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
-import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -96,10 +93,10 @@ public class MixinDBCKiTech {
             ci.cancel();
     }
 
-    @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/settings/GameSettings;thirdPersonView:I", ordinal = 0, shift = At.Shift.AFTER))
+    @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/EntityClientPlayerMP;getCommandSenderName()Ljava/lang/String;", ordinal = 0, shift = At.Shift.BEFORE))
     private static void setAuraType(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "state") LocalFloatRef state, @Local(name = "state2") LocalFloatRef state2, @Local(name = "kk") LocalBooleanRef kk, @Local(name = "ssb") LocalBooleanRef ssb, @Local(name = "ssg") LocalBooleanRef ssg, @Local(name = "ssbs") LocalBooleanRef ssbs, @Local(name = "v") LocalBooleanRef divine, @Local(name = "oozar") LocalBooleanRef oozaru, @Local(name = "ui") LocalBooleanRef ui, @Local(name = "gd") LocalBooleanRef godestruction) {
         DBCData dbcData = DBCData.get(p);
-        Aura aura = dbcData.getAura(p);
+        Aura aura = dbcData.getCurrentAura();
         if (aura != null) {
             if (aura.display.type.equals("ssg"))
                 ssg.set(true);
@@ -126,7 +123,7 @@ public class MixinDBCKiTech {
     @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", shift = At.Shift.BEFORE))
     private static void setAuraFields(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "aura") LocalRef<Entity> Aura) {
         DBCData dbcData = DBCData.get(p);
-        Aura aura = dbcData.getAura(p);
+        Aura aura = dbcData.getCurrentAura();
         if (aura != null) {
             EntityAura2 aur = (EntityAura2) Aura.get();
             if (aura.display.hasColor("color1"))
@@ -146,13 +143,13 @@ public class MixinDBCKiTech {
             if (aura.display.hasAlpha("aura"))
                 aur.setAlp(aura.display.alpha);
 
-            if(aura.display.hasSize())
+            if (aura.display.hasSize())
                 ((IEntityAura) aur).setSize(aura.display.size);
 
             ((IEntityAura) aur).setHasLightning(aura.display.hasLightning);
             ((IEntityAura) aur).setLightningColor(aura.display.lightningColor);
 
-            if(aura.display.hasAlpha("lightning"))
+            if (aura.display.hasAlpha("lightning"))
                 ((IEntityAura) aur).setLightningAlpha(aura.display.lightningAlpha);
             else
                 ((IEntityAura) aur).setLightningAlpha(255);

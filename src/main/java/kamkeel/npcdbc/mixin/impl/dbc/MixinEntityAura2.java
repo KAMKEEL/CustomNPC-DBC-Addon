@@ -44,6 +44,7 @@ public class MixinEntityAura2 implements IEntityAura {
     @Override
     public void setHasLightning(boolean hasLightning) {
         this.hasLightning = hasLightning;
+        state = hasLightning ? 5 : state;
     }
 
     @Unique
