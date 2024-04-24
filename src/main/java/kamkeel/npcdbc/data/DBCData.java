@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data;
 
 
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -421,5 +422,9 @@ public class DBCData {
             return (Aura) AuraController.Instance.get(auraID);
 
         return null;
+    }
+
+    public boolean isCharging(){
+        return DBCUtils.isChargingKiAttack(player);
     }
 }

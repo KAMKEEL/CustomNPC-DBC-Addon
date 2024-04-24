@@ -743,7 +743,7 @@ public class DBCUtils {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
                 boolean isBlocking = props.getBlocking() == 1;
                 // Hussar
-                boolean isChargingKi = false;
+                boolean isChargingKi = ;
 
                 int[] attributes = PlyrAttrbts(player);
                 String[] playerSkills = PlyrSkills(player);
@@ -974,5 +974,15 @@ public class DBCUtils {
 
     public static int getMaxBody(EntityPlayer player) {
         return DBCUtils.getMaxStat(player, 2);
+    }
+
+    public static boolean isChargingKiAttack(EntityPlayer player) {
+        ExtendedPlayer jrmcExtendedPlayer = ExtendedPlayer.get(player);
+
+        //Abusing JRMCore's animation system to see if a player is charging a ki attack.
+        boolean kiAnimationTypeSelected = jrmcExtendedPlayer.getAnimKiShoot() != 0;
+        boolean shouldAttemptAnimation = jrmcExtendedPlayer.getAnimKiShootOn() != 0;
+
+        return kiAnimationTypeSelected && shouldAttemptAnimation;
     }
 }
