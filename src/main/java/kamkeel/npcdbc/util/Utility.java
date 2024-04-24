@@ -222,6 +222,19 @@ public class Utility {
         sendScrollData(player, map);
     }
 
+    public static void sendPlayerAuraData(EntityPlayerMP player) {
+        PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
+
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        for (int auraID : data.unlockedAuras) {
+            Aura aura = (Aura) AuraController.getInstance().get(auraID);
+            if (aura != null) {
+                map.put(aura.name, aura.id);
+            }
+        }
+        sendScrollData(player, map);
+    }
+
     public static String removeBoldColorCode(String s) {
         for (int i = 0; i < s.length() - 2; i++) {
             if (s.charAt(i) == '§' && (s.charAt(i + 1) == 'l')) {

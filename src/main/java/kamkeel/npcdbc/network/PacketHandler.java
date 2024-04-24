@@ -28,6 +28,9 @@ public final class PacketHandler {
         map.put(DBCSetValPacket.packetName, new DBCSetValPacket());
         map.put(DBCInfoSync.packetName, new DBCInfoSync());
         map.put(DBCSelectForm.packetName, new DBCSelectForm());
+        map.put(DBCSelectAura.packetName, new DBCSelectAura());
+        map.put(RequestAura.packetName, new RequestAura());
+        map.put(RequestForm.packetName, new RequestForm());
         this.register();
     }
 

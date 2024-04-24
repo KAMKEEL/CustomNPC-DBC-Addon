@@ -184,15 +184,6 @@ public class MixinDBCAddon {
      * @reason Performs Syncing | SyncController
      */
     @Overwrite(remap = false)
-    public void formPacketGets(EntityPlayer player, ByteBuf buffer) {
-        NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
-    }
-
-    /**
-     * @author Kamkeel
-     * @reason Performs Syncing | SyncController
-     */
-    @Overwrite(remap = false)
     public void formPacketRemove(EntityPlayer player, ByteBuf buffer) {
         FormController.getInstance().delete(buffer.readInt());
         NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
@@ -211,58 +202,5 @@ public class MixinDBCAddon {
         FormController.getInstance().saveForm(customForm);
         NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
         Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, customForm.writeToNBT());
-    }
-
-    /**
-     * @author Kamkeel
-     * @reason Sets the Selected Form to the Player
-     */
-    @Overwrite(remap = false)
-    public void formPacketSet(EntityPlayer player, ByteBuf buffer) throws IOException {
-        int formID = buffer.readInt();
-        PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
-        PlayerDBCInfo data = ((IPlayerDBCInfo) playerData).getPlayerDBCInfo();
-        if(data == null)
-            return;
-
-        if(formID > -1){
-            if(data.selectedForm != formID && data.unlockedForms.contains(formID)){
-                Form customForm = (Form) FormController.getInstance().get(formID);
-                NBTTagCompound compound = new NBTTagCompound();
-                if(customForm != null){
-                    data.selectedForm = formID;
-                    compound = customForm.writeToNBT();
-                } else {
-                    data.selectedForm = -1;
-                }
-                data.updateClient();
-                playerData.save();
-                Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
-            }
-        }
-        else {
-            data.selectedForm = -1;
-            data.updateClient();
-            playerData.save();
-            NBTTagCompound compound = new NBTTagCompound();
-            Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
-        }
-    }
-
-    /**
-     * @author Kamkeel
-     * @reason Give the Player their Form Information
-     */
-    @Overwrite(remap = false)
-    public void formPacketPlayers(EntityPlayer player){
-        Utility.sendPlayerFormData((EntityPlayerMP) player);
-        PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
-        NBTTagCompound compound = new NBTTagCompound();
-        if(data != null &&  data.selectedForm != -1){
-            Form customForm = (Form) FormController.getInstance().get(data.selectedForm);
-            if(customForm != null)
-                compound = customForm.writeToNBT();
-        }
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
     }
 }
