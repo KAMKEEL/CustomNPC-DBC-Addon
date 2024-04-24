@@ -742,8 +742,8 @@ public class DBCUtils {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
                 boolean isBlocking = props.getBlocking() == 1;
-                // Hussar
-                boolean isChargingKi = ;
+
+                boolean isChargingKi = isChargingKiAttack(player);
 
                 int[] attributes = PlyrAttrbts(player);
                 String[] playerSkills = PlyrSkills(player);
