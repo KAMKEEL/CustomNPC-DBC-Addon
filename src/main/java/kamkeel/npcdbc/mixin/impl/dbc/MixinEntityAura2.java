@@ -1,7 +1,9 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,10 +27,10 @@ public class MixinEntityAura2 {
 
     @Inject(method = "<init>(Lnet/minecraft/world/World;Ljava/lang/String;IFFI)V", at = @At("TAIL"))
     public void onCustomAura(World par1World, String dbcCharger, int c, float s, float s2, int cr, CallbackInfo ci) {
-        Aura aura = null; //pls make the framework for this
-      //  state = 5;
-        bol7 = true;
-        if (aura != null) {
+        PlayerDBCInfo formData = Utility.getSelfData();
+        if (formData != null && formData.getCurrentAura() != null) {
+            Aura aura = formData.getCurrentAura();
+
             if (aura.display.hasLightning)
                 state = 5;
             if (aura.display.hasColor("color1"))

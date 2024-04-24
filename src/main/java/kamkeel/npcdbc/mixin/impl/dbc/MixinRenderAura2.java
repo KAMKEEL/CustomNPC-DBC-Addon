@@ -4,7 +4,9 @@ import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.DragonBC.common.Npcs.RenderAura2;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.renderer.Tessellator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,8 +22,9 @@ public class MixinRenderAura2 {
 
     @Inject(method = "lightning", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/Tessellator;setColorRGBA_F(FFFF)V", ordinal = -1, shift = At.Shift.AFTER))
     private void renderLightning(EntityAura2 e, double par2, double par4, double par6, float par9, float var20, float var13, boolean rot, CallbackInfo ci, @Local(name = "tessellator2") LocalRef<Tessellator> tessellator) {
-        Aura aura = null;//add here
-        if (aura != null) {
+        PlayerDBCInfo formData = Utility.getSelfData();
+        if (formData != null && formData.getCurrentAura() != null) {
+            Aura aura = formData.getCurrentAura();
 
             if (aura.display.getHasLightning() && aura.display.lightningColor != 0) {
                 Color col = Color.decode(aura.display.lightningColor + "");
@@ -32,17 +35,20 @@ public class MixinRenderAura2 {
 
     @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 0))
     private void auraSize(Args args) {
-        Aura aura = null;//add here
+        PlayerDBCInfo formData = Utility.getSelfData();
+        if (formData != null && formData.getCurrentAura() != null) {
+            Aura aura = formData.getCurrentAura();
 
-        if (aura != null && aura.display.hasSize()) {
-            float xSize = (float) args.get(0) * aura.display.getSize();
-            float ySize = (float) args.get(1) * aura.display.getSize();
-            float zSize = (float) args.get(2) * aura.display.getSize();
+            if (aura.display.hasSize()) {
+                float xSize = (float) args.get(0) * aura.display.getSize();
+                float ySize = (float) args.get(1) * aura.display.getSize();
+                float zSize = (float) args.get(2) * aura.display.getSize();
 
-            args.set(0, xSize);
-            args.set(1, ySize);
-            args.set(2, zSize);
+                args.set(0, xSize);
+                args.set(1, ySize);
+                args.set(2, zSize);
 
+            }
         }
     }
 }
