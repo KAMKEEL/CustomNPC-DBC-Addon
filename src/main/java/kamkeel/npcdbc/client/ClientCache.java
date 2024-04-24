@@ -7,6 +7,8 @@ import noppes.npcs.util.CacheHashMap;
 
 public class ClientCache {
 
+    public static boolean fromRenderPlayerJBRA;
+    public static boolean isChangePart;
     public static final CacheHashMap<String, CacheHashMap.CachedObject<DBCData>> clientDataCache = new CacheHashMap<>((long) ConfigClient.CacheLife * 60 * 1000);
 
     public static DBCData getClientData(EntityPlayer player){

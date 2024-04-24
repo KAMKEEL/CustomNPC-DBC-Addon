@@ -8,6 +8,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.form.Form;
@@ -128,7 +129,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
 
     }
-
 
     @Unique
     private void renderSSJ4Fur(Form form, int gender, int bodyCM) {
@@ -291,4 +291,27 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
 
+    /**
+     * Methods Below so we don't need
+     * to constantly scan stack traces
+     */
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;getPlayerColor(IIIIIZZZZZ)I", shift = At.Shift.BEFORE))
+    private void setFromRenderPlayerJBRA(AbstractClientPlayer abstractClientPlayer, float par2, CallbackInfo ci) {
+        ClientCache.fromRenderPlayerJBRA = true;
+    }
+
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;getPlayerColor(IIIIIZZZZZ)I", shift = At.Shift.AFTER))
+    private void clearFromRenderPlayerJBRA(AbstractClientPlayer abstractClientPlayer, float par2, CallbackInfo ci) {
+        ClientCache.fromRenderPlayerJBRA = false;
+    }
+
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;getPlayerColor2(IIIIIZZZZ)I", shift = At.Shift.BEFORE))
+    private void setFromRenderPlayer2JBRA(AbstractClientPlayer abstractClientPlayer, float par2, CallbackInfo ci) {
+        ClientCache.fromRenderPlayerJBRA = true;
+    }
+
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;getPlayerColor2(IIIIIZZZZ)I", shift = At.Shift.AFTER))
+    private void clearFromRenderPlayer2JBRA(AbstractClientPlayer abstractClientPlayer, float par2, CallbackInfo ci) {
+        ClientCache.fromRenderPlayerJBRA = false;
+    }
 }

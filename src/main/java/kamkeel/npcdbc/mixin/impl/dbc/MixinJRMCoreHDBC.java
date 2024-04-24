@@ -4,6 +4,11 @@ import JinRyuu.JRMCore.JRMCoreHDBC;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.Utility;
@@ -18,19 +23,26 @@ public class MixinJRMCoreHDBC {
     private static void onGetPlayerColor(int type, int def, int p, int r, int s, boolean divine, boolean y, boolean ui, boolean ui2, boolean gd, CallbackInfoReturnable<Integer> ci) {
         //if this method is not called by RenderPlayerJBRA, as rendering data is already handled, and this method is heavily used in rendering in DBC
         // To be improved by kAM
-        if (!Utility.stackTraceContains("RenderPlayerJBRA")) {
-            PlayerDBCInfo formData = Utility.getSelfData();
-            if (formData != null && formData.getCurrentForm() != null) {
-                Form form = formData.getCurrentForm();
-                if (Utility.stackTraceContains("chargePart")) {
-                    // formData = Utility.getData(CommonProxy.CurrentJRMCTickPlayer);
-                    form = formData.getCurrentForm();
+        if (!ClientCache.fromRenderPlayerJBRA) {
+            if (ClientCache.isChangePart) {
+                DBCData dbcData = DBCData.get(CommonProxy.CurrentAuraPlayer);
+                if(dbcData.addonFormID != -1){
+                    IForm form = FormController.getInstance().get(dbcData.addonFormID);
+                    if(form != null && ((Form) form).display.auraColor != -1){
+                        ci.setReturnValue(((Form) form).display.auraColor);
+                    }
+                }
+            } else {
+                PlayerDBCInfo formData = Utility.getSelfData();
+                if (formData != null && formData.getCurrentForm() != null) {
+                    Form form = formData.getCurrentForm();
                     if (form.display.auraColor != -1)
                         ci.setReturnValue(form.display.auraColor);
-                } else if (form.display.furColor != -1 && (form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")))
-                    ci.setReturnValue(form.display.furColor);
-                else if (form.display.hairColor != -1)
-                    ci.setReturnValue(form.display.hairColor);
+                    else if (form.display.furColor != -1 && (form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")))
+                        ci.setReturnValue(form.display.furColor);
+                    else if (form.display.hairColor != -1)
+                        ci.setReturnValue(form.display.hairColor);
+                }
             }
         }
     }
@@ -54,5 +66,4 @@ public class MixinJRMCoreHDBC {
             }
         }
     }
-
 }

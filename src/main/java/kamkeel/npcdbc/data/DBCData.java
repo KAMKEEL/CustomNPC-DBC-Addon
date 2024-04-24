@@ -5,8 +5,13 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.DBCUtils;
@@ -405,5 +410,19 @@ public class DBCData {
             default:
                 return false;
         }
+    }
+
+    public Aura getAura(EntityPlayer player){
+        DBCData dbcData = DBCData.get(player);
+        Aura aura = null;
+        if(dbcData.addonFormID != -1){
+            IForm form = FormController.getInstance().get(dbcData.addonFormID);
+            if(form != null && ((Form) form).display.auraID != -1){
+                aura = (Aura) AuraController.getInstance().get(((Form) form).display.auraID);
+            }
+        } else if(dbcData.auraID != -1){
+            aura = (Aura) AuraController.getInstance().get(dbcData.auraID);
+        }
+        return aura;
     }
 }
