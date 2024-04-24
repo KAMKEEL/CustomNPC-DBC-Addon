@@ -27,6 +27,8 @@ public interface IAura {
 
     void removeFromPlayer(String name);
 
+    IAuraDisplay getDisplay();
+
     IAura save();
 
 

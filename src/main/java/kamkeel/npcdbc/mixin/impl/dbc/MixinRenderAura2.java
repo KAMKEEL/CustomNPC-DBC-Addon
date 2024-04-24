@@ -28,7 +28,7 @@ public class MixinRenderAura2 {
 
             if (aura.display.getHasLightning() && aura.display.lightningColor != 0) {
                 Color col = Color.decode(aura.display.lightningColor + "");
-                tessellator.get().setColorRGBA(col.getRed(), col.getGreen(), col.getBlue(), aura.display.lightningAlpha);
+                tessellator.get().setColorRGBA(col.getRed(), col.getGreen(), col.getBlue(), aura.display.hasAlpha("lightning") ? aura.display.alpha : 255);
             }
         }
     }

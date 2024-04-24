@@ -1,21 +1,24 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.DragonBC.common.DBCKiTech;
+import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.TransformController;
-import kamkeel.npcdbc.data.aura.Aura;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -88,9 +91,11 @@ public class MixinDBCKiTech {
     }
 
     @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/settings/GameSettings;thirdPersonView:I", ordinal = 0, shift = At.Shift.AFTER))
-    private static void chargePart(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "state") LocalFloatRef state, @Local(name = "state2") LocalFloatRef state2, @Local(name = "kk") LocalBooleanRef kk, @Local(name = "ssb") LocalBooleanRef ssb, @Local(name = "ssg") LocalBooleanRef ssg, @Local(name = "ssbs") LocalBooleanRef ssbs, @Local(name = "v") LocalBooleanRef divine, @Local(name = "oozar") LocalBooleanRef oozaru, @Local(name = "ui") LocalBooleanRef ui, @Local(name = "gd") LocalBooleanRef godestruction) {
-        Aura aura = null; //pls make the framework for this
-        if (aura != null) {
+    private static void setAuraType(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "state") LocalFloatRef state, @Local(name = "state2") LocalFloatRef state2, @Local(name = "kk") LocalBooleanRef kk, @Local(name = "ssb") LocalBooleanRef ssb, @Local(name = "ssg") LocalBooleanRef ssg, @Local(name = "ssbs") LocalBooleanRef ssbs, @Local(name = "v") LocalBooleanRef divine, @Local(name = "oozar") LocalBooleanRef oozaru, @Local(name = "ui") LocalBooleanRef ui, @Local(name = "gd") LocalBooleanRef godestruction) {
+        PlayerDBCInfo formData = Utility.getSelfData();
+        if (formData != null && formData.getCurrentAura() != null) {
+            Aura aura = formData.getCurrentAura();
+
             if (aura.display.type.equals("ssg"))
                 ssg.set(true);
             else if (aura.display.type.equals("ssb"))
@@ -114,10 +119,33 @@ public class MixinDBCKiTech {
         }
     }
 
-//    @Inject(method = "Descend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;Rls(B)V", shift = At.Shift.AFTER), cancellable = true)
-//    private static void fix0ReleaseOnDescend(KeyBinding K, CallbackInfo ci) {
-//        CustomForm form = Utility.getSelfData() != null ? Utility.getSelfData().getCurrentForm() : null;
-//        if (form != null)
-//            ci.cancel();
-//    }
+    @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", shift = At.Shift.BEFORE))
+    private static void setAuraFields(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "aura") LocalRef<Entity> Aura) {
+
+        PlayerDBCInfo formData = Utility.getSelfData();
+        if (formData != null && formData.getCurrentAura() != null) {
+            Aura aura = formData.getCurrentAura();
+
+            EntityAura2 aur = (EntityAura2) Aura.get();
+            if (aura.display.hasColor("color1"))
+                aur.setCol(aura.display.color1);
+            if (aura.display.hasColor("color2"))
+                aur.setColL2(aura.display.color2);
+            if (aura.display.hasColor("color3"))
+                aur.setColL3(aura.display.color3);
+//            if (aura.display.hasTexture1)
+//                tex = aura.display.texture1;
+//            if (aura.display.hasTexture2)
+//                texl2 = aura.display.texture2;
+//            if (aura.display.hasTexture3)
+//                texl3 = aura.display.texture3;
+            if (aura.display.hasSpeed())
+                aur.setSpd((int) aura.display.speed);
+            if (aura.display.hasAlpha("lightning"))
+                aur.setAlp(aura.display.alpha);
+
+        }
+    }
+
+
 }
