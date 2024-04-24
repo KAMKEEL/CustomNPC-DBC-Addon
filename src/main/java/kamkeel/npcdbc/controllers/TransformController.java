@@ -157,7 +157,7 @@ public class TransformController {
         if(form == null)
             return;
 
-        PlayerDBCInfo formData = Utility.getFormData(player);
+        PlayerDBCInfo formData = Utility.getData(player);
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
             // Check for in Required DBC Form before Transforming
@@ -194,7 +194,7 @@ public class TransformController {
     }
 
     public static void handleFormDescend(EntityPlayer player) {
-        PlayerDBCInfo formData = Utility.getFormData(player);
+        PlayerDBCInfo formData = Utility.getData(player);
         if (formData.isInCustomForm()) {
             Form form = formData.getCurrentForm();
             DBCData dbcData = DBCData.get(player);

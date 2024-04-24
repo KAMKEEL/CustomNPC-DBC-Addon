@@ -21,7 +21,7 @@ public class MixinJRMCoreHDBC {
         if (!Utility.stackTraceContains("RenderPlayerJBRA")) {
             PlayerDBCInfo formData = Utility.getSelfData();
             if (Utility.stackTraceContains("chargePart")) {
-                formData = Utility.getFormData(CommonProxy.CurrentJRMCTickPlayer);
+                formData = Utility.getData(CommonProxy.CurrentJRMCTickPlayer);
                 Form form = formData != null ? formData.getCurrentForm() : null;
                 if (form != null && form.display.auraColor != -1)
                     ci.setReturnValue(form.display.auraColor);
@@ -29,7 +29,7 @@ public class MixinJRMCoreHDBC {
             if (formData != null && formData.getCurrentForm() != null) {
                 Form form = formData.getCurrentForm();
                 if (Utility.stackTraceContains("chargePart")) {
-                    formData = Utility.getFormData(CommonProxy.CurrentJRMCTickPlayer);
+                    formData = Utility.getData(CommonProxy.CurrentJRMCTickPlayer);
                     form = formData.getCurrentForm();
                     if (form.display.auraColor != -1)
                         ci.setReturnValue(form.display.auraColor);
@@ -47,7 +47,7 @@ public class MixinJRMCoreHDBC {
             Form form = null;
 
             if (Utility.isServer()) {
-                PlayerDBCInfo data = Utility.getFormData(CommonProxy.CurrentJRMCTickPlayer);
+                PlayerDBCInfo data = Utility.getData(CommonProxy.CurrentJRMCTickPlayer);
                 if (data != null)
                     form = data.getCurrentForm();
             } else

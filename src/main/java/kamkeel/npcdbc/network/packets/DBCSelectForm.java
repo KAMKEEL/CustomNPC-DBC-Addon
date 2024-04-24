@@ -40,7 +40,7 @@ public final class DBCSelectForm extends AbstractPacket {
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         int formID = in.readInt();
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
-        PlayerDBCInfo formData = Utility.getFormData(playerData);
+        PlayerDBCInfo formData = Utility.getData(playerData);
         formData.selectedForm = -1;
         NBTTagCompound compound = new NBTTagCompound();
         if (formID != -1 && FormController.getInstance().has(formID)){

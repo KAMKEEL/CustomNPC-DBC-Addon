@@ -3,9 +3,11 @@ package kamkeel.npcdbc.util;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import net.minecraft.client.Minecraft;
@@ -110,7 +112,7 @@ public class Utility {
 
     public static Form getCurrentForm(EntityPlayer p) {
         if (isServer(p))
-            return Utility.getFormData(p) != null ? Utility.getFormData(p).getCurrentForm() : null;
+            return Utility.getData(p) != null ? Utility.getData(p).getCurrentForm() : null;
         else
             return getFormClient(p);
     }
@@ -174,6 +176,22 @@ public class Utility {
         return (Form) FormController.getInstance().get(form);
     }
 
+    public static Aura getAuraClient(EntityPlayer player) {
+        if (player == null)
+            return null;
+
+        DBCData dbcData = DBCData.get(player);
+        if (dbcData == null)//(dbcData.Release <= 0 || dbcData.Ki <= 0)
+            return null;
+
+        int form = dbcData.auraID;
+        if (form == -1)
+            return null;
+
+
+        return (Aura) AuraController.getInstance().get(form);
+    }
+
     @SideOnly(Side.CLIENT)
     public static float getFormLevelClient(AbstractClientPlayer player) {
         DBCData dbcData = DBCData.get(player);
@@ -183,11 +201,11 @@ public class Utility {
         return dbcData.addonFormLevel;
     }
 
-    public static PlayerDBCInfo getFormData(EntityPlayer player) {
-        return Utility.getFormData(PlayerDataController.Instance.getPlayerData(player));
+    public static PlayerDBCInfo getData(EntityPlayer player) {
+        return Utility.getData(PlayerDataController.Instance.getPlayerData(player));
     }
 
-    public static PlayerDBCInfo getFormData(PlayerData playerData) {
+    public static PlayerDBCInfo getData(PlayerData playerData) {
         return ((IPlayerDBCInfo) playerData).getPlayerDBCInfo();
     }
 

@@ -194,7 +194,7 @@ public class Form implements IForm {
     @Override
     public void assignToPlayer(EntityPlayer p) {
         if (race == DBCRace.ALL || race == DBCData.get(p).Race) {
-            PlayerDBCInfo formData = Utility.getFormData(p);
+            PlayerDBCInfo formData = Utility.getData(p);
             formData.addForm(this);
             formData.updateClient();
         }
@@ -207,7 +207,7 @@ public class Form implements IForm {
 
     @Override
     public void removeFromPlayer(EntityPlayer p) {
-        PlayerDBCInfo formData = Utility.getFormData(p);
+        PlayerDBCInfo formData = Utility.getData(p);
         formData.removeForm(this);
         if (formData.selectedForm == this.id)
             formData.selectedForm = -1;

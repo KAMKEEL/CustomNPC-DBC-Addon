@@ -61,7 +61,7 @@ public class ServerEventHandler {
     public void handleFormProcesses(EntityPlayer player) {
         Form form = Utility.getCurrentForm(player);
         if (form != null) {
-            PlayerDBCInfo formData = Utility.getFormData(player);
+            PlayerDBCInfo formData = Utility.getData(player);
             DBCData dbcData = DBCData.get(player);
 
             if (dbcData.Release <= 0 || dbcData.Ki <= 0) { //reverts player from CF when ki or release are 0
