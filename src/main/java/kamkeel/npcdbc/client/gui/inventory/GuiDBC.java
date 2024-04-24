@@ -1,10 +1,14 @@
 package kamkeel.npcdbc.client.gui.inventory;
 
 import kamkeel.npcdbc.client.gui.component.GuiFormScroll;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSelectForm;
 import kamkeel.npcdbc.network.packets.TransformPacket;
+import kamkeel.npcdbc.scripted.DBCAPI;
+import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
@@ -83,17 +87,35 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
     }
 
     private void renderScreen() {
-        drawGradientRect(guiLeft + 140, guiTop + 4, guiLeft + xSize + 36 ,guiTop + 25, 0x50101010, 0x80101010);
+        drawGradientRect(guiLeft + 140, guiTop + 4, guiLeft + xSize + 36 ,guiTop + 24, 0xC0101010, 0xC0101010);
         drawHorizontalLine(guiLeft + 140, guiLeft + xSize + 35, guiTop + 25, 0xFF000000 + CustomNpcResourceListener.DefaultTextColor);
+        drawGradientRect(guiLeft + 140, guiTop + 27, guiLeft + xSize + 36 ,guiTop + ySize + 10, 0xA0101010, 0xA0101010);
         String drawString = "§fNo Form Selected";
         if (selectedForm != null) {
             drawString = selectedForm.getMenuName();
         }
         int textWidth = getStringWidthWithoutColor(drawString);
         int centerX = guiLeft + 140 + ((xSize - textWidth + 30 - 140) / 2); // Adjusted centerX calculation
-        GL11.glPushMatrix();
-        fontRendererObj.drawString(drawString, centerX, guiTop + 10, CustomNpcResourceListener.DefaultTextColor);
-        GL11.glPopMatrix();
+        fontRendererObj.drawString(drawString, centerX, guiTop + 10, CustomNpcResourceListener.DefaultTextColor, true);
+        if (selectedForm != null) {
+            DBCData dbcData = DBCData.getClient();
+            int race = dbcData.Race;
+            int y = guiTop + 18;
+            if(selectedForm.requiredForm.containsKey(race)){
+                String parent = "§fPrev: " + DBCUtils.getFormattedStateName(race, selectedForm.requiredForm.get(race));
+                parent = Utility.removeBoldColorCode(parent);
+                fontRendererObj.drawString(parent, guiLeft + 143, y+=12, CustomNpcResourceListener.DefaultTextColor, true);
+            } else if(selectedForm.hasParent() && selectedForm.getParent() != null){
+                String parent = "§fPrev: " + selectedForm.getParent().getMenuName();
+                parent = Utility.removeBoldColorCode(parent);
+                fontRendererObj.drawString(parent, guiLeft + 143, y+=12, CustomNpcResourceListener.DefaultTextColor, true);
+            }
+            if(selectedForm.hasChild() && selectedForm.getChild() != null){
+                String child = "§fNext: " + selectedForm.getChild().getMenuName();
+                child = Utility.removeBoldColorCode(child);
+                fontRendererObj.drawString(child, guiLeft + 143, y+=12, CustomNpcResourceListener.DefaultTextColor, true);
+            }
+        }
     }
 
 
