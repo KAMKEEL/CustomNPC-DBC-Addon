@@ -741,7 +741,9 @@ public class DBCUtils {
         if (!player.worldObj.isRemote && dbcStats != null && damageAmount > 0) {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
-                boolean block = props.getBlocking() == 1;
+                boolean isBlocking = props.getBlocking() == 1;
+                // Hussar
+                boolean isChargingKi = false;
 
                 int[] attributes = PlyrAttrbts(player);
                 String[] playerSkills = PlyrSkills(player);
@@ -782,7 +784,6 @@ public class DBCUtils {
                 int kiProtectionCost = 0;
                 int maxKiPool = JRMCoreH.stat(player, 5, powerType, 5, attributes[5], race, classID, JRMCoreH.SklLvl_KiBs(playerSkills, powerType));
                 int kiProtectLevel = JRMCoreH.SklLvl(11, playerSkills);
-                ;
 
                 double formDamageReduction = 1;
                 if (!dbcStats.isIgnoreFormReduction()) {
@@ -828,11 +829,14 @@ public class DBCUtils {
                 ////////////////////
                 ////// EFFECT STAMINA BOOL
                 // Reduce Stamina
-                if (block && !dbcStats.isIgnoreBlock() && currStamina >= staminaCost) {
+                if (isBlocking && !dbcStats.isIgnoreBlock() && currStamina >= staminaCost) {
                     if (!isInCreativeMode(player)) {
                         setInt(Math.max(currStamina - staminaCost, 0), player, "jrmcStamina");
                     }
-                } else {
+                } else if (isChargingKi) {
+
+                }
+                else {
                     // Passive Dex
                     def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
                 }
