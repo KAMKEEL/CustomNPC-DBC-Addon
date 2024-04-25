@@ -126,9 +126,6 @@ public class MiscCapsule extends Item {
             player.addChatComponentMessage(new ChatComponentText("§7UI Heat Restored"));
         }
         else if(meta == EnumMiscCapsules.PowerPoint.getMeta()){
-            // Restore 100 Amount of Power Points
-            StatusEffectController.Instance.applyEffect(player, new RegenEffect(10));
-
             DBCData dbcData = DBCData.get(player);
             if(dbcData.Race != DBCRace.ARCOSIAN){
                 player.addChatComponentMessage(new ChatComponentText("§7Only Arcosians can use this capsule"));
