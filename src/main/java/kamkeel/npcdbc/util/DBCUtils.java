@@ -1017,4 +1017,14 @@ public class DBCUtils {
 
         return kiAnimationTypeSelected && shouldAttemptAnimation;
     }
+
+    public static int getRacialSkill(EntityPlayer player){
+        JGPlayerMP JG = new JGPlayerMP(player);
+        JG.connectBaseNBT();
+        String racial = JG.getSkillsX();
+
+        if(racial == null || racial.isEmpty() || racial.contains("pty"))
+            return 0;
+        return Integer.parseInt(racial.substring(2));
+    }
 }
