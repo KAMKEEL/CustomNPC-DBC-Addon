@@ -53,7 +53,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                     s2 = Utility.removeBoldColorCode(name) + " §8Mastery Lvl: §4" + formatter.format(curLevel) + (removeBase ? (isInKaioken ? kaiokenString : "") : "\n§8" + s2);
                 }
                 //adds the form color to STR,DEX and WIL attribute values
-            } else if ((s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§")) {
+            } else if ((s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) || s1.contains(JRMCoreH.trl("jrmc", "mleDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "DefDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "Passive")+":") || s1.contains(JRMCoreH.trl("jrmc", "EnPwDB")+":") && s1.contains("§")) {
                 int secondIndex = 0;
                 for (int i = 0; i < s1.length(); i++) {
                     if (s1.charAt(i) == '§' && !s1.substring(i, i + 2).equals("§8")) {
