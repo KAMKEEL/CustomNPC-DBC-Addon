@@ -1,7 +1,11 @@
-package kamkeel.npcdbc.items;
+package kamkeel.npcdbc.items.capules;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
+import kamkeel.npcdbc.constants.Capsule;
+import kamkeel.npcdbc.constants.enums.EnumHealthCapsules;
 import kamkeel.npcdbc.constants.enums.EnumStaminaCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.data.DBCData;
@@ -14,9 +18,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import noppes.npcs.CustomItems;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,7 +62,7 @@ public class StaminaCapsule extends Item {
         if (meta >= 0 && meta < EnumStaminaCapsules.count()) {
             return icons[meta];
         }
-        return null;
+        return icons[0];
     }
 
     /**
@@ -84,6 +90,7 @@ public class StaminaCapsule extends Item {
 
     @Override
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
+        player.setItemInUse(itemStack, this.getMaxItemUseDuration(itemStack));
         if (world.isRemote)
             return itemStack;
 
@@ -121,4 +128,25 @@ public class StaminaCapsule extends Item {
         return EnumAction.block;
     }
 
+    @Override
+    public int getMaxItemUseDuration(ItemStack par1ItemStack) {
+        return 100;
+    }
+
+    @Override
+    public ItemStack onEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer) {
+        return par1ItemStack;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+        int meta = itemStack.getItemDamage();
+        if (meta < 0 || meta > EnumHealthCapsules.count())
+            meta = 0;
+
+        HashMap<Integer, Integer> staminaStrength = CapsuleController.Instance.capsuleStrength.get(Capsule.STAMINA);
+        HashMap<Integer, Integer> staminaCooldown = CapsuleController.Instance.capsuleCooldowns.get(Capsule.STAMINA);
+        par3List.add(StatCollector.translateToLocalFormatted("capsule.restore", staminaStrength.get(meta) + "%", StatCollector.translateToLocal("capsule.stamina")));
+        par3List.add(StatCollector.translateToLocalFormatted("capsule.cooldown", staminaCooldown.get(meta)));
+    }
 }
