@@ -6,6 +6,7 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
+import noppes.npcs.util.ValueUtil;
 
 public class FormDisplay implements IFormDisplay {
 
@@ -125,7 +126,7 @@ public class FormDisplay implements IFormDisplay {
 
     @Override
     public void setSize(float size) {
-        formSize = Math.max(Math.min(size, 10), 0.05f);
+        formSize = ValueUtil.clamp(size, 0.01f, 3);
     }
 
     @Override
