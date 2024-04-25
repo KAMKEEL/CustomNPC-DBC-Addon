@@ -133,12 +133,16 @@ public class PlayerDBCInfo {
         DBCData data = DBCData.get(parent.player);
         if (data == null)
             return;
+
         FormMastery fm = (FormMastery) f.getMastery();
+        if (!formLevels.containsKey(f.id))
+            return;
+
         float playerLevel = formLevels.get(f.id);
         float fullGain = fm.calculateFullGain(gainType, playerLevel, data.MND);
 
         playerLevel = Math.min(playerLevel + fullGain, fm.maxLevel); //updated level
-        formLevels.put(f.id, playerLevel);
+        formLevels.replace(f.id, playerLevel);
         updateClient();
     }
 
