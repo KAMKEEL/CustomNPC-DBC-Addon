@@ -5,8 +5,6 @@ import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalByteRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -14,7 +12,6 @@ import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
-import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.Entity;
@@ -196,29 +193,29 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;StatPasDef:I", shift = At.Shift.AFTER))
     private static void applyChargingDex(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir, @Local(name = "def") LocalIntRef def, @Local(name = "kiProtection") LocalIntRef kiProtection) {
-        boolean isChargingKi = DBCUtils.isChargingKiAttack((EntityPlayer) Player);
         DBCData dbcData = DBCData.get((EntityPlayer) Player);
         byte classID = dbcData.Class;
-        int newDef = def.get();
+        boolean isChargingKi = dbcData.isChargingKiAttack();
+        float newDef = def.get();
         int kiProt = kiProtection.get();
         if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
             // Charging Dex
             switch (classID) {
                 case 0:
-                    newDef = (int) ((float) ((newDef - kiProt) * ConfigDBCGameplay.MartialArtistCharge) * 0.01F) + kiProt;
+                    newDef = ((newDef - kiProt) * ConfigDBCGameplay.MartialArtistCharge * 0.01F) + kiProt;
                     break;
                 case 1:
-                    newDef = (int) ((float) ((newDef - kiProt) * ConfigDBCGameplay.SpiritualistCharge) * 0.01F) + kiProt;
+                    newDef = ((newDef - kiProt) * ConfigDBCGameplay.SpiritualistCharge * 0.01F) + kiProt;
                     break;
                 case 2:
-                    newDef = (int) ((float) ((newDef - kiProt) * ConfigDBCGameplay.WarriorCharge) * 0.01F) + kiProt;
+                    newDef = ((newDef - kiProt) * ConfigDBCGameplay.WarriorCharge * 0.01F) + kiProt;
                     break;
                 default:
-                    newDef = (int) ((float) ((newDef - kiProt) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProt;
+                    newDef = ((newDef - kiProt) * JRMCoreConfig.StatPasDef * 0.01F) + kiProt;
                     break;
             }
         }
-        def.set(newDef);
+        def.set((int) newDef);
     }
 }
 

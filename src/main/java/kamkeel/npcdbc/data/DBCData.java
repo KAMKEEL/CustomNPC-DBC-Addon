@@ -2,7 +2,6 @@ package kamkeel.npcdbc.data;
 
 
 import JinRyuu.JRMCore.JRMCoreH;
-import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -21,6 +20,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
+
+import static JinRyuu.JRMCore.JRMCoreH.nbt;
 
 public class DBCData {
 
@@ -325,6 +326,13 @@ public class DBCData {
 
     }
 
+    public void setArcReserve(int reserve) {
+        if (Race != 4)
+            return;
+        nbt(player).setInteger("jrmcArcRsrv", reserve);
+
+    }
+
     public boolean isForm(int dbcForm) {
         switch (dbcForm) {
             case DBCForm.Kaioken:
@@ -426,7 +434,7 @@ public class DBCData {
         return null;
     }
 
-    public boolean isChargingKiAttack(){
+    public boolean isChargingKiAttack() {
         return DBCUtils.isChargingKiAttack(player);
     }
 }
