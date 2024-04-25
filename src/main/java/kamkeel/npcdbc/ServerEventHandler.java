@@ -3,7 +3,6 @@ package kamkeel.npcdbc;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
-import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -11,18 +10,14 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.CapsuleInfo;
-import kamkeel.npcdbc.network.packets.DBCInfoSync;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.FakePlayer;
 import noppes.npcs.NoppesUtilServer;
-import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
-
-import java.util.HashMap;
 
 public class ServerEventHandler {
 
@@ -59,25 +54,9 @@ public class ServerEventHandler {
             if (player.ticksExisted % 10 == 0) {
                 // Keep the Player informed on their own data
                 DBCData dbcData = DBCData.get(player);
-                if (player.ticksExisted % 20 == 0) {
-                    HashMap<Integer, Integer> current = StatusEffectController.Instance.activeEffects.get(Utility.getUUID(player));
-                    for(int effect : current.keySet()){
-                        int currentValue = current.get(effect);
-                        if(currentValue == -1)
-                            continue;
+                if (player.ticksExisted % 20 == 0)
+                    dbcData.decrementActiveEffects();
 
-                        int newTime = current.get(effect) - 1;
-                        if(newTime == 0){
-                            current.remove(effect);
-                            System.out.println("Effect Removed");
-                        }
-                        else {
-                            current.put(effect, newTime);
-                            System.out.println("Time Remaining: " + newTime);
-                        }
-                    }
-                    dbcData.setActiveEffects(current);
-                }
 
                 dbcData.syncAllClients();
             }

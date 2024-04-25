@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.data;
 
 
-import JinRyuu.DragonBC.common.Items.ItemSenzu;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
@@ -201,10 +200,32 @@ public class DBCData {
         return this.player.getEntityData().getCompoundTag(DBCPersisted);
     }
 
+    public HashMap<Integer, Integer> getActiveEffects() {
+        return StatusEffectController.Instance.activeEffects.get(Utility.getUUID(player));
+    }
+
     public void setActiveEffects(HashMap<Integer, Integer> activeEffects) {
         NBTTagCompound raw = getRawCompound();
         this.activeEffects = activeEffects;
         raw.setTag("addonActiveEffects", NBTTags.nbtIntegerIntegerMap(activeEffects));
+    }
+
+    public void decrementActiveEffects() {
+        HashMap<Integer, Integer> currentEffects = getActiveEffects();
+        for (int effect : currentEffects.keySet()) {
+            int currentTimer = currentEffects.get(effect);
+            if (currentTimer == -1)
+                continue;
+
+            int newTime = currentTimer - 1;
+
+            if (newTime <= 0)
+                currentEffects.remove(effect);
+            else
+                currentEffects.replace(effect, newTime);
+
+        }
+        setActiveEffects(currentEffects);
     }
 
     public void setEyeColorLeft(int color) {
