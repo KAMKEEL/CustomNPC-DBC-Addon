@@ -323,14 +323,12 @@ public class DBCData {
 
         Heat = Math.max(Heat - toAdd, 0);
         saveNBTData();
-
     }
 
     public void setArcReserve(int reserve) {
         if (Race != 4)
             return;
         nbt(player).setInteger("jrmcArcRsrv", reserve);
-
     }
 
     public boolean isForm(int dbcForm) {
