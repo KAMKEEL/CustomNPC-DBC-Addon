@@ -3,7 +3,11 @@ package kamkeel.npcdbc.data.statuseffect;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class StatusEffect {
-    public int id = -1, timer = -1;
+    public int id = -1;
+    public int timer = -1;
+
+    // Must be a multiple of 10
+    public int everyXTick = 20;
     public String name = "", icon = "", type = "";
 
     public boolean lossOnDeath = true;
@@ -44,7 +48,16 @@ public class StatusEffect {
         this.type = type;
     }
 
-    public void processEffect(EntityPlayer player) {
+    public int getEveryXTick() { return everyXTick; }
 
+    public void setEveryXTick(int everyXTick){
+        this.everyXTick = everyXTick; }
+
+    public void runEffect(EntityPlayer player){
+        if(player.ticksExisted % everyXTick == 0){
+            process(player);
+        }
     }
+
+    public void process(EntityPlayer player) {}
 }

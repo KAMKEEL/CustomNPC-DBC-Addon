@@ -40,6 +40,7 @@ public class CustomNpcPlusDBC {
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
         CapsuleController.getInstance().load();
+        StatusEffectController.getInstance().load();
     }
 
     @Mod.EventHandler

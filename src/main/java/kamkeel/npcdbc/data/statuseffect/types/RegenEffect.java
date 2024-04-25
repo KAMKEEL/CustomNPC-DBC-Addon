@@ -12,7 +12,5 @@ public class RegenEffect extends StatusEffect {
     }
 
     @Override
-    public void processEffect(EntityPlayer player){
-
-    }
+    public void process(EntityPlayer player){}
 }

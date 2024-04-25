@@ -12,6 +12,10 @@ public class ConfigDBCGameplay
 {
     public static Configuration config;
 
+    public final static String StatusEffects = "StatusEffects";
+    public static Property CheckEffectsTickProperty;
+    public static float CheckEffectsTick = 10;
+
     public final static String ChargingDex = "ChargingDex";
     public static Property EnableChargingDexProperty;
     public static boolean EnableChargingDex = true;
@@ -29,6 +33,11 @@ public class ConfigDBCGameplay
         try
         {
             config.load();
+
+            CheckEffectsTickProperty = config.get(StatusEffects, "Run Effects Every X Tick", 10, "This will check effects every X ticks. All registered effects must be multiple of 10. [10, 20, 30...] Max: 100");
+            CheckEffectsTick = CheckEffectsTickProperty.getInt(10);
+            CheckEffectsTick = (CheckEffectsTick % 10 == 0) ? CheckEffectsTick : ((CheckEffectsTick / 10) + 1) * 10;
+            CheckEffectsTick = ValueUtil.clamp(CheckEffectsTick, 10, 100);
 
             EnableChargingDexProperty = config.get(ChargingDex, "0. Enable Charging Dex", true, "Charging Dex -> Percent of Total Defense Activated while Charging Ki Attacks. \nActive Defense [Blocking], Passive [Not Blocking](Takes Percent of Active in JRMCore Configs.) \nCharging Defense [Charging Ki Attack](Percent of Active)[0 - 100]");
             EnableChargingDex = EnableChargingDexProperty.getBoolean(true);
