@@ -131,34 +131,36 @@ public class MixinDBCKiTech {
         DBCData dbcData = DBCData.get(p);
         Aura aura = dbcData.getCurrentAura();
         if (aura != null) {
-            EntityAura2 aur = (EntityAura2) Aura.get();
-            if (aura.display.hasColor("color1"))
-                aur.setCol(aura.display.color1);
-            if (aura.display.hasColor("color2"))
-                aur.setColL2(aura.display.color2);
-            if (aura.display.hasColor("color3"))
-                aur.setColL3(aura.display.color3);
+            if(Aura.get() instanceof  EntityAura2){
+                EntityAura2 aur = (EntityAura2) Aura.get();
+                if (aura.display.hasColor("color1"))
+                    aur.setCol(aura.display.color1);
+                if (aura.display.hasColor("color2"))
+                    aur.setColL2(aura.display.color2);
+                if (aura.display.hasColor("color3"))
+                    aur.setColL3(aura.display.color3);
 //            if (aura.display.hasTexture1)
 //                tex = aura.display.texture1;
 //            if (aura.display.hasTexture2)
 //                texl2 = aura.display.texture2;
 //            if (aura.display.hasTexture3)
 //                texl3 = aura.display.texture3;
-            if (aura.display.hasSpeed())
-                aur.setSpd((int) aura.display.speed);
-            if (aura.display.hasAlpha("aura"))
-                aur.setAlp(aura.display.alpha);
+                if (aura.display.hasSpeed())
+                    aur.setSpd((int) aura.display.speed);
+                if (aura.display.hasAlpha("aura"))
+                    aur.setAlp(aura.display.alpha);
 
-            if (aura.display.hasSize())
-                ((IEntityAura) aur).setSize(aura.display.size);
+                if (aura.display.hasSize())
+                    ((IEntityAura) aur).setSize(aura.display.size);
 
-            ((IEntityAura) aur).setHasLightning(aura.display.hasLightning);
-            ((IEntityAura) aur).setLightningColor(aura.display.lightningColor);
+                ((IEntityAura) aur).setHasLightning(aura.display.hasLightning);
+                ((IEntityAura) aur).setLightningColor(aura.display.lightningColor);
 
-            if (aura.display.hasAlpha("lightning"))
-                ((IEntityAura) aur).setLightningAlpha(aura.display.lightningAlpha);
-            else
-                ((IEntityAura) aur).setLightningAlpha(255);
+                if (aura.display.hasAlpha("lightning"))
+                    ((IEntityAura) aur).setLightningAlpha(aura.display.lightningAlpha);
+                else
+                    ((IEntityAura) aur).setLightningAlpha(255);
+            }
         }
     }
 
