@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import noppes.npcs.CustomItems;
@@ -92,22 +93,25 @@ public class KiCapsule extends Item {
 
         EnumKiCapsules kiCapsules = EnumKiCapsules.values()[meta];
         UUID playerUUID = player.getUniqueID();
-        if (CapsuleController.canUseKiCapsule(playerUUID, meta)) {
-            // Percentage of Ki to Restore
-            int kiRestored = kiCapsules.getStrength();
-
-            // Restore X Amount of KI
-            DBCData.get(player).restoreKiPercent(kiRestored);
-
-            // Removes 1 Item
-            itemStack.splitStack(1);
-            if (itemStack.stackSize <= 0)
-                player.destroyCurrentEquippedItem();
-
-            // Set Cooldown
-            CapsuleController.setKiCapsule(playerUUID, meta);
+        long remainingTime = CapsuleController.canUseKiCapsule(playerUUID, meta);
+        if(remainingTime > 0){
+            player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
+            return itemStack;
         }
 
+        // Percentage of Ki to Restore
+        int kiRestored = kiCapsules.getStrength();
+
+        // Restore X Amount of KI
+        DBCData.get(player).restoreKiPercent(kiRestored);
+
+        // Removes 1 Item
+        itemStack.splitStack(1);
+        if (itemStack.stackSize <= 0)
+            player.destroyCurrentEquippedItem();
+
+        // Set Cooldown
+        CapsuleController.setKiCapsule(playerUUID, meta);
         return itemStack;
     }
 }

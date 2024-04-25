@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import noppes.npcs.CustomItems;
@@ -90,24 +91,27 @@ public class StaminaCapsule extends Item {
         if (meta < 0 || meta > EnumStaminaCapsules.count())
             meta = 0;
 
-        EnumStaminaCapsules staminaCapsules = EnumStaminaCapsules.values()[meta];
         UUID playerUUID = player.getUniqueID();
-        if (CapsuleController.canUseStaminaCapsule(playerUUID, meta)) {
-            // Percentage of Stamina to Restore
-            int staminaRestored = staminaCapsules.getStrength();
-
-            // Restore X Amount of Stamina
-            DBCData.get(player).restoreStaminaPercent(staminaRestored);
-
-            // Removes 1 Item
-            itemStack.splitStack(1);
-            if (itemStack.stackSize <= 0)
-                player.destroyCurrentEquippedItem();
-
-            // Set Cooldown
-            CapsuleController.setStaminaCapsule(playerUUID, meta);
+        long remainingTime = CapsuleController.canUseStaminaCapsule(playerUUID, meta);
+        if(remainingTime > 0){
+            player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
+            return itemStack;
         }
 
+        EnumStaminaCapsules staminaCapsules = EnumStaminaCapsules.values()[meta];
+        // Percentage of Stamina to Restore
+        int staminaRestored = staminaCapsules.getStrength();
+
+        // Restore X Amount of Stamina
+        DBCData.get(player).restoreStaminaPercent(staminaRestored);
+
+        // Removes 1 Item
+        itemStack.splitStack(1);
+        if (itemStack.stackSize <= 0)
+            player.destroyCurrentEquippedItem();
+
+        // Set Cooldown
+        CapsuleController.setStaminaCapsule(playerUUID, meta);
         return itemStack;
     }
 }

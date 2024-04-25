@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import noppes.npcs.CustomItems;
@@ -92,22 +93,25 @@ public class HealthCapsule extends Item {
 
         EnumHealthCapsules healthCapsules = EnumHealthCapsules.values()[meta];
         UUID playerUUID = player.getUniqueID();
-        if (CapsuleController.canUseHealthCapsule(playerUUID, meta)) {
-            // Percentage of Health to Restore
-            int healthRestored = healthCapsules.getStrength();
-
-            // Restore X Amount of Health
-            DBCData.get(player).restoreHealthPercent(healthRestored);
-
-            // Removes 1 Item
-            itemStack.splitStack(1);
-            if (itemStack.stackSize <= 0)
-                player.destroyCurrentEquippedItem();
-
-            // Set Cooldown
-            CapsuleController.setHealthCapsule(playerUUID, meta);
+        long remainingTime = CapsuleController.canUseKiCapsule(playerUUID, meta);
+        if(remainingTime > 0){
+            player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
+            return itemStack;
         }
+        
+        // Percentage of Health to Restore
+        int healthRestored = healthCapsules.getStrength();
 
+        // Restore X Amount of Health
+        DBCData.get(player).restoreHealthPercent(healthRestored);
+
+        // Removes 1 Item
+        itemStack.splitStack(1);
+        if (itemStack.stackSize <= 0)
+            player.destroyCurrentEquippedItem();
+
+        // Set Cooldown
+        CapsuleController.setHealthCapsule(playerUUID, meta);
         return itemStack;
     }
 }

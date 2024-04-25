@@ -84,7 +84,7 @@ public class CapsuleController {
         }
     }
 
-    public static boolean canUseKiCapsule(UUID playerUUID, int type){
+    public static long canUseKiCapsule(UUID playerUUID, int type){
         if(ConfigCapsules.EnableCapsuleCooldowns){
             if (type < 0 || type > EnumKiCapsules.count())
                 type = 0;
@@ -96,7 +96,11 @@ public class CapsuleController {
                 if (CapsuleController.lastUsedKiCapsule.containsKey(playerUUID))
                     freedomTime = CapsuleController.lastUsedKiCapsule.get(playerUUID);
 
-                return currentTime > freedomTime;
+                // Calculate remaining time in milliseconds
+                long remainingTimeMillis = freedomTime - currentTime;
+
+                // Return remaining time in seconds
+                return (remainingTimeMillis + 999) / 1000;
             }
             else {
                 if (!CapsuleController.lastAlternateKiCapsule.containsKey(playerUUID))
@@ -106,10 +110,14 @@ public class CapsuleController {
                 if (tierTime.containsKey(type))
                     freedomTime = tierTime.get(type);
 
-                return currentTime > freedomTime;
+                // Calculate remaining time in milliseconds
+                long remainingTimeMillis = freedomTime - currentTime;
+
+                // Return remaining time in seconds
+                return (remainingTimeMillis + 999) / 1000;
             }
         }
-        return true;
+        return 0;
     }
 
 
@@ -135,7 +143,7 @@ public class CapsuleController {
         }
     }
 
-    public static boolean canUseHealthCapsule(UUID playerUUID, int type){
+    public static long canUseHealthCapsule(UUID playerUUID, int type){
         if(ConfigCapsules.EnableCapsuleCooldowns){
             if (type < 0 || type > EnumHealthCapsules.count())
                 type = 0;
@@ -147,7 +155,11 @@ public class CapsuleController {
                 if (CapsuleController.lastUsedHealthCapsule.containsKey(playerUUID))
                     freedomTime = CapsuleController.lastUsedHealthCapsule.get(playerUUID);
 
-                return currentTime > freedomTime;
+                // Calculate remaining time in milliseconds
+                long remainingTimeMillis = freedomTime - currentTime;
+
+                // Return remaining time in seconds
+                return (remainingTimeMillis + 999) / 1000;
             }
             else {
                 if (!CapsuleController.lastAlternateHealthCapsule.containsKey(playerUUID))
@@ -157,10 +169,14 @@ public class CapsuleController {
                 if (tierTime.containsKey(type))
                     freedomTime = tierTime.get(type);
 
-                return currentTime > freedomTime;
+                // Calculate remaining time in milliseconds
+                long remainingTimeMillis = freedomTime - currentTime;
+
+                // Return remaining time in seconds
+                return (remainingTimeMillis + 999) / 1000;
             }
         }
-        return true;
+        return 0;
     }
 
     public static void setStaminaCapsule(UUID playerUUID, int type){
@@ -185,7 +201,7 @@ public class CapsuleController {
         }
     }
 
-    public static boolean canUseStaminaCapsule(UUID playerUUID, int type){
+    public static long canUseStaminaCapsule(UUID playerUUID, int type){
         if(ConfigCapsules.EnableCapsuleCooldowns){
             if (type < 0 || type > EnumStaminaCapsules.count())
                 type = 0;
@@ -197,7 +213,11 @@ public class CapsuleController {
                 if (CapsuleController.lastUsedStaminaCapsule.containsKey(playerUUID))
                     freedomTime = CapsuleController.lastUsedStaminaCapsule.get(playerUUID);
 
-                return currentTime > freedomTime;
+                // Calculate remaining time in milliseconds
+                long remainingTimeMillis = freedomTime - currentTime;
+
+                // Return remaining time in seconds
+                return (remainingTimeMillis + 999) / 1000;
             }
             else {
                 if (!CapsuleController.lastAlternateStaminaCapsule.containsKey(playerUUID))
@@ -207,9 +227,13 @@ public class CapsuleController {
                 if (tierTime.containsKey(type))
                     freedomTime = tierTime.get(type);
 
-                return currentTime > freedomTime;
+                // Calculate remaining time in milliseconds
+                long remainingTimeMillis = freedomTime - currentTime;
+
+                // Return remaining time in seconds
+                return (remainingTimeMillis + 999) / 1000;
             }
         }
-        return true;
+        return 0;
     }
 }
