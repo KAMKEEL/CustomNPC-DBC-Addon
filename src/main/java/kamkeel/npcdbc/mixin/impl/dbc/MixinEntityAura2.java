@@ -1,26 +1,37 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.mixin.IEntityAura;
+import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(value = EntityAura2.class, remap = false)
 public class MixinEntityAura2 implements IEntityAura {
 
     @Shadow
     private float state;
-
     @Unique
     private boolean hasLightning;
     @Unique
     private int lightningColor;
     @Unique
     private int lightningAlpha;
-
     @Unique
     private float getSize = 1;
+
+    @ModifyArgs(method = "<init>(Lnet/minecraft/world/World;Ljava/lang/String;IFFI)V", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;setPositionAndRotation(DDDFF)V"))
+    private void fixAuraOffset(Args args, @Local(name = "other") LocalRef<Entity> player) {
+        Entity p = player.get();
+        p.worldObj.getBlock((int) p.posX, (int) (p.posY - 1), (int) p.posZ);
+
+    }
 
     @Unique
     @Override

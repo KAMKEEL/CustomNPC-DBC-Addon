@@ -54,7 +54,21 @@ public class MixinRenderAura2 {
             float size = JRMCoreHDBC.DBCsizeBasedOnRace2(dbcData.Race, dbcData.State);
             s1.set(8.0f * size);
         }
+        s.set(s1.get() * Math.min(dbcData.Release, 50) / 45);
+    }
 
-        s.set((s1.get()) * dbcData.Release / 45);
+    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V"))
+    private void fixAuraOffset(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> aura, @Local(name = "s") LocalFloatRef s) {
+        EntityAura2 par1Entity = aura.get();
+        EntityPlayer auraOwner = par1Entity.worldObj.getPlayerEntityByName(par1Entity.getmot());
+        DBCData dbcData = DBCData.get(auraOwner);
+        float ratio = s.get();
+//        if (dbcData.addonFormID > -1) {
+//            float size = JRMCoreHDBC.DBCsizeBasedOnRace2(dbcData.Race, dbcData.State);
+//            ratio = size > 3.0f ? s.get() / 1.5f : s.get();
+//        }
+        float value = -0.3f - 0.07f * ratio;
+        args.set(1, value);
+
     }
 }
