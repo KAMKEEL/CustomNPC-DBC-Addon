@@ -1,16 +1,15 @@
 package kamkeel.npcdbc.data.statuseffect;
 
+import net.minecraft.entity.player.EntityPlayer;
+
 public class StatusEffect {
     public int id = -1, timer = -1;
     public String name = "", icon = "", type = "";
 
+    public boolean lossOnDeath = false;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public StatusEffect(int timer) {
+        this.timer = timer;
     }
 
     public int getTimer() {
@@ -43,5 +42,9 @@ public class StatusEffect {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void processEffect(EntityPlayer player) {
+
     }
 }
