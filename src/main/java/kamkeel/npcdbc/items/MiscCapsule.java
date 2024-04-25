@@ -3,6 +3,7 @@ package kamkeel.npcdbc.items;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.data.DBCData;
@@ -124,6 +125,17 @@ public class MiscCapsule extends Item {
             // Restore 100 Amount of Heat
             DBCData.get(player).restoreUIHeat(100);
             player.addChatComponentMessage(new ChatComponentText("§7UI Heat Restored"));
+        }
+        else if(meta == EnumMiscCapsules.PowerPoint.getMeta()){
+            // Restore 100 Amount of Power Points
+            DBCData dbcData = DBCData.get(player);
+            if(dbcData.Race != DBCRace.ARCOSIAN){
+                player.addChatComponentMessage(new ChatComponentText("§7Only Arcosians can use this capsule"));
+                return itemStack;
+            } else {
+                dbcData.restoreArcPP(100);
+                player.addChatComponentMessage(new ChatComponentText("§5Power Points Restored"));
+            }
         }
 
         itemStack.splitStack(1);
