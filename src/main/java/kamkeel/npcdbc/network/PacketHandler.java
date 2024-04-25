@@ -64,11 +64,11 @@ public final class PacketHandler {
         }
     }
 
-    // send this packet to all players tracking the entity
-    public void sendToAllTracking(Entity e, IMessage message) {
-        EntityTracker et = ((WorldServer) e.worldObj).getEntityTracker();
-        et.func_151248_b(e, dispatcherC.getPacketFrom(message));
-    }
+//    // send this packet to all players tracking the entity
+//    public void sendToAllTracking(Entity e, IMessage message) {
+//        EntityTracker et = ((WorldServer) e.worldObj).getEntityTracker();
+//        et.func_151248_b(e, dispatcherC.getPacketFrom(message));
+//    }
 
     public void sendToPlayer(FMLProxyPacket packet, EntityPlayerMP player) {
         if (packet != null && CustomNpcPlusDBC.side() == Side.SERVER) {

@@ -196,26 +196,26 @@ public abstract class MixinJRMCoreH {
         DBCData dbcData = DBCData.get((EntityPlayer) Player);
         byte classID = dbcData.Class;
         boolean isChargingKi = dbcData.isChargingKiAttack();
-        int newDef = def.get();
+        float newDef = def.get();
         int kiProt = kiProtection.get();
         if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
             // Charging Dex
             switch (classID) {
                 case 0:
-                    newDef = (int) ((float) ((newDef - kiProt) * ConfigDBCGameplay.MartialArtistCharge) * 0.01F) + kiProt;
+                    newDef = ((newDef - kiProt) * ConfigDBCGameplay.MartialArtistCharge * 0.01F) + kiProt;
                     break;
                 case 1:
-                    newDef = (int) ((float) ((newDef - kiProt) * ConfigDBCGameplay.SpiritualistCharge) * 0.01F) + kiProt;
+                    newDef = ((newDef - kiProt) * ConfigDBCGameplay.SpiritualistCharge * 0.01F) + kiProt;
                     break;
                 case 2:
-                    newDef = (int) ((float) ((newDef - kiProt) * ConfigDBCGameplay.WarriorCharge) * 0.01F) + kiProt;
+                    newDef = ((newDef - kiProt) * ConfigDBCGameplay.WarriorCharge * 0.01F) + kiProt;
                     break;
                 default:
-                    newDef = (int) ((float) ((newDef - kiProt) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProt;
+                    newDef = ((newDef - kiProt) * JRMCoreConfig.StatPasDef * 0.01F) + kiProt;
                     break;
             }
         }
-        def.set(newDef);
+        def.set((int) newDef);
     }
 }
 
