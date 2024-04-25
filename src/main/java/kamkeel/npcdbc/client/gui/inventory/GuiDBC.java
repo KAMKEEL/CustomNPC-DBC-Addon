@@ -293,7 +293,6 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
     @Override
     public void customScrollClicked(int i, int j, int k, GuiCustomScroll guiCustomScroll) {
         if (guiScroll != null && guiCustomScroll.id == guiScroll.id) {
-            //clicking a selected item in list deselects it (super unnecessary but my neurodivergent brain requires this level of detail)
             if (selected != null && selected.equals(guiScroll.getSelected())) {
                 selected = "";
                 guiScroll.selected = -1;
