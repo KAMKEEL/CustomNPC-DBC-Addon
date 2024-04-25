@@ -64,12 +64,6 @@ public final class PacketHandler {
         }
     }
 
-//    // send this packet to all players tracking the entity
-//    public void sendToAllTracking(Entity e, IMessage message) {
-//        EntityTracker et = ((WorldServer) e.worldObj).getEntityTracker();
-//        et.func_151248_b(e, dispatcherC.getPacketFrom(message));
-//    }
-
     public void sendToPlayer(FMLProxyPacket packet, EntityPlayerMP player) {
         if (packet != null && CustomNpcPlusDBC.side() == Side.SERVER) {
             channels.get(packet.channel()).sendTo(packet, player);
@@ -80,6 +74,13 @@ public final class PacketHandler {
         if (packet != null) {
             packet.setTarget(Side.SERVER);
             channels.get(packet.channel()).sendToServer(packet);
+        }
+    }
+
+    public void sendToTrackingPlayers(FMLProxyPacket packet, Entity entity) {
+        if (packet != null && CustomNpcPlusDBC.side() == Side.SERVER) {
+            EntityTracker tracker = ((WorldServer) entity.worldObj).getEntityTracker();
+            tracker.func_151248_b(entity, packet); // Send packet to tracking players
         }
     }
 

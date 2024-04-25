@@ -189,7 +189,7 @@ public class TransformController {
 
             formData.updateClient();
             Utility.sendMessage(player, "§aTransformed to§r " + formData.getCurrentForm().getMenuName());
-            dbcData.saveNBTData();
+            dbcData.saveNBTData(true);
         }
     }
 
@@ -224,7 +224,7 @@ public class TransformController {
 
             formData.updateClient();
             JRMCoreH.setByte(0, player, "jrmcSaiRg");
-            dbcData.saveNBTData();
+            dbcData.saveNBTData(true);
         }
     }
 }

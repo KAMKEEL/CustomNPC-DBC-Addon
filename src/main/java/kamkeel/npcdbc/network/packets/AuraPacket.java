@@ -61,7 +61,7 @@ public final class AuraPacket extends AbstractPacket {
         }
 
         formData.updateClient();
-        dbcData.saveNBTData();
+        dbcData.saveNBTData(true);
 
     }
 }

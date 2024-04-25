@@ -17,6 +17,7 @@ import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
@@ -149,7 +150,7 @@ public class DBCData {
         auraID = c.getInteger("auraID");
     }
 
-    public void saveNBTData() {
+    public void saveNBTData(boolean tracking) {
         NBTTagCompound nbt = this.saveFromNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
 
         PlayerDBCInfo formData = Utility.getData(player);
@@ -161,7 +162,14 @@ public class DBCData {
         nbt.setFloat("addonFormLevel", addonFormLevel);
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 
-        syncAllClients();
+        // Send to Tracking Only
+        if(tracking){
+            PacketHandler.Instance.sendToPlayer(new PingPacket(this).generatePacket(), ((EntityPlayerMP) player));
+            PacketHandler.Instance.sendToTrackingPlayers( new PingPacket(this).generatePacket(), player);
+        }
+        else {
+            syncAllClients();
+        }
     }
 
     public void loadNBTData(boolean syncALL) {
@@ -194,7 +202,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     public void setEyeColorRight(int color) {
@@ -205,7 +213,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     public void setHairColor(int color) {
@@ -216,7 +224,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     //main color for humans/saiyans/majins
@@ -228,7 +236,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     //saiyan oozaru and arco/nameks
@@ -240,7 +248,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     // namekian/arco
@@ -251,7 +259,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     //only arco
@@ -262,7 +270,7 @@ public class DBCData {
         String hexCol = JRMCoreH.numToLet5(color);
         DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     public void setHairPreset(int preset) {
@@ -272,7 +280,7 @@ public class DBCData {
 
         DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     public void setNosePreset(int preset) {
@@ -282,7 +290,7 @@ public class DBCData {
 
         DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
         getRawCompound().setString("jrmcDNS", DNS);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     // Negative Values will Drain instead
@@ -292,7 +300,7 @@ public class DBCData {
 
         Ki += toAdd;
         Ki = Math.min(Ki, maxKi);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     public void restoreHealthPercent(float percToRestore) {
@@ -301,7 +309,7 @@ public class DBCData {
 
         Body += toAdd;
         Body = Math.min(Body, maxBody);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     public void restoreStaminaPercent(float percToRestore) {
@@ -310,7 +318,7 @@ public class DBCData {
 
         Stamina += toAdd;
         Stamina = Math.min(Stamina, maxSta);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     //Negative value will add instead
@@ -322,7 +330,7 @@ public class DBCData {
         int toAdd = (int) (maxHeat * (percToRestore / 100));
 
         Heat = Math.max(Heat - toAdd, 0);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     public void setArcReserve(int reserve) {
@@ -367,7 +375,7 @@ public class DBCData {
 
     public void setSE(int id, boolean bo) {
         JRMCoreH.StusEfcts(id, StatusEffects, player, bo);
-        saveNBTData();
+        saveNBTData(true);
     }
 
     public void setForm(int dbcForm, boolean on) {
@@ -398,7 +406,7 @@ public class DBCData {
                 setSE(12, on);
                 break;
         }
-        saveNBTData();
+        saveNBTData(true);
     }
 
     public boolean settingOn(int id) {

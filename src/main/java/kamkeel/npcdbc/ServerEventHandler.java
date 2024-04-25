@@ -53,6 +53,7 @@ public class ServerEventHandler {
                 DBCData dbcData = DBCData.get(player);
                 dbcData.loadNBTData(false);
                 PacketHandler.Instance.sendToPlayer(new PingPacket(dbcData).generatePacket(), ((EntityPlayerMP) player));
+                PacketHandler.Instance.sendToTrackingPlayers( new PingPacket(dbcData).generatePacket(), player);
             }
 
             handleFormProcesses(player);
