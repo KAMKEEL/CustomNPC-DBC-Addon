@@ -166,7 +166,7 @@ public class MiscCapsule extends Item {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         int meta = itemStack.getItemDamage();
-        if (meta < 0 || meta > EnumHealthCapsules.count())
+        if (meta < 0 || meta > EnumMiscCapsules.count())
             meta = 0;
 
         HashMap<Integer, Integer> miscCooldown = CapsuleController.Instance.capsuleCooldowns.get(Capsule.MISC);
