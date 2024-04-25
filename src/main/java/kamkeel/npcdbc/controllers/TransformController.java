@@ -154,19 +154,19 @@ public class TransformController {
 
     public static void handleFormAscend(EntityPlayer player, int formID) {
         Form form = (Form) FormController.getInstance().get(formID);
-        if(form == null)
+        if (form == null)
             return;
 
         PlayerDBCInfo formData = Utility.getData(player);
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
             // Check for in Required DBC Form before Transforming
-            if(form.requiredForm.containsKey((int) dbcData.Race)){
-                if(form.requiredForm.get((int) dbcData.Race) != dbcData.State)
+            if (form.requiredForm.containsKey((int) dbcData.Race)) {
+                if (form.requiredForm.get((int) dbcData.Race) != dbcData.State)
                     return;
             } else {
                 // Must be in Parent Form to Transform
-                if(form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm)
+                if (form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm)
                     return;
             }
 
@@ -175,7 +175,7 @@ public class TransformController {
                 return;
 
             if (!isInBaseForm(dbcData.Race, dbcData.State)) {
-                if (!form.stackable.vanillaStackable){
+                if (!form.stackable.vanillaStackable) {
                     if (rc_arc(dbcData.Race) && dbcData.State >= 4)
                         dbcData.State = 4;
                     else
@@ -206,12 +206,11 @@ public class TransformController {
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), formData.currentForm != 1, prevID, true, intoParent ? form.getParentID() : -1)))
                 return;
 
-            if(form.requiredForm.containsKey((int) dbcData.Race)){
+            if (form.requiredForm.containsKey((int) dbcData.Race)) {
                 formData.currentForm = -1;
                 Utility.sendMessage(player, "§cDescended from§r " + form.getMenuName());
                 dbcData.State = form.requiredForm.get((int) dbcData.Race);
-            }
-            else {
+            } else {
                 if (intoParent) {
                     Utility.sendMessage(player, "§cDescended into§r " + form.getParent().getMenuName());
                     formData.currentForm = form.getParentID();
