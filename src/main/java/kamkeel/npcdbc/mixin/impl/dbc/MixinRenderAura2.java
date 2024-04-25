@@ -52,9 +52,9 @@ public class MixinRenderAura2 {
         DBCData dbcData = DBCData.get(auraOwner);
         if (dbcData.addonFormID > -1) {
             float size = JRMCoreHDBC.DBCsizeBasedOnRace2(dbcData.Race, dbcData.State);
-            s1.set(s1.get() * size);
+            s1.set(8.0f * size);
         }
 
-        s.set((s1.get()) + dbcData.Release * 0.015f);
+        s.set((s1.get()) * dbcData.Release / 45);
     }
 }

@@ -6,7 +6,6 @@ import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.client.ClientCache;
-import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -26,9 +25,9 @@ public class MixinJRMCoreHDBC {
         if (!ClientCache.fromRenderPlayerJBRA) {
             if (ClientCache.isChangePart) {
                 DBCData dbcData = DBCData.get(CommonProxy.CurrentAuraPlayer);
-                if(dbcData.addonFormID != -1){
+                if (dbcData.addonFormID != -1) {
                     IForm form = FormController.getInstance().get(dbcData.addonFormID);
-                    if(form != null && ((Form) form).display.auraColor != -1){
+                    if (form != null && ((Form) form).display.auraColor != -1) {
                         ci.setReturnValue(((Form) form).display.auraColor);
                     }
                 }
@@ -60,7 +59,7 @@ public class MixinJRMCoreHDBC {
                 form = Utility.getFormClient(CommonProxy.CurrentJRMCTickPlayer);
             if (form != null && form.display.hasSize()) {
                 if (form.display.keepOriginalSize)
-                    cir.setReturnValue(size.get() * form.display.formSize);
+                    cir.setReturnValue(size.get() + form.display.formSize);
                 else
                     cir.setReturnValue(form.display.formSize);
             }
