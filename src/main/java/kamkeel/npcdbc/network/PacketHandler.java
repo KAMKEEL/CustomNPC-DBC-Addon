@@ -5,12 +5,15 @@ import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.network.packets.*;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.world.WorldServer;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -59,6 +62,12 @@ public final class PacketHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // send this packet to all players tracking the entity
+    public void sendToAllTracking(Entity e, IMessage message) {
+        EntityTracker et = ((WorldServer) e.worldObj).getEntityTracker();
+        et.func_151248_b(e, dispatcherC.getPacketFrom(message));
     }
 
     public void sendToPlayer(FMLProxyPacket packet, EntityPlayerMP player) {
