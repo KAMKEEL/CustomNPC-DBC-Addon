@@ -449,11 +449,4 @@ public class DBCData {
 
         return null;
     }
-
-    public int getRacialSkill(){
-        return DBCUtils.getRacialSkill(player);
-    }
-    public boolean isChargingKiAttack() {
-        return DBCUtils.isChargingKiAttack(player);
-    }
 }
