@@ -18,8 +18,7 @@ public class StatusEffectController {
     public void load(){
         activeEffects.clear();
 
-        RegenEffect regenEffect = new RegenEffect(-1);
-        registeredEffects.put(regenEffect.id, regenEffect);
+        registeredEffects.put(1, new RegenEffect(-1));
     }
 
     public void loadEffects(EntityPlayer player){

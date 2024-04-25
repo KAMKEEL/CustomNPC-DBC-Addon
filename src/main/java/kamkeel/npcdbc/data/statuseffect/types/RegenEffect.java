@@ -7,7 +7,6 @@ public class RegenEffect extends StatusEffect {
 
     public RegenEffect(int timer) {
         super(timer);
-        id = 1;
         name = "Regeneration";
     }
 
