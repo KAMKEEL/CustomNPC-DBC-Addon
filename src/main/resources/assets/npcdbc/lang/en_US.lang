@@ -17,6 +17,15 @@ form.select=Select
 ############################
 ## ITEMS
 ############################
+# Must have 2 %s - or Format Error
+# (1) - Amount Restored
+# (2) - Type
+capsule.cooldown=%ss Cooldown
+capsule.restore=Restores %s %s
+capsule.ki=Ki
+capsule.hp=HP
+capsule.stamina=Stamina
+
 item.npcdbc:base_healthcapsule.name=Base Health Capsule
 item.npcdbc:super_healthcapsule.name=Super Health Capsule
 item.npcdbc:mega_healthcapsule.name=Mega Health Capsule

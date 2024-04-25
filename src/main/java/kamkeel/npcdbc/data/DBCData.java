@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data;
 
 
+import JinRyuu.DragonBC.common.Items.ItemSenzu;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
@@ -339,7 +340,7 @@ public class DBCData {
     public void restoreArcPP(int percToRestoreFromMax) {
         if (Race != 4)
             return;
-
+        
         int maxReserve = JRMCoreConfig.ArcosianPPMax[getMaxSkillX()];
         int toAdd = maxReserve * (percToRestoreFromMax / 100);
 

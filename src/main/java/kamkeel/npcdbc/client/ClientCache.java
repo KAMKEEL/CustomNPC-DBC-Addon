@@ -5,6 +5,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
 
+import java.util.HashMap;
+
 public class ClientCache {
 
     public static boolean fromRenderPlayerJBRA;
