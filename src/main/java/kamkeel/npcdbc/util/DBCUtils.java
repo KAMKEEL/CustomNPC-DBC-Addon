@@ -7,6 +7,7 @@ import JinRyuu.JRMCore.server.JGPlayerMP;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.api.npc.IDBCStats;
+import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity.EnumEntitySize;
 import net.minecraft.entity.EntityLivingBase;
@@ -572,6 +573,7 @@ public class DBCUtils {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
                 boolean block = props.getBlocking() == 1;
+                boolean isChargingKi = isChargingKiAttack(player);
                 int[] PlyrAttrbts = PlyrAttrbts(player);
                 NBTTagCompound nbt = nbt(player, "pres");
                 byte state = nbt.getByte("jrmcState");
@@ -663,6 +665,22 @@ public class DBCUtils {
                     player.worldObj.playSoundAtEntity(player, "jinryuudragonbc:DBC4.block" + id, 0.5F, 0.9F / (player.worldObj.rand.nextFloat() * 0.6F + 0.9F));
                     if (!isInCreativeMode(player)) {
                         setInt(currStamina - staminaCost < 0 ? 0 : currStamina - staminaCost, player, "jrmcStamina");
+                    }
+                } else if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
+                    // Charging Dex
+                    switch (classID){
+                        case 0:
+                            def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.MartialArtistCharge) * 0.01F) + kiProtection;
+                            break;
+                        case 1:
+                            def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.SpiritualistCharge) * 0.01F) + kiProtection;
+                            break;
+                        case 2:
+                            def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.WarriorCharge) * 0.01F) + kiProtection;
+                            break;
+                        default:
+                            def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
+                            break;
                     }
                 } else {
                     def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
@@ -833,8 +851,22 @@ public class DBCUtils {
                     if (!isInCreativeMode(player)) {
                         setInt(Math.max(currStamina - staminaCost, 0), player, "jrmcStamina");
                     }
-                } else if (isChargingKi) {
-
+                } else if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
+                    // Charging Dex
+                    switch (classID){
+                        case 0:
+                            def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.MartialArtistCharge) * 0.01F) + kiProtection;
+                            break;
+                        case 1:
+                            def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.SpiritualistCharge) * 0.01F) + kiProtection;
+                            break;
+                        case 2:
+                            def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.WarriorCharge) * 0.01F) + kiProtection;
+                            break;
+                        default:
+                            def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
+                            break;
+                    }
                 }
                 else {
                     // Passive Dex

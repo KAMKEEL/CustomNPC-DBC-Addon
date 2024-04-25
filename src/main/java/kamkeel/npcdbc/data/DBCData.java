@@ -49,7 +49,7 @@ public class DBCData {
         this.side = player.worldObj.isRemote ? Side.CLIENT : Side.SERVER;
 
         if (side == Side.SERVER)
-            loadNBTData();
+            loadNBTData(true);
     }
 
     public static DBCData getData(EntityPlayer player) {
@@ -66,6 +66,7 @@ public class DBCData {
             data = ClientCache.getClientData(player);
         } else {
             data = getData(player);
+            data.loadNBTData(false);
         }
         data.player = player;
         return data;
@@ -162,7 +163,7 @@ public class DBCData {
         syncAllClients();
     }
 
-    public void loadNBTData() {
+    public void loadNBTData(boolean syncALL) {
         NBTTagCompound dbc = this.player.getEntityData().getCompoundTag(DBCPersisted);
 
         // Save the DBC Addon tags to PlayerPersisted before loading it to fields
@@ -172,7 +173,8 @@ public class DBCData {
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
 
         loadFromNBT(dbc);
-        syncAllClients();
+        if(syncALL)
+            syncAllClients();
     }
 
     public void syncAllClients() {

@@ -26,7 +26,7 @@ public class ServerEventHandler {
         if (event.player == null || event.player.worldObj == null || event.player.worldObj.isRemote || event.player instanceof FakePlayer)
             return;
         DBCData dbcData = DBCData.get(event.player);
-        dbcData.loadNBTData();
+        dbcData.loadNBTData(true);
         dbcData.syncAllClients();
     }
 
@@ -51,7 +51,7 @@ public class ServerEventHandler {
 
             if (player.ticksExisted % 10 == 0) {
                 DBCData dbcData = DBCData.get(player);
-                dbcData.loadNBTData();
+                dbcData.loadNBTData(false);
             }
 
             handleFormProcesses(player);
@@ -67,7 +67,7 @@ public class ServerEventHandler {
             if (dbcData.Release <= 0 || dbcData.Ki <= 0) { //reverts player from CF when ki or release are 0
                 formData.currentForm = -1;
                 formData.updateClient();
-                dbcData.loadNBTData();
+                dbcData.loadNBTData(false);
             }
 
             if (formData.hasTimer(form.id)) {
@@ -90,7 +90,7 @@ public class ServerEventHandler {
             if (data == null) {
                 return;
             }
-            data.loadNBTData();
+            data.loadNBTData(false);
             PacketHandler.Instance.sendToPlayer(new PingPacket(data).generatePacket(), ((EntityPlayerMP) event.entityPlayer));
         }
     }
