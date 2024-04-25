@@ -509,7 +509,6 @@ public class DBCData {
             return;
         int maxAbsorption = JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL;
         int toAdd = (int) (maxAbsorption * (percToRestoreFromMax/100f));
-        System.out.println(toAdd);
         int currentAbsorption = getMajinAbsorptionValueS(nbt(player).getString("jrmcMajinAbsorptionData"));
         setAbsorption(Math.min(toAdd+currentAbsorption, maxAbsorption));
     }
