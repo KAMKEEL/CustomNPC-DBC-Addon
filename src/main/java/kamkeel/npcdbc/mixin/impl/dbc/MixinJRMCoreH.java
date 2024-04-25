@@ -1,19 +1,27 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 
+import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalByteRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
+import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -26,10 +34,6 @@ import static kamkeel.npcdbc.util.DBCUtils.lastSetDamage;
 
 @Mixin(value = JRMCoreH.class, remap = false)
 public abstract class MixinJRMCoreH {
-
-
-    @Shadow
-    public static int curBody;
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onGetPlayerAttribute(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info) {
@@ -177,7 +181,6 @@ public abstract class MixinJRMCoreH {
             Utility.getData(player).updateCurrentFormMastery("damaged");
         else if (gainMultiID == 3)
             Utility.getData(player).updateCurrentFormMastery("fireki");
-
     }
 
     @ModifyArgs(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
@@ -189,6 +192,33 @@ public abstract class MixinJRMCoreH {
             args.set(0, Math.max(0, newHealth));
             lastSetDamage = -1;
         }
+    }
+
+    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;StatPasDef:I", shift = At.Shift.AFTER))
+    private static void applyChargingDex(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir, @Local(name = "def") LocalIntRef def, @Local(name = "kiProtection") LocalIntRef kiProtection) {
+        boolean isChargingKi = DBCUtils.isChargingKiAttack((EntityPlayer) Player);
+        DBCData dbcData = DBCData.get((EntityPlayer) Player);
+        byte classID = dbcData.Class;
+        int newDef = def.get();
+        int kiProt = kiProtection.get();
+        if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
+            // Charging Dex
+            switch (classID) {
+                case 0:
+                    newDef = (int) ((float) ((newDef - kiProt) * ConfigDBCGameplay.MartialArtistCharge) * 0.01F) + kiProt;
+                    break;
+                case 1:
+                    newDef = (int) ((float) ((newDef - kiProt) * ConfigDBCGameplay.SpiritualistCharge) * 0.01F) + kiProt;
+                    break;
+                case 2:
+                    newDef = (int) ((float) ((newDef - kiProt) * ConfigDBCGameplay.WarriorCharge) * 0.01F) + kiProt;
+                    break;
+                default:
+                    newDef = (int) ((float) ((newDef - kiProt) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProt;
+                    break;
+            }
+        }
+        def.set(newDef);
     }
 }
 
