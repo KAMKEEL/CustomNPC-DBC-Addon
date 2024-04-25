@@ -29,12 +29,12 @@ public class DBCUtils {
     public static String[][] fullFormNames = new String[][]{{"Base", "Full Power", "Buffed State", "God Ki State"}, {"§8Base", "Super Saiyan", "Super Saiyan (G2)", "Super Saiyan (G3)", "Super Saiyan", "Super Saiyan 2", "Super Saiyan 3", "Great Ape", "Super Great Ape", "Super Saiyan God", "Super Saiyan Blue", "", "", "", "Super Saiyan 4", "SS Blue (Evolved)"}, {"§8Base", "Super Saiyan", "Super Saiyan (G2)", "Super Saiyan (G3)", "Super Saiyan", "Super Saiyan 2", "Super Saiyan 3", "Great Ape", "Super Great Ape", "Super Saiyan God", "Super Saiyan Blue", "", "", "", "Super Saiyan 4", "SS Blue (Evolved)"}, {"Base", "Full Power Release", "Giant Form", "God Ki State"}, {"First Form", "First Form (Buffed)", "Second Form", "Third Form", "Final Form", "Super Form", "Ultimate Form", "God Ki State"}, {"Base", "Evil Form", "Full Power (Buffed)", "Purest Form", "God Ki State"}};
     public static String[][] shortFormNames = new String[][]{{}, {"§8Base", "SS", "SS (G2)", "SS (G3)", "SS", "SS 2", "SS 3", "Great Ape", "Super Great Ape", "SS God", "SS Blue", "", "", "", "SS 4", "SSB (Evo)"}};
     public static String[][] formattedNames = new String[][]{
-        {"§fBase", "§eFull Release", "§cBuffed", "§f4God"},
-        {"§fBase", "§eSuper Saiyan", "§eSuper Saiyan (Grade 2)", "§eSuper Saiyan (Grade 3)", "§eMastered Super Saiyan", "§eSuper Saiyan 2", "§eSuper Saiyan 3", "§4Oozaru", "§6Golden Oozaru", "§cSuper Saiyan God", "§bSuper Saiyan Blue", "", "", "", "§4Super Saiyan 4", "§bShinka"},
-        {"§fBase", "§eSuper Saiyan", "§eSuper Saiyan (Grade 2)", "§eSuper Saiyan (Grade 3)", "§eMastered Super Saiyan", "§eSuper Saiyan 2", "§eSuper Saiyan 3", "§4Oozaru", "§6Golden Oozaru", "§cSuper Saiyan God", "§bSuper Saiyan Blue", "", "", "", "§4Super Saiyan 4", "§bShinka"},
-        {"§fBase", "§eFull Release", "§aGiant Form", "§4God"},
-        {"§7Minimal", "§7First Form", "§7Second Form", "§7Third Form", "§fBase", "§5Fifth Form", "§6Ultimate", "§4God"},
-        {"§fBase", "§4Evil", "§cFull Power", "§dPurest", "§4God"}
+            {"§fBase", "§eFull Release", "§cBuffed", "§f4God"},
+            {"§fBase", "§eSuper Saiyan", "§eSuper Saiyan (Grade 2)", "§eSuper Saiyan (Grade 3)", "§eMastered Super Saiyan", "§eSuper Saiyan 2", "§eSuper Saiyan 3", "§4Oozaru", "§6Golden Oozaru", "§cSuper Saiyan God", "§bSuper Saiyan Blue", "", "", "", "§4Super Saiyan 4", "§bShinka"},
+            {"§fBase", "§eSuper Saiyan", "§eSuper Saiyan (Grade 2)", "§eSuper Saiyan (Grade 3)", "§eMastered Super Saiyan", "§eSuper Saiyan 2", "§eSuper Saiyan 3", "§4Oozaru", "§6Golden Oozaru", "§cSuper Saiyan God", "§bSuper Saiyan Blue", "", "", "", "§4Super Saiyan 4", "§bShinka"},
+            {"§fBase", "§eFull Release", "§aGiant Form", "§4God"},
+            {"§7Minimal", "§7First Form", "§7Second Form", "§7Third Form", "§fBase", "§5Fifth Form", "§6Ultimate", "§4God"},
+            {"§fBase", "§4Evil", "§cFull Power", "§dPurest", "§4God"}
     };
     public static int[][] formColors = new int[][]{{0, 0xFFEF99, 0xFFEF99, 0xFFEF99, 0xFFEF99, 0xFFEF99, 0xFFEF99, 0x964B00, 0xFFEF99, 0xFD4345, 0x46D2F5, 0, 0, 0, 0xC11D00, 0x2039A0}}; // ssg
     public static float height;
@@ -47,8 +47,8 @@ public class DBCUtils {
         String out = "";
         try {
             out = formattedNames[race][state];
+        } catch (IndexOutOfBoundsException ignored) {
         }
-        catch (IndexOutOfBoundsException ignored){}
         return out;
     }
 
@@ -58,25 +58,39 @@ public class DBCUtils {
         String u2 = " " + (w ? "M" : "") + "UI";
 
         if (ui && state != 0 && !divine) {
-            if (state == 7 || state == 8) return "";
+            if (state == 7 || state == 8)
+                return "";
 
-            if (state == 14) fn = fullFormNames[race][state] + u2;
-            else if (JRMCoreH.rc_sai()) fn = shortFormNames[race][state] + u;
+            if (state == 14)
+                fn = fullFormNames[race][state] + u2;
+            else if (JRMCoreH.rc_sai())
+                fn = shortFormNames[race][state] + u;
 
         } else {
-            if (l && canBeLgnd(race, state)) if (state == 8) fn = "Ape";
-            else fn = shortFormNames[race][state];
+            if (l && canBeLgnd(race, state))
+                if (state == 8)
+                    fn = "Ape";
+                else
+                    fn = shortFormNames[race][state];
             if (divine && JRMCoreH.rc_sai(race)) {
-                if (state == 10) if (ui) fn = "SS Rosé" + u;
-                else fn = "Super Saiyan Rosé";
-                if (state == 15) if (ui) fn = "SS Rosé Evo" + u;
-                else fn = "SS Rosé (Evolved)";
-                if (state == 14 && !ui) fn = "Divine SS 4";
+                if (state == 10)
+                    if (ui)
+                        fn = "SS Rosé" + u;
+                    else
+                        fn = "Super Saiyan Rosé";
+                if (state == 15)
+                    if (ui)
+                        fn = "SS Rosé Evo" + u;
+                    else
+                        fn = "SS Rosé (Evolved)";
+                if (state == 14 && !ui)
+                    fn = "Divine SS 4";
 
             }
         }
 
-        if (JRMCoreH.StusEfctsMe(20) || JRMCoreH.StusEfctsMe(13) || ui && state == 0) fn = "";
+        if (JRMCoreH.StusEfctsMe(20) || JRMCoreH.StusEfctsMe(13) || ui && state == 0)
+            fn = "";
 
         // JRMCoreH.getFormMaster
 
@@ -94,34 +108,53 @@ public class DBCUtils {
         boolean GoD = JRMCoreH.StusEfctsMe(20);
         boolean kk = JRMCoreH.StusEfctsMe(5);
         int c = 0;
-        if (JRMCoreH.rc_sai()) c = formColors[0][state];
+        if (JRMCoreH.rc_sai())
+            c = formColors[0][state];
         //else
         //c = GuiTKeys.getFormColorState(state);
-        if (l && canBeLgnd(race, state)) c = 0x55FF55;
-        if (divine) if (JRMCoreH.rc_sai()) {
-            if (state == 10) c = 0xFF9BD5;
-            else if (state == 15) c = 0xFF4284;// 0xD86FA0;
-            else if (state == 14) c = 0xFF6684;
-        }
-        if (mystic) c = 0xE7EACE;
-        if (ui) if (uiHairWhite) c = 0xE8E8E8;// 0xC1C1C1;//0xF0F0F0;
-        else c = 0x6A6D70;
-        if (GoD) c = 0xAA00AA;
-        if (kk) c = 0xFF5555;
+        if (l && canBeLgnd(race, state))
+            c = 0x55FF55;
+        if (divine)
+            if (JRMCoreH.rc_sai()) {
+                if (state == 10)
+                    c = 0xFF9BD5;
+                else if (state == 15)
+                    c = 0xFF4284;// 0xD86FA0;
+                else if (state == 14)
+                    c = 0xFF6684;
+            }
+        if (mystic)
+            c = 0xE7EACE;
+        if (ui)
+            if (uiHairWhite)
+                c = 0xE8E8E8;// 0xC1C1C1;//0xF0F0F0;
+            else
+                c = 0x6A6D70;
+        if (GoD)
+            c = 0xAA00AA;
+        if (kk)
+            c = 0xFF5555;
         return c;
 
     }
 
     public static String getFullState2Name(int race, int state, boolean l, boolean divine, boolean mystic, boolean ui, boolean uiHairWhite, boolean GoD) {
         String st2 = "";
-        if (l && canBeLgnd(race, state) && !divine && !ui) st2 = formLabels[1];
-        if (mystic) st2 = formLabels[0];
-        if (ui && (state == 0 || state == 7 || state == 8)) if (uiHairWhite) st2 = formLabels[7];
-        else st2 = formLabels[6];
+        if (l && canBeLgnd(race, state) && !divine && !ui)
+            st2 = formLabels[1];
+        if (mystic)
+            st2 = formLabels[0];
+        if (ui && (state == 0 || state == 7 || state == 8))
+            if (uiHairWhite)
+                st2 = formLabels[7];
+            else
+                st2 = formLabels[6];
 
-        if (GoD) st2 = formLabels[8];
+        if (GoD)
+            st2 = formLabels[8];
         boolean kk = JRMCoreH.StusEfctsMe(5);
-        if (kk) st2 = "Kaioken " + JRMCoreH.TransKaiNms[JRMCoreH.State2];
+        if (kk)
+            st2 = "Kaioken " + JRMCoreH.TransKaiNms[JRMCoreH.State2];
 
         return st2;
     }
@@ -139,19 +172,25 @@ public class DBCUtils {
     }
 
     public static Boolean canBeLgnd(int race, int st) {
-        if (race == 1 | race == 2) if (st != 0 && st != 9 && st != 10 && st != 15 && st != 7) return true;
-        else return false;
-        else return false;
+        if (race == 1 | race == 2)
+            if (st != 0 && st != 9 && st != 10 && st != 15 && st != 7)
+                return true;
+            else
+                return false;
+        else
+            return false;
     }
 
     public static int getEyeColor(int t, int d, int p, int r, int s, boolean v, boolean y, boolean ui, boolean ui2, boolean gd) {
-        if (ui2 || ui) return t == 15790320 ? 15790320 : (t == 1 ? 13816530 : 15790320);
+        if (ui2 || ui)
+            return t == 15790320 ? 15790320 : (t == 1 ? 13816530 : 15790320);
         // if (!ssb && !ssbs && !ss4 && !ssg && !ss)
         return JRMCoreHDBC.getPlayerColor(t, d, p, r, s, v, y, ui, false, gd);
     }
 
     public static Boolean isUIWhite(boolean ui, int st2) {
-        if (!ui) return false;
+        if (!ui)
+            return false;
         int i = JGConfigUltraInstinct.CONFIG_UI_LEVELS < st2 ? JGConfigUltraInstinct.CONFIG_UI_LEVELS : st2;
         int ultra_instinct_level = JRMCoreH.state2UltraInstinct(false, (byte) i);
         return JGConfigUltraInstinct.CONFIG_UI_HAIR_WHITE[ultra_instinct_level];
@@ -163,10 +202,14 @@ public class DBCUtils {
         boolean[] haircol = JGConfigUltraInstinct.CONFIG_UI_HAIR_WHITE;
         int blacklevel = 0, whitelevel = 0;
         for (int i = 0; i < curLvl; i++)
-            if (!haircol[i]) blacklevel = i + 1;
-            else whitelevel = i + 1;
-        if (hairWhite) return whitelevel;
-        else return blacklevel;
+            if (!haircol[i])
+                blacklevel = i + 1;
+            else
+                whitelevel = i + 1;
+        if (hairWhite)
+            return whitelevel;
+        else
+            return blacklevel;
 
     }
 
@@ -180,7 +223,9 @@ public class DBCUtils {
         boolean[] haircol = JGConfigUltraInstinct.CONFIG_UI_HAIR_WHITE;
         boolean is = false;
         for (int i = 0; i < curLvl; i++) {
-            if (haircol[i]) if (i + 1 == JRMCoreH.State2) is = true;
+            if (haircol[i])
+                if (i + 1 == JRMCoreH.State2)
+                    is = true;
         }
 
         return is;
@@ -245,14 +290,17 @@ public class DBCUtils {
         int[] PlyrAttrbtsFull = getAllFullAttributes(p);
 
         for (int i = 0; i < PlyrAttrbts.length; i++) {
-            if (i == 0 || i == 1 || i == 4) PlyrAttrbts[i] = PlyrAttrbtsFull[i];
+            if (i == 0 || i == 1 || i == 4)
+                PlyrAttrbts[i] = PlyrAttrbtsFull[i];
         }
 
         float f = att == 5 ? JRMCoreH.SklLvl_KiBs(p, 1) : 0f;
         int stat = JRMCoreH.stat(p, att, powerType, att, PlyrAttrbts[att], race, classID, f);
 
-        if (att == 0) stat += getExtraOutput(p, att, 100);
-        else if (att == 1) stat += getExtraOutput(p, att, 100);
+        if (att == 0)
+            stat += getExtraOutput(p, att, 100);
+        else if (att == 1)
+            stat += getExtraOutput(p, att, 100);
 
         return stat;
     }
@@ -280,15 +328,19 @@ public class DBCUtils {
 
     public static void setDmgRed(Entity entity, float dmgred) {
         if (entity != null)
-            if (entity instanceof EntityPlayer) JRMCoreH.setFloat(dmgred, (EntityPlayer) entity, "dmgred");
-            else JRMCoreH.nbt(entity).setFloat("dmgred", dmgred);
+            if (entity instanceof EntityPlayer)
+                JRMCoreH.setFloat(dmgred, (EntityPlayer) entity, "dmgred");
+            else
+                JRMCoreH.nbt(entity).setFloat("dmgred", dmgred);
 
     }
 
     public static float getDmgRed(Entity entity) {
         if (entity != null)
-            if (entity instanceof EntityPlayer) return JRMCoreH.getFloat((EntityPlayer) entity, "dmgred");
-            else return JRMCoreH.nbt(entity).getFloat("dmgred");
+            if (entity instanceof EntityPlayer)
+                return JRMCoreH.getFloat((EntityPlayer) entity, "dmgred");
+            else
+                return JRMCoreH.nbt(entity).getFloat("dmgred");
         return 0;
     }
 
@@ -409,7 +461,8 @@ public class DBCUtils {
     public static int getPlayerID(EntityPlayer p) {
         if (p.worldObj.isRemote) {
             for (int pl = 0; pl < JRMCoreH.plyrs.length; pl++)
-                if (JRMCoreH.plyrs[pl].equals(p.getCommandSenderName())) return pl;
+                if (JRMCoreH.plyrs[pl].equals(p.getCommandSenderName()))
+                    return pl;
         }
         return 0;
     }
@@ -425,7 +478,8 @@ public class DBCUtils {
             if (d31.contains("=")) {
                 attributeTags = d31.split("=");
                 tagslist = new ArrayList<>(Arrays.asList(attributeTags));
-            } else tagslist.add(d31);
+            } else
+                tagslist.add(d31);
 
             for (String attributeTag : tagslist) {
                 if (attributeTag.contains("|")) {
@@ -439,7 +493,8 @@ public class DBCUtils {
 
                         if (numOperatorPairs.containsKey(operation))
                             numOperatorPairs.replace(operation, numOperatorPairs.get(operation) + num);
-                        else numOperatorPairs.put(operation, num);
+                        else
+                            numOperatorPairs.put(operation, num);
 
                     }
 
@@ -449,8 +504,10 @@ public class DBCUtils {
                         int num = entry.getValue();
                         output.append(operation).append(num).append(",");
                     }
-                    if (output.length() > 0) output.deleteCharAt(output.length() - 1);
-                    if (output.length() == 0) output = new StringBuilder("0");
+                    if (output.length() > 0)
+                        output.deleteCharAt(output.length() - 1);
+                    if (output.length() == 0)
+                        output = new StringBuilder("0");
                     results.add(output.toString());
                 } else if (!attributeTag.equals("n")) {
                     String[] split = attributeTag.split(";");
@@ -458,12 +515,14 @@ public class DBCUtils {
                     int num = Integer.parseInt(split[1].substring(1));
 
                     results.add(operation + Integer.toString(num));
-                } else results.add("0");
+                } else
+                    results.add("0");
             }
         }
         String[] r = results.toArray(new String[6]);
         for (int i = 0; i < r.length; i++) {
-            if (r[i] == null) r[i] = "0";
+            if (r[i] == null)
+                r[i] = "0";
         }
         return r;
 
@@ -472,13 +531,17 @@ public class DBCUtils {
     public static float bonusMulti(EntityPlayer p, int stat) {
         float multi = 1.0F;
         String s = getAllBonuses(p)[stat];
-        if (s.equals("0")) s = "1";
+        if (s.equals("0"))
+            s = "1";
         ArrayList<String> values = new ArrayList<>();
-        if (s.contains(",")) values = new ArrayList<>(Arrays.asList(s.split(",")));
-        else values.add(s);
+        if (s.contains(","))
+            values = new ArrayList<>(Arrays.asList(s.split(",")));
+        else
+            values.add(s);
         for (String b : values) {
             char operation = b.charAt(0);
-            if (operation == '*') multi = Float.parseFloat(b.substring(1));
+            if (operation == '*')
+                multi = Float.parseFloat(b.substring(1));
 
         }
         return multi;
@@ -487,13 +550,17 @@ public class DBCUtils {
     public static float bonusDiv(EntityPlayer p, int stat) {
         float multi = 1.0F;
         String s = getAllBonuses(p)[stat] != null ? getAllBonuses(p)[stat] : "1";
-        if (s.equals("0")) s = "1";
+        if (s.equals("0"))
+            s = "1";
         ArrayList<String> values = new ArrayList<>();
-        if (s.contains(",")) values = new ArrayList<>(Arrays.asList(s.split(",")));
-        else values.add(s);
+        if (s.contains(","))
+            values = new ArrayList<>(Arrays.asList(s.split(",")));
+        else
+            values.add(s);
         for (String b : values) {
             char operation = b.charAt(0);
-            if (operation == '/') multi = Float.parseFloat(b.substring(1));
+            if (operation == '/')
+                multi = Float.parseFloat(b.substring(1));
 
         }
         return multi;
@@ -504,11 +571,14 @@ public class DBCUtils {
         String s = getAllBonuses(p)[stat];
 
         ArrayList<String> values = new ArrayList<>();
-        if (s.contains(",")) values = new ArrayList<>(Arrays.asList(s.split(",")));
-        else values.add(s);
+        if (s.contains(","))
+            values = new ArrayList<>(Arrays.asList(s.split(",")));
+        else
+            values.add(s);
         for (String b : values) {
             char operation = b.charAt(0);
-            if (operation == '+') multi = Integer.parseInt(b.substring(1));
+            if (operation == '+')
+                multi = Integer.parseInt(b.substring(1));
 
         }
         return multi;
@@ -519,11 +589,14 @@ public class DBCUtils {
         String s = getAllBonuses(p)[stat];
 
         ArrayList<String> values = new ArrayList<>();
-        if (s.contains(",")) values = new ArrayList<>(Arrays.asList(s.split(",")));
-        else values.add(s);
+        if (s.contains(","))
+            values = new ArrayList<>(Arrays.asList(s.split(",")));
+        else
+            values.add(s);
         for (String b : values) {
             char operation = b.charAt(0);
-            if (operation == '-') multi = Integer.parseInt(b.substring(1));
+            if (operation == '-')
+                multi = Integer.parseInt(b.substring(1));
 
         }
         return multi;
@@ -535,9 +608,11 @@ public class DBCUtils {
             NBTTagCompound nbt = JRMCoreH.nbt(p, "pres");
             for (int i = 0; i <= 5; i++) {
                 String a = nbt.getString("jrmcAttrBonus" + ComJrmcaBonus.ATTRIBUTES_SHORT[i]);
-                if (!a.isEmpty()) s += a + "=";
+                if (!a.isEmpty())
+                    s += a + "=";
             }
-        } else s = JRMCoreH.dat31[getPlayerID(p)];
+        } else
+            s = JRMCoreH.dat31[getPlayerID(p)];
         s = s.isEmpty() ? null : s;
         return s;
     }
@@ -545,7 +620,8 @@ public class DBCUtils {
     public static int[] statsWithBonus(EntityPlayer p) {
 
         int[] oldstats = getAllFullAttributes(p);
-        if (!JRMCoreConfig.JRMCABonusOn || getBonusAttString(p) == null) return oldstats;
+        if (!JRMCoreConfig.JRMCABonusOn || getBonusAttString(p) == null)
+            return oldstats;
         int[] newstats = new int[6];
 
         for (int i = 0; i < oldstats.length; i++) {
@@ -668,7 +744,7 @@ public class DBCUtils {
                     }
                 } else if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
                     // Charging Dex
-                    switch (classID){
+                    switch (classID) {
                         case 0:
                             def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.MartialArtistCharge) * 0.01F) + kiProtection;
                             break;
@@ -853,7 +929,7 @@ public class DBCUtils {
                     }
                 } else if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
                     // Charging Dex
-                    switch (classID){
+                    switch (classID) {
                         case 0:
                             def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.MartialArtistCharge) * 0.01F) + kiProtection;
                             break;
@@ -867,8 +943,7 @@ public class DBCUtils {
                             def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
                             break;
                     }
-                }
-                else {
+                } else {
                     // Passive Dex
                     def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
                 }
@@ -1018,22 +1093,4 @@ public class DBCUtils {
         return kiAnimationTypeSelected && shouldAttemptAnimation;
     }
 
-    public static int getRacialSkill(EntityPlayer player){
-        JGPlayerMP JG = new JGPlayerMP(player);
-        JG.connectBaseNBT();
-        String racial = JG.getSkillsX();
-
-        if(racial == null || racial.isEmpty() || racial.contains("pty"))
-            return 0;
-        return Integer.parseInt(racial.substring(2));
-    }
-
-    public static int getMaxPowerPoints(EntityPlayer player){
-        JGPlayerMP JG = new JGPlayerMP(player);
-        JG.connectBaseNBT();
-        if(JG.getRace() != RACE_ARCOSIAN)
-            return 0;
-
-        return JRMCoreConfig.ArcosianPPMax[getRacialSkill(player)];
-    }
 }

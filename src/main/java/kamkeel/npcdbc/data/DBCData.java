@@ -22,7 +22,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
 
-import static JinRyuu.JRMCore.JRMCoreH.SklLvlX;
 import static JinRyuu.JRMCore.JRMCoreH.nbt;
 
 public class DBCData {
@@ -341,12 +340,19 @@ public class DBCData {
         if (Race != 4)
             return;
 
-        int maxReserve = JRMCoreConfig.ArcosianPPMax[SklLvlX(player)];
+        int maxReserve = JRMCoreConfig.ArcosianPPMax[getMaxSkillX()];
         int toAdd = maxReserve * (percToRestoreFromMax / 100);
 
         int reserve = nbt(player).getInteger("jrmcArcRsrv");
         reserve = Math.min(reserve + toAdd, maxReserve);
         setArcReserve(reserve);
+    }
+
+    public int getMaxSkillX() {
+        String racial = nbt(player).getString("jrmcSSltX");
+        if (racial == null || racial.isEmpty() || racial.contains("pty"))
+            return 0;
+        return Integer.parseInt(racial.substring(2));
     }
 
     public boolean isForm(int dbcForm) {
