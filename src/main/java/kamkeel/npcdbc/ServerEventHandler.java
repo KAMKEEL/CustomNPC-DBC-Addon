@@ -7,14 +7,11 @@ import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
@@ -26,7 +23,7 @@ public class ServerEventHandler {
         if (event.player == null || event.player.worldObj == null || event.player.worldObj.isRemote || event.player instanceof FakePlayer)
             return;
         DBCData dbcData = DBCData.get(event.player);
-        dbcData.syncAllClients();
+        dbcData.loadNBTData(true);
     }
 
 
@@ -51,9 +48,7 @@ public class ServerEventHandler {
             if (player.ticksExisted % 10 == 0) {
                 // Keep the Player informed on their own data
                 DBCData dbcData = DBCData.get(player);
-                dbcData.loadNBTData(false);
-                PacketHandler.Instance.sendToPlayer(new PingPacket(dbcData).generatePacket(), ((EntityPlayerMP) player));
-                PacketHandler.Instance.sendToTrackingPlayers( new PingPacket(dbcData).generatePacket(), player);
+                dbcData.loadNBTData(true);
             }
 
             handleFormProcesses(player);
@@ -69,7 +64,7 @@ public class ServerEventHandler {
             if (dbcData.Release <= 0 || dbcData.Ki <= 0) { //reverts player from CF when ki or release are 0
                 formData.currentForm = -1;
                 formData.updateClient();
-                dbcData.loadNBTData(false);
+                dbcData.loadNBTData(true);
             }
 
             if (formData.hasTimer(form.id)) {
@@ -82,18 +77,4 @@ public class ServerEventHandler {
 
     }
 
-    @SubscribeEvent
-    public void addTracking(PlayerEvent.StartTracking event) {
-        if (event.target.worldObj == null || event.target.worldObj.isRemote)
-            return;
-
-        if (event.target instanceof EntityPlayer && !(event.target instanceof FakePlayer)) {
-            DBCData data = DBCData.get((EntityPlayer) event.target);
-            if (data == null) {
-                return;
-            }
-            data.loadNBTData(false);
-            PacketHandler.Instance.sendToPlayer(new PingPacket(data).generatePacket(), ((EntityPlayerMP) event.entityPlayer));
-        }
-    }
 }

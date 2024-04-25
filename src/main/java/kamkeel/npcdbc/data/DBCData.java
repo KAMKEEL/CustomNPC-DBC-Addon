@@ -17,7 +17,6 @@ import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
@@ -150,7 +149,7 @@ public class DBCData {
         auraID = c.getInteger("auraID");
     }
 
-    public void saveNBTData(boolean tracking) {
+    public void saveNBTData(boolean syncALL) {
         NBTTagCompound nbt = this.saveFromNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
 
         PlayerDBCInfo formData = Utility.getData(player);
@@ -163,13 +162,9 @@ public class DBCData {
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 
         // Send to Tracking Only
-        if(tracking){
-            PacketHandler.Instance.sendToPlayer(new PingPacket(this).generatePacket(), ((EntityPlayerMP) player));
-            PacketHandler.Instance.sendToTrackingPlayers( new PingPacket(this).generatePacket(), player);
-        }
-        else {
+        if (syncALL)
             syncAllClients();
-        }
+
     }
 
     public void loadNBTData(boolean syncALL) {
@@ -182,12 +177,13 @@ public class DBCData {
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
 
         loadFromNBT(dbc);
-        if(syncALL)
+        if (syncALL)
             syncAllClients();
     }
 
     public void syncAllClients() {
-        PacketHandler.Instance.sendToAll(new PingPacket(this).generatePacket());
+        PacketHandler.Instance.sendToTrackingPlayers(new PingPacket(this).generatePacket(), player);
+
     }
 
     public NBTTagCompound getRawCompound() {
