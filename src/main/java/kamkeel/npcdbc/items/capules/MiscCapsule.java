@@ -137,6 +137,15 @@ public class MiscCapsule extends Item {
                 dbcData.restoreArcPP(100);
                 player.addChatComponentMessage(new ChatComponentText("§5Power Points Restored"));
             }
+        }else if(meta == EnumMiscCapsules.Absorption.getMeta()){
+            DBCData dbcData = DBCData.get(player);
+            if(dbcData.Race != DBCRace.MAJIN){
+                player.addChatComponentMessage(new ChatComponentText("§7Only Majins can use this capsule"));;
+                return itemStack;
+            } else {
+                dbcData.restoreAbsorption(100);
+                player.addChatComponentMessage(new ChatComponentText("§5Absorption Restored"));
+            }
         }
 
         itemStack.splitStack(1);

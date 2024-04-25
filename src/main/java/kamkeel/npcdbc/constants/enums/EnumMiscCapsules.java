@@ -7,7 +7,8 @@ public enum EnumMiscCapsules {
     KO(0, "KO", KOCooldown),
     Revive(1, "Revive", ReviveCooldown),
     Heat(2, "Heat", HeatCooldown),
-    PowerPoint(3, "PowerPoint", PowerPointCooldown);
+    PowerPoint(3, "PowerPoint", PowerPointCooldown),
+    Absorption(4, "Absorption", AbsorptionCooldown);
 
     private final int meta;
     private final String name;

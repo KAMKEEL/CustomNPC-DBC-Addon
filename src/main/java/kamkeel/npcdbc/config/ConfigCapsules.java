@@ -176,6 +176,9 @@ public class ConfigCapsules
     public static Property PowerPointCooldownProperty;
     public static int PowerPointCooldown = 10;
 
+    public static Property AbsorptionCooldownProperty;
+    public static int AbsorptionCooldown = 10;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -335,8 +338,11 @@ public class ConfigCapsules
             HeatCooldownProperty = config.get(MISC, "Heat Cooldown", 10);
             HeatCooldown = HeatCooldownProperty.getInt(10);
 
-            PowerPointCooldownProperty = config.get(MISC, "PowerPointCooldown Cooldown", 10, "Only usable by Arcosians to restore PP Value");
+            PowerPointCooldownProperty = config.get(MISC, "PowerPoint Cooldown", 10, "Only usable by Arcosians to restore PP Value");
             PowerPointCooldown = PowerPointCooldownProperty.getInt(10);
+
+            AbsorptionCooldownProperty = config.get(MISC, "Absorption Cooldown", 10, "Only usable by Majins to restore absorption");
+            AbsorptionCooldown = AbsorptionCooldownProperty.getInt();
         }
         catch (Exception e)
         {
