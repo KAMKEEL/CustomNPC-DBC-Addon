@@ -6,7 +6,7 @@ public class StatusEffect {
     public int id = -1, timer = -1;
     public String name = "", icon = "", type = "";
 
-    public boolean lossOnDeath = false;
+    public boolean lossOnDeath = true;
 
     public StatusEffect(int timer) {
         this.timer = timer;

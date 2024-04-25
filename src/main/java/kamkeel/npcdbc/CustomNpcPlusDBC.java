@@ -10,7 +10,9 @@ import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.PacketHandler;
 
@@ -20,7 +22,7 @@ import static noppes.npcs.CustomNpcs.configPath;
 public class CustomNpcPlusDBC {
 
     public static final String name = "CustomNPC+ DBC Addon";
-    public static final String version = "1.0";
+    public static final String version = "1.0-beta2";
     public static final String ID = "npcdbc";
     @SidedProxy(clientSide = "kamkeel.npcdbc.client.ClientProxy", serverSide = "kamkeel.npcdbc.CommonProxy")
     public static CommonProxy proxy;
@@ -37,12 +39,15 @@ public class CustomNpcPlusDBC {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
+        CapsuleController.getInstance().load();
     }
 
     @Mod.EventHandler
     public void setAboutToStart(FMLServerAboutToStartEvent event) {
         FormController.getInstance().load();
         AuraController.getInstance().load();
+        CapsuleController.getInstance().load();
+        StatusEffectController.getInstance().load();
     }
 
     @Mod.EventHandler

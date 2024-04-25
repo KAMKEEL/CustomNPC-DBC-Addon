@@ -9,7 +9,6 @@ public class RegenEffect extends StatusEffect {
         super(timer);
         id = 1;
         name = "Regeneration";
-
     }
 
     @Override
