@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.client.gui.inventory;
 
-import kamkeel.npcdbc.client.gui.component.GuiFormScroll;
+import kamkeel.npcdbc.client.gui.component.GuiFormAuraScroll;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
@@ -27,7 +27,7 @@ import java.util.Vector;
 
 public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollListener, IScrollData {
     private final ResourceLocation resource = new ResourceLocation("customnpcs", "textures/gui/standardbg.png");
-    private GuiFormScroll guiScroll;
+    private GuiFormAuraScroll guiScroll;
     private String selected = null;
     private String search = "";
     private Form selectedForm;
@@ -51,7 +51,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
     public void initGui() {
         super.initGui();
         if (guiScroll == null) {
-            guiScroll = new GuiFormScroll(this, 0);
+            guiScroll = new GuiFormAuraScroll(this, 0);
             guiScroll.setSize(135, 118);
         }
 
