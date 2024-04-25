@@ -4,6 +4,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.constants.DBCSyncType;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
@@ -21,6 +22,8 @@ import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 
+import java.util.HashMap;
+
 public class ServerEventHandler {
 
     @SubscribeEvent
@@ -31,6 +34,7 @@ public class ServerEventHandler {
         dbcData.loadNBTData(true);
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(true).generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(false).generatePacket(), (EntityPlayerMP) event.player);
+        StatusEffectController.getInstance().loadEffects(event.player);
     }
 
 
@@ -55,7 +59,27 @@ public class ServerEventHandler {
             if (player.ticksExisted % 10 == 0) {
                 // Keep the Player informed on their own data
                 DBCData dbcData = DBCData.get(player);
-                dbcData.loadNBTData(true);
+                if (player.ticksExisted % 20 == 0) {
+                    HashMap<Integer, Integer> current = StatusEffectController.Instance.activeEffects.get(Utility.getUUID(player));
+                    for(int effect : current.keySet()){
+                        int currentValue = current.get(effect);
+                        if(currentValue == -1)
+                            continue;
+
+                        int newTime = current.get(effect) - 1;
+                        if(newTime == 0){
+                            current.remove(effect);
+                            System.out.println("Effect Removed");
+                        }
+                        else {
+                            current.put(effect, newTime);
+                            System.out.println("Time Remaining: " + newTime);
+                        }
+                    }
+                    dbcData.setActiveEffects(current);
+                }
+
+                dbcData.syncAllClients();
             }
 
             handleFormProcesses(player);
@@ -80,8 +104,6 @@ public class ServerEventHandler {
                     formData.updateClient();
             }
         }
-
-
     }
 
 }

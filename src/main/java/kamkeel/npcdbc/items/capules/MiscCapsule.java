@@ -10,7 +10,9 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumHealthCapsules;
 import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.statuseffect.types.RegenEffect;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -125,6 +127,8 @@ public class MiscCapsule extends Item {
         }
         else if(meta == EnumMiscCapsules.PowerPoint.getMeta()){
             // Restore 100 Amount of Power Points
+            StatusEffectController.Instance.applyEffect(player, new RegenEffect(10));
+
             DBCData dbcData = DBCData.get(player);
             if(dbcData.Race != DBCRace.ARCOSIAN){
                 player.addChatComponentMessage(new ChatComponentText("§7Only Arcosians can use this capsule"));

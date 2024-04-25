@@ -11,6 +11,7 @@ import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
@@ -20,8 +21,11 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.NBTTags;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
+
+import java.util.HashMap;
 
 import static JinRyuu.JRMCore.JRMCoreH.nbt;
 
@@ -42,6 +46,7 @@ public class DBCData {
     // Custom Form
     public int addonFormID, auraID;
     public float addonFormLevel;
+    public HashMap<Integer, Integer> activeEffects = new HashMap<>();
 
     public DBCData() {
         this.side = Side.SERVER;
@@ -112,6 +117,7 @@ public class DBCData {
         comp.setInteger("addonFormID", addonFormID);
         comp.setInteger("auraID", auraID);
         comp.setFloat("addonFormLevel", addonFormLevel);
+        comp.setTag("addonActiveEffects", NBTTags.nbtIntegerIntegerMap(activeEffects));
         return comp;
     }
 
@@ -149,6 +155,7 @@ public class DBCData {
         addonFormID = c.getInteger("addonFormID");
         addonFormLevel = c.getFloat("addonFormLevel");
         auraID = c.getInteger("auraID");
+        activeEffects = NBTTags.getIntegerIntegerMap(c.getTagList("addonActiveEffects", 10));
     }
 
     public void saveNBTData(boolean syncALL) {
@@ -158,9 +165,11 @@ public class DBCData {
         addonFormID = formData.currentForm;
         addonFormLevel = formData.getCurrentLevel();
         auraID = formData.currentAura;
+        activeEffects = StatusEffectController.Instance.activeEffects.get(Utility.getUUID(player));
         nbt.setInteger("addonFormID", addonFormID);
         nbt.setInteger("auraID", auraID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
+        nbt.setTag("addonActiveEffects", NBTTags.nbtIntegerIntegerMap(activeEffects));
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 
         // Send to Tracking Only
@@ -190,6 +199,12 @@ public class DBCData {
 
     public NBTTagCompound getRawCompound() {
         return this.player.getEntityData().getCompoundTag(DBCPersisted);
+    }
+
+    public void setActiveEffects(HashMap<Integer, Integer> activeEffects) {
+        NBTTagCompound raw = getRawCompound();
+        this.activeEffects = activeEffects;
+        raw.setTag("addonActiveEffects", NBTTags.nbtIntegerIntegerMap(activeEffects));
     }
 
     public void setEyeColorLeft(int color) {
@@ -340,7 +355,7 @@ public class DBCData {
     public void restoreArcPP(int percToRestoreFromMax) {
         if (Race != 4)
             return;
-        
+
         int maxReserve = JRMCoreConfig.ArcosianPPMax[getMaxSkillX()];
         int toAdd = maxReserve * (percToRestoreFromMax / 100);
 
