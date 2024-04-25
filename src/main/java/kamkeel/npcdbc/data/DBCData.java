@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data;
 
 
+import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
@@ -21,6 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
 
+import static JinRyuu.JRMCore.JRMCoreH.SklLvlX;
 import static JinRyuu.JRMCore.JRMCoreH.nbt;
 
 public class DBCData {
@@ -333,6 +335,18 @@ public class DBCData {
         if (Race != 4)
             return;
         nbt(player).setInteger("jrmcArcRsrv", reserve);
+    }
+
+    public void restoreArcPP(int percToRestoreFromMax) {
+        if (Race != 4)
+            return;
+
+        int maxReserve = JRMCoreConfig.ArcosianPPMax[SklLvlX(player)];
+        int toAdd = maxReserve * (percToRestoreFromMax / 100);
+
+        int reserve = nbt(player).getInteger("jrmcArcRsrv");
+        reserve = Math.min(reserve + toAdd, maxReserve);
+        setArcReserve(reserve);
     }
 
     public boolean isForm(int dbcForm) {
