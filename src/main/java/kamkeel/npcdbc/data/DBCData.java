@@ -4,11 +4,13 @@ package kamkeel.npcdbc.data;
 import JinRyuu.DragonBC.common.Items.ItemSenzu;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -23,6 +25,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
 
+import static JinRyuu.JRMCore.JRMCoreH.getMajinAbsorptionValueS;
 import static JinRyuu.JRMCore.JRMCoreH.nbt;
 
 public class DBCData {
@@ -340,7 +343,7 @@ public class DBCData {
     public void restoreArcPP(int percToRestoreFromMax) {
         if (Race != 4)
             return;
-        
+
         int maxReserve = JRMCoreConfig.ArcosianPPMax[getMaxSkillX()];
         int toAdd = maxReserve * (percToRestoreFromMax / 100);
 
@@ -455,5 +458,22 @@ public class DBCData {
             return (Aura) AuraController.Instance.get(auraID);
 
         return null;
+    }
+
+    public void setAbsorption(int amount){
+        if (Race != DBCRace.MAJIN)
+            return;
+
+        nbt(player).setString("jrmcMajinAbsorptionData", amount+",0,0+0");
+    }
+
+    public void restoreAbsorption(int percToRestoreFromMax) {
+        if (Race != DBCRace.MAJIN)
+            return;
+        int maxAbsorption = JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL;
+        int toAdd = (int) (maxAbsorption * (percToRestoreFromMax/100f));
+        System.out.println(toAdd);
+        int currentAbsorption = getMajinAbsorptionValueS(nbt(player).getString("jrmcMajinAbsorptionData"));
+        setAbsorption(Math.min(toAdd+currentAbsorption, maxAbsorption));
     }
 }
