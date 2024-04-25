@@ -8,6 +8,7 @@ import kamkeel.npcdbc.data.DBCData;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -113,5 +114,11 @@ public class HealthCapsule extends Item {
         // Set Cooldown
         CapsuleController.setHealthCapsule(playerUUID, meta);
         return itemStack;
+    }
+
+    @Override
+    public EnumAction getItemUseAction(ItemStack stack)
+    {
+        return EnumAction.block;
     }
 }

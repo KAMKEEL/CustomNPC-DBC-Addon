@@ -8,6 +8,7 @@ import kamkeel.npcdbc.data.DBCData;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -71,7 +72,6 @@ public class StaminaCapsule extends Item {
 
         return EnumRarity.epic;
     }
-
     /**
      * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
      */
@@ -114,4 +114,11 @@ public class StaminaCapsule extends Item {
         CapsuleController.setStaminaCapsule(playerUUID, meta);
         return itemStack;
     }
+
+    @Override
+    public EnumAction getItemUseAction(ItemStack stack)
+    {
+        return EnumAction.block;
+    }
+
 }
