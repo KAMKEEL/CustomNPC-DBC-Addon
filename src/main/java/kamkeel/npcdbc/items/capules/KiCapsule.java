@@ -142,7 +142,7 @@ public class KiCapsule extends Item {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         int meta = itemStack.getItemDamage();
-        if (meta < 0 || meta > EnumHealthCapsules.count())
+        if (meta < 0 || meta > EnumKiCapsules.count())
             meta = 0;
 
         HashMap<Integer, Integer> kiStrength = CapsuleController.Instance.capsuleStrength.get(Capsule.KI);
