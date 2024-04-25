@@ -50,8 +50,10 @@ public class ServerEventHandler {
             }
 
             if (player.ticksExisted % 10 == 0) {
+                // Keep the Player informed on their own data
                 DBCData dbcData = DBCData.get(player);
                 dbcData.loadNBTData(false);
+                PacketHandler.Instance.sendToPlayer(new PingPacket(dbcData).generatePacket(), ((EntityPlayerMP) player));
             }
 
             handleFormProcesses(player);
