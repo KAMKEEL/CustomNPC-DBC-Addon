@@ -1027,4 +1027,13 @@ public class DBCUtils {
             return 0;
         return Integer.parseInt(racial.substring(2));
     }
+
+    public static int getMaxPowerPoints(EntityPlayer player){
+        JGPlayerMP JG = new JGPlayerMP(player);
+        JG.connectBaseNBT();
+        if(JG.getRace() != RACE_ARCOSIAN)
+            return 0;
+
+        return JRMCoreConfig.ArcosianPPMax[getRacialSkill(player)];
+    }
 }
