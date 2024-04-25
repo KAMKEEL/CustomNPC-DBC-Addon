@@ -43,7 +43,7 @@ public class GuiFormAuraScroll extends GuiCustomScroll {
                 if(GuiDBC.activePage == 1)
                     menuName = auraDisplays.get(list.get(i));
                 if(menuName == null || menuName.isEmpty())
-                    menuName = "Missing";
+                    menuName = "";
                 String displayString = StatCollector.translateToLocal(menuName);
                 String text = "";
                 float maxWidth = (xSize + xOffset - 8) * 0.8f;
