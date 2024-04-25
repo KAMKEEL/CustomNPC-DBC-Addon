@@ -26,7 +26,6 @@ public class ServerEventHandler {
         if (event.player == null || event.player.worldObj == null || event.player.worldObj.isRemote || event.player instanceof FakePlayer)
             return;
         DBCData dbcData = DBCData.get(event.player);
-        dbcData.loadNBTData(true);
         dbcData.syncAllClients();
     }
 
