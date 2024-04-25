@@ -36,10 +36,9 @@ public final class PingPacket extends AbstractPacket {
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         String playerName = ByteBufUtils.readUTF8String(in);
         EntityPlayer sendingPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(playerName);
-        if (sendingPlayer != null)
-            data = DBCData.get(sendingPlayer);
-
-        if (data != null)
-            data.loadFromNBT(ByteBufUtils.readNBT(in));
+        if (sendingPlayer != null){
+            DBCData dbcData = DBCData.get(sendingPlayer);
+            dbcData.loadFromNBT(ByteBufUtils.readNBT(in));
+        }
     }
 }
