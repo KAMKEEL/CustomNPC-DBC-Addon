@@ -28,6 +28,7 @@ import java.util.Vector;
 public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollListener, IScrollData {
     private final ResourceLocation resource = new ResourceLocation("customnpcs", "textures/gui/standardbg.png");
     private GuiFormAuraScroll guiScroll;
+    private boolean loaded = false;
     private String selected = null;
     private String search = "";
     private Form selectedForm;
@@ -104,7 +105,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         drawHorizontalLine(guiLeft + 140, guiLeft + xSize + 35, guiTop + 25, 0xFF000000 + CustomNpcResourceListener.DefaultTextColor);
         drawGradientRect(guiLeft + 140, guiTop + 27, guiLeft + xSize + 36 ,guiTop + ySize - 14, 0xA0101010, 0xA0101010);
 
-        if(activePage == 0){
+        if(activePage == 0 && loaded){
             String drawString = "§fNo Form Selected";
             if (selectedForm != null) {
                 drawString = selectedForm.getMenuName();
@@ -132,7 +133,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 }
             }
         }
-        else {
+        else if (loaded) {
             String drawString = "§fNo Aura Selected";
             if (selectedAura != null) {
                 drawString = selectedAura.getMenuName();
@@ -210,6 +211,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 guiScroll.selected = -1;
             }
         }
+        loaded = false;
     }
 
 
@@ -227,7 +229,6 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             guiScroll.resetScroll();
             guiScroll.setList(getSearch());
             setSelected(selectedForm.name); //so list keeps selectedForm highlighted despite search
-
         }
     }
 
@@ -285,6 +286,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             selectedAura.readFromNBT(compound);
             setSelected(selectedAura.name);
         }
+        loaded = true;
         initGui();
     }
 
