@@ -33,7 +33,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
     private Form selectedForm;
     private Aura selectedAura;
     private HashMap<String, Integer> loadedData = new HashMap<String, Integer>();
-    private static int activePage = 0;
+    public static int activePage = 0;
 
     public GuiDBC() {
         super();

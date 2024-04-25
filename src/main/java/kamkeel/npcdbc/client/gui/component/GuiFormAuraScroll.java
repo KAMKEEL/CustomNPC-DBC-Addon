@@ -38,9 +38,9 @@ public class GuiFormAuraScroll extends GuiCustomScroll {
                 int xOffset = scrollHeight < ySize - 8 ? 0 : 10;
                 String rawName = list.get(i);
                 String menuName = "";
-                if(GuiDBC.activeTab == 0)
+                if(GuiDBC.activePage == 0)
                     menuName = formDisplays.get(list.get(i));
-                if(GuiDBC.activeTab == 1)
+                if(GuiDBC.activePage == 1)
                     menuName = auraDisplays.get(list.get(i));
                 if(menuName == null || menuName.isEmpty())
                     menuName = "Missing";
