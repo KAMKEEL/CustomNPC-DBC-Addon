@@ -98,7 +98,7 @@ public class HealthCapsule extends Item {
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
-        
+
         // Percentage of Health to Restore
         int healthRestored = healthCapsules.getStrength();
 

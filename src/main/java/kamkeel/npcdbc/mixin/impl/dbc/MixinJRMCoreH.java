@@ -34,9 +34,6 @@ import static kamkeel.npcdbc.util.DBCUtils.lastSetDamage;
 @Mixin(value = JRMCoreH.class, remap = false)
 public abstract class MixinJRMCoreH {
 
-    @Shadow
-    public abstract int[] PlyrAttrbts(EntityPlayer p);
-
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onGetPlayerAttribute(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info) {
         {
