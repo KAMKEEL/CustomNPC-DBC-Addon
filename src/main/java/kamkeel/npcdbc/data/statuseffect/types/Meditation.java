@@ -5,12 +5,12 @@ import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class FruitOfMight extends StatusEffect {
+public class Meditation extends StatusEffect {
 
-    public FruitOfMight(int timer) {
+    public Meditation(int timer) {
         super(timer);
-        name = "FruitOfMight";
-        id = Effects.FRUIT_OF_MIGHT;
+        name = "Meditation";
+        id = Effects.MEDITATION;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
         iconX = 0;
         iconY = 0;

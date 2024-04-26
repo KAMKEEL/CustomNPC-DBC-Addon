@@ -5,12 +5,12 @@ import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class FruitOfMight extends StatusEffect {
+public class Overpower extends StatusEffect {
 
-    public FruitOfMight(int timer) {
+    public Overpower(int timer) {
         super(timer);
-        name = "FruitOfMight";
-        id = Effects.FRUIT_OF_MIGHT;
+        name = "Overpower";
+        id = Effects.OVERPOWER;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
         iconX = 0;
         iconY = 0;

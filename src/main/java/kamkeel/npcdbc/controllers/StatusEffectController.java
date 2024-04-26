@@ -1,12 +1,10 @@
 package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.api.IStatusEffectHandler;
+import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
-import kamkeel.npcdbc.data.statuseffect.types.FruitOfMight;
-import kamkeel.npcdbc.data.statuseffect.types.Inflation;
-import kamkeel.npcdbc.data.statuseffect.types.NamekRegen;
-import kamkeel.npcdbc.data.statuseffect.types.Regen;
+import kamkeel.npcdbc.data.statuseffect.types.*;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -28,10 +26,13 @@ public class StatusEffectController implements IStatusEffectHandler {
     public void load() {
         activeEffects.clear();
 
-        standardEffects.put(1, new Regen(-1));
-        standardEffects.put(2, new NamekRegen(-1));
-        standardEffects.put(3, new Inflation(-1));
-        standardEffects.put(4, new FruitOfMight(-1));
+        standardEffects.put(Effects.REGEN, new Regen(-1));
+        standardEffects.put(Effects.NAMEK_REGEN, new NamekRegen(-1));
+        standardEffects.put(Effects.FRUIT_OF_MIGHT, new FruitOfMight(-1));
+        standardEffects.put(Effects.INFLATION, new Inflation(-1));
+        standardEffects.put(Effects.MEDITATION, new Meditation(-1));
+        standardEffects.put(Effects.OVERPOWER, new Overpower(-1));
+        standardEffects.put(Effects.CHOCOLATED, new Chocolated(-1));
     }
 
     public void loadEffects(EntityPlayer player) {
