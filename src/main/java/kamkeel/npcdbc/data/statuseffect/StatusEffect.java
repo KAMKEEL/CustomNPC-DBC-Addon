@@ -1,14 +1,16 @@
 package kamkeel.npcdbc.data.statuseffect;
 
+import kamkeel.npcdbc.IStatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class StatusEffect {
+public class StatusEffect implements IStatusEffect {
     public int id = -1;
     public int timer = -1;
 
     // Must be a multiple of 10
     public int everyXTick = 20;
     public String name = "", icon = "", type = "";
+    public int iconX = 0, iconY = 0;
 
     public boolean lossOnDeath = true;
 
@@ -16,10 +18,12 @@ public class StatusEffect {
         this.timer = timer;
     }
 
+    @Override
     public int getTimer() {
         return timer;
     }
 
+    @Override
     public void setTimer(int timer) {
         this.timer = timer;
     }

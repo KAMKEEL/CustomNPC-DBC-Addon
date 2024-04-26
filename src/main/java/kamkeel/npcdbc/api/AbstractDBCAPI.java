@@ -3,6 +3,7 @@ package kamkeel.npcdbc.api;
 import cpw.mods.fml.common.Loader;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import noppes.npcs.api.entity.ICustomNpc;
@@ -31,6 +32,10 @@ public abstract class AbstractDBCAPI {
             return instance;
         }
     }
+
+    public abstract IFormHandler getFormHandler();
+
+    public abstract IStatusEffectHandler getStatusEffectHandler();
 
     public abstract IForm createForm(String name);
 

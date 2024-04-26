@@ -1,18 +1,24 @@
 package kamkeel.npcdbc.controllers;
 
+import kamkeel.npcdbc.api.IStatusEffectHandler;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
-import kamkeel.npcdbc.data.statuseffect.types.RegenEffect;
+import kamkeel.npcdbc.data.statuseffect.types.FruitOfMight;
+import kamkeel.npcdbc.data.statuseffect.types.Inflation;
+import kamkeel.npcdbc.data.statuseffect.types.NamekRegen;
+import kamkeel.npcdbc.data.statuseffect.types.Regen;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-public class StatusEffectController {
+public class StatusEffectController implements IStatusEffectHandler {
 
     public static StatusEffectController Instance = new StatusEffectController();
-    public HashMap<Integer, StatusEffect> registeredEffects = new HashMap<>();
+    public HashMap<Integer, StatusEffect> standardEffects = new HashMap<>();
+    public HashMap<Integer, StatusEffect> customEffects = new HashMap<>(); // TODO: I will implement later - Kam
+
     public HashMap<UUID, HashMap<Integer, Integer>> activeEffects = new HashMap<>();
 
     public static StatusEffectController getInstance() {
@@ -22,7 +28,10 @@ public class StatusEffectController {
     public void load() {
         activeEffects.clear();
 
-        registeredEffects.put(1, new RegenEffect(-1));
+        standardEffects.put(1, new Regen(-1));
+        standardEffects.put(2, new NamekRegen(-1));
+        standardEffects.put(3, new Inflation(-1));
+        standardEffects.put(4, new FruitOfMight(-1));
     }
 
     public void loadEffects(EntityPlayer player) {
@@ -33,7 +42,7 @@ public class StatusEffectController {
     public void runEffects(EntityPlayer player) {
         HashMap<Integer, Integer> current = getPlayerEffects(player);
         for (int active : current.keySet()) {
-            StatusEffect effect = registeredEffects.get(active);
+            StatusEffect effect = standardEffects.get(active);
             if (effect != null) {
                 effect.runEffect(player);
             }
@@ -41,7 +50,7 @@ public class StatusEffectController {
     }
 
     public StatusEffect get(int id) {
-        return registeredEffects.get(id);
+        return standardEffects.get(id);
     }
 
     public HashMap<Integer, Integer> getPlayerEffects(EntityPlayer player) {
@@ -62,5 +71,49 @@ public class StatusEffectController {
             currentEffects = activeEffects.get(Utility.getUUID(player));
 
         currentEffects.remove(effect.id);
+    }
+
+    @Override
+    public boolean hasEffectTime(EntityPlayer player, int id){
+        HashMap<Integer, Integer> currentEffects = new HashMap<>();
+        if (activeEffects.containsKey(player.getUniqueID()))
+            currentEffects = activeEffects.get(Utility.getUUID(player));
+        else
+            return false;
+
+        if(currentEffects.containsKey(id))
+            return true;
+
+        return false;
+    }
+
+    @Override
+    public int getEffectTime(EntityPlayer player, int id){
+        HashMap<Integer, Integer> currentEffects = new HashMap<>();
+        if (activeEffects.containsKey(player.getUniqueID()))
+            currentEffects = activeEffects.get(Utility.getUUID(player));
+
+        if(currentEffects.containsKey(id))
+            return currentEffects.get(id);
+
+        return -2;
+    }
+
+    @Override
+    public void applyEffect(EntityPlayer player, int id, int timer) {
+        HashMap<Integer, Integer> currentEffects = new HashMap<>();
+        if (activeEffects.containsKey(player.getUniqueID()))
+            currentEffects = activeEffects.get(Utility.getUUID(player));
+
+        currentEffects.put(id, timer);
+    }
+
+    @Override
+    public void removeEffect(EntityPlayer player, int id) {
+        HashMap<Integer, Integer> currentEffects = new HashMap<>();
+        if (activeEffects.containsKey(player.getUniqueID()))
+            currentEffects = activeEffects.get(Utility.getUUID(player));
+
+        currentEffects.remove(id);
     }
 }
