@@ -11,6 +11,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.CapsuleInfo;
+import kamkeel.npcdbc.network.packets.ChargingDexInfo;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -30,6 +31,7 @@ public class ServerEventHandler {
         dbcData.loadNBTData(true);
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(true).generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(false).generatePacket(), (EntityPlayerMP) event.player);
+        PacketHandler.Instance.sendToPlayer(new ChargingDexInfo().generatePacket(), (EntityPlayerMP) event.player);
         StatusEffectController.getInstance().loadEffects(event.player);
     }
 

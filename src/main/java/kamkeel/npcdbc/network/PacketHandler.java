@@ -35,6 +35,7 @@ public final class PacketHandler {
         map.put(RequestAura.packetName, new RequestAura());
         map.put(RequestForm.packetName, new RequestForm());
         map.put(CapsuleInfo.packetName, new CapsuleInfo());
+        map.put(ChargingDexInfo.packetName, new ChargingDexInfo());
         this.register();
     }
 
