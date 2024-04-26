@@ -161,6 +161,8 @@ public class Form implements IForm {
         this.race = race;
     }
 
+
+
     @Override
     public void setAttributeMulti(int id, float multi) {
         switch (id) {

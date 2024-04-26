@@ -48,6 +48,22 @@ public interface IFormMastery {
 
     boolean hasInstantTransformationUnlockLevel();
 
+    float getKiDrain();
+
+    /**
+     * @param kiDrain percentage of Ki to drain every KiDrainTimer ticks
+     */
+    void setKiDrain(float kiDrain);
+
+    boolean hasKiDrain();
+
+    int getKiDrainTimer();
+
+    /**
+     * @param timeInTicks time to reduce ki by KiDrain by in ticks
+     */
+    void setKiDrainTimer(int timeInTicks);
+
     /**
      * Saves CustomForm with the New Form Mastery Modifications
      *

@@ -17,6 +17,7 @@ public interface IForm {
     void setRace(int race);
 
 
+
     /**
      * @return index 0 is strengthMulti,1 dexMulti, 2 willMulti
      */
