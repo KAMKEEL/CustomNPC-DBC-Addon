@@ -81,8 +81,12 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                 s1 = replaceFormColor(s1, formData.getFormColorCode(formData.getCurrentForm()));
             }
 
-        }else if(DBCData.getClient().isLegendary()){
+        }else if(DBCData.getClient().isLegendary() && isInBaseForm(DBCData.getClient()) ){
+            if(!DBCData.getClient().containsSE(19)){ //If in UI, do not change colors
+                return;
+            }
             String legendColor = "§a";
+
             if (isDrawingAttributeData) {
                 String[] data = adjustAttributeData(s1, s2, legendColor);
                 s1 = data[0];
@@ -100,6 +104,14 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
             int ll = 200;
             Object[] txt = new Object[]{s2, "§8", 0, true, x + 5, y + 5, ll};
             detailList.add(txt);
+        }
+    }
+
+    private static boolean isInBaseForm(DBCData client){
+        if(client.Race == 4){
+            return client.State == 4;
+        }else{
+            return client.State == 0;
         }
     }
 
