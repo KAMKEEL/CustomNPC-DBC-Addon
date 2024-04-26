@@ -36,8 +36,14 @@ public class ClientEventHandler {
     private void performAscend() {
         PlayerDBCInfo formData = Utility.getSelfData();
         if (formData != null && formData.hasSelectedForm()) {
+            Form form = formData.getSelectedForm();
+
+            float healthReq = form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
+            if (DBCData.getClient().getCurrentBodyPercentage() > healthReq)
+                return;
+
             if (formData.isInCustomForm()) {
-                Form form = formData.getCurrentForm();
+                form = formData.getCurrentForm();
                 if (form.hasChild() && formData.hasFormUnlocked(form.getChildID())) {
                     IForm child = form.getChild();
                     if (verifyFormTransform((Form) child))
@@ -94,7 +100,16 @@ public class ClientEventHandler {
                         Form form = formData.getCurrentForm();
                         if (form.hasChild() && !formData.hasFormUnlocked(form.getChildID()))
                             Utility.sendMessage(mc.thePlayer, "§cYou do not have the next transformation unlocked!");
+                    } else {
+                        Form form = formData.getSelectedForm();
+                        if (form != null) {
+                            float healthReq = form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
+                            if (DBCData.getClient().getCurrentBodyPercentage() > healthReq) {
+                                Utility.sendMessage(mc.thePlayer, "§cYou need to be below " + (int) healthReq + "% health to access the selected form!");
+                            }
+                        }
                     }
+
 
                 } else if (KeyHandler.AuraKey.isPressed()) {
                     if (formData.selectedAura == -1)

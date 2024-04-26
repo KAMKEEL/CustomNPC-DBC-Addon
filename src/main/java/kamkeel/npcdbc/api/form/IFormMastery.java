@@ -5,10 +5,15 @@ package kamkeel.npcdbc.api.form;
  * get a better understanding on how this interface functions
  */
 public interface IFormMastery {
+    float getHealthRequirement();
+
+    void setHealthRequirement(float healthRequirementInPercent);
+
     /**
      * @param type 3 Legal: "flat", "perlevel", "max"
      * @return value of specified type
      */
+
 
     /**
      * @param type  4 Legal: "attribute","kidrain","strain","healthrequirement"
