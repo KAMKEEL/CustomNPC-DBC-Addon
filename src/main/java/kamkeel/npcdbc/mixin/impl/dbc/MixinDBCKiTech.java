@@ -34,7 +34,7 @@ public class MixinDBCKiTech {
     @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;rc_nam(I)Z", ordinal = 0, shift = At.Shift.BEFORE))
     private static void setAuraType(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "state") LocalFloatRef state, @Local(name = "state2") LocalFloatRef state2, @Local(name = "kk") LocalBooleanRef kk, @Local(name = "ssb") LocalBooleanRef ssb, @Local(name = "ssg") LocalBooleanRef ssg, @Local(name = "ssbs") LocalBooleanRef ssbs, @Local(name = "v") LocalBooleanRef divine, @Local(name = "oozar") LocalBooleanRef oozaru, @Local(name = "ui") LocalBooleanRef ui, @Local(name = "gd") LocalBooleanRef godestruction) {
         DBCData dbcData = DBCData.get(p);
-        Aura aura = dbcData.getCurrentAura();
+        Aura aura = dbcData.getAura();
         if (aura != null) {
             if (aura.display.type.equals("ssg"))
                 ssg.set(true);
@@ -129,7 +129,7 @@ public class MixinDBCKiTech {
     @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", shift = At.Shift.BEFORE, remap = true))
     private static void setAuraFields(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "aura") LocalRef<Entity> Aura) {
         DBCData dbcData = DBCData.get(p);
-        Aura aura = dbcData.getCurrentAura();
+        Aura aura = dbcData.getAura();
         if (aura != null) {
             if (Aura.get() instanceof EntityAura2) {
                 EntityAura2 aur = (EntityAura2) Aura.get();

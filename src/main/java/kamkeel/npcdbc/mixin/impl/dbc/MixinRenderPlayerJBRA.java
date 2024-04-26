@@ -47,7 +47,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
     private void changeFormData(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "rg") LocalIntRef rg, @Local(name = "st") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3, @Local(name = "msk") LocalBooleanRef mask) {
-        Form form = DBCData.getFormClient(par1AbstractClientPlayer);
+        Form form = DBCData.getForm(par1AbstractClientPlayer);
         //this prevents ssj2 hair animating immediately into ssj1 when going into ssj1 type forms from base
         if (TransformController.rage > 0) {
             if (TransformController.transformedInto != null) { //if just transformed into ssj type, don't display ssj2 hair
@@ -103,7 +103,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             ci, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef
                                             bodyCM, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef
                                             race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
-        Form form = DBCData.getFormClient(par1AbstractClientPlayer);
+        Form form = DBCData.getForm(par1AbstractClientPlayer);
         if (form != null) {
             HD = ConfigDBCClient.EnableHDTextures;
             //only saiyans
@@ -195,7 +195,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             ci, @Local(name = "race") LocalIntRef race, @Local(name = "State") LocalIntRef
                                            st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef
                                            bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
-        Form form = DBCData.getFormClient(par1EntityPlayer);
+        Form form = DBCData.getForm(par1EntityPlayer);
         if (form != null) {
 
             //arm colors
@@ -230,7 +230,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef
                                          bodyCM, @Local(name = "gen") LocalIntRef gender) {
 
-        Form form = DBCData.getFormClient(par1EntityPlayer);
+        Form form = DBCData.getForm(par1EntityPlayer);
         if (form != null && (race.get() == 1 || race.get() == 2)) {
             if (this.renderManager != null && this.renderManager.renderEngine != null) {
                 if (form.display.hairType.equals("ssj4")) {

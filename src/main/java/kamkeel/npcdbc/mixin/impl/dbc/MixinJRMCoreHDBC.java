@@ -57,7 +57,7 @@ public class MixinJRMCoreHDBC {
                 if (data != null)
                     form = data.getCurrentForm();
             } else
-                form = DBCData.getFormClient(CommonProxy.CurrentJRMCTickPlayer);
+                form = DBCData.getForm(CommonProxy.CurrentJRMCTickPlayer);
             if (form != null && form.display.hasSize()) {
                 if (form.display.keepOriginalSize)
                     cir.setReturnValue(size.get() + form.display.formSize);

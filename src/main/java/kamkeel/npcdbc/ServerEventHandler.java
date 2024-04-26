@@ -61,14 +61,14 @@ public class ServerEventHandler {
                 if (player.ticksExisted % 20 == 0)
                     dbcData.decrementActiveEffects();
 
-                dbcData.syncAllClients();
+                dbcData.syncTracking();
             }
             handleFormProcesses(player);
         }
     }
 
     public void handleFormProcesses(EntityPlayer player) {
-        Form form = DBCData.getCurrentForm(player);
+        Form form = DBCData.getForm(player);
         if (form != null) {
             PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
             DBCData dbcData = DBCData.get(player);

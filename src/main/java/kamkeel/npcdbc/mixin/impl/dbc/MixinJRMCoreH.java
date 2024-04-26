@@ -15,7 +15,6 @@ import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,15 +41,16 @@ public abstract class MixinJRMCoreH {
             if (player == null)
                 return;
 
-            if (Utility.isServer()) {
+            if (Utility.isServer(player)) {
                 PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
                 if (formData != null && formData.isInCustomForm()) {
                     currentFormLevel = formData.getCurrentLevel();
                     form = formData.getCurrentForm();
                 }
             } else {
-                form = DBCData.getFormClient(player);
-                currentFormLevel = DBCData.getFormLevelClient((AbstractClientPlayer) player);
+                DBCData dbcData = DBCData.get(player);
+                form = dbcData.getForm();
+                currentFormLevel = dbcData.addonFormLevel;
             }
 
             if (form != null) {
@@ -149,7 +149,7 @@ public abstract class MixinJRMCoreH {
     private static void descendOn0Release(int s, EntityPlayer Player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcRelease")) {
             PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(Player);
-            Form form = DBCData.getCurrentForm(Player);
+            Form form = DBCData.getForm(Player);
             if (form != null) {
                 formData.currentForm = -1;
                 formData.updateClient();
@@ -162,7 +162,7 @@ public abstract class MixinJRMCoreH {
     private static void descendOn0Ki(int s, EntityPlayer Player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcEnrgy")) {
             PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(Player);
-            Form form = DBCData.getCurrentForm(Player);
+            Form form = DBCData.getForm(Player);
             if (form != null) {
                 formData.currentForm = -1;
                 formData.updateClient();

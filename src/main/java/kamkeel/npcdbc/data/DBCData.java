@@ -6,8 +6,6 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
@@ -21,13 +19,9 @@ import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import noppes.npcs.config.ConfigClient;
-import noppes.npcs.util.CacheHashMap;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
@@ -37,9 +31,7 @@ import java.util.Map;
 import static JinRyuu.JRMCore.JRMCoreH.getMajinAbsorptionValueS;
 import static JinRyuu.JRMCore.JRMCoreH.nbt;
 
-public class DBCData {
-
-    public static final CacheHashMap<String, CacheHashMap.CachedObject<DBCData>> dbcDataCache = new CacheHashMap<>((long) ConfigClient.CacheLife * 60 * 1000);
+public class DBCData extends DBCDataUniversal {
 
     public static String DBCPersisted = "PlayerPersisted";
     public final Side side;
@@ -66,79 +58,6 @@ public class DBCData {
 
         if (side == Side.SERVER)
             loadNBTData(true);
-    }
-
-    public static DBCData getData(EntityPlayer player) {
-        synchronized (dbcDataCache) {
-            if (!dbcDataCache.containsKey(player.getCommandSenderName()))
-                dbcDataCache.put(player.getCommandSenderName(), new CacheHashMap.CachedObject<>(new DBCData(player)));
-            return dbcDataCache.get(player.getCommandSenderName()).getObject();
-        }
-    }
-
-    public static DBCData get(EntityPlayer player) {
-        DBCData data;
-        if (player.worldObj.isRemote) {
-            data = ClientCache.getClientData(player);
-        } else {
-            data = getData(player);
-            data.loadNBTData(false);
-        }
-        data.player = player;
-        return data;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static DBCData getClient() {
-        return get(Minecraft.getMinecraft().thePlayer);
-    }
-
-    public static Form getFormClient(EntityPlayer player) {
-        if (player == null)
-            return null;
-
-        DBCData dbcData = get(player);
-        if (dbcData == null)//(dbcData.Release <= 0 || dbcData.Ki <= 0)
-            return null;
-
-        int form = dbcData.addonFormID;
-        if (form == -1)
-            return null;
-
-
-        return (Form) FormController.getInstance().get(form);
-    }
-
-    public static Aura getAuraClient(EntityPlayer player) {
-        if (player == null)
-            return null;
-
-        DBCData dbcData = get(player);
-        if (dbcData == null)//(dbcData.Release <= 0 || dbcData.Ki <= 0)
-            return null;
-
-        int form = dbcData.auraID;
-        if (form == -1)
-            return null;
-
-
-        return (Aura) AuraController.getInstance().get(form);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static float getFormLevelClient(AbstractClientPlayer player) {
-        DBCData dbcData = get(player);
-        if (dbcData == null)
-            return 0f;
-
-        return dbcData.addonFormLevel;
-    }
-
-    public static Form getCurrentForm(EntityPlayer p) {
-        if (Utility.isServer(p))
-            return PlayerDataUtil.getDBCInfo(p) != null ? PlayerDataUtil.getDBCInfo(p).getCurrentForm() : null;
-        else
-            return getFormClient(p);
     }
 
     public NBTTagCompound saveFromNBT(NBTTagCompound comp) {
@@ -227,7 +146,7 @@ public class DBCData {
         }
     }
 
-    public void saveNBTData(boolean syncALL) {
+    public void saveNBTData(boolean syncTracking) {
         NBTTagCompound nbt = this.saveFromNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
 
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
@@ -242,9 +161,8 @@ public class DBCData {
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 
         // Send to Tracking Only
-        if (syncALL)
-            syncAllClients();
-
+        if (syncTracking)
+            syncTracking();
     }
 
     public void loadNBTData(boolean syncALL) {
@@ -258,10 +176,10 @@ public class DBCData {
 
         loadFromNBT(dbc);
         if (syncALL)
-            syncAllClients();
+            syncTracking();
     }
 
-    public void syncAllClients() {
+    public void syncTracking() {
         PacketHandler.Instance.sendToTrackingPlayers(new PingPacket(this).generatePacket(), player);
 
     }
@@ -616,7 +534,7 @@ public class DBCData {
     }
 
     public boolean settingOn(int id) {
-        return Utility.isServer() ? JRMCoreH.PlyrSettingsB(player, id) : JRMCoreH.PlyrSettingsB(id);
+        return Utility.isServer(player) ? JRMCoreH.PlyrSettingsB(player, id) : JRMCoreH.PlyrSettingsB(id);
     }
 
     public boolean formSettingOn(int dbcForm) {
@@ -634,7 +552,9 @@ public class DBCData {
         }
     }
 
-    public Aura getCurrentAura() {
+    public Aura getAura() {
+        if(player == null)
+            return null;
         DBCData dbcData = DBCData.get(player);
         Form form = (Form) FormController.getInstance().get(dbcData.addonFormID);
 
@@ -646,5 +566,13 @@ public class DBCData {
         return null;
     }
 
+    public Form getForm() {
+        if (player == null)
+            return null;
 
+        if (addonFormID == -1)
+            return null;
+
+        return (Form) FormController.getInstance().get(addonFormID);
+    }
 }
