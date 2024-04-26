@@ -20,8 +20,32 @@ public class StatusEffect implements IStatusEffect {
     public String icon = "";
     public int iconX = 0, iconY = 0;
     boolean isCustom = false;
-    public StatusEffect(int duration){
+
+    public StatusEffect(int duration) {
         this.duration = duration;
+    }
+
+    public static StatusEffect readEffectData(NBTTagCompound nbt) {
+        int id = nbt.getInteger("Id");
+        if (id > 0) {
+            boolean found = StatusEffectController.getInstance().standardEffects.containsKey(id) ||
+                    StatusEffectController.getInstance().customEffects.containsKey(id);
+            if (found) {
+                byte level = nbt.getByte("Level");
+                int dur = nbt.getInteger("Dur");
+                if (id >= 100) {
+                    CustomEffect customEffect = new CustomEffect(id, dur);
+                    customEffect.level = level;
+                    return customEffect;
+                } else {
+                    StatusEffect statusEffect = new StatusEffect(dur);
+                    statusEffect.id = id;
+                    statusEffect.level = level;
+                    return statusEffect;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -54,7 +78,6 @@ public class StatusEffect implements IStatusEffect {
         return name;
     }
 
-
     public void runEffect(EntityPlayer player) {
         if (player.ticksExisted % everyXTick == 0) {
             process(player);
@@ -66,41 +89,15 @@ public class StatusEffect implements IStatusEffect {
 
     @Override
     public void performEffect(IPlayer player) {
-        if(player != null && player.getMCEntity() != null && player.getMCEntity() instanceof EntityPlayer){
+        if (player != null && player.getMCEntity() != null && player.getMCEntity() instanceof EntityPlayer) {
             process((EntityPlayer) player.getMCEntity());
         }
     }
 
-    public NBTTagCompound writeEffectData(NBTTagCompound nbt)
-    {
+    public NBTTagCompound writeEffectData(NBTTagCompound nbt) {
         nbt.setInteger("Id", this.id);
         nbt.setByte("Level", this.getLevel());
         nbt.setInteger("Dur", this.getDuration());
         return nbt;
-    }
-
-    public static StatusEffect readEffectData(NBTTagCompound nbt)
-    {
-        int id = nbt.getInteger("Id");
-        if(id > 0){
-            boolean found = StatusEffectController.getInstance().standardEffects.containsKey(id) ||
-                StatusEffectController.getInstance().customEffects.containsKey(id);
-            if(found){
-                byte level = nbt.getByte("Level");
-                int dur = nbt.getInteger("Dur");
-                if(id >= 100){
-                    CustomEffect customEffect = new CustomEffect(id, dur);
-                    customEffect.level = level;
-                    return customEffect;
-                }
-                else {
-                    StatusEffect statusEffect = new StatusEffect(dur);
-                    statusEffect.id = id;
-                    statusEffect.level = level;
-                    return statusEffect;
-                }
-            }
-        }
-        return null;
     }
 }
