@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.DBCUtils;
@@ -53,23 +54,38 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                     s2 = Utility.removeBoldColorCode(name) + " §8Mastery Lvl: §4" + formatter.format(curLevel) + (removeBase ? (isInKaioken ? kaiokenString : "") : "\n§8" + s2);
                 }
                 //adds the form color to STR,DEX and WIL attribute values
-            } else if ((s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) || s1.contains(JRMCoreH.trl("jrmc", "mleDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "DefDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "Passive")+":") || s1.contains(JRMCoreH.trl("jrmc", "EnPwDB")+":") && s1.contains("§")) {
-                int secondIndex = 0;
-                for (int i = 0; i < s1.length(); i++) {
-                    if (s1.charAt(i) == '§' && !s1.substring(i, i + 2).equals("§8")) {
-                        secondIndex = i;
-                        break;
-                    }
+            } else if ((s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§")) {
+                String currentColor = formData.getFormColorCode(formData.getCurrentForm());
+                currentColor = Utility.removeBoldColorCode(currentColor);
+
+                s1 = replaceFormColor(s1, currentColor);
+
+
+                //Adds "Modified" tooltips
+                if(s2.contains(JRMCoreH.trl("jrmc", "Modified"))){
+                    s2 = replaceFormColor(s2, currentColor);
+                }else{
+                    int attributeId = getAttributeIdByName(s1);
+                    int modified = DBCUtils.getFullAttribute(Minecraft.getMinecraft().thePlayer, attributeId);
+                    int original = JRMCoreH.PlyrAttrbts()[attributeId];
+
+                    String tooltipData = JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Modified") + ": " + currentColor + modified
+                        + "\n" + JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Original")+": " + JRMCoreH.cldr + original
+                        + "\n" + JRMCoreH.cldgy;
+
+                    s2 = tooltipData + s2;
                 }
 
-                String originalColor = s1.substring(secondIndex, secondIndex + 2);
-                s1 = s1.replace(originalColor, formData.getFormColorCode(formData.getCurrentForm()));
                 // adds the "xMulti" after CON: AttributeValue
             } else if (s1.contains("CON:")) {
                 float multi = (float) DBCUtils.getCurFormMulti(Minecraft.getMinecraft().thePlayer);
                 if (s1.contains("x"))
                     s1 = s1.substring(0, s1.indexOf("x") - 1);
                 s1 = s1 + (JRMCoreH.round(multi, 1) != 1.0 ? formData.getFormColorCode(formData.getCurrentForm()) + " x" + JRMCoreH.round(multi, 1) : "");
+
+                //Corrects Statistics colors
+            } else if( s1.contains(JRMCoreH.trl("jrmc", "mleDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "DefDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "Passive")+":") || s1.contains(JRMCoreH.trl("jrmc", "EnPwDB")+":") && s1.contains("§")){
+                s1 = replaceFormColor(s1, formData.getFormColorCode(formData.getCurrentForm()));
             }
 
             int wpos = var8.getStringWidth(s1);
@@ -81,5 +97,29 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
             }
             ci.cancel();
         }
+    }
+
+    private static int getAttributeIdByName(String s1){
+        if(s1.contains("STR:"))
+            return 0;
+        if(s1.contains("DEX:"))
+            return 1;
+        if(s1.contains("WIL"))
+            return 3;
+        return 0;
+    }
+
+    private static String replaceFormColor(String s1, String currentColor) {
+        int secondIndex = 0;
+        for (int i = 0; i < s1.length(); i++) {
+            if (s1.charAt(i) == '§' && !s1.substring(i, i + 2).equals("§8")) {
+                secondIndex = i;
+                break;
+            }
+        }
+
+        String originalColor = s1.substring(secondIndex, secondIndex + 2);
+        s1 = s1.replace(originalColor, currentColor);
+        return s1;
     }
 }
