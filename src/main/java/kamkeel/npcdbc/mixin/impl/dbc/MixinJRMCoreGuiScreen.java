@@ -115,17 +115,24 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
         }
     }
 
-    private static String[] adjustAttributeData(String s1, String s2, String legendColor) {
-        s1 = replaceFormColor(s1, legendColor);
+    /**
+     * Adjusts the rendered text to apply correct form colors.
+     * @param s1 Main string
+     * @param s2 Tooltip
+     * @param replacementColor Color to replace the wrong stat color with.
+     * @return String array of size 2, corresponding to modified s1 and s2 (need those to correct the rendering);
+     */
+    private static String[] adjustAttributeData(String s1, String s2, String replacementColor) {
+        s1 = replaceFormColor(s1, replacementColor);
 
         if(s2.contains(JRMCoreH.trl("jrmc", "Modified"))){
-            s2 = replaceFormColor(s2, legendColor);
+            s2 = replaceFormColor(s2, replacementColor);
         }else{
             int attributeId = getAttributeIdByName(s1);
             int modified = DBCUtils.getFullAttribute(Minecraft.getMinecraft().thePlayer, attributeId);
             int original = JRMCoreH.PlyrAttrbts()[attributeId];
 
-            String tooltipData = JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Modified") + ": " + legendColor + modified
+            String tooltipData = JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Modified") + ": " + replacementColor + modified
                 + "\n" + JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Original")+": " + JRMCoreH.cldr + original
                 + "\n" + JRMCoreH.cldgy;
 
