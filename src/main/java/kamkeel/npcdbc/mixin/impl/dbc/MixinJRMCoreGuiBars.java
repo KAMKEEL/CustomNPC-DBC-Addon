@@ -33,7 +33,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
         for (int id : current.keySet()) {
             StatusEffect effect = StatusEffectController.Instance.get(id);
             if (effect.icon.length() > 3) {
-                drawIcon(var51 + i.get(), var61 + j.get(), effect.icon);
+                drawIcon(var51 + i.get(), var61 + j.get(), effect.icon, effect.iconX, effect.iconY);
                 if (var71 == 0) {
                     i.set(i.get() + 18);
                 } else
@@ -45,14 +45,12 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
     }
 
     @Unique
-    private void drawIcon(int x, int y, String iconDir) {
+    private void drawIcon(int x, int y, String iconDir, int iconX, int iconY) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(iconDir));
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        int h = 0;
-        int v = 0;
         float w = 100f;
         int w2 = (int) (0.16F * (100.0F - w));
-        this.drawTexturedModalRect(x + 2 + (JGConfigClientSettings.CLIENT_hud0 > 1 ? 50 : 0), y + w2 + 2, h, v, 16, 16);
+        this.drawTexturedModalRect(x + 2 + (JGConfigClientSettings.CLIENT_hud0 > 1 ? 50 : 0), y + w2 + 2, iconX, iconY, 16, 16);
     }
 
 }
