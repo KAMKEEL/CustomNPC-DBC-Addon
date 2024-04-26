@@ -73,6 +73,17 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 HD = ConfigDBCClient.EnableHDTextures;
                 boolean isSaiyan = dbcData.Race == 1 || dbcData.Race == 2;
 
+                //eye colors for ALL forms except ssj4
+                if (form.display.eyeColor != -1 && (hair.contains("EYELEFT") || hair.contains("EYERIGHT"))) {
+                    if (form.display.hairType.equals("ssj4") && isSaiyan && HD) {
+                    } else
+                        RenderPlayerJBRA.glColor3f(form.display.eyeColor);
+                }
+
+                //majin effect check
+                if (dbcData.Race == 5 && !form.display.effectMajinHair)
+                    return;
+
                 if (isSaiyan) {
                     //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
                     if (form.display.hairType.equals("ssj4")) {
@@ -101,12 +112,6 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 if (form.display.hairColor != -1 && (isHairPreset(hair) || hair.contains("EYEBROW")))
                     RenderPlayerJBRA.glColor3f(form.display.hairColor);
 
-                //eye colors for ALL forms except ssj4
-                if (form.display.eyeColor != -1 && (hair.contains("EYELEFT") || hair.contains("EYERIGHT"))) {
-                    if (form.display.hairType.equals("ssj4") && isSaiyan && HD) {
-                    } else
-                        RenderPlayerJBRA.glColor3f(form.display.eyeColor);
-                }
 
                 //sets hairstates for default presets
                 if (isHairPreset(hair)) {
@@ -163,6 +168,10 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 String hairTexture = "normall.png";
                 TextureManager texMan = Minecraft.getMinecraft().renderEngine;
                 texMan.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + hairTexture));
+
+                //majin effect check
+                if (rc == 5 && !form.display.effectMajinHair)
+                    return;
 
                 //hairstates with texture
                 if (form.display.hairType.equals("base")) {
