@@ -52,7 +52,7 @@ public final class RequestAura extends AbstractPacket {
             }
         }
         else if(onlyPlayers){
-            Utility.sendPlayerAuraData((EntityPlayerMP) player);
+            NetworkUtility.sendPlayersAuras((EntityPlayerMP) player);
         }
         else {
             NetworkUtility.sendCustomAuraDataAll((EntityPlayerMP) player);

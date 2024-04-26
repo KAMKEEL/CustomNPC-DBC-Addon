@@ -49,7 +49,7 @@ public final class RequestForm extends AbstractPacket {
                 Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
             }
         } else if(onlyPlayers){
-            Utility.sendPlayerFormData((EntityPlayerMP) player);
+            NetworkUtility.sendPlayersForms((EntityPlayerMP) player);
         }
         else {
             NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);

@@ -47,7 +47,7 @@ public final class DBCSelectAura extends AbstractPacket {
             if(dbcInfo.hasAuraUnlocked(auraID)){
                 Aura aura = (Aura) AuraController.getInstance().get(auraID);
                 dbcInfo.selectedAura = auraID;
-                Utility.sendMessage(player, String.format("§bAura %s §aSelected", aura.getMenuName()));
+                Utility.sendMessage(player, String.format("§bAura %s §bSelected", aura.getMenuName()));
                 compound = aura.writeToNBT();
             }
         } else {

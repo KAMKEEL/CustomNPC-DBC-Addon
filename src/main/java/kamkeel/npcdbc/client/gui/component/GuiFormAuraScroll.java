@@ -1,6 +1,9 @@
 package kamkeel.npcdbc.client.gui.component;
 
+import kamkeel.npcdbc.client.gui.inventory.GuiDBC;
+import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.StatCollector;
@@ -9,16 +12,20 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 
-public class GuiFormScroll extends GuiCustomScroll {
+public class GuiFormAuraScroll extends GuiCustomScroll {
     private final HashMap<String, String> formDisplays = new HashMap<>();
+    private final HashMap<String, String> auraDisplays = new HashMap<>();
     int hoverColor;
 
-    public GuiFormScroll(GuiScreen parent, int id) {
+    public GuiFormAuraScroll(GuiScreen parent, int id) {
         super(parent, id);
         visible = true;
         multipleSelection = false;
         for(Form allForms : FormController.getInstance().customForms.values()){
             formDisplays.put(allForms.getName(), allForms.getMenuName());
+        }
+        for(Aura allAuras : AuraController.getInstance().customAuras.values()){
+            auraDisplays.put(allAuras.getName(), allAuras.getMenuName());
         }
     }
 
@@ -30,9 +37,13 @@ public class GuiFormScroll extends GuiCustomScroll {
             if (k >= 4 && k + 12 < ySize) {
                 int xOffset = scrollHeight < ySize - 8 ? 0 : 10;
                 String rawName = list.get(i);
-                String menuName = formDisplays.get(list.get(i));
-                if(menuName.isEmpty())
-                    menuName = "Missing";
+                String menuName = "";
+                if(GuiDBC.activePage == 0)
+                    menuName = formDisplays.get(list.get(i));
+                if(GuiDBC.activePage == 1)
+                    menuName = auraDisplays.get(list.get(i));
+                if(menuName == null || menuName.isEmpty())
+                    menuName = "";
                 String displayString = StatCollector.translateToLocal(menuName);
                 String text = "";
                 float maxWidth = (xSize + xOffset - 8) * 0.8f;
