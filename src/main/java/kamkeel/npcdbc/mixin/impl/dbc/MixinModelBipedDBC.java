@@ -43,7 +43,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     public void fixSSJtoSSJ2RageAnim(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(name = "trTime") LocalIntRef trTime) {
         if (ClientEventHandler.renderingPlayer != null) {
             String playerName = JRMCoreH.plyrs[pl];
-            Form form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
+            Form form = DBCData.getFormClient(ClientEventHandler.renderingPlayer);
             if (form != null && rp.getState(playerName) != s)
                 rp.setState(s, playerName);
 
@@ -65,7 +65,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At("HEAD"), cancellable = true)
     public void formRendering(float par1, String hair, String anim, CallbackInfoReturnable<String> ci, @Local(ordinal = 0) LocalRef<String> Hair) {
         if (ClientEventHandler.renderingPlayer != null) {
-            Form form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
+            Form form = DBCData.getFormClient(ClientEventHandler.renderingPlayer);
             if (form != null) {
                 hair = Hair.get();
                 DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
@@ -143,7 +143,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                                          ci, @Local(ordinal = 0) LocalRef<String> hair, @Local(ordinal = 0) LocalIntRef
                                          st, @Local(ordinal = 3) LocalIntRef race) {
         if (ClientEventHandler.renderingPlayer != null) {
-            Form form = Utility.getFormClient(ClientEventHandler.renderingPlayer);
+            Form form = DBCData.getFormClient(ClientEventHandler.renderingPlayer);
 
             //set texture for non saiyan CH, animate it when ascending
             if (rc != 1 && rc != 2) {

@@ -22,6 +22,7 @@ import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -90,6 +91,54 @@ public class DBCData {
     @SideOnly(Side.CLIENT)
     public static DBCData getClient() {
         return get(Minecraft.getMinecraft().thePlayer);
+    }
+
+    public static Form getFormClient(EntityPlayer player) {
+        if (player == null)
+            return null;
+
+        DBCData dbcData = get(player);
+        if (dbcData == null)//(dbcData.Release <= 0 || dbcData.Ki <= 0)
+            return null;
+
+        int form = dbcData.addonFormID;
+        if (form == -1)
+            return null;
+
+
+        return (Form) FormController.getInstance().get(form);
+    }
+
+    public static Aura getAuraClient(EntityPlayer player) {
+        if (player == null)
+            return null;
+
+        DBCData dbcData = get(player);
+        if (dbcData == null)//(dbcData.Release <= 0 || dbcData.Ki <= 0)
+            return null;
+
+        int form = dbcData.auraID;
+        if (form == -1)
+            return null;
+
+
+        return (Aura) AuraController.getInstance().get(form);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static float getFormLevelClient(AbstractClientPlayer player) {
+        DBCData dbcData = get(player);
+        if (dbcData == null)
+            return 0f;
+
+        return dbcData.addonFormLevel;
+    }
+
+    public static Form getCurrentForm(EntityPlayer p) {
+        if (Utility.isServer(p))
+            return PlayerDataUtil.getDBCInfo(p) != null ? PlayerDataUtil.getDBCInfo(p).getCurrentForm() : null;
+        else
+            return getFormClient(p);
     }
 
     public NBTTagCompound saveFromNBT(NBTTagCompound comp) {

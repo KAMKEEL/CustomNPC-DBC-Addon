@@ -49,8 +49,8 @@ public abstract class MixinJRMCoreH {
                     form = formData.getCurrentForm();
                 }
             } else {
-                form = Utility.getFormClient(player);
-                currentFormLevel = Utility.getFormLevelClient((AbstractClientPlayer) player);
+                form = DBCData.getFormClient(player);
+                currentFormLevel = DBCData.getFormLevelClient((AbstractClientPlayer) player);
             }
 
             if (form != null) {
@@ -149,7 +149,7 @@ public abstract class MixinJRMCoreH {
     private static void descendOn0Release(int s, EntityPlayer Player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcRelease")) {
             PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(Player);
-            Form form = Utility.getCurrentForm(Player);
+            Form form = DBCData.getCurrentForm(Player);
             if (form != null) {
                 formData.currentForm = -1;
                 formData.updateClient();
@@ -162,7 +162,7 @@ public abstract class MixinJRMCoreH {
     private static void descendOn0Ki(int s, EntityPlayer Player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcEnrgy")) {
             PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(Player);
-            Form form = Utility.getCurrentForm(Player);
+            Form form = DBCData.getCurrentForm(Player);
             if (form != null) {
                 formData.currentForm = -1;
                 formData.updateClient();

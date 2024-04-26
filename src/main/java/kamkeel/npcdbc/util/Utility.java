@@ -3,13 +3,7 @@ package kamkeel.npcdbc.util;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.aura.Aura;
-import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
@@ -99,13 +93,6 @@ public class Utility {
 
     }
 
-    public static Form getCurrentForm(EntityPlayer p) {
-        if (isServer(p))
-            return PlayerDataUtil.getDBCInfo(p) != null ? PlayerDataUtil.getDBCInfo(p).getCurrentForm() : null;
-        else
-            return getFormClient(p);
-    }
-
     public static void printStackTrace() {
         for (StackTraceElement ste : Thread.currentThread().getStackTrace())
             System.out.println(ste);
@@ -130,47 +117,6 @@ public class Utility {
         return n >= Utility.percent(maxN, minPerc) && n < Utility.percent(maxN, maxPerc);
     }
 
-
-    public static Form getFormClient(EntityPlayer player) {
-        if (player == null)
-            return null;
-
-        DBCData dbcData = DBCData.get(player);
-        if (dbcData == null)//(dbcData.Release <= 0 || dbcData.Ki <= 0)
-            return null;
-
-        int form = dbcData.addonFormID;
-        if (form == -1)
-            return null;
-
-
-        return (Form) FormController.getInstance().get(form);
-    }
-
-    public static Aura getAuraClient(EntityPlayer player) {
-        if (player == null)
-            return null;
-
-        DBCData dbcData = DBCData.get(player);
-        if (dbcData == null)//(dbcData.Release <= 0 || dbcData.Ki <= 0)
-            return null;
-
-        int form = dbcData.auraID;
-        if (form == -1)
-            return null;
-
-
-        return (Aura) AuraController.getInstance().get(form);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static float getFormLevelClient(AbstractClientPlayer player) {
-        DBCData dbcData = DBCData.get(player);
-        if (dbcData == null)
-            return 0f;
-
-        return dbcData.addonFormLevel;
-    }
 
     public static String removeBoldColorCode(String s) {
         for (int i = 0; i < s.length() - 2; i++) {

@@ -12,7 +12,6 @@ import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.CapsuleInfo;
 import kamkeel.npcdbc.util.PlayerDataUtil;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -69,7 +68,7 @@ public class ServerEventHandler {
     }
 
     public void handleFormProcesses(EntityPlayer player) {
-        Form form = Utility.getCurrentForm(player);
+        Form form = DBCData.getCurrentForm(player);
         if (form != null) {
             PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
             DBCData dbcData = DBCData.get(player);

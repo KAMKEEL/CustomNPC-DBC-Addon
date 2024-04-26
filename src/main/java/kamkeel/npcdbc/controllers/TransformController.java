@@ -38,7 +38,7 @@ public class TransformController {
     //WIP, only 85% done, but is functional and won't break
     @SideOnly(Side.CLIENT)
     public static void Ascend(Form form) {
-        Form currentForm = Utility.getCurrentForm(Minecraft.getMinecraft().thePlayer);
+        Form currentForm = DBCData.getCurrentForm(Minecraft.getMinecraft().thePlayer);
         if (cantTransform || (rage > 0 && transformed) || currentForm != null && currentForm.getID() == form.id)
             return;
         dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
