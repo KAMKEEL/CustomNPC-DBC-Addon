@@ -25,6 +25,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
+import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -334,8 +335,7 @@ public class DBCData {
         int maxKi = DBCUtils.getMaxKi(player);
         int toAdd = (int) (maxKi * (percToRestore / 100));
 
-        Ki += toAdd;
-        Ki = Math.min(Ki, maxKi);
+        Ki = ValueUtil.clamp(Ki + toAdd, 0, maxKi);
         getRawCompound().setInteger("jrmcEnrgy", Ki);
     }
 
@@ -343,7 +343,7 @@ public class DBCData {
         int maxBody = DBCUtils.getMaxBody(player);
         int toAdd = (int) (maxBody * (percToRestore / 100));
 
-        Body += toAdd;
+        Body = ValueUtil.clamp(Body + toAdd, 0, maxBody);
         getRawCompound().setInteger("jrmcBdy", Body);
     }
 
@@ -351,8 +351,8 @@ public class DBCData {
         int maxSta = DBCUtils.getMaxStamina(player);
         int toAdd = (int) (maxSta * (percToRestore / 100));
 
-        Stamina += toAdd;
-        Stamina = Math.min(Stamina, maxSta);
+
+        Stamina = ValueUtil.clamp(Stamina + toAdd, 0, maxSta);
         getRawCompound().setInteger("jrmcStamina", Stamina);
     }
 
@@ -364,7 +364,7 @@ public class DBCData {
         int maxHeat = JGConfigUltraInstinct.CONFIG_UI_HEAT_DURATION[State2];
         int toAdd = (int) (maxHeat * (percToRestore / 100));
 
-        Heat = Math.max(Heat - toAdd, 0);
+        Heat = ValueUtil.clamp(Heat - toAdd, 0, maxHeat);
         getRawCompound().setInteger("jrmcEf8slc", Heat);
     }
 
@@ -382,7 +382,7 @@ public class DBCData {
         int toAdd = maxReserve * (percToRestoreFromMax / 100);
 
         int reserve = nbt(player).getInteger("jrmcArcRsrv");
-        reserve = Math.min(reserve + toAdd, maxReserve);
+        reserve = ValueUtil.clamp(reserve + toAdd, 0, maxReserve);
         setArcReserve(reserve);
     }
 
@@ -398,8 +398,9 @@ public class DBCData {
             return;
         int maxAbsorption = JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL;
         int toAdd = (int) (maxAbsorption * (percToRestoreFromMax / 100f));
+
         int currentAbsorption = getMajinAbsorptionValueS(nbt(player).getString("jrmcMajinAbsorptionData"));
-        setAbsorption(Math.min(toAdd + currentAbsorption, maxAbsorption));
+        setAbsorption(ValueUtil.clamp(toAdd + currentAbsorption, 0, maxAbsorption));
     }
 
     public int getMaxSkillX() {
