@@ -5,7 +5,9 @@ import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
@@ -30,12 +32,14 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
         DBCData dbcData = DBCData.getClient();
         HashMap<Integer, Integer> current = dbcData.getActiveEffects();
         for (int id : current.keySet()) {
-            // StatusEffect effect = StatusEffectController.Instance.get(id);
-            drawIcon(var51 + i.get(), var61 + j.get(), CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png");
-            if (var71 == 0) {
-                i.set(i.get() + 18);
-            } else
-                j.set(j.get() + 18);
+            StatusEffect effect = StatusEffectController.Instance.get(id);
+            if (effect.hasIcon()) {
+                drawIcon(var51 + i.get(), var61 + j.get(), CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png");
+                if (var71 == 0) {
+                    i.set(i.get() + 18);
+                } else
+                    j.set(j.get() + 18);
+            }
         }
 
 
