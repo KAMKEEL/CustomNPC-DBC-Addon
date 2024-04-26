@@ -517,7 +517,8 @@ public class DBCData {
         int maxReserve = JRMCoreConfig.ArcosianPPMax[getMaxSkillX()];
         int toAdd = maxReserve * (percToRestoreFromMax / 100);
 
-        int reserve = nbt(player).getInteger("jrmcArcRsrv");
+        // Arc Reserve can be less than 0, so Add from 0.
+        int reserve = Math.max(nbt(player).getInteger("jrmcArcRsrv"), 0);
         reserve = ValueUtil.clamp(reserve + toAdd, 0, maxReserve);
         setArcReserve(reserve);
     }
