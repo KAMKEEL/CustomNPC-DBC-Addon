@@ -19,13 +19,17 @@ import noppes.npcs.util.CacheHashMap;
 public class DBCDataUniversal {
 
     /**
+     * Data is cleared after 10 minutes
+     **/
+    public static final CacheHashMap<String, CacheHashMap.CachedObject<DBCData>> dbcDataCache = new CacheHashMap<>((long) ConfigClient.CacheLife * 60 * 1000);
+
+
+    /**
      * Static / Universal DBC Data
      * Functionality for Inheritance
      *
      * Making Code a lot cleaner to read and process
      */
-    public static final CacheHashMap<String, CacheHashMap.CachedObject<DBCData>> dbcDataCache = new CacheHashMap<>((long) ConfigClient.CacheLife * 60 * 1000);
-
     public static DBCData getData(EntityPlayer player) {
         synchronized (dbcDataCache) {
             if (!dbcDataCache.containsKey(player.getCommandSenderName()))
