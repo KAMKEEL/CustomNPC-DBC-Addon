@@ -190,7 +190,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         this.modelMain.renderHairs(0.0625F, "OOZARU");
     }
 
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER), remap = true)
+    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER),remap = true)
     private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo
             ci, @Local(name = "race") LocalIntRef race, @Local(name = "State") LocalIntRef
                                            st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef
@@ -225,7 +225,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
     }
 
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 0, shift = At.Shift.BEFORE), remap = true)
+    @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 0, shift = At.Shift.BEFORE))
     private void renderSaiyanArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef
             race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef
                                          bodyCM, @Local(name = "gen") LocalIntRef gender) {

@@ -26,7 +26,7 @@ public class MixinEntityAura2 implements IEntityAura {
     @Unique
     private float getSize = 1;
 
-    @ModifyArgs(method = "<init>(Lnet/minecraft/world/World;Ljava/lang/String;IFFI)V", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;setPositionAndRotation(DDDFF)V"))
+    @ModifyArgs(method = "<init>(Lnet/minecraft/world/World;Ljava/lang/String;IFFI)V", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;setPositionAndRotation(DDDFF)V", remap = true))
     private void fixAuraOffset(Args args, @Local(name = "other") LocalRef<Entity> player) {
         Entity p = player.get();
         p.worldObj.getBlock((int) p.posX, (int) (p.posY - 1), (int) p.posZ);
