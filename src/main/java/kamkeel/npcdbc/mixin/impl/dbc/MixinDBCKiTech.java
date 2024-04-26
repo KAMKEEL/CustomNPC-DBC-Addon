@@ -31,6 +31,33 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = DBCKiTech.class, remap = false)
 public class MixinDBCKiTech {
+    @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;rc_nam(I)Z", ordinal = 0, shift = At.Shift.BEFORE))
+    private static void setAuraType(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "state") LocalFloatRef state, @Local(name = "state2") LocalFloatRef state2, @Local(name = "kk") LocalBooleanRef kk, @Local(name = "ssb") LocalBooleanRef ssb, @Local(name = "ssg") LocalBooleanRef ssg, @Local(name = "ssbs") LocalBooleanRef ssbs, @Local(name = "v") LocalBooleanRef divine, @Local(name = "oozar") LocalBooleanRef oozaru, @Local(name = "ui") LocalBooleanRef ui, @Local(name = "gd") LocalBooleanRef godestruction) {
+        DBCData dbcData = DBCData.get(p);
+        Aura aura = dbcData.getCurrentAura();
+        if (aura != null) {
+            if (aura.display.type.equals("ssg"))
+                ssg.set(true);
+            else if (aura.display.type.equals("ssb"))
+                ssb.set(true);
+            else if (aura.display.type.equals("ssbkk")) {
+                kk.set(true);
+                ssb.set(true);
+            } else if (aura.display.type.equals("ssbevo"))
+                ssbs.set(true);
+            else if (aura.display.type.equals("ssrose")) {
+                ssb.set(true);
+                divine.set(true);
+            } else if (aura.display.type.equals("ssroseevo")) {
+                ssbs.set(true);
+                divine.set(true);
+            } else if (aura.display.type.equals("ui"))
+                ui.set(true);
+            else if (aura.display.type.equals("godofdestruction"))
+                godestruction.set(true);
+        }
+    }
+
     /**
      * Prevents player from transforming to other DBC forms if they are in custom form, except stackable ones
      */
@@ -93,38 +120,10 @@ public class MixinDBCKiTech {
         }
     }
 
-
     @Inject(method = "triForce", at = @At("HEAD"), cancellable = true)
     private static void fixRage(int i, int j, int k, CallbackInfo ci) {
         if (i == 1 && j == 1 && k == 100 && TransformController.ascending)
             ci.cancel();
-    }
-
-    @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/EntityClientPlayerMP;getCommandSenderName()Ljava/lang/String;", ordinal = 0, shift = At.Shift.BEFORE, remap = true))
-    private static void setAuraType(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "state", print = true) LocalFloatRef state, @Local(name = "state2") LocalFloatRef state2, @Local(name = "kk") LocalBooleanRef kk, @Local(name = "ssb") LocalBooleanRef ssb, @Local(name = "ssg") LocalBooleanRef ssg, @Local(name = "ssbs") LocalBooleanRef ssbs, @Local(name = "v") LocalBooleanRef divine, @Local(name = "oozar") LocalBooleanRef oozaru, @Local(name = "ui") LocalBooleanRef ui, @Local(name = "gd") LocalBooleanRef godestruction) {
-        DBCData dbcData = DBCData.get(p);
-        Aura aura = dbcData.getCurrentAura();
-        if (aura != null) {
-            if (aura.display.type.equals("ssg"))
-                ssg.set(true);
-            else if (aura.display.type.equals("ssb"))
-                ssb.set(true);
-            else if (aura.display.type.equals("ssbkk")) {
-                kk.set(true);
-                ssb.set(true);
-            } else if (aura.display.type.equals("ssbevo"))
-                ssbs.set(true);
-            else if (aura.display.type.equals("ssrose")) {
-                ssb.set(true);
-                divine.set(true);
-            } else if (aura.display.type.equals("ssroseevo")) {
-                ssbs.set(true);
-                divine.set(true);
-            } else if (aura.display.type.equals("ui"))
-                ui.set(true);
-            else if (aura.display.type.equals("godofdestruction"))
-                godestruction.set(true);
-        }
     }
 
     @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", shift = At.Shift.BEFORE, remap = true))

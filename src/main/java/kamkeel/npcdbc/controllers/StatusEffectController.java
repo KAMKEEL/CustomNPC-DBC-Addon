@@ -15,48 +15,52 @@ public class StatusEffectController {
     public HashMap<Integer, StatusEffect> registeredEffects = new HashMap<>();
     public HashMap<UUID, HashMap<Integer, Integer>> activeEffects = new HashMap<>();
 
-    public void load(){
+    public static StatusEffectController getInstance() {
+        return Instance;
+    }
+
+    public void load() {
         activeEffects.clear();
 
         registeredEffects.put(1, new RegenEffect(-1));
     }
 
-    public void loadEffects(EntityPlayer player){
+    public void loadEffects(EntityPlayer player) {
         DBCData dbcData = DBCData.get(player);
         activeEffects.put(Utility.getUUID(player), dbcData.activeEffects);
     }
 
-    public void runEffects(EntityPlayer player){
+    public void runEffects(EntityPlayer player) {
         HashMap<Integer, Integer> current = getPlayerEffects(player);
-        for(int active : current.keySet()){
+        for (int active : current.keySet()) {
             StatusEffect effect = registeredEffects.get(active);
-            if(effect != null){
+            if (effect != null) {
                 effect.runEffect(player);
             }
         }
     }
 
-    public HashMap<Integer, Integer> getPlayerEffects(EntityPlayer player){
+    public StatusEffect get(int id) {
+        return registeredEffects.get(id);
+    }
+
+    public HashMap<Integer, Integer> getPlayerEffects(EntityPlayer player) {
         return activeEffects.get(Utility.getUUID(player));
     }
 
-    public void applyEffect(EntityPlayer player, StatusEffect effect){
+    public void applyEffect(EntityPlayer player, StatusEffect effect) {
         HashMap<Integer, Integer> currentEffects = new HashMap<>();
-        if(activeEffects.containsKey(player.getUniqueID()))
+        if (activeEffects.containsKey(player.getUniqueID()))
             currentEffects = activeEffects.get(Utility.getUUID(player));
 
         currentEffects.put(effect.id, effect.timer);
     }
 
-    public void removeEffect(EntityPlayer player, StatusEffect effect){
+    public void removeEffect(EntityPlayer player, StatusEffect effect) {
         HashMap<Integer, Integer> currentEffects = new HashMap<>();
-        if(activeEffects.containsKey(player.getUniqueID()))
+        if (activeEffects.containsKey(player.getUniqueID()))
             currentEffects = activeEffects.get(Utility.getUUID(player));
 
         currentEffects.remove(effect.id);
-    }
-
-    public static StatusEffectController getInstance() {
-        return Instance;
     }
 }
