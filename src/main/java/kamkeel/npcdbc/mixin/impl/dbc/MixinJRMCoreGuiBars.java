@@ -33,7 +33,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
         HashMap<Integer, StatusEffect> current = dbcData.getActiveEffects();
         for (int id : current.keySet()) {
             StatusEffect effect = StatusEffectController.Instance.get(id);
-            if (effect.hasIcon()) {
+            if (!effect.icon.isEmpty()) {
                 drawIcon(var51 + i.get(), var61 + j.get(), CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png");
                 if (var71 == 0) {
                     i.set(i.get() + 18);
