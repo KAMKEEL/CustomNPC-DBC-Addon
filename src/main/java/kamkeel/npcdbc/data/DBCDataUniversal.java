@@ -27,7 +27,6 @@ public class DBCDataUniversal {
     /**
      * Static / Universal DBC Data
      * Functionality for Inheritance
-     *
      * Making Code a lot cleaner to read and process
      */
     public static DBCData getData(EntityPlayer player) {
