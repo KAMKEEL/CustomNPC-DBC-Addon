@@ -1091,5 +1091,4 @@ public class DBCUtils {
 
         return kiAnimationTypeSelected && shouldAttemptAnimation;
     }
-
 }

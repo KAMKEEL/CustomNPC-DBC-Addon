@@ -6,6 +6,7 @@ import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import kamkeel.npcdbc.api.AbstractDBCAPI;
 import kamkeel.npcdbc.api.IKiAttack;
+import kamkeel.npcdbc.api.aura.IAuraHandler;
 import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
@@ -46,6 +47,12 @@ public class DBCAPI extends AbstractDBCAPI {
     public IFormHandler getFormHandler() {
         return FormController.Instance;
     }
+
+    @Override
+    public IAuraHandler getAuraHandler() {
+        return AuraController.Instance;
+    }
+
 
     @Override
     public IStatusEffectHandler getStatusEffectHandler() {

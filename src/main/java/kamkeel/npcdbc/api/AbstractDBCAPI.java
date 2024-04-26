@@ -2,6 +2,7 @@ package kamkeel.npcdbc.api;
 
 import cpw.mods.fml.common.Loader;
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.api.aura.IAuraHandler;
 import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
@@ -35,6 +36,8 @@ public abstract class AbstractDBCAPI {
     }
 
     public abstract IFormHandler getFormHandler();
+
+    public abstract IAuraHandler getAuraHandler();
 
     public abstract IStatusEffectHandler getStatusEffectHandler();
 
