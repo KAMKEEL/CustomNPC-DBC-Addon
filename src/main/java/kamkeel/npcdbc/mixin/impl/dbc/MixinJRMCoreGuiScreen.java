@@ -30,7 +30,14 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
 
     @Inject(method = "drawDetails", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onDrawDetails(String s1, String s2, int xpos, int ypos, int x, int y, FontRenderer var8, CallbackInfo ci) {
-        if (Utility.getSelfData() != null && Utility.getSelfData().isInCustomForm()) {
+
+        if(Utility.getSelfData() == null){
+            return;
+        }
+
+        boolean isDrawingAttributeData = (s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§");
+        boolean isDrawingStatisticsData = s1.contains(JRMCoreH.trl("jrmc", "mleDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "DefDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "Passive")+":") || s1.contains(JRMCoreH.trl("jrmc", "EnPwDB")+":") && s1.contains("§");
+        if (Utility.getSelfData().isInCustomForm()) {
             Form form = Utility.getSelfData().getCurrentForm();
             PlayerDBCInfo formData = Utility.getSelfData();
             if (s1.contains(JRMCoreH.trl("jrmc", "TRState") + ":")) {
@@ -54,27 +61,13 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                     s2 = Utility.removeBoldColorCode(name) + " §8Mastery Lvl: §4" + formatter.format(curLevel) + (removeBase ? (isInKaioken ? kaiokenString : "") : "\n§8" + s2);
                 }
                 //adds the form color to STR,DEX and WIL attribute values
-            } else if ((s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§")) {
+            } else if (isDrawingAttributeData) {
                 String currentColor = formData.getFormColorCode(formData.getCurrentForm());
                 currentColor = Utility.removeBoldColorCode(currentColor);
 
-                s1 = replaceFormColor(s1, currentColor);
-
-
-                //Adds "Modified" tooltips
-                if(s2.contains(JRMCoreH.trl("jrmc", "Modified"))){
-                    s2 = replaceFormColor(s2, currentColor);
-                }else{
-                    int attributeId = getAttributeIdByName(s1);
-                    int modified = DBCUtils.getFullAttribute(Minecraft.getMinecraft().thePlayer, attributeId);
-                    int original = JRMCoreH.PlyrAttrbts()[attributeId];
-
-                    String tooltipData = JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Modified") + ": " + currentColor + modified
-                        + "\n" + JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Original")+": " + JRMCoreH.cldr + original
-                        + "\n" + JRMCoreH.cldgy;
-
-                    s2 = tooltipData + s2;
-                }
+                String[] data = adjustAttributeData(s1, s2, currentColor);
+                s1 = data[0];
+                s2 = data[1];
 
                 // adds the "xMulti" after CON: AttributeValue
             } else if (s1.contains("CON:")) {
@@ -84,19 +77,50 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                 s1 = s1 + (JRMCoreH.round(multi, 1) != 1.0 ? formData.getFormColorCode(formData.getCurrentForm()) + " x" + JRMCoreH.round(multi, 1) : "");
 
                 //Corrects Statistics colors
-            } else if( s1.contains(JRMCoreH.trl("jrmc", "mleDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "DefDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "Passive")+":") || s1.contains(JRMCoreH.trl("jrmc", "EnPwDB")+":") && s1.contains("§")){
+            } else if(isDrawingStatisticsData){
                 s1 = replaceFormColor(s1, formData.getFormColorCode(formData.getCurrentForm()));
             }
 
-            int wpos = var8.getStringWidth(s1);
-            var8.drawString(s1, xpos, ypos, 0);
-            if (xpos < x && xpos + wpos > x && ypos - 3 < y && ypos + 10 > y) {
-                int ll = 200;
-                Object[] txt = new Object[]{s2, "§8", 0, true, x + 5, y + 5, ll};
-                detailList.add(txt);
+        }else if(DBCData.getClient().isLegendary()){
+            String legendColor = "§a";
+            if (isDrawingAttributeData) {
+                String[] data = adjustAttributeData(s1, s2, legendColor);
+                s1 = data[0];
+                s2 = data[1];
+            } else if(isDrawingStatisticsData){
+                s1 = replaceFormColor(s1, legendColor);
             }
-            ci.cancel();
+
         }
+
+        ci.cancel();
+        int wpos = var8.getStringWidth(s1);
+        var8.drawString(s1, xpos, ypos, 0);
+        if (xpos < x && xpos + wpos > x && ypos - 3 < y && ypos + 10 > y) {
+            int ll = 200;
+            Object[] txt = new Object[]{s2, "§8", 0, true, x + 5, y + 5, ll};
+            detailList.add(txt);
+        }
+    }
+
+    private static String[] adjustAttributeData(String s1, String s2, String legendColor) {
+        s1 = replaceFormColor(s1, legendColor);
+
+        if(s2.contains(JRMCoreH.trl("jrmc", "Modified"))){
+            s2 = replaceFormColor(s2, legendColor);
+        }else{
+            int attributeId = getAttributeIdByName(s1);
+            int modified = DBCUtils.getFullAttribute(Minecraft.getMinecraft().thePlayer, attributeId);
+            int original = JRMCoreH.PlyrAttrbts()[attributeId];
+
+            String tooltipData = JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Modified") + ": " + legendColor + modified
+                + "\n" + JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Original")+": " + JRMCoreH.cldr + original
+                + "\n" + JRMCoreH.cldgy;
+
+            s2 = tooltipData + s2;
+        }
+
+        return new String[]{s1, s2};
     }
 
     private static int getAttributeIdByName(String s1){
