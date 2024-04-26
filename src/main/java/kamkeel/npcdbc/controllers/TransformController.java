@@ -172,7 +172,7 @@ public class TransformController {
             }
 
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
-            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), formData.currentForm != 1, prevID, true, formID)))
+            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, formID)))
                 return;
 
             if (!isInBaseForm(dbcData.Race, dbcData.State)) {
@@ -204,7 +204,7 @@ public class TransformController {
             boolean intoParent = parent != null && formData.hasFormUnlocked(form.getParentID());
 
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
-            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(Utility.getIPlayer(player), formData.currentForm != 1, prevID, true, intoParent ? form.getParentID() : -1)))
+            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, intoParent ? form.getParentID() : -1)))
                 return;
 
             if (form.requiredForm.containsKey((int) dbcData.Race)) {

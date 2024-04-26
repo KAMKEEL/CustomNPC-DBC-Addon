@@ -11,8 +11,10 @@ import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
+import noppes.npcs.scripted.NpcAPI;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,5 +76,12 @@ public class PlayerDataUtil {
             }
         }
         sendScrollData(player, map);
+    }
+
+    /**
+     * Converting EntityPlayer to IPlayer for Scripting API
+     */
+    public static IPlayer getIPlayer(EntityPlayer p) {
+        return (IPlayer) NpcAPI.Instance().getIEntity(p);
     }
 }

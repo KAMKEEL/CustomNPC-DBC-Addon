@@ -5,7 +5,6 @@ import kamkeel.addon.DBCAddon;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.controllers.DBCSyncController;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.mixin.INPCDisplay;
@@ -15,19 +14,16 @@ import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
-import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.NpcDamageSource;
 import noppes.npcs.Server;
 import noppes.npcs.constants.EnumPacketClient;
-import noppes.npcs.constants.SyncType;
-import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,7 +31,6 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
 
@@ -112,7 +107,7 @@ public class MixinDBCAddon {
             // Calculate DBC Damage
             int damageToHP = DBCUtils.calculateDBCStatDamage(player, (int) attackStrength, dbcStats);
             DamageSource damageSource = new NpcDamageSource("mob", npc);
-            DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(Utility.getIPlayer(player), damageToHP, damageSource, DBCDamageSource.NPC);
+            DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(PlayerDataUtil.getIPlayer(player), damageToHP, damageSource, DBCDamageSource.NPC);
             if (DBCEventHooks.onDBCDamageEvent(damagedEvent))
                 return;
 
