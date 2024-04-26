@@ -6,22 +6,35 @@ public interface IForm {
 
     String getName();
 
+    /**
+     * @param name Name of the form. Must be unique to each form
+     */
     void setName(String name);
 
     String getMenuName();
+
+    /**
+     * @param name Name of form to be displayed in all form rendering, whether Form Selection GUI or DBC stat sheet or chat. Minecraft Color codes are allowed "&4&l"
+     */
 
     void setMenuName(String name);
 
     int getRace();
 
+    /**
+     * @param race The race ID of the form. Only player's of raceID can access this form. -1 for ALL RACES
+     */
     void setRace(int race);
 
 
-
     /**
-     * @return index 0 is strengthMulti,1 dexMulti, 2 willMulti
+     * @return An array of str,dex,will multipliers. index 0 is strengthMulti,1 dexMulti, 2 willMulti
      */
     float[] getAllMulti();
+
+    /**
+     * @param allMulti Sets strength, dex and willpower multipliers to this value
+     */
 
     void setAllMulti(float allMulti);
 
@@ -36,21 +49,29 @@ public interface IForm {
      */
     float getAttributeMulti(int id);
 
+    /**
+     * @param player Player to give this form to
+     */
+    void assignToPlayer(EntityPlayer player);
 
-    void assignToPlayer(EntityPlayer p);
+    void removeFromPlayer(EntityPlayer player);
 
-    void removeFromPlayer(EntityPlayer p);
+    void assignToPlayer(String playerName);
 
-    void assignToPlayer(String name);
-
-    void removeFromPlayer(String name);
+    void removeFromPlayer(String playerName);
 
     String getAscendSound();
 
+    /**
+     * @param directory Sound effect to play on form ascension
+     */
     void setAscendSound(String directory);
 
     String getDescendSound();
 
+    /**
+     * @param directory Sound effect to play on descending
+     */
     void setDescendSound(String directory);
 
     int getID();
@@ -61,14 +82,14 @@ public interface IForm {
     void setID(int newID);
 
     /**
-     * @return ID of form linked to this
+     * @return ID of form next in chain of transformation to this i.e SSJ2 Red is child of SSJ Red
      */
     int getChildID();
 
     boolean hasChild();
 
     /**
-     * @param formID form ID to of child to this form. i.e linking SSJ2 Red to SSJ Red
+     * @param formID form ID to of child to this form. i.e id of SSJ2 Red to link to SSJ Red
      */
     void linkChild(int formID);
 
@@ -117,6 +138,9 @@ public interface IForm {
 
     int getTimer();
 
+    /**
+     * @param timeInTicks Sets the form's timer. When this timer runs out, player reverts from form
+     */
     void setTimer(int timeInTicks);
 
     boolean hasTimer();
@@ -126,10 +150,20 @@ public interface IForm {
      */
     void removeParentForm();
 
+    /**
+     * @return An interface containing getters and setters for all the form's mastery data
+     */
     IFormMastery getMastery();
+
+    /**
+     * @return An interface containing getters and setters for all the form's rendering data
+     */
 
     IFormDisplay getDisplay();
 
+    /**
+     * @return An interface containing getters and setters for all data on the form's interactions with vanilla DBC forms
+     */
     IFormStackable getStackable();
 
 
