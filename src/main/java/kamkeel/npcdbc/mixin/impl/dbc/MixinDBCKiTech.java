@@ -18,7 +18,6 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.TransformPacket;
-import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -106,7 +105,7 @@ public class MixinDBCKiTech {
 
             if (returnEarly) {
                 if (form.requiredForm.containsKey((int) JRMCoreH.Race)) {
-                    int id = DBCUtils.getPlayerID(d.player);
+                    int id = d.getJRMCPlayerID();
                     JRMCoreH.State = form.requiredForm.get((int) JRMCoreH.Race);
                     JRMCoreH.data2[id] = JRMCoreH.State + JRMCoreH.data2[id].substring(1);
                 }
