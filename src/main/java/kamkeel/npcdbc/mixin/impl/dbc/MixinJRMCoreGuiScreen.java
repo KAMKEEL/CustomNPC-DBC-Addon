@@ -65,7 +65,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                 String currentColor = formData.getFormColorCode(formData.getCurrentForm());
                 currentColor = Utility.removeBoldColorCode(currentColor);
 
-                String[] data = adjustAttributeData(s1, s2, currentColor);
+                String[] data = getAdjustedAttributeData(s1, s2, currentColor);
                 s1 = data[0];
                 s2 = data[1];
 
@@ -88,7 +88,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
             String legendColor = "§a";
 
             if (isDrawingAttributeData) {
-                String[] data = adjustAttributeData(s1, s2, legendColor);
+                String[] data = getAdjustedAttributeData(s1, s2, legendColor);
                 s1 = data[0];
                 s2 = data[1];
             } else if(isDrawingStatisticsData){
@@ -122,7 +122,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
      * @param replacementColor Color to replace the wrong stat color with.
      * @return String array of size 2, corresponding to modified s1 and s2 (need those to correct the rendering);
      */
-    private static String[] adjustAttributeData(String s1, String s2, String replacementColor) {
+    private static String[] getAdjustedAttributeData(String s1, String s2, String replacementColor) {
         s1 = replaceFormColor(s1, replacementColor);
 
         if(s2.contains(JRMCoreH.trl("jrmc", "Modified"))){
@@ -152,7 +152,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
         return 0;
     }
 
-    private static String replaceFormColor(String s1, String currentColor) {
+    private static String replaceFormColor(String s1, String replacementColor) {
         int secondIndex = 0;
         for (int i = 0; i < s1.length(); i++) {
             if (s1.charAt(i) == '§' && !s1.substring(i, i + 2).equals("§8")) {
@@ -162,7 +162,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
         }
 
         String originalColor = s1.substring(secondIndex, secondIndex + 2);
-        s1 = s1.replace(originalColor, currentColor);
+        s1 = s1.replace(originalColor, replacementColor);
         return s1;
     }
 }
