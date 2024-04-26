@@ -52,7 +52,7 @@ public class ServerEventHandler {
                 }
             }
 
-            if(player.ticksExisted % ConfigDBCGameplay.CheckEffectsTick == 0)
+            if (player.ticksExisted % ConfigDBCGameplay.CheckEffectsTick == 0)
                 StatusEffectController.Instance.runEffects(player);
 
             if (player.ticksExisted % 10 == 0) {
@@ -83,6 +83,12 @@ public class ServerEventHandler {
                 formData.decrementTimer(form.id);
                 if (player.ticksExisted % 20 == 0)
                     formData.updateClient();
+            }
+            if (form.mastery.hasKiDrain()) {
+                if (player.ticksExisted % 10 == 0) {
+                    float toDrain = form.mastery.kiDrain * form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
+                    dbcData.restoreKiPercent(-toDrain / form.mastery.kiDrainTimer * 10);
+                }
             }
         }
     }

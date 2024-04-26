@@ -2,6 +2,7 @@ package kamkeel.npcdbc.api;
 
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.data.DBCData;
 import noppes.npcs.api.entity.IDBCPlayer;
 
 public interface IDBCAddon extends IDBCPlayer {
@@ -246,6 +247,8 @@ public interface IDBCAddon extends IDBCPlayer {
     void removeCustomMastery(int formid);
 
     IForm getCurrentCustomForm();
+
+    DBCData getDBCData();
 
     boolean isInAura();
 
