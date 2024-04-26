@@ -50,8 +50,8 @@ public class FormStackable implements IFormStackable {
     }
 
     @Override
-    public boolean isFormStackable(int dbcForm) {
-        switch (dbcForm) {
+    public boolean isFormStackable(int DBCNonRacialFormID) {
+        switch (DBCNonRacialFormID) {
             case DBCForm.Kaioken:
                 return kaiokenStackable;
             case DBCForm.UltraInstinct:
@@ -76,8 +76,8 @@ public class FormStackable implements IFormStackable {
     }
 
     @Override
-    public void allowStackForm(int dbcForm, boolean stackForm) {
-        switch (dbcForm) {
+    public void allowStackForm(int DBCNonRacialFormID, boolean stackForm) {
+        switch (DBCNonRacialFormID) {
             case DBCForm.Kaioken:
                 kaiokenStackable = stackForm;
                 break;

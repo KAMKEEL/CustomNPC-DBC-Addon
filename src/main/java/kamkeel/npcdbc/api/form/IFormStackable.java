@@ -18,19 +18,23 @@ public interface IFormStackable {
     float getFormMulti(int DBCForm);
 
     /**
-     * @param DBCForm Non-racial DBC Forms, 20 Kaioken, 21 Mystic, 22 UI, 23 GoD
-     * @return True if can stack DBCForm on Custom Form
+     * @param DBCNonRacialFormID Non-racial DBC Forms, 20 Kaioken, 21 Mystic, 22 UI, 23 GoD
+     * @return True if can stack DBCNonRacialFormID on Custom Form
      */
-    boolean isFormStackable(int DBCForm);
+    boolean isFormStackable(int DBCNonRacialFormID);
 
     boolean isVanillaStackable();
 
+    /**
+     * @param vanillaStackable True makes this custom form stackable onto Vanilla DBC racial forms. i.e if you go into DBC SSBlue then go into a custom form with default presets, you will maintain the
+     *                         appearance and aura of DBC SSBlue. However, custom forms always have stat calculation priority. If vanilla DBC SSBlue has multi of 100x, and CF has 10x, SSBlue CF will only have the 10x of CF multi.
+     */
     void setVanillaStackable(boolean vanillaStackable);
 
     /**
-     * @param DBCForm Non-racial DBC Forms, 20 Kaioken, 21 Mystic, 22 UI, 23 GoD
+     * @param DBCNonRacialFormID Non-racial DBC Forms, 20 Kaioken, 21 Mystic, 22 UI, 23 GoD
      */
-    void allowStackForm(int DBCForm, boolean stackForm);
+    void allowStackForm(int DBCNonRacialFormID, boolean stackForm);
 
 
     void setState2Factor(int dbcForm, float factor);
