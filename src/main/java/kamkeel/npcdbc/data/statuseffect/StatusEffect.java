@@ -48,16 +48,24 @@ public class StatusEffect {
         this.type = type;
     }
 
-    public int getEveryXTick() { return everyXTick; }
+    public int getEveryXTick() {
+        return everyXTick;
+    }
 
-    public void setEveryXTick(int everyXTick){
-        this.everyXTick = everyXTick; }
+    public void setEveryXTick(int everyXTick) {
+        this.everyXTick = everyXTick;
+    }
 
-    public void runEffect(EntityPlayer player){
-        if(player.ticksExisted % everyXTick == 0){
+    public void runEffect(EntityPlayer player) {
+        if (player.ticksExisted % everyXTick == 0) {
             process(player);
         }
     }
 
-    public void process(EntityPlayer player) {}
+    public boolean hasIcon() {
+        return icon.length() < 3;
+    }
+
+    public void process(EntityPlayer player) {
+    }
 }
