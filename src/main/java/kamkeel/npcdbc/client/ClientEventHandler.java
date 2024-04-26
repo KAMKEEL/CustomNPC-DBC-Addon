@@ -12,6 +12,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.AuraPacket;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 
@@ -34,7 +35,7 @@ public class ClientEventHandler {
     }
 
     private void performAscend() {
-        PlayerDBCInfo formData = Utility.getSelfData();
+        PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
         if (formData != null && formData.hasSelectedForm()) {
             Form form = formData.getSelectedForm();
 
@@ -62,7 +63,7 @@ public class ClientEventHandler {
         if (mc.thePlayer == null)
             return false;
 
-        PlayerDBCInfo formData = Utility.getSelfData();
+        PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
         if (formData == null)
             return false;
 
@@ -87,7 +88,7 @@ public class ClientEventHandler {
     public void onKeyPress(InputEvent.KeyInputEvent e) {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.currentScreen == null) {
-            PlayerDBCInfo formData = Utility.getSelfData();
+            PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
             if (formData != null) {
                 if (KeyHandler.AscendKey.isPressed()) {
                     if (formData.selectedForm == -1)

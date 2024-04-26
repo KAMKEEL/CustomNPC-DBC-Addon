@@ -14,6 +14,7 @@ import kamkeel.npcdbc.network.packets.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -132,7 +133,7 @@ public class TransformController {
 
     @SideOnly(Side.CLIENT)
     public static float getRageMeterIncrementation(Form form) {
-        PlayerDBCInfo formData = Utility.getSelfData();
+        PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
         float curLevel = formData.getFormLevel(form.id);
         float maxLevel = form.getMastery().getMaxLevel();
         float ratio = curLevel / maxLevel;
@@ -157,7 +158,7 @@ public class TransformController {
         if (form == null)
             return;
 
-        PlayerDBCInfo formData = Utility.getData(player);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
             // Check for in Required DBC Form before Transforming
@@ -194,7 +195,7 @@ public class TransformController {
     }
 
     public static void handleFormDescend(EntityPlayer player) {
-        PlayerDBCInfo formData = Utility.getData(player);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         if (formData.isInCustomForm()) {
             Form form = formData.getCurrentForm();
             DBCData dbcData = DBCData.get(player);

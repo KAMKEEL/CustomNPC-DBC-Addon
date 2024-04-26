@@ -7,6 +7,7 @@ import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -31,15 +32,15 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
     @Inject(method = "drawDetails", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onDrawDetails(String s1, String s2, int xpos, int ypos, int x, int y, FontRenderer var8, CallbackInfo ci) {
 
-        if(Utility.getSelfData() == null){
+        if(PlayerDataUtil.getClientDBCInfo() == null){
             return;
         }
 
         boolean isDrawingAttributeData = (s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§");
         boolean isDrawingStatisticsData = s1.contains(JRMCoreH.trl("jrmc", "mleDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "DefDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "Passive")+":") || s1.contains(JRMCoreH.trl("jrmc", "EnPwDB")+":") && s1.contains("§");
-        if (Utility.getSelfData().isInCustomForm()) {
-            Form form = Utility.getSelfData().getCurrentForm();
-            PlayerDBCInfo formData = Utility.getSelfData();
+        if (PlayerDataUtil.getClientDBCInfo().isInCustomForm()) {
+            Form form = PlayerDataUtil.getClientDBCInfo().getCurrentForm();
+            PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
             if (s1.contains(JRMCoreH.trl("jrmc", "TRState") + ":")) {
                 final String TRState2 = JRMCoreH.trl("jrmc", "TRState"); // "Form : SS4"
                 if (formData != null && formData.isInCustomForm()) {

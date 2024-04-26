@@ -11,6 +11,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.CapsuleInfo;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -70,7 +71,7 @@ public class ServerEventHandler {
     public void handleFormProcesses(EntityPlayer player) {
         Form form = Utility.getCurrentForm(player);
         if (form != null) {
-            PlayerDBCInfo formData = Utility.getData(player);
+            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
             DBCData dbcData = DBCData.get(player);
 
             if (dbcData.Release <= 0 || dbcData.Ki <= 0) { //reverts player from CF when ki or release are 0

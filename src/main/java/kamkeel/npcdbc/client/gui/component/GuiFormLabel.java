@@ -5,7 +5,7 @@ import kamkeel.npcdbc.client.gui.inventory.GuiDBC;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import noppes.npcs.client.gui.util.GuiNpcLabel;
 
 public class GuiFormLabel extends GuiDBC {
@@ -22,7 +22,7 @@ public class GuiFormLabel extends GuiDBC {
         ySize = 150;
         guiLeft = parent.guiLeft + 5;
         guiTop = parent.guiTop + 5;
-        formData = Utility.getSelfData();
+        formData = PlayerDataUtil.getClientDBCInfo();
 
     }
 

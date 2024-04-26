@@ -5,6 +5,7 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.AbstractPacket;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -40,7 +41,7 @@ public final class DBCSelectForm extends AbstractPacket {
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         int formID = in.readInt();
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
-        PlayerDBCInfo formData = Utility.getData(playerData);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(playerData);
         formData.selectedForm = -1;
         NBTTagCompound compound = new NBTTagCompound();
         if (formID != -1 && FormController.getInstance().has(formID)){

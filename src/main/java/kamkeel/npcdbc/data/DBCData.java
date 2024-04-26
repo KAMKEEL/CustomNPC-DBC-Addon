@@ -19,13 +19,12 @@ import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.potion.PotionEffect;
-import noppes.npcs.NBTTags;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
 import noppes.npcs.util.ValueUtil;
@@ -182,7 +181,7 @@ public class DBCData {
     public void saveNBTData(boolean syncALL) {
         NBTTagCompound nbt = this.saveFromNBT(this.player.getEntityData().getCompoundTag(DBCPersisted));
 
-        PlayerDBCInfo formData = Utility.getData(player);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         addonFormID = formData.currentForm;
         addonFormLevel = formData.getCurrentLevel();
         auraID = formData.currentAura;
@@ -203,7 +202,7 @@ public class DBCData {
         NBTTagCompound dbc = this.player.getEntityData().getCompoundTag(DBCPersisted);
 
         // Save the DBC Addon tags to PlayerPersisted before loading it to fields
-        PlayerDBCInfo formData = Utility.getData(player);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         dbc.setInteger("addonFormID", formData.currentForm);
         dbc.setInteger("auraID", formData.currentAura);
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());

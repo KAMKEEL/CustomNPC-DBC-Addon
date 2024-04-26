@@ -9,7 +9,7 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
@@ -196,7 +196,7 @@ public class Form implements IForm {
     @Override
     public void assignToPlayer(EntityPlayer p) {
         if (race == DBCRace.ALL || race == DBCData.get(p).Race) {
-            PlayerDBCInfo formData = Utility.getData(p);
+            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(p);
             formData.addForm(this);
             formData.updateClient();
         }
@@ -209,7 +209,7 @@ public class Form implements IForm {
 
     @Override
     public void removeFromPlayer(EntityPlayer p) {
-        PlayerDBCInfo formData = Utility.getData(p);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(p);
         formData.removeForm(this);
         if (formData.selectedForm == this.id)
             formData.selectedForm = -1;

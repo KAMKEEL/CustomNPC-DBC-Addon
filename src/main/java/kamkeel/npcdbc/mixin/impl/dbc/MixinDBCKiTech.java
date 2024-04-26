@@ -19,7 +19,7 @@ import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.DBCUtils;
-import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
@@ -64,7 +64,7 @@ public class MixinDBCKiTech {
     @Inject(method = "Ascend", at = @At("HEAD"), cancellable = true)
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
         if (K.getIsKeyPressed()) {
-            PlayerDBCInfo formData = Utility.getSelfData();
+            PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
             if (formData != null && formData.isInCustomForm()) {
                 Form form = formData.getCurrentForm();
                 if (form != null) {
@@ -84,7 +84,7 @@ public class MixinDBCKiTech {
      */
     @Inject(method = "Descend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;kiInSuper:I", shift = At.Shift.AFTER), cancellable = true)
     private static void DescendModified(KeyBinding K, CallbackInfo ci) {
-        PlayerDBCInfo formData = Utility.getSelfData();
+        PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
         DBCData d = DBCData.get(Minecraft.getMinecraft().thePlayer);
 
         boolean returnEarly = true;

@@ -13,7 +13,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.DBCUtils;
-import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
@@ -598,7 +598,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     public void setCustomForm(String formName) {
         Form f = (Form) FormController.Instance.get(formName);
-        PlayerDBCInfo c = Utility.getData(player);
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (c.hasForm(f)) {
             DBCData d = DBCData.get(player);
             d.State = 0;
@@ -656,7 +656,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setSelectedCustomForm(int formid) {
-        PlayerDBCInfo c = Utility.getData(player);
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (FormController.getInstance().has(formid))
             c.selectedForm = formid;
         else
@@ -667,18 +667,18 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void removeSelectedCustomForm() {
-        PlayerDBCInfo formData = Utility.getData(player);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         formData.selectedForm = -1;
         formData.updateClient();
     }
 
 
     public boolean isInCustomForm() {
-        return Utility.getData(player).isInCustomForm();
+        return PlayerDataUtil.getDBCInfo(player).isInCustomForm();
     }
 
     public boolean isInCustomForm(String formName) {
-        return Utility.getData(player).isInForm(formName);
+        return PlayerDataUtil.getDBCInfo(player).isInForm(formName);
     }
 
     //////////////////////////////////////////////
@@ -686,7 +686,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     // Form Mastery stuff
     @Override
     public void setCustomMastery(int formid, float value) {
-        PlayerDBCInfo formData = Utility.getData(player);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         if (formData.hasFormUnlocked(formid)) {
             formData.setFormLevel(formid, value);
             formData.updateClient();
@@ -696,7 +696,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void addCustomMastery(int formid, float value) {
-        PlayerDBCInfo formData = Utility.getData(player);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         if (formData.hasFormUnlocked(formid)) {
             formData.addFormLevel(formid, value);
             formData.updateClient();
@@ -705,7 +705,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void getCustomMastery(int formid) {
-        PlayerDBCInfo formData = Utility.getData(player);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         if (formData.hasFormUnlocked(formid)) {
             formData.getFormLevel(formid);
             formData.updateClient();
@@ -714,7 +714,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void removeCustomMastery(int formid) {
-        PlayerDBCInfo formData = Utility.getData(player);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         if (formData.hasFormUnlocked(formid)) {
             formData.removeFormMastery(formid);
             formData.updateClient();
@@ -722,7 +722,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     public IForm getCurrentCustomForm() {
-        return Utility.getData(player).getCurrentForm();
+        return PlayerDataUtil.getDBCInfo(player).getCurrentForm();
     }
 
 
@@ -732,7 +732,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void setAura(String auraName) {
         Aura aura = (Aura) AuraController.Instance.get(auraName);
-        PlayerDBCInfo c = Utility.getData(player);
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (c.hasAura(aura)) {
             c.currentAura = aura.id;
             c.updateClient();
@@ -774,7 +774,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setSelectedAura(int Auraid) {
-        PlayerDBCInfo c = Utility.getData(player);
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (AuraController.getInstance().has(Auraid))
             c.selectedAura = Auraid;
         else
@@ -785,7 +785,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void removeSelectedAura() {
-        PlayerDBCInfo AuraData = Utility.getData(player);
+        PlayerDBCInfo AuraData = PlayerDataUtil.getDBCInfo(player);
         AuraData.selectedAura = -1;
         AuraData.updateClient();
     }
@@ -797,12 +797,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isInAura() {
-        return Utility.getData(player).isInCustomAura();
+        return PlayerDataUtil.getDBCInfo(player).isInCustomAura();
     }
 
     @Override
     public boolean isInAura(String auraName) {
-        return Utility.getData(player).isInAura(auraName);
+        return PlayerDataUtil.getDBCInfo(player).isInAura(auraName);
     }
     //////////////////////////////////////////////
     //////////////////////////////////////////////

@@ -10,6 +10,7 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,7 +33,7 @@ public class MixinJRMCoreHDBC {
                     }
                 }
             } else {
-                PlayerDBCInfo formData = Utility.getSelfData();
+                PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
                 if (formData != null && formData.getCurrentForm() != null) {
                     Form form = formData.getCurrentForm();
                     if (form.display.auraColor != -1)
@@ -52,7 +53,7 @@ public class MixinJRMCoreHDBC {
             Form form = null;
 
             if (Utility.isServer()) {
-                PlayerDBCInfo data = Utility.getData(CommonProxy.CurrentJRMCTickPlayer);
+                PlayerDBCInfo data = PlayerDataUtil.getDBCInfo(CommonProxy.CurrentJRMCTickPlayer);
                 if (data != null)
                     form = data.getCurrentForm();
             } else

@@ -5,7 +5,7 @@ import kamkeel.npcdbc.api.aura.IAuraDisplay;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.controllers.AnimationController;
@@ -79,7 +79,7 @@ public class Aura implements IAura {
     @Override
     public void assignToPlayer(EntityPlayer p) {
 
-        PlayerDBCInfo formData = Utility.getData(p);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(p);
         formData.addAura(this);
         formData.updateClient();
 
@@ -93,7 +93,7 @@ public class Aura implements IAura {
 
     @Override
     public void removeFromPlayer(EntityPlayer p) {
-        PlayerDBCInfo formData = Utility.getData(p);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(p);
         formData.removeAura(this);
         if (formData.selectedAura == this.id)
             formData.selectedAura = -1;

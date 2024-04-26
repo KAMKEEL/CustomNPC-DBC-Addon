@@ -5,6 +5,7 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.network.AbstractPacket;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -40,7 +41,7 @@ public final class DBCSelectAura extends AbstractPacket {
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         int auraID = in.readInt();
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
-        PlayerDBCInfo dbcInfo = Utility.getData(playerData);
+        PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(playerData);
         dbcInfo.selectedAura = -1;
         NBTTagCompound compound = new NBTTagCompound();
         if (auraID != -1 && AuraController.getInstance().has(auraID)){

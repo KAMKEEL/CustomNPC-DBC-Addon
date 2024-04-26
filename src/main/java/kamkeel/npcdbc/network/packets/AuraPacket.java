@@ -5,6 +5,7 @@ import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.util.ByteBufUtils;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -50,7 +51,7 @@ public final class AuraPacket extends AbstractPacket {
         boolean enable = in.readBoolean();
 
         DBCData dbcData = DBCData.get(player);
-        PlayerDBCInfo formData = Utility.getData(player);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
 
         if (enable) {
             formData.currentAura = auraID;

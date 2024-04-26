@@ -13,6 +13,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.Entity;
@@ -20,7 +21,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -43,7 +43,7 @@ public abstract class MixinJRMCoreH {
                 return;
 
             if (Utility.isServer()) {
-                PlayerDBCInfo formData = Utility.getData(player);
+                PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
                 if (formData != null && formData.isInCustomForm()) {
                     currentFormLevel = formData.getCurrentLevel();
                     form = formData.getCurrentForm();
@@ -122,7 +122,7 @@ public abstract class MixinJRMCoreH {
     @Inject(method = "Rls", at = @At("HEAD"), cancellable = true)
     private static void fix0ReleaseOnCFDescend(byte b, CallbackInfo ci) {
         if (b == 0) {
-            PlayerDBCInfo formData = Utility.getSelfData();
+            PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
             if (formData != null && formData.isInCustomForm())
                 ci.cancel();
         }
@@ -131,7 +131,7 @@ public abstract class MixinJRMCoreH {
     //delete all player CF data on jrmc startnew
     @Inject(method = "resetChar(Lnet/minecraft/entity/player/EntityPlayer;ZZZF)V", at = @At("TAIL"))
     private static void resetChar(EntityPlayer p, boolean keepSkills, boolean keepTechs, boolean keepMasteries, float perc, CallbackInfo ci) {
-        Utility.getData(p).resetAllForm();
+        PlayerDataUtil.getDBCInfo(p).resetAllForm();
         if (!keepMasteries) {
             NBTTagCompound PlayerPersisted = nbt(p);
             for (int i = 0; i < Races.length; i++)
@@ -148,7 +148,7 @@ public abstract class MixinJRMCoreH {
     @Inject(method = "setByte(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
     private static void descendOn0Release(int s, EntityPlayer Player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcRelease")) {
-            PlayerDBCInfo formData = Utility.getData(Player);
+            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(Player);
             Form form = Utility.getCurrentForm(Player);
             if (form != null) {
                 formData.currentForm = -1;
@@ -161,7 +161,7 @@ public abstract class MixinJRMCoreH {
     @Inject(method = "setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
     private static void descendOn0Ki(int s, EntityPlayer Player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcEnrgy")) {
-            PlayerDBCInfo formData = Utility.getData(Player);
+            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(Player);
             Form form = Utility.getCurrentForm(Player);
             if (form != null) {
                 formData.currentForm = -1;
@@ -173,13 +173,13 @@ public abstract class MixinJRMCoreH {
     @Inject(method = "addToFormMasteriesValue(Lnet/minecraft/entity/player/EntityPlayer;DDIIIZZZZI)V", at = @At("HEAD"), cancellable = true)
     private static void addFormMasteries(EntityPlayer player, double value, double valueKK, int race, int state, int state2, boolean isKaiokenOn, boolean isMysticOn, boolean isUltraInstinctOn, boolean isGoDOn, int gainMultiID, CallbackInfo ci) {
         if (gainMultiID == 0)
-            Utility.getData(player).updateCurrentFormMastery("update");
+            PlayerDataUtil.getDBCInfo(player).updateCurrentFormMastery("update");
         else if (gainMultiID == 1)
-            Utility.getData(player).updateCurrentFormMastery("attack");
+            PlayerDataUtil.getDBCInfo(player).updateCurrentFormMastery("attack");
         else if (gainMultiID == 2)
-            Utility.getData(player).updateCurrentFormMastery("damaged");
+            PlayerDataUtil.getDBCInfo(player).updateCurrentFormMastery("damaged");
         else if (gainMultiID == 3)
-            Utility.getData(player).updateCurrentFormMastery("fireki");
+            PlayerDataUtil.getDBCInfo(player).updateCurrentFormMastery("fireki");
     }
 
     @ModifyArgs(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))

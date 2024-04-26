@@ -6,28 +6,19 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.controllers.PlayerDataController;
-import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.scripted.NpcAPI;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-
-import static noppes.npcs.NoppesUtilServer.sendScrollData;
 
 public class Utility {
     public static boolean isServer() {
@@ -112,7 +103,7 @@ public class Utility {
 
     public static Form getCurrentForm(EntityPlayer p) {
         if (isServer(p))
-            return Utility.getData(p) != null ? Utility.getData(p).getCurrentForm() : null;
+            return PlayerDataUtil.getDBCInfo(p) != null ? PlayerDataUtil.getDBCInfo(p).getCurrentForm() : null;
         else
             return getFormClient(p);
     }
@@ -145,20 +136,6 @@ public class Utility {
         return (IPlayer) NpcAPI.Instance().getIEntity(p);
     }
 
-    /**
-     * doesn't work, returned playerdata is out of sync
-     *
-     * @return
-     */
-    @SideOnly(Side.CLIENT)
-    public static PlayerDBCInfo getSelfData() {
-        if (Minecraft.getMinecraft().thePlayer == null)
-            return null;
-        IPlayerDBCInfo formData = (IPlayerDBCInfo) PlayerData.get(Minecraft.getMinecraft().thePlayer);
-        if (formData == null)
-            return null;
-        return formData.getPlayerDBCInfo();
-    }
 
     public static Form getFormClient(EntityPlayer player) {
         if (player == null)
@@ -199,40 +176,6 @@ public class Utility {
             return 0f;
 
         return dbcData.addonFormLevel;
-    }
-
-    public static PlayerDBCInfo getData(EntityPlayer player) {
-        return Utility.getData(PlayerDataController.Instance.getPlayerData(player));
-    }
-
-    public static PlayerDBCInfo getData(PlayerData playerData) {
-        return ((IPlayerDBCInfo) playerData).getPlayerDBCInfo();
-    }
-
-    public static void sendPlayerFormData(EntityPlayerMP player) {
-        PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
-
-        Map<String, Integer> map = new HashMap<String, Integer>();
-        for (int formID : data.unlockedForms) {
-            Form form = (Form) FormController.getInstance().get(formID);
-            if (form != null) {
-                map.put(form.name, form.id);
-            }
-        }
-        sendScrollData(player, map);
-    }
-
-    public static void sendPlayerAuraData(EntityPlayerMP player) {
-        PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
-
-        Map<String, Integer> map = new HashMap<String, Integer>();
-        for (int auraID : data.unlockedAuras) {
-            Aura aura = (Aura) AuraController.getInstance().get(auraID);
-            if (aura != null) {
-                map.put(aura.name, aura.id);
-            }
-        }
-        sendScrollData(player, map);
     }
 
     public static String removeBoldColorCode(String s) {

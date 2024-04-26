@@ -6,7 +6,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
-import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,7 +38,7 @@ public class NetworkUtility {
     }
 
     public static void sendPlayersForms(EntityPlayer player){
-        Utility.sendPlayerFormData((EntityPlayerMP) player);
+        PlayerDataUtil.sendFormDBCInfo((EntityPlayerMP) player);
         PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
         NBTTagCompound compound = new NBTTagCompound();
         if(data != null &&  data.selectedForm != -1){
@@ -50,7 +50,7 @@ public class NetworkUtility {
     }
 
     public static void sendPlayersAuras(EntityPlayer player){
-        Utility.sendPlayerAuraData((EntityPlayerMP) player);
+        PlayerDataUtil.sendAuraDBCInfo((EntityPlayerMP) player);
         PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
         NBTTagCompound compound = new NBTTagCompound();
         if(data != null &&  data.selectedAura != -1){
