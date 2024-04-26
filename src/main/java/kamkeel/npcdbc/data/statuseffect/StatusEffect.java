@@ -1,64 +1,59 @@
 package kamkeel.npcdbc.data.statuseffect;
 
-import kamkeel.npcdbc.IStatusEffect;
+import kamkeel.npcdbc.api.effect.IStatusEffect;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.api.entity.IPlayer;
 
 public class StatusEffect implements IStatusEffect {
     public int id = -1;
-    public int timer = -1;
+
+    public String name = "";
+    public int duration = -1;
+    public byte level = 1;
+    public boolean lossOnDeath = true;
 
     // Must be a multiple of 10
     public int everyXTick = 20;
-    public String name = "", icon = "", type = "";
+
+    public String icon = "";
     public int iconX = 0, iconY = 0;
-
-    public boolean lossOnDeath = true;
-
-    public StatusEffect(int timer) {
-        this.timer = timer;
+    boolean isCustom = false;
+    public StatusEffect(int duration){
+        this.duration = duration;
     }
 
     @Override
-    public int getTimer() {
-        return timer;
+    public int getId() {
+        return id;
     }
 
     @Override
-    public void setTimer(int timer) {
-        this.timer = timer;
+    public int getDuration() {
+        return duration;
     }
 
+    @Override
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    @Override
+    public byte getLevel() {
+        return level;
+    }
+
+    @Override
+    public void setLevel(byte level) {
+        this.level = level;
+    }
+
+    @Override
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public int getEveryXTick() {
-        return everyXTick;
-    }
-
-    public void setEveryXTick(int everyXTick) {
-        this.everyXTick = everyXTick;
-    }
 
     public void runEffect(EntityPlayer player) {
         if (player.ticksExisted % everyXTick == 0) {
@@ -66,10 +61,46 @@ public class StatusEffect implements IStatusEffect {
         }
     }
 
-    public boolean hasIcon() {
-        return icon.length() < 3;
+    public void process(EntityPlayer player) {
     }
 
-    public void process(EntityPlayer player) {
+    @Override
+    public void performEffect(IPlayer player) {
+        if(player != null && player.getMCEntity() != null && player.getMCEntity() instanceof EntityPlayer){
+            process((EntityPlayer) player.getMCEntity());
+        }
+    }
+
+    public NBTTagCompound writeEffectData(NBTTagCompound nbt)
+    {
+        nbt.setInteger("Id", this.id);
+        nbt.setByte("Level", this.getLevel());
+        nbt.setInteger("Dur", this.getDuration());
+        return nbt;
+    }
+
+    public static StatusEffect readEffectData(NBTTagCompound nbt)
+    {
+        int id = nbt.getInteger("Id");
+        if(id > 0){
+            boolean found = StatusEffectController.getInstance().standardEffects.containsKey(id) ||
+                StatusEffectController.getInstance().customEffects.containsKey(id);
+            if(found){
+                byte level = nbt.getByte("Level");
+                int dur = nbt.getInteger("Dur");
+                if(id >= 100){
+                    CustomEffect customEffect = new CustomEffect(id, dur);
+                    customEffect.level = level;
+                    return customEffect;
+                }
+                else {
+                    StatusEffect statusEffect = new StatusEffect(dur);
+                    statusEffect.id = id;
+                    statusEffect.level = level;
+                    return statusEffect;
+                }
+            }
+        }
+        return null;
     }
 }

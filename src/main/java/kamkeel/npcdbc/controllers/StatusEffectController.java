@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.controllers;
 
-import kamkeel.npcdbc.api.IStatusEffectHandler;
+import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
@@ -17,7 +17,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     public HashMap<Integer, StatusEffect> standardEffects = new HashMap<>();
     public HashMap<Integer, StatusEffect> customEffects = new HashMap<>(); // TODO: I will implement later - Kam
 
-    public HashMap<UUID, HashMap<Integer, Integer>> activeEffects = new HashMap<>();
+    public HashMap<UUID, HashMap<Integer, StatusEffect>> activeEffects = new HashMap<>();
 
     public static StatusEffectController getInstance() {
         return Instance;
@@ -41,7 +41,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     }
 
     public void runEffects(EntityPlayer player) {
-        HashMap<Integer, Integer> current = getPlayerEffects(player);
+        HashMap<Integer, StatusEffect> current = getPlayerEffects(player);
         for (int active : current.keySet()) {
             StatusEffect effect = standardEffects.get(active);
             if (effect != null) {
@@ -54,20 +54,20 @@ public class StatusEffectController implements IStatusEffectHandler {
         return standardEffects.get(id);
     }
 
-    public HashMap<Integer, Integer> getPlayerEffects(EntityPlayer player) {
+    public HashMap<Integer, StatusEffect> getPlayerEffects(EntityPlayer player) {
         return activeEffects.get(Utility.getUUID(player));
     }
 
     public void applyEffect(EntityPlayer player, StatusEffect effect) {
-        HashMap<Integer, Integer> currentEffects = new HashMap<>();
+        HashMap<Integer, StatusEffect> currentEffects = new HashMap<>();
         if (activeEffects.containsKey(player.getUniqueID()))
             currentEffects = activeEffects.get(Utility.getUUID(player));
 
-        currentEffects.put(effect.id, effect.timer);
+        currentEffects.put(effect.id, effect);
     }
 
     public void removeEffect(EntityPlayer player, StatusEffect effect) {
-        HashMap<Integer, Integer> currentEffects = new HashMap<>();
+        HashMap<Integer, StatusEffect> currentEffects = new HashMap<>();
         if (activeEffects.containsKey(player.getUniqueID()))
             currentEffects = activeEffects.get(Utility.getUUID(player));
 
@@ -76,42 +76,42 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     @Override
     public boolean hasEffectTime(EntityPlayer player, int id){
-        HashMap<Integer, Integer> currentEffects = new HashMap<>();
+        HashMap<Integer, StatusEffect> currentEffects = new HashMap<>();
         if (activeEffects.containsKey(player.getUniqueID()))
             currentEffects = activeEffects.get(Utility.getUUID(player));
         else
             return false;
 
-        if(currentEffects.containsKey(id))
-            return true;
-
-        return false;
+        return currentEffects.containsKey(id);
     }
 
     @Override
-    public int getEffectTime(EntityPlayer player, int id){
-        HashMap<Integer, Integer> currentEffects = new HashMap<>();
+    public int getEffectDuration(EntityPlayer player, int id){
+        HashMap<Integer, StatusEffect> currentEffects = new HashMap<>();
         if (activeEffects.containsKey(player.getUniqueID()))
             currentEffects = activeEffects.get(Utility.getUUID(player));
 
         if(currentEffects.containsKey(id))
-            return currentEffects.get(id);
+            return currentEffects.get(id).duration;
 
         return -2;
     }
 
     @Override
-    public void applyEffect(EntityPlayer player, int id, int timer) {
-        HashMap<Integer, Integer> currentEffects = new HashMap<>();
+    public void applyEffect(EntityPlayer player, int id, int duration, byte level) {
+        HashMap<Integer, StatusEffect> currentEffects = new HashMap<>();
         if (activeEffects.containsKey(player.getUniqueID()))
             currentEffects = activeEffects.get(Utility.getUUID(player));
 
-        currentEffects.put(id, timer);
+        StatusEffect statusEffect = new StatusEffect(duration);
+        statusEffect.id = id;
+        statusEffect.level = level;
+        currentEffects.put(id, statusEffect);
     }
 
     @Override
     public void removeEffect(EntityPlayer player, int id) {
-        HashMap<Integer, Integer> currentEffects = new HashMap<>();
+        HashMap<Integer, StatusEffect> currentEffects = new HashMap<>();
         if (activeEffects.containsKey(player.getUniqueID()))
             currentEffects = activeEffects.get(Utility.getUUID(player));
 

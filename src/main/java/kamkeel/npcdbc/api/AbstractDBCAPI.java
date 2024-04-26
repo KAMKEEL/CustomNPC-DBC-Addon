@@ -2,6 +2,7 @@ package kamkeel.npcdbc.api;
 
 import cpw.mods.fml.common.Loader;
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
