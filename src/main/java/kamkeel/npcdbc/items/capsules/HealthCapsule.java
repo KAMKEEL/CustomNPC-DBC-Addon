@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.items.capules;
+package kamkeel.npcdbc.items.capsules;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -6,9 +6,11 @@ import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.enums.EnumHealthCapsules;
-import kamkeel.npcdbc.constants.enums.EnumKiCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,12 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class KiCapsule extends Item {
+public class HealthCapsule extends Item {
 
     protected IIcon[] icons;
 
-    public KiCapsule() {
-        this.setMaxStackSize(ConfigCapsules.KiCapsuleMaxStack);
+    public HealthCapsule() {
+        this.setMaxStackSize(ConfigCapsules.HealthCapsuleMaxStack);
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
         this.setCreativeTab(CustomItems.tabMisc);
@@ -41,25 +43,25 @@ public class KiCapsule extends Item {
     public String getUnlocalizedName(ItemStack stack) {
 
         int metadata = stack.getItemDamage();
-        EnumKiCapsules kicapsules = EnumKiCapsules.values()[metadata];
-        return LocalizationHelper.ITEM_PREFIX + kicapsules.getName().toLowerCase() + "_kicapsule";
+        EnumHealthCapsules healthcapsules = EnumHealthCapsules.values()[metadata];
+        return LocalizationHelper.ITEM_PREFIX + healthcapsules.getName().toLowerCase() + "_healthcapsule";
     }
 
     @Override
     public void registerIcons(IIconRegister reg) {
 
-        icons = new IIcon[EnumKiCapsules.count()];
-        String prefix = "npcdbc:kicapsules/";
+        icons = new IIcon[EnumHealthCapsules.count()];
+        String prefix = "npcdbc:healthcapsules/";
 
-        for (EnumKiCapsules kiCapsule : EnumKiCapsules.values()) {
-            icons[kiCapsule.getMeta()] = reg.registerIcon(prefix + kiCapsule.getName().toLowerCase());
+        for (EnumHealthCapsules healthCapsule : EnumHealthCapsules.values()) {
+            icons[healthCapsule.getMeta()] = reg.registerIcon(prefix + healthCapsule.getName().toLowerCase());
         }
     }
 
     @Override
     public IIcon getIconFromDamage(int meta) {
 
-        if (meta >= 0 && meta < EnumKiCapsules.count()) {
+        if (meta >= 0 && meta < EnumHealthCapsules.count()) {
             return icons[meta];
         }
         return icons[0];
@@ -84,8 +86,8 @@ public class KiCapsule extends Item {
      */
     @Override
     public void getSubItems(Item item, CreativeTabs tab, List list) {
-        for (EnumKiCapsules kiCapsules : EnumKiCapsules.values()) {
-            list.add(new ItemStack(item, 1, kiCapsules.getMeta()));
+        for (EnumHealthCapsules healthCapsules : EnumHealthCapsules.values()) {
+            list.add(new ItemStack(item, 1, healthCapsules.getMeta()));
         }
     }
 
@@ -96,22 +98,25 @@ public class KiCapsule extends Item {
             return itemStack;
 
         int meta = itemStack.getItemDamage();
-        if (meta < 0 || meta > EnumKiCapsules.count())
+        if (meta < 0 || meta > EnumHealthCapsules.count())
             meta = 0;
 
-        EnumKiCapsules kiCapsules = EnumKiCapsules.values()[meta];
+        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.HP, meta)))
+            return itemStack;
+
+        EnumHealthCapsules healthCapsules = EnumHealthCapsules.values()[meta];
         UUID playerUUID = player.getUniqueID();
-        long remainingTime = CapsuleController.canUseKiCapsule(playerUUID, meta);
+        long remainingTime = CapsuleController.canUseHealthCapsule(playerUUID, meta);
         if(remainingTime > 0){
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
 
-        // Percentage of Ki to Restore
-        int kiRestored = kiCapsules.getStrength();
+        // Percentage of Health to Restore
+        int healthRestored = healthCapsules.getStrength();
 
-        // Restore X Amount of KI
-        DBCData.get(player).restoreKiPercent(kiRestored);
+        // Restore X Amount of Health
+        DBCData.get(player).restoreHealthPercent(healthRestored);
 
         // Removes 1 Item
         itemStack.splitStack(1);
@@ -119,7 +124,7 @@ public class KiCapsule extends Item {
             player.destroyCurrentEquippedItem();
 
         // Set Cooldown
-        CapsuleController.setKiCapsule(playerUUID, meta);
+        CapsuleController.setHealthCapsule(playerUUID, meta);
         return itemStack;
     }
 
@@ -142,12 +147,12 @@ public class KiCapsule extends Item {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         int meta = itemStack.getItemDamage();
-        if (meta < 0 || meta > EnumKiCapsules.count())
+        if (meta < 0 || meta > EnumHealthCapsules.count())
             meta = 0;
 
-        HashMap<Integer, Integer> kiStrength = CapsuleController.Instance.capsuleStrength.get(Capsule.KI);
-        HashMap<Integer, Integer> kiCooldown = CapsuleController.Instance.capsuleCooldowns.get(Capsule.KI);
-        par3List.add(StatCollector.translateToLocalFormatted("capsule.restore", kiStrength.get(meta) + "%", StatCollector.translateToLocal("capsule.ki")));
-        par3List.add(StatCollector.translateToLocalFormatted("capsule.cooldown", kiCooldown.get(meta)));
+        HashMap<Integer, Integer> health = CapsuleController.Instance.capsuleStrength.get(Capsule.HP);
+        HashMap<Integer, Integer> healthCooldown = CapsuleController.Instance.capsuleCooldowns.get(Capsule.HP);
+        par3List.add(StatCollector.translateToLocalFormatted("capsule.restore", health.get(meta) + "%", StatCollector.translateToLocal("capsule.hp")));
+        par3List.add(StatCollector.translateToLocalFormatted("capsule.cooldown", healthCooldown.get(meta)));
     }
 }

@@ -18,4 +18,10 @@ public class DBCEventHooks {
         handler.callScript(DBCScriptType.DAMAGED.function, damagedEvent);
         return NpcAPI.EVENT_BUS.post(damagedEvent);
     }
+
+    public static boolean onCapsuleUsedEvent(DBCPlayerEvent.CapsuleUsedEvent capsuleUsedEvent) {
+        PlayerDataScript handler = ScriptController.Instance.playerScripts;
+        handler.callScript(DBCScriptType.CAPSULEUSED.function, capsuleUsedEvent);
+        return NpcAPI.EVENT_BUS.post(capsuleUsedEvent);
+    }
 }

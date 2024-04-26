@@ -9,11 +9,21 @@ public interface IDBCEvent extends IPlayerEvent {
     @Cancelable
     interface CapsuleUsedEvent extends IDBCEvent {
 
+        /**
+         * 0: Misc, 1: HP, 2: Ki, 3: Stamina
+         * @return Type of Capsule
+         */
         int getType();
 
+        /**
+         * @return Subtype / Metadata of the Capsule
+         */
         int getSubType();
 
-        String getSubTypeName();
+        /**
+         * @return Capsule Name
+         */
+        String getCapsuleName();
     }
 
     @Cancelable
