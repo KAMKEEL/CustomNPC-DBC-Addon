@@ -15,26 +15,24 @@ public class FormMastery implements IFormMastery {
     public float fireKiGain = 0.03f, fireKiMultiDivPlus = 100, fireKiMindBonusFlat = 1.0f, fireKiMindBonusPerMind = 0.001f, fireKiMindBonusMax = 5;
     public float kiDrainMultiFlat = 1.0f, kiDrainMultiPerLevel = -0.01f, kiDrainMultiMinOrMax = 0.1f;
     public float strainMultiFlat = 1.0f, strainMultiPerLevel = -0.01f, strainMultiMinOrMax = 0.1f;
+
+    public float healthRequirement = 0f;
     public float healthRequirementMultiFlat = 1.0f, healthRequirementMultiPerLevel = 0.01f, healthRequirementMultiMinOrMax = 5f;
 
-
-    //1 percent
-    public float kiDrain = 1.0f, healthRequirement = 100f;
-    //1 second
+    public int kiDrain = 0;
     public int kiDrainTimer = 20;
-
 
     public FormMastery(Form parent) {
         this.parent = parent;
     }
 
     @Override
-    public float getKiDrain() {
+    public int getKiDrain() {
         return kiDrain;
     }
 
     @Override
-    public void setKiDrain(float kiDrain) {
+    public void setKiDrain(int kiDrain) {
         this.kiDrain = kiDrain;
     }
 
@@ -356,7 +354,7 @@ public class FormMastery implements IFormMastery {
 
         maxLevel = formMastery.getInteger("maxLevel");
         instantTransformationUnlockLevel = formMastery.getFloat("instantTransformationUnlockLevel");
-        kiDrain = formMastery.getFloat("kiDrain");
+        kiDrain = formMastery.getInteger("kiDrain");
         kiDrainTimer = formMastery.getInteger("kiDrainTimer");
         healthRequirement = formMastery.getFloat("healthRequirement");
 
@@ -413,7 +411,7 @@ public class FormMastery implements IFormMastery {
         NBTTagCompound formMastery = new NBTTagCompound();
         formMastery.setFloat("maxLevel", maxLevel);
         formMastery.setFloat("instantTransformationUnlockLevel", instantTransformationUnlockLevel);
-        formMastery.setFloat("kiDrain", kiDrain);
+        formMastery.setInteger("kiDrain", kiDrain);
         formMastery.setInteger("kiDrainTimer", kiDrainTimer);
         formMastery.setFloat("healthRequirement", healthRequirement);
 

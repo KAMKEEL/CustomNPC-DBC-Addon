@@ -38,7 +38,7 @@ public class ClientEventHandler {
             Form form = formData.getSelectedForm();
 
             float healthReq = form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
-            if (DBCData.getClient().getCurrentBodyPercentage() > healthReq)
+            if (form.mastery.healthRequirement != 0f && DBCData.getClient().getCurrentBodyPercentage() > healthReq)
                 return;
 
             if (formData.isInCustomForm()) {
@@ -103,7 +103,7 @@ public class ClientEventHandler {
                         Form form = formData.getSelectedForm();
                         if (form != null) {
                             float healthReq = form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
-                            if (DBCData.getClient().getCurrentBodyPercentage() > healthReq) {
+                            if (form.mastery.healthRequirement != 0f && DBCData.getClient().getCurrentBodyPercentage() > healthReq) {
                                 Utility.sendMessage(mc.thePlayer, "§cYou need to be below " + (int) healthReq + "% health to access the selected form!");
                             }
                         }

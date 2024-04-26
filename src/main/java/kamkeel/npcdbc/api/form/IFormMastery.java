@@ -53,12 +53,12 @@ public interface IFormMastery {
 
     boolean hasInstantTransformationUnlockLevel();
 
-    float getKiDrain();
+    int getKiDrain();
 
     /**
      * @param kiDrain percentage of Ki to drain every KiDrainTimer ticks
      */
-    void setKiDrain(float kiDrain);
+    void setKiDrain(int kiDrain);
 
     boolean hasKiDrain();
 
