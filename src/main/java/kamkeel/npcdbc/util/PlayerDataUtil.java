@@ -27,6 +27,13 @@ public class PlayerDataUtil {
      * Since PlayerDBCInfo is a Mixin Class designed to append to
      * PlayerData it is simpler to call a UTIL Function. Calling functions
      * directly from Mixin Classes itself, are sloppy.
+     *
+     * PlayerDBCInfo is intended to hold valuable PlayerData information on the CNPC+
+     * side. Unlocked Aura, Forms IDs. Form Mastery, selected/current Aura and Forms.
+     * These are then outsourced to DBC Data to save on their player persisted.
+     * Other Clients Rendering a Player will naturally be sent others DBC Data when
+     * rendering, so the Form/Aura Information is bundled with it. However, this means
+     * the SOURCE of DBC Info is CustomNPC+ PlayerData file and not Minecraft PlayerData.
      */
 
     @SideOnly(Side.CLIENT)
