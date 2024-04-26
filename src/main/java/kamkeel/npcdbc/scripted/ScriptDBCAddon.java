@@ -27,11 +27,13 @@ import static JinRyuu.JRMCore.JRMCoreH.getInt;
 public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T> implements IDBCAddon {
     public T player;
     public NBTTagCompound nbt;
+    public DBCData dbcData;
 
     public ScriptDBCAddon(T player) {
         super(player);
         this.player = player;
         this.nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
+        dbcData = DBCData.get(player);
     }
 
     @Override
@@ -55,7 +57,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getMaxBody() {
-        return DBCUtils.getMaxStat(player, 2);
+        return dbcData.getMaxBody();
     }
 
     /**
@@ -71,7 +73,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public float getBodyPercentage() {
-        return DBCUtils.bodyPerc(player);
+        return dbcData.getCurrentBodyPercentage();
     }
 
     /**
@@ -79,13 +81,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getMaxKi() {
-        int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(player);
-        JGPlayerMP JG = new JGPlayerMP(player);
-        JG.setNBT(nbt);
-        byte pwr = JRMCoreH.getByte(player, "jrmcPwrtyp");
-        byte rce = JRMCoreH.getByte(player, "jrmcRace");
-        byte cls = JRMCoreH.getByte(player, "jrmcClass");
-        return JG.getEnergyMax(rce, cls, pwr, PlyrAttrbts, JRMCoreH.SklLvl_KiBs(player, pwr));
+        return dbcData.getMaxKi();
     }
 
     /**
@@ -93,14 +89,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getMaxStamina() {
-        int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(player);
-        JGPlayerMP JG = new JGPlayerMP(player);
-        JG.setNBT(nbt);
-        byte pwr = JRMCoreH.getByte(player, "jrmcPwrtyp");
-        byte rce = JRMCoreH.getByte(player, "jrmcRace");
-        byte cls = JRMCoreH.getByte(player, "jrmcClass");
-
-        return JG.getStaminaMax(rce, cls, pwr, PlyrAttrbts);
+        return dbcData.getMaxStamina();
     }
 
     /**
@@ -108,16 +97,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int[] getAllAttributes() {
-        int[] stats = new int[6];
-        NBTTagCompound nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
-        stats[0] = nbt.getInteger("jrmcStrI");
-        stats[1] = nbt.getInteger("jrmcDexI");
-        stats[2] = nbt.getInteger("jrmcCnsI");
-        stats[3] = nbt.getInteger("jrmcWilI");
-        stats[4] = nbt.getInteger("jrmcIntI");
-        stats[5] = nbt.getInteger("jrmcCncI");
-
-        return stats;
+        return dbcData.getAllAttributes();
     }
 
     /**
@@ -239,15 +219,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      * if SSJ form multi is 20x and is SSJ, returns 200,000. LSSJ returns 350,000, LSSJ Kaioken x40 returns 1,000,000 and so on
      * 0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
      *
-     * @param statid ID of Stat
+     * @param attributeID ID of Stat
      * @return stat value
      */
     @Override
-    public int getFullAttribute(int statid) {
-        JGPlayerMP JG = new JGPlayerMP(player);
-        NBTTagCompound nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
-        JG.setNBT(nbt);
-        return JG.getAttribute(statid);
+    public int getFullAttribute(int attributeID) {
+        return dbcData.getFullAttribute(attributeID);
     }
 
     /**
@@ -470,21 +447,21 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     * @param attribute 0 for Melee Dmg, 1 for Defense, 3 for Ki Power
+     * @param statID 0 for Melee Dmg, 1 for Defense, 3 for Ki Power
      * @return Player's stat, NOT attributes i.e Melee Dmg, not STR
      */
     @Override
-    public int getMaxStat(int attribute) {
-        return DBCUtils.getMaxStat(player, attribute);
+    public int getMaxStat(int statID) {
+        return dbcData.getMaxStat(statID);
     }
 
     /**
-     * @param attribute check getMaxStat
+     * @param statID check getMaxStat
      * @return Player's stat as a percentage of MaxStat through power release i.e if MaxStat is 1000 and release is 10, returns 100
      */
     @Override
-    public int getCurrentStat(int attribute) {
-        return (int) (getMaxStat(attribute) * this.getRelease() * 100F);
+    public int getCurrentStat(int statID) {
+        return dbcData.getCurrentStat(statID);
     }
 
     /**
@@ -492,10 +469,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public double getCurrentFormMultiplier() {
-        double str = this.getStat("str");
-        double maxstr = getFullAttribute(0);
-
-        return (Math.max(maxstr, str)) / str;
+        return dbcData.getCurrentMulti();
     }
 
     @Override

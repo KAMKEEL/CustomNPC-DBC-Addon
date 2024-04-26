@@ -1,26 +1,20 @@
 package kamkeel.npcdbc.util;
 
 import JinRyuu.DragonBC.common.DBCConfig;
-import JinRyuu.JRMCore.*;
+import JinRyuu.JRMCore.JRMCoreConfig;
+import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
-import JinRyuu.JRMCore.server.JGPlayerMP;
+import JinRyuu.JRMCore.mod_JRMCore;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.Entity.EnumEntitySize;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import static JinRyuu.JRMCore.JRMCoreH.*;
 
@@ -181,12 +175,6 @@ public class DBCUtils {
             return false;
     }
 
-    public static int getEyeColor(int t, int d, int p, int r, int s, boolean v, boolean y, boolean ui, boolean ui2, boolean gd) {
-        if (ui2 || ui)
-            return t == 15790320 ? 15790320 : (t == 1 ? 13816530 : 15790320);
-        // if (!ssb && !ssbs && !ss4 && !ssg && !ss)
-        return JRMCoreHDBC.getPlayerColor(t, d, p, r, s, v, y, ui, false, gd);
-    }
 
     public static Boolean isUIWhite(boolean ui, int st2) {
         if (!ui)
@@ -231,100 +219,6 @@ public class DBCUtils {
         return is;
     }
 
-    public static int getFullAttribute(EntityPlayer p, int attribute) {
-        boolean x = p.worldObj.isRemote;
-        int powerType = x ? JRMCoreH.Pwrtyp : JRMCoreH.getByte(p, "jrmcPwrtyp");
-        int race = x ? JRMCoreH.Race : JRMCoreH.getByte(p, "jrmcRace");
-        int state = x ? JRMCoreH.State : JRMCoreH.getByte(p, "jrmcState");
-        int state2 = x ? JRMCoreH.State2 : JRMCoreH.getByte(p, "jrmcState2");
-        double release = x ? JRMCoreH.curRelease : JRMCoreH.getByte(p, "jrmcRelease");
-        String sklx = x ? JRMCoreH.PlyrSkillX : JRMCoreH.getString(p, "jrmcSSltX");
-        int resrv = x ? JRMCoreH.getArcRsrv() : JRMCoreH.getInt(p, "jrmcArcRsrv");
-        String absorption = x ? JRMCoreH.getMajinAbsorption() : JRMCoreH.getString(p, "jrmcMajinAbsorptionData");
-        String statusEffects = getStE(p);
-        int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(p);
-        String[] PlyrSkills = JRMCoreH.PlyrSkills(p);
-        boolean mj = JRMCoreH.StusEfcts(12, statusEffects);
-        boolean c = (JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects));
-        boolean lg = JRMCoreH.StusEfcts(14, statusEffects);
-        boolean kk = JRMCoreH.StusEfcts(5, statusEffects);
-        boolean mc = JRMCoreH.StusEfcts(13, statusEffects);
-        boolean mn = JRMCoreH.StusEfcts(19, statusEffects);
-        boolean gd = JRMCoreH.StusEfcts(20, statusEffects);
-        return JRMCoreH.getPlayerAttribute(p, PlyrAttrbts, attribute, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
-    }
-
-    public static int[] getAllFullAttributes(EntityPlayer p) {
-        boolean x = p.worldObj.isRemote;
-        int powerType = x ? JRMCoreH.Pwrtyp : JRMCoreH.getByte(p, "jrmcPwrtyp");
-        int race = x ? JRMCoreH.Race : JRMCoreH.getByte(p, "jrmcRace");
-        int state = x ? JRMCoreH.State : JRMCoreH.getByte(p, "jrmcState");
-        int state2 = x ? JRMCoreH.State2 : JRMCoreH.getByte(p, "jrmcState2");
-        double release = x ? JRMCoreH.curRelease : JRMCoreH.getByte(p, "jrmcRelease");
-        String sklx = x ? JRMCoreH.PlyrSkillX : JRMCoreH.getString(p, "jrmcSSltX");
-        int resrv = x ? JRMCoreH.getArcRsrv() : JRMCoreH.getInt(p, "jrmcArcRsrv");
-        String absorption = x ? JRMCoreH.getMajinAbsorption() : JRMCoreH.getString(p, "jrmcMajinAbsorptionData");
-        String statusEffects = getStE(p);
-        int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(p);
-        String[] PlyrSkills = JRMCoreH.PlyrSkills(p);
-        boolean mj = JRMCoreH.StusEfcts(12, statusEffects);
-        boolean c = (JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects));
-        boolean lg = JRMCoreH.StusEfcts(14, statusEffects);
-        boolean kk = JRMCoreH.StusEfcts(5, statusEffects);
-        boolean mc = JRMCoreH.StusEfcts(13, statusEffects);
-        boolean mn = JRMCoreH.StusEfcts(19, statusEffects);
-        boolean gd = JRMCoreH.StusEfcts(20, statusEffects);
-        int[] a = new int[6];
-        for (int i = 0; i <= 5; i++)
-            a[i] = JRMCoreH.getPlayerAttribute(p, PlyrAttrbts, i, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
-
-        return a;
-    }
-
-    public static int getMaxStat(EntityPlayer p, int att) { // gets max player stat, 0 dmg 1 def only, rest are
-        boolean x = p.worldObj.isRemote;
-        int race = x ? JRMCoreH.Race : JRMCoreH.getByte(p, "jrmcRace");
-        int powerType = x ? JRMCoreH.Pwrtyp : JRMCoreH.getByte(p, "jrmcPwrtyp");
-        byte classID = x ? JRMCoreH.Class : JRMCoreH.getByte(p, "jrmcClass");
-        int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(p);
-        int[] PlyrAttrbtsFull = getAllFullAttributes(p);
-
-        for (int i = 0; i < PlyrAttrbts.length; i++) {
-            if (i == 0 || i == 1 || i == 4)
-                PlyrAttrbts[i] = PlyrAttrbtsFull[i];
-        }
-
-        float f = att == 5 ? JRMCoreH.SklLvl_KiBs(p, 1) : 0f;
-        int stat = JRMCoreH.stat(p, att, powerType, att, PlyrAttrbts[att], race, classID, f);
-
-        if (att == 0)
-            stat += getExtraOutput(p, att, 100);
-        else if (att == 1)
-            stat += getExtraOutput(p, att, 100);
-
-        return stat;
-    }
-
-    public static int getCurrentStat(EntityPlayer p, int attribute) { // gets stat at current release
-        int stat = getMaxStat(p, attribute);
-        int release = JRMCoreH.getByte(p, "jrmcRelease");
-        double curAtr = (stat) * (release * 0.01D) * JRMCoreH.weightPerc(0, p);
-        return (int) (curAtr);
-    }
-
-    public static int getExtraOutput(EntityPlayer p, int att, int release) {
-        int extraoutput = 0;
-        if (att == 0) {
-            int maxki = getMaxStat(p, 5);
-            extraoutput = (int) (JRMCoreH.SklLvl(12, p) * 0.0025 * maxki * release * 0.01);
-        } else if (att == 1) {
-            int maxki = getMaxStat(p, 5);
-            extraoutput = (int) (JRMCoreH.SklLvl(11, p) * 0.005 * maxki * release * 0.01);
-        } else if (att == 5) {
-            extraoutput = getMaxStat(p, 5) - JRMCoreH.stat(p, att, JRMCoreH.getByte(p, "jrmcPwrtyp"), att, JRMCoreH.PlyrAttrbts(p)[5], JRMCoreH.getByte(p, "jrmcRace"), JRMCoreH.getByte(p, "jrmcClass"), 0);
-        }
-        return extraoutput;
-    }
 
     public static void setDmgRed(Entity entity, float dmgred) {
         if (entity != null)
@@ -344,41 +238,8 @@ public class DBCUtils {
         return 0;
     }
 
-    public static void kiCost(EntityPlayer p, int kiToDrain) {
-        int ki = JRMCoreH.getInt(p, "jrmcEnrgy");
-        int newKi = ki - kiToDrain;
-        JRMCoreH.setInt(newKi < 0 ? 0 : newKi, p, "jrmcEnrgy");
-    }
 
-    public static void kiCostAsPercentOfMax(EntityPlayer p, float percToDrain) {
-        int maxKi = getMaxStat(p, 5);
-        int newKi = (int) (maxKi * (percToDrain / 100));
-        kiCost(p, newKi);
-    }
-
-    public static boolean hasKiAsPercentOfMax(EntityPlayer p, float perc) {
-        int ki = JRMCoreH.getInt(p, "jrmcEnrgy");
-        int maxKi = getMaxStat(p, 5);
-        int newKi = (int) (maxKi * (perc / 100));
-        return ki >= newKi;
-    }
-
-    public static double getCurFormMulti(EntityPlayer p) {
-        double str = JRMCoreH.PlyrAttrbts(p)[0];
-        double maxstr = getFullAttribute(p, 0);
-        return maxstr / str;
-
-    }
-
-    public static float bodyPerc(EntityPlayer p) {
-        float curBody = !p.worldObj.isRemote ? JRMCoreH.getInt(p, "jrmcBdy") : JRMCoreH.curBody;
-        float maxBody = getMaxStat(p, 2);
-
-        return curBody * 100 / maxBody;
-
-    }
-
-    public static String getData(int id, EntityPlayer p) {
+    public static String getJRMCData(int id, EntityPlayer p) {
         for (int pl = 0; pl < JRMCoreH.plyrs.length; pl++) {
             if (JRMCoreH.plyrs[pl].equals(p.getCommandSenderName())) {
                 return JRMCoreH.data(id)[pl];
@@ -422,224 +283,6 @@ public class DBCUtils {
 
     public static boolean isFMMax(EntityPlayer p, String formName, int race) {
         return isFM(p, formName, race, 100);
-    }
-
-    public static String getStE(EntityPlayer p) {
-        boolean x = p.worldObj.isRemote;
-        return x ? JRMCoreH.StusEfctsMe() : JRMCoreH.getString(p, "jrmcStatusEff");
-    }
-
-    public static int getMeleeDamage(EntityPlayer attacker) { // without extra output and passive output
-        return (int) getCurrentStat(attacker, 0);
-    }
-
-    public static void sS(EntityPlayer p, float par1, float par2) {
-        if (par1 != p.width || par2 != p.height) {
-            p.width = par1;
-            p.height = par2;
-            p.boundingBox.maxX = p.boundingBox.minX + (double) p.width;
-            p.boundingBox.maxZ = p.boundingBox.minZ + (double) p.width;
-            p.boundingBox.maxY = p.boundingBox.minY + (double) p.height;
-        }
-
-        float f2 = par1 % 2.0F;
-        if ((double) f2 < 0.375) {
-            p.myEntitySize = EnumEntitySize.SIZE_1;
-        } else if ((double) f2 < 0.75) {
-            p.myEntitySize = EnumEntitySize.SIZE_2;
-        } else if ((double) f2 < 1.0) {
-            p.myEntitySize = EnumEntitySize.SIZE_3;
-        } else if ((double) f2 < 1.375) {
-            p.myEntitySize = EnumEntitySize.SIZE_4;
-        } else if ((double) f2 < 1.75) {
-            p.myEntitySize = EnumEntitySize.SIZE_5;
-        } else {
-            p.myEntitySize = EnumEntitySize.SIZE_6;
-        }
-    }
-
-    public static int getPlayerID(EntityPlayer p) {
-        if (p.worldObj.isRemote) {
-            for (int pl = 0; pl < JRMCoreH.plyrs.length; pl++)
-                if (JRMCoreH.plyrs[pl].equals(p.getCommandSenderName()))
-                    return pl;
-        }
-        return 0;
-    }
-
-    public static String[] getAllBonuses(EntityPlayer p) {
-        ArrayList<String> results = new ArrayList<>();
-
-        String d31 = getBonusAttString(p);
-
-        String[] attributeTags;
-        ArrayList<String> tagslist = new ArrayList<>();
-        if (d31 != null) {
-            if (d31.contains("=")) {
-                attributeTags = d31.split("=");
-                tagslist = new ArrayList<>(Arrays.asList(attributeTags));
-            } else
-                tagslist.add(d31);
-
-            for (String attributeTag : tagslist) {
-                if (attributeTag.contains("|")) {
-                    String[] split = attributeTag.split("\\|");
-                    Map<Character, Integer> numOperatorPairs = new HashMap<>();
-
-                    for (String str : split) {
-                        String[] b = str.split(";");
-                        char operation = b[1].charAt(0);
-                        int num = Integer.parseInt(b[1].substring(1));
-
-                        if (numOperatorPairs.containsKey(operation))
-                            numOperatorPairs.replace(operation, numOperatorPairs.get(operation) + num);
-                        else
-                            numOperatorPairs.put(operation, num);
-
-                    }
-
-                    StringBuilder output = new StringBuilder();
-                    for (Map.Entry<Character, Integer> entry : numOperatorPairs.entrySet()) {
-                        char operation = entry.getKey();
-                        int num = entry.getValue();
-                        output.append(operation).append(num).append(",");
-                    }
-                    if (output.length() > 0)
-                        output.deleteCharAt(output.length() - 1);
-                    if (output.length() == 0)
-                        output = new StringBuilder("0");
-                    results.add(output.toString());
-                } else if (!attributeTag.equals("n")) {
-                    String[] split = attributeTag.split(";");
-                    char operation = split[1].charAt(0);
-                    int num = Integer.parseInt(split[1].substring(1));
-
-                    results.add(operation + Integer.toString(num));
-                } else
-                    results.add("0");
-            }
-        }
-        String[] r = results.toArray(new String[6]);
-        for (int i = 0; i < r.length; i++) {
-            if (r[i] == null)
-                r[i] = "0";
-        }
-        return r;
-
-    }
-
-    public static float bonusMulti(EntityPlayer p, int stat) {
-        float multi = 1.0F;
-        String s = getAllBonuses(p)[stat];
-        if (s.equals("0"))
-            s = "1";
-        ArrayList<String> values = new ArrayList<>();
-        if (s.contains(","))
-            values = new ArrayList<>(Arrays.asList(s.split(",")));
-        else
-            values.add(s);
-        for (String b : values) {
-            char operation = b.charAt(0);
-            if (operation == '*')
-                multi = Float.parseFloat(b.substring(1));
-
-        }
-        return multi;
-    }
-
-    public static float bonusDiv(EntityPlayer p, int stat) {
-        float multi = 1.0F;
-        String s = getAllBonuses(p)[stat] != null ? getAllBonuses(p)[stat] : "1";
-        if (s.equals("0"))
-            s = "1";
-        ArrayList<String> values = new ArrayList<>();
-        if (s.contains(","))
-            values = new ArrayList<>(Arrays.asList(s.split(",")));
-        else
-            values.add(s);
-        for (String b : values) {
-            char operation = b.charAt(0);
-            if (operation == '/')
-                multi = Float.parseFloat(b.substring(1));
-
-        }
-        return multi;
-    }
-
-    public static int bonusAdd(EntityPlayer p, int stat) {
-        int multi = 0;
-        String s = getAllBonuses(p)[stat];
-
-        ArrayList<String> values = new ArrayList<>();
-        if (s.contains(","))
-            values = new ArrayList<>(Arrays.asList(s.split(",")));
-        else
-            values.add(s);
-        for (String b : values) {
-            char operation = b.charAt(0);
-            if (operation == '+')
-                multi = Integer.parseInt(b.substring(1));
-
-        }
-        return multi;
-    }
-
-    public static int bonusSub(EntityPlayer p, int stat) {
-        int multi = 0;
-        String s = getAllBonuses(p)[stat];
-
-        ArrayList<String> values = new ArrayList<>();
-        if (s.contains(","))
-            values = new ArrayList<>(Arrays.asList(s.split(",")));
-        else
-            values.add(s);
-        for (String b : values) {
-            char operation = b.charAt(0);
-            if (operation == '-')
-                multi = Integer.parseInt(b.substring(1));
-
-        }
-        return multi;
-    }
-
-    public static String getBonusAttString(EntityPlayer p) {
-        String s = "";
-        if (!p.worldObj.isRemote) {
-            NBTTagCompound nbt = JRMCoreH.nbt(p, "pres");
-            for (int i = 0; i <= 5; i++) {
-                String a = nbt.getString("jrmcAttrBonus" + ComJrmcaBonus.ATTRIBUTES_SHORT[i]);
-                if (!a.isEmpty())
-                    s += a + "=";
-            }
-        } else
-            s = JRMCoreH.dat31[getPlayerID(p)];
-        s = s.isEmpty() ? null : s;
-        return s;
-    }
-
-    public static int[] statsWithBonus(EntityPlayer p) {
-
-        int[] oldstats = getAllFullAttributes(p);
-        if (!JRMCoreConfig.JRMCABonusOn || getBonusAttString(p) == null)
-            return oldstats;
-        int[] newstats = new int[6];
-
-        for (int i = 0; i < oldstats.length; i++) {
-            int o = oldstats[i];
-            newstats[i] = (int) ((o / bonusDiv(p, i) * bonusMulti(p, i)) + bonusAdd(p, i) - bonusSub(p, i));
-        }
-        return newstats;
-    }
-
-    public static void knockback(EntityLivingBase targetEntity, Entity attacker, int knockbackStrength) {
-        if (knockbackStrength > 0) {
-
-            float var25 = MathHelper.sqrt_double(attacker.motionX * attacker.motionX + attacker.motionZ * attacker.motionZ);
-
-            if (var25 > 0.0F) {
-                targetEntity.addVelocity(attacker.motionX * knockbackStrength * 0.6000000238418579D / var25, 0.1D, attacker.motionZ * knockbackStrength * 0.6000000238418579D / var25);
-            }
-        }
     }
 
     public static int calculateDBCDamageFromSource(Entity Player, float dbcA, DamageSource s) {
@@ -926,7 +569,7 @@ public class DBCUtils {
                     if (!isInCreativeMode(player)) {
                         setInt(Math.max(currStamina - staminaCost, 0), player, "jrmcStamina");
                     }
-                }  else if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
+                } else if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
                     // Charging Dex
                     switch (classID) {
                         case 0:
@@ -942,8 +585,7 @@ public class DBCUtils {
                             def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
                             break;
                     }
-                }
-                else {
+                } else {
                     // Passive Dex
                     def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
                 }
@@ -1057,30 +699,6 @@ public class DBCUtils {
         }
     }
 
-    public static int getMaxKi(EntityPlayer player) {
-        int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(player);
-        JGPlayerMP JG = new JGPlayerMP(player);
-        JG.connectBaseNBT();
-        byte pwr = JRMCoreH.getByte(player, "jrmcPwrtyp");
-        byte rce = JRMCoreH.getByte(player, "jrmcRace");
-        byte cls = JRMCoreH.getByte(player, "jrmcClass");
-        return JG.getEnergyMax(rce, cls, pwr, PlyrAttrbts, JRMCoreH.SklLvl_KiBs(player, pwr));
-    }
-
-    public static int getMaxStamina(EntityPlayer player) {
-        int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(player);
-        JGPlayerMP JG = new JGPlayerMP(player);
-        JG.connectBaseNBT();
-        byte pwr = JRMCoreH.getByte(player, "jrmcPwrtyp");
-        byte rce = JRMCoreH.getByte(player, "jrmcRace");
-        byte cls = JRMCoreH.getByte(player, "jrmcClass");
-
-        return JG.getStaminaMax(rce, cls, pwr, PlyrAttrbts);
-    }
-
-    public static int getMaxBody(EntityPlayer player) {
-        return DBCUtils.getMaxStat(player, 2);
-    }
 
     public static boolean isChargingKiAttack(EntityPlayer player) {
         ExtendedPlayer jrmcExtendedPlayer = ExtendedPlayer.get(player);

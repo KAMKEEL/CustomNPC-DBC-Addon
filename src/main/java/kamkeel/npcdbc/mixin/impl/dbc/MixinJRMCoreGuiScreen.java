@@ -32,12 +32,12 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
     @Inject(method = "drawDetails", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onDrawDetails(String s1, String s2, int xpos, int ypos, int x, int y, FontRenderer var8, CallbackInfo ci) {
 
-        if(PlayerDataUtil.getClientDBCInfo() == null){
+        if (PlayerDataUtil.getClientDBCInfo() == null) {
             return;
         }
 
-        boolean isDrawingAttributeData = (s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§");
-        boolean isDrawingStatisticsData = s1.contains(JRMCoreH.trl("jrmc", "mleDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "DefDB")+":") || s1.contains(JRMCoreH.trl("jrmc", "Passive")+":") || s1.contains(JRMCoreH.trl("jrmc", "EnPwDB")+":") && s1.contains("§");
+        boolean isDrawingAttributes = (s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§");
+        boolean isDrawingStats = s1.contains(JRMCoreH.trl("jrmc", "mleDB") + ":") || s1.contains(JRMCoreH.trl("jrmc", "DefDB") + ":") || s1.contains(JRMCoreH.trl("jrmc", "Passive") + ":") || s1.contains(JRMCoreH.trl("jrmc", "EnPwDB") + ":") && s1.contains("§");
         if (PlayerDataUtil.getClientDBCInfo().isInCustomForm()) {
             Form form = PlayerDataUtil.getClientDBCInfo().getCurrentForm();
             PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
@@ -62,7 +62,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                     s2 = Utility.removeBoldColorCode(name) + " §8Mastery Lvl: §4" + formatter.format(curLevel) + (removeBase ? (isInKaioken ? kaiokenString : "") : "\n§8" + s2);
                 }
                 //adds the form color to STR,DEX and WIL attribute values
-            } else if (isDrawingAttributeData) {
+            } else if (isDrawingAttributes) {
                 String currentColor = formData.getFormColorCode(formData.getCurrentForm());
                 currentColor = Utility.removeBoldColorCode(currentColor);
 
@@ -72,27 +72,27 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
 
                 // adds the "xMulti" after CON: AttributeValue
             } else if (s1.contains("CON:")) {
-                float multi = (float) DBCUtils.getCurFormMulti(Minecraft.getMinecraft().thePlayer);
+                float multi = (float)  DBCData.getClient().getCurrentMulti();
                 if (s1.contains("x"))
                     s1 = s1.substring(0, s1.indexOf("x") - 1);
                 s1 = s1 + (JRMCoreH.round(multi, 1) != 1.0 ? formData.getFormColorCode(formData.getCurrentForm()) + " x" + JRMCoreH.round(multi, 1) : "");
 
                 //Corrects Statistics colors
-            } else if(isDrawingStatisticsData){
+            } else if (isDrawingStats) {
                 s1 = replaceFormColor(s1, formData.getFormColorCode(formData.getCurrentForm()));
             }
 
-        }else if(DBCData.getClient().isLegendary() && isInBaseForm(DBCData.getClient()) ){
-            if(!DBCData.getClient().containsSE(19)){ //If in UI, do not change colors
+        } else if (DBCData.getClient().isLegendary() && isInBaseForm(DBCData.getClient())) {
+            if (!DBCData.getClient().containsSE(19)) { //If in UI, do not change colors
                 return;
             }
             String legendColor = "§a";
 
-            if (isDrawingAttributeData) {
+            if (isDrawingAttributes) {
                 String[] data = getAdjustedAttributeData(s1, s2, legendColor);
                 s1 = data[0];
                 s2 = data[1];
-            } else if(isDrawingStatisticsData){
+            } else if (isDrawingStats) {
                 s1 = replaceFormColor(s1, legendColor);
             }
 
@@ -108,34 +108,35 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
         }
     }
 
-    private static boolean isInBaseForm(DBCData client){
-        if(client.Race == 4){
+    private static boolean isInBaseForm(DBCData client) {
+        if (client.Race == 4) {
             return client.State == 4;
-        }else{
+        } else {
             return client.State == 0;
         }
     }
 
     /**
      * Adjusts the rendered text to apply correct form colors.
-     * @param s1 Main string
-     * @param s2 Tooltip
+     *
+     * @param s1               Main string
+     * @param s2               Tooltip
      * @param replacementColor Color to replace the wrong stat color with.
      * @return String array of size 2, corresponding to modified s1 and s2 (need those to correct the rendering);
      */
     private static String[] getAdjustedAttributeData(String s1, String s2, String replacementColor) {
         s1 = replaceFormColor(s1, replacementColor);
 
-        if(s2.contains(JRMCoreH.trl("jrmc", "Modified"))){
+        if (s2.contains(JRMCoreH.trl("jrmc", "Modified"))) {
             s2 = replaceFormColor(s2, replacementColor);
-        }else{
+        } else {
             int attributeId = getAttributeIdByName(s1);
-            int modified = DBCUtils.getFullAttribute(Minecraft.getMinecraft().thePlayer, attributeId);
+            int modified = DBCData.getClient().getFullAttribute(attributeId);
             int original = JRMCoreH.PlyrAttrbts()[attributeId];
 
             String tooltipData = JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Modified") + ": " + replacementColor + modified
-                + "\n" + JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Original")+": " + JRMCoreH.cldr + original
-                + "\n" + JRMCoreH.cldgy;
+                    + "\n" + JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Original") + ": " + JRMCoreH.cldr + original
+                    + "\n" + JRMCoreH.cldgy;
 
             s2 = tooltipData + s2;
         }
@@ -143,12 +144,12 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
         return new String[]{s1, s2};
     }
 
-    private static int getAttributeIdByName(String s1){
-        if(s1.contains("STR:"))
+    private static int getAttributeIdByName(String s1) {
+        if (s1.contains("STR:"))
             return 0;
-        if(s1.contains("DEX:"))
+        if (s1.contains("DEX:"))
             return 1;
-        if(s1.contains("WIL"))
+        if (s1.contains("WIL"))
             return 3;
         return 0;
     }

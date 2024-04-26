@@ -16,7 +16,6 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
-import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,10 +37,10 @@ public class DBCData extends DBCDataUniversal {
     public EntityPlayer player;
 
     // Original DBC
-    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXSeconds, Rage, Heat, AuraColor;
+    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXSeconds, Rage, Heat, AuraColor, ArcReserve;
     public byte Class, Race, Powertype, State, State2, Release;
     public boolean Alive, isKO;
-    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "";
+    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "";
 
     // Custom Form
     public int addonFormID, auraID;
@@ -74,11 +73,14 @@ public class DBCData extends DBCDataUniversal {
         comp.setInteger("jrmcSaiRg", Rage);
         comp.setInteger("jrmcEf8slc", Heat);
         comp.setInteger("jrmcAuraColor", AuraColor);
+        comp.setInteger("jrmcArcRsrv", ArcReserve);
+
         comp.setByte("jrmcState", State);
         comp.setByte("jrmcState2", State2);
         comp.setByte("jrmcRelease", Release);
         comp.setByte("jrmcPwrtyp", Powertype);
         comp.setByte("jrmcRace", Race);
+
         comp.setString("jrmcStatusEff", StatusEffects);
         comp.setString("jrmcSSltX", RacialSkills);
         comp.setString("jrmcSSlts", Skills);
@@ -87,7 +89,7 @@ public class DBCData extends DBCDataUniversal {
         comp.setString("jrmcFormMasteryNonRacial", FormMasteryNR);
         comp.setString("jrmcDNS", DNS);
         comp.setString("jrmcDNSH", DNSHair);
-
+        comp.setString("jrmcMajinAbsorptionData", MajinAbsorptionData);
         // DBC Addon
         comp.setInteger("addonFormID", addonFormID);
         comp.setInteger("auraID", auraID);
@@ -111,12 +113,15 @@ public class DBCData extends DBCDataUniversal {
         Heat = c.getInteger("jrmcEf8slc");
         isKO = c.getInteger("jrmcHar4va") > 0;
         AuraColor = c.getInteger("jrmcAuraColor");
+        ArcReserve = c.getInteger("jrmcArcRsrv");
+
         State = c.getByte("jrmcState");
         State2 = c.getByte("jrmcState2");
         Release = c.getByte("jrmcRelease");
         Powertype = c.getByte("jrmcPwrtyp");
         Race = c.getByte("jrmcRace");
         Class = c.getByte("jrmcClass");
+
         StatusEffects = c.getString("jrmcStatusEff");
         RacialSkills = c.getString("jrmcSSltX");
         Skills = c.getString("jrmcSSlts");
@@ -125,21 +130,19 @@ public class DBCData extends DBCDataUniversal {
         FormMasteryNR = c.getString("jrmcFormMasteryNonRacial");
         DNS = c.getString("jrmcDNS");
         DNSHair = c.getString("jrmcDNSH");
+        MajinAbsorptionData = c.getString("jrmcMajinAbsorptionData");
 
         // DBC Addon
         addonFormID = c.getInteger("addonFormID");
         addonFormLevel = c.getFloat("addonFormLevel");
         auraID = c.getInteger("auraID");
 
-        if (c.hasKey("addonActiveEffects", 9))
-        {
+        if (c.hasKey("addonActiveEffects", 9)) {
             NBTTagList nbttaglist = c.getTagList("addonActiveEffects", 10);
-            for (int i = 0; i < nbttaglist.tagCount(); ++i)
-            {
+            for (int i = 0; i < nbttaglist.tagCount(); ++i) {
                 NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
                 StatusEffect statusEffect = StatusEffect.readEffectData(nbttagcompound1);
-                if (statusEffect != null)
-                {
+                if (statusEffect != null) {
                     this.activeEffects.put(statusEffect.getId(), statusEffect);
                 }
             }
@@ -192,21 +195,20 @@ public class DBCData extends DBCDataUniversal {
         return StatusEffectController.Instance.activeEffects.get(Utility.getUUID(player));
     }
 
-    public void saveEffects(NBTTagCompound nbt){
-        NBTTagList nbttaglist = new NBTTagList();
-        Iterator iterator = this.activeEffects.values().iterator();
-        while (iterator.hasNext())
-        {
-            StatusEffect statusEffect = (StatusEffect)iterator.next();
-            nbttaglist.appendTag(statusEffect.writeEffectData(new NBTTagCompound()));
-        }
-        nbt.setTag("addonActiveEffects", nbttaglist);
-    }
-
     public void setActiveEffects(HashMap<Integer, StatusEffect> activeEffects) {
         NBTTagCompound raw = getRawCompound();
         this.activeEffects = activeEffects;
         saveEffects(raw);
+    }
+
+    public void saveEffects(NBTTagCompound nbt) {
+        NBTTagList nbttaglist = new NBTTagList();
+        Iterator iterator = this.activeEffects.values().iterator();
+        while (iterator.hasNext()) {
+            StatusEffect statusEffect = (StatusEffect) iterator.next();
+            nbttaglist.appendTag(statusEffect.writeEffectData(new NBTTagCompound()));
+        }
+        nbt.setTag("addonActiveEffects", nbttaglist);
     }
 
     public void decrementActiveEffects() {
@@ -228,62 +230,75 @@ public class DBCData extends DBCDataUniversal {
         setActiveEffects(currentEffects);
     }
 
+    public int[] getAllAttributes() {
+        return new int[]{STR, DEX, CON, WIL, MND, SPI};
+    }
+
+    public int getFullAttribute(int attri) {
+        boolean majin = JRMCoreH.StusEfcts(12, StatusEffects);
+        boolean fusion = (JRMCoreH.StusEfcts(10, StatusEffects) || JRMCoreH.StusEfcts(11, StatusEffects));
+        boolean legendary = JRMCoreH.StusEfcts(14, StatusEffects);
+        boolean kaioken = JRMCoreH.StusEfcts(5, StatusEffects);
+        boolean mystic = JRMCoreH.StusEfcts(13, StatusEffects);
+        boolean ui = JRMCoreH.StusEfcts(19, StatusEffects);
+        boolean GoD = JRMCoreH.StusEfcts(20, StatusEffects);
+
+        return JRMCoreH.getPlayerAttribute(player, getAllAttributes(), attri, State, State2, Race, RacialSkills, (int) Release, ArcReserve, legendary, majin, kaioken, mystic, ui, GoD, Powertype, Skills.split(","), fusion, MajinAbsorptionData);
+
+    }
+
     public int[] getAllFullAttributes() {
-        boolean x = player.worldObj.isRemote;
-        String skillX = JRMCoreH.getString(player, "jrmcSSltX");
-        int reserve = x ? JRMCoreH.getArcRsrv() : JRMCoreH.getInt(player, "jrmcArcRsrv");
-        String absorption = x ? JRMCoreH.getMajinAbsorption() : JRMCoreH.getString(player, "jrmcMajinAbsorptionData");
-        int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(player);
-        String[] PlyrSkills = JRMCoreH.PlyrSkills(player);
-        boolean mj = JRMCoreH.StusEfcts(12, StatusEffects);
-        boolean c = (JRMCoreH.StusEfcts(10, StatusEffects) || JRMCoreH.StusEfcts(11, StatusEffects));
-        boolean lg = JRMCoreH.StusEfcts(14, StatusEffects);
-        boolean kk = JRMCoreH.StusEfcts(5, StatusEffects);
-        boolean mc = JRMCoreH.StusEfcts(13, StatusEffects);
-        boolean mn = JRMCoreH.StusEfcts(19, StatusEffects);
-        boolean gd = JRMCoreH.StusEfcts(20, StatusEffects);
+        boolean majin = JRMCoreH.StusEfcts(12, StatusEffects);
+        boolean fusion = (JRMCoreH.StusEfcts(10, StatusEffects) || JRMCoreH.StusEfcts(11, StatusEffects));
+        boolean legendary = JRMCoreH.StusEfcts(14, StatusEffects);
+        boolean kaioken = JRMCoreH.StusEfcts(5, StatusEffects);
+        boolean mystic = JRMCoreH.StusEfcts(13, StatusEffects);
+        boolean ui = JRMCoreH.StusEfcts(19, StatusEffects);
+        boolean GoD = JRMCoreH.StusEfcts(20, StatusEffects);
         int[] a = new int[6];
         for (int i = 0; i <= 5; i++)
-            a[i] = JRMCoreH.getPlayerAttribute(player, PlyrAttrbts, i, State, State2, Race, skillX, (int) Release, reserve, lg, mj, kk, mc, mn, gd, Powertype, PlyrSkills, c, absorption);
+            a[i] = JRMCoreH.getPlayerAttribute(player, getAllAttributes(), i, State, State2, Race, RacialSkills, Release, ArcReserve, legendary, majin, kaioken, mystic, ui, GoD, Powertype, Skills.split(","), fusion, MajinAbsorptionData);
 
         return a;
     }
 
     public int getExtraOutput(int att, int release) {
         int extraoutput = 0;
+
         if (att == 0) {
             int maxki = getMaxStat(5);
-            extraoutput = (int) (JRMCoreH.SklLvl(12, player) * 0.0025 * maxki * release * 0.01);
+            extraoutput = (int) (JRMCoreH.SklLvl(12, Skills.split(",")) * 0.0025 * maxki * release * 0.01);
         } else if (att == 1) {
             int maxki = getMaxStat(5);
-            extraoutput = (int) (JRMCoreH.SklLvl(11, player) * 0.005 * maxki * release * 0.01);
-        } else if (att == 5) {
-            extraoutput = getMaxStat(5) - JRMCoreH.stat(player, att, Powertype, att, JRMCoreH.PlyrAttrbts(player)[5], Race, Class, 0);
-        }
+            extraoutput = (int) (JRMCoreH.SklLvl(11, Skills.split(",")) * 0.005 * maxki * release * 0.01);
+        } else if (att == 5)
+            extraoutput = getMaxStat(5) - JRMCoreH.stat(player, att, Powertype, att, SPI, Race, Class, JRMCoreH.SklLvl_KiBs(Skills.split(","), 1));
+
         return extraoutput;
     }
 
-    public int getMaxStat(int att) { // gets max player stat, 0 dmg 1 def only, rest are
+    public int getMaxStat(int attributeID) { // gets max player stat, 0 dmg 1 def only, rest are
+        int attribute = 0;
 
-        int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(player);
-        int[] PlyrAttrbtsFull = getAllFullAttributes();
+        if (attributeID == 0 || attributeID == 1 || attributeID == 4)
+            attribute = getFullAttribute(attributeID);
+        else
+            attribute = getAllAttributes()[attributeID];
 
-        for (int i = 0; i < PlyrAttrbts.length; i++) {
-            if (i == 0 || i == 1 || i == 4)
-                PlyrAttrbts[i] = PlyrAttrbtsFull[i];
-        }
+        float f = attributeID == 5 ? JRMCoreH.SklLvl_KiBs(Skills.split(","), 1) : 0f;
+        int stat = JRMCoreH.stat(player, attributeID, Powertype, attributeID, attribute, Race, Class, f);
 
-        float f = att == 5 ? JRMCoreH.SklLvl_KiBs(player, 1) : 0f;
-        int stat = JRMCoreH.stat(player, att, Powertype, att, PlyrAttrbts[att], Race, Class, f);
-
-        if (att == 0)
-            stat += getExtraOutput(att, 100);
-        else if (att == 1)
-            stat += getExtraOutput(att, 100);
+        if (attributeID == 0)
+            stat += getExtraOutput(attributeID, 100);
+        else if (attributeID == 1)
+            stat += getExtraOutput(attributeID, 100);
 
         return stat;
     }
 
+    public int getCurrentStat(int attribute) { // gets stat at current release
+        return (int) (getMaxStat(attribute) * Release * 0.01D * JRMCoreH.weightPerc(0, player));
+    }
 
     public void setEyeColorLeft(int color) {
         int i = 42;
@@ -379,6 +394,14 @@ public class DBCData extends DBCDataUniversal {
         return JRMCoreH.stat(player, 2, Powertype, 2, CON, Race, Class, 0);
     }
 
+    public int getMaxStamina() {
+        return JRMCoreH.stat(player, 2, Powertype, 3, CON, Race, Class, 0);
+    }
+
+    public int getMaxKi() {
+        return JRMCoreH.stat(player, 5, Powertype, 5, CON, Race, Class, 0);
+    }
+
     public float getCurrentBodyPercentage() {
         return (Body * 100) / (float) getMaxBody();
 
@@ -386,7 +409,7 @@ public class DBCData extends DBCDataUniversal {
 
     // Negative Values will Drain instead
     public void restoreKiPercent(float percToRestore) {
-        int maxKi = DBCUtils.getMaxKi(player);
+        int maxKi = getMaxKi();
         int toAdd = (int) (maxKi * (percToRestore / 100));
 
         Ki = ValueUtil.clamp(Ki + toAdd, 0, maxKi);
@@ -394,7 +417,7 @@ public class DBCData extends DBCDataUniversal {
     }
 
     public void restoreHealthPercent(float percToRestore) {
-        int maxBody = DBCUtils.getMaxBody(player);
+        int maxBody = getMaxBody();
         int toAdd = (int) (maxBody * (percToRestore / 100));
 
         Body = ValueUtil.clamp(Body + toAdd, 0, maxBody);
@@ -402,7 +425,7 @@ public class DBCData extends DBCDataUniversal {
     }
 
     public void restoreStaminaPercent(float percToRestore) {
-        int maxSta = DBCUtils.getMaxStamina(player);
+        int maxSta = getMaxStamina();
         int toAdd = (int) (maxSta * (percToRestore / 100));
 
 
@@ -552,8 +575,20 @@ public class DBCData extends DBCDataUniversal {
         }
     }
 
+    public int getJRMCPlayerID() {
+        for (int pl = 0; pl < JRMCoreH.plyrs.length; pl++)
+            if (JRMCoreH.plyrs[pl].equals(player.getCommandSenderName()))
+                return pl;
+        return 0;
+    }
+
+    public double getCurrentMulti() {
+        return getFullAttribute(0) / STR;
+
+    }
+
     public Aura getAura() {
-        if(player == null)
+        if (player == null)
             return null;
         DBCData dbcData = DBCData.get(player);
         Form form = (Form) FormController.getInstance().get(dbcData.addonFormID);
