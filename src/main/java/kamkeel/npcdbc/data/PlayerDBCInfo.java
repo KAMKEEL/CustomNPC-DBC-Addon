@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.controllers.data.PlayerData;
+import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -141,7 +142,7 @@ public class PlayerDBCInfo {
         float playerLevel = formLevels.get(f.id);
         float fullGain = fm.calculateFullGain(gainType, playerLevel, data.MND);
 
-        playerLevel = Math.min(playerLevel + fullGain, fm.maxLevel); //updated level
+        playerLevel = ValueUtil.clamp(playerLevel + fullGain, 0, fm.maxLevel); //updated level
         formLevels.replace(f.id, playerLevel);
         updateClient();
     }
@@ -150,7 +151,7 @@ public class PlayerDBCInfo {
         Form form = FormController.getInstance().customForms.get(formID);
         if (form != null) {
             float current = formLevels.get(formID);
-            float updated = Math.min(current + amount, ((FormMastery) form.getMastery()).maxLevel);
+            float updated = ValueUtil.clamp(current + amount, 0, ((FormMastery) form.getMastery()).maxLevel);
             formLevels.put(formID, updated);
             updateClient();
         }
@@ -159,7 +160,7 @@ public class PlayerDBCInfo {
     public void setFormLevel(int formID, float amount) {
         Form form = FormController.getInstance().customForms.get(formID);
         if (form != null) {
-            float updated = Math.min(amount, ((FormMastery) form.getMastery()).maxLevel);
+            float updated = ValueUtil.clamp(amount, 0, ((FormMastery) form.getMastery()).maxLevel);
             formLevels.put(formID, updated);
             updateClient();
         }
