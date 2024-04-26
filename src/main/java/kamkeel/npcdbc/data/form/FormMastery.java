@@ -7,20 +7,27 @@ public class FormMastery implements IFormMastery {
 
     private final Form parent;
 
-    public float maxLevel = 100, instantTransformationUnlockLevel = -1;
+    public float maxLevel = 100;
+    public float instantTransformationUnlockLevel = -1;
+
+    // Attribute
     public float attributeMultiFlat = 1.0f, attributeMultiPerLevel = 0.01f, attributeMultiMinOrMax = 1.5f;
+
+    // Gain
     public float updateGain = 0.01f, updateMultiDivPlus = 100, updateMindBonusFlat = 1.0f, updateMindBonusPerMind = 0.001f, updateMindBonusMax = 5f;
     public float attackGain = 0.03f, attackMultiDivPlus = 100, attackMindBonusFlat = 1.0f, attackMindBonusPerMind = 0.001f, attackMindBonusMax = 5f;
     public float damagedGain = 0.03f, damagedMultiDivPlus = 100, damagedMindBonusFlat = 1.0f, damagedMindBonusPerMind = 0.001f, damagedMindBonusMax = 5f;
     public float fireKiGain = 0.03f, fireKiMultiDivPlus = 100, fireKiMindBonusFlat = 1.0f, fireKiMindBonusPerMind = 0.001f, fireKiMindBonusMax = 5;
-    public float kiDrainMultiFlat = 1.0f, kiDrainMultiPerLevel = -0.01f, kiDrainMultiMinOrMax = 0.1f;
-    public float strainMultiFlat = 1.0f, strainMultiPerLevel = -0.01f, strainMultiMinOrMax = 0.1f;
 
     public float healthRequirement = 0f;
     public float healthRequirementMultiFlat = 1.0f, healthRequirementMultiPerLevel = 0.01f, healthRequirementMultiMinOrMax = 5f;
 
     public int kiDrain = 0;
     public int kiDrainTimer = 20;
+    public float kiDrainMultiFlat = 1.0f, kiDrainMultiPerLevel = -0.01f, kiDrainMultiMinOrMax = 0.1f;
+
+    public float strainMultiFlat = 1.0f, strainMultiPerLevel = -0.01f, strainMultiMinOrMax = 0.1f;
+
 
     public FormMastery(Form parent) {
         this.parent = parent;
