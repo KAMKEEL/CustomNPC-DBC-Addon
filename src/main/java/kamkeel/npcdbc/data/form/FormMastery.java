@@ -2,6 +2,8 @@ package kamkeel.npcdbc.data.form;
 
 import kamkeel.npcdbc.api.form.IFormMastery;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.util.ValueUtil;
+import scala.tools.nsc.doc.model.Val;
 
 public class FormMastery implements IFormMastery {
 
@@ -65,7 +67,7 @@ public class FormMastery implements IFormMastery {
 
     @Override
     public void setHealthRequirement(float healthRequirementInPercent) {
-        this.healthRequirement = healthRequirementInPercent;
+        this.healthRequirement = ValueUtil.clamp(healthRequirementInPercent, 1, 100);
     }
 
     public float getMulti(String type, String type1) {

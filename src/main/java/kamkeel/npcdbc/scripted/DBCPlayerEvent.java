@@ -3,8 +3,13 @@ package kamkeel.npcdbc.scripted;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import kamkeel.npcdbc.api.event.IDBCEvent;
+import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.constants.DBCScriptType;
+import kamkeel.npcdbc.constants.enums.EnumHealthCapsules;
+import kamkeel.npcdbc.constants.enums.EnumKiCapsules;
+import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
+import kamkeel.npcdbc.constants.enums.EnumStaminaCapsules;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.api.IDamageSource;
 import noppes.npcs.api.entity.IPlayer;
@@ -15,6 +20,57 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
 
     public DBCPlayerEvent(IPlayer player) {
         super(player);
+    }
+
+    /**
+     * capsuleUsed
+     */
+    @Cancelable
+    public static class CapsuleUsedEvent extends DBCPlayerEvent implements IDBCEvent.CapsuleUsedEvent {
+
+        private final int type;
+        private final int subtype;
+
+        public CapsuleUsedEvent(IPlayer player, int type, int subtype) {
+            super(player);
+            this.type = type;
+            this.subtype = subtype;
+        }
+
+        @Override
+        public int getType() {
+            return type;
+        }
+
+        @Override
+        public int getSubType() {
+            return subtype;
+        }
+
+        @Override
+        public String getCapsuleName() {
+            String name = "UNKNOWN";
+            if(subtype >= 0){
+                if(type == Capsule.MISC && subtype < EnumMiscCapsules.count()){
+                    name = EnumMiscCapsules.values()[subtype].getName();
+                }
+                else if (type == Capsule.HP && subtype < EnumHealthCapsules.count()){
+                    name = EnumHealthCapsules.values()[subtype].getName();
+                }
+                else if (type == Capsule.KI && subtype < EnumKiCapsules.count()){
+                    name = EnumKiCapsules.values()[subtype].getName();
+                }
+                else if (type == Capsule.STAMINA && subtype < EnumStaminaCapsules.count()){
+                    name = EnumStaminaCapsules.values()[subtype].getName();
+                }
+            }
+
+            return name;
+        }
+
+        public String getHookName() {
+            return DBCScriptType.CAPSULEUSED.function;
+        }
     }
 
     /**

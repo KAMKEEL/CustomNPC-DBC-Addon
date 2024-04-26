@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.mixin.impl.npc.client;
 
+import kamkeel.npcdbc.constants.DBCScriptType;
 import noppes.npcs.client.gui.script.GuiScriptInterface;
 import noppes.npcs.client.gui.script.GuiScriptPlayers;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +14,8 @@ public abstract class MixinGuiScriptPlayers extends GuiScriptInterface {
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     private void onConstructorComplete(CallbackInfo info) {
-        this.hookList.add("dbcFormChange");
-        this.hookList.add("dbcDamaged");
+        this.hookList.add(DBCScriptType.FORMCHANGE.name());
+        this.hookList.add(DBCScriptType.DAMAGED.name());
+        this.hookList.add(DBCScriptType.CAPSULEUSED.name());
     }
 }

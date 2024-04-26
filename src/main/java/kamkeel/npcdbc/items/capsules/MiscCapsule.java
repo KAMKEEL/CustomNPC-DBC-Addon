@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.items.capules;
+package kamkeel.npcdbc.items.capsules;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
@@ -10,6 +10,9 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -90,6 +93,9 @@ public class MiscCapsule extends Item {
         int meta = itemStack.getItemDamage();
         if (meta < 0 || meta > EnumMiscCapsules.count())
             meta = 0;
+
+        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.MISC, meta)))
+            return itemStack;
 
         UUID playerUUID = player.getUniqueID();
         long remainingTime = CapsuleController.canUseMiscCapsule(playerUUID, meta);

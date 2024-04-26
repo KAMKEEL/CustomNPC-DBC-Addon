@@ -1,14 +1,16 @@
-package kamkeel.npcdbc.items.capules;
+package kamkeel.npcdbc.items.capsules;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.Capsule;
-import kamkeel.npcdbc.constants.enums.EnumHealthCapsules;
 import kamkeel.npcdbc.constants.enums.EnumStaminaCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -97,6 +99,9 @@ public class StaminaCapsule extends Item {
         int meta = itemStack.getItemDamage();
         if (meta < 0 || meta > EnumStaminaCapsules.count())
             meta = 0;
+
+        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.STAMINA, meta)))
+            return itemStack;
 
         UUID playerUUID = player.getUniqueID();
         long remainingTime = CapsuleController.canUseStaminaCapsule(playerUUID, meta);
