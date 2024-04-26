@@ -42,7 +42,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
             }
         }
 
-        drawIcon(var51, var61, CustomNpcPlusDBC.ID + ":textures/statuseffects/sharingan.png");
+        drawIcon(var51, var61, CustomNpcPlusDBC.ID + ":textures/statuseffects/statuseffects.png");
         if (var71 == 0) {
             i.set(i.get() + 18);
         } else
