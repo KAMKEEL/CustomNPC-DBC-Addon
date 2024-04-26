@@ -835,8 +835,7 @@ public class DBCUtils {
         if (!player.worldObj.isRemote && dbcStats != null && damageAmount > 0) {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
-                boolean isBlocking = props.getBlocking() == 1;
-
+                boolean block = props.getBlocking() == 1;
                 boolean isChargingKi = isChargingKiAttack(player);
 
                 int[] attributes = PlyrAttrbts(player);
@@ -923,11 +922,11 @@ public class DBCUtils {
                 ////////////////////
                 ////// EFFECT STAMINA BOOL
                 // Reduce Stamina
-                if (isBlocking && !dbcStats.isIgnoreBlock() && currStamina >= staminaCost) {
+                if (block && !dbcStats.isIgnoreBlock() && currStamina >= staminaCost) {
                     if (!isInCreativeMode(player)) {
                         setInt(Math.max(currStamina - staminaCost, 0), player, "jrmcStamina");
                     }
-                } else if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
+                }  else if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
                     // Charging Dex
                     switch (classID) {
                         case 0:
@@ -943,7 +942,8 @@ public class DBCUtils {
                             def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
                             break;
                     }
-                } else {
+                }
+                else {
                     // Passive Dex
                     def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
                 }
@@ -975,7 +975,7 @@ public class DBCUtils {
                     enduranceReduction = (double) (1.0F - 0.03F * (float) enduranceLevel);
                 }
 
-                double damageBreakThrough = damageAmount;
+                int defensePenetrated = 0;
                 // Default Penetration of the NPC
                 // By default all entities are 10. Players have their own
                 // default penetration skill. Based on if they are in Legendary
@@ -985,14 +985,11 @@ public class DBCUtils {
                     // Defense Pen of 10 --> RawDefense * 0.1 -- 10% Penetrated
                     // Defense Pen of 50 --> RawDefense * 0.5 -- 50% Penetrated
                     // Defense Pen of 100 --> RawDefense * 1 -- 100% Penetrated
-                    int defensePenetrated = (int) ((float) (rawDefense * npcDefensePenetration) * 0.01F);
-
-                    // The Amount of Damage that will break through based on defensePenetrated
-                    damageBreakThrough = (double) (damageAmount - (rawDefense - defensePenetrated));
+                    defensePenetrated = (int) ((float) (rawDefense * npcDefensePenetration) * 0.01F);
                 }
 
                 // Damage after Reduction
-                damageAmount = (int) (damageBreakThrough * enduranceReduction);
+                damageAmount = (int) ((damageAmount - rawDefense - defensePenetrated) * enduranceReduction);
 
                 // Prevents Negative Damages
                 damageAmount = Math.max(damageAmount, 1);
@@ -1051,8 +1048,10 @@ public class DBCUtils {
 
         if (!isInCreativeMode(player)) {
             if (lastSetDamage != -1) {
-                newHP = Math.max(lastSetDamage, 0);
+                damageToHP = Math.max(lastSetDamage, 0);
                 lastSetDamage = -1;
+                reducedHP = playerHP - damageToHP;
+                newHP = Math.max(reducedHP, 0);
             }
             setInt(newHP, player, "jrmcBdy");
         }
