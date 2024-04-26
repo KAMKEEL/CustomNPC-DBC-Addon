@@ -93,7 +93,7 @@ public class DBCData {
     public NBTTagCompound saveFromNBT(NBTTagCompound comp) {
         comp.setInteger("jrmcStrI", STR);
         comp.setInteger("jrmcDexI", DEX);
-        comp.setInteger("jrmcConI", CON);
+        comp.setInteger("jrmcCnsI", CON);
         comp.setInteger("jrmcWilI", WIL);
         comp.setInteger("jrmcIntI", MND);
         comp.setInteger("jrmcCncI", SPI);
@@ -129,7 +129,7 @@ public class DBCData {
     public void loadFromNBT(NBTTagCompound c) {
         STR = c.getInteger("jrmcStrI");
         DEX = c.getInteger("jrmcDexI");
-        CON = c.getInteger("jrmcConI");
+        CON = c.getInteger("jrmcCnsI");
         WIL = c.getInteger("jrmcWilI");
         MND = c.getInteger("jrmcIntI");
         SPI = c.getInteger("jrmcCncI");
@@ -239,6 +239,62 @@ public class DBCData {
         setActiveEffects(currentEffects);
     }
 
+    public int[] getAllFullAttributes() {
+        boolean x = player.worldObj.isRemote;
+        String skillX = JRMCoreH.getString(player, "jrmcSSltX");
+        int reserve = x ? JRMCoreH.getArcRsrv() : JRMCoreH.getInt(player, "jrmcArcRsrv");
+        String absorption = x ? JRMCoreH.getMajinAbsorption() : JRMCoreH.getString(player, "jrmcMajinAbsorptionData");
+        int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(player);
+        String[] PlyrSkills = JRMCoreH.PlyrSkills(player);
+        boolean mj = JRMCoreH.StusEfcts(12, StatusEffects);
+        boolean c = (JRMCoreH.StusEfcts(10, StatusEffects) || JRMCoreH.StusEfcts(11, StatusEffects));
+        boolean lg = JRMCoreH.StusEfcts(14, StatusEffects);
+        boolean kk = JRMCoreH.StusEfcts(5, StatusEffects);
+        boolean mc = JRMCoreH.StusEfcts(13, StatusEffects);
+        boolean mn = JRMCoreH.StusEfcts(19, StatusEffects);
+        boolean gd = JRMCoreH.StusEfcts(20, StatusEffects);
+        int[] a = new int[6];
+        for (int i = 0; i <= 5; i++)
+            a[i] = JRMCoreH.getPlayerAttribute(player, PlyrAttrbts, i, State, State2, Race, skillX, (int) Release, reserve, lg, mj, kk, mc, mn, gd, Powertype, PlyrSkills, c, absorption);
+
+        return a;
+    }
+
+    public int getExtraOutput(int att, int release) {
+        int extraoutput = 0;
+        if (att == 0) {
+            int maxki = getMaxStat(5);
+            extraoutput = (int) (JRMCoreH.SklLvl(12, player) * 0.0025 * maxki * release * 0.01);
+        } else if (att == 1) {
+            int maxki = getMaxStat(5);
+            extraoutput = (int) (JRMCoreH.SklLvl(11, player) * 0.005 * maxki * release * 0.01);
+        } else if (att == 5) {
+            extraoutput = getMaxStat(5) - JRMCoreH.stat(player, att, Powertype, att, JRMCoreH.PlyrAttrbts(player)[5], Race, Class, 0);
+        }
+        return extraoutput;
+    }
+
+    public int getMaxStat(int att) { // gets max player stat, 0 dmg 1 def only, rest are
+
+        int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(player);
+        int[] PlyrAttrbtsFull = getAllFullAttributes();
+
+        for (int i = 0; i < PlyrAttrbts.length; i++) {
+            if (i == 0 || i == 1 || i == 4)
+                PlyrAttrbts[i] = PlyrAttrbtsFull[i];
+        }
+
+        float f = att == 5 ? JRMCoreH.SklLvl_KiBs(player, 1) : 0f;
+        int stat = JRMCoreH.stat(player, att, Powertype, att, PlyrAttrbts[att], Race, Class, f);
+
+        if (att == 0)
+            stat += getExtraOutput(att, 100);
+        else if (att == 1)
+            stat += getExtraOutput(att, 100);
+
+        return stat;
+    }
+
 
     public void setEyeColorLeft(int color) {
         int i = 42;
@@ -328,6 +384,15 @@ public class DBCData {
 
         DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
         getRawCompound().setString("jrmcDNS", DNS);
+    }
+
+    public int getMaxBody() {
+        return JRMCoreH.stat(player, 2, Powertype, 2, CON, Race, Class, 0);
+    }
+
+    public float getCurrentBodyPercentage() {
+        return (Body * 100) / (float) getMaxBody();
+
     }
 
     // Negative Values will Drain instead
