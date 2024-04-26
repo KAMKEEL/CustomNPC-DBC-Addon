@@ -126,7 +126,7 @@ public class FormDisplay implements IFormDisplay {
 
     @Override
     public void setSize(float size) {
-        formSize = ValueUtil.clamp(size, 0.01f, 3);
+        formSize = ValueUtil.clamp(size, 0.2f, 3);
     }
 
     @Override
@@ -202,13 +202,7 @@ public class FormDisplay implements IFormDisplay {
         }
     }
 
-    @Override
-    public int getNameColor() {
-        if (hairType.equals("ssj4") || hairType.equals("oozaru"))
-            return furColor;
-        else
-            return hairColor;
-    }
+
 
     @Override
     public String getHairType(String type) {
@@ -242,15 +236,6 @@ public class FormDisplay implements IFormDisplay {
         throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
 
-    @Override
-    public int getAuraColor() {
-        return auraColor;
-    }
-
-    @Override
-    public void setAuraColor(int auraColor) {
-        this.auraColor = auraColor;
-    }
 
     @Override
     public boolean hasArcoMask() {

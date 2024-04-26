@@ -30,10 +30,10 @@ public interface IFormDisplay {
 
     /**
      * @param type Legal types: "base", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
+     *             Only saiyans and half-saiyans are eligible for ssj4 and oozaru
      */
     void setHairType(String type);
 
-    int getNameColor();
 
     /**
      * @param type Legal types: "base", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
@@ -54,7 +54,7 @@ public interface IFormDisplay {
     float getSize();
 
     /**
-     * @param size size to set form to. 2.0f sets the player to 2x their normal size. Max: 50.0
+     * @param size size to set form to. 2.0f sets the player to 2x their normal size. Min: 0.2, Max: 3.0
      */
     void setSize(float size);
 
@@ -71,31 +71,45 @@ public interface IFormDisplay {
 
     boolean hasSize();
 
-    int getAuraColor();
-
-    void setAuraColor(int auraColor);
-
     String getBodyType();
 
     /**
+     * So far this is only for arcosian race.
+     *
      * @param type Legal: firstform, secondform, thirdform, finalform, ultimatecooler
      */
     void setBodyType(String type);
 
     public boolean hasArcoMask();
 
+    /**
+     * @param hasMask True if you want the form to render with Ultimate Cooler's mask
+     */
+
     void hasArcoMask(boolean hasMask);
 
     boolean effectMajinHair();
 
+    /**
+     * @param effect True to allow majin CFs to have different hairType like SSJ,SSJ2 and SSJ3
+     */
     void setEffectMajinHair(boolean effect);
 
+    /**
+     * @return True if form has a custom IAura object
+     */
     boolean hasAura();
 
     IAura getAura();
 
+    /**
+     * @param aura Set the IAura object you want the form to use
+     */
     void setAura(IAura aura);
 
+    /**
+     * @param auraID ID of IAura object
+     */
     void setAura(int auraID);
 
     /**
