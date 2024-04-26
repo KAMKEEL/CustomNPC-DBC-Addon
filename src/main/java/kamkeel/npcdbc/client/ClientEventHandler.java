@@ -10,8 +10,6 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.AuraPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -109,17 +107,6 @@ public class ClientEventHandler {
                                 Utility.sendMessage(mc.thePlayer, "§cYou need to be below " + (int) healthReq + "% health to access the selected form!");
                             }
                         }
-                    }
-
-
-                } else if (KeyHandler.AuraKey.isPressed()) {
-                    if (formData.selectedAura == -1)
-                        Utility.sendMessage(mc.thePlayer, "§cYou have not selected an aura!");
-                    else if (formData.isInCustomAura()) {
-                        PacketHandler.Instance.sendToServer(new AuraPacket(Minecraft.getMinecraft().thePlayer, formData.currentAura, false).generatePacket());
-                    } else {
-                        PacketHandler.Instance.sendToServer(new AuraPacket(Minecraft.getMinecraft().thePlayer, formData.selectedAura, true).generatePacket());
-
                     }
                 }
             }

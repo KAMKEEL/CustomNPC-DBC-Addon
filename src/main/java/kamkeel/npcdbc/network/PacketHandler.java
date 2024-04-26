@@ -27,11 +27,11 @@ public final class PacketHandler {
     public PacketHandler() {
         map.put(PingPacket.packetName, new PingPacket());
         map.put(TransformPacket.packetName, new TransformPacket());
-        map.put(AuraPacket.packetName, new AuraPacket());
         map.put(DBCSetValPacket.packetName, new DBCSetValPacket());
         map.put(DBCInfoSync.packetName, new DBCInfoSync());
         map.put(DBCSelectForm.packetName, new DBCSelectForm());
         map.put(DBCSelectAura.packetName, new DBCSelectAura());
+        map.put(DBCSetAura.packetName, new DBCSetAura());
         map.put(RequestAura.packetName, new RequestAura());
         map.put(RequestForm.packetName, new RequestForm());
         map.put(CapsuleInfo.packetName, new CapsuleInfo());

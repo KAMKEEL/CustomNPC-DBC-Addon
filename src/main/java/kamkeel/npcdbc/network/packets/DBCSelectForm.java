@@ -2,6 +2,7 @@ package kamkeel.npcdbc.network.packets;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.AbstractPacket;
@@ -57,6 +58,6 @@ public final class DBCSelectForm extends AbstractPacket {
 
         formData.updateClient();
         Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
-
+        DBCData.get(player).saveNBTData(true);
     }
 }

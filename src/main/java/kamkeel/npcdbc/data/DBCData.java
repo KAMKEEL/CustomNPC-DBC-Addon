@@ -155,8 +155,8 @@ public class DBCData extends DBCDataUniversal {
         auraID = formData.currentAura;
         activeEffects = StatusEffectController.Instance.activeEffects.get(Utility.getUUID(player));
         nbt.setInteger("addonFormID", addonFormID);
-        nbt.setInteger("auraID", auraID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
+        nbt.setInteger("auraID", auraID);
         saveEffects(nbt);
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 

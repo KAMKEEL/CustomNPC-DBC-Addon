@@ -7,6 +7,16 @@ import noppes.npcs.api.event.IPlayerEvent;
 public interface IDBCEvent extends IPlayerEvent {
 
     @Cancelable
+    interface CapsuleUsedEvent extends IDBCEvent {
+
+        int getType();
+
+        int getSubType();
+
+        String getSubTypeName();
+    }
+
+    @Cancelable
     interface FormChangeEvent extends IDBCEvent {
 
         int getFormBeforeID();

@@ -2,21 +2,22 @@ package kamkeel.npcdbc.client.gui.inventory;
 
 import kamkeel.npcdbc.client.gui.component.GuiFormAuraScroll;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.DBCSelectAura;
-import kamkeel.npcdbc.network.packets.DBCSelectForm;
-import kamkeel.npcdbc.network.packets.RequestAura;
-import kamkeel.npcdbc.network.packets.RequestForm;
+import kamkeel.npcdbc.network.packets.*;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.gui.player.inventory.GuiCNPCInventory;
 import noppes.npcs.client.gui.util.*;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import tconstruct.client.tabs.AbstractTab;
 
@@ -34,6 +35,11 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
     private Form selectedForm;
     private Aura selectedAura;
     private HashMap<String, Integer> loadedData = new HashMap<String, Integer>();
+    private PlayerDBCInfo info;
+
+    public int prevAura = 0;
+    public int currentAura = 0;
+    public int showingAura = 0;
     public static int activePage = 0;
 
     public GuiDBC() {
@@ -46,6 +52,14 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             PacketHandler.Instance.sendToServer(new RequestForm(-1, true).generatePacket());
         else
             PacketHandler.Instance.sendToServer(new RequestAura(-1,true).generatePacket());
+
+        PlayerDBCInfo dbcInfo = PlayerDataUtil.getClientDBCInfo();
+        if(dbcInfo != null){
+            this.info = dbcInfo;
+            showingAura = PlayerDataUtil.getClientDBCInfo().currentAura != -1 ? 0 : 1;
+            currentAura = PlayerDataUtil.getClientDBCInfo().currentAura;
+            prevAura = PlayerDataUtil.getClientDBCInfo().currentAura;
+        }
     }
 
     @Override
@@ -80,6 +94,12 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         GuiNpcButton clearButton = new GuiNpcButton(2, guiLeft + 75, guiTop + ySize - 11, "form.clear");
         clearButton.width = 65;
         this.addButton(clearButton);
+
+        if(activePage == 1){
+            GuiNpcButton hideAura = new GuiNpcButton(3, guiLeft + 145, guiTop + ySize - 11,  new String[]{"aura.shown", "aura.hidden"}, showingAura);
+            hideAura.width = 65;
+            this.addButton(hideAura);
+        }
     }
 
     @Override
@@ -177,10 +197,12 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         if(guibutton.id == 40 && activePage != 0){
             activePage = 0;
             PacketHandler.Instance.sendToServer(new RequestForm(-1, true).generatePacket());
+            loaded = false;
         }
         if(guibutton.id == 41 && activePage != 1){
             activePage = 1;
             PacketHandler.Instance.sendToServer(new RequestAura(-1, true).generatePacket());
+            loaded = false;
         }
 
         if(activePage == 0){
@@ -189,12 +211,14 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                     if (loadedData.containsKey(selected)) {
                         int formID = loadedData.get(selected);
                         PacketHandler.Instance.sendToServer(new DBCSelectForm(formID).generatePacket());
+                        loaded = false;
                     }
                 }
             } else if (guibutton.id == 2) {
                 PacketHandler.Instance.sendToServer(new DBCSelectForm(-1).generatePacket());
                 selected = null;
                 guiScroll.selected = -1;
+                loaded = false;
             }
         }
         else {
@@ -203,15 +227,32 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                     if (loadedData.containsKey(selected)) {
                         int auraID = loadedData.get(selected);
                         PacketHandler.Instance.sendToServer(new DBCSelectAura(auraID).generatePacket());
+                        currentAura = auraID;
+                        showingAura = 0;
+                        loaded = false;
                     }
                 }
             } else if (guibutton.id == 2) {
                 PacketHandler.Instance.sendToServer(new DBCSelectAura(-1).generatePacket());
                 selected = null;
                 guiScroll.selected = -1;
+                currentAura = -1;
+                showingAura = 1;
+                loaded = false;
+            } else if (guibutton.id == 3) {
+                showingAura = ((GuiNpcButton)guibutton).getValue();
+                if(showingAura == 0){
+                    // Show
+                    if(selectedAura != null){
+                        currentAura = selectedAura.id;
+                    }
+                }
+                else {
+                    // Hide
+                    currentAura = -1;
+                }
             }
         }
-        loaded = false;
     }
 
 
@@ -306,5 +347,11 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
 
     @Override
     public void customScrollDoubleClicked(String selection, GuiCustomScroll scroll) {
+    }
+
+    public void close() {
+        if(prevAura != currentAura)
+            PacketHandler.Instance.sendToServer(new DBCSetAura(currentAura).generatePacket());
+        super.close();
     }
 }

@@ -14,6 +14,9 @@ stats.defensePenetration=Defense Penetration
 form.clear=Clear
 form.select=Select
 
+aura.shown=Shown
+aura.hidden=Hidden
+
 ############################
 ## ITEMS
 ############################
