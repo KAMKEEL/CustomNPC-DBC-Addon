@@ -5,9 +5,7 @@ import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.DBCData;
-import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
@@ -27,31 +25,24 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
     @Shadow
     private int id;
 
-    @Inject(method = "showSE", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPopMatrix()V", shift = At.Shift.BEFORE))
+    @Inject(method = "showSE", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;displayWidth:I", shift = At.Shift.BEFORE))
     private void renderStatusEffectIcon(int var51, int var61, int var71, int var81, CallbackInfo ci, @Local(name = "i") LocalIntRef i, @Local(name = "j") LocalIntRef j) {
         DBCData dbcData = DBCData.getClient();
         HashMap<Integer, Integer> current = dbcData.getActiveEffects();
         for (int id : current.keySet()) {
-            StatusEffect effect = StatusEffectController.Instance.get(id);
-            if (effect.hasIcon()) {
-                drawIcon(var51, var61, effect.icon);
-                if (var71 == 0) {
-                    i.set(i.get() + 18);
-                } else
-                    j.set(j.get() + 18);
-            }
+            // StatusEffect effect = StatusEffectController.Instance.get(id);
+            drawIcon(var51 + i.get(), var61 + j.get(), CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png");
+            if (var71 == 0) {
+                i.set(i.get() + 18);
+            } else
+                j.set(j.get() + 18);
         }
 
-        drawIcon(var51, var61, CustomNpcPlusDBC.ID + ":textures/statuseffects/statuseffects.png");
-        if (var71 == 0) {
-            i.set(i.get() + 18);
-        } else
-            j.set(j.get() + 18);
+
     }
 
     @Unique
     private void drawIcon(int x, int y, String iconDir) {
-        GL11.glPushMatrix();
         Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(iconDir));
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         int h = 0;
@@ -59,7 +50,6 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
         float w = 100f;
         int w2 = (int) (0.16F * (100.0F - w));
         this.drawTexturedModalRect(x + 2 + (JGConfigClientSettings.CLIENT_hud0 > 1 ? 50 : 0), y + w2 + 2, h, v, 16, 16);
-        GL11.glPopMatrix();
     }
 
 }
