@@ -28,6 +28,8 @@ import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import static JinRyuu.JRMCore.JRMCoreH.getMajinAbsorptionValueS;
 import static JinRyuu.JRMCore.JRMCoreH.nbt;
@@ -216,21 +218,27 @@ public class DBCData {
 
     public void decrementActiveEffects() {
         HashMap<Integer, Integer> currentEffects = getActiveEffects();
-        for (int effect : currentEffects.keySet()) {
-            int currentTimer = currentEffects.get(effect);
+        Iterator<Map.Entry<Integer, Integer>> iterator = currentEffects.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, Integer> entry = iterator.next();
+            int effect = entry.getKey();
+            int currentTimer = entry.getValue();
+
             if (currentTimer == -1)
                 continue;
 
             int newTime = currentTimer - 1;
 
             if (newTime <= 0)
-                currentEffects.remove(effect);
+                iterator.remove(); // Remove the current entry using iterator
             else
-                currentEffects.replace(effect, newTime);
+                entry.setValue(newTime); // Update the timer value
 
         }
         setActiveEffects(currentEffects);
     }
+
 
     public void setEyeColorLeft(int color) {
         int i = 42;
