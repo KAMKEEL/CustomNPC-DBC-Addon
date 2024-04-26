@@ -115,6 +115,13 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
         }
     }
 
+    /**
+     * Adjusts the rendered text to apply correct form colors.
+     * @param s1 Main string
+     * @param s2 Tooltip
+     * @param legendColor Color to replace the wrong stat color with.
+     * @return String array of size 2, corresponding to modified s1 and s2 (need those to correct the rendering);
+     */
     private static String[] adjustAttributeData(String s1, String s2, String legendColor) {
         s1 = replaceFormColor(s1, legendColor);
 
