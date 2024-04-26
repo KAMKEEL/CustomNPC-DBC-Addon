@@ -79,6 +79,8 @@ public interface IForm {
 
     void addFormRequirement(int race, byte state);
 
+    void removeFormRequirement(int race);
+
     int getFormRequirement(int race);
 
     /**

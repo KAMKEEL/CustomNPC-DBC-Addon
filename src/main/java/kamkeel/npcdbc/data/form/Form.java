@@ -306,6 +306,13 @@ public class Form implements IForm {
     }
 
     @Override
+    public void removeFormRequirement(int race) {
+        if (race > 5 || race < 0)
+            return;
+        requiredForm.remove(race);
+    }
+
+    @Override
     public int getFormRequirement(int race) {
         if (!requiredForm.containsKey(race))
             return -1;
