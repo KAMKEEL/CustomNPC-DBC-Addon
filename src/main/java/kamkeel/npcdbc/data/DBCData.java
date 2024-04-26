@@ -525,7 +525,7 @@ public class DBCData {
     }
 
     public boolean isLegendary() {
-        return JRMCoreH.StusEfctsMe(17);
+        return JRMCoreH.StusEfctsMe(14);
     }
 
     public boolean containsSE(int id) {
