@@ -15,6 +15,8 @@ public class ConfigDBCGameplay
     public final static String StatusEffects = "StatusEffects";
     public static Property CheckEffectsTickProperty;
     public static float CheckEffectsTick = 10;
+    public static boolean EnableRegen = true;
+    public static float RegenPercent = 10;
 
     public final static String ChargingDex = "ChargingDex";
     public static Property EnableChargingDexProperty;

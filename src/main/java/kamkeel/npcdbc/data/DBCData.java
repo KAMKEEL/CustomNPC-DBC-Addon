@@ -15,6 +15,7 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.DBCUtils;
@@ -22,6 +23,8 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.potion.PotionEffect;
 import noppes.npcs.NBTTags;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
@@ -51,7 +54,7 @@ public class DBCData {
     // Custom Form
     public int addonFormID, auraID;
     public float addonFormLevel;
-    public HashMap<Integer, Integer> activeEffects = new HashMap<>();
+    public HashMap<Integer, StatusEffect> activeEffects = new HashMap<>();
 
     public DBCData() {
         this.side = Side.SERVER;
@@ -122,7 +125,7 @@ public class DBCData {
         comp.setInteger("addonFormID", addonFormID);
         comp.setInteger("auraID", auraID);
         comp.setFloat("addonFormLevel", addonFormLevel);
-        comp.setTag("addonActiveEffects", NBTTags.nbtIntegerIntegerMap(activeEffects));
+        saveEffects(comp);
         return comp;
     }
 
@@ -160,7 +163,20 @@ public class DBCData {
         addonFormID = c.getInteger("addonFormID");
         addonFormLevel = c.getFloat("addonFormLevel");
         auraID = c.getInteger("auraID");
-        activeEffects = NBTTags.getIntegerIntegerMap(c.getTagList("addonActiveEffects", 10));
+
+        if (c.hasKey("addonActiveEffects", 9))
+        {
+            NBTTagList nbttaglist = c.getTagList("addonActiveEffects", 10);
+            for (int i = 0; i < nbttaglist.tagCount(); ++i)
+            {
+                NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+                StatusEffect statusEffect = StatusEffect.readEffectData(nbttagcompound1);
+                if (statusEffect != null)
+                {
+                    this.activeEffects.put(statusEffect.getId(), statusEffect);
+                }
+            }
+        }
     }
 
     public void saveNBTData(boolean syncALL) {
@@ -174,7 +190,7 @@ public class DBCData {
         nbt.setInteger("addonFormID", addonFormID);
         nbt.setInteger("auraID", auraID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
-        nbt.setTag("addonActiveEffects", NBTTags.nbtIntegerIntegerMap(activeEffects));
+        saveEffects(nbt);
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 
         // Send to Tracking Only
@@ -206,35 +222,42 @@ public class DBCData {
         return this.player.getEntityData().getCompoundTag(DBCPersisted);
     }
 
-    public HashMap<Integer, Integer> getActiveEffects() {
+    public HashMap<Integer, StatusEffect> getActiveEffects() {
         return StatusEffectController.Instance.activeEffects.get(Utility.getUUID(player));
     }
 
-    public void setActiveEffects(HashMap<Integer, Integer> activeEffects) {
+    public void saveEffects(NBTTagCompound nbt){
+        NBTTagList nbttaglist = new NBTTagList();
+        Iterator iterator = this.activeEffects.values().iterator();
+        while (iterator.hasNext())
+        {
+            StatusEffect statusEffect = (StatusEffect)iterator.next();
+            nbttaglist.appendTag(statusEffect.writeEffectData(new NBTTagCompound()));
+        }
+        nbt.setTag("addonActiveEffects", nbttaglist);
+    }
+
+    public void setActiveEffects(HashMap<Integer, StatusEffect> activeEffects) {
         NBTTagCompound raw = getRawCompound();
         this.activeEffects = activeEffects;
-        raw.setTag("addonActiveEffects", NBTTags.nbtIntegerIntegerMap(activeEffects));
+        saveEffects(raw);
     }
 
     public void decrementActiveEffects() {
-        HashMap<Integer, Integer> currentEffects = getActiveEffects();
-        Iterator<Map.Entry<Integer, Integer>> iterator = currentEffects.entrySet().iterator();
+        HashMap<Integer, StatusEffect> currentEffects = getActiveEffects();
+        Iterator<Map.Entry<Integer, StatusEffect>> iterator = currentEffects.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            Map.Entry<Integer, Integer> entry = iterator.next();
-            int effect = entry.getKey();
-            int currentTimer = entry.getValue();
+            Map.Entry<Integer, StatusEffect> entry = iterator.next();
+            StatusEffect currentEffect = entry.getValue();
 
-            if (currentTimer == -1)
+            if (currentEffect.duration == -1)
                 continue;
 
-            int newTime = currentTimer - 1;
+            currentEffect.duration--;
 
-            if (newTime <= 0)
+            if (currentEffect.duration == 0)
                 iterator.remove(); // Remove the current entry using iterator
-            else
-                entry.setValue(newTime); // Update the timer value
-
         }
         setActiveEffects(currentEffects);
     }
