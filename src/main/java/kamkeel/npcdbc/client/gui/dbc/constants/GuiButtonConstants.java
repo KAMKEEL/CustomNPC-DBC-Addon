@@ -4,6 +4,7 @@ public class GuiButtonConstants {
     public final static int EXIT = -1;
     public final static int FAMILY_C = -2;
     public final static int YEARS_C = -3;
+    public final static int SERVER_SITE = -4;
 
     public enum ReferenceIDs{
         NEWS(31, 0),
