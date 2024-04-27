@@ -10,7 +10,7 @@ public class StatusEffect implements IStatusEffect {
     public int id = -1;
 
     public String name = "";
-    public int duration = -1;
+    public int duration = -100;
     public byte level = 1;
     public boolean lossOnDeath = true;
 

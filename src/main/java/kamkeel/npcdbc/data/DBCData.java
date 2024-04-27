@@ -216,21 +216,19 @@ public class DBCData extends DBCDataUniversal {
     public void decrementActiveEffects() {
         HashMap<Integer, StatusEffect> currentEffects = getActiveEffects();
         Iterator<Map.Entry<Integer, StatusEffect>> iterator = currentEffects.entrySet().iterator();
-
         while (iterator.hasNext()) {
             Map.Entry<Integer, StatusEffect> entry = iterator.next();
             StatusEffect currentEffect = entry.getValue();
 
-            if (currentEffect.duration == -1)
+            if (currentEffect.duration == -100)
                 continue;
-            else if (currentEffect.duration == 0) {
+            else if (currentEffect.duration <= 0) {
                 currentEffect.runout(player);
                 iterator.remove(); // Remove the current entry using iterator
             } else
                 currentEffect.duration--;
-
-            setActiveEffects(currentEffects);
         }
+        setActiveEffects(currentEffects);
     }
 
     public int[] getAllAttributes() {

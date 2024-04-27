@@ -7,6 +7,7 @@ import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.types.*;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.api.entity.IPlayer;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -26,15 +27,16 @@ public class StatusEffectController implements IStatusEffectHandler {
     public void load() {
         activeEffects.clear();
 
-        standardEffects.put(Effects.REGEN_HEALTH, new RegenHealth(-1));
-        standardEffects.put(Effects.REGEN_KI, new RegenKi(-1));
-        standardEffects.put(Effects.REGEN_STAMINA, new RegenStamina(-1));
-        standardEffects.put(Effects.NAMEK_REGEN, new NamekRegen(-1));
-        standardEffects.put(Effects.FRUIT_OF_MIGHT, new FruitOfMight(-1));
-        standardEffects.put(Effects.INFLATION, new Inflation(-1));
-        standardEffects.put(Effects.MEDITATION, new Meditation(-1));
-        standardEffects.put(Effects.OVERPOWER, new Overpower(-1));
-        standardEffects.put(Effects.CHOCOLATED, new Chocolated(-1));
+        // Global Registration for Effects
+        standardEffects.put(Effects.REGEN_HEALTH, new RegenHealth(-100));
+        standardEffects.put(Effects.REGEN_KI, new RegenKi(-100));
+        standardEffects.put(Effects.REGEN_STAMINA, new RegenStamina(-100));
+        standardEffects.put(Effects.NAMEK_REGEN, new NamekRegen(-100));
+        standardEffects.put(Effects.FRUIT_OF_MIGHT, new FruitOfMight(-100));
+        standardEffects.put(Effects.INFLATION, new Inflation(-100));
+        standardEffects.put(Effects.MEDITATION, new Meditation(-100));
+        standardEffects.put(Effects.OVERPOWER, new Overpower(-100));
+        standardEffects.put(Effects.CHOCOLATED, new Chocolated(-100));
     }
 
     public void loadEffects(EntityPlayer player) {
@@ -79,7 +81,34 @@ public class StatusEffectController implements IStatusEffectHandler {
     }
 
     @Override
-    public boolean hasEffectTime(EntityPlayer player, int id) {
+    public boolean hasEffect(IPlayer player, int id) {
+        if(player == null || player.getMCEntity() == null)
+            return false;
+        return hasEffect((EntityPlayer) player.getMCEntity(), id);
+    }
+
+    @Override
+    public int getEffectDuration(IPlayer player, int id) {
+        if(player == null || player.getMCEntity() == null)
+            return -1;
+        return getEffectDuration((EntityPlayer) player.getMCEntity(), id);
+    }
+
+    @Override
+    public void applyEffect(IPlayer player, int id, int duration, byte level) {
+        if(player == null || player.getMCEntity() == null)
+            return;
+        applyEffect((EntityPlayer) player.getMCEntity(), id, duration, level);
+    }
+
+    @Override
+    public void removeEffect(IPlayer player, int id) {
+        if(player == null || player.getMCEntity() == null)
+            return;
+        removeEffect((EntityPlayer) player.getMCEntity(), id);
+    }
+
+    public boolean hasEffect(EntityPlayer player, int id) {
         HashMap<Integer, StatusEffect> currentEffects = new HashMap<>();
         if (activeEffects.containsKey(player.getUniqueID()))
             currentEffects = activeEffects.get(Utility.getUUID(player));
@@ -89,7 +118,6 @@ public class StatusEffectController implements IStatusEffectHandler {
         return currentEffects.containsKey(id);
     }
 
-    @Override
     public int getEffectDuration(EntityPlayer player, int id) {
         HashMap<Integer, StatusEffect> currentEffects = new HashMap<>();
         if (activeEffects.containsKey(player.getUniqueID()))
@@ -98,10 +126,9 @@ public class StatusEffectController implements IStatusEffectHandler {
         if (currentEffects.containsKey(id))
             return currentEffects.get(id).duration;
 
-        return -2;
+        return -1;
     }
 
-    @Override
     public void applyEffect(EntityPlayer player, int id, int duration, byte level) {
         HashMap<Integer, StatusEffect> currentEffects = new HashMap<>();
         if (activeEffects.containsKey(player.getUniqueID()))
@@ -115,7 +142,6 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     }
 
-    @Override
     public void removeEffect(EntityPlayer player, int id) {
         HashMap<Integer, StatusEffect> currentEffects = new HashMap<>();
         if (activeEffects.containsKey(player.getUniqueID()))

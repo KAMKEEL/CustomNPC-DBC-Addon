@@ -26,6 +26,12 @@ public class ConfigDBCGameplay
     public static Property WarriorChargeProperty;
     public static float WarriorCharge = 60;
 
+    public final static String NamekianRegeneration = "Namek Regen";
+    public static Property EnableNamekianRegenProperty;
+    public static boolean EnableNamekianRegen = true;
+    public static float NamekianRegenMin = 20;
+    public static float NamekianRegenMax = 50;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -51,6 +57,11 @@ public class ConfigDBCGameplay
             MartialArtistCharge = ValueUtil.clamp(WarriorCharge, 0, 100);
             SpiritualistCharge = ValueUtil.clamp(WarriorCharge, 0, 100);
             WarriorCharge = ValueUtil.clamp(WarriorCharge, 0, 100);
+
+            EnableNamekianRegenProperty = config.get(NamekianRegeneration, "Enable Namekian Regeneration", true, "Namekian Regeneration will automatically apply the Namek Regen Effect (dbc_effects.cfg), \nwhen the Player falls below MIN Health and will stop continue to MAX Health.");
+            EnableNamekianRegen = EnableNamekianRegenProperty.getBoolean(true);
+            NamekianRegenMin = config.get(NamekianRegeneration, "Min Namekian Regen", 20).getInt(20);
+            NamekianRegenMax = config.get(NamekianRegeneration, "Max Namekian Regen", 50).getInt(50);
         }
         catch (Exception e)
         {
