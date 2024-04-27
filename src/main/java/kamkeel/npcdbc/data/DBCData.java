@@ -42,7 +42,7 @@ public class DBCData extends DBCDataUniversal {
 
     // Original DBC
     public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXSeconds, Rage, Heat, AuraColor, ArcReserve;
-    public byte Class, Race, Powertype, State, State2, Release;
+    public byte Class, Race, Powertype, Accept, State, State2, Release;
     public boolean Alive, isKO;
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "";
 
@@ -85,6 +85,7 @@ public class DBCData extends DBCDataUniversal {
         comp.setByte("jrmcRelease", Release);
         comp.setByte("jrmcPwrtyp", Powertype);
         comp.setByte("jrmcRace", Race);
+        comp.setByte("jrmcAccept", Accept);
 
         comp.setString("jrmcStatusEff", StatusEffects);
         comp.setString("jrmcSSltX", RacialSkills);
@@ -126,6 +127,7 @@ public class DBCData extends DBCDataUniversal {
         Powertype = c.getByte("jrmcPwrtyp");
         Race = c.getByte("jrmcRace");
         Class = c.getByte("jrmcClass");
+        Accept = c.getByte("jrmcAccept");
 
         StatusEffects = c.getString("jrmcStatusEff");
         RacialSkills = c.getString("jrmcSSltX");
@@ -207,9 +209,9 @@ public class DBCData extends DBCDataUniversal {
 
     public HashMap<Integer, PlayerEffect> updateEffects(HashMap<Integer, PlayerEffect> setVals) {
         HashMap<Integer, PlayerEffect> createdMap = new HashMap<>();
-        for (PlayerEffect playerEffect : setVals.values()){
+        for (PlayerEffect playerEffect : setVals.values()) {
             PlayerEffect newEffect;
-            if(this.currentEffects.containsKey(playerEffect.id)){
+            if (this.currentEffects.containsKey(playerEffect.id)) {
                 newEffect = currentEffects.get(playerEffect.id);
                 newEffect.duration = playerEffect.duration;
                 newEffect.level = playerEffect.level;
@@ -237,7 +239,7 @@ public class DBCData extends DBCDataUniversal {
         while (iterator.hasNext()) {
             Map.Entry<Integer, PlayerEffect> entry = iterator.next();
             PlayerEffect currentEffect = entry.getValue();
-            if(currentEffect == null) {
+            if (currentEffect == null) {
                 iterator.remove();
                 continue;
             }
@@ -246,7 +248,7 @@ public class DBCData extends DBCDataUniversal {
                 continue;
             else if (currentEffect.duration <= 0) {
                 StatusEffect parent = StatusEffectController.Instance.get(currentEffect.id);
-                if(parent != null)
+                if (parent != null)
                     parent.runout(player, currentEffect);
                 iterator.remove();
             } else
@@ -656,12 +658,12 @@ public class DBCData extends DBCDataUniversal {
         return (Form) FormController.getInstance().get(addonFormID);
     }
 
-    public void applyNamekianRegen(){
-        if(player == null)
+    public void applyNamekianRegen() {
+        if (player == null)
             return;
 
-        if(getCurrentBodyPercentage() < ConfigDBCGameplay.NamekianRegenMin){
-            if(!StatusEffectController.getInstance().hasEffect(player, Effects.NAMEK_REGEN)){
+        if (getCurrentBodyPercentage() < ConfigDBCGameplay.NamekianRegenMin) {
+            if (!StatusEffectController.getInstance().hasEffect(player, Effects.NAMEK_REGEN)) {
                 StatusEffectController.getInstance().applyEffect(player, new PlayerEffect(Effects.NAMEK_REGEN, -100, (byte) 1));
             }
         }
