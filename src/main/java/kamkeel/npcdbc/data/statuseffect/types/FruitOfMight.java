@@ -31,12 +31,6 @@ public class FruitOfMight extends StatusEffect {
         }
     }
 
-    public FruitOfMight(int timer, float kiToDrain, int everyXTicks) {
-        this(timer);
-        this.kiToDrain = kiToDrain;
-        this.everyXTick = everyXTicks;
-    }
-
     public void init(EntityPlayer player) {
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         c.currentAura = fruitOfMightAura.id;
