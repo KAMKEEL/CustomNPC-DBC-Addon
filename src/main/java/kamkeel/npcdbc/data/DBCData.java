@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data;
 
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
@@ -58,6 +59,7 @@ public class DBCData extends DBCDataUniversal {
         if (side == Side.SERVER)
             loadNBTData(true);
     }
+
 
     public NBTTagCompound saveFromNBT(NBTTagCompound comp) {
         comp.setInteger("jrmcStrI", STR);
@@ -585,6 +587,26 @@ public class DBCData extends DBCDataUniversal {
     public double getCurrentMulti() {
         return getFullAttribute(0) / STR;
 
+    }
+
+    public String getJRMCData(int id) {
+        for (int pl = 0; pl < JRMCoreH.plyrs.length; pl++) {
+            if (JRMCoreH.plyrs[pl].equals(player.getCommandSenderName())) {
+                return JRMCoreH.data(id)[pl];
+            }
+        }
+        return "";
+
+    }
+
+    public boolean isChargingKiAttack() {
+        ExtendedPlayer jrmcExtendedPlayer = ExtendedPlayer.get(player);
+
+        //Abusing JRMCore's animation system to see if a player is charging a ki attack.
+        boolean kiAnimationTypeSelected = jrmcExtendedPlayer.getAnimKiShoot() != 0;
+        boolean shouldAttemptAnimation = jrmcExtendedPlayer.getAnimKiShootOn() != 0;
+
+        return kiAnimationTypeSelected && shouldAttemptAnimation;
     }
 
     public Aura getAura() {

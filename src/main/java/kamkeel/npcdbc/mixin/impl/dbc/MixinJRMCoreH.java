@@ -12,7 +12,6 @@ import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
-import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
@@ -197,7 +196,7 @@ public abstract class MixinJRMCoreH {
     private static void applyChargingDex(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir, @Local(name = "def") LocalIntRef def, @Local(name = "kiProtection") LocalIntRef kiProtection) {
         DBCData dbcData = DBCData.get((EntityPlayer) Player);
         byte classID = dbcData.Class;
-        boolean isChargingKi = DBCUtils.isChargingKiAttack((EntityPlayer) Player);
+        boolean isChargingKi = DBCData.get((EntityPlayer) Player).isChargingKiAttack();
         float newDef = def.get();
         int kiProt = kiProtection.get();
         if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {

@@ -9,6 +9,7 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.data.DBCData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,8 +21,6 @@ import static JinRyuu.JRMCore.JRMCoreH.*;
 
 // Created by Goatee
 public class DBCUtils {
-    public static String[][] fullFormNames = new String[][]{{"Base", "Full Power", "Buffed State", "God Ki State"}, {"§8Base", "Super Saiyan", "Super Saiyan (G2)", "Super Saiyan (G3)", "Super Saiyan", "Super Saiyan 2", "Super Saiyan 3", "Great Ape", "Super Great Ape", "Super Saiyan God", "Super Saiyan Blue", "", "", "", "Super Saiyan 4", "SS Blue (Evolved)"}, {"§8Base", "Super Saiyan", "Super Saiyan (G2)", "Super Saiyan (G3)", "Super Saiyan", "Super Saiyan 2", "Super Saiyan 3", "Great Ape", "Super Great Ape", "Super Saiyan God", "Super Saiyan Blue", "", "", "", "Super Saiyan 4", "SS Blue (Evolved)"}, {"Base", "Full Power Release", "Giant Form", "God Ki State"}, {"First Form", "First Form (Buffed)", "Second Form", "Third Form", "Final Form", "Super Form", "Ultimate Form", "God Ki State"}, {"Base", "Evil Form", "Full Power (Buffed)", "Purest Form", "God Ki State"}};
-    public static String[][] shortFormNames = new String[][]{{}, {"§8Base", "SS", "SS (G2)", "SS (G3)", "SS", "SS 2", "SS 3", "Great Ape", "Super Great Ape", "SS God", "SS Blue", "", "", "", "SS 4", "SSB (Evo)"}};
     public static String[][] formattedNames = new String[][]{
             {"§fBase", "§eFull Release", "§cBuffed", "§f4God"},
             {"§fBase", "§eSuper Saiyan", "§eSuper Saiyan (Grade 2)", "§eSuper Saiyan (Grade 3)", "§eMastered Super Saiyan", "§eSuper Saiyan 2", "§eSuper Saiyan 3", "§4Oozaru", "§6Golden Oozaru", "§cSuper Saiyan God", "§bSuper Saiyan Blue", "", "", "", "§4Super Saiyan 4", "§bShinka"},
@@ -30,11 +29,6 @@ public class DBCUtils {
             {"§7Minimal", "§7First Form", "§7Second Form", "§7Third Form", "§fBase", "§5Fifth Form", "§6Ultimate", "§4God"},
             {"§fBase", "§4Evil", "§cFull Power", "§dPurest", "§4God"}
     };
-    public static int[][] formColors = new int[][]{{0, 0xFFEF99, 0xFFEF99, 0xFFEF99, 0xFFEF99, 0xFFEF99, 0xFFEF99, 0x964B00, 0xFFEF99, 0xFD4345, 0x46D2F5, 0, 0, 0, 0xC11D00, 0x2039A0}}; // ssg
-    public static float height;
-    public static float width;
-
-    public static String[] formLabels = new String[]{"Mystic", "Legendary", "Divine", "Rosé", "(Mastered)", "Ritual", "Ultra Instinct", "Mastered UI", "God Of Destruction"};
     public static int lastSetDamage = -1;
 
     public static String getFormattedStateName(int race, int state) {
@@ -46,136 +40,10 @@ public class DBCUtils {
         return out;
     }
 
-    public static String getFullState1Name(int race, int state, boolean divine, boolean l, boolean ui, boolean w) {
-        String fn = fullFormNames[race][state];
-        String u = " (" + (w ? "M" : "") + "UI)";
-        String u2 = " " + (w ? "M" : "") + "UI";
 
-        if (ui && state != 0 && !divine) {
-            if (state == 7 || state == 8)
-                return "";
-
-            if (state == 14)
-                fn = fullFormNames[race][state] + u2;
-            else if (JRMCoreH.rc_sai())
-                fn = shortFormNames[race][state] + u;
-
-        } else {
-            if (l && canBeLgnd(race, state))
-                if (state == 8)
-                    fn = "Ape";
-                else
-                    fn = shortFormNames[race][state];
-            if (divine && JRMCoreH.rc_sai(race)) {
-                if (state == 10)
-                    if (ui)
-                        fn = "SS Rosé" + u;
-                    else
-                        fn = "Super Saiyan Rosé";
-                if (state == 15)
-                    if (ui)
-                        fn = "SS Rosé Evo" + u;
-                    else
-                        fn = "SS Rosé (Evolved)";
-                if (state == 14 && !ui)
-                    fn = "Divine SS 4";
-
-            }
-        }
-
-        if (JRMCoreH.StusEfctsMe(20) || JRMCoreH.StusEfctsMe(13) || ui && state == 0)
-            fn = "";
-
-        // JRMCoreH.getFormMaster
-
-        return fn;
-    }
-
-    public static int getCurrentFormColor() {
-        int race = JRMCoreH.Race;
-        int state = JRMCoreH.State;
-        boolean l = JRMCoreH.StusEfctsMe(14);
-        boolean divine = JRMCoreH.StusEfctsMe(17);
-        boolean mystic = JRMCoreH.StusEfctsMe(13);
-        boolean ui = JRMCoreH.StusEfctsMe(19);
-        boolean uiHairWhite = DBCUtils.isUIWhite(ui, JRMCoreH.State2);
-        boolean GoD = JRMCoreH.StusEfctsMe(20);
-        boolean kk = JRMCoreH.StusEfctsMe(5);
-        int c = 0;
-        if (JRMCoreH.rc_sai())
-            c = formColors[0][state];
-        //else
-        //c = GuiTKeys.getFormColorState(state);
-        if (l && canBeLgnd(race, state))
-            c = 0x55FF55;
-        if (divine)
-            if (JRMCoreH.rc_sai()) {
-                if (state == 10)
-                    c = 0xFF9BD5;
-                else if (state == 15)
-                    c = 0xFF4284;// 0xD86FA0;
-                else if (state == 14)
-                    c = 0xFF6684;
-            }
-        if (mystic)
-            c = 0xE7EACE;
-        if (ui)
-            if (uiHairWhite)
-                c = 0xE8E8E8;// 0xC1C1C1;//0xF0F0F0;
-            else
-                c = 0x6A6D70;
-        if (GoD)
-            c = 0xAA00AA;
-        if (kk)
-            c = 0xFF5555;
-        return c;
-
-    }
-
-    public static String getFullState2Name(int race, int state, boolean l, boolean divine, boolean mystic, boolean ui, boolean uiHairWhite, boolean GoD) {
-        String st2 = "";
-        if (l && canBeLgnd(race, state) && !divine && !ui)
-            st2 = formLabels[1];
-        if (mystic)
-            st2 = formLabels[0];
-        if (ui && (state == 0 || state == 7 || state == 8))
-            if (uiHairWhite)
-                st2 = formLabels[7];
-            else
-                st2 = formLabels[6];
-
-        if (GoD)
-            st2 = formLabels[8];
-        boolean kk = JRMCoreH.StusEfctsMe(5);
-        if (kk)
-            st2 = "Kaioken " + JRMCoreH.TransKaiNms[JRMCoreH.State2];
-
-        return st2;
-    }
-
-    public static String getCurrentFormFullName(int race, int state, boolean l, boolean divine, boolean mystic, boolean ui, boolean uiHairWhite, boolean GoD) {
-        String st1 = getFullState1Name(race, state, divine, l, ui, uiHairWhite);
-        String st2 = getFullState2Name(race, state, l, divine, mystic, ui, uiHairWhite, GoD);
-
-        st1 = st1.equals("§8Base") && !st2.equals("") ? "" : st1;
-
-        String name = st2.equals("") ? st1 : st2 + " " + st1;
-
-
-        return name;
-    }
-
-    public static Boolean canBeLgnd(int race, int st) {
-        if (race == 1 | race == 2)
-            if (st != 0 && st != 9 && st != 10 && st != 15 && st != 7)
-                return true;
-            else
-                return false;
-        else
-            return false;
-    }
-
-
+    /**
+     * A generic that checks if given st2 has white hair in the config
+     */
     public static Boolean isUIWhite(boolean ui, int st2) {
         if (!ui)
             return false;
@@ -184,6 +52,9 @@ public class DBCUtils {
         return JGConfigUltraInstinct.CONFIG_UI_HAIR_WHITE[ultra_instinct_level];
     }
 
+    /**
+     * Last UI Level player has unlocked. True if MUI last level with white hair
+     */
     public static int lastUIlvl(boolean hairWhite, EntityPlayer p) {
         int ui = JRMCoreH.SklLvl(16, p);
         int curLvl = JGConfigUltraInstinct.CONFIG_UI_LEVELS < ui ? JGConfigUltraInstinct.CONFIG_UI_LEVELS : ui;
@@ -220,35 +91,6 @@ public class DBCUtils {
     }
 
 
-    public static void setDmgRed(Entity entity, float dmgred) {
-        if (entity != null)
-            if (entity instanceof EntityPlayer)
-                JRMCoreH.setFloat(dmgred, (EntityPlayer) entity, "dmgred");
-            else
-                JRMCoreH.nbt(entity).setFloat("dmgred", dmgred);
-
-    }
-
-    public static float getDmgRed(Entity entity) {
-        if (entity != null)
-            if (entity instanceof EntityPlayer)
-                return JRMCoreH.getFloat((EntityPlayer) entity, "dmgred");
-            else
-                return JRMCoreH.nbt(entity).getFloat("dmgred");
-        return 0;
-    }
-
-
-    public static String getJRMCData(int id, EntityPlayer p) {
-        for (int pl = 0; pl < JRMCoreH.plyrs.length; pl++) {
-            if (JRMCoreH.plyrs[pl].equals(p.getCommandSenderName())) {
-                return JRMCoreH.data(id)[pl];
-            }
-        }
-        return "";
-
-    }
-
     public static double getMaxFormMasteryLvl(int st, int race) {
         // int n = JRMCoreH.trans[JRMCoreH.Race].length - 1; // kk? n + 1 : mys? n + 2 :
         // ui? n + 3: god? n + 4 : n;
@@ -274,11 +116,7 @@ public class DBCUtils {
         int st = JRMCoreH.getFormID(formName, race, true);
         double max = getMaxFormMasteryLvl(st, race);
         double fm = getFormMasteryValue(p, race, formName);
-        return fm >= perc(max, perc);
-    }
-
-    public static double perc(double n, double perc) {
-        return n / 100 * perc;
+        return fm >= Utility.percent(max, perc);
     }
 
     public static boolean isFMMax(EntityPlayer p, String formName, int race) {
@@ -292,7 +130,7 @@ public class DBCUtils {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
                 boolean block = props.getBlocking() == 1;
-                boolean isChargingKi = isChargingKiAttack(player);
+                boolean isChargingKi = DBCData.get(player).isChargingKiAttack();
                 int[] PlyrAttrbts = PlyrAttrbts(player);
                 NBTTagCompound nbt = nbt(player, "pres");
                 byte state = nbt.getByte("jrmcState");
@@ -479,7 +317,7 @@ public class DBCUtils {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
                 boolean block = props.getBlocking() == 1;
-                boolean isChargingKi = isChargingKiAttack(player);
+                boolean isChargingKi = DBCData.get(player).isChargingKiAttack();
 
                 int[] attributes = PlyrAttrbts(player);
                 String[] playerSkills = PlyrSkills(player);
@@ -700,13 +538,4 @@ public class DBCUtils {
     }
 
 
-    public static boolean isChargingKiAttack(EntityPlayer player) {
-        ExtendedPlayer jrmcExtendedPlayer = ExtendedPlayer.get(player);
-
-        //Abusing JRMCore's animation system to see if a player is charging a ki attack.
-        boolean kiAnimationTypeSelected = jrmcExtendedPlayer.getAnimKiShoot() != 0;
-        boolean shouldAttemptAnimation = jrmcExtendedPlayer.getAnimKiShootOn() != 0;
-
-        return kiAnimationTypeSelected && shouldAttemptAnimation;
-    }
 }
