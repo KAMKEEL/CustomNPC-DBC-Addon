@@ -204,7 +204,7 @@ public class AuraDisplay implements IAuraDisplay {
 
     @Override
     public void setSize(float size) {
-        this.size = ValueUtil.clamp(size, 0.05f, 10f);
+        this.size = ValueUtil.clamp(size, 0.05f, 10);
     }
 
 
