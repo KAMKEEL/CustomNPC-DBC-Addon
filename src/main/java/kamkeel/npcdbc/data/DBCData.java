@@ -7,13 +7,16 @@ import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
@@ -46,7 +49,7 @@ public class DBCData extends DBCDataUniversal {
     // Custom Form
     public int addonFormID, auraID;
     public float addonFormLevel;
-    public HashMap<Integer, StatusEffect> activeEffects = new HashMap<>();
+    public HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
 
     public DBCData() {
         this.side = Side.SERVER;
@@ -96,7 +99,7 @@ public class DBCData extends DBCDataUniversal {
         comp.setInteger("addonFormID", addonFormID);
         comp.setInteger("auraID", auraID);
         comp.setFloat("addonFormLevel", addonFormLevel);
-        saveEffects(comp);
+        saveEffectsNBT(comp);
         return comp;
     }
 
@@ -143,9 +146,9 @@ public class DBCData extends DBCDataUniversal {
             NBTTagList nbttaglist = c.getTagList("addonActiveEffects", 10);
             for (int i = 0; i < nbttaglist.tagCount(); ++i) {
                 NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-                StatusEffect statusEffect = StatusEffect.readEffectData(nbttagcompound1);
-                if (statusEffect != null) {
-                    this.activeEffects.put(statusEffect.getId(), statusEffect);
+                PlayerEffect playerEffect = PlayerEffect.readEffectData(nbttagcompound1);
+                if (playerEffect != null) {
+                    this.currentEffects.put(playerEffect.id, playerEffect);
                 }
             }
         }
@@ -158,11 +161,11 @@ public class DBCData extends DBCDataUniversal {
         addonFormID = formData.currentForm;
         addonFormLevel = formData.getCurrentLevel();
         auraID = formData.currentAura;
-        activeEffects = StatusEffectController.Instance.activeEffects.get(Utility.getUUID(player));
+        setCurrentEffects(StatusEffectController.Instance.playerEffects.get(Utility.getUUID(player)));
         nbt.setInteger("addonFormID", addonFormID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
         nbt.setInteger("auraID", auraID);
-        saveEffects(nbt);
+        saveEffectsNBT(nbt);
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 
         // Send to Tracking Only
@@ -193,44 +196,64 @@ public class DBCData extends DBCDataUniversal {
         return this.player.getEntityData().getCompoundTag(DBCPersisted);
     }
 
-    public HashMap<Integer, StatusEffect> getActiveEffects() {
-        return StatusEffectController.Instance.activeEffects.get(Utility.getUUID(player));
+    public HashMap<Integer, PlayerEffect> getPlayerEffects() {
+        return StatusEffectController.Instance.playerEffects.get(Utility.getUUID(player));
     }
 
-    public void setActiveEffects(HashMap<Integer, StatusEffect> activeEffects) {
+    public void setCurrentEffects(HashMap<Integer, PlayerEffect> setVals) {
         NBTTagCompound raw = getRawCompound();
-        this.activeEffects = activeEffects;
-        saveEffects(raw);
+        this.currentEffects = updateEffects(setVals);
+        saveEffectsNBT(raw);
     }
 
-    public void saveEffects(NBTTagCompound nbt) {
+    public HashMap<Integer, PlayerEffect> updateEffects(HashMap<Integer, PlayerEffect> setVals) {
+        HashMap<Integer, PlayerEffect> createdMap = new HashMap<>();
+        for (PlayerEffect playerEffect : setVals.values()){
+            PlayerEffect newEffect;
+            if(this.currentEffects.containsKey(playerEffect.id)){
+                newEffect = currentEffects.get(playerEffect.id);
+                newEffect.duration = playerEffect.duration;
+                newEffect.level = playerEffect.level;
+                createdMap.put(playerEffect.id, newEffect);
+            } else {
+                createdMap.put(playerEffect.id, new PlayerEffect(playerEffect.id, playerEffect.duration, playerEffect.level));
+            }
+        }
+        return createdMap;
+    }
+
+    public void saveEffectsNBT(NBTTagCompound nbt) {
         NBTTagList nbttaglist = new NBTTagList();
-        Iterator iterator = this.activeEffects.values().iterator();
+        Iterator iterator = this.currentEffects.values().iterator();
         while (iterator.hasNext()) {
-            StatusEffect statusEffect = (StatusEffect) iterator.next();
-            nbttaglist.appendTag(statusEffect.writeEffectData(new NBTTagCompound()));
+            PlayerEffect playerEffect = (PlayerEffect) iterator.next();
+            nbttaglist.appendTag(playerEffect.writeEffectData(new NBTTagCompound()));
         }
         nbt.setTag("addonActiveEffects", nbttaglist);
     }
 
     public void decrementActiveEffects() {
-        HashMap<Integer, StatusEffect> currentEffects = getActiveEffects();
-        Iterator<Map.Entry<Integer, StatusEffect>> iterator = currentEffects.entrySet().iterator();
-
+        HashMap<Integer, PlayerEffect> currentEffects = getPlayerEffects();
+        Iterator<Map.Entry<Integer, PlayerEffect>> iterator = currentEffects.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<Integer, StatusEffect> entry = iterator.next();
-            StatusEffect currentEffect = entry.getValue();
-
-            if (currentEffect.duration == -1)
+            Map.Entry<Integer, PlayerEffect> entry = iterator.next();
+            PlayerEffect currentEffect = entry.getValue();
+            if(currentEffect == null) {
+                iterator.remove();
                 continue;
-            else if (currentEffect.duration == 0) {
-                currentEffect.runout(player);
-                iterator.remove(); // Remove the current entry using iterator
+            }
+
+            if (currentEffect.duration == -100)
+                continue;
+            else if (currentEffect.duration <= 0) {
+                StatusEffect parent = StatusEffectController.Instance.get(currentEffect.id);
+                if(parent != null)
+                    parent.runout(player, currentEffect);
+                iterator.remove();
             } else
                 currentEffect.duration--;
-
-            setActiveEffects(currentEffects);
         }
+        setCurrentEffects(currentEffects);
     }
 
     public int[] getAllAttributes() {
@@ -632,5 +655,16 @@ public class DBCData extends DBCDataUniversal {
             return null;
 
         return (Form) FormController.getInstance().get(addonFormID);
+    }
+
+    public void applyNamekianRegen(){
+        if(player == null)
+            return;
+
+        if(getCurrentBodyPercentage() < ConfigDBCGameplay.NamekianRegenMin){
+            if(!StatusEffectController.getInstance().hasEffect(player, Effects.NAMEK_REGEN)){
+                StatusEffectController.getInstance().applyEffect(player, new PlayerEffect(Effects.NAMEK_REGEN, -100, (byte) 1));
+            }
+        }
     }
 }

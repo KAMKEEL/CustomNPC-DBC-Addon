@@ -2,13 +2,13 @@ package kamkeel.npcdbc.data.statuseffect.types;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class Meditation extends StatusEffect {
 
-    public Meditation(int timer) {
-        super(timer);
+    public Meditation() {
         name = "Meditation";
         id = Effects.MEDITATION;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
@@ -17,5 +17,5 @@ public class Meditation extends StatusEffect {
     }
 
     @Override
-    public void process(EntityPlayer player){}
+    public void process(EntityPlayer player, PlayerEffect playerEffect){}
 }
