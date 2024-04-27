@@ -1,6 +1,9 @@
 package kamkeel.npcdbc.client.gui.dbc.constants;
 
 public class GuiButtonConstants {
+    //How many non-gui referencing button actions exist
+    private final static int reference_offset = 20;
+
     public final static int EXIT = -1;
     public final static int FAMILY_C = -2;
     public final static int YEARS_C = -3;
@@ -42,7 +45,7 @@ public class GuiButtonConstants {
         }
 
         public int getButtonId() {
-            return -20 - this.ordinal();
+            return -reference_offset - this.ordinal();
         }
     }
 }
