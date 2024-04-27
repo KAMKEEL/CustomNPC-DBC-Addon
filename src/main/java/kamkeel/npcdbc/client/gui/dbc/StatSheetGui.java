@@ -9,6 +9,14 @@ public class StatSheetGui extends AbstractJRMCGui {
 
     public static boolean overrideBaseDBC = false;
 
+    public StatSheetGui() {
+        super(10);
+    }
+
+    protected StatSheetGui(int guiReplacementID){
+        super(guiReplacementID);
+    }
+
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
@@ -19,7 +27,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
     @Override
     public void initGui(){
-        this.buttonList.clear();
+        super.initGui();
 
 
         this.buttonList.add(new GuiButton(31, 0, 0, "News"));
