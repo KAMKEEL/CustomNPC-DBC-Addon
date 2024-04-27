@@ -15,7 +15,7 @@ import noppes.npcs.constants.EnumPacketClient;
 import java.io.IOException;
 
 public final class RequestForm extends AbstractPacket {
-    public static final String packetName = "NPCDBC|RequestForm";
+    public static final String packetName = "NPC|RequestForm";
     private int formID;
     private boolean onlyPlayers;
 

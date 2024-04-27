@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public final class CapsuleInfo extends AbstractPacket {
-    public static final String packetName = "NPCDBC|CapsuleInfo";
+    public static final String packetName = "NPC|CapInfo";
     private boolean cooldown = false;
 
     public CapsuleInfo(){}

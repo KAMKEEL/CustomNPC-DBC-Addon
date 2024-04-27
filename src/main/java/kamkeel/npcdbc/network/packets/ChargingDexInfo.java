@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public final class ChargingDexInfo extends AbstractPacket {
-    public static final String packetName = "NPCDBC|ChargingDexInfo";
+    public static final String packetName = "NPC|ChargeDex";
     private float ma = 0;
     private float spi = 0;
     private float war = 0;

@@ -19,7 +19,7 @@ import noppes.npcs.controllers.data.PlayerData;
 import java.io.IOException;
 
 public final class DBCSetAura extends AbstractPacket {
-    public static final String packetName = "NPCDBC|SetAura";
+    public static final String packetName = "NPC|SetAura";
     private int auraID;
 
     public DBCSetAura(int auraID) {

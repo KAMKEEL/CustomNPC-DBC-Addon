@@ -17,7 +17,7 @@ import noppes.npcs.constants.EnumPacketClient;
 import java.io.IOException;
 
 public final class RequestAura extends AbstractPacket {
-    public static final String packetName = "NPCDBC|RequestAura";
+    public static final String packetName = "NPC|RequestAura";
     private int auraID;
     private boolean onlyPlayers;
 

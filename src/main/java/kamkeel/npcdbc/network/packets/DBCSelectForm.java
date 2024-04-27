@@ -19,7 +19,7 @@ import noppes.npcs.controllers.data.PlayerData;
 import java.io.IOException;
 
 public final class DBCSelectForm extends AbstractPacket {
-    public static final String packetName = "NPCDBC|SelectForm";
+    public static final String packetName = "NPC|SelectForm";
     private int formID;
 
     public DBCSelectForm(int formID) {

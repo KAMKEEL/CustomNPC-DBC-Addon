@@ -12,7 +12,7 @@ import java.io.IOException;
 import static noppes.npcs.NoppesUtilServer.getPlayerByName;
 
 public final class DBCSetValPacket extends AbstractPacket {
-    public static final String packetName = "NPCDBC|SetValue";
+    public static final String packetName = "NPC|SetValue";
     private EnumNBTType type;
     private EntityPlayer player;
     private String tag;
