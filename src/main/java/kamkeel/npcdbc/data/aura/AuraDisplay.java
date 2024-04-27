@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.aura;
 import kamkeel.npcdbc.api.aura.IAuraDisplay;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
+import noppes.npcs.util.ValueUtil;
 
 public class AuraDisplay implements IAuraDisplay {
     public Aura parent;
@@ -203,7 +204,7 @@ public class AuraDisplay implements IAuraDisplay {
 
     @Override
     public void setSize(float size) {
-        this.size = Math.max(Math.min(size, 10), 0.05f);
+        this.size = ValueUtil.clamp(size, 0.05f, 10f);
     }
 
 

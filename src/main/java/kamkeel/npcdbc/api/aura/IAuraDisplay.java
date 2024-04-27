@@ -32,6 +32,10 @@ public interface IAuraDisplay {
 
     int getAlpha();
 
+    /**
+     * @param type  Legal types: aura, lightning
+     * @param alpha value of alpha/transparency to set type to
+     */
     void setAlpha(String type, int alpha);
 
     /**
@@ -46,6 +50,9 @@ public interface IAuraDisplay {
 
     float getSize();
 
+    /**
+     * @param size Value to set aura size to. Min 0.05, Max 10
+     */
     void setSize(float size);
 
 
@@ -53,7 +60,9 @@ public interface IAuraDisplay {
 
     float getSpeed();
 
-
+    /**
+     * @param speed How fast aura should go through its lifecycle in ticks. DBC Default is 40 ticks. The lower, the faster
+     */
     void setSpeed(float speed);
 
     /**

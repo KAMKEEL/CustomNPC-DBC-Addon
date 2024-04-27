@@ -77,23 +77,23 @@ public class Aura implements IAura {
     }
 
     @Override
-    public void assignToPlayer(EntityPlayer p) {
+    public void assignToPlayer(EntityPlayer player) {
 
-        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(p);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         formData.addAura(this);
         formData.updateClient();
 
 
     }
 
-    public void assignToPlayer(String name) {
-        assignToPlayer(NpcAPI.Instance().getPlayer(name).getMCEntity());
+    public void assignToPlayer(String playerName) {
+        assignToPlayer(NpcAPI.Instance().getPlayer(playerName).getMCEntity());
     }
 
 
     @Override
-    public void removeFromPlayer(EntityPlayer p) {
-        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(p);
+    public void removeFromPlayer(EntityPlayer player) {
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         formData.removeAura(this);
         if (formData.selectedAura == this.id)
             formData.selectedAura = -1;
@@ -101,8 +101,8 @@ public class Aura implements IAura {
         formData.updateClient();
     }
 
-    public void removeFromPlayer(String name) {
-        removeFromPlayer(NpcAPI.Instance().getPlayer(name).getMCEntity());
+    public void removeFromPlayer(String playerName) {
+        removeFromPlayer(NpcAPI.Instance().getPlayer(playerName).getMCEntity());
     }
 
     @Override
