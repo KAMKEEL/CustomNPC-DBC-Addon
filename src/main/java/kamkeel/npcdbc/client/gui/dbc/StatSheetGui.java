@@ -3,7 +3,7 @@ package kamkeel.npcdbc.client.gui.dbc;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreGuiButtons00;
 import JinRyuu.JRMCore.JRMCoreH;
-import kamkeel.npcdbc.client.gui.dbc.constants.GuiButtonConstants;
+import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.data.DBCData;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
@@ -29,7 +29,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         dynamicLabels.clear();
 
-        this.dynamicLabels.add(new JRMCoreLabel("Testing", DBCData.getClient().Body+"", guiWidthOffset+10, guiHeightOffset+10, -1));
+        this.dynamicLabels.add(new JRMCoreLabel("Testing", DBCData.getClient().Ki+"", guiWidthOffset+10, guiHeightOffset+10, -1));
 
 
 
@@ -123,9 +123,9 @@ public class StatSheetGui extends AbstractJRMCGui {
         JRMCoreClient.bars.showSE(this.width/4, guiHeightOffset - 35, 0, 0);
     }
     private void addDifficultyButton() {
-        String translation = "Difficulty";
+        GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.DIFFICULTY;
+        String translation = ref.getTranslation();
         int stringWidth = fontRendererObj.getStringWidth(translation)+8;
-        GuiButtonConstants.ReferenceIDs ref = GuiButtonConstants.ReferenceIDs.DIFFICULTY;
         this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 8046079));
     }
 }
