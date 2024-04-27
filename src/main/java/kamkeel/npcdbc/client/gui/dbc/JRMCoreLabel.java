@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui.dbc;
 
+import JinRyuu.JRMCore.JRMCoreH;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
@@ -83,7 +84,7 @@ public class JRMCoreLabel extends GuiLabel {
 
             int linesWritten = 0;
             for(String text : toolTipSplit){
-                client.fontRenderer.drawString(text, tooltipX+5, tooltipY+5 + linesWritten*10, 0);
+                client.fontRenderer.drawString( JRMCoreH.cldgy+text, tooltipX+5, tooltipY+5 + linesWritten*10, 0);
                 linesWritten++;
             }
 
