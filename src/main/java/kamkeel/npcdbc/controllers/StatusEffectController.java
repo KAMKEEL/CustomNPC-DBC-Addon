@@ -41,9 +41,18 @@ public class StatusEffectController implements IStatusEffectHandler {
         standardEffects.put(Effects.CHOCOLATED, new Chocolated());
     }
 
+    /**
+     * Loads Effects from Players Player Persisted NBT
+     * @param player Player Logging in
+     */
     public void loadEffects(EntityPlayer player) {
         DBCData dbcData = DBCData.get(player);
-        playerEffects.put(Utility.getUUID(player), dbcData.activeEffects);
+        HashMap<Integer, PlayerEffect> playerEffectHashMap = new HashMap<>();
+        for(PlayerEffect val : dbcData.currentEffects.values()){
+            PlayerEffect playerEffect = new PlayerEffect(val.id, val.duration, val.level);
+            playerEffectHashMap.put(playerEffect.id, playerEffect);
+        }
+        playerEffects.put(Utility.getUUID(player), playerEffectHashMap);
     }
 
     public void runEffects(EntityPlayer player) {

@@ -13,7 +13,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,7 +27,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
     @Inject(method = "showSE", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;displayWidth:I", shift = At.Shift.BEFORE))
     private void renderStatusEffectIcon(int var51, int var61, int var71, int var81, CallbackInfo ci, @Local(name = "i") LocalIntRef i, @Local(name = "j") LocalIntRef j) {
         DBCData dbcData = DBCData.getClient();
-        HashMap<Integer, PlayerEffect> current = dbcData.getActiveEffects();
+        HashMap<Integer, PlayerEffect> current = dbcData.getPlayerEffects();
         for (int id : current.keySet()) {
             StatusEffect effect = StatusEffectController.Instance.get(id);
             if(effect == null)
