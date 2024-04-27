@@ -2,9 +2,12 @@ package kamkeel.npcdbc.client.gui.dbc;
 
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreGuiButtons00;
+import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
+import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.mixin.IDBCGuiScreen;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -39,6 +42,14 @@ public class StatSheetGui extends AbstractJRMCGui {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
+        DBCData dbcClient = DBCData.getClient();
+        if(dbcClient.Accept == 0){
+            JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
+            ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(0);
+            FMLCommonHandler.instance().showGuiScreen(DBCScreen);
+            return;
+        }
+
         this.drawBackground();
 
         drawStatusEffects();
@@ -63,9 +74,6 @@ public class StatSheetGui extends AbstractJRMCGui {
     protected void actionPerformed(GuiButton button){
         super.actionPerformed(button);
 
-//        JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
-//        ((IDBCGuiScreen) (Object) DBCScreen).setGuiIDPostInit(button.id);
-//        FMLCommonHandler.instance().showGuiScreen(DBCScreen);
     }
 
     protected void drawAlignmentBar(){
