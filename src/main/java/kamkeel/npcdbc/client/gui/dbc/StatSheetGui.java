@@ -4,14 +4,16 @@ import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.mixin.IDBCGuiScreen;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 
-public class StatSheetGUI extends GuiScreen {
+public class StatSheetGui extends AbstractJRMCGui {
 
     public static boolean overrideBaseDBC = false;
 
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
+        this.drawBackground();
+
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -47,12 +49,9 @@ public class StatSheetGUI extends GuiScreen {
     }
 
     @Override
-    public boolean doesGuiPauseGame(){
-        return false;
-    }
-
-    @Override
     protected void actionPerformed(GuiButton button){
+        super.actionPerformed(button);
+
         JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
         ((IDBCGuiScreen) (Object) DBCScreen).setGuiIDPostInit(button.id);
         FMLCommonHandler.instance().showGuiScreen(DBCScreen);
