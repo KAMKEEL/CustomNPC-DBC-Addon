@@ -1,9 +1,6 @@
 package kamkeel.npcdbc.client.gui.dbc;
 
-import JinRyuu.JRMCore.JRMCoreGuiButtons00;
-import JinRyuu.JRMCore.JRMCoreGuiButtons02;
-import JinRyuu.JRMCore.JRMCoreGuiButtons03;
-import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.*;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiButtonConstants;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -37,6 +34,7 @@ public abstract class AbstractJRMCGui extends GuiScreen {
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
         this.guiHeightOffset = (this.height - menuImageHeight) / 2;
 
+        addCloseButton();
         addNavbarButtons();
     }
 
@@ -56,13 +54,24 @@ public abstract class AbstractJRMCGui extends GuiScreen {
         }
     }
 
-    protected void addNavbarButtons(){
-        //@TODO Add proper navbar generation buttons
+    protected void addStatusEffects(){
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
         this.guiHeightOffset = (this.height - menuImageHeight) / 2;
+        JRMCoreClient.bars.showSE(this.width/4, guiHeightOffset - 35, 0, 0);
+    }
 
+    protected void addServerButtons(){
+        this.guiWidthOffset = (this.width - menuImageWidth) / 2;
+        this.guiHeightOffset = (this.height - menuImageHeight) / 2;
+    }
+    protected void addCloseButton(){
+        this.guiWidthOffset = (this.width - menuImageWidth) / 2;
+        this.guiHeightOffset = (this.height - menuImageHeight) / 2;
         this.buttonList.add(new JRMCoreGuiButtons00(GuiButtonConstants.EXIT, guiWidthOffset + menuImageWidth/2 -150, guiHeightOffset+menuImageHeight/2+65, 20, 20, "X", 0));
 
+    }
+
+    protected void addNavbarButtons(){
         GuiButtonConstants.ReferenceIDs[] guiReferences = GuiButtonConstants.ReferenceIDs.values();
         int i = 0;
         for(; i < guiReferences.length; i++){
