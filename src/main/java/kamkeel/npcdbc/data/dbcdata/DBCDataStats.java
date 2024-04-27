@@ -13,6 +13,8 @@ import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
@@ -27,6 +29,42 @@ public class DBCDataStats {
 
     public DBCDataStats(DBCData dbcData) {
         this.d = dbcData;
+    }
+
+    public HashMap<Integer, PlayerEffect> getPlayerEffects() {
+        return d.currentEffects;
+    }
+
+    public void setCurrentEffects(HashMap<Integer, PlayerEffect> setVals) {
+        NBTTagCompound raw = d.getRawCompound();
+        d.currentEffects = updateEffects(setVals);
+        saveEffectsNBT(raw);
+    }
+
+    public HashMap<Integer, PlayerEffect> updateEffects(HashMap<Integer, PlayerEffect> setVals) {
+        HashMap<Integer, PlayerEffect> createdMap = new HashMap<>();
+        for (PlayerEffect playerEffect : setVals.values()) {
+            PlayerEffect newEffect;
+            if (d.currentEffects.containsKey(playerEffect.id)) {
+                newEffect = d.currentEffects.get(playerEffect.id);
+                newEffect.duration = playerEffect.duration;
+                newEffect.level = playerEffect.level;
+                createdMap.put(playerEffect.id, newEffect);
+            } else {
+                createdMap.put(playerEffect.id, new PlayerEffect(playerEffect.id, playerEffect.duration, playerEffect.level));
+            }
+        }
+        return createdMap;
+    }
+
+    public void saveEffectsNBT(NBTTagCompound nbt) {
+        NBTTagList nbttaglist = new NBTTagList();
+        Iterator iterator = d.currentEffects.values().iterator();
+        while (iterator.hasNext()) {
+            PlayerEffect playerEffect = (PlayerEffect) iterator.next();
+            nbttaglist.appendTag(playerEffect.writeEffectData(new NBTTagCompound()));
+        }
+        nbt.setTag("addonActiveEffects", nbttaglist);
     }
 
     public void decrementActiveEffects() {
@@ -50,7 +88,7 @@ public class DBCDataStats {
             } else
                 currentEffect.duration--;
         }
-        d.setCurrentEffects(currentEffects);
+        setCurrentEffects(currentEffects);
     }
 
     public int[] getAllAttributes() {

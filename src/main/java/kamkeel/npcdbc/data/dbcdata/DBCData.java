@@ -20,7 +20,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class DBCData extends DBCDataUniversal {
 
@@ -90,7 +89,7 @@ public class DBCData extends DBCDataUniversal {
         comp.setInteger("addonFormID", addonFormID);
         comp.setInteger("auraID", auraID);
         comp.setFloat("addonFormLevel", addonFormLevel);
-        saveEffectsNBT(comp);
+        stats.saveEffectsNBT(comp);
         return comp;
     }
 
@@ -153,11 +152,11 @@ public class DBCData extends DBCDataUniversal {
         addonFormID = formData.currentForm;
         addonFormLevel = formData.getCurrentLevel();
         auraID = formData.currentAura;
-        setCurrentEffects(StatusEffectController.Instance.playerEffects.get(Utility.getUUID(player)));
+        stats.setCurrentEffects(StatusEffectController.Instance.playerEffects.get(Utility.getUUID(player)));
         nbt.setInteger("addonFormID", addonFormID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
         nbt.setInteger("auraID", auraID);
-        saveEffectsNBT(nbt);
+        stats.saveEffectsNBT(nbt);
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 
         // Send to Tracking Only
@@ -185,42 +184,6 @@ public class DBCData extends DBCDataUniversal {
 
     public NBTTagCompound getRawCompound() {
         return this.player.getEntityData().getCompoundTag(DBCPersisted);
-    }
-
-    public HashMap<Integer, PlayerEffect> getPlayerEffects() {
-        return this.currentEffects;
-    }
-
-    public void setCurrentEffects(HashMap<Integer, PlayerEffect> setVals) {
-        NBTTagCompound raw = getRawCompound();
-        this.currentEffects = updateEffects(setVals);
-        saveEffectsNBT(raw);
-    }
-
-    public HashMap<Integer, PlayerEffect> updateEffects(HashMap<Integer, PlayerEffect> setVals) {
-        HashMap<Integer, PlayerEffect> createdMap = new HashMap<>();
-        for (PlayerEffect playerEffect : setVals.values()) {
-            PlayerEffect newEffect;
-            if (this.currentEffects.containsKey(playerEffect.id)) {
-                newEffect = currentEffects.get(playerEffect.id);
-                newEffect.duration = playerEffect.duration;
-                newEffect.level = playerEffect.level;
-                createdMap.put(playerEffect.id, newEffect);
-            } else {
-                createdMap.put(playerEffect.id, new PlayerEffect(playerEffect.id, playerEffect.duration, playerEffect.level));
-            }
-        }
-        return createdMap;
-    }
-
-    public void saveEffectsNBT(NBTTagCompound nbt) {
-        NBTTagList nbttaglist = new NBTTagList();
-        Iterator iterator = this.currentEffects.values().iterator();
-        while (iterator.hasNext()) {
-            PlayerEffect playerEffect = (PlayerEffect) iterator.next();
-            nbttaglist.appendTag(playerEffect.writeEffectData(new NBTTagCompound()));
-        }
-        nbt.setTag("addonActiveEffects", nbttaglist);
     }
 
 

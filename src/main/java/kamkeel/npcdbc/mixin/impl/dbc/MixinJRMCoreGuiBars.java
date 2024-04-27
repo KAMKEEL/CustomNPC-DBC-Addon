@@ -27,7 +27,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
     @Inject(method = "showSE", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;displayWidth:I", shift = At.Shift.BEFORE))
     private void renderStatusEffectIcon(int var51, int var61, int var71, int var81, CallbackInfo ci, @Local(name = "i") LocalIntRef i, @Local(name = "j") LocalIntRef j) {
         DBCData dbcData = DBCData.getClient();
-        HashMap<Integer, PlayerEffect> current = dbcData.getPlayerEffects();
+        HashMap<Integer, PlayerEffect> current = dbcData.stats.getPlayerEffects();
         for (int id : current.keySet()) {
             StatusEffect effect = StatusEffectController.Instance.get(id);
             if(effect == null)
