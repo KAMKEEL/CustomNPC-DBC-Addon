@@ -17,7 +17,9 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
@@ -72,6 +74,17 @@ public class ServerEventHandler {
             handleFormProcesses(player);
         }
     }
+
+    @SubscribeEvent
+    public void playerDeathEvent(LivingDeathEvent event) {
+        if(event.entityLiving == null || event.entityLiving.worldObj == null || event.entityLiving.worldObj.isRemote)
+            return;
+
+        if(event.entityLiving.worldObj instanceof WorldServer && event.entityLiving instanceof EntityPlayer) {
+            StatusEffectController.getInstance().killEffects((EntityPlayer) event.entityLiving);
+        }
+    }
+
 
     public void handleFormProcesses(EntityPlayer player) {
         Form form = DBCData.getForm(player);

@@ -189,7 +189,6 @@ public class DBCData extends DBCDataUniversal {
 
     public void syncTracking() {
         PacketHandler.Instance.sendToTrackingPlayers(new PingPacket(this).generatePacket(), player);
-
     }
 
     public NBTTagCompound getRawCompound() {

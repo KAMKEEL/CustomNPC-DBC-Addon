@@ -65,6 +65,19 @@ public class StatusEffectController implements IStatusEffectHandler {
         }
     }
 
+    public void killEffects(EntityPlayer player) {
+        HashMap<Integer, PlayerEffect> current = getPlayerEffects(player);
+        for (int active : current.keySet()) {
+            StatusEffect effect = get(active);
+            if (effect != null) {
+                if(effect.lossOnDeath)
+                    current.remove(active);
+            } else {
+                current.remove(active);
+            }
+        }
+    }
+
     public StatusEffect get(int id) {
         StatusEffect statusEffect = standardEffects.get(id);
         if(statusEffect == null)
