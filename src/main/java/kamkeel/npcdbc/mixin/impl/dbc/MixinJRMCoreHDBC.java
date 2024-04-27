@@ -7,7 +7,7 @@ import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.PlayerDataUtil;

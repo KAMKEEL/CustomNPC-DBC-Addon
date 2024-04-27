@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.data;
+package kamkeel.npcdbc.data.dbcdata;
 
 
 import JinRyuu.JRMCore.JRMCoreConfig;
@@ -14,6 +14,7 @@ import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
@@ -50,6 +51,8 @@ public class DBCData extends DBCDataUniversal {
     public int addonFormID, auraID;
     public float addonFormLevel;
     public HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
+
+    public DBCDataStats stats = new DBCDataStats(this);
 
     public DBCData() {
         this.side = Side.SERVER;
