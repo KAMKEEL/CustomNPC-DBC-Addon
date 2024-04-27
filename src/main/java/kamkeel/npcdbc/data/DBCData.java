@@ -18,7 +18,6 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
-import kamkeel.npcdbc.data.statuseffect.types.NamekRegen;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -162,7 +161,7 @@ public class DBCData extends DBCDataUniversal {
         addonFormID = formData.currentForm;
         addonFormLevel = formData.getCurrentLevel();
         auraID = formData.currentAura;
-        activeEffects = StatusEffectController.Instance.activeEffects.get(Utility.getUUID(player));
+        activeEffects = StatusEffectController.Instance.playerEffects.get(Utility.getUUID(player));
         nbt.setInteger("addonFormID", addonFormID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
         nbt.setInteger("auraID", auraID);
@@ -198,7 +197,7 @@ public class DBCData extends DBCDataUniversal {
     }
 
     public HashMap<Integer, PlayerEffect> getActiveEffects() {
-        return StatusEffectController.Instance.activeEffects.get(Utility.getUUID(player));
+        return StatusEffectController.Instance.playerEffects.get(Utility.getUUID(player));
     }
 
     public void setActiveEffects(HashMap<Integer, PlayerEffect> activeEffects) {
