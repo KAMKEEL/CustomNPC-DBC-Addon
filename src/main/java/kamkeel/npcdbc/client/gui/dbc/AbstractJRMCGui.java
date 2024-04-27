@@ -1,7 +1,9 @@
 package kamkeel.npcdbc.client.gui.dbc;
 
 import JinRyuu.JRMCore.*;
+import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiButtonConstants;
+import kamkeel.npcdbc.mixin.IDBCGuiScreen;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
@@ -45,9 +47,26 @@ public abstract class AbstractJRMCGui extends GuiScreen {
 
     @Override
     protected void actionPerformed(GuiButton button){
-        switch(button.id){
-            case 0:
+        int id = button.id;
+
+        for(GuiButtonConstants.ReferenceIDs ref : GuiButtonConstants.ReferenceIDs.values()){
+            if(ref.getButtonId() == id){
+                JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
+                ((IDBCGuiScreen) (Object) DBCScreen).setGuiIDPostInit(ref.getGuiID());
+                FMLCommonHandler.instance().showGuiScreen(DBCScreen);
+                return;
+            }
+        }
+
+        switch(id){
+            case GuiButtonConstants.EXIT:
                 this.mc.thePlayer.closeScreen();
+                return;
+            case GuiButtonConstants.FAMILY_C:
+                JRMCoreHJFC.openGui(1, this.mc.thePlayer);
+                return;
+            case GuiButtonConstants.YEARS_C:
+                JRMCoreHJYC.openGui(1, this.mc.thePlayer);
                 return;
             default:
                 break;
@@ -63,6 +82,9 @@ public abstract class AbstractJRMCGui extends GuiScreen {
     protected void addServerButtons(){
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
         this.guiHeightOffset = (this.height - menuImageHeight) / 2;
+
+
+
     }
     protected void addCloseButton(){
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
@@ -80,19 +102,19 @@ public abstract class AbstractJRMCGui extends GuiScreen {
                 break;
 
             boolean isSelected = ref.getGuiID() == this.guiID;
-            this.buttonList.add(new JRMCoreGuiButtons03(ref.getGuiID(), guiWidthOffset + i*21, guiHeightOffset+menuImageHeight+2, "",  (isSelected ? 1 : 0), 8046079,  ref.getIconID()));
+            this.buttonList.add(new JRMCoreGuiButtons03(ref.getButtonId(), guiWidthOffset + i*21, guiHeightOffset+menuImageHeight+2, "",  (isSelected ? 1 : 0), 8046079,  ref.getIconID()));
             //@TODO ADD TOOLTIP
         }
 
         if(JRMCoreH.JYC()){
             //@TODO get name
-            this.buttonList.add(new JRMCoreGuiButtons02(11, guiWidthOffset + i*21, guiHeightOffset+menuImageHeight+2, "CA", 0, 8046079));
+            this.buttonList.add(new JRMCoreGuiButtons02(GuiButtonConstants.YEARS_C, guiWidthOffset + i*21, guiHeightOffset+menuImageHeight+2, "CA", 0, 8046079));
             //@TODO add tooltip
             i++;
         }
         if(JRMCoreH.JFC()){
             //@TODO get name
-            this.buttonList.add(new JRMCoreGuiButtons02(12, guiWidthOffset + i*21, guiHeightOffset+menuImageHeight+2, "FA", 0, 8046079));
+            this.buttonList.add(new JRMCoreGuiButtons02(GuiButtonConstants.FAMILY_C, guiWidthOffset + i*21, guiHeightOffset+menuImageHeight+2, "FA", 0, 8046079));
             //@TODO add tooltip
             i++;
         }

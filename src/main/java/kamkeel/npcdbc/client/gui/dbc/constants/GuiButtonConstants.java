@@ -1,7 +1,9 @@
 package kamkeel.npcdbc.client.gui.dbc.constants;
 
 public class GuiButtonConstants {
-    public final static int EXIT = 0;
+    public final static int EXIT = -1;
+    public final static int FAMILY_C = -2;
+    public final static int YEARS_C = -3;
 
     public enum ReferenceIDs{
         NEWS(31, 0),
@@ -36,6 +38,10 @@ public class GuiButtonConstants {
         }
         public int getIconID(){
             return iconID;
+        }
+
+        public int getButtonId() {
+            return -20 - this.ordinal();
         }
     }
 }
