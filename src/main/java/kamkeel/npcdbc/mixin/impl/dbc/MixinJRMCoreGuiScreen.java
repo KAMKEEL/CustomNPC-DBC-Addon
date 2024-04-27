@@ -2,7 +2,7 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import cpw.mods.fml.common.FMLCommonHandler;
-import kamkeel.npcdbc.client.gui.dbc.StatSheetGUI;
+import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.mixin.IDBCGuiScreen;
 import net.minecraft.client.gui.GuiScreen;
@@ -33,8 +33,8 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
 
     @Inject(method = "updateScreen", at=@At("HEAD"), remap = true)
     private void onUpdateScreen(CallbackInfo ci){
-        if(this.guiID == 10 && StatSheetGUI.overrideBaseDBC && DBCData.getClient().Powertype == 1)
-            FMLCommonHandler.instance().showGuiScreen(new StatSheetGUI());
+        if(this.guiID == 10 && StatSheetGui.overrideBaseDBC && DBCData.getClient().Powertype == 1)
+            FMLCommonHandler.instance().showGuiScreen(new StatSheetGui());
     }
 
     @Inject(method = "initGui", at=@At("RETURN"), remap = true)
