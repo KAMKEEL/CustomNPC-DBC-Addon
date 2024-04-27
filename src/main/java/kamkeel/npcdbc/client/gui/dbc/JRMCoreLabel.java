@@ -24,7 +24,8 @@ public class JRMCoreLabel extends GuiLabel {
 
     public JRMCoreLabel(String text, String tooltipText, int x, int y, int hoverableAreaWidth, int hoverableAreaHeight, int tooltipWidth, int tooltipHeight){
         this.displayString = text;
-        this.tooltip = tooltipText.replaceAll("/n", "\n");
+        if(tooltip != null)
+            this.tooltip = tooltipText.replaceAll("/n", "\n");
         this.xPosition = x;
         this.yPosition = y;
         this.hoverableAreaWidth = hoverableAreaWidth;
@@ -35,6 +36,10 @@ public class JRMCoreLabel extends GuiLabel {
 
     public JRMCoreLabel(String text, String tooltipText, int x, int y, int tooltipWidth){
         this(text, tooltipText, x, y, -1, -1, tooltipWidth, -1);
+    }
+
+    public JRMCoreLabel(String text, String tooltipText, int x, int y){
+        this(text, tooltipText, x, y, -1, -1, 200, -1);
     }
 
     public JRMCoreLabel(GuiButton button, String tooltipText, int tooltipWidth){
@@ -59,6 +64,9 @@ public class JRMCoreLabel extends GuiLabel {
 
 
         client.fontRenderer.drawString(displayString, xPosition, yPosition, 0);
+        if(tooltip == null)
+            return;
+
         if(isHovered(mouseX, mouseY)){
             client.getTextureManager().bindTexture(background);
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
