@@ -12,7 +12,7 @@ import java.io.IOException;
 import static noppes.npcs.NoppesUtilServer.getPlayerByName;
 
 public final class TransformPacket extends AbstractPacket {
-    public static final String packetName = "NPCDBC|Transform";
+    public static final String packetName = "NPC|Transform";
     private EntityPlayer player;
     private int state;
     private boolean ascend;

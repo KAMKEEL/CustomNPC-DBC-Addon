@@ -11,7 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.io.IOException;
 
 public final class PingPacket extends AbstractPacket {
-    public static final String packetName = "NPCDBC|Ping";
+    public static final String packetName = "NPC|Ping";
     private DBCData data;
 
     public PingPacket() {

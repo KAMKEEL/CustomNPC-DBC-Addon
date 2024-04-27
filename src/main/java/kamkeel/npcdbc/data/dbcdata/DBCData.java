@@ -201,7 +201,7 @@ public class DBCData extends DBCDataUniversal {
     }
 
     public HashMap<Integer, PlayerEffect> getPlayerEffects() {
-        return StatusEffectController.Instance.playerEffects.get(Utility.getUUID(player));
+        return this.currentEffects;
     }
 
     public void setCurrentEffects(HashMap<Integer, PlayerEffect> setVals) {
@@ -237,7 +237,7 @@ public class DBCData extends DBCDataUniversal {
     }
 
     public void decrementActiveEffects() {
-        HashMap<Integer, PlayerEffect> currentEffects = getPlayerEffects();
+        HashMap<Integer, PlayerEffect> currentEffects = StatusEffectController.Instance.playerEffects.get(Utility.getUUID(player));
         Iterator<Map.Entry<Integer, PlayerEffect>> iterator = currentEffects.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Integer, PlayerEffect> entry = iterator.next();
