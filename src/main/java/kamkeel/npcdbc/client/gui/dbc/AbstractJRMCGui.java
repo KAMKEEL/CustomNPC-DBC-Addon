@@ -4,18 +4,18 @@ import JinRyuu.JRMCore.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiButtonConstants;
 import kamkeel.npcdbc.mixin.IDBCGuiScreen;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiConfirmOpenLink;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiYesNoCallback;
+import net.minecraft.client.gui.*;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallback {
     private static final ResourceLocation menuTexture = new ResourceLocation("jinryuumodscore:gui.png");
+    protected List<GuiLabel> dynamicLabels = new ArrayList<>();
     private final int guiID;
     protected int menuImageWidth = 256;
     protected int menuImageHeight = 159;
@@ -30,6 +30,12 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
      */
     public AbstractJRMCGui(int guiReplacementID){
         this.guiID = guiReplacementID;
+    }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks){
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        drawDynamicLabels(mouseX, mouseY, partialTicks);
     }
 
     protected void drawBackground(){
@@ -49,6 +55,12 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
         addCloseButton();
         addNavbarButtons();
         addClientHelpButtons();
+    }
+
+    protected void drawDynamicLabels(int mouseX, int mouseY, float partialTicks){
+        for (GuiLabel dynamicLabel : this.dynamicLabels) {
+            dynamicLabel.func_146159_a(this.mc, mouseX, mouseY);
+        }
     }
 
     @Override
@@ -108,7 +120,9 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
         for(GuiButtonConstants.ReferenceIDs ref : referenceArr){
             //@TODO tooltip
             String name = "CL";
-            buttonList.add(new JRMCoreGuiButtons03(ref.getButtonId(), guiWidthOffset+offsetX, guiHeightOffset+menuImageHeight+2+offsetY, name.substring(0, 2).toUpperCase(), 0, 8046079, ref.getIconID()));
+            GuiButton button = new JRMCoreGuiButtons03(ref.getButtonId(), guiWidthOffset+offsetX, guiHeightOffset+menuImageHeight+2+offsetY, name.substring(0, 2).toUpperCase(), 0, 8046079, ref.getIconID());
+            buttonList.add(button);
+            this.labelList.add(new JRMCoreLabel(button, ref.toString()));
             offsetY -= 21;
         }
     }
@@ -156,7 +170,9 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
                 break;
 
             boolean isSelected = ref.getGuiID() == this.guiID;
-            this.buttonList.add(new JRMCoreGuiButtons03(ref.getButtonId(), guiWidthOffset + xOffset*21, guiHeightOffset+menuImageHeight+2, "",  (isSelected ? 1 : 0), 8046079,  ref.getIconID()));
+            GuiButton button = new JRMCoreGuiButtons03(ref.getButtonId(), guiWidthOffset + xOffset*21, guiHeightOffset+menuImageHeight+2, "",  (isSelected ? 1 : 0), 8046079,  ref.getIconID());
+            this.buttonList.add(button);
+            this.labelList.add(new JRMCoreLabel(button, ref.toString()));
             //@TODO ADD TOOLTIP
             xOffset++;
         }

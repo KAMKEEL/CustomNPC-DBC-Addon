@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.dbc;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -13,28 +14,33 @@ public class JRMCoreLabel extends GuiLabel {
 
     protected String displayString;
     protected String tooltip;
-    protected int xPos;
-    protected int yPos;
-    protected int width;
-    protected int height;
+    protected int xPosition;
+    protected int yPosition;
+    protected int hoverableAreaWidth;
+    protected int hoverableAreaHeight;
+    protected int tooltipWidth;
+    protected int tooltipHeight;
 
-    protected int textWidth;
-
-    public JRMCoreLabel(String text, String tooltipText, int x, int y, int width, int height){
+    public JRMCoreLabel(String text, String tooltipText, int x, int y, int hoverableAreaWidth, int hoverableAreaHeight, int tooltipWidth, int tooltipHeight){
         this.displayString = text;
         this.tooltip = tooltipText.replaceAll("/n", "\n");
-        this.xPos = x;
-        this.yPos = y;
-        this.width = width;
-        this.height = height;
+        this.xPosition = x;
+        this.yPosition = y;
+        this.hoverableAreaWidth = hoverableAreaWidth;
+        this.hoverableAreaHeight = hoverableAreaHeight;
+        this.tooltipWidth = tooltipWidth;
+        this.tooltipHeight = tooltipHeight;
     }
 
-    public JRMCoreLabel(String text, String tooltipText, int x, int y, int width){
-        this(text, tooltipText, x, y, width, -1);
+    public JRMCoreLabel(String text, String tooltipText, int x, int y, int tooltipWidth){
+        this(text, tooltipText, x, y, -1, -1, tooltipWidth, -1);
     }
 
-    public JRMCoreLabel(String text, String tooltipText, int x, int y){
-        this(text, tooltipText, x, y, -1, -1);
+    public JRMCoreLabel(GuiButton button, String tooltipText, int tooltipWidth){
+        this(null, tooltipText, button.xPosition, button.yPosition, button.width, button.height, tooltipWidth, -1);
+    }
+    public JRMCoreLabel(GuiButton button, String tooltipText){
+        this(null, tooltipText, button.xPosition, button.yPosition, button.width, button.height, -1, -1);
     }
 
     /**
@@ -45,29 +51,34 @@ public class JRMCoreLabel extends GuiLabel {
      */
     @Override
     public void func_146159_a(Minecraft client, int mouseX, int mouseY){
-        textWidth = client.fontRenderer.getStringWidth(displayString);
-        client.fontRenderer.drawString(displayString, xPos, yPos, 0);
+        if(displayString != null && (hoverableAreaHeight < 0 || hoverableAreaWidth < 0)){
+            hoverableAreaWidth = client.fontRenderer.getStringWidth(displayString);
+            hoverableAreaHeight = 10;
+        }
+
+
+        client.fontRenderer.drawString(displayString, xPosition, yPosition, 0);
         if(isHovered(mouseX, mouseY)){
             client.getTextureManager().bindTexture(background);
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
 
-            int toolTipWidth = width;
-            int toolTipHeight = height;
-
-            if(toolTipWidth < 0){
-                toolTipWidth = textWidth;
+            if(tooltipWidth < 0){
+                if(tooltip.contains("\n"))
+                    tooltipWidth = 100;
+                else
+                    tooltipWidth = client.fontRenderer.getStringWidth(tooltip);
             }
 
-            List<String> toolTipSplit = (List<String>) client.fontRenderer.listFormattedStringToWidth(tooltip, toolTipWidth);
+            List<String> toolTipSplit = (List<String>) client.fontRenderer.listFormattedStringToWidth(tooltip, tooltipWidth);
 
-            if(toolTipHeight < 0){
-                toolTipHeight = toolTipSplit.size()*10;
+            if(tooltipHeight < 0){
+                tooltipHeight = toolTipSplit.size()*10;
             }
 
             int tooltipX = mouseX;
             int tooltipY = mouseY+10;
 
-            this.drawTexturedModalRect(tooltipX, tooltipY, 0, 0, toolTipWidth+10, toolTipHeight+10);
+            this.drawTexturedModalRect(tooltipX, tooltipY, 0, 0, tooltipWidth+10, tooltipHeight+10);
 //            client.fontRenderer.drawString("\u00a74Inside text", mouseX+5, mouseY+15, 0);
 
             int linesWritten = 0;
@@ -80,6 +91,6 @@ public class JRMCoreLabel extends GuiLabel {
     }
 
     protected boolean isHovered(int mouseX, int mouseY){
-        return xPos < mouseX && xPos+textWidth > mouseX && yPos-3 < mouseY && yPos + 10 > mouseY;
+        return xPosition < mouseX && xPosition + hoverableAreaWidth > mouseX && yPosition -3 < mouseY && yPosition + hoverableAreaHeight > mouseY;
     }
 }
