@@ -20,7 +20,7 @@ public class DBCSyncController {
         NBTTagCompound compound = new NBTTagCompound();
         for (Form customForm : FormController.getInstance().customForms.values()) {
             list.appendTag(customForm.writeToNBT());
-            if (list.tagCount() > 10) {
+            if (list.tagCount() > 5) {
                 compound = new NBTTagCompound();
                 compound.setTag("Data", list);
                 PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_ADD, compound, -1).generatePacket(), player);
@@ -36,7 +36,7 @@ public class DBCSyncController {
         compound = new NBTTagCompound();
         for (Aura aura : AuraController.getInstance().customAuras.values()) {
             list.appendTag(aura.writeToNBT());
-            if (list.tagCount() > 10) {
+            if (list.tagCount() > 5) {
                 compound = new NBTTagCompound();
                 compound.setTag("Data", list);
                 PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_ADD, compound, -1).generatePacket(), player);
