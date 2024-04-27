@@ -35,7 +35,20 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
         super.drawScreen(mouseX, mouseY, partialTicks);
-        drawDynamicLabels(mouseX, mouseY, partialTicks);
+
+        for (GuiLabel dynamicLabel : this.dynamicLabels) {
+            dynamicLabel.func_146159_a(this.mc, mouseX, mouseY);
+        }
+
+        //Going over these twice specifically because of wrong layering
+        for(Object label : this.labelList){
+            if(label instanceof HoverableLabel)
+                ((HoverableLabel) label).hover(this.mc, mouseX, mouseY);
+        }
+        for (GuiLabel label : this.dynamicLabels) {
+            if(label instanceof HoverableLabel)
+                ((HoverableLabel) label).hover(this.mc, mouseX, mouseY);
+        }
     }
 
     protected void drawBackground(){
@@ -55,12 +68,6 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
         addCloseButton();
         addNavbarButtons();
         addClientHelpButtons();
-    }
-
-    protected void drawDynamicLabels(int mouseX, int mouseY, float partialTicks){
-        for (GuiLabel dynamicLabel : this.dynamicLabels) {
-            dynamicLabel.func_146159_a(this.mc, mouseX, mouseY);
-        }
     }
 
     @Override

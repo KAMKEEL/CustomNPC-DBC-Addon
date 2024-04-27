@@ -34,11 +34,9 @@ public class GuiIcon extends GuiLabel {
      */
     @Override
     public void func_146159_a(Minecraft client, int mouseX, int mouseY){
-        GL11.glPushMatrix();
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         client.getTextureManager().bindTexture(texture);
         this.drawTexturedModalRect(xPosition, yPosition, textureX, textureY, width, height);
-        GL11.glPopMatrix();
     }
 
 }

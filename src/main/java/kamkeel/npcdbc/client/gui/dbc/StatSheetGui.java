@@ -8,13 +8,17 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.mixin.IDBCGuiScreen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+import static JinRyuu.JRMCore.JRMCoreGuiScreen.kqGW3Z;
+
 public class StatSheetGui extends AbstractJRMCGui {
 
     private static final ResourceLocation icons = new ResourceLocation("jinryuumodscore:icons.png");
+    private static final ResourceLocation icons3 = new ResourceLocation("jinryuumodscore:icons3.png");
     public static boolean overrideBaseDBC = false;
 
     public StatSheetGui() {
@@ -27,12 +31,91 @@ public class StatSheetGui extends AbstractJRMCGui {
 
     @Override
     public void updateScreen(){
+
+        DBCData dbcClient = DBCData.getClient();
+        if(!overrideBaseDBC){
+            JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
+            ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(10);
+            FMLCommonHandler.instance().showGuiScreen(DBCScreen);
+            return;
+        }
+        if(dbcClient.Accept == 0){
+            JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
+            ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(0);
+            FMLCommonHandler.instance().showGuiScreen(DBCScreen);
+            return;
+        }
+
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
         this.guiHeightOffset = (this.height - menuImageHeight) / 2;
 
         dynamicLabels.clear();
 
-        this.dynamicLabels.add(new JRMCoreLabel("Testing", DBCData.getClient().Ki+"", guiWidthOffset+10, guiHeightOffset+10, -1));
+        //this.dynamicLabels.add(new JRMCoreLabel("Testing", DBCData.getClient().Ki+"", guiWidthOffset+10, guiHeightOffset+10, -1));
+        boolean max = JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts) >= JRMCoreH.getPlayerLevel(kqGW3Z(false) * 6);
+
+        int index = 0;
+
+        //Level
+        this.dynamicLabels.add(new JRMCoreLabel(
+            String.format("%s: §8%s", JRMCoreH.trl("jrmc", "Level"), JRMCoreH.numSep(JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts))),
+            (max ? JRMCoreH.trl("jrmc", "LevelMax") : JRMCoreH.trl("jrmc", "LevelNext", JRMCoreH.cllr + JRMCoreH.attrLvlNext(JRMCoreH.PlyrAttrbts) + JRMCoreH.cldgy)),
+            this.guiWidthOffset+5,
+            this.guiHeightOffset+5+index*10
+        ));
+        index++;
+
+        //TP
+        String requiredTP = JRMCoreH.cct(JRMCoreH.trl("jrmc", "RequiredTP"), JRMCoreH.cllr + JRMCoreH.numSep(JRMCoreH.attrCst(JRMCoreH.PlyrAttrbts, 0)) + JRMCoreH.cldgy, "");
+        this.dynamicLabels.add(new JRMCoreLabel(
+            String.format("%s: §8%s", JRMCoreH.trl("jrmc", "TP"), JRMCoreH.numSep(JRMCoreH.curTP)),
+            JRMCoreH.trl("jrmc", "TrainingPoints") + ",\n "+requiredTP,
+            this.guiWidthOffset+5,
+            this.guiHeightOffset+5+index*10
+        ));
+        index++;
+
+
+        String raceText = String.format("%s: §8%s", JRMCoreH.trl("jrmc", "Race"), JRMCoreH.Races[JRMCoreH.Race]);
+        this.dynamicLabels.add(new JRMCoreLabel(
+            raceText,
+            null,
+            this.guiWidthOffset+5,
+            this.guiHeightOffset+5+index*10
+        ));
+
+        this.dynamicLabels.add(new GuiIcon(
+            icons3,
+            guiWidthOffset+5+Minecraft.getMinecraft().fontRenderer.getStringWidth(raceText),
+            guiHeightOffset+2+index*10,
+            0,
+            (JRMCoreH.dnsGender(JRMCoreH.dns) < 1 ? 128 : 112),
+            16,
+            16
+        ));
+
+        index++;
+
+
+
+        //@TODO Add proper hovers
+        //@TODO Add proper translation
+        //@TODO Add custom form support
+        this.dynamicLabels.add(new JRMCoreLabel(
+            String.format("%s: §8%s", JRMCoreH.trl("jrmc", "TRState"), JRMCoreH.TransNms[JRMCoreH.Race][JRMCoreH.State]),
+            null,
+            this.guiWidthOffset+5,
+            this.guiHeightOffset+5+index*10
+        ));
+        index++;
+
+        this.dynamicLabels.add(new JRMCoreLabel(
+            String.format("%s: §8%s", JRMCoreH.trl("jrmc", "Class"), JRMCoreH.ClassesDBC[JRMCoreH.Class]),
+            null,
+            this.guiWidthOffset+5,
+            this.guiHeightOffset+5+index*10
+        ));
+        index++;
 
 
 
@@ -42,14 +125,6 @@ public class StatSheetGui extends AbstractJRMCGui {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
-        DBCData dbcClient = DBCData.getClient();
-        if(dbcClient.Accept == 0){
-            JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
-            ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(0);
-            FMLCommonHandler.instance().showGuiScreen(DBCScreen);
-            return;
-        }
-
         this.drawBackground();
 
         drawStatusEffects();
@@ -60,8 +135,14 @@ public class StatSheetGui extends AbstractJRMCGui {
     @Override
     public void initGui(){
         super.initGui();
-
         updateScreen();
+
+        //Change screens
+        String s = "Switch to "+(overrideBaseDBC ? "Normal" : "§aEnhanced") +" GUI";
+        int i = this.fontRendererObj.getStringWidth(s)+10;
+        this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2, guiHeightOffset - 30, i + 8, 20, s, 0));
+
+
 
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
         this.guiHeightOffset = (this.height - menuImageHeight) / 2;
@@ -73,6 +154,8 @@ public class StatSheetGui extends AbstractJRMCGui {
     @Override
     protected void actionPerformed(GuiButton button){
         super.actionPerformed(button);
+        if(button.id == 303030303)
+            overrideBaseDBC = false;
 
     }
 
