@@ -24,18 +24,20 @@ public class NamekRegen extends StatusEffect {
         DBCData dbcData = DBCData.get(player);
         float currentBodyPercent = dbcData.getCurrentBodyPercentage();
         float percentToRegen = ConfigDBCEffects.NamekRegenPercent * playerEffect.level;
-        if(dbcData.Body != 0 && currentBodyPercent < ConfigDBCGameplay.NamekianRegenMax){
-            boolean kill = false;
-            if (currentBodyPercent + percentToRegen > ConfigDBCGameplay.NamekianRegenMax) {
-                percentToRegen = ConfigDBCGameplay.NamekianRegenMax - currentBodyPercent;
-                kill = true;
-            }
-            dbcData.restoreHealthPercent(percentToRegen);
-            if (kill) {
+        if(dbcData.Body != 0){
+            if(currentBodyPercent < ConfigDBCGameplay.NamekianRegenMax){
+                boolean kill = false;
+                if (currentBodyPercent + percentToRegen > ConfigDBCGameplay.NamekianRegenMax) {
+                    percentToRegen = ConfigDBCGameplay.NamekianRegenMax - currentBodyPercent;
+                    kill = true;
+                }
+                dbcData.restoreHealthPercent(percentToRegen);
+                if (kill) {
+                    playerEffect.kill();
+                }
+            } else {
                 playerEffect.kill();
             }
-        } else {
-            playerEffect.kill();
         }
     }
 }
