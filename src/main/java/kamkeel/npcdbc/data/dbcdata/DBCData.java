@@ -2,11 +2,8 @@ package kamkeel.npcdbc.data.dbcdata;
 
 
 import JinRyuu.JRMCore.JRMCoreH;
-import JinRyuu.JRMCore.i.ExtendedPlayer;
 import cpw.mods.fml.relauncher.Side;
-import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.StatusEffectController;
@@ -227,97 +224,6 @@ public class DBCData extends DBCDataUniversal {
     }
 
 
-    public void setEyeColorLeft(int color) {
-        int i = 42;
-        if (DNS == null || DNS.length() < i)
-            return;
-
-        String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        getRawCompound().setString("jrmcDNS", DNS);
-    }
-
-    public void setEyeColorRight(int color) {
-        int i = 47;
-        if (DNS == null || DNS.length() < i)
-            return;
-
-        String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        getRawCompound().setString("jrmcDNS", DNS);
-    }
-
-    public void setHairColor(int color) {
-        int i = 7;
-        if (DNS == null || DNS.length() < i)
-            return;
-
-        String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        getRawCompound().setString("jrmcDNS", DNS);
-    }
-
-    //main color for humans/saiyans/majins
-    public void setBodyColorMain(int color) {
-        int i = 16;
-        if (DNS == null || DNS.length() < i)
-            return;
-
-        String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        getRawCompound().setString("jrmcDNS", DNS);
-    }
-
-    //saiyan oozaru and arco/nameks
-    public void setBodyColor1(int color) {
-        int i = 21;
-        if (DNS == null || DNS.length() < i)
-            return;
-
-        String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        getRawCompound().setString("jrmcDNS", DNS);
-    }
-
-    // namekian/arco
-    public void setBodyColor2(int color) {
-        int i = 26;
-        if (DNS == null || DNS.length() < i)
-            return;
-        String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        getRawCompound().setString("jrmcDNS", DNS);
-    }
-
-    //only arco
-    public void setBodyColor3(int color) {
-        int i = 31;
-        if (DNS == null || DNS.length() < i)
-            return;
-        String hexCol = JRMCoreH.numToLet5(color);
-        DNS = DNS.substring(0, i) + hexCol + DNS.substring(i + 5);
-        getRawCompound().setString("jrmcDNS", DNS);
-    }
-
-    public void setHairPreset(int preset) {
-        int i = 3;
-        if (DNS == null || DNS.length() < i)
-            return;
-
-        DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
-        getRawCompound().setString("jrmcDNS", DNS);
-    }
-
-    public void setNosePreset(int preset) {
-        int i = 36;
-        if (DNS == null || DNS.length() < i)
-            return;
-
-        DNS = DNS.substring(0, i) + JRMCoreH.numToLet(preset) + DNS.substring(i + 2);
-        getRawCompound().setString("jrmcDNS", DNS);
-    }
-
-
     public boolean isForm(int dbcForm) {
         switch (dbcForm) {
             case DBCForm.Kaioken:
@@ -340,13 +246,6 @@ public class DBCData extends DBCDataUniversal {
         }
     }
 
-    public boolean isDivine() {
-        return JRMCoreH.StusEfctsMe(17);
-    }
-
-    public boolean isLegendary() {
-        return JRMCoreH.StusEfctsMe(14);
-    }
 
     public boolean containsSE(int id) {
         return JRMCoreH.StusEfcts(id, StatusEffects);
@@ -404,8 +303,6 @@ public class DBCData extends DBCDataUniversal {
                 return false;
         }
     }
-
-
 
 
     public Aura getAura() {
