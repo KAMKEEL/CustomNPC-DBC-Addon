@@ -4,13 +4,13 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class RegenStamina extends StatusEffect {
 
-    public RegenStamina(int timer) {
-        super(timer);
+    public RegenStamina() {
         name = "Stamina Regeneration";
         id = Effects.REGEN_STAMINA;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
@@ -19,9 +19,9 @@ public class RegenStamina extends StatusEffect {
     }
 
     @Override
-    public void process(EntityPlayer player) {
+    public void process(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
-        int percentToRegen = ConfigDBCEffects.StaminaRegenPercent * this.level;
+        int percentToRegen = ConfigDBCEffects.StaminaRegenPercent * playerEffect.level;
         dbcData.restoreHealthPercent(percentToRegen);
     }
 }

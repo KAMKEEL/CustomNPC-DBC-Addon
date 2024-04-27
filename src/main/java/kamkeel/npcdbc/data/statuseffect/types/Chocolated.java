@@ -2,13 +2,13 @@ package kamkeel.npcdbc.data.statuseffect.types;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class Chocolated extends StatusEffect {
 
-    public Chocolated(int timer) {
-        super(timer);
+    public Chocolated() {
         name = "Chocolated";
         id = Effects.CHOCOLATED;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
@@ -17,5 +17,5 @@ public class Chocolated extends StatusEffect {
     }
 
     @Override
-    public void process(EntityPlayer player){}
+    public void process(EntityPlayer player, PlayerEffect playerEffect){}
 }

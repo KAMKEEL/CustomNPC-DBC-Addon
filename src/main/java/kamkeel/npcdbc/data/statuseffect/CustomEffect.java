@@ -3,8 +3,7 @@ package kamkeel.npcdbc.data.statuseffect;
 import kamkeel.npcdbc.api.effect.ICustomEffect;
 
 public class CustomEffect extends StatusEffect implements ICustomEffect {
-    public CustomEffect(int id, int duration) {
-        super(duration);
+    public CustomEffect(int id) {
         this.isCustom = true;
         this.id = id;
     }

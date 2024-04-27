@@ -5,13 +5,13 @@ import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class NamekRegen extends StatusEffect {
 
-    public NamekRegen(int timer) {
-        super(timer);
+    public NamekRegen() {
         name = "NamekRegen";
         id = Effects.NAMEK_REGEN;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
@@ -20,10 +20,10 @@ public class NamekRegen extends StatusEffect {
     }
 
     @Override
-    public void process(EntityPlayer player){
+    public void process(EntityPlayer player, PlayerEffect playerEffect){
         DBCData dbcData = DBCData.get(player);
         float currentBodyPercent = dbcData.getCurrentBodyPercentage();
-        float percentToRegen = ConfigDBCEffects.NamekRegenPercent * this.level;
+        float percentToRegen = ConfigDBCEffects.NamekRegenPercent * playerEffect.level;
         if(dbcData.Body != 0 && currentBodyPercent < ConfigDBCGameplay.NamekianRegenMax){
             boolean kill = false;
             if (currentBodyPercent + percentToRegen > ConfigDBCGameplay.NamekianRegenMax) {
@@ -32,10 +32,10 @@ public class NamekRegen extends StatusEffect {
             }
             dbcData.restoreHealthPercent(percentToRegen);
             if (kill) {
-                this.kill();
+                playerEffect.kill();
             }
         } else {
-            this.kill();
+            playerEffect.kill();
         }
     }
 }

@@ -4,6 +4,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -60,6 +61,9 @@ public class ServerEventHandler {
             if (player.ticksExisted % 10 == 0) {
                 // Keep the Player informed on their own data
                 DBCData dbcData = DBCData.get(player);
+                if(ConfigDBCGameplay.EnableNamekianRegen && dbcData.Race == DBCRace.NAMEKIAN)
+                    dbcData.applyNamekianRegen();
+
                 if (player.ticksExisted % 20 == 0)
                     dbcData.decrementActiveEffects();
 
