@@ -40,6 +40,9 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
 
     @Override
     public void initGui(){
+        this.buttonList.clear();
+        this.labelList.clear();
+
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
         this.guiHeightOffset = (this.height - menuImageHeight) / 2;
 

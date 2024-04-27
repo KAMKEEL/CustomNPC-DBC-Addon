@@ -6,6 +6,7 @@ import JinRyuu.JRMCore.JRMCoreGuiButtons03;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiButtonConstants;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
@@ -36,8 +37,16 @@ public class StatSheetGui extends AbstractJRMCGui {
     public void initGui(){
         super.initGui();
 
+        this.guiWidthOffset = (this.width - menuImageWidth) / 2;
+        this.guiHeightOffset = (this.height - menuImageHeight) / 2;
+
+        this.labelList.add(new JRMCoreLabel("Testing", "lol\nlolol\nolol", guiWidthOffset+10, guiHeightOffset+10, 70));
+
+
+
         addServerButtons();
         addDifficultyButton();
+        System.out.println("initialized GUI");
     }
 
     @Override
