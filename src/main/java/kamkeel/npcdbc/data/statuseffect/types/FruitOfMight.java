@@ -2,10 +2,16 @@ package kamkeel.npcdbc.data.statuseffect.types;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class FruitOfMight extends StatusEffect {
+    public static Aura fruitOfMightAura = null;
+    public float kiToDrain = 1.0f;
 
     public FruitOfMight(int timer) {
         super(timer);
@@ -14,8 +20,45 @@ public class FruitOfMight extends StatusEffect {
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
         iconX = 0;
         iconY = 0;
+
+        if (fruitOfMightAura == null) {
+            fruitOfMightAura = new Aura();
+            fruitOfMightAura.id = -10;
+            fruitOfMightAura.display.setColor("color1", 0x0); //black
+            fruitOfMightAura.display.setColor("color3", 0xb329ba); //purple
+            fruitOfMightAura.display.hasLightning = true;
+            fruitOfMightAura.display.lightningColor = 0xb329ba; //purple
+        }
+    }
+
+    public FruitOfMight(int timer, float kiToDrain, int everyXTicks) {
+        this(timer);
+        this.kiToDrain = kiToDrain;
+        this.everyXTick = everyXTicks;
+    }
+
+    public void init(EntityPlayer player) {
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        c.currentAura = fruitOfMightAura.id;
+        c.updateClient();
+
     }
 
     @Override
-    public void process(EntityPlayer player){}
+    public void process(EntityPlayer player) {
+        DBCData dbcData = DBCData.get(player);
+        dbcData.restoreKiPercent(-kiToDrain);
+        if (dbcData.Ki <= 0)
+            this.kill();
+
+    }
+
+    public void runout(EntityPlayer player) {
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        if (c.currentAura == fruitOfMightAura.id) {
+            c.currentAura = -1;
+            c.updateClient();
+        }
+
+    }
 }
