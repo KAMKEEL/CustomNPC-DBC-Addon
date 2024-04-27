@@ -11,6 +11,7 @@ public interface IDBCEvent extends IPlayerEvent {
 
         /**
          * 0: Misc, 1: HP, 2: Ki, 3: Stamina
+         *
          * @return Type of Capsule
          */
         int getType();
@@ -28,13 +29,24 @@ public interface IDBCEvent extends IPlayerEvent {
 
     @Cancelable
     interface FormChangeEvent extends IDBCEvent {
-
+        /**
+         * @return The ID of the Form. If form before is vanilla DBC, returns the ID of that. i.e Base returns 0, SSGod returns 9. Else, returns ID of CNPC Custom Form
+         */
         int getFormBeforeID();
 
+        /**
+         * @return The ID of the Form. If form after is vanilla DBC, returns the ID of that. i.e SSGod returns 9. Else, returns ID of CNPC Custom Form
+         */
         int getFormAfterID();
 
+        /**
+         * @return If form before transformation is a vanilla DBC (SSJ/SSGod/SSBEvo) and not a CNPC Custom Form, this returns false
+         */
         boolean isFormBeforeCustom();
 
+        /**
+         * @return If form after transformation is a vanilla DBC (SSJ/SSGod/SSBEvo) and not a CNPC Custom Form, this returns false
+         */
         boolean isFormAfterCustom();
     }
 
@@ -44,6 +56,7 @@ public interface IDBCEvent extends IPlayerEvent {
 
         /**
          * Calculated based on Player's Stats, Dex, Blocking, etc.
+         *
          * @return Damage Dealt to the HP of the Player
          */
         float getDamage();
