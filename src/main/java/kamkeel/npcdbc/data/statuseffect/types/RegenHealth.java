@@ -23,6 +23,6 @@ public class RegenHealth extends StatusEffect {
         DBCData dbcData = DBCData.get(player);
         int percentToRegen = ConfigDBCEffects.HealthRegenPercent * playerEffect.level;
         if(dbcData.Body > 0)
-            dbcData.restoreHealthPercent(percentToRegen);
+            dbcData.stats.restoreHealthPercent(percentToRegen);
     }
 }

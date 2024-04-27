@@ -22,6 +22,6 @@ public class RegenStamina extends StatusEffect {
     public void process(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
         int percentToRegen = ConfigDBCEffects.StaminaRegenPercent * playerEffect.level;
-        dbcData.restoreHealthPercent(percentToRegen);
+        dbcData.stats.restoreHealthPercent(percentToRegen);
     }
 }

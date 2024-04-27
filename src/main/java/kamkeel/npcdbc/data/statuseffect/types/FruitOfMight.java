@@ -41,7 +41,7 @@ public class FruitOfMight extends StatusEffect {
     @Override
     public void process(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
-        dbcData.restoreKiPercent(-kiToDrain);
+        dbcData.stats.restoreKiPercent(-kiToDrain);
         if (dbcData.Ki <= 0)
             playerEffect.kill();
     }

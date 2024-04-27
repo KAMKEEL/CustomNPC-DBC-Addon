@@ -22,7 +22,7 @@ public class NamekRegen extends StatusEffect {
     @Override
     public void process(EntityPlayer player, PlayerEffect playerEffect){
         DBCData dbcData = DBCData.get(player);
-        float currentBodyPercent = dbcData.getCurrentBodyPercentage();
+        float currentBodyPercent = dbcData.stats.getCurrentBodyPercentage();
         float percentToRegen = ConfigDBCEffects.NamekRegenPercent * playerEffect.level;
         if(dbcData.Body != 0){
             if(currentBodyPercent < ConfigDBCGameplay.NamekianRegenMax){
@@ -31,7 +31,7 @@ public class NamekRegen extends StatusEffect {
                     percentToRegen = ConfigDBCGameplay.NamekianRegenMax - currentBodyPercent;
                     kill = true;
                 }
-                dbcData.restoreHealthPercent(percentToRegen);
+                dbcData.stats.restoreHealthPercent(percentToRegen);
                 if (kill) {
                     playerEffect.kill();
                 }

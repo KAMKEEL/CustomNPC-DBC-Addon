@@ -3,8 +3,9 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -70,7 +71,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
 
                 // adds the "xMulti" after CON: AttributeValue
             } else if (s1.contains("CON:")) {
-                float multi = (float)  DBCData.getClient().getCurrentMulti();
+                float multi = (float) DBCData.getClient().stats.getCurrentMulti();
                 if (s1.contains("x"))
                     s1 = s1.substring(0, s1.indexOf("x") - 1);
                 s1 = s1 + (JRMCoreH.round(multi, 1) != 1.0 ? formData.getFormColorCode(formData.getCurrentForm()) + " x" + JRMCoreH.round(multi, 1) : "");
@@ -80,7 +81,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
                 s1 = replaceFormColor(s1, formData.getFormColorCode(formData.getCurrentForm()));
             }
 
-        } else if (DBCData.getClient().isLegendary() && isInBaseForm(DBCData.getClient())) {
+        } else if (DBCData.getClient().isForm(DBCForm.Legendary) && isInBaseForm(DBCData.getClient())) {
             if (!DBCData.getClient().containsSE(19)) { //If in UI, do not change colors
                 return;
             }
@@ -129,7 +130,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
             s2 = replaceFormColor(s2, replacementColor);
         } else {
             int attributeId = getAttributeIdByName(s1);
-            int modified = DBCData.getClient().getFullAttribute(attributeId);
+            int modified = DBCData.getClient().stats.getFullAttribute(attributeId);
             int original = JRMCoreH.PlyrAttrbts()[attributeId];
 
             String tooltipData = JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Modified") + ": " + replacementColor + modified

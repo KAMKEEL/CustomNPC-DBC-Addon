@@ -196,7 +196,7 @@ public abstract class MixinJRMCoreH {
     private static void applyChargingDex(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir, @Local(name = "def") LocalIntRef def, @Local(name = "kiProtection") LocalIntRef kiProtection) {
         DBCData dbcData = DBCData.get((EntityPlayer) Player);
         byte classID = dbcData.Class;
-        boolean isChargingKi = DBCData.get((EntityPlayer) Player).isChargingKiAttack();
+        boolean isChargingKi = DBCData.get((EntityPlayer) Player).stats.isChargingKiAttack();
         float newDef = def.get();
         int kiProt = kiProtection.get();
         if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {

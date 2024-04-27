@@ -116,7 +116,7 @@ public class HealthCapsule extends Item {
         int healthRestored = healthCapsules.getStrength();
 
         // Restore X Amount of Health
-        DBCData.get(player).restoreHealthPercent(healthRestored);
+        DBCData.get(player).stats.restoreHealthPercent(healthRestored);
 
         // Removes 1 Item
         itemStack.splitStack(1);

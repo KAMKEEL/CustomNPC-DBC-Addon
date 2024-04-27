@@ -116,7 +116,7 @@ public class KiCapsule extends Item {
         int kiRestored = kiCapsules.getStrength();
 
         // Restore X Amount of KI
-        DBCData.get(player).restoreKiPercent(kiRestored);
+        DBCData.get(player).stats.restoreKiPercent(kiRestored);
 
         // Removes 1 Item
         itemStack.splitStack(1);

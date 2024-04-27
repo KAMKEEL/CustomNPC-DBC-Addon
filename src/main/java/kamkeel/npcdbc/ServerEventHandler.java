@@ -64,10 +64,10 @@ public class ServerEventHandler {
                 // Keep the Player informed on their own data
                 DBCData dbcData = DBCData.get(player);
                 if(ConfigDBCGameplay.EnableNamekianRegen && dbcData.Race == DBCRace.NAMEKIAN)
-                    dbcData.applyNamekianRegen();
+                    dbcData.stats.applyNamekianRegen();
 
                 if (player.ticksExisted % 20 == 0)
-                    dbcData.decrementActiveEffects();
+                    dbcData.stats.decrementActiveEffects();
 
                 dbcData.syncTracking();
             }
@@ -106,7 +106,7 @@ public class ServerEventHandler {
             if (form.mastery.hasKiDrain()) {
                 if (player.ticksExisted % 10 == 0) {
                     float toDrain = form.mastery.kiDrain * form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
-                    dbcData.restoreKiPercent(-toDrain / form.mastery.kiDrainTimer * 10);
+                    dbcData.stats.restoreKiPercent(-toDrain / form.mastery.kiDrainTimer * 10);
                 }
             }
         }

@@ -125,7 +125,7 @@ public class MiscCapsule extends Item {
         }
         else if(meta == EnumMiscCapsules.Heat.getMeta()){
             // Restore 100 Amount of Heat
-            DBCData.get(player).restoreUIHeat(100);
+            DBCData.get(player).stats.restoreUIHeat(100);
             player.addChatComponentMessage(new ChatComponentText("§7UI Heat Restored"));
         }
         else if(meta == EnumMiscCapsules.PowerPoint.getMeta()){
@@ -134,7 +134,7 @@ public class MiscCapsule extends Item {
                 player.addChatComponentMessage(new ChatComponentText("§7Only Arcosians can use this capsule"));
                 return itemStack;
             } else {
-                dbcData.restoreArcPP(100);
+                dbcData.stats.restoreArcPP(100);
                 player.addChatComponentMessage(new ChatComponentText("§5Power Points Restored"));
             }
         }else if(meta == EnumMiscCapsules.Absorption.getMeta()){
@@ -143,7 +143,7 @@ public class MiscCapsule extends Item {
                 player.addChatComponentMessage(new ChatComponentText("§7Only Majins can use this capsule"));;
                 return itemStack;
             } else {
-                dbcData.restoreAbsorption(100);
+                dbcData.stats.restoreAbsorption(100);
                 player.addChatComponentMessage(new ChatComponentText("§5Absorption Restored"));
             }
         }

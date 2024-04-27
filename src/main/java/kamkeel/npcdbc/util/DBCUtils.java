@@ -130,7 +130,7 @@ public class DBCUtils {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
                 boolean block = props.getBlocking() == 1;
-                boolean isChargingKi = DBCData.get(player).isChargingKiAttack();
+                boolean isChargingKi = DBCData.get(player).stats.isChargingKiAttack();
                 int[] PlyrAttrbts = PlyrAttrbts(player);
                 NBTTagCompound nbt = nbt(player, "pres");
                 byte state = nbt.getByte("jrmcState");
@@ -317,7 +317,7 @@ public class DBCUtils {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
                 boolean block = props.getBlocking() == 1;
-                boolean isChargingKi = DBCData.get(player).isChargingKiAttack();
+                boolean isChargingKi = DBCData.get(player).stats.isChargingKiAttack();
 
                 int[] attributes = PlyrAttrbts(player);
                 String[] playerSkills = PlyrSkills(player);

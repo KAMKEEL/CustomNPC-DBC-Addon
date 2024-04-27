@@ -115,7 +115,7 @@ public class StaminaCapsule extends Item {
         int staminaRestored = staminaCapsules.getStrength();
 
         // Restore X Amount of Stamina
-        DBCData.get(player).restoreStaminaPercent(staminaRestored);
+        DBCData.get(player).stats.restoreStaminaPercent(staminaRestored);
 
         // Removes 1 Item
         itemStack.splitStack(1);

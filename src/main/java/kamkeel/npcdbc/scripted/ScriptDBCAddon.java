@@ -57,7 +57,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getMaxBody() {
-        return dbcData.getMaxBody();
+        return dbcData.stats.getMaxBody();
     }
 
     /**
@@ -73,7 +73,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public float getBodyPercentage() {
-        return dbcData.getCurrentBodyPercentage();
+        return dbcData.stats.getCurrentBodyPercentage();
     }
 
     /**
@@ -81,7 +81,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getMaxKi() {
-        return dbcData.getMaxKi();
+        return dbcData.stats.getMaxKi();
     }
 
     /**
@@ -89,7 +89,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getMaxStamina() {
-        return dbcData.getMaxStamina();
+        return dbcData.stats.getMaxStamina();
     }
 
     /**
@@ -97,7 +97,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int[] getAllAttributes() {
-        return dbcData.getAllAttributes();
+        return dbcData.stats.getAllAttributes();
     }
 
     /**
@@ -224,7 +224,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getFullAttribute(int attributeID) {
-        return dbcData.getFullAttribute(attributeID);
+        return dbcData.stats.getFullAttribute(attributeID);
     }
 
     /**
@@ -452,7 +452,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getMaxStat(int statID) {
-        return dbcData.getMaxStat(statID);
+        return dbcData.stats.getMaxStat(statID);
     }
 
     /**
@@ -461,7 +461,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getCurrentStat(int statID) {
-        return dbcData.getCurrentStat(statID);
+        return dbcData.stats.getCurrentStat(statID);
     }
 
     /**
@@ -469,7 +469,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public double getCurrentFormMultiplier() {
-        return dbcData.getCurrentMulti();
+        return dbcData.stats.getCurrentMulti();
     }
 
     @Override

@@ -105,7 +105,7 @@ public class MixinDBCKiTech {
 
             if (returnEarly) {
                 if (form.requiredForm.containsKey((int) JRMCoreH.Race)) {
-                    int id = d.getJRMCPlayerID();
+                    int id = d.stats.getJRMCPlayerID();
                     JRMCoreH.State = form.requiredForm.get((int) JRMCoreH.Race);
                     JRMCoreH.data2[id] = JRMCoreH.State + JRMCoreH.data2[id].substring(1);
                 }
