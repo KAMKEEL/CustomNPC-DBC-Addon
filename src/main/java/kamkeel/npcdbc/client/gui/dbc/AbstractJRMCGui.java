@@ -91,7 +91,7 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
         for(GuiButtonConstants.ReferenceIDs ref : GuiButtonConstants.ReferenceIDs.values()){
             if(ref.getButtonId() == id){
                 JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
-                ((IDBCGuiScreen) (Object) DBCScreen).setGuiIDPostInit(ref.getGuiID());
+                ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(ref.getGuiID());
                 FMLCommonHandler.instance().showGuiScreen(DBCScreen);
                 return;
             }
@@ -110,12 +110,12 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
         this.guiHeightOffset = (this.height - menuImageHeight) / 2;
 
         GuiButtonConstants.ReferenceIDs[] referenceArr = new GuiButtonConstants.ReferenceIDs[]{
-                GuiButtonConstants.ReferenceIDs.HELP_MENU,
                 GuiButtonConstants.ReferenceIDs.CLIENT_SETTINGS,
+                GuiButtonConstants.ReferenceIDs.HELP_MENU,
                 GuiButtonConstants.ReferenceIDs.NOTIFICATIONS
         };
         int offsetX = -60 + 25;
-        int offsetY = -59;
+        int offsetY = -60;
 
         for(GuiButtonConstants.ReferenceIDs ref : referenceArr){
             //@TODO tooltip
@@ -123,7 +123,7 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
             GuiButton button = new JRMCoreGuiButtons03(ref.getButtonId(), guiWidthOffset+offsetX, guiHeightOffset+menuImageHeight+2+offsetY, name.substring(0, 2).toUpperCase(), 0, 8046079, ref.getIconID());
             buttonList.add(button);
             this.labelList.add(new JRMCoreLabel(button, ref.toString()));
-            offsetY -= 21;
+            offsetY -= 20;
         }
     }
 
