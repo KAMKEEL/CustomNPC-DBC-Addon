@@ -1,7 +1,10 @@
 package kamkeel.npcdbc.client.gui.dbc;
 
 import JinRyuu.JRMCore.JRMCoreClient;
+import JinRyuu.JRMCore.JRMCoreGuiButtons00;
+import JinRyuu.JRMCore.JRMCoreGuiButtons03;
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.client.gui.dbc.constants.GuiButtonConstants;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -34,9 +37,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         super.initGui();
 
         addServerButtons();
-
-
-
+        addDifficultyButton();
     }
 
     @Override
@@ -96,9 +97,16 @@ public class StatSheetGui extends AbstractJRMCGui {
         this.drawTexturedModalRect((this.width - 5) / 2 - max / 2 + alignmentAdjusted - 4, guiHeightOffset-14, 0, 182, 11, 13);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
+
     protected void drawStatusEffects(){
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
         this.guiHeightOffset = (this.height - menuImageHeight) / 2;
         JRMCoreClient.bars.showSE(this.width/4, guiHeightOffset - 35, 0, 0);
+    }
+    private void addDifficultyButton() {
+        String translation = "Difficulty";
+        int stringWidth = fontRendererObj.getStringWidth(translation)+8;
+        GuiButtonConstants.ReferenceIDs ref = GuiButtonConstants.ReferenceIDs.DIFFICULTY;
+        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 8046079));
     }
 }
