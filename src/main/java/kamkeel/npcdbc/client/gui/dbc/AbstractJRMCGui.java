@@ -5,11 +5,16 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiButtonConstants;
 import kamkeel.npcdbc.mixin.IDBCGuiScreen;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiConfirmOpenLink;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-public abstract class AbstractJRMCGui extends GuiScreen {
+import java.awt.*;
+import java.net.URI;
+
+public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallback {
     private static final ResourceLocation menuTexture = new ResourceLocation("jinryuumodscore:gui.png");
     private final int guiID;
     protected int menuImageWidth = 256;
@@ -17,6 +22,8 @@ public abstract class AbstractJRMCGui extends GuiScreen {
 
     protected int guiWidthOffset;
     protected int guiHeightOffset;
+
+    private URI clickedUrl;
 
     /**
      * @param guiReplacementID ID of the JRMC Gui this object is replacing
@@ -38,6 +45,7 @@ public abstract class AbstractJRMCGui extends GuiScreen {
 
         addCloseButton();
         addNavbarButtons();
+        addClientHelpButtons();
     }
 
     @Override
@@ -49,15 +57,6 @@ public abstract class AbstractJRMCGui extends GuiScreen {
     protected void actionPerformed(GuiButton button){
         int id = button.id;
 
-        for(GuiButtonConstants.ReferenceIDs ref : GuiButtonConstants.ReferenceIDs.values()){
-            if(ref.getButtonId() == id){
-                JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
-                ((IDBCGuiScreen) (Object) DBCScreen).setGuiIDPostInit(ref.getGuiID());
-                FMLCommonHandler.instance().showGuiScreen(DBCScreen);
-                return;
-            }
-        }
-
         switch(id){
             case GuiButtonConstants.EXIT:
                 this.mc.thePlayer.closeScreen();
@@ -68,24 +67,65 @@ public abstract class AbstractJRMCGui extends GuiScreen {
             case GuiButtonConstants.YEARS_C:
                 JRMCoreHJYC.openGui(1, this.mc.thePlayer);
                 return;
+            case GuiButtonConstants.SERVER_SITE:
+                this.openUrlBox("http://dbcserver1710.jingames.net");
             default:
                 break;
         }
+
+        for(GuiButtonConstants.ReferenceIDs ref : GuiButtonConstants.ReferenceIDs.values()){
+            if(ref.getButtonId() == id){
+                JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
+                ((IDBCGuiScreen) (Object) DBCScreen).setGuiIDPostInit(ref.getGuiID());
+                FMLCommonHandler.instance().showGuiScreen(DBCScreen);
+                return;
+            }
+        }
     }
 
-    protected void addStatusEffects(){
+    private void openUrlBox(String url) {
+        try{
+            this.clickedUrl = new URI(url);
+        } catch (Exception ignored) {}
+        mc.displayGuiScreen(new GuiConfirmOpenLink(this, url, 0, false));
+    }
+
+    protected void addClientHelpButtons(){
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
         this.guiHeightOffset = (this.height - menuImageHeight) / 2;
-        JRMCoreClient.bars.showSE(this.width/4, guiHeightOffset - 35, 0, 0);
+
+        GuiButtonConstants.ReferenceIDs[] referenceArr = new GuiButtonConstants.ReferenceIDs[]{
+                GuiButtonConstants.ReferenceIDs.HELP_MENU,
+                GuiButtonConstants.ReferenceIDs.CLIENT_SETTINGS,
+                GuiButtonConstants.ReferenceIDs.NOTIFICATIONS
+        };
+        int offsetX = -60 + 25;
+        int offsetY = -59;
+
+        for(GuiButtonConstants.ReferenceIDs ref : referenceArr){
+            //@TODO tooltip
+            String name = "CL";
+            buttonList.add(new JRMCoreGuiButtons03(ref.getButtonId(), guiWidthOffset+offsetX, guiHeightOffset+menuImageHeight+2+offsetY, name.substring(0, 2).toUpperCase(), 0, 8046079, ref.getIconID()));
+            offsetY -= 21;
+        }
     }
 
     protected void addServerButtons(){
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
         this.guiHeightOffset = (this.height - menuImageHeight) / 2;
 
+        String s = "Official DBC Server's site";
+        int i = this.fontRendererObj.getStringWidth(s);
+        this.buttonList.add(new JRMCoreGuiButtons00(GuiButtonConstants.SERVER_SITE, guiWidthOffset + 260, guiHeightOffset + 85 - 40, i + 8, 20, s, 0));
 
+        if (!JRMCoreConfig.ssurl.contains("empty") && JRMCoreConfig.ssurl.contains("ttp")) {
+            s = "Server Shop";
+            i = this.fontRendererObj.getStringWidth(s);
+            this.buttonList.add(new JRMCoreGuiButtons00(3099, guiWidthOffset + 260, guiHeightOffset + 85, i + 8, 20, s, 0));
+        }
 
     }
+
     protected void addCloseButton(){
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
         this.guiHeightOffset = (this.height - menuImageHeight) / 2;
@@ -95,29 +135,56 @@ public abstract class AbstractJRMCGui extends GuiScreen {
 
     protected void addNavbarButtons(){
         GuiButtonConstants.ReferenceIDs[] guiReferences = GuiButtonConstants.ReferenceIDs.values();
-        int i = 0;
-        for(; i < guiReferences.length; i++){
+        int xOffset = 0;
+
+
+
+        if (!JRMCoreConfig.ssurl.contains("empty") && JRMCoreConfig.ssurl.contains("ttp")) {
+            GuiButtonConstants.ReferenceIDs ref = GuiButtonConstants.ReferenceIDs.SERVER_SHOP;
+            //String name = "Server Shop";
+            buttonList.add(new JRMCoreGuiButtons02(3099, guiWidthOffset, guiHeightOffset+menuImageHeight+2, "$", ref.getGuiID() == guiID ? 1 : 0, Color.GREEN.darker().darker().getRGB()));
+            //drawDetails(JRMCoreH.cct(name), guiLeft + i * 21, guiTop + ySize + 2 + 1, 20, 20, x, y, fontRendererObj);
+            xOffset++;
+        }
+
+        for(int i = 0; i < guiReferences.length; i++){
             GuiButtonConstants.ReferenceIDs ref = guiReferences[i];
             if(ref == GuiButtonConstants.ReferenceIDs.DIFFICULTY)
                 break;
 
             boolean isSelected = ref.getGuiID() == this.guiID;
-            this.buttonList.add(new JRMCoreGuiButtons03(ref.getButtonId(), guiWidthOffset + i*21, guiHeightOffset+menuImageHeight+2, "",  (isSelected ? 1 : 0), 8046079,  ref.getIconID()));
+            this.buttonList.add(new JRMCoreGuiButtons03(ref.getButtonId(), guiWidthOffset + xOffset*21, guiHeightOffset+menuImageHeight+2, "",  (isSelected ? 1 : 0), 8046079,  ref.getIconID()));
             //@TODO ADD TOOLTIP
+            xOffset++;
         }
 
         if(JRMCoreH.JYC()){
             //@TODO get name
-            this.buttonList.add(new JRMCoreGuiButtons02(GuiButtonConstants.YEARS_C, guiWidthOffset + i*21, guiHeightOffset+menuImageHeight+2, "CA", 0, 8046079));
+            this.buttonList.add(new JRMCoreGuiButtons02(GuiButtonConstants.YEARS_C, guiWidthOffset + xOffset*21, guiHeightOffset+menuImageHeight+2, "CA", 0, 8046079));
             //@TODO add tooltip
-            i++;
+            xOffset++;
         }
         if(JRMCoreH.JFC()){
             //@TODO get name
-            this.buttonList.add(new JRMCoreGuiButtons02(GuiButtonConstants.FAMILY_C, guiWidthOffset + i*21, guiHeightOffset+menuImageHeight+2, "FA", 0, 8046079));
+            this.buttonList.add(new JRMCoreGuiButtons02(GuiButtonConstants.FAMILY_C, guiWidthOffset + xOffset*21, guiHeightOffset+menuImageHeight+2, "FA", 0, 8046079));
             //@TODO add tooltip
-            i++;
+            xOffset++;
         }
 
+
+    }
+    @Override
+    public void confirmClicked(boolean result, int id){
+        if(id == 0){
+            if(result && this.clickedUrl != null){
+                try {
+                    Desktop.getDesktop().browse(this.clickedUrl);
+                } catch (Throwable var3) {
+                }
+            }
+            this.clickedUrl = null;
+            mc.displayGuiScreen(this);
+
+        }
     }
 }
