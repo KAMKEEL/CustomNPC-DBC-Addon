@@ -26,7 +26,9 @@ public class StatusEffectController implements IStatusEffectHandler {
     public void load() {
         activeEffects.clear();
 
-        standardEffects.put(Effects.REGEN, new Regen(-1));
+        standardEffects.put(Effects.REGEN_HEALTH, new RegenHealth(-1));
+        standardEffects.put(Effects.REGEN_KI, new RegenKi(-1));
+        standardEffects.put(Effects.REGEN_STAMINA, new RegenStamina(-1));
         standardEffects.put(Effects.NAMEK_REGEN, new NamekRegen(-1));
         standardEffects.put(Effects.FRUIT_OF_MIGHT, new FruitOfMight(-1));
         standardEffects.put(Effects.INFLATION, new Inflation(-1));
