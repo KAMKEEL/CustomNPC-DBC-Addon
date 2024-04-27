@@ -84,7 +84,19 @@ public class StatusEffect implements IStatusEffect {
         }
     }
 
+    public void init(EntityPlayer player) {
+
+    }
+
     public void process(EntityPlayer player) {
+    }
+
+    public void runout(EntityPlayer player) {
+
+    }
+
+    public void kill() {
+        duration = 0;
     }
 
     @Override

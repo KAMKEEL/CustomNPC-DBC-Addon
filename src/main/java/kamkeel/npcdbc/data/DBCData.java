@@ -223,13 +223,14 @@ public class DBCData extends DBCDataUniversal {
 
             if (currentEffect.duration == -1)
                 continue;
-
-            currentEffect.duration--;
-
-            if (currentEffect.duration == 0)
+            else if (currentEffect.duration == 0) {
+                currentEffect.runout(player);
                 iterator.remove(); // Remove the current entry using iterator
+            } else
+                currentEffect.duration--;
+
+            setActiveEffects(currentEffects);
         }
-        setActiveEffects(currentEffects);
     }
 
     public int[] getAllAttributes() {

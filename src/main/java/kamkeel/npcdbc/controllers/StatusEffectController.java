@@ -64,6 +64,7 @@ public class StatusEffectController implements IStatusEffectHandler {
             currentEffects = activeEffects.get(Utility.getUUID(player));
 
         currentEffects.put(effect.id, effect);
+        effect.init(player);
     }
 
     public void removeEffect(EntityPlayer player, StatusEffect effect) {
@@ -72,10 +73,11 @@ public class StatusEffectController implements IStatusEffectHandler {
             currentEffects = activeEffects.get(Utility.getUUID(player));
 
         currentEffects.remove(effect.id);
+        effect.runout(player);
     }
 
     @Override
-    public boolean hasEffectTime(EntityPlayer player, int id){
+    public boolean hasEffectTime(EntityPlayer player, int id) {
         HashMap<Integer, StatusEffect> currentEffects = new HashMap<>();
         if (activeEffects.containsKey(player.getUniqueID()))
             currentEffects = activeEffects.get(Utility.getUUID(player));
@@ -86,12 +88,12 @@ public class StatusEffectController implements IStatusEffectHandler {
     }
 
     @Override
-    public int getEffectDuration(EntityPlayer player, int id){
+    public int getEffectDuration(EntityPlayer player, int id) {
         HashMap<Integer, StatusEffect> currentEffects = new HashMap<>();
         if (activeEffects.containsKey(player.getUniqueID()))
             currentEffects = activeEffects.get(Utility.getUUID(player));
 
-        if(currentEffects.containsKey(id))
+        if (currentEffects.containsKey(id))
             return currentEffects.get(id).duration;
 
         return -2;
@@ -107,6 +109,8 @@ public class StatusEffectController implements IStatusEffectHandler {
         statusEffect.id = id;
         statusEffect.level = level;
         currentEffects.put(id, statusEffect);
+        statusEffect.init(player);
+
     }
 
     @Override
@@ -116,5 +120,7 @@ public class StatusEffectController implements IStatusEffectHandler {
             currentEffects = activeEffects.get(Utility.getUUID(player));
 
         currentEffects.remove(id);
+        currentEffects.get(id).runout(player);
+
     }
 }
