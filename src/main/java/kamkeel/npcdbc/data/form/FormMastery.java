@@ -54,7 +54,7 @@ public class FormMastery implements IFormMastery {
 
     @Override
     public float getDodgeChance() {
-        return kiDrain;
+        return dodgeChance;
     }
 
     @Override

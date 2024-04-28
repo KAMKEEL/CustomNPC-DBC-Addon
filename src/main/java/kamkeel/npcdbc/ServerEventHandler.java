@@ -3,17 +3,20 @@ package kamkeel.npcdbc;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.combatmode.Dodge;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.StatusEffectController;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.CapsuleInfo;
 import kamkeel.npcdbc.network.packets.ChargingDexInfo;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,6 +26,8 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
+
+import java.util.Random;
 
 public class ServerEventHandler {
 
@@ -63,7 +68,7 @@ public class ServerEventHandler {
             if (player.ticksExisted % 10 == 0) {
                 // Keep the Player informed on their own data
                 DBCData dbcData = DBCData.get(player);
-                if(ConfigDBCGameplay.EnableNamekianRegen && dbcData.Race == DBCRace.NAMEKIAN)
+                if (ConfigDBCGameplay.EnableNamekianRegen && dbcData.Race == DBCRace.NAMEKIAN)
                     dbcData.stats.applyNamekianRegen();
 
                 if (player.ticksExisted % 20 == 0)
@@ -77,14 +82,32 @@ public class ServerEventHandler {
 
     @SubscribeEvent
     public void playerDeathEvent(LivingDeathEvent event) {
-        if(event.entityLiving == null || event.entityLiving.worldObj == null || event.entityLiving.worldObj.isRemote)
+        if (event.entityLiving == null || event.entityLiving.worldObj == null || event.entityLiving.worldObj.isRemote)
             return;
 
-        if(event.entityLiving.worldObj instanceof WorldServer && event.entityLiving instanceof EntityPlayer) {
+        if (event.entityLiving.worldObj instanceof WorldServer && event.entityLiving instanceof EntityPlayer) {
             StatusEffectController.getInstance().killEffects((EntityPlayer) event.entityLiving);
         }
     }
 
+    @SubscribeEvent
+    public void DBCAttackEvent(DBCPlayerEvent.DamagedEvent event) {
+        Form form = DBCData.getForm((EntityPlayer) event.player);
+        if (form != null) {
+            if (form.mastery.hasDodge()) {
+                Random rand = new Random();
+                if (form.mastery.dodgeChance <= rand.nextInt(100)) {
+                    event.setCanceled(true);
+                    Dodge.dodge((Entity) event.player, event.damageSource.getMCDamageSource().getEntity());
+                }
+            }
+            if (form.mastery.hasDamageNegation()) {
+                float newDamage = event.getDamage() * (100 - form.mastery.damageNegation) / 100;
+                event.setDamage(newDamage);
+            }
+
+        }
+    }
 
     public void handleFormProcesses(EntityPlayer player) {
         Form form = DBCData.getForm(player);
