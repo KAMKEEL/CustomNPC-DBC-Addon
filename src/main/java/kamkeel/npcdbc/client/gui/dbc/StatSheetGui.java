@@ -163,7 +163,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         this.dynamicElements.add(new JRMCoreLabel(
-            String.format("%s: §8%s", JRMCoreH.trl("jrmc", "Alignment"), JRMCoreH.algnCur(JRMCoreH.align)),
+            String.format("%s: §4%s", JRMCoreH.trl("jrmc", "Alignment"), JRMCoreH.algnCur(JRMCoreH.align)),
             JRMCoreH.trl("jrmc", "AlignmentDesc", JRMCoreH.align+"%"),
             this.guiWidthOffset+5,
             this.guiHeightOffset+5+index*10
@@ -185,6 +185,8 @@ public class StatSheetGui extends AbstractJRMCGui {
         String[] attrNames = new String[]{
             "STR", "DEX", "CON", "WIL", "MND", "SPI"
         };
+
+        int[] statVals = new int[3];
 
         int upgradeCost = JRMCoreH.attrCst(JRMCoreH.PlyrAttrbts, this.upgradeCounter);
         boolean canAffordUpgrade = JRMCoreH.curTP >= upgradeCost;
@@ -223,6 +225,10 @@ public class StatSheetGui extends AbstractJRMCGui {
 
             if(isSTRDEXWIL){
                 modifiedStatVal = JRMCoreH.getPlayerAttribute(JRMCoreClient.mc.thePlayer, JRMCoreH.PlyrAttrbts, i, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.PlyrSkillX, JRMCoreH.curRelease, JRMCoreH.getArcRsrv(), JRMCoreH.StusEfctsMe(14), JRMCoreH.StusEfctsMe(12), JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20), JRMCoreH.Pwrtyp, JRMCoreH.PlyrSkills, isFused, JRMCoreH.getMajinAbsorption());;
+                if(i < 2)
+                    statVals[i] = modifiedStatVal;
+                else if(i == 3)
+                    statVals[2] = modifiedStatVal;
             }
 
             String statDisplay = JRMCoreH.numSep(modifiedStatVal);
@@ -285,6 +291,42 @@ public class StatSheetGui extends AbstractJRMCGui {
             )
         );
 
+        index = 0;
+
+        this.dynamicElements.add(new JRMCoreLabel(
+           String.format("%s: §8%s%%", JRMCoreH.trl("jrmc", "PowerRelease"), dbcClient.Release),
+           null,
+            guiWidthOffset+133,
+            guiHeightOffset+5+index*10
+        ));
+        index++;
+        index++;
+
+
+        this.dynamicElements.add(new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "Stats"),
+            null,
+            guiWidthOffset+133,
+            guiHeightOffset+5+index*10
+        ));
+        index++;
+
+        System.out.println(String.format("%s, %s", JRMCoreH.Class, dbcClient.Class));
+        int stat = JRMCoreH.stat(mc.thePlayer, 0, 1, 0, statVals[0], dbcClient.Race, JRMCoreH.Class, 0);
+        //float inc = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 0, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
+        int curAtr = (int)((double)stat * 0.01D * (double)JRMCoreH.curRelease * (double)JRMCoreH.weightPerc(0));
+        long longValue = (long)curAtr + (long)0;
+        if (longValue > 2147483647L) {
+            longValue = 2147483647L;
+        }
+
+        this.dynamicElements.add(new JRMCoreLabel(
+            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "mleMC"), formColor+JRMCoreH.numSep((long) (stat*(dbcClient.Release / 100.0F)))),
+            "description",
+            guiWidthOffset+133,
+            guiHeightOffset+5+index*10
+        ));
+        index++;
 
 
     }
