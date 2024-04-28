@@ -29,9 +29,6 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
 
     @Shadow
     public int guiID;
-
-    @Shadow
-    private int hei;
     @Unique
     private int newGuiID;
     @Unique

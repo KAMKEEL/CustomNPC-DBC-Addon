@@ -145,11 +145,11 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         int upgradeCost = JRMCoreH.attrCst(JRMCoreH.PlyrAttrbts, this.upgradeCounter);
         boolean isFused = false; //@TODO add logic for this
-
+        boolean canAffordUpgrade = JRMCoreH.curTP >= upgradeCost;
         for(int i = 0; i < 6; i++){
             boolean isMaxed = !(JRMCoreGuiScreen.kqGW3Z(isFused) > JRMCoreH.PlyrAttrbts[i]);
-            boolean canAfford = JRMCoreH.curTP >= upgradeCost;
-            boolean isButtonEnabled = !isFused && !isMaxed && canAfford;
+            boolean isButtonEnabled = !isFused && !isMaxed && canAffordUpgrade;
+
             String upgradeTooltip = null;
 
             int yPos = guiHeightOffset+i*10+index*10;
@@ -158,6 +158,8 @@ public class StatSheetGui extends AbstractJRMCGui {
                 upgradeTooltip = JRMCoreH.trl("dbc", "cantupgradef");
             }else if(isMaxed){
                 upgradeTooltip = JRMCoreH.trl("jrmc", "AttributeMaxed");
+            }else if(!canAffordUpgrade){
+                upgradeTooltip = JRMCoreH.trl("jrmc", "cantupgrade")+ "\n" + JRMCoreH.trl("jrmc", "RequiredTP", "§4"+JRMCoreH.numSep(upgradeCost));
             }
 
             GuiButton button = buttons[i];
@@ -209,11 +211,25 @@ public class StatSheetGui extends AbstractJRMCGui {
         }
 
 
+        String upgradeDescription = JRMCoreH.trl("jrmc", "UCnam");
+        int descriptionWidth = this.mc.fontRenderer.getStringWidth(upgradeDescription+" ");
+
+        if (allMaxed) {
+            upgradeDescription += "\n§c" + JRMCoreH.cct(JRMCoreH.trl("jrmc", "AttributeAllMaxed"));
+        } else if (upgradeCost == 0 || !canAffordUpgrade) {
+            upgradeDescription += "\n§c" + JRMCoreH.cct(JRMCoreH.trl("jrmc", "cantupgrade"));
+        } else if (isFused) {
+            upgradeDescription += "\n§c" + JRMCoreH.cct(JRMCoreH.trl("dbc", "cantupgradef"));
+        }else if(upgradeCounter > 0){
+            upgradeDescription += ", ";
+        }
+
         this.dynamicElements.add(new JRMCoreLabel(
             " §8UC: " + JRMCoreH.cldb + JRMCoreH.numSep(upgradeCost)+" TP "+(upgradeCounter > 0 ? "x"+JRMCoreH.attributeMultiplier(this.upgradeCounter) : ""),
-            "lololol",
+            upgradeDescription,
             guiWidthOffset+15,
-            guiHeightOffset+5+index*10
+            guiHeightOffset+5+index*10,
+            descriptionWidth
             )
         );
 
