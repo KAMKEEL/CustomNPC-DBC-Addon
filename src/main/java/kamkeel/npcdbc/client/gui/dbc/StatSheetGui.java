@@ -1,9 +1,11 @@
 package kamkeel.npcdbc.client.gui.dbc;
 
+import JinRyuu.DragonBC.common.DBCConfig;
 import JinRyuu.JRMCore.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -68,7 +70,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         }else if(isMajin){
             formColor = "§c";
         }else if(isLegendary){
-            formColor = "§a";
+            formColor = "§2";
         }
 
         boolean isFused = dbcClient.containsSE(10) || dbcClient.containsSE(11);
@@ -186,7 +188,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             "STR", "DEX", "CON", "WIL", "MND", "SPI"
         };
 
-        int[] statVals = new int[3];
+        int[] statVals = new int[6];
 
         int upgradeCost = JRMCoreH.attrCst(JRMCoreH.PlyrAttrbts, this.upgradeCounter);
         boolean canAffordUpgrade = JRMCoreH.curTP >= upgradeCost;
@@ -225,11 +227,8 @@ public class StatSheetGui extends AbstractJRMCGui {
 
             if(isSTRDEXWIL){
                 modifiedStatVal = JRMCoreH.getPlayerAttribute(JRMCoreClient.mc.thePlayer, JRMCoreH.PlyrAttrbts, i, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.PlyrSkillX, JRMCoreH.curRelease, JRMCoreH.getArcRsrv(), JRMCoreH.StusEfctsMe(14), JRMCoreH.StusEfctsMe(12), JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20), JRMCoreH.Pwrtyp, JRMCoreH.PlyrSkills, isFused, JRMCoreH.getMajinAbsorption());;
-                if(i < 2)
-                    statVals[i] = modifiedStatVal;
-                else if(i == 3)
-                    statVals[2] = modifiedStatVal;
             }
+            statVals[i] = modifiedStatVal;
 
             String statDisplay = JRMCoreH.numSep(modifiedStatVal);
 
@@ -274,6 +273,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         if (allMaxed) {
             upgradeDescription += "\n§c" + JRMCoreH.cct(JRMCoreH.trl("jrmc", "AttributeAllMaxed"));
+            descriptionWidth = 150;
         } else if (upgradeCost == 0 || !canAffordUpgrade) {
             upgradeDescription += "\n§c" + JRMCoreH.cct(JRMCoreH.trl("jrmc", "cantupgrade"));
         } else if (isFused) {
@@ -283,7 +283,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         }
 
         this.dynamicElements.add(new JRMCoreLabel(
-            " §8UC: " + JRMCoreH.cldb + (allMaxed || upgradeCost <= 0 ? JRMCoreH.trl("jrmc", "LimitReached") : JRMCoreH.numSep(upgradeCost)+" TP "+(upgradeCounter > 0 ? "x"+JRMCoreH.attributeMultiplier(this.upgradeCounter) : "")),
+            " §8UC: " + JRMCoreH.cldb + (upgradeCost <= 0 ? JRMCoreH.trl("jrmc", "LimitReached") : (allMaxed ? JRMCoreH.trl("jrmc", "AttributeAllMaxed") : JRMCoreH.numSep(upgradeCost)+" TP "+(upgradeCounter > 0 ? "x"+JRMCoreH.attributeMultiplier(this.upgradeCounter) : ""))),
             upgradeDescription,
             guiWidthOffset+15,
             guiHeightOffset+5+index*10,
@@ -311,8 +311,8 @@ public class StatSheetGui extends AbstractJRMCGui {
         ));
         index++;
 
-        System.out.println(String.format("%s, %s", JRMCoreH.Class, dbcClient.Class));
-        int stat = JRMCoreH.stat(mc.thePlayer, 0, 1, 0, statVals[0], dbcClient.Race, JRMCoreH.Class, 0);
+        //@TODO ADD KI FIST
+        int stat = JRMCoreH.stat(mc.thePlayer, 0, 1, 0, statVals[0], dbcClient.Race, dbcClient.Class, 0);
         //float inc = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 0, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
         int curAtr = (int)((double)stat * 0.01D * (double)JRMCoreH.curRelease * (double)JRMCoreH.weightPerc(0));
         long longValue = (long)curAtr + (long)0;
@@ -321,13 +321,94 @@ public class StatSheetGui extends AbstractJRMCGui {
         }
 
         this.dynamicElements.add(new JRMCoreLabel(
-            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "mleMC"), formColor+JRMCoreH.numSep((long) (stat*(dbcClient.Release / 100.0F)))),
+            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "mleDB"), formColor+JRMCoreH.numSep((long) (stat*(dbcClient.Release / 100.0F)))),
             "description",
             guiWidthOffset+133,
             guiHeightOffset+5+index*10
         ));
         index++;
 
+        //@TODO ADD KI PROT
+        int kiProtectionVal = (int)((double)JRMCoreH.SklLvl(11) * DBCConfig.cnfKDd * (double)statVals[5] * (double)JRMCoreH.curRelease * 0.01D);
+
+        stat = JRMCoreH.stat(mc.thePlayer, 1, 1, 1, statVals[1], dbcClient.Race, dbcClient.Class, 0);
+        //float inc = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 0, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
+        curAtr = (int)((double)stat * (dbcClient.Release / 100.0F) * (double)JRMCoreH.weightPerc(1));
+        longValue = (long)curAtr + (long)kiProtectionVal;
+        if (longValue > 2147483647L) {
+            longValue = 2147483647L;
+        }
+
+        this.dynamicElements.add(new JRMCoreLabel(
+            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "DefDB"), formColor+JRMCoreH.numSep((long) (longValue))),
+            "description",
+            guiWidthOffset+133,
+            guiHeightOffset+5+index*10
+        ));
+        index++;
+
+        this.dynamicElements.add(new JRMCoreLabel(
+            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "Passive"), formColor+JRMCoreH.numSep((long) (longValue*JRMCoreConfig.StatPasDef/100))),
+            "description",
+            guiWidthOffset+138,
+            guiHeightOffset+5+index*10
+        ));
+        index++;
+
+        if(ClientCache.hasChargingDex){
+            this.dynamicElements.add(new JRMCoreLabel(
+                String.format("§8%s: §4%s", "Charging", formColor + JRMCoreH.numSep((long) (longValue * ClientCache.chargingDexValues.get((int) dbcClient.Class) / 100))),
+                "description",
+                guiWidthOffset + 138,
+                guiHeightOffset + 5 + index * 10
+            ));
+            index++;
+        }
+
+        stat = JRMCoreH.stat(mc.thePlayer, 2, 1, 2, statVals[2], dbcClient.Race, dbcClient.Class, 0);
+
+        double dmgReducScaling = JRMCoreH.getPlayerAttribute(JRMCoreClient.mc.thePlayer, JRMCoreH.PlyrAttrbts, 2, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.PlyrSkillX, JRMCoreH.curRelease, JRMCoreH.getArcRsrv(), JRMCoreH.StusEfctsMe(14), JRMCoreH.StusEfctsMe(12), JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20), JRMCoreH.Pwrtyp, JRMCoreH.PlyrSkills, isFused, JRMCoreH.getMajinAbsorption());
+        double percentile = (dmgReducScaling > statVals[2] ? dmgReducScaling : statVals[2]) / ((double) statVals[2]);
+        int dmgReduction = (int)((1.0D - 1.0D / percentile) * 100.0D);
+        this.dynamicElements.add(new JRMCoreLabel(
+            String.format("§8%s: §4%s %s", JRMCoreH.trl("jrmc", "BdDB"), JRMCoreH.numSep(stat), (JRMCoreH.round(percentile, 1) != 1.0D ? "R" + dmgReduction + "%" : "")),
+            "description",
+            guiWidthOffset+133,
+            guiHeightOffset+5+index*10
+        ));
+        index++;
+
+        stat = JRMCoreH.stat(mc.thePlayer, 2, 1, 3, statVals[2], dbcClient.Race, dbcClient.Class, 0);
+
+        this.dynamicElements.add(new JRMCoreLabel(
+            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "StDB"), JRMCoreH.numSep(stat)),
+            "description",
+            guiWidthOffset+133,
+            guiHeightOffset+5+index*10
+        ));
+        index++;
+
+        stat = JRMCoreH.stat(mc.thePlayer, 3, 1, 4, statVals[3], dbcClient.Race, dbcClient.Class, 0);
+
+        this.dynamicElements.add(new JRMCoreLabel(
+            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "EnPwDB"), formColor+JRMCoreH.numSep((int)((double)stat * 0.01D * (double)JRMCoreH.curRelease))),
+            "description",
+            guiWidthOffset+133,
+            guiHeightOffset+5+index*10
+        ));
+        index++;
+
+        stat = JRMCoreH.stat(mc.thePlayer, 5, 1, 5, statVals[5], dbcClient.Race, dbcClient.Class, JRMCoreH.SklLvl_KiBs(1));
+        int statBonus = stat - JRMCoreH.stat(mc.thePlayer, 5, 1, 5, statVals[5], dbcClient.Race, dbcClient.Class, 0);
+
+        this.dynamicElements.add(new JRMCoreLabel(
+            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "EnPlDB"), JRMCoreH.numSep(stat)),
+            "description",
+            guiWidthOffset+133,
+            guiHeightOffset+5+index*10
+        ));
+
+        //@TODO ADD RUNNING/FLYING SPEEDS
 
     }
 
