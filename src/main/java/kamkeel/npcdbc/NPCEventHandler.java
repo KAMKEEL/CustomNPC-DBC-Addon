@@ -37,9 +37,9 @@ public class NPCEventHandler {
         if (event.player == null || event.player.getMCEntity() == null || event.player.getMCEntity().worldObj.isRemote)
             return;
 
-        Form form = DBCData.getForm((EntityPlayer) event.player);
+        Form form = DBCData.getForm((EntityPlayer) event.player.getMCEntity());
         if (form != null) {
-            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo((EntityPlayer) event.player);
+            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo((EntityPlayer) event.player.getMCEntity());
             if (form.mastery.hasDodge()) {
                 Random rand = new Random();
                 float dodgeChance = form.mastery.dodgeChance * form.mastery.calculateMulti("dodge", formData.getCurrentLevel());
