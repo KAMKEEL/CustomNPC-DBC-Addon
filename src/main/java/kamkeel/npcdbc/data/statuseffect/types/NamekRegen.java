@@ -15,7 +15,7 @@ public class NamekRegen extends StatusEffect {
         name = "NamekRegen";
         id = Effects.NAMEK_REGEN;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
-        iconX = 0;
+        iconX = 48;
         iconY = 0;
     }
 

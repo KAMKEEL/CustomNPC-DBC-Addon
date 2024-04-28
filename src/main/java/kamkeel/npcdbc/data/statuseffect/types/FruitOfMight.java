@@ -18,7 +18,7 @@ public class FruitOfMight extends StatusEffect {
         name = "FruitOfMight";
         id = Effects.FRUIT_OF_MIGHT;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
-        iconX = 0;
+        iconX = 64;
         iconY = 0;
 
         if (fruitOfMightAura == null) {

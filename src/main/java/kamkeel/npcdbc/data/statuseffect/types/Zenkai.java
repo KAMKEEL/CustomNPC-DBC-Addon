@@ -6,13 +6,13 @@ import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class Overpower extends StatusEffect {
+public class Zenkai extends StatusEffect {
 
-    public Overpower() {
-        name = "Overpower";
-        id = Effects.OVERPOWER;
+    public Zenkai() {
+        name = "Zenkai";
+        id = Effects.ZENKAI;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
-        iconX = 112;
+        iconX = 160;
         iconY = 0;
     }
 

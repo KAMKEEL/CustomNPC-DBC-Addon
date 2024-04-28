@@ -39,6 +39,8 @@ public class StatusEffectController implements IStatusEffectHandler {
         standardEffects.put(Effects.MEDITATION, new Meditation());
         standardEffects.put(Effects.OVERPOWER, new Overpower());
         standardEffects.put(Effects.CHOCOLATED, new Chocolated());
+        standardEffects.put(Effects.DARKNESS, new Darkness());
+        standardEffects.put(Effects.ZENKAI, new Zenkai());
     }
 
     /**

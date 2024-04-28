@@ -12,7 +12,7 @@ public class Inflation extends StatusEffect {
         name = "Inflation";
         id = Effects.INFLATION;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
-        iconX = 0;
+        iconX = 80;
         iconY = 0;
     }
 

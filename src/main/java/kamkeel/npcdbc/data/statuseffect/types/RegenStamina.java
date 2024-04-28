@@ -14,7 +14,7 @@ public class RegenStamina extends StatusEffect {
         name = "Stamina Regeneration";
         id = Effects.REGEN_STAMINA;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
-        iconX = 0;
+        iconX = 32;
         iconY = 0;
     }
 
