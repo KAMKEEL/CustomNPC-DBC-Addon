@@ -210,8 +210,7 @@ public class TransformController {
 
             if (form.mastery.hasHeat() && dbcData.addonCurrentHeat > 0) {
                 float heatRatio = dbcData.addonCurrentHeat / form.mastery.maxHeat;
-                int painTime = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()) * heatRatio);
-                dbcData.Pain = painTime;
+                dbcData.Pain = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()) * heatRatio);
                 dbcData.addonCurrentHeat = 0;
 
             }

@@ -115,17 +115,18 @@ public class ServerEventHandler {
     }
 
     public void handleFormProcesses(EntityPlayer player) {
-        Form form = DBCData.getForm(player);
+        DBCData dbcData = DBCData.get(player);
+        Form form = dbcData.getForm();
         if (form != null) {
             PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-            DBCData dbcData = DBCData.get(player);
-
-            if (dbcData.Release <= 0 || dbcData.Ki <= 0) { //reverts player from CF when ki or release are 0
+            // Reverts player from form when ki or release are 0
+            if (dbcData.Release <= 0 || dbcData.Ki <= 0) {
                 formData.currentForm = -1;
                 formData.updateClient();
                 dbcData.loadNBTData(true);
             }
 
+            // Updates form Timer
             if (formData.hasTimer(form.id)) {
                 formData.decrementTimer(form.id);
                 if (player.ticksExisted % 20 == 0)
@@ -139,7 +140,7 @@ public class ServerEventHandler {
             }
 
             if (form.mastery.hasHeat() && player.ticksExisted % 20 == 0) {
-                float heatToAdd = 1.0f * form.mastery.calculateMulti("heat", formData.getCurrentLevel());
+                float heatToAdd = form.mastery.calculateMulti("heat", formData.getCurrentLevel());
                 float newHeat = ValueUtil.clamp(dbcData.addonCurrentHeat + heatToAdd, 0, form.mastery.maxHeat);
 
                 if (newHeat == form.mastery.maxHeat) {
