@@ -2,7 +2,6 @@ package kamkeel.npcdbc.controllers;
 
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.aura.IAuraHandler;
-import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.network.PacketHandler;
