@@ -29,9 +29,42 @@ public class FormMastery implements IFormMastery {
 
     public float heatMultiFlat = 1.0f, heatMultiPerLevel = -0.01f, heatMultiMinOrMax = 0.1f;
 
+    public float dodgeChance = 0f;
+    public float damageNegation = 0f;
+
 
     public FormMastery(Form parent) {
         this.parent = parent;
+    }
+
+    @Override
+    public float getDamageNegation() {
+        return damageNegation;
+    }
+
+    @Override
+    public void setDamageNegation(float damageNegation) {
+        this.damageNegation = damageNegation;
+    }
+
+    @Override
+    public boolean hasDamageNegation() {
+        return damageNegation > 0;
+    }
+
+    @Override
+    public float getDodgeChance() {
+        return kiDrain;
+    }
+
+    @Override
+    public void setDodgeChance(float dodgeChance) {
+        this.dodgeChance = dodgeChance;
+    }
+
+    @Override
+    public boolean hasDodge() {
+        return dodgeChance > 0;
     }
 
     @Override

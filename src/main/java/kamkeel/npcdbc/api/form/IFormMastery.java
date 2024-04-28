@@ -73,6 +73,18 @@ public interface IFormMastery {
 
     boolean hasInstantTransformationUnlockLevel();
 
+    float getDamageNegation();
+
+    void setDamageNegation(float damageNegation);
+
+    boolean hasDamageNegation();
+
+    float getDodgeChance();
+
+    void setDodgeChance(float dodgeChance);
+
+    boolean hasDodge();
+
     int getKiDrain();
 
     /**
