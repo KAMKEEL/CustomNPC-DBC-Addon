@@ -4,15 +4,13 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCClass;
-import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.network.AbstractPacket;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 public final class ChargingDexInfo extends AbstractPacket {
-    public static final String packetName = "NPCDBC|ChargingDexInfo";
+    public static final String packetName = "NPC|ChargeDex";
     private float ma = 0;
     private float spi = 0;
     private float war = 0;

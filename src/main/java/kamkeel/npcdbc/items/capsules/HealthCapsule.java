@@ -7,7 +7,7 @@ import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.enums.EnumHealthCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -116,7 +116,7 @@ public class HealthCapsule extends Item {
         int healthRestored = healthCapsules.getStrength();
 
         // Restore X Amount of Health
-        DBCData.get(player).restoreHealthPercent(healthRestored);
+        DBCData.get(player).stats.restoreHealthPercent(healthRestored);
 
         // Removes 1 Item
         itemStack.splitStack(1);

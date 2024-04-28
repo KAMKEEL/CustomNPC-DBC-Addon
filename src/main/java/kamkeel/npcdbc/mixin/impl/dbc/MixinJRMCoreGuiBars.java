@@ -5,7 +5,7 @@ import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.controllers.StatusEffectController;
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.client.Minecraft;
@@ -27,10 +27,12 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
     @Inject(method = "showSE", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;displayWidth:I", shift = At.Shift.BEFORE))
     private void renderStatusEffectIcon(int var51, int var61, int var71, int var81, CallbackInfo ci, @Local(name = "i") LocalIntRef i, @Local(name = "j") LocalIntRef j) {
         DBCData dbcData = DBCData.getClient();
-        HashMap<Integer, PlayerEffect> current = dbcData.getPlayerEffects();
+        if (dbcData == null)
+            return;
+        HashMap<Integer, PlayerEffect> current = dbcData.stats.getPlayerEffects();
         for (int id : current.keySet()) {
             StatusEffect effect = StatusEffectController.Instance.get(id);
-            if(effect == null)
+            if (effect == null)
                 continue;
             if (effect.icon.length() > 3) {
                 drawIcon(var51 + i.get(), var61 + j.get(), effect.icon, effect.iconX, effect.iconY);

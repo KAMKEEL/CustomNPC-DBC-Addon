@@ -7,7 +7,7 @@ import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.enums.EnumKiCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -116,7 +116,7 @@ public class KiCapsule extends Item {
         int kiRestored = kiCapsules.getStrength();
 
         // Restore X Amount of KI
-        DBCData.get(player).restoreKiPercent(kiRestored);
+        DBCData.get(player).stats.restoreKiPercent(kiRestored);
 
         // Removes 1 Item
         itemStack.splitStack(1);

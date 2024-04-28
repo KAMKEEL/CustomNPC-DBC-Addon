@@ -2,9 +2,9 @@ package kamkeel.npcdbc.data.statuseffect.types;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -41,7 +41,7 @@ public class FruitOfMight extends StatusEffect {
     @Override
     public void process(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
-        dbcData.restoreKiPercent(-kiToDrain);
+        dbcData.stats.restoreKiPercent(-kiToDrain);
         if (dbcData.Ki <= 0)
             playerEffect.kill();
     }

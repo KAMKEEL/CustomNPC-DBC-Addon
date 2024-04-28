@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.client;
 
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;

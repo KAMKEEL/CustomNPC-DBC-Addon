@@ -9,14 +9,17 @@ import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.*;
+import net.minecraft.item.EnumAction;
+import net.minecraft.item.EnumRarity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
@@ -125,7 +128,7 @@ public class MiscCapsule extends Item {
         }
         else if(meta == EnumMiscCapsules.Heat.getMeta()){
             // Restore 100 Amount of Heat
-            DBCData.get(player).restoreUIHeat(100);
+            DBCData.get(player).stats.restoreUIHeat(100);
             player.addChatComponentMessage(new ChatComponentText("§7UI Heat Restored"));
         }
         else if(meta == EnumMiscCapsules.PowerPoint.getMeta()){
@@ -134,7 +137,7 @@ public class MiscCapsule extends Item {
                 player.addChatComponentMessage(new ChatComponentText("§7Only Arcosians can use this capsule"));
                 return itemStack;
             } else {
-                dbcData.restoreArcPP(100);
+                dbcData.stats.restoreArcPP(100);
                 player.addChatComponentMessage(new ChatComponentText("§5Power Points Restored"));
             }
         }else if(meta == EnumMiscCapsules.Absorption.getMeta()){
@@ -143,7 +146,7 @@ public class MiscCapsule extends Item {
                 player.addChatComponentMessage(new ChatComponentText("§7Only Majins can use this capsule"));;
                 return itemStack;
             } else {
-                dbcData.restoreAbsorption(100);
+                dbcData.stats.restoreAbsorption(100);
                 player.addChatComponentMessage(new ChatComponentText("§5Absorption Restored"));
             }
         }

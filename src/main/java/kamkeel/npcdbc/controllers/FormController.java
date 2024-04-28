@@ -11,9 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
-import noppes.npcs.Server;
 import noppes.npcs.constants.EnumPacketClient;
-import noppes.npcs.constants.SyncType;
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.*;

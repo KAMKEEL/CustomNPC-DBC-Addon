@@ -11,7 +11,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.TransformController;
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -58,6 +58,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
         }
         if (form != null) {
+
+
             //set body colors
             if (form.display.hasColor("bodycm"))
                 bodyCM.set(form.display.bodyCM);
@@ -190,7 +192,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         this.modelMain.renderHairs(0.0625F, "OOZARU");
     }
 
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER),remap = true)
+    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER), remap = true)
     private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo
             ci, @Local(name = "race") LocalIntRef race, @Local(name = "State") LocalIntRef
                                            st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef

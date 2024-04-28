@@ -2,24 +2,18 @@ package kamkeel.npcdbc.network.packets;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.Server;
-import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 
 import java.io.IOException;
 
 public final class DBCSetAura extends AbstractPacket {
-    public static final String packetName = "NPCDBC|SetAura";
+    public static final String packetName = "NPC|SetAura";
     private int auraID;
 
     public DBCSetAura(int auraID) {

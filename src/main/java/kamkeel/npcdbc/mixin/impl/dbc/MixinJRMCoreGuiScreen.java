@@ -4,7 +4,7 @@ import JinRyuu.JRMCore.JRMCoreGuiButtons00;
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.mixin.IDBCGuiScreen;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;

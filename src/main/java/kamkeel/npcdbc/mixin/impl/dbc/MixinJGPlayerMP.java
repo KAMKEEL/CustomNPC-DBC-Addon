@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.server.JGPlayerMP;
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;

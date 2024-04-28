@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.network.packets;
 
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.client.Minecraft;
@@ -11,7 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.io.IOException;
 
 public final class PingPacket extends AbstractPacket {
-    public static final String packetName = "NPCDBC|Ping";
+    public static final String packetName = "NPC|Ping";
     private DBCData data;
 
     public PingPacket() {

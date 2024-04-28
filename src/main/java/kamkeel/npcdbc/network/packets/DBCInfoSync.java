@@ -11,7 +11,7 @@ import noppes.npcs.constants.EnumPacketClient;
 import java.io.IOException;
 
 public final class DBCInfoSync extends AbstractPacket {
-    public static final String packetName = "NPCDBC|Sync";
+    public static final String packetName = "NPC|Sync";
     private int syncINT;
     private EnumPacketClient syncType;
     private int removeINT;

@@ -2,7 +2,7 @@ package kamkeel.npcdbc.network.packets;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import static noppes.npcs.NoppesUtilServer.getPlayerByName;
 
 public final class DBCSetValPacket extends AbstractPacket {
-    public static final String packetName = "NPCDBC|SetValue";
+    public static final String packetName = "NPC|SetValue";
     private EnumNBTType type;
     private EntityPlayer player;
     private String tag;

@@ -1,10 +1,7 @@
 package kamkeel.npcdbc.data.statuseffect;
 
 import kamkeel.npcdbc.api.effect.IStatusEffect;
-import kamkeel.npcdbc.controllers.StatusEffectController;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.api.entity.IPlayer;
 
 public class StatusEffect implements IStatusEffect {
     public int id = -1;

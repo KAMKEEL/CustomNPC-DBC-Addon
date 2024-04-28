@@ -9,7 +9,7 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -130,7 +130,7 @@ public class DBCUtils {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
                 boolean block = props.getBlocking() == 1;
-                boolean isChargingKi = DBCData.get(player).isChargingKiAttack();
+                boolean isChargingKi = DBCData.get(player).stats.isChargingKiAttack();
                 int[] PlyrAttrbts = PlyrAttrbts(player);
                 NBTTagCompound nbt = nbt(player, "pres");
                 byte state = nbt.getByte("jrmcState");
@@ -317,7 +317,7 @@ public class DBCUtils {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
                 boolean block = props.getBlocking() == 1;
-                boolean isChargingKi = DBCData.get(player).isChargingKiAttack();
+                boolean isChargingKi = DBCData.get(player).stats.isChargingKiAttack();
 
                 int[] attributes = PlyrAttrbts(player);
                 String[] playerSkills = PlyrSkills(player);

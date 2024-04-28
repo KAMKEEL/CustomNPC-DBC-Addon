@@ -7,8 +7,8 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.controllers.TransformController;
-import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -38,7 +38,9 @@ public class ClientEventHandler {
             Form form = formData.getSelectedForm();
 
             float healthReq = form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
-            if (DBCData.getClient().getCurrentBodyPercentage() > healthReq)
+            if (DBCData.getClient().stats.getCurrentBodyPercentage() > healthReq)
+                return;
+            if (form.mastery.hasHeat() && DBCData.getClient().Pain > 0)
                 return;
 
             if (formData.isInCustomForm()) {
@@ -103,9 +105,12 @@ public class ClientEventHandler {
                         Form form = formData.getSelectedForm();
                         if (form != null) {
                             float healthReq = form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
-                            if (DBCData.getClient().getCurrentBodyPercentage() > healthReq) {
+                            if (DBCData.getClient().stats.getCurrentBodyPercentage() > healthReq)
                                 Utility.sendMessage(mc.thePlayer, "§cYou need to be below " + (int) healthReq + "% health to access the selected form!");
-                            }
+
+                            if (form.mastery.hasHeat() && DBCData.getClient().Pain > 0)
+                                Utility.sendMessage(mc.thePlayer, "§cFailed to transform, you are in pain!");
+
                         }
                     }
                 }

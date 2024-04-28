@@ -2,8 +2,8 @@ package kamkeel.npcdbc.network.packets;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -19,7 +19,7 @@ import noppes.npcs.controllers.data.PlayerData;
 import java.io.IOException;
 
 public final class DBCSelectForm extends AbstractPacket {
-    public static final String packetName = "NPCDBC|SelectForm";
+    public static final String packetName = "NPC|SelectForm";
     private int formID;
 
     public DBCSelectForm(int formID) {

@@ -11,9 +11,9 @@ import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.TransformController;
-import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.network.PacketHandler;
@@ -105,7 +105,7 @@ public class MixinDBCKiTech {
 
             if (returnEarly) {
                 if (form.requiredForm.containsKey((int) JRMCoreH.Race)) {
-                    int id = d.getJRMCPlayerID();
+                    int id = d.stats.getJRMCPlayerID();
                     JRMCoreH.State = form.requiredForm.get((int) JRMCoreH.Race);
                     JRMCoreH.data2[id] = JRMCoreH.State + JRMCoreH.data2[id].substring(1);
                 }

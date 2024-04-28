@@ -3,8 +3,8 @@ package kamkeel.npcdbc.client.gui.component;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.gui.inventory.GuiDBC;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import noppes.npcs.client.gui.util.GuiNpcLabel;
 

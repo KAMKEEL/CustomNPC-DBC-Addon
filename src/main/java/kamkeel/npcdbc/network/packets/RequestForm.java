@@ -5,7 +5,6 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,7 +14,7 @@ import noppes.npcs.constants.EnumPacketClient;
 import java.io.IOException;
 
 public final class RequestForm extends AbstractPacket {
-    public static final String packetName = "NPCDBC|RequestForm";
+    public static final String packetName = "NPC|RequestForm";
     private int formID;
     private boolean onlyPlayers;
 

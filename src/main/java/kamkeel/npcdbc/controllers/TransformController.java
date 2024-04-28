@@ -6,8 +6,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
-import kamkeel.npcdbc.data.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetValPacket;
@@ -200,6 +200,7 @@ public class TransformController {
             Form form = formData.getCurrentForm();
             DBCData dbcData = DBCData.get(player);
 
+
             Form parent = FormController.getInstance().customForms.get(form.getParentID());
             boolean intoParent = parent != null && formData.hasFormUnlocked(form.getParentID());
 
@@ -207,6 +208,12 @@ public class TransformController {
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, intoParent ? form.getParentID() : -1)))
                 return;
 
+            if (form.mastery.hasHeat() && dbcData.addonCurrentHeat > 0) {
+                float heatRatio = dbcData.addonCurrentHeat / form.mastery.maxHeat;
+                dbcData.Pain = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()) * heatRatio);
+                dbcData.addonCurrentHeat = 0;
+
+            }
             if (form.requiredForm.containsKey((int) dbcData.Race)) {
                 formData.currentForm = -1;
                 Utility.sendMessage(player, "§cDescended from§r " + form.getMenuName());

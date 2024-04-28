@@ -3,7 +3,7 @@ package kamkeel.npcdbc.client.gui.dbc;
 import JinRyuu.JRMCore.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IDBCGuiScreen;
@@ -55,10 +55,10 @@ public class StatSheetGui extends AbstractJRMCGui {
         }
 
         String formColor = "";
-        String formName = "";
+        String formName;
         Form customForm = dbcClient.getForm();
 
-        boolean isLegendary = dbcClient.isLegendary();
+        boolean isLegendary = dbcClient.containsSE(14);
         boolean isMajin = dbcClient.containsSE(12);
 
 

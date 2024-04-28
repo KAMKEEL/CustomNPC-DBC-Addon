@@ -1,7 +1,5 @@
 package kamkeel.npcdbc.api.aura;
 
-import kamkeel.npcdbc.api.form.IForm;
-
 public interface IAuraHandler {
     IAura saveAura(IAura var1);
 

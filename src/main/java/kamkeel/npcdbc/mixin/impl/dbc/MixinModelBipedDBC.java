@@ -10,7 +10,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.TransformController;
-import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;

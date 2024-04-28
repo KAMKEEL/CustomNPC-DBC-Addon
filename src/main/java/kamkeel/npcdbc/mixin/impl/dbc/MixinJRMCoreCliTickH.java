@@ -1,9 +1,11 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreCliTicH;
+import JinRyuu.JRMCore.JRMCoreClient;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,5 +27,14 @@ public class MixinJRMCoreCliTickH {
 
     }
 
+    @Inject(method = "onRenderTick()V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;cura:I", ordinal = 0, shift = At.Shift.BEFORE))
+    private void renderCustomHeat(CallbackInfo ci) {
+        DBCData dbcData = DBCData.getClient();
+        if (dbcData == null)
+            return;
+        if (dbcData.addonCurrentHeat > 0) //renders heat bar
+            JRMCoreClient.bars.rendera();
+
+    }
 
 }
