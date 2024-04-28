@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.skills;
+package kamkeel.npcdbc.combatmode;
 
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.block.Block;
