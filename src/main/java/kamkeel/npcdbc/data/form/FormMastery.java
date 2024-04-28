@@ -468,6 +468,10 @@ public class FormMastery implements IFormMastery {
         return instantTransformationUnlockLevel > -1;
     }
 
+    public boolean canInstantTransform(float curLevel) {
+        return curLevel >= instantTransformationUnlockLevel;
+    }
+
     public float calculateMulti(String type, float playerLevel) {
         float flat = getMulti(type, "flat");
         float perLevel = getMulti(type, "perlevel");

@@ -139,7 +139,7 @@ public class TransformController {
         float ratio = curLevel / maxLevel;
 
         if (form.getMastery().hasInstantTransformationUnlockLevel())
-            if (curLevel >= form.getMastery().getInstantTransformationUnlockLevel())
+            if (form.mastery.canInstantTransform(curLevel))
                 return 15;
 
         if (Utility.percentBetween(curLevel, maxLevel, 0, 5))

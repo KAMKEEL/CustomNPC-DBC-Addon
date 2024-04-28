@@ -71,14 +71,14 @@ public class ClientEventHandler {
 
         DBCData dbcData = DBCData.getClient();
         // Check for in Required DBC Form before Transforming
-        if (form.requiredForm.containsKey((int) dbcData.Race)) {
+        if (!form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && form.requiredForm.containsKey((int) dbcData.Race)) {
             if (form.requiredForm.get((int) dbcData.Race) != dbcData.State) {
                 Utility.sendMessage(mc.thePlayer, "§cYou are not in the right DBC form");
                 return false;
             }
         } else {
             // Must be in Parent Form to Transform
-            if (form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm) {
+            if (!form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm) {
                 Utility.sendMessage(mc.thePlayer, "§cYou are not in the correct parent form");
                 return false;
             }
