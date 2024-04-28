@@ -73,6 +73,18 @@ public interface IFormMastery {
 
     boolean hasInstantTransformationUnlockLevel();
 
+    int getPainTime();
+
+    void setPainTime(int painTime);
+
+    boolean hasPainTime();
+
+    float getMaxHeat();
+
+    void setMaxHeat(float maxHeat);
+
+    boolean hasHeat();
+
     float getDamageNegation();
 
     void setDamageNegation(float damageNegation);

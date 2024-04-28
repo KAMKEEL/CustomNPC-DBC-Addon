@@ -26,6 +26,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
+import noppes.npcs.util.ValueUtil;
 
 import java.util.Random;
 
@@ -135,6 +136,22 @@ public class ServerEventHandler {
                     float toDrain = form.mastery.kiDrain * form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
                     dbcData.stats.restoreKiPercent(-toDrain / form.mastery.kiDrainTimer * 10);
                 }
+            }
+
+            if (form.mastery.hasHeat() && player.ticksExisted % 20 == 0) {
+                float heatToAdd = 1.0f * form.mastery.calculateMulti("heat", formData.getCurrentLevel());
+                float newHeat = ValueUtil.clamp(dbcData.addonCurrentHeat + heatToAdd, 0, form.mastery.maxHeat);
+
+                if (newHeat == form.mastery.maxHeat) {
+                    int painTime = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()));
+                    dbcData.getRawCompound().setInteger("jrmcGyJ7dp", painTime);
+                    formData.currentForm = -1;
+                    formData.updateClient();
+
+                    newHeat = 0;
+                }
+
+                dbcData.getRawCompound().setFloat("addonCurrentHeat", newHeat);
             }
         }
     }

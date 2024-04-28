@@ -27,18 +27,51 @@ public class FormMastery implements IFormMastery {
     public int kiDrainTimer = 20;
     public float kiDrainMultiFlat = 1.0f, kiDrainMultiPerLevel = -0.01f, kiDrainMultiMinOrMax = 0.1f;
 
-    public float heatMultiFlat = 1.0f, heatMultiPerLevel = -0.01f, heatMultiMinOrMax = 0.1f;
-    public float painMultiFlat = 1.0f, painMultiPerLevel = -0.01f, painMultiMinOrMax = 0.1f;
+    public float maxHeat = 100; //seconds it takes to reach max heat
+    public float heatMultiFlat = 1.0f, heatMultiPerLevel = -0.01f, heatMultiMinOrMax = 0f; //0 min so form doesn't generate heat at max level
+    public int painTime = 10; //in minutes
+
+    public float painMultiFlat = 1.0f, painMultiPerLevel = -0.01f, painMultiMinOrMax = 0f; //0 min so form doesn't generate pain at max level
 
     public float dodgeChance = 0f;
-    public float dodgeMultiFlat = 1.0f, dodgeMultiPerLevel = 0.01f, dodgeMultiMinOrMax = 5f;
+    public float dodgeMultiFlat = 1.0f, dodgeMultiPerLevel = 0.01f, dodgeMultiMinOrMax = 2f;
 
     public float damageNegation = 0f;
-    public float damageNegationMultiFlat = 1.0f, damageNegationMultiPerLevel = 0.01f, damageNegationMultiMinOrMax = 5f;
+    public float damageNegationMultiFlat = 1.0f, damageNegationMultiPerLevel = 0.01f, damageNegationMultiMinOrMax = 2f;
 
 
     public FormMastery(Form parent) {
         this.parent = parent;
+    }
+
+    @Override
+    public int getPainTime() {
+        return painTime;
+    }
+
+    @Override
+    public void setPainTime(int painTime) {
+        this.painTime = painTime;
+    }
+
+    @Override
+    public boolean hasPainTime() {
+        return painTime > 0;
+    }
+
+    @Override
+    public float getMaxHeat() {
+        return maxHeat;
+    }
+
+    @Override
+    public void setMaxHeat(float maxHeat) {
+        this.maxHeat = maxHeat;
+    }
+
+    @Override
+    public boolean hasHeat() {
+        return maxHeat > 1;
     }
 
     @Override
@@ -483,6 +516,10 @@ public class FormMastery implements IFormMastery {
         kiDrain = formMastery.getInteger("kiDrain");
         kiDrainTimer = formMastery.getInteger("kiDrainTimer");
         healthRequirement = formMastery.getFloat("healthRequirement");
+        dodgeChance = formMastery.getFloat("dodgeChance");
+        damageNegation = formMastery.getFloat("damageNegation");
+        painTime = formMastery.getInteger("painTime");
+        maxHeat = formMastery.getFloat("maxHeat");
 
         NBTTagCompound attributeMulti = formMastery.getCompoundTag("attributeMulti");
         attributeMultiFlat = attributeMulti.getFloat("flat");
@@ -494,15 +531,31 @@ public class FormMastery implements IFormMastery {
         kiDrainMultiPerLevel = kiDrainMulti.getFloat("perLevel");
         kiDrainMultiMinOrMax = kiDrainMulti.getFloat("minOrMax");
 
-        NBTTagCompound strainMulti = formMastery.getCompoundTag("strainMulti");
-        heatMultiFlat = strainMulti.getFloat("flat");
-        heatMultiPerLevel = strainMulti.getFloat("perLevel");
-        heatMultiMinOrMax = strainMulti.getFloat("minOrMax");
+        NBTTagCompound heatMulti = formMastery.getCompoundTag("heatMulti");
+        heatMultiFlat = heatMulti.getFloat("flat");
+        heatMultiPerLevel = heatMulti.getFloat("perLevel");
+        heatMultiMinOrMax = heatMulti.getFloat("minOrMax");
+
+        NBTTagCompound painMulti = formMastery.getCompoundTag("painMulti");
+        painMultiFlat = painMulti.getFloat("flat");
+        painMultiPerLevel = painMulti.getFloat("perLevel");
+        painMultiMinOrMax = painMulti.getFloat("minOrMax");
 
         NBTTagCompound healthRequirementMulti = formMastery.getCompoundTag("healthRequirementMulti");
         healthRequirementMultiFlat = healthRequirementMulti.getFloat("flat");
         healthRequirementMultiPerLevel = healthRequirementMulti.getFloat("perLevel");
         healthRequirementMultiMinOrMax = healthRequirementMulti.getFloat("minOrMax");
+
+        NBTTagCompound dodgeMulti = formMastery.getCompoundTag("dodgeMulti");
+        dodgeMultiFlat = dodgeMulti.getFloat("flat");
+        dodgeMultiPerLevel = dodgeMulti.getFloat("perLevel");
+        dodgeMultiMinOrMax = dodgeMulti.getFloat("minOrMax");
+
+        NBTTagCompound damageNegationMulti = formMastery.getCompoundTag("damageNegationMulti");
+        damageNegationMultiFlat = damageNegationMulti.getFloat("flat");
+        damageNegationMultiPerLevel = damageNegationMulti.getFloat("perLevel");
+        damageNegationMultiMinOrMax = damageNegationMulti.getFloat("minOrMax");
+
 
         NBTTagCompound update = formMastery.getCompoundTag("update");
         updateGain = update.getFloat("gain");
@@ -535,11 +588,16 @@ public class FormMastery implements IFormMastery {
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound formMastery = new NBTTagCompound();
+
         formMastery.setFloat("maxLevel", maxLevel);
         formMastery.setFloat("instantTransformationUnlockLevel", instantTransformationUnlockLevel);
         formMastery.setInteger("kiDrain", kiDrain);
         formMastery.setInteger("kiDrainTimer", kiDrainTimer);
         formMastery.setFloat("healthRequirement", healthRequirement);
+        formMastery.setFloat("dodgeChance", dodgeChance);
+        formMastery.setFloat("damageNegation", damageNegation);
+        formMastery.setFloat("maxHeat", maxHeat);
+        formMastery.setInteger("painTime", painTime);
 
         NBTTagCompound attributeMulti = new NBTTagCompound();
         attributeMulti.setFloat("flat", attributeMultiFlat);
@@ -553,17 +611,35 @@ public class FormMastery implements IFormMastery {
         kiDrainMulti.setFloat("minOrMax", kiDrainMultiMinOrMax);
         formMastery.setTag("kiDrainMulti", kiDrainMulti);
 
-        NBTTagCompound strainMulti = new NBTTagCompound();
-        strainMulti.setFloat("flat", heatMultiFlat);
-        strainMulti.setFloat("perLevel", heatMultiPerLevel);
-        strainMulti.setFloat("minOrMax", heatMultiMinOrMax);
-        formMastery.setTag("strainMulti", strainMulti);
+        NBTTagCompound heatMulti = new NBTTagCompound();
+        heatMulti.setFloat("flat", heatMultiFlat);
+        heatMulti.setFloat("perLevel", heatMultiPerLevel);
+        heatMulti.setFloat("minOrMax", heatMultiMinOrMax);
+        formMastery.setTag("heatMulti", heatMulti);
+
+        NBTTagCompound painMulti = new NBTTagCompound();
+        painMulti.setFloat("flat", heatMultiFlat);
+        painMulti.setFloat("perLevel", heatMultiPerLevel);
+        painMulti.setFloat("minOrMax", heatMultiMinOrMax);
+        formMastery.setTag("painMulti", painMulti);
 
         NBTTagCompound healthRequirementMulti = new NBTTagCompound();
         healthRequirementMulti.setFloat("flat", healthRequirementMultiFlat);
         healthRequirementMulti.setFloat("perLevel", healthRequirementMultiPerLevel);
         healthRequirementMulti.setFloat("minOrMax", healthRequirementMultiMinOrMax);
         formMastery.setTag("healthRequirementMulti", healthRequirementMulti);
+
+        NBTTagCompound dodgeMulti = new NBTTagCompound();
+        dodgeMulti.setFloat("flat", heatMultiFlat);
+        dodgeMulti.setFloat("perLevel", heatMultiPerLevel);
+        dodgeMulti.setFloat("minOrMax", heatMultiMinOrMax);
+        formMastery.setTag("dodgeMulti", dodgeMulti);
+
+        NBTTagCompound damageNegationMulti = new NBTTagCompound();
+        damageNegationMulti.setFloat("flat", heatMultiFlat);
+        damageNegationMulti.setFloat("perLevel", heatMultiPerLevel);
+        damageNegationMulti.setFloat("minOrMax", heatMultiMinOrMax);
+        formMastery.setTag("damageNegationMulti", damageNegationMulti);
 
         NBTTagCompound update = new NBTTagCompound();
         update.setFloat("gain", updateGain);

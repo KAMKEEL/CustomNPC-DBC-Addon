@@ -28,14 +28,14 @@ public class DBCData extends DBCDataUniversal {
     public EntityPlayer player;
 
     // Original DBC
-    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXSeconds, Rage, Heat, AuraColor, ArcReserve;
+    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXSeconds, Rage, Heat, Pain, AuraColor, ArcReserve;
     public byte Class, Race, Powertype, Accept, State, State2, Release;
     public boolean Alive, isKO;
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "";
 
     // Custom Form
     public int addonFormID, auraID;
-    public float addonFormLevel;
+    public float addonFormLevel, addonCurrentHeat;
     public HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
 
     public DBCDataStats stats = new DBCDataStats(this);
@@ -67,8 +67,10 @@ public class DBCData extends DBCDataUniversal {
         comp.setInteger("jrmcHar4va", KOforXSeconds);
         comp.setInteger("jrmcSaiRg", Rage);
         comp.setInteger("jrmcEf8slc", Heat);
+        comp.setInteger("jrmcGyJ7dp", Pain);
         comp.setInteger("jrmcAuraColor", AuraColor);
         comp.setInteger("jrmcArcRsrv", ArcReserve);
+
 
         comp.setByte("jrmcState", State);
         comp.setByte("jrmcState2", State2);
@@ -90,6 +92,7 @@ public class DBCData extends DBCDataUniversal {
         comp.setInteger("addonFormID", addonFormID);
         comp.setInteger("auraID", auraID);
         comp.setFloat("addonFormLevel", addonFormLevel);
+        comp.setFloat("addonCurrentHeat", addonCurrentHeat);
         stats.saveEffectsNBT(comp);
         return comp;
     }
@@ -107,6 +110,7 @@ public class DBCData extends DBCDataUniversal {
         KOforXSeconds = c.getInteger("jrmcHar4va");
         Rage = c.getInteger("jrmcSaiRg");
         Heat = c.getInteger("jrmcEf8slc");
+        Pain = c.getInteger("jrmcGyJ7dp");
         isKO = c.getInteger("jrmcHar4va") > 0;
         AuraColor = c.getInteger("jrmcAuraColor");
         ArcReserve = c.getInteger("jrmcArcRsrv");
@@ -132,6 +136,7 @@ public class DBCData extends DBCDataUniversal {
         // DBC Addon
         addonFormID = c.getInteger("addonFormID");
         addonFormLevel = c.getFloat("addonFormLevel");
+        addonCurrentHeat = c.getFloat("addonCurrentHeat");
         auraID = c.getInteger("auraID");
 
         if (c.hasKey("addonActiveEffects", 9)) {
