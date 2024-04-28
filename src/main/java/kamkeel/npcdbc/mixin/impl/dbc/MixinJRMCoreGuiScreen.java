@@ -52,6 +52,8 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
 
     @Inject(method = "drawScreen", at=@At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"), remap = true)
     private void onDrawScreen(CallbackInfo ci){
+        if(this.guiID != 10)
+            return;
         String s = "Switch to "+(overrideBaseDBC ? "Normal" : "§aEnhanced") +" GUI";
         int i = this.fontRendererObj.getStringWidth(s)+10;
         this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2, (this.height-159)/2 - 30, i + 8, 20, s, 0));
