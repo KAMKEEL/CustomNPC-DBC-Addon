@@ -7,8 +7,8 @@ import kamkeel.npcdbc.api.form.IFormMastery;
 import kamkeel.npcdbc.api.form.IFormStackable;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -40,7 +40,7 @@ public class Form implements IForm {
      * ID of parent and child forms of this
      */
     public int childID = -1, parentID = -1;
-    public boolean fromParentOnly = true;
+    public boolean fromParentOnly = false;
 
     public float strengthMulti = 1.0f;
     public float dexMulti = 1.0f;
@@ -160,7 +160,6 @@ public class Form implements IForm {
     public void setRace(int race) {
         this.race = race;
     }
-
 
 
     @Override
