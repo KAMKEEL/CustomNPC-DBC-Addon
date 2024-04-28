@@ -77,6 +77,7 @@ public class DBCData extends DBCDataUniversal {
         comp.setByte("jrmcRelease", Release);
         comp.setByte("jrmcPwrtyp", Powertype);
         comp.setByte("jrmcRace", Race);
+        comp.setByte("jrmcClass", Class);
         comp.setByte("jrmcAccept", Accept);
 
         comp.setString("jrmcStatusEff", StatusEffects);
