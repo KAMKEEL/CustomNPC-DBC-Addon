@@ -62,14 +62,16 @@ public class StatSheetGui extends AbstractJRMCGui {
         Form customForm = dbcClient.getForm();
 
         boolean isLegendary = dbcClient.containsSE(14);
+        boolean isLegendaryEnabled = JRMCoreH.lgndb(dbcClient.Race, dbcClient.State);
+
         boolean isMajin = dbcClient.containsSE(12);
 
 
-        if(isMajin && isLegendary){
+        if(isMajin && isLegendary && isLegendaryEnabled){
             formColor = "§5";
         }else if(isMajin){
             formColor = "§c";
-        }else if(isLegendary){
+        }else if(isLegendary && isLegendaryEnabled){
             formColor = "§2";
         }
 
@@ -315,13 +317,13 @@ public class StatSheetGui extends AbstractJRMCGui {
         int stat = JRMCoreH.stat(mc.thePlayer, 0, 1, 0, statVals[0], dbcClient.Race, dbcClient.Class, 0);
         //float inc = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 0, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
         int curAtr = (int)((double)stat * 0.01D * (double)JRMCoreH.curRelease * (double)JRMCoreH.weightPerc(0));
-        long longValue = (long)curAtr + (long)0;
+        long longValue = (long)curAtr + (int)((double)JRMCoreH.SklLvl(12) * DBCConfig.cnfKFd * (double)statVals[5] * (double)JRMCoreH.curRelease * 0.01D);
         if (longValue > 2147483647L) {
             longValue = 2147483647L;
         }
 
         this.dynamicElements.add(new JRMCoreLabel(
-            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "mleDB"), formColor+JRMCoreH.numSep((long) (stat*(dbcClient.Release / 100.0F)))),
+            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "mleDB"), formColor+JRMCoreH.numSep(longValue)),
             "description",
             guiWidthOffset+133,
             guiHeightOffset+5+index*10
@@ -340,7 +342,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         }
 
         this.dynamicElements.add(new JRMCoreLabel(
-            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "DefDB"), formColor+JRMCoreH.numSep((long) (longValue))),
+            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "DefDB"), formColor+JRMCoreH.numSep(longValue)),
             "description",
             guiWidthOffset+133,
             guiHeightOffset+5+index*10
@@ -348,7 +350,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         this.dynamicElements.add(new JRMCoreLabel(
-            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "Passive"), formColor+JRMCoreH.numSep((long) (longValue*JRMCoreConfig.StatPasDef/100))),
+            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "Passive"), formColor+JRMCoreH.numSep(longValue*JRMCoreConfig.StatPasDef/100)),
             "description",
             guiWidthOffset+138,
             guiHeightOffset+5+index*10
@@ -519,6 +521,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.DIFFICULTY;
         String translation = ref.getTranslation();
         int stringWidth = fontRendererObj.getStringWidth(translation)+8;
-        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 8046079));
+        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 0xC6C6C6));
+//        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 8046079));
     }
 }
