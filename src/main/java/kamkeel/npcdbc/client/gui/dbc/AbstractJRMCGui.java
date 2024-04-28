@@ -15,7 +15,7 @@ import java.util.List;
 
 public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallback {
     private static final ResourceLocation menuTexture = new ResourceLocation("jinryuumodscore:gui.png");
-    protected List<GuiLabel> dynamicLabels = new ArrayList<>();
+    protected List<Gui> dynamicElements = new ArrayList<>();
     protected final int guiID;
     protected int menuImageWidth = 256;
     protected int menuImageHeight = 159;
@@ -36,8 +36,11 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
         super.drawScreen(mouseX, mouseY, partialTicks);
 
-        for (GuiLabel dynamicLabel : this.dynamicLabels) {
-            dynamicLabel.func_146159_a(this.mc, mouseX, mouseY);
+        for (Gui element : this.dynamicElements) {
+            if(element instanceof GuiLabel)
+                ((GuiLabel) element).func_146159_a(this.mc, mouseX, mouseY);
+            else if(element instanceof GuiButton)
+                ((GuiButton) element).drawButton(this.mc, mouseX, mouseY);
         }
 
         //Going over these twice specifically because of wrong layering
@@ -45,9 +48,9 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
             if(label instanceof HoverableLabel)
                 ((HoverableLabel) label).hover(this.mc, mouseX, mouseY);
         }
-        for (GuiLabel label : this.dynamicLabels) {
-            if(label instanceof HoverableLabel)
-                ((HoverableLabel) label).hover(this.mc, mouseX, mouseY);
+        for (Gui element : this.dynamicElements) {
+            if(element instanceof HoverableLabel)
+                ((HoverableLabel) element).hover(this.mc, mouseX, mouseY);
         }
     }
 

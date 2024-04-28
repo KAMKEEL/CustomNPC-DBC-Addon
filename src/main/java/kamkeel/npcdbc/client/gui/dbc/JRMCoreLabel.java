@@ -42,7 +42,7 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel{
     }
 
     public JRMCoreLabel(String text, String tooltipText, int x, int y){
-        this(text, tooltipText, x, y, -1, -1, 200, -1);
+        this(text, tooltipText, x, y, -1, -1, -1, -1);
     }
 
     public JRMCoreLabel(GuiButton button, String tooltipText, int tooltipWidth){
@@ -60,10 +60,6 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel{
      */
     @Override
     public void func_146159_a(Minecraft client, int mouseX, int mouseY){
-        if(displayString != null && (hoverableAreaHeight < 0 || hoverableAreaWidth < 0)){
-            hoverableAreaWidth = client.fontRenderer.getStringWidth(displayString);
-            hoverableAreaHeight = 8;
-        }
         client.fontRenderer.drawString(displayString, xPosition, yPosition, 0);
 
     }
@@ -76,15 +72,21 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel{
     public void hover(Minecraft client, int mouseX, int mouseY) {
         if(tooltip == null)
             return;
+
+        if(displayString != null && (hoverableAreaHeight < 0 || hoverableAreaWidth < 0)){
+            hoverableAreaWidth = client.fontRenderer.getStringWidth(displayString);
+            hoverableAreaHeight = 8;
+        }
+
         if(isHovered(mouseX, mouseY)) {
 
             client.getTextureManager().bindTexture(background);
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
             if (tooltipWidth < 0) {
                 if (tooltip.contains("\n"))
-                    tooltipWidth = 100;
+                    tooltipWidth = 200;
                 else
-                    tooltipWidth = client.fontRenderer.getStringWidth(tooltip);
+                    tooltipWidth = Math.min(client.fontRenderer.getStringWidth(tooltip), 200);
             }
 
 
