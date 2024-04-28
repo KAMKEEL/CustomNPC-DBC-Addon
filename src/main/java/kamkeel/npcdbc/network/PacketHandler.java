@@ -36,6 +36,7 @@ public final class PacketHandler {
         map.put(RequestForm.packetName, new RequestForm());
         map.put(CapsuleInfo.packetName, new CapsuleInfo());
         map.put(ChargingDexInfo.packetName, new ChargingDexInfo());
+        map.put(SyncDBCConfigPacket.packetName, new SyncDBCConfigPacket());
         this.register();
     }
 

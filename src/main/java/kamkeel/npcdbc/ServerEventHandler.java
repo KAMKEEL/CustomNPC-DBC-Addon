@@ -1,5 +1,6 @@
 package kamkeel.npcdbc;
 
+import JinRyuu.DragonBC.common.DBCConfig;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -13,6 +14,7 @@ import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.CapsuleInfo;
 import kamkeel.npcdbc.network.packets.ChargingDexInfo;
+import kamkeel.npcdbc.network.packets.SyncDBCConfigPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -35,6 +37,7 @@ public class ServerEventHandler {
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(true).generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(false).generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new ChargingDexInfo().generatePacket(), (EntityPlayerMP) event.player);
+        PacketHandler.Instance.sendToPlayer(new SyncDBCConfigPacket(DBCConfig.ccnfKDd, DBCConfig.ccnfKFd).generatePacket(), (EntityPlayerMP) event.player);
         StatusEffectController.getInstance().loadEffects(event.player);
     }
 
