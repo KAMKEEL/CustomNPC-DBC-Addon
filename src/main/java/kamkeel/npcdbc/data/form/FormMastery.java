@@ -3,7 +3,6 @@ package kamkeel.npcdbc.data.form;
 import kamkeel.npcdbc.api.form.IFormMastery;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.util.ValueUtil;
-import scala.tools.nsc.doc.model.Val;
 
 public class FormMastery implements IFormMastery {
 
@@ -28,7 +27,7 @@ public class FormMastery implements IFormMastery {
     public int kiDrainTimer = 20;
     public float kiDrainMultiFlat = 1.0f, kiDrainMultiPerLevel = -0.01f, kiDrainMultiMinOrMax = 0.1f;
 
-    public float strainMultiFlat = 1.0f, strainMultiPerLevel = -0.01f, strainMultiMinOrMax = 0.1f;
+    public float heatMultiFlat = 1.0f, heatMultiPerLevel = -0.01f, heatMultiMinOrMax = 0.1f;
 
 
     public FormMastery(Form parent) {
@@ -93,11 +92,11 @@ public class FormMastery implements IFormMastery {
             case "strain":
                 switch (type1.toLowerCase()) {
                     case "flat":
-                        return strainMultiFlat;
+                        return heatMultiFlat;
                     case "perlevel":
-                        return strainMultiPerLevel;
+                        return heatMultiPerLevel;
                     case "minormax":
-                        return strainMultiMinOrMax;
+                        return heatMultiMinOrMax;
                 }
             case "healthrequirement":
                 switch (type1.toLowerCase()) {
@@ -136,11 +135,11 @@ public class FormMastery implements IFormMastery {
             case "strain":
                 switch (type1.toLowerCase()) {
                     case "flat":
-                        strainMultiFlat = value;
+                        heatMultiFlat = value;
                     case "perlevel":
-                        strainMultiPerLevel = value;
+                        heatMultiPerLevel = value;
                     case "minormax":
-                        strainMultiMinOrMax = value;
+                        heatMultiMinOrMax = value;
                 }
             case "healthrequirement":
                 switch (type1.toLowerCase()) {
@@ -378,9 +377,9 @@ public class FormMastery implements IFormMastery {
         kiDrainMultiMinOrMax = kiDrainMulti.getFloat("minOrMax");
 
         NBTTagCompound strainMulti = formMastery.getCompoundTag("strainMulti");
-        strainMultiFlat = strainMulti.getFloat("flat");
-        strainMultiPerLevel = strainMulti.getFloat("perLevel");
-        strainMultiMinOrMax = strainMulti.getFloat("minOrMax");
+        heatMultiFlat = strainMulti.getFloat("flat");
+        heatMultiPerLevel = strainMulti.getFloat("perLevel");
+        heatMultiMinOrMax = strainMulti.getFloat("minOrMax");
 
         NBTTagCompound healthRequirementMulti = formMastery.getCompoundTag("healthRequirementMulti");
         healthRequirementMultiFlat = healthRequirementMulti.getFloat("flat");
@@ -437,9 +436,9 @@ public class FormMastery implements IFormMastery {
         formMastery.setTag("kiDrainMulti", kiDrainMulti);
 
         NBTTagCompound strainMulti = new NBTTagCompound();
-        strainMulti.setFloat("flat", strainMultiFlat);
-        strainMulti.setFloat("perLevel", strainMultiPerLevel);
-        strainMulti.setFloat("minOrMax", strainMultiMinOrMax);
+        strainMulti.setFloat("flat", heatMultiFlat);
+        strainMulti.setFloat("perLevel", heatMultiPerLevel);
+        strainMulti.setFloat("minOrMax", heatMultiMinOrMax);
         formMastery.setTag("strainMulti", strainMulti);
 
         NBTTagCompound healthRequirementMulti = new NBTTagCompound();
