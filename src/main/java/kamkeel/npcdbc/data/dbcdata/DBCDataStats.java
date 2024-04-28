@@ -283,6 +283,25 @@ public class DBCDataStats {
 
     }
 
+    public boolean isFused() {
+        if (data.Fusion.contains(",")) {
+            String[] fusionMembers = data.Fusion.split(",");
+            if (fusionMembers.length == 3)
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isFusionSpectator() {
+        if (data.Fusion.contains(",")) {
+            String[] fusionMembers = data.Fusion.split(",");
+            if (fusionMembers.length == 3)
+                return fusionMembers[1].equalsIgnoreCase(data.player.getCommandSenderName());
+
+        }
+        return false;
+    }
+
     public boolean isChargingKiAttack() {
         ExtendedPlayer jrmcExtendedPlayer = ExtendedPlayer.get(data.player);
 

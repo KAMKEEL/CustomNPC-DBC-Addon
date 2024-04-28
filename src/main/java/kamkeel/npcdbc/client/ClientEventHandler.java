@@ -36,11 +36,13 @@ public class ClientEventHandler {
         PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
         if (formData != null && formData.hasSelectedForm()) {
             Form form = formData.getSelectedForm();
-
+            DBCData dbcData = DBCData.getClient();
             float healthReq = form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
-            if (DBCData.getClient().stats.getCurrentBodyPercentage() > healthReq)
+            if (dbcData.stats.getCurrentBodyPercentage() > healthReq && !dbcData.stats.isFused())
                 return;
-            if (form.mastery.hasHeat() && DBCData.getClient().Pain > 0)
+            if (form.mastery.hasHeat() && dbcData.Pain > 0)
+                return;
+            if (dbcData.stats.isFusionSpectator())
                 return;
 
             if (formData.isInCustomForm()) {

@@ -31,7 +31,7 @@ public class DBCData extends DBCDataUniversal {
     public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXSeconds, Rage, Heat, Pain, AuraColor, ArcReserve;
     public byte Class, Race, Powertype, Accept, State, State2, Release;
     public boolean Alive, isKO;
-    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "";
+    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "", Fusion = "";
 
     // Custom Form
     public int addonFormID, auraID;
@@ -89,6 +89,7 @@ public class DBCData extends DBCDataUniversal {
         comp.setString("jrmcDNS", DNS);
         comp.setString("jrmcDNSH", DNSHair);
         comp.setString("jrmcMajinAbsorptionData", MajinAbsorptionData);
+        comp.setString("jrmcFuzion", Fusion);
         // DBC Addon
         comp.setInteger("addonFormID", addonFormID);
         comp.setInteger("auraID", auraID);
@@ -133,6 +134,7 @@ public class DBCData extends DBCDataUniversal {
         DNS = c.getString("jrmcDNS");
         DNSHair = c.getString("jrmcDNSH");
         MajinAbsorptionData = c.getString("jrmcMajinAbsorptionData");
+        Fusion = c.getString("jrmcFuzion");
 
         // DBC Addon
         addonFormID = c.getInteger("addonFormID");
