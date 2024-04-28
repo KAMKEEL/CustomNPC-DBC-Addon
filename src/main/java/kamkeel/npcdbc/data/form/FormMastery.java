@@ -30,7 +30,10 @@ public class FormMastery implements IFormMastery {
     public float heatMultiFlat = 1.0f, heatMultiPerLevel = -0.01f, heatMultiMinOrMax = 0.1f;
 
     public float dodgeChance = 0f;
+    public float dodgeMultiFlat = 1.0f, dodgeMultiPerLevel = 0.01f, dodgeMultiMinOrMax = 5f;
+
     public float damageNegation = 0f;
+    public float damageNegationMultiFlat = 1.0f, damageNegationMultiPerLevel = 0.01f, damageNegationMultiMinOrMax = 5f;
 
 
     public FormMastery(Form parent) {
@@ -122,7 +125,7 @@ public class FormMastery implements IFormMastery {
                     case "minormax":
                         return kiDrainMultiMinOrMax;
                 }
-            case "strain":
+            case "heat":
                 switch (type1.toLowerCase()) {
                     case "flat":
                         return heatMultiFlat;
@@ -140,6 +143,24 @@ public class FormMastery implements IFormMastery {
                     case "minormax":
                         return healthRequirementMultiMinOrMax;
                 }
+            case "dodge":
+                switch (type1.toLowerCase()) {
+                    case "flat":
+                        return dodgeMultiFlat;
+                    case "perlevel":
+                        return dodgeMultiPerLevel;
+                    case "minormax":
+                        return dodgeMultiMinOrMax;
+                }
+            case "damagenegation":
+                switch (type1.toLowerCase()) {
+                    case "flat":
+                        return damageNegationMultiFlat;
+                    case "perlevel":
+                        return damageNegationMultiPerLevel;
+                    case "minormax":
+                        return damageNegationMultiMinOrMax;
+                }
 
         }
         return 1.0f;
@@ -151,37 +172,78 @@ public class FormMastery implements IFormMastery {
                 switch (type1.toLowerCase()) {
                     case "flat":
                         attributeMultiFlat = value;
+                        break;
                     case "perlevel":
                         attributeMultiPerLevel = value;
+                        break;
                     case "minormax":
                         attributeMultiMinOrMax = value;
+                        break;
                 }
+                break;
             case "kidrain":
                 switch (type1.toLowerCase()) {
                     case "flat":
                         kiDrainMultiFlat = value;
+                        break;
                     case "perlevel":
                         kiDrainMultiPerLevel = value;
+                        break;
                     case "minormax":
                         kiDrainMultiMinOrMax = value;
+                        break;
                 }
-            case "strain":
+                break;
+            case "heat":
                 switch (type1.toLowerCase()) {
                     case "flat":
                         heatMultiFlat = value;
+                        break;
                     case "perlevel":
                         heatMultiPerLevel = value;
+                        break;
                     case "minormax":
                         heatMultiMinOrMax = value;
+                        break;
                 }
+                break;
             case "healthrequirement":
                 switch (type1.toLowerCase()) {
                     case "flat":
                         healthRequirementMultiFlat = value;
+                        break;
                     case "perlevel":
                         healthRequirementMultiPerLevel = value;
+                        break;
                     case "minormax":
                         healthRequirementMultiMinOrMax = value;
+                        break;
+                }
+                break;
+            case "dodge":
+                switch (type1.toLowerCase()) {
+                    case "flat":
+                        dodgeMultiFlat = value;
+                        break;
+                    case "perlevel":
+                        dodgeMultiPerLevel = value;
+                        break;
+                    case "minormax":
+                        dodgeMultiMinOrMax = value;
+                        break;
+                }
+                break;
+            case "damagenegation":
+                switch (type1.toLowerCase()) {
+                    case "flat":
+                        damageNegationMultiFlat = value;
+                        break;
+                    case "perlevel":
+                        damageNegationMultiPerLevel = value;
+                        break;
+                    case "minormax":
+                        damageNegationMultiMinOrMax = value;
+                        break;
                 }
 
         }
