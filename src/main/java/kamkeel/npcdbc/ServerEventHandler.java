@@ -101,6 +101,7 @@ public class ServerEventHandler {
                 if (dodgeChance >= rand.nextInt(100)) {
                     event.setCanceled(true);
                     Dodge.dodge((Entity) event.player, event.damageSource.getMCDamageSource().getEntity());
+                    return;
                 }
             }
             if (form.mastery.hasDamageNegation()) {

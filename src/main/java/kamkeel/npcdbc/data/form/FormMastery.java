@@ -28,6 +28,7 @@ public class FormMastery implements IFormMastery {
     public float kiDrainMultiFlat = 1.0f, kiDrainMultiPerLevel = -0.01f, kiDrainMultiMinOrMax = 0.1f;
 
     public float heatMultiFlat = 1.0f, heatMultiPerLevel = -0.01f, heatMultiMinOrMax = 0.1f;
+    public float painMultiFlat = 1.0f, painMultiPerLevel = -0.01f, painMultiMinOrMax = 0.1f;
 
     public float dodgeChance = 0f;
     public float dodgeMultiFlat = 1.0f, dodgeMultiPerLevel = 0.01f, dodgeMultiMinOrMax = 5f;
@@ -134,6 +135,15 @@ public class FormMastery implements IFormMastery {
                     case "minormax":
                         return heatMultiMinOrMax;
                 }
+            case "pain":
+                switch (type1.toLowerCase()) {
+                    case "flat":
+                        return painMultiFlat;
+                    case "perlevel":
+                        return painMultiPerLevel;
+                    case "minormax":
+                        return painMultiMinOrMax;
+                }
             case "healthrequirement":
                 switch (type1.toLowerCase()) {
                     case "flat":
@@ -204,6 +214,19 @@ public class FormMastery implements IFormMastery {
                         break;
                     case "minormax":
                         heatMultiMinOrMax = value;
+                        break;
+                }
+                break;
+            case "pain":
+                switch (type1.toLowerCase()) {
+                    case "flat":
+                        painMultiFlat = value;
+                        break;
+                    case "perlevel":
+                        painMultiPerLevel = value;
+                        break;
+                    case "minormax":
+                        painMultiMinOrMax = value;
                         break;
                 }
                 break;
