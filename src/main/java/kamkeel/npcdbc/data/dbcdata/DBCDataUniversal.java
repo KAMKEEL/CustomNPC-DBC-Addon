@@ -10,7 +10,6 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.config.ConfigClient;
 import noppes.npcs.util.CacheHashMap;
@@ -86,7 +85,7 @@ public class DBCDataUniversal {
         }
     }
 
-    public static float getFormLevel(AbstractClientPlayer player) {
+    public static float getFormLevel(EntityPlayer player) {
         DBCData dbcData = get(player);
         if (dbcData == null)
             return 0f;
