@@ -2,21 +2,22 @@ package kamkeel.npcdbc.client.gui.dbc;
 
 import JinRyuu.JRMCore.*;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IDBCGuiScreen;
-import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import static JinRyuu.JRMCore.JRMCoreGuiScreen.kqGW3Z;
 
+@SideOnly(Side.CLIENT)
 public class StatSheetGui extends AbstractJRMCGui {
 
     private static final ResourceLocation icons = new ResourceLocation("jinryuumodscore:icons.png");
