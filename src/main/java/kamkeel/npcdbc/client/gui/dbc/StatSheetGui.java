@@ -4,7 +4,11 @@ import JinRyuu.JRMCore.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.data.DBCData;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IDBCGuiScreen;
+import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ChatComponentText;
@@ -34,6 +38,9 @@ public class StatSheetGui extends AbstractJRMCGui {
     public void updateScreen(){
 
         DBCData dbcClient = DBCData.getClient();
+        PlayerDBCInfo dataClient = PlayerDataUtil.getClientDBCInfo();
+
+
         if(!overrideBaseDBC){
             JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
             ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(10);
@@ -46,6 +53,41 @@ public class StatSheetGui extends AbstractJRMCGui {
             FMLCommonHandler.instance().showGuiScreen(DBCScreen);
             return;
         }
+
+        String formColor = "";
+        String formName = "";
+        Form customForm = dbcClient.getForm();
+
+        boolean isLegendary = dbcClient.isLegendary();
+        boolean isMajin = dbcClient.containsSE(12);
+
+
+        if(isMajin && isLegendary){
+            formColor = "§5";
+        }else if(isMajin){
+            formColor = "§c";
+        }else if(isLegendary){
+            formColor = "§a";
+        }
+
+        boolean isFused = dbcClient.containsSE(10) || dbcClient.containsSE(11);
+        if(isFused){
+            formColor = "§d";
+        }
+
+        if(customForm != null){
+            formName = customForm.getMenuName();
+            formColor = dataClient.getFormColorCode(customForm);
+        }else {
+            formName = JRMCoreH.trl("jrmc", JRMCoreH.TransNms[dbcClient.Race][dbcClient.State]);
+
+
+            boolean ascendedAboveBase = (dbcClient.Race == 4 && dbcClient.State > 4) || dbcClient.State > 0;
+            if (formColor.isEmpty() && ascendedAboveBase)
+                formColor = "§6";
+        }
+        formName = formColor + formName;
+        formColor = (formColor.equals("§4") ? "" : formColor); //Makes stats pop out when your form color is the same as the default stat color
 
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
         this.guiHeightOffset = (this.height - menuImageHeight) / 2;
@@ -103,7 +145,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         //@TODO Add proper translation
         //@TODO Add custom form support
         this.dynamicElements.add(new JRMCoreLabel(
-            String.format("%s: §8%s", JRMCoreH.trl("jrmc", "TRState"), JRMCoreH.TransNms[JRMCoreH.Race][JRMCoreH.State]),
+            String.format("%s: §8%s", JRMCoreH.trl("jrmc", "TRState"), formColor+formName),
             null,
             this.guiWidthOffset+5,
             this.guiHeightOffset+5+index*10
@@ -144,11 +186,12 @@ public class StatSheetGui extends AbstractJRMCGui {
         };
 
         int upgradeCost = JRMCoreH.attrCst(JRMCoreH.PlyrAttrbts, this.upgradeCounter);
-        boolean isFused = false; //@TODO add logic for this
         boolean canAffordUpgrade = JRMCoreH.curTP >= upgradeCost;
         for(int i = 0; i < 6; i++){
             boolean isMaxed = !(JRMCoreGuiScreen.kqGW3Z(isFused) > JRMCoreH.PlyrAttrbts[i]);
             boolean isButtonEnabled = !isFused && !isMaxed && canAffordUpgrade;
+
+            boolean isSTRDEXWIL = (i < 2 || i == 3);
 
             String upgradeTooltip = null;
 
@@ -177,14 +220,22 @@ public class StatSheetGui extends AbstractJRMCGui {
             int originalStatVal = JRMCoreH.PlyrAttrbts[i];
             int modifiedStatVal = originalStatVal; //@TODO Replace with multi
 
+            if(isSTRDEXWIL){
+                modifiedStatVal = JRMCoreH.getPlayerAttribute(JRMCoreClient.mc.thePlayer, JRMCoreH.PlyrAttrbts, i, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.PlyrSkillX, JRMCoreH.curRelease, JRMCoreH.getArcRsrv(), JRMCoreH.StusEfctsMe(14), JRMCoreH.StusEfctsMe(12), JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20), JRMCoreH.Pwrtyp, JRMCoreH.PlyrSkills, isFused, JRMCoreH.getMajinAbsorption());;
+            }
+
+            String statDisplay = JRMCoreH.numSep(modifiedStatVal);
+
             String attributeDesc = JRMCoreH.attrNms(1, i) + ", "+ JRMCoreH.trl("jrmc", JRMCoreH.attrDsc[1][i]);
 
             if(originalStatVal != modifiedStatVal){
-                attributeDesc = "Modified: \n" +attributeDesc;
+                attributeDesc = JRMCoreH.trl("jrmc", "Modified") +": §4" + formColor+statDisplay+"\n§8"
+                    + JRMCoreH.trl("jrmc", "Original") +": §4" + JRMCoreH.numSep(originalStatVal)+"\n§8"
+                    +attributeDesc;
             }
 
             this.dynamicElements.add(new JRMCoreLabel(
-                String.format("§8%s: %s%s", attrNames[i], "§4", JRMCoreH.numSep(modifiedStatVal)),
+                String.format("§8%s: §4%s%s", attrNames[i], (isSTRDEXWIL ? formColor : ""), statDisplay),
                 attributeDesc,
                 guiWidthOffset+15,
                 yPos+5
@@ -225,7 +276,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         }
 
         this.dynamicElements.add(new JRMCoreLabel(
-            " §8UC: " + JRMCoreH.cldb + JRMCoreH.numSep(upgradeCost)+" TP "+(upgradeCounter > 0 ? "x"+JRMCoreH.attributeMultiplier(this.upgradeCounter) : ""),
+            " §8UC: " + JRMCoreH.cldb + (allMaxed || upgradeCost <= 0 ? JRMCoreH.trl("jrmc", "LimitReached") : JRMCoreH.numSep(upgradeCost)+" TP "+(upgradeCounter > 0 ? "x"+JRMCoreH.attributeMultiplier(this.upgradeCounter) : "")),
             upgradeDescription,
             guiWidthOffset+15,
             guiHeightOffset+5+index*10,
