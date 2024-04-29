@@ -37,7 +37,8 @@ public class ClientEventHandler {
         if (formData != null && formData.hasSelectedForm()) {
             Form form = formData.getSelectedForm();
             DBCData dbcData = DBCData.getClient();
-            float healthReq = form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
+            float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ?
+                150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
             if (dbcData.stats.getCurrentBodyPercentage() > healthReq && !dbcData.stats.isFused())
                 return;
             if (form.mastery.hasHeat() && dbcData.Pain > 0)
@@ -106,7 +107,8 @@ public class ClientEventHandler {
                     } else {
                         Form form = formData.getSelectedForm();
                         if (form != null) {
-                            float healthReq = form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
+                            float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ?
+                                150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
                             if (DBCData.getClient().stats.getCurrentBodyPercentage() > healthReq)
                                 Utility.sendMessage(mc.thePlayer, "§cYou need to be below " + (int) healthReq + "% health to access the selected form!");
 
