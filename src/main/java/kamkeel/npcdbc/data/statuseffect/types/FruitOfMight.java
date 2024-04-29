@@ -31,7 +31,7 @@ public class FruitOfMight extends StatusEffect {
         }
     }
 
-    public void init(EntityPlayer player) {
+    public void init(EntityPlayer player, PlayerEffect playerEffect) {
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         c.currentAura = fruitOfMightAura.id;
         c.updateClient();
