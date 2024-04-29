@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.network.packets;
 
 import io.netty.buffer.ByteBuf;
+import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -43,17 +44,30 @@ public final class DBCSelectForm extends AbstractPacket {
         int formID = in.readInt();
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(playerData);
-        formData.selectedForm = -1;
         NBTTagCompound compound = new NBTTagCompound();
         if (formID != -1 && FormController.getInstance().has(formID)){
-            if(formData.hasFormUnlocked(formID)){
-                Form form = (Form) FormController.getInstance().get(formID);
+            Form form = (Form) FormController.getInstance().get(formID);
+            if(form != null && formData.hasFormUnlocked(formID)){
+                if(form.hasParent()){
+                    if(ConfigDBCGameplay.InstantTransform){
+                        boolean canInstant = form.mastery.canInstantTransform(formData.getFormLevel(formID));
+                        if(!canInstant){
+                            Utility.sendMessage(player, "§cYou do not have enough mastery to transform directly");
+                            return;
+                        }
+                    } else {
+                        Utility.sendMessage(player, "§cYou cannot transform to this form directly");
+                        return;
+                    }
+                }
+
                 formData.selectedForm = formID;
                 Utility.sendMessage(player, String.format("§aForm %s §aSelected", form.getMenuName()));
                 compound = form.writeToNBT();
             }
         } else {
-            Utility.sendMessage(player, "§cCleared form selection");
+            formData.selectedForm = -1;
+            Utility.sendMessage(player, "§cCleared selection");
         }
 
         formData.updateClient();
