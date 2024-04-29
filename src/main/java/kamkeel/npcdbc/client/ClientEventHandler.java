@@ -37,13 +37,13 @@ public class ClientEventHandler {
         if (formData != null && formData.hasSelectedForm()) {
             Form form = formData.getSelectedForm();
             DBCData dbcData = DBCData.getClient();
+            if (dbcData.stats.isFusionSpectator())
+                return;
             float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ?
                 150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
-            if (dbcData.stats.getCurrentBodyPercentage() > healthReq && !dbcData.stats.isFused())
+            if (dbcData.stats.getCurrentBodyPercentage() > healthReq)
                 return;
             if (form.mastery.hasHeat() && dbcData.Pain > 0)
-                return;
-            if (dbcData.stats.isFusionSpectator())
                 return;
 
             if (formData.isInCustomForm()) {
@@ -107,14 +107,22 @@ public class ClientEventHandler {
                     } else {
                         Form form = formData.getSelectedForm();
                         if (form != null) {
+                            if (DBCData.getClient().stats.isFusionSpectator()){
+                                Utility.sendMessage(mc.thePlayer, "§cYou cannot transform as a spectator");
+                                return;
+                            }
                             float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ?
                                 150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
-                            if (DBCData.getClient().stats.getCurrentBodyPercentage() > healthReq)
+
+                            if (DBCData.getClient().stats.getCurrentBodyPercentage() > healthReq) {
                                 Utility.sendMessage(mc.thePlayer, "§cYou need to be below " + (int) healthReq + "% health to access the selected form!");
+                                return;
+                            }
 
-                            if (form.mastery.hasHeat() && DBCData.getClient().Pain > 0)
+                            if (form.mastery.hasHeat() && DBCData.getClient().Pain > 0){
                                 Utility.sendMessage(mc.thePlayer, "§cFailed to transform, you are in pain!");
-
+                                return;
+                            }
                         }
                     }
                 }
