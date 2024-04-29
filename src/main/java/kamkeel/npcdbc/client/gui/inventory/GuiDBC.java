@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.inventory;
 
 import kamkeel.npcdbc.client.gui.component.GuiFormAuraScroll;
+import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -27,10 +28,16 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
     private boolean loaded = false;
     private String selected = null;
     private String search = "";
+
+    private PlayerDBCInfo dbcInfo;
+
     private Form selectedForm;
     private Form viewingForm;
+    private ArrayList<String> stackables = new ArrayList<>();
+
     private Aura selectedAura;
     private Aura viewingAura;
+
     private HashMap<String, Integer> loadedData = new HashMap<String, Integer>();
 
     public int prevAura = 0;
@@ -49,7 +56,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         else
             PacketHandler.Instance.sendToServer(new RequestAura(-1,true).generatePacket());
 
-        PlayerDBCInfo dbcInfo = PlayerDataUtil.getClientDBCInfo();
+        this.dbcInfo = PlayerDataUtil.getClientDBCInfo();
         if(dbcInfo != null){
             showingAura = dbcInfo.currentAura != -1 ? 0 : 1;
             currentAura = dbcInfo.currentAura;
@@ -147,7 +154,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                     fontRendererObj.drawString(child, guiLeft + 143, y+=12, CustomNpcResourceListener.DefaultTextColor, true);
                 }
 
-                int stats = guiTop + 18 + 64;
+                int stats = guiTop + 18 + 48;
                 String label = "§fStrength:";
                 String info = "§4x§c" + viewingForm.strengthMulti;
                 fontRendererObj.drawString(label, guiLeft + 143, stats, CustomNpcResourceListener.DefaultTextColor, true);
@@ -162,6 +169,21 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 info = "§6x§e" + viewingForm.willMulti;
                 fontRendererObj.drawString(label, guiLeft + 143, stats+=12, CustomNpcResourceListener.DefaultTextColor, true);
                 fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
+
+                if(this.dbcInfo != null &&  this.dbcInfo.formLevels.containsKey(viewingForm.id)){
+                    label = "§fMastery:";
+                    double masteryValue = this.dbcInfo.formLevels.get(viewingForm.id);
+                    String roundedMastery = String.format("%.2f", masteryValue);
+                    info = "§b" + roundedMastery + " §7/ §b" + viewingForm.mastery.maxLevel;
+                    fontRendererObj.drawString(label, guiLeft + 143, stats+=12, CustomNpcResourceListener.DefaultTextColor, true);
+                    fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
+                }
+                if(!stackables.isEmpty()){
+                    label = "§fStackable:";
+                    info = String.join("§7, ", stackables);
+                    fontRendererObj.drawString(label, guiLeft + 143, stats+=12, CustomNpcResourceListener.DefaultTextColor, true);
+                    fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
+                }
             }
             if(selectedForm != null){
                 String drawSelected = "§fSelected: " + selectedForm.getMenuName();
@@ -339,18 +361,21 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             this.selectedForm = null;
             selected = null;
             setSelected(selected);
+            registerStackables();
         } else if (compound.hasKey("Skip")) {}
         else if (compound.hasKey("Type") && compound.getString("Type").equals("ViewAura")){
             this.viewingAura = new Aura();
             this.viewingForm = null;
             viewingAura.readFromNBT(compound);
             setSelected(viewingAura.name);
+            registerStackables();
         }
         else if (compound.hasKey("Type") && compound.getString("Type").equals("ViewForm")){
             this.viewingForm = new Form();
             this.viewingAura = null;
             viewingForm.readFromNBT(compound);
             setSelected(viewingForm.name);
+            registerStackables();
         }
         else if (compound.hasKey("attributes")) {
             this.viewingForm = new Form();
@@ -360,6 +385,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             selectedForm.readFromNBT(compound);
             viewingForm.readFromNBT(compound);
             setSelected(viewingForm.name);
+            registerStackables();
         } else {
             this.selectedAura = new Aura();
             this.viewingAura = new Aura();
@@ -368,6 +394,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             selectedAura.readFromNBT(compound);
             viewingAura.readFromNBT(compound);
             setSelected(viewingAura.name);
+            registerStackables();
         }
         loaded = true;
         initGui();
@@ -407,5 +434,26 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         if(prevAura != currentAura)
             PacketHandler.Instance.sendToServer(new DBCSetAura(currentAura).generatePacket());
         super.close();
+    }
+
+    public void registerStackables(){
+        stackables.clear();
+        if(viewingForm != null){
+            if(viewingForm.stackable.vanillaStackable){
+                stackables.add("§eDBC");
+            }
+            if(viewingForm.stackable.kaiokenStackable){
+                stackables.add("§cKK");
+            }
+            if(viewingForm.stackable.uiStackable){
+                stackables.add("§bUI");
+            }
+            if(viewingForm.stackable.godStackable){
+                stackables.add("§5GoD");
+            }
+            if(viewingForm.stackable.mysticStackable){
+                stackables.add("§dMystic");
+            }
+        }
     }
 }
