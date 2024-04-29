@@ -8,12 +8,14 @@ import kamkeel.npcdbc.api.AbstractDBCAPI;
 import kamkeel.npcdbc.api.IKiAttack;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.aura.IAuraHandler;
+import kamkeel.npcdbc.api.effect.IBonusHandler;
 import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.KiAttack;
@@ -57,6 +59,11 @@ public class DBCAPI extends AbstractDBCAPI {
     @Override
     public IStatusEffectHandler getStatusEffectHandler() {
         return StatusEffectController.Instance;
+    }
+
+    @Override
+    public IBonusHandler getBonusHandler() {
+        return BonusController.Instance;
     }
 
     public IForm createForm(String name) {

@@ -9,10 +9,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.LoadConfiguration;
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.PacketHandler;
 
@@ -41,6 +38,7 @@ public class CustomNpcPlusDBC {
         proxy.init(event);
         CapsuleController.getInstance().load();
         StatusEffectController.getInstance().load();
+        BonusController.getInstance().load();
     }
 
     @Mod.EventHandler
@@ -49,6 +47,7 @@ public class CustomNpcPlusDBC {
         AuraController.getInstance().load();
         CapsuleController.getInstance().load();
         StatusEffectController.getInstance().load();
+        BonusController.getInstance().load();
     }
 
     @Mod.EventHandler
