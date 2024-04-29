@@ -181,7 +181,7 @@ public class DBCDataStats {
     }
 
     public int getMaxKi() {
-        return JRMCoreH.stat(data.player, 5, data.Powertype, 5, data.SPI, data.Race, data.Class, JRMCoreH.SklLvl_KiBs(data.player, 1));
+        return JRMCoreH.stat(data.player, 5, data.Powertype, 5, data.SPI, data.Race, data.Class, JRMCoreH.SklLvl_KiBs(data.Skills.split(","), 1));
     }
 
     public int getMaxFusionBody() {

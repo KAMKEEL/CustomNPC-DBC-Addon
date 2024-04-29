@@ -10,6 +10,8 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -24,6 +26,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -35,24 +38,24 @@ public class MixinDBCKiTech {
         DBCData dbcData = DBCData.get(p);
         Aura aura = dbcData.getAura();
         if (aura != null) {
-            if (aura.display.type.equals("ssg"))
+            if (aura.display.type == EnumPlayerAuraTypes.SaiyanGod)
                 ssg.set(true);
-            else if (aura.display.type.equals("ssb"))
+            else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlue)
                 ssb.set(true);
-            else if (aura.display.type.equals("ssbkk")) {
+            else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlueKK) {
                 kk.set(true);
                 ssb.set(true);
-            } else if (aura.display.type.equals("ssbevo"))
+            } else if (aura.display.type == EnumPlayerAuraTypes.Shinka)
                 ssbs.set(true);
-            else if (aura.display.type.equals("ssrose")) {
+            else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRose) {
                 ssb.set(true);
                 divine.set(true);
-            } else if (aura.display.type.equals("ssroseevo")) {
+            } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRoseEvo) {
                 ssbs.set(true);
                 divine.set(true);
-            } else if (aura.display.type.equals("ui"))
+            } else if (aura.display.type == EnumPlayerAuraTypes.UI)
                 ui.set(true);
-            else if (aura.display.type.equals("godofdestruction"))
+            else if (aura.display.type == EnumPlayerAuraTypes.GoD)
                 godestruction.set(true);
         }
     }
@@ -132,6 +135,10 @@ public class MixinDBCKiTech {
         if (aura != null) {
             if (Aura.get() instanceof EntityAura2) {
                 EntityAura2 aur = (EntityAura2) Aura.get();
+                int mimicColor = getManualAuraColor(aura.display.type);
+                if(mimicColor != -1)
+                    aur.setCol(mimicColor);
+
                 if (aura.display.hasColor("color1"))
                     aur.setCol(aura.display.color1);
                 if (aura.display.hasColor("color2"))
@@ -147,7 +154,7 @@ public class MixinDBCKiTech {
                 if (aura.display.hasSpeed())
                     aur.setSpd((int) aura.display.speed);
                 if (aura.display.hasAlpha("aura"))
-                    aur.setAlp(aura.display.alpha);
+                    aur.setAlp((float) aura.display.alpha / 255);
 
                 if (aura.display.hasSize())
                     ((IEntityAura) aur).setSize(aura.display.size);
@@ -178,5 +185,26 @@ public class MixinDBCKiTech {
     private static void clearFromRenderPlayerJBRA(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci) {
         CommonProxy.CurrentAuraPlayer = null;
         ClientCache.isChangePart = false;
+    }
+
+    @Unique
+    private static int getManualAuraColor(EnumPlayerAuraTypes playerAuraTypes) {
+        int clr = -1;
+        if (playerAuraTypes == EnumPlayerAuraTypes.GoD) {
+            clr = 12464847;
+        } else if (playerAuraTypes == EnumPlayerAuraTypes.UI) {
+            clr = 15790320;
+        } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanRose) {
+            clr = 7536661;
+        } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanRoseEvo) {
+            clr = 14030412;
+        } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanBlue || playerAuraTypes == EnumPlayerAuraTypes.SaiyanBlueKK) {
+            clr = 2805230;
+        } else if (playerAuraTypes == EnumPlayerAuraTypes.Shinka) {
+            clr = 32767;
+        } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanGod) {
+            clr = 16761125;
+        }
+        return clr;
     }
 }

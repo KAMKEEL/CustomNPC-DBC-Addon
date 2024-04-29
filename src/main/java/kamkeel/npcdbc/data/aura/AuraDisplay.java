@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.aura;
 
 import kamkeel.npcdbc.api.aura.IAuraDisplay;
+import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
@@ -8,7 +9,8 @@ import noppes.npcs.util.ValueUtil;
 public class AuraDisplay implements IAuraDisplay {
     public Aura parent;
 
-    public String type = "", texture1 = "", texture2 = "", texture3 = "";
+    public EnumPlayerAuraTypes type = EnumPlayerAuraTypes.None;
+    public String texture1 = "", texture2 = "", texture3 = "";
     public int color1 = -1, color2 = -1, color3 = -1, alpha = -1;
     public float size = 1.0f, speed = 1.0f;
 
@@ -25,7 +27,8 @@ public class AuraDisplay implements IAuraDisplay {
     public void readFromNBT(NBTTagCompound compound) {
         NBTTagCompound rendering = compound.getCompoundTag("rendering");
 
-        type = rendering.getString("type");
+        EnumPlayerAuraTypes auraTypes = EnumPlayerAuraTypes.getEnumFromName(rendering.getString("type"));
+        type = auraTypes == null ? EnumPlayerAuraTypes.None : auraTypes;
         texture1 = rendering.getString("texture1");
         texture2 = rendering.getString("texture2");
         texture3 = rendering.getString("texture3");
@@ -46,7 +49,7 @@ public class AuraDisplay implements IAuraDisplay {
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound rendering = new NBTTagCompound();
 
-        rendering.setString("type", type);
+        rendering.setString("type", type.getName());
         rendering.setString("texture1", texture1);
         rendering.setString("texture2", texture2);
         rendering.setString("texture3", texture3);
@@ -68,17 +71,15 @@ public class AuraDisplay implements IAuraDisplay {
 
     @Override
     public String getType() {
-        return type;
+        return type.getName();
     }
 
     @Override
     public void setType(String type) {
-        String s = type.toLowerCase();
-        if (s.equals("ssgod") || s.equals("ssb") || s.equals("ssbevo") || s.equals("ssrose") || s.equals("ssroseevo") || s.equals("ui") || s.equals("godofdestruction") || s.equals(""))
-            this.type = s;
-        else
-            throw new CustomNPCsException("Invalid type! Legal types: SSGod, SSB ,SSBEvo , SSRose, SSRoseEvo, UI, GodOfDestruction");
-
+        EnumPlayerAuraTypes s = EnumPlayerAuraTypes.getEnumFromName(type.toLowerCase());
+        if(s == null)
+            throw new CustomNPCsException("Invalid type! Legal types: %s", String.join(", ", EnumPlayerAuraTypes.getAllNames()));
+        this.type = s;
     }
 
     @Override
@@ -158,7 +159,7 @@ public class AuraDisplay implements IAuraDisplay {
     }
 
     @Override
-    public int getAlpha() {
+    public int getAlpha(String type) {
         switch (type.toLowerCase()) {
             case "aura":
                 return alpha;
