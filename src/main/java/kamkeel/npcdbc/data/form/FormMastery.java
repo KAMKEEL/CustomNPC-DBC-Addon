@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.form;
 
 import kamkeel.npcdbc.api.form.IFormMastery;
+import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.util.ValueUtil;
 

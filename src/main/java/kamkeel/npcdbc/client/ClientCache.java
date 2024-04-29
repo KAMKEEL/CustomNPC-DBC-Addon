@@ -13,6 +13,7 @@ public class ClientCache {
     public static boolean isChangePart;
     public static final CacheHashMap<String, CacheHashMap.CachedObject<DBCData>> clientDataCache = new CacheHashMap<>((long) ConfigClient.CacheLife * 60 * 1000);
 
+    public static boolean allowTransformBypass = false;
     public static boolean hasChargingDex = false;
     public static HashMap<Integer, Float> chargingDexValues = new HashMap<>();
 

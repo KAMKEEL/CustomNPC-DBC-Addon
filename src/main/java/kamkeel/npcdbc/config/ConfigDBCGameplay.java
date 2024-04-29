@@ -16,6 +16,10 @@ public class ConfigDBCGameplay
     public static Property CheckEffectsTickProperty;
     public static float CheckEffectsTick = 10;
 
+    public final static String Forms = "Forms";
+    public static Property InstantTransformProperty;
+    public static boolean InstantTransform = true;
+
     public final static String ChargingDex = "ChargingDex";
     public static Property EnableChargingDexProperty;
     public static boolean EnableChargingDex = true;
@@ -62,6 +66,9 @@ public class ConfigDBCGameplay
             EnableNamekianRegen = EnableNamekianRegenProperty.getBoolean(true);
             NamekianRegenMin = config.get(NamekianRegeneration, "Min Namekian Regen", 20).getInt(20);
             NamekianRegenMax = config.get(NamekianRegeneration, "Max Namekian Regen", 50).getInt(50);
+
+            InstantTransformProperty = config.get(Forms, "Instant Transform Bypass Parent", false, "Allows Instant Transform to Bypass the Parent Only Check\n [If the player has Instant Transform Unlocked in Mastery, they can go to the form directly]");
+            InstantTransform = InstantTransformProperty.getBoolean(false);
         }
         catch (Exception e)
         {

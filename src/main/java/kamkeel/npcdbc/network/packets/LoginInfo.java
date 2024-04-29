@@ -9,18 +9,20 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import java.io.IOException;
 
-public final class ChargingDexInfo extends AbstractPacket {
-    public static final String packetName = "NPC|ChargeDex";
-    private float ma = 0;
-    private float spi = 0;
-    private float war = 0;
-    private boolean enabled = false;
+public final class LoginInfo extends AbstractPacket {
+    public static final String packetName = "NPC|Login";
+    private final float ma;
+    private final float spi;
+    private final float war;
+    private final boolean chargeDex;
+    private final boolean transformBypass;
 
-    public ChargingDexInfo(){
-        this.enabled = ConfigDBCGameplay.EnableChargingDex;
+    public LoginInfo(){
+        this.chargeDex = ConfigDBCGameplay.EnableChargingDex;
         this.ma = ConfigDBCGameplay.MartialArtistCharge;
         this.spi = ConfigDBCGameplay.SpiritualistCharge;
         this.war = ConfigDBCGameplay.WarriorCharge;
+        this.transformBypass = ConfigDBCGameplay.InstantTransform;
     }
 
     @Override
@@ -30,10 +32,12 @@ public final class ChargingDexInfo extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        out.writeBoolean(this.enabled);
+        out.writeBoolean(this.chargeDex);
         out.writeFloat(this.ma);
         out.writeFloat(this.spi);
         out.writeFloat(this.war);
+
+        out.writeBoolean(this.transformBypass);
     }
 
     @Override
@@ -47,6 +51,8 @@ public final class ChargingDexInfo extends AbstractPacket {
             ClientCache.chargingDexValues.put(DBCClass.MartialArtist, martialArtist);
             ClientCache.chargingDexValues.put(DBCClass.Spiritualist, spiritualist);
             ClientCache.chargingDexValues.put(DBCClass.Warrior, warrior);
+
+            ClientCache.allowTransformBypass = in.readBoolean();
         }
     }
 }
