@@ -77,7 +77,7 @@ public class AuraDisplay implements IAuraDisplay {
     @Override
     public void setType(String type) {
         EnumPlayerAuraTypes s = EnumPlayerAuraTypes.getEnumFromName(type.toLowerCase());
-        if(s == null)
+        if (s == null)
             throw new CustomNPCsException("Invalid type! Legal types: %s", String.join(", ", EnumPlayerAuraTypes.getAllNames()));
         this.type = s;
     }
@@ -96,13 +96,13 @@ public class AuraDisplay implements IAuraDisplay {
     public boolean hasColor(String colorType) {
         switch (colorType.toLowerCase()) {
             case "color1":
-                return color1 != -1;
+                return color1 > -1;
             case "color2":
-                return color2 != -1;
+                return color2 > -1;
             case "color3":
-                return color3 != -1;
+                return color3 > -1;
             case "lightning":
-                return lightningColor != -1;
+                return lightningColor > -1;
 
         }
         throw new CustomNPCsException("Invalid type! Legal types: color1, color2, color3, lightningColor");
@@ -150,9 +150,9 @@ public class AuraDisplay implements IAuraDisplay {
     public boolean hasAlpha(String type) {
         switch (type.toLowerCase()) {
             case "aura":
-                return alpha != -1;
+                return alpha > -1;
             case "lightning":
-                return lightningAlpha != -1;
+                return lightningAlpha > -1;
 
         }
         throw new CustomNPCsException("Invalid type! Legal types:  aura, lightning");
