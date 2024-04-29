@@ -53,10 +53,14 @@ public final class DBCSelectForm extends AbstractPacket {
                         boolean canInstant = form.mastery.canInstantTransform(formData.getFormLevel(formID));
                         if(!canInstant){
                             Utility.sendMessage(player, "§cYou do not have enough mastery to transform directly");
+                            compound.setBoolean("Skip", true);
+                            Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
                             return;
                         }
                     } else {
                         Utility.sendMessage(player, "§cYou cannot transform to this form directly");
+                        compound.setBoolean("Skip", true);
+                        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
                         return;
                     }
                 }
