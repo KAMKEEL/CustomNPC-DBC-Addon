@@ -10,7 +10,6 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -45,7 +44,7 @@ public class MixinDBCKiTech {
             else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlueKK) {
                 kk.set(true);
                 ssb.set(true);
-            } else if (aura.display.type == EnumPlayerAuraTypes.Shinka)
+            } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlueEvo)
                 ssbs.set(true);
             else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRose) {
                 ssb.set(true);
@@ -200,7 +199,7 @@ public class MixinDBCKiTech {
             clr = 14030412;
         } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanBlue || playerAuraTypes == EnumPlayerAuraTypes.SaiyanBlueKK) {
             clr = 2805230;
-        } else if (playerAuraTypes == EnumPlayerAuraTypes.Shinka) {
+        } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanBlueEvo) {
             clr = 32767;
         } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanGod) {
             clr = 16761125;

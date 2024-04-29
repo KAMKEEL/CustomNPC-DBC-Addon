@@ -6,22 +6,18 @@ import java.util.List;
 public enum EnumPlayerAuraTypes {
     None(""),
     SaiyanGod("ssgod"),
-    GoD("godofdestruction"),
-    UI("ui"),
     SaiyanBlue("ssb"),
+    SaiyanBlueKK("ssbkk"),
+    SaiyanBlueEvo("shinka"),
     SaiyanRose("ssrose"),
     SaiyanRoseEvo("ssroseevo"),
-    SaiyanBlueKK("ssbkk"),
-    Shinka("shinka");
+    UI("ui"),
+    GoD("godofdestruction");
 
     private final String name;
 
-    private EnumPlayerAuraTypes(String name){
+    private EnumPlayerAuraTypes(String name) {
         this.name = name;
-    }
-
-    public String getName(){
-        return this.name;
     }
 
     public static EnumPlayerAuraTypes getEnumFromName(String name) {
@@ -39,6 +35,10 @@ public enum EnumPlayerAuraTypes {
             names.add(auraType.getName());
         }
         return names;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
 }
