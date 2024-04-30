@@ -114,7 +114,7 @@ public abstract class MixinJRMCoreH {
                     result *= (multis[2] + bonus[2]);
 
                 if (attribute == 0 || attribute == 1 || attribute == 3)
-                    result *= (int) (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
+                    result *= (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
 
                 // Add Bonus Multi to Base Attributes
                 if (attribute == 0) // STR
