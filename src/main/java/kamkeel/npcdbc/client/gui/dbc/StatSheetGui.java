@@ -156,7 +156,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         this.dynamicElements.add(new JRMCoreLabel(
-            String.format("%s: §8%s", JRMCoreH.trl("jrmc", "Class"), JRMCoreH.ClassesDBC[JRMCoreH.Class]),
+            String.format("%s: §8%s", JRMCoreH.trl("jrmc", "Class"), JRMCoreH.trl("jrmc", JRMCoreH.ClassesDBC[JRMCoreH.Class])),
             JRMCoreH.trl("jrmc", JRMCoreH.ClassesDBCDesc[JRMCoreH.Class]),
             this.guiWidthOffset+5,
             this.guiHeightOffset+5+index*10,
