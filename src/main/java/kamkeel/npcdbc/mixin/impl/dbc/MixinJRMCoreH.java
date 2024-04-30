@@ -107,11 +107,11 @@ public abstract class MixinJRMCoreH {
 
                 stackableMulti *= (float) fmvalue;
                 if (attribute == 0) //str
-                    result *= (int) (multis[0] + bonus[0]);
+                    result *= (multis[0] + bonus[0]);
                 else if (attribute == 1) //dex
-                    result *= (int) (multis[1] + bonus[1]);
+                    result *= (multis[1] + bonus[1]);
                 else if (attribute == 3) //will
-                    result *= (int) (multis[2] + bonus[2]);
+                    result *= (multis[2] + bonus[2]);
 
                 if (attribute == 0 || attribute == 1 || attribute == 3)
                     result *= (int) (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));

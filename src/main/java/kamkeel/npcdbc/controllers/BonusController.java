@@ -132,6 +132,7 @@ public class BonusController implements IBonusHandler {
         else
             playerBonus.put(uuid, current);
         current.remove(bonus.name);
+        syncBonus(player);
     }
 
     public void removeBonus(EntityPlayer player, String name) {
