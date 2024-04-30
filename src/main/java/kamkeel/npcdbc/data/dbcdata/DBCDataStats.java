@@ -13,8 +13,14 @@ import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import noppes.npcs.NoppesUtilPlayer;
+import noppes.npcs.NoppesUtilServer;
+import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
@@ -162,7 +168,7 @@ public class DBCDataStats {
     }
 
     public double getCurrentMulti() {
-        return getFullAttribute(0) / data.STR;
+        return (double) getFullAttribute(0) / data.STR;
 
     }
 
@@ -175,17 +181,55 @@ public class DBCDataStats {
     }
 
     public int getMaxKi() {
-        return JRMCoreH.stat(data.player, 5, data.Powertype, 5, data.CON, data.Race, data.Class, 0);
+        return JRMCoreH.stat(data.player, 5, data.Powertype, 5, data.SPI, data.Race, data.Class, JRMCoreH.SklLvl_KiBs(data.Skills.split(","), 1));
+    }
+
+    public int getMaxFusionBody() {
+        int con = data.CON;
+        if(isFused()){
+            EntityPlayer spectator = getSpectatorEntity();
+            if(spectator != null){
+                DBCData specData = DBCData.get(spectator);
+                con = Math.min(data.CON, specData.CON) * 2;
+            }
+        }
+        return JRMCoreH.stat(data.player, 2, data.Powertype, 2, con, data.Race, data.Class, 0);
+    }
+
+    public int getMaxFusionStamina() {
+        int con = data.CON;
+        if(isFused()){
+            EntityPlayer spectator = getSpectatorEntity();
+            if(spectator != null){
+                DBCData specData = DBCData.get(spectator);
+                con = Math.min(data.CON, specData.CON) * 2;
+            }
+        }
+        return JRMCoreH.stat(data.player, 2, data.Powertype, 3, con, data.Race, data.Class, 0);
+    }
+
+    public int getMaxFusionKi() {
+        int spi = data.SPI;
+        if(isFused()){
+            EntityPlayer spectator = getSpectatorEntity();
+            if(spectator != null){
+                DBCData specData = DBCData.get(spectator);
+                spi = Math.min(data.SPI, specData.SPI) * 2;
+            }
+        }
+        return JRMCoreH.stat(data.player, 5, data.Powertype, 5, spi, data.Race, data.Class, JRMCoreH.SklLvl_KiBs(data.player, 1));
     }
 
     public float getCurrentBodyPercentage() {
-        return (data.Body * 100) / (float) getMaxBody();
+        if(isFused())
+            return (data.Body * 100) / (float) getMaxFusionBody();
 
+        return (data.Body * 100) / (float) getMaxBody();
     }
 
     // Negative Values will Drain instead
     public void restoreKiPercent(float percToRestore) {
-        int maxKi = getMaxKi();
+        int maxKi = isFused() ? getMaxFusionKi() : getMaxKi();
         int toAdd = (int) (maxKi * (percToRestore / 100));
 
         data.Ki = ValueUtil.clamp(data.Ki + toAdd, 0, maxKi);
@@ -193,7 +237,7 @@ public class DBCDataStats {
     }
 
     public void restoreHealthPercent(float percToRestore) {
-        int maxBody = getMaxBody();
+        int maxBody = isFused() ? getMaxFusionBody() : getMaxBody();
         int toAdd = (int) (maxBody * (percToRestore / 100));
 
         data.Body = ValueUtil.clamp(data.Body + toAdd, 0, maxBody);
@@ -201,7 +245,7 @@ public class DBCDataStats {
     }
 
     public void restoreStaminaPercent(float percToRestore) {
-        int maxSta = getMaxStamina();
+        int maxSta = isFused() ? getMaxFusionStamina() : getMaxStamina();
         int toAdd = (int) (maxSta * (percToRestore / 100));
 
 
@@ -281,6 +325,50 @@ public class DBCDataStats {
         }
         return "";
 
+    }
+
+    public boolean isFused() {
+        if (data.Fusion.contains(",")) {
+            String[] fusionMembers = data.Fusion.split(",");
+            return fusionMembers.length == 3;
+        }
+        return false;
+    }
+
+    public boolean isFusionSpectator() {
+        if (data.Fusion.contains(",")) {
+            String[] fusionMembers = data.Fusion.split(",");
+            if (fusionMembers.length == 3)
+                return fusionMembers[1].equalsIgnoreCase(data.player.getCommandSenderName());
+
+        }
+        return false;
+    }
+
+    public String getSpectatorName() {
+        if (data.Fusion.contains(",")) {
+            String[] fusionMembers = data.Fusion.split(",");
+            if (fusionMembers.length == 3)
+                return fusionMembers[1];
+
+        }
+        return "";
+    }
+
+    public EntityPlayer getSpectatorEntity(){
+        if(isFused() && !isFusionSpectator()){
+            String spectator = getSpectatorName();
+            if(!spectator.isEmpty()){
+                EntityPlayer specEntity = null;
+                if(data.player.worldObj.isRemote){
+                    specEntity = data.player.worldObj.getPlayerEntityByName(spectator);
+                } else {
+                    specEntity = NoppesUtilServer.getPlayerByName(spectator);
+                }
+                return specEntity;
+            }
+        }
+        return null;
     }
 
     public boolean isChargingKiAttack() {

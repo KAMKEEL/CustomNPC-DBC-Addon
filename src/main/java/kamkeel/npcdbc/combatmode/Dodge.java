@@ -19,50 +19,51 @@ public class Dodge {
         return false;
     }
 
-    public static void dodge(Entity p, Entity t) {
+    public static boolean dodge(Entity p, Entity t) {
         if (t == null)
-            return;
+            return false;
 
         for (int i = 0; i < 30; i++) {
             if (instantTransDodge(p, t, 10, -180, 1.0, 0, 5, 1))
-                break;
+                return true;
             if (instantTransDodge(p, t, 20, -180, 1.15, 5, 10, 2))
-                break;
+                return true;
             if (instantTransDodge(p, t, 30, -180, 1.0, 10, 15, 3))
-                break;
+                return true;
             if (instantTransDodge(p, t, 60, -180, 1.15, 20, 25, 4))
-                break;
+                return true;
             if (instantTransDodge(p, t, 90, -180, 1.35, 25, 30, 5))
-                break;
+                return true;
             if (instantTransDodge(p, t, -10, -180, 1.0, 30, 35, 6))
-                break;
+                return true;
             if (instantTransDodge(p, t, -20, -180, 1.15, 35, 40, 7))
-                break;
+                return true;
             if (instantTransDodge(p, t, -30, -180, 1.0, 40, 45, 8))
-                break;
+                return true;
             if (instantTransDodge(p, t, -30, -180, 1.25, 45, 50, 9))
-                break;
+                return true;
             if (instantTransDodge(p, t, -40, -180, 1.15, 50, 55, 10))
-                break;
+                return true;
             if (instantTransDodge(p, t, -40, -180, 1.65, 55, 60, 11))
-                break;
+                return true;
             if (instantTransDodge(p, t, -80, -180, 1.75, 60, 65, 12))
-                break;
+                return true;
             if (instantTransDodge(p, t, -60, -180, 1.25, 65, 70, 13))
-                break;
+                return true;
             if (instantTransDodge(p, t, 80, -180, 1.75, 70, 75, 14))
-                break;
+                return true;
             if (instantTransDodge(p, t, -180, -180, 1.75, 75, 80, 15))
-                break;
+                return true;
             if (instantTransDodge(p, t, 140, -180, 1.25, 80, 85, 16))
-                break;
+                return true;
             if (instantTransDodge(p, t, -140, -180, 1.25, 85, 90, 17))
-                break;
+                return true;
             if (instantTransDodge(p, t, 120, -180, 1.75, 90, 95, 18))
-                break;
+                return true;
             if (instantTransDodge(p, t, -120, -180, 1.75, 95, 100, 19))
-                break;
+                return true;
         }
+        return false;
     }
 
 

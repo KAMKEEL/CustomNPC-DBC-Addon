@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.items;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.items.capsules.HealthCapsule;
 import kamkeel.npcdbc.items.capsules.KiCapsule;
@@ -13,6 +14,10 @@ public class ModItems {
     public static Item HealthCapsules;
     public static Item StaminaCapsules;
     public static Item MiscCapsules;
+
+    public static Item FruitOfMight;
+
+    public static Item Potaras;
 
     /**
      * Declare and register items. Do NOT add recipes here!
@@ -36,5 +41,11 @@ public class ModItems {
                 GameRegistry.registerItem(MiscCapsules, "misccapsule");
             }
         }
+
+        FruitOfMight = new FruitOfMight(5, 0.4f, false).setTextureName(LocalizationHelper.MOD_PREFIX + "fruitofmight");
+        GameRegistry.registerItem(FruitOfMight, FruitOfMight.getUnlocalizedName());
+
+        Potaras = new Potara();
+        GameRegistry.registerItem(Potaras, "potara");
     }
 }

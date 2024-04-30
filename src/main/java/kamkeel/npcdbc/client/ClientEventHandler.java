@@ -6,6 +6,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -36,11 +37,14 @@ public class ClientEventHandler {
         PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
         if (formData != null && formData.hasSelectedForm()) {
             Form form = formData.getSelectedForm();
-
-            float healthReq = form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
-            if (DBCData.getClient().stats.getCurrentBodyPercentage() > healthReq)
+            DBCData dbcData = DBCData.getClient();
+            if (dbcData.stats.isFusionSpectator())
                 return;
-            if (form.mastery.hasHeat() && DBCData.getClient().Pain > 0)
+            float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ?
+                150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
+            if (dbcData.stats.getCurrentBodyPercentage() > healthReq)
+                return;
+            if (form.mastery.hasHeat() && dbcData.Pain > 0)
                 return;
 
             if (formData.isInCustomForm()) {
@@ -67,18 +71,24 @@ public class ClientEventHandler {
         if (formData == null)
             return false;
 
+        boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ClientCache.allowTransformBypass;
+        if(allowBypass)
+            return true;
+
         DBCData dbcData = DBCData.getClient();
         // Check for in Required DBC Form before Transforming
-        if (form.requiredForm.containsKey((int) dbcData.Race)) {
-            if (form.requiredForm.get((int) dbcData.Race) != dbcData.State) {
+        if (form.requiredForm.containsKey((int) dbcData.Race)){
+            if(form.requiredForm.get((int) dbcData.Race) != dbcData.State) {
                 Utility.sendMessage(mc.thePlayer, "§cYou are not in the right DBC form");
                 return false;
             }
         } else {
             // Must be in Parent Form to Transform
-            if (form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm) {
-                Utility.sendMessage(mc.thePlayer, "§cYou are not in the correct parent form");
-                return false;
+            if(form.parentID != -1 && form.isFromParentOnly() ){
+                if (form.parentID != formData.currentForm) {
+                    Utility.sendMessage(mc.thePlayer, "§cYou must transform from the parent form");
+                    return false;
+                }
             }
         }
         return true;
@@ -104,13 +114,22 @@ public class ClientEventHandler {
                     } else {
                         Form form = formData.getSelectedForm();
                         if (form != null) {
-                            float healthReq = form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
-                            if (DBCData.getClient().stats.getCurrentBodyPercentage() > healthReq)
+                            if (DBCData.getClient().stats.isFusionSpectator()){
+                                Utility.sendMessage(mc.thePlayer, "§cYou cannot transform as a spectator");
+                                return;
+                            }
+                            float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ?
+                                150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
+
+                            if (DBCData.getClient().stats.getCurrentBodyPercentage() > healthReq) {
                                 Utility.sendMessage(mc.thePlayer, "§cYou need to be below " + (int) healthReq + "% health to access the selected form!");
+                                return;
+                            }
 
-                            if (form.mastery.hasHeat() && DBCData.getClient().Pain > 0)
+                            if (form.mastery.hasHeat() && DBCData.getClient().Pain > 0){
                                 Utility.sendMessage(mc.thePlayer, "§cFailed to transform, you are in pain!");
-
+                                return;
+                            }
                         }
                     }
                 }

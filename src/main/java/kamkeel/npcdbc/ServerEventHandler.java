@@ -4,9 +4,9 @@ import JinRyuu.DragonBC.common.DBCConfig;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
-import kamkeel.npcdbc.combatmode.Dodge;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -17,8 +17,8 @@ import kamkeel.npcdbc.network.packets.CapsuleInfo;
 import kamkeel.npcdbc.network.packets.ChargingDexInfo;
 import kamkeel.npcdbc.network.packets.SyncDBCConfigPacket;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.network.packets.LoginInfo;
 import kamkeel.npcdbc.util.PlayerDataUtil;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,8 +30,6 @@ import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.util.ValueUtil;
 
-import java.util.Random;
-
 public class ServerEventHandler {
 
     @SubscribeEvent
@@ -42,9 +40,11 @@ public class ServerEventHandler {
         dbcData.loadNBTData(true);
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(true).generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(false).generatePacket(), (EntityPlayerMP) event.player);
+        PacketHandler.Instance.sendToPlayer(new LoginInfo().generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new ChargingDexInfo().generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new SyncDBCConfigPacket(DBCConfig.ccnfKDd, DBCConfig.ccnfKFd).generatePacket(), (EntityPlayerMP) event.player);
         StatusEffectController.getInstance().loadEffects(event.player);
+        BonusController.getInstance().loadBonus(event.player);
     }
 
 

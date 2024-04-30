@@ -1,7 +1,10 @@
 package kamkeel.npcdbc.data.statuseffect.types;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.controllers.BonusController;
+import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -12,14 +15,17 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class FruitOfMight extends StatusEffect {
     public static Aura fruitOfMightAura = null;
-    public float kiToDrain = 1.0f;
+    public float kiToDrain;
+    public PlayerBonus fruitOfMightBonus;
 
     public FruitOfMight() {
         name = "FruitOfMight";
         id = Effects.FRUIT_OF_MIGHT;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
-        iconX = 0;
+        iconX = 64;
         iconY = 0;
+        fruitOfMightBonus = new PlayerBonus(name, (float) ConfigDBCEffects.FOM_Strength, (float) ConfigDBCEffects.FOM_Dex, (float) ConfigDBCEffects.FOM_Will);
+        kiToDrain = (float) ConfigDBCEffects.FOM_KiDrain;
 
         if (fruitOfMightAura == null) {
             fruitOfMightAura = new Aura();
@@ -31,17 +37,17 @@ public class FruitOfMight extends StatusEffect {
         }
     }
 
-    public void init(EntityPlayer player) {
+    public void init(EntityPlayer player, PlayerEffect playerEffect){
+        BonusController.getInstance().applyBonus(player, fruitOfMightBonus);
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         c.currentAura = fruitOfMightAura.id;
         c.updateClient();
-
     }
 
     @Override
     public void process(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
-        dbcData.stats.restoreKiPercent(-kiToDrain);
+        dbcData.stats.restoreKiPercent(kiToDrain);
         if (dbcData.Ki <= 0)
             playerEffect.kill();
     }
@@ -53,5 +59,6 @@ public class FruitOfMight extends StatusEffect {
             c.currentAura = -1;
             c.updateClient();
         }
+        BonusController.getInstance().removeBonus(player, fruitOfMightBonus);
     }
 }

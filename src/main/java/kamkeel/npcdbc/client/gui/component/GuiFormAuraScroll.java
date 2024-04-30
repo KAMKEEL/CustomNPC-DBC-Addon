@@ -5,16 +5,19 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.util.TextSplitter;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.util.GuiCustomScroll;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class GuiFormAuraScroll extends GuiCustomScroll {
     private final HashMap<String, String> formDisplays = new HashMap<>();
     private final HashMap<String, String> auraDisplays = new HashMap<>();
+    private int hoverCount = 0;
     int hoverColor;
 
     public GuiFormAuraScroll(GuiScreen parent, int id) {
@@ -79,6 +82,37 @@ public class GuiFormAuraScroll extends GuiCustomScroll {
 
             }
         }
+    }
 
+    @Override
+    public void drawHover(int i, int j) {
+        if (this.visible) {
+            GL11.glPushMatrix();
+            GL11.glTranslatef((float)this.guiLeft, (float)this.guiTop, 0.0F);
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            if (this.oldHover != this.hover) {
+                this.oldHover = this.hover;
+                this.hoverCount = 0;
+            } else if (this.hoverCount < 110) {
+                ++this.hoverCount;
+            }
+
+            if (this.hover != -1 && this.hoverCount > 100) {
+                String menuName = "";
+                if(GuiDBC.activePage == 0)
+                    menuName = formDisplays.get(this.list.get(this.hover));
+                if(GuiDBC.activePage == 1)
+                    menuName = auraDisplays.get(this.list.get(this.hover));
+                if(menuName == null || menuName.isEmpty())
+                    menuName = "";
+                String displayString = StatCollector.translateToLocal(menuName);
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                List<String> lines = TextSplitter.splitText(displayString, 30);
+                super.drawHoveringText(lines, i - this.guiLeft, j - this.guiTop, this.fontRendererObj);
+                GL11.glDisable(2896);
+            }
+
+            GL11.glPopMatrix();
+        }
     }
 }

@@ -12,7 +12,7 @@ public class Overpower extends StatusEffect {
         name = "Overpower";
         id = Effects.OVERPOWER;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
-        iconX = 0;
+        iconX = 112;
         iconY = 0;
     }
 

@@ -9,12 +9,12 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.LoadConfiguration;
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.PacketHandler;
+import noppes.npcs.config.legacy.LegacyConfig;
+
+import java.io.File;
 
 import static noppes.npcs.CustomNpcs.configPath;
 
@@ -22,17 +22,20 @@ import static noppes.npcs.CustomNpcs.configPath;
 public class CustomNpcPlusDBC {
 
     public static final String name = "CustomNPC+ DBC Addon";
-    public static final String version = "1.0-beta2";
+    public static final String version = "1.0-beta3";
     public static final String ID = "npcdbc";
     @SidedProxy(clientSide = "kamkeel.npcdbc.client.ClientProxy", serverSide = "kamkeel.npcdbc.CommonProxy")
     public static CommonProxy proxy;
     @Mod.Instance
     public static CustomNpcPlusDBC instance;
+    public static String addonConfig;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
         proxy.preInit(ev);
-        LoadConfiguration.init(configPath);
+
+        addonConfig = ev.getModConfigurationDirectory() + File.separator + "CustomNpcPlus" + File.separator + "dbc" + File.separator;
+        LoadConfiguration.init(addonConfig);
         ModItems.init();
     }
 
@@ -41,6 +44,7 @@ public class CustomNpcPlusDBC {
         proxy.init(event);
         CapsuleController.getInstance().load();
         StatusEffectController.getInstance().load();
+        BonusController.getInstance().load();
     }
 
     @Mod.EventHandler
@@ -49,6 +53,7 @@ public class CustomNpcPlusDBC {
         AuraController.getInstance().load();
         CapsuleController.getInstance().load();
         StatusEffectController.getInstance().load();
+        BonusController.getInstance().load();
     }
 
     @Mod.EventHandler

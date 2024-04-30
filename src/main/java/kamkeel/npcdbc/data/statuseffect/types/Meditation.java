@@ -12,7 +12,7 @@ public class Meditation extends StatusEffect {
         name = "Meditation";
         id = Effects.MEDITATION;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
-        iconX = 0;
+        iconX = 96;
         iconY = 0;
     }
 

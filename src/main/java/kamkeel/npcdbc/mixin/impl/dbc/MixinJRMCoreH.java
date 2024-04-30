@@ -8,6 +8,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -41,16 +42,19 @@ public abstract class MixinJRMCoreH {
             if (player == null)
                 return;
 
+            float[] bonus = new float[3];
             if (Utility.isServer(player)) {
                 PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
                 if (formData != null && formData.isInCustomForm()) {
                     currentFormLevel = formData.getCurrentLevel();
                     form = formData.getCurrentForm();
                 }
+                bonus = BonusController.getInstance().getCurrentBonuses(player);
             } else {
                 DBCData dbcData = DBCData.get(player);
                 form = dbcData.getForm();
                 currentFormLevel = dbcData.addonFormLevel;
+                bonus = dbcData.bonus.getCurrentBonuses();
             }
 
             if (form != null) {
@@ -101,20 +105,55 @@ public abstract class MixinJRMCoreH {
                     fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Mystic", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
 
 
-                stackableMulti *= fmvalue;
-                if (attribute == 0) //str
-                    result *= multis[0];
-                else if (attribute == 1) //dex
-                    result *= multis[1];
-                else if (attribute == 3) //will
-                    result *= multis[2];
+                stackableMulti *= (float) fmvalue;
+                if (attribute == 0) // STR
+                    result *= (multis[0] + bonus[0]);
+                else if (attribute == 1) // DEX
+                    result *= (multis[1] + bonus[1]);
+                else if (attribute == 3) // WIL
+                    result *= (multis[2] + bonus[2]);
 
                 if (attribute == 0 || attribute == 1 || attribute == 3)
-                    result *= (int) (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
+                    result *= (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
+
+                // Add Bonus Multi to Base Attributes
+                if (attribute == 0) // STR
+                    result += (currAttributes[0] * bonus[0]);
+                else if (attribute == 1) // DEX
+                    result += (currAttributes[1] * bonus[1]);
+                else if (attribute == 3) // WIL
+                    result += (currAttributes[3] * bonus[2]);
+
 
                 result = (int) (Math.min((double) result, Double.MAX_VALUE));
                 info.setReturnValue(result);
             }
+        }
+    }
+
+    @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;OverAtrLimit:Z"), remap = false, cancellable = true)
+    private static void applyBonusToDBC(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info,  @Local(name = "result") LocalIntRef result) {
+        {
+            if (player == null)
+                return;
+
+            float[] bonus = new float[3];
+            if (Utility.isServer(player)) {
+                bonus = BonusController.getInstance().getCurrentBonuses(player);
+            } else {
+                DBCData dbcData = DBCData.get(player);
+                bonus = dbcData.bonus.getCurrentBonuses();
+            }
+
+            int resultOriginal = result.get();
+            if (attribute == 0 && bonus[0] != 0) //str
+                resultOriginal = (int) (resultOriginal + (currAttributes[0] * bonus[0]));
+            else if (attribute == 1) //dex
+                resultOriginal = (int) (resultOriginal + (currAttributes[1] * bonus[1]));
+            else if (attribute == 3) //will
+                resultOriginal = (int) (resultOriginal + (currAttributes[3] * bonus[2]));
+
+            result.set(resultOriginal);
         }
     }
 

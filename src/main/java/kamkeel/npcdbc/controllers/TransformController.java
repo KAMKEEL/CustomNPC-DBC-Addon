@@ -5,6 +5,8 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -139,7 +141,7 @@ public class TransformController {
         float ratio = curLevel / maxLevel;
 
         if (form.getMastery().hasInstantTransformationUnlockLevel())
-            if (curLevel >= form.getMastery().getInstantTransformationUnlockLevel())
+            if (form.mastery.canInstantTransform(curLevel))
                 return 15;
 
         if (Utility.percentBetween(curLevel, maxLevel, 0, 5))
@@ -161,14 +163,18 @@ public class TransformController {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
-            // Check for in Required DBC Form before Transforming
-            if (form.requiredForm.containsKey((int) dbcData.Race)) {
-                if (form.requiredForm.get((int) dbcData.Race) != dbcData.State)
-                    return;
-            } else {
-                // Must be in Parent Form to Transform
-                if (form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm)
-                    return;
+
+            boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ConfigDBCGameplay.InstantTransform;
+            if(!allowBypass){
+                // Check for in Required DBC Form before Transforming
+                if (form.requiredForm.containsKey((int) dbcData.Race)) {
+                    if (form.requiredForm.get((int) dbcData.Race) != dbcData.State)
+                        return;
+                } else {
+                    // Must be in Parent Form to Transform
+                    if (form.isFromParentOnly() && form.parentID != -1 && form.parentID != formData.currentForm)
+                        return;
+                }
             }
 
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;

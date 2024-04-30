@@ -5,8 +5,10 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
@@ -31,15 +33,16 @@ public class DBCData extends DBCDataUniversal {
     public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXSeconds, Rage, Heat, Pain, AuraColor, ArcReserve;
     public byte Class, Race, Powertype, Accept, State, State2, Release;
     public boolean Alive, isKO;
-    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "";
+    public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "", Fusion = "";
 
-    // Custom Form
+    // Custom Form / Custom Aura
     public int addonFormID, auraID;
     public float addonFormLevel, addonCurrentHeat;
     public HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
+    public HashMap<String, PlayerBonus> currentBonuses = new HashMap<>();
 
     public DBCDataStats stats = new DBCDataStats(this);
-
+    public DBCDataBonus bonus = new DBCDataBonus(this);
 
     public DBCData() {
         this.side = Side.SERVER;
@@ -89,12 +92,14 @@ public class DBCData extends DBCDataUniversal {
         comp.setString("jrmcDNS", DNS);
         comp.setString("jrmcDNSH", DNSHair);
         comp.setString("jrmcMajinAbsorptionData", MajinAbsorptionData);
+        comp.setString("jrmcFuzion", Fusion);
         // DBC Addon
         comp.setInteger("addonFormID", addonFormID);
         comp.setInteger("auraID", auraID);
         comp.setFloat("addonFormLevel", addonFormLevel);
         comp.setFloat("addonCurrentHeat", addonCurrentHeat);
         stats.saveEffectsNBT(comp);
+        bonus.saveBonusNBT(comp);
         return comp;
     }
 
@@ -133,6 +138,7 @@ public class DBCData extends DBCDataUniversal {
         DNS = c.getString("jrmcDNS");
         DNSHair = c.getString("jrmcDNSH");
         MajinAbsorptionData = c.getString("jrmcMajinAbsorptionData");
+        Fusion = c.getString("jrmcFuzion");
 
         // DBC Addon
         addonFormID = c.getInteger("addonFormID");
@@ -140,6 +146,7 @@ public class DBCData extends DBCDataUniversal {
         addonCurrentHeat = c.getFloat("addonCurrentHeat");
         auraID = c.getInteger("auraID");
 
+        this.currentEffects.clear();
         if (c.hasKey("addonActiveEffects", 9)) {
             NBTTagList nbttaglist = c.getTagList("addonActiveEffects", 10);
             for (int i = 0; i < nbttaglist.tagCount(); ++i) {
@@ -148,6 +155,16 @@ public class DBCData extends DBCDataUniversal {
                 if (playerEffect != null) {
                     this.currentEffects.put(playerEffect.id, playerEffect);
                 }
+            }
+        }
+
+        this.currentBonuses.clear();
+        if (c.hasKey("addonBonus", 9)) {
+            NBTTagList nbttaglist = c.getTagList("addonBonus", 10);
+            for (int i = 0; i < nbttaglist.tagCount(); ++i) {
+                NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+                PlayerBonus bonus = PlayerBonus.readBonusData(nbttagcompound1);
+                this.currentBonuses.put(bonus.name, bonus);
             }
         }
     }
@@ -160,10 +177,12 @@ public class DBCData extends DBCDataUniversal {
         addonFormLevel = formData.getCurrentLevel();
         auraID = formData.currentAura;
         stats.setCurrentEffects(StatusEffectController.Instance.playerEffects.get(Utility.getUUID(player)));
+        bonus.setCurrentBonuses(BonusController.Instance.playerBonus.get(Utility.getUUID(player)));
         nbt.setInteger("addonFormID", addonFormID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
         nbt.setInteger("auraID", auraID);
         stats.saveEffectsNBT(nbt);
+        bonus.saveBonusNBT(nbt);
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 
         // Send to Tracking Only
@@ -179,7 +198,8 @@ public class DBCData extends DBCDataUniversal {
         dbc.setInteger("addonFormID", formData.currentForm);
         dbc.setInteger("auraID", formData.currentAura);
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
-
+        stats.saveEffectsNBT(dbc);
+        bonus.saveBonusNBT(dbc);
         loadFromNBT(dbc);
         if (syncALL)
             syncTracking();

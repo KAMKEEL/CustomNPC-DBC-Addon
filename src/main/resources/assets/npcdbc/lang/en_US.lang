@@ -55,3 +55,8 @@ item.npcdbc:revive_misccapsule.name=Revive Capsule
 item.npcdbc:heat_misccapsule.name=Heat Capsule
 item.npcdbc:powerpoint_misccapsule.name=Power Point Capsule
 item.npcdbc:absorption_misccapsule.name=Absorption Capsule
+
+item.npcdbc:fruitofmight.name=Fruit of Might
+item.npcdbc:one_potara.name=Potara Earring
+item.npcdbc:two_potara.name=Grand Potara Earring
+item.npcdbc:three_potara.name=Supreme Potara Earring

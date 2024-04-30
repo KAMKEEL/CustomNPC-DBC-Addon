@@ -4,12 +4,12 @@ public interface IAuraDisplay {
 
 
     /**
-     * @return legal types: SSJ, SSGod, SSB ,SSBEvo , SSRose, SSRoseEvo, UI, GodOfDestruction
+     * @return legal types: ssgod, godofdestruction, ui, ssb, ssrose, ssroseevo, ssbkk, shinka
      */
     String getType();
 
     /**
-     * @return legal types: SSJ, SSGod, SSB ,SSBEvo , SSRose, SSRoseEvo, UI, GodOfDestruction
+     * @return legal types: ssgod, godofdestruction, ui, ssb, ssrose, ssroseevo, ssbkk, shinka
      */
     void setType(String auraType);
 
@@ -30,7 +30,7 @@ public interface IAuraDisplay {
 
     boolean hasAlpha(String type);
 
-    int getAlpha();
+    int getAlpha(String type);
 
     /**
      * @param type  Legal types: aura, lightning
