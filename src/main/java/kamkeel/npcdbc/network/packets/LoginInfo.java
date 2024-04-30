@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.network.packets;
 
+import JinRyuu.DragonBC.common.DBCConfig;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
@@ -16,6 +17,8 @@ public final class LoginInfo extends AbstractPacket {
     private final float war;
     private final boolean chargeDex;
     private final boolean transformBypass;
+    private final double kiProtectionValue;
+    private final double kiFistValue;
 
     public LoginInfo(){
         this.chargeDex = ConfigDBCGameplay.EnableChargingDex;
@@ -23,6 +26,8 @@ public final class LoginInfo extends AbstractPacket {
         this.spi = ConfigDBCGameplay.SpiritualistCharge;
         this.war = ConfigDBCGameplay.WarriorCharge;
         this.transformBypass = ConfigDBCGameplay.InstantTransform;
+        this.kiProtectionValue = DBCConfig.ccnfKDd;
+        this.kiFistValue = DBCConfig.ccnfKFd;
     }
 
     @Override
@@ -38,6 +43,9 @@ public final class LoginInfo extends AbstractPacket {
         out.writeFloat(this.war);
 
         out.writeBoolean(this.transformBypass);
+
+        out.writeDouble(this.kiProtectionValue);
+        out.writeDouble(this.kiFistValue);
     }
 
     @Override
@@ -53,6 +61,9 @@ public final class LoginInfo extends AbstractPacket {
             ClientCache.chargingDexValues.put(DBCClass.Warrior, warrior);
 
             ClientCache.allowTransformBypass = in.readBoolean();
+
+            DBCConfig.cnfKDd = in.readDouble();
+            DBCConfig.cnfKFd = in.readDouble();
         }
     }
 }

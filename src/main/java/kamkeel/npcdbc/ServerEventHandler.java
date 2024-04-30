@@ -14,7 +14,6 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.CapsuleInfo;
-import kamkeel.npcdbc.network.packets.SyncDBCConfigPacket;
 import kamkeel.npcdbc.network.packets.LoginInfo;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,7 +38,6 @@ public class ServerEventHandler {
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(true).generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(false).generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new LoginInfo().generatePacket(), (EntityPlayerMP) event.player);
-        PacketHandler.Instance.sendToPlayer(new SyncDBCConfigPacket(DBCConfig.ccnfKDd, DBCConfig.ccnfKFd).generatePacket(), (EntityPlayerMP) event.player);
         StatusEffectController.getInstance().loadEffects(event.player);
         BonusController.getInstance().loadBonus(event.player);
     }
