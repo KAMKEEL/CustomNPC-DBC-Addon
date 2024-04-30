@@ -242,7 +242,7 @@ public interface IDBCAddon extends IDBCPlayer {
 
     void addCustomMastery(int formid, float value);
 
-    void getCustomMastery(int formid);
+    float getCustomMastery(int formid);
 
     void removeCustomMastery(int formid);
 

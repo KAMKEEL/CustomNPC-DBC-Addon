@@ -678,12 +678,13 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public void getCustomMastery(int formid) {
+    public float getCustomMastery(int formid) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        float level = 0;
         if (formData.hasFormUnlocked(formid)) {
-            formData.getFormLevel(formid);
-            formData.updateClient();
+            level = formData.getFormLevel(formid);
         }
+        return level;
     }
 
     @Override
