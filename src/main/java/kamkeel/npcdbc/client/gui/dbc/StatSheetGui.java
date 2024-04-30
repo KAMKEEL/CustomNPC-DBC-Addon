@@ -43,13 +43,15 @@ public class StatSheetGui extends AbstractJRMCGui {
         DBCData dbcClient = DBCData.getClient();
         PlayerDBCInfo dataClient = PlayerDataUtil.getClientDBCInfo();
 
-
         if(!overrideBaseDBC){
             JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
             ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(10);
             FMLCommonHandler.instance().showGuiScreen(DBCScreen);
             return;
         }
+
+        if(dataClient == null)
+            return;
         if(dbcClient.Accept == 0){
             JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
             ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(0);

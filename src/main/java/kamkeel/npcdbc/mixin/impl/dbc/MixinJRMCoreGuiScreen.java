@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreGuiButtons00;
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.common.FMLCommonHandler;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -198,7 +199,9 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
             this.guiID = newGuiID;
 
         if(overrideBaseDBC)
-            wish = "jinryuumodscore:gui2.png";
+            wish = CustomNpcPlusDBC.ID + ":textures/gui/gui_dark.png";
+        // wish = CustomNpcPlusDBC.ID + ":textures/gui/gui_light.png";
+        // wish = "jinryuumodscore:gui2.png";
     }
 
 

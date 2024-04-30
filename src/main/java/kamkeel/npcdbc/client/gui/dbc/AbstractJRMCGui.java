@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.gui.dbc;
 
 import JinRyuu.JRMCore.*;
 import cpw.mods.fml.common.FMLCommonHandler;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.mixin.IDBCGuiScreen;
 import net.minecraft.client.gui.*;
@@ -14,7 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallback {
-    private static final ResourceLocation menuTexture = new ResourceLocation("jinryuumodscore:gui2.png");
+    // private static final ResourceLocation menuTexture = new ResourceLocation("jinryuumodscore:gui2.png");
+    private static final ResourceLocation menuTexture = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/gui_dark.png");
     protected List<Gui> dynamicElements = new ArrayList<>();
     protected final int guiID;
     protected int menuImageWidth = 256;
