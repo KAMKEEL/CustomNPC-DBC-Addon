@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-public class JRMCoreLabel extends GuiLabel implements HoverableLabel{
+public class JRMCoreLabel extends GuiLabel implements HoverableLabel {
 
     protected static final ResourceLocation background = new ResourceLocation("jinryuumodscore:allw.png");
 
@@ -100,14 +100,13 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel{
                 tooltipHeight = toolTipSplit.size() * 10;
             }
 
-            int tooltipX = mouseX;
             int tooltipY = mouseY + 10;
 
-            this.drawTexturedModalRect(tooltipX, tooltipY, 0, 0, tooltipWidth + 10, tooltipHeight + 10);
+            this.drawTexturedModalRect(mouseX, tooltipY, 0, 0, tooltipWidth + 10, tooltipHeight + 10);
 
             int linesWritten = 0;
             for (String text : toolTipSplit) {
-                client.fontRenderer.drawString(JRMCoreH.cldgy + text, tooltipX + 5, tooltipY + 5 + linesWritten * 10, 0);
+                client.fontRenderer.drawString(JRMCoreH.cldgy + text, mouseX + 5, tooltipY + 5 + linesWritten * 10, 0);
                 linesWritten++;
             }
 
