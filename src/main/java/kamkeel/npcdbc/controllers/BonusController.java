@@ -75,7 +75,19 @@ public class BonusController implements IBonusHandler {
         return currentEffects.containsKey(id);
     }
 
-    public void applyBonus(EntityPlayer player, String name, byte str, byte dex, byte wil) {
+    public void applyBonus(EntityPlayer player, PlayerBonus bonus) {
+        if(player == null || bonus == null)
+            return;
+        HashMap<String, PlayerBonus> currentbonus = new HashMap<>();
+        UUID uuid = Utility.getUUID(player);
+        if (playerBonus.containsKey(uuid))
+            currentbonus = playerBonus.get(Utility.getUUID(player));
+        else
+            playerBonus.put(uuid, currentbonus);
+        currentbonus.put(bonus.name, bonus);
+    }
+
+    public void applyBonus(EntityPlayer player, String name, float str, float dex, float wil) {
         if(player == null || name.isEmpty())
             return;
 
@@ -88,6 +100,18 @@ public class BonusController implements IBonusHandler {
 
         PlayerBonus bonus = new PlayerBonus(name, str, dex, wil);
         currentbonus.put(name, bonus);
+    }
+
+    public void removeBonus(EntityPlayer player, PlayerBonus bonus) {
+        if(player == null || bonus == null)
+            return;
+        HashMap<String, PlayerBonus> current = new HashMap<>();
+        UUID uuid = Utility.getUUID(player);
+        if (playerBonus.containsKey(uuid))
+            current = playerBonus.get(Utility.getUUID(player));
+        else
+            playerBonus.put(uuid, current);
+        current.remove(bonus.name);
     }
 
     public void removeBonus(EntityPlayer player, String name) {
@@ -103,7 +127,7 @@ public class BonusController implements IBonusHandler {
     }
 
     @Override
-    public IPlayerBonus createBonus(String name, byte str, byte dex, byte wil) {
+    public IPlayerBonus createBonus(String name, float str, float dex, float wil) {
         return new PlayerBonus(name, str, dex, wil);
     }
 
@@ -120,7 +144,7 @@ public class BonusController implements IBonusHandler {
     }
 
     @Override
-    public void applyBonus(IPlayer player, String name, byte str, byte dex, byte wil) {
+    public void applyBonus(IPlayer player, String name, float str, float dex, float wil) {
         if(player == null || player.getMCEntity() == null)
             return;
         applyBonus((EntityPlayer) player.getMCEntity(), name, str, dex, wil);

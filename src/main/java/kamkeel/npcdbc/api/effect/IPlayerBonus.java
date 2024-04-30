@@ -4,15 +4,15 @@ public interface IPlayerBonus {
 
     String getName();
 
-    byte getStrength();
+    float getStrength();
 
     void setStrength(byte strength);
 
-    byte getDexterity();
+    float getDexterity();
 
     void setDexterity(byte dexterity);
 
-    byte getWillpower();
+    float getWillpower();
 
     void setWillpower(byte willpower);
 }

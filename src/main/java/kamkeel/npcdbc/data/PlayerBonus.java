@@ -7,11 +7,11 @@ import net.minecraft.nbt.NBTTagCompound;
 public class PlayerBonus implements IPlayerBonus {
 
     public String name;
-    public byte strength;
-    public byte dexterity;
-    public byte willpower;
+    public float strength;
+    public float dexterity;
+    public float willpower;
 
-    public PlayerBonus(String name, byte strength, byte dexterity, byte willpower) {
+    public PlayerBonus(String name, float strength, float dexterity, float willpower) {
         this.name = name;
         this.strength = strength;
         this.dexterity = dexterity;
@@ -24,7 +24,7 @@ public class PlayerBonus implements IPlayerBonus {
     }
 
     @Override
-    public byte getStrength() {
+    public float getStrength() {
         return strength;
     }
 
@@ -34,7 +34,7 @@ public class PlayerBonus implements IPlayerBonus {
     }
 
     @Override
-    public byte getDexterity() {
+    public float getDexterity() {
         return dexterity;
     }
 
@@ -44,7 +44,7 @@ public class PlayerBonus implements IPlayerBonus {
     }
 
     @Override
-    public byte getWillpower() {
+    public float getWillpower() {
         return willpower;
     }
 
@@ -55,17 +55,17 @@ public class PlayerBonus implements IPlayerBonus {
 
     public static PlayerBonus readBonusData(NBTTagCompound nbt) {
         String name = nbt.getString("ID");
-        byte strength = nbt.getByte(String.valueOf(DBCAttribute.Strength));
-        byte dexterity = nbt.getByte(String.valueOf(DBCAttribute.Dexterity));
-        byte willpower = nbt.getByte(String.valueOf(DBCAttribute.Willpower));
+        float strength = nbt.getFloat(String.valueOf(DBCAttribute.Strength));
+        float dexterity = nbt.getFloat(String.valueOf(DBCAttribute.Dexterity));
+        float willpower = nbt.getFloat(String.valueOf(DBCAttribute.Willpower));
         return new PlayerBonus(name, strength, dexterity, willpower);
     }
 
     public NBTTagCompound writeBonusData(NBTTagCompound nbt) {
         nbt.setString("ID", this.name);
-        nbt.setByte(String.valueOf(DBCAttribute.Strength), strength);
-        nbt.setByte(String.valueOf(DBCAttribute.Dexterity), dexterity);
-        nbt.setByte(String.valueOf(DBCAttribute.Willpower), willpower);
+        nbt.setFloat(String.valueOf(DBCAttribute.Strength), strength);
+        nbt.setFloat(String.valueOf(DBCAttribute.Dexterity), dexterity);
+        nbt.setFloat(String.valueOf(DBCAttribute.Willpower), willpower);
         return nbt;
     }
 }
