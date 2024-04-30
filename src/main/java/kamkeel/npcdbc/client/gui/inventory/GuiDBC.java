@@ -171,7 +171,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                     label = "§fMastery:";
                     double masteryValue = this.dbcInfo.formLevels.get(viewingForm.id);
                     String roundedMastery = String.format("%.2f", masteryValue);
-                    info = "§4" + roundedMastery + " §7/ §4" + viewingForm.mastery.maxLevel;
+                    info = "§a" + roundedMastery + " §7/ §a" + viewingForm.mastery.maxLevel;
                     fontRendererObj.drawString(label, guiLeft + 143, stats += 12, CustomNpcResourceListener.DefaultTextColor, true);
                     fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
                 }
@@ -443,7 +443,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 stackables.add("§5GoD");
             }
             if (viewingForm.stackable.mysticStackable) {
-                stackables.add("§fMystic");
+                stackables.add("§dMystic");
             }
         }
     }
