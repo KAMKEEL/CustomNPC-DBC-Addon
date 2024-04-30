@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -24,7 +25,6 @@ public class StatSheetGui extends AbstractJRMCGui {
 
     private static final ResourceLocation icons = new ResourceLocation("jinryuumodscore:icons.png");
     private static final ResourceLocation icons3 = new ResourceLocation("jinryuumodscore:icons3.png");
-    public static boolean overrideBaseDBC = false;
     private int upgradeCounter;
 
     private GuiButton[] buttons = new GuiButton[7];
@@ -43,7 +43,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         DBCData dbcClient = DBCData.getClient();
         PlayerDBCInfo dataClient = PlayerDataUtil.getClientDBCInfo();
 
-        if(!overrideBaseDBC){
+        if(!ConfigDBCClient.EnhancedGui){
             JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
             ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(10);
             FMLCommonHandler.instance().showGuiScreen(DBCScreen);
@@ -433,7 +433,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         updateScreen();
 
         //Change screens
-        String s = "Switch to "+(overrideBaseDBC ? "Normal" : "§aEnhanced") +" GUI";
+        String s = "Switch to "+(ConfigDBCClient.EnhancedGui ? "Normal" : "§aEnhanced") +" GUI";
         int i = this.fontRendererObj.getStringWidth(s)+10;
         this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2, guiHeightOffset - 30, i + 8, 20, s, 0));
 
@@ -453,9 +453,10 @@ public class StatSheetGui extends AbstractJRMCGui {
     protected void actionPerformed(GuiButton button){
         super.actionPerformed(button);
         int id = button.id;
-        if(id == 303030303)
-            overrideBaseDBC = false;
-
+        if(id == 303030303){
+            ConfigDBCClient.EnhancedGui = false;
+            ConfigDBCClient.EnhancedGuiProperty.set(false);
+        }
         if(id >= 0 && id <= 5){
             if(!JRMCoreH.isFused()){
                 JRMCoreH.Upg((byte) (id+upgradeCounter*6));
