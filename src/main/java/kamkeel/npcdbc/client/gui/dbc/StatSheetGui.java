@@ -436,7 +436,11 @@ public class StatSheetGui extends AbstractJRMCGui {
         String s = "Switch to "+(ConfigDBCClient.EnhancedGui ? "Normal" : "§aEnhanced") +" GUI";
         int i = this.fontRendererObj.getStringWidth(s)+10;
         this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2, guiHeightOffset - 30, i + 8, 20, s, 0));
-
+        if(ConfigDBCClient.EnhancedGui){
+            String dark = ConfigDBCClient.DarkMode ? "Light" : "Dark";
+            int j = this.fontRendererObj.getStringWidth(dark)+10;
+            this.buttonList.add(new JRMCoreGuiButtons00(404040404, (this.width -j)/2 + 40, guiHeightOffset - 30, j + 8, 20, dark, 0));
+        }
 
         addServerButtons();
 
@@ -456,6 +460,10 @@ public class StatSheetGui extends AbstractJRMCGui {
         if(id == 303030303){
             ConfigDBCClient.EnhancedGui = false;
             ConfigDBCClient.EnhancedGuiProperty.set(false);
+        }
+        if(id == 404040404){
+            ConfigDBCClient.DarkMode = !ConfigDBCClient.DarkMode;
+            ConfigDBCClient.DarkModeProperty.set(ConfigDBCClient.DarkMode);
         }
         if(id >= 0 && id <= 5){
             if(!JRMCoreH.isFused()){
