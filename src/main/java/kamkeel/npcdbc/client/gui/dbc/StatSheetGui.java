@@ -108,8 +108,8 @@ public class StatSheetGui extends AbstractJRMCGui {
         this.dynamicElements.add(new JRMCoreLabel(
             String.format("%s: §8%s", JRMCoreH.trl("jrmc", "Level"), JRMCoreH.numSep(JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts))),
             (max ? JRMCoreH.trl("jrmc", "LevelMax") : JRMCoreH.trl("jrmc", "LevelNext", JRMCoreH.cllr + JRMCoreH.attrLvlNext(JRMCoreH.PlyrAttrbts) + JRMCoreH.cldgy)),
-            this.guiWidthOffset+5,
-            this.guiHeightOffset+5+index*10
+            this.guiWidthOffset+6,
+            this.guiHeightOffset+5+index*10+1
         ));
         index++;
 
@@ -118,8 +118,8 @@ public class StatSheetGui extends AbstractJRMCGui {
         this.dynamicElements.add(new JRMCoreLabel(
             String.format("%s: §8%s", JRMCoreH.trl("jrmc", "TP"), JRMCoreH.numSep(JRMCoreH.curTP)),
             JRMCoreH.trl("jrmc", "TrainingPoints") + ",\n "+requiredTP,
-            this.guiWidthOffset+5,
-            this.guiHeightOffset+5+index*10
+            this.guiWidthOffset+6,
+            this.guiHeightOffset+5+index*10+1
         ));
         index++;
 
@@ -128,14 +128,14 @@ public class StatSheetGui extends AbstractJRMCGui {
         this.dynamicElements.add(new JRMCoreLabel(
             raceText,
             null,
-            this.guiWidthOffset+5,
-            this.guiHeightOffset+5+index*10
+            this.guiWidthOffset+6,
+            this.guiHeightOffset+5+index*10+1
         ));
 
         this.dynamicElements.add(new GuiIcon(
             icons3,
             guiWidthOffset+5+Minecraft.getMinecraft().fontRenderer.getStringWidth(raceText),
-            guiHeightOffset+2+index*10,
+            guiHeightOffset+2+index*10+1,
             0,
             (JRMCoreH.dnsGender(JRMCoreH.dns) < 1 ? 128 : 112),
             16,
@@ -152,16 +152,16 @@ public class StatSheetGui extends AbstractJRMCGui {
         this.dynamicElements.add(new JRMCoreLabel(
             String.format("%s: §8%s", JRMCoreH.trl("jrmc", "TRState"), formColor+formName),
             null,
-            this.guiWidthOffset+5,
-            this.guiHeightOffset+5+index*10
+            this.guiWidthOffset+6,
+            this.guiHeightOffset+5+index*10+1
         ));
         index++;
 
         this.dynamicElements.add(new JRMCoreLabel(
             String.format("%s: §8%s", JRMCoreH.trl("jrmc", "Class"), JRMCoreH.trl("jrmc", JRMCoreH.ClassesDBC[JRMCoreH.Class])),
             JRMCoreH.trl("jrmc", JRMCoreH.ClassesDBCDesc[JRMCoreH.Class]),
-            this.guiWidthOffset+5,
-            this.guiHeightOffset+5+index*10,
+            this.guiWidthOffset+6,
+            this.guiHeightOffset+5+index*10+1,
             200
         ));
         index++;
@@ -169,8 +169,8 @@ public class StatSheetGui extends AbstractJRMCGui {
         this.dynamicElements.add(new JRMCoreLabel(
             String.format("%s: §4%s", JRMCoreH.trl("jrmc", "Alignment"), JRMCoreH.algnCur(JRMCoreH.align)),
             JRMCoreH.trl("jrmc", "AlignmentDesc", JRMCoreH.align+"%"),
-            this.guiWidthOffset+5,
-            this.guiHeightOffset+5+index*10
+            this.guiWidthOffset+6,
+            this.guiHeightOffset+5+index*10+1
         ));
         index++;
 
@@ -181,8 +181,8 @@ public class StatSheetGui extends AbstractJRMCGui {
         this.dynamicElements.add(new JRMCoreLabel(
             JRMCoreH.trl("jrmc", "Attributes"),
             null,
-            this.guiWidthOffset+5,
-            this.guiHeightOffset+5+index*10
+            this.guiWidthOffset+6,
+            this.guiHeightOffset+5+index*10+1
         ));
         index++;
 
@@ -202,7 +202,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
             String upgradeTooltip = null;
 
-            int yPos = guiHeightOffset+i*10+index*10;
+            int yPos = guiHeightOffset+i*10+index*10+1;
 
             if(isFused){
                 upgradeTooltip = JRMCoreH.trl("dbc", "cantupgradef");
@@ -213,8 +213,8 @@ public class StatSheetGui extends AbstractJRMCGui {
             }
 
             GuiButton button = buttons[i];
-            if(button == null){
-                button = new JRMCoreGuiButtonsA3(i, guiWidthOffset + 3, yPos+3, 10, 2, isButtonEnabled);
+            if(button == null || !this.buttonList.contains(button)){
+                button = new JRMCoreGuiButtonsA3(i, guiWidthOffset + 4, yPos+3, 10, 2, isButtonEnabled);
                 buttons[i] = button;
                 this.buttonList.add(button);
             }else{
@@ -261,7 +261,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             upgradeButton = new JRMCoreGuiButtonsA3(
                 6,
                 guiWidthOffset+7,
-                guiHeightOffset + index*10 + 3,
+                guiHeightOffset + index*10+1 + 3,
                 10,
                 2,
                 (!allMaxed && !isFused)
@@ -291,7 +291,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             " §8UC: " + JRMCoreH.cldb + (upgradeCost <= 0 ? JRMCoreH.trl("jrmc", "LimitReached") : (allMaxed ? JRMCoreH.trl("jrmc", "AttributeAllMaxed") : JRMCoreH.numSep(upgradeCost)+" TP "+(upgradeCounter > 0 ? "x"+JRMCoreH.attributeMultiplier(this.upgradeCounter) : ""))),
             upgradeDescription,
             guiWidthOffset+15,
-            guiHeightOffset+5+index*10,
+            guiHeightOffset+5+index*10+1,
             descriptionWidth
             )
         );
@@ -302,7 +302,7 @@ public class StatSheetGui extends AbstractJRMCGui {
            String.format("%s: §8%s%%", JRMCoreH.trl("jrmc", "PowerRelease"), dbcClient.Release),
            null,
             guiWidthOffset+133,
-            guiHeightOffset+5+index*10
+            guiHeightOffset+5+index*10+1
         ));
         index++;
         index++;
@@ -312,7 +312,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             JRMCoreH.trl("jrmc", "Stats"),
             null,
             guiWidthOffset+133,
-            guiHeightOffset+5+index*10
+            guiHeightOffset+5+index*10+1
         ));
         index++;
 
@@ -329,7 +329,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "mleDB"), formColor+JRMCoreH.numSep(longValue)),
             "description",
             guiWidthOffset+133,
-            guiHeightOffset+5+index*10
+            guiHeightOffset+5+index*10+1
         ));
         index++;
 
@@ -348,7 +348,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "DefDB"), formColor+JRMCoreH.numSep(longValue)),
             "description",
             guiWidthOffset+133,
-            guiHeightOffset+5+index*10
+            guiHeightOffset+5+index*10+1
         ));
         index++;
 
@@ -356,7 +356,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "Passive"), formColor+JRMCoreH.numSep(longValue*JRMCoreConfig.StatPasDef/100)),
             "description",
             guiWidthOffset+138,
-            guiHeightOffset+5+index*10
+            guiHeightOffset+5+index*10+1
         ));
         index++;
 
@@ -379,7 +379,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             String.format("§8%s: §4%s %s", JRMCoreH.trl("jrmc", "BdDB"), JRMCoreH.numSep(stat), (JRMCoreH.round(percentile, 1) != 1.0D ? "R" + dmgReduction + "%" : "")),
             "description",
             guiWidthOffset+133,
-            guiHeightOffset+5+index*10
+            guiHeightOffset+5+index*10+1
         ));
         index++;
 
@@ -389,7 +389,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "StDB"), JRMCoreH.numSep(stat)),
             "description",
             guiWidthOffset+133,
-            guiHeightOffset+5+index*10
+            guiHeightOffset+5+index*10+1
         ));
         index++;
 
@@ -399,7 +399,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "EnPwDB"), formColor+JRMCoreH.numSep((int)((double)stat * 0.01D * (double)JRMCoreH.curRelease))),
             "description",
             guiWidthOffset+133,
-            guiHeightOffset+5+index*10
+            guiHeightOffset+5+index*10+1
         ));
         index++;
 
@@ -410,7 +410,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "EnPlDB"), JRMCoreH.numSep(stat)),
             "description",
             guiWidthOffset+133,
-            guiHeightOffset+5+index*10
+            guiHeightOffset+5+index*10+1
         ));
 
         //@TODO ADD RUNNING/FLYING SPEEDS
@@ -423,7 +423,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         this.drawBackground();
 
         drawStatusEffects(this.width/4, guiHeightOffset - 35);
-        drawAlignmentBar();
+        drawAlignmentBar(guiWidthOffset + 8, guiHeightOffset - 6);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -469,7 +469,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
     }
 
-    protected void drawAlignmentBar(){
+    protected void drawAlignmentBar(int x, int y){
         mc.getTextureManager().bindTexture(icons);
         GL11.glPushMatrix();
         int alignment1;
@@ -491,10 +491,10 @@ public class StatSheetGui extends AbstractJRMCGui {
         float h4 = (float)(alignment1 & 255) / 255.0F;
         float h1 = 1.0F;
         GL11.glColor4f(h1 * h2, h1 * h3, h1 * h4, 0.5F);
-        this.drawTexturedModalRect(guiWidthOffset + 8, guiHeightOffset - 6, 8, 174, 241, 7);
+        this.drawTexturedModalRect(x, y, 8, 174, 241, 7);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glPopMatrix();
-        this.drawTexturedModalRect(guiWidthOffset, guiHeightOffset - 5, 0, 169, menuImageWidth, 5);
+        this.drawTexturedModalRect(x-8, y+1, 0, 169, menuImageWidth, 5);
         int max = menuImageWidth - 20;
         if (max < 1) {
             max = 1;

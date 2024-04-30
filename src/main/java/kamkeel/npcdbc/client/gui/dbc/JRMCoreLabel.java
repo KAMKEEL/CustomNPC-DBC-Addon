@@ -24,7 +24,11 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel{
     protected int tooltipHeight;
 
     public JRMCoreLabel(String text, String tooltipText, int x, int y, int hoverableAreaWidth, int hoverableAreaHeight, int tooltipWidth, int tooltipHeight){
+        if(text != null)
+            text = "\u00a78"+text.replaceAll("\u00a78", "\u00a77");
+
         this.displayString = text;
+
         if(tooltip != null)
             this.tooltip = tooltipText.replaceAll("/n", "\n");
         else
@@ -60,7 +64,7 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel{
      */
     @Override
     public void func_146159_a(Minecraft client, int mouseX, int mouseY){
-        client.fontRenderer.drawString(displayString, xPosition, yPosition, 0);
+        client.fontRenderer.drawString(displayString, xPosition, yPosition, 0, true);
 
     }
 
