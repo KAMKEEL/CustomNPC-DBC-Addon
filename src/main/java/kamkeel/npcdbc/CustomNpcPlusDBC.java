@@ -12,6 +12,9 @@ import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.PacketHandler;
+import noppes.npcs.config.legacy.LegacyConfig;
+
+import java.io.File;
 
 import static noppes.npcs.CustomNpcs.configPath;
 
@@ -25,11 +28,14 @@ public class CustomNpcPlusDBC {
     public static CommonProxy proxy;
     @Mod.Instance
     public static CustomNpcPlusDBC instance;
+    public static String addonConfig;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent ev) {
         proxy.preInit(ev);
-        LoadConfiguration.init(configPath);
+
+        addonConfig = ev.getModConfigurationDirectory() + File.separator + "CustomNpcPlus" + File.separator + "dbc" + File.separator;
+        LoadConfiguration.init(addonConfig);
         ModItems.init();
     }
 
