@@ -28,8 +28,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import static kamkeel.npcdbc.client.gui.dbc.StatSheetGui.overrideBaseDBC;
-
 @Mixin(value = JRMCoreGuiScreen.class, remap = false)
 
 public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
@@ -52,7 +50,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
 
     @Inject(method = "updateScreen", at=@At("HEAD"), remap = true)
     private void onUpdateScreen(CallbackInfo ci){
-        if(this.guiID == 10 && overrideBaseDBC && DBCData.getClient().Powertype == 1)
+        if(this.guiID == 10 && ConfigDBCClient.EnhancedGui && DBCData.getClient().Powertype == 1)
             FMLCommonHandler.instance().showGuiScreen(new StatSheetGui());
     }
 
