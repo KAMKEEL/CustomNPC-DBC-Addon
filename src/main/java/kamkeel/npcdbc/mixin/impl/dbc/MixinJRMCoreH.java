@@ -106,15 +106,24 @@ public abstract class MixinJRMCoreH {
 
 
                 stackableMulti *= (float) fmvalue;
-                if (attribute == 0) //str
+                if (attribute == 0) // STR
                     result *= (multis[0] + bonus[0]);
-                else if (attribute == 1) //dex
+                else if (attribute == 1) // DEX
                     result *= (multis[1] + bonus[1]);
-                else if (attribute == 3) //will
+                else if (attribute == 3) // WIL
                     result *= (multis[2] + bonus[2]);
 
                 if (attribute == 0 || attribute == 1 || attribute == 3)
                     result *= (int) (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
+
+                // Add Bonus Multi to Base Attributes
+                if (attribute == 0) // STR
+                    result += (currAttributes[0] * bonus[0]);
+                else if (attribute == 1) // DEX
+                    result += (currAttributes[1] * bonus[1]);
+                else if (attribute == 3) // WIL
+                    result += (currAttributes[3] * bonus[2]);
+
 
                 result = (int) (Math.min((double) result, Double.MAX_VALUE));
                 info.setReturnValue(result);
@@ -138,11 +147,11 @@ public abstract class MixinJRMCoreH {
 
             int resultOriginal = result.get();
             if (attribute == 0 && bonus[0] != 0) //str
-                resultOriginal = (int) (resultOriginal + (resultOriginal * bonus[0]));
+                resultOriginal = (int) (resultOriginal + (currAttributes[0] * bonus[0]));
             else if (attribute == 1) //dex
-                resultOriginal = (int) (resultOriginal + (resultOriginal * bonus[1]));
+                resultOriginal = (int) (resultOriginal + (currAttributes[1] * bonus[1]));
             else if (attribute == 3) //will
-                resultOriginal = (int) (resultOriginal + (resultOriginal * bonus[2]));
+                resultOriginal = (int) (resultOriginal + (currAttributes[3] * bonus[2]));
 
             result.set(resultOriginal);
         }
