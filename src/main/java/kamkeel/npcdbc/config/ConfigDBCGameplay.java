@@ -36,6 +36,10 @@ public class ConfigDBCGameplay
     public static float NamekianRegenMin = 20;
     public static float NamekianRegenMax = 50;
 
+    public final static String PotaraFusion = "PotaraFusion";
+    public static boolean UniqueEarrings = true;
+    public static boolean WearableEarrings = true;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -69,6 +73,9 @@ public class ConfigDBCGameplay
 
             InstantTransformProperty = config.get(Forms, "Instant Transform Bypass Parent", false, "Allows Instant Transform to Bypass the Parent Only Check\n [If the player has Instant Transform Unlocked in Mastery, they can go to the form directly]");
             InstantTransform = InstantTransformProperty.getBoolean(false);
+
+            UniqueEarrings = config.get(PotaraFusion, "Unique Earrings", true, "Enabling Unique Earrings will cause all SPLIT Potaras to be hashed to a\n unique pair. Only the unique pairs can be used in a fusion.").getBoolean(true);
+            WearableEarrings = config.get(PotaraFusion, "Wearable Earrings", true, "Enabling Wearable Earrings will check a radius around the worn player.\n Disabling this will require players to right-click each-other with valid earrings to fuse.").getBoolean(true);
         }
         catch (Exception e)
         {
