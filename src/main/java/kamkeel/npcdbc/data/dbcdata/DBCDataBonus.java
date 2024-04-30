@@ -16,6 +16,16 @@ public class DBCDataBonus {
         this.data = dbcData;
     }
 
+    public float[] getCurrentBonuses() {
+        float[] bonuses = new float[3];
+        for(PlayerBonus playerBonus : data.currentBonuses.values()){
+            bonuses[0] += playerBonus.strength;
+            bonuses[1] += playerBonus.dexterity;
+            bonuses[2] += playerBonus.willpower;
+        }
+        return bonuses;
+    }
+
     public void setCurrentBonuses(HashMap<String, PlayerBonus> setVals) {
         NBTTagCompound raw = data.getRawCompound();
         data.currentBonuses = updateBonuses(setVals);

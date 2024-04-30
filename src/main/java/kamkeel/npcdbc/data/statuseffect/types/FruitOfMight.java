@@ -24,7 +24,7 @@ public class FruitOfMight extends StatusEffect {
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
         iconX = 64;
         iconY = 0;
-        fruitOfMightBonus = new PlayerBonus(name, (float) ConfigDBCEffects.FOM_Strength, (float) ConfigDBCEffects.FOM_Strength, (float) ConfigDBCEffects.FOM_Strength);
+        fruitOfMightBonus = new PlayerBonus(name, (float) ConfigDBCEffects.FOM_Strength, (float) ConfigDBCEffects.FOM_Dex, (float) ConfigDBCEffects.FOM_Will);
 
         if (fruitOfMightAura == null) {
             fruitOfMightAura = new Aura();

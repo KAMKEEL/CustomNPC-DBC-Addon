@@ -168,7 +168,7 @@ public class DBCDataStats {
     }
 
     public double getCurrentMulti() {
-        return getFullAttribute(0) / data.STR;
+        return (double) getFullAttribute(0) / data.STR;
 
     }
 
