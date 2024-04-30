@@ -417,7 +417,7 @@ public class StatSheetGui extends AbstractJRMCGui {
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
         this.drawBackground();
 
-        drawStatusEffects();
+        drawStatusEffects(this.width/4, guiHeightOffset - 35);
         drawAlignmentBar();
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
@@ -433,9 +433,15 @@ public class StatSheetGui extends AbstractJRMCGui {
         this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2, guiHeightOffset - 30, i + 8, 20, s, 0));
 
 
-
         addServerButtons();
-        addDifficultyButton();
+
+        GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.DIFFICULTY;
+        String translation = ref.getTranslation();
+        int stringWidth = fontRendererObj.getStringWidth(translation)+8;
+        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 0xC6C6C6));
+//        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 8046079));
+
+
     }
 
     @Override
@@ -503,14 +509,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    protected void drawStatusEffects(){
-        JRMCoreClient.bars.showSE(this.width/4, guiHeightOffset - 35, 0, 0);
-    }
-    private void addDifficultyButton() {
-        GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.DIFFICULTY;
-        String translation = ref.getTranslation();
-        int stringWidth = fontRendererObj.getStringWidth(translation)+8;
-        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 0xC6C6C6));
-//        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 8046079));
+    protected void drawStatusEffects(int x, int y){
+        JRMCoreClient.bars.showSE(x, y, 0, 0);
     }
 }
