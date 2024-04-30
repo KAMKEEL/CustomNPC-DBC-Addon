@@ -238,6 +238,9 @@ public class StatSheetGui extends AbstractJRMCGui {
                 attributeDesc = JRMCoreH.trl("jrmc", "Modified") +": §4" + formColor+statDisplay+"\n§8"
                     + JRMCoreH.trl("jrmc", "Original") +": §4" + JRMCoreH.numSep(originalStatVal)+"\n§8"
                     +attributeDesc;
+                float multi = (float) modifiedStatVal / originalStatVal;
+                if((JRMCoreH.round(multi, 1) != 1))
+                    statDisplay += " §4x"+JRMCoreH.round(multi, 1);
             }
 
             this.dynamicElements.add(new JRMCoreLabel(
