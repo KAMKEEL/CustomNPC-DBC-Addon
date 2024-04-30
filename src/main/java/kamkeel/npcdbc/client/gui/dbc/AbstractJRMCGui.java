@@ -116,9 +116,6 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
     }
 
     protected void addClientHelpButtons(){
-        this.guiWidthOffset = (this.width - menuImageWidth) / 2;
-        this.guiHeightOffset = (this.height - menuImageHeight) / 2;
-
         GuiInfo.ReferenceIDs[] referenceArr = new GuiInfo.ReferenceIDs[]{
                 GuiInfo.ReferenceIDs.CLIENT_SETTINGS,
                 GuiInfo.ReferenceIDs.HELP_MENU,
@@ -137,9 +134,6 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
     }
 
     protected void addServerButtons(){
-        this.guiWidthOffset = (this.width - menuImageWidth) / 2;
-        this.guiHeightOffset = (this.height - menuImageHeight) / 2;
-
         String s = "Official DBC Server's site";
         int i = this.fontRendererObj.getStringWidth(s);
         this.buttonList.add(new JRMCoreGuiButtons00(GuiInfo.SERVER_SITE_ID, guiWidthOffset + 260, guiHeightOffset + 85 - 40, i + 8, 20, s, 0));
@@ -153,8 +147,6 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
     }
 
     protected void addCloseButton(){
-        this.guiWidthOffset = (this.width - menuImageWidth) / 2;
-        this.guiHeightOffset = (this.height - menuImageHeight) / 2;
         this.buttonList.add(new JRMCoreGuiButtons00(GuiInfo.EXIT, guiWidthOffset + menuImageWidth/2 -150, guiHeightOffset+menuImageHeight/2+66, 20, 20, "X", 0));
 
     }

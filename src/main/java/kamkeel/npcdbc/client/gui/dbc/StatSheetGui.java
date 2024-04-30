@@ -94,8 +94,6 @@ public class StatSheetGui extends AbstractJRMCGui {
         formName = formColor + formName;
         formColor = (formColor.equals("§4") ? "" : formColor); //Makes stats pop out when your form color is the same as the default stat color
 
-        this.guiWidthOffset = (this.width - menuImageWidth) / 2;
-        this.guiHeightOffset = (this.height - menuImageHeight) / 2;
 
         dynamicElements.clear();
 
@@ -436,9 +434,6 @@ public class StatSheetGui extends AbstractJRMCGui {
 
 
 
-        this.guiWidthOffset = (this.width - menuImageWidth) / 2;
-        this.guiHeightOffset = (this.height - menuImageHeight) / 2;
-
         addServerButtons();
         addDifficultyButton();
     }
@@ -464,10 +459,6 @@ public class StatSheetGui extends AbstractJRMCGui {
     }
 
     protected void drawAlignmentBar(){
-        int imgHeight = this.menuImageHeight-10;
-        this.guiHeightOffset = (this.height - imgHeight) / 2;
-        this.guiWidthOffset = (this.width - this.menuImageWidth) / 2;
-
         mc.getTextureManager().bindTexture(icons);
         GL11.glPushMatrix();
         int alignment1;
@@ -489,10 +480,10 @@ public class StatSheetGui extends AbstractJRMCGui {
         float h4 = (float)(alignment1 & 255) / 255.0F;
         float h1 = 1.0F;
         GL11.glColor4f(h1 * h2, h1 * h3, h1 * h4, 0.5F);
-        this.drawTexturedModalRect(guiWidthOffset + 8, guiHeightOffset - 11, 8, 174, 241, 7);
+        this.drawTexturedModalRect(guiWidthOffset + 8, guiHeightOffset - 6, 8, 174, 241, 7);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glPopMatrix();
-        this.drawTexturedModalRect(guiWidthOffset, guiHeightOffset - 10, 0, 169, menuImageWidth, 5);
+        this.drawTexturedModalRect(guiWidthOffset, guiHeightOffset - 5, 0, 169, menuImageWidth, 5);
         int max = menuImageWidth - 20;
         if (max < 1) {
             max = 1;
@@ -508,13 +499,11 @@ public class StatSheetGui extends AbstractJRMCGui {
         h3 = (float)(alignment2 >> 8 & 255) / 255.0F;
         h4 = (float)(alignment2 & 255) / 255.0F;
         GL11.glColor4f(h1 * h2, h1 * h3, h1 * h4, 1.0F);
-        this.drawTexturedModalRect((this.width - 5) / 2 - max / 2 + alignmentAdjusted - 4, guiHeightOffset-14, 0, 182, 11, 13);
+        this.drawTexturedModalRect((this.width - 5) / 2 - max / 2 + alignmentAdjusted - 4, guiHeightOffset-9, 0, 182, 11, 13);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     protected void drawStatusEffects(){
-        this.guiWidthOffset = (this.width - menuImageWidth) / 2;
-        this.guiHeightOffset = (this.height - menuImageHeight) / 2;
         JRMCoreClient.bars.showSE(this.width/4, guiHeightOffset - 35, 0, 0);
     }
     private void addDifficultyButton() {
