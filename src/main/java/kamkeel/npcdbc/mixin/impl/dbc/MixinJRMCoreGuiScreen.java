@@ -7,6 +7,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -38,6 +39,8 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
 
     @Shadow
     public static String wish;
+    @Shadow
+    public static String button1;
 
 
     @Shadow
@@ -198,8 +201,17 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
         if(ignoreInit)
             this.guiID = newGuiID;
 
-        if(overrideBaseDBC)
-            wish = CustomNpcPlusDBC.ID + ":textures/gui/gui_dark.png";
+        if(ConfigDBCClient.EnhancedGui){
+            if(ConfigDBCClient.DarkMode){
+                wish = CustomNpcPlusDBC.ID + ":textures/gui/gui_dark.png";
+                button1 = CustomNpcPlusDBC.ID + ":textures/gui/button_dark.png";
+            }
+            else {
+                wish = CustomNpcPlusDBC.ID + ":textures/gui/gui_light.png";
+                button1 = CustomNpcPlusDBC.ID + ":textures/gui/button_light.png";
+            }
+        }
+
         // wish = CustomNpcPlusDBC.ID + ":textures/gui/gui_light.png";
         // wish = "jinryuumodscore:gui2.png";
     }
@@ -209,7 +221,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
     private void onDrawScreen(CallbackInfo ci){
         if(this.guiID != 10)
             return;
-        String s = "Switch to "+(overrideBaseDBC ? "Normal" : "§aEnhanced") +" GUI";
+        String s = "Switch to "+(ConfigDBCClient.EnhancedGui ? "Normal" : "§aEnhanced") +" GUI";
         int i = this.fontRendererObj.getStringWidth(s)+10;
         this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2, (this.height-159)/2 - 30, i + 8, 20, s, 0));
     }
@@ -217,7 +229,8 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
     @Inject(method="actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", at=@At("HEAD"), remap = true)
     public void onActionPerformed(GuiButton button, CallbackInfo ci){
         if(button.id == 303030303){
-            overrideBaseDBC = true;
+            ConfigDBCClient.EnhancedGui = true;
+            ConfigDBCClient.EnhancedGuiProperty.set(true);
         }
     }
 
