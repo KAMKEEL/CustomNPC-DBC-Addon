@@ -44,6 +44,9 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
     private void onInitGui(CallbackInfo ci){
         if(ignoreInit)
             this.guiID = newGuiID;
+
+        if(overrideBaseDBC)
+            wish = "jinryuumodscore:gui2.png";
     }
 
 
