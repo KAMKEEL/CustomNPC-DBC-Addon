@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.PlayerBonus;
@@ -145,6 +146,7 @@ public class DBCData extends DBCDataUniversal {
         addonCurrentHeat = c.getFloat("addonCurrentHeat");
         auraID = c.getInteger("auraID");
 
+        this.currentEffects.clear();
         if (c.hasKey("addonActiveEffects", 9)) {
             NBTTagList nbttaglist = c.getTagList("addonActiveEffects", 10);
             for (int i = 0; i < nbttaglist.tagCount(); ++i) {
@@ -156,6 +158,7 @@ public class DBCData extends DBCDataUniversal {
             }
         }
 
+        this.currentBonuses.clear();
         if (c.hasKey("addonBonus", 9)) {
             NBTTagList nbttaglist = c.getTagList("addonBonus", 10);
             for (int i = 0; i < nbttaglist.tagCount(); ++i) {
@@ -174,7 +177,7 @@ public class DBCData extends DBCDataUniversal {
         addonFormLevel = formData.getCurrentLevel();
         auraID = formData.currentAura;
         stats.setCurrentEffects(StatusEffectController.Instance.playerEffects.get(Utility.getUUID(player)));
-        bonus.setCurrentBonuses(new HashMap<>());
+        bonus.setCurrentBonuses(BonusController.Instance.playerBonus.get(Utility.getUUID(player)));
         nbt.setInteger("addonFormID", addonFormID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
         nbt.setInteger("auraID", auraID);
@@ -195,7 +198,8 @@ public class DBCData extends DBCDataUniversal {
         dbc.setInteger("addonFormID", formData.currentForm);
         dbc.setInteger("auraID", formData.currentAura);
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
-
+        stats.saveEffectsNBT(dbc);
+        bonus.saveBonusNBT(dbc);
         loadFromNBT(dbc);
         if (syncALL)
             syncTracking();
