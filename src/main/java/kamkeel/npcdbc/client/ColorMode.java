@@ -16,11 +16,18 @@ public class ColorMode {
         }
         return LIGHTMODE_TEXT;
     }
-    
+
     public static int textAlt(){
         if(ConfigDBCClient.DarkMode){
             return DARKMODE_TEXT_ALTERNATE;
         }
         return LIGHTMODE_TEXT_ALTERNATE;
+    }
+
+    public static String skimColors(String input){
+        if(ConfigDBCClient.DarkMode){
+            return input.replace("§0", "").replace("§8", "§7").replace("&0", "");
+        }
+        return input.replace("§f", "").replace("§7", "§8").replace("&f", "");
     }
 }

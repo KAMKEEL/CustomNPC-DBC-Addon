@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.mixin.impl.dbc.recolor;
 
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
+import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -18,10 +19,7 @@ public class MixinJRMCoreGuiScreenColor extends GuiScreen  {
     @Redirect(method = "drawScreen", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I"), remap = true)
     private int drawScreenFix(FontRenderer instance, String text, int x, int y, int color){
         if(ConfigDBCClient.EnhancedGui){
-            if(ConfigDBCClient.DarkMode){
-                text = text.replace("§0", "").replace("§8", "§7").replace("&0", "");
-                return instance.drawString(text, x, y, 0x7C7C7C, true);
-            }
+            return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), true);
         }
         return instance.drawString(text, x, y, color);
     }
@@ -29,9 +27,7 @@ public class MixinJRMCoreGuiScreenColor extends GuiScreen  {
     @Redirect(method = "drawHUD_helpgmodeselect", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true))
     private int HelpSelect(FontRenderer instance, String text, int x, int y, int color){
         if(ConfigDBCClient.EnhancedGui){
-            if(ConfigDBCClient.DarkMode){
-                return instance.drawString(text, x, y, 0x7C7C7C, true);
-            }
+            return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), true);
         }
         return instance.drawString(text, x, y, color);
     }
@@ -39,9 +35,7 @@ public class MixinJRMCoreGuiScreenColor extends GuiScreen  {
     @Redirect(method = "drawHUD_instantTransmissionPicker", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true))
     private int instantTrans(FontRenderer instance, String text, int x, int y, int color){
         if(ConfigDBCClient.EnhancedGui){
-            if(ConfigDBCClient.DarkMode){
-                return instance.drawString(text, x, y, 0x7C7C7C, true);
-            }
+            return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), true);
         }
         return instance.drawString(text, x, y, color);
     }
@@ -49,9 +43,7 @@ public class MixinJRMCoreGuiScreenColor extends GuiScreen  {
     @Redirect(method = "drawHUD_clntsett", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true))
     private int drawHUD_clntsett(FontRenderer instance, String text, int x, int y, int color){
         if(ConfigDBCClient.EnhancedGui){
-            if(ConfigDBCClient.DarkMode){
-                return instance.drawString(text, x, y, 0x7C7C7C, true);
-            }
+            return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), true);
         }
         return instance.drawString(text, x, y, color);
     }
@@ -59,10 +51,7 @@ public class MixinJRMCoreGuiScreenColor extends GuiScreen  {
     @Redirect(method = "drawDetails(Ljava/lang/String;Ljava/lang/String;IIIILnet/minecraft/client/gui/FontRenderer;)V", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true))
     private static int drawDetails(FontRenderer instance, String text, int x, int y, int color){
         if(ConfigDBCClient.EnhancedGui){
-            if(ConfigDBCClient.DarkMode){
-                text = text.replace("§0", "").replace("&0", "");
-                return instance.drawString(text, x, y, 0x7C7C7C, true);
-            }
+            return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), true);
         }
         return instance.drawString(text, x, y, color);
     }
@@ -70,9 +59,7 @@ public class MixinJRMCoreGuiScreenColor extends GuiScreen  {
     @Redirect(method = "current", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true))
     private int current(FontRenderer instance, String text, int x, int y, int color){
         if(ConfigDBCClient.EnhancedGui){
-            if(ConfigDBCClient.DarkMode){
-                return instance.drawString(text, x, y, 0x7C7C7C, true);
-            }
+            return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), true);
         }
         return instance.drawString(text, x, y, color);
     }
