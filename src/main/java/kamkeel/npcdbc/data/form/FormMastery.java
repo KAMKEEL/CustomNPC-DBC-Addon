@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.data.form;
 
 import kamkeel.npcdbc.api.form.IFormMastery;
-import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.util.ValueUtil;
 
@@ -24,7 +23,7 @@ public class FormMastery implements IFormMastery {
     public float healthRequirement = 100f;
     public float healthRequirementMultiFlat = 1.0f, healthRequirementMultiPerLevel = 0.01f, healthRequirementMultiMinOrMax = 5f;
 
-    public int kiDrain = 1;
+    public float kiDrain = 1;
     public int kiDrainTimer = 20;
     public float kiDrainMultiFlat = 1.0f, kiDrainMultiPerLevel = -0.01f, kiDrainMultiMinOrMax = 0.1f;
 
@@ -106,12 +105,12 @@ public class FormMastery implements IFormMastery {
     }
 
     @Override
-    public int getKiDrain() {
+    public float getKiDrain() {
         return kiDrain;
     }
 
     @Override
-    public void setKiDrain(int kiDrain) {
+    public void setKiDrain(float kiDrain) {
         this.kiDrain = kiDrain;
     }
 
@@ -518,7 +517,7 @@ public class FormMastery implements IFormMastery {
 
         maxLevel = formMastery.getInteger("maxLevel");
         instantTransformationUnlockLevel = formMastery.getFloat("instantTransformationUnlockLevel");
-        kiDrain = formMastery.getInteger("kiDrain");
+        kiDrain = formMastery.getFloat("kiDrain");
         kiDrainTimer = formMastery.getInteger("kiDrainTimer");
         healthRequirement = formMastery.getFloat("healthRequirement");
         dodgeChance = formMastery.getFloat("dodgeChance");
@@ -596,7 +595,7 @@ public class FormMastery implements IFormMastery {
 
         formMastery.setFloat("maxLevel", maxLevel);
         formMastery.setFloat("instantTransformationUnlockLevel", instantTransformationUnlockLevel);
-        formMastery.setInteger("kiDrain", kiDrain);
+        formMastery.setFloat("kiDrain", kiDrain);
         formMastery.setInteger("kiDrainTimer", kiDrainTimer);
         formMastery.setFloat("healthRequirement", healthRequirement);
         formMastery.setFloat("dodgeChance", dodgeChance);

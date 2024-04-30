@@ -136,7 +136,7 @@ public interface IFormMastery {
      */
     boolean hasDodge();
 
-    int getKiDrain();
+    float getKiDrain();
 
     /**
      * @param kiDrain percentage of Ki to drain every KiDrainTimer ticks at form level 0
@@ -144,7 +144,7 @@ public interface IFormMastery {
      *                This drain decreases with kiDrain mastery. Setting this to 10% and min to 0.1x means player has a 1% of their ki drained per tick
      *                at max form level
      */
-    void setKiDrain(int kiDrain);
+    void setKiDrain(float kiDrain);
 
     /**
      * @return True if kiDrain is greater than 0
