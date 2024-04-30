@@ -15,7 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class FruitOfMight extends StatusEffect {
     public static Aura fruitOfMightAura = null;
-    public float kiToDrain = 1.0f;
+    public float kiToDrain;
     public PlayerBonus fruitOfMightBonus;
 
     public FruitOfMight() {
@@ -25,6 +25,7 @@ public class FruitOfMight extends StatusEffect {
         iconX = 64;
         iconY = 0;
         fruitOfMightBonus = new PlayerBonus(name, (float) ConfigDBCEffects.FOM_Strength, (float) ConfigDBCEffects.FOM_Dex, (float) ConfigDBCEffects.FOM_Will);
+        kiToDrain = (float) ConfigDBCEffects.FOM_KiDrain;
 
         if (fruitOfMightAura == null) {
             fruitOfMightAura = new Aura();
@@ -46,7 +47,7 @@ public class FruitOfMight extends StatusEffect {
     @Override
     public void process(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
-        dbcData.stats.restoreKiPercent(-kiToDrain);
+        dbcData.stats.restoreKiPercent(kiToDrain);
         if (dbcData.Ki <= 0)
             playerEffect.kill();
     }

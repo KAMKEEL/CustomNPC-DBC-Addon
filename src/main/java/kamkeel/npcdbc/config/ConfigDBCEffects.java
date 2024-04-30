@@ -23,6 +23,8 @@ public class ConfigDBCEffects
     public static double FOM_Strength = 1.2f;
     public static double FOM_Dex = 0.5f;
     public static double FOM_Will = 0.5f;
+    public static int FOM_EffectLength = 90;
+    public static double FOM_KiDrain = -0.8f;
 
     public static void init(File configFile)
     {
@@ -41,6 +43,8 @@ public class ConfigDBCEffects
             FOM_Strength = config.get(FRUITOFMIGHT, "Strength Multi", 1.2, "Amount added to Strength Multi").getDouble(1.2);
             FOM_Dex = config.get(FRUITOFMIGHT, "Dex Multi", 0.5, "Amount added to Dex Multi").getDouble(0.5);
             FOM_Will = config.get(FRUITOFMIGHT, "Will Multi", 0.5, "Amount added to Will Multi").getDouble(0.5);
+            FOM_EffectLength = config.get(FRUITOFMIGHT, "Effect Time", 90, "Ki Drain Percent per Second").getInt(90);
+            FOM_KiDrain = config.get(FRUITOFMIGHT, "Effect Drain", -0.8, "Ki Drain Percent per Second").getDouble(-0.8);
         }
         catch (Exception e)
         {
