@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.mixin.impl.dbc;
+package kamkeel.npcdbc.mixin.impl.dbc.recolor;
 
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreGuiButtons00;

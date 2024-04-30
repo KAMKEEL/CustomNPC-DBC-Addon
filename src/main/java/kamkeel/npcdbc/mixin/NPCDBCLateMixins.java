@@ -28,10 +28,13 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
             mixins.add("dbc.MixinJRMCoreCliTickH");
             mixins.add("dbc.MixinJRMCoreGuiBars");
             mixins.add("dbc.MixinJRMCoreGuiScreen");
-            mixins.add("dbc.MixinJRMCoreGuiButtons");
             mixins.add("dbc.MixinModelBipedDBC");
             mixins.add("dbc.MixinRenderAura2");
             mixins.add("dbc.MixinRenderPlayerJBRA");
+
+            mixins.add("dbc.recolor.MixinJRMCoreGuiButtons");
+            mixins.add("dbc.recolor.MixinJRMCoreGuiScreenColor");
+            mixins.add("dbc.recolor.MixinJRMText");
         }
         mixins.add("npc.MixinDBCStats");
         mixins.add("npc.MixinPlayerData");

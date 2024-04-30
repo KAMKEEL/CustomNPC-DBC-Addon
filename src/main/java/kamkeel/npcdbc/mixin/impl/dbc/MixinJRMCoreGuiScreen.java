@@ -209,9 +209,6 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
                 button1 = CustomNpcPlusDBC.ID + ":textures/gui/button_light.png";
             }
         }
-
-        // wish = CustomNpcPlusDBC.ID + ":textures/gui/gui_light.png";
-        // wish = "jinryuumodscore:gui2.png";
     }
 
 
