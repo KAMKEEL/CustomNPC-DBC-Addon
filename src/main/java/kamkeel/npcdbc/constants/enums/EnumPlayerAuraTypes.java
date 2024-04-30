@@ -11,6 +11,7 @@ public enum EnumPlayerAuraTypes {
     SaiyanBlueEvo("shinka"),
     SaiyanRose("ssrose"),
     SaiyanRoseEvo("ssroseevo"),
+    UltimateArco("ultimate"),
     UI("ui"),
     GoD("godofdestruction");
 

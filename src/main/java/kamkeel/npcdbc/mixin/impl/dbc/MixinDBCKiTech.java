@@ -33,7 +33,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = DBCKiTech.class, remap = false)
 public class MixinDBCKiTech {
     @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;rc_nam(I)Z", ordinal = 0, shift = At.Shift.BEFORE))
-    private static void setAuraType(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "state") LocalFloatRef state, @Local(name = "state2") LocalFloatRef state2, @Local(name = "kk") LocalBooleanRef kk, @Local(name = "ssb") LocalBooleanRef ssb, @Local(name = "ssg") LocalBooleanRef ssg, @Local(name = "ssbs") LocalBooleanRef ssbs, @Local(name = "v") LocalBooleanRef divine, @Local(name = "oozar") LocalBooleanRef oozaru, @Local(name = "ui") LocalBooleanRef ui, @Local(name = "gd") LocalBooleanRef godestruction) {
+    private static void setAuraType(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "state") LocalFloatRef state, @Local(name = "state2") LocalFloatRef state2, @Local(name = "kk") LocalBooleanRef kk, @Local(name = "ssb") LocalBooleanRef ssb, @Local(name = "ssg") LocalBooleanRef ssg, @Local(name = "ssbs") LocalBooleanRef ssbs, @Local(name = "v") LocalBooleanRef divine, @Local(name = "oozar") LocalBooleanRef oozaru, @Local(name = "ui") LocalBooleanRef ui, @Local(name = "gd") LocalBooleanRef godestruction, @Local(name = "auf") LocalBooleanRef auf) {
         DBCData dbcData = DBCData.get(p);
         Aura aura = dbcData.getAura();
         if (aura != null) {
@@ -49,6 +49,8 @@ public class MixinDBCKiTech {
             else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRose) {
                 ssb.set(true);
                 divine.set(true);
+            } else if (aura.display.type == EnumPlayerAuraTypes.UltimateArco) {
+                auf.set(true);
             } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRoseEvo) {
                 ssbs.set(true);
                 divine.set(true);
@@ -203,6 +205,8 @@ public class MixinDBCKiTech {
             clr = 32767;
         } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanGod) {
             clr = 16761125;
+        }  else if (playerAuraTypes == EnumPlayerAuraTypes.UltimateArco) {
+            clr = 16430355;
         }
         return clr;
     }
