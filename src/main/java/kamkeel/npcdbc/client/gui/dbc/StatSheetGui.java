@@ -433,7 +433,12 @@ public class StatSheetGui extends AbstractJRMCGui {
     @Override
     public void initGui(){
         super.initGui();
-        updateScreen();
+
+        if(!ConfigDBCClient.EnhancedGui){
+            return;
+        }
+
+//        updateScreen();
         addServerButtons();
 
 
@@ -453,7 +458,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.DIFFICULTY;
         String translation = ref.getTranslation();
         int stringWidth = fontRendererObj.getStringWidth(translation)+8;
-        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 0xC6C6C6));
+        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 0));
 //        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 8046079));
 
 

@@ -19,7 +19,7 @@ import java.util.List;
 public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallback {
     // private static final ResourceLocation menuTexture = new ResourceLocation("jinryuumodscore:gui2.png");
     protected ResourceLocation menuTexture = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/gui_light.png");
-    protected List<GuiLabel> dynamicLabels = new ArrayList<>();
+    protected List<JRMCoreLabel> dynamicLabels = new ArrayList<>();
     protected final int guiID;
     protected int menuImageWidth = 256;
     protected int menuImageHeight = 159;
@@ -38,8 +38,8 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
-        super.drawScreen(mouseX, mouseY, partialTicks);
         drawBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
         for (Gui element : this.dynamicLabels) {
             if(element instanceof GuiLabel)
                 ((GuiLabel) element).func_146159_a(this.mc, mouseX, mouseY);
