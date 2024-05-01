@@ -1,20 +1,24 @@
 package kamkeel.npcdbc.client.gui.dbc;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-public class JRMCoreLabel extends GuiLabel implements HoverableLabel{
+public class JRMCoreLabel extends GuiLabel implements HoverableLabel {
 
     protected static final ResourceLocation background = new ResourceLocation("jinryuumodscore:allw.png");
 
-    protected String displayString;
+    protected String displayFormat;
+    protected String tooltipFormat;
+
+
+    protected String display;
     protected String tooltip;
     protected int xPosition;
     protected int yPosition;
@@ -23,38 +27,78 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel{
     protected int tooltipWidth;
     protected int tooltipHeight;
 
-    public JRMCoreLabel(String text, String tooltipText, int x, int y, int hoverableAreaWidth, int hoverableAreaHeight, int tooltipWidth, int tooltipHeight){
-        if(text != null)
-            text = "\u00a78"+text.replaceAll("\u00a78", "\u00a77");
-
-        this.displayString = text;
-
-        if(tooltip != null)
-            this.tooltip = tooltipText.replaceAll("/n", "\n");
-        else
-            tooltip = tooltipText;
+    public JRMCoreLabel(String displayFormat, String tooltipFormat, int x, int y){
+        this.displayFormat = displayFormat;
+        this.tooltipFormat = tooltipFormat;
         this.xPosition = x;
         this.yPosition = y;
-        this.hoverableAreaWidth = hoverableAreaWidth;
-        this.hoverableAreaHeight = hoverableAreaHeight;
-        this.tooltipWidth = tooltipWidth;
-        this.tooltipHeight = tooltipHeight;
     }
 
-    public JRMCoreLabel(String text, String tooltipText, int x, int y, int tooltipWidth){
-        this(text, tooltipText, x, y, -1, -1, tooltipWidth, -1);
+    public JRMCoreLabel(GuiButton button, String name) {
+        this.xPosition = button.xPosition;
+        this.yPosition = button.yPosition;
+        this.hoverableAreaWidth = button.width;
+        this.hoverableAreaHeight = button.height;
+
+        this.setTooltip(name);
     }
 
-    public JRMCoreLabel(String text, String tooltipText, int x, int y){
-        this(text, tooltipText, x, y, -1, -1, -1, -1);
+    public JRMCoreLabel updateDisplay(Object... arguments){
+        setDisplay(String.format(displayFormat, arguments));
+        return this;
     }
 
-    public JRMCoreLabel(GuiButton button, String tooltipText, int tooltipWidth){
-        this(null, tooltipText, button.xPosition, button.yPosition, button.width, button.height, tooltipWidth, -1);
+    public JRMCoreLabel updateTooltip(Object... arguments){
+        setTooltip(String.format(tooltipFormat, arguments));
+        return this;
     }
-    public JRMCoreLabel(GuiButton button, String tooltipText){
-        this(null, tooltipText, button.xPosition, button.yPosition, button.width, button.height, -1, -1);
+
+    private JRMCoreLabel setTooltip(String text) {
+        this.tooltip = text;
+        this.tooltipWidth = 0;
+        this.tooltipHeight = 0;
+        return this;
     }
+
+    private JRMCoreLabel setDisplay(String text){
+        this.display = text;
+        this.hoverableAreaWidth = 0;
+        this.hoverableAreaHeight = 0;
+        return this;
+    }
+
+//    public JRMCoreLabel(String text, String tooltipText, int x, int y, int hoverableAreaWidth, int hoverableAreaHeight, int tooltipWidth, int tooltipHeight){
+//        if(text != null)
+//            text = "\u00a78"+text.replaceAll("\u00a78", "\u00a77");
+//
+//        this.displayString = text;
+//
+//        if(tooltip != null)
+//            this.tooltip = tooltipText.replaceAll("/n", "\n");
+//        else
+//            tooltip = tooltipText;
+//        this.xPosition = x;
+//        this.yPosition = y;
+//        this.hoverableAreaWidth = hoverableAreaWidth;
+//        this.hoverableAreaHeight = hoverableAreaHeight;
+//        this.tooltipWidth = tooltipWidth;
+//        this.tooltipHeight = tooltipHeight;
+//    }
+//
+//    public JRMCoreLabel(String text, String tooltipText, int x, int y, int tooltipWidth){
+//        this(text, tooltipText, x, y, -1, -1, tooltipWidth, -1);
+//    }
+//
+//    public JRMCoreLabel(String text, String tooltipText, int x, int y){
+//        this(text, tooltipText, x, y, -1, -1, -1, -1);
+//    }
+//
+//    public JRMCoreLabel(GuiButton button, String tooltipText, int tooltipWidth){
+//        this(null, tooltipText, button.xPosition, button.yPosition, button.width, button.height, tooltipWidth, -1);
+//    }
+//    public JRMCoreLabel(GuiButton button, String tooltipText){
+//        this(null, tooltipText, button.xPosition, button.yPosition, button.width, button.height, -1, -1);
+//    }
 
     /**
      * The draw function for the button
@@ -64,7 +108,7 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel{
      */
     @Override
     public void func_146159_a(Minecraft client, int mouseX, int mouseY){
-        client.fontRenderer.drawString(displayString, xPosition, yPosition, 0, true);
+        client.fontRenderer.drawString(display, xPosition, yPosition, 0, ConfigDBCClient.DarkMode);
 
     }
 
@@ -77,8 +121,8 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel{
         if(tooltip == null)
             return;
 
-        if(displayString != null && (hoverableAreaHeight < 0 || hoverableAreaWidth < 0)){
-            hoverableAreaWidth = client.fontRenderer.getStringWidth(displayString);
+        if(display != null && (hoverableAreaHeight <= 0 || hoverableAreaWidth <= 0)){
+            hoverableAreaWidth = client.fontRenderer.getStringWidth(display);
             hoverableAreaHeight = 8;
         }
 
@@ -86,7 +130,7 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel{
 
             client.getTextureManager().bindTexture(background);
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
-            if (tooltipWidth < 0) {
+            if (tooltipWidth <= 0) {
                 if (tooltip.contains("\n"))
                     tooltipWidth = 200;
                 else
@@ -96,18 +140,17 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel{
 
             List<String> toolTipSplit = (List<String>) client.fontRenderer.listFormattedStringToWidth(tooltip, tooltipWidth);
 
-            if (tooltipHeight < 0) {
+            if (tooltipHeight <= 0) {
                 tooltipHeight = toolTipSplit.size() * 10;
             }
 
-            int tooltipX = mouseX;
             int tooltipY = mouseY + 10;
 
-            this.drawTexturedModalRect(tooltipX, tooltipY, 0, 0, tooltipWidth + 10, tooltipHeight + 10);
+            this.drawTexturedModalRect(mouseX, tooltipY, 0, 0, tooltipWidth + 10, tooltipHeight + 10);
 
             int linesWritten = 0;
             for (String text : toolTipSplit) {
-                client.fontRenderer.drawString(JRMCoreH.cldgy + text, tooltipX + 5, tooltipY + 5 + linesWritten * 10, 0);
+                client.fontRenderer.drawString(JRMCoreH.cldgy + text, mouseX + 5, tooltipY + 5 + linesWritten * 10, 0);
                 linesWritten++;
             }
 
