@@ -46,7 +46,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         super(guiReplacementID);
     }
 
-    private String getDescription(String attrName, float inc, String maxRelease, String passive, String charging, String extraOutput, int dmgReduction){
+    private String getDescription(String attrName, float inc, String maxRelease, String passive, String charging, String extraOutput, int dmgReduction, int statReduction){
         String format = JRMCoreH.trl("jrmc", "StatIncreaseDesc");
         if(maxRelease != null)
             format += JRMCoreH.trl("jrmc", "StatIncreaseDesc2");
@@ -58,8 +58,11 @@ public class StatSheetGui extends AbstractJRMCGui {
             format += JRMCoreH.trl("jrmc", "StatIncreaseDesc4");
         format = String.format(format, attrName, inc, maxRelease, passive, extraOutput);
 
-        if(dmgReduction != 0)
-            format += String.format(JRMCoreH.trl("jrmc", "StatIncreaseDesc5"), "", "", dmgReduction);
+        if(statReduction != 0)
+            format += "\n"+JRMCoreH.trl("jrmc", "weightreduction")+": §c"+statReduction+"% §7";
+
+        if(dmgReduction > 0)
+            format += "\n"+String.format(JRMCoreH.trl("jrmc", "StatIncreaseDesc5"), "", "", dmgReduction);
         return format;
 
     }
@@ -260,7 +263,8 @@ public class StatSheetGui extends AbstractJRMCGui {
             passiveDef,
             chargingDef,
             (bonusOutput > 0 ? JRMCoreH.numSep(bonusOutput) : null),
-            0
+            0,
+                (int) (100.0F - JRMCoreH.weightPerc(1) * 100.0F)
         );
         dynamicLabels.get("defense")
             .updateDisplay(formColor+JRMCoreH.numSep(longValue))
