@@ -42,6 +42,18 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel {
 
         this.setTooltip(name);
     }
+    public JRMCoreLabel(GuiButton button, String displayFormat, String name) {
+        this(button, displayFormat, null, name);
+    }
+    public JRMCoreLabel(GuiButton button, String displayFormat, String tooltipFormat, String name) {
+        this.xPosition = button.xPosition;
+        this.yPosition = button.yPosition;
+        this.hoverableAreaWidth = button.width;
+        this.hoverableAreaHeight = button.height;
+        this.displayFormat = displayFormat;
+        this.tooltipFormat = tooltipFormat;
+        this.setTooltip(name);
+    }
 
     public JRMCoreLabel updateDisplay(Object... arguments){
         setDisplay(String.format(displayFormat, arguments));
@@ -53,14 +65,14 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel {
         return this;
     }
 
-    private JRMCoreLabel setTooltip(String text) {
+    public JRMCoreLabel setTooltip(String text) {
         this.tooltip = text;
         this.tooltipWidth = 0;
         this.tooltipHeight = 0;
         return this;
     }
 
-    private JRMCoreLabel setDisplay(String text){
+    public JRMCoreLabel setDisplay(String text){
         this.display = text;
         this.hoverableAreaWidth = 0;
         this.hoverableAreaHeight = 0;

@@ -7,10 +7,10 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiIcon extends GuiLabel {
     private final ResourceLocation texture;
-    private final int xPosition;
-    private final int yPosition;
-    private final int textureX;
-    private final int textureY;
+    public int xPosition;
+    public final int yPosition;
+    public int textureX;
+    public int textureY;
     private final int width;
     private final int height;
 

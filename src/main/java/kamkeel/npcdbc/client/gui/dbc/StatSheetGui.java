@@ -21,6 +21,7 @@ import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static JinRyuu.JRMCore.JRMCoreGuiScreen.kqGW3Z;
@@ -34,7 +35,8 @@ public class StatSheetGui extends AbstractJRMCGui {
 
     private final HashMap<String, GuiLabel> labelMap = new HashMap<>();
 
-    private GuiButton[] buttons = new GuiButton[7];
+    private GuiIcon genderIcon;
+    private GuiButton[] upgradeButtons = new GuiButton[7];
 
     public StatSheetGui() {
         super(10);
@@ -101,220 +103,124 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         boolean isMaxLevel = JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts) >= JRMCoreH.getPlayerLevel(kqGW3Z(false) * 6);
         dynamicLabels.get("level")
-            .updateDisplay("\u00a78"+JRMCoreH.numSep(JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts)))
+            .updateDisplay("§8"+JRMCoreH.numSep(JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts)))
             .updateTooltip(isMaxLevel ? JRMCoreH.trl("jrmc", "LevelMax") : JRMCoreH.trl("jrmc", "LevelNext", JRMCoreH.cllr + JRMCoreH.attrLvlNext(JRMCoreH.PlyrAttrbts) + JRMCoreH.cldgy));
 
         dynamicLabels.get("tp")
             .updateDisplay(JRMCoreH.numSep(JRMCoreH.curTP))
             .updateTooltip(JRMCoreH.cllr + JRMCoreH.numSep(JRMCoreH.attrCst(JRMCoreH.PlyrAttrbts, 0)) + JRMCoreH.cldgy);
 
-//
-//        String raceText = String.format("%s: §8%s", JRMCoreH.trl("jrmc", "Race"), JRMCoreH.Races[JRMCoreH.Race]);
-//        this.dynamicLabels.add(new JRMCoreLabel(
-//            raceText,
-//            null,
-//            this.guiWidthOffset+6,
-//            this.guiHeightOffset+5+index*10+1
-//        ));
-//
-//        this.dynamicLabels.add(new GuiIcon(
-//            icons3,
-//            guiWidthOffset+5+Minecraft.getMinecraft().fontRenderer.getStringWidth(raceText),
-//            guiHeightOffset+2+index*10+1,
-//            0,
-//            (JRMCoreH.dnsGender(JRMCoreH.dns) < 1 ? 128 : 112),
-//            16,
-//            16
-//        ));
-//
-//        index++;
-//
-//
-//
-//        //@TODO Add proper hovers
-//        //@TODO Add proper translation
-//        //@TODO Add custom form support
-//        this.dynamicLabels.add(new JRMCoreLabel(
-//            String.format("%s: §8%s", JRMCoreH.trl("jrmc", "TRState"), formColor+formName),
-//            null,
-//            this.guiWidthOffset+6,
-//            this.guiHeightOffset+5+index*10+1
-//        ));
-//        index++;
-//
-//        this.dynamicLabels.add(new JRMCoreLabel(
-//            String.format("%s: §8%s", JRMCoreH.trl("jrmc", "Class"), JRMCoreH.trl("jrmc", JRMCoreH.ClassesDBC[JRMCoreH.Class])),
-//            JRMCoreH.trl("jrmc", JRMCoreH.ClassesDBCDesc[JRMCoreH.Class]),
-//            this.guiWidthOffset+6,
-//            this.guiHeightOffset+5+index*10+1,
-//            200
-//        ));
-//        index++;
-//
-//        this.dynamicLabels.add(new JRMCoreLabel(
-//            String.format("%s: §4%s", JRMCoreH.trl("jrmc", "Alignment"), JRMCoreH.algnCur(JRMCoreH.align)),
-//            JRMCoreH.trl("jrmc", "AlignmentDesc", JRMCoreH.align+"%"),
-//            this.guiWidthOffset+6,
-//            this.guiHeightOffset+5+index*10+1
-//        ));
-//        index++;
-//
-//        //Line break between race info and stats
-//        index++;
-//
-//
-//        this.dynamicLabels.add(new JRMCoreLabel(
-//            JRMCoreH.trl("jrmc", "Attributes"),
-//            null,
-//            this.guiWidthOffset+6,
-//            this.guiHeightOffset+5+index*10+1
-//        ));
-//        index++;
-//
-//        String[] attrNames = new String[]{
-//            "STR", "DEX", "CON", "WIL", "MND", "SPI"
-//        };
-//
-//        int[] statVals = new int[6];
-//
-//        int upgradeCost = JRMCoreH.attrCst(JRMCoreH.PlyrAttrbts, this.upgradeCounter);
-//        boolean canAffordUpgrade = JRMCoreH.curTP >= upgradeCost;
-//        for(int i = 0; i < 6; i++){
-//            boolean isMaxed = !(JRMCoreGuiScreen.kqGW3Z(isFused) > JRMCoreH.PlyrAttrbts[i]);
-//            boolean isButtonEnabled = !isFused && !isMaxed && canAffordUpgrade;
-//
-//            boolean isSTRDEXWIL = (i < 2 || i == 3);
-//
-//            String upgradeTooltip = null;
-//
-//            int yPos = guiHeightOffset+i*10+index*10+1;
-//
-//            if(isFused){
-//                upgradeTooltip = JRMCoreH.trl("dbc", "cantupgradef");
-//            }else if(isMaxed){
-//                upgradeTooltip = JRMCoreH.trl("jrmc", "AttributeMaxed");
-//            }else if(!canAffordUpgrade){
-//                upgradeTooltip = JRMCoreH.trl("jrmc", "cantupgrade")+ "\n" + JRMCoreH.trl("jrmc", "RequiredTP", "§4"+JRMCoreH.numSep(upgradeCost));
-//            }
-//
-//            GuiButton button = buttons[i];
-//            if(button == null || !this.buttonList.contains(button)){
-//                button = new JRMCoreGuiButtonsA3(i, guiWidthOffset + 4, yPos+3, 10, 2, isButtonEnabled);
-//                buttons[i] = button;
-//                this.buttonList.add(button);
-//            }else{
-//                button.enabled = isButtonEnabled;
-//            }
-//            if(upgradeTooltip != null){
-//                this.dynamicLabels.add(new JRMCoreLabel(button, upgradeTooltip));
-//            }
-//
-//            int originalStatVal = JRMCoreH.PlyrAttrbts[i];
-//            int modifiedStatVal = originalStatVal; //@TODO Replace with multi
-//
-//            if(isSTRDEXWIL){
-//                modifiedStatVal = JRMCoreH.getPlayerAttribute(JRMCoreClient.mc.thePlayer, JRMCoreH.PlyrAttrbts, i, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.PlyrSkillX, JRMCoreH.curRelease, JRMCoreH.getArcRsrv(), JRMCoreH.StusEfctsMe(14), JRMCoreH.StusEfctsMe(12), JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20), JRMCoreH.Pwrtyp, JRMCoreH.PlyrSkills, isFused, JRMCoreH.getMajinAbsorption());;
-//            }
-//            statVals[i] = modifiedStatVal;
-//
-//            String statDisplay = JRMCoreH.numSep(modifiedStatVal);
-//
-//            String attributeDesc = JRMCoreH.attrNms(1, i) + ", "+ JRMCoreH.trl("jrmc", JRMCoreH.attrDsc[1][i]);
-//
-//            if(originalStatVal != modifiedStatVal){
-//                attributeDesc = JRMCoreH.trl("jrmc", "Modified") +": §4" + formColor+statDisplay+"\n§8"
-//                    + JRMCoreH.trl("jrmc", "Original") +": §4" + JRMCoreH.numSep(originalStatVal)+"\n§8"
-//                    +attributeDesc;
-//                float multi = (float) modifiedStatVal / originalStatVal;
-//                if((JRMCoreH.round(multi, 1) != 1))
-//                    statDisplay += " §4x"+JRMCoreH.round(multi, 1);
-//            }
-//
-//            this.dynamicLabels.add(new JRMCoreLabel(
-//                String.format("§8%s: §4%s%s", attrNames[i], (isSTRDEXWIL ? formColor : ""), statDisplay),
-//                attributeDesc,
-//                guiWidthOffset+15,
-//                yPos+5
-//            ));
-//        }
-//        index+=6;
-//
-//        boolean allMaxed = JRMCoreH.acm(JRMCoreH.PlyrAttrbts);
-//
-//        GuiButton upgradeButton = buttons[6];
-//        if(upgradeButton == null){
-//            upgradeButton = new JRMCoreGuiButtonsA3(
-//                6,
-//                guiWidthOffset+7,
-//                guiHeightOffset + index*10+1 + 3,
-//                10,
-//                2,
-//                (!allMaxed && !isFused)
-//            );
-//            buttons[6] = upgradeButton;
-//            this.buttonList.add(upgradeButton);
-//        }else{
-//            upgradeButton.enabled = (!allMaxed && !isFused);
-//        }
-//
-//
-//        String upgradeDescription = JRMCoreH.trl("jrmc", "UCnam");
-//        int descriptionWidth = this.mc.fontRenderer.getStringWidth(upgradeDescription+" ");
-//
-//        if (allMaxed) {
-//            upgradeDescription += "\n§c" + JRMCoreH.cct(JRMCoreH.trl("jrmc", "AttributeAllMaxed"));
-//            descriptionWidth = 150;
-//        } else if (upgradeCost == 0 || !canAffordUpgrade) {
-//            upgradeDescription += "\n§c" + JRMCoreH.cct(JRMCoreH.trl("jrmc", "cantupgrade"));
-//        } else if (isFused) {
-//            upgradeDescription += "\n§c" + JRMCoreH.cct(JRMCoreH.trl("dbc", "cantupgradef"));
-//        }else if(upgradeCounter > 0){
-//            upgradeDescription += ", ";
-//        }
-//
-//        this.dynamicLabels.add(new JRMCoreLabel(
-//            " §8UC: " + JRMCoreH.cldb + (upgradeCost <= 0 ? JRMCoreH.trl("jrmc", "LimitReached") : (allMaxed ? JRMCoreH.trl("jrmc", "AttributeAllMaxed") : JRMCoreH.numSep(upgradeCost)+" TP "+(upgradeCounter > 0 ? "x"+JRMCoreH.attributeMultiplier(this.upgradeCounter) : ""))),
-//            upgradeDescription,
-//            guiWidthOffset+15,
-//            guiHeightOffset+5+index*10+1,
-//            descriptionWidth
-//            )
-//        );
-//
-//        index = 0;
-//
-//        this.dynamicLabels.add(new JRMCoreLabel(
-//           String.format("%s: §8%s%%", JRMCoreH.trl("jrmc", "PowerRelease"), dbcClient.Release),
-//           null,
-//            guiWidthOffset+133,
-//            guiHeightOffset+5+index*10+1
-//        ));
-//        index++;
-//        index++;
-//
-//
-//        this.dynamicLabels.add(new JRMCoreLabel(
-//            JRMCoreH.trl("jrmc", "Stats"),
-//            null,
-//            guiWidthOffset+133,
-//            guiHeightOffset+5+index*10+1
-//        ));
-//        index++;
-//
-//        //@TODO ADD KI FIST
-//        int stat = JRMCoreH.stat(mc.thePlayer, 0, 1, 0, statVals[0], dbcClient.Race, dbcClient.Class, 0);
-//        //float inc = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 0, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
-//        int curAtr = (int)((double)stat * 0.01D * (double)JRMCoreH.curRelease * (double)JRMCoreH.weightPerc(0));
-//        long longValue = (long)curAtr + (int)((double)JRMCoreH.SklLvl(12) * DBCConfig.cnfKFd * (double)statVals[5] * (double)JRMCoreH.curRelease * 0.01D);
-//        if (longValue > 2147483647L) {
-//            longValue = 2147483647L;
-//        }
+        dynamicLabels.get("race")
+            .updateDisplay(JRMCoreH.trl(JRMCoreH.Races[dbcClient.Race]));
+
+        genderIcon.xPosition = guiWidthOffset+5+Minecraft.getMinecraft().fontRenderer.getStringWidth(dynamicLabels.get("race").display);
+        genderIcon.textureY = (JRMCoreH.dnsGender(JRMCoreH.dns) < 1 ? 128 : 112);
+
+        dynamicLabels.get("form")
+            .updateDisplay(formColor+formName);
+
+        dynamicLabels.get("class")
+            .updateDisplay(JRMCoreH.trl("jrmc", JRMCoreH.ClassesDBC[dbcClient.Class]))
+            .updateTooltip(JRMCoreH.trl("jrmc", JRMCoreH.ClassesDBCDesc[JRMCoreH.Class]));
+
+        dynamicLabels.get("alignment")
+            .updateDisplay(JRMCoreH.algnCur(JRMCoreH.align))
+            .updateTooltip(JRMCoreH.align+"%");
+
+        int upgradeCost = JRMCoreH.attrCst(JRMCoreH.PlyrAttrbts, this.upgradeCounter);
+        boolean canAffordUpgrade = JRMCoreH.curTP >= upgradeCost;
+        boolean allMaxed = JRMCoreH.acm(JRMCoreH.PlyrAttrbts);
+
+        int[] statVals = new int[6];
+        for(int i = 0; i < 6; i++){
+            boolean isMaxed = !(JRMCoreGuiScreen.kqGW3Z(isFused) > JRMCoreH.PlyrAttrbts[i]);
+            boolean isButtonEnabled = !isFused && !isMaxed && canAffordUpgrade;
+
+            upgradeButtons[i].enabled = isButtonEnabled;
+
+            String upgradeTooltip = null;
+
+            if(isFused){
+                upgradeTooltip = JRMCoreH.trl("dbc", "cantupgradef");
+            }else if(isMaxed){
+                upgradeTooltip = JRMCoreH.trl("jrmc", "AttributeMaxed");
+            }else if(!canAffordUpgrade){
+                upgradeTooltip = JRMCoreH.trl("jrmc", "cantupgrade")+ "\n" + JRMCoreH.trl("jrmc", "RequiredTP", "§4"+JRMCoreH.numSep(upgradeCost));
+            }
+            dynamicLabels.get("attr_"+i+"_button_desc").setTooltip(upgradeTooltip);
+
+            boolean isSTRDEXWIL = (i < 2 || i == 3);
+
+            int originalStatVal = JRMCoreH.PlyrAttrbts[i];
+            int modifiedStatVal = originalStatVal;
+
+            if(isSTRDEXWIL){
+                modifiedStatVal = JRMCoreH.getPlayerAttribute(JRMCoreClient.mc.thePlayer, JRMCoreH.PlyrAttrbts, i, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.PlyrSkillX, JRMCoreH.curRelease, JRMCoreH.getArcRsrv(), JRMCoreH.StusEfctsMe(14), JRMCoreH.StusEfctsMe(12), JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20), JRMCoreH.Pwrtyp, JRMCoreH.PlyrSkills, isFused, JRMCoreH.getMajinAbsorption());;
+            }
+            statVals[i] = modifiedStatVal;
+
+            String statDisplay = JRMCoreH.numSep(modifiedStatVal);
+            String attributeDesc = JRMCoreH.attrNms(1, i) + ", "+ JRMCoreH.trl("jrmc", JRMCoreH.attrDsc[1][i]);
+
+            if(originalStatVal != modifiedStatVal){
+                attributeDesc = JRMCoreH.trl("jrmc", "Modified") +": §4" + formColor+statDisplay+"\n§8"
+                    + JRMCoreH.trl("jrmc", "Original") +": §4" + JRMCoreH.numSep(originalStatVal)+"\n§8"
+                    +attributeDesc;
+                float multi = (float) modifiedStatVal / originalStatVal;
+                if((JRMCoreH.round(multi, 1) != 1))
+                    statDisplay += " §4x"+JRMCoreH.round(multi, 1);
+            }
+
+            dynamicLabels.get("attr_"+i)
+                .updateDisplay((isSTRDEXWIL ? formColor : "")+statDisplay)
+                .updateTooltip(attributeDesc);
+
+
+        }
+
+        upgradeButtons[6].enabled = (!isFused || !allMaxed);
+
+        String upgradeDescription = JRMCoreH.trl("jrmc", "UCnam");
+        int descriptionWidth = this.mc.fontRenderer.getStringWidth(upgradeDescription+" ");
+
+        if (allMaxed) {
+            upgradeDescription += "\n§c" + JRMCoreH.cct(JRMCoreH.trl("jrmc", "AttributeAllMaxed"));
+            descriptionWidth = 150;
+        } else if (upgradeCost == 0 || !canAffordUpgrade) {
+            upgradeDescription += "\n§c" + JRMCoreH.cct(JRMCoreH.trl("jrmc", "cantupgrade"));
+        } else if (isFused) {
+            upgradeDescription += "\n§c" + JRMCoreH.cct(JRMCoreH.trl("dbc", "cantupgradef"));
+        }else if(upgradeCounter > 0){
+            upgradeDescription += ", "+ "x"+JRMCoreH.attributeMultiplier(this.upgradeCounter);
+        }
+        dynamicLabels.get("upgradeAmount")
+            .updateTooltip(upgradeDescription)
+            .updateDisplay(JRMCoreH.clbe + (upgradeCost <= 0 ? JRMCoreH.trl("jrmc", "LimitReached") : (allMaxed ? JRMCoreH.trl("jrmc", "AttributeAllMaxed") : JRMCoreH.numSep(upgradeCost)+" TP "+(upgradeCounter > 0 ? "x"+JRMCoreH.attributeMultiplier(this.upgradeCounter) : ""))))
+            .tooltipWidth = descriptionWidth;
+
+
+        this.dynamicLabels.get("release")
+            .updateDisplay(dbcClient.Release);
+
+
+
+
+        //@TODO ADD KI FIST
+        int stat = JRMCoreH.stat(mc.thePlayer, 0, 1, 0, statVals[0], dbcClient.Race, dbcClient.Class, 0);
+        //float inc = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 0, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
+        int curAtr = (int)((double)stat * 0.01D * (double)JRMCoreH.curRelease * (double)JRMCoreH.weightPerc(0));
+        long longValue = (long)curAtr + (int)((double)JRMCoreH.SklLvl(12) * DBCConfig.cnfKFd * (double)statVals[5] * (double)JRMCoreH.curRelease * 0.01D);
+        if (longValue > 2147483647L) {
+            longValue = 2147483647L;
+        }
+        dynamicLabels.get("melee")
+            .updateDisplay(formColor+JRMCoreH.numSep(longValue));
 //
 //        this.dynamicLabels.add(new JRMCoreLabel(
 //            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "mleDB"), formColor+JRMCoreH.numSep(longValue)),
 //            "description",
 //            guiWidthOffset+133,
-//            guiHeightOffset+5+index*10+1
+//            guiHeightOffset+index*10+6
 //        ));
 //        index++;
 //
@@ -333,7 +239,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 //            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "DefDB"), formColor+JRMCoreH.numSep(longValue)),
 //            "description",
 //            guiWidthOffset+133,
-//            guiHeightOffset+5+index*10+1
+//            guiHeightOffset+index*10+6
 //        ));
 //        index++;
 //
@@ -341,7 +247,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 //            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "Passive"), formColor+JRMCoreH.numSep(longValue*JRMCoreConfig.StatPasDef/100)),
 //            "description",
 //            guiWidthOffset+138,
-//            guiHeightOffset+5+index*10+1
+//            guiHeightOffset+index*10+6
 //        ));
 //        index++;
 //
@@ -364,7 +270,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 //            String.format("§8%s: §4%s %s", JRMCoreH.trl("jrmc", "BdDB"), JRMCoreH.numSep(stat), (JRMCoreH.round(percentile, 1) != 1.0D ? "R" + dmgReduction + "%" : "")),
 //            "description",
 //            guiWidthOffset+133,
-//            guiHeightOffset+5+index*10+1
+//            guiHeightOffset+index*10+6
 //        ));
 //        index++;
 //
@@ -374,7 +280,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 //            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "StDB"), JRMCoreH.numSep(stat)),
 //            "description",
 //            guiWidthOffset+133,
-//            guiHeightOffset+5+index*10+1
+//            guiHeightOffset+index*10+6
 //        ));
 //        index++;
 //
@@ -384,7 +290,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 //            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "EnPwDB"), formColor+JRMCoreH.numSep((int)((double)stat * 0.01D * (double)JRMCoreH.curRelease))),
 //            "description",
 //            guiWidthOffset+133,
-//            guiHeightOffset+5+index*10+1
+//            guiHeightOffset+index*10+6
 //        ));
 //        index++;
 //
@@ -395,7 +301,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 //            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "EnPlDB"), JRMCoreH.numSep(stat)),
 //            "description",
 //            guiWidthOffset+133,
-//            guiHeightOffset+5+index*10+1
+//            guiHeightOffset+index*10+6
 //        ));
 //
 //        //@TODO ADD RUNNING/FLYING SPEEDS
@@ -421,12 +327,12 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         //Button to adjust GUI
         String s = "Switch to "+(ConfigDBCClient.EnhancedGui ? "Normal" : "§aEnhanced") +" GUI";
-        int i = this.fontRendererObj.getStringWidth(s)+10;
-        this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2, guiHeightOffset - 30, i + 8, 20, s, 0));
+        int button1Width = this.fontRendererObj.getStringWidth(s)+10;
+        this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -button1Width)/2, guiHeightOffset - 30, button1Width + 8, 20, s, 0));
 
         String dark = ConfigDBCClient.DarkMode ? "Light" : "Dark";
-        int j = this.fontRendererObj.getStringWidth(dark)+10;
-        this.buttonList.add(new JRMCoreGuiButtons00(404040404, guiWidthOffset + 260, guiHeightOffset+5, j + 8, 20, dark, 0));
+        int button2Width = this.fontRendererObj.getStringWidth(dark)+10;
+        this.buttonList.add(new JRMCoreGuiButtons00(404040404, guiWidthOffset + 260, guiHeightOffset+5, button2Width + 8, 20, dark, 0));
 
 
         //Difficulty button
@@ -453,6 +359,192 @@ public class StatSheetGui extends AbstractJRMCGui {
             guiWidthOffset+6,
             guiHeightOffset+index*10+6
         ));
+        index++;
+
+        dynamicLabels.put("race", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "Race")+": %s",
+            null,
+            guiWidthOffset+6,
+            guiHeightOffset+index*10+6
+        ));
+        genderIcon = new GuiIcon(
+            icons3,
+            0,
+            guiHeightOffset+2+index*10+1,
+            0,
+            (JRMCoreH.dnsGender(JRMCoreH.dns) < 1 ? 128 : 112),
+            16,
+            16
+        );
+        this.labelList.add(genderIcon);
+        index++;
+
+        dynamicLabels.put("form", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "TRState")+": %s",
+            null,
+            guiWidthOffset+6,
+            guiHeightOffset+index*10+6
+
+        ));
+        index++;
+
+        dynamicLabels.put("class", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "Class")+": %s",
+            "%s",
+            this.guiWidthOffset+6,
+            this.guiHeightOffset+index*10+6
+        ));
+        index++;
+
+        dynamicLabels.put("alignment", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "Alignment")+": %s",
+            JRMCoreH.trl("jrmc", "AlignmentDesc"),
+            this.guiWidthOffset+6,
+            this.guiHeightOffset+index*10+6
+        ));
+        index++;
+
+        labelList.add(new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "Attributes")+":",
+            "%s",
+            this.guiWidthOffset+6,
+            this.guiHeightOffset+index*10+11
+        ).updateDisplay());
+        index++;
+
+        String[] statNames = new String[]{
+            "STR", "DEX", "CON", "WIL", "MND", "SPI"
+        };
+
+        for(int i = 0; i < 6; i++){
+            int yPos = guiHeightOffset+i*10+index*10+6;
+
+            GuiButton button = new JRMCoreGuiButtonsA3(i, guiWidthOffset + 5, yPos+3, 10, 2, false);
+
+            dynamicLabels.put("attr_"+i+"_button_desc", new JRMCoreLabel(button, "%s", null));
+            upgradeButtons[i] = button;
+            dynamicLabels.put("attr_"+i, new JRMCoreLabel(
+    statNames[i]+": §4%s",
+    "%s",
+            guiWidthOffset+17,
+            yPos+5
+            ));
+
+
+        }
+        index+=6;
+        GuiButton amountButton = new JRMCoreGuiButtonsA3(6, guiWidthOffset+5, guiHeightOffset+index*10+12, 10, 2, false);
+        upgradeButtons[6] = amountButton;
+        this.buttonList.addAll(Arrays.asList(upgradeButtons));
+
+        dynamicLabels.put("upgradeAmount", new JRMCoreLabel(
+            "UC: %s",
+            "%s",
+            guiWidthOffset+17,
+            guiHeightOffset+index*10+14
+        ).setDisplay("Testing"));
+
+        index = 0;
+        this.dynamicLabels.put("release", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "PowerRelease")+": %s%%",
+            null,
+            guiWidthOffset+133,
+            guiHeightOffset+index*10+6
+        ));
+        index++;
+
+        this.labelList.add(new JRMCoreLabel(
+            null,
+            null,
+            guiWidthOffset+133,
+            guiHeightOffset+index*10+11
+        ).setDisplay(JRMCoreH.trl("jrmc", "Stats")));
+        index++;
+
+
+        this.dynamicLabels.put("melee", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "mleDB")+": §4%s",
+            "%s",
+            guiWidthOffset+133,
+            guiHeightOffset+index*10+11
+        ));
+        index++;
+
+        this.dynamicLabels.put("defense", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "DefDB")+": §4%s",
+            "%s",
+            guiWidthOffset+133,
+            guiHeightOffset+index*10+11
+        ));
+        index++;
+
+        this.dynamicLabels.put("passive", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "Passive")+": %s",
+            "%s",
+            guiWidthOffset+138,
+            guiHeightOffset+index*10+11
+        ));
+        index++;
+
+        if(ClientCache.hasChargingDex){
+            this.dynamicLabels.put("charging", new JRMCoreLabel(
+                "Charging: %s",
+                "%s",
+                guiWidthOffset+138,
+                guiHeightOffset+index*10+11
+            ));
+            index++;
+        }
+
+        this.dynamicLabels.put("body", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "BdDB")+": §4%s",
+            "%s",
+            guiWidthOffset+133,
+            guiHeightOffset+index*10+11
+        ));
+        index++;
+
+        this.dynamicLabels.put("actionTime", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "StDB")+": §4%s",
+            "%s",
+            guiWidthOffset+133,
+            guiHeightOffset+index*10+11
+        ));
+        index++;
+
+        this.dynamicLabels.put("kiPower", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "EnPwDB")+": §4%s",
+            "%s",
+            guiWidthOffset+133,
+            guiHeightOffset+index*10+11
+        ));
+        index++;
+
+        this.dynamicLabels.put("maxKi", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "EnPlDB")+": §4%s",
+            "%s",
+            guiWidthOffset+133,
+            guiHeightOffset+index*10+11
+        ));
+        index++;
+        this.dynamicLabels.put("running", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "SpDB")+": §4%s",
+            "%s",
+            guiWidthOffset+133,
+            guiHeightOffset+index*10+11
+        ));
+        index++;
+        this.dynamicLabels.put("flying", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "FSDB")+": §4%s",
+            "%s",
+            guiWidthOffset+133,
+            guiHeightOffset+index*10+11
+        ));
+        index++;
+
+
+
+        updateScreen();
     }
 
     @Override
@@ -475,7 +567,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         }
         if(id == 6){
             this.upgradeCounter++;
-            if(this.upgradeCounter >= 3)
+            if(this.upgradeCounter > 3)
                 this.upgradeCounter = 0;
         }
 
