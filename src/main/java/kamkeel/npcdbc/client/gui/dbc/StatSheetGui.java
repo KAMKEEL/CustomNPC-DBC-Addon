@@ -38,6 +38,8 @@ public class StatSheetGui extends AbstractJRMCGui {
     private GuiIcon genderIcon;
     private GuiButton[] upgradeButtons = new GuiButton[7];
 
+    private static final String DARKMODE_ACCENT = "§7";
+
     public StatSheetGui() {
         super(10);
     }
@@ -420,7 +422,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         String jrmcID = "jinryuumodscore:";
 
         dynamicLabels.put("level", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "Level")+": %s",
+            JRMCoreH.trl("jrmc", "Level")+": "+ (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "")+ "%s",
             "%s",
             guiWidthOffset+6,
             guiHeightOffset+index*10+6
@@ -428,7 +430,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         dynamicLabels.put("tp", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "TP")+": %s",
+            JRMCoreH.trl("jrmc", "TP")+": "+ (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "")+ "%s",
             JRMCoreH.trl("jrmc", "TrainingPoints")+"\n"+JRMCoreH.trl("jrmc", "RequiredTP"),
             guiWidthOffset+6,
             guiHeightOffset+index*10+6
@@ -436,7 +438,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         dynamicLabels.put("race", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "Race")+": %s",
+            JRMCoreH.trl("jrmc", "Race")+": "+ (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "")+ "%s",
             null,
             guiWidthOffset+6,
             guiHeightOffset+index*10+6
@@ -454,7 +456,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         dynamicLabels.put("form", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "TRState")+": %s",
+            JRMCoreH.trl("jrmc", "TRState")+": "+ (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "")+ "%s",
             null,
             guiWidthOffset+6,
             guiHeightOffset+index*10+6
@@ -463,7 +465,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         dynamicLabels.put("class", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "Class")+": %s",
+            JRMCoreH.trl("jrmc", "Class")+": "+ (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "")+ "%s",
             "%s",
             this.guiWidthOffset+6,
             this.guiHeightOffset+index*10+6
@@ -471,7 +473,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         dynamicLabels.put("alignment", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "Alignment")+": %s",
+            JRMCoreH.trl("jrmc", "Alignment")+": "+ (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "")+ "%s",
             JRMCoreH.trl("jrmc", "AlignmentDesc"),
             this.guiWidthOffset+6,
             this.guiHeightOffset+index*10+6
@@ -498,7 +500,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             dynamicLabels.put("attr_"+i+"_button_desc", new JRMCoreLabel(button, "%s", null));
             upgradeButtons[i] = button;
             dynamicLabels.put("attr_"+i, new JRMCoreLabel(
-    statNames[i]+": §4%s",
+    (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + statNames[i]+": §4%s",
     "%s",
             guiWidthOffset+17,
             yPos+5
@@ -512,7 +514,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         this.buttonList.addAll(Arrays.asList(upgradeButtons));
 
         dynamicLabels.put("upgradeAmount", new JRMCoreLabel(
-            "UC: %s",
+            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + "UC: %s",
             "%s",
             guiWidthOffset+17,
             guiHeightOffset+index*10+14
@@ -520,7 +522,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         index = 0;
         this.dynamicLabels.put("release", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "PowerRelease")+": %s%%",
+            JRMCoreH.trl("jrmc", "PowerRelease")+": "+(ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "")+"%s%%",
             null,
             guiWidthOffset+133,
             guiHeightOffset+index*10+6
@@ -537,7 +539,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
 
         this.dynamicLabels.put("melee", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "mleDB")+": §4%s",
+            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + JRMCoreH.trl("jrmc", "mleDB")+": §4%s",
             JRMCoreH.trl("jrmc", "StatIncreaseDesc")+JRMCoreH.trl("jrmc", "StatIncreaseDesc2"),
             guiWidthOffset+133,
             guiHeightOffset+index*10+11
@@ -545,7 +547,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         this.dynamicLabels.put("defense", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "DefDB")+": §4%s",
+            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + JRMCoreH.trl("jrmc", "DefDB")+": §4%s",
             "%s",
             guiWidthOffset+133,
             guiHeightOffset+index*10+11
@@ -553,7 +555,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         this.dynamicLabels.put("passive", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "Passive")+": §4%s",
+            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + JRMCoreH.trl("jrmc", "Passive")+": §4%s",
             "%s",
             guiWidthOffset+138,
             guiHeightOffset+index*10+11
@@ -562,7 +564,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         if(ClientCache.hasChargingDex){
             this.dynamicLabels.put("charging", new JRMCoreLabel(
-                "Charging: §4%s",
+                (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + "Charging: §4%s",
                 "%s",
                 guiWidthOffset+138,
                 guiHeightOffset+index*10+11
@@ -571,7 +573,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         }
 
         this.dynamicLabels.put("body", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "BdDB")+": §4%s",
+            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + JRMCoreH.trl("jrmc", "BdDB")+": §4%s",
             "%s",
             guiWidthOffset+133,
             guiHeightOffset+index*10+11
@@ -579,7 +581,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         this.dynamicLabels.put("actionTime", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "StDB")+": §4%s",
+            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + JRMCoreH.trl("jrmc", "StDB")+": §4%s",
             "%s",
             guiWidthOffset+133,
             guiHeightOffset+index*10+11
@@ -587,7 +589,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         this.dynamicLabels.put("kiPower", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "EnPwDB")+": §4%s",
+            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + JRMCoreH.trl("jrmc", "EnPwDB")+": §4%s",
             "%s",
             guiWidthOffset+133,
             guiHeightOffset+index*10+11
@@ -595,21 +597,21 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         this.dynamicLabels.put("maxKi", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "EnPlDB")+": §4%s",
+            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + JRMCoreH.trl("jrmc", "EnPlDB")+": §4%s",
             "%s",
             guiWidthOffset+133,
             guiHeightOffset+index*10+11
         ));
         index++;
         this.dynamicLabels.put("running", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "SpDB")+": §4%s",
+            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + JRMCoreH.trl("jrmc", "SpDB")+": §4%s",
             "%s",
             guiWidthOffset+133,
             guiHeightOffset+index*10+11
         ));
         index++;
         this.dynamicLabels.put("flying", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "FSDB")+": §4%s",
+            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + JRMCoreH.trl("jrmc", "FSDB")+": §4%s",
             "%s",
             guiWidthOffset+133,
             guiHeightOffset+index*10+11
