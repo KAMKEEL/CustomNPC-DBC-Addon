@@ -14,12 +14,13 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallback {
     // private static final ResourceLocation menuTexture = new ResourceLocation("jinryuumodscore:gui2.png");
-    protected ResourceLocation menuTexture = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/gui_light.png");
-    protected List<JRMCoreLabel> dynamicLabels = new ArrayList<>();
+    protected ResourceLocation menuTexture = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/gui_dark.png");
+    protected HashMap<String, JRMCoreLabel> dynamicLabels = new HashMap<>();
     protected final int guiID;
     protected int menuImageWidth = 256;
     protected int menuImageHeight = 159;
@@ -39,8 +40,9 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
         drawBackground();
+
         super.drawScreen(mouseX, mouseY, partialTicks);
-        for (Gui element : this.dynamicLabels) {
+        for (Gui element : this.dynamicLabels.values()) {
             if(element instanceof GuiLabel)
                 ((GuiLabel) element).func_146159_a(this.mc, mouseX, mouseY);
             else if(element instanceof GuiButton)
@@ -52,7 +54,7 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
             if(label instanceof HoverableLabel)
                 ((HoverableLabel) label).hover(this.mc, mouseX, mouseY);
         }
-        for (Gui element : this.dynamicLabels) {
+        for (Gui element : this.dynamicLabels.values()) {
             if(element instanceof HoverableLabel)
                 ((HoverableLabel) element).hover(this.mc, mouseX, mouseY);
         }

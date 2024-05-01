@@ -5,7 +5,9 @@ import JinRyuu.JRMCore.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -44,90 +46,68 @@ public class StatSheetGui extends AbstractJRMCGui {
 
     @Override
     public void updateScreen(){
-//
-//        DBCData dbcClient = DBCData.getClient();
-//        PlayerDBCInfo dataClient = PlayerDataUtil.getClientDBCInfo();
-//
-        if(!ConfigDBCClient.EnhancedGui){
+
+
+        DBCData dbcClient = DBCData.getClient();
+        PlayerDBCInfo dataClient = PlayerDataUtil.getClientDBCInfo();
+
+
+        if(dbcClient == null || dataClient == null) {
+            return;
+        }
+        if(!ConfigDBCClient.EnhancedGui || dbcClient.Accept == 0){
             JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
             ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(10);
             FMLCommonHandler.instance().showGuiScreen(DBCScreen);
             return;
         }
-//
-//        if(dataClient == null)
-//            return;
-//        if(dbcClient.Accept == 0){
-//            JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
-//            ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(0);
-//            FMLCommonHandler.instance().showGuiScreen(DBCScreen);
-//            return;
-//        }
-//
-//        String formColor = "";
-//        String formName;
-//        Form customForm = dbcClient.getForm();
-//
-//        boolean isLegendary = dbcClient.containsSE(14);
-//        boolean isLegendaryEnabled = JRMCoreH.lgndb(dbcClient.Race, dbcClient.State);
-//
-//        boolean isMajin = dbcClient.containsSE(12);
-//
-//
-//        if(isMajin && isLegendary && isLegendaryEnabled){
-//            formColor = "§5";
-//        }else if(isMajin){
-//            formColor = "§c";
-//        }else if(isLegendary && isLegendaryEnabled){
-//            formColor = "§2";
-//        }
-//
-//        boolean isFused = dbcClient.containsSE(10) || dbcClient.containsSE(11);
-//        if(isFused){
-//            formColor = "§d";
-//        }
-//
-//        if(customForm != null){
-//            formName = customForm.getMenuName();
-//            formColor = dataClient.getFormColorCode(customForm);
-//        }else {
-//            formName = JRMCoreH.trl("jrmc", JRMCoreH.TransNms[dbcClient.Race][dbcClient.State]);
-//
-//
-//            boolean ascendedAboveBase = (dbcClient.Race == 4 && dbcClient.State > 4) || dbcClient.State > 0;
-//            if (formColor.isEmpty() && ascendedAboveBase)
-//                formColor = "§6";
-//        }
-//        formName = formColor + formName;
-//        formColor = (formColor.equals("§4") ? "" : formColor); //Makes stats pop out when your form color is the same as the default stat color
-//
-//
-//        dynamicLabels.clear();
-//
-//        //this.dynamicLabels.add(new JRMCoreLabel("Testing", DBCData.getClient().Ki+"", guiWidthOffset+10, guiHeightOffset+10, -1));
-//        boolean max = JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts) >= JRMCoreH.getPlayerLevel(kqGW3Z(false) * 6);
-//
-//        int index = 0;
-//
-//        //Level
-//        this.dynamicLabels.add(new JRMCoreLabel(
-//            String.format("%s: §8%s", JRMCoreH.trl("jrmc", "Level"), JRMCoreH.numSep(JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts))),
-//            (max ? JRMCoreH.trl("jrmc", "LevelMax") : JRMCoreH.trl("jrmc", "LevelNext", JRMCoreH.cllr + JRMCoreH.attrLvlNext(JRMCoreH.PlyrAttrbts) + JRMCoreH.cldgy)),
-//            this.guiWidthOffset+6,
-//            this.guiHeightOffset+5+index*10+1
-//        ));
-//        index++;
-//
-//        //TP
-//        String requiredTP = JRMCoreH.cct(JRMCoreH.trl("jrmc", "RequiredTP"), JRMCoreH.cllr + JRMCoreH.numSep(JRMCoreH.attrCst(JRMCoreH.PlyrAttrbts, 0)) + JRMCoreH.cldgy, "");
-//        this.dynamicLabels.add(new JRMCoreLabel(
-//            String.format("%s: §8%s", JRMCoreH.trl("jrmc", "TP"), JRMCoreH.numSep(JRMCoreH.curTP)),
-//            JRMCoreH.trl("jrmc", "TrainingPoints") + ",\n "+requiredTP,
-//            this.guiWidthOffset+6,
-//            this.guiHeightOffset+5+index*10+1
-//        ));
-//        index++;
-//
+
+        String formColor = "";
+        String formName;
+        Form customForm = dbcClient.getForm();
+
+        boolean isLegendary = dbcClient.containsSE(14);
+        boolean isLegendaryEnabled = JRMCoreH.lgndb(dbcClient.Race, dbcClient.State);
+
+        boolean isMajin = dbcClient.containsSE(12);
+
+        if(isMajin && isLegendary && isLegendaryEnabled){
+            formColor = "§5";
+        }else if(isMajin){
+            formColor = "§c";
+        }else if(isLegendary && isLegendaryEnabled){
+            formColor = "§2";
+        }
+
+        boolean isFused = dbcClient.containsSE(10) || dbcClient.containsSE(11);
+        if(isFused){
+            formColor = "§d";
+        }
+
+        if(customForm != null){
+            formName = customForm.getMenuName();
+            formColor = dataClient.getFormColorCode(customForm);
+        }else {
+            formName = JRMCoreH.trl("jrmc", JRMCoreH.TransNms[dbcClient.Race][dbcClient.State]);
+
+
+            boolean ascendedAboveBase = (dbcClient.Race == 4 && dbcClient.State > 4) || dbcClient.State > 0;
+            if (formColor.isEmpty() && ascendedAboveBase)
+                formColor = "§6";
+        }
+        formName = formColor + formName;
+        formColor = (formColor.equals("§4") ? "" : formColor); //Makes stats pop out when your form color is the same as the default stat color
+
+
+        boolean isMaxLevel = JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts) >= JRMCoreH.getPlayerLevel(kqGW3Z(false) * 6);
+        dynamicLabels.get("level")
+            .updateDisplay("\u00a78"+JRMCoreH.numSep(JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts)))
+            .updateTooltip(isMaxLevel ? JRMCoreH.trl("jrmc", "LevelMax") : JRMCoreH.trl("jrmc", "LevelNext", JRMCoreH.cllr + JRMCoreH.attrLvlNext(JRMCoreH.PlyrAttrbts) + JRMCoreH.cldgy));
+
+        dynamicLabels.get("tp")
+            .updateDisplay(JRMCoreH.numSep(dbcClient.TP))
+            .updateTooltip(JRMCoreH.cllr + JRMCoreH.numSep(JRMCoreH.attrCst(JRMCoreH.PlyrAttrbts, 0)) + JRMCoreH.cldgy);
+
 //
 //        String raceText = String.format("%s: §8%s", JRMCoreH.trl("jrmc", "Race"), JRMCoreH.Races[JRMCoreH.Race]);
 //        this.dynamicLabels.add(new JRMCoreLabel(
@@ -437,13 +417,9 @@ public class StatSheetGui extends AbstractJRMCGui {
         if(!ConfigDBCClient.EnhancedGui){
             return;
         }
-
-//        updateScreen();
         addServerButtons();
 
-
-
-        //Button to change screens
+        //Button to adjust GUI
         String s = "Switch to "+(ConfigDBCClient.EnhancedGui ? "Normal" : "§aEnhanced") +" GUI";
         int i = this.fontRendererObj.getStringWidth(s)+10;
         this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2, guiHeightOffset - 30, i + 8, 20, s, 0));
@@ -453,15 +429,30 @@ public class StatSheetGui extends AbstractJRMCGui {
         this.buttonList.add(new JRMCoreGuiButtons00(404040404, guiWidthOffset + 260, guiHeightOffset+5, j + 8, 20, dark, 0));
 
 
-
         //Difficulty button
         GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.DIFFICULTY;
         String translation = ref.getTranslation();
         int stringWidth = fontRendererObj.getStringWidth(translation)+8;
         this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 0));
-//        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 8046079));
 
+        int index = 0;
 
+        String jrmcID = "jinryuumodscore:";
+
+        dynamicLabels.put("level", new JRMCoreLabel(
+            JRMCoreH.trl("jrmc", "Level")+": %s",
+            "%s",
+            guiWidthOffset+6,
+            guiHeightOffset+index*10+6
+        ));
+        index++;
+
+        dynamicLabels.put("tp", new JRMCoreLabel(
+            "%s: %s",
+            JRMCoreH.trl("jrmc", "RequiredTP"),
+            guiWidthOffset+6,
+            guiHeightOffset+index*10+6
+        ));
     }
 
     @Override
