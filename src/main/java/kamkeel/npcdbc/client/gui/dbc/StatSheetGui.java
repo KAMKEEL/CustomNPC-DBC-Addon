@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.gui.dbc;
 
 import JinRyuu.DragonBC.common.DBCConfig;
 import JinRyuu.JRMCore.*;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -80,7 +81,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         if(dbcClient == null || dataClient == null) {
             return;
         }
-        if(!ConfigDBCClient.EnhancedGui || dbcClient.Accept == 0){
+        if(!ConfigDBCClient.EnhancedGui || dbcClient.Accept == 0 || dbcClient.Powertype != 1){
             JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
             ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(10);
             FMLCommonHandler.instance().showGuiScreen(DBCScreen);
@@ -89,12 +90,17 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         String formColor = "";
         String formName;
+        String formTooltip = null; //@TODO Add mastery tooltips
         Form customForm = dbcClient.getForm();
 
         boolean isLegendary = dbcClient.containsSE(14);
         boolean isLegendaryEnabled = JRMCoreH.lgndb(dbcClient.Race, dbcClient.State);
 
         boolean isMajin = dbcClient.containsSE(12);
+        boolean isUI = dbcClient.containsSE(19);
+        boolean isGoD = dbcClient.containsSE(20);
+        boolean isRose = dbcClient.containsSE(17);
+        boolean isMystic = dbcClient.containsSE(13);
 
         if(isMajin && isLegendary && isLegendaryEnabled){
             formColor = "§5";
@@ -113,16 +119,29 @@ public class StatSheetGui extends AbstractJRMCGui {
             formName = customForm.getMenuName();
             formColor = dataClient.getFormColorCode(customForm);
         }else {
-            formName = JRMCoreH.trl("jrmc", JRMCoreH.TransNms[dbcClient.Race][dbcClient.State]);
+            formName = JRMCoreH.trl("jrmc", JRMCoreH.getTransformationName(JRMCoreH.Race, JRMCoreH.isPowerTypeChakra() ? 0 : JRMCoreH.State, isRose, isMystic, isUI, isGoD));
 
 
             boolean ascendedAboveBase = (dbcClient.Race == 4 && dbcClient.State > 4) || dbcClient.State > 0;
-            if (formColor.isEmpty() && ascendedAboveBase)
-                formColor = "§6";
+            if (formColor.isEmpty()){
+                if(ascendedAboveBase)
+                    formColor = "§6";
+                if(ascendedAboveBase && isRose)
+                    formColor = "§5";
+                if(isMystic)
+                    formColor = "§3";
+                if(isUI)
+                    formColor = "§b";
+                if(isGoD)
+                    formColor = "§5";
+            }
         }
         formName = formColor + formName;
         formColor = (formColor.equals("§4") ? "" : formColor); //Makes stats pop out when your form color is the same as the default stat color
 
+        if(JGConfigDBCFormMastery.FM_Enabled){
+            formTooltip = "TEST"; //@TODO ADD MASTERY TOOLTIPS
+        }
 
         boolean isMaxLevel = JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts) >= JRMCoreH.getPlayerLevel(kqGW3Z(false) * 6);
         dynamicLabels.get("level")
@@ -140,7 +159,8 @@ public class StatSheetGui extends AbstractJRMCGui {
         genderIcon.textureY = (JRMCoreH.dnsGender(JRMCoreH.dns) < 1 ? 128 : 112);
 
         dynamicLabels.get("form")
-            .updateDisplay(formColor+formName);
+            .updateDisplay(formColor+formName)
+            .setTooltip(formTooltip);
 
         dynamicLabels.get("class")
             .updateDisplay(JRMCoreH.trl("jrmc", JRMCoreH.ClassesDBC[dbcClient.Class]))
@@ -178,7 +198,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             int modifiedStatVal = originalStatVal;
 
             if(isSTRDEXWIL){
-                modifiedStatVal = JRMCoreH.getPlayerAttribute(JRMCoreClient.mc.thePlayer, JRMCoreH.PlyrAttrbts, i, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.PlyrSkillX, JRMCoreH.curRelease, JRMCoreH.getArcRsrv(), JRMCoreH.StusEfctsMe(14), JRMCoreH.StusEfctsMe(12), JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20), JRMCoreH.Pwrtyp, JRMCoreH.PlyrSkills, isFused, JRMCoreH.getMajinAbsorption());;
+                modifiedStatVal = JRMCoreH.getPlayerAttribute(JRMCoreClient.mc.thePlayer, JRMCoreH.PlyrAttrbts, i, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.PlyrSkillX, JRMCoreH.curRelease, JRMCoreH.getArcRsrv(), JRMCoreH.StusEfctsMe(14), JRMCoreH.StusEfctsMe(12), JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20), 1, JRMCoreH.PlyrSkills, isFused, JRMCoreH.getMajinAbsorption());;
             }
             statVals[i] = modifiedStatVal;
 
@@ -193,6 +213,7 @@ public class StatSheetGui extends AbstractJRMCGui {
                 if((JRMCoreH.round(multi, 1) != 1))
                     statDisplay += " §4x"+JRMCoreH.round(multi, 1);
             }
+            attributeDesc += "\n  §6@TODO Add Bonus attributes";
 
             dynamicLabels.get("attr_"+i)
                 .updateDisplay((isSTRDEXWIL ? formColor : "")+statDisplay)
@@ -228,7 +249,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         int SPI = JRMCoreH.stat(JRMCoreClient.mc.thePlayer, 5, 1, 5, statVals[5], dbcClient.Race, dbcClient.Class, JRMCoreH.SklLvl_KiBs(JRMCoreH.PlyrSkills, 1));
         int stat = JRMCoreH.stat(mc.thePlayer, 0, 1, 0, statVals[0], dbcClient.Race, dbcClient.Class, 0);
-        float incrementVal = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 0, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
+        float incrementVal = JRMCoreH.statInc(1, 0, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
         int curAtr = (int)((double)stat * 0.01D * (double)JRMCoreH.curRelease * (double)JRMCoreH.weightPerc(0));
         int bonusOutput = 0;
         if(!JRMCoreH.PlyrSettingsB(9))
@@ -254,7 +275,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             );
 
         stat = JRMCoreH.stat(mc.thePlayer, 1, 1, 1, statVals[1], dbcClient.Race, dbcClient.Class, 0);
-        incrementVal = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 1, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
+        incrementVal = JRMCoreH.statInc(1, 1, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
         curAtr = (int)((double)stat * 0.01D * (double)JRMCoreH.curRelease * (double)JRMCoreH.weightPerc(1));
         bonusOutput = 0;
         if(!JRMCoreH.PlyrSettingsB(10)){
@@ -301,9 +322,9 @@ public class StatSheetGui extends AbstractJRMCGui {
 
 
         stat = JRMCoreH.stat(mc.thePlayer, 2, 1, 2, statVals[2], dbcClient.Race, dbcClient.Class, 0);
-        incrementVal = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 2, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
+        incrementVal = JRMCoreH.statInc(1, 2, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
 
-        int scaling = JRMCoreH.getPlayerAttribute(JRMCoreClient.mc.thePlayer, JRMCoreH.PlyrAttrbts, 2, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.PlyrSkillX, JRMCoreH.curRelease, JRMCoreH.getArcRsrv(), JRMCoreH.StusEfctsMe(14), JRMCoreH.StusEfctsMe(12), JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20), JRMCoreH.Pwrtyp, JRMCoreH.PlyrSkills, isFused, JRMCoreH.getMajinAbsorption());
+        int scaling = JRMCoreH.getPlayerAttribute(JRMCoreClient.mc.thePlayer, JRMCoreH.PlyrAttrbts, 2, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.PlyrSkillX, JRMCoreH.curRelease, JRMCoreH.getArcRsrv(), JRMCoreH.StusEfctsMe(14), JRMCoreH.StusEfctsMe(12), JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20), 1, JRMCoreH.PlyrSkills, isFused, JRMCoreH.getMajinAbsorption());
         double percentile = ((double) (Math.max(scaling, statVals[2])) /statVals[2]);
 
         int dmgReduction = (int) ((1.0D - 1.0D / percentile) * 100);
@@ -325,7 +346,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             );
 
         stat = JRMCoreH.stat(mc.thePlayer, 2, 1, 3, statVals[2], dbcClient.Race, dbcClient.Class, 0);
-        incrementVal = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 3, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
+        incrementVal = JRMCoreH.statInc(1, 3, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
 
         dynamicLabels.get("actionTime")
             .updateDisplay(JRMCoreH.numSep(stat))
@@ -343,13 +364,13 @@ public class StatSheetGui extends AbstractJRMCGui {
             );
 
         stat = JRMCoreH.stat(mc.thePlayer, 3, 1, 4, statVals[3], dbcClient.Race, dbcClient.Class, 0);
-        incrementVal = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 4, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
+        incrementVal = JRMCoreH.statInc(1, 4, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
         curAtr = (int) (stat*0.01*dbcClient.Release);
         dynamicLabels.get("kiPower")
             .updateDisplay(formColor+JRMCoreH.numSep(curAtr))
             .setTooltip(
                 getDescription(
-                    JRMCoreH.attrNms(JRMCoreH.Pwrtyp, 3),
+                    JRMCoreH.attrNms(1, 3),
                     incrementVal,
                     JRMCoreH.numSep(stat),
                     null,
@@ -362,7 +383,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
 
         stat = JRMCoreH.stat(mc.thePlayer, 5, 1, 5, statVals[5], dbcClient.Race, dbcClient.Class, JRMCoreH.SklLvl_KiBs(1));
-        incrementVal = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 5, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
+        incrementVal = JRMCoreH.statInc(1, 5, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
         bonusOutput = stat - JRMCoreH.stat(mc.thePlayer, 5, 1, 5, statVals[5], dbcClient.Race, dbcClient.Class, 0);
 
 
@@ -370,7 +391,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             .updateDisplay(JRMCoreH.numSep(stat))
             .setTooltip(
                 getDescription(
-                    JRMCoreH.attrNms(JRMCoreH.Pwrtyp, 5),
+                    JRMCoreH.attrNms(1, 5),
                     incrementVal,
                     null,
                     null,
