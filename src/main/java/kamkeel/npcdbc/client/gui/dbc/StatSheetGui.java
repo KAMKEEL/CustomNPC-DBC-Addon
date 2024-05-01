@@ -224,11 +224,13 @@ public class StatSheetGui extends AbstractJRMCGui {
             .updateDisplay(dbcClient.Release);
 
 
-
+        int SPI = JRMCoreH.stat(JRMCoreClient.mc.thePlayer, 5, 1, 5, statVals[5], dbcClient.Race, dbcClient.Class, JRMCoreH.SklLvl_KiBs(JRMCoreH.PlyrSkills, 1));
         int stat = JRMCoreH.stat(mc.thePlayer, 0, 1, 0, statVals[0], dbcClient.Race, dbcClient.Class, 0);
         float incrementVal = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 0, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
         int curAtr = (int)((double)stat * 0.01D * (double)JRMCoreH.curRelease * (double)JRMCoreH.weightPerc(0));
-        int bonusOutput = (int)((double)JRMCoreH.SklLvl(12) * DBCConfig.cnfKFd * (double)statVals[5] * (double)JRMCoreH.curRelease * 0.01D);
+        int bonusOutput = 0;
+        if(!JRMCoreH.PlyrSettingsB(9))
+            bonusOutput = (int)((double)JRMCoreH.SklLvl(12) * 0.0025D * SPI * (double)JRMCoreH.curRelease * 0.01D * DBCConfig.cnfKFd);
         long longValue = (long)curAtr + bonusOutput;
 
         if (longValue > 2147483647L) {
@@ -236,16 +238,29 @@ public class StatSheetGui extends AbstractJRMCGui {
         }
         dynamicLabels.get("melee")
             .updateDisplay(formColor+JRMCoreH.numSep(longValue))
-            .updateTooltip(
-                JRMCoreH.trl("jrmc", JRMCoreH.attrNms(1, 0)),
-                incrementVal,
-                JRMCoreH.numSep(stat)
+            .setTooltip(
+                getDescription(
+                    JRMCoreH.trl("jrmc", JRMCoreH.attrNms(1, 0)),
+                    incrementVal,
+                    JRMCoreH.numSep(stat),
+                    null,
+                    null,
+                    (bonusOutput > 0 ? JRMCoreH.numSep(bonusOutput) : null),
+                    0,
+                    (int) (100.0F - JRMCoreH.weightPerc(0) * 100.0F)
+                )
             );
 
         stat = JRMCoreH.stat(mc.thePlayer, 1, 1, 1, statVals[1], dbcClient.Race, dbcClient.Class, 0);
         incrementVal = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 1, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
         curAtr = (int)((double)stat * 0.01D * (double)JRMCoreH.curRelease * (double)JRMCoreH.weightPerc(1));
-        bonusOutput = (int)((double)JRMCoreH.SklLvl(11) * DBCConfig.cnfKDd * (double)statVals[5] * (double)JRMCoreH.curRelease * 0.01D);
+        bonusOutput = 0;
+        if(!JRMCoreH.PlyrSettingsB(10)){
+            bonusOutput = (int)((double)JRMCoreH.SklLvl(11) *  0.005D * SPI * (double)JRMCoreH.curRelease * 0.01D);
+            if(bonusOutput < 1)
+                bonusOutput = 1;
+            bonusOutput *= DBCConfig.cnfKDd;
+        }
         longValue = (long)curAtr + bonusOutput;
         if (longValue > 2147483647L) {
             longValue = 2147483647L;
