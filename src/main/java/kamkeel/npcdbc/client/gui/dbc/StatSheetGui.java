@@ -105,7 +105,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             .updateTooltip(isMaxLevel ? JRMCoreH.trl("jrmc", "LevelMax") : JRMCoreH.trl("jrmc", "LevelNext", JRMCoreH.cllr + JRMCoreH.attrLvlNext(JRMCoreH.PlyrAttrbts) + JRMCoreH.cldgy));
 
         dynamicLabels.get("tp")
-            .updateDisplay(JRMCoreH.numSep(dbcClient.TP))
+            .updateDisplay(JRMCoreH.numSep(JRMCoreH.curTP))
             .updateTooltip(JRMCoreH.cllr + JRMCoreH.numSep(JRMCoreH.attrCst(JRMCoreH.PlyrAttrbts, 0)) + JRMCoreH.cldgy);
 
 //
@@ -448,8 +448,8 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         dynamicLabels.put("tp", new JRMCoreLabel(
-            "%s: %s",
-            JRMCoreH.trl("jrmc", "RequiredTP"),
+            JRMCoreH.trl("jrmc", "TP")+": %s",
+            JRMCoreH.trl("jrmc", "TrainingPoints")+"\n"+JRMCoreH.trl("jrmc", "RequiredTP"),
             guiWidthOffset+6,
             guiHeightOffset+index*10+6
         ));
