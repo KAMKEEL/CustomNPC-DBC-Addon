@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.dbc;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -120,7 +121,7 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel {
      */
     @Override
     public void func_146159_a(Minecraft client, int mouseX, int mouseY){
-        client.fontRenderer.drawString(display, xPosition, yPosition, 0, ConfigDBCClient.DarkMode);
+        client.fontRenderer.drawString(display, xPosition, yPosition, ColorMode.textColor(), ConfigDBCClient.DarkMode);
 
     }
 
