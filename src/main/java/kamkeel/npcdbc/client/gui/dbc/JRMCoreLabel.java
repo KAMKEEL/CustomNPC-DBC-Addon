@@ -53,6 +53,8 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel {
         this.hoverableAreaHeight = button.height;
         this.displayFormat = displayFormat;
         this.tooltipFormat = tooltipFormat;
+        if(this.tooltipFormat != null)
+            this.tooltipFormat = tooltipFormat.replaceAll("/n", "\n");
         this.setTooltip(name);
     }
 
@@ -67,7 +69,10 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel {
     }
 
     public JRMCoreLabel setTooltip(String text) {
-        this.tooltip = text;
+        if(text != null)
+            this.tooltip = text.replaceAll("/n", "\n");
+        else
+            this.tooltip = null;
         this.tooltipWidth = 0;
         this.tooltipHeight = 0;
         return this;
@@ -143,6 +148,7 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel {
 
             client.getTextureManager().bindTexture(background);
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
+
             if (tooltipWidth <= 0) {
                 if (tooltip.contains("\n"))
                     tooltipWidth = 200;

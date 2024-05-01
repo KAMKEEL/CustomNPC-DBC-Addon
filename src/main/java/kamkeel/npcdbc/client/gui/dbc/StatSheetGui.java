@@ -46,6 +46,24 @@ public class StatSheetGui extends AbstractJRMCGui {
         super(guiReplacementID);
     }
 
+    private String getDescription(String attrName, float inc, String maxRelease, String passive, String charging, String extraOutput, int dmgReduction){
+        String format = JRMCoreH.trl("jrmc", "StatIncreaseDesc");
+        if(maxRelease != null)
+            format += JRMCoreH.trl("jrmc", "StatIncreaseDesc2");
+        if(passive != null)
+            format += JRMCoreH.trl("jrmc", "StatIncreaseDesc3");
+        if(charging != null)
+            format += "\n§8Charging Output §5"+charging+"§8"; //@TODO add localization
+        if(extraOutput != null)
+            format += JRMCoreH.trl("jrmc", "StatIncreaseDesc4");
+        format = String.format(format, attrName, inc, maxRelease, passive, extraOutput);
+
+        if(dmgReduction != 0)
+            format += String.format(JRMCoreH.trl("jrmc", "StatIncreaseDesc5"), "", "", dmgReduction);
+        return format;
+
+    }
+
     @Override
     public void updateScreen(){
 
@@ -178,7 +196,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         }
 
-        upgradeButtons[6].enabled = (!isFused || !allMaxed);
+        upgradeButtons[6].enabled = (!isFused && !allMaxed);
 
         String upgradeDescription = JRMCoreH.trl("jrmc", "UCnam");
         int descriptionWidth = this.mc.fontRenderer.getStringWidth(upgradeDescription+" ");
@@ -205,14 +223,62 @@ public class StatSheetGui extends AbstractJRMCGui {
 
 
         int stat = JRMCoreH.stat(mc.thePlayer, 0, 1, 0, statVals[0], dbcClient.Race, dbcClient.Class, 0);
-        //float inc = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 0, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
+        float incrementVal = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 0, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
         int curAtr = (int)((double)stat * 0.01D * (double)JRMCoreH.curRelease * (double)JRMCoreH.weightPerc(0));
-        long longValue = (long)curAtr + (int)((double)JRMCoreH.SklLvl(12) * DBCConfig.cnfKFd * (double)statVals[5] * (double)JRMCoreH.curRelease * 0.01D);
+        int bonusOutput = (int)((double)JRMCoreH.SklLvl(12) * DBCConfig.cnfKFd * (double)statVals[5] * (double)JRMCoreH.curRelease * 0.01D);
+        long longValue = (long)curAtr + bonusOutput;
+
         if (longValue > 2147483647L) {
             longValue = 2147483647L;
         }
         dynamicLabels.get("melee")
-            .updateDisplay(formColor+JRMCoreH.numSep(longValue));
+            .updateDisplay(formColor+JRMCoreH.numSep(longValue))
+            .updateTooltip(
+                JRMCoreH.trl("jrmc", JRMCoreH.attrNms(1, 0)),
+                incrementVal,
+                JRMCoreH.numSep(stat)
+            );
+
+        stat = JRMCoreH.stat(mc.thePlayer, 1, 1, 1, statVals[1], dbcClient.Race, dbcClient.Class, 0);
+        incrementVal = JRMCoreH.statInc(JRMCoreH.Pwrtyp, 1, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
+        curAtr = (int)((double)stat * 0.01D * (double)JRMCoreH.curRelease * (double)JRMCoreH.weightPerc(1));
+        bonusOutput = (int)((double)JRMCoreH.SklLvl(11) * DBCConfig.cnfKDd * (double)statVals[5] * (double)JRMCoreH.curRelease * 0.01D);
+        longValue = (long)curAtr + bonusOutput;
+        if (longValue > 2147483647L) {
+            longValue = 2147483647L;
+        }
+
+        String passiveDef = JRMCoreH.numSep((int) (longValue * ((float) JRMCoreConfig.cStatPasDef / 100)));
+        String chargingDef = null;
+        if(ClientCache.hasChargingDex)
+            chargingDef = JRMCoreH.numSep((int) (longValue * (ClientCache.chargingDexValues.get((int) dbcClient.Class) / 100)));
+
+        String defDesc = getDescription(
+            JRMCoreH.trl("jrmc", JRMCoreH.attrNms(1, 1)),
+            incrementVal,
+            JRMCoreH.numSep(stat),
+            passiveDef,
+            chargingDef,
+            (bonusOutput > 0 ? JRMCoreH.numSep(bonusOutput) : null),
+            0
+        );
+        dynamicLabels.get("defense")
+            .updateDisplay(formColor+JRMCoreH.numSep(longValue))
+            .setTooltip(defDesc);
+
+
+        dynamicLabels.get("passive")
+            .updateDisplay(formColor+passiveDef)
+            .setTooltip(defDesc);
+
+
+        if(dynamicLabels.get("charging") != null) {
+            dynamicLabels.get("charging")
+                .updateDisplay(formColor + chargingDef)
+                .setTooltip(defDesc);
+        }
+
+
 //
 //        this.dynamicLabels.add(new JRMCoreLabel(
 //            String.format("§8%s: §4%s", JRMCoreH.trl("jrmc", "mleDB"), formColor+JRMCoreH.numSep(longValue)),
@@ -462,7 +528,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         this.dynamicLabels.put("melee", new JRMCoreLabel(
             JRMCoreH.trl("jrmc", "mleDB")+": §4%s",
-            "%s",
+            JRMCoreH.trl("jrmc", "StatIncreaseDesc")+JRMCoreH.trl("jrmc", "StatIncreaseDesc2"),
             guiWidthOffset+133,
             guiHeightOffset+index*10+11
         ));
@@ -477,7 +543,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
         this.dynamicLabels.put("passive", new JRMCoreLabel(
-            JRMCoreH.trl("jrmc", "Passive")+": %s",
+            JRMCoreH.trl("jrmc", "Passive")+": §4%s",
             "%s",
             guiWidthOffset+138,
             guiHeightOffset+index*10+11
@@ -486,7 +552,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         if(ClientCache.hasChargingDex){
             this.dynamicLabels.put("charging", new JRMCoreLabel(
-                "Charging: %s",
+                "Charging: §4%s",
                 "%s",
                 guiWidthOffset+138,
                 guiHeightOffset+index*10+11
