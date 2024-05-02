@@ -403,6 +403,36 @@ public class StatSheetGui extends AbstractJRMCGui {
             );
 //        //@TODO ADD RUNNING/FLYING SPEEDS
 
+        int formID = JRMCoreH.StusEfctsMe(13) ? (JRMCoreH.rc_sai(JRMCoreH.Race) ? JRMCoreH.mstc_sai(JRMCoreH.SklLvlX(1, JRMCoreH.PlyrSkillX) - 1) : (JRMCoreH.rc_arc(JRMCoreH.Race) ? JRMCoreH.mstc_arc() : (JRMCoreH.rc_humNam(JRMCoreH.Race) ? JRMCoreH.mstc_humnam() : 1))) : JRMCoreH.State;
+        incrementVal = JRMCoreH.statInc(1, 7, 100, JRMCoreH.Race, JRMCoreH.Class, 0.0F) * 0.01F;
+        stat = (int)(JRMCoreH.spdFrm(JRMCoreH.PlyrAttrbts[1], JRMCoreH.SklLvl(2, (byte) 1), 100.0F, true, false, formID, JRMCoreH.State2, incrementVal) * 100.0F);
+
+        int speedReduction = (int) (100.0F - JRMCoreH.weightPerc(1) * 100.0F);
+
+        String statDesc = String.format(JRMCoreH.trl("jrmc", "SpDBDesc"), "§2"+stat+"§8", "§c"+JRMCoreH.attrNms(1, 1)+"§8", "§9"+JRMCoreH.trl("dbc", "Dash")+"§8");
+        if(speedReduction > 0)
+            statDesc += "\n" + JRMCoreH.trl("jrmc", "weightreduction") + ": §c"+speedReduction+"% §7";
+
+
+
+        dynamicLabels.get("running")
+            .updateDisplay(stat)
+            .setTooltip(statDesc);
+
+
+        incrementVal = JRMCoreH.statInc(1, 11, 100, JRMCoreH.Race, JRMCoreH.Class, 0.0F) * 0.01F;
+        stat = (int)(JRMCoreH.spdFrm(JRMCoreH.PlyrAttrbts[4], JRMCoreH.SklLvl(3, (byte) 1), 100.0F, true, false, formID, JRMCoreH.State2, incrementVal) * 100.0F);
+
+
+        statDesc = String.format(JRMCoreH.trl("jrmc", "FSDBDesc"), "§2"+stat+"§8", "§c"+JRMCoreH.attrNms(1, 4)+"§8", "§9"+JRMCoreH.trl("dbc", "Fly")+"§8");
+        if(speedReduction > 0)
+            statDesc += "\n" + JRMCoreH.trl("jrmc", "weightreduction") + ": §c"+speedReduction+"% §7";
+
+
+        dynamicLabels.get("flying")
+            .updateDisplay(stat)
+            .setTooltip(statDesc);
+
     }
 
 
