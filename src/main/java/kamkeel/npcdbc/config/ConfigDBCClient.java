@@ -22,7 +22,7 @@ public class ConfigDBCClient
     public static Property EnhancedGuiProperty;
     public static boolean EnhancedGui = true;
     public static Property DarkModeProperty;
-    public static boolean DarkMode = false;
+    public static boolean DarkMode = true;
 
     public static void init(File configFile)
     {
@@ -38,8 +38,8 @@ public class ConfigDBCClient
 
             EnhancedGuiProperty = config.get(GUI, "Enable Enhanced Gui", true, "Uses DBC Addons GUI for Coloring and Manipulation");
             EnhancedGui = EnhancedGuiProperty.getBoolean(true);
-            DarkModeProperty = config.get(GUI, "Dark Mode", false, "Uses Dark Mode GUI in Enhanced Menu");
-            DarkMode = DarkModeProperty.getBoolean(false);
+            DarkModeProperty = config.get(GUI, "Dark Mode", true, "Uses Dark Mode GUI in Enhanced Menu");
+            DarkMode = DarkModeProperty.getBoolean(true);
         }
         catch (Exception e)
         {

@@ -625,14 +625,14 @@ public class StatSheetGui extends AbstractJRMCGui {
         ));
         index++;
         this.dynamicLabels.put("running", new JRMCoreLabel(
-            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + JRMCoreH.trl("jrmc", "SpDB")+": §4%s",
+            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + JRMCoreH.trl("jrmc", "SpDB")+": §4%s%%",
             "%s",
             guiWidthOffset+133,
             guiHeightOffset+index*10+11
         ));
         index++;
         this.dynamicLabels.put("flying", new JRMCoreLabel(
-            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + JRMCoreH.trl("jrmc", "FSDB")+": §4%s",
+            (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + JRMCoreH.trl("jrmc", "FSDB")+": §4%s%%",
             "%s",
             guiWidthOffset+133,
             guiHeightOffset+index*10+11
@@ -651,10 +651,12 @@ public class StatSheetGui extends AbstractJRMCGui {
         if(id == 303030303){
             ConfigDBCClient.EnhancedGui = false;
             ConfigDBCClient.EnhancedGuiProperty.set(false);
+            ConfigDBCClient.config.save();
         }
         if(id == 404040404){
             ConfigDBCClient.DarkMode = !ConfigDBCClient.DarkMode;
             ConfigDBCClient.DarkModeProperty.set(ConfigDBCClient.DarkMode);
+            ConfigDBCClient.config.save();
             initGui();
         }
         if(id >= 0 && id <= 5){
