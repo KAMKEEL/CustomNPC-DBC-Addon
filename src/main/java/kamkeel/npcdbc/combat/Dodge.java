@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.combatmode;
+package kamkeel.npcdbc.combat;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;

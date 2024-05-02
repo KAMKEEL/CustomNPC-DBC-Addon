@@ -1,7 +1,7 @@
 package kamkeel.npcdbc;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import kamkeel.npcdbc.combatmode.Dodge;
+import kamkeel.npcdbc.combat.Dodge;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
