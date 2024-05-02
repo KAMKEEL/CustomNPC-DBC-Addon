@@ -141,24 +141,15 @@ public class StatSheetGui extends AbstractJRMCGui {
             DecimalFormat formatter = new DecimalFormat("#.##");
 
             float curLevel = 0;
+
             //Custom form handling
             if(dataClient != null && dataClient.isInCustomForm()){
                 curLevel = dataClient.getFormLevel(dataClient.currentForm);
-                formTooltip = Utility.removeBoldColorCode(formName) + " §8Mastery Lvl: §4" + formatter.format(curLevel);
-
             //DBC Form handling
             }else{
-                boolean statusEffectForm = isUI || isGoD || isMystic;
-                if(statusEffectForm) {
-                    //Do stuff
-
-
-                }else{
-                    //Normal state stuff
-                }
-                formTooltip = formName + " §8Mastery Lvl: §4" + formatter.format(curLevel);
-
+                curLevel = Float.parseFloat(JRMCoreH.getFormMasteryData().split(",")[1]);
             }
+            formTooltip = Utility.removeBoldColorCode(formName) + " §8Mastery Lvl: §4" + formatter.format(curLevel);
 
             if(isInKaioken){
                 int kaiokenID = JRMCoreH.getFormID("Kaioken", JRMCoreH.Race);
