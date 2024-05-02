@@ -36,6 +36,11 @@ public class StatSheetGui extends AbstractJRMCGui {
 
     private static final String DARKMODE_ACCENT = "§7";
 
+    private static final int VANITY_UPDATE_COOLDOWN = 2000;
+    private static int VANITY_TIMER = 0;
+
+    private GuiButton UPDATE_VANITY_BUTTON;
+
     public StatSheetGui() {
         super(10);
     }
@@ -76,11 +81,18 @@ public class StatSheetGui extends AbstractJRMCGui {
         if(dbcClient == null || dataClient == null) {
             return;
         }
+
         if(!ConfigDBCClient.EnhancedGui || dbcClient.Accept == 0 || dbcClient.Powertype != 1){
             JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
             ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(10);
             FMLCommonHandler.instance().showGuiScreen(DBCScreen);
             return;
+        }
+
+        VANITY_TIMER++;
+        if(!JRMCoreEH.aw && JRMCoreEH.dt && VANITY_TIMER >= VANITY_UPDATE_COOLDOWN && UPDATE_VANITY_BUTTON != null){
+            VANITY_TIMER = 0;
+            UPDATE_VANITY_BUTTON.enabled = true;
         }
 
         String formColor = "";
@@ -475,14 +487,14 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         String dark = ConfigDBCClient.DarkMode ? "Light" : "Dark";
         int button2Width = this.fontRendererObj.getStringWidth(dark)+10;
-        this.buttonList.add(new JRMCoreGuiButtons00(404040404, guiWidthOffset + 260, guiHeightOffset+5, button2Width + 8, 20, dark, 0));
+        this.buttonList.add(new JRMCoreGuiButtons00(404040404, guiWidthOffset + 260, height/2 + 34, button2Width + 8, 20, dark, 0));
 
 
         //Difficulty button
         GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.DIFFICULTY;
         String translation = ref.getTranslation();
         int stringWidth = fontRendererObj.getStringWidth(translation)+8;
-        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 0));
+        this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), guiWidthOffset + 260, height/2 + 55, stringWidth, 20, translation, 0));
 
         int index = 0;
 
@@ -684,6 +696,16 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
 
+        if(JRMCoreEH.dt){
+            String name = "Update vanity";
+            int width = this.fontRendererObj.getStringWidth(name);
+            UPDATE_VANITY_BUTTON = new JRMCoreGuiButtons00(100, guiWidthOffset + 260, guiHeightOffset + 3, width + 8, 20, name, 0);
+            buttonList.add(UPDATE_VANITY_BUTTON);
+
+            name = (JRMCoreEH.gk ? "Hide" : "Show") + " own vanity";
+            width = this.fontRendererObj.getStringWidth(name);
+            buttonList.add(new JRMCoreGuiButtons00(101, guiWidthOffset + 260, guiHeightOffset + 24, width + 8, 20, name, 0));
+        }
 
         updateScreen();
     }
@@ -712,6 +734,18 @@ public class StatSheetGui extends AbstractJRMCGui {
             this.upgradeCounter++;
             if(this.upgradeCounter > 3)
                 this.upgradeCounter = 0;
+        }
+
+        if(id == 100){
+            JRMCoreEH.aw = true;
+            VANITY_TIMER = 0;
+            button.enabled = false;
+        }
+        if(id == 101){
+            JRMCoreEH.gk = !JRMCoreEH.gk;
+            String name = (JRMCoreEH.gk ? "Hide" : "Show") + " own vanity";
+            button.displayString = name;
+            button.width = fontRendererObj.getStringWidth(name)+8;
         }
 
     }
