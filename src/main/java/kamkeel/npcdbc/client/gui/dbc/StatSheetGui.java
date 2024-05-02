@@ -6,9 +6,7 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.ClientCache;
-import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -16,14 +14,14 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IDBCGuiScreen;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import static JinRyuu.JRMCore.JRMCoreGuiScreen.kqGW3Z;
 
@@ -33,11 +31,8 @@ public class StatSheetGui extends AbstractJRMCGui {
     private static final ResourceLocation icons = new ResourceLocation("jinryuumodscore:icons.png");
     private static final ResourceLocation icons3 = new ResourceLocation("jinryuumodscore:icons3.png");
     private int upgradeCounter;
-
-    private final HashMap<String, GuiLabel> labelMap = new HashMap<>();
-
     private GuiIcon genderIcon;
-    private GuiButton[] upgradeButtons = new GuiButton[7];
+    private final GuiButton[] upgradeButtons = new GuiButton[7];
 
     private static final String DARKMODE_ACCENT = "§7";
 
@@ -102,6 +97,8 @@ public class StatSheetGui extends AbstractJRMCGui {
         boolean isRose = dbcClient.containsSE(17);
         boolean isMystic = dbcClient.containsSE(13);
 
+        boolean isInKaioken = JRMCoreH.StusEfctsMe(5);
+
         if(isMajin && isLegendary && isLegendaryEnabled){
             formColor = "§5";
         }else if(isMajin){
@@ -116,7 +113,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         }
 
         if(customForm != null){
-            formName = customForm.getMenuName();
+            formName = Utility.removeBoldColorCode(customForm.getMenuName());
             formColor = dataClient.getFormColorCode(customForm);
         }else {
             formName = JRMCoreH.trl("jrmc", JRMCoreH.getTransformationName(JRMCoreH.Race, JRMCoreH.isPowerTypeChakra() ? 0 : JRMCoreH.State, isRose, isMystic, isUI, isGoD));
@@ -139,8 +136,37 @@ public class StatSheetGui extends AbstractJRMCGui {
         formName = formColor + formName;
         formColor = (formColor.equals("§4") ? "" : formColor); //Makes stats pop out when your form color is the same as the default stat color
 
+        //Form Mastery
         if(JGConfigDBCFormMastery.FM_Enabled){
-            formTooltip = "TEST"; //@TODO ADD MASTERY TOOLTIPS
+            DecimalFormat formatter = new DecimalFormat("#.##");
+
+            float curLevel = 0;
+            //Custom form handling
+            if(dataClient != null && dataClient.isInCustomForm()){
+                curLevel = dataClient.getFormLevel(dataClient.currentForm);
+                formTooltip = Utility.removeBoldColorCode(formName) + " §8Mastery Lvl: §4" + formatter.format(curLevel);
+
+            //DBC Form handling
+            }else{
+                boolean statusEffectForm = isUI || isGoD || isMystic;
+                if(statusEffectForm) {
+                    //Do stuff
+
+
+                }else{
+                    //Normal state stuff
+                }
+                formTooltip = formName + " §8Mastery Lvl: §4" + formatter.format(curLevel);
+
+            }
+
+            if(isInKaioken){
+                int kaiokenID = JRMCoreH.getFormID("Kaioken", JRMCoreH.Race);
+                double kaiokenLevel = JRMCoreH.getFormMasteryValue(JRMCoreClient.mc.thePlayer, kaiokenID);
+                String kaiokenString = "\n" + JRMCoreH.cldgy + "§cKaioken §8Mastery Lvl: " + JRMCoreH.cldr + formatter.format(kaiokenLevel);
+
+                formTooltip += kaiokenString;
+            }
         }
 
         boolean isMaxLevel = JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts) >= JRMCoreH.getPlayerLevel(kqGW3Z(false) * 6);
@@ -177,9 +203,8 @@ public class StatSheetGui extends AbstractJRMCGui {
         int[] statVals = new int[6];
         for(int i = 0; i < 6; i++){
             boolean isMaxed = !(JRMCoreGuiScreen.kqGW3Z(isFused) > JRMCoreH.PlyrAttrbts[i]);
-            boolean isButtonEnabled = !isFused && !isMaxed && canAffordUpgrade;
 
-            upgradeButtons[i].enabled = isButtonEnabled;
+            upgradeButtons[i].enabled = !isFused && !isMaxed && canAffordUpgrade;
 
             String upgradeTooltip = null;
 
@@ -198,7 +223,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             int modifiedStatVal = originalStatVal;
 
             if(isSTRDEXWIL){
-                modifiedStatVal = JRMCoreH.getPlayerAttribute(JRMCoreClient.mc.thePlayer, JRMCoreH.PlyrAttrbts, i, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.PlyrSkillX, JRMCoreH.curRelease, JRMCoreH.getArcRsrv(), JRMCoreH.StusEfctsMe(14), JRMCoreH.StusEfctsMe(12), JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20), 1, JRMCoreH.PlyrSkills, isFused, JRMCoreH.getMajinAbsorption());;
+                modifiedStatVal = JRMCoreH.getPlayerAttribute(JRMCoreClient.mc.thePlayer, JRMCoreH.PlyrAttrbts, i, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.PlyrSkillX, JRMCoreH.curRelease, JRMCoreH.getArcRsrv(), JRMCoreH.StusEfctsMe(14), JRMCoreH.StusEfctsMe(12), JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20), 1, JRMCoreH.PlyrSkills, isFused, JRMCoreH.getMajinAbsorption());
             }
             statVals[i] = modifiedStatVal;
 
@@ -469,8 +494,6 @@ public class StatSheetGui extends AbstractJRMCGui {
         this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), width/2 + 90 - stringWidth / 2, height/2 + 55, stringWidth, 20, translation, 0));
 
         int index = 0;
-
-        String jrmcID = "jinryuumodscore:";
 
         dynamicLabels.put("level", new JRMCoreLabel(
             JRMCoreH.trl("jrmc", "Level")+": "+ (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "")+ "%s",
