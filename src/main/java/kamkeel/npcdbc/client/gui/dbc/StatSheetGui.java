@@ -97,7 +97,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
         String formColor = "";
         String formName;
-        String formTooltip = null; //@TODO Add mastery tooltips
+        String formTooltip = null;
         Form customForm = dbcClient.getForm();
 
         boolean isLegendary = dbcClient.containsSE(14);
@@ -429,7 +429,6 @@ public class StatSheetGui extends AbstractJRMCGui {
                     0
                 )
             );
-//        //@TODO ADD RUNNING/FLYING SPEEDS
 
         int formID = JRMCoreH.StusEfctsMe(13) ? (JRMCoreH.rc_sai(JRMCoreH.Race) ? JRMCoreH.mstc_sai(JRMCoreH.SklLvlX(1, JRMCoreH.PlyrSkillX) - 1) : (JRMCoreH.rc_arc(JRMCoreH.Race) ? JRMCoreH.mstc_arc() : (JRMCoreH.rc_humNam(JRMCoreH.Race) ? JRMCoreH.mstc_humnam() : 1))) : JRMCoreH.State;
         incrementVal = JRMCoreH.statInc(1, 7, 100, JRMCoreH.Race, JRMCoreH.Class, 0.0F) * 0.01F;
