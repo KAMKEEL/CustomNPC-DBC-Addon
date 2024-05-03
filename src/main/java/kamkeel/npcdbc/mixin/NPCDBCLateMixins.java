@@ -34,7 +34,6 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
 
             mixins.add("dbc.recolor.MixinJRMCoreGuiButtons");
             mixins.add("dbc.recolor.MixinJRMCoreGuiScreenColor");
-            mixins.add("dbc.recolor.MixinJRMText");
         }
         mixins.add("npc.MixinDBCStats");
         mixins.add("npc.MixinPlayerData");

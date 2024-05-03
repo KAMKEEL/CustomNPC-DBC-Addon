@@ -1,33 +1,18 @@
 package kamkeel.npcdbc.mixin.impl.dbc.recolor;
 
-import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreGuiButtons00;
-import JinRyuu.JRMCore.JRMCoreGuiScreen;
-import JinRyuu.JRMCore.JRMCoreH;
-import cpw.mods.fml.common.FMLCommonHandler;
-import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
+import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.config.ConfigDBCClient;
-import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.constants.DBCScriptType;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.mixin.IDBCGuiScreen;
-import kamkeel.npcdbc.util.PlayerDataUtil;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.text.DecimalFormat;
-import java.util.List;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(value = JRMCoreGuiButtons00.class, remap = false)
 
@@ -49,6 +34,15 @@ public abstract class MixinJRMCoreGuiButtons extends GuiButton {
         if(ConfigDBCClient.EnhancedGui){
             if(col == 0)
                 col = 16777215;
+        }
+    }
+
+    @Redirect(method = "drawButton", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreGuiButtons00;drawCenteredString(Lnet/minecraft/client/gui/FontRenderer;Ljava/lang/String;III)V", remap = true))
+    public void changeButtonText(JRMCoreGuiButtons00 instance, FontRenderer fontRenderer, String s, int x, int y, int originalColor){
+        if(originalColor == 14737632 && ConfigDBCClient.EnhancedGui && !ConfigDBCClient.DarkMode){
+            fontRenderer.drawString(s, x - fontRenderer.getStringWidth(s) / 2, y, ColorMode.LIGHTMODE_TEXT_ALTERNATE, false);
+        } else {
+            fontRenderer.drawString(s, x - fontRenderer.getStringWidth(s) / 2, y, originalColor, false);
         }
     }
 }

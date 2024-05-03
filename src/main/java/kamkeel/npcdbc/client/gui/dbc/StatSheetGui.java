@@ -249,7 +249,7 @@ public class StatSheetGui extends AbstractJRMCGui {
                 if(JGConfigDBCFormMastery.FM_Enabled && isSTRDEXWIL){
                     float masteryMulti = JRMCoreH.round((float) getFormMasteryMulti(), 2);
                     if(masteryMulti > 0)
-                        attributeDesc += "\n> Multi: §4x" +   JRMCoreH.round(formMulti, 2) + "§8 (Form) x §4x" + masteryMulti + "§8 (Mastery)";
+                        attributeDesc += "\n> Multi: §4x" +   JRMCoreH.round(formMulti, 2) + "§8 (Form) * §4x" + masteryMulti + "§8 (Mastery)";
                 }
 
                 if((JRMCoreH.round(multi, 2) != 1))
