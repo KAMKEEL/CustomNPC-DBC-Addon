@@ -13,6 +13,7 @@ import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.api.handler.data.ISound;
 import noppes.npcs.scripted.NpcAPI;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -156,6 +157,22 @@ public class Utility {
                 return s.substring(0, i) + s.substring(i + 2);
             }
         }
+        return s;
+    }
+
+    public static HashMap<String, String> darkCodes = new HashMap<>();
+    public static String getDarkColorCode(String s) {
+        if(darkCodes.isEmpty()){
+            darkCodes.put("§a", "§2");
+            darkCodes.put("§b", "§9");
+            darkCodes.put("§c", "§c");
+            darkCodes.put("§e", "§6");
+            darkCodes.put("§7", "§8");
+            darkCodes.put("§d", "§5");
+            darkCodes.put("§f", "§0");
+        }
+        if(darkCodes.containsKey(s))
+            return darkCodes.get(s);
         return s;
     }
 }

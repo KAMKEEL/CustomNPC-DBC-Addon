@@ -3,12 +3,15 @@ package kamkeel.npcdbc.client.gui.dbc;
 import JinRyuu.DragonBC.common.DBCConfig;
 import JinRyuu.JRMCore.*;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.constants.DBCAttribute;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -24,6 +27,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 
 import static JinRyuu.JRMCore.JRMCoreGuiScreen.kqGW3Z;
+import static JinRyuu.JRMCore.JRMCoreH.*;
 
 @SideOnly(Side.CLIENT)
 public class StatSheetGui extends AbstractJRMCGui {
@@ -38,6 +42,7 @@ public class StatSheetGui extends AbstractJRMCGui {
 
     private static final int VANITY_UPDATE_COOLDOWN = 2000;
     private static int VANITY_TIMER = 0;
+    private boolean hasWeight = false;
 
     private GuiButton UPDATE_VANITY_BUTTON;
 
@@ -72,12 +77,8 @@ public class StatSheetGui extends AbstractJRMCGui {
 
     @Override
     public void updateScreen(){
-
-
         DBCData dbcClient = DBCData.getClient();
         PlayerDBCInfo dataClient = PlayerDataUtil.getClientDBCInfo();
-
-
         if(dbcClient == null || dataClient == null) {
             return;
         }
@@ -147,6 +148,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         }
         formName = formColor + formName;
         formColor = (formColor.equals("§4") ? "" : formColor); //Makes stats pop out when your form color is the same as the default stat color
+        String darkFormColor = Utility.getDarkColorCode(formColor);
 
         //Form Mastery
         if(JGConfigDBCFormMastery.FM_Enabled){
@@ -204,6 +206,12 @@ public class StatSheetGui extends AbstractJRMCGui {
         boolean allMaxed = JRMCoreH.acm(JRMCoreH.PlyrAttrbts);
 
         int[] statVals = new int[6];
+        if ((int)JRMCoreH.WeightOn > 0) {
+            hasWeight = true;
+//            wDex = JRMCoreH.weightPerc(1);
+//            wStr = JRMCoreH.weightPerc(0);
+        }
+
         for(int i = 0; i < 6; i++){
             boolean isMaxed = !(JRMCoreGuiScreen.kqGW3Z(isFused) > JRMCoreH.PlyrAttrbts[i]);
 
@@ -224,24 +232,34 @@ public class StatSheetGui extends AbstractJRMCGui {
 
             int originalStatVal = JRMCoreH.PlyrAttrbts[i];
             int modifiedStatVal = originalStatVal;
-
             if(isSTRDEXWIL){
                 modifiedStatVal = JRMCoreH.getPlayerAttribute(JRMCoreClient.mc.thePlayer, JRMCoreH.PlyrAttrbts, i, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.PlyrSkillX, JRMCoreH.curRelease, JRMCoreH.getArcRsrv(), JRMCoreH.StusEfctsMe(14), JRMCoreH.StusEfctsMe(12), JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20), 1, JRMCoreH.PlyrSkills, isFused, JRMCoreH.getMajinAbsorption());
             }
             statVals[i] = modifiedStatVal;
 
             String statDisplay = JRMCoreH.numSep(modifiedStatVal);
-            String attributeDesc = JRMCoreH.attrNms(1, i) + ", "+ JRMCoreH.trl("jrmc", JRMCoreH.attrDsc[1][i]);
+            String attributeDesc = "§9" + JRMCoreH.attrNms(1, i) + "§8: "+ JRMCoreH.trl("jrmc", JRMCoreH.attrDsc[1][i]);
 
+            float multi = (float) modifiedStatVal / originalStatVal;
             if(originalStatVal != modifiedStatVal){
-                attributeDesc = JRMCoreH.trl("jrmc", "Modified") +": §4" + formColor+statDisplay+"\n§8"
-                    + JRMCoreH.trl("jrmc", "Original") +": §4" + JRMCoreH.numSep(originalStatVal)+"\n§8"
-                    +attributeDesc;
-                float multi = (float) modifiedStatVal / originalStatVal;
-                if((JRMCoreH.round(multi, 1) != 1))
-                    statDisplay += " §4x"+JRMCoreH.round(multi, 1);
+                attributeDesc += "\n" + JRMCoreH.trl("jrmc", "Modified") +": §4" + darkFormColor+statDisplay+"\n§8"
+                    + JRMCoreH.trl("jrmc", "Original") +": §4" + JRMCoreH.numSep(originalStatVal)+"§8";
+
+                if(JGConfigDBCFormMastery.FM_Enabled && isSTRDEXWIL){
+                    double formMulti = customForm != null ? customForm.getAttributeMulti(i) : DBCFormMulti(i);
+                    double formFlat = DBCFormFlat(i);
+                    float masteryMulti = JRMCoreH.round(multi - (float) formMulti, 2);
+                    if(masteryMulti > 0)
+                        attributeDesc += "\n  Form: " +   JRMCoreH.round(formMulti, 2) + " Mastery: " + masteryMulti ;
+                }
+
+                if((JRMCoreH.round(multi, 2) != 1))
+                    statDisplay += " §4x"+JRMCoreH.round(multi, 2);
             }
-            attributeDesc += "\n  §6@TODO Add Bonus attributes";
+            if(i == DBCAttribute.Strength || i == DBCAttribute.Dexterity)
+                attributeDesc += (hasWeight ? "\n" + JRMCoreH.trl("jrmc", "trainingweightworn") + ": §c" + (int)JRMCoreH.WeightOn + "§8": "");
+            attributeDesc += "\nRace-Class Multiplier: " + JGConfigRaces.CONFIG_RACES_ATTRIBUTE_MULTI[JRMCoreH.Race][JRMCoreH.Class][i];
+            attributeDesc += getAttributeBonusDescription(i);
 
             dynamicLabels.get("attr_"+i)
                 .updateDisplay((isSTRDEXWIL ? formColor : "")+statDisplay)
@@ -796,5 +814,63 @@ public class StatSheetGui extends AbstractJRMCGui {
 
     protected void drawStatusEffects(int x, int y){
         JRMCoreClient.bars.showSE(x, y, 0, 0);
+    }
+
+    public String getAttributeBonusDescription(int attributeID) {
+        if (JRMCoreConfig.JRMCABonusOn) {
+            String description = "\nBonus Attributes:";
+            String[] bonuses = JRMCoreH.getBonusAttributes(attributeID).split("\\|");
+            String[] var5 = bonuses;
+            int var6 = bonuses.length;
+
+            for(int var7 = 0; var7 < var6; ++var7) {
+                String bonus = var5[var7];
+                if (bonus.equals("n")) {
+                    return "";
+                } else {
+                    description = description + "\n " + bonus.replace(";", ": ");
+                }
+            }
+
+            return description;
+        } else {
+            return "";
+        }
+    }
+
+    public double DBCFormMulti(int atr){
+        switch (JRMCoreH.Race){
+            case 0:
+                return ev_oob(TransHmStBnP, JRMCoreH.State, atr);
+            case 1:
+                return ev_oob(TransSaiStBnP, JRMCoreH.State, atr);
+            case 2:
+                return ev_oob(TransHalfSaiStBnP, JRMCoreH.State, atr);
+            case 3:
+                return ev_oob(TransNaStBnP, JRMCoreH.State, atr);
+            case 4:
+                return ev_oob(TransFrStBnP, JRMCoreH.State, atr);
+            case 5:
+                return ev_oob(TransMaStBnP, JRMCoreH.State, atr);
+        }
+        return 0;
+    }
+
+    public double DBCFormFlat(int atr){
+        switch (JRMCoreH.Race){
+            case 0:
+                return ev_oob(TransHmStBnF, JRMCoreH.State, atr);
+            case 1:
+                return ev_oob(TransSaiStBnF, JRMCoreH.State, atr);
+            case 2:
+                return ev_oob(TransHalfSaiStBnF, JRMCoreH.State, atr);
+            case 3:
+                return ev_oob(TransNaStBnF, JRMCoreH.State, atr);
+            case 4:
+                return ev_oob(TransFrStBnF, JRMCoreH.State, atr);
+            case 5:
+                return ev_oob(TransMaStBnF, JRMCoreH.State, atr);
+        }
+        return 0;
     }
 }
