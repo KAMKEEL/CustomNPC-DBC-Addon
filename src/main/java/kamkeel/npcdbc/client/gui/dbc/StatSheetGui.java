@@ -126,7 +126,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         }
 
         if(customForm != null){
-            formName = Utility.removeBoldColorCode(customForm.getMenuName());
+            formName = Utility.removeColorCodes(customForm.getMenuName());
             formColor = dataClient.getFormColorCode(customForm);
         }else {
             formName = JRMCoreH.trl("jrmc", JRMCoreH.getTransformationName(JRMCoreH.Race, JRMCoreH.isPowerTypeChakra() ? 0 : JRMCoreH.State, isRose, isMystic, isUI, isGoD));
@@ -146,9 +146,10 @@ public class StatSheetGui extends AbstractJRMCGui {
                     formColor = "§5";
             }
         }
-        formName = formColor + formName;
         formColor = (formColor.equals("§4") ? "" : formColor); //Makes stats pop out when your form color is the same as the default stat color
         String darkFormColor = Utility.getDarkColorCode(formColor);
+        if(!ConfigDBCClient.DarkMode)
+            formColor = darkFormColor;
 
         //Form Mastery
         if(JGConfigDBCFormMastery.FM_Enabled){

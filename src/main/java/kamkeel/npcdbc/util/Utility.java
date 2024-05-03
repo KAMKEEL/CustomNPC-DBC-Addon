@@ -160,6 +160,30 @@ public class Utility {
         return s;
     }
 
+    public static String removeColorCodes(String s) {
+        StringBuilder sb = new StringBuilder();
+        boolean skipNext = false;
+
+        for (int i = 0; i < s.length(); i++) {
+            if (skipNext) {
+                skipNext = false;
+                continue;
+            }
+
+            if (s.charAt(i) == '\u00A7' && i + 1 < s.length()) {
+                char code = s.charAt(i + 1);
+                if (Character.isDigit(code) || "abcdefklmnor".indexOf(code) != -1) {
+                    skipNext = true;
+                    continue;
+                }
+            }
+
+            sb.append(s.charAt(i));
+        }
+
+        return sb.toString();
+    }
+
     public static HashMap<String, String> darkCodes = new HashMap<>();
     public static String getDarkColorCode(String s) {
         if(darkCodes.isEmpty()){
