@@ -44,25 +44,19 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
         drawBackground();
 
         super.drawScreen(mouseX, mouseY, partialTicks);
-        for (Gui element : this.dynamicLabels.values()) {
-            if(element instanceof GuiButton)
-                ((GuiButton) element).drawButton(this.mc, mouseX, mouseY);
-            if(element instanceof JRMCoreLabel)
-                ((JRMCoreLabel) element).drawLabel(this.mc, mouseX, mouseY);
+        for (JRMCoreLabel label: this.dynamicLabels.values()) {
+            label.drawLabel(this.mc, mouseX, mouseY);
         }
-
         for(JRMCoreLabel label : this.myCustomLabels){
-                label.drawLabel(this.mc, mouseX, mouseY);
+            label.drawLabel(this.mc, mouseX, mouseY);
         }
 
         //Going over these twice specifically because of wrong layering
-        for(HoverableLabel label : this.myCustomLabels){
-            if(label instanceof HoverableLabel)
-                label.hover(this.mc, mouseX, mouseY);
+        for(JRMCoreLabel label : this.myCustomLabels){
+            label.hover(this.mc, mouseX, mouseY);
         }
-        for (Gui element : this.dynamicLabels.values()) {
-            if(element instanceof HoverableLabel)
-                ((HoverableLabel) element).hover(this.mc, mouseX, mouseY);
+        for (JRMCoreLabel label:  this.dynamicLabels.values()) {
+            label.hover(this.mc, mouseX, mouseY);
         }
     }
 
