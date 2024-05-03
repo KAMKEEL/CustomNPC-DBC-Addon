@@ -239,18 +239,16 @@ public class StatSheetGui extends AbstractJRMCGui {
 
             String statDisplay = JRMCoreH.numSep(modifiedStatVal);
             String attributeDesc = "§9" + JRMCoreH.attrNms(1, i) + "§8: "+ JRMCoreH.trl("jrmc", JRMCoreH.attrDsc[1][i]);
-
-            float multi = (float) modifiedStatVal / originalStatVal;
             if(originalStatVal != modifiedStatVal){
                 attributeDesc += "\n" + JRMCoreH.trl("jrmc", "Modified") +": §4" + darkFormColor+statDisplay+"\n§8"
                     + JRMCoreH.trl("jrmc", "Original") +": §4" + JRMCoreH.numSep(originalStatVal)+"§8";
 
+                float multi = (float) modifiedStatVal / originalStatVal;
+                float formMulti = customForm != null ? customForm.getAttributeMulti(i) : (float) DBCFormMulti(i);
                 if(JGConfigDBCFormMastery.FM_Enabled && isSTRDEXWIL){
-                    double formMulti = customForm != null ? customForm.getAttributeMulti(i) : DBCFormMulti(i);
-                    double formFlat = DBCFormFlat(i);
-                    float masteryMulti = JRMCoreH.round(multi - (float) formMulti, 2);
+                    float masteryMulti = JRMCoreH.round((float) getFormMasteryMulti(), 2);
                     if(masteryMulti > 0)
-                        attributeDesc += "\n  Form: " +   JRMCoreH.round(formMulti, 2) + " Mastery: " + masteryMulti ;
+                        attributeDesc += "\n> Multi: §4x" +   JRMCoreH.round(formMulti, 2) + "§8 (Form) x §4x" + masteryMulti + "§8 (Mastery)";
                 }
 
                 if((JRMCoreH.round(multi, 2) != 1))
@@ -872,5 +870,14 @@ public class StatSheetGui extends AbstractJRMCGui {
                 return ev_oob(TransMaStBnF, JRMCoreH.State, atr);
         }
         return 0;
+    }
+
+    public double getFormMasteryMulti(){
+        Form form = DBCData.getClient().getForm();
+        PlayerDBCInfo dataClient = PlayerDataUtil.getClientDBCInfo();
+        if(form != null && dataClient != null){
+            return form.mastery.calculateMulti("attribute", dataClient.formLevels.get(form.id));
+        }
+        return JRMCoreH.getFormMasteryAttributeMulti(JRMCoreClient.mc.thePlayer, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20));
     }
 }
