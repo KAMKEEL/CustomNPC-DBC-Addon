@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-public class GuiIcon extends GuiLabel {
+public class GuiIcon extends JRMCoreLabel {
     private final ResourceLocation texture;
     public int xPosition;
     public final int yPosition;
@@ -27,13 +27,12 @@ public class GuiIcon extends GuiLabel {
 
 
     /**
-     * The draw function for the button
+     * The draw function for the label
      * @param client
      * @param mouseX
      * @param mouseY
      */
-    @Override
-    public void func_146159_a(Minecraft client, int mouseX, int mouseY){
+    public void drawLabel(Minecraft client, int mouseX, int mouseY){
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         client.getTextureManager().bindTexture(texture);
         this.drawTexturedModalRect(xPosition, yPosition, textureX, textureY, width, height);

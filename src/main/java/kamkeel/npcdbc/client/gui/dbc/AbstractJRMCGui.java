@@ -21,6 +21,8 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
     // private static final ResourceLocation menuTexture = new ResourceLocation("jinryuumodscore:gui2.png");
     protected ResourceLocation menuTexture = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/gui_dark.png");
     protected HashMap<String, JRMCoreLabel> dynamicLabels = new HashMap<>();
+
+    protected ArrayList<JRMCoreLabel> myCustomLabels = new ArrayList<>();
     protected final int guiID;
     protected int menuImageWidth = 256;
     protected int menuImageHeight = 159;
@@ -43,16 +45,20 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
 
         super.drawScreen(mouseX, mouseY, partialTicks);
         for (Gui element : this.dynamicLabels.values()) {
-            if(element instanceof GuiLabel)
-                ((GuiLabel) element).func_146159_a(this.mc, mouseX, mouseY);
-            else if(element instanceof GuiButton)
+            if(element instanceof GuiButton)
                 ((GuiButton) element).drawButton(this.mc, mouseX, mouseY);
+            if(element instanceof JRMCoreLabel)
+                ((JRMCoreLabel) element).drawLabel(this.mc, mouseX, mouseY);
+        }
+
+        for(JRMCoreLabel label : this.myCustomLabels){
+                label.drawLabel(this.mc, mouseX, mouseY);
         }
 
         //Going over these twice specifically because of wrong layering
-        for(Object label : this.labelList){
+        for(HoverableLabel label : this.myCustomLabels){
             if(label instanceof HoverableLabel)
-                ((HoverableLabel) label).hover(this.mc, mouseX, mouseY);
+                label.hover(this.mc, mouseX, mouseY);
         }
         for (Gui element : this.dynamicLabels.values()) {
             if(element instanceof HoverableLabel)
@@ -81,6 +87,7 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
 
         this.buttonList.clear();
         this.labelList.clear();
+        this.myCustomLabels.clear();
         this.dynamicLabels.clear();
 
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
@@ -146,7 +153,7 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
             String name = ref.getTranslation();
             GuiButton button = new JRMCoreGuiButtons03(ref.getButtonId(), guiWidthOffset+offsetX, guiHeightOffset+menuImageHeight+2+offsetY, name.substring(0, 2).toUpperCase(), 0, 8046079, ref.getIconID());
             buttonList.add(button);
-            this.labelList.add(new JRMCoreLabel(button, name));
+            this.myCustomLabels.add(new JRMCoreLabel(button, name));
             offsetY -= 20;
         }
     }
@@ -180,7 +187,7 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
             //String name = "Server Shop";
             GuiButton button = new JRMCoreGuiButtons02(3099, guiWidthOffset, guiHeightOffset+menuImageHeight+2, "$", ref.getGuiID() == guiID ? 1 : 0, Color.GREEN.darker().darker().getRGB());
             buttonList.add(button);
-            labelList.add(new JRMCoreLabel(button, ref.getTranslation()));
+            myCustomLabels.add(new JRMCoreLabel(button, ref.getTranslation()));
             //drawDetails(JRMCoreH.cct(name), guiLeft + i * 21, guiTop + ySize + 2 + 1, 20, 20, x, y, fontRendererObj);
 
             xOffset++;
@@ -194,7 +201,7 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
             boolean isSelected = ref.getGuiID() == this.guiID;
             GuiButton button = new JRMCoreGuiButtons03(ref.getButtonId(), guiWidthOffset + xOffset*21, guiHeightOffset+menuImageHeight+2, "",  (isSelected ? 1 : 0), 8046079,  ref.getIconID());
             this.buttonList.add(button);
-            this.labelList.add(new JRMCoreLabel(button, ref.getTranslation()));
+            this.myCustomLabels.add(new JRMCoreLabel(button, ref.getTranslation()));
             xOffset++;
         }
 
@@ -202,14 +209,14 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
             String buttonName = GuiInfo.translateButtonLocale(GuiInfo.YEARS_C_TRANSLATION);
             GuiButton button = new JRMCoreGuiButtons02(GuiInfo.YEARS_C_ID, guiWidthOffset + xOffset*21, guiHeightOffset+menuImageHeight+2, buttonName.substring(0, 2).toUpperCase(), 0, 8046079);
             this.buttonList.add(button);
-            this.labelList.add(new JRMCoreLabel(button, buttonName));
+            this.myCustomLabels.add(new JRMCoreLabel(button, buttonName));
             xOffset++;
         }
         if(JRMCoreH.JFC()){
             String buttonName = GuiInfo.translateButtonLocale(GuiInfo.FAMILY_C_TRANSLATION);
             GuiButton button = new JRMCoreGuiButtons02(GuiInfo.FAMILY_C_ID, guiWidthOffset + xOffset*21, guiHeightOffset+menuImageHeight+2, buttonName.substring(0, 2).toUpperCase(), 0, 8046079);
             this.buttonList.add(button);
-            this.labelList.add(new JRMCoreLabel(button, buttonName));
+            this.myCustomLabels.add(new JRMCoreLabel(button, buttonName));
             xOffset++;
         }
 

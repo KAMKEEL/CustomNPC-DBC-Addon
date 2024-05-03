@@ -4,6 +4,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.util.ResourceLocation;
@@ -11,7 +12,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-public class JRMCoreLabel extends GuiLabel implements HoverableLabel {
+public class JRMCoreLabel extends Gui implements HoverableLabel {
 
     protected static final ResourceLocation background = new ResourceLocation("jinryuumodscore:allw.png");
 
@@ -56,6 +57,10 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel {
         if(this.tooltipFormat != null)
             this.tooltipFormat = tooltipFormat.replaceAll("/n", "\n");
         this.setTooltip(name);
+    }
+
+    public JRMCoreLabel() {
+
     }
 
     public JRMCoreLabel updateDisplay(Object... arguments){
@@ -119,13 +124,12 @@ public class JRMCoreLabel extends GuiLabel implements HoverableLabel {
 //    }
 
     /**
-     * The draw function for the button
+     * The draw function for the label
      * @param client
      * @param mouseX
      * @param mouseY
      */
-    @Override
-    public void func_146159_a(Minecraft client, int mouseX, int mouseY){
+    public void drawLabel(Minecraft client, int mouseX, int mouseY){
         client.fontRenderer.drawString(display, xPosition, yPosition, ColorMode.textColor(), ConfigDBCClient.DarkMode);
 
     }

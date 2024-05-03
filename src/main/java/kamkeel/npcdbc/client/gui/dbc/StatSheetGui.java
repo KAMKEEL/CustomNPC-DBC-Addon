@@ -545,7 +545,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             16,
             16
         );
-        this.labelList.add(genderIcon);
+        this.myCustomLabels.add(genderIcon);
         index++;
 
         dynamicLabels.put("form", new JRMCoreLabel(
@@ -573,7 +573,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         ));
         index++;
 
-        labelList.add(new JRMCoreLabel(
+        myCustomLabels.add(new JRMCoreLabel(
             JRMCoreH.trl("jrmc", "Attributes")+":",
             "%s",
             this.guiWidthOffset+6,
@@ -622,7 +622,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         ));
         index++;
 
-        this.labelList.add(new JRMCoreLabel(
+        this.myCustomLabels.add(new JRMCoreLabel(
             null,
             null,
             guiWidthOffset+133,
