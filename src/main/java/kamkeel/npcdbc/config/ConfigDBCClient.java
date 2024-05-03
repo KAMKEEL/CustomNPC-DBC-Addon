@@ -16,6 +16,14 @@ public class ConfigDBCClient
     public static Property EnableHDTexturesProperty;
     public static boolean EnableHDTextures = false;
 
+
+    public final static String GUI = "Gui";
+
+    public static Property EnhancedGuiProperty;
+    public static boolean EnhancedGui = true;
+    public static Property DarkModeProperty;
+    public static boolean DarkMode = true;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -25,8 +33,13 @@ public class ConfigDBCClient
             config.load();
 
             // General
-            EnableHDTexturesProperty = config.get(GENERAL, "Enable HD Textures", false, "Uses internal DBC Addon HD Textures");
-            EnableHDTextures = EnableHDTexturesProperty.getBoolean(false);
+            EnableHDTexturesProperty = config.get(GENERAL, "Enable HD Textures", true, "Uses internal DBC Addon HD Textures");
+            EnableHDTextures = EnableHDTexturesProperty.getBoolean(true);
+
+            EnhancedGuiProperty = config.get(GUI, "Enable Enhanced Gui", true, "Uses DBC Addons GUI for Coloring and Manipulation");
+            EnhancedGui = EnhancedGuiProperty.getBoolean(true);
+            DarkModeProperty = config.get(GUI, "Dark Mode", true, "Uses Dark Mode GUI in Enhanced Menu");
+            DarkMode = DarkModeProperty.getBoolean(true);
         }
         catch (Exception e)
         {

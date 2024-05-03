@@ -1,5 +1,6 @@
 package kamkeel.npcdbc;
 
+import JinRyuu.DragonBC.common.DBCConfig;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;

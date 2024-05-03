@@ -415,6 +415,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return JRMCoreH.isFusionSpectator(player);
     }
 
+    @Override
+    public boolean isChargingKi() {
+        return dbcData.stats.isChargingKiAttack();
+    }
+
     /**
      * @param skillname Check JRMCoreH.DBCSkillNames
      * @return skill level from 1 to 10

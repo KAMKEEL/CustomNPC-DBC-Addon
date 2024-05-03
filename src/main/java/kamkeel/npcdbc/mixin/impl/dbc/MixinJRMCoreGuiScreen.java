@@ -1,18 +1,26 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreClient;
+import JinRyuu.JRMCore.JRMCoreGuiButtons00;
 import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
+import cpw.mods.fml.common.FMLCommonHandler;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.mixin.IDBCGuiScreen;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -22,11 +30,29 @@ import java.util.List;
 
 @Mixin(value = JRMCoreGuiScreen.class, remap = false)
 
-public class MixinJRMCoreGuiScreen extends GuiScreen {
+public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
 
     @Shadow
     protected static List<Object[]> detailList;
 
+    @Shadow
+    public static String wish;
+    @Shadow
+    public static String button1;
+
+
+    @Shadow
+    public int guiID;
+    @Unique
+    private int newGuiID;
+    @Unique
+    private boolean ignoreInit = false;
+
+    @Inject(method = "updateScreen", at=@At("HEAD"), remap = true)
+    private void onUpdateScreen(CallbackInfo ci){
+        if(this.guiID == 10 && ConfigDBCClient.EnhancedGui && DBCData.getClient().Powertype == 1)
+            FMLCommonHandler.instance().showGuiScreen(new StatSheetGui());
+    }
 
     @Inject(method = "drawDetails", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onDrawDetails(String s1, String s2, int xpos, int ypos, int x, int y, FontRenderer var8, CallbackInfo ci) {
@@ -134,8 +160,8 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
             int original = JRMCoreH.PlyrAttrbts()[attributeId];
 
             String tooltipData = JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Modified") + ": " + replacementColor + modified
-                    + "\n" + JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Original") + ": " + JRMCoreH.cldr + original
-                    + "\n" + JRMCoreH.cldgy;
+                + "\n" + JRMCoreH.cldgy + JRMCoreH.trl("jrmc", "Original") + ": " + JRMCoreH.cldr + original
+                + "\n" + JRMCoreH.cldgy;
 
             s2 = tooltipData + s2;
         }
@@ -165,5 +191,56 @@ public class MixinJRMCoreGuiScreen extends GuiScreen {
         String originalColor = s1.substring(secondIndex, secondIndex + 2);
         s1 = s1.replace(originalColor, replacementColor);
         return s1;
+    }
+
+
+    @Inject(method = "initGui", at=@At("RETURN"), remap = true)
+    private void onInitGui(CallbackInfo ci){
+        if(ignoreInit)
+            this.guiID = newGuiID;
+
+        if(ConfigDBCClient.EnhancedGui){
+            if(ConfigDBCClient.DarkMode){
+                wish = CustomNpcPlusDBC.ID + ":textures/gui/gui_dark.png";
+                button1 = CustomNpcPlusDBC.ID + ":textures/gui/button_dark.png";
+            }
+            else {
+                wish = CustomNpcPlusDBC.ID + ":textures/gui/gui_light.png";
+                button1 = CustomNpcPlusDBC.ID + ":textures/gui/button_light.png";
+            }
+        }
+    }
+
+
+    @Inject(method = "drawScreen", at=@At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"), remap = true)
+    private void onDrawScreen(CallbackInfo ci){
+        if(this.guiID != 10)
+            return;
+        String s = "Switch to "+(ConfigDBCClient.EnhancedGui ? "Normal" : "§aEnhanced") +" GUI";
+        int i = this.fontRendererObj.getStringWidth(s)+10;
+        this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2, (this.height-159)/2 - 30, i + 8, 20, s, 0));
+        if(ConfigDBCClient.EnhancedGui){
+            String dark = ConfigDBCClient.DarkMode ? "Light" : "Dark";
+            int j = this.fontRendererObj.getStringWidth(dark)+10;
+            this.buttonList.add(new JRMCoreGuiButtons00(404040404, (this.width -i)/2 + 40, (this.height-159)/2 - 30, j + 8, 20, dark, 0));
+        }
+    }
+
+    @Inject(method="actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", at=@At("HEAD"), remap = true)
+    public void onActionPerformed(GuiButton button, CallbackInfo ci){
+        if(button.id == 303030303){
+            ConfigDBCClient.EnhancedGui = true;
+            ConfigDBCClient.EnhancedGuiProperty.set(true);
+        }
+        if(button.id == 404040404){
+            ConfigDBCClient.DarkMode = !ConfigDBCClient.DarkMode;
+            ConfigDBCClient.DarkModeProperty.set(ConfigDBCClient.DarkMode);
+        }
+    }
+
+    @Unique
+    public void setGuiIDPostInit(int id) {
+        this.newGuiID = id;
+        this.ignoreInit = true;
     }
 }

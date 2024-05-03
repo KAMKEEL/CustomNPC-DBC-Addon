@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
@@ -64,28 +65,33 @@ public abstract class MixinJRMCoreH {
                 mysticOn = false;
                 uiOn = false;
                 GoDOn = false;
+
+                boolean masteryCalc = JGConfigDBCFormMastery.FM_Enabled;
+                JGConfigDBCFormMastery.FM_Enabled = masteryCalc && form.stackable.vanillaStackable;
+                int state = form.stackable.vanillaStackable ? st : 0;
                 switch (race) {
                     case 0:
-                        result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, 0, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                        result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
                         break;
                     case 1:
-                        result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, 0, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                        result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
                         break;
                     case 2:
-                        result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, 0, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                        result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
                         break;
                     case 3:
-                        result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, 0, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                        result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
                         break;
                     case 4:
-                        result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, 0, currRelease, arcRel, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                        result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, state, currRelease, arcRel, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
                         break;
                     case 5:
-                        result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, 0, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn, majinAbs);
+                        result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn, majinAbs);
                         break;
                     default:
                         result = currAttributes[attribute];
                 }
+                JGConfigDBCFormMastery.FM_Enabled = masteryCalc;
 
                 DBCData d = DBCData.get(player);
                 float[] multis = form.getAllMulti();

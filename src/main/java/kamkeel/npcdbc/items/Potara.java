@@ -111,7 +111,9 @@ public class Potara extends Item {
         if (openSlots >= 2) {
             // Create two new ItemStacks with NBT data
             ItemStack leftPotara = new ItemStack(itemStack.getItem());
+            leftPotara.setItemDamage(itemStack.getItemDamage());
             ItemStack rightPotara = new ItemStack(itemStack.getItem());
+            rightPotara.setItemDamage(itemStack.getItemDamage());
 
             // Add NBT data to each ItemStack
             NBTTagCompound leftNBT = leftPotara.getTagCompound();

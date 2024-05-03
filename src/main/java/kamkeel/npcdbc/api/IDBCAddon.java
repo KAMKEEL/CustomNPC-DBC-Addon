@@ -115,6 +115,12 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     boolean isDBCFusionSpectator();
 
+
+    /**
+     * @return True if player is charging a ki attack
+     */
+    boolean isChargingKi();
+
     /**
      * @param skillname Check JRMCoreH.DBCSkillNames
      * @return skill level from 1 to 10
