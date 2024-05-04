@@ -100,7 +100,7 @@ public class DBCDataUniversal {
      * @param spectator player that is supposed to be the spectator
      * @param time time in minutes
      */
-    public static void fusePlayers(EntityPlayer controller, EntityPlayer spectator, int time){
+    public static void fusePlayers(EntityPlayer controller, EntityPlayer spectator, float time){
         fusePlayers(get(controller), get(spectator), time);
     }
 
@@ -110,7 +110,7 @@ public class DBCDataUniversal {
      * @param spectator player that is supposed to be the spectator
      * @param time time in minutes
      */
-    private static void fusePlayers(DBCData controller, DBCData spectator, int time) {
+    private static void fusePlayers(DBCData controller, DBCData spectator, float time) {
         controller.fuseWith(spectator, time);
     }
 }

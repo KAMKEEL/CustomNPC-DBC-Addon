@@ -326,7 +326,7 @@ public class DBCData extends DBCDataUniversal {
      * @param spectator player that is supposed to be the spectator
      * @param time time in minutes
      */
-    public void fuseWith(DBCData spectator, int time) {
+    public void fuseWith(DBCData spectator, float time) {
         if(spectator == null || this.player == null)
             return;
 
@@ -344,7 +344,7 @@ public class DBCData extends DBCDataUniversal {
 
         NBTTagCompound spectatorTag = spectator.getRawCompound();
 
-        String fusionString = String.format("%s,%s,%d", controllerName, spectatorName, time);
+        String fusionString = String.format("%s,%s,%d", controllerName, spectatorName, ((int) time));
 
         controllerTag.setString("jrmcFuzion", fusionString);
         spectatorTag.setString("jrmcFuzion", fusionString);
