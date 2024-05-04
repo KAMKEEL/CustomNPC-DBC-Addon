@@ -11,12 +11,15 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
 import kamkeel.npcdbc.constants.enums.EnumPotaraTypes;
 import kamkeel.npcdbc.controllers.CapsuleController;
+import kamkeel.npcdbc.controllers.FusionHandler;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
@@ -145,6 +148,25 @@ public class Potara extends Item {
         return itemStack;
     }
 
+    public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase target)
+    {
+        if (player.worldObj.isRemote)
+            return false;
+
+        if(!(target instanceof EntityPlayer))
+            return false;
+
+        if(stack.getTagCompound() == null || !stack.getTagCompound().hasKey("Side"))
+            return false;
+
+        NBTTagCompound potara = stack.getTagCompound();
+        boolean rightSide = potara.getString("Side").equals("RIGHT");
+        String hash = potara.hasKey("Hash") ? potara.getString("Hash") : "";
+        int tier = stack.getItemDamage();
+        FusionHandler.requestFusion(player, (EntityPlayer) target, rightSide, hash, tier);
+        return true;
+    }
+
     private String generateUniqueCode() {
         StringBuilder uniqueCode = new StringBuilder();
         Random random = new Random();
@@ -158,11 +180,13 @@ public class Potara extends Item {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         NBTTagCompound compound = itemStack.getTagCompound();
-        if(compound != null){
+        if(compound != null && compound.hasKey("Side")){
             par3List.add(StatCollector.translateToLocalFormatted("§eSide: §6" + compound.getString("Side")));
             if(compound.hasKey("Hash")){
                 par3List.add(StatCollector.translateToLocalFormatted("§7Hash: §8" + compound.getString("Hash")));
             }
+        } else {
+            par3List.add(StatCollector.translateToLocalFormatted("§eRight click to split into pairs"));
         }
     }
 }
