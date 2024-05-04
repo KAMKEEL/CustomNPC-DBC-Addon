@@ -20,6 +20,7 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import noppes.npcs.scripted.CustomNPCsException;
 
 import java.util.HashMap;
 
@@ -320,4 +321,50 @@ public class DBCData extends DBCDataUniversal {
     }
 
 
+    /**
+     * Fuse with another player
+     * @param spectator player that is supposed to be the spectator
+     * @param time time in minutes
+     */
+    public void fuseWith(DBCData spectator, int time) {
+        if(spectator == null || this.player == null)
+            return;
+
+        if(spectator == this)
+            throw new CustomNPCsException("Tried to fuse the player with themselves");
+
+        time *= 12; //Gets DBC time
+
+        //EntityPlayer specPlayer = spectator.player;
+
+        String controllerName = this.player.getCommandSenderName();
+        String spectatorName = spectator.player.getCommandSenderName();
+
+        NBTTagCompound controllerTag = this.getRawCompound();
+
+        NBTTagCompound spectatorTag = spectator.getRawCompound();
+
+        String fusionString = String.format("%s,%s,%d", controllerName, spectatorName, time);
+
+        controllerTag.setString("jrmcFuzion", fusionString);
+        spectatorTag.setString("jrmcFuzion", fusionString);
+
+        this.setSE(10, true);
+        spectator.setSE(11, true);
+
+        JRMCoreH.PlyrSettingsRem(this.player, 4);
+        JRMCoreH.PlyrSettingsRem(spectator.player, 4);
+
+        controllerTag.setByte("jrmcState2", (byte) 0);
+        spectatorTag.setByte("jrmcState2", (byte) 0);
+
+        spectator.setSE(3, false);
+        spectator.setSE(4, false);
+        spectator.setSE(5, false);
+
+        this.stats.restoreHealthPercent(100);
+        spectator.stats.restoreHealthPercent(100);
+        this.stats.restoreKiPercent(100);
+        spectator.stats.restoreKiPercent(100);
+    }
 }
