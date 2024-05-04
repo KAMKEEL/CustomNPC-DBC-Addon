@@ -5,6 +5,7 @@ import kamkeel.npcdbc.data.FuseRequest;
 import kamkeel.npcdbc.items.Potara;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -81,6 +82,12 @@ public class FusionHandler {
                 fuseRequest.remove(uuidTarget);
                 sendPotara.splitStack(1);
                 targetPotara.splitStack(1);
+                if(sendPotara.stackSize <= 0)
+                    sender.destroyCurrentEquippedItem();
+
+                if(targetPotara.stackSize <= 0)
+                    target.destroyCurrentEquippedItem();
+
                 Utility.sendMessage(sender, String.format("§aYou fuse with §e%s§a!", target.getCommandSenderName()));
                 Utility.sendMessage(target, String.format("§aYou fuse with §e%s§a!", sender.getCommandSenderName()));
                 return true;
