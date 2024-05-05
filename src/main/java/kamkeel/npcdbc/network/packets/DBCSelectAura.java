@@ -6,6 +6,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.AbstractPacket;
+import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
@@ -51,11 +52,11 @@ public final class DBCSelectAura extends AbstractPacket {
             if(dbcInfo.hasAuraUnlocked(auraID)){
                 Aura aura = (Aura) AuraController.getInstance().get(auraID);
                 dbcInfo.selectedAura = auraID;
-                Utility.sendMessage(player, String.format("§bAura %s §bSelected", aura.getMenuName()));
+                NetworkUtility.sendServerMessage(player, "§b", "npcdbc.auraSelect", " ", aura.getMenuName());
                 compound = aura.writeToNBT();
             }
         } else {
-            Utility.sendMessage(player, "§9Cleared aura selection");
+            NetworkUtility.sendServerMessage(player, "§9", "npcdbc.clearedSelection");
         }
 
         dbcInfo.updateClient();

@@ -16,6 +16,9 @@ public class ConfigDBCClient
     public static Property EnableHDTexturesProperty;
     public static boolean EnableHDTextures = false;
 
+    public static Property HideInfoMessageProperty;
+    public static boolean HideInfoMessage = false;
+
 
     public final static String GUI = "Gui";
 
@@ -35,6 +38,9 @@ public class ConfigDBCClient
             // General
             EnableHDTexturesProperty = config.get(GENERAL, "Enable HD Textures", true, "Uses internal DBC Addon HD Textures");
             EnableHDTextures = EnableHDTexturesProperty.getBoolean(true);
+
+            HideInfoMessageProperty = config.get(GENERAL, "Hide Info Messages", false, "Hides Change Form and other various transformation messages in game");
+            HideInfoMessage = HideInfoMessageProperty.getBoolean(false);
 
             EnhancedGuiProperty = config.get(GUI, "Enable Enhanced Gui", true, "Uses DBC Addons GUI for Coloring and Manipulation");
             EnhancedGui = EnhancedGuiProperty.getBoolean(true);

@@ -41,6 +41,15 @@ npcdbc.potaraSides=Potaras must be opposite sides
 npcdbc.potaraHash=Potaras must be of the same pair
 npcdbc.potaraFusion=You fuse with:
 npcdbc.potaraRequest=Fusion request from
+npcdbc.notEnoughMastery=You do not have enough mastery to instant transform
+npcdbc.cannotTransformDirect=You cannot transform to this form directly
+npcdbc.clearedSelection=Cleared selection
+npcdbc.formSelect=Form Selected:
+npcdbc.auraSelect=Aura Selected:
+npcdbc.transform=Transformed to
+npcdbc.descend=Descended to
+npcdbc.descendFrom=Descended from
+npcdbc.timeExpired=Timer has run out!
 
 ############################
 ## ITEMS

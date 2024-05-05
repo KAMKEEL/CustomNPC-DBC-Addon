@@ -66,4 +66,8 @@ public class NetworkUtility {
     public static void sendServerMessage(EntityPlayer player, Object... message){
         PacketHandler.Instance.sendToPlayer(new SendChat(message).generatePacket(), (EntityPlayerMP) player);
     }
+
+    public static void sendInfoMessage(EntityPlayer player, Object... message){
+        PacketHandler.Instance.sendToPlayer(new SendChat(true, message).generatePacket(), (EntityPlayerMP) player);
+    }
 }
