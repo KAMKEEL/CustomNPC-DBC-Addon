@@ -37,6 +37,7 @@ public final class PacketHandler {
         map.put(DBCGetForm.packetName, new DBCGetForm());
         map.put(CapsuleInfo.packetName, new CapsuleInfo());
         map.put(LoginInfo.packetName, new LoginInfo());
+        map.put(SendChat.packetName, new SendChat());
         this.register();
     }
 

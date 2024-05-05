@@ -3,6 +3,7 @@ package kamkeel.npcdbc.controllers;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.data.FuseRequest;
 import kamkeel.npcdbc.items.Potara;
+import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,12 +23,12 @@ public class FusionHandler {
 
         if(!senderFusion){
             // Fusion is not on- Inform Sender
-            Utility.sendMessage(sender, "§cYour fusion skill is not enabled");
+            NetworkUtility.sendServerMessage(sender, "§c", sender.getCommandSenderName(), " ", "npcdbc.fusionSkillFusion");
             return false;
         }
         if(!targetFusion){
             // Target Fusion is not on- Inform Sender
-            Utility.sendMessage(sender, String.format("§c%s§c does not have their fusion skill enabled", target.getCommandSenderName()));
+            NetworkUtility.sendServerMessage(sender, "§c", target.getCommandSenderName(), " ", "npcdbc.fusionSkillFusion");
             return false;
         }
 
@@ -40,41 +41,41 @@ public class FusionHandler {
             targetRequest = fuseRequest.get(uuidTarget);
             if(senderRequest.checkRequest(targetRequest)){
                 if(sender.getHeldItem() == null || !(sender.getHeldItem().getItem() instanceof Potara)){
-                    Utility.sendMessage(sender, "§cYou are not holding a potara");
+                    NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.holdPotara");
                     return false;
                 }
                 if(target.getHeldItem() == null || !(target.getHeldItem().getItem() instanceof Potara)){
-                    Utility.sendMessage(sender, "§cThey are not holding a potara");
+                    NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.holdPotara");
                     return false;
                 }
                 ItemStack sendPotara = sender.getHeldItem();
                 ItemStack targetPotara = target.getHeldItem();
 
                 if(sendPotara.getItemDamage() != targetPotara.getItemDamage()) {
-                    Utility.sendMessage(sender, "§cThe held potaras are not the same tier");
+                    NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.potaraTier");
                     return false;
                 }
 
                 NBTTagCompound sendNBT = sendPotara.getTagCompound();
                 NBTTagCompound targetNBT = targetPotara.getTagCompound();
                 if(sendNBT == null || targetNBT == null) {
-                    Utility.sendMessage(sender, "§cThe held potaras are not split");
+                    NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.potaraSpit");
                     return false;
                 }
                 if(!sendNBT.hasKey("Side") || !targetNBT.hasKey("Side")){
-                    Utility.sendMessage(sender, "§cThe held potaras are not split");
+                    NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.potaraSpit");
                     return false;
                 }
 
                 if(sendNBT.getString("Side").equals(targetNBT.getString("Side"))){
-                    Utility.sendMessage(sender, "§cThe held potaras are the same side");
+                    NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.potaraSides");
                     return false;
                 }
 
                 String sendHash = sendNBT.hasKey("Hash") ? sendNBT.getString("Hash") : "";
                 String targetHash = sendNBT.hasKey("Hash") ? sendNBT.getString("Hash") : "";
                 if(!sendHash.equals(targetHash)) {
-                    Utility.sendMessage(sender, "§cThe held potaras are not the same pair");
+                    NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.potaraHash");
                     return false;
                 }
 
@@ -88,8 +89,8 @@ public class FusionHandler {
                 if(targetPotara.stackSize <= 0)
                     target.destroyCurrentEquippedItem();
 
-                Utility.sendMessage(sender, String.format("§aYou fuse with §e%s§a!", target.getCommandSenderName()));
-                Utility.sendMessage(target, String.format("§aYou fuse with §e%s§a!", sender.getCommandSenderName()));
+                NetworkUtility.sendServerMessage(sender, "§a", "npcdbc.potaraFusion", " §e", target.getCommandSenderName());
+                NetworkUtility.sendServerMessage(target, "§a", "npcdbc.potaraFusion", " §e", sender.getCommandSenderName());
                 return true;
             }
         }
@@ -99,7 +100,7 @@ public class FusionHandler {
             existing = fuseRequest.get(uuidSender);
 
         if(existing == null || senderRequest.newRequest(existing)){
-            Utility.sendMessage(target, String.format("§e%s §ahas requested to Potara Fuse", sender.getCommandSenderName()));
+            NetworkUtility.sendServerMessage(target, "§e", "npcdbc.potaraRequest", " §a", sender.getCommandSenderName());
             fuseRequest.put(uuidSender, senderRequest);
         }
         return false;
