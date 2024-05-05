@@ -99,7 +99,7 @@ public class FusionHandler {
             existing = fuseRequest.get(uuidSender);
 
         if(existing == null || senderRequest.newRequest(existing)){
-            Utility.sendMessage(target, String.format("%s §ahas requested to Potara Fuse", sender.getCommandSenderName()));
+            Utility.sendMessage(target, String.format("§e%s §ahas requested to Potara Fuse", sender.getCommandSenderName()));
             fuseRequest.put(uuidSender, senderRequest);
         }
         return false;
