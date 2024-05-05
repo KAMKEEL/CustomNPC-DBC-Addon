@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.items;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.items.ItemVanity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.LocalizationHelper;
@@ -17,8 +18,10 @@ import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -28,8 +31,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.EnumHelper;
 import noppes.npcs.CustomItems;
 
 import java.util.HashMap;
@@ -39,11 +44,12 @@ import java.util.UUID;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
 
-public class Potara extends Item {
+public class Potara extends ItemVanity {
 
     protected IIcon[] icons;
 
     public Potara() {
+        super(0xFFFFFF, 0, "Lol");
         this.setMaxStackSize(16);
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
@@ -188,5 +194,16 @@ public class Potara extends Item {
         } else {
             par3List.add(StatCollector.translateToLocalFormatted("§eRight click to split into pairs"));
         }
+    }
+
+    @Override
+    public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type) {
+        return "npcdbc:textures/armor/dbcvanity/potara.png"; //@TODO change texture based on damage
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public ModelBiped giMdl(int slt, EntityLivingBase e) {
+        return new PotaraModel();
     }
 }
