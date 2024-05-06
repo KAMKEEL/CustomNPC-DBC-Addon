@@ -11,6 +11,7 @@ import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.TransformPacket;
@@ -195,7 +196,7 @@ public class TransformController {
                 formData.addTimer(formID, formData.getForm(id).getTimer());
 
             formData.updateClient();
-            Utility.sendMessage(player, "§aTransformed to§r " + formData.getCurrentForm().getMenuName());
+            NetworkUtility.sendInfoMessage(player, "§a", "npcdbc.transform", "§r ", form.getMenuName());
             dbcData.saveNBTData(true);
         }
     }
@@ -222,16 +223,16 @@ public class TransformController {
             }
             if (form.requiredForm.containsKey((int) dbcData.Race)) {
                 formData.currentForm = -1;
-                Utility.sendMessage(player, "§cDescended from§r " + form.getMenuName());
+                NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getMenuName());
                 dbcData.State = form.requiredForm.get((int) dbcData.Race);
             } else {
                 if (intoParent) {
-                    Utility.sendMessage(player, "§cDescended into§r " + form.getParent().getMenuName());
+                    NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getParent().getMenuName());
                     formData.currentForm = form.getParentID();
                 } else if (formData.getTimer(form.id) == 0) {
-                    Utility.sendMessage(player, "§cTimer for§r " + form.getMenuName() + "§c has ran out!");
+                    NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.timeExpired");
                 } else {
-                    Utility.sendMessage(player, "§cDescended from§r " + form.getMenuName());
+                    NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descendFrom", "§r ", form.getMenuName());
                     formData.currentForm = -1;
                 }
             }
