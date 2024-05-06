@@ -1,48 +1,33 @@
 package kamkeel.npcdbc.items;
 
-import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.items.ItemVanity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.LocalizationHelper;
-import kamkeel.npcdbc.config.ConfigCapsules;
+import kamkeel.npcdbc.client.model.PotaraModel;
+import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
-import kamkeel.npcdbc.constants.Capsule;
-import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
 import kamkeel.npcdbc.constants.enums.EnumPotaraTypes;
-import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.controllers.FusionHandler;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.scripted.DBCEventHooks;
-import kamkeel.npcdbc.scripted.DBCPlayerEvent;
-import kamkeel.npcdbc.util.PlayerDataUtil;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.client.MinecraftForgeClient;
 import noppes.npcs.CustomItems;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
-
-import static JinRyuu.JRMCore.JRMCoreH.getInt;
 
 public class Potara extends ItemVanity {
 
@@ -54,11 +39,12 @@ public class Potara extends ItemVanity {
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
         this.setCreativeTab(CustomItems.tabMisc);
+
+        MinecraftForgeClient.registerItemRenderer(this, new PotaraItemRenderer());
     }
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
-
         int metadata = stack.getItemDamage();
         EnumPotaraTypes misc = EnumPotaraTypes.values()[metadata];
         return LocalizationHelper.ITEM_PREFIX + misc.getName().toLowerCase() + "_potara";

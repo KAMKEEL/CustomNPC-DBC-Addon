@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.items;
+package kamkeel.npcdbc.client.model;
 
 
 import JinRyuu.JRMCore.entity.ModelBipedBody;
