@@ -205,6 +205,6 @@ public class ItemPotara extends ItemVanity {
     @Override
     @SideOnly(Side.CLIENT)
     public ModelBiped giMdl(int slt, EntityLivingBase e) {
-        return new ModelPotara();
+        return new ModelPotara(0);
     }
 }
