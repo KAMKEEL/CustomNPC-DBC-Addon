@@ -174,7 +174,7 @@ public class Potara extends ItemVanity {
     }
 
     public static boolean isSplit(ItemStack itemStack){
-        return itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("Hash");
+        return itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("Side");
     }
 
     @SideOnly(Side.CLIENT)
