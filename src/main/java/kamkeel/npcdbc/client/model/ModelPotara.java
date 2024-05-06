@@ -5,10 +5,10 @@ import JinRyuu.JRMCore.entity.ModelBipedBody;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 
-public class PotaraModel extends ModelBipedBody {
+public class ModelPotara extends ModelBipedBody {
     ModelRenderer earring = new ModelRenderer(this, "earring");
 
-    public PotaraModel(){
+    public ModelPotara(){
 
         earring.setTextureOffset(0, 0);
         earring.setTextureSize(16, 16);

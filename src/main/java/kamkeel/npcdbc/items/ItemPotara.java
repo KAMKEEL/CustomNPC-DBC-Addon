@@ -4,7 +4,7 @@ import JinRyuu.JRMCore.items.ItemVanity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.LocalizationHelper;
-import kamkeel.npcdbc.client.model.PotaraModel;
+import kamkeel.npcdbc.client.model.ModelPotara;
 import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
@@ -21,7 +21,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -206,6 +205,6 @@ public class ItemPotara extends ItemVanity {
     @Override
     @SideOnly(Side.CLIENT)
     public ModelBiped giMdl(int slt, EntityLivingBase e) {
-        return new PotaraModel();
+        return new ModelPotara();
     }
 }
