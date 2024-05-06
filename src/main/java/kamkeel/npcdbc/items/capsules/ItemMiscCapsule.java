@@ -32,11 +32,11 @@ import java.util.UUID;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
 
-public class MiscCapsule extends Item {
+public class ItemMiscCapsule extends Item {
 
     protected IIcon[] icons;
 
-    public MiscCapsule() {
+    public ItemMiscCapsule() {
         this.setMaxStackSize(ConfigCapsules.MiscCapsuleMaxStack);
         this.setHasSubtypes(true);
         this.setMaxDamage(0);

@@ -28,11 +28,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class HealthCapsule extends Item {
+public class ItemHealthCapsule extends Item {
 
     protected IIcon[] icons;
 
-    public HealthCapsule() {
+    public ItemHealthCapsule() {
         this.setMaxStackSize(ConfigCapsules.HealthCapsuleMaxStack);
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
