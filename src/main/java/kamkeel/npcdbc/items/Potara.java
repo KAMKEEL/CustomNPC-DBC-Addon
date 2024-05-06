@@ -183,6 +183,14 @@ public class Potara extends ItemVanity {
         return uniqueCode.toString();
     }
 
+    public static boolean isRightSide(ItemStack itemStack){
+        return itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("Side") && itemStack.getTagCompound().getString("Side").equals("RIGHT");
+    }
+
+    public static boolean isSplit(ItemStack itemStack){
+        return itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("Hash");
+    }
+
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         NBTTagCompound compound = itemStack.getTagCompound();
