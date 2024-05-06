@@ -1,11 +1,10 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreComTickH;
-import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.i.InventoryCustomPlayer;
 import JinRyuu.JRMCore.server.JGPlayerMP;
 import kamkeel.npcdbc.CommonProxy;
-import kamkeel.npcdbc.items.Potara;
+import kamkeel.npcdbc.items.ItemPotara;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,7 +26,7 @@ public class MixinJRMCoreComTickH {
 
     @Redirect(method = "updatePlayersData", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/i/InventoryCustomPlayer;setInventorySlotContents(ILnet/minecraft/item/ItemStack;)V"))
     public void preventPotaraDelete(InventoryCustomPlayer instance, int slot, ItemStack stack) {
-        if(slot > 2 && stack != null && !(stack.getItem() instanceof Potara)){
+        if(slot > 2 && stack != null && !(stack.getItem() instanceof ItemPotara)){
             instance.setInventorySlotContents(slot, (ItemStack)null);
         }
     }

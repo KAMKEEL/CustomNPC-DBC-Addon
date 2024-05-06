@@ -45,7 +45,7 @@ public class ModItems {
         FruitOfMight = new FruitOfMight(5, 0.4f, false).setTextureName(LocalizationHelper.MOD_PREFIX + "fruitofmight");
         GameRegistry.registerItem(FruitOfMight, FruitOfMight.getUnlocalizedName());
 
-        Potaras = new Potara();
+        Potaras = new ItemPotara();
         GameRegistry.registerItem(Potaras, "potara");
     }
 }

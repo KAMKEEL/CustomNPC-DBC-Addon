@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.i.SlotCustom;
-import kamkeel.npcdbc.items.Potara;
+import kamkeel.npcdbc.items.ItemPotara;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
@@ -23,13 +23,13 @@ public abstract class MixinSlotCustom extends Slot {
             return;
 
         Item item = stack.getItem();
-        if(!(item instanceof Potara))
+        if(!(item instanceof ItemPotara))
             return;
 
         cir.cancel();
 
-        if(Potara.isSplit(stack))
-            cir.setReturnValue(canWearPotara(!Potara.isRightSide(stack)));
+        if(ItemPotara.isSplit(stack))
+            cir.setReturnValue(canWearPotara(!ItemPotara.isRightSide(stack)));
         else
             cir.setReturnValue(false);
     }
@@ -44,10 +44,10 @@ public abstract class MixinSlotCustom extends Slot {
                 continue;
             Item item = itemStack.getItem();
 
-            if(!(item instanceof Potara))
+            if(!(item instanceof ItemPotara))
                 continue;
 
-            if(Potara.isRightSide(itemStack) ^ checkLeft)
+            if(ItemPotara.isRightSide(itemStack) ^ checkLeft)
                 hasPotaraOnThatSide = true;
         }
 

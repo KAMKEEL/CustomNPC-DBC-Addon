@@ -21,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -29,11 +30,11 @@ import noppes.npcs.CustomItems;
 import java.util.List;
 import java.util.Random;
 
-public class Potara extends ItemVanity {
+public class ItemPotara extends ItemVanity {
 
     protected IIcon[] icons;
 
-    public Potara() {
+    public ItemPotara() {
         super(0xFFFFFF, 0, "Lol");
         this.setMaxStackSize(16);
         this.setHasSubtypes(true);
@@ -52,17 +53,24 @@ public class Potara extends ItemVanity {
 
     @Override
     public void registerIcons(IIconRegister reg) {
-        icons = new IIcon[EnumPotaraTypes.count()];
+        icons = new IIcon[EnumPotaraTypes.count() * 2];
         String prefix = "npcdbc:potara/";
 
         for (EnumPotaraTypes potaraTypes : EnumPotaraTypes.values()) {
             icons[potaraTypes.getMeta()] = reg.registerIcon(prefix + potaraTypes.getName().toLowerCase());
+        }
+
+        for(int i = EnumPotaraTypes.count(); i < EnumPotaraTypes.count() * 2; i++){
+            icons[i] = reg.registerIcon(prefix + EnumPotaraTypes.values()[i - EnumPotaraTypes.count()].getName().toLowerCase() + "_pair");
         }
     }
 
     @Override
     public IIcon getIconFromDamage(int meta) {
         if (meta >= 0 && meta < EnumMiscCapsules.count()) {
+            return icons[meta];
+        }
+        if(meta >= EnumMiscCapsules.count() && meta < EnumMiscCapsules.count() * 2){
             return icons[meta];
         }
         return icons[0];

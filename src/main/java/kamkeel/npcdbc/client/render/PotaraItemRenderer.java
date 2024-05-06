@@ -1,30 +1,23 @@
 package kamkeel.npcdbc.client.render;
 
-import kamkeel.npcdbc.items.Potara;
+import kamkeel.npcdbc.constants.enums.EnumPotaraTypes;
+import kamkeel.npcdbc.items.ItemPotara;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
-import noppes.npcs.client.ClientCacheHandler;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 public class PotaraItemRenderer implements IItemRenderer {
     private static final ResourceLocation enchant = new ResourceLocation("textures/misc/enchanted_item_glint.png");
-    private static final ResourceLocation unsplit = new ResourceLocation("textures/items/diamond.png");
-
 
     public PotaraItemRenderer() {}
 
@@ -38,31 +31,23 @@ public class PotaraItemRenderer implements IItemRenderer {
         return type == ItemRenderType.ENTITY && (helper == ItemRendererHelper.ENTITY_ROTATION || helper == ItemRendererHelper.ENTITY_BOBBING);
     }
 
-    // Only Run if Custom Size
-    public void customRender(ItemStack par2ItemStack) {
-        if (!(par2ItemStack.getItem() instanceof Potara))
-            return;
-    }
-
-    // Only Run if Custom Size
-    public void customRenderPart2(ItemStack par2ItemStack) {
-        if (!(par2ItemStack.getItem() instanceof Potara))
-            return;
-    }
-
     @Override
     public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
-        if (type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
-            IIcon iicon = ((EntityLivingBase)data[1]).getItemIcon(item, 0);
-            renderItemEquipped(iicon, item);
-        } else if (type == ItemRenderType.EQUIPPED) {
-            IIcon iicon = ((EntityLivingBase)data[1]).getItemIcon(item, 0);
-            renderItemEquipped(iicon, item);
+        if(item == null || !(item.getItem() instanceof ItemPotara))
+            return;
+        boolean isSplit = ItemPotara.isSplit(item);
+        if (type == ItemRenderType.EQUIPPED_FIRST_PERSON || type == ItemRenderType.EQUIPPED) {
+            IIcon icon;
+            if(isSplit){
+                icon = ((EntityLivingBase)data[1]).getItemIcon(item, 0);
+            } else {
+                icon = item.getItem().getIconFromDamage(item.getItemDamage() + EnumPotaraTypes.count());
+            }
+            renderItemEquipped(icon, item);
         } else if (type == ItemRenderType.ENTITY) {
-            EntityItem entityItem = (EntityItem)data[1];
-            this.renderDroppedItem(entityItem, item);
+            this.renderDroppedItem(item, isSplit);
         } else if (type == ItemRenderType.INVENTORY) {
-            this.renderInventoryItem(item, (RenderBlocks)data[0]);
+            this.renderInventoryItem(item, isSplit);
         }
     }
 
@@ -77,23 +62,13 @@ public class PotaraItemRenderer implements IItemRenderer {
         }
 
         Tessellator tessellator = Tessellator.instance;
-        if (bindPotaraTexture(texturemanager, par2ItemStack)) {
-            texturemanager.bindTexture(texturemanager.getResourceLocation(par2ItemStack.getItemSpriteNumber()));
-        } else {
-            texturemanager.bindTexture(unsplit);
-        }
-
+        texturemanager.bindTexture(texturemanager.getResourceLocation(par2ItemStack.getItemSpriteNumber()));
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-        if (bindPotaraTexture(texturemanager, par2ItemStack)) {
-            float f = iicon.getMinU();
-            float f1 = iicon.getMaxU();
-            float f2 = iicon.getMinV();
-            float f3 = iicon.getMaxV();
-            ItemRenderer.renderItemIn2D(tessellator, f1, f2, f, f3, iicon.getIconWidth(), iicon.getIconHeight(), 0.0625F);
-        } else {
-            ItemRenderer.renderItemIn2D(tessellator, 0.0F, 0.0F, 1.0F, 1.0F, 256, 256, 0.0625F);
-        }
-
+        float f = iicon.getMinU();
+        float f1 = iicon.getMaxU();
+        float f2 = iicon.getMinV();
+        float f3 = iicon.getMaxV();
+        ItemRenderer.renderItemIn2D(tessellator, f1, f2, f, f3, iicon.getIconWidth(), iicon.getIconHeight(), 0.0625F);
         if (par2ItemStack.hasEffect(par3)) {
             GL11.glDepthFunc(GL11.GL_EQUAL);
             GL11.glDisable(GL11.GL_LIGHTING);
@@ -127,7 +102,10 @@ public class PotaraItemRenderer implements IItemRenderer {
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
     }
 
-    public void renderDroppedItem(EntityItem entityItem, ItemStack item) {
+    public void renderDroppedItem(ItemStack item, boolean isSplit) {
+        if(item == null || item.getItem() == null)
+            return;
+
         Tessellator tessellator = Tessellator.instance;
         float f9 = 0.5F;
         float f10 = 0.25F;
@@ -141,43 +119,35 @@ public class PotaraItemRenderer implements IItemRenderer {
         Minecraft mc = Minecraft.getMinecraft();
         TextureManager texturemanager = mc.getTextureManager();
 
-        if (bindPotaraTexture(texturemanager, item)) {
-            texturemanager.bindTexture(TextureMap.locationItemsTexture);
-            IIcon par2Icon = item.getIconIndex();
-            ItemRenderer.renderItemIn2D(tessellator, par2Icon.getMaxU(), par2Icon.getMinV(), par2Icon.getMinU(), par2Icon.getMaxV(), par2Icon.getIconWidth(), par2Icon.getIconHeight(), f12);
+        texturemanager.bindTexture(TextureMap.locationItemsTexture);
+        IIcon par2Icon;
+        if(isSplit){
+            par2Icon = item.getIconIndex();
         } else {
-            texturemanager.bindTexture(unsplit);
-            ItemRenderer.renderItemIn2D(tessellator, 0.0F, 0.0F, 1.0F, 1.0F, 256, 256, 0.0625F);
+            par2Icon = item.getItem().getIconFromDamage(item.getItemDamage() + EnumPotaraTypes.count());
         }
+        ItemRenderer.renderItemIn2D(tessellator, par2Icon.getMaxU(), par2Icon.getMinV(), par2Icon.getMinU(), par2Icon.getMaxV(), par2Icon.getIconWidth(), par2Icon.getIconHeight(), f12);
         GL11.glPopMatrix();
     }
 
 
-    public void renderInventoryItem(ItemStack itemStack, RenderBlocks renderBlocks) {
-        IIcon iicon = itemStack.getItem().getIcon(itemStack, -1);
+    public void renderInventoryItem(ItemStack itemStack, boolean isSplit) {
+        if(itemStack == null || itemStack.getItem() == null)
+            return;
+
+        IIcon iicon;
+        if(isSplit){
+            iicon = itemStack.getIconIndex();
+        } else {
+            iicon = itemStack.getItem().getIconFromDamage(itemStack.getItemDamage() + EnumPotaraTypes.count());
+        }
 
         GL11.glDisable(GL11.GL_LIGHTING); //Forge: Make sure that render states are reset, a renderEffect can derp them up.
         GL11.glEnable(GL11.GL_ALPHA_TEST);
 
         Minecraft mc = Minecraft.getMinecraft();
         TextureManager texturemanager = mc.getTextureManager();
-        if(itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("Side")){
-            RenderItem.getInstance().renderIcon(0, 0, iicon, 16, 16);
-        } else {
-            texturemanager.bindTexture(unsplit);
-            int posX = 0;
-            int posY = 0;
-            int imageHeight = 16;
-            int imageWidth = 16;
-            Tessellator tessellator = Tessellator.instance;
-            tessellator.startDrawingQuads();
-            tessellator.addVertexWithUV((double)(posX), (double)(posY + imageHeight), 0, 0, 1);
-            tessellator.addVertexWithUV((double)(posX + imageWidth), (double)(posY + imageHeight), 0, 1, 1);
-            tessellator.addVertexWithUV((double)(posX + imageWidth), (double)(posY), 0, 1, 0);
-            tessellator.addVertexWithUV((double)(posX), (double)(posY), 0, 0, 0);
-            tessellator.draw();
-        }
-
+        RenderItem.getInstance().renderIcon(0, 0, iicon, 16, 16);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_LIGHTING);
 
@@ -187,13 +157,4 @@ public class PotaraItemRenderer implements IItemRenderer {
         }
         GL11.glEnable(GL11.GL_LIGHTING);
     }
-
-
-    public boolean bindPotaraTexture(TextureManager textureManager, ItemStack itemStack){
-        if(itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("Side")){
-            return true;
-        }
-        return false;
-    }
-
 }

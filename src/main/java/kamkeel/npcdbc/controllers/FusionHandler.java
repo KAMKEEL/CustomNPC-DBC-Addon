@@ -2,11 +2,10 @@ package kamkeel.npcdbc.controllers;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.data.FuseRequest;
-import kamkeel.npcdbc.items.Potara;
+import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -40,11 +39,11 @@ public class FusionHandler {
         if(fuseRequest.containsKey(uuidTarget)){
             targetRequest = fuseRequest.get(uuidTarget);
             if(senderRequest.checkRequest(targetRequest)){
-                if(sender.getHeldItem() == null || !(sender.getHeldItem().getItem() instanceof Potara)){
+                if(sender.getHeldItem() == null || !(sender.getHeldItem().getItem() instanceof ItemPotara)){
                     NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.holdPotara");
                     return false;
                 }
-                if(target.getHeldItem() == null || !(target.getHeldItem().getItem() instanceof Potara)){
+                if(target.getHeldItem() == null || !(target.getHeldItem().getItem() instanceof ItemPotara)){
                     NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.holdPotara");
                     return false;
                 }

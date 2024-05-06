@@ -2,7 +2,7 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.i.ContainerCustomPlayer;
 import JinRyuu.JRMCore.i.InventoryCustomPlayer;
-import kamkeel.npcdbc.items.Potara;
+import kamkeel.npcdbc.items.ItemPotara;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -33,16 +33,16 @@ public abstract class MixinContainerCustomPlayer extends Container {
     @Unique
     protected boolean mergeItemStack(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection){
         Item item = stack.getItem();
-        if(!(item instanceof Potara))
+        if(!(item instanceof ItemPotara))
             return super.mergeItemStack(stack, startIndex, endIndex, reverseDirection);
 
         if(startIndex >= 15)
             return super.mergeItemStack(stack, startIndex, endIndex, reverseDirection);
 
-        if(!Potara.isSplit(stack))
+        if(!ItemPotara.isSplit(stack))
             return false;
 
-        if(canWearPotara(!Potara.isRightSide(stack)))
+        if(canWearPotara(!ItemPotara.isRightSide(stack)))
             return super.mergeItemStack(stack, startIndex, endIndex, reverseDirection);
         else
             return false;
@@ -58,10 +58,10 @@ public abstract class MixinContainerCustomPlayer extends Container {
                 continue;
             Item item = itemStack.getItem();
 
-            if(!(item instanceof Potara))
+            if(!(item instanceof ItemPotara))
                 continue;
 
-            if(Potara.isRightSide(itemStack) ^ checkLeft)
+            if(ItemPotara.isRightSide(itemStack) ^ checkLeft)
                 hasPotaraOnThatSide = true;
         }
 
