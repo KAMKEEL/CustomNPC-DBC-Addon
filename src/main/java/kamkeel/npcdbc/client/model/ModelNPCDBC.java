@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.model.ModelMPM;
-import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.opengl.GL11;
 
 public class ModelNPCDBC extends ModelBase {
@@ -73,15 +72,7 @@ public class ModelNPCDBC extends ModelBase {
     public ModelRenderer ftailS5;
     public ModelRenderer ftailS6;
 
-    public ModelRenderer bipedHeadrad;
-    public ModelRenderer bipedHeadradl2;
-    public ModelRenderer bipedHeadradl;
-    public ModelRenderer bipedHeadc7;
-    public ModelRenderer bipedHeadc8;
-    public ModelRenderer bipedHeadssj3;
-    public ModelRenderer bipedHeadssj3l;
-    public ModelRenderer bipedHeadssj3t;
-    public ModelRenderer bipedHeadssj3l2;
+
     public TextureManager tex;
 
     public int tempState, stateChange, state2Change, auraTime, auraType, bendTime;
@@ -145,25 +136,6 @@ public class ModelNPCDBC extends ModelBase {
         this.setRotation(this.eyebrow, 0.0F, 0.0F, 0.0F);
 
         addArcoHorns();
-        addSSJ3Hair();
-    }
-
-    public static int dnsHair1(String s, int n) {
-        int a = 0;
-        try {
-            a = Integer.parseInt(s.charAt(n) + "");
-        } catch (NumberFormatException var3) {
-        }
-        return s.length() > n ? a : 0;
-    }
-
-    public static int dnsHair2(String s, int n) {
-        int a = 0;
-        try {
-            a = Integer.parseInt(s.charAt(n) + "" + s.charAt(n + 1) + "");
-        } catch (NumberFormatException var3) {
-        }
-        return s.length() > n ? a : 0;
     }
 
     public void addArcoHorns() {
@@ -355,30 +327,6 @@ public class ModelNPCDBC extends ModelBase {
         this.Fro5b.addChild(this.F5spike4);
     }
 
-    public void addSSJ3Hair() {
-        this.bipedHeadrad = new ModelRenderer(this, 0, 0);
-        this.bipedHeadrad.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.bipedHeadrad.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.bipedHeadradl2 = new ModelRenderer(this, 0, 0);
-        this.bipedHeadradl2.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.bipedHeadradl2.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.bipedHeadradl = new ModelRenderer(this, 0, 0);
-        this.bipedHeadradl.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.bipedHeadradl.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.bipedHeadssj3 = new ModelRenderer(this, 0, 0);
-        this.bipedHeadssj3.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.bipedHeadssj3.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.bipedHeadssj3l = new ModelRenderer(this, 0, 0);
-        this.bipedHeadssj3l.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.bipedHeadssj3l.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.bipedHeadssj3t = new ModelRenderer(this, 0, 0);
-        this.bipedHeadssj3t.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.bipedHeadssj3t.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.bipedHeadssj3l2 = new ModelRenderer(this, 0, 0);
-        this.bipedHeadssj3l2.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.bipedHeadssj3l2.setRotationPoint(0.0F, 0.0F, 0.0F);
-    }
-
     public void renderFace(DBCDisplay display) {
         RenderPlayerJBRA.glColor3f(display.bodyCM == -1 ? getDefaultColor("bodyCM", display.race) : display.bodyCM);
         tex.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
@@ -451,8 +399,9 @@ public class ModelNPCDBC extends ModelBase {
 
         if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             int bodyCM = display.bodyCM == -1 ? getDefaultColor("bodyCM", race) : display.bodyCM;
-            RenderPlayerJBRA.glColor3f(bodyCM);
             tex.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
+            RenderPlayerJBRA.glColor3f(bodyCM);
+
         } else if (race == DBCRace.NAMEKIAN) {
             tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
             int bodyCM = display.bodyCM == -1 ? getDefaultColor("bodyCM", race) : display.bodyCM;
@@ -468,8 +417,10 @@ public class ModelNPCDBC extends ModelBase {
             int bodyC2 = display.bodyC2 == -1 ? getDefaultColor("bodyC2", race) : display.bodyC2;
             RenderPlayerJBRA.glColor3f(bodyC2);
             model.render(0.0625F);
-            GL11.glColor3f(1f, 1f, 1f);
+
+
             tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
+            GL11.glColor3f(1f, 1f, 1f);
             //model.render(0.0625F);
 
         } else if (race == DBCRace.ARCOSIAN) {
@@ -518,35 +469,20 @@ public class ModelNPCDBC extends ModelBase {
             RenderPlayerJBRA.glColor3f(bodyC3);
             model.render(0.0625F);
 
-            GL11.glColor3f(1f, 1f, 1f);
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
 
+            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+            GL11.glColor3f(1f, 1f, 1f);
 
         } else if (race == DBCRace.MAJIN) {
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
             int bodyCM = display.bodyCM == -1 ? getDefaultColor("bodyCM", race) : display.bodyCM;
+            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
             RenderPlayerJBRA.glColor3f(bodyCM);
+
             //  model.render(0.0625F);
 
 
         }
         // parent.currentlyPlayerTexture = false;
-    }
-
-    private void transRot(float f5, ModelRenderer m) {
-
-        GL11.glTranslatef(m.rotationPointX * f5, m.rotationPointY * f5, m.rotationPointZ * f5);
-        if (m.rotateAngleZ != 0.0F) {
-            GL11.glRotatef(m.rotateAngleZ * (180.0F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
-        }
-
-        if (m.rotateAngleY != 0.0F) {
-            GL11.glRotatef(m.rotateAngleY * (180.0F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
-        }
-
-        if (m.rotateAngleX != 0.0F) {
-            GL11.glRotatef(m.rotateAngleX * (180.0F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
-        }
     }
 
     public void renderMisc(String hair) {
@@ -704,86 +640,6 @@ public class ModelNPCDBC extends ModelBase {
 
             }
         }
-
-        if (hair.contains("SSJ3")) {
-            this.bipedHeadrad.rotateAngleY = parent.bipedHead.rotateAngleY;
-            this.bipedHeadrad.rotateAngleX = parent.bipedHead.rotateAngleX;
-            this.bipedHeadrad.rotationPointX = parent.bipedHead.rotationPointX;
-            this.bipedHeadrad.rotationPointY = parent.bipedHead.rotationPointY;
-            this.bipedHeadrad.render(par1);
-            this.bipedHeadradl.rotateAngleY = parent.bipedHead.rotateAngleY;
-            this.bipedHeadradl.rotateAngleX = parent.bipedHead.rotateAngleX / 4.0F;
-            this.bipedHeadradl.rotationPointX = parent.bipedHead.rotationPointX;
-            this.bipedHeadradl.rotationPointY = parent.bipedHead.rotationPointY;
-            this.bipedHeadradl.render(par1);
-            this.bipedHeadradl2.rotateAngleY = parent.bipedHead.rotateAngleY;
-            this.bipedHeadradl2.rotateAngleX = parent.bipedHead.rotateAngleX / 2.0F;
-            this.bipedHeadradl2.rotationPointX = parent.bipedHead.rotationPointX;
-            this.bipedHeadradl2.rotationPointY = parent.bipedHead.rotationPointY;
-            this.bipedHeadradl2.render(par1);
-            this.bipedHeadradl2.rotateAngleY = parent.bipedHead.rotateAngleY;
-            this.bipedHeadradl2.rotateAngleX = parent.bipedHead.rotateAngleX / 1.2F;
-            this.bipedHeadradl2.rotationPointX = parent.bipedHead.rotationPointX;
-            this.bipedHeadradl2.rotationPointY = parent.bipedHead.rotationPointY;
-            this.bipedHeadradl2.render(par1);
-
-            this.bipedHeadssj3t.rotateAngleY = parent.bipedHead.rotateAngleY;
-            this.bipedHeadssj3t.rotateAngleX = parent.bipedHead.rotateAngleX;
-            this.bipedHeadssj3t.rotationPointX = parent.bipedHead.rotationPointX;
-            this.bipedHeadssj3t.rotationPointY = parent.bipedHead.rotationPointY;
-            this.bipedHeadssj3t.render(par1);
-
-        }
-    }
-
-    public int getDefaultColor(String type, int race) {
-        if (race < 3) {
-            if (type.equalsIgnoreCase("bodycm"))
-                return 16297621;
-        } else if (race == 3) {
-            if (type.equalsIgnoreCase("bodycm"))
-                return 5095183;
-            else if (type.equalsIgnoreCase("bodyc1"))
-                return 13796998;
-            else if (type.equalsIgnoreCase("bodyc2"))
-                return 12854822;
-        } else if (race == 4) {
-            if (type.equalsIgnoreCase("bodycm"))
-                return 15460342;
-            else if (type.equalsIgnoreCase("bodyc1"))
-                return 16111595;
-            else if (type.equalsIgnoreCase("bodyc2"))
-                return 8533141;
-            else if (type.equalsIgnoreCase("bodyc3"))
-                return 16550015;
-        } else if (race == 5)
-            if (type.equalsIgnoreCase("bodycm"))
-                return 16757199;
-
-
-        return 0;
-
-    }
-
-    public String getFaceTexture(DBCDisplay display, String t) {
-        int race = display.race;
-        String tex = "";
-        int st = display.arcoState;
-
-        if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN)
-            tex = "jinryuumodscore:cc/hum" + t + ".png";
-        else if (race == DBCRace.NAMEKIAN)
-            tex = "jinryuudragonbc:cc/nam/4nam" + t + ".png";
-        else if (race == DBCRace.ARCOSIAN)
-            tex = "jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + t + ".png";
-        else if (race == DBCRace.MAJIN)
-            tex = "jinryuudragonbc:cc/majin/majin" + t + ".png";
-
-
-        return tex;
-    }
-
-    public void renderBody(EntityNPCInterface npc) {
 
     }
 
@@ -1188,6 +1044,53 @@ public class ModelNPCDBC extends ModelBase {
         GL11.glPopMatrix();
     }
 
+    public int getDefaultColor(String type, int race) {
+        if (race < 3) {
+            if (type.equalsIgnoreCase("bodycm"))
+                return 16297621;
+        } else if (race == 3) {
+            if (type.equalsIgnoreCase("bodycm"))
+                return 5095183;
+            else if (type.equalsIgnoreCase("bodyc1"))
+                return 13796998;
+            else if (type.equalsIgnoreCase("bodyc2"))
+                return 12854822;
+        } else if (race == 4) {
+            if (type.equalsIgnoreCase("bodycm"))
+                return 15460342;
+            else if (type.equalsIgnoreCase("bodyc1"))
+                return 16111595;
+            else if (type.equalsIgnoreCase("bodyc2"))
+                return 8533141;
+            else if (type.equalsIgnoreCase("bodyc3"))
+                return 16550015;
+        } else if (race == 5)
+            if (type.equalsIgnoreCase("bodycm"))
+                return 16757199;
+
+
+        return 0;
+
+    }
+
+    public String getFaceTexture(DBCDisplay display, String t) {
+        int race = display.race;
+        String tex = "";
+        int st = display.arcoState;
+
+        if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN)
+            tex = "jinryuumodscore:cc/hum" + t + ".png";
+        else if (race == DBCRace.NAMEKIAN)
+            tex = "jinryuudragonbc:cc/nam/4nam" + t + ".png";
+        else if (race == DBCRace.ARCOSIAN)
+            tex = "jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + t + ".png";
+        else if (race == DBCRace.MAJIN)
+            tex = "jinryuudragonbc:cc/majin/majin" + t + ".png";
+
+
+        return tex;
+    }
+
     private void setRotation(ModelRenderer model, float x, float y, float z) {
         model.rotateAngleX = x;
         model.rotateAngleY = y;
@@ -1198,5 +1101,30 @@ public class ModelNPCDBC extends ModelBase {
         model.rotateAngleX = x;
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
+    }
+
+    public int dnsHair2(String s, int n) {
+        int a = 0;
+        try {
+            a = Integer.parseInt(s.charAt(n) + "" + s.charAt(n + 1) + "");
+        } catch (NumberFormatException var3) {
+        }
+        return s.length() > n ? a : 0;
+    }
+
+    private void transRot(float f5, ModelRenderer m) {
+
+        GL11.glTranslatef(m.rotationPointX * f5, m.rotationPointY * f5, m.rotationPointZ * f5);
+        if (m.rotateAngleZ != 0.0F) {
+            GL11.glRotatef(m.rotateAngleZ * (180.0F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
+        }
+
+        if (m.rotateAngleY != 0.0F) {
+            GL11.glRotatef(m.rotateAngleY * (180.0F / (float) Math.PI), 0.0F, 1.0F, 0.0F);
+        }
+
+        if (m.rotateAngleX != 0.0F) {
+            GL11.glRotatef(m.rotateAngleX * (180.0F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
+        }
     }
 }
