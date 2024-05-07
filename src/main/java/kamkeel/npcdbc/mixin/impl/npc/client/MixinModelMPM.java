@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.mixin.impl.npc.client;
 
 import kamkeel.npcdbc.client.model.ModelNPCDBC;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.entity.Entity;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.client.model.ModelNPCMale;
@@ -18,7 +20,7 @@ public class MixinModelMPM extends ModelNPCMale {
     @Shadow
     public boolean isArmor;
     @Unique
-    public ModelNPCDBC customNPC_DBCAddon$modelNPCDBC;
+    public ModelNPCDBC NPCDBCModel;
 
     public MixinModelMPM(float f) {
         super(f);
@@ -30,26 +32,65 @@ public class MixinModelMPM extends ModelNPCMale {
 
     @Inject(method = "render", at = @At(value = "HEAD"), remap = true)
     private void rotationKeep(Entity par1Entity, float p1, float p2, float p3, float p4, float p5, float p6, CallbackInfo ci) {
-        if (customNPC_DBCAddon$modelNPCDBC == null)
-            customNPC_DBCAddon$modelNPCDBC = new ModelNPCDBC((ModelMPM) (Object) this);
+        if (NPCDBCModel == null)
+            NPCDBCModel = new ModelNPCDBC((ModelMPM) (Object) this);
 
-        customNPC_DBCAddon$modelNPCDBC.rot1 = p1;
-        customNPC_DBCAddon$modelNPCDBC.rot2 = p2;
-        customNPC_DBCAddon$modelNPCDBC.rot3 = p3;
-        customNPC_DBCAddon$modelNPCDBC.rot4 = p4;
-        customNPC_DBCAddon$modelNPCDBC.rot5 = p5;
-        customNPC_DBCAddon$modelNPCDBC.rot6 = p6;
+        NPCDBCModel.rot1 = p1;
+        NPCDBCModel.rot2 = p2;
+        NPCDBCModel.rot3 = p3;
+        NPCDBCModel.rot4 = p4;
+        NPCDBCModel.rot5 = p5;
+        NPCDBCModel.rot6 = p6;
     }
 
-    @Inject(method = "renderHead", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPopMatrix()V", shift = At.Shift.BEFORE))
+    @Inject(method = "renderHead", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 2, shift = At.Shift.BEFORE), cancellable = true)
     private void renderDBCHead(EntityCustomNpc entity, float f, CallbackInfo ci) {
-        if (customNPC_DBCAddon$modelNPCDBC == null && !isArmor)
-            customNPC_DBCAddon$modelNPCDBC = new ModelNPCDBC((ModelMPM) (Object) this);
+        if (NPCDBCModel == null && !isArmor)
+            NPCDBCModel = new ModelNPCDBC((ModelMPM) (Object) this);
 
-        if (!isArmor) {
-            customNPC_DBCAddon$modelNPCDBC.renderHead(entity);
+        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        if (!isArmor && display.enabled) {
+            NPCDBCModel.renderHead(display);
+            NPCDBCModel.renderAllBody(display);
         }
+
+
     }
 
+    @Inject(method = "renderBody", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.BEFORE), cancellable = true)
+    private void renderDBCBody(EntityCustomNpc entity, float f, CallbackInfo ci) {
+        if (NPCDBCModel == null && !isArmor)
+            NPCDBCModel = new ModelNPCDBC((ModelMPM) (Object) this);
+
+        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        if (!isArmor && display.enabled)
+            NPCDBCModel.renderAllBody(display);
+
+
+    }
+
+    @Inject(method = "renderLegs", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/part/ModelLegs;render(F)V", shift = At.Shift.BEFORE), cancellable = true)
+    private void renderDBCLegs(EntityCustomNpc entity, float f, CallbackInfo ci) {
+        if (NPCDBCModel == null && !isArmor)
+            NPCDBCModel = new ModelNPCDBC((ModelMPM) (Object) this);
+
+        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        if (!isArmor && display.enabled)
+            NPCDBCModel.renderAllBody(display);
+
+
+    }
+
+    @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.BEFORE), cancellable = true)
+    private void renderDBCArms(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
+        if (NPCDBCModel == null && !isArmor)
+            NPCDBCModel = new ModelNPCDBC((ModelMPM) (Object) this);
+
+        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        if (!isArmor && display.enabled)
+            NPCDBCModel.renderAllBody(display);
+
+
+    }
 
 }

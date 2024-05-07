@@ -5,8 +5,8 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JBRA.mod_JBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
-import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
@@ -118,11 +118,8 @@ public class ModelNPCDBC extends ModelBase {
 
 
     public void renderFace(DBCDisplay display) {
-        int bodyColor = 16297621;
-        RenderPlayerJBRA.glColor3f(bodyColor);
-
-        int noseType = 2;
-        tex.bindTexture(new ResourceLocation("jinryuumodscore", "cc/humn" + noseType + ".png"));
+        RenderPlayerJBRA.glColor3f(display.bodyCM);
+        tex.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
         this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
         this.nose.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -131,8 +128,7 @@ public class ModelNPCDBC extends ModelBase {
         this.nose.render(0.0625F);
 
 
-        int mouthType = 1;
-        tex.bindTexture(new ResourceLocation("jinryuumodscore", "cc/humm" + mouthType + ".png"));
+        tex.bindTexture(new ResourceLocation(getFaceTexture(display, "m" + display.mouthType)));
         this.mouth.rotateAngleY = parent.bipedHead.rotateAngleY;
         this.mouth.rotateAngleX = parent.bipedHead.rotateAngleX;
         this.mouth.rotationPointX = parent.bipedHead.rotationPointX;
@@ -140,31 +136,32 @@ public class ModelNPCDBC extends ModelBase {
         this.mouth.render(0.0625F);
 
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
-        int eyeType = 0;
-        tex.bindTexture(new ResourceLocation("jinryuumodscore", "cc/humb" + eyeType + ".png"));
+        tex.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
         this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
         this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
         this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
         this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
         this.eyebase.render(0.0625F);
-
-        tex.bindTexture(new ResourceLocation("jinryuumodscore", "cc/humw" + eyeType + ".png"));
-        RenderPlayerJBRA.glColor3f(display.getHairColor());
-        this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
-        this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
-        this.eyebrow.rotationPointX = parent.bipedHead.rotationPointX;
-        this.eyebrow.rotationPointY = parent.bipedHead.rotationPointY;
-        this.eyebrow.render(0.0625F);
+        int race = 4;//display.race;
+        if (race < 4) {
+            RenderPlayerJBRA.glColor3f(display.getHairColor());
+            tex.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
+            this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
+            this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
+            this.eyebrow.rotationPointX = parent.bipedHead.rotationPointX;
+            this.eyebrow.rotationPointY = parent.bipedHead.rotationPointY;
+            this.eyebrow.render(0.0625F);
+        }
 
         RenderPlayerJBRA.glColor3f(display.getEyeColor());
-        tex.bindTexture(new ResourceLocation("jinryuumodscore", "cc/huml" + eyeType + ".png"));
+        tex.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
         this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
         this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
         this.eyeleft.rotationPointX = parent.bipedHead.rotationPointX;
         this.eyeleft.rotationPointY = parent.bipedHead.rotationPointY;
         this.eyeleft.render(0.0625F);
 
-        tex.bindTexture(new ResourceLocation("jinryuumodscore", "cc/humr" + eyeType + ".png"));
+        tex.bindTexture(new ResourceLocation(getFaceTexture(display, "r" + display.eyeType)));
         this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
         this.eyeright.rotateAngleX = parent.bipedHead.rotateAngleX;
         this.eyeright.rotationPointX = parent.bipedHead.rotationPointX;
@@ -173,18 +170,38 @@ public class ModelNPCDBC extends ModelBase {
 
     }
 
-    public void renderHead(EntityNPCInterface npc) {
-        DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
-        if (display.enabled) {
-            GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
+    public void renderHead(DBCDisplay display) {
+        GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
+        if (display.hairCode.length() > 5)
+            renderHairs(display);
 
-            if (display.hairCode.length() > 5)
-                renderHairs(display);
+        renderFace(display);
+        GL11.glPopAttrib();
+    }
 
-            renderFace(display);
-            GL11.glPopAttrib();
-            parent.currentlyPlayerTexture = false;
-        }
+    public void renderAllBody(DBCDisplay display) {
+        RenderPlayerJBRA.glColor3f(display.bodyCM);
+        tex.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
+        // parent.currentlyPlayerTexture = false;
+    }
+
+    public String getFaceTexture(DBCDisplay display, String t) {
+        int race = 4;
+        String tex = "";
+        int state = 0;
+        display.noseType = 1;
+
+        if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN)
+            tex = "jinryuumodscore:cc/hum" + t + ".png";
+        else if (race == DBCRace.NAMEKIAN)
+            tex = "jinryuudragonbc:cc/nam/4nam" + t + ".png";
+        else if (race == DBCRace.ARCOSIAN)
+            tex = "jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[state] + "0" + t + ".png";
+        else if (race == DBCRace.MAJIN)
+            tex = "jinryuudragonbc:cc/majin/majin" + t + ".png";
+
+
+        return tex;
     }
 
     public void renderBody(EntityNPCInterface npc) {
