@@ -6,6 +6,7 @@ import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.entity.Entity;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.client.model.ModelNPCMale;
+import noppes.npcs.client.model.part.ModelLegs;
 import noppes.npcs.entity.EntityCustomNpc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,6 +22,10 @@ public class MixinModelMPM extends ModelNPCMale {
     public boolean isArmor;
     @Unique
     public ModelNPCDBC NPCDBCModel;
+    @Unique
+    public DBCDisplay display;
+    @Shadow
+    private ModelLegs legs;
 
     public MixinModelMPM(float f) {
         super(f);
@@ -48,49 +53,35 @@ public class MixinModelMPM extends ModelNPCMale {
         if (NPCDBCModel == null && !isArmor)
             NPCDBCModel = new ModelNPCDBC((ModelMPM) (Object) this);
 
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+         display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled) {
             NPCDBCModel.renderHead(display);
-            NPCDBCModel.renderAllBody(display);
+            NPCDBCModel.renderAllBody(display, bipedHead);
         }
-
-
     }
 
     @Inject(method = "renderBody", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.BEFORE), cancellable = true)
     private void renderDBCBody(EntityCustomNpc entity, float f, CallbackInfo ci) {
-        if (NPCDBCModel == null && !isArmor)
-            NPCDBCModel = new ModelNPCDBC((ModelMPM) (Object) this);
-
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
-            NPCDBCModel.renderAllBody(display);
-
-
+            NPCDBCModel.renderAllBody(display, bipedBody);
     }
 
     @Inject(method = "renderLegs", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/part/ModelLegs;render(F)V", shift = At.Shift.BEFORE), cancellable = true)
     private void renderDBCLegs(EntityCustomNpc entity, float f, CallbackInfo ci) {
-        if (NPCDBCModel == null && !isArmor)
-            NPCDBCModel = new ModelNPCDBC((ModelMPM) (Object) this);
-
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
-            NPCDBCModel.renderAllBody(display);
-
-
+            NPCDBCModel.renderAllBody(display, legs);
     }
 
-    @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.BEFORE), cancellable = true)
-    private void renderDBCArms(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
-        if (NPCDBCModel == null && !isArmor)
-            NPCDBCModel = new ModelNPCDBC((ModelMPM) (Object) this);
-
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+    @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
+    private void renderDBCLeftArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
         if (!isArmor && display.enabled)
-            NPCDBCModel.renderAllBody(display);
+            NPCDBCModel.renderAllBody(display, bipedLeftArm);
+    }
 
-
+    @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
+    private void renderDBCRightArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
+        if (!isArmor && display.enabled)
+            NPCDBCModel.renderAllBody(display, bipedRightArm);
     }
 
 }

@@ -19,17 +19,14 @@ public interface IDBCDisplay {
 
     void setHairCode(String hairCode);
 
-    int getHairColor();
-
-    void setEyeColor(int eyeColor);
-
-    int getEyeColor();
-
-    void setHairColor(int hairColor);
 
     int getRace();
 
     void setRace(int race);
+
+    int setBodyType();
+
+    void getBodyType(int bodyType);
 
     void setHairType(String type);
 

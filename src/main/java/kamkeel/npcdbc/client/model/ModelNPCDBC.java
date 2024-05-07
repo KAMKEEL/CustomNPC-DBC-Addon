@@ -118,7 +118,7 @@ public class ModelNPCDBC extends ModelBase {
 
 
     public void renderFace(DBCDisplay display) {
-        RenderPlayerJBRA.glColor3f(display.bodyCM);
+        RenderPlayerJBRA.glColor3f(display.bodyCM == -1 ? 16297621 : display.bodyCM);
         tex.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
         this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
@@ -142,10 +142,9 @@ public class ModelNPCDBC extends ModelBase {
         this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
         this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
         this.eyebase.render(0.0625F);
-        int race = display.race;
 
-        if (race < 4) {
-            RenderPlayerJBRA.glColor3f(display.getHairColor());
+        if (display.race < 4) {
+            RenderPlayerJBRA.glColor3f(display.hairColor);
             tex.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
             this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
             this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -154,7 +153,7 @@ public class ModelNPCDBC extends ModelBase {
             this.eyebrow.render(0.0625F);
         }
 
-        RenderPlayerJBRA.glColor3f(display.getEyeColor());
+        RenderPlayerJBRA.glColor3f(display.eyeColor);
         tex.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
         this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
         this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -180,15 +179,37 @@ public class ModelNPCDBC extends ModelBase {
         GL11.glPopAttrib();
     }
 
-    public void renderAllBody(DBCDisplay display) {
+    public void renderAllBody(DBCDisplay display, ModelRenderer model) {
         int race = display.race;
+
         if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-            RenderPlayerJBRA.glColor3f(display.bodyCM);
+            int bodyCM = display.bodyCM == -1 ? 16297621 : display.bodyCM;
+            RenderPlayerJBRA.glColor3f(bodyCM);
             tex.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
         } else if (race == DBCRace.NAMEKIAN) {
+            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
+            int bodyCM = display.bodyCM == -1 ? 5095183 : display.bodyCM;
+            RenderPlayerJBRA.glColor3f(bodyCM);
+            model.render(0.0625F);
+
+            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
+            int bodyC1 = display.bodyC1 == -1 ? 13796998 : display.bodyC1;
+            RenderPlayerJBRA.glColor3f(bodyC1);
+            model.render(0.0625F);
+
+            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
+            int bodyC2 = display.bodyC2 == -1 ? 12854822 : display.bodyC2;
+            RenderPlayerJBRA.glColor3f(bodyC2);
+            model.render(0.0625F);
+            GL11.glColor3f(1f, 1f, 1f);
+            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
+            model.render(0.0625F);
 
         } else if (race == DBCRace.ARCOSIAN) {
-
+            int bodyCM = display.bodyCM == -1 ? 15460342 : display.bodyCM;
+            int bodyC1 = display.bodyC1 == -1 ? 16111595 : display.bodyC1;
+            int bodyC2 = display.bodyC2 == -1 ? 8533141 : display.bodyC2;
+            int bodyC3 = display.bodyC3 == -1 ? 16550015 : display.bodyC3;
         } else if (race == DBCRace.MAJIN) {
 
         }
@@ -236,7 +257,7 @@ public class ModelNPCDBC extends ModelBase {
         else if (display.hairType.equals("ssj4"))
             hairCode = "373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820";
 
-        RenderPlayerJBRA.glColor3f(display.getHairColor());
+        RenderPlayerJBRA.glColor3f(display.hairColor);
         tex.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
 
         boolean hasHairAnimations = true;

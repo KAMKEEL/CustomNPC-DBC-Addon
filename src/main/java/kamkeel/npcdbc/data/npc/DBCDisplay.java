@@ -12,9 +12,9 @@ public class DBCDisplay implements IDBCDisplay {
 
     public String hairCode = "", hairType = "";
 
-    public int hairColor, eyeColor, bodyCM = 16297621, bodyC1, bodyC2, bodyC3, furColor;
+    public int hairColor, eyeColor, bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
 
-    public int race = 4, rage;
+    public int race = 4, rage, bodyType;
 
     public int noseType = 1, mouthType = 1, eyeType = 0;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
@@ -24,10 +24,11 @@ public class DBCDisplay implements IDBCDisplay {
         if (enabled) {
             comp.setInteger("race", race);
 
+            comp.setInteger("bodyType", bodyType);
             comp.setString("DBCHairType", hairType);
             comp.setString("DBCHair", hairCode);
-            comp.setInteger("DBCHairColor", hairColor);
 
+            comp.setInteger("DBCHairColor", hairColor);
             comp.setInteger("DBCEyeColor", eyeColor);
             comp.setInteger("furColor", furColor);
             comp.setInteger("bodyCM", bodyCM);
@@ -47,10 +48,11 @@ public class DBCDisplay implements IDBCDisplay {
         if (enabled) {
             race = comp.getInteger("race");
 
+            bodyType = comp.getInteger("bodyType");
             hairType = comp.getString("DBCHairType");
             hairCode = comp.getString("DBCHair");
-            hairColor = comp.getInteger("DBCHairColor");
 
+            hairColor = comp.getInteger("DBCHairColor");
             eyeColor = comp.getInteger("DBCEyeColor");
             furColor = comp.getInteger("furColor");
             bodyCM = comp.getInteger("bodyCM");
@@ -92,6 +94,7 @@ public class DBCDisplay implements IDBCDisplay {
                 throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
         }
     }
+
     @Override
     public int getColor(String type) {
         switch (type.toLowerCase()) {
@@ -147,25 +150,6 @@ public class DBCDisplay implements IDBCDisplay {
         this.hairCode = hairCode;
     }
 
-    @Override
-    public int getHairColor() {
-        return hairColor;
-    }
-
-    @Override
-    public void setHairColor(int hairColor) {
-        this.hairColor = hairColor;
-    }
-
-    @Override
-    public int getEyeColor() {
-        return eyeColor;
-    }
-
-    @Override
-    public void setEyeColor(int eyeColor) {
-        this.eyeColor = eyeColor;
-    }
 
     @Override
     public int getRace() {
@@ -175,6 +159,16 @@ public class DBCDisplay implements IDBCDisplay {
     @Override
     public void setRace(int race) {
         this.race = ValueUtil.clamp(race, 0, 5);
+    }
+
+    @Override
+    public int setBodyType() {
+        return bodyType;
+    }
+
+    @Override
+    public void getBodyType(int bodyType) {
+        this.bodyType = ValueUtil.clamp(bodyType, 0, 2);
     }
 
     @Override
@@ -198,4 +192,5 @@ public class DBCDisplay implements IDBCDisplay {
         else
             throw new CustomNPCsException("Invalid type!");
     }
+
 }
