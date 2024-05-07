@@ -390,7 +390,12 @@ public class ModelNPCDBC extends ModelBase {
         this.nose.render(0.0625F);
 
 
-        tex.bindTexture(new ResourceLocation(getFaceTexture(display, "m" + display.mouthType)));
+        String mouthDir = "";
+        if (display.race == 4 && display.hasCoolerMask)
+            mouthDir = "jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[display.arcoState] + display.bodyType + "a.png";
+        else
+            mouthDir = getFaceTexture(display, "m" + display.mouthType);
+        tex.bindTexture(new ResourceLocation(mouthDir));
         this.mouth.rotateAngleY = parent.bipedHead.rotateAngleY;
         this.mouth.rotateAngleX = parent.bipedHead.rotateAngleX;
         this.mouth.rotationPointX = parent.bipedHead.rotationPointX;

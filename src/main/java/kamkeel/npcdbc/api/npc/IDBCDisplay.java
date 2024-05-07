@@ -30,5 +30,9 @@ public interface IDBCDisplay {
 
     void setHairType(String type);
 
+    boolean hasCoolerMask();
+
+    void hasCoolerMask(boolean has);
+
     String getHairType(String type);
 }

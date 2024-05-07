@@ -16,7 +16,9 @@ public class DBCDisplay implements IDBCDisplay {
 
     public int race = 4, rage, bodyType;
 
-    public int noseType = 1, mouthType = 1, eyeType = 0,arcoState;
+    public int noseType = 1, mouthType = 1, eyeType = 0, arcoState;
+
+    public boolean hasCoolerMask = false;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
@@ -37,6 +39,8 @@ public class DBCDisplay implements IDBCDisplay {
             comp.setInteger("bodyC3", bodyC3);
 
             comp.setInteger("arcoState", arcoState);
+
+            comp.setBoolean("hasCoolerMask", hasCoolerMask);
 
             comp.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
 
@@ -63,6 +67,7 @@ public class DBCDisplay implements IDBCDisplay {
             bodyC3 = comp.getInteger("bodyC3");
 
             arcoState = comp.getInteger("arcoState");
+            hasCoolerMask = comp.getBoolean("hasCoolerMask");
 
             enumAuraTypes = EnumAuraTypes.values()[comp.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
 
@@ -187,6 +192,15 @@ public class DBCDisplay implements IDBCDisplay {
         }
     }
 
+    @Override
+    public boolean hasCoolerMask() {
+        return hasCoolerMask;
+    }
+
+    @Override
+    public void hasCoolerMask(boolean has) {
+        hasCoolerMask = has;
+    }
 
     @Override
     public String getHairType(String type) {
