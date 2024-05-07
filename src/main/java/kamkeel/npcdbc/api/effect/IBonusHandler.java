@@ -6,6 +6,8 @@ public interface IBonusHandler {
 
     IPlayerBonus createBonus(String name, float str, float dex, float wil);
 
+    IPlayerBonus createBonus(String name, float str, float dex, float wil, float con, float spi);
+
     boolean hasBonus(IPlayer player, String name);
 
     boolean hasBonus(IPlayer player, IPlayerBonus bonus);

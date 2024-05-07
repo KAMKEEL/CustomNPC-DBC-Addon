@@ -8,6 +8,7 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -93,26 +94,38 @@ public abstract class MixinJRMCoreH {
             stackableMulti *= (float) fmvalue;
 
             float currentFormLevel = dbcData.addonFormLevel;
-            float[] bonus = dbcData.bonus.getCurrentBonuses();
 
-            if (attribute == 0) // STR
-                result *= (multis[0] + bonus[0]);
-            else if (attribute == 1) // DEX
-                result *= (multis[1] + bonus[1]);
-            else if (attribute == 3) // WIL
-                result *= (multis[2] + bonus[2]);
+            float[] multiBonus = dbcData.bonus.getMultiBonus();
+            if (attribute == DBCAttribute.Strength) // STR
+                result *= (multis[0] + multiBonus[0]);
+            else if (attribute == DBCAttribute.Dexterity) // DEX
+                result *= (multis[1] + multiBonus[1]);
+            else if (attribute == DBCAttribute.Willpower) // WIL
+                result *= (multis[2] + multiBonus[2]);
 
             if (attribute == 0 || attribute == 1 || attribute == 3)
                 result *= (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
 
             // Add Bonus Multi to Base Attributes
-            if (attribute == 0) // STR
-                result += (currAttributes[0] * bonus[0]);
-            else if (attribute == 1) // DEX
-                result += (currAttributes[1] * bonus[1]);
-            else if (attribute == 3) // WIL
-                result += (currAttributes[3] * bonus[2]);
+            if (attribute == DBCAttribute.Strength) // STR
+                result += (currAttributes[0] * multiBonus[0]);
+            else if (attribute == DBCAttribute.Dexterity) // DEX
+                result += (currAttributes[1] * multiBonus[1]);
+            else if (attribute == DBCAttribute.Willpower) // WIL
+                result += (currAttributes[3] * multiBonus[2]);
 
+            float[] flatBonus = dbcData.bonus.getFlatBonus();
+            // Add Bonus Flat to Base Attributes at the end
+            if (attribute == DBCAttribute.Strength) // STR
+                result += flatBonus[0];
+            else if (attribute == DBCAttribute.Dexterity) // DEX
+                result += flatBonus[1];
+            else if (attribute == DBCAttribute.Willpower) // WIL
+                result += flatBonus[2];
+            else if (attribute == DBCAttribute.Constitution) // CON
+                result += flatBonus[3];
+            else if (attribute == DBCAttribute.Spirit) // SPI
+                result += flatBonus[4];
 
             result = ValueUtil.clamp(result, 0, Integer.MAX_VALUE);
             info.setReturnValue(result);
@@ -123,18 +136,31 @@ public abstract class MixinJRMCoreH {
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;OverAtrLimit:Z"), remap = false, cancellable = true)
     private static void applyBonusToDBC(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info, @Local(name = "result") LocalIntRef result) {
         DBCData dbcData = DBCData.get(player);
-        float[] bonus = dbcData.bonus.getCurrentBonuses();
-
         int resultOriginal = result.get();
+
+        float[] bonus = dbcData.bonus.getMultiBonus();
         if (attribute == 0 && bonus[0] != 0) //str
-            resultOriginal += (int) (currAttributes[0] * bonus[0]);
-        else if (attribute == 1) //dex
-            resultOriginal += (int) (currAttributes[1] * bonus[1]);
-        else if (attribute == 3) //will
-            resultOriginal += (int) (currAttributes[3] * bonus[2]);
+            resultOriginal += (currAttributes[0] * bonus[0]);
+        else if (attribute == 1 && bonus[0] != 0) //dex
+            resultOriginal += (currAttributes[1] * bonus[1]);
+        else if (attribute == 3 && bonus[0] != 0) //will
+            resultOriginal += (currAttributes[3] * bonus[2]);
+
+
+        float[] flatBonus = dbcData.bonus.getFlatBonus();
+        // Add Bonus Flat to Base Attributes at the end
+        if (attribute == DBCAttribute.Strength) // STR
+            resultOriginal += flatBonus[0];
+        else if (attribute == DBCAttribute.Dexterity) // DEX
+            resultOriginal += flatBonus[1];
+        else if (attribute == DBCAttribute.Willpower) // WIL
+            resultOriginal += flatBonus[2];
+        else if (attribute == DBCAttribute.Constitution) // CON
+            resultOriginal += flatBonus[3];
+        else if (attribute == DBCAttribute.Spirit) // SPI
+            resultOriginal += flatBonus[4];
 
         result.set(resultOriginal);
-
     }
 
     // fix for descending from a CF sets release to 0 as game registers you as base in a CF

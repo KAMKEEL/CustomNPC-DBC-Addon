@@ -5,7 +5,6 @@ import kamkeel.npcdbc.api.effect.IPlayerBonus;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.Utility;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.api.entity.IPlayer;
 
@@ -29,7 +28,7 @@ public class BonusController implements IBonusHandler {
         DBCData dbcData = DBCData.get(player);
         HashMap<String, PlayerBonus> playerBonusHashMap = new HashMap<>();
         for(PlayerBonus val : dbcData.currentBonuses.values()){
-            PlayerBonus bonus = new PlayerBonus(val.name, val.strength, val.dexterity, val.willpower);
+            PlayerBonus bonus = new PlayerBonus(val.name, val.type, val.strength, val.dexterity, val.willpower, val.constituion, val.spirit);
             playerBonusHashMap.put(bonus.name, bonus);
         }
         playerBonus.put(Utility.getUUID(player), playerBonusHashMap);
@@ -41,11 +40,13 @@ public class BonusController implements IBonusHandler {
         if (playerBonus.containsKey(uuid))
             currentBonus = playerBonus.get(Utility.getUUID(player));
 
-        float[] bonuses = new float[3];
+        float[] bonuses = new float[5];
         for(PlayerBonus playerBonus : currentBonus.values()){
             bonuses[0] += playerBonus.strength;
             bonuses[1] += playerBonus.dexterity;
             bonuses[2] += playerBonus.willpower;
+            bonuses[3] += playerBonus.constituion;
+            bonuses[4] += playerBonus.spirit;
         }
         return bonuses;
     }
@@ -106,7 +107,7 @@ public class BonusController implements IBonusHandler {
         syncBonus(player);
     }
 
-    public void applyBonus(EntityPlayer player, String name, float str, float dex, float wil) {
+    public void applyBonus(EntityPlayer player, String name, byte type, float str, float dex, float wil) {
         if(player == null || name.isEmpty())
             return;
 
@@ -117,7 +118,7 @@ public class BonusController implements IBonusHandler {
         else
             playerBonus.put(uuid, currentbonus);
 
-        PlayerBonus bonus = new PlayerBonus(name, str, dex, wil);
+        PlayerBonus bonus = new PlayerBonus(name,  type, str, dex, wil);
         currentbonus.put(name, bonus);
         syncBonus(player);
     }
@@ -150,7 +151,12 @@ public class BonusController implements IBonusHandler {
 
     @Override
     public IPlayerBonus createBonus(String name, float str, float dex, float wil) {
-        return new PlayerBonus(name, str, dex, wil);
+        return new PlayerBonus(name, (byte) 0, str, dex, wil);
+    }
+
+    @Override
+    public IPlayerBonus createBonus(String name, float str, float dex, float wil, float con, float spi) {
+        return new PlayerBonus(name, (byte) 1, str, dex, wil, con, spi);
     }
 
     @Override
@@ -169,12 +175,16 @@ public class BonusController implements IBonusHandler {
     public void applyBonus(IPlayer player, String name, float str, float dex, float wil) {
         if(player == null || player.getMCEntity() == null)
             return;
-        applyBonus((EntityPlayer) player.getMCEntity(), name, str, dex, wil);
+        applyBonus((EntityPlayer) player.getMCEntity(), name, (byte) 0, str, dex, wil);
     }
 
     @Override
     public void applyBonus(IPlayer player, IPlayerBonus bonus) {
-        applyBonus(player, bonus.getName(), bonus.getStrength(), bonus.getDexterity(), bonus.getWillpower());
+        if(bonus == null)
+            return;
+        if(player == null || player.getMCEntity() == null)
+            return;
+        applyBonus((EntityPlayer) player.getMCEntity(), (PlayerBonus) bonus);
     }
 
     @Override
