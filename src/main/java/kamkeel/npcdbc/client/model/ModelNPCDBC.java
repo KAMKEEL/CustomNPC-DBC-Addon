@@ -5,19 +5,19 @@ import JinRyuu.JBRA.ModelRendererJBRA;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JBRA.mod_JBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
-import JinRyuu.JRMCore.JRMCoreH;
-import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.model.ModelMPM;
+import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.opengl.GL11;
-import org.spongepowered.asm.mixin.Unique;
 
 public class ModelNPCDBC extends ModelBase {
 
     public ModelRendererJBRA[] hairall;
-    private ModelMPM parent;
+    private final ModelMPM parent;
 
     public float rot1;
     public float rot2;
@@ -54,7 +54,17 @@ public class ModelNPCDBC extends ModelBase {
         }
     }
 
-    // Render Hairs V2 into NPC
+    public void renderHead(EntityNPCInterface npc){
+        String dnsTest = "373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820";
+        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
+        RenderPlayerJBRA.glColor3f(0x0);
+        renderHairs(npc, 0.0625F, dnsTest, 0, 0, null);
+        parent.currentlyPlayerTexture = false;
+    }
+
+    public void renderBody(EntityNPCInterface npc){
+
+    }
 
     public static int dnsHair1(String s, int n) {
         return s.length() > n ? sa(s, n) : 0;
@@ -84,7 +94,7 @@ public class ModelNPCDBC extends ModelBase {
         return s1.charAt(s2) + "";
     }
 
-    public void renderHairsV2(float par1, String h, int state, int rage, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer) {
+    public void renderHairs(EntityNPCInterface npc, float par1, String h, int state, int rage, RenderPlayerJBRA rp) {
         String playerName = "Kam";//JRMCoreH.plyrs[pl];
         boolean canUse = mod_JBRA.a6P9H9B;
         boolean pstrty = false;//super form selected;JRMCoreH.plyrSttngsClient(1, pl);
@@ -96,145 +106,145 @@ public class ModelNPCDBC extends ModelBase {
         boolean hasHairAnimations = true;
         int trTime = canUse ? 2 : 200;
         int arTime = canUse ? 2 : 200;
-        if (hasHairAnimations) {
-            if (JRMCoreH.HairsT(state, "B") && rp.getStateChange(playerName) < 200) {
-                rp.setStateChange(rp.getStateChange(playerName) + trTime, playerName);
-            }
-
-            if (JRMCoreH.HairsT(state, "C")) {
-                if (rp.getStateChange(playerName) < 200) {
-                    rp.setStateChange(rp.getStateChange(playerName) + trTime, playerName);
-                }
-
-                if (rp.getState2Change(playerName) < 200) {
-                    rp.setState2Change(rp.getState2Change(playerName) + trTime, playerName);
-                }
-            }
-
-            if (JRMCoreH.HairsT(rp.getState(playerName), "A") && !JRMCoreH.HairsT(state, "A")) {
-                if (!JRMCoreH.HairsT(rp.getState(playerName), state) && rp.getStateChange(playerName) < 200) {
-                    rp.setStateChange(rp.getStateChange(playerName) + trTime, playerName);
-                }
-
-                if (rp.getStateChange(playerName) >= 200) {
-                    rp.setStateChange(200, playerName);
-                    rp.setState(state, playerName);
-                }
-            } else if (!JRMCoreH.HairsT(rp.getState(playerName), "A") && JRMCoreH.HairsT(state, "A")) {
-                if ((!JRMCoreH.HairsT(rp.getState(playerName), state) || rage == 0) && rp.getStateChange(playerName) > 0) {
-                    rp.setStateChange(rp.getStateChange(playerName) - trTime, playerName);
-                }
-
-                if (rp.getStateChange(playerName) <= 0) {
-                    rp.setStateChange(0, playerName);
-                    rp.setState(state, playerName);
-                }
-            } else if (!JRMCoreH.HairsT(rp.getState(playerName), state) && JRMCoreH.HairsT(rp.getState(playerName), "B") && JRMCoreH.HairsT(state, "B")) {
-                rp.setState(state, playerName);
-            } else if (JRMCoreH.HairsT(rp.getState(playerName), "A")) {
-                if (!canUse && JRMCoreH.HairsT(rp.getState(playerName), state) && rage > 90) {
-                    rp.setStateChange(rp.getStateChange(playerName) + trTime, playerName);
-                    if (rp.getStateChange(playerName) > 200) {
-                        rp.setStateChange(200, playerName);
-                    }
-                } else if (canUse && JRMCoreH.HairsT(rp.getState(playerName), state) && rage > 0 && rp.getStateChange(playerName) < rage * 2) {
-                    rp.setStateChange(rp.getStateChange(playerName) + trTime, playerName);
-                } else if (JRMCoreH.HairsT(rp.getState(playerName), state)) {
-                    if (rp.getStateChange(playerName) > 0) {
-                        rp.setStateChange(rp.getStateChange(playerName) - trTime, playerName);
-                    } else {
-                        rp.setStateChange(0, playerName);
-                    }
-
-                    if (rp.getState2Change(playerName) > 0) {
-                        rp.setState2Change(rp.getState2Change(playerName) - trTime, playerName);
-                    } else {
-                        rp.setState2Change(0, playerName);
-                    }
-                }
-            } else if ((!JRMCoreH.HairsT(state, "B") || !pstrty) && !JRMCoreH.HairsT(state, "B")) {
-                if (!JRMCoreH.HairsT(rp.getState(playerName), state) && JRMCoreH.HairsT(state, "C")) {
-                    if (rp.getState2Change(playerName) < 200) {
-                        rp.setState2Change(rp.getState2Change(playerName) + trTime, playerName);
-                    }
-
-                    if (rp.getState2Change(playerName) >= 200) {
-                        rp.setState2Change(200, playerName);
-                        rp.setState(state, playerName);
-                    }
-                }
-            } else if (!canUse && JRMCoreH.HairsT(rp.getState(playerName), state) && rage > 90) {
-                rp.setState2Change(rp.getState2Change(playerName) + trTime, playerName);
-                if (rp.getState2Change(playerName) > 200) {
-                    rp.setState2Change(200, playerName);
-                }
-            } else if (canUse && JRMCoreH.HairsT(rp.getState(playerName), state) && rage > 0 && rp.getState2Change(playerName) < rage * 2) {
-                rp.setState2Change(rp.getState2Change(playerName) + trTime, playerName);
-            } else if (rp.getState2Change(playerName) > 200) {
-                rp.setState2Change(200, playerName);
-                rp.setState(state, playerName);
-            } else if (rp.getState2Change(playerName) > 0) {
-                rp.setState2Change(rp.getState2Change(playerName) - trTime, playerName);
-            } else if (rp.getState2Change(playerName) != 0) {
-                rp.setState2Change(0, playerName);
-            }
-        }
-
-        if (canUse && (aura || trty || kken || trbo)) { //turbo/kaioken/charging hair animation
-            if (JRMCoreH.HairsT(rp.getState(playerName), state) && rp.getAuratime(playerName) < 50) {
-                if (rp.getAuratime(playerName) < 50 && rp.getAuratype(playerName) == 0) {
-                    rp.setAuratime(rp.getAuratime(playerName) + arTime, playerName);
-                }
-
-                if (rp.getAuratime(playerName) >= 50) {
-                    rp.setAuratype(1, playerName);
-                }
-
-                if (rp.getAuratime(playerName) < 20 && rp.getAuratype(playerName) == 1) {
-                    rp.setAuratype(0, playerName);
-                }
-
-                if (rp.getAuratime(playerName) > 0 && rp.getAuratype(playerName) == 1) {
-                    rp.setAuratime(rp.getAuratime(playerName) - arTime, playerName);
-                }
-            } else if (JRMCoreH.HairsT(rp.getState(playerName), state) && !JRMCoreH.HairsT(state, "A")) {
-                if (rp.getAuratype(playerName) < 2) {
-                    rp.setAuratype(2, playerName);
-                }
-
-                if (rp.getBendtime(playerName) < 50 && rp.getAuratype(playerName) == 2) {
-                    rp.setBendtime(rp.getBendtime(playerName) + arTime, playerName);
-                }
-
-                if (rp.getBendtime(playerName) >= 50) {
-                    rp.setAuratype(3, playerName);
-                }
-
-                if (rp.getBendtime(playerName) < 20 && rp.getAuratype(playerName) == 3) {
-                    rp.setAuratype(2, playerName);
-                }
-
-                if (rp.getBendtime(playerName) > 0 && rp.getAuratype(playerName) == 3) {
-                    rp.setBendtime(rp.getBendtime(playerName) - arTime, playerName);
-                }
-            }
-        } else {
-            if (rp.getAuratype(playerName) > 0) {
-                rp.setAuratype(0, playerName);
-            }
-
-            if (rp.getBendtime(playerName) > 0) {
-                rp.setBendtime(rp.getBendtime(playerName) - 1, playerName);
-            }
-
-            if (rp.getAuratime(playerName) > 0) {
-                rp.setAuratime(rp.getAuratime(playerName) - 1, playerName);
-            }
-        }
+//        if (hasHairAnimations) {
+//            if (JRMCoreH.HairsT(state, "B") && rp.getStateChange(playerName) < 200) {
+//                rp.setStateChange(rp.getStateChange(playerName) + trTime, playerName);
+//            }
+//
+//            if (JRMCoreH.HairsT(state, "C")) {
+//                if (rp.getStateChange(playerName) < 200) {
+//                    rp.setStateChange(rp.getStateChange(playerName) + trTime, playerName);
+//                }
+//
+//                if (rp.getState2Change(playerName) < 200) {
+//                    rp.setState2Change(rp.getState2Change(playerName) + trTime, playerName);
+//                }
+//            }
+//
+//            if (JRMCoreH.HairsT(rp.getState(playerName), "A") && !JRMCoreH.HairsT(state, "A")) {
+//                if (!JRMCoreH.HairsT(rp.getState(playerName), state) && rp.getStateChange(playerName) < 200) {
+//                    rp.setStateChange(rp.getStateChange(playerName) + trTime, playerName);
+//                }
+//
+//                if (rp.getStateChange(playerName) >= 200) {
+//                    rp.setStateChange(200, playerName);
+//                    rp.setState(state, playerName);
+//                }
+//            } else if (!JRMCoreH.HairsT(rp.getState(playerName), "A") && JRMCoreH.HairsT(state, "A")) {
+//                if ((!JRMCoreH.HairsT(rp.getState(playerName), state) || rage == 0) && rp.getStateChange(playerName) > 0) {
+//                    rp.setStateChange(rp.getStateChange(playerName) - trTime, playerName);
+//                }
+//
+//                if (rp.getStateChange(playerName) <= 0) {
+//                    rp.setStateChange(0, playerName);
+//                    rp.setState(state, playerName);
+//                }
+//            } else if (!JRMCoreH.HairsT(rp.getState(playerName), state) && JRMCoreH.HairsT(rp.getState(playerName), "B") && JRMCoreH.HairsT(state, "B")) {
+//                rp.setState(state, playerName);
+//            } else if (JRMCoreH.HairsT(rp.getState(playerName), "A")) {
+//                if (!canUse && JRMCoreH.HairsT(rp.getState(playerName), state) && rage > 90) {
+//                    rp.setStateChange(rp.getStateChange(playerName) + trTime, playerName);
+//                    if (rp.getStateChange(playerName) > 200) {
+//                        rp.setStateChange(200, playerName);
+//                    }
+//                } else if (canUse && JRMCoreH.HairsT(rp.getState(playerName), state) && rage > 0 && rp.getStateChange(playerName) < rage * 2) {
+//                    rp.setStateChange(rp.getStateChange(playerName) + trTime, playerName);
+//                } else if (JRMCoreH.HairsT(rp.getState(playerName), state)) {
+//                    if (rp.getStateChange(playerName) > 0) {
+//                        rp.setStateChange(rp.getStateChange(playerName) - trTime, playerName);
+//                    } else {
+//                        rp.setStateChange(0, playerName);
+//                    }
+//
+//                    if (rp.getState2Change(playerName) > 0) {
+//                        rp.setState2Change(rp.getState2Change(playerName) - trTime, playerName);
+//                    } else {
+//                        rp.setState2Change(0, playerName);
+//                    }
+//                }
+//            } else if ((!JRMCoreH.HairsT(state, "B") || !pstrty) && !JRMCoreH.HairsT(state, "B")) {
+//                if (!JRMCoreH.HairsT(rp.getState(playerName), state) && JRMCoreH.HairsT(state, "C")) {
+//                    if (rp.getState2Change(playerName) < 200) {
+//                        rp.setState2Change(rp.getState2Change(playerName) + trTime, playerName);
+//                    }
+//
+//                    if (rp.getState2Change(playerName) >= 200) {
+//                        rp.setState2Change(200, playerName);
+//                        rp.setState(state, playerName);
+//                    }
+//                }
+//            } else if (!canUse && JRMCoreH.HairsT(rp.getState(playerName), state) && rage > 90) {
+//                rp.setState2Change(rp.getState2Change(playerName) + trTime, playerName);
+//                if (rp.getState2Change(playerName) > 200) {
+//                    rp.setState2Change(200, playerName);
+//                }
+//            } else if (canUse && JRMCoreH.HairsT(rp.getState(playerName), state) && rage > 0 && rp.getState2Change(playerName) < rage * 2) {
+//                rp.setState2Change(rp.getState2Change(playerName) + trTime, playerName);
+//            } else if (rp.getState2Change(playerName) > 200) {
+//                rp.setState2Change(200, playerName);
+//                rp.setState(state, playerName);
+//            } else if (rp.getState2Change(playerName) > 0) {
+//                rp.setState2Change(rp.getState2Change(playerName) - trTime, playerName);
+//            } else if (rp.getState2Change(playerName) != 0) {
+//                rp.setState2Change(0, playerName);
+//            }
+//        }
+//
+//        if (canUse && (aura || trty || kken || trbo)) { //turbo/kaioken/charging hair animation
+//            if (JRMCoreH.HairsT(rp.getState(playerName), state) && rp.getAuratime(playerName) < 50) {
+//                if (rp.getAuratime(playerName) < 50 && rp.getAuratype(playerName) == 0) {
+//                    rp.setAuratime(rp.getAuratime(playerName) + arTime, playerName);
+//                }
+//
+//                if (rp.getAuratime(playerName) >= 50) {
+//                    rp.setAuratype(1, playerName);
+//                }
+//
+//                if (rp.getAuratime(playerName) < 20 && rp.getAuratype(playerName) == 1) {
+//                    rp.setAuratype(0, playerName);
+//                }
+//
+//                if (rp.getAuratime(playerName) > 0 && rp.getAuratype(playerName) == 1) {
+//                    rp.setAuratime(rp.getAuratime(playerName) - arTime, playerName);
+//                }
+//            } else if (JRMCoreH.HairsT(rp.getState(playerName), state) && !JRMCoreH.HairsT(state, "A")) {
+//                if (rp.getAuratype(playerName) < 2) {
+//                    rp.setAuratype(2, playerName);
+//                }
+//
+//                if (rp.getBendtime(playerName) < 50 && rp.getAuratype(playerName) == 2) {
+//                    rp.setBendtime(rp.getBendtime(playerName) + arTime, playerName);
+//                }
+//
+//                if (rp.getBendtime(playerName) >= 50) {
+//                    rp.setAuratype(3, playerName);
+//                }
+//
+//                if (rp.getBendtime(playerName) < 20 && rp.getAuratype(playerName) == 3) {
+//                    rp.setAuratype(2, playerName);
+//                }
+//
+//                if (rp.getBendtime(playerName) > 0 && rp.getAuratype(playerName) == 3) {
+//                    rp.setBendtime(rp.getBendtime(playerName) - arTime, playerName);
+//                }
+//            }
+//        } else {
+//            if (rp.getAuratype(playerName) > 0) {
+//                rp.setAuratype(0, playerName);
+//            }
+//
+//            if (rp.getBendtime(playerName) > 0) {
+//                rp.setBendtime(rp.getBendtime(playerName) - 1, playerName);
+//            }
+//
+//            if (rp.getAuratime(playerName) > 0) {
+//                rp.setAuratime(rp.getAuratime(playerName) - 1, playerName);
+//            }
+//        }
 
         GL11.glPushMatrix();
-        GL11.glScalef((0.5F + 0.5F / ModelBipedDBC.f) * 1.0F, 0.5F + 0.5F / ModelBipedDBC.f, (0.5F + 0.5F / ModelBipedDBC.f) * 1.0F);
-        GL11.glTranslatef(0.0F, (ModelBipedDBC.f - 1.0F) / ModelBipedDBC.f * (2.0F - (ModelBipedDBC.f >= 1.5F && ModelBipedDBC.f <= 2.0F ? (2.0F - ModelBipedDBC.f) / 2.5F : (ModelBipedDBC.f < 1.5F && ModelBipedDBC.f >= 1.0F ? (ModelBipedDBC.f * 2.0F - 2.0F) * 0.2F : 0.0F))), 0.0F);
+        GL11.glScalef((0.5F + 0.5F / 1.0F) * 1.0F, 0.5F + 0.5F / 1.0F, (0.5F + 0.5F / 1.0F) * 1.0F);
+        GL11.glTranslatef(0.0F, (1.0F - 1.0F) / 1.0F * (2.0F - (1.0F >= 1.5F && 1.0F<= 2.0F ? (2.0F - 1.0F) / 2.5F : (1.0F < 1.5F && 1.0F >= 1.0F ? (1.0F * 2.0F - 2.0F) * 0.2F : 0.0F))), 0.0F);
         float[] var10000 = new float[]{0.6F, 0.5F, 0.4F, -0.5F};
         var10000 = new float[]{0.0F, 0.0F, 0.0F, 0.0F};
         int[] hairRightPosZ = new int[]{3, 2, 1, 0, 3, 2, 1, 3, 2, 3};
@@ -275,106 +285,106 @@ public class ModelNPCDBC extends ModelBase {
                 boolean hpRight = face >= hairPos[1] && face < hairPos[2];
                 boolean hpLeft = face >= hairPos[2] && face < hairPos[3];
                 boolean hpBack = face >= hairPos[3] && face < hairPos[4];
-                if (rp.getStateChange(playerName) > 0 && l > 0) {
-                    if (y > -1.0F && y < 1.0F && z > -1.0F && z < 1.0F && hpBack) {
-                        x += (float) rp.getStateChange(playerName) * Int * (x < 0.0F ? -0.01F : 0.01F) * (float) l * 0.01F;
-                        x = x > 3.0F ? 3.0F : x;
-                        x = x < -3.0F ? -3.0F : x;
-                    }
-
-                    if (y > -1.0F && y < 1.0F && x > -1.0F && x < 1.0F && !hpBack) {
-                        z += (float) rp.getStateChange(playerName) * Int * (z < 0.0F ? -0.01F : 0.01F);
-                        z = z > 3.2F ? 3.2F : z;
-                        z = z < -3.2F ? -3.2F : z;
-                        if (!hpFront || x < 0.0F) {
-                            x += (float) rp.getStateChange(playerName) * Int * 0.01F;
-                            x = x > 0.4F ? 0.4F : x;
-                            x = x < -0.4F ? -0.4F : x;
-                        }
-
-                        if (z > 0.0F) {
-                            boolean add = hpTop ? hairTopPosZ[face - hairPos[4]] == 0 || hairTopPosZ[face - hairPos[4]] == 2 : false;
-                            boolean add2 = hpTop ? face % 4 == 0 || face % 4 == 3 : false;
-                            b += (float) rp.getStateChange(playerName) * Int * -0.02F;
-                            b = b < (add && add2 ? 0.0F : -0.2F) ? (add && add2 ? 0.0F : -0.2F) : b;
-                        } else if (z < 0.0F) {
-                            boolean add = hpTop ? hairTopPosZ[face - hairPos[4]] == 0 || hairTopPosZ[face - hairPos[4]] == 2 : false;
-                            boolean add2 = hpTop ? face % 4 == 0 || face % 4 == 3 : false;
-                            b += (float) rp.getStateChange(playerName) * Int * 0.02F;
-                            b = b > (add && add2 ? 0.0F : 0.2F) ? (add && add2 ? 0.0F : 0.2F) : b;
-                        }
-                    } else if (y > -1.0F && y < 1.0F) {
-                        x += (float) rp.getStateChange(playerName) * Int * (x < 0.0F ? -0.01F : 0.01F);
-                        x = x > 2.8F ? 2.8F : x;
-                        x = x < -2.8F ? -2.8F : x;
-                        if (b > 1.5F) {
-                            x = x > 1.5F ? 1.5F : x;
-                            x = x < -1.5F ? -1.5F : x;
-                            b += (float) rp.getStateChange(playerName) * Int * (b < 0.0F ? 0.03F : -0.03F);
-                            b = b > 2.8F ? 2.8F : b;
-                            b = b < -2.8F ? -2.8F : b;
-                        }
-                    } else if (x > -1.0F && x < 1.0F) {
-                        z += (float) rp.getStateChange(playerName) * Int * (z < 0.0F ? -0.01F : 0.01F);
-                        z = z > 2.8F ? 2.8F : z;
-                        z = z < -2.8F ? -2.8F : z;
-                        if (b > 0.0F && z > 0.0F && y < 1.6F) {
-                            z = z > 2.2F ? 2.2F : z;
-                            z = z < -2.2F ? -2.2F : z;
-                            float var91 = b + (float) rp.getStateChange(playerName) * Int * -0.02F;
-                            float var92 = var91 > b ? b : var91;
-                            b = var92 < -b ? -b : var92;
-                        } else if (b > 0.0F && z < 0.0F && y > 0.0F) {
-                            z = z > 2.2F ? 2.2F : z;
-                            z = z < -2.2F ? -2.2F : z;
-                            float var89 = b + (float) rp.getStateChange(playerName) * Int * -0.02F;
-                            float var90 = var89 > b ? b : var89;
-                            b = var90 < -b ? -b : var90;
-                        } else if (y < -1.3F && b > 0.0F) {
-                            z = z > 2.2F ? 2.2F : z;
-                            z = z < -2.2F ? -2.2F : z;
-                            b += (float) rp.getStateChange(playerName) * Int * -0.02F;
-                            b = b < 0.5F ? 0.5F : b;
-                        }
-                    }
-                }
-
-                if (rp.getState2Change(playerName) > 0) {
-                    if (y > -1.0F && y < 1.0F && x > -1.0F && x < 1.0F && hpFront) {
-                        float Int2 = Int > 0.02F ? 0.6F : Int;
-                        x += (float) rp.getState2Change(playerName) * Int2 * 0.01F;
-                        x = x > 0.2F ? 0.2F : x;
-                        x = x < -0.2F ? -0.2F : x;
-                        z += (float) rp.getState2Change(playerName) * Int2 * (z < 0.0F ? -0.02F : 0.02F);
-                        z = z > 2.8F ? 2.8F : z;
-                        z = z < -2.8F ? -2.8F : z;
-                    }
-
-                    l = (int) ((float) l + (float) rp.getState2Change(playerName) * 0.1F);
-                    if (b < 0.0F) {
-                        b += (float) rp.getState2Change(playerName) * 5.0E-4F;
-                        b = b >= 0.0F ? 0.2F : b;
-                    }
-
-                    if (b > 0.0F) {
-                        b += (float) rp.getState2Change(playerName) * -5.0E-4F;
-                        b = b <= 0.0F ? -0.2F : b;
-                    }
-                }
-
-                if (rp.getBendtime(playerName) > 0) {
-                    z += (float) rp.getBendtime(playerName) * (z < 0.0F ? -0.0025F : 0.0025F);
-                    b += (float) rp.getBendtime(playerName) * (b > 0.0F ? -0.005F : 0.005F);
-                    z = z > 3.2F ? 3.2F : z;
-                    z = z < -3.2F ? -3.2F : z;
-                }
-
-                if (rp.getAuratime(playerName) > 0) {
-                    z += (float) rp.getAuratime(playerName) * (z < 0.0F ? -0.0025F : 0.0025F);
-                    b += (float) rp.getAuratime(playerName) * (b > 0.0F ? -0.005F : 0.005F);
-                    z = z > 3.2F ? 3.2F : z;
-                    z = z < -3.2F ? -3.2F : z;
-                }
+//                if (rp.getStateChange(playerName) > 0 && l > 0) {
+//                    if (y > -1.0F && y < 1.0F && z > -1.0F && z < 1.0F && hpBack) {
+//                        x += (float) rp.getStateChange(playerName) * Int * (x < 0.0F ? -0.01F : 0.01F) * (float) l * 0.01F;
+//                        x = x > 3.0F ? 3.0F : x;
+//                        x = x < -3.0F ? -3.0F : x;
+//                    }
+//
+//                    if (y > -1.0F && y < 1.0F && x > -1.0F && x < 1.0F && !hpBack) {
+//                        z += (float) rp.getStateChange(playerName) * Int * (z < 0.0F ? -0.01F : 0.01F);
+//                        z = z > 3.2F ? 3.2F : z;
+//                        z = z < -3.2F ? -3.2F : z;
+//                        if (!hpFront || x < 0.0F) {
+//                            x += (float) rp.getStateChange(playerName) * Int * 0.01F;
+//                            x = x > 0.4F ? 0.4F : x;
+//                            x = x < -0.4F ? -0.4F : x;
+//                        }
+//
+//                        if (z > 0.0F) {
+//                            boolean add = hpTop ? hairTopPosZ[face - hairPos[4]] == 0 || hairTopPosZ[face - hairPos[4]] == 2 : false;
+//                            boolean add2 = hpTop ? face % 4 == 0 || face % 4 == 3 : false;
+//                            b += (float) rp.getStateChange(playerName) * Int * -0.02F;
+//                            b = b < (add && add2 ? 0.0F : -0.2F) ? (add && add2 ? 0.0F : -0.2F) : b;
+//                        } else if (z < 0.0F) {
+//                            boolean add = hpTop ? hairTopPosZ[face - hairPos[4]] == 0 || hairTopPosZ[face - hairPos[4]] == 2 : false;
+//                            boolean add2 = hpTop ? face % 4 == 0 || face % 4 == 3 : false;
+//                            b += (float) rp.getStateChange(playerName) * Int * 0.02F;
+//                            b = b > (add && add2 ? 0.0F : 0.2F) ? (add && add2 ? 0.0F : 0.2F) : b;
+//                        }
+//                    } else if (y > -1.0F && y < 1.0F) {
+//                        x += (float) rp.getStateChange(playerName) * Int * (x < 0.0F ? -0.01F : 0.01F);
+//                        x = x > 2.8F ? 2.8F : x;
+//                        x = x < -2.8F ? -2.8F : x;
+//                        if (b > 1.5F) {
+//                            x = x > 1.5F ? 1.5F : x;
+//                            x = x < -1.5F ? -1.5F : x;
+//                            b += (float) rp.getStateChange(playerName) * Int * (b < 0.0F ? 0.03F : -0.03F);
+//                            b = b > 2.8F ? 2.8F : b;
+//                            b = b < -2.8F ? -2.8F : b;
+//                        }
+//                    } else if (x > -1.0F && x < 1.0F) {
+//                        z += (float) rp.getStateChange(playerName) * Int * (z < 0.0F ? -0.01F : 0.01F);
+//                        z = z > 2.8F ? 2.8F : z;
+//                        z = z < -2.8F ? -2.8F : z;
+//                        if (b > 0.0F && z > 0.0F && y < 1.6F) {
+//                            z = z > 2.2F ? 2.2F : z;
+//                            z = z < -2.2F ? -2.2F : z;
+//                            float var91 = b + (float) rp.getStateChange(playerName) * Int * -0.02F;
+//                            float var92 = var91 > b ? b : var91;
+//                            b = var92 < -b ? -b : var92;
+//                        } else if (b > 0.0F && z < 0.0F && y > 0.0F) {
+//                            z = z > 2.2F ? 2.2F : z;
+//                            z = z < -2.2F ? -2.2F : z;
+//                            float var89 = b + (float) rp.getStateChange(playerName) * Int * -0.02F;
+//                            float var90 = var89 > b ? b : var89;
+//                            b = var90 < -b ? -b : var90;
+//                        } else if (y < -1.3F && b > 0.0F) {
+//                            z = z > 2.2F ? 2.2F : z;
+//                            z = z < -2.2F ? -2.2F : z;
+//                            b += (float) rp.getStateChange(playerName) * Int * -0.02F;
+//                            b = b < 0.5F ? 0.5F : b;
+//                        }
+//                    }
+//                }
+//
+//                if (rp.getState2Change(playerName) > 0) {
+//                    if (y > -1.0F && y < 1.0F && x > -1.0F && x < 1.0F && hpFront) {
+//                        float Int2 = Int > 0.02F ? 0.6F : Int;
+//                        x += (float) rp.getState2Change(playerName) * Int2 * 0.01F;
+//                        x = x > 0.2F ? 0.2F : x;
+//                        x = x < -0.2F ? -0.2F : x;
+//                        z += (float) rp.getState2Change(playerName) * Int2 * (z < 0.0F ? -0.02F : 0.02F);
+//                        z = z > 2.8F ? 2.8F : z;
+//                        z = z < -2.8F ? -2.8F : z;
+//                    }
+//
+//                    l = (int) ((float) l + (float) rp.getState2Change(playerName) * 0.1F);
+//                    if (b < 0.0F) {
+//                        b += (float) rp.getState2Change(playerName) * 5.0E-4F;
+//                        b = b >= 0.0F ? 0.2F : b;
+//                    }
+//
+//                    if (b > 0.0F) {
+//                        b += (float) rp.getState2Change(playerName) * -5.0E-4F;
+//                        b = b <= 0.0F ? -0.2F : b;
+//                    }
+//                }
+//
+//                if (rp.getBendtime(playerName) > 0) {
+//                    z += (float) rp.getBendtime(playerName) * (z < 0.0F ? -0.0025F : 0.0025F);
+//                    b += (float) rp.getBendtime(playerName) * (b > 0.0F ? -0.005F : 0.005F);
+//                    z = z > 3.2F ? 3.2F : z;
+//                    z = z < -3.2F ? -3.2F : z;
+//                }
+//
+//                if (rp.getAuratime(playerName) > 0) {
+//                    z += (float) rp.getAuratime(playerName) * (z < 0.0F ? -0.0025F : 0.0025F);
+//                    b += (float) rp.getAuratime(playerName) * (b > 0.0F ? -0.005F : 0.005F);
+//                    z = z > 3.2F ? 3.2F : z;
+//                    z = z < -3.2F ? -3.2F : z;
+//                }
 
                 int lng = 0;
                 if (!JRMCoreClient.mc.isGamePaused()) {
