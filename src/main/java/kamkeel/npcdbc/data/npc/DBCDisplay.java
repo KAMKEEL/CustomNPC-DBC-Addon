@@ -4,6 +4,7 @@ import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
+import noppes.npcs.util.ValueUtil;
 
 public class DBCDisplay implements IDBCDisplay {
 
@@ -13,7 +14,7 @@ public class DBCDisplay implements IDBCDisplay {
 
     public int hairColor, eyeColor, bodyCM = 16297621;
 
-    public int race = 1, rage;
+    public int race = 4, rage;
 
     public int noseType = 1, mouthType = 1, eyeType = 0;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
@@ -113,7 +114,7 @@ public class DBCDisplay implements IDBCDisplay {
 
     @Override
     public void setRace(int race) {
-        this.race = race;
+        this.race = ValueUtil.clamp(race, 0, 5);
     }
 
     @Override

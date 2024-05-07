@@ -142,7 +142,8 @@ public class ModelNPCDBC extends ModelBase {
         this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
         this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
         this.eyebase.render(0.0625F);
-        int race = 4;//display.race;
+        int race = display.race;
+
         if (race < 4) {
             RenderPlayerJBRA.glColor3f(display.getHairColor());
             tex.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
@@ -180,16 +181,24 @@ public class ModelNPCDBC extends ModelBase {
     }
 
     public void renderAllBody(DBCDisplay display) {
-        RenderPlayerJBRA.glColor3f(display.bodyCM);
-        tex.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
+        int race = display.race;
+        if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            RenderPlayerJBRA.glColor3f(display.bodyCM);
+            tex.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
+        } else if (race == DBCRace.NAMEKIAN) {
+
+        } else if (race == DBCRace.ARCOSIAN) {
+
+        } else if (race == DBCRace.MAJIN) {
+
+        }
         // parent.currentlyPlayerTexture = false;
     }
 
     public String getFaceTexture(DBCDisplay display, String t) {
-        int race = 4;
+        int race = display.race;
         String tex = "";
         int state = 0;
-        display.noseType = 1;
 
         if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN)
             tex = "jinryuumodscore:cc/hum" + t + ".png";
