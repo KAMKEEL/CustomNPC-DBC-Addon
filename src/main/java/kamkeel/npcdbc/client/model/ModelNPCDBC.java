@@ -37,7 +37,7 @@ public class ModelNPCDBC extends ModelBase {
 
     public TextureManager tex;
 
-    public int tempState, stateChange, state2Change, auraTime, auraType, bendType;
+    public int tempState, stateChange, state2Change, auraTime, auraType, bendTime;
 
     public ModelNPCDBC(ModelMPM mpm) {
         this.parent = mpm;
@@ -103,7 +103,6 @@ public class ModelNPCDBC extends ModelBase {
         try {
             a = Integer.parseInt(s.charAt(n) + "");
         } catch (NumberFormatException var3) {
-
         }
         return s.length() > n ? a : 0;
     }
@@ -111,9 +110,8 @@ public class ModelNPCDBC extends ModelBase {
     public static int dnsHair2(String s, int n) {
         int a = 0;
         try {
-            a = Integer.parseInt(s.charAt(n) + s.charAt(n + 1) + "");
+            a = Integer.parseInt(s.charAt(n) + "" + s.charAt(n + 1) + "");
         } catch (NumberFormatException var3) {
-
         }
         return s.length() > n ? a : 0;
     }
@@ -180,8 +178,9 @@ public class ModelNPCDBC extends ModelBase {
         if (display.enabled && !display.getHairCode().isEmpty()) {
             tex.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
             GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
-            RenderPlayerJBRA.glColor3f(display.getHairColor());
-            renderHairs(npc, 0.0625F, display.getHairCode(), 0, 0, null);
+
+            if (display.hairCode.length() > 5)
+                renderHairs(display);
 
             renderFace(npc, display);
             GL11.glPopAttrib();
@@ -193,19 +192,26 @@ public class ModelNPCDBC extends ModelBase {
 
     }
 
-    public void renderHairs(EntityNPCInterface npc, float par1, String h, int state, int rage, RenderPlayerJBRA rp) {
-        String playerName = "Kam";//JRMCoreH.plyrs[pl];
+    public void renderHairs(DBCDisplay display) {
         boolean canUse = mod_JBRA.a6P9H9B;
         boolean pstrty = false;//super form selected;JRMCoreH.plyrSttngsClient(1, pl);
-        boolean aura = false;//aura anim JRMCoreH.StusEfctsClient(4, pl);
-        boolean trbo = false; //turbo anim JRMCoreH.StusEfctsClient(3, pl);
+        boolean aura = true;//aura anim JRMCoreH.StusEfctsClient(4, pl);
+        boolean trbo = true; //turbo anim JRMCoreH.StusEfctsClient(3, pl);
         boolean kken = false;//kaioken anim JRMCoreH.StusEfctsClient(5, pl);
         boolean trty = false; //transforming anim JRMCoreH.StusEfctsClient(1, pl);
 
-        boolean isA = state == 0;
-        boolean isB = state == 1;
-        boolean isC = state == 5;
+        String hairCode = display.hairCode;
+        int state = 0;
+        int rage = display.rage;
 
+        if (display.hairType.equals("ssj"))
+            state = 1;
+        else if (display.equals("ssj2"))
+            state = 5;
+        else if (display.hairType.equals("ssj4"))
+            hairCode = "373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820";
+
+        RenderPlayerJBRA.glColor3f(display.getHairColor());
 
         boolean hasHairAnimations = true;
         int trTime = canUse ? 2 : 200;
@@ -295,54 +301,55 @@ public class ModelNPCDBC extends ModelBase {
         }
 
         if (canUse && (aura || trty || kken || trbo)) { //turbo/kaioken/charging hair animation
-            if (JRMCoreH.HairsT(tempState, state) && rp.getAuratime(playerName) < 50) {
-                if (rp.getAuratime(playerName) < 50 && rp.getAuratype(playerName) == 0) {
-                    rp.setAuratime(rp.getAuratime(playerName) + arTime, playerName);
+            if (JRMCoreH.HairsT(tempState, state) && auraTime < 50) {
+                if (auraTime < 50 && auraType == 0) {
+                    auraTime += arTime;
                 }
 
-                if (rp.getAuratime(playerName) >= 50) {
-                    rp.setAuratype(1, playerName);
+                if (auraTime >= 50) {
+                    auraType = 1;
                 }
 
-                if (rp.getAuratime(playerName) < 20 && rp.getAuratype(playerName) == 1) {
-                    rp.setAuratype(0, playerName);
+                if (auraTime < 20 && auraType == 1) {
+                    auraType = 0;
                 }
 
-                if (rp.getAuratime(playerName) > 0 && rp.getAuratype(playerName) == 1) {
-                    rp.setAuratime(rp.getAuratime(playerName) - arTime, playerName);
+                if (auraTime > 0 && auraType == 1) {
+                    auraTime -= arTime;
                 }
             } else if (JRMCoreH.HairsT(tempState, state) && !JRMCoreH.HairsT(state, "A")) {
-                if (rp.getAuratype(playerName) < 2) {
-                    rp.setAuratype(2, playerName);
+                if (auraType < 2) {
+                    auraType = 2;
                 }
 
-                if (rp.getBendtime(playerName) < 50 && rp.getAuratype(playerName) == 2) {
-                    rp.setBendtime(rp.getBendtime(playerName) + arTime, playerName);
+                if (bendTime < 50 && auraType == 2) {
+                    bendTime += arTime;
                 }
 
-                if (rp.getBendtime(playerName) >= 50) {
-                    rp.setAuratype(3, playerName);
+                if (bendTime >= 50) {
+                    auraType = 3;
                 }
 
-                if (rp.getBendtime(playerName) < 20 && rp.getAuratype(playerName) == 3) {
-                    rp.setAuratype(2, playerName);
+                if (bendTime < 20 && auraType == 3) {
+                    auraType = 2;
                 }
 
-                if (rp.getBendtime(playerName) > 0 && rp.getAuratype(playerName) == 3) {
-                    rp.setBendtime(rp.getBendtime(playerName) - arTime, playerName);
+                if (bendTime > 0 && auraType == 3) {
+                    bendTime -= arTime;
                 }
             }
         } else {
-            if (rp.getAuratype(playerName) > 0) {
-                rp.setAuratype(0, playerName);
+            if (auraType > 0) {
+                auraType = 0;
             }
 
-            if (rp.getBendtime(playerName) > 0) {
-                rp.setBendtime(rp.getBendtime(playerName) - 1, playerName);
+            if (bendTime > 0) {
+                bendTime -= 1;
             }
 
-            if (rp.getAuratime(playerName) > 0) {
-                rp.setAuratime(rp.getAuratime(playerName) - 1, playerName);
+            if (auraTime > 0) {
+                auraTime -= 1;
+                ;
             }
         }
 
@@ -360,7 +367,7 @@ public class ModelNPCDBC extends ModelBase {
         int[] hairTopPosX = new int[]{0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3};
         int[] hairTopPosZ = new int[]{0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3};
         int[] hairPos = new int[]{0, 4, 14, 24, 40, 56};
-        String hairdns = h;
+        String hairdns = hairCode;
 
         for (int face = 0; face < 56; ++face) {
             int l = dnsHair2(hairdns, face * 14);
@@ -476,16 +483,16 @@ public class ModelNPCDBC extends ModelBase {
                     }
                 }
 
-                if (rp.getBendtime(playerName) > 0) {
-                    z += (float) rp.getBendtime(playerName) * (z < 0.0F ? -0.0025F : 0.0025F);
-                    b += (float) rp.getBendtime(playerName) * (b > 0.0F ? -0.005F : 0.005F);
+                if (bendTime > 0) {
+                    z += (float) bendTime * (z < 0.0F ? -0.0025F : 0.0025F);
+                    b += (float) bendTime * (b > 0.0F ? -0.005F : 0.005F);
                     z = z > 3.2F ? 3.2F : z;
                     z = z < -3.2F ? -3.2F : z;
                 }
 
-                if (rp.getAuratime(playerName) > 0) {
-                    z += (float) rp.getAuratime(playerName) * (z < 0.0F ? -0.0025F : 0.0025F);
-                    b += (float) rp.getAuratime(playerName) * (b > 0.0F ? -0.005F : 0.005F);
+                if (auraTime > 0) {
+                    z += (float) auraTime * (z < 0.0F ? -0.0025F : 0.0025F);
+                    b += (float) auraTime * (b > 0.0F ? -0.005F : 0.005F);
                     z = z > 3.2F ? 3.2F : z;
                     z = z < -3.2F ? -3.2F : z;
                 }
@@ -528,7 +535,7 @@ public class ModelNPCDBC extends ModelBase {
                 this.hairall[3 + face * 4].rotationPointZ = 0.0F;
                 this.hairall[3 + face * 4].rotationPointY = 2.5F;
                 GL11.glPushMatrix();
-                GL11.glTranslatef(parent.bipedHead.rotationPointX * par1, parent.bipedHead.rotationPointY * par1, parent.bipedHead.rotationPointZ * par1);
+                GL11.glTranslatef(parent.bipedHead.rotationPointX * 0.0625f, parent.bipedHead.rotationPointY * 0.0625f, parent.bipedHead.rotationPointZ * 0.0625f);
                 if (parent.bipedHead.rotateAngleZ != 0.0F) {
                     GL11.glRotatef(parent.bipedHead.rotateAngleZ * (180.0F / (float) Math.PI), 0.0F, 0.0F, 1.0F);
                 }
@@ -560,7 +567,7 @@ public class ModelNPCDBC extends ModelBase {
                 this.hairall[1 + face * 4].showModel = (float) l > 0.0F;
                 this.hairall[2 + face * 4].showModel = (float) l > 33.0F;
                 this.hairall[3 + face * 4].showModel = (float) l > 66.0F;
-                this.hairall[lng + face * 4].render(par1);
+                this.hairall[lng + face * 4].render(0.0625f);
                 GL11.glPopMatrix();
                 GL11.glPopMatrix();
             }
