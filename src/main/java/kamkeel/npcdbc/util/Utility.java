@@ -20,6 +20,8 @@ import java.util.UUID;
 import static kamkeel.npcdbc.util.PlayerDataUtil.getIPlayer;
 
 public class Utility {
+    public static HashMap<String, String> darkCodes = new HashMap<>();
+
     public static boolean isServer() {
         return FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER;
     }
@@ -38,10 +40,7 @@ public class Utility {
 
     public static Entity getEntityFromID(World w, String s) { //s is basically getEntityID
         if (!s.isEmpty()) {
-            if (Boolean.parseBoolean(s.split(",")[1])) //if player
-                return Utility.getEntityByUUID(w, s.split(",")[0]);
-            else
-                return w.getEntityByID(Integer.parseInt(s.split(",")[0]));
+            return w.getEntityByID(Integer.parseInt(s));
         }
         return null;
 
@@ -150,7 +149,6 @@ public class Utility {
         return n >= Utility.percent(maxN, minPerc) && n < Utility.percent(maxN, maxPerc);
     }
 
-
     public static String removeBoldColorCode(String s) {
         for (int i = 0; i < s.length() - 2; i++) {
             if (s.charAt(i) == '\u00A7' && (s.charAt(i + 1) == 'l')) {
@@ -184,9 +182,8 @@ public class Utility {
         return sb.toString();
     }
 
-    public static HashMap<String, String> darkCodes = new HashMap<>();
     public static String getDarkColorCode(String s) {
-        if(darkCodes.isEmpty()){
+        if (darkCodes.isEmpty()) {
             darkCodes.put("§a", "§2");
             darkCodes.put("§b", "§9");
             darkCodes.put("§c", "§c");
@@ -195,7 +192,7 @@ public class Utility {
             darkCodes.put("§d", "§5");
             darkCodes.put("§f", "§0");
         }
-        if(darkCodes.containsKey(s))
+        if (darkCodes.containsKey(s))
             return darkCodes.get(s);
         return s;
     }
