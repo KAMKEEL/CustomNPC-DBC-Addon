@@ -1,7 +1,10 @@
 package kamkeel.npcdbc.data.npc;
 
+import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
+import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.data.aura.Aura;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
@@ -19,12 +22,14 @@ public class DBCDisplay implements IDBCDisplay {
     public int noseType = 1, mouthType = 1, eyeType = 0, arcoState;
 
     public boolean hasCoolerMask = false;
+    public int auraID = -1;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
         comp.setBoolean("DBCDisplayEnabled", enabled);
         if (enabled) {
             comp.setInteger("race", race);
+            comp.setInteger("auraID", auraID);
 
             comp.setInteger("bodyType", bodyType);
             comp.setString("DBCHairType", hairType);
@@ -53,6 +58,7 @@ public class DBCDisplay implements IDBCDisplay {
         enabled = comp.getBoolean("DBCDisplayEnabled");
         if (enabled) {
             race = comp.getInteger("race");
+            auraID = comp.getInteger("auraID");
 
             bodyType = comp.getInteger("bodyType");
             hairType = comp.getString("DBCHairType");
@@ -129,6 +135,7 @@ public class DBCDisplay implements IDBCDisplay {
     public boolean isEnabled() {
         return enabled;
     }
+
 
     @Override
     public void setEnabled(boolean enabled) {
@@ -209,6 +216,34 @@ public class DBCDisplay implements IDBCDisplay {
             return hairType;
         else
             throw new CustomNPCsException("Invalid type!");
+    }
+
+    @Override
+    public boolean hasAura() {
+        boolean has = AuraController.getInstance().has(auraID);
+        if (!has && auraID > -1)
+            auraID = -1;
+        return has;
+    }
+
+    @Override
+    public IAura getAura() {
+        return AuraController.getInstance().get(auraID);
+    }
+
+    @Override
+    public void setAura(IAura aura) {
+        this.auraID = aura.getID();
+    }
+
+    @Override
+    public void setAura(int auraID) {
+        this.auraID = auraID;
+    }
+
+    //internal usage
+    public Aura getAur() {
+        return (Aura) AuraController.getInstance().get(auraID);
     }
 
 }

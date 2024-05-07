@@ -95,6 +95,7 @@ public class ModelPotara extends ModelBipedBody {
     public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
         setRotationAngles(f, f1, f2, f3, f4, f5, entity);
         copyRotationData(Head, bipedHead);
+        this.isSneak = entity.isSneaking();
         Head.render(f5);
     }
 }

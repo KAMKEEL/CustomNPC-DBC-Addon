@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.api.npc;
 
+import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 
 public interface IDBCDisplay {
@@ -35,4 +36,12 @@ public interface IDBCDisplay {
     void hasCoolerMask(boolean has);
 
     String getHairType(String type);
+
+    boolean hasAura();
+
+    IAura getAura();
+
+    void setAura(IAura aura);
+
+    void setAura(int auraID);
 }
