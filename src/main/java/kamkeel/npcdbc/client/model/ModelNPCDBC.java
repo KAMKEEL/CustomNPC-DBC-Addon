@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.client.model;
 
-import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.ModelRendererJBRA;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JBRA.mod_JBRA;
@@ -16,9 +15,8 @@ import org.lwjgl.opengl.GL11;
 
 public class ModelNPCDBC extends ModelBase {
 
-    public ModelRendererJBRA[] hairall;
     private final ModelMPM parent;
-
+    public ModelRendererJBRA[] hairall;
     public float rot1;
     public float rot2;
     public float rot3;
@@ -54,18 +52,6 @@ public class ModelNPCDBC extends ModelBase {
         }
     }
 
-    public void renderHead(EntityNPCInterface npc){
-        String dnsTest = "373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820";
-        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
-        RenderPlayerJBRA.glColor3f(0x0);
-        renderHairs(npc, 0.0625F, dnsTest, 0, 0, null);
-        parent.currentlyPlayerTexture = false;
-    }
-
-    public void renderBody(EntityNPCInterface npc){
-
-    }
-
     public static int dnsHair1(String s, int n) {
         return s.length() > n ? sa(s, n) : 0;
     }
@@ -92,6 +78,20 @@ public class ModelNPCDBC extends ModelBase {
 
     public static String saO(String s1, int s2) {
         return s1.charAt(s2) + "";
+    }
+
+    public void renderHead(EntityNPCInterface npc) {
+        String dnsTest = "373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820";
+        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
+        GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
+        RenderPlayerJBRA.glColor3f(0x0);
+        renderHairs(npc, 0.0625F, dnsTest, 0, 0, null);
+        GL11.glPopAttrib();
+        parent.currentlyPlayerTexture = false;
+    }
+
+    public void renderBody(EntityNPCInterface npc) {
+
     }
 
     public void renderHairs(EntityNPCInterface npc, float par1, String h, int state, int rage, RenderPlayerJBRA rp) {
@@ -244,7 +244,7 @@ public class ModelNPCDBC extends ModelBase {
 
         GL11.glPushMatrix();
         GL11.glScalef((0.5F + 0.5F / 1.0F) * 1.0F, 0.5F + 0.5F / 1.0F, (0.5F + 0.5F / 1.0F) * 1.0F);
-        GL11.glTranslatef(0.0F, (1.0F - 1.0F) / 1.0F * (2.0F - (1.0F >= 1.5F && 1.0F<= 2.0F ? (2.0F - 1.0F) / 2.5F : (1.0F < 1.5F && 1.0F >= 1.0F ? (1.0F * 2.0F - 2.0F) * 0.2F : 0.0F))), 0.0F);
+        GL11.glTranslatef(0.0F, (1.0F - 1.0F) / 1.0F * (2.0F - (1.0F >= 1.5F && 1.0F <= 2.0F ? (2.0F - 1.0F) / 2.5F : (1.0F < 1.5F && 1.0F >= 1.0F ? (1.0F * 2.0F - 2.0F) * 0.2F : 0.0F))), 0.0F);
         float[] var10000 = new float[]{0.6F, 0.5F, 0.4F, -0.5F};
         var10000 = new float[]{0.0F, 0.0F, 0.0F, 0.0F};
         int[] hairRightPosZ = new int[]{3, 2, 1, 0, 3, 2, 1, 3, 2, 3};
