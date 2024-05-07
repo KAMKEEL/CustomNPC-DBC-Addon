@@ -10,26 +10,32 @@ public class DBCDisplay implements IDBCDisplay {
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
 
     private String hairCode = "";
-    private int hairColor = 0x0;
+    private int hairColor = 0x0, eyeColor = 0;
+
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         nbttagcompound.setBoolean("DBCDisplayEnabled", enabled);
-        if(enabled){
+        if (enabled) {
             nbttagcompound.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
 
             nbttagcompound.setString("DBCHair", hairCode);
             nbttagcompound.setInteger("DBCHairColor", hairColor);
+
+            nbttagcompound.setInteger("DBCEyeColor", eyeColor);
+
         }
         return nbttagcompound;
     }
 
     public void readFromNBT(NBTTagCompound nbttagcompound) {
         enabled = nbttagcompound.getBoolean("DBCDisplayEnabled");
-        if(enabled) {
+        if (enabled) {
             enumAuraTypes = EnumAuraTypes.values()[nbttagcompound.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
 
             hairCode = nbttagcompound.getString("DBCHair");
             hairColor = nbttagcompound.getInteger("DBCHairColor");
+
+            eyeColor = nbttagcompound.getInteger("DBCEyeColor");
         }
     }
 
@@ -75,5 +81,15 @@ public class DBCDisplay implements IDBCDisplay {
     @Override
     public void setHairColor(int hairColor) {
         this.hairColor = hairColor;
+    }
+
+    @Override
+    public int getEyeColor() {
+        return eyeColor;
+    }
+
+    @Override
+    public void setEyeColor(int eyeColor) {
+        this.eyeColor = eyeColor;
     }
 }

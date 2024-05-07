@@ -17,5 +17,9 @@ public interface IDBCDisplay {
 
     int getHairColor();
 
+    void setEyeColor(int eyeColor);
+
+    int getEyeColor();
+
     void setHairColor(int hairColor);
 }
