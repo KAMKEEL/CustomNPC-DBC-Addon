@@ -23,6 +23,10 @@ public interface IDBCDisplay {
 
     void setHairColor(int hairColor);
 
+    int getRace();
+
+    void setRace(int race);
+
     void setHairType(String type);
 
     String getHairType(String type);

@@ -8,39 +8,47 @@ import noppes.npcs.scripted.CustomNPCsException;
 public class DBCDisplay implements IDBCDisplay {
 
     public boolean enabled = false;
-    private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
 
     public String hairCode = "", hairType = "";
-    public int hairColor, eyeColor;
 
-    public int rage;
+    public int hairColor, eyeColor, bodyCM = 16297621;
 
+    public int race = 1, rage;
 
-    public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
-        nbttagcompound.setBoolean("DBCDisplayEnabled", enabled);
+    public int noseType = 1, mouthType = 1, eyeType = 0;
+    private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
+
+    public NBTTagCompound writeToNBT(NBTTagCompound comp) {
+        comp.setBoolean("DBCDisplayEnabled", enabled);
         if (enabled) {
-            nbttagcompound.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
+            comp.setInteger("race", race);
 
-            nbttagcompound.setString("DBCHairType", hairType);
-            nbttagcompound.setString("DBCHair", hairCode);
-            nbttagcompound.setInteger("DBCHairColor", hairColor);
+            comp.setString("DBCHairType", hairType);
+            comp.setString("DBCHair", hairCode);
+            comp.setInteger("DBCHairColor", hairColor);
 
-            nbttagcompound.setInteger("DBCEyeColor", eyeColor);
+            comp.setInteger("DBCEyeColor", eyeColor);
+
+            comp.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
+
 
         }
-        return nbttagcompound;
+        return comp;
     }
 
-    public void readFromNBT(NBTTagCompound nbttagcompound) {
-        enabled = nbttagcompound.getBoolean("DBCDisplayEnabled");
+    public void readFromNBT(NBTTagCompound comp) {
+        enabled = comp.getBoolean("DBCDisplayEnabled");
         if (enabled) {
-            enumAuraTypes = EnumAuraTypes.values()[nbttagcompound.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
+            race = comp.getInteger("race");
 
-            hairType = nbttagcompound.getString("DBCHairType");
-            hairCode = nbttagcompound.getString("DBCHair");
-            hairColor = nbttagcompound.getInteger("DBCHairColor");
+            hairType = comp.getString("DBCHairType");
+            hairCode = comp.getString("DBCHair");
+            hairColor = comp.getInteger("DBCHairColor");
 
-            eyeColor = nbttagcompound.getInteger("DBCEyeColor");
+            eyeColor = comp.getInteger("DBCEyeColor");
+
+            enumAuraTypes = EnumAuraTypes.values()[comp.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
+
         }
     }
 
@@ -96,6 +104,16 @@ public class DBCDisplay implements IDBCDisplay {
     @Override
     public void setEyeColor(int eyeColor) {
         this.eyeColor = eyeColor;
+    }
+
+    @Override
+    public int getRace() {
+        return race;
+    }
+
+    @Override
+    public void setRace(int race) {
+        this.race = race;
     }
 
     @Override
