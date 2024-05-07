@@ -23,6 +23,7 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
         if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT){
             mixins.add("npc.client.MixinGuiScriptPlayers");
             mixins.add("npc.client.MixinDBCClient");
+            mixins.add("npc.client.MixinModelMPM");
 
             mixins.add("dbc.MixinDBCKiTech");
             mixins.add("dbc.MixinJRMCoreCliTickH");

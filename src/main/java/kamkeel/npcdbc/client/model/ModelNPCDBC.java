@@ -12,11 +12,19 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.util.MathHelper;
 import noppes.npcs.client.model.ModelMPM;
 import org.lwjgl.opengl.GL11;
+import org.spongepowered.asm.mixin.Unique;
 
 public class ModelNPCDBC extends ModelBase {
 
     public ModelRendererJBRA[] hairall;
     private ModelMPM parent;
+
+    public float rot1;
+    public float rot2;
+    public float rot3;
+    public float rot4;
+    public float rot5;
+    public float rot6;
 
     public ModelNPCDBC(ModelMPM mpm) {
         this.parent = mpm;
