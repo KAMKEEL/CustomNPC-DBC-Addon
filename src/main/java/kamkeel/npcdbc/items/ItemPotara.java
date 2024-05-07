@@ -18,6 +18,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
@@ -25,16 +26,17 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import noppes.npcs.CustomItems;
+import noppes.npcs.scripted.NpcAPI;
 
 import java.util.List;
 import java.util.Random;
 
-public class ItemPotara extends ItemVanity {
+public class ItemPotara extends ItemArmor {
 
     protected IIcon[] icons;
 
     public ItemPotara() {
-        super(0xFFFFFF, 0, "Lol");
+        super(ItemArmor.ArmorMaterial.IRON, 0, 0);
         this.setMaxStackSize(16);
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
@@ -199,12 +201,20 @@ public class ItemPotara extends ItemVanity {
 
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type) {
-        return "npcdbc:textures/armor/dbcvanity/potara.png"; //@TODO change texture based on damage
+        int meta = stack.getItemDamageForDisplay();
+        return "npcdbc:textures/armor/dbcvanity/potara_"+meta+".png"; //@TODO change texture based on damage
     }
 
+
     @Override
-    @SideOnly(Side.CLIENT)
-    public ModelBiped giMdl(int slt, EntityLivingBase e) {
-        return ModelPotara.BOTH_EARS;
+    public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int par3){
+        if(!isSplit(itemStack))
+            return ModelPotara.BOTH_EARS;
+
+        if(isRightSide(itemStack))
+            return ModelPotara.RIGHT_EAR;
+
+        return ModelPotara.LEFT_EAR;
     }
+
 }
