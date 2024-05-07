@@ -11,6 +11,10 @@ import javax.vecmath.Matrix4f;
 
 public class ModelPotara extends ModelBipedBody {
 
+    public static final ModelPotara RIGHT_EAR = new ModelPotara(0);
+    public static final ModelPotara LEFT_EAR = new ModelPotara(1);
+    public static final ModelPotara BOTH_EARS = new ModelPotara();
+
     private final ModelRenderer Head;
     private final ModelRenderer earringRight;
     private final ModelRenderer earringLeft;
@@ -19,7 +23,7 @@ public class ModelPotara extends ModelBipedBody {
      * Creates a model for the Potara.
      * @param side 0 - right, 1 - left
      */
-    public ModelPotara(int side){
+    private ModelPotara(int side){
         this();
         if(side == 0)
             earringLeft.isHidden = true;
@@ -30,7 +34,7 @@ public class ModelPotara extends ModelBipedBody {
 
 
 
-    public ModelPotara() {
+    private ModelPotara() {
         textureWidth = 8;
         textureHeight = 8;
 
@@ -39,7 +43,7 @@ public class ModelPotara extends ModelBipedBody {
 
 
         earringRight = new ModelRenderer(this);
-        earringRight.setRotationPoint(2.0F, -0.5F, 0.0F);
+        earringRight.setRotationPoint(2.0F, -0.40F, -0.5F);
         Head.addChild(earringRight);
         earringRight.cubeList.add(new ModelBox(earringRight, 0, 2, -7.0F, -2.0F, -1.0F, 1, 1, 1, 0.0F));
 
@@ -56,7 +60,7 @@ public class ModelPotara extends ModelBipedBody {
         dangle1_r1.cubeList.add(new ModelBox(dangle1_r1, 0, 0, -0.5F, -0.5F, 0.0F, 1, 1, 0, 0.0F));
 
         earringLeft = new ModelRenderer(this);
-        earringLeft.setRotationPoint(-2.0F, -0.5F, 0.0F);
+        earringLeft.setRotationPoint(-2.0F, -0.40F, -0.5F);
         Head.addChild(earringLeft);
         earringLeft.cubeList.add(new ModelBox(earringLeft, 0, 2, 6.0F, -2.0F, -1.0F, 1, 1, 1, 0.0F));
 
