@@ -136,7 +136,7 @@ public class MixinDBCKiTech {
         if (aura != null) {
             if (Aura.get() instanceof EntityAura2) {
                 EntityAura2 aur = (EntityAura2) Aura.get();
-                int mimicColor = getManualAuraColor(aura.display.type);
+                int mimicColor = EnumPlayerAuraTypes.getManualAuraColor(aura.display.type);
                 if(mimicColor != -1)
                     aur.setCol(mimicColor);
 
@@ -188,26 +188,6 @@ public class MixinDBCKiTech {
         ClientCache.isChangePart = false;
     }
 
-    @Unique
-    private static int getManualAuraColor(EnumPlayerAuraTypes playerAuraTypes) {
-        int clr = -1;
-        if (playerAuraTypes == EnumPlayerAuraTypes.GoD) {
-            clr = 12464847;
-        } else if (playerAuraTypes == EnumPlayerAuraTypes.UI) {
-            clr = 15790320;
-        } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanRose) {
-            clr = 7536661;
-        } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanRoseEvo) {
-            clr = 14030412;
-        } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanBlue || playerAuraTypes == EnumPlayerAuraTypes.SaiyanBlueKK) {
-            clr = 2805230;
-        } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanBlueEvo) {
-            clr = 32767;
-        } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanGod) {
-            clr = 16761125;
-        }  else if (playerAuraTypes == EnumPlayerAuraTypes.UltimateArco) {
-            clr = 16430355;
-        }
-        return clr;
-    }
+
+
 }

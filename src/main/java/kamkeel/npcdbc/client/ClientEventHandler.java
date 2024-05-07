@@ -7,6 +7,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -167,12 +168,16 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void entityAura(LivingEvent.LivingUpdateEvent event) {
-        if (event.entity instanceof EntityCustomNpc) {
+        if (event.entity instanceof EntityCustomNpc && !Utility.isServer(event.entity)) {
             EntityCustomNpc npc = (EntityCustomNpc) event.entity;
             DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
-            if (display.enabled && display.auraID > -1) {
-                Aura aura = (Aura) AuraController.getInstance().get(display.auraID);
-                EntityAura2 aur = new EntityAura2(npc.worldObj, npc.getEntityId() +"", aura.display.color1, 0, 0, 100, false);
+            if (!display.enabled)
+                return;
+            Aura aura = (Aura) AuraController.getInstance().get(display.auraID);
+            if (aura == null)
+                return;
+            if (npc.ticksExisted % 5 == 0) {
+                EntityAura2 aur = new EntityAura2(npc.worldObj, npc.getEntityId() + "", aura.display.color1, 0, 0, 100, false);
 
                 if (aura.display.hasColor("color1"))
                     aur.setCol(aura.display.color1);
@@ -183,8 +188,13 @@ public class ClientEventHandler {
 
                 if (aura.display.hasSpeed())
                     aur.setSpd((int) aura.display.speed);
+                else
+                    aur.setSpd(40);
+
                 if (aura.display.hasAlpha("aura"))
                     aur.setAlp((float) aura.display.alpha / 255);
+                else
+                    aur.setAlp(0.4f);
 
                 if (aura.display.hasSize())
                     ((IEntityAura) aur).setSize(aura.display.size);
@@ -196,8 +206,62 @@ public class ClientEventHandler {
                     ((IEntityAura) aur).setLightningAlpha(aura.display.lightningAlpha);
                 else
                     ((IEntityAura) aur).setLightningAlpha(255);
-                //       System.out.println();
+
+                int mimicColor = EnumPlayerAuraTypes.getManualAuraColor(aura.display.type);
+                if (mimicColor != -1)
+                    aur.setCol(mimicColor);
+
+                if (aura.display.type == EnumPlayerAuraTypes.SaiyanGod) {
+                    aur.setAlp(0.2F);
+                    aur.setTex("aurai");
+                    aur.setTexL2("aurai2");
+                    aur.setColL2(16747301);
+                } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlue) {
+                    aur.setSpd(40);
+                    aur.setAlp(0.5F);
+                    aur.setTex("aurag");
+                    aur.setColL3(15727354);
+                    aur.setTexL3("auragb");
+                } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlueEvo) {
+                    aur.setSpd(40);
+                    aur.setAlp(0.5F);
+                    aur.setTex("aurag");
+                    aur.setColL3(12310271);
+                    aur.setTexL3("auragb");
+                } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRose) {
+                    aur.setSpd(30);
+                    aur.setAlp(0.2F);
+                    aur.setTex("aurai");
+                    aur.setTexL2("aurai2");
+                    aur.setColL2(7872713);
+                } else if (aura.display.type == EnumPlayerAuraTypes.UltimateArco) {
+                    aur.setAlp(0.5F);
+                    aur.setTex("aurau");
+                    aur.setTexL2("aurau2");
+                    aur.setColL2(16776724);
+                } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRoseEvo) {
+                    aur.setSpd(30);
+                    aur.setAlp(0.2F);
+                    aur.setTex("aurai");
+                    aur.setTexL2("aurai2");
+                    aur.setColL2(8592109);
+                } else if (aura.display.type == EnumPlayerAuraTypes.UI) {
+                    aur.setSpd(100);
+                    aur.setAlp(0.15F);
+                    aur.setTex("auras");
+                    aur.setCol(15790320);
+                    aur.setColL3(4746495);
+                    aur.setTexL3("auragb");
+                } else if (aura.display.type == EnumPlayerAuraTypes.GoD) {
+                    aur.setSpd(30);
+                    aur.setAlp(0.2F);
+                    aur.setTex("aurag");
+                    aur.setTexL3("auragb");
+                    aur.setColL2(12464847);
+                }
+
                 aur.worldObj.spawnEntityInWorld(aur);
+
             }
 
         }

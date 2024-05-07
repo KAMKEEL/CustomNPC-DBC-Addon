@@ -12,7 +12,7 @@ public class AuraDisplay implements IAuraDisplay {
     public EnumPlayerAuraTypes type = EnumPlayerAuraTypes.None;
     public String texture1 = "", texture2 = "", texture3 = "";
     public int color1 = -1, color2 = -1, color3 = -1, alpha = -1;
-    public float size = 1.0f, speed = 1.0f;
+    public float size = 1.0f, speed = -1f;
 
 
     public boolean hasLightning = false;
@@ -211,7 +211,7 @@ public class AuraDisplay implements IAuraDisplay {
 
     @Override
     public boolean hasSpeed() {
-        return speed != 1.0f;
+        return speed >0;
     }
 
     @Override
