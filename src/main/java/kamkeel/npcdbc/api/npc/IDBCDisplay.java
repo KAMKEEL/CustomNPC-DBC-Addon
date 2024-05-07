@@ -3,6 +3,10 @@ package kamkeel.npcdbc.api.npc;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 
 public interface IDBCDisplay {
+    void setColor(String type, int color);
+
+    int getColor(String type);
+
     boolean isEnabled();
 
     void setEnabled(boolean enabled);

@@ -203,7 +203,6 @@ public class FormDisplay implements IFormDisplay {
     }
 
 
-
     @Override
     public String getHairType(String type) {
         String s = type.toLowerCase();
