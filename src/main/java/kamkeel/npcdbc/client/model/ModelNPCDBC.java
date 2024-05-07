@@ -4,11 +4,13 @@ import JinRyuu.JBRA.ModelRendererJBRA;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JBRA.mod_JBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
+import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.model.ModelMPM;
@@ -26,10 +28,22 @@ public class ModelNPCDBC extends ModelBase {
     public float rot5;
     public float rot6;
 
+    public ModelRenderer nose;
+    public ModelRenderer mouth;
+    public ModelRenderer eyeleft;
+    public ModelRenderer eyeright;
+    public ModelRenderer eyebase;
+    public ModelRenderer eyebrow;
+
+    public TextureManager tex;
+
+    public int stateChange = 0;
+
     public ModelNPCDBC(ModelMPM mpm) {
         this.parent = mpm;
         this.textureHeight = 32;
         this.textureWidth = 64;
+        tex = Minecraft.getMinecraft().renderEngine;
 
         // Init Hair
         this.hairall = new ModelRendererJBRA[224];
@@ -52,43 +66,124 @@ public class ModelNPCDBC extends ModelBase {
                 }
             }
         }
+
+        this.nose = new ModelRenderer(this, 0, 0);
+        this.nose.addBox(-4.0F, -8.0F, -4.006F, 8, 8, 0);
+        this.nose.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.nose, 0.0F, 0.0F, 0.0F);
+
+        this.mouth = new ModelRenderer(this, 0, 0);
+        this.mouth.addBox(-4.0F, -8.0F, -4.007F, 8, 8, 0);
+        this.mouth.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.mouth, 0.0F, 0.0F, 0.0F);
+
+        this.eyebase = new ModelRenderer(this, 0, 0);
+        this.eyebase.addBox(-4.0F, -8.0F, -4.008F, 8, 8, 0);
+        this.eyebase.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.eyebase, 0.0F, 0.0F, 0.0F);
+
+        this.eyeleft = new ModelRenderer(this, 0, 0);
+        this.eyeleft.addBox(-4.0F, -8.0F, -4.009F, 8, 8, 0);
+        this.eyeleft.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.eyeleft, 0.0F, 0.0F, 0.0F);
+
+        this.eyeright = new ModelRenderer(this, 0, 0);
+        this.eyeright.addBox(-4.0F, -8.0F, -4.01F, 8, 8, 0);
+        this.eyeright.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.eyeright, 0.0F, 0.0F, 0.0F);
+
+        this.eyebrow = new ModelRenderer(this, 0, 0);
+        this.eyebrow.addBox(-4.0F, -8.0F, -4.01F, 8, 8, 0);
+        this.eyebrow.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.eyebrow, 0.0F, 0.0F, 0.0F);
     }
 
     public static int dnsHair1(String s, int n) {
-        return s.length() > n ? sa(s, n) : 0;
+        int a = 0;
+        try {
+            a = Integer.parseInt(s.charAt(n) + "");
+        } catch (NumberFormatException var3) {
+
+        }
+        return s.length() > n ? a : 0;
     }
 
     public static int dnsHair2(String s, int n) {
-        return s.length() > n ? sa2(s, n) : 0;
-    }
-
-    public static int sa(String s1, int s2) {
+        int a = 0;
         try {
-            return Integer.parseInt(saO(s1, s2));
+            a = Integer.parseInt(s.charAt(n) + s.charAt(n + 1) + "");
         } catch (NumberFormatException var3) {
-            return 0;
+
         }
+        return s.length() > n ? a : 0;
     }
 
-    public static int sa2(String s1, int s2) {
-        try {
-            return Integer.parseInt(saO(s1, s2) + saO(s1, s2 + 1));
-        } catch (NumberFormatException var3) {
-            return 0;
-        }
-    }
 
-    public static String saO(String s1, int s2) {
-        return s1.charAt(s2) + "";
+    public void renderFace(EntityNPCInterface npc, DBCDisplay display) {
+        int bodyColor = 16297621;
+        RenderPlayerJBRA.glColor3f(bodyColor);
+
+        int noseType = 2;
+        tex.bindTexture(new ResourceLocation("jinryuumodscore", "cc/humn" + noseType + ".png"));
+
+        this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
+        this.nose.rotateAngleX = parent.bipedHead.rotateAngleX;
+        this.nose.rotationPointX = parent.bipedHead.rotationPointX;
+        this.nose.rotationPointY = parent.bipedHead.rotationPointY;
+        this.nose.render(0.0625F);
+
+
+        int mouthType = 1;
+        tex.bindTexture(new ResourceLocation("jinryuumodscore", "cc/humm" + mouthType + ".png"));
+        this.mouth.rotateAngleY = parent.bipedHead.rotateAngleY;
+        this.mouth.rotateAngleX = parent.bipedHead.rotateAngleX;
+        this.mouth.rotationPointX = parent.bipedHead.rotationPointX;
+        this.mouth.rotationPointY = parent.bipedHead.rotationPointY;
+        this.mouth.render(0.0625F);
+
+        GL11.glColor3f(1.0f, 1.0f, 1.0f);
+        int eyeType = 0;
+        tex.bindTexture(new ResourceLocation("jinryuumodscore", "cc/humb" + eyeType + ".png"));
+        this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
+        this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
+        this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
+        this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
+        this.eyebase.render(0.0625F);
+
+        tex.bindTexture(new ResourceLocation("jinryuumodscore", "cc/humw" + eyeType + ".png"));
+        RenderPlayerJBRA.glColor3f(display.getHairColor());
+        this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
+        this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
+        this.eyebrow.rotationPointX = parent.bipedHead.rotationPointX;
+        this.eyebrow.rotationPointY = parent.bipedHead.rotationPointY;
+        this.eyebrow.render(0.0625F);
+
+        RenderPlayerJBRA.glColor3f(display.getEyeColor());
+        tex.bindTexture(new ResourceLocation("jinryuumodscore", "cc/huml" + eyeType + ".png"));
+        this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
+        this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
+        this.eyeleft.rotationPointX = parent.bipedHead.rotationPointX;
+        this.eyeleft.rotationPointY = parent.bipedHead.rotationPointY;
+        this.eyeleft.render(0.0625F);
+
+        tex.bindTexture(new ResourceLocation("jinryuumodscore", "cc/humr" + eyeType + ".png"));
+        this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
+        this.eyeright.rotateAngleX = parent.bipedHead.rotateAngleX;
+        this.eyeright.rotationPointX = parent.bipedHead.rotationPointX;
+        this.eyeright.rotationPointY = parent.bipedHead.rotationPointY;
+        this.eyeright.render(0.0625F);
+
     }
 
     public void renderHead(EntityNPCInterface npc) {
         DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
-        if(display.enabled && !display.getHairCode().isEmpty()){
-            Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
+        if (display.enabled && !display.getHairCode().isEmpty()) {
+            tex.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
             GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
             RenderPlayerJBRA.glColor3f(display.getHairColor());
             renderHairs(npc, 0.0625F, display.getHairCode(), 0, 0, null);
+
+            renderFace(npc, display);
             GL11.glPopAttrib();
             parent.currentlyPlayerTexture = false;
         }

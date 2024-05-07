@@ -17,7 +17,8 @@ public class MixinModelMPM extends ModelNPCMale {
 
     @Shadow
     public boolean isArmor;
-    @Unique public ModelNPCDBC customNPC_DBCAddon$modelNPCDBC;
+    @Unique
+    public ModelNPCDBC customNPC_DBCAddon$modelNPCDBC;
 
     public MixinModelMPM(float f) {
         super(f);
@@ -28,9 +29,9 @@ public class MixinModelMPM extends ModelNPCMale {
     }
 
     @Inject(method = "render", at = @At(value = "HEAD"), remap = true)
-    private void rotationKeep(Entity par1Entity, float p1, float p2, float p3, float p4, float p5, float p6, CallbackInfo ci){
-        if(customNPC_DBCAddon$modelNPCDBC == null)
-            customNPC_DBCAddon$modelNPCDBC = new ModelNPCDBC((ModelMPM) (Object)this);
+    private void rotationKeep(Entity par1Entity, float p1, float p2, float p3, float p4, float p5, float p6, CallbackInfo ci) {
+        if (customNPC_DBCAddon$modelNPCDBC == null)
+            customNPC_DBCAddon$modelNPCDBC = new ModelNPCDBC((ModelMPM) (Object) this);
 
         customNPC_DBCAddon$modelNPCDBC.rot1 = p1;
         customNPC_DBCAddon$modelNPCDBC.rot2 = p2;
@@ -41,12 +42,14 @@ public class MixinModelMPM extends ModelNPCMale {
     }
 
     @Inject(method = "renderHead", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPopMatrix()V", shift = At.Shift.BEFORE))
-    private void renderDBCHead(EntityCustomNpc entity, float f, CallbackInfo ci){
-        if(customNPC_DBCAddon$modelNPCDBC == null && !isArmor)
-            customNPC_DBCAddon$modelNPCDBC = new ModelNPCDBC((ModelMPM) (Object)this);
+    private void renderDBCHead(EntityCustomNpc entity, float f, CallbackInfo ci) {
+        if (customNPC_DBCAddon$modelNPCDBC == null && !isArmor)
+            customNPC_DBCAddon$modelNPCDBC = new ModelNPCDBC((ModelMPM) (Object) this);
 
-        if(!isArmor){
+        if (!isArmor) {
             customNPC_DBCAddon$modelNPCDBC.renderHead(entity);
         }
     }
+
+
 }
