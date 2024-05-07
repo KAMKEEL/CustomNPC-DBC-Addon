@@ -4,6 +4,8 @@ import JinRyuu.JBRA.ModelRendererJBRA;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JBRA.mod_JBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
@@ -81,13 +83,15 @@ public class ModelNPCDBC extends ModelBase {
     }
 
     public void renderHead(EntityNPCInterface npc) {
-        String dnsTest = "373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820";
-        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
-        GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
-        RenderPlayerJBRA.glColor3f(0x0);
-        renderHairs(npc, 0.0625F, dnsTest, 0, 0, null);
-        GL11.glPopAttrib();
-        parent.currentlyPlayerTexture = false;
+        DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
+        if(display.enabled && !display.getHairCode().isEmpty()){
+            Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
+            GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
+            RenderPlayerJBRA.glColor3f(display.getHairColor());
+            renderHairs(npc, 0.0625F, display.getHairCode(), 0, 0, null);
+            GL11.glPopAttrib();
+            parent.currentlyPlayerTexture = false;
+        }
     }
 
     public void renderBody(EntityNPCInterface npc) {

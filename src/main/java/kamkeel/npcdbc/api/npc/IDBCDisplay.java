@@ -10,4 +10,12 @@ public interface IDBCDisplay {
     EnumAuraTypes getFormAuraTypes();
 
     void setFormAuraTypes(String type);
+
+    String getHairCode();
+
+    void setHairCode(String hairCode);
+
+    int getHairColor();
+
+    void setHairColor(int hairColor);
 }
