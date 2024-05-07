@@ -16,7 +16,7 @@ public class DBCDisplay implements IDBCDisplay {
 
     public int race = 4, rage, bodyType;
 
-    public int noseType = 1, mouthType = 1, eyeType = 0;
+    public int noseType = 1, mouthType = 1, eyeType = 0,arcoState;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
@@ -35,6 +35,8 @@ public class DBCDisplay implements IDBCDisplay {
             comp.setInteger("bodyC1", bodyC1);
             comp.setInteger("bodyC2", bodyC2);
             comp.setInteger("bodyC3", bodyC3);
+
+            comp.setInteger("arcoState", arcoState);
 
             comp.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
 
@@ -59,6 +61,8 @@ public class DBCDisplay implements IDBCDisplay {
             bodyC1 = comp.getInteger("bodyC1");
             bodyC2 = comp.getInteger("bodyC2");
             bodyC3 = comp.getInteger("bodyC3");
+
+            arcoState = comp.getInteger("arcoState");
 
             enumAuraTypes = EnumAuraTypes.values()[comp.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
 
