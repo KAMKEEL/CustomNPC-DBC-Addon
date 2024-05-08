@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiScreen;
 import noppes.npcs.client.gui.model.GuiModelColor;
 import noppes.npcs.client.gui.util.GuiModelInterface;
 import noppes.npcs.client.gui.util.GuiNpcButton;
+import noppes.npcs.client.gui.util.GuiNpcButtonYesNo;
 import noppes.npcs.client.gui.util.GuiNpcLabel;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelPartData;
@@ -33,6 +34,8 @@ public class GuiModelDBC extends GuiModelInterface {
         addLabel(new GuiNpcLabel(1, "Race", guiLeft, y + 5, 0xFFFFFF));
         addButton(new GuiNpcButton(1, guiLeft + 40, y, 60, 20, arrRace, display.race+1));
         if(display.race > -1){
+            addButton(new GuiNpcButtonYesNo(304, guiLeft + 64, y, 40, 20, display.useSkin));
+
             addButton(new GuiNpcButton(300, guiLeft + 20, y+=22, 42, 20, getColor(display.bodyCM)));
             addLabel(new GuiNpcLabel(300, "CM", guiLeft, y + 5, 0xFFFFFF));
             addButton(new GuiNpcButton(301, guiLeft + 101, y, 42, 20, getColor(display.bodyC1)));
@@ -109,7 +112,7 @@ public class GuiModelDBC extends GuiModelInterface {
         if(button.id == 13){
             this.mc.displayGuiScreen(new GuiModelColor(this, playerdata.getPartData("dbcEars"), npc));
         }
-        if(button.id >= 300){
+        if(button.id == 300){
             this.mc.displayGuiScreen(new GuiDBCModelColor(this, display, npc, 0));
         }
         if(button.id == 301){
@@ -120,6 +123,9 @@ public class GuiModelDBC extends GuiModelInterface {
         }
         if(button.id == 303){
             this.mc.displayGuiScreen(new GuiDBCModelColor(this, display, npc, 3));
+        }
+        if(button.id == 304){
+            display.useSkin = button.getValue() == 1;
         }
     }
 
