@@ -16,24 +16,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(DataDisplay.class)
 public class MixinDBCDisplay implements INPCDisplay {
 
-    @Shadow(remap = false) public EntityNPCInterface npc;
+    @Shadow(remap = false)
+    public EntityNPCInterface npc;
 
     @Unique
-    private final DBCDisplay dbcDisplay = new DBCDisplay();
+    private DBCDisplay dbcDisplay;
+
+    @Inject(method = "<init>", at = @At("TAIL"), remap = false)
+    public void init(EntityNPCInterface npc, CallbackInfo ci) {
+        dbcDisplay = new DBCDisplay(npc);
+    }
 
     @Inject(method = "writeToNBT", at = @At("HEAD"), remap = false)
     public void writeToNBT(NBTTagCompound nbttagcompound, CallbackInfoReturnable<NBTTagCompound> cir) {
-        if(hasDBCData())
+        if (hasDBCData())
             dbcDisplay.writeToNBT(nbttagcompound);
     }
 
     @Inject(method = "readToNBT", at = @At("HEAD"), remap = false)
-    public void readFromNBT(NBTTagCompound nbttagcompound, CallbackInfo ci){
+    public void readFromNBT(NBTTagCompound nbttagcompound, CallbackInfo ci) {
         dbcDisplay.readFromNBT(nbttagcompound);
     }
 
     @Unique
-    public DBCDisplay getDBCDisplay(){
+    public DBCDisplay getDBCDisplay() {
         return dbcDisplay;
     }
 

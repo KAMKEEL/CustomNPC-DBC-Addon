@@ -8,8 +8,10 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
+import kamkeel.npcdbc.network.packets.PlaySound;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
+import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
@@ -19,28 +21,25 @@ import java.util.HashSet;
 public class DBCDisplay implements IDBCDisplay {
 
     public boolean enabled = false;
-
     public String hairCode = "", hairType = "";
-
     public int hairColor, eyeColor, bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
     public boolean hasArcoMask = false;
-
     public int race = 4, bodyType;
-
     public int noseType = 1, mouthType = 1, eyeType = 0, arcoState;
-
-
     public int auraID = -1;
     public boolean auraOn = false;
     public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
-
     public int formID = -1, selectedForm = -1, rage;
     public float rageValue;
     public boolean isTransforming, transformed;
     public HashSet<Integer> unlockedForms = new HashSet<Integer>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
-
+    EntityNPCInterface npc;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
+
+    public DBCDisplay(EntityNPCInterface npc) {
+        this.npc = npc;
+    }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setBoolean("DBCDisplayEnabled", enabled);
@@ -324,6 +323,9 @@ public class DBCDisplay implements IDBCDisplay {
     }
 
     public void descend(int id) {
+        if (isInForm()) {
+            PlaySound.play(npc, getCurrentForm().descendSound, 50);
+        }
         if (FormController.Instance.has(id)) {
             formID = id;
         } else
@@ -331,6 +333,11 @@ public class DBCDisplay implements IDBCDisplay {
         selectedForm = -1;
         isTransforming = false;
         transformed = false;
+    }
+
+    public void interruptTransform() {
+        selectedForm = -1;
+        isTransforming = false;
     }
 
     public void setForm(Form form) {
