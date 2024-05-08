@@ -20,6 +20,9 @@ public class AuraDisplay implements IAuraDisplay {
 
     public boolean kaiokenOn = false;
 
+    public String auraSound = "";
+    public float soundTime = -1; //seconds
+
     public AuraDisplay(Aura parent) {
         this.parent = parent;
     }
@@ -47,6 +50,9 @@ public class AuraDisplay implements IAuraDisplay {
 
         kaiokenOn = rendering.getBoolean("kaiokenOn");
 
+        auraSound = rendering.getString("auraSound");
+        soundTime = rendering.getInteger("soundTime");
+
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -70,6 +76,9 @@ public class AuraDisplay implements IAuraDisplay {
 
         rendering.setBoolean("kaiokenOn", kaiokenOn);
 
+        rendering.setString("auraSound", auraSound);
+        rendering.setFloat("soundTime", soundTime);
+
         compound.setTag("rendering", rendering);
         return compound;
     }
@@ -80,9 +89,30 @@ public class AuraDisplay implements IAuraDisplay {
     }
 
     @Override
+    public String getAuraSound() {
+        return auraSound;
+    }
+
+    @Override
+    public void setAuraSound(String sound) {
+        this.auraSound = sound;
+    }
+
+    @Override
+    public float getSoundTime() {
+        return soundTime;
+    }
+
+    @Override
+    public void setSoundTime(float seconds) {
+        this.soundTime = seconds;
+    }
+
+    @Override
     public boolean isKaiokenToggled() {
         return kaiokenOn;
     }
+
 
     @Override
     public String getType() {

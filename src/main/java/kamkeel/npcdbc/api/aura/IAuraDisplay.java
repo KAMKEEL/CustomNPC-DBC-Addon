@@ -5,6 +5,14 @@ public interface IAuraDisplay {
 
     void toggleKaioken(boolean toggle);
 
+    String getAuraSound();
+
+    void setAuraSound(String sound);
+
+    float getSoundTime();
+
+    void setSoundTime(float seconds);
+
     boolean isKaiokenToggled();
 
     /**
