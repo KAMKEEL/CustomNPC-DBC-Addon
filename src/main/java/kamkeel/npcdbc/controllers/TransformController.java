@@ -169,12 +169,10 @@ public class TransformController {
             display.rageValue = getRageMeterIncrementation(form, display.getFormLevel(form.id));
 
         display.rage += display.rageValue;
-        display.auraOn = true;
 
         if (display.rage >= 100) {
             display.formID = form.id;
             PlaySound.play(npc, form.getAscendSound(), 50);
-            display.transformed = true;
         }
         npc.updateClient();
 
@@ -192,18 +190,16 @@ public class TransformController {
             else {
                 display.rage = 0;
                 display.rageValue = 0;
-                display.transformed = false;
+                display.selectedForm = -1;
 
             }
             if (display.rage <= 50 && display.isTransforming) {
                 display.isTransforming = false;
-                display.auraOn = false;
-                display.selectedForm = -1;
+
             }
             npc.updateClient();
         }
     }
-
 
 
     //////////////////////////////////////////////////

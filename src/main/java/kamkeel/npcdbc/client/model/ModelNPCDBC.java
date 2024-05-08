@@ -480,7 +480,7 @@ public class ModelNPCDBC extends ModelBase {
         int race = display.race;
         int rage = display.rage;
 
-        if (display.rage > 0 && display.transformed)
+        if (display.rage > 0 && display.selectedForm == display.formID)
             rage = 0;
 
         if (display.hairType.equals("ssj"))

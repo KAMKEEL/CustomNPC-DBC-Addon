@@ -55,8 +55,7 @@ public class ClientEventHandler {
             DBCData dbcData = DBCData.getClient();
             if (dbcData.stats.isFusionSpectator())
                 return;
-            float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ?
-                    150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
+            float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ? 150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
             if (dbcData.stats.getCurrentBodyPercentage() > healthReq)
                 return;
             if (form.mastery.hasHeat() && dbcData.Pain > 0)
@@ -126,8 +125,7 @@ public class ClientEventHandler {
                                 Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.spectator"));
                                 return;
                             }
-                            float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ?
-                                    150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
+                            float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ? 150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
 
                             if (dbcData.stats.getCurrentBodyPercentage() > healthReq) {
                                 Utility.sendMessage(mc.thePlayer, "§c" + StatCollector.translateToLocalFormatted("npcdbc.healthRequirement", healthReq));
@@ -180,7 +178,7 @@ public class ClientEventHandler {
             Aura aura = display.getAur();
             if (aura == null)
                 return;
-            if (npc.ticksExisted % 5 == 0 && display.auraOn) {
+            if (npc.ticksExisted % 5 == 0 && (display.auraOn || display.isTransforming)) {
 
 
                 EntityAura2 aur = new EntityAura2(npc.worldObj, Utility.getEntityID(npc), aura.display.color1, 0, 0, 100, false);
@@ -299,10 +297,9 @@ public class ClientEventHandler {
                 if (s == null) {
                     PacketHandler.Instance.sendToServer(new PlaySound(sound, soundRange, Utility.getEntityID(npc)).generatePacket());
                 } else if (s != null) { //dynamic volume, as player gets further away from aura source volume decreases
-                    s.stopSound();
                     float distance = npc.getDistanceToEntity(Minecraft.getMinecraft().thePlayer);
                     float volume = 1 - distance / soundRange;
-                    Utility.setSoundVolume(s, volume);
+                    SoundHelper.setSoundVolume(s, volume);
                 }
 
 

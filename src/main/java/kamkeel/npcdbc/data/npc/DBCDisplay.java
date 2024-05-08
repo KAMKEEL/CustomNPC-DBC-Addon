@@ -31,7 +31,7 @@ public class DBCDisplay implements IDBCDisplay {
     public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
     public int formID = -1, selectedForm = -1, rage;
     public float rageValue;
-    public boolean isTransforming, transformed;
+    public boolean isTransforming;
     public HashSet<Integer> unlockedForms = new HashSet<Integer>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
     EntityNPCInterface npc;
@@ -68,7 +68,6 @@ public class DBCDisplay implements IDBCDisplay {
 
             compound.setInteger("rage", rage);
             compound.setBoolean("isTransforming", isTransforming);
-            compound.setBoolean("transformed", transformed);
             compound.setInteger("formID", formID);
             compound.setInteger("selectedForm", selectedForm);
             compound.setTag("unlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
@@ -104,7 +103,6 @@ public class DBCDisplay implements IDBCDisplay {
 
             rage = compound.getInteger("rage");
             isTransforming = compound.getBoolean("isTransforming");
-            transformed = compound.getBoolean("transformed");
             formID = compound.getInteger("formID");
             selectedForm = compound.getInteger("selectedForm");
             unlockedForms = NBTTags.getIntegerSet(compound.getTagList("unlockedForms", 10));
@@ -332,7 +330,6 @@ public class DBCDisplay implements IDBCDisplay {
             formID = -1;
         selectedForm = -1;
         isTransforming = false;
-        transformed = false;
     }
 
     public void interruptTransform() {
