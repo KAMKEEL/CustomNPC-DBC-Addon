@@ -24,6 +24,8 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import noppes.npcs.client.controllers.ScriptClientSound;
+import noppes.npcs.client.controllers.ScriptSoundController;
 import noppes.npcs.entity.EntityCustomNpc;
 
 import static noppes.npcs.NoppesStringUtils.translate;
@@ -179,7 +181,10 @@ public class ClientEventHandler {
             if (aura == null)
                 return;
             if (npc.ticksExisted % 5 == 0 && display.auraOn) {
-                EntityAura2 aur = new EntityAura2(npc.worldObj, npc.getEntityId() + "", aura.display.color1, 0, 0, 100, false);
+
+
+
+                EntityAura2 aur = new EntityAura2(npc.worldObj, Utility.getEntityID(npc), aura.display.color1, 0, 0, 100, false);
                 boolean kk = aura.display.kaiokenOn;
                 if (aura.display.hasColor("color1"))
                     aur.setCol(aura.display.color1);
@@ -278,7 +283,8 @@ public class ClientEventHandler {
                     sound = aura.display.auraSound;
                     int time = (int) (aura.display.soundTime * 20);
                     if (npc.ticksExisted % time == 0)
-                        PacketHandler.Instance.sendToServer(new PlaySound(sound, 15).generatePacket());
+                        //DBCKiTech.soundAsc(sound);
+                        PacketHandler.Instance.sendToServer(new PlaySound(sound, 50,Utility.getEntityID(npc)).generatePacket());
 
                 } else {
                     float time = 20 * 2.5f;
@@ -286,8 +292,12 @@ public class ClientEventHandler {
                         time = 20 * 3;
 
                     if (npc.ticksExisted % time == 0)
-                        PacketHandler.Instance.sendToServer(new PlaySound(sound, 15).generatePacket());
+                        PacketHandler.Instance.sendToServer(new PlaySound(sound, 50,Utility.getEntityID(npc)).generatePacket());
+                    //DBCKiTech.soundAsc(sound);
                 }
+
+             //   ScriptClientSound s = ScriptSoundController.Instance.ge;
+
                 aur.worldObj.spawnEntityInWorld(aur);
 
             }

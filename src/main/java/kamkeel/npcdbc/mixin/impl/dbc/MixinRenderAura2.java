@@ -60,11 +60,11 @@ public class MixinRenderAura2 {
             }
             s.set(s1.get() * Math.min(dbcData.Release, 50) / 45);
         }
-        Entity entity = Utility.getEntityFromID(par1Entity.worldObj,par1Entity.getmot());
+        Entity entity = Utility.getEntityFromID(par1Entity.worldObj, par1Entity.getmot());
         if (entity instanceof EntityCustomNpc) {
             EntityCustomNpc npc = (EntityCustomNpc) entity;
             s1.set(8.0f * 0.2f * npc.display.modelSize);
-           s.set(s1.get() * Math.min(par1Entity.getCRel(), 70) / 45);
+            s.set(s1.get() * Math.min(par1Entity.getCRel(), 70) / 45);
         }
     }
 }
