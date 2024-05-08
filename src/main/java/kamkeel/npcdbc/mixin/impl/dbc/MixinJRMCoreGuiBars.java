@@ -90,13 +90,13 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
 
             case 3:
                 return "Kaioken";
-//            case 4:
-//                return "ResourceID "+resourceID;
+            case 4:
+                return "Swooping/Dashing";
 
             case 6:
                 return "Strain";
-//            case 7:
-//                return "ResourceID "+resourceID;
+            case 7:
+                return "Full Moon";
             case 8:
                 return "GodPower";
             case 9:
