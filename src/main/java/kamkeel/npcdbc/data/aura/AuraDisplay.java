@@ -18,6 +18,7 @@ public class AuraDisplay implements IAuraDisplay {
     public boolean hasLightning = false;
     public int lightningColor = -1, lightningAlpha = -1;
 
+    public boolean kaiokenOn = false;
 
     public AuraDisplay(Aura parent) {
         this.parent = parent;
@@ -44,6 +45,8 @@ public class AuraDisplay implements IAuraDisplay {
         lightningColor = rendering.getInteger("lightningColor");
         lightningAlpha = rendering.getInteger("lightningAlpha");
 
+        kaiokenOn = rendering.getBoolean("kaiokenOn");
+
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -65,8 +68,20 @@ public class AuraDisplay implements IAuraDisplay {
         rendering.setInteger("lightningColor", lightningColor);
         rendering.setInteger("lightningAlpha", lightningAlpha);
 
+        rendering.setBoolean("kaiokenOn", kaiokenOn);
+
         compound.setTag("rendering", rendering);
         return compound;
+    }
+
+    @Override
+    public void toggleKaioken(boolean toggle) {
+        this.kaiokenOn = toggle;
+    }
+
+    @Override
+    public boolean isKaiokenToggled() {
+        return kaiokenOn;
     }
 
     @Override
@@ -211,7 +226,7 @@ public class AuraDisplay implements IAuraDisplay {
 
     @Override
     public boolean hasSpeed() {
-        return speed >0;
+        return speed > 0;
     }
 
     @Override

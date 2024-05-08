@@ -3,6 +3,10 @@ package kamkeel.npcdbc.api.aura;
 public interface IAuraDisplay {
 
 
+    void toggleKaioken(boolean toggle);
+
+    boolean isKaiokenToggled();
+
     /**
      * @return legal types: ssgod, godofdestruction, ui, ssb, ssrose, ssroseevo, ssbkk, shinka
      */
