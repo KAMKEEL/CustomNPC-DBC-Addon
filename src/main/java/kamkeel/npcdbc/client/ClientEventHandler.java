@@ -176,7 +176,7 @@ public class ClientEventHandler {
             Aura aura = (Aura) AuraController.getInstance().get(display.auraID);
             if (aura == null)
                 return;
-            if (npc.ticksExisted % 5 == 0) {
+            if (npc.ticksExisted % 5 == 0 && display.auraOn) {
                 EntityAura2 aur = new EntityAura2(npc.worldObj, npc.getEntityId() + "", aura.display.color1, 0, 0, 100, false);
 
                 if (aura.display.hasColor("color1"))
