@@ -36,29 +36,7 @@ public final class PlaySound extends AbstractPacket {
         this.entityID = "";
     }
 
-    @Override
-    public String getChannel() {
-        return packetName;
-    }
-
-    @Override
-    public void sendData(ByteBuf out) throws IOException {
-        ByteBufUtils.writeUTF8String(out, soundDir);
-        ByteBufUtils.writeUTF8String(out, entityID);
-        out.writeFloat(range);
-
-    }
-
-    @Override
-    public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        soundDir = ByteBufUtils.readUTF8String(in);
-        entityID = ByteBufUtils.readUTF8String(in);
-        range = in.readFloat();
-
-        Entity entity = entityID.isEmpty() ? player : Utility.getEntityFromID(player.worldObj, entityID);
-        if (entity == null)
-            return;
-
+    public static void play(Entity entity, String soundDir, float range) {
         IEntity<?> IEntity = NpcAPI.Instance().getIEntity(entity);
         ISound sound = NpcAPI.Instance().createSound(soundDir);
         sound.setEntity(IEntity);
@@ -84,5 +62,33 @@ public final class PlaySound extends AbstractPacket {
                 sound.setVolume(volume);
                 other.playSound(1, sound);
             }
+    }
+
+    @Override
+    public String getChannel() {
+        return packetName;
+    }
+
+    @Override
+    public void sendData(ByteBuf out) throws IOException {
+        ByteBufUtils.writeUTF8String(out, soundDir);
+        ByteBufUtils.writeUTF8String(out, entityID);
+        out.writeFloat(range);
+
+    }
+
+    @Override
+    public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
+        soundDir = ByteBufUtils.readUTF8String(in);
+        entityID = ByteBufUtils.readUTF8String(in);
+        range = in.readFloat();
+
+        Entity entity = entityID.isEmpty() ? player : Utility.getEntityFromID(player.worldObj, entityID);
+        if (entity == null)
+            return;
+
+        play(entity, soundDir, range);
+
+
     }
 }
