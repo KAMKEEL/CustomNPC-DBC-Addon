@@ -8,12 +8,12 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
-import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.mixin.INPCDisplay;
@@ -176,7 +176,7 @@ public class ClientEventHandler {
             DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
             if (!display.enabled)
                 return;
-            Aura aura = (Aura) AuraController.getInstance().get(display.auraID);
+            Aura aura = display.getAur();
             if (aura == null)
                 return;
             if (npc.ticksExisted % 5 == 0 && display.auraOn) {
@@ -212,6 +212,19 @@ public class ClientEventHandler {
                 else
                     ((IEntityAura) aur).setLightningAlpha(255);
 
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //Forms
+                Form form = display.getCurrentForm();
+                if (form != null) {
+                    FormDisplay d = form.display;
+                    if (d.hasColor("aura"))
+                        aur.setCol(d.auraColor);
+                }
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+
+
                 String sound = "jinryuudragonbc:DBC.aura";
 
                 int mimicColor = EnumPlayerAuraTypes.getManualAuraColor(aura.display.type);
@@ -230,7 +243,6 @@ public class ClientEventHandler {
                     aur.setTex("aurag");
                     aur.setColL3(15727354);
                     aur.setTexL3("auragb");
-
                 } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlueEvo) {
                     aur.setSpd(40);
                     aur.setAlp(0.5F);
@@ -283,9 +295,7 @@ public class ClientEventHandler {
                     sound = aura.display.auraSound;
                     int time = (int) (aura.display.soundTime * 20);
                     if (npc.ticksExisted % time == 0)
-                        //DBCKiTech.soundAsc(sound);
                         PacketHandler.Instance.sendToServer(new PlaySound(sound, soundRange, Utility.getEntityID(npc)).generatePacket());
-
                 } else {
                     float time = 20 * 2.5f;
                     if (EnumPlayerAuraTypes.isBlue(aura.display.type) && kk)
@@ -293,7 +303,6 @@ public class ClientEventHandler {
 
                     if (npc.ticksExisted % time == 0)
                         PacketHandler.Instance.sendToServer(new PlaySound(sound, soundRange, Utility.getEntityID(npc)).generatePacket());
-                    //DBCKiTech.soundAsc(sound);
                 }
 
 
@@ -306,7 +315,6 @@ public class ClientEventHandler {
 
 
                 aur.worldObj.spawnEntityInWorld(aur);
-
             }
 
         }

@@ -8,6 +8,8 @@ import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.model.part.ArcoHorns;
 import kamkeel.npcdbc.client.model.part.RaceEars;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
@@ -168,8 +170,30 @@ public class ModelNPCDBC extends ModelBase {
     }
 
     public void renderFace(DBCDisplay display) {
+        int eyeColor = display.eyeColor;
+        int eyeBrowColor = display.hairColor;
+        boolean hasArcoMask = display.hasArcoMask;
+
+        //////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////
+        //Forms
+        Form form = display.getCurrentForm();
+        if (form != null) {
+            FormDisplay d = form.display;
+
+            if (d.hasColor("eye"))
+                eyeColor = d.eyeColor;
+            if (d.hasColor("hair"))
+                eyeBrowColor = d.hairColor;
+
+            if (d.hasArcoMask)
+                hasArcoMask = true;
+
+        }
+        //////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////
         TextureManager textureManager = Minecraft.getMinecraft().renderEngine;
-        RenderPlayerJBRA.glColor3f(display.bodyCM == -1 ? getDefaultColor("bodyCM", display.race) : display.bodyCM);
+        RenderPlayerJBRA.glColor3f(display.bodyCM == -1 ? getBodyColor(display, "bodyCM", display.race) : display.bodyCM);
         textureManager.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
         this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
@@ -179,7 +203,7 @@ public class ModelNPCDBC extends ModelBase {
         this.nose.render(0.0625F);
 
         String mouthDir = "";
-        if (display.race == 4 && display.hasArcoMask)
+        if (display.race == 4 && hasArcoMask)
             mouthDir = "jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[display.arcoState] + display.bodyType + "a.png";
         else
             mouthDir = getFaceTexture(display, "m" + display.mouthType);
@@ -199,7 +223,7 @@ public class ModelNPCDBC extends ModelBase {
         this.eyebase.render(0.0625F);
 
         if (display.race < 4) {
-            RenderPlayerJBRA.glColor3f(display.hairColor);
+            RenderPlayerJBRA.glColor3f(eyeBrowColor);
             textureManager.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
             this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
             this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -208,7 +232,8 @@ public class ModelNPCDBC extends ModelBase {
             this.eyebrow.render(0.0625F);
         }
 
-        RenderPlayerJBRA.glColor3f(display.eyeColor);
+
+        RenderPlayerJBRA.glColor3f(eyeColor);
         textureManager.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
         this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
         this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -238,23 +263,23 @@ public class ModelNPCDBC extends ModelBase {
         TextureManager textureManager = Minecraft.getMinecraft().renderEngine;
 
         if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-            int bodyCM = display.bodyCM == -1 ? getDefaultColor("bodyCM", race) : display.bodyCM;
+            int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
             textureManager.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
             RenderPlayerJBRA.glColor3f(bodyCM);
 
         } else if (race == DBCRace.NAMEKIAN) {
             textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
-            int bodyCM = display.bodyCM == -1 ? getDefaultColor("bodyCM", race) : display.bodyCM;
+            int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
             RenderPlayerJBRA.glColor3f(bodyCM);
             model.render(0.0625F);
 
             textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
-            int bodyC1 = display.bodyC1 == -1 ? getDefaultColor("bodyC1", race) : display.bodyC1;
+            int bodyC1 = display.bodyC1 == -1 ? getBodyColor(display, "bodyC1", race) : display.bodyC1;
             RenderPlayerJBRA.glColor3f(bodyC1);
             model.render(0.0625F);
 
             textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
-            int bodyC2 = display.bodyC2 == -1 ? getDefaultColor("bodyC2", race) : display.bodyC2;
+            int bodyC2 = display.bodyC2 == -1 ? getBodyColor(display, "bodyC2", race) : display.bodyC2;
             RenderPlayerJBRA.glColor3f(bodyC2);
             model.render(0.0625F);
 
@@ -266,10 +291,29 @@ public class ModelNPCDBC extends ModelBase {
         } else if (race == DBCRace.ARCOSIAN) {
             int st = display.arcoState;
             int ts = 0;
-            int bodyCM = display.bodyCM == -1 ? getDefaultColor("bodyCM", race) : display.bodyCM;
-            int bodyC1 = display.bodyC1 == -1 ? getDefaultColor("bodyC1", race) : display.bodyC1;
-            int bodyC2 = display.bodyC2 == -1 ? getDefaultColor("bodyC2", race) : display.bodyC2;
-            int bodyC3 = display.bodyC3 == -1 ? getDefaultColor("bodyC3", race) : display.bodyC3;
+            int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
+            int bodyC1 = display.bodyC1 == -1 ? getBodyColor(display, "bodyC1", race) : display.bodyC1;
+            int bodyC2 = display.bodyC2 == -1 ? getBodyColor(display, "bodyC2", race) : display.bodyC2;
+            int bodyC3 = display.bodyC3 == -1 ? getBodyColor(display, "bodyC3", race) : display.bodyC3;
+
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            //Forms
+            Form form = display.getCurrentForm();
+            if (form != null) {
+                if (form.display.bodyType.equals("firstform"))
+                    st = 0;
+                else if (form.display.bodyType.equals("secondform"))
+                    st = 2;
+                else if (form.display.bodyType.equals("thirdform"))
+                    st = 3;
+                else if (form.display.bodyType.equals("finalform"))
+                    st = 4;
+                else if (form.display.bodyType.equals("ultimatecooler"))
+                    st = 5;
+            }
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
 
             //HORNS
             textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
@@ -313,7 +357,7 @@ public class ModelNPCDBC extends ModelBase {
             GL11.glColor3f(1f, 1f, 1f);
 
         } else if (race == DBCRace.MAJIN) {
-            int bodyCM = display.bodyCM == -1 ? getDefaultColor("bodyCM", race) : display.bodyCM;
+            int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
             textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
             RenderPlayerJBRA.glColor3f(bodyCM);
 
@@ -433,7 +477,11 @@ public class ModelNPCDBC extends ModelBase {
 
         String hairCode = display.hairCode;
         int state = 0;
+        int race = display.race;
         int rage = display.rage;
+
+        if (display.rage > 0 && display.transformed)
+            rage = 0;
 
         if (display.hairType.equals("ssj"))
             state = 1;
@@ -444,9 +492,41 @@ public class ModelNPCDBC extends ModelBase {
 
         int hairColor = display.hairColor;
         if (display.hairColor == -1 && display.race == 5)
-            hairColor = getDefaultColor("bodycm", 5);
-        RenderPlayerJBRA.glColor3f(hairColor);
+            hairColor = getBodyColor(display, "bodycm", 5);
 
+        //////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////
+        //Forms
+        Form form = display.getCurrentForm();
+        if (form != null) {
+            FormDisplay d = form.display;
+            if (race == 5 && !form.display.effectMajinHair) {
+                if (form.display.bodyCM != -1)
+                    hairColor = form.display.bodyCM;
+            } else {
+                if (d.hairCode.equalsIgnoreCase("bald") || d.hairType.equals("oozaru"))
+                    return;
+                else if (d.hairCode.length() > 3)
+                    hairCode = d.hairCode;
+                else if (d.hairCode.length() < 5 && d.hairType.equals("ssj4"))
+                    hairCode = "373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820";
+
+                if (d.hasColor("hair"))
+                    hairColor = d.hairColor;
+
+                if (d.hairType.equals("base"))
+                    state = 0;
+                else if (d.hairType.equals("ssj"))
+                    state = 1;
+                else if (d.hairType.equals("ssj2"))
+                    state = 5;
+
+            }
+        }
+        //////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////
+
+        RenderPlayerJBRA.glColor3f(hairColor);
         textureManager.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
 
         boolean hasHairAnimations = true;
@@ -588,6 +668,27 @@ public class ModelNPCDBC extends ModelBase {
                 ;
             }
         }
+
+        ////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////
+        //Hair fix
+        if (tempState != state)
+            tempState = state;
+
+
+        int hairState = race == 5 ? 0 : state;
+        if (!JRMCoreH.HairsT(tempState, "A") && JRMCoreH.HairsT(hairState, "A")) {
+            if ((!JRMCoreH.HairsT(tempState, hairState) || rage == 0) && stateChange > 0) {
+                stateChange -= trTime;
+            }
+
+            if (stateChange <= 0) {
+                stateChange = 0;
+                tempState = hairState;
+            }
+        }
+        ////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////
 
         GL11.glPushMatrix();
         GL11.glScalef((0.5F + 0.5F / 1.0F) * 1.0F, 0.5F + 0.5F / 1.0F, (0.5F + 0.5F / 1.0F) * 1.0F);
@@ -813,30 +914,37 @@ public class ModelNPCDBC extends ModelBase {
         GL11.glPopMatrix();
     }
 
-    public int getDefaultColor(String type, int race) {
+    public int getBodyColor(DBCDisplay display, String type, int race) {
+        int color = 0;
+
+        Form form = display.getCurrentForm();
+        FormDisplay d = null;
+        if (form != null)
+            d = form.display;
+
         if (race < 3) {
             if (type.equalsIgnoreCase("bodycm"))
-                return 16297621;
+                color = d != null && d.hasColor("bodyCM") ? d.bodyCM : 16297621;
         } else if (race == 3) {
             if (type.equalsIgnoreCase("bodycm"))
-                return 5095183;
+                color = d != null && d.hasColor("bodyCM") ? d.bodyCM : 5095183;
             else if (type.equalsIgnoreCase("bodyc1"))
-                return 13796998;
+                color = d != null && d.hasColor("bodyC1") ? d.bodyC1 : 13796998;
             else if (type.equalsIgnoreCase("bodyc2"))
-                return 12854822;
+                color = d != null && d.hasColor("bodyC2") ? d.bodyC2 : 12854822;
         } else if (race == 4) {
             if (type.equalsIgnoreCase("bodycm"))
-                return 15460342;
+                color = d != null && d.hasColor("bodyCM") ? d.bodyCM : 15460342;
             else if (type.equalsIgnoreCase("bodyc1"))
-                return 16111595;
+                color = d != null && d.hasColor("bodyC1") ? d.bodyC1 : 16111595;
             else if (type.equalsIgnoreCase("bodyc2"))
-                return 8533141;
+                color = d != null && d.hasColor("bodyC2") ? d.bodyC2 : 8533141;
             else if (type.equalsIgnoreCase("bodyc3"))
-                return 16550015;
+                color = d != null && d.hasColor("bodyC3") ? d.bodyC3 : 16550015;
         } else if (race == 5)
             if (type.equalsIgnoreCase("bodycm"))
-                return 16757199;
-        return 0;
+                color = d != null && d.hasColor("bodyCM") ? d.bodyCM : 16757199;
+        return color;
     }
 
     public String getFaceTexture(DBCDisplay display, String t) {
