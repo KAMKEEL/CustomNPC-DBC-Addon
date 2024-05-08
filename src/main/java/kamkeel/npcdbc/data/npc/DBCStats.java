@@ -5,19 +5,13 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class DBCStats implements IDBCStats {
     public boolean enabled = false;
+    public boolean friendlyFist = false, ignoreDex = false, ignoreBlock = false, ignoreEndurance = false, ignoreKiProtection = false, ignoreFormReduction = false, hasDefensePenetration = false;
 
-    private boolean friendlyFist = false;
-    private boolean ignoreDex = false;
-    private boolean ignoreBlock = false;
-    private boolean ignoreEndurance = false;
-    private boolean ignoreKiProtection = false;
-    private boolean ignoreFormReduction = false;
-    private boolean hasDefensePenetration = false;
-    private int defensePenetration = 10;
+    public int defensePenetration = 10;
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         nbttagcompound.setBoolean("DBCEnabled", enabled);
-        if(enabled){
+        if (enabled) {
             nbttagcompound.setBoolean("DBCFriendlyFist", friendlyFist);
             nbttagcompound.setBoolean("DBCIgnoreDex", ignoreDex);
             nbttagcompound.setBoolean("DBCIgnoreBlock", ignoreBlock);
@@ -32,7 +26,7 @@ public class DBCStats implements IDBCStats {
 
     public void readFromNBT(NBTTagCompound nbttagcompound) {
         enabled = nbttagcompound.getBoolean("DBCEnabled");
-        if(enabled) {
+        if (enabled) {
             friendlyFist = nbttagcompound.getBoolean("DBCFriendlyFist");
             ignoreDex = nbttagcompound.getBoolean("DBCIgnoreDex");
             ignoreBlock = nbttagcompound.getBoolean("DBCIgnoreBlock");
@@ -115,15 +109,22 @@ public class DBCStats implements IDBCStats {
     }
 
     @Override
-    public boolean hasDefensePenetration() { return hasDefensePenetration;}
-
-    @Override
-    public void setHasDefensePenetration(boolean hasDefensePenetration) { this.hasDefensePenetration = hasDefensePenetration; }
-
-    @Override
-    public int getDefensePenetration() { return defensePenetration;
+    public boolean hasDefensePenetration() {
+        return hasDefensePenetration;
     }
 
     @Override
-    public void setDefensePenetration(int defensePenetration) { this.defensePenetration = defensePenetration; }
+    public void setHasDefensePenetration(boolean hasDefensePenetration) {
+        this.hasDefensePenetration = hasDefensePenetration;
+    }
+
+    @Override
+    public int getDefensePenetration() {
+        return defensePenetration;
+    }
+
+    @Override
+    public void setDefensePenetration(int defensePenetration) {
+        this.defensePenetration = defensePenetration;
+    }
 }

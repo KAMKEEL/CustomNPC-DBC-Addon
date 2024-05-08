@@ -4,10 +4,16 @@ import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.NBTTags;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
+
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class DBCDisplay implements IDBCDisplay {
 
@@ -16,65 +22,83 @@ public class DBCDisplay implements IDBCDisplay {
     public String hairCode = "", hairType = "";
 
     public int hairColor, eyeColor, bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
+    public boolean hasArcoMask = false;
 
-    public int race = 4, rage, bodyType;
+    public int race = 4, bodyType;
 
     public int noseType = 1, mouthType = 1, eyeType = 0, arcoState;
 
-    public boolean hasArcoMask = false,  auraOn = false;
+
     public int auraID = -1;
+    public boolean auraOn = false;
+    public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
+
+    public int formID = -1, rage;
+    public HashSet<Integer> unlockedForms = new HashSet<Integer>();
+    public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
+
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
 
-    public NBTTagCompound writeToNBT(NBTTagCompound comp) {
-        comp.setBoolean("DBCDisplayEnabled", enabled);
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        compound.setBoolean("DBCDisplayEnabled", enabled);
         if (enabled) {
-            comp.setInteger("race", race);
-            comp.setInteger("auraID", auraID);
-            comp.setBoolean("auraOn", auraOn);
+            compound.setInteger("race", race);
+            compound.setBoolean("auraOn", auraOn);
 
-            comp.setInteger("bodyType", bodyType);
-            comp.setString("DBCHairType", hairType);
-            comp.setString("DBCHair", hairCode);
+            compound.setInteger("bodyType", bodyType);
+            compound.setString("DBCHairType", hairType);
+            compound.setString("DBCHair", hairCode);
 
-            comp.setInteger("DBCHairColor", hairColor);
-            comp.setInteger("DBCEyeColor", eyeColor);
-            comp.setInteger("furColor", furColor);
-            comp.setInteger("bodyCM", bodyCM);
-            comp.setInteger("bodyC1", bodyC1);
-            comp.setInteger("bodyC2", bodyC2);
-            comp.setInteger("bodyC3", bodyC3);
+            compound.setInteger("DBCHairColor", hairColor);
+            compound.setInteger("DBCEyeColor", eyeColor);
+            compound.setInteger("furColor", furColor);
+            compound.setInteger("bodyCM", bodyCM);
+            compound.setInteger("bodyC1", bodyC1);
+            compound.setInteger("bodyC2", bodyC2);
+            compound.setInteger("bodyC3", bodyC3);
 
-            comp.setInteger("arcoState", arcoState);
-            comp.setBoolean("hasArcoMask", hasArcoMask);
+            compound.setInteger("arcoState", arcoState);
+            compound.setBoolean("hasArcoMask", hasArcoMask);
 
-            comp.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
+            compound.setInteger("auraID", auraID);
+            compound.setTag("unlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
+            compound.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
+
+            compound.setInteger("formID", formID);
+            compound.setTag("unlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
+            compound.setTag("formLevels", NBTTags.nbtIntegerFloatMap(formLevels));
         }
-        return comp;
+        return compound;
     }
 
-    public void readFromNBT(NBTTagCompound comp) {
-        enabled = comp.getBoolean("DBCDisplayEnabled");
+    public void readFromNBT(NBTTagCompound compound) {
+        enabled = compound.getBoolean("DBCDisplayEnabled");
         if (enabled) {
-            race = comp.getInteger("race");
-            auraID = comp.getInteger("auraID");
-            auraOn = comp.getBoolean("auraOn");
+            race = compound.getInteger("race");
+            auraOn = compound.getBoolean("auraOn");
 
-            bodyType = comp.getInteger("bodyType");
-            hairType = comp.getString("DBCHairType");
-            hairCode = comp.getString("DBCHair");
+            bodyType = compound.getInteger("bodyType");
+            hairType = compound.getString("DBCHairType");
+            hairCode = compound.getString("DBCHair");
 
-            hairColor = comp.getInteger("DBCHairColor");
-            eyeColor = comp.getInteger("DBCEyeColor");
-            furColor = comp.getInteger("furColor");
-            bodyCM = comp.getInteger("bodyCM");
-            bodyC1 = comp.getInteger("bodyC1");
-            bodyC2 = comp.getInteger("bodyC2");
-            bodyC3 = comp.getInteger("bodyC3");
+            hairColor = compound.getInteger("DBCHairColor");
+            eyeColor = compound.getInteger("DBCEyeColor");
+            furColor = compound.getInteger("furColor");
+            bodyCM = compound.getInteger("bodyCM");
+            bodyC1 = compound.getInteger("bodyC1");
+            bodyC2 = compound.getInteger("bodyC2");
+            bodyC3 = compound.getInteger("bodyC3");
 
-            arcoState = comp.getInteger("arcoState");
-            hasArcoMask = comp.getBoolean("hasArcoMask");
+            arcoState = compound.getInteger("arcoState");
+            hasArcoMask = compound.getBoolean("hasArcoMask");
 
-            enumAuraTypes = EnumAuraTypes.values()[comp.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
+            auraID = compound.getInteger("auraID");
+            unlockedAuras = NBTTags.getIntegerSet(compound.getTagList("unlockedAuras", 10));
+            enumAuraTypes = EnumAuraTypes.values()[compound.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
+
+            formID = compound.getInteger("formID");
+            unlockedForms = NBTTags.getIntegerSet(compound.getTagList("unlockedForms", 10));
+            formLevels = NBTTags.getIntegerFloatMap(compound.getTagList("formLevels", 10));
         }
     }
 
@@ -215,6 +239,9 @@ public class DBCDisplay implements IDBCDisplay {
             throw new CustomNPCsException("Invalid type!");
     }
 
+    /////////////////////////////////////////////
+    /////////////////////////////////////////////
+    // Auras
     @Override
     public boolean hasAura() {
         boolean has = AuraController.getInstance().has(auraID);
@@ -256,5 +283,99 @@ public class DBCDisplay implements IDBCDisplay {
     public Aura getAur() {
         return (Aura) AuraController.getInstance().get(auraID);
     }
+
+    public void resetAllAuras() {
+        auraID = -1;
+        unlockedAuras.clear();
+    }
+
+    /////////////////////////////////////////////
+    /////////////////////////////////////////////
+    // Forms
+
+    public void setForm(Form form) {
+        if (form != null)
+            formID = form.id;
+    }
+
+    public void setForm(int id) {
+        Form f = (Form) FormController.Instance.get(id);
+        if (f != null)
+            formID = f.id;
+    }
+
+    public void setForm(String formName) {
+        Form f = (Form) FormController.Instance.get(formName);
+        if (f != null)
+            formID = f.id;
+    }
+
+    public void addForm(Form form) {
+        addForm(form.id);
+    }
+
+    public void addForm(int id) {
+        if (!unlockedForms.contains(id)) {
+            unlockedForms.add(id);
+            formLevels.put(id, 0f);
+        }
+    }
+
+    public boolean removeForm(Form form) {
+        return removeForm(form.id);
+    }
+
+    public boolean removeForm(int id) {
+        formLevels.remove(id);
+        return unlockedForms.remove(id);
+    }
+
+    public Form getForm(int id) {
+        if (unlockedForms.contains(id))
+            return (Form) FormController.getInstance().get(id);
+
+        return null;
+    }
+
+    public Form getForm(String name) {
+        Form f = (Form) FormController.Instance.get(name);
+        if (f != null)
+            return getForm(f.id);
+        return null;
+
+    }
+
+
+    public Form getCurrentForm() {
+        if (formID > 0)
+            return (Form) FormController.Instance.get(formID);
+        return null;
+    }
+
+
+    public boolean hasForm(int id) {
+        return unlockedForms.contains(id);
+    }
+
+    public boolean hasForm(Form form) {
+        return unlockedForms.contains(form.id);
+    }
+
+    public boolean isInForm() {
+        return formID > -1 && getCurrentForm() != null;
+    }
+
+    public boolean isInForm(String formName) {
+        return getCurrentForm().getName().equals(formName);
+    }
+
+
+    public void resetAllForm() {
+        formID = -1;
+        unlockedForms.clear();
+        formLevels.clear();
+    }
+    /////////////////////////////////////////////
+    /////////////////////////////////////////////
 
 }
