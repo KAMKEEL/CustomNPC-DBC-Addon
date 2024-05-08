@@ -60,6 +60,8 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
 
     @Unique
     private void addHoverable(String name, int i, int i1) {
+        if(name == null)
+            return;
         if(this.mc.currentScreen instanceof AbstractJRMCGui){
             AbstractJRMCGui gui = (AbstractJRMCGui) this.mc.currentScreen;
             gui.horribleDBCDynamicLabels.put(i, new JRMCoreLabel(null, name, i, i1, 15, 15));
