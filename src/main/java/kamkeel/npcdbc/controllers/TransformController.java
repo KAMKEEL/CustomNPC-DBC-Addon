@@ -5,15 +5,17 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetValPacket;
+import kamkeel.npcdbc.network.packets.PlaySound;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
@@ -21,6 +23,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.entity.EntityCustomNpc;
 
 import static JinRyuu.JRMCore.JRMCoreH.isInBaseForm;
 import static JinRyuu.JRMCore.JRMCoreH.rc_arc;
@@ -52,7 +55,7 @@ public class TransformController {
         releaseTime++;
         soundTime++;
         TransformController.setAscending(true);
-        rageValue = getRageMeterIncrementation(form);
+        rageValue = getRageMeterIncrementation(form, PlayerDataUtil.getClientDBCInfo().getFormLevel(form.id));
         rage += rageValue;
         JRMCoreH.TransSaiCurRg = (byte) rage;
         PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
@@ -135,22 +138,73 @@ public class TransformController {
     }
 
     @SideOnly(Side.CLIENT)
-    public static float getRageMeterIncrementation(Form form) {
-        PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
-        float curLevel = formData.getFormLevel(form.id);
+    public static float getRageMeterIncrementation(Form form, float formLevel) {
+        //  PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
+        //float formLevel = formData.getFormLevel(form.id);
         float maxLevel = form.getMastery().getMaxLevel();
-        float ratio = curLevel / maxLevel;
+        float ratio = formLevel / maxLevel;
 
         if (form.getMastery().hasInstantTransformationUnlockLevel())
-            if (form.mastery.canInstantTransform(curLevel))
+            if (form.mastery.canInstantTransform(formLevel))
                 return 15;
 
-        if (Utility.percentBetween(curLevel, maxLevel, 0, 5))
+        if (Utility.percentBetween(formLevel, maxLevel, 0, 5))
             return 1;
-        else if (Utility.percentBetween(curLevel, maxLevel, 5, 101))
+        else if (Utility.percentBetween(formLevel, maxLevel, 5, 101))
             return 15 * ratio;
         return 0;
     }
+    //////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // NPC transformation handling
+
+    public static void npcAscend(EntityCustomNpc npc, Form form) {
+        DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
+
+        if (form.id == display.formID || !display.isTransforming)
+            return;
+
+        display.isTransforming = true;
+        if (display.rageValue <= 0)
+            display.rageValue = getRageMeterIncrementation(form, display.getFormLevel(form.id));
+
+        display.rage += display.rageValue;
+        display.auraOn = true;
+
+        if (display.rage >= 100) {
+            display.formID = form.id;
+            PlaySound.play(npc, form.getAscendSound(), 50);
+            display.transformed = true;
+        }
+        npc.updateClient();
+
+    }
+
+    public static void npcDecrementRage(EntityCustomNpc npc, DBCDisplay display) {
+        if (display.rage == 0)
+            return;
+
+        if (display.rage > 0) {
+            if (display.rage > 100)
+                display.rage = 100;
+            if (display.rage - (display.rageValue) >= 0)
+                display.rage -= (display.rageValue);
+            else {
+                display.rage = 0;
+                display.rageValue = 0;
+                display.transformed = false;
+
+            }
+            if (display.rage <= 50 && display.isTransforming) {
+                display.isTransforming = false;
+                display.auraOn = false;
+                display.selectedForm = -1;
+            }
+            npc.updateClient();
+        }
+    }
+
+
 
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
@@ -166,7 +220,7 @@ public class TransformController {
             DBCData dbcData = DBCData.get(player);
 
             boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ConfigDBCGameplay.InstantTransform;
-            if(!allowBypass){
+            if (!allowBypass) {
                 // Check for in Required DBC Form before Transforming
                 if (form.requiredForm.containsKey((int) dbcData.Race)) {
                     if (form.requiredForm.get((int) dbcData.Race) != dbcData.State)
