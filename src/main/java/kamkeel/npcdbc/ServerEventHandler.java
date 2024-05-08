@@ -145,7 +145,7 @@ public class ServerEventHandler {
             DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
             if (!display.enabled)
                 return;
-            if (display.isTransforming && display.selectedForm != -1 && !display.transformed) {
+            if (display.isTransforming && display.selectedForm != -1 && display.selectedForm != display.formID) {
                 TransformController.npcAscend(npc, (Form) FormController.Instance.get(display.selectedForm));
             } else
                 TransformController.npcDecrementRage(npc, display);

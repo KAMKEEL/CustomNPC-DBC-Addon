@@ -14,7 +14,7 @@ import org.lwjgl.opengl.GL11;
 
 public abstract class ModelDBCPartInterface extends ModelRenderer {
     public ModelData data;
-    private EntityCustomNpc entity;
+    public EntityCustomNpc entity;
     public float scale = 1.0F;
     protected ResourceLocation location;
     public int useColor = 0; // CM, C1, C2, C3

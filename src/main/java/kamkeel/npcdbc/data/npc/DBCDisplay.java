@@ -7,69 +7,72 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.form.FormMastery;
-import kamkeel.npcdbc.network.packets.PlaySound;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.NBTTags;
-import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
-
-import java.util.HashMap;
-import java.util.HashSet;
 
 public class DBCDisplay implements IDBCDisplay {
 
     public boolean enabled = false;
+
+    // Hair Display //
     public String hairCode = "", hairType = "";
-    public int hairColor, eyeColor, bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1;
+    public int hairColor = -1;
+
+
+
+    // Race Display //
+    public int race = -1;
+    public boolean useSkin = false;
+    public int bodyType = 0;
+    public int bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1;
     public boolean hasArcoMask = false;
-    public int race = 4, bodyType;
+
+    // Face Display //
+    public int eyeColor = -1;
     public int noseType = 1, mouthType = 1, eyeType = 0, arcoState;
-    public boolean loadSkin = false;
+
+    // Aura Display //
     public boolean auraOn = false;
     public int auraID = -1;
-    public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
+
+    // Form Display //
     public int formID = -1, selectedForm = -1, rage;
-    public float rageValue;
-    public boolean isTransforming, transformed;
-    public HashSet<Integer> unlockedForms = new HashSet<Integer>();
-    public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
-    EntityNPCInterface npc;
+    public float formLevel = 0;
+    public boolean isTransforming;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
 
-    public DBCDisplay(EntityNPCInterface npc) {
-        this.npc = npc;
-    }
+    // Server Side Usage
+    public float rageValue;
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
         comp.setBoolean("DBCDisplayEnabled", enabled);
         if (enabled) {
-            comp.setInteger("DBCRace", race);
-            comp.setInteger("DBCAuraID", auraID);
-            comp.setBoolean("DBCAuraOn", auraOn);
-
             comp.setInteger("DBCBodyType", bodyType);
             comp.setString("DBCHairType", hairType);
             comp.setString("DBCHair", hairCode);
 
             comp.setInteger("DBCHairColor", hairColor);
             comp.setInteger("DBCEyeColor", eyeColor);
+
+            comp.setInteger("DBCRace", race);
+            comp.setBoolean("DBCUseSkin", useSkin);
             comp.setInteger("DBCBodyCM", bodyCM);
             comp.setInteger("DBCBodyC1", bodyC1);
             comp.setInteger("DBCBodyC2", bodyC2);
             comp.setInteger("DBCBodyC3", bodyC3);
-
             comp.setInteger("DBCArcoState", arcoState);
+
             comp.setBoolean("DBCArcoMask", hasArcoMask);
 
-            comp.setInteger("rage", rage);
-            comp.setBoolean("isTransforming", isTransforming);
-            comp.setBoolean("transformed", transformed);
-            comp.setInteger("formID", formID);
-            comp.setInteger("selectedForm", selectedForm);
-            comp.setTag("unlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
-            comp.setTag("formLevels", NBTTags.nbtIntegerFloatMap(formLevels));
+            comp.setInteger("DBCRage", rage);
+            comp.setBoolean("DBCIsTransforming", isTransforming);
+            comp.setInteger("DBCFormID", formID);
+            comp.setFloat("DBCFormLevel", formLevel);
+            comp.setInteger("DBCSelectedForm", selectedForm);
+
+            comp.setInteger("DBCAuraID", auraID);
+            comp.setBoolean("DBCAuraOn", auraOn);
             comp.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
         }
         return comp;
@@ -82,6 +85,7 @@ public class DBCDisplay implements IDBCDisplay {
             auraID = compound.getInteger("DBCAuraID");
             auraOn = compound.getBoolean("DBCAuraOn");
 
+            useSkin = compound.getBoolean("DBCUseSkin");
             bodyType = compound.getInteger("DBCBodyType");
             hairType = compound.getString("DBCHairType");
             hairCode = compound.getString("DBCHair");
@@ -97,16 +101,12 @@ public class DBCDisplay implements IDBCDisplay {
             hasArcoMask = compound.getBoolean("DBCArcoMask");
 
             auraID = compound.getInteger("auraID");
-            unlockedAuras = NBTTags.getIntegerSet(compound.getTagList("unlockedAuras", 10));
             enumAuraTypes = EnumAuraTypes.values()[compound.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
 
             rage = compound.getInteger("rage");
             isTransforming = compound.getBoolean("isTransforming");
-            transformed = compound.getBoolean("transformed");
             formID = compound.getInteger("formID");
             selectedForm = compound.getInteger("selectedForm");
-            unlockedForms = NBTTags.getIntegerSet(compound.getTagList("unlockedForms", 10));
-            formLevels = NBTTags.getIntegerFloatMap(compound.getTagList("formLevels", 10));
         }
     }
 
@@ -293,11 +293,6 @@ public class DBCDisplay implements IDBCDisplay {
         return (Aura) AuraController.getInstance().get(auraID);
     }
 
-    public void resetAllAuras() {
-        auraID = -1;
-        unlockedAuras.clear();
-    }
-
     /////////////////////////////////////////////
     /////////////////////////////////////////////
     // Forms
@@ -312,23 +307,9 @@ public class DBCDisplay implements IDBCDisplay {
 
     public void transform(Form form) {
         transform(form.id);
-
     }
 
-    public void descend(int id) {
-        if (isInForm()) {
-            PlaySound.play(npc, getCurrentForm().descendSound, 50);
-        }
-        if (FormController.Instance.has(id)) {
-            formID = id;
-        } else
-            formID = -1;
-        selectedForm = -1;
-        isTransforming = false;
-        transformed = false;
-    }
-
-    public void interruptTransform() {
+    public void cancelTransform() {
         selectedForm = -1;
         isTransforming = false;
     }
@@ -350,55 +331,10 @@ public class DBCDisplay implements IDBCDisplay {
             formID = f.id;
     }
 
-    public void addForm(Form form) {
-        addForm(form.id);
-    }
-
-    public void addForm(int id) {
-        if (!unlockedForms.contains(id)) {
-            unlockedForms.add(id);
-            formLevels.put(id, 0f);
-        }
-    }
-
-    public boolean removeForm(Form form) {
-        return removeForm(form.id);
-    }
-
-    public boolean removeForm(int id) {
-        formLevels.remove(id);
-        return unlockedForms.remove(id);
-    }
-
-    public Form getForm(int id) {
-        if (unlockedForms.contains(id))
-            return (Form) FormController.getInstance().get(id);
-
-        return null;
-    }
-
-    public Form getForm(String name) {
-        Form f = (Form) FormController.Instance.get(name);
-        if (f != null)
-            return getForm(f.id);
-        return null;
-
-    }
-
-
     public Form getCurrentForm() {
         if (formID > 0)
             return (Form) FormController.Instance.get(formID);
         return null;
-    }
-
-
-    public boolean hasForm(int id) {
-        return unlockedForms.contains(id);
-    }
-
-    public boolean hasForm(Form form) {
-        return unlockedForms.contains(form.id);
     }
 
     public boolean isInForm() {
@@ -409,71 +345,38 @@ public class DBCDisplay implements IDBCDisplay {
         return getCurrentForm().getName().equals(formName);
     }
 
-
-    public void resetAllForm() {
-        formID = -1;
-        unlockedForms.clear();
-        formLevels.clear();
-    }
-
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    // Form mastery stuff
-    public void updateCurrentFormMastery(String gainType) {
-        updateFormMastery(formID, gainType);
-    }
-
-    public void updateFormMastery(int formID, String gainType) {
-        Form f = FormController.getInstance().customForms.get(formID);
-        if (f == null || !isInForm())
-            return;
-
-        FormMastery fm = (FormMastery) f.getMastery();
-        if (!formLevels.containsKey(f.id))
-            return;
-        int mind = 0;
-        float playerLevel = formLevels.get(f.id);
-        float fullGain = fm.calculateFullGain(gainType, playerLevel, mind);
-
-        playerLevel = ValueUtil.clamp(playerLevel + fullGain, 0, fm.maxLevel); //updated level
-        formLevels.replace(f.id, playerLevel);
-    }
-
-    public void addFormLevel(int formID, float amount) {
-        Form form = FormController.getInstance().customForms.get(formID);
-        if (form != null) {
-            float current = formLevels.get(formID);
-            float updated = ValueUtil.clamp(current + amount, 0, ((FormMastery) form.getMastery()).maxLevel);
-            formLevels.put(formID, updated);
-        }
-    }
-
-    public void setFormLevel(int formID, float amount) {
-        Form form = FormController.getInstance().customForms.get(formID);
-        if (form != null) {
-            float updated = ValueUtil.clamp(amount, 0, ((FormMastery) form.getMastery()).maxLevel);
-            formLevels.put(formID, updated);
-        }
-    }
-
-    public void removeFormMastery(int formID) {
-        Form form = FormController.getInstance().customForms.get(formID);
-        if (form != null) {
-            formLevels.remove(formID);
-        }
+    public void setFormLevel(float amount) {
+        formLevel = amount;
     }
 
     public float getFormLevel(int formID) {
-        if (formID != -1 && formLevels.containsKey(formID))
-            return formLevels.get(formID);
+        if (formID != -1)
+            return formLevel;
         return 0f;
     }
 
-    public float getCurrentLevel() {
-        return getFormLevel(formID);
+    public int getState() {
+        int state = this.arcoState;
+        Form form = this.getCurrentForm();
+        if (form != null) {
+            switch (form.display.bodyType) {
+                case "firstform":
+                    state = 0;
+                    break;
+                case "secondform":
+                    state = 2;
+                    break;
+                case "thirdform":
+                    state = 3;
+                    break;
+                case "finalform":
+                    state = 4;
+                    break;
+                case "ultimatecooler":
+                    state = 5;
+                    break;
+            }
+        }
+        return state;
     }
-
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-
 }

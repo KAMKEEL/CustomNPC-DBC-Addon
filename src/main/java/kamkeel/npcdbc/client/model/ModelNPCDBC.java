@@ -259,113 +259,87 @@ public class ModelNPCDBC extends ModelBase {
     }
 
     public void renderAllBody(DBCDisplay display, ModelRenderer model) {
-        int race = display.race;
-        TextureManager textureManager = Minecraft.getMinecraft().renderEngine;
+        if(display.useSkin){
+            int race = display.race;
+            TextureManager textureManager = Minecraft.getMinecraft().renderEngine;
+            if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+                int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
+                textureManager.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
+                RenderPlayerJBRA.glColor3f(bodyCM);
 
-        if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-            int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
-            textureManager.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
-            RenderPlayerJBRA.glColor3f(bodyCM);
+            } else if (race == DBCRace.NAMEKIAN) {
+                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
+                int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
+                RenderPlayerJBRA.glColor3f(bodyCM);
+                model.render(0.0625F);
 
-        } else if (race == DBCRace.NAMEKIAN) {
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
-            int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
-            RenderPlayerJBRA.glColor3f(bodyCM);
-            model.render(0.0625F);
+                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
+                int bodyC1 = display.bodyC1 == -1 ? getBodyColor(display, "bodyC1", race) : display.bodyC1;
+                RenderPlayerJBRA.glColor3f(bodyC1);
+                model.render(0.0625F);
 
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
-            int bodyC1 = display.bodyC1 == -1 ? getBodyColor(display, "bodyC1", race) : display.bodyC1;
-            RenderPlayerJBRA.glColor3f(bodyC1);
-            model.render(0.0625F);
-
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
-            int bodyC2 = display.bodyC2 == -1 ? getBodyColor(display, "bodyC2", race) : display.bodyC2;
-            RenderPlayerJBRA.glColor3f(bodyC2);
-            model.render(0.0625F);
+                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
+                int bodyC2 = display.bodyC2 == -1 ? getBodyColor(display, "bodyC2", race) : display.bodyC2;
+                RenderPlayerJBRA.glColor3f(bodyC2);
+                model.render(0.0625F);
 
 
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
-            GL11.glColor3f(1f, 1f, 1f);
-            //model.render(0.0625F);
+                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
+                GL11.glColor3f(1f, 1f, 1f);
+                //model.render(0.0625F);
 
-        } else if (race == DBCRace.ARCOSIAN) {
-            int st = display.arcoState;
-            int ts = 0;
-            int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
-            int bodyC1 = display.bodyC1 == -1 ? getBodyColor(display, "bodyC1", race) : display.bodyC1;
-            int bodyC2 = display.bodyC2 == -1 ? getBodyColor(display, "bodyC2", race) : display.bodyC2;
-            int bodyC3 = display.bodyC3 == -1 ? getBodyColor(display, "bodyC3", race) : display.bodyC3;
+            } else if (race == DBCRace.ARCOSIAN) {
+                int st = display.arcoState;
+                int ts = 0;
+                int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
+                int bodyC1 = display.bodyC1 == -1 ? getBodyColor(display, "bodyC1", race) : display.bodyC1;
+                int bodyC2 = display.bodyC2 == -1 ? getBodyColor(display, "bodyC2", race) : display.bodyC2;
+                int bodyC3 = display.bodyC3 == -1 ? getBodyColor(display, "bodyC3", race) : display.bodyC3;
 
-            //////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////
-            //Forms
-            Form form = display.getCurrentForm();
-            if (form != null) {
-                if (form.display.bodyType.equals("firstform"))
-                    st = 0;
-                else if (form.display.bodyType.equals("secondform"))
-                    st = 2;
-                else if (form.display.bodyType.equals("thirdform"))
-                    st = 3;
-                else if (form.display.bodyType.equals("finalform"))
-                    st = 4;
-                else if (form.display.bodyType.equals("ultimatecooler"))
-                    st = 5;
+                //////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////
+                //Forms
+                Form form = display.getCurrentForm();
+                if (form != null) {
+                    if (form.display.bodyType.equals("firstform"))
+                        st = 0;
+                    else if (form.display.bodyType.equals("secondform"))
+                        st = 2;
+                    else if (form.display.bodyType.equals("thirdform"))
+                        st = 3;
+                    else if (form.display.bodyType.equals("finalform"))
+                        st = 4;
+                    else if (form.display.bodyType.equals("ultimatecooler"))
+                        st = 5;
+                }
+
+                //ACTUAL BODY
+                RenderPlayerJBRA.glColor3f(bodyCM);
+                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                model.render(0.0625F);
+
+                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                RenderPlayerJBRA.glColor3f(bodyC1);
+                model.render(0.0625F);
+
+                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                RenderPlayerJBRA.glColor3f(bodyC2);
+                model.render(0.0625F);
+
+                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                RenderPlayerJBRA.glColor3f(bodyC3);
+                model.render(0.0625F);
+
+                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                GL11.glColor3f(1f, 1f, 1f);
+
+            } else if (race == DBCRace.MAJIN) {
+                int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
+                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
+                RenderPlayerJBRA.glColor3f(bodyCM);
+                //  model.render(0.0625F);
             }
-            //////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////
-
-            //HORNS
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
-            RenderPlayerJBRA.glColor3f(bodyCM);
-            renderMisc("FR" + JRMCoreH.TransFrHrn[st]);
-
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
-            RenderPlayerJBRA.glColor3f(bodyC1);
-            renderMisc("FR" + JRMCoreH.TransFrHrn[st]);
-
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
-            RenderPlayerJBRA.glColor3f(bodyC2);
-            renderMisc("FR" + JRMCoreH.TransFrHrn[st]);
-
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
-            RenderPlayerJBRA.glColor3f(bodyC3);
-            renderMisc("FR" + JRMCoreH.TransFrHrn[st]);
-
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
-            GL11.glColor3f(1f, 1f, 1f);
-            renderMisc("FR" + JRMCoreH.TransFrHrn[st]);
-
-            //ACTUAL BODY
-            RenderPlayerJBRA.glColor3f(bodyCM);
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-            model.render(0.0625F);
-
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-            RenderPlayerJBRA.glColor3f(bodyC1);
-            model.render(0.0625F);
-
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-            RenderPlayerJBRA.glColor3f(bodyC2);
-            model.render(0.0625F);
-
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-            RenderPlayerJBRA.glColor3f(bodyC3);
-            model.render(0.0625F);
-
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-            GL11.glColor3f(1f, 1f, 1f);
-
-        } else if (race == DBCRace.MAJIN) {
-            int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
-            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
-            RenderPlayerJBRA.glColor3f(bodyCM);
-
-            //  model.render(0.0625F);
-
-
         }
-        // parent.currentlyPlayerTexture = false;
     }
 
     public void renderMisc(String hair) {
@@ -414,45 +388,7 @@ public class ModelNPCDBC extends ModelBase {
                 this.LeftArmSpike.rotateAngleZ = parent.bipedLeftArm.rotateAngleZ;
                 this.LeftArmSpike.render(par1);
             }
-
-
-            if (hair.contains("0") || hair.contains("2") || hair.contains("1")) {
-                // Head Spike Pair Bottom
-//                this.SpikePair.rotateAngleY = parent.bipedHead.rotateAngleY;
-//                this.SpikePair.rotateAngleX = parent.bipedHead.rotateAngleX;
-//                this.SpikePair.rotationPointX = parent.bipedHead.rotationPointX;
-//                this.SpikePair.rotationPointY = parent.bipedHead.rotationPointY;
-//                this.SpikePair.render(par1);
-            }
-
-            if (hair.contains("1") || hair.contains("2")) {
-                // Head Spike Pair Extension
-//                this.SpikePairExtended.rotateAngleY = parent.bipedHead.rotateAngleY;
-//                this.SpikePairExtended.rotateAngleX = parent.bipedHead.rotateAngleX;
-//                this.SpikePairExtended.rotationPointX = parent.bipedHead.rotationPointX;
-//                this.SpikePairExtended.rotationPointY = parent.bipedHead.rotationPointY;
-//                this.SpikePairExtended.render(par1);
-            }
-
-            if (hair.contains("2")) {
-                // Form 3 Long Head
-//                this.ThirdFormBigHead.rotateAngleY = parent.bipedHead.rotateAngleY;
-//                this.ThirdFormBigHead.rotateAngleX = parent.bipedHead.rotateAngleX;
-//                this.ThirdFormBigHead.rotationPointX = parent.bipedHead.rotationPointX;
-//                this.ThirdFormBigHead.rotationPointY = parent.bipedHead.rotationPointY;
-//                this.ThirdFormBigHead.render(par1);
-            }
-
-            if (hair.contains("4")) {
-                // 5th Form Head Spikes
-//                this.CoolerHeadSpikes.rotateAngleY = parent.bipedHead.rotateAngleY;
-//                this.CoolerHeadSpikes.rotateAngleX = parent.bipedHead.rotateAngleX;
-//                this.CoolerHeadSpikes.rotationPointX = parent.bipedHead.rotationPointX;
-//                this.CoolerHeadSpikes.rotationPointY = parent.bipedHead.rotationPointY;
-//                this.CoolerHeadSpikes.render(par1);
-            }
         }
-
     }
 
     public void renderHairs(DBCDisplay display) {
@@ -480,7 +416,7 @@ public class ModelNPCDBC extends ModelBase {
         int race = display.race;
         int rage = display.rage;
 
-        if (display.rage > 0 && display.transformed)
+        if (display.rage > 0 && display.selectedForm == display.formID)
             rage = 0;
 
         if (display.hairType.equals("ssj"))

@@ -156,9 +156,7 @@ public class GuiModelDBC extends GuiModelInterface {
 
     public String getColor(int input) {
         String str;
-        for(str = Integer.toHexString(input); str.length() < 6; str = "0" + str) {
-        }
-
+        for(str = Integer.toHexString(input); str.length() < 6; str = "0" + str) {}
         return str;
     }
 }

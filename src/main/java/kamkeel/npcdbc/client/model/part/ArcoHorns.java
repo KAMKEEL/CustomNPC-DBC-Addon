@@ -4,6 +4,8 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
 import kamkeel.npcdbc.client.model.ModelNPCDBC;
+import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.client.model.ModelRenderer;
@@ -14,8 +16,6 @@ import noppes.npcs.entity.data.ModelData;
 import noppes.npcs.entity.data.ModelPartData;
 
 public class ArcoHorns extends ModelDBCPartInterface {
-    private EntityCustomNpc npc;
-
     // First Form
     public ModelRenderer SpikePair;
     public ModelRenderer spikePairOne;
@@ -131,49 +131,39 @@ public class ArcoHorns extends ModelDBCPartInterface {
         this.addChild(CoolerHeadSpikes);
     }
 
-    public void setData(ModelData data, EntityCustomNpc npc) {
-        this.npc = npc;
-        super.setData(data, npc);
-    }
-
     @Override
     public void render(float par1) {
-        DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
-        int race = display.race;
+        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        if(display.race == DBCRace.ARCOSIAN && display.useSkin){
+            int state = display.getState();
 
-        //HORNS
-//        int bodyCM = display.bodyCM == -1 ? ModelNPCDBC.getDefaultColor("bodyCM", race) : display.bodyCM;
-//        int bodyC1 = display.bodyC1 == -1 ? ModelNPCDBC.getDefaultColor("bodyC1", race) : display.bodyC1;
-//        int bodyC2 = display.bodyC2 == -1 ? ModelNPCDBC.getDefaultColor("bodyC2", race) : display.bodyC2;
-//        int bodyC3 = display.bodyC3 == -1 ? ModelNPCDBC.getDefaultColor("bodyC3", race) : display.bodyC3;
+            useColor = 0;
+            this.bodyCM = display.bodyCM;
+            location = new ResourceLocation("jinryuudragonbc:cc/arc/m/0B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
+            super.render(par1);
 
-        bodyCM = 0x34eb37;
-        bodyC1 = 0x34eb37;
-        bodyC2 = 0x34eb37;
-        bodyC3 = 0x34eb37;
+            useColor = 1;
+            location = new ResourceLocation("jinryuudragonbc:cc/arc/m/1B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
+            this.bodyC1 = display.bodyC1;
+            super.render(par1);
 
-        int st = 1;
+            useColor = 2;
+            location = new ResourceLocation("jinryuudragonbc:cc/arc/m/2B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
+            this.bodyC2 = display.bodyC2;
+            super.render(par1);
 
-        useColor = 0;
-        this.bodyCM = bodyCM;
-        super.render(par1);
+            useColor = 3;
+            location = new ResourceLocation("jinryuudragonbc:cc/arc/m/3B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
+            this.bodyC3 = display.bodyC3;
+            super.render(par1);
 
-        useColor = 1;
-        this.bodyC1 = bodyC1;
-        super.render(par1);
-
-        useColor = 2;
-        this.bodyC2 = bodyC2;
-        super.render(par1);
-
-        useColor = 3;
-        this.bodyC3 = bodyC3;
-        super.render(par1);
-
-        useColor = 0;
-        bodyCM = 0xfffff;
-        this.bodyCM = bodyCM;
-        super.render(par1);
+            useColor = 0;
+            location = new ResourceLocation("jinryuudragonbc:cc/arc/m/4B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
+            this.bodyCM = display.bodyCM;
+            super.render(par1);
+        } else {
+            super.render(par1);
+        }
     }
 
     @Override

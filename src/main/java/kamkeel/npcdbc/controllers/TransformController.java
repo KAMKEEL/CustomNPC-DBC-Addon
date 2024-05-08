@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -137,10 +138,7 @@ public class TransformController {
         soundTime = 0;
     }
 
-    @SideOnly(Side.CLIENT)
     public static float getRageMeterIncrementation(Form form, float formLevel) {
-        //  PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
-        //float formLevel = formData.getFormLevel(form.id);
         float maxLevel = form.getMastery().getMaxLevel();
         float ratio = formLevel / maxLevel;
 
@@ -154,6 +152,7 @@ public class TransformController {
             return 15 * ratio;
         return 0;
     }
+
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
     // NPC transformation handling
@@ -164,20 +163,16 @@ public class TransformController {
         if (form.id == display.formID || !display.isTransforming)
             return;
 
-        display.isTransforming = true;
         if (display.rageValue <= 0)
             display.rageValue = getRageMeterIncrementation(form, display.getFormLevel(form.id));
 
         display.rage += display.rageValue;
-        display.auraOn = true;
 
         if (display.rage >= 100) {
             display.formID = form.id;
             PlaySound.play(npc, form.getAscendSound(), 50);
-            display.transformed = true;
         }
         npc.updateClient();
-
     }
 
     public static void npcDecrementRage(EntityCustomNpc npc, DBCDisplay display) {
@@ -192,18 +187,35 @@ public class TransformController {
             else {
                 display.rage = 0;
                 display.rageValue = 0;
-                display.transformed = false;
-
+                display.selectedForm = -1;
             }
             if (display.rage <= 50 && display.isTransforming) {
                 display.isTransforming = false;
-                display.auraOn = false;
-                display.selectedForm = -1;
             }
             npc.updateClient();
         }
     }
 
+    public static void npcDescend(EntityCustomNpc npc) {
+        DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
+
+        Form current = display.getCurrentForm();
+        if(current == null)
+            return;
+
+        display.rageValue = 0;
+
+        IForm parent = current.getParent();
+        if(parent != null)
+            display.formID = parent.getID();
+        else
+            display.formID = -1;
+
+        display.selectedForm = -1;
+        display.isTransforming = false;
+        PlaySound.play(npc, current.getDescendSound(), 50);
+        npc.updateClient();
+    }
 
 
     //////////////////////////////////////////////////

@@ -34,5 +34,10 @@ public class SoundHelper {
         return null;
     }
 
+    public static void setSoundVolume(PositionedSound sound, float volume) {
+        Utility.setPrivateField(PositionedSound.class, "volume", false, sound, volume);
+
+    }
+
 
 }

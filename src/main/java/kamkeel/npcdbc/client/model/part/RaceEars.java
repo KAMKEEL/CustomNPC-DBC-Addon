@@ -1,12 +1,13 @@
 package kamkeel.npcdbc.client.model.part;
 
+import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
 import net.minecraft.client.model.ModelRenderer;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.client.model.util.ModelPartInterface;
 import noppes.npcs.entity.data.ModelData;
 import noppes.npcs.entity.data.ModelPartData;
 
-public class RaceEars extends ModelPartInterface {
+public class RaceEars extends ModelDBCPartInterface {
 
     public ModelRenderer ArcoEars;
     public ModelRenderer ear1;
@@ -41,7 +42,7 @@ public class RaceEars extends ModelPartInterface {
             isHidden = true;
             return;
         }
-        color = config.color;
+        bodyCM = config.color;
         isHidden = false;
 
         ArcoEars.isHidden = config.type != 1;

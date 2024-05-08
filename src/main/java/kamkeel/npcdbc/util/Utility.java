@@ -69,10 +69,7 @@ public class Utility {
     }
 
 
-    public static void setSoundVolume(PositionedSound sound, float volume) {
-        setPrivateField(PositionedSound.class, "volume", false, sound, volume);
 
-    }
 
     public static String getEntityID(Entity p) {
         if (p instanceof EntityPlayer)
