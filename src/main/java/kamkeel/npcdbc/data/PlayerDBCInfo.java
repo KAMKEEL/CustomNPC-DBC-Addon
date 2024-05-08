@@ -115,8 +115,8 @@ public class PlayerDBCInfo {
         TransformController.handleFormDescend((EntityPlayerMP) parent.player);
         currentForm = -1;
         selectedForm = -1;
-        unlockedForms = new HashSet<>();
-        formLevels = new HashMap();
+        unlockedForms.clear();
+        formLevels.clear();
         updateClient();
     }
 
@@ -287,6 +287,13 @@ public class PlayerDBCInfo {
 
     public Aura getSelectedAura() {
         return (Aura) AuraController.Instance.get(selectedAura);
+    }
+
+    public void resetAllAuras() {
+        currentAura = -1;
+        selectedAura = -1;
+        unlockedAuras.clear();
+        updateClient();
     }
 
     ///////////////////////////////////////////
