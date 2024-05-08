@@ -24,7 +24,7 @@ public class FruitOfMight extends StatusEffect {
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
         iconX = 64;
         iconY = 0;
-        fruitOfMightBonus = new PlayerBonus(name, (float) ConfigDBCEffects.FOM_Strength, (float) ConfigDBCEffects.FOM_Dex, (float) ConfigDBCEffects.FOM_Will);
+        fruitOfMightBonus = new PlayerBonus(name, (byte) 0, (float) ConfigDBCEffects.FOM_Strength, (float) ConfigDBCEffects.FOM_Dex, (float) ConfigDBCEffects.FOM_Will);
         kiToDrain = (float) ConfigDBCEffects.FOM_KiDrain;
 
         if (fruitOfMightAura == null) {
@@ -37,6 +37,7 @@ public class FruitOfMight extends StatusEffect {
         }
     }
 
+    @Override
     public void init(EntityPlayer player, PlayerEffect playerEffect){
         BonusController.getInstance().applyBonus(player, fruitOfMightBonus);
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
