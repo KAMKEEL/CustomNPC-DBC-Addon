@@ -4,6 +4,7 @@ import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.mixin.IEntityAura;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -59,7 +60,7 @@ public class MixinEntityAura2 implements IEntityAura {
         if (player.get() != null)
             return;
         EntityAura2 aura = (EntityAura2) (Object) this;
-        Entity entity = aura.worldObj.getEntityByID(Integer.parseInt(mot));
+        Entity entity = Utility.getEntityFromID(aura.worldObj, mot);
         if (entity != null)
             player.set(entity);
     }

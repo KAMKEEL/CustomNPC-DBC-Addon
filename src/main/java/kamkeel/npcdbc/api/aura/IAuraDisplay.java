@@ -3,6 +3,20 @@ package kamkeel.npcdbc.api.aura;
 public interface IAuraDisplay {
 
 
+    void toggleKaioken(boolean toggle);
+
+    boolean hasSound();
+
+    String getAuraSound();
+
+    void setAuraSound(String sound);
+
+    float getSoundTime();
+
+    void setSoundTime(float seconds);
+
+    boolean isKaiokenToggled();
+
     /**
      * @return legal types: ssgod, godofdestruction, ui, ssb, ssrose, ssroseevo, ssbkk, shinka
      */

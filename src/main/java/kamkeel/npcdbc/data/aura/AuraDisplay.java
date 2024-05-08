@@ -18,6 +18,10 @@ public class AuraDisplay implements IAuraDisplay {
     public boolean hasLightning = false;
     public int lightningColor = -1, lightningAlpha = -1;
 
+    public boolean kaiokenOn = false;
+
+    public String auraSound = "";
+    public float soundTime = -1; //seconds
 
     public AuraDisplay(Aura parent) {
         this.parent = parent;
@@ -44,6 +48,11 @@ public class AuraDisplay implements IAuraDisplay {
         lightningColor = rendering.getInteger("lightningColor");
         lightningAlpha = rendering.getInteger("lightningAlpha");
 
+        kaiokenOn = rendering.getBoolean("kaiokenOn");
+
+        auraSound = rendering.getString("auraSound");
+        soundTime = rendering.getInteger("soundTime");
+
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -65,9 +74,49 @@ public class AuraDisplay implements IAuraDisplay {
         rendering.setInteger("lightningColor", lightningColor);
         rendering.setInteger("lightningAlpha", lightningAlpha);
 
+        rendering.setBoolean("kaiokenOn", kaiokenOn);
+
+        rendering.setString("auraSound", auraSound);
+        rendering.setFloat("soundTime", soundTime);
+
         compound.setTag("rendering", rendering);
         return compound;
     }
+
+    @Override
+    public void toggleKaioken(boolean toggle) {
+        this.kaiokenOn = toggle;
+    }
+    @Override
+    public boolean hasSound() {
+        return auraSound.length() > 3;
+    }
+
+    @Override
+    public String getAuraSound() {
+        return auraSound;
+    }
+
+    @Override
+    public void setAuraSound(String sound) {
+        this.auraSound = sound;
+    }
+
+    @Override
+    public float getSoundTime() {
+        return soundTime;
+    }
+
+    @Override
+    public void setSoundTime(float seconds) {
+        this.soundTime = seconds;
+    }
+
+    @Override
+    public boolean isKaiokenToggled() {
+        return kaiokenOn;
+    }
+
 
     @Override
     public String getType() {
@@ -211,7 +260,7 @@ public class AuraDisplay implements IAuraDisplay {
 
     @Override
     public boolean hasSpeed() {
-        return speed >0;
+        return speed > 0;
     }
 
     @Override

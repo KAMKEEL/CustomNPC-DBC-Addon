@@ -21,7 +21,7 @@ public class DBCDisplay implements IDBCDisplay {
 
     public int noseType = 1, mouthType = 1, eyeType = 0, arcoState;
 
-    public boolean hasArcoMask = false;
+    public boolean hasArcoMask = false,  auraOn = false;
     public int auraID = -1;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
 
@@ -30,6 +30,7 @@ public class DBCDisplay implements IDBCDisplay {
         if (enabled) {
             comp.setInteger("race", race);
             comp.setInteger("auraID", auraID);
+            comp.setBoolean("auraOn", auraOn);
 
             comp.setInteger("bodyType", bodyType);
             comp.setString("DBCHairType", hairType);
@@ -56,6 +57,7 @@ public class DBCDisplay implements IDBCDisplay {
         if (enabled) {
             race = comp.getInteger("race");
             auraID = comp.getInteger("auraID");
+            auraOn = comp.getBoolean("auraOn");
 
             bodyType = comp.getInteger("bodyType");
             hairType = comp.getString("DBCHairType");
@@ -234,6 +236,20 @@ public class DBCDisplay implements IDBCDisplay {
     @Override
     public void setAura(int auraID) {
         this.auraID = auraID;
+    }
+
+    @Override
+    public boolean isAuraToggled() {
+        return auraOn;
+    }
+
+
+    @Override
+    public void toggleAura(boolean toggle) {
+        if (AuraController.getInstance().has(auraID))
+            this.auraOn = toggle;
+        else
+            this.auraOn = false;
     }
 
     //internal usage

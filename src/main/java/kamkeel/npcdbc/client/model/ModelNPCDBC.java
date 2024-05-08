@@ -309,7 +309,6 @@ public class ModelNPCDBC extends ModelBase {
             RenderPlayerJBRA.glColor3f(bodyC3);
             model.render(0.0625F);
 
-
             textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
             GL11.glColor3f(1f, 1f, 1f);
 
@@ -427,8 +426,8 @@ public class ModelNPCDBC extends ModelBase {
         }
         boolean canUse = mod_JBRA.a6P9H9B;
         boolean pstrty = false;//super form selected;JRMCoreH.plyrSttngsClient(1, pl);
-        boolean aura = true;//aura anim JRMCoreH.StusEfctsClient(4, pl);
-        boolean trbo = true; //turbo anim JRMCoreH.StusEfctsClient(3, pl);
+        boolean aura = display.auraOn;//aura anim JRMCoreH.StusEfctsClient(4, pl);
+        boolean trbo = false; //turbo anim JRMCoreH.StusEfctsClient(3, pl);
         boolean kken = false;//kaioken anim JRMCoreH.StusEfctsClient(5, pl);
         boolean trty = false; //transforming anim JRMCoreH.StusEfctsClient(1, pl);
 

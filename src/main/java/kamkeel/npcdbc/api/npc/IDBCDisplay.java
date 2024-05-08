@@ -44,4 +44,8 @@ public interface IDBCDisplay {
     void setAura(IAura aura);
 
     void setAura(int auraID);
+
+    boolean isAuraToggled();
+
+    void toggleAura(boolean toggle);
 }
