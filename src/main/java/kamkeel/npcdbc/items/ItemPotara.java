@@ -178,6 +178,11 @@ public class ItemPotara extends ItemArmor {
         return uniqueCode.toString();
     }
 
+    public static String getHash(ItemStack stack){
+        NBTTagCompound potara = stack.getTagCompound();
+        return potara.hasKey("Hash") ? potara.getString("Hash") : null;
+    }
+
     public static boolean isRightSide(ItemStack itemStack){
         return itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("Side") && itemStack.getTagCompound().getString("Side").equals("RIGHT");
     }

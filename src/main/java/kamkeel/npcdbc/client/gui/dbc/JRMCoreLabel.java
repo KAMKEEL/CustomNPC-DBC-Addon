@@ -59,7 +59,16 @@ public class JRMCoreLabel extends Gui implements HoverableLabel {
         this.setTooltip(name);
     }
 
-    public JRMCoreLabel() {
+    public JRMCoreLabel(String displayText, String tooltipText, int x, int y, int hoverableAreaWidth, int hoverableAreaHeight){
+        setTooltip(tooltipText);
+        setDisplay(displayText);
+        this.xPosition = x;
+        this.yPosition = y;
+        this.hoverableAreaWidth = hoverableAreaWidth;
+        this.hoverableAreaHeight = hoverableAreaHeight;
+    }
+
+    protected JRMCoreLabel() {
 
     }
 
@@ -90,38 +99,6 @@ public class JRMCoreLabel extends Gui implements HoverableLabel {
         return this;
     }
 
-//    public JRMCoreLabel(String text, String tooltipText, int x, int y, int hoverableAreaWidth, int hoverableAreaHeight, int tooltipWidth, int tooltipHeight){
-//        if(text != null)
-//            text = "\u00a78"+text.replaceAll("\u00a78", "\u00a77");
-//
-//        this.displayString = text;
-//
-//        if(tooltip != null)
-//            this.tooltip = tooltipText.replaceAll("/n", "\n");
-//        else
-//            tooltip = tooltipText;
-//        this.xPosition = x;
-//        this.yPosition = y;
-//        this.hoverableAreaWidth = hoverableAreaWidth;
-//        this.hoverableAreaHeight = hoverableAreaHeight;
-//        this.tooltipWidth = tooltipWidth;
-//        this.tooltipHeight = tooltipHeight;
-//    }
-//
-//    public JRMCoreLabel(String text, String tooltipText, int x, int y, int tooltipWidth){
-//        this(text, tooltipText, x, y, -1, -1, tooltipWidth, -1);
-//    }
-//
-//    public JRMCoreLabel(String text, String tooltipText, int x, int y){
-//        this(text, tooltipText, x, y, -1, -1, -1, -1);
-//    }
-//
-//    public JRMCoreLabel(GuiButton button, String tooltipText, int tooltipWidth){
-//        this(null, tooltipText, button.xPosition, button.yPosition, button.width, button.height, tooltipWidth, -1);
-//    }
-//    public JRMCoreLabel(GuiButton button, String tooltipText){
-//        this(null, tooltipText, button.xPosition, button.yPosition, button.width, button.height, -1, -1);
-//    }
 
     /**
      * The draw function for the label

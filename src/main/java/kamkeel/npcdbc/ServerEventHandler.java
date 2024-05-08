@@ -1,36 +1,31 @@
 package kamkeel.npcdbc;
 
+import JinRyuu.DragonBC.common.DBCConfig;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.BonusController;
-import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.FusionHandler;
 import kamkeel.npcdbc.controllers.StatusEffectController;
-import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.npc.DBCDisplay;
-import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.CapsuleInfo;
 import kamkeel.npcdbc.network.packets.LoginInfo;
 import kamkeel.npcdbc.util.PlayerDataUtil;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
-import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.util.ValueUtil;
 
 public class ServerEventHandler {
@@ -69,6 +64,9 @@ public class ServerEventHandler {
 
             if (player.ticksExisted % ConfigDBCGameplay.CheckEffectsTick == 0)
                 StatusEffectController.Instance.runEffects(player);
+
+            if (player.ticksExisted % 60 == 0)
+                FusionHandler.checkNearbyPlayers(player);
 
             if (player.ticksExisted % 10 == 0) {
                 // Keep the Player informed on their own data
@@ -135,20 +133,6 @@ public class ServerEventHandler {
 
                 dbcData.getRawCompound().setFloat("addonCurrentHeat", newHeat);
             }
-        }
-    }
-
-    @SubscribeEvent
-    public void entityAura(LivingEvent.LivingUpdateEvent event) {
-        if (event.entity instanceof EntityCustomNpc && Utility.isServer(event.entity)) {
-            EntityCustomNpc npc = (EntityCustomNpc) event.entity;
-            DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
-            if (!display.enabled)
-                return;
-            if (display.isTransforming && display.selectedForm != -1 && !display.transformed) {
-                TransformController.npcAscend(npc, (Form) FormController.Instance.get(display.selectedForm));
-            } else
-                TransformController.npcDecrementRage(npc,display);
         }
     }
 

@@ -11,7 +11,6 @@ import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCAttribute;
-import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -483,8 +482,9 @@ public class StatSheetGui extends AbstractJRMCGui {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
         super.drawScreen(mouseX, mouseY, partialTicks);
-        drawStatusEffects(this.width/4, guiHeightOffset - 35);
         drawAlignmentBar(guiWidthOffset + 8, guiHeightOffset - 6);
+        drawStatusEffects(this.width/4, guiHeightOffset - 35);
+        drawDBCLabels(mouseX, mouseY);
     }
 
     @Override
@@ -545,7 +545,7 @@ public class StatSheetGui extends AbstractJRMCGui {
             16,
             16
         );
-        this.myCustomLabels.add(genderIcon);
+        this.hoverableStaticLabels.add(genderIcon);
         index++;
 
         dynamicLabels.put("form", new JRMCoreLabel(
@@ -573,7 +573,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         ));
         index++;
 
-        myCustomLabels.add(new JRMCoreLabel(
+        hoverableStaticLabels.add(new JRMCoreLabel(
             JRMCoreH.trl("jrmc", "Attributes")+":",
             "%s",
             this.guiWidthOffset+6,
@@ -622,7 +622,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         ));
         index++;
 
-        this.myCustomLabels.add(new JRMCoreLabel(
+        this.hoverableStaticLabels.add(new JRMCoreLabel(
             null,
             null,
             guiWidthOffset+133,
