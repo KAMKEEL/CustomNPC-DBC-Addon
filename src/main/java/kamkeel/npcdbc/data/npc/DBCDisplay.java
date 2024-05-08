@@ -7,6 +7,7 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormMastery;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.scripted.CustomNPCsException;
@@ -33,7 +34,9 @@ public class DBCDisplay implements IDBCDisplay {
     public boolean auraOn = false;
     public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
 
-    public int formID = -1, rage;
+    public int formID = -1, selectedForm = -1, rage;
+    public float rageValue;
+    public boolean isTransforming, transformed;
     public HashSet<Integer> unlockedForms = new HashSet<Integer>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
 
@@ -64,7 +67,11 @@ public class DBCDisplay implements IDBCDisplay {
             compound.setTag("unlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
             compound.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
 
+            compound.setInteger("rage", rage);
+            compound.setBoolean("isTransforming", isTransforming);
+            compound.setBoolean("transformed", transformed);
             compound.setInteger("formID", formID);
+            compound.setInteger("selectedForm", selectedForm);
             compound.setTag("unlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
             compound.setTag("formLevels", NBTTags.nbtIntegerFloatMap(formLevels));
         }
@@ -96,7 +103,11 @@ public class DBCDisplay implements IDBCDisplay {
             unlockedAuras = NBTTags.getIntegerSet(compound.getTagList("unlockedAuras", 10));
             enumAuraTypes = EnumAuraTypes.values()[compound.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
 
+            rage = compound.getInteger("rage");
+            isTransforming = compound.getBoolean("isTransforming");
+            transformed = compound.getBoolean("transformed");
             formID = compound.getInteger("formID");
+            selectedForm = compound.getInteger("selectedForm");
             unlockedForms = NBTTags.getIntegerSet(compound.getTagList("unlockedForms", 10));
             formLevels = NBTTags.getIntegerFloatMap(compound.getTagList("formLevels", 10));
         }
@@ -281,6 +292,12 @@ public class DBCDisplay implements IDBCDisplay {
 
     //internal usage
     public Aura getAur() {
+        if (isInForm()) {
+            Form form = getCurrentForm();
+            if (form.display.hasAura())
+                return form.display.getAur();
+        }
+
         return (Aura) AuraController.getInstance().get(auraID);
     }
 
@@ -292,6 +309,29 @@ public class DBCDisplay implements IDBCDisplay {
     /////////////////////////////////////////////
     /////////////////////////////////////////////
     // Forms
+
+    public void transform(int id) {
+        if (FormController.Instance.has(id)) {
+            isTransforming = true;
+            selectedForm = id;
+        } else
+            throw new CustomNPCsException("Form " + id + " does not exist!");
+    }
+
+    public void transform(Form form) {
+        transform(form.id);
+
+    }
+
+    public void descend(int id) {
+        if (FormController.Instance.has(id)) {
+            formID = id;
+        } else
+            formID = -1;
+        selectedForm = -1;
+        isTransforming = false;
+        transformed = false;
+    }
 
     public void setForm(Form form) {
         if (form != null)
@@ -375,7 +415,65 @@ public class DBCDisplay implements IDBCDisplay {
         unlockedForms.clear();
         formLevels.clear();
     }
-    /////////////////////////////////////////////
-    /////////////////////////////////////////////
+
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    // Form mastery stuff
+    public void updateCurrentFormMastery(String gainType) {
+        updateFormMastery(formID, gainType);
+    }
+
+    public void updateFormMastery(int formID, String gainType) {
+        Form f = FormController.getInstance().customForms.get(formID);
+        if (f == null || !isInForm())
+            return;
+
+        FormMastery fm = (FormMastery) f.getMastery();
+        if (!formLevels.containsKey(f.id))
+            return;
+        int mind = 0;
+        float playerLevel = formLevels.get(f.id);
+        float fullGain = fm.calculateFullGain(gainType, playerLevel, mind);
+
+        playerLevel = ValueUtil.clamp(playerLevel + fullGain, 0, fm.maxLevel); //updated level
+        formLevels.replace(f.id, playerLevel);
+    }
+
+    public void addFormLevel(int formID, float amount) {
+        Form form = FormController.getInstance().customForms.get(formID);
+        if (form != null) {
+            float current = formLevels.get(formID);
+            float updated = ValueUtil.clamp(current + amount, 0, ((FormMastery) form.getMastery()).maxLevel);
+            formLevels.put(formID, updated);
+        }
+    }
+
+    public void setFormLevel(int formID, float amount) {
+        Form form = FormController.getInstance().customForms.get(formID);
+        if (form != null) {
+            float updated = ValueUtil.clamp(amount, 0, ((FormMastery) form.getMastery()).maxLevel);
+            formLevels.put(formID, updated);
+        }
+    }
+
+    public void removeFormMastery(int formID) {
+        Form form = FormController.getInstance().customForms.get(formID);
+        if (form != null) {
+            formLevels.remove(formID);
+        }
+    }
+
+    public float getFormLevel(int formID) {
+        if (formID != -1 && formLevels.containsKey(formID))
+            return formLevels.get(formID);
+        return 0f;
+    }
+
+    public float getCurrentLevel() {
+        return getFormLevel(formID);
+    }
+
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
 
 }
