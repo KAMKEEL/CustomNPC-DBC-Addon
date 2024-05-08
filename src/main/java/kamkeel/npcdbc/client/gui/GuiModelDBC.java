@@ -32,13 +32,25 @@ public class GuiModelDBC extends GuiModelInterface {
 		int y = guiTop + 20;
         addLabel(new GuiNpcLabel(1, "Race", guiLeft, y + 5, 0xFFFFFF));
         addButton(new GuiNpcButton(1, guiLeft + 40, y, 60, 20, arrRace, display.race+1));
+        if(display.race > -1){
+            addButton(new GuiNpcButton(300, guiLeft + 20, y+=22, 42, 20, getColor(display.bodyCM)));
+            addLabel(new GuiNpcLabel(300, "CM", guiLeft, y + 5, 0xFFFFFF));
+            addButton(new GuiNpcButton(301, guiLeft + 101, y, 42, 20, getColor(display.bodyC1)));
+            addLabel(new GuiNpcLabel(301, "C1", guiLeft + 80, y + 5, 0xFFFFFF));
+
+
+            addButton(new GuiNpcButton(302, guiLeft + 20, y+=22, 42, 20, getColor(display.bodyC2)));
+            addLabel(new GuiNpcLabel(302, "C2", guiLeft, y + 5, 0xFFFFFF));
+            addButton(new GuiNpcButton(303, guiLeft + 101, y, 42, 20, getColor(display.bodyC3)));
+            addLabel(new GuiNpcLabel(303, "C3", guiLeft + 80, y + 5, 0xFFFFFF));
+        }
 
         ModelPartData arcoHorn = playerdata.getPartData("arcoHorn");
     	addButton(new GuiNpcButton(2, guiLeft + 40, y+=22, 60, 20, arrArcoHorns, arcoHorn == null ? 0 : arcoHorn.type));
 		addLabel(new GuiNpcLabel(2, "Arco", guiLeft, y + 5, 0xFFFFFF));
 		if(arcoHorn != null){
             addButton(new GuiNpcButton(12, guiLeft + 101, y, 40, 20, arcoHorn.getColor()));
-            getButton(12).enabled = display.race > -1;
+            getButton(12).enabled = display.race == -1;
         }
 
         ModelPartData dbcEars = playerdata.getPartData("dbcEars");
@@ -46,7 +58,7 @@ public class GuiModelDBC extends GuiModelInterface {
         addLabel(new GuiNpcLabel(3, "Ears", guiLeft, y + 5, 0xFFFFFF));
         if(dbcEars != null){
             addButton(new GuiNpcButton(13, guiLeft + 122, y, 40, 20, dbcEars.getColor()));
-            getButton(13).enabled = display.race > -1;
+            getButton(13).enabled = display.race == -1;
         }
     }
 
@@ -83,7 +95,6 @@ public class GuiModelDBC extends GuiModelInterface {
             this.mc.displayGuiScreen(new GuiModelColor(this, playerdata.getPartData("arcoHorn"), npc));
         }
 
-
         if(button.id == 3){
             int value = button.getValue();
             if(value == 0)
@@ -97,6 +108,18 @@ public class GuiModelDBC extends GuiModelInterface {
         }
         if(button.id == 13){
             this.mc.displayGuiScreen(new GuiModelColor(this, playerdata.getPartData("dbcEars"), npc));
+        }
+        if(button.id >= 300){
+            this.mc.displayGuiScreen(new GuiDBCModelColor(this, display, npc, 0));
+        }
+        if(button.id == 301){
+            this.mc.displayGuiScreen(new GuiDBCModelColor(this, display, npc, 1));
+        }
+        if(button.id == 302){
+            this.mc.displayGuiScreen(new GuiDBCModelColor(this, display, npc, 2));
+        }
+        if(button.id == 303){
+            this.mc.displayGuiScreen(new GuiDBCModelColor(this, display, npc, 3));
         }
     }
 
@@ -129,5 +152,13 @@ public class GuiModelDBC extends GuiModelInterface {
             if (type.equalsIgnoreCase("bodycm"))
                 return 16757199;
         return 0;
+    }
+
+    public String getColor(int input) {
+        String str;
+        for(str = Integer.toHexString(input); str.length() < 6; str = "0" + str) {
+        }
+
+        return str;
     }
 }

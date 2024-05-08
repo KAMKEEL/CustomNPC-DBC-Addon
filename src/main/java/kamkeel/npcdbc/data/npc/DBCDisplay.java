@@ -22,12 +22,13 @@ public class DBCDisplay implements IDBCDisplay {
 
     public boolean enabled = false;
     public String hairCode = "", hairType = "";
-    public int hairColor, eyeColor, bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
+    public int hairColor, eyeColor, bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1;
     public boolean hasArcoMask = false;
     public int race = 4, bodyType;
     public int noseType = 1, mouthType = 1, eyeType = 0, arcoState;
-    public int auraID = -1;
+    public boolean loadSkin = false;
     public boolean auraOn = false;
+    public int auraID = -1;
     public HashSet<Integer> unlockedAuras = new HashSet<Integer>();
     public int formID = -1, selectedForm = -1, rage;
     public float rageValue;
@@ -41,62 +42,59 @@ public class DBCDisplay implements IDBCDisplay {
         this.npc = npc;
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setBoolean("DBCDisplayEnabled", enabled);
+    public NBTTagCompound writeToNBT(NBTTagCompound comp) {
+        comp.setBoolean("DBCDisplayEnabled", enabled);
         if (enabled) {
-            compound.setInteger("race", race);
-            compound.setBoolean("auraOn", auraOn);
+            comp.setInteger("DBCRace", race);
+            comp.setInteger("DBCAuraID", auraID);
+            comp.setBoolean("DBCAuraOn", auraOn);
 
-            compound.setInteger("bodyType", bodyType);
-            compound.setString("DBCHairType", hairType);
-            compound.setString("DBCHair", hairCode);
+            comp.setInteger("DBCBodyType", bodyType);
+            comp.setString("DBCHairType", hairType);
+            comp.setString("DBCHair", hairCode);
 
-            compound.setInteger("DBCHairColor", hairColor);
-            compound.setInteger("DBCEyeColor", eyeColor);
-            compound.setInteger("furColor", furColor);
-            compound.setInteger("bodyCM", bodyCM);
-            compound.setInteger("bodyC1", bodyC1);
-            compound.setInteger("bodyC2", bodyC2);
-            compound.setInteger("bodyC3", bodyC3);
+            comp.setInteger("DBCHairColor", hairColor);
+            comp.setInteger("DBCEyeColor", eyeColor);
+            comp.setInteger("DBCBodyCM", bodyCM);
+            comp.setInteger("DBCBodyC1", bodyC1);
+            comp.setInteger("DBCBodyC2", bodyC2);
+            comp.setInteger("DBCBodyC3", bodyC3);
 
-            compound.setInteger("arcoState", arcoState);
-            compound.setBoolean("hasArcoMask", hasArcoMask);
+            comp.setInteger("DBCArcoState", arcoState);
+            comp.setBoolean("DBCArcoMask", hasArcoMask);
 
-            compound.setInteger("auraID", auraID);
-            compound.setTag("unlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
-            compound.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
-
-            compound.setInteger("rage", rage);
-            compound.setBoolean("isTransforming", isTransforming);
-            compound.setBoolean("transformed", transformed);
-            compound.setInteger("formID", formID);
-            compound.setInteger("selectedForm", selectedForm);
-            compound.setTag("unlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
-            compound.setTag("formLevels", NBTTags.nbtIntegerFloatMap(formLevels));
+            comp.setInteger("rage", rage);
+            comp.setBoolean("isTransforming", isTransforming);
+            comp.setBoolean("transformed", transformed);
+            comp.setInteger("formID", formID);
+            comp.setInteger("selectedForm", selectedForm);
+            comp.setTag("unlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
+            comp.setTag("formLevels", NBTTags.nbtIntegerFloatMap(formLevels));
+            comp.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
         }
-        return compound;
+        return comp;
     }
 
     public void readFromNBT(NBTTagCompound compound) {
         enabled = compound.getBoolean("DBCDisplayEnabled");
         if (enabled) {
-            race = compound.getInteger("race");
-            auraOn = compound.getBoolean("auraOn");
+            race = compound.getInteger("DBCRace");
+            auraID = compound.getInteger("DBCAuraID");
+            auraOn = compound.getBoolean("DBCAuraOn");
 
-            bodyType = compound.getInteger("bodyType");
+            bodyType = compound.getInteger("DBCBodyType");
             hairType = compound.getString("DBCHairType");
             hairCode = compound.getString("DBCHair");
 
             hairColor = compound.getInteger("DBCHairColor");
             eyeColor = compound.getInteger("DBCEyeColor");
-            furColor = compound.getInteger("furColor");
-            bodyCM = compound.getInteger("bodyCM");
-            bodyC1 = compound.getInteger("bodyC1");
-            bodyC2 = compound.getInteger("bodyC2");
-            bodyC3 = compound.getInteger("bodyC3");
+            bodyCM = compound.getInteger("DBCBodyCM");
+            bodyC1 = compound.getInteger("DBCBodyC1");
+            bodyC2 = compound.getInteger("DBCBodyC2");
+            bodyC3 = compound.getInteger("DBCBodyC3");
 
-            arcoState = compound.getInteger("arcoState");
-            hasArcoMask = compound.getBoolean("hasArcoMask");
+            arcoState = compound.getInteger("DBCArcoState");
+            hasArcoMask = compound.getBoolean("DBCArcoMask");
 
             auraID = compound.getInteger("auraID");
             unlockedAuras = NBTTags.getIntegerSet(compound.getTagList("unlockedAuras", 10));
@@ -133,11 +131,8 @@ public class DBCDisplay implements IDBCDisplay {
             case "bodyc3":
                 bodyC3 = color;
                 break;
-            case "fur":
-                furColor = color;
-                break;
             default:
-                throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
+                throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3");
         }
     }
 
@@ -156,10 +151,8 @@ public class DBCDisplay implements IDBCDisplay {
                 return bodyC2;
             case "bodyc3":
                 return bodyC3;
-            case "fur":
-                return furColor;
         }
-        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
+        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3");
     }
 
     @Override
