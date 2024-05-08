@@ -5,11 +5,13 @@ import kamkeel.npcdbc.data.FuseRequest;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class FusionHandler {
@@ -103,5 +105,59 @@ public class FusionHandler {
             fuseRequest.put(uuidSender, senderRequest);
         }
         return false;
+    }
+
+    public static void checkNearbyPlayers(EntityPlayer player){
+        ItemStack potara = player.getCurrentArmor(0);
+        if(potara == null)
+            return;
+        if(!(potara.getItem() instanceof ItemPotara))
+            return;
+
+        if(!ItemPotara.isSplit(potara))
+            return;
+
+        if(!JRMCoreH.PlyrSettingsB(player, 4))
+            return;
+
+        int potaraTier = potara.getItemDamage();
+        String hash = ItemPotara.getHash(potara);
+        boolean isRight = ItemPotara.isRightSide(potara);
+        if(hash == null)
+            return;
+
+        double range = 5;
+
+        List<EntityPlayer> nearbyPlayers = player.worldObj.getEntitiesWithinAABB(EntityPlayer.class, player.boundingBox.expand(range, range, range));
+
+        for(EntityPlayer nearbyPlayer : nearbyPlayers){
+            if(doesPlayerHaveEarring(nearbyPlayer, potaraTier, !isRight, hash)){
+                //@TODO: Fuse players
+                return;
+            }
+        }
+
+    }
+
+    private static boolean doesPlayerHaveEarring(EntityPlayer player, int tier, boolean isRight, String hashToCheck){
+        ItemStack potara = player.getCurrentArmor(0);
+        if(potara == null)
+            return false;
+        if(!(potara.getItem() instanceof ItemPotara))
+            return false;
+
+        if(!ItemPotara.isSplit(potara))
+            return false;
+
+        if(!JRMCoreH.PlyrSettingsB(player, 4))
+            return false;
+
+        int wornTier = potara.getItemDamage();
+        String wornHash = ItemPotara.getHash(potara);
+        boolean wearingRight = ItemPotara.isRightSide(potara);
+        if(wornHash == null)
+            return false;
+
+        return tier == wornTier && wornHash.equals(hashToCheck) && wearingRight == isRight;
     }
 }

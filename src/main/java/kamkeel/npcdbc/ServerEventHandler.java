@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.BonusController;
+import kamkeel.npcdbc.controllers.FusionHandler;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -63,6 +64,9 @@ public class ServerEventHandler {
 
             if (player.ticksExisted % ConfigDBCGameplay.CheckEffectsTick == 0)
                 StatusEffectController.Instance.runEffects(player);
+
+            if (player.ticksExisted % 60 == 0)
+                FusionHandler.checkNearbyPlayers(player);
 
             if (player.ticksExisted % 10 == 0) {
                 // Keep the Player informed on their own data
