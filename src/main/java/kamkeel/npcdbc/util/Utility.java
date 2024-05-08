@@ -8,13 +8,10 @@ import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.api.handler.data.ISound;
-import noppes.npcs.client.controllers.ScriptClientSound;
-import noppes.npcs.client.controllers.ScriptSoundController;
 import noppes.npcs.scripted.NpcAPI;
 
 import java.lang.reflect.Field;
@@ -71,18 +68,6 @@ public class Utility {
 
     }
 
-    public static ScriptClientSound getClientSound(Entity entity, String soundDir) {
-        for (ScriptClientSound sound : ScriptSoundController.Instance.sounds.values()) {
-            Entity soundOwner = (Entity) getPFValue(ScriptClientSound.class, "entity", sound);
-            if (soundOwner != entity)
-                continue;
-            ResourceLocation loc = (ResourceLocation) getPFValue(PositionedSound.class, "field_147664_a", sound);
-            String s = loc.getResourceDomain() + ":" + loc.getResourcePath();
-            if (s.equalsIgnoreCase(soundDir))
-                return sound;
-        }
-        return null;
-    }
 
     public static void setSoundVolume(PositionedSound sound, float volume) {
         setPrivateField(PositionedSound.class, "volume", false, sound, volume);
@@ -237,6 +222,7 @@ public class Utility {
         // instance arg
         try {
             Field f = getPrivateField(c, name);
+            Utility.removeFinalModif(f);
             return f.get(instance);
         } catch (Exception e) {
             e.printStackTrace();
@@ -246,12 +232,9 @@ public class Utility {
 
     public static void removeFinalModif(Field f) {
         try {
-            System.out.println("before final " + f.getModifiers());
             Field modifiers = Field.class.getDeclaredField("modifiers");
             modifiers.setAccessible(true);
             modifiers.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-            System.out.println("after final " + f.getModifiers());
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -265,7 +248,6 @@ public class Utility {
             if (isFinal)
                 Utility.removeFinalModif(f);
             f.set(instance, newValUtilitye);
-            System.out.println();
         } catch (IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
