@@ -4,9 +4,11 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
@@ -16,6 +18,7 @@ import noppes.npcs.client.controllers.ScriptSoundController;
 import noppes.npcs.scripted.NpcAPI;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -68,13 +71,23 @@ public class Utility {
 
     }
 
-//    public static ScriptClientSound getClientSound(String soundDir) {
-//        for (ScriptClientSound sound : ScriptSoundController.Instance.sounds.values()) {
-//            getPrivateField(ScriptClientSound.class, "")
-//
-//
-//        }
-//    }
+    public static ScriptClientSound getClientSound(Entity entity, String soundDir) {
+        for (ScriptClientSound sound : ScriptSoundController.Instance.sounds.values()) {
+            Entity soundOwner = (Entity) getPFValue(ScriptClientSound.class, "entity", sound);
+            if (soundOwner != entity)
+                continue;
+            ResourceLocation loc = (ResourceLocation) getPFValue(PositionedSound.class, "field_147664_a", sound);
+            String s = loc.getResourceDomain() + ":" + loc.getResourcePath();
+            if (s.equalsIgnoreCase(soundDir))
+                return sound;
+        }
+        return null;
+    }
+
+    public static void setSoundVolume(PositionedSound sound, float volume) {
+        setPrivateField(PositionedSound.class, "volume", false, sound, volume);
+
+    }
 
     public static String getEntityID(Entity p) {
         if (p instanceof EntityPlayer)
@@ -93,7 +106,7 @@ public class Utility {
                 else
                     return w.getEntityByID(Integer.parseInt(id.split(",")[0]));
 
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
             }
         }
         return null;
@@ -230,4 +243,32 @@ public class Utility {
         }
         return null;
     }
+
+    public static void removeFinalModif(Field f) {
+        try {
+            System.out.println("before final " + f.getModifiers());
+            Field modifiers = Field.class.getDeclaredField("modifiers");
+            modifiers.setAccessible(true);
+            modifiers.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+            System.out.println("after final " + f.getModifiers());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setPrivateField(Class<?> c, String name, boolean isFinal, Object instance, Object newValUtilitye) {
+        if (instance == null)
+            return;
+        try {
+            Field f = Utility.getPrivateField(c, name);
+            if (isFinal)
+                Utility.removeFinalModif(f);
+            f.set(instance, newValUtilitye);
+            System.out.println();
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
