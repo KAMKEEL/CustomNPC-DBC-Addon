@@ -21,6 +21,9 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
     protected HashMap<String, JRMCoreLabel> dynamicLabels = new HashMap<>();
 
     protected ArrayList<JRMCoreLabel> hoverableStaticLabels = new ArrayList<>();
+
+    public HashMap<Integer, JRMCoreLabel> horribleDBCDynamicLabels = new HashMap<>();
+
     protected final int guiID;
     protected int menuImageWidth = 256;
     protected int menuImageHeight = 159;
@@ -56,6 +59,18 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
         for (JRMCoreLabel label:  this.dynamicLabels.values()) {
             label.hover(this.mc, mouseX, mouseY);
         }
+
+    }
+
+    protected void drawDBCLabels(int mouseX, int mouseY){
+        for(JRMCoreLabel label : this.horribleDBCDynamicLabels.values()){
+            label.drawLabel(this.mc, mouseX, mouseY);
+        }
+        for(JRMCoreLabel label : this.horribleDBCDynamicLabels.values()){
+            label.hover(this.mc, mouseX, mouseY);
+        }
+
+        this.horribleDBCDynamicLabels.clear(); //I fucking hate this
     }
 
     protected void drawBackground(){
