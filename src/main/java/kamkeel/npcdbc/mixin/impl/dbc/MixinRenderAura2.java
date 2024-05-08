@@ -59,6 +59,7 @@ public class MixinRenderAura2 {
                 s1.set(8.0f * size);
             }
             s.set(s1.get() * Math.min(dbcData.Release, 50) / 45);
+            return;
         }
         Entity entity = Utility.getEntityFromID(par1Entity.worldObj, par1Entity.getmot());
         if (entity instanceof EntityCustomNpc) {

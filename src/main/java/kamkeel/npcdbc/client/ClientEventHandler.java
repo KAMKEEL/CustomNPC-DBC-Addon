@@ -25,7 +25,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.client.controllers.ScriptClientSound;
-import noppes.npcs.client.controllers.ScriptSoundController;
 import noppes.npcs.entity.EntityCustomNpc;
 
 import static noppes.npcs.NoppesStringUtils.translate;
@@ -183,7 +182,6 @@ public class ClientEventHandler {
             if (npc.ticksExisted % 5 == 0 && display.auraOn) {
 
 
-
                 EntityAura2 aur = new EntityAura2(npc.worldObj, Utility.getEntityID(npc), aura.display.color1, 0, 0, 100, false);
                 boolean kk = aura.display.kaiokenOn;
                 if (aura.display.hasColor("color1"))
@@ -279,12 +277,14 @@ public class ClientEventHandler {
                     else
                         sound = "jinryuudragonbc:1610.aurab";
                 }
+
+                float soundRange = 50;
                 if (aura.display.hasSound()) {
                     sound = aura.display.auraSound;
                     int time = (int) (aura.display.soundTime * 20);
                     if (npc.ticksExisted % time == 0)
                         //DBCKiTech.soundAsc(sound);
-                        PacketHandler.Instance.sendToServer(new PlaySound(sound, 50,Utility.getEntityID(npc)).generatePacket());
+                        PacketHandler.Instance.sendToServer(new PlaySound(sound, soundRange, Utility.getEntityID(npc)).generatePacket());
 
                 } else {
                     float time = 20 * 2.5f;
@@ -292,11 +292,18 @@ public class ClientEventHandler {
                         time = 20 * 3;
 
                     if (npc.ticksExisted % time == 0)
-                        PacketHandler.Instance.sendToServer(new PlaySound(sound, 50,Utility.getEntityID(npc)).generatePacket());
+                        PacketHandler.Instance.sendToServer(new PlaySound(sound, soundRange, Utility.getEntityID(npc)).generatePacket());
                     //DBCKiTech.soundAsc(sound);
                 }
 
-             //   ScriptClientSound s = ScriptSoundController.Instance.ge;
+
+                ScriptClientSound s = Utility.getClientSound(npc, sound); //already existing aura sound
+                if (s != null) { //dynamic volume, as player gets further away from aura source volume decreases
+                    float distance = npc.getDistanceToEntity(Minecraft.getMinecraft().thePlayer);
+                    float volume = 1 - distance / soundRange;
+                    Utility.setSoundVolume(s, volume);
+                }
+
 
                 aur.worldObj.spawnEntityInWorld(aur);
 
