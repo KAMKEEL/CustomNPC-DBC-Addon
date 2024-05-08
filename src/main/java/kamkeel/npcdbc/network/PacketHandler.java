@@ -38,6 +38,7 @@ public final class PacketHandler {
         map.put(CapsuleInfo.packetName, new CapsuleInfo());
         map.put(LoginInfo.packetName, new LoginInfo());
         map.put(SendChat.packetName, new SendChat());
+        map.put(PlaySound.packetName, new PlaySound());
         this.register();
     }
 
