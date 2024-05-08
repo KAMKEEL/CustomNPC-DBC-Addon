@@ -8,14 +8,13 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.util.PlayerDataUtil;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -37,130 +36,131 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onGetPlayerAttribute(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info) {
-        {
-            Form form = null;
-            float currentFormLevel = 0f;
-            if (player == null)
-                return;
+        if (DBCData.get(player).getForm() != null) {
+            DBCData dbcData = DBCData.get(player);
+            Form form = dbcData.getForm();
 
-            float[] bonus = new float[3];
-            if (Utility.isServer(player)) {
-                PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-                if (formData != null && formData.isInCustomForm()) {
-                    currentFormLevel = formData.getCurrentLevel();
-                    form = formData.getCurrentForm();
-                }
-                bonus = BonusController.getInstance().getCurrentBonuses(player);
-            } else {
-                DBCData dbcData = DBCData.get(player);
-                form = dbcData.getForm();
-                currentFormLevel = dbcData.addonFormLevel;
-                bonus = dbcData.bonus.getCurrentBonuses();
+            int skillX = powerType == 1 ? JRMCoreH.SklLvlX(1, SklX) - 1 : 0;
+            int mysticLvl = powerType == 1 ? JRMCoreH.SklLvl(10, 1, Skls) : 0;
+            int result = 0;
+            mysticOn = false;
+            uiOn = false;
+            GoDOn = false;
+
+            boolean masteryCalc = JGConfigDBCFormMastery.FM_Enabled;
+            JGConfigDBCFormMastery.FM_Enabled = masteryCalc && form.stackable.vanillaStackable;
+            int state = form.stackable.vanillaStackable ? st : 0;
+            switch (race) {
+                case 0:
+                    result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                    break;
+                case 1:
+                    result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                    break;
+                case 2:
+                    result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                    break;
+                case 3:
+                    result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                    break;
+                case 4:
+                    result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, state, currRelease, arcRel, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                    break;
+                case 5:
+                    result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn, majinAbs);
+                    break;
+                default:
+                    result = currAttributes[attribute];
             }
+            JGConfigDBCFormMastery.FM_Enabled = masteryCalc;
 
-            if (form != null) {
-                int skillX = powerType == 1 ? JRMCoreH.SklLvlX(1, SklX) - 1 : 0;
-                int mysticLvl = powerType == 1 ? JRMCoreH.SklLvl(10, 1, Skls) : 0;
-                int result = 0;
-                mysticOn = false;
-                uiOn = false;
-                GoDOn = false;
+            DBCData d = DBCData.get(player);
+            float[] multis = form.getAllMulti();
+            float stackableMulti = d.isForm(DBCForm.Kaioken) ? form.stackable.getFormMulti(DBCForm.Kaioken) : d.isForm(DBCForm.UltraInstinct) ? form.stackable.getFormMulti(DBCForm.UltraInstinct) : d.isForm(DBCForm.GodOfDestruction) ? form.stackable.getFormMulti(DBCForm.GodOfDestruction) : d.isForm(DBCForm.Mystic) ? form.stackable.getFormMulti(DBCForm.Mystic) : 1.0f;
+            double fmvalue = 1.0f;
 
-                boolean masteryCalc = JGConfigDBCFormMastery.FM_Enabled;
-                JGConfigDBCFormMastery.FM_Enabled = masteryCalc && form.stackable.vanillaStackable;
-                int state = form.stackable.vanillaStackable ? st : 0;
-                switch (race) {
-                    case 0:
-                        result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
-                        break;
-                    case 1:
-                        result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
-                        break;
-                    case 2:
-                        result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
-                        break;
-                    case 3:
-                        result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
-                        break;
-                    case 4:
-                        result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, state, currRelease, arcRel, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
-                        break;
-                    case 5:
-                        result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn, majinAbs);
-                        break;
-                    default:
-                        result = currAttributes[attribute];
-                }
-                JGConfigDBCFormMastery.FM_Enabled = masteryCalc;
+            //don't forget to multiply this by legend/divine/majin multis
+            if (d.isForm(DBCForm.Kaioken) && d.State2 > 1) {
+                fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Kaioken", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
+                stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.Kaioken) * d.State2 / (JRMCoreH.TransKaiDmg.length - 1);
+            } else if (d.isForm(DBCForm.UltraInstinct) && d.State2 > 1) {
+                fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "UltraInstict", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
+                stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.UltraInstinct) * d.State2 / JGConfigUltraInstinct.CONFIG_UI_LEVELS;
+            } else if (d.isForm(DBCForm.GodOfDestruction))
+                fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "GodOfDestruction", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
+            else if (d.isForm(DBCForm.Mystic))
+                fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Mystic", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
 
-                DBCData d = DBCData.get(player);
-                float[] multis = form.getAllMulti();
-                float stackableMulti = d.isForm(DBCForm.Kaioken) ? form.stackable.getFormMulti(DBCForm.Kaioken) : d.isForm(DBCForm.UltraInstinct) ? form.stackable.getFormMulti(DBCForm.UltraInstinct) : d.isForm(DBCForm.GodOfDestruction) ? form.stackable.getFormMulti(DBCForm.GodOfDestruction) : d.isForm(DBCForm.Mystic) ? form.stackable.getFormMulti(DBCForm.Mystic) : 1.0f;
-                double fmvalue = 1.0f;
+            stackableMulti *= (float) fmvalue;
 
-                //don't forget to multiply this by legend/divine/majin multis
-                if (d.isForm(DBCForm.Kaioken) && d.State2 > 1) {
-                    fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Kaioken", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
-                    stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.Kaioken) * d.State2 / (JRMCoreH.TransKaiDmg.length - 1);
-                } else if (d.isForm(DBCForm.UltraInstinct) && d.State2 > 1) {
-                    fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "UltraInstict", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
-                    stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.UltraInstinct) * d.State2 / JGConfigUltraInstinct.CONFIG_UI_LEVELS;
-                } else if (d.isForm(DBCForm.GodOfDestruction))
-                    fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "GodOfDestruction", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
-                else if (d.isForm(DBCForm.Mystic))
-                    fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Mystic", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
+            float currentFormLevel = dbcData.addonFormLevel;
 
+            float[] multiBonus = dbcData.bonus.getMultiBonus();
+            if (attribute == DBCAttribute.Strength) // STR
+                result *= (multis[0] + multiBonus[0]);
+            else if (attribute == DBCAttribute.Dexterity) // DEX
+                result *= (multis[1] + multiBonus[1]);
+            else if (attribute == DBCAttribute.Willpower) // WIL
+                result *= (multis[2] + multiBonus[2]);
 
-                stackableMulti *= (float) fmvalue;
-                if (attribute == 0) // STR
-                    result *= (multis[0] + bonus[0]);
-                else if (attribute == 1) // DEX
-                    result *= (multis[1] + bonus[1]);
-                else if (attribute == 3) // WIL
-                    result *= (multis[2] + bonus[2]);
+            if (attribute == 0 || attribute == 1 || attribute == 3)
+                result *= (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
 
-                if (attribute == 0 || attribute == 1 || attribute == 3)
-                    result *= (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
+            // Add Bonus Multi to Base Attributes
+            if (attribute == DBCAttribute.Strength) // STR
+                result += (currAttributes[0] * multiBonus[0]);
+            else if (attribute == DBCAttribute.Dexterity) // DEX
+                result += (currAttributes[1] * multiBonus[1]);
+            else if (attribute == DBCAttribute.Willpower) // WIL
+                result += (currAttributes[3] * multiBonus[2]);
 
-                // Add Bonus Multi to Base Attributes
-                if (attribute == 0) // STR
-                    result += (currAttributes[0] * bonus[0]);
-                else if (attribute == 1) // DEX
-                    result += (currAttributes[1] * bonus[1]);
-                else if (attribute == 3) // WIL
-                    result += (currAttributes[3] * bonus[2]);
+            float[] flatBonus = dbcData.bonus.getFlatBonus();
+            // Add Bonus Flat to Base Attributes at the end
+            if (attribute == DBCAttribute.Strength) // STR
+                result += flatBonus[0];
+            else if (attribute == DBCAttribute.Dexterity) // DEX
+                result += flatBonus[1];
+            else if (attribute == DBCAttribute.Willpower) // WIL
+                result += flatBonus[2];
+            else if (attribute == DBCAttribute.Constitution) // CON
+                result += flatBonus[3];
+            else if (attribute == DBCAttribute.Spirit) // SPI
+                result += flatBonus[4];
 
-
-                result = (int) (Math.min((double) result, Double.MAX_VALUE));
-                info.setReturnValue(result);
-            }
+            result = ValueUtil.clamp(result, 0, Integer.MAX_VALUE);
+            info.setReturnValue(result);
         }
+
     }
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;OverAtrLimit:Z"), remap = false, cancellable = true)
-    private static void applyBonusToDBC(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info,  @Local(name = "result") LocalIntRef result) {
-        {
-            if (player == null)
-                return;
+    private static void applyBonusToDBC(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info, @Local(name = "result") LocalIntRef result) {
+        DBCData dbcData = DBCData.get(player);
+        int resultOriginal = result.get();
 
-            float[] bonus = new float[3];
-            if (Utility.isServer(player)) {
-                bonus = BonusController.getInstance().getCurrentBonuses(player);
-            } else {
-                DBCData dbcData = DBCData.get(player);
-                bonus = dbcData.bonus.getCurrentBonuses();
-            }
+        float[] bonus = dbcData.bonus.getMultiBonus();
+        if (attribute == 0 && bonus[0] != 0) //str
+            resultOriginal += (currAttributes[0] * bonus[0]);
+        else if (attribute == 1 && bonus[0] != 0) //dex
+            resultOriginal += (currAttributes[1] * bonus[1]);
+        else if (attribute == 3 && bonus[0] != 0) //will
+            resultOriginal += (currAttributes[3] * bonus[2]);
 
-            int resultOriginal = result.get();
-            if (attribute == 0 && bonus[0] != 0) //str
-                resultOriginal = (int) (resultOriginal + (currAttributes[0] * bonus[0]));
-            else if (attribute == 1) //dex
-                resultOriginal = (int) (resultOriginal + (currAttributes[1] * bonus[1]));
-            else if (attribute == 3) //will
-                resultOriginal = (int) (resultOriginal + (currAttributes[3] * bonus[2]));
 
-            result.set(resultOriginal);
-        }
+        float[] flatBonus = dbcData.bonus.getFlatBonus();
+        // Add Bonus Flat to Base Attributes at the end
+        if (attribute == DBCAttribute.Strength) // STR
+            resultOriginal += flatBonus[0];
+        else if (attribute == DBCAttribute.Dexterity) // DEX
+            resultOriginal += flatBonus[1];
+        else if (attribute == DBCAttribute.Willpower) // WIL
+            resultOriginal += flatBonus[2];
+        else if (attribute == DBCAttribute.Constitution) // CON
+            resultOriginal += flatBonus[3];
+        else if (attribute == DBCAttribute.Spirit) // SPI
+            resultOriginal += flatBonus[4];
+
+        result.set(resultOriginal);
     }
 
     // fix for descending from a CF sets release to 0 as game registers you as base in a CF
@@ -265,7 +265,7 @@ public abstract class MixinJRMCoreH {
         def.set((int) newDef);
     }
 
-    @Inject(method = "getHeatPercentageClient", at = @At("HEAD"),cancellable = true)
+    @Inject(method = "getHeatPercentageClient", at = @At("HEAD"), cancellable = true)
     private static void customHeat(CallbackInfoReturnable<Float> cir) {
         DBCData dbcData = DBCData.getClient();
         if (dbcData == null)

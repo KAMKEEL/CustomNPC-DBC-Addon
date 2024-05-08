@@ -1,55 +1,52 @@
 package kamkeel.npcdbc.items;
 
-import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.items.ItemVanity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.LocalizationHelper;
-import kamkeel.npcdbc.config.ConfigCapsules;
+import kamkeel.npcdbc.client.model.ModelPotara;
+import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
-import kamkeel.npcdbc.constants.Capsule;
-import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
 import kamkeel.npcdbc.constants.enums.EnumPotaraTypes;
-import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.scripted.DBCEventHooks;
-import kamkeel.npcdbc.scripted.DBCPlayerEvent;
-import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcdbc.controllers.FusionHandler;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import noppes.npcs.CustomItems;
+import noppes.npcs.scripted.NpcAPI;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
-import static JinRyuu.JRMCore.JRMCoreH.getInt;
-
-public class Potara extends Item {
+public class ItemPotara extends ItemArmor {
 
     protected IIcon[] icons;
 
-    public Potara() {
+    public ItemPotara() {
+        super(ItemArmor.ArmorMaterial.IRON, 0, 0);
         this.setMaxStackSize(16);
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
         this.setCreativeTab(CustomItems.tabMisc);
+
+        MinecraftForgeClient.registerItemRenderer(this, new PotaraItemRenderer());
     }
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
-
         int metadata = stack.getItemDamage();
         EnumPotaraTypes misc = EnumPotaraTypes.values()[metadata];
         return LocalizationHelper.ITEM_PREFIX + misc.getName().toLowerCase() + "_potara";
@@ -57,17 +54,24 @@ public class Potara extends Item {
 
     @Override
     public void registerIcons(IIconRegister reg) {
-        icons = new IIcon[EnumPotaraTypes.count()];
+        icons = new IIcon[EnumPotaraTypes.count() * 2];
         String prefix = "npcdbc:potara/";
 
         for (EnumPotaraTypes potaraTypes : EnumPotaraTypes.values()) {
             icons[potaraTypes.getMeta()] = reg.registerIcon(prefix + potaraTypes.getName().toLowerCase());
+        }
+
+        for(int i = EnumPotaraTypes.count(); i < EnumPotaraTypes.count() * 2; i++){
+            icons[i] = reg.registerIcon(prefix + EnumPotaraTypes.values()[i - EnumPotaraTypes.count()].getName().toLowerCase() + "_pair");
         }
     }
 
     @Override
     public IIcon getIconFromDamage(int meta) {
         if (meta >= 0 && meta < EnumMiscCapsules.count()) {
+            return icons[meta];
+        }
+        if(meta >= EnumMiscCapsules.count() && meta < EnumMiscCapsules.count() * 2){
             return icons[meta];
         }
         return icons[0];
@@ -145,6 +149,25 @@ public class Potara extends Item {
         return itemStack;
     }
 
+    public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase target)
+    {
+        if (player.worldObj.isRemote)
+            return false;
+
+        if(!(target instanceof EntityPlayer))
+            return false;
+
+        if(stack.getTagCompound() == null || !stack.getTagCompound().hasKey("Side"))
+            return false;
+
+        NBTTagCompound potara = stack.getTagCompound();
+        boolean rightSide = potara.getString("Side").equals("RIGHT");
+        String hash = potara.hasKey("Hash") ? potara.getString("Hash") : "";
+        int tier = stack.getItemDamage();
+        FusionHandler.requestFusion(player, (EntityPlayer) target, rightSide, hash, tier);
+        return true;
+    }
+
     private String generateUniqueCode() {
         StringBuilder uniqueCode = new StringBuilder();
         Random random = new Random();
@@ -155,14 +178,43 @@ public class Potara extends Item {
         return uniqueCode.toString();
     }
 
+    public static boolean isRightSide(ItemStack itemStack){
+        return itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("Side") && itemStack.getTagCompound().getString("Side").equals("RIGHT");
+    }
+
+    public static boolean isSplit(ItemStack itemStack){
+        return itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("Side");
+    }
+
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         NBTTagCompound compound = itemStack.getTagCompound();
-        if(compound != null){
+        if(compound != null && compound.hasKey("Side")){
             par3List.add(StatCollector.translateToLocalFormatted("§eSide: §6" + compound.getString("Side")));
             if(compound.hasKey("Hash")){
                 par3List.add(StatCollector.translateToLocalFormatted("§7Hash: §8" + compound.getString("Hash")));
             }
+        } else {
+            par3List.add(StatCollector.translateToLocalFormatted("§eRight click to split into pairs"));
         }
     }
+
+    @Override
+    public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type) {
+        int meta = stack.getItemDamageForDisplay();
+        return "npcdbc:textures/armor/dbcvanity/potara_"+meta+".png"; //@TODO change texture based on damage
+    }
+
+
+    @Override
+    public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int par3){
+        if(!isSplit(itemStack))
+            return ModelPotara.BOTH_EARS;
+
+        if(isRightSide(itemStack))
+            return ModelPotara.RIGHT_EAR;
+
+        return ModelPotara.LEFT_EAR;
+    }
+
 }

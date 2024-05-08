@@ -2,7 +2,6 @@ package kamkeel.npcdbc.items;
 
 import kamkeel.npcdbc.LocalizationHelper;;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
-import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
@@ -13,9 +12,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import noppes.npcs.CustomItems;
 
-public class FruitOfMight extends ItemFood {
+public class ItemFruitOfMight extends ItemFood {
 
-    public FruitOfMight(int saturation, float eatTime, boolean wolfFeed){
+    public ItemFruitOfMight(int saturation, float eatTime, boolean wolfFeed){
         super(saturation, eatTime, wolfFeed);
 
         this.setMaxStackSize(5);

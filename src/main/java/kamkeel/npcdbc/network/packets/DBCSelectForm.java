@@ -7,6 +7,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.AbstractPacket;
+import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
@@ -52,13 +53,13 @@ public final class DBCSelectForm extends AbstractPacket {
                     if(ConfigDBCGameplay.InstantTransform){
                         boolean canInstant = form.mastery.canInstantTransform(formData.getFormLevel(formID));
                         if(!canInstant){
-                            Utility.sendMessage(player, "§cYou do not have enough mastery to transform directly");
+                            NetworkUtility.sendServerMessage(player, "§c", "npcdbc.notEnoughMastery");
                             compound.setBoolean("Skip", true);
                             Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
                             return;
                         }
                     } else {
-                        Utility.sendMessage(player, "§cYou cannot transform to this form directly");
+                        NetworkUtility.sendServerMessage(player, "§c", "npcdbc.cannotTransformDirect");
                         compound.setBoolean("Skip", true);
                         Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
                         return;
@@ -66,12 +67,12 @@ public final class DBCSelectForm extends AbstractPacket {
                 }
 
                 formData.selectedForm = formID;
-                Utility.sendMessage(player, String.format("§aForm %s §aSelected", form.getMenuName()));
+                NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", form.getMenuName());
                 compound = form.writeToNBT();
             }
         } else {
             formData.selectedForm = -1;
-            Utility.sendMessage(player, "§cCleared selection");
+            NetworkUtility.sendServerMessage(player, "§9", "npcdbc.clearedSelection");
         }
 
         formData.updateClient();

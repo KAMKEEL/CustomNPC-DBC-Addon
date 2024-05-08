@@ -26,6 +26,18 @@ public class ConfigDBCEffects
     public static int FOM_EffectLength = 90;
     public static double FOM_KiDrain = -0.8f;
 
+
+    public final static String ZENKAI = "Zenkai";
+    public static double Saiyan_Strength = 1.2f;
+    public static double Saiyan_Dex = 0.5f;
+    public static double Saiyan_Will = 0.5f;
+    public static int Saiyan_EffectLength = 90;
+
+    public static double HalfSaiyan_Strength = 1.2f;
+    public static double HalfSaiyan_Dex = 0.5f;
+    public static double HalfSaiyan_Will = 0.5f;
+    public static int HalfSaiyan_EffectLength = 90;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);

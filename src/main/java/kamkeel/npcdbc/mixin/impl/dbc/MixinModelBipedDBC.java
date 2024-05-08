@@ -170,8 +170,11 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 texMan.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + hairTexture));
 
                 //majin effect check
-                if (rc == 5 && !form.display.effectMajinHair)
+                if (rc == 5 && !form.display.effectMajinHair){
+                    if(form.display.bodyCM != -1)
+                        RenderPlayerJBRA.glColor3f(form.display.bodyCM);
                     return;
+                }
 
                 //hairstates with texture
                 if (form.display.hairType.equals("base")) {

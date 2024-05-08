@@ -6,6 +6,8 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
+import kamkeel.npcdbc.network.packets.PingPacket;
+import kamkeel.npcdbc.network.packets.SendChat;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -61,4 +63,11 @@ public class NetworkUtility {
         Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
     }
 
+    public static void sendServerMessage(EntityPlayer player, Object... message){
+        PacketHandler.Instance.sendToPlayer(new SendChat(message).generatePacket(), (EntityPlayerMP) player);
+    }
+
+    public static void sendInfoMessage(EntityPlayer player, Object... message){
+        PacketHandler.Instance.sendToPlayer(new SendChat(true, message).generatePacket(), (EntityPlayerMP) player);
+    }
 }

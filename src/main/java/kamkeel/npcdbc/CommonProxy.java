@@ -6,6 +6,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import kamkeel.npcdbc.api.AbstractDBCAPI;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import noppes.npcs.scripted.NpcAPI;
@@ -38,5 +39,11 @@ public class CommonProxy {
 
     public World getClientWorld() {
         return null;
+    }
+
+    public void registerItem(Item item) { }
+
+    public int getNewRenderId() {
+        return -1;
     }
 }

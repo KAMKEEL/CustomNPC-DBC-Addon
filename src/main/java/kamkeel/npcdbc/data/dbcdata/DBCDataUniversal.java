@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.dbcdata;
 
+import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.ClientCache;
@@ -91,5 +92,25 @@ public class DBCDataUniversal {
             return 0f;
 
         return dbcData.addonFormLevel;
+    }
+
+    /**
+     * Fuse two players
+     * @param controller player that is supposed to be the controller
+     * @param spectator player that is supposed to be the spectator
+     * @param time time in minutes
+     */
+    public static void fusePlayers(EntityPlayer controller, EntityPlayer spectator, float time){
+        fusePlayers(get(controller), get(spectator), time);
+    }
+
+    /**
+     * Fuse two players
+     * @param controller player that is supposed to be the controller
+     * @param spectator player that is supposed to be the spectator
+     * @param time time in minutes
+     */
+    private static void fusePlayers(DBCData controller, DBCData spectator, float time) {
+        controller.fuseWith(spectator, time);
     }
 }

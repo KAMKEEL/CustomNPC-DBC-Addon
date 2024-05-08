@@ -4,15 +4,21 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.api.handler.data.ISound;
+import noppes.npcs.client.controllers.ScriptClientSound;
+import noppes.npcs.client.controllers.ScriptSoundController;
 import noppes.npcs.scripted.NpcAPI;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +26,8 @@ import java.util.UUID;
 import static kamkeel.npcdbc.util.PlayerDataUtil.getIPlayer;
 
 public class Utility {
+    public static HashMap<String, String> darkCodes = new HashMap<>();
+
     public static boolean isServer() {
         return FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER;
     }
@@ -36,16 +44,6 @@ public class Utility {
         player.addChatMessage(new ChatComponentText(message));
     }
 
-    public static Entity getEntityFromID(World w, String s) { //s is basically getEntityID
-        if (!s.isEmpty()) {
-            if (Boolean.parseBoolean(s.split(",")[1])) //if player
-                return Utility.getEntityByUUID(w, s.split(",")[0]);
-            else
-                return w.getEntityByID(Integer.parseInt(s.split(",")[0]));
-        }
-        return null;
-
-    }
 
     public static void playSound(Entity p, String soundid, int range) {
         playSound(p, soundid, range, 1);
@@ -73,13 +71,46 @@ public class Utility {
 
     }
 
+    public static ScriptClientSound getClientSound(Entity entity, String soundDir) {
+        for (ScriptClientSound sound : ScriptSoundController.Instance.sounds.values()) {
+            Entity soundOwner = (Entity) getPFValue(ScriptClientSound.class, "entity", sound);
+            if (soundOwner != entity)
+                continue;
+            ResourceLocation loc = (ResourceLocation) getPFValue(PositionedSound.class, "field_147664_a", sound);
+            String s = loc.getResourceDomain() + ":" + loc.getResourcePath();
+            if (s.equalsIgnoreCase(soundDir))
+                return sound;
+        }
+        return null;
+    }
+
+    public static void setSoundVolume(PositionedSound sound, float volume) {
+        setPrivateField(PositionedSound.class, "volume", false, sound, volume);
+
+    }
+
     public static String getEntityID(Entity p) {
         if (p instanceof EntityPlayer)
-            return p.getUniqueID().toString() + ",true"; //true as in "entity is player"
+            return getUUID(p).toString() + ",true"; //true as in "entity is player"
         else if (p != null)
             return p.getEntityId() + ",false";
         else
             return "";
+    }
+
+    public static Entity getEntityFromID(World w, String id) { //s is basically getEntityID
+        if (id != null && !id.isEmpty()) {
+            try {
+                if (Boolean.parseBoolean(id.split(",")[1])) //if player
+                    return Utility.getFromUUID(UUID.fromString(id.split(",")[0]), w);
+                else
+                    return w.getEntityByID(Integer.parseInt(id.split(",")[0]));
+
+            } catch (Exception e) {
+            }
+        }
+        return null;
+
     }
 
     public static UUID getUUID(Entity entity) {
@@ -113,18 +144,6 @@ public class Utility {
         return null;
     }
 
-    public static Entity getEntityByUUID(World w, String s) {
-        if (s == null)
-            return null;
-
-        List<Entity> allEntity = w.loadedEntityList;
-        for (Entity player : allEntity)
-            if (player.getUniqueID().toString().equals(s))
-                return player;
-
-        return null;
-
-    }
 
     public static void printStackTrace() {
         for (StackTraceElement ste : Thread.currentThread().getStackTrace())
@@ -149,7 +168,6 @@ public class Utility {
     public static boolean percentBetween(double n, double maxN, double minPerc, double maxPerc) {
         return n >= Utility.percent(maxN, minPerc) && n < Utility.percent(maxN, maxPerc);
     }
-
 
     public static String removeBoldColorCode(String s) {
         for (int i = 0; i < s.length() - 2; i++) {
@@ -184,9 +202,8 @@ public class Utility {
         return sb.toString();
     }
 
-    public static HashMap<String, String> darkCodes = new HashMap<>();
     public static String getDarkColorCode(String s) {
-        if(darkCodes.isEmpty()){
+        if (darkCodes.isEmpty()) {
             darkCodes.put("§a", "§2");
             darkCodes.put("§b", "§9");
             darkCodes.put("§c", "§c");
@@ -195,8 +212,63 @@ public class Utility {
             darkCodes.put("§d", "§5");
             darkCodes.put("§f", "§0");
         }
-        if(darkCodes.containsKey(s))
+        if (darkCodes.containsKey(s))
             return darkCodes.get(s);
         return s;
     }
+
+    public static Field getPrivateField(Class<?> c, String name) {
+        try {
+            Field[] fields = c.getDeclaredFields();
+            for (Field f : fields)
+                if (f.getName().equals(name)) {
+                    f.setAccessible(true);
+                    return f;
+                }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    // get private field value
+    public static Object getPFValue(Class<?> c, String name, Object instance) { // if field is static, enter null in
+        // instance arg
+        try {
+            Field f = getPrivateField(c, name);
+            return f.get(instance);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void removeFinalModif(Field f) {
+        try {
+            System.out.println("before final " + f.getModifiers());
+            Field modifiers = Field.class.getDeclaredField("modifiers");
+            modifiers.setAccessible(true);
+            modifiers.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+            System.out.println("after final " + f.getModifiers());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setPrivateField(Class<?> c, String name, boolean isFinal, Object instance, Object newValUtilitye) {
+        if (instance == null)
+            return;
+        try {
+            Field f = Utility.getPrivateField(c, name);
+            if (isFinal)
+                Utility.removeFinalModif(f);
+            f.set(instance, newValUtilitye);
+            System.out.println();
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -1,3 +1,7 @@
+############################
+## BUTTONS
+############################
+
 stats.dbcsettings=DBC Settings
 
 stats.dbc=DBC Settings
@@ -16,6 +20,36 @@ form.select=Select
 
 aura.shown=Shown
 aura.hidden=Hidden
+
+############################
+## MESSAGES
+############################
+
+npcdbc.noFormSelected=No Form Selected
+npcdbc.cooldown=You need to cooldown
+npcdbc.nextUnlocked=You do not have the next transformation unlocked
+npcdbc.spectator=You cannot transform as a spectator
+npcdbc.healthRequirement=You need to be below %d percent health to access the selected form
+npcdbc.pain=Cannot transform while in pain
+npcdbc.wrongDBC=You are in the wrong DBC Form
+npcdbc.transformFromParent=Must transfrom from Parent
+npcdbc.fusionSkillFusion=does not have fusion skill enabled
+npcdbc.holdPotara=Both players must hold a Potara Earring
+npcdbc.potaraTier=Earrings are not the same tier
+npcdbc.potaraSpit=Earrings are not split
+npcdbc.potaraSides=Potaras must be opposite sides
+npcdbc.potaraHash=Potaras must be of the same pair
+npcdbc.potaraFusion=You fuse with:
+npcdbc.potaraRequest=Fusion request from
+npcdbc.notEnoughMastery=You do not have enough mastery to instant transform
+npcdbc.cannotTransformDirect=You cannot transform to this form directly
+npcdbc.clearedSelection=Cleared selection
+npcdbc.formSelect=Form Selected:
+npcdbc.auraSelect=Aura Selected:
+npcdbc.transform=Transformed to
+npcdbc.descend=Descended to
+npcdbc.descendFrom=Descended from
+npcdbc.timeExpired=Timer has run out!
 
 ############################
 ## ITEMS
