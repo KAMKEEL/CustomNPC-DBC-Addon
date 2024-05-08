@@ -11,9 +11,6 @@ public interface IAuraDisplay {
 
     void setAuraSound(String sound);
 
-    float getSoundTime();
-
-    void setSoundTime(float seconds);
 
     boolean isKaiokenToggled();
 

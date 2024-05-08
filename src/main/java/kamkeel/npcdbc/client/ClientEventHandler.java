@@ -20,6 +20,7 @@ import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PlaySound;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcdbc.util.SoundHelper;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.StatCollector;
@@ -291,23 +292,14 @@ public class ClientEventHandler {
                 }
 
                 float soundRange = 50;
-                if (aura.display.hasSound()) {
+                if (aura.display.hasSound())
                     sound = aura.display.auraSound;
-                    int time = (int) (aura.display.soundTime * 20);
-                    if (npc.ticksExisted % time == 0)
-                        PacketHandler.Instance.sendToServer(new PlaySound(sound, soundRange, Utility.getEntityID(npc)).generatePacket());
-                } else {
-                    float time = 20 * 2.5f;
-                    if (EnumPlayerAuraTypes.isBlue(aura.display.type) && kk)
-                        time = 20 * 3;
 
-                    if (npc.ticksExisted % time == 0)
-                        PacketHandler.Instance.sendToServer(new PlaySound(sound, soundRange, Utility.getEntityID(npc)).generatePacket());
-                }
-
-
-                ScriptClientSound s = Utility.getClientSound(npc, sound); //already existing aura sound
-                if (s != null) { //dynamic volume, as player gets further away from aura source volume decreases
+                ScriptClientSound s = SoundHelper.getClientSound(npc, sound); //already existing aura sound
+                if (s == null) {
+                    PacketHandler.Instance.sendToServer(new PlaySound(sound, soundRange, Utility.getEntityID(npc)).generatePacket());
+                } else if (s != null) { //dynamic volume, as player gets further away from aura source volume decreases
+                    s.stopSound();
                     float distance = npc.getDistanceToEntity(Minecraft.getMinecraft().thePlayer);
                     float volume = 1 - distance / soundRange;
                     Utility.setSoundVolume(s, volume);
