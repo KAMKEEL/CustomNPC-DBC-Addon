@@ -60,6 +60,12 @@ public enum EnumPlayerAuraTypes {
         return clr;
     }
 
+    public static boolean isBlue(EnumPlayerAuraTypes type) {
+        if (type == SaiyanBlue || type == SaiyanBlueEvo || type == SaiyanRose || type == SaiyanRoseEvo)
+            return true;
+        return false;
+    }
+
     public String getName() {
         return this.name;
     }

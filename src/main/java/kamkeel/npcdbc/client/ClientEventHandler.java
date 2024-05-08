@@ -17,6 +17,8 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.mixin.INPCDisplay;
+import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.PlaySound;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -178,7 +180,7 @@ public class ClientEventHandler {
                 return;
             if (npc.ticksExisted % 5 == 0 && display.auraOn) {
                 EntityAura2 aur = new EntityAura2(npc.worldObj, npc.getEntityId() + "", aura.display.color1, 0, 0, 100, false);
-
+                boolean kk = aura.display.kaiokenOn;
                 if (aura.display.hasColor("color1"))
                     aur.setCol(aura.display.color1);
                 if (aura.display.hasColor("color2"))
@@ -207,6 +209,8 @@ public class ClientEventHandler {
                 else
                     ((IEntityAura) aur).setLightningAlpha(255);
 
+                String sound = "jinryuudragonbc:DBC.aura";
+
                 int mimicColor = EnumPlayerAuraTypes.getManualAuraColor(aura.display.type);
                 if (mimicColor != -1)
                     aur.setCol(mimicColor);
@@ -216,12 +220,14 @@ public class ClientEventHandler {
                     aur.setTex("aurai");
                     aur.setTexL2("aurai2");
                     aur.setColL2(16747301);
+                    sound = "jinryuudragonbc:1610.aurag";
                 } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlue) {
                     aur.setSpd(40);
                     aur.setAlp(0.5F);
                     aur.setTex("aurag");
                     aur.setColL3(15727354);
                     aur.setTexL3("auragb");
+
                 } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlueEvo) {
                     aur.setSpd(40);
                     aur.setAlp(0.5F);
@@ -234,11 +240,6 @@ public class ClientEventHandler {
                     aur.setTex("aurai");
                     aur.setTexL2("aurai2");
                     aur.setColL2(7872713);
-                } else if (aura.display.type == EnumPlayerAuraTypes.UltimateArco) {
-                    aur.setAlp(0.5F);
-                    aur.setTex("aurau");
-                    aur.setTexL2("aurau2");
-                    aur.setColL2(16776724);
                 } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRoseEvo) {
                     aur.setSpd(30);
                     aur.setAlp(0.2F);
@@ -252,14 +253,41 @@ public class ClientEventHandler {
                     aur.setCol(15790320);
                     aur.setColL3(4746495);
                     aur.setTexL3("auragb");
+                    sound = "jinryuudragonbc:DBC5.aura_ui";
                 } else if (aura.display.type == EnumPlayerAuraTypes.GoD) {
                     aur.setSpd(30);
                     aur.setAlp(0.2F);
                     aur.setTex("aurag");
                     aur.setTexL3("auragb");
                     aur.setColL2(12464847);
+                    sound = "jinryuudragonbc:DBC5.aura_destroyer";
+                } else if (aura.display.type == EnumPlayerAuraTypes.UltimateArco) {
+                    aur.setAlp(0.5F);
+                    aur.setTex("aurau");
+                    aur.setTexL2("aurau2");
+                    aur.setColL2(16776724);
                 }
 
+                if (EnumPlayerAuraTypes.isBlue(aura.display.type)) {
+                    if (kk)
+                        sound = "jinryuudragonbc:1610.aurabk";
+                    else
+                        sound = "jinryuudragonbc:1610.aurab";
+                }
+                if (aura.display.hasSound()) {
+                    sound = aura.display.auraSound;
+                    int time = (int) (aura.display.soundTime * 20);
+                    if (npc.ticksExisted % time == 0)
+                        PacketHandler.Instance.sendToServer(new PlaySound(sound, 15).generatePacket());
+
+                } else {
+                    float time = 20 * 2.5f;
+                    if (EnumPlayerAuraTypes.isBlue(aura.display.type) && kk)
+                        time = 20 * 3;
+
+                    if (npc.ticksExisted % time == 0)
+                        PacketHandler.Instance.sendToServer(new PlaySound(sound, 15).generatePacket());
+                }
                 aur.worldObj.spawnEntityInWorld(aur);
 
             }

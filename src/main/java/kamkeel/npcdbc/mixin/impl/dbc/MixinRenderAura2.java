@@ -8,6 +8,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.mixin.IEntityAura;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -59,7 +60,7 @@ public class MixinRenderAura2 {
             }
             s.set(s1.get() * Math.min(dbcData.Release, 50) / 45);
         }
-        Entity entity = par1Entity.worldObj.getEntityByID(Integer.parseInt(par1Entity.getmot()));
+        Entity entity = Utility.getEntityFromID(par1Entity.worldObj,par1Entity.getmot());
         if (entity instanceof EntityCustomNpc) {
             EntityCustomNpc npc = (EntityCustomNpc) entity;
             s1.set(8.0f * 0.2f * npc.display.modelSize);

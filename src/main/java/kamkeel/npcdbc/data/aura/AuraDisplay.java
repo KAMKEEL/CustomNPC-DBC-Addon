@@ -87,6 +87,10 @@ public class AuraDisplay implements IAuraDisplay {
     public void toggleKaioken(boolean toggle) {
         this.kaiokenOn = toggle;
     }
+    @Override
+    public boolean hasSound() {
+        return auraSound.length() > 3;
+    }
 
     @Override
     public String getAuraSound() {

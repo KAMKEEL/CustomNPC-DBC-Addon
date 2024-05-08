@@ -40,7 +40,11 @@ public class Utility {
 
     public static Entity getEntityFromID(World w, String s) { //s is basically getEntityID
         if (!s.isEmpty()) {
-            return w.getEntityByID(Integer.parseInt(s));
+            try {
+                int i = Integer.parseInt(s);
+                return w.getEntityByID(i);
+            } catch (NumberFormatException e) {
+            }
         }
         return null;
 
