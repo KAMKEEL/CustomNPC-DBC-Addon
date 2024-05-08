@@ -102,7 +102,7 @@ public class TransformController {
         if (rage > 0) {
             if (rage > 100)
                 rage = 100;
-            if (rage - (rageValue) >= 0)
+            if (rage - (rageValue) > 0)
                 rage -= (rageValue);
             else {
                 rage = 0;
@@ -187,7 +187,7 @@ public class TransformController {
         if (display.rage > 0) {
             if (display.rage > 100)
                 display.rage = 100;
-            if (display.rage - (display.rageValue) >= 0)
+            if (display.rage - (display.rageValue) > 0)
                 display.rage -= (display.rageValue);
             else {
                 display.rage = 0;

@@ -46,7 +46,7 @@ public final class PlaySound extends AbstractPacket {
         if (entity instanceof EntityPlayer) {
             IPlayer<?> pl = getIPlayer((EntityPlayer) entity);
 
-            pl.playSound(1, sound);
+            pl.playSound(sound);
         }
 
         if (range == 0)
@@ -60,7 +60,7 @@ public final class PlaySound extends AbstractPacket {
                 IPlayer other = (IPlayer) otherEntity;
                 float volume = 1 - distance / range;
                 sound.setVolume(volume);
-                other.playSound(1, sound);
+                other.playSound(sound);
             }
     }
 
