@@ -5,6 +5,8 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JBRA.mod_JBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.client.model.part.ArcoHorns;
+import kamkeel.npcdbc.client.model.part.RaceEars;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import net.minecraft.client.Minecraft;
@@ -14,6 +16,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.model.ModelMPM;
+import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.opengl.GL11;
 
 public class ModelNPCDBC extends ModelBase {
@@ -27,6 +30,9 @@ public class ModelNPCDBC extends ModelBase {
     public float rot5;
     public float rot6;
 
+    public ArcoHorns arcoHorns;
+    public RaceEars raceEars;
+
     public ModelRenderer nose;
     public ModelRenderer mouth;
     public ModelRenderer eyeleft;
@@ -34,46 +40,17 @@ public class ModelNPCDBC extends ModelBase {
     public ModelRenderer eyebase;
     public ModelRenderer eyebrow;
 
-    public ModelRenderer Fro;
-    public ModelRenderer Fro0;
-    public ModelRenderer Fro1;
-    public ModelRenderer Fro2;
-    public ModelRenderer Fro5;
-    public ModelRenderer Fro5b;
-    public ModelRenderer Fro5l;
-    public ModelRenderer Fro5r;
-    public ModelRenderer FroB;
-    public ModelRenderer appule;
-    public ModelRenderer Fhorn2;
-    public ModelRenderer Fhorn1;
-    public ModelRenderer Fhorn3;
-    public ModelRenderer Fhorn4;
-    public ModelRenderer F2horn1;
-    public ModelRenderer F2horn2;
-    public ModelRenderer F5horn1;
-    public ModelRenderer F5horn2;
-    public ModelRenderer F5horn3;
-    public ModelRenderer F5horn4;
-    public ModelRenderer F5horn5;
+    public ModelRenderer BackSpikes;
+    public ModelRenderer LeftArmSpike;
+    public ModelRenderer RightArmSpike;
+
     public ModelRenderer F5spike1;
     public ModelRenderer F5spike2;
     public ModelRenderer F5spike3;
     public ModelRenderer F5spike4;
-    public ModelRenderer ftail1;
-    public ModelRenderer ftail2;
-    public ModelRenderer fear1;
-    public ModelRenderer fear2;
-    public ModelRenderer leftarmshoulder;
-    public ModelRenderer rightarmshoulder;
-    public ModelRenderer ftailS1;
-    public ModelRenderer ftailS2;
-    public ModelRenderer ftailS3;
-    public ModelRenderer ftailS4;
-    public ModelRenderer ftailS5;
-    public ModelRenderer ftailS6;
 
-
-    public TextureManager tex;
+    public ModelRenderer ArcoLeftShoulder;
+    public ModelRenderer ArcoRightShoulder;
 
     public int tempState, stateChange, state2Change, auraTime, auraType, bendTime;
 
@@ -81,8 +58,6 @@ public class ModelNPCDBC extends ModelBase {
         this.parent = mpm;
         this.textureHeight = 32;
         this.textureWidth = 64;
-        tex = Minecraft.getMinecraft().renderEngine;
-
         // Init Hair
         this.hairall = new ModelRendererJBRA[224];
         int hossz;
@@ -136,92 +111,28 @@ public class ModelNPCDBC extends ModelBase {
         this.setRotation(this.eyebrow, 0.0F, 0.0F, 0.0F);
 
         addArcoHorns();
+
+        this.parent.bipedHead.addChild(arcoHorns = new ArcoHorns(mpm));
+        this.parent.bipedHead.addChild(raceEars = new RaceEars(mpm));
+    }
+
+    public void setPlayerData(EntityCustomNpc entity) {
+        this.arcoHorns.setData(entity.modelData, entity);
+        this.raceEars.setData(entity.modelData, entity);
     }
 
     public void addArcoHorns() {
-        this.Fro = new ModelRenderer(this, 0, 0);
-        this.Fro.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.Fro.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.Fro0 = new ModelRenderer(this, 0, 0);
-        this.Fro0.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.Fro0.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.Fro1 = new ModelRenderer(this, 0, 0);
-        this.Fro1.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.Fro1.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.Fro2 = new ModelRenderer(this, 0, 0);
-        this.Fro2.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.Fro2.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.Fro5 = new ModelRenderer(this, 0, 0);
-        this.Fro5.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.Fro5.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.Fro5b = new ModelRenderer(this, 0, 0);
-        this.Fro5b.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.Fro5b.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.Fro5r = new ModelRenderer(this, 0, 0);
-        this.Fro5r.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.Fro5r.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.Fro5l = new ModelRenderer(this, 0, 0);
-        this.Fro5l.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.Fro5l.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.FroB = new ModelRenderer(this, 0, 0);
-        this.FroB.addBox(-0.0F, -0.0F, -0.0F, 0, 12, 0, 0.02F);
-        this.FroB.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.appule = new ModelRenderer(this, 0, 16);
-        this.appule.addBox(-4.0F, -8.0F, 4.0F, 8, 8, 8);
-        this.appule.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.appule, 0.0F, 0.0F, 0.0F);
-        this.Fhorn2 = new ModelRenderer(this, 8, 6);
-        this.Fhorn2.addBox(1.5F, -11.0F, -3.5F, 2, 4, 2);
-        this.Fhorn2.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.Fhorn2, 0.0F, 0.0F, (float) (-Math.PI / 4));
-        this.Fhorn1 = new ModelRenderer(this, 8, 6);
-        this.Fhorn1.addBox(-3.5F, -11.0F, -3.5F, 2, 4, 2);
-        this.Fhorn1.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.Fhorn1, 0.0F, 0.0F, (float) (Math.PI / 4));
-        this.Fhorn3 = new ModelRenderer(this, 8, 6);
-        this.Fhorn3.addBox(2.5F, -14.0F, -3.5F, 2, 4, 2);
-        this.Fhorn3.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.Fhorn3, 0.0F, 0.0F, 0.2094395F);
-        this.Fhorn4 = new ModelRenderer(this, 8, 6);
-        this.Fhorn4.addBox(-4.5F, -14.0F, -3.5F, 2, 4, 2);
-        this.Fhorn4.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.Fhorn4, 0.0F, 0.0F, -0.2094395F);
-        this.F2horn1 = new ModelRenderer(this, 16, 6);
-        this.F2horn1.addBox(-3.5F, -11.0F, 6.5F, 2, 4, 2);
-        this.F2horn1.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.F2horn1, 0.0F, 0.0F, (float) (Math.PI / 4));
-        this.F2horn2 = new ModelRenderer(this, 16, 6);
-        this.F2horn2.addBox(1.5F, -11.0F, 6.5F, 2, 4, 2);
-        this.F2horn2.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.F2horn2, 0.0F, 0.0F, (float) (-Math.PI / 4));
-        this.ftail1 = new ModelRenderer(this, 32, 16);
-        this.ftail1.addBox(-2.0F, 7.0F, 4.0F, 4, 4, 12);
-        this.ftail1.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.ftail1, -0.3490659F, 0.0F, 0.0F);
-        this.ftail2 = new ModelRenderer(this, 32, 16);
-        this.ftail2.addBox(-2.0F, 15.0F, 2.0F, 4, 4, 12);
-        this.ftail2.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.ftail2, (float) (Math.PI / 6), 1.33E-5F, 0.0F);
-        this.F5horn1 = new ModelRenderer(this, 8, 6);
-        this.F5horn1.addBox(-4.5F, -8.0F, -6.5F, 2, 6, 2);
-        this.F5horn1.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.F5horn1, (float) (-Math.PI * 2.0 / 9.0), 0.0F, 1.047198F);
-        this.F5horn2 = new ModelRenderer(this, 8, 6);
-        this.F5horn2.addBox(2.5F, -8.0F, -6.5F, 2, 6, 2);
-        this.F5horn2.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.F5horn2, (float) (-Math.PI * 2.0 / 9.0), 0.0F, -1.047198F);
-        this.F5horn3 = new ModelRenderer(this, 8, 6);
-        this.F5horn3.addBox(-0.5F, -10.0F, -8.0F, 2, 6, 2);
-        this.F5horn3.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.F5horn3, (float) (-Math.PI * 2.0 / 9.0), 0.0F, 0.2094395F);
-        this.F5horn4 = new ModelRenderer(this, 8, 6);
-        this.F5horn4.addBox(-1.5F, -10.0F, -8.0F, 2, 6, 2);
-        this.F5horn4.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.F5horn4, (float) (-Math.PI * 2.0 / 9.0), 0.0F, -0.2094395F);
-        this.F5horn5 = new ModelRenderer(this, 8, 6);
-        this.F5horn5.addBox(-2.5F, -7.0F, -7.2F, 5, 2, 2);
-        this.F5horn5.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.F5horn5, (float) (-Math.PI / 6), 0.0F, 0.0F);
+        this.BackSpikes = new ModelRenderer(this, 0, 0);
+        this.BackSpikes.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
+        this.BackSpikes.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.RightArmSpike = new ModelRenderer(this, 0, 0);
+        this.RightArmSpike.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
+        this.RightArmSpike.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.LeftArmSpike = new ModelRenderer(this, 0, 0);
+        this.LeftArmSpike.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
+        this.LeftArmSpike.setRotationPoint(0.0F, 0.0F, 0.0F);
+
+
         this.F5spike1 = new ModelRenderer(this, 0, 6);
         this.F5spike1.addBox(-6.0F, 1.0F, -1.0F, 1, 5, 2);
         this.F5spike1.setRotationPoint(0.0F, 0.0F, 0.0F);
@@ -238,98 +149,28 @@ public class ModelNPCDBC extends ModelBase {
         this.F5spike4.addBox(-4.0F, -4.0F, 3.0F, 2, 6, 2);
         this.F5spike4.setRotationPoint(0.0F, 0.0F, 0.0F);
         this.setRotation(this.F5spike4, -0.9773844F, 0.0F, -0.2094395F);
-        this.ftailS1 = new ModelRenderer(this, 38, 54);
-        this.ftailS1.addBox(-2.0F, -2.0F, 0.0F, 4, 4, 6);
-        this.ftailS1.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.ftailS1, (float) (-Math.PI / 6), 0.0F, 0.0F);
-        this.ftailS2 = new ModelRenderer(this, 38, 54);
-        this.ftailS2.addBox(-2.0F, -2.0F, 0.0F, 4, 4, 6);
-        this.ftailS2.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.ftailS2, (float) (Math.PI / 6), 8.727E-4F, 0.0F);
-        this.ftailS3 = new ModelRenderer(this, 38, 54);
-        this.ftailS3.addBox(-2.0F, -2.0F, 0.0F, 4, 4, 6);
-        this.ftailS3.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.ftailS3, 0.0F, 0.0F, 0.0F);
-        this.ftailS4 = new ModelRenderer(this, 38, 54);
-        this.ftailS4.addBox(-2.0F, -2.0F, 0.0F, 4, 4, 6);
-        this.ftailS4.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.ftailS4, 0.0F, 0.0F, 0.0F);
-        this.ftailS5 = new ModelRenderer(this, 38, 54);
-        this.ftailS5.addBox(-2.0F, -2.0F, 0.0F, 4, 4, 6);
-        this.ftailS5.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.ftailS5, 0.0F, 0.0F, 0.0F);
-        this.ftailS6 = new ModelRenderer(this, 38, 54);
-        this.ftailS6.addBox(-2.0F, -2.0F, 0.0F, 4, 4, 6);
-        this.ftailS6.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.ftailS6, 0.0F, 0.0F, 0.0F);
-        this.ftailS5.addChild(this.ftailS6);
-        this.ftailS4.addChild(this.ftailS5);
-        this.ftailS3.addChild(this.ftailS4);
-        this.ftailS2.addChild(this.ftailS3);
-        this.ftailS1.addChild(this.ftailS2);
-        this.FroB.addChild(this.ftailS1);
-        this.FroB.rotationPointX = 2.0F;
-        this.FroB.rotationPointY = 10.0F;
-        this.FroB.rotationPointZ = 2.0F;
-        this.ftailS1.rotationPointX = -2.0F;
-        this.ftailS1.rotationPointY = -2.0F;
-        this.ftailS1.rotationPointZ = 0.0F;
-        this.ftailS2.rotationPointX = 0.0F;
-        this.ftailS2.rotationPointY = 0.0F;
-        this.ftailS2.rotationPointZ = 5.0F;
-        this.ftailS3.rotationPointX = 0.0F;
-        this.ftailS3.rotationPointY = 0.0F;
-        this.ftailS3.rotationPointZ = 5.0F;
-        this.ftailS4.rotationPointX = 0.0F;
-        this.ftailS4.rotationPointY = 0.0F;
-        this.ftailS4.rotationPointZ = 5.0F;
-        this.ftailS5.rotationPointX = 0.0F;
-        this.ftailS5.rotationPointY = 0.0F;
-        this.ftailS5.rotationPointZ = 5.0F;
-        this.ftailS6.rotationPointX = 0.0F;
-        this.ftailS6.rotationPointY = 0.0F;
-        this.ftailS6.rotationPointZ = 5.0F;
-        this.fear1 = new ModelRenderer(this, 12, 0);
-        this.fear1.addBox(-5.0F, -5.0F, -3.0F, 1, 3, 2);
-        this.fear1.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.fear1, -0.4014257F, 0.0F, 0.0F);
-        this.fear2 = new ModelRenderer(this, 12, 0);
-        this.fear2.mirror = true;
-        this.fear2.addBox(4.0F, -5.0F, -3.0F, 1, 3, 2);
-        this.fear2.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.fear2, -0.4014257F, 0.0F, 0.0F);
-        this.rightarmshoulder = new ModelRenderer(this, 38, 0);
-        this.rightarmshoulder.addBox(-6.0F, -3.0F, -3.0F, 7, 4, 6);
-        this.rightarmshoulder.setRotationPoint(-5.0F, 2.0F, 0.0F);
-        this.rightarmshoulder.setTextureSize(128, 64);
-        this.leftarmshoulder = new ModelRenderer(this, 38, 0);
-        this.leftarmshoulder.mirror = true;
-        this.leftarmshoulder.addBox(-1.0F, -3.0F, -3.0F, 7, 4, 6);
-        this.leftarmshoulder.setRotationPoint(5.0F, 2.0F, 0.0F);
-        this.leftarmshoulder.setTextureSize(128, 64);
-        this.Fro0.addChild(this.Fhorn2);
-        this.Fro0.addChild(this.Fhorn1);
-        this.Fro1.addChild(this.Fhorn3);
-        this.Fro1.addChild(this.Fhorn4);
-        this.Fro2.addChild(this.appule);
-        this.Fro2.addChild(this.F2horn1);
-        this.Fro2.addChild(this.F2horn2);
-        this.Fro.addChild(this.fear1);
-        this.Fro.addChild(this.fear2);
-        this.Fro5.addChild(this.F5horn1);
-        this.Fro5.addChild(this.F5horn2);
-        this.Fro5.addChild(this.F5horn3);
-        this.Fro5.addChild(this.F5horn4);
-        this.Fro5.addChild(this.F5horn5);
-        this.Fro5r.addChild(this.F5spike1);
-        this.Fro5l.addChild(this.F5spike2);
-        this.Fro5b.addChild(this.F5spike3);
-        this.Fro5b.addChild(this.F5spike4);
+
+
+        this.ArcoRightShoulder = new ModelRenderer(this, 38, 0);
+        this.ArcoRightShoulder.addBox(-6.0F, -3.0F, -3.0F, 7, 4, 6);
+        this.ArcoRightShoulder.setRotationPoint(-5.0F, 2.0F, 0.0F);
+        this.ArcoRightShoulder.setTextureSize(128, 64);
+        this.ArcoLeftShoulder = new ModelRenderer(this, 38, 0);
+        this.ArcoLeftShoulder.mirror = true;
+        this.ArcoLeftShoulder.addBox(-1.0F, -3.0F, -3.0F, 7, 4, 6);
+        this.ArcoLeftShoulder.setRotationPoint(5.0F, 2.0F, 0.0F);
+        this.ArcoLeftShoulder.setTextureSize(128, 64);
+
+        this.RightArmSpike.addChild(this.F5spike1);
+        this.LeftArmSpike.addChild(this.F5spike2);
+        this.BackSpikes.addChild(this.F5spike3);
+        this.BackSpikes.addChild(this.F5spike4);
     }
 
     public void renderFace(DBCDisplay display) {
+        TextureManager textureManager = Minecraft.getMinecraft().renderEngine;
         RenderPlayerJBRA.glColor3f(display.bodyCM == -1 ? getDefaultColor("bodyCM", display.race) : display.bodyCM);
-        tex.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
+        textureManager.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
         this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
         this.nose.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -337,13 +178,12 @@ public class ModelNPCDBC extends ModelBase {
         this.nose.rotationPointY = parent.bipedHead.rotationPointY;
         this.nose.render(0.0625F);
 
-
         String mouthDir = "";
-        if (display.race == 4 && display.hasCoolerMask)
+        if (display.race == 4 && display.hasArcoMask)
             mouthDir = "jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[display.arcoState] + display.bodyType + "a.png";
         else
             mouthDir = getFaceTexture(display, "m" + display.mouthType);
-        tex.bindTexture(new ResourceLocation(mouthDir));
+        textureManager.bindTexture(new ResourceLocation(mouthDir));
         this.mouth.rotateAngleY = parent.bipedHead.rotateAngleY;
         this.mouth.rotateAngleX = parent.bipedHead.rotateAngleX;
         this.mouth.rotationPointX = parent.bipedHead.rotationPointX;
@@ -351,7 +191,7 @@ public class ModelNPCDBC extends ModelBase {
         this.mouth.render(0.0625F);
 
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
-        tex.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
+        textureManager.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
         this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
         this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
         this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
@@ -360,7 +200,7 @@ public class ModelNPCDBC extends ModelBase {
 
         if (display.race < 4) {
             RenderPlayerJBRA.glColor3f(display.hairColor);
-            tex.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
+            textureManager.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
             this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
             this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
             this.eyebrow.rotationPointX = parent.bipedHead.rotationPointX;
@@ -369,20 +209,19 @@ public class ModelNPCDBC extends ModelBase {
         }
 
         RenderPlayerJBRA.glColor3f(display.eyeColor);
-        tex.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
+        textureManager.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
         this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
         this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
         this.eyeleft.rotationPointX = parent.bipedHead.rotationPointX;
         this.eyeleft.rotationPointY = parent.bipedHead.rotationPointY;
         this.eyeleft.render(0.0625F);
 
-        tex.bindTexture(new ResourceLocation(getFaceTexture(display, "r" + display.eyeType)));
+        textureManager.bindTexture(new ResourceLocation(getFaceTexture(display, "r" + display.eyeType)));
         this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
         this.eyeright.rotateAngleX = parent.bipedHead.rotateAngleX;
         this.eyeright.rotationPointX = parent.bipedHead.rotationPointX;
         this.eyeright.rotationPointY = parent.bipedHead.rotationPointY;
         this.eyeright.render(0.0625F);
-
     }
 
     public void renderHead(DBCDisplay display) {
@@ -396,30 +235,31 @@ public class ModelNPCDBC extends ModelBase {
 
     public void renderAllBody(DBCDisplay display, ModelRenderer model) {
         int race = display.race;
+        TextureManager textureManager = Minecraft.getMinecraft().renderEngine;
 
         if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             int bodyCM = display.bodyCM == -1 ? getDefaultColor("bodyCM", race) : display.bodyCM;
-            tex.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
             RenderPlayerJBRA.glColor3f(bodyCM);
 
         } else if (race == DBCRace.NAMEKIAN) {
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
             int bodyCM = display.bodyCM == -1 ? getDefaultColor("bodyCM", race) : display.bodyCM;
             RenderPlayerJBRA.glColor3f(bodyCM);
             model.render(0.0625F);
 
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
             int bodyC1 = display.bodyC1 == -1 ? getDefaultColor("bodyC1", race) : display.bodyC1;
             RenderPlayerJBRA.glColor3f(bodyC1);
             model.render(0.0625F);
 
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
             int bodyC2 = display.bodyC2 == -1 ? getDefaultColor("bodyC2", race) : display.bodyC2;
             RenderPlayerJBRA.glColor3f(bodyC2);
             model.render(0.0625F);
 
 
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
             GL11.glColor3f(1f, 1f, 1f);
             //model.render(0.0625F);
 
@@ -432,50 +272,50 @@ public class ModelNPCDBC extends ModelBase {
             int bodyC3 = display.bodyC3 == -1 ? getDefaultColor("bodyC3", race) : display.bodyC3;
 
             //HORNS
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
             RenderPlayerJBRA.glColor3f(bodyCM);
-            renderMisc((ts == 4 ? "n" : "") + "FR" + JRMCoreH.TransFrHrn[st]);
+            renderMisc("FR" + JRMCoreH.TransFrHrn[st]);
 
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
             RenderPlayerJBRA.glColor3f(bodyC1);
-            renderMisc((ts == 4 ? "n" : "") + "FR" + JRMCoreH.TransFrHrn[st]);
+            renderMisc("FR" + JRMCoreH.TransFrHrn[st]);
 
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
             RenderPlayerJBRA.glColor3f(bodyC2);
-            renderMisc((ts == 4 ? "n" : "") + "FR" + JRMCoreH.TransFrHrn[st]);
+            renderMisc("FR" + JRMCoreH.TransFrHrn[st]);
 
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
             RenderPlayerJBRA.glColor3f(bodyC3);
-            renderMisc((ts == 4 ? "n" : "") + "FR" + JRMCoreH.TransFrHrn[st]);
+            renderMisc("FR" + JRMCoreH.TransFrHrn[st]);
 
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4B" + JRMCoreH.TransFrSkn2[st] + display.bodyType + ".png"));
             GL11.glColor3f(1f, 1f, 1f);
-            renderMisc((ts == 4 ? "n" : "") + "FR" + JRMCoreH.TransFrHrn[st]);
+            renderMisc("FR" + JRMCoreH.TransFrHrn[st]);
 
             //ACTUAL BODY
             RenderPlayerJBRA.glColor3f(bodyCM);
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
             model.render(0.0625F);
 
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
             RenderPlayerJBRA.glColor3f(bodyC1);
             model.render(0.0625F);
 
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
             RenderPlayerJBRA.glColor3f(bodyC2);
             model.render(0.0625F);
 
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
             RenderPlayerJBRA.glColor3f(bodyC3);
             model.render(0.0625F);
 
 
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
             GL11.glColor3f(1f, 1f, 1f);
 
         } else if (race == DBCRace.MAJIN) {
             int bodyCM = display.bodyCM == -1 ? getDefaultColor("bodyCM", race) : display.bodyCM;
-            tex.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
+            textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
             RenderPlayerJBRA.glColor3f(bodyCM);
 
             //  model.render(0.0625F);
@@ -488,162 +328,92 @@ public class ModelNPCDBC extends ModelBase {
     public void renderMisc(String hair) {
         float par1 = 0.0625f;
         if (hair.contains("FR")) {
-            this.Fro.rotateAngleY = parent.bipedHead.rotateAngleY;
-            this.Fro.rotateAngleX = parent.bipedHead.rotateAngleX;
-            this.Fro.rotationPointX = parent.bipedHead.rotationPointX;
-            this.Fro.rotationPointY = parent.bipedHead.rotationPointY;
-            this.Fro.render(par1);
-
             if (hair.contains("2")) {
-                this.leftarmshoulder.rotationPointZ = parent.bipedLeftArm.rotationPointZ;
-                this.leftarmshoulder.rotationPointY = parent.bipedLeftArm.rotationPointY;
-                this.leftarmshoulder.rotationPointX = parent.bipedLeftArm.rotationPointX;
-                this.leftarmshoulder.rotateAngleY = parent.bipedLeftArm.rotateAngleY;
-                this.leftarmshoulder.rotateAngleX = parent.bipedLeftArm.rotateAngleX;
-                this.leftarmshoulder.rotateAngleZ = parent.bipedLeftArm.rotateAngleZ;
-                this.leftarmshoulder.render(par1);
-                this.rightarmshoulder.rotationPointZ = parent.bipedRightArm.rotationPointZ;
-                this.rightarmshoulder.rotationPointY = parent.bipedRightArm.rotationPointY;
-                this.rightarmshoulder.rotationPointX = parent.bipedRightArm.rotationPointX;
-                this.rightarmshoulder.rotateAngleY = parent.bipedRightArm.rotateAngleY;
-                this.rightarmshoulder.rotateAngleX = parent.bipedRightArm.rotateAngleX;
-                this.rightarmshoulder.rotateAngleZ = parent.bipedRightArm.rotateAngleZ;
-                this.rightarmshoulder.render(par1);
+                this.ArcoLeftShoulder.rotationPointZ = parent.bipedLeftArm.rotationPointZ;
+                this.ArcoLeftShoulder.rotationPointY = parent.bipedLeftArm.rotationPointY;
+                this.ArcoLeftShoulder.rotationPointX = parent.bipedLeftArm.rotationPointX;
+                this.ArcoLeftShoulder.rotateAngleY = parent.bipedLeftArm.rotateAngleY;
+                this.ArcoLeftShoulder.rotateAngleX = parent.bipedLeftArm.rotateAngleX;
+                this.ArcoLeftShoulder.rotateAngleZ = parent.bipedLeftArm.rotateAngleZ;
+                this.ArcoLeftShoulder.render(par1);
+
+                this.ArcoRightShoulder.rotationPointZ = parent.bipedRightArm.rotationPointZ;
+                this.ArcoRightShoulder.rotationPointY = parent.bipedRightArm.rotationPointY;
+                this.ArcoRightShoulder.rotationPointX = parent.bipedRightArm.rotationPointX;
+                this.ArcoRightShoulder.rotateAngleY = parent.bipedRightArm.rotateAngleY;
+                this.ArcoRightShoulder.rotateAngleX = parent.bipedRightArm.rotateAngleX;
+                this.ArcoRightShoulder.rotateAngleZ = parent.bipedRightArm.rotateAngleZ;
+                this.ArcoRightShoulder.render(par1);
             }
-            if (!hair.contains("nFR")) {
-                ModelRenderer var10000;
-                GL11.glPushMatrix();
-                this.transRot(par1, parent.bipedBody);
-                GL11.glScalef(1.0F, 1.0F, 1.0F);
-                this.FroB.render(par1);
-                float r = MathHelper.sin(this.rot3 * 0.02F) * 0.1F;
-                float r2 = MathHelper.cos(this.rot3 * 0.02F) * 0.1F;
-                float r3 = MathHelper.cos(this.rot3 * 0.14F) * 0.1F;
-                this.ftailS1.rotateAngleY = 0.2F;
-                if (mod_JBRA.a6P9H9B) {
-                    var10000 = this.ftailS1;
-                    var10000.rotateAngleY += MathHelper.cos(this.rot3 * 0.09F) * 0.2F - 0.2F + r2;
-                }
-
-                this.ftailS1.rotateAngleX = -0.3F;
-                this.ftailS2.rotateAngleY = 0.2F;
-                if (mod_JBRA.a6P9H9B) {
-                    var10000 = this.ftailS2;
-                    var10000.rotateAngleY += MathHelper.cos(this.rot3 * 0.09F) * 0.2F - 0.2F + r3 + r3;
-                }
-
-                this.ftailS2.rotateAngleX = 0.4F;
-                this.ftailS3.rotateAngleY = 0.1F;
-                if (mod_JBRA.a6P9H9B) {
-                    var10000 = this.ftailS3;
-                    var10000.rotateAngleY += MathHelper.cos(this.rot3 * 0.09F) * 0.1F - 0.1F + r2 + r3;
-                }
-
-                this.ftailS3.rotateAngleX = 0.6F;
-                if (mod_JBRA.a6P9H9B) {
-                    var10000 = this.ftailS3;
-                    var10000.rotateAngleX += MathHelper.sin(this.rot3 * 0.09F) * 0.4F + 0.3F;
-                }
-
-                this.ftailS4.rotateAngleY = 0.1F;
-                if (mod_JBRA.a6P9H9B) {
-                    var10000 = this.ftailS4;
-                    var10000.rotateAngleY += MathHelper.cos(this.rot3 * 0.09F) * 0.4F - 0.1F + r3;
-                }
-
-                this.ftailS4.rotateAngleX = 0.3F;
-                if (mod_JBRA.a6P9H9B) {
-                    var10000 = this.ftailS4;
-                    var10000.rotateAngleX += MathHelper.sin(this.rot3 * 0.09F) * 0.1F - 0.2F;
-                }
-
-                this.ftailS5.rotateAngleY = 0.2F;
-                if (mod_JBRA.a6P9H9B) {
-                    var10000 = this.ftailS5;
-                    var10000.rotateAngleY += MathHelper.cos(this.rot3 * 0.09F) * 0.4F - 0.2F + r2 + r3;
-                }
-
-                this.ftailS5.rotateAngleX = -0.2F;
-                if (mod_JBRA.a6P9H9B) {
-                    var10000 = this.ftailS5;
-                    var10000.rotateAngleX += MathHelper.sin(this.rot3 * 0.09F) * 0.1F - 0.3F;
-                }
-
-                this.ftailS6.rotateAngleY = 0.2F;
-                if (mod_JBRA.a6P9H9B) {
-                    var10000 = this.ftailS6;
-                    var10000.rotateAngleY += MathHelper.cos(this.rot3 * 0.09F) * 0.4F - 0.2F + r3 + r3;
-                }
-
-                this.ftailS6.rotateAngleX = -0.4F;
-                if (mod_JBRA.a6P9H9B) {
-                    var10000 = this.ftailS6;
-                    var10000.rotateAngleX += MathHelper.sin(this.rot3 * 0.09F) * 0.4F - 0.4F;
-                }
-
-                GL11.glPopMatrix();
-            }
-
             if (hair.contains("4")) {
-                this.Fro5b.rotateAngleY = parent.bipedBody.rotateAngleY;
-                this.Fro5b.rotateAngleX = parent.bipedBody.rotateAngleX;
-                this.Fro5b.rotationPointX = parent.bipedBody.rotationPointX;
-                this.Fro5b.rotationPointY = parent.bipedBody.rotationPointY;
-                this.Fro5b.render(par1);
-                this.Fro5r.rotationPointX = parent.bipedRightArm.rotationPointX;
-                this.Fro5r.rotationPointY = parent.bipedRightArm.rotationPointY;
-                this.Fro5r.rotationPointZ = parent.bipedRightArm.rotationPointZ;
-                this.Fro5r.rotateAngleY = parent.bipedRightArm.rotateAngleY;
-                this.Fro5r.rotateAngleX = parent.bipedRightArm.rotateAngleX;
-                this.Fro5r.rotateAngleZ = parent.bipedRightArm.rotateAngleZ;
-                this.Fro5r.render(par1);
-                this.Fro5l.rotationPointX = parent.bipedLeftArm.rotationPointX;
-                this.Fro5l.rotationPointY = parent.bipedLeftArm.rotationPointY;
-                this.Fro5l.rotationPointZ = parent.bipedLeftArm.rotationPointZ;
-                this.Fro5l.rotateAngleY = parent.bipedLeftArm.rotateAngleY;
-                this.Fro5l.rotateAngleX = parent.bipedLeftArm.rotateAngleX;
-                this.Fro5l.rotateAngleZ = parent.bipedLeftArm.rotateAngleZ;
-                this.Fro5l.render(par1);
+                // Back Spikes
+                this.BackSpikes.rotateAngleY = parent.bipedBody.rotateAngleY;
+                this.BackSpikes.rotateAngleX = parent.bipedBody.rotateAngleX;
+                this.BackSpikes.rotationPointX = parent.bipedBody.rotationPointX;
+                this.BackSpikes.rotationPointY = parent.bipedBody.rotationPointY;
+                this.BackSpikes.render(par1);
+
+                // Right Arm Spikes
+                this.RightArmSpike.rotationPointX = parent.bipedRightArm.rotationPointX;
+                this.RightArmSpike.rotationPointY = parent.bipedRightArm.rotationPointY;
+                this.RightArmSpike.rotationPointZ = parent.bipedRightArm.rotationPointZ;
+                this.RightArmSpike.rotateAngleY = parent.bipedRightArm.rotateAngleY;
+                this.RightArmSpike.rotateAngleX = parent.bipedRightArm.rotateAngleX;
+                this.RightArmSpike.rotateAngleZ = parent.bipedRightArm.rotateAngleZ;
+                this.RightArmSpike.render(par1);
+
+                // Left Arm Spikes
+                this.LeftArmSpike.rotationPointX = parent.bipedLeftArm.rotationPointX;
+                this.LeftArmSpike.rotationPointY = parent.bipedLeftArm.rotationPointY;
+                this.LeftArmSpike.rotationPointZ = parent.bipedLeftArm.rotationPointZ;
+                this.LeftArmSpike.rotateAngleY = parent.bipedLeftArm.rotateAngleY;
+                this.LeftArmSpike.rotateAngleX = parent.bipedLeftArm.rotateAngleX;
+                this.LeftArmSpike.rotateAngleZ = parent.bipedLeftArm.rotateAngleZ;
+                this.LeftArmSpike.render(par1);
             }
 
 
             if (hair.contains("0") || hair.contains("2") || hair.contains("1")) {
-                this.Fro0.rotateAngleY = parent.bipedHead.rotateAngleY;
-                this.Fro0.rotateAngleX = parent.bipedHead.rotateAngleX;
-                this.Fro0.rotationPointX = parent.bipedHead.rotationPointX;
-                this.Fro0.rotationPointY = parent.bipedHead.rotationPointY;
-                this.Fro0.render(par1);
+                // Head Spike Pair Bottom
+//                this.SpikePair.rotateAngleY = parent.bipedHead.rotateAngleY;
+//                this.SpikePair.rotateAngleX = parent.bipedHead.rotateAngleX;
+//                this.SpikePair.rotationPointX = parent.bipedHead.rotationPointX;
+//                this.SpikePair.rotationPointY = parent.bipedHead.rotationPointY;
+//                this.SpikePair.render(par1);
             }
 
             if (hair.contains("1") || hair.contains("2")) {
-                this.Fro1.rotateAngleY = parent.bipedHead.rotateAngleY;
-                this.Fro1.rotateAngleX = parent.bipedHead.rotateAngleX;
-                this.Fro1.rotationPointX = parent.bipedHead.rotationPointX;
-                this.Fro1.rotationPointY = parent.bipedHead.rotationPointY;
-                this.Fro1.render(par1);
+                // Head Spike Pair Extension
+//                this.SpikePairExtended.rotateAngleY = parent.bipedHead.rotateAngleY;
+//                this.SpikePairExtended.rotateAngleX = parent.bipedHead.rotateAngleX;
+//                this.SpikePairExtended.rotationPointX = parent.bipedHead.rotationPointX;
+//                this.SpikePairExtended.rotationPointY = parent.bipedHead.rotationPointY;
+//                this.SpikePairExtended.render(par1);
             }
 
             if (hair.contains("2")) {
-                this.Fro2.rotateAngleY = parent.bipedHead.rotateAngleY;
-                this.Fro2.rotateAngleX = parent.bipedHead.rotateAngleX;
-                this.Fro2.rotationPointX = parent.bipedHead.rotationPointX;
-                this.Fro2.rotationPointY = parent.bipedHead.rotationPointY;
-                this.Fro2.render(par1);
+                // Form 3 Long Head
+//                this.ThirdFormBigHead.rotateAngleY = parent.bipedHead.rotateAngleY;
+//                this.ThirdFormBigHead.rotateAngleX = parent.bipedHead.rotateAngleX;
+//                this.ThirdFormBigHead.rotationPointX = parent.bipedHead.rotationPointX;
+//                this.ThirdFormBigHead.rotationPointY = parent.bipedHead.rotationPointY;
+//                this.ThirdFormBigHead.render(par1);
             }
 
             if (hair.contains("4")) {
-                this.Fro5.rotateAngleY = parent.bipedHead.rotateAngleY;
-                this.Fro5.rotateAngleX = parent.bipedHead.rotateAngleX;
-                this.Fro5.rotationPointX = parent.bipedHead.rotationPointX;
-                this.Fro5.rotationPointY = parent.bipedHead.rotationPointY;
-                this.Fro5.render(par1);
-
+                // 5th Form Head Spikes
+//                this.CoolerHeadSpikes.rotateAngleY = parent.bipedHead.rotateAngleY;
+//                this.CoolerHeadSpikes.rotateAngleX = parent.bipedHead.rotateAngleX;
+//                this.CoolerHeadSpikes.rotationPointX = parent.bipedHead.rotationPointX;
+//                this.CoolerHeadSpikes.rotationPointY = parent.bipedHead.rotationPointY;
+//                this.CoolerHeadSpikes.render(par1);
             }
         }
 
     }
 
     public void renderHairs(DBCDisplay display) {
+        TextureManager textureManager = Minecraft.getMinecraft().renderEngine;
         if (display.hairCode.length() < 5) {
             if (display.hairCode.equalsIgnoreCase("bald"))
                 return;
@@ -678,7 +448,7 @@ public class ModelNPCDBC extends ModelBase {
             hairColor = getDefaultColor("bodycm", 5);
         RenderPlayerJBRA.glColor3f(hairColor);
 
-        tex.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
+        textureManager.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
 
         boolean hasHairAnimations = true;
         int trTime = canUse ? 2 : 200;
@@ -1067,10 +837,7 @@ public class ModelNPCDBC extends ModelBase {
         } else if (race == 5)
             if (type.equalsIgnoreCase("bodycm"))
                 return 16757199;
-
-
         return 0;
-
     }
 
     public String getFaceTexture(DBCDisplay display, String t) {
@@ -1086,8 +853,6 @@ public class ModelNPCDBC extends ModelBase {
             tex = "jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + t + ".png";
         else if (race == DBCRace.MAJIN)
             tex = "jinryuudragonbc:cc/majin/majin" + t + ".png";
-
-
         return tex;
     }
 
@@ -1107,7 +872,7 @@ public class ModelNPCDBC extends ModelBase {
         int a = 0;
         try {
             a = Integer.parseInt(s.charAt(n) + "" + s.charAt(n + 1) + "");
-        } catch (NumberFormatException var3) {
+        } catch (NumberFormatException ignored) {
         }
         return s.length() > n ? a : 0;
     }

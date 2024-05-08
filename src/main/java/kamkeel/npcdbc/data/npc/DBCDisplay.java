@@ -21,7 +21,7 @@ public class DBCDisplay implements IDBCDisplay {
 
     public int noseType = 1, mouthType = 1, eyeType = 0, arcoState;
 
-    public boolean hasCoolerMask = false;
+    public boolean hasArcoMask = false;
     public int auraID = -1;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
 
@@ -44,12 +44,9 @@ public class DBCDisplay implements IDBCDisplay {
             comp.setInteger("bodyC3", bodyC3);
 
             comp.setInteger("arcoState", arcoState);
-
-            comp.setBoolean("hasCoolerMask", hasCoolerMask);
+            comp.setBoolean("hasArcoMask", hasArcoMask);
 
             comp.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
-
-
         }
         return comp;
     }
@@ -73,17 +70,15 @@ public class DBCDisplay implements IDBCDisplay {
             bodyC3 = comp.getInteger("bodyC3");
 
             arcoState = comp.getInteger("arcoState");
-            hasCoolerMask = comp.getBoolean("hasCoolerMask");
+            hasArcoMask = comp.getBoolean("hasArcoMask");
 
             enumAuraTypes = EnumAuraTypes.values()[comp.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
-
         }
     }
 
     @Override
     public void setColor(String type, int color) {
         switch (type.toLowerCase()) {
-
             case "hair":
                 hairColor = color;
                 break;
@@ -201,12 +196,12 @@ public class DBCDisplay implements IDBCDisplay {
 
     @Override
     public boolean hasCoolerMask() {
-        return hasCoolerMask;
+        return hasArcoMask;
     }
 
     @Override
     public void hasCoolerMask(boolean has) {
-        hasCoolerMask = has;
+        hasArcoMask = has;
     }
 
     @Override
