@@ -28,6 +28,8 @@ public class DBCRightArms extends ModelDBCPartInterface {
         this.ArcoRightShoulder.addBox(-6.0F, -3.0F, -3.0F, 7, 4, 6);
         this.ArcoRightShoulder.setRotationPoint(-5.0F, 2.0F, 0.0F);
         this.ArcoRightShoulder.setTextureSize(128, 64);
+        this.addChild(ArcoRightShoulder);
+
 
         this.RightArmSpike = new ModelRenderer(base, 0, 0);
         this.RightArmSpike.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
@@ -37,8 +39,6 @@ public class DBCRightArms extends ModelDBCPartInterface {
         this.rightArmSpikePart.setRotationPoint(0.0F, 0.0F, 0.0F);
         this.setRotation(this.rightArmSpikePart, 0.0F, 0.0F, (float) (-Math.PI / 6));
         this.RightArmSpike.addChild(rightArmSpikePart);
-
-        this.addChild(ArcoRightShoulder);
         this.addChild(RightArmSpike);
     }
 
@@ -62,8 +62,9 @@ public class DBCRightArms extends ModelDBCPartInterface {
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/2B20.png");
             useColor = 2;
             bodyC2 = display.getCurrentBodyColor("c2");
-            useColor = 0;
             super.render(par1);
+
+            useColor = 0;
         } else {
             super.render(par1);
         }

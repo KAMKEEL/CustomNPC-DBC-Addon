@@ -62,6 +62,7 @@ public class DBCLeftArms extends ModelDBCPartInterface {
             useColor = 2;
             bodyC2 = display.getCurrentBodyColor("c2");
             super.render(par1);
+
             useColor = 0;
         } else {
              super.render(par1);
