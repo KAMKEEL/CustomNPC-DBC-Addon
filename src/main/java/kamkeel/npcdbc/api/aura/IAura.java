@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.api.aura;
 
+import kamkeel.npcdbc.data.aura.Aura;
 import net.minecraft.entity.player.EntityPlayer;
 
 public interface IAura {
@@ -41,6 +42,14 @@ public interface IAura {
      */
 
     IAuraDisplay getDisplay();
+
+    int getSecondaryAuraID();
+
+    IAura getSecondaryAura();
+
+    void setSecondaryAura(int id);
+
+    void setSecondaryAura(Aura aura);
 
     /**
      * @return Saves all Aura data. Always call this when changing any aura data

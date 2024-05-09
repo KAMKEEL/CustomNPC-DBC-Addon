@@ -15,6 +15,7 @@ public class Aura implements IAura {
     public int id = -1;
     public String name = "", menuName = "§aNEW";
 
+    public int secondaryAuraID = -1;
     public AuraDisplay display = new AuraDisplay(this);
 
     public NBTTagCompound writeToNBT() {
@@ -22,6 +23,7 @@ public class Aura implements IAura {
         compound.setInteger("ID", id);
         compound.setString("name", name);
         compound.setString("menuName", menuName);
+        compound.setInteger("secondaryAuraID", secondaryAuraID);
 
         display.writeToNBT(compound);
 
@@ -38,6 +40,8 @@ public class Aura implements IAura {
         name = compound.getString("name");
         menuName = compound.getString("menuName");
 
+        secondaryAuraID = compound.getInteger("secondaryAuraID");
+
         display.readFromNBT(compound);
 
     }
@@ -52,6 +56,7 @@ public class Aura implements IAura {
     public void setName(String name) {
         this.name = name;
     }
+
 
     @Override
     public String getMenuName() {
@@ -108,6 +113,36 @@ public class Aura implements IAura {
     @Override
     public IAuraDisplay getDisplay() {
         return this.display;
+    }
+
+
+    @Override
+    public int getSecondaryAuraID() {
+        return secondaryAuraID;
+    }
+
+    public Aura getSecondaryAur() {
+        if (AuraController.Instance.has(secondaryAuraID))
+            return (Aura) AuraController.Instance.get(id);
+        return null;
+    }
+
+    @Override
+    public IAura getSecondaryAura() {
+        if (AuraController.Instance.has(secondaryAuraID))
+            return AuraController.Instance.get(id);
+        return null;
+    }
+
+    @Override
+    public void setSecondaryAura(int id) {
+        if (AuraController.Instance.has(id))
+            this.secondaryAuraID = id;
+    }
+
+    @Override
+    public void setSecondaryAura(Aura aura) {
+        setSecondaryAura(aura.id);
     }
 
     @Override
