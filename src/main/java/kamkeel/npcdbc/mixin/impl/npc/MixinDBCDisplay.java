@@ -24,7 +24,7 @@ public class MixinDBCDisplay implements INPCDisplay {
 
     @Inject(method = "<init>", at = @At("TAIL"), remap = false)
     public void init(EntityNPCInterface npc, CallbackInfo ci) {
-        dbcDisplay = new DBCDisplay();
+        dbcDisplay = new DBCDisplay(npc);
     }
 
     @Inject(method = "writeToNBT", at = @At("HEAD"), remap = false)

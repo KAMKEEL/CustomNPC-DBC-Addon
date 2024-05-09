@@ -8,18 +8,19 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.DataAI;
+import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
 public class DBCDisplay implements IDBCDisplay {
 
+    private EntityNPCInterface npc;
     public boolean enabled = false;
 
     // Hair Display //
     public String hairCode = "", hairType = "";
     public int hairColor = -1;
-
-
 
     // Race Display //
     public int race = -1;
@@ -44,6 +45,10 @@ public class DBCDisplay implements IDBCDisplay {
 
     // Server Side Usage
     public float rageValue;
+
+    public DBCDisplay(EntityNPCInterface npc){
+        this.npc = npc;
+    }
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
         comp.setBoolean("DBCDisplayEnabled", enabled);
