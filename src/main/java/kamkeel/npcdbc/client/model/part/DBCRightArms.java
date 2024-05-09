@@ -26,7 +26,7 @@ public class DBCRightArms extends ModelDBCPartInterface {
 
         this.ArcoRightShoulder = new ModelRenderer(base, 38, 0);
         this.ArcoRightShoulder.addBox(-6.0F, -3.0F, -3.0F, 7, 4, 6);
-        this.ArcoRightShoulder.setRotationPoint(-5.0F, 2.0F, 0.0F);
+        this.ArcoRightShoulder.setRotationPoint(0, 0F, 0.0F);
         this.ArcoRightShoulder.setTextureSize(128, 64);
         this.addChild(ArcoRightShoulder);
 
@@ -45,9 +45,6 @@ public class DBCRightArms extends ModelDBCPartInterface {
     @Override
     public void render(float par1) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
-        this.ArcoRightShoulder.rotationPointZ = base.bipedRightArm.rotationPointZ;
-        this.ArcoRightShoulder.rotationPointY = base.bipedRightArm.rotationPointY;
-        this.ArcoRightShoulder.rotationPointX = base.bipedRightArm.rotationPointX;
         this.ArcoRightShoulder.rotateAngleY = base.bipedRightArm.rotateAngleY;
         this.ArcoRightShoulder.rotateAngleX = base.bipedRightArm.rotateAngleX;
         this.ArcoRightShoulder.rotateAngleZ = base.bipedRightArm.rotateAngleZ;
