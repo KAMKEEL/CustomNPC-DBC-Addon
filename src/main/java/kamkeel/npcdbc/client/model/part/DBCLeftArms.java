@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.model.part;
 
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
+import kamkeel.npcdbc.client.model.ModelNPCDBC;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.client.model.ModelRenderer;
@@ -52,12 +53,12 @@ public class DBCLeftArms extends ModelDBCPartInterface {
         if(display.useSkin){;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/0B20.png");
             useColor = 0;
-            bodyCM = display.getCurrentBodyColor("cm");
+            bodyCM = ModelNPCDBC.getBodyColor(display,"bodycm",display.race);
             super.render(par1);
 
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/2B20.png");
             useColor = 2;
-            bodyC2 = display.getCurrentBodyColor("c2");
+            bodyC2 =ModelNPCDBC.getBodyColor(display,"bodyc2",display.race);
             super.render(par1);
 
             useColor = 0;
