@@ -15,7 +15,7 @@ import noppes.npcs.util.ValueUtil;
 
 public class DBCDisplay implements IDBCDisplay {
 
-    private EntityNPCInterface npc;
+    private final EntityNPCInterface npc;
     public boolean enabled = false;
 
     // Hair Display //
@@ -52,65 +52,75 @@ public class DBCDisplay implements IDBCDisplay {
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
         comp.setBoolean("DBCDisplayEnabled", enabled);
         if (enabled) {
-            comp.setInteger("DBCBodyType", bodyType);
-            comp.setString("DBCHairType", hairType);
-            comp.setString("DBCHair", hairCode);
+            NBTTagCompound dbcDisplay = new NBTTagCompound();
 
-            comp.setInteger("DBCHairColor", hairColor);
-            comp.setInteger("DBCEyeColor", eyeColor);
+            dbcDisplay.setInteger("DBCBodyType", bodyType);
+            dbcDisplay.setString("DBCHairType", hairType);
+            dbcDisplay.setString("DBCHair", hairCode);
 
-            comp.setInteger("DBCRace", race);
-            comp.setBoolean("DBCUseSkin", useSkin);
-            comp.setInteger("DBCBodyCM", bodyCM);
-            comp.setInteger("DBCBodyC1", bodyC1);
-            comp.setInteger("DBCBodyC2", bodyC2);
-            comp.setInteger("DBCBodyC3", bodyC3);
-            comp.setInteger("DBCArcoState", arcoState);
+            dbcDisplay.setInteger("DBCHairColor", hairColor);
+            dbcDisplay.setInteger("DBCEyeColor", eyeColor);
 
-            comp.setBoolean("DBCArcoMask", hasArcoMask);
+            dbcDisplay.setInteger("DBCRace", race);
+            dbcDisplay.setBoolean("DBCUseSkin", useSkin);
+            dbcDisplay.setInteger("DBCBodyCM", bodyCM);
+            dbcDisplay.setInteger("DBCBodyC1", bodyC1);
+            dbcDisplay.setInteger("DBCBodyC2", bodyC2);
+            dbcDisplay.setInteger("DBCBodyC3", bodyC3);
+            dbcDisplay.setInteger("DBCArcoState", arcoState);
 
-            comp.setInteger("DBCRage", rage);
-            comp.setBoolean("DBCIsTransforming", isTransforming);
-            comp.setInteger("DBCFormID", formID);
-            comp.setFloat("DBCFormLevel", formLevel);
-            comp.setInteger("DBCSelectedForm", selectedForm);
+            dbcDisplay.setBoolean("DBCArcoMask", hasArcoMask);
 
-            comp.setInteger("DBCAuraID", auraID);
-            comp.setBoolean("DBCAuraOn", auraOn);
-            comp.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
+            dbcDisplay.setInteger("DBCRage", rage);
+            dbcDisplay.setBoolean("DBCIsTransforming", isTransforming);
+            dbcDisplay.setInteger("DBCFormID", formID);
+            dbcDisplay.setFloat("DBCFormLevel", formLevel);
+            dbcDisplay.setInteger("DBCSelectedForm", selectedForm);
+
+            dbcDisplay.setInteger("DBCAuraID", auraID);
+            dbcDisplay.setBoolean("DBCAuraOn", auraOn);
+            dbcDisplay.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
+
+            comp.setTag("DBCDisplay", dbcDisplay);
+        } else {
+            comp.removeTag("DBCDisplay");
         }
         return comp;
     }
 
-    public void readFromNBT(NBTTagCompound compound) {
-        enabled = compound.getBoolean("DBCDisplayEnabled");
+    public void readFromNBT(NBTTagCompound comp) {
+        enabled = comp.getBoolean("DBCDisplayEnabled");
         if (enabled) {
-            race = compound.getInteger("DBCRace");
-            auraID = compound.getInteger("DBCAuraID");
-            auraOn = compound.getBoolean("DBCAuraOn");
+            NBTTagCompound dbcDisplay = comp.getCompoundTag("DBCDisplay");
 
-            useSkin = compound.getBoolean("DBCUseSkin");
-            bodyType = compound.getInteger("DBCBodyType");
-            hairType = compound.getString("DBCHairType");
-            hairCode = compound.getString("DBCHair");
+            race = dbcDisplay.getInteger("DBCRace");
+            auraID = dbcDisplay.getInteger("DBCAuraID");
+            auraOn = dbcDisplay.getBoolean("DBCAuraOn");
 
-            hairColor = compound.getInteger("DBCHairColor");
-            eyeColor = compound.getInteger("DBCEyeColor");
-            bodyCM = compound.getInteger("DBCBodyCM");
-            bodyC1 = compound.getInteger("DBCBodyC1");
-            bodyC2 = compound.getInteger("DBCBodyC2");
-            bodyC3 = compound.getInteger("DBCBodyC3");
+            useSkin = dbcDisplay.getBoolean("DBCUseSkin");
+            bodyType = dbcDisplay.getInteger("DBCBodyType");
+            hairType = dbcDisplay.getString("DBCHairType");
+            hairCode = dbcDisplay.getString("DBCHair");
 
-            arcoState = compound.getInteger("DBCArcoState");
-            hasArcoMask = compound.getBoolean("DBCArcoMask");
+            hairColor = dbcDisplay.getInteger("DBCHairColor");
+            eyeColor = dbcDisplay.getInteger("DBCEyeColor");
+            bodyCM = dbcDisplay.getInteger("DBCBodyCM");
+            bodyC1 = dbcDisplay.getInteger("DBCBodyC1");
+            bodyC2 = dbcDisplay.getInteger("DBCBodyC2");
+            bodyC3 = dbcDisplay.getInteger("DBCBodyC3");
 
-            auraID = compound.getInteger("DBCAuraID");
-            enumAuraTypes = EnumAuraTypes.values()[compound.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
+            arcoState = dbcDisplay.getInteger("DBCArcoState");
+            hasArcoMask = dbcDisplay.getBoolean("DBCArcoMask");
 
-            rage = compound.getInteger("DBCRage");
-            isTransforming = compound.getBoolean("DBCIsTransforming");
-            formID = compound.getInteger("DBCFormID");
-            selectedForm = compound.getInteger("DBCSelectedForm");
+            auraID = dbcDisplay.getInteger("DBCAuraID");
+            enumAuraTypes = EnumAuraTypes.values()[dbcDisplay.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
+
+            rage = dbcDisplay.getInteger("DBCRage");
+            isTransforming = dbcDisplay.getBoolean("DBCIsTransforming");
+            formID = dbcDisplay.getInteger("DBCFormID");
+            selectedForm = dbcDisplay.getInteger("DBCSelectedForm");
+        } else {
+            comp.removeTag("DBCDisplay");
         }
     }
 

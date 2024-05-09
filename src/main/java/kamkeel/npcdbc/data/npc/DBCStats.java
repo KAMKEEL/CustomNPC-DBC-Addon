@@ -10,16 +10,22 @@ public class DBCStats implements IDBCStats {
     public int defensePenetration = 10;
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
-        nbttagcompound.setBoolean("DBCEnabled", enabled);
+        nbttagcompound.setBoolean("DBCStatsEnabled", enabled);
         if (enabled) {
-            nbttagcompound.setBoolean("DBCFriendlyFist", friendlyFist);
-            nbttagcompound.setBoolean("DBCIgnoreDex", ignoreDex);
-            nbttagcompound.setBoolean("DBCIgnoreBlock", ignoreBlock);
-            nbttagcompound.setBoolean("DBCIgnoreEndurance", ignoreEndurance);
-            nbttagcompound.setBoolean("DBCIgnoreKiProtection", ignoreKiProtection);
-            nbttagcompound.setBoolean("DBCIgnoreFormReduction", ignoreFormReduction);
-            nbttagcompound.setBoolean("DBCIsDefensePen", hasDefensePenetration);
-            nbttagcompound.setInteger("DBCDefensePen", defensePenetration);
+            NBTTagCompound dbcStats = new NBTTagCompound();
+
+            dbcStats.setBoolean("DBCFriendlyFist", friendlyFist);
+            dbcStats.setBoolean("DBCIgnoreDex", ignoreDex);
+            dbcStats.setBoolean("DBCIgnoreBlock", ignoreBlock);
+            dbcStats.setBoolean("DBCIgnoreEndurance", ignoreEndurance);
+            dbcStats.setBoolean("DBCIgnoreKiProtection", ignoreKiProtection);
+            dbcStats.setBoolean("DBCIgnoreFormReduction", ignoreFormReduction);
+            dbcStats.setBoolean("DBCIsDefensePen", hasDefensePenetration);
+            dbcStats.setInteger("DBCDefensePen", defensePenetration);
+
+            nbttagcompound.setTag("DBCStats", dbcStats);
+        } else {
+            nbttagcompound.removeTag("DBCStats");
         }
         return nbttagcompound;
     }
@@ -27,14 +33,18 @@ public class DBCStats implements IDBCStats {
     public void readFromNBT(NBTTagCompound nbttagcompound) {
         enabled = nbttagcompound.getBoolean("DBCEnabled");
         if (enabled) {
-            friendlyFist = nbttagcompound.getBoolean("DBCFriendlyFist");
-            ignoreDex = nbttagcompound.getBoolean("DBCIgnoreDex");
-            ignoreBlock = nbttagcompound.getBoolean("DBCIgnoreBlock");
-            ignoreEndurance = nbttagcompound.getBoolean("DBCIgnoreEndurance");
-            ignoreKiProtection = nbttagcompound.getBoolean("DBCIgnoreKiProtection");
-            ignoreFormReduction = nbttagcompound.getBoolean("DBCIgnoreFormReduction");
-            hasDefensePenetration = nbttagcompound.getBoolean("DBCIsDefensePen");
-            defensePenetration = nbttagcompound.getInteger("DBCDefensePen");
+            NBTTagCompound dbcStats = nbttagcompound.getCompoundTag("DBCStats");
+
+            friendlyFist = dbcStats.getBoolean("DBCFriendlyFist");
+            ignoreDex = dbcStats.getBoolean("DBCIgnoreDex");
+            ignoreBlock = dbcStats.getBoolean("DBCIgnoreBlock");
+            ignoreEndurance = dbcStats.getBoolean("DBCIgnoreEndurance");
+            ignoreKiProtection = dbcStats.getBoolean("DBCIgnoreKiProtection");
+            ignoreFormReduction = dbcStats.getBoolean("DBCIgnoreFormReduction");
+            hasDefensePenetration = dbcStats.getBoolean("DBCIsDefensePen");
+            defensePenetration = dbcStats.getInteger("DBCDefensePen");
+        } else {
+            nbttagcompound.removeTag("DBCStats");
         }
     }
 
