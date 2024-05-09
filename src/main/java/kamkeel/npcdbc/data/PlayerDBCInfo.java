@@ -315,12 +315,12 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
-        
-        compound.setTag("DBCData", dbcCompound);
+
+        compound.setTag("DBCInfo", dbcCompound);
     }
 
     public void loadNBTData(NBTTagCompound compound) {
-        NBTTagCompound dbcCompound = compound.getCompoundTag("DBCData");
+        NBTTagCompound dbcCompound = compound.getCompoundTag("DBCInfo");
 
         currentForm = dbcCompound.getInteger("CurrentForm");
         selectedForm = dbcCompound.getInteger("SelectedForm");
