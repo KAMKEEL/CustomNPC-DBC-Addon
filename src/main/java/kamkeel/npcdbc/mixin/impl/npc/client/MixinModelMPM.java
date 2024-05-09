@@ -71,8 +71,9 @@ public abstract class MixinModelMPM extends ModelNPCMale {
     @Inject(method = "renderBody", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.BEFORE), cancellable = true)
     private void renderDBCBody(EntityCustomNpc entity, float f, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
-        if (!isArmor && display.enabled)
+        if (!isArmor && display.enabled){
             NPCDBCModel.renderAllBody(display, bipedBody);
+        }
     }
 
     @Inject(method = "renderLegs", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/part/ModelLegs;render(F)V", shift = At.Shift.BEFORE), cancellable = true)

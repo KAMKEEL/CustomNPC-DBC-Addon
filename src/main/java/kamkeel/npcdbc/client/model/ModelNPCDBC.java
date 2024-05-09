@@ -5,10 +5,7 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JBRA.mod_JBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
-import kamkeel.npcdbc.client.model.part.DBCArms;
-import kamkeel.npcdbc.client.model.part.DBCBody;
-import kamkeel.npcdbc.client.model.part.DBCHorns;
-import kamkeel.npcdbc.client.model.part.DBCEars;
+import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
@@ -37,8 +34,8 @@ public class ModelNPCDBC extends ModelBase {
     public DBCHorns DBCHorns;
     public DBCEars DBCEars;
     public DBCBody DBCBody;
-    public DBCArms DBCRightArm;
-    public DBCArms DBCLeftArm;
+    public DBCRightArms DBCRightArms;
+    public DBCLeftArms DBCLeftArms;
 
     // Face
     public ModelRenderer nose;
@@ -52,8 +49,8 @@ public class ModelNPCDBC extends ModelBase {
 
     public ModelNPCDBC(ModelMPM mpm) {
         this.parent = mpm;
-        this.textureHeight = 32;
-        this.textureWidth = 64;
+        this.textureHeight = mpm.textureHeight;
+        this.textureWidth =  mpm.textureWidth;
         // Init Hair
         this.hairall = new ModelRendererJBRA[224];
         int hossz;
@@ -110,16 +107,16 @@ public class ModelNPCDBC extends ModelBase {
         this.parent.bipedHead.addChild(DBCEars = new DBCEars(mpm));
         this.parent.bipedBody.addChild(DBCBody = new DBCBody(mpm));
 
-        this.parent.bipedRightArm.addChild(DBCRightArm = new DBCArms(mpm, true));
-        this.parent.bipedLeftArm.addChild(DBCLeftArm = new DBCArms(mpm, false));
+        this.parent.bipedRightArm.addChild(this.DBCRightArms = new DBCRightArms(mpm));
+        this.parent.bipedLeftArm.addChild(this.DBCLeftArms = new DBCLeftArms(mpm));
     }
 
     public void setPlayerData(EntityCustomNpc entity) {
         this.DBCHorns.setData(entity.modelData, entity);
         this.DBCEars.setData(entity.modelData, entity);
         this.DBCBody.setData(entity.modelData, entity);
-        this.DBCRightArm.setData(entity.modelData, entity);
-        this.DBCLeftArm.setData(entity.modelData, entity);
+        this.DBCRightArms.setData(entity.modelData, entity);
+        this.DBCLeftArms.setData(entity.modelData, entity);
     }
 
     public void renderFace(DBCDisplay display) {

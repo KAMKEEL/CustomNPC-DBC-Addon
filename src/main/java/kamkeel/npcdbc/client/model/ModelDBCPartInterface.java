@@ -62,7 +62,7 @@ public abstract class ModelDBCPartInterface extends ModelRenderer {
         TintData tintData = this.entity.display.tintData;
         boolean showColor = !this.base.isArmor && tintData.processColor(this.entity.hurtTime > 0 || this.entity.deathTime > 0);
         if (showColor) {
-            int color = this.bodyCM;;
+            int color = this.bodyCM;
             switch (useColor){
                 case 1:
                     color = this.bodyC1;
