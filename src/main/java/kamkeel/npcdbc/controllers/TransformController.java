@@ -5,7 +5,6 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -25,6 +24,7 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.entity.EntityCustomNpc;
+import noppes.npcs.util.ValueUtil;
 
 import static JinRyuu.JRMCore.JRMCoreH.isInBaseForm;
 import static JinRyuu.JRMCore.JRMCoreH.rc_arc;
@@ -176,38 +176,30 @@ public class TransformController {
     }
 
     public static void npcDecrementRage(EntityCustomNpc npc, DBCDisplay display) {
-        if (display.rage == 0)
+        if (display.rage <= 0)
             return;
 
-        if (display.rage > 0) {
-            if (display.rage > 100)
-                display.rage = 100;
-            if (display.rage - (display.rageValue) > 0)
-                display.rage -= (display.rageValue);
-            else {
-                display.rage = 0;
-                display.rageValue = 0;
-                display.selectedForm = -1;
-            }
-            if (display.rage <= 50 && display.isTransforming) {
-                display.isTransforming = false;
-            }
-            npc.updateClient();
+
+        display.rage = (int) ValueUtil.clamp(display.rage - display.rageValue, 0, 100);
+
+        if (display.rage == 0) {
+            display.rageValue = 0;
+            display.selectedForm = -1;
+        } else if (display.rage <= 50 && display.isTransforming) {
+            display.isTransforming = false;
         }
+        npc.updateClient();
+
     }
 
-    public static void npcDescend(EntityCustomNpc npc) {
+    public static void npcDescend(EntityCustomNpc npc, int id) {
         DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
-
         Form current = display.getCurrentForm();
-        if(current == null)
+        if (current == null)
             return;
 
-        display.rageValue = 0;
-
-        IForm parent = current.getParent();
-        if(parent != null)
-            display.formID = parent.getID();
+        if (FormController.Instance.has(id))
+            display.formID = id;
         else
             display.formID = -1;
 
