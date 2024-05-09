@@ -108,7 +108,7 @@ public class FusionHandler {
     }
 
     public static void checkNearbyPlayers(EntityPlayer player){
-        ItemStack potara = player.getCurrentArmor(0);
+        ItemStack potara = player.getCurrentArmor(3);
         if(potara == null)
             return;
         if(!(potara.getItem() instanceof ItemPotara))
@@ -140,7 +140,7 @@ public class FusionHandler {
     }
 
     private static boolean doesPlayerHaveEarring(EntityPlayer player, int tier, boolean isRight, String hashToCheck){
-        ItemStack potara = player.getCurrentArmor(0);
+        ItemStack potara = player.getCurrentArmor(3);
         if(potara == null)
             return false;
         if(!(potara.getItem() instanceof ItemPotara))
