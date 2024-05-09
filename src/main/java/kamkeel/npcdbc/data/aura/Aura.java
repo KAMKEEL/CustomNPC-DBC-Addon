@@ -123,7 +123,7 @@ public class Aura implements IAura {
 
     public Aura getSecondaryAur() {
         if (AuraController.Instance.has(secondaryAuraID))
-            return (Aura) AuraController.Instance.get(id);
+            return (Aura) AuraController.Instance.get(secondaryAuraID);
         return null;
     }
 
@@ -138,11 +138,17 @@ public class Aura implements IAura {
     public void setSecondaryAura(int id) {
         if (AuraController.Instance.has(id))
             this.secondaryAuraID = id;
+        else
+            secondaryAuraID = -1;
     }
 
     @Override
     public void setSecondaryAura(Aura aura) {
         setSecondaryAura(aura.id);
+    }
+
+    public boolean hasSecondaryAura() {
+        return AuraController.Instance.has(secondaryAuraID);
     }
 
     @Override

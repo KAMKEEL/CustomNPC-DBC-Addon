@@ -98,13 +98,13 @@ public class DBCDisplay implements IDBCDisplay {
             arcoState = compound.getInteger("DBCArcoState");
             hasArcoMask = compound.getBoolean("DBCArcoMask");
 
-            auraID = compound.getInteger("auraID");
+            auraID = compound.getInteger("DBCAuraID");
             enumAuraTypes = EnumAuraTypes.values()[compound.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
 
-            rage = compound.getInteger("rage");
-            isTransforming = compound.getBoolean("isTransforming");
-            formID = compound.getInteger("formID");
-            selectedForm = compound.getInteger("selectedForm");
+            rage = compound.getInteger("DBCRage");
+            isTransforming = compound.getBoolean("DBCIsTransforming");
+            formID = compound.getInteger("DBCFormID");
+            selectedForm = compound.getInteger("DBCSelectedForm");
         }
     }
 
@@ -308,12 +308,13 @@ public class DBCDisplay implements IDBCDisplay {
 
     @Override
     public void setAura(IAura aura) {
-        this.auraID = aura.getID();
+        setAura(aura.getID());
     }
 
     @Override
     public void setAura(int auraID) {
-        this.auraID = auraID;
+        if (AuraController.Instance.has(auraID))
+            this.auraID = auraID;
     }
 
     @Override

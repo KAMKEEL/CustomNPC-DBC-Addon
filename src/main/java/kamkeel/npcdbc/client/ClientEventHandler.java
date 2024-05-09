@@ -23,10 +23,13 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.SoundHelper;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.client.controllers.ScriptClientSound;
 import noppes.npcs.entity.EntityCustomNpc;
+import noppes.npcs.entity.EntityNPCInterface;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
@@ -179,134 +182,149 @@ public class ClientEventHandler {
             if (aura == null)
                 return;
             if (npc.ticksExisted % 5 == 0 && (display.auraOn || display.isTransforming)) {
+                spawnAura(npc, aura);
+                if (aura.hasSecondaryAura())
+                    spawnAura(npc, aura.getSecondaryAur());
 
 
-                EntityAura2 aur = new EntityAura2(npc.worldObj, Utility.getEntityID(npc), aura.display.color1, 0, 0, 100, false);
-                boolean kk = aura.display.kaiokenOn;
-                if (aura.display.hasColor("color1"))
-                    aur.setCol(aura.display.color1);
-                if (aura.display.hasColor("color2"))
-                    aur.setColL2(aura.display.color2);
-                if (aura.display.hasColor("color3"))
-                    aur.setColL3(aura.display.color3);
-
-                if (aura.display.hasSpeed())
-                    aur.setSpd((int) aura.display.speed);
-                else
-                    aur.setSpd(40);
-
-                if (aura.display.hasAlpha("aura"))
-                    aur.setAlp((float) aura.display.alpha / 255);
-                else
-                    aur.setAlp(0.4f);
-
-                if (aura.display.hasSize())
-                    ((IEntityAura) aur).setSize(aura.display.size);
-
-                ((IEntityAura) aur).setHasLightning(aura.display.hasLightning);
-                ((IEntityAura) aur).setLightningColor(aura.display.lightningColor);
-
-                if (aura.display.hasAlpha("lightning"))
-                    ((IEntityAura) aur).setLightningAlpha(aura.display.lightningAlpha);
-                else
-                    ((IEntityAura) aur).setLightningAlpha(255);
-
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //Forms
-                Form form = display.getCurrentForm();
-                if (form != null) {
-                    FormDisplay d = form.display;
-                    if (d.hasColor("aura"))
-                        aur.setCol(d.auraColor);
-                }
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-
-
-                String sound = "jinryuudragonbc:DBC.aura";
-
-                int mimicColor = EnumPlayerAuraTypes.getManualAuraColor(aura.display.type);
-                if (mimicColor != -1)
-                    aur.setCol(mimicColor);
-
-                if (aura.display.type == EnumPlayerAuraTypes.SaiyanGod) {
-                    aur.setAlp(0.2F);
-                    aur.setTex("aurai");
-                    aur.setTexL2("aurai2");
-                    aur.setColL2(16747301);
-                    sound = "jinryuudragonbc:1610.aurag";
-                } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlue) {
-                    aur.setSpd(40);
-                    aur.setAlp(0.5F);
-                    aur.setTex("aurag");
-                    aur.setColL3(15727354);
-                    aur.setTexL3("auragb");
-                } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlueEvo) {
-                    aur.setSpd(40);
-                    aur.setAlp(0.5F);
-                    aur.setTex("aurag");
-                    aur.setColL3(12310271);
-                    aur.setTexL3("auragb");
-                } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRose) {
-                    aur.setSpd(30);
-                    aur.setAlp(0.2F);
-                    aur.setTex("aurai");
-                    aur.setTexL2("aurai2");
-                    aur.setColL2(7872713);
-                } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRoseEvo) {
-                    aur.setSpd(30);
-                    aur.setAlp(0.2F);
-                    aur.setTex("aurai");
-                    aur.setTexL2("aurai2");
-                    aur.setColL2(8592109);
-                } else if (aura.display.type == EnumPlayerAuraTypes.UI) {
-                    aur.setSpd(100);
-                    aur.setAlp(0.15F);
-                    aur.setTex("auras");
-                    aur.setCol(15790320);
-                    aur.setColL3(4746495);
-                    aur.setTexL3("auragb");
-                    sound = "jinryuudragonbc:DBC5.aura_ui";
-                } else if (aura.display.type == EnumPlayerAuraTypes.GoD) {
-                    aur.setSpd(30);
-                    aur.setAlp(0.2F);
-                    aur.setTex("aurag");
-                    aur.setTexL3("auragb");
-                    aur.setColL2(12464847);
-                    sound = "jinryuudragonbc:DBC5.aura_destroyer";
-                } else if (aura.display.type == EnumPlayerAuraTypes.UltimateArco) {
-                    aur.setAlp(0.5F);
-                    aur.setTex("aurau");
-                    aur.setTexL2("aurau2");
-                    aur.setColL2(16776724);
-                }
-
-                if (EnumPlayerAuraTypes.isBlue(aura.display.type)) {
-                    if (kk)
-                        sound = "jinryuudragonbc:1610.aurabk";
-                    else
-                        sound = "jinryuudragonbc:1610.aurab";
-                }
-
-                float soundRange = 50;
-                if (aura.display.hasSound())
-                    sound = aura.display.auraSound;
-
-                ScriptClientSound s = SoundHelper.getClientSound(npc, sound); //already existing aura sound
-                if (s == null) {
-                    PacketHandler.Instance.sendToServer(new PlaySound(sound, soundRange, Utility.getEntityID(npc)).generatePacket());
-                } else if (s != null) { //dynamic volume, as player gets further away from aura source volume decreases
-                    float distance = npc.getDistanceToEntity(Minecraft.getMinecraft().thePlayer);
-                    float volume = 1 - distance / soundRange;
-                    SoundHelper.setSoundVolume(s, volume);
-                }
-
-
-                aur.worldObj.spawnEntityInWorld(aur);
             }
-
         }
     }
+
+    public static void spawnAura(Entity entity, Aura aura) {
+        EntityAura2 aur = new EntityAura2(entity.worldObj, Utility.getEntityID(entity), aura.display.color1, 0, 0, 100, false);
+        boolean kk = aura.display.kaiokenOn;
+        aur.setAlp(0.4f);
+        aur.setSpd(40);
+
+        if (aura.display.hasSize())
+            ((IEntityAura) aur).setSize(aura.display.size);
+
+        ((IEntityAura) aur).setHasLightning(aura.display.hasLightning);
+        ((IEntityAura) aur).setLightningColor(aura.display.lightningColor);
+
+        if (aura.display.hasAlpha("lightning"))
+            ((IEntityAura) aur).setLightningAlpha(aura.display.lightningAlpha);
+        else
+            ((IEntityAura) aur).setLightningAlpha(255);
+
+
+        String sound = "jinryuudragonbc:DBC.aura";
+        int mimicColor = EnumPlayerAuraTypes.getManualAuraColor(aura.display.type);
+        if (mimicColor != -1)
+            aur.setCol(mimicColor);
+
+        if (aura.display.type == EnumPlayerAuraTypes.SaiyanGod) {
+            aur.setAlp(0.2F);
+            aur.setTex("aurai");
+            aur.setTexL2("aurai2");
+            aur.setColL2(16747301);
+            sound = "jinryuudragonbc:1610.aurag";
+        } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlue) {
+            aur.setSpd(40);
+            aur.setAlp(0.5F);
+            aur.setTex("aurag");
+            aur.setColL3(15727354);
+            aur.setTexL3("auragb");
+        } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlueEvo) {
+            aur.setSpd(40);
+            aur.setAlp(0.5F);
+            aur.setTex("aurag");
+            aur.setColL3(12310271);
+            aur.setTexL3("auragb");
+        } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRose) {
+            aur.setSpd(30);
+            aur.setAlp(0.2F);
+            aur.setTex("aurai");
+            aur.setTexL2("aurai2");
+            aur.setColL2(7872713);
+        } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRoseEvo) {
+            aur.setSpd(30);
+            aur.setAlp(0.2F);
+            aur.setTex("aurai");
+            aur.setTexL2("aurai2");
+            aur.setColL2(8592109);
+        } else if (aura.display.type == EnumPlayerAuraTypes.UI) {
+            aur.setSpd(100);
+            aur.setAlp(0.15F);
+            aur.setTex("auras");
+            aur.setCol(15790320);
+            aur.setColL3(4746495);
+            aur.setTexL3("auragb");
+            sound = "jinryuudragonbc:DBC5.aura_ui";
+        } else if (aura.display.type == EnumPlayerAuraTypes.GoD) {
+            aur.setSpd(30);
+            aur.setAlp(0.2F);
+            aur.setTex("aurag");
+            aur.setTexL3("auragb");
+            aur.setColL2(12464847);
+            sound = "jinryuudragonbc:DBC5.aura_destroyer";
+        } else if (aura.display.type == EnumPlayerAuraTypes.UltimateArco) {
+            aur.setAlp(0.5F);
+            aur.setTex("aurau");
+            aur.setTexL2("aurau2");
+            aur.setColL2(16776724);
+        }
+
+        //////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////
+        //Forms
+        Form form = null;
+        if (entity instanceof EntityNPCInterface)
+            form = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().getCurrentForm();
+        else if (entity instanceof EntityPlayer)
+            form = DBCData.get((EntityPlayer) entity).getForm();
+
+        if (form != null) {
+            FormDisplay d = form.display;
+            if (d.hasColor("aura"))
+                aur.setCol(d.auraColor);
+        }
+        //////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////
+
+        if (aura.display.hasColor("color1"))
+            aur.setCol(aura.display.color1);
+        if (aura.display.hasColor("color2"))
+            aur.setColL2(aura.display.color2);
+        if (aura.display.hasColor("color3"))
+            aur.setColL3(aura.display.color3);
+
+        if (aura.display.hasAlpha("aura"))
+            aur.setAlp((float) aura.display.alpha / 255);
+
+        if (aura.display.hasSpeed())
+            aur.setSpd((int) aura.display.speed);
+
+        if (EnumPlayerAuraTypes.isBlue(aura.display.type)) {
+            if (kk)
+                sound = "jinryuudragonbc:1610.aurabk";
+            else
+                sound = "jinryuudragonbc:1610.aurab";
+        }
+
+        float soundRange = 50;
+        if (aura.display.hasSound())
+            sound = aura.display.auraSound;
+
+        ////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////
+        // This block indefinitely loops through aura sound as long as aura is enabled
+        // regardless of the sound.ogg duration. The second the sound ends, it insta-replays
+
+        ScriptClientSound s = SoundHelper.getClientSound(entity, sound); //already existing aura sound
+        if (s == null) {
+            PacketHandler.Instance.sendToServer(new PlaySound(sound, soundRange, Utility.getEntityID(entity)).generatePacket());
+        } else if (s != null) { //dynamic volume, as player gets further away from aura source volume decreases
+            float distance = entity.getDistanceToEntity(Minecraft.getMinecraft().thePlayer);
+            float volume = 1 - distance / soundRange;
+            SoundHelper.setSoundVolume(s, volume);
+        }
+        ////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////
+
+        aur.worldObj.spawnEntityInWorld(aur);
+    }
+
 
 }
