@@ -362,6 +362,11 @@ public class DBCDisplay implements IDBCDisplay {
         isTransforming = false;
     }
 
+    public void descend(int id) {
+        // TransformController.npcDescend(npc,id);   need an npc reference
+
+    }
+
     public void setForm(Form form) {
         if (form != null)
             formID = form.id;
