@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.model.part;
 
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
+import kamkeel.npcdbc.client.model.ModelNPCDBC;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.client.model.ModelRenderer;
@@ -8,7 +9,6 @@ import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.data.ModelData;
 import noppes.npcs.entity.data.ModelPartData;
-import org.lwjgl.opengl.GL11;
 
 public class DBCRightArms extends ModelDBCPartInterface {
 
@@ -49,16 +49,16 @@ public class DBCRightArms extends ModelDBCPartInterface {
         this.ArcoRightShoulder.rotateAngleX = base.bipedRightArm.rotateAngleX;
         this.ArcoRightShoulder.rotateAngleZ = base.bipedRightArm.rotateAngleZ;
 
-        if(display.useSkin){
+        if (display.useSkin) {
             this.useColor = 0;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/0B20.png");
             useColor = 0;
-            bodyCM = display.getCurrentBodyColor("cm");
+            bodyCM = ModelNPCDBC.getBodyColor(display, "bodycm", display.race);
             super.render(par1);
 
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/2B20.png");
             useColor = 2;
-            bodyC2 = display.getCurrentBodyColor("c2");
+            bodyC2 = ModelNPCDBC.getBodyColor(display, "bodyc2", display.race);
             super.render(par1);
 
             useColor = 0;
@@ -70,8 +70,7 @@ public class DBCRightArms extends ModelDBCPartInterface {
     @Override
     public void initData(ModelData modelData) {
         ModelPartData config = data.getPartData("dbcArms");
-        if(config == null)
-        {
+        if (config == null) {
             isHidden = true;
             return;
         }
@@ -81,10 +80,9 @@ public class DBCRightArms extends ModelDBCPartInterface {
 
         RightArmSpike.isHidden = config.type != 1;
         ArcoRightShoulder.isHidden = config.type != 2;
-        if(!config.playerTexture){
+        if (!config.playerTexture) {
             location = config.getResource();
-        }
-        else
+        } else
             location = null;
     }
 }

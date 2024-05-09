@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.model.part;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
+import kamkeel.npcdbc.client.model.ModelNPCDBC;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
@@ -133,34 +134,34 @@ public class DBCHorns extends ModelDBCPartInterface {
     @Override
     public void render(float par1) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
-        if(display.useSkin){
+        if (display.useSkin) {
             int state = ValueUtil.clamp(display.getCurrentArcoState(), 0, 7);
-            if(display.race != DBCRace.ARCOSIAN)
+            if (display.race != DBCRace.ARCOSIAN)
                 state = 3;
 
             useColor = 0;
-            this.bodyCM = display.getCurrentBodyColor("cm");
+            this.bodyCM = ModelNPCDBC.getBodyColor(display, "bodycm", display.race);
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/0B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
             super.render(par1);
 
             useColor = 1;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/1B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC1 = display.getCurrentBodyColor("c1");
+            this.bodyC1 = ModelNPCDBC.getBodyColor(display, "bodyc1", display.race);
             super.render(par1);
 
             useColor = 2;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/2B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC2 = display.getCurrentBodyColor("c2");
+            this.bodyC2 = ModelNPCDBC.getBodyColor(display, "bodyc2", display.race);
             super.render(par1);
 
             useColor = 3;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/3B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC3 = display.getCurrentBodyColor("c3");
+            this.bodyC3 = ModelNPCDBC.getBodyColor(display, "bodyc3", display.race);
             super.render(par1);
 
             useColor = 0;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/4B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyCM = display.getCurrentBodyColor("cm");
+            this.bodyCM = ModelNPCDBC.getBodyColor(display, "bodycm", display.race);
             super.render(par1);
         } else {
             super.render(par1);
@@ -170,8 +171,7 @@ public class DBCHorns extends ModelDBCPartInterface {
     @Override
     public void initData(ModelData modelData) {
         ModelPartData config = data.getPartData("dbcHorn");
-        if(config == null)
-        {
+        if (config == null) {
             isHidden = true;
             return;
         }
@@ -183,10 +183,9 @@ public class DBCHorns extends ModelDBCPartInterface {
         ThirdFormBigHead.isHidden = config.type != 3;
         CoolerHeadSpikes.isHidden = config.type != 4;
 
-        if(!config.playerTexture){
+        if (!config.playerTexture) {
             location = config.getResource();
-        }
-        else
+        } else
             location = null;
     }
 }

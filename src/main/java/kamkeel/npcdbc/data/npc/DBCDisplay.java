@@ -20,7 +20,6 @@ public class DBCDisplay implements IDBCDisplay {
     public int hairColor = -1;
 
 
-
     // Race Display //
     public int race = -1;
     public boolean useSkin = false;
@@ -40,10 +39,9 @@ public class DBCDisplay implements IDBCDisplay {
     public int formID = -1, selectedForm = -1, rage;
     public float formLevel = 0;
     public boolean isTransforming;
-    private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
-
     // Server Side Usage
     public float rageValue;
+    private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
         comp.setBoolean("DBCDisplayEnabled", enabled);
@@ -136,24 +134,74 @@ public class DBCDisplay implements IDBCDisplay {
         }
     }
 
-    @Override
-    public int getColor(String type) {
+    public boolean hasColor(String type) {
+        Form form = this.getCurrentForm();
+        boolean inF = form != null;
         switch (type.toLowerCase()) {
             case "hair":
-                return hairColor;
+                return (inF ? form.display.hairColor : hairColor) != -1;
             case "eye":
-                return eyeColor;
+                return (inF ? form.display.eyeColor : eyeColor) != -1;
             case "bodycm":
-                return bodyCM;
+                return (inF ? form.display.bodyCM : bodyCM) != -1;
             case "bodyc1":
-                return bodyC1;
+                return (inF ? form.display.bodyC1 : bodyC1) != -1;
             case "bodyc2":
-                return bodyC2;
+                return (inF ? form.display.bodyC2 : bodyC2) != -1;
             case "bodyc3":
-                return bodyC3;
+                return (inF ? form.display.bodyC3 : bodyC3) != -1;
+
         }
-        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3");
+        throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3");
     }
+
+    @Override
+    public int getColor(String type) {
+        Form form = this.getCurrentForm();
+        boolean inF = form != null;
+        switch (type.toLowerCase()) {
+            case "hair":
+                return inF ? form.display.hairColor : hairColor;
+            case "eye":
+                return inF ? form.display.eyeColor : eyeColor;
+            case "bodycm":
+                return inF ? form.display.bodyCM : bodyCM;
+            case "bodyc1":
+                return inF ? form.display.bodyC1 : bodyC1;
+            case "bodyc2":
+                return inF ? form.display.bodyC2 : bodyC2;
+            case "bodyc3":
+                return inF ? form.display.bodyC3 : bodyC3;
+        }
+        throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3");
+    }
+
+
+    public int getCurrentArcoState() {
+        int state = this.arcoState;
+        Form form = this.getCurrentForm();
+        if (form != null) {
+            switch (form.display.bodyType) {
+                case "firstform":
+                    state = 0;
+                    break;
+                case "secondform":
+                    state = 2;
+                    break;
+                case "thirdform":
+                    state = 3;
+                    break;
+                case "finalform":
+                    state = 4;
+                    break;
+                case "ultimatecooler":
+                    state = 5;
+                    break;
+            }
+        }
+        return state;
+    }
+
 
     @Override
     public boolean isEnabled() {
@@ -355,74 +403,5 @@ public class DBCDisplay implements IDBCDisplay {
         return 0f;
     }
 
-    public int getCurrentArcoState() {
-        int state = this.arcoState;
-        Form form = this.getCurrentForm();
-        if (form != null) {
-            switch (form.display.bodyType) {
-                case "firstform":
-                    state = 0;
-                    break;
-                case "secondform":
-                    state = 2;
-                    break;
-                case "thirdform":
-                    state = 3;
-                    break;
-                case "finalform":
-                    state = 4;
-                    break;
-                case "ultimatecooler":
-                    state = 5;
-                    break;
-            }
-        }
-        return state;
-    }
 
-    public int getCurrentBodyColor(String part) {
-        int body = 0;
-        switch (part.toLowerCase()) {
-            case "cm":
-                body = this.bodyCM;
-                break;
-            case "c1":
-                body = this.bodyC1;
-                break;
-            case "c2":
-                body = this.bodyC2;
-                break;
-            case "c3":
-                body = this.bodyC3;
-                break;
-        }
-
-        Form form = this.getCurrentForm();
-        if (form != null) {
-            switch (part) {
-                case "cm":
-                    if (form.display.bodyCM != -1) {
-                        return form.display.bodyCM;
-                    }
-                    break;
-                case "c1":
-                    if (form.display.bodyC1 != -1) {
-                        return form.display.bodyC1;
-                    }
-                    break;
-                case "c2":
-                    if (form.display.bodyC2 != -1) {
-                        return form.display.bodyC2;
-                    }
-                    break;
-                case "c3":
-                    if (form.display.bodyC3 != -1) {
-                        return form.display.bodyC3;
-                    }
-                    break;
-            }
-        }
-
-        return body;
-    }
 }
