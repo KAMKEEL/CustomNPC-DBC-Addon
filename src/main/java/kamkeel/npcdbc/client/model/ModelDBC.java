@@ -19,7 +19,7 @@ import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.opengl.GL11;
 
-public class ModelNPCDBC extends ModelBase {
+public class ModelDBC extends ModelBase {
 
     private final ModelMPM parent;
     public ModelRendererJBRA[] hairall;
@@ -47,7 +47,7 @@ public class ModelNPCDBC extends ModelBase {
 
     public int tempState, stateChange, state2Change, auraTime, auraType, bendTime;
 
-    public ModelNPCDBC(ModelMPM mpm) {
+    public ModelDBC(ModelMPM mpm) {
         this.parent = mpm;
         this.textureHeight = mpm.textureHeight;
         this.textureWidth = mpm.textureWidth;

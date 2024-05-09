@@ -1,15 +1,13 @@
 package kamkeel.npcdbc.client.model.part;
 
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
-import kamkeel.npcdbc.client.model.ModelNPCDBC;
-import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.client.model.ModelRenderer;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.data.ModelData;
 import noppes.npcs.entity.data.ModelPartData;
-import noppes.npcs.util.ValueUtil;
 
 public class DBCBody extends ModelDBCPartInterface {
 
@@ -44,7 +42,7 @@ public class DBCBody extends ModelDBCPartInterface {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if(display.useSkin){
             this.useColor = 0;
-            this.bodyCM = ModelNPCDBC.getBodyColor(display,"bodycm",display.race);
+            this.bodyCM = ModelDBC.getBodyColor(display,"bodycm",display.race);
             super.render(par1);
         } else {
             super.render(par1);

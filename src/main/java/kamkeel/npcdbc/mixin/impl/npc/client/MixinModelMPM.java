@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.mixin.impl.npc.client;
 
-import kamkeel.npcdbc.client.model.ModelNPCDBC;
+import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.entity.Entity;
@@ -21,7 +21,7 @@ public abstract class MixinModelMPM extends ModelNPCMale {
     @Shadow
     public boolean isArmor;
     @Unique
-    public ModelNPCDBC NPCDBCModel;
+    public ModelDBC NPCDBCModel;
 
     @Shadow
     private ModelLegs legs;
@@ -36,12 +36,12 @@ public abstract class MixinModelMPM extends ModelNPCMale {
 
     @Inject(method = "<init>(FZ)V", at = @At("RETURN"))
     private void addDBCModel(CallbackInfo ci) {
-        NPCDBCModel = new ModelNPCDBC((ModelMPM) (Object) this);
+        NPCDBCModel = new ModelDBC((ModelMPM) (Object) this);
     }
 
     @Inject(method = "<init>(FI)V", at = @At("RETURN"))
     private void addDBCModelAlex(CallbackInfo ci) {
-        NPCDBCModel = new ModelNPCDBC((ModelMPM) (Object) this);
+        NPCDBCModel = new ModelDBC((ModelMPM) (Object) this);
     }
 
     @Inject(method = "setPlayerData", at = @At("RETURN"))
