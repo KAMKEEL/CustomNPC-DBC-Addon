@@ -2,7 +2,7 @@ package kamkeel.npcdbc.client.model.part;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
-import kamkeel.npcdbc.client.model.ModelNPCDBC;
+import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
@@ -140,28 +140,28 @@ public class DBCHorns extends ModelDBCPartInterface {
                 state = 3;
 
             useColor = 0;
-            this.bodyCM = ModelNPCDBC.getBodyColor(display, "bodycm", display.race);
+            this.bodyCM = ModelDBC.getBodyColor(display, "bodycm", display.race);
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/0B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
             super.render(par1);
 
             useColor = 1;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/1B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC1 = ModelNPCDBC.getBodyColor(display, "bodyc1", display.race);
+            this.bodyC1 = ModelDBC.getBodyColor(display, "bodyc1", display.race);
             super.render(par1);
 
             useColor = 2;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/2B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC2 = ModelNPCDBC.getBodyColor(display, "bodyc2", display.race);
+            this.bodyC2 = ModelDBC.getBodyColor(display, "bodyc2", display.race);
             super.render(par1);
 
             useColor = 3;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/3B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC3 = ModelNPCDBC.getBodyColor(display, "bodyc3", display.race);
+            this.bodyC3 = ModelDBC.getBodyColor(display, "bodyc3", display.race);
             super.render(par1);
 
             useColor = 0;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/4B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyCM = ModelNPCDBC.getBodyColor(display, "bodycm", display.race);
+            this.bodyCM = ModelDBC.getBodyColor(display, "bodycm", display.race);
             super.render(par1);
         } else {
             super.render(par1);
