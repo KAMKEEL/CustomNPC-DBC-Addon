@@ -304,27 +304,32 @@ public class PlayerDBCInfo {
     }
 
     public void saveNBTData(NBTTagCompound compound) {
-        compound.setInteger("CurrentForm", currentForm);
-        compound.setInteger("SelectedForm", selectedForm);
-        compound.setTag("UnlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
-        compound.setTag("FormMastery", NBTTags.nbtIntegerFloatMap(formLevels));
-        compound.setTag("FormTimers", NBTTags.nbtIntegerIntegerMap(formTimers));
+        NBTTagCompound dbcCompound = new NBTTagCompound();
+        dbcCompound.setInteger("CurrentForm", currentForm);
+        dbcCompound.setInteger("SelectedForm", selectedForm);
+        dbcCompound.setTag("UnlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
+        dbcCompound.setTag("FormMastery", NBTTags.nbtIntegerFloatMap(formLevels));
+        dbcCompound.setTag("FormTimers", NBTTags.nbtIntegerIntegerMap(formTimers));
 
 
-        compound.setInteger("CurrentAura", currentAura);
-        compound.setInteger("SelectedAura", selectedAura);
-        compound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
+        dbcCompound.setInteger("CurrentAura", currentAura);
+        dbcCompound.setInteger("SelectedAura", selectedAura);
+        dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
+        
+        compound.setTag("DBCData", dbcCompound);
     }
 
     public void loadNBTData(NBTTagCompound compound) {
-        currentForm = compound.getInteger("CurrentForm");
-        selectedForm = compound.getInteger("SelectedForm");
-        unlockedForms = NBTTags.getIntegerSet(compound.getTagList("UnlockedForms", 10));
-        formLevels = NBTTags.getIntegerFloatMap(compound.getTagList("FormMastery", 10));
-        formTimers = NBTTags.getIntegerIntegerMap(compound.getTagList("FormTimers", 10));
+        NBTTagCompound dbcCompound = compound.getCompoundTag("DBCData");
 
-        currentAura = compound.getInteger("CurrentAura");
-        selectedAura = compound.getInteger("SelectedAura");
-        unlockedAuras = NBTTags.getIntegerSet(compound.getTagList("UnlockedAuras", 10));
+        currentForm = dbcCompound.getInteger("CurrentForm");
+        selectedForm = dbcCompound.getInteger("SelectedForm");
+        unlockedForms = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedForms", 10));
+        formLevels = NBTTags.getIntegerFloatMap(dbcCompound.getTagList("FormMastery", 10));
+        formTimers = NBTTags.getIntegerIntegerMap(dbcCompound.getTagList("FormTimers", 10));
+
+        currentAura = dbcCompound.getInteger("CurrentAura");
+        selectedAura = dbcCompound.getInteger("SelectedAura");
+        unlockedAuras = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAuras", 10));
     }
 }
