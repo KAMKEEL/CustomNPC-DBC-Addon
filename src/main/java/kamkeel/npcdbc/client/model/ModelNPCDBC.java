@@ -5,18 +5,19 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JBRA.mod_JBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
-import kamkeel.npcdbc.client.model.part.ArcoHorns;
-import kamkeel.npcdbc.client.model.part.RaceEars;
+import kamkeel.npcdbc.client.model.part.DBCArms;
+import kamkeel.npcdbc.client.model.part.DBCBody;
+import kamkeel.npcdbc.client.model.part.DBCHorns;
+import kamkeel.npcdbc.client.model.part.DBCEars;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.opengl.GL11;
@@ -32,27 +33,20 @@ public class ModelNPCDBC extends ModelBase {
     public float rot5;
     public float rot6;
 
-    public ArcoHorns arcoHorns;
-    public RaceEars raceEars;
+    // DBC Parts
+    public DBCHorns DBCHorns;
+    public DBCEars DBCEars;
+    public DBCBody DBCBody;
+    public DBCArms DBCRightArm;
+    public DBCArms DBCLeftArm;
 
+    // Face
     public ModelRenderer nose;
     public ModelRenderer mouth;
     public ModelRenderer eyeleft;
     public ModelRenderer eyeright;
     public ModelRenderer eyebase;
     public ModelRenderer eyebrow;
-
-    public ModelRenderer BackSpikes;
-    public ModelRenderer LeftArmSpike;
-    public ModelRenderer RightArmSpike;
-
-    public ModelRenderer F5spike1;
-    public ModelRenderer F5spike2;
-    public ModelRenderer F5spike3;
-    public ModelRenderer F5spike4;
-
-    public ModelRenderer ArcoLeftShoulder;
-    public ModelRenderer ArcoRightShoulder;
 
     public int tempState, stateChange, state2Change, auraTime, auraType, bendTime;
 
@@ -112,148 +106,106 @@ public class ModelNPCDBC extends ModelBase {
         this.eyebrow.setRotationPoint(0.0F, 0.0F, 0.0F);
         this.setRotation(this.eyebrow, 0.0F, 0.0F, 0.0F);
 
-        addArcoHorns();
+        this.parent.bipedHead.addChild(DBCHorns = new DBCHorns(mpm));
+        this.parent.bipedHead.addChild(DBCEars = new DBCEars(mpm));
+        this.parent.bipedBody.addChild(DBCBody = new DBCBody(mpm));
 
-        this.parent.bipedHead.addChild(arcoHorns = new ArcoHorns(mpm));
-        this.parent.bipedHead.addChild(raceEars = new RaceEars(mpm));
+        this.parent.bipedRightArm.addChild(DBCRightArm = new DBCArms(mpm, true));
+        this.parent.bipedLeftArm.addChild(DBCLeftArm = new DBCArms(mpm, false));
     }
 
     public void setPlayerData(EntityCustomNpc entity) {
-        this.arcoHorns.setData(entity.modelData, entity);
-        this.raceEars.setData(entity.modelData, entity);
-    }
-
-    public void addArcoHorns() {
-        this.BackSpikes = new ModelRenderer(this, 0, 0);
-        this.BackSpikes.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.BackSpikes.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.RightArmSpike = new ModelRenderer(this, 0, 0);
-        this.RightArmSpike.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.RightArmSpike.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.LeftArmSpike = new ModelRenderer(this, 0, 0);
-        this.LeftArmSpike.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.LeftArmSpike.setRotationPoint(0.0F, 0.0F, 0.0F);
-
-
-        this.F5spike1 = new ModelRenderer(this, 0, 6);
-        this.F5spike1.addBox(-6.0F, 1.0F, -1.0F, 1, 5, 2);
-        this.F5spike1.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.F5spike1, 0.0F, 0.0F, (float) (-Math.PI / 6));
-        this.F5spike2 = new ModelRenderer(this, 0, 6);
-        this.F5spike2.addBox(5.0F, 1.0F, -1.0F, 1, 5, 2);
-        this.F5spike2.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.F5spike2, 0.0F, 0.0F, (float) (Math.PI / 6));
-        this.F5spike3 = new ModelRenderer(this, 8, 38);
-        this.F5spike3.addBox(2.0F, -4.0F, 3.0F, 2, 6, 2);
-        this.F5spike3.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.F5spike3, -0.9773844F, 0.0F, 0.2094395F);
-        this.F5spike4 = new ModelRenderer(this, 8, 38);
-        this.F5spike4.addBox(-4.0F, -4.0F, 3.0F, 2, 6, 2);
-        this.F5spike4.setRotationPoint(0.0F, 0.0F, 0.0F);
-        this.setRotation(this.F5spike4, -0.9773844F, 0.0F, -0.2094395F);
-
-
-        this.ArcoRightShoulder = new ModelRenderer(this, 38, 0);
-        this.ArcoRightShoulder.addBox(-6.0F, -3.0F, -3.0F, 7, 4, 6);
-        this.ArcoRightShoulder.setRotationPoint(-5.0F, 2.0F, 0.0F);
-        this.ArcoRightShoulder.setTextureSize(128, 64);
-        this.ArcoLeftShoulder = new ModelRenderer(this, 38, 0);
-        this.ArcoLeftShoulder.mirror = true;
-        this.ArcoLeftShoulder.addBox(-1.0F, -3.0F, -3.0F, 7, 4, 6);
-        this.ArcoLeftShoulder.setRotationPoint(5.0F, 2.0F, 0.0F);
-        this.ArcoLeftShoulder.setTextureSize(128, 64);
-
-        this.RightArmSpike.addChild(this.F5spike1);
-        this.LeftArmSpike.addChild(this.F5spike2);
-        this.BackSpikes.addChild(this.F5spike3);
-        this.BackSpikes.addChild(this.F5spike4);
+        this.DBCHorns.setData(entity.modelData, entity);
+        this.DBCEars.setData(entity.modelData, entity);
+        this.DBCBody.setData(entity.modelData, entity);
+        this.DBCRightArm.setData(entity.modelData, entity);
+        this.DBCLeftArm.setData(entity.modelData, entity);
     }
 
     public void renderFace(DBCDisplay display) {
-        int eyeColor = display.eyeColor;
-        int eyeBrowColor = display.hairColor;
-        boolean hasArcoMask = display.hasArcoMask;
+        if(display.useSkin){
+            int eyeColor = display.eyeColor;
+            int eyeBrowColor = display.hairColor;
+            boolean hasArcoMask = display.hasArcoMask;
 
-        //////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////
-        //Forms
-        Form form = display.getCurrentForm();
-        if (form != null) {
-            FormDisplay d = form.display;
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            //Forms
+            Form form = display.getCurrentForm();
+            if (form != null) {
+                FormDisplay d = form.display;
 
-            if (d.hasColor("eye"))
-                eyeColor = d.eyeColor;
-            if (d.hasColor("hair"))
-                eyeBrowColor = d.hairColor;
+                if (d.hasColor("eye"))
+                    eyeColor = d.eyeColor;
+                if (d.hasColor("hair"))
+                    eyeBrowColor = d.hairColor;
 
-            if (d.hasArcoMask)
-                hasArcoMask = true;
+                if (d.hasArcoMask)
+                    hasArcoMask = true;
 
+            }
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            RenderPlayerJBRA.glColor3f(display.getCurrentBodyColor("cm"));
+            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
+
+            this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
+            this.nose.rotateAngleX = parent.bipedHead.rotateAngleX;
+            this.nose.rotationPointX = parent.bipedHead.rotationPointX;
+            this.nose.rotationPointY = parent.bipedHead.rotationPointY;
+            this.nose.render(0.0625F);
+
+            String mouthDir = "";
+            if (display.race == 4 && hasArcoMask)
+                mouthDir = "jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[display.arcoState] + display.bodyType + "a.png";
+            else
+                mouthDir = getFaceTexture(display, "m" + display.mouthType);
+            ClientProxy.bindTexture(new ResourceLocation(mouthDir));
+            this.mouth.rotateAngleY = parent.bipedHead.rotateAngleY;
+            this.mouth.rotateAngleX = parent.bipedHead.rotateAngleX;
+            this.mouth.rotationPointX = parent.bipedHead.rotationPointX;
+            this.mouth.rotationPointY = parent.bipedHead.rotationPointY;
+            this.mouth.render(0.0625F);
+
+            GL11.glColor3f(1.0f, 1.0f, 1.0f);
+            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
+            this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
+            this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
+            this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
+            this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
+            this.eyebase.render(0.0625F);
+
+            if (display.race < 4) {
+                RenderPlayerJBRA.glColor3f(eyeBrowColor);
+                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
+                this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
+                this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
+                this.eyebrow.rotationPointX = parent.bipedHead.rotationPointX;
+                this.eyebrow.rotationPointY = parent.bipedHead.rotationPointY;
+                this.eyebrow.render(0.0625F);
+            }
+
+
+            RenderPlayerJBRA.glColor3f(eyeColor);
+            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
+            this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
+            this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
+            this.eyeleft.rotationPointX = parent.bipedHead.rotationPointX;
+            this.eyeleft.rotationPointY = parent.bipedHead.rotationPointY;
+            this.eyeleft.render(0.0625F);
+
+            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "r" + display.eyeType)));
+            this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
+            this.eyeright.rotateAngleX = parent.bipedHead.rotateAngleX;
+            this.eyeright.rotationPointX = parent.bipedHead.rotationPointX;
+            this.eyeright.rotationPointY = parent.bipedHead.rotationPointY;
+            this.eyeright.render(0.0625F);
         }
-        //////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////
-        TextureManager textureManager = Minecraft.getMinecraft().renderEngine;
-        RenderPlayerJBRA.glColor3f(display.bodyCM == -1 ? getBodyColor(display, "bodyCM", display.race) : display.bodyCM);
-        textureManager.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
-
-        this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
-        this.nose.rotateAngleX = parent.bipedHead.rotateAngleX;
-        this.nose.rotationPointX = parent.bipedHead.rotationPointX;
-        this.nose.rotationPointY = parent.bipedHead.rotationPointY;
-        this.nose.render(0.0625F);
-
-        String mouthDir = "";
-        if (display.race == 4 && hasArcoMask)
-            mouthDir = "jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[display.arcoState] + display.bodyType + "a.png";
-        else
-            mouthDir = getFaceTexture(display, "m" + display.mouthType);
-        textureManager.bindTexture(new ResourceLocation(mouthDir));
-        this.mouth.rotateAngleY = parent.bipedHead.rotateAngleY;
-        this.mouth.rotateAngleX = parent.bipedHead.rotateAngleX;
-        this.mouth.rotationPointX = parent.bipedHead.rotationPointX;
-        this.mouth.rotationPointY = parent.bipedHead.rotationPointY;
-        this.mouth.render(0.0625F);
-
-        GL11.glColor3f(1.0f, 1.0f, 1.0f);
-        textureManager.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
-        this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
-        this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
-        this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
-        this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
-        this.eyebase.render(0.0625F);
-
-        if (display.race < 4) {
-            RenderPlayerJBRA.glColor3f(eyeBrowColor);
-            textureManager.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
-            this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
-            this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
-            this.eyebrow.rotationPointX = parent.bipedHead.rotationPointX;
-            this.eyebrow.rotationPointY = parent.bipedHead.rotationPointY;
-            this.eyebrow.render(0.0625F);
-        }
-
-
-        RenderPlayerJBRA.glColor3f(eyeColor);
-        textureManager.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
-        this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
-        this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
-        this.eyeleft.rotationPointX = parent.bipedHead.rotationPointX;
-        this.eyeleft.rotationPointY = parent.bipedHead.rotationPointY;
-        this.eyeleft.render(0.0625F);
-
-        textureManager.bindTexture(new ResourceLocation(getFaceTexture(display, "r" + display.eyeType)));
-        this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
-        this.eyeright.rotateAngleX = parent.bipedHead.rotateAngleX;
-        this.eyeright.rotationPointX = parent.bipedHead.rotationPointX;
-        this.eyeright.rotationPointY = parent.bipedHead.rotationPointY;
-        this.eyeright.render(0.0625F);
     }
 
     public void renderHead(DBCDisplay display) {
-        display.arcoState = 5;
         GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
         renderHairs(display);
-
         renderFace(display);
         GL11.glPopAttrib();
     }
@@ -261,138 +213,52 @@ public class ModelNPCDBC extends ModelBase {
     public void renderAllBody(DBCDisplay display, ModelRenderer model) {
         if(display.useSkin){
             int race = display.race;
-            TextureManager textureManager = Minecraft.getMinecraft().renderEngine;
             if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-                int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
-                textureManager.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
-                RenderPlayerJBRA.glColor3f(bodyCM);
-
+                ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
+                RenderPlayerJBRA.glColor3f(display.getCurrentBodyColor("cm"));
             } else if (race == DBCRace.NAMEKIAN) {
-                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
-                int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
-                RenderPlayerJBRA.glColor3f(bodyCM);
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
+                RenderPlayerJBRA.glColor3f(display.getCurrentBodyColor("cm"));
                 model.render(0.0625F);
 
-                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
-                int bodyC1 = display.bodyC1 == -1 ? getBodyColor(display, "bodyC1", race) : display.bodyC1;
-                RenderPlayerJBRA.glColor3f(bodyC1);
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
+                RenderPlayerJBRA.glColor3f(display.getCurrentBodyColor("c1"));
                 model.render(0.0625F);
 
-                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
-                int bodyC2 = display.bodyC2 == -1 ? getBodyColor(display, "bodyC2", race) : display.bodyC2;
-                RenderPlayerJBRA.glColor3f(bodyC2);
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
+                RenderPlayerJBRA.glColor3f(display.getCurrentBodyColor("c2"));
                 model.render(0.0625F);
 
-
-                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
                 GL11.glColor3f(1f, 1f, 1f);
-                //model.render(0.0625F);
-
             } else if (race == DBCRace.ARCOSIAN) {
-                int st = display.arcoState;
-                int ts = 0;
-                int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
-                int bodyC1 = display.bodyC1 == -1 ? getBodyColor(display, "bodyC1", race) : display.bodyC1;
-                int bodyC2 = display.bodyC2 == -1 ? getBodyColor(display, "bodyC2", race) : display.bodyC2;
-                int bodyC3 = display.bodyC3 == -1 ? getBodyColor(display, "bodyC3", race) : display.bodyC3;
-
-                //////////////////////////////////////////////////////
-                //////////////////////////////////////////////////////
-                //Forms
-                Form form = display.getCurrentForm();
-                if (form != null) {
-                    if (form.display.bodyType.equals("firstform"))
-                        st = 0;
-                    else if (form.display.bodyType.equals("secondform"))
-                        st = 2;
-                    else if (form.display.bodyType.equals("thirdform"))
-                        st = 3;
-                    else if (form.display.bodyType.equals("finalform"))
-                        st = 4;
-                    else if (form.display.bodyType.equals("ultimatecooler"))
-                        st = 5;
-                }
-
-                //ACTUAL BODY
-                RenderPlayerJBRA.glColor3f(bodyCM);
-                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                int st = display.getCurrentArcoState();
+                RenderPlayerJBRA.glColor3f(display.getCurrentBodyColor("cm"));
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
                 model.render(0.0625F);
 
-                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(bodyC1);
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                RenderPlayerJBRA.glColor3f(display.getCurrentBodyColor("c1"));
                 model.render(0.0625F);
 
-                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(bodyC2);
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                RenderPlayerJBRA.glColor3f(display.getCurrentBodyColor("c2"));
                 model.render(0.0625F);
 
-                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(bodyC3);
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                RenderPlayerJBRA.glColor3f(display.getCurrentBodyColor("c3"));
                 model.render(0.0625F);
 
-                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
                 GL11.glColor3f(1f, 1f, 1f);
-
             } else if (race == DBCRace.MAJIN) {
-                int bodyCM = display.bodyCM == -1 ? getBodyColor(display, "bodyCM", race) : display.bodyCM;
-                textureManager.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
-                RenderPlayerJBRA.glColor3f(bodyCM);
-                //  model.render(0.0625F);
-            }
-        }
-    }
-
-    public void renderMisc(String hair) {
-        float par1 = 0.0625f;
-        if (hair.contains("FR")) {
-            if (hair.contains("2")) {
-                this.ArcoLeftShoulder.rotationPointZ = parent.bipedLeftArm.rotationPointZ;
-                this.ArcoLeftShoulder.rotationPointY = parent.bipedLeftArm.rotationPointY;
-                this.ArcoLeftShoulder.rotationPointX = parent.bipedLeftArm.rotationPointX;
-                this.ArcoLeftShoulder.rotateAngleY = parent.bipedLeftArm.rotateAngleY;
-                this.ArcoLeftShoulder.rotateAngleX = parent.bipedLeftArm.rotateAngleX;
-                this.ArcoLeftShoulder.rotateAngleZ = parent.bipedLeftArm.rotateAngleZ;
-                this.ArcoLeftShoulder.render(par1);
-
-                this.ArcoRightShoulder.rotationPointZ = parent.bipedRightArm.rotationPointZ;
-                this.ArcoRightShoulder.rotationPointY = parent.bipedRightArm.rotationPointY;
-                this.ArcoRightShoulder.rotationPointX = parent.bipedRightArm.rotationPointX;
-                this.ArcoRightShoulder.rotateAngleY = parent.bipedRightArm.rotateAngleY;
-                this.ArcoRightShoulder.rotateAngleX = parent.bipedRightArm.rotateAngleX;
-                this.ArcoRightShoulder.rotateAngleZ = parent.bipedRightArm.rotateAngleZ;
-                this.ArcoRightShoulder.render(par1);
-            }
-            if (hair.contains("4")) {
-                // Back Spikes
-                this.BackSpikes.rotateAngleY = parent.bipedBody.rotateAngleY;
-                this.BackSpikes.rotateAngleX = parent.bipedBody.rotateAngleX;
-                this.BackSpikes.rotationPointX = parent.bipedBody.rotationPointX;
-                this.BackSpikes.rotationPointY = parent.bipedBody.rotationPointY;
-                this.BackSpikes.render(par1);
-
-                // Right Arm Spikes
-                this.RightArmSpike.rotationPointX = parent.bipedRightArm.rotationPointX;
-                this.RightArmSpike.rotationPointY = parent.bipedRightArm.rotationPointY;
-                this.RightArmSpike.rotationPointZ = parent.bipedRightArm.rotationPointZ;
-                this.RightArmSpike.rotateAngleY = parent.bipedRightArm.rotateAngleY;
-                this.RightArmSpike.rotateAngleX = parent.bipedRightArm.rotateAngleX;
-                this.RightArmSpike.rotateAngleZ = parent.bipedRightArm.rotateAngleZ;
-                this.RightArmSpike.render(par1);
-
-                // Left Arm Spikes
-                this.LeftArmSpike.rotationPointX = parent.bipedLeftArm.rotationPointX;
-                this.LeftArmSpike.rotationPointY = parent.bipedLeftArm.rotationPointY;
-                this.LeftArmSpike.rotationPointZ = parent.bipedLeftArm.rotationPointZ;
-                this.LeftArmSpike.rotateAngleY = parent.bipedLeftArm.rotateAngleY;
-                this.LeftArmSpike.rotateAngleX = parent.bipedLeftArm.rotateAngleX;
-                this.LeftArmSpike.rotateAngleZ = parent.bipedLeftArm.rotateAngleZ;
-                this.LeftArmSpike.render(par1);
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
+                RenderPlayerJBRA.glColor3f(display.getCurrentBodyColor("cm"));
             }
         }
     }
 
     public void renderHairs(DBCDisplay display) {
-        TextureManager textureManager = Minecraft.getMinecraft().renderEngine;
         if (display.hairCode.length() < 5) {
             if (display.hairCode.equalsIgnoreCase("bald"))
                 return;
@@ -428,7 +294,7 @@ public class ModelNPCDBC extends ModelBase {
 
         int hairColor = display.hairColor;
         if (display.hairColor == -1 && display.race == 5)
-            hairColor = getBodyColor(display, "bodycm", 5);
+            hairColor = display.getCurrentBodyColor("cm");
 
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
@@ -461,9 +327,11 @@ public class ModelNPCDBC extends ModelBase {
         }
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
+        if(true)
+            return;
 
         RenderPlayerJBRA.glColor3f(hairColor);
-        textureManager.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
+        ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
 
         boolean hasHairAnimations = true;
         int trTime = canUse ? 2 : 200;
@@ -601,7 +469,6 @@ public class ModelNPCDBC extends ModelBase {
 
             if (auraTime > 0) {
                 auraTime -= 1;
-                ;
             }
         }
 

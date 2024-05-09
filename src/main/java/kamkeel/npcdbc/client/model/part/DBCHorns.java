@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.client.model.part;
 
-import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -11,8 +10,9 @@ import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.data.ModelData;
 import noppes.npcs.entity.data.ModelPartData;
+import noppes.npcs.util.ValueUtil;
 
-public class ArcoHorns extends ModelDBCPartInterface {
+public class DBCHorns extends ModelDBCPartInterface {
     // First Form
     public ModelRenderer SpikePair;
     public ModelRenderer spikePairOne;
@@ -37,8 +37,10 @@ public class ArcoHorns extends ModelDBCPartInterface {
     public ModelRenderer CSpike4;
     public ModelRenderer CSpike5;
 
-    public ArcoHorns(ModelMPM base) {
+    public DBCHorns(ModelMPM base) {
         super(base);
+        textureHeight = 32;
+        textureWidth = 64;
 
         // First Form
         this.SpikePair = new ModelRenderer(base, 0, 0);
@@ -131,32 +133,34 @@ public class ArcoHorns extends ModelDBCPartInterface {
     @Override
     public void render(float par1) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
-        if(display.race == DBCRace.ARCOSIAN && display.useSkin){
-            int state = display.getState();
+        if(display.useSkin){
+            int state = ValueUtil.clamp(display.getCurrentArcoState(), 0, 7);
+            if(display.race != DBCRace.ARCOSIAN)
+                state = 3;
 
             useColor = 0;
-            this.bodyCM = display.bodyCM;
+            this.bodyCM = display.getCurrentBodyColor("cm");
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/0B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
             super.render(par1);
 
             useColor = 1;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/1B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC1 = display.bodyC1;
+            this.bodyC1 = display.getCurrentBodyColor("c1");
             super.render(par1);
 
             useColor = 2;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/2B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC2 = display.bodyC2;
+            this.bodyC2 = display.getCurrentBodyColor("c2");
             super.render(par1);
 
             useColor = 3;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/3B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC3 = display.bodyC3;
+            this.bodyC3 = display.getCurrentBodyColor("c3");
             super.render(par1);
 
             useColor = 0;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/4B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyCM = display.bodyCM;
+            this.bodyCM = display.getCurrentBodyColor("cm");
             super.render(par1);
         } else {
             super.render(par1);
@@ -165,7 +169,7 @@ public class ArcoHorns extends ModelDBCPartInterface {
 
     @Override
     public void initData(ModelData modelData) {
-        ModelPartData config = data.getPartData("arcoHorn");
+        ModelPartData config = data.getPartData("dbcHorn");
         if(config == null)
         {
             isHidden = true;

@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.mixin.impl.npc.client;
 
 import kamkeel.npcdbc.client.model.ModelNPCDBC;
-import kamkeel.npcdbc.client.model.part.ArcoHorns;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.entity.Entity;

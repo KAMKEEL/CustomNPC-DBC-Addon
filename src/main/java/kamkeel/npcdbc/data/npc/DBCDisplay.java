@@ -25,7 +25,7 @@ public class DBCDisplay implements IDBCDisplay {
     public int race = -1;
     public boolean useSkin = false;
     public int bodyType = 0;
-    public int bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1;
+    public int bodyCM = 0xffffff, bodyC1 = 0xffffff, bodyC2 = 0xffffff, bodyC3 = 0xffffff;
     public boolean hasArcoMask = false;
 
     // Face Display //
@@ -355,7 +355,7 @@ public class DBCDisplay implements IDBCDisplay {
         return 0f;
     }
 
-    public int getState() {
+    public int getCurrentArcoState() {
         int state = this.arcoState;
         Form form = this.getCurrentForm();
         if (form != null) {
@@ -378,5 +378,51 @@ public class DBCDisplay implements IDBCDisplay {
             }
         }
         return state;
+    }
+
+    public int getCurrentBodyColor(String part) {
+        int body = 0;
+        switch (part.toLowerCase()) {
+            case "cm":
+                body = this.bodyCM;
+                break;
+            case "c1":
+                body = this.bodyC1;
+                break;
+            case "c2":
+                body = this.bodyC2;
+                break;
+            case "c3":
+                body = this.bodyC3;
+                break;
+        }
+
+        Form form = this.getCurrentForm();
+        if (form != null) {
+            switch (part) {
+                case "cm":
+                    if (form.display.bodyCM != -1) {
+                        return form.display.bodyCM;
+                    }
+                    break;
+                case "c1":
+                    if (form.display.bodyC1 != -1) {
+                        return form.display.bodyC1;
+                    }
+                    break;
+                case "c2":
+                    if (form.display.bodyC2 != -1) {
+                        return form.display.bodyC2;
+                    }
+                    break;
+                case "c3":
+                    if (form.display.bodyC3 != -1) {
+                        return form.display.bodyC3;
+                    }
+                    break;
+            }
+        }
+
+        return body;
     }
 }

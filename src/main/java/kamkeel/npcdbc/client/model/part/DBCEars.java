@@ -1,20 +1,23 @@
 package kamkeel.npcdbc.client.model.part;
 
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.client.model.ModelRenderer;
 import noppes.npcs.client.model.ModelMPM;
-import noppes.npcs.client.model.util.ModelPartInterface;
 import noppes.npcs.entity.data.ModelData;
 import noppes.npcs.entity.data.ModelPartData;
 
-public class RaceEars extends ModelDBCPartInterface {
+public class DBCEars extends ModelDBCPartInterface {
 
     public ModelRenderer ArcoEars;
     public ModelRenderer ear1;
     public ModelRenderer ear2;
 
-    public RaceEars(ModelMPM base) {
+    public DBCEars(ModelMPM base) {
         super(base);
+        textureHeight = 32;
+        textureWidth = 64;
 
         this.ArcoEars = new ModelRenderer(base, 0, 0);
         this.ArcoEars.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
@@ -32,6 +35,18 @@ public class RaceEars extends ModelDBCPartInterface {
         this.ArcoEars.addChild(this.ear2);
 
         this.addChild(ArcoEars);
+    }
+
+    @Override
+    public void render(float par1) {
+        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        if(display.useSkin){
+            this.useColor = 0;
+            this.bodyCM = display.getCurrentBodyColor("cm");
+            super.render(par1);
+        } else {
+            super.render(par1);
+        }
     }
 
     @Override
