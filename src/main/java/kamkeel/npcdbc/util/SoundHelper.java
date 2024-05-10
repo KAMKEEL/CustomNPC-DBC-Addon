@@ -1,14 +1,19 @@
 package kamkeel.npcdbc.util;
 
+import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PlaySound;
 import kamkeel.npcdbc.network.packets.StopSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSound;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -68,7 +73,8 @@ public class SoundHelper {
                     this.yPosF = (float) this.entity.posY;
                     this.zPosF = (float) this.entity.posZ;
                 }
-            }
+            } else
+                this.donePlaying = true;
 
         }
 
@@ -85,7 +91,7 @@ public class SoundHelper {
         public void play(boolean forOthers) {
             if (onlyOneCanExist && playingSounds.containsKey(key))
                 return;
-            playingSounds.put(key, this);
+            //  playingSounds.put(key, this);
             Minecraft.getMinecraft().getSoundHandler().playSound(this);
             if (forOthers)
                 PacketHandler.Instance.sendToServer(new PlaySound(this).generatePacket());
@@ -93,8 +99,8 @@ public class SoundHelper {
         }
 
         public void stop(boolean forOthers) {
-            if (playingSounds.containsKey(key))
-                playingSounds.remove(key);
+            //if (playingSounds.containsKey(key))
+            // playingSounds.remove(key);
 
             Minecraft.getMinecraft().getSoundHandler().stopSound(this);
             if (forOthers)
@@ -139,6 +145,47 @@ public class SoundHelper {
             World world = Utility.getWorld(dimID);
             sound.entity = Utility.getEntityFromID(world, compound.getString("entity"));
             return sound;
+        }
+    }
+
+    public static class AuraSound extends Sound {
+        public static HashMap<String, AuraSound> playingAuras = new HashMap<>();
+
+        public AuraSound(String soundDir) {
+            super(soundDir);
+        }
+
+        public AuraSound(String soundDir, Entity entity) {
+            super(soundDir, entity);
+        }
+
+        public void play(boolean forOthers) {
+            super.play(forOthers);
+            playingAuras.put(key, this);
+        }
+
+        public void update() {
+            super.update();
+            if (entity instanceof EntityNPCInterface) {
+                DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
+                if (!display.auraOn)
+                    donePlaying = true;
+
+            } else if (entity instanceof EntityPlayer) {
+                DBCData dbcData = DBCData.get((EntityPlayer) entity);
+                if (!dbcData.isDBCAuraOn())
+                    donePlaying = true;
+            }
+        }
+
+        public static boolean isPlaying(Entity entity, String soundDir) {
+            Iterator<String> iter = playingAuras.keySet().iterator();
+            while (iter.hasNext()) {
+                String sound = iter.next();
+                if (sound.contains(entity.getCommandSenderName() + entity.getEntityId()) && sound.contains(soundDir))
+                    return true;
+            }
+            return false;
         }
     }
 }

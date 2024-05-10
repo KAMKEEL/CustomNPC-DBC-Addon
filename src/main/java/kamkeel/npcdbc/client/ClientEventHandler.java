@@ -21,7 +21,6 @@ import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.SoundHelper;
-import kamkeel.npcdbc.util.SoundHelper.Sound;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -211,8 +210,9 @@ public class ClientEventHandler {
                     aura = dbcData.getAura();
                 }
                 if (!auraOn) {
-                    if (event.entity.ticksExisted % 60 == 0 && SoundHelper.playingSounds.containsKey(auraSoundKey))
-                        SoundHelper.stopSounds(event.entity, "aura");
+                    //  System.out.println(SoundHelper.playingSounds);
+                    //if (event.entity.ticksExisted % 60 == 0 && SoundHelper.contains(auraSoundKey))
+                    // SoundHelper.stopSounds(event.entity, "aura");
                     return;
                 }
                 if (aura == null || isPlayer && !aura.display.overrideDBCAura && !dbcData.isForm(DBCForm.Base))
@@ -379,13 +379,9 @@ public class ClientEventHandler {
         ////////////////////////////////////////////////////
         // This block indefinitely loops through aura sound as long as aura is enabled
         // regardless of the sound.ogg duration. The second the sound ends, it insta-replays
-        String auraSoundKey = isNPC ? display.auraSoundKey : dbcData.auraSoundKey;
-        if (!SoundHelper.contains(auraSoundKey)) {
-            Sound auraSound = new Sound(sound, entity);
-            if (isNPC)
-                display.auraSoundKey = auraSound.key;
-            else if (isPlayer)
-                dbcData.auraSoundKey = auraSound.key;
+
+        if (!SoundHelper.AuraSound.isPlaying(entity, sound)) {
+            SoundHelper.AuraSound auraSound = new SoundHelper.AuraSound(sound, entity);
 
             auraSound.range = 64;
             auraSound.setRepeat(true);
