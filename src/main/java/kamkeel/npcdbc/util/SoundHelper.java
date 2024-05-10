@@ -47,12 +47,8 @@ public class SoundHelper {
         public Sound(String soundDir, Entity entity) {
             super(new ResourceLocation(soundDir));
             this.soundDir = soundDir;
-
-            Utility.setPrivateField(ScriptClientSound.class, "entity", false, this, entity);
             this.entity = entity;
-
             key = toString();
-
         }
 
         public void update() {
