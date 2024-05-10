@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.sound;
 
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.PlaySound;
 import kamkeel.npcdbc.network.packets.StopSound;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -56,6 +57,8 @@ public class Sound extends MovingSound {
             return;
         SoundHandler.playingSounds.put(key, this);
         Minecraft.getMinecraft().getSoundHandler().playSound(this);
+        if (forOthers)
+            PacketHandler.Instance.sendToServer(new PlaySound(this).generatePacket());
     }
 
     public void stop(boolean forOthers) {
@@ -66,7 +69,7 @@ public class Sound extends MovingSound {
             PacketHandler.Instance.sendToServer(new StopSound(this).generatePacket());
     }
 
-    public boolean isPlaying(){
+    public boolean isPlaying() {
         return Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(this);
     }
 

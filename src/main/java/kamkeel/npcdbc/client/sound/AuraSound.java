@@ -7,14 +7,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 public class AuraSound extends Sound {
 
     public AuraSound(String soundDir, Entity entity) {
         super(soundDir, entity);
+        range = 32;
     }
 
     @Override
@@ -28,7 +25,7 @@ public class AuraSound extends Sound {
         boolean auraOn = true;
         if (entity instanceof EntityNPCInterface) {
             DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
-            if (!display.auraOn)
+            if (!display.isAuraOn())
                 auraOn = false;
 
         } else if (entity instanceof EntityPlayer) {

@@ -1,8 +1,8 @@
 package kamkeel.npcdbc.network.packets;
 
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.client.sound.Sound;
+import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.util.ByteBufUtils;
