@@ -15,6 +15,21 @@ stats.ignoreFormDefense=Ignore Form Defense
 stats.hasDefensePenetration=Has Defense Penetration
 stats.defensePenetration=Defense Penetration
 
+display.part.long=Long
+display.part.ultimate=Ultimate
+display.part.spike=Spike
+display.part.spike2=Spike2
+display.part.backSpike=BSpike
+display.part.armSpikes=ArmSpike
+display.part.shoulder=Shoulder
+display.parts=Parts
+display.race=Race
+display.skinOverride=DBC Skin
+display.state=State
+
+part.horns=Horns
+part.ears=Ears
+
 form.clear=Clear
 form.select=Select
 

@@ -17,10 +17,10 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
 
 	private final GuiScreen parent;
     private final String[] arrRace = new String[]{"gui.no","Human", "Saiyan", "HalfSaiyan", "Namekian", "Arcosian", "Majin"};
-    private final String[] arrArcoHorns = new String[]{"gui.no","Spike","SpikeTwo","Long","Ultimate"};
+    private final String[] arrArcoHorns = new String[]{"gui.no","display.part.spike","display.part.spike2","display.part.long","display.part.ultimate"};
     private final String[] arrRaceEars = new String[]{"gui.no","Arco"};
-    private final String[] arrBody = new String[]{"gui.no","BSpike"};
-    private final String[] arrArm = new String[]{"gui.no","ArmSpike",  "Shoulder"};
+    private final String[] arrBody = new String[]{"gui.no","display.part.backSpike"};
+    private final String[] arrArm = new String[]{"gui.no","display.part.armSpikes",  "display.part.shoulder"};
     private DBCDisplay display;
     private int tab = 0;
 
@@ -36,28 +36,28 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
     	super.initGui();
 		int y = guiTop + 5;
         addButton(new GuiNpcButtonYesNo(0, guiLeft + 64, y, 60, 20, display.enabled));
-        addLabel(new GuiNpcLabel(0, "Enabled", guiLeft, y + 5, 0xFFFFFF));
+        addLabel(new GuiNpcLabel(0, "gui.enabled", guiLeft, y + 5, 0xFFFFFF));
         if(!display.enabled)
             return;
 
-        addButton(new GuiNpcButton(50, guiLeft, y += 22, 60, 20, "Parts"));
+        addButton(new GuiNpcButton(50, guiLeft, y += 22, 60, 20, "display.parts"));
         getButton(50).enabled = tab != 0;
-        addButton(new GuiNpcButton(51, guiLeft + 64, y, 60, 20, "Race"));
+        addButton(new GuiNpcButton(51, guiLeft + 64, y, 60, 20, "display.race"));
         getButton(51).enabled = tab != 1;
 
         if(tab == 0){
-            addButton(new GuiNpcButton(101, guiLeft + 40, y+=22, 60, 20, "Paste"));
-            addButton(new GuiNpcButton(102, guiLeft + 101, y, 50, 20, "Copy"));
+            addButton(new GuiNpcButton(101, guiLeft + 40, y+=22, 60, 20, "gui.paste"));
+            addButton(new GuiNpcButton(102, guiLeft + 101, y, 50, 20, "gui.copy"));
             addLabel(new GuiNpcLabel(100, "Hair", guiLeft, y + 5, 0xFFFFFF));
             if(!display.hairCode.isEmpty()){
-                addButton(new GuiNpcButton(103, guiLeft + 40, y+=22, 60, 20, "Clear"));
+                addButton(new GuiNpcButton(103, guiLeft + 40, y+=22, 60, 20, "gui.clear"));
                 addButton(new GuiNpcButton(104, guiLeft + 101, y, 50, 20, getColor(display.hairColor)));
                 getButton(104).packedFGColour = display.hairColor;
             }
 
             ModelPartData dbcHorn = playerdata.getPartData("dbcHorn");
             addButton(new GuiNpcButton(2, guiLeft + 40, y+=22, 60, 20, arrArcoHorns, dbcHorn == null ? 0 : dbcHorn.type));
-            addLabel(new GuiNpcLabel(2, "Horns", guiLeft, y + 5, 0xFFFFFF));
+            addLabel(new GuiNpcLabel(2, "part.horns", guiLeft, y + 5, 0xFFFFFF));
             if(dbcHorn != null){
                 addButton(new GuiNpcButton(12, guiLeft + 101, y, 50, 20, dbcHorn.getColor()));
                 getButton(12).enabled = !display.useSkin;
@@ -66,7 +66,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
 
             ModelPartData dbcEars = playerdata.getPartData("dbcEars");
             addButton(new GuiNpcButton(3, guiLeft + 40, y += 22, 60, 20, arrRaceEars, dbcEars == null ? 0 : dbcEars.type));
-            addLabel(new GuiNpcLabel(3, "Ears", guiLeft, y + 5, 0xFFFFFF));
+            addLabel(new GuiNpcLabel(3, "part.ears", guiLeft, y + 5, 0xFFFFFF));
             if(dbcEars != null){
                 addButton(new GuiNpcButton(13, guiLeft + 101, y, 50, 20, dbcEars.getColor()));
                 getButton(13).enabled = !display.useSkin;
@@ -75,7 +75,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
 
             ModelPartData dbcBody = playerdata.getPartData("dbcBody");
             addButton(new GuiNpcButton(4, guiLeft + 40, y += 22, 60, 20, arrBody, dbcBody == null ? 0 : dbcBody.type));
-            addLabel(new GuiNpcLabel(4, "Body", guiLeft, y + 5, 0xFFFFFF));
+            addLabel(new GuiNpcLabel(4, "model.body", guiLeft, y + 5, 0xFFFFFF));
             if(dbcBody != null){
                 addButton(new GuiNpcButton(14, guiLeft + 101, y, 50, 20, dbcBody.getColor()));
                 getButton(14).enabled = !display.useSkin;
@@ -84,7 +84,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
 
             ModelPartData dbcArms = playerdata.getPartData("dbcArms");
             addButton(new GuiNpcButton(5, guiLeft + 40, y += 22, 60, 20, arrArm, dbcArms == null ? 0 : dbcArms.type));
-            addLabel(new GuiNpcLabel(5, "Arms", guiLeft, y + 5, 0xFFFFFF));
+            addLabel(new GuiNpcLabel(5, "model.arms", guiLeft, y + 5, 0xFFFFFF));
             if(dbcArms != null){
                 addButton(new GuiNpcButton(15, guiLeft + 101, y, 50, 20, dbcArms.getColor()));
                 getButton(15).enabled = !display.useSkin;
@@ -92,18 +92,18 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             }
         } else {
             addButton(new GuiNpcButton(1, guiLeft + 64, y += 22, 60, 20, arrRace, display.race+1));
-            addLabel(new GuiNpcLabel(1, "Race", guiLeft, y + 5, 0xFFFFFF));
+            addLabel(new GuiNpcLabel(1, "display.race", guiLeft, y + 5, 0xFFFFFF));
             if(display.race > -1){
                 addButton(new GuiNpcButtonYesNo(304, guiLeft + 64, y+=22, 60, 20, display.useSkin));
-                addLabel(new GuiNpcLabel(304, "Skin", guiLeft, y + 5, 0xFFFFFF));
+                addLabel(new GuiNpcLabel(304, "display.skinOverride", guiLeft, y + 5, 0xFFFFFF));
                 if(display.useSkin) {
                     if(display.race == DBCRace.ARCOSIAN || display.race == DBCRace.NAMEKIAN){
                         addButton(new GuiButtonBiDirectional(200,guiLeft + 40, y+=22, 52, 20, new String[]{"0", "1", "2"}, display.bodyType));
-                        addLabel(new GuiNpcLabel(200, "Type", guiLeft, y + 5, 0xFFFFFF));
+                        addLabel(new GuiNpcLabel(200, "gui.type", guiLeft, y + 5, 0xFFFFFF));
 
                         if(display.race == DBCRace.ARCOSIAN){
                             addButton(new GuiButtonBiDirectional(201,guiLeft + 145, y, 52, 20, new String[]{"0", "1", "2", "3", "4", "5", "6", "7"}, display.arcoState));
-                            addLabel(new GuiNpcLabel(201, "State", guiLeft + 105, y + 5, 0xFFFFFF));
+                            addLabel(new GuiNpcLabel(201, "display.state", guiLeft + 105, y + 5, 0xFFFFFF));
                         }
                     }
                     addButton(new GuiNpcButton(300, guiLeft + 20, y+=22, 42, 20, getColor(display.bodyCM)));
@@ -231,8 +231,12 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
                 playerdata.removePart("dbcArms");
             else{
                 ModelPartData data = playerdata.getOrCreatePart("dbcArms");
-                if(button.getValue() > 0)
+                if(button.getValue() > 0){
                     data.setTexture("tail/monkey1", value);
+                    if(button.getValue() == 2)
+                        data.texture = "npcdbc:textures/parts/shoulder.png";
+                }
+
             }
             initGui();
         }
