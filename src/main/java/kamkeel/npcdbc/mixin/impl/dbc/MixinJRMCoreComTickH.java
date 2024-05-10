@@ -24,10 +24,4 @@ public class MixinJRMCoreComTickH {
         CommonProxy.CurrentJRMCTickPlayer = player;
     }
 
-    @Redirect(method = "updatePlayersData", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/i/InventoryCustomPlayer;setInventorySlotContents(ILnet/minecraft/item/ItemStack;)V"))
-    public void preventPotaraDelete(InventoryCustomPlayer instance, int slot, ItemStack stack) {
-        if(slot > 2 && stack != null && !(stack.getItem() instanceof ItemPotara)){
-            instance.setInventorySlotContents(slot, (ItemStack)null);
-        }
-    }
 }

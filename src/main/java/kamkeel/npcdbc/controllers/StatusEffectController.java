@@ -19,26 +19,13 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     public static StatusEffectController Instance = new StatusEffectController();
 
-    public HashMap<Integer, DBCEffect> dbcEffectByIconID = new HashMap<>();
-
     public HashMap<Integer, StatusEffect> standardEffects = new HashMap<>();
     public HashMap<Integer, CustomEffect> customEffects = new HashMap<>(); // TODO: I will implement later - Kam
 
     public HashMap<UUID, HashMap<Integer, PlayerEffect>> playerEffects = new HashMap<>();
 
-    private void addDBCEffect(DBCEffect effect){
-        if(effect == null)
-            return;
-
-        if(effect.resourceID > -1)
-            dbcEffectByIconID.put(effect.resourceID, effect);
-
-//        if(effect.id > -1)
-//            dbcEffects.put(effect.id, effect);
-    }
-
     public StatusEffectController(){
-        addDBCEffect(new DBCEffect("Blocking", "dbc.se.blocking", -1, 0, true));
+
     }
 
     public static StatusEffectController getInstance() {

@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.npc;
 
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
@@ -431,16 +432,18 @@ public class DBCDisplay implements IDBCDisplay {
     public void setDefaultColors(){
         if (race < 3) {
             bodyCM = 16297621;
-        } else if (race == 3) {
+        } else if (race == DBCRace.NAMEKIAN) {
+            hairColor = 5095183;
             bodyCM =  5095183;
             bodyC1 =  13796998;
             bodyC2 =  12854822;
-        } else if (race == 4) {
+        } else if (race == DBCRace.ARCOSIAN) {
             bodyCM =  15460342;
             bodyC1 =  16111595;
             bodyC2 =  8533141;
             bodyC3 =  16550015;
-        } else if (race == 5)
+        } else if (race == DBCRace.MAJIN)
             bodyCM =  16757199;
+        eyeColor = 0x000000;
     }
 }

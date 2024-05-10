@@ -23,7 +23,7 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
     private int colorY;
     private GuiNpcTextField textfield;
     private final DBCDisplay data;
-    private int type = 0; // CM, C1, C2, C3, HairColor
+    private int type = 0; // CM, C1, C2, C3, HairColor, EyeColor
 
     public GuiDBCDisplayColor(GuiScreen parent, DBCDisplay data, EntityCustomNpc npc, int type) {
         super(npc);
@@ -51,6 +51,9 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
         } else if(type == 4){
             this.addTextField(this.textfield = new GuiNpcTextField(0, this, this.guiLeft + 25, this.guiTop + 20, 70, 20, getColor(this.data.hairColor)));
             this.textfield.setTextColor(this.data.hairColor);
+        } else if(type == 5){
+            this.addTextField(this.textfield = new GuiNpcTextField(0, this, this.guiLeft + 25, this.guiTop + 20, 70, 20, getColor(this.data.eyeColor)));
+            this.textfield.setTextColor(this.data.eyeColor);
         } else {
             this.addTextField(this.textfield = new GuiNpcTextField(0, this, this.guiLeft + 25, this.guiTop + 20, 70, 20, getColor(this.data.bodyCM)));
             this.textfield.setTextColor(this.data.bodyCM);
@@ -76,6 +79,9 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
                         break;
                     case 4:
                         this.data.hairColor = color;
+                        break;
+                    case 5:
+                        this.data.eyeColor = color;
                         break;
                     default:
                         this.data.bodyCM = color;
@@ -126,6 +132,9 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
                         case 4:
                             this.data.hairColor = color;
                             break;
+                        case 5:
+                            this.data.eyeColor = color;
+                            break;
                         default:
                             this.data.bodyCM = color;
                             break;
@@ -167,6 +176,9 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
                 break;
             case 4:
                 this.data.hairColor = color;
+                break;
+            case 5:
+                this.data.eyeColor = color;
                 break;
             default:
                 this.data.bodyCM = color;

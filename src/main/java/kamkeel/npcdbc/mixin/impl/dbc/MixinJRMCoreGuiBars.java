@@ -4,6 +4,7 @@ import JinRyuu.JRMCore.JRMCoreGuiBars;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.gui.dbc.AbstractJRMCGui;
 import kamkeel.npcdbc.client.gui.dbc.JRMCoreLabel;
 import kamkeel.npcdbc.controllers.StatusEffectController;
@@ -53,7 +54,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
 
     @Inject(method = "drawIcon(III)V", at = @At("HEAD"))
     private void onDrawIcon(int var51, int var61, int resourceID, CallbackInfo ci) {
-        String name = this.statusEffectFromResourceID(resourceID);
+        String name = LocalizationHelper.getLocalizedString(this.statusEffectFromResourceID(resourceID));
         addHoverable(name, var51, var61);
     }
 
@@ -80,55 +81,53 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
 
         switch (resourceID) {
             case 0:
-                return "Blocking";
+                return "dbc.se.blocking";
 
             case 1:
-                return "Flying";
+                return "dbc.se.flying";
             case 2:
-                return "Charging";
+                return "dbc.se.charging";
 
             case 3:
-                return "Kaioken";
+                return "dbc.se.kaioken";
             case 4:
-                return "Swooping/Dashing";
+                return "dbc.se.swooping";
 
             case 6:
-                return "Strain";
+                return "dbc.se.strain";
             case 7:
-                return "Full Moon";
+                return "dbc.se.fullmoon";
             case 8:
-                return "GodPower";
+                return "dbc.se.godpower";
             case 9:
-                return "Majin";
+                return "dbc.se.majin";
             case 10:
-                return "Legendary";
-//            case 11:
-//                return "GIVE ME THIS STATUS EFFECT NAME";
+                return "dbc.se.legendary";
 
             case 15:
-                return "Divine";
+                return "dbc.se.divine";
             case 16:
-                return "Pain";
+                return "dbc.se.pain";
             case 17:
-                return "Ultra Instinct";
+                return "dbc.se.ultrainstinct";
             case 18:
-                return "Transforming";
+                return "dbc.se.transforming";
             case 19:
-                return "Mystic";
+                return "dbc.se.mystic";
             case 20:
-                return "KO";
+                return "dbc.se.ko";
             case 21:
-                return "Fusion timer";
+                return "dbc.se.fusion";
 
             case 23:
-                return "God of Destruction";
+                return "dbc.se.god";
 
             case 128:
-                return "Turbo";
+                return "dbc.se.turbo";
             case 129:
-                return "Strain in:";
+                return "dbc.se.strainIn";
             case 130:
-                return "Fatigue:";
+                return "dbc.se.fatigue";
 
             default:
                 return "ResourceID " + resourceID;
