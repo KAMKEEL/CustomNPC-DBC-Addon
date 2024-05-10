@@ -63,8 +63,8 @@ public abstract class MixinModelMPM extends ModelNPCMale {
     private void renderDBCHead(EntityCustomNpc entity, float f, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled) {
-            NPCDBCModel.renderHead(display);
-            NPCDBCModel.renderAllBody(display, bipedHead);
+            NPCDBCModel.renderFace(display);
+            NPCDBCModel.renderBodySkin(display, bipedHead);
         }
     }
 
@@ -72,7 +72,7 @@ public abstract class MixinModelMPM extends ModelNPCMale {
     private void renderDBCBody(EntityCustomNpc entity, float f, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled){
-            NPCDBCModel.renderAllBody(display, bipedBody);
+            NPCDBCModel.renderBodySkin(display, bipedBody);
         }
     }
 
@@ -80,21 +80,21 @@ public abstract class MixinModelMPM extends ModelNPCMale {
     private void renderDBCLegs(EntityCustomNpc entity, float f, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
-            NPCDBCModel.renderAllBody(display, legs);
+            NPCDBCModel.renderBodySkin(display, legs);
     }
 
     @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     private void renderDBCLeftArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
-            NPCDBCModel.renderAllBody(display, bipedLeftArm);
+            NPCDBCModel.renderBodySkin(display, bipedLeftArm);
     }
 
     @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
     private void renderDBCRightArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
-            NPCDBCModel.renderAllBody(display, bipedRightArm);
+            NPCDBCModel.renderBodySkin(display, bipedRightArm);
     }
 
 }
