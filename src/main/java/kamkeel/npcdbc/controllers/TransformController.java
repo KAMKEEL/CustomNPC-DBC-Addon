@@ -23,7 +23,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import noppes.npcs.entity.EntityCustomNpc;
+import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
 
 import static JinRyuu.JRMCore.JRMCoreH.isInBaseForm;
@@ -157,7 +157,7 @@ public class TransformController {
     //////////////////////////////////////////////////
     // NPC transformation handling
 
-    public static void npcAscend(EntityCustomNpc npc, Form form) {
+    public static void npcAscend(EntityNPCInterface npc, Form form) {
         DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
 
         if (form.id == display.formID || !display.isTransforming)
@@ -175,7 +175,7 @@ public class TransformController {
         npc.updateClient();
     }
 
-    public static void npcDecrementRage(EntityCustomNpc npc, DBCDisplay display) {
+    public static void npcDecrementRage(EntityNPCInterface npc, DBCDisplay display) {
         if (display.rage <= 0)
             return;
 
@@ -192,7 +192,7 @@ public class TransformController {
 
     }
 
-    public static void npcDescend(EntityCustomNpc npc, int id) {
+    public static void npcDescend(EntityNPCInterface npc, int id) {
         DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
         Form current = display.getCurrentForm();
         if (current == null)

@@ -5,6 +5,7 @@ import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.nbt.NBTTagCompound;
@@ -380,7 +381,7 @@ public class DBCDisplay implements IDBCDisplay {
     }
 
     public void descend(int id) {
-        // TransformController.npcDescend(npc,id);   need an npc reference
+         TransformController.npcDescend(npc,id);
 
     }
 

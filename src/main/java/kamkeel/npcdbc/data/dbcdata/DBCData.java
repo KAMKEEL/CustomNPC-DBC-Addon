@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.dbcdata;
 
 
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.JRMCoreHDBC;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.AuraController;
@@ -32,7 +33,7 @@ public class DBCData extends DBCDataUniversal {
 
     // Original DBC
     public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXSeconds, Rage, Heat, Pain, AuraColor, ArcReserve;
-    public byte Class, Race, Powertype, Accept, State, State2, Release;
+    public byte Class, Race, Powertype, Accept, State, State2, Release, Alignment;
     public boolean Alive, isKO;
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "", Fusion = "";
 
@@ -83,6 +84,7 @@ public class DBCData extends DBCDataUniversal {
         comp.setByte("jrmcRace", Race);
         comp.setByte("jrmcClass", Class);
         comp.setByte("jrmcAccept", Accept);
+        comp.setByte("jrmcAlign", Alignment);
 
         comp.setString("jrmcStatusEff", StatusEffects);
         comp.setString("jrmcSSltX", RacialSkills);
@@ -129,6 +131,7 @@ public class DBCData extends DBCDataUniversal {
         Race = c.getByte("jrmcRace");
         Class = c.getByte("jrmcClass");
         Accept = c.getByte("jrmcAccept");
+        Alignment = c.getByte("jrmcAlign");
 
         StatusEffects = c.getString("jrmcStatusEff");
         RacialSkills = c.getString("jrmcSSltX");
@@ -217,6 +220,8 @@ public class DBCData extends DBCDataUniversal {
 
     public boolean isForm(int dbcForm) {
         switch (dbcForm) {
+            case DBCForm.Base:
+                return State == 0 && !isForm(DBCForm.Kaioken) && !isForm(DBCForm.UltraInstinct) && !isForm(DBCForm.GodOfDestruction) && !isForm(DBCForm.Mystic);
             case DBCForm.Kaioken:
                 return State2 > 0 && JRMCoreH.StusEfcts(5, StatusEffects);
             case DBCForm.UltraInstinct:
@@ -295,42 +300,45 @@ public class DBCData extends DBCDataUniversal {
         }
     }
 
+    public boolean isDBCAuraOn() {
+        return containsSE(1) || containsSE(3) || containsSE(4) || containsSE(5) || containsSE(7);
+    }
+
+    public boolean isTransforming() {
+        return containsSE(1);
+    }
+
+    public int getDBCColor() {
+        return JRMCoreHDBC.getPlayerColor2(2, JRMCoreH.Algnmnt_rc(Alignment), 1, Race, State, isForm(DBCForm.Divine), isForm(DBCForm.Legendary), isForm(DBCForm.UltraInstinct), isForm(DBCForm.GodOfDestruction));
+
+    }
 
     public Aura getAura() {
-        if (player == null)
-            return null;
-        DBCData dbcData = DBCData.get(player);
-        Form form = (Form) FormController.getInstance().get(dbcData.addonFormID);
+        Form form = getForm();
 
         if (form != null && form.display.hasAura())
             return form.display.getAur();
-        else if (auraID > -1)
-            return (Aura) AuraController.Instance.get(auraID);
 
-        return null;
+        return (Aura) AuraController.Instance.get(auraID);
+
     }
 
     public Form getForm() {
-        if (player == null)
-            return null;
-
-        if (addonFormID == -1)
-            return null;
-
         return (Form) FormController.getInstance().get(addonFormID);
     }
 
 
     /**
      * Fuse with another player
+     *
      * @param spectator player that is supposed to be the spectator
-     * @param time time in minutes
+     * @param time      time in minutes
      */
     public void fuseWith(DBCData spectator, float time) {
-        if(spectator == null || this.player == null)
+        if (spectator == null || this.player == null)
             return;
 
-        if(spectator == this)
+        if (spectator == this)
             throw new CustomNPCsException("Tried to fuse the player with themselves");
 
         time *= 12; //Gets DBC time
