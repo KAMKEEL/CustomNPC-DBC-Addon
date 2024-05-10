@@ -9,8 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import noppes.npcs.client.controllers.ScriptClientSound;
-
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,8 +38,8 @@ public class SoundHelper {
         public boolean onlyOneCanExist = true;
 
 
-        public Sound(ResourceLocation location) {
-            super(location);
+        public Sound(String soundDir) {
+            super(new ResourceLocation(soundDir));
         }
 
         public Sound(String soundDir, Entity entity) {
@@ -118,7 +116,7 @@ public class SoundHelper {
 
         public static Sound createFromNBT(NBTTagCompound compound) {
             String directory = compound.getString("soundDir");
-            Sound sound = new Sound(new ResourceLocation(directory));
+            Sound sound = new Sound(directory);
 
             sound.setVolume(compound.getFloat("volume"));
             sound.soundDir = directory;
