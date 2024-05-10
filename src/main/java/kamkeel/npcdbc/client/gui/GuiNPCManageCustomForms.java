@@ -3,10 +3,12 @@ package kamkeel.npcdbc.client.gui;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.RequestForm;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.Client;
 import noppes.npcs.client.NoppesUtil;
@@ -87,21 +89,29 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
     @Override
     protected void actionPerformed(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
-        if (button.id == 0) {
-            save();
-            String name = "New";
-            while (data.containsKey(name))
-                name += "_";
-            Form form = new Form(-1, name);
 
-            NBTTagCompound compound = form.writeToNBT();
-            Client.sendData(EnumPacketServer.CustomFormSave, compound);
-        }
-        if (button.id == 1) {
-            if (data.containsKey(scrollForms.getSelected())) {
-                GuiYesNo guiyesno = new GuiYesNo(this, scrollForms.getSelected(), StatCollector.translateToLocal("gui.delete"), 1);
-                displayGuiScreen(guiyesno);
-            }
+        switch(button.id){
+            case 0:
+                save();
+                String name = "New";
+                while (data.containsKey(name))
+                    name += "_";
+                Form form = new Form(-1, name);
+
+                NBTTagCompound compound = form.writeToNBT();
+                Client.sendData(EnumPacketServer.CustomFormSave, compound);
+                break;
+
+            case 1:
+                if (data.containsKey(scrollForms.getSelected())) {
+                    GuiYesNo guiyesno = new GuiYesNo(this, scrollForms.getSelected(), StatCollector.translateToLocal("gui.delete"), 1);
+                    displayGuiScreen(guiyesno);
+                }
+                break;
+
+            case 3:
+                this.customForm.fromParentOnly = button.getValue() == 1;
+                break;
         }
     }
 
@@ -177,7 +187,6 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
     public void unFocused(GuiNpcTextField guiNpcTextField) {
         if (customForm.id == -1)
             return;
-
 
         switch(guiNpcTextField.id){
             case 0:
