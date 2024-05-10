@@ -9,6 +9,8 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.client.sound.AuraSound;
+import kamkeel.npcdbc.client.sound.NPCSoundHandler;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import kamkeel.npcdbc.controllers.TransformController;
@@ -30,12 +32,12 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 
-import java.util.Iterator;
-
 import static noppes.npcs.NoppesStringUtils.translate;
 
 
 public class ClientEventHandler {
+
+    private int soundTicker = -1;
 
     @SubscribeEvent
     public void onSkill(TickEvent.PlayerTickEvent event) {
@@ -174,12 +176,10 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void handleSounds(TickEvent.ClientTickEvent event) {
-        Iterator<SoundHelper.Sound> iter = SoundHelper.playingSounds.values().iterator();
-        while (iter.hasNext()) {
-            SoundHelper.Sound sound = iter.next();
-            if (!sound.isPlaying())
-                iter.remove();
-
+        if(event.side == Side.CLIENT){
+            if(soundTicker % 5 == 0)
+                NPCSoundHandler.verifySounds();
+            soundTicker++;
         }
     }
 
@@ -380,8 +380,8 @@ public class ClientEventHandler {
         // This block indefinitely loops through aura sound as long as aura is enabled
         // regardless of the sound.ogg duration. The second the sound ends, it insta-replays
 
-        if (!SoundHelper.AuraSound.isPlaying(entity, sound)) {
-            SoundHelper.AuraSound auraSound = new SoundHelper.AuraSound(sound, entity);
+        if (!NPCSoundHandler.isPlayingSound(entity, sound)) {
+            AuraSound auraSound = new AuraSound(sound, entity);
 
             auraSound.range = 32;
             auraSound.setRepeat(true);
