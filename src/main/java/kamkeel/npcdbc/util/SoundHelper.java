@@ -35,6 +35,7 @@ public class SoundHelper {
         public String soundDir;
         public Entity entity;
 
+        public float range = 16;
         public boolean onlyOneCanExist = true;
 
 
@@ -91,9 +92,10 @@ public class SoundHelper {
 
             c.setFloat("volume", volume);
             c.setBoolean("repeat", repeat);
+            c.setFloat("range", range);
             c.setBoolean("onlyOneCanExist", onlyOneCanExist);
             c.setString("soundDir", soundDir);
-            c.setString("name", key);
+            c.setString("key", key);
             c.setInteger("dimensionID", entity.worldObj.provider.dimensionId);
             c.setString("entity", Utility.getEntityID(entity));
 
@@ -109,16 +111,18 @@ public class SoundHelper {
 
             setVolume(c.getFloat("volume"));
             repeat = c.getBoolean("repeat");
+            range = c.getFloat("range");
             onlyOneCanExist = c.getBoolean("onlyOneCanExist");
 
             soundDir = c.getString("soundDir");
             Utility.setPrivateField(PositionedSound.class, "field_147664_a", true, this, new ResourceLocation(soundDir));
 
-            key = c.getString("name");
+            key = c.getString("key");
 
             int dimID = c.getInteger("dimensionID");
             World world = Utility.getWorld(dimID);
             entity = Utility.getEntityFromID(world, c.getString("entity"));
+            Utility.setPrivateField(ScriptClientSound.class, "entity", false, this, entity);
             return this;
 
         }
