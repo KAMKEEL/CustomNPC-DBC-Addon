@@ -16,6 +16,7 @@ import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class SoundHelper {
     public static HashMap<String, Sound> playingSounds = new HashMap<>();
@@ -90,11 +91,7 @@ public class SoundHelper {
         public void play(boolean forOthers) {
             if (onlyOneCanExist && playingSounds.containsKey(key))
                 return;
-            //  playingSounds.put(key, this);
             Minecraft.getMinecraft().getSoundHandler().playSound(this);
-            //if (forOthers)
-            // PacketHandler.Instance.sendToServer(new PlaySound(this).generatePacket());
-
         }
 
         public void stop(boolean forOthers) {
@@ -182,12 +179,16 @@ public class SoundHelper {
             }
         }
 
+        //isSoundPlaying
         public static boolean isPlaying(Entity entity, String soundDir) {
-            Iterator<String> iter = playingAuras.keySet().iterator();
+            Iterator<Map.Entry<String, AuraSound>> iter = playingAuras.entrySet().iterator();
             while (iter.hasNext()) {
-                String sound = iter.next();
-                if (sound.contains(entity.getCommandSenderName() + entity.getEntityId()) && sound.contains(soundDir))
-                    return true;
+                Map.Entry<String, AuraSound> entry = iter.next();
+                String sound = entry.getKey();
+                if (sound.contains(entity.getCommandSenderName() + entity.getEntityId()) && sound.contains(soundDir)){
+                    AuraSound auraSound = entry.getValue();
+                    return auraSound.isPlaying();
+                }
             }
             return false;
         }

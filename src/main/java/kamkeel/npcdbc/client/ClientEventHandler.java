@@ -383,7 +383,7 @@ public class ClientEventHandler {
         if (!SoundHelper.AuraSound.isPlaying(entity, sound)) {
             SoundHelper.AuraSound auraSound = new SoundHelper.AuraSound(sound, entity);
 
-            auraSound.range = 64;
+            auraSound.range = 32;
             auraSound.setRepeat(true);
             auraSound.play(true);
         }
