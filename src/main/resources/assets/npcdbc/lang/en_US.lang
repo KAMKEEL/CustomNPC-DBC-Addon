@@ -38,6 +38,31 @@ aura.shown=Shown
 aura.hidden=Hidden
 
 ############################
+## Status Effects
+############################
+dbc.se.blocking=Blocking
+dbc.se.flying=Flying
+dbc.se.charging=Charging
+dbc.se.kaioken=Kaioken
+dbc.se.swooping=Swooping
+dbc.se.strain=Strained
+dbc.se.fullmoon=Full Moon
+dbc.se.godpower=GodPower
+dbc.se.majin=Majin
+dbc.se.legendary=Legendary
+dbc.se.divine=Divine
+dbc.se.pain=Pain
+dbc.se.ultrainstinct=Ultra Instinct
+dbc.se.transforming=Transforming
+dbc.se.mystic=Mystic
+dbc.se.ko=KO
+dbc.se.fusion=Fusion
+dbc.se.god=God of Destruction
+dbc.se.turbo=Turbo
+dbc.se.strainIn=Strain In
+dbc.se.fatigue=Fatigue
+
+############################
 ## MESSAGES
 ############################
 
