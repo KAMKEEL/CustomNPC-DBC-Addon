@@ -42,7 +42,7 @@ public class DBCBody extends ModelDBCPartInterface {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if(display.useSkin){
             this.useColor = 0;
-            this.bodyCM = ModelDBC.getBodyColor(display,"bodycm",display.race);
+            this.bodyCM = display.bodyCM;
             super.render(par1);
         } else {
             super.render(par1);

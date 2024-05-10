@@ -425,5 +425,19 @@ public class DBCDisplay implements IDBCDisplay {
         return 0f;
     }
 
-
+    public void setDefaultColors(){
+        if (race < 3) {
+            bodyCM = 16297621;
+        } else if (race == 3) {
+            bodyCM =  5095183;
+            bodyC1 =  13796998;
+            bodyC2 =  12854822;
+        } else if (race == 4) {
+            bodyCM =  15460342;
+            bodyC1 =  16111595;
+            bodyC2 =  8533141;
+            bodyC3 =  16550015;
+        } else if (race == 5)
+            bodyCM =  16757199;
+    }
 }

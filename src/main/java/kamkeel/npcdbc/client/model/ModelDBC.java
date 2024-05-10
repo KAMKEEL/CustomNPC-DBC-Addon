@@ -87,35 +87,6 @@ public class ModelDBC extends ModelBase {
         this.parent.bipedLeftArm.addChild(this.DBCLeftArms = new DBCLeftArms(mpm));
     }
 
-    public static int getBodyColor(DBCDisplay d, String type, int race) {
-        int color = 0;
-
-
-        if (race < 3) {
-            if (type.equalsIgnoreCase("bodycm"))
-                color = d.hasColor("bodyCM") ? d.getColor("bodycm") : 16297621;
-        } else if (race == 3) {
-            if (type.equalsIgnoreCase("bodycm"))
-                color = d.hasColor("bodyCM") ? d.getColor("bodycm") : 5095183;
-            else if (type.equalsIgnoreCase("bodyc1"))
-                color = d.hasColor("bodyC1") ? d.getColor("bodyc1") : 13796998;
-            else if (type.equalsIgnoreCase("bodyc2"))
-                color = d.hasColor("bodyC2") ? d.getColor("bodyc2") : 12854822;
-        } else if (race == 4) {
-            if (type.equalsIgnoreCase("bodycm"))
-                color = d.hasColor("bodyCM") ? d.getColor("bodycm") : 15460342;
-            else if (type.equalsIgnoreCase("bodyc1"))
-                color = d.hasColor("bodyC1") ? d.getColor("bodyc1") : 16111595;
-            else if (type.equalsIgnoreCase("bodyc2"))
-                color = d.hasColor("bodyC2") ? d.getColor("bodyc2") : 8533141;
-            else if (type.equalsIgnoreCase("bodyc3"))
-                color = d.hasColor("bodyC3") ? d.getColor("bodyc3") : 16550015;
-        } else if (race == 5)
-            if (type.equalsIgnoreCase("bodycm"))
-                color = d.hasColor("bodyCM") ? d.getColor("bodycm") : 16757199;
-        return color;
-    }
-
     public void setPlayerData(EntityCustomNpc entity) {
         this.DBCHair.setData(entity.modelData, entity);
         this.DBCHorns.setData(entity.modelData, entity);
@@ -149,7 +120,7 @@ public class ModelDBC extends ModelBase {
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
-            RenderPlayerJBRA.glColor3f(getBodyColor(display, "bodycm", display.race));
+            RenderPlayerJBRA.glColor3f(display.bodyCM);
             ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
             this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
@@ -218,45 +189,45 @@ public class ModelDBC extends ModelBase {
             int race = display.race;
             if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
-                RenderPlayerJBRA.glColor3f(getBodyColor(display, "bodycm", race));
+                RenderPlayerJBRA.glColor3f(display.bodyCM);
             } else if (race == DBCRace.NAMEKIAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(getBodyColor(display, "bodycm", race));
+                RenderPlayerJBRA.glColor3f(display.bodyCM);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(getBodyColor(display, "bodyc1", race));
+                RenderPlayerJBRA.glColor3f(display.bodyC1);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(getBodyColor(display, "bodyc2", race));
+                RenderPlayerJBRA.glColor3f(display.bodyC2);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
                 GL11.glColor3f(1f, 1f, 1f);
             } else if (race == DBCRace.ARCOSIAN) {
                 int st = display.getCurrentArcoState();
-                RenderPlayerJBRA.glColor3f(getBodyColor(display, "bodycm", race));
+                RenderPlayerJBRA.glColor3f(display.bodyCM);
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(getBodyColor(display, "bodyc1", race));
+                RenderPlayerJBRA.glColor3f(display.bodyC1);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(getBodyColor(display, "bodyc2", race));
+                RenderPlayerJBRA.glColor3f(display.bodyC2);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(getBodyColor(display, "bodyc3", race));
+                RenderPlayerJBRA.glColor3f(display.bodyC3);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
                 GL11.glColor3f(1f, 1f, 1f);
             } else if (race == DBCRace.MAJIN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
-                RenderPlayerJBRA.glColor3f(getBodyColor(display, "bodycm", race));
+                RenderPlayerJBRA.glColor3f(display.bodyCM);
             }
         }
     }

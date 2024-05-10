@@ -140,28 +140,28 @@ public class DBCHorns extends ModelDBCPartInterface {
                 state = 3;
 
             useColor = 0;
-            this.bodyCM = ModelDBC.getBodyColor(display, "bodycm", display.race);
+            this.bodyCM = display.bodyCM;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/0B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
             super.render(par1);
 
             useColor = 1;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/1B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC1 = ModelDBC.getBodyColor(display, "bodyc1", display.race);
+            this.bodyC1 = display.bodyC1;
             super.render(par1);
 
             useColor = 2;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/2B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC2 = ModelDBC.getBodyColor(display, "bodyc2", display.race);
+            this.bodyC2 = display.bodyC2;
             super.render(par1);
 
             useColor = 3;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/3B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC3 = ModelDBC.getBodyColor(display, "bodyc3", display.race);
+            this.bodyC3 = display.bodyC3;
             super.render(par1);
 
             useColor = 0;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/4B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyCM = ModelDBC.getBodyColor(display, "bodycm", display.race);
+            this.bodyCM = display.bodyCM;
             super.render(par1);
         } else {
             super.render(par1);

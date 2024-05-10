@@ -162,7 +162,7 @@ public class DBCHair extends ModelHairRenderer {
 
         int hairColor = display.hairColor;
         if (display.hairColor == -1 && display.race == 5)
-            hairColor = ModelDBC.getBodyColor(display, "bodycm", race);
+            hairColor = display.bodyCM;
 
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////

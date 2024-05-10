@@ -121,6 +121,8 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
                     addButton(new GuiNpcButton(303, guiLeft + 101, y, 42, 20, getColor(display.bodyC3)));
                     addLabel(new GuiNpcLabel(303, "C3", guiLeft + 80, y + 5, 0xFFFFFF));
                     getButton(303).packedFGColour = display.bodyC3;
+
+                    addButton(new GuiNpcButton(320, guiLeft + 13, y+=22, 110, 20, "display.setDefaultColors"));
                 }
             }
         }
@@ -255,6 +257,10 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         }
         if(button.id == 303){
             this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, display, npc, 3));
+        }
+        if(button.id == 320){
+            display.setDefaultColors();
+            initGui();
         }
         if(button.id == 304){
             // Set NPC to Steve Model

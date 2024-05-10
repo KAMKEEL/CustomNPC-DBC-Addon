@@ -53,12 +53,12 @@ public class DBCRightArms extends ModelDBCPartInterface {
             this.useColor = 0;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/0B20.png");
             useColor = 0;
-            bodyCM = ModelDBC.getBodyColor(display, "bodycm", display.race);
+            bodyCM = display.bodyCM;
             super.render(par1);
 
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/2B20.png");
             useColor = 2;
-            bodyC2 = ModelDBC.getBodyColor(display, "bodyc2", display.race);
+            bodyC2 = display.bodyC2;
             super.render(par1);
 
             useColor = 0;
