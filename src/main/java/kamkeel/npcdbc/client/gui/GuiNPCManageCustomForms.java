@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.client.gui;
 
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.RequestForm;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
@@ -27,7 +29,7 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
 
     public GuiNPCManageCustomForms(EntityNPCInterface npc) {
         super(npc);
-        Client.sendData(EnumPacketServer.CustomFormsGet);
+        PacketHandler.Instance.sendToServer(new RequestForm(-1, false).generatePacket());
     }
 
     public void initGui() {
@@ -43,6 +45,7 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
         scrollForms.guiLeft = guiLeft + 220;
         scrollForms.guiTop = guiTop + 4;
         addScroll(scrollForms);
+
         addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 220, guiTop + 4 + 3 + 185, 143, 20, search));
 
         if (customForm.id == -1)
@@ -54,6 +57,8 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
 
         addLabel(new GuiNpcLabel(10, "ID", guiLeft + 178, guiTop + 4));
         addLabel(new GuiNpcLabel(11, customForm.id + "", guiLeft + 178, guiTop + 14));
+
+        scrollForms.setList(getSearchList());
     }
 
     @Override
@@ -64,9 +69,9 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
             String name = "New";
             while (data.containsKey(name))
                 name += "_";
-            Form faction = new Form(-1, name);
+            Form form = new Form(-1, name);
 
-            NBTTagCompound compound = faction.writeToNBT();
+            NBTTagCompound compound = form.writeToNBT();
             Client.sendData(EnumPacketServer.CustomFormSave, compound);
         }
         if (button.id == 1) {
@@ -116,6 +121,7 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
     public void setData(Vector<String> list, HashMap<String, Integer> data) {
         String name = scrollForms.getSelected();
         this.data = data;
+        System.out.println("got data");
         scrollForms.setList(getSearchList());
 
         if (name != null)
