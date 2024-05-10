@@ -20,7 +20,7 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
     @Override
     public List<String> getMixins(Set<String> loadedMods) {
         List<String> mixins = new ArrayList<>();
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT){
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
             mixins.add("npc.client.MixinGuiScriptPlayers");
             mixins.add("npc.client.MixinDBCClient");
             mixins.add("npc.client.MixinModelMPM");
@@ -42,6 +42,7 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
         mixins.add("npc.MixinScriptPlayer");
 
         mixins.add("dbc.MixinEntityAura2");
+        mixins.add("dbc.MixinEntityAuraRing");
         mixins.add("dbc.MixinJGPlayerMP");
         mixins.add("dbc.MixinJRMCoreComTickH");
         mixins.add("dbc.MixinJRMCoreEH");

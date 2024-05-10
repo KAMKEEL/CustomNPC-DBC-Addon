@@ -6,7 +6,6 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -29,32 +28,10 @@ public class MixinEntityAura2 implements IEntityAura {
     private float getSize = 1;
 
     @Shadow
-    private boolean rot;
-    @Shadow
-    private float yaw;
-    @Shadow
-    private float pitch;
-    @Shadow
     private String mot;
 
-    @Inject(method = "<init>(Lnet/minecraft/world/World;Ljava/lang/String;IFFI)V", at = @At(value = "RETURN"))
-    private void fixAuraOffset(World par1World, String dbcCharger, int c, float s, float s2, int cr, CallbackInfo ci) {
-//        if (player.get() != null)
-//            return;
-//        EntityAura2 aura = (EntityAura2) (Object) this;
-//        Entity other = Utility.getEntityFromID(par1World, mot);
-//        if (other != null) {
-//            if (this.rot) {
-//                this.yaw = other.rotationYaw;
-//                this.pitch = other.rotationPitch;
-//            }
-//
-//            aura.setPositionAndRotation(other.posX, other.posY + (double) (other instanceof EntityPlayerSP ? -1.6F : 0.0F), other.posZ, other.rotationYaw, other.rotationPitch);
-//        }
 
-    }
-
-    @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", shift = At.Shift.AFTER))
+    @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", shift = At.Shift.AFTER, remap = true))
     private void redirect(CallbackInfo ci, @Local(name = "other") LocalRef<Entity> player) {
 
         if (player.get() != null)

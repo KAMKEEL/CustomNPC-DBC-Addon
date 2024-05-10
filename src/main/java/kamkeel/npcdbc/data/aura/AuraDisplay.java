@@ -50,7 +50,7 @@ public class AuraDisplay implements IAuraDisplay {
         lightningAlpha = rendering.getInteger("lightningAlpha");
 
         hasKaiokenAura = rendering.getBoolean("kaiokenOn");
-        overrideDBCAura = rendering.getBoolean("overrideDBCForm");
+        overrideDBCAura = rendering.getBoolean("overrideDBCAura");
 
         auraSound = rendering.getString("auraSound");
 
@@ -76,7 +76,7 @@ public class AuraDisplay implements IAuraDisplay {
         rendering.setInteger("lightningAlpha", lightningAlpha);
 
         rendering.setBoolean("kaiokenOn", hasKaiokenAura);
-        rendering.setBoolean("overrideDBCForm", overrideDBCAura);
+        rendering.setBoolean("overrideDBCAura", overrideDBCAura);
 
         rendering.setString("auraSound", auraSound);
 
