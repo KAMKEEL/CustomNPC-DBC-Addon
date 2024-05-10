@@ -5,13 +5,12 @@ import kamkeel.npcdbc.network.packets.PlaySound;
 import kamkeel.npcdbc.network.packets.StopSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSound;
-import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import noppes.npcs.client.controllers.ScriptClientSound;
-import noppes.npcs.scripted.ScriptSound;
+
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,8 +55,16 @@ public class SoundHelper {
 
         }
 
-        public Entity getScriptSoundEntity() {
-            return (Entity) Utility.getPFValue(ScriptClientSound.class, "entity", this);
+        public void update() {
+            if (this.entity != null) {
+                if (this.entity.isDead) {
+                    this.donePlaying = true;
+                } else {
+                    this.xPosF = (float) this.entity.posX;
+                    this.yPosF = (float) this.entity.posY;
+                    this.zPosF = (float) this.entity.posZ;
+                }
+            }
 
         }
 
@@ -69,6 +76,7 @@ public class SoundHelper {
         public void setRepeat(boolean repeat) {
             this.repeat = repeat;
         }
+
 
         public void play(boolean forOthers) {
             if (onlyOneCanExist && playingSounds.containsKey(key))
@@ -108,7 +116,6 @@ public class SoundHelper {
             return Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(this);
         }
 
-
         public String toString() {
             return entity.getCommandSenderName() + entity.getEntityId() + "," + soundDir + "," + this.hashCode();
         }
@@ -116,7 +123,7 @@ public class SoundHelper {
         public static Sound createFromNBT(NBTTagCompound compound) {
             String directory = compound.getString("soundDir");
             Sound sound = new Sound(new ResourceLocation(directory));
-            
+
             sound.setVolume(compound.getFloat("volume"));
             sound.soundDir = directory;
             sound.repeat = compound.getBoolean("repeat");
@@ -128,18 +135,6 @@ public class SoundHelper {
             World world = Utility.getWorld(dimID);
             sound.entity = Utility.getEntityFromID(world, compound.getString("entity"));
             return sound;
-        }
-
-        public void update() {
-            if (this.entity != null) {
-                if (this.entity.isDead) {
-                    this.donePlaying = true;
-                } else {
-                    this.xPosF = (float)this.entity.posX;
-                    this.yPosF = (float)this.entity.posY;
-                    this.zPosF = (float)this.entity.posZ;
-                }
-            }
         }
     }
 }
