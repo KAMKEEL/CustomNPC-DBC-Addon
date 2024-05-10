@@ -4,12 +4,11 @@ import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PlaySound;
 import kamkeel.npcdbc.network.packets.StopSound;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSound;
+import net.minecraft.client.audio.MovingSound;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import noppes.npcs.client.controllers.ScriptClientSound;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,32 +28,47 @@ public class SoundHelper {
         }
     }
 
+    public static boolean contains(String key) {
+        Iterator<String> iter = SoundHelper.playingSounds.keySet().iterator();
+        while (iter.hasNext()) {
+            String sound = iter.next();
+            if (sound.contains(key))
+                return true;
 
-    public static class Sound extends ScriptClientSound {
+        }
+        return false;
+    }
+
+    public static class Sound extends MovingSound {
         public String key;
         public String soundDir;
         public Entity entity;
 
+        public float range = 16;
         public boolean onlyOneCanExist = true;
 
 
-        public Sound() {
-            super(null);
+        public Sound(String soundDir) {
+            super(new ResourceLocation(soundDir));
         }
 
         public Sound(String soundDir, Entity entity) {
             super(new ResourceLocation(soundDir));
             this.soundDir = soundDir;
-
-            Utility.setPrivateField(ScriptClientSound.class, "entity", false, this, entity);
             this.entity = entity;
-
             key = toString();
-
         }
 
-        public Entity getScriptSoundEntity() {
-            return (Entity) Utility.getPFValue(ScriptClientSound.class, "entity", this);
+        public void update() {
+            if (this.entity != null) {
+                if (this.entity.isDead) {
+                    this.donePlaying = true;
+                } else {
+                    this.xPosF = (float) this.entity.posX;
+                    this.yPosF = (float) this.entity.posY;
+                    this.zPosF = (float) this.entity.posZ;
+                }
+            }
 
         }
 
@@ -66,6 +80,7 @@ public class SoundHelper {
         public void setRepeat(boolean repeat) {
             this.repeat = repeat;
         }
+
 
         public void play(boolean forOthers) {
             if (onlyOneCanExist && playingSounds.containsKey(key))
@@ -91,9 +106,10 @@ public class SoundHelper {
 
             c.setFloat("volume", volume);
             c.setBoolean("repeat", repeat);
+            c.setFloat("range", range);
             c.setBoolean("onlyOneCanExist", onlyOneCanExist);
             c.setString("soundDir", soundDir);
-            c.setString("name", key);
+            c.setString("key", key);
             c.setInteger("dimensionID", entity.worldObj.provider.dimensionId);
             c.setString("entity", Utility.getEntityID(entity));
 
@@ -104,36 +120,25 @@ public class SoundHelper {
             return Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(this);
         }
 
-        public Sound readFromNBT(NBTTagCompound c) {
-
-
-            setVolume(c.getFloat("volume"));
-            repeat = c.getBoolean("repeat");
-            onlyOneCanExist = c.getBoolean("onlyOneCanExist");
-
-            soundDir = c.getString("soundDir");
-            Utility.setPrivateField(PositionedSound.class, "field_147664_a", true, this, new ResourceLocation(soundDir));
-
-            key = c.getString("name");
-
-            int dimID = c.getInteger("dimensionID");
-            World world = Utility.getWorld(dimID);
-            entity = Utility.getEntityFromID(world, c.getString("entity"));
-            return this;
-
-        }
-
         public String toString() {
             return entity.getCommandSenderName() + entity.getEntityId() + "," + soundDir + "," + this.hashCode();
         }
 
-        public static Sound createFromNBT(NBTTagCompound c) {
-            Sound sound = new Sound();
-            return sound.readFromNBT(c);
+        public static Sound createFromNBT(NBTTagCompound compound) {
+            String directory = compound.getString("soundDir");
+            Sound sound = new Sound(directory);
 
+            sound.setVolume(compound.getFloat("volume"));
+            sound.soundDir = directory;
+            sound.repeat = compound.getBoolean("repeat");
+            sound.range = compound.getFloat("range");
+            sound.onlyOneCanExist = compound.getBoolean("onlyOneCanExist");
+            sound.key = compound.getString("key");
+
+            int dimID = compound.getInteger("dimensionID");
+            World world = Utility.getWorld(dimID);
+            sound.entity = Utility.getEntityFromID(world, compound.getString("entity"));
+            return sound;
         }
-
     }
-
-
 }

@@ -372,7 +372,6 @@ public class ClientEventHandler {
                 sound = "jinryuudragonbc:1610.aurab";
         }
 
-        float soundRange = 50;
         if (aura.display.hasSound())
             sound = aura.display.auraSound;
 
@@ -380,15 +379,15 @@ public class ClientEventHandler {
         ////////////////////////////////////////////////////
         // This block indefinitely loops through aura sound as long as aura is enabled
         // regardless of the sound.ogg duration. The second the sound ends, it insta-replays
-
         String auraSoundKey = isNPC ? display.auraSoundKey : dbcData.auraSoundKey;
-        if (!SoundHelper.playingSounds.containsKey(auraSoundKey)) {
+        if (!SoundHelper.contains(auraSoundKey)) {
             Sound auraSound = new Sound(sound, entity);
             if (isNPC)
                 display.auraSoundKey = auraSound.key;
             else if (isPlayer)
                 dbcData.auraSoundKey = auraSound.key;
 
+            auraSound.range = 64;
             auraSound.setRepeat(true);
             auraSound.play(true);
         }

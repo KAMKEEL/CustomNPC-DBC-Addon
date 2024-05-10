@@ -98,8 +98,10 @@ public class ModelDBC extends ModelBase {
 
     public void renderFace(DBCDisplay display) {
         if (display.useSkin) {
+            GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
+
             int eyeColor = display.eyeColor;
-            int eyeBrowColor = display.hairColor;
+            int eyeBrowColor = display.race == DBCRace.NAMEKIAN ? display.bodyCM : display.hairColor;
             boolean hasArcoMask = display.hasArcoMask;
 
             //////////////////////////////////////////////////////
@@ -131,9 +133,11 @@ public class ModelDBC extends ModelBase {
 
             String mouthDir = "";
             if (display.race == 4 && hasArcoMask)
-                mouthDir = "jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[display.arcoState] + display.bodyType + "a.png";
+                mouthDir = "jinryuudragonbc:cc/arc/m/0A" + 2 + display.bodyType + "a.png";
             else
                 mouthDir = getFaceTexture(display, "m" + display.mouthType);
+
+            int ok = JRMCoreH.TransFrSkn[display.arcoState];
             ClientProxy.bindTexture(new ResourceLocation(mouthDir));
             this.mouth.rotateAngleY = parent.bipedHead.rotateAngleY;
             this.mouth.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -174,17 +178,12 @@ public class ModelDBC extends ModelBase {
             this.eyeright.rotationPointX = parent.bipedHead.rotationPointX;
             this.eyeright.rotationPointY = parent.bipedHead.rotationPointY;
             this.eyeright.render(0.0625F);
+
+            GL11.glPopAttrib();
         }
     }
 
-    public void renderHead(DBCDisplay display) {
-        GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
-        // renderHairs(display);
-        renderFace(display);
-        GL11.glPopAttrib();
-    }
-
-    public void renderAllBody(DBCDisplay display, ModelRenderer model) {
+    public void renderBodySkin(DBCDisplay display, ModelRenderer model) {
         if (display.useSkin) {
             int race = display.race;
             if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
