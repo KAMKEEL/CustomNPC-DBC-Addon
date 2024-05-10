@@ -1,8 +1,10 @@
 package kamkeel.npcdbc.client.gui.global.customforms;
 
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.RequestForm;
+import kamkeel.npcdbc.network.packets.gui.SaveForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
@@ -24,10 +26,13 @@ import java.util.Vector;
 
 public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScrollData, ICustomScrollListener, ITextfieldListener, IGuiData, ISubGuiListener, GuiYesNoCallback {
     private GuiCustomScroll scrollForms;
-    private HashMap<String, Integer> data = new HashMap<String, Integer>();
+    private HashMap<String, Integer> data = new HashMap<>();
     private Form customForm = new Form();
     private String selected = null;
     private String search = "";
+
+    public int parentForm = -1;
+    public int childForm = -1;
 
     public GuiNPCManageCustomForms(EntityNPCInterface npc) {
         super(npc);
@@ -73,14 +78,14 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
         addLabel(new GuiNpcLabel(4, "Must transform from parent:", guiLeft+8, guiTop+77));
 
         addButton(new GuiNpcButton(7, guiLeft+74, guiTop+94, 114, 20, "<Select Form>")); //@TODO lang file
-        if(customForm.hasParent())
-            getButton(7).setDisplayText(customForm.getParent().getName());
+        if(parentForm != -1)
+            getButton(7).setDisplayText(FormController.getInstance().get(parentForm).getName());
         addButton(new GuiNpcButton(8, guiLeft+190, guiTop+94, 20, 20, "X"));
         addLabel(new GuiNpcLabel(5, "Parent form", guiLeft+8, guiTop + 99));
 
         addButton(new GuiNpcButton(9, guiLeft+74, guiTop+116, 114, 20, "<Select Form>")); //@TODO lang file
-        if(customForm.hasChild())
-            getButton(9).setDisplayText(customForm.getChild().getName());
+        if(childForm != -1)
+            getButton(9).setDisplayText(FormController.getInstance().get(childForm).getName());
         addButton(new GuiNpcButton(10, guiLeft+190, guiTop+116, 20, 20, "X"));
         addLabel(new GuiNpcLabel(6, "Child form", guiLeft+8, guiTop + 121));
 
@@ -92,7 +97,6 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
     @Override
     protected void actionPerformed(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
-
         switch(button.id){
             case 0:
                 save();
@@ -127,15 +131,19 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
                 break;
             case 7:
                 //@TODO open parent form selection
+                this.setSubGui(new SubGuiSelectForm(false));
                 break;
             case 8:
-                //@TODO Clear parent form
+                parentForm = -1;
+                initGui();
                 break;
             case 9:
                 //@TODO add child form selection
+                this.setSubGui(new SubGuiSelectForm(true));
                 break;
             case 10:
-                //@TODO clear child form
+                childForm = -1;
+                initGui();
                 break;
         }
     }
@@ -144,7 +152,8 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
     public void setGuiData(NBTTagCompound compound) {
         this.customForm = new Form();
         customForm.readFromNBT(compound);
-
+        parentForm = customForm.parentID;
+        childForm = customForm.childID;
         setSelected(customForm.name);
         initGui();
     }
@@ -203,8 +212,7 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
     @Override
     public void save() {
         if (selected != null && data.containsKey(selected) && customForm != null) {
-            NBTTagCompound compound = customForm.writeToNBT();
-            Client.sendData(EnumPacketServer.CustomFormSave, compound);
+            PacketHandler.Instance.sendToServer(new SaveForm(customForm, parentForm, childForm).generatePacket());
         }
     }
 
@@ -236,7 +244,7 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
 
     @Override
     public void subGuiClosed(SubGuiInterface subgui) {
-        if (subgui instanceof SubGuiColorSelector) {
+        if (subgui instanceof SubGuiSelectForm) {
 //	    	customForm.color = ((SubGuiColorSelector)subgui).color;
             initGui();
         }

@@ -12,6 +12,9 @@ public class SubGuiFormMastery extends SubGuiInterface implements ITextfieldList
 
     public SubGuiFormMastery(FormMastery formMastery){
         this.mastery = formMastery;
+        this.closeOnEsc = true;
+        this.drawDefaultBackground = false;
+        this.setBackground("menubg.png");
     }
     @Override
     public void unFocused(GuiNpcTextField guiNpcTextField) {

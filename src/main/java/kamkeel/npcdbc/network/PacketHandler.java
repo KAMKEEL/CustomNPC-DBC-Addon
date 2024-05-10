@@ -8,6 +8,7 @@ import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.network.packets.*;
+import kamkeel.npcdbc.network.packets.gui.SaveForm;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -40,6 +41,7 @@ public final class PacketHandler {
         map.put(SendChat.packetName, new SendChat());
         map.put(PlaySound.packetName, new PlaySound());
         map.put(StopSound.packetName, new StopSound());
+        map.put(SaveForm.packetName, new SaveForm());
         this.register();
     }
 

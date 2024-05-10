@@ -11,6 +11,9 @@ public class SubGuiFormStackables extends SubGuiInterface implements ITextfieldL
 
     public SubGuiFormStackables(FormStackable stackable){
         this.stackable = stackable;
+        this.closeOnEsc = true;
+        this.drawDefaultBackground = true;
+        this.setBackground("menubg.png");
     }
 
     @Override

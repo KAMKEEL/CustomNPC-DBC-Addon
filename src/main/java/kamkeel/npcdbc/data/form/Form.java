@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.form;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormDisplay;
@@ -256,6 +257,8 @@ public class Form implements IForm {
         if (formID == this.id)
             return;
 
+        System.out.println("linked child "+formID+"???");
+
         Form form = (Form) FormController.getInstance().get(formID);
         if (form != null) {
             childID = formID;
@@ -272,6 +275,8 @@ public class Form implements IForm {
     public void linkParent(int formID) {
         if (formID == this.id)
             return;
+
+        System.out.println("linked parent "+ FMLCommonHandler.instance().getEffectiveSide() +"???");
 
         Form form = (Form) FormController.getInstance().get(formID);
         if (form != null) {
@@ -339,6 +344,11 @@ public class Form implements IForm {
 
 
     public void removeChildForm() {
+        if(childID != -1){
+            Form child = (Form) getChild();
+            if(child != null)
+                child.parentID = -1;
+        }
         childID = -1;
     }
 
@@ -374,6 +384,11 @@ public class Form implements IForm {
     }
 
     public void removeParentForm() {
+        if(parentID != -1){
+            Form parent = (Form) getParent();
+            if(parent != null)
+                parent.childID = -1;
+        }
         parentID = -1;
     }
 

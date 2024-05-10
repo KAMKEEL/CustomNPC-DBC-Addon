@@ -13,6 +13,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ITextfieldList
     public SubGuiFormDisplay(FormDisplay display){
         this.display = display;
         this.closeOnEsc = true;
+        this.drawDefaultBackground = true;
+        xSize = 256;
+        this.setBackground("menubg.png");
     }
 
     @Override
