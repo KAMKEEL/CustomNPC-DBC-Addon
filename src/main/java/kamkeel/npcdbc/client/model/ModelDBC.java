@@ -101,7 +101,7 @@ public class ModelDBC extends ModelBase {
             GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
 
             int eyeColor = display.eyeColor;
-            int eyeBrowColor = display.hairColor;
+            int eyeBrowColor = display.race == DBCRace.NAMEKIAN ? display.bodyCM : display.hairColor;
             boolean hasArcoMask = display.hasArcoMask;
 
             //////////////////////////////////////////////////////

@@ -32,6 +32,8 @@ display.maskOff=Mask Off
 display.eye=Eye
 display.mouth=Mouth
 display.nose=Nose
+display.color=Color
+display.modify=Modify
 
 part.horns=Horns
 part.ears=Ears

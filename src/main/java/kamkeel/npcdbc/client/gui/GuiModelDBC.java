@@ -23,6 +23,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
     private final String[] arrArm = new String[]{"gui.no","display.part.armSpikes",  "display.part.shoulder"};
     private DBCDisplay display;
     private int tab = 0;
+    private int raceTab = 0;
 
     public GuiModelDBC(GuiScreen parent, EntityCustomNpc npc){
 		super(npc);
@@ -95,56 +96,65 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
                 addButton(new GuiNpcButtonYesNo(304, guiLeft + 64, y+=22, 60, 20, display.useSkin));
                 addLabel(new GuiNpcLabel(304, "display.skinOverride", guiLeft, y + 5, 0xFFFFFF));
                 if(display.useSkin) {
-                    if(display.race == DBCRace.ARCOSIAN){
-                        addButton(new GuiButtonBiDirectional(201,guiLeft + 35, y+=22, 52, 20, new String[]{"0", "1", "2", "3", "4", "5", "6", "7"}, display.arcoState));
-                        addLabel(new GuiNpcLabel(201, "display.state", guiLeft, y + 5, 0xFFFFFF));
-                        addButton(new GuiNpcButton(206, guiLeft + 94, y, 70, 20, new String[]{"display.maskOff", "display.maskOn"}, display.hasArcoMask ? 1 : 0));
+                    addButton(new GuiNpcButton(52, guiLeft, y += 22, 60, 20, "display.color"));
+                    getButton(52).enabled = raceTab != 0;
+                    addButton(new GuiNpcButton(53, guiLeft + 64, y, 60, 20, "display.modify"));
+                    getButton(53).enabled = raceTab != 1;
+
+                    if(raceTab == 0){
+                        addButton(new GuiNpcButton(305, guiLeft + 20, y+=22, 42, 20, getColor(display.eyeColor)));
+                        addLabel(new GuiNpcLabel(305, "display.eye", guiLeft, y + 5, 0xFFFFFF));
+                        getButton(305).packedFGColour = display.eyeColor;
+
+                        addButton(new GuiNpcButton(320, guiLeft + 68, y, 76, 20, "display.setDefault"));
+
+                        addButton(new GuiNpcButton(300, guiLeft + 20, y+=22, 42, 20, getColor(display.bodyCM)));
+                        addLabel(new GuiNpcLabel(300, "CM", guiLeft, y + 5, 0xFFFFFF));
+                        getButton(300).packedFGColour = display.bodyCM;
+
+                        addButton(new GuiNpcButton(301, guiLeft + 101, y, 42, 20, getColor(display.bodyC1)));
+                        addLabel(new GuiNpcLabel(301, "C1", guiLeft + 80, y + 5, 0xFFFFFF));
+                        getButton(301).packedFGColour = display.bodyC1;
+
+                        addButton(new GuiNpcButton(302, guiLeft + 20, y+=22, 42, 20, getColor(display.bodyC2)));
+                        addLabel(new GuiNpcLabel(302, "C2", guiLeft, y + 5, 0xFFFFFF));
+                        getButton(302).packedFGColour = display.bodyC2;
+
+                        addButton(new GuiNpcButton(303, guiLeft + 101, y, 42, 20, getColor(display.bodyC3)));
+                        addLabel(new GuiNpcLabel(303, "C3", guiLeft + 80, y + 5, 0xFFFFFF));
+                        getButton(303).packedFGColour = display.bodyC3;
+                    } else {
+                        if(display.race == DBCRace.ARCOSIAN){
+                            addButton(new GuiButtonBiDirectional(201,guiLeft + 35, y+=22, 52, 20, new String[]{"0", "1", "2", "3", "4", "5", "6", "7"}, display.arcoState));
+                            addLabel(new GuiNpcLabel(201, "display.state", guiLeft, y + 5, 0xFFFFFF));
+                            addButton(new GuiNpcButton(206, guiLeft + 94, y, 70, 20, new String[]{"display.maskOff", "display.maskOn"}, display.hasArcoMask ? 1 : 0));
+                        }
+
+                        String[] mouths = new String[]{"0", "1", "2", "3", "4"};
+                        if(display.race == DBCRace.ARCOSIAN)
+                            mouths = new String[]{"0", "1", "2", "3", "4", "5"};
+
+                        String[] eyes = new String[]{"0", "1", "2", "3", "4", "5"};
+                        if(display.race == DBCRace.ARCOSIAN)
+                            eyes = new String[]{"0", "1"};
+                        if(display.race == DBCRace.NAMEKIAN)
+                            eyes = new String[]{"0", "1", "2"};
+
+                        addButton(new GuiButtonBiDirectional(203,guiLeft + 35, y+=22, 52, 20, eyes, display.eyeType));
+                        addLabel(new GuiNpcLabel(203, "display.eye", guiLeft, y + 5, 0xFFFFFF));
+
+
+                        addButton(new GuiButtonBiDirectional(204,guiLeft + 35, y+=22, 52, 20, mouths, display.mouthType));
+                        addLabel(new GuiNpcLabel(204, "display.mouth", guiLeft, y + 5, 0xFFFFFF));
+
+                        addButton(new GuiButtonBiDirectional(202,guiLeft + 35, y+=22, 52, 20, new String[]{"0", "1", "2", "3", "4"}, display.noseType));
+                        addLabel(new GuiNpcLabel(202, "display.nose", guiLeft, y + 5, 0xFFFFFF));
+
+                        if(display.race == DBCRace.ARCOSIAN || display.race == DBCRace.NAMEKIAN){
+                            addButton(new GuiButtonBiDirectional(200,guiLeft + 35, y+=22, 52, 20, new String[]{"0", "1", "2"}, display.bodyType));
+                            addLabel(new GuiNpcLabel(200, "model.body", guiLeft, y + 5, 0xFFFFFF));
+                        }
                     }
-
-                    String[] mouths = new String[]{"0", "1", "2", "3", "4"};
-                    if(display.race == DBCRace.ARCOSIAN)
-                        mouths = new String[]{"0", "1", "2", "3", "4", "5"};
-
-                    addButton(new GuiButtonBiDirectional(204,guiLeft + 35, y+=22, 52, 20, mouths, display.mouthType));
-                    addLabel(new GuiNpcLabel(204, "display.mouth", guiLeft, y + 5, 0xFFFFFF));
-
-                    addButton(new GuiButtonBiDirectional(202,guiLeft + 125, y, 52, 20, new String[]{"0", "1", "2", "3", "4"}, display.noseType));
-                    addLabel(new GuiNpcLabel(202, "display.nose", guiLeft + 90, y + 5, 0xFFFFFF));
-
-                    String[] eyes = new String[]{"0", "1", "2", "3", "4", "5"};
-                    if(display.race == DBCRace.ARCOSIAN)
-                        eyes = new String[]{"0", "1"};
-                    if(display.race == DBCRace.NAMEKIAN)
-                        eyes = new String[]{"0", "1", "2"};
-
-                    addButton(new GuiButtonBiDirectional(203,guiLeft + 35, y+=22, 52, 20, eyes, display.eyeType));
-                    addLabel(new GuiNpcLabel(203, "display.eye", guiLeft, y + 5, 0xFFFFFF));
-
-                    if(display.race == DBCRace.ARCOSIAN || display.race == DBCRace.NAMEKIAN){
-                        addButton(new GuiButtonBiDirectional(200,guiLeft + 125, y, 52, 20, new String[]{"0", "1", "2"}, display.bodyType));
-                        addLabel(new GuiNpcLabel(200, "model.body", guiLeft + 90, y + 5, 0xFFFFFF));
-                    }
-                    addButton(new GuiNpcButton(305, guiLeft + 20, y+=22, 42, 20, getColor(display.eyeColor)));
-                    addLabel(new GuiNpcLabel(305, "display.eye", guiLeft, y + 5, 0xFFFFFF));
-                    getButton(305).packedFGColour = display.eyeColor;
-
-                    addButton(new GuiNpcButton(320, guiLeft + 68, y, 76, 20, "display.setDefault"));
-
-                    addButton(new GuiNpcButton(300, guiLeft + 20, y+=22, 42, 20, getColor(display.bodyCM)));
-                    addLabel(new GuiNpcLabel(300, "CM", guiLeft, y + 5, 0xFFFFFF));
-                    getButton(300).packedFGColour = display.bodyCM;
-
-                    addButton(new GuiNpcButton(301, guiLeft + 101, y, 42, 20, getColor(display.bodyC1)));
-                    addLabel(new GuiNpcLabel(301, "C1", guiLeft + 80, y + 5, 0xFFFFFF));
-                    getButton(301).packedFGColour = display.bodyC1;
-
-                    addButton(new GuiNpcButton(302, guiLeft + 20, y+=22, 42, 20, getColor(display.bodyC2)));
-                    addLabel(new GuiNpcLabel(302, "C2", guiLeft, y + 5, 0xFFFFFF));
-                    getButton(302).packedFGColour = display.bodyC2;
-
-                    addButton(new GuiNpcButton(303, guiLeft + 101, y, 42, 20, getColor(display.bodyC3)));
-                    addLabel(new GuiNpcLabel(303, "C3", guiLeft + 80, y + 5, 0xFFFFFF));
-                    getButton(303).packedFGColour = display.bodyC3;
                 }
             }
         }
@@ -160,6 +170,14 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         }
         if(button.id == 51){
             tab = 1;
+            initGui();
+        }
+        if(button.id == 52){
+            raceTab = 0;
+            initGui();
+        }
+        if(button.id == 53){
+            raceTab = 1;
             initGui();
         }
         if(button.id == 0){
@@ -202,6 +220,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         }
         if(button.id == 103){
             display.hairCode = "";
+            display.hairColor = 0xffffff;
             initGui();
         }
         if(button.id == 104){
