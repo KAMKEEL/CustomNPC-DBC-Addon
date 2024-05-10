@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.client.gui;
+package kamkeel.npcdbc.client.gui.global.customforms;
 
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
