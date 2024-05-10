@@ -39,7 +39,9 @@ public class SoundHandler {
         Iterator<Sound> iter = playingSounds.values().iterator();
         while (iter.hasNext()) {
             Sound sound = iter.next();
-            sound.isPlaying();
+            if(!sound.isPlaying() || sound.isDonePlaying()) {
+                sound.stop(false);
+            }
         }
     }
 

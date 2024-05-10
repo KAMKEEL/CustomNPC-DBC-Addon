@@ -6,7 +6,6 @@ import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.util.ByteBufUtils;
-import kamkeel.npcdbc.util.SoundHelper;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 

@@ -12,8 +12,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class AuraSound extends Sound {
-    public static HashMap<String, AuraSound> playingAuras = new HashMap<>();
-
     public AuraSound(String soundDir) {
         super(soundDir);
     }
@@ -21,17 +19,6 @@ public class AuraSound extends Sound {
     public AuraSound(String soundDir, Entity entity) {
         super(soundDir, entity);
     }
-
-    public void play(boolean forOthers) {
-        super.play(forOthers);
-        playingAuras.put(key, this);
-    }
-
-    public void stop(boolean forOthers) {
-        super.stop(forOthers);
-        playingAuras.remove(key, this);
-    }
-
 
     public void update() {
         super.update();
@@ -47,8 +34,7 @@ public class AuraSound extends Sound {
                 auraOn = false;
         }
         if (!auraOn) {
-            this.donePlaying = true;
-            playingAuras.remove(key);
+            stop(false);
         }
     }
 }

@@ -22,7 +22,6 @@ import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.util.PlayerDataUtil;
-import kamkeel.npcdbc.util.SoundHelper;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;

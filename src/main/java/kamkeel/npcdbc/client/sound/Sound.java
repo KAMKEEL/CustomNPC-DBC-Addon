@@ -34,10 +34,8 @@ public class Sound extends MovingSound {
 
         if (this.entity == null || entity.isDead || (Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.MASTER) == 0)) {
             stop(false);
-            this.donePlaying = true;
             return;
         }
-
 
         this.xPosF = (float) this.entity.posX;
         this.yPosF = (float) this.entity.posY;
@@ -60,7 +58,9 @@ public class Sound extends MovingSound {
     }
 
     public void stop(boolean forOthers) {
+        this.donePlaying = true;
         Minecraft.getMinecraft().getSoundHandler().stopSound(this);
+        SoundHandler.playingSounds.remove(this.key);
         if (forOthers)
             PacketHandler.Instance.sendToServer(new StopSound(this).generatePacket());
     }
