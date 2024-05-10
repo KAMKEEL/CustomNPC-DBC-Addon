@@ -4,7 +4,6 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.PlaySound;
 import kamkeel.npcdbc.network.packets.StopSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSound;
@@ -93,8 +92,8 @@ public class SoundHelper {
                 return;
             //  playingSounds.put(key, this);
             Minecraft.getMinecraft().getSoundHandler().playSound(this);
-            if (forOthers)
-                PacketHandler.Instance.sendToServer(new PlaySound(this).generatePacket());
+            //if (forOthers)
+            // PacketHandler.Instance.sendToServer(new PlaySound(this).generatePacket());
 
         }
 
@@ -166,15 +165,20 @@ public class SoundHelper {
 
         public void update() {
             super.update();
+            boolean auraOn = true;
             if (entity instanceof EntityNPCInterface) {
                 DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
                 if (!display.auraOn)
-                    donePlaying = true;
+                    auraOn = false;
 
             } else if (entity instanceof EntityPlayer) {
                 DBCData dbcData = DBCData.get((EntityPlayer) entity);
                 if (!dbcData.isDBCAuraOn())
-                    donePlaying = true;
+                    auraOn = false;
+            }
+            if (!auraOn) {
+                this.donePlaying = true;
+                playingAuras.remove(key);
             }
         }
 
