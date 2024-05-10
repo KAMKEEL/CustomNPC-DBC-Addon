@@ -39,6 +39,7 @@ public final class PacketHandler {
         map.put(LoginInfo.packetName, new LoginInfo());
         map.put(SendChat.packetName, new SendChat());
         map.put(PlaySound.packetName, new PlaySound());
+        map.put(StopSound.packetName, new StopSound());
         this.register();
     }
 
@@ -82,7 +83,7 @@ public final class PacketHandler {
         }
     }
 
-    public void sendToTrackingPlayers(FMLProxyPacket packet, Entity entity) {
+    public void sendToTrackingPlayers(Entity entity, FMLProxyPacket packet) {
         if (packet != null && CustomNpcPlusDBC.side() == Side.SERVER) {
             EntityTracker tracker = ((WorldServer) entity.worldObj).getEntityTracker();
             tracker.func_151248_b(entity, packet); // Send packet to tracking players

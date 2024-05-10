@@ -54,11 +54,12 @@ public class MixinRenderAura2 {
         EntityPlayer auraOwner = par1Entity.worldObj.getPlayerEntityByName(par1Entity.getmot());
         if (auraOwner instanceof EntityPlayer) {
             DBCData dbcData = DBCData.get(auraOwner);
-            if (dbcData.addonFormID > -1) {
-                float size = JRMCoreHDBC.DBCsizeBasedOnRace2(dbcData.Race, dbcData.State);
+            float size = JRMCoreHDBC.DBCsizeBasedOnRace2(dbcData.Race, dbcData.State);
+
+            if (dbcData.addonFormID > -1)
                 s1.set(8.0f * size);
-            }
-            s.set(s1.get() * Math.min(dbcData.Release, 50) / 45);
+
+            s.set(s.get() == 0 ? 1 : s.get() * Math.min(dbcData.Release, 100) * 0.015f);
             return;
         }
         Entity entity = Utility.getEntityFromID(par1Entity.worldObj, par1Entity.getmot());

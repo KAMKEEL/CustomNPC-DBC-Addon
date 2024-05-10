@@ -4,11 +4,11 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.api.handler.data.ISound;
@@ -69,8 +69,6 @@ public class Utility {
     }
 
 
-
-
     public static String getEntityID(Entity p) {
         if (p instanceof EntityPlayer)
             return getUUID(p).toString() + ",true"; //true as in "entity is player"
@@ -93,6 +91,10 @@ public class Utility {
         }
         return null;
 
+    }
+
+    public static World getWorld(int dimensionID) {
+        return Utility.isServer() ? DimensionManager.getWorld(dimensionID) : Minecraft.getMinecraft().theWorld;
     }
 
     public static UUID getUUID(Entity entity) {
@@ -213,6 +215,7 @@ public class Utility {
         return null;
 
     }
+
 
     // get private field value
     public static Object getPFValue(Class<?> c, String name, Object instance) { // if field is static, enter null in

@@ -170,7 +170,7 @@ public class TransformController {
 
         if (display.rage >= 100) {
             display.formID = form.id;
-            PlaySound.play(npc, form.getAscendSound(), 50);
+            PlaySound.play(npc, form.getAscendSound());
         }
         npc.updateClient();
     }
@@ -205,7 +205,7 @@ public class TransformController {
 
         display.selectedForm = -1;
         display.isTransforming = false;
-        PlaySound.play(npc, current.getDescendSound(), 50);
+        PlaySound.play(npc, current.getDescendSound());
         npc.updateClient();
     }
 

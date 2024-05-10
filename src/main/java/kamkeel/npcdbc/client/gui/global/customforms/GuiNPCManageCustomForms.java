@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.client.gui;
+package kamkeel.npcdbc.client.gui.global.customforms;
 
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
@@ -36,7 +36,6 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
 
     public void initGui() {
         super.initGui();
-
         addButton(new GuiNpcButton(0, guiLeft + 368, guiTop + 8, 45, 20, "gui.add"));
         addButton(new GuiNpcButton(1, guiLeft + 368, guiTop + 32, 45, 20, "gui.remove"));
 
@@ -115,6 +114,7 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
 
             case 3:
                 //@TODO Open display subgui
+                this.setSubGui(new SubGuiFormDisplay(customForm.display));
                 break;
             case 4:
                 //@TODO open mastery subgui

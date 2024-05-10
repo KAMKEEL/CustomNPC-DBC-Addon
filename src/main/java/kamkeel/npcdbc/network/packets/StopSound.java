@@ -6,25 +6,20 @@ import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import kamkeel.npcdbc.util.SoundHelper;
 import kamkeel.npcdbc.util.Utility;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.io.IOException;
 
-public final class PlaySound extends AbstractPacket {
-    public static final String packetName = "NPC|PlaySound";
+public final class StopSound extends AbstractPacket {
+    public static final String packetName = "NPC|StopSound";
 
     public SoundHelper.Sound sound;
 
 
-    public PlaySound() {
+    public StopSound() {
     }
 
-    public PlaySound(Entity entity, String soundDir) {
-        sound = new SoundHelper.Sound(soundDir, entity);
-    }
-
-    public PlaySound(SoundHelper.Sound sound) {
+    public StopSound(SoundHelper.Sound sound) {
         this.sound = sound;
     }
 
@@ -46,27 +41,20 @@ public final class PlaySound extends AbstractPacket {
         sound = SoundHelper.Sound.createFromNBT(ByteBufUtils.readNBT(in));
 
         if (Utility.isServer())
-            play(sound);
-        else
-            sound.play(false);
+            stop(sound);
+        else {
+            if (SoundHelper.playingSounds.containsKey(sound.key)) {
+                SoundHelper.playingSounds.get(sound.key).stop(false);
+            }
+        }
 
 
     }
 
-    public static void play(SoundHelper.Sound sound) {
+    public static void stop(SoundHelper.Sound sound) {
         if (sound == null || sound.entity == null)
             return;
-
-        PacketHandler.Instance.sendToTrackingPlayers(sound.entity, new PlaySound(sound).generatePacket());
-
-    }
-
-    public static void play(Entity entity, String soundDir) {
-        if (entity == null)
-            return;
-        SoundHelper.Sound sound = new SoundHelper.Sound(soundDir, entity);
-        PacketHandler.Instance.sendToTrackingPlayers(sound.entity, new PlaySound(sound).generatePacket());
-
+        PacketHandler.Instance.sendToTrackingPlayers(sound.entity, new StopSound(sound).generatePacket());
     }
 
 }
