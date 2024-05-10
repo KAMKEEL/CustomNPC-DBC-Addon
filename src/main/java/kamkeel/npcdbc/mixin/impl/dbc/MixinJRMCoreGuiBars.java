@@ -6,7 +6,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.client.gui.dbc.AbstractJRMCGui;
 import kamkeel.npcdbc.client.gui.dbc.JRMCoreLabel;
-import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
@@ -52,17 +51,17 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
         }
     }
 
-    @Inject(method = "LJinRyuu/JRMCore/JRMCoreGuiBars;drawIcon(III)V", at=@At("HEAD"))
-    private void onDrawIcon(int var51, int var61, int resourceID, CallbackInfo ci){
+    @Inject(method = "drawIcon(III)V", at = @At("HEAD"))
+    private void onDrawIcon(int var51, int var61, int resourceID, CallbackInfo ci) {
         String name = this.statusEffectFromResourceID(resourceID);
         addHoverable(name, var51, var61);
     }
 
     @Unique
     private void addHoverable(String name, int i, int i1) {
-        if(name == null)
+        if (name == null)
             return;
-        if(this.mc.currentScreen instanceof AbstractJRMCGui){
+        if (this.mc.currentScreen instanceof AbstractJRMCGui) {
             AbstractJRMCGui gui = (AbstractJRMCGui) this.mc.currentScreen;
             gui.horribleDBCDynamicLabels.put(i, new JRMCoreLabel(null, name, i, i1, 15, 15));
         }
@@ -77,9 +76,9 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
         this.drawTexturedModalRect(x + 2 + (JGConfigClientSettings.CLIENT_hud0 > 1 ? 50 : 0), y + w2 + 2, iconX, iconY, 16, 16);
     }
 
-    private String statusEffectFromResourceID(int resourceID){
+    private String statusEffectFromResourceID(int resourceID) {
 
-        switch(resourceID){
+        switch (resourceID) {
             case 0:
                 return "Blocking";
 
@@ -132,7 +131,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
                 return "Fatigue:";
 
             default:
-                return "ResourceID "+resourceID;
+                return "ResourceID " + resourceID;
         }
     }
 

@@ -49,18 +49,17 @@ public class MixinDBCKiTech {
     @Inject(method = "Ascend", at = @At("HEAD"), cancellable = true)
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
         if (K.getIsKeyPressed()) {
-            PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
-            if (formData != null && formData.isInCustomForm()) {
-                Form form = formData.getCurrentForm();
-                if (form != null) {
-                    if (JRMCoreH.PlyrSettingsB(0) && form.stackable.isFormStackable(DBCForm.Kaioken)) {
-                    } else if (JRMCoreH.PlyrSettingsB(11) && form.stackable.isFormStackable(DBCForm.UltraInstinct)) {
-                    } else if (JRMCoreH.PlyrSettingsB(16) && form.stackable.isFormStackable(DBCForm.GodOfDestruction)) {
-                    } else if (JRMCoreH.PlyrSettingsB(6) && form.stackable.isFormStackable(DBCForm.Mystic)) {
-                    } else
-                        ci.cancel();
-                }
+            Form form = DBCData.getClient().getForm();
+
+            if (form != null) {
+                if (JRMCoreH.PlyrSettingsB(0) && form.stackable.isFormStackable(DBCForm.Kaioken)) {
+                } else if (JRMCoreH.PlyrSettingsB(11) && form.stackable.isFormStackable(DBCForm.UltraInstinct)) {
+                } else if (JRMCoreH.PlyrSettingsB(16) && form.stackable.isFormStackable(DBCForm.GodOfDestruction)) {
+                } else if (JRMCoreH.PlyrSettingsB(6) && form.stackable.isFormStackable(DBCForm.Mystic)) {
+                } else
+                    ci.cancel();
             }
+
         }
     }
 
@@ -70,28 +69,29 @@ public class MixinDBCKiTech {
     @Inject(method = "Descend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;kiInSuper:I", shift = At.Shift.AFTER), cancellable = true)
     private static void DescendModified(KeyBinding K, CallbackInfo ci) {
         PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
-        DBCData d = DBCData.get(Minecraft.getMinecraft().thePlayer);
+
+        DBCData dbcData = DBCData.getClient();
+        Form form = dbcData.getForm();
 
         boolean returnEarly = true;
-        if (d != null && formData != null && formData.isInCustomForm()) {
-            Form form = formData.getCurrentForm();
-            if (d.formSettingOn(DBCForm.Kaioken)) {
-                if (d.isForm(DBCForm.Kaioken))
+        if (form != null) {
+            if (dbcData.formSettingOn(DBCForm.Kaioken)) {
+                if (dbcData.isForm(DBCForm.Kaioken))
                     returnEarly = false;
-            } else if (d.formSettingOn(DBCForm.UltraInstinct)) {
-                if (d.isForm(DBCForm.UltraInstinct))
+            } else if (dbcData.formSettingOn(DBCForm.UltraInstinct)) {
+                if (dbcData.isForm(DBCForm.UltraInstinct))
                     returnEarly = false;
-            } else if (d.formSettingOn(DBCForm.GodOfDestruction)) {
-                if (d.isForm(DBCForm.GodOfDestruction))
+            } else if (dbcData.formSettingOn(DBCForm.GodOfDestruction)) {
+                if (dbcData.isForm(DBCForm.GodOfDestruction))
                     returnEarly = false;
-            } else if (d.formSettingOn(DBCForm.Mystic))
-                if (d.isForm(DBCForm.Mystic))
+            } else if (dbcData.formSettingOn(DBCForm.Mystic))
+                if (dbcData.isForm(DBCForm.Mystic))
                     returnEarly = false;
 
 
             if (returnEarly) {
                 if (form.requiredForm.containsKey((int) JRMCoreH.Race)) {
-                    int id = d.stats.getJRMCPlayerID();
+                    int id = dbcData.stats.getJRMCPlayerID();
                     JRMCoreH.State = form.requiredForm.get((int) JRMCoreH.Race);
                     JRMCoreH.data2[id] = JRMCoreH.State + JRMCoreH.data2[id].substring(1);
                 }
