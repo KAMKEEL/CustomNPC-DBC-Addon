@@ -5,19 +5,6 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public interface IAura {
 
-
-    /**-
-     * If a Form does NOT have an IAura object
-     * it will use the Forms Aura Color
-     *-
-     * Individual IAura Color Precedence:
-     *  1. Form's Aura
-     *  2. Individual IAura Color
-     *  3. IF overrideDBCForm & in DBC Form > Use DBC Form Colors [SSJ, Shinka, Rose]
-     *  4. Individual IAura's Type Colors [GoD, UI, SSGod]
-     *  5. Base Aura Color
-     */
-
     String getName();
 
     /**
