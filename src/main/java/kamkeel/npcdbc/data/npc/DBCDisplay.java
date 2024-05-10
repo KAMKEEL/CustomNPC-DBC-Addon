@@ -42,9 +42,11 @@ public class DBCDisplay implements IDBCDisplay {
     public int formID = -1, selectedForm = -1, rage;
     public float formLevel = 0;
     public boolean isTransforming;
+
     // Server Side Usage
     public float rageValue;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
+    public String auraSoundKey = "";
 
     public DBCDisplay(EntityNPCInterface npc){
         this.npc = npc;

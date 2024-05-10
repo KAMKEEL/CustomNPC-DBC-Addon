@@ -13,7 +13,12 @@ public interface IAuraDisplay {
 
     String getAuraSound();
 
-    void setAuraSound(String sound);
+    /**
+     * The aura sound file must have "aura" in its name
+     *
+     * @param soundDirectory i.e "customnpcs:auras.majin_aura
+     */
+    void setAuraSound(String soundDirectory);
 
 
     boolean isKaiokenToggled();

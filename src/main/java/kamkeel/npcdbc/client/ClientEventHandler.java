@@ -19,19 +19,19 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.mixin.INPCDisplay;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.PlaySound;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.SoundHelper;
+import kamkeel.npcdbc.util.SoundHelper.Sound;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import noppes.npcs.client.controllers.ScriptClientSound;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
+
+import java.util.Iterator;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
@@ -174,6 +174,17 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
+    public void handleSounds(TickEvent.ClientTickEvent event) {
+        Iterator<SoundHelper.Sound> iter = SoundHelper.playingSounds.values().iterator();
+        while (iter.hasNext()) {
+            SoundHelper.Sound sound = iter.next();
+            if (!sound.isPlaying())
+                iter.remove();
+
+        }
+    }
+
+    @SubscribeEvent
     public void entityAura(LivingEvent.LivingUpdateEvent event) {
         if ((event.entity instanceof EntityCustomNpc || event.entity instanceof EntityPlayer) && !Utility.isServer(event.entity)) {
             if (event.entity.ticksExisted % 5 == 0) {
@@ -181,20 +192,29 @@ public class ClientEventHandler {
                 boolean isPlayer = event.entity instanceof EntityPlayer;
                 boolean isNPC = event.entity instanceof EntityNPCInterface;
                 DBCData dbcData = null;
+                String auraSoundKey = null;
+
+                boolean auraOn = false;
                 if (isNPC) {
                     EntityCustomNpc npc = (EntityCustomNpc) event.entity;
                     DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
-                    if (!display.enabled || !display.auraOn && !display.isTransforming)
+                    if (!display.enabled)
                         return;
+
+                    auraOn = display.auraOn || display.isTransforming;
+                    auraSoundKey = display.auraSoundKey;
                     aura = display.getAur();
                 } else if (isPlayer) {
                     dbcData = DBCData.get((EntityPlayer) event.entity);
-                    boolean auraOn = dbcData.isDBCAuraOn();
-                    if (!auraOn)
-                        return;
+                    auraOn = dbcData.isDBCAuraOn();
+                    auraSoundKey = dbcData.auraSoundKey;
                     aura = dbcData.getAura();
                 }
-
+                if (!auraOn) {
+                    if (event.entity.ticksExisted % 60 == 0 && SoundHelper.playingSounds.containsKey(auraSoundKey))
+                        SoundHelper.stopSounds(event.entity, "aura");
+                    return;
+                }
                 if (aura == null || isPlayer && !aura.display.overrideDBCAura && !dbcData.isForm(DBCForm.Base))
                     return;
 
@@ -211,13 +231,17 @@ public class ClientEventHandler {
         boolean isPlayer = entity instanceof EntityPlayer;
         boolean isNPC = entity instanceof EntityNPCInterface;
         DBCData dbcData = null;
+        DBCDisplay display = null;
         String auraOwner = isPlayer ? entity.getCommandSenderName() : Utility.getEntityID(entity);
+
         if (isPlayer)
             dbcData = DBCData.get((EntityPlayer) entity);
 
-        EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, 0, 0, isPlayer ? dbcData.Release : 100, false);
+        boolean rotate90 = isPlayer && (dbcData.containsSE(7)) ? true : false;
+        EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, isPlayer ? dbcData.State : 0, isPlayer ? dbcData.State2 : 0, isPlayer ? dbcData.Release : 100, rotate90);
+        aur.setLocationAndAngles(entity.posX, entity.posY - 5, entity.posZ, entity.rotationYaw, entity.rotationPitch);
         boolean kk = aura.display.hasKaiokenAura;
-        aur.setAlp(0.4f);
+        aur.setAlp(0.3f);
         aur.setSpd(40);
 
         if (aura.display.hasSize())
@@ -299,7 +323,7 @@ public class ClientEventHandler {
         boolean spawnRing = entity.ticksExisted % 25 == 0;
 
         if (isNPC) {
-            DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
+            display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
             form = display.getCurrentForm();
             if (display.isTransforming && spawnRing)
                 ring = new EntityAuraRing(entity.worldObj, Utility.getEntityID(entity), 0, 0, 0, 0);
@@ -357,13 +381,16 @@ public class ClientEventHandler {
         // This block indefinitely loops through aura sound as long as aura is enabled
         // regardless of the sound.ogg duration. The second the sound ends, it insta-replays
 
-        ScriptClientSound s = SoundHelper.getClientSound(entity, sound); //already existing aura sound
-        if (s == null) {
-            PacketHandler.Instance.sendToServer(new PlaySound(sound, soundRange, Utility.getEntityID(entity)).generatePacket());
-        } else if (s != null) { //dynamic volume, as player gets further away from aura source volume decreases
-            float distance = entity.getDistanceToEntity(Minecraft.getMinecraft().thePlayer);
-            float volume = 1 - distance / soundRange;
-            SoundHelper.setSoundVolume(s, volume);
+        String auraSoundKey = isNPC ? display.auraSoundKey : dbcData.auraSoundKey;
+        if (!SoundHelper.playingSounds.containsKey(auraSoundKey)) {
+            Sound auraSound = new Sound(sound, entity);
+            if (isNPC)
+                display.auraSoundKey = auraSound.key;
+            else if (isPlayer)
+                dbcData.auraSoundKey = auraSound.key;
+
+            auraSound.setRepeat(true);
+            auraSound.play(true);
         }
         ////////////////////////////////////////////////////
         ////////////////////////////////////////////////////

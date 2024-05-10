@@ -110,8 +110,8 @@ public class AuraDisplay implements IAuraDisplay {
     }
 
     @Override
-    public void setAuraSound(String sound) {
-        this.auraSound = sound;
+    public void setAuraSound(String soundDirectory) {
+        this.auraSound = soundDirectory;
     }
 
 
