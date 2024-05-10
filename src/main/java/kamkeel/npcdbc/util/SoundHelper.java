@@ -4,7 +4,7 @@ import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.PlaySound;
 import kamkeel.npcdbc.network.packets.StopSound;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSound;
+import net.minecraft.client.audio.MovingSound;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -30,7 +30,7 @@ public class SoundHelper {
     }
 
 
-    public static class Sound extends ScriptClientSound {
+    public static class Sound extends MovingSound {
         public String key;
         public String soundDir;
         public Entity entity;
@@ -54,8 +54,16 @@ public class SoundHelper {
 
         }
 
-        public Entity getScriptSoundEntity() {
-            return (Entity) Utility.getPFValue(ScriptClientSound.class, "entity", this);
+        public void update() {
+            if (this.entity != null) {
+                if (this.entity.isDead) {
+                    this.donePlaying = true;
+                } else {
+                    this.xPosF = (float) this.entity.posX;
+                    this.yPosF = (float) this.entity.posY;
+                    this.zPosF = (float) this.entity.posZ;
+                }
+            }
 
         }
 
@@ -67,6 +75,7 @@ public class SoundHelper {
         public void setRepeat(boolean repeat) {
             this.repeat = repeat;
         }
+
 
         public void play(boolean forOthers) {
             if (onlyOneCanExist && playingSounds.containsKey(key))
@@ -115,14 +124,11 @@ public class SoundHelper {
             onlyOneCanExist = c.getBoolean("onlyOneCanExist");
 
             soundDir = c.getString("soundDir");
-            Utility.setPrivateField(PositionedSound.class, "field_147664_a", true, this, new ResourceLocation(soundDir));
-
             key = c.getString("key");
 
             int dimID = c.getInteger("dimensionID");
             World world = Utility.getWorld(dimID);
             entity = Utility.getEntityFromID(world, c.getString("entity"));
-            Utility.setPrivateField(ScriptClientSound.class, "entity", false, this, entity);
             return this;
 
         }
@@ -132,7 +138,7 @@ public class SoundHelper {
         }
 
         public static Sound createFromNBT(NBTTagCompound c) {
-            Sound sound = new Sound();
+            Sound sound = new Sound(c.getString("soundDir"), null);
             return sound.readFromNBT(c);
 
         }

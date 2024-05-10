@@ -372,7 +372,6 @@ public class ClientEventHandler {
                 sound = "jinryuudragonbc:1610.aurab";
         }
 
-        float soundRange = 50;
         if (aura.display.hasSound())
             sound = aura.display.auraSound;
 
