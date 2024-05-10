@@ -4,6 +4,7 @@ import JinRyuu.JRMCore.JRMCoreGuiBars;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.gui.dbc.AbstractJRMCGui;
 import kamkeel.npcdbc.client.gui.dbc.JRMCoreLabel;
 import kamkeel.npcdbc.controllers.StatusEffectController;
@@ -53,7 +54,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
 
     @Inject(method = "drawIcon(III)V", at = @At("HEAD"))
     private void onDrawIcon(int var51, int var61, int resourceID, CallbackInfo ci) {
-        String name = this.statusEffectFromResourceID(resourceID);
+        String name = LocalizationHelper.getLocalizedString(this.statusEffectFromResourceID(resourceID));
         addHoverable(name, var51, var61);
     }
 
@@ -102,8 +103,6 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
                 return "Majin";
             case 10:
                 return "Legendary";
-//            case 11:
-//                return "GIVE ME THIS STATUS EFFECT NAME";
 
             case 15:
                 return "Divine";
