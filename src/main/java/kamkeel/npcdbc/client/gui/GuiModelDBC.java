@@ -254,7 +254,10 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, display, npc, 3));
         }
         if(button.id == 304){
+            // Set NPC to Steve Model
             display.useSkin = button.getValue() == 1;
+            if(display.useSkin)
+                npc.display.modelType = 0;
             initGui();
         }
         if(button.id == 200){
