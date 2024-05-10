@@ -86,7 +86,7 @@ public class Sound extends MovingSound {
     }
 
     public String toString() {
-        return entity.getCommandSenderName() + entity.getEntityId() + "," + soundDir;
+        return entity.getEntityId() + ":" + soundDir;
     }
 
     public static Sound createFromNBT(NBTTagCompound compound) {

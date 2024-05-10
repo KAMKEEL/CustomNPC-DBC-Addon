@@ -12,14 +12,17 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class AuraSound extends Sound {
-    public AuraSound(String soundDir) {
-        super(soundDir);
-    }
 
     public AuraSound(String soundDir, Entity entity) {
         super(soundDir, entity);
     }
 
+    @Override
+    public String toString() {
+        return entity.getEntityId() + ":AURA:" + soundDir;
+    }
+
+    @Override
     public void update() {
         super.update();
         boolean auraOn = true;
