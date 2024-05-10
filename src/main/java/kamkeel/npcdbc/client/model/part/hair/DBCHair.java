@@ -88,6 +88,7 @@ public class DBCHair extends ModelHairRenderer {
 
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         this.renderHairs(display);
+        this.base.currentlyPlayerTexture = false;
         if (showColor) {
             GL11.glColor4f(1.0F, 1.0F, 1.0F, this.base.alpha);
         }
