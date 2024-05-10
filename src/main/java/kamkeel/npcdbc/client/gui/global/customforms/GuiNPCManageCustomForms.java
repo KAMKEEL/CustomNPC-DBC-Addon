@@ -78,18 +78,21 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
         addLabel(new GuiNpcLabel(4, "Must transform from parent:", guiLeft+8, guiTop+77));
 
         addButton(new GuiNpcButton(7, guiLeft+74, guiTop+94, 114, 20, "<Select Form>")); //@TODO lang file
-        if(parentForm != -1)
-            getButton(7).setDisplayText(FormController.getInstance().get(parentForm).getName());
+        if(parentForm != -1){
+            if(FormController.getInstance().has(parentForm))
+                getButton(7).setDisplayText(FormController.getInstance().get(parentForm).getName());
+        }
+
         addButton(new GuiNpcButton(8, guiLeft+190, guiTop+94, 20, 20, "X"));
         addLabel(new GuiNpcLabel(5, "Parent form", guiLeft+8, guiTop + 99));
 
         addButton(new GuiNpcButton(9, guiLeft+74, guiTop+116, 114, 20, "<Select Form>")); //@TODO lang file
-        if(childForm != -1)
-            getButton(9).setDisplayText(FormController.getInstance().get(childForm).getName());
+        if(childForm != -1){
+            if(FormController.getInstance().has(childForm))
+                getButton(9).setDisplayText(FormController.getInstance().get(childForm).getName());
+        }
         addButton(new GuiNpcButton(10, guiLeft+190, guiTop+116, 20, 20, "X"));
         addLabel(new GuiNpcLabel(6, "Child form", guiLeft+8, guiTop + 121));
-
-
 
         scrollForms.setList(getSearchList());
     }
@@ -245,7 +248,19 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
     @Override
     public void subGuiClosed(SubGuiInterface subgui) {
         if (subgui instanceof SubGuiSelectForm) {
-//	    	customForm.color = ((SubGuiColorSelector)subgui).color;
+            if(customForm != null){
+                SubGuiSelectForm guiSelectForm = ((SubGuiSelectForm)subgui);
+                if(guiSelectForm.selectionChild){
+                    childForm = guiSelectForm.selectedFormID;
+                    if(parentForm == childForm)
+                        parentForm = -1;
+                }
+                else {
+                    parentForm = guiSelectForm.selectedFormID;
+                    if(parentForm == childForm)
+                        childForm = -1;
+                }
+            }
             initGui();
         }
     }

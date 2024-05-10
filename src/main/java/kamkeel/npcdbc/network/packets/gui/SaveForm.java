@@ -1,12 +1,11 @@
 package kamkeel.npcdbc.network.packets.gui;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 import io.netty.buffer.ByteBuf;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
-import kamkeel.npcdbc.network.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import noppes.npcs.Server;
@@ -48,22 +47,31 @@ public class SaveForm extends AbstractPacket {
 
         Form form = new Form();
         form.readFromNBT(Server.readNBT(in));
+        int newParentForm = in.readInt();
+        int newChildForm = in.readInt();
+
+        if(form.parentID != newParentForm || form.childID != newChildForm){
+            if(newParentForm == -1)
+                form.removeParentForm();
+            else
+                form.linkParent(newParentForm);
+
+            if(newChildForm == -1)
+                form.removeChildForm();
+            else
+                form.linkChild(newChildForm);
+
+            IForm parent = FormController.getInstance().get(newParentForm);
+            if(parent != null)
+                parent.save();
+
+            IForm child = FormController.getInstance().get(newChildForm);
+            if(child != null)
+                child.save();
+        }
         form = (Form) FormController.getInstance().saveForm(form);
-
-        parentForm = in.readInt();
-        if(parentForm == -1)
-            form.removeParentForm();
-        else
-            form.linkParent(parentForm);
-
-        childForm = in.readInt();
-        if(childForm == -1)
-            form.removeChildForm();
-        else
-            form.linkChild(childForm);
 
         System.out.printf("Saved form %s (%s, %s)\n", form.name, parentForm>=0, childForm>=0);
         NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
-
     }
 }

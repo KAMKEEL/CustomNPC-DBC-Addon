@@ -15,10 +15,12 @@ import java.util.Vector;
 public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, ICustomScrollListener, ITextfieldListener {
 
     private HashMap<String, Integer> data = new HashMap<>();
-    boolean selectionChild;
     private GuiCustomScroll scrollForms;
     private String selected = null;
     private String search = "";
+
+    public boolean selectionChild;
+    public int selectedFormID = -1;
 
     public SubGuiSelectForm(boolean selectionChild){
         this.selectionChild = selectionChild;
@@ -52,11 +54,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         int id = button.id;
 
         if(id == 0 && selected != null){
-            GuiNPCManageCustomForms parent = (GuiNPCManageCustomForms) this.parent;
-            if(selectionChild)
-                parent.childForm = data.get(selected);
-            else
-                parent.parentForm = data.get(selected);
+            selectedFormID = data.get(selected);
             this.close();
         }
         if(id == 1){
@@ -69,7 +67,6 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         String name = scrollForms.getSelected();
         this.data = data;
         scrollForms.setList(getSearchList());
-
         if (name != null)
             scrollForms.setSelected(name);
     }
