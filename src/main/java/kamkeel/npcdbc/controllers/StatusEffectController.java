@@ -27,7 +27,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     public HashMap<UUID, HashMap<Integer, PlayerEffect>> playerEffects = new HashMap<>();
 
     public StatusEffectController(){
-        dbcEffects.put(0, new DBCEffect("Blocking", "dbc.se.blocking", 0, -1, true));
+        dbcEffects.put(0, new DBCEffect("Blocking", "dbc.se.blocking", -1, 0, true));
     }
 
     public static StatusEffectController getInstance() {
