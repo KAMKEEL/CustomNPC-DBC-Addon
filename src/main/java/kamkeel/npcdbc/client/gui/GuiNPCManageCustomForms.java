@@ -51,12 +51,18 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
         if (customForm.id == -1)
             return;
 
+
+
         this.addTextField(new GuiNpcTextField(0, this, guiLeft + 40, guiTop + 4, 136, 20, customForm.name));
         getTextField(0).setMaxStringLength(20);
         addLabel(new GuiNpcLabel(0, "gui.name", guiLeft + 8, guiTop + 9));
 
         addLabel(new GuiNpcLabel(10, "ID", guiLeft + 178, guiTop + 4));
         addLabel(new GuiNpcLabel(11, customForm.id + "", guiLeft + 178, guiTop + 14));
+
+        this.addTextField(new GuiNpcTextField(1, this, guiLeft + 70, guiTop + 26, 106, 20, customForm.menuName.replaceAll("§", "&")));
+        getTextField(1).setMaxStringLength(20);
+        addLabel(new GuiNpcLabel(1, "Menu name", guiLeft + 8, guiTop + 31));
 
         scrollForms.setList(getSearchList());
     }
@@ -121,7 +127,6 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
     public void setData(Vector<String> list, HashMap<String, Integer> data) {
         String name = scrollForms.getSelected();
         this.data = data;
-        System.out.println("got data");
         scrollForms.setList(getSearchList());
 
         if (name != null)
@@ -143,6 +148,7 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
         }
     }
 
+    @Override
     public void save() {
         if (selected != null && data.containsKey(selected) && customForm != null) {
             NBTTagCompound compound = customForm.writeToNBT();
@@ -155,16 +161,25 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
         if (customForm.id == -1)
             return;
 
-        if (guiNpcTextField.id == 0) {
-            String name = guiNpcTextField.getText();
-            if (!name.isEmpty() && !data.containsKey(name)) {
-                String old = customForm.name;
-                data.remove(customForm.name);
-                customForm.name = name;
-                data.put(customForm.name, customForm.id);
-                selected = name;
-                scrollForms.replace(old, customForm.name);
-            }
+
+        switch(guiNpcTextField.id){
+            case 0:
+                String name = guiNpcTextField.getText();
+                if (!name.isEmpty() && !data.containsKey(name)) {
+                    String old = customForm.name;
+                    data.remove(customForm.name);
+                    customForm.name = name;
+                    data.put(customForm.name, customForm.id);
+                    selected = name;
+                    scrollForms.replace(old, customForm.name);
+                }
+                break;
+            case 1:
+                String menuName = guiNpcTextField.getText();
+                if(!menuName.isEmpty() && !data.containsKey(menuName)){
+                    customForm.menuName = menuName.replaceAll("&", "§");
+                }
+                break;
         }
     }
 
