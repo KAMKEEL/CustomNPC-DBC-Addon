@@ -18,8 +18,10 @@ public class AuraDisplay implements IAuraDisplay {
     public boolean hasLightning = false;
     public int lightningColor = -1, lightningAlpha = -1;
 
-    public boolean kaiokenOn = false;
+    public boolean hasKaiokenAura = false;
+    public float kaiokenAuraSize = 1f;
 
+    public boolean overrideDBCAura = false;
     public String auraSound = "";
 
     public AuraDisplay(Aura parent) {
@@ -47,7 +49,8 @@ public class AuraDisplay implements IAuraDisplay {
         lightningColor = rendering.getInteger("lightningColor");
         lightningAlpha = rendering.getInteger("lightningAlpha");
 
-        kaiokenOn = rendering.getBoolean("kaiokenOn");
+        hasKaiokenAura = rendering.getBoolean("kaiokenOn");
+        overrideDBCAura = rendering.getBoolean("overrideDBCForm");
 
         auraSound = rendering.getString("auraSound");
 
@@ -72,7 +75,8 @@ public class AuraDisplay implements IAuraDisplay {
         rendering.setInteger("lightningColor", lightningColor);
         rendering.setInteger("lightningAlpha", lightningAlpha);
 
-        rendering.setBoolean("kaiokenOn", kaiokenOn);
+        rendering.setBoolean("kaiokenOn", hasKaiokenAura);
+        rendering.setBoolean("overrideDBCForm", overrideDBCAura);
 
         rendering.setString("auraSound", auraSound);
 
@@ -81,8 +85,18 @@ public class AuraDisplay implements IAuraDisplay {
     }
 
     @Override
+    public boolean getOverrideDBCAura() {
+        return overrideDBCAura;
+    }
+
+    @Override
+    public void setOverrideDBCAura(boolean override) {
+        this.overrideDBCAura = override;
+    }
+
+    @Override
     public void toggleKaioken(boolean toggle) {
-        this.kaiokenOn = toggle;
+        this.hasKaiokenAura = toggle;
     }
 
     @Override
@@ -103,7 +117,7 @@ public class AuraDisplay implements IAuraDisplay {
 
     @Override
     public boolean isKaiokenToggled() {
-        return kaiokenOn;
+        return hasKaiokenAura;
     }
 
 

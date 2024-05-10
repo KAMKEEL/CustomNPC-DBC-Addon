@@ -3,6 +3,10 @@ package kamkeel.npcdbc.api.aura;
 public interface IAuraDisplay {
 
 
+    boolean getOverrideDBCAura();
+
+    void setOverrideDBCAura(boolean override);
+
     void toggleKaioken(boolean toggle);
 
     boolean hasSound();
