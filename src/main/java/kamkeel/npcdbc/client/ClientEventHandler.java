@@ -1,19 +1,21 @@
 package kamkeel.npcdbc.client;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
+import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
+import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.mixin.INPCDisplay;
@@ -173,18 +175,32 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void entityAura(LivingEvent.LivingUpdateEvent event) {
-        if (event.entity instanceof EntityCustomNpc && !Utility.isServer(event.entity)) {
-            EntityCustomNpc npc = (EntityCustomNpc) event.entity;
-            DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
-            if (!display.enabled)
-                return;
-            Aura aura = display.getAur();
-            if (aura == null)
-                return;
-            if (npc.ticksExisted % 5 == 0 && (display.auraOn || display.isTransforming)) {
-                spawnAura(npc, aura);
+        if ((event.entity instanceof EntityCustomNpc || event.entity instanceof EntityPlayer) && !Utility.isServer(event.entity)) {
+            if (event.entity.ticksExisted % 5 == 0) {
+                Aura aura = null;
+                boolean isPlayer = event.entity instanceof EntityPlayer;
+                boolean isNPC = event.entity instanceof EntityNPCInterface;
+                DBCData dbcData = null;
+                if (isNPC) {
+                    EntityCustomNpc npc = (EntityCustomNpc) event.entity;
+                    DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
+                    if (!display.enabled || !display.auraOn && !display.isTransforming)
+                        return;
+                    aura = display.getAur();
+                } else if (isPlayer) {
+                    dbcData = DBCData.get((EntityPlayer) event.entity);
+                    boolean auraOn = dbcData.isDBCAuraOn();
+                    if (!auraOn)
+                        return;
+                    aura = dbcData.getAura();
+                }
+
+                if (aura == null || isPlayer && !aura.display.overrideDBCAura && !dbcData.isForm(DBCForm.Base))
+                    return;
+
+                spawnAura(event.entity, aura);
                 if (aura.hasSecondaryAura())
-                    spawnAura(npc, aura.getSecondaryAur());
+                    spawnAura(event.entity, aura.getSecondaryAur());
 
 
             }
@@ -192,8 +208,15 @@ public class ClientEventHandler {
     }
 
     public static void spawnAura(Entity entity, Aura aura) {
-        EntityAura2 aur = new EntityAura2(entity.worldObj, Utility.getEntityID(entity), aura.display.color1, 0, 0, 100, false);
-        boolean kk = aura.display.kaiokenOn;
+        boolean isPlayer = entity instanceof EntityPlayer;
+        boolean isNPC = entity instanceof EntityNPCInterface;
+        DBCData dbcData = null;
+        String auraOwner = isPlayer ? entity.getCommandSenderName() : Utility.getEntityID(entity);
+        if (isPlayer)
+            dbcData = DBCData.get((EntityPlayer) entity);
+
+        EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, 0, 0, isPlayer ? dbcData.Release : 100, false);
+        boolean kk = aura.display.hasKaiokenAura;
         aur.setAlp(0.4f);
         aur.setSpd(40);
 
@@ -209,11 +232,12 @@ public class ClientEventHandler {
             ((IEntityAura) aur).setLightningAlpha(255);
 
 
-        String sound = "jinryuudragonbc:DBC.aura";
+        int formColor = isPlayer ? dbcData.AuraColor > 0 ? dbcData.AuraColor : JRMCoreH.Algnmnt_rc(dbcData.Alignment) : 11075583; //alignment color
         int mimicColor = EnumPlayerAuraTypes.getManualAuraColor(aura.display.type);
         if (mimicColor != -1)
-            aur.setCol(mimicColor);
+            formColor = mimicColor;
 
+        String sound = "jinryuudragonbc:DBC.aura";
         if (aura.display.type == EnumPlayerAuraTypes.SaiyanGod) {
             aur.setAlp(0.2F);
             aur.setTex("aurai");
@@ -268,27 +292,48 @@ public class ClientEventHandler {
 
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
-        //Forms
+        //Forms & Aura Ring
         Form form = null;
-        if (entity instanceof EntityNPCInterface)
-            form = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().getCurrentForm();
-        else if (entity instanceof EntityPlayer)
-            form = DBCData.get((EntityPlayer) entity).getForm();
+        EntityAuraRing ring = null;
+        EntityAura2 kaiokenAura = null;
+        boolean spawnRing = entity.ticksExisted % 25 == 0;
 
-        if (form != null) {
-            FormDisplay d = form.display;
-            if (d.hasColor("aura"))
-                aur.setCol(d.auraColor);
+        if (isNPC) {
+            DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
+            form = display.getCurrentForm();
+            if (display.isTransforming && spawnRing)
+                ring = new EntityAuraRing(entity.worldObj, Utility.getEntityID(entity), 0, 0, 0, 0);
+        } else if (isPlayer) {
+            form = dbcData.getForm();
+            if (dbcData.isTransforming() && spawnRing)
+                ring = new EntityAuraRing(entity.worldObj, auraOwner, 0, 0, 0, 0);
+            if (dbcData.isForm(DBCForm.Kaioken) && kk)
+                kaiokenAura = new EntityAura2(entity.worldObj, auraOwner, 16646144, 2.0F + dbcData.State, dbcData.State2 * 1.5f, dbcData.Release, false);
+
+
         }
+
+
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
 
-        if (aura.display.hasColor("color1"))
-            aur.setCol(aura.display.color1);
+
+        if (isPlayer && dbcData.State > 0)//vanilla DBC form colors
+            formColor = dbcData.getDBCColor();
+
+        if (aura.display.hasColor("color1")) //IAura color
+            formColor = aura.display.color1;
+
+        if (form != null && form.display.hasColor("aura")) //IForm color
+            formColor = form.display.auraColor;
+
+        aur.setCol(formColor);
+
         if (aura.display.hasColor("color2"))
             aur.setColL2(aura.display.color2);
         if (aura.display.hasColor("color3"))
             aur.setColL3(aura.display.color3);
+
 
         if (aura.display.hasAlpha("aura"))
             aur.setAlp((float) aura.display.alpha / 255);
@@ -322,6 +367,15 @@ public class ClientEventHandler {
         }
         ////////////////////////////////////////////////////
         ////////////////////////////////////////////////////
+
+
+        if (ring != null) {
+            ring.setCol(aur.getCol());
+            aur.worldObj.spawnEntityInWorld(ring);
+        }
+
+        if (kaiokenAura != null)
+            aur.worldObj.spawnEntityInWorld(kaiokenAura);
 
         aur.worldObj.spawnEntityInWorld(aur);
     }
