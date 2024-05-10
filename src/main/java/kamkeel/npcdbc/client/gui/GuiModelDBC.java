@@ -36,9 +36,6 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
     public void initGui() {
     	super.initGui();
 		int y = guiTop + 5;
-        addButton(new GuiNpcButton(600, guiLeft + 300, y + 30, 60, 20, "Reload"));
-
-
         addButton(new GuiNpcButtonYesNo(0, guiLeft + 64, y, 60, 20, display.enabled));
         addLabel(new GuiNpcLabel(0, "Enabled", guiLeft, y + 5, 0xFFFFFF));
         if(!display.enabled)
@@ -265,9 +262,6 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         }
         if(button.id == 201){
             display.arcoState = button.getValue();
-        }
-        if(button.id == 600){
-            initGui();
         }
     }
 
