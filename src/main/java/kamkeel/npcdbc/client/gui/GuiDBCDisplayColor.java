@@ -14,19 +14,18 @@ import noppes.npcs.client.gui.util.GuiModelInterface;
 import noppes.npcs.client.gui.util.GuiNpcTextField;
 import noppes.npcs.client.gui.util.ITextfieldListener;
 import noppes.npcs.entity.EntityCustomNpc;
-import noppes.npcs.entity.data.ModelPartData;
 import org.lwjgl.opengl.GL11;
 
-public class GuiDBCModelColor extends GuiModelInterface implements ITextfieldListener {
+public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldListener {
     private GuiScreen parent;
     private static final ResourceLocation color = new ResourceLocation("customnpcs:textures/gui/color.png");
     private int colorX;
     private int colorY;
     private GuiNpcTextField textfield;
     private DBCDisplay data;
-    private int type = 0;
+    private int type = 0; // CM, C1, C2, C3, HairColor
 
-    public GuiDBCModelColor(GuiScreen parent, DBCDisplay data, EntityCustomNpc npc, int type) {
+    public GuiDBCDisplayColor(GuiScreen parent, DBCDisplay data, EntityCustomNpc npc, int type) {
         super(npc);
         this.parent = parent;
         this.data = data;
@@ -49,6 +48,9 @@ public class GuiDBCModelColor extends GuiModelInterface implements ITextfieldLis
         } else if(type == 3){
             this.addTextField(this.textfield = new GuiNpcTextField(0, this, this.guiLeft + 25, this.guiTop + 20, 70, 20, getColor(this.data.bodyC3)));
             this.textfield.setTextColor(this.data.bodyC3);
+        } else if(type == 4){
+            this.addTextField(this.textfield = new GuiNpcTextField(0, this, this.guiLeft + 25, this.guiTop + 20, 70, 20, getColor(this.data.hairColor)));
+            this.textfield.setTextColor(this.data.hairColor);
         } else {
             this.addTextField(this.textfield = new GuiNpcTextField(0, this, this.guiLeft + 25, this.guiTop + 20, 70, 20, getColor(this.data.bodyCM)));
             this.textfield.setTextColor(this.data.bodyCM);
@@ -71,6 +73,9 @@ public class GuiDBCModelColor extends GuiModelInterface implements ITextfieldLis
                         break;
                     case 3:
                         this.data.bodyC3 = color;
+                        break;
+                    case 4:
+                        this.data.hairColor = color;
                         break;
                     default:
                         this.data.bodyCM = color;
@@ -105,7 +110,7 @@ public class GuiDBCModelColor extends GuiModelInterface implements ITextfieldLis
             InputStream stream = null;
 
             try {
-                IResource resource = this.mc.getResourceManager().getResource(GuiDBCModelColor.color);
+                IResource resource = this.mc.getResourceManager().getResource(GuiDBCDisplayColor.color);
                 BufferedImage bufferedimage = ImageIO.read(stream = resource.getInputStream());
                 int color = bufferedimage.getRGB((i - this.guiLeft - 4) * 4, (j - this.guiTop - 50) * 4) & 16777215;
                 if (color != 0) {
@@ -118,6 +123,9 @@ public class GuiDBCModelColor extends GuiModelInterface implements ITextfieldLis
                             break;
                         case 3:
                             this.data.bodyC3 = color;
+                            break;
+                        case 4:
+                            this.data.hairColor = color;
                             break;
                         default:
                             this.data.bodyCM = color;
@@ -157,6 +165,9 @@ public class GuiDBCModelColor extends GuiModelInterface implements ITextfieldLis
                 break;
             case 3:
                 this.data.bodyC3 = color;
+                break;
+            case 4:
+                this.data.hairColor = color;
                 break;
             default:
                 this.data.bodyCM = color;
