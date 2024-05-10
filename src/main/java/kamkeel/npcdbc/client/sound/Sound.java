@@ -54,6 +54,7 @@ public class Sound extends MovingSound {
     public void play(boolean forOthers) {
         if (onlyOneCanExist && SoundHandler.playingSounds.containsKey(key))
             return;
+        SoundHandler.playingSounds.put(key, this);
         Minecraft.getMinecraft().getSoundHandler().playSound(this);
     }
 
