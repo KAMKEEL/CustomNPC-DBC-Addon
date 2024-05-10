@@ -26,7 +26,12 @@ display.parts=Parts
 display.race=Race
 display.skinOverride=DBC Skin
 display.state=State
-display.setDefaultColors=Set Default Colors
+display.setDefault=Set Default
+display.maskOn=Mask On
+display.maskOff=Mask Off
+display.eye=Eye
+display.mouth=Mouth
+display.nose=Nose
 
 part.horns=Horns
 part.ears=Ears
