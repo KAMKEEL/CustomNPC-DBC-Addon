@@ -7,6 +7,7 @@ import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.StopSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSound;
+import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -65,16 +66,18 @@ public class SoundHelper {
         }
 
         public void update() {
-            if (this.entity != null) {
-                if (this.entity.isDead) {
-                    this.donePlaying = true;
-                } else {
-                    this.xPosF = (float) this.entity.posX;
-                    this.yPosF = (float) this.entity.posY;
-                    this.zPosF = (float) this.entity.posZ;
-                }
-            } else
+
+            if (this.entity == null || entity.isDead || (Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.MASTER) == 0)) {
+                stop(false);
                 this.donePlaying = true;
+                return;
+            }
+
+
+            this.xPosF = (float) this.entity.posX;
+            this.yPosF = (float) this.entity.posY;
+            this.zPosF = (float) this.entity.posZ;
+
 
         }
 
@@ -123,7 +126,7 @@ public class SoundHelper {
         }
 
         public String toString() {
-            return entity.getCommandSenderName() + entity.getEntityId() + "," + soundDir + "," + this.hashCode();
+            return entity.getCommandSenderName() + entity.getEntityId() + "," + soundDir;
         }
 
         public static Sound createFromNBT(NBTTagCompound compound) {
@@ -160,6 +163,12 @@ public class SoundHelper {
             playingAuras.put(key, this);
         }
 
+        public void stop(boolean forOthers) {
+            super.stop(forOthers);
+            playingAuras.remove(key, this);
+        }
+
+
         public void update() {
             super.update();
             boolean auraOn = true;
@@ -185,7 +194,7 @@ public class SoundHelper {
             while (iter.hasNext()) {
                 Map.Entry<String, AuraSound> entry = iter.next();
                 String sound = entry.getKey();
-                if (sound.contains(entity.getCommandSenderName() + entity.getEntityId()) && sound.contains(soundDir)){
+                if (sound.contains(entity.getCommandSenderName() + entity.getEntityId()) && sound.contains(soundDir)) {
                     AuraSound auraSound = entry.getValue();
                     return auraSound.isPlaying();
                 }
