@@ -28,6 +28,16 @@ public class SoundHelper {
         }
     }
 
+    public static boolean contains(String key) {
+        Iterator<String> iter = SoundHelper.playingSounds.keySet().iterator();
+        while (iter.hasNext()) {
+            String sound = iter.next();
+            if (sound.contains(key))
+                return true;
+
+        }
+        return false;
+    }
 
     public static class Sound extends MovingSound {
         public String key;
