@@ -20,7 +20,6 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
     private final String[] arrArcoHorns = new String[]{"gui.no","Spike","SpikeTwo","Long","Ultimate"};
     private final String[] arrRaceEars = new String[]{"gui.no","Arco"};
     private final String[] arrBody = new String[]{"gui.no","BSpike"};
-    private final String[] arrHair = new String[]{"gui.no","gui.yes"};
     private final String[] arrArm = new String[]{"gui.no","ArmSpike",  "Shoulder"};
     private DBCDisplay display;
     private int tab = 0;

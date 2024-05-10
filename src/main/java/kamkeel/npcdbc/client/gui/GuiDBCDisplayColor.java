@@ -22,7 +22,7 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
     private int colorX;
     private int colorY;
     private GuiNpcTextField textfield;
-    private DBCDisplay data;
+    private final DBCDisplay data;
     private int type = 0; // CM, C1, C2, C3, HairColor
 
     public GuiDBCDisplayColor(GuiScreen parent, DBCDisplay data, EntityCustomNpc npc, int type) {
@@ -85,7 +85,6 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
             } catch (NumberFormatException var6) {
                 this.textfield.setText(prev);
             }
-
         }
     }
 
@@ -134,7 +133,7 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
                     this.textfield.setTextColor(color);
                     this.textfield.setText(getColor(color));
                 }
-            } catch (IOException var16) {
+            } catch (IOException ignored) {
             } finally {
                 if (stream != null) {
                     try {
