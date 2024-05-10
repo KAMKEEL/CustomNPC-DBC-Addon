@@ -35,8 +35,8 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
     public void initGui() {
         super.initGui();
 
-        this.addButton(new GuiNpcButton(0, guiLeft + 368, guiTop + 8, 45, 20, "gui.add"));
-        this.addButton(new GuiNpcButton(1, guiLeft + 368, guiTop + 32, 45, 20, "gui.remove"));
+        addButton(new GuiNpcButton(0, guiLeft + 368, guiTop + 8, 45, 20, "gui.add"));
+        addButton(new GuiNpcButton(1, guiLeft + 368, guiTop + 32, 45, 20, "gui.remove"));
 
         if (scrollForms == null) {
             scrollForms = new GuiCustomScroll(this, 0, 0);
@@ -53,16 +53,33 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
 
 
 
-        this.addTextField(new GuiNpcTextField(0, this, guiLeft + 40, guiTop + 4, 136, 20, customForm.name));
+        addTextField(new GuiNpcTextField(0, this, guiLeft + 40, guiTop + 4, 136, 20, customForm.name));
         getTextField(0).setMaxStringLength(20);
         addLabel(new GuiNpcLabel(0, "gui.name", guiLeft + 8, guiTop + 9));
 
-        addLabel(new GuiNpcLabel(10, "ID", guiLeft + 178, guiTop + 4));
-        addLabel(new GuiNpcLabel(11, customForm.id + "", guiLeft + 178, guiTop + 14));
+        addLabel(new GuiNpcLabel(1, "ID", guiLeft + 178, guiTop + 4));
+        addLabel(new GuiNpcLabel(2, customForm.id + "", guiLeft + 178, guiTop + 14));
 
-        this.addTextField(new GuiNpcTextField(1, this, guiLeft + 70, guiTop + 26, 106, 20, customForm.menuName.replaceAll("§", "&")));
+        addTextField(new GuiNpcTextField(1, this, guiLeft + 70, guiTop + 26, 106, 20, customForm.menuName.replaceAll("§", "&")));
         getTextField(1).setMaxStringLength(20);
-        addLabel(new GuiNpcLabel(1, "Menu name", guiLeft + 8, guiTop + 31));
+        addLabel(new GuiNpcLabel(3, "Menu name", guiLeft + 8, guiTop + 31)); //@TODO Lang file
+
+        addButton(new GuiNpcButton(0, guiLeft + 8, guiTop + 50, 64, 20, "DISPLAY")); //@TODO Lang file
+        addButton(new GuiNpcButton(1, guiLeft + 77, guiTop + 50, 64, 20, "MASTERY")); //@TODO Lang file
+        addButton(new GuiNpcButton(2, guiLeft + 146, guiTop + 50, 64, 20, "STACKABLE")); //@TODO Lang file
+
+        addButton(new GuiNpcButton(3, guiLeft+165, guiTop+72, 45, 20, new String[]{"gui.no", "gui.yes"}, this.customForm.fromParentOnly ? 1 : 0));
+        addLabel(new GuiNpcLabel(4, "Must transform from parent:", guiLeft+8, guiTop+77));
+
+        addButton(new GuiNpcButton(4, guiLeft+74, guiTop+94, 114, 20, "<Select Form>")); //@TODO Default + langfile
+        addButton(new GuiNpcButton(5, guiLeft+190, guiTop+94, 20, 20, "X"));
+        addLabel(new GuiNpcLabel(5, "Parent form", guiLeft+8, guiTop + 99));
+
+        addButton(new GuiNpcButton(6, guiLeft+74, guiTop+116, 114, 20, "<Select Form>")); //@TODO Default + langfie
+        addButton(new GuiNpcButton(7, guiLeft+190, guiTop+116, 20, 20, "X"));
+        addLabel(new GuiNpcLabel(6, "Child form", guiLeft+8, guiTop + 121));
+
+
 
         scrollForms.setList(getSearchList());
     }
