@@ -51,6 +51,9 @@ public class SaveForm extends AbstractPacket {
         int newChildForm = in.readInt();
 
         if(form.parentID != newParentForm || form.childID != newChildForm){
+            IForm parent = FormController.getInstance().get(form.parentID);
+            IForm child = FormController.getInstance().get(form.childID);
+
             if(newParentForm == -1)
                 form.removeParentForm();
             else
@@ -61,11 +64,9 @@ public class SaveForm extends AbstractPacket {
             else
                 form.linkChild(newChildForm);
 
-            IForm parent = FormController.getInstance().get(newParentForm);
             if(parent != null)
                 parent.save();
 
-            IForm child = FormController.getInstance().get(newChildForm);
             if(child != null)
                 child.save();
         }
