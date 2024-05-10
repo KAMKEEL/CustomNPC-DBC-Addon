@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.network.packets;
 
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.client.sound.NPCSoundHandler;
+import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketHandler;
@@ -45,8 +45,8 @@ public final class StopSound extends AbstractPacket {
         if (Utility.isServer())
             stop(sound);
         else {
-            if (NPCSoundHandler.playingSounds.containsKey(sound.key)) {
-                NPCSoundHandler.playingSounds.get(sound.key).stop(false);
+            if (SoundHandler.playingSounds.containsKey(sound.key)) {
+                SoundHandler.playingSounds.get(sound.key).stop(false);
             }
         }
     }

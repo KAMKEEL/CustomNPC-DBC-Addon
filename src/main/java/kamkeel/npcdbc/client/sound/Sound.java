@@ -11,9 +11,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import java.util.Iterator;
-import java.util.Map;
-
 public class Sound extends MovingSound {
     public String key;
     public String soundDir;
@@ -57,7 +54,7 @@ public class Sound extends MovingSound {
 
 
     public void play(boolean forOthers) {
-        if (onlyOneCanExist && NPCSoundHandler.playingSounds.containsKey(key))
+        if (onlyOneCanExist && SoundHandler.playingSounds.containsKey(key))
             return;
         Minecraft.getMinecraft().getSoundHandler().playSound(this);
     }

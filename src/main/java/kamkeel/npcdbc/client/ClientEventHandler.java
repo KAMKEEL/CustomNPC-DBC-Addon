@@ -10,7 +10,7 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.client.sound.AuraSound;
-import kamkeel.npcdbc.client.sound.NPCSoundHandler;
+import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import kamkeel.npcdbc.controllers.TransformController;
@@ -178,7 +178,7 @@ public class ClientEventHandler {
     public void handleSounds(TickEvent.ClientTickEvent event) {
         if(event.side == Side.CLIENT){
             if(soundTicker % 5 == 0)
-                NPCSoundHandler.verifySounds();
+                SoundHandler.verifySounds();
             soundTicker++;
         }
     }
@@ -380,7 +380,7 @@ public class ClientEventHandler {
         // This block indefinitely loops through aura sound as long as aura is enabled
         // regardless of the sound.ogg duration. The second the sound ends, it insta-replays
 
-        if (!NPCSoundHandler.isPlayingSound(entity, sound)) {
+        if (!SoundHandler.isPlayingSound(entity, sound)) {
             AuraSound auraSound = new AuraSound(sound, entity);
 
             auraSound.range = 32;

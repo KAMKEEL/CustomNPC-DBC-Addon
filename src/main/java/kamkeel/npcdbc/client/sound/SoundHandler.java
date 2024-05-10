@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class NPCSoundHandler {
+public class SoundHandler {
     public static HashMap<String, Sound> playingSounds = new HashMap<>();
 
     public static void stopSounds(Entity entity, String soundContains) {
@@ -44,7 +44,7 @@ public class NPCSoundHandler {
     }
 
     public static boolean isPlayingSound(Entity entity, String soundDir) {
-        Iterator<Map.Entry<String, Sound>> iter = NPCSoundHandler.playingSounds.entrySet().iterator();
+        Iterator<Map.Entry<String, Sound>> iter = SoundHandler.playingSounds.entrySet().iterator();
         while (iter.hasNext()) {
             Map.Entry<String, Sound> entry = iter.next();
             String sound = entry.getKey();
