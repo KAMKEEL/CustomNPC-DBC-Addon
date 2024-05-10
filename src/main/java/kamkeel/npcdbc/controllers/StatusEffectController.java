@@ -4,6 +4,7 @@ import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
+import kamkeel.npcdbc.data.statuseffect.DBCEffect;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.types.*;
@@ -17,10 +18,17 @@ import java.util.UUID;
 public class StatusEffectController implements IStatusEffectHandler {
 
     public static StatusEffectController Instance = new StatusEffectController();
+
+    public HashMap<Integer, DBCEffect> dbcEffects = new HashMap<>();
+
     public HashMap<Integer, StatusEffect> standardEffects = new HashMap<>();
     public HashMap<Integer, CustomEffect> customEffects = new HashMap<>(); // TODO: I will implement later - Kam
 
     public HashMap<UUID, HashMap<Integer, PlayerEffect>> playerEffects = new HashMap<>();
+
+    public StatusEffectController(){
+        dbcEffects.put(0, new DBCEffect("Blocking", "dbc.se.blocking", 0, -1, true));
+    }
 
     public static StatusEffectController getInstance() {
         return Instance;

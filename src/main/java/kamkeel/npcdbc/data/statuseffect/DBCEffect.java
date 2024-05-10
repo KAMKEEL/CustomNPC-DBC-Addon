@@ -1,0 +1,24 @@
+package kamkeel.npcdbc.data.statuseffect;
+
+/**
+ * This is knowledge base class for
+ * mapping DBC Effects to their valid ids.
+ * Hard coded to decrypt their resource IDs
+ * to Status ID as well as if their timers
+ * are recorded.
+ */
+public class DBCEffect {
+    public String name;
+    public String langName;
+    public int id;
+    public int resourceID;
+    boolean infinite;
+
+    public DBCEffect(String name, String langName, int id, int resourceID, boolean infinite) {
+        this.name = name;
+        this.langName = langName;
+        this.id = id;
+        this.resourceID = resourceID;
+        this.infinite = infinite;
+    }
+}
