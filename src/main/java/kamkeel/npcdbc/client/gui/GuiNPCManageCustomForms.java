@@ -66,19 +66,23 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
         getTextField(1).setMaxStringLength(20);
         addLabel(new GuiNpcLabel(3, "Menu name", guiLeft + 8, guiTop + 31)); //@TODO Lang file
 
-        addButton(new GuiNpcButton(0, guiLeft + 8, guiTop + 50, 64, 20, "DISPLAY")); //@TODO Lang file
-        addButton(new GuiNpcButton(1, guiLeft + 77, guiTop + 50, 64, 20, "MASTERY")); //@TODO Lang file
-        addButton(new GuiNpcButton(2, guiLeft + 146, guiTop + 50, 64, 20, "STACKABLE")); //@TODO Lang file
+        addButton(new GuiNpcButton(3, guiLeft + 8, guiTop + 50, 64, 20, "DISPLAY")); //@TODO Lang file
+        addButton(new GuiNpcButton(4, guiLeft + 77, guiTop + 50, 64, 20, "MASTERY")); //@TODO Lang file
+        addButton(new GuiNpcButton(5, guiLeft + 146, guiTop + 50, 64, 20, "STACKABLE")); //@TODO Lang file
 
-        addButton(new GuiNpcButton(3, guiLeft+165, guiTop+72, 45, 20, new String[]{"gui.no", "gui.yes"}, this.customForm.fromParentOnly ? 1 : 0));
+        addButton(new GuiNpcButton(6, guiLeft+165, guiTop+72, 45, 20, new String[]{"gui.no", "gui.yes"}, this.customForm.fromParentOnly ? 1 : 0));
         addLabel(new GuiNpcLabel(4, "Must transform from parent:", guiLeft+8, guiTop+77));
 
-        addButton(new GuiNpcButton(4, guiLeft+74, guiTop+94, 114, 20, "<Select Form>")); //@TODO Default + langfile
-        addButton(new GuiNpcButton(5, guiLeft+190, guiTop+94, 20, 20, "X"));
+        addButton(new GuiNpcButton(7, guiLeft+74, guiTop+94, 114, 20, "<Select Form>")); //@TODO lang file
+        if(customForm.hasParent())
+            getButton(7).setDisplayText(customForm.getParent().getName());
+        addButton(new GuiNpcButton(8, guiLeft+190, guiTop+94, 20, 20, "X"));
         addLabel(new GuiNpcLabel(5, "Parent form", guiLeft+8, guiTop + 99));
 
-        addButton(new GuiNpcButton(6, guiLeft+74, guiTop+116, 114, 20, "<Select Form>")); //@TODO Default + langfie
-        addButton(new GuiNpcButton(7, guiLeft+190, guiTop+116, 20, 20, "X"));
+        addButton(new GuiNpcButton(9, guiLeft+74, guiTop+116, 114, 20, "<Select Form>")); //@TODO lang file
+        if(customForm.hasChild())
+            getButton(9).setDisplayText(customForm.getChild().getName());
+        addButton(new GuiNpcButton(10, guiLeft+190, guiTop+116, 20, 20, "X"));
         addLabel(new GuiNpcLabel(6, "Child form", guiLeft+8, guiTop + 121));
 
 
@@ -110,7 +114,28 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
                 break;
 
             case 3:
+                //@TODO Open display subgui
+                break;
+            case 4:
+                //@TODO open mastery subgui
+                break;
+            case 5:
+                //@TODO open stackable subgui
+                break;
+            case 6:
                 this.customForm.fromParentOnly = button.getValue() == 1;
+                break;
+            case 7:
+                //@TODO open parent form selection
+                break;
+            case 8:
+                //@TODO Clear parent form
+                break;
+            case 9:
+                //@TODO add child form selection
+                break;
+            case 10:
+                //@TODO clear child form
                 break;
         }
     }
