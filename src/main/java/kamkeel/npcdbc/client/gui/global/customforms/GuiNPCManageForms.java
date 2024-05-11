@@ -1,11 +1,9 @@
 package kamkeel.npcdbc.client.gui.global.customforms;
 
 import JinRyuu.JRMCore.JRMCoreH;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.RequestForm;
-import kamkeel.npcdbc.network.packets.gui.SaveForm;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.gui.GuiButton;
@@ -16,6 +14,7 @@ import net.minecraft.util.StatCollector;
 import noppes.npcs.client.Client;
 import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.NoppesUtil;
+import noppes.npcs.client.gui.SubGuiNpcQuest;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.constants.EnumPacketServer;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -25,9 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements ICustomScrollListener, IScrollData, IGuiData, ISubGuiListener, GuiYesNoCallback {
-    private GuiCustomScroll scrollForms;
-    private HashMap<String, Integer> data = new HashMap<>();
+public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScrollListener, IScrollData, IGuiData, ISubGuiListener, GuiYesNoCallback {
+    public GuiCustomScroll scrollForms;
+    public HashMap<String, Integer> data = new HashMap<>();
     private Form customForm = new Form();
     private final ArrayList<String> stackables = new ArrayList<>();
     private String selected = null;
@@ -36,7 +35,7 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements ICustom
     public int parentForm = -1;
     public int childForm = -1;
 
-    public GuiNPCManageCustomForms(EntityNPCInterface npc) {
+    public GuiNPCManageForms(EntityNPCInterface npc) {
         super(npc);
         PacketHandler.Instance.sendToServer(new RequestForm(-1, false).generatePacket());
     }
@@ -91,7 +90,9 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements ICustom
                 }
                 break;
             case 2:
-                // Do Edit Button
+                if (data.containsKey(scrollForms.getSelected()) && customForm != null && customForm.id >= 0) {
+                    setSubGui(new SubGuiNpcForms(this, customForm));
+                }
                 break;
         }
     }
@@ -109,8 +110,14 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements ICustom
     @Override
     public void drawScreen(int i, int j, float f) {
         super.drawScreen(i, j, f);
+    }
+
+    @Override
+    public void drawBackground() {
+        super.drawBackground();
         renderScreen();
     }
+
 
     private void renderScreen() {
         drawGradientRect(guiLeft + 5, guiTop + 4, guiLeft + 218, guiTop + 24, 0xC0101010, 0xC0101010);

@@ -64,7 +64,7 @@ public class TheHussGUI extends GuiNPCInterface2 implements IScrollData, ICustom
 
         addTextField(new GuiNpcTextField(1, this, guiLeft + 70, guiTop + 26, 106, 20, customForm.menuName.replaceAll("§", "&")));
         getTextField(1).setMaxStringLength(20);
-        addLabel(new GuiNpcLabel(3, "Menu name", guiLeft + 8, guiTop + 31)); //@TODO Lang file
+        addLabel(new GuiNpcLabel(3, "Menu name", guiLeft + 8, guiTop + 31));
 
         addButton(new GuiNpcButton(3, guiLeft + 8, guiTop + 50, 64, 20, "DISPLAY")); //@TODO Lang file
         addButton(new GuiNpcButton(4, guiLeft + 77, guiTop + 50, 64, 20, "MASTERY")); //@TODO Lang file
