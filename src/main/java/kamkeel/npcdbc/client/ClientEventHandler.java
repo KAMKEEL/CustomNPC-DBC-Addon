@@ -190,24 +190,23 @@ public class ClientEventHandler {
                 boolean isPlayer = event.entity instanceof EntityPlayer;
                 boolean isNPC = event.entity instanceof EntityNPCInterface;
                 DBCData dbcData = null;
+                DBCDisplay display = null;
 
-                boolean auraOn = false;
                 if (isNPC) {
                     EntityCustomNpc npc = (EntityCustomNpc) event.entity;
-                    DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
-                    if (!display.enabled || !display.isAuraOn())
+                    display = ((INPCDisplay) npc.display).getDBCDisplay();
+                    if (!display.enabled)
                         return;
                     aura = display.getAur();
                 } else if (isPlayer) {
                     dbcData = DBCData.get((EntityPlayer) event.entity);
-                    if (!dbcData.isDBCAuraOn())
-                        return;
                     aura = dbcData.getAura();
                 }
 
 
-                if (aura == null || isPlayer && !aura.display.overrideDBCAura && !dbcData.isForm(DBCForm.Base))
+                if (aura == null)
                     return;
+
 
                 spawnAura(event.entity, aura);
                 if (aura.hasSecondaryAura())
