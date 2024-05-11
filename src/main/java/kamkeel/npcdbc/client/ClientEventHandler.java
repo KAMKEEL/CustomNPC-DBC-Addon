@@ -176,8 +176,11 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void handleSounds(TickEvent.ClientTickEvent event) {
         if (event.side == Side.CLIENT) {
-            if (soundTicker % 5 == 0)
+            if (soundTicker % 5 == 0) {
                 SoundHandler.verifySounds();
+                soundTicker = 0;
+            }
+
             soundTicker++;
         }
     }
@@ -197,10 +200,10 @@ public class ClientEventHandler {
                     display = ((INPCDisplay) npc.display).getDBCDisplay();
                     if (!display.enabled)
                         return;
-                    aura = display.getAur();
+                    aura = display.getToggledAura();
                 } else if (isPlayer) {
                     dbcData = DBCData.get((EntityPlayer) event.entity);
-                    aura = dbcData.getAura();
+                    aura = dbcData.getToggledAura();
                 }
 
 
@@ -223,6 +226,7 @@ public class ClientEventHandler {
         DBCData dbcData = null;
         DBCDisplay display = null;
         String auraOwner = isPlayer ? entity.getCommandSenderName() : Utility.getEntityID(entity);
+        boolean isTransforming;
 
         if (isPlayer)
             dbcData = DBCData.get((EntityPlayer) entity);
@@ -251,13 +255,11 @@ public class ClientEventHandler {
         if (mimicColor != -1)
             formColor = mimicColor;
 
-        String sound = "jinryuudragonbc:DBC.aura";
         if (aura.display.type == EnumPlayerAuraTypes.SaiyanGod) {
             aur.setAlp(0.2F);
             aur.setTex("aurai");
             aur.setTexL2("aurai2");
             aur.setColL2(16747301);
-            sound = "jinryuudragonbc:1610.aurag";
         } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlue) {
             aur.setSpd(40);
             aur.setAlp(0.5F);
@@ -289,14 +291,12 @@ public class ClientEventHandler {
             aur.setCol(15790320);
             aur.setColL3(4746495);
             aur.setTexL3("auragb");
-            sound = "jinryuudragonbc:DBC5.aura_ui";
         } else if (aura.display.type == EnumPlayerAuraTypes.GoD) {
             aur.setSpd(30);
             aur.setAlp(0.2F);
             aur.setTex("aurag");
             aur.setTexL3("auragb");
             aur.setColL2(12464847);
-            sound = "jinryuudragonbc:DBC5.aura_destroyer";
         } else if (aura.display.type == EnumPlayerAuraTypes.UltimateArco) {
             aur.setAlp(0.5F);
             aur.setTex("aurau");
@@ -326,6 +326,7 @@ public class ClientEventHandler {
 
         }
 
+        isTransforming = isNPC ? display.isTransforming : dbcData.isTransforming();
 
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
@@ -354,27 +355,14 @@ public class ClientEventHandler {
         if (aura.display.hasSpeed())
             aur.setSpd((int) aura.display.speed);
 
-        if (EnumPlayerAuraTypes.isBlue(aura.display.type)) {
-            if (kk)
-                sound = "jinryuudragonbc:1610.aurabk";
-            else
-                sound = "jinryuudragonbc:1610.aurab";
-        }
-
-        if (aura.display.hasSound())
-            sound = aura.display.auraSound;
 
         ////////////////////////////////////////////////////
         ////////////////////////////////////////////////////
         // This block indefinitely loops through aura sound as long as aura is enabled
         // regardless of the sound.ogg duration. The second the sound ends, it insta-replays
 
-        if (!SoundHandler.isPlayingSound(entity, sound)) {
-            AuraSound auraSound = new AuraSound(sound, entity);
+        AuraSound.play(entity, aura, isTransforming);
 
-            auraSound.setRepeat(true);
-            auraSound.play(false);
-        }
         ////////////////////////////////////////////////////
         ////////////////////////////////////////////////////
 
