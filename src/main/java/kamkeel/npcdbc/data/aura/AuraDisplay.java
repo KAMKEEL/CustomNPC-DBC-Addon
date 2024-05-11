@@ -18,11 +18,11 @@ public class AuraDisplay implements IAuraDisplay {
     public boolean hasLightning = false;
     public int lightningColor = -1, lightningAlpha = -1;
 
-    public boolean hasKaiokenAura = false;
+    public boolean hasKaiokenAura = false, kaiokenOverrides = true;
     public float kaiokenAuraSize = 1f;
 
     public boolean overrideDBCAura = false;
-    public String auraSound = "";
+    public String auraSound = "", kaiokenSound = "";
 
     public AuraDisplay(Aura parent) {
         this.parent = parent;
@@ -50,10 +50,11 @@ public class AuraDisplay implements IAuraDisplay {
         lightningAlpha = rendering.getInteger("lightningAlpha");
 
         hasKaiokenAura = rendering.getBoolean("kaiokenOn");
+        kaiokenOverrides = rendering.getBoolean("kaiokenOverrides");
         overrideDBCAura = rendering.getBoolean("overrideDBCAura");
 
         auraSound = rendering.getString("auraSound");
-
+        kaiokenSound = rendering.getString("kaiokenSound");
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -76,9 +77,11 @@ public class AuraDisplay implements IAuraDisplay {
         rendering.setInteger("lightningAlpha", lightningAlpha);
 
         rendering.setBoolean("kaiokenOn", hasKaiokenAura);
+        rendering.setBoolean("kaiokenOverrides", kaiokenOverrides);
         rendering.setBoolean("overrideDBCAura", overrideDBCAura);
 
         rendering.setString("auraSound", auraSound);
+        rendering.setString("kaiokenSound", kaiokenSound);
 
         compound.setTag("rendering", rendering);
         return compound;
@@ -99,6 +102,17 @@ public class AuraDisplay implements IAuraDisplay {
         this.hasKaiokenAura = toggle;
     }
 
+
+    @Override
+    public String getKaiokenSound() {
+        return kaiokenSound;
+    }
+
+    @Override
+    public void setKaiokenSound(String soundDirectory) {
+        this.kaiokenSound = soundDirectory;
+    }
+
     @Override
     public boolean hasSound() {
         return auraSound.length() > 3;
@@ -114,6 +128,40 @@ public class AuraDisplay implements IAuraDisplay {
         this.auraSound = soundDirectory;
     }
 
+    public String getFinalSound() {
+        String sound = "jinryuudragonbc:DBC.aura";
+
+        if (type == EnumPlayerAuraTypes.SaiyanGod)
+            sound = "jinryuudragonbc:1610.aurag";
+        else if (type == EnumPlayerAuraTypes.UI)
+            sound = "jinryuudragonbc:DBC5.aura_ui";
+        else if (type == EnumPlayerAuraTypes.GoD)
+            sound = "jinryuudragonbc:DBC5.aura_destroyer";
+        else if (EnumPlayerAuraTypes.isBlue(type))
+            sound = "jinryuudragonbc:1610.aurab";
+
+
+        if (hasSound())
+            sound = auraSound;
+        return sound;
+
+    }
+
+    public String getFinalKKSound() {
+        if (!hasKaiokenAura)
+            return null;
+
+        String sound = null;
+
+        if (kaiokenSound.equalsIgnoreCase("nosound")) {
+
+        } else if (kaiokenSound.isEmpty())
+            sound = "jinryuudragonbc:1610.aurabk";
+        else if (kaiokenSound.length() > 3)
+            sound = kaiokenSound;
+
+        return sound;
+    }
 
     @Override
     public boolean isKaiokenToggled() {
