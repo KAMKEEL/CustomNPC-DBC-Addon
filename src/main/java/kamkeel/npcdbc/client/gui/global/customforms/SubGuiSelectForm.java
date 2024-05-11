@@ -80,7 +80,9 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
     }
 
     @Override
-    public void customScrollClicked(int i, int i1, int i2, GuiCustomScroll guiCustomScroll) {}
+    public void customScrollClicked(int i, int i1, int i2, GuiCustomScroll guiCustomScroll) {
+        selected = scrollForms.getSelected();
+    }
 
     @Override
     public void unFocused(GuiNpcTextField guiNpcTextField) {}
