@@ -512,9 +512,9 @@ public class StatSheetGui extends AbstractJRMCGui {
         addServerButtons();
 
         //Button to adjust GUI
-        String s = "Switch to "+(ConfigDBCClient.EnhancedGui ? "Normal" : "§aEnhanced") +" GUI";
+        String s = (!ConfigDBCClient.EnhancedGui ? "Old" : "§aModern") +" GUI";
         int button1Width = this.fontRendererObj.getStringWidth(s)+10;
-        this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -button1Width)/2, guiHeightOffset - 30, button1Width + 8, 20, s, 0));
+        this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -button1Width)/2, guiHeightOffset - 50, button1Width + 8, 20, s, 0));
 
         //Difficulty button
         GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.DIFFICULTY;

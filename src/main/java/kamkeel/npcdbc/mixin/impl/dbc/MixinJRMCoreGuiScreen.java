@@ -216,9 +216,9 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
     private void onDrawScreen(CallbackInfo ci){
         if(this.guiID != 10)
             return;
-        String s = "Switch to "+(ConfigDBCClient.EnhancedGui ? "Normal" : "§aEnhanced") +" GUI";
+        String s = (!ConfigDBCClient.EnhancedGui ? "Old" : "§aModern") +" GUI";
         int i = this.fontRendererObj.getStringWidth(s)+10;
-        this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2, (this.height-159)/2 - 30, i + 8, 20, s, 0));
+        this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2, (this.height-159)/2 - 50, i + 8, 20, s, 0));
         if(ConfigDBCClient.EnhancedGui){
             String dark = ConfigDBCClient.DarkMode ? "Light" : "Dark";
             int j = this.fontRendererObj.getStringWidth(dark)+10;
