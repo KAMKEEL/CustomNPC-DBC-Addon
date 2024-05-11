@@ -192,7 +192,7 @@ public class TransformController {
 
     public static void npcDescend(EntityNPCInterface npc, int id) {
         DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
-        Form current = display.getCurrentForm();
+        Form current = display.getForm();
         if (current == null)
             return;
 

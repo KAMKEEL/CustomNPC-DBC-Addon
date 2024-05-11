@@ -154,7 +154,7 @@ public class DBCDisplay implements IDBCDisplay {
     }
 
     public boolean hasColor(String type) {
-        Form form = this.getCurrentForm();
+        Form form = this.getForm();
         boolean inF = form != null;
         switch (type.toLowerCase()) {
             case "hair":
@@ -176,7 +176,7 @@ public class DBCDisplay implements IDBCDisplay {
 
     @Override
     public int getColor(String type) {
-        Form form = this.getCurrentForm();
+        Form form = this.getForm();
         boolean inF = form != null;
         switch (type.toLowerCase()) {
             case "hair":
@@ -198,7 +198,7 @@ public class DBCDisplay implements IDBCDisplay {
 
     public int getCurrentArcoState() {
         int state = this.arcoState;
-        Form form = this.getCurrentForm();
+        Form form = this.getForm();
         if (form != null) {
             switch (form.display.bodyType) {
                 case "firstform":
@@ -370,7 +370,7 @@ public class DBCDisplay implements IDBCDisplay {
     //internal usage
     public Aura getAur() {
         if (isInForm()) {
-            Form form = (Form) getCurrentForm();
+            Form form = (Form) getForm();
             if (form.display.hasAura())
                 return form.display.getAur();
         }
@@ -404,6 +404,16 @@ public class DBCDisplay implements IDBCDisplay {
 
     }
 
+    public IForm getCurrentForm() {
+        return getForm();
+    }
+
+    public Form getForm() {
+        if (formID > 0)
+            return (Form) FormController.Instance.get(formID);
+        return null;
+    }
+
     public void setForm(IForm form) {
         if (form != null)
             formID = form.getID();
@@ -421,14 +431,8 @@ public class DBCDisplay implements IDBCDisplay {
             formID = f.id;
     }
 
-    public IForm getCurrentForm() {
-        if (formID > 0)
-            return FormController.Instance.get(formID);
-        return null;
-    }
-
     public boolean isInForm() {
-        return formID > -1 && getCurrentForm() != null;
+        return formID > -1 && getForm() != null;
     }
 
     public boolean isInForm(IForm form) {
