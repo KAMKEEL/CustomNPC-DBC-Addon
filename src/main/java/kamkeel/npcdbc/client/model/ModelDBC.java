@@ -107,7 +107,7 @@ public class ModelDBC extends ModelBase {
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
             //Forms
-            Form form = display.getCurrentForm();
+            Form form = display.getForm();
             if (form != null) {
                 FormDisplay d = form.display;
 

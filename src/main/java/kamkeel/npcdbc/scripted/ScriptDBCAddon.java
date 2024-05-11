@@ -36,21 +36,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         dbcData = DBCData.get(player);
     }
 
-    @Override
-    public int[] getAllFullStats() {
-        int[] fullstats = new int[6];
-        JGPlayerMP JG = new JGPlayerMP(player);
-        NBTTagCompound nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
-        JG.setNBT(nbt);
-        fullstats[0] = JG.getAttribute(0);
-        fullstats[1] = JG.getAttribute(1);
-        fullstats[2] = nbt.getInteger("jrmcCnsI");
-        fullstats[3] = JG.getAttribute(3);
-        fullstats[4] = nbt.getInteger("jrmcIntI");
-        fullstats[5] = nbt.getInteger("jrmcCncI");
-
-        return fullstats;
-    }
 
     /**
      * @return Player's max body
@@ -215,16 +200,21 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     /**
-     * A "Full" stat is a stat that has all form multipliers calculated. i.e if base Strength is 10,000, returns 10,000.
+     * A "Full" attribute is a attribute that has all form multipliers calculated. i.e if base Strength is 10,000, returns 10,000.
      * if SSJ form multi is 20x and is SSJ, returns 200,000. LSSJ returns 350,000, LSSJ Kaioken x40 returns 1,000,000 and so on
      * 0 for strength, 1 dex, 2 constitution, 3 willpower, 4 mind, 5 spirit
      *
-     * @param attributeID ID of Stat
-     * @return stat value
+     * @param attributeID ID of attribute
+     * @return full attribute value
      */
     @Override
     public int getFullAttribute(int attributeID) {
         return dbcData.stats.getFullAttribute(attributeID);
+    }
+
+    @Override
+    public int[] getAllFullAttributes() {
+        return dbcData.stats.getAllFullAttributes();
     }
 
     /**
@@ -242,7 +232,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      * @return Name of form player is currently in
      */
     @Override
-    public String getCurrentformName() {
+    public String getCurrentDBCFormName() {
         int race = this.getRace();
         int form = (int) this.getForm();
         return DBCAPI.Instance().getFormName(race, form);
@@ -254,7 +244,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      * @param add      adds the amount to current mastery, instead of setting it to it
      */
     @Override
-    public void changeFormMastery(String formName, double amount, boolean add) {
+    public void changeDBCMastery(String formName, double amount, boolean add) {
         JGPlayerMP JG = new JGPlayerMP(player);
         NBTTagCompound nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
         JG.setNBT(nbt);
@@ -346,7 +336,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      * @return Form mastery value
      */
     @Override
-    public double getFormMasteryValue(String formName) {
+    public double getDBCMasteryValue(String formName) {
 
         JGPlayerMP JG = new JGPlayerMP(player);
         NBTTagCompound nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
@@ -403,7 +393,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      * @return Entire form mastery NBT string, aka data32
      */
     @Override
-    public String getAllFormMasteries() {
+    public String getAllDBCMasteries() {
         return JRMCoreH.getFormMasteryData(player);
     }
 
@@ -544,39 +534,102 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      * @return True if either MUI or UI Omen
      */
     public boolean isUI() {
-        return JRMCoreH.StusEfcts(19, nbt.getString("jrmcStatusEff"));
+        return dbcData.isForm(DBCForm.UltraInstinct);
     }
 
     public boolean isMystic() {
-        return JRMCoreH.StusEfcts(13, nbt.getString("jrmcStatusEff"));
+        return dbcData.isForm(DBCForm.Mystic);
     }
 
     public boolean isKaioken() {
-        return JRMCoreH.StusEfcts(5, nbt.getString("jrmcStatusEff"));
+        return dbcData.isForm(DBCForm.Kaioken);
     }
 
     public boolean isGOD() {
-        return JRMCoreH.StusEfcts(20, nbt.getString("jrmcStatusEff"));
+        return dbcData.isForm(DBCForm.GodOfDestruction);
     }
 
     public boolean isLegendary() {
-        return JRMCoreH.StusEfcts(14, nbt.getString("jrmcStatusEff"));
+        return dbcData.isForm(DBCForm.Legendary);
     }
 
     public boolean isDivine() {
-        return JRMCoreH.StusEfcts(17, nbt.getString("jrmcStatusEff"));
+        return dbcData.isForm(DBCForm.Divine);
     }
 
     public boolean isMajin() {
-        return JRMCoreH.StusEfcts(12, nbt.getString("jrmcStatusEff"));
+        return dbcData.isForm(DBCForm.Majin);
     }
 
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     // Form stuff
 
-    public void setCustomForm(String formName) {
-        Form f = (Form) FormController.Instance.get(formName);
+    public void giveForm(String formName) {
+        IForm form = FormController.Instance.get(formName);
+        form.assignToPlayer(player);
+    }
+
+    @Override
+    public void giveForm(IForm form) {
+        giveForm(form.getName());
+    }
+
+    public void removeForm(String formName) {
+        IForm f = FormController.Instance.get(formName);
+        f.removeFromPlayer(player);
+    }
+
+    @Override
+    public void removeForm(IForm form) {
+        removeForm(form.getName());
+    }
+
+    @Override
+    public void setSelectedForm(IForm form) {
+        setSelectedForm(form != null ? form.getID() : -1);
+    }
+
+    @Override
+    public void setSelectedForm(int formID) {
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        if (FormController.getInstance().has(formID))
+            c.selectedForm = formID;
+        else
+            c.selectedForm = -1;
+
+        c.updateClient();
+    }
+
+    @Override
+    public void removeSelectedForm() {
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        formData.selectedForm = -1;
+        formData.updateClient();
+    }
+
+    public boolean isInForm() {
+        return PlayerDataUtil.getDBCInfo(player).isInCustomForm();
+    }
+
+    @Override
+    public boolean isInForm(IForm form) {
+        return dbcData.addonFormID == form.getID();
+    }
+
+    public boolean isInForm(int formID) {
+        return PlayerDataUtil.getDBCInfo(player).isInForm(formID);
+    }
+
+    public IForm getCurrentForm() {
+        return dbcData.getForm();
+    }
+
+    public void setForm(int formID) {
+        Form f = (Form) FormController.Instance.get(formID);
+        if (f == null)
+            throw new CustomNPCsException("Form does not exist!");
+
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (c.hasForm(f)) {
             DBCData d = DBCData.get(player);
@@ -599,133 +652,79 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             c.currentForm = f.id;
             c.updateClient();
         } else
-            throw new CustomNPCsException("Player doesn't have form " + formName + " unlocked!");
+            throw new CustomNPCsException("Player doesn't have form " + f.name + " unlocked!");
     }
 
     @Override
-    public void setCustomForm(IForm form) {
-        setCustomForm(form.getName());
-    }
-
-    public void giveCustomForm(String formName) {
-        IForm form = FormController.Instance.get(formName);
-        form.assignToPlayer(player);
-    }
-
-    @Override
-    public void giveCustomForm(IForm form) {
-        giveCustomForm(form.getName());
-    }
-
-    public void removeCustomForm(String formName) {
-        IForm f = FormController.Instance.get(formName);
-        f.removeFromPlayer(player);
-    }
-
-    @Override
-    public void removeCustomForm(IForm form) {
-        removeCustomForm(form.getName());
-    }
-
-    @Override
-    public void setSelectedCustomForm(IForm form) {
-        setSelectedCustomForm(form != null ? form.getID() : -1);
-    }
-
-
-    @Override
-    public void setSelectedCustomForm(int formid) {
-        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
-        if (FormController.getInstance().has(formid))
-            c.selectedForm = formid;
-        else
-            c.selectedForm = -1;
-
-        c.updateClient();
-    }
-
-    @Override
-    public void removeSelectedCustomForm() {
-        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        formData.selectedForm = -1;
-        formData.updateClient();
-    }
-
-
-    public boolean isInCustomForm() {
-        return PlayerDataUtil.getDBCInfo(player).isInCustomForm();
-    }
-
-    public boolean isInCustomForm(String formName) {
-        return PlayerDataUtil.getDBCInfo(player).isInForm(formName);
+    public void setForm(IForm form) {
+        setForm(form.getID());
     }
 
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     // Form Mastery stuff
     @Override
-    public void setCustomMastery(int formid, float value) {
+    public void setCustomMastery(int formID, float value) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        if (formData.hasFormUnlocked(formid)) {
-            formData.setFormLevel(formid, value);
+        if (formData.hasFormUnlocked(formID)) {
+            formData.setFormLevel(formID, value);
             formData.updateClient();
         }
 
     }
 
     @Override
-    public void addCustomMastery(int formid, float value) {
+    public void setCustomMastery(IForm form, float value) {
+        setCustomMastery(form.getID(), value);
+    }
+
+    @Override
+    public void addCustomMastery(int formID, float value) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        if (formData.hasFormUnlocked(formid)) {
-            formData.addFormLevel(formid, value);
+        if (formData.hasFormUnlocked(formID)) {
+            formData.addFormLevel(formID, value);
             formData.updateClient();
         }
     }
 
     @Override
-    public float getCustomMastery(int formid) {
+    public void addCustomMastery(IForm form, float value) {
+        addCustomMastery(form.getID(), value);
+    }
+
+    @Override
+    public float getCustomMastery(int formID) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         float level = 0;
-        if (formData.hasFormUnlocked(formid)) {
-            level = formData.getFormLevel(formid);
+        if (formData.hasFormUnlocked(formID)) {
+            level = formData.getFormLevel(formID);
         }
         return level;
     }
 
     @Override
-    public void removeCustomMastery(int formid) {
+    public float getCustomMastery(IForm form) {
+        return getCustomMastery(form.getID());
+    }
+
+    @Override
+    public void removeCustomMastery(int formID) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        if (formData.hasFormUnlocked(formid)) {
-            formData.removeFormMastery(formid);
+        if (formData.hasFormUnlocked(formID)) {
+            formData.removeFormMastery(formID);
             formData.updateClient();
         }
     }
 
-    public IForm getCurrentCustomForm() {
-        return PlayerDataUtil.getDBCInfo(player).getCurrentForm();
+    @Override
+    public void removeCustomMastery(IForm form) {
+        removeCustomMastery(form.getID());
     }
 
 
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     // Aura stuff
-    @Override
-    public void setAura(String auraName) {
-        Aura aura = (Aura) AuraController.Instance.get(auraName);
-        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
-        if (c.hasAura(aura)) {
-            c.currentAura = aura.id;
-            c.updateClient();
-        } else
-            throw new CustomNPCsException("Player doesn't have aura " + auraName + " unlocked!");
-    }
-
-    @Override
-    public void setAura(IAura Aura) {
-        setAura(Aura.getName());
-    }
-
-
     @Override
     public void giveAura(IAura Aura) {
         giveAura(Aura.getName());
@@ -770,9 +769,29 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         AuraData.updateClient();
     }
 
+    public IAura getAura() {
+        return getDBCData().getAura();
+    }
+
+    @Override
+    public void setAura(String auraName) {
+        Aura aura = (Aura) AuraController.Instance.get(auraName);
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        if (c.hasAura(aura)) {
+            c.currentAura = aura.id;
+            c.updateClient();
+        } else
+            throw new CustomNPCsException("Player doesn't have aura " + auraName + " unlocked!");
+    }
+
+    @Override
+    public void setAura(IAura Aura) {
+        setAura(Aura.getName());
+    }
+
     @Override
     public DBCData getDBCData() {
-        return DBCData.get(player);
+        return dbcData;
     }
 
     @Override
@@ -781,8 +800,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public boolean isInAura(String auraName) {
-        return PlayerDataUtil.getDBCInfo(player).isInAura(auraName);
+    public boolean isInAura(IAura aura) {
+        return aura.getID() == dbcData.auraID;
     }
     //////////////////////////////////////////////
     //////////////////////////////////////////////

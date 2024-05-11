@@ -8,7 +8,6 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.controllers.data.PlayerData;
@@ -95,6 +94,10 @@ public class PlayerDBCInfo {
         return getCurrentForm().getName().equals(formName);
     }
 
+    public boolean isInForm(int formID) {
+        return formID == currentForm;
+    }
+
     public Form getCurrentForm() {
         if (currentForm > 0)
             return (Form) FormController.Instance.get(currentForm);
@@ -112,7 +115,7 @@ public class PlayerDBCInfo {
     }
 
     public void resetAllForm() {
-        TransformController.handleFormDescend((EntityPlayerMP) parent.player);
+        TransformController.handleFormDescend(parent.player, -10);
         currentForm = -1;
         selectedForm = -1;
         unlockedForms.clear();
@@ -202,7 +205,7 @@ public class PlayerDBCInfo {
             if (currentTime > 0)
                 formTimers.replace(formid, currentTime - 1);
             else if (currentTime == 0) {
-                TransformController.handleFormDescend(parent.player);
+                TransformController.handleFormDescend(parent.player, 0);
                 formTimers.remove(formid);
             }
         }

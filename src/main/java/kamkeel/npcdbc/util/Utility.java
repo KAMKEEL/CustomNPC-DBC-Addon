@@ -9,18 +9,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import noppes.npcs.api.entity.IEntity;
-import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.api.handler.data.ISound;
-import noppes.npcs.scripted.NpcAPI;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
-import static kamkeel.npcdbc.util.PlayerDataUtil.getIPlayer;
 
 public class Utility {
     public static HashMap<String, String> darkCodes = new HashMap<>();
@@ -30,42 +24,16 @@ public class Utility {
     }
 
     public static boolean isServer(Entity entity) {
-        return entity != null && entity.worldObj != null && !entity.worldObj.isRemote;
+        return entity != null && isServer(entity.worldObj);
     }
 
     public static boolean isServer(World worldObj) {
         return worldObj != null && !worldObj.isRemote;
     }
 
-    public static void sendMessage(EntityPlayer player, String message) {
-        player.addChatMessage(new ChatComponentText(message));
-    }
-
-
-    public static void playSound(Entity p, String soundid, int range) {
-        playSound(p, soundid, range, 1);
-    }
-
-    public static void playSound(Entity p, String soundid, int range, float volume) {
-        ISound IT = NpcAPI.Instance().createSound(soundid);
-        IT.setVolume(1);
-        IT.setPitch(1);
-
-        if (p instanceof EntityPlayer) {
-            IPlayer<?> pl = getIPlayer((EntityPlayer) p);
-            IT.setEntity(pl);
-            pl.playSound(1, IT);
-        }
-
-        if (range == 0)
-            return;
-
-        IEntity<?> y = NpcAPI.Instance().getIEntity(p);
-        IEntity<?>[] pls = y.getSurroundingEntities(range);
-        for (IEntity<?> pe : pls)
-            if (pe instanceof IPlayer && pe != p)
-                ((IPlayer<?>) pe).playSound(1, IT);
-
+    public static void sendMessage(Entity entity, String message) {
+        if (entity instanceof EntityPlayer)
+            ((EntityPlayer) entity).addChatMessage(new ChatComponentText(message));
     }
 
 

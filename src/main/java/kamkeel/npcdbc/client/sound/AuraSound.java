@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.client.sound;
 
-import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -10,13 +10,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
 
 public class AuraSound extends Sound {
+    private final Aura aura;
+    public boolean isKaiokenSound = false;
 
-    public AuraSound(String soundDir, Entity entity) {
+    public AuraSound(Aura aura, String soundDir, Entity entity) {
         super(soundDir, entity);
         volume = 0.01f;
         maxVolume = 0.5f;
         fadeIn = true;
         range = 32;
+        this.aura = aura;
+
+        onlyOneCanExist = true;
     }
 
     @Override
@@ -30,49 +35,60 @@ public class AuraSound extends Sound {
         super.update();
 
         Aura aura = null;
+        boolean isInKaioken = false;
         if (entity instanceof EntityNPCInterface) {
             DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
             aura = display.getToggledAura();
         } else if (entity instanceof EntityPlayer) {
             DBCData dbcData = DBCData.get((EntityPlayer) entity);
             aura = dbcData.getToggledAura();
+            isInKaioken = dbcData.isForm(DBCForm.Kaioken);
+
         }
 
-        if (aura == null)
+        if (aura != this.aura || !isInKaioken && isKaiokenSound) {
+            if (aura != null)
+                fadeFactor = 0.1f;
             fadeOut = true;
+        }
 
 
     }
 
-    public static void play(Entity entity, Aura aura, boolean isTransforming) {
+    public static void play(Entity entity, Aura aura) {
         if (entity == null || aura == null)
             return;
 
-        String sound = "jinryuudragonbc:DBC.aura";
-        if (aura.display.type == EnumPlayerAuraTypes.SaiyanGod)
-            sound = "jinryuudragonbc:1610.aurag";
-        else if (aura.display.type == EnumPlayerAuraTypes.UI)
-            sound = "jinryuudragonbc:DBC5.aura_ui";
-        else if (aura.display.type == EnumPlayerAuraTypes.GoD)
-            sound = "jinryuudragonbc:DBC5.aura_destroyer";
-        else if (EnumPlayerAuraTypes.isBlue(aura.display.type))
-            if (aura.display.hasKaiokenAura)
-                sound = "jinryuudragonbc:1610.aurabk";
-            else
-                sound = "jinryuudragonbc:1610.aurab";
+        boolean isTransforming = false;
 
-        if (aura.display.hasSound())
-            sound = aura.display.auraSound;
+        if (entity instanceof EntityPlayer) {
+            DBCData dbcData = DBCData.get((EntityPlayer) entity);
+            isTransforming = dbcData.isTransforming();
+
+        } else if (entity instanceof EntityNPCInterface) {
+            DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
+            isTransforming = display.isTransforming;
+        }
+
+
+        String sound = aura.display.getFinalSound();
+        String secondSound = aura.hasSecondaryAura() ? aura.getSecondaryAur().display.getFinalSound() : null;
 
         if (!SoundHandler.isPlayingSound(entity, sound)) {
-            AuraSound auraSound = new AuraSound(sound, entity);
-
+            AuraSound auraSound = new AuraSound(aura, sound, entity);
             if (isTransforming)
                 auraSound.setVolume(0.2f);
 
-
-            auraSound.setRepeat(true);
-            auraSound.play(false);
+            auraSound.setRepeat(true).play(false);
         }
+
+        if (secondSound != null && !SoundHandler.isPlayingSound(entity, secondSound)) {
+            AuraSound secondarySound = new AuraSound(aura, secondSound, entity);
+            if (isTransforming)
+                secondarySound.setVolume(0.2f);
+            secondarySound.setRepeat(true).play(false);
+        }
+
+
     }
 }

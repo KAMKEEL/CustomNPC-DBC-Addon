@@ -116,7 +116,7 @@ public class FormMastery implements IFormMastery {
 
     @Override
     public boolean hasKiDrain() {
-        return kiDrain > 0;
+        return kiDrain != 0;
     }
 
     @Override

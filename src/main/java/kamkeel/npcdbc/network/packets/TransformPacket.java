@@ -49,7 +49,7 @@ public final class TransformPacket extends AbstractPacket {
         if (ascend)
             TransformController.handleFormAscend(sendingPlayer, state);
         else
-            TransformController.handleFormDescend(sendingPlayer);
+            TransformController.handleFormDescend(sendingPlayer, state);
 
     }
 }

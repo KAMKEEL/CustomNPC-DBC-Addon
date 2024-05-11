@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.npc;
 
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
@@ -153,7 +154,7 @@ public class DBCDisplay implements IDBCDisplay {
     }
 
     public boolean hasColor(String type) {
-        Form form = this.getCurrentForm();
+        Form form = this.getForm();
         boolean inF = form != null;
         switch (type.toLowerCase()) {
             case "hair":
@@ -175,7 +176,7 @@ public class DBCDisplay implements IDBCDisplay {
 
     @Override
     public int getColor(String type) {
-        Form form = this.getCurrentForm();
+        Form form = this.getForm();
         boolean inF = form != null;
         switch (type.toLowerCase()) {
             case "hair":
@@ -197,7 +198,7 @@ public class DBCDisplay implements IDBCDisplay {
 
     public int getCurrentArcoState() {
         int state = this.arcoState;
-        Form form = this.getCurrentForm();
+        Form form = this.getForm();
         if (form != null) {
             switch (form.display.bodyType) {
                 case "firstform":
@@ -349,6 +350,11 @@ public class DBCDisplay implements IDBCDisplay {
             this.auraOn = false;
     }
 
+    @Override
+    public boolean isInAura(IAura aura) {
+        return aura.getID() == auraID;
+    }
+
     public boolean isAuraOn() {
         return auraOn || isTransforming;
     }
@@ -363,9 +369,8 @@ public class DBCDisplay implements IDBCDisplay {
 
     //internal usage
     public Aura getAur() {
-
         if (isInForm()) {
-            Form form = getCurrentForm();
+            Form form = (Form) getForm();
             if (form.display.hasAura())
                 return form.display.getAur();
         }
@@ -385,8 +390,8 @@ public class DBCDisplay implements IDBCDisplay {
             throw new CustomNPCsException("Form " + id + " does not exist!");
     }
 
-    public void transform(Form form) {
-        transform(form.id);
+    public void transform(IForm form) {
+        transform(form.getID());
     }
 
     public void cancelTransform() {
@@ -399,9 +404,19 @@ public class DBCDisplay implements IDBCDisplay {
 
     }
 
-    public void setForm(Form form) {
+    public IForm getCurrentForm() {
+        return getForm();
+    }
+
+    public Form getForm() {
+        if (formID > 0)
+            return (Form) FormController.Instance.get(formID);
+        return null;
+    }
+
+    public void setForm(IForm form) {
         if (form != null)
-            formID = form.id;
+            formID = form.getID();
     }
 
     public void setForm(int id) {
@@ -416,18 +431,12 @@ public class DBCDisplay implements IDBCDisplay {
             formID = f.id;
     }
 
-    public Form getCurrentForm() {
-        if (formID > 0)
-            return (Form) FormController.Instance.get(formID);
-        return null;
-    }
-
     public boolean isInForm() {
-        return formID > -1 && getCurrentForm() != null;
+        return formID > -1 && getForm() != null;
     }
 
-    public boolean isInForm(String formName) {
-        return getCurrentForm().getName().equals(formName);
+    public boolean isInForm(IForm form) {
+        return formID == form.getID();
     }
 
     public void setFormLevel(float amount) {
@@ -455,6 +464,7 @@ public class DBCDisplay implements IDBCDisplay {
             bodyC3 = 16550015;
         } else if (race == DBCRace.MAJIN)
             bodyCM = 16757199;
+
         eyeColor = 0x000000;
     }
 }

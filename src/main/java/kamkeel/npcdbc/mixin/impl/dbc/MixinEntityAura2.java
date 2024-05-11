@@ -27,6 +27,11 @@ public class MixinEntityAura2 implements IEntityAura {
     @Unique
     private float getSize = 1;
 
+    @Unique
+    private EntityAura2 parent;
+    @Unique
+    private boolean isKaiokenAura;
+
     @Shadow
     private String mot;
 
@@ -101,6 +106,38 @@ public class MixinEntityAura2 implements IEntityAura {
     @Override
     public void setSize(float getSize) {
         this.getSize = getSize;
+    }
+
+    @Unique
+    @Override
+    public EntityAura2 getParent() {
+        return this.parent;
+    }
+
+
+    @Unique
+    @Override
+    public void setParent(EntityAura2 parent) {
+        this.parent = parent;
+    }
+
+    @Unique
+    @Override
+    public boolean hasParent() {
+        return this.parent != null;
+    }
+
+    @Unique
+    @Override
+    public void setIsKaioken(boolean is) {
+        this.isKaiokenAura = is;
+    }
+
+
+    @Unique
+    @Override
+    public boolean isKaioken() {
+        return isKaiokenAura;
     }
 
 

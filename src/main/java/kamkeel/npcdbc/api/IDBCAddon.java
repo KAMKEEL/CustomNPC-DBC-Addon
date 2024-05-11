@@ -6,7 +6,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import noppes.npcs.api.entity.IDBCPlayer;
 
 public interface IDBCAddon extends IDBCPlayer {
-    int[] getAllFullStats();
+    int[] getAllFullAttributes();
 
     /**
      * @return Player's max body
@@ -90,25 +90,25 @@ public interface IDBCAddon extends IDBCPlayer {
     /**
      * @return Name of form player is currently in
      */
-    String getCurrentformName();
+    String getCurrentDBCFormName();
 
     /**
      * @param formName name of form to change mastery of
      * @param amount   sets the current mastery value to amount
      * @param add      adds the amount to current mastery, instead of setting it to it
      */
-    void changeFormMastery(String formName, double amount, boolean add);
+    void changeDBCMastery(String formName, double amount, boolean add);
 
     /**
      * @param formName name of form
      * @return Form mastery value
      */
-    double getFormMasteryValue(String formName);
+    double getDBCMasteryValue(String formName);
 
     /**
      * @return Entire form mastery NBT string, aka data32
      */
-    String getAllFormMasteries();
+    String getAllDBCMasteries();
 
     /**
      * @return True if player is fused and spectator
@@ -194,25 +194,25 @@ public interface IDBCAddon extends IDBCPlayer {
 
     boolean isMajin();
 
-    void setCustomForm(String formName);
+    void setForm(int formID);
 
-    void setCustomForm(IForm form);
+    void setForm(IForm form);
 
-    void giveCustomForm(String formName);
+    void giveForm(String formName);
 
-    void giveCustomForm(IForm form);
+    void giveForm(IForm form);
 
-    void removeCustomForm(String formName);
+    void removeForm(String formName);
 
-    void removeCustomForm(IForm form);
+    void removeForm(IForm form);
 
     //form player transforms to on transformation
-    void setSelectedCustomForm(IForm form);
+    void setSelectedForm(IForm form);
 
 
-    void setSelectedCustomForm(int formid);
+    void setSelectedForm(int formID);
 
-    void removeSelectedCustomForm();
+    void removeSelectedForm();
 
     //////////////////////////////////////////////
     //////////////////////////////////////////////
@@ -220,6 +220,8 @@ public interface IDBCAddon extends IDBCPlayer {
     void setAura(String auraName);
 
     void setAura(IAura Aura);
+
+    void removeCustomMastery(IForm form);
 
     void giveAura(IAura Aura);
 
@@ -229,34 +231,43 @@ public interface IDBCAddon extends IDBCPlayer {
 
     void setSelectedAura(IAura Aura);
 
-    void setSelectedAura(int formid);
+    void setSelectedAura(int formID);
 
     void removeSelectedAura();
 
     /**
      * @return True if player is in any CNPC+ custom form
      */
-    boolean isInCustomForm();
+    boolean isInForm();
+
+    boolean isInForm(IForm form);
 
     /**
-     * @param formName
-     * @return True if player is in formName
+     * @param formID
+     * @return True if player is in formID
      */
-    boolean isInCustomForm(String formName);
+    boolean isInForm(int formID);
 
-    void setCustomMastery(int formid, float value);
+    void setCustomMastery(int formID, float value);
 
-    void addCustomMastery(int formid, float value);
+    void setCustomMastery(IForm form, float value);
 
-    float getCustomMastery(int formid);
+    void addCustomMastery(int formID, float value);
 
-    void removeCustomMastery(int formid);
+    void addCustomMastery(IForm form, float value);
 
-    IForm getCurrentCustomForm();
+    float getCustomMastery(int formID);
+
+    float getCustomMastery(IForm form);
+
+    void removeCustomMastery(int formID);
+
+    IForm getCurrentForm();
 
     DBCData getDBCData();
 
     boolean isInAura();
 
-    boolean isInAura(String auraName);
+
+    boolean isInAura(IAura aura);
 }

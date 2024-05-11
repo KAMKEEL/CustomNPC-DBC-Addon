@@ -9,14 +9,22 @@ public interface IAuraDisplay {
 
     void toggleKaioken(boolean toggle);
 
+
+    String getKaiokenSound();
+
+    /**
+     * @param soundDirectory "customnpcs:auras.kaioken_aura"
+     *                       Set to "nosound" to disable kaioken aura sound,
+     *                       Default is "", which plays "jinryuudragonbc:1610.aurabk".
+     */
+    void setKaiokenSound(String soundDirectory);
+
     boolean hasSound();
 
     String getAuraSound();
 
     /**
-     * The aura sound file must have "aura" in its name
-     *
-     * @param soundDirectory i.e "customnpcs:auras.majin_aura
+     * @param soundDirectory i.e "customnpcs:auras.majin_aura"
      */
     void setAuraSound(String soundDirectory);
 
@@ -35,26 +43,28 @@ public interface IAuraDisplay {
 
     boolean hasColor(String type);
 
-    /**-
+    /**
+     * -
      * Individual IAura Color Precedence:
-     *  1. Form's Aura
-     *  2. Individual IAura Color
-     *  3. IF overrideDBCForm & in DBC Form > Use DBC Form Colors [SSJ, Shinka, Rose]
-     *  4. Individual IAura's Type Colors [GoD, UI, SSGod]
-     *  5. Base Aura Color
+     * 1. IForm's IAura object color followed by IForm's auraColor (Highest)
+     * 2. Individual IAura Color
+     * 3. IF overrideDBCForm & in DBC Form -> IAura uses DBC Form Colors [SSJ (yellow), Legendary (green), Divine (purple)]
+     * 4. Individual IAura's Type Colors [GoD, UI, SSGod]
+     * 5. Base Aura Color (Lowest)
      *
      * @param colorType Legal types: color1, color2, color3
      * @param color     hexadecimal color to set type to
      */
     void setColor(String colorType, int color);
 
-    /**-
+    /**
+     * -
      * Individual IAura Color Precedence:
-     *  1. Form's Aura
-     *  2. Individual IAura Color
-     *  3. IF overrideDBCForm & in DBC Form > Use DBC Form Colors [SSJ, Shinka, Rose]
-     *  4. Individual IAura's Type Colors [GoD, UI, SSGod]
-     *  5. Base Aura Color
+     * 1. Form's Aura
+     * 2. Individual IAura Color
+     * 3. IF overrideDBCForm & in DBC Form > Use DBC Form Colors [SSJ, Shinka, Rose]
+     * 4. Individual IAura's Type Colors [GoD, UI, SSGod]
+     * 5. Base Aura Color
      *
      * @param colorType Legal types: color1, color2, color3
      * @return Decimal color of type

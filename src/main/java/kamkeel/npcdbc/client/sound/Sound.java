@@ -21,7 +21,7 @@ public class Sound extends MovingSound {
 
     public float maxVolume = 1.0f;
     public float range = 16;
-    public boolean onlyOneCanExist = true;
+    public boolean onlyOneCanExist = false;
 
     public boolean fadeOut = false, fadeIn = false;
     public float fadeFactor = 0.01f;
@@ -35,6 +35,7 @@ public class Sound extends MovingSound {
         super(new ResourceLocation(soundDir));
         this.soundDir = soundDir;
         this.entity = entity;
+        volume = 0.5f;
         key = toString();
     }
 
@@ -60,30 +61,39 @@ public class Sound extends MovingSound {
         }
     }
 
-    public void setVolume(float volume) {
+    public Sound setVolume(float volume) {
         this.volume = volume;
+        return this;
     }
 
-    public void setRepeat(boolean repeat) {
+    public Sound setRepeat(boolean repeat) {
         this.repeat = repeat;
+        return this;
+    }
+
+    public Sound setRange(float repeat) {
+        this.range = repeat;
+        return this;
     }
 
 
     public void play(boolean forOthers) {
-        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, soundDir, volume, getPitch());
-
-        if (MinecraftForge.EVENT_BUS.post(event) || onlyOneCanExist && SoundHandler.playingSounds.containsKey(key))
-            return;
-
-        SoundHandler.playingSounds.put(key, this);
-        Minecraft.getMinecraft().getSoundHandler().playSound(this);
         if (forOthers)
             PacketHandler.Instance.sendToServer(new PlaySound(this).generatePacket());
+        else {
+            PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, soundDir, volume, getPitch());
+
+            if (MinecraftForge.EVENT_BUS.post(event) || onlyOneCanExist && SoundHandler.playingSounds.containsKey(key))
+                return;
+
+            Minecraft.getMinecraft().getSoundHandler().playSound(this);
+            SoundHandler.playingSounds.put(key, this);
+        }
+
     }
 
     public void stop(boolean forOthers) {
-        Minecraft.getMinecraft().getSoundHandler().stopSound(this);
-        SoundHandler.playingSounds.remove(this.key);
+        donePlaying = true; // this is all we need, let game and verifySounds handle rest
 
         if (forOthers)
             PacketHandler.Instance.sendToServer(new StopSound(this).generatePacket());
