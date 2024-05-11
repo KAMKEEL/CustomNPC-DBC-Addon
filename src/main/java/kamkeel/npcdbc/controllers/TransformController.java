@@ -257,7 +257,7 @@ public class TransformController {
         }
     }
 
-    public static void handleFormDescend(EntityPlayer player) {
+    public static void handleFormDescend(EntityPlayer player, int formID) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         if (formData.isInCustomForm()) {
             Form form = formData.getCurrentForm();
@@ -277,7 +277,9 @@ public class TransformController {
                 dbcData.addonCurrentHeat = 0;
 
             }
-            if (form.requiredForm.containsKey((int) dbcData.Race)) {
+            if (formID == -10) {
+                formData.currentForm = -1;
+            } else if (form.requiredForm.containsKey((int) dbcData.Race)) {
                 formData.currentForm = -1;
                 NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getMenuName());
                 dbcData.State = form.requiredForm.get((int) dbcData.Race);

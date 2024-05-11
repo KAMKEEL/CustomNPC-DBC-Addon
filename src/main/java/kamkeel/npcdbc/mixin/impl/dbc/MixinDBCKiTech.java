@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -19,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -35,7 +37,7 @@ public class MixinDBCKiTech {
             if (aura != null) {
                 if (aura.display.overrideDBCAura)
                     ci.cancel();
-                else if (dbcData.isForm(DBCForm.Base))
+                else if (dbcData.isForm(DBCForm.Base) || dbcData.isForm(DBCForm.Kaioken) && aura.display.hasKaiokenAura && !aura.display.kaiokenOverrides)
                     ci.cancel();
             }
         }
@@ -90,16 +92,18 @@ public class MixinDBCKiTech {
 
 
             if (returnEarly) {
-                if (form.requiredForm.containsKey((int) JRMCoreH.Race)) {
-                    int id = dbcData.stats.getJRMCPlayerID();
-                    JRMCoreH.State = form.requiredForm.get((int) JRMCoreH.Race);
-                    JRMCoreH.data2[id] = JRMCoreH.State + JRMCoreH.data2[id].substring(1);
-                }
-                if (form.hasParent() && formData.hasFormUnlocked(form.getParentID()))
-                    PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getParentID(), false).generatePacket());
-                else
+                if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
+                    PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -10, false).generatePacket());
+                else {
+                    if (form.requiredForm.containsKey((int) JRMCoreH.Race)) {
+                        int id = dbcData.stats.getJRMCPlayerID();
+                        JRMCoreH.State = form.requiredForm.get((int) JRMCoreH.Race);
+                        JRMCoreH.data2[id] = JRMCoreH.State + JRMCoreH.data2[id].substring(1);
+                    }
+
                     PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false).generatePacket());
-                DBCKiTech.soundAsc(form.getDescendSound());
+                    new Sound(form.getDescendSound(), dbcData.player).play(true);
+                }
                 ci.cancel();
             }
         }

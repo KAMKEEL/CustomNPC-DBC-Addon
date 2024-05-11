@@ -112,7 +112,7 @@ public class PlayerDBCInfo {
     }
 
     public void resetAllForm() {
-        TransformController.handleFormDescend((EntityPlayerMP) parent.player);
+        TransformController.handleFormDescend(parent.player, -10);
         currentForm = -1;
         selectedForm = -1;
         unlockedForms.clear();
@@ -202,7 +202,7 @@ public class PlayerDBCInfo {
             if (currentTime > 0)
                 formTimers.replace(formid, currentTime - 1);
             else if (currentTime == 0) {
-                TransformController.handleFormDescend(parent.player);
+                TransformController.handleFormDescend(parent.player,0);
                 formTimers.remove(formid);
             }
         }
