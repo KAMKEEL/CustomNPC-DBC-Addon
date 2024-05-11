@@ -1,16 +1,20 @@
 package kamkeel.npcdbc.client.gui.global.customforms;
 
-import kamkeel.npcdbc.controllers.FormController;
+import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.RequestForm;
 import kamkeel.npcdbc.network.packets.gui.SaveForm;
+import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.Client;
+import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.constants.EnumPacketServer;
@@ -21,10 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScrollData, ICustomScrollListener, ITextfieldListener, IGuiData, ISubGuiListener, GuiYesNoCallback {
+public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements ICustomScrollListener, IScrollData, IGuiData, ISubGuiListener, GuiYesNoCallback {
     private GuiCustomScroll scrollForms;
     private HashMap<String, Integer> data = new HashMap<>();
     private Form customForm = new Form();
+    private final ArrayList<String> stackables = new ArrayList<>();
     private String selected = null;
     private String search = "";
 
@@ -39,7 +44,12 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
     public void initGui() {
         super.initGui();
         addButton(new GuiNpcButton(0, guiLeft + 368, guiTop + 8, 45, 20, "gui.add"));
+
         addButton(new GuiNpcButton(1, guiLeft + 368, guiTop + 32, 45, 20, "gui.remove"));
+        getButton(1).enabled = customForm != null && customForm.id != -1;
+
+        addButton(new GuiNpcButton(2, guiLeft + 368, guiTop + 56, 45, 20, "gui.edit"));
+        getButton(2).enabled = customForm != null && customForm.id != -1;
 
         if (scrollForms == null) {
             scrollForms = new GuiCustomScroll(this, 0, 0);
@@ -52,47 +62,11 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
 
         addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 220, guiTop + 4 + 3 + 185, 143, 20, search));
 
-        if (customForm.id == -1)
-            return;
-
-
-
-        addTextField(new GuiNpcTextField(0, this, guiLeft + 40, guiTop + 4, 136, 20, customForm.name));
-        getTextField(0).setMaxStringLength(20);
-        addLabel(new GuiNpcLabel(0, "gui.name", guiLeft + 8, guiTop + 9));
-
-        addLabel(new GuiNpcLabel(1, "ID", guiLeft + 178, guiTop + 4));
-        addLabel(new GuiNpcLabel(2, customForm.id + "", guiLeft + 178, guiTop + 14));
-
-        addTextField(new GuiNpcTextField(1, this, guiLeft + 70, guiTop + 26, 106, 20, customForm.menuName.replaceAll("§", "&")));
-        getTextField(1).setMaxStringLength(20);
-        addLabel(new GuiNpcLabel(3, "Menu name", guiLeft + 8, guiTop + 31)); //@TODO Lang file
-
-        addButton(new GuiNpcButton(3, guiLeft + 8, guiTop + 50, 64, 20, "DISPLAY")); //@TODO Lang file
-        addButton(new GuiNpcButton(4, guiLeft + 77, guiTop + 50, 64, 20, "MASTERY")); //@TODO Lang file
-        addButton(new GuiNpcButton(5, guiLeft + 146, guiTop + 50, 64, 20, "STACKABLE")); //@TODO Lang file
-
-        addButton(new GuiNpcButton(6, guiLeft+165, guiTop+72, 45, 20, new String[]{"gui.no", "gui.yes"}, this.customForm.fromParentOnly ? 1 : 0));
-        addLabel(new GuiNpcLabel(4, "Must transform from parent:", guiLeft+8, guiTop+77));
-
-        addButton(new GuiNpcButton(7, guiLeft+74, guiTop+94, 114, 20, "<Select Form>")); //@TODO lang file
-        if(parentForm != -1){
-            if(FormController.getInstance().has(parentForm))
-                getButton(7).setDisplayText(FormController.getInstance().get(parentForm).getName());
+        registerStackables();
+        if(customForm != null && customForm.id != -1) {
+            addLabel(new GuiNpcLabel(10, "ID", guiLeft + 368, guiTop + 4 + 3 + 185));
+            addLabel(new GuiNpcLabel(11, customForm.id + "", guiLeft + 368, guiTop + 4 + 3 + 195));
         }
-
-        addButton(new GuiNpcButton(8, guiLeft+190, guiTop+94, 20, 20, "X"));
-        addLabel(new GuiNpcLabel(5, "Parent form", guiLeft+8, guiTop + 99));
-
-        addButton(new GuiNpcButton(9, guiLeft+74, guiTop+116, 114, 20, "<Select Form>")); //@TODO lang file
-        if(childForm != -1){
-            if(FormController.getInstance().has(childForm))
-                getButton(9).setDisplayText(FormController.getInstance().get(childForm).getName());
-        }
-        addButton(new GuiNpcButton(10, guiLeft+190, guiTop+116, 20, 20, "X"));
-        addLabel(new GuiNpcLabel(6, "Child form", guiLeft+8, guiTop + 121));
-
-
     }
 
     @Override
@@ -116,35 +90,8 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
                     displayGuiScreen(guiyesno);
                 }
                 break;
-
-            case 3:
-                //@TODO Open display subgui
-                this.setSubGui(new SubGuiFormDisplay(customForm.display));
-                break;
-            case 4:
-                //@TODO open mastery subgui
-                this.setSubGui(new SubGuiFormMastery(customForm.mastery));
-                break;
-            case 5:
-                //@TODO open stackable subgui
-                this.setSubGui(new SubGuiFormStackables(customForm.stackable));
-                break;
-            case 6:
-                this.customForm.fromParentOnly = button.getValue() == 1;
-                break;
-            case 7:
-                this.setSubGui(new SubGuiSelectForm(false));
-                break;
-            case 8:
-                parentForm = -1;
-                initGui();
-                break;
-            case 9:
-                this.setSubGui(new SubGuiSelectForm(true));
-                break;
-            case 10:
-                childForm = -1;
-                initGui();
+            case 2:
+                // Do Edit Button
                 break;
         }
     }
@@ -158,6 +105,112 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
         setSelected(customForm.name);
         initGui();
     }
+
+    @Override
+    public void drawScreen(int i, int j, float f) {
+        super.drawScreen(i, j, f);
+        renderScreen();
+    }
+
+    private void renderScreen() {
+        drawGradientRect(guiLeft + 5, guiTop + 4, guiLeft + 218, guiTop + 24, 0xC0101010, 0xC0101010);
+        drawHorizontalLine(guiLeft + 5, guiLeft + 218, guiTop + 25, 0xFF000000 + CustomNpcResourceListener.DefaultTextColor);
+        drawGradientRect(guiLeft + 5, guiTop + 27, guiLeft + 218, guiTop + ySize + 9, 0xA0101010, 0xA0101010);
+        if (customForm != null && customForm.id != -1) {
+            String drawString = customForm.getMenuName();
+            int textWidth = getStringWidthWithoutColor(drawString);
+            int centerX = guiLeft + 5 + ((218 - 10 - textWidth) / 2); // Adjusted centerX calculation
+            fontRendererObj.drawString(drawString, centerX, guiTop + 10, CustomNpcResourceListener.DefaultTextColor, true);
+            int y = guiTop + 18;
+
+            String race = "§fRace: §e" + (customForm.race == -1 ? "All" : JRMCoreH.Races[customForm.race]);
+            fontRendererObj.drawString(race, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
+
+            String label = "§fStrength:";
+            String info = "§4x§c" + customForm.strengthMulti;
+            fontRendererObj.drawString(label, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
+            fontRendererObj.drawString(info, guiLeft + 65, y, CustomNpcResourceListener.DefaultTextColor, true);
+
+            label = "§fDexterity:";
+            info = "§3x§b" + customForm.dexMulti;
+            fontRendererObj.drawString(label, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
+            fontRendererObj.drawString(info, guiLeft + 65, y, CustomNpcResourceListener.DefaultTextColor, true);
+
+            label = "§fWillpower:";
+            info = "§6x§e" + customForm.willMulti;
+            fontRendererObj.drawString(label, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
+            fontRendererObj.drawString(info, guiLeft + 65, y, CustomNpcResourceListener.DefaultTextColor, true);
+
+            if (!stackables.isEmpty()) {
+                label = "§fStackable:";
+                info = String.join("§7, ", stackables);
+                fontRendererObj.drawString(label, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
+                fontRendererObj.drawString(info, guiLeft + 65, y, CustomNpcResourceListener.DefaultTextColor, true);
+            }
+
+            if(!customForm.requiredForm.isEmpty() || customForm.hasParent() || customForm.hasChild()){
+                String parent = "§f------- Links -------";
+                fontRendererObj.drawString(parent, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
+            }
+            if (customForm.hasChild() && customForm.getChild() != null) {
+                String child = "§fChild Form: ";
+                String childName = Utility.removeBoldColorCode(customForm.getChild().getMenuName());
+                fontRendererObj.drawString(child, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
+                fontRendererObj.drawString(childName, guiLeft + 80, y, CustomNpcResourceListener.DefaultTextColor, true);
+            }
+            if(customForm.race != -1){
+                if (customForm.requiredForm.containsKey(customForm.race)) {
+                    String parent = "§fParent Form: ";
+                    String parentName = Utility.removeBoldColorCode(DBCUtils.getFormattedStateName(customForm.race , customForm.requiredForm.get(customForm.race)));
+                    fontRendererObj.drawString(parent, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
+                    fontRendererObj.drawString(parentName, guiLeft + 80, y, CustomNpcResourceListener.DefaultTextColor, true);
+                } else if (customForm.hasParent() && customForm.getParent() != null) {
+                    String parent = "§fParent Form: ";
+                    String parentName = Utility.removeBoldColorCode(customForm.getParent().getMenuName());
+                    fontRendererObj.drawString(parent, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
+                    fontRendererObj.drawString(parentName, guiLeft + 80, y, CustomNpcResourceListener.DefaultTextColor, true);
+                }
+            } else if (!customForm.requiredForm.isEmpty() || (customForm.hasParent() && customForm.getParent() != null)) {
+                if (customForm.hasParent() && customForm.getParent() != null) {
+                    String parent = "§fParent Form: ";
+                    String parentName = Utility.removeBoldColorCode(customForm.getParent().getMenuName());
+                    fontRendererObj.drawString(parent, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
+                    fontRendererObj.drawString(parentName, guiLeft + 80, y, CustomNpcResourceListener.DefaultTextColor, true);
+                }
+                if(!customForm.requiredForm.isEmpty()){
+                    String ok = "§f-- Parent Forms --";
+                    fontRendererObj.drawString(ok, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
+                    for(int i = 0; i < 6; i++){
+                        if(customForm.requiredForm.containsKey(i)){
+                            String parent = "§f" + JRMCoreH.Races[i] + "§f: ";
+                            String parentName = Utility.removeBoldColorCode(DBCUtils.getFormattedStateName(i , customForm.requiredForm.get(i)));
+                            fontRendererObj.drawString(parent, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
+                            fontRendererObj.drawString(parentName, guiLeft + 80, y, CustomNpcResourceListener.DefaultTextColor, true);
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    public int getStringWidthWithoutColor(String text) {
+        int width = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            if (c == '§') {
+                if (i < text.length() - 1) {
+                    i += 1;
+                }
+            } else {
+                // If not a color code, calculate the width
+                width += fontRendererObj.getCharWidth(c);
+            }
+        }
+        return width;
+    }
+
 
     @Override
     public void keyTyped(char c, int i) {
@@ -211,57 +264,31 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
     }
 
     @Override
-    public void save() {
-        if (selected != null && data.containsKey(selected) && customForm != null) {
-            PacketHandler.Instance.sendToServer(new SaveForm(customForm, parentForm, childForm).generatePacket());
-        }
-    }
+    public void save() {}
 
-    @Override
-    public void unFocused(GuiNpcTextField guiNpcTextField) {
-        if (customForm.id == -1)
-            return;
-
-        switch(guiNpcTextField.id){
-            case 0:
-                String name = guiNpcTextField.getText();
-                if (!name.isEmpty() && !data.containsKey(name)) {
-                    String old = customForm.name;
-                    data.remove(customForm.name);
-                    customForm.name = name;
-                    data.put(customForm.name, customForm.id);
-                    selected = name;
-                    scrollForms.replace(old, customForm.name);
-                }
-                break;
-            case 1:
-                String menuName = guiNpcTextField.getText();
-                if(!menuName.isEmpty() && !data.containsKey(menuName)){
-                    customForm.menuName = menuName.replaceAll("&", "§");
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void subGuiClosed(SubGuiInterface subgui) {
-        if (subgui instanceof SubGuiSelectForm) {
-            if(customForm != null){
-                SubGuiSelectForm guiSelectForm = ((SubGuiSelectForm)subgui);
-                if(guiSelectForm.selectionChild){
-                    childForm = guiSelectForm.selectedFormID;
-                    if(parentForm == childForm)
-                        parentForm = -1;
-                }
-                else {
-                    parentForm = guiSelectForm.selectedFormID;
-                    if(parentForm == childForm)
-                        childForm = -1;
-                }
+    public void registerStackables() {
+        stackables.clear();
+        if (customForm != null) {
+            if (customForm.stackable.vanillaStackable) {
+                stackables.add("§eDBC");
             }
-            initGui();
+            if (customForm.stackable.kaiokenStackable) {
+                stackables.add("§cKK");
+            }
+            if (customForm.stackable.uiStackable) {
+                stackables.add("§7UI");
+            }
+            if (customForm.stackable.godStackable) {
+                stackables.add("§5GoD");
+            }
+            if (customForm.stackable.mysticStackable) {
+                stackables.add("§dMystic");
+            }
         }
     }
+
+    @Override
+    public void subGuiClosed(SubGuiInterface subgui) {}
 
     @Override
     public void confirmClicked(boolean result, int id) {
