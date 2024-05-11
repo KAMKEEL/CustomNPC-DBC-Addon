@@ -24,6 +24,7 @@ public class FruitOfMight extends StatusEffect {
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
         iconX = 64;
         iconY = 0;
+        length = ConfigDBCEffects.FOM_EffectLength;
         fruitOfMightBonus = new PlayerBonus(name, (byte) 0, (float) ConfigDBCEffects.FOM_Strength, (float) ConfigDBCEffects.FOM_Dex, (float) ConfigDBCEffects.FOM_Will);
         kiToDrain = (float) ConfigDBCEffects.FOM_KiDrain;
 

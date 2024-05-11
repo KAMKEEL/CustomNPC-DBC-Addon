@@ -38,7 +38,7 @@ public class ItemFruitOfMight extends ItemFood {
     protected void onFoodEaten(ItemStack itemStack, World world, EntityPlayer player)
     {
         if (!world.isRemote) {
-            StatusEffectController.getInstance().applyEffect(player, new PlayerEffect(Effects.FRUIT_OF_MIGHT, ConfigDBCEffects.FOM_EffectLength, (byte) 1));
+            StatusEffectController.getInstance().applyEffect(player, Effects.FRUIT_OF_MIGHT);
         }
     }
 }

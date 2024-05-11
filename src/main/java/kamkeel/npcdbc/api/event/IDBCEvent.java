@@ -87,4 +87,8 @@ public interface IDBCEvent extends IPlayerEvent {
         float getType();
     }
 
+    @Cancelable
+    interface DBCReviveEvent extends IDBCEvent {
+
+    }
 }

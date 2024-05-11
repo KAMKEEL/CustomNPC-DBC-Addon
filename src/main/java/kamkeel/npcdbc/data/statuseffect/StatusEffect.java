@@ -8,6 +8,7 @@ public class StatusEffect implements IStatusEffect {
 
     public String name = "";
     public boolean lossOnDeath = true;
+    public int length = 30;
 
     // Must be a multiple of 10
     public int everyXTick = 20;

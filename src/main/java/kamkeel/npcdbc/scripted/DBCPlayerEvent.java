@@ -163,4 +163,15 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
             return DBCScriptType.DAMAGED.function;
         }
     }
+
+    public static class ReviveEvent extends DBCPlayerEvent implements IDBCEvent.DBCReviveEvent {
+
+        public ReviveEvent(IPlayer player) {
+            super(player);
+        }
+
+        public String getHookName() {
+            return DBCScriptType.REVIVED.function;
+        }
+    }
 }

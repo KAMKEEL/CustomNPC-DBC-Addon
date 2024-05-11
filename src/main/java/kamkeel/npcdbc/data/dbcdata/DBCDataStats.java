@@ -383,7 +383,7 @@ public class DBCDataStats {
 
         if (getCurrentBodyPercentage() < ConfigDBCGameplay.NamekianRegenMin) {
             if (!StatusEffectController.getInstance().hasEffect(data.player, Effects.NAMEK_REGEN)) {
-                StatusEffectController.getInstance().applyEffect(data.player, new PlayerEffect(Effects.NAMEK_REGEN, -100, (byte) 1));
+                StatusEffectController.getInstance().applyEffect(data.player, Effects.NAMEK_REGEN, -100);
             }
         }
     }

@@ -97,6 +97,22 @@ public class StatusEffectController implements IStatusEffectHandler {
         return playerEffects.get(Utility.getUUID(player));
     }
 
+    public void applyEffect(EntityPlayer player, int id) {
+        StatusEffect parent = get(id);
+        if(parent != null){
+            PlayerEffect playerEffect = new PlayerEffect(id, parent.length, (byte) 1);
+            applyEffect(player, playerEffect);
+        }
+    }
+
+    public void applyEffect(EntityPlayer player, int id, int duration) {
+        StatusEffect parent = get(id);
+        if(parent != null){
+            PlayerEffect playerEffect = new PlayerEffect(id, duration, (byte) 1);
+            applyEffect(player, playerEffect);
+        }
+    }
+
     public void applyEffect(EntityPlayer player, PlayerEffect effect) {
         if(effect == null)
             return;
