@@ -10,7 +10,6 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.DataAI;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;

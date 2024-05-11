@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.client.model;
 
-import JinRyuu.JBRA.ModelRendererJBRA;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;

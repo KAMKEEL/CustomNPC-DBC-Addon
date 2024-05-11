@@ -6,7 +6,6 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
-import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.network.packets.SendChat;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;

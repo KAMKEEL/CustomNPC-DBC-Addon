@@ -12,11 +12,8 @@ import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.PacketHandler;
-import noppes.npcs.config.legacy.LegacyConfig;
 
 import java.io.File;
-
-import static noppes.npcs.CustomNpcs.configPath;
 
 @Mod(modid = CustomNpcPlusDBC.ID, name = CustomNpcPlusDBC.name, version = CustomNpcPlusDBC.version, dependencies = "required-after:customnpcs;required-after:jinryuujrmcore;required-after:jinryuudragonblockc;")
 public class CustomNpcPlusDBC {

@@ -2,7 +2,6 @@ package kamkeel.npcdbc.client.model.part;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
-import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;

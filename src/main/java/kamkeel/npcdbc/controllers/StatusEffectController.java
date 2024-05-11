@@ -4,7 +4,6 @@ import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
-import kamkeel.npcdbc.data.statuseffect.DBCEffect;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.types.*;
