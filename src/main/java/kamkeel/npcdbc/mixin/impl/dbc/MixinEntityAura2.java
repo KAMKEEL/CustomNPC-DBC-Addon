@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
@@ -26,6 +27,11 @@ public class MixinEntityAura2 implements IEntityAura {
     private int lightningAlpha;
     @Unique
     private float getSize = 1;
+
+    @Unique
+    private Aura parent;
+    @Unique
+    private boolean isKaiokenAura;
 
     @Shadow
     private String mot;
@@ -103,5 +109,36 @@ public class MixinEntityAura2 implements IEntityAura {
         this.getSize = getSize;
     }
 
+    @Unique
+    @Override
+    public Aura getParent() {
+        return this.parent;
+    }
+
+
+    @Unique
+    @Override
+    public void setParent(Aura parent) {
+        this.parent = parent;
+    }
+
+    @Unique
+    @Override
+    public boolean hasParent() {
+        return this.parent != null;
+    }
+
+    @Unique
+    @Override
+    public void setIsKaioken(boolean is) {
+        this.isKaiokenAura = is;
+    }
+
+
+    @Unique
+    @Override
+    public boolean isKaioken() {
+        return isKaiokenAura;
+    }
 
 }

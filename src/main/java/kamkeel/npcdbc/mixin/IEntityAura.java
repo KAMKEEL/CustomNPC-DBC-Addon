@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.mixin;
 
+import kamkeel.npcdbc.data.aura.Aura;
 import org.spongepowered.asm.mixin.Unique;
 
 public interface IEntityAura {
@@ -24,4 +25,19 @@ public interface IEntityAura {
     float getSize();
 
     void setSize(float getSize);
+
+    @Unique
+    Aura getParent();
+
+    @Unique
+    void setParent(Aura parent);
+
+    @Unique
+    boolean hasParent();
+
+    @Unique
+    void setIsKaioken(boolean is);
+
+    @Unique
+    boolean isKaioken();
 }
