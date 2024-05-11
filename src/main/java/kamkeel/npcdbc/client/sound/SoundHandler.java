@@ -39,10 +39,9 @@ public class SoundHandler {
         Iterator<Sound> iter = playingSounds.values().iterator();
         while (iter.hasNext()) {
             Sound sound = iter.next();
-            if (!sound.isPlaying() || sound.isDonePlaying()) {
-                Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
+            if (!sound.isPlaying())
                 iter.remove();
-            }
+
         }
     }
 
