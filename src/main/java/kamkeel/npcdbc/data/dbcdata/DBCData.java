@@ -44,7 +44,7 @@ public class DBCData extends DBCDataUniversal {
 
     //NON VANILLA DBC
     public float flightSpeed = 1.0f;
-    public boolean isFlying, flightEnabled = true;
+    public boolean isFlying, flightEnabled = true, flightGravity;
 
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
@@ -108,6 +108,7 @@ public class DBCData extends DBCDataUniversal {
         comp.setFloat("DBCFlightSpeed", flightSpeed);
         comp.setBoolean("DBCisFlying", isFlying);
         comp.setBoolean("DBCFlightEnabled", flightEnabled);
+        comp.setBoolean("DBCFlightGravity", flightGravity);
         stats.saveEffectsNBT(comp);
         bonus.saveBonusNBT(comp);
         return comp;
@@ -160,6 +161,7 @@ public class DBCData extends DBCDataUniversal {
         flightSpeed = c.getFloat("DBCFlightSpeed");
         isFlying = c.getBoolean("DBCisFlying");
         flightEnabled = c.getBoolean("DBCFlightEnabled");
+        flightGravity = c.getBoolean("DBCFlightGravity");
 
         this.currentEffects.clear();
         if (c.hasKey("addonActiveEffects", 9)) {
@@ -216,6 +218,7 @@ public class DBCData extends DBCDataUniversal {
         stats.saveEffectsNBT(dbc);
         bonus.saveBonusNBT(dbc);
         dbc.setFloat("DBCFlightSpeed", 1f);
+        dbc.setBoolean("DBCFlightGravity", false);
         loadFromNBT(dbc);
         if (syncALL)
             syncTracking();

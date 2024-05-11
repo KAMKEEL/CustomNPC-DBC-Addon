@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
+import JinRyuu.DragonBC.common.DBCClient;
 import JinRyuu.DragonBC.common.DBCKiTech;
+import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
@@ -54,13 +56,22 @@ public class MixinDBCKiTech {
 
     }
 
-    @Inject(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;floating:Z", ordinal = 7, shift = At.Shift.AFTER), cancellable = true)
+    @Inject(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;floating:Z", ordinal = 7, shift = At.Shift.AFTER))
     private static void isFlying(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
         DBCData dbcData = DBCData.getClient();
         if (dbcData.isFlying != DBCKiTech.floating) {
             dbcData.isFlying = DBCKiTech.floating;
             PacketHandler.Instance.sendToServer(new DBCSetValPacket(dbcData.player, EnumNBTType.BOOLEAN, "DBCisFlying", DBCKiTech.floating).generatePacket());
         }
+
+
+    }
+
+    @Inject(method = "FloatKi", at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/EntityClientPlayerMP;motionY:D", ordinal = 5,shift = At.Shift.BEFORE))
+    private static void flightGravity(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
+        DBCData dbcData = DBCData.getClient();
+        if (!dbcData.flightGravity)
+            DBCClient.mc.thePlayer.motionY /= dbcData.flightGravity && !JRMCoreH.isShtng && JRMCoreConfig.PlayerFlyingDragDownOn ? 15.15 : 150.15;
 
 
     }
