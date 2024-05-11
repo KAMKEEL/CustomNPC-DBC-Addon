@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.data.form;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormDisplay;
