@@ -19,8 +19,13 @@ public class Sound extends MovingSound {
     public String soundDir;
     public Entity entity;
 
+    public float maxVolume = 1.0f;
     public float range = 16;
     public boolean onlyOneCanExist = true;
+
+    public boolean fadeOut = false, fadeIn = false;
+    public float fadeFactor = 0.01f;
+
 
     public Sound(String soundDir) {
         super(new ResourceLocation(soundDir));
@@ -34,7 +39,6 @@ public class Sound extends MovingSound {
     }
 
     public void update() {
-
         if (this.entity == null || entity.isDead || (Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.MASTER) == 0)) {
             stop(false);
             return;
@@ -43,6 +47,17 @@ public class Sound extends MovingSound {
         this.xPosF = (float) this.entity.posX;
         this.yPosF = (float) this.entity.posY;
         this.zPosF = (float) this.entity.posZ;
+
+        if (fadeIn && !fadeOut)
+            if (volume < maxVolume)
+                volume = Math.min(volume + fadeFactor, maxVolume);
+
+
+        if (fadeOut) {
+            volume -= fadeFactor;
+            if (volume <= 0)
+                stop(false);
+        }
     }
 
     public void setVolume(float volume) {
@@ -67,9 +82,9 @@ public class Sound extends MovingSound {
     }
 
     public void stop(boolean forOthers) {
-        this.donePlaying = true;
         Minecraft.getMinecraft().getSoundHandler().stopSound(this);
         SoundHandler.playingSounds.remove(this.key);
+
         if (forOthers)
             PacketHandler.Instance.sendToServer(new StopSound(this).generatePacket());
     }
@@ -82,11 +97,18 @@ public class Sound extends MovingSound {
         NBTTagCompound c = new NBTTagCompound();
 
         c.setFloat("volume", volume);
-        c.setBoolean("repeat", repeat);
+        c.setFloat("maxVolume", maxVolume);
         c.setFloat("range", range);
+        c.setFloat("fadeFactor", fadeFactor);
+
+        c.setBoolean("repeat", repeat);
         c.setBoolean("onlyOneCanExist", onlyOneCanExist);
+        c.setBoolean("fadeOut", fadeOut);
+        c.setBoolean("fadeIn", fadeIn);
+
         c.setString("soundDir", soundDir);
         c.setString("key", key);
+
         c.setInteger("dimensionID", entity.worldObj.provider.dimensionId);
         c.setString("entity", Utility.getEntityID(entity));
 
@@ -102,8 +124,13 @@ public class Sound extends MovingSound {
         Sound sound = new Sound(directory);
 
         sound.setVolume(compound.getFloat("volume"));
+        sound.maxVolume = compound.getFloat("maxVolume");
         sound.soundDir = directory;
         sound.repeat = compound.getBoolean("repeat");
+        sound.fadeOut = compound.getBoolean("fadeOut");
+        sound.fadeIn = compound.getBoolean("fadeIn");
+        sound.fadeFactor = compound.getFloat("fadeFactor");
+
         sound.range = compound.getFloat("range");
         sound.onlyOneCanExist = compound.getBoolean("onlyOneCanExist");
         sound.key = compound.getString("key");
