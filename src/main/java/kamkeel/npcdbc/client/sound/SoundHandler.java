@@ -35,12 +35,13 @@ public class SoundHandler {
         return false;
     }
 
-    public static void verifySounds(){
+    public static void verifySounds() {
         Iterator<Sound> iter = playingSounds.values().iterator();
         while (iter.hasNext()) {
             Sound sound = iter.next();
-            if(!sound.isPlaying() || sound.isDonePlaying()) {
-                sound.stop(false);
+            if (!sound.isPlaying() || sound.isDonePlaying()) {
+                Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
+                iter.remove();
             }
         }
     }
@@ -50,7 +51,7 @@ public class SoundHandler {
         while (iter.hasNext()) {
             Map.Entry<String, Sound> entry = iter.next();
             String sound = entry.getKey();
-            if (sound.contains(entity.getCommandSenderName() + entity.getEntityId()) && sound.contains(soundDir)){
+            if (sound.contains(entity.getCommandSenderName() + entity.getEntityId()) && sound.contains(soundDir)) {
                 Sound found = entry.getValue();
                 return found.isPlaying();
             }
