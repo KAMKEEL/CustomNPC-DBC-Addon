@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.items;
 
-import kamkeel.npcdbc.LocalizationHelper;;
+import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.StatusEffectController;
@@ -11,6 +11,8 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import noppes.npcs.CustomItems;
+
+;
 
 public class ItemFruitOfMight extends ItemFood {
 

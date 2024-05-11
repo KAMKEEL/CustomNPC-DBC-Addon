@@ -7,10 +7,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 public class AuraSound extends Sound {
 
     public AuraSound(String soundDir, Entity entity) {
