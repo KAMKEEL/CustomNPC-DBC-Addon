@@ -40,6 +40,10 @@ public class DBCData extends DBCDataUniversal {
     public HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
     public HashMap<String, PlayerBonus> currentBonuses = new HashMap<>();
 
+    //NON VANILLA DBC
+    public float flightSpeed = 1.0f;
+    public boolean isFlying, flightEnabled = true;
+
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
 
@@ -98,6 +102,10 @@ public class DBCData extends DBCDataUniversal {
         comp.setInteger("auraID", auraID);
         comp.setFloat("addonFormLevel", addonFormLevel);
         comp.setFloat("addonCurrentHeat", addonCurrentHeat);
+
+        comp.setFloat("DBCFlightSpeed", flightSpeed);
+        comp.setBoolean("DBCisFlying", isFlying);
+        comp.setBoolean("DBCFlightEnabled", flightEnabled);
         stats.saveEffectsNBT(comp);
         bonus.saveBonusNBT(comp);
         return comp;
@@ -146,6 +154,10 @@ public class DBCData extends DBCDataUniversal {
         addonFormLevel = c.getFloat("addonFormLevel");
         addonCurrentHeat = c.getFloat("addonCurrentHeat");
         auraID = c.getInteger("auraID");
+
+        flightSpeed = c.getFloat("DBCFlightSpeed");
+        isFlying = c.getBoolean("DBCisFlying");
+        flightEnabled = c.getBoolean("DBCFlightEnabled");
 
         this.currentEffects.clear();
         if (c.hasKey("addonActiveEffects", 9)) {
@@ -201,6 +213,8 @@ public class DBCData extends DBCDataUniversal {
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
         stats.saveEffectsNBT(dbc);
         bonus.saveBonusNBT(dbc);
+        dbc.setFloat("DBCFlightSpeed", 1f);
+        dbc.setBoolean("DBCFlightEnabled", true);
         loadFromNBT(dbc);
         if (syncALL)
             syncTracking();

@@ -8,12 +8,14 @@ import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
@@ -24,10 +26,57 @@ import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(value = DBCKiTech.class, remap = false)
 public class MixinDBCKiTech {
+
+    /**
+     * Prevents player from transforming to other DBC forms if they are in custom form, except stackable ones
+     */
+    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
+    private static void changeBaseSpeed(Args args) {
+        DBCData dbcData = DBCData.getClient();
+        float speed = args.get(3);
+
+        args.set(3, speed * dbcData.flightSpeed);
+
+    }
+
+    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V", ordinal = 1))
+    private static void changeDynamic(Args args) {
+        DBCData dbcData = DBCData.getClient();
+        float speed = args.get(3);
+
+        args.set(3, speed * dbcData.flightSpeed);
+
+    }
+
+    @Inject(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;floating:Z", ordinal = 6, shift = At.Shift.AFTER), cancellable = true)
+    private static void isFlying(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
+        DBCData dbcData = DBCData.getClient();
+        if (!dbcData.isFlying && DBCKiTech.floating) {
+            dbcData.isFlying = true;
+            PacketHandler.Instance.sendToServer(new DBCSetValPacket(dbcData.player, EnumNBTType.BOOLEAN, "DBCisFlying", true).generatePacket());
+        } else if (dbcData.isFlying && !DBCKiTech.floating) {
+            dbcData.isFlying = false;
+            PacketHandler.Instance.sendToServer(new DBCSetValPacket(dbcData.player, EnumNBTType.BOOLEAN, "DBCisFlying", false).generatePacket());
+
+        }
+
+
+    }
+
+    @Inject(method = "FloatKi", at = @At("HEAD"), cancellable = true)
+    private static void disableFlight(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
+        DBCData dbcData = DBCData.getClient();
+        if (!dbcData.flightEnabled)
+            ci.cancel();
+
+    }
+
 
     @Inject(method = "chargePart(Z)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", remap = true), cancellable = true)
     private static void cancelAura(boolean b, CallbackInfo ci, @Local(name = "e") LocalRef<Entity> entity) {
