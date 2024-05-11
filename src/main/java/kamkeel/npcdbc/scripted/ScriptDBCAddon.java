@@ -561,6 +561,15 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return dbcData.isForm(DBCForm.Majin);
     }
 
+    @Override
+    public void setFlight(boolean flightOn) {
+        dbcData.setFlight(flightOn);
+    }
+
+    @Override
+    public boolean isFlying() {
+        return dbcData.isFlying;
+    }
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     // Form stuff

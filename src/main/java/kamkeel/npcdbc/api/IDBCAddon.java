@@ -198,6 +198,10 @@ public interface IDBCAddon extends IDBCPlayer {
 
     void setForm(IForm form);
 
+    void setFlight(boolean flightOn);
+
+    boolean isFlying();
+
     void giveForm(String formName);
 
     void giveForm(IForm form);

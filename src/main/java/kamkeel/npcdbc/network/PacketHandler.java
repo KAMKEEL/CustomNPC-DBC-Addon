@@ -42,6 +42,7 @@ public final class PacketHandler {
         map.put(PlaySound.packetName, new PlaySound());
         map.put(StopSound.packetName, new StopSound());
         map.put(SaveForm.packetName, new SaveForm());
+        map.put(DBCSetFlight.packetName, new DBCSetFlight());
         this.register();
     }
 

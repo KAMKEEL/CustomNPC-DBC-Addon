@@ -54,16 +54,12 @@ public class MixinDBCKiTech {
 
     }
 
-    @Inject(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;floating:Z", ordinal = 6, shift = At.Shift.AFTER), cancellable = true)
+    @Inject(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;floating:Z", ordinal = 7, shift = At.Shift.AFTER), cancellable = true)
     private static void isFlying(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
         DBCData dbcData = DBCData.getClient();
-        if (!dbcData.isFlying && DBCKiTech.floating) {
-            dbcData.isFlying = true;
-            PacketHandler.Instance.sendToServer(new DBCSetValPacket(dbcData.player, EnumNBTType.BOOLEAN, "DBCisFlying", true).generatePacket());
-        } else if (dbcData.isFlying && !DBCKiTech.floating) {
-            dbcData.isFlying = false;
-            PacketHandler.Instance.sendToServer(new DBCSetValPacket(dbcData.player, EnumNBTType.BOOLEAN, "DBCisFlying", false).generatePacket());
-
+        if (dbcData.isFlying != DBCKiTech.floating) {
+            dbcData.isFlying = DBCKiTech.floating;
+            PacketHandler.Instance.sendToServer(new DBCSetValPacket(dbcData.player, EnumNBTType.BOOLEAN, "DBCisFlying", DBCKiTech.floating).generatePacket());
         }
 
 

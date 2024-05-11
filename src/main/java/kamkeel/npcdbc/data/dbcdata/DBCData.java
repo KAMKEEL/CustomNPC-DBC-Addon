@@ -12,10 +12,12 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.DBCSetFlight;
 import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.scripted.CustomNPCsException;
@@ -214,7 +216,6 @@ public class DBCData extends DBCDataUniversal {
         stats.saveEffectsNBT(dbc);
         bonus.saveBonusNBT(dbc);
         dbc.setFloat("DBCFlightSpeed", 1f);
-        dbc.setBoolean("DBCFlightEnabled", true);
         loadFromNBT(dbc);
         if (syncALL)
             syncTracking();
@@ -358,6 +359,9 @@ public class DBCData extends DBCDataUniversal {
         return (Form) FormController.getInstance().get(addonFormID);
     }
 
+    public void setFlight(boolean flightOn) {
+        PacketHandler.Instance.sendToPlayer(new DBCSetFlight(flightOn).generatePacket(), (EntityPlayerMP) player);
+    }
 
     /**
      * Fuse with another player
