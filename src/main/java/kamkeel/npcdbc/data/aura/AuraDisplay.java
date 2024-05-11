@@ -10,18 +10,19 @@ public class AuraDisplay implements IAuraDisplay {
     public Aura parent;
 
     public EnumPlayerAuraTypes type = EnumPlayerAuraTypes.None;
+
     public String texture1 = "", texture2 = "", texture3 = "";
     public int color1 = -1, color2 = -1, color3 = -1, alpha = -1;
     public float size = 1.0f, speed = -1f;
 
-
     public boolean hasLightning = false;
     public int lightningColor = -1, lightningAlpha = -1;
 
-    public boolean hasKaiokenAura = false, kaiokenOverrides = true;
-    public float kaiokenAuraSize = 1f;
+    public int kaiokenColor = -1, kaiokenAlpha = -1;
+    public boolean hasKaiokenAura = true, kaiokenOverrides = true;
 
     public boolean overrideDBCAura = false;
+
     public String auraSound = "", kaiokenSound = "";
 
     public AuraDisplay(Aura parent) {
@@ -45,10 +46,14 @@ public class AuraDisplay implements IAuraDisplay {
         color3 = rendering.getInteger("color3");
         alpha = rendering.getInteger("alpha");
 
+
         hasLightning = rendering.getBoolean("hasLightning");
         lightningColor = rendering.getInteger("lightningColor");
         lightningAlpha = rendering.getInteger("lightningAlpha");
 
+
+        kaiokenColor = rendering.getInteger("kaiokenColor");
+        kaiokenAlpha = rendering.getInteger("kaiokenAlpha");
         hasKaiokenAura = rendering.getBoolean("kaiokenOn");
         kaiokenOverrides = rendering.getBoolean("kaiokenOverrides");
         overrideDBCAura = rendering.getBoolean("overrideDBCAura");
@@ -72,10 +77,13 @@ public class AuraDisplay implements IAuraDisplay {
         rendering.setInteger("color3", color3);
         rendering.setInteger("alpha", alpha);
 
+
         rendering.setBoolean("hasLightning", hasLightning);
         rendering.setInteger("lightningColor", lightningColor);
         rendering.setInteger("lightningAlpha", lightningAlpha);
 
+        rendering.setInteger("kaiokenColor", kaiokenColor);
+        rendering.setInteger("kaiokenAlpha", kaiokenAlpha);
         rendering.setBoolean("kaiokenOn", hasKaiokenAura);
         rendering.setBoolean("kaiokenOverrides", kaiokenOverrides);
         rendering.setBoolean("overrideDBCAura", overrideDBCAura);
@@ -155,8 +163,10 @@ public class AuraDisplay implements IAuraDisplay {
 
         if (kaiokenSound.equalsIgnoreCase("nosound")) {
 
-        } else if (kaiokenSound.isEmpty())
+        } else if (kaiokenSound.isEmpty() && !kaiokenOverrides)
             sound = "jinryuudragonbc:1610.aurabk";
+        else if (kaiokenOverrides)
+            sound = "jinryuudragonbc:DBC.aura";
         else if (kaiokenSound.length() > 3)
             sound = kaiokenSound;
 
@@ -203,9 +213,11 @@ public class AuraDisplay implements IAuraDisplay {
                 return color3 > -1;
             case "lightning":
                 return lightningColor > -1;
+            case "kaioken":
+                return kaiokenColor > -1;
 
         }
-        throw new CustomNPCsException("Invalid type! Legal types: color1, color2, color3, lightningColor");
+        throw new CustomNPCsException("Invalid type! Legal types: color1, color2, color3, lightningColor, kaioken");
     }
 
     @Override
@@ -223,8 +235,11 @@ public class AuraDisplay implements IAuraDisplay {
             case "lightning":
                 lightningColor = color;
                 break;
+            case "kaioken":
+                kaiokenColor = color;
+                break;
             default:
-                throw new CustomNPCsException("Invalid type! Legal types: color1, color2, color3, lightning");
+                throw new CustomNPCsException("Invalid type! Legal types: color1, color2, color3, lightning, kaioken");
 
         }
 
@@ -242,8 +257,10 @@ public class AuraDisplay implements IAuraDisplay {
                 return color3;
             case "lightning":
                 return lightningColor;
+            case "kaioken":
+                return kaiokenColor;
         }
-        throw new CustomNPCsException("Invalid type! Legal types: color1, color2, color3, lightningColor");
+        throw new CustomNPCsException("Invalid type! Legal types: color1, color2, color3, lightningColor, kaioken");
     }
 
     @Override
@@ -253,9 +270,11 @@ public class AuraDisplay implements IAuraDisplay {
                 return alpha > -1;
             case "lightning":
                 return lightningAlpha > -1;
+            case "kaioken":
+                return kaiokenAlpha > -1;
 
         }
-        throw new CustomNPCsException("Invalid type! Legal types:  aura, lightning");
+        throw new CustomNPCsException("Invalid type! Legal types:  aura, lightning, kaioken");
     }
 
     @Override
@@ -265,8 +284,10 @@ public class AuraDisplay implements IAuraDisplay {
                 return alpha;
             case "lightning":
                 return lightningAlpha;
+            case "kaioken":
+                return kaiokenAlpha;
         }
-        throw new CustomNPCsException("Invalid type! Legal types: aura, lightning");
+        throw new CustomNPCsException("Invalid type! Legal types: aura, lightning, kaioken");
     }
 
     @Override
@@ -278,8 +299,11 @@ public class AuraDisplay implements IAuraDisplay {
             case "lightning":
                 lightningAlpha = value;
                 break;
+            case "kaioken":
+                kaiokenAlpha = value;
+                break;
             default:
-                throw new CustomNPCsException("Invalid type! Legal types: aura, lightning");
+                throw new CustomNPCsException("Invalid type! Legal types: aura, lightning, kaioken");
         }
     }
 

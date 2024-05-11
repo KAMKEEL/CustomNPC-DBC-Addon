@@ -60,12 +60,10 @@ public class AuraSound extends Sound {
             return;
 
         boolean isTransforming = false;
-        boolean isInKaioken = false;
 
         if (entity instanceof EntityPlayer) {
             DBCData dbcData = DBCData.get((EntityPlayer) entity);
             isTransforming = dbcData.isTransforming();
-            isInKaioken = dbcData.isForm(DBCForm.Kaioken);
 
         } else if (entity instanceof EntityNPCInterface) {
             DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
@@ -74,7 +72,6 @@ public class AuraSound extends Sound {
 
 
         String sound = aura.display.getFinalSound();
-        String kkSound = isInKaioken ? aura.display.getFinalKKSound() : null;
         String secondSound = aura.hasSecondaryAura() ? aura.getSecondaryAur().display.getFinalSound() : null;
 
         if (!SoundHandler.isPlayingSound(entity, sound)) {
@@ -84,6 +81,7 @@ public class AuraSound extends Sound {
 
             auraSound.setRepeat(true).play(false);
         }
+
         if (secondSound != null && !SoundHandler.isPlayingSound(entity, secondSound)) {
             AuraSound secondarySound = new AuraSound(aura, secondSound, entity);
             if (isTransforming)
@@ -91,11 +89,6 @@ public class AuraSound extends Sound {
             secondarySound.setRepeat(true).play(false);
         }
 
-        if (kkSound != null && !SoundHandler.isPlayingSound(entity, kkSound)) {
-            AuraSound kaiokenSound = new AuraSound(aura, kkSound, entity);
 
-            kaiokenSound.isKaiokenSound = true;
-            kaiokenSound.setRepeat(true).play(false);
-        }
     }
 }

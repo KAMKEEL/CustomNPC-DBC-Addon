@@ -37,7 +37,7 @@ public class MixinDBCKiTech {
             if (aura != null) {
                 if (aura.display.overrideDBCAura)
                     ci.cancel();
-                else if (dbcData.isForm(DBCForm.Base) || dbcData.isForm(DBCForm.Kaioken) && aura.display.hasKaiokenAura && !aura.display.kaiokenOverrides)
+                else if (dbcData.isForm(DBCForm.Base) || dbcData.isForm(DBCForm.Kaioken) && aura.display.hasKaiokenAura)
                     ci.cancel();
             }
         }
