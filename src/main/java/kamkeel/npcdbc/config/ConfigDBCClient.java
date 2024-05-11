@@ -27,6 +27,9 @@ public class ConfigDBCClient
     public static Property DarkModeProperty;
     public static boolean DarkMode = true;
 
+    public static Property AdvancedGuiModeProperty;
+    public static boolean AdvancedGui = false;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -46,6 +49,8 @@ public class ConfigDBCClient
             EnhancedGui = EnhancedGuiProperty.getBoolean(true);
             DarkModeProperty = config.get(GUI, "Dark Mode", true, "Uses Dark Mode GUI in Enhanced Menu");
             DarkMode = DarkModeProperty.getBoolean(true);
+            AdvancedGuiModeProperty = config.get(GUI, "Advanced GUI", false, "Shows Advanced Status Effects and Calculations in Menu");
+            AdvancedGui = AdvancedGuiModeProperty.getBoolean(false);
         }
         catch (Exception e)
         {

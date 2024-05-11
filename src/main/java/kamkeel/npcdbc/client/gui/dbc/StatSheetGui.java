@@ -11,6 +11,7 @@ import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCAttribute;
+import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -244,11 +245,20 @@ public class StatSheetGui extends AbstractJRMCGui {
                     + JRMCoreH.trl("jrmc", "Original") +": §4" + JRMCoreH.numSep(originalStatVal)+"§8";
 
                 float multi = (float) modifiedStatVal / originalStatVal;
-                float formMulti = customForm != null ? customForm.getAttributeMulti(i) : (float) DBCFormMulti(i);
-                if(JGConfigDBCFormMastery.FM_Enabled && isSTRDEXWIL){
-                    float masteryMulti = JRMCoreH.round((float) getFormMasteryMulti(), 2);
-                    if(masteryMulti > 0)
-                        attributeDesc += "\n> Multi: §4x" +   JRMCoreH.round(formMulti, 2) + "§8 (Form) * §4x" + masteryMulti + "§8 (Mastery)";
+                if(ConfigDBCClient.AdvancedGui){
+                    float formMulti = customForm != null ? customForm.getAttributeMulti(i) : (float) DBCFormMulti(i);
+                    String multiString = "";
+                    multiString += "\n> Multi: §4x" +   JRMCoreH.round(formMulti, 2) + "§8 (Form)";
+                    if(JGConfigDBCFormMastery.FM_Enabled){
+                        float masteryMulti = JRMCoreH.round((float) getFormMasteryMulti(), 2);
+                        if(masteryMulti > 0)
+                            multiString += " * §4x" + masteryMulti + "§8 (Mastery)";
+                    }
+                    if(customForm != null && customForm.stackable.vanillaStackable){
+                        float stackMulti = JGConfigDBCFormMastery.FM_Enabled ? (float) JRMCoreH.getFormMasteryAttributeMulti(JRMCoreClient.mc.thePlayer, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20)) : (float) DBCFormMulti(i);
+                        multiString += "\n* §4x" +   JRMCoreH.round(stackMulti, 2) + "§8 (" + JRMCoreH.trl("jrmc", JRMCoreH.getTransformationName(JRMCoreH.Race, JRMCoreH.isPowerTypeChakra() ? 0 : JRMCoreH.State, isRose, isMystic, isUI, isGoD)) + ")";
+                    }
+                    attributeDesc += multiString;
                 }
 
                 if((JRMCoreH.round(multi, 2) != 1))
@@ -256,7 +266,12 @@ public class StatSheetGui extends AbstractJRMCGui {
             }
             if(i == DBCAttribute.Strength || i == DBCAttribute.Dexterity)
                 attributeDesc += (hasWeight ? "\n" + JRMCoreH.trl("jrmc", "trainingweightworn") + ": §c" + (int)JRMCoreH.WeightOn + "§8": "");
-            attributeDesc += "\nRace-Class Multiplier: " + JGConfigRaces.CONFIG_RACES_ATTRIBUTE_MULTI[JRMCoreH.Race][JRMCoreH.Class][i];
+
+            if(ConfigDBCClient.AdvancedGui){
+                attributeDesc += "\nRace-Class Multiplier: " + JGConfigRaces.CONFIG_RACES_ATTRIBUTE_MULTI[JRMCoreH.Race][JRMCoreH.Class][i];
+                attributeDesc += getAddonBonus(i);
+            }
+
             attributeDesc += getAttributeBonusDescription(i);
 
             dynamicLabels.get("attr_"+i)
@@ -501,16 +516,17 @@ public class StatSheetGui extends AbstractJRMCGui {
         int button1Width = this.fontRendererObj.getStringWidth(s)+10;
         this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -button1Width)/2, guiHeightOffset - 30, button1Width + 8, 20, s, 0));
 
-        String dark = ConfigDBCClient.DarkMode ? "Light" : "Dark";
-        int button2Width = this.fontRendererObj.getStringWidth(dark)+10;
-        this.buttonList.add(new JRMCoreGuiButtons00(404040404, guiWidthOffset + 260, height/2 + 34, button2Width + 8, 20, dark, 0));
-
-
         //Difficulty button
         GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.DIFFICULTY;
         String translation = ref.getTranslation();
-        int stringWidth = fontRendererObj.getStringWidth(translation)+8;
+        int stringWidth = fontRendererObj.getStringWidth(translation)+15;
         this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), guiWidthOffset + 260, height/2 + 55, stringWidth, 20, translation, 0));
+
+        String dark = ConfigDBCClient.DarkMode ? "Light" : "Dark";
+        this.buttonList.add(new JRMCoreGuiButtons00(404040404, guiWidthOffset + 260, height/2 + 12, stringWidth, 20, dark, 0));
+
+        String advan = ConfigDBCClient.AdvancedGui ? "Advanced" : "Simple";
+        this.buttonList.add(new JRMCoreGuiButtons00(505050505, guiWidthOffset + 260, height/2 + 34, stringWidth, 20, advan, 0));
 
         int index = 0;
 
@@ -741,6 +757,12 @@ public class StatSheetGui extends AbstractJRMCGui {
             ConfigDBCClient.config.save();
             initGui();
         }
+        if(id == 505050505){
+            ConfigDBCClient.AdvancedGui = !ConfigDBCClient.AdvancedGui;
+            ConfigDBCClient.AdvancedGuiModeProperty.set(ConfigDBCClient.AdvancedGui);
+            ConfigDBCClient.config.save();
+            initGui();
+        }
         if(id >= 0 && id <= 5){
             if(!JRMCoreH.isFused()){
                 JRMCoreH.Upg((byte) (id+upgradeCounter*6));
@@ -835,6 +857,28 @@ public class StatSheetGui extends AbstractJRMCGui {
         } else {
             return "";
         }
+    }
+
+    public String getAddonBonus(int attributeID) {
+        String description = "";
+        DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
+        if(!dbcData.currentBonuses.isEmpty()){
+            description += "\nBonus Stats:";
+            for(PlayerBonus playerBonus : dbcData.currentBonuses.values()){
+                if(attributeID == DBCAttribute.Strength && playerBonus.strength != 0){
+                    description += "\n>> " + playerBonus.name + ": " + (playerBonus.type == 1 ? " " : "x ") + playerBonus.strength;
+                } else if(attributeID == DBCAttribute.Dexterity && playerBonus.dexterity != 0){
+                    description += "\n>> " + playerBonus.name + ": " + (playerBonus.type == 1 ? " " : "x ") + playerBonus.dexterity;
+                } else if(attributeID == DBCAttribute.Constitution && playerBonus.constituion != 0){
+                    description += "\n>> " + playerBonus.name + ": " + (playerBonus.type == 1 ? " " : "x ") + playerBonus.constituion;
+                } else if(attributeID == DBCAttribute.Willpower && playerBonus.willpower != 0){
+                    description += "\n>> " + playerBonus.name + ": " + (playerBonus.type == 1 ? " " : "x ") + playerBonus.willpower;
+                } else if(attributeID == DBCAttribute.Spirit && playerBonus.spirit != 0){
+                    description += "\n>> " + playerBonus.name + ": " + (playerBonus.type == 1 ? " " : "x ") + playerBonus.spirit;
+                }
+            }
+        }
+        return description;
     }
 
     public double DBCFormMulti(int atr){
