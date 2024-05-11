@@ -175,8 +175,8 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void handleSounds(TickEvent.ClientTickEvent event) {
-        if(event.side == Side.CLIENT){
-            if(soundTicker % 5 == 0)
+        if (event.side == Side.CLIENT) {
+            if (soundTicker % 5 == 0)
                 SoundHandler.verifySounds();
             soundTicker++;
         }
@@ -190,30 +190,22 @@ public class ClientEventHandler {
                 boolean isPlayer = event.entity instanceof EntityPlayer;
                 boolean isNPC = event.entity instanceof EntityNPCInterface;
                 DBCData dbcData = null;
-                String auraSoundKey = null;
 
                 boolean auraOn = false;
                 if (isNPC) {
                     EntityCustomNpc npc = (EntityCustomNpc) event.entity;
                     DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
-                    if (!display.enabled)
+                    if (!display.enabled || !display.isAuraOn())
                         return;
-
-                    auraOn = display.auraOn || display.isTransforming;
-                    auraSoundKey = display.auraSoundKey;
                     aura = display.getAur();
                 } else if (isPlayer) {
                     dbcData = DBCData.get((EntityPlayer) event.entity);
-                    auraOn = dbcData.isDBCAuraOn();
-                    auraSoundKey = dbcData.auraSoundKey;
+                    if (!dbcData.isDBCAuraOn())
+                        return;
                     aura = dbcData.getAura();
                 }
-                if (!auraOn) {
-                    //  System.out.println(SoundHelper.playingSounds);
-                    //if (event.entity.ticksExisted % 60 == 0 && SoundHelper.contains(auraSoundKey))
-                    // SoundHelper.stopSounds(event.entity, "aura");
-                    return;
-                }
+
+
                 if (aura == null || isPlayer && !aura.display.overrideDBCAura && !dbcData.isForm(DBCForm.Base))
                     return;
 
@@ -333,7 +325,6 @@ public class ClientEventHandler {
             if (dbcData.isForm(DBCForm.Kaioken) && kk)
                 kaiokenAura = new EntityAura2(entity.worldObj, auraOwner, 16646144, 2.0F + dbcData.State, dbcData.State2 * 1.5f, dbcData.Release, false);
 
-
         }
 
 
@@ -382,9 +373,8 @@ public class ClientEventHandler {
         if (!SoundHandler.isPlayingSound(entity, sound)) {
             AuraSound auraSound = new AuraSound(sound, entity);
 
-            auraSound.range = 32;
             auraSound.setRepeat(true);
-            auraSound.play(true);
+            auraSound.play(false);
         }
         ////////////////////////////////////////////////////
         ////////////////////////////////////////////////////
