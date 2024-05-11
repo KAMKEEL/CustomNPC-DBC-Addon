@@ -26,9 +26,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
@@ -67,13 +65,13 @@ public class MixinDBCKiTech {
 
     }
 
-    @Inject(method = "FloatKi", at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/EntityClientPlayerMP;motionY:D", ordinal = 5,shift = At.Shift.BEFORE))
-    private static void flightGravity(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
+    @Redirect(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;PlayerFlyingDragDownOn:Z"))
+    private static boolean flightGravity() {
         DBCData dbcData = DBCData.getClient();
         if (!dbcData.flightGravity)
-            DBCClient.mc.thePlayer.motionY /= dbcData.flightGravity && !JRMCoreH.isShtng && JRMCoreConfig.PlayerFlyingDragDownOn ? 15.15 : 150.15;
+            return JRMCoreConfig.PlayerFlyingDragDownOn;
 
-
+        return false;
     }
 
     @Inject(method = "FloatKi", at = @At("HEAD"), cancellable = true)
