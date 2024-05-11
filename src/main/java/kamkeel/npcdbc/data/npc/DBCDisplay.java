@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.npc;
 
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
@@ -349,6 +350,11 @@ public class DBCDisplay implements IDBCDisplay {
             this.auraOn = false;
     }
 
+    @Override
+    public boolean isInAura(IAura aura) {
+        return aura.getID() == auraID;
+    }
+
     public boolean isAuraOn() {
         return auraOn || isTransforming;
     }
@@ -364,7 +370,7 @@ public class DBCDisplay implements IDBCDisplay {
     //internal usage
     public Aura getAur() {
         if (isInForm()) {
-            Form form = getCurrentForm();
+            Form form = (Form) getCurrentForm();
             if (form.display.hasAura())
                 return form.display.getAur();
         }
@@ -384,8 +390,8 @@ public class DBCDisplay implements IDBCDisplay {
             throw new CustomNPCsException("Form " + id + " does not exist!");
     }
 
-    public void transform(Form form) {
-        transform(form.id);
+    public void transform(IForm form) {
+        transform(form.getID());
     }
 
     public void cancelTransform() {
@@ -398,9 +404,9 @@ public class DBCDisplay implements IDBCDisplay {
 
     }
 
-    public void setForm(Form form) {
+    public void setForm(IForm form) {
         if (form != null)
-            formID = form.id;
+            formID = form.getID();
     }
 
     public void setForm(int id) {
@@ -415,9 +421,9 @@ public class DBCDisplay implements IDBCDisplay {
             formID = f.id;
     }
 
-    public Form getCurrentForm() {
+    public IForm getCurrentForm() {
         if (formID > 0)
-            return (Form) FormController.Instance.get(formID);
+            return FormController.Instance.get(formID);
         return null;
     }
 
@@ -425,8 +431,8 @@ public class DBCDisplay implements IDBCDisplay {
         return formID > -1 && getCurrentForm() != null;
     }
 
-    public boolean isInForm(String formName) {
-        return getCurrentForm().getName().equals(formName);
+    public boolean isInForm(IForm form) {
+        return formID == form.getID();
     }
 
     public void setFormLevel(float amount) {
@@ -454,6 +460,7 @@ public class DBCDisplay implements IDBCDisplay {
             bodyC3 = 16550015;
         } else if (race == DBCRace.MAJIN)
             bodyCM = 16757199;
+
         eyeColor = 0x000000;
     }
 }
