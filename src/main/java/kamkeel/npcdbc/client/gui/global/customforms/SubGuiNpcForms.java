@@ -11,6 +11,7 @@ import noppes.npcs.client.gui.questtypes.GuiNpcQuestTypeKill;
 import noppes.npcs.client.gui.questtypes.GuiNpcQuestTypeLocation;
 import noppes.npcs.client.gui.questtypes.GuiNpcQuestTypeManual;
 import noppes.npcs.client.gui.select.GuiQuestSelection;
+import noppes.npcs.client.gui.select.GuiSoundSelection;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.constants.*;
 import noppes.npcs.controllers.data.PlayerMail;
@@ -19,6 +20,7 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
 {
 
 	public Form form;
+    boolean setAscendSound = true;
     public int parentForm = -1;
     public int childForm = -1;
 	private final GuiNPCManageForms parent;
@@ -48,8 +50,9 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
 		addLabel(new GuiNpcLabel(0,"ID", guiLeft + 238, y + 1));
 		addLabel(new GuiNpcLabel(2,	form.id + "", guiLeft + 238, y + 11));
 
+        y += 23;
 
-        addTextField(new GuiNpcTextField(4, this, guiLeft + 70, y+=22, 166, 20, form.menuName.replaceAll("§", "&")));
+        addTextField(new GuiNpcTextField(4, this, guiLeft + 70, y, 166, 20, form.menuName.replaceAll("§", "&")));
         getTextField(4).setMaxStringLength(20);
         addLabel(new GuiNpcLabel(4, "Menu Name", guiLeft + 4, y+5));
 
@@ -59,11 +62,10 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
         getTextField(19).floatsOnly = true;
         getTextField(19).setMinMaxDefaultFloat(-10000, 10000, 1);
 
-        y += 22;
+        y += 23;
         addButton(new GuiNpcButton(6, guiLeft + 4, y, 70, 20, "DISPLAY"));
         addButton(new GuiNpcButton(7, guiLeft + 84, y, 70, 20, "MASTERY"));
         addButton(new GuiNpcButton(8, guiLeft + 166, y, 70, 20, "STACKABLE"));
-
 
         addLabel(new GuiNpcLabel(20,"Dexterity", guiLeft + 239, y + 5));
         addTextField(new GuiNpcTextField(20, this, guiLeft + 295, y, 60, 20, String.valueOf(form.dexMulti)));
@@ -71,38 +73,51 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
         getTextField(20).floatsOnly = true;
         getTextField(20).setMinMaxDefaultFloat(-10000, 10000, 1);
 
-        y += 22;
+        y += 23;
+
         addLabel(new GuiNpcLabel(21,"Willpower", guiLeft + 239, y + 5));
         addTextField(new GuiNpcTextField(21, this, guiLeft + 295, y, 60, 20, String.valueOf(form.willMulti)));
         getTextField(21).setMaxStringLength(15);
         getTextField(21).floatsOnly = true;
         getTextField(21).setMinMaxDefaultFloat(-10000, 10000, 1);
 
-        addButton(new GuiNpcButton(10, guiLeft + 192, guiTop + 72, 45, 20, new String[]{"gui.no", "gui.yes"}, form.fromParentOnly ? 1 : 0));
-        addLabel(new GuiNpcLabel(10, "Transform from Only Parent Form", guiLeft+8, guiTop+77));
+        addButton(new GuiNpcButton(10, guiLeft + 192, y, 45, 20, new String[]{"gui.no", "gui.yes"}, form.fromParentOnly ? 1 : 0));
+        addLabel(new GuiNpcLabel(10, "Transform from Only Parent Form", guiLeft+8, y + 5));
 
-        y += 22;
+        y += 23;
 
-        addButton(new GuiNpcButton(11, guiLeft + 74, guiTop+94, 140, 20, "No Parent"));
+        addButton(new GuiNpcButton(11, guiLeft + 74, y, 140, 20, "No Parent"));
         if(parentForm != -1){
             if(FormController.getInstance().has(parentForm))
                 getButton(11).setDisplayText(FormController.getInstance().get(parentForm).getName());
         }
 
-        addButton(new GuiNpcButton(12, guiLeft + 216, guiTop + 94, 20, 20, "X"));
+        addButton(new GuiNpcButton(12, guiLeft + 216, y, 20, 20, "X"));
         getButton(12).enabled = parentForm != -1;
-        addLabel(new GuiNpcLabel(12, "Parent Form", guiLeft + 8, guiTop + 99));
+        addLabel(new GuiNpcLabel(12, "Parent Form", guiLeft + 8, y + 5));
 
-        y += 22;
+        y += 23;
 
-        addButton(new GuiNpcButton(13, guiLeft + 74, guiTop+116, 140, 20, "No Child"));
+        addButton(new GuiNpcButton(13, guiLeft + 74, y, 140, 20, "No Child"));
         if(childForm != -1){
             if(FormController.getInstance().has(childForm))
                 getButton(13).setDisplayText(FormController.getInstance().get(childForm).getName());
         }
-        addButton(new GuiNpcButton(14, guiLeft + 216, guiTop + 116, 20, 20, "X"));
+        addButton(new GuiNpcButton(14, guiLeft + 216, y, 20, 20, "X"));
         getButton(14).enabled = childForm != -1;
-        addLabel(new GuiNpcLabel(14, "Child Form", guiLeft + 8, guiTop + 121));
+        addLabel(new GuiNpcLabel(14, "Child Form", guiLeft + 8, y + 5));
+
+        y += 23;
+
+        addLabel(new GuiNpcLabel(30, "Ascend Sound", guiLeft + 7, y + 5));
+        addTextField(new GuiNpcTextField(30, this, fontRendererObj, guiLeft + 90, y, 194, 20, form.ascendSound));
+        addButton(new GuiNpcButton(30, guiLeft + 293, y, 60, 20, "gui.select"));
+
+        y += 23;
+
+        addLabel(new GuiNpcLabel(31, "Descend Sound", guiLeft + 7, y + 5));
+        addTextField(new GuiNpcTextField(31, this, fontRendererObj, guiLeft + 90, y, 194, 20, form.descendSound));
+        addButton(new GuiNpcButton(31, guiLeft + 293, y, 60, 20, "gui.select"));
 
         addButton(new GuiNpcButton(1010101, guiLeft + 200, guiTop + 192, 50, 20, "RELOAD"));
         addButton(new GuiNpcButton(16, guiLeft + 303, guiTop + 192, 50, 20, "gui.done"));
@@ -120,6 +135,14 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
         }
         if(button.id == 13){
             this.setSubGui(new SubGuiSelectForm(true));
+        }
+        if(button.id == 30){
+            setAscendSound = true;
+            setSubGui(new GuiSoundSelection((getTextField(30).getText())));
+        }
+        if(button.id == 31){
+            setAscendSound = false;
+            setSubGui(new GuiSoundSelection((getTextField(31).getText())));
         }
 		if(button.id == 16){
 			close();
@@ -164,6 +187,12 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
         if (guiNpcTextField.id == 21) {
             form.willMulti = guiNpcTextField.getFloat();
         }
+        if (guiNpcTextField.id == 30) {
+            form.ascendSound = guiNpcTextField.getText();
+        }
+        if (guiNpcTextField.id == 31) {
+            form.descendSound = guiNpcTextField.getText();
+        }
 	}
 
 	@Override
@@ -183,6 +212,20 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
                 }
             }
             initGui();
+        }
+        else if (subgui instanceof GuiSoundSelection){
+            GuiSoundSelection gss = (GuiSoundSelection) subgui;
+            if(gss.selectedResource != null) {
+                if(setAscendSound){
+                    getTextField(30).setText(gss.selectedResource.toString());
+                    unFocused(getTextField(30));
+                }
+                else {
+                    getTextField(31).setText(gss.selectedResource.toString());
+                    unFocused(getTextField(31));
+                }
+                initGui();
+            }
         }
 	}
 
