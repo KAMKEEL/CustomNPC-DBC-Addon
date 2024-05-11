@@ -211,22 +211,23 @@ public class ClientEventHandler {
                     return;
 
 
-                spawnAura(event.entity, aura);
+                spawnAura(event.entity, aura, null);
                 if (aura.hasSecondaryAura())
-                    spawnAura(event.entity, aura.getSecondaryAur());
+                    spawnAura(event.entity, aura.getSecondaryAur(), aura);
 
 
             }
         }
     }
 
-    public static void spawnAura(Entity entity, Aura aura) {
+    public static void spawnAura(Entity entity, Aura aura, Aura parent) {
         boolean isPlayer = entity instanceof EntityPlayer;
         boolean isNPC = entity instanceof EntityNPCInterface;
         DBCData dbcData = null;
+
         DBCDisplay display = null;
+
         String auraOwner = isPlayer ? entity.getCommandSenderName() : Utility.getEntityID(entity);
-        boolean isTransforming;
 
         if (isPlayer)
             dbcData = DBCData.get((EntityPlayer) entity);
@@ -238,8 +239,12 @@ public class ClientEventHandler {
         aur.setAlp(0.3f);
         aur.setSpd(40);
 
-        if (aura.display.hasSize())
-            ((IEntityAura) aur).setSize(aura.display.size);
+        if (parent != null)
+            ((IEntityAura) aur).setParent(parent);
+
+        if (aura.hasSecondaryAura())
+            if (aura.display.hasSize())
+                ((IEntityAura) aur).setSize(aura.display.size);
 
         ((IEntityAura) aur).setHasLightning(aura.display.hasLightning);
         ((IEntityAura) aur).setLightningColor(aura.display.lightningColor);
@@ -326,8 +331,6 @@ public class ClientEventHandler {
 
         }
 
-        isTransforming = isNPC ? display.isTransforming : dbcData.isTransforming();
-
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
 
@@ -361,7 +364,7 @@ public class ClientEventHandler {
         // This block indefinitely loops through aura sound as long as aura is enabled
         // regardless of the sound.ogg duration. The second the sound ends, it insta-replays
 
-        AuraSound.play(entity, aura, isTransforming);
+        AuraSound.play(entity, aura);
 
         ////////////////////////////////////////////////////
         ////////////////////////////////////////////////////
@@ -372,8 +375,15 @@ public class ClientEventHandler {
             aur.worldObj.spawnEntityInWorld(ring);
         }
 
-        if (kaiokenAura != null)
+        if (kaiokenAura != null) {
+            ((IEntityAura) kaiokenAura).setParent(aura);
+            kaiokenAura.setAlp(0.3F);
+            kaiokenAura.setSpd(40);
+            kaiokenAura.setTex("aurak");
+            kaiokenAura.setInner(false);
+            kaiokenAura.setRendPass(0);
             aur.worldObj.spawnEntityInWorld(kaiokenAura);
+        }
 
         aur.worldObj.spawnEntityInWorld(aur);
     }
