@@ -5,10 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.BonusController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -305,6 +302,9 @@ public class DBCData extends DBCDataUniversal {
     }
 
     public boolean isTransforming() {
+        if (!Utility.isServer(player) && TransformController.ascending)
+            return true;
+
         return containsSE(1);
     }
 
@@ -313,12 +313,16 @@ public class DBCData extends DBCDataUniversal {
 
     }
 
+    public Aura getToggledAura() {
+        if (!isDBCAuraOn() && !isTransforming())
+            return null;
+        return getAura();
+    }
+
     public Aura getAura() {
         Form form = getForm();
         Aura aura = null;
 
-        if (!isDBCAuraOn())
-            return null;
 
         if (form != null && form.display.hasAura())
             aura = form.display.getAur();

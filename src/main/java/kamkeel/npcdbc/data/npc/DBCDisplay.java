@@ -353,10 +353,16 @@ public class DBCDisplay implements IDBCDisplay {
         return auraOn || isTransforming;
     }
 
+    public Aura getToggledAura() {
+        if (!auraOn && !isTransforming)
+            return null;
+
+        return getAur();
+    }
+
+
     //internal usage
     public Aura getAur() {
-        if (!auraOn)
-            return null;
 
         if (isInForm()) {
             Form form = getCurrentForm();
