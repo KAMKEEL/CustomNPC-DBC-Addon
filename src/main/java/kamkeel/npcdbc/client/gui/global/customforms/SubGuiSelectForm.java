@@ -19,6 +19,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
     private String selected = null;
     private String search = "";
 
+    public boolean confirmed = false;
     public boolean selectionChild;
     public int selectedFormID = -1;
 
@@ -54,6 +55,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         int id = button.id;
 
         if(id == 0 && selected != null){
+            confirmed = true;
             selectedFormID = data.get(selected);
             this.close();
         }
@@ -78,18 +80,10 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
     }
 
     @Override
-    public void customScrollClicked(int i, int i1, int i2, GuiCustomScroll guiCustomScroll) {
-        if (guiCustomScroll.id == 0) {
-            save();
-            selected = scrollForms.getSelected();
-            Client.sendData(EnumPacketServer.CustomFormGet, data.get(selected));
-        }
-    }
+    public void customScrollClicked(int i, int i1, int i2, GuiCustomScroll guiCustomScroll) {}
 
     @Override
-    public void unFocused(GuiNpcTextField guiNpcTextField) {
-
-    }
+    public void unFocused(GuiNpcTextField guiNpcTextField) {}
 
     @Override
     public void keyTyped(char c, int i) {
