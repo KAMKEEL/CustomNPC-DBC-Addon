@@ -498,7 +498,7 @@ public class StatSheetGui extends AbstractJRMCGui {
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
         super.drawScreen(mouseX, mouseY, partialTicks);
         drawAlignmentBar(guiWidthOffset + 8, guiHeightOffset - 6);
-        drawStatusEffects(this.width/4, guiHeightOffset - 35);
+        drawStatusEffects(this.width/4, guiHeightOffset - 40);
         drawDBCLabels(mouseX, mouseY);
     }
 
