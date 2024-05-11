@@ -10,7 +10,6 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.DataAI;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
@@ -47,9 +46,8 @@ public class DBCDisplay implements IDBCDisplay {
     // Server Side Usage
     public float rageValue;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
-    public String auraSoundKey = "";
 
-    public DBCDisplay(EntityNPCInterface npc){
+    public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;
     }
 
@@ -351,8 +349,15 @@ public class DBCDisplay implements IDBCDisplay {
             this.auraOn = false;
     }
 
+    public boolean isAuraOn() {
+        return auraOn || isTransforming;
+    }
+
     //internal usage
     public Aura getAur() {
+        if (!auraOn)
+            return null;
+
         if (isInForm()) {
             Form form = getCurrentForm();
             if (form.display.hasAura())
@@ -384,7 +389,7 @@ public class DBCDisplay implements IDBCDisplay {
     }
 
     public void descend(int id) {
-         TransformController.npcDescend(npc,id);
+        TransformController.npcDescend(npc, id);
 
     }
 
@@ -429,21 +434,21 @@ public class DBCDisplay implements IDBCDisplay {
         return 0f;
     }
 
-    public void setDefaultColors(){
+    public void setDefaultColors() {
         if (race < 3) {
             bodyCM = 16297621;
         } else if (race == DBCRace.NAMEKIAN) {
             hairColor = 5095183;
-            bodyCM =  5095183;
-            bodyC1 =  13796998;
-            bodyC2 =  12854822;
+            bodyCM = 5095183;
+            bodyC1 = 13796998;
+            bodyC2 = 12854822;
         } else if (race == DBCRace.ARCOSIAN) {
-            bodyCM =  15460342;
-            bodyC1 =  16111595;
-            bodyC2 =  8533141;
-            bodyC3 =  16550015;
+            bodyCM = 15460342;
+            bodyC1 = 16111595;
+            bodyC2 = 8533141;
+            bodyC3 = 16550015;
         } else if (race == DBCRace.MAJIN)
-            bodyCM =  16757199;
+            bodyCM = 16757199;
         eyeColor = 0x000000;
     }
 }

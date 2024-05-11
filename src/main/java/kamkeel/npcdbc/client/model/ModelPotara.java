@@ -5,9 +5,6 @@ import JinRyuu.JRMCore.entity.ModelBipedBody;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
-import org.lwjgl.opengl.GL11;
-
-import javax.vecmath.Matrix4f;
 
 public class ModelPotara extends ModelBipedBody {
 

@@ -28,15 +28,15 @@ public class ConfigDBCEffects
 
 
     public final static String ZENKAI = "Zenkai";
-    public static double Saiyan_Strength = 1.2f;
-    public static double Saiyan_Dex = 0.5f;
-    public static double Saiyan_Will = 0.5f;
-    public static int Saiyan_EffectLength = 90;
+    public static double ZenkaiSaiyanStr = 1.0f;
+    public static double ZenkaiSaiyanDex = 1.0f;
+    public static double ZenkaiSaiyanWil = 1.0f;
+    public static int ZenkaiSaiyanLength = 360;
 
-    public static double HalfSaiyan_Strength = 1.2f;
-    public static double HalfSaiyan_Dex = 0.5f;
-    public static double HalfSaiyan_Will = 0.5f;
-    public static int HalfSaiyan_EffectLength = 90;
+    public static double ZenkaiHALFStr = 1.0f;
+    public static double ZenkaiHALFDex = 1.0f;
+    public static double ZenkaiHALFWil = 1.0f;
+    public static int ZenkaiHALFLength = 180;
 
     public static void init(File configFile)
     {
@@ -57,6 +57,20 @@ public class ConfigDBCEffects
             FOM_Will = config.get(FRUITOFMIGHT, "Will Multi", 0.5, "Amount added to Will Multi").getDouble(0.5);
             FOM_EffectLength = config.get(FRUITOFMIGHT, "Effect Time", 90, "Ki Drain Percent per Second").getInt(90);
             FOM_KiDrain = config.get(FRUITOFMIGHT, "Effect Drain", -0.8, "Ki Drain Percent per Second").getDouble(-0.8);
+
+            config.addCustomCategoryComment(ZENKAI,
+                "Zenkai will occur when a Saiyan or Half Saiyan dies. This can be disabled in\n" +
+                        "the DBC Gameplay Config. If the Zenaki effect is given to a none Saiyan. It will\n" +
+                         "utilitze the Half Saiyan Config values.");
+            ZenkaiSaiyanStr = config.get(ZENKAI, "Saiyan Strength Multi", 1.2f, "Amount added to Strength Multi").getDouble(1.0f);
+            ZenkaiSaiyanDex = config.get(ZENKAI, "Saiyan Dex Multi", 1.2f, "Amount added to Dex Multi").getDouble(1.0f);
+            ZenkaiSaiyanWil = config.get(ZENKAI, "Saiyan Will Multi", 1.2f, "Amount added to Will Multi").getDouble(1.0f);
+            ZenkaiSaiyanLength = config.get(ZENKAI, "Saiyan Zenkai Length", 360, "Time of Zenkai in Seconds").getInt(360);
+
+            ZenkaiHALFStr = config.get(ZENKAI, "Half Saiyan Strength Multi", 1.2f, "Amount added to Strength Multi").getDouble(1.0f);
+            ZenkaiHALFDex = config.get(ZENKAI, "Half Saiyan Dex Multi", 1.2f, "Amount added to Dex Multi").getDouble(1.0f);
+            ZenkaiHALFWil = config.get(ZENKAI, "Half Saiyan Will Multi", 1.2f, "Amount added to Will Multi").getDouble(1.0f);
+            ZenkaiHALFLength = config.get(ZENKAI, "Half Saiyan Zenkai Length", 180, "Time of Zenkai in Seconds").getInt(180);
         }
         catch (Exception e)
         {

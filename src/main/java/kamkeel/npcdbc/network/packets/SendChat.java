@@ -2,13 +2,10 @@ package kamkeel.npcdbc.network.packets;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.config.ConfigDBCClient;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import kamkeel.npcdbc.util.Utility;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 
 import java.io.IOException;

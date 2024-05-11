@@ -7,8 +7,6 @@ import net.minecraft.nbt.NBTTagList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import static JinRyuu.JRMCore.JRMCoreH.nbt;
-
 public class DBCDataBonus {
     private final DBCData data;
 

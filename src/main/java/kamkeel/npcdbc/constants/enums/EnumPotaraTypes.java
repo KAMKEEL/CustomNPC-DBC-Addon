@@ -1,7 +1,5 @@
 package kamkeel.npcdbc.constants.enums;
 
-import static kamkeel.npcdbc.config.ConfigCapsules.*;
-
 public enum EnumPotaraTypes {
 
     One(0, "One", 15),

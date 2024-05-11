@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.client.gui.global.customforms;
 
-import kamkeel.npcdbc.api.form.IFormMastery;
 import kamkeel.npcdbc.data.form.FormMastery;
 import noppes.npcs.client.gui.util.GuiNpcTextField;
 import noppes.npcs.client.gui.util.ITextfieldListener;

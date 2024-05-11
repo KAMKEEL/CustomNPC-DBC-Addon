@@ -24,4 +24,10 @@ public class DBCEventHooks {
         handler.callScript(DBCScriptType.CAPSULEUSED.function, capsuleUsedEvent);
         return NpcAPI.EVENT_BUS.post(capsuleUsedEvent);
     }
+
+    public static boolean onReviveEvent(DBCPlayerEvent.ReviveEvent reviveEvent) {
+        PlayerDataScript handler = ScriptController.Instance.playerScripts;
+        handler.callScript(DBCScriptType.REVIVED.function, reviveEvent);
+        return NpcAPI.EVENT_BUS.post(reviveEvent);
+    }
 }

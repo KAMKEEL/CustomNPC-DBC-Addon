@@ -1,22 +1,19 @@
 package kamkeel.npcdbc.client.model.part.hair;
 
 import JinRyuu.JBRA.RenderPlayerJBRA;
+import JinRyuu.JBRA.mod_JBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
-import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.controllers.data.TintData;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelData;
-import noppes.npcs.entity.data.ModelPartData;
-import JinRyuu.JBRA.mod_JBRA;
 import org.lwjgl.opengl.GL11;
 
 public class DBCHair extends ModelHairRenderer {
@@ -25,8 +22,6 @@ public class DBCHair extends ModelHairRenderer {
     public ModelData data;
     public EntityCustomNpc entity;
     public DBCDisplay display;
-
-    protected ResourceLocation location;
     public int hairColor = 16777215;
     public ModelMPM base;
 
@@ -88,6 +83,7 @@ public class DBCHair extends ModelHairRenderer {
 
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         this.renderHairs(display);
+        this.base.currentlyPlayerTexture = false;
         if (showColor) {
             GL11.glColor4f(1.0F, 1.0F, 1.0F, this.base.alpha);
         }

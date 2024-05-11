@@ -1,10 +1,10 @@
 package kamkeel.npcdbc.network.packets;
 
 import io.netty.buffer.ByteBuf;
+import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.util.ByteBufUtils;
-import kamkeel.npcdbc.util.SoundHelper;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,17 +14,16 @@ import java.io.IOException;
 public final class PlaySound extends AbstractPacket {
     public static final String packetName = "NPC|PlaySound";
 
-    public SoundHelper.Sound sound;
-
+    public Sound sound;
 
     public PlaySound() {
     }
 
     public PlaySound(Entity entity, String soundDir) {
-        sound = new SoundHelper.Sound(soundDir, entity);
+        sound = new Sound(soundDir, entity);
     }
 
-    public PlaySound(SoundHelper.Sound sound) {
+    public PlaySound(Sound sound) {
         this.sound = sound;
     }
 
@@ -43,7 +42,7 @@ public final class PlaySound extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        sound = SoundHelper.Sound.createFromNBT(ByteBufUtils.readNBT(in));
+        sound = Sound.createFromNBT(ByteBufUtils.readNBT(in));
 
         if (Utility.isServer())
             play(sound);
@@ -53,7 +52,7 @@ public final class PlaySound extends AbstractPacket {
 
     }
 
-    public static void play(SoundHelper.Sound sound) {
+    public static void play(Sound sound) {
         if (sound == null || sound.entity == null)
             return;
 
@@ -64,7 +63,7 @@ public final class PlaySound extends AbstractPacket {
     public static void play(Entity entity, String soundDir) {
         if (entity == null)
             return;
-        SoundHelper.Sound sound = new SoundHelper.Sound(soundDir, entity);
+        Sound sound = new Sound(soundDir, entity);
         PacketHandler.Instance.sendToTrackingPlayers(sound.entity, new PlaySound(sound).generatePacket());
 
     }

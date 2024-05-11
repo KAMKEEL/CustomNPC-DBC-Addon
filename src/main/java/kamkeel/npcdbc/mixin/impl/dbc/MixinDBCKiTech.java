@@ -27,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = DBCKiTech.class, remap = false)
 public class MixinDBCKiTech {
 
-    @Inject(method = "chargePart(Z)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;"), cancellable = true)
+    @Inject(method = "chargePart(Z)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", remap = true), cancellable = true)
     private static void cancelAura(boolean b, CallbackInfo ci, @Local(name = "e") LocalRef<Entity> entity) {
         if (entity.get() instanceof EntityPlayer) {
             DBCData dbcData = DBCData.get((EntityPlayer) entity.get());

@@ -43,9 +43,6 @@ public class DBCData extends DBCDataUniversal {
     public HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
     public HashMap<String, PlayerBonus> currentBonuses = new HashMap<>();
 
-    //Preprocessed data
-    public String auraSoundKey = "";
-
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
 
@@ -318,12 +315,25 @@ public class DBCData extends DBCDataUniversal {
 
     public Aura getAura() {
         Form form = getForm();
+        Aura aura = null;
+
+        if (!isDBCAuraOn())
+            return null;
 
         if (form != null && form.display.hasAura())
-            return form.display.getAur();
+            aura = form.display.getAur();
+        else if (aura == null)
+            aura = (Aura) AuraController.Instance.get(auraID);
 
-        return (Aura) AuraController.Instance.get(auraID);
+        if (aura != null) {
+            if (!aura.display.overrideDBCAura && !isForm(DBCForm.Base))
+                return null;
+            else
+                return aura;
 
+
+        }
+        return null;
     }
 
     public Form getForm() {

@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
-import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;

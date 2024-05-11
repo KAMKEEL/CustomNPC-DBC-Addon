@@ -1,18 +1,14 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreComTickH;
-import JinRyuu.JRMCore.i.InventoryCustomPlayer;
 import JinRyuu.JRMCore.server.JGPlayerMP;
 import kamkeel.npcdbc.CommonProxy;
-import kamkeel.npcdbc.items.ItemPotara;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = JRMCoreComTickH.class, remap = false)

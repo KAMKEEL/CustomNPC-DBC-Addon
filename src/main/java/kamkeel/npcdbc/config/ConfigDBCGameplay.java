@@ -40,6 +40,11 @@ public class ConfigDBCGameplay
     public static boolean UniqueEarrings = true;
     public static boolean WearableEarrings = true;
 
+    public final static String Zenkai = "Zenkai";
+    public static Property EnableZenkaiProperty;
+    public static boolean SaiyanZenkai = true;
+    public static boolean HalfSaiyanZenkai = true;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -70,6 +75,9 @@ public class ConfigDBCGameplay
             EnableNamekianRegen = EnableNamekianRegenProperty.getBoolean(true);
             NamekianRegenMin = config.get(NamekianRegeneration, "Min Namekian Regen", 20).getInt(20);
             NamekianRegenMax = config.get(NamekianRegeneration, "Max Namekian Regen", 50).getInt(50);
+
+            SaiyanZenkai = config.get(Zenkai, "Enable Saiyan Zenkai", true, "Enables Zenkai for Saiyans after Revive").getBoolean(true);
+            HalfSaiyanZenkai = config.get(Zenkai, "Enable Half Saiyan Zenkai", true, "Enables Zenkai for Half Saiyans after Revive").getBoolean(true);
 
             InstantTransformProperty = config.get(Forms, "Instant Transform Bypass Parent", false, "Allows Instant Transform to Bypass the Parent Only Check\n [If the player has Instant Transform Unlocked in Mastery, they can go to the form directly]");
             InstantTransform = InstantTransformProperty.getBoolean(false);

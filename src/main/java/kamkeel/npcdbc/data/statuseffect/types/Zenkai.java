@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.statuseffect.types;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.data.PlayerBonus;
@@ -19,18 +20,26 @@ public class Zenkai extends StatusEffect {
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
         iconX = 160;
         iconY = 0;
+        length = ConfigDBCEffects.ZenkaiHALFLength;
 
-        saiyanZenkai = new PlayerBonus("Saiyan" + name, (byte) 0, (float) ConfigDBCEffects.Saiyan_Strength, (float) ConfigDBCEffects.Saiyan_Dex, (float) ConfigDBCEffects.Saiyan_Will);
-        halfSaiyanZenkai = new PlayerBonus("HalfSaiyan" + name, (byte) 0, (float) ConfigDBCEffects.HalfSaiyan_Strength, (float) ConfigDBCEffects.HalfSaiyan_Dex, (float) ConfigDBCEffects.HalfSaiyan_Will);
+        saiyanZenkai = new PlayerBonus("Saiyan" + name, (byte) 0, (float) ConfigDBCEffects.ZenkaiSaiyanStr, (float) ConfigDBCEffects.ZenkaiSaiyanDex, (float) ConfigDBCEffects.ZenkaiSaiyanWil);
+        halfSaiyanZenkai = new PlayerBonus("HalfSaiyan" + name, (byte) 0, (float) ConfigDBCEffects.ZenkaiHALFStr, (float) ConfigDBCEffects.ZenkaiHALFDex, (float) ConfigDBCEffects.ZenkaiHALFWil);
     }
 
     @Override
     public void init(EntityPlayer player, PlayerEffect playerEffect){
-        BonusController.getInstance().applyBonus(player, saiyanZenkai);
+        DBCData dbcData = DBCData.get(player);
+        if(dbcData.Race == DBCRace.SAIYAN)
+            BonusController.getInstance().applyBonus(player, saiyanZenkai);
+        else
+            BonusController.getInstance().applyBonus(player, halfSaiyanZenkai);
     }
 
     @Override
     public void runout(EntityPlayer player, PlayerEffect playerEffect) {
-        BonusController.getInstance().removeBonus(player, saiyanZenkai);
+        if(playerEffect.getName().equals(saiyanZenkai.getName()))
+            BonusController.getInstance().removeBonus(player, saiyanZenkai);
+        else
+            BonusController.getInstance().removeBonus(player, halfSaiyanZenkai);
     }
 }

@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.items;
 
-import JinRyuu.JRMCore.items.ItemVanity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.LocalizationHelper;
@@ -26,7 +25,6 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import noppes.npcs.CustomItems;
-import noppes.npcs.scripted.NpcAPI;
 
 import java.util.List;
 import java.util.Random;

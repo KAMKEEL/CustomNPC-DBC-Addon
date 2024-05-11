@@ -13,14 +13,10 @@ import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.util.Utility;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import noppes.npcs.NoppesUtilPlayer;
 import noppes.npcs.NoppesUtilServer;
-import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
@@ -387,7 +383,7 @@ public class DBCDataStats {
 
         if (getCurrentBodyPercentage() < ConfigDBCGameplay.NamekianRegenMin) {
             if (!StatusEffectController.getInstance().hasEffect(data.player, Effects.NAMEK_REGEN)) {
-                StatusEffectController.getInstance().applyEffect(data.player, new PlayerEffect(Effects.NAMEK_REGEN, -100, (byte) 1));
+                StatusEffectController.getInstance().applyEffect(data.player, Effects.NAMEK_REGEN, -100);
             }
         }
     }
