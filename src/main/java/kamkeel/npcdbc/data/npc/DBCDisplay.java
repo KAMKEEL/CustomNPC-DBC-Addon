@@ -355,6 +355,9 @@ public class DBCDisplay implements IDBCDisplay {
 
     //internal usage
     public Aura getAur() {
+        if (!auraOn)
+            return null;
+
         if (isInForm()) {
             Form form = getCurrentForm();
             if (form.display.hasAura())

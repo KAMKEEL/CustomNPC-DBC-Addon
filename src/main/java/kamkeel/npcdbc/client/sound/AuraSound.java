@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.sound;
 
+import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
@@ -19,22 +20,23 @@ public class AuraSound extends Sound {
         return entity.getEntityId() + ":AURA:" + soundDir;
     }
 
+
     @Override
     public void update() {
         super.update();
-        boolean auraOn = true;
+
+        Aura aura = null;
         if (entity instanceof EntityNPCInterface) {
             DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
-            if (!display.isAuraOn())
-                auraOn = false;
-
+            aura = display.getAur();
         } else if (entity instanceof EntityPlayer) {
             DBCData dbcData = DBCData.get((EntityPlayer) entity);
-            if (!dbcData.isDBCAuraOn())
-                auraOn = false;
+            aura = dbcData.getAura();
         }
-        if (!auraOn) {
+
+        if (aura == null)
             stop(false);
-        }
+
+
     }
 }
