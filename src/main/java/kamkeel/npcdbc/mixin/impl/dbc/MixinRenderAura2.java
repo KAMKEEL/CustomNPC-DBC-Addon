@@ -59,6 +59,7 @@ public class MixinRenderAura2 {
             if (dbcData.addonFormID > -1)
                 s1.set(8.0f * size);
 
+
             s.set(s.get() == 0 ? 1 : s.get() * Math.min(dbcData.Release, 100) * 0.015f);
             return;
         }

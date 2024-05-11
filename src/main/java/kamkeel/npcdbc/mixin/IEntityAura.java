@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.mixin;
 
-import kamkeel.npcdbc.data.aura.Aura;
+import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import org.spongepowered.asm.mixin.Unique;
 
 public interface IEntityAura {
@@ -27,10 +27,10 @@ public interface IEntityAura {
     void setSize(float getSize);
 
     @Unique
-    Aura getParent();
+    EntityAura2 getParent();
 
     @Unique
-    void setParent(Aura parent);
+    void setParent(EntityAura2 parent);
 
     @Unique
     boolean hasParent();
@@ -40,4 +40,6 @@ public interface IEntityAura {
 
     @Unique
     boolean isKaioken();
+
+
 }
