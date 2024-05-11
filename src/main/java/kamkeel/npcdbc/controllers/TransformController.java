@@ -1,11 +1,11 @@
 package kamkeel.npcdbc.controllers;
 
-import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.sound.AuraSound;
+import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -62,7 +62,7 @@ public class TransformController {
         JRMCoreH.TransSaiCurRg = (byte) rage;
         PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
 
-        AuraSound.play(dbcData.player, dbcData.getAura(), ascending);
+        AuraSound.play(dbcData.player, dbcData.getAura());
 
 
         if (time >= 6) { //increments rage meter and drain ki cost every 6 ticks
@@ -84,7 +84,7 @@ public class TransformController {
         }
         if (rage >= 100) { //transform when rage meter reaches 100 (max)
             PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getID(), true).generatePacket());
-            DBCKiTech.soundAsc(form.getAscendSound());
+            new Sound(form.getAscendSound(), dbcData.player).play(true);
             resetTimers();
             cantTransform = true;
             transformed = true;

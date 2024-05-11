@@ -50,11 +50,23 @@ public class SoundHandler {
         while (iter.hasNext()) {
             Map.Entry<String, Sound> entry = iter.next();
             String sound = entry.getKey();
-            if (sound.contains(entity.getCommandSenderName() + entity.getEntityId()) && sound.contains(soundDir)) {
+            if (sound.contains(entity.getEntityId() + "") && sound.contains(soundDir)) {
                 Sound found = entry.getValue();
                 return found.isPlaying();
             }
         }
         return false;
+    }
+
+    public static Sound getPlayingSound(Entity entity, String soundDir) {
+        Iterator<Map.Entry<String, Sound>> iter = SoundHandler.playingSounds.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<String, Sound> entry = iter.next();
+            String sound = entry.getKey();
+            if (sound.contains(entity.getEntityId() + "") && sound.contains(soundDir))
+                return entry.getValue();
+
+        }
+        return null;
     }
 }

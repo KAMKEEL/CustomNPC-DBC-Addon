@@ -102,8 +102,8 @@ public class MixinDBCKiTech {
                     }
 
                     PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false).generatePacket());
-                    new Sound(form.getDescendSound(), dbcData.player).play(true);
                 }
+                new Sound(form.getDescendSound(), dbcData.player).play(true);
                 ci.cancel();
             }
         }
