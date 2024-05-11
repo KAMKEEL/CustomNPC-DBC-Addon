@@ -257,8 +257,6 @@ public class Form implements IForm {
         if (formID == this.id)
             return;
 
-        System.out.println("linked child "+formID+"???");
-
         Form form = (Form) FormController.getInstance().get(formID);
         if (form != null) {
             childID = formID;
@@ -275,8 +273,6 @@ public class Form implements IForm {
     public void linkParent(int formID) {
         if (formID == this.id)
             return;
-
-        System.out.println("linked parent "+ FMLCommonHandler.instance().getEffectiveSide() +"???");
 
         Form form = (Form) FormController.getInstance().get(formID);
         if (form != null) {

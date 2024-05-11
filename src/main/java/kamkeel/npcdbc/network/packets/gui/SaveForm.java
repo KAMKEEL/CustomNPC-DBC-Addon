@@ -68,9 +68,8 @@ public class SaveForm extends AbstractPacket {
             if(child != null)
                 child.save();
         }
-        form = (Form) FormController.getInstance().saveForm(form);
+        FormController.getInstance().saveForm(form);
 
-        System.out.printf("Saved form %s (%s, %s)\n", form.name, parentForm>=0, childForm>=0);
         NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
     }
 }
