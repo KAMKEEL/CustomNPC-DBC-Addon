@@ -51,6 +51,7 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
         scrollForms.guiLeft = guiLeft + 220;
         scrollForms.guiTop = guiTop + 4;
         addScroll(scrollForms);
+        scrollForms.setList(getSearchList());
 
         addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 220, guiTop + 4 + 3 + 185, 143, 20, search));
 
@@ -94,7 +95,7 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
         addButton(new GuiNpcButton(10, guiLeft+190, guiTop+116, 20, 20, "X"));
         addLabel(new GuiNpcLabel(6, "Child form", guiLeft+8, guiTop + 121));
 
-        scrollForms.setList(getSearchList());
+
     }
 
     @Override
@@ -125,15 +126,16 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
                 break;
             case 4:
                 //@TODO open mastery subgui
+                this.setSubGui(new SubGuiFormMastery(customForm.mastery));
                 break;
             case 5:
                 //@TODO open stackable subgui
+                this.setSubGui(new SubGuiFormStackables(customForm.stackable));
                 break;
             case 6:
                 this.customForm.fromParentOnly = button.getValue() == 1;
                 break;
             case 7:
-                //@TODO open parent form selection
                 this.setSubGui(new SubGuiSelectForm(false));
                 break;
             case 8:
@@ -141,7 +143,6 @@ public class GuiNPCManageCustomForms extends GuiNPCInterface2 implements IScroll
                 initGui();
                 break;
             case 9:
-                //@TODO add child form selection
                 this.setSubGui(new SubGuiSelectForm(true));
                 break;
             case 10:
