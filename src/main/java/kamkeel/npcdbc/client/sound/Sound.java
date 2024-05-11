@@ -11,6 +11,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 
 public class Sound extends MovingSound {
     public String key;
@@ -53,8 +55,11 @@ public class Sound extends MovingSound {
 
 
     public void play(boolean forOthers) {
-        if (onlyOneCanExist && SoundHandler.playingSounds.containsKey(key))
+        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, soundDir, volume, getPitch());
+
+        if (MinecraftForge.EVENT_BUS.post(event) || onlyOneCanExist && SoundHandler.playingSounds.containsKey(key))
             return;
+
         SoundHandler.playingSounds.put(key, this);
         Minecraft.getMinecraft().getSoundHandler().playSound(this);
         if (forOthers)

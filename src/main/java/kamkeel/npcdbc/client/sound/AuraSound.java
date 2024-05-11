@@ -12,6 +12,7 @@ public class AuraSound extends Sound {
 
     public AuraSound(String soundDir, Entity entity) {
         super(soundDir, entity);
+        volume = 0.5f;
         range = 32;
     }
 
