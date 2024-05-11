@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.data.dbcdata;
 
-import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.ClientCache;

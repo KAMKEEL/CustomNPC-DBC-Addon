@@ -4,7 +4,6 @@ import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
-import kamkeel.npcdbc.data.statuseffect.DBCEffect;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.types.*;
@@ -96,6 +95,22 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     public HashMap<Integer, PlayerEffect> getPlayerEffects(EntityPlayer player) {
         return playerEffects.get(Utility.getUUID(player));
+    }
+
+    public void applyEffect(EntityPlayer player, int id) {
+        StatusEffect parent = get(id);
+        if(parent != null){
+            PlayerEffect playerEffect = new PlayerEffect(id, parent.length, (byte) 1);
+            applyEffect(player, playerEffect);
+        }
+    }
+
+    public void applyEffect(EntityPlayer player, int id, int duration) {
+        StatusEffect parent = get(id);
+        if(parent != null){
+            PlayerEffect playerEffect = new PlayerEffect(id, duration, (byte) 1);
+            applyEffect(player, playerEffect);
+        }
     }
 
     public void applyEffect(EntityPlayer player, PlayerEffect effect) {

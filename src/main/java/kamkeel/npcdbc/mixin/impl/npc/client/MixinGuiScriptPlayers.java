@@ -17,5 +17,6 @@ public abstract class MixinGuiScriptPlayers extends GuiScriptInterface {
         this.hookList.add(DBCScriptType.FORMCHANGE.name());
         this.hookList.add(DBCScriptType.DAMAGED.name());
         this.hookList.add(DBCScriptType.CAPSULEUSED.name());
+        this.hookList.add(DBCScriptType.REVIVED.name());
     }
 }

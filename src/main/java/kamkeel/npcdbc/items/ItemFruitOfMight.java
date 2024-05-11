@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.items;
 
-import kamkeel.npcdbc.LocalizationHelper;;
+import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.StatusEffectController;
@@ -11,6 +11,8 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import noppes.npcs.CustomItems;
+
+;
 
 public class ItemFruitOfMight extends ItemFood {
 
@@ -36,7 +38,7 @@ public class ItemFruitOfMight extends ItemFood {
     protected void onFoodEaten(ItemStack itemStack, World world, EntityPlayer player)
     {
         if (!world.isRemote) {
-            StatusEffectController.getInstance().applyEffect(player, new PlayerEffect(Effects.FRUIT_OF_MIGHT, ConfigDBCEffects.FOM_EffectLength, (byte) 1));
+            StatusEffectController.getInstance().applyEffect(player, Effects.FRUIT_OF_MIGHT);
         }
     }
 }

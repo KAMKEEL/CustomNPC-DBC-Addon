@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.client.gui.dbc;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
