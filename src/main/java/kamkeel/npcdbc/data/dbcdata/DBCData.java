@@ -45,7 +45,7 @@ public class DBCData extends DBCDataUniversal {
     //NON VANILLA DBC
     public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f;
     public int flightSpeedRelease = 100;
-    public boolean isFlying, flightEnabled = true, flightGravity;
+    public boolean isFlying, flightEnabled = true, flightGravity = true;
 
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
@@ -161,12 +161,26 @@ public class DBCData extends DBCDataUniversal {
         addonCurrentHeat = c.getFloat("addonCurrentHeat");
         auraID = c.getInteger("auraID");
 
+        if (!c.hasKey("DBCBaseFlightSpeed"))
+            c.setFloat("DBCBaseFlightSpeed", baseFlightSpeed);
         baseFlightSpeed = c.getFloat("DBCBaseFlightSpeed");
+
+        if (!c.hasKey("DBCBaseFlightSpeed"))
+            c.setFloat("DBCDynamicFlightSpeed", dynamicFlightSpeed);
         dynamicFlightSpeed = c.getFloat("DBCDynamicFlightSpeed");
+
+        if (!c.hasKey("DBCBaseFlightSpeed"))
+            c.setInteger("DBCFlightSpeedRelease", flightSpeedRelease);
         flightSpeedRelease = c.getInteger("DBCFlightSpeedRelease");
-        isFlying = c.getBoolean("DBCisFlying");
+
+        if (!c.hasKey("DBCBaseFlightSpeed"))
+            c.setBoolean("DBCFlightEnabled", flightEnabled);
         flightEnabled = c.getBoolean("DBCFlightEnabled");
+
+        if (!c.hasKey("DBCBaseFlightSpeed"))
+            c.setBoolean("DBCFlightGravity", flightGravity);
         flightGravity = c.getBoolean("DBCFlightGravity");
+
 
         this.currentEffects.clear();
         if (c.hasKey("addonActiveEffects", 9)) {
@@ -222,8 +236,8 @@ public class DBCData extends DBCDataUniversal {
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
         stats.saveEffectsNBT(dbc);
         bonus.saveBonusNBT(dbc);
-        dbc.setFloat("DBCFlightSpeedRelease", 100f);
-        dbc.setBoolean("DBCFlightGravity", false);
+        //dbc.setFloat("DBCFlightSpeedRelease", 100f);
+        // dbc.setBoolean("DBCFlightGravity", false);
         loadFromNBT(dbc);
         if (syncALL)
             syncTracking();
