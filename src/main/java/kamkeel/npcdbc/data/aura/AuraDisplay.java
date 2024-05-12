@@ -23,6 +23,9 @@ public class AuraDisplay implements IAuraDisplay {
 
     public boolean overrideDBCAura = false;
 
+    public boolean kettleModeCharging, kettleModeAura;
+    public byte kettleModeType = 0;
+
     public String auraSound = "", kaiokenSound = "";
 
     public AuraDisplay(Aura parent) {
@@ -58,6 +61,10 @@ public class AuraDisplay implements IAuraDisplay {
         kaiokenOverrides = rendering.getBoolean("kaiokenOverrides");
         overrideDBCAura = rendering.getBoolean("overrideDBCAura");
 
+        kettleModeCharging = rendering.getBoolean("kettleModeCharging");
+        kettleModeAura = rendering.getBoolean("kettleMode");
+        kettleModeType = rendering.getByte("kettleModeType");
+
         auraSound = rendering.getString("auraSound");
         kaiokenSound = rendering.getString("kaiokenSound");
     }
@@ -88,11 +95,45 @@ public class AuraDisplay implements IAuraDisplay {
         rendering.setBoolean("kaiokenOverrides", kaiokenOverrides);
         rendering.setBoolean("overrideDBCAura", overrideDBCAura);
 
+        rendering.setBoolean("kettleModeCharging", kettleModeCharging);
+        rendering.setBoolean("kettleMode", kettleModeAura);
+        rendering.setByte("kettleModeType", kettleModeType);
+
         rendering.setString("auraSound", auraSound);
         rendering.setString("kaiokenSound", kaiokenSound);
 
         compound.setTag("rendering", rendering);
         return compound;
+    }
+
+    @Override
+    public boolean getKettleModeAura() {
+        return this.kettleModeAura;
+    }
+
+    @Override
+    public void setKettleModeAura(boolean set) {
+        this.kettleModeAura = set;
+    }
+
+    @Override
+    public boolean getKettleModeCharging() {
+        return this.kettleModeCharging;
+    }
+
+    @Override
+    public void setKettleModeCharging(boolean set) {
+        this.kettleModeCharging = set;
+    }
+
+    @Override
+    public byte getKettleModeType() {
+        return this.kettleModeType;
+    }
+
+    @Override
+    public void setKettleModeType(byte type) {
+        this.kettleModeType = type;
     }
 
     @Override

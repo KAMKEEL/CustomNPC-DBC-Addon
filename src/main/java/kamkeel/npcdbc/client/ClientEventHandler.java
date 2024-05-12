@@ -315,6 +315,7 @@ public class ClientEventHandler {
             aur.setColL2(16776724);
         }
 
+
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
         //Forms & Aura Ring
@@ -360,6 +361,12 @@ public class ClientEventHandler {
         if (aura.display.hasSpeed())
             aur.setSpd((int) aura.display.speed);
 
+
+        boolean isCharging = isPlayer && (dbcData.containsSE(4) || isTransforming) ? true : isTransforming ? true : false;
+        if (aura.display.kettleModeCharging)
+            aur.kettleMode = isCharging ? aura.display.kettleModeType : 0;
+        if (aura.display.kettleModeAura)
+            aur.kettleMode = aura.display.kettleModeType;
 
         ////////////////////////////////////////////////////
         ////////////////////////////////////////////////////

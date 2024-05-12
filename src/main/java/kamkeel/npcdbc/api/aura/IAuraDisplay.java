@@ -3,6 +3,27 @@ package kamkeel.npcdbc.api.aura;
 public interface IAuraDisplay {
 
 
+    boolean getKettleModeAura();
+
+    /**
+     * @param set True if kettle mode is always on regardless of charging/kettleModeCharging (turn kettleModeType on)
+     */
+    void setKettleModeAura(boolean set);
+
+    boolean getKettleModeCharging();
+
+    /**
+     * @param set True if kettle mode is only when charging ki/transforming; (turn kettleModeType on)
+     */
+    void setKettleModeCharging(boolean set);
+
+    byte getKettleModeType();
+
+    /**
+     * @param type Legal: 0 for off, 1 for only white particles without aura, 2 for both aura and particles
+     */
+    void setKettleModeType(byte type);
+
     boolean getOverrideDBCAura();
 
     void setOverrideDBCAura(boolean override);
