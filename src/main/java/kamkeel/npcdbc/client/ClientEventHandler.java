@@ -241,12 +241,11 @@ public class ClientEventHandler {
         if (isPlayer)
             dbcData = DBCData.get((EntityPlayer) entity);
 
-        boolean rotate90 = isPlayer && (dbcData.containsSE(7)) ? true : false;
+        boolean rotate90 = isPlayer && (dbcData.containsSE(7));
         EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, isPlayer ? dbcData.State : 0, isPlayer ? dbcData.State2 : 0, isPlayer ? dbcData.Release : 100, rotate90);
         aur.setLocationAndAngles(entity.posX, entity.posY - 5, entity.posZ, entity.rotationYaw, entity.rotationPitch);
-        boolean kk = aura.display.hasKaiokenAura;
-        aur.setAlp(0.3f);
-        aur.setSpd(40);
+        aur.setAlp(0.2f);
+        aur.setSpd(20);
 
 
         if (aura.display.hasSize())
@@ -254,11 +253,9 @@ public class ClientEventHandler {
 
         ((IEntityAura) aur).setHasLightning(aura.display.hasLightning);
         ((IEntityAura) aur).setLightningColor(aura.display.lightningColor);
-
-        if (aura.display.hasAlpha("lightning"))
-            ((IEntityAura) aur).setLightningAlpha(aura.display.lightningAlpha);
-        else
-            ((IEntityAura) aur).setLightningAlpha(255);
+        ((IEntityAura) aur).setLightningAlpha(aura.display.lightningAlpha);
+        ((IEntityAura) aur).setLightningSpeed(aura.display.lightningSpeed);
+        ((IEntityAura) aur).setLightningIntensity(aura.display.lightningIntensity);
 
 
         int formColor = isPlayer ? dbcData.AuraColor > 0 ? dbcData.AuraColor : JRMCoreH.Algnmnt_rc(dbcData.Alignment) : 11075583; //alignment color
@@ -314,6 +311,14 @@ public class ClientEventHandler {
             aur.setTexL2("aurau2");
             aur.setColL2(16776724);
         }
+//
+//        for(int i = 0; i < 1 && 2; i++){
+//
+//        }
+
+        boolean bo = false;
+//        for (int i2 = 0; i2 < (1) && (i2 != 1 || !(3 > (isPlayer ? 2 / 2.0F : 10.0F))); ++i2) {
+//        }
 
 
         //////////////////////////////////////////////////////
@@ -321,17 +326,19 @@ public class ClientEventHandler {
         //Forms & Aura Ring
         Form form = null;
         boolean isTransforming = false;
+        boolean isCharging = false;
 
         if (isNPC) {
             display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
             form = display.getForm();
             isTransforming = display.isTransforming;
+            isCharging = isTransforming;
+
 
         } else if (isPlayer) {
             form = dbcData.getForm();
             isTransforming = dbcData.isTransforming();
-
-
+            isCharging = dbcData.containsSE(4) || isTransforming;
         }
 
         //////////////////////////////////////////////////////
@@ -361,8 +368,7 @@ public class ClientEventHandler {
         if (aura.display.hasSpeed())
             aur.setSpd((int) aura.display.speed);
 
-
-        boolean isCharging = isPlayer && (dbcData.containsSE(4) || isTransforming) ? true : isTransforming ? true : false;
+        //Kettle Mode stuff
         if (aura.display.kettleModeCharging)
             aur.kettleMode = isCharging ? aura.display.kettleModeType : 0;
         if (aura.display.kettleModeAura)
@@ -390,26 +396,38 @@ public class ClientEventHandler {
 
         boolean override = aura.display.kaiokenOverrides;
         boolean rotate90 = dbcData.containsSE(7) ? true : false;
-        EntityAura2 kaiokenAura = new EntityAura2(dbcData.player.worldObj, dbcData.player.getCommandSenderName(), 0, 2.0F + dbcData.State, dbcData.State2 * 1.5f, dbcData.Release, rotate90);
-        ((IEntityAura) kaiokenAura).setSize(aura.display.size * 1f);
+
+        EntityAura2 kaiokenAura = new EntityAura2(dbcData.player.worldObj, dbcData.player.getCommandSenderName(), 16646144, 2.0F + dbcData.State, dbcData.State2 * 1.5f, dbcData.Release, rotate90);
+        ((IEntityAura) kaiokenAura).setIsKaioken(true);
+        if (override) {
+            kaiokenAura.setAlp(0.2F);
+            kaiokenAura.setSpd(20);
+        } else {
+            kaiokenAura.setAlp(0.4F);
+            kaiokenAura.setSpd(40);
+            kaiokenAura.setTex("aurak");
+            kaiokenAura.setInner(false);
+            kaiokenAura.setRendPass(0);
+        }
 
         if (aura.display.hasAlpha("kaioken"))
             kaiokenAura.setAlp((float) aura.display.kaiokenAlpha / 255);
-        else
-            kaiokenAura.setAlp(0.4F);
 
         if (aura.display.hasColor("kaioken"))
             kaiokenAura.setCol(aura.display.kaiokenColor);
-        else
-            kaiokenAura.setCol(16646144);
 
-        kaiokenAura.setSpd(40);
+        if (aura.display.hasSpeed())
+            kaiokenAura.setSpd((int) aura.display.speed);
 
-        if (!override) {
-            kaiokenAura.setTex("aurak");
-            kaiokenAura.setInner(!aura.display.kaiokenOverrides);
-            kaiokenAura.setRendPass(0);
-        }
+        ((IEntityAura) kaiokenAura).setSize(aura.display.size * aura.display.kaiokenSize);
+        ((IEntityAura) kaiokenAura).setHasLightning(aura.display.hasLightning);
+        ((IEntityAura) kaiokenAura).setLightningColor(aura.display.lightningColor);
+        ((IEntityAura) kaiokenAura).setLightningAlpha(aura.display.lightningAlpha);
+
+
+        long l = System.nanoTime();
+        long t = System.currentTimeMillis();
+        double t2 = l / 10000000L;
 
         String kkSound = aura.display.getFinalKKSound();
         if (kkSound != null && !SoundHandler.isPlayingSound(dbcData.player, kkSound)) {
@@ -428,15 +446,13 @@ public class ClientEventHandler {
     }
 
     public static EntityAuraRing spawnAuraRing(Entity entity, int color) {
-        if (entity.ticksExisted % 25 != 0)
+        if (entity.ticksExisted % 20 != 0)
             return null;
 
         boolean isPlayer = entity instanceof EntityPlayer;
-        EntityAuraRing ring = new EntityAuraRing(entity.worldObj, isPlayer ? entity.getCommandSenderName() : Utility.getEntityID(entity), 0, 0, 0, 0);
+        EntityAuraRing ring = new EntityAuraRing(entity.worldObj, isPlayer ? entity.getCommandSenderName() : Utility.getEntityID(entity), color, 0, 0, 0);
 
-        ring.setCol(color);
         entity.worldObj.spawnEntityInWorld(ring);
-
         return ring;
 
     }

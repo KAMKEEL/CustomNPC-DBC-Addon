@@ -367,7 +367,7 @@ public class DBCData extends DBCDataUniversal {
             aura = (Aura) AuraController.Instance.get(auraID);
 
         if (aura != null) {
-            if (!aura.display.overrideDBCAura && (!isForm(DBCForm.Base) && !(isForm(DBCForm.Kaioken) && aura.display.hasKaiokenAura)))
+            if (!aura.display.overrideDBCAura && (!isForm(DBCForm.Base) && !(isForm(DBCForm.Kaioken) && aura.display.hasKaiokenAura && State == 0)))
                 return null;
             else
                 return aura;
