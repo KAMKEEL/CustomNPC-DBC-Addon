@@ -22,6 +22,7 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -118,13 +119,13 @@ public class ServerEventHandler {
             if (form.mastery.hasKiDrain()) {
                 if (player.ticksExisted % 10 == 0) {
 
-                    int might = DBCUtils.calculateKiDrainMight(dbcData);
+                    int might = DBCUtils.calculateKiDrainMight(dbcData, player);
 
                     double cost = might * form.mastery.getKiDrain();
                     cost *= ((double) dbcData.Release / 100);
                     cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
 
-                    dbcData.stats.restoreKiFlat((int) -cost);
+                    dbcData.stats.restoreKiFlat((int) (-cost  / form.mastery.kiDrainTimer * 10));
                 }
             }
 
