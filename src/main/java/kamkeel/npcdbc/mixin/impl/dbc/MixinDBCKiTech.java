@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
-import JinRyuu.DragonBC.common.DBCClient;
 import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
@@ -26,7 +25,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
@@ -38,28 +40,24 @@ public class MixinDBCKiTech {
      */
     @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
     private static void changeBaseSpeed(Args args) {
-        DBCData dbcData = DBCData.getClient();
         float speed = args.get(3);
-
-        args.set(3, speed * dbcData.flightSpeed);
+        args.set(3, speed * DBCData.getClient().baseFlightSpeed);
 
     }
 
-    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V", ordinal = 1))
+    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private static void changeDynamic(Args args) {
-        DBCData dbcData = DBCData.getClient();
-        float speed = args.get(3);
-
-        args.set(3, speed * dbcData.flightSpeed);
+        float speed = args.get(4);
+        args.set(4, speed * DBCData.getClient().dynamicFlightSpeed);
 
     }
 
     @Inject(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;floating:Z", ordinal = 7, shift = At.Shift.AFTER))
     private static void isFlying(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
-        DBCData dbcData = DBCData.getClient();
-        if (dbcData.isFlying != DBCKiTech.floating) {
-            dbcData.isFlying = DBCKiTech.floating;
-            PacketHandler.Instance.sendToServer(new DBCSetValPacket(dbcData.player, EnumNBTType.BOOLEAN, "DBCisFlying", DBCKiTech.floating).generatePacket());
+
+        if (DBCData.getClient().isFlying != DBCKiTech.floating) {
+            DBCData.getClient().isFlying = DBCKiTech.floating;
+            PacketHandler.Instance.sendToServer(new DBCSetValPacket(DBCData.getClient().player, EnumNBTType.BOOLEAN, "DBCisFlying", DBCKiTech.floating).generatePacket());
         }
 
 
@@ -67,17 +65,15 @@ public class MixinDBCKiTech {
 
     @Redirect(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;PlayerFlyingDragDownOn:Z"))
     private static boolean flightGravity() {
-        DBCData dbcData = DBCData.getClient();
-        if (!dbcData.flightGravity)
-            return JRMCoreConfig.PlayerFlyingDragDownOn;
+        if (!DBCData.getClient().flightGravity)
+            return false;
 
-        return false;
+        return JRMCoreConfig.PlayerFlyingDragDownOn;
     }
 
     @Inject(method = "FloatKi", at = @At("HEAD"), cancellable = true)
     private static void disableFlight(KeyBinding kiFlight, KeyBinding keyBindJump, KeyBinding keyBindSneak, CallbackInfo ci) {
-        DBCData dbcData = DBCData.getClient();
-        if (!dbcData.flightEnabled)
+        if (!DBCData.getClient().flightEnabled)
             ci.cancel();
 
     }

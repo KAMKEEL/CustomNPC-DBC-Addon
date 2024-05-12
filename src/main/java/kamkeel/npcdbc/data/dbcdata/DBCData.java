@@ -43,7 +43,8 @@ public class DBCData extends DBCDataUniversal {
     public HashMap<String, PlayerBonus> currentBonuses = new HashMap<>();
 
     //NON VANILLA DBC
-    public float flightSpeed = 1.0f;
+    public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f;
+    public int flightSpeedRelease;
     public boolean isFlying, flightEnabled = true, flightGravity;
 
     public DBCDataStats stats = new DBCDataStats(this);
@@ -105,7 +106,9 @@ public class DBCData extends DBCDataUniversal {
         comp.setFloat("addonFormLevel", addonFormLevel);
         comp.setFloat("addonCurrentHeat", addonCurrentHeat);
 
-        comp.setFloat("DBCFlightSpeed", flightSpeed);
+        comp.setFloat("DBCBaseFlightSpeed", baseFlightSpeed);
+        comp.setFloat("DBCDynamicFlightSpeed", dynamicFlightSpeed);
+        comp.setInteger("DBCFlightSpeedRelease", flightSpeedRelease);
         comp.setBoolean("DBCisFlying", isFlying);
         comp.setBoolean("DBCFlightEnabled", flightEnabled);
         comp.setBoolean("DBCFlightGravity", flightGravity);
@@ -158,7 +161,9 @@ public class DBCData extends DBCDataUniversal {
         addonCurrentHeat = c.getFloat("addonCurrentHeat");
         auraID = c.getInteger("auraID");
 
-        flightSpeed = c.getFloat("DBCFlightSpeed");
+        baseFlightSpeed = c.getFloat("DBCBaseFlightSpeed");
+        dynamicFlightSpeed = c.getFloat("DBCDynamicFlightSpeed");
+        flightSpeedRelease = c.getInteger("DBCFlightSpeedRelease");
         isFlying = c.getBoolean("DBCisFlying");
         flightEnabled = c.getBoolean("DBCFlightEnabled");
         flightGravity = c.getBoolean("DBCFlightGravity");
@@ -217,7 +222,7 @@ public class DBCData extends DBCDataUniversal {
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
         stats.saveEffectsNBT(dbc);
         bonus.saveBonusNBT(dbc);
-        dbc.setFloat("DBCFlightSpeed", 1f);
+        dbc.setFloat("DBCDynamicFlightSpeed", 10f);
         dbc.setBoolean("DBCFlightGravity", false);
         loadFromNBT(dbc);
         if (syncALL)
