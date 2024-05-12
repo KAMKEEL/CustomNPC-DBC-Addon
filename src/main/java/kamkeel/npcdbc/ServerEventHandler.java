@@ -1,5 +1,6 @@
 package kamkeel.npcdbc;
 
+import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -15,6 +16,7 @@ import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.CapsuleInfo;
 import kamkeel.npcdbc.network.packets.LoginInfo;
+import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
@@ -115,8 +117,14 @@ public class ServerEventHandler {
             }
             if (form.mastery.hasKiDrain()) {
                 if (player.ticksExisted % 10 == 0) {
-                    float toDrain = form.mastery.kiDrain * form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
-                    dbcData.stats.restoreKiPercent(-toDrain / form.mastery.kiDrainTimer * 10);
+
+                    int might = DBCUtils.calculateKiDrainMight(dbcData);
+
+                    double cost = might * form.mastery.getKiDrain();
+                    cost *= ((double) dbcData.Release / 100);
+                    cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
+
+                    dbcData.stats.restoreKiFlat((int) -cost);
                 }
             }
 

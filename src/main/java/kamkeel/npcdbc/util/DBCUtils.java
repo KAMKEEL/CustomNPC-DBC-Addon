@@ -537,5 +537,14 @@ public class DBCUtils {
         }
     }
 
+    public static int calculateKiDrainMight(DBCData dbcData){
+        int[] playerAttributes = JRMCoreH.PlyrAttrbts(dbcData.player); //Need to get fused attributes, major refactor of DBCData later on?
+
+        int strengthBuff = JRMCoreH.getPlayerAttribute(playerAttributes, 0, dbcData.State, 0, 1, "SklX", dbcData.Release, dbcData.ArcReserve, false, false, false, false, false, 1, null, false) - playerAttributes[0];
+        int dexBuff = JRMCoreH.getPlayerAttribute(playerAttributes, 1, dbcData.State, 0, 1, "SklX", dbcData.Release, dbcData.ArcReserve, false, false, false, false, false, 1, null, false) - playerAttributes[1];
+        int willBuff = JRMCoreH.getPlayerAttribute(playerAttributes, 3, dbcData.State, 0, 1, "SklX", dbcData.Release, dbcData.ArcReserve, false, false, false, false, false, 1, null, false) - playerAttributes[3];
+
+        return (int) (strengthBuff*0.4F + dexBuff*0.25F + willBuff*0.35F);
+    }
 
 }

@@ -232,6 +232,12 @@ public class DBCDataStats {
         data.getRawCompound().setInteger("jrmcEnrgy", data.Ki);
     }
 
+    public void restoreKiFlat(int amountToRestore) {
+        int maxKi = isFused() ? getMaxFusionKi() : getMaxKi();
+        data.Ki = ValueUtil.clamp(data.Ki+amountToRestore, 0, maxKi);
+        data.getRawCompound().setInteger("jrmcEnrgy", data.Ki);
+    }
+
     public void restoreHealthPercent(float percToRestore) {
         int maxBody = isFused() ? getMaxFusionBody() : getMaxBody();
         int toAdd = (int) (maxBody * (percToRestore / 100));
