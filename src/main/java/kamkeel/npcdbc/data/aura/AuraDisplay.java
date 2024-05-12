@@ -16,10 +16,11 @@ public class AuraDisplay implements IAuraDisplay {
     public float size = 1.0f, speed = -1f;
 
     public boolean hasLightning = false;
-    public int lightningColor = -1, lightningAlpha = -1;
+    public int lightningColor = -1, lightningAlpha = -1, lightningSpeed = -1, lightningIntensity = -1;
 
     public int kaiokenColor = -1, kaiokenAlpha = -1;
     public boolean hasKaiokenAura = true, kaiokenOverrides = true;
+    public float kaiokenSize = 1.1f; //kaioken size is always 1.1x bigger than aura size by default
 
     public boolean overrideDBCAura = false;
 
@@ -53,10 +54,13 @@ public class AuraDisplay implements IAuraDisplay {
         hasLightning = rendering.getBoolean("hasLightning");
         lightningColor = rendering.getInteger("lightningColor");
         lightningAlpha = rendering.getInteger("lightningAlpha");
+        lightningSpeed = rendering.getInteger("lightningSpeed");
+        lightningIntensity = rendering.getInteger("lightningIntensity");
 
 
         kaiokenColor = rendering.getInteger("kaiokenColor");
         kaiokenAlpha = rendering.getInteger("kaiokenAlpha");
+        kaiokenSize = rendering.getFloat("kaiokenSize");
         hasKaiokenAura = rendering.getBoolean("kaiokenOn");
         kaiokenOverrides = rendering.getBoolean("kaiokenOverrides");
         overrideDBCAura = rendering.getBoolean("overrideDBCAura");
@@ -88,9 +92,12 @@ public class AuraDisplay implements IAuraDisplay {
         rendering.setBoolean("hasLightning", hasLightning);
         rendering.setInteger("lightningColor", lightningColor);
         rendering.setInteger("lightningAlpha", lightningAlpha);
+        rendering.setInteger("lightningSpeed", lightningSpeed);
+        rendering.setInteger("lightningIntensity", lightningIntensity);
 
         rendering.setInteger("kaiokenColor", kaiokenColor);
         rendering.setInteger("kaiokenAlpha", kaiokenAlpha);
+        rendering.setFloat("kaiokenSize", kaiokenSize);
         rendering.setBoolean("kaiokenOn", hasKaiokenAura);
         rendering.setBoolean("kaiokenOverrides", kaiokenOverrides);
         rendering.setBoolean("overrideDBCAura", overrideDBCAura);
@@ -151,6 +158,15 @@ public class AuraDisplay implements IAuraDisplay {
         this.hasKaiokenAura = toggle;
     }
 
+    @Override
+    public float getKaiokenSize() {
+        return kaiokenSize;
+    }
+
+    @Override
+    public void setKaiokenSize(float size) {
+        this.kaiokenSize = size;
+    }
 
     @Override
     public String getKaiokenSound() {
@@ -356,6 +372,28 @@ public class AuraDisplay implements IAuraDisplay {
     @Override
     public boolean getHasLightning() {
         return hasLightning;
+    }
+
+    @Override
+    public int getLightningSpeed() {
+        return lightningSpeed;
+    }
+
+    @Override
+    public void setLightningSpeed(int lightningSpeed) {
+        this.lightningSpeed = lightningSpeed;
+    }
+
+    @Override
+    public int getLightningIntensity() {
+        return lightningIntensity;
+    }
+
+    @Override
+    public void setLightningIntensity(int lightningIntensity) {
+        if (lightningIntensity != -1)
+            lightningIntensity = ValueUtil.clamp(lightningIntensity, 1, 8);
+        this.lightningIntensity = lightningIntensity;
     }
 
     @Override

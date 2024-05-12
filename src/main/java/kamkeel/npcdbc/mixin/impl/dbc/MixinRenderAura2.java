@@ -5,6 +5,7 @@ import JinRyuu.DragonBC.common.Npcs.RenderAura2;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.mixin.IEntityAura;
@@ -13,29 +14,82 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.entity.EntityCustomNpc;
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
-
-import java.awt.*;
 
 @Mixin(value = RenderAura2.class, remap = false)
 public class MixinRenderAura2 {
 
-    @Inject(method = "lightning", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/Tessellator;setColorRGBA_F(FFFF)V", ordinal = -1, shift = At.Shift.AFTER, remap = true))
-    private void renderLightning(EntityAura2 e, double par2, double par4, double par6, float par9, float var20, float var13, boolean rot, CallbackInfo ci, @Local(name = "tessellator2") LocalRef<Tessellator> tessellator) {
+    @Shadow
+    private int lightVertN;
+
+
+    @Redirect(method = "lightning", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;getState()F"))
+    private float setHasLightning(EntityAura2 instance) {
+        IEntityAura aura = (IEntityAura) instance;
+        if (aura.hasLightning())
+            return 5f;
+        return instance.getState();
+
+
+    }
+
+    @Redirect(method = "lightning", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;getLightLivingTime()I"))
+    private int setLightningSpeed(EntityAura2 instance) {
+        IEntityAura aura = (IEntityAura) instance;
+        if (aura.getLightningSpeed() != -1)
+            return aura.getLightningSpeed();
+
+        return instance.getLightLivingTime();
+
+
+    }
+
+    @Inject(method = "lightning", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/Npcs/RenderAura2;lightVertN:I", ordinal = 0, shift = At.Shift.AFTER, remap = true))
+    private void setLightningIntensity(EntityAura2 e, double par2, double par4, double par6, float par9, float var20, float var13, boolean rot, CallbackInfo ci, @Local(name = "nu2") LocalIntRef nu2) {
         IEntityAura aura = (IEntityAura) e;
-        if (aura.isHasLightning() && aura.getLightningColor() != 0) {
-            Color col = Color.decode(aura.getLightningColor() + "");
-            tessellator.get().setColorRGBA(col.getRed(), col.getGreen(), col.getBlue(), aura.getLightningAlpha());
+        if (!aura.hasLightning())
+            return;
+
+        int intensity = aura.getLightningIntensity();
+
+        if (aura.getLightningIntensity() > -1) {
+            lightVertN = intensity;
+            nu2.set(intensity);
         }
+
+    }
+
+    @Inject(method = "lightning", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/Tessellator;setColorRGBA_F(FFFF)V", ordinal = -1, shift = At.Shift.AFTER, remap = true))
+    private void renderLightningColor(EntityAura2 e, double par2, double par4, double par6, float par9, float var20, float var13, boolean rot, CallbackInfo ci, @Local(name = "tessellator2") LocalRef<Tessellator> tessellator) {
+        IEntityAura aura = (IEntityAura) e;
+        if (!aura.hasLightning())
+            return;
+
+        int lightningColor = 0x25c9cf;
+        int lightningAlpa = 255;
+
+        if (aura.getLightningColor() > -1)
+            lightningColor = aura.getLightningColor();
+        if (aura.getLightningAlpha() > -1)
+            lightningAlpa = aura.getLightningAlpha();
+
+        if (lightningColor <= 1000)
+            GL11.glDisable(GL11.GL_BLEND);
+
+        tessellator.get().setColorRGBA_I(lightningColor, lightningAlpa);
+
     }
 
     @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 0))
-    private void auraSize(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura) {
+    private void setAuraSize(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura) {
         IEntityAura aura = (IEntityAura) entityAura.get();
         if (aura.getSize() != 1f) {
             float xSize = (float) args.get(0) * aura.getSize();
@@ -45,6 +99,7 @@ public class MixinRenderAura2 {
             args.set(0, xSize);
             args.set(1, ySize);
             args.set(2, zSize);
+
 
         }
     }
@@ -70,4 +125,6 @@ public class MixinRenderAura2 {
             s.set(s1.get() * Math.min(par1Entity.getCRel(), 70) / 45);
         }
     }
+
+
 }

@@ -138,10 +138,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Redirect(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", opcode = Opcodes.GETSTATIC))
-    public boolean fixPotaraHair(@Local(name = "abstractClientPlayer") AbstractClientPlayer abstractClientPlayer){
+    public boolean fixPotaraHair(@Local(name = "abstractClientPlayer") AbstractClientPlayer abstractClientPlayer) {
         ItemStack item = abstractClientPlayer.getCurrentArmor(3);
 
-        if(item != null && item.getItem() instanceof ItemPotara)
+        if (item != null && item.getItem() instanceof ItemPotara)
             return false;
 
         return JRMCoreConfig.HHWHO;

@@ -31,6 +31,10 @@ public interface IAuraDisplay {
     void toggleKaioken(boolean toggle);
 
 
+    float getKaiokenSize();
+
+    void setKaiokenSize(float size);
+
     String getKaiokenSound();
 
     /**
@@ -109,6 +113,14 @@ public interface IAuraDisplay {
     void hasLightning(boolean hasLightning);
 
     boolean getHasLightning();
+
+    int getLightningSpeed();
+
+    void setLightningSpeed(int lightningSpeed);
+
+    int getLightningIntensity();
+
+    void setLightningIntensity(int lightningIntensity);
 
     boolean hasSize();
 

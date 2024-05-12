@@ -8,7 +8,7 @@ public interface IEntityAura {
 
     void setState(float ok);
 
-    boolean isHasLightning();
+    boolean hasLightning();
 
     void setHasLightning(boolean hasLightning);
 
@@ -21,6 +21,18 @@ public interface IEntityAura {
 
     @Unique
     void setLightningAlpha(int lightningAlpha);
+
+    @Unique
+    int getLightningSpeed();
+
+    @Unique
+    int getLightningIntensity();
+
+    @Unique
+    void setLightningSpeed(int lightningSpeed);
+
+    @Unique
+    void setLightningIntensity(int lightningIntensity);
 
     float getSize();
 

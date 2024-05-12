@@ -25,6 +25,10 @@ public class MixinEntityAura2 implements IEntityAura {
     @Unique
     private int lightningAlpha;
     @Unique
+    private int lightningSpeed;
+    @Unique
+    private int lightningIntensity;
+    @Unique
     private float getSize = 1;
 
     @Unique
@@ -61,7 +65,7 @@ public class MixinEntityAura2 implements IEntityAura {
 
     @Unique
     @Override
-    public boolean isHasLightning() {
+    public boolean hasLightning() {
         return hasLightning;
     }
 
@@ -69,7 +73,6 @@ public class MixinEntityAura2 implements IEntityAura {
     @Override
     public void setHasLightning(boolean hasLightning) {
         this.hasLightning = hasLightning;
-        state = hasLightning ? 5 : state;
     }
 
     @Unique
@@ -94,6 +97,30 @@ public class MixinEntityAura2 implements IEntityAura {
     @Override
     public void setLightningAlpha(int lightningAlpha) {
         this.lightningAlpha = lightningAlpha;
+    }
+
+    @Unique
+    @Override
+    public int getLightningSpeed() {
+        return lightningSpeed;
+    }
+
+    @Unique
+    @Override
+    public void setLightningSpeed(int lightningSpeed) {
+        this.lightningSpeed = lightningSpeed;
+    }
+
+    @Unique
+    @Override
+    public int getLightningIntensity() {
+        return lightningIntensity;
+    }
+
+    @Unique
+    @Override
+    public void setLightningIntensity(int lightningIntensity) {
+        this.lightningIntensity = lightningIntensity;
     }
 
     @Unique
