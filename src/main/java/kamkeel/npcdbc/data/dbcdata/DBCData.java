@@ -44,7 +44,7 @@ public class DBCData extends DBCDataUniversal {
 
     //NON VANILLA DBC
     public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f;
-    public int flightSpeedRelease;
+    public int flightSpeedRelease = 100;
     public boolean isFlying, flightEnabled = true, flightGravity;
 
     public DBCDataStats stats = new DBCDataStats(this);
@@ -222,7 +222,7 @@ public class DBCData extends DBCDataUniversal {
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
         stats.saveEffectsNBT(dbc);
         bonus.saveBonusNBT(dbc);
-        dbc.setFloat("DBCDynamicFlightSpeed", 10f);
+        dbc.setFloat("DBCFlightSpeedRelease", 100f);
         dbc.setBoolean("DBCFlightGravity", false);
         loadFromNBT(dbc);
         if (syncALL)
