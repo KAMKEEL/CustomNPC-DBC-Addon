@@ -67,6 +67,9 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         getTextField(20).floatsOnly = true;
         getTextField(20).setMinMaxDefaultFloat(-10000, 10000, 1);
 
+        addButton(new GuiNpcButton(10, guiLeft + 192, y, 45, 20, new String[]{"gui.no", "gui.yes"}, form.fromParentOnly ? 1 : 0));
+        addLabel(new GuiNpcLabel(10, "Transform from Only Parent Form", guiLeft+8, y + 5));
+
         y += 23;
 
         addLabel(new GuiNpcLabel(21,"Willpower", guiLeft + 239, y + 5));
@@ -75,8 +78,8 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         getTextField(21).floatsOnly = true;
         getTextField(21).setMinMaxDefaultFloat(-10000, 10000, 1);
 
-        addButton(new GuiNpcButton(10, guiLeft + 192, y, 45, 20, new String[]{"gui.no", "gui.yes"}, form.fromParentOnly ? 1 : 0));
-        addLabel(new GuiNpcLabel(10, "Transform from Only Parent Form", guiLeft+8, y + 5));
+        addButton(new GuiNpcButton(50, guiLeft + 142, y, 95, 20, "Edit Parents"));
+        addLabel(new GuiNpcLabel(50, "DBC Form Parents", guiLeft+8, y + 5));
 
         y += 23;
 

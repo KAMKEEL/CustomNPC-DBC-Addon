@@ -42,13 +42,13 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         if(stackable.kaiokenStackable){
             y += 23;
 
-            addLabel(new GuiNpcLabel(22,"KK Strength", guiLeft + 4, y + 5));
+            addLabel(new GuiNpcLabel(22,"KK Strength %", guiLeft + 4, y + 5));
             addTextField(new GuiNpcTextField(22, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.kaiokenStrength)));
             getTextField(22).setMaxStringLength(22);
             getTextField(22).floatsOnly = true;
             getTextField(22).setMinMaxDefaultFloat(-10000, 10000, 1);
 
-            addLabel(new GuiNpcLabel(23,"KK State 2 Strength", guiLeft + 175, y + 5));
+            addLabel(new GuiNpcLabel(23,"KK State 2 Strength %", guiLeft + 175, y + 5));
             addTextField(new GuiNpcTextField(23, this, guiLeft + 300, y, 50, 20, String.valueOf(stackable.kaiokenState2Factor)));
             getTextField(23).setMaxStringLength(23);
             getTextField(23).floatsOnly = true;
@@ -63,13 +63,13 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         if(stackable.uiStackable){
             y += 23;
 
-            addLabel(new GuiNpcLabel(32,"UI Strength", guiLeft + 4, y + 5));
+            addLabel(new GuiNpcLabel(32,"UI Strength %", guiLeft + 4, y + 5));
             addTextField(new GuiNpcTextField(32, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.uiStrength)));
             getTextField(32).setMaxStringLength(32);
             getTextField(32).floatsOnly = true;
             getTextField(32).setMinMaxDefaultFloat(-10000, 10000, 1);
 
-            addLabel(new GuiNpcLabel(33,"UI State 2 Strength", guiLeft + 175, y + 5));
+            addLabel(new GuiNpcLabel(33,"UI State 2 Strength %", guiLeft + 175, y + 5));
             addTextField(new GuiNpcTextField(33, this, guiLeft + 300, y, 50, 20, String.valueOf(stackable.uiState2Factor)));
             getTextField(33).setMaxStringLength(33);
             getTextField(33).floatsOnly = true;
@@ -83,7 +83,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         if(stackable.godStackable){
             y += 23;
-            addLabel(new GuiNpcLabel(42,"GoD Strength", guiLeft + 4, y + 5));
+            addLabel(new GuiNpcLabel(42,"GoD Strength %", guiLeft + 4, y + 5));
             addTextField(new GuiNpcTextField(42, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.godStrength)));
             getTextField(42).setMaxStringLength(42);
             getTextField(42).floatsOnly = true;
@@ -97,7 +97,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         if(stackable.mysticStackable){
             y += 23;
-            addLabel(new GuiNpcLabel(52,"Mystic Strength", guiLeft + 4, y + 5));
+            addLabel(new GuiNpcLabel(52,"Mystic Strength %", guiLeft + 4, y + 5));
             addTextField(new GuiNpcTextField(52, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.mysticStrength)));
             getTextField(52).setMaxStringLength(52);
             getTextField(52).floatsOnly = true;
