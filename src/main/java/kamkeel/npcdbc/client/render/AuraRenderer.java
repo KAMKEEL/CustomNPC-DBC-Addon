@@ -10,6 +10,7 @@ import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -160,17 +161,17 @@ public class AuraRenderer extends RenderDBC {
         int age = aura.ticksExisted % speed;
         GL11.glPushMatrix();
         size = 1f;
-        GL11.glTranslated(posX, 0 * size , posZ);
+        GL11.glTranslated(posX, posY + 3.3f * size, posZ);
         this.shadowSize = 0.0F;
 
         GL11.glPushMatrix();
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
 
         GL11.glDepthMask(false);
-        GL11.glEnable(3042);
-        GL11.glDisable(2896);
-        GL11.glBlendFunc(770, 771);
-        GL11.glAlphaFunc(516, 0.003921569F);
+        // GL11.glEnable(3042);
+        //GL11.glDisable(2896);
+        // GL11.glBlendFunc(770, 771);
+        // GL11.glAlphaFunc(516, 0.003921569F);
         Random rand = new Random();
         pulseMax = 0;
         // pulseAnimation = 20;
@@ -210,13 +211,18 @@ public class AuraRenderer extends RenderDBC {
                 GL11.glPopMatrix();
                 GL11.glPushMatrix();
                 GL11.glRotatef(360 * j + 45, 0F, 1F, 0F);
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glDisable(GL11.GL_ALPHA_TEST);
+                //  GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+                GL11.glDisable(GL11.GL_LIGHTING);
                 this.renderManager.renderEngine.bindTexture(color3 > -1 && i == 1 ? t3 : t1);
+                //  Minecraft.getMinecraft().entityRenderer.disableLightmap((double) 0);
                 if (color3 > -1 && i == 1)
                     cf(color1, color3, alpha);
                 else
                     glColor4f(color1, alpha);
 
-                this.model.renderModel(aura, age + 4.0F, (float) 0 * modelRotX, speed);
+                this.model.renderModel(aura, age, (float) 0 * modelRotX, speed);
 
 
                 if (tex2.length() > 2) {
@@ -241,6 +247,7 @@ public class AuraRenderer extends RenderDBC {
             }
 
         }
+        GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glAlphaFunc(516, 0.1F);
         GL11.glDisable(3042);
         GL11.glEnable(2896);
@@ -248,6 +255,7 @@ public class AuraRenderer extends RenderDBC {
         GL11.glPopMatrix();
         GL11.glDepthMask(true);
         GL11.glPopMatrix();
+        Minecraft.getMinecraft().entityRenderer.enableLightmap((double) 0);
         if (JGConfigClientSettings.CLIENT_DA12) {
             //this.lightning(par1Entity, parX, parY, parZ, par9, 1.0F, var13, rot);
         }

@@ -41,7 +41,7 @@ public class EntityAura extends Entity {
         //  height = 0;
         ignoreFrustumCheck = true;
         /// boundingBox.setBB(entity.boundingBox); 
-
+        renderPass = 1;
         if (entity instanceof EntityPlayer) {
             dbcData = DBCData.get((EntityPlayer) entity);
             isPlayer = true;
