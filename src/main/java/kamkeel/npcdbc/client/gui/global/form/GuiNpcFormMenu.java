@@ -27,12 +27,12 @@ public class GuiNpcFormMenu {
 
     public void initGui(int guiLeft, int guiTop, int width) {
         Keyboard.enableRepeatEvents(true);
-        GuiMenuTopButton close = new GuiMenuTopButton(0, guiLeft + width - 22, guiTop - 17, "X");
+        GuiMenuTopButton close = new GuiMenuTopButton(-5, guiLeft + width - 22, guiTop - 17, "X");
 
-        GuiMenuTopButton general = new GuiMenuTopButton(1, guiLeft + 4, guiTop - 17, "General");
-        GuiMenuTopButton display = new GuiMenuTopButton(2, general.xPosition + general.getWidth(), guiTop - 17, "menu.display");
-        GuiMenuTopButton mastery = new GuiMenuTopButton(3, display.xPosition + display.getWidth(), guiTop - 17, "Mastery");
-        GuiMenuTopButton stackable = new GuiMenuTopButton(4, mastery.xPosition + mastery.getWidth(), guiTop - 17, "Stackable");
+        GuiMenuTopButton general = new GuiMenuTopButton(-1, guiLeft + 4, guiTop - 17, "General");
+        GuiMenuTopButton display = new GuiMenuTopButton(-2, general.xPosition + general.getWidth(), guiTop - 17, "menu.display");
+        GuiMenuTopButton mastery = new GuiMenuTopButton(-3, display.xPosition + display.getWidth(), guiTop - 17, "Mastery");
+        GuiMenuTopButton stackable = new GuiMenuTopButton(-4, mastery.xPosition + mastery.getWidth(), guiTop - 17, "Stackable");
 
         this.topButtons = new GuiMenuTopButton[]{general, display, mastery, stackable, close};
         GuiMenuTopButton[] var12 = this.topButtons;
@@ -49,15 +49,15 @@ public class GuiNpcFormMenu {
             Minecraft mc = Minecraft.getMinecraft();
             NoppesUtil.clickSound();
             int id = button.id;
-            if (id == 0) {
+            if (id == -5) {
                 this.close();
             } else {
-                if (id == 1) {
+                if (id == -1) {
                     formsParent.setSubGui(new SubGuiFormGeneral(formsParent, form));
-                } else if (id == 2) {
-                } else if (id == 3) {
+                } else if (id == -2) {
+                } else if (id == -3) {
                     formsParent.setSubGui(new SubGuiFormMastery(formsParent, form));
-                } else if (id == 4) {
+                } else if (id == -4) {
                     formsParent.setSubGui(new SubGuiFormStackable(formsParent, form));
                 }
 

@@ -17,7 +17,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
 		xSize = 360;
 		ySize = 216;
 
-        menu = new GuiNpcFormMenu(parent, this, 3, form);
+        menu = new GuiNpcFormMenu(parent, this, -3, form);
 	}
 
     public void initGui()

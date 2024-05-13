@@ -29,7 +29,7 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
 		xSize = 360;
 		ySize = 216;
 
-        menu = new GuiNpcFormMenu(parent, this, 1, form);
+        menu = new GuiNpcFormMenu(parent, this, -1, form);
 	}
 
     public void initGui()
@@ -60,9 +60,6 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         getTextField(19).setMinMaxDefaultFloat(-10000, 10000, 1);
 
         y += 23;
-        addButton(new GuiNpcButton(6, guiLeft + 4, y, 70, 20, "DISPLAY"));
-        addButton(new GuiNpcButton(7, guiLeft + 84, y, 70, 20, "MASTERY"));
-        addButton(new GuiNpcButton(8, guiLeft + 166, y, 70, 20, "STACKABLE"));
 
         addLabel(new GuiNpcLabel(20,"Dexterity", guiLeft + 239, y + 5));
         addTextField(new GuiNpcTextField(20, this, guiLeft + 295, y, 60, 20, String.valueOf(form.dexMulti)));
@@ -124,6 +121,9 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
 		GuiNpcButton button = (GuiNpcButton) guibutton;
         if(button.id == 3){
             form.race = button.getValue() - 1;
+        }
+        if(button.id == 10){
+            form.fromParentOnly = button.getValue() == 1;
         }
         if(button.id == 11){
             this.setSubGui(new SubGuiSelectForm(false));
