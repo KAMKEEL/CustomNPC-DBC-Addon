@@ -39,7 +39,7 @@ public class ModelAura extends ModelBase {
 
       //  this.auraModel.rotationPointY = 55.0F + ageTemp;
 
-        this.auraModel.offsetY = -1.6f; //-ageTemp * 0.175F; // from 0 to -1.64 to -4(max)
+        this.auraModel.offsetY = -ageTemp * 0.175F; // from 0 to -1.64 to -4(max)
         
         //from  -0.4  (widest)  to 0.4 
        this.auraModel.offsetZ = ageTemp < 8.0F ? 0.3F - ageTemp * 0.1F : -0.5F + (ageTemp - 7.0F) * 0.053F;
