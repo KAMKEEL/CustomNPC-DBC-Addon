@@ -6,14 +6,18 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
+import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.NpcAPI;
 
 import java.util.HashMap;
@@ -90,5 +94,23 @@ public class PlayerDataUtil {
      */
     public static IPlayer getIPlayer(EntityPlayer p) {
         return (IPlayer) NpcAPI.Instance().getIEntity(p);
+    }
+
+    public static Form getForm(Entity entity) {
+        if (entity instanceof EntityPlayer)
+            DBCData.get((EntityPlayer) entity).getForm();
+        else if (entity instanceof EntityNPCInterface)
+            return ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().getForm();
+
+        return null;
+    }
+
+    public static Aura getToggledAura(Entity entity) {
+        if (entity instanceof EntityPlayer)
+            DBCData.get((EntityPlayer) entity).getToggledAura();
+        else if (entity instanceof EntityNPCInterface)
+            return ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().getToggledAura();
+
+        return null;
     }
 }

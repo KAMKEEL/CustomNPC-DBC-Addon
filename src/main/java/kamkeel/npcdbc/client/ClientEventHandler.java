@@ -19,6 +19,7 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -215,15 +216,24 @@ public class ClientEventHandler {
 
                 }
 
-                if (isInKaioken && aura.display.kaiokenOverrides) {
-                    spawnKaiokenAura(aura, dbcData);
-                } else {
-                    spawnAura(event.entity, aura);
-                    if (aura.hasSecondaryAura())
-                        spawnAura(event.entity, aura.getSecondaryAur());
-                    if (isInKaioken)
-                        spawnKaiokenAura(aura, dbcData);
-                }
+                if (dbcData.auraEntity == null)
+                    new EntityAura(event.entity, aura).spawn();
+               // else
+                   // dbcData.auraEntity.spawn();
+
+//                if (isInKaioken && aura.display.kaiokenOverrides) {
+//                    spawnKaiokenAura(aura, dbcData);
+//                } else {//if (TransformController.transformed) {
+//                    spawnAura(event.entity, aura);
+//                    if (aura.hasSecondaryAura())
+//                        spawnAura(event.entity, aura.getSecondaryAur());
+//                    if (isInKaioken)
+//                        spawnKaiokenAura(aura, dbcData);
+///////
+//
+//                  //  TransformController.transformed = !TransformController.transformed;
+//
+//                }
 
 
             }
@@ -245,7 +255,7 @@ public class ClientEventHandler {
         EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, isPlayer ? dbcData.State : 0, isPlayer ? dbcData.State2 : 0, isPlayer ? dbcData.Release : 100, rotate90);
         aur.setLocationAndAngles(entity.posX, entity.posY - 5, entity.posZ, entity.rotationYaw, entity.rotationPitch);
         aur.setAlp(0.2f);
-        aur.setSpd(20);
+        aur.setSpd(100);
 
 
         if (aura.display.hasSize())
@@ -300,7 +310,7 @@ public class ClientEventHandler {
             aur.setColL3(4746495);
             aur.setTexL3("auragb");
         } else if (aura.display.type == EnumPlayerAuraTypes.GoD) {
-            aur.setSpd(30);
+            aur.setSpd(100);
             aur.setAlp(0.2F);
             aur.setTex("aurag");
             aur.setTexL3("auragb");

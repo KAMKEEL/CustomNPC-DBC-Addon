@@ -7,7 +7,7 @@ import net.minecraft.entity.Entity;
 import noppes.npcs.entity.EntityNPCInterface;
 
 public class ParticleFormHandler {
-    public static void spawnParticle(EntityNPCInterface npc, EnumAuraTypes types){
+    public static void spawnParticle(Entity npc, EnumAuraTypes types){
         switch (types){
             case GoD:
                 if (npc.worldObj.isRemote && JGConfigClientSettings.CLIENT_DA8) {

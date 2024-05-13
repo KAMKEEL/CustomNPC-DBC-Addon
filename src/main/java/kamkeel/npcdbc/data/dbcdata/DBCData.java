@@ -11,6 +11,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
+import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetFlight;
 import kamkeel.npcdbc.network.packets.PingPacket;
@@ -46,6 +47,8 @@ public class DBCData extends DBCDataUniversal {
     public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f;
     public int flightSpeedRelease = 100;
     public boolean isFlying, flightEnabled = true, flightGravity = true;
+    
+    public EntityAura auraEntity;
 
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
