@@ -103,9 +103,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             getTextField(52).floatsOnly = true;
             getTextField(52).setMinMaxDefaultFloat(-10000, 10000, 1);
         }
-
-        addButton(new GuiNpcButton(1010101, guiLeft + 200, guiTop + 192, 50, 20, "RELOAD"));
-	}
+    }
 
 	public void buttonEvent(GuiButton guibutton)
     {
