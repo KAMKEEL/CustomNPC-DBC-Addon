@@ -71,9 +71,10 @@ public class EntityAura extends Entity {
 
         int age = ticksExisted % speed+1;
 
-        if (entity == null || currentAura == null)
-            if ((ticksExisted) % speed == speed - 1)
-                setDead();
+        if (entity == null || currentAura == null || ticksExisted >= speed && speed != -1)
+            setDead();
+        //if ((ticksExisted) % speed == speed - 1)
+               
 
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
 

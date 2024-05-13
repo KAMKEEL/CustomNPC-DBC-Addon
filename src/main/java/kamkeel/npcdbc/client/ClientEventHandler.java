@@ -216,7 +216,7 @@ public class ClientEventHandler {
 
                 }
 
-                if (dbcData.auraEntity == null)
+               if (dbcData.auraEntity == null)
                     new EntityAura(event.entity, aura).spawn();
                // else
                    // dbcData.auraEntity.spawn();

@@ -37,15 +37,15 @@ public class ModelAura extends ModelBase {
         float curperc = ageTemp * maxageperc * 0.01F; // perc from 0 to 1
         ageTemp = curperc * 20.0F; //1 to 20
 
-        this.auraModel.rotationPointY = 55.0F + ageTemp;
+      //  this.auraModel.rotationPointY = 55.0F + ageTemp;
 
-        this.auraModel.offsetY = -ageTemp * 0.175F; // from 0 to -1.64 to -4(max)
+        this.auraModel.offsetY = -1.6f; //-ageTemp * 0.175F; // from 0 to -1.64 to -4(max)
+        
         //from  -0.4  (widest)  to 0.4 
-        this.auraModel.offsetZ = ageTemp < 8.0F ? 0.3F - ageTemp * 0.1F : -0.5F + (ageTemp - 7.0F) * 0.053F;
+       this.auraModel.offsetZ = ageTemp < 8.0F ? 0.3F - ageTemp * 0.1F : -0.5F + (ageTemp - 7.0F) * 0.053F;
         // if (curperc > 0.5)
         //GL11.glScalef(1 - curperc ,1, 1- curperc );
         this.auraModel.rotateAngleX = 0.8726646F - curperc * 0.01F - rotX;
-        if (ageTemp <= 2)
-            System.out.println();
+    ;
     }
 }

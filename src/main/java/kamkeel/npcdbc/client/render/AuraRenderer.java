@@ -147,10 +147,11 @@ public class AuraRenderer extends RenderDBC {
         if (display.hasSpeed())
             speed = (int) display.speed;
 
-        aura.speed = speed = 4;
+        aura.speed = speed = 100;
         float alphaConfig = (float) JGConfigClientSettings.CLIENT_DA21 / 10.0F;
-        alpha = (isFirstPerson ? isInner ? 0.025f : 0.05f : alpha) * alphaConfig;
         alpha = 1f;
+        alpha = (isFirstPerson ? isInner ? 0.025f : 0.05f : alpha) * alphaConfig;
+
 
         ResourceLocation t1 = tex1.length() > 3 ? new ResourceLocation(tex1) : null;
         ResourceLocation t2 = tex2.length() > 3 ? new ResourceLocation(tex2) : null;
@@ -183,26 +184,26 @@ public class AuraRenderer extends RenderDBC {
         
         GL11.glScalef(size + 0.1F * s + pulsingSize, size + 0.07F * s, size + 0.1F * s + pulsingSize);
         GL11.glTranslatef(0.0F, -0.3F - 0.07F * s, 0.0F);
-        GL11.glRotatef(spin, 0.0F, 1.0F, 0.0F);
+        //  GL11.glRotatef(spin, 0.0F, 1.0F, 0.0F);
         float modelRotX = 0.75f;
+// (isInner ? 2 : 1) && (i != 1 || !(age > (color3 > -1 ? speed / 2.0F : 10.0F)))
 
-
-        for (int i = 0; i < (isInner ? 2 : 1) && (i != 1 || !(age > (color3 > -1 ? speed / 2.0F : 10.0F))); ++i) {
+        for (int i = 0; i < 3; ++i) {
             for (float j = 0; j < 1; j += 0.25) {
 
                 GL11.glPushMatrix();
-                //
-                //  GL11.glRotatef(360 * j, 0.0F, 1.0F, 0.0F);
+
+//                GL11.glRotatef(360 * j, 0.0F, 1.0F, 0.0F);
 //                if (age < 15.0F) {
 //                    this.renderManager.renderEngine.bindTexture(t1);
 //                    glColor4f(color1, alpha);
-//                    this.model.renderModel(aura, 0.0625F, age, (float) i * modelRotX, speed);
+//                    this.model.renderModel(aura, age, (float) i * modelRotX, speed);
 //
 //
 //                    if (tex2.length() > 2) {
 //                        this.renderManager.renderEngine.bindTexture(t2);
 //                        glColor4f(color2, alpha);
-//                        this.model.renderModel(aura, 0.0625F, age, (float) i * modelRotX, speed);
+//                        this.model.renderModel(aura, age, (float) i * modelRotX, speed);
 //                    }
 //                }
 
@@ -215,13 +216,13 @@ public class AuraRenderer extends RenderDBC {
                 else
                     glColor4f(color1, alpha);
 
-                this.model.renderModel(aura, age + 4.0F, (float) i * modelRotX, speed);
+                this.model.renderModel(aura, age + 4.0F, (float) 0 * modelRotX, speed);
 
 
                 if (tex2.length() > 2) {
                     this.renderManager.renderEngine.bindTexture(t2);
                     glColor4f(color2, alpha);
-                    this.model.renderModel(aura, age + 4.0F, i * modelRotX, speed);
+                    this.model.renderModel(aura, age + 4.0F, 1 * modelRotX, speed);
                 }
 
                 GL11.glPopMatrix();
@@ -233,23 +234,23 @@ public class AuraRenderer extends RenderDBC {
 
                     this.renderManager.renderEngine.bindTexture(t3);
                     glColor4f(color3, alpha);
-                    this.model.renderModel(aura, age + 4.0F, i * modelRotX, speed);
+                    this.model.renderModel(aura, age + 4.0F, 0 * modelRotX, speed);
 
                     GL11.glPopMatrix();
                 }
             }
-            GL11.glAlphaFunc(516, 0.1F);
-            GL11.glDisable(3042);
-            GL11.glEnable(2896);
-            GL11.glEnable(3553);
-            GL11.glPopMatrix();
-            GL11.glDepthMask(true);
-            GL11.glPopMatrix();
-            if (JGConfigClientSettings.CLIENT_DA12) {
-                //this.lightning(par1Entity, parX, parY, parZ, par9, 1.0F, var13, rot);
-            }
-        }
 
+        }
+        GL11.glAlphaFunc(516, 0.1F);
+        GL11.glDisable(3042);
+        GL11.glEnable(2896);
+        GL11.glEnable(3553);
+        GL11.glPopMatrix();
+        GL11.glDepthMask(true);
+        GL11.glPopMatrix();
+        if (JGConfigClientSettings.CLIENT_DA12) {
+            //this.lightning(par1Entity, parX, parY, parZ, par9, 1.0F, var13, rot);
+        }
 
     }
 
