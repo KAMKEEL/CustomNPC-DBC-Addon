@@ -1,11 +1,9 @@
-package kamkeel.npcdbc.client.gui.global.customforms;
+package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.RequestForm;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.Client;
 import noppes.npcs.client.gui.util.*;
-import noppes.npcs.constants.EnumPacketServer;
 
 import java.util.ArrayList;
 import java.util.HashMap;

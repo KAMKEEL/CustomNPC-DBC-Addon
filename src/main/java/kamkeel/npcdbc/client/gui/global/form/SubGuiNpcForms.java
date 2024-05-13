@@ -1,29 +1,22 @@
-package kamkeel.npcdbc.client.gui.global.customforms;
+package kamkeel.npcdbc.client.gui.global.form;
 
+import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.client.Client;
-import noppes.npcs.client.gui.*;
-import noppes.npcs.client.gui.questtypes.GuiNpcQuestTypeDialog;
-import noppes.npcs.client.gui.questtypes.GuiNpcQuestTypeKill;
-import noppes.npcs.client.gui.questtypes.GuiNpcQuestTypeLocation;
-import noppes.npcs.client.gui.questtypes.GuiNpcQuestTypeManual;
-import noppes.npcs.client.gui.select.GuiQuestSelection;
 import noppes.npcs.client.gui.select.GuiSoundSelection;
 import noppes.npcs.client.gui.util.*;
-import noppes.npcs.constants.*;
-import noppes.npcs.controllers.data.PlayerMail;
 
 public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener,ITextfieldListener
 {
+
+    private final GuiNPCManageForms parent;
 
 	public Form form;
     boolean setAscendSound = true;
     public int parentForm = -1;
     public int childForm = -1;
-	private final GuiNPCManageForms parent;
+
 
 	public SubGuiNpcForms(GuiNPCManageForms parent, Form form)
 	{
@@ -40,15 +33,15 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
     public void initGui()
     {
         super.initGui();
-
+        guiTop += 7;
         int y = guiTop + 3;
 
         addTextField(new GuiNpcTextField(1, this, this.fontRendererObj, guiLeft + 36, y, 200, 20, form.name));
         addLabel(new GuiNpcLabel(1,"gui.name", guiLeft + 4, y + 5));
         addButton(new GuiNpcButton(3, guiLeft + 260, y, 95, 20, new String[]{"All Races", "Human", "Saiyan", "Half Saiyan", "Namekian", "Arcosian", "Majin"}, form.race + 1));
 
-		addLabel(new GuiNpcLabel(0,"ID", guiLeft + 238, y + 1));
-		addLabel(new GuiNpcLabel(2,	form.id + "", guiLeft + 238, y + 11));
+        addLabel(new GuiNpcLabel(0,"ID", guiLeft + 238, y + 1));
+        addLabel(new GuiNpcLabel(2,	form.id + "", guiLeft + 238, y + 11));
 
         y += 23;
 
@@ -120,13 +113,11 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
         addButton(new GuiNpcButton(31, guiLeft + 293, y, 60, 20, "gui.select"));
 
         addButton(new GuiNpcButton(1010101, guiLeft + 200, guiTop + 192, 50, 20, "RELOAD"));
-        addButton(new GuiNpcButton(16, guiLeft + 303, guiTop + 192, 50, 20, "gui.done"));
 	}
 
 	public void buttonEvent(GuiButton guibutton)
     {
 		GuiNpcButton button = (GuiNpcButton) guibutton;
-
         if(button.id == 3){
             form.race = button.getValue() - 1;
         }
@@ -152,9 +143,6 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
             setAscendSound = false;
             setSubGui(new GuiSoundSelection((getTextField(31).getText())));
         }
-		if(button.id == 16){
-			close();
-		}
         if(button.id == 1010101){
             initGui();
         }
@@ -242,9 +230,7 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
 	}
 
 	@Override
-	public void selected(int id, String name) {
-
-	}
+	public void selected(int id, String name) {}
 
 	public void save(){}
 }

@@ -3,7 +3,7 @@ package kamkeel.npcdbc.mixin.impl.npc.client;
 import kamkeel.addon.client.DBCClient;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.gui.SubGuiDBCProperties;
-import kamkeel.npcdbc.client.gui.global.customforms.GuiNPCManageForms;
+import kamkeel.npcdbc.client.gui.global.form.GuiNPCManageForms;
 import kamkeel.npcdbc.client.gui.inventory.GuiDBC;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.entity.EntityLivingBase;

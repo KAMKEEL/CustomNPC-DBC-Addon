@@ -8,21 +8,18 @@ import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.Server;
 
 import java.io.IOException;
 
 public class SaveForm extends AbstractPacket {
     public static final String packetName = "NPC|SaveForm";
-    private int parentForm = -1;
-    private int childForm = -1;
 
-    private Form form = new Form();
+    private NBTTagCompound form;
 
-    public SaveForm(Form customForm, int parentID, int childID){
-        this.form = customForm;
-        this.parentForm = parentID;
-        this.childForm = childID;
+    public SaveForm(NBTTagCompound compound){
+        this.form = compound;
     }
 
     public SaveForm() {
@@ -36,9 +33,7 @@ public class SaveForm extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        Server.writeNBT(out, form.writeToNBT());
-        out.writeInt(parentForm);
-        out.writeInt(childForm);
+        Server.writeNBT(out, form);
     }
 
     @Override
@@ -47,13 +42,20 @@ public class SaveForm extends AbstractPacket {
 
         Form form = new Form();
         form.readFromNBT(Server.readNBT(in));
-        int newParentForm = in.readInt();
-        int newChildForm = in.readInt();
 
-        if(form.parentID != newParentForm || form.childID != newChildForm){
-            IForm parent = FormController.getInstance().get(form.parentID);
-            IForm child = FormController.getInstance().get(form.childID);
+        int oldParentForm = -1;
+        int oldChildForm = -1;
 
+        IForm original = FormController.getInstance().get(form.id);
+        if(original != null){
+            oldParentForm = original.getParentID();
+            oldChildForm = original.getChildID();
+        }
+
+        int newParentForm = form.parentID;
+        int newChildForm = form.childID;
+
+        if(newParentForm != oldParentForm || newChildForm != oldChildForm){
             form.removeParentForm();
             if(newParentForm == -1)
                 form.linkParent(newParentForm);
@@ -62,14 +64,24 @@ public class SaveForm extends AbstractPacket {
             if(newChildForm != -1)
                 form.linkChild(newChildForm);
 
+            IForm parent = FormController.getInstance().get(form.parentID);
+            IForm child = FormController.getInstance().get(form.childID);
+            IForm oldParent = FormController.getInstance().get(oldParentForm);
+            IForm oldChild = FormController.getInstance().get(oldChildForm);
+
             if(parent != null)
                 parent.save();
 
             if(child != null)
                 child.save();
+
+            if(oldParent != null)
+                oldParent.save();
+
+            if(oldChild != null)
+                oldChild.save();
         }
         FormController.getInstance().saveForm(form);
-
         NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
     }
 }

@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.client.gui.global.customforms;
+package kamkeel.npcdbc.client.gui.global.form;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.data.form.Form;
@@ -14,7 +14,6 @@ import net.minecraft.util.StatCollector;
 import noppes.npcs.client.Client;
 import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.NoppesUtil;
-import noppes.npcs.client.gui.SubGuiNpcQuest;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.constants.EnumPacketServer;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -91,7 +90,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
                 break;
             case 2:
                 if (data.containsKey(scrollForms.getSelected()) && customForm != null && customForm.id >= 0) {
-                    setSubGui(new SubGuiNpcForms(this, customForm));
+                    setSubGui(new SubGuiFormGeneral(this, customForm));
                 }
                 break;
         }
