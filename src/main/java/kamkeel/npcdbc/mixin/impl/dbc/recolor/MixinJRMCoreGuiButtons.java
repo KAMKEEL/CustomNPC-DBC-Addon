@@ -35,7 +35,7 @@ public abstract class MixinJRMCoreGuiButtons extends GuiButton {
         }
     }
 
-    @Redirect(method = "drawButton", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreGuiButtons00;drawCenteredString(Lnet/minecraft/client/gui/FontRenderer;Ljava/lang/String;III)V", remap = true))
+    @Redirect(method = "drawButton", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreGuiButtons00;drawCenteredString(Lnet/minecraft/client/gui/FontRenderer;Ljava/lang/String;III)V"), remap = true)
     public void changeButtonText(JRMCoreGuiButtons00 instance, FontRenderer fontRenderer, String s, int x, int y, int originalColor){
         if(originalColor == 14737632 && ConfigDBCClient.EnhancedGui && !ConfigDBCClient.DarkMode){
             fontRenderer.drawString(s, x - fontRenderer.getStringWidth(s) / 2, y, ColorMode.LIGHTMODE_TEXT_ALTERNATE, false);
