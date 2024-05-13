@@ -160,7 +160,7 @@ public class AuraRenderer extends RenderDBC {
         int age = aura.ticksExisted % speed;
         GL11.glPushMatrix();
         size = 1f;
-        GL11.glTranslated(posX, posY + 2.25f * size , posZ);
+        GL11.glTranslated(posX, 0 * size , posZ);
         this.shadowSize = 0.0F;
 
         GL11.glPushMatrix();
@@ -181,7 +181,7 @@ public class AuraRenderer extends RenderDBC {
         float spd2 = 18.0F / (speed * 0.05F);
         float spin = age * spd2;
         float pulsingSize = pulseAnimation * 0.03f;
-        
+
         GL11.glScalef(size + 0.1F * s + pulsingSize, size + 0.07F * s, size + 0.1F * s + pulsingSize);
         GL11.glTranslatef(0.0F, -0.3F - 0.07F * s, 0.0F);
         //  GL11.glRotatef(spin, 0.0F, 1.0F, 0.0F);
