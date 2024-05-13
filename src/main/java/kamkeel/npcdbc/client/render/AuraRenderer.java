@@ -161,13 +161,13 @@ public class AuraRenderer extends RenderDBC {
         int age = aura.ticksExisted % speed;
         GL11.glPushMatrix();
         size = 1f;
-        GL11.glTranslated(posX, posY + 3.3f * size, posZ);
+        GL11.glTranslated(posX, posY + 2.25f * size, posZ);
         this.shadowSize = 0.0F;
 
         GL11.glPushMatrix();
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
 
-        GL11.glDepthMask(false);
+        //GL11.glDepthMask(false);
         // GL11.glEnable(3042);
         //GL11.glDisable(2896);
         // GL11.glBlendFunc(770, 771);
@@ -189,11 +189,11 @@ public class AuraRenderer extends RenderDBC {
         float modelRotX = 0.75f;
 // (isInner ? 2 : 1) && (i != 1 || !(age > (color3 > -1 ? speed / 2.0F : 10.0F)))
 
-        for (int i = 0; i < 3; ++i) {
+        int maxLayers = 10;
+        for (float i = 0; i < maxLayers; ++i) {
             for (float j = 0; j < 1; j += 0.25) {
 
                 GL11.glPushMatrix();
-
 //                GL11.glRotatef(360 * j, 0.0F, 1.0F, 0.0F);
 //                if (age < 15.0F) {
 //                    this.renderManager.renderEngine.bindTexture(t1);
@@ -204,31 +204,40 @@ public class AuraRenderer extends RenderDBC {
 //                    if (tex2.length() > 2) {
 //                        this.renderManager.renderEngine.bindTexture(t2);
 //                        glColor4f(color2, alpha);
-//                        this.model.renderModel(aura, age, (float) i * modelRotX, speed);
+//                        model.auraModel.render(0.0625f);
 //                    }
 //                }
-
                 GL11.glPopMatrix();
+
                 GL11.glPushMatrix();
                 GL11.glRotatef(360 * j + 45, 0F, 1F, 0F);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glDisable(GL11.GL_ALPHA_TEST);
-                //  GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+              //  GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
                 GL11.glDisable(GL11.GL_LIGHTING);
-                this.renderManager.renderEngine.bindTexture(color3 > -1 && i == 1 ? t3 : t1);
-                //  Minecraft.getMinecraft().entityRenderer.disableLightmap((double) 0);
+                 this.renderManager.renderEngine.bindTexture(color3 > -1 && i == 1 ? t3 : t1);
+             //   Minecraft.getMinecraft().entityRenderer.disableLightmap((double) 0);
                 if (color3 > -1 && i == 1)
                     cf(color1, color3, alpha);
                 else
                     glColor4f(color1, alpha);
 
-                this.model.renderModel(aura, age, (float) 0 * modelRotX, speed);
+
+                float agePerc = (float) age / speed;
+                float ageTemp = agePerc * 20f;
+                float layerPerc =  i / maxLayers;
+                float maxOffset = 20 * 0.15f;
+                model.auraModel.offsetY = -ageTemp * 0.15F ; // from 0 to -1.64 to -4(max)
+                model.auraModel.offsetZ = ageTemp < 8.0F ? 0.3F - ageTemp * 0.1F : -0.5F + (ageTemp - 7.0F) * 0.053F;   //from  -0.4  (widest)  to 0.4
+                model.auraModel.rotateAngleX = (0.8726646F - agePerc * 0.01F - 0 * modelRotX) * (1 - ((float) Math.pow(agePerc, 2)));
+                model.auraModel.rotationPointY = 55.0F + ageTemp;
+                model.auraModel.render(0.0625f);
 
 
                 if (tex2.length() > 2) {
                     this.renderManager.renderEngine.bindTexture(t2);
                     glColor4f(color2, alpha);
-                    this.model.renderModel(aura, age + 4.0F, 1 * modelRotX, speed);
+                    model.auraModel.render(0.0625f);
                 }
 
                 GL11.glPopMatrix();
@@ -240,7 +249,7 @@ public class AuraRenderer extends RenderDBC {
 
                     this.renderManager.renderEngine.bindTexture(t3);
                     glColor4f(color3, alpha);
-                    this.model.renderModel(aura, age + 4.0F, 0 * modelRotX, speed);
+                    model.auraModel.render(0.0625f);
 
                     GL11.glPopMatrix();
                 }
