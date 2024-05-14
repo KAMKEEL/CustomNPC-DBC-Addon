@@ -55,7 +55,7 @@ public class FruitOfMight extends StatusEffect {
     }
 
     @Override
-    public void runout(EntityPlayer player, PlayerEffect playerEffect) {
+    public void kill(EntityPlayer player, PlayerEffect playerEffect) {
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (c.currentAura == fruitOfMightAura.id) {
             c.currentAura = -1;

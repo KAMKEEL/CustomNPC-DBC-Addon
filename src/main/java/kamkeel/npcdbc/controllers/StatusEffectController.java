@@ -12,6 +12,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.api.entity.IPlayer;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 
 public class StatusEffectController implements IStatusEffectHandler {
@@ -74,13 +76,17 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     public void killEffects(EntityPlayer player) {
         HashMap<Integer, PlayerEffect> current = getPlayerEffects(player);
-        for (int active : current.keySet()) {
-            StatusEffect effect = get(active);
+        Iterator<Map.Entry<Integer, PlayerEffect>> iterator = current.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, PlayerEffect> entry = iterator.next();
+            StatusEffect effect = get(entry.getKey());
             if (effect != null) {
-                if(effect.lossOnDeath)
-                    current.remove(active);
+                if(effect.lossOnDeath){
+                    effect.kill(player, entry.getValue());
+                    iterator.remove();
+                }
             } else {
-                current.remove(active);
+                iterator.remove(); // Use iterator to remove the current element
             }
         }
     }
@@ -146,6 +152,7 @@ public class StatusEffectController implements IStatusEffectHandler {
             StatusEffect parent = get(effect.id);
             if(parent != null){
                 parent.runout(player, effect);
+                parent.kill(player, effect);
             }
             currentEffects.remove(effect.id);
         }
@@ -237,8 +244,10 @@ public class StatusEffectController implements IStatusEffectHandler {
         if(currentEffects.containsKey(id)){
             PlayerEffect current = currentEffects.get(id);
             StatusEffect parent = get(current.id);
-            if(parent != null)
+            if(parent != null){
                 parent.runout(player, current);
+                parent.kill(player, current);
+            }
 
             currentEffects.remove(id);
         }

@@ -42,7 +42,7 @@ public class StatusEffect implements IStatusEffect {
     public void process(EntityPlayer player, PlayerEffect playerEffect) {
     }
 
-    public void runout(EntityPlayer player, PlayerEffect playerEffect) {
+    public void runout(EntityPlayer player, PlayerEffect playerEffect) {}
 
-    }
+    public void kill(EntityPlayer player, PlayerEffect playerEffect) {}
 }

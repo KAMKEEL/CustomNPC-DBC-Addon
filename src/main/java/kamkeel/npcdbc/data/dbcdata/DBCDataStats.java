@@ -84,8 +84,10 @@ public class DBCDataStats {
                 continue;
             else if (currentEffect.duration <= 0) {
                 StatusEffect parent = StatusEffectController.Instance.get(currentEffect.id);
-                if (parent != null)
+                if (parent != null){
                     parent.runout(data.player, currentEffect);
+                    parent.kill(data.player, currentEffect);
+                }
                 iterator.remove();
             } else
                 currentEffect.duration--;

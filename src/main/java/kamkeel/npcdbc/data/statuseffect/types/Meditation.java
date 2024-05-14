@@ -32,7 +32,7 @@ public class Meditation extends StatusEffect {
     }
 
     @Override
-    public void runout(EntityPlayer player, PlayerEffect playerEffect) {
+    public void kill(EntityPlayer player, PlayerEffect playerEffect) {
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         BonusController.getInstance().removeBonus(player, meditationBonus);
     }

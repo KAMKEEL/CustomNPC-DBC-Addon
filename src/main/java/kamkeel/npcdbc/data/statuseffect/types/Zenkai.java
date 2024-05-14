@@ -36,7 +36,7 @@ public class Zenkai extends StatusEffect {
     }
 
     @Override
-    public void runout(EntityPlayer player, PlayerEffect playerEffect) {
+    public void kill(EntityPlayer player, PlayerEffect playerEffect) {
         if(playerEffect.getName().equals(saiyanZenkai.getName()))
             BonusController.getInstance().removeBonus(player, saiyanZenkai);
         else
