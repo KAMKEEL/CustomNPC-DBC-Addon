@@ -24,7 +24,7 @@ public class FormMastery implements IFormMastery {
     public float healthRequirementMultiFlat = 1.0f, healthRequirementMultiPerLevel = 0.01f, healthRequirementMultiMinOrMax = 5f;
 
     public float kiDrain = 1;
-    public int kiDrainTimer = 20;
+    public int kiDrainTimer = 100;
     public float kiDrainMultiFlat = 1.0f, kiDrainMultiPerLevel = -0.01f, kiDrainMultiMinOrMax = 0.1f;
 
     public float maxHeat = 0; //seconds it takes to reach max heat

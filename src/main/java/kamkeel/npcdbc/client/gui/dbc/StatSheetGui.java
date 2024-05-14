@@ -255,7 +255,8 @@ public class StatSheetGui extends AbstractJRMCGui {
                             multiString += " * §4x" + masteryMulti + "§8 (Mastery)";
                     }
                     if(customForm != null && customForm.stackable.vanillaStackable){
-                        float stackMulti = JGConfigDBCFormMastery.FM_Enabled ? (float) JRMCoreH.getFormMasteryAttributeMulti(JRMCoreClient.mc.thePlayer, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20)) : (float) DBCFormMulti(i);
+                        float dbcMulti = (float) DBCFormMulti(i);
+                        float stackMulti = dbcMulti * (JGConfigDBCFormMastery.FM_Enabled ? (float) JRMCoreH.getFormMasteryAttributeMulti(JRMCoreClient.mc.thePlayer, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20)) :1);
                         multiString += "\n* §4x" +   JRMCoreH.round(stackMulti, 2) + "§8 (" + JRMCoreH.trl("jrmc", JRMCoreH.getTransformationName(JRMCoreH.Race, JRMCoreH.isPowerTypeChakra() ? 0 : JRMCoreH.State, isRose, isMystic, isUI, isGoD)) + ")";
                     }
                     attributeDesc += multiString;
