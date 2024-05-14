@@ -40,7 +40,12 @@ public abstract class MixinJRMCoreGuiButtons extends GuiButton {
         if(originalColor == 14737632 && ConfigDBCClient.EnhancedGui && !ConfigDBCClient.DarkMode){
             fontRenderer.drawString(s, x - fontRenderer.getStringWidth(s) / 2, y, ColorMode.LIGHTMODE_TEXT_ALTERNATE, false);
         } else {
-            fontRenderer.drawString(s, x - fontRenderer.getStringWidth(s) / 2, y, originalColor, false);
+            if(ConfigDBCClient.EnhancedGui){
+                fontRenderer.drawString(s, x - fontRenderer.getStringWidth(s) / 2, y, originalColor, false);
+            }
+            else {
+                fontRenderer.drawString(s, x - fontRenderer.getStringWidth(s) / 2, y, originalColor, true);
+            }
         }
     }
 }

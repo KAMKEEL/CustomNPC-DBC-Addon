@@ -11,7 +11,7 @@ public class Bloated extends StatusEffect {
     public Bloated() {
         name = "Bloated";
         id = Effects.BLOATED;
-        icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
+        icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
         iconX = 128;
         iconY = 0;
     }

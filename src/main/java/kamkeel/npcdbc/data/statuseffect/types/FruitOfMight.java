@@ -21,7 +21,7 @@ public class FruitOfMight extends StatusEffect {
     public FruitOfMight() {
         name = "FruitOfMight";
         id = Effects.FRUIT_OF_MIGHT;
-        icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
+        icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
         iconX = 64;
         iconY = 0;
         length = ConfigDBCEffects.FOM_EffectLength;

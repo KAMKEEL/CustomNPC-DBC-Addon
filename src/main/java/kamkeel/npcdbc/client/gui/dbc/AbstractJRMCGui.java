@@ -166,10 +166,15 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
             this.hoverableStaticLabels.add(new JRMCoreLabel(button, name));
             offsetY -= 20;
         }
+
+        String discord = "Discord";
+        GuiButton button = new JRMCoreButtonClone(707070707, guiWidthOffset+offsetX, guiHeightOffset+menuImageHeight+2+offsetY, discord.substring(0, 2).toUpperCase(), 0, 8046079, 1);
+        buttonList.add(button);
+        this.hoverableStaticLabels.add(new JRMCoreLabel(button, discord));
     }
 
     protected void addServerButtons(){
-        String s = "Official DBC Server's site";
+        String s = "Official DBC Server";
         int i = this.fontRendererObj.getStringWidth(s);
         this.buttonList.add(new JRMCoreGuiButtons00(GuiInfo.SERVER_SITE_ID, guiWidthOffset + 260, guiHeightOffset + 85 - 40, i + 8, 20, s, 0));
 
@@ -178,7 +183,6 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
             i = this.fontRendererObj.getStringWidth(s);
             this.buttonList.add(new JRMCoreGuiButtons00(3099, guiWidthOffset + 260, guiHeightOffset + 85, i + 8, 20, s, 0));
         }
-
     }
 
     protected void addCloseButton(){

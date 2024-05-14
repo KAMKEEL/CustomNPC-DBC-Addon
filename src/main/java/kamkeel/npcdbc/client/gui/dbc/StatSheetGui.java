@@ -20,9 +20,12 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiConfirmOpenLink;
+import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+import java.net.URI;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
@@ -30,7 +33,7 @@ import static JinRyuu.JRMCore.JRMCoreGuiScreen.kqGW3Z;
 import static JinRyuu.JRMCore.JRMCoreH.*;
 
 @SideOnly(Side.CLIENT)
-public class StatSheetGui extends AbstractJRMCGui {
+public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
     private static final ResourceLocation icons = new ResourceLocation("jinryuumodscore:icons.png");
     private static final ResourceLocation icons3 = new ResourceLocation("jinryuumodscore:icons3.png");
@@ -515,7 +518,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         //Button to adjust GUI
         String s = (!ConfigDBCClient.EnhancedGui ? "Old" : "§aModern") +" GUI";
         int button1Width = this.fontRendererObj.getStringWidth(s)+10;
-        this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -button1Width)/2, guiHeightOffset - 50, button1Width + 8, 20, s, 0));
+        this.buttonList.add(new JRMCoreGuiButtons00(303030303, guiWidthOffset + 260, height/2 - 10, button1Width + 8, 20, s, 0));
 
         //Difficulty button
         GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.DIFFICULTY;
@@ -729,7 +732,7 @@ public class StatSheetGui extends AbstractJRMCGui {
         index++;
 
 
-        if(JRMCoreEH.dt){
+        if(true || JRMCoreEH.dt){
             String name = "Update vanity";
             int width = this.fontRendererObj.getStringWidth(name);
             UPDATE_VANITY_BUTTON = new JRMCoreGuiButtons00(100, guiWidthOffset + 260, guiHeightOffset + 3, width + 8, 20, name, 0);
@@ -763,6 +766,9 @@ public class StatSheetGui extends AbstractJRMCGui {
             ConfigDBCClient.AdvancedGuiModeProperty.set(ConfigDBCClient.AdvancedGui);
             ConfigDBCClient.config.save();
             initGui();
+        }
+        if(id == 707070707){
+            mc.displayGuiScreen(new GuiConfirmOpenLink(this, "https://discord.com/invite/pQqRTvFeJ5He", 0, true));
         }
         if(id >= 0 && id <= 5){
             if(!JRMCoreH.isFused()){
@@ -925,5 +931,19 @@ public class StatSheetGui extends AbstractJRMCGui {
             return form.mastery.calculateMulti("attribute", dataClient.formLevels.get(form.id));
         }
         return JRMCoreH.getFormMasteryAttributeMulti(JRMCoreClient.mc.thePlayer, JRMCoreH.State, JRMCoreH.State2, JRMCoreH.Race, JRMCoreH.StusEfctsMe(5), JRMCoreH.StusEfctsMe(13), JRMCoreH.StusEfctsMe(19), JRMCoreH.StusEfctsMe(20));
+    }
+
+    public void confirmClicked(boolean flag, int i) {
+        if (flag) {
+            if (i == 0) {
+                String link = "https://discord.com/invite/pQqRTvFeJ5";
+                try{
+                    Class oclass = java.lang.Class.forName("java.awt.Desktop");
+                    Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object)null, new Object[0]);
+                    oclass.getMethod("browse", new Class[] {URI.class}).invoke(object, new Object[] {new URI(link)});
+                }
+                catch (Throwable ignored) {}
+            }
+        }
     }
 }

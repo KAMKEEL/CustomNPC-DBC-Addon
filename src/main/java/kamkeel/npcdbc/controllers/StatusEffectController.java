@@ -40,7 +40,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         standardEffects.put(Effects.REGEN_STAMINA, new RegenStamina());
         standardEffects.put(Effects.NAMEK_REGEN, new NamekRegen());
         standardEffects.put(Effects.FRUIT_OF_MIGHT, new FruitOfMight());
-        standardEffects.put(Effects.BLOATED, new Bloated());    // TODO: Finish it
+        standardEffects.put(Effects.BLOATED, new Bloated());        // TODO: Finish it
         standardEffects.put(Effects.MEDITATION, new Meditation());  // TODO: Finish it
         standardEffects.put(Effects.OVERPOWER, new Overpower());    // TODO: Finish it
         standardEffects.put(Effects.CHOCOLATED, new Chocolated());  // TODO: Finish it
