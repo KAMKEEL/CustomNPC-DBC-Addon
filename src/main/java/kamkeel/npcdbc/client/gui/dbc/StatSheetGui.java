@@ -768,7 +768,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             initGui();
         }
         if(id == 707070707){
-            mc.displayGuiScreen(new GuiConfirmOpenLink(this, "https://discord.com/invite/pQqRTvFeJ5He", 0, true));
+            mc.displayGuiScreen(new GuiConfirmOpenLink(this, "https://discord.com/invite/pQqRTvFeJ5", 0, true));
         }
         if(id >= 0 && id <= 5){
             if(!JRMCoreH.isFused()){
