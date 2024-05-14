@@ -43,7 +43,16 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
                 continue;
             if (effect.icon.length() > 3) {
                 drawIcon(var51 + i.get(), var61 + j.get(), effect.icon, effect.iconX, effect.iconY);
-                addHoverable(effect.getName(), var51 + i.get(), var61 + j.get());
+                String text = effect.getName();
+                if(dbcData.currentEffects.containsKey(effect.getId())){
+                    PlayerEffect pe = dbcData.currentEffects.get(effect.getId());
+                    if(pe.getDuration() != -100)
+                        text += "\nTime: " + pe.getDuration() + "s";
+                    else
+                        text += "\nTime: Infinite";
+                }
+
+                addHoverable(text, var51 + i.get(), var61 + j.get());
                 if (var71 == 0) {
                     i.set(i.get() + 18);
                 } else

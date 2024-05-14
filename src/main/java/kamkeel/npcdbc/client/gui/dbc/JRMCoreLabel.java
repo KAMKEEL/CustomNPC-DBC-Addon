@@ -130,10 +130,14 @@ public class JRMCoreLabel extends Gui implements HoverableLabel {
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 0.8f);
 
             if (tooltipWidth <= 0) {
-                if (tooltip.contains("\n"))
-                    tooltipWidth = 200;
-                else
-                    tooltipWidth = Math.min(client.fontRenderer.getStringWidth(tooltip), 200);
+
+                int maxLineWidth = 0;
+                String[] lines = tooltip.split("\n");
+                for(String line : lines){
+                    int lineWidth = client.fontRenderer.getStringWidth(line);
+                    maxLineWidth = Math.max(maxLineWidth, lineWidth);
+                }
+                tooltipWidth = Math.min(maxLineWidth, 200);
             }
 
 
@@ -152,8 +156,6 @@ public class JRMCoreLabel extends Gui implements HoverableLabel {
                 client.fontRenderer.drawString(JRMCoreH.cldgy + text, mouseX + 5, tooltipY + 5 + linesWritten * 10, 0);
                 linesWritten++;
             }
-
-
         }
     }
 }
