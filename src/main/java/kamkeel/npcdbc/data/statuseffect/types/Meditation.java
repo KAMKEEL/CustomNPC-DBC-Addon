@@ -20,7 +20,7 @@ public class Meditation extends StatusEffect {
         name = "Meditation";
         id = Effects.MEDITATION;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
-        iconX = 96;
+        iconX = 112;
         iconY = 0;
 
         meditationBonus = new PlayerBonus(name, (byte) 1, (float) ConfigDBCEffects.FOM_Strength, (float) ConfigDBCEffects.FOM_Dex, (float) ConfigDBCEffects.FOM_Will);

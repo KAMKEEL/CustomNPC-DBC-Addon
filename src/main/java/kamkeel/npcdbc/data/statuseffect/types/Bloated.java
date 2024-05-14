@@ -6,13 +6,13 @@ import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class Inflation extends StatusEffect {
+public class Bloated extends StatusEffect {
 
-    public Inflation() {
-        name = "Inflation";
-        id = Effects.INFLATION;
+    public Bloated() {
+        name = "Bloated";
+        id = Effects.BLOATED;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
-        iconX = 80;
+        iconX = 128;
         iconY = 0;
     }
 

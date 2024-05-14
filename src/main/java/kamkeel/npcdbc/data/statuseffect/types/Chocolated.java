@@ -12,7 +12,7 @@ public class Chocolated extends StatusEffect {
         name = "Chocolated";
         id = Effects.CHOCOLATED;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/statuseffects.png";
-        iconX = 128;
+        iconX = 96;
         iconY = 0;
     }
 
