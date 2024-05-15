@@ -4,6 +4,7 @@ import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.controllers.EntityLightController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -12,6 +13,7 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.EnumSkyBlock;
 import noppes.npcs.entity.EntityNPCInterface;
 
 public class EntityAura extends Entity {
@@ -26,6 +28,7 @@ public class EntityAura extends Entity {
     public EntityAura secondaryAura;
     public EntityAura kaioken;
     public AuraSound sound;
+    public EntityLightController light;
 
     public boolean isKaioken;
     public boolean isTransforming;
@@ -38,9 +41,11 @@ public class EntityAura extends Entity {
         super(entity.worldObj);
         this.entity = entity;
         this.aura = aura;
+        light = new EntityLightController(entity);
         //  height = 0;
         ignoreFrustumCheck = true;
         /// boundingBox.setBB(entity.boundingBox); 
+        
         renderPass = 1;
         if (entity instanceof EntityPlayer) {
             dbcData = DBCData.get((EntityPlayer) entity);
@@ -55,7 +60,8 @@ public class EntityAura extends Entity {
 
 
     public void onUpdate() {
-
+        light.onUpdate();
+       // light.addLitBlockUnder();
         Aura currentAura = null;
 
         if (isPlayer) {
@@ -73,11 +79,10 @@ public class EntityAura extends Entity {
 
         if (entity == null || currentAura == null || ticksExisted >= speed && speed != -1)
             setDead();
-        //if ((ticksExisted) % speed == speed - 1)
-               
+
 
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
-
+        
     }
 
     public boolean shouldRenderInPass(int pass) {
@@ -88,13 +93,13 @@ public class EntityAura extends Entity {
         super.setDead();
         if (isPlayer && dbcData.auraEntity == this)
             dbcData.auraEntity = null;
+        this.worldObj.updateLightByType(EnumSkyBlock.Block, (int) entity.posX, (int) entity.posY, (int) entity.posZ);
 
     }
 
     protected void entityInit() {
 
     }
-
 
     protected void readEntityFromNBT(NBTTagCompound tagCompund) {
 
