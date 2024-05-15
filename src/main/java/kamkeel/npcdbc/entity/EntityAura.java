@@ -1,19 +1,23 @@
 package kamkeel.npcdbc.entity;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
+import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import kamkeel.npcdbc.controllers.EntityLightController;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.EnumSkyBlock;
 import noppes.npcs.entity.EntityNPCInterface;
 
 public class EntityAura extends Entity {
@@ -23,30 +27,26 @@ public class EntityAura extends Entity {
     public DBCData dbcData = null;
     DBCDisplay display = null;
 
-    public EntityAura parent;
-
-    public EntityAura secondaryAura;
-    public EntityAura kaioken;
-    public AuraSound sound;
     public EntityLightController light;
+
 
     public boolean isKaioken;
     public boolean isTransforming;
     public boolean isCharging;
     public boolean isPlayer;
 
-    public int speed = -1, renderPass;
+    public int color1 = -1, color2 = -1, color3 = -1, speed = 20, renderPass;
+    public String tex1 = "jinryuudragonbc:aura.png", tex2 = "", tex3 = "";
+    public float alpha, maxAlpha = 0.2f, size = 1f;
+
+    public boolean isInner, doneUsing, fadeOut = false, fadeIn = true;
+    public float fadeFactor = 0.005f;
 
     public EntityAura(Entity entity, Aura aura) {
         super(entity.worldObj);
         this.entity = entity;
         this.aura = aura;
-        light = new EntityLightController(entity);
-        //  height = 0;
-        ignoreFrustumCheck = true;
-        /// boundingBox.setBB(entity.boundingBox); 
-        
-        renderPass = 1;
+
         if (entity instanceof EntityPlayer) {
             dbcData = DBCData.get((EntityPlayer) entity);
             isPlayer = true;
@@ -54,10 +54,100 @@ public class EntityAura extends Entity {
         } else if (entity instanceof EntityNPCInterface)
             display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
 
+        color1 = isPlayer ? dbcData.AuraColor > 0 ? dbcData.AuraColor : JRMCoreH.Algnmnt_rc(dbcData.Alignment) : 11075583; //alignment color
 
+        AuraDisplay display = aura.display;
+        int mimicColor = EnumPlayerAuraTypes.getManualAuraColor(display.type);
+        if (mimicColor != -1)
+            color1 = mimicColor;
+
+        String auraDir = "jinryuudragonbc:";
+        if (display.type == EnumPlayerAuraTypes.SaiyanGod) {
+            maxAlpha = 0.2f;
+            tex1 = auraDir + "aurai.png";
+            tex2 = auraDir + "auraj.png";
+            color2 = 16747301;
+        } else if (display.type == EnumPlayerAuraTypes.SaiyanBlue) {
+            // speed = 40;
+            maxAlpha = 0.5F;
+            tex1 = auraDir + "aurag.png";
+            tex3 = auraDir + "auragb.png";
+            color3 = 15727354;
+        } else if (display.type == EnumPlayerAuraTypes.SaiyanBlueEvo) {
+            // speed = 40;
+            maxAlpha = 0.5F;
+            tex1 = auraDir + "aurag.png";
+            tex3 = auraDir + "auragb.png";
+            color3 = 12310271;
+        } else if (display.type == EnumPlayerAuraTypes.SaiyanRose) {
+            // speed = 30;
+            maxAlpha = 0.2F;
+            tex1 = auraDir + "aurai.png";
+            tex2 = auraDir + "auraj.png";
+            color2 = 7872713;
+        } else if (display.type == EnumPlayerAuraTypes.SaiyanRoseEvo) {
+            //speed = 30;
+            maxAlpha = 0.2F;
+            tex1 = auraDir + "aurai.png";
+            tex2 = auraDir + "auraj.png";
+            color2 = 8592109;
+        } else if (display.type == EnumPlayerAuraTypes.UI) {
+            // speed = 100;
+            maxAlpha = 0.15F;
+            color1 = 15790320;
+            tex1 = auraDir + "auras.png";
+            color3 = 4746495;
+            tex3 = auraDir + "auragb.png";
+        } else if (display.type == EnumPlayerAuraTypes.GoD) {
+            // speed = 100;
+            maxAlpha = 0.2F;
+            tex1 = auraDir + "aurag.png";
+            tex3 = auraDir + "auragb.png";
+            color2 = 12464847;
+        } else if (display.type == EnumPlayerAuraTypes.UltimateArco) {
+            maxAlpha = 0.5F;
+            tex1 = auraDir + "aurau.png";
+            tex2 = auraDir + "aurau2.png";
+            color2 = 16776724;
+        }
+
+        if (isPlayer && dbcData.State > 0)//vanilla DBC form colors
+            color1 = dbcData.getDBCColor();
+
+        if (display.hasColor("color1")) //IAura color
+            color1 = display.color1;
+
+        Form form = PlayerDataUtil.getForm(entity);
+        if (form != null && form.display.hasColor("aura")) //IForm color
+            color1 = form.display.auraColor;
+
+
+        if (display.hasColor("color2"))
+            color2 = display.color2;
+        if (display.hasColor("color3"))
+            color3 = display.color3;
+
+
+        if (display.hasAlpha("aura"))
+            maxAlpha = (float) display.alpha / 255;
+        maxAlpha = 0.3f;
+        fadeFactor *= 10;
+
+        alpha = fadeFactor;
+
+        if (display.hasSpeed())
+            speed = (int) display.speed;
+        light = new EntityLightController(entity);
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
+
+
     }
 
+    protected void entityInit() {
+        ignoreFrustumCheck = true;
+        renderPass = 1;
+
+    }
 
     public void onUpdate() {
         light.onUpdate();
@@ -75,12 +165,19 @@ public class EntityAura extends Entity {
             currentAura = display.getToggledAura();
         }
 
-        int age = ticksExisted % speed+1;
+        if (entity == null || currentAura == null || aura != currentAura)
+            fadeOut = true;
 
-        if (entity == null || currentAura == null || ticksExisted >= speed && speed != -1)
-            setDead();
+        if (fadeIn && !fadeOut)
+            if (alpha < maxAlpha)
+                alpha = Math.min(alpha + fadeFactor, maxAlpha);
 
 
+        if (fadeOut) {
+            alpha -= fadeFactor;
+            if (alpha <= 0)
+                setDead();
+        }
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
         
     }
@@ -93,13 +190,9 @@ public class EntityAura extends Entity {
         super.setDead();
         if (isPlayer && dbcData.auraEntity == this)
             dbcData.auraEntity = null;
-        this.worldObj.updateLightByType(EnumSkyBlock.Block, (int) entity.posX, (int) entity.posY, (int) entity.posZ);
 
     }
 
-    protected void entityInit() {
-
-    }
 
     protected void readEntityFromNBT(NBTTagCompound tagCompund) {
 
