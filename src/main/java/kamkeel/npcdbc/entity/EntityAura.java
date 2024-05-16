@@ -240,6 +240,13 @@ public class EntityAura extends Entity {
 
     }
 
+
+    public double getYOffset() {
+        float sizeFactor = size < 1.5 ? 1 : 1.2f;
+        float stateFactor = dbcData.State * 0.03f;
+        
+        return 1.75f * size * sizeFactor + stateFactor;
+    }
     public void spawn() {
         entity.worldObj.spawnEntityInWorld(this);
         // playSound();

@@ -75,7 +75,8 @@ public class AuraRenderer extends RenderDBC {
         ResourceLocation t3 = aura.tex3.length() > 3 ? new ResourceLocation(aura.tex3) : null;
         
         GL11.glPushMatrix();
-        GL11.glTranslated(posX, posY + 2f * aura.size, posZ);
+        aura.size = 1f;
+        GL11.glTranslated(posX, posY + aura.getYOffset(), posZ);
 
         GL11.glPushMatrix();
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
@@ -85,7 +86,7 @@ public class AuraRenderer extends RenderDBC {
         GL11.glBlendFunc(770, 771);
         GL11.glAlphaFunc(516, 0.003921569F);
 
-        float sizeStateReleaseFactor = aura.dbcData.Release * 0.03f;
+        float sizeStateReleaseFactor = aura.dbcData.State * 0.5f + aura.dbcData.Release * 0.03f;
         float pulsingSize = pulseAnimation * 0.03f;
         GL11.glScalef(aura.size + 0.1F * sizeStateReleaseFactor + pulsingSize, aura.size + 0.07F * sizeStateReleaseFactor, aura.size + 0.1F * sizeStateReleaseFactor + pulsingSize);
       
@@ -93,45 +94,41 @@ public class AuraRenderer extends RenderDBC {
 
       //  float spd2 = 18.0F / (speed * 0.05F);
        // float spin = aura.ticksExisted * spd2;
-        GL11.glRotatef(aura.ticksExisted % speed * 3, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(aura.ticksExisted % speed * 4, 0.0F, 1.0F, 0.0F);
         float modelRotX = 0.75f;
-
+        float agePerc = (float) age / speed;
+        float ageTemp = agePerc * 20f;
         int maxLayers = 5;
         for (float i = 1; i < maxLayers + 1; ++i) {
+            float layerPerc = i / maxLayers;
+            float layerTemp = layerPerc * 20f;
+            
             for (float j = 1; j < 2; j += 0.05) {
-               //  GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-                  GL11.glDisable(GL11.GL_LIGHTING);
-                 Minecraft.getMinecraft().entityRenderer.disableLightmap((double) 0);
-                 GL11.glDisable(GL11.GL_ALPHA_TEST);
+                Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+                
                 GL11.glPushMatrix();
-//                GL11.glRotatef(360 * j, 0.0F, 1.0F, 0.0F);
-//                if (age < 15.0F) {
-//                    this.renderManager.renderEngine.bindTexture(t1);
-//                    glColor4f(aura.color1, alpha);
-//                    this.model.renderModel(aura, age, (float) i * modelRotX, speed);
-//
-//
-//                    if (t2 != null) {
-//                        this.renderManager.renderEngine.bindTexture(t2);
-//                        glColor4f(aura.color2, alpha);rr
-//                        model.auraModel.render(0.0625f);
-//                    }
-//                }
+                GL11.glRotatef(360 * j, 0.0F, 1.0F, 0.0F);
+                if (layerPerc > 20.0F) {
+                    this.renderManager.renderEngine.bindTexture(t1);
+                    model.auraModel.render(0.0625f);
+
+
+                    if (t2 != null) {
+                        this.renderManager.renderEngine.bindTexture(t2);
+                        glColor4f(aura.color2, alpha);
+                        model.auraModel.render(0.0625f);
+                    }
+                }
                 GL11.glPopMatrix();
 
                 GL11.glPushMatrix();
                 GL11.glRotatef(360 * j + 45, 0F, 1F, 0F);
-                this.renderManager.renderEngine.bindTexture(aura.color3 > -1 && i == 1 ? t3 : t1);
+                this.renderManager.renderEngine.bindTexture(t1);
                 if (aura.color3 > -1 && i == 1)
                     cf(aura.color1, aura.color3, alpha);
                 else
                     glColor4f(aura.color1, alpha);
 
-
-                float agePerc = (float) age / speed;
-                float ageTemp = agePerc * 20f;
-                float layerPerc =  i / maxLayers;
-                float layerTemp = layerPerc * 20f;
 
                 //  model.auraModel.offsetY = -(i / maxLayers) * 20 * 0.15f; // from 0 to -1.64 to -4(max)
                 model.auraModel.offsetY = -(i / maxLayers) * 20 * 0.125f;
@@ -176,7 +173,7 @@ public class AuraRenderer extends RenderDBC {
         GL11.glPopMatrix();
         GL11.glDepthMask(true);
         GL11.glPopMatrix();
-Minecraft.getMinecraft().entityRenderer.enableLightmap((double) 0);
+        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
 
         //Transparency stuff
         //  GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
