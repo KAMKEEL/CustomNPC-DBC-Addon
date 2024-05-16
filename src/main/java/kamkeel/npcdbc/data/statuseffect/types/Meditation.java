@@ -13,27 +13,25 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class Meditation extends StatusEffect {
-
-    public PlayerBonus meditationBonus;
-
+    
     public Meditation() {
         name = "Meditation";
         id = Effects.MEDITATION;
         icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
         iconX = 112;
         iconY = 0;
-
-        meditationBonus = new PlayerBonus(name, (byte) 1, (float) ConfigDBCEffects.FOM_Strength, (float) ConfigDBCEffects.FOM_Dex, (float) ConfigDBCEffects.FOM_Will);
     }
 
     @Override
     public void init(EntityPlayer player, PlayerEffect playerEffect){
-        BonusController.getInstance().applyBonus(player, meditationBonus);
+        DBCData dbcData = DBCData.get(player);
+        PlayerBonus medBonus = new PlayerBonus(name, (byte) 1);
+        medBonus.spirit = dbcData.SPI * ((float) ConfigDBCEffects.MeditationSpiBoostPercent / 100);
+        BonusController.getInstance().applyBonus(player, medBonus);
     }
 
     @Override
     public void kill(EntityPlayer player, PlayerEffect playerEffect) {
-        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
-        BonusController.getInstance().removeBonus(player, meditationBonus);
+        BonusController.getInstance().removeBonus(player, name);
     }
 }

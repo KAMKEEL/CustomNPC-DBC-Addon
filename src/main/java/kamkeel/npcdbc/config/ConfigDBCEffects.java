@@ -38,6 +38,9 @@ public class ConfigDBCEffects
     public static double ZenkaiHALFWil = 1.0f;
     public static int ZenkaiHALFLength = 180;
 
+    public final static String Meditation = "Meditation";
+    public static int MeditationSpiBoostPercent = 20;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -71,6 +74,10 @@ public class ConfigDBCEffects
             ZenkaiHALFDex = config.get(ZENKAI, "Half Saiyan Dex Multi", 1.2f, "Amount added to Dex Multi").getDouble(1.0f);
             ZenkaiHALFWil = config.get(ZENKAI, "Half Saiyan Will Multi", 1.2f, "Amount added to Will Multi").getDouble(1.0f);
             ZenkaiHALFLength = config.get(ZENKAI, "Half Saiyan Zenkai Length", 180, "Time of Zenkai in Seconds").getInt(180);
+
+            config.addCustomCategoryComment(Meditation,
+                "Meditation Spirit Bonus is always added AFTER all other calculations");
+            MeditationSpiBoostPercent = config.get(Meditation, "Meditation Boost", 20, "Amount of percent to multiply Base Spirit Stats by").getInt(20);
         }
         catch (Exception e)
         {

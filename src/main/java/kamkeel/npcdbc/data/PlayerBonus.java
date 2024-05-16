@@ -9,12 +9,17 @@ public class PlayerBonus implements IPlayerBonus {
     public String name;
     public byte type; // Type 0 is Multi, Type 1 is Addition
 
-    public float strength;
-    public float dexterity;
-    public float willpower;
+    public float strength = 0;
+    public float dexterity = 0;
+    public float willpower = 0;
 
     public float constituion = 0;
     public float spirit = 0;
+
+    public PlayerBonus(String name, byte type) {
+        this.name = name;
+        this.type = type;
+    }
 
     public PlayerBonus(String name, byte type, float strength, float dexterity, float willpower) {
         this.name = name;
