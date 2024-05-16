@@ -2,9 +2,11 @@ package kamkeel.npcdbc.entity;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import kamkeel.npcdbc.controllers.EntityLightController;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -79,6 +81,7 @@ public class EntityAura extends Entity {
             tex1 = auraDir + "aurag.png";
             tex3 = auraDir + "auragb.png";
             color3 = 12310271;
+            renderPass = 1;
         } else if (display.type == EnumPlayerAuraTypes.SaiyanRose) {
             // speed = 30;
             maxAlpha = 0.2F;
@@ -241,9 +244,18 @@ public class EntityAura extends Entity {
     }
 
 
-    public double getYOffset() {
+    public double getYOffset() { //for correctly scaling aura size
         float sizeFactor = size < 1.5 ? 1 : 1.2f;
-        float stateFactor = dbcData.State * 0.03f;
+        float offsetFactor = 0.1f;
+        int race = dbcData.Race;
+        int state = dbcData.State;
+        if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            if (state == DBCForm.SuperSaiyan3)
+                offsetFactor = 0.02f;
+            else if (state == DBCForm.SuperSaiyan4)
+                offsetFactor = 0.0075f;
+        }
+        float stateFactor = AuraRenderer.getStateSizeFactor(dbcData.State, dbcData.Race) * offsetFactor;
         
         return 1.75f * size * sizeFactor + stateFactor;
     }
