@@ -35,7 +35,7 @@ public class EntityAura extends Entity {
     public boolean isCharging;
     public boolean isPlayer;
 
-    public int color1 = -1, color2 = -1, color3 = -1, speed = 20, renderPass;
+    public int color1 = -1, color2 = -1, color3 = -1, speed = 10, renderPass;
     public String tex1 = "jinryuudragonbc:aura.png", tex2 = "", tex3 = "";
     public float alpha, maxAlpha = 0.2f, size = 1f;
 
@@ -130,7 +130,7 @@ public class EntityAura extends Entity {
 
         if (display.hasAlpha("aura"))
             maxAlpha = (float) display.alpha / 255;
-        maxAlpha = 0.3f;
+        maxAlpha = 0.1f;
         fadeFactor *= 10;
 
         alpha = fadeFactor;

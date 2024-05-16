@@ -5,6 +5,7 @@ import JinRyuu.DragonBC.common.Npcs.RenderDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import kamkeel.npcdbc.client.model.ModelAura;
 import kamkeel.npcdbc.entity.EntityAura;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -62,7 +63,7 @@ public class AuraRenderer extends RenderDBC {
         alpha = (isFirstPerson ? aura.isInner ? 0.0075f : 0.0125f : alpha) * alphaConfig;
 
 
-        pulseMax = 5;
+        pulseMax = 0;
         if (pulseMax > 0)
             animatePulsing();
         else
@@ -92,12 +93,16 @@ public class AuraRenderer extends RenderDBC {
 
       //  float spd2 = 18.0F / (speed * 0.05F);
        // float spin = aura.ticksExisted * spd2;
-        GL11.glRotatef(aura.ticksExisted % 360 * 3, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(aura.ticksExisted % speed * 3, 0.0F, 1.0F, 0.0F);
         float modelRotX = 0.75f;
 
-        int maxLayers = 15;
+        int maxLayers = 5;
         for (float i = 1; i < maxLayers + 1; ++i) {
             for (float j = 1; j < 2; j += 0.05) {
+               //  GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+                  GL11.glDisable(GL11.GL_LIGHTING);
+                 Minecraft.getMinecraft().entityRenderer.disableLightmap((double) 0);
+                 GL11.glDisable(GL11.GL_ALPHA_TEST);
                 GL11.glPushMatrix();
 //                GL11.glRotatef(360 * j, 0.0F, 1.0F, 0.0F);
 //                if (age < 15.0F) {
@@ -108,7 +113,7 @@ public class AuraRenderer extends RenderDBC {
 //
 //                    if (t2 != null) {
 //                        this.renderManager.renderEngine.bindTexture(t2);
-//                        glColor4f(aura.color2, alpha);
+//                        glColor4f(aura.color2, alpha);rr
 //                        model.auraModel.render(0.0625f);
 //                    }
 //                }
@@ -129,9 +134,9 @@ public class AuraRenderer extends RenderDBC {
                 float layerTemp = layerPerc * 20f;
 
                 //  model.auraModel.offsetY = -(i / maxLayers) * 20 * 0.15f; // from 0 to -1.64 to -4(max)
-                model.auraModel.offsetY = -(i / maxLayers) * 20 * 0.2f;
+                model.auraModel.offsetY = -(i / maxLayers) * 20 * 0.125f;
                 //  model.auraModel.offsetZ = ageTemp < 8.0F ? 0.4F - ageTemp * 0.1F : -0.5F + (ageTemp - 7.0F) * 0.053F;   //from  -0.4  (widest)  to 0.4
-                model.auraModel.offsetZ = layerTemp < 5F ? 0.1F - layerTemp * 0.075F : -0.3F + (layerTemp - 7.0F) * 0.035F;
+                model.auraModel.offsetZ = layerTemp < 7F ? 0.2F - 1 * 0.075F : 0.35F + (1 - 7.0F) * 0.055F;
                 model.auraModel.rotateAngleX = (0.9926646F - layerTemp * 0.01F - 0 * modelRotX) * (1 - i / maxLayers) * (1 - ((float) Math.pow(i / maxLayers, 2)));
                 if (layerPerc > 0.99)
                     model.auraModel.rotateAngleX = 100;
@@ -171,7 +176,7 @@ public class AuraRenderer extends RenderDBC {
         GL11.glPopMatrix();
         GL11.glDepthMask(true);
         GL11.glPopMatrix();
-
+Minecraft.getMinecraft().entityRenderer.enableLightmap((double) 0);
 
         //Transparency stuff
         //  GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
