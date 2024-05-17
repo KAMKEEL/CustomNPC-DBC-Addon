@@ -98,7 +98,7 @@ public class PlayerDataUtil {
 
     public static Form getForm(Entity entity) {
         if (entity instanceof EntityPlayer)
-            DBCData.get((EntityPlayer) entity).getForm();
+            return DBCData.get((EntityPlayer) entity).getForm();
         else if (entity instanceof EntityNPCInterface)
             return ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().getForm();
 
@@ -107,7 +107,7 @@ public class PlayerDataUtil {
 
     public static Aura getToggledAura(Entity entity) {
         if (entity instanceof EntityPlayer)
-            DBCData.get((EntityPlayer) entity).getToggledAura();
+            return DBCData.get((EntityPlayer) entity).getToggledAura();
         else if (entity instanceof EntityNPCInterface)
             return ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().getToggledAura();
 

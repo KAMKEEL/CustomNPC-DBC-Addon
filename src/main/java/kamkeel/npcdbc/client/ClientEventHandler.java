@@ -216,24 +216,25 @@ public class ClientEventHandler {
 
                 }
 
-               if (dbcData.auraEntity == null)
-                    new EntityAura(event.entity, aura).spawn();
-               // else
-                   // dbcData.auraEntity.spawn();
+                boolean enhancedRendering = true;
+                if (enhancedRendering) {
+                    if (dbcData.auraEntity == null)
+                        new EntityAura(event.entity, aura).spawn();
+                } else {
+                    if (isInKaioken && aura.display.kaiokenOverrides) {
+                        spawnKaiokenAura(aura, dbcData);
+                    } else {//if (TransformController.transformed) {
+                        spawnAura(event.entity, aura);
+                        if (aura.hasSecondaryAura())
+                            spawnAura(event.entity, aura.getSecondaryAur());
+                        if (isInKaioken)
+                            spawnKaiokenAura(aura, dbcData);
+/////
 
-//                if (isInKaioken && aura.display.kaiokenOverrides) {
-//                    spawnKaiokenAura(aura, dbcData);
-//                } else {//if (TransformController.transformed) {
-//                    spawnAura(event.entity, aura);
-//                    if (aura.hasSecondaryAura())
-//                        spawnAura(event.entity, aura.getSecondaryAur());
-//                    if (isInKaioken)
-//                        spawnKaiokenAura(aura, dbcData);
-///////
-//
-//                  //  TransformController.transformed = !TransformController.transformed;
-//
-//                }
+                        //  TransformController.transformed = !TransformController.transformed;
+
+                    }
+                }
 
 
             }

@@ -2,6 +2,7 @@ package kamkeel.npcdbc.entity;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.entity.EntityCusPar;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
@@ -17,6 +18,7 @@ import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -70,39 +72,33 @@ public class EntityAura extends Entity {
             tex2 = auraDir + "auraj.png";
             color2 = 16747301;
         } else if (display.type == EnumPlayerAuraTypes.SaiyanBlue) {
-            // speed = 40;
             maxAlpha = 0.5F;
             tex1 = auraDir + "aurag.png";
             tex3 = auraDir + "auragb.png";
             color3 = 15727354;
         } else if (display.type == EnumPlayerAuraTypes.SaiyanBlueEvo) {
-            // speed = 40;
             maxAlpha = 0.5F;
             tex1 = auraDir + "aurag.png";
             tex3 = auraDir + "auragb.png";
             color3 = 12310271;
             renderPass = 1;
         } else if (display.type == EnumPlayerAuraTypes.SaiyanRose) {
-            // speed = 30;
             maxAlpha = 0.2F;
             tex1 = auraDir + "aurai.png";
             tex2 = auraDir + "auraj.png";
             color2 = 7872713;
         } else if (display.type == EnumPlayerAuraTypes.SaiyanRoseEvo) {
-            //speed = 30;
             maxAlpha = 0.2F;
             tex1 = auraDir + "aurai.png";
             tex2 = auraDir + "auraj.png";
             color2 = 8592109;
         } else if (display.type == EnumPlayerAuraTypes.UI) {
-            // speed = 100;
             maxAlpha = 0.15F;
             color1 = 15790320;
             tex1 = auraDir + "auras.png";
             color3 = 4746495;
             tex3 = auraDir + "auragb.png";
         } else if (display.type == EnumPlayerAuraTypes.GoD) {
-            // speed = 100;
             maxAlpha = 0.2F;
             tex1 = auraDir + "aurag.png";
             tex3 = auraDir + "auragb.png";
@@ -133,17 +129,14 @@ public class EntityAura extends Entity {
 
         if (display.hasAlpha("aura"))
             maxAlpha = (float) display.alpha / 255;
-        maxAlpha = 0.1f;
-        fadeFactor *= 10;
+        maxAlpha = 0.05f;
 
-        alpha = fadeFactor;
 
         if (display.hasSpeed())
             speed = (int) display.speed;
         light = new EntityLightController(entity);
+
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
-
-
     }
 
     protected void entityInit() {
@@ -152,58 +145,85 @@ public class EntityAura extends Entity {
 
     }
 
-    public void onUpdate() {
-        light.onUpdate();
-       // light.addLitBlockUnder();
-        Aura currentAura = null;
+    public void updateColor() {
+        color1 = isPlayer ? dbcData.AuraColor > 0 ? dbcData.AuraColor : JRMCoreH.Algnmnt_rc(dbcData.Alignment) : 11075583; //alignment color
 
+        if (isPlayer && dbcData.State > 0)//vanilla DBC form colors
+            color1 = dbcData.getDBCColor();
+
+        Form form = PlayerDataUtil.getForm(entity);
+        if (form != null && form.display.hasColor("aura")) //IForm color
+            color1 = form.display.auraColor;
+    }
+
+    public void onUpdate() {
+
+        Aura currentAura = PlayerDataUtil.getToggledAura(entity);
+        if (entity == null || currentAura == null || aura != currentAura) //aura death condition
+            fadeOut = true;
+        
+        light.onUpdate();
+        // light.addLitBlockUnder();
         if (isPlayer) {
             isTransforming = dbcData.isTransforming();
             isCharging = dbcData.containsSE(4) || isTransforming;
-            currentAura = dbcData.getToggledAura();
 
         } else {
             isTransforming = display.isTransforming;
             isCharging = isTransforming;
-            currentAura = display.getToggledAura();
         }
-
-        if (entity == null || currentAura == null || aura != currentAura)
-            fadeOut = true;
-
+        updateColor();
+        
         if (fadeIn && !fadeOut)
             if (alpha < maxAlpha)
                 alpha = Math.min(alpha + fadeFactor, maxAlpha);
-
 
         if (fadeOut) {
             alpha -= fadeFactor;
             if (alpha <= 0)
                 setDead();
         }
+        double posXOth = entity.posX;
+        double posYOth = entity.posY + (double) (entity instanceof EntityPlayerSP ?2 : 0.0F);
+        double posZOth = entity.posZ;
+        float red = this.alpha;
+        float green = 1.0F;
+        float blue = (float) (this.color1 >> 16 & 255) / 255.0F;
+        float red2 = (float) (this.color1 >> 8 & 255) / 255.0F;
+        float green2 = (float) (this.color1 & 255) / 255.0F;
+        red = green * blue;
+        green = green * red2;
+        blue = green * green2;
+        if (red > 1.0F) {
+            red = 1.0F;
+        }
+
+        if (green > 1.0F) {
+            green = 1.0F;
+        }
+
+        if (blue > 1.0F) {
+            blue = 1.0F;
+        }
+
+        for (float gh = 0; gh < 5; ++gh) {
+          //  float life = 0.8F * entity.height;
+            float extra_scale = 1.0F + (entity.height > 2.1F ? entity.height / 2.0F : 0.0F) / 5.0F;
+            float life = entity.width * 2.20F;
+            double x = (Math.random() * 1.0 - 0.5) * (double) (life * 1.3F);
+            double y = Math.random() * (double) (entity.height * 1.4F) - (double) (entity.height / 2.0F) - 0.30000001192092896 + 0.5;
+            double z = (Math.random() * 1.0 - 0.5) * (double) (life * 1.3F);
+            double motx = Math.random() * 0.019999999552965164 - 0.009999999776482582;
+            double moty = (Math.random() * 0.8999999761581421 + 0.8999999761581421) * (double) (life * extra_scale) * 0.07;
+            double motz = Math.random() * 0.019999999552965164 - 0.009999999776482582;
+            Entity par = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, motx, moty, motz, 0.0F, (int) (Math.random() * 3.0) + 32, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", (int) (30.0F * life * 0.5F), 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * extra_scale, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * extra_scale, 0.2F * life * extra_scale, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 2, 0.0F, 0.0F, 0.4F, 0.45F, 0.08F, false, -1, true, entity);
+            entity.worldObj.spawnEntityInWorld(par);
+            par = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, motx, moty, motz, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", (int) (30.0F * life * 0.5F), 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * extra_scale, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * extra_scale, 0.1F * life * extra_scale, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 2, 0.0F, 0.0F, 0.4F, 0.45F, 0.08F, false, -1, true, entity);
+            entity.worldObj.spawnEntityInWorld(par);
+        }
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
-        
     }
 
-    public boolean shouldRenderInPass(int pass) {
-        return pass == renderPass;
-    }
-
-    public void setDead() {
-        super.setDead();
-        if (isPlayer && dbcData.auraEntity == this)
-            dbcData.auraEntity = null;
-
-    }
-
-
-    protected void readEntityFromNBT(NBTTagCompound tagCompund) {
-
-    }
-
-    protected void writeEntityToNBT(NBTTagCompound tagCompound) {
-
-    }
 
     public void playSound() {
         if (entity == null || aura == null)
@@ -244,26 +264,6 @@ public class EntityAura extends Entity {
     }
 
 
-    public double getYOffset() { //for correctly scaling aura size
-        float sizeFactor = size < 1.5 ? 1 : 1.2f;
-        float offsetFactor = 0.1f;
-        int race = dbcData.Race;
-        int state = dbcData.State;
-        if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-            if (state == DBCForm.SuperSaiyan3)
-                offsetFactor = 0.02f;
-            else if (state == DBCForm.SuperSaiyan4)
-                offsetFactor = 0.0075f;
-        }
-        float stateFactor = AuraRenderer.getStateSizeFactor(dbcData.State, dbcData.Race) * offsetFactor;
-        
-        return 1.75f * size * sizeFactor + stateFactor;
-    }
-    public void spawn() {
-        entity.worldObj.spawnEntityInWorld(this);
-        // playSound();
-    }
-
     public EntityAuraRing spawnAuraRing(Entity entity, int color) {
         if (entity.ticksExisted % 20 != 0)
             return null;
@@ -273,6 +273,50 @@ public class EntityAura extends Entity {
 
         entity.worldObj.spawnEntityInWorld(ring);
         return ring;
+
+    }
+
+    public boolean shouldRenderInPass(int pass) {
+        return pass == renderPass;
+    }
+
+    public double getYOffset() { //for correctly scaling aura size
+        float sizeFactor = size < 1.5 ? 1 : 1.2f;
+        float offsetFactor = 0.1f;
+        int race = dbcData.Race;
+        int state = dbcData.State;
+
+        if (state == DBCForm.Base)
+            offsetFactor *= dbcData.Release * 0.075;
+
+        if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            if (state == DBCForm.SuperSaiyan3)
+                offsetFactor = 0.02f;
+            else if (state == DBCForm.SuperSaiyan4)
+                offsetFactor = 0.0075f;
+        }
+        float stateFactor = AuraRenderer.getStateSizeFactor(dbcData.State, dbcData.Race) * offsetFactor;
+
+        return 1.75f * size * sizeFactor + stateFactor;
+    }
+
+    public void spawn() {
+        entity.worldObj.spawnEntityInWorld(this);
+        playSound();
+    }
+
+    public void setDead() {
+        super.setDead();
+        if (isPlayer && dbcData.auraEntity == this)
+            dbcData.auraEntity = null;
+
+    }
+
+    protected void readEntityFromNBT(NBTTagCompound tagCompund) {
+
+    }
+
+    protected void writeEntityToNBT(NBTTagCompound tagCompound) {
 
     }
 }
