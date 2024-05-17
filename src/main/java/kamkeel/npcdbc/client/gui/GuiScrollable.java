@@ -18,7 +18,8 @@ public class GuiScrollable extends GuiScreen {
     protected int clipWidth;
     protected int clipHeight;
     protected ScaledResolution scaledResolution;
-    protected int scrollY = 0;
+    protected float scrollY = 0;
+    protected float nextScrollY = 0;
 
     /*
      * @TODO
@@ -31,26 +32,52 @@ public class GuiScrollable extends GuiScreen {
         this.parent = parent;
     }
 
+    private double lerp(double a, double b, double lambda){
+        return a + lambda * (b - a);
+    }
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
         GL11.glPushMatrix();
-        drawDefaultBackground();
 
+
+        scrollY = (float) lerp(scrollY, nextScrollY, partialTicks);
+
+        drawDefaultBackground();
+        drawRect(xPos-5, yPos-5, xPos+clipWidth+5, yPos+clipHeight+5, 0xFFD3D3D3);
+        drawGradientRect(xPos, yPos, xPos+clipWidth, yPos+clipHeight, -1072689136, -804253680);
+
+        GL11.glTranslatef(xPos, scrollY, 0);
         //Enable clipping
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        setClip((width-200)/2, (height-100)/2, 200, 100);
-        drawRect((width-200)/2, scrollY, (width-200)/2+100, 100+scrollY, 0xFFFF0000);
-
+        setClip();
+        //drawRect((width-200)/2, scrollY, (width-200)/2+100, 100+scrollY, 0xFFFF0000);
+        super.drawScreen(mouseX-xPos, (int) (mouseY-scrollY), partialTicks);
+        drawString(fontRendererObj, "Test:", 0, 1, 0xFF00FF);
 
         //Disable clipping (VERY IMPORTANT)
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+        GL11.glTranslatef(0, 0, 0);
+
+
         GL11.glPopMatrix();
     }
 
     @Override
     public void initGui(){
         scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        buttonList.add(new GuiButton(0, 0, 9, 50, 20, "Testing"));
+
+        float scrollPerc = nextScrollY / (yPos+clipHeight);
+
+        xPos = (width-200)/2;
+        yPos = (height-250)/2;
+        clipWidth = 200;
+        clipHeight = 250;
+
+        nextScrollY = scrollPerc * (yPos+clipHeight);
     }
 
     @Override
@@ -67,11 +94,14 @@ public class GuiScrollable extends GuiScreen {
     @Override
     public void handleMouseInput(){
         super.handleMouseInput();
-        if(Mouse.getEventDWheel() != 0){
-            scrollY += Mouse.getEventDWheel() > 0 ? 14 : -14;
-            if(scrollY < 0)
-                scrollY = 0;
+
+        nextScrollY -= (float) Mouse.getEventDWheel()/25;
+        if(nextScrollY < yPos)
+            nextScrollY = yPos;
+        if(nextScrollY > yPos+clipHeight-10){
+            nextScrollY = yPos+clipHeight-10;
         }
+
     }
 
     @Override
