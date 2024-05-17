@@ -42,6 +42,8 @@ public class GuiScrollable extends GuiScreen {
 
 
         scrollY = (float) lerp(scrollY, nextScrollY, partialTicks);
+        if(Float.isNaN(scrollY))
+            scrollY = 0;
 
         drawDefaultBackground();
         drawRect(xPos-5, yPos-5, xPos+clipWidth+5, yPos+clipHeight+5, 0xFFD3D3D3);
@@ -50,9 +52,9 @@ public class GuiScrollable extends GuiScreen {
         GL11.glTranslatef(xPos, scrollY, 0);
         //Enable clipping
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-
         setClip();
-        //drawRect((width-200)/2, scrollY, (width-200)/2+100, 100+scrollY, 0xFFFF0000);
+        drawRect(0, 0, 100, 200, 0xFFFF0000);
+
         super.drawScreen(mouseX-xPos, (int) (mouseY-scrollY), partialTicks);
         drawString(fontRendererObj, "Test:", 0, 1, 0xFF00FF);
 
@@ -70,7 +72,10 @@ public class GuiScrollable extends GuiScreen {
         scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         buttonList.add(new GuiButton(0, 0, 9, 50, 20, "Testing"));
 
-        float scrollPerc = nextScrollY / (yPos+clipHeight);
+        float scrollPerc = 0;
+        if((yPos+clipHeight) != 0){
+            scrollPerc = nextScrollY / (yPos+clipHeight);
+        }
 
         xPos = (width-200)/2;
         yPos = (height-250)/2;
