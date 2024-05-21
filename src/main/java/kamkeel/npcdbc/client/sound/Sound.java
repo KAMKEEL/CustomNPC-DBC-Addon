@@ -66,6 +66,11 @@ public class Sound extends MovingSound {
         return this;
     }
 
+    public Sound setPitch(float pitch) {
+        this.field_147663_c = pitch;
+        return this;
+    }
+
     public Sound setRepeat(boolean repeat) {
         this.repeat = repeat;
         return this;

@@ -231,15 +231,13 @@ public class ClientEventHandler {
                 } else {
                     if (isInKaioken && aura.display.kaiokenOverrides) {
                         spawnKaiokenAura(aura, dbcData);
-                    } else {//if (TransformController.transformed) {
+                    } else {
                         spawnAura(event.entity, aura);
                         if (aura.hasSecondaryAura())
                             spawnAura(event.entity, aura.getSecondaryAur());
                         if (isInKaioken)
                             spawnKaiokenAura(aura, dbcData);
-/////
 
-                        //  TransformController.transformed = !TransformController.transformed;
 
                     }
                 }
@@ -443,11 +441,7 @@ public class ClientEventHandler {
         ((IEntityAura) kaiokenAura).setLightningColor(aura.display.lightningColor);
         ((IEntityAura) kaiokenAura).setLightningAlpha(aura.display.lightningAlpha);
 
-
-        long l = System.nanoTime();
-        long t = System.currentTimeMillis();
-        double t2 = l / 10000000L;
-
+        
         String kkSound = aura.display.getFinalKKSound();
         if (kkSound != null && !SoundHandler.isPlayingSound(dbcData.player, kkSound)) {
             AuraSound kaiokenSound = new AuraSound(aura, kkSound, dbcData.player);

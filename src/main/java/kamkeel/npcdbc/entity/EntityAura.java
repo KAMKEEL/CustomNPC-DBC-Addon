@@ -45,6 +45,9 @@ public class EntityAura extends Entity {
     public String tex1 = "jinryuudragonbc:aura.png", tex2 = "", tex3 = "";
     public float alpha, maxAlpha = 0.2f, size = 1f;
 
+    public boolean hasLightning;
+    public int lightningColor = 0x25c9cf, lightningAlpha = 255;
+
     public boolean isInner, fadeOut = false, fadeIn = true;
 
     public String name;
@@ -148,6 +151,11 @@ public class EntityAura extends Entity {
             speed = (int) display.speed;
         light = new EntityLightController(entity);
 
+        hasLightning = display.hasLightning;
+        if (display.hasColor("lightning"))
+            lightningColor = display.lightningColor;
+        if (display.hasAlpha("lightning"))
+            lightningAlpha = display.lightningAlpha;
 
         return this;
     }
@@ -177,6 +185,13 @@ public class EntityAura extends Entity {
             speed = (int) display.speed;
 
         size = display.size * display.kaiokenSize;
+
+        hasLightning = display.hasLightning;
+        if (display.hasColor("lightning"))
+            lightningColor = display.lightningColor;
+        if (display.hasAlpha("lightning"))
+            lightningAlpha = display.lightningAlpha;
+        
         isKaioken = true;
         return this;
     }

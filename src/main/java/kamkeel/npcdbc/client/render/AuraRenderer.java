@@ -5,6 +5,7 @@ import JinRyuu.DragonBC.common.Npcs.RenderDBC;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import kamkeel.npcdbc.client.model.ModelAura;
+import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.entity.EntityAura;
@@ -173,7 +174,7 @@ public class AuraRenderer extends RenderDBC {
 
         }
         float r = rand.nextInt(50);
-        if (r < 5 && age < 10)
+        if (aura.hasLightning && r < 5 && age < 10)
             lightning(aura, posX, posY + aura.getYOffset(), posZ);
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawing(1);
@@ -200,8 +201,8 @@ public class AuraRenderer extends RenderDBC {
 
         if (aura.ticksExisted % 100 > 0 && rand.nextLong() < 1)
             return;
-        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
-        //   this.lightVertRotation = new float[10][7];
+
+        this.lightVertRotation = new float[10][7];
         GL11.glPushMatrix();
         Tessellator tessellator = Tessellator.instance;
         GL11.glDisable(3553);
@@ -214,7 +215,7 @@ public class AuraRenderer extends RenderDBC {
         double[] adouble1 = new double[8];
         double d3 = 0.0;
         double d4 = 0.0;
-        GL11.glTranslatef((float) par2, (float) par4, (float) par6);
+        GL11.glTranslated(par2, par4 + 0.6, par6);
         int k1 = 0;
         int nu = (int) (Math.random() * 10.0) + 1;
         int nu2 = 3;
@@ -262,7 +263,7 @@ public class AuraRenderer extends RenderDBC {
                     d6 += (double) (rand.nextInt(31) - 15) * 0.07000000029802322;
                     tessellator.startDrawing(5);
                     float f2 = 0.5F;
-                    tessellator.setColorRGBA_I(0x25c9cf, 255);
+                    tessellator.setColorRGBA_I(aura.lightningColor, aura.lightningAlpha);
 
 
                     double d9 = 0.1 + (double) k1 * 0.2;
@@ -299,12 +300,12 @@ public class AuraRenderer extends RenderDBC {
                 }
             }
         }
-
+        if (rand.nextInt(15) < 2 && aura.ticksExisted % 5 == 0)
+            new Sound("jinryuudragonbc:1610.spark", aura.entity).setVolume(0.1f).setPitch(0.90f + rand.nextInt(3) * 0.05f).play(false);
         GL11.glDisable(3042);
         GL11.glEnable(2896);
         GL11.glEnable(3553);
         GL11.glPopMatrix();
-        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
 
     }
     public static float getStateIntensity(int state, int race) {
