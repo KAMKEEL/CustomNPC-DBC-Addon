@@ -83,7 +83,7 @@ public class Sound extends MovingSound {
         else {
             PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, soundDir, volume, getPitch());
 
-            if (MinecraftForge.EVENT_BUS.post(event) || onlyOneCanExist && SoundHandler.playingSounds.containsKey(key))
+            if (MinecraftForge.EVENT_BUS.post(event) || onlyOneCanExist && SoundHandler.playingSounds.containsKey(key) && !SoundHandler.playingSounds.get(key).fadeOut)
                 return;
 
             Minecraft.getMinecraft().getSoundHandler().playSound(this);
