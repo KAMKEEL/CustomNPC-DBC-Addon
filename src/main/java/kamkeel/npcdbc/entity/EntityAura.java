@@ -209,13 +209,7 @@ public class EntityAura extends Entity {
             color1 = form.display.auraColor;
         }
     }
-
-    public void killChildren() {
-        for (EntityAura child : children.values()) {
-            child.despawn();
-        }
-    }
-
+    
     public boolean isRoot() {
         return parent == null;
     }
@@ -234,7 +228,9 @@ public class EntityAura extends Entity {
             Aura currentAura = PlayerDataUtil.getToggledAura(entity);
             if (entity == null || currentAura == null || aura != currentAura) { //aura death condition
                 despawn();
-                killChildren();
+
+                for (EntityAura child : children.values())
+                    child.despawn();
             }
         }
         // light.addLitBlockUnder();
