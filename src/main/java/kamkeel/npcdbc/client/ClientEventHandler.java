@@ -218,8 +218,16 @@ public class ClientEventHandler {
 
                 boolean enhancedRendering = true;
                 if (enhancedRendering) {
-                    if (dbcData.auraEntity == null)
-                        new EntityAura(event.entity, aura).spawn();
+                    EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
+                    if (enhancedAura == null)
+                        enhancedAura = new EntityAura(event.entity, aura).load().spawn();
+                    if (enhancedAura != null) {
+                        if (aura.hasSecondaryAura() && !enhancedAura.children.containsKey("Secondary"))
+                            new EntityAura(event.entity, aura.getSecondaryAur()).load().setParent(enhancedAura, "Secondary").spawn();
+                        
+                        if (isInKaioken && !enhancedAura.children.containsKey("Kaioken"))
+                            new EntityAura(event.entity, aura).loadKaioken().setParent(enhancedAura, "Kaioken").spawn();
+                    }
                 } else {
                     if (isInKaioken && aura.display.kaiokenOverrides) {
                         spawnKaiokenAura(aura, dbcData);

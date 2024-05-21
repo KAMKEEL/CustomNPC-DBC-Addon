@@ -5,7 +5,6 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.sound.AuraSound;
-import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
@@ -24,17 +23,20 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.entity.EntityNPCInterface;
 
+import java.util.HashMap;
+
 public class EntityAura extends Entity {
 
     public final Entity entity;
     public final Aura aura;
+    public AuraSound auraSound;
     public DBCData dbcData = null;
     DBCDisplay display = null;
 
     public EntityLightController light;
 
 
-    public boolean isKaioken;
+    public boolean isKaioken, isInKaioken;
     public boolean isTransforming;
     public boolean isCharging;
     public boolean isPlayer;
@@ -43,7 +45,12 @@ public class EntityAura extends Entity {
     public String tex1 = "jinryuudragonbc:aura.png", tex2 = "", tex3 = "";
     public float alpha, maxAlpha = 0.2f, size = 1f;
 
-    public boolean isInner, doneUsing, fadeOut = false, fadeIn = true;
+    public boolean isInner, fadeOut = false, fadeIn = true;
+
+    public String name;
+    public EntityAura parent;
+    public HashMap<String, EntityAura> children = new HashMap<>();
+
     public float fadeFactor = 0.005f;
 
     public EntityAura(Entity entity, Aura aura) {
@@ -55,9 +62,14 @@ public class EntityAura extends Entity {
             dbcData = DBCData.get((EntityPlayer) entity);
             isPlayer = true;
             dbcData.auraEntity = this;
-        } else if (entity instanceof EntityNPCInterface)
+        } else if (entity instanceof EntityNPCInterface) {
             display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
+            display.auraEntity = this;
+        }
+        setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
+    }
 
+    public EntityAura load() {
         color1 = isPlayer ? dbcData.AuraColor > 0 ? dbcData.AuraColor : JRMCoreH.Algnmnt_rc(dbcData.Alignment) : 11075583; //alignment color
 
         AuraDisplay display = aura.display;
@@ -136,9 +148,49 @@ public class EntityAura extends Entity {
             speed = (int) display.speed;
         light = new EntityLightController(entity);
 
-        setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
+
+        return this;
     }
 
+    public EntityAura loadKaioken() {
+        AuraDisplay display = aura.display;
+        color1 = 16646144;
+        if (display.kaiokenOverrides) {
+            maxAlpha = 0.1f;
+            speed = 40;
+            tex1 = "jinryuudragonbc:aura.png";
+        } else {
+            maxAlpha = 0.1f;
+            speed = 40;
+            tex1 = "jinryuudragonbc:aurak.png";
+            renderPass = 0;
+        }
+
+        if (aura.display.hasAlpha("kaioken"))
+            maxAlpha = (float) display.kaiokenAlpha / 255;
+
+
+        if (aura.display.hasColor("kaioken"))
+            color1 = display.kaiokenColor;
+
+        if (aura.display.hasSpeed())
+            speed = (int) display.speed;
+
+        size = display.size * display.kaiokenSize;
+        isKaioken = true;
+        return this;
+    }
+
+    public EntityAura setParent(EntityAura aura, String thisName) {
+        parent = aura;
+
+        if (isPlayer)
+            dbcData.auraEntity = aura;
+        else
+            display.auraEntity = aura;
+        parent.children.put(name = thisName, this);
+        return this;
+    }
     protected void entityInit() {
         ignoreFrustumCheck = true;
         renderPass = 1;
@@ -146,6 +198,7 @@ public class EntityAura extends Entity {
     }
 
     public void updateColor() {
+        if (!isKaioken) {
         color1 = isPlayer ? dbcData.AuraColor > 0 ? dbcData.AuraColor : JRMCoreH.Algnmnt_rc(dbcData.Alignment) : 11075583; //alignment color
 
         if (isPlayer && dbcData.State > 0)//vanilla DBC form colors
@@ -154,24 +207,48 @@ public class EntityAura extends Entity {
         Form form = PlayerDataUtil.getForm(entity);
         if (form != null && form.display.hasColor("aura")) //IForm color
             color1 = form.display.auraColor;
+        }
+    }
+
+    public void killChildren() {
+        for (EntityAura child : children.values()) {
+            child.despawn();
+        }
+    }
+
+    public boolean isRoot() {
+        return parent == null;
+    }
+
+    public void despawn() {
+        if (fadeOut)
+            return;
+        fadeOut = true;
+        if (auraSound != null)
+             auraSound.fadeOut = true;
     }
 
     public void onUpdate() {
 
-        Aura currentAura = PlayerDataUtil.getToggledAura(entity);
-        if (entity == null || currentAura == null || aura != currentAura) //aura death condition
-            fadeOut = true;
-        
-        light.onUpdate();
+        if (isRoot()) {
+            Aura currentAura = PlayerDataUtil.getToggledAura(entity);
+            if (entity == null || currentAura == null || aura != currentAura) { //aura death condition
+                despawn();
+                killChildren();
+            }
+        }
         // light.addLitBlockUnder();
         if (isPlayer) {
             isTransforming = dbcData.isTransforming();
             isCharging = dbcData.containsSE(4) || isTransforming;
-
+            isInKaioken = dbcData.isForm(DBCForm.Kaioken);
         } else {
             isTransforming = display.isTransforming;
             isCharging = isTransforming;
         }
+
+        if (!isInKaioken && isKaioken)
+            despawn();
         updateColor();
         
         if (fadeIn && !fadeOut)
@@ -226,39 +303,14 @@ public class EntityAura extends Entity {
 
 
     public void playSound() {
-        if (entity == null || aura == null)
-            return;
 
-
-        String sound = aura.display.getFinalSound();
-        String secondSound = aura.hasSecondaryAura() ? aura.getSecondaryAur().display.getFinalSound() : null;
-
-        if (sound != null && !SoundHandler.isPlayingSound(entity, sound)) {
-            AuraSound auraSound = new AuraSound(aura, sound, entity);
+        String sound = !isKaioken ? aura.display.getFinalSound() : aura.display.getFinalKKSound();
+        if (sound != null) {
+            auraSound = new AuraSound(aura, sound, entity);
             if (isTransforming)
                 auraSound.setVolume(0.2f);
-
-            auraSound.isKaiokenSound = isKaioken;
+            auraSound.isEnhancedAura = true;
             auraSound.setRepeat(true).play(false);
-        }
-
-        if (secondSound != null && !SoundHandler.isPlayingSound(entity, secondSound)) {
-            AuraSound secondarySound = new AuraSound(aura, secondSound, entity);
-            if (isTransforming)
-                secondarySound.setVolume(0.2f);
-
-            secondarySound.setRepeat(true).play(false);
-        }
-
-        if (!dbcData.isForm(DBCForm.Kaioken) || !aura.display.hasKaiokenAura)
-            return;
-
-        String kkSound = aura.display.getFinalKKSound();
-        if (kkSound != null && !SoundHandler.isPlayingSound(dbcData.player, kkSound)) {
-            AuraSound kaiokenSound = new AuraSound(aura, kkSound, dbcData.player);
-
-            kaiokenSound.isKaiokenSound = true;
-            kaiokenSound.setRepeat(true).play(false);
         }
 
     }
@@ -300,15 +352,19 @@ public class EntityAura extends Entity {
         return 1.75f * size * sizeFactor + stateFactor;
     }
 
-    public void spawn() {
+    public EntityAura spawn() {
         entity.worldObj.spawnEntityInWorld(this);
         playSound();
+        return this;
     }
 
     public void setDead() {
         super.setDead();
         if (isPlayer && dbcData.auraEntity == this)
             dbcData.auraEntity = null;
+
+        if (parent != null && parent.children != null && parent.children.containsKey(name))
+            parent.children.remove(name);
 
     }
 
