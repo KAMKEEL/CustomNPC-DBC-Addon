@@ -2,7 +2,7 @@ package kamkeel.npcdbc.entity;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.JRMCoreH;
-import JinRyuu.JRMCore.entity.EntityCusPar;
+import JinRyuu.JRMCore.JRMCoreHDBC;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -17,11 +17,13 @@ import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.entity.EntityNPCInterface;
+import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 
@@ -207,7 +209,7 @@ public class EntityAura extends Entity {
         return this;
     }
     protected void entityInit() {
-        ignoreFrustumCheck = true;
+         ignoreFrustumCheck = true;
         renderPass = 1;
 
     }
@@ -304,10 +306,10 @@ public class EntityAura extends Entity {
             double motx = Math.random() * 0.019999999552965164 - 0.009999999776482582;
             double moty = (Math.random() * 0.8999999761581421 + 0.8999999761581421) * (double) (life * extra_scale) * 0.07;
             double motz = Math.random() * 0.019999999552965164 - 0.009999999776482582;
-            Entity par = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, motx, moty, motz, 0.0F, (int) (Math.random() * 3.0) + 32, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", (int) (30.0F * life * 0.5F), 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * extra_scale, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * extra_scale, 0.2F * life * extra_scale, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 2, 0.0F, 0.0F, 0.4F, 0.45F, 0.08F, false, -1, true, entity);
-            entity.worldObj.spawnEntityInWorld(par);
-            par = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, motx, moty, motz, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", (int) (30.0F * life * 0.5F), 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * extra_scale, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * extra_scale, 0.1F * life * extra_scale, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 2, 0.0F, 0.0F, 0.4F, 0.45F, 0.08F, false, -1, true, entity);
-            entity.worldObj.spawnEntityInWorld(par);
+            //   Entity par = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, motx, moty, motz, 0.0F, (int) (Math.random() * 3.0) + 32, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", (int) (30.0F * life * 0.5F), 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * extra_scale, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * extra_scale, 0.2F * life * extra_scale, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 2, 0.0F, 0.0F, 0.4F, 0.45F, 0.08F, false, -1, true, entity);
+            // entity.worldObj.spawnEntityInWorld(par);
+            //par = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, motx, moty, motz, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", (int) (30.0F * life * 0.5F), 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * extra_scale, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * extra_scale, 0.1F * life * extra_scale, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 2, 0.0F, 0.0F, 0.4F, 0.45F, 0.08F, false, -1, true, entity);
+            //  entity.worldObj.spawnEntityInWorld(par);
         }
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
     }
@@ -345,10 +347,11 @@ public class EntityAura extends Entity {
 
     public double getYOffset() { //for correctly scaling aura size
         float sizeFactor = size < 1.5 ? 1 : 1.2f;
-        float offsetFactor = 0.1f;
+        float offsetFactor = 0.05f;
         int race = dbcData.Race;
         int state = dbcData.State;
-
+        int customFormID = dbcData.addonFormID;
+        
         if (state == DBCForm.Base)
             offsetFactor *= dbcData.Release * 0.075;
 
@@ -358,9 +361,21 @@ public class EntityAura extends Entity {
             else if (state == DBCForm.SuperSaiyan4)
                 offsetFactor = 0.0075f;
         }
-        float stateFactor = AuraRenderer.getStateSizeFactor(dbcData.State, dbcData.Race) * offsetFactor;
+        float finalStateFactor;
+        float stateFactor = AuraRenderer.getStateSizeFactor(dbcData);
 
-        return 1.75f * size * sizeFactor + stateFactor;
+        if (customFormID > -1) { //idk this sounds like hell but auras wont scale with custom form sizes properly without this 
+            float raceSize = JRMCoreHDBC.DBCsizeBasedOnRace2(race, state);
+            float release = ValueUtil.clamp(dbcData.Release, 15, 50);
+            float effectiveSize = raceSize * release * 0.015f;
+            float factor = raceSize > 2.25 ? effectiveSize * raceSize / 3 * 0.8f + (release < 45 ? -0.55f : release / 50 * raceSize / 3 * 0.75f) : 0;
+            finalStateFactor = raceSize * 0.3f - factor;
+        } else
+            finalStateFactor = stateFactor * offsetFactor;
+
+        boolean client = Minecraft.getMinecraft().thePlayer == entity;
+
+        return (3.4f - (client ? entity.yOffset : 0)) * size * sizeFactor + finalStateFactor;
     }
 
     public EntityAura spawn() {

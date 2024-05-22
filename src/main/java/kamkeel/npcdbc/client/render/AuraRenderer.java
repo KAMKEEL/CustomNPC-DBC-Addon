@@ -3,16 +3,19 @@ package kamkeel.npcdbc.client.render;
 import JinRyuu.DragonBC.common.DBCClient;
 import JinRyuu.DragonBC.common.Npcs.RenderDBC;
 import JinRyuu.JRMCore.JRMCoreClient;
+import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import kamkeel.npcdbc.client.model.ModelAura;
 import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import noppes.npcs.util.ValueUtil;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
@@ -94,7 +97,7 @@ public class AuraRenderer extends RenderDBC {
         GL11.glBlendFunc(770, 771);
         GL11.glAlphaFunc(516, 0.003921569F);
 
-        float sizeStateReleaseFactor = getStateSizeFactor(state, race) + aura.dbcData.Release * 0.03f;
+        float sizeStateReleaseFactor = getStateSizeFactor(aura.dbcData) + aura.dbcData.Release * 0.03f;
         float pulsingSize = pulseAnimation * 0.03f;
         GL11.glScalef(aura.size + 0.1F * sizeStateReleaseFactor + pulsingSize, aura.size + 0.07F * sizeStateReleaseFactor, aura.size + 0.1F * sizeStateReleaseFactor + pulsingSize);
       
@@ -334,7 +337,10 @@ public class AuraRenderer extends RenderDBC {
         return state * intensityFactor;
     }
 
-    public static float getStateSizeFactor(int state, int race) {
+    public static float getStateSizeFactor(DBCData dbcData) {
+        int state = dbcData.State;
+        int race = dbcData.Race;
+        
         int sizeFactor = state; //responsible for correctly scaling aura sizes
         if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             if (state == DBCForm.Base)
@@ -356,6 +362,14 @@ public class AuraRenderer extends RenderDBC {
                 sizeFactor = 12;
 
         }
+
+        if (dbcData.addonFormID > -1) {
+            float size = JRMCoreHDBC.DBCsizeBasedOnRace2(race, state);
+            float effectiveSize = size * ValueUtil.clamp(dbcData.Release, 15, 50) * 0.015f;
+            float factor = effectiveSize / size * 17;
+            return size * factor;
+        }
+        
         return sizeFactor * 0.5f;
 
     }
