@@ -36,7 +36,7 @@ public class AuraSound extends Sound {
     public void update() {
         super.update();
 
-        //DBC aura logic 
+        //DBC aura logic
         if (!isEnhancedAura) {
             Aura aura = null;
             boolean isInKaioken = false;
@@ -56,8 +56,6 @@ public class AuraSound extends Sound {
                 fadeOut = true;
             }
         }
-
-
     }
 
     public static void play(Entity entity, Aura aura) {

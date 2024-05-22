@@ -193,7 +193,7 @@ public class EntityAura extends Entity {
             lightningColor = display.lightningColor;
         if (display.hasAlpha("lightning"))
             lightningAlpha = display.lightningAlpha;
-        
+
         isKaioken = true;
         return this;
     }
@@ -226,7 +226,7 @@ public class EntityAura extends Entity {
             color1 = form.display.auraColor;
         }
     }
-    
+
     public boolean isRoot() {
         return parent == null;
     }
@@ -263,7 +263,7 @@ public class EntityAura extends Entity {
         if (!isInKaioken && isKaioken)
             despawn();
         updateColor();
-        
+
         if (fadeIn && !fadeOut)
             if (alpha < maxAlpha)
                 alpha = Math.min(alpha + fadeFactor, maxAlpha);
@@ -316,7 +316,6 @@ public class EntityAura extends Entity {
 
 
     public void playSound() {
-
         String sound = !isKaioken ? aura.display.getFinalSound() : aura.display.getFinalKKSound();
         if (sound != null) {
             auraSound = new AuraSound(aura, sound, entity);
@@ -325,7 +324,6 @@ public class EntityAura extends Entity {
             auraSound.isEnhancedAura = true;
             auraSound.setRepeat(true).play(false);
         }
-
     }
 
 
@@ -351,7 +349,7 @@ public class EntityAura extends Entity {
         int race = dbcData.Race;
         int state = dbcData.State;
         int customFormID = dbcData.addonFormID;
-        
+
         if (state == DBCForm.Base)
             offsetFactor *= dbcData.Release * 0.075;
 
@@ -364,7 +362,7 @@ public class EntityAura extends Entity {
         float finalStateFactor;
         float stateFactor = AuraRenderer.getStateSizeFactor(dbcData);
 
-        if (customFormID > -1) { //idk this sounds like hell but auras wont scale with custom form sizes properly without this 
+        if (customFormID > -1) { //idk this sounds like hell but auras wont scale with custom form sizes properly without this
             float raceSize = JRMCoreHDBC.DBCsizeBasedOnRace2(race, state);
             float release = ValueUtil.clamp(dbcData.Release, 15, 50);
             float effectiveSize = raceSize * release * 0.015f;

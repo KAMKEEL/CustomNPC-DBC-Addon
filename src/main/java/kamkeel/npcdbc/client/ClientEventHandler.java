@@ -59,7 +59,7 @@ public class ClientEventHandler {
                 } else if (ConfigDBCClient.EnhancedCharging && JRMCoreKeyHandler.KiCharge.getIsKeyPressed()) {
                     chargeKi();
                 } else {
-                TransformController.decrementRage();
+                    TransformController.decrementRage();
                 }
             }
         }
@@ -241,7 +241,7 @@ public class ClientEventHandler {
                     if (enhancedAura != null) {
                         if (aura.hasSecondaryAura() && !enhancedAura.children.containsKey("Secondary"))
                             new EntityAura(event.entity, aura.getSecondaryAur()).load().setParent(enhancedAura, "Secondary").spawn();
-                        
+
                         if (isInKaioken && !enhancedAura.children.containsKey("Kaioken"))
                             new EntityAura(event.entity, aura).loadKaioken().setParent(enhancedAura, "Kaioken").spawn();
                     }
@@ -458,7 +458,7 @@ public class ClientEventHandler {
         ((IEntityAura) kaiokenAura).setLightningColor(aura.display.lightningColor);
         ((IEntityAura) kaiokenAura).setLightningAlpha(aura.display.lightningAlpha);
 
-        
+
         String kkSound = aura.display.getFinalKKSound();
         if (kkSound != null && !SoundHandler.isPlayingSound(dbcData.player, kkSound)) {
             AuraSound kaiokenSound = new AuraSound(aura, kkSound, dbcData.player);
