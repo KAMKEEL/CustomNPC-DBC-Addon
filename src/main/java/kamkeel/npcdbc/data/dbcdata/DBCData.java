@@ -22,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.scripted.CustomNPCsException;
+import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 
@@ -434,5 +435,21 @@ public class DBCData extends DBCDataUniversal {
         spectator.stats.restoreHealthPercent(100);
         this.stats.restoreKiPercent(100);
         spectator.stats.restoreKiPercent(100);
+    }
+
+    public float addFusionMastery(DBCData controller, DBCData spectator) {
+        float mastery = 0f;
+
+        Form form = controller.getForm();
+        if (form != null) {
+            mastery = controller.getDBCInfo().getFormLevel(form.id);
+            if (spectator.getDBCInfo().hasFormUnlocked(form.id))
+                mastery = ValueUtil.clamp(mastery + spectator.getDBCInfo().getFormLevel(form.id), 0, form.mastery.getMaxLevel());
+        }
+        return mastery;
+    }
+
+    public PlayerDBCInfo getDBCInfo() {
+        return PlayerDataUtil.getDBCInfo(player);
     }
 }
