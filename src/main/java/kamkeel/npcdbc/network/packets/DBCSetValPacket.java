@@ -43,6 +43,10 @@ public final class DBCSetValPacket extends AbstractPacket {
                 ByteBufUtils.writeUTF8String(out,(String) value);
                 dbcData.getRawCompound().setString(tag, (String) value);
                 break;
+            case BYTE:
+                out.writeByte((byte) value);
+                dbcData.getRawCompound().setByte(tag, (byte) value);
+                break;
             case INT:
                 out.writeInt((int) value);
                 dbcData.getRawCompound().setInteger(tag, (int) value);
@@ -82,6 +86,10 @@ public final class DBCSetValPacket extends AbstractPacket {
             case STRING:
                 String newString = ByteBufUtils.readUTF8String(in);
                 dbcData.getRawCompound().setString(tag, newString);
+                break;
+            case BYTE:
+                byte byteValue = in.readByte();
+                dbcData.getRawCompound().setByte(tag, byteValue);
                 break;
             case INT:
                 int intValue = in.readInt();

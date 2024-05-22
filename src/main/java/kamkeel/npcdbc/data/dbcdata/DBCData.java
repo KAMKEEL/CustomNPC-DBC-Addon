@@ -48,6 +48,7 @@ public class DBCData extends DBCDataUniversal {
     public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f;
     public int flightSpeedRelease = 100;
     public boolean isFlying, flightEnabled = true, flightGravity = true;
+    public int maxRelease = 100;
     
     public EntityAura auraEntity;
 
@@ -116,6 +117,8 @@ public class DBCData extends DBCDataUniversal {
         comp.setBoolean("DBCisFlying", isFlying);
         comp.setBoolean("DBCFlightEnabled", flightEnabled);
         comp.setBoolean("DBCFlightGravity", flightGravity);
+
+        comp.setInteger("DBCMaxRelease", maxRelease);
         stats.saveEffectsNBT(comp);
         bonus.saveBonusNBT(comp);
         return comp;
@@ -185,6 +188,9 @@ public class DBCData extends DBCDataUniversal {
             c.setBoolean("DBCFlightGravity", flightGravity);
         flightGravity = c.getBoolean("DBCFlightGravity");
 
+        if (!c.hasKey("DBCMaxRelease"))
+            c.setInteger("DBCMaxRelease", maxRelease);
+        maxRelease = c.getInteger("DBCMaxRelease");
 
         this.currentEffects.clear();
         if (c.hasKey("addonActiveEffects", 9)) {

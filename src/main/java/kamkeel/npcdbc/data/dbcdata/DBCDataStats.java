@@ -393,4 +393,8 @@ public class DBCDataStats {
             }
         }
     }
+
+    public int getMaxRelease() {
+        return data.maxRelease;
+    }
 }
