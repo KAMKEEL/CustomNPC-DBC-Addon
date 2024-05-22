@@ -8,6 +8,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.sound.Sound;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.controllers.TransformController;
@@ -25,6 +26,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -34,6 +37,15 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(value = DBCKiTech.class, remap = false)
 public class MixinDBCKiTech {
+
+ 
+    @Inject(method = "ChargeKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;time:I", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
+    private static void ChargeKi(CallbackInfo ci) {
+        if (ConfigDBCClient.EnhancedCharging)
+            ci.cancel();
+        
+    }
+
 
     /**
      * Prevents player from transforming to other DBC forms if they are in custom form, except stackable ones

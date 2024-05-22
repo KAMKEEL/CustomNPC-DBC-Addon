@@ -11,6 +11,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
+import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetFlight;
 import kamkeel.npcdbc.network.packets.PingPacket;
@@ -21,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.scripted.CustomNPCsException;
+import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 
@@ -46,6 +48,9 @@ public class DBCData extends DBCDataUniversal {
     public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f;
     public int flightSpeedRelease = 100;
     public boolean isFlying, flightEnabled = true, flightGravity = true;
+    public int maxRelease = 100;
+    
+    public EntityAura auraEntity;
 
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
@@ -112,6 +117,8 @@ public class DBCData extends DBCDataUniversal {
         comp.setBoolean("DBCisFlying", isFlying);
         comp.setBoolean("DBCFlightEnabled", flightEnabled);
         comp.setBoolean("DBCFlightGravity", flightGravity);
+
+        comp.setInteger("DBCMaxRelease", maxRelease);
         stats.saveEffectsNBT(comp);
         bonus.saveBonusNBT(comp);
         return comp;
@@ -181,6 +188,9 @@ public class DBCData extends DBCDataUniversal {
             c.setBoolean("DBCFlightGravity", flightGravity);
         flightGravity = c.getBoolean("DBCFlightGravity");
 
+        if (!c.hasKey("DBCMaxRelease"))
+            c.setInteger("DBCMaxRelease", maxRelease);
+        maxRelease = c.getInteger("DBCMaxRelease");
 
         this.currentEffects.clear();
         if (c.hasKey("addonActiveEffects", 9)) {
@@ -431,5 +441,21 @@ public class DBCData extends DBCDataUniversal {
         spectator.stats.restoreHealthPercent(100);
         this.stats.restoreKiPercent(100);
         spectator.stats.restoreKiPercent(100);
+    }
+
+    public float addFusionMastery(DBCData controller, DBCData spectator) {
+        float mastery = 0f;
+
+        Form form = controller.getForm();
+        if (form != null) {
+            mastery = controller.getDBCInfo().getFormLevel(form.id);
+            if (spectator.getDBCInfo().hasFormUnlocked(form.id))
+                mastery = ValueUtil.clamp(mastery + spectator.getDBCInfo().getFormLevel(form.id), 0, form.mastery.getMaxLevel());
+        }
+        return mastery;
+    }
+
+    public PlayerDBCInfo getDBCInfo() {
+        return PlayerDataUtil.getDBCInfo(player);
     }
 }

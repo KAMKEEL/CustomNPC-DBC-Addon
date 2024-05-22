@@ -6,6 +6,8 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.client.render.AuraRenderer;
+import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
@@ -24,6 +26,7 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent ev) {
         super.preInit(ev);
         eventsInit();
+        RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
     }
 
     public void init(FMLInitializationEvent ev) {

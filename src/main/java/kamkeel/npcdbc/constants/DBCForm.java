@@ -23,9 +23,9 @@ public class DBCForm {
     public static final int SuperSaiyan4 = 14;
     public static final int GreatApe = 7;
     public static final int SuperGreatApe = 8;
-    public static final int SaiyanGod = 9;
-    public static final int SaiyanBlue = 10;
-    public static final int Shinka = 15; // SSJ Blue Evolved
+    public static final int SuperSaiyanGod = 9;
+    public static final int SuperSaiyanBlue = 10;
+    public static final int BlueEvo = 15; // SSJ Blue Evolved
 
 
     ////////////////////////////////
@@ -65,5 +65,10 @@ public class DBCForm {
     public static final int Legendary = 24;
     public static final int Divine = 25;
     public static final int Majin = 26;
+
+
+    public static boolean isGod(int state) {
+        return state == SuperSaiyanGod || state == SuperSaiyanBlue || state == BlueEvo;
+    }
 
 }

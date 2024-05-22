@@ -16,7 +16,7 @@ public class SoundHandler {
         Iterator<Sound> iter = playingSounds.values().iterator();
         while (iter.hasNext()) {
             Sound sound = iter.next();
-            if (sound.entity == entity && sound.soundDir.toLowerCase().contains(soundContains)) {
+            if (sound.entity == entity && sound.soundDir.toLowerCase().contains(soundContains.toLowerCase())) {
                 Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
                 PacketHandler.Instance.sendToServer(new StopSound(sound).generatePacket());
                 iter.remove();

@@ -12,6 +12,7 @@ import noppes.npcs.entity.EntityNPCInterface;
 public class AuraSound extends Sound {
     private final Aura aura;
     public boolean isKaiokenSound = false;
+    public boolean isEnhancedAura;
 
     public AuraSound(Aura aura, String soundDir, Entity entity) {
         super(soundDir, entity);
@@ -22,6 +23,7 @@ public class AuraSound extends Sound {
         this.aura = aura;
 
         onlyOneCanExist = true;
+        fadeFactor = 0.02f;
     }
 
     @Override
@@ -34,22 +36,25 @@ public class AuraSound extends Sound {
     public void update() {
         super.update();
 
-        Aura aura = null;
-        boolean isInKaioken = false;
-        if (entity instanceof EntityNPCInterface) {
-            DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
-            aura = display.getToggledAura();
-        } else if (entity instanceof EntityPlayer) {
-            DBCData dbcData = DBCData.get((EntityPlayer) entity);
-            aura = dbcData.getToggledAura();
-            isInKaioken = dbcData.isForm(DBCForm.Kaioken);
+        //DBC aura logic 
+        if (!isEnhancedAura) {
+            Aura aura = null;
+            boolean isInKaioken = false;
+            if (entity instanceof EntityNPCInterface) {
+                DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
+                aura = display.getToggledAura();
+            } else if (entity instanceof EntityPlayer) {
+                DBCData dbcData = DBCData.get((EntityPlayer) entity);
+                aura = dbcData.getToggledAura();
+                isInKaioken = dbcData.isForm(DBCForm.Kaioken);
 
-        }
+            }
 
-        if (aura != this.aura || !isInKaioken && isKaiokenSound) {
-            if (aura != null)
-                fadeFactor = 0.1f;
-            fadeOut = true;
+            if (aura != this.aura || !isInKaioken && isKaiokenSound) {
+                if (aura != null)
+                    fadeFactor = 0.1f;
+                fadeOut = true;
+            }
         }
 
 

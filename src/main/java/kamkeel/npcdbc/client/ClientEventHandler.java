@@ -3,15 +3,19 @@ package kamkeel.npcdbc.client;
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.JRMCoreKeyHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -19,8 +23,11 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.mixin.INPCDisplay;
+import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.DBCSetValPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -30,6 +37,7 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
+import noppes.npcs.util.ValueUtil;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
@@ -45,14 +53,24 @@ public class ClientEventHandler {
 
         if (event.phase == TickEvent.Phase.START) {
             Minecraft mc = Minecraft.getMinecraft();
-            if (mc.currentScreen == null && KeyHandler.AscendKey.getIsKeyPressed()) {
-                performAscend();
-            } else {
+            if (mc.currentScreen == null) {
+                if (KeyHandler.AscendKey.getIsKeyPressed()) {
+                    performAscend();
+                } else if (ConfigDBCClient.EnhancedCharging && JRMCoreKeyHandler.KiCharge.getIsKeyPressed()) {
+                    chargeKi();
+                } else {
                 TransformController.decrementRage();
+                }
             }
         }
     }
 
+    private void chargeKi() {
+        boolean powerDown = JRMCoreKeyHandler.Fn.getIsKeyPressed();
+        int release = DBCData.getClient().Release;
+        int newRelease = ValueUtil.clamp(!powerDown ? ++release : --release, 0, DBCData.getClient().maxRelease);
+        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcRelease", newRelease).generatePacket());
+    }
     private void performAscend() {
         PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
         if (formData != null && formData.hasSelectedForm()) {
@@ -215,14 +233,30 @@ public class ClientEventHandler {
 
                 }
 
-                if (isInKaioken && aura.display.kaiokenOverrides) {
-                    spawnKaiokenAura(aura, dbcData);
+                boolean enhancedRendering = true;
+                if (enhancedRendering) {
+                    EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
+                    if (enhancedAura == null)
+                        enhancedAura = new EntityAura(event.entity, aura).load().spawn();
+                    if (enhancedAura != null) {
+                        if (aura.hasSecondaryAura() && !enhancedAura.children.containsKey("Secondary"))
+                            new EntityAura(event.entity, aura.getSecondaryAur()).load().setParent(enhancedAura, "Secondary").spawn();
+                        
+                        if (isInKaioken && !enhancedAura.children.containsKey("Kaioken"))
+                            new EntityAura(event.entity, aura).loadKaioken().setParent(enhancedAura, "Kaioken").spawn();
+                    }
                 } else {
-                    spawnAura(event.entity, aura);
-                    if (aura.hasSecondaryAura())
-                        spawnAura(event.entity, aura.getSecondaryAur());
-                    if (isInKaioken)
+                    if (isInKaioken && aura.display.kaiokenOverrides) {
                         spawnKaiokenAura(aura, dbcData);
+                    } else {
+                        spawnAura(event.entity, aura);
+                        if (aura.hasSecondaryAura())
+                            spawnAura(event.entity, aura.getSecondaryAur());
+                        if (isInKaioken)
+                            spawnKaiokenAura(aura, dbcData);
+
+
+                    }
                 }
 
 
@@ -245,7 +279,7 @@ public class ClientEventHandler {
         EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, isPlayer ? dbcData.State : 0, isPlayer ? dbcData.State2 : 0, isPlayer ? dbcData.Release : 100, rotate90);
         aur.setLocationAndAngles(entity.posX, entity.posY - 5, entity.posZ, entity.rotationYaw, entity.rotationPitch);
         aur.setAlp(0.2f);
-        aur.setSpd(20);
+        aur.setSpd(100);
 
 
         if (aura.display.hasSize())
@@ -300,7 +334,7 @@ public class ClientEventHandler {
             aur.setColL3(4746495);
             aur.setTexL3("auragb");
         } else if (aura.display.type == EnumPlayerAuraTypes.GoD) {
-            aur.setSpd(30);
+            aur.setSpd(100);
             aur.setAlp(0.2F);
             aur.setTex("aurag");
             aur.setTexL3("auragb");
@@ -424,11 +458,7 @@ public class ClientEventHandler {
         ((IEntityAura) kaiokenAura).setLightningColor(aura.display.lightningColor);
         ((IEntityAura) kaiokenAura).setLightningAlpha(aura.display.lightningAlpha);
 
-
-        long l = System.nanoTime();
-        long t = System.currentTimeMillis();
-        double t2 = l / 10000000L;
-
+        
         String kkSound = aura.display.getFinalKKSound();
         if (kkSound != null && !SoundHandler.isPlayingSound(dbcData.player, kkSound)) {
             AuraSound kaiokenSound = new AuraSound(aura, kkSound, dbcData.player);

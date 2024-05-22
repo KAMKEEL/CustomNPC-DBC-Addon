@@ -10,6 +10,7 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
@@ -47,7 +48,9 @@ public class DBCDisplay implements IDBCDisplay {
     // Server Side Usage
     public float rageValue;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
-
+    
+    public EntityAura auraEntity;
+    
     public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;
     }
