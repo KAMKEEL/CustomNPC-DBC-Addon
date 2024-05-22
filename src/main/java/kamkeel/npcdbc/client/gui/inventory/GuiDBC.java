@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.inventory;
 
 import kamkeel.npcdbc.client.gui.component.GuiFormAuraScroll;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -95,6 +96,11 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         this.addButton(clearButton);
 
         if (activePage == 1) {
+            addLabel(new GuiNpcLabel(1,"Revamp Aura", guiLeft + 170, guiTop + ySize - 11 - 24 + 5));
+            GuiNpcButton revampAura = new GuiNpcButtonYesNo(5, guiLeft + 250, guiTop + ySize - 11 - 24, ConfigDBCClient.RevampAura);
+            revampAura.width = 65;
+            this.addButton(revampAura);
+
             GuiNpcButton hideAura = new GuiNpcButton(3, guiLeft + 250, guiTop + ySize - 11, new String[]{"aura.shown", "aura.hidden"}, showingAura);
             hideAura.width = 65;
             this.addButton(hideAura);
@@ -286,6 +292,10 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                     // Hide
                     currentAura = -1;
                 }
+            }
+            else if (guibutton.id == 5) {
+                ConfigDBCClient.RevampAura = ((GuiNpcButton) guibutton).getValue() == 1;
+                ConfigDBCClient.RevampAuraProperty.set(ConfigDBCClient.RevampAura);
             }
         }
     }

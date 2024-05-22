@@ -19,6 +19,9 @@ public class ConfigDBCClient
     public static Property HideInfoMessageProperty;
     public static boolean HideInfoMessage = false;
 
+    public static Property RevampAuraProperty;
+    public static boolean RevampAura = true;
+
 
     public final static String GUI = "Gui";
 
@@ -29,7 +32,7 @@ public class ConfigDBCClient
 
     public static Property AdvancedGuiModeProperty;
     public static boolean AdvancedGui = false;
-    
+
     public static boolean EnhancedCharging = true;
 
     public static void init(File configFile)
@@ -46,6 +49,9 @@ public class ConfigDBCClient
 
             HideInfoMessageProperty = config.get(GENERAL, "Hide Info Messages", false, "Hides Change Form and other various transformation messages in game");
             HideInfoMessage = HideInfoMessageProperty.getBoolean(false);
+
+            RevampAuraProperty = config.get(GENERAL, "Revamp Aura", true, "Renders with the new DBC Addon style of auras");
+            RevampAura = RevampAuraProperty.getBoolean(true);
 
             EnhancedGuiProperty = config.get(GUI, "Enable Enhanced Gui", true, "Uses DBC Addons GUI for Coloring and Manipulation");
             EnhancedGui = EnhancedGuiProperty.getBoolean(true);
