@@ -2,6 +2,7 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import net.minecraft.entity.Entity;
+import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,8 +13,7 @@ public class MixinEntityEnergyAtt {
     @Inject(method = "setTarget", at = @At("HEAD"), cancellable = true)
     private void target(Entity entity, CallbackInfo ci) {
         EntityEnergyAtt ki = (EntityEnergyAtt) (Object) this;
-
-        if (ki.shootingEntity == entity && ki.ticksExisted < 60)
+        if (ki.shootingEntity == entity && ki.shootingEntity instanceof EntityNPCInterface && ki.ticksExisted < 60)
             ci.cancel();
     }
 }
