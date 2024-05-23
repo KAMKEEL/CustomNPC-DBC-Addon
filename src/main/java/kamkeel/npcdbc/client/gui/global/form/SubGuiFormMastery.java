@@ -28,96 +28,111 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
 
         int y = guiTop + 3;
 
-        y += 23;
-
-        addLabel(new GuiNpcLabel(1,"Max Mastery Level", guiLeft + 4, y + 5));
-        addTextField(new GuiNpcTextField(1, this, guiLeft + 135, y, 50, 20, String.valueOf(form.mastery.maxLevel)));
-        getTextField(1).setMaxStringLength(10);
-        getTextField(1).floatsOnly = true;
-        getTextField(1).setMinMaxDefaultFloat(-10000, 10000, 1);
+        GuiScrollWindow guiScrollWindow = new GuiScrollWindow(this, guiLeft +4, y, xSize-9, ySize-7, 200);
+        addScrollableGui(0, guiScrollWindow);
+        y = 23;
 
 
-        addLabel(new GuiNpcLabel(8,"Multi Flat", guiLeft + 190, y + 5));
-        addTextField(new GuiNpcTextField(8, this, guiLeft + 300, y, 50, 20, String.valueOf(form.mastery.attributeMultiFlat)));
-        getTextField(8).setMaxStringLength(10);
-        getTextField(8).floatsOnly = true;
-        getTextField(8).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.addLabel(new GuiNpcLabel(1,"Max Mastery Level", 4, y + 5));
+        guiScrollWindow.addTextField(new GuiNpcTextField(1, this, 135, y, 50, 20, String.valueOf(form.mastery.maxLevel)));
+        guiScrollWindow.getTextField(1).setMaxStringLength(10);
+        guiScrollWindow.getTextField(1).floatsOnly = true;
+        guiScrollWindow.getTextField(1).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.getLabel(1).color = 0xd3d3d3;
 
-        y += 23;
 
-        addLabel(new GuiNpcLabel(10,"Multi Min/Max", guiLeft + 4, y + 5));
-        addTextField(new GuiNpcTextField(10, this, guiLeft + 135, y, 50, 20, String.valueOf(form.mastery.attributeMultiMinOrMax)));
-        getTextField(10).setMaxStringLength(10);
-        getTextField(10).floatsOnly = true;
-        getTextField(10).setMinMaxDefaultFloat(-10000, 10000, 1);
-
-        addLabel(new GuiNpcLabel(9,"Multi Per Level", guiLeft + 190, y + 5));
-        addTextField(new GuiNpcTextField(9, this, guiLeft + 300, y, 50, 20, String.valueOf(form.mastery.attributeMultiPerLevel)));
-        getTextField(9).setMaxStringLength(10);
-        getTextField(9).floatsOnly = true;
-        getTextField(9).setMinMaxDefaultFloat(-10000, 10000, 1);
-
-        y += 23;
-        y += 23;
-
-        addLabel(new GuiNpcLabel(2,"Instant Transform Level", guiLeft + 4, y + 5));
-        addTextField(new GuiNpcTextField(2, this, guiLeft + 135, y, 50, 20, String.valueOf(form.mastery.instantTransformationUnlockLevel)));
-        getTextField(2).setMaxStringLength(10);
-        getTextField(2).floatsOnly = true;
-        getTextField(2).setMinMaxDefaultFloat(-10000, 10000, 1);
-
-        addLabel(new GuiNpcLabel(4,"Max Heat", guiLeft + 190, y + 5));
-        addTextField(new GuiNpcTextField(4, this, guiLeft + 300, y, 50, 20, String.valueOf(form.mastery.maxHeat)));
-        getTextField(4).setMaxStringLength(10);
-        getTextField(4).floatsOnly = true;
-        getTextField(4).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.addLabel(new GuiNpcLabel(8,"Multi Flat", 190, y + 5));
+        guiScrollWindow.addTextField(new GuiNpcTextField(8, this, 300, y, 50, 20, String.valueOf(form.mastery.attributeMultiFlat)));
+        guiScrollWindow.getTextField(8).setMaxStringLength(10);
+        guiScrollWindow.getTextField(8).floatsOnly = true;
+        guiScrollWindow.getTextField(8).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.getLabel(8).color = 0xd3d3d3;
 
         y += 23;
 
-        addLabel(new GuiNpcLabel(11,"Ki Drain", guiLeft + 4, y + 5));
-        addTextField(new GuiNpcTextField(11, this, guiLeft + 135, y, 50, 20, String.valueOf(form.mastery.kiDrain)));
-        getTextField(11).setMaxStringLength(10);
-        getTextField(11).floatsOnly = true;
-        getTextField(11).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.addLabel(new GuiNpcLabel(10,"Multi Min/Max", 4, y + 5));
+        guiScrollWindow.addTextField(new GuiNpcTextField(10, this, 135, y, 50, 20, String.valueOf(form.mastery.attributeMultiMinOrMax)));
+        guiScrollWindow.getTextField(10).setMaxStringLength(10);
+        guiScrollWindow.getTextField(10).floatsOnly = true;
+        guiScrollWindow.getTextField(10).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.getLabel(10).color = 0xd3d3d3;
 
-        addLabel(new GuiNpcLabel(12,"Ki Drain Ticks", guiLeft + 190, y + 5));
-        addTextField(new GuiNpcTextField(12, this, guiLeft + 300, y, 50, 20, String.valueOf(form.mastery.kiDrainTimer)));
-        getTextField(12).setMaxStringLength(10);
-        getTextField(12).floatsOnly = true;
-        getTextField(12).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.addLabel(new GuiNpcLabel(9,"Multi Per Level", 190, y + 5));
+        guiScrollWindow.addTextField(new GuiNpcTextField(9, this, 300, y, 50, 20, String.valueOf(form.mastery.attributeMultiPerLevel)));
+        guiScrollWindow.getTextField(9).setMaxStringLength(10);
+        guiScrollWindow.getTextField(9).floatsOnly = true;
+        guiScrollWindow.getTextField(9).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.getLabel(9).color = 0xd3d3d3;
+
+        y += 23;
+        y += 23;
+
+        guiScrollWindow.addLabel(new GuiNpcLabel(2,"Instant Transform Level", 4, y + 5));
+        guiScrollWindow.addTextField(new GuiNpcTextField(2, this, 135, y, 50, 20, String.valueOf(form.mastery.instantTransformationUnlockLevel)));
+        guiScrollWindow.getTextField(2).setMaxStringLength(10);
+        guiScrollWindow.getTextField(2).floatsOnly = true;
+        guiScrollWindow.getTextField(2).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.getLabel(2).color = 0xd3d3d3;
+
+        guiScrollWindow.addLabel(new GuiNpcLabel(4,"Max Heat", 190, y + 5));
+        guiScrollWindow.addTextField(new GuiNpcTextField(4, this, 300, y, 50, 20, String.valueOf(form.mastery.maxHeat)));
+        guiScrollWindow.getTextField(4).setMaxStringLength(10);
+        guiScrollWindow.getTextField(4).floatsOnly = true;
+        guiScrollWindow.getTextField(4).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.getLabel(4).color = 0xd3d3d3;
 
         y += 23;
 
-        addLabel(new GuiNpcLabel(5,"Damage Negation", guiLeft + 4, y + 5));
-        addTextField(new GuiNpcTextField(5, this, guiLeft + 135, y, 50, 20, String.valueOf(form.mastery.damageNegation)));
-        getTextField(5).setMaxStringLength(10);
-        getTextField(5).floatsOnly = true;
-        getTextField(5).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.addLabel(new GuiNpcLabel(11,"Ki Drain", 4, y + 5));
+        guiScrollWindow.addTextField(new GuiNpcTextField(11, this, 135, y, 50, 20, String.valueOf(form.mastery.kiDrain)));
+        guiScrollWindow.getTextField(11).setMaxStringLength(10);
+        guiScrollWindow.getTextField(11).floatsOnly = true;
+        guiScrollWindow.getTextField(11).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.getLabel(11).color = 0xd3d3d3;
 
-        addLabel(new GuiNpcLabel(6,"Dodge Chance", guiLeft + 190, y + 5));
-        addTextField(new GuiNpcTextField(6, this, guiLeft + 300, y, 50, 20, String.valueOf(form.mastery.dodgeChance)));
-        getTextField(6).setMaxStringLength(10);
-        getTextField(6).floatsOnly = true;
-        getTextField(6).setMinMaxDefaultFloat(-10000, 10000, 1);
-
-        y += 23;
-        addLabel(new GuiNpcLabel(7,"Pain Time", guiLeft + 4, y + 5));
-        addTextField(new GuiNpcTextField(7, this, guiLeft + 135, y, 50, 20, String.valueOf(form.mastery.painTime)));
-        getTextField(7).setMaxStringLength(10);
-        getTextField(7).floatsOnly = true;
-        getTextField(7).setMinMaxDefaultFloat(-10000, 10000, 1);
-
-        addLabel(new GuiNpcLabel(3,"Health Requirement", guiLeft + 190, y + 5));
-        addTextField(new GuiNpcTextField(3, this, guiLeft + 300, y, 50, 20, String.valueOf(form.mastery.healthRequirement)));
-        getTextField(3).setMaxStringLength(10);
-        getTextField(3).floatsOnly = true;
-        getTextField(3).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.addLabel(new GuiNpcLabel(12,"Ki Drain Ticks", 190, y + 5));
+        guiScrollWindow.addTextField(new GuiNpcTextField(12, this, 300, y, 50, 20, String.valueOf(form.mastery.kiDrainTimer)));
+        guiScrollWindow.getTextField(12).setMaxStringLength(10);
+        guiScrollWindow.getTextField(12).floatsOnly = true;
+        guiScrollWindow.getTextField(12).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.getLabel(12).color = 0xd3d3d3;
 
         y += 23;
 
+        guiScrollWindow.addLabel(new GuiNpcLabel(5,"Damage Negation", 4, y + 5));
+        guiScrollWindow.addTextField(new GuiNpcTextField(5, this, 135, y, 50, 20, String.valueOf(form.mastery.damageNegation)));
+        guiScrollWindow.getTextField(5).setMaxStringLength(10);
+        guiScrollWindow.getTextField(5).floatsOnly = true;
+        guiScrollWindow.getTextField(5).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.getLabel(5).color = 0xd3d3d3;
+
+        guiScrollWindow.addLabel(new GuiNpcLabel(6,"Dodge Chance", 190, y + 5));
+        guiScrollWindow.addTextField(new GuiNpcTextField(6, this, 300, y, 50, 20, String.valueOf(form.mastery.dodgeChance)));
+        guiScrollWindow.getTextField(6).setMaxStringLength(10);
+        guiScrollWindow.getTextField(6).floatsOnly = true;
+        guiScrollWindow.getTextField(6).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.getLabel(6).color = 0xd3d3d3;
+
+        y += 23;
+        guiScrollWindow.addLabel(new GuiNpcLabel(7,"Pain Time", 4, y + 5));
+        guiScrollWindow.addTextField(new GuiNpcTextField(7, this, 135, y, 50, 20, String.valueOf(form.mastery.painTime)));
+        guiScrollWindow.getTextField(7).setMaxStringLength(10);
+        guiScrollWindow.getTextField(7).floatsOnly = true;
+        guiScrollWindow.getTextField(7).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.getLabel(7).color = 0xd3d3d3;
+
+        guiScrollWindow.addLabel(new GuiNpcLabel(3,"Health Requirement", 190, y + 5));
+        guiScrollWindow.addTextField(new GuiNpcTextField(3, this, 300, y, 50, 20, String.valueOf(form.mastery.healthRequirement)));
+        guiScrollWindow.getTextField(3).setMaxStringLength(10);
+        guiScrollWindow.getTextField(3).floatsOnly = true;
+        guiScrollWindow.getTextField(3).setMinMaxDefaultFloat(-10000, 10000, 1);
+        guiScrollWindow.getLabel(3).color = 0xd3d3d3;
+
         y += 23;
 
-        addButton(new GuiNpcButton(1010101, guiLeft + 200, guiTop + 192, 50, 20, "RELOAD"));
+        y += 23;
+
+        guiScrollWindow.addButton(new GuiNpcButton(1010101, 200, 192, 50, 20, "RELOAD"));
 	}
 
 	public void buttonEvent(GuiButton guibutton)
