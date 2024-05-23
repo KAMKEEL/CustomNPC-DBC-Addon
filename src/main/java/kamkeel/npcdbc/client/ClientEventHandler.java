@@ -232,7 +232,6 @@ public class ClientEventHandler {
                     isInKaioken = dbcData.isForm(DBCForm.Kaioken) && aura.display.hasKaiokenAura;
 
                 }
-
                 if (ConfigDBCClient.RevampAura) {
                     EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
                     if (enhancedAura == null)
@@ -245,6 +244,10 @@ public class ClientEventHandler {
                             new EntityAura(event.entity, aura).loadKaioken().setParent(enhancedAura, "Kaioken").spawn();
                     }
                 } else {
+                    EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
+                    if (enhancedAura != null)
+                        enhancedAura.despawn();
+                    
                     if (isInKaioken && aura.display.kaiokenOverrides) {
                         spawnKaiokenAura(aura, dbcData);
                     } else {
@@ -274,10 +277,7 @@ public class ClientEventHandler {
 
         boolean rotate90 = isPlayer && (dbcData.containsSE(7));
         EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, isPlayer ? dbcData.State : 0, isPlayer ? dbcData.State2 : 0, isPlayer ? dbcData.Release : 100, rotate90);
-        aur.setLocationAndAngles(entity.posX, entity.posY - 5, entity.posZ, entity.rotationYaw, entity.rotationPitch);
-        aur.setAlp(0.2f);
-        aur.setSpd(100);
-
+        aur.setAlp(0.2F);
 
         if (aura.display.hasSize())
             ((IEntityAura) aur).setSize(aura.display.size);
@@ -342,14 +342,6 @@ public class ClientEventHandler {
             aur.setTexL2("aurau2");
             aur.setColL2(16776724);
         }
-//
-//        for(int i = 0; i < 1 && 2; i++){
-//
-//        }
-
-        boolean bo = false;
-//        for (int i2 = 0; i2 < (1) && (i2 != 1 || !(3 > (isPlayer ? 2 / 2.0F : 10.0F))); ++i2) {
-//        }
 
 
         //////////////////////////////////////////////////////
