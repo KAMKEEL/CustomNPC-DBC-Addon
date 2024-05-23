@@ -3,6 +3,14 @@ package kamkeel.npcdbc.api.aura;
 public interface IAuraDisplay {
 
 
+    void enable3DAura(boolean enable);
+
+    boolean is3DAuraEnabled();
+
+    void enable2DAura(boolean enable);
+
+    boolean is2DAuraEnabled();
+
     boolean getKettleModeAura();
 
     /**
