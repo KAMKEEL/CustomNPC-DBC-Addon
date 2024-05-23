@@ -41,9 +41,12 @@ public class ConfigDBCGameplay
     public static boolean WearableEarrings = true;
 
     public final static String Zenkai = "Zenkai";
-    public static Property EnableZenkaiProperty;
     public static boolean SaiyanZenkai = true;
     public static boolean HalfSaiyanZenkai = true;
+
+    public final static String KiCharge = "KiCharge";
+    public static boolean PreciseKiCharging = true;
+    public static boolean KiChargeReleaseLevel = true;
 
     public static void init(File configFile)
     {
@@ -84,6 +87,9 @@ public class ConfigDBCGameplay
 
             UniqueEarrings = config.get(PotaraFusion, "Unique Earrings", true, "Enabling Unique Earrings will cause all SPLIT Potaras to be hashed to a\n unique pair. Only the unique pairs can be used in a fusion.").getBoolean(true);
             WearableEarrings = config.get(PotaraFusion, "Wearable Earrings", true, "Enabling Wearable Earrings will check a radius around the worn player.\n Disabling this will require players to right-click each-other with valid earrings to fuse.").getBoolean(true);
+
+            PreciseKiCharging = config.get(KiCharge, "Precise Ki Charge", true, "Enabling this feature will allow all players to Charge ki at a more direct rate. Instead of 5 percent \nit would charge every 1 percent and become more accurate / precise.").getBoolean(true);
+            KiChargeReleaseLevel = config.get(KiCharge, "Ki Charge Speed with Release Level", true, "Enabling this feature will make Ki Charging faster for players with a higher Release Level.").getBoolean(true);
         }
         catch (Exception e)
         {
