@@ -139,8 +139,10 @@ public class FusionHandler {
         if(!JRMCoreH.PlyrSettingsB(player, 4))
             return;
 
-        if(hasNofuse(player))
+        if(hasNofuse(player)) {
+            JRMCoreH.PlyrSettingsRem(player, 4);
             NetworkUtility.sendServerMessage(player, "§c", player.getCommandSenderName(), " ", "npcdbc.noFuse");
+        }
 
         int tier = potara.getItemDamage();
         String hash = ItemPotara.getHash(potara);
