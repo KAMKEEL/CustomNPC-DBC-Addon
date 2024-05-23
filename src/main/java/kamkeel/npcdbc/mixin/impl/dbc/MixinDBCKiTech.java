@@ -45,9 +45,8 @@ public class MixinDBCKiTech {
 
         }
 
-        if (ConfigDBCGameplay.PreciseKiCharging)
+        if (ClientCache.preciseCharging)
             ci.cancel();
-
     }
 
 
