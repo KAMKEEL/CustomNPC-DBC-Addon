@@ -26,8 +26,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -91,18 +89,24 @@ public class MixinDBCKiTech {
     }
 
 
-    @Inject(method = "chargePart(Z)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", remap = true), cancellable = true)
-    private static void cancelAura(boolean b, CallbackInfo ci, @Local(name = "e") LocalRef<Entity> entity) {
-        if (entity.get() instanceof EntityPlayer) {
-            DBCData dbcData = DBCData.get((EntityPlayer) entity.get());
-            Aura aura = dbcData.getAura();
-            if (aura != null) {
-                if (aura.display.overrideDBCAura)
-                    ci.cancel();
-                else if (dbcData.isForm(DBCForm.Base) || dbcData.isForm(DBCForm.Kaioken) && aura.display.hasKaiokenAura)
-                    ci.cancel();
-            }
+    @Inject(method = "chargePart(Z)V", at = @At("HEAD"), cancellable = true)
+    private static void cancelAura(boolean b, CallbackInfo ci) {
+//        if (ConfigDBCClient.RevampAura)
+//            ci.cancel();
+
+    }
+
+    @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At("HEAD"), cancellable = true)
+    private static void cancelAura2(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci) {
+        DBCData dbcData = DBCData.get(p);
+        Aura aura = dbcData.getAura();
+        if (aura != null) {
+            if (aura.display.overrideDBCAura)
+                ci.cancel();
+            else if (dbcData.isForm(DBCForm.Base) || dbcData.isForm(DBCForm.Kaioken) && aura.display.hasKaiokenAura)
+                ci.cancel();
         }
+
 
     }
 
