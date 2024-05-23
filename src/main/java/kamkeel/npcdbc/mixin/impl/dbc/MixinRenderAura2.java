@@ -4,6 +4,7 @@ import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.DragonBC.common.Npcs.RenderAura2;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
@@ -89,8 +90,9 @@ public class MixinRenderAura2 {
     }
 
     @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 0))
-    private void setAuraSize(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura) {
-        IEntityAura aura = (IEntityAura) entityAura.get();
+    private void setAuraSize(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(name = "cl3b") LocalBooleanRef hasColor3) {
+        EntityAura2 aur = entityAura.get();
+        IEntityAura aura = (IEntityAura) aur;
         if (aura.getSize() != 1f) {
             float xSize = (float) args.get(0) * aura.getSize();
             float ySize = (float) args.get(1) * aura.getSize();
@@ -102,6 +104,7 @@ public class MixinRenderAura2 {
 
 
         }
+       hasColor3.set(aur.getColL3() > 0 && aur.getTexL3().length() > 2);
     }
 
     @Inject(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;getState2()F", ordinal = 0, shift = At.Shift.BEFORE))
