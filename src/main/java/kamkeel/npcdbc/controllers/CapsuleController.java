@@ -17,10 +17,12 @@ public class CapsuleController {
 
     public HashMap<UUID, HashMap<Integer, Long>> miscCapsuleCooldown = new HashMap<>();
 
+    // For Capsule Type as a Whole [Cooldown Type 0]
     public HashMap<UUID, Long> lastUsedKiCapsule = new HashMap<>();
     public HashMap<UUID, Long> lastUsedHealthCapsule = new HashMap<>();
     public HashMap<UUID, Long> lastUsedStaminaCapsule = new HashMap<>();
 
+    // For Individual Capsule [Cooldown Type 1]
     public HashMap<UUID, HashMap<Integer, Long>> lastAlternateKiCapsule = new HashMap<>();
     public HashMap<UUID, HashMap<Integer, Long>> lastAlternateHealthCapsule = new HashMap<>();
     public HashMap<UUID, HashMap<Integer, Long>> lastAlternateStaminaCapsule = new HashMap<>();
