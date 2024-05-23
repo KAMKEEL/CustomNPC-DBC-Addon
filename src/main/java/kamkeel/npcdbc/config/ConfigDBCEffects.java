@@ -41,6 +41,12 @@ public class ConfigDBCEffects
     public final static String Meditation = "Meditation";
     public static int MeditationSpiBoostPercent = 20;
 
+
+    public final static String Potara = "Potara";
+    public static double TierOneMulti = 0.5f;
+    public static double TierTwoMulti = 0.7f;
+    public static double TierThreeMulti = 1.0f;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -78,6 +84,13 @@ public class ConfigDBCEffects
             config.addCustomCategoryComment(Meditation,
                 "Meditation Spirit Bonus is always added AFTER all other calculations");
             MeditationSpiBoostPercent = config.get(Meditation, "Meditation Boost", 20, "Amount of percent to multiply Base Spirit Stats by").getInt(20);
+
+
+            config.addCustomCategoryComment(Potara,
+                "If the Potara Status Effect Multi is set to 0 or below, then the Status Effect will not be applied");
+            TierOneMulti = config.get(Potara, "Tier 1 Multi", 0.5f).getDouble(0.5f);
+            TierTwoMulti = config.get(Potara, "Tier 2 Multi", 0.7f).getDouble(0.7f);
+            TierThreeMulti = config.get(Potara, "Tier 3 Multi", 1.0f).getDouble(1.0f);
         }
         catch (Exception e)
         {

@@ -89,6 +89,7 @@ npcdbc.potaraSides=Potaras must be opposite sides
 npcdbc.potaraHash=Potaras must be of the same pair
 npcdbc.potaraFusion=You fuse with:
 npcdbc.potaraRequest=Fusion request from
+npcdbc.fusionFound=Fusion found! Sneak to be the Spectator!
 npcdbc.notEnoughMastery=You do not have enough mastery to instant transform
 npcdbc.cannotTransformDirect=You cannot transform to this form directly
 npcdbc.clearedSelection=Cleared selection

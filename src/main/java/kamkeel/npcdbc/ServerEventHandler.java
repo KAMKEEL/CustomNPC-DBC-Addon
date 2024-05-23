@@ -68,8 +68,9 @@ public class ServerEventHandler {
             if (player.ticksExisted % ConfigDBCGameplay.CheckEffectsTick == 0)
                 StatusEffectController.Instance.runEffects(player);
 
-            if (player.ticksExisted % 60 == 0)
-                FusionHandler.checkNearbyPlayers(player);
+            if(ConfigDBCGameplay.WearableEarrings)
+                if (player.ticksExisted % 60 == 0)
+                    FusionHandler.checkNearbyPlayers(player);
 
             if (player.ticksExisted % 10 == 0) {
                 // Keep the Player informed on their own data
@@ -92,7 +93,7 @@ public class ServerEventHandler {
 
             DBCData dbcData = DBCData.get(player);
             boolean powerDown = dbcData.isFnPressed;
-            
+
             int release = dbcData.Release;
             int newRelease = ValueUtil.clamp(!powerDown ? ++release : --release, 0, DBCData.getClient().maxRelease);
             dbcData.getRawCompound().setInteger("jrmcRelease", newRelease);
