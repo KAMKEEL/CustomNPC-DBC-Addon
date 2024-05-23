@@ -69,7 +69,7 @@ public class ClientEventHandler {
         boolean powerDown = JRMCoreKeyHandler.Fn.getIsKeyPressed();
         int release = DBCData.getClient().Release;
         int newRelease = ValueUtil.clamp(!powerDown ? ++release : --release, 0, DBCData.getClient().maxRelease);
-        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcRelease", newRelease).generatePacket());
+     //   PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcRelease", newRelease).generatePacket());
     }
     private void performAscend() {
         PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();

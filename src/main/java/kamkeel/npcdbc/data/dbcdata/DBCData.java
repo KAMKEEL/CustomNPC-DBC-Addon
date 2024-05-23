@@ -355,6 +355,9 @@ public class DBCData extends DBCDataUniversal {
         return containsSE(1);
     }
 
+    public boolean isChargingKi() {
+        return containsSE(4);
+    }
     public int getDBCColor() {
         return JRMCoreHDBC.getPlayerColor2(2, JRMCoreH.Algnmnt_rc(Alignment), 1, Race, State, isForm(DBCForm.Divine), isForm(DBCForm.Legendary), isForm(DBCForm.UltraInstinct), isForm(DBCForm.GodOfDestruction));
 
@@ -365,6 +368,7 @@ public class DBCData extends DBCDataUniversal {
             return null;
         return getAura();
     }
+
 
     public Aura getAura() {
         Form form = getForm();

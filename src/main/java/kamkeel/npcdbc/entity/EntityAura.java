@@ -46,7 +46,7 @@ public class EntityAura extends Entity {
 
     public int color1 = -1, color2 = -1, color3 = -1, speed = 10, renderPass;
     public String tex1 = "jinryuudragonbc:aura.png", tex2 = "", tex3 = "";
-    public float alpha, maxAlpha = 0.2f, size = 1f;
+    public float alpha, maxAlpha = 0.05f, size = 1f;
 
     public boolean hasLightning;
     public int lightningColor = 0x25c9cf, lightningAlpha = 255;
@@ -147,7 +147,6 @@ public class EntityAura extends Entity {
 
         if (display.hasAlpha("aura"))
             maxAlpha = (float) display.alpha / 255;
-        maxAlpha = 0.05f;
 
 
         if (display.hasSpeed())
@@ -230,8 +229,7 @@ public class EntityAura extends Entity {
         Form form = PlayerDataUtil.getForm(entity);
         if (form != null && form.display.hasColor("aura")) //IForm color
             color1 = form.display.auraColor;
-
-
+        
     }
 
     public boolean isRoot() {

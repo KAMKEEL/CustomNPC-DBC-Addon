@@ -1,6 +1,5 @@
 package kamkeel.npcdbc;
 
-import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -22,7 +21,6 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -85,9 +83,20 @@ public class ServerEventHandler {
                 dbcData.syncTracking();
             }
             handleFormProcesses(player);
+            chargeKi(player);
         }
     }
 
+    public void chargeKi(EntityPlayer player) {
+        if (player.ticksExisted % 7 == 0 && DBCData.get(player).isChargingKi()) {
+
+            DBCData dbcData = DBCData.get(player);
+            int release = dbcData.Release;
+            int newRelease = ValueUtil.clamp(++release, 0, dbcData.maxRelease);
+            dbcData.getRawCompound().setInteger("jrmcRelease", newRelease);
+
+        }
+    }
     @SubscribeEvent
     public void playerDeathEvent(LivingDeathEvent event) {
         if (event.entityLiving == null || event.entityLiving.worldObj == null || event.entityLiving.worldObj.isRemote)
