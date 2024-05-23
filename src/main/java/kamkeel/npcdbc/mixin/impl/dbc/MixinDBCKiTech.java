@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.JRMCoreKeyHandler;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.sound.Sound;
@@ -36,6 +37,13 @@ public class MixinDBCKiTech {
  
     @Inject(method = "ChargeKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;time:I", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     private static void ChargeKi(CallbackInfo ci) {
+        boolean FnPressed = JRMCoreKeyHandler.Fn.getIsKeyPressed();
+        if (DBCData.getClient().isFnPressed != FnPressed) {
+            DBCData.getClient().isFnPressed = FnPressed;
+            PacketHandler.Instance.sendToServer(new DBCSetValPacket(DBCData.getClient().player, EnumNBTType.BOOLEAN, "DBCIsFnPressed", FnPressed).generatePacket());
+
+        }
+        
         if (ConfigDBCClient.EnhancedCharging)
             ci.cancel();
         

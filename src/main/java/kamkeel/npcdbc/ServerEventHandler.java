@@ -88,11 +88,13 @@ public class ServerEventHandler {
     }
 
     public void chargeKi(EntityPlayer player) {
-        if (player.ticksExisted % 7 == 0 && DBCData.get(player).isChargingKi()) {
+        if (player.ticksExisted % 10 == 0 && DBCData.get(player).isChargingKi()) {
 
             DBCData dbcData = DBCData.get(player);
+            boolean powerDown = dbcData.isFnPressed;
+            
             int release = dbcData.Release;
-            int newRelease = ValueUtil.clamp(++release, 0, dbcData.maxRelease);
+            int newRelease = ValueUtil.clamp(!powerDown ? ++release : --release, 0, DBCData.getClient().maxRelease);
             dbcData.getRawCompound().setInteger("jrmcRelease", newRelease);
 
         }
