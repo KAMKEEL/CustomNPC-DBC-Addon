@@ -43,7 +43,6 @@ public class Aura implements IAura {
         secondaryAuraID = compound.getInteger("secondaryAuraID");
 
         display.readFromNBT(compound);
-
     }
 
 

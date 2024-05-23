@@ -82,10 +82,6 @@ public class AuraRenderer extends RenderDBC {
             pulseAnimation = 0;
 
         Random rand = new Random();
-        ResourceLocation t1 = aura.tex1.length() > 3 ? new ResourceLocation(aura.tex1) : null;
-        ResourceLocation t2 = aura.tex2.length() > 3 ? new ResourceLocation(aura.tex2) : null;
-        ResourceLocation t3 = aura.tex3.length() > 3 ? new ResourceLocation(aura.tex3) : null;
-        
         GL11.glPushMatrix();
         GL11.glTranslated(posX, posY + aura.getYOffset(), posZ);
 
@@ -100,7 +96,7 @@ public class AuraRenderer extends RenderDBC {
         float sizeStateReleaseFactor = getStateSizeFactor(aura.dbcData) + aura.dbcData.Release * 0.03f;
         float pulsingSize = pulseAnimation * 0.03f;
         GL11.glScalef(aura.size + 0.1F * sizeStateReleaseFactor + pulsingSize, aura.size + 0.07F * sizeStateReleaseFactor, aura.size + 0.1F * sizeStateReleaseFactor + pulsingSize);
-      
+
         GL11.glTranslatef(0.0F, -0.3F - 0.07F * sizeStateReleaseFactor, 0.0F);
         GL11.glRotatef(age * 4, 0.0F, 1.0F, 0.0F);
 
@@ -108,7 +104,7 @@ public class AuraRenderer extends RenderDBC {
         for (float i = 1; i < maxLayers + 1; ++i) {
             float layerPercent = i / maxLayers;
             float layerTemp = layerPercent * 20f;
-            
+
             for (float j = 1; j < 2; j += 0.05) {
 
                 Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
@@ -122,17 +118,17 @@ public class AuraRenderer extends RenderDBC {
                 float r = rand.nextInt(200);
                 if (layerTemp > 3) //aura intensity
                     model.auraModel.offsetY += -r * 0.0015f * getStateIntensity(state, race);
-                
-                
+
+
                 GL11.glPushMatrix();
                 GL11.glRotatef(360 * j, 0.0F, 1.0F, 0.0F);
                 if (layerPercent < 0.21) {
                     glColor4f(aura.color1, alpha);
-                    this.renderManager.renderEngine.bindTexture(t1);
+                    this.renderManager.renderEngine.bindTexture(aura.text1);
                     model.auraModel.render(0.0625f);
 
-                    if (t2 != null) {
-                        this.renderManager.renderEngine.bindTexture(t2);
+                    if (aura.text2 != null) {
+                        this.renderManager.renderEngine.bindTexture(aura.text2);
                         glColor4f(aura.color2, alpha);
                         model.auraModel.render(0.0625f);
                     }
@@ -141,19 +137,19 @@ public class AuraRenderer extends RenderDBC {
 
                 GL11.glPushMatrix();
                 GL11.glRotatef(360 * j + 45, 0F, 1F, 0F);
-                this.renderManager.renderEngine.bindTexture(t1);
+                this.renderManager.renderEngine.bindTexture(aura.text1);
                 if (aura.color3 > -1 && j < 1)
                     cf(aura.color1, aura.color3, alpha);
                 else
                     glColor4f(aura.color1, alpha);
                 model.auraModel.render(0.0625f);
 
-                if (t2 != null) {
+                if (aura.text2 != null) {
                     GL11.glTranslatef(0.0F, 3F, 0.0F);
                     GL11.glPushMatrix();
                     GL11.glScalef(0.8F, 0.4F, 0.8F);
-                    
-                    this.renderManager.renderEngine.bindTexture(t2);
+
+                    this.renderManager.renderEngine.bindTexture(aura.text2);
                     glColor4f(aura.color2, alpha);
                     model.auraModel.render(0.0625f);
                     GL11.glPopMatrix();
@@ -161,13 +157,13 @@ public class AuraRenderer extends RenderDBC {
 
                 GL11.glPopMatrix();
 
-                if (aura.color3 > -1 && t3 != null) {
+                if (aura.color3 > -1 && aura.text3 != null) {
                     GL11.glPushMatrix();
                     GL11.glScalef(0.9F, 0.9F, 0.9F);
                     GL11.glTranslatef(0.0F, 0.5F, 0.0F);
                     GL11.glRotatef(360 * j + 45, 0.0F, 1.0F, 0.0F);
 
-                    this.renderManager.renderEngine.bindTexture(t3);
+                    this.renderManager.renderEngine.bindTexture(aura.text3);
                     glColor4f(aura.color3, alpha);
                     model.auraModel.render(0.0625f);
 
@@ -186,7 +182,7 @@ public class AuraRenderer extends RenderDBC {
         tessellator.addVertex(0, 0, 1);
         //  GL11.glScalef(3, 3, 3);
         tessellator.draw();
-        
+
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glAlphaFunc(516, 0.1F);
         GL11.glDisable(3042);
@@ -340,7 +336,7 @@ public class AuraRenderer extends RenderDBC {
     public static float getStateSizeFactor(DBCData dbcData) {
         int state = dbcData.State;
         int race = dbcData.Race;
-        
+
         int sizeFactor = state; //responsible for correctly scaling aura sizes
         if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             if (state == DBCForm.Base)
@@ -369,7 +365,7 @@ public class AuraRenderer extends RenderDBC {
             float factor = effectiveSize / size * 17;
             return size * factor;
         }
-        
+
         return sizeFactor * 0.5f;
 
     }
