@@ -60,7 +60,7 @@ public class AuraRenderer extends RenderDBC {
     }
 
     public void renderAura(EntityAura aura, double posX, double posY, double posZ) {
-        if (aura.aura.display.kettleModeType == 1)
+        if (aura.aura.display.kettleModeType == 1 || !aura.aura.display.enable3DAura)
             return;
 
         int state = aura.dbcData.State;
