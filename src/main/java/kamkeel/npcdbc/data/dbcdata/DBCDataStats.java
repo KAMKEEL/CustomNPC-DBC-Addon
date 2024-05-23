@@ -396,6 +396,10 @@ public class DBCDataStats {
         }
     }
 
+    public void setMaxRelease(byte newMax) {
+        data.maxRelease =  ValueUtil.clamp(newMax, (byte) 0, (byte) 127);
+    }
+
     public int getMaxRelease() {
         return data.maxRelease;
     }

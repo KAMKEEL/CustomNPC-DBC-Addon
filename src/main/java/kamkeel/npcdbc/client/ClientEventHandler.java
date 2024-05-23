@@ -56,8 +56,6 @@ public class ClientEventHandler {
             if (mc.currentScreen == null) {
                 if (KeyHandler.AscendKey.getIsKeyPressed()) {
                     performAscend();
-                } else if (ConfigDBCClient.EnhancedCharging && JRMCoreKeyHandler.KiCharge.getIsKeyPressed()) {
-                    chargeKi();
                 } else {
                     TransformController.decrementRage();
                 }
@@ -65,12 +63,6 @@ public class ClientEventHandler {
         }
     }
 
-    private void chargeKi() {
-        boolean powerDown = JRMCoreKeyHandler.Fn.getIsKeyPressed();
-        int release = DBCData.getClient().Release;
-        int newRelease = ValueUtil.clamp(!powerDown ? ++release : --release, 0, DBCData.getClient().maxRelease);
-     //   PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcRelease", newRelease).generatePacket());
-    }
     private void performAscend() {
         PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
         if (formData != null && formData.hasSelectedForm()) {
@@ -247,7 +239,7 @@ public class ClientEventHandler {
                     EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
                     if (enhancedAura != null)
                         enhancedAura.despawn();
-                    
+
                     if (isInKaioken && aura.display.kaiokenOverrides) {
                         spawnKaiokenAura(aura, dbcData);
                     } else {
