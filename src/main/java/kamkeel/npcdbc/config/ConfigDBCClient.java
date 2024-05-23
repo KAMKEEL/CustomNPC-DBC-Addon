@@ -33,8 +33,6 @@ public class ConfigDBCClient
     public static Property AdvancedGuiModeProperty;
     public static boolean AdvancedGui = false;
 
-    public static boolean EnhancedCharging = true;
-
     public static void init(File configFile)
     {
         config = new Configuration(configFile);

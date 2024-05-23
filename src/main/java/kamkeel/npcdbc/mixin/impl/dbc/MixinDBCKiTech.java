@@ -8,6 +8,7 @@ import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.controllers.TransformController;
@@ -34,7 +35,7 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 @Mixin(value = DBCKiTech.class, remap = false)
 public class MixinDBCKiTech {
 
- 
+
     @Inject(method = "ChargeKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;time:I", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     private static void ChargeKi(CallbackInfo ci) {
         boolean FnPressed = JRMCoreKeyHandler.Fn.getIsKeyPressed();
@@ -43,10 +44,10 @@ public class MixinDBCKiTech {
             PacketHandler.Instance.sendToServer(new DBCSetValPacket(DBCData.getClient().player, EnumNBTType.BOOLEAN, "DBCIsFnPressed", FnPressed).generatePacket());
 
         }
-        
-        if (ConfigDBCClient.EnhancedCharging)
+
+        if (ConfigDBCGameplay.PreciseKiCharging)
             ci.cancel();
-        
+
     }
 
 

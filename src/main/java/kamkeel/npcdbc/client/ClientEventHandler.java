@@ -44,7 +44,6 @@ public class ClientEventHandler {
     public void onSkill(TickEvent.PlayerTickEvent event) {
         if (event.side == Side.SERVER || event.player == null)
             return;
-        ConfigDBCClient.EnhancedCharging = true;
         if (event.phase == TickEvent.Phase.START) {
             Minecraft mc = Minecraft.getMinecraft();
             if (mc.currentScreen == null) {
@@ -234,7 +233,7 @@ public class ClientEventHandler {
                     EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
                     if (enhancedAura != null)
                         enhancedAura.despawn();
-                    
+
                     if (isInKaioken && aura.display.kaiokenOverrides) {
                         spawnKaiokenAura(aura, dbcData);
                     } else {

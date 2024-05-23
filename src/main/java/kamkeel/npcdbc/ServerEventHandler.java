@@ -81,7 +81,7 @@ public class ServerEventHandler {
                 if (player.ticksExisted % 20 == 0)
                     dbcData.stats.decrementActiveEffects();
 
-                if (dbcData.isChargingKi())
+                if (ConfigDBCGameplay.PreciseKiCharging && dbcData.isChargingKi())
                     chargeKi(dbcData);
 
                 dbcData.syncTracking();
