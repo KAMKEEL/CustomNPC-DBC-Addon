@@ -9,6 +9,7 @@ import noppes.npcs.entity.EntityNPCInterface;
 public class ParticleFormHandler {
     public static void spawnParticle(Entity npc, EnumAuraTypes types){
         switch (types){
+            
             case GoD:
                 if (npc.worldObj.isRemote && JGConfigClientSettings.CLIENT_DA8) {
                     for(int k = 0; k < JGConfigClientSettings.get_da1(); ++k) {
