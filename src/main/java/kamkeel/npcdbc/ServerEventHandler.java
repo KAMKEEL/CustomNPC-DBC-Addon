@@ -81,24 +81,21 @@ public class ServerEventHandler {
                 if (player.ticksExisted % 20 == 0)
                     dbcData.stats.decrementActiveEffects();
 
+                chargeKi(dbcData);
                 dbcData.syncTracking();
             }
             handleFormProcesses(player);
-            chargeKi(player);
         }
     }
 
-    public void chargeKi(EntityPlayer player) {
-        if (player.ticksExisted % 10 == 0 && DBCData.get(player).isChargingKi()) {
+    public void chargeKi(DBCData dbcData) {
+        boolean powerDown = dbcData.isFnPressed;
 
-            DBCData dbcData = DBCData.get(player);
-            boolean powerDown = dbcData.isFnPressed;
-
-            byte release = dbcData.Release;
-            byte newRelease = ValueUtil.clamp(!powerDown ? ++release : --release, (byte) 0, DBCData.getClient().maxRelease);
-            dbcData.getRawCompound().setByte("jrmcRelease", newRelease);
-        }
+        byte release = dbcData.Release;
+        byte newRelease = ValueUtil.clamp(!powerDown ? ++release : --release, (byte) 0, DBCData.getClient().maxRelease);
+        dbcData.getRawCompound().setByte("jrmcRelease", newRelease);
     }
+
     @SubscribeEvent
     public void playerDeathEvent(LivingDeathEvent event) {
         if (event.entityLiving == null || event.entityLiving.worldObj == null || event.entityLiving.worldObj.isRemote)
