@@ -328,7 +328,6 @@ public class EntityAura extends Entity {
             auraSound = new AuraSound(aura, sound, entity);
             if (isTransforming)
                 auraSound.setVolume(0.2f);
-            auraSound.isEnhancedAura = true;
             auraSound.setRepeat(true).play(false);
         }
     }

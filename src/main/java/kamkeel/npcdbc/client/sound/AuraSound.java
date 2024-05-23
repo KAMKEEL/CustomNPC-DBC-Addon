@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.sound;
 
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -12,7 +13,6 @@ import noppes.npcs.entity.EntityNPCInterface;
 public class AuraSound extends Sound {
     private final Aura aura;
     public boolean isKaiokenSound = false;
-    public boolean isEnhancedAura;
 
     public AuraSound(Aura aura, String soundDir, Entity entity) {
         super(soundDir, entity);
@@ -36,8 +36,8 @@ public class AuraSound extends Sound {
     public void update() {
         super.update();
 
-        //DBC aura logic
-        if (!isEnhancedAura) {
+        // DBC Aura Logic
+        if (!ConfigDBCClient.RevampAura) {
             Aura aura = null;
             boolean isInKaioken = false;
             if (entity instanceof EntityNPCInterface) {
