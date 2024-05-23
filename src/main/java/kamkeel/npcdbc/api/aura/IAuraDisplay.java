@@ -150,6 +150,10 @@ public interface IAuraDisplay {
      */
     void setSpeed(float speed);
 
+    String getType2D();
+
+    void setType2D(String type2D);
+
     /**
      * @param textureType Legal types: texture1, texture2, texture3
      * @return resource location of texture
