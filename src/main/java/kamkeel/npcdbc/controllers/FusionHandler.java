@@ -37,6 +37,11 @@ public class FusionHandler {
         }
 
         // Add No Fuse Check
+        // Sender has No Fuse
+        // NetworkUtility.sendServerMessage(sender, "§c", sender.getCommandSenderName(), " ", "npcdbc.noFuse");
+
+        // Target has No Fuse
+        // NetworkUtility.sendServerMessage(sender, "§c", target.getCommandSenderName(), " ", "npcdbc.noFuse");
 
         UUID uuidSender = Utility.getUUID(sender);
         UUID uuidTarget = Utility.getUUID(target);
@@ -134,6 +139,7 @@ public class FusionHandler {
             return;
 
         // Add No Fuse Check
+        // NetworkUtility.sendServerMessage(player, "§c", player.getCommandSenderName(), " ", "npcdbc.noFuse");
 
         int tier = potara.getItemDamage();
         String hash = ItemPotara.getHash(potara);
