@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.mixin.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreGuiBars;
+import JinRyuu.JRMCore.JRMCoreHC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
@@ -20,6 +21,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.HashMap;
@@ -31,6 +33,12 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
     @Shadow
     private Minecraft mc;
 
+    @Redirect(method = "kiBarHelper", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreGuiBars;getSmoothReleaseLevel()I", ordinal = 0))
+    private int release(JRMCoreGuiBars instance) {
+        if (JRMCoreHC.smoothReleaseLevel > 100)
+            return 100;
+        return (int) JRMCoreHC.smoothReleaseLevel;
+    }
     @Inject(method = "showSE", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;displayWidth:I", shift = At.Shift.BEFORE, remap = true))
     private void renderStatusEffectIcon(int var51, int var61, int var71, int var81, CallbackInfo ci, @Local(name = "i") LocalIntRef i, @Local(name = "j") LocalIntRef j) {
         DBCData dbcData = DBCData.getClient();
