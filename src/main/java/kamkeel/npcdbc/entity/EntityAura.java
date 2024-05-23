@@ -3,11 +3,12 @@ package kamkeel.npcdbc.entity;
 import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
-import JinRyuu.JRMCore.entity.EntityCusPar;
+import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import kamkeel.npcdbc.controllers.EntityLightController;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -19,7 +20,6 @@ import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -278,43 +278,18 @@ public class EntityAura extends Entity {
             if (alpha <= 0)
                 setDead();
         }
-        double posXOth = entity.posX;
-        double posYOth = entity.posY + (double) (entity instanceof EntityPlayerSP ?2 : 0.0F);
-        double posZOth = entity.posZ;
-        float red = this.alpha;
-        float green = 1.0F;
-        float blue = (float) (this.color1 >> 16 & 255) / 255.0F;
-        float red2 = (float) (this.color1 >> 8 & 255) / 255.0F;
-        float green2 = (float) (this.color1 & 255) / 255.0F;
-        red = green * blue;
-        green = green * red2;
-        blue = green * green2;
-        if (red > 1.0F) {
-            red = 1.0F;
-        }
 
-        if (green > 1.0F) {
-            green = 1.0F;
-        }
-
-        if (blue > 1.0F) {
-            blue = 1.0F;
-        }
-
-        for (float gh = 0; gh < 5; ++gh) {
-            float life = 0.8f * entity.height;
-            float extra_scale = 1.0F + (entity.height > 2.1F ? entity.height / 2.0F : 0.0F) / 5.0F;
-         //   float life = entity.width * 2.20F;
-            double x = (Math.random() * 1.0 - 0.5) * (double) (life * 1.3F);
-            double y = Math.random() * (double) (entity.height * 1.4F) - (double) (entity.height / 2.0F) - 0.30000001192092896 + 0.5;
-            double z = (Math.random() * 1.0 - 0.5) * (double) (life * 1.3F);
-            double motx = Math.random() * 0.019999999552965164 - 0.009999999776482582;
-            double moty = (Math.random() * 0.8999999761581421 + 0.8999999761581421) * (double) (life * extra_scale) * 0.07;
-            double motz = Math.random() * 0.019999999552965164 - 0.009999999776482582;
-            Entity entity2 = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, motx, moty, motz, 0.0F, (int) (Math.random() * 3.0) + 32, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", (int) (30.0F * life * 0.5F), 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * extra_scale, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * extra_scale, 0.2F * life * extra_scale, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 2, 0.0F, 0.0F, 0.4F, 0.45F, 0.08F, false, -1, true, entity);
-            entity.worldObj.spawnEntityInWorld(entity2);
-            entity2 = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, motx, moty, motz, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", (int) (30.0F * life * 0.5F), 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * extra_scale, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * extra_scale, 0.1F * life * extra_scale, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 2, 0.0F, 0.0F, 0.4F, 0.45F, 0.08F, false, -1, true, entity);
-            entity.worldObj.spawnEntityInWorld(entity2);
+        if (aura.display.enable2DAura) {
+            int race = isPlayer ? dbcData.Race : display.race;
+            int state = isPlayer ? dbcData.State : 0;
+            boolean isUI = isPlayer ? dbcData.isForm(DBCForm.UltraInstinct) : false;
+            boolean isGoD = isPlayer ? dbcData.isForm(DBCForm.GodOfDestruction) : false;
+            boolean isDivine = isPlayer ? dbcData.isForm(DBCForm.Divine) : false;
+            EnumAuraTypes type2D = EnumAuraTypes.getType(race, state, isDivine, isUI, isGoD);
+            if (type2D == EnumAuraTypes.None)
+                type2D = EnumAuraTypes.Base;
+            ParticleFormHandler.spawnAuraParticles(entity, type2D, color1);
+            
         }
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
     }
