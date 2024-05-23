@@ -68,8 +68,9 @@ public class ServerEventHandler {
             if (player.ticksExisted % ConfigDBCGameplay.CheckEffectsTick == 0)
                 StatusEffectController.Instance.runEffects(player);
 
-            if (player.ticksExisted % 60 == 0)
-                FusionHandler.checkNearbyPlayers(player);
+            if(ConfigDBCGameplay.WearableEarrings)
+                if (player.ticksExisted % 60 == 0)
+                    FusionHandler.checkNearbyPlayers(player);
 
             if (player.ticksExisted % 10 == 0) {
                 // Keep the Player informed on their own data
@@ -80,25 +81,23 @@ public class ServerEventHandler {
                 if (player.ticksExisted % 20 == 0)
                     dbcData.stats.decrementActiveEffects();
 
+                if (dbcData.isChargingKi())
+                    chargeKi(dbcData);
+
                 dbcData.syncTracking();
             }
             handleFormProcesses(player);
-            chargeKi(player);
         }
     }
 
-    public void chargeKi(EntityPlayer player) {
-        if (player.ticksExisted % 10 == 0 && DBCData.get(player).isChargingKi()) {
+    public void chargeKi(DBCData dbcData) {
+        boolean powerDown = dbcData.isFnPressed;
 
-            DBCData dbcData = DBCData.get(player);
-            boolean powerDown = dbcData.isFnPressed;
-            
-            int release = dbcData.Release;
-            int newRelease = ValueUtil.clamp(!powerDown ? ++release : --release, 0, DBCData.getClient().maxRelease);
-            dbcData.getRawCompound().setInteger("jrmcRelease", newRelease);
-
-        }
+        byte release = dbcData.Release;
+        byte newRelease = ValueUtil.clamp(!powerDown ? ++release : --release, (byte) 0, DBCData.getClient().maxRelease);
+        dbcData.getRawCompound().setByte("jrmcRelease", newRelease);
     }
+
     @SubscribeEvent
     public void playerDeathEvent(LivingDeathEvent event) {
         if (event.entityLiving == null || event.entityLiving.worldObj == null || event.entityLiving.worldObj.isRemote)

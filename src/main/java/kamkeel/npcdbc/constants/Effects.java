@@ -12,4 +12,5 @@ public class Effects {
     public static final int CHOCOLATED = 9;
     public static final int DARKNESS = 10;
     public static final int ZENKAI = 11;
+    public static final int POTARA = 12;
 }

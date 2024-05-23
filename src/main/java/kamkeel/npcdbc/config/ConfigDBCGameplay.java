@@ -7,6 +7,8 @@ import noppes.npcs.util.ValueUtil;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ConfigDBCGameplay
 {
@@ -39,6 +41,9 @@ public class ConfigDBCGameplay
     public final static String PotaraFusion = "PotaraFusion";
     public static boolean UniqueEarrings = true;
     public static boolean WearableEarrings = true;
+    public static int PotaraOneTime = 10;
+    public static int PotaraTwoTime = 15;
+    public static int PotaraThreeTime = 25;
 
     public final static String Zenkai = "Zenkai";
     public static boolean SaiyanZenkai = true;
@@ -85,8 +90,13 @@ public class ConfigDBCGameplay
             InstantTransformProperty = config.get(Forms, "Instant Transform Bypass Parent", false, "Allows Instant Transform to Bypass the Parent Only Check\n [If the player has Instant Transform Unlocked in Mastery, they can go to the form directly]");
             InstantTransform = InstantTransformProperty.getBoolean(false);
 
+            config.setCategoryComment(PotaraFusion, "Potara Fusion comes with a Bonus Multi applied by the Potara Status Effect. This can be modified within the DBC Addon Effect Config");
+            config.setCategoryPropertyOrder(PotaraFusion, new ArrayList<>(Arrays.asList("Unique Earrings", "Wearable Earrings", "Tier 1 Time", "Tier 2 Time", "Tier 3 Time")));
             UniqueEarrings = config.get(PotaraFusion, "Unique Earrings", true, "Enabling Unique Earrings will cause all SPLIT Potaras to be hashed to a\n unique pair. Only the unique pairs can be used in a fusion.").getBoolean(true);
             WearableEarrings = config.get(PotaraFusion, "Wearable Earrings", true, "Enabling Wearable Earrings will check a radius around the worn player.\n Disabling this will require players to right-click each-other with valid earrings to fuse.").getBoolean(true);
+            PotaraOneTime = config.get(PotaraFusion, "Tier 1 Time", 10, "The amount of time the Tier One Potara Earrings Fusion lasts").getInt(10);
+            PotaraTwoTime = config.get(PotaraFusion, "Tier 2 Time", 15, "The amount of time the Tier Two Potara Earrings Fusion lasts").getInt(15);
+            PotaraThreeTime = config.get(PotaraFusion, "Tier 3 Time", 25, "The amount of time the Tier Three Potara Earrings Fusion lasts").getInt(25);
 
             PreciseKiCharging = config.get(KiCharge, "Precise Ki Charge", true, "Enabling this feature will allow all players to Charge ki at a more direct rate. Instead of 5 percent \nit would charge every 1 percent and become more accurate / precise.").getBoolean(true);
             KiChargeReleaseLevel = config.get(KiCharge, "Ki Charge Speed with Release Level", true, "Enabling this feature will make Ki Charging faster for players with a higher Release Level.").getBoolean(true);

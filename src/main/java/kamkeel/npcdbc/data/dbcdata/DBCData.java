@@ -44,13 +44,13 @@ public class DBCData extends DBCDataUniversal {
     public HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
     public HashMap<String, PlayerBonus> currentBonuses = new HashMap<>();
 
-    //NON VANILLA DBC
+    // NON VANILLA DBC
     public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f;
     public int flightSpeedRelease = 100;
     public boolean isFlying, flightEnabled = true, flightGravity = true;
-    public int maxRelease = 100;
+    public byte maxRelease = 100;
     public boolean isFnPressed;
-    
+
     public EntityAura auraEntity;
 
     public DBCDataStats stats = new DBCDataStats(this);
@@ -191,13 +191,13 @@ public class DBCData extends DBCDataUniversal {
         flightGravity = c.getBoolean("DBCFlightGravity");
 
         if (!c.hasKey("DBCMaxRelease"))
-            c.setInteger("DBCMaxRelease", maxRelease);
-        maxRelease = c.getInteger("DBCMaxRelease");
+            c.setByte("DBCMaxRelease", maxRelease);
+        maxRelease = c.getByte("DBCMaxRelease");
 
         if (!c.hasKey("DBCIsFnPressed"))
             c.setBoolean("DBCIsFnPressed", isFnPressed);
         isFnPressed = c.getBoolean("DBCIsFnPressed");
-        
+
         this.currentEffects.clear();
         if (c.hasKey("addonActiveEffects", 9)) {
             NBTTagList nbttaglist = c.getTagList("addonActiveEffects", 10);

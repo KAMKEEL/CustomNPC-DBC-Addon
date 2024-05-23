@@ -178,7 +178,7 @@ public class ItemPotara extends ItemArmor {
 
     public static String getHash(ItemStack stack){
         NBTTagCompound potara = stack.getTagCompound();
-        return potara.hasKey("Hash") ? potara.getString("Hash") : null;
+        return potara.hasKey("Hash") ? potara.getString("Hash") : "";
     }
 
     public static boolean isRightSide(ItemStack itemStack){
@@ -205,7 +205,7 @@ public class ItemPotara extends ItemArmor {
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type) {
         int meta = stack.getItemDamageForDisplay();
-        return "npcdbc:textures/armor/dbcvanity/potara_"+meta+".png"; //@TODO change texture based on damage
+        return "npcdbc:textures/armor/dbcvanity/potara_"+meta+".png";
     }
 
 

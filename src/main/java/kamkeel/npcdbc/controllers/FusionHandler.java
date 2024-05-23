@@ -1,7 +1,12 @@
 package kamkeel.npcdbc.controllers;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.config.ConfigDBCEffects;
+import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.constants.enums.EnumPotaraTypes;
 import kamkeel.npcdbc.data.FuseRequest;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCDataUniversal;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.Utility;
@@ -31,6 +36,13 @@ public class FusionHandler {
             NetworkUtility.sendServerMessage(sender, "§c", target.getCommandSenderName(), " ", "npcdbc.fusionSkillFusion");
             return false;
         }
+
+
+        if(hasNofuse(sender))
+            NetworkUtility.sendServerMessage(sender, "§c", sender.getCommandSenderName(), " ", "npcdbc.noFuse");
+
+        if(hasNofuse(target))
+            NetworkUtility.sendServerMessage(sender, "§c", target.getCommandSenderName(), " ", "npcdbc.noFuse");
 
         UUID uuidSender = Utility.getUUID(sender);
         UUID uuidTarget = Utility.getUUID(target);
@@ -91,6 +103,14 @@ public class FusionHandler {
 
                 NetworkUtility.sendServerMessage(sender, "§a", "npcdbc.potaraFusion", " §e", target.getCommandSenderName());
                 NetworkUtility.sendServerMessage(target, "§a", "npcdbc.potaraFusion", " §e", sender.getCommandSenderName());
+
+                EnumPotaraTypes potaraType = EnumPotaraTypes.getPotaraFromMeta(tier);
+
+                StatusEffectController.getInstance().applyEffect(sender, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
+                StatusEffectController.getInstance().applyEffect(target, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
+
+                DBCData.fusePlayers(target, sender, potaraType.getLength());
+
                 return true;
             }
         }
@@ -119,23 +139,57 @@ public class FusionHandler {
         if(!JRMCoreH.PlyrSettingsB(player, 4))
             return;
 
-        int potaraTier = potara.getItemDamage();
+        if(hasNofuse(player)) {
+            JRMCoreH.PlyrSettingsRem(player, 4);
+            NetworkUtility.sendServerMessage(player, "§c", player.getCommandSenderName(), " ", "npcdbc.noFuse");
+        }
+
+        int tier = potara.getItemDamage();
         String hash = ItemPotara.getHash(potara);
         boolean isRight = ItemPotara.isRightSide(potara);
-        if(hash == null)
-            return;
-
-        double range = 5;
+        double range = 8;
 
         List<EntityPlayer> nearbyPlayers = player.worldObj.getEntitiesWithinAABB(EntityPlayer.class, player.boundingBox.expand(range, range, range));
 
         for(EntityPlayer nearbyPlayer : nearbyPlayers){
-            if(doesPlayerHaveEarring(nearbyPlayer, potaraTier, !isRight, hash)){
-                //@TODO: Fuse players
+            if(nearbyPlayer == player)
+                continue;
+
+            if(doesPlayerHaveEarring(nearbyPlayer, tier, !isRight, hash)){
+                if(nearbyPlayer.isSneaking()){
+                    NetworkUtility.sendServerMessage(nearbyPlayer, "§a", "npcdbc.potaraFusion", " §e", player.getCommandSenderName());
+                    NetworkUtility.sendServerMessage(player, "§a", "npcdbc.potaraFusion", " §e", nearbyPlayer.getCommandSenderName());
+
+
+                    EnumPotaraTypes potaraType = EnumPotaraTypes.getPotaraFromMeta(tier);
+
+                    StatusEffectController.getInstance().applyEffect(player, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
+                    StatusEffectController.getInstance().applyEffect(nearbyPlayer, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
+
+                    DBCData.fusePlayers(player, nearbyPlayer, potaraType.getLength());
+
+                }
+                else {
+                    NetworkUtility.sendServerMessage(player, "§a", "npcdbc.fusionFound");
+                }
                 return;
             }
         }
 
+    }
+
+    private static boolean hasNofuse(EntityPlayer player){
+        DBCData data = DBCDataUniversal.getData(player);
+
+        if(data == null)
+            return false;
+
+        String fusionString = data.getRawCompound().getString("jrmcFuzion");
+
+        if (fusionString == null || fusionString.isEmpty() || fusionString.contains(","))
+            return false;
+
+        return Integer.parseInt(fusionString) > 0;
     }
 
     private static boolean doesPlayerHaveEarring(EntityPlayer player, int tier, boolean isRight, String hashToCheck){
@@ -154,9 +208,6 @@ public class FusionHandler {
         int wornTier = potara.getItemDamage();
         String wornHash = ItemPotara.getHash(potara);
         boolean wearingRight = ItemPotara.isRightSide(potara);
-        if(wornHash == null)
-            return false;
-
         return tier == wornTier && wornHash.equals(hashToCheck) && wearingRight == isRight;
     }
 }
