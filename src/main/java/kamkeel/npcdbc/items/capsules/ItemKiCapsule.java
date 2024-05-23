@@ -101,7 +101,7 @@ public class ItemKiCapsule extends Item {
         if (meta < 0 || meta > EnumKiCapsules.count())
             meta = 0;
 
-        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.HP, meta)))
+        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.KI, meta)))
             return itemStack;
 
         EnumKiCapsules kiCapsules = EnumKiCapsules.values()[meta];
