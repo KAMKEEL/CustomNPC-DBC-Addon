@@ -21,7 +21,7 @@ public class RegenKi extends StatusEffect {
     @Override
     public void process(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
-        int percentToRegen = ConfigDBCEffects.KiRegenPercent * playerEffect.level;
-        dbcData.stats.restoreHealthPercent(percentToRegen);
+        int percentToRestore = ConfigDBCEffects.KiRegenPercent * playerEffect.level;
+        dbcData.stats.restoreKiPercent(percentToRestore);
     }
 }

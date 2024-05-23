@@ -20,7 +20,7 @@ public enum EnumHealthCapsules {
         this.meta = meta;
         this.name = name;
         this.strength = strength;
-        this.cooldown = 10;
+        this.cooldown = cooldown;
     }
 
     public int getMeta(){
