@@ -3,6 +3,7 @@ package kamkeel.npcdbc.entity;
 import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
+import JinRyuu.JRMCore.entity.EntityCusPar;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -215,16 +216,22 @@ public class EntityAura extends Entity {
     }
 
     public void updateColor() {
-        if (!isKaioken) {
+        if (isKaioken)
+            return;
+        
         color1 = isPlayer ? dbcData.AuraColor > 0 ? dbcData.AuraColor : JRMCoreH.Algnmnt_rc(dbcData.Alignment) : 11075583; //alignment color
 
-        if (isPlayer && dbcData.State > 0)//vanilla DBC form colors
+        if (isPlayer && dbcData.State > 0) //vanilla DBC form colors
             color1 = dbcData.getDBCColor();
 
+        if (aura.display.hasColor("color1")) //IAura color
+            color1 = aura.display.color1;
+        
         Form form = PlayerDataUtil.getForm(entity);
         if (form != null && form.display.hasColor("aura")) //IForm color
             color1 = form.display.auraColor;
-        }
+
+
     }
 
     public boolean isRoot() {
@@ -306,10 +313,10 @@ public class EntityAura extends Entity {
             double motx = Math.random() * 0.019999999552965164 - 0.009999999776482582;
             double moty = (Math.random() * 0.8999999761581421 + 0.8999999761581421) * (double) (life * extra_scale) * 0.07;
             double motz = Math.random() * 0.019999999552965164 - 0.009999999776482582;
-            //   Entity par = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, motx, moty, motz, 0.0F, (int) (Math.random() * 3.0) + 32, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", (int) (30.0F * life * 0.5F), 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * extra_scale, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * extra_scale, 0.2F * life * extra_scale, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 2, 0.0F, 0.0F, 0.4F, 0.45F, 0.08F, false, -1, true, entity);
-            // entity.worldObj.spawnEntityInWorld(par);
-            //par = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, motx, moty, motz, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", (int) (30.0F * life * 0.5F), 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * extra_scale, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * extra_scale, 0.1F * life * extra_scale, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 2, 0.0F, 0.0F, 0.4F, 0.45F, 0.08F, false, -1, true, entity);
-            //  entity.worldObj.spawnEntityInWorld(par);
+            Entity par = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, motx, moty, motz, 0.0F, (int) (Math.random() * 3.0) + 32, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", (int) (30.0F * life * 0.5F), 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * extra_scale, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * extra_scale, 0.2F * life * extra_scale, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 2, 0.0F, 0.0F, 0.4F, 0.45F, 0.08F, false, -1, true, entity);
+            entity.worldObj.spawnEntityInWorld(par);
+            par = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, motx, moty, motz, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", (int) (30.0F * life * 0.5F), 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * extra_scale, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * extra_scale, 0.1F * life * extra_scale, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 2, 0.0F, 0.0F, 0.4F, 0.45F, 0.08F, false, -1, true, entity);
+            entity.worldObj.spawnEntityInWorld(par);
         }
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
     }
