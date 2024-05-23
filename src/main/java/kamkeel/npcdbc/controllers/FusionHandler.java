@@ -36,6 +36,8 @@ public class FusionHandler {
             return false;
         }
 
+        // Add No Fuse Check
+
         UUID uuidSender = Utility.getUUID(sender);
         UUID uuidTarget = Utility.getUUID(target);
 
@@ -130,6 +132,8 @@ public class FusionHandler {
 
         if(!JRMCoreH.PlyrSettingsB(player, 4))
             return;
+
+        // Add No Fuse Check
 
         int tier = potara.getItemDamage();
         String hash = ItemPotara.getHash(potara);
