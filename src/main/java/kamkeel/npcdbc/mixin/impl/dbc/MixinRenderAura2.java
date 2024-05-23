@@ -104,7 +104,7 @@ public class MixinRenderAura2 {
 
 
         }
-       hasColor3.set(aur.getColL3() > 0 && aur.getTexL3().length() > 2);
+     //  hasColor3.set(aur.getColL3() > 0 && aur.getTexL3().length() > 2);
     }
 
     @Inject(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;getState2()F", ordinal = 0, shift = At.Shift.BEFORE))
