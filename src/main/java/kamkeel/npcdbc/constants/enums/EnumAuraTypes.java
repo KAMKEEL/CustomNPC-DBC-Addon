@@ -2,6 +2,7 @@ package kamkeel.npcdbc.constants.enums;
 
 public enum EnumAuraTypes {
     None,
+    Base,
     GoD,
     GoDToppo,
     UI,
