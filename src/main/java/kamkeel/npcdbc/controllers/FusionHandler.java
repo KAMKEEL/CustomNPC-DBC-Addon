@@ -6,6 +6,7 @@ import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumPotaraTypes;
 import kamkeel.npcdbc.data.FuseRequest;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.dbcdata.DBCDataUniversal;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.Utility;
@@ -36,12 +37,12 @@ public class FusionHandler {
             return false;
         }
 
-        // Add No Fuse Check
-        // Sender has No Fuse
-        // NetworkUtility.sendServerMessage(sender, "§c", sender.getCommandSenderName(), " ", "npcdbc.noFuse");
 
-        // Target has No Fuse
-        // NetworkUtility.sendServerMessage(sender, "§c", target.getCommandSenderName(), " ", "npcdbc.noFuse");
+        if(hasNofuse(sender))
+            NetworkUtility.sendServerMessage(sender, "§c", sender.getCommandSenderName(), " ", "npcdbc.noFuse");
+
+        if(hasNofuse(target))
+            NetworkUtility.sendServerMessage(sender, "§c", target.getCommandSenderName(), " ", "npcdbc.noFuse");
 
         UUID uuidSender = Utility.getUUID(sender);
         UUID uuidTarget = Utility.getUUID(target);
@@ -138,8 +139,10 @@ public class FusionHandler {
         if(!JRMCoreH.PlyrSettingsB(player, 4))
             return;
 
-        // Add No Fuse Check
-        // NetworkUtility.sendServerMessage(player, "§c", player.getCommandSenderName(), " ", "npcdbc.noFuse");
+        if(hasNofuse(player)) {
+            JRMCoreH.PlyrSettingsRem(player, 4);
+            NetworkUtility.sendServerMessage(player, "§c", player.getCommandSenderName(), " ", "npcdbc.noFuse");
+        }
 
         int tier = potara.getItemDamage();
         String hash = ItemPotara.getHash(potara);
@@ -173,6 +176,20 @@ public class FusionHandler {
             }
         }
 
+    }
+
+    private static boolean hasNofuse(EntityPlayer player){
+        DBCData data = DBCDataUniversal.getData(player);
+
+        if(data == null)
+            return false;
+
+        String fusionString = data.getRawCompound().getString("jrmcFuzion");
+
+        if (fusionString == null || fusionString.isEmpty() || fusionString.contains(","))
+            return false;
+
+        return Integer.parseInt(fusionString) > 0;
     }
 
     private static boolean doesPlayerHaveEarring(EntityPlayer player, int tier, boolean isRight, String hashToCheck){
