@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.client.model;
 
-import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -122,7 +122,7 @@ public class ModelDBC extends ModelBase {
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
-            RenderPlayerJBRA.glColor3f(display.bodyCM);
+            ColorMode.colorToHex(display.bodyCM);
             ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
             this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
@@ -154,7 +154,7 @@ public class ModelDBC extends ModelBase {
             this.eyebase.render(0.0625F);
 
             if (display.race < 4) {
-                RenderPlayerJBRA.glColor3f(eyeBrowColor);
+                ColorMode.colorToHex(eyeBrowColor);
                 ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
                 this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
                 this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -164,7 +164,7 @@ public class ModelDBC extends ModelBase {
             }
 
 
-            RenderPlayerJBRA.glColor3f(eyeColor);
+            ColorMode.colorToHex(eyeColor);
             ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
             this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
             this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -188,45 +188,45 @@ public class ModelDBC extends ModelBase {
             int race = display.race;
             if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
-                RenderPlayerJBRA.glColor3f(display.bodyCM);
+                ColorMode.colorToHex(display.bodyCM);
             } else if (race == DBCRace.NAMEKIAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(display.bodyCM);
+                ColorMode.colorToHex(display.bodyCM);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(display.bodyC1);
+                ColorMode.colorToHex(display.bodyC1);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(display.bodyC2);
+                ColorMode.colorToHex(display.bodyC2);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
                 GL11.glColor3f(1f, 1f, 1f);
             } else if (race == DBCRace.ARCOSIAN) {
                 int st = display.getCurrentArcoState();
-                RenderPlayerJBRA.glColor3f(display.bodyCM);
+                ColorMode.colorToHex(display.bodyCM);
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(display.bodyC1);
+                ColorMode.colorToHex(display.bodyC1);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(display.bodyC2);
+                ColorMode.colorToHex(display.bodyC2);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                RenderPlayerJBRA.glColor3f(display.bodyC3);
+                ColorMode.colorToHex(display.bodyC3);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
                 GL11.glColor3f(1f, 1f, 1f);
             } else if (race == DBCRace.MAJIN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
-                RenderPlayerJBRA.glColor3f(display.bodyCM);
+                ColorMode.colorToHex(display.bodyCM);
             }
         }
     }

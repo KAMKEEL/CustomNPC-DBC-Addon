@@ -1,9 +1,9 @@
 package kamkeel.npcdbc.client.model.part.hair;
 
-import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JBRA.mod_JBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -190,7 +190,7 @@ public class DBCHair extends ModelHairRenderer {
         }
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
-        RenderPlayerJBRA.glColor3f(hairColor);
+        ColorMode.colorToHex(hairColor);
         ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
 
         boolean hasHairAnimations = true;
