@@ -142,7 +142,7 @@ public class AuraRenderer extends RenderDBC {
                 GL11.glPushMatrix();
                 GL11.glRotatef(360 * j + 45, 0F, 1F, 0F);
                 this.renderManager.renderEngine.bindTexture(t1);
-                if (aura.color3 > -1 && i == 1)
+                if (aura.color3 > -1 && j < 1)
                     cf(aura.color1, aura.color3, alpha);
                 else
                     glColor4f(aura.color1, alpha);
