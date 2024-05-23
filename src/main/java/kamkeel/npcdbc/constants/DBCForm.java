@@ -67,8 +67,27 @@ public class DBCForm {
     public static final int Majin = 26;
 
 
-    public static boolean isGod(int state) {
+    public static boolean isSaiyanGod(int state) {
         return state == SuperSaiyanGod || state == SuperSaiyanBlue || state == BlueEvo;
     }
 
+    public static boolean isGod(int race, int state) {
+        if (race == DBCRace.HUMAN) {
+            if (state == HumanGod)
+                return true;
+        } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            if (state == SuperSaiyanGod)
+                return true;
+        } else if (race == DBCRace.NAMEKIAN) {
+            if (state == NamekGod)
+                return true;
+        } else if (race == DBCRace.ARCOSIAN) {
+            if (state == ArcoGod)
+                return true;
+        } else if (race == DBCRace.MAJIN) {
+            if (state == MajinGod)
+                return true;
+        }
+        return false;
+    }
 }

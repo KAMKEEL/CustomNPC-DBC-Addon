@@ -1,5 +1,8 @@
 package kamkeel.npcdbc.constants.enums;
 
+import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +10,6 @@ public enum EnumPlayerAuraTypes {
     None(""),
     SaiyanGod("ssgod"),
     SaiyanBlue("ssb"),
-    SaiyanBlueKK("ssbkk"),
     SaiyanBlueEvo("shinka"),
     SaiyanRose("ssrose"),
     SaiyanRoseEvo("ssroseevo"),
@@ -38,6 +40,30 @@ public enum EnumPlayerAuraTypes {
         return names;
     }
 
+    public static EnumPlayerAuraTypes getType(int race, int state, boolean divine, boolean ui, boolean god) {
+        if (ui)
+            return UI;
+        else if (god)
+            return GoD;
+        else if (DBCForm.isGod(race, state))
+            return SaiyanGod;
+
+        if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            if (state == DBCForm.SuperSaiyanBlue)
+                if (divine)
+                    return SaiyanRose;
+                else
+                    return SaiyanBlue;
+            else if (state == DBCForm.BlueEvo)
+                if (divine)
+                    return SaiyanRoseEvo;
+                else
+                    return SaiyanBlueEvo;
+
+        }
+        return None;
+    }
+
     public static int getManualAuraColor(EnumPlayerAuraTypes playerAuraTypes) {
         int clr = -1;
         if (playerAuraTypes == EnumPlayerAuraTypes.GoD) {
@@ -48,7 +74,7 @@ public enum EnumPlayerAuraTypes {
             clr = 7536661;
         } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanRoseEvo) {
             clr = 14030412;
-        } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanBlue || playerAuraTypes == EnumPlayerAuraTypes.SaiyanBlueKK) {
+        } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanBlue) {
             clr = 2805230;
         } else if (playerAuraTypes == EnumPlayerAuraTypes.SaiyanBlueEvo) {
             clr = 32767;
@@ -65,6 +91,7 @@ public enum EnumPlayerAuraTypes {
             return true;
         return false;
     }
+
 
     public String getName() {
         return this.name;
