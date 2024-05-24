@@ -37,11 +37,15 @@ public class FusionHandler {
         }
 
 
-        if(hasNofuse(sender))
+        if(hasNoFuse(sender)){
             NetworkUtility.sendServerMessage(sender, "§c", sender.getCommandSenderName(), " ", "npcdbc.noFuse");
+            return false;
+        }
 
-        if(hasNofuse(target))
+        if(hasNoFuse(target)){
             NetworkUtility.sendServerMessage(sender, "§c", target.getCommandSenderName(), " ", "npcdbc.noFuse");
+            return false;
+        }
 
         UUID uuidSender = Utility.getUUID(sender);
         UUID uuidTarget = Utility.getUUID(target);
@@ -138,9 +142,11 @@ public class FusionHandler {
         if(!JRMCoreH.PlyrSettingsB(player, 4))
             return;
 
-        if(hasNofuse(player)) {
+        if(hasNoFuse(player)) {
             JRMCoreH.PlyrSettingsRem(player, 4);
             NetworkUtility.sendServerMessage(player, "§c", player.getCommandSenderName(), " ", "npcdbc.noFuse");
+            NetworkUtility.sendServerMessage(player, "§e", "npcdbc.disableFuse");
+            return;
         }
 
         int tier = potara.getItemDamage();
@@ -177,18 +183,21 @@ public class FusionHandler {
 
     }
 
-    private static boolean hasNofuse(EntityPlayer player){
-        DBCData data = DBCDataUniversal.getData(player);
-
-        if(data == null)
+    private static boolean hasNoFuse(EntityPlayer player){
+        DBCData data = DBCData.get(player);
+        String fusionString = data.getRawCompound().getString("jrmcFuzion")
+        if(fusionString == null)
             return false;
 
-        String fusionString = data.getRawCompound().getString("jrmcFuzion");
-
-        if (fusionString == null || fusionString.isEmpty() || fusionString.contains(","))
+        fusionString = fusionString.replace(" ", "");
+        if (fusionString.isEmpty() || fusionString.contains(","))
             return false;
 
-        return Integer.parseInt(fusionString) > 0;
+        try {
+            return Integer.parseInt(fusionString) > 0;
+        } catch (Exception ignored){
+            return true;
+        }
     }
 
     private static boolean doesPlayerHaveEarring(EntityPlayer player, int tier, boolean isRight, String hashToCheck){

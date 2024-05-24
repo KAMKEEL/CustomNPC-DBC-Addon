@@ -84,6 +84,7 @@ npcdbc.transformFromParent=Must transfrom from Parent
 npcdbc.fusionSkillFusion=does not have fusion skill enabled
 npcdbc.holdPotara=Both players must hold a Potara Earring
 npcdbc.noFuse=cannot fuse with NoFuse in effect
+npcdbc.disableFuse=Fusion skill has been disabled
 npcdbc.potaraTier=Earrings are not the same tier
 npcdbc.potaraSpit=Earrings are not split
 npcdbc.potaraSides=Potaras must be opposite sides
