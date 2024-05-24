@@ -114,7 +114,13 @@ public class DBCHair extends ModelHairRenderer {
             isHidden = true;
             return;
         }
-        hairColor = display.hairColor;
+
+        int formColor = -1;
+        if(display.getForm() != null){
+            formColor = display.getForm().display.hairColor;
+        }
+
+        hairColor = formColor != -1 ? formColor : display.hairColor;
         isHidden = hairCluster.isHidden = false;
     }
 
