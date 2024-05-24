@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.controllers;
 
 import JinRyuu.JRMCore.JRMCoreH;
-import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumPotaraTypes;
 import kamkeel.npcdbc.data.FuseRequest;

@@ -6,7 +6,8 @@ import kamkeel.npcdbc.network.packets.gui.SaveForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import noppes.npcs.client.NoppesUtil;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiMenuTopButton;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import org.lwjgl.input.Keyboard;
 
 public class GuiNpcFormMenu {

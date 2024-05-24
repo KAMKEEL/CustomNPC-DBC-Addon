@@ -5,15 +5,13 @@ import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.data.PlayerBonus;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
-import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class Meditation extends StatusEffect {
-    
+
     public Meditation() {
         name = "Meditation";
         id = Effects.MEDITATION;

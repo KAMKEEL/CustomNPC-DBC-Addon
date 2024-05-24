@@ -14,7 +14,6 @@ import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
 import noppes.npcs.util.ValueUtil;
 import org.lwjgl.opengl.GL11;
 

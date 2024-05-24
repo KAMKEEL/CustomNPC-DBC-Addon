@@ -3,7 +3,6 @@ package kamkeel.npcdbc.client.gui.dbc;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
