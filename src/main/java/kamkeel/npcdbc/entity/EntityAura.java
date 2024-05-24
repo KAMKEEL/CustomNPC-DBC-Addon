@@ -11,6 +11,7 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import kamkeel.npcdbc.controllers.EntityLightController;
+import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -34,14 +35,12 @@ public class EntityAura extends Entity {
     public final Entity entity;
     public final Aura aura;
     public AuraSound auraSound;
-    public DBCData dbcData = null;
-    DBCDisplay display = null;
+    public IAuraData auraData;
 
     public EntityLightController light;
     public boolean isKaioken, isInKaioken;
     public boolean isTransforming;
     public boolean isCharging;
-    public boolean isPlayer;
 
     public int color1 = -1, color2 = -1, color3 = -1, speed = 10, renderPass;
     public float alpha, maxAlpha = 0.05f, size = 1f;
@@ -65,21 +64,17 @@ public class EntityAura extends Entity {
         this.aura = aura;
 
         if (entity instanceof EntityPlayer) {
-            dbcData = DBCData.get((EntityPlayer) entity);
-            isPlayer = true;
-            dbcData.auraEntity = this;
+            auraData = DBCData.get((EntityPlayer) entity);
         } else if (entity instanceof EntityNPCInterface) {
-            display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
-            display.auraEntity = this;
+            auraData = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
         }
+        auraData.setAuraEntity(this);
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
-
         text1 = new ResourceLocation( "jinryuudragonbc:aura.png");
     }
 
     public EntityAura load() {
-        color1 = isPlayer ? dbcData.AuraColor > 0 ? dbcData.AuraColor : JRMCoreH.Algnmnt_rc(dbcData.Alignment) : 11075583; //alignment color
-
+        color1 = auraData.getAuraColor();
         AuraDisplay display = aura.display;
         int mimicColor = EnumPlayerAuraTypes.getManualAuraColor(display.type);
         if (mimicColor != -1)
@@ -130,8 +125,9 @@ public class EntityAura extends Entity {
             color2 = 16776724;
         }
 
-        if (isPlayer && dbcData.State > 0)//vanilla DBC form colors
-            color1 = dbcData.getDBCColor();
+        // Vanilla DBC form colors
+        if (auraData instanceof DBCData && ((DBCData) auraData).State > 0)
+            color1 = ((DBCData) auraData).getDBCColor();
 
         if (display.hasColor("color1")) //IAura color
             color1 = display.color1;
@@ -202,11 +198,7 @@ public class EntityAura extends Entity {
 
     public EntityAura setParent(EntityAura aura, String thisName) {
         parent = aura;
-
-        if (isPlayer)
-            dbcData.auraEntity = aura;
-        else
-            display.auraEntity = aura;
+        auraData.setAuraEntity(aura);
         parent.children.put(name = thisName, this);
         return this;
     }
@@ -220,10 +212,9 @@ public class EntityAura extends Entity {
         if (isKaioken)
             return;
 
-        color1 = isPlayer ? dbcData.AuraColor > 0 ? dbcData.AuraColor : JRMCoreH.Algnmnt_rc(dbcData.Alignment) : 11075583; //alignment color
-
-        if (isPlayer && dbcData.State > 0) //vanilla DBC form colors
-            color1 = dbcData.getDBCColor();
+        // Vanilla DBC form colors
+        if (auraData instanceof DBCData && ((DBCData) auraData).State > 0)
+            color1 = ((DBCData) auraData).getDBCColor();
 
         if (aura.display.hasColor("color1")) //IAura color
             color1 = aura.display.color1;
@@ -258,14 +249,10 @@ public class EntityAura extends Entity {
             }
         }
         // light.addLitBlockUnder();
-        if (isPlayer) {
-            isTransforming = dbcData.isTransforming();
-            isCharging = dbcData.containsSE(4) || isTransforming;
-            isInKaioken = dbcData.isForm(DBCForm.Kaioken);
-        } else {
-            isTransforming = display.isTransforming;
-            isCharging = isTransforming;
-        }
+
+        isTransforming = auraData.isTransforming();
+        isCharging = auraData.isCharging() || isTransforming;
+        isInKaioken = auraData.isInKaioken();
 
         if (!isInKaioken && isKaioken)
             despawn();
@@ -282,11 +269,11 @@ public class EntityAura extends Entity {
         }
 
         if (aura.display.enable2DAura) {
-            int race = isPlayer ? dbcData.Race : display.race;
-            int state = isPlayer ? dbcData.State : 0;
-            boolean isUI = isPlayer ? dbcData.isForm(DBCForm.UltraInstinct) : false;
-            boolean isGoD = isPlayer ? dbcData.isForm(DBCForm.GodOfDestruction) : false;
-            boolean isDivine = isPlayer ? dbcData.isForm(DBCForm.Divine) : false;
+            byte race = auraData.getRace();
+            int state = auraData instanceof DBCData ? ((DBCData)auraData).State: 0;
+            boolean isUI = auraData instanceof DBCData && ((DBCData) auraData).isForm(DBCForm.UltraInstinct);
+            boolean isGoD = auraData instanceof DBCData && ((DBCData) auraData).isForm(DBCForm.GodOfDestruction);
+            boolean isDivine = auraData instanceof DBCData && ((DBCData) auraData).isForm(DBCForm.Divine);
             EnumAuraTypes type2D = EnumAuraTypes.getType(race, state, isDivine, isUI, isGoD);
             if (type2D == EnumAuraTypes.None)
                 type2D = EnumAuraTypes.Base;
@@ -327,12 +314,13 @@ public class EntityAura extends Entity {
     public double getYOffset() { //for correctly scaling aura size
         float sizeFactor = size < 1.5 ? 1 : 1.2f;
         float offsetFactor = 0.05f;
-        int race = dbcData.Race;
-        int state = dbcData.State;
-        int customFormID = dbcData.addonFormID;
+        int race = auraData.getRace();
+        int state = auraData instanceof DBCData ? ((DBCData)auraData).State: 0;
+        int customFormID = auraData.getFormID();
+        float originalRel = auraData instanceof DBCData ? (float) ((DBCData) auraData).Release : 100f;
 
         if (state == DBCForm.Base)
-            offsetFactor *= dbcData.Release * 0.075;
+            offsetFactor *= (float) (originalRel * 0.075);
 
         if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             if (state == DBCForm.SuperSaiyan3)
@@ -341,11 +329,11 @@ public class EntityAura extends Entity {
                 offsetFactor = 0.0075f;
         }
         float finalStateFactor;
-        float stateFactor = AuraRenderer.getStateSizeFactor(dbcData);
+        float stateFactor = auraData instanceof DBCData ? AuraRenderer.getStateSizeFactor(((DBCData)auraData)) : 0.5f;
 
-        if (customFormID > -1) { //idk this sounds like hell but auras wont scale with custom form sizes properly without this
+        if (customFormID > -1) { // IDK this sounds like hell but auras wont scale with custom form sizes properly without this
             float raceSize = JRMCoreHDBC.DBCsizeBasedOnRace2(race, state);
-            float release = ValueUtil.clamp(dbcData.Release, 15, 50);
+            float release = ValueUtil.clamp(originalRel, 15, 50);
             float effectiveSize = raceSize * release * 0.015f;
             float factor = raceSize > 2.25 ? effectiveSize * raceSize / 3 * 0.8f + (release < 45 ? -0.55f : release / 50 * raceSize / 3 * 0.75f) : 0;
             finalStateFactor = raceSize * 0.3f - factor;
@@ -365,8 +353,10 @@ public class EntityAura extends Entity {
 
     public void setDead() {
         super.setDead();
-        if (isPlayer && dbcData.auraEntity == this)
-            dbcData.auraEntity = null;
+        auraData.setAuraEntity(null);
+
+        if (auraData.getAuraEntity() == this)
+            auraData.setAuraEntity(null);
 
         if (parent != null && parent.children != null && parent.children.containsKey(name))
             parent.children.remove(name);

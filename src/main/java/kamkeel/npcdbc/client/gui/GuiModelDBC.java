@@ -200,7 +200,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         }
         if(button.id == 1){
             int value = button.getValue();
-            display.race = value - 1;
+            display.race = (byte) (value - 1);
             if(display.race == -1){
                 display.useSkin = false;
             }

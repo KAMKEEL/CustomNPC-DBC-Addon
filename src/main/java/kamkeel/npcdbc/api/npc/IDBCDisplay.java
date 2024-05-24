@@ -21,9 +21,9 @@ public interface IDBCDisplay {
     void setHairCode(String hairCode);
 
 
-    int getRace();
+    byte getRace();
 
-    void setRace(int race);
+    void setRace(byte race);
 
     int setBodyType();
 

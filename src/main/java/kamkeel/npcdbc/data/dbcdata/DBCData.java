@@ -6,6 +6,7 @@ import JinRyuu.JRMCore.JRMCoreHDBC;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -26,7 +27,7 @@ import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 
-public class DBCData extends DBCDataUniversal {
+public class DBCData extends DBCDataUniversal implements IAuraData {
 
     public static String DBCPersisted = "PlayerPersisted";
     public final Side side;
@@ -361,6 +362,16 @@ public class DBCData extends DBCDataUniversal {
         return containsSE(1);
     }
 
+    @Override
+    public boolean isInKaioken() {
+        return isForm(DBCForm.Kaioken);
+    }
+
+    @Override
+    public boolean isCharging() {
+        return false;
+    }
+
     public boolean isChargingKi() {
         return containsSE(4);
     }
@@ -468,4 +479,30 @@ public class DBCData extends DBCDataUniversal {
     public PlayerDBCInfo getDBCInfo() {
         return PlayerDataUtil.getDBCInfo(player);
     }
+
+    @Override
+    public EntityAura getAuraEntity() {
+        return this.auraEntity;
+    }
+
+    @Override
+    public void setAuraEntity(EntityAura aura) {
+        this.auraEntity = aura;
+    }
+
+    @Override
+    public int getAuraColor() {
+        return AuraColor > 0 ? AuraColor : JRMCoreH.Algnmnt_rc(Alignment);
+    }
+
+    @Override
+    public byte getRace() {
+        return Race;
+    }
+
+    @Override
+    public int getFormID() {
+        return addonFormID;
+    }
+
 }

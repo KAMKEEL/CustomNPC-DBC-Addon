@@ -63,8 +63,8 @@ public class AuraRenderer extends RenderDBC {
         if (aura.aura.display.kettleModeType == 1 || !aura.aura.display.enable3DAura)
             return;
 
-        int state = aura.dbcData.State;
-        int race = aura.dbcData.Race;
+        byte race = aura.auraData.getRace();
+        byte state = aura.auraData instanceof DBCData ? ((DBCData)aura.auraData).State: 0;
         int speed = aura.speed = 10;
         int age = Math.max(1, aura.ticksExisted % speed);
 
@@ -93,7 +93,10 @@ public class AuraRenderer extends RenderDBC {
         GL11.glBlendFunc(770, 771);
         GL11.glAlphaFunc(516, 0.003921569F);
 
-        float sizeStateReleaseFactor = getStateSizeFactor(aura.dbcData) + aura.dbcData.Release * 0.03f;
+        float originalRel = aura.auraData  instanceof DBCData ? (float) ((DBCData) aura.auraData).Release : 100f;
+        float sizeStateReleaseFactor = originalRel * 0.03f;
+        sizeStateReleaseFactor += aura.auraData instanceof DBCData ? getStateSizeFactor(((DBCData) aura.auraData)) : 0.5f;
+
         float pulsingSize = pulseAnimation * 0.03f;
         GL11.glScalef(aura.size + 0.1F * sizeStateReleaseFactor + pulsingSize, aura.size + 0.07F * sizeStateReleaseFactor, aura.size + 0.1F * sizeStateReleaseFactor + pulsingSize);
 

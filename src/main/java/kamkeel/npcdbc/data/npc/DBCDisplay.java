@@ -8,6 +8,7 @@ import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.entity.EntityAura;
@@ -16,7 +17,7 @@ import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
-public class DBCDisplay implements IDBCDisplay {
+public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     private final EntityNPCInterface npc;
     public boolean enabled = false;
@@ -26,7 +27,7 @@ public class DBCDisplay implements IDBCDisplay {
     public int hairColor = -1;
 
     // Race Display //
-    public int race = -1;
+    public byte race = -1;
     public boolean useSkin = false;
     public int bodyType = 0;
     public int bodyCM = 0xffffff, bodyC1 = 0xffffff, bodyC2 = 0xffffff, bodyC3 = 0xffffff;
@@ -48,9 +49,9 @@ public class DBCDisplay implements IDBCDisplay {
     // Server Side Usage
     public float rageValue;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
-    
+
     public EntityAura auraEntity;
-    
+
     public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;
     }
@@ -99,7 +100,7 @@ public class DBCDisplay implements IDBCDisplay {
         if (enabled) {
             NBTTagCompound dbcDisplay = comp.getCompoundTag("DBCDisplay");
 
-            race = dbcDisplay.getInteger("DBCRace");
+            race = dbcDisplay.getByte("DBCRace");
             auraID = dbcDisplay.getInteger("DBCAuraID");
             auraOn = dbcDisplay.getBoolean("DBCAuraOn");
 
@@ -262,13 +263,13 @@ public class DBCDisplay implements IDBCDisplay {
 
 
     @Override
-    public int getRace() {
+    public byte getRace() {
         return race;
     }
 
     @Override
-    public void setRace(int race) {
-        this.race = ValueUtil.clamp(race, 0, 5);
+    public void setRace(byte race) {
+        this.race = ValueUtil.clamp(race, (byte) 0,  (byte) 5);
     }
 
     @Override
@@ -434,6 +435,11 @@ public class DBCDisplay implements IDBCDisplay {
             formID = f.id;
     }
 
+    @Override
+    public int getFormID() {
+        return formID;
+    }
+
     public boolean isInForm() {
         return formID > -1 && getForm() != null;
     }
@@ -469,5 +475,35 @@ public class DBCDisplay implements IDBCDisplay {
             bodyCM = 16757199;
 
         eyeColor = 0x000000;
+    }
+
+    @Override
+    public EntityAura getAuraEntity() {
+        return this.auraEntity;
+    }
+
+    @Override
+    public void setAuraEntity(EntityAura aura) {
+        this.auraEntity = aura;
+    }
+
+    @Override
+    public int getAuraColor() {
+        return 11075583;
+    }
+
+    @Override
+    public boolean isTransforming() {
+        return isTransforming;
+    }
+
+    @Override
+    public boolean isCharging() {
+        return auraOn;
+    }
+
+    @Override
+    public boolean isInKaioken() {
+        return false;
     }
 }
