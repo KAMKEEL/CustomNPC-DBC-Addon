@@ -8,6 +8,7 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.mixin.INPCDisplay;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
@@ -89,8 +90,9 @@ public class ModelDBC extends ModelBase {
     }
 
     public void setPlayerData(EntityCustomNpc entity) {
+        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         isHurt = false;
-        if (entity.hurtTime > 0) {
+        if (display.isEnabled() && display.useSkin && entity.hurtTime > 0) {
             isHurt = true;
             GL11.glDepthFunc(GL11.GL_LEQUAL);
             GL11.glDisable(GL11.GL_BLEND);
