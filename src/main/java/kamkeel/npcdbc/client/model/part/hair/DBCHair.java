@@ -28,8 +28,6 @@ public class DBCHair extends ModelHairRenderer {
     public ModelHairRenderer hairCluster;
     public ModelHairRenderer[] hairall;
 
-    public int tempState, stateChange, state2Change, auraTime, auraType, bendTime;
-
     public DBCHair(ModelMPM base) {
         super(base);
         this.base = base;
@@ -115,12 +113,8 @@ public class DBCHair extends ModelHairRenderer {
             return;
         }
 
-        int formColor = -1;
-        if(display.getForm() != null){
-            formColor = display.getForm().display.hairColor;
-        }
 
-        hairColor = formColor != -1 ? formColor : display.hairColor;
+        hairColor = display.hairColor;
         isHidden = hairCluster.isHidden = false;
     }
 
@@ -208,164 +202,161 @@ public class DBCHair extends ModelHairRenderer {
         }
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
-        //ColorMode.colorToHex(hairColor);
+        ColorMode.colorToHex(hairColor);
         ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
 
-        boolean hasHairAnimations = true;
         int trTime = canUse ? 2 : 200;
         int arTime = canUse ? 2 : 200;
-        if (hasHairAnimations) {
-            if (JRMCoreH.HairsT(state, "B") && stateChange < 200) {
-                stateChange += trTime;
+        if (JRMCoreH.HairsT(state, "B") &&  display.stateChange < 200) {
+            display.stateChange += trTime;
+        }
+
+        if (JRMCoreH.HairsT(state, "C")) {
+            if (display.stateChange < 200) {
+                display.stateChange += trTime;
             }
 
-            if (JRMCoreH.HairsT(state, "C")) {
-                if (stateChange < 200) {
-                    stateChange += trTime;
-                }
-
-                if (state2Change < 200) {
-                    state2Change += trTime;
-                }
-            }
-
-            if (JRMCoreH.HairsT(tempState, "A") && !JRMCoreH.HairsT(state, "A")) {
-                if (!JRMCoreH.HairsT(tempState, state) && stateChange < 200) {
-                    stateChange += trTime;
-                }
-
-                if (stateChange >= 200) {
-                    stateChange = 200;
-                    tempState = state;
-                }
-            } else if (!JRMCoreH.HairsT(tempState, "A") && JRMCoreH.HairsT(state, "A")) {
-                if ((!JRMCoreH.HairsT(tempState, state) || rage == 0) && stateChange > 0) {
-                    stateChange -= trTime;
-                }
-
-                if (stateChange <= 0) {
-                    stateChange = 0;
-                    tempState = state;
-                }
-            } else if (!JRMCoreH.HairsT(tempState, state) && JRMCoreH.HairsT(tempState, "B") && JRMCoreH.HairsT(state, "B")) {
-                tempState = state;
-            } else if (JRMCoreH.HairsT(tempState, "A")) {
-                if (!canUse && JRMCoreH.HairsT(tempState, state) && rage > 90) {
-                    stateChange += trTime;
-                    if (stateChange > 200) {
-                        stateChange = 200;
-                    }
-                } else if (canUse && JRMCoreH.HairsT(tempState, state) && rage > 0 && stateChange < rage * 2) {
-                    stateChange += trTime;
-                } else if (JRMCoreH.HairsT(tempState, state)) {
-                    if (stateChange > 0) {
-                        stateChange -= trTime;
-                    } else {
-                        stateChange = 0;
-                    }
-
-                    if (state2Change > 0) {
-                        state2Change -= trTime;
-                    } else {
-                        state2Change = 0;
-                    }
-                }
-            } else if ((!JRMCoreH.HairsT(state, "B") || !superForm) && !JRMCoreH.HairsT(state, "B")) {
-                if (!JRMCoreH.HairsT(tempState, state) && JRMCoreH.HairsT(state, "C")) {
-                    if (state2Change < 200) {
-                        state2Change += trTime;
-                    }
-
-                    if (state2Change >= 200) {
-                        state2Change = 200;
-                        tempState = state;
-                    }
-                }
-            } else if (!canUse && JRMCoreH.HairsT(tempState, state) && rage > 90) {
-                state2Change += trTime;
-                if (state2Change > 200) {
-                    state2Change = 200;
-                }
-            } else if (canUse && JRMCoreH.HairsT(tempState, state) && rage > 0 && state2Change < rage * 2) {
-                state2Change += trTime;
-            } else if (state2Change > 200) {
-                state2Change = 200;
-                tempState = state;
-            } else if (state2Change > 0) {
-                state2Change -= trTime;
-            } else if (state2Change != 0) {
-                state2Change = 0;
+            if (display.state2Change < 200) {
+                display.state2Change += trTime;
             }
         }
 
-        if (canUse && (hasAura || isTransforming || isKaioken || isTurbo)) { //turbo/kaioken/charging hair animation
-            if (JRMCoreH.HairsT(tempState, state) && auraTime < 50) {
-                if (auraTime < 50 && auraType == 0) {
-                    auraTime += arTime;
+        if (JRMCoreH.HairsT( display.tempState, "A") && !JRMCoreH.HairsT(state, "A")) {
+            if (!JRMCoreH.HairsT(display.tempState, state) && display.stateChange < 200) {
+                display.stateChange += trTime;
+            }
+
+            if (display.stateChange >= 200) {
+                display.stateChange = 200;
+                display.tempState = state;
+            }
+        } else if (!JRMCoreH.HairsT(display.tempState, "A") && JRMCoreH.HairsT(state, "A")) {
+            if ((!JRMCoreH.HairsT(display.tempState, state) || rage == 0) && display.stateChange > 0) {
+                display.stateChange -= trTime;
+            }
+
+            if (display.stateChange <= 0) {
+                display.stateChange = 0;
+                display.tempState = state;
+            }
+        } else if (!JRMCoreH.HairsT(display.tempState, state) && JRMCoreH.HairsT(display.tempState, "B") && JRMCoreH.HairsT(state, "B")) {
+            display.tempState = state;
+        } else if (JRMCoreH.HairsT(display.tempState, "A")) {
+            if (!canUse && JRMCoreH.HairsT(display.tempState, state) && rage > 90) {
+                display.stateChange += trTime;
+                if (display.stateChange > 200) {
+                    display.stateChange = 200;
+                }
+            } else if (canUse && JRMCoreH.HairsT(display.tempState, state) && rage > 0 && display.stateChange < rage * 2) {
+                display.stateChange += trTime;
+            } else if (JRMCoreH.HairsT(display.tempState, state)) {
+                if (display.stateChange > 0) {
+                    display.stateChange -= trTime;
+                } else {
+                    display.stateChange = 0;
                 }
 
-                if (auraTime >= 50) {
-                    auraType = 1;
+                if (display.state2Change > 0) {
+                    display.state2Change -= trTime;
+                } else {
+                    display.state2Change = 0;
+                }
+            }
+        } else if ((!JRMCoreH.HairsT(state, "B") || !superForm) && !JRMCoreH.HairsT(state, "B")) {
+            if (!JRMCoreH.HairsT(display.tempState, state) && JRMCoreH.HairsT(state, "C")) {
+                if (display.state2Change < 200) {
+                    display.state2Change += trTime;
                 }
 
-                if (auraTime < 20 && auraType == 1) {
-                    auraType = 0;
+                if (display.state2Change >= 200) {
+                    display.state2Change = 200;
+                    display.tempState = state;
+                }
+            }
+        } else if (!canUse && JRMCoreH.HairsT(display.tempState, state) && rage > 90) {
+            display.state2Change += trTime;
+            if (display.state2Change > 200) {
+                display.state2Change = 200;
+            }
+        } else if (canUse && JRMCoreH.HairsT(display.tempState, state) && rage > 0 && display.state2Change < rage * 2) {
+            display.state2Change += trTime;
+        } else if (display.state2Change > 200) {
+            display.state2Change = 200;
+            display.tempState = state;
+        } else if (display.state2Change > 0) {
+            display.state2Change -= trTime;
+        } else if (display.state2Change != 0) {
+            display.state2Change = 0;
+        }
+
+        if (canUse && hasAura) { //turbo/kaioken/charging hair animation
+            if (JRMCoreH.HairsT(display.tempState, state) && display.auraTime < 50) {
+                if (display.auraTime < 50 && display.auraType == 0) {
+                    display.auraTime += arTime;
                 }
 
-                if (auraTime > 0 && auraType == 1) {
-                    auraTime -= arTime;
-                }
-            } else if (JRMCoreH.HairsT(tempState, state) && !JRMCoreH.HairsT(state, "A")) {
-                if (auraType < 2) {
-                    auraType = 2;
+                if (display.auraTime >= 50) {
+                    display.auraType = 1;
                 }
 
-                if (bendTime < 50 && auraType == 2) {
-                    bendTime += arTime;
+                if (display.auraTime < 20 && display.auraType == 1) {
+                    display.auraType = 0;
                 }
 
-                if (bendTime >= 50) {
-                    auraType = 3;
+                if (display.auraTime > 0 && display.auraType == 1) {
+                    display.auraTime -= arTime;
+                }
+            } else if (JRMCoreH.HairsT(display.tempState, state) && !JRMCoreH.HairsT(state, "A")) {
+                if (display.auraType < 2) {
+                    display.auraType = 2;
                 }
 
-                if (bendTime < 20 && auraType == 3) {
-                    auraType = 2;
+                if (display.bendTime < 50 && display.auraType == 2) {
+                    display.bendTime += arTime;
                 }
 
-                if (bendTime > 0 && auraType == 3) {
-                    bendTime -= arTime;
+                if (display.bendTime >= 50) {
+                    display.auraType = 3;
+                }
+
+                if (display.bendTime < 20 && display.auraType == 3) {
+                    display.auraType = 2;
+                }
+
+                if (display.bendTime > 0 && display.auraType == 3) {
+                    display.bendTime -= arTime;
                 }
             }
         } else {
-            if (auraType > 0) {
-                auraType = 0;
+            if (display.auraType > 0) {
+                display.auraType = 0;
             }
 
-            if (bendTime > 0) {
-                bendTime -= 1;
+            if (display.bendTime > 0) {
+                display.bendTime -= 1;
             }
 
-            if (auraTime > 0) {
-                auraTime -= 1;
+            if (display.auraTime > 0) {
+                display.auraTime -= 1;
             }
         }
 
         ////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////
         //Hair fix
-        if (tempState != state)
-            tempState = state;
+        if (display.tempState != state)
+            display.tempState = state;
 
 
         int hairState = race == 5 ? 0 : state;
-        if (!JRMCoreH.HairsT(tempState, "A") && JRMCoreH.HairsT(hairState, "A")) {
-            if ((!JRMCoreH.HairsT(tempState, hairState) || rage == 0) && stateChange > 0) {
-                stateChange -= trTime;
+        if (!JRMCoreH.HairsT(display.tempState, "A") && JRMCoreH.HairsT(hairState, "A")) {
+            if ((!JRMCoreH.HairsT(display.tempState, hairState) || rage == 0) && display.stateChange > 0) {
+                display.stateChange -= trTime;
             }
 
-            if (stateChange <= 0) {
-                stateChange = 0;
-                tempState = hairState;
+            if (display.stateChange <= 0) {
+                display.stateChange = 0;
+                display.tempState = hairState;
             }
         }
         ////////////////////////////////////////////////////////
@@ -413,19 +404,19 @@ public class DBCHair extends ModelHairRenderer {
                 boolean hpRight = face >= hairPos[1] && face < hairPos[2];
                 boolean hpLeft = face >= hairPos[2] && face < hairPos[3];
                 boolean hpBack = face >= hairPos[3] && face < hairPos[4];
-                if (stateChange > 0 && l > 0) {
+                if (display.stateChange > 0 && l > 0) {
                     if (y > -1.0F && y < 1.0F && z > -1.0F && z < 1.0F && hpBack) {
-                        x += (float) stateChange * Int * (x < 0.0F ? -0.01F : 0.01F) * (float) l * 0.01F;
+                        x += (float) display.stateChange * Int * (x < 0.0F ? -0.01F : 0.01F) * (float) l * 0.01F;
                         x = x > 3.0F ? 3.0F : x;
                         x = x < -3.0F ? -3.0F : x;
                     }
 
                     if (y > -1.0F && y < 1.0F && x > -1.0F && x < 1.0F && !hpBack) {
-                        z += (float) stateChange * Int * (z < 0.0F ? -0.01F : 0.01F);
+                        z += (float) display.stateChange * Int * (z < 0.0F ? -0.01F : 0.01F);
                         z = z > 3.2F ? 3.2F : z;
                         z = z < -3.2F ? -3.2F : z;
                         if (!hpFront || x < 0.0F) {
-                            x += (float) stateChange * Int * 0.01F;
+                            x += (float) display.stateChange * Int * 0.01F;
                             x = x > 0.4F ? 0.4F : x;
                             x = x < -0.4F ? -0.4F : x;
                         }
@@ -433,83 +424,83 @@ public class DBCHair extends ModelHairRenderer {
                         if (z > 0.0F) {
                             boolean add = hpTop ? hairTopPosZ[face - hairPos[4]] == 0 || hairTopPosZ[face - hairPos[4]] == 2 : false;
                             boolean add2 = hpTop ? face % 4 == 0 || face % 4 == 3 : false;
-                            b += (float) stateChange * Int * -0.02F;
+                            b += (float) display.stateChange * Int * -0.02F;
                             b = b < (add && add2 ? 0.0F : -0.2F) ? (add && add2 ? 0.0F : -0.2F) : b;
                         } else if (z < 0.0F) {
                             boolean add = hpTop ? hairTopPosZ[face - hairPos[4]] == 0 || hairTopPosZ[face - hairPos[4]] == 2 : false;
                             boolean add2 = hpTop ? face % 4 == 0 || face % 4 == 3 : false;
-                            b += (float) stateChange * Int * 0.02F;
+                            b += (float) display.stateChange * Int * 0.02F;
                             b = b > (add && add2 ? 0.0F : 0.2F) ? (add && add2 ? 0.0F : 0.2F) : b;
                         }
                     } else if (y > -1.0F && y < 1.0F) {
-                        x += (float) stateChange * Int * (x < 0.0F ? -0.01F : 0.01F);
+                        x += (float) display.stateChange * Int * (x < 0.0F ? -0.01F : 0.01F);
                         x = x > 2.8F ? 2.8F : x;
                         x = x < -2.8F ? -2.8F : x;
                         if (b > 1.5F) {
                             x = x > 1.5F ? 1.5F : x;
                             x = x < -1.5F ? -1.5F : x;
-                            b += (float) stateChange * Int * (b < 0.0F ? 0.03F : -0.03F);
+                            b += (float) display.stateChange * Int * (b < 0.0F ? 0.03F : -0.03F);
                             b = b > 2.8F ? 2.8F : b;
                             b = b < -2.8F ? -2.8F : b;
                         }
                     } else if (x > -1.0F && x < 1.0F) {
-                        z += (float) stateChange * Int * (z < 0.0F ? -0.01F : 0.01F);
+                        z += (float) display.stateChange * Int * (z < 0.0F ? -0.01F : 0.01F);
                         z = z > 2.8F ? 2.8F : z;
                         z = z < -2.8F ? -2.8F : z;
                         if (b > 0.0F && z > 0.0F && y < 1.6F) {
                             z = z > 2.2F ? 2.2F : z;
                             z = z < -2.2F ? -2.2F : z;
-                            float var91 = b + (float) stateChange * Int * -0.02F;
+                            float var91 = b + (float) display.stateChange * Int * -0.02F;
                             float var92 = var91 > b ? b : var91;
                             b = var92 < -b ? -b : var92;
                         } else if (b > 0.0F && z < 0.0F && y > 0.0F) {
                             z = z > 2.2F ? 2.2F : z;
                             z = z < -2.2F ? -2.2F : z;
-                            float var89 = b + (float) stateChange * Int * -0.02F;
+                            float var89 = b + (float) display.stateChange * Int * -0.02F;
                             float var90 = var89 > b ? b : var89;
                             b = var90 < -b ? -b : var90;
                         } else if (y < -1.3F && b > 0.0F) {
                             z = z > 2.2F ? 2.2F : z;
                             z = z < -2.2F ? -2.2F : z;
-                            b += (float) stateChange * Int * -0.02F;
+                            b += (float) display.stateChange * Int * -0.02F;
                             b = b < 0.5F ? 0.5F : b;
                         }
                     }
                 }
 
-                if (state2Change > 0) {
+                if (display.state2Change > 0) {
                     if (y > -1.0F && y < 1.0F && x > -1.0F && x < 1.0F && hpFront) {
                         float Int2 = Int > 0.02F ? 0.6F : Int;
-                        x += (float) state2Change * Int2 * 0.01F;
+                        x += (float) display.state2Change * Int2 * 0.01F;
                         x = x > 0.2F ? 0.2F : x;
                         x = x < -0.2F ? -0.2F : x;
-                        z += (float) state2Change * Int2 * (z < 0.0F ? -0.02F : 0.02F);
+                        z += (float) display.state2Change * Int2 * (z < 0.0F ? -0.02F : 0.02F);
                         z = z > 2.8F ? 2.8F : z;
                         z = z < -2.8F ? -2.8F : z;
                     }
 
-                    l = (int) ((float) l + (float) state2Change * 0.1F);
+                    l = (int) ((float) l + (float) display.state2Change * 0.1F);
                     if (b < 0.0F) {
-                        b += (float) state2Change * 5.0E-4F;
+                        b += (float) display.state2Change * 5.0E-4F;
                         b = b >= 0.0F ? 0.2F : b;
                     }
 
                     if (b > 0.0F) {
-                        b += (float) state2Change * -5.0E-4F;
+                        b += (float) display.state2Change * -5.0E-4F;
                         b = b <= 0.0F ? -0.2F : b;
                     }
                 }
 
-                if (bendTime > 0) {
-                    z += (float) bendTime * (z < 0.0F ? -0.0025F : 0.0025F);
-                    b += (float) bendTime * (b > 0.0F ? -0.005F : 0.005F);
+                if (display.bendTime > 0) {
+                    z += (float) display.bendTime * (z < 0.0F ? -0.0025F : 0.0025F);
+                    b += (float) display.bendTime * (b > 0.0F ? -0.005F : 0.005F);
                     z = z > 3.2F ? 3.2F : z;
                     z = z < -3.2F ? -3.2F : z;
                 }
 
-                if (auraTime > 0) {
-                    z += (float) auraTime * (z < 0.0F ? -0.0025F : 0.0025F);
-                    b += (float) auraTime * (b > 0.0F ? -0.005F : 0.005F);
+                if (display.auraTime > 0) {
+                    z += (float) display.auraTime * (z < 0.0F ? -0.0025F : 0.0025F);
+                    b += (float) display.auraTime * (b > 0.0F ? -0.005F : 0.005F);
                     z = z > 3.2F ? 3.2F : z;
                     z = z < -3.2F ? -3.2F : z;
                 }

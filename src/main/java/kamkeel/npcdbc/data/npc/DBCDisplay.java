@@ -48,6 +48,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     // Server Side Usage
     public float rageValue;
+    public int tempState, stateChange, state2Change, auraTime, auraType, bendTime;
     private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
 
     public EntityAura auraEntity;
