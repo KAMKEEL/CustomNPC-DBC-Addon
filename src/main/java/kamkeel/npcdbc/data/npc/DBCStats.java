@@ -8,6 +8,7 @@ public class DBCStats implements IDBCStats {
     public boolean friendlyFist = false, ignoreDex = false, ignoreBlock = false, ignoreEndurance = false, ignoreKiProtection = false, ignoreFormReduction = false, hasDefensePenetration = false;
 
     public int defensePenetration = 10;
+    public byte release = 100;
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         nbttagcompound.setBoolean("DBCStatsEnabled", enabled);
@@ -22,6 +23,7 @@ public class DBCStats implements IDBCStats {
             dbcStats.setBoolean("DBCIgnoreFormReduction", ignoreFormReduction);
             dbcStats.setBoolean("DBCIsDefensePen", hasDefensePenetration);
             dbcStats.setInteger("DBCDefensePen", defensePenetration);
+            dbcStats.setByte("DBCRelease", release);
 
             nbttagcompound.setTag("DBCStats", dbcStats);
         } else {
@@ -43,9 +45,20 @@ public class DBCStats implements IDBCStats {
             ignoreFormReduction = dbcStats.getBoolean("DBCIgnoreFormReduction");
             hasDefensePenetration = dbcStats.getBoolean("DBCIsDefensePen");
             defensePenetration = dbcStats.getInteger("DBCDefensePen");
+            release = dbcStats.getByte("DBCRelease");
         } else {
             nbttagcompound.removeTag("DBCStats");
         }
+    }
+
+    @Override
+    public void setRelease(byte release) {
+        this.release = release;
+    }
+
+    @Override
+    public byte getRelease() {
+        return release;
     }
 
     @Override
