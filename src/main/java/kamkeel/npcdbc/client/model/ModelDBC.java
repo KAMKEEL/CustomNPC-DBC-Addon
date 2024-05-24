@@ -137,7 +137,6 @@ public class ModelDBC extends ModelBase {
             else
                 mouthDir = getFaceTexture(display, "m" + display.mouthType);
 
-            int ok = JRMCoreH.TransFrSkn[display.arcoState];
             ClientProxy.bindTexture(new ResourceLocation(mouthDir));
             this.mouth.rotateAngleY = parent.bipedHead.rotateAngleY;
             this.mouth.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -185,6 +184,8 @@ public class ModelDBC extends ModelBase {
 
     public void renderBodySkin(DBCDisplay display, ModelRenderer model) {
         if (display.useSkin) {
+            GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
+
             int race = display.race;
             if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
@@ -228,6 +229,8 @@ public class ModelDBC extends ModelBase {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
                 ColorMode.colorToHex(display.bodyCM);
             }
+
+            GL11.glPopAttrib();
         }
     }
 
