@@ -1,6 +1,10 @@
 package kamkeel.npcdbc.api.npc;
 
 public interface IDBCStats {
+    void setRelease(byte release);
+
+    byte getRelease();
+
     boolean isEnabled();
 
     void setEnabled(boolean enabled);

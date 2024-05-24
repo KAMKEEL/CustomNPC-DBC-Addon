@@ -12,6 +12,7 @@ import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.entity.EntityAura;
+import kamkeel.npcdbc.mixin.INPCStats;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
@@ -436,11 +437,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             formID = f.id;
     }
 
-    @Override
-    public int getFormID() {
-        return formID;
-    }
-
+ 
     public boolean isInForm() {
         return formID > -1 && getForm() != null;
     }
@@ -506,5 +503,20 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public boolean isInKaioken() {
         return false;
+    }
+
+    @Override
+    public int getFormID() {
+        return formID;
+    }
+
+    @Override
+    public byte getRelease() {
+        return ((INPCStats) npc.stats).getDBCStats().release;
+    }
+
+    @Override
+    public byte getState() {
+        return 0;
     }
 }

@@ -1,12 +1,11 @@
 package kamkeel.npcdbc.entity;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
-import JinRyuu.JRMCore.JRMCoreHDBC;
+import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
 import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
 import kamkeel.npcdbc.controllers.EntityLightController;
@@ -24,7 +23,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.entity.EntityNPCInterface;
-import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 
@@ -94,7 +92,6 @@ public class EntityAura extends Entity {
             text1 =  new ResourceLocation(auraDir + "aurag.png");
             text3 =  new ResourceLocation(auraDir + "auragb.png");
             color3 = 12310271;
-            renderPass = 1;
         } else if (display.type == EnumPlayerAuraTypes.SaiyanRose) {
             maxAlpha = 0.2F;
             text1 =  new ResourceLocation(auraDir + "aurai.png");
@@ -203,6 +200,7 @@ public class EntityAura extends Entity {
     protected void entityInit() {
          ignoreFrustumCheck = true;
         renderPass =1;
+        height = 20 * 0.11f;
 
     }
 
@@ -210,9 +208,11 @@ public class EntityAura extends Entity {
         if (isKaioken)
             return;
 
+        color1 = auraData.getAuraColor();
         // Vanilla DBC form colors
         if (auraData instanceof DBCData && ((DBCData) auraData).State > 0)
-            color1 = ((DBCData) auraData).getDBCColor();
+            // color1 = ((DBCData) auraData).getDBCColor();
+            color1 = EnumPlayerAuraTypes.getStateColor(auraData.getRace(), ((DBCData) auraData).State, ((DBCData) auraData).isForm(DBCForm.Divine));
 
         if (aura.display.hasColor("color1")) //IAura color
             color1 = aura.display.color1;
@@ -221,6 +221,11 @@ public class EntityAura extends Entity {
         if (form != null && form.display.hasColor("aura")) //IForm color
             color1 = form.display.auraColor;
 
+        String auraDir = "jinryuudragonbc:";
+        //  setTexture(1, auraDir + "auragbpng");
+        // setTexture(3, auraDir + "auragb.png");
+        color3 = 15727354;
+        //alpha = 0.1f;
     }
 
     public boolean isRoot() {
@@ -266,12 +271,13 @@ public class EntityAura extends Entity {
                 setDead();
         }
 
-        if (aura.display.enable2DAura) {
+        if (aura.display.enable2DAura && JGConfigClientSettings.CLIENT_DA13) {
+            boolean isPlayer = auraData instanceof DBCData;
             byte race = auraData.getRace();
-            int state = auraData instanceof DBCData ? ((DBCData)auraData).State: 0;
-            boolean isUI = auraData instanceof DBCData && ((DBCData) auraData).isForm(DBCForm.UltraInstinct);
-            boolean isGoD = auraData instanceof DBCData && ((DBCData) auraData).isForm(DBCForm.GodOfDestruction);
-            boolean isDivine = auraData instanceof DBCData && ((DBCData) auraData).isForm(DBCForm.Divine);
+            int state = auraData.getState();
+            boolean isUI = isPlayer && ((DBCData) auraData).isForm(DBCForm.UltraInstinct);
+            boolean isGoD = isPlayer && ((DBCData) auraData).isForm(DBCForm.GodOfDestruction);
+            boolean isDivine = isPlayer && ((DBCData) auraData).isForm(DBCForm.Divine);
             EnumAuraTypes type2D = EnumAuraTypes.getType(race, state, isDivine, isUI, isGoD);
             if (type2D == EnumAuraTypes.None)
                 type2D = EnumAuraTypes.Base;
@@ -309,38 +315,22 @@ public class EntityAura extends Entity {
         return pass == renderPass;
     }
 
-    public double getYOffset() { //for correctly scaling aura size
-        float sizeFactor = size < 1.5 ? 1 : 1.2f;
-        float offsetFactor = 0.05f;
-        int race = auraData.getRace();
-        int state = auraData instanceof DBCData ? ((DBCData)auraData).State: 0;
-        int customFormID = auraData.getFormID();
-        float originalRel = auraData instanceof DBCData ? (float) ((DBCData) auraData).Release : 100f;
+    public double getYOffset() { //for correctly offsetting aura size
+        float stateSizeFactor = AuraRenderer.getStateSizeFactor(auraData);
+        float sizeStateReleaseFactor = stateSizeFactor + (auraData.getRelease() / 100) * Math.max(stateSizeFactor * 0.75f, 3.5f); //aura gets 1.75x bigger at 100% release
+        float size = this.size + 0.1f * sizeStateReleaseFactor;
 
-        if (state == DBCForm.Base)
-            offsetFactor *= (float) (originalRel * 0.075);
+        float scaledAuraHeight = height * size;
+        float yOffset = -0.05f + scaledAuraHeight + scaledAuraHeight * (scaledAuraHeight / 50) * 2.25f;
 
-        if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-            if (state == DBCForm.SuperSaiyan3)
-                offsetFactor = 0.02f;
-            else if (state == DBCForm.SuperSaiyan4)
-                offsetFactor = 0.0075f;
-        }
-        float finalStateFactor;
-        float stateFactor = auraData instanceof DBCData ? AuraRenderer.getStateSizeFactor(((DBCData)auraData)) : 0.5f;
+        if (stateSizeFactor < 4)  //bug in which offset is not correct if size is too small
+            yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
 
-        if (customFormID > -1) { // IDK this sounds like hell but auras wont scale with custom form sizes properly without this
-            float raceSize = JRMCoreHDBC.DBCsizeBasedOnRace2(race, state);
-            float release = ValueUtil.clamp(originalRel, 15, 50);
-            float effectiveSize = raceSize * release * 0.015f;
-            float factor = raceSize > 2.25 ? effectiveSize * raceSize / 3 * 0.8f + (release < 45 ? -0.55f : release / 50 * raceSize / 3 * 0.75f) : 0;
-            finalStateFactor = raceSize * 0.3f - factor;
-        } else
-            finalStateFactor = stateFactor * offsetFactor;
 
         boolean client = Minecraft.getMinecraft().thePlayer == entity;
+        float clientOffset = !client ? 1.62f : 0;
 
-        return (3.4f - (client ? entity.yOffset : 0)) * size * sizeFactor + finalStateFactor;
+        return yOffset + clientOffset;
     }
 
     public EntityAura spawn() {
@@ -362,15 +352,16 @@ public class EntityAura extends Entity {
     }
 
     public void setTexture(int type, String path){
+        ResourceLocation loc = path == null ? null : new ResourceLocation(path);
         switch (type){
             case 2:
-                text2 = new ResourceLocation(path);
+                text2 = loc;
                 break;
             case 3:
-                text3 = new ResourceLocation(path);
+                text3 = loc;
                 break;
             default:
-                text1 = new ResourceLocation(path);
+                text1 = loc;
                 break;
         }
     }

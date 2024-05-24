@@ -86,6 +86,27 @@ public enum EnumPlayerAuraTypes {
         return clr;
     }
 
+    public static int getStateColor(int race, int state, boolean divine) {
+
+        if (DBCForm.isGod(race, state))
+            return 0xe62727;
+
+        if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            if (state == DBCForm.SuperSaiyanBlue)
+                if (divine)
+                    return 0;
+                else
+                    return 0x00ffff;
+            else if (state == DBCForm.BlueEvo)
+                if (divine)
+                    return 0;
+                else
+                    return 0x1315ba;
+
+        }
+        return -1;
+    }
+
     public static boolean isBlue(EnumPlayerAuraTypes type) {
         if (type == SaiyanBlue || type == SaiyanBlueEvo || type == SaiyanRose || type == SaiyanRoseEvo)
             return true;

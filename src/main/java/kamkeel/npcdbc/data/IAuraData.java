@@ -13,7 +13,9 @@ public interface IAuraData {
     public byte getRace();
 
     public int getFormID();
-
+    public byte getRelease();
+    public byte getState();
+    
     // Aura Color
     // Aura Size
     // Aura State

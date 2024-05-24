@@ -9,7 +9,7 @@ import kamkeel.npcdbc.client.model.ModelAura;
 import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
@@ -59,20 +59,20 @@ public class AuraRenderer extends RenderDBC {
     }
 
     public void renderAura(EntityAura aura, double posX, double posY, double posZ) {
-        if (aura.aura.display.kettleModeType == 1 || !aura.aura.display.enable3DAura)
+        if (aura.aura.display.kettleModeType == 1 || !aura.aura.display.enable3DAura || !JGConfigClientSettings.CLIENT_DA14)
             return;
 
         byte race = aura.auraData.getRace();
-        byte state = aura.auraData instanceof DBCData ? ((DBCData)aura.auraData).State: 0;
-        int speed = aura.speed = 10;
+        byte state = aura.auraData.getState();
+        int speed = aura.speed;
         int age = Math.max(1, aura.ticksExisted % speed);
+        float release = Math.max(5, aura.auraData.getRelease());
 
 
         float alpha = aura.alpha;
         float alphaConfig = (float) JGConfigClientSettings.CLIENT_DA21 / 10.0F;
         boolean isFirstPerson = DBCClient.mc.thePlayer == aura.entity && DBCClient.mc.gameSettings.thirdPersonView == 0;
         alpha = (isFirstPerson ? aura.isInner ? 0.0075f : 0.005f : alpha) * alphaConfig;
-
 
         pulseMax = 5;
         if (pulseMax > 0)
@@ -92,15 +92,13 @@ public class AuraRenderer extends RenderDBC {
         GL11.glBlendFunc(770, 771);
         GL11.glAlphaFunc(516, 0.003921569F);
 
-        float originalRel = aura.auraData  instanceof DBCData ? (float) ((DBCData) aura.auraData).Release : 100f;
-        float sizeStateReleaseFactor = originalRel * 0.03f;
-        sizeStateReleaseFactor += aura.auraData instanceof DBCData ? getStateSizeFactor(((DBCData) aura.auraData)) : 0.5f;
-
         float pulsingSize = pulseAnimation * 0.03f;
-        GL11.glScalef(aura.size + 0.1F * sizeStateReleaseFactor + pulsingSize, aura.size + 0.07F * sizeStateReleaseFactor, aura.size + 0.1F * sizeStateReleaseFactor + pulsingSize);
+        float stateSizeFactor = getStateSizeFactor(aura.auraData);
+        float sizeStateReleaseFactor = stateSizeFactor + (release / 100) * Math.max(stateSizeFactor * 0.75f, 3.5f); //aura gets 1.75x bigger at 100% release
+        float size = aura.size + 0.1f * sizeStateReleaseFactor;
 
-        GL11.glTranslatef(0.0F, -0.3F - 0.07F * sizeStateReleaseFactor, 0.0F);
-        GL11.glRotatef(age * 4, 0.0F, 1.0F, 0.0F);
+        GL11.glScalef(size + pulsingSize, size, size + pulsingSize);
+        GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
 
         int maxLayers = 5;
         for (float i = 1; i < maxLayers + 1; ++i) {
@@ -110,7 +108,7 @@ public class AuraRenderer extends RenderDBC {
             for (float j = 1; j < 2; j += 0.05) {
 
                 Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
-                model.auraModel.offsetY = -(i / maxLayers) * 20 * 0.11f;
+                model.auraModel.offsetY = -(i / maxLayers) * aura.height;
                 model.auraModel.offsetZ = layerTemp < 7F ? 0.2F - 1 * 0.075F : 0.35F + (1 - 7.0F) * 0.055F;
                 model.auraModel.rotateAngleX = (0.9926646F - layerTemp * 0.01F) * (1 - i / maxLayers) * (1 - ((float) Math.pow(i / maxLayers, 2)));
                 if (layerPercent > 0.99) //makes aura close in at top
@@ -322,7 +320,7 @@ public class AuraRenderer extends RenderDBC {
                 intensityFactor = 0.1f;
 
             else if (state == DBCForm.SuperSaiyanGod)
-                return intensityFactor * 0.5f;
+                intensityFactor = 0.1f;
             else if (state == DBCForm.SuperSaiyanBlue)
                 intensityFactor = 0.1f;
             else if (state == DBCForm.BlueEvo)
@@ -335,40 +333,42 @@ public class AuraRenderer extends RenderDBC {
         return state * intensityFactor;
     }
 
-    public static float getStateSizeFactor(DBCData dbcData) {
-        int state = dbcData.State;
-        int race = dbcData.Race;
+    public static float getStateSizeFactor(IAuraData data) {
+        int state = data.getState();
+        int race = data.getRace();
 
-        int sizeFactor = state; //responsible for correctly scaling aura sizes
+
+        float sizeFactor = state; //responsible for correctly scaling aura sizes
         if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             if (state == DBCForm.Base)
-                sizeFactor = 1;
+                sizeFactor = 0.5f;
             else if (state > DBCForm.Base && state < DBCForm.SuperSaiyan2)
-                sizeFactor = 10;
+                sizeFactor = 5;
             else if (state == DBCForm.SuperSaiyan2)
-                sizeFactor = 15;
+                sizeFactor = 7.5f;
             else if (state == DBCForm.SuperSaiyan3)
-                sizeFactor = 30;
+                sizeFactor = 10;
             else if (state == DBCForm.SuperSaiyan4)
-                sizeFactor = 35;
+                sizeFactor = 12.5f;
 
             else if (state == DBCForm.SuperSaiyanGod)
-                sizeFactor = 8;
+                sizeFactor = 1;
             else if (state == DBCForm.SuperSaiyanBlue)
-                sizeFactor = 8;
+                sizeFactor = 6;
             else if (state == DBCForm.BlueEvo)
-                sizeFactor = 12;
+                sizeFactor = 8;
 
         }
 
-        if (dbcData.addonFormID > -1) {
+        if (data.getFormID() > -1) {
+            int release = data.getRelease();
             float size = JRMCoreHDBC.DBCsizeBasedOnRace2(race, state);
-            float effectiveSize = size * ValueUtil.clamp(dbcData.Release, 15, 50) * 0.015f;
-            float factor = effectiveSize / size * 17;
+            float effectiveSize = size * ValueUtil.clamp(release, 15, 50) * 0.015f;
+            float factor = effectiveSize / size * 10;
             return size * factor;
         }
 
-        return sizeFactor * 0.5f;
+        return sizeFactor;
 
     }
 
