@@ -19,9 +19,7 @@ import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.util.ValueUtil;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import static JinRyuu.JRMCore.JRMCoreH.getMajinAbsorptionValueS;
 import static JinRyuu.JRMCore.JRMCoreH.nbt;
@@ -61,11 +59,13 @@ public class DBCDataStats {
 
     public void saveEffectsNBT(NBTTagCompound nbt) {
         NBTTagList nbttaglist = new NBTTagList();
-        Iterator iterator = data.currentEffects.values().iterator();
-        while (iterator.hasNext()) {
-            PlayerEffect playerEffect = (PlayerEffect) iterator.next();
+
+        // Copy the collection to avoid ConcurrentModificationException
+        List<PlayerEffect> effectsCopy = new ArrayList<>(data.currentEffects.values());
+        for (PlayerEffect playerEffect : effectsCopy) {
             nbttaglist.appendTag(playerEffect.writeEffectData(new NBTTagCompound()));
         }
+
         nbt.setTag("addonActiveEffects", nbttaglist);
     }
 
