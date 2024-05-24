@@ -16,21 +16,21 @@ public class ConfigDBCEffects
     public static int KiRegenPercent = 5;
     public static int StaminaRegenPercent = 5;
 
-    public final static String NAMEK_REGEN = "Namekian Regen";
+    public final static String NAMEK_REGEN = "Namekian_Regen";
     public static int NamekRegenPercent = 3;
 
-    public final static String FRUITOFMIGHT = "Fruit of Might";
-    public static double FOM_Strength = 1.2f;
-    public static double FOM_Dex = 0.5f;
-    public static double FOM_Will = 0.5f;
+    public final static String FRUITOFMIGHT = "Fruit_of_Might";
+    public static double FOM_Strength = 1.2;
+    public static double FOM_Dex = 0.5;
+    public static double FOM_Will = 0.5;
     public static int FOM_EffectLength = 90;
-    public static double FOM_KiDrain = -0.8f;
+    public static double FOM_KiDrain = -0.8;
 
 
     public final static String ZENKAI = "Zenkai";
-    public static double ZenkaiSaiyanStr = 1.0f;
-    public static double ZenkaiSaiyanDex = 1.0f;
-    public static double ZenkaiSaiyanWil = 1.0f;
+    public static double ZenkaiSaiyanStr = 1.0;
+    public static double ZenkaiSaiyanDex = 1.0;
+    public static double ZenkaiSaiyanWil = 1.0;
     public static int ZenkaiSaiyanLength = 360;
 
     public static double ZenkaiHALFStr = 1.0f;
@@ -43,9 +43,9 @@ public class ConfigDBCEffects
 
 
     public final static String Potara = "Potara";
-    public static double TierOneMulti = 0.5f;
-    public static double TierTwoMulti = 0.7f;
-    public static double TierThreeMulti = 1.0f;
+    public static double TierOneMulti = 0.5;
+    public static double TierTwoMulti = 0.7;
+    public static double TierThreeMulti = 1.0;
 
     public static void init(File configFile)
     {
