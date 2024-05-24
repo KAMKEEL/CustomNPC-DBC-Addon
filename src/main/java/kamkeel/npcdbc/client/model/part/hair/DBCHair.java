@@ -70,6 +70,7 @@ public class DBCHair extends ModelHairRenderer {
         if(base.isArmor)
             return;
 
+        GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
         ClientProxy.bindTexture(hairResource);
         TintData tintData = this.entity.display.tintData;
         boolean showColor = !this.base.isArmor && tintData.processColor(this.entity.hurtTime > 0 || this.entity.deathTime > 0);
@@ -79,6 +80,16 @@ public class DBCHair extends ModelHairRenderer {
             float green = (float)(color >> 8 & 255) / 255.0F;
             float blue = (float)(color & 255) / 255.0F;
             GL11.glColor4f(red, green, blue, this.base.alpha);
+        } else if(this.entity.hurtTime > 0 || this.entity.deathTime > 0){
+            int color = this.hairColor;
+            float red = (float)(color >> 16 & 255) / 255.0F;
+            float green = (float)(color >> 8 & 255) / 255.0F;
+            float blue = (float)(color & 255) / 255.0F;
+
+            // Increase the red component
+            float increasedRed = Math.min(red + 0.3F, 1.0F); // Increase red by 0.1, ensuring it doesn't exceed 1.0
+
+            GL11.glColor4f(increasedRed, green, blue, this.base.alpha);
         }
 
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
@@ -87,6 +98,7 @@ public class DBCHair extends ModelHairRenderer {
         if (showColor) {
             GL11.glColor4f(1.0F, 1.0F, 1.0F, this.base.alpha);
         }
+        GL11.glPopAttrib();
     }
 
     public void setData(ModelData data, EntityCustomNpc entity) {
@@ -190,7 +202,7 @@ public class DBCHair extends ModelHairRenderer {
         }
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
-        ColorMode.colorToHex(hairColor);
+        //ColorMode.colorToHex(hairColor);
         ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
 
         boolean hasHairAnimations = true;
