@@ -94,8 +94,9 @@ public class ServerEventHandler {
         boolean powerDown = dbcData.isFnPressed;
 
         byte release = dbcData.Release;
-        byte newRelease = ValueUtil.clamp(!powerDown ? ++release : --release, (byte) 0, DBCData.getClient().maxRelease);
-        dbcData.getRawCompound().setByte("jrmcRelease", newRelease);
+        int releaseFactor = 5;
+        int newRelease = ValueUtil.clamp(!powerDown ? release + releaseFactor : release - releaseFactor, (byte) 0, DBCData.getClient().maxRelease);
+        dbcData.getRawCompound().setByte("jrmcRelease", (byte) newRelease);
     }
 
     @SubscribeEvent
