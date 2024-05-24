@@ -13,6 +13,8 @@ import noppes.npcs.entity.data.ModelPartData;
 import java.awt.*;
 import java.awt.datatransfer.*;
 
+import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
+
 public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
 
 	private final GuiScreen parent;
@@ -212,7 +214,8 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             initGui();
         }
         if(button.id == 101){
-            display.hairCode = getClipboardContents();
+            String newDNSHair = getClipboardContents();
+            display.hairCode = newDNSHair.length() != 786 ? dnsHairG1toG2(newDNSHair) : newDNSHair;
             initGui();
         }
         if(button.id == 102){
