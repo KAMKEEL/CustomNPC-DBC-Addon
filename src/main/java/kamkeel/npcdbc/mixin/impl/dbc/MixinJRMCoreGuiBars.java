@@ -58,6 +58,10 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
                         text += "\nTime: " + pe.getDuration() + "s";
                     else
                         text += "\nTime: Infinite";
+
+                    if(pe.level > 1){
+                        text += "\nLevel:" + pe.level;
+                    }
                 }
 
                 addHoverable(text, var51 + i.get(), var61 + j.get());
