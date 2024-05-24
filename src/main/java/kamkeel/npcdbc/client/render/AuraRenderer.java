@@ -82,7 +82,7 @@ public class AuraRenderer extends RenderDBC {
 
         Random rand = new Random();
         GL11.glPushMatrix();
-        GL11.glTranslated(posX, posY + aura.getYOffset(), posZ);
+
 
         GL11.glPushMatrix();
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
@@ -92,11 +92,19 @@ public class AuraRenderer extends RenderDBC {
         GL11.glBlendFunc(770, 771);
         GL11.glAlphaFunc(516, 0.003921569F);
 
+
         float pulsingSize = pulseAnimation * 0.03f;
         float stateSizeFactor = getStateSizeFactor(aura.auraData);
         float sizeStateReleaseFactor = stateSizeFactor + (release / 100) * Math.max(stateSizeFactor * 0.75f, 3.5f); //aura gets 1.75x bigger at 100% release
         float size = aura.size + 0.1f * sizeStateReleaseFactor;
+        aura.effectiveSize = size;
 
+        double yOffset = aura.getYOffset(size);
+        if (stateSizeFactor < 4)  //fixes bug in which offset is not correct if size is too small
+            yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
+
+        GL11.glTranslated(posX, posY - yOffset, posZ);
+        
         GL11.glScalef(size + pulsingSize, size, size + pulsingSize);
         GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
 
@@ -308,29 +316,29 @@ public class AuraRenderer extends RenderDBC {
 
     }
     public static float getStateIntensity(int state, int race) {
-        float intensityFactor = 0.75f; //the higher, the more intensely the aura moves in Y axis
+        float intensityFactor = 150f; //the higher, the more intensely the aura moves in Y axis
         if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             if (state > DBCForm.Base && state < DBCForm.SuperSaiyan2)
-                intensityFactor = 0.4f;
+                intensityFactor = 40f;
             else if (state == DBCForm.SuperSaiyan2)
-                intensityFactor = 0.325f;
+                intensityFactor = 32.5f;
             else if (state == DBCForm.SuperSaiyan3)
-                intensityFactor = 0.35f;
+                intensityFactor = 35f;
             else if (state == DBCForm.SuperSaiyan4)
-                intensityFactor = 0.1f;
+                intensityFactor = 10f;
 
             else if (state == DBCForm.SuperSaiyanGod)
-                intensityFactor = 0.1f;
+                intensityFactor = 10f;
             else if (state == DBCForm.SuperSaiyanBlue)
-                intensityFactor = 0.1f;
+                intensityFactor = 15f;
             else if (state == DBCForm.BlueEvo)
-                intensityFactor = 0.1f;
+                intensityFactor = 15f;
         }
 
         if (state < 1)
             state = 1;
 
-        return state * intensityFactor;
+        return state * intensityFactor / 100;
     }
 
     public static float getStateSizeFactor(IAuraData data) {
@@ -343,9 +351,9 @@ public class AuraRenderer extends RenderDBC {
             if (state == DBCForm.Base)
                 sizeFactor = 0.5f;
             else if (state > DBCForm.Base && state < DBCForm.SuperSaiyan2)
-                sizeFactor = 5;
+                sizeFactor = 4;
             else if (state == DBCForm.SuperSaiyan2)
-                sizeFactor = 7.5f;
+                sizeFactor = 6f;
             else if (state == DBCForm.SuperSaiyan3)
                 sizeFactor = 10;
             else if (state == DBCForm.SuperSaiyan4)
@@ -354,9 +362,9 @@ public class AuraRenderer extends RenderDBC {
             else if (state == DBCForm.SuperSaiyanGod)
                 sizeFactor = 1;
             else if (state == DBCForm.SuperSaiyanBlue)
-                sizeFactor = 6;
+                sizeFactor = 4;
             else if (state == DBCForm.BlueEvo)
-                sizeFactor = 8;
+                sizeFactor = 6;
 
         }
 

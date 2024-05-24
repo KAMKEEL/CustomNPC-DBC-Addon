@@ -3,7 +3,6 @@ package kamkeel.npcdbc.entity;
 import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import kamkeel.npcdbc.client.ParticleFormHandler;
-import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
@@ -39,7 +38,7 @@ public class EntityAura extends Entity {
     public boolean isCharging;
 
     public int color1 = -1, color2 = -1, color3 = -1, speed = 10, renderPass;
-    public float alpha, maxAlpha = 0.05f, size = 1f;
+    public float alpha, maxAlpha = 0.05f, size = 1f, effectiveSize;
 
     public boolean hasLightning;
     public int lightningColor = 0x25c9cf, lightningAlpha = 255;
@@ -281,7 +280,7 @@ public class EntityAura extends Entity {
             EnumAuraTypes type2D = EnumAuraTypes.getType(race, state, isDivine, isUI, isGoD);
             if (type2D == EnumAuraTypes.None)
                 type2D = EnumAuraTypes.Base;
-            ParticleFormHandler.spawnAuraParticles(entity, type2D, color1);
+            ParticleFormHandler.spawnAuraParticles(entity, type2D, color1, (height - 0.8f) * effectiveSize, entity.width);
 
         }
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
@@ -315,17 +314,9 @@ public class EntityAura extends Entity {
         return pass == renderPass;
     }
 
-    public double getYOffset() { //for correctly offsetting aura size
-        float stateSizeFactor = AuraRenderer.getStateSizeFactor(auraData);
-        float sizeStateReleaseFactor = stateSizeFactor + (auraData.getRelease() / 100) * Math.max(stateSizeFactor * 0.75f, 3.5f); //aura gets 1.75x bigger at 100% release
-        float size = this.size + 0.1f * sizeStateReleaseFactor;
-
+    public double getYOffset(float size) { //for correctly offsetting aura size
         float scaledAuraHeight = height * size;
         float yOffset = -0.05f + scaledAuraHeight + scaledAuraHeight * (scaledAuraHeight / 50) * 2.25f;
-
-        if (stateSizeFactor < 4)  //bug in which offset is not correct if size is too small
-            yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
-
 
         boolean client = Minecraft.getMinecraft().thePlayer == entity;
         float clientOffset = !client ? 1.62f : 0;
