@@ -31,7 +31,7 @@ public class DBCStats implements IDBCStats {
     }
 
     public void readFromNBT(NBTTagCompound nbttagcompound) {
-        enabled = nbttagcompound.getBoolean("DBCEnabled");
+        enabled = nbttagcompound.getBoolean("DBCStatsEnabled");
         if (enabled) {
             NBTTagCompound dbcStats = nbttagcompound.getCompoundTag("DBCStats");
 
