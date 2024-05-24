@@ -505,4 +505,14 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         return addonFormID;
     }
 
+    @Override
+    public byte getRelease() {
+        return Release;
+    }
+
+    @Override
+    public byte getState() {
+        return State;
+    }
+
 }
