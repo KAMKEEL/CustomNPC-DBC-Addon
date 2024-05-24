@@ -42,4 +42,22 @@ public class ColorMode {
         float b = h1 * h4;
         GL11.glColor3f(r, g, b);
     }
+
+    public static void applyModelColor(int color, boolean isHurt) {
+        applyModelColor(color, 1.0f, isHurt);
+    }
+
+    public static void applyModelColor(int color, float alpha, boolean isHurt) {
+        float red = (color >> 16 & 255) / 255f;
+        float green = (color >> 8 & 255) / 255f;
+        float blue = (color & 255) / 255f;
+
+        if (isHurt) {
+            red = (float) Math.min(red + 0.2, 1.0f);
+            green = (float) Math.max(green - 0.2, 0);
+            blue = (float) Math.max(blue - 0.2, 0);
+        }
+
+        GL11.glColor4f(red, green, blue, alpha);
+    }
 }

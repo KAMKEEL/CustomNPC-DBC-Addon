@@ -4,6 +4,7 @@ import JinRyuu.JBRA.mod_JBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.ColorMode;
+import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -202,7 +203,7 @@ public class DBCHair extends ModelHairRenderer {
         }
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
-        ColorMode.colorToHex(hairColor);
+        ColorMode.applyModelColor(hairColor, ModelDBC.isHurt);
         ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
 
         int trTime = canUse ? 2 : 200;

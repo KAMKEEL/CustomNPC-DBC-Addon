@@ -19,6 +19,7 @@ import org.lwjgl.opengl.GL11;
 public class ModelDBC extends ModelBase {
 
     private final ModelMPM parent;
+    public static boolean isHurt = false;
     public float rot1;
     public float rot2;
     public float rot3;
@@ -88,6 +89,15 @@ public class ModelDBC extends ModelBase {
     }
 
     public void setPlayerData(EntityCustomNpc entity) {
+        isHurt = false;
+        if (entity.hurtTime > 0) {
+            isHurt = true;
+            GL11.glDepthFunc(GL11.GL_LEQUAL);
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glEnable(GL11.GL_ALPHA_TEST);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+        }
+
         this.DBCHair.setData(entity.modelData, entity);
         this.DBCHorns.setData(entity.modelData, entity);
         this.DBCEars.setData(entity.modelData, entity);
@@ -98,8 +108,6 @@ public class ModelDBC extends ModelBase {
 
     public void renderFace(DBCDisplay display) {
         if (display.useSkin) {
-            GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
-
             int eyeColor = display.eyeColor;
             int eyeBrowColor = display.race == DBCRace.NAMEKIAN ? display.bodyCM : display.hairColor;
             boolean hasArcoMask = display.hasArcoMask;
@@ -122,7 +130,7 @@ public class ModelDBC extends ModelBase {
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
-            ColorMode.colorToHex(display.bodyCM);
+            ColorMode.applyModelColor(display.bodyCM, isHurt);
             ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
             this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
@@ -153,7 +161,7 @@ public class ModelDBC extends ModelBase {
             this.eyebase.render(0.0625F);
 
             if (display.race < 4) {
-                ColorMode.colorToHex(eyeBrowColor);
+                ColorMode.applyModelColor(eyeBrowColor, isHurt);
                 ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
                 this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
                 this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -163,7 +171,7 @@ public class ModelDBC extends ModelBase {
             }
 
 
-            ColorMode.colorToHex(eyeColor);
+            ColorMode.applyModelColor(eyeColor, isHurt);
             ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
             this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
             this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -177,60 +185,54 @@ public class ModelDBC extends ModelBase {
             this.eyeright.rotationPointX = parent.bipedHead.rotationPointX;
             this.eyeright.rotationPointY = parent.bipedHead.rotationPointY;
             this.eyeright.render(0.0625F);
-
-            GL11.glPopAttrib();
         }
     }
 
     public void renderBodySkin(DBCDisplay display, ModelRenderer model) {
         if (display.useSkin) {
-            GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
-
             int race = display.race;
             if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
-                ColorMode.colorToHex(display.bodyCM);
+                ColorMode.applyModelColor(display.bodyCM, isHurt);
             } else if (race == DBCRace.NAMEKIAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
-                ColorMode.colorToHex(display.bodyCM);
+                ColorMode.applyModelColor(display.bodyCM, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
-                ColorMode.colorToHex(display.bodyC1);
+                ColorMode.applyModelColor(display.bodyC1, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
-                ColorMode.colorToHex(display.bodyC2);
+                ColorMode.applyModelColor(display.bodyC2, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
                 GL11.glColor3f(1f, 1f, 1f);
             } else if (race == DBCRace.ARCOSIAN) {
                 int st = display.getCurrentArcoState();
-                ColorMode.colorToHex(display.bodyCM);
+                ColorMode.applyModelColor(display.bodyCM, isHurt);
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                ColorMode.colorToHex(display.bodyC1);
+                ColorMode.applyModelColor(display.bodyC1, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                ColorMode.colorToHex(display.bodyC2);
+                ColorMode.applyModelColor(display.bodyC2, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                ColorMode.colorToHex(display.bodyC3);
+                ColorMode.applyModelColor(display.bodyC3, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
                 GL11.glColor3f(1f, 1f, 1f);
             } else if (race == DBCRace.MAJIN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
-                ColorMode.colorToHex(display.bodyCM);
+                ColorMode.applyModelColor(display.bodyCM, isHurt);
             }
-
-            GL11.glPopAttrib();
         }
     }
 
