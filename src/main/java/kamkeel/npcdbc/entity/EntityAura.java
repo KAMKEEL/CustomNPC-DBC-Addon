@@ -5,8 +5,8 @@ import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
-import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.EntityLightController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -25,6 +25,8 @@ import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.HashMap;
 
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.Default;
+
 public class EntityAura extends Entity {
 
     public final Entity entity;
@@ -37,6 +39,8 @@ public class EntityAura extends Entity {
     public boolean isTransforming;
     public boolean isCharging;
 
+    public EnumAuraTypes3D type3D;
+    public EnumAuraTypes2D type2D;
     public int color1 = -1, color2 = -1, color3 = -1, speed = 10, renderPass;
     public float alpha, maxAlpha = 0.05f, size = 1f, effectiveSize;
 
@@ -68,60 +72,27 @@ public class EntityAura extends Entity {
         text1 = new ResourceLocation( "jinryuudragonbc:aura.png");
     }
 
-    public EntityAura load() {
+
+    public EntityAura load(boolean all) {
         color1 = auraData.getAuraColor();
         AuraDisplay display = aura.display;
-        int mimicColor = EnumPlayerAuraTypes.getManualAuraColor(display.type);
+
+        type3D = display.type;
+        if (aura.display.type == Default)
+            type3D = EnumAuraTypes3D.getType(auraData);
+
+        type2D = display.type2D;
+        //if (aura.display.type2D == EnumAuraTypes2D.Default)
+           // type2D = EnumAuraTypes2D.getType(auraData);
+
+        int mimicColor = EnumAuraTypes3D.getManualAuraColor(type3D, true);
         if (mimicColor != -1)
             color1 = mimicColor;
 
-        String auraDir = "jinryuudragonbc:";
-        if (display.type == EnumPlayerAuraTypes.SaiyanGod) {
-            maxAlpha = 0.2f;
-            text1 = new ResourceLocation(auraDir + "aurai.png");
-            text2 =  new ResourceLocation(auraDir + "auraj.png");
-            color2 = 16747301;
-        } else if (display.type == EnumPlayerAuraTypes.SaiyanBlue) {
-            maxAlpha = 0.5F;
-            text1 =  new ResourceLocation(auraDir + "aurag.png");
-            text3 =  new ResourceLocation(auraDir + "auragb.png");
-            color3 = 15727354;
-        } else if (display.type == EnumPlayerAuraTypes.SaiyanBlueEvo) {
-            maxAlpha = 0.5F;
-            text1 =  new ResourceLocation(auraDir + "aurag.png");
-            text3 =  new ResourceLocation(auraDir + "auragb.png");
-            color3 = 12310271;
-        } else if (display.type == EnumPlayerAuraTypes.SaiyanRose) {
-            maxAlpha = 0.2F;
-            text1 =  new ResourceLocation(auraDir + "aurai.png");
-            text2 =  new ResourceLocation(auraDir + "auraj.png");
-            color2 = 7872713;
-        } else if (display.type == EnumPlayerAuraTypes.SaiyanRoseEvo) {
-            maxAlpha = 0.2F;
-            text1 =  new ResourceLocation(auraDir + "aurai.png");
-            text2 =  new ResourceLocation(auraDir + "auraj.png");
-            color2 = 8592109;
-        } else if (display.type == EnumPlayerAuraTypes.UI) {
-            maxAlpha = 0.15F;
-            color1 = 15790320;
-            text1 = new ResourceLocation(auraDir + "auras.png");
-            color3 = 4746495;
-            text3 = new ResourceLocation(auraDir + "auragb.png");
-        } else if (display.type == EnumPlayerAuraTypes.GoD) {
-            maxAlpha = 0.2F;
-            text1 =  new ResourceLocation(auraDir + "aurag.png");
-            text3 =  new ResourceLocation(auraDir + "auragb.png");
-            color2 = 12464847;
-        } else if (display.type == EnumPlayerAuraTypes.UltimateArco) {
-            maxAlpha = 0.5F;
-            text1 =  new ResourceLocation(auraDir + "aurau.png");
-            text2 =  new ResourceLocation(auraDir + "aurau2.png");
-            color2 = 16776724;
-        }
 
         // Vanilla DBC form colors
         if (auraData instanceof DBCData && ((DBCData) auraData).State > 0)
-            color1 = ((DBCData) auraData).getDBCColor();
+            color1 = auraData.getDBCColor();
 
         if (display.hasColor("color1")) //IAura color
             color1 = display.color1;
@@ -130,26 +101,29 @@ public class EntityAura extends Entity {
         if (form != null && form.display.hasColor("aura")) //IForm color
             color1 = form.display.auraColor;
 
+        if (all) {
+            if (display.hasColor("color2"))
+                color2 = display.color2;
+            if (display.hasColor("color3"))
+                color3 = display.color3;
 
-        if (display.hasColor("color2"))
-            color2 = display.color2;
-        if (display.hasColor("color3"))
-            color3 = display.color3;
+            //loadType();
+
+            if (display.hasAlpha("aura"))
+                maxAlpha = (float) display.alpha / 255;
 
 
-        if (display.hasAlpha("aura"))
-            maxAlpha = (float) display.alpha / 255;
+            if (display.hasSpeed())
+                speed = (int) display.speed;
 
+            light = new EntityLightController(entity);
 
-        if (display.hasSpeed())
-            speed = (int) display.speed;
-        light = new EntityLightController(entity);
-
-        hasLightning = display.hasLightning;
-        if (display.hasColor("lightning"))
-            lightningColor = display.lightningColor;
-        if (display.hasAlpha("lightning"))
-            lightningAlpha = display.lightningAlpha;
+            hasLightning = display.hasLightning;
+            if (display.hasColor("lightning"))
+                lightningColor = display.lightningColor;
+            if (display.hasAlpha("lightning"))
+                lightningAlpha = display.lightningAlpha;
+        }
 
         return this;
     }
@@ -190,6 +164,53 @@ public class EntityAura extends Entity {
         return this;
     }
 
+    public void loadType() {
+        String auraDir = "jinryuudragonbc:";
+        if (type3D == EnumAuraTypes3D.SaiyanGod) {
+            maxAlpha = 0.2f;
+            text1 = new ResourceLocation(auraDir + "aurai.png");
+            text2 = new ResourceLocation(auraDir + "auraj.png");
+            color2 = 16747301;
+        } else if (type3D == EnumAuraTypes3D.SaiyanBlue) {
+            maxAlpha = 0.05F;
+            text1 = new ResourceLocation(auraDir + "aurag.png");
+            text3 = new ResourceLocation(auraDir + "auragb.png");
+            color3 = 15727354;
+        } else if (type3D == EnumAuraTypes3D.SaiyanBlueEvo) {
+            maxAlpha = 0.05F;
+            text1 = new ResourceLocation(auraDir + "aurag.png");
+            text3 = new ResourceLocation(auraDir + "auragb.png");
+            color3 = 12310271;
+        } else if (type3D == EnumAuraTypes3D.SaiyanRose) {
+            maxAlpha = 0.05F;
+            text1 = new ResourceLocation(auraDir + "aurai.png");
+            text2 = new ResourceLocation(auraDir + "auraj.png");
+            color2 = 7872713;
+        } else if (type3D == EnumAuraTypes3D.SaiyanRoseEvo) {
+            maxAlpha = 0.05F;
+            text1 = new ResourceLocation(auraDir + "aurai.png");
+            text2 = new ResourceLocation(auraDir + "auraj.png");
+            color2 = 8592109;
+        } else if (type3D == EnumAuraTypes3D.UI) {
+            maxAlpha = 0.15F;
+            color1 = 15790320;
+            text1 = new ResourceLocation(auraDir + "auras.png");
+            color3 = 4746495;
+            text3 = new ResourceLocation(auraDir + "auragb.png");
+        } else if (type3D == EnumAuraTypes3D.GoD) {
+            maxAlpha = 0.05F;
+            text1 = new ResourceLocation(auraDir + "aurag.png");
+            text3 = new ResourceLocation(auraDir + "auragb.png");
+            color2 = 12464847;
+        } else if (type3D == EnumAuraTypes3D.UltimateArco) {
+            maxAlpha = 0.05F;
+            text1 = new ResourceLocation(auraDir + "aurau.png");
+            text2 = new ResourceLocation(auraDir + "aurau2.png");
+            color2 = 16776724;
+        }
+
+    }
+
     public EntityAura setParent(EntityAura aura, String thisName) {
         parent = aura;
         auraData.setAuraEntity(aura);
@@ -203,28 +224,21 @@ public class EntityAura extends Entity {
 
     }
 
-    public void updateColor() {
+    public void updateDisplay() {
         if (isKaioken)
             return;
 
-        color1 = auraData.getAuraColor();
-        // Vanilla DBC form colors
-        if (auraData instanceof DBCData && ((DBCData) auraData).State > 0)
-            // color1 = ((DBCData) auraData).getDBCColor();
-            color1 = EnumPlayerAuraTypes.getStateColor(auraData.getRace(), ((DBCData) auraData).State, ((DBCData) auraData).isForm(DBCForm.Divine));
+        if (entity.ticksExisted % 10 == 0)
+            load(false);
 
-        if (aura.display.hasColor("color1")) //IAura color
-            color1 = aura.display.color1;
 
-        Form form = PlayerDataUtil.getForm(entity);
-        if (form != null && form.display.hasColor("aura")) //IForm color
-            color1 = form.display.auraColor;
+        if (aura.display.enable2DAura && JGConfigClientSettings.CLIENT_DA13)
+            ParticleFormHandler.spawnAura2D(entity, type2D, color1, (height * 0.53f) * effectiveSize, EnumAuraTypes2D.getParticleWidth(auraData));
+
 
         String auraDir = "jinryuudragonbc:";
         //  setTexture(1, auraDir + "auragbpng");
         // setTexture(3, auraDir + "auragb.png");
-        color3 = 15727354;
-        //alpha = 0.1f;
     }
 
     public boolean isRoot() {
@@ -250,16 +264,6 @@ public class EntityAura extends Entity {
                     child.despawn();
             }
         }
-        // light.addLitBlockUnder();
-
-        isTransforming = auraData.isTransforming();
-        isCharging = auraData.isCharging() || isTransforming;
-        isInKaioken = auraData.isInKaioken();
-
-        if (!isInKaioken && isKaioken)
-            despawn();
-        updateColor();
-
         if (fadeIn && !fadeOut)
             if (alpha < maxAlpha)
                 alpha = Math.min(alpha + fadeFactor, maxAlpha);
@@ -270,20 +274,16 @@ public class EntityAura extends Entity {
                 setDead();
         }
 
-        if (aura.display.enable2DAura && JGConfigClientSettings.CLIENT_DA13) {
-            boolean isPlayer = auraData instanceof DBCData;
-            byte race = auraData.getRace();
-            int state = auraData.getState();
-            boolean isUI = isPlayer && ((DBCData) auraData).isForm(DBCForm.UltraInstinct);
-            boolean isGoD = isPlayer && ((DBCData) auraData).isForm(DBCForm.GodOfDestruction);
-            boolean isDivine = isPlayer && ((DBCData) auraData).isForm(DBCForm.Divine);
-            EnumAuraTypes type2D = EnumAuraTypes.getType(race, state, isDivine, isUI, isGoD);
-            if (type2D == EnumAuraTypes.None)
-                type2D = EnumAuraTypes.Base;
-            ParticleFormHandler.spawnAuraParticles(entity, type2D, color1, (height - 0.8f) * effectiveSize, entity.width);
+        if (!isInKaioken && isKaioken)
+            despawn();
 
-        }
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
+        isTransforming = auraData.isTransforming();
+        isCharging = auraData.isChargingKi() || isTransforming;
+        isInKaioken = auraData.isForm(DBCForm.Kaioken);
+        updateDisplay();
+
+
     }
 
 

@@ -2,6 +2,7 @@ package kamkeel.npcdbc.constants.enums;
 
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.data.IAuraData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,13 @@ public enum EnumAuraTypes3D {
         return names;
     }
 
-    public static EnumAuraTypes3D getType(int race, int state, boolean divine, boolean ui, boolean god) {
+    public static EnumAuraTypes3D getType(IAuraData data) {
+        int race = data.getRace();
+        int state = data.getState();
+        boolean divine = data.isForm(DBCForm.Divine);
+        boolean ui = data.isForm(DBCForm.UltraInstinct);
+        boolean god = data.isForm(DBCForm.GodOfDestruction);
+        
         if (ui)
             return UI;
         else if (god)
@@ -79,7 +86,7 @@ public enum EnumAuraTypes3D {
                 col = 2805230;
         } else if (playerAuraTypes == EnumAuraTypes3D.SaiyanBlueEvo) {
             if (revampedAura)
-                col = 0x1315ba;
+                col = 0x0c02cc;
             else
                 col = 32767;
         } else if (playerAuraTypes == EnumAuraTypes3D.SaiyanRose) {

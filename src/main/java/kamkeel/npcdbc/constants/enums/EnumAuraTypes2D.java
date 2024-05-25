@@ -2,6 +2,7 @@ package kamkeel.npcdbc.constants.enums;
 
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.data.IAuraData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,13 @@ public enum EnumAuraTypes2D {
         return names;
     }
 
-    public static EnumAuraTypes2D getType(int race, int state, boolean divine, boolean ui, boolean god) {
+    public static EnumAuraTypes2D getType(IAuraData data) {
+        int race = data.getRace();
+        int state = data.getState();
+        boolean divine = data.isForm(DBCForm.Divine);
+        boolean ui = data.isForm(DBCForm.UltraInstinct);
+        boolean god = data.isForm(DBCForm.GodOfDestruction);
+        
         if (ui)
             return UI;
         else if (god)
@@ -95,17 +102,19 @@ public enum EnumAuraTypes2D {
         return None;
     }
 
-    public static int getParticleWidth(int race, int state) {
+    public static int getParticleWidth(IAuraData data) {
+        int race = data.getRace();
+        int state = data.getState();
 
         if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-            if (state < DBCForm.SuperSaiyan2)
-                return 10;
+            if (state > 0 && state< DBCForm.SuperSaiyan2)
+                return 7;
             if (state == DBCForm.SuperSaiyan2)
                 return 10;
             else if (state == DBCForm.SuperSaiyan3)
                 return 15;
             else if (state == DBCForm.SuperSaiyan4)
-                return 15;
+                return 20;
             else if (state == DBCForm.BlueEvo)
                 return 5;
             else if (state == DBCForm.SuperSaiyanBlue)

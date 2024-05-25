@@ -221,10 +221,10 @@ public class ClientEventHandler {
                 if (ConfigDBCClient.RevampAura) {
                     EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
                     if (enhancedAura == null)
-                        enhancedAura = new EntityAura(event.entity, aura).load().spawn();
+                        enhancedAura = new EntityAura(event.entity, aura).load(true).spawn();
                     if (enhancedAura != null) {
                         if (aura.hasSecondaryAura() && !enhancedAura.children.containsKey("Secondary"))
-                            new EntityAura(event.entity, aura.getSecondaryAur()).load().setParent(enhancedAura, "Secondary").spawn();
+                            new EntityAura(event.entity, aura.getSecondaryAur()).load(true).setParent(enhancedAura, "Secondary").spawn();
 
                         if (isInKaioken && !enhancedAura.children.containsKey("Kaioken"))
                             new EntityAura(event.entity, aura).loadKaioken().setParent(enhancedAura, "Kaioken").spawn();

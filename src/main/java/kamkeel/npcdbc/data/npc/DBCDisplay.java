@@ -4,7 +4,7 @@ import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.TransformController;
@@ -20,7 +20,7 @@ import noppes.npcs.util.ValueUtil;
 
 public class DBCDisplay implements IDBCDisplay, IAuraData {
 
-    private final EntityNPCInterface npc;
+    public final EntityNPCInterface npc;
     public boolean enabled = false;
 
     // Hair Display //
@@ -50,7 +50,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     // Server Side Usage
     public float rageValue;
     public int tempState, stateChange, state2Change, auraTime, auraType, bendTime;
-    private EnumAuraTypes3D enumAuraTypes = EnumAuraTypes3D.None;
+    private EnumAuraTypes2D enumAuraTypes = EnumAuraTypes2D.None;
 
     public EntityAura auraEntity;
 
@@ -122,7 +122,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             hasArcoMask = dbcDisplay.getBoolean("DBCArcoMask");
 
             auraID = dbcDisplay.getInteger("DBCAuraID");
-            enumAuraTypes = EnumAuraTypes3D.values()[dbcDisplay.getInteger("DBCDisplayAura") % EnumAuraTypes3D.values().length];
+            enumAuraTypes = EnumAuraTypes2D.values()[dbcDisplay.getInteger("DBCDisplayAura") % EnumAuraTypes2D.values().length];
 
             rage = dbcDisplay.getInteger("DBCRage");
             isTransforming = dbcDisplay.getBoolean("DBCIsTransforming");
@@ -240,17 +240,17 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public EnumAuraTypes3D getFormAuraTypes() {
+    public EnumAuraTypes2D getFormAuraTypes() {
         return enumAuraTypes;
     }
 
-    public void setFormAuraTypes(EnumAuraTypes3D enumAuraTypes) {
+    public void setFormAuraTypes(EnumAuraTypes2D enumAuraTypes) {
         this.enumAuraTypes = enumAuraTypes;
     }
 
     @Override
     public void setFormAuraTypes(String type) {
-        this.enumAuraTypes = EnumAuraTypes3D.valueOf(type);
+        this.enumAuraTypes = EnumAuraTypes2D.valueOf(type);
     }
 
     @Override

@@ -58,7 +58,7 @@ public class MixinDBCClient {
     public void renderDBCAuras(EntityNPCInterface npcInterface) {
         INPCDisplay display = (INPCDisplay) npcInterface.display;
         if(display.hasDBCData())
-            ParticleFormHandler.spawnParticle(npcInterface, display.getDBCDisplay().getFormAuraTypes());
+            ParticleFormHandler.spawnAura2D(display.getDBCDisplay());
     }
 
 
