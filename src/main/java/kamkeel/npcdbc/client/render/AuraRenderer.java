@@ -82,17 +82,7 @@ public class AuraRenderer extends RenderDBC {
 
         Random rand = new Random();
         GL11.glPushMatrix();
-
-
-        GL11.glPushMatrix();
-        GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
-        GL11.glDepthMask(false);
-        GL11.glEnable(3042);
-        GL11.glDisable(2896);
-        GL11.glBlendFunc(770, 771);
-        GL11.glAlphaFunc(516, 0.003921569F);
-
-
+        
         float pulsingSize = pulseAnimation * 0.03f;
         float stateSizeFactor = getStateSizeFactor(aura.auraData);
         float sizeStateReleaseFactor = stateSizeFactor + (release / 100) * Math.max(stateSizeFactor * 0.75f, 3.5f); //aura gets 1.75x bigger at 100% release
@@ -102,9 +92,19 @@ public class AuraRenderer extends RenderDBC {
         double yOffset = aura.getYOffset(size);
         if (stateSizeFactor < 4)  //fixes bug in which offset is not correct if size is too small
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
-
-        GL11.glTranslated(posX, posY - yOffset, posZ);
+        GL11.glTranslated(posX, posY +yOffset, posZ);
         
+        GL11.glPushMatrix();
+        GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
+        
+
+        GL11.glDepthMask(false);
+        GL11.glEnable(3042);
+        GL11.glDisable(2896);
+        GL11.glBlendFunc(770, 771);
+        GL11.glAlphaFunc(516, 0.003921569F);
+
+
         GL11.glScalef(size + pulsingSize, size, size + pulsingSize);
         GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
 

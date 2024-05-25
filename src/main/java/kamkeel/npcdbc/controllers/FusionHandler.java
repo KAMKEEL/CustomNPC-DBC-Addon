@@ -185,7 +185,7 @@ public class FusionHandler {
 
     private static boolean hasNoFuse(EntityPlayer player){
         DBCData data = DBCData.get(player);
-        String fusionString = data.getRawCompound().getString("jrmcFuzion")
+        String fusionString = data.getRawCompound().getString("jrmcFuzion");
         if(fusionString == null)
             return false;
 
