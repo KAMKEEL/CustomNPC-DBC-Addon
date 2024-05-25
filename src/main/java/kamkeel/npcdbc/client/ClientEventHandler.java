@@ -13,7 +13,7 @@ import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
-import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -276,53 +276,53 @@ public class ClientEventHandler {
 
 
         int formColor = isPlayer ? dbcData.AuraColor > 0 ? dbcData.AuraColor : JRMCoreH.Algnmnt_rc(dbcData.Alignment) : 11075583; //alignment color
-        int mimicColor = EnumPlayerAuraTypes.getManualAuraColor(aura.display.type);
+        int mimicColor = EnumAuraTypes3D.getManualAuraColor(aura.display.type, false);
         if (mimicColor != -1)
             formColor = mimicColor;
 
-        if (aura.display.type == EnumPlayerAuraTypes.SaiyanGod) {
+        if (aura.display.type == EnumAuraTypes3D.SaiyanGod) {
             aur.setAlp(0.2F);
             aur.setTex("aurai");
             aur.setTexL2("aurai2");
             aur.setColL2(16747301);
-        } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlue) {
+        } else if (aura.display.type == EnumAuraTypes3D.SaiyanBlue) {
             aur.setSpd(40);
             aur.setAlp(0.5F);
             aur.setTex("aurag");
             aur.setColL3(15727354);
             aur.setTexL3("auragb");
-        } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanBlueEvo) {
+        } else if (aura.display.type == EnumAuraTypes3D.SaiyanBlueEvo) {
             aur.setSpd(40);
             aur.setAlp(0.5F);
             aur.setTex("aurag");
             aur.setColL3(12310271);
             aur.setTexL3("auragb");
-        } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRose) {
+        } else if (aura.display.type == EnumAuraTypes3D.SaiyanRose) {
             aur.setSpd(30);
             aur.setAlp(0.2F);
             aur.setTex("aurai");
             aur.setTexL2("aurai2");
             aur.setColL2(7872713);
-        } else if (aura.display.type == EnumPlayerAuraTypes.SaiyanRoseEvo) {
+        } else if (aura.display.type == EnumAuraTypes3D.SaiyanRoseEvo) {
             aur.setSpd(30);
             aur.setAlp(0.2F);
             aur.setTex("aurai");
             aur.setTexL2("aurai2");
             aur.setColL2(8592109);
-        } else if (aura.display.type == EnumPlayerAuraTypes.UI) {
+        } else if (aura.display.type == EnumAuraTypes3D.UI) {
             aur.setSpd(100);
             aur.setAlp(0.15F);
             aur.setTex("auras");
             aur.setCol(15790320);
             aur.setColL3(4746495);
             aur.setTexL3("auragb");
-        } else if (aura.display.type == EnumPlayerAuraTypes.GoD) {
+        } else if (aura.display.type == EnumAuraTypes3D.GoD) {
             aur.setSpd(100);
             aur.setAlp(0.2F);
             aur.setTex("aurag");
             aur.setTexL3("auragb");
             aur.setColL2(12464847);
-        } else if (aura.display.type == EnumPlayerAuraTypes.UltimateArco) {
+        } else if (aura.display.type == EnumAuraTypes3D.UltimateArco) {
             aur.setAlp(0.5F);
             aur.setTex("aurau");
             aur.setTexL2("aurau2");

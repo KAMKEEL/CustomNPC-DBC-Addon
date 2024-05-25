@@ -1,7 +1,8 @@
 package kamkeel.npcdbc.data.aura;
 
 import kamkeel.npcdbc.api.aura.IAuraDisplay;
-import kamkeel.npcdbc.constants.enums.EnumPlayerAuraTypes;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
@@ -10,7 +11,8 @@ public class AuraDisplay implements IAuraDisplay {
     public Aura parent;
 
     public boolean enable2DAura = true, enable3DAura = true;
-    public EnumPlayerAuraTypes type = EnumPlayerAuraTypes.None, type2D = EnumPlayerAuraTypes.None;
+    public EnumAuraTypes3D type = EnumAuraTypes3D.Default;
+    public EnumAuraTypes2D type2D = EnumAuraTypes2D.Default;
 
     public String texture1 = "", texture2 = "", texture3 = "";
     public int color1 = -1, color2 = -1, color3 = -1, alpha = -1;
@@ -40,11 +42,11 @@ public class AuraDisplay implements IAuraDisplay {
 
         enable2DAura = rendering.getBoolean("enable2DAura");
         enable3DAura = rendering.getBoolean("enable3DAura");
-        EnumPlayerAuraTypes auraTypes = EnumPlayerAuraTypes.getEnumFromName(rendering.getString("type"));
-        type = auraTypes == null ? EnumPlayerAuraTypes.None : auraTypes;
+        EnumAuraTypes3D auraTypes3D = EnumAuraTypes3D.getEnumFromName(rendering.getString("type"));
+        type = auraTypes3D == null ? EnumAuraTypes3D.Default : auraTypes3D;
 
-        auraTypes = EnumPlayerAuraTypes.getEnumFromName(rendering.getString("type2DD"));
-        type2D = auraTypes == null ? EnumPlayerAuraTypes.None : auraTypes;
+        EnumAuraTypes2D auraTypes2D = EnumAuraTypes2D.getEnumFromName(rendering.getString("type2D"));
+        type2D = auraTypes2D == null ? EnumAuraTypes2D.Default : auraTypes2D;
         
         texture1 = rendering.getString("texture1");
         texture2 = rendering.getString("texture2");
@@ -86,7 +88,7 @@ public class AuraDisplay implements IAuraDisplay {
         rendering.setBoolean("enable2DAura", enable2DAura);
         rendering.setBoolean("enable3DAura", enable3DAura);
         rendering.setString("type", type.getName());
-        rendering.setString("type2D", type2D.getName());
+        rendering.setString("type2D", type2D.name);
         rendering.setString("texture1", texture1);
         rendering.setString("texture2", texture2);
         rendering.setString("texture3", texture3);
@@ -225,13 +227,13 @@ public class AuraDisplay implements IAuraDisplay {
     public String getFinalSound() {
         String sound = "jinryuudragonbc:DBC.aura";
 
-        if (type == EnumPlayerAuraTypes.SaiyanGod)
+        if (type == EnumAuraTypes3D.SaiyanGod)
             sound = "jinryuudragonbc:1610.aurag";
-        else if (type == EnumPlayerAuraTypes.UI)
+        else if (type == EnumAuraTypes3D.UI)
             sound = "jinryuudragonbc:DBC5.aura_ui";
-        else if (type == EnumPlayerAuraTypes.GoD)
+        else if (type == EnumAuraTypes3D.GoD)
             sound = "jinryuudragonbc:DBC5.aura_destroyer";
-        else if (EnumPlayerAuraTypes.isBlue(type))
+        else if (EnumAuraTypes3D.isBlue(type))
             sound = "jinryuudragonbc:1610.aurab";
 
 
@@ -272,23 +274,23 @@ public class AuraDisplay implements IAuraDisplay {
 
     @Override
     public void setType(String type) {
-        EnumPlayerAuraTypes s = EnumPlayerAuraTypes.getEnumFromName(type.toLowerCase());
+        EnumAuraTypes3D s = EnumAuraTypes3D.getEnumFromName(type.toLowerCase());
         if (s == null)
-            throw new CustomNPCsException("Invalid type! Legal types: %s", String.join(", ", EnumPlayerAuraTypes.getAllNames()));
+            throw new CustomNPCsException("Invalid type! Legal types: %s", String.join(", ", EnumAuraTypes3D.getAllNames()));
         this.type = s;
     }
 
     @Override
     public String getType2D() {
-        return type2D.getName();
+        return type2D.name;
     }
 
     @Override
     public void setType2D(String type2D) {
-        EnumPlayerAuraTypes s = EnumPlayerAuraTypes.getEnumFromName(type2D.toLowerCase());
+        EnumAuraTypes2D s = EnumAuraTypes2D.getEnumFromName(type2D.toLowerCase());
         if (s == null)
-            throw new CustomNPCsException("Invalid type! Legal types: %s", String.join(", ", EnumPlayerAuraTypes.getAllNames()));
-        this.type = s;
+            throw new CustomNPCsException("Invalid type! Legal types: %s", String.join(", ", EnumAuraTypes2D.getAllNames()));
+        this.type2D = s;
     }
     @Override
     public String getTexture(String textureType) {

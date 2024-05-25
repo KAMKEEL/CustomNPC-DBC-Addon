@@ -356,21 +356,12 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public boolean isTransforming() {
-        if (!Utility.isServer(player) && TransformController.ascending)
+        if (TransformController.ascending)
             return true;
 
         return containsSE(1);
     }
 
-    @Override
-    public boolean isInKaioken() {
-        return isForm(DBCForm.Kaioken);
-    }
-
-    @Override
-    public boolean isCharging() {
-        return false;
-    }
 
     public boolean isChargingKi() {
         return containsSE(4);

@@ -4,7 +4,7 @@ import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.TransformController;
@@ -50,7 +50,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     // Server Side Usage
     public float rageValue;
     public int tempState, stateChange, state2Change, auraTime, auraType, bendTime;
-    private EnumAuraTypes enumAuraTypes = EnumAuraTypes.None;
+    private EnumAuraTypes3D enumAuraTypes = EnumAuraTypes3D.None;
 
     public EntityAura auraEntity;
 
@@ -122,7 +122,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             hasArcoMask = dbcDisplay.getBoolean("DBCArcoMask");
 
             auraID = dbcDisplay.getInteger("DBCAuraID");
-            enumAuraTypes = EnumAuraTypes.values()[dbcDisplay.getInteger("DBCDisplayAura") % EnumAuraTypes.values().length];
+            enumAuraTypes = EnumAuraTypes3D.values()[dbcDisplay.getInteger("DBCDisplayAura") % EnumAuraTypes3D.values().length];
 
             rage = dbcDisplay.getInteger("DBCRage");
             isTransforming = dbcDisplay.getBoolean("DBCIsTransforming");
@@ -240,17 +240,17 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public EnumAuraTypes getFormAuraTypes() {
+    public EnumAuraTypes3D getFormAuraTypes() {
         return enumAuraTypes;
     }
 
-    public void setFormAuraTypes(EnumAuraTypes enumAuraTypes) {
+    public void setFormAuraTypes(EnumAuraTypes3D enumAuraTypes) {
         this.enumAuraTypes = enumAuraTypes;
     }
 
     @Override
     public void setFormAuraTypes(String type) {
-        this.enumAuraTypes = EnumAuraTypes.valueOf(type);
+        this.enumAuraTypes = EnumAuraTypes3D.valueOf(type);
     }
 
     @Override
@@ -496,14 +496,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public boolean isCharging() {
+    public boolean isChargingKi() {
         return auraOn;
     }
-
-    @Override
-    public boolean isInKaioken() {
-        return false;
-    }
+    
 
     @Override
     public int getFormID() {
@@ -518,5 +514,15 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public byte getState() {
         return 0;
+    }
+
+    @Override
+    public boolean isForm(int form) {
+        return false;
+    }
+
+    @Override
+    public int getDBCColor() {
+        return getAuraColor();
     }
 }

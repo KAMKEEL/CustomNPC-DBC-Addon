@@ -1,7 +1,8 @@
 package kamkeel.npcdbc.api.npc;
 
 import kamkeel.npcdbc.api.aura.IAura;
-import kamkeel.npcdbc.constants.enums.EnumAuraTypes;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 
 public interface IDBCDisplay {
     void setColor(String type, int color);
@@ -12,7 +13,7 @@ public interface IDBCDisplay {
 
     void setEnabled(boolean enabled);
 
-    EnumAuraTypes getFormAuraTypes();
+    EnumAuraTypes3D getFormAuraTypes();
 
     void setFormAuraTypes(String type);
 

@@ -7,14 +7,18 @@ public interface IAuraData {
     public void setAuraEntity(EntityAura aura);
     public int getAuraColor();
     public boolean isTransforming();
-    public boolean isInKaioken();
-    public boolean isCharging();
+
+    public boolean isChargingKi();
 
     public byte getRace();
 
     public int getFormID();
     public byte getRelease();
     public byte getState();
+
+    public boolean isForm(int form);
+
+    public int getDBCColor();
     
     // Aura Color
     // Aura Size
