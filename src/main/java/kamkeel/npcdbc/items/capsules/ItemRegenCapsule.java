@@ -65,7 +65,12 @@ public class ItemRegenCapsule extends Item {
 
     @Override
     public EnumRarity getRarity(ItemStack item) {
-        return EnumRarity.values()[item.getItemDamage() % 3 + 1];
+        int rarity = item.getItemDamage() % 3 + 1;
+
+        if(rarity >= EnumRarity.values().length)
+            return EnumRarity.epic;
+
+        return EnumRarity.values()[1];
     }
 
     @Override
