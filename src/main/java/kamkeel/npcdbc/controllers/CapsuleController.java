@@ -1,10 +1,8 @@
 package kamkeel.npcdbc.controllers;
 
-import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.enums.*;
-import net.minecraft.util.MathHelper;
 
 import java.io.*;
 import java.util.HashMap;
@@ -33,6 +31,7 @@ public class CapsuleController {
 
     public HashMap<Integer, HashMap<Integer, Integer>> capsuleStrength = new HashMap<>();
     public HashMap<Integer, HashMap<Integer, Integer>> capsuleCooldowns = new HashMap<>();
+    public HashMap<Integer, HashMap<Integer, Integer>> capsuleEffectTimes = new HashMap<>();
 
     public static void setMiscCapsule(UUID playerUUID, int type){
         if(ConfigCapsules.EnableCapsuleCooldowns){
@@ -331,6 +330,7 @@ public class CapsuleController {
         miscCapsuleCooldown.clear();
         capsuleStrength.clear();
         capsuleCooldowns.clear();
+        capsuleEffectTimes.clear();
 
         capsuleStrength.put(Capsule.HP, new HashMap<>());
         capsuleStrength.put(Capsule.KI, new HashMap<>());
@@ -343,6 +343,8 @@ public class CapsuleController {
         capsuleCooldowns.put(Capsule.STAMINA, new HashMap<>());
         capsuleCooldowns.put(Capsule.REGEN, new HashMap<>());
 
+        capsuleEffectTimes.put(Capsule.REGEN, new HashMap<>());
+
         HashMap<Integer, Integer> miscCooldown = capsuleCooldowns.get(Capsule.MISC);
         HashMap<Integer, Integer> hpCooldown = capsuleCooldowns.get(Capsule.HP);
         HashMap<Integer, Integer> kiCooldown = capsuleCooldowns.get(Capsule.KI);
@@ -352,8 +354,10 @@ public class CapsuleController {
         HashMap<Integer, Integer> hpStrength = capsuleStrength.get(Capsule.HP);
         HashMap<Integer, Integer> kiStrength = capsuleStrength.get(Capsule.KI);
         HashMap<Integer, Integer> staminaStrength = capsuleStrength.get(Capsule.STAMINA);
-        HashMap<Integer, Integer> regenStrength = capsuleCooldowns.get(Capsule.REGEN);
+        HashMap<Integer, Integer> regenStrength = capsuleStrength.get(Capsule.REGEN);
 
+
+        HashMap<Integer, Integer> regenEffectTime = capsuleEffectTimes.get(Capsule.REGEN);
 
         for(EnumMiscCapsules miscCapsules : EnumMiscCapsules.values()){
             miscCooldown.put(miscCapsules.getMeta(), miscCapsules.getCooldown());
@@ -373,6 +377,7 @@ public class CapsuleController {
         for(EnumRegenCapsules regenCapsules : EnumRegenCapsules.values()){
             regenCooldown.put(regenCapsules.getMeta(), regenCapsules.getCooldown());
             regenStrength.put(regenCapsules.getMeta(), regenCapsules.getStrength());
+            regenEffectTime.put(regenCapsules.getMeta(), regenCapsules.getEffectTime());
         }
     }
 

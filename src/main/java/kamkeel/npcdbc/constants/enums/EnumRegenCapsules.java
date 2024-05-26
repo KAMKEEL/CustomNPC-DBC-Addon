@@ -54,7 +54,7 @@ public enum EnumRegenCapsules {
         return values().length;
     }
 
-    public int getUseTime() {
+    public int getEffectTime() {
         return this.useTime;
     }
 }

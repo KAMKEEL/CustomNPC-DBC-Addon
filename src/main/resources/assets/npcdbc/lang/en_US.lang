@@ -114,7 +114,11 @@ capsule.ki=Ki
 capsule.hp=HP
 capsule.stamina=Stamina
 
-capsule.regen=Gives "%1s" at level %2s
+# Must have 3 %s - or Format Error
+# (1) - Status effect name
+# (2) - Status effect level
+# (3) - Effect time
+capsule.effect=Gives "%1s" at level%2s for%3s seconds
 
 item.npcdbc:base_healthcapsule.name=Base Health Capsule
 item.npcdbc:super_healthcapsule.name=Super Health Capsule

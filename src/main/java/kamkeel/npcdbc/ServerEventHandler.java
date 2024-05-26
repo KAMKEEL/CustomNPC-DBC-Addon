@@ -39,8 +39,9 @@ public class ServerEventHandler {
             return;
         DBCData dbcData = DBCData.get(event.player);
         dbcData.loadNBTData(true);
-        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(true).generatePacket(), (EntityPlayerMP) event.player);
-        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(false).generatePacket(), (EntityPlayerMP) event.player);
+        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(true, false).generatePacket(), (EntityPlayerMP) event.player);
+        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(false, true).generatePacket(), (EntityPlayerMP) event.player);
+        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(false, false).generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new LoginInfo().generatePacket(), (EntityPlayerMP) event.player);
         StatusEffectController.getInstance().loadEffects(event.player);
         BonusController.getInstance().loadBonus(event.player);

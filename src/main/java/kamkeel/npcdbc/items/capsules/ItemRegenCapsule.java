@@ -111,7 +111,7 @@ public class ItemRegenCapsule extends Item {
 
 
         // Apply status effect
-        StatusEffectController.getInstance().applyEffect(player, regenCapsules.getStatusEffectId(), regenCapsules.getUseTime(), (byte) regenCapsules.getStrength());
+        StatusEffectController.getInstance().applyEffect(player, regenCapsules.getStatusEffectId(), regenCapsules.getEffectTime(), (byte) regenCapsules.getStrength());
 
         // Remove 1 item
         itemStack.splitStack(1);
@@ -150,7 +150,9 @@ public class ItemRegenCapsule extends Item {
 
         HashMap<Integer, Integer> regenStrength = CapsuleController.Instance.capsuleStrength.get(Capsule.REGEN);
         HashMap<Integer, Integer> regenCooldown = CapsuleController.Instance.capsuleCooldowns.get(Capsule.REGEN);
-        par3List.add(StatCollector.translateToLocalFormatted("capsule.regen", StatusEffectController.getInstance().get(regenCapsules.getStatusEffectId()).getName(), regenStrength.get(meta)));
+        HashMap<Integer, Integer> regenTimes = CapsuleController.Instance.capsuleEffectTimes.get(Capsule.REGEN);
+
+        par3List.add(StatCollector.translateToLocalFormatted("capsule.effect", StatusEffectController.getInstance().get(regenCapsules.getStatusEffectId()).getName(), regenStrength.get(meta), regenTimes.get(meta)));
         par3List.add(StatCollector.translateToLocalFormatted("capsule.cooldown", regenCooldown.get(meta)));
     }
 }
