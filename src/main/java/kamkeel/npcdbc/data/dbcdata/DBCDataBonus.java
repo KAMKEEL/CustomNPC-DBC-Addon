@@ -1,11 +1,14 @@
 package kamkeel.npcdbc.data.dbcdata;
 
 import kamkeel.npcdbc.data.PlayerBonus;
+import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 public class DBCDataBonus {
     private final DBCData data;
@@ -71,9 +74,10 @@ public class DBCDataBonus {
 
     public void saveBonusNBT(NBTTagCompound nbt) {
         NBTTagList nbttaglist = new NBTTagList();
-        Iterator iterator = data.currentBonuses.values().iterator();
-        while (iterator.hasNext()) {
-            PlayerBonus bonus = (PlayerBonus) iterator.next();
+
+        // Copy the collection to avoid ConcurrentModificationException
+        List<PlayerBonus> bonusCopy = new ArrayList<>(data.currentBonuses.values());
+        for (PlayerBonus bonus : bonusCopy) {
             nbttaglist.appendTag(bonus.writeBonusData(new NBTTagCompound()));
         }
         nbt.setTag("addonBonus", nbttaglist);
