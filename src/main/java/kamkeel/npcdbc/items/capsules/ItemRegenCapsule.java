@@ -20,9 +20,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import noppes.npcs.CustomItems;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -101,7 +103,7 @@ public class ItemRegenCapsule extends Item {
         UUID playerUUID = player.getUniqueID();
 
         // Check cooldowns
-        long remainingTime = 0;
+        long remainingTime = CapsuleController.canUseRegenCapsule(playerUUID, meta);
         if(remainingTime > 0){
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
@@ -109,7 +111,7 @@ public class ItemRegenCapsule extends Item {
 
 
         // Apply status effect
-        StatusEffectController.getInstance().applyEffect(player, regenCapsules.getStatusEffectId(), regenCapsules.getUseTime(), regenCapsules.getStrength());
+        StatusEffectController.getInstance().applyEffect(player, regenCapsules.getStatusEffectId(), regenCapsules.getUseTime(), (byte) regenCapsules.getStrength());
 
         // Remove 1 item
         itemStack.splitStack(1);
@@ -117,7 +119,7 @@ public class ItemRegenCapsule extends Item {
             player.destroyCurrentEquippedItem();
 
         // Set Cooldown
-//        CapsuleController.setRegenCapsule(playerUUID, meta);
+        CapsuleController.setRegenCapsule(playerUUID, meta);
 
         return itemStack;
     }
@@ -140,13 +142,15 @@ public class ItemRegenCapsule extends Item {
 
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
-//        int meta = itemStack.getItemDamage();
-//        if (meta < 0 || meta > EnumKiCapsules.count())
-//            meta = 0;
-//
-//        HashMap<Integer, Integer> kiStrength = CapsuleController.Instance.capsuleStrength.get(Capsule.KI);
-//        HashMap<Integer, Integer> kiCooldown = CapsuleController.Instance.capsuleCooldowns.get(Capsule.KI);
-//        par3List.add(StatCollector.translateToLocalFormatted("capsule.restore", kiStrength.get(meta) + "%", StatCollector.translateToLocal("capsule.ki")));
-//        par3List.add(StatCollector.translateToLocalFormatted("capsule.cooldown", kiCooldown.get(meta)));
+        int meta = itemStack.getItemDamage();
+        if (meta < 0 || meta > EnumRegenCapsules.count())
+            meta = 0;
+
+        EnumRegenCapsules regenCapsules = EnumRegenCapsules.values()[meta];
+
+        HashMap<Integer, Integer> regenStrength = CapsuleController.Instance.capsuleStrength.get(Capsule.REGEN);
+        HashMap<Integer, Integer> regenCooldown = CapsuleController.Instance.capsuleCooldowns.get(Capsule.REGEN);
+        par3List.add(StatCollector.translateToLocalFormatted("capsule.regen", StatusEffectController.getInstance().get(regenCapsules.getStatusEffectId()).getName(), regenStrength.get(meta)));
+        par3List.add(StatCollector.translateToLocalFormatted("capsule.cooldown", regenCooldown.get(meta)));
     }
 }
