@@ -3,6 +3,7 @@ package kamkeel.npcdbc;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.Effects;
@@ -105,7 +106,7 @@ public class ServerEventHandler {
         byte release = dbcData.Release;
 
         byte maxRelease = (byte) ((byte) (50 + dbcData.stats.getPotentialUnlockLevel() * 5)
-                    + (byte) (StatusEffectController.Instance.hasEffect(player,  Effects.OVERPOWER) ? 25 : 0));
+                    + (byte) (StatusEffectController.Instance.hasEffect(player,  Effects.OVERPOWER) ? ConfigDBCEffects.OVERPOWER_AMOUNT : 0));
 
         int newRelease = ValueUtil.clamp(!powerDown ? release + releaseFactor : release - releaseFactor, (byte) 0, maxRelease);
         dbcData.getRawCompound().setByte("jrmcRelease", (byte) newRelease);

@@ -2,6 +2,7 @@ package kamkeel.npcdbc.config;
 
 import cpw.mods.fml.common.FMLLog;
 import net.minecraftforge.common.config.Configuration;
+import noppes.npcs.util.ValueUtil;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
@@ -47,6 +48,9 @@ public class ConfigDBCEffects
     public static double TierTwoMulti = 0.7;
     public static double TierThreeMulti = 1.0;
 
+    public final static String OVERPOWER = "OVERPOWER";
+    public static int OVERPOWER_AMOUNT = 25;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -91,6 +95,13 @@ public class ConfigDBCEffects
             TierOneMulti = config.get(Potara, "Tier 1 Multi", 0.5f).getDouble(0.5f);
             TierTwoMulti = config.get(Potara, "Tier 2 Multi", 0.7f).getDouble(0.7f);
             TierThreeMulti = config.get(Potara, "Tier 3 Multi", 1.0f).getDouble(1.0f);
+
+            OVERPOWER_AMOUNT = config.get(OVERPOWER, "Overpower Amount", 25,
+                "Overpower allows a player to increase their release above their natural limit. Potential Unlock Level \n" +
+                    "is included in this calculation. So if their limit is 50 percent then their new limit is 50 + Overpower Amount." +
+                    "The range of accepted values are [0 to 25].").getInt(25);
+
+            OVERPOWER_AMOUNT = ValueUtil.clamp(OVERPOWER_AMOUNT, 0, 25);
         }
         catch (Exception e)
         {
