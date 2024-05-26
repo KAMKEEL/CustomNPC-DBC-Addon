@@ -75,21 +75,7 @@ public class DBCUtils {
     public static boolean hasMUI(EntityPlayer p) {
         return lastUIlvl(true, p) > 0;
     }
-
-    public static boolean isMUI(EntityPlayer p) {
-        int ui = JRMCoreH.SklLvl(16, p);
-        int curLvl = JGConfigUltraInstinct.CONFIG_UI_LEVELS < ui ? JGConfigUltraInstinct.CONFIG_UI_LEVELS : ui;
-        boolean[] haircol = JGConfigUltraInstinct.CONFIG_UI_HAIR_WHITE;
-        boolean is = false;
-        for (int i = 0; i < curLvl; i++) {
-            if (haircol[i])
-                if (i + 1 == JRMCoreH.State2)
-                    is = true;
-        }
-
-        return is;
-    }
-
+    
 
     public static double getMaxFormMasteryLvl(int st, int race) {
         // int n = JRMCoreH.trans[JRMCoreH.Race].length - 1; // kk? n + 1 : mys? n + 2 :

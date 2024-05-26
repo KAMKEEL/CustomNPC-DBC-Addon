@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.dbcdata;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.*;
@@ -278,7 +279,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             case DBCForm.Kaioken:
                 return State2 > 0 && JRMCoreH.StusEfcts(5, StatusEffects);
             case DBCForm.UltraInstinct:
-                return State2 > 0 && JRMCoreH.StusEfcts(19, StatusEffects);
+                return State2 > 0 && JRMCoreH.StusEfcts(19, StatusEffects) && !JRMCoreH.StusEfcts(5, StatusEffects);
+            case DBCForm.MasteredUltraInstinct:
+                return isForm(DBCForm.UltraInstinct) && JGConfigUltraInstinct.CONFIG_UI_LEVELS >= State2 ? JGConfigUltraInstinct.CONFIG_UI_HAIR_WHITE[State2 - 1] : false;
             case DBCForm.GodOfDestruction:
                 return JRMCoreH.StusEfcts(20, StatusEffects);
             case DBCForm.Mystic:

@@ -12,7 +12,6 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -513,13 +512,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         nbt.setString("jrmcMajinAbsorptionData", str);
     }
 
-    /**
-     * @return True if player is transformed into white MUI
-     */
-    @Override
-    public boolean isMUI() {
-        return DBCUtils.isMUI(player);
-    }
 
     /**
      * @return True if player is currently KO
@@ -537,6 +529,10 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return dbcData.isForm(DBCForm.UltraInstinct);
     }
 
+    public boolean isMUI() {
+        return dbcData.isForm(DBCForm.MasteredUltraInstinct);
+    }
+    
     public boolean isMystic() {
         return dbcData.isForm(DBCForm.Mystic);
     }
