@@ -98,7 +98,7 @@ public class ItemHealthCapsule extends Item {
             return itemStack;
 
         int meta = itemStack.getItemDamage();
-        if (meta < 0 || meta > EnumHealthCapsules.count())
+        if (meta < 0 || meta >= EnumHealthCapsules.count())
             meta = 0;
 
         if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.HP, meta)))
@@ -147,7 +147,7 @@ public class ItemHealthCapsule extends Item {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         int meta = itemStack.getItemDamage();
-        if (meta < 0 || meta > EnumHealthCapsules.count())
+        if (meta < 0 || meta >= EnumHealthCapsules.count())
             meta = 0;
 
         HashMap<Integer, Integer> health = CapsuleController.Instance.capsuleStrength.get(Capsule.HP);
