@@ -87,7 +87,7 @@ public interface IFormMastery {
 
     boolean hasPainTime();
 
-    float getMaxHeat();
+    int getMaxHeat();
 
     /**
      * @param maxHeat Seconds it takes to reach 100% heat. Setting this to 120 means player will reach full form heat in 120 seconds.
@@ -97,7 +97,7 @@ public interface IFormMastery {
      *                The time the player takes to reach this maxHeat value increases with heat mastery. Setting this to 100 and minormax of pain to 0.1 means player gains 0.1 heat per second
      *                at max form level. Setting minormax to 0 completely disables heat at max form level
      */
-    void setMaxHeat(float maxHeat);
+    void setMaxHeat(int maxHeat);
 
     /**
      * @return True if maxHeat is greater than 1
