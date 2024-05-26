@@ -165,7 +165,7 @@ public class EntityAura extends Entity {
 
         text1 = new ResourceLocation("jinryuudragonbc:aurak.png");
         renderPass = 0;
-        maxAlpha = 0.1f;
+        maxAlpha = 0.2f;
 
         if (aura.display.hasAlpha("kaioken"))
             maxAlpha = (float) display.kaiokenAlpha / 255;

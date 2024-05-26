@@ -403,6 +403,12 @@ public class Form implements IForm {
     }
 
     @Override
+    public IForm clone() {
+        Form form = new Form();
+        form.readFromNBT(writeToNBT());
+        return form;
+    }
+    @Override
     public IForm save() {
         return FormController.Instance.saveForm(this);
     }
