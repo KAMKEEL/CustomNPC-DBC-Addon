@@ -18,6 +18,7 @@ public class ConfigCapsules
     public final static String HEALTH = "Health";
     public final static String STAMINA = "Stamina";
     public final static String MISC = "Misc";
+    public final static String REGEN = "Regen";
 
     /**
      *  General Properties
@@ -39,6 +40,10 @@ public class ConfigCapsules
 
     public static boolean EnableMiscCapsule = true;
     public static int MiscCapsuleMaxStack = 16;
+
+    public static boolean EnableRegenCapsules = true;
+    public static int RegenCapsuleCooldownType = 4;
+    public static int RegenCapsuleMaxStack = 16;
 
 
     /**
@@ -105,6 +110,47 @@ public class ConfigCapsules
     public static int StaminaMasterCooldown = 10;
 
     /**
+     *  Regen properties
+     */
+    public static byte RegenHPBaseStrength = 1;
+    public static byte RegenHPBaseUseTime = 10;
+    public static byte RegenHPBaseCooldown = 10;
+
+    public static byte RegenHPSuperStrength = 2;
+    public static byte RegenHPSuperUseTime = 10;
+    public static byte RegenHPSuperCooldown = 20;
+
+    public static byte RegenHPMegaStrength = 3;
+    public static byte RegenHPMegaUseTime = 10;
+    public static byte RegenHPMegaCooldown = 30;
+
+    public static byte RegenKiBaseStrength = 1;
+    public static byte RegenKiBaseUseTime = 10;
+    public static byte RegenKiBaseCooldown = 10;
+
+    public static byte RegenKiSuperStrength = 2;
+    public static byte RegenKiSuperUseTime = 10;
+    public static byte RegenKiSuperCooldown = 20;
+
+    public static byte RegenKiMegaStrength = 3;
+    public static byte RegenKiMegaUseTime = 10;
+    public static byte RegenKiMegaCooldown = 30;
+
+    public static byte RegenStaminaBaseStrength = 1;
+    public static byte RegenStaminaBaseUseTime = 10;
+    public static byte RegenStaminaBaseCooldown = 10;
+
+    public static byte RegenStaminaSuperStrength = 2;
+    public static byte RegenStaminaSuperUseTime = 10;
+    public static byte RegenStaminaSuperCooldown = 20;
+
+    public static byte RegenStaminaMegaStrength = 3;
+    public static byte RegenStaminaMegaUseTime = 10;
+    public static byte RegenStaminaMegaCooldown = 30;
+
+
+
+    /**
      *  Misc Properties
      **/
     public static int KOCooldown = 10;
@@ -140,13 +186,19 @@ public class ConfigCapsules
             StaminaCapsuleCooldownType = config.get(CAPSULES, "Stamina Capsule Cooldown", 0, "0 - Cooldowns are per Type [All Stamina Capsules], 1 - Cooldowns are per Tier [Individual Stamina Capsule Tier]").getInt(0);
             StaminaCapsuleMaxStack = config.get(CAPSULES, "Stamina Capsule Max Stack Size", 16, "Max Stack Size per Stamina Capsule").getInt(16);
 
+            EnableRegenCapsules = config.get(CAPSULES, "Regen Capsules", true, "Enable Regen Capsules").getBoolean(true);
+            RegenCapsuleCooldownType = config.get(CAPSULES, "Regen Capsule Cooldown", 2, "0 - Cooldowns are per Type [All Regen Capsules], 1 - Cooldowns are per Tier [Individual Regen Capsule Tier], 2 - Cooldowns are per Regen Type [HP, Ki and Stamina regens have separate cooldowns]").getInt(2);
+            RegenCapsuleMaxStack = config.get(CAPSULES, "Regen Capsule Max Stack Size", 16, "Max Stack Size per Regen Capsule").getInt(16);
+
             KiCapsuleCooldownType = ValueUtil.clamp(KiCapsuleCooldownType, 0, 1);
             HealthCapsuleCooldownType = ValueUtil.clamp(HealthCapsuleCooldownType, 0, 1);
             StaminaCapsuleCooldownType = ValueUtil.clamp(StaminaCapsuleCooldownType, 0, 1);
+            RegenCapsuleCooldownType = ValueUtil.clamp(RegenCapsuleCooldownType, 0, 2);
 
             KiCapsuleMaxStack = ValueUtil.clamp(KiCapsuleMaxStack, 1, 64);
             HealthCapsuleMaxStack = ValueUtil.clamp(HealthCapsuleMaxStack, 1, 64);
             StaminaCapsuleMaxStack = ValueUtil.clamp(StaminaCapsuleMaxStack, 1, 64);
+            RegenCapsuleMaxStack = ValueUtil.clamp(RegenCapsuleMaxStack, 1, 64);
 
             // Ki Capsules
             KiBaseStrength = config.get(KI, "1. Base Ki Strength", 5).getInt(5);
@@ -204,6 +256,49 @@ public class ConfigCapsules
 
             StaminaMasterStrength = config.get(STAMINA, "6. Master Stamina Strength", 100).getInt(100);
             StaminaMasterCooldown = config.get(STAMINA, "6. Master Stamina Cooldown", 10).getInt(10);
+
+            // Regen capsules
+
+            // HP Regeneration Settings
+            RegenHPBaseStrength = (byte) config.get(REGEN, "1. Base HP Regen Strength", 1).getInt(1);
+            RegenHPBaseUseTime = (byte) config.get(REGEN, "1. Base HP Regen Use Time", 10).getInt(10);
+            RegenHPBaseCooldown = (byte) config.get(REGEN, "1. Base HP Regen Cooldown", 10).getInt(10);
+
+            RegenHPSuperStrength = (byte) config.get(REGEN, "2. Super HP Regen Strength", 2).getInt(2);
+            RegenHPSuperUseTime = (byte) config.get(REGEN, "2. Super HP Regen Use Time", 10).getInt(10);
+            RegenHPSuperCooldown = (byte) config.get(REGEN, "2. Super HP Regen Cooldown", 20).getInt(20);
+
+            RegenHPMegaStrength = (byte) config.get(REGEN, "3. Mega HP Regen Strength", 3).getInt(3);
+            RegenHPMegaUseTime = (byte) config.get(REGEN, "3. Mega HP Regen Use Time", 10).getInt(10);
+            RegenHPMegaCooldown = (byte) config.get(REGEN, "3. Mega HP Regen Cooldown", 30).getInt(30);
+
+            // Ki Regeneration Settings
+            RegenKiBaseStrength = (byte) config.get(REGEN, "4. Base Ki Regen Strength", 1).getInt(1);
+            RegenKiBaseUseTime = (byte) config.get(REGEN, "4. Base Ki Regen Use Time", 10).getInt(10);
+            RegenKiBaseCooldown = (byte) config.get(REGEN, "4. Base Ki Regen Cooldown", 10).getInt(10);
+
+            RegenKiSuperStrength = (byte) config.get(REGEN, "5. Super Ki Regen Strength", 2).getInt(2);
+            RegenKiSuperUseTime = (byte) config.get(REGEN, "5. Super Ki Regen Use Time", 10).getInt(10);
+            RegenKiSuperCooldown = (byte) config.get(REGEN, "5. Super Ki Regen Cooldown", 20).getInt(20);
+
+            RegenKiMegaStrength = (byte) config.get(REGEN, "6. Mega Ki Regen Strength", 3).getInt(3);
+            RegenKiMegaUseTime = (byte) config.get(REGEN, "6. Mega Ki Regen Use Time", 10).getInt(10);
+            RegenKiMegaCooldown = (byte) config.get(REGEN, "6. Mega Ki Regen Cooldown", 30).getInt(30);
+
+            // Stamina Regeneration Settings
+            RegenStaminaBaseStrength = (byte) config.get(REGEN, "7. Base Stamina Regen Strength", 1).getInt(1);
+            RegenStaminaBaseUseTime = (byte) config.get(REGEN, "7. Base Stamina Regen Use Time", 10).getInt(10);
+            RegenStaminaBaseCooldown = (byte) config.get(REGEN, "7. Base Stamina Regen Cooldown", 10).getInt(10);
+
+            RegenStaminaSuperStrength = (byte) config.get(REGEN, "8. Super Stamina Regen Strength", 2).getInt(2);
+            RegenStaminaSuperUseTime = (byte) config.get(REGEN, "8. Super Stamina Regen Use Time", 10).getInt(10);
+            RegenStaminaSuperCooldown = (byte) config.get(REGEN, "8. Super Stamina Regen Cooldown", 20).getInt(20);
+
+            RegenStaminaMegaStrength = (byte) config.get(REGEN, "9. Mega Stamina Regen Strength", 3).getInt(3);
+            RegenStaminaMegaUseTime = (byte) config.get(REGEN, "9. Mega Stamina Regen Use Time", 10).getInt(10);
+            RegenStaminaMegaCooldown = (byte) config.get(REGEN, "9. Mega Stamina Regen Cooldown", 30).getInt(30);
+
+
 
             // Misc Capsules
             KOCooldown = config.get(MISC, "Ko Cooldown", 10).getInt(10);
