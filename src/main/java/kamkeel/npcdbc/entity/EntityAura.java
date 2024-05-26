@@ -241,8 +241,10 @@ public class EntityAura extends Entity {
             load(false);
 
 
-        if (aura.display.type2D != EnumAuraTypes2D.None && JGConfigClientSettings.CLIENT_DA13)
-            ParticleFormHandler.spawnAura2D(entity, type2D, color1, (height * 0.53f) * effectiveSize, EnumAuraTypes2D.getParticleWidth(auraData));
+        if (aura.display.type2D != EnumAuraTypes2D.None && JGConfigClientSettings.CLIENT_DA13) {
+            float height = effectiveSize <= 0 ? entity.height : (this.height * 0.53f) * effectiveSize;
+            ParticleFormHandler.spawnAura2D(entity, type2D, color1, height, EnumAuraTypes2D.getParticleWidth(auraData));
+        }
 
 
         String auraDir = "jinryuudragonbc:";

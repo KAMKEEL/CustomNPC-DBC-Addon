@@ -61,10 +61,11 @@ public class DBCForm {
     public static final int Kaioken = 20;
     public static final int Mystic = 21;
     public static final int UltraInstinct = 22;
-    public static final int GodOfDestruction = 23;
-    public static final int Legendary = 24;
-    public static final int Divine = 25;
-    public static final int Majin = 26;
+    public static final int MasteredUltraInstinct = 23;
+    public static final int GodOfDestruction = 24;
+    public static final int Legendary = 25;
+    public static final int Divine = 26;
+    public static final int Majin = 27;
 
 
     public static boolean isSaiyanGod(int state) {
