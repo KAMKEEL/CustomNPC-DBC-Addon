@@ -260,43 +260,43 @@ public class ConfigCapsules
             // Regen capsules
 
             // HP Regeneration Settings
-            RegenHPBaseStrength = (byte) config.getInt("1. Base HP Regen Strength", REGEN, 1, 1, Byte.MAX_VALUE, "");
-            RegenHPBaseUseTime = config.getInt("1. Base HP Regen Use Time", REGEN, 10, 1, Integer.MAX_VALUE, "");
-            RegenHPBaseCooldown = config.getInt("1. Base HP Regen Cooldown", REGEN, 10, 1, Integer.MAX_VALUE, "");
+            RegenHPBaseStrength = (byte) ValueUtil.clamp(config.get(REGEN, "1. Base HP Regen Strength", 1).getInt(1), 1, Byte.MAX_VALUE);
+            RegenHPBaseUseTime = ValueUtil.clamp(config.get(REGEN, "1. Base HP Regen Use Time", 10).getInt(10), 1, Integer.MAX_VALUE);
+            RegenHPBaseCooldown = ValueUtil.clamp(config.get(REGEN, "1. Base HP Regen Cooldown", 10).getInt(10), 1, Integer.MAX_VALUE);
 
-            RegenHPSuperStrength = (byte) config.getInt("2. Super HP Regen Strength", REGEN, 2, 1, Byte.MAX_VALUE, "");
-            RegenHPSuperUseTime = config.getInt("2. Super HP Regen Use Time", REGEN, 10, 1, Integer.MAX_VALUE, "");
-            RegenHPSuperCooldown = config.getInt("2. Super HP Regen Cooldown", REGEN, 20, 1, Integer.MAX_VALUE, "");
+            RegenHPSuperStrength = (byte) ValueUtil.clamp(config.get(REGEN, "2. Super HP Regen Strength", 2).getInt(2), 1, Byte.MAX_VALUE);
+            RegenHPSuperUseTime = ValueUtil.clamp(config.get(REGEN, "2. Super HP Regen Use Time", 10).getInt(10), 1, Integer.MAX_VALUE);
+            RegenHPSuperCooldown = ValueUtil.clamp(config.get(REGEN, "2. Super HP Regen Cooldown", 20).getInt(20), 1, Integer.MAX_VALUE);
 
-            RegenHPMegaStrength = (byte) config.getInt("3. Mega HP Regen Strength", REGEN, 3, 1, Byte.MAX_VALUE, "");
-            RegenHPMegaUseTime = config.getInt("3. Mega HP Regen Use Time", REGEN, 10, 1, Integer.MAX_VALUE, "");
-            RegenHPMegaCooldown = config.getInt("3. Mega HP Regen Cooldown", REGEN, 30, 1, Integer.MAX_VALUE, "");
+            RegenHPMegaStrength = (byte) ValueUtil.clamp(config.get(REGEN, "3. Mega HP Regen Strength", 3).getInt(3), 1, Byte.MAX_VALUE);
+            RegenHPMegaUseTime = ValueUtil.clamp(config.get(REGEN, "3. Mega HP Regen Use Time", 10).getInt(10), 1, Integer.MAX_VALUE);
+            RegenHPMegaCooldown = ValueUtil.clamp(config.get(REGEN, "3. Mega HP Regen Cooldown", 30).getInt(30), 1, Integer.MAX_VALUE);
 
-// Ki Regeneration Settings
-            RegenKiBaseStrength = (byte) config.getInt("4. Base Ki Regen Strength", REGEN, 1, 1, Byte.MAX_VALUE, "");
-            RegenKiBaseUseTime = config.getInt("4. Base Ki Regen Use Time", REGEN, 10, 1, Integer.MAX_VALUE, "");
-            RegenKiBaseCooldown = config.getInt("4. Base Ki Regen Cooldown", REGEN, 10, 1, Integer.MAX_VALUE, "");
+            // Ki Regeneration Settings
+            RegenKiBaseStrength = (byte) ValueUtil.clamp(config.get(REGEN, "4. Base Ki Regen Strength", 1).getInt(1), 1, Byte.MAX_VALUE);
+            RegenKiBaseUseTime = ValueUtil.clamp(config.get(REGEN, "4. Base Ki Regen Use Time", 10).getInt(10), 1, Integer.MAX_VALUE);
+            RegenKiBaseCooldown = ValueUtil.clamp(config.get(REGEN, "4. Base Ki Regen Cooldown", 10).getInt(10), 1, Integer.MAX_VALUE);
 
-            RegenKiSuperStrength = (byte) config.getInt("5. Super Ki Regen Strength", REGEN, 2, 1, Byte.MAX_VALUE, "");
-            RegenKiSuperUseTime = config.getInt("5. Super Ki Regen Use Time", REGEN, 10, 1, Integer.MAX_VALUE, "");
-            RegenKiSuperCooldown = config.getInt("5. Super Ki Regen Cooldown", REGEN, 20, 1, Integer.MAX_VALUE, "");
+            RegenKiSuperStrength = (byte) ValueUtil.clamp(config.get(REGEN, "5. Super Ki Regen Strength", 2).getInt(2), 1, Byte.MAX_VALUE);
+            RegenKiSuperUseTime = ValueUtil.clamp(config.get(REGEN, "5. Super Ki Regen Use Time", 10).getInt(10), 1, Integer.MAX_VALUE);
+            RegenKiSuperCooldown = ValueUtil.clamp(config.get(REGEN, "5. Super Ki Regen Cooldown", 20).getInt(20), 1, Integer.MAX_VALUE);
 
-            RegenKiMegaStrength = (byte) config.getInt("6. Mega Ki Regen Strength", REGEN, 3, 1, Byte.MAX_VALUE, "");
-            RegenKiMegaUseTime = config.getInt("6. Mega Ki Regen Use Time", REGEN, 10, 1, Integer.MAX_VALUE, "");
-            RegenKiMegaCooldown = config.getInt("6. Mega Ki Regen Cooldown", REGEN, 30, 1, Integer.MAX_VALUE, "");
+            RegenKiMegaStrength = (byte) ValueUtil.clamp(config.get(REGEN, "6. Mega Ki Regen Strength", 3).getInt(3), 1, Byte.MAX_VALUE);
+            RegenKiMegaUseTime = ValueUtil.clamp(config.get(REGEN, "6. Mega Ki Regen Use Time", 10).getInt(10), 1, Integer.MAX_VALUE);
+            RegenKiMegaCooldown = ValueUtil.clamp(config.get(REGEN, "6. Mega Ki Regen Cooldown", 30).getInt(30), 1, Integer.MAX_VALUE);
 
-// Stamina Regeneration Settings
-            RegenStaminaBaseStrength = (byte) config.getInt("7. Base Stamina Regen Strength", REGEN, 1, 1, Byte.MAX_VALUE, "");
-            RegenStaminaBaseUseTime = config.getInt("7. Base Stamina Regen Use Time", REGEN, 10, 1, Integer.MAX_VALUE, "");
-            RegenStaminaBaseCooldown = config.getInt("7. Base Stamina Regen Cooldown", REGEN, 10, 1, Integer.MAX_VALUE, "");
+            // Stamina Regeneration Settings
+            RegenStaminaBaseStrength = (byte) ValueUtil.clamp(config.get(REGEN, "7. Base Stamina Regen Strength", 1).getInt(1), 1, Byte.MAX_VALUE);
+            RegenStaminaBaseUseTime = ValueUtil.clamp(config.get(REGEN, "7. Base Stamina Regen Use Time", 10).getInt(10), 1, Integer.MAX_VALUE);
+            RegenStaminaBaseCooldown = ValueUtil.clamp(config.get(REGEN, "7. Base Stamina Regen Cooldown", 10).getInt(10), 1, Integer.MAX_VALUE);
 
-            RegenStaminaSuperStrength = (byte) config.getInt("8. Super Stamina Regen Strength", REGEN, 2, 1, Byte.MAX_VALUE, "");
-            RegenStaminaSuperUseTime = config.getInt("8. Super Stamina Regen Use Time", REGEN, 10, 1, Integer.MAX_VALUE, "");
-            RegenStaminaSuperCooldown = config.getInt("8. Super Stamina Regen Cooldown", REGEN, 20, 1, Integer.MAX_VALUE, "");
+            RegenStaminaSuperStrength = (byte) ValueUtil.clamp(config.get(REGEN, "8. Super Stamina Regen Strength", 2).getInt(2), 1, Byte.MAX_VALUE);
+            RegenStaminaSuperUseTime = ValueUtil.clamp(config.get(REGEN, "8. Super Stamina Regen Use Time", 10).getInt(10), 1, Integer.MAX_VALUE);
+            RegenStaminaSuperCooldown = ValueUtil.clamp(config.get(REGEN, "8. Super Stamina Regen Cooldown", 20).getInt(20), 1, Integer.MAX_VALUE);
 
-            RegenStaminaMegaStrength = (byte) config.getInt("9. Mega Stamina Regen Strength", REGEN, 3, 1, Byte.MAX_VALUE, "");
-            RegenStaminaMegaUseTime = config.getInt("9. Mega Stamina Regen Use Time", REGEN, 10, 1, Integer.MAX_VALUE, "");
-            RegenStaminaMegaCooldown = config.getInt("9. Mega Stamina Regen Cooldown", REGEN, 30, 1, Integer.MAX_VALUE, "");
+            RegenStaminaMegaStrength = (byte) ValueUtil.clamp(config.get(REGEN, "9. Mega Stamina Regen Strength", 3).getInt(3), 1, Byte.MAX_VALUE);
+            RegenStaminaMegaUseTime = ValueUtil.clamp(config.get(REGEN, "9. Mega Stamina Regen Use Time", 10).getInt(10), 1, Integer.MAX_VALUE);
+            RegenStaminaMegaCooldown = ValueUtil.clamp(config.get(REGEN, "9. Mega Stamina Regen Cooldown", 30).getInt(30), 1, Integer.MAX_VALUE);
 
 
 
