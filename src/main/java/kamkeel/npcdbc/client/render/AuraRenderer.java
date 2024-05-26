@@ -87,8 +87,10 @@ public class AuraRenderer extends RenderDBC {
         float pulsingSize = pulseAnimation * 0.03f;
 
         float kaiokenSize = 0;
-        if (aura.isKaioken)
-            kaiokenSize = 0.75f * aura.auraData.getState2();
+
+        boolean isKaioken = aura.isKaioken || aura.aura.display.overrideDBCAura && aura.isInKaioken;
+        if (isKaioken)
+            kaiokenSize = 1f * aura.auraData.getState2();
 
         float stateSizeFactor = getStateSizeFactor(aura.auraData) + kaiokenSize;
         float sizeStateReleaseFactor = stateSizeFactor + (release / 100) * Math.max(stateSizeFactor * 0.75f, 3.5f); //aura gets 1.75x bigger at 100% release

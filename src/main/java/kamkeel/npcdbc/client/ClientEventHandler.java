@@ -218,13 +218,12 @@ public class ClientEventHandler {
                     isInKaioken = dbcData.isForm(DBCForm.Kaioken) && aura.display.hasKaiokenAura;
 
                 }
+                EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
                 if (ConfigDBCClient.RevampAura) {
-                    EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
                     if (enhancedAura == null)
                         new EntityAura(event.entity, aura).load(true).spawn();
                     
                 } else {
-                    EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
                     if (enhancedAura != null)
                         enhancedAura.despawn();
 
