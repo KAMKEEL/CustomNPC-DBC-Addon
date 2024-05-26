@@ -114,6 +114,12 @@ capsule.ki=Ki
 capsule.hp=HP
 capsule.stamina=Stamina
 
+# Must have 3 %s - or Format Error
+# (1) - Status effect name
+# (2) - Status effect level
+# (3) - Effect time
+capsule.effect=Gives "%1s" at level%2s for%3s seconds
+
 item.npcdbc:base_healthcapsule.name=Base Health Capsule
 item.npcdbc:super_healthcapsule.name=Super Health Capsule
 item.npcdbc:mega_healthcapsule.name=Mega Health Capsule
@@ -134,6 +140,18 @@ item.npcdbc:mega_staminacapsule.name=Mega Stamina Capsule
 item.npcdbc:giga_staminacapsule.name=Giga Stamina Capsule
 item.npcdbc:superior_staminacapsule.name=Superior Stamina Capsule
 item.npcdbc:master_staminacapsule.name=Master Stamina Capsule
+
+item.npcdbc:base_hp_regencapsule.name=Base HP Regen Capsule
+item.npcdbc:super_hp_regencapsule.name=Super HP Regen Capsule
+item.npcdbc:mega_hp_regencapsule.name=Mega HP Regen Capsule
+item.npcdbc:base_ki_regencapsule.name=Base Ki Regen Capsule
+item.npcdbc:super_ki_regencapsule.name=Super Ki Regen Capsule
+item.npcdbc:mega_ki_regencapsule.name=Mega Ki Regen Capsule
+item.npcdbc:base_stamina_regencapsule.name=Base Stamina Regen Capsule
+item.npcdbc:super_stamina_regencapsule.name=Super Stamina Regen Capsule
+item.npcdbc:mega_stamina_regencapsule.name=Mega Stamina Regen Capsule
+
+
 
 item.npcdbc:ko_misccapsule.name=KO Capsule
 item.npcdbc:revive_misccapsule.name=Revive Capsule

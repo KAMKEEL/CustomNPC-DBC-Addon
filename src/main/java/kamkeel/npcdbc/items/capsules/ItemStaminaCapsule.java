@@ -33,7 +33,7 @@ public class ItemStaminaCapsule extends Item {
     protected IIcon[] icons;
 
     public ItemStaminaCapsule() {
-        this.setMaxStackSize(ConfigCapsules.StaminaCapsuleMaxStack);
+        this.setMaxStackSize(ConfigCapsules.RegenCapsuleMaxStack);
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
         this.setCreativeTab(CustomItems.tabMisc);
@@ -97,7 +97,7 @@ public class ItemStaminaCapsule extends Item {
             return itemStack;
 
         int meta = itemStack.getItemDamage();
-        if (meta < 0 || meta > EnumStaminaCapsules.count())
+        if (meta < 0 || meta >= EnumStaminaCapsules.count())
             meta = 0;
 
         if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.STAMINA, meta)))
@@ -146,7 +146,7 @@ public class ItemStaminaCapsule extends Item {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         int meta = itemStack.getItemDamage();
-        if (meta < 0 || meta > EnumStaminaCapsules.count())
+        if (meta < 0 || meta >= EnumStaminaCapsules.count())
             meta = 0;
 
         HashMap<Integer, Integer> staminaStrength = CapsuleController.Instance.capsuleStrength.get(Capsule.STAMINA);

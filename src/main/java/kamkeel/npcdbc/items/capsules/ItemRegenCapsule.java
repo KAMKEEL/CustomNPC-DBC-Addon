@@ -5,9 +5,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.Capsule;
-import kamkeel.npcdbc.constants.enums.EnumKiCapsules;
+import kamkeel.npcdbc.constants.enums.EnumRegenCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -28,11 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class ItemKiCapsule extends Item {
+public class ItemRegenCapsule extends Item {
 
     protected IIcon[] icons;
 
-    public ItemKiCapsule() {
+    public ItemRegenCapsule() {
+        // @TODO Change to config value later
         this.setMaxStackSize(ConfigCapsules.KiCapsuleMaxStack);
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
@@ -41,53 +42,46 @@ public class ItemKiCapsule extends Item {
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
-
         int metadata = stack.getItemDamage();
-        EnumKiCapsules kicapsules = EnumKiCapsules.values()[metadata];
-        return LocalizationHelper.ITEM_PREFIX + kicapsules.getName().toLowerCase() + "_kicapsule";
+        EnumRegenCapsules regenCapsule = EnumRegenCapsules.values()[metadata];
+
+        return LocalizationHelper.ITEM_PREFIX + regenCapsule.getName().toLowerCase() + "_regencapsule";
     }
 
     @Override
     public void registerIcons(IIconRegister reg) {
 
-        icons = new IIcon[EnumKiCapsules.count()];
-        String prefix = "npcdbc:kicapsules/";
+        icons = new IIcon[EnumRegenCapsules.count()];
+        String prefix = "npcdbc:regencapsules/";
 
-        for (EnumKiCapsules kiCapsule : EnumKiCapsules.values()) {
-            icons[kiCapsule.getMeta()] = reg.registerIcon(prefix + kiCapsule.getName().toLowerCase());
+        for (EnumRegenCapsules regenCapsule : EnumRegenCapsules.values()) {
+            icons[regenCapsule.getMeta()] = reg.registerIcon(prefix + regenCapsule.getName().toLowerCase());
         }
     }
 
     @Override
     public IIcon getIconFromDamage(int meta) {
 
-        if (meta >= 0 && meta < EnumKiCapsules.count()) {
+        if (meta >= 0 && meta < EnumRegenCapsules.count()) {
             return icons[meta];
         }
         return icons[0];
     }
 
-    /**
-     * Return an item rarity from EnumRarity
-     */
+    @Override
     public EnumRarity getRarity(ItemStack item) {
+        int rarity = (item.getItemDamage() % 3) + 1;
 
-        if (item.getItemDamage() == 0 || item.getItemDamage() == 1) {
-            return EnumRarity.uncommon;
-        } else if (item.getItemDamage() == 2 || item.getItemDamage() == 3) {
-            return EnumRarity.rare;
-        }
+        if(rarity >= EnumRarity.values().length)
+            return EnumRarity.epic;
 
-        return EnumRarity.epic;
+        return EnumRarity.values()[rarity];
     }
 
-    /**
-     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
-     */
     @Override
     public void getSubItems(Item item, CreativeTabs tab, List list) {
-        for (EnumKiCapsules kiCapsules : EnumKiCapsules.values()) {
-            list.add(new ItemStack(item, 1, kiCapsules.getMeta()));
+        for (EnumRegenCapsules regenCapsule : EnumRegenCapsules.values()) {
+            list.add(new ItemStack(item, 1, regenCapsule.getMeta()));
         }
     }
 
@@ -98,33 +92,35 @@ public class ItemKiCapsule extends Item {
             return itemStack;
 
         int meta = itemStack.getItemDamage();
-        if (meta < 0 || meta >= EnumKiCapsules.count())
+        if (meta < 0 || meta >= EnumRegenCapsules.count())
             meta = 0;
 
-        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.KI, meta)))
+        // Fire Event
+        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.REGEN, meta)))
             return itemStack;
 
-        EnumKiCapsules kiCapsules = EnumKiCapsules.values()[meta];
+        EnumRegenCapsules regenCapsules = EnumRegenCapsules.values()[meta];
         UUID playerUUID = player.getUniqueID();
-        long remainingTime = CapsuleController.canUseKiCapsule(playerUUID, meta);
+
+        // Check cooldowns
+        long remainingTime = CapsuleController.canUseRegenCapsule(playerUUID, meta);
         if(remainingTime > 0){
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
 
-        // Percentage of Ki to Restore
-        int kiRestored = kiCapsules.getStrength();
 
-        // Restore X Amount of KI
-        DBCData.get(player).stats.restoreKiPercent(kiRestored);
+        // Apply status effect
+        StatusEffectController.getInstance().applyEffect(player, regenCapsules.getStatusEffectId(), regenCapsules.getEffectTime(), (byte) regenCapsules.getStrength());
 
-        // Removes 1 Item
+        // Remove 1 item
         itemStack.splitStack(1);
         if (itemStack.stackSize <= 0)
             player.destroyCurrentEquippedItem();
 
         // Set Cooldown
-        CapsuleController.setKiCapsule(playerUUID, meta);
+        CapsuleController.setRegenCapsule(playerUUID, meta);
+
         return itemStack;
     }
 
@@ -147,12 +143,16 @@ public class ItemKiCapsule extends Item {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         int meta = itemStack.getItemDamage();
-        if (meta < 0 || meta >= EnumKiCapsules.count())
+        if (meta < 0 || meta >= EnumRegenCapsules.count())
             meta = 0;
 
-        HashMap<Integer, Integer> kiStrength = CapsuleController.Instance.capsuleStrength.get(Capsule.KI);
-        HashMap<Integer, Integer> kiCooldown = CapsuleController.Instance.capsuleCooldowns.get(Capsule.KI);
-        par3List.add(StatCollector.translateToLocalFormatted("capsule.restore", kiStrength.get(meta) + "%", StatCollector.translateToLocal("capsule.ki")));
-        par3List.add(StatCollector.translateToLocalFormatted("capsule.cooldown", kiCooldown.get(meta)));
+        EnumRegenCapsules regenCapsules = EnumRegenCapsules.values()[meta];
+
+        HashMap<Integer, Integer> regenStrength = CapsuleController.Instance.capsuleStrength.get(Capsule.REGEN);
+        HashMap<Integer, Integer> regenCooldown = CapsuleController.Instance.capsuleCooldowns.get(Capsule.REGEN);
+        HashMap<Integer, Integer> regenTimes = CapsuleController.Instance.capsuleEffectTimes.get(Capsule.REGEN);
+
+        par3List.add(StatCollector.translateToLocalFormatted("capsule.effect", StatusEffectController.getInstance().get(regenCapsules.getStatusEffectId()).getName(), regenStrength.get(meta), regenTimes.get(meta)));
+        par3List.add(StatCollector.translateToLocalFormatted("capsule.cooldown", regenCooldown.get(meta)));
     }
 }

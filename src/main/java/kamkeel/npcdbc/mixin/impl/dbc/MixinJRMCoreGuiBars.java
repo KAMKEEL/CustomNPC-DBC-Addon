@@ -60,7 +60,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
                         text += "\nTime: Infinite";
 
                     if(pe.level > 1){
-                        text += "\nLevel:" + pe.level;
+                        text += "\nLevel: " + pe.level;
                     }
                 }
 

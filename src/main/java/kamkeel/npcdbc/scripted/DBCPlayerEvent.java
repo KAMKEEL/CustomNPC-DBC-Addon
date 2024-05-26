@@ -6,10 +6,7 @@ import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.constants.DBCScriptType;
-import kamkeel.npcdbc.constants.enums.EnumHealthCapsules;
-import kamkeel.npcdbc.constants.enums.EnumKiCapsules;
-import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
-import kamkeel.npcdbc.constants.enums.EnumStaminaCapsules;
+import kamkeel.npcdbc.constants.enums.*;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.api.IDamageSource;
 import noppes.npcs.api.entity.IPlayer;
@@ -62,6 +59,9 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
                 }
                 else if (type == Capsule.STAMINA && subtype < EnumStaminaCapsules.count()){
                     name = EnumStaminaCapsules.values()[subtype].getName();
+                }
+                else if (type == Capsule.REGEN && subtype < EnumRegenCapsules.count()){
+                    name = EnumRegenCapsules.values()[subtype].getName();
                 }
             }
 

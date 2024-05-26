@@ -5,24 +5,22 @@ import kamkeel.npcdbc.config.ConfigDBCGameplay;
 
 public enum EnumPotaraTypes {
 
-    One(0, "One", ConfigDBCGameplay.PotaraOneTime, (float) ConfigDBCEffects.TierOneMulti),
-    Two(1, "Two", ConfigDBCGameplay.PotaraTwoTime, (float) ConfigDBCEffects.TierTwoMulti),
-    Three(2, "Three", ConfigDBCGameplay.PotaraThreeTime, (float) ConfigDBCEffects.TierThreeMulti);
+    One("One", ConfigDBCGameplay.PotaraOneTime, (float) ConfigDBCEffects.TierOneMulti),
+    Two("Two", ConfigDBCGameplay.PotaraTwoTime, (float) ConfigDBCEffects.TierTwoMulti),
+    Three("Three", ConfigDBCGameplay.PotaraThreeTime, (float) ConfigDBCEffects.TierThreeMulti);
 
-    private final int meta;
     private final String name;
     private final int length;
     private final float multi;
 
-    private EnumPotaraTypes(int meta, String name, int length, float multi){
-        this.meta = meta;
+    EnumPotaraTypes(String name, int length, float multi){
         this.name = name;
         this.length = length;
         this.multi = multi;
     }
 
     public int getMeta(){
-        return this.meta;
+        return this.ordinal();
     }
 
     public String getName(){
