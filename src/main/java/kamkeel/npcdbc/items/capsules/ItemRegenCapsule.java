@@ -40,7 +40,7 @@ public class ItemRegenCapsule extends Item {
         int metadata = stack.getItemDamage();
         EnumRegenCapsules regenCapsule = EnumRegenCapsules.values()[metadata];
 
-        return LocalizationHelper.ITEM_PREFIX + regenCapsule.getName().toLowerCase() + "_kicapsule";
+        return LocalizationHelper.ITEM_PREFIX + regenCapsule.getName().toLowerCase() + "_regencapsule";
     }
 
     @Override
