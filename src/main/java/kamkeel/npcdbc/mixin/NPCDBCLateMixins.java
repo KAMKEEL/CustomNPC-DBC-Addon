@@ -4,6 +4,7 @@ import com.gtnewhorizon.gtnhmixins.ILateMixinLoader;
 import com.gtnewhorizon.gtnhmixins.LateMixin;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.Set;
 
 @LateMixin
 public class NPCDBCLateMixins implements ILateMixinLoader {
+
+    public static final MixinEnvironment.Side side = MixinEnvironment.getCurrentEnvironment().getSide();
 
     @Override
     public String getMixinConfig() {
@@ -20,7 +23,7 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
     @Override
     public List<String> getMixins(Set<String> loadedMods) {
         List<String> mixins = new ArrayList<>();
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+        if (side == MixinEnvironment.Side.CLIENT) {
             mixins.add("npc.client.MixinGuiScriptPlayers");
             mixins.add("npc.client.MixinDBCClient");
             mixins.add("npc.client.MixinModelMPM");
