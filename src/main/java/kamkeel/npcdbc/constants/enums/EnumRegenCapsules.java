@@ -39,8 +39,8 @@ public enum EnumRegenCapsules {
         return this.name;
     }
 
-    public byte getStrength(){
-        return (byte) this.strength;
+    public int getStrength(){
+        return this.strength;
     }
 
     public int getCooldown(){

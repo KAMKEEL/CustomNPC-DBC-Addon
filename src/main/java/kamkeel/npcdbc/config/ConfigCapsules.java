@@ -187,7 +187,7 @@ public class ConfigCapsules
             StaminaCapsuleMaxStack = config.get(CAPSULES, "Stamina Capsule Max Stack Size", 16, "Max Stack Size per Stamina Capsule").getInt(16);
 
             EnableRegenCapsules = config.get(CAPSULES, "Regen Capsules", true, "Enable Regen Capsules").getBoolean(true);
-            RegenCapsuleCooldownType = config.get(CAPSULES, "Regen Capsule Cooldown", 2, "0 - Cooldowns are per Type [All Regen Capsules], 1 - Cooldowns are per Tier [Individual Regen Capsule Tier], 2 - Cooldowns are per Regen Type [HP, Ki and Stamina regens have separate cooldowns]").getInt(2);
+            RegenCapsuleCooldownType = config.get(CAPSULES, "Regen Capsule Cooldown", 2, "0 - Cooldowns are per Type [All Regen Capsules], 1 - Cooldowns are per Tier [Individual Regen Capsule Type and Tier], 2 - Cooldowns are per Regen Type [HP, Ki and Stamina regens have separate cooldowns]").getInt(2);
             RegenCapsuleMaxStack = config.get(CAPSULES, "Regen Capsule Max Stack Size", 16, "Max Stack Size per Regen Capsule").getInt(16);
 
             KiCapsuleCooldownType = ValueUtil.clamp(KiCapsuleCooldownType, 0, 1);
