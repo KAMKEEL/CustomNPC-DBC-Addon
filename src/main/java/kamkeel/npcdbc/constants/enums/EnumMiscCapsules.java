@@ -4,25 +4,23 @@ import static kamkeel.npcdbc.config.ConfigCapsules.*;
 
 public enum EnumMiscCapsules {
 
-    KO(0, "KO", KOCooldown),
-    Revive(1, "Revive", ReviveCooldown),
-    Heat(2, "Heat", HeatCooldown),
-    PowerPoint(3, "PowerPoint", PowerPointCooldown),
-    Absorption(4, "Absorption", AbsorptionCooldown);
+    KO("KO", KOCooldown),
+    Revive("Revive", ReviveCooldown),
+    Heat("Heat", HeatCooldown),
+    PowerPoint("PowerPoint", PowerPointCooldown),
+    Absorption("Absorption", AbsorptionCooldown);
 
-    private final int meta;
     private final String name;
     private final int cooldown;
 
 
-    private EnumMiscCapsules(int meta, String name, int cooldown){
-        this.meta = meta;
+    EnumMiscCapsules(String name, int cooldown){
         this.name = name;
         this.cooldown = cooldown;
     }
 
     public int getMeta(){
-        return this.meta;
+        return this.ordinal();
     }
 
     public String getName(){

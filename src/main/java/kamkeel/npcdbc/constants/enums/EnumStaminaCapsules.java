@@ -4,27 +4,25 @@ import static kamkeel.npcdbc.config.ConfigCapsules.*;
 
 public enum EnumStaminaCapsules {
 
-    Base(0, "Base", StaminaBaseStrength, StaminaBaseCooldown),
-    Super(1, "Super", StaminaSuperStrength,StaminaSuperCooldown),
-    Mega(2, "Mega", StaminaMegaStrength,StaminaMegaCooldown),
-    Giga(3, "Giga", StaminaGigaStrength,StaminaGigaCooldown),
-    Superior(4, "Superior", StaminaSuperiorStrength, StaminaSuperiorCooldown),
-    Master(5, "Master", StaminaMasterStrength,StaminaMasterCooldown);
+    Base("Base", StaminaBaseStrength, StaminaBaseCooldown),
+    Super("Super", StaminaSuperStrength,StaminaSuperCooldown),
+    Mega("Mega", StaminaMegaStrength,StaminaMegaCooldown),
+    Giga("Giga", StaminaGigaStrength,StaminaGigaCooldown),
+    Superior("Superior", StaminaSuperiorStrength, StaminaSuperiorCooldown),
+    Master("Master", StaminaMasterStrength,StaminaMasterCooldown);
 
-    private final int meta;
     private final String name;
     private final int strength;
     private final int cooldown;
 
-    private EnumStaminaCapsules(int meta, String name, int strength, int cooldown){
-        this.meta = meta;
+    EnumStaminaCapsules(String name, int strength, int cooldown){
         this.name = name;
         this.strength = strength;
         this.cooldown = cooldown;
     }
 
     public int getMeta(){
-        return this.meta;
+        return this.ordinal();
     }
 
     public String getName(){
