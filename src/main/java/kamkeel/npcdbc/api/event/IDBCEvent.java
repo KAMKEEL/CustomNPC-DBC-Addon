@@ -88,7 +88,10 @@ public interface IDBCEvent extends IPlayerEvent {
     }
 
     @Cancelable
-    interface DBCReviveEvent extends IDBCEvent {
+    interface DBCReviveEvent extends IDBCEvent { }
+
+    interface DBCKnockout extends IDBCEvent {
+        IDamageSource getDamageSource();
 
     }
 }

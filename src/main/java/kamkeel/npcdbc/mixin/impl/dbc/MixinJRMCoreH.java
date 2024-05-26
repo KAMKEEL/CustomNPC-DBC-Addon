@@ -14,6 +14,8 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.Entity;
@@ -249,6 +251,13 @@ public abstract class MixinJRMCoreH {
             args.set(0, Math.max(0, newHealth));
             lastSetDamage = -1;
         }
+    }
+
+    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I",
+        at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setByte(BLnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V",
+            ordinal = 0, shift = At.Shift.BEFORE))
+    private static void callKOEvent(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir) {
+        DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer((EntityPlayer) Player), s));
     }
 
     @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;StatPasDef:I", shift = At.Shift.AFTER))

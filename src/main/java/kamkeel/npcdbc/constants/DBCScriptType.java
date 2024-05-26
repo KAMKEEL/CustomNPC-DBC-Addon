@@ -4,8 +4,9 @@ public enum DBCScriptType {
 
     FORMCHANGE("dbcFormChange"),
     DAMAGED("dbcDamaged"),
-    CAPSULEUSED("capsuleUsed"),
-    REVIVED("revived");
+    CAPSULEUSED("dbcCapsuleUsed"),
+    REVIVED("dbcRevived"),
+    KNOCKOUT("dbcKnockout");
 
     public String function;
 

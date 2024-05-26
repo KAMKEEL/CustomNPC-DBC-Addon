@@ -112,7 +112,7 @@ public class MixinDBCAddon {
                 return;
 
             DBCUtils.lastSetDamage = (int) damagedEvent.damage;
-            DBCUtils.doDBCDamage(player, damageToHP, dbcStats);
+            DBCUtils.doDBCDamage(player, damageToHP, dbcStats, damageSource);
         }
     }
 

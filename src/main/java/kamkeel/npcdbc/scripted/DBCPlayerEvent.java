@@ -174,4 +174,24 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
             return DBCScriptType.REVIVED.function;
         }
     }
+
+    public static class KnockoutEvent extends DBCPlayerEvent implements IDBCEvent.DBCKnockout {
+
+        public final IDamageSource damageSource;
+
+        public KnockoutEvent(IPlayer player, DamageSource damageSource) {
+            super(player);
+            this.damageSource = NpcAPI.Instance().getIDamageSource(damageSource);
+        }
+
+        @Override
+        public IDamageSource getDamageSource() {
+            return damageSource;
+        }
+
+
+        public String getHookName() {
+            return DBCScriptType.KNOCKOUT.function;
+        }
+    }
 }

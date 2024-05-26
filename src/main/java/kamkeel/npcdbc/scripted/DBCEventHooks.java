@@ -30,4 +30,10 @@ public class DBCEventHooks {
         handler.callScript(DBCScriptType.REVIVED.function, reviveEvent);
         return NpcAPI.EVENT_BUS.post(reviveEvent);
     }
+
+    public static void onKnockoutEvent(DBCPlayerEvent.KnockoutEvent koEvent) {
+        PlayerDataScript handler = ScriptController.Instance.playerScripts;
+        handler.callScript(DBCScriptType.KNOCKOUT.function, koEvent);
+        NpcAPI.EVENT_BUS.post(koEvent);
+    }
 }

@@ -10,6 +10,8 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -493,7 +495,7 @@ public class DBCUtils {
         return damageAmount;
     }
 
-    public static void doDBCDamage(EntityPlayer player, int damageToHP, IDBCStats dbcStats) {
+    public static void doDBCDamage(EntityPlayer player, int damageToHP, IDBCStats dbcStats, DamageSource source) {
         NBTTagCompound nbt = nbt(player, "pres");
         byte state = nbt.getByte("jrmcState");
         byte race = nbt.getByte("jrmcRace");
@@ -511,20 +513,22 @@ public class DBCUtils {
         }
 
         boolean friendlyFist = dbcStats.isFriendlyFist();
-        if (friendlyFist) {
-            int ko = getInt(player, "jrmcHar4va");
-            newHP = Math.max(reducedHP, 20);
-            if (ko <= 0 && newHP == 20) {
-                setInt((int) 6, player, "jrmcHar4va");
-                setByte(race == 4 ? (state < 4 ? state : 4) : 0, player, "jrmcState");
-                setByte((int) 0, player, "jrmcState2");
-                setByte((int) 0, player, "jrmcRelease");
-                setInt((int) 0, player, "jrmcStamina");
-                StusEfcts(19, statusEffects, (EntityPlayer) player, false);
-            }
-        }
 
         if (!isInCreativeMode(player)) {
+            if (friendlyFist) {
+                int ko = getInt(player, "jrmcHar4va");
+                newHP = Math.max(reducedHP, 20);
+                if (ko <= 0 && newHP == 20) {
+                    DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), source));
+                    setInt((int) 6, player, "jrmcHar4va");
+                    setByte(race == 4 ? (state < 4 ? state : 4) : 0, player, "jrmcState");
+                    setByte((int) 0, player, "jrmcState2");
+                    setByte((int) 0, player, "jrmcRelease");
+                    setInt((int) 0, player, "jrmcStamina");
+                    StusEfcts(19, statusEffects, (EntityPlayer) player, false);
+                }
+            }
+
             setInt(newHP, player, "jrmcBdy");
         }
     }
