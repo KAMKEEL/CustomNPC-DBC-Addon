@@ -90,7 +90,7 @@ public class ServerEventHandler {
             }
             handleFormProcesses(player);
 
-            if(ConfigDBCGameplay.RevampKiCharging && player.ticksExisted % 5 == 0){
+            if(ConfigDBCGameplay.RevampKiCharging){
                 chargeKi(player);
             }
         }
@@ -101,6 +101,11 @@ public class ServerEventHandler {
         dbcData.loadCharging();
         if(!dbcData.isChargingKi())
             return;
+
+        int chargeTick = 16 - (ConfigDBCGameplay.KiPotentialUnlock ? dbcData.stats.getPotentialUnlockLevel() : 6);
+        if(player.ticksExisted % chargeTick != 0)
+            return;
+
         int releaseFactor = ConfigDBCGameplay.KiChargeRate;
         boolean powerDown = dbcData.isFnPressed;
         byte release = dbcData.Release;
