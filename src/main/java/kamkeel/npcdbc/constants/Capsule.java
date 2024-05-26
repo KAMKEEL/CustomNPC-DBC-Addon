@@ -5,4 +5,5 @@ public class Capsule {
     public static final int HP = 1;
     public static final int KI = 2;
     public static final int STAMINA = 3;
+    public static final int REGEN = 4;
 }

@@ -3,10 +3,7 @@ package kamkeel.npcdbc.items;
 import cpw.mods.fml.common.registry.GameRegistry;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
-import kamkeel.npcdbc.items.capsules.ItemHealthCapsule;
-import kamkeel.npcdbc.items.capsules.ItemKiCapsule;
-import kamkeel.npcdbc.items.capsules.ItemMiscCapsule;
-import kamkeel.npcdbc.items.capsules.ItemStaminaCapsule;
+import kamkeel.npcdbc.items.capsules.*;
 import net.minecraft.item.Item;
 
 public class ModItems {
@@ -14,6 +11,7 @@ public class ModItems {
     public static Item HealthCapsules;
     public static Item StaminaCapsules;
     public static Item MiscCapsules;
+    public static Item RegenCapsules;
 
     public static Item FruitOfMight;
 
@@ -40,6 +38,13 @@ public class ModItems {
                 MiscCapsules = new ItemMiscCapsule();
                 GameRegistry.registerItem(MiscCapsules, "misccapsule");
             }
+
+            // @TODO: Add configs:
+            if(true){
+                RegenCapsules = new ItemRegenCapsule();
+                GameRegistry.registerItem(RegenCapsules, "regencapsule");
+            }
+
         }
 
         FruitOfMight = new ItemFruitOfMight(5, 0.4f, false).setTextureName(LocalizationHelper.MOD_PREFIX + "fruitofmight");
