@@ -92,7 +92,7 @@ public class ItemRegenCapsule extends Item {
             return itemStack;
 
         int meta = itemStack.getItemDamage();
-        if (meta < 0 || meta > EnumRegenCapsules.count())
+        if (meta < 0 || meta >= EnumRegenCapsules.count())
             meta = 0;
 
         // Fire Event
@@ -143,7 +143,7 @@ public class ItemRegenCapsule extends Item {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         int meta = itemStack.getItemDamage();
-        if (meta < 0 || meta > EnumRegenCapsules.count())
+        if (meta < 0 || meta >= EnumRegenCapsules.count())
             meta = 0;
 
         EnumRegenCapsules regenCapsules = EnumRegenCapsules.values()[meta];
