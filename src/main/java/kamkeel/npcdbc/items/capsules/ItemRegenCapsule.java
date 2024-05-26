@@ -5,12 +5,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.Capsule;
-import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.constants.enums.EnumKiCapsules;
 import kamkeel.npcdbc.constants.enums.EnumRegenCapsules;
+import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.controllers.StatusEffectController;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -96,20 +93,31 @@ public class ItemRegenCapsule extends Item {
         if (meta < 0 || meta > EnumRegenCapsules.count())
             meta = 0;
 
+        // Fire Event
         if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.REGEN, meta)))
             return itemStack;
 
         EnumRegenCapsules regenCapsules = EnumRegenCapsules.values()[meta];
         UUID playerUUID = player.getUniqueID();
+
+        // Check cooldowns
         long remainingTime = 0;
         if(remainingTime > 0){
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
 
-        int level = regenCapsules.getStrength();
-        int statusEffectId = regenCapsules.getStatusEffect();
 
+        // Apply status effect
+        StatusEffectController.getInstance().applyEffect(player, regenCapsules.getStatusEffectId(), regenCapsules.getUseTime(), regenCapsules.getStrength());
+
+        // Remove 1 item
+        itemStack.splitStack(1);
+        if (itemStack.stackSize <= 0)
+            player.destroyCurrentEquippedItem();
+
+        // Set Cooldown
+//        CapsuleController.setRegenCapsule(playerUUID, meta);
 
         return itemStack;
     }
