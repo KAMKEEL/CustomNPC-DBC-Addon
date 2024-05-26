@@ -33,7 +33,7 @@ public class ItemStaminaCapsule extends Item {
     protected IIcon[] icons;
 
     public ItemStaminaCapsule() {
-        this.setMaxStackSize(ConfigCapsules.StaminaCapsuleMaxStack);
+        this.setMaxStackSize(ConfigCapsules.RegenCapsuleMaxStack);
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
         this.setCreativeTab(CustomItems.tabMisc);
