@@ -5,9 +5,15 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.Capsule;
+import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumKiCapsules;
 import kamkeel.npcdbc.constants.enums.EnumRegenCapsules;
-import kamkeel.npcdbc.controllers.CapsuleController;
+import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.statuseffect.StatusEffect;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,13 +21,13 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import noppes.npcs.CustomItems;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class ItemRegenCapsule extends Item {
 
@@ -82,6 +88,29 @@ public class ItemRegenCapsule extends Item {
 
     @Override
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
+        player.setItemInUse(itemStack, this.getMaxItemUseDuration(itemStack));
+        if (world.isRemote)
+            return itemStack;
+
+        int meta = itemStack.getItemDamage();
+        if (meta < 0 || meta > EnumRegenCapsules.count())
+            meta = 0;
+
+        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.REGEN, meta)))
+            return itemStack;
+
+        EnumRegenCapsules regenCapsules = EnumRegenCapsules.values()[meta];
+        UUID playerUUID = player.getUniqueID();
+        long remainingTime = 0;
+        if(remainingTime > 0){
+            player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
+            return itemStack;
+        }
+
+        int level = regenCapsules.getStrength();
+        int statusEffectId = regenCapsules.getStatusEffect();
+
+
         return itemStack;
     }
 
