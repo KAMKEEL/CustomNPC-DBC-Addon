@@ -2,7 +2,8 @@ package kamkeel.npcdbc.constants.enums;
 
 public enum EnumRegenCapsules {
     // @TODO: Add proper configs
-    BaseHP(0, "base_ki", 2, 4, 4);
+    BaseHP(0, "base_hp", 2, 4, 4);
+
     ;
 
     private final int meta;
