@@ -42,7 +42,7 @@ public class ConfigCapsules
     public static int MiscCapsuleMaxStack = 16;
 
     public static boolean EnableRegenCapsules = true;
-    public static int RegenCapsuleCooldownType = 4;
+    public static int RegenCapsuleCooldownType = 2;
     public static int RegenCapsuleMaxStack = 16;
 
 
