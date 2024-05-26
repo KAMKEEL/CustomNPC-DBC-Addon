@@ -340,6 +340,7 @@ public class ParticleFormHandler {
                     for (int i = 0; i < 1; ++i) {   //dark blue
                         width = height * 0.9f;
                         life = 0.8F * height;
+
                         x = offset + (Math.random() * (double) height - 0.5) * 0.800000011920929;
                         y = (Math.random() * (double) height - 0.5) * 0.800000011920929;
                         z = offset + (Math.random() - 0.5) * width;
@@ -565,19 +566,26 @@ public class ParticleFormHandler {
                 break;
             case GoD:
                 for (int k = 0; k < JGConfigClientSettings.get_da1(); ++k) {
-                    for (int i = 0; i < 5; ++i) {
-                        double x = Math.random() - 0.5;
-                        double y = Math.random() * (double) entity.height - 0.5;
-                        double z = Math.random() - 0.5;
-                        Entity particle = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, entity.posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 30, 2, (float) (Math.random() * 0.029999999329447746), (float) (Math.random() * 0.029999999329447746) + 0.05F, 0.1F, 2, 168.0F, 50.0F, 214.0F, 0.0F, 0.0F, 0.0F, 175.0F, 55.0F, 228.0F, 3, 0.5F, 0.0F, 0.0F, 0.0F, -0.1F, false, -1, false, entity);
+                    double x, y, z;
+                    float width = height * 0.8f;
+                    float offset = 0;
+                    double posY = entity.posY + (entity instanceof EntityPlayerSP ? -1.6f : 0.0);
+                    float life = 0.35f * height;
+                    for (int i = 0; i < 3; ++i) {
+                        x = offset + (Math.random() - 0.5) * width;
+                        y = (Math.random() * (double) height - 0.2);
+                        z = offset + (Math.random() - 0.5) * width;
+                        Entity particle = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 40, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 2, 168.0F, 50.0F, 214.0F, 0.0F, 0.0F, 0.0F, 175.0F, 55.0F, 228.0F, 3, 0.5F, 0.0F, 0.0F, 0.0F, -0.1F, false, -1, false, entity);
                         particle.worldObj.spawnEntityInWorld(particle);
-                        x = Math.random() - 0.5;
-                        y = Math.random() * (double) entity.height - 0.5;
-                        z = Math.random() - 0.5;
-                        particle = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, entity.posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", 30, 2, (float) (Math.random() * 0.029999999329447746), (float) (Math.random() * 0.029999999329447746) + 0.05F, 0.1F, 2, 168.0F, 50.0F, 214.0F, 0.0F, 0.0F, 0.0F, 175.0F, 55.0F, 228.0F, 3, 0.5F, 0.0F, 0.0F, 0.0F, -0.1F, false, -1, false, entity);
+
+                        x = offset + (Math.random() - 0.5) * width;
+                        y = (Math.random() * (double) height - 0.2);
+                        z = offset + (Math.random() - 0.5) * width;
+                        particle = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", 40, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 2, 168.0F, 50.0F, 214.0F, 0.0F, 0.0F, 0.0F, 175.0F, 55.0F, 228.0F, 3, 0.5F, 0.0F, 0.0F, 0.0F, -0.1F, false, -1, false, entity);
                         particle.worldObj.spawnEntityInWorld(particle);
                     }
                 }
+                    
                 break;
             case GoDToppo:
                 for (int r = 0; r < JGConfigClientSettings.get_da1(); ++r) {
@@ -629,9 +637,9 @@ public class ParticleFormHandler {
                         double x;
                         double y;
                         double z;
-                        int repeat2;
+                        int i;
                         EntityCusPar particle2;
-                        for(repeat2 = 0; repeat2 < 4; ++repeat2) {
+                        for (i = 0; i < 4; ++i) {
                             outNew = 1.7600001F;
                             y = (Math.random() * (double) entity.height - 0.5) * 0.800000011920929;
                             x = Math.random() * (double)outNew - (double)(outNew / 2.0F);
@@ -639,7 +647,7 @@ public class ParticleFormHandler {
                             particle2 = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.18F, 0.21000001F, 0.006F, false, -1, true, entity);
                             particle2.worldObj.spawnEntityInWorld(particle2);
                         }
-                        for(repeat2 = 0; repeat2 < 4; ++repeat2) {
+                        for (i = 0; i < 4; ++i) {
                             y = (Math.random() * (double) entity.height - 0.5) * 0.800000011920929;
                             x = Math.random() * (double)outNew - (double)(outNew / 2.0F);
                             z = Math.random() * (double)outNew - (double)(outNew / 2.0F);
@@ -654,7 +662,7 @@ public class ParticleFormHandler {
                             particle2.worldObj.spawnEntityInWorld(particle2);
                         }
 
-                        EntityCusPar entity3;
+                        EntityCusPar particle;
                         outNew = 1.8000001F;
                         y = (Math.random() * (double) entity.height - 0.5) * 0.800000011920929;
                         x = Math.random() * (double)outNew - (double)(outNew / 2.0F);
@@ -662,14 +670,14 @@ public class ParticleFormHandler {
                         particle2 = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 0, red2, green2, blue2, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.24000001F, 0.27F, 0.009000001F, false, -1, true, entity);
                         particle2.worldObj.spawnEntityInWorld(particle2);
 
-                        for(repeat2 = 0; repeat2 < 1 + 1; ++repeat2) {
+                        for (i = 0; i < 1 + 1; ++i) {
                             y = Math.random() * (double)(targetsizeMax - targetsizeMin) + (double)targetsizeMin;
                             y -= 0.30000001192092896;
                             outNew = 1.9499999F;
                             x = Math.random() * (double)outNew - (double)(outNew / 2.0F);
                             z = Math.random() * (double)outNew - (double)(outNew / 2.0F);
-                            entity3 = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 0, red2, green2, blue2, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.24000001F, 0.27F, 0.009000001F, false, -1, true, entity);
-                            entity3.worldObj.spawnEntityInWorld(entity3);
+                            particle = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 0, red2, green2, blue2, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.24000001F, 0.27F, 0.009000001F, false, -1, true, entity);
+                            particle.worldObj.spawnEntityInWorld(particle);
                         }
 
                         x = Math.random() * 1.5 - 0.75;
@@ -679,13 +687,13 @@ public class ParticleFormHandler {
                         particle2.worldObj.spawnEntityInWorld(particle2);
 
 
-                        for(repeat2 = 0; repeat2 < 3; ++repeat2) {
+                        for (i = 0; i < 3; ++i) {
                             outNew = 0.6F;
                             x = Math.random() * (double)outNew - (double)(outNew / 2.0F);
                             y = (Math.random() * (double) entity.height - 0.5) * 0.800000011920929 * 0.6000000238418579 - 0.30000001192092896;
                             z = Math.random() * (double)outNew - (double)(outNew / 2.0F);
-                            entity3 = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, 0.0, Math.random() * 0.03999999910593033 + 0.01, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 0, 243.0F, 247.0F, 250.0F, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.120000005F, 0.15F, 0.003F, false, -1, true, entity);
-                            entity3.worldObj.spawnEntityInWorld(entity3);
+                            particle = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, 0.0, Math.random() * 0.03999999910593033 + 0.01, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 0, 243.0F, 247.0F, 250.0F, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.120000005F, 0.15F, 0.003F, false, -1, true, entity);
+                            particle.worldObj.spawnEntityInWorld(particle);
 
                             for(int inner = 0; inner < 2; ++inner) {
                                 y = Math.random() * (double)(targetsizeMax - targetsizeMin) + (double)targetsizeMin;
@@ -708,13 +716,137 @@ public class ParticleFormHandler {
                             y -= 0.30000001192092896;
                             x = Math.random() * (double)outNew - (double)(outNew / 2.0F);
                             z = Math.random() * (double)outNew - (double)(outNew / 2.0F);
-                            entity3 = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, 0.0, Math.random() * 0.029999999329447746 + 0.01, 0.0, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.019999999552965164) + 0.02F) * life * 0.5F * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F * 0.5F, 0.2F * life * 0.5F * 0.5F, 0, red3, green3, blue3, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.24000001F, 0.27F, 0.009000001F, false, -1, true, entity);
-                            entity3.worldObj.spawnEntityInWorld(entity3);
+                            particle = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, 0.0, Math.random() * 0.029999999329447746 + 0.01, 0.0, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.019999999552965164) + 0.02F) * life * 0.5F * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F * 0.5F, 0.2F * life * 0.5F * 0.5F, 0, red3, green3, blue3, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.24000001F, 0.27F, 0.009000001F, false, -1, true, entity);
+                            particle.worldObj.spawnEntityInWorld(particle);
                         }
                     }
                 break;
         }
 
+    }
+
+    public static void UI(Entity entity, EnumAuraTypes2D types, int color, float height, float numberOfParticles) {
+        float red, red2, green2, blue3, green, blue, alpha = 0.7f;
+        double x, y, z;
+        float life = 0.8F * height;
+        float width = height * 0.7f;
+        boolean isMUI = false;
+
+        double posY = entity.posY + (entity instanceof EntityPlayerSP ? -1.6f : 0.0);
+
+        if (isMUI) {
+            red = 87.0F;
+            green = 200.0F;
+            blue = 208.0F;
+            red2 = 203.0F;
+            green2 = 137.0F;
+            red = 234.0F;
+            green = 245.0F;
+            blue = 250.0F;
+            blue3 = 252.0F;
+        } else {
+            red = 141.0F;
+            green = 158.0F;
+            blue = 210.0F;
+            red2 = 215.0F;
+            green2 = 152.0F;
+            red = 219.0F;
+            green = 243.0F;
+            blue = 247.0F;
+            blue3 = 250.0F;
+        }
+
+        float extra_scale = 1.5F;
+        float outNew = 1.6F;
+        float target_fullsize_one1 = 0.32F;
+        float targetsizeMin = height * (8.0F / target_fullsize_one1) * 0.01F;
+        float target_fullsize_one2 = 0.32F;
+        float targetsizeMax = height * (26.0F / target_fullsize_one2) * 0.01F;
+
+        EntityCusPar particle;
+        for (int i = 0; i < 4; ++i) {
+            outNew = 1.7600001F;
+            y = (Math.random() * (double) height - 0.5) * 0.800000011920929;
+            x = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+            z = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+            particle = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 0, 150.0F, 186.0F, 255.0F, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.3F * alpha, 0.35F * alpha, 0.01F * alpha, false, -1, true, entity);
+            particle.worldObj.spawnEntityInWorld(particle);
+        }
+
+        for (int i = 0; i < 4; ++i) {
+            outNew = 1.7600001F;
+            y = (Math.random() * (double) height - 0.5) * 0.800000011920929;
+            x = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+            z = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+            particle = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.3F * alpha, 0.35F * alpha, 0.01F * alpha, false, -1, true, entity);
+            particle.worldObj.spawnEntityInWorld(particle);
+        }
+
+
+        for (int i = 0; i < 3; ++i) {
+            outNew = 0.6F;
+            x = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+            y = (Math.random() * (double) height - 0.5) * 0.800000011920929 * 0.6000000238418579 - 0.30000001192092896;
+            z = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+            particle = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.03999999910593033 + 0.01, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 0, 243.0F, 247.0F, 250.0F, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.2F * alpha, 0.25F * alpha, 0.005F * alpha, false, -1, true, entity);
+            particle.worldObj.spawnEntityInWorld(particle);
+
+            for (int j = 0; j < 2; ++j) {
+                y = Math.random() * (double) (targetsizeMax - targetsizeMin) + (double) targetsizeMin;
+                y -= 0.30000001192092896;
+                outNew = 1.26F;
+                x = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+                z = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+                Entity entity1 = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.03999999910593033 + 0.01, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 32, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 0, green, blue, blue3, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.3F * alpha, 0.35F * alpha, 0.02F * alpha, false, -1, true, entity);
+                entity1.worldObj.spawnEntityInWorld(entity1);
+            }
+        }
+        if (isMUI) {
+            outNew = 1.8000001F;
+            y = (Math.random() * (double) height - 0.5) * 0.800000011920929;
+            x = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+            z = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+            particle = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 0, red2, green2, red, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.4F * alpha, 0.45F * alpha, 0.015F * alpha, false, -1, true, entity);
+            particle.worldObj.spawnEntityInWorld(particle);
+
+            for (int i = 0; i < 1 + (isMUI ? 1 : 0); ++i) {
+                y = Math.random() * (double) (targetsizeMax - targetsizeMin) + (double) targetsizeMin;
+                y -= 0.30000001192092896;
+                outNew = 1.9499999F;
+                x = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+                z = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+                particle = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 0, red2, green2, red, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.4F * alpha, 0.45F * alpha, 0.015F * alpha, false, -1, true, entity);
+                particle.worldObj.spawnEntityInWorld(particle);
+            }
+        }
+        if (entity.ticksExisted % (isMUI ? 1 : 4) == 0) {
+            x = Math.random() * 1.5 - 0.75;
+            y = (Math.random() * (double) height - 0.5) * 0.800000011920929;
+            z = Math.random() * 1.5 - 0.75;
+            particle = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.019999999552965164) + 0.02F) * life * 0.5F * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F * 0.5F, 0.2F * life * 0.5F * 0.5F, 0, red2, green2, red, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.4F * (isMUI ? 1.2F : 1.0F) * alpha, 0.45F * (isMUI ? 1.2F : 1.0F) * alpha, 0.015F * (isMUI ? 1.2F : 1.0F) * alpha, false, -1, true, entity);
+            particle.worldObj.spawnEntityInWorld(particle);
+        }
+        if (entity.ticksExisted % 4 == 0) {
+            x = Math.random() * 0.6000000238418579 - 0.30000001192092896;
+            y = (Math.random() * (double) height - 0.5) * 0.800000011920929;
+            z = Math.random() * 0.6000000238418579 - 0.30000001192092896;
+            particle = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.029999999329447746 + 0.01, 0.0, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F * 0.5F, 0.2F * life * 0.5F * 0.5F, 0, green, blue, blue3, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.4F * alpha, 0.45F * alpha, 0.015F * alpha, false, -1, true, entity);
+            particle.worldObj.spawnEntityInWorld(particle);
+
+            y = Math.random() * (double) (targetsizeMax - targetsizeMin) + (double) targetsizeMin;
+            y -= 0.30000001192092896;
+            outNew = 1.26F;
+            x = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+            z = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+            particle = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.029999999329447746 + 0.01, 0.0, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.019999999552965164) + 0.02F) * life * 0.5F * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F * 0.5F, 0.2F * life * 0.5F * 0.5F, 0, green, blue, blue3, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.4F * alpha, 0.45F * alpha, 0.015F * alpha, false, -1, true, entity);
+            particle.worldObj.spawnEntityInWorld(particle);
+
+            x = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+            y = Math.random() * (double) height - 0.5;
+            z = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+            particle = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F * 0.5F, 0.2F * life * 0.5F * 0.5F, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.4F * alpha, 0.45F * alpha, 0.015F * alpha, false, -1, true, entity);
+            particle.worldObj.spawnEntityInWorld(particle);
+        }
     }
 
 
