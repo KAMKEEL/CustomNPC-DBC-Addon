@@ -4,7 +4,6 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
@@ -62,7 +61,6 @@ public class TransformController {
         JRMCoreH.TransSaiCurRg = (byte) rage;
         PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
 
-        AuraSound.play(dbcData.player, dbcData.getAura());
 
 
         if (time >= 6) { //increments rage meter and drain ki cost every 6 ticks

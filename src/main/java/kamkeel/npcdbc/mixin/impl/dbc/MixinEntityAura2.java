@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixin.impl.dbc;
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
@@ -42,13 +43,24 @@ public class MixinEntityAura2 implements IEntityAura {
 
     @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", shift = At.Shift.AFTER), remap = true)
     private void redirect(CallbackInfo ci, @Local(name = "other") LocalRef<Entity> player) {
-
-        if (player.get() != null)
-            return;
         EntityAura2 aura = (EntityAura2) (Object) this;
+
+        if (player.get() != null) {
+            if (aura.getAge() < aura.getLightLivingTime() && hasLightning && aura.getAge() == 2)
+                new Sound("jinryuudragonbc:1610.spark", player.get()).setVolume(0.0375F).setPitch(0.85F + aura.getLightLivingTime() * 0.05F).play(false);
+
+            return;
+        }
         Entity entity = Utility.getEntityFromID(aura.worldObj, mot);
-        if (entity != null)
+        if (entity != null) {
             player.set(entity);
+
+
+        }
+        
+        
+        
+        
     }
 
     @Unique

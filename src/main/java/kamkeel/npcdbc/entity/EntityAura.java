@@ -108,10 +108,12 @@ public class EntityAura extends Entity {
         if (form != null && form.display.hasColor("aura")) //IForm color
             color1 = form.display.auraColor;
 
+        if (isVanillaDefault) {
         if (DBCRace.isSaiyan(auraData.getRace()) && (auraData.getState() == 5 || auraData.getState() == 6))
             hasLightning = true;
         else
             hasLightning = false;
+        }
 
 
         if (isInKaioken) {
