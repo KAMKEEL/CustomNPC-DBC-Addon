@@ -16,7 +16,8 @@ public class ClientCache {
     public static boolean allowTransformBypass = false;
     public static boolean hasChargingDex = false;
     public static HashMap<Integer, Float> chargingDexValues = new HashMap<>();
-    public static boolean preciseCharging = true;
+
+    public static boolean kiRevamp = true;
 
     public static DBCData getClientData(EntityPlayer player){
         synchronized (clientDataCache) {

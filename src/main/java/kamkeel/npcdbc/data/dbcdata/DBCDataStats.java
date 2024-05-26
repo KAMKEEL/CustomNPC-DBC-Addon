@@ -161,6 +161,7 @@ public class DBCDataStats {
         return stat;
     }
 
+
     public int getCurrentStat(int attribute) { // gets stat at current release
         return (int) (getMaxStat(attribute) * data.Release * 0.01D * JRMCoreH.weightPerc(0, data.player));
     }
@@ -396,11 +397,8 @@ public class DBCDataStats {
         }
     }
 
-    public void setMaxRelease(byte newMax) {
-        data.maxRelease =  ValueUtil.clamp(newMax, (byte) 0, (byte) 127);
+    public byte getPotentialUnlockLevel() {
+        return (byte) JRMCoreH.SklLvl(5, data.Skills.split(","));
     }
 
-    public int getMaxRelease() {
-        return data.maxRelease;
-    }
 }

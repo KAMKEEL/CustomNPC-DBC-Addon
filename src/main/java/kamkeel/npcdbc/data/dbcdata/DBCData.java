@@ -49,7 +49,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f;
     public int flightSpeedRelease = 100;
     public boolean isFlying, flightEnabled = true, flightGravity = true;
-    public byte maxRelease = 100;
     public boolean isFnPressed;
 
     public EntityAura auraEntity;
@@ -120,7 +119,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setBoolean("DBCFlightEnabled", flightEnabled);
         comp.setBoolean("DBCFlightGravity", flightGravity);
 
-        comp.setInteger("DBCMaxRelease", maxRelease);
         comp.setBoolean("DBCIsFnPressed", isFnPressed);
         stats.saveEffectsNBT(comp);
         bonus.saveBonusNBT(comp);
@@ -191,10 +189,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             c.setBoolean("DBCFlightGravity", flightGravity);
         flightGravity = c.getBoolean("DBCFlightGravity");
 
-        if (!c.hasKey("DBCMaxRelease"))
-            c.setByte("DBCMaxRelease", maxRelease);
-        maxRelease = c.getByte("DBCMaxRelease");
-
         if (!c.hasKey("DBCIsFnPressed"))
             c.setBoolean("DBCIsFnPressed", isFnPressed);
         isFnPressed = c.getBoolean("DBCIsFnPressed");
@@ -258,6 +252,14 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         loadFromNBT(dbc);
         if (syncALL)
             syncTracking();
+    }
+
+    // Get all Necessary Charging Information
+    public void loadCharging() {
+        NBTTagCompound dbc = this.player.getEntityData().getCompoundTag(DBCPersisted);
+        Skills = dbc.getString("jrmcSSlts");
+        Release = dbc.getByte("jrmcRelease");
+        isFnPressed = dbc.getBoolean("DBCIsFnPressed");
     }
 
     public void syncTracking() {
@@ -455,7 +457,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         spectator.stats.restoreKiPercent(100);
     }
 
-    public float addFusionMastery(DBCData controller, DBCData spectator) {
+    public float getFusionMastery(DBCData controller, DBCData spectator) {
         float mastery = 0f;
 
         Form form = controller.getForm();

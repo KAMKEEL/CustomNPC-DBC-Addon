@@ -2,7 +2,6 @@ package kamkeel.npcdbc.config;
 
 import cpw.mods.fml.common.FMLLog;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 import noppes.npcs.util.ValueUtil;
 import org.apache.logging.log4j.Level;
 
@@ -43,8 +42,9 @@ public class ConfigDBCGameplay
     public static boolean HalfSaiyanZenkai = true;
 
     public final static String KiCharge = "Ki_Charge";
-    public static boolean PreciseKiCharging = true;
-    public static boolean KiChargeReleaseLevel = true;
+    public static boolean RevampKiCharging = true;
+    public static boolean KiPotentialUnlock = true;
+    public static int KiChargeRate = 1;
 
     public static void init(File configFile)
     {
@@ -90,9 +90,26 @@ public class ConfigDBCGameplay
             PotaraOneTime = config.get(PotaraFusion, "Tier 1 Time", 10, "The amount of time the Tier One Potara Earrings Fusion lasts").getInt(10);
             PotaraTwoTime = config.get(PotaraFusion, "Tier 2 Time", 15, "The amount of time the Tier Two Potara Earrings Fusion lasts").getInt(15);
             PotaraThreeTime = config.get(PotaraFusion, "Tier 3 Time", 25, "The amount of time the Tier Three Potara Earrings Fusion lasts").getInt(25);
+            PotaraOneTime = Math.max(1, PotaraOneTime);
+            PotaraTwoTime = Math.max(1, PotaraTwoTime);
+            PotaraThreeTime = Math.max(1, PotaraThreeTime);
 
-            PreciseKiCharging = config.get(KiCharge, "Precise Ki Charge", true, "Enabling this feature will allow all players to Charge ki at a more direct rate. Instead of 5 percent \nit would charge every 1 percent and become more accurate / precise.").getBoolean(true);
-            KiChargeReleaseLevel = config.get(KiCharge, "Ki Charge Speed with Release Level", true, "Enabling this feature will make Ki Charging faster for players with a higher Release Level.").getBoolean(true);
+            config.setCategoryComment(KiCharge,
+                "Ki Charge Revamp allows many modifications to the normal vanilla DBC Ki Charge to be configured.\n" +
+                    "If the Revamp Ki Charge is disabled then the Status Effect Overpower will not function.\n" +
+                    "This functionality does not control Energy Attack Charging speeds. Ki Revamp will also allow\n" +
+                    "Humans and Namekians to power down with the FN Key, as opposed to vanilla DBC.");
+
+            RevampKiCharging = config.get(KiCharge, "0. Enable Ki Revamp", true, "Enabling this feature will allow huge modifications to Ki Charging as featured below.").getBoolean(true);
+            KiPotentialUnlock = config.get(KiCharge, "Ki Charge Speed with Potential Unlock Level", true,
+                "Enabling this feature will make Ki Charging faster for players with a higher Release Level." +
+                "\nEach level is 20% faster than the base charging speed").getBoolean(true);
+            KiPotentialUnlock = config.get(KiCharge, "Ki Charge Speed with Potential Unlock Level", true,
+                "Enabling this feature will make Ki Charging faster for players with a higher Release Level." +
+                    "\nEach level is 20% faster than the base charging speed").getBoolean(true);
+            KiChargeRate = config.get(KiCharge, "Ki Charge Rate", 1,
+                "Tweaking this number will allow for more precise ki charging. Default for DBC is 5.").getInt(1);
+            KiChargeRate = ValueUtil.clamp(KiChargeRate, 1, 50);
         }
         catch (Exception e)
         {

@@ -5,11 +5,13 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.data.statuseffect.types.NamekRegen;
 import kamkeel.npcdbc.mixin.INPCDisplay;
 import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
@@ -81,21 +83,30 @@ public class ServerEventHandler {
                 if (player.ticksExisted % 20 == 0)
                     dbcData.stats.decrementActiveEffects();
 
-                if (ConfigDBCGameplay.PreciseKiCharging && dbcData.isChargingKi())
-                    chargeKi(dbcData);
-
                 dbcData.syncTracking();
+                // ChargeKi
             }
             handleFormProcesses(player);
+
+            if(ConfigDBCGameplay.RevampKiCharging && player.ticksExisted % 5 == 0){
+                chargeKi(player);
+            }
         }
     }
 
-    public void chargeKi(DBCData dbcData) {
+    public void chargeKi(EntityPlayer player) {
+        DBCData dbcData = DBCData.getData(player);
+        dbcData.loadCharging();
+        if(!dbcData.isChargingKi())
+            return;
+        int releaseFactor = ConfigDBCGameplay.KiChargeRate;
         boolean powerDown = dbcData.isFnPressed;
-
         byte release = dbcData.Release;
-        int releaseFactor = 5;
-        int newRelease = ValueUtil.clamp(!powerDown ? release + releaseFactor : release - releaseFactor, (byte) 0, DBCData.getClient().maxRelease);
+
+        byte maxRelease = (byte) ((byte) (50 + dbcData.stats.getPotentialUnlockLevel() * 5)
+                    + (byte) (StatusEffectController.Instance.hasEffect(player,  Effects.OVERPOWER) ? 25 : 0));
+
+        int newRelease = ValueUtil.clamp(!powerDown ? release + releaseFactor : release - releaseFactor, (byte) 0, maxRelease);
         dbcData.getRawCompound().setByte("jrmcRelease", (byte) newRelease);
     }
 

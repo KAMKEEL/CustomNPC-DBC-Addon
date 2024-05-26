@@ -19,7 +19,7 @@ public final class LoginInfo extends AbstractPacket {
     private final boolean transformBypass;
     private final double kiProtectionValue;
     private final double kiFistValue;
-    private final boolean preciseCharge;
+    private final boolean kiRevamp;
 
     public LoginInfo(){
         this.chargeDex = ConfigDBCGameplay.EnableChargingDex;
@@ -29,7 +29,7 @@ public final class LoginInfo extends AbstractPacket {
         this.transformBypass = ConfigDBCGameplay.InstantTransform;
         this.kiProtectionValue = DBCConfig.ccnfKDd;
         this.kiFistValue = DBCConfig.ccnfKFd;
-        this.preciseCharge = ConfigDBCGameplay.PreciseKiCharging;
+        this.kiRevamp = ConfigDBCGameplay.RevampKiCharging;
     }
 
     @Override
@@ -49,7 +49,7 @@ public final class LoginInfo extends AbstractPacket {
         out.writeDouble(this.kiProtectionValue);
         out.writeDouble(this.kiFistValue);
 
-        out.writeBoolean(this.preciseCharge);
+        out.writeBoolean(this.kiRevamp);
     }
 
     @Override
@@ -69,7 +69,7 @@ public final class LoginInfo extends AbstractPacket {
             DBCConfig.cnfKDd = in.readDouble();
             DBCConfig.cnfKFd = in.readDouble();
 
-            ClientCache.preciseCharging = in.readBoolean();
+            ClientCache.kiRevamp = in.readBoolean();
         }
     }
 }

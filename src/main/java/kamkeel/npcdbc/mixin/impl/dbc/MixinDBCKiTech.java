@@ -43,7 +43,7 @@ public class MixinDBCKiTech {
 
         }
 
-        if (ClientCache.preciseCharging)
+        if (ClientCache.kiRevamp)
             ci.cancel();
     }
 
@@ -139,8 +139,6 @@ public class MixinDBCKiTech {
      */
     @Inject(method = "Descend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;kiInSuper:I", shift = At.Shift.AFTER), cancellable = true)
     private static void DescendModified(KeyBinding K, CallbackInfo ci) {
-        PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
-
         DBCData dbcData = DBCData.getClient();
         Form form = dbcData.getForm();
 

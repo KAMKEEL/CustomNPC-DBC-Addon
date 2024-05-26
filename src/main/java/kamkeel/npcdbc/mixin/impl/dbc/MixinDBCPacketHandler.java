@@ -34,8 +34,6 @@ public class MixinDBCPacketHandler {
             } else {
                 StatusEffectController.getInstance().applyEffect(p, Effects.ZENKAI);
             }
-
-
         }
     }
 }
