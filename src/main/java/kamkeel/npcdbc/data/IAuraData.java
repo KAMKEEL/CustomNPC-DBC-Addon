@@ -15,6 +15,7 @@ public interface IAuraData {
     public int getFormID();
     public byte getRelease();
     public byte getState();
+    public byte getState2();
 
     public boolean isForm(int form);
 

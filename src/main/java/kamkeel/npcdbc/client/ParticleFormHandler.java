@@ -17,7 +17,7 @@ public class ParticleFormHandler {
 
 
     public static void spawnAura2D(Entity entity, IAuraData data, float height) {
-        if (!entity.worldObj.isRemote || !JGConfigClientSettings.CLIENT_DA8 || data == null)
+        if (!entity.worldObj.isRemote || !JGConfigClientSettings.CLIENT_DA8 || data == null || data.getAuraEntity() == null)
             return;
 
         EnumAuraTypes2D types = data.getAuraEntity().type2D;

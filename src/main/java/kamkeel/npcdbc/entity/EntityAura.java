@@ -73,6 +73,9 @@ public class EntityAura extends Entity {
         auraData.setAuraEntity(this);
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
         text1 = new ResourceLocation( "jinryuudragonbc:aura.png");
+
+        if (aura.hasSecondaryAura() && children.containsKey("Secondary"))
+            new EntityAura(entity, aura.getSecondaryAur()).load(true).setParent(this, "Secondary").spawn();
     }
 
 
@@ -110,6 +113,25 @@ public class EntityAura extends Entity {
         else
             hasLightning = false;
 
+
+        if (isInKaioken) {
+            boolean kaiokenOverride = display.kaiokenOverrides;
+            if (isVanillaDefault && DBCForm.isSaiyanGod(auraData.getState()))
+                kaiokenOverride = false;
+
+
+            if (!kaiokenOverride && !children.containsKey("Kaioken"))
+                new EntityAura(entity, aura).loadKaioken().setParent(this, "Kaioken").spawn();
+
+            if (kaiokenOverride) {
+                color1 = lightningColor = 16646144;
+            }
+
+        } else {
+            if (lightningColor == 16646144)
+                lightningColor = 0x25c9cf;
+        }
+
         if (all) {
             if (display.hasColor("color2"))
                 color2 = display.color2;
@@ -140,16 +162,10 @@ public class EntityAura extends Entity {
     public EntityAura loadKaioken() {
         AuraDisplay display = aura.display;
         color1 = 16646144;
-        if (display.kaiokenOverrides) {
-            maxAlpha = 0.1f;
-            speed = 40;
-            text1 =  new ResourceLocation("jinryuudragonbc:aura.png");
-        } else {
-            maxAlpha = 0.1f;
-            speed = 40;
-            text1 =  new ResourceLocation("jinryuudragonbc:aurak.png");
-            renderPass = 0;
-        }
+
+        text1 = new ResourceLocation("jinryuudragonbc:aurak.png");
+        renderPass = 0;
+        maxAlpha = 0.1f;
 
         if (aura.display.hasAlpha("kaioken"))
             maxAlpha = (float) display.kaiokenAlpha / 255;
@@ -234,8 +250,13 @@ public class EntityAura extends Entity {
     }
 
     public void updateDisplay() {
-        if (isKaioken)
+        if (isKaioken) {
+            if (parent.isVanillaDefault && !DBCForm.isSaiyanGod(auraData.getState()))
+                fadeOut = true;
+
             return;
+        }
+            
 
         if (entity.ticksExisted % 10 == 0)
             load(false);
@@ -269,13 +290,19 @@ public class EntityAura extends Entity {
 
     public void onUpdate() {
 
-        if (isRoot()) {
+        if (isRoot() && !fadeOut) { //check aura death conditions
             Aura currentAura = PlayerDataUtil.getToggledAura(entity);
-            if (!isVanillaDefault && (entity == null || currentAura == null || aura != currentAura))  //aura death condition
+            if (!isVanillaDefault && (entity == null || currentAura == null || aura != currentAura || auraData.getAuraEntity() != this))  
                 despawn();
             else if (isVanillaDefault && (!auraData.isAuraOn() || currentAura != null || !ConfigDBCClient.RevampAura))
                 despawn();
+
+
         }
+        isInKaioken = auraData.isForm(DBCForm.Kaioken);
+        if (!isInKaioken && isKaioken && !fadeOut)
+            despawn();
+        
         if (fadeIn && !fadeOut)
             if (alpha < maxAlpha) {
                 alpha = Math.min(alpha + fadeFactor, maxAlpha);
@@ -289,13 +316,11 @@ public class EntityAura extends Entity {
                 setDead();
         }
 
-        if (!isInKaioken && isKaioken)
-            despawn();
 
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
         isTransforming = auraData.isTransforming();
         isCharging = auraData.isChargingKi() || isTransforming;
-        isInKaioken = auraData.isForm(DBCForm.Kaioken);
+
         updateDisplay();
 
 
@@ -347,7 +372,6 @@ public class EntityAura extends Entity {
 
     public void setDead() {
         super.setDead();
-        auraData.setAuraEntity(null);
 
         if (auraData.getAuraEntity() == this)
             auraData.setAuraEntity(null);

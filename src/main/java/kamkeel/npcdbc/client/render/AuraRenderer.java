@@ -85,7 +85,12 @@ public class AuraRenderer extends RenderDBC {
         GL11.glPushMatrix();
         
         float pulsingSize = pulseAnimation * 0.03f;
-        float stateSizeFactor = getStateSizeFactor(aura.auraData);
+
+        float kaiokenSize = 0;
+        if (aura.isKaioken)
+            kaiokenSize = 0.75f * aura.auraData.getState2();
+
+        float stateSizeFactor = getStateSizeFactor(aura.auraData) + kaiokenSize;
         float sizeStateReleaseFactor = stateSizeFactor + (release / 100) * Math.max(stateSizeFactor * 0.75f, 3.5f); //aura gets 1.75x bigger at 100% release
         float size = aura.size + 0.1f * sizeStateReleaseFactor;
         aura.effectiveSize = size;
