@@ -9,6 +9,7 @@ import kamkeel.npcdbc.client.model.ModelAura;
 import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
@@ -59,7 +60,7 @@ public class AuraRenderer extends RenderDBC {
     }
 
     public void renderAura(EntityAura aura, double posX, double posY, double posZ) {
-        if (aura.aura.display.kettleModeType == 1 || !aura.aura.display.enable3DAura || !JGConfigClientSettings.CLIENT_DA14)
+        if (aura.aura.display.kettleModeType == 1 || aura.aura.display.type == EnumAuraTypes3D.None || !JGConfigClientSettings.CLIENT_DA14)
             return;
 
         byte race = aura.auraData.getRace();
@@ -181,7 +182,7 @@ public class AuraRenderer extends RenderDBC {
 
         }
         float r = rand.nextInt(50);
-        if (aura.hasLightning && r < 5 && age < 10)
+        if (aura.hasLightning && r < 10 && age < 10)
             lightning(aura, posX, posY + aura.getYOffset(), posZ);
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawing(1);
@@ -222,7 +223,7 @@ public class AuraRenderer extends RenderDBC {
         double[] adouble1 = new double[8];
         double d3 = 0.0;
         double d4 = 0.0;
-        GL11.glTranslated(par2, par4 + 0.6, par6);
+        GL11.glTranslated(par2, par4 +2.3, par6);
         int k1 = 0;
         int nu = (int) (Math.random() * 10.0) + 1;
         int nu2 = 3;

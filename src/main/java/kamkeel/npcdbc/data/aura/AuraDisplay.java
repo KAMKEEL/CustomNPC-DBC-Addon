@@ -10,7 +10,6 @@ import noppes.npcs.util.ValueUtil;
 public class AuraDisplay implements IAuraDisplay {
     public Aura parent;
 
-    public boolean enable2DAura = true, enable3DAura = true;
     public EnumAuraTypes3D type = EnumAuraTypes3D.Default;
     public EnumAuraTypes2D type2D = EnumAuraTypes2D.Default;
 
@@ -40,8 +39,6 @@ public class AuraDisplay implements IAuraDisplay {
     public void readFromNBT(NBTTagCompound compound) {
         NBTTagCompound rendering = compound.getCompoundTag("rendering");
 
-        enable2DAura = rendering.getBoolean("enable2DAura");
-        enable3DAura = rendering.getBoolean("enable3DAura");
         EnumAuraTypes3D auraTypes3D = EnumAuraTypes3D.getEnumFromName(rendering.getString("type"));
         type = auraTypes3D == null ? EnumAuraTypes3D.Default : auraTypes3D;
 
@@ -85,8 +82,6 @@ public class AuraDisplay implements IAuraDisplay {
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound rendering = new NBTTagCompound();
 
-        rendering.setBoolean("enable2DAura", enable2DAura);
-        rendering.setBoolean("enable3DAura", enable3DAura);
         rendering.setString("type", type.getName());
         rendering.setString("type2D", type2D.name);
         rendering.setString("texture1", texture1);
@@ -124,26 +119,7 @@ public class AuraDisplay implements IAuraDisplay {
         compound.setTag("rendering", rendering);
         return compound;
     }
-
-    @Override
-    public void enable3DAura(boolean enable) {
-        this.enable3DAura = enable;
-    }
-
-    @Override
-    public boolean is3DAuraEnabled() {
-        return this.enable3DAura;
-    }
-
-    @Override
-    public void enable2DAura(boolean enable) {
-        this.enable2DAura = enable;
-    }
-
-    @Override
-    public boolean is2DAuraEnabled() {
-        return this.enable2DAura;
-    }
+    
     @Override
     public boolean getKettleModeAura() {
         return this.kettleModeAura;
@@ -180,8 +156,9 @@ public class AuraDisplay implements IAuraDisplay {
     }
 
     @Override
-    public void setOverrideDBCAura(boolean override) {
+    public Aura setOverrideDBCAura(boolean override) {
         this.overrideDBCAura = override;
+        return parent;
     }
 
     @Override
