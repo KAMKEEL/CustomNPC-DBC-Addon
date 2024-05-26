@@ -517,6 +517,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
+    public byte getState2() {
+        return 0;
+    }
+    @Override
     public boolean isForm(int form) {
         return false;
     }

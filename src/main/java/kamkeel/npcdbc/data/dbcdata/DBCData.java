@@ -511,4 +511,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         return State;
     }
 
+    @Override
+    public byte getState2() {
+        return State2;
+    }
+
 }

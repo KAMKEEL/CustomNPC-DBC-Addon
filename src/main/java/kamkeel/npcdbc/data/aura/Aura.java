@@ -151,6 +151,12 @@ public class Aura implements IAura {
     }
 
     @Override
+    public IAura clone() {
+        Aura aura = new Aura();
+        aura.readFromNBT(writeToNBT());
+        return aura;
+    }
+    @Override
     public IAura save() {
         return AuraController.Instance.saveAura(this);
     }

@@ -118,7 +118,7 @@ public class MixinRenderAura2 {
                 s1.set(8.0f * size);
 
 
-            s.set(s.get() == 0 ? 1 : s.get() * Math.min(dbcData.Release, 100) * 0.015f);
+         s.set(s.get() == 0 ? 1 : s.get() * Math.min(dbcData.Release, 100) * 0.01f);
             return;
         }
         Entity entity = Utility.getEntityFromID(par1Entity.worldObj, par1Entity.getmot());

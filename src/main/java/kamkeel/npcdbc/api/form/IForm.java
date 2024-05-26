@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.api.form;
 
+import kamkeel.npcdbc.api.aura.IAura;
 import net.minecraft.entity.player.EntityPlayer;
 
 public interface IForm {
@@ -166,6 +167,10 @@ public interface IForm {
      */
     IFormStackable getStackable();
 
-
+    /**
+     *
+     * @return clones this IForm object and returns a new IForm with the same exact properties
+     */
+    IForm clone();
     IForm save();
 }

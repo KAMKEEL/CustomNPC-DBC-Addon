@@ -113,14 +113,7 @@ public class MixinDBCKiTech {
 
             if (enhancedAura == null)
                 enhancedAura = new EntityAura(p, new Aura().display.setOverrideDBCAura(true)).setIsVanilla(true).load(true).spawn();
-
-
-            if (enhancedAura != null) {
-                boolean isInKaioken = dbcData.isForm(DBCForm.Kaioken);
-                if (isInKaioken && !enhancedAura.children.containsKey("Kaioken"))
-                    new EntityAura(p, new Aura().display.setOverrideDBCAura(true)).setIsVanilla(true).loadKaioken().setParent(enhancedAura, "Kaioken").spawn();
-
-            }
+            
             if (enhancedAura != null)
                 ci.cancel();
         }
