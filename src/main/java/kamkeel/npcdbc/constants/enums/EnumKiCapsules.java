@@ -4,27 +4,25 @@ import static kamkeel.npcdbc.config.ConfigCapsules.*;
 
 public enum EnumKiCapsules {
 
-    Base(0, "Base", KiBaseStrength, KiBaseCooldown),
-    Super(1, "Super", KiSuperStrength,KiSuperCooldown),
-    Mega(2, "Mega", KiMegaStrength,KiMegaCooldown),
-    Giga(3, "Giga", KiGigaStrength,KiGigaCooldown),
-    Superior(4, "Superior", KiSuperiorStrength, KiSuperiorCooldown),
-    Master(5, "Master", KiMasterStrength,KiMasterCooldown);
+    Base("Base", KiBaseStrength, KiBaseCooldown),
+    Super("Super", KiSuperStrength,KiSuperCooldown),
+    Mega("Mega", KiMegaStrength,KiMegaCooldown),
+    Giga("Giga", KiGigaStrength,KiGigaCooldown),
+    Superior("Superior", KiSuperiorStrength, KiSuperiorCooldown),
+    Master("Master", KiMasterStrength,KiMasterCooldown);
 
-    private final int meta;
     private final String name;
     private final int strength;
     private final int cooldown;
 
-    private EnumKiCapsules(int meta, String name, int strength, int cooldown){
-        this.meta = meta;
+    EnumKiCapsules(String name, int strength, int cooldown){
         this.name = name;
         this.strength = strength;
         this.cooldown = cooldown;
     }
 
     public int getMeta(){
-        return this.meta;
+        return this.ordinal();
     }
 
     public String getName(){
