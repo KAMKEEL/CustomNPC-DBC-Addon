@@ -81,7 +81,7 @@ public enum EnumAuraTypes3D {
                 col = 16761125;
         } else if (playerAuraTypes == EnumAuraTypes3D.SaiyanBlue) {
             if (revampedAura)
-                col = 0x00ffff;
+                col = 0x48b6fa;//0x00ffff;
             else
                 col = 2805230;
         } else if (playerAuraTypes == EnumAuraTypes3D.SaiyanBlueEvo) {
