@@ -129,7 +129,7 @@ public class DBCAPI extends AbstractDBCAPI {
         if (race >= 0 && race <= 5) {
             return JRMCoreH.Races[race];
         }
-        return null;
+        return "";
     }
 
     /**
