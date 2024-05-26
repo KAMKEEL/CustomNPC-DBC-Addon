@@ -7,17 +7,17 @@ import JinRyuu.JRMCore.JRMCoreKeyHandler;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.sound.Sound;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.controllers.TransformController;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.TransformPacket;
-import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -107,6 +107,21 @@ public class MixinDBCKiTech {
             if (aura.display.overrideDBCAura)
                 ci.cancel();
             else if (dbcData.isForm(DBCForm.Base) || dbcData.isForm(DBCForm.Kaioken) && aura.display.hasKaiokenAura)
+                ci.cancel();
+        } else if (ConfigDBCClient.RevampAura) {
+            EntityAura enhancedAura = dbcData.auraEntity;
+
+            if (enhancedAura == null)
+                enhancedAura = new EntityAura(p, new Aura().display.setOverrideDBCAura(true)).setIsVanilla(true).load(true).spawn();
+
+
+            if (enhancedAura != null) {
+                boolean isInKaioken = dbcData.isForm(DBCForm.Kaioken);
+                if (isInKaioken && !enhancedAura.children.containsKey("Kaioken"))
+                    new EntityAura(p, new Aura().display.setOverrideDBCAura(true)).setIsVanilla(true).loadKaioken().setParent(enhancedAura, "Kaioken").spawn();
+
+            }
+            if (enhancedAura != null)
                 ci.cancel();
         }
 

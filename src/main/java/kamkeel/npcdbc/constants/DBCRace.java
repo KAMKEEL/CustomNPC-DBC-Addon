@@ -8,4 +8,8 @@ public class DBCRace {
     public static int NAMEKIAN = 3;
     public static int ARCOSIAN = 4;
     public static int MAJIN = 5;
+
+    public static boolean isSaiyan(int race) {
+        return race == 1 || race == 2;
+    }
 }

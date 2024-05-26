@@ -353,8 +353,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         }
     }
 
-    public boolean isDBCAuraOn() {
-        return containsSE(1) || containsSE(3) || containsSE(4) || containsSE(5) || containsSE(7);
+    public boolean isAuraOn() {
+        return isTransforming()|| containsSE(3) || containsSE(4) || containsSE(5) || containsSE(7);
     }
 
     public boolean isTransforming() {
@@ -374,7 +374,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public Aura getToggledAura() {
-        if (!isDBCAuraOn() && !isTransforming())
+        if (!isAuraOn() && !isTransforming())
             return null;
         return getAura();
     }

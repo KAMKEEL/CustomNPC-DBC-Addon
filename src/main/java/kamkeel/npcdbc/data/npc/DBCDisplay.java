@@ -525,4 +525,5 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public int getDBCColor() {
         return getAuraColor();
     }
+    
 }

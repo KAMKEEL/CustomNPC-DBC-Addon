@@ -19,6 +19,7 @@ public interface IAuraData {
     public boolean isForm(int form);
 
     public int getDBCColor();
+    public boolean isAuraOn();
     
     // Aura Color
     // Aura Size

@@ -4,7 +4,9 @@ import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.sound.AuraSound;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.EntityLightController;
@@ -38,6 +40,7 @@ public class EntityAura extends Entity {
     public boolean isKaioken, isInKaioken;
     public boolean isTransforming;
     public boolean isCharging;
+    public boolean isVanillaDefault; // when custom aura is hidden and revamp is enabled
 
     public EnumAuraTypes3D type3D;
     public EnumAuraTypes2D type2D;
@@ -82,17 +85,18 @@ public class EntityAura extends Entity {
             type3D = EnumAuraTypes3D.getType(auraData);
 
         type2D = display.type2D;
-        //if (aura.display.type2D == EnumAuraTypes2D.Default)
-           // type2D = EnumAuraTypes2D.getType(auraData);
-
-        int mimicColor = EnumAuraTypes3D.getManualAuraColor(type3D, true);
-        if (mimicColor != -1)
-            color1 = mimicColor;
+        if (aura.display.type2D == EnumAuraTypes2D.Default)
+            type2D = EnumAuraTypes2D.getType(auraData);
 
 
         // Vanilla DBC form colors
         if (auraData instanceof DBCData && ((DBCData) auraData).State > 0)
             color1 = auraData.getDBCColor();
+
+        int mimicColor = EnumAuraTypes3D.getManualAuraColor(type3D, true);
+        if (mimicColor != -1)
+            color1 = mimicColor;
+
 
         if (display.hasColor("color1")) //IAura color
             color1 = display.color1;
@@ -100,6 +104,11 @@ public class EntityAura extends Entity {
         Form form = PlayerDataUtil.getForm(entity);
         if (form != null && form.display.hasColor("aura")) //IForm color
             color1 = form.display.auraColor;
+
+        if (DBCRace.isSaiyan(auraData.getRace()) && (auraData.getState() == 5 || auraData.getState() == 6))
+            hasLightning = true;
+        else
+            hasLightning = false;
 
         if (all) {
             if (display.hasColor("color2"))
@@ -232,7 +241,7 @@ public class EntityAura extends Entity {
             load(false);
 
 
-        if (aura.display.enable2DAura && JGConfigClientSettings.CLIENT_DA13)
+        if (aura.display.type2D != EnumAuraTypes2D.None && JGConfigClientSettings.CLIENT_DA13)
             ParticleFormHandler.spawnAura2D(entity, type2D, color1, (height * 0.53f) * effectiveSize, EnumAuraTypes2D.getParticleWidth(auraData));
 
 
@@ -251,22 +260,26 @@ public class EntityAura extends Entity {
         fadeOut = true;
         if (auraSound != null)
              auraSound.fadeOut = true;
+
+        for (EntityAura child : children.values()) //children of root cannot have children
+            child.despawn();
     }
 
     public void onUpdate() {
 
         if (isRoot()) {
             Aura currentAura = PlayerDataUtil.getToggledAura(entity);
-            if (entity == null || currentAura == null || aura != currentAura) { //aura death condition
+            if (!isVanillaDefault && (entity == null || currentAura == null || aura != currentAura))  //aura death condition
                 despawn();
-
-                for (EntityAura child : children.values())
-                    child.despawn();
-            }
+            else if (isVanillaDefault && (!auraData.isAuraOn() || currentAura != null || !ConfigDBCClient.RevampAura))
+                despawn();
         }
         if (fadeIn && !fadeOut)
-            if (alpha < maxAlpha)
+            if (alpha < maxAlpha) {
                 alpha = Math.min(alpha + fadeFactor, maxAlpha);
+                if (alpha >= maxAlpha)
+                    fadeIn = false;
+            }
 
         if (fadeOut) {
             alpha -= fadeFactor;
@@ -355,6 +368,11 @@ public class EntityAura extends Entity {
                 text1 = loc;
                 break;
         }
+    }
+
+    public EntityAura setIsVanilla(boolean bo) {
+        this.isVanillaDefault = bo;
+        return this;
     }
 
     protected void readEntityFromNBT(NBTTagCompound tagCompund) {

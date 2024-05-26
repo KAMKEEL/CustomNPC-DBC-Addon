@@ -1,15 +1,11 @@
 package kamkeel.npcdbc.api.aura;
 
+import kamkeel.npcdbc.data.aura.Aura;
+
 public interface IAuraDisplay {
 
 
-    void enable3DAura(boolean enable);
 
-    boolean is3DAuraEnabled();
-
-    void enable2DAura(boolean enable);
-
-    boolean is2DAuraEnabled();
 
     boolean getKettleModeAura();
 
@@ -34,7 +30,7 @@ public interface IAuraDisplay {
 
     boolean getOverrideDBCAura();
 
-    void setOverrideDBCAura(boolean override);
+    Aura setOverrideDBCAura(boolean override);
 
     void toggleKaioken(boolean toggle);
 
