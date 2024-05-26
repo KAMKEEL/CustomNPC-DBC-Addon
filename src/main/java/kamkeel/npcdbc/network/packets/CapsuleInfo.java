@@ -10,17 +10,19 @@ import java.util.HashMap;
 
 public final class CapsuleInfo extends AbstractPacket {
     public static final String packetName = "NPC|CapInfo";
-    private boolean cooldown = false;
-    private boolean effectTime = false;
+
+    private InfoType infoType;
 
     public CapsuleInfo(){}
 
-    public CapsuleInfo(boolean cooldowns, boolean effectTime){
-        if(cooldowns && effectTime)
-            throw new RuntimeException("Can't send both EffectTime and Cooldowns at the same time");
+    public CapsuleInfo(InfoType infoType){
+        this.infoType = infoType;
+    }
 
-        this.cooldown = cooldowns;
-        this.effectTime = effectTime;
+    public enum InfoType{
+        STRENGTH,
+        COOLDOWN,
+        EFFECT_TIME
     }
 
     @Override
@@ -30,48 +32,53 @@ public final class CapsuleInfo extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        byte[] data;
-        if (this.cooldown) {
+        byte[] data = new byte[0];
+
+        if (this.infoType == InfoType.COOLDOWN) {
             data = CapsuleController.serializeHashMap(CapsuleController.Instance.capsuleCooldowns);
-        }else if(this.effectTime){
-            data = CapsuleController.serializeHashMap(CapsuleController.Instance.capsuleEffectTimes);
         }
-        else {
+        else if(this.infoType == InfoType.STRENGTH){
             data = CapsuleController.serializeHashMap(CapsuleController.Instance.capsuleStrength);
         }
-        out.writeBoolean(this.cooldown);
-        out.writeBoolean(this.effectTime);
+        else if(this.infoType == InfoType.EFFECT_TIME){
+            data = CapsuleController.serializeHashMap(CapsuleController.Instance.capsuleEffectTimes);
+        }
+
+        out.writeInt(this.infoType.ordinal());
         out.writeInt(data.length);
         out.writeBytes(data);
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        boolean cooldown = in.readBoolean();
-        boolean effectTime = in.readBoolean();
+
+        int type = in.readInt();
+        this.infoType = InfoType.values()[type];
+
         int length = in.readInt();
         byte[] data = new byte[length];
         in.readBytes(data);
 
-        if(cooldown){
+        if (this.infoType == InfoType.COOLDOWN) {
             try {
                 HashMap<Integer, HashMap<Integer, Integer>> newMap = CapsuleController.deserializeHashMap(data);
                 CapsuleController.Instance.capsuleCooldowns = newMap;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-        }else if(effectTime){
+        }
+        else if(this.infoType == InfoType.STRENGTH){
             try {
                 HashMap<Integer, HashMap<Integer, Integer>> newMap = CapsuleController.deserializeHashMap(data);
-                CapsuleController.Instance.capsuleEffectTimes = newMap;
+                CapsuleController.Instance.capsuleStrength = newMap;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        else {
+        else if(this.infoType == InfoType.EFFECT_TIME){
             try {
                 HashMap<Integer, HashMap<Integer, Integer>> newMap = CapsuleController.deserializeHashMap(data);
-                CapsuleController.Instance.capsuleStrength = newMap;
+                CapsuleController.Instance.capsuleEffectTimes = newMap;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
