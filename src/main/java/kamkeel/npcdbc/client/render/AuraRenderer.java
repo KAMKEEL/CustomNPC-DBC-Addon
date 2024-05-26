@@ -83,9 +83,8 @@ public class AuraRenderer extends RenderDBC {
 
         Random rand = new Random();
         GL11.glPushMatrix();
-        
-        float pulsingSize = pulseAnimation * 0.03f;
 
+        float pulsingSize = pulseAnimation * 0.03f;
         float kaiokenSize = 0;
 
         boolean isKaioken = aura.isKaioken || aura.aura.display.overrideDBCAura && aura.isInKaioken;
@@ -93,7 +92,7 @@ public class AuraRenderer extends RenderDBC {
             kaiokenSize = 1f * aura.auraData.getState2();
 
         float stateSizeFactor = getStateSizeFactor(aura.auraData) + kaiokenSize;
-        float sizeStateReleaseFactor = stateSizeFactor + (release / 100) * Math.max(stateSizeFactor * 0.75f, 3.5f); //aura gets 1.75x bigger at 100% release
+        float sizeStateReleaseFactor = stateSizeFactor + (release / 100) * Math.max(stateSizeFactor * 0.75f, 2.5f); //aura gets 1.75x bigger at 100% release
         float size = aura.size + 0.1f * sizeStateReleaseFactor;
         aura.effectiveSize = size;
 
@@ -101,10 +100,10 @@ public class AuraRenderer extends RenderDBC {
         if (stateSizeFactor < 4)  //fixes bug in which offset is not correct if size is too small
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
         GL11.glTranslated(posX, posY +yOffset, posZ);
-        
+
         GL11.glPushMatrix();
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
-        
+
 
         GL11.glDepthMask(false);
         GL11.glEnable(3042);
@@ -379,7 +378,7 @@ public class AuraRenderer extends RenderDBC {
         if (data.getFormID() > -1) {
             int release = data.getRelease();
             float size = JRMCoreHDBC.DBCsizeBasedOnRace2(race, state);
-            float effectiveSize = size * ValueUtil.clamp(release, 15, 50) * 0.015f;
+            float effectiveSize = size * ValueUtil.clamp(release, 15, 25) * 0.015f;
             float factor = effectiveSize / size * 10;
             return size * factor;
         }

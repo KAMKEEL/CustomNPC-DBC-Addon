@@ -27,7 +27,7 @@ public class FormMastery implements IFormMastery {
     public int kiDrainTimer = 100;
     public float kiDrainMultiFlat = 1.0f, kiDrainMultiPerLevel = -0.01f, kiDrainMultiMinOrMax = 0.1f;
 
-    public float maxHeat = 0; //seconds it takes to reach max heat
+    public int maxHeat = 0; //seconds it takes to reach max heat
     public float heatMultiFlat = 1.0f, heatMultiPerLevel = -0.01f, heatMultiMinOrMax = 0f; //0 min so form doesn't generate heat at max level
 
     public int painTime = 0; //in minutes
@@ -60,12 +60,12 @@ public class FormMastery implements IFormMastery {
     }
 
     @Override
-    public float getMaxHeat() {
+    public int getMaxHeat() {
         return maxHeat;
     }
 
     @Override
-    public void setMaxHeat(float maxHeat) {
+    public void setMaxHeat(int maxHeat) {
         this.maxHeat = maxHeat;
     }
 
@@ -523,7 +523,7 @@ public class FormMastery implements IFormMastery {
         dodgeChance = formMastery.getFloat("dodgeChance");
         damageNegation = formMastery.getFloat("damageNegation");
         painTime = formMastery.getInteger("painTime");
-        maxHeat = formMastery.getFloat("maxHeat");
+        maxHeat = formMastery.getInteger("maxHeat");
 
         NBTTagCompound attributeMulti = formMastery.getCompoundTag("attributeMulti");
         attributeMultiFlat = attributeMulti.getFloat("flat");
@@ -600,7 +600,7 @@ public class FormMastery implements IFormMastery {
         formMastery.setFloat("healthRequirement", healthRequirement);
         formMastery.setFloat("dodgeChance", dodgeChance);
         formMastery.setFloat("damageNegation", damageNegation);
-        formMastery.setFloat("maxHeat", maxHeat);
+        formMastery.setInteger("maxHeat", maxHeat);
         formMastery.setInteger("painTime", painTime);
 
         NBTTagCompound attributeMulti = new NBTTagCompound();
