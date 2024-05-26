@@ -487,15 +487,6 @@ public class DBCUtils {
                 int playerHP = getInt(player, "jrmcBdy");
                 int reducedHP = playerHP - damageAmount;
                 int newHP = Math.max(reducedHP, 0);
-
-                boolean friendlyFist = dbcStats.isFriendlyFist();
-                if (friendlyFist) {
-                    int ko = getInt(player, "jrmcHar4va");
-                    newHP = Math.max(reducedHP, 20);
-                    if (ko <= 0 && newHP == 20) {
-                        return 0;
-                    }
-                }
                 return playerHP - newHP;
             }
         }
@@ -512,6 +503,13 @@ public class DBCUtils {
         int reducedHP = playerHP - damageToHP;
         int newHP = Math.max(reducedHP, 0);
 
+        if (lastSetDamage != -1) {
+            damageToHP = Math.max(lastSetDamage, 0);
+            lastSetDamage = -1;
+            reducedHP = playerHP - damageToHP;
+            newHP = Math.max(reducedHP, 0);
+        }
+
         boolean friendlyFist = dbcStats.isFriendlyFist();
         if (friendlyFist) {
             int ko = getInt(player, "jrmcHar4va");
@@ -527,12 +525,6 @@ public class DBCUtils {
         }
 
         if (!isInCreativeMode(player)) {
-            if (lastSetDamage != -1) {
-                damageToHP = Math.max(lastSetDamage, 0);
-                lastSetDamage = -1;
-                reducedHP = playerHP - damageToHP;
-                newHP = Math.max(reducedHP, 0);
-            }
             setInt(newHP, player, "jrmcBdy");
         }
     }
