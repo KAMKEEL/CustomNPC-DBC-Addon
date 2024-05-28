@@ -167,6 +167,8 @@ public class ConfigCapsules
         {
             config.load();
 
+            config.setCategoryComment(CAPSULES, "All Capsule Strength configs are in PERCENT Restored. All cooldowns are in seconds.");
+
             // Capsules
             EnableCapsules = config.get(CAPSULES, "Enable Capsules", true).getBoolean(true);
             EnableCapsuleCooldowns = config.get(CAPSULES, "Enable Capsule Cooldowns", true, "All Cooldowns are in SECONDS").getBoolean(true);
@@ -175,19 +177,26 @@ public class ConfigCapsules
             MiscCapsuleMaxStack = config.get(CAPSULES, "Misc Capsule Max Stack Size", 16, "Max Stack Size per Misc Capsules").getInt(16);
 
             EnableKiCapsule = config.get(CAPSULES, "Ki Capsules", true, "Enable Ki Capsules").getBoolean(true);
-            KiCapsuleCooldownType = config.get(CAPSULES, "Ki Capsule Cooldown", 0, "0 - Cooldowns are per Type [All Ki Capsules], 1 - Cooldowns are per Tier [Individual Ki Capsule Tier]").getInt(0);
+            KiCapsuleCooldownType = config.get(CAPSULES, "Ki Capsule Cooldown", 0, "0 - Cooldowns are per Type [All Ki Capsules]," +
+                "\n1 - Cooldowns are per Tier [Individual Ki Capsule Tier]").getInt(0);
             KiCapsuleMaxStack = config.get(CAPSULES, "Ki Capsule Max Stack Size", 16, "Max Stack Size per Ki Capsules").getInt(16);
 
             EnableHealthCapsule = config.get(CAPSULES, "Health Capsules", true, "Enable Health Capsule").getBoolean(true);
-            HealthCapsuleCooldownType = config.get(CAPSULES, "Health Capsule Cooldown", 0, "0 - Cooldowns are per Type [All Health Capsules], 1 - Cooldowns are per Tier [Individual Health Capsule Tier]").getInt(0);
+            HealthCapsuleCooldownType = config.get(CAPSULES, "Health Capsule Cooldown", 0, "0 - Cooldowns are per Type [All Health Capsules]," +
+                "\n1 - Cooldowns are per Tier [Individual Health Capsule Tier]").getInt(0);
             HealthCapsuleMaxStack = config.get(CAPSULES, "Health Capsule Max Stack Size", 16, "Max Stack Size per Health Capsule").getInt(16);
 
             EnableStaminaCapsule = config.get(CAPSULES, "Stamina Capsules", true, "Enable Stamina Capsules").getBoolean(true);
-            StaminaCapsuleCooldownType = config.get(CAPSULES, "Stamina Capsule Cooldown", 0, "0 - Cooldowns are per Type [All Stamina Capsules], 1 - Cooldowns are per Tier [Individual Stamina Capsule Tier]").getInt(0);
+            StaminaCapsuleCooldownType = config.get(CAPSULES, "Stamina Capsule Cooldown", 0,
+                "0 - Cooldowns are per Type [All Stamina Capsules]," +
+                    "\n1 - Cooldowns are per Tier [Individual Stamina Capsule Tier]").getInt(0);
             StaminaCapsuleMaxStack = config.get(CAPSULES, "Stamina Capsule Max Stack Size", 16, "Max Stack Size per Stamina Capsule").getInt(16);
 
             EnableRegenCapsules = config.get(CAPSULES, "Regen Capsules", true, "Enable Regen Capsules").getBoolean(true);
-            RegenCapsuleCooldownType = config.get(CAPSULES, "Regen Capsule Cooldown", 2, "0 - Cooldowns are per Type [All Regen Capsules], 1 - Cooldowns are per Tier [Individual Regen Capsule Type and Tier], 2 - Cooldowns are per Regen Type [HP, Ki and Stamina regens have separate cooldowns]").getInt(2);
+            RegenCapsuleCooldownType = config.get(CAPSULES, "Regen Capsule Cooldown", 2,
+                "0 - Cooldowns are per Type [All Regen Capsules], " +
+                "\n1 - Cooldowns are per Tier [Individual Regen Capsule Type and Tier], " +
+                "\n2 - Cooldowns are per Regen Type [HP, Ki and Stamina regens have separate cooldowns]").getInt(2);
             RegenCapsuleMaxStack = config.get(CAPSULES, "Regen Capsule Max Stack Size", 16, "Max Stack Size per Regen Capsule").getInt(16);
 
             KiCapsuleCooldownType = ValueUtil.clamp(KiCapsuleCooldownType, 0, 1);
@@ -259,6 +268,8 @@ public class ConfigCapsules
 
             // Regen capsules
 
+            config.setCategoryComment(REGEN, "Regen Capsules use time  are in seconds and strength is percent restored per second");
+
             // HP Regeneration Settings
             RegenHPBaseStrength = (byte) ValueUtil.clamp(config.get(REGEN, "1. Base HP Regen Strength", 1).getInt(1), 1, Byte.MAX_VALUE);
             RegenHPBaseUseTime = ValueUtil.clamp(config.get(REGEN, "1. Base HP Regen Use Time", 10).getInt(10), 1, Integer.MAX_VALUE);
@@ -297,8 +308,6 @@ public class ConfigCapsules
             RegenStaminaMegaStrength = (byte) ValueUtil.clamp(config.get(REGEN, "9. Mega Stamina Regen Strength", 3).getInt(3), 1, Byte.MAX_VALUE);
             RegenStaminaMegaUseTime = ValueUtil.clamp(config.get(REGEN, "9. Mega Stamina Regen Use Time", 10).getInt(10), 1, Integer.MAX_VALUE);
             RegenStaminaMegaCooldown = ValueUtil.clamp(config.get(REGEN, "9. Mega Stamina Regen Cooldown", 30).getInt(30), 1, Integer.MAX_VALUE);
-
-
 
 
             // Misc Capsules

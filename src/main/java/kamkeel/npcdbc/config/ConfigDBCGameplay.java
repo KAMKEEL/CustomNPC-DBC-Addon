@@ -71,7 +71,7 @@ public class ConfigDBCGameplay
             WarriorCharge = ValueUtil.clamp(WarriorCharge, 0, 100);
 
             EnableNamekianRegen = config.get(NamekianRegeneration, "Enable Namekian Regeneration", true,
-                "Namekian Regeneration will automatically apply the Namek Regen Effect (dbc_effects.cfg), " +
+                "Namekian Regeneration will automatically apply the Namek Regen Effect (dbc/effects.cfg), " +
                     "\nwhen the Player falls below MIN Health and will stop continue to MAX Health.").getBoolean(true);
             NamekianRegenMin = config.get(NamekianRegeneration, "Min Namekian Regen", 20).getInt(20);
             NamekianRegenMax = config.get(NamekianRegeneration, "Max Namekian Regen", 50).getInt(50);
@@ -87,9 +87,9 @@ public class ConfigDBCGameplay
             config.setCategoryPropertyOrder(PotaraFusion, new ArrayList<>(Arrays.asList("Unique Earrings", "Wearable Earrings", "Tier 1 Time", "Tier 2 Time", "Tier 3 Time")));
             UniqueEarrings = config.get(PotaraFusion, "Unique Earrings", true, "Enabling Unique Earrings will cause all SPLIT Potaras to be hashed to a\n unique pair. Only the unique pairs can be used in a fusion.").getBoolean(true);
             WearableEarrings = config.get(PotaraFusion, "Wearable Earrings", true, "Enabling Wearable Earrings will check a radius around the worn player.\n Disabling this will require players to right-click each-other with valid earrings to fuse.").getBoolean(true);
-            PotaraOneTime = config.get(PotaraFusion, "Tier 1 Time", 10, "The amount of time the Tier One Potara Earrings Fusion lasts").getInt(10);
-            PotaraTwoTime = config.get(PotaraFusion, "Tier 2 Time", 15, "The amount of time the Tier Two Potara Earrings Fusion lasts").getInt(15);
-            PotaraThreeTime = config.get(PotaraFusion, "Tier 3 Time", 25, "The amount of time the Tier Three Potara Earrings Fusion lasts").getInt(25);
+            PotaraOneTime = config.get(PotaraFusion, "Tier 1 Time", 10, "The amount of time the Tier One Potara Earrings Fusion lasts. [In Minutes]").getInt(10);
+            PotaraTwoTime = config.get(PotaraFusion, "Tier 2 Time", 15, "The amount of time the Tier Two Potara Earrings Fusion lasts. [In Minutes]").getInt(15);
+            PotaraThreeTime = config.get(PotaraFusion, "Tier 3 Time", 25, "The amount of time the Tier Three Potara Earrings Fusion lasts. [In Minutes]").getInt(25);
             PotaraOneTime = Math.max(1, PotaraOneTime);
             PotaraTwoTime = Math.max(1, PotaraTwoTime);
             PotaraThreeTime = Math.max(1, PotaraThreeTime);
@@ -103,10 +103,7 @@ public class ConfigDBCGameplay
             RevampKiCharging = config.get(KiCharge, "0. Enable Ki Revamp", true, "Enabling this feature will allow huge modifications to Ki Charging as featured below.").getBoolean(true);
             KiPotentialUnlock = config.get(KiCharge, "Ki Charge Speed with Potential Unlock Level", true,
                 "Enabling this feature will make Ki Charging faster for players with a higher Release Level." +
-                "\nEach level is 20% faster than the base charging speed").getBoolean(true);
-            KiPotentialUnlock = config.get(KiCharge, "Ki Charge Speed with Potential Unlock Level", true,
-                "Enabling this feature will make Ki Charging faster for players with a higher Release Level." +
-                    "\nEach level is 20% faster than the base charging speed").getBoolean(true);
+                    "\nEach level: [1: 15ticks, 2: 14, 3: 13.... 10: 5 Ticks").getBoolean(true);
             KiChargeRate = config.get(KiCharge, "Ki Charge Rate", 1,
                 "Tweaking this number will allow for more precise ki charging. Default for DBC is 5.").getInt(1);
             KiChargeRate = ValueUtil.clamp(KiChargeRate, 1, 50);

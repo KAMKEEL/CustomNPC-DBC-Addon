@@ -7,11 +7,20 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.render.AuraRenderer;
+import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.entity.EntityAura;
+import kamkeel.npcdbc.items.ItemPotara;
+import kamkeel.npcdbc.items.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
+import noppes.npcs.CustomItems;
+import noppes.npcs.client.renderer.NpcItemRenderer;
+import noppes.npcs.client.renderer.items.CustomItemRenderer;
+import noppes.npcs.items.ItemScripted;
 
 
 public class ClientProxy extends CommonProxy {
@@ -27,7 +36,9 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent ev) {
         super.preInit(ev);
         eventsInit();
+
         RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
+        MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
     }
 
     public void init(FMLInitializationEvent ev) {
@@ -53,5 +64,9 @@ public class ClientProxy extends CommonProxy {
     @Override
     public int getNewRenderId() {
         return RenderingRegistry.getNextAvailableRenderId();
+    }
+
+    @Override
+    public void registerItem(Item item) {
     }
 }

@@ -62,7 +62,16 @@ public class Utility {
     }
 
     public static World getWorld(int dimensionID) {
-        return Utility.isServer() ? DimensionManager.getWorld(dimensionID) : Minecraft.getMinecraft().theWorld;
+        if (Utility.isServer()) {
+            return DimensionManager.getWorld(dimensionID);
+        } else {
+            return getClientWorld();
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private static World getClientWorld() {
+        return Minecraft.getMinecraft().theWorld;
     }
 
     public static UUID getUUID(Entity entity) {
