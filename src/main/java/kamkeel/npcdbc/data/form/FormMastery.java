@@ -28,7 +28,7 @@ public class FormMastery implements IFormMastery {
     public float kiDrainMultiFlat = 1.0f, kiDrainMultiPerLevel = -0.01f, kiDrainMultiMinOrMax = 0.1f;
 
     public int maxHeat = 0; //seconds it takes to reach max heat
-    public float heatMultiFlat = 1.0f, heatMultiPerLevel = -0.01f, heatMultiMinOrMax = 0f; //0 min so form doesn't generate heat at max level
+    public float heatMultiFlat = 1.0f, heatMultiPerLevel = 0.01f, heatMultiMinOrMax = 0f; //0 min so form doesn't generate heat at max level
 
     public int painTime = 0; //in minutes
     public float painMultiFlat = 1.0f, painMultiPerLevel = -0.01f, painMultiMinOrMax = 0f; //0 min so form doesn't generate pain at max level
