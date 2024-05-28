@@ -142,8 +142,13 @@ public class EntityAura extends Entity {
 
             //loadType();
 
-            if (display.hasAlpha("aura"))
-                maxAlpha = (float) display.alpha / 255;
+            if (display.hasAlpha("aura")){
+                // New Aura has many layers and gets extremely dark without
+                // this modification. Even alphas set to 30 will become fully
+                // solid without this change, due to the mass amount of layers
+                // rendered and overlapping
+                maxAlpha = (float) display.alpha / (255 * 5);
+            }
 
 
             if (display.hasSpeed())
@@ -258,7 +263,7 @@ public class EntityAura extends Entity {
 
             return;
         }
-            
+
 
         if (entity.ticksExisted % 10 == 0)
             load(false);
@@ -294,7 +299,7 @@ public class EntityAura extends Entity {
 
         if (isRoot() && !fadeOut) { //check aura death conditions
             Aura currentAura = PlayerDataUtil.getToggledAura(entity);
-            if (!isVanillaDefault && (entity == null || currentAura == null || aura != currentAura || auraData.getAuraEntity() != this))  
+            if (!isVanillaDefault && (entity == null || currentAura == null || aura != currentAura || auraData.getAuraEntity() != this))
                 despawn();
             else if (isVanillaDefault && (!auraData.isAuraOn() || currentAura != null || !ConfigDBCClient.RevampAura))
                 despawn();
@@ -304,7 +309,7 @@ public class EntityAura extends Entity {
         isInKaioken = auraData.isForm(DBCForm.Kaioken);
         if (!isInKaioken && isKaioken && !fadeOut)
             despawn();
-        
+
         if (fadeIn && !fadeOut)
             if (alpha < maxAlpha) {
                 alpha = Math.min(alpha + fadeFactor, maxAlpha);
