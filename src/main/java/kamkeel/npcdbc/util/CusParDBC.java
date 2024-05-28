@@ -24,20 +24,20 @@ public class CusParDBC {
     }
 
     public void spawn() {
-        float red = color >> 16 & 255;
-        float green = color >> 8 & 255;
-        float blue = color & 255;
+        float red = (color >> 16 & 255) / 255.0F;
+        float green = (color >> 8 & 255) / 255.0F;
+        float blue = (color & 255) / 255.0F;
 
         float red2 = 0, green2 = 0, blue2 = 0, red3 = 0, green3 = 0, blue3 = 0;
         if (color2 != -1) {
-            red2 = color2 >> 16 & 255;
-            green2 = color2 >> 8 & 255;
-            blue2 = color2 & 255;
+            red2 = (color2 >> 16 & 255) / 255.0F;
+            green2 = (color2 >> 8 & 255) / 255.0F;
+            blue2 = (color2 & 255) / 255.0F;
         }
         if (color3 != -1) {
-            red3 = color3 >> 16 & 255;
-            green3 = color3 >> 8 & 255;
-            blue3 = color3 & 255;
+            red3 = (color3 >> 16 & 255) / 255.0F;
+            green3 = (color3 >> 8 & 255) / 255.0F;
+            blue3 = (color3 & 255) / 255.0F;
         }
 
         double x = offset + (Math.random() - 0.5) * width;
