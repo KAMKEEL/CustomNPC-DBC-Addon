@@ -10,6 +10,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.client.render.PlayerOutline;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -44,10 +45,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
 
-
-    @Unique
-    public void renderOutline() {
-
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
+    public void renderOutline(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
+        PlayerOutline.renderOutline((RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))

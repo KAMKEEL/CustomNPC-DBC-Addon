@@ -32,15 +32,12 @@ public class ColorMode {
         return input.replace("§f", "").replace("§7", "§8").replace("&f", "");
     }
 
-    public static void colorToHex(int c) {
-        float h2 = (float)(c >> 16 & 255) / 255.0F;
-        float h3 = (float)(c >> 8 & 255) / 255.0F;
-        float h4 = (float)(c & 255) / 255.0F;
-        float h1 = 1.0F;
-        float r = h1 * h2;
-        float g = h1 * h3;
-        float b = h1 * h4;
-        GL11.glColor3f(r, g, b);
+    public static void glColorInt(int color, float alpha) {
+        float r = (color >> 16 & 255) / 255.0F;
+        float g = (color >> 8 & 255) / 255.0F;
+        float b = (color & 255) / 255.0F;
+
+        GL11.glColor4f(r, g, b, alpha);
     }
 
     public static void applyModelColor(int color, boolean isHurt) {

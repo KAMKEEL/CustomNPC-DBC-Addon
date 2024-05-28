@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.client.render.PlayerOutline;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.IAuraData;
@@ -53,6 +54,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public boolean isFnPressed;
 
     public EntityAura auraEntity;
+    public PlayerOutline outline = null;
 
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);

@@ -29,6 +29,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -39,6 +40,11 @@ import static noppes.npcs.NoppesStringUtils.translate;
 public class ClientEventHandler {
 
     private int soundTicker = -1;
+
+
+    @SubscribeEvent
+    public void renderPlayer(RenderPlayerEvent.Post e) {
+    }
 
     @SubscribeEvent
     public void onSkill(TickEvent.PlayerTickEvent event) {

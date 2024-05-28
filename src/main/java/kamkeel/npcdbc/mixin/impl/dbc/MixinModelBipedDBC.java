@@ -8,6 +8,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -64,6 +65,9 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
     @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At("HEAD"), cancellable = true)
     public void formRendering(float par1, String hair, String anim, CallbackInfoReturnable<String> ci, @Local(ordinal = 0) LocalRef<String> Hair) {
+        if (ClientProxy.RenderingOutline)
+            return;
+        
         if (ClientEventHandler.renderingPlayer != null) {
             Form form = DBCData.getForm(ClientEventHandler.renderingPlayer);
             if (form != null) {
@@ -147,6 +151,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo
                                          ci, @Local(ordinal = 0) LocalRef<String> hair, @Local(ordinal = 0) LocalIntRef
                                          st, @Local(ordinal = 3) LocalIntRef race) {
+        if (ClientProxy.RenderingOutline)
+            return;
         if (ClientEventHandler.renderingPlayer != null) {
             Form form = DBCData.getForm(ClientEventHandler.renderingPlayer);
 
