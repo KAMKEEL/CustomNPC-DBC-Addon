@@ -56,6 +56,7 @@ public class GuiNpcFormMenu {
                 if (id == -1) {
                     formsParent.setSubGui(new SubGuiFormGeneral(formsParent, form));
                 } else if (id == -2) {
+                    formsParent.setSubGui(new SubGuiFormDisplay(formsParent, form));
                 } else if (id == -3) {
                     formsParent.setSubGui(new SubGuiFormMastery(formsParent, form));
                 } else if (id == -4) {

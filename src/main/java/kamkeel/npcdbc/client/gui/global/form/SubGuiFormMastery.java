@@ -131,7 +131,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
 
         maxScroll += 23;
         y += 23;
-        scrollWindow.addLabel(new GuiNpcLabel(200,"master.kiDrainSettings", 4, y + 5));
+        scrollWindow.addLabel(new GuiNpcLabel(200,"mastery.kiDrainSettings", 4, y + 5));
         scrollWindow.getLabel(200).color = 0xffffff;
         scrollWindow.addButton(new GuiNpcButton(200, 200, y, 120, 20, new String[]{"display.hide", "display.show"}, showKiDrain ? 1 : 0));
         if(showKiDrain){
@@ -167,7 +167,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.getTextField(204).setMinMaxDefaultFloat(-10000f, 10000f, -0.01f);
             scrollWindow.getLabel(204).color = 0xffffff;
 
-            scrollWindow.addLabel(new GuiNpcLabel(205,"master.minMax", 180, y + 5));
+            scrollWindow.addLabel(new GuiNpcLabel(205,"mastery.minMax", 180, y + 5));
             scrollWindow.addTextField(new GuiNpcTextField(205, this, 295, y, 40, 20, String.valueOf(mastery.kiDrainMultiMinOrMax)));
             scrollWindow.getTextField(205).setMaxStringLength(10);
             scrollWindow.getTextField(205).floatsOnly = true;
@@ -202,10 +202,10 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.addTextField(new GuiNpcTextField(303, this, 135, y, 40, 20, String.valueOf(mastery.heatMultiPerLevel)));
             scrollWindow.getTextField(303).setMaxStringLength(10);
             scrollWindow.getTextField(303).floatsOnly = true;
-            scrollWindow.getTextField(303).setMinMaxDefaultFloat(0f, 10000f, -0.01f);
+            scrollWindow.getTextField(303).setMinMaxDefaultFloat(0f, 10000f, 0.01f);
             scrollWindow.getLabel(303).color = 0xffffff;
 
-            scrollWindow.addLabel(new GuiNpcLabel(304,"master.minMax", 180, y + 5));
+            scrollWindow.addLabel(new GuiNpcLabel(304,"mastery.minMax", 180, y + 5));
             scrollWindow.addTextField(new GuiNpcTextField(304, this, 295, y, 40, 20, String.valueOf(mastery.heatMultiMinOrMax)));
             scrollWindow.getTextField(304).setMaxStringLength(10);
             scrollWindow.getTextField(304).floatsOnly = true;
@@ -243,7 +243,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.getTextField(403).setMinMaxDefaultFloat(0f, 10000f, -0.01f);
             scrollWindow.getLabel(403).color = 0xffffff;
 
-            scrollWindow.addLabel(new GuiNpcLabel(404,"master.minMax", 180, y + 5));
+            scrollWindow.addLabel(new GuiNpcLabel(404,"mastery.minMax", 180, y + 5));
             scrollWindow.addTextField(new GuiNpcTextField(404, this, 295, y, 40, 20, String.valueOf(mastery.painMultiMinOrMax)));
             scrollWindow.getTextField(404).setMaxStringLength(10);
             scrollWindow.getTextField(404).floatsOnly = true;
@@ -278,10 +278,10 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.addTextField(new GuiNpcTextField(503, this, 135, y, 40, 20, String.valueOf(mastery.dodgeMultiPerLevel)));
             scrollWindow.getTextField(503).setMaxStringLength(10);
             scrollWindow.getTextField(503).floatsOnly = true;
-            scrollWindow.getTextField(503).setMinMaxDefaultFloat(0f, 10000f, -0.01f);
+            scrollWindow.getTextField(503).setMinMaxDefaultFloat(0f, 10000f, 0.01f);
             scrollWindow.getLabel(503).color = 0xffffff;
 
-            scrollWindow.addLabel(new GuiNpcLabel(504,"master.minMax", 180, y + 5));
+            scrollWindow.addLabel(new GuiNpcLabel(504,"mastery.minMax", 180, y + 5));
             scrollWindow.addTextField(new GuiNpcTextField(504, this, 295, y, 40, 20, String.valueOf(mastery.dodgeMultiMinOrMax)));
             scrollWindow.getTextField(504).setMaxStringLength(10);
             scrollWindow.getTextField(504).floatsOnly = true;
@@ -316,10 +316,10 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.addTextField(new GuiNpcTextField(603, this, 135, y, 40, 20, String.valueOf(mastery.damageNegationMultiPerLevel)));
             scrollWindow.getTextField(603).setMaxStringLength(10);
             scrollWindow.getTextField(603).floatsOnly = true;
-            scrollWindow.getTextField(603).setMinMaxDefaultFloat(0f, 10000f, -0.01f);
+            scrollWindow.getTextField(603).setMinMaxDefaultFloat(0f, 10000f, 0.01f);
             scrollWindow.getLabel(603).color = 0xffffff;
 
-            scrollWindow.addLabel(new GuiNpcLabel(604,"master.minMax", 180, y + 5));
+            scrollWindow.addLabel(new GuiNpcLabel(604,"mastery.minMax", 180, y + 5));
             scrollWindow.addTextField(new GuiNpcTextField(604, this, 295, y, 40, 20, String.valueOf(mastery.damageNegationMultiMinOrMax)));
             scrollWindow.getTextField(604).setMaxStringLength(10);
             scrollWindow.getTextField(604).floatsOnly = true;
