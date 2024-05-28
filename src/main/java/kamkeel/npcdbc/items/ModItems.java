@@ -39,12 +39,10 @@ public class ModItems {
                 GameRegistry.registerItem(MiscCapsules, "misccapsule");
             }
 
-            // @TODO: Add configs:
-            if(true){
+            if(ConfigCapsules.EnableRegenCapsules){
                 RegenCapsules = new ItemRegenCapsule();
                 GameRegistry.registerItem(RegenCapsules, "regencapsule");
             }
-
         }
 
         FruitOfMight = new ItemFruitOfMight(5, 0.4f, false).setTextureName(LocalizationHelper.MOD_PREFIX + "fruitofmight");

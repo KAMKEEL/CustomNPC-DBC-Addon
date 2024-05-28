@@ -9,9 +9,12 @@ import kamkeel.npcdbc.network.NetworkUtility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.CustomNpcsPermissions;
 import noppes.npcs.Server;
 
 import java.io.IOException;
+
+import static kamkeel.npcdbc.network.DBCAddonPermissions.GLOBAL_CUSTOMFORM;
 
 public class SaveForm extends AbstractPacket {
     public static final String packetName = "NPC|SaveForm";
@@ -38,7 +41,8 @@ public class SaveForm extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        //@TODO check permissions
+        if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_CUSTOMFORM))
+            return;
 
         Form form = new Form();
         form.readFromNBT(Server.readNBT(in));
