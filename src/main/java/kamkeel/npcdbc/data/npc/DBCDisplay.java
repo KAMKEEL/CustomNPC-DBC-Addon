@@ -336,13 +336,18 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     @Override
     public void setAura(IAura aura) {
-        setAura(aura.getID());
+        if (aura == null)
+            this.auraID = -1;
+        else
+            setAura(aura.getID());
     }
 
     @Override
     public void setAura(int auraID) {
         if (AuraController.Instance.has(auraID))
             this.auraID = auraID;
+        else
+            this.auraID = -1;
     }
 
     @Override
