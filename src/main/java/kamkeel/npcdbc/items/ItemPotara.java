@@ -209,6 +209,7 @@ public class ItemPotara extends ItemArmor {
 
 
     @Override
+    @SideOnly(Side.CLIENT)
     public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int par3){
         if(!isSplit(itemStack))
             return ModelPotara.BOTH_EARS;
