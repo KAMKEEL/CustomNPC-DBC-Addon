@@ -23,14 +23,14 @@ public class ParticleFormHandler {
         EnumAuraTypes2D types = data.getAuraEntity().type2D;
         int color = data.getAuraEntity().color1;
         float numberOfParticles = EnumAuraTypes2D.getParticleWidth(data);
-        
+
         switch (types) {
             case Base:
                 for (int k = 0; k < JGConfigClientSettings.get_da1(); ++k) {
                     double posY = entity.posY + (entity instanceof EntityPlayerSP ? 2 : 0.0);
-                    float red = color >> 16 & 255;
-                    float green = color >> 8 & 255;
-                    float blue = color & 255;
+                    float red = (color >> 16 & 255) / 255.0F;
+                    float green = (color >> 8 & 255) / 255.0F;
+                    float blue = (color & 255) / 255.0F;
 
                     for (float i = 0; i < numberOfParticles; ++i) {
                         float life = 0.8f * height;
@@ -91,7 +91,7 @@ public class ParticleFormHandler {
                     green = 244;
                     blue = 240;
                     alpha = 0.9f;
-                    for (i = 0; i < 2; ++i) { //white orange 
+                    for (i = 0; i < 2; ++i) { //white orange
                         life = 0.3F * height;
                         width = height * 0.5f;
                         x = offset + (Math.random() - 0.5) * width;
@@ -179,7 +179,7 @@ public class ParticleFormHandler {
                     green = 244;
                     blue = 240;
                     alpha = 0.9f;
-                    for (int i = 0; i < 2; ++i) { //white  
+                    for (int i = 0; i < 2; ++i) { //white
                         life = 0.4F * height;
                         width = height * 0.5f;
                         x = offset + (Math.random() - 0.5) * width;
@@ -719,7 +719,7 @@ public class ParticleFormHandler {
                         particle.worldObj.spawnEntityInWorld(particle);
                     }
                 }
-                    
+
                 break;
             case GoDToppo:
                 for (int r = 0; r < JGConfigClientSettings.get_da1(); ++r) {
