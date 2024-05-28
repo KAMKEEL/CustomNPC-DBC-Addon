@@ -33,8 +33,7 @@ public class ItemRegenCapsule extends Item {
     protected IIcon[] icons;
 
     public ItemRegenCapsule() {
-        // @TODO Change to config value later
-        this.setMaxStackSize(ConfigCapsules.KiCapsuleMaxStack);
+        this.setMaxStackSize(ConfigCapsules.RegenCapsuleMaxStack);
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
         this.setCreativeTab(CustomItems.tabMisc);
