@@ -39,14 +39,12 @@ public class PlayerOutline {
     public static void renderOutline(RenderPlayerJBRA render, EntityPlayer p) {
         //Uncomment line below
 
-        DBCData.get(p).outline = new PlayerOutline(0xCfffff, 0x0d2dba).setAlpha(1f, 1f);
+       // DBCData.get(p).outline = new PlayerOutline(0xCfffff, 0x0d2dba);
         if (DBCData.get(p).outline == null)
             return;
         
         PlayerOutline outline = DBCData.get(p).outline;
         ClientProxy.RenderingOutline = true;
-        float scale = 1.045f;
-
 
         glPushMatrix();
         GL11.glEnable(GL_BLEND);
@@ -57,7 +55,7 @@ public class PlayerOutline {
         glDisable(GL_DEPTH_TEST);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-
+        float scale = 1.045f;
         ///////////////////////////////////
         ///////////////////////////////////
         //Outer
