@@ -107,6 +107,17 @@ public class MixinRenderAura2 {
         hasColor3.set(aur.getColL3() > 0 && aur.getTexL3().length() > 2);
     }
 
+    // Calculations not correctly
+//    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V", ordinal = 3))
+//    private void setAuraTranslate(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(name = "cl3b") LocalBooleanRef hasColor3) {
+//        EntityAura2 aur = entityAura.get();
+//        IEntityAura aura = (IEntityAura) aur;
+//        if (aura.getSize() != 1f) {
+//            float ySize = (float) args.get(1) * aura.getSize();
+//            args.set(1, ySize);
+//        }
+//    }
+
     @Inject(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;getState2()F", ordinal = 0, shift = At.Shift.BEFORE))
     private void fixAuraSize(EntityAura2 par1Entity, double parX, double parY, double parZ, float par8, float par9, CallbackInfo ci, @Local(name = "s1") LocalFloatRef s1, @Local(name = "s") LocalFloatRef s, @Local(name = "cr") LocalFloatRef cr) {
         EntityPlayer auraOwner = par1Entity.worldObj.getPlayerEntityByName(par1Entity.getmot());
