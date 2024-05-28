@@ -42,8 +42,8 @@ public class ConfigDBCClient
             config.load();
 
             // General
-            EnableHDTexturesProperty = config.get(GENERAL, "Enable HD Textures", true, "Uses internal DBC Addon HD Textures");
-            EnableHDTextures = EnableHDTexturesProperty.getBoolean(true);
+            EnableHDTexturesProperty = config.get(GENERAL, "Enable HD Textures", false, "Uses internal DBC Addon HD Textures");
+            EnableHDTextures = EnableHDTexturesProperty.getBoolean(false);
 
             HideInfoMessageProperty = config.get(GENERAL, "Hide Info Messages", false, "Hides Change Form and other various transformation messages in game");
             HideInfoMessage = HideInfoMessageProperty.getBoolean(false);
