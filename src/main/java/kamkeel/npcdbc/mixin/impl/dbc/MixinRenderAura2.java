@@ -4,10 +4,7 @@ import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.DragonBC.common.Npcs.RenderAura2;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import com.llamalad7.mixinextras.sugar.ref.*;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.mixin.IEntityAura;
 import kamkeel.npcdbc.util.Utility;
@@ -94,9 +91,10 @@ public class MixinRenderAura2 {
         EntityAura2 aur = entityAura.get();
         IEntityAura aura = (IEntityAura) aur;
         if (aura.getSize() != 1f) {
-            float xSize = (float) args.get(0) * aura.getSize();
-            float ySize = (float) args.get(1) * aura.getSize();
-            float zSize = (float) args.get(2) * aura.getSize();
+            float size = aura.getSize();
+            float xSize = (float) args.get(0) * size;
+            float ySize = (float) args.get(1) * size;
+            float zSize = (float) args.get(2) * size;
 
             args.set(0, xSize);
             args.set(1, ySize);
@@ -107,16 +105,16 @@ public class MixinRenderAura2 {
         hasColor3.set(aur.getColL3() > 0 && aur.getTexL3().length() > 2);
     }
 
-    // Calculations not correctly
-//    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V", ordinal = 3))
-//    private void setAuraTranslate(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(name = "cl3b") LocalBooleanRef hasColor3) {
-//        EntityAura2 aur = entityAura.get();
-//        IEntityAura aura = (IEntityAura) aur;
-//        if (aura.getSize() != 1f) {
-//            float ySize = (float) args.get(1) * aura.getSize();
-//            args.set(1, ySize);
-//        }
-//    }
+    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V", ordinal = 0))
+    private void fixAuraOffset(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(ordinal = 1) LocalDoubleRef parY) {
+        IEntityAura aura = (IEntityAura) entityAura.get();
+        if (aura.getSize() != 1f) {
+            float fixedOffset = (float) (parY.get() + 3.0F * aura.getSize());
+            args.set(1, fixedOffset);
+        }
+
+    }
+    
 
     @Inject(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;getState2()F", ordinal = 0, shift = At.Shift.BEFORE))
     private void fixAuraSize(EntityAura2 par1Entity, double parX, double parY, double parZ, float par8, float par9, CallbackInfo ci, @Local(name = "s1") LocalFloatRef s1, @Local(name = "s") LocalFloatRef s, @Local(name = "cr") LocalFloatRef cr) {
