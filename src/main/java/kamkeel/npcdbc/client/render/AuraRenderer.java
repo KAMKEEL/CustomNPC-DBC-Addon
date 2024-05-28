@@ -60,7 +60,7 @@ public class AuraRenderer extends RenderDBC {
     }
 
     public void renderAura(EntityAura aura, double posX, double posY, double posZ) {
-        if (aura.aura.display.kettleModeType == 1 || aura.aura.display.type == EnumAuraTypes3D.None || !JGConfigClientSettings.CLIENT_DA14)
+        if (aura.aura.display.kettleModeType == 1 || aura.type3D == EnumAuraTypes3D.None || !JGConfigClientSettings.CLIENT_DA14)
             return;
 
         byte race = aura.auraData.getRace();

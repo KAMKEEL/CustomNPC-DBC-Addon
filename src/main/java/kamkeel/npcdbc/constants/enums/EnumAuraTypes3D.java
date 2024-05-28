@@ -48,7 +48,7 @@ public enum EnumAuraTypes3D {
         boolean divine = data.isForm(DBCForm.Divine);
         boolean ui = data.isForm(DBCForm.UltraInstinct);
         boolean god = data.isForm(DBCForm.GodOfDestruction);
-        
+
         if (ui)
             return UI;
         else if (god)
@@ -69,7 +69,7 @@ public enum EnumAuraTypes3D {
                     return SaiyanBlueEvo;
 
         }
-        return None;
+        return Default;
     }
 
     public static int getManualAuraColor(EnumAuraTypes3D playerAuraTypes, boolean revampedAura) {

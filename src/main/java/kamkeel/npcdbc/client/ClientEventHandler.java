@@ -205,6 +205,8 @@ public class ClientEventHandler {
                 DBCData dbcData = null;
                 DBCDisplay display = null;
                 boolean isInKaioken = false;
+
+                boolean vanillaAura = false;
                 if (isNPC) {
                     EntityCustomNpc npc = (EntityCustomNpc) event.entity;
                     display = ((INPCDisplay) npc.display).getDBCDisplay();
@@ -212,8 +214,13 @@ public class ClientEventHandler {
                         return;
                     aura = display.getToggledAura();
 
-                    if (aura == null)
-                        return;
+                    if (aura == null){
+                        if(display.isAuraOn()){
+                            vanillaAura = true;
+                        } else {
+                            return;
+                        }
+                    }
                 } else if (isPlayer) {
                     dbcData = DBCData.get((EntityPlayer) event.entity);
                     aura = dbcData.getToggledAura();
@@ -227,8 +234,10 @@ public class ClientEventHandler {
                 EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
                 if (ConfigDBCClient.RevampAura) {
                     if (enhancedAura == null)
-                        new EntityAura(event.entity, aura).load(true).spawn();
-                    
+                        if(vanillaAura)
+                            new EntityAura(event.entity, new Aura().display.setOverrideDBCAura(true)).setIsVanilla(true).load(true).spawn();
+                        else
+                            new EntityAura(event.entity, aura).load(true).spawn();
                 } else {
                     if (enhancedAura != null)
                         enhancedAura.despawn();

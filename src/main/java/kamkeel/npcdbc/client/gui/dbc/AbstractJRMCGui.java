@@ -194,8 +194,6 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
         GuiInfo.ReferenceIDs[] guiReferences = GuiInfo.ReferenceIDs.values();
         int xOffset = 0;
 
-
-
         if (!JRMCoreConfig.ssurl.contains("empty") && JRMCoreConfig.ssurl.contains("ttp")) {
             GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.SERVER_SHOP;
             //String name = "Server Shop";

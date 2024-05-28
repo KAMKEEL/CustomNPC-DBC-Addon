@@ -353,10 +353,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     @Override
     public void toggleAura(boolean toggle) {
-        if (AuraController.getInstance().has(auraID))
-            this.auraOn = toggle;
-        else
-            this.auraOn = false;
+        this.auraOn = toggle;
     }
 
     @Override
