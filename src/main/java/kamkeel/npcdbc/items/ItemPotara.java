@@ -2,6 +2,7 @@ package kamkeel.npcdbc.items;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.model.ModelPotara;
 import kamkeel.npcdbc.client.render.PotaraItemRenderer;
@@ -39,8 +40,6 @@ public class ItemPotara extends ItemArmor {
         this.setHasSubtypes(true);
         this.setMaxDamage(0);
         this.setCreativeTab(CustomItems.tabMisc);
-
-        MinecraftForgeClient.registerItemRenderer(this, new PotaraItemRenderer());
     }
 
     @Override
