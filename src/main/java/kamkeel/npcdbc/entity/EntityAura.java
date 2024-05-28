@@ -153,6 +153,8 @@ public class EntityAura extends Entity {
 
             if (display.hasSpeed())
                 speed = (int) display.speed;
+            if (display.hasSize())
+                size = display.size;
 
             light = new EntityLightController(entity);
 

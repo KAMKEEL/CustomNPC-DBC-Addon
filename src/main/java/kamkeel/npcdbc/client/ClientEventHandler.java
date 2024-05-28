@@ -214,13 +214,12 @@ public class ClientEventHandler {
                         return;
                     aura = display.getToggledAura();
 
-                    if (aura == null){
-                        if(display.isAuraOn()){
-                            vanillaAura = true;
-                        } else {
-                            return;
-                        }
-                    }
+                    if (aura == null && display.isAuraOn())
+                        vanillaAura = true;
+                    else
+                        return;
+
+
                 } else if (isPlayer) {
                     dbcData = DBCData.get((EntityPlayer) event.entity);
                     aura = dbcData.getToggledAura();
