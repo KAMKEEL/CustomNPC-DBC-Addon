@@ -113,7 +113,7 @@ public class ServerEventHandler {
         byte maxRelease = (byte) ((byte) (50 + dbcData.stats.getPotentialUnlockLevel() * 5)
                     + (byte) (StatusEffectController.Instance.hasEffect(player,  Effects.OVERPOWER) ? ConfigDBCEffects.OVERPOWER_AMOUNT : 0));
 
-        int newRelease = ValueUtil.clamp(!powerDown ? release + releaseFactor : release - releaseFactor, (byte) 0, maxRelease);
+        int newRelease = ValueUtil.clamp(!powerDown ? release + releaseFactor : release - releaseFactor, (byte) releaseFactor, maxRelease);
         dbcData.getRawCompound().setByte("jrmcRelease", (byte) newRelease);
     }
 
