@@ -187,6 +187,16 @@ public class StatusEffectController implements IStatusEffectHandler {
         removeEffect((EntityPlayer) player.getMCEntity(), id);
     }
 
+    @Override
+    public void clearEffects(IPlayer player) {
+        if(player == null || player.getMCEntity() == null)
+            return;
+        HashMap<Integer, PlayerEffect> effects = playerEffects.get(player.getMCEntity().getUniqueID());
+        if(effects != null){
+            effects.clear();
+        }
+    }
+
     public boolean hasEffect(EntityPlayer player, int id) {
         HashMap<Integer, PlayerEffect> currentEffects;
         UUID uuid = Utility.getUUID(player);

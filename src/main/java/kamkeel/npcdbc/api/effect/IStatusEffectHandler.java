@@ -36,4 +36,6 @@ public interface IStatusEffectHandler {
      * @param id ID of Status Effect
      */
     void removeEffect(IPlayer player, int id);
+
+    void clearEffects(IPlayer player);
 }
