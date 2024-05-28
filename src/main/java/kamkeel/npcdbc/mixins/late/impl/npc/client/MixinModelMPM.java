@@ -59,7 +59,7 @@ public abstract class MixinModelMPM extends ModelNPCMale {
         NPCDBCModel.rot6 = p6;
     }
 
-    @Inject(method = "renderHead", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 2, shift = At.Shift.BEFORE), cancellable = true)
+    @Inject(method = "renderHead", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 2, shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCHead(EntityCustomNpc entity, float f, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled) {
@@ -68,7 +68,7 @@ public abstract class MixinModelMPM extends ModelNPCMale {
         }
     }
 
-    @Inject(method = "renderBody", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.BEFORE), cancellable = true)
+    @Inject(method = "renderBody", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCBody(EntityCustomNpc entity, float f, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled){
@@ -76,21 +76,21 @@ public abstract class MixinModelMPM extends ModelNPCMale {
         }
     }
 
-    @Inject(method = "renderLegs", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/part/ModelLegs;render(F)V", shift = At.Shift.BEFORE), cancellable = true)
+    @Inject(method = "renderLegs", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/part/ModelLegs;render(F)V", shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCLegs(EntityCustomNpc entity, float f, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, legs);
     }
 
-    @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
+    @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0, shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCLeftArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, bipedLeftArm);
     }
 
-    @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
+    @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 1, shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCRightArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
