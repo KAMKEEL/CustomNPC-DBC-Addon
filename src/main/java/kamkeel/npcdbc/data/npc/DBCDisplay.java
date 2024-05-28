@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.data.npc;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
@@ -36,7 +38,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     // Face Display //
     public int eyeColor = -1;
-    public int noseType = 1, mouthType = 1, eyeType = 0, arcoState;
+    public int noseType = 0, mouthType = 0, eyeType = 0, arcoState;
 
     // Aura Display //
     public boolean auraOn = false;
@@ -53,6 +55,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     private EnumAuraTypes2D enumAuraTypes = EnumAuraTypes2D.None;
 
     public EntityAura auraEntity;
+    public static Form fakeForm;
 
     public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;
@@ -415,6 +418,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     public Form getForm() {
+        if(formID == - 100 && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT){
+            if(fakeForm == null)
+                fakeForm = new Form(-100, "EXTREME_FAKE_FORM");
+            return fakeForm;
+        }
         if (formID > 0)
             return (Form) FormController.Instance.get(formID);
         return null;
@@ -437,7 +445,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             formID = f.id;
     }
 
- 
+
     public boolean isInForm() {
         return formID > -1 && getForm() != null;
     }
@@ -499,7 +507,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public boolean isChargingKi() {
         return auraOn;
     }
-    
+
 
     @Override
     public int getFormID() {
@@ -529,5 +537,5 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public int getDBCColor() {
         return getAuraColor();
     }
-    
+
 }
