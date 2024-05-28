@@ -5,7 +5,7 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
-import kamkeel.npcdbc.mixin.INPCDisplay;
+import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.entity.EntityNPCInterface;

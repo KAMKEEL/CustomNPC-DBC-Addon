@@ -7,7 +7,7 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
-import kamkeel.npcdbc.mixin.IPlayerDBCInfo;
+import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.controllers.data.PlayerData;

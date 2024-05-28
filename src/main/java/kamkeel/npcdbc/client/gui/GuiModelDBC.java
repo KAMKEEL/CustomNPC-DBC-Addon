@@ -2,7 +2,7 @@ package kamkeel.npcdbc.client.gui;
 
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
-import kamkeel.npcdbc.mixin.INPCDisplay;
+import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import noppes.npcs.client.gui.model.GuiModelColor;

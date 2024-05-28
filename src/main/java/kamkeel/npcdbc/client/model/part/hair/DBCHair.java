@@ -8,7 +8,7 @@ import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
-import kamkeel.npcdbc.mixin.INPCDisplay;
+import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;

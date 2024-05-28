@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.client.gui;
 
 import kamkeel.npcdbc.data.npc.DBCStats;
-import kamkeel.npcdbc.mixin.INPCStats;
+import kamkeel.npcdbc.mixins.late.INPCStats;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityNPCInterface;

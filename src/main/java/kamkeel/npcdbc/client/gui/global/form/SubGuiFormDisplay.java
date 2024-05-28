@@ -1,11 +1,10 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
-import kamkeel.npcdbc.mixin.INPCDisplay;
+import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;

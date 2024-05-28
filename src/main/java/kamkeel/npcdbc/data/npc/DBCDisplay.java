@@ -14,7 +14,7 @@ import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.entity.EntityAura;
-import kamkeel.npcdbc.mixin.INPCStats;
+import kamkeel.npcdbc.mixins.late.INPCStats;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
