@@ -16,7 +16,7 @@ public class MixinEntityAuraRing {
     @Shadow
     private String mot;
 
-    @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", shift = At.Shift.AFTER), remap = true)
+    @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", shift = At.Shift.AFTER, remap = true), remap = true)
     private void redirect(CallbackInfo ci, @Local(name = "other") LocalRef<Entity> player) {
 
         if (player.get() != null)

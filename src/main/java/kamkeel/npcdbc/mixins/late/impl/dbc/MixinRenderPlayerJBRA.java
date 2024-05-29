@@ -63,8 +63,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
         }
         if (form != null) {
-
-
             //set body colors
             if (form.display.hasColor("bodycm"))
                 bodyCM.set(form.display.bodyCM);

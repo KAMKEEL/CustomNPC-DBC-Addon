@@ -35,8 +35,6 @@ public class MixinRenderAura2 {
         if (aura.hasLightning())
             return 5f;
         return instance.getState();
-
-
     }
 
     @Redirect(method = "lightning", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;getLightLivingTime()I"))
@@ -46,8 +44,6 @@ public class MixinRenderAura2 {
             return aura.getLightningSpeed();
 
         return instance.getLightLivingTime();
-
-
     }
 
     @Inject(method = "lightning", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/Npcs/RenderAura2;lightVertN:I", ordinal = 0, shift = At.Shift.AFTER))
