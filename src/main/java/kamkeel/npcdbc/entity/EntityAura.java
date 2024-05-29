@@ -53,7 +53,7 @@ public class EntityAura extends Entity {
     public EnumAuraTypes3D type3D;
     public EnumAuraTypes2D type2D;
     public int color1 = -1, color2 = -1, color3 = -1, speed = 10, renderPass;
-    public float alpha, maxAlpha = 0.05f, size = 1f, effectiveSize;
+    public float alpha, maxAlpha = 0.05f, size = 1f, effectiveSize, skinColorAlpha = 0.25f;
 
     public boolean hasLightning;
     public int lightningColor = 0x25c9cf, lightningAlpha = 255;
@@ -157,6 +157,7 @@ public class EntityAura extends Entity {
                 // rendered and overlapping
                 maxAlpha = (float) display.alpha / (255 * 5);
             }
+            //  maxAlpha = 0.51f;
 
 
             if (display.hasSpeed())
@@ -272,12 +273,13 @@ public class EntityAura extends Entity {
         en.setRenderPass(ClientProxy.SecondRenderPass);
         
         if (entity.isInWater()) {
-            renderPass = 0;
+            // renderPass = 0;
             en.setRenderPass(0);
-        } else {
+        } else if (!isKaioken) {
             renderPass =1;
         }
         if (isKaioken) {
+            //  renderPass = 0;
             if (parent.isVanillaDefault && !DBCForm.isSaiyanGod(auraData.getState()))
                 fadeOut = true;
 
@@ -329,15 +331,19 @@ public class EntityAura extends Entity {
         if (!isInKaioken && isKaioken && !fadeOut)
             despawn();
 
+
         if (fadeIn && !fadeOut)
             if (alpha < maxAlpha) {
+                float fadeFactor = this.fadeFactor + (maxAlpha / 1) * 0.04f;
                 alpha = Math.min(alpha + fadeFactor, maxAlpha);
                 if (alpha >= maxAlpha)
                     fadeIn = false;
             }
 
+
         if (fadeOut) {
-            alpha -= fadeFactor;
+            float fadeFactor = this.fadeFactor + (maxAlpha / 1) * 0.04f;
+            alpha -= fadeFactor;//(float) Math.pow(fadeFactor, 1 + (alpha / 1) * 7);
             if (alpha <= 0)
                 setDead();
         }
