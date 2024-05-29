@@ -56,7 +56,6 @@ public final class PlaySound extends AbstractPacket {
             return;
 
         PacketHandler.Instance.sendToTrackingPlayers(sound.entity, new PlaySound(sound).generatePacket());
-
     }
 
     public static void play(Entity entity, String soundDir) {

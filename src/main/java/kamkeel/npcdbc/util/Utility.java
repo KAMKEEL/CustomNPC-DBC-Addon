@@ -3,6 +3,8 @@ package kamkeel.npcdbc.util;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.sound.ClientSound;
+import kamkeel.npcdbc.data.SoundSource;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -228,6 +230,17 @@ public class Utility {
         } catch (IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void playClientSoundAll(String directory, Entity entity, boolean all){
+
+        new SoundSource(directory, entity).play(all)
+
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void playClientSound(String directory, Entity entity, boolean all){
+        new ClientSound(new SoundSource(directory, entity)).play(all);
     }
 
 }

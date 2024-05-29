@@ -1,5 +1,8 @@
 package kamkeel.npcdbc.combat;
 
+import kamkeel.npcdbc.data.SoundSource;
+import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.PlaySound;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockTallGrass;
@@ -28,9 +31,8 @@ public class InstantTransmission {
             double dz = Math.cos((angle * Math.PI) / 180) * distance;
             if (blockSuitable(tar, (int) (tar.posX + dx), (int) tar.posY, (int) (tar.posZ + dz))) {
                 IEntity<?> pl = NpcAPI.Instance().getIEntity(p);
-                // TODO: Make Util Sound Functions
-                // new Sound("jinryuudragonbc:DBC5.instant_transmission", p).play(true);
-
+                SoundSource soundSource = new SoundSource("jinryuudragonbc:DBC5.instant_transmission", p);
+                PacketHandler.Instance.sendToTrackingPlayers(soundSource.entity, new PlaySound(soundSource).generatePacket());
 
                 pl.setPosition(tar.posX + dx, tar.posY, tar.posZ + dz); // y needs fixing
                 pl.setRotation((float) (angle + lookinga));
