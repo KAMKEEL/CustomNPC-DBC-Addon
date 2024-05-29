@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
+import noppes.npcs.util.ValueUtil;
 
 import java.util.Arrays;
 
@@ -566,6 +567,40 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public boolean isFlying() {
         return dbcData.isFlying;
     }
+
+    @Override
+    public void setAllowFlight(boolean allowFlight) {
+        dbcData.flightEnabled = allowFlight;
+    }
+
+    @Override
+    public void setFlightSpeedRelease(int release) {
+        dbcData.flightSpeedRelease = ValueUtil.clamp(release, 1, 100);
+    }
+
+    @Override
+    public void setBaseFlightSpeed(int speed) {
+        dbcData.baseFlightSpeed = ValueUtil.clamp(speed, 1, 10);
+    }
+
+    @Override
+    public void setDynamicFlightSpeed(int speed) {
+        dbcData.dynamicFlightSpeed = ValueUtil.clamp(speed, 1, 10);
+    }
+
+    @Override
+    public void setFlightGravity(boolean isEffected) {
+        dbcData.flightGravity = isEffected;
+    }
+
+    @Override
+    public void setFlightDefaults() {
+        dbcData.baseFlightSpeed = 1.0f;
+        dbcData.dynamicFlightSpeed = 1.0f;
+        dbcData.flightEnabled = true;
+        dbcData.flightSpeedRelease = 100;
+    }
+
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     // Form stuff

@@ -202,6 +202,18 @@ public interface IDBCAddon extends IDBCPlayer {
 
     boolean isFlying();
 
+    void setAllowFlight(boolean allowFlight);
+
+    void setFlightSpeedRelease(int release);
+
+    void setBaseFlightSpeed(int speed);
+
+    void setDynamicFlightSpeed(int speed);
+
+    void setFlightGravity(boolean isEffected);
+
+    void setFlightDefaults();
+
     void giveForm(String formName);
 
     void giveForm(IForm form);
@@ -271,7 +283,6 @@ public interface IDBCAddon extends IDBCPlayer {
     DBCData getDBCData();
 
     boolean isInAura();
-
 
     boolean isInAura(IAura aura);
 }

@@ -33,12 +33,9 @@ public final class DBCSetFlight extends AbstractPacket {
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         flightOn = in.readBoolean();
 
-
         if (flightOn && player.onGround)
             DBCClient.mc.thePlayer.motionY = 0.5;
 
-
         DBCKiTech.floating = flightOn;
-
     }
 }
