@@ -434,6 +434,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 display.hairColor = color;
             }
             refreshValues();
+            updateButtons();
         }
         if (subgui instanceof SubGuiSelectAura) {
             if(form != null){
