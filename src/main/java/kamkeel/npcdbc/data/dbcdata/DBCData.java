@@ -182,7 +182,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             c.setFloat("DBCBaseFlightSpeed", baseFlightSpeed);
         baseFlightSpeed = c.getFloat("DBCBaseFlightSpeed");
 
-        if (!c.hasKey("DBCBaseFlightSpeed"))
+        if (!c.hasKey("DBCDynamicFlightSpeed"))
             c.setFloat("DBCDynamicFlightSpeed", dynamicFlightSpeed);
         dynamicFlightSpeed = c.getFloat("DBCDynamicFlightSpeed");
 
@@ -190,11 +190,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             c.setInteger("DBCFlightSpeedRelease", flightSpeedRelease);
         flightSpeedRelease = c.getInteger("DBCFlightSpeedRelease");
 
-        if (!c.hasKey("DBCBaseFlightSpeed"))
+        if (!c.hasKey("DBCFlightEnabled"))
             c.setBoolean("DBCFlightEnabled", flightEnabled);
         flightEnabled = c.getBoolean("DBCFlightEnabled");
 
-        if (!c.hasKey("DBCBaseFlightSpeed"))
+        if (!c.hasKey("DBCFlightGravity"))
             c.setBoolean("DBCFlightGravity", flightGravity);
         flightGravity = c.getBoolean("DBCFlightGravity");
 
@@ -256,8 +256,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
         stats.saveEffectsNBT(dbc);
         bonus.saveBonusNBT(dbc);
-        //dbc.setFloat("DBCFlightSpeedRelease", 100f);
-        // dbc.setBoolean("DBCFlightGravity", false);
         loadFromNBT(dbc);
         if (syncALL)
             syncTracking();
