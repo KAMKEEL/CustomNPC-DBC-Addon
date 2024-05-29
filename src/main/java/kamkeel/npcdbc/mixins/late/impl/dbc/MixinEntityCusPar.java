@@ -11,7 +11,7 @@ public class MixinEntityCusPar {
     @Unique
     public boolean shouldRenderInPass(int pass) {
         if (ConfigDBCClient.RevampAura)
-            return pass == 1;
+            return pass == 0;
         return pass == 0;
     }
 }

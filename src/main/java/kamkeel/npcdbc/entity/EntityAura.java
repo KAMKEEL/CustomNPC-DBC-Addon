@@ -270,13 +270,13 @@ public class EntityAura extends Entity {
     public void updateDisplay() {
        // alpha = 0.1f;
         IEntityMC en = (IEntityMC) entity;
-        en.setRenderPass(ClientProxy.SecondRenderPass);
+        en.setRenderPass(0);
         
         if (entity.isInWater()) {
             // renderPass = 0;
             en.setRenderPass(0);
         } else if (!isKaioken) {
-            renderPass =1;
+            renderPass =0;
         }
         if (isKaioken) {
             //  renderPass = 0;
