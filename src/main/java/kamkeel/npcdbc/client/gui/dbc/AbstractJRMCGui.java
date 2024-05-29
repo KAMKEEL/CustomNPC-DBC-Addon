@@ -245,7 +245,6 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
             }
             this.clickedUrl = null;
             mc.displayGuiScreen(this);
-
         }
     }
 }

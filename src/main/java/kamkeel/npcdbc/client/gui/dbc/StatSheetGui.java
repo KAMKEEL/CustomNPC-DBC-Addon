@@ -955,5 +955,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 catch (Throwable ignored) {}
             }
         }
+
+        mc.displayGuiScreen(this);
     }
 }
