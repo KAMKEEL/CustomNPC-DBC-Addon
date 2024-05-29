@@ -8,11 +8,8 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import noppes.npcs.api.ISkinOverlay;
-import noppes.npcs.controllers.FactionController;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
-import noppes.npcs.controllers.data.SkinOverlay;
 
 import java.util.List;
 

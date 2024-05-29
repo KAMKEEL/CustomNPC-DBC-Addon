@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.api.form;
 
-import kamkeel.npcdbc.api.aura.IAura;
 import net.minecraft.entity.player.EntityPlayer;
 
 public interface IForm {

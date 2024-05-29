@@ -9,7 +9,6 @@ import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.entity.EntityAura;
-import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.items.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,10 +16,6 @@ import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
-import noppes.npcs.CustomItems;
-import noppes.npcs.client.renderer.NpcItemRenderer;
-import noppes.npcs.client.renderer.items.CustomItemRenderer;
-import noppes.npcs.items.ItemScripted;
 
 
 public class ClientProxy extends CommonProxy {

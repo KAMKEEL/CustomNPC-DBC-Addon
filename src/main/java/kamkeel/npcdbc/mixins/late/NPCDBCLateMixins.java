@@ -2,8 +2,6 @@ package kamkeel.npcdbc.mixins.late;
 
 import com.gtnewhorizon.gtnhmixins.ILateMixinLoader;
 import com.gtnewhorizon.gtnhmixins.LateMixin;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.util.ArrayList;

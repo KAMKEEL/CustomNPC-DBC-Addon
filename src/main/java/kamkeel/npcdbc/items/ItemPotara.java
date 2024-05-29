@@ -2,10 +2,8 @@ package kamkeel.npcdbc.items;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.model.ModelPotara;
-import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.enums.EnumMiscCapsules;
 import kamkeel.npcdbc.constants.enums.EnumPotaraTypes;
@@ -24,7 +22,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
 import noppes.npcs.CustomItems;
 
 import java.util.List;

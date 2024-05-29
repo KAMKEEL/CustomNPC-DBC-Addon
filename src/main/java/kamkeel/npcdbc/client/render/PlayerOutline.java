@@ -42,7 +42,7 @@ public class PlayerOutline {
        // DBCData.get(p).outline = new PlayerOutline(0xCfffff, 0x0d2dba);
         if (DBCData.get(p).outline == null)
             return;
-        
+
         PlayerOutline outline = DBCData.get(p).outline;
         ClientProxy.RenderingOutline = true;
 
@@ -96,14 +96,10 @@ public class PlayerOutline {
         glPopMatrix();
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         ClientProxy.RenderingOutline = false;
-
     }
 
     public static void renderHair(EntityPlayer p, RenderPlayerJBRA render) {
         DBCData d = DBCData.get(p);
-        
-        
         render.modelMain.renderHairsV2(0.0625f, d.DNSHair, 0f, (int) d.State, d.Rage, d.stats.getJRMCPlayerID(), d.Race, render, (AbstractClientPlayer) p);
-
     }
 }

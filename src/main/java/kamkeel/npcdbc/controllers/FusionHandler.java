@@ -5,7 +5,6 @@ import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumPotaraTypes;
 import kamkeel.npcdbc.data.FuseRequest;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.dbcdata.DBCDataUniversal;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.Utility;

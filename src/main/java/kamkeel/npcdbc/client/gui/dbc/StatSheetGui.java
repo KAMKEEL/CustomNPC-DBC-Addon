@@ -26,14 +26,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
+import java.lang.Class;
 import java.net.URI;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
 import static JinRyuu.JRMCore.JRMCoreGuiScreen.kqGW3Z;
 import static JinRyuu.JRMCore.JRMCoreH.*;
-
-import java.lang.Class;
 
 @SideOnly(Side.CLIENT)
 public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {

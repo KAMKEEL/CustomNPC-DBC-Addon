@@ -1,13 +1,11 @@
 package kamkeel.npcdbc.data.dbcdata;
 
 import kamkeel.npcdbc.data.PlayerBonus;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 public class DBCDataBonus {

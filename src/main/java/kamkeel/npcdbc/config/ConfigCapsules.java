@@ -2,7 +2,6 @@ package kamkeel.npcdbc.config;
 
 import cpw.mods.fml.common.FMLLog;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 import noppes.npcs.util.ValueUtil;
 import org.apache.logging.log4j.Level;
 
