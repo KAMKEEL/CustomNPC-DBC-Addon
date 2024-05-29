@@ -58,7 +58,7 @@ public class AuraDisplay implements IAuraDisplay {
         color2 = rendering.hasKey("color2") ? rendering.getInteger("color2") : -1;
         color3 = rendering.hasKey("color3") ? rendering.getInteger("color3") : -1;
         alpha = rendering.hasKey("alpha") ? rendering.getInteger("alpha") : -1;
-        
+
         // Lightning
         hasLightning = rendering.hasKey("hasLightning") && rendering.getBoolean("hasLightning");
         lightningColor = rendering.hasKey("lightningColor") ? rendering.getInteger("lightningColor") : -1;

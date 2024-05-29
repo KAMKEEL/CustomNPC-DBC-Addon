@@ -232,15 +232,8 @@ public class Utility {
         }
     }
 
-    public static void playClientSoundAll(String directory, Entity entity, boolean all){
-
-        new SoundSource(directory, entity).play(all)
-
-    }
-
     @SideOnly(Side.CLIENT)
     public static void playClientSound(String directory, Entity entity, boolean all){
         new ClientSound(new SoundSource(directory, entity)).play(all);
     }
-
 }
