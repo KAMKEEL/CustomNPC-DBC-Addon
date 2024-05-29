@@ -571,26 +571,31 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void setAllowFlight(boolean allowFlight) {
         dbcData.flightEnabled = allowFlight;
+        dbcData.saveNBTData(false);
     }
 
     @Override
     public void setFlightSpeedRelease(int release) {
         dbcData.flightSpeedRelease = ValueUtil.clamp(release, 1, 100);
+        dbcData.saveNBTData(false);
     }
 
     @Override
     public void setBaseFlightSpeed(int speed) {
         dbcData.baseFlightSpeed = ValueUtil.clamp(speed, 1, 10);
+        dbcData.saveNBTData(false);
     }
 
     @Override
     public void setDynamicFlightSpeed(int speed) {
         dbcData.dynamicFlightSpeed = ValueUtil.clamp(speed, 1, 10);
+        dbcData.saveNBTData(false);
     }
 
     @Override
     public void setFlightGravity(boolean isEffected) {
         dbcData.flightGravity = isEffected;
+        dbcData.saveNBTData(false);
     }
 
     @Override
@@ -599,6 +604,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         dbcData.dynamicFlightSpeed = 1.0f;
         dbcData.flightEnabled = true;
         dbcData.flightSpeedRelease = 100;
+        dbcData.flightGravity = true;
+        dbcData.saveNBTData(false);
     }
 
     //////////////////////////////////////////////
