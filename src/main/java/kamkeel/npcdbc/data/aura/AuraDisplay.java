@@ -44,39 +44,44 @@ public class AuraDisplay implements IAuraDisplay {
 
         EnumAuraTypes2D auraTypes2D = EnumAuraTypes2D.getEnumFromName(rendering.getString("type2D"));
         type2D = auraTypes2D == null ? EnumAuraTypes2D.Default : auraTypes2D;
+
+        texture1 = rendering.hasKey("texture1") ? rendering.getString("texture1") : "";
+        texture2 = rendering.hasKey("texture2") ? rendering.getString("texture2") : "";
+        texture3 = rendering.hasKey("texture3") ? rendering.getString("texture3") : "";
+
+        // Floats
+        speed = rendering.hasKey("speed") ? rendering.getFloat("speed") : -1f;
+        size = rendering.hasKey("size") ? rendering.getFloat("size") : 1.0f;
+
+        // Colors and Alpha
+        color1 = rendering.hasKey("color1") ? rendering.getInteger("color1") : -1;
+        color2 = rendering.hasKey("color2") ? rendering.getInteger("color2") : -1;
+        color3 = rendering.hasKey("color3") ? rendering.getInteger("color3") : -1;
+        alpha = rendering.hasKey("alpha") ? rendering.getInteger("alpha") : -1;
         
-        texture1 = rendering.getString("texture1");
-        texture2 = rendering.getString("texture2");
-        texture3 = rendering.getString("texture3");
-        speed = rendering.getFloat("speed");
-        size = rendering.getFloat("size");
+        // Lightning
+        hasLightning = rendering.hasKey("hasLightning") && rendering.getBoolean("hasLightning");
+        lightningColor = rendering.hasKey("lightningColor") ? rendering.getInteger("lightningColor") : -1;
+        lightningAlpha = rendering.hasKey("lightningAlpha") ? rendering.getInteger("lightningAlpha") : -1;
+        lightningSpeed = rendering.hasKey("lightningSpeed") ? rendering.getInteger("lightningSpeed") : -1;
+        lightningIntensity = rendering.hasKey("lightningIntensity") ? rendering.getInteger("lightningIntensity") : -1;
 
-        color1 = rendering.getInteger("color1");
-        color2 = rendering.getInteger("color2");
-        color3 = rendering.getInteger("color3");
-        alpha = rendering.getInteger("alpha");
+        // Kaioken
+        kaiokenColor = rendering.hasKey("kaiokenColor") ? rendering.getInteger("kaiokenColor") : -1;
+        kaiokenAlpha = rendering.hasKey("kaiokenAlpha") ? rendering.getInteger("kaiokenAlpha") : -1;
+        kaiokenSize = rendering.hasKey("kaiokenSize") ? rendering.getFloat("kaiokenSize") : 1.1f;
+        hasKaiokenAura = !rendering.hasKey("kaiokenOn") || rendering.getBoolean("kaiokenOn");
+        kaiokenOverrides = !rendering.hasKey("kaiokenOverrides") || rendering.getBoolean("kaiokenOverrides");
+        overrideDBCAura = rendering.hasKey("overrideDBCAura") && rendering.getBoolean("overrideDBCAura");
 
+        // Kettle Mode
+        kettleModeCharging = rendering.hasKey("kettleModeCharging") && rendering.getBoolean("kettleModeCharging");
+        kettleModeAura = rendering.hasKey("kettleMode") && rendering.getBoolean("kettleMode");
+        kettleModeType = rendering.hasKey("kettleModeType") ? rendering.getByte("kettleModeType") : 0;
 
-        hasLightning = rendering.getBoolean("hasLightning");
-        lightningColor = rendering.getInteger("lightningColor");
-        lightningAlpha = rendering.getInteger("lightningAlpha");
-        lightningSpeed = rendering.getInteger("lightningSpeed");
-        lightningIntensity = rendering.getInteger("lightningIntensity");
-
-
-        kaiokenColor = rendering.getInteger("kaiokenColor");
-        kaiokenAlpha = rendering.getInteger("kaiokenAlpha");
-        kaiokenSize = rendering.getFloat("kaiokenSize");
-        hasKaiokenAura = rendering.getBoolean("kaiokenOn");
-        kaiokenOverrides = rendering.getBoolean("kaiokenOverrides");
-        overrideDBCAura = rendering.getBoolean("overrideDBCAura");
-
-        kettleModeCharging = rendering.getBoolean("kettleModeCharging");
-        kettleModeAura = rendering.getBoolean("kettleMode");
-        kettleModeType = rendering.getByte("kettleModeType");
-
-        auraSound = rendering.getString("auraSound");
-        kaiokenSound = rendering.getString("kaiokenSound");
+        // Sounds
+        auraSound = rendering.hasKey("auraSound") ? rendering.getString("auraSound") : "";
+        kaiokenSound = rendering.hasKey("kaiokenSound") ? rendering.getString("kaiokenSound") : "";
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -119,7 +124,7 @@ public class AuraDisplay implements IAuraDisplay {
         compound.setTag("rendering", rendering);
         return compound;
     }
-    
+
     @Override
     public boolean getKettleModeAura() {
         return this.kettleModeAura;

@@ -40,6 +40,8 @@ public class Aura implements IAura {
         name = compound.getString("name");
         menuName = compound.getString("menuName");
 
+        if (!compound.hasKey("secondaryAuraID"))
+            compound.setInteger("secondaryAuraID", -1);
         secondaryAuraID = compound.getInteger("secondaryAuraID");
 
         display.readFromNBT(compound);
