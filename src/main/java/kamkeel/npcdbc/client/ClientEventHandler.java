@@ -215,12 +215,12 @@ public class ClientEventHandler {
                         return;
                     aura = display.getToggledAura();
 
-                    if (aura == null && display.isAuraOn())
+                    if (aura == null && display.isAuraOn()){
+                        aura = new Aura().display.setOverrideDBCAura(true);
                         vanillaAura = true;
+                    }
                     else
                         return;
-
-
                 } else if (isPlayer) {
                     dbcData = DBCData.get((EntityPlayer) event.entity);
                     aura = dbcData.getToggledAura();
@@ -229,13 +229,12 @@ public class ClientEventHandler {
                         return;
 
                     isInKaioken = dbcData.isForm(DBCForm.Kaioken) && aura.display.hasKaiokenAura;
-
                 }
                 EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
                 if (ConfigDBCClient.RevampAura) {
                     if (enhancedAura == null)
                         if(vanillaAura)
-                            new EntityAura(event.entity, new Aura().display.setOverrideDBCAura(true)).setIsVanilla(true).load(true).spawn();
+                            new EntityAura(event.entity, aura).setIsVanilla(true).load(true).spawn();
                         else
                             new EntityAura(event.entity, aura).load(true).spawn();
                 } else {
