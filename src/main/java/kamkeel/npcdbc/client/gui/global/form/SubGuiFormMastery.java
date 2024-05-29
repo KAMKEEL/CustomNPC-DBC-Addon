@@ -45,9 +45,10 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
 
         int y = guiTop + 3;
 
+        // TODO: Fix Resizing Bug
         GuiScrollWindow scrollWindow = new GuiScrollWindow(this, guiLeft +4, y, xSize-9, ySize-7, 0);
         addScrollableGui(0, scrollWindow);
-        int maxScroll = -150;
+        int maxScroll = -20;
 
         y -= 15;
 
