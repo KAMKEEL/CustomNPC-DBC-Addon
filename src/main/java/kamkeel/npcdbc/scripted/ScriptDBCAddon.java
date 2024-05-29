@@ -267,7 +267,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             case "mystic":
                 found = true;
                 isMysticOn = true;
-
+                break;
             case "ultrainstict":
                 found = true;
                 isUltraInstinctOn = true;
@@ -532,7 +532,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public boolean isMUI() {
         return dbcData.isForm(DBCForm.MasteredUltraInstinct);
     }
-    
+
     public boolean isMystic() {
         return dbcData.isForm(DBCForm.Mystic);
     }
