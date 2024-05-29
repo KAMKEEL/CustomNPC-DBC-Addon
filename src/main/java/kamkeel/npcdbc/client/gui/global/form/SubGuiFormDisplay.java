@@ -1,7 +1,13 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
+import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
+import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
+import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -16,6 +22,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.SubGuiColorSelector;
+import noppes.npcs.client.gui.select.GuiSoundSelection;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelData;
@@ -98,15 +105,23 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     private void raceButtons(int y) {
         addLabel(new GuiNpcLabel(200, "display.formSize", guiLeft + 7, y + 5));
-        addTextField(new GuiNpcTextField(200, this, guiLeft + 61, y, 50, 20, String.valueOf(display.formSize)));
+        addTextField(new GuiNpcTextField(200, this, guiLeft + 61, y, 30, 20, String.valueOf(display.formSize)));
         getTextField(200).setMaxStringLength(10);
         getTextField(200).floatsOnly = true;
         getTextField(200).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
+
+        addButton(new GuiNpcButton(1306, guiLeft + 101, y, 100, 20,  "display.selectAura"));
+        if(display.auraID != -1 && AuraController.getInstance().has(display.auraID))
+            getButton(1306).setDisplayText(AuraController.getInstance().get(display.auraID).getName());
+        addButton(new GuiNpcButton(1406, guiLeft + 202, y, 20, 20, "X"));
+        getButton(1406).enabled = display.auraID != -1;
 
         y += 22;
         addLabel(new GuiNpcLabel(106, "display.aura", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(106, guiLeft + 61, y, 50, 20, getColor(display.auraColor)));
         getButton(106).packedFGColour = display.auraColor;
+        getButton(106).enabled = display.auraID == -1;
+
         addButton(new GuiNpcButton(1106, guiLeft + 112, y, 20, 20, "X"));
         getButton(1106).enabled = display.auraColor != -1;
         addButton(new GuiNpcButton(1206, guiLeft + 133, y, 50, 20,  new String[]{"display.hide", "display.show"}, showAura ? 1 : 0));
@@ -237,6 +252,14 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Aura Show
         if(button.id == 1206){
             showAura = !showAura;
+            refreshValues();
+            updateButtons();
+        }
+        if(button.id == 1306){
+            this.setSubGui(new SubGuiSelectAura());
+        }
+        if(button.id == 1406){
+            display.auraID = -1;
             refreshValues();
             updateButtons();
         }
@@ -411,7 +434,19 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 display.hairColor = color;
             }
             refreshValues();
-            initGui();
+        }
+        if (subgui instanceof SubGuiSelectAura) {
+            if(form != null){
+                SubGuiSelectAura guiSelectForm = ((SubGuiSelectAura)subgui);
+                if(guiSelectForm.confirmed){
+                    if(guiSelectForm.selectedAuraID == display.auraID)
+                        return;
+
+                    display.auraID = guiSelectForm.selectedAuraID;
+                }
+            }
+            refreshValues();
+            updateButtons();
         }
     }
 
@@ -486,6 +521,70 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             aur.setAlp(0.5F);
             aur.setInner(true);
             aur.setCol(display.auraColor);
+
+            if(display.auraID != -1 && AuraController.getInstance().has(display.auraID)){
+                Aura aura = AuraController.getInstance().customAuras.get(display.auraID);
+                if (aura.display.type == EnumAuraTypes3D.SaiyanGod) {
+                    aur.setAlp(0.2F);
+                    aur.setTex("aurai");
+                    aur.setTexL2("aurai2");
+                    aur.setColL2(16747301);
+                } else if (aura.display.type == EnumAuraTypes3D.SaiyanBlue) {
+                    aur.setSpd(40);
+                    aur.setAlp(0.5F);
+                    aur.setTex("aurag");
+                    aur.setColL3(15727354);
+                    aur.setTexL3("auragb");
+                } else if (aura.display.type == EnumAuraTypes3D.SaiyanBlueEvo) {
+                    aur.setSpd(40);
+                    aur.setAlp(0.5F);
+                    aur.setTex("aurag");
+                    aur.setColL3(12310271);
+                    aur.setTexL3("auragb");
+                } else if (aura.display.type == EnumAuraTypes3D.SaiyanRose) {
+                    aur.setSpd(30);
+                    aur.setAlp(0.2F);
+                    aur.setTex("aurai");
+                    aur.setTexL2("aurai2");
+                    aur.setColL2(7872713);
+                } else if (aura.display.type == EnumAuraTypes3D.SaiyanRoseEvo) {
+                    aur.setSpd(30);
+                    aur.setAlp(0.2F);
+                    aur.setTex("aurai");
+                    aur.setTexL2("aurai2");
+                    aur.setColL2(8592109);
+                } else if (aura.display.type == EnumAuraTypes3D.UI) {
+                    aur.setSpd(100);
+                    aur.setAlp(0.15F);
+                    aur.setTex("auras");
+                    aur.setCol(15790320);
+                    aur.setColL3(4746495);
+                    aur.setTexL3("auragb");
+                } else if (aura.display.type == EnumAuraTypes3D.GoD) {
+                    aur.setSpd(100);
+                    aur.setAlp(0.2F);
+                    aur.setTex("aurag");
+                    aur.setTexL3("auragb");
+                    aur.setColL2(12464847);
+                } else if (aura.display.type == EnumAuraTypes3D.UltimateArco) {
+                    aur.setAlp(0.5F);
+                    aur.setTex("aurau");
+                    aur.setTexL2("aurau2");
+                    aur.setColL2(16776724);
+                }
+                if(aura.display.hasColor("color1"))
+                    aur.setCol(aura.display.color1);
+                if (aura.display.hasColor("color2"))
+                    aur.setColL2(aura.display.color2);
+                if (aura.display.hasColor("color3"))
+                    aur.setColL3(aura.display.color3);
+
+                if (aura.display.hasAlpha("aura"))
+                    aur.setAlp((float) aura.display.alpha / 255);
+
+                if (aura.display.hasSpeed())
+                    aur.setSpd((int) aura.display.speed);
+            }
             try {
                 GL11.glPushMatrix();
                 RenderHelper.disableStandardItemLighting();

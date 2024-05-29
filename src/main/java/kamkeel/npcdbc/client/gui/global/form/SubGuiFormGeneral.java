@@ -42,7 +42,7 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
 
         addTextField(new GuiNpcTextField(1, this, this.fontRendererObj, guiLeft + 36, y, 200, 20, form.name));
         addLabel(new GuiNpcLabel(1,"gui.name", guiLeft + 4, y + 5));
-        addButton(new GuiNpcButton(3, guiLeft + 260, y, 95, 20, new String[]{"All Races", "Human", "Saiyan", "Half Saiyan", "Namekian", "Arcosian", "Majin"}, form.race + 1));
+        addButton(new GuiNpcButton(3, guiLeft + 260, y, 95, 20, new String[]{"general.allRaces", "Human", "Saiyan", "Half Saiyan", "Namekian", "Arcosian", "Majin"}, form.race + 1));
 
         addLabel(new GuiNpcLabel(0,"ID", guiLeft + 238, y + 1));
         addLabel(new GuiNpcLabel(2,	form.id + "", guiLeft + 238, y + 11));
@@ -51,9 +51,9 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
 
         addTextField(new GuiNpcTextField(4, this, guiLeft + 70, y, 166, 20, form.menuName.replaceAll("§", "&")));
         getTextField(4).setMaxStringLength(20);
-        addLabel(new GuiNpcLabel(4, "Menu Name", guiLeft + 4, y+5));
+        addLabel(new GuiNpcLabel(4, "general.menuName", guiLeft + 4, y+5));
 
-        addLabel(new GuiNpcLabel(19,"Strength", guiLeft + 239, y + 5));
+        addLabel(new GuiNpcLabel(19,"general.strength", guiLeft + 239, y + 5));
         addTextField(new GuiNpcTextField(19, this, guiLeft + 295, y, 60, 20, String.valueOf(form.strengthMulti)));
         getTextField(19).setMaxStringLength(15);
         getTextField(19).floatsOnly = true;
@@ -61,29 +61,29 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
 
         y += 23;
 
-        addLabel(new GuiNpcLabel(20,"Dexterity", guiLeft + 239, y + 5));
+        addLabel(new GuiNpcLabel(20,"general.dexterity", guiLeft + 239, y + 5));
         addTextField(new GuiNpcTextField(20, this, guiLeft + 295, y, 60, 20, String.valueOf(form.dexMulti)));
         getTextField(20).setMaxStringLength(15);
         getTextField(20).floatsOnly = true;
         getTextField(20).setMinMaxDefaultFloat(-10000, 10000, 1);
 
         addButton(new GuiNpcButton(10, guiLeft + 192, y, 45, 20, new String[]{"gui.no", "gui.yes"}, form.fromParentOnly ? 1 : 0));
-        addLabel(new GuiNpcLabel(10, "Transform from Only Parent Form", guiLeft+8, y + 5));
+        addLabel(new GuiNpcLabel(10, "general.transformOnly", guiLeft+8, y + 5));
 
         y += 23;
 
-        addLabel(new GuiNpcLabel(21,"Willpower", guiLeft + 239, y + 5));
+        addLabel(new GuiNpcLabel(21,"general.willpower", guiLeft + 239, y + 5));
         addTextField(new GuiNpcTextField(21, this, guiLeft + 295, y, 60, 20, String.valueOf(form.willMulti)));
         getTextField(21).setMaxStringLength(15);
         getTextField(21).floatsOnly = true;
         getTextField(21).setMinMaxDefaultFloat(-10000, 10000, 1);
 
-        addButton(new GuiNpcButton(50, guiLeft + 142, y, 95, 20, "Edit Parents"));
-        addLabel(new GuiNpcLabel(50, "DBC Form Parents", guiLeft+8, y + 5));
+        addButton(new GuiNpcButton(50, guiLeft + 142, y, 95, 20, "general.editParents"));
+        addLabel(new GuiNpcLabel(50, "general.dbcFormParents", guiLeft+8, y + 5));
 
         y += 23;
 
-        addButton(new GuiNpcButton(11, guiLeft + 74, y, 140, 20, "No Parent"));
+        addButton(new GuiNpcButton(11, guiLeft + 74, y, 140, 20, "general.noParent"));
         if(parentForm != -1){
             if(FormController.getInstance().has(parentForm))
                 getButton(11).setDisplayText(FormController.getInstance().get(parentForm).getName());
@@ -91,28 +91,28 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
 
         addButton(new GuiNpcButton(12, guiLeft + 216, y, 20, 20, "X"));
         getButton(12).enabled = parentForm != -1;
-        addLabel(new GuiNpcLabel(12, "Parent Form", guiLeft + 8, y + 5));
+        addLabel(new GuiNpcLabel(12, "general.parentForm", guiLeft + 8, y + 5));
 
         y += 23;
 
-        addButton(new GuiNpcButton(13, guiLeft + 74, y, 140, 20, "No Child"));
+        addButton(new GuiNpcButton(13, guiLeft + 74, y, 140, 20, "general.noChild"));
         if(childForm != -1){
             if(FormController.getInstance().has(childForm))
                 getButton(13).setDisplayText(FormController.getInstance().get(childForm).getName());
         }
         addButton(new GuiNpcButton(14, guiLeft + 216, y, 20, 20, "X"));
         getButton(14).enabled = childForm != -1;
-        addLabel(new GuiNpcLabel(14, "Child Form", guiLeft + 8, y + 5));
+        addLabel(new GuiNpcLabel(14, "general.childForm", guiLeft + 8, y + 5));
 
         y += 23;
 
-        addLabel(new GuiNpcLabel(30, "Ascend Sound", guiLeft + 7, y + 5));
+        addLabel(new GuiNpcLabel(30, "general.ascendSound", guiLeft + 7, y + 5));
         addTextField(new GuiNpcTextField(30, this, fontRendererObj, guiLeft + 90, y, 194, 20, form.ascendSound));
         addButton(new GuiNpcButton(30, guiLeft + 293, y, 60, 20, "gui.select"));
 
         y += 23;
 
-        addLabel(new GuiNpcLabel(31, "Descend Sound", guiLeft + 7, y + 5));
+        addLabel(new GuiNpcLabel(31, "general.descendSound", guiLeft + 7, y + 5));
         addTextField(new GuiNpcTextField(31, this, fontRendererObj, guiLeft + 90, y, 194, 20, form.descendSound));
         addButton(new GuiNpcButton(31, guiLeft + 293, y, 60, 20, "gui.select"));
     }
