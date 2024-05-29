@@ -6,11 +6,12 @@ import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import kamkeel.npcdbc.client.model.ModelAura;
-import kamkeel.npcdbc.client.sound.Sound;
+import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.data.IAuraData;
+import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
@@ -315,7 +316,7 @@ public class AuraRenderer extends RenderDBC {
             }
         }
         if (rand.nextInt(15) < 2 && aura.ticksExisted % 5 == 0)
-            new Sound("jinryuudragonbc:1610.spark", aura.entity).setVolume(0.1f).setPitch(0.90f + rand.nextInt(3) * 0.05f).play(false);
+            new ClientSound(new SoundSource("jinryuudragonbc:1610.spark", aura.entity)).setVolume(0.1f).setPitch(0.90f + rand.nextInt(3) * 0.05f).play(false);
         GL11.glDisable(3042);
         GL11.glEnable(2896);
         GL11.glEnable(3553);

@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.combat;
 
-import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockTallGrass;
@@ -29,7 +28,8 @@ public class InstantTransmission {
             double dz = Math.cos((angle * Math.PI) / 180) * distance;
             if (blockSuitable(tar, (int) (tar.posX + dx), (int) tar.posY, (int) (tar.posZ + dz))) {
                 IEntity<?> pl = NpcAPI.Instance().getIEntity(p);
-                new Sound("jinryuudragonbc:DBC5.instant_transmission", p).play(true);
+                // TODO: Make Util Sound Functions
+                // new Sound("jinryuudragonbc:DBC5.instant_transmission", p).play(true);
 
 
                 pl.setPosition(tar.posX + dx, tar.posY, tar.posZ + dz); // y needs fixing

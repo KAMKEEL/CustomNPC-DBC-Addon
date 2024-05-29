@@ -1,7 +1,10 @@
 package kamkeel.npcdbc.network.packets;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.client.sound.Sound;
+import kamkeel.npcdbc.client.sound.ClientSound;
+import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.util.ByteBufUtils;
@@ -14,16 +17,16 @@ import java.io.IOException;
 public final class PlaySound extends AbstractPacket {
     public static final String packetName = "NPC|PlaySound";
 
-    public Sound sound;
+    public SoundSource sound;
 
     public PlaySound() {
     }
 
     public PlaySound(Entity entity, String soundDir) {
-        sound = new Sound(soundDir, entity);
+        sound = new SoundSource(soundDir, entity);
     }
 
-    public PlaySound(Sound sound) {
+    public PlaySound(SoundSource sound) {
         this.sound = sound;
     }
 
@@ -36,23 +39,19 @@ public final class PlaySound extends AbstractPacket {
     @Override
     public void sendData(ByteBuf out) throws IOException {
         ByteBufUtils.writeNBT(out, sound.writeToNbt());
-
-
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        sound = Sound.createFromNBT(ByteBufUtils.readNBT(in));
+        SoundSource sound = SoundSource.createFromNBT(ByteBufUtils.readNBT(in));
 
         if (Utility.isServer())
             play(sound);
         else
-            sound.play(false);
-
-
+            playClient(sound);
     }
 
-    public static void play(Sound sound) {
+    public static void play(SoundSource sound) {
         if (sound == null || sound.entity == null)
             return;
 
@@ -63,9 +62,12 @@ public final class PlaySound extends AbstractPacket {
     public static void play(Entity entity, String soundDir) {
         if (entity == null)
             return;
-        Sound sound = new Sound(soundDir, entity);
+        SoundSource sound = new SoundSource(soundDir, entity);
         PacketHandler.Instance.sendToTrackingPlayers(sound.entity, new PlaySound(sound).generatePacket());
-
     }
 
+    @SideOnly(Side.CLIENT)
+    public static void playClient(SoundSource sound){
+        new ClientSound(sound).play(false);
+    }
 }

@@ -1,8 +1,10 @@
 package kamkeel.npcdbc.network.packets;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.client.sound.Sound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
+import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.util.ByteBufUtils;
@@ -14,13 +16,12 @@ import java.io.IOException;
 public final class StopSound extends AbstractPacket {
     public static final String packetName = "NPC|StopSound";
 
-    public Sound sound;
-
+    public SoundSource sound;
 
     public StopSound() {
     }
 
-    public StopSound(Sound sound) {
+    public StopSound(SoundSource sound) {
         this.sound = sound;
     }
 
@@ -39,21 +40,29 @@ public final class StopSound extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        sound = Sound.createFromNBT(ByteBufUtils.readNBT(in));
+        SoundSource sound = SoundSource.createFromNBT(ByteBufUtils.readNBT(in));
 
         if (Utility.isServer())
             stop(sound);
         else {
-            if (SoundHandler.playingSounds.containsKey(sound.key)) {
-                SoundHandler.playingSounds.get(sound.key).stop(false);
-            }
+            stopClient(sound);
         }
     }
 
-    public static void stop(Sound sound) {
+    public static void stop(SoundSource sound) {
         if (sound == null || sound.entity == null)
             return;
         PacketHandler.Instance.sendToTrackingPlayers(sound.entity, new StopSound(sound).generatePacket());
+    }
+
+
+    @SideOnly(Side.CLIENT)
+    public static void stopClient(SoundSource sound) {
+        if (sound == null || sound.entity == null)
+            return;
+        if (SoundHandler.playingSounds.containsKey(sound.key)) {
+            SoundHandler.playingSounds.get(sound.key).stop(false);
+        }
     }
 
 }

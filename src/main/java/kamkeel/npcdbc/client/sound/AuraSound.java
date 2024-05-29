@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.sound;
 
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -10,27 +11,22 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
 
-public class AuraSound extends Sound {
+public class AuraSound extends ClientSound {
     private final Aura aura;
     public boolean isKaiokenSound = false;
 
-    public AuraSound(Aura aura, String soundDir, Entity entity) {
-        super(soundDir, entity);
+    public AuraSound(Aura aura, SoundSource soundSource) {
+        super(soundSource);
         volume = 0.01f;
-        maxVolume = 0.5f;
-        fadeIn = true;
-        range = 32;
+        soundSource.maxVolume = 0.5f;
+        soundSource.fadeIn = true;
+        soundSource.range = 32;
         this.aura = aura;
 
-        onlyOneCanExist = true;
-        fadeFactor = 0.02f;
+        soundSource.onlyOneCanExist = true;
+        soundSource.fadeFactor = 0.02f;
+        soundSource.key += ":AURA";
     }
-
-    @Override
-    public String toString() {
-        return entity.getEntityId() + ":AURA:" + soundDir;
-    }
-
 
     @Override
     public void update() {
@@ -52,8 +48,8 @@ public class AuraSound extends Sound {
 
             if (aura != this.aura || !isInKaioken && isKaiokenSound) {
                 if (aura != null)
-                    fadeFactor = 0.1f;
-                fadeOut = true;
+                    soundSource.fadeFactor = 0.1f;
+                soundSource.fadeOut = true;
             }
         }
     }
@@ -78,7 +74,7 @@ public class AuraSound extends Sound {
         String secondSound = aura.hasSecondaryAura() ? aura.getSecondaryAur().display.getFinalSound() : null;
 
         if (!SoundHandler.isPlayingSound(entity, sound)) {
-            AuraSound auraSound = new AuraSound(aura, sound, entity);
+            AuraSound auraSound = new AuraSound(aura, new SoundSource(sound, entity));
             if (isTransforming)
                 auraSound.setVolume(0.2f);
 
@@ -86,12 +82,10 @@ public class AuraSound extends Sound {
         }
 
         if (secondSound != null && !SoundHandler.isPlayingSound(entity, secondSound)) {
-            AuraSound secondarySound = new AuraSound(aura, secondSound, entity);
+            AuraSound secondarySound = new AuraSound(aura, new SoundSource(secondSound, entity));
             if (isTransforming)
                 secondarySound.setVolume(0.2f);
             secondarySound.setRepeat(true).play(false);
         }
-
-
     }
 }

@@ -16,6 +16,7 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -443,7 +444,7 @@ public class ClientEventHandler {
 
         String kkSound = aura.display.getFinalKKSound();
         if (kkSound != null && !SoundHandler.isPlayingSound(dbcData.player, kkSound)) {
-            AuraSound kaiokenSound = new AuraSound(aura, kkSound, dbcData.player);
+            AuraSound kaiokenSound = new AuraSound(aura, new SoundSource(kkSound, dbcData.player));
 
             kaiokenSound.isKaiokenSound = true;
             kaiokenSound.setRepeat(true).play(false);

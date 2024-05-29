@@ -4,10 +4,11 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.sound.Sound;
+import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -82,7 +83,7 @@ public class TransformController {
         }
         if (rage >= 100) { //transform when rage meter reaches 100 (max)
             PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getID(), true).generatePacket());
-            new Sound(form.getAscendSound(), dbcData.player).play(true);
+            new ClientSound(new SoundSource(form.getAscendSound(), dbcData.player)).play(true);
             resetTimers();
             cantTransform = true;
             transformed = true;

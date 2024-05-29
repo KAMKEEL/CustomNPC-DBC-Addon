@@ -2,6 +2,8 @@ package kamkeel.npcdbc.entity;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -11,6 +13,7 @@ import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.EntityLightController;
 import kamkeel.npcdbc.data.IAuraData;
+import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -33,8 +36,11 @@ public class EntityAura extends Entity {
 
     public final Entity entity;
     public final Aura aura;
-    public AuraSound auraSound;
     public IAuraData auraData;
+
+    @SideOnly(Side.CLIENT)
+    public AuraSound auraSound;
+
 
     public EntityLightController light;
     public boolean isKaioken, isInKaioken;
@@ -290,8 +296,7 @@ public class EntityAura extends Entity {
         if (fadeOut)
             return;
         fadeOut = true;
-        if (auraSound != null)
-             auraSound.fadeOut = true;
+        fadeOutSound();
 
         for (EntityAura child : children.values()) //children of root cannot have children
             child.despawn();
@@ -336,14 +341,21 @@ public class EntityAura extends Entity {
     }
 
 
+    @SideOnly(Side.CLIENT)
     public void playSound() {
         String sound = !isKaioken ? aura.display.getFinalSound() : aura.display.getFinalKKSound();
         if (sound != null) {
-            auraSound = new AuraSound(aura, sound, entity);
+            auraSound = new AuraSound(aura, new SoundSource(sound, entity));
             if (isTransforming)
                 auraSound.setVolume(0.2f);
             auraSound.setRepeat(true).play(false);
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void fadeOutSound(){
+        if (auraSound != null)
+            auraSound.soundSource.fadeOut = true;
     }
 
 

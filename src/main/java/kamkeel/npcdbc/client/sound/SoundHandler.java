@@ -10,15 +10,15 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class SoundHandler {
-    public static HashMap<String, Sound> playingSounds = new HashMap<>();
+    public static HashMap<String, ClientSound> playingSounds = new HashMap<>();
 
     public static void stopSounds(Entity entity, String soundContains) {
-        Iterator<Sound> iter = playingSounds.values().iterator();
+        Iterator<ClientSound> iter = playingSounds.values().iterator();
         while (iter.hasNext()) {
-            Sound sound = iter.next();
-            if (sound.entity == entity && sound.soundDir.toLowerCase().contains(soundContains.toLowerCase())) {
+            ClientSound sound = iter.next();
+            if (sound.entity == entity && sound.soundSource.soundDir.toLowerCase().contains(soundContains.toLowerCase())) {
                 Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
-                PacketHandler.Instance.sendToServer(new StopSound(sound).generatePacket());
+                PacketHandler.Instance.sendToServer(new StopSound(sound.soundSource).generatePacket());
                 iter.remove();
             }
         }
@@ -36,9 +36,9 @@ public class SoundHandler {
     }
 
     public static void verifySounds() {
-        Iterator<Sound> iter = playingSounds.values().iterator();
+        Iterator<ClientSound> iter = playingSounds.values().iterator();
         while (iter.hasNext()) {
-            Sound sound = iter.next();
+            ClientSound sound = iter.next();
             if (!sound.isPlaying())
                 iter.remove();
 
@@ -46,22 +46,22 @@ public class SoundHandler {
     }
 
     public static boolean isPlayingSound(Entity entity, String soundDir) {
-        Iterator<Map.Entry<String, Sound>> iter = SoundHandler.playingSounds.entrySet().iterator();
+        Iterator<Map.Entry<String, ClientSound>> iter = SoundHandler.playingSounds.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry<String, Sound> entry = iter.next();
+            Map.Entry<String, ClientSound> entry = iter.next();
             String sound = entry.getKey();
             if (sound.contains(entity.getEntityId() + "") && sound.contains(soundDir)) {
-                Sound found = entry.getValue();
+                ClientSound found = entry.getValue();
                 return found.isPlaying();
             }
         }
         return false;
     }
 
-    public static Sound getPlayingSound(Entity entity, String soundDir) {
-        Iterator<Map.Entry<String, Sound>> iter = SoundHandler.playingSounds.entrySet().iterator();
+    public static ClientSound getPlayingSound(Entity entity, String soundDir) {
+        Iterator<Map.Entry<String, ClientSound>> iter = SoundHandler.playingSounds.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry<String, Sound> entry = iter.next();
+            Map.Entry<String, ClientSound> entry = iter.next();
             String sound = entry.getKey();
             if (sound.contains(entity.getEntityId() + "") && sound.contains(soundDir))
                 return entry.getValue();

@@ -3,7 +3,10 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import kamkeel.npcdbc.client.sound.Sound;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.sound.ClientSound;
+import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
@@ -47,20 +50,19 @@ public class MixinEntityAura2 implements IEntityAura {
 
         if (player.get() != null) {
             if (aura.getAge() < aura.getLightLivingTime() && hasLightning && aura.getAge() == 2)
-                new Sound("jinryuudragonbc:1610.spark", player.get()).setVolume(0.0375F).setPitch(0.85F + aura.getLightLivingTime() * 0.05F).play(false);
-
+                playSound(player.get(), aura);
             return;
         }
         Entity entity = Utility.getEntityFromID(aura.worldObj, mot);
         if (entity != null) {
             player.set(entity);
-
-
         }
+    }
 
-
-
-
+    @Unique
+    @SideOnly(Side.CLIENT)
+    public void playSound(Entity player, EntityAura2 aura){
+        new ClientSound(new SoundSource("jinryuudragonbc:1610.spark", player)).setVolume(0.0375F).setPitch(0.85F + aura.getLightLivingTime() * 0.05F).play(false);
     }
 
     @Unique
