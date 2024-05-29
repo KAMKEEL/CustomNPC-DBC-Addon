@@ -42,8 +42,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "", Fusion = "";
 
     // Custom Form / Custom Aura
-    public int addonFormID, auraID;
-    public float addonFormLevel, addonCurrentHeat;
+    public int addonFormID = -1, auraID = -1;
+    public float addonFormLevel = 0, addonCurrentHeat = 0;
     public HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
     public HashMap<String, PlayerBonus> currentBonuses = new HashMap<>();
 
@@ -167,9 +167,15 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         Fusion = c.getString("jrmcFuzion");
 
         // DBC Addon
+        if (!c.hasKey("addonFormID"))
+            c.setInteger("addonFormID", addonFormID);
         addonFormID = c.getInteger("addonFormID");
+
         addonFormLevel = c.getFloat("addonFormLevel");
         addonCurrentHeat = c.getFloat("addonCurrentHeat");
+
+        if (!c.hasKey("auraID"))
+            c.setInteger("auraID", auraID);
         auraID = c.getInteger("auraID");
 
         if (!c.hasKey("DBCBaseFlightSpeed"))
