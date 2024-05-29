@@ -22,11 +22,10 @@ public class MixinEntity implements IEntityMC {
      * @author
      * @reason
      */
-//    @Overwrite
-//    public boolean shouldRenderInPass(int pass) {
-//        //   System.out.println();
-//        return pass == renderPass;
-//    }
+
+    public boolean shouldRenderInPass(int pass) {
+        return pass == renderPass;
+    }
 
 //    @Inject(method = "shouldRenderInPass", at = @At("HEAD"))
 //    private void shouldRenderInPass(int pass, CallbackInfoReturnable<Boolean> cir) {

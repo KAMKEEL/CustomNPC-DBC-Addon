@@ -10,11 +10,13 @@ import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.render.PlayerOutline;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ItemPotara;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -24,6 +26,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import noppes.npcs.client.ClientEventHandler;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -45,9 +48,35 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
 
+
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
     public void renderOutline(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
         PlayerOutline.renderOutline((RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
+    }
+
+    @Inject(method = "glColor3f(I)V", at = @At("HEAD"), cancellable = true)
+    private static void mixAuraColor(int c, CallbackInfo ci) {
+        EntityPlayer player = ClientEventHandler.renderingPlayer;
+        if (ClientEventHandler.renderingPlayer == null || DBCData.get(player) == null)
+            return;
+        EntityAura aura = DBCData.get(player).auraEntity;
+        if (aura == null || aura.color1 == -1)
+            return;
+
+        int col = ColorMode.mixColors(c, aura.color1, 0.25f);
+
+        float r = (float) (col >> 16 & 255) / 255.0F;
+        float g = (float) (col >> 8 & 255) / 255.0F;
+        float b = (float) (col & 255) / 255.0F;
+
+        r = Math.min(1, r + getR());
+        g = Math.min(1, g + getG());
+        b = Math.min(1, b + getB());
+
+        GL11.glColor3f(r, g, b);
+        ci.cancel();
+
+
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
@@ -305,6 +334,20 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Shadow
     private void func_aam2(ModelRenderer ra, ModelRenderer la, int id, boolean c) {
+    }
+
+    private static float getR() {
+        return 0;
+    }
+
+    @Shadow
+    private static float getG() {
+        return 0;
+    }
+
+    @Shadow
+    private static float getB() {
+        return 0;
     }
 
 
