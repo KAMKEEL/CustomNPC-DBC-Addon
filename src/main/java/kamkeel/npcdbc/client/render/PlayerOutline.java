@@ -40,7 +40,7 @@ public class PlayerOutline {
     public static void renderOutline(RenderPlayerJBRA render, EntityPlayer p) {
         //Uncomment line below
         EntityAura aura = DBCData.get(p).auraEntity;
-        if (aura == null)
+        if (aura == null || aura != null)
             return;
         
         DBCData.get(p).outline = new PlayerOutline(0xCfffff, 0x0d2dba);

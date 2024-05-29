@@ -4,7 +4,6 @@ import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -25,6 +24,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -271,12 +271,12 @@ public class EntityAura extends Entity {
        // alpha = 0.1f;
         IEntityMC en = (IEntityMC) entity;
         en.setRenderPass(0);
-        
+
         if (entity.isInWater()) {
-            // renderPass = 0;
+            renderPass = 0;
             en.setRenderPass(0);
         } else if (!isKaioken) {
-            renderPass =0;
+            renderPass = 0;
         }
         if (isKaioken) {
             //  renderPass = 0;
@@ -409,6 +409,9 @@ public class EntityAura extends Entity {
         return this;
     }
 
+    public boolean shouldRender() {
+        return type3D != EnumAuraTypes3D.None && aura.display.kettleModeType != 1 && JGConfigClientSettings.CLIENT_DA14;
+    }
     public void setDead() {
         super.setDead();
 

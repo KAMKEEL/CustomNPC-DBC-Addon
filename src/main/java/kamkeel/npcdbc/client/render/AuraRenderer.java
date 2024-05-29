@@ -9,7 +9,6 @@ import kamkeel.npcdbc.client.model.ModelAura;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.entity.EntityAura;
@@ -61,7 +60,7 @@ public class AuraRenderer extends RenderDBC {
     }
 
     public void renderAura(EntityAura aura, double posX, double posY, double posZ) {
-        if (aura.aura.display.kettleModeType == 1 || aura.type3D == EnumAuraTypes3D.None || !JGConfigClientSettings.CLIENT_DA14)
+        if (!aura.shouldRender() || aura != null)
             return;
 
         byte race = aura.auraData.getRace();
