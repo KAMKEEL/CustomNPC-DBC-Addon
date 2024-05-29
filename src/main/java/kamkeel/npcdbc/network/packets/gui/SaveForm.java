@@ -14,7 +14,7 @@ import noppes.npcs.Server;
 
 import java.io.IOException;
 
-import static kamkeel.npcdbc.network.DBCAddonPermissions.GLOBAL_CUSTOMFORM;
+import static kamkeel.npcdbc.network.DBCAddonPermissions.GLOBAL_DBCFORM;
 
 public class SaveForm extends AbstractPacket {
     public static final String packetName = "NPC|SaveForm";
@@ -41,7 +41,7 @@ public class SaveForm extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_CUSTOMFORM))
+        if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCFORM))
             return;
 
         Form form = new Form();
