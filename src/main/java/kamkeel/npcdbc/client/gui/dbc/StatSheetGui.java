@@ -243,7 +243,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             }
             statVals[i] = modifiedStatVal;
 
-            String statDisplay = JRMCoreH.numSep(modifiedStatVal);
+            String statDisplay = JRMCoreH.numSep((modifiedStatVal + getAddonBonusStat(i)));
             String attributeDesc = "§9" + JRMCoreH.attrNms(1, i) + "§8: "+ JRMCoreH.trl("jrmc", JRMCoreH.attrDsc[1][i]);
             if(originalStatVal != modifiedStatVal){
                 attributeDesc += "\n" + JRMCoreH.trl("jrmc", "Modified") +": §4" + darkFormColor+statDisplay+"\n§8"
@@ -895,6 +895,27 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             }
         }
         return description;
+    }
+
+    public long getAddonBonusStat(int attributeID) {
+        DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
+        long extra = 0;
+        if(!dbcData.currentBonuses.isEmpty()){
+            for(PlayerBonus playerBonus : dbcData.currentBonuses.values()){
+                if(attributeID == DBCAttribute.Strength && playerBonus.strength != 0){
+                    extra += playerBonus.strength;
+                } else if(attributeID == DBCAttribute.Dexterity && playerBonus.dexterity != 0){
+                    extra += playerBonus.dexterity;
+                } else if(attributeID == DBCAttribute.Constitution && playerBonus.constituion != 0){
+                    extra += playerBonus.constituion;
+                } else if(attributeID == DBCAttribute.Willpower && playerBonus.willpower != 0){
+                    extra += playerBonus.willpower;
+                } else if(attributeID == DBCAttribute.Spirit && playerBonus.spirit != 0){
+                    extra += playerBonus.spirit;
+                }
+            }
+        }
+        return extra;
     }
 
     public double DBCFormMulti(int atr){
