@@ -4,9 +4,6 @@ import kamkeel.npcdbc.data.aura.Aura;
 
 public interface IAuraDisplay {
 
-
-
-
     boolean getKettleModeAura();
 
     /**

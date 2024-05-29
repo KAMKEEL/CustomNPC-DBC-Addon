@@ -23,7 +23,7 @@ public interface IFormDisplay {
     int getColor(String type);
 
     /**
-     * @param type  Legal types: aura, hair, eye, bodycm, body1, body2, body3
+     * @param type  Legal types: aura, hair, eye, bodycm, body1, body2, body3, fur
      * @param color Decimal color to set type as
      */
     void setColor(String type, int color);

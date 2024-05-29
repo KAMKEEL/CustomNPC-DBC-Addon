@@ -23,6 +23,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiConfirmOpenLink;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
 import java.net.URI;
@@ -528,11 +529,18 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         int stringWidth = fontRendererObj.getStringWidth(translation)+15;
         this.buttonList.add(new JRMCoreGuiButtons00(ref.getButtonId(), guiWidthOffset + 260, height/2 + 55, stringWidth, 20, translation, 0));
 
-        String dark = ConfigDBCClient.DarkMode ? "Light" : "Dark";
+        String dark = ConfigDBCClient.DarkMode ? "statsheet.light" : "statsheet.dark";
+        dark = StatCollector.translateToLocal(dark);
+        stringWidth = fontRendererObj.getStringWidth(dark)+15;
         this.buttonList.add(new JRMCoreGuiButtons00(404040404, guiWidthOffset + 260, height/2 + 12, stringWidth, 20, dark, 0));
 
-        String advan = ConfigDBCClient.AdvancedGui ? "Advanced" : "Simple";
-        this.buttonList.add(new JRMCoreGuiButtons00(505050505, guiWidthOffset + 260, height/2 + 34, stringWidth, 20, advan, 0));
+        String advan = ConfigDBCClient.AdvancedGui ? "statsheet.advanced" : "statsheet.simple";
+        advan = StatCollector.translateToLocal(advan);
+        stringWidth = fontRendererObj.getStringWidth(advan)+15;
+        GuiButton button4 = new JRMCoreGuiButtons00(505050505, guiWidthOffset + 260, height/2 + 34, stringWidth, 20, advan, 0);
+        this.buttonList.add(button4);
+        String hover = StatCollector.translateToLocal("statsheet.tooltip");
+        hoverableStaticLabels.add(new JRMCoreLabel(button4, hover));
 
         int index = 0;
 
@@ -737,12 +745,12 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         if(JRMCoreEH.dt){
             String name = "Update vanity";
             int width = this.fontRendererObj.getStringWidth(name);
-            UPDATE_VANITY_BUTTON = new JRMCoreGuiButtons00(100, guiWidthOffset + 260, guiHeightOffset + 3, width + 8, 20, name, 0);
+            UPDATE_VANITY_BUTTON = new JRMCoreGuiButtons00(100, guiWidthOffset - 78, guiHeightOffset, width + 8, 20, name, 0);
             buttonList.add(UPDATE_VANITY_BUTTON);
 
             name = (JRMCoreEH.gk ? "Hide" : "Show") + " own vanity";
             width = this.fontRendererObj.getStringWidth(name);
-            buttonList.add(new JRMCoreGuiButtons00(101, guiWidthOffset + 260, guiHeightOffset + 24, width + 8, 20, name, 0));
+            buttonList.add(new JRMCoreGuiButtons00(101, guiWidthOffset - 88, guiHeightOffset + 21, width + 8, 20, name, 0));
         }
 
         updateScreen();

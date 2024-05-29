@@ -70,6 +70,14 @@ display.nose=Nose
 display.color=Color
 display.modify=Modify
 
+statsheet.dark=Dark
+statsheet.light=Light
+statsheet.modern=Modern
+statsheet.old=Old
+statsheet.advanced=Advanced
+statsheet.simple=Simple
+statsheet.tooltip=Tooltip Modifications
+
 part.horns=Horns
 part.ears=Ears
 

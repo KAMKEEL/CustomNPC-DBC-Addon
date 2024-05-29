@@ -174,14 +174,14 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
     }
 
     protected void addServerButtons(){
-        String s = "Official DBC Server";
+        String s = "DBC Server";
         int i = this.fontRendererObj.getStringWidth(s);
-        this.buttonList.add(new JRMCoreGuiButtons00(GuiInfo.SERVER_SITE_ID, guiWidthOffset + 260, guiHeightOffset + 85 - 40, i + 8, 20, s, 0));
+        this.buttonList.add(new JRMCoreGuiButtons00(GuiInfo.SERVER_SITE_ID, guiWidthOffset + 260, guiHeightOffset + 3, i + 8, 20, s, 0));
 
         if (!JRMCoreConfig.ssurl.contains("empty") && JRMCoreConfig.ssurl.contains("ttp")) {
             s = GuiInfo.ReferenceIDs.SERVER_SHOP.getTranslation();
             i = this.fontRendererObj.getStringWidth(s);
-            this.buttonList.add(new JRMCoreGuiButtons00(3099, guiWidthOffset + 260, guiHeightOffset + 85, i + 8, 20, s, 0));
+            this.buttonList.add(new JRMCoreGuiButtons00(3099, guiWidthOffset + 260, guiHeightOffset + 25, i + 8, 20, s, 0));
         }
     }
 
@@ -194,7 +194,7 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
         GuiInfo.ReferenceIDs[] guiReferences = GuiInfo.ReferenceIDs.values();
         int xOffset = 0;
 
-        if (!JRMCoreConfig.ssurl.contains("empty") && JRMCoreConfig.ssurl.contains("ttp")) {
+        if ((!JRMCoreConfig.ssurl.contains("empty") && JRMCoreConfig.ssurl.contains("ttp"))) {
             GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.SERVER_SHOP;
             //String name = "Server Shop";
             GuiButton button = new JRMCoreGuiButtons02(3099, guiWidthOffset, guiHeightOffset+menuImageHeight+2, "$", ref.getGuiID() == guiID ? 1 : 0, Color.GREEN.darker().darker().getRGB());

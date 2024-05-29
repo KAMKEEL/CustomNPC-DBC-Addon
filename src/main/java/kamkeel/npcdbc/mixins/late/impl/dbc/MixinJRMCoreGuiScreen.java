@@ -218,7 +218,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
             return;
         String s = (!ConfigDBCClient.EnhancedGui ? "Old" : "§aModern") +" GUI";
         int i = this.fontRendererObj.getStringWidth(s)+10;
-        this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2 + 154, (this.height-159)/2 + 70, i + 8, 20, s, 0));
+        this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2 + 154, (this.height-159)/2 + 65, i + 8, 20, s, 0));
     }
 
     @Inject(method="actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", at=@At("HEAD"), remap = true)
