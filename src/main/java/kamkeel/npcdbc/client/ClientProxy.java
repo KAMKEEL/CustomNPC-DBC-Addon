@@ -20,7 +20,6 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy {
     public static boolean RenderingOutline;
-    public static final int SecondRenderPass = 1684;
 
     public static void eventsInit() {
         FMLCommonHandler.instance().bus().register(new ClientEventHandler());

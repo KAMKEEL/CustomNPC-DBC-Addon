@@ -36,16 +36,13 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
 
     @Override
     public List<String> getMixins() {
-        ArrayList<String> mixins = new ArrayList<>();
+        ArrayList<String> list = new ArrayList<>();
 
-        System.out.println("hi1");
         if (side == MixinEnvironment.Side.CLIENT) {
-            mixins.add("client.MixinSoundManager");
-            mixins.add("client.MixinEntity");
-            mixins.add("client.MixinEntityRenderer");
+            list.add("client.MixinSoundManager");
         }
 
-        return mixins;
+        return list;
     }
 
     @Override
