@@ -11,6 +11,7 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -50,6 +51,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     boolean hasRace;
     boolean showAura = false;
+    public int auraTicks = 1;
     int racePage = 0;
     private float rotation = 0.0F;
     private GuiNpcButton left;
@@ -252,6 +254,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Aura Show
         if(button.id == 1206){
             showAura = !showAura;
+            auraTicks = 1;
             refreshValues();
             updateButtons();
         }
@@ -593,6 +596,16 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE); // Additive blending for brightness
                 GL11.glDisable(GL11.GL_LIGHTING); // Disable standard lighting
                 GL11.glScalef(0.8f, 0.8f, 0.8f);
+
+
+//                int add = auraTicks % 5;
+//                aur.setSpd(5 + add);
+//                RenderManager.instance.renderEntityWithPosYaw((Entity) aur, 0.0, 1.0, 0.0, 0.0F, 1.0F);
+//                aur.setSpd((5 * 2) + add);
+//                RenderManager.instance.renderEntityWithPosYaw((Entity) aur, 0.0, 1.0, 0.0, 0.0F, 1.0F);
+//                aur.setSpd((5 * 3) + add);
+//                RenderManager.instance.renderEntityWithPosYaw((Entity) aur, 0.0, 1.0, 0.0, 0.0F, 1.0F);
+//                aur.setSpd((5 * 4) + add);
                 RenderManager.instance.renderEntityWithPosYaw((Entity) aur, 0.0, 1.0, 0.0, 0.0F, 1.0F);
 
                 // Restore the settings
@@ -603,6 +616,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             } catch (Exception ignored) {
             }
         }
+        auraTicks++;
 
         // Render Entity
         try {
