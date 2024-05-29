@@ -1,5 +1,5 @@
 
-## 👋 Welcome to the CustomNPC+ AW Addon Repository.
+## 👋 Welcome to the CustomNPC+ DBC Addon Repository.
 
 ----------------
 
@@ -17,7 +17,7 @@
 - **CurseForge**: [NONE]()
 
 ### 🔹 Installation
-This mod is an addon mod to **CustomNPC+**. It requires both **Armourer's Workshop** and **CustomNPC+** to be installed alongside it.
+This mod is an addon mod to **CustomNPC+**. It requires **DBC**, **JRMCore**, **JBRAClient**, and **CustomNPC+** to be installed alongside it.
 It also requires a Mixin Mod like UniMixins.
 
 ## Cloning / Compiling / Building
