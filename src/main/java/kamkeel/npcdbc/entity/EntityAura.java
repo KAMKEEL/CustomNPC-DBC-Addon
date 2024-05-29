@@ -4,6 +4,7 @@ import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -18,6 +19,7 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.mixins.early.IEntityMC;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -265,6 +267,16 @@ public class EntityAura extends Entity {
     }
 
     public void updateDisplay() {
+       // alpha = 0.1f;
+        IEntityMC en = (IEntityMC) entity;
+        en.setRenderPass(ClientProxy.SecondRenderPass);
+        
+        if (entity.isInWater()) {
+            renderPass = 0;
+            en.setRenderPass(0);
+        } else {
+            renderPass =1;
+        }
         if (isKaioken) {
             if (parent.isVanillaDefault && !DBCForm.isSaiyanGod(auraData.getState()))
                 fadeOut = true;

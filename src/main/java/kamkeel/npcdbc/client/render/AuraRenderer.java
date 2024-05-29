@@ -107,11 +107,14 @@ public class AuraRenderer extends RenderDBC {
 
 
         GL11.glDepthMask(false);
+        GL11.glDepthFunc(GL11.GL_LEQUAL);
+
         GL11.glEnable(3042);
         GL11.glDisable(2896);
         GL11.glBlendFunc(770, 771);
         GL11.glAlphaFunc(516, 0.003921569F);
 
+        //alpha = 0.15f;
 
         GL11.glScalef(size + pulsingSize, size, size + pulsingSize);
         GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);

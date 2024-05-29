@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client;
 
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import noppes.npcs.util.ValueUtil;
 import org.lwjgl.opengl.GL11;
 
 public class ColorMode {
@@ -39,6 +40,50 @@ public class ColorMode {
 
         GL11.glColor4f(r, g, b, alpha);
     }
+
+    public static int mixColors(int color1, int color2, float alpha) {
+        alpha = ValueUtil.clamp(alpha, 0, 1);
+
+        int r1 = (color1 >> 16) & 0xFF;
+        int g1 = (color1 >> 8) & 0xFF;
+        int b1 = color1 & 0xFF;
+
+        int r2 = (color2 >> 16) & 0xFF;
+        int g2 = (color2 >> 8) & 0xFF;
+        int b2 = color2 & 0xFF;
+
+        int r = (int) ((1 - alpha) * r1 + alpha * r2);
+        int g = (int) ((1 - alpha) * g1 + alpha * g2);
+        int b = (int) ((1 - alpha) * b1 + alpha * b2);
+
+        return (r << 16) | (g << 8) | b;
+    }
+
+    public static int mixColors(int color1, int color2, int color3, float alpha1, float alpha2) {
+        alpha1 = ValueUtil.clamp(alpha1, 0, 1);
+        alpha2 = ValueUtil.clamp(alpha2, 0, 1);
+
+        float remainingAlpha = ValueUtil.clamp(1 - alpha1 - alpha2, 0, 1);
+
+        int r1 = (color1 >> 16) & 0xFF;
+        int g1 = (color1 >> 8) & 0xFF;
+        int b1 = color1 & 0xFF;
+
+        int r2 = (color2 >> 16) & 0xFF;
+        int g2 = (color2 >> 8) & 0xFF;
+        int b2 = color2 & 0xFF;
+
+        int r3 = (color3 >> 16) & 0xFF;
+        int g3 = (color3 >> 8) & 0xFF;
+        int b3 = color3 & 0xFF;
+
+        int r = (int) (remainingAlpha * r1 + alpha1 * r2 + alpha2 * r3);
+        int g = (int) (remainingAlpha * g1 + alpha1 * g2 + alpha2 * g3);
+        int b = (int) (remainingAlpha * b1 + alpha1 * b2 + alpha2 * b3);
+
+        return (r << 16) | (g << 8) | b;
+    }
+
 
     public static void applyModelColor(int color, boolean isHurt) {
         applyModelColor(color, 1.0f, isHurt);

@@ -4,6 +4,7 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,8 +39,11 @@ public class PlayerOutline {
 
     public static void renderOutline(RenderPlayerJBRA render, EntityPlayer p) {
         //Uncomment line below
-
-       // DBCData.get(p).outline = new PlayerOutline(0xCfffff, 0x0d2dba);
+        EntityAura aura = DBCData.get(p).auraEntity;
+        if (aura == null)
+            return;
+        
+        DBCData.get(p).outline = new PlayerOutline(0xCfffff, 0x0d2dba);
         if (DBCData.get(p).outline == null)
             return;
 
