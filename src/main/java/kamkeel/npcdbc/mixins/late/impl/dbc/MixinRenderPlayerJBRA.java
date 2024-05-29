@@ -4,6 +4,7 @@ import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
@@ -13,6 +14,7 @@ import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.render.PlayerOutline;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -57,13 +59,16 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Inject(method = "glColor3f(I)V", at = @At("HEAD"), cancellable = true)
     private static void mixAuraColor(int c, CallbackInfo ci) {
         EntityPlayer player = ClientEventHandler.renderingPlayer;
-        if (ClientEventHandler.renderingPlayer == null || DBCData.get(player) == null)
+        if (ClientEventHandler.renderingPlayer == null || DBCData.get(player) == null || !JGConfigClientSettings.CLIENT_DA14)
             return;
         EntityAura aura = DBCData.get(player).auraEntity;
-        if (aura == null || aura.color1 == -1)
+        if (aura == null || aura.color1 == -1 || aura.type3D == EnumAuraTypes3D.None || aura.aura.display.kettleModeType == 1)
             return;
 
-        int col = ColorMode.mixColors(c, aura.color1, 0.25f);
+        if (aura.fadeOut)
+            aura.skinColorAlpha = (float) Math.max(0.0f, aura.skinColorAlpha - Math.pow(aura.fadeFactor, 1 + (aura.alpha / 1) * 7));
+
+        int col = ColorMode.mixColors(c, aura.color1, aura.skinColorAlpha);
 
         float r = (float) (col >> 16 & 255) / 255.0F;
         float g = (float) (col >> 8 & 255) / 255.0F;
