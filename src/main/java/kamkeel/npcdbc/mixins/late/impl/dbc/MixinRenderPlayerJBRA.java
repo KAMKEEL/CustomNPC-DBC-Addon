@@ -4,7 +4,6 @@ import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
-import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
@@ -14,7 +13,6 @@ import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.render.PlayerOutline;
 import kamkeel.npcdbc.config.ConfigDBCClient;
-import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -54,15 +52,31 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
     public void renderOutline(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
         PlayerOutline.renderOutline((RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
+        EntityAura aura = DBCData.get(par1AbstractClientPlayer).auraEntity;
+        
+        if (aura == null || !aura.shouldRender())
+            return;
+        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
     }
+
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPopMatrix()V", ordinal = 3, shift = At.Shift.AFTER))
+    public void postRender(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
+        EntityAura aura = DBCData.get(par1AbstractClientPlayer).auraEntity;
+        if (aura == null || !aura.shouldRender())
+            return;
+        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+
+
+    }
+
 
     @Inject(method = "glColor3f(I)V", at = @At("HEAD"), cancellable = true)
     private static void mixAuraColor(int c, CallbackInfo ci) {
         EntityPlayer player = ClientEventHandler.renderingPlayer;
-        if (ClientEventHandler.renderingPlayer == null || DBCData.get(player) == null || !JGConfigClientSettings.CLIENT_DA14)
+        if (ClientEventHandler.renderingPlayer == null || DBCData.get(player) == null)
             return;
         EntityAura aura = DBCData.get(player).auraEntity;
-        if (aura == null || aura.color1 == -1 || aura.type3D == EnumAuraTypes3D.None || aura.aura.display.kettleModeType == 1)
+        if (aura == null || aura.color1 == -1 || !aura.shouldRender())
             return;
 
         if (aura.fadeOut)
