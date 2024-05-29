@@ -74,7 +74,7 @@ public class AuraRenderer extends RenderDBC {
         float alpha = aura.alpha;
         float alphaConfig = (float) JGConfigClientSettings.CLIENT_DA21 / 10.0F;
         boolean isFirstPerson = DBCClient.mc.thePlayer == aura.entity && DBCClient.mc.gameSettings.thirdPersonView == 0;
-        alpha = (isFirstPerson ? aura.isInner ? 0.0075f : 0.005f : alpha) * alphaConfig;
+        alpha = (isFirstPerson ? aura.isKaioken ? 0.015f : 0.0125f : alpha) * alphaConfig;
 
         pulseMax = 5;
         if (pulseMax > 0)
