@@ -734,7 +734,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         index++;
 
 
-        if(true || JRMCoreEH.dt){
+        if(JRMCoreEH.dt){
             String name = "Update vanity";
             int width = this.fontRendererObj.getStringWidth(name);
             UPDATE_VANITY_BUTTON = new JRMCoreGuiButtons00(100, guiWidthOffset + 260, guiHeightOffset + 3, width + 8, 20, name, 0);
