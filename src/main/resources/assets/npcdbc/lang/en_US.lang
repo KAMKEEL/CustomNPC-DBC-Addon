@@ -11,7 +11,6 @@ stats.ignoreBlock=Ignore Block
 stats.ignoreEndurance=Ignore Endurance
 stats.ignoreKiDamage=Ignore Ki Protection
 stats.ignoreFormDefense=Ignore Form Defense
-
 stats.hasDefensePenetration=Has Defense Penetration
 stats.defensePenetration=Defense Penetration
 
@@ -69,6 +68,31 @@ display.mouth=Mouth
 display.nose=Nose
 display.color=Color
 display.modify=Modify
+display.formSize=Form Size
+display.aura=Aura
+display.fur=Fur
+display.hair=Hair
+display.hairType=Hair Type
+display.majinHair=Majin Hair
+display.arcoMask=Arco Mask
+display.form=Form
+display.mastery=Mastery
+display.stackable=Stackable
+display.general=General
+display.bodyc1=Body C1
+display.bodyc2=Body C2
+display.bodyc3=Body C3
+display.vanillaStackable=Vanilla Stackable
+display.kkStackable=Kaioken Stackable
+display.kkRatio=KK Multi Ratio
+display.kkLevelRatio=KK Level Ratio
+display.uiStackable=UI Stackable
+display.uiRatio=UI Multi Ratio
+display.uiLevelRatio=UI Level Ratio
+display.godStackable=GoD Stackable
+display.godRatio=GoD Multi Ratio
+display.mysticStackable=Mystic Stackable
+display.mysticRatio=Mystic Multi Ratio
 
 statsheet.dark=Dark
 statsheet.light=Light
@@ -86,6 +110,8 @@ form.select=Select
 
 aura.shown=Shown
 aura.hidden=Hidden
+
+editor.invalid=Editor cannot show
 
 ############################
 ## Status Effects

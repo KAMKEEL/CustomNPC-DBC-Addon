@@ -51,7 +51,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         if(tab == 0){
             addButton(new GuiNpcButton(101, guiLeft + 40, y+=22, 60, 20, "gui.paste"));
             addButton(new GuiNpcButton(102, guiLeft + 101, y, 50, 20, "gui.copy"));
-            addLabel(new GuiNpcLabel(100, "Hair", guiLeft, y + 5, 0xFFFFFF));
+            addLabel(new GuiNpcLabel(100, "display.hair", guiLeft, y + 5, 0xFFFFFF));
             addButton(new GuiNpcButton(104, guiLeft + 101, y+=22, 50, 20, getColor(display.hairColor)));
             addButton(new GuiNpcButton(103, guiLeft + 40, y, 60, 20, "gui.clear"));
             getButton(104).packedFGColour = display.hairColor;

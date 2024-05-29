@@ -115,9 +115,7 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         addLabel(new GuiNpcLabel(31, "Descend Sound", guiLeft + 7, y + 5));
         addTextField(new GuiNpcTextField(31, this, fontRendererObj, guiLeft + 90, y, 194, 20, form.descendSound));
         addButton(new GuiNpcButton(31, guiLeft + 293, y, 60, 20, "gui.select"));
-
-        addButton(new GuiNpcButton(1010101, guiLeft + 200, guiTop + 192, 50, 20, "RELOAD"));
-	}
+    }
 
 	public void buttonEvent(GuiButton guibutton)
     {
@@ -246,7 +244,8 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
 
     public void drawScreen(int i, int j, float f) {
         super.drawScreen(i, j, f);
-        menu.drawElements(fontRendererObj, i, j, mc, f);
+        if(!hasSubGui())
+            menu.drawElements(fontRendererObj, i, j, mc, f);
     }
 
 	@Override

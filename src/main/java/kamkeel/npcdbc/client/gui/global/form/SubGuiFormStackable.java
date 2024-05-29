@@ -31,7 +31,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         int y = guiTop + 3;
 
-        addLabel(new GuiNpcLabel(1,"Vanilla Stackable", guiLeft + 4, y + 5));
+        addLabel(new GuiNpcLabel(1,"display.vanillaStackable", guiLeft + 4, y + 5));
         addButton(new GuiNpcButtonYesNo(1, guiLeft + 115, y, 50, 20, stackable.vanillaStackable));
 
         y += 23;
@@ -42,13 +42,13 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         if(stackable.kaiokenStackable){
             y += 23;
 
-            addLabel(new GuiNpcLabel(22,"KK Strength %", guiLeft + 4, y + 5));
+            addLabel(new GuiNpcLabel(22,"display.kkRatio", guiLeft + 4, y + 5));
             addTextField(new GuiNpcTextField(22, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.kaiokenStrength)));
             getTextField(22).setMaxStringLength(22);
             getTextField(22).floatsOnly = true;
             getTextField(22).setMinMaxDefaultFloat(-10000, 10000, 1);
 
-            addLabel(new GuiNpcLabel(23,"KK State 2 Strength %", guiLeft + 175, y + 5));
+            addLabel(new GuiNpcLabel(23,"display.kkLevelRatio", guiLeft + 175, y + 5));
             addTextField(new GuiNpcTextField(23, this, guiLeft + 300, y, 50, 20, String.valueOf(stackable.kaiokenState2Factor)));
             getTextField(23).setMaxStringLength(23);
             getTextField(23).floatsOnly = true;
@@ -57,19 +57,19 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         y += 23;
 
-        addLabel(new GuiNpcLabel(3,"UI Stackable", guiLeft + 4, y + 5));
+        addLabel(new GuiNpcLabel(3,"display.uiStackable", guiLeft + 4, y + 5));
         addButton(new GuiNpcButtonYesNo(3, guiLeft + 115, y, 50, 20, stackable.uiStackable));
 
         if(stackable.uiStackable){
             y += 23;
 
-            addLabel(new GuiNpcLabel(32,"UI Strength %", guiLeft + 4, y + 5));
+            addLabel(new GuiNpcLabel(32,"display.uiRatio", guiLeft + 4, y + 5));
             addTextField(new GuiNpcTextField(32, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.uiStrength)));
             getTextField(32).setMaxStringLength(32);
             getTextField(32).floatsOnly = true;
             getTextField(32).setMinMaxDefaultFloat(-10000, 10000, 1);
 
-            addLabel(new GuiNpcLabel(33,"UI State 2 Strength %", guiLeft + 175, y + 5));
+            addLabel(new GuiNpcLabel(33,"display.uiLevelRatio", guiLeft + 175, y + 5));
             addTextField(new GuiNpcTextField(33, this, guiLeft + 300, y, 50, 20, String.valueOf(stackable.uiState2Factor)));
             getTextField(33).setMaxStringLength(33);
             getTextField(33).floatsOnly = true;
@@ -78,12 +78,12 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         y += 23;
 
-        addLabel(new GuiNpcLabel(4,"GoD Stackable", guiLeft + 4, y + 5));
+        addLabel(new GuiNpcLabel(4,"display.godStackable", guiLeft + 4, y + 5));
         addButton(new GuiNpcButtonYesNo(4, guiLeft + 115, y, 50, 20, stackable.godStackable));
 
         if(stackable.godStackable){
             y += 23;
-            addLabel(new GuiNpcLabel(42,"GoD Strength %", guiLeft + 4, y + 5));
+            addLabel(new GuiNpcLabel(42,"display.godRatio", guiLeft + 4, y + 5));
             addTextField(new GuiNpcTextField(42, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.godStrength)));
             getTextField(42).setMaxStringLength(42);
             getTextField(42).floatsOnly = true;
@@ -92,12 +92,12 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         y += 23;
 
-        addLabel(new GuiNpcLabel(5,"Mystic Stackable", guiLeft + 4, y + 5));
+        addLabel(new GuiNpcLabel(5,"display.mysticStackable", guiLeft + 4, y + 5));
         addButton(new GuiNpcButtonYesNo(5, guiLeft + 115, y, 50, 20, stackable.mysticStackable));
 
         if(stackable.mysticStackable){
             y += 23;
-            addLabel(new GuiNpcLabel(52,"Mystic Strength %", guiLeft + 4, y + 5));
+            addLabel(new GuiNpcLabel(52,"display.mysticRatio", guiLeft + 4, y + 5));
             addTextField(new GuiNpcTextField(52, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.mysticStrength)));
             getTextField(52).setMaxStringLength(52);
             getTextField(52).floatsOnly = true;

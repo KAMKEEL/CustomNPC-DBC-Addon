@@ -1,10 +1,12 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
+import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -12,6 +14,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityCustomNpc;
@@ -39,6 +42,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     public EntityCustomNpc npc;
 
     boolean hasRace;
+    boolean showAura = false;
     int racePage = 0;
     private float rotation = 0.0F;
     private GuiNpcButton left;
@@ -93,28 +97,29 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     }
 
     private void raceButtons(int y) {
-        addLabel(new GuiNpcLabel(200, "Form Size", guiLeft + 7, y + 5));
+        addLabel(new GuiNpcLabel(200, "display.formSize", guiLeft + 7, y + 5));
         addTextField(new GuiNpcTextField(200, this, guiLeft + 61, y, 50, 20, String.valueOf(display.formSize)));
         getTextField(200).setMaxStringLength(10);
         getTextField(200).floatsOnly = true;
         getTextField(200).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
 
         y += 22;
-        addLabel(new GuiNpcLabel(106, "Aura", guiLeft + 7, y + 5));
+        addLabel(new GuiNpcLabel(106, "display.aura", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(106, guiLeft + 61, y, 50, 20, getColor(display.auraColor)));
         getButton(106).packedFGColour = display.auraColor;
         addButton(new GuiNpcButton(1106, guiLeft + 112, y, 20, 20, "X"));
         getButton(1106).enabled = display.auraColor != -1;
+        addButton(new GuiNpcButton(1206, guiLeft + 133, y, 50, 20,  new String[]{"display.hide", "display.show"}, showAura ? 1 : 0));
 
         y += 22;
-        addLabel(new GuiNpcLabel(107, "Eye", guiLeft + 7, y + 5));
+        addLabel(new GuiNpcLabel(107, "display.eye", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(107, guiLeft + 61, y, 50, 20, getColor(display.eyeColor)));
         getButton(107).packedFGColour = display.eyeColor;
         addButton(new GuiNpcButton(1107, guiLeft + 112, y, 20, 20, "X"));
         getButton(1107).enabled = display.eyeColor != -1;
 
         y += 22;
-        addLabel(new GuiNpcLabel(108, "Body", guiLeft + 7, y + 5));
+        addLabel(new GuiNpcLabel(108, "model.body", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(108, guiLeft + 61, y, 50, 20, getColor(display.bodyCM)));
         getButton(108).packedFGColour = display.bodyCM;
         addButton(new GuiNpcButton(1108, guiLeft + 112, y, 20, 20, "X"));
@@ -126,7 +131,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         if (visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
             y += 22;
-            addLabel(new GuiNpcLabel(112, "Fur", guiLeft + 7, y + 5));
+            addLabel(new GuiNpcLabel(112, "display.fur", guiLeft + 7, y + 5));
             addButton(new GuiNpcButton(112, guiLeft + 61, y, 50, 20, getColor(display.furColor)));
             getButton(112).packedFGColour = display.furColor;
             addButton(new GuiNpcButton(1112, guiLeft + 112, y, 20, 20, "X"));
@@ -135,7 +140,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         if(visualDisplay.race == DBCRace.MAJIN){
             y += 22;
-            addLabel(new GuiNpcLabel(115, "Majin Hair", guiLeft + 7, y + 5));
+            addLabel(new GuiNpcLabel(115, "display.majinHair", guiLeft + 7, y + 5));
             addButton(new GuiNpcButtonYesNo(115, guiLeft + 61, y, 50, 20, display.effectMajinHair));
         }
 
@@ -145,34 +150,34 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         if(visualDisplay.race == DBCRace.ARCOSIAN){
             y += 22;
-            addLabel(new GuiNpcLabel(113, "Arco Mask", guiLeft + 7, y + 5));
+            addLabel(new GuiNpcLabel(113, "display.arcoMask=", guiLeft + 7, y + 5));
             addButton(new GuiNpcButtonYesNo(113, guiLeft + 61, y, 50, 20, visualDisplay.hasArcoMask));
 
             y += 22;
             int index = getArcoForm();
 
-            addLabel(new GuiNpcLabel(114, "Form", guiLeft + 7, y + 5));
+            addLabel(new GuiNpcLabel(114, "display.form", guiLeft + 7, y + 5));
             addButton(new GuiNpcButton(114, guiLeft + 61, y, 50, 20, arcoForms, index));
         }
     }
 
     private int addBodyColors(int y) {
         y += 22;
-        addLabel(new GuiNpcLabel(109, "Body C1", guiLeft + 7, y + 5));
+        addLabel(new GuiNpcLabel(109, "display.bodyc1", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(109, guiLeft + 61, y, 50, 20, getColor(display.bodyC1)));
         getButton(109).packedFGColour = display.bodyC1;
         addButton(new GuiNpcButton(1109, guiLeft + 112, y, 20, 20, "X"));
         getButton(1109).enabled = display.bodyC1 != -1;
 
         y += 22;
-        addLabel(new GuiNpcLabel(110, "Body C2", guiLeft + 7, y + 5));
+        addLabel(new GuiNpcLabel(110, "display.bodyc2", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(110, guiLeft + 61, y, 50, 20, getColor(display.bodyC2)));
         getButton(110).packedFGColour = display.bodyC2;
         addButton(new GuiNpcButton(1110, guiLeft + 112, y, 20, 20, "X"));
         getButton(1110).enabled = display.bodyC2 != -1;
 
         y += 22;
-        addLabel(new GuiNpcLabel(111, "Body C3", guiLeft + 7, y + 5));
+        addLabel(new GuiNpcLabel(111, "display.bodyc3", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(111, guiLeft + 61, y, 50, 20, getColor(display.bodyC3)));
         getButton(111).packedFGColour = display.bodyC3;
         addButton(new GuiNpcButton(1111, guiLeft + 112, y, 20, 20, "X"));
@@ -183,20 +188,22 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     private int addHairOptions(int y) {
         y += 23;
-        addLabel(new GuiNpcLabel(100, "Hair", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(103, guiLeft + 112, y, 60, 20, "gui.clear"));
+        addLabel(new GuiNpcLabel(100, "display.hair", guiLeft + 7, y + 5));
+        addButton(new GuiNpcButton(103, guiLeft + 102, y, 45, 20, "gui.clear"));
         if (display.hairCode.isEmpty()) {
-            addButton(new GuiNpcButton(101, guiLeft + 51, y, 60, 20, "gui.paste"));
+            addButton(new GuiNpcButton(101, guiLeft + 51, y, 50, 20, "gui.paste"));
             getButton(103).enabled = false;
         } else {
             addButton(new GuiNpcButton(102, guiLeft + 51, y, 60, 20, "gui.copy"));
         }
-        addButton(new GuiNpcButton(104, guiLeft + 173, y, 50, 20, getColor(visualDisplay.hairColor)));
+        addButton(new GuiNpcButton(104, guiLeft + 147, y, 50, 20, getColor(visualDisplay.hairColor)));
         getButton(104).packedFGColour = visualDisplay.hairColor;
+        addButton(new GuiNpcButton(1104, guiLeft + 199, y, 20, 20, "X"));
+        getButton(1104).enabled = display.hairColor != -1;
 
         y += 22;
         int index = getHairType();
-        addLabel(new GuiNpcLabel(140, "Hair Type", guiLeft + 7, y + 5));
+        addLabel(new GuiNpcLabel(140, "display.hairType", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(140, guiLeft + 61, y, 50, 20, hairTypes, index));
         return y;
     }
@@ -224,6 +231,12 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Aura Color Clear
         if(button.id == 1106){
             display.auraColor = -1;
+            refreshValues();
+            updateButtons();
+        }
+        // Aura Show
+        if(button.id == 1206){
+            showAura = !showAura;
             refreshValues();
             updateButtons();
         }
@@ -318,7 +331,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         // Hair Clear
         if(button.id == 103){
-            display.hairColor = -1;
             display.hairCode = "";
             refreshValues();
             updateButtons();
@@ -339,6 +351,12 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             lastColorClicked = 7;
             setSubGui(new SubGuiColorSelector(display.hairColor));
         }
+        // Hair Color Clear
+        if(button.id == 1104){
+            display.hairColor = -1;
+            refreshValues();
+            updateButtons();
+        }
     }
 
     private void updateButtons() {
@@ -357,7 +375,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
 
 	@Override
-    public void unFocused(GuiNpcTextField txtField) {}
+    public void unFocused(GuiNpcTextField txtField) {
+        if(txtField.id == 200){
+            display.formSize = txtField.getFloat();
+        }
+    }
 
     @Override
     public void mouseClicked(int i, int j, int k)
@@ -423,10 +445,10 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             int xPos = (scaledWidth - this.xSize) / 2 + 280;
             int yPos = (scaledHeight - this.ySize) / 2 - 15;
             if(visualDisplay.hairType.equals("ssj3")){
-                fontRendererObj.drawString("Editor cannot show SSJ3", xPos, yPos, 0xffffff);
+                fontRendererObj.drawString(StatCollector.translateToLocal("editor.invalid") + " SSJ3", xPos, yPos, 0xffffff);
             }
             if(visualDisplay.hairType.equals("oozaru")){
-                fontRendererObj.drawString("Editor cannot show Oozaru", xPos, yPos, 0xffffff);
+                fontRendererObj.drawString(StatCollector.translateToLocal("editor.invalid") + " Oozaru", xPos, yPos, 0xffffff);
             }
             GL11.glPopMatrix();
         }
@@ -458,9 +480,35 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         GL11.glTranslatef(0.0F, entity.yOffset, 0.0F);
         RenderManager.instance.playerViewY = 180F;
 
+        if(showAura) {
+            // Render Aura
+            EntityAura2 aur = new EntityAura2(entity.worldObj, Utility.getEntityID(entity), 0, 0, 0, 100, false);
+            aur.setAlp(0.5F);
+            aur.setInner(true);
+            aur.setCol(display.auraColor);
+            try {
+                GL11.glPushMatrix();
+                RenderHelper.disableStandardItemLighting();
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE); // Additive blending for brightness
+                GL11.glDisable(GL11.GL_LIGHTING); // Disable standard lighting
+                GL11.glScalef(0.8f, 0.8f, 0.8f);
+                RenderManager.instance.renderEntityWithPosYaw((Entity) aur, 0.0, 1.0, 0.0, 0.0F, 1.0F);
+
+                // Restore the settings
+                GL11.glEnable(GL11.GL_LIGHTING); // Re-enable standard lighting
+                GL11.glDisable(GL11.GL_BLEND);
+                GL11.glPopMatrix();
+                RenderHelper.enableStandardItemLighting();
+            } catch (Exception ignored) {
+            }
+        }
+
+        // Render Entity
         try {
             RenderManager.instance.renderEntityWithPosYaw((Entity)entity, 0.0, 0.0, 0.0, 0.0F, 1.0F);
         } catch (Exception ignored) {}
+
 
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
         entity.prevRotationYaw = entity.rotationYaw = f3;
@@ -521,7 +569,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
 
         visualDisplay.hairType = display.hairType;
-        visualDisplay.hairColor = display.hairColor == -1 ? visualDisplay.hairColor : display.hairColor;
+        visualDisplay.hairColor = display.hairColor == -1 ? 0xffffff : display.hairColor;
         if(visualDisplay.race == DBCRace.NAMEKIAN || visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.MAJIN)
             visualDisplay.hairColor = display.bodyCM;
 

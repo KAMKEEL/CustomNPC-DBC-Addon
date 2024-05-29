@@ -30,10 +30,10 @@ public class GuiNpcFormMenu {
         Keyboard.enableRepeatEvents(true);
         GuiMenuTopButton close = new GuiMenuTopButton(-5, guiLeft + width - 22, guiTop - 17, "X");
 
-        GuiMenuTopButton general = new GuiMenuTopButton(-1, guiLeft + 4, guiTop - 17, "General");
+        GuiMenuTopButton general = new GuiMenuTopButton(-1, guiLeft + 4, guiTop - 17, "display.general");
         GuiMenuTopButton display = new GuiMenuTopButton(-2, general.xPosition + general.getWidth(), guiTop - 17, "menu.display");
-        GuiMenuTopButton mastery = new GuiMenuTopButton(-3, display.xPosition + display.getWidth(), guiTop - 17, "Mastery");
-        GuiMenuTopButton stackable = new GuiMenuTopButton(-4, mastery.xPosition + mastery.getWidth(), guiTop - 17, "Stackable");
+        GuiMenuTopButton mastery = new GuiMenuTopButton(-3, display.xPosition + display.getWidth(), guiTop - 17, "display.mastery");
+        GuiMenuTopButton stackable = new GuiMenuTopButton(-4, mastery.xPosition + mastery.getWidth(), guiTop - 17, "display.stackable");
 
         this.topButtons = new GuiMenuTopButton[]{general, display, mastery, stackable, close};
         GuiMenuTopButton[] var12 = this.topButtons;
