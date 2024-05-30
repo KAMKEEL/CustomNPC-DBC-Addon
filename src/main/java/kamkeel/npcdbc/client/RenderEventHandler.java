@@ -1,17 +1,13 @@
 package kamkeel.npcdbc.client;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.entity.EntityAura;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.client.renderer.ImageData;
-import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -37,10 +33,7 @@ public class RenderEventHandler {
 //        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         glEnable(GL_ALPHA_TEST);
 
-        glDisable(GL_CULL_FACE);
-
         renderAura(event);
-        glEnable(GL_CULL_FACE);
 
         glStencilMask(0xFF);
         glDisable(GL_BLEND);
