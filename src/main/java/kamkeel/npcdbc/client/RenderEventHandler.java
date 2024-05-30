@@ -1,12 +1,10 @@
 package kamkeel.npcdbc.client;
 
-import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -148,18 +146,16 @@ public class RenderEventHandler {
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);  // Keep stencil value
         GL11.glStencilMask(0xFF);  // Write to stencil buffer
 
-        if(doEnable) {
-
+        if(doEnable) 
             GL11.glDisable(GL11.GL_STENCIL_TEST);
-        }
+        
     }
 
     public static void checkStencilStart(int id, boolean invert, boolean doEnable) {
 
-        if(doEnable) {
-
+        if (doEnable) 
             GL11.glEnable(GL11.GL_STENCIL_TEST);
-        }
+
 
         GL11.glStencilFunc(invert ? GL11.GL_EQUAL : GL11.GL_NOTEQUAL, id, 0xFF);  // Test stencil value
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);  // Keep stencil value
@@ -170,9 +166,8 @@ public class RenderEventHandler {
 
         GL11.glStencilMask(0xFF);
 
-        if(doEnable) {
-
+        if (doEnable) 
             GL11.glDisable(GL11.GL_STENCIL_TEST);
-        }
+
     }
 }
