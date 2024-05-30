@@ -15,6 +15,7 @@ import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import noppes.npcs.util.ValueUtil;
 import org.lwjgl.opengl.GL11;
@@ -25,6 +26,7 @@ import static JinRyuu.DragonBC.common.Npcs.RenderAura2.cf;
 import static JinRyuu.DragonBC.common.Npcs.RenderAura2.glColor4f;
 
 public class AuraRenderer extends RenderDBC {
+    public static AuraRenderer Instance;
     private ModelAura model;
     String auraDir = "jinryuudragonbc:";
     int pulseAnimation;
@@ -38,6 +40,7 @@ public class AuraRenderer extends RenderDBC {
         model = (ModelAura) this.mainModel;
         this.shadowSize = 0.0F;
         this.lightVertRotation = new float[10][7];
+        Instance = this;
     }
 
     public void animatePulsing() {
@@ -60,10 +63,13 @@ public class AuraRenderer extends RenderDBC {
 
     }
 
-    public void renderAura(EntityAura aura, double posX, double posY, double posZ) {
+    public void renderAura(EntityAura aura, float partialTicks) {
         if (!aura.shouldRender())
             return;
-
+        double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - RenderManager.renderPosX;
+        double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - RenderManager.renderPosY;
+        double interPosZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - RenderManager.renderPosZ;
+        
         byte race = aura.auraData.getRace();
         byte state = aura.auraData.getState();
         int speed = aura.speed;
@@ -83,7 +89,7 @@ public class AuraRenderer extends RenderDBC {
             pulseAnimation = 0;
 
         Random rand = new Random();
-        RenderEventHandler.disableStencilWriting(RenderEventHandler.PLAYER_STENCIL_ID, false);
+      //  RenderEventHandler.disableStencilWriting(RenderEventHandler.PLAYER_STENCIL_ID, false);
         GL11.glPushMatrix();
 
         float pulsingSize = pulseAnimation * 0.03f;
@@ -101,7 +107,7 @@ public class AuraRenderer extends RenderDBC {
         double yOffset = aura.getYOffset(size);
         if (stateSizeFactor < 4)  //fixes bug in which offset is not correct if size is too small
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
-        GL11.glTranslated(posX, posY +yOffset, posZ);
+        GL11.glTranslated(interPosX, interPosY +yOffset, interPosZ);
 
         GL11.glPushMatrix();
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
@@ -193,7 +199,7 @@ public class AuraRenderer extends RenderDBC {
         }
         float r = rand.nextInt(50);
         if (aura.hasLightning && r < 10 && age < 10)
-            lightning(aura, posX, posY + aura.getYOffset(), posZ);
+            lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawing(1);
         tessellator.setColorRGBA_I(0xffffff, 255);
@@ -211,7 +217,7 @@ public class AuraRenderer extends RenderDBC {
         GL11.glDepthMask(true);
         GL11.glPopMatrix();
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
-        RenderEventHandler.postStencilRendering();
+      //  RenderEventHandler.postStencilRendering();
 
     }
 
@@ -393,6 +399,6 @@ public class AuraRenderer extends RenderDBC {
     }
 
     public void doRender(Entity aura, double posX, double posY, double posZ, float yaw, float partialTickTime) {
-        this.renderAura((EntityAura) aura, posX, posY, posZ);
+      // this.renderAura((EntityAura) aura,partialTickTime);
     }
 }

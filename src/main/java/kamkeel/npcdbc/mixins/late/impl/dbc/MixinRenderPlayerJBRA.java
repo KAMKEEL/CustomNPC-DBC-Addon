@@ -11,6 +11,7 @@ import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.ColorMode;
+import kamkeel.npcdbc.client.DBCRenderEvent;
 import kamkeel.npcdbc.client.render.PlayerOutline;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.TransformController;
@@ -26,6 +27,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import noppes.npcs.client.ClientEventHandler;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.lib.Opcodes;
@@ -49,9 +51,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
 
 
-    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     public void renderOutline(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
-       // PlayerOutline.renderOutline((RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
+        if (MinecraftForge.EVENT_BUS.post(new DBCRenderEvent.Pre(par1AbstractClientPlayer, (RenderPlayerJBRA) (Object) this, par2)))
+            ci.cancel();
+        
         EntityAura aura = DBCData.get(par1AbstractClientPlayer).auraEntity;
         
         if (aura == null || !aura.shouldRender())
@@ -59,8 +63,12 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
     }
 
-    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPopMatrix()V", ordinal = 3, shift = At.Shift.AFTER))
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPopMatrix()V", ordinal = 1, shift = At.Shift.AFTER))
     public void postRender(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
+        MinecraftForge.EVENT_BUS.post(new DBCRenderEvent.Post(par1AbstractClientPlayer, (RenderPlayerJBRA) (Object) this, par2));
+
+
+        PlayerOutline.renderOutline((RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer, par2);  
         EntityAura aura = DBCData.get(par1AbstractClientPlayer).auraEntity;
         if (aura == null || !aura.shouldRender())
             return;

@@ -1,7 +1,10 @@
 package kamkeel.npcdbc.client;
 
+import JinRyuu.JBRA.RenderPlayerJBRA;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.render.AuraRenderer;
+import kamkeel.npcdbc.client.render.PlayerOutline;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
@@ -29,24 +32,35 @@ public class RenderEventHandler {
 
 
     @SubscribeEvent
-    public void renderPlayer(RenderPlayerEvent.Post e) {
+    public void renderPlayer(DBCRenderEvent.Post e) {
         EntityPlayer player = e.entityPlayer;
+        RenderPlayerJBRA render = (RenderPlayerJBRA) e.renderer;
+        
         float partialTicks = e.partialRenderTick;
+
         if (DBCData.get(player) == null)
             return;
 
+
+        //   PlayerOutline.renderOutline(render, player, partialTicks);
+        
         EntityAura aura = DBCData.get(player).auraEntity;
-        if (aura == null || aura != null || !aura.shouldRender())
+        if (aura == null || !aura.shouldRender())
             return;
 
         double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - RenderManager.renderPosX;
         double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - RenderManager.renderPosY;
         double interPosZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - RenderManager.renderPosZ;
+
+
         ImageData tex = new ImageData(CustomNpcPlusDBC.ID + ":textures/aura/aura.png");
 
         float scale = 2.00f;
 
         disableStencilWriting(1, false);
+        AuraRenderer.Instance.renderAura(aura, partialTicks);
+        PlayerOutline.renderOutline(render, player, partialTicks);
+
         glPushMatrix();
 
 
@@ -65,7 +79,7 @@ public class RenderEventHandler {
         for (float j = 1; j < 2; j += 1) {
             glPushMatrix();
             GL11.glRotatef(360 * j, 0F, 0F, 1F);
-            renderImage(tex, aura.color1, 0.2f);
+            //  renderImage(tex, aura.color1, 0.2f);
             glPopMatrix();
         }
 
