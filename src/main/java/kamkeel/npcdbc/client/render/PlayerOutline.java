@@ -3,10 +3,12 @@ package kamkeel.npcdbc.client.render;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ColorMode;
+import kamkeel.npcdbc.client.RenderEventHandler;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 
@@ -40,8 +42,8 @@ public class PlayerOutline {
     public static void renderOutline(RenderPlayerJBRA render, EntityPlayer p) {
         //Uncomment line below
         EntityAura aura = DBCData.get(p).auraEntity;
-        if (aura == null || aura != null)
-            return;
+       // if (aura == null || aura != null)
+         //   return;
         
         DBCData.get(p).outline = new PlayerOutline(0xCfffff, 0x0d2dba);
         if (DBCData.get(p).outline == null)
@@ -50,6 +52,7 @@ public class PlayerOutline {
         PlayerOutline outline = DBCData.get(p).outline;
         ClientProxy.RenderingOutline = true;
 
+        RenderEventHandler.enableStencilWriting(RenderEventHandler.PLAYER_STENCIL_ID);
         glPushMatrix();
         GL11.glEnable(GL_BLEND);
         GL11.glDisable(GL_LIGHTING);
@@ -100,6 +103,7 @@ public class PlayerOutline {
         glPopMatrix();
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         ClientProxy.RenderingOutline = false;
+        RenderEventHandler.postStencilRendering();
     }
 
     public static void renderHair(EntityPlayer p, RenderPlayerJBRA render) {

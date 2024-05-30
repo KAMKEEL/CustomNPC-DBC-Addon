@@ -39,9 +39,9 @@ public class RenderEventHandler {
         if (aura == null || aura != null || !aura.shouldRender())
             return;
 
-        double posX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - RenderManager.renderPosX;
-        double posY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - RenderManager.renderPosY;
-        double posZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - RenderManager.renderPosZ;
+        double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - RenderManager.renderPosX;
+        double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - RenderManager.renderPosY;
+        double interPosZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - RenderManager.renderPosZ;
         ImageData tex = new ImageData(CustomNpcPlusDBC.ID + ":textures/aura/aura.png");
 
         float scale = 2.00f;
@@ -57,7 +57,7 @@ public class RenderEventHandler {
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
         glScalef(scale, scale, scale);
-        GL11.glTranslated(posX, posY - 0.65f, posZ-0.025f);
+        GL11.glTranslated(interPosX, interPosY - 0.65f, interPosZ-0.025f);
         glTranslatef(0f, 0, -0.35f);
         glRotatef(180, 0, 0, 1);
         glRotatef(315,1,0,0);

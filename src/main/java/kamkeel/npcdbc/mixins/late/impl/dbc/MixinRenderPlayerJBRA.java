@@ -51,7 +51,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
     public void renderOutline(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
-        PlayerOutline.renderOutline((RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
+       // PlayerOutline.renderOutline((RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
         EntityAura aura = DBCData.get(par1AbstractClientPlayer).auraEntity;
         
         if (aura == null || !aura.shouldRender())
