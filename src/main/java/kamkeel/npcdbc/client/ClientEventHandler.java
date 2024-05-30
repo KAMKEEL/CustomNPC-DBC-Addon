@@ -219,7 +219,7 @@ public class ClientEventHandler {
                         aura = new Aura().display.setOverrideDBCAura(true);
                         vanillaAura = true;
                     }
-                    else
+                    else if(aura == null)
                         return;
                 } else if (isPlayer) {
                     dbcData = DBCData.get((EntityPlayer) event.entity);
@@ -271,6 +271,9 @@ public class ClientEventHandler {
         boolean rotate90 = isPlayer && (dbcData.containsSE(7));
         EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, isPlayer ? dbcData.State : 0, isPlayer ? dbcData.State2 : 0, isPlayer ? dbcData.Release : 100, rotate90);
         aur.setAlp(0.2F);
+
+        if (isNPC)
+            ((IEntityAura) aur).setSize((float) ((EntityNPCInterface) entity).display.modelSize / 5);
 
         if (aura.display.hasSize())
             ((IEntityAura) aur).setSize(aura.display.size);

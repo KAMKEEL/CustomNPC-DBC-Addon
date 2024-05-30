@@ -146,7 +146,7 @@ public class EntityAura extends Entity {
             if (display.hasColor("color3"))
                 color3 = display.color3;
 
-            //loadType();
+            loadType();
 
             if (display.hasAlpha("aura")){
                 // New Aura has many layers and gets extremely dark without
@@ -159,6 +159,10 @@ public class EntityAura extends Entity {
 
             if (display.hasSpeed())
                 speed = (int) display.speed;
+
+            if (entity instanceof EntityNPCInterface)
+                size = (float) ((EntityNPCInterface) entity).display.modelSize / 5;
+
             if (display.hasSize())
                 size = display.size;
 
@@ -377,6 +381,9 @@ public class EntityAura extends Entity {
 
     public double getYOffset(float size) { //for correctly offsetting aura size
         float scaledAuraHeight = height * size;
+        if(entity instanceof EntityNPCInterface)
+            scaledAuraHeight = entity.height * size;
+        
         float yOffset = -0.05f + scaledAuraHeight + scaledAuraHeight * (scaledAuraHeight / 50) * 2.25f;
 
         boolean client = Minecraft.getMinecraft().thePlayer == entity;
