@@ -21,12 +21,17 @@ public class RenderEventHandler {
 
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Pre e) {
+        setStencilStart(1, true);
+    }
+
+    @SubscribeEvent
+    public void renderPlayer(RenderPlayerEvent.Post e) {
+        setStencilEnd(1, true);
+
         EntityPlayer player = e.entityPlayer;
         float partialTicks = e.partialRenderTick;
         if (DBCData.get(player) == null)
             return;
-
-        // setStencilStart(1, true);
 
         EntityAura aura = DBCData.get(player).auraEntity;
         if (aura == null || !aura.shouldRender())
@@ -38,6 +43,7 @@ public class RenderEventHandler {
         ImageData tex = new ImageData(CustomNpcPlusDBC.ID + ":textures/aura/aura.png");
 
         float scale = 1.75f;
+        glDepthMask(false);
         glPushMatrix();
         GL11.glEnable(GL_BLEND);
         GL11.glDisable(GL_LIGHTING);
@@ -46,16 +52,12 @@ public class RenderEventHandler {
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
         // glScalef(scale, scale, scale);
-        GL11.glTranslated(posX, posY - 0.65f, posZ-0.025f);
-        glTranslatef(0f, 0, -0.35f);
-        glRotatef(180, 0, 0, 1);
-        glRotatef(315,1,0,0);
+         GL11.glTranslated(posX, posY - 0.65f, posZ-0.025f);
+         glTranslatef(0f, 0, -0.35f);
+         glRotatef(180, 0, 0, 1);
+         glRotatef(315,1,0,0);
 
-
-//        EntityAura2 aur = new EntityAura2(player.worldObj, player.getCommandSenderName(), 0xffffff, 0, 0, 100, false);
-//        aur.setAlp(0.2F);
-//        player.worldObj.spawnEntityInWorld(aur);
-
+        // checkStencilStart(1, false, false);
         for (float j = 1; j < 2; j += 1) {
             glPushMatrix();
             //  glTranslatef(1.65f * j, 0, 0);
@@ -68,7 +70,7 @@ public class RenderEventHandler {
             renderImage(tex, aura.color1, 1f);
             glPopMatrix();
         }
-
+        // checkStencilEnd(false);
 
         // Reset depth mask after rendering aura
         glDepthMask(true);
@@ -79,16 +81,14 @@ public class RenderEventHandler {
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();
 
-        // setStencilEnd(1, true);
+//        EntityAura2 aur = new EntityAura2(player.worldObj, player.getCommandSenderName(), 0xffffff, 0, 0, 100, false);
+//        aur.setAlp(0.2F);
+//        player.worldObj.spawnEntityInWorld(aur);
     }
 
     @SubscribeEvent
     public void renderLast(RenderWorldLastEvent renderWorldLastEvent){
         GL11.glClear(GL_STENCIL_BUFFER_BIT);
-    }
-
-    @SubscribeEvent
-    public void renderPlayer(RenderPlayerEvent.Post e) {
     }
 
     public static void renderImage(ImageData imageData, int color, float alpha) {
