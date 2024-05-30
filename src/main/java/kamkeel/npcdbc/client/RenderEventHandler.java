@@ -42,8 +42,8 @@ public class RenderEventHandler {
         double posZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - RenderManager.renderPosZ;
         ImageData tex = new ImageData(CustomNpcPlusDBC.ID + ":textures/aura/aura.png");
 
-        float scale = 1.75f;
-        glDepthMask(false);
+        float scale = 4.00f;
+
         glPushMatrix();
         GL11.glEnable(GL_BLEND);
         GL11.glDisable(GL_LIGHTING);
@@ -51,26 +51,21 @@ public class RenderEventHandler {
         GL11.glAlphaFunc(GL_GREATER, 0.003921569F);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
-        // glScalef(scale, scale, scale);
-         GL11.glTranslated(posX, posY - 0.65f, posZ-0.025f);
-         glTranslatef(0f, 0, -0.35f);
-         glRotatef(180, 0, 0, 1);
-         glRotatef(315,1,0,0);
+        glDepthMask(false);
+        glScalef(scale, scale, scale);
+        GL11.glTranslated(posX, posY - 0.65f, posZ-0.025f);
+        glTranslatef(0f, 0, -0.35f);
+        glRotatef(180, 0, 0, 1);
+        glRotatef(315,1,0,0);
 
-        // checkStencilStart(1, false, false);
+        checkStencilStart(1, false, true);
         for (float j = 1; j < 2; j += 1) {
             glPushMatrix();
-            //  glTranslatef(1.65f * j, 0, 0);
             GL11.glRotatef(360 * j, 0F, 0F, 1F);
-            //  glRotatef(315,1,0,0);
-            if (j == 1) {
-                //  glRotatef(180, 0, 0, 1);
-                // glRotatef(180, 0, 1, 0);
-            }
             renderImage(tex, aura.color1, 1f);
             glPopMatrix();
         }
-        // checkStencilEnd(false);
+        checkStencilEnd(true);
 
         // Reset depth mask after rendering aura
         glDepthMask(true);
@@ -80,10 +75,6 @@ public class RenderEventHandler {
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();
-
-//        EntityAura2 aur = new EntityAura2(player.worldObj, player.getCommandSenderName(), 0xffffff, 0, 0, 100, false);
-//        aur.setAlp(0.2F);
-//        player.worldObj.spawnEntityInWorld(aur);
     }
 
     @SubscribeEvent
@@ -146,14 +137,16 @@ public class RenderEventHandler {
             GL11.glEnable(GL11.GL_STENCIL_TEST);
         }
 
-        GL11.glStencilFunc(GL11.GL_ALWAYS, id, 0xFF);
-        GL11.glStencilMask(0xFF);
+        GL11.glStencilFunc(GL11.GL_ALWAYS, id, 0xFF);  // Always pass the stencil test
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);  // Keep stencil value
+        GL11.glStencilMask(0xFF);  // Write to stencil buffer
     }
 
     public static void setStencilEnd(int id, boolean doEnable) {
 
-        GL11.glStencilFunc(GL11.GL_ALWAYS, id, 0xFF);
-        GL11.glStencilMask(0xFF);
+        GL11.glStencilFunc(GL11.GL_ALWAYS, id, 0xFF);  // Always pass the stencil test
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);  // Keep stencil value
+        GL11.glStencilMask(0xFF);  // Write to stencil buffer
 
         if(doEnable) {
 
@@ -168,9 +161,9 @@ public class RenderEventHandler {
             GL11.glEnable(GL11.GL_STENCIL_TEST);
         }
 
-        GL11.glStencilFunc(invert ? GL11.GL_EQUAL : GL11.GL_NOTEQUAL, id, 0xFF);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
-        GL11.glStencilMask(0x00);
+        GL11.glStencilFunc(invert ? GL11.GL_EQUAL : GL11.GL_NOTEQUAL, id, 0xFF);  // Test stencil value
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);  // Keep stencil value
+        GL11.glStencilMask(0x00);  // Do not write to stencil buffer
     }
 
     public static void checkStencilEnd(boolean doEnable) {

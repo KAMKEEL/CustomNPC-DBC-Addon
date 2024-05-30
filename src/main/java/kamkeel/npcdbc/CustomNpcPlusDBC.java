@@ -12,8 +12,10 @@ import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.PacketHandler;
+import net.minecraftforge.client.ForgeHooksClient;
 
 import java.io.File;
+import java.lang.reflect.Field;
 
 @Mod(modid = CustomNpcPlusDBC.ID, name = CustomNpcPlusDBC.name, version = CustomNpcPlusDBC.version, dependencies = "required-after:customnpcs;required-after:jinryuujrmcore;required-after:jinryuudragonblockc;")
 public class CustomNpcPlusDBC {
@@ -34,6 +36,8 @@ public class CustomNpcPlusDBC {
         addonConfig = ev.getModConfigurationDirectory() + File.separator + "CustomNpcPlus" + File.separator + "dbc" + File.separator;
         LoadConfiguration.init(addonConfig);
         ModItems.init();
+
+        forceStencilEnable();
     }
 
     @Mod.EventHandler
@@ -62,4 +66,60 @@ public class CustomNpcPlusDBC {
     public static Side side() {
         return FMLCommonHandler.instance().getEffectiveSide();
     }
+
+    public static void forceStencilEnable() {
+
+        System.setProperty("forge.forceDisplayStencil", "true");
+
+        Field field;
+
+        try {
+
+            field = ForgeHooksClient.class.getDeclaredField("stencilBits");
+
+            field.setAccessible(true);
+
+            field.setInt(ForgeHooksClient.class, 8);
+        }
+        catch (NoSuchFieldException | SecurityException e) {
+
+            e.printStackTrace();
+        }
+        catch (IllegalArgumentException e) {
+
+            e.printStackTrace();
+        }
+        catch (IllegalAccessException e) {
+
+            e.printStackTrace();
+        }
+    }
+
+    static Field field4 = null;
+
+    public static int getStencilBits() {
+
+        int r = -1;
+
+        try {
+
+            if(field4 == null) {
+
+                field4 = ForgeHooksClient.class.getDeclaredField("stencilBits");
+                field4.setAccessible(true);
+                r = (int) field4.get(ForgeHooksClient.class);
+            }
+            else {
+
+                r = (int) field4.get(ForgeHooksClient.class);
+            }
+        }
+        catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+
+            e.printStackTrace();
+        }
+
+        return r;
+    }
+
 }
