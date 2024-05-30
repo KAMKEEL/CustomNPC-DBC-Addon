@@ -23,7 +23,7 @@ import java.lang.reflect.Field;
 
 public class ClientProxy extends CommonProxy {
     public static boolean RenderingOutline;
-    public static final int SecondRenderPass = 1684;
+    public static final int MiddleRenderPass = 1684;
 
     public static void eventsInit() {
         FMLCommonHandler.instance().bus().register(new ClientEventHandler());

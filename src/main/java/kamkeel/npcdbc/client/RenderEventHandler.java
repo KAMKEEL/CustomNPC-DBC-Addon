@@ -9,30 +9,34 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import noppes.npcs.client.renderer.ImageData;
 import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
+    /**
+     * ID used when cutting out the player from stencil buffer
+     */
+    public final static int PLAYER_STENCIL_ID = 1; 
 
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Pre e) {
-        setStencilStart(1, true);
+        glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
+        glEnable(GL11.GL_STENCIL_TEST);
+        enableStencilWriting(PLAYER_STENCIL_ID);
     }
+
 
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Post e) {
-        setStencilEnd(1, true);
-
         EntityPlayer player = e.entityPlayer;
         float partialTicks = e.partialRenderTick;
         if (DBCData.get(player) == null)
             return;
 
         EntityAura aura = DBCData.get(player).auraEntity;
-        if (aura == null || !aura.shouldRender())
+        if (aura == null || aura != null || !aura.shouldRender())
             return;
 
         double posX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - RenderManager.renderPosX;
@@ -40,45 +44,40 @@ public class RenderEventHandler {
         double posZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - RenderManager.renderPosZ;
         ImageData tex = new ImageData(CustomNpcPlusDBC.ID + ":textures/aura/aura.png");
 
-        float scale = 4.00f;
+        float scale = 2.00f;
 
+        disableStencilWriting(1, false);
         glPushMatrix();
+
+
         GL11.glEnable(GL_BLEND);
         GL11.glDisable(GL_LIGHTING);
         GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GL11.glAlphaFunc(GL_GREATER, 0.003921569F);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
-        glDepthMask(false);
         glScalef(scale, scale, scale);
         GL11.glTranslated(posX, posY - 0.65f, posZ-0.025f);
         glTranslatef(0f, 0, -0.35f);
         glRotatef(180, 0, 0, 1);
         glRotatef(315,1,0,0);
 
-        checkStencilStart(1, false, true);
         for (float j = 1; j < 2; j += 1) {
             glPushMatrix();
             GL11.glRotatef(360 * j, 0F, 0F, 1F);
-            renderImage(tex, aura.color1, 1f);
+            renderImage(tex, aura.color1, 0.2f);
             glPopMatrix();
         }
-        checkStencilEnd(true);
-
-        // Reset depth mask after rendering aura
-        glDepthMask(true);
 
         // Reset OpenGL states
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();
+        postStencilRendering();
+        glStencilFunc(GL_ALWAYS, 0, 0xFF);  //LETS YOU DRAW TO THE COLOR BUFFER AGAIN
     }
 
-    @SubscribeEvent
-    public void renderLast(RenderWorldLastEvent renderWorldLastEvent){
-        GL11.glClear(GL_STENCIL_BUFFER_BIT);
-    }
 
     public static void renderImage(ImageData imageData, int color, float alpha) {
         if (!imageData.imageLoaded())
@@ -128,46 +127,18 @@ public class RenderEventHandler {
         GL11.glPopMatrix();
     }
 
-    public static void setStencilStart(int id, boolean doEnable) {
-
-        if(doEnable) {
-
-            GL11.glEnable(GL11.GL_STENCIL_TEST);
-        }
-
-        GL11.glStencilFunc(GL11.GL_ALWAYS, id, 0xFF);  // Always pass the stencil test
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);  // Keep stencil value
-        GL11.glStencilMask(0xFF);  // Write to stencil buffer
+    public static void enableStencilWriting(int id) {
+        glStencilFunc(GL_ALWAYS, id, 0xFF);  // Always draw to the color buffer & pass the stencil test
+        glStencilMask(0xFF);  // Write to stencil buffer
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);  // Keep stencil value
     }
 
-    public static void setStencilEnd(int id, boolean doEnable) {
-
-        GL11.glStencilFunc(GL11.GL_ALWAYS, id, 0xFF);  // Always pass the stencil test
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);  // Keep stencil value
-        GL11.glStencilMask(0xFF);  // Write to stencil buffer
-
-        if(doEnable) 
-            GL11.glDisable(GL11.GL_STENCIL_TEST);
-        
+    public static void disableStencilWriting(int id, boolean invert) {
+        glStencilFunc(invert ? GL_EQUAL : GL_NOTEQUAL, id, 0xFF);  // Test stencil value
+        glStencilMask(0x00);  // Do not write to stencil buffer
     }
 
-    public static void checkStencilStart(int id, boolean invert, boolean doEnable) {
-
-        if (doEnable) 
-            GL11.glEnable(GL11.GL_STENCIL_TEST);
-
-
-        GL11.glStencilFunc(invert ? GL11.GL_EQUAL : GL11.GL_NOTEQUAL, id, 0xFF);  // Test stencil value
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);  // Keep stencil value
-        GL11.glStencilMask(0x00);  // Do not write to stencil buffer
-    }
-
-    public static void checkStencilEnd(boolean doEnable) {
-
-        GL11.glStencilMask(0xFF);
-
-        if (doEnable) 
-            GL11.glDisable(GL11.GL_STENCIL_TEST);
-
+    public static void postStencilRendering() {
+        glStencilFunc(GL_ALWAYS, 0, 0xFF);
     }
 }

@@ -5,6 +5,7 @@ import JinRyuu.DragonBC.common.Npcs.RenderDBC;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
+import kamkeel.npcdbc.client.RenderEventHandler;
 import kamkeel.npcdbc.client.model.ModelAura;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -60,7 +61,7 @@ public class AuraRenderer extends RenderDBC {
     }
 
     public void renderAura(EntityAura aura, double posX, double posY, double posZ) {
-        if (!aura.shouldRender() || aura != null)
+        if (!aura.shouldRender())
             return;
 
         byte race = aura.auraData.getRace();
@@ -75,13 +76,14 @@ public class AuraRenderer extends RenderDBC {
         boolean isFirstPerson = DBCClient.mc.thePlayer == aura.entity && DBCClient.mc.gameSettings.thirdPersonView == 0;
         alpha = (isFirstPerson ? aura.isKaioken ? 0.015f : 0.0125f : alpha) * alphaConfig;
 
-        pulseMax = 0;
+        pulseMax = 5;
         if (pulseMax > 0)
             animatePulsing();
         else
             pulseAnimation = 0;
 
         Random rand = new Random();
+        RenderEventHandler.disableStencilWriting(RenderEventHandler.PLAYER_STENCIL_ID, false);
         GL11.glPushMatrix();
 
         float pulsingSize = pulseAnimation * 0.03f;
@@ -113,17 +115,16 @@ public class AuraRenderer extends RenderDBC {
         GL11.glBlendFunc(770, 771);
         GL11.glAlphaFunc(516, 0.003921569F);
 
-        alpha = 1f;
 
         GL11.glScalef(size + pulsingSize, size, size + pulsingSize);
-        //GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
 
         int maxLayers = 5;
         for (float i = 1; i < maxLayers + 1; ++i) {
             float layerPercent = i / maxLayers;
             float layerTemp = layerPercent * 20f;
 
-            for (float j = 1; j < 2; j +=1f) {
+            for (float j = 1; j < 2; j += 0.05f) {
 
                 Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
                 model.auraModel.offsetY = -(i / maxLayers) * aura.height;
@@ -134,8 +135,8 @@ public class AuraRenderer extends RenderDBC {
 
                 model.auraModel.rotationPointY = 55.0F + (i / maxLayers) * 20;
                 float r = rand.nextInt(200);
-                //if (layerTemp > 3) //aura intensity
-                 //   model.auraModel.offsetY += -r * 0.0015f * getStateIntensity(state, race);
+                if (layerTemp > 3) //aura intensity
+                    model.auraModel.offsetY += -r * 0.0015f * getStateIntensity(state, race);
 
 
                 GL11.glPushMatrix();
@@ -143,7 +144,7 @@ public class AuraRenderer extends RenderDBC {
                 if (layerPercent < 0.21) {
                     glColor4f(aura.color1, alpha);
                     this.renderManager.renderEngine.bindTexture(aura.text1);
-                //    model.auraModel.render(0.0625f);
+                    model.auraModel.render(0.0625f);
 
                     if (aura.text2 != null) {
                         this.renderManager.renderEngine.bindTexture(aura.text2);
@@ -210,6 +211,7 @@ public class AuraRenderer extends RenderDBC {
         GL11.glDepthMask(true);
         GL11.glPopMatrix();
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+        RenderEventHandler.postStencilRendering();
 
     }
 

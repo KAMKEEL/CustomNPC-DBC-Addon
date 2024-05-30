@@ -4,6 +4,7 @@ import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -24,7 +25,6 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -268,18 +268,12 @@ public class EntityAura extends Entity {
     }
 
     public void updateDisplay() {
-       // alpha = 0.1f;
-        IEntityMC en = (IEntityMC) entity;
-        en.setRenderPass(0);
-
-        if (entity.isInWater()) {
-            renderPass = 0;
-            en.setRenderPass(0);
-        } else if (!isKaioken) {
-            renderPass = 0;
-        }
+        if (entity.isInWater())
+            ((IEntityMC) entity).setRenderPass(renderPass = 0);
+        else if (renderPass == 0)
+            ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
+     
         if (isKaioken) {
-            //  renderPass = 0;
             if (parent.isVanillaDefault && !DBCForm.isSaiyanGod(auraData.getState()))
                 fadeOut = true;
 
@@ -404,6 +398,7 @@ public class EntityAura extends Entity {
     }
 
     public EntityAura spawn() {
+        ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
         entity.worldObj.spawnEntityInWorld(this);
         playSound();
         return this;
@@ -414,6 +409,7 @@ public class EntityAura extends Entity {
     }
     public void setDead() {
         super.setDead();
+        ((IEntityMC) entity).setRenderPass(0); //rest player renderpass on aura despawn
 
         if (auraData.getAuraEntity() == this)
             auraData.setAuraEntity(null);
