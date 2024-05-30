@@ -2,11 +2,13 @@ package kamkeel.npcdbc.client;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -20,42 +22,53 @@ public class RenderEventHandler {
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Pre e) {
         EntityPlayer player = e.entityPlayer;
+        float partialTicks = e.partialRenderTick;
         if (DBCData.get(player) == null)
             return;
 
-        setStencilStart(1, true);
+        // setStencilStart(1, true);
 
         EntityAura aura = DBCData.get(player).auraEntity;
         if (aura == null || !aura.shouldRender())
             return;
 
-        ImageData tex = new ImageData("jinryuudragonbc:aura.png");
+        double posX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - RenderManager.renderPosX;
+        double posY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - RenderManager.renderPosY;
+        double posZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - RenderManager.renderPosZ;
+        ImageData tex = new ImageData(CustomNpcPlusDBC.ID + ":textures/aura/aura.png");
 
-        float scale = 5f;
-        GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
+        float scale = 1.75f;
+        glPushMatrix();
+        GL11.glEnable(GL_BLEND);
+        GL11.glDisable(GL_LIGHTING);
+        GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glAlphaFunc(GL_GREATER, 0.003921569F);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
-        // Move aura rendering here
-        glDepthMask(false);
-        glScalef(scale, scale, scale);
-        for (int i = 0; i < 2; i++) {
+        // glScalef(scale, scale, scale);
+        GL11.glTranslated(posX, posY - 0.65f, posZ-0.025f);
+        glTranslatef(0f, 0, -0.35f);
+        glRotatef(180, 0, 0, 1);
+        glRotatef(315,1,0,0);
+
+
+//        EntityAura2 aur = new EntityAura2(player.worldObj, player.getCommandSenderName(), 0xffffff, 0, 0, 100, false);
+//        aur.setAlp(0.2F);
+//        player.worldObj.spawnEntityInWorld(aur);
+
+        for (float j = 1; j < 2; j += 1) {
             glPushMatrix();
-            if (i == 1) {
-                glRotatef(180, 0, 0, 1);
-                glRotatef(180, 0, 1, 0);
+            //  glTranslatef(1.65f * j, 0, 0);
+            GL11.glRotatef(360 * j, 0F, 0F, 1F);
+            //  glRotatef(315,1,0,0);
+            if (j == 1) {
+                //  glRotatef(180, 0, 0, 1);
+                // glRotatef(180, 0, 1, 0);
             }
             renderImage(tex, aura.color1, 1f);
             glPopMatrix();
         }
 
-//        EntityAura2 aur = new EntityAura2(player.worldObj, player.getCommandSenderName(), 0xffffff, 0, 0, 100, false);
-//        aur.setAlp(0.2F);
-//        player.worldObj.spawnEntityInWorld(aur);
 
         // Reset depth mask after rendering aura
         glDepthMask(true);
@@ -64,10 +77,9 @@ public class RenderEventHandler {
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glPopAttrib();
         GL11.glPopMatrix();
 
-        setStencilEnd(1, true);
+        // setStencilEnd(1, true);
     }
 
     @SubscribeEvent
@@ -90,10 +102,10 @@ public class RenderEventHandler {
         GL11.glColor4f(red, green, blue, alpha);
 
         for (int i = 0; i < 2; i++) {
-            boolean front = i == 0;
+            boolean front = i == 1;
             Tessellator tessellator = Tessellator.instance;
             if (front) {
-                GL11.glRotated(180, 0.0, 0.0, 1.0);
+                GL11.glRotatef(180, 0, 0, 1.0f);
             }
 
             imageData.bindTexture();
