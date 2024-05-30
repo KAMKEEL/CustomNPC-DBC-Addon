@@ -360,7 +360,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             chargingDef = JRMCoreH.numSep((int) (longValue * (ClientCache.chargingDexValues.get((int) dbcClient.Class) / 100)));
 
         String defDesc = getDescription(
-            JRMCoreH.trl("jrmc", JRMCoreH.attrNms(1, 1)),
+            JRMCoreH.attrNms(1, 1),
             incrementVal,
             JRMCoreH.numSep(stat),
             passiveDef,
@@ -399,7 +399,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             .updateDisplay(JRMCoreH.numSep(stat) + (isReductionWorthDisplaying ? " R" + dmgReduction + "%" : ""))
             .setTooltip(
                 getDescription(
-                    JRMCoreH.trl("jrmc", JRMCoreH.attrNms(1, 2)),
+                    JRMCoreH.attrNms(1, 2),
                     incrementVal,
                     null,
                     null,
@@ -417,7 +417,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             .updateDisplay(JRMCoreH.numSep(stat))
             .setTooltip(
                 getDescription(
-                    JRMCoreH.trl("jrmc", JRMCoreH.attrNms(1, 2)),
+                    JRMCoreH.attrNms(1, 2),
                     incrementVal,
                     null,
                     null,
