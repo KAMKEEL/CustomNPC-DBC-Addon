@@ -14,8 +14,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
+
+import java.lang.reflect.Field;
 
 
 public class ClientProxy extends CommonProxy {
@@ -24,6 +27,7 @@ public class ClientProxy extends CommonProxy {
     public static void eventsInit() {
         FMLCommonHandler.instance().bus().register(new ClientEventHandler());
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
+        MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
 
     }
 
@@ -31,6 +35,8 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent ev) {
         super.preInit(ev);
         eventsInit();
+
+        forceStencilEnable();
 
         RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
         MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
@@ -63,5 +69,33 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void registerItem(Item item) {
+    }
+
+    public static void forceStencilEnable() {
+
+        System.setProperty("forge.forceDisplayStencil", "true");
+
+        Field field;
+
+        try {
+
+            field = ForgeHooksClient.class.getDeclaredField("stencilBits");
+
+            field.setAccessible(true);
+
+            field.setInt(ForgeHooksClient.class, 8);
+        }
+        catch (NoSuchFieldException | SecurityException e) {
+
+            e.printStackTrace();
+        }
+        catch (IllegalArgumentException e) {
+
+            e.printStackTrace();
+        }
+        catch (IllegalAccessException e) {
+
+            e.printStackTrace();
+        }
     }
 }
