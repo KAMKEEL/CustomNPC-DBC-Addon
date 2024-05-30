@@ -1,12 +1,15 @@
 package kamkeel.npcdbc.client;
 
+import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import noppes.npcs.client.renderer.ImageData;
 import org.lwjgl.opengl.GL11;
 
@@ -20,6 +23,8 @@ public class RenderEventHandler {
         if (DBCData.get(player) == null)
             return;
 
+        setStencilStart(1, true);
+
         EntityAura aura = DBCData.get(player).auraEntity;
         if (aura == null || !aura.shouldRender())
             return;
@@ -27,14 +32,16 @@ public class RenderEventHandler {
         ImageData tex = new ImageData("jinryuudragonbc:aura.png");
 
         float scale = 5f;
-        glPushMatrix();
-        GL11.glEnable(GL_BLEND);
-        GL11.glDisable(GL_LIGHTING);
-        GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glAlphaFunc(GL_GREATER, 0.003921569F);
+        GL11.glPushMatrix();
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
-        glDepthMask(false);
 
+        // Move aura rendering here
+        glDepthMask(false);
         glScalef(scale, scale, scale);
         for (int i = 0; i < 2; i++) {
             glPushMatrix();
@@ -46,13 +53,26 @@ public class RenderEventHandler {
             glPopMatrix();
         }
 
+//        EntityAura2 aur = new EntityAura2(player.worldObj, player.getCommandSenderName(), 0xffffff, 0, 0, 100, false);
+//        aur.setAlp(0.2F);
+//        player.worldObj.spawnEntityInWorld(aur);
+
+        // Reset depth mask after rendering aura
         glDepthMask(true);
-        GL11.glAlphaFunc(GL_GREATER, 0.1F);
-        GL11.glDisable(GL_BLEND);
-        GL11.glEnable(GL_LIGHTING);
-        glPopMatrix();
 
+        // Reset OpenGL states
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_LIGHTING);
+        GL11.glPopAttrib();
+        GL11.glPopMatrix();
 
+        setStencilEnd(1, true);
+    }
+
+    @SubscribeEvent
+    public void renderLast(RenderWorldLastEvent renderWorldLastEvent){
+        GL11.glClear(GL_STENCIL_BUFFER_BIT);
     }
 
     @SubscribeEvent
@@ -105,5 +125,49 @@ public class RenderEventHandler {
             tessellator.draw();
         }
         GL11.glPopMatrix();
+    }
+
+    public static void setStencilStart(int id, boolean doEnable) {
+
+        if(doEnable) {
+
+            GL11.glEnable(GL11.GL_STENCIL_TEST);
+        }
+
+        GL11.glStencilFunc(GL11.GL_ALWAYS, id, 0xFF);
+        GL11.glStencilMask(0xFF);
+    }
+
+    public static void setStencilEnd(int id, boolean doEnable) {
+
+        GL11.glStencilFunc(GL11.GL_ALWAYS, id, 0xFF);
+        GL11.glStencilMask(0xFF);
+
+        if(doEnable) {
+
+            GL11.glDisable(GL11.GL_STENCIL_TEST);
+        }
+    }
+
+    public static void checkStencilStart(int id, boolean invert, boolean doEnable) {
+
+        if(doEnable) {
+
+            GL11.glEnable(GL11.GL_STENCIL_TEST);
+        }
+
+        GL11.glStencilFunc(invert ? GL11.GL_EQUAL : GL11.GL_NOTEQUAL, id, 0xFF);
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
+        GL11.glStencilMask(0x00);
+    }
+
+    public static void checkStencilEnd(boolean doEnable) {
+
+        GL11.glStencilMask(0xFF);
+
+        if(doEnable) {
+
+            GL11.glDisable(GL11.GL_STENCIL_TEST);
+        }
     }
 }
