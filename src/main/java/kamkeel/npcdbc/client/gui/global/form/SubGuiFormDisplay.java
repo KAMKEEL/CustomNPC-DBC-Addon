@@ -129,6 +129,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         addButton(new GuiNpcButton(1206, guiLeft + 133, y, 50, 20,  new String[]{"display.hide", "display.show"}, showAura ? 1 : 0));
 
         y += 22;
+        addLabel(new GuiNpcLabel(124, "display.hudColor", guiLeft + 7, y + 5));
+        addButton(new GuiNpcButton(124, guiLeft + 61, y, 50, 20, getColor(display.hudColor)));
+        getButton(124).packedFGColour = display.hudColor;
+        addButton(new GuiNpcButton(1124, guiLeft + 112, y, 20, 20, "X"));
+        getButton(1124).enabled = display.hudColor != -1;
+
+        y += 22;
         addLabel(new GuiNpcLabel(107, "display.eye", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(107, guiLeft + 61, y, 50, 20, getColor(display.eyeColor)));
         getButton(107).packedFGColour = display.eyeColor;
@@ -174,11 +181,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             addLabel(new GuiNpcLabel(113, "display.arcoMask", guiLeft + 7, y + 5));
             addButton(new GuiNpcButtonYesNo(113, guiLeft + 61, y, 50, 20, visualDisplay.hasArcoMask));
 
-            y += 22;
             int index = getArcoForm();
-
-            addLabel(new GuiNpcLabel(114, "display.form", guiLeft + 7, y + 5));
-            addButton(new GuiNpcButton(114, guiLeft + 61, y, 50, 20, arcoForms, index));
+            addLabel(new GuiNpcLabel(114, "display.form", guiLeft + 130, y + 5));
+            addButton(new GuiNpcButton(114, guiLeft + 167, y, 50, 20, arcoForms, index));
         }
     }
 
@@ -275,6 +280,17 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         if(button.id == 1406){
             display.auraID = -1;
+            refreshValues();
+            updateButtons();
+        }
+        // Hud Color
+        if(button.id == 124){
+            lastColorClicked = 8;
+            setSubGui(new SubGuiColorSelector(display.hudColor));
+        }
+        // Hud Color Clear
+        if(button.id == 1124){
+            display.hudColor = -1;
             refreshValues();
             updateButtons();
         }
@@ -454,6 +470,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 display.furColor = color;
             } else if(lastColorClicked == 7){
                 display.hairColor = color;
+            } else if(lastColorClicked == 8){
+                display.hudColor = color;
             }
             refreshValues();
             updateButtons();
@@ -803,6 +821,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         spoofForm.display.bodyC2 = display.bodyC2;
         spoofForm.display.bodyC3 = display.bodyC3;
         spoofForm.display.bodyType = display.bodyType;
+        spoofForm.display.hudColor = display.hudColor;
         spoofForm.display.eyeColor = display.eyeColor;
         spoofForm.display.effectMajinHair = display.effectMajinHair;
         spoofForm.display.furColor = display.furColor;

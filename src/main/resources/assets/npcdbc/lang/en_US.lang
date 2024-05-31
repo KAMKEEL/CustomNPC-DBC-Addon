@@ -64,6 +64,7 @@ display.state=State
 display.setDefault=Set Default
 display.maskOn=Mask On
 display.maskOff=Mask Off
+display.hudColor=Hud
 display.eye=Eye
 display.mouth=Mouth
 display.nose=Nose
