@@ -7,7 +7,13 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.*;
+import kamkeel.npcdbc.network.packets.aura.DBCGetAura;
+import kamkeel.npcdbc.network.packets.aura.DBCSelectAura;
+import kamkeel.npcdbc.network.packets.aura.DBCSetAura;
+import kamkeel.npcdbc.network.packets.aura.DBCRequestAura;
+import kamkeel.npcdbc.network.packets.form.DBCGetForm;
+import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
+import kamkeel.npcdbc.network.packets.form.DBCRequestForm;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -50,9 +56,9 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         this.drawDefaultBackground = false;
         title = "";
         if (activePage == 0)
-            PacketHandler.Instance.sendToServer(new RequestForm(-1, true).generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, true).generatePacket());
         else
-            PacketHandler.Instance.sendToServer(new RequestAura(-1, true).generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCRequestAura(-1, true).generatePacket());
 
         this.dbcInfo = PlayerDataUtil.getClientDBCInfo();
         if (dbcInfo != null) {
@@ -239,12 +245,12 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         }
         if (guibutton.id == 40 && activePage != 0) {
             activePage = 0;
-            PacketHandler.Instance.sendToServer(new RequestForm(-1, true).generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, true).generatePacket());
             loaded = false;
         }
         if (guibutton.id == 41 && activePage != 1) {
             activePage = 1;
-            PacketHandler.Instance.sendToServer(new RequestAura(-1, true).generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCRequestAura(-1, true).generatePacket());
             loaded = false;
         }
 

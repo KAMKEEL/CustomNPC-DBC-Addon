@@ -2,6 +2,9 @@
 ## BUTTONS
 ############################
 
+global.customforms=Forms
+global.customauras=Auras
+
 stats.dbcsettings=DBC Settings
 
 stats.dbc=DBC Settings
@@ -99,6 +102,45 @@ display.godRatio=GoD Multi Ratio
 display.mysticStackable=Mystic Stackable
 display.mysticRatio=Mystic Multi Ratio
 display.selectAura=No Aura
+display.displaySettings=Display Settings
+display.lightning=Lightning
+display.extra=Extra
+display.size=Size
+display.speed=Speed
+display.overrideDBC=Override DBC
+display.color1=Color 1
+display.color2=Color 2
+display.color3=Color 3
+display.alpha=Alpha
+display.3DType=3D Type
+display.2DType=2D Type
+auratype.none=None
+auratype.default=Default
+auratype.ssgod=SS God
+auratype.ssb=SS Blue
+auratype.shinka=Shinka
+auratype.ssrose=SS Rose
+auratype.ssroseevo=SS Rose Evo
+auratype.ultimate=Ultimate
+auratype.ui=UI
+auratype.god=God
+auratype.base=Base
+auratype.god_toppo=God Toppo
+auratype.mui=MUI
+auratype.legendary=Legendary
+auratype.ssj=SSJ
+auratype.jiren=Jiren
+display.lAlpha=L Alpha
+display.lSpeed=L Speed
+display.lIntensity=L Intensity
+display.kaioken=Kaioken
+display.kAlpha=K Alpha
+display.kSize=K Size
+display.kaiokenOverride=Kaioken Override
+display.kettleModeCharging=Kettle Mode Charging
+display.kettleModeAura=Kettle Mode Aura
+display.kettleModeType=Kettle Mode Type
+
 general.menuName=Menu Name
 general.strength=Strength
 general.dexterity=Dexterity
@@ -113,6 +155,10 @@ general.childForm=Child Form
 general.ascendSound=Ascend Sound
 general.descendSound=Descend Sound
 general.allRaces=All Races
+
+aura.secondary=Secondary
+general.auraSound=Sound
+general.kaiokenSound=Kaioken Sound
 
 statsheet.dark=Dark
 statsheet.light=Light

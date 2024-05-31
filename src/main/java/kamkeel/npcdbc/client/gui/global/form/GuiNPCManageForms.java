@@ -3,7 +3,10 @@ package kamkeel.npcdbc.client.gui.global.form;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.RequestForm;
+import kamkeel.npcdbc.network.packets.form.DBCGetForm;
+import kamkeel.npcdbc.network.packets.form.DBCRequestForm;
+import kamkeel.npcdbc.network.packets.form.DBCRemoveForm;
+import kamkeel.npcdbc.network.packets.form.DBCSaveForm;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.gui.GuiButton;
@@ -11,11 +14,9 @@ import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
-import noppes.npcs.client.Client;
 import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.util.*;
-import noppes.npcs.constants.EnumPacketServer;
 import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
 
     public GuiNPCManageForms(EntityNPCInterface npc) {
         super(npc);
-        PacketHandler.Instance.sendToServer(new RequestForm(-1, false).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, false).generatePacket());
     }
 
     public void initGui() {
@@ -77,9 +78,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
                 while (data.containsKey(name))
                     name += "_";
                 Form form = new Form(-1, name);
-
-                NBTTagCompound compound = form.writeToNBT();
-                Client.sendData(EnumPacketServer.CustomFormSave, compound);
+                PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT()).generatePacket());
                 break;
 
             case 1:
@@ -265,7 +264,8 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
         if (guiCustomScroll.id == 0) {
             save();
             selected = scrollForms.getSelected();
-            Client.sendData(EnumPacketServer.CustomFormGet, data.get(selected));
+            if(selected != null && !selected.isEmpty())
+                PacketHandler.Instance.sendToServer(new DBCGetForm(data.get(selected)).generatePacket());
         }
     }
 
@@ -303,7 +303,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
             return;
         if (id == 1) {
             if (data.containsKey(scrollForms.getSelected())) {
-                Client.sendData(EnumPacketServer.CustomFormRemove, data.get(selected));
+                PacketHandler.Instance.sendToServer(new DBCRemoveForm(data.get(scrollForms.getSelected())).generatePacket());
                 scrollForms.clear();
                 customForm = new Form();
                 initGui();

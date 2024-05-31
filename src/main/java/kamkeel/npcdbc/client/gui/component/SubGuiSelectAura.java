@@ -1,8 +1,7 @@
 package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.RequestAura;
-import kamkeel.npcdbc.network.packets.RequestForm;
+import kamkeel.npcdbc.network.packets.aura.DBCRequestAura;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.*;
 
@@ -27,7 +26,7 @@ public class SubGuiSelectAura extends SubGuiInterface implements IScrollData, IC
         xSize = 256;
         this.setBackground("menubg.png");
 
-        PacketHandler.Instance.sendToServer(new RequestAura(-1, false).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCRequestAura(-1, false).generatePacket());
     }
 
     @Override

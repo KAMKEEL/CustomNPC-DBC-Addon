@@ -18,6 +18,13 @@ public class Aura implements IAura {
     public int secondaryAuraID = -1;
     public AuraDisplay display = new AuraDisplay(this);
 
+    public Aura(){}
+
+    public Aura(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public NBTTagCompound writeToNBT() {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger("ID", id);

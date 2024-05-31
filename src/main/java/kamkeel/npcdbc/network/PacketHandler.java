@@ -8,7 +8,8 @@ import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.network.packets.*;
-import kamkeel.npcdbc.network.packets.gui.SaveForm;
+import kamkeel.npcdbc.network.packets.aura.*;
+import kamkeel.npcdbc.network.packets.form.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -32,17 +33,20 @@ public final class PacketHandler {
         map.put(DBCSelectForm.packetName, new DBCSelectForm());
         map.put(DBCSelectAura.packetName, new DBCSelectAura());
         map.put(DBCSetAura.packetName, new DBCSetAura());
-        map.put(RequestAura.packetName, new RequestAura());
+        map.put(DBCRequestAura.packetName, new DBCRequestAura());
         map.put(DBCGetAura.packetName, new DBCGetAura());
-        map.put(RequestForm.packetName, new RequestForm());
+        map.put(DBCRequestForm.packetName, new DBCRequestForm());
         map.put(DBCGetForm.packetName, new DBCGetForm());
         map.put(CapsuleInfo.packetName, new CapsuleInfo());
         map.put(LoginInfo.packetName, new LoginInfo());
         map.put(SendChat.packetName, new SendChat());
         map.put(PlaySound.packetName, new PlaySound());
         map.put(StopSound.packetName, new StopSound());
-        map.put(SaveForm.packetName, new SaveForm());
+        map.put(DBCSaveForm.packetName, new DBCSaveForm());
+        map.put(DBCRemoveForm.packetName, new DBCRemoveForm());
         map.put(DBCSetFlight.packetName, new DBCSetFlight());
+        map.put(DBCRemoveAura.packetName, new DBCRemoveAura());
+        map.put(DBCSaveAura.packetName, new DBCSaveAura());
         this.register();
     }
 
