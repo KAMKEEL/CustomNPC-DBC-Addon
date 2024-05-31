@@ -727,7 +727,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             }
         }
 
-
         if(visualDisplay.race == DBCRace.ARCOSIAN){
             ModelPartData horn = data.getOrCreatePart("dbcHorn");
             ModelPartData arms;
@@ -768,6 +767,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                     data.removePart("dbcHorn");
                     break;
             }
+        }
+
+        if(visualDisplay.race == DBCRace.NAMEKIAN){
+            ModelPartData horn = data.getOrCreatePart("dbcHorn");
+            horn.setTexture("tail/monkey1", 5);
         }
 
         // Copy Form to Fake Form

@@ -19,7 +19,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
 
 	private final GuiScreen parent;
     private final String[] arrRace = new String[]{"gui.no","Human", "Saiyan", "HalfSaiyan", "Namekian", "Arcosian", "Majin"};
-    private final String[] arrArcoHorns = new String[]{"gui.no","display.part.spike","display.part.spike2","display.part.long","display.part.ultimate"};
+    private final String[] arrHorns = new String[]{"gui.no","display.part.spike","display.part.spike2","display.part.long","display.part.ultimate","display.part.antenna"};
     private final String[] arrRaceEars = new String[]{"gui.no","Arco"};
     private final String[] arrBody = new String[]{"gui.no","display.part.backSpike"};
     private final String[] arrArm = new String[]{"gui.no","display.part.armSpikes",  "display.part.shoulder"};
@@ -57,7 +57,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             getButton(104).packedFGColour = display.hairColor;
 
             ModelPartData dbcHorn = playerdata.getPartData("dbcHorn");
-            addButton(new GuiNpcButton(2, guiLeft + 40, y+=22, 60, 20, arrArcoHorns, dbcHorn == null ? 0 : dbcHorn.type));
+            addButton(new GuiNpcButton(2, guiLeft + 40, y+=22, 60, 20, arrHorns, dbcHorn == null ? 0 : dbcHorn.type));
             addLabel(new GuiNpcLabel(2, "part.horns", guiLeft, y + 5, 0xFFFFFF));
             if(dbcHorn != null){
                 addButton(new GuiNpcButton(12, guiLeft + 101, y, 50, 20, dbcHorn.getColor()));
