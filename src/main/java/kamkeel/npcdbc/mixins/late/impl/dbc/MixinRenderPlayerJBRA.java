@@ -113,9 +113,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             HD = ConfigDBCClient.EnableHDTextures;
             //only saiyans
             if (race.get() == 1 || race.get() == 2) {
+                if(form.display.hasBodyFur())
+                    renderSSJ4Fur(form, gender.get(), bodyCM.get());
+
                 //renders all ssj4
                 if (form.display.hairType.equals("ssj4")) {
-                    renderSSJ4Fur(form, gender.get(), bodyCM.get());
                     renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get());
                     if (hairback.get() != 12)
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);

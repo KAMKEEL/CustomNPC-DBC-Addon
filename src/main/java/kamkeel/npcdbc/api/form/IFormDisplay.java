@@ -88,6 +88,14 @@ public interface IFormDisplay {
 
     void hasArcoMask(boolean hasMask);
 
+
+    boolean hasBodyFur();
+
+    /**
+     * @param hasFur True if you want the form to render with fur on body
+     */
+    void hasBodyFur(boolean hasFur);
+
     boolean effectMajinHair();
 
     /**

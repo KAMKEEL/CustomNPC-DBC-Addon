@@ -165,9 +165,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             y = addHairOptions(y);
         }
 
+        if (visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
+            y = addFurOptions(y);
+        }
+
         if(visualDisplay.race == DBCRace.ARCOSIAN){
             y += 22;
-            addLabel(new GuiNpcLabel(113, "display.arcoMask=", guiLeft + 7, y + 5));
+            addLabel(new GuiNpcLabel(113, "display.arcoMask", guiLeft + 7, y + 5));
             addButton(new GuiNpcButtonYesNo(113, guiLeft + 61, y, 50, 20, visualDisplay.hasArcoMask));
 
             y += 22;
@@ -211,7 +215,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             addButton(new GuiNpcButton(101, guiLeft + 51, y, 50, 20, "gui.paste"));
             getButton(103).enabled = false;
         } else {
-            addButton(new GuiNpcButton(102, guiLeft + 51, y, 60, 20, "gui.copy"));
+            addButton(new GuiNpcButton(102, guiLeft + 51, y, 45, 20, "gui.copy"));
         }
         addButton(new GuiNpcButton(104, guiLeft + 147, y, 50, 20, getColor(visualDisplay.hairColor)));
         getButton(104).packedFGColour = visualDisplay.hairColor;
@@ -222,6 +226,14 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         int index = getHairType();
         addLabel(new GuiNpcLabel(140, "display.hairType", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(140, guiLeft + 61, y, 50, 20, hairTypes, index));
+        return y;
+    }
+
+    private int addFurOptions(int y) {
+        y += 22;
+        addLabel(new GuiNpcLabel(123, "display.bodyFur", guiLeft + 7, y + 5));
+        addButton(new GuiNpcButtonYesNo(123, guiLeft + 61, y, 50, 20, display.hasBodyFur));
+
         return y;
     }
 
@@ -344,6 +356,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             refreshValues();
             updateButtons();
         }
+        // Body Fur
+        if(button.id == 123){
+            display.hasBodyFur = !display.hasBodyFur;
+            refreshValues();
+            updateButtons();
+        }
+
         // Form
         if(button.id == 114){
             display.bodyType = getArcoString(button.getValue());
@@ -792,6 +811,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         spoofForm.display.keepOriginalSize = display.keepOriginalSize;
         spoofForm.display.formSize = display.formSize;
         spoofForm.display.hasArcoMask = display.hasArcoMask;
+        spoofForm.display.hasBodyFur = display.hasBodyFur;
 
         visualDisplay.formID = spoofForm.id;
     }

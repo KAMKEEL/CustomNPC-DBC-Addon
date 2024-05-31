@@ -22,6 +22,7 @@ public class FormDisplay implements IFormDisplay {
     public int auraColor = -1;
     public String bodyType = "";
     public int bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
+    public boolean hasBodyFur = false;
     public boolean hasArcoMask = false;
     public boolean effectMajinHair = false;
 
@@ -49,6 +50,7 @@ public class FormDisplay implements IFormDisplay {
 
         hasArcoMask = rendering.getBoolean("hasArcoMask");
         effectMajinHair = rendering.getBoolean("effectMajinHair");
+        hasBodyFur = rendering.getBoolean("hasBodyFur");
 
         formSize = rendering.getFloat("formSize");
         keepOriginalSize = rendering.getBoolean("keepOriginalSize");
@@ -74,6 +76,7 @@ public class FormDisplay implements IFormDisplay {
 
         rendering.setBoolean("hasArcoMask", hasArcoMask);
         rendering.setBoolean("effectMajinHair", effectMajinHair);
+        rendering.setBoolean("hasBodyFur", hasBodyFur);
 
         rendering.setFloat("formSize", formSize);
         rendering.setBoolean("keepOriginalSize", keepOriginalSize);
@@ -244,6 +247,16 @@ public class FormDisplay implements IFormDisplay {
     @Override
     public void hasArcoMask(boolean hasMask) {
         this.hasArcoMask = hasMask;
+    }
+
+    @Override
+    public boolean hasBodyFur() {
+        return hasBodyFur;
+    }
+
+    @Override
+    public void hasBodyFur(boolean hasFur) {
+        this.hasBodyFur = hasFur;
     }
 
     @Override
