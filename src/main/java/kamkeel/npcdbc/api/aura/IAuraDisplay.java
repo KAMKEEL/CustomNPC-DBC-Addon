@@ -67,6 +67,13 @@ public interface IAuraDisplay {
      */
     void setType(String auraType);
 
+    String getType2D();
+
+    /**
+     * @return legal types: ssgod, godofdestruction, ui, mui, ssb, ssrose, ssroseevo, ssbkk, shinka
+     */
+    void setType2D(String type2D);
+    
     boolean hasColor(String type);
 
     /**
@@ -143,9 +150,7 @@ public interface IAuraDisplay {
      */
     void setSpeed(float speed);
 
-    String getType2D();
 
-    void setType2D(String type2D);
 
     /**
      * @param textureType Legal types: texture1, texture2, texture3

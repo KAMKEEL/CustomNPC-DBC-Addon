@@ -14,6 +14,7 @@ public enum EnumAuraTypes2D {
     GoD("godofdestruction"),
     GoDToppo("godofdestructiontoppo"),
     UI("ui"),
+    MasteredUI("mui"),
     UltimateArco("ultimate"),
     Legendary("legendary"),
     SaiyanSuper("ssj"),

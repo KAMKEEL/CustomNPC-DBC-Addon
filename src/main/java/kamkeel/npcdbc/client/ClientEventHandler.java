@@ -13,6 +13,7 @@ import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -30,7 +31,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -290,30 +290,35 @@ public class ClientEventHandler {
             aur.setTex("aurai");
             aur.setTexL2("aurai2");
             aur.setColL2(16747301);
+            aur.setBol6(0);
         } else if (aura.display.type == EnumAuraTypes3D.SaiyanBlue) {
             aur.setSpd(40);
             aur.setAlp(0.5F);
             aur.setTex("aurag");
             aur.setColL3(15727354);
             aur.setTexL3("auragb");
+            aur.setBol6(1);
         } else if (aura.display.type == EnumAuraTypes3D.SaiyanBlueEvo) {
             aur.setSpd(40);
             aur.setAlp(0.5F);
             aur.setTex("aurag");
             aur.setColL3(12310271);
             aur.setTexL3("auragb");
+            aur.setBol6(2);
         } else if (aura.display.type == EnumAuraTypes3D.SaiyanRose) {
             aur.setSpd(30);
             aur.setAlp(0.2F);
             aur.setTex("aurai");
             aur.setTexL2("aurai2");
             aur.setColL2(7872713);
+            aur.setBol6(3);
         } else if (aura.display.type == EnumAuraTypes3D.SaiyanRoseEvo) {
             aur.setSpd(30);
             aur.setAlp(0.2F);
             aur.setTex("aurai");
             aur.setTexL2("aurai2");
             aur.setColL2(8592109);
+            aur.setBol6(5);
         } else if (aura.display.type == EnumAuraTypes3D.UI) {
             aur.setSpd(100);
             aur.setAlp(0.15F);
@@ -321,17 +326,43 @@ public class ClientEventHandler {
             aur.setCol(15790320);
             aur.setColL3(4746495);
             aur.setTexL3("auragb");
+            aur.setBol4(true);
+            aur.setBol4a(true);
         } else if (aura.display.type == EnumAuraTypes3D.GoD) {
             aur.setSpd(100);
             aur.setAlp(0.2F);
             aur.setTex("aurag");
             aur.setTexL3("auragb");
             aur.setColL2(12464847);
+            aur.setBol6(6);
         } else if (aura.display.type == EnumAuraTypes3D.UltimateArco) {
             aur.setAlp(0.5F);
             aur.setTex("aurau");
             aur.setTexL2("aurau2");
             aur.setColL2(16776724);
+            aur.setBol6(4);
+        }
+
+
+        if (aura.display.type2D == EnumAuraTypes2D.SaiyanGod) {
+            aur.setBol6(0);
+        } else if (aura.display.type2D == EnumAuraTypes2D.SaiyanBlue) {
+            aur.setBol6(1);
+        } else if (aura.display.type2D == EnumAuraTypes2D.SaiyanBlueEvo) {
+            aur.setBol6(2);
+        } else if (aura.display.type2D == EnumAuraTypes2D.SaiyanRose) {
+            aur.setBol6(3);
+        } else if (aura.display.type2D == EnumAuraTypes2D.SaiyanRoseEvo) {
+            aur.setBol6(5);
+        } else if (aura.display.type2D == EnumAuraTypes2D.UI) {
+            aur.setBol4(true);
+        } else if (aura.display.type2D == EnumAuraTypes2D.MasteredUI) {
+            aur.setBol4(true);
+            aur.setBol4a(true);
+        } else if (aura.display.type2D == EnumAuraTypes2D.GoD) {
+            aur.setBol6(6);
+        } else if (aura.display.type2D == EnumAuraTypes2D.UltimateArco) {
+            aur.setBol6(4);
         }
 
 
