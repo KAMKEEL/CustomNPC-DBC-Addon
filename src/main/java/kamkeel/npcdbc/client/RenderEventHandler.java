@@ -76,6 +76,7 @@ public class RenderEventHandler {
         if (aura != null && aura.shouldRender()) {
             glPushMatrix();
             glLoadMatrix(PRE_RENDER_MATRIX); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
+            glRotatef(180,0,0,1);
             AuraRenderer.Instance.renderAura(aura, partialTicks);
             glPopMatrix();
         }
