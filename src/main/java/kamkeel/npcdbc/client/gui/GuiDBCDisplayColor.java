@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui;
 
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -9,6 +10,8 @@ import noppes.npcs.client.gui.util.GuiModelInterface;
 import noppes.npcs.client.gui.util.GuiNpcTextField;
 import noppes.npcs.client.gui.util.ITextfieldListener;
 import noppes.npcs.entity.EntityCustomNpc;
+import noppes.npcs.entity.data.ModelData;
+import noppes.npcs.entity.data.ModelPartData;
 import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
@@ -18,6 +21,7 @@ import java.io.InputStream;
 
 public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldListener {
     private GuiScreen parent;
+    private ModelData modelData;
     private static final ResourceLocation color = new ResourceLocation("customnpcs:textures/gui/color.png");
     private int colorX;
     private int colorY;
@@ -25,9 +29,10 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
     private final DBCDisplay data;
     private int type = 0; // CM, C1, C2, C3, HairColor, EyeColor
 
-    public GuiDBCDisplayColor(GuiScreen parent, DBCDisplay data, EntityCustomNpc npc, int type) {
+    public GuiDBCDisplayColor(GuiScreen parent, ModelData modelData, DBCDisplay data, EntityCustomNpc npc, int type) {
         super(npc);
         this.parent = parent;
+        this.modelData = modelData;
         this.data = data;
         this.xOffset = 60;
         this.ySize = 230;
@@ -98,6 +103,7 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
                 this.textfield.setText(prev);
             }
         }
+        verifyRaceTail();
     }
 
     protected void actionPerformed(GuiButton btn) {
@@ -150,6 +156,7 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
                     }
                     this.textfield.setTextColor(color);
                     this.textfield.setText(getColor(color));
+                    verifyRaceTail();
                 }
             } catch (IOException ignored) {
             } finally {
@@ -197,6 +204,7 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
                 break;
         }
         textfield.setTextColor(color);
+        verifyRaceTail();
     }
 
     public String getColor(int input) {
@@ -205,5 +213,25 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
         }
 
         return str;
+    }
+
+    public void verifyRaceTail(){
+        if(data.useSkin && (data.race == DBCRace.SAIYAN || data.race == DBCRace.HALFSAIYAN  || data.race == DBCRace.ARCOSIAN)){
+            ModelPartData tail = playerdata.getOrCreatePart("tail");
+            tail.setTexture("tail/monkey1", 8);
+            if(data.race == DBCRace.SAIYAN || data.race == DBCRace.HALFSAIYAN){
+                tail.pattern = 0;
+                tail.color = data.hairColor;
+                if(data.furColor != -1){
+                    tail.color = data.furColor;
+                }
+            }
+            if(data.race == DBCRace.ARCOSIAN){
+                tail.pattern = 2;
+                tail.color = data.bodyC3;
+            }
+        } else {
+            playerdata.removePart("tail");
+        }
     }
 }

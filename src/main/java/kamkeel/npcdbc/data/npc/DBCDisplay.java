@@ -68,12 +68,15 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         if (enabled) {
             NBTTagCompound dbcDisplay = new NBTTagCompound();
 
-            dbcDisplay.setInteger("DBCBodyType", bodyType);
-            dbcDisplay.setString("DBCHairType", hairType);
             dbcDisplay.setString("DBCHair", hairCode);
-
             dbcDisplay.setInteger("DBCHairColor", hairColor);
             dbcDisplay.setInteger("DBCEyeColor", eyeColor);
+
+            dbcDisplay.setString("DBCHairType", hairType);
+            dbcDisplay.setInteger("DBCEyeType", eyeType);
+            dbcDisplay.setInteger("DBCMouthType", mouthType);
+            dbcDisplay.setInteger("DBCNoseType", noseType);
+            dbcDisplay.setInteger("DBCBodyType", bodyType);
 
             dbcDisplay.setInteger("DBCRace", race);
             dbcDisplay.setBoolean("DBCUseSkin", useSkin);
@@ -114,9 +117,13 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             auraOn = dbcDisplay.getBoolean("DBCAuraOn");
 
             useSkin = dbcDisplay.getBoolean("DBCUseSkin");
-            bodyType = dbcDisplay.getInteger("DBCBodyType");
-            hairType = dbcDisplay.getString("DBCHairType");
             hairCode = dbcDisplay.getString("DBCHair");
+
+            hairType = dbcDisplay.getString("DBCHairType");
+            eyeType = dbcDisplay.getInteger("DBCEyeType");
+            mouthType = dbcDisplay.getInteger("DBCMouthType");
+            noseType = dbcDisplay.getInteger("DBCNoseType");
+            bodyType = dbcDisplay.getInteger("DBCBodyType");
 
             hairColor = dbcDisplay.getInteger("DBCHairColor");
             eyeColor = dbcDisplay.getInteger("DBCEyeColor");

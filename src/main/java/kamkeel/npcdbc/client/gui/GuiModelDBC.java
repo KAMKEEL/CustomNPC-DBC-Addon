@@ -200,6 +200,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
                 playerdata.removePart("dbcEars");
                 playerdata.removePart("dbcBody");
                 playerdata.removePart("dbcArms");
+                playerdata.removePart("tail");
                 display.hairCode = "";
                 display.useSkin = false;
                 display.arcoState = 0;
@@ -208,7 +209,6 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
                 display.mouthType = 0;
                 display.eyeType = 0;
             }
-
             initGui();
         }
         if(button.id == 1){
@@ -222,6 +222,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             display.noseType = 0;
             display.mouthType = 0;
             display.eyeType = 0;
+            verifyRaceTail();
             initGui();
         }
         if(button.id == 101){
@@ -238,10 +239,10 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             initGui();
         }
         if(button.id == 104){
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, display, npc, 4));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 4));
         }
         if(button.id == 305){
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, display, npc, 5));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 5));
         }
 
         if(button.id == 2){
@@ -307,24 +308,24 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         if(button.id == 15){
             this.mc.displayGuiScreen(new GuiModelColor(this, playerdata.getPartData("dbcArms"), npc));
         }
-
         if(button.id == 300){
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, display, npc, 0));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 0));
         }
         if(button.id == 301){
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, display, npc, 1));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 1));
         }
         if(button.id == 302){
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, display, npc, 2));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 2));
         }
         if(button.id == 303){
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, display, npc, 3));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 3));
         }
         if(button.id == 311){
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, display, npc, 6));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 6));
         }
         if(button.id == 320){
             display.setDefaultColors();
+            verifyRaceTail();
             initGui();
         }
         if(button.id == 304){
@@ -332,6 +333,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             display.useSkin = button.getValue() == 1;
             if(display.useSkin)
                 npc.display.modelType = 0;
+            verifyRaceTail();
             initGui();
         }
         if(button.id == 200){
@@ -348,9 +350,6 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         }
         if(button.id == 204){
             display.mouthType = button.getValue();
-        }
-        if(button.id == 204){
-            display.noseType = button.getValue();
         }
         if(button.id == 206){
             display.hasArcoMask = button.getValue() == 1;
@@ -392,4 +391,24 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
 
     @Override
     public void lostOwnership(Clipboard clipboard, Transferable contents) {}
+
+    public void verifyRaceTail(){
+        if(display.useSkin && (display.race == DBCRace.SAIYAN || display.race == DBCRace.HALFSAIYAN  || display.race == DBCRace.ARCOSIAN)){
+            ModelPartData tail = playerdata.getOrCreatePart("tail");
+            tail.setTexture("tail/monkey1", 8);
+            if(display.race == DBCRace.SAIYAN || display.race == DBCRace.HALFSAIYAN){
+                tail.pattern = 0;
+                tail.color = display.hairColor;
+                if(display.furColor != -1){
+                    tail.color = display.furColor;
+                }
+            }
+            if(display.race == DBCRace.ARCOSIAN){
+                tail.pattern = 2;
+                tail.color = display.bodyC3;
+            }
+        } else {
+            playerdata.removePart("tail");
+        }
+    }
 }

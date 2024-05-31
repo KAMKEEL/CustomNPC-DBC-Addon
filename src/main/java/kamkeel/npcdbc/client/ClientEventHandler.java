@@ -42,11 +42,6 @@ public class ClientEventHandler {
 
     private int soundTicker = -1;
 
-
-    @SubscribeEvent
-    public void renderPlayer(RenderPlayerEvent.Post e) {
-    }
-
     @SubscribeEvent
     public void onSkill(TickEvent.PlayerTickEvent event) {
         if (event.side == Side.SERVER || event.player == null)
