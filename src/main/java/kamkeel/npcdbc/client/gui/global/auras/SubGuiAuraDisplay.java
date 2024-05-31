@@ -79,17 +79,11 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         y += 23;
 
         if(selectedTab == 0){
-            addLabel(new GuiNpcLabel(200, "display.size", guiLeft + 138, y + 5));
-            addTextField(new GuiNpcTextField(200, this, guiLeft + 190, y, 40, 20, String.valueOf(auraDisplay.size)));
-            getTextField(200).setMaxStringLength(10);
-            getTextField(200).floatsOnly = true;
-            getTextField(200).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
-
-            addLabel(new GuiNpcLabel(201, "display.speed", guiLeft + 240, y + 5));
-            addTextField(new GuiNpcTextField(201, this, guiLeft + 315, y, 40, 20, String.valueOf(auraDisplay.speed)));
-            getTextField(201).setMaxStringLength(10);
-            getTextField(201).floatsOnly = true;
-            getTextField(201).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
+            addLabel(new GuiNpcLabel(3003, "display.alpha", guiLeft + 138, y + 5));
+            addTextField(new GuiNpcTextField(3003, this, guiLeft + 190, y, 40, 20, String.valueOf(auraDisplay.alpha)));
+            getTextField(3003).setMaxStringLength(4);
+            getTextField(3003).integersOnly = true;
+            getTextField(3003).setMinMaxDefault(-1, 255, -1);
 
             y += 23;
             addLabel(new GuiNpcLabel(3004, "display.overrideDBC", guiLeft + 138, y + 5));
@@ -118,11 +112,17 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
 
             y += 23;
 
-            addLabel(new GuiNpcLabel(3003, "display.alpha", guiLeft + 138, y + 5));
-            addTextField(new GuiNpcTextField(3003, this, guiLeft + 190, y, 40, 20, String.valueOf(auraDisplay.alpha)));
-            getTextField(3003).setMaxStringLength(4);
-            getTextField(3003).integersOnly = true;
-            getTextField(3003).setMinMaxDefault(-1, 255, -1);
+            addLabel(new GuiNpcLabel(200, "display.size", guiLeft + 138, y + 5));
+            addTextField(new GuiNpcTextField(200, this, guiLeft + 190, y, 40, 20, String.valueOf(auraDisplay.size)));
+            getTextField(200).setMaxStringLength(10);
+            getTextField(200).floatsOnly = true;
+            getTextField(200).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
+
+            addLabel(new GuiNpcLabel(201, "display.speed", guiLeft + 240, y + 5));
+            addTextField(new GuiNpcTextField(201, this, guiLeft + 315, y, 40, 20, String.valueOf(auraDisplay.speed)));
+            getTextField(201).setMaxStringLength(10);
+            getTextField(201).floatsOnly = true;
+            getTextField(201).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
 
             y += 23;
             addLabel(new GuiNpcLabel(3006, "display.3DType", guiLeft + 138, y + 5));
@@ -150,13 +150,15 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
                 y += 23;
 
                 addLabel(new GuiNpcLabel(203, "display.lAlpha", guiLeft + 138, y + 5));
-                addTextField(new GuiNpcTextField(203, this, guiLeft + 190, y, 40, 20, String.valueOf(auraDisplay.lightningAlpha)));
+                addTextField(new GuiNpcTextField(203, this, guiLeft + 220, y, 40, 20, String.valueOf(auraDisplay.lightningAlpha)));
                 getTextField(203).setMaxStringLength(4);
                 getTextField(203).integersOnly = true;
                 getTextField(203).setMinMaxDefault(-1, 255, -1);
 
-                addLabel(new GuiNpcLabel(204, "display.lSpeed", guiLeft + 240, y + 5));
-                addTextField(new GuiNpcTextField(204, this, guiLeft + 315, y, 40, 20, String.valueOf(auraDisplay.lightningSpeed)));
+                y += 23;
+
+                addLabel(new GuiNpcLabel(204, "display.lSpeed", guiLeft + 138, y + 5));
+                addTextField(new GuiNpcTextField(204, this, guiLeft + 220, y, 40, 20, String.valueOf(auraDisplay.lightningSpeed)));
                 getTextField(204).setMaxStringLength(4);
                 getTextField(204).integersOnly = true;
                 getTextField(204).setMinMaxDefault(-1, 100, -1);
@@ -164,7 +166,7 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
                 y += 23;
 
                 addLabel(new GuiNpcLabel(205, "display.lIntensity", guiLeft + 138, y + 5));
-                addTextField(new GuiNpcTextField(205, this, guiLeft + 190, y, 40, 20, String.valueOf(auraDisplay.lightningAlpha)));
+                addTextField(new GuiNpcTextField(205, this, guiLeft + 220, y, 40, 20, String.valueOf(auraDisplay.lightningAlpha)));
                 getTextField(205).setMaxStringLength(4);
                 getTextField(205).integersOnly = true;
                 getTextField(205).setMinMaxDefault(-1, 100, -1);
