@@ -114,7 +114,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             //only saiyans
             if (race.get() == 1 || race.get() == 2) {
                 if(form.display.hasBodyFur())
-                    renderSSJ4Fur(form, gender.get(), bodyCM.get());
+                    renderBodyFur(form, gender.get(), bodyCM.get());
 
                 //renders all ssj4
                 if (form.display.hairType.equals("ssj4")) {
@@ -149,7 +149,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
 
     @Unique
-    private void renderSSJ4Fur(Form form, int gender, int bodyCM) {
+    private void renderBodyFur(Form form, int gender, int bodyCM) {
         String bodyTexture = (gender == 1 ? "f" : "") + "hum.png";
         this.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + bodyTexture));
         RenderPlayerJBRA.glColor3f(bodyCM);

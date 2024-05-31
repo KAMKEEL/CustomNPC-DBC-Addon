@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.model;
 
+import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
@@ -198,6 +199,7 @@ public class ModelDBC extends ModelBase {
             int bodyC1 = display.bodyC1;
             int bodyC2 = display.bodyC2;
             int bodyC3 = display.bodyC3;
+            int furColor = display.furColor;
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
             //Forms
@@ -212,6 +214,8 @@ public class ModelDBC extends ModelBase {
                     bodyC2 = d.bodyC2;
                 if (d.hasColor("bodyc3"))
                     bodyC3 = d.bodyC3;
+                if (d.hasColor("fur"))
+                    furColor = d.furColor;
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
@@ -220,6 +224,13 @@ public class ModelDBC extends ModelBase {
             if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
                 ColorMode.applyModelColor(bodyCM, isHurt);
+
+                if(display.hasFur){
+                    model.render(0.0625F);
+                    ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/ss4b.png"));
+                    ColorMode.applyModelColor(furColor, isHurt);
+                }
+
             } else if (race == DBCRace.NAMEKIAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
                 ColorMode.applyModelColor(bodyCM, isHurt);

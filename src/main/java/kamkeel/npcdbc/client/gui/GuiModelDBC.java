@@ -125,6 +125,13 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
                         addButton(new GuiNpcButton(303, guiLeft + 101, y, 42, 20, getColor(display.bodyC3)));
                         addLabel(new GuiNpcLabel(303, "C3", guiLeft + 80, y + 5, 0xFFFFFF));
                         getButton(303).packedFGColour = display.bodyC3;
+
+                        if(display.race == DBCRace.SAIYAN || display.race == DBCRace.HALFSAIYAN){
+                            addButton(new GuiNpcButton(311, guiLeft + 20, y+=22, 42, 20, getColor(display.furColor)));
+                            addLabel(new GuiNpcLabel(311, "FUR", guiLeft, y + 5, 0xFFFFFF));
+                            getButton(311).packedFGColour = display.furColor;
+                        }
+
                     } else {
                         if(display.race == DBCRace.ARCOSIAN){
                             addButton(new GuiButtonBiDirectional(201,guiLeft + 35, y+=22, 52, 20, new String[]{"0", "1", "2", "3", "4", "5", "6", "7"}, display.arcoState));
@@ -155,6 +162,10 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
                         if(display.race == DBCRace.ARCOSIAN || display.race == DBCRace.NAMEKIAN){
                             addButton(new GuiButtonBiDirectional(200,guiLeft + 35, y+=22, 52, 20, new String[]{"0", "1", "2"}, display.bodyType));
                             addLabel(new GuiNpcLabel(200, "model.body", guiLeft, y + 5, 0xFFFFFF));
+                        }
+
+                        if(display.race == DBCRace.SAIYAN || display.race == DBCRace.HALFSAIYAN){
+                            addButton(new GuiNpcButton(207, guiLeft + 2, y+=22, 90, 20, new String[]{"display.furOff", "display.furOn"}, display.hasFur ? 1 : 0));
                         }
                     }
                 }
@@ -309,6 +320,9 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         if(button.id == 303){
             this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, display, npc, 3));
         }
+        if(button.id == 311){
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, display, npc, 6));
+        }
         if(button.id == 320){
             display.setDefaultColors();
             initGui();
@@ -340,6 +354,9 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         }
         if(button.id == 206){
             display.hasArcoMask = button.getValue() == 1;
+        }
+        if(button.id == 207){
+            display.hasFur = button.getValue() == 1;
         }
     }
 

@@ -35,6 +35,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public int bodyType = 0;
     public int bodyCM = 0xffffff, bodyC1 = 0xffffff, bodyC2 = 0xffffff, bodyC3 = 0xffffff;
     public boolean hasArcoMask = false;
+    public int furColor = -1;
+    public boolean hasFur = false;
 
     // Face Display //
     public int eyeColor = -1;
@@ -79,9 +81,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             dbcDisplay.setInteger("DBCBodyC1", bodyC1);
             dbcDisplay.setInteger("DBCBodyC2", bodyC2);
             dbcDisplay.setInteger("DBCBodyC3", bodyC3);
-            dbcDisplay.setInteger("DBCArcoState", arcoState);
+            dbcDisplay.setInteger("DBCFurColor", furColor);
 
+            dbcDisplay.setInteger("DBCArcoState", arcoState);
             dbcDisplay.setBoolean("DBCArcoMask", hasArcoMask);
+            dbcDisplay.setBoolean("DBCFur", hasFur);
 
             dbcDisplay.setInteger("DBCRage", rage);
             dbcDisplay.setBoolean("DBCIsTransforming", isTransforming);
@@ -120,9 +124,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             bodyC1 = dbcDisplay.getInteger("DBCBodyC1");
             bodyC2 = dbcDisplay.getInteger("DBCBodyC2");
             bodyC3 = dbcDisplay.getInteger("DBCBodyC3");
+            furColor = dbcDisplay.getInteger("DBCFurColor");
 
             arcoState = dbcDisplay.getInteger("DBCArcoState");
             hasArcoMask = dbcDisplay.getBoolean("DBCArcoMask");
+            hasFur =  dbcDisplay.getBoolean("DBCFur");
 
             auraID = dbcDisplay.getInteger("DBCAuraID");
             enumAuraTypes = EnumAuraTypes2D.values()[dbcDisplay.getInteger("DBCDisplayAura") % EnumAuraTypes2D.values().length];
@@ -157,8 +163,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             case "bodyc3":
                 bodyC3 = color;
                 break;
+            case "fur":
+                furColor = color;
+                break;
             default:
-                throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3");
+                throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
         }
     }
 
@@ -178,9 +187,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
                 return (inF ? form.display.bodyC2 : bodyC2) != -1;
             case "bodyc3":
                 return (inF ? form.display.bodyC3 : bodyC3) != -1;
-
+            case "fur":
+                return (inF ? form.display.furColor : furColor) != -1;
         }
-        throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3");
+        throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
 
     @Override
@@ -200,8 +210,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
                 return inF ? form.display.bodyC2 : bodyC2;
             case "bodyc3":
                 return inF ? form.display.bodyC3 : bodyC3;
+            case "fur":
+                return inF ? form.display.furColor : furColor;
         }
-        throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3");
+        throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
 
 
@@ -468,6 +480,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     public void setDefaultColors() {
         eyeColor = 0x000000;
+        furColor = 0x3e2b17;
 
         if (race < 3) {
             bodyCM = 16297621;

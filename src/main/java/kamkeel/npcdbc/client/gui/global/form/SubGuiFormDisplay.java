@@ -723,6 +723,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             visualDisplay.eyeColor = 0xFF0000;
         }
 
+        visualDisplay.furColor = display.furColor;
+
         visualDisplay.hairCode = "";
         if(visualDisplay.race == DBCRace.HUMAN || visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
             visualDisplay.hairCode = display.hairCode;

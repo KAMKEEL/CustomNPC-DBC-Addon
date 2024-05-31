@@ -54,7 +54,10 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
         } else if(type == 5){
             this.addTextField(this.textfield = new GuiNpcTextField(0, this, this.guiLeft + 25, this.guiTop + 20, 70, 20, getColor(this.data.eyeColor)));
             this.textfield.setTextColor(this.data.eyeColor);
-        } else {
+        } else if(type == 6){
+            this.addTextField(this.textfield = new GuiNpcTextField(0, this, this.guiLeft + 25, this.guiTop + 20, 70, 20, getColor(this.data.furColor)));
+            this.textfield.setTextColor(this.data.furColor);
+        }else {
             this.addTextField(this.textfield = new GuiNpcTextField(0, this, this.guiLeft + 25, this.guiTop + 20, 70, 20, getColor(this.data.bodyCM)));
             this.textfield.setTextColor(this.data.bodyCM);
         }
@@ -82,6 +85,9 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
                         break;
                     case 5:
                         this.data.eyeColor = color;
+                        break;
+                    case 6:
+                        this.data.furColor = color;
                         break;
                     default:
                         this.data.bodyCM = color;
@@ -135,6 +141,9 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
                         case 5:
                             this.data.eyeColor = color;
                             break;
+                        case 6:
+                            this.data.furColor = color;
+                            break;
                         default:
                             this.data.bodyCM = color;
                             break;
@@ -179,6 +188,9 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
                 break;
             case 5:
                 this.data.eyeColor = color;
+                break;
+            case 6:
+                this.data.furColor = color;
                 break;
             default:
                 this.data.bodyCM = color;
