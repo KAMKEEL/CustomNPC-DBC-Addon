@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.client.model.part;
 
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
+import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.model.ModelRenderer;
@@ -41,7 +43,19 @@ public class DBCBody extends ModelDBCPartInterface {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if(display.useSkin){
             this.useColor = 0;
-            this.bodyCM = display.bodyCM;
+            bodyCM = display.bodyCM;
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            //Forms
+            Form form = display.getForm();
+            if (form != null) {
+                FormDisplay d = form.display;
+                if (d.hasColor("bodycm"))
+                    bodyCM = d.bodyCM;
+            }
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+
             super.render(par1);
         } else {
             super.render(par1);

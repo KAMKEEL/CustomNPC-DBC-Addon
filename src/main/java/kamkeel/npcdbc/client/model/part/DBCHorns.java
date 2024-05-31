@@ -3,6 +3,8 @@ package kamkeel.npcdbc.client.model.part;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.model.ModelRenderer;
@@ -138,29 +140,47 @@ public class DBCHorns extends ModelDBCPartInterface {
             if (display.race != DBCRace.ARCOSIAN)
                 state = 3;
 
+
+            bodyCM = display.bodyCM;
+            bodyC1 = display.bodyC1;
+            bodyC2 = display.bodyC2;
+            bodyC3 = display.bodyC3;
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            //Forms
+            Form form = display.getForm();
+            if (form != null) {
+                FormDisplay d = form.display;
+                if (d.hasColor("bodycm"))
+                    bodyCM = d.bodyCM;
+                if (d.hasColor("bodyc1"))
+                    bodyC1 = d.bodyC1;
+                if (d.hasColor("bodyc2"))
+                    bodyC2 = d.bodyC2;
+                if (d.hasColor("bodyc3"))
+                    bodyC3 = d.bodyC3;
+            }
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+
             useColor = 0;
-            this.bodyCM = display.bodyCM;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/0B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
             super.render(par1);
 
             useColor = 1;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/1B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC1 = display.bodyC1;
             super.render(par1);
 
             useColor = 2;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/2B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC2 = display.bodyC2;
             super.render(par1);
 
             useColor = 3;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/3B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC3 = display.bodyC3;
             super.render(par1);
 
             useColor = 0;
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/4B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyCM = display.bodyCM;
             super.render(par1);
         } else {
             super.render(par1);
