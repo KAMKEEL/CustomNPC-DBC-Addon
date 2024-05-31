@@ -42,7 +42,6 @@ public class ConfigDBCEffects
     public final static String Meditation = "Meditation";
     public static int MeditationSpiBoostPercent = 20;
 
-
     public final static String Potara = "Potara";
     public static double TierOneMulti = 0.5;
     public static double TierTwoMulti = 0.7;
@@ -50,6 +49,11 @@ public class ConfigDBCEffects
 
     public final static String OVERPOWER = "OVERPOWER";
     public static int OVERPOWER_AMOUNT = 25;
+
+    public final static String FATIGUE = "FATIGUE";
+    public static int FATIGUE_TIME = 15;
+    public static boolean FATIGUE_ZENAKI = true;
+    public static boolean FATIGUE_OVERPOWER = true;
 
     public static void init(File configFile)
     {
@@ -104,6 +108,15 @@ public class ConfigDBCEffects
                     "The range of accepted values are [0 to 25].").getInt(25);
 
             OVERPOWER_AMOUNT = ValueUtil.clamp(OVERPOWER_AMOUNT, 0, 25);
+
+
+            config.addCustomCategoryComment(FATIGUE,
+                "Fatigue prevents specific effects from being applied to the player." +
+                    "\nSimilar to Pain or NoFuse, it acts as a Cooldown");
+            FATIGUE_TIME = config.get(Potara, "Fatigue Time", 15, "Amount of Time in Minutes for Fatigue").getInt(15);
+            FATIGUE_ZENAKI = config.get(FATIGUE, "Fatigue Zenkai", true).getBoolean(true);
+            FATIGUE_OVERPOWER = config.get(FATIGUE, "Fatigue Overpower", true).getBoolean(true);
+
         }
         catch (Exception e)
         {

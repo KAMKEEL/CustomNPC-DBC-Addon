@@ -50,6 +50,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         standardEffects.put(Effects.DARKNESS, new Darkness());      // TODO: Finish it
         standardEffects.put(Effects.ZENKAI, new Zenkai());
         standardEffects.put(Effects.POTARA, new PotaraFusion());
+        standardEffects.put(Effects.FATIGUE, new PotaraFusion());
     }
 
     /**

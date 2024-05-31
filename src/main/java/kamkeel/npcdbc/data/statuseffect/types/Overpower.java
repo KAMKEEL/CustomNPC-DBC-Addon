@@ -2,6 +2,7 @@ package kamkeel.npcdbc.data.statuseffect.types;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
@@ -29,5 +30,7 @@ public class Overpower extends StatusEffect {
 
         int newRelease = ValueUtil.clamp(release, (byte) 0, maxRelease);
         dbcData.getRawCompound().setByte("jrmcRelease", (byte) newRelease);
+
+        StatusEffectController.getInstance().applyEffect(player, Effects.FATIGUE);
     }
 }

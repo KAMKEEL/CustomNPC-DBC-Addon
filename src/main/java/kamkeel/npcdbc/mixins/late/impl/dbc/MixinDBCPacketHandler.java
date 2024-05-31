@@ -26,6 +26,10 @@ public class MixinDBCPacketHandler {
             ci.cancel();
 
         DBCData dbcData = DBCData.get(p);
+
+        if(StatusEffectController.Instance.hasEffect(p, Effects.FATIGUE))
+            return;
+        
         if((ConfigDBCGameplay.SaiyanZenkai && dbcData.Race == DBCRace.SAIYAN ) ||
             (ConfigDBCGameplay.HalfSaiyanZenkai && dbcData.Race == DBCRace.HALFSAIYAN)){
 
