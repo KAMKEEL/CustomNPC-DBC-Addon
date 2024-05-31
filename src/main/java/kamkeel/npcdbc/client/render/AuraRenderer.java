@@ -344,7 +344,7 @@ public class AuraRenderer extends RenderDBC {
         float sizeFactor = state; //responsible for correctly scaling aura sizes
         if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             if (state == DBCForm.Base)
-                sizeFactor = 3f;
+                sizeFactor = 0.5f;
             else if (state > DBCForm.Base && state < DBCForm.SuperSaiyan2)
                 sizeFactor = 4;
             else if (state == DBCForm.SuperSaiyan2)

@@ -14,19 +14,24 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.client.renderer.ImageData;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
+import java.nio.FloatBuffer;
 import java.util.Iterator;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
     /**
-     * ID used when cutting out the player from stencil buffer
+     * ID used when cutting out an entity from stencil buffer
      */
-    public final static int PLAYER_STENCIL_ID = 1; 
+    public final static int PLAYER_STENCIL_ID = 1;
+    public final static int ENTITY_STENCIL_ID = 2;
+    public static FloatBuffer PRE_RENDER_MATRIX = BufferUtils.createFloatBuffer(16);
 
     @SubscribeEvent
     public void renderPlayer(RenderPlayerEvent.Pre e) {
@@ -34,7 +39,7 @@ public class RenderEventHandler {
         glEnable(GL11.GL_STENCIL_TEST);
         enableStencilWriting(PLAYER_STENCIL_ID);
     }
-
+    
     @SubscribeEvent
     public void renderPlayer(DBCRenderEvent.Pre e) {
         EntityAura aura = DBCData.get(e.entityPlayer).auraEntity;
@@ -42,45 +47,68 @@ public class RenderEventHandler {
             Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
     }
-    
+
+    @SubscribeEvent
+    public void renderPlayer(RenderLivingEvent.Pre e) {
+        if (!(e.entity instanceof EntityPlayer))
+            return;
+
+        //IMPORTANT, SAVES THE MODEL VIEW MATRIX PRE ENTITYLIVING TRANSFORMATIONS
+        GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, PRE_RENDER_MATRIX);
+    }
+
+
     @SubscribeEvent
     public void renderPlayer(DBCRenderEvent.Post e) {
-        EntityPlayer player = e.entityPlayer;
+        if (!(e.entity instanceof EntityPlayer))
+            return;
+        EntityPlayer player = (EntityPlayer) e.entity;
         RenderPlayerJBRA render = (RenderPlayerJBRA) e.renderer;
-        float partialTicks = e.partialRenderTick;
+        float partialTicks = Minecraft.getMinecraft().timer.renderPartialTicks;
         DBCData data = DBCData.get(player);
 
         disableStencilWriting(PLAYER_STENCIL_ID, false);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
-
+        ////////////////////////////////////////
+        ////////////////////////////////////////
         //Aura
         EntityAura aura = data.auraEntity;
-        if (aura != null && aura.shouldRender())
+        if (aura != null && aura.shouldRender()) {
+            glPushMatrix();
+            glLoadMatrix(PRE_RENDER_MATRIX); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
             AuraRenderer.Instance.renderAura(aura, partialTicks);
+            glPopMatrix();
+        }
 
-        //#Todo: add custom particle rendering here in-between
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //Custom Particles
+        glPushMatrix();
+        glLoadMatrix(PRE_RENDER_MATRIX); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
         IRenderCusPar particleRender = null;
-        Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator();
-        while (iter.hasNext()) {
+        for (Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator(); iter.hasNext(); ) {
             EntityCusPar particle = iter.next();
-            if (particleRender == null) {
+            if (particleRender == null)
                 particleRender = (IRenderCusPar) RenderManager.instance.getEntityRenderObject(particle);
-            }
 
             particleRender.renderParticle(particle, partialTicks);
-            iter.remove();
-
+            if (particle.isDead)
+                iter.remove();
         }
-        
+        glPopMatrix();
 
+        ////////////////////////////////////////
+        ////////////////////////////////////////
         //Outline
         data.outline = new PlayerOutline(0xCfffff, 0x0d2dba);
-        if (data.outline != null)
+        if (data.outline != null) {
             PlayerOutline.renderOutline(render, player, partialTicks);
-        else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
+        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
             ((IEntityMC) player).setRenderPass(0);
         }
 
+        ////////////////////////////////////////
+        ////////////////////////////////////////
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
     }

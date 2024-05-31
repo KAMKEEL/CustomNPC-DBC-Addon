@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.npc;
 
+import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.aura.IAura;
@@ -19,6 +20,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class DBCDisplay implements IDBCDisplay, IAuraData {
 
@@ -56,6 +60,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     public EntityAura auraEntity;
     public static Form fakeForm;
+    public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
 
     public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;

@@ -3,10 +3,13 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.IEntityCusPar;
+import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -40,6 +43,12 @@ public class MixinEntityCusPar implements IEntityCusPar {
         if (ent instanceof EntityPlayer && DBCData.get((EntityPlayer) ent).auraEntity != null) {
             DBCData.get((EntityPlayer) ent).particleRenderQueue.add((EntityCusPar) (Object) this);
             enhancedRendering = true;
+        } else if (ent instanceof EntityNPCInterface) {
+            DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) ent).display).getDBCDisplay();
+            if (display != null && display.auraEntity != null) {
+                display.particleRenderQueue.add((EntityCusPar) (Object) this);
+                enhancedRendering = true;
+            }
         }
     }
 
@@ -48,6 +57,12 @@ public class MixinEntityCusPar implements IEntityCusPar {
         if (ent instanceof EntityPlayer && DBCData.get((EntityPlayer) ent).auraEntity != null) {
             DBCData.get((EntityPlayer) ent).particleRenderQueue.add((EntityCusPar) (Object) this);
             enhancedRendering = true;
+        } else if (ent instanceof EntityNPCInterface) {
+            DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) ent).display).getDBCDisplay();
+            if (display != null && display.auraEntity != null) {
+                display.particleRenderQueue.add((EntityCusPar) (Object) this);
+                enhancedRendering = true;
+            }
         }
     }
 }
