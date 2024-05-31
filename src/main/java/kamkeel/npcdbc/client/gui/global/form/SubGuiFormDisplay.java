@@ -657,8 +657,17 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         else
             visualDisplay.race = (byte) racePage;
 
-        visualDisplay.eyeColor = 0x000000;
+        visualDisplay.hasArcoMask = false;
+        if(visualDisplay.race == DBCRace.ARCOSIAN){
+            visualDisplay.hasArcoMask = display.hasArcoMask;
+        }
 
+        visualDisplay.hairType = display.hairType;
+        visualDisplay.hairColor = display.hairColor == -1 ? 0xffffff : display.hairColor;
+        if(visualDisplay.race == DBCRace.NAMEKIAN || visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.MAJIN)
+            visualDisplay.hairColor = display.bodyCM;
+
+        visualDisplay.eyeColor = 0x000000;
         if (visualDisplay.race < 3) {
             visualDisplay.bodyCM = 16297621;
         } else if (visualDisplay.race == DBCRace.NAMEKIAN) {
@@ -676,16 +685,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             visualDisplay.bodyCM = 16757199;
             visualDisplay.eyeColor = 0xFF0000;
         }
-
-        visualDisplay.hasArcoMask = false;
-        if(visualDisplay.race == DBCRace.ARCOSIAN){
-            visualDisplay.hasArcoMask = display.hasArcoMask;
-        }
-
-        visualDisplay.hairType = display.hairType;
-        visualDisplay.hairColor = display.hairColor == -1 ? 0xffffff : display.hairColor;
-        if(visualDisplay.race == DBCRace.NAMEKIAN || visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.MAJIN)
-            visualDisplay.hairColor = display.bodyCM;
 
         visualDisplay.hairCode = "";
         if(visualDisplay.race == DBCRace.HUMAN || visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
