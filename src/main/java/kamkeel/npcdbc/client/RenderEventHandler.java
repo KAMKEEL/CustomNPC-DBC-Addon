@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client;
 
 import JinRyuu.JBRA.RenderPlayerJBRA;
+import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.render.AuraRenderer;
@@ -8,6 +9,7 @@ import kamkeel.npcdbc.client.render.PlayerOutline;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.early.IEntityMC;
+import kamkeel.npcdbc.mixins.late.IRenderCusPar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -15,6 +17,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.client.renderer.ImageData;
 import org.lwjgl.opengl.GL11;
+
+import java.util.Iterator;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -55,6 +59,19 @@ public class RenderEventHandler {
             AuraRenderer.Instance.renderAura(aura, partialTicks);
 
         //#Todo: add custom particle rendering here in-between
+        IRenderCusPar particleRender = null;
+        Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator();
+        while (iter.hasNext()) {
+            EntityCusPar particle = iter.next();
+            if (particleRender == null) {
+                particleRender = (IRenderCusPar) RenderManager.instance.getEntityRenderObject(particle);
+            }
+
+            particleRender.renderParticle(particle, partialTicks);
+            iter.remove();
+
+        }
+        
 
         //Outline
         data.outline = new PlayerOutline(0xCfffff, 0x0d2dba);

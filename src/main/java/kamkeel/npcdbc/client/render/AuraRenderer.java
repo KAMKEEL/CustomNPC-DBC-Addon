@@ -100,7 +100,7 @@ public class AuraRenderer extends RenderDBC {
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
         
         GL11.glPushMatrix();
-        GL11.glTranslated(interPosX, interPosY - yOffset, interPosZ);
+        GL11.glTranslated(-interPosX, -interPosY - yOffset, -interPosZ);
 
         GL11.glPushMatrix();
         GL11.glDepthMask(false);

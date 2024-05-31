@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.dbcdata;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
+import JinRyuu.JRMCore.entity.EntityCusPar;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.client.render.PlayerOutline;
@@ -28,6 +29,8 @@ import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class DBCData extends DBCDataUniversal implements IAuraData {
 
@@ -58,6 +61,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
+    public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
 
     public DBCData() {
         this.side = Side.SERVER;
