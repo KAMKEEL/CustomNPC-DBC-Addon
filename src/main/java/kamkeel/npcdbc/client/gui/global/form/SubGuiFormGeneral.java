@@ -11,18 +11,13 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
 {
     private final GuiNPCManageForms parent;
     private GuiNpcFormMenu menu;
-
 	public Form form;
     boolean setAscendSound = true;
-    public int parentForm = -1;
-    public int childForm = -1;
 
 
 	public SubGuiFormGeneral(GuiNPCManageForms parent, Form form)
 	{
-		this.form = form;
-        this.parentForm = form.parentID;
-        this.childForm = form.childID;
+		this.form = form;;
         this.parent = parent;
 
 		setBackground("menubg.png");
@@ -84,24 +79,24 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         y += 23;
 
         addButton(new GuiNpcButton(11, guiLeft + 74, y, 140, 20, "general.noParent"));
-        if(parentForm != -1){
-            if(FormController.getInstance().has(parentForm))
-                getButton(11).setDisplayText(FormController.getInstance().get(parentForm).getName());
+        if(form.parentID != -1){
+            if(FormController.getInstance().has(form.parentID))
+                getButton(11).setDisplayText(FormController.getInstance().get(form.parentID).getName());
         }
 
         addButton(new GuiNpcButton(12, guiLeft + 216, y, 20, 20, "X"));
-        getButton(12).enabled = parentForm != -1;
+        getButton(12).enabled = form.parentID != -1;
         addLabel(new GuiNpcLabel(12, "general.parentForm", guiLeft + 8, y + 5));
 
         y += 23;
 
         addButton(new GuiNpcButton(13, guiLeft + 74, y, 140, 20, "general.noChild"));
-        if(childForm != -1){
-            if(FormController.getInstance().has(childForm))
-                getButton(13).setDisplayText(FormController.getInstance().get(childForm).getName());
+        if(form.childID != -1){
+            if(FormController.getInstance().has(form.childID))
+                getButton(13).setDisplayText(FormController.getInstance().get(form.childID).getName());
         }
         addButton(new GuiNpcButton(14, guiLeft + 216, y, 20, 20, "X"));
-        getButton(14).enabled = childForm != -1;
+        getButton(14).enabled = form.childID != -1;
         addLabel(new GuiNpcLabel(14, "general.childForm", guiLeft + 8, y + 5));
 
         y += 23;
@@ -130,14 +125,14 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
             this.setSubGui(new SubGuiSelectForm(false));
         }
         if(button.id == 12){
-            parentForm = -1;
+            form.parentID = -1;
             initGui();
         }
         if(button.id == 13){
             this.setSubGui(new SubGuiSelectForm(true));
         }
         if(button.id == 14){
-            childForm = -1;
+            form.childID = -1;
             initGui();
         }
         if(button.id == 30){
@@ -213,14 +208,14 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
                     if(guiSelectForm.selectedFormID == form.id)
                         return;
                     if(guiSelectForm.selectionChild){
-                        childForm = guiSelectForm.selectedFormID;
-                        if(parentForm == childForm)
-                            parentForm = -1;
+                        form.childID = guiSelectForm.selectedFormID;
+                        if(form.parentID == form.childID)
+                            form.parentID = -1;
                     }
                     else {
-                        parentForm = guiSelectForm.selectedFormID;
-                        if(parentForm == childForm)
-                            childForm = -1;
+                        form.parentID = guiSelectForm.selectedFormID;
+                        if(form.parentID == form.childID)
+                            form.childID = -1;
                     }
                 }
             }
