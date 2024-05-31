@@ -38,6 +38,7 @@ public class FormDisplay implements IFormDisplay {
         auraColor = rendering.getInteger("auraColor");
         eyeColor = rendering.getInteger("eyeColor");
         hairColor = rendering.getInteger("hairColor");
+        hudColor = rendering.getInteger("hudColor");
 
         furColor = rendering.getInteger("furColor");
         hairCode = rendering.getString("hairCode");
@@ -64,6 +65,7 @@ public class FormDisplay implements IFormDisplay {
         rendering.setInteger("auraColor", auraColor);
         rendering.setInteger("eyeColor", eyeColor);
         rendering.setInteger("hairColor", hairColor);
+        rendering.setInteger("hudColor", hudColor);
 
         rendering.setString("hairCode", hairCode);
         rendering.setString("hairType", hairType);
