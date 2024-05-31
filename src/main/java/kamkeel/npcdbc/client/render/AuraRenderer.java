@@ -5,7 +5,6 @@ import JinRyuu.DragonBC.common.Npcs.RenderDBC;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
-import kamkeel.npcdbc.client.RenderEventHandler;
 import kamkeel.npcdbc.client.model.ModelAura;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -13,7 +12,6 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.entity.EntityAura;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
@@ -64,8 +62,6 @@ public class AuraRenderer extends RenderDBC {
     }
 
     public void renderAura(EntityAura aura, float partialTicks) {
-        if (!aura.shouldRender())
-            return;
         double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - RenderManager.renderPosX;
         double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - RenderManager.renderPosY;
         double interPosZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - RenderManager.renderPosZ;
@@ -75,8 +71,6 @@ public class AuraRenderer extends RenderDBC {
         int speed = aura.speed;
         int age = Math.max(1, aura.ticksExisted % speed);
         float release = Math.max(5, aura.auraData.getRelease());
-
-
         float alpha = aura.alpha;
         float alphaConfig = (float) JGConfigClientSettings.CLIENT_DA21 / 10.0F;
         boolean isFirstPerson = DBCClient.mc.thePlayer == aura.entity && DBCClient.mc.gameSettings.thirdPersonView == 0;
@@ -89,9 +83,6 @@ public class AuraRenderer extends RenderDBC {
             pulseAnimation = 0;
 
         Random rand = new Random();
-      //  RenderEventHandler.disableStencilWriting(RenderEventHandler.PLAYER_STENCIL_ID, false);
-        GL11.glPushMatrix();
-
         float pulsingSize = pulseAnimation * 0.03f;
         float kaiokenSize = 0;
 
@@ -105,22 +96,18 @@ public class AuraRenderer extends RenderDBC {
         aura.effectiveSize = size;
 
         double yOffset = aura.getYOffset(size);
-        if (stateSizeFactor < 4)  //fixes bug in which offset is not correct if size is too small
+        if (stateSizeFactor < 4)  //fixes bug in which offset is not// correct if size is too small
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
-        GL11.glTranslated(interPosX, interPosY +yOffset, interPosZ);
+        
+        GL11.glPushMatrix();
+        GL11.glTranslated(interPosX, interPosY - yOffset, interPosZ);
 
         GL11.glPushMatrix();
-        GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
-
-
-       GL11.glDepthMask(false);
-      // GL11.glDepthFunc(GL11.GL_LEQUAL);
-
-       GL11.glEnable(3042);
-       GL11.glDisable(2896);
+        GL11.glDepthMask(false);
+        GL11.glEnable(3042);
+        GL11.glDisable(2896);
         GL11.glBlendFunc(770, 771);
         GL11.glAlphaFunc(516, 0.003921569F);
-
 
         GL11.glScalef(size + pulsingSize, size, size + pulsingSize);
         GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
@@ -132,7 +119,6 @@ public class AuraRenderer extends RenderDBC {
 
             for (float j = 1; j < 2; j += 0.05f) {
 
-                Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
                 model.auraModel.offsetY = -(i / maxLayers) * aura.height;
                 model.auraModel.offsetZ = layerTemp < 7F ? 0.2F - 1 * 0.075F : 0.35F + (1 - 7.0F) * 0.055F;
                 model.auraModel.rotateAngleX = (0.9926646F - layerTemp * 0.01F) * (1 - i / maxLayers) * (1 - ((float) Math.pow(i / maxLayers, 2)));
@@ -200,24 +186,15 @@ public class AuraRenderer extends RenderDBC {
         float r = rand.nextInt(50);
         if (aura.hasLightning && r < 10 && age < 10)
             lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawing(1);
-        tessellator.setColorRGBA_I(0xffffff, 255);
-        tessellator.addVertex(0, 0, 0);
-        tessellator.addVertex(0, 0, 1);
-        //  GL11.glScalef(3, 3, 3);
-        tessellator.draw();
 
-        GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glAlphaFunc(516, 0.1F);
         GL11.glDisable(3042);
         GL11.glEnable(2896);
         GL11.glEnable(3553);
-        GL11.glPopMatrix();
         GL11.glDepthMask(true);
         GL11.glPopMatrix();
-        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
-      //  RenderEventHandler.postStencilRendering();
+
+        GL11.glPopMatrix();
 
     }
 
@@ -367,7 +344,7 @@ public class AuraRenderer extends RenderDBC {
         float sizeFactor = state; //responsible for correctly scaling aura sizes
         if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             if (state == DBCForm.Base)
-                sizeFactor = 0.5f;
+                sizeFactor = 3f;
             else if (state > DBCForm.Base && state < DBCForm.SuperSaiyan2)
                 sizeFactor = 4;
             else if (state == DBCForm.SuperSaiyan2)

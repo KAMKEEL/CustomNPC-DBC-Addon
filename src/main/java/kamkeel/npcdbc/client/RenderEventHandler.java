@@ -7,6 +7,7 @@ import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PlayerOutline;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.entity.EntityAura;
+import kamkeel.npcdbc.mixins.early.IEntityMC;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -30,40 +31,51 @@ public class RenderEventHandler {
         enableStencilWriting(PLAYER_STENCIL_ID);
     }
 
+    @SubscribeEvent
+    public void renderPlayer(DBCRenderEvent.Pre e) {
+        EntityAura aura = DBCData.get(e.entityPlayer).auraEntity;
+        if ((aura != null && aura.shouldRender()) || DBCData.get(e.entityPlayer).outline != null)
+            Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
+    }
+    
     @SubscribeEvent
     public void renderPlayer(DBCRenderEvent.Post e) {
         EntityPlayer player = e.entityPlayer;
         RenderPlayerJBRA render = (RenderPlayerJBRA) e.renderer;
-        
         float partialTicks = e.partialRenderTick;
+        DBCData data = DBCData.get(player);
 
-        if (DBCData.get(player) == null)
-            return;
+        disableStencilWriting(PLAYER_STENCIL_ID, false);
+        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
+        //Aura
+        EntityAura aura = data.auraEntity;
+        if (aura != null && aura.shouldRender())
+            AuraRenderer.Instance.renderAura(aura, partialTicks);
 
-        //   PlayerOutline.renderOutline(render, player, partialTicks);
-        
-        EntityAura aura = DBCData.get(player).auraEntity;
-        if (aura == null || !aura.shouldRender())
-            return;
+        //#Todo: add custom particle rendering here in-between
 
+        //Outline
+        data.outline = new PlayerOutline(0xCfffff, 0x0d2dba);
+        if (data.outline != null)
+            PlayerOutline.renderOutline(render, player, partialTicks);
+        else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
+            ((IEntityMC) player).setRenderPass(0);
+        }
+
+        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+        postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
+    }
+
+    public void newerAuraTemp(EntityAura aura, float partialTicks) {
         double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - RenderManager.renderPosX;
         double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - RenderManager.renderPosY;
         double interPosZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - RenderManager.renderPosZ;
-
-
         ImageData tex = new ImageData(CustomNpcPlusDBC.ID + ":textures/aura/aura.png");
-
         float scale = 2.00f;
 
-        disableStencilWriting(1, false);
-        AuraRenderer.Instance.renderAura(aura, partialTicks);
-        PlayerOutline.renderOutline(render, player, partialTicks);
-
         glPushMatrix();
-
-
         GL11.glEnable(GL_BLEND);
         GL11.glDisable(GL_LIGHTING);
         GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -71,15 +83,15 @@ public class RenderEventHandler {
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
         glScalef(scale, scale, scale);
-        GL11.glTranslated(interPosX, interPosY - 0.65f, interPosZ-0.025f);
+        GL11.glTranslated(interPosX, interPosY - 0.65f, interPosZ - 0.025f);
         glTranslatef(0f, 0, -0.35f);
         glRotatef(180, 0, 0, 1);
-        glRotatef(315,1,0,0);
+        glRotatef(315, 1, 0, 0);
 
         for (float j = 1; j < 2; j += 1) {
             glPushMatrix();
             GL11.glRotatef(360 * j, 0F, 0F, 1F);
-            //  renderImage(tex, aura.color1, 0.2f);
+            renderImage(tex, aura.color1, 0.2f);
             glPopMatrix();
         }
 
@@ -88,10 +100,7 @@ public class RenderEventHandler {
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();
-        postStencilRendering();
-        glStencilFunc(GL_ALWAYS, 0, 0xFF);  //LETS YOU DRAW TO THE COLOR BUFFER AGAIN
     }
-
 
     public static void renderImage(ImageData imageData, int color, float alpha) {
         if (!imageData.imageLoaded())

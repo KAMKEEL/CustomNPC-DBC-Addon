@@ -1,9 +1,11 @@
 package kamkeel.npcdbc.util;
 
 import JinRyuu.DragonBC.common.DBCConfig;
+import JinRyuu.DragonBC.common.Items.ItemsDBC;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
+import JinRyuu.JRMCore.items.ItemVanity;
 import JinRyuu.JRMCore.mod_JRMCore;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
@@ -15,6 +17,7 @@ import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
@@ -537,4 +540,23 @@ public class DBCUtils {
         return (int) might;
     }
 
+    public static boolean shouldRenderHair(EntityPlayer player, int playerID) {
+        String[] s = JRMCoreH.data1[playerID].split(";");
+        ItemStack helmetStack = player.inventory.armorItemInSlot(3);
+
+        boolean helmetOn = helmetStack != null && helmetStack.getItem() != null;
+        boolean vanityHelmetOn = false;
+        String[][] slot_vanity_num = new String[8][];
+        int[] vanitySlots = new int[8];
+        for (int i = 0; i < 8; ++i) {
+            slot_vanity_num[i] = s[8 + i].split(",");
+            vanitySlots[i] = Integer.parseInt(slot_vanity_num[i][0]);
+            if (!vanityHelmetOn && vanitySlots[i] > 0) {
+                Item vanityItem = Item.getItemById(vanitySlots[i]);
+                vanityHelmetOn = vanityItem instanceof ItemVanity && ((ItemVanity) vanityItem).armorType == 5 && vanitySlots[i] != Item.getIdFromItem(ItemsDBC.Coat_2) && vanitySlots[i] != Item.getIdFromItem(ItemsDBC.Coat);
+            }
+        }
+
+        return JRMCoreConfig.HHWHO ? !helmetOn && !vanityHelmetOn : true;
+    }
 }

@@ -10,9 +10,9 @@ import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.DBCRenderEvent;
-import kamkeel.npcdbc.client.render.PlayerOutline;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -55,26 +55,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     public void renderOutline(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
         if (MinecraftForge.EVENT_BUS.post(new DBCRenderEvent.Pre(par1AbstractClientPlayer, (RenderPlayerJBRA) (Object) this, par2)))
             ci.cancel();
-        
-        EntityAura aura = DBCData.get(par1AbstractClientPlayer).auraEntity;
-        
-        if (aura == null || !aura.shouldRender())
-            return;
-        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPopMatrix()V", ordinal = 1, shift = At.Shift.AFTER))
     public void postRender(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
         MinecraftForge.EVENT_BUS.post(new DBCRenderEvent.Post(par1AbstractClientPlayer, (RenderPlayerJBRA) (Object) this, par2));
-
-
-        PlayerOutline.renderOutline((RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer, par2);  
-        EntityAura aura = DBCData.get(par1AbstractClientPlayer).auraEntity;
-        if (aura == null || !aura.shouldRender())
-            return;
-        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
-
-
     }
 
 
