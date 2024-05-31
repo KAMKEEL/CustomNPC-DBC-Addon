@@ -4,6 +4,8 @@ import noppes.npcs.api.entity.IPlayer;
 
 public interface IBonusHandler {
 
+    void clearBonuses(IPlayer player);
+
     IPlayerBonus createBonus(String name, float str, float dex, float wil);
 
     IPlayerBonus createBonus(String name, float str, float dex, float wil, float con, float spi);

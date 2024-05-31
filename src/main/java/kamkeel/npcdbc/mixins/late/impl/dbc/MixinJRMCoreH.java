@@ -190,8 +190,7 @@ public abstract class MixinJRMCoreH {
     //delete all player CF data on jrmc startnew
     @Inject(method = "resetChar(Lnet/minecraft/entity/player/EntityPlayer;ZZZF)V", at = @At("TAIL"))
     private static void resetChar(EntityPlayer p, boolean keepSkills, boolean keepTechs, boolean keepMasteries, float perc, CallbackInfo ci) {
-        PlayerDataUtil.getDBCInfo(p).resetAllForm();
-        PlayerDataUtil.getDBCInfo(p).resetAllAuras();
+        PlayerDataUtil.getDBCInfo(p).resetChar();
         if (!keepMasteries) {
             NBTTagCompound PlayerPersisted = nbt(p);
             for (int i = 0; i < Races.length; i++)

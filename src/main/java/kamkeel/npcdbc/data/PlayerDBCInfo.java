@@ -1,8 +1,6 @@
 package kamkeel.npcdbc.data;
 
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -114,12 +112,20 @@ public class PlayerDBCInfo {
         return (Form) FormController.Instance.get(selectedForm);
     }
 
-    public void resetAllForm() {
+    public void resetChar() {
         TransformController.handleFormDescend(parent.player, -10);
         currentForm = -1;
         selectedForm = -1;
         unlockedForms.clear();
         formLevels.clear();
+
+        unlockedAuras.clear();
+        currentAura = -1;
+        selectedAura = -1;
+
+        StatusEffectController.getInstance().clearEffects(parent.player);
+        BonusController.getInstance().clearBonuses(parent.player);
+
         updateClient();
     }
 
@@ -292,12 +298,6 @@ public class PlayerDBCInfo {
         return (Aura) AuraController.Instance.get(selectedAura);
     }
 
-    public void resetAllAuras() {
-        currentAura = -1;
-        selectedAura = -1;
-        unlockedAuras.clear();
-        updateClient();
-    }
 
     ///////////////////////////////////////////
     ///////////////////////////////////////////
