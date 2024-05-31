@@ -1,10 +1,11 @@
 package kamkeel.npcdbc.data.npc;
 
 import kamkeel.npcdbc.api.npc.IDBCStats;
+import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class DBCStats implements IDBCStats {
-    public boolean enabled = false;
+    public boolean enabled = ConfigDBCGeneral.STATS_BY_DEFAULT;
     public boolean friendlyFist = false, ignoreDex = false, ignoreBlock = false, ignoreEndurance = false, ignoreKiProtection = false, ignoreFormReduction = false, hasDefensePenetration = false;
 
     public int defensePenetration = 10;

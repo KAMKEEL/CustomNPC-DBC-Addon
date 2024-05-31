@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
+import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.controllers.AuraController;
@@ -23,7 +24,7 @@ import noppes.npcs.util.ValueUtil;
 public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     public final EntityNPCInterface npc;
-    public boolean enabled = false;
+    public boolean enabled = ConfigDBCGeneral.DISPLAY_BY_DEFAULT;
 
     // Hair Display //
     public String hairCode = "", hairType = "";
