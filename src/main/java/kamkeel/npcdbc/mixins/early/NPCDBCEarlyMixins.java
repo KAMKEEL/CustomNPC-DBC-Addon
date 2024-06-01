@@ -42,6 +42,7 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
         if (side == MixinEnvironment.Side.CLIENT) {
             mixins.add("client.MixinSoundManager");
             mixins.add("client.MixinEntity");
+            mixins.add("client.MixinRenderGlobal");
             mixins.add("client.MixinEntityRenderer");
         }
 
