@@ -7,39 +7,107 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PlayerOutline;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.early.IEntityMC;
+import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IRenderCusPar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.client.renderer.ImageData;
+import noppes.npcs.client.renderer.RenderCustomNpc;
+import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
 import java.util.Iterator;
+import java.util.TreeMap;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
-    /**
-     * ID used when cutting out an entity from stencil buffer
-     */
-    public final static int PLAYER_STENCIL_ID = 1;
-    public final static int ENTITY_STENCIL_ID = 2;
-    public static FloatBuffer PRE_RENDER_MATRIX = BufferUtils.createFloatBuffer(16);
+    public static FloatBuffer PRE_RENDER_MODELVIEW = BufferUtils.createFloatBuffer(16);
 
     @SubscribeEvent
-    public void renderPlayer(RenderPlayerEvent.Pre e) {
+    public void enablePlayerStencil(RenderPlayerEvent.Pre e) {
         glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
-        glEnable(GL11.GL_STENCIL_TEST);
-        enableStencilWriting(PLAYER_STENCIL_ID);
+        glEnable(GL_STENCIL_TEST);
+        enableStencilWriting(e.entity.getEntityId());
     }
-    
+
+
+    @SubscribeEvent
+    public void enableEntityStencil(RenderLivingEvent.Pre e) {
+        if ((e.entity instanceof EntityPlayer)) {
+            //IMPORTANT, SAVES THE MODEL VIEW MATRIX PRE ENTITYLIVING TRANSFORMATIONS
+            glGetFloat(GL_MODELVIEW_MATRIX, PRE_RENDER_MODELVIEW);
+        } else if ((e.entity instanceof EntityNPCInterface)) {
+            glGetFloat(GL_MODELVIEW_MATRIX, PRE_RENDER_MODELVIEW);
+            glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
+            glEnable(GL_STENCIL_TEST);
+            enableStencilWriting(e.entity.getEntityId());
+            //  Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+        }
+
+    }
+
+    @SubscribeEvent
+    public void renderNPC(RenderLivingEvent.Post e) {
+        if (!(e.entity instanceof EntityNPCInterface))
+            return;
+
+
+        EntityNPCInterface entity = (EntityNPCInterface) e.entity;
+        RenderCustomNpc r = (RenderCustomNpc) e.renderer;
+        float partialTicks = Minecraft.getMinecraft().timer.renderPartialTicks;
+
+        disableStencilWriting(entity.getEntityId(), false);
+        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //Aura
+        EntityAura aura = display.auraEntity;
+        if (aura != null && aura.shouldRender()) {
+            glPushMatrix();
+            glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
+            glRotatef(180, 0, 0, 1);
+            AuraRenderer.Instance.renderAura(aura, partialTicks);
+            glPopMatrix();
+        }
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //Custom Particles
+        glPushMatrix();
+        glLoadMatrix(PRE_RENDER_MODELVIEW); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
+        IRenderCusPar particleRender = null;
+        for (Iterator<EntityCusPar> iter = display.particleRenderQueue.iterator(); iter.hasNext(); ) {
+            EntityCusPar particle = iter.next();
+            if (particleRender == null)
+                particleRender = (IRenderCusPar) RenderManager.instance.getEntityRenderObject(particle);
+
+            particleRender.renderParticle(particle, partialTicks);
+            if (particle.isDead)
+                iter.remove();
+        }
+        glPopMatrix();
+
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+        postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
+        glDisable(GL_STENCIL_TEST);
+    }
+
     @SubscribeEvent
     public void renderPlayer(DBCRenderEvent.Pre e) {
         EntityAura aura = DBCData.get(e.entityPlayer).auraEntity;
@@ -47,27 +115,18 @@ public class RenderEventHandler {
             Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
     }
-
-    @SubscribeEvent
-    public void renderPlayer(RenderLivingEvent.Pre e) {
-        if (!(e.entity instanceof EntityPlayer))
-            return;
-
-        //IMPORTANT, SAVES THE MODEL VIEW MATRIX PRE ENTITYLIVING TRANSFORMATIONS
-        GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, PRE_RENDER_MATRIX);
-    }
-
-
     @SubscribeEvent
     public void renderPlayer(DBCRenderEvent.Post e) {
         if (!(e.entity instanceof EntityPlayer))
             return;
+
+
         EntityPlayer player = (EntityPlayer) e.entity;
         RenderPlayerJBRA render = (RenderPlayerJBRA) e.renderer;
         float partialTicks = Minecraft.getMinecraft().timer.renderPartialTicks;
         DBCData data = DBCData.get(player);
 
-        disableStencilWriting(PLAYER_STENCIL_ID, false);
+        disableStencilWriting(player.getEntityId(), false);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -75,17 +134,21 @@ public class RenderEventHandler {
         EntityAura aura = data.auraEntity;
         if (aura != null && aura.shouldRender()) {
             glPushMatrix();
-            glLoadMatrix(PRE_RENDER_MATRIX); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
+            glPushAttrib(GL_TRANSFORM_BIT);
+            glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
             glRotatef(180,0,0,1);
+
             AuraRenderer.Instance.renderAura(aura, partialTicks);
+            glPopAttrib();
             glPopMatrix();
         }
+
 
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Custom Particles
         glPushMatrix();
-        glLoadMatrix(PRE_RENDER_MATRIX); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
+        glLoadMatrix(PRE_RENDER_MODELVIEW); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
         IRenderCusPar particleRender = null;
         for (Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator(); iter.hasNext(); ) {
             EntityCusPar particle = iter.next();
@@ -101,7 +164,8 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
-        data.outline = new PlayerOutline(0xCfffff, 0x0d2dba);
+        // data.outline = new PlayerOutline(0xCfffff, 0x0d2dba);
+        data.outline = null;
         if (data.outline != null) {
             PlayerOutline.renderOutline(render, player, partialTicks);
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
@@ -122,30 +186,30 @@ public class RenderEventHandler {
         float scale = 2.00f;
 
         glPushMatrix();
-        GL11.glEnable(GL_BLEND);
-        GL11.glDisable(GL_LIGHTING);
-        GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glAlphaFunc(GL_GREATER, 0.003921569F);
+        glEnable(GL_BLEND);
+        glDisable(GL_LIGHTING);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glAlphaFunc(GL_GREATER, 0.003921569F);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
         glScalef(scale, scale, scale);
-        GL11.glTranslated(interPosX, interPosY - 0.65f, interPosZ - 0.025f);
+        glTranslated(interPosX, interPosY - 0.65f, interPosZ - 0.025f);
         glTranslatef(0f, 0, -0.35f);
         glRotatef(180, 0, 0, 1);
         glRotatef(315, 1, 0, 0);
 
         for (float j = 1; j < 2; j += 1) {
             glPushMatrix();
-            GL11.glRotatef(360 * j, 0F, 0F, 1F);
+            glRotatef(360 * j, 0F, 0F, 1F);
             renderImage(tex, aura.color1, 0.2f);
             glPopMatrix();
         }
 
         // Reset OpenGL states
-        GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glPopMatrix();
+        glAlphaFunc(GL_GREATER, 0.1F);
+        glDisable(GL_BLEND);
+        glEnable(GL_LIGHTING);
+        glPopMatrix();
     }
 
     public static void renderImage(ImageData imageData, int color, float alpha) {
@@ -156,13 +220,13 @@ public class RenderEventHandler {
         float red = (color >> 16 & 255) / 255f;
         float green = (color >> 8 & 255) / 255f;
         float blue = (color & 255) / 255f;
-        GL11.glColor4f(red, green, blue, alpha);
+        glColor4f(red, green, blue, alpha);
 
         for (int i = 0; i < 2; i++) {
             boolean front = i == 1;
             Tessellator tessellator = Tessellator.instance;
             if (front) {
-                GL11.glRotatef(180, 0, 0, 1.0f);
+                glRotatef(180, 0, 0, 1.0f);
             }
 
             imageData.bindTexture();
@@ -177,10 +241,10 @@ public class RenderEventHandler {
             float textureXScale = 1.0F, textureYScale = 1.0F;
             if (totalWidth > totalHeight) {
                 textureYScale = (float) totalHeight / totalWidth;
-                GL11.glScalef(1 / textureYScale / 2, 1 / textureYScale / 2, 1 / textureYScale / 2);
+                glScalef(1 / textureYScale / 2, 1 / textureYScale / 2, 1 / textureYScale / 2);
             } else if (totalHeight > totalWidth) {
                 textureXScale = (float) totalWidth / totalHeight;
-                GL11.glScalef(1 / textureXScale / 2, 1 / textureXScale / 2, 1 / textureXScale / 2);
+                glScalef(1 / textureXScale / 2, 1 / textureXScale / 2, 1 / textureXScale / 2);
             }
 
             tessellator.startDrawingQuads();
@@ -193,7 +257,7 @@ public class RenderEventHandler {
             tessellator.addVertexWithUV(textureXScale * -(u2 - u1) / 2, 0, textureYScale * (v2 - v1) / 2, u1, v2);
             tessellator.draw();
         }
-        GL11.glPopMatrix();
+        glPopMatrix();
     }
 
     public static void enableStencilWriting(int id) {
