@@ -12,6 +12,7 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.entity.EntityAura;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
@@ -100,18 +101,24 @@ public class AuraRenderer extends RenderDBC {
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
         
         GL11.glPushMatrix();
-        GL11.glTranslated(-interPosX, -interPosY - yOffset, -interPosZ);
+        if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
+            GL11.glShadeModel(GL11.GL_SMOOTH);
+        GL11.glTranslated(-interPosX, -interPosY - yOffset, interPosZ);
+
+        //GL11.glTranslated(0,- yOffset, 0);
 
         GL11.glPushMatrix();
         GL11.glDepthMask(false);
+        // GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(3042);
         GL11.glDisable(2896);
         GL11.glBlendFunc(770, 771);
-        GL11.glAlphaFunc(516, 0.003921569F);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.005F);
 
         GL11.glScalef(size + pulsingSize, size, size + pulsingSize);
         GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
-
+        //   alpha = 0.8f;
         int maxLayers = 5;
         for (float i = 1; i < maxLayers + 1; ++i) {
             float layerPercent = i / maxLayers;
@@ -184,8 +191,8 @@ public class AuraRenderer extends RenderDBC {
 
         }
         float r = rand.nextInt(50);
-        if (aura.hasLightning && r < 10 && age < 10)
-            lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
+        //if (aura.hasLightning && r < 10 && age < 10)
+        //lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
 
         GL11.glAlphaFunc(516, 0.1F);
         GL11.glDisable(3042);
@@ -194,6 +201,8 @@ public class AuraRenderer extends RenderDBC {
         GL11.glDepthMask(true);
         GL11.glPopMatrix();
 
+        if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
+            GL11.glShadeModel(GL11.GL_FLAT);
         GL11.glPopMatrix();
 
     }
