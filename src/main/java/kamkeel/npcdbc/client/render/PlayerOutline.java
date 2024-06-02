@@ -46,8 +46,7 @@ public class PlayerOutline {
             ((IEntityMC) player).setRenderPass(0);
         else
             ((IEntityMC) player).setRenderPass(ClientProxy.MiddleRenderPass);
-        
-        
+
         glPushMatrix();
         GL11.glEnable(GL_BLEND);
         GL11.glDisable(GL_LIGHTING);
@@ -75,10 +74,13 @@ public class PlayerOutline {
         glScalef(1.025f * 1.025f * outline.outerSize, 1.025f, 1.025f * 1.025f * outline.outerSize);
         renderTail(player, render);
         glPopMatrix();
+        glStencilMask(0x0);
         
         ///////////////////////////////////
         ///////////////////////////////////
         //Inner
+        glStencilMask(0xFF);
+
         glPushMatrix();
         ColorMode.glColorInt(outline.innerColor, outline.innerAlpha); //inner
         glScalef(scale * outline.innerSize, 1.025f, scale * outline.innerSize);
@@ -96,6 +98,7 @@ public class PlayerOutline {
         glPopMatrix();
         ///////////////////////////////////
         ///////////////////////////////////
+        // RenderEventHandler.postStencilRendering();
 
         GL11.glAlphaFunc(GL_GREATER, 0.1F);
         GL11.glDisable(GL_BLEND);
@@ -104,6 +107,7 @@ public class PlayerOutline {
         glDepthMask(true);
         glPopMatrix();
         ClientProxy.RenderingOutline = false;
+
     }
 
     public static void renderDBCPlayer(EntityPlayer player, RenderPlayerJBRA renderer) {

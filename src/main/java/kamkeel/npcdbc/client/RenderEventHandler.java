@@ -15,7 +15,6 @@ import kamkeel.npcdbc.mixins.late.IRenderCusPar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -26,7 +25,6 @@ import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
 import java.util.Iterator;
-import java.util.TreeMap;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -60,7 +58,6 @@ public class RenderEventHandler {
     public void renderNPC(RenderLivingEvent.Post e) {
         if (!(e.entity instanceof EntityNPCInterface))
             return;
-
 
         EntityNPCInterface entity = (EntityNPCInterface) e.entity;
         RenderCustomNpc r = (RenderCustomNpc) e.renderer;
@@ -128,21 +125,53 @@ public class RenderEventHandler {
 
         disableStencilWriting(player.getEntityId(), false);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+        EntityAura aura = data.auraEntity;
+
+
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //Outline
+        // glClear(GL_STENCIL_BUFFER_BIT);
+        disableStencilWriting(player.getEntityId(), false);
+        // glStencilFunc(GL_GEQUAL, player.getEntityId(), 0xFF);
+        // Write to stencil buffer
+        data.outline = new PlayerOutline(0xa53ebc, 0x0d2dba);
+        // data.outline = null;
+        if (data.outline != null) {
+            PlayerOutline.renderOutline(render, player, partialTicks);
+        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
+            ((IEntityMC) player).setRenderPass(0);
+        }
+        disableStencilWriting(player.getEntityId(), false);
+
+        // glStencilFunc(GL_ALWAYS, player.getEntityId(), 0xFF);
+
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Aura
-        EntityAura aura = data.auraEntity;
+
         if (aura != null && aura.shouldRender()) {
             glPushMatrix();
-            glPushAttrib(GL_TRANSFORM_BIT);
+            //   glPushAttrib(GL_TRANSFORM_BIT);
             glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
-            glRotatef(180,0,0,1);
 
             AuraRenderer.Instance.renderAura(aura, partialTicks);
-            glPopAttrib();
+            // glPopAttrib();
             glPopMatrix();
         }
-
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //Outline
+        // glClear(GL_STENCIL_BUFFER_BIT);
+        //disableStencilWriting(player.getEntityId(), false);
+//        glStencilMask(0xF);  // Write to stencil buffer
+//        data.outline = new PlayerOutline(0xCfffff, 0x0d2dba);
+//        // data.outline = null;
+//        if (data.outline != null) {
+//            PlayerOutline.renderOutline(render, player, partialTicks);
+//        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
+//            ((IEntityMC) player).setRenderPass(0);
+//        }
 
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -160,18 +189,6 @@ public class RenderEventHandler {
                 iter.remove();
         }
         glPopMatrix();
-
-        ////////////////////////////////////////
-        ////////////////////////////////////////
-        //Outline
-        // data.outline = new PlayerOutline(0xCfffff, 0x0d2dba);
-        data.outline = null;
-        if (data.outline != null) {
-            PlayerOutline.renderOutline(render, player, partialTicks);
-        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
-            ((IEntityMC) player).setRenderPass(0);
-        }
-
         ////////////////////////////////////////
         ////////////////////////////////////////
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);

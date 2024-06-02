@@ -270,8 +270,8 @@ public class EntityAura extends Entity {
     public void updateDisplay() {
         if (entity.isInWater())
             ((IEntityMC) entity).setRenderPass(renderPass = 0);
-      //  else if (renderPass == 0)
-         //   ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
+        else if (renderPass == 0)
+           ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
      
         if (isKaioken) {
             if (parent.isVanillaDefault && !DBCForm.isSaiyanGod(auraData.getState()))
@@ -398,7 +398,7 @@ public class EntityAura extends Entity {
     }
 
     public EntityAura spawn() {
-        ((IEntityMC) entity).setRenderPass(renderPass = 0);
+        ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
         entity.ignoreFrustumCheck = true;
 
         entity.worldObj.spawnEntityInWorld(this);
