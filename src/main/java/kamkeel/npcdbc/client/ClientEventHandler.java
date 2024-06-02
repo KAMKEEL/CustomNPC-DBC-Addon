@@ -9,6 +9,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -28,12 +29,14 @@ import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
+import org.lwjgl.input.Keyboard;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
@@ -41,9 +44,16 @@ import static noppes.npcs.NoppesStringUtils.translate;
 public class ClientEventHandler {
 
     private int soundTicker = -1;
+    public static int ticksInGame;
 
+    @SubscribeEvent
+    public void clientTickEnd(TickEvent.ClientTickEvent event) {
+        GuiScreen gui = Minecraft.getMinecraft().currentScreen;
+        if (gui == null || !gui.doesGuiPauseGame())
+            ticksInGame++;
 
- 
+    }
+    
     @SubscribeEvent
     public void onSkill(TickEvent.PlayerTickEvent event) {
         if (event.side == Side.SERVER || event.player == null)
@@ -55,6 +65,11 @@ public class ClientEventHandler {
                     performAscend();
                 } else {
                     TransformController.decrementRage();
+                }
+
+                if (Keyboard.isKeyDown(Keyboard.KEY_L)) {
+                    Minecraft.getMinecraft().refreshResources();
+                    ShaderHelper.loadShaders(true);
                 }
             }
         }

@@ -33,6 +33,8 @@ public class ConfigDBCClient
     public static Property AdvancedGuiModeProperty;
     public static boolean AdvancedGui = false;
 
+    public static boolean UseShaders = true;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);

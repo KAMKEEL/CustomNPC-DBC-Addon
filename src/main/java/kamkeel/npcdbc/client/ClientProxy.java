@@ -8,6 +8,7 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PotaraItemRenderer;
+import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ModItems;
 import net.minecraft.client.Minecraft;
@@ -38,16 +39,16 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent ev) {
         super.preInit(ev);
-        eventsInit();
         forceStencilEnable();
-        
-        RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
-        MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
     }
 
     public void init(FMLInitializationEvent ev) {
         super.init(ev);
+        eventsInit();
         KeyHandler.registerKeys();
+       // RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
+        MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
+        ShaderHelper.loadShaders(false);
     }
 
     @Override
