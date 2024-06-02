@@ -46,7 +46,7 @@ public class ClientProxy extends CommonProxy {
         super.init(ev);
         eventsInit();
         KeyHandler.registerKeys();
-       // RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
+        RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
         MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
         ShaderHelper.loadShaders(false);
     }

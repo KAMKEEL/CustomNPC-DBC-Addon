@@ -8,7 +8,7 @@ import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.RenderEventHandler;
 import kamkeel.npcdbc.client.model.ModelAura;
-import kamkeel.npcdbc.client.shader.IShaderCallBack;
+import kamkeel.npcdbc.client.shader.IShaderUniform;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -115,7 +115,7 @@ public class AuraRenderer extends RenderDBC {
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
             GL11.glShadeModel(GL11.GL_SMOOTH);
         glRotatef(180, 0, 0, 1);
-        GL11.glTranslated(interPosX, interPosY - yOffset, interPosZ);
+        GL11.glTranslated(-interPosX, -interPosY - yOffset, interPosZ);
 
         
         //GL11.glTranslated(0,- yOffset, 0);
@@ -187,18 +187,9 @@ public class AuraRenderer extends RenderDBC {
         //glRotatef(180, 0, 0, 1);
         glTranslatef(0f, 0.8f, 0);
         // glColorMask(false, false, false, true);
-        IShaderCallBack callback = shader -> {
-            // Frag Uniforms
-            int disfigurationUniform = ARBShaderObjects.glGetUniformLocationARB(shader, "disfiguration");
-            ARBShaderObjects.glUniform1fARB(disfigurationUniform, 0.025F);
-            // Vert Uniforms
-            int grainIntensityUniform = ARBShaderObjects.glGetUniformLocationARB(shader, "grainIntensity");
-            ARBShaderObjects.glUniform1fARB(grainIntensityUniform, 0.05F);
-        };
-      //  ShaderHelper.useShader(ShaderHelper.doppleganger, callback);
+
 
         renderAura(aura, 0x6e1188, 0.0515f, 3f);
-        ShaderHelper.releaseShader();
         glColorMask(true, true, true, true);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         glPopMatrix();
@@ -215,7 +206,20 @@ public class AuraRenderer extends RenderDBC {
         glScalef(1.2f, 1.14f, 1.2f);
         glTranslated(0, -0.95f, 0);
         GL11.glDepthMask(false);
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //Shader stuff
+        float r = ((aura.color1 >> 16 & 255) / 255f);
+        float g = ((aura.color1 >> 8 & 255) / 255f);
+        float b = ((aura.color1 & 255) / 255f);
+        IShaderUniform uniforms = shader -> {
+            int rgbaLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "rgba");
+            ARBShaderObjects.glUniform4fARB(rgbaLocation, r, g, b, aura.alpha);
+
+        };
+        ShaderHelper.useShader(ShaderHelper.aura, uniforms);
         renderAura(aura, 0x97b1f4, 0.1f, 1f);
+        ShaderHelper.releaseShader();
         glPopMatrix();
 
 
@@ -225,7 +229,7 @@ public class AuraRenderer extends RenderDBC {
         GL11.glEnable(3553);
         GL11.glDepthMask(true);
         // GL11.glPopMatrix();
-        float r = rand.nextInt(50);
+        //  float r = rand.nextInt(50);
         //if (aura.hasLightning && r < 10 && age < 10)
         //lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
 

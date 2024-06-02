@@ -13,8 +13,8 @@ package kamkeel.npcdbc.client.shader;
 /**
  * A Callback for when a shader is called. Used to define shader uniforms.
  */
-public interface IShaderCallBack {
+public interface IShaderUniform {
 
-	void call(int shader);
+	void load(int shader);
 
 }

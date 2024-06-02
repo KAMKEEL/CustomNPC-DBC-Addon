@@ -11,6 +11,7 @@
 package kamkeel.npcdbc.client.shader;
 
 import cpw.mods.fml.common.FMLLog;
+import kamkeel.npcdbc.client.ClientEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.renderer.OpenGlHelper;
 import org.apache.logging.log4j.Level;
@@ -75,20 +76,19 @@ public final class ShaderHelper {
 		ARBShaderObjects.glDeleteObjectARB(aura);
 	}
 
-	public static void useShader(int shader, IShaderCallBack callback) {
+	public static void useShader(int shader, IShaderUniform uniforms) {
 		if (!useShaders())
 			return;
 
-		if (shader != 0) { //loads all uniforms
-			int time = ARBShaderObjects.glGetUniformLocationARB(shader, "time");
-			//ARBShaderObjects.glUniform1iARB(time, 1);
-
-			//if (callback != null)
-			//callback.call(shader);
-		}
-
 		//binds shader
 		ARBShaderObjects.glUseProgramObjectARB(shader);
+
+		if (shader != 0) { //loads all uniforms
+			int time = ARBShaderObjects.glGetUniformLocationARB(shader, "time");
+			ARBShaderObjects.glUniform1iARB(time, ClientEventHandler.ticksInGame);
+			if (uniforms != null)
+				uniforms.load(shader);
+		}
 
 
 	}
