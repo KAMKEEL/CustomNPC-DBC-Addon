@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.client.shader;
 
+import kamkeel.npcdbc.CustomNpcPlusDBC;
+
 public class ShaderResources {
     public static final String PREFIX_SHADER = "/assets/npcdbc/shader/";
 
@@ -18,5 +20,7 @@ public class ShaderResources {
 
     public static final String AURA_VERT = PREFIX_SHADER + "aura.vert";
     public static final String AURA_FRAG = PREFIX_SHADER + "aura.frag";
+
+    public static final String AURA_NOISE = CustomNpcPlusDBC.ID + ":textures/noise/noise.png";
     
 }

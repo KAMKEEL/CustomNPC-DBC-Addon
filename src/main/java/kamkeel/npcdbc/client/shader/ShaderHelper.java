@@ -14,11 +14,9 @@ import cpw.mods.fml.common.FMLLog;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
-import org.lwjgl.opengl.ARBFragmentShader;
-import org.lwjgl.opengl.ARBShaderObjects;
-import org.lwjgl.opengl.ARBVertexShader;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.*;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -92,6 +90,13 @@ public final class ShaderHelper {
 		}
 
 
+	}
+
+	public static void loadTextureUnit(int textureUnit, String textureLoc) {
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL13.glActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
+		noppes.npcs.client.ClientProxy.bindTexture(new ResourceLocation(textureLoc));
+		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
 	}
 
 	public static void useShader(int shader) {

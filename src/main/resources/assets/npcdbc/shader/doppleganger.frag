@@ -14,7 +14,6 @@ float rand(vec2 co) {
 
 void main() {
     vec4 color = texture2D(bgl_RenderedTexture, texcoord);
-    
     float gs = (color.r + color.g + color.b) / 50.0;
     
     float r = gs + rand(texcoord) * grainIntensity;
@@ -22,6 +21,5 @@ void main() {
     float b = gs + rand(texcoord) * grainIntensity;
     
     gl_FragColor = vec4(r, g, b, color.a);
-    
-    gl_FragColor = vec4(vertPos,1.0);
+
 }

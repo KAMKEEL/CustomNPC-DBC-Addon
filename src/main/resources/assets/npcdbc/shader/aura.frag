@@ -2,13 +2,20 @@
 
 varying vec3 vertPos;
 varying vec2 texCoord;
+varying vec3 clippingPos;
+
 
 uniform vec4 rgba;
 uniform float time;
 uniform sampler2D bgl_RenderedTexture;
+uniform sampler2D noiseTexture;
+
+uniform vec3 center;
 
 void main() {
     vec4 texel = texture2D(bgl_RenderedTexture, texCoord);
+    vec4 noiseColor = texture2D(noiseTexture, texCoord);
+
 
     if (texel.a < 0.55)
     discard;
@@ -25,5 +32,7 @@ void main() {
     // Mix the two colors based on the oscillating value
     vec3 final_color = mix(color1, color2, oscillating_value);
 
-    gl_FragColor = vec4(final_color, 1.0);
+  //  gl_FragColor = vec4(gl_FragCoord.xyz, 1.0);
+    gl_FragColor = vec4(noiseColor.xyz, 1.0);
+
 }

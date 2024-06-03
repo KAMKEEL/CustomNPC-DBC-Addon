@@ -6,10 +6,10 @@ import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.RenderEventHandler;
 import kamkeel.npcdbc.client.model.ModelAura;
 import kamkeel.npcdbc.client.shader.IShaderUniform;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
+import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -212,10 +212,17 @@ public class AuraRenderer extends RenderDBC {
         float r = ((aura.color1 >> 16 & 255) / 255f);
         float g = ((aura.color1 >> 8 & 255) / 255f);
         float b = ((aura.color1 & 255) / 255f);
+
+        ShaderHelper.loadTextureUnit(2, ShaderResources.AURA_NOISE);
         IShaderUniform uniforms = shader -> {
             int rgbaLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "rgba");
             ARBShaderObjects.glUniform4fARB(rgbaLocation, r, g, b, 0.5f);
 
+            int center = ARBShaderObjects.glGetUniformLocationARB(shader, "center");
+            ARBShaderObjects.glUniform3fARB(center, (float) aura.entity.posX, (float) aura.entity.posY, (float) aura.entity.posZ);
+
+            int textureLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "noiseTexture");
+            ARBShaderObjects.glUniform1iARB(textureLocation, 2);
         };
 
      ShaderHelper.useShader(ShaderHelper.aura, uniforms);
