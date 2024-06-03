@@ -18,12 +18,11 @@ import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.util.ValueUtil;
 import org.lwjgl.opengl.ARBShaderObjects;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
 
@@ -72,16 +71,9 @@ public class AuraRenderer extends RenderDBC {
     }
 
     public void renderAura(EntityAura aura, float partialTicks) {
-        Entity renderEn = Minecraft.getMinecraft().renderViewEntity;
-        double interPosX = (aura.lastTickPosX + ((aura.posX - aura.lastTickPosX) * (double) partialTicks)) - renderEn.posX;
-        double interPosY = (aura.lastTickPosY + ((aura.posY - aura.lastTickPosY) * (double) partialTicks)) - renderEn.posY;
-        double interPosZ = (aura.lastTickPosZ + ((aura.posZ - aura.lastTickPosZ) * (double) partialTicks)) - renderEn.posZ;
-        Entity entity = Minecraft.getMinecraft().thePlayer;
-        TextureManager render = Minecraft.getMinecraft().renderEngine;
-
-        // interPosX = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks;
-        // interPosY = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks;
-        // interPosZ = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks;
+        double interPosX = aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks - RenderManager.renderPosX;
+        double interPosY = aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks - RenderManager.renderPosY;
+        double interPosZ = aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks - RenderManager.renderPosZ;
         
         byte race = aura.auraData.getRace();
         byte state = aura.auraData.getState();
@@ -119,23 +111,20 @@ public class AuraRenderer extends RenderDBC {
         if (stateSizeFactor < 4)  //fixes bug in which offset is not// correct if size is too small
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
 
-
-        GL11.glPushMatrix();
-        GL11.glTranslated(interPosX, interPosY + yOffset, interPosZ);
-        glRotatef(180, 0, 0, 1);
+        glDepthMask(true);
+        glEnable(GL_BLEND);
+        glDisable(GL_LIGHTING);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.05F);
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
-            GL11.glShadeModel(GL11.GL_SMOOTH);
+            glShadeModel(GL_SMOOTH);
 
-
-        // GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
-        GL11.glDepthMask(true);
-        GL11.glEnable(3042);
-        GL11.glDisable(2896);
-        // glDisable(GL_LIGHTING);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glAlphaFunc(GL11.GL_GREATER, 0.05F);
-
+        glPushMatrix();
+        glTranslated(interPosX, interPosY + yOffset, interPosZ);
+        glRotatef(180, 0, 0, 1);
+        // glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
+        
         float sizeFactor = 0.95f;
 
 
@@ -144,12 +133,12 @@ public class AuraRenderer extends RenderDBC {
         //Outer
         glPushMatrix();
         sizeFactor = 1.1f;
-        GL11.glScalef((size + pulsingSize), size, (size + pulsingSize));
+        glScalef((size + pulsingSize), size, (size + pulsingSize));
         glScalef(sizeFactor, sizeFactor * 1.1f, sizeFactor);
        // RenderEventHandler.disableStencilWriting(aura.entity.getEntityId() + 1, false);
         glScalef(1.2f, 1.14f, 1.2f);
         glTranslated(0, -0.95f, 0);
-        GL11.glDepthMask(false);
+        glDepthMask(false);
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Shader stuff
@@ -170,34 +159,30 @@ public class AuraRenderer extends RenderDBC {
             ARBShaderObjects.glUniform1iARB(textureLocation, 2);
         };
 
-     ShaderHelper.useShader(ShaderHelper.aura, uniforms);
+        ShaderHelper.useShader(ShaderHelper.aura, uniforms);
         renderAura(aura, 0x97b1f4, 1.1f, 1f);
         ShaderHelper.releaseShader();
         glPopMatrix();
 
 
-        GL11.glAlphaFunc(516, 01F);
-        GL11.glDisable(3042);
-        GL11.glEnable(2896);
-        GL11.glEnable(3553);
-        GL11.glDepthMask(true);
         //  float r = rand.nextInt(50);
         //if (aura.hasLightning && r < 10 && age < 10)
         //lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
 
+        glPopMatrix();
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
-            GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glPopMatrix();
-
-
+            glShadeModel(GL_FLAT);
+        glAlphaFunc(GL_GREATER, 1F);
+        glDisable(GL_BLEND);
+        glEnable(GL_LIGHTING);
+        glEnable(GL_TEXTURE_2D);
+        glDepthMask(true);
     }
 
     public void renderAura(EntityAura aura, int color, float alpha, float intensity) {
         byte race = aura.auraData.getRace();
         byte state = aura.auraData.getState();
 
-
-        //   alpha = 0.8f;
         int maxLayers = 5;
         for (float i = 1; i < maxLayers + 1; ++i) {
             float layerPercent = i / maxLayers;
@@ -216,57 +201,24 @@ public class AuraRenderer extends RenderDBC {
               //  if (layerTemp > 3) //aura intensity
                   //  model.auraModel.offsetY += -r * 0.0015f * intensity * getStateIntensity(state, race);
 
-
-                GL11.glPushMatrix();
-                GL11.glRotatef(360 * j, 0.0F, 1.0F, 0.0F);
+                glPushMatrix();
+                glRotatef(360 * j, 0.0F, 1.0F, 0.0F);
                 if (layerPercent < 0.21) {
                     glColor4f(color, alpha);
                     //  this.renderManager.renderEngine.bindTexture(aura.text1);
-                 //   model.auraModel.render(0.0625f);
-
-                    if (aura.text2 != null) {
-                        this.renderManager.renderEngine.bindTexture(aura.text2);
-                        glColor4f(aura.color2, alpha);
-                        model.auraModel.render(0.0625f);
-                    }
+                    //   model.auraModel.render(0.0625f);
+                    
                 }
-                GL11.glPopMatrix();
+                glPopMatrix();
 
-                GL11.glPushMatrix();
-                GL11.glRotatef(360 * j + 45, 0F, 1F, 0F);
+                glPushMatrix();
+                glRotatef(360 * j + 45, 0F, 1F, 0F);
                 if (aura.color3 > -1 && j < 1)
                     cf(aura.color1, aura.color3, alpha);
                 else
                     glColor4f(color, alpha);
-
-
                 model.auraModel.render(0.0625f);
-
-                if (aura.text2 != null) {
-                    GL11.glTranslatef(0.0F, 3F, 0.0F);
-                    GL11.glPushMatrix();
-                    GL11.glScalef(0.8F, 0.4F, 0.8F);
-
-                    this.renderManager.renderEngine.bindTexture(aura.text2);
-                    glColor4f(aura.color2, alpha);
-                    model.auraModel.render(0.0625f);
-                    GL11.glPopMatrix();
-                }
-
-                GL11.glPopMatrix();
-
-                if (aura.color3 > -1 && aura.text3 != null) {
-                    GL11.glPushMatrix();
-                    GL11.glScalef(0.9F, 0.9F, 0.9F);
-                    GL11.glTranslatef(0.0F, 0.5F, 0.0F);
-                    GL11.glRotatef(360 * j + 45, 0.0F, 1.0F, 0.0F);
-
-                    this.renderManager.renderEngine.bindTexture(aura.text3);
-                    glColor4f(aura.color3, alpha);
-                    model.auraModel.render(0.0625f);
-
-                    GL11.glPopMatrix();
-                }
+                glPopMatrix();
             }
 
         }
@@ -281,19 +233,19 @@ public class AuraRenderer extends RenderDBC {
             return;
 
         this.lightVertRotation = new float[10][7];
-        GL11.glPushMatrix();
+        glPushMatrix();
         Tessellator tessellator = Tessellator.instance;
-        GL11.glDisable(3553);
-        GL11.glDisable(2896);
-        GL11.glEnable(3042);
-        GL11.glBlendFunc(770, 1);
-        GL11.glScalef(0.5f, 1f, 0.5f);
+        glDisable(3553);
+        glDisable(2896);
+        glEnable(3042);
+        glBlendFunc(770, 1);
+        glScalef(0.5f, 1f, 0.5f);
 
         double[] adouble = new double[8];
         double[] adouble1 = new double[8];
         double d3 = 0.0;
         double d4 = 0.0;
-        GL11.glTranslated(par2, par4 +2.3, par6);
+        glTranslated(par2, par4 + 2.3, par6);
         int k1 = 0;
         int nu = (int) (Math.random() * 10.0) + 1;
         int nu2 = 3;
@@ -314,10 +266,10 @@ public class AuraRenderer extends RenderDBC {
             }
 
             float sc = (0.05F + this.lightVertRotation[i][6]) * 0.75f;
-            GL11.glRotatef(360.0F * this.lightVertRotation[i][0], 1.0F, 0.0F, 0.0F);
-            GL11.glRotatef(360.0F * this.lightVertRotation[i][1], 0.0F, 1.0F, 0.0F);
-            GL11.glRotatef(360.0F * this.lightVertRotation[i][2], 0.0F, 0.0F, 1.0F);
-            GL11.glTranslatef(this.lightVertRotation[i][3], this.lightVertRotation[i][4], this.lightVertRotation[i][5]);
+            glRotatef(360.0F * this.lightVertRotation[i][0], 1.0F, 0.0F, 0.0F);
+            glRotatef(360.0F * this.lightVertRotation[i][1], 0.0F, 1.0F, 0.0F);
+            glRotatef(360.0F * this.lightVertRotation[i][2], 0.0F, 0.0F, 1.0F);
+            glTranslatef(this.lightVertRotation[i][3], this.lightVertRotation[i][4], this.lightVertRotation[i][5]);
 
 
             for (int j = 0; j < nu2; ++j) {
@@ -380,10 +332,10 @@ public class AuraRenderer extends RenderDBC {
         }
         if (rand.nextInt(15) < 2 && aura.ticksExisted % 5 == 0)
             new ClientSound(new SoundSource("jinryuudragonbc:1610.spark", aura.entity)).setVolume(0.1f).setPitch(0.90f + rand.nextInt(3) * 0.05f).play(false);
-        GL11.glDisable(3042);
-        GL11.glEnable(2896);
-        GL11.glEnable(3553);
-        GL11.glPopMatrix();
+        glDisable(3042);
+        glEnable(2896);
+        glEnable(3553);
+        glPopMatrix();
 
     }
     public static float getStateIntensity(int state, int race) {
