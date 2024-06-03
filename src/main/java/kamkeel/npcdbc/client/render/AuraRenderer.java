@@ -18,7 +18,7 @@ import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.util.ValueUtil;
@@ -72,9 +72,16 @@ public class AuraRenderer extends RenderDBC {
     }
 
     public void renderAura(EntityAura aura, float partialTicks) {
-        double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - RenderManager.renderPosX;
-        double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - RenderManager.renderPosY;
-        double interPosZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - RenderManager.renderPosZ;
+        Entity renderEn = Minecraft.getMinecraft().renderViewEntity;
+        double interPosX = (aura.lastTickPosX + ((aura.posX - aura.lastTickPosX) * (double) partialTicks)) - renderEn.posX;
+        double interPosY = (aura.lastTickPosY + ((aura.posY - aura.lastTickPosY) * (double) partialTicks)) - renderEn.posY;
+        double interPosZ = (aura.lastTickPosZ + ((aura.posZ - aura.lastTickPosZ) * (double) partialTicks)) - renderEn.posZ;
+        Entity entity = Minecraft.getMinecraft().thePlayer;
+        TextureManager render = Minecraft.getMinecraft().renderEngine;
+
+        // interPosX = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks;
+        // interPosY = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks;
+        // interPosZ = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks;
         
         byte race = aura.auraData.getRace();
         byte state = aura.auraData.getState();
@@ -102,6 +109,7 @@ public class AuraRenderer extends RenderDBC {
             kaiokenSize = 1f * aura.auraData.getState2();
 
         float stateSizeFactor = getStateSizeFactor(aura.auraData) + kaiokenSize;
+
         float sizeStateReleaseFactor = stateSizeFactor + (release / 100) * Math.max(stateSizeFactor * 0.75f, 2.5f); //aura gets 1.75x bigger at 100% release
         float size = aura.size + 0.1f * sizeStateReleaseFactor;
         aura.effectiveSize = size;
@@ -110,18 +118,16 @@ public class AuraRenderer extends RenderDBC {
         double yOffset = aura.getYOffset(size);
         if (stateSizeFactor < 4)  //fixes bug in which offset is not// correct if size is too small
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
-        // glClear(GL_STENCIL_BUFFER_BIT);
-        // glEnable(GL_STENCIL_TEST);
+
+
         GL11.glPushMatrix();
+        GL11.glTranslated(interPosX, interPosY + yOffset, interPosZ);
+        glRotatef(180, 0, 0, 1);
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
             GL11.glShadeModel(GL11.GL_SMOOTH);
-        glRotatef(180, 0, 0, 1);
-        GL11.glTranslated(-interPosX, -interPosY - yOffset, interPosZ);
 
-        
-        //GL11.glTranslated(0,- yOffset, 0);
-       // GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
-        // GL11.glPushMatrix();
+
+        // GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
         GL11.glDepthMask(true);
         GL11.glEnable(3042);
         GL11.glDisable(2896);
@@ -129,72 +135,9 @@ public class AuraRenderer extends RenderDBC {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.05F);
-        // GL11.glEnable(GL11.GL_ALPHA_TEST);
-        //  GL11.glAlphaFunc(GL11.GL_GREATER, 0.0005F);r
+
         float sizeFactor = 0.95f;
 
-//        ////////////////////////////////////////
-//        ////////////////////////////////////////
-//        //Inner
-//        //RenderEventHandler.disableStencilWriting(aura.entity.getEntityId(), false);
-//        glPushMatrix();
-//        sizeFactor = 0.9f;
-//        glDepthMask(false);
-//        GL11.glScalef((size + pulsingSize) * sizeFactor, size * sizeFactor, (size + pulsingSize) * sizeFactor);
-//        glTranslatef(0, 0.5f, 0);
-//        //glColorMask(false, false, false, true);
-//        renderAura(aura, 0x5fffff, 0.05f, 1f);
-//        glColorMask(true, true, true, true);
-//        GL11.glDisable(GL11.GL_ALPHA_TEST);
-//        glPopMatrix();
-
-        //   RenderEventHandler.enableStencilWriting(aura.entity.getEntityId());
-//        ////////////////////////////////////////
-//        ////////////////////////////////////////
-//        //Inner
-//        GL11.glDepthMask(true);
-//       // glTranslatef(0, 0.15f, 0);
-//        glPushMatrix();
-//       // GL11.glEnable(GL11.GL_ALPHA_TEST);
-//       // GL11.glDisable(3042);
-//        //GL11.glAlphaFunc(GL11.GL_GREATER, 0.000F);
-//        sizeFactor = 0.95f;
-//        GL11.glScalef((size + pulsingSize) * sizeFactor, size * sizeFactor, (size + pulsingSize) * sizeFactor);
-//         glColorMask(false, false, false, true);
-//        renderAura(aura, 0x00ffff, 0.1051f, 1f);
-//        glColorMask(true, true, true, true);
-//        GL11.glDisable(GL11.GL_ALPHA_TEST);
-//        glPopMatrix();
-//        //GL11.glEnable(3042);
-
-        ////////////////////////////////////////
-        ////////////////////////////////////////
-        //Inner
-        GL11.glDepthMask(false);
-        glTranslatef(0, 0.15f, 0);
-        glPushMatrix();
-
-        // RenderEventHandler.enableStencilWriting(aura.entity.getEntityId() + 1);
-        //RenderEventHandler.disableStencilWriting(aura.entity.getEntityId(), false);
-        // glStencilFunc(GL_LEQUAL, aura.entity.getEntityId(), 0xFF);  // Always draw to the color buffer & pass the stencil test
-       // glStencilMask(0xFF);  // Write to stencil buffer
-        // glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);  // Keep stencil value
-        // GL11.glEnable(GL11.GL_ALPHA_TEST);
-        //GL11.glDisable(3042);
-        //GL11.glAlphaFunc(GL11.GL_GREATER, 0.000F);
-        sizeFactor = 0.8f;
-        // glRotatef(180, 0, 0, 1);
-        GL11.glScalef((size + pulsingSize) * sizeFactor, size * sizeFactor, (size + pulsingSize) * sizeFactor);
-        //glRotatef(180, 0, 0, 1);
-        glTranslatef(0f, 0.8f, 0);
-        // glColorMask(false, false, false, true);
-
-
-       // renderAura(aura, 0x6e1188, 0.0515f, 3f);
-        glColorMask(true, true, true, true);
-       // GL11.glDisable(GL11.GL_ALPHA_TEST);
-        glPopMatrix();
-        //GL11.glEnable(3042);
 
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -238,7 +181,6 @@ public class AuraRenderer extends RenderDBC {
         GL11.glEnable(2896);
         GL11.glEnable(3553);
         GL11.glDepthMask(true);
-        // GL11.glPopMatrix();
         //  float r = rand.nextInt(50);
         //if (aura.hasLightning && r < 10 && age < 10)
         //lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
@@ -297,16 +239,7 @@ public class AuraRenderer extends RenderDBC {
                 else
                     glColor4f(color, alpha);
 
-                int numSegments = 5;
-                for (int g = 0; g <= numSegments; g++) {
-                    float angle = 2.0f * (float) Math.PI * g / numSegments;
-                    float x = (float) (12.5 + (float) Math.cos(angle) * 2);
-                    float y = 73 + (float) Math.sin(angle) * 2;
 
-                    float t = (float) g / numSegments;
-                    // GL11.glColor3f(0.0f, 0.5f * (1.0f - t), 1.0f - t);
-
-                }
                 model.auraModel.render(0.0625f);
 
                 if (aura.text2 != null) {

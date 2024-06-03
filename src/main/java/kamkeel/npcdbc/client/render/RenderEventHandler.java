@@ -77,8 +77,8 @@ public class RenderEventHandler {
         EntityAura aura = display.auraEntity;
         if (aura != null && aura.shouldRender()) {
             glPushMatrix();
-            glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
-            glRotatef(180, 0, 0, 1);
+         glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
+        //    glRotatef(180, 0, 0, 1);
             AuraRenderer.Instance.renderAura(aura, partialTicks);
             glPopMatrix();
         }
@@ -141,6 +141,8 @@ public class RenderEventHandler {
             AuraRenderer.Instance.renderAura(aura, partialTicks);
             glPopMatrix();
         }
+
+
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Custom Particles
@@ -157,6 +159,7 @@ public class RenderEventHandler {
                 iter.remove();
         }
         glPopMatrix();
+
 
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -182,6 +185,7 @@ public class RenderEventHandler {
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
             ((IEntityMC) player).setRenderPass(0);
         }
+
 
         ////////////////////////////////////////
         ////////////////////////////////////////
