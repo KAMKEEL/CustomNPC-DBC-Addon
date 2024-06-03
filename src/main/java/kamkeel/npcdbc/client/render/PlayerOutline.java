@@ -2,6 +2,8 @@ package kamkeel.npcdbc.client.render;
 
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
+import JinRyuu.JRMCore.i.ExtendedPlayer;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -39,7 +41,7 @@ public class PlayerOutline {
         return this;
     }
 
-    public static void renderOutline(RenderPlayerJBRA render, EntityPlayer player, float partialTicks) {
+    public static void renderOutline(RenderPlayerJBRA render, EntityPlayer player, float partialTicks, boolean isArm) {
         PlayerOutline outline = DBCData.get(player).outline;
         ClientProxy.RenderingOutline = true;
         if (player.isInWater())
@@ -65,14 +67,23 @@ public class PlayerOutline {
         glScalef(size, 1.025f * factor, size);
         glPushMatrix();
         glTranslatef(0, -0.030f, 0);
-        renderDBCPlayer(player, render);
+        if (isArm)
+            renderDBCArm(player, render);
+        else
+            renderDBCPlayer(player, render);
         glPopMatrix();
-        renderHair(player, render);
+
+        if (!isArm)
+            renderHair(player, render);
+
         glPopMatrix();
 
         glPushMatrix();
         glScalef(1.025f * 1.025f * outline.outerSize, 1.025f, 1.025f * 1.025f * outline.outerSize);
-        renderTail(player, render);
+
+        if (!isArm)
+            renderMisc(player, render);
+        
         glPopMatrix();
         
         ///////////////////////////////////
@@ -84,14 +95,24 @@ public class PlayerOutline {
 
         glPushMatrix();
         glTranslatef(0, -0.015f, 0);
-        renderDBCPlayer(player, render);
+
+        if (isArm)
+            renderDBCArm(player, render);
+        else
+            renderDBCPlayer(player, render);
+        
         glPopMatrix();
-        renderHair(player, render);
+
+        if (!isArm)
+            renderHair(player, render);
+        
         glPopMatrix();
 
         glPushMatrix();
         glScalef(1.025f, 1.025f, 1.025f);
-        renderTail(player, render);
+
+        if (!isArm)
+            renderMisc(player, render);
 
         glPopMatrix();
         
@@ -107,6 +128,7 @@ public class PlayerOutline {
 
     }
 
+
     public static void renderDBCPlayer(EntityPlayer player, RenderPlayerJBRA renderer) {
         DBCData data = DBCData.get(player);
         int race = data.Race;
@@ -117,7 +139,7 @@ public class PlayerOutline {
         
     }
 
-    public static void renderTail(EntityPlayer player, RenderPlayerJBRA renderer) {
+    public static void renderMisc(EntityPlayer player, RenderPlayerJBRA renderer) {
         DBCData data = DBCData.get(player);
         int race = data.Race;
 
@@ -175,4 +197,100 @@ public class PlayerOutline {
 
         }
     }
+
+    public static void renderDBCArm(EntityPlayer player, RenderPlayerJBRA renderer) {
+        boolean instantTransmission = ExtendedPlayer.get(player).getBlocking() == 2;
+        int[] an = new int[]{1, 0, 2, 0, 0, 3, 0, 1, 1};
+        int id = ExtendedPlayer.get(player).getBlocking() != 0 ? (instantTransmission ? 6 : 0) : (ExtendedPlayer.get(player).getAnimKiShoot() != 0 ? an[ExtendedPlayer.get(player).getAnimKiShoot() - 1] + 2 : -1);
+        renderer.modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, player);
+
+        if (id == -1)
+            renderer.modelMain.RA.render(0.0625F);
+        else {
+            if (id == 0) {
+                if (JGConfigClientSettings.CLIENT_DA18) {
+                    GL11.glPushMatrix();
+                    GL11.glTranslatef(-0.2F, -0.4F, -0.8F);
+                    GL11.glRotatef(50.0F, 1.0F, 0.0F, 1.0F);
+                    GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
+                    GL11.glRotatef(20.0F, 0.0F, 0.0F, 1.0F);
+                    renderer.modelMain.LA.render(0.0625F);
+                    GL11.glPopMatrix();
+                }
+            } else if (id == 3) {
+                GL11.glPushMatrix();
+                GL11.glTranslatef(0.1F, -0.2F, -0.5F);
+                GL11.glTranslatef(-0.2F, 0.0F, -0.1F);
+                GL11.glRotatef(10.0F, -1.0F, 0.0F, 0.0F);
+                GL11.glRotatef(20.0F, 0.0F, 0.0F, -1.0F);
+                GL11.glRotatef(115.0F, 0.0F, 1.0F, 0.0F);
+                renderer.modelMain.LA.render(0.0625F);
+                GL11.glPopMatrix();
+            } else if (id == 5) {
+                GL11.glPushMatrix();
+                GL11.glTranslatef(-0.2F, -0.4F, -0.8F);
+                GL11.glTranslatef(-0.4F, 0.1F, -0.1F);
+                GL11.glRotatef(42.0F, -1.0F, 0.0F, 0.0F);
+                GL11.glRotatef(10.0F, 0.0F, 0.0F, 1.0F);
+                GL11.glRotatef(115.0F, 0.0F, 1.0F, 0.0F);
+                GL11.glTranslatef(-0.6F, 0.08F, 0.3F);
+                renderer.modelMain.LA.render(0.0625F);
+                GL11.glPopMatrix();
+            }
+
+            if (id != 0 && id != 6) {
+                if (id != 2 && id != 3) {
+                    if (id == 4 || id == 5) {
+                        GL11.glPushMatrix();
+                        GL11.glTranslatef(-0.2F, 0.4F, -0.1F);
+                        GL11.glRotatef(10.0F, -1.0F, 0.0F, 0.0F);
+                        GL11.glRotatef(20.0F, 0.0F, 0.0F, -1.0F);
+                        GL11.glRotatef(40.0F, 0.0F, 0.0F, 1.0F);
+                        renderer.modelMain.RA.render(0.0625F);
+                        GL11.glPopMatrix();
+                    }
+                } else {
+                    GL11.glPushMatrix();
+                    GL11.glTranslatef(-0.2F, 0.0F, -0.1F);
+                    GL11.glRotatef(10.0F, -1.0F, 0.0F, 0.0F);
+                    GL11.glRotatef(20.0F, 0.0F, 0.0F, -1.0F);
+                    renderer.modelMain.RA.render(0.0625F);
+                    GL11.glPopMatrix();
+                }
+            } else {
+                label53:
+                {
+                    if (id == 0) {
+                        if (!JGConfigClientSettings.CLIENT_DA18) {
+                            break label53;
+                        }
+                    } else if (!JGConfigClientSettings.instantTransmissionFirstPerson) {
+                        break label53;
+                    }
+
+                    GL11.glPushMatrix();
+                    GL11.glEnable(3042);
+                    GL11.glBlendFunc(770, 771);
+                    GL11.glAlphaFunc(516, 0.003921569F);
+                    GL11.glDepthMask(false);
+                    GL11.glTranslatef(-0.5F, -0.1F, -0.1F);
+                    GL11.glRotatef(40.0F, 0.0F, 0.0F, -1.0F);
+                    GL11.glRotatef(80.0F, -1.0F, 0.0F, 0.0F);
+                    GL11.glRotatef((float) (id == 0 ? -20 : 30), 0.0F, 0.0F, 1.0F);
+                }
+
+                renderer.modelMain.RA.render(0.0625F);
+                if (id == 0) {
+                    if (!JGConfigClientSettings.CLIENT_DA18) {
+                        return;
+                    }
+                } else if (!JGConfigClientSettings.instantTransmissionFirstPerson) {
+                    return;
+                }
+
+                GL11.glPopMatrix();
+            }
+        }
+    }
+
 }

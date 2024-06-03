@@ -4,7 +4,6 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.DBCRenderEvent;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -13,8 +12,10 @@ import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.early.IEntityMC;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IRenderCusPar;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -40,6 +41,12 @@ public class RenderEventHandler {
         enableStencilWriting(e.entity.getEntityId());
     }
 
+    @SubscribeEvent
+    public void enableHandStencil(DBCPlayerEvent.RenderArmEvent.Pre e) {
+        glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
+        glEnable(GL_STENCIL_TEST);
+        enableStencilWriting(e.entity.getEntityId());
+    }
 
     @SubscribeEvent
     public void enableEntityStencil(RenderLivingEvent.Pre e) {
@@ -53,9 +60,7 @@ public class RenderEventHandler {
             enableStencilWriting(e.entity.getEntityId());
             Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         }
-        glDepthMask(true); //fixes MC RP1 entity bug
-
-
+        glDepthMask(true); //fixes a native MC RP1 entity bug in which the depth test is disabled
     }
 
     @SubscribeEvent
@@ -104,22 +109,16 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
-        postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
-    }
-
-    @SubscribeEvent
-    public void renderPlayer(DBCRenderEvent.Pre e) {
-        EntityAura aura = DBCData.get(e.entityPlayer).auraEntity;
-        if ((aura != null && aura.shouldRender()) || DBCData.get(e.entityPlayer).outline != null)
-            Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
-
+        enableStencilWriting(e.entity.getEntityId());
+        // postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
+        glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
+        glDisable(GL_STENCIL_TEST);
 
     }
-    @SubscribeEvent
-    public void renderPlayer(DBCRenderEvent.Post e) {
-        EntityPlayer player = (EntityPlayer) e.entity;
-        RenderPlayerJBRA render = (RenderPlayerJBRA) e.renderer;
-        float partialTicks = Minecraft.getMinecraft().timer.renderPartialTicks;
+
+
+    public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm) {
+        RenderPlayerJBRA render = (RenderPlayerJBRA) renderer;
         DBCData data = DBCData.get(player);
 
         disableStencilWriting(player.getEntityId(), false);
@@ -174,7 +173,7 @@ public class RenderEventHandler {
             //Sphere s = new Sphere();
             // s.draw(2, 36, 18);
 
-            PlayerOutline.renderOutline(render, player, partialTicks);
+            PlayerOutline.renderOutline(render, player, partialTicks, isArm);
             ShaderHelper.releaseShader();
             glPopMatrix();
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
@@ -188,6 +187,22 @@ public class RenderEventHandler {
         postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
     }
 
+    @SubscribeEvent
+    public void renderPlayer(DBCPlayerEvent.RenderEvent.Pre e) {
+        EntityAura aura = DBCData.get(e.entityPlayer).auraEntity;
+        if ((aura != null && aura.shouldRender()) || DBCData.get(e.entityPlayer).outline != null)
+            Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+    }
+
+    @SubscribeEvent
+    public void renderPlayer(DBCPlayerEvent.RenderEvent.Post e) {
+        renderPlayer(e.entityPlayer, e.renderer, e.partialRenderTick, false);
+    }
+
+    @SubscribeEvent
+    public void renderHand(DBCPlayerEvent.RenderArmEvent.Post e) {
+        renderPlayer(e.entityPlayer, e.renderer, e.partialRenderTick, true);
+    }
     public void newerAuraTemp(EntityAura aura, float partialTicks) {
         double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - RenderManager.renderPosX;
         double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - RenderManager.renderPosY;
