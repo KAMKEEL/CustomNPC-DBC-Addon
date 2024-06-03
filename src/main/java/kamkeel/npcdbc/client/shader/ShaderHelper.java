@@ -86,12 +86,14 @@ public final class ShaderHelper {
 			ARBShaderObjects.glUniform1fARB(time, ClientProxy.getTimeSinceStart());
 			
 			if (uniforms != null)
-				uniforms.load(shader);
+				loadUniforms(shader, uniforms);
 		}
-
-
 	}
 
+	public static void loadUniforms(int shader, IShaderUniform uniforms) {
+		uniforms.load(shader);
+	}
+	
 	public static void loadTextureUnit(int textureUnit, String textureLoc) {
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL13.glActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
@@ -223,3 +225,17 @@ public final class ShaderHelper {
 	}
 
 }
+/* BUILT-IN GLSL 120 VERTEX ATTRIBUTES
+
+gl_Vertex: This attribute represents the position of the vertex in object space. It is a vec4 attribute containing the x, y, z, and w coordinates of the vertex.
+
+gl_Normal: This attribute represents the normal vector of the vertex. It is a vec3 attribute used for lighting calculations to determine how light interacts with the surface.
+
+gl_Color: This attribute represents the color of the vertex. It is a vec4 attribute containing the RGBA color values.
+
+gl_MultiTexCoord0, gl_MultiTexCoord1, ..., gl_MultiTexCoord7: These attributes represent texture coordinates for multiple texture units. Each attribute is a vec4 containing the s, t, r, and q components of the texture coordinate.
+
+gl_SecondaryColor: This attribute represents the secondary color of the vertex. It is a vec4 attribute used for two-sided lighting calculations.
+
+gl_FogCoord: This attribute represents the fog coordinate of the vertex. It is a float attribute used to determine fog effects.
+*/

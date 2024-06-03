@@ -176,7 +176,7 @@ public class AuraRenderer extends RenderDBC {
         // RenderEventHandler.enableStencilWriting(aura.entity.getEntityId() + 1);
         //RenderEventHandler.disableStencilWriting(aura.entity.getEntityId(), false);
         // glStencilFunc(GL_LEQUAL, aura.entity.getEntityId(), 0xFF);  // Always draw to the color buffer & pass the stencil test
-        glStencilMask(0xFF);  // Write to stencil buffer
+       // glStencilMask(0xFF);  // Write to stencil buffer
         // glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);  // Keep stencil value
         // GL11.glEnable(GL11.GL_ALPHA_TEST);
         //GL11.glDisable(3042);
@@ -213,7 +213,7 @@ public class AuraRenderer extends RenderDBC {
         float g = ((aura.color1 >> 8 & 255) / 255f);
         float b = ((aura.color1 & 255) / 255f);
 
-        ShaderHelper.loadTextureUnit(2, ShaderResources.AURA_NOISE);
+        ShaderHelper.loadTextureUnit(2, "jinryuudragonbc:aurag.png"); //NOISE HERE
         IShaderUniform uniforms = shader -> {
             int rgbaLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "rgba");
             ARBShaderObjects.glUniform4fARB(rgbaLocation, r, g, b, 0.5f);
