@@ -37,6 +37,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
@@ -51,6 +52,7 @@ public class ClientEventHandler {
         GuiScreen gui = Minecraft.getMinecraft().currentScreen;
         if (gui == null || !gui.doesGuiPauseGame())
             ticksInGame++;
+       // ticksInGame = 0;
 
     }
     
@@ -67,10 +69,11 @@ public class ClientEventHandler {
                     TransformController.decrementRage();
                 }
 
-                if (Keyboard.isKeyDown(Keyboard.KEY_L)) {
-                    Minecraft.getMinecraft().refreshResources();
-                    ShaderHelper.loadShaders(true);
-                }
+
+            }
+            if (Keyboard.isKeyDown(Keyboard.KEY_L) || Mouse.isButtonDown(3)) {
+                Minecraft.getMinecraft().refreshResources();
+                ShaderHelper.loadShaders(true);
             }
         }
     }

@@ -11,7 +11,7 @@
 package kamkeel.npcdbc.client.shader;
 
 import cpw.mods.fml.common.FMLLog;
-import kamkeel.npcdbc.client.ClientEventHandler;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.renderer.OpenGlHelper;
 import org.apache.logging.log4j.Level;
@@ -85,7 +85,8 @@ public final class ShaderHelper {
 
 		if (shader != 0) { //loads all uniforms
 			int time = ARBShaderObjects.glGetUniformLocationARB(shader, "time");
-			ARBShaderObjects.glUniform1iARB(time, ClientEventHandler.ticksInGame);
+			ARBShaderObjects.glUniform1fARB(time, ClientProxy.getTimeSinceStart());
+			
 			if (uniforms != null)
 				uniforms.load(shader);
 		}
@@ -161,7 +162,7 @@ public final class ShaderHelper {
 		}
 	}
 
-	private static String getLogInfo(int obj) {
+	public static String getLogInfo(int obj) {
 		return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects.glGetObjectParameteriARB(obj, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
 	}
 

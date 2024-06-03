@@ -6,6 +6,8 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PlayerOutline;
+import kamkeel.npcdbc.client.shader.IShaderUniform;
+import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
@@ -22,6 +24,7 @@ import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.ARBShaderObjects;
 
 import java.nio.FloatBuffer;
 import java.util.Iterator;
@@ -111,12 +114,12 @@ public class RenderEventHandler {
         if ((aura != null && aura.shouldRender()) || DBCData.get(e.entityPlayer).outline != null)
             Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
+
     }
     @SubscribeEvent
     public void renderPlayer(DBCRenderEvent.Post e) {
-        if (!(e.entity instanceof EntityPlayer))
-            return;
 
+        ShaderHelper.releaseShader();
 
         EntityPlayer player = (EntityPlayer) e.entity;
         RenderPlayerJBRA render = (RenderPlayerJBRA) e.renderer;
@@ -130,49 +133,13 @@ public class RenderEventHandler {
 
         ////////////////////////////////////////
         ////////////////////////////////////////
-        //Outline
-        // glClear(GL_STENCIL_BUFFER_BIT);
-        disableStencilWriting(player.getEntityId(), false);
-        // glStencilFunc(GL_GEQUAL, player.getEntityId(), 0xFF);
-        // Write to stencil buffer
-        data.outline = new PlayerOutline(0xa53ebc, 0x0d2dba);
-        // data.outline = null;
-        if (data.outline != null) {
-            PlayerOutline.renderOutline(render, player, partialTicks);
-        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
-            ((IEntityMC) player).setRenderPass(0);
-        }
-        disableStencilWriting(player.getEntityId(), false);
-
-        // glStencilFunc(GL_ALWAYS, player.getEntityId(), 0xFF);
-
-        ////////////////////////////////////////
-        ////////////////////////////////////////
         //Aura
-
         if (aura != null && aura.shouldRender()) {
             glPushMatrix();
-            //   glPushAttrib(GL_TRANSFORM_BIT);
             glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
-
             AuraRenderer.Instance.renderAura(aura, partialTicks);
-            // glPopAttrib();
             glPopMatrix();
         }
-        ////////////////////////////////////////
-        ////////////////////////////////////////
-        //Outline
-        // glClear(GL_STENCIL_BUFFER_BIT);
-        //disableStencilWriting(player.getEntityId(), false);
-//        glStencilMask(0xF);  // Write to stencil buffer
-//        data.outline = new PlayerOutline(0xCfffff, 0x0d2dba);
-//        // data.outline = null;
-//        if (data.outline != null) {
-//            PlayerOutline.renderOutline(render, player, partialTicks);
-//        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
-//            ((IEntityMC) player).setRenderPass(0);
-//        }
-
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Custom Particles
@@ -189,6 +156,37 @@ public class RenderEventHandler {
                 iter.remove();
         }
         glPopMatrix();
+
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //Outline
+        // glClear(GL_STENCIL_BUFFER_BIT);
+        // disableStencilWriting(player.getEntityId(), false);
+        // glStencilFunc(GL_GEQUAL, player.getEntityId(), 0xFF);
+        // Write to stencil buffer
+        data.outline = new PlayerOutline(0xa53ebc, 0x0d2dba);
+        // data.outline = null;
+        if (data.outline != null) {
+            glPushMatrix();
+            float scale = 1.25f;
+            //    glScalef(scale,scale,scale);
+            IShaderUniform callback = shader -> {
+                // Frag Uniforms
+                int disfigurationUniform = ARBShaderObjects.glGetUniformLocationARB(shader, "disfiguration");
+                ARBShaderObjects.glUniform1fARB(disfigurationUniform, 0.2F);
+
+                // Vert Uniforms
+                int grainIntensityUniform = ARBShaderObjects.glGetUniformLocationARB(shader, "grainIntensity");
+                ARBShaderObjects.glUniform1fARB(grainIntensityUniform, 1.25F);
+            };
+            // ShaderHelper.useShader(ShaderHelper.doppleganger,callback);
+            PlayerOutline.renderOutline(render, player, partialTicks);
+            ShaderHelper.releaseShader();
+            glPopMatrix();
+        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
+            ((IEntityMC) player).setRenderPass(0);
+        }
+
         ////////////////////////////////////////
         ////////////////////////////////////////
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);

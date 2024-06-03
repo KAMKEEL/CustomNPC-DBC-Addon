@@ -1,5 +1,10 @@
 #version 120
 
+varying vec2 texCoord;
+varying vec3 vertPos;
+
 void main() {
-    gl_Position = vec4(vec3(0.0), 1.0);
+    gl_Position = gl_ModelViewProjectionMatrix* gl_Vertex;
+    vertPos = gl_Vertex.xyz;
+    texCoord = vec2(gl_MultiTexCoord0);
 }

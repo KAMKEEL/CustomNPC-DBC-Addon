@@ -16,6 +16,7 @@ public class ShaderResources {
     public static final String GOLD_FRAG = PREFIX_SHADER + "gold.frag";
     public static final String CATEGORY_BUTTON_FRAG = PREFIX_SHADER + "category_button.frag";
 
+    public static final String AURA_VERT = PREFIX_SHADER + "aura.vert";
     public static final String AURA_FRAG = PREFIX_SHADER + "aura.frag";
-    public static final String AURA_VERT = PREFIX_SHADER + "aura.frag";
+    
 }

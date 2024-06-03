@@ -20,11 +20,14 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.lang.reflect.Field;
+import java.time.Duration;
+import java.time.Instant;
 
 
 public class ClientProxy extends CommonProxy {
     public static boolean RenderingOutline;
     public static final int MiddleRenderPass = 1684;
+    public static Instant startTime;
 
     public static void eventsInit() {
         FMLCommonHandler.instance().bus().register(new ClientEventHandler());
@@ -49,6 +52,13 @@ public class ClientProxy extends CommonProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
         MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
         ShaderHelper.loadShaders(false);
+        startTime = Instant.now();
+        
+        
+    }
+
+    public static float getTimeSinceStart() {
+        return Duration.between(startTime, Instant.now()).toMillis() / 1000f;
     }
 
     @Override

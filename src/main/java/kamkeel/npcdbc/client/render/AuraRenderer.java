@@ -86,7 +86,7 @@ public class AuraRenderer extends RenderDBC {
         alpha = (isFirstPerson ? aura.isKaioken ? 0.015f : 0.0125f : alpha) * alphaConfig;
         aura.setTexture(1, CustomNpcPlusDBC.ID + ":textures/aura/auraalpha.png");
 
-        pulseMax = 5;
+        pulseMax = 0;
         if (pulseMax > 0)
             animatePulsing();
         else
@@ -119,7 +119,7 @@ public class AuraRenderer extends RenderDBC {
 
         
         //GL11.glTranslated(0,- yOffset, 0);
-        GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
+       // GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
         // GL11.glPushMatrix();
         GL11.glDepthMask(true);
         GL11.glEnable(3042);
@@ -127,7 +127,7 @@ public class AuraRenderer extends RenderDBC {
         // glDisable(GL_LIGHTING);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glAlphaFunc(GL11.GL_GREATER, 0.005F);
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.05F);
         // GL11.glEnable(GL11.GL_ALPHA_TEST);
         //  GL11.glAlphaFunc(GL11.GL_GREATER, 0.0005F);r
         float sizeFactor = 0.95f;
@@ -173,7 +173,7 @@ public class AuraRenderer extends RenderDBC {
         glTranslatef(0, 0.15f, 0);
         glPushMatrix();
 
-        RenderEventHandler.enableStencilWriting(aura.entity.getEntityId() + 1);
+        // RenderEventHandler.enableStencilWriting(aura.entity.getEntityId() + 1);
         //RenderEventHandler.disableStencilWriting(aura.entity.getEntityId(), false);
         // glStencilFunc(GL_LEQUAL, aura.entity.getEntityId(), 0xFF);  // Always draw to the color buffer & pass the stencil test
         glStencilMask(0xFF);  // Write to stencil buffer
@@ -189,9 +189,9 @@ public class AuraRenderer extends RenderDBC {
         // glColorMask(false, false, false, true);
 
 
-        renderAura(aura, 0x6e1188, 0.0515f, 3f);
+       // renderAura(aura, 0x6e1188, 0.0515f, 3f);
         glColorMask(true, true, true, true);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
+       // GL11.glDisable(GL11.GL_ALPHA_TEST);
         glPopMatrix();
         //GL11.glEnable(3042);
 
@@ -202,7 +202,7 @@ public class AuraRenderer extends RenderDBC {
         sizeFactor = 1.1f;
         GL11.glScalef((size + pulsingSize), size, (size + pulsingSize));
         glScalef(sizeFactor, sizeFactor * 1.1f, sizeFactor);
-        RenderEventHandler.disableStencilWriting(aura.entity.getEntityId() + 1, false);
+       // RenderEventHandler.disableStencilWriting(aura.entity.getEntityId() + 1, false);
         glScalef(1.2f, 1.14f, 1.2f);
         glTranslated(0, -0.95f, 0);
         GL11.glDepthMask(false);
@@ -214,16 +214,17 @@ public class AuraRenderer extends RenderDBC {
         float b = ((aura.color1 & 255) / 255f);
         IShaderUniform uniforms = shader -> {
             int rgbaLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "rgba");
-            ARBShaderObjects.glUniform4fARB(rgbaLocation, r, g, b, aura.alpha);
+            ARBShaderObjects.glUniform4fARB(rgbaLocation, r, g, b, 0.5f);
 
         };
-        ShaderHelper.useShader(ShaderHelper.aura, uniforms);
-        renderAura(aura, 0x97b1f4, 0.1f, 1f);
+
+     ShaderHelper.useShader(ShaderHelper.aura, uniforms);
+        renderAura(aura, 0x97b1f4, 1.1f, 1f);
         ShaderHelper.releaseShader();
         glPopMatrix();
 
 
-        GL11.glAlphaFunc(516, 0.1F);
+        GL11.glAlphaFunc(516, 01F);
         GL11.glDisable(3042);
         GL11.glEnable(2896);
         GL11.glEnable(3553);
@@ -251,7 +252,7 @@ public class AuraRenderer extends RenderDBC {
             float layerPercent = i / maxLayers;
             float layerTemp = layerPercent * 20f;
 
-            for (float j = 1; j < 2; j += 0.05f) {
+            for (float j = 1; j < 2; j += 1f) {
 
                 model.auraModel.offsetY = -(i / maxLayers) * aura.height;
                 model.auraModel.offsetZ = layerTemp < 7F ? 0.2F - 1 * 0.075F : 0.35F + (1 - 7.0F) * 0.055F;
@@ -261,8 +262,8 @@ public class AuraRenderer extends RenderDBC {
 
                 model.auraModel.rotationPointY = 55.0F + (i / maxLayers) * 20;
                 float r = new Random().nextInt(200);
-                if (layerTemp > 3) //aura intensity
-                    model.auraModel.offsetY += -r * 0.0015f * intensity * getStateIntensity(state, race);
+              //  if (layerTemp > 3) //aura intensity
+                  //  model.auraModel.offsetY += -r * 0.0015f * intensity * getStateIntensity(state, race);
 
 
                 GL11.glPushMatrix();
@@ -270,7 +271,7 @@ public class AuraRenderer extends RenderDBC {
                 if (layerPercent < 0.21) {
                     glColor4f(color, alpha);
                     this.renderManager.renderEngine.bindTexture(aura.text1);
-                    model.auraModel.render(0.0625f);
+                 //   model.auraModel.render(0.0625f);
 
                     if (aura.text2 != null) {
                         this.renderManager.renderEngine.bindTexture(aura.text2);

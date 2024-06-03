@@ -1,6 +1,8 @@
 #version 120
 
 varying vec2 texcoord;
+varying vec3 vertPos;
+
 uniform sampler2D bgl_RenderedTexture;
 uniform int time; // Passed in, see ShaderHelper.java
 
@@ -20,4 +22,6 @@ void main() {
     float b = gs + rand(texcoord) * grainIntensity;
     
     gl_FragColor = vec4(r, g, b, color.a);
+    
+    gl_FragColor = vec4(vertPos,1.0);
 }
