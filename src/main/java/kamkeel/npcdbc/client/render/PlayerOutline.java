@@ -60,8 +60,6 @@ public class PlayerOutline {
         //Outer
         float scale = 1.045f, factor = 1.045f;
         glPushMatrix();
-        //   ShaderHelper.useShader(ShaderHelper.pylonGlow);
-
         ColorMode.glColorInt(outline.outerColor, outline.outerAlpha);
         float size = scale * factor * outline.innerSize;
         glScalef(size, 1.025f * factor, size);
@@ -75,17 +73,11 @@ public class PlayerOutline {
         glPushMatrix();
         glScalef(1.025f * 1.025f * outline.outerSize, 1.025f, 1.025f * 1.025f * outline.outerSize);
         renderTail(player, render);
-        //    ShaderHelper.releaseShader();
-
         glPopMatrix();
-
-        //glStencilMask(0x0);
         
         ///////////////////////////////////
         ///////////////////////////////////
         //Inner
-        // glStencilMask(0xFF);
-
         glPushMatrix();
         ColorMode.glColorInt(outline.innerColor, outline.innerAlpha); //inner
         glScalef(scale * outline.innerSize, 1.025f, scale * outline.innerSize);
@@ -102,10 +94,9 @@ public class PlayerOutline {
         renderTail(player, render);
 
         glPopMatrix();
+        
         ///////////////////////////////////
         ///////////////////////////////////
-        // RenderEventHandler.postStencilRendering();
-
         GL11.glAlphaFunc(GL_GREATER, 0.1F);
         GL11.glDisable(GL_BLEND);
         GL11.glEnable(GL_LIGHTING);

@@ -97,7 +97,7 @@ public final class ShaderHelper {
 	
 	public static void loadTextureUnit(int textureUnit, String textureLoc) {
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL13.glActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
+		OpenGlHelper.setActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
 		noppes.npcs.client.ClientProxy.bindTexture(new ResourceLocation(textureLoc));
 		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
 	}

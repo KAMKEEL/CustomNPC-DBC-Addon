@@ -71,7 +71,7 @@ public class ClientEventHandler {
 
 
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_L) || Mouse.isButtonDown(3)) {
+            if (Keyboard.isKeyDown(Keyboard.KEY_L) || Mouse.isButtonDown(3) || Mouse.isButtonDown(2)) {
                 Minecraft.getMinecraft().refreshResources();
                 ShaderHelper.loadShaders(true);
             }

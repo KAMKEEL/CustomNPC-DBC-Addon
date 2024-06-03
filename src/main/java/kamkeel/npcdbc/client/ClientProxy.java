@@ -8,6 +8,7 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PotaraItemRenderer;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ModItems;

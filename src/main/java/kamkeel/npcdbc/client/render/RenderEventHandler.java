@@ -1,12 +1,10 @@
-package kamkeel.npcdbc.client;
+package kamkeel.npcdbc.client.render;
 
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.render.AuraRenderer;
-import kamkeel.npcdbc.client.render.PlayerOutline;
-import kamkeel.npcdbc.client.shader.IShaderUniform;
+import kamkeel.npcdbc.client.DBCRenderEvent;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -26,7 +24,6 @@ import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBShaderObjects;
-import org.lwjgl.util.glu.Sphere;
 
 import java.nio.FloatBuffer;
 import java.util.Iterator;
@@ -56,6 +53,8 @@ public class RenderEventHandler {
             enableStencilWriting(e.entity.getEntityId());
             //  Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         }
+        glDepthMask(true); //fixes MC RP1 entity bug
+
 
     }
 
@@ -162,28 +161,21 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
-        // glClear(GL_STENCIL_BUFFER_BIT);
-        // disableStencilWriting(player.getEntityId(), false);
-        // glStencilFunc(GL_GEQUAL, player.getEntityId(), 0xFF);
-        // Write to stencil buffer
         data.outline = new PlayerOutline(0xa53ebc, 0x0d2dba);
-        // data.outline = null;
+        //  data.outline = null;
         if (data.outline != null) {
             glPushMatrix();
             ShaderHelper.loadTextureUnit(2, ShaderResources.PERLIN_NOISE); //NOISE HERE
-            IShaderUniform uniforms = shader -> {
+            ShaderHelper.useShader(ShaderHelper.perlinNoise, shader -> {
                 int textureLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "noiseTexture");
                 ARBShaderObjects.glUniform1iARB(textureLocation, 2);
 
                 int resLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "u_resolution");
                 ARBShaderObjects.glUniform2fARB(resLocation, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
-                
-            };
-            Sphere s = new Sphere();
+            });
+            //Sphere s = new Sphere();
+            // s.draw(2, 36, 18);
 
-            ShaderHelper.useShader(ShaderHelper.perlinNoise, uniforms);
-           // s.draw(2,36,18);
-            
             PlayerOutline.renderOutline(render, player, partialTicks);
             ShaderHelper.releaseShader();
             glPopMatrix();
