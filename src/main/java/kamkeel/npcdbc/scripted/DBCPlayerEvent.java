@@ -7,7 +7,10 @@ import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.constants.enums.*;
+import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.api.IDamageSource;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.scripted.NpcAPI;
@@ -192,6 +195,43 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
 
         public String getHookName() {
             return DBCScriptType.KNOCKOUT.function;
+        }
+    }
+
+
+    public static class RenderEvent extends RenderPlayerEvent {
+
+        public RenderEvent(EntityPlayer player, RenderPlayer renderer, float partialRenderTick) {
+            super(player, renderer, partialRenderTick);
+        }
+        @Cancelable
+        public static class Pre extends RenderPlayerEvent {
+            public Pre(EntityPlayer player, RenderPlayer renderer, float tick) {
+                super(player, renderer, tick);
+            }
+        }
+        public static class Post extends RenderPlayerEvent {
+            public Post(EntityPlayer player, RenderPlayer renderer, float tick) {
+                super(player, renderer, tick);
+            }
+        }
+    }
+
+    public static class RenderArmEvent extends RenderPlayerEvent {
+        
+        public RenderArmEvent(EntityPlayer player, RenderPlayer renderer, float partialRenderTick) {
+            super(player, renderer, partialRenderTick);
+        }
+        @Cancelable
+        public static class Pre extends RenderPlayerEvent {
+            public Pre(EntityPlayer player, RenderPlayer renderer, float partialRenderTick) {
+                super(player, renderer, partialRenderTick);
+            }
+        }
+        public static class Post extends RenderPlayerEvent {
+            public Post(EntityPlayer player, RenderPlayer renderer, float partialRenderTick) {
+                super(player, renderer, partialRenderTick);
+            }
         }
     }
 }
