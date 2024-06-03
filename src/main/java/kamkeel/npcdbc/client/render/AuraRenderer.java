@@ -112,11 +112,12 @@ public class AuraRenderer extends RenderDBC {
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
 
         glDepthMask(true);
-        glEnable(GL_BLEND);
         glDisable(GL_LIGHTING);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0.05F);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
             glShadeModel(GL_SMOOTH);
 
@@ -170,12 +171,12 @@ public class AuraRenderer extends RenderDBC {
         //lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
 
         glPopMatrix();
+        glEnable(GL_TEXTURE_2D);
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
             glShadeModel(GL_FLAT);
-        glAlphaFunc(GL_GREATER, 1F);
         glDisable(GL_BLEND);
+        glDisable(GL_ALPHA_TEST);
         glEnable(GL_LIGHTING);
-        glEnable(GL_TEXTURE_2D);
         glDepthMask(true);
     }
 

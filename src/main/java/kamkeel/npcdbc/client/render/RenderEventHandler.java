@@ -51,7 +51,7 @@ public class RenderEventHandler {
             glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
             glEnable(GL_STENCIL_TEST);
             enableStencilWriting(e.entity.getEntityId());
-            //  Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+            Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         }
         glDepthMask(true); //fixes MC RP1 entity bug
 
@@ -77,8 +77,7 @@ public class RenderEventHandler {
         EntityAura aura = display.auraEntity;
         if (aura != null && aura.shouldRender()) {
             glPushMatrix();
-         glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
-        //    glRotatef(180, 0, 0, 1);
+            glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
             AuraRenderer.Instance.renderAura(aura, partialTicks);
             glPopMatrix();
         }
@@ -106,7 +105,6 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
-        glDisable(GL_STENCIL_TEST);
     }
 
     @SubscribeEvent
@@ -119,9 +117,6 @@ public class RenderEventHandler {
     }
     @SubscribeEvent
     public void renderPlayer(DBCRenderEvent.Post e) {
-
-        ShaderHelper.releaseShader();
-
         EntityPlayer player = (EntityPlayer) e.entity;
         RenderPlayerJBRA render = (RenderPlayerJBRA) e.renderer;
         float partialTicks = Minecraft.getMinecraft().timer.renderPartialTicks;
