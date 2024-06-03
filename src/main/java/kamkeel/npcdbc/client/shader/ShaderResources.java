@@ -20,7 +20,9 @@ public class ShaderResources {
 
     public static final String AURA_VERT = PREFIX_SHADER + "aura.vert";
     public static final String AURA_FRAG = PREFIX_SHADER + "aura.frag";
-
-    public static final String AURA_NOISE = CustomNpcPlusDBC.ID + ":textures/noise/noise.png";
+    public static final String PERLIN_VERT = PREFIX_SHADER + "perlin.vert";
+    public static final String PERLIN_FRAG = PREFIX_SHADER + "perlin.frag";
+    
+    public static final String PERLIN_NOISE = CustomNpcPlusDBC.ID + ":textures/noise/noise.png";
     
 }

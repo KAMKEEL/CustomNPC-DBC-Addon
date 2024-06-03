@@ -13,7 +13,7 @@ uniform vec3 center;
 
 void main() {
     vec4 mainColor = texture2D(mainTexture, texCoord);
-    vec4 noiseColor = texture2D(noiseTexture, texCoord);
+    vec4 noiseColor = texture2D(noiseTexture, texCoord*2);
 
 
     if (mainColor.a < 0.25)
@@ -51,5 +51,6 @@ void main() {
     vec3 glow = glowColor * glowIntensity / (noisyDistance * noisyDistance);
 
     // Output final fragment color with glow effect
-    gl_FragColor = vec4(glow, noiseColor.a);
+   // gl_FragColor = vec4(glow, noiseColor.a);
+    gl_FragColor = mix(mainColor,noiseColor,noiseColor.b);
 }

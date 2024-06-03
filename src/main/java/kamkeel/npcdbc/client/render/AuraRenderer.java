@@ -20,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 import noppes.npcs.util.ValueUtil;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
@@ -213,7 +214,8 @@ public class AuraRenderer extends RenderDBC {
         float g = ((aura.color1 >> 8 & 255) / 255f);
         float b = ((aura.color1 & 255) / 255f);
 
-        ShaderHelper.loadTextureUnit(2, "jinryuudragonbc:aurag.png"); //NOISE HERE
+        this.renderManager.renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:aurag.png"));
+        ShaderHelper.loadTextureUnit(2, ShaderResources.PERLIN_NOISE); //NOISE HERE
         IShaderUniform uniforms = shader -> {
             int rgbaLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "rgba");
             ARBShaderObjects.glUniform4fARB(rgbaLocation, r, g, b, 0.5f);
@@ -277,7 +279,7 @@ public class AuraRenderer extends RenderDBC {
                 GL11.glRotatef(360 * j, 0.0F, 1.0F, 0.0F);
                 if (layerPercent < 0.21) {
                     glColor4f(color, alpha);
-                    this.renderManager.renderEngine.bindTexture(aura.text1);
+                    //  this.renderManager.renderEngine.bindTexture(aura.text1);
                  //   model.auraModel.render(0.0625f);
 
                     if (aura.text2 != null) {
@@ -290,7 +292,6 @@ public class AuraRenderer extends RenderDBC {
 
                 GL11.glPushMatrix();
                 GL11.glRotatef(360 * j + 45, 0F, 1F, 0F);
-                this.renderManager.renderEngine.bindTexture(aura.text1);
                 if (aura.color3 > -1 && j < 1)
                     cf(aura.color1, aura.color3, alpha);
                 else

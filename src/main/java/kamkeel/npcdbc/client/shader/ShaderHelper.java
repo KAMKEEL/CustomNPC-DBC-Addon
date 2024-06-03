@@ -39,7 +39,7 @@ public final class ShaderHelper {
 	public static int categoryButton = 0;
 
 	public static int aura = 0;
-
+	public static int perlinNoise = 0;
 	public static void loadShaders(boolean reload) {
 		if (!useShaders())
 			return;
@@ -59,6 +59,7 @@ public final class ShaderHelper {
 		categoryButton = createProgram(null, ShaderResources.CATEGORY_BUTTON_FRAG);
 
 		aura = createProgram(ShaderResources.AURA_VERT, ShaderResources.AURA_FRAG);
+		perlinNoise = createProgram(ShaderResources.PERLIN_VERT, ShaderResources.PERLIN_FRAG);
 	}
 
 	public static void deleteShaders() {

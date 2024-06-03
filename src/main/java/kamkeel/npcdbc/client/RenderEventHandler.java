@@ -8,6 +8,7 @@ import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PlayerOutline;
 import kamkeel.npcdbc.client.shader.IShaderUniform;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
+import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
@@ -25,6 +26,7 @@ import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBShaderObjects;
+import org.lwjgl.util.glu.Sphere;
 
 import java.nio.FloatBuffer;
 import java.util.Iterator;
@@ -168,18 +170,20 @@ public class RenderEventHandler {
         // data.outline = null;
         if (data.outline != null) {
             glPushMatrix();
-            float scale = 1.25f;
-            //    glScalef(scale,scale,scale);
-            IShaderUniform callback = shader -> {
-                // Frag Uniforms
-                int disfigurationUniform = ARBShaderObjects.glGetUniformLocationARB(shader, "disfiguration");
-                ARBShaderObjects.glUniform1fARB(disfigurationUniform, 0.2F);
+            ShaderHelper.loadTextureUnit(2, ShaderResources.PERLIN_NOISE); //NOISE HERE
+            IShaderUniform uniforms = shader -> {
+                int textureLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "noiseTexture");
+                ARBShaderObjects.glUniform1iARB(textureLocation, 2);
 
-                // Vert Uniforms
-                int grainIntensityUniform = ARBShaderObjects.glGetUniformLocationARB(shader, "grainIntensity");
-                ARBShaderObjects.glUniform1fARB(grainIntensityUniform, 1.25F);
+                int resLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "u_resolution");
+                ARBShaderObjects.glUniform2fARB(resLocation, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+                
             };
-            // ShaderHelper.useShader(ShaderHelper.doppleganger,callback);
+            Sphere s = new Sphere();
+
+            ShaderHelper.useShader(ShaderHelper.perlinNoise, uniforms);
+           // s.draw(2,36,18);
+            
             PlayerOutline.renderOutline(render, player, partialTicks);
             ShaderHelper.releaseShader();
             glPopMatrix();
