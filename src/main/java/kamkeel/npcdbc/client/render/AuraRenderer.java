@@ -125,7 +125,6 @@ public class AuraRenderer extends RenderDBC {
         glTranslated(interPosX, interPosY + yOffset, interPosZ);
         glRotatef(180, 0, 0, 1);
         // glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
-        
         float sizeFactor = 0.95f;
 
 
@@ -140,6 +139,8 @@ public class AuraRenderer extends RenderDBC {
         glScalef(1.2f, 1.14f, 1.2f);
         glTranslated(0, -0.95f, 0);
         glDepthMask(false);
+
+
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Shader stuff
@@ -166,6 +167,8 @@ public class AuraRenderer extends RenderDBC {
         glPopMatrix();
 
 
+        ////////////////////////////////////////
+        ////////////////////////////////////////
         //  float r = rand.nextInt(50);
         //if (aura.hasLightning && r < 10 && age < 10)
         //lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);

@@ -76,6 +76,7 @@ public class RenderEventHandler {
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
 
+
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Aura
@@ -86,6 +87,8 @@ public class RenderEventHandler {
             AuraRenderer.Instance.renderAura(aura, partialTicks);
             glPopMatrix();
         }
+
+
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Custom Particles
@@ -103,9 +106,11 @@ public class RenderEventHandler {
         }
         glPopMatrix();
 
-        ////////////////////////////////////////
-        ////////////////////////////////////////
 
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //Outline
+        
         ////////////////////////////////////////
         ////////////////////////////////////////
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
@@ -172,7 +177,6 @@ public class RenderEventHandler {
             });
             //Sphere s = new Sphere();
             // s.draw(2, 36, 18);
-
             PlayerOutline.renderOutline(render, player, partialTicks, isArm);
             ShaderHelper.releaseShader();
             glPopMatrix();
@@ -203,6 +207,7 @@ public class RenderEventHandler {
     public void renderHand(DBCPlayerEvent.RenderArmEvent.Post e) {
         renderPlayer(e.entityPlayer, e.renderer, e.partialRenderTick, true);
     }
+    
     public void newerAuraTemp(EntityAura aura, float partialTicks) {
         double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - RenderManager.renderPosX;
         double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - RenderManager.renderPosY;
