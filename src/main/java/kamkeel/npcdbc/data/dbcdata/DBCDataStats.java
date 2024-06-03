@@ -315,21 +315,18 @@ public class DBCDataStats {
     }
 
     public int getJRMCPlayerID() {
-        for (int pl = 0; pl < JRMCoreH.plyrs.length; pl++)
-            if (JRMCoreH.plyrs[pl].equals(data.player.getCommandSenderName()))
-                return pl;
+        try {
+            for (int pl = 0; pl < JRMCoreH.plyrs.length; pl++)
+                if (JRMCoreH.plyrs[pl].equals(data.player.getCommandSenderName()))
+                    return pl;
+        } catch (NullPointerException e) {
+        }
         return 0;
     }
 
 
     public String getJRMCData(int id) {
-        for (int pl = 0; pl < JRMCoreH.plyrs.length; pl++) {
-            if (JRMCoreH.plyrs[pl].equals(data.player.getCommandSenderName())) {
-                return JRMCoreH.data(id)[pl];
-            }
-        }
-        return "";
-
+        return JRMCoreH.data(id)[getJRMCPlayerID()];
     }
 
     public boolean isFused() {

@@ -541,7 +541,12 @@ public class DBCUtils {
     }
 
     public static boolean shouldRenderHair(EntityPlayer player, int playerID) {
-        String[] s = JRMCoreH.data1[playerID].split(";");
+        String[] s;
+        try {
+            s = JRMCoreH.data1[playerID].split(";");
+        } catch (Exception e) {
+            return false;
+        }
         ItemStack helmetStack = player.inventory.armorItemInSlot(3);
 
         boolean helmetOn = helmetStack != null && helmetStack.getItem() != null;
