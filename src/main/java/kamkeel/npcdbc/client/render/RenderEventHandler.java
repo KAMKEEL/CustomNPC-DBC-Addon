@@ -29,8 +29,7 @@ import org.lwjgl.util.glu.Sphere;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 
-import static kamkeel.npcdbc.client.shader.ShaderHelper.releaseShader;
-import static kamkeel.npcdbc.client.shader.ShaderHelper.useShader;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
@@ -166,15 +165,25 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
-        data.outline = new PlayerOutline(0xa53ebc, 0x0d2dba);
+        data.outline = new PlayerOutline(0x00ffff, 0xffffff);
         //  data.outline = null;
         if (data.outline != null) {
             glPushMatrix();
             useShader(ShaderHelper.outline, shader -> {
-                ShaderHelper.uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
+                uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
+                uniformColor("innerColor", data.outline.innerColor, 1);
+                uniformColor("outerColor", data.outline.outerColor, 1);
+                uniform1f("noiseSize", 3f);
+                uniform1f("range", 0.4f);
+                uniform1f("threshold", 0.5f);
+                uniform1f("noiseSpeed", 3);
+                uniform1f("throbSpeed", 1f);
             });
+
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             Sphere s = new Sphere();
-            //  s.draw(2, 36, 18);
+            // s.draw(2, 36, 18);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             PlayerOutline.renderOutline(render, player, partialTicks, isArm);
             releaseShader();
             glPopMatrix();

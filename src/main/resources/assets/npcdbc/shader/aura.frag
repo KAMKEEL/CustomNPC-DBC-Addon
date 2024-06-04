@@ -30,7 +30,7 @@ void main() {
     vec3 color = vec3(1.0, noise * 0.8, 0.0) * noise;
 
     // Output the final color
-    gl_FragColor = vec4(color,noiseColor.r);
+    gl_FragColor = vec4(color,noiseColor.r * 2);
    // float oscillating_value = (sin(time) + 1.0) * 0.5;
 //
 //    // Define two colors to alternate between
