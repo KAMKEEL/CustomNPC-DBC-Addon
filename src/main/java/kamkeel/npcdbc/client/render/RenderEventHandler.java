@@ -24,11 +24,13 @@ import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.ARBShaderObjects;
+import org.lwjgl.util.glu.Sphere;
 
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 
+import static kamkeel.npcdbc.client.shader.ShaderHelper.releaseShader;
+import static kamkeel.npcdbc.client.shader.ShaderHelper.useShader;
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
@@ -123,6 +125,7 @@ public class RenderEventHandler {
 
 
     public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm) {
+        ShaderHelper.releaseShader();
         RenderPlayerJBRA render = (RenderPlayerJBRA) renderer;
         DBCData data = DBCData.get(player);
 
@@ -167,18 +170,13 @@ public class RenderEventHandler {
         //  data.outline = null;
         if (data.outline != null) {
             glPushMatrix();
-            ShaderHelper.loadTextureUnit(2, ShaderResources.PERLIN_NOISE); //NOISE HERE
-            ShaderHelper.useShader(ShaderHelper.perlinNoise, shader -> {
-                int textureLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "noiseTexture");
-                ARBShaderObjects.glUniform1iARB(textureLocation, 2);
-
-                int resLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "u_resolution");
-                ARBShaderObjects.glUniform2fARB(resLocation, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+            useShader(ShaderHelper.outline, shader -> {
+                ShaderHelper.uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
             });
-            //Sphere s = new Sphere();
-            // s.draw(2, 36, 18);
+            Sphere s = new Sphere();
+            //  s.draw(2, 36, 18);
             PlayerOutline.renderOutline(render, player, partialTicks, isArm);
-            ShaderHelper.releaseShader();
+            releaseShader();
             glPopMatrix();
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
             ((IEntityMC) player).setRenderPass(0);

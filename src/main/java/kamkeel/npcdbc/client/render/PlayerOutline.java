@@ -55,7 +55,7 @@ public class PlayerOutline {
         GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GL11.glAlphaFunc(GL_GREATER, 0.003921569F);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-        glDepthMask(false);
+        glDepthMask(true);
         
         ///////////////////////////////////
         ///////////////////////////////////

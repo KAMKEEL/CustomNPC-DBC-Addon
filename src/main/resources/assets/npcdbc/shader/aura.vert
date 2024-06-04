@@ -19,7 +19,7 @@ void main() {
     vec4 noiseColor = texture2D(noiseTexture, texCoord*2);
     float displacement = fract(noiseColor.r + time) / 10;
     vec3 newPosition = gl_Vertex.xyz + gl_Normal.xyz *displacement;
-    gl_Position = gl_ModelViewProjectionMatrix* vec4(newPosition, 1.0);
+    gl_Position = gl_ModelViewProjectionMatrix* gl_Vertex ;//vec4(newPosition, 1.0);
     vertPos = gl_Vertex.xyz;
 
     texCoord = vec2(gl_MultiTexCoord0);

@@ -13,6 +13,7 @@ package kamkeel.npcdbc.client.shader;
 import cpw.mods.fml.common.FMLLog;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
@@ -40,6 +41,7 @@ public final class ShaderHelper {
 	public static int categoryButton = 0;
 
 	public static int aura = 0;
+	public static int outline = 0;
 	public static int perlinNoise = 0;
 	public static void loadShaders(boolean reload) {
 		if (!useShaders())
@@ -60,6 +62,7 @@ public final class ShaderHelper {
 		categoryButton = createProgram(null, ShaderResources.CATEGORY_BUTTON_FRAG);
 
 		aura = createProgram(ShaderResources.AURA_VERT, ShaderResources.AURA_FRAG);
+		outline = createProgram(ShaderResources.OUTLINE_VERT, ShaderResources.OUTLINE_FRAG);
 		perlinNoise = createProgram(ShaderResources.PERLIN_VERT, ShaderResources.PERLIN_FRAG);
 	}
 
@@ -84,6 +87,7 @@ public final class ShaderHelper {
 		
 		if (shader != 0) { //loads all uniforms
 			uniform1f("time", ClientProxy.getTimeSinceStart());
+			uniformVec2("u_resolution", Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
 			
 			if (uniforms != null)
 				loadUniforms(shader, uniforms);

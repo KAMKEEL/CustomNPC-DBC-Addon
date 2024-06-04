@@ -31,7 +31,7 @@ void main() {
     texCoord = vec2(gl_MultiTexCoord0);
 
     vec4 noiseColor = 5 * texture2D(noiseTexture, texCoord);
-    float displacement = (noiseColor.r + sin(time * 6)) * 0.01358135 - 0.035;
+    float displacement = (noiseColor.r + sin(time * 4)) * 0.01358135 - 0.035;
 
     vec3 newPosition = gl_Vertex.xyz + gl_Normal.xyz *displacement;
  //   newPosition.y+=sin(newPosition.x * 50) / 8;

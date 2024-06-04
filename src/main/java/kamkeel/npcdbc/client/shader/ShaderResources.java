@@ -20,6 +20,8 @@ public class ShaderResources {
 
     public static final String AURA_VERT = PREFIX_SHADER + "aura.vert";
     public static final String AURA_FRAG = PREFIX_SHADER + "aura.frag";
+    public static final String OUTLINE_VERT = PREFIX_SHADER + "outline.vert";
+    public static final String OUTLINE_FRAG = PREFIX_SHADER + "outline.frag";
     public static final String PERLIN_VERT = PREFIX_SHADER + "perlin.vert";
     public static final String PERLIN_FRAG = PREFIX_SHADER + "perlin.frag";
     

@@ -19,38 +19,47 @@ void main() {
     if (mainColor.a < 0.25)
     discard;
 
-    gl_FragColor = vec4(0, sin(time) * 3, sin(time) * 3, 0.5);
-    // gl_FragColor = texel;
+ //   gl_FragColor = vec4(0, sin(time) * 3, sin(time) * 3, 0.5);
+    vec2 uv = texCoord;
+    uv.y += time * 0.2;
 
-    float oscillating_value = (sin(time) + 1.0) * 0.5;
+    // Sample the noise texture
+    float noise = texture2D(noiseTexture, uv).r;
 
-    // Define two colors to alternate between
-    vec3 color1 = vec3(1 - vertPos.xyz);// Red
-    vec3 color2 = vec3(noiseColor.xyz);// Blue
+    // Create a fire color gradient
+    vec3 color = vec3(1.0, noise * 0.8, 0.0) * noise;
 
-    // Mix the two colors based on the oscillating value
-    // vec3 final_color = mix(color1, color2, oscillating_value);
-    // float distance = 1 - length(vertPos /1.25);
-    // gl_FragColor = vec4(final_color.xyz, 0.5);
-    // gl_FragColor = vec4(vec3(0, 1.0, 1.0)*distance, 1);
-    //  gl_FragColor = vec4(final_color.rgb, noiseColor.a);
-
-    float distance = length(vertPos);
-
-    // Define glow color and intensity
-    vec3 glowColor = vec3(0.5, 1, 1);// Blue glow color
-    float glowIntensity = 0.5;
-
-    // Calculate distortion based on time
-    float distortion = sin(time * 4) * 0.05;// Adjust the amplitude and frequency as needed
-
-    // Add some noise to the distance calculation based on time
-    float noisyDistance = distance + distortion;
-
-    // Calculate glow effect based on noisy distance
-    vec3 glow = glowColor * glowIntensity / (noisyDistance * noisyDistance);
-
-    // Output final fragment color with glow effect
-   // gl_FragColor = vec4(glow, noiseColor.a);
-    gl_FragColor = mix(mainColor,noiseColor,noiseColor.b);
+    // Output the final color
+    gl_FragColor = vec4(color,noiseColor.r);
+   // float oscillating_value = (sin(time) + 1.0) * 0.5;
+//
+//    // Define two colors to alternate between
+//    vec3 color1 = vec3(1 - vertPos.xyz);// Red
+//    vec3 color2 = vec3(noiseColor.xyz);// Blue
+//
+//    // Mix the two colors based on the oscillating value
+//    // vec3 final_color = mix(color1, color2, oscillating_value);
+//    // float distance = 1 - length(vertPos /1.25);
+//    // gl_FragColor = vec4(final_color.xyz, 0.5);
+//    // gl_FragColor = vec4(vec3(0, 1.0, 1.0)*distance, 1);
+//    //  gl_FragColor = vec4(final_color.rgb, noiseColor.a);
+//
+//    float distance = length(vertPos);
+//
+//    // Define glow color and intensity
+//    vec3 glowColor = vec3(0.5, 1, 1);// Blue glow color
+//    float glowIntensity = 0.5;
+//
+//    // Calculate distortion based on time
+//    float distortion = sin(time * 4) * 0.05;// Adjust the amplitude and frequency as needed
+//
+//    // Add some noise to the distance calculation based on time
+//    float noisyDistance = distance + distortion;
+//
+//    // Calculate glow effect based on noisy distance
+//    vec3 glow = glowColor * glowIntensity / (noisyDistance * noisyDistance);
+//
+//    // Output final fragment color with glow effect
+//   // gl_FragColor = vec4(glow, noiseColor.a);
+//    gl_FragColor = mix(mainColor,noiseColor,noiseColor.b);
 }

@@ -21,5 +21,7 @@ void main() {
     vec3 color1 = vec3(0,1,1);
     vec3 color2 = vec3(1,1,1);
     vec3 new = mix(color1,color2,vertexPos.y +0.3);
-    gl_FragColor = vec4(new,  max(1- length(vertexPos - vec3(0, 0.75, 0)) *1.35, 0.2));
+    float alpha =  max(1- length(vertexPos - vec3(0, 0.75, 0)) *1.35, 0.2);
+    float alphaGlow = 0.5 +1 * (sin(time *4)) * 0.25;
+    gl_FragColor = vec4(new, alphaGlow);
 }
