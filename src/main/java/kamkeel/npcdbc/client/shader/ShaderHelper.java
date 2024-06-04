@@ -26,7 +26,8 @@ public final class ShaderHelper {
 
 	private static final int VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB;
 	private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;
-
+	public static int currentProgram;
+	
 	public static int pylonGlow = 0;
 	public static int enchanterRune = 0;
 	public static int manaPool = 0;
@@ -78,13 +79,11 @@ public final class ShaderHelper {
 	public static void useShader(int shader, IShaderUniform uniforms) {
 		if (!useShaders())
 			return;
-
 		//binds shader
-		ARBShaderObjects.glUseProgramObjectARB(shader);
-
+		ARBShaderObjects.glUseProgramObjectARB(currentProgram = shader);
+		
 		if (shader != 0) { //loads all uniforms
-			int time = ARBShaderObjects.glGetUniformLocationARB(shader, "time");
-			ARBShaderObjects.glUniform1fARB(time, ClientProxy.getTimeSinceStart());
+			uniform1f("time", ClientProxy.getTimeSinceStart());
 			
 			if (uniforms != null)
 				loadUniforms(shader, uniforms);
@@ -225,6 +224,42 @@ public final class ShaderHelper {
 		return source.toString();
 	}
 
+
+	//////////////////////////////////////////////////
+	//////////////////////////////////////////////////
+	//Uniform helpers
+	public static void uniform1f(String name, float x) {
+		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+		ARBShaderObjects.glUniform1fARB(uniformLocation, x);
+	}
+
+	public static void uniformVec2(String name, float x, float y) {
+		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+		ARBShaderObjects.glUniform2fARB(uniformLocation, x, y);
+	}
+
+	public static void uniformVec3(String name, float x, float y, float z) {
+		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+		ARBShaderObjects.glUniform3fARB(uniformLocation, x, y, z);
+	}
+
+	public static void uniformVec4(String name, float x, float y, float z, float w) {
+		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+		ARBShaderObjects.glUniform4fARB(uniformLocation, x, y, z, w);
+	}
+
+	public static void uniformTexture(String name, int textureUnit, String textureLoc) {
+		ShaderHelper.loadTextureUnit(textureUnit, textureLoc);
+		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+		ARBShaderObjects.glUniform1iARB(uniformLocation, textureUnit);
+	}
+
+	public static void uniformColor(String name, int color, float alpha) {
+		float r = (color >> 16 & 255) / 255f;
+		float g = (color >> 8 & 255) / 255f;
+		float b = (color & 255) / 255f;
+		uniformVec4(name, r, g, b, alpha);
+	}
 }
 /* BUILT-IN GLSL 120 VERTEX ATTRIBUTES
 

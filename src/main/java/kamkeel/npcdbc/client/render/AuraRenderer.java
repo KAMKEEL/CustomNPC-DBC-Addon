@@ -22,7 +22,6 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.util.ValueUtil;
-import org.lwjgl.opengl.ARBShaderObjects;
 
 import java.util.Random;
 
@@ -144,21 +143,11 @@ public class AuraRenderer extends RenderDBC {
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Shader stuff
-        float r = ((aura.color1 >> 16 & 255) / 255f);
-        float g = ((aura.color1 >> 8 & 255) / 255f);
-        float b = ((aura.color1 & 255) / 255f);
-
         this.renderManager.renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:aurag.png"));
-        ShaderHelper.loadTextureUnit(2, ShaderResources.PERLIN_NOISE); //NOISE HERE
         IShaderUniform uniforms = shader -> {
-            int rgbaLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "rgba");
-            ARBShaderObjects.glUniform4fARB(rgbaLocation, r, g, b, 0.5f);
-
-            int center = ARBShaderObjects.glGetUniformLocationARB(shader, "center");
-            ARBShaderObjects.glUniform3fARB(center, (float) aura.entity.posX, (float) aura.entity.posY, (float) aura.entity.posZ);
-
-            int textureLocation = ARBShaderObjects.glGetUniformLocationARB(shader, "noiseTexture");
-            ARBShaderObjects.glUniform1iARB(textureLocation, 2);
+            ShaderHelper.uniformColor("rgba", aura.color1, 1f);
+            ShaderHelper.uniformVec3("center", (float) aura.entity.posX, (float) aura.entity.posY, (float) aura.entity.posZ);
+            ShaderHelper.uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
         };
 
         ShaderHelper.useShader(ShaderHelper.aura, uniforms);
