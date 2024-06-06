@@ -232,6 +232,13 @@ public class Utility {
         }
     }
 
+    public static float lerp(float a, float b, float position) {
+        return a + (b - a) * position;
+    }
+    public static double lerp(double a, double b, float position) {
+        return a + (b - a) * position;
+    }
+    
     @SideOnly(Side.CLIENT)
     public static void playClientSound(String directory, Entity entity, boolean all){
         new ClientSound(new SoundSource(directory, entity)).play(all);

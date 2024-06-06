@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.client;
+package kamkeel.npcdbc.client.particle;
 
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import JinRyuu.JRMCore.entity.EntityCusPar;

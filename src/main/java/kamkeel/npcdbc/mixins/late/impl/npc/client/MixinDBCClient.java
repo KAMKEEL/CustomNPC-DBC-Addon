@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
 import kamkeel.addon.client.DBCClient;
-import kamkeel.npcdbc.client.ParticleFormHandler;
+import kamkeel.npcdbc.client.particle.ParticleFormHandler;
 import kamkeel.npcdbc.client.gui.SubGuiDBCProperties;
 import kamkeel.npcdbc.client.gui.global.form.GuiNPCManageForms;
 import kamkeel.npcdbc.client.gui.inventory.GuiDBC;
