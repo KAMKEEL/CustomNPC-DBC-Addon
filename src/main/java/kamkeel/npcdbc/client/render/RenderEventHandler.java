@@ -169,17 +169,22 @@ public class RenderEventHandler {
         //  data.outline = null;
         if (data.outline != null) {
             glPushMatrix();
+
             useShader(ShaderHelper.outline, shader -> {
                 uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
-                uniformColor("innerColor", data.outline.innerColor, 1);
-                uniformColor("outerColor", data.outline.outerColor, 1);
-                uniform1f("noiseSize", 3f);
+                uniformTextureResolution("texRes", ShaderResources.PERLIN_NOISE);
+                uniformColor("innerColor", 0x00ffff, 1);
+                uniformColor("outerColor", 0xffffff, 1);
+                uniform1f("noiseSize", 1f);
                 uniform1f("range", 0.4f);
                 uniform1f("threshold", 0.5f);
-                uniform1f("noiseSpeed", 3);
+                uniform1f("noiseSpeed", 1);
                 uniform1f("throbSpeed", 1f);
-            });
 
+                float[] blurKernel = new float[]{1.f, 2.f, 1.f, 2.f, 4.f, 2.f, 1.f, 2.f, 1.f};
+                uniformArray("blurKernel", blurKernel);
+                uniform1f("blurIntensity", 1f);
+            });
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             Sphere s = new Sphere();
             // s.draw(2, 36, 18);

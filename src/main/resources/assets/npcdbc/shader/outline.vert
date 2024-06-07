@@ -6,7 +6,7 @@ uniform float time;
 uniform sampler2D noiseTexture;
 uniform float throbSpeed;
 
-
+varying vec4 originalColor;
 
 
 
@@ -28,4 +28,5 @@ void main() {
     vertexPos = gl_Vertex;
     texCoord = vec2(gl_MultiTexCoord0);
     modelView = gl_ModelViewMatrix * vertexPos;
+    originalColor = gl_Color;
 }
