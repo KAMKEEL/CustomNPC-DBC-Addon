@@ -17,11 +17,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 public final class ShaderHelper {
 
@@ -98,13 +101,6 @@ public final class ShaderHelper {
 		uniforms.load(shader);
 	}
 	
-	public static void loadTextureUnit(int textureUnit, String textureLoc) {
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		OpenGlHelper.setActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
-		noppes.npcs.client.ClientProxy.bindTexture(new ResourceLocation(textureLoc));
-		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
-	}
-
 	public static void useShader(int shader) {
 		useShader(shader, null);
 	}
@@ -237,6 +233,23 @@ public final class ShaderHelper {
 		ARBShaderObjects.glUniform1fARB(uniformLocation, x);
 	}
 
+	public static void uniformArray(String name, float[] array) {
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(array.length);
+		buffer.put(array);
+		buffer.flip();
+
+		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+		ARBShaderObjects.glUniform1ARB(uniformLocation, buffer);
+	}
+
+	public static void uniformArray(String name, int[] array) {
+		IntBuffer buffer = BufferUtils.createIntBuffer(array.length);
+		buffer.put(array);
+		buffer.flip();
+		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+		ARBShaderObjects.glUniform1ARB(uniformLocation, buffer);
+	}
+
 	public static void uniformVec2(String name, float x, float y) {
 		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
 		ARBShaderObjects.glUniform2fARB(uniformLocation, x, y);
@@ -252,10 +265,28 @@ public final class ShaderHelper {
 		ARBShaderObjects.glUniform4fARB(uniformLocation, x, y, z, w);
 	}
 
+	public static void loadTextureUnit(int textureUnit, String textureLoc) {
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		OpenGlHelper.setActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
+		noppes.npcs.client.ClientProxy.bindTexture(new ResourceLocation(textureLoc));
+		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+	}
+
 	public static void uniformTexture(String name, int textureUnit, String textureLoc) {
 		ShaderHelper.loadTextureUnit(textureUnit, textureLoc);
 		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
 		ARBShaderObjects.glUniform1iARB(uniformLocation, textureUnit);
+	}
+
+	public static void uniformTextureResolution(String name, String textureLoc) {
+		int previousTexture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+		noppes.npcs.client.ClientProxy.bindTexture(new ResourceLocation(textureLoc));
+
+		float width = GL11.glGetTexLevelParameterf(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+		float height = GL11.glGetTexLevelParameterf(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
+		uniformVec2(name, width, height);
+
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, previousTexture);
 	}
 
 	public static void uniformColor(String name, int color, float alpha) {
