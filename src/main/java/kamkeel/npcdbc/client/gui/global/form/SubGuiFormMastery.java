@@ -45,12 +45,12 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
 
         int y = guiTop + 3;
 
-        // TODO: Fix Resizing Bug
         GuiScrollWindow scrollWindow = new GuiScrollWindow(this, guiLeft +4, y, xSize-9, ySize-7, 0);
         addScrollableGui(0, scrollWindow);
         int maxScroll = -20;
 
-        y -= 15;
+
+        y = 5;
 
         scrollWindow.addLabel(new GuiNpcLabel(1,"mastery.maxLevel", 4, y + 5));
         scrollWindow.addTextField(new GuiNpcTextField(1, this, 135, y, 40, 20, String.valueOf(form.mastery.maxLevel)));
