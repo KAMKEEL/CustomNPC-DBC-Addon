@@ -624,7 +624,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                     aur.setAlp((float) aura.display.alpha / 255);
 
                 if (aura.display.hasSpeed())
-                    aur.setSpd((int) aura.display.speed);
+                    aur.setSpd(aura.display.speed);
             }
             try {
                 GL11.glPushMatrix();

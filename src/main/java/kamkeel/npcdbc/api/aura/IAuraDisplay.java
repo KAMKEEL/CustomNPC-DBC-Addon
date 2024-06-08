@@ -73,7 +73,7 @@ public interface IAuraDisplay {
      * @return legal types: ssgod, godofdestruction, ui, mui, ssb, ssrose, ssroseevo, ssbkk, shinka
      */
     void setType2D(String type2D);
-    
+
     boolean hasColor(String type);
 
     /**
@@ -143,12 +143,12 @@ public interface IAuraDisplay {
 
     boolean hasSpeed();
 
-    float getSpeed();
+    int getSpeed();
 
     /**
      * @param speed How fast aura should go through its lifecycle in ticks. DBC Default is 40 ticks. The lower, the faster
      */
-    void setSpeed(float speed);
+    void setSpeed(int speed);
 
 
 

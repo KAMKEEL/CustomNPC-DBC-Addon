@@ -121,7 +121,7 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
             addLabel(new GuiNpcLabel(201, "display.speed", guiLeft + 240, y + 5));
             addTextField(new GuiNpcTextField(201, this, guiLeft + 315, y, 40, 20, String.valueOf(auraDisplay.speed)));
             getTextField(201).setMaxStringLength(10);
-            getTextField(201).floatsOnly = true;
+            getTextField(201).integersOnly = true;
             getTextField(201).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
 
             y += 23;
@@ -323,7 +323,7 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         }
         else if(guiNpcTextField.id == 201) {
             // Speed
-            auraDisplay.speed = guiNpcTextField.getFloat();
+            auraDisplay.speed = guiNpcTextField.getInteger();
         }
         else if(guiNpcTextField.id == 203) {
             // TextField for lightning alpha in the "Lightning" tab
@@ -493,7 +493,7 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
                 aur.setAlp((float) aura.display.alpha / 255);
 
             if (aura.display.hasSpeed())
-                aur.setSpd((int) aura.display.speed);
+                aur.setSpd(aura.display.speed);
 
             try {
                 GL11.glPushMatrix();

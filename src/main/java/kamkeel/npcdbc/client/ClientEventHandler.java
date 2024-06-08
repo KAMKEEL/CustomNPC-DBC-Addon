@@ -411,7 +411,7 @@ public class ClientEventHandler {
             aur.setAlp((float) aura.display.alpha / 255);
 
         if (aura.display.hasSpeed())
-            aur.setSpd((int) aura.display.speed);
+            aur.setSpd(aura.display.speed);
 
         //Kettle Mode stuff
         if (aura.display.kettleModeCharging)
@@ -462,7 +462,7 @@ public class ClientEventHandler {
             kaiokenAura.setCol(aura.display.kaiokenColor);
 
         if (aura.display.hasSpeed())
-            kaiokenAura.setSpd((int) aura.display.speed);
+            kaiokenAura.setSpd(aura.display.speed);
 
         ((IEntityAura) kaiokenAura).setSize(aura.display.size * aura.display.kaiokenSize);
         ((IEntityAura) kaiokenAura).setHasLightning(aura.display.hasLightning);

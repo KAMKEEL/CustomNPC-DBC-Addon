@@ -158,7 +158,7 @@ public class EntityAura extends Entity {
 
 
             if (display.hasSpeed())
-                speed = (int) display.speed;
+                speed = display.speed;
 
             if (entity instanceof EntityNPCInterface)
                 size = (float) ((EntityNPCInterface) entity).display.modelSize / 5;
@@ -194,7 +194,7 @@ public class EntityAura extends Entity {
             color1 = display.kaiokenColor;
 
         if (aura.display.hasSpeed())
-            speed = (int) display.speed;
+            speed = display.speed;
 
         size = display.size * display.kaiokenSize;
 
@@ -383,7 +383,7 @@ public class EntityAura extends Entity {
         float scaledAuraHeight = height * size;
         if(entity instanceof EntityNPCInterface)
             scaledAuraHeight = entity.height * size;
-        
+
         float yOffset = -0.05f + scaledAuraHeight + scaledAuraHeight * (scaledAuraHeight / 50) * 2.25f;
 
         boolean client = Minecraft.getMinecraft().thePlayer == entity;

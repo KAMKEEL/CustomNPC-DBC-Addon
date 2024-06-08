@@ -14,8 +14,8 @@ public class AuraDisplay implements IAuraDisplay {
     public EnumAuraTypes2D type2D = EnumAuraTypes2D.Default;
 
     public String texture1 = "", texture2 = "", texture3 = "";
-    public int color1 = -1, color2 = -1, color3 = -1, alpha = -1;
-    public float size = 1.0f, speed = -1f;
+    public int color1 = -1, color2 = -1, color3 = -1, alpha = -1, speed = -1;
+    public float size = 1.0f;
 
     public boolean hasLightning = false;
     public int lightningColor = -1, lightningAlpha = -1, lightningSpeed = -1, lightningIntensity = -1;
@@ -50,7 +50,7 @@ public class AuraDisplay implements IAuraDisplay {
         texture3 = rendering.hasKey("texture3") ? rendering.getString("texture3") : "";
 
         // Floats
-        speed = rendering.hasKey("speed") ? rendering.getFloat("speed") : -1f;
+        speed = rendering.hasKey("speed") ? rendering.getInteger("speed") : -1;
         size = rendering.hasKey("size") ? rendering.getFloat("size") : 1.0f;
 
         // Colors and Alpha
@@ -92,7 +92,7 @@ public class AuraDisplay implements IAuraDisplay {
         rendering.setString("texture1", texture1);
         rendering.setString("texture2", texture2);
         rendering.setString("texture3", texture3);
-        rendering.setFloat("speed", speed);
+        rendering.setInteger("speed", speed);
         rendering.setFloat("size", size);
 
         rendering.setInteger("color1", color1);
@@ -443,12 +443,12 @@ public class AuraDisplay implements IAuraDisplay {
     }
 
     @Override
-    public float getSpeed() {
+    public int getSpeed() {
         return speed;
     }
 
     @Override
-    public void setSpeed(float speed) {
+    public void setSpeed(int speed) {
         this.speed = speed;
     }
 
