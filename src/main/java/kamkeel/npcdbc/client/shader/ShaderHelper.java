@@ -25,11 +25,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class ShaderHelper {
 
 	private static final int VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB;
 	private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;
+	private static List<Integer> programs = new ArrayList<>();
 	public static int currentProgram;
 	
 	public static int pylonGlow = 0;
@@ -46,6 +49,7 @@ public final class ShaderHelper {
 	public static int aura = 0;
 	public static int outline = 0;
 	public static int perlinNoise = 0;
+	public static int blur = 0;
 	public static void loadShaders(boolean reload) {
 		if (!useShaders())
 			return;
@@ -67,20 +71,9 @@ public final class ShaderHelper {
 		aura = createProgram(ShaderResources.AURA_VERT, ShaderResources.AURA_FRAG);
 		outline = createProgram(ShaderResources.OUTLINE_VERT, ShaderResources.OUTLINE_FRAG);
 		perlinNoise = createProgram(ShaderResources.PERLIN_VERT, ShaderResources.PERLIN_FRAG);
+		blur = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.BLUR_FRAG);
 	}
 
-	public static void deleteShaders() {
-		ARBShaderObjects.glDeleteObjectARB(pylonGlow);
-		ARBShaderObjects.glDeleteObjectARB(enchanterRune);
-		ARBShaderObjects.glDeleteObjectARB(doppleganger);
-		ARBShaderObjects.glDeleteObjectARB(halo);
-		ARBShaderObjects.glDeleteObjectARB(dopplegangerBar);
-		ARBShaderObjects.glDeleteObjectARB(terraPlateRune);
-		ARBShaderObjects.glDeleteObjectARB(filmGrain);
-		ARBShaderObjects.glDeleteObjectARB(gold);
-		ARBShaderObjects.glDeleteObjectARB(categoryButton);
-		ARBShaderObjects.glDeleteObjectARB(aura);
-	}
 
 	public static void useShader(int shader, IShaderUniform uniforms) {
 		if (!useShaders())
@@ -117,20 +110,20 @@ public final class ShaderHelper {
 	// http://lwjgl.org/wiki/index.php?title=GLSL_Shaders_with_LWJGL
 
 	private static int createProgram(String vert, String frag) {
-		int vertId = 0, fragId = 0, program = 0;
+		int vertexShader = 0, fragmentShader = 0, program = 0;
 		if (vert != null)
-			vertId = createShader(vert, VERT);
+			vertexShader = createShader(vert, VERT);
 		if (frag != null)
-			fragId = createShader(frag, FRAG);
+			fragmentShader = createShader(frag, FRAG);
 
 		program = ARBShaderObjects.glCreateProgramObjectARB();
 		if (program == 0)
 			return 0;
 
 		if (vert != null)
-			ARBShaderObjects.glAttachObjectARB(program, vertId);
+			ARBShaderObjects.glAttachObjectARB(program, vertexShader);
 		if (frag != null)
-			ARBShaderObjects.glAttachObjectARB(program, fragId);
+			ARBShaderObjects.glAttachObjectARB(program, fragmentShader);
 
 		ARBShaderObjects.glLinkProgramARB(program);
 		if (ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB) == GL11.GL_FALSE) {
@@ -144,6 +137,10 @@ public final class ShaderHelper {
 			return 0;
 		}
 
+		ARBShaderObjects.glDeleteObjectARB(vertexShader);
+		ARBShaderObjects.glDeleteObjectARB(fragmentShader);
+
+		programs.add(program);
 		return program;
 	}
 
@@ -224,6 +221,11 @@ public final class ShaderHelper {
 		return source.toString();
 	}
 
+	public static void deleteShaders() {
+		for (Integer p : programs)
+			ARBShaderObjects.glDeleteObjectARB(p);
+	}
+
 
 	//////////////////////////////////////////////////
 	//////////////////////////////////////////////////
@@ -238,16 +240,14 @@ public final class ShaderHelper {
 		buffer.put(array);
 		buffer.flip();
 
-		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
-		ARBShaderObjects.glUniform1ARB(uniformLocation, buffer);
+		uniformBuffer(name, buffer);
 	}
 
 	public static void uniformArray(String name, int[] array) {
 		IntBuffer buffer = BufferUtils.createIntBuffer(array.length);
 		buffer.put(array);
 		buffer.flip();
-		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
-		ARBShaderObjects.glUniform1ARB(uniformLocation, buffer);
+		uniformBuffer(name, buffer);
 	}
 
 	public static void uniformVec2(String name, float x, float y) {
@@ -295,6 +295,19 @@ public final class ShaderHelper {
 		float b = (color & 255) / 255f;
 		uniformVec4(name, r, g, b, alpha);
 	}
+
+	public static void uniformBuffer(String name, FloatBuffer buffer) {
+		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+		ARBShaderObjects.glUniform1ARB(uniformLocation, buffer);
+	}
+
+	public static void uniformBuffer(String name, IntBuffer buffer) {
+		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+		ARBShaderObjects.glUniform1ARB(uniformLocation, buffer);
+	}
+
+	
+
 }
 /* BUILT-IN GLSL 120 VERTEX ATTRIBUTES
 

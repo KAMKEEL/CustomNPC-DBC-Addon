@@ -18,12 +18,15 @@ public class ShaderResources {
     public static final String GOLD_FRAG = PREFIX_SHADER + "gold.frag";
     public static final String CATEGORY_BUTTON_FRAG = PREFIX_SHADER + "category_button.frag";
 
+    public static final String DEFAULT_VERT = PREFIX_SHADER + "default.vert";
+
     public static final String AURA_VERT = PREFIX_SHADER + "aura.vert";
     public static final String AURA_FRAG = PREFIX_SHADER + "aura.frag";
     public static final String OUTLINE_VERT = PREFIX_SHADER + "outline.vert";
     public static final String OUTLINE_FRAG = PREFIX_SHADER + "outline.frag";
     public static final String PERLIN_VERT = PREFIX_SHADER + "perlin.vert";
     public static final String PERLIN_FRAG = PREFIX_SHADER + "perlin.frag";
+    public static final String BLUR_FRAG = PREFIX_SHADER + "blur.frag";
     
     public static final String PERLIN_NOISE = CustomNpcPlusDBC.ID + ":textures/noise/noise.png";
     

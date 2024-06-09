@@ -3,12 +3,14 @@ package kamkeel.npcdbc.client;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
+import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ModItems;
@@ -29,6 +31,7 @@ public class ClientProxy extends CommonProxy {
     public static boolean RenderingOutline;
     public static final int MiddleRenderPass = 1684;
     public static Instant startTime;
+    public static int rendering, defaultRendering;
 
     public static void eventsInit() {
         FMLCommonHandler.instance().bus().register(new ClientEventHandler());
@@ -36,6 +39,9 @@ public class ClientProxy extends CommonProxy {
 
         FMLCommonHandler.instance().bus().register(new RenderEventHandler());
         MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
+
+        FMLCommonHandler.instance().bus().register(new PostProcessing());
+        MinecraftForge.EVENT_BUS.register(new PostProcessing());
 
 
     }
@@ -56,6 +62,9 @@ public class ClientProxy extends CommonProxy {
         startTime = Instant.now();
         
         
+    }
+
+    public void postInit(FMLPostInitializationEvent ev) {
     }
 
     public static float getTimeSinceStart() {

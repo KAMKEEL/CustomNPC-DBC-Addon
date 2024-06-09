@@ -59,6 +59,8 @@ public class CustomNpcPlusDBC {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
+        proxy.postInit(event);
+        
         PacketHandler.Instance = new PacketHandler();
         PacketHandler.Instance.register();
     }

@@ -2,6 +2,7 @@ package kamkeel.npcdbc;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import kamkeel.npcdbc.api.AbstractDBCAPI;
@@ -27,6 +28,9 @@ public class CommonProxy {
 
     public void init(FMLInitializationEvent ev) {
         NpcAPI.Instance().addGlobalObject("DBCAPI", AbstractDBCAPI.Instance());
+    }
+
+    public void postInit(FMLPostInitializationEvent ev) {
     }
 
     public EntityPlayer getPlayerEntity(MessageContext ctx) {
