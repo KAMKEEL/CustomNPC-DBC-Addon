@@ -4,6 +4,8 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -17,6 +19,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -122,6 +125,15 @@ public class RenderEventHandler {
 
     }
 
+    public static void tempPre(PostProcessing.Event.Pre e) {
+
+    }
+
+    public static void tempPost(PostProcessing.Event.Post e) {
+        Framebuffer buff = e.frameBuffer;
+        PostProcessing.renderQuad(ClientProxy.rendering, buff.framebufferWidth * 0.55f, 0, buff.framebufferWidth, buff.framebufferHeight * 0.45f);
+        // renderQuad(ClientProxy.rendering, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+    }
 
     public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm) {
         ShaderHelper.releaseShader();
@@ -168,8 +180,15 @@ public class RenderEventHandler {
         data.outline = new PlayerOutline(0x00ffff, 0xffffff);
         //  data.outline = null;
         if (data.outline != null) {
-            glPushMatrix();
+            // ClientProxy.rendering = ClientProxy.defaultRendering;
+            ClientProxy.rendering = PostProcessing.COLOR_BUFFER_2;
+            PostProcessing.drawToBuffer(0);
+          //  glClearColor(0, 0, 0, 0);
+          //  glClear(GL_COLOR_BUFFER_BIT); 
+            
 
+
+            glPushMatrix();
             useShader(ShaderHelper.outline, shader -> {
                 uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
                 uniformTextureResolution("texRes", ShaderResources.PERLIN_NOISE);
@@ -192,6 +211,7 @@ public class RenderEventHandler {
             PlayerOutline.renderOutline(render, player, partialTicks, isArm);
             releaseShader();
             glPopMatrix();
+            PostProcessing.resetDrawBuffer();
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
             ((IEntityMC) player).setRenderPass(0);
         }
