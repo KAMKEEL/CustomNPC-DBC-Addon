@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.entity.ModelBipedBody;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import org.lwjgl.opengl.GL11;
 
 public class ModelPotara extends ModelBipedBody {
 
@@ -93,6 +94,38 @@ public class ModelPotara extends ModelBipedBody {
         setRotationAngles(f, f1, f2, f3, f4, f5, entity);
         copyRotationData(Head, bipedHead);
         this.isSneak = entity.isSneaking();
-        Head.render(f5);
+
+
+        renderHeadpiece(f5);
+    }
+
+    private void renderHeadpiece(float scale){
+        float scalar;
+
+        if (g <= 1) {
+            if (this.isChild) {
+                scalar = 2.0F;
+                GL11.glPushMatrix();
+                GL11.glScalef(1.5F / scalar, 1.5F / scalar, 1.5F / scalar);
+                GL11.glTranslatef(0.0F, 16.0F * scale, 0.0F);
+                this.bipedHead.render(scale);
+                GL11.glPopMatrix();
+            }else{
+                scalar = f;
+                GL11.glPushMatrix();
+                GL11.glScalef(0.5F + 0.5F / scalar, 0.5F + 0.5F / scalar, 0.5F + 0.5F / scalar);
+                GL11.glTranslatef(0.0F, (scalar - 1.0F) / scalar * (2.0F - (scalar >= 1.5F && scalar <= 2.0F ? (2.0F - scalar) / 2.5F : (scalar < 1.5F && scalar >= 1.0F ? (scalar * 2.0F - 2.0F) * 0.2F : 0.0F))), 0.0F);
+                this.Head.render(scale);
+                GL11.glPopMatrix();
+            }
+
+        }else{
+            scalar = f;
+            GL11.glPushMatrix();
+            GL11.glScalef((0.5F + 0.5F / scalar) * (g <= 1 ? 1.0F : 0.85F), 0.5F + 0.5F / scalar, (0.5F + 0.5F / scalar) * (g <= 1 ? 1.0F : 0.85F));
+            GL11.glTranslatef(0.0F, (scalar - 1.0F) / scalar * (2.0F - (scalar >= 1.5F && scalar <= 2.0F ? (2.0F - scalar) / 2.5F : (scalar < 1.5F && scalar >= 1.0F ? (scalar * 2.0F - 2.0F) * 0.2F : 0.0F))), 0.0F);
+            this.Head.render(scale);
+            GL11.glPopMatrix();
+        }
     }
 }
