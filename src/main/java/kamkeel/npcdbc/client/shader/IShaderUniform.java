@@ -5,6 +5,6 @@ package kamkeel.npcdbc.client.shader;
  */
 public interface IShaderUniform {
 
-	void load(int shader);
+	void load();
 
 }

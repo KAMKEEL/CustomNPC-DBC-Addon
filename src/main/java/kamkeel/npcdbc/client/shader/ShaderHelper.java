@@ -34,6 +34,7 @@ public final class ShaderHelper {
 	private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;
 	private static List<Integer> programs = new ArrayList<>();
 	public static int currentProgram;
+    public static int defaultTexture = 0;
 
 	public static int pylonGlow = 0;
 	public static int enchanterRune = 0;
@@ -49,13 +50,16 @@ public final class ShaderHelper {
 	public static int aura = 0;
 	public static int outline = 0;
 	public static int perlinNoise = 0;
-	public static int blur = 0;
+    public static int blur = 0;
+    public static int additiveCombine = 0;
+
 	public static void loadShaders(boolean reload) {
 		if (!useShaders())
 			return;
 
 		if (reload)
 			deleteShaders();
+        defaultTexture = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.DEFAULT_TEXTURE_FRAG);
 
 		pylonGlow = createProgram(null, ShaderResources.PYLON_GLOW_FRAG);
 		enchanterRune = createProgram(null, ShaderResources.ENCHANTER_RUNE_FRAG);
@@ -71,7 +75,9 @@ public final class ShaderHelper {
 		aura = createProgram(ShaderResources.AURA_VERT, ShaderResources.AURA_FRAG);
 		outline = createProgram(ShaderResources.OUTLINE_VERT, ShaderResources.OUTLINE_FRAG);
 		perlinNoise = createProgram(ShaderResources.PERLIN_VERT, ShaderResources.PERLIN_FRAG);
+
 		blur = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.BLUR_FRAG);
+        additiveCombine = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.ADDITIVE_COMBINE_FRAG);
 	}
 
 
@@ -86,12 +92,12 @@ public final class ShaderHelper {
 			uniformVec2("u_resolution", Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
 
             if (uniforms != null)
-				loadUniforms(shader, uniforms);
+                loadUniforms(uniforms);
 		}
 	}
 
-	public static void loadUniforms(int shader, IShaderUniform uniforms) {
-		uniforms.load(shader);
+    public static void loadUniforms(IShaderUniform uniforms) {
+        uniforms.load();
 	}
 
 	public static void useShader(int shader) {
@@ -287,7 +293,17 @@ public final class ShaderHelper {
 		ARBShaderObjects.glUniform1iARB(uniformLocation, textureUnit);
 	}
 
-	public static void uniformTextureResolution(String name, String textureLoc) {
+    public static void uniformTexture(String name, int textureUnit, int textureID) {
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        OpenGlHelper.setActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+        int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+        ARBShaderObjects.glUniform1iARB(uniformLocation, textureUnit);
+        OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+    }
+
+
+    public static void uniformTextureResolution(String name, String textureLoc) {
 		int previousTexture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
 		noppes.npcs.client.ClientProxy.bindTexture(new ResourceLocation(textureLoc));
 

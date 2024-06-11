@@ -60,11 +60,12 @@ public class ClientProxy extends CommonProxy {
         MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
         ShaderHelper.loadShaders(false);
         startTime = Instant.now();
-        
-        
+
+
     }
 
     public void postInit(FMLPostInitializationEvent ev) {
+        PostProcessing.init(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
     }
 
     public static float getTimeSinceStart() {

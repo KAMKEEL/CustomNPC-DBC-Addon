@@ -73,7 +73,7 @@ public class AuraRenderer extends RenderDBC {
         double interPosX = aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks - RenderManager.renderPosX;
         double interPosY = aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks - RenderManager.renderPosY;
         double interPosZ = aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks - RenderManager.renderPosZ;
-        
+
         byte race = aura.auraData.getRace();
         byte state = aura.auraData.getState();
         int speed = aura.speed;
@@ -144,7 +144,7 @@ public class AuraRenderer extends RenderDBC {
         ////////////////////////////////////////
         //Shader stuff
         this.renderManager.renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:aurag.png"));
-        IShaderUniform uniforms = shader -> {
+        IShaderUniform uniforms = () -> {
             ShaderHelper.uniformColor("rgba", aura.color1, 1f);
             ShaderHelper.uniformVec3("center", (float) aura.entity.posX, (float) aura.entity.posY, (float) aura.entity.posZ);
             ShaderHelper.uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
@@ -200,7 +200,7 @@ public class AuraRenderer extends RenderDBC {
                     glColor4f(color, alpha);
                     //  this.renderManager.renderEngine.bindTexture(aura.text1);
                     //   model.auraModel.render(0.0625f);
-                    
+
                 }
                 glPopMatrix();
 
