@@ -32,10 +32,9 @@ import org.lwjgl.util.glu.Sphere;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 
-import static kamkeel.npcdbc.client.shader.PostProcessing.renderQuad;
+import static kamkeel.npcdbc.client.shader.PostProcessing.bloomBuffers;
 import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
 import static org.lwjgl.opengl.GL11.*;
-
 public class RenderEventHandler {
     public static FloatBuffer PRE_RENDER_MODELVIEW = BufferUtils.createFloatBuffer(16);
 
@@ -132,20 +131,43 @@ public class RenderEventHandler {
 
     public static void tempPost(PostProcessing.Event.Post e) {
         Framebuffer buff = e.frameBuffer;
-        useShader(blur, shader -> {
-            uniform1i("horizontal", 0);
+        // PostProcessing.blurFilter(ClientProxy.rendering,1f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+
+
+        //  GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, PostProcessing.bloomBuffers[0]);
+        for (int i = 0; i < bloomBuffers.length; i++) {
+            //  GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, buff.framebufferObject);
+            // GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, bloomBuffers[i]);
+//
+            //  GL30.glBlitFramebuffer(0, 0, buff.framebufferWidth, buff.framebufferHeight, 0, 0, buff.framebufferWidth >> (i + 1), buff.framebufferHeight >> (i + 1), GL11.GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        }
+        //glBindTexture(GL_TEXTURE_2D, PostProcessing.bloomTextures[4]);
+        //  PostProcessing.renderQuad(buff.framebufferTexture, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+        // glBindTexture(GL_TEXTURE_2D, 0);
+        //////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////
+        //blurring done to main buffer
+        buff.bindFramebuffer(false);
+        PostProcessing.drawToBuffer(2);
+        // PostProcessing.blurFilter(ClientProxy.rendering, 10f, buff.framebufferWidth * 0.55f, 0, buff.framebufferWidth, buff.framebufferHeight * 0.45f);
+        PostProcessing.blurFilter(ClientProxy.rendering, 4f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+        PostProcessing.resetDrawBuffer();
+        buff.unbindFramebuffer();
+
+        //////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////
+        //Both textures combined in default buffer
+        buff.bindFramebufferTexture();
+        useShader(additiveCombine, () -> {
+            uniformTexture("texture2", 2, PostProcessing.MAIN_BLOOM_TEXTURE);
         });
-       // renderQuad(ClientProxy.rendering, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-          PostProcessing.renderQuad(ClientProxy.rendering, buff.framebufferWidth * 0.55f, 0, buff.framebufferWidth, buff.framebufferHeight * 0.45f);
+        PostProcessing.renderQuad(buff.framebufferTexture, buff.framebufferWidth * 0.55f, 0, buff.framebufferWidth, buff.framebufferHeight * 0.45f);
+        // GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+        //  PostProcessing.renderQuad(ClientProxy.rendering, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
         releaseShader();
-        useShader(blur, shader -> {
-            uniform1i("horizontal", 1);
-        });
-       // renderQuad(ClientProxy.rendering, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-        PostProcessing.renderQuad(ClientProxy.rendering, buff.framebufferWidth * 0.55f, 0, buff.framebufferWidth, buff.framebufferHeight * 0.45f);
-        releaseShader();
-        //  releaseShader();
-        // renderQuad(ClientProxy.rendering, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+        buff.unbindFramebufferTexture();
+
+
     }
 
     public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm) {
@@ -194,15 +216,19 @@ public class RenderEventHandler {
         //  data.outline = null;
         if (data.outline != null) {
             // ClientProxy.rendering = ClientProxy.defaultRendering;
-            ClientProxy.rendering = PostProcessing.COLOR_BUFFER_2;
+            ClientProxy.rendering = PostProcessing.MAIN_BLOOM_TEXTURE;
             PostProcessing.drawToBuffer(2);
+            //  GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, bloomBuffers[0]);
+            // glEnable(GL_DEPTH_TEST);
+
             glClearColor(0, 0, 0, 0);
             glClear(GL_COLOR_BUFFER_BIT);
+            //PostProcessing.drawToBuffer(0,2);
 
 
 
             glPushMatrix();
-            useShader(ShaderHelper.outline, shader -> {
+            useShader(ShaderHelper.outline, () -> {
                 uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
                 uniformTextureResolution("texRes", ShaderResources.PERLIN_NOISE);
                 uniformColor("innerColor", 0x00ffff, 1);
@@ -211,7 +237,7 @@ public class RenderEventHandler {
                 uniform1f("range", 0.4f);
                 uniform1f("threshold", 0.5f);
                 uniform1f("noiseSpeed", 1);
-                uniform1f("throbSpeed", 1f);
+                uniform1f("throbSpeed", 0f);
 
                 float[] blurKernel = new float[]{1.f, 2.f, 1.f, 2.f, 4.f, 2.f, 1.f, 2.f, 1.f};
                 uniformArray("blurKernel", blurKernel);
@@ -225,6 +251,7 @@ public class RenderEventHandler {
             releaseShader();
             glPopMatrix();
             PostProcessing.resetDrawBuffer();
+            // bindMainBuffer();
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
             ((IEntityMC) player).setRenderPass(0);
         }

@@ -66,7 +66,8 @@ public class ClientProxy extends CommonProxy {
 
     public void postInit(FMLPostInitializationEvent ev) {
         PostProcessing.init(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
-    }
+        PostProcessing.createMainBloomTexture();
+   }
 
     public static float getTimeSinceStart() {
         return Duration.between(startTime, Instant.now()).toMillis() / 1000f;

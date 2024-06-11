@@ -2,6 +2,7 @@ package kamkeel.npcdbc.mixins.early.impl.client;
 
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,6 +15,9 @@ public class MixinMinecraft {
     private void pre(int width, int height, CallbackInfo ci) {
         PostProcessing.deleteBuffers();
         PostProcessing.init(width, height);
+
+        TextureUtil.deleteTexture(PostProcessing.MAIN_BLOOM_TEXTURE);
+        PostProcessing.createMainBloomTexture();
     }
 
 }
