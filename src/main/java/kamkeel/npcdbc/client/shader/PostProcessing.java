@@ -20,16 +20,12 @@ public class PostProcessing {
 
     @SubscribeEvent
     public void preProcess(PostProcessing.Event.Pre e) {
-       // RenderEventHandler.tempPre(e);
-
-
+        RenderEventHandler.tempPre(e);
     }
 
     @SubscribeEvent
     public void postProcess(PostProcessing.Event.Post e) {
-    //    RenderEventHandler.tempPost(e);
-
-
+        RenderEventHandler.tempPost(e);
     }
 
 

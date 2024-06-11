@@ -32,6 +32,7 @@ import org.lwjgl.util.glu.Sphere;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 
+import static kamkeel.npcdbc.client.shader.PostProcessing.renderQuad;
 import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -114,7 +115,7 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
-        
+
         ////////////////////////////////////////
         ////////////////////////////////////////
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
@@ -131,7 +132,19 @@ public class RenderEventHandler {
 
     public static void tempPost(PostProcessing.Event.Post e) {
         Framebuffer buff = e.frameBuffer;
+        useShader(blur, shader -> {
+            uniform1i("horizontal", 0);
+        });
+       // renderQuad(ClientProxy.rendering, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+          PostProcessing.renderQuad(ClientProxy.rendering, buff.framebufferWidth * 0.55f, 0, buff.framebufferWidth, buff.framebufferHeight * 0.45f);
+        releaseShader();
+        useShader(blur, shader -> {
+            uniform1i("horizontal", 1);
+        });
+       // renderQuad(ClientProxy.rendering, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
         PostProcessing.renderQuad(ClientProxy.rendering, buff.framebufferWidth * 0.55f, 0, buff.framebufferWidth, buff.framebufferHeight * 0.45f);
+        releaseShader();
+        //  releaseShader();
         // renderQuad(ClientProxy.rendering, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
     }
 
@@ -182,10 +195,10 @@ public class RenderEventHandler {
         if (data.outline != null) {
             // ClientProxy.rendering = ClientProxy.defaultRendering;
             ClientProxy.rendering = PostProcessing.COLOR_BUFFER_2;
-            PostProcessing.drawToBuffer(0);
-          //  glClearColor(0, 0, 0, 0);
-          //  glClear(GL_COLOR_BUFFER_BIT); 
-            
+            PostProcessing.drawToBuffer(2);
+            glClearColor(0, 0, 0, 0);
+            glClear(GL_COLOR_BUFFER_BIT);
+
 
 
             glPushMatrix();
@@ -239,7 +252,7 @@ public class RenderEventHandler {
     public void renderHand(DBCPlayerEvent.RenderArmEvent.Post e) {
         renderPlayer(e.entityPlayer, e.renderer, e.partialRenderTick, true);
     }
-    
+
     public void newerAuraTemp(EntityAura aura, float partialTicks) {
         double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - RenderManager.renderPosX;
         double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - RenderManager.renderPosY;

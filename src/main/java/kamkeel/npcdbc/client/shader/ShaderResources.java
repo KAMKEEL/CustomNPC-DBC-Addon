@@ -3,7 +3,7 @@ package kamkeel.npcdbc.client.shader;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 
 public class ShaderResources {
-    public static final String PREFIX_SHADER = "/assets/npcdbc/shader/";
+    public static final String PREFIX_SHADER = "/assets/npcdbc/shader/";//CustomNpcPlusDBC.ID + ":shader/";
 
 
     public static final String PYLON_GLOW_FRAG = PREFIX_SHADER + "pylon_glow.frag";
@@ -27,7 +27,7 @@ public class ShaderResources {
     public static final String PERLIN_VERT = PREFIX_SHADER + "perlin.vert";
     public static final String PERLIN_FRAG = PREFIX_SHADER + "perlin.frag";
     public static final String BLUR_FRAG = PREFIX_SHADER + "blur.frag";
-    
+
     public static final String PERLIN_NOISE = CustomNpcPlusDBC.ID + ":textures/noise/noise.png";
-    
+
 }

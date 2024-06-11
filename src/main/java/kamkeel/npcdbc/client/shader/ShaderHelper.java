@@ -34,7 +34,7 @@ public final class ShaderHelper {
 	private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;
 	private static List<Integer> programs = new ArrayList<>();
 	public static int currentProgram;
-	
+
 	public static int pylonGlow = 0;
 	public static int enchanterRune = 0;
 	public static int manaPool = 0;
@@ -80,12 +80,12 @@ public final class ShaderHelper {
 			return;
 		//binds shader
 		ARBShaderObjects.glUseProgramObjectARB(currentProgram = shader);
-		
+
 		if (shader != 0) { //loads all uniforms
 			uniform1f("time", ClientProxy.getTimeSinceStart());
 			uniformVec2("u_resolution", Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
-			
-			if (uniforms != null)
+
+            if (uniforms != null)
 				loadUniforms(shader, uniforms);
 		}
 	}
@@ -93,7 +93,7 @@ public final class ShaderHelper {
 	public static void loadUniforms(int shader, IShaderUniform uniforms) {
 		uniforms.load(shader);
 	}
-	
+
 	public static void useShader(int shader) {
 		useShader(shader, null);
 	}
@@ -172,12 +172,17 @@ public final class ShaderHelper {
 
 	private static String readFile(String filename) throws Exception {
 		StringBuilder source = new StringBuilder();
-		InputStream in = ShaderHelper.class.getResourceAsStream(filename);
+        //   ResourceLocation rscloc = new ResourceLocation(filename);
+        //   IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(rscloc);
+
+        InputStream in = ShaderHelper.class.getResourceAsStream(filename);//resource.getInputStream();
 		Exception exception = null;
 		BufferedReader reader;
 
-		if (in == null)
-			return "";
+        if (in == null) {
+            FMLLog.log(Level.ERROR, "Resource not found: " + filename);
+            return "";
+        }
 
 		try {
 			reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
@@ -235,6 +240,10 @@ public final class ShaderHelper {
 		ARBShaderObjects.glUniform1fARB(uniformLocation, x);
 	}
 
+    public static void uniform1i(String name, int x) {
+        int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+        ARBShaderObjects.glUniform1iARB(uniformLocation, x);
+    }
 	public static void uniformArray(String name, float[] array) {
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(array.length);
 		buffer.put(array);
@@ -306,7 +315,6 @@ public final class ShaderHelper {
 		ARBShaderObjects.glUniform1ARB(uniformLocation, buffer);
 	}
 
-	
 
 }
 /* BUILT-IN GLSL 120 VERTEX ATTRIBUTES

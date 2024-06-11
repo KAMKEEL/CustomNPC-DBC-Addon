@@ -272,7 +272,7 @@ public class EntityAura extends Entity {
             ((IEntityMC) entity).setRenderPass(renderPass = 0);
         else if (renderPass == 0)
            ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
-     
+
         if (isKaioken) {
             if (parent.isVanillaDefault && !DBCForm.isSaiyanGod(auraData.getState()))
                 fadeOut = true;
