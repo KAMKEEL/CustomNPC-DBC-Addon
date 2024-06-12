@@ -52,6 +52,7 @@ public final class ShaderHelper {
 	public static int perlinNoise = 0;
     public static int blur = 0;
     public static int additiveCombine = 0;
+    public static int bloomCombine = 0;
 
 	public static void loadShaders(boolean reload) {
 		if (!useShaders())
@@ -78,6 +79,7 @@ public final class ShaderHelper {
 
 		blur = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.BLUR_FRAG);
         additiveCombine = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.ADDITIVE_COMBINE_FRAG);
+        bloomCombine = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.BLOOM_COMBINE_FRAG);
 	}
 
 
@@ -297,9 +299,9 @@ public final class ShaderHelper {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         OpenGlHelper.setActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+        OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
         int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
         ARBShaderObjects.glUniform1iARB(uniformLocation, textureUnit);
-        OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 
 

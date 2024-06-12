@@ -32,6 +32,5 @@ public class MixinFrameBuffer {
     private void post(int p_147615_1_, int p_147615_2_, CallbackInfo ci) {
         PostProcessing.Event.Post event = new PostProcessing.Event.Post((Framebuffer) (Object) this, activeTexture);
         MinecraftForge.EVENT_BUS.post(event);
-
     }
 }

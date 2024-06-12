@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.render;
 
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.entity.EntityCusPar;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientProxy;
@@ -26,15 +27,19 @@ import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
+import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.glu.Sphere;
 
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 
-import static kamkeel.npcdbc.client.shader.PostProcessing.bloomBuffers;
+import static kamkeel.npcdbc.client.shader.PostProcessing.*;
 import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
 import static org.lwjgl.opengl.GL11.*;
+
 public class RenderEventHandler {
     public static FloatBuffer PRE_RENDER_MODELVIEW = BufferUtils.createFloatBuffer(16);
 
@@ -131,26 +136,64 @@ public class RenderEventHandler {
 
     public static void tempPost(PostProcessing.Event.Post e) {
         Framebuffer buff = e.frameBuffer;
-        // PostProcessing.blurFilter(ClientProxy.rendering,1f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
 
-
-        //  GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, PostProcessing.bloomBuffers[0]);
         for (int i = 0; i < bloomBuffers.length; i++) {
-            //  GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, buff.framebufferObject);
-            // GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, bloomBuffers[i]);
-//
-            //  GL30.glBlitFramebuffer(0, 0, buff.framebufferWidth, buff.framebufferHeight, 0, 0, buff.framebufferWidth >> (i + 1), buff.framebufferHeight >> (i + 1), GL11.GL_COLOR_BUFFER_BIT, GL_LINEAR);
+            if (bloomBuffers[i] <= 0)
+                continue;
+            GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, bloomBuffers[i]);
+            glClearColor(0, 0, 0, 0);
+            glClear(GL_COLOR_BUFFER_BIT);
         }
-        //glBindTexture(GL_TEXTURE_2D, PostProcessing.bloomTextures[4]);
-        //  PostProcessing.renderQuad(buff.framebufferTexture, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-        // glBindTexture(GL_TEXTURE_2D, 0);
+
+
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, buff.framebufferObject);
+        PostProcessing.drawToBuffer(3);
+        blurFilter(MAIN_BLUR_TEXTURE, 1f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+        blurFilter(MAIN_BLUR_TEXTURE, 1f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+        blurFilter(MAIN_BLUR_TEXTURE, 1, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+        resetDrawBuffer();
+
+        GL11.glReadBuffer(GL30.GL_COLOR_ATTACHMENT3);
+        GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, bloomBuffers[0]);
+        GL30.glBlitFramebuffer(0, 0, buff.framebufferWidth, buff.framebufferHeight, 0, 0, buff.framebufferWidth >> 1, buff.framebufferHeight >> 1, GL11.GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+        int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
+        if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
+            FMLLog.log(Level.ERROR, "Failed to blit FBO: " + status);
+
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+        GL11.glReadBuffer(GL11.GL_BACK);
+
+
+        for (int i = 0; i < bloomBuffers.length; i++) {
+            if (bloomBuffers[i] <= 0 || i + 1 >= bloomBuffers.length)
+                continue;
+            GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, bloomBuffers[i]);
+            GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, bloomBuffers[i + 1]);
+
+            GL30.glBlitFramebuffer(0, 0, buff.framebufferWidth >> (i + 1), buff.framebufferHeight >> (i + 1), 0, 0, buff.framebufferWidth >> (i + 2), buff.framebufferHeight >> (i + 2), GL11.GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+            status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
+            if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
+                FMLLog.log(Level.ERROR, "Failed to blit FBO: " + status);
+        }
+
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //blurring done to main buffer
         buff.bindFramebuffer(false);
         PostProcessing.drawToBuffer(2);
-        // PostProcessing.blurFilter(ClientProxy.rendering, 10f, buff.framebufferWidth * 0.55f, 0, buff.framebufferWidth, buff.framebufferHeight * 0.45f);
-        PostProcessing.blurFilter(ClientProxy.rendering, 4f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+        useShader(bloomCombine);
+        for (int i = 0; i < bloomTextures.length; i++) {
+            //   GL13.glActiveTexture(GL_TEXTURE0 + i + 2);
+            //   glBindTexture(GL_TEXTURE_2D, bloomTextures[i]);
+            if (i == 0) {
+                uniformTexture("textureMain", 0, MAIN_BLOOM_TEXTURE);
+                uniformTexture("textureBlur", 1, MAIN_BLUR_TEXTURE);
+            }
+            uniformTexture("texture" + i, i + 2, bloomTextures[i]);
+        }
+        PostProcessing.renderQuad(-1, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
         PostProcessing.resetDrawBuffer();
         buff.unbindFramebuffer();
 
@@ -159,13 +202,11 @@ public class RenderEventHandler {
         //Both textures combined in default buffer
         buff.bindFramebufferTexture();
         useShader(additiveCombine, () -> {
-            uniformTexture("texture2", 2, PostProcessing.MAIN_BLOOM_TEXTURE);
+            uniformTexture("texture2", 2, MAIN_BLOOM_TEXTURE);
         });
-        PostProcessing.renderQuad(buff.framebufferTexture, buff.framebufferWidth * 0.55f, 0, buff.framebufferWidth, buff.framebufferHeight * 0.45f);
-        // GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-        //  PostProcessing.renderQuad(ClientProxy.rendering, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+        PostProcessing.renderQuad(buff.framebufferTexture, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+
         releaseShader();
-        buff.unbindFramebufferTexture();
 
 
     }
@@ -217,7 +258,7 @@ public class RenderEventHandler {
         if (data.outline != null) {
             // ClientProxy.rendering = ClientProxy.defaultRendering;
             ClientProxy.rendering = PostProcessing.MAIN_BLOOM_TEXTURE;
-            PostProcessing.drawToBuffer(2);
+            PostProcessing.drawToBuffer(2, 3);
             //  GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, bloomBuffers[0]);
             // glEnable(GL_DEPTH_TEST);
 

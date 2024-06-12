@@ -43,8 +43,8 @@ void main() {
     uv = uv / noiseSize;
     vec3 color;
     vec3 noise =gaussianBlur(uv);
-   
-    
+
+
     float t = smoothstep(threshold-range, threshold+range, noise.g);
     color = mix(innerColor, outerColor, t).rgb;
 
@@ -55,8 +55,8 @@ void main() {
     // if(mainSample.a < 0.5)
     // discard;
     //  color = mix(color, mainSample.rgb * col.rgb,(sin(time * 0.5) + 1)*0.5);
-    
-    gl_FragColor = vec4(color.rgb, alphaGlow);
+
+    gl_FragColor = vec4(color.rgb, 1.);
 }
 
 

@@ -31,6 +31,6 @@ public class ShaderResources {
 
     public static final String BLUR_FRAG = PREFIX_SHADER + "blur.frag";
     public static final String ADDITIVE_COMBINE_FRAG = PREFIX_SHADER + "AdditiveCombine.frag";
-
+    public static final String BLOOM_COMBINE_FRAG = PREFIX_SHADER + "bloom.frag";
 
 }
