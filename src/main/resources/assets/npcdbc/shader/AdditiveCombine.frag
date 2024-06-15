@@ -12,8 +12,11 @@ void main() {
     // if(color2.a > 0)
     //  gl_FragColor = color1 * color2 * 10.;
     // else{
-    gl_FragColor = color1 + color2 * 2.;
+    //color2 = color2 / (color2 + vec4(1.));
+    float exposure = 1.;
+    color2.rgb = vec3(1.0) - exp(-color2.rgb * exposure);//tone mapping
 
-    // }
+    //color2.rgb = pow(color2.rgb, vec3(1./1.3));//gamma correction
+    gl_FragColor = color1 + color2;
 
 }

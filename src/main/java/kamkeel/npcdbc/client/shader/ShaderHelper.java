@@ -52,8 +52,8 @@ public final class ShaderHelper {
 	public static int perlinNoise = 0;
     public static int blur = 0;
     public static int additiveCombine = 0;
-    public static int bloomCombine = 0;
-
+    public static int downsample13 = 0;
+    public static int upsampleTent = 0;
 	public static void loadShaders(boolean reload) {
 		if (!useShaders())
 			return;
@@ -79,7 +79,8 @@ public final class ShaderHelper {
 
 		blur = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.BLUR_FRAG);
         additiveCombine = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.ADDITIVE_COMBINE_FRAG);
-        bloomCombine = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.BLOOM_COMBINE_FRAG);
+        downsample13 = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.DOWNSAMPLE_13TAP_FRAG);
+        upsampleTent = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.UPSAMPLE_FILTER);
 	}
 
 

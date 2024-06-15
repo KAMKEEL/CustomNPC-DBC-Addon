@@ -11,20 +11,31 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.shader.Framebuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class PostProcessing {
-    public static int MAIN_BLOOM_TEXTURE, MAIN_BLUR_TEXTURE;
+    public static int MAIN_BLOOM_TEXTURE;
     public static int BLOOM_BUFFERS_LENGTH = 10;
     public static int[] bloomBuffers = new int[BLOOM_BUFFERS_LENGTH];
     public static int[] bloomTextures = new int[bloomBuffers.length];
+    public static int blankTexture;
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
+
 
     public static void init(int width, int height) {
         int previousBuffer = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
@@ -33,7 +44,7 @@ public class PostProcessing {
 
             int mipWidth = width >> (i + 1);
             int mipHeight = height >> (i + 1);
-            if (mipWidth <= 0 || mipHeight <= 0)
+            if (mipWidth < 15 || mipHeight < 7)
                 break;
 
             bloomBuffers[i] = OpenGlHelper.func_153165_e();
@@ -41,6 +52,8 @@ public class PostProcessing {
 
             bloomTextures[i] = TextureUtil.glGenTextures();
             glBindTexture(GL_TEXTURE_2D, bloomTextures[i]);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, mipWidth, mipHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
@@ -52,18 +65,57 @@ public class PostProcessing {
             if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
                 throw new RuntimeException("Framebuffer " + i + " is not complete: " + status);
 
-            glClearColor(0, 0, 0, 0);
+            glClearColor(0, 0, 0, 1f);
             glClear(GL_COLOR_BUFFER_BIT);
         }
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, previousBuffer);
 
     }
 
+    public static void saveTextureToPNG(int textureID) {
+        // Framebuffer fbo = PostProcessing.getMainBuffer();
+        //  System.out.println("Main FBO res: " + fbo.framebufferTextureWidth + "x" + fbo.framebufferTextureHeight);
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        int width = (int) GL11.glGetTexLevelParameterf(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+        int height = (int) GL11.glGetTexLevelParameterf(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
+
+        //System.out.println("res: " + width + "x" + height);
+        ByteBuffer buffer = ByteBuffer.allocateDirect(width * height * 4);
+        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int index = (x + (height - y - 1) * width) * 4; // Vertical flip
+                int r = buffer.get(index) & 0xFF;
+                int g = buffer.get(index + 1) & 0xFF;
+                int b = buffer.get(index + 2) & 0xFF;
+                int a = buffer.get(index + 3) & 0xFF;
+                int argb = (a << 24) | (r << 16) | (g << 8) | b;
+                image.setRGB(x, y, argb);
+            }
+        }
+
+        // Save BufferedImage to PNG file
+        String desktopPath = System.getProperty("user.home") + "/Desktop/image/";
+        String filename = desktopPath + dateFormat.format(new Date()) + "_" + textureID + ".png";
+        File file = new File(filename);
+
+        try {
+            ImageIO.write(image, "PNG", file);
+            System.out.println("Texture saved to: " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Failed to write PNG file: " + e.getMessage());
+        }
+
+    }
     public static void deleteBuffers() {
         for (int i = 0; i < bloomBuffers.length; i++) {
-            if (bloomTextures[i] > -1)
+            if (bloomTextures[i] > 0)
                 TextureUtil.deleteTexture(bloomTextures[i]);
-            if (bloomBuffers[i] > -1)
+            if (bloomBuffers[i] > 0)
                 OpenGlHelper.func_153174_h(bloomBuffers[i]);
         }
         bloomBuffers = new int[BLOOM_BUFFERS_LENGTH];
@@ -121,22 +173,24 @@ public class PostProcessing {
         fb.bindFramebuffer(false);
         MAIN_BLOOM_TEXTURE = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, MAIN_BLOOM_TEXTURE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, fb.framebufferTextureWidth, fb.framebufferTextureHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
         OpenGlHelper.func_153188_a(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, MAIN_BLOOM_TEXTURE, 0);
 
-        MAIN_BLUR_TEXTURE = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, MAIN_BLUR_TEXTURE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, fb.framebufferTextureWidth, fb.framebufferTextureHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
-        OpenGlHelper.func_153188_a(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, MAIN_BLUR_TEXTURE, 0);
-
         int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
         if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
             throw new RuntimeException("Framebuffer is not complete: " + status);
 
+        blankTexture = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, blankTexture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, fb.framebufferTextureWidth, fb.framebufferTextureHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
 
         ClientProxy.rendering = ClientProxy.defaultRendering = fb.framebufferTexture;
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, previousBuffer);

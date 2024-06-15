@@ -9,6 +9,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
@@ -55,7 +56,7 @@ public class ClientEventHandler {
        // ticksInGame = 0;
 
     }
-    
+
     @SubscribeEvent
     public void onSkill(TickEvent.PlayerTickEvent event) {
         if (event.side == Side.SERVER || event.player == null)
@@ -74,6 +75,12 @@ public class ClientEventHandler {
             if (Keyboard.isKeyDown(Keyboard.KEY_L) || Mouse.isButtonDown(3) || Mouse.isButtonDown(2)) {
                 Minecraft.getMinecraft().refreshResources();
                 ShaderHelper.loadShaders(true);
+            }
+            if (Keyboard.isKeyDown(Keyboard.KEY_F10)) {
+                for (int i : PostProcessing.bloomTextures) {
+                    if (i > 0)
+                        PostProcessing.saveTextureToPNG(i);
+                }
             }
         }
     }
