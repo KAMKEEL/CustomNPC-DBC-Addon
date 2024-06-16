@@ -36,6 +36,7 @@ import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
+    public static final int TAIL_STENCIL_ID = 2;
     public static FloatBuffer PRE_RENDER_MODELVIEW = BufferUtils.createFloatBuffer(16);
 
     @SubscribeEvent

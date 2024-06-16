@@ -14,6 +14,7 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 
+import static kamkeel.npcdbc.client.render.RenderEventHandler.disableStencilWriting;
 import static org.lwjgl.opengl.GL11.*;
 
 public class PlayerOutline {
@@ -49,13 +50,12 @@ public class PlayerOutline {
         else
             ((IEntityMC) player).setRenderPass(ClientProxy.MiddleRenderPass);
 
-        glPushMatrix();
+
         GL11.glEnable(GL_BLEND);
-        GL11.glDisable(GL_LIGHTING);
         GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glAlphaFunc(GL_GREATER, 0.003921569F);
+        GL11.glDisable(GL_LIGHTING);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-       // glDepthMask(true);
+        glPushMatrix();
 
         ///////////////////////////////////
         ///////////////////////////////////
@@ -65,26 +65,43 @@ public class PlayerOutline {
         ColorMode.glColorInt(outline.outerColor, outline.outerAlpha);
         float size = scale * factor * outline.innerSize;
         glScalef(size, 1.025f * factor, size);
+
         glPushMatrix();
         glTranslatef(0, -0.020f, 0);
-        if (isArm)
+        if (isArm) {
+            glTranslatef(0.018f, 0, 0);
             renderDBCArm(player, render);
+        }
         else
-            renderDBCPlayer(player, render);
+            render.modelMain.renderBody(0.0625F);
         glPopMatrix();
 
         if (!isArm)
             renderHair(player, render);
-
         glPopMatrix();
 
-        glPushMatrix();
-        glScalef(1.025f * 1.025f * outline.outerSize, 1.025f, 1.025f * 1.025f * outline.outerSize);
+        if (!isArm) {
+            disableStencilWriting(player.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID, false);
+            glPushMatrix();
+            glScalef(1.02f * 1.01f * outline.outerSize, 1, 1.02f * 1.02f * outline.outerSize);
 
-        if (!isArm)
-            renderMisc(player, render);
+            DBCData data = DBCData.get(player);
+            int race = data.Race;
 
-        glPopMatrix();
+            if (race == DBCRace.NAMEKIAN) {
+                render.modelMain.renderHairs(0.0625F, "N");
+            } else if (DBCRace.isSaiyan(race)) {
+                byte ts = Byte.parseByte(JRMCoreH.dat19[data.stats.getJRMCPlayerID()].split(";")[0]);
+                render.modelMain.renderHairs(0.0625F, ts != 0 && ts != -1 ? (ts == 1 ? "SJT2" : "") : "SJT1");
+            } else if (race == DBCRace.ARCOSIAN) {
+                byte ts = Byte.parseByte(JRMCoreH.dat19[data.stats.getJRMCPlayerID()].split(";")[0]);
+                render.modelMain.renderHairs(0.0625F, (ts == 4 ? "n" : "") + "FR" + JRMCoreH.TransFrHrn[data.State]);
+            }
+
+            glPopMatrix();
+            disableStencilWriting(player.getEntityId(), false);
+        }
+
 
         ///////////////////////////////////
         ///////////////////////////////////
@@ -118,38 +135,12 @@ public class PlayerOutline {
 
         ///////////////////////////////////
         ///////////////////////////////////
-        GL11.glAlphaFunc(GL_GREATER, 0.1F);
-        GL11.glDisable(GL_BLEND);
-        GL11.glEnable(GL_LIGHTING);
-        GL11.glEnable(GL_TEXTURE_2D);
-        glDepthMask(true);
         glPopMatrix();
+        GL11.glEnable(GL_LIGHTING);
+        GL11.glDisable(GL_BLEND);
+        GL11.glEnable(GL_TEXTURE_2D);
         ClientProxy.RenderingOutline = false;
 
-    }
-
-
-    public static void renderDBCPlayer(EntityPlayer player, RenderPlayerJBRA renderer) {
-        DBCData data = DBCData.get(player);
-        int race = data.Race;
-
-        renderer.modelMain.renderBody(0.0625F);
-        if (race == DBCRace.NAMEKIAN)
-            renderer.modelMain.renderHairs(0.0625F, "N");
-
-    }
-
-    public static void renderMisc(EntityPlayer player, RenderPlayerJBRA renderer) {
-        DBCData data = DBCData.get(player);
-        int race = data.Race;
-
-        if (DBCRace.isSaiyan(race)) {
-            byte ts = Byte.parseByte(JRMCoreH.dat19[data.stats.getJRMCPlayerID()].split(";")[0]);
-            renderer.modelMain.renderHairs(0.0625F, ts != 0 && ts != -1 ? (ts == 1 ? "SJT2" : "") : "SJT1");
-        } else if (race == DBCRace.ARCOSIAN) {
-            byte ts = Byte.parseByte(JRMCoreH.dat19[data.stats.getJRMCPlayerID()].split(";")[0]);
-            renderer.modelMain.renderHairs(0.0625F, (ts == 4 ? "n" : "") + "FR" + JRMCoreH.TransFrHrn[data.State]);
-        }
     }
 
     public static void renderHair(EntityPlayer player, RenderPlayerJBRA renderer) {
