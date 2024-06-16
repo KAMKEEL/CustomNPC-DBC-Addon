@@ -67,21 +67,22 @@ public class PostProcessing {
         //////////////////////////////////////////////////////////////////
         //Down Sampling in a mip chain
         glBindFramebuffer(GL30.GL_FRAMEBUFFER, bloomBuffers[0]);
-        useShader(downsample13);
+        glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT);
         glViewport(0, 0, buff.framebufferWidth >> 1, buff.framebufferHeight >> 1);
+        useShader(downsample13);
         renderQuad(MAIN_BLOOM_TEXTURE, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-
+        blurFilter(bloomTextures[0], 2.5f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
 
         int downSamples = 0;
         for (int i = 0; i < bloomBuffers.length; i++) {
             if (bloomBuffers[i] <= 0 || i + 1 >= bloomBuffers.length)
                 continue;
-            glBindFramebuffer(GL30.GL_FRAMEBUFFER, bloomBuffers[i + 1]);
             int mipWidth = buff.framebufferWidth >> (i + 2), mipHeight = buff.framebufferHeight >> (i + 2);
+            glBindFramebuffer(GL30.GL_FRAMEBUFFER, bloomBuffers[i + 1]);
             glViewport(0, 0, mipWidth, mipHeight);
             useShader(downsample13);
             renderQuad(bloomTextures[i], 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-
             downSamples = i + 1;
         }
 
@@ -99,11 +100,7 @@ public class PostProcessing {
 
             drawToBuffers(2);
             glViewport(0, 0, mipWidth, mipHeight);
-            //useShader(upsampleTent);
-            // renderQuad(lower, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
             blurFilter(lower, 1f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-            // blurFilter(blankTexture, 4f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-            // blurFilter(blankTexture, 4f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
             resetDrawBuffer();
             int lowerUpscaled = blankTexture;
 

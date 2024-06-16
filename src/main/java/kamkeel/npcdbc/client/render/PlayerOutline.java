@@ -71,7 +71,7 @@ public class PlayerOutline {
             uniform1f("range", 0.21f);
             uniform1f("threshold", 0.55f);
             uniform1f("noiseSpeed", 1);
-            uniform1f("throbSpeed", 3f);
+            uniform1f("throbSpeed", 0f);
         });
 
         float scale = 1.025f, factor = 1.025f;
