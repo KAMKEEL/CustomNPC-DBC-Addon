@@ -17,11 +17,11 @@ void main() {
 
     mat4 scalingMatrix = mat4(
     size, 0.0, 0.0, 0.0,
-    0.0, size, 0.0, 0.0,
+    0.0, 1., 0.0, 0.0,
     0.0, 0.0, size, 0.0,
     0.0, 0.0, 0.0, 1.0
     );
-    
+
     //vec3 newPosition = gl_Vertex.xyz + gl_Normal * displacement;
     gl_Position = gl_ModelViewProjectionMatrix* scalingMatrix * gl_Vertex;
 

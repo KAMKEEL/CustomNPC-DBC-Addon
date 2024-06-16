@@ -6,7 +6,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
-import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -32,7 +31,6 @@ import java.nio.FloatBuffer;
 import java.util.Iterator;
 
 import static kamkeel.npcdbc.client.shader.PostProcessing.processBloom;
-import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
@@ -136,6 +134,10 @@ public class RenderEventHandler {
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         EntityAura aura = data.auraEntity;
 
+        if (ConfigDBCClient.EnableBloom) {
+            PostProcessing.drawToBuffers(0, 2);
+            processBloom = true;
+        }
 
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -172,39 +174,15 @@ public class RenderEventHandler {
         data.outline = new PlayerOutline(0x00ffff, 0xffffff);
         //  data.outline = null;
         if (data.outline != null) {
-            if (ConfigDBCClient.EnableBloom) {
-                PostProcessing.drawToBuffers(0, 2);
-                processBloom = true;
-            }
-
-            glPushMatrix();
-            useShader(ShaderHelper.outline, () -> {
-                uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
-                uniformTextureResolution("texRes", ShaderResources.PERLIN_NOISE);
-                uniformColor("innerColor", 0x00ffff, 1);
-                uniformColor("outerColor", 0xffffff, 1);
-                uniform1f("noiseSize", 1f);
-                uniform1f("range", 0.21f);
-                uniform1f("threshold", 0.55f);
-                uniform1f("noiseSpeed", 1);
-                uniform1f("throbSpeed", 0f);
-
-                float[] blurKernel = new float[]{1.f, 2.f, 1.f, 2.f, 4.f, 2.f, 1.f, 2.f, 1.f};
-                uniformArray("blurKernel", blurKernel);
-                uniform1f("blurIntensity", 1f);
-            });
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             Sphere s = new Sphere();
             int sphereTrans = 10;
             glTranslatef(0, 0, sphereTrans);
-            // s.draw(6, 36, 18);
+            //    s.draw(6, 36, 18);
             glTranslatef(0, 0, -sphereTrans);
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
             PlayerOutline.renderOutline(render, player, partialTicks, isArm);
-            releaseShader();
-            glPopMatrix();
-
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
             ((IEntityMC) player).setRenderPass(0);
         }
