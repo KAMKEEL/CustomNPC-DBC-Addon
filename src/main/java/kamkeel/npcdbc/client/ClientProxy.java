@@ -31,7 +31,6 @@ public class ClientProxy extends CommonProxy {
     public static boolean RenderingOutline;
     public static final int MiddleRenderPass = 1684;
     public static Instant startTime;
-    public static int rendering, defaultRendering;
 
     public static void eventsInit() {
         FMLCommonHandler.instance().bus().register(new ClientEventHandler());
@@ -39,11 +38,6 @@ public class ClientProxy extends CommonProxy {
 
         FMLCommonHandler.instance().bus().register(new RenderEventHandler());
         MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
-
-        FMLCommonHandler.instance().bus().register(new PostProcessing());
-        MinecraftForge.EVENT_BUS.register(new PostProcessing());
-
-
     }
 
     @Override
@@ -66,7 +60,6 @@ public class ClientProxy extends CommonProxy {
 
     public void postInit(FMLPostInitializationEvent ev) {
         PostProcessing.init(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
-        PostProcessing.createMainBloomTexture();
    }
 
     public static float getTimeSinceStart() {

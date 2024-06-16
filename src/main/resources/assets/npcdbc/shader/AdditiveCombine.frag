@@ -16,7 +16,9 @@ void main() {
     float exposure = 1.;
     color2.rgb = vec3(1.0) - exp(-color2.rgb * exposure);//tone mapping
 
-    //color2.rgb = pow(color2.rgb, vec3(1./1.3));//gamma correction
-    gl_FragColor = color1 + color2;
+    // color2.rgb = pow(color2.rgb, vec3(1./1.3));//gamma correction
+    vec4 color;
+    color = color1 + color2;
+    gl_FragColor =color;
 
 }

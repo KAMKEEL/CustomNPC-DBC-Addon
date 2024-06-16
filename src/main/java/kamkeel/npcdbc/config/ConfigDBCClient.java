@@ -34,6 +34,7 @@ public class ConfigDBCClient
     public static boolean AdvancedGui = false;
 
     public static boolean UseShaders = true;
+    public static boolean EnableBloom = true;
 
     public static void init(File configFile)
     {

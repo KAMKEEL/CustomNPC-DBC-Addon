@@ -55,18 +55,18 @@ public class PlayerOutline {
         GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GL11.glAlphaFunc(GL_GREATER, 0.003921569F);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-        glDepthMask(true);
-        
+       // glDepthMask(true);
+
         ///////////////////////////////////
         ///////////////////////////////////
         //Outer
-        float scale = 1.045f, factor = 1.045f;
+        float scale = 1.025f, factor = 1.025f;
         glPushMatrix();
         ColorMode.glColorInt(outline.outerColor, outline.outerAlpha);
         float size = scale * factor * outline.innerSize;
         glScalef(size, 1.025f * factor, size);
         glPushMatrix();
-        glTranslatef(0, -0.030f, 0);
+        glTranslatef(0, -0.020f, 0);
         if (isArm)
             renderDBCArm(player, render);
         else
@@ -83,39 +83,39 @@ public class PlayerOutline {
 
         if (!isArm)
             renderMisc(player, render);
-        
+
         glPopMatrix();
-        
+
         ///////////////////////////////////
         ///////////////////////////////////
         //Inner
-        glPushMatrix();
-        ColorMode.glColorInt(outline.innerColor, outline.innerAlpha); //inner
-        glScalef(scale * outline.innerSize, 1.025f, scale * outline.innerSize);
+//        glPushMatrix();
+//        ColorMode.glColorInt(outline.innerColor, outline.innerAlpha); //inner
+//        glScalef(scale * outline.innerSize, 1.025f, scale * outline.innerSize);
+//
+//        glPushMatrix();
+//        glTranslatef(0, -0.015f, 0);
+//
+//        if (isArm)
+//            renderDBCArm(player, render);
+//        else
+//            renderDBCPlayer(player, render);
+//
+//        glPopMatrix();
+//
+//        if (!isArm)
+//            renderHair(player, render);
+//
+//        glPopMatrix();
+//
+//        glPushMatrix();
+//        glScalef(1.025f, 1.025f, 1.025f);
+//
+//        if (!isArm)
+//            renderMisc(player, render);
+//
+//        glPopMatrix();
 
-        glPushMatrix();
-        glTranslatef(0, -0.015f, 0);
-
-        if (isArm)
-            renderDBCArm(player, render);
-        else
-            renderDBCPlayer(player, render);
-        
-        glPopMatrix();
-
-        if (!isArm)
-            renderHair(player, render);
-        
-        glPopMatrix();
-
-        glPushMatrix();
-        glScalef(1.025f, 1.025f, 1.025f);
-
-        if (!isArm)
-            renderMisc(player, render);
-
-        glPopMatrix();
-        
         ///////////////////////////////////
         ///////////////////////////////////
         GL11.glAlphaFunc(GL_GREATER, 0.1F);
@@ -136,7 +136,7 @@ public class PlayerOutline {
         renderer.modelMain.renderBody(0.0625F);
         if (race == DBCRace.NAMEKIAN)
             renderer.modelMain.renderHairs(0.0625F, "N");
-        
+
     }
 
     public static void renderMisc(EntityPlayer player, RenderPlayerJBRA renderer) {

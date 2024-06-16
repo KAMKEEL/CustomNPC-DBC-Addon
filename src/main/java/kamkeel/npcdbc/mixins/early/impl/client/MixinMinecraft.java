@@ -13,11 +13,7 @@ public class MixinMinecraft {
 
     @Inject(method = "resize", at = @At("TAIL"))
     private void pre(int width, int height, CallbackInfo ci) {
-        PostProcessing.deleteBuffers();
+        PostProcessing.delete();
         PostProcessing.init(width, height);
-
-        TextureUtil.deleteTexture(PostProcessing.MAIN_BLOOM_TEXTURE);
-        PostProcessing.createMainBloomTexture();
     }
-
 }

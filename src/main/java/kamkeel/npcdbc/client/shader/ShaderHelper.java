@@ -54,6 +54,7 @@ public final class ShaderHelper {
     public static int additiveCombine = 0;
     public static int downsample13 = 0;
     public static int upsampleTent = 0;
+
 	public static void loadShaders(boolean reload) {
 		if (!useShaders())
 			return;

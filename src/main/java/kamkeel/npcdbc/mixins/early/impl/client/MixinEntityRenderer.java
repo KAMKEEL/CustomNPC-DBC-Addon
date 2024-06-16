@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.early.impl.client;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.shader.PostProcessing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.culling.Frustrum;
@@ -23,6 +24,16 @@ public class MixinEntityRenderer {
         ForgeHooksClient.setRenderPass(ClientProxy.MiddleRenderPass);
         this.mc.renderGlobal.renderEntities(this.mc.renderViewEntity, frustrum.get(), partialTick);
         ForgeHooksClient.setRenderPass(-1);
-    
+
+    }
+
+    @Inject(method = "renderWorld", at = @At("HEAD"))
+    private void pre(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
+        PostProcessing.preProcess();
+    }
+
+    @Inject(method = "updateCameraAndRender", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/OpenGlHelper;shadersSupported:Z", shift = At.Shift.BEFORE))
+    private void post(float p_78480_1_, CallbackInfo ci) {
+        PostProcessing.postProcess();
     }
 }

@@ -4,10 +4,10 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.shader.ShaderResources;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
@@ -16,11 +16,9 @@ import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IRenderCusPar;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -28,18 +26,14 @@ import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.glu.Sphere;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 
-import static kamkeel.npcdbc.client.shader.PostProcessing.*;
+import static kamkeel.npcdbc.client.shader.PostProcessing.processBloom;
 import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 public class RenderEventHandler {
     public static FloatBuffer PRE_RENDER_MODELVIEW = BufferUtils.createFloatBuffer(16);
@@ -131,82 +125,6 @@ public class RenderEventHandler {
 
     }
 
-    public static void tempPre(PostProcessing.Event.Pre e) {
-
-    }
-
-    public static void tempPost(PostProcessing.Event.Post e) {
-        if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
-            return;
-
-        Framebuffer buff = e.frameBuffer;
-        glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, bloomBuffers[0]);
-        useShader(downsample13);
-        glViewport(0, 0, buff.framebufferWidth >> 1, buff.framebufferHeight >> 1);
-        renderQuad(MAIN_BLOOM_TEXTURE, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-
-        //////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////
-        //Down Sampling in a mip chain
-        int downSamples = 0;
-        for (int i = 0; i < bloomBuffers.length; i++) {
-            if (bloomBuffers[i] <= 0 || i + 1 >= bloomBuffers.length)
-                continue;
-            glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, bloomBuffers[i + 1]);
-            int mipWidth = buff.framebufferWidth >> (i + 2), mipHeight = buff.framebufferHeight >> (i + 2);
-            glViewport(0, 0, mipWidth, mipHeight);
-            useShader(downsample13);
-            renderQuad(bloomTextures[i], 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-
-            downSamples = i + 1;
-        }
-
-        //////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////
-        //Up sampling the mip chain while applying a tent filter
-        for (int i = downSamples; i > 0; i--) {
-            int lower = bloomTextures[i];
-            int mipWidth = buff.framebufferWidth >> (i), mipHeight = buff.framebufferHeight >> (i);
-
-            glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, bloomBuffers[i - 1]);
-            glBindTexture(GL_TEXTURE_2D, blankTexture);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, mipWidth, mipHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
-            OpenGlHelper.func_153188_a(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, blankTexture, 0);
-
-            drawToBuffer(2);
-            glViewport(0, 0, mipWidth, mipHeight);
-            //useShader(upsampleTent);
-            //renderQuad(lower, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-            blurFilter(lower, 1f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-            blurFilter(blankTexture, 1f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-            resetDrawBuffer();
-            int lowerUpscaled = blankTexture;
-
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_ONE, GL_ONE);
-            renderQuad(lowerUpscaled, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-            glDisable(GL_BLEND);
-
-        }
-        releaseShader();
-        glViewport(0, 0, buff.framebufferWidth, buff.framebufferHeight);
-        glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-
-        //////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////
-        //Both textures combined in default buffer
-        useShader(additiveCombine, () -> {
-            uniformTexture("texture2", 2, bloomTextures[0]);
-        });
-        PostProcessing.renderQuad(bloomTextures[0], 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-        releaseShader();
-
-        //////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////
-        //testing shit
-        // renderQuad(bloomTextures[0], 0, 0, buff.framebufferWidth, buff.framebufferHeight); //367
-
-    }
 
     public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm) {
         ShaderHelper.releaseShader();
@@ -253,10 +171,10 @@ public class RenderEventHandler {
         data.outline = new PlayerOutline(0x00ffff, 0xffffff);
         //  data.outline = null;
         if (data.outline != null) {
-            ClientProxy.rendering = PostProcessing.MAIN_BLOOM_TEXTURE;
-            PostProcessing.drawToBuffer(2);
-            glClearColor(0, 0, 0, 0);
-            glClear(GL_COLOR_BUFFER_BIT);
+            if (ConfigDBCClient.EnableBloom) {
+                PostProcessing.drawToBuffers(0, 2);
+                processBloom = true;
+            }
 
             glPushMatrix();
             useShader(ShaderHelper.outline, () -> {
@@ -265,8 +183,8 @@ public class RenderEventHandler {
                 uniformColor("innerColor", 0x00ffff, 1);
                 uniformColor("outerColor", 0xffffff, 1);
                 uniform1f("noiseSize", 1f);
-                uniform1f("range", 0.4f);
-                uniform1f("threshold", 0.5f);
+                uniform1f("range", 0.21f);
+                uniform1f("threshold", 0.55f);
                 uniform1f("noiseSpeed", 1);
                 uniform1f("throbSpeed", 0f);
 
@@ -285,7 +203,7 @@ public class RenderEventHandler {
             PlayerOutline.renderOutline(render, player, partialTicks, isArm);
             releaseShader();
             glPopMatrix();
-            PostProcessing.resetDrawBuffer();
+
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
             ((IEntityMC) player).setRenderPass(0);
         }
@@ -293,8 +211,12 @@ public class RenderEventHandler {
 
         ////////////////////////////////////////
         ////////////////////////////////////////
+        if (processBloom)
+            PostProcessing.resetDrawBuffer();
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
-        postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
+        //  postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
+        enableStencilWriting(player.getEntityId());
+
     }
 
     @SubscribeEvent
