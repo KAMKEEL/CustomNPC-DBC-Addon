@@ -126,6 +126,7 @@ public class RenderEventHandler {
 
 
     public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm) {
+
         ShaderHelper.releaseShader();
         RenderPlayerJBRA render = (RenderPlayerJBRA) renderer;
         DBCData data = DBCData.get(player);

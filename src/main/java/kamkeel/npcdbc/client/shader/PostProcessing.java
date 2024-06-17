@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.shader;
 
 import cpw.mods.fml.common.FMLLog;
+import kamkeel.npcdbc.client.modern.ModernGLHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -52,7 +53,7 @@ public class PostProcessing {
         GL11.glLoadIdentity();
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0.0D, buff.framebufferWidth, buff.framebufferHeight, 0.0D, 0, 1);
+        GL11.glOrtho(0.0D,-1,1, 0.0D, 0, 1);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glColorMask(true, true, true, false);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -63,6 +64,7 @@ public class PostProcessing {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
 
+        ModernGLHelper.render();
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //Down Sampling in a mip chain
