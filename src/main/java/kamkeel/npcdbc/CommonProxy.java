@@ -11,8 +11,11 @@ import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import noppes.npcs.scripted.NpcAPI;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class CommonProxy {
+    public static final Logger LOGGER = LogManager.getLogger(CustomNpcPlusDBC.ID);
     public static EntityPlayer CurrentJRMCTickPlayer = null;
     public static EntityPlayer CurrentAuraPlayer = null;
 

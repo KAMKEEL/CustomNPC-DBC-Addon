@@ -1,13 +1,12 @@
 package kamkeel.npcdbc.client.shader;
 
-import cpw.mods.fml.common.FMLLog;
+import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.modern.ModernGLHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.shader.Framebuffer;
-import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -172,7 +171,7 @@ public class PostProcessing {
 
             int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
             if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
-                FMLLog.log(Level.ERROR, "Framebuffer " + i + " is not complete: " + status);
+                CommonProxy.LOGGER.error("Framebuffer " + i + " is not complete: " + status);
 
             glClearColor(0, 0, 0, 1f);
             glClear(GL_COLOR_BUFFER_BIT);
@@ -190,7 +189,7 @@ public class PostProcessing {
 
         int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
         if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
-            FMLLog.log(Level.ERROR, "Framebuffer is not complete: " + status);
+            CommonProxy.LOGGER.error("Framebuffer is not complete: " + status);
 
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, previousBuffer);
 

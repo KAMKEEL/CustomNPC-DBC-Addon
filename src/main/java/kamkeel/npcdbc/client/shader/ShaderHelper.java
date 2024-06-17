@@ -1,22 +1,11 @@
-/**
- * This class was created by <Vazkii>. It's distributed as
- * part of the Botania Mod. Get the Source Code in github:
- * https://github.com/Vazkii/Botania
- * <p>
- * Botania is Open Source and distributed under the
- * Botania License: http://botaniamod.net/license.php
- * <p>
- * File Created @ [Apr 9, 2014, 11:20:26 PM (GMT)]
- */
 package kamkeel.npcdbc.client.shader;
 
-import cpw.mods.fml.common.FMLLog;
+import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
-import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
 
@@ -139,13 +128,13 @@ public final class ShaderHelper {
 
 		ARBShaderObjects.glLinkProgramARB(program);
 		if (ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB) == GL11.GL_FALSE) {
-			FMLLog.log(Level.ERROR, getLogInfo(program));
+            CommonProxy.LOGGER.error(getLogInfo(program));
 			return 0;
 		}
 
 		ARBShaderObjects.glValidateProgramARB(program);
 		if (ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL11.GL_FALSE) {
-			FMLLog.log(Level.ERROR, getLogInfo(program));
+            CommonProxy.LOGGER.error(getLogInfo(program));
 			return 0;
 		}
 
@@ -176,7 +165,7 @@ public final class ShaderHelper {
 			ARBShaderObjects.glCompileShaderARB(shader);
 
 			if (ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL11.GL_FALSE)
-				throw new RuntimeException("Error creating shader: " + getLogInfo(shader));
+                CommonProxy.LOGGER.error("Error creating shader: " + getLogInfo(shader));
 
 			return shader;
 		} catch (Exception e) {
@@ -200,7 +189,7 @@ public final class ShaderHelper {
 		BufferedReader reader;
 
         if (in == null) {
-            FMLLog.log(Level.ERROR, "Resource not found: " + filename);
+            CommonProxy.LOGGER.error("Resource not found: " + filename);
             return "";
         }
 
