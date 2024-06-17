@@ -1,10 +1,8 @@
 package kamkeel.npcdbc.client.gui.global.auras;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
-import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
-import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -16,16 +14,12 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.util.*;
-import noppes.npcs.constants.EnumDayTime;
 import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-
-import java.util.Iterator;
 
 public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener,ITextfieldListener
 {
