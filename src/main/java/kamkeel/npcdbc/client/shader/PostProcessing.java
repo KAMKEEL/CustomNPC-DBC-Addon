@@ -1,12 +1,12 @@
 package kamkeel.npcdbc.client.shader;
 
-import kamkeel.npcdbc.CommonProxy;
-import kamkeel.npcdbc.client.modern.ModernGLHelper;
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.shader.Framebuffer;
+import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -52,7 +52,7 @@ public class PostProcessing {
         GL11.glLoadIdentity();
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0.0D,-1,1, 0.0D, 0, 1);
+        GL11.glOrtho(0.0D, buff.framebufferWidth, buff.framebufferHeight, 0.0D, 0, 1);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glColorMask(true, true, true, false);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -63,7 +63,6 @@ public class PostProcessing {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
 
-        ModernGLHelper.render();
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //Down Sampling in a mip chain
@@ -171,7 +170,7 @@ public class PostProcessing {
 
             int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
             if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
-                CommonProxy.LOGGER.error("Framebuffer " + i + " is not complete: " + status);
+                FMLLog.log(Level.ERROR, "Framebuffer " + i + " is not complete: " + status);
 
             glClearColor(0, 0, 0, 1f);
             glClear(GL_COLOR_BUFFER_BIT);
@@ -189,7 +188,7 @@ public class PostProcessing {
 
         int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
         if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
-            CommonProxy.LOGGER.error("Framebuffer is not complete: " + status);
+            FMLLog.log(Level.ERROR, "Framebuffer is not complete: " + status);
 
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, previousBuffer);
 

@@ -43,7 +43,6 @@ public final class ShaderHelper {
     public static int additiveCombine = 0;
     public static int downsample13 = 0;
     public static int upsampleTent = 0;
-	public static int modern;
 
 	public static void loadShaders(boolean reload) {
 		if (!useShaders())
@@ -72,7 +71,6 @@ public final class ShaderHelper {
         additiveCombine = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.ADDITIVE_COMBINE_FRAG);
         downsample13 = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.DOWNSAMPLE_13TAP_FRAG);
         upsampleTent = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.UPSAMPLE_FILTER);
-		modern = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.DEFAULT_TEXTURE_FRAG);
 	}
 
 
@@ -117,7 +115,7 @@ public final class ShaderHelper {
 		if (frag != null)
 			fragmentShader = createShader(frag, FRAG);
 
-		program = currentProgram = ARBShaderObjects.glCreateProgramObjectARB();
+		program = ARBShaderObjects.glCreateProgramObjectARB();
 		if (program == 0)
 			return 0;
 
@@ -141,18 +139,10 @@ public final class ShaderHelper {
 		ARBShaderObjects.glDeleteObjectARB(vertexShader);
 		ARBShaderObjects.glDeleteObjectARB(fragmentShader);
 
-
-		bindAttribute(0, "vertexPosition");
-		bindAttribute(1, "colors");
-		bindAttribute(2, "texCoords");
-
 		programs.add(program);
 		return program;
 	}
 
-	public static void bindAttribute(int attribute, String variableName) {
-		GL20.glBindAttribLocation(currentProgram, attribute, variableName);
-	}
 	private static int createShader(String filename, int shaderType) {
 		int shader = 0;
 		try {

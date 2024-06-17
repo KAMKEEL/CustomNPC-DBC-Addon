@@ -1,25 +1,10 @@
-#version 400 core
+#version 120
 
-in vec3 col;
-in vec3 fragPosition;
+varying vec2 texCoord;
 
-out vec4 outColor;
-uniform sampler2D textureSampler;
+uniform sampler2D texture1;
 
-
-
-void main(void){
-    outColor = vec4(col.rgb,1.);// texture(textureSampler, passTextCoords);
+void main() {
+    vec4 color1 = texture2D(texture1, texCoord);
+    gl_FragColor = color1;
 }
-
-
-//#version 120
-//
-//varying vec2 texCoord;
-//
-//uniform sampler2D texture1;
-//
-//void main() {
-//    vec4 color1 = texture2D(texture1, texCoord);
-//    gl_FragColor = color1;
-//}

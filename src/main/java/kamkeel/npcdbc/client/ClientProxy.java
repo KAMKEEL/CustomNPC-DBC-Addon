@@ -10,7 +10,6 @@ import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
-import kamkeel.npcdbc.client.modern.ModernGLHelper;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.entity.EntityAura;
@@ -61,7 +60,6 @@ public class ClientProxy extends CommonProxy {
 
     public void postInit(FMLPostInitializationEvent ev) {
         PostProcessing.init(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
-        ModernGLHelper.init();
    }
 
     public static float getTimeSinceStart() {
