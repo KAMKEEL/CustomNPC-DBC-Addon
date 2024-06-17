@@ -22,6 +22,7 @@ public final class ShaderHelper {
 	private static final int VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB;
 	private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;
 	private static List<Integer> programs = new ArrayList<>();
+    public static boolean optifineShadersLoaded;
 	public static int currentProgram;
     public static int defaultTexture = 0;
 
@@ -240,7 +241,23 @@ public final class ShaderHelper {
 			ARBShaderObjects.glDeleteObjectARB(p);
 	}
 
+    public static boolean areOptifineShadersLoaded() {
+        try {
+            Class<?> shaders = Class.forName("shadersmod.client.Shaders");
+            try {
+                String shaderPack = (String) shaders.getMethod("getShaderPackName").invoke(null);
+                if (shaderPack != null) {
+                    return optifineShadersLoaded = true;
+                }
+            } catch (Exception e) {
+                ClientProxy.LOGGER.warn("Failed to get shader pack name");
+                e.printStackTrace();
+            }
+        } catch (ClassNotFoundException e) {
 
+        }
+        return optifineShadersLoaded = false;
+    }
 	//////////////////////////////////////////////////
 	//////////////////////////////////////////////////
 	//Uniform helpers
