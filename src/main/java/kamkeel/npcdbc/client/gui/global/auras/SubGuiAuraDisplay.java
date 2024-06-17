@@ -17,6 +17,7 @@ import net.minecraft.entity.EntityLivingBase;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityCustomNpc;
+import noppes.npcs.util.ValueUtil;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -330,6 +331,7 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         else if(guiNpcTextField.id == 205) {
             // TextField for lightning intensity in the "Lightning" tab
             auraDisplay.lightningIntensity = guiNpcTextField.getInteger();
+            auraDisplay.lightningIntensity = ValueUtil.clamp(auraDisplay.lightningIntensity, 0 , 8);
         }
         else if(guiNpcTextField.id == 3003) {
             // TextField for alpha in the "General" tab
