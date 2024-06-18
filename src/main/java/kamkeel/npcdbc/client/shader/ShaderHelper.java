@@ -79,10 +79,9 @@ public final class ShaderHelper {
 	public static void useShader(int shader, IShaderUniform uniforms) {
 		if (!useShaders())
 			return;
-		//binds shader
 		ARBShaderObjects.glUseProgramObjectARB(currentProgram = shader);
 
-		if (shader != 0) { //loads all uniforms
+        if (shader != 0) {
 			uniform1f("time", ClientProxy.getTimeSinceStart());
 			uniformVec2("u_resolution", Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
 
@@ -107,10 +106,7 @@ public final class ShaderHelper {
 		return ConfigDBCClient.UseShaders && OpenGlHelper.shadersSupported;
 	}
 
-	// Most of the code taken from the LWJGL wiki
-	// http://lwjgl.org/wiki/index.php?title=GLSL_Shaders_with_LWJGL
-
-	private static int createProgram(String vert, String frag) {
+    private static int createProgram(String vert, String frag) {
 		int vertexShader = 0, fragmentShader = 0, program = 0;
 		if (vert != null)
 			vertexShader = createShader(vert, VERT);
@@ -173,10 +169,7 @@ public final class ShaderHelper {
 
 	private static String readFile(String filename) throws Exception {
 		StringBuilder source = new StringBuilder();
-        //   ResourceLocation rscloc = new ResourceLocation(filename);
-        //   IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(rscloc);
-
-        InputStream in = ShaderHelper.class.getResourceAsStream(filename);//resource.getInputStream();
+        InputStream in = ShaderHelper.class.getResourceAsStream(filename);
 		Exception exception = null;
 		BufferedReader reader;
 

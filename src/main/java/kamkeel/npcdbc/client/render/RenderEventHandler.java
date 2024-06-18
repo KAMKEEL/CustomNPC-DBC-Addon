@@ -19,8 +19,10 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -134,11 +136,33 @@ public class RenderEventHandler {
         disableStencilWriting(player.getEntityId(), false);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         EntityAura aura = data.auraEntity;
-
         if (ConfigDBCClient.EnableBloom) {
             PostProcessing.drawToBuffers(0, 2);
             processBloom = true;
         }
+
+        glPushMatrix(); glDepthMask(false);
+        ClientProxy.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/aura.png"));
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE,GL_ONE_MINUS_DST_COLOR);
+        glColor4f(1, 1f, 1.0f, 1f);
+        glTranslatef(3.95F, -1, 0);
+        glScalef(3f, 3f, 3f);
+        glRotatef(180, 0, 0, 1);
+        glRotatef(180, 0, 1, 0);
+        PostProcessing.renderQuad(-1, -2, -1, 2, 1);
+        glPopMatrix();
+        glPushMatrix();
+        ClientProxy.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/aura.png"));
+        glColor4f(0f, 0f, 0f, 1.0f);
+      //  glDepthMask(false);
+         glTranslatef(-0.025f,-0.65f,0);
+        glScalef(5f, 2.5f, 5f);
+        glRotatef(180, 0, 0, 1);
+        glRotatef(180, 0, 1, 0);
+     //   PostProcessing.renderQuad(-1, -1, -1, 1, 1);
+       glDepthMask(true);
+        glPopMatrix();
 
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -155,6 +179,7 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         //Custom Particles
         glPushMatrix();
+
         glLoadMatrix(PRE_RENDER_MODELVIEW); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
         IRenderCusPar particleRender = null;
         for (Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator(); iter.hasNext(); ) {
@@ -216,7 +241,7 @@ public class RenderEventHandler {
         renderPlayer(e.entityPlayer, e.renderer, e.partialRenderTick, true);
     }
 
-    public void newerAuraTemp(EntityAura aura, float partialTicks) {
+    public static void newerAuraTemp(EntityAura aura, float partialTicks) {
         double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - RenderManager.renderPosX;
         double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - RenderManager.renderPosY;
         double interPosZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - RenderManager.renderPosZ;
@@ -225,9 +250,8 @@ public class RenderEventHandler {
 
         glPushMatrix();
         glEnable(GL_BLEND);
-        glDisable(GL_LIGHTING);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glAlphaFunc(GL_GREATER, 0.003921569F);
+        glDisable(GL_LIGHTING);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
         glScalef(scale, scale, scale);
@@ -244,7 +268,6 @@ public class RenderEventHandler {
         }
 
         // Reset OpenGL states
-        glAlphaFunc(GL_GREATER, 0.1F);
         glDisable(GL_BLEND);
         glEnable(GL_LIGHTING);
         glPopMatrix();

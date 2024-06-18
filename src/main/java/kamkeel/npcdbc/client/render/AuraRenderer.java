@@ -151,7 +151,7 @@ public class AuraRenderer extends RenderDBC {
         };
 
         ShaderHelper.useShader(ShaderHelper.aura, uniforms);
-        renderAura(aura, 0x97b1f4, 1.1f, 1f);
+       // renderAura(aura, 0x97b1f4, 1.1f, 1f);
         ShaderHelper.releaseShader();
         glPopMatrix();
 
