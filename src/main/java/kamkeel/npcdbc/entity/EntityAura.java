@@ -100,7 +100,7 @@ public class EntityAura extends Entity {
             else
                 type2D = EnumAuraTypes2D.getType(auraData);
         }
-        
+
         // Vanilla DBC form colors
         if (auraData instanceof DBCData && ((DBCData) auraData).State > 0)
             color1 = auraData.getDBCColor();
