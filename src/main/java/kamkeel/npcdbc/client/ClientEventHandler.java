@@ -109,7 +109,7 @@ public class ClientEventHandler {
             return false;
         if (!form.stackable.godStackable && dbcData.isForm(DBCForm.GodOfDestruction))
             return false;
-        
+
         if (form.requiredForm.containsKey((int) dbcData.Race)) {
             return form.requiredForm.get((int) dbcData.Race) == dbcData.State;
         } else {
