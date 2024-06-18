@@ -71,8 +71,6 @@ public class AuraRenderer extends RenderDBC {
         double interPosY = aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks - RenderManager.renderPosY;
         double interPosZ = aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks - RenderManager.renderPosZ;
 
-        byte race = aura.auraData.getRace();
-        byte state = aura.auraData.getState();
         int speed = aura.speed;
         int age = Math.max(1, aura.ticksExisted % speed);
         float release = Math.max(5, aura.auraData.getRelease());
@@ -113,7 +111,6 @@ public class AuraRenderer extends RenderDBC {
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0);
         glDepthMask(false);
         glPushMatrix();
@@ -147,7 +144,7 @@ public class AuraRenderer extends RenderDBC {
         ////////////////////////////////////////
         RenderEventHandler.enableStencilWriting(aura.entity.getEntityId());
         float r = rand.nextInt(50);
-        if (r < 10 && age < 10)
+        if (aura.hasLightning && r < 10 && age < 10)
             lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
         RenderEventHandler.disableStencilWriting(aura.entity.getEntityId(), false);
 
@@ -155,7 +152,7 @@ public class AuraRenderer extends RenderDBC {
         glPopMatrix();
         glDepthMask(true);
         glDisable(GL_BLEND);
-        glDisable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.5f);
         glEnable(GL_LIGHTING);
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
             glShadeModel(GL_FLAT);
