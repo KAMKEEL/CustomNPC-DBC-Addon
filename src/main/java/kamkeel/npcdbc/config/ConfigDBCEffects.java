@@ -50,10 +50,10 @@ public class ConfigDBCEffects
     public final static String OVERPOWER = "OVERPOWER";
     public static int OVERPOWER_AMOUNT = 25;
 
-    public final static String FATIGUE = "FATIGUE";
-    public static int FATIGUE_TIME = 15;
-    public static boolean FATIGUE_ZENAKI = true;
-    public static boolean FATIGUE_OVERPOWER = true;
+    public final static String EXHAUST = "EXHAUST";
+    public static int EXHAUST_TIME = 15;
+    public static boolean EXHAUST_ZENAKI = true;
+    public static boolean EXHAUST_OVERPOWER = true;
 
     public static void init(File configFile)
     {
@@ -110,12 +110,12 @@ public class ConfigDBCEffects
             OVERPOWER_AMOUNT = ValueUtil.clamp(OVERPOWER_AMOUNT, 0, 25);
 
 
-            config.addCustomCategoryComment(FATIGUE,
-                "Fatigue prevents specific effects from being applied to the player." +
+            config.addCustomCategoryComment(EXHAUST,
+                "Exhausted prevents specific effects from being applied to the player." +
                     "\nSimilar to Pain or NoFuse, it acts as a Cooldown");
-            FATIGUE_TIME = config.get(Potara, "Fatigue Time", 15, "Amount of Time in Minutes for Fatigue").getInt(15);
-            FATIGUE_ZENAKI = config.get(FATIGUE, "Fatigue Zenkai", true).getBoolean(true);
-            FATIGUE_OVERPOWER = config.get(FATIGUE, "Fatigue Overpower", true).getBoolean(true);
+            EXHAUST_TIME = config.get(Potara, "Exhaust Time", 15, "Amount of Time in Minutes for Exhaust").getInt(15);
+            EXHAUST_ZENAKI = config.get(EXHAUST, "Exhaust Zenkai", true).getBoolean(true);
+            EXHAUST_OVERPOWER = config.get(EXHAUST, "Exhaust Overpower", true).getBoolean(true);
 
         }
         catch (Exception e)

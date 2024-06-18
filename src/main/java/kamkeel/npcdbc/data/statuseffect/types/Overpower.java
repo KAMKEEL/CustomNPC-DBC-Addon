@@ -31,6 +31,6 @@ public class Overpower extends StatusEffect {
         int newRelease = ValueUtil.clamp(release, (byte) 0, maxRelease);
         dbcData.getRawCompound().setByte("jrmcRelease", (byte) newRelease);
 
-        StatusEffectController.getInstance().applyEffect(player, Effects.FATIGUE);
+        StatusEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED);
     }
 }
