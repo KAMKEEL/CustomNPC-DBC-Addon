@@ -96,8 +96,12 @@ public class EntityAura extends Entity {
             type3D = EnumAuraTypes3D.getType(auraData);
 
         type2D = display.type2D;
-        if (aura.display.type2D == EnumAuraTypes2D.Default)
-            type2D = EnumAuraTypes2D.getType(auraData);
+        if (aura.display.type2D == EnumAuraTypes2D.Default) {
+            if (type3D != EnumAuraTypes3D.None)
+                type2D = EnumAuraTypes2D.getFrom3D(type3D);
+            else
+                type2D = EnumAuraTypes2D.getType(auraData);
+        }
 
 
         // Vanilla DBC form colors
