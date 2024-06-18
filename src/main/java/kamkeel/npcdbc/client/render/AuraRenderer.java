@@ -7,9 +7,7 @@ import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.model.ModelAura;
-import kamkeel.npcdbc.client.shader.IShaderUniform;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
-import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -20,7 +18,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.Random;
@@ -109,67 +106,59 @@ public class AuraRenderer extends RenderDBC {
         double yOffset = aura.getYOffset(size);
         if (stateSizeFactor < 4)  //fixes bug in which offset is not// correct if size is too small
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
-
-        glDepthMask(true);
-        glDisable(GL_LIGHTING);
-        glEnable(GL_ALPHA_TEST);
-        glAlphaFunc(GL_GREATER, 0.05F);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //RenderEventHandler.disableStencilWriting(aura.entity.getEntityId() + 1, false);
 
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
             glShadeModel(GL_SMOOTH);
+        glDisable(GL_LIGHTING);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0);
+        glDepthMask(false);
+        glPushMatrix();
+
 
         glPushMatrix();
         glTranslated(interPosX, interPosY + yOffset, interPosZ);
         glRotatef(180, 0, 0, 1);
-        // glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
-        float sizeFactor = 0.95f;
-
-
-        ////////////////////////////////////////
-        ////////////////////////////////////////
-        //Outer
-        glPushMatrix();
-        sizeFactor = 1.1f;
         glScalef((size + pulsingSize), size, (size + pulsingSize));
-        glScalef(sizeFactor, sizeFactor * 1.1f, sizeFactor);
-       // RenderEventHandler.disableStencilWriting(aura.entity.getEntityId() + 1, false);
-        glScalef(1.2f, 1.14f, 1.2f);
-        glTranslated(0, -0.95f, 0);
-        glDepthMask(false);
+        glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
+        renderAura(aura, aura.color1, alpha, 1f);
+        glPopMatrix();
 
 
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Shader stuff
-        this.renderManager.renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:aurag.png"));
-        IShaderUniform uniforms = () -> {
-            ShaderHelper.uniformColor("rgba", aura.color1, 1f);
-            ShaderHelper.uniformVec3("center", (float) aura.entity.posX, (float) aura.entity.posY, (float) aura.entity.posZ);
-            ShaderHelper.uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
-        };
+        // this.renderManager.renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:aurag.png"));
+//        IShaderUniform uniforms = () -> {
+//            ShaderHelper.uniformColor("rgba", aura.color1, 1f);
+//            ShaderHelper.uniformVec3("center", (float) aura.entity.posX, (float) aura.entity.posY, (float) aura.entity.posZ);
+//            ShaderHelper.uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
+//        };
 
-        ShaderHelper.useShader(ShaderHelper.aura, uniforms);
-       // renderAura(aura, 0x97b1f4, 1.1f, 1f);
+        // ShaderHelper.useShader(ShaderHelper.aura, uniforms);
+
         ShaderHelper.releaseShader();
-        glPopMatrix();
 
 
         ////////////////////////////////////////
         ////////////////////////////////////////
-        //  float r = rand.nextInt(50);
-        //if (aura.hasLightning && r < 10 && age < 10)
-        //lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
+        RenderEventHandler.enableStencilWriting(aura.entity.getEntityId());
+        float r = rand.nextInt(50);
+        if (r < 10 && age < 10)
+            lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
+        RenderEventHandler.disableStencilWriting(aura.entity.getEntityId(), false);
+
 
         glPopMatrix();
-        glEnable(GL_TEXTURE_2D);
-        if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
-            glShadeModel(GL_FLAT);
+        glDepthMask(true);
         glDisable(GL_BLEND);
         glDisable(GL_ALPHA_TEST);
         glEnable(GL_LIGHTING);
-        glDepthMask(true);
+        if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
+            glShadeModel(GL_FLAT);
     }
 
     public void renderAura(EntityAura aura, int color, float alpha, float intensity) {
@@ -181,7 +170,7 @@ public class AuraRenderer extends RenderDBC {
             float layerPercent = i / maxLayers;
             float layerTemp = layerPercent * 20f;
 
-            for (float j = 1; j < 2; j += 1f) {
+            for (float j = 1; j < 2; j += 0.05f) {
 
                 model.auraModel.offsetY = -(i / maxLayers) * aura.height;
                 model.auraModel.offsetZ = layerTemp < 7F ? 0.2F - 1 * 0.075F : 0.35F + (1 - 7.0F) * 0.055F;
@@ -191,15 +180,15 @@ public class AuraRenderer extends RenderDBC {
 
                 model.auraModel.rotationPointY = 55.0F + (i / maxLayers) * 20;
                 float r = new Random().nextInt(200);
-              //  if (layerTemp > 3) //aura intensity
-                  //  model.auraModel.offsetY += -r * 0.0015f * intensity * getStateIntensity(state, race);
+                if (layerTemp > 3) //aura intensity
+                    model.auraModel.offsetY += -r * 0.0015f * intensity * getStateIntensity(state, race);
 
                 glPushMatrix();
                 glRotatef(360 * j, 0.0F, 1.0F, 0.0F);
                 if (layerPercent < 0.21) {
                     glColor4f(color, alpha);
-                    //  this.renderManager.renderEngine.bindTexture(aura.text1);
-                    //   model.auraModel.render(0.0625f);
+                    this.renderManager.renderEngine.bindTexture(aura.text1);
+                    model.auraModel.render(0.0625f);
 
                 }
                 glPopMatrix();
@@ -225,20 +214,23 @@ public class AuraRenderer extends RenderDBC {
         if (aura.ticksExisted % 100 > 0 && rand.nextLong() < 1)
             return;
 
-        this.lightVertRotation = new float[10][7];
-        glPushMatrix();
         Tessellator tessellator = Tessellator.instance;
-        glDisable(3553);
-        glDisable(2896);
-        glEnable(3042);
-        glBlendFunc(770, 1);
-        glScalef(0.5f, 1f, 0.5f);
+        this.lightVertRotation = new float[10][7];
+
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glDisable(GL_TEXTURE_2D);
+        glPushMatrix();
+
+        boolean client = Minecraft.getMinecraft().thePlayer == aura.entity;
+        float clientOffset = !client ? 1.62f : 0;
+        glTranslated(par2, par4 + clientOffset, par6);
+        glScalef(0.75f, 1f, 0.75f);
+
 
         double[] adouble = new double[8];
         double[] adouble1 = new double[8];
         double d3 = 0.0;
         double d4 = 0.0;
-        glTranslated(par2, par4 + 2.3, par6);
         int k1 = 0;
         int nu = (int) (Math.random() * 10.0) + 1;
         int nu2 = 3;
@@ -325,10 +317,8 @@ public class AuraRenderer extends RenderDBC {
         }
         if (rand.nextInt(15) < 2 && aura.ticksExisted % 5 == 0)
             new ClientSound(new SoundSource("jinryuudragonbc:1610.spark", aura.entity)).setVolume(0.1f).setPitch(0.90f + rand.nextInt(3) * 0.05f).play(false);
-        glDisable(3042);
-        glEnable(2896);
-        glEnable(3553);
         glPopMatrix();
+        glEnable(GL_TEXTURE_2D);
 
     }
     public static float getStateIntensity(int state, int race) {

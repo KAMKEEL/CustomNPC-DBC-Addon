@@ -48,16 +48,17 @@ public class PlayerOutline {
     public static void renderOutline(RenderPlayerJBRA render, EntityPlayer player, float partialTicks, boolean isArm) {
         PlayerOutline outline = DBCData.get(player).outline;
         ClientProxy.RenderingOutline = true;
-        if (player.isInWater())
-            ((IEntityMC) player).setRenderPass(0);
-        else
-            ((IEntityMC) player).setRenderPass(ClientProxy.MiddleRenderPass);
+      //  if (player.isInWater())
+          //  ((IEntityMC) player).setRenderPass(0);
+      //  else
+          //  ((IEntityMC) player).setRenderPass(ClientProxy.MiddleRenderPass);
 
 
         GL11.glEnable(GL_BLEND);
         GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GL11.glDisable(GL_LIGHTING);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
+        glDepthMask(true);
         glPushMatrix();
 
         ///////////////////////////////////

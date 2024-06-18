@@ -136,10 +136,6 @@ public class RenderEventHandler {
         disableStencilWriting(player.getEntityId(), false);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         EntityAura aura = data.auraEntity;
-        if (ConfigDBCClient.EnableBloom) {
-            PostProcessing.drawToBuffers(0, 2);
-            processBloom = true;
-        }
 
         glPushMatrix(); glDepthMask(false);
         ClientProxy.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/aura.png"));
@@ -150,7 +146,7 @@ public class RenderEventHandler {
         glScalef(3f, 3f, 3f);
         glRotatef(180, 0, 0, 1);
         glRotatef(180, 0, 1, 0);
-        PostProcessing.renderQuad(-1, -2, -1, 2, 1);
+      //  PostProcessing.renderQuad(-1, -2, -1, 2, 1);
         glPopMatrix();
         glPushMatrix();
         ClientProxy.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/aura.png"));
@@ -163,6 +159,7 @@ public class RenderEventHandler {
      //   PostProcessing.renderQuad(-1, -1, -1, 1, 1);
        glDepthMask(true);
         glPopMatrix();
+
 
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -193,6 +190,10 @@ public class RenderEventHandler {
         }
         glPopMatrix();
 
+        if (ConfigDBCClient.EnableBloom) {
+            PostProcessing.drawToBuffers(0, 2);
+            processBloom = true;
+        }
 
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -221,7 +222,6 @@ public class RenderEventHandler {
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         //  postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
         enableStencilWriting(player.getEntityId());
-
     }
 
     @SubscribeEvent
