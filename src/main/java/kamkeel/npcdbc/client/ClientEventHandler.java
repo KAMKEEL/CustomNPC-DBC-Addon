@@ -115,6 +115,7 @@ public class ClientEventHandler {
         if (form == null)
             return false;
 
+
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.thePlayer == null)
             return false;
@@ -128,6 +129,15 @@ public class ClientEventHandler {
             return true;
 
         DBCData dbcData = DBCData.getClient();
+        if (!form.stackable.kaiokenStackable && dbcData.isForm(DBCForm.Kaioken))
+            return false;
+        if (!form.stackable.uiStackable && dbcData.isForm(DBCForm.UltraInstinct))
+            return false;
+        if (!form.stackable.mysticStackable && dbcData.isForm(DBCForm.Mystic))
+            return false;
+        if (!form.stackable.godStackable && dbcData.isForm(DBCForm.GodOfDestruction))
+            return false;
+
         if (form.requiredForm.containsKey((int) dbcData.Race)) {
             return form.requiredForm.get((int) dbcData.Race) == dbcData.State;
         } else {
