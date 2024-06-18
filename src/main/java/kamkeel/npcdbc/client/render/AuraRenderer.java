@@ -110,10 +110,8 @@ public class AuraRenderer extends RenderDBC {
         GL11.glDisable(GL_LIGHTING);
         GL11.glEnable(GL_BLEND);
         GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glEnable(GL_ALPHA_TEST);
         GL11.glAlphaFunc(GL_GREATER, 0.003921569F);
         GL11.glDepthMask(false);
-
 
         GL11.glScalef(size + pulsingSize, size, size + pulsingSize);
         GL11.glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
@@ -198,7 +196,6 @@ public class AuraRenderer extends RenderDBC {
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glAlphaFunc(GL_GREATER, 0.5F);
         GL11.glDisable(GL_BLEND);
-        GL11.glDisable(GL_ALPHA_TEST);
         GL11.glPopMatrix();
         GL11.glPopMatrix();
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
