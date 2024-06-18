@@ -129,6 +129,9 @@ public class MixinDBCKiTech {
     @Inject(method = "Ascend", at = @At("HEAD"), cancellable = true)
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
         if (K.getIsKeyPressed()) {
+            if (TransformController.ascending)
+                ci.cancel();
+
             Form form = DBCData.getClient().getForm();
 
             if (form != null) {
