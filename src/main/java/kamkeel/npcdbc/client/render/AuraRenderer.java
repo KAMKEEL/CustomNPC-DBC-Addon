@@ -23,6 +23,7 @@ import java.util.Random;
 
 import static JinRyuu.DragonBC.common.Npcs.RenderAura2.cf;
 import static JinRyuu.DragonBC.common.Npcs.RenderAura2.glColor4f;
+import static org.lwjgl.opengl.GL11.*;
 
 public class AuraRenderer extends RenderDBC {
     private ModelAura model;
@@ -83,7 +84,6 @@ public class AuraRenderer extends RenderDBC {
             pulseAnimation = 0;
 
         Random rand = new Random();
-        GL11.glPushMatrix();
 
         float pulsingSize = pulseAnimation * 0.03f;
         float kaiokenSize = 0;
@@ -100,17 +100,19 @@ public class AuraRenderer extends RenderDBC {
         double yOffset = aura.getYOffset(size);
         if (stateSizeFactor < 4)  //fixes bug in which offset is not correct if size is too small
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
+        GL11.glPushMatrix();
         GL11.glTranslated(posX, posY +yOffset, posZ);
 
         GL11.glPushMatrix();
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
 
 
+        GL11.glDisable(GL_LIGHTING);
+        GL11.glEnable(GL_BLEND);
+        GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL_ALPHA_TEST);
+        GL11.glAlphaFunc(GL_GREATER, 0.003921569F);
         GL11.glDepthMask(false);
-        GL11.glEnable(3042);
-        GL11.glDisable(2896);
-        GL11.glBlendFunc(770, 771);
-        GL11.glAlphaFunc(516, 0.003921569F);
 
 
         GL11.glScalef(size + pulsingSize, size, size + pulsingSize);
@@ -191,21 +193,13 @@ public class AuraRenderer extends RenderDBC {
         float r = rand.nextInt(50);
         if (aura.hasLightning && r < 10 && age < 10)
             lightning(aura, posX, posY + aura.getYOffset(), posZ);
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawing(1);
-        tessellator.setColorRGBA_I(0xffffff, 255);
-        tessellator.addVertex(0, 0, 0);
-        tessellator.addVertex(0, 0, 1);
-        //  GL11.glScalef(3, 3, 3);
-        tessellator.draw();
 
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glAlphaFunc(516, 0.1F);
-        GL11.glDisable(3042);
-        GL11.glEnable(2896);
-        GL11.glEnable(3553);
-        GL11.glPopMatrix();
         GL11.glDepthMask(true);
+        GL11.glEnable(GL11.GL_LIGHTING);
+        GL11.glAlphaFunc(GL_GREATER, 0.5F);
+        GL11.glDisable(GL_BLEND);
+        GL11.glDisable(GL_ALPHA_TEST);
+        GL11.glPopMatrix();
         GL11.glPopMatrix();
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
 
@@ -216,21 +210,21 @@ public class AuraRenderer extends RenderDBC {
 
         if (aura.ticksExisted % 100 > 0 && rand.nextLong() < 1)
             return;
-
-        this.lightVertRotation = new float[10][7];
-        GL11.glPushMatrix();
         Tessellator tessellator = Tessellator.instance;
-        GL11.glDisable(3553);
-        GL11.glDisable(2896);
-        GL11.glEnable(3042);
-        GL11.glBlendFunc(770, 1);
+        this.lightVertRotation = new float[10][7];
+
+        GL11.glDisable(GL_LIGHTING);
+        GL11.glEnable(GL_BLEND);
+        GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        GL11.glDisable(GL_TEXTURE_2D);
+        GL11.glPushMatrix();
         GL11.glScalef(0.5f, 1f, 0.5f);
 
         double[] adouble = new double[8];
         double[] adouble1 = new double[8];
         double d3 = 0.0;
         double d4 = 0.0;
-        GL11.glTranslated(par2, par4 +2.3, par6);
+        GL11.glTranslated(par2, par4, par6);
         int k1 = 0;
         int nu = (int) (Math.random() * 10.0) + 1;
         int nu2 = 3;
@@ -317,10 +311,10 @@ public class AuraRenderer extends RenderDBC {
         }
         if (rand.nextInt(15) < 2 && aura.ticksExisted % 5 == 0)
             new ClientSound(new SoundSource("jinryuudragonbc:1610.spark", aura.entity)).setVolume(0.1f).setPitch(0.90f + rand.nextInt(3) * 0.05f).play(false);
-        GL11.glDisable(3042);
-        GL11.glEnable(2896);
-        GL11.glEnable(3553);
         GL11.glPopMatrix();
+        GL11.glDisable(GL_BLEND);
+        GL11.glEnable(GL_LIGHTING);
+        GL11.glEnable(GL_TEXTURE_2D);
 
     }
     public static float getStateIntensity(int state, int race) {
