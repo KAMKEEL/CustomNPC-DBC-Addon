@@ -7,6 +7,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.client.modern.ModernModels;
 import kamkeel.npcdbc.client.render.AuraRenderer;
 import kamkeel.npcdbc.client.render.PotaraItemRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
@@ -60,6 +61,7 @@ public class ClientProxy extends CommonProxy {
 
     public void postInit(FMLPostInitializationEvent ev) {
         PostProcessing.init(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+        ModernModels.loadModels();
    }
 
     public static float getTimeSinceStart() {

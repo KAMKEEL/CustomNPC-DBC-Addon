@@ -22,6 +22,9 @@ public class ShaderResources {
     public static final String DEFAULT_VERT = PREFIX_SHADER + "default.vert";
     public static final String DEFAULT_TEXTURE_FRAG = PREFIX_SHADER + "defaultTexture.frag";
 
+    public static final String MODERN_DEFAULT_VERT = PREFIX_SHADER + "modern/default.vert";
+    public static final String MODERN_DEFAULT_TEXTURE_FRAG = PREFIX_SHADER + "modern/defaultTexture.frag";
+
     public static final String AURA_VERT = PREFIX_SHADER + "aura.vert";
     public static final String AURA_FRAG = PREFIX_SHADER + "aura.frag";
     public static final String OUTLINE_VERT = PREFIX_SHADER + "outline.vert";

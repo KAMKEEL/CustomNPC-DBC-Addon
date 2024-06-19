@@ -44,11 +44,11 @@ public final class ShaderHelper {
     public static int additiveCombine = 0;
     public static int downsample13 = 0;
     public static int upsampleTent = 0;
+	public static int modern;
 
 	public static void loadShaders(boolean reload) {
-        if (!useShaders())
+		if (!useShaders())
 			return;
-        areOptifineShadersLoaded();
 
 		if (reload)
 			deleteShaders();
@@ -73,15 +73,17 @@ public final class ShaderHelper {
         additiveCombine = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.ADDITIVE_COMBINE_FRAG);
         downsample13 = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.DOWNSAMPLE_13TAP_FRAG);
         upsampleTent = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.UPSAMPLE_FILTER);
-    }
+        modern = createProgram(ShaderResources.MODERN_DEFAULT_VERT, ShaderResources.MODERN_DEFAULT_TEXTURE_FRAG);
+	}
 
 
 	public static void useShader(int shader, IShaderUniform uniforms) {
 		if (!useShaders())
 			return;
+		//binds shader
 		ARBShaderObjects.glUseProgramObjectARB(currentProgram = shader);
 
-        if (shader != 0) {
+		if (shader != 0) { //loads all uniforms
 			uniform1f("time", ClientProxy.getTimeSinceStart());
 			uniformVec2("u_resolution", Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
 
@@ -106,14 +108,17 @@ public final class ShaderHelper {
 		return ConfigDBCClient.UseShaders && OpenGlHelper.shadersSupported;
 	}
 
-    private static int createProgram(String vert, String frag) {
+	// Most of the code taken from the LWJGL wiki
+	// http://lwjgl.org/wiki/index.php?title=GLSL_Shaders_with_LWJGL
+
+	private static int createProgram(String vert, String frag) {
 		int vertexShader = 0, fragmentShader = 0, program = 0;
 		if (vert != null)
 			vertexShader = createShader(vert, VERT);
 		if (frag != null)
 			fragmentShader = createShader(frag, FRAG);
 
-		program = ARBShaderObjects.glCreateProgramObjectARB();
+		program = currentProgram = ARBShaderObjects.glCreateProgramObjectARB();
 		if (program == 0)
 			return 0;
 
@@ -137,10 +142,18 @@ public final class ShaderHelper {
 		ARBShaderObjects.glDeleteObjectARB(vertexShader);
 		ARBShaderObjects.glDeleteObjectARB(fragmentShader);
 
+
+		bindAttribute(0, "vertexPosition");
+		bindAttribute(1, "colors");
+		bindAttribute(2, "texCoords");
+
 		programs.add(program);
 		return program;
 	}
 
+	public static void bindAttribute(int attribute, String variableName) {
+		GL20.glBindAttribLocation(currentProgram, attribute, variableName);
+	}
 	private static int createShader(String filename, int shaderType) {
 		int shader = 0;
 		try {
@@ -169,7 +182,10 @@ public final class ShaderHelper {
 
 	private static String readFile(String filename) throws Exception {
 		StringBuilder source = new StringBuilder();
-        InputStream in = ShaderHelper.class.getResourceAsStream(filename);
+        //   ResourceLocation rscloc = new ResourceLocation(filename);
+        //   IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(rscloc);
+
+        InputStream in = ShaderHelper.class.getResourceAsStream(filename);//resource.getInputStream();
 		Exception exception = null;
 		BufferedReader reader;
 
@@ -242,8 +258,7 @@ public final class ShaderHelper {
         }
         return optifineShadersLoaded = false;
     }
-
-    //////////////////////////////////////////////////
+	//////////////////////////////////////////////////
 	//////////////////////////////////////////////////
 	//Uniform helpers
 	public static void uniform1f(String name, float x) {
