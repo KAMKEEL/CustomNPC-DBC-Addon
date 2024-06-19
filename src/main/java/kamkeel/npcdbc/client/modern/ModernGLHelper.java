@@ -83,7 +83,6 @@ public class ModernGLHelper {
 
 
         GL30.glBindVertexArray(vao);
-        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK,GL11.GL_LINE);
         ShaderHelper.useShader(ShaderHelper.modern);
 
         GL11.glDrawElements(GL11.GL_TRIANGLES, 6, GL11.GL_UNSIGNED_INT, 0);
