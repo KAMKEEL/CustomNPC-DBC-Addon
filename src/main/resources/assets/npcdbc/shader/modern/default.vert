@@ -7,31 +7,14 @@ in vec2 texCoords;
 out vec3 col;
 out vec3 fragPosition;
 
+uniform mat4 modelView;
+uniform mat4 projection;
 
 
 void main(void) {
 
-    gl_Position = vec4(vertexPosition.xy,0, 1.0);
+    gl_Position = modelView* projection* vec4(vertexPosition.xy,1, 1.0);
     fragPosition = vertexPosition;// Pass vertex position to fragment shader
     col = colors;
 
 }
-
-
-//#version 120
-//varying vec4 vertexPos;
-//varying vec3 normal;
-//varying vec2 texCoord;
-//varying vec4 originalColor;
-//
-//
-//
-//void main() {
-//    vertexPos = gl_Vertex;
-//    normal = gl_Normal;
-//    texCoord = vec2(gl_MultiTexCoord0);
-//    originalColor = gl_Color;
-//
-//
-//    gl_Position = gl_ModelViewProjectionMatrix* gl_Vertex;
-//}

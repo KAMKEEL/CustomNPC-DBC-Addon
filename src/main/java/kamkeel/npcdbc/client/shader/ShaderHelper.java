@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
+import org.lwjgl.util.vector.Matrix4f;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -16,6 +17,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public final class ShaderHelper {
 
@@ -300,7 +303,7 @@ public final class ShaderHelper {
 		ARBShaderObjects.glUniform4fARB(uniformLocation, x, y, z, w);
 	}
 
-	public static void loadTextureUnit(int textureUnit, String textureLoc) {
+    public static void loadTextureUnit(int textureUnit, String textureLoc) {
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		OpenGlHelper.setActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
 		noppes.npcs.client.ClientProxy.bindTexture(new ResourceLocation(textureLoc));
@@ -351,6 +354,34 @@ public final class ShaderHelper {
 		ARBShaderObjects.glUniform1ARB(uniformLocation, buffer);
 	}
 
+    public static void uniformMatrix4x4(String name, FloatBuffer buffer) {
+        int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+        GL20.glUniformMatrix4(uniformLocation, false, buffer);
+    }
+
+    public static FloatBuffer matrixToBuffer(Matrix4f mat) {
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+        mat.store(buffer);
+        return (FloatBuffer) buffer.flip();
+    }
+
+    public static Matrix4f bufferToMatrix(FloatBuffer buffer) {
+        Matrix4f mat = new Matrix4f();
+        mat.load(buffer);
+        return mat;
+    }
+
+    public static FloatBuffer getModelView() {
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+        glGetFloat(GL_MODELVIEW_MATRIX, buffer);
+        return buffer;
+    }
+
+    public static FloatBuffer getProjection() {
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
+        glGetFloat(GL_PROJECTION_MATRIX, buffer);
+        return buffer;
+    }
 
 }
 /* BUILT-IN GLSL 120 VERTEX ATTRIBUTES
