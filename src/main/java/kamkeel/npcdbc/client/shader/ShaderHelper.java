@@ -73,7 +73,7 @@ public final class ShaderHelper {
         additiveCombine = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.ADDITIVE_COMBINE_FRAG);
         downsample13 = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.DOWNSAMPLE_13TAP_FRAG);
         upsampleTent = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.UPSAMPLE_FILTER);
-		modern = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.DEFAULT_TEXTURE_FRAG);
+        modern = createProgram(ShaderResources.MODERN_DEFAULT_VERT, ShaderResources.MODERN_DEFAULT_TEXTURE_FRAG);
 	}
 
 

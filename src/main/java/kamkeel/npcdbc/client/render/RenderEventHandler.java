@@ -4,6 +4,7 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.modern.ModernGLHelper;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -25,9 +26,14 @@ import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.glu.Sphere;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.Iterator;
 
 import static kamkeel.npcdbc.client.shader.PostProcessing.processBloom;
@@ -168,6 +174,7 @@ public class RenderEventHandler {
         }
         glPopMatrix();
 
+ModernGLHelper.drawWorkingQuad();
 
         ////////////////////////////////////////
         ////////////////////////////////////////
