@@ -26,8 +26,6 @@ import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.glu.Sphere;
 
 import java.nio.FloatBuffer;
@@ -152,8 +150,12 @@ public class RenderEventHandler {
             AuraRenderer.Instance.renderAura(aura, partialTicks);
             glPopMatrix();
         }
-
-
+        glPushMatrix();
+        glDisable(GL_DEPTH_TEST);
+        glScalef(10, 10, 10);
+        ModernModels.quad.render(ShaderHelper.modern, null);
+        glEnable(GL_DEPTH_TEST);
+        glPopMatrix();
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Custom Particles

@@ -83,7 +83,10 @@ public class ModernGLHelper {
 
 
         GL30.glBindVertexArray(vao);
-        ShaderHelper.useShader(ShaderHelper.modern);
+        ShaderHelper.useShader(ShaderHelper.modern, () -> {
+            ShaderHelper.uniformMatrix4x4("modelView", ShaderHelper.getModelView());
+            ShaderHelper.uniformMatrix4x4("projection", ShaderHelper.getProjection());
+        });
 
         GL11.glDrawElements(GL11.GL_TRIANGLES, 6, GL11.GL_UNSIGNED_INT, 0);
 
