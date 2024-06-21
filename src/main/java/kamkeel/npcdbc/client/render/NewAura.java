@@ -5,8 +5,11 @@ import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.entity.EntityAura;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.Entity;
 import noppes.npcs.client.renderer.ImageData;
+import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -16,7 +19,7 @@ public class NewAura {
     public static int currentFrame;
 
     public static void renderAura(EntityAura aura, float partialTicks) {
-        float speed = ClientProxy.getTimeSinceStart() * 15;
+        float speed = ClientProxy.getTimeSinceStart() * 10;
         currentFrame = (int) (speed % FRAMES);
         ImageData image = new ImageData(AURA_DIR + "enhanced_aura.png");
         if (!image.imageLoaded())
@@ -26,32 +29,50 @@ public class NewAura {
         int width = image.getTotalWidth(), height = image.getTotalHeight();
         int frameWidth = width / 4, frameStartU = currentFrame * frameWidth;
 
+        Entity ren = Minecraft.getMinecraft().renderViewEntity;
+        float yaw = ren.rotationYaw, pitch = ren.rotationPitch;
+        glDepthMask(false);
+        glDisable(GL_DEPTH_TEST);
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBlendFunc(GL_ONE, GL_ONE);
-        glPushMatrix();
-        float scale = 7.4f;
-        glTranslatef(0, 0.4f, 0);
-        glScalef(scale + 1, scale + 3, scale + 1);
-
-
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         ShaderHelper.useShader(ShaderHelper.aura, () -> {
-            ShaderHelper.uniformColor("color1", 0xffffff, 1f);
-            ShaderHelper.uniformColor("color2", 0xffff00, 0.75f);
-            ShaderHelper.uniformColor("color3", 0x00ffff, 0.25f);
-            ShaderHelper.uniformColor("color4", 0xff00ff, 0.255f);
+            ShaderHelper.uniformColor("color1", 0xffff00, 0.5f);
+            ShaderHelper.uniformColor("color2", 0x555500, 0.45f);
+            ShaderHelper.uniformColor("color3", 0xAAAA00, 0.25f);
+            ShaderHelper.uniformColor("color4", 0xAAAA00, 0.155f);
 
             ShaderHelper.uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
             ShaderHelper.uniform1f("speed", speed);
         });
-        renderQuad(image, frameStartU, 0, frameStartU + frameWidth, height);
-        ShaderHelper.releaseShader();
 
+        glPushMatrix();
+        float scale = 7.4f;
+        glTranslatef(0, 0.4f, 0);
+        glScalef(scale + 1, scale + 3, scale + 1);
+        GL11.glRotated((double) (180.0F - ren.rotationYaw), 0.0, 1.0, 0.0);
+        GL11.glRotated((double) (360 - ren.rotationPitch), 1.0, 0.0, 0.0);
+        float pitchTranslation = ren.rotationPitch < 0 ? -0.0005f :  0.000005f;
+        glTranslatef(0, pitchTranslation * ren.rotationPitch, 0);
+     //   if(pitch > 55)
+        //  glTranslatef(0, 20 * pitchTranslation * ren.rotationPitch, 0);
+        if (ren.rotationPitch < -45) {
+            scale = 45 / Math.abs(pitch) * 1;
+            glScalef(scale, scale, scale);
+        } else if (ren.rotationPitch > 45) {
+            scale = 45 / Math.abs(pitch) * 1.25f ;
+               glScalef(scale, scale, scale);
+        }
+
+        renderQuad(image, frameStartU, 0, frameStartU + frameWidth, height);
         glPopMatrix();
+        ;
+
+        ShaderHelper.releaseShader();
         glEnable(GL_LIGHTING);
         glDisable(GL_BLEND);
-
+        glEnable(GL_DEPTH_TEST);
     }
 
 

@@ -47,6 +47,9 @@ void main() {
 
     currentFrame = adjustColor(currentFrame);
     vec4 nextFrame = adjustColor(texture2D(mainTexture, vec2(texCoord.x +frameWidth, texCoord.y)));
+    vec4 color = mix(currentFrame, nextFrame, fract(speed));
+  //  if (color.r < 0.01){
+      //  color*= 5; }
 
-    gl_FragColor = mix(currentFrame, nextFrame, fract(speed));
+    gl_FragColor = vec4(color.rgb, 1);
 }

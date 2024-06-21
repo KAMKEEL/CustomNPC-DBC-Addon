@@ -88,7 +88,9 @@ public class RenderEventHandler {
         if (aura != null && aura.shouldRender()) {
             glPushMatrix();
             glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
-            AuraRenderer.Instance.renderAura(aura, partialTicks);
+         //   AuraRenderer.Instance.renderAura(aura, partialTicks);
+          //  NewAura.renderAura(aura, partialTicks);
+
             glPopMatrix();
         }
 
@@ -132,9 +134,38 @@ public class RenderEventHandler {
         RenderPlayerJBRA render = (RenderPlayerJBRA) renderer;
         DBCData data = DBCData.get(player);
 
-        disableStencilWriting(player.getEntityId(), false);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         EntityAura aura = data.auraEntity;
+
+
+        if (ConfigDBCClient.EnableBloom) {
+            PostProcessing.drawToBuffers(0, 2);
+            processBloom = true;
+        }
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //Outline
+        data.outline = new PlayerOutline(0x00ffff, 0xffffff);
+        //  data.outline = null;
+        if (data.outline != null) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            Sphere s = new Sphere();
+            int sphereTrans = 10;
+            glTranslatef(0, 0, sphereTrans);
+            //    s.draw(6, 36, 18);
+            glTranslatef(0, 0, -sphereTrans);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            glStencilFunc(GL_NOTEQUAL, player.getEntityId(), 0xFF);  // Test stencil value
+            glStencilMask(0x0);
+            PlayerOutline.renderOutline(render, player, partialTicks, isArm);
+            glStencilMask(0xFF);
+        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
+            ((IEntityMC) player).setRenderPass(0);
+        }
+//        if (processBloom)
+//            PostProcessing.resetDrawBuffer();
+        disableStencilWriting(player.getEntityId(), false);
+        enableStencilWriting(player.getEntityId());
 
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -165,28 +196,7 @@ public class RenderEventHandler {
         glPopMatrix();
 
 
-        if (ConfigDBCClient.EnableBloom) {
-            PostProcessing.drawToBuffers(0, 2);
-            processBloom = true;
-        }
-        ////////////////////////////////////////
-        ////////////////////////////////////////
-        //Outline
-        data.outline = new PlayerOutline(0x00ffff, 0xffffff);
-        //  data.outline = null;
-        if (data.outline != null) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            Sphere s = new Sphere();
-            int sphereTrans = 10;
-            glTranslatef(0, 0, sphereTrans);
-            //    s.draw(6, 36, 18);
-            glTranslatef(0, 0, -sphereTrans);
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-          //  PlayerOutline.renderOutline(render, player, partialTicks, isArm);
-        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
-            ((IEntityMC) player).setRenderPass(0);
-        }
 
         glPushMatrix();
         //   glDisable(GL_DEPTH_TEST);
