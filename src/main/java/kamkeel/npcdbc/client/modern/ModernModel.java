@@ -25,14 +25,25 @@ public class ModernModel {
     }
 
     public void render(int shaderProgram, IShaderUniform uniforms) {
-        bind();
-        ShaderHelper.useShader(shaderProgram, uniforms);
-        ShaderHelper.uniformMatrix4x4("modelView", ShaderHelper.getModelView());
-        ShaderHelper.uniformMatrix4x4("projection", ShaderHelper.getProjection());
+        try {
+            bind();           // System.out.println("g0" + GL11.glGetError());
 
-        GL11.glDrawElements(GL11.GL_TRIANGLES, indexCount, GL11.GL_UNSIGNED_INT, 0);
-        ShaderHelper.releaseShader();
+            ShaderHelper.useShader(shaderProgram, uniforms);
+            //  System.out.println("g" + GL11.glGetError());
+            ShaderHelper.uniformMatrix4x4("modelView", ShaderHelper.getModelView());
+            // System.out.println("g1" + GL11.glGetError());
+
+            ShaderHelper.uniformMatrix4x4("projection", ShaderHelper.getProjection());
+            // System.out.println("g2" + GL11.glGetError());
+
+            GL11.glDrawElements(GL11.GL_TRIANGLES, indexCount, GL11.GL_UNSIGNED_INT, 0);          //  System.out.println("g3" + GL11.glGetError());
+
+            ShaderHelper.releaseShader();
         unbind();
+        } catch (Exception e) {
+            e.printStackTrace();
+            ModernGLHelper.drawWorkingQuad();
+        }
     }
     public void destroy() {
         GL15.glDeleteBuffers(EBO);

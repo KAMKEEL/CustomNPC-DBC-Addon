@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static kamkeel.npcdbc.client.modern.ModernGLHelper.createVAO;
+import static kamkeel.npcdbc.client.modern.ModernGLHelper.drawWorkingQuad;
 
 public class ModernModels {
     public static Map<Integer, ModernModel> loadedModels = new HashMap();
@@ -20,6 +21,7 @@ public class ModernModels {
 
         int[] indices = {0, 1, 2, 2, 3, 0};
         quad = createVAO(vertices, indices);
+        drawWorkingQuad();
     }
 
     public static void delete() { //memory management, cleans up vaos and vbos from memory

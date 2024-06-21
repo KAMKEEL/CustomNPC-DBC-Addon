@@ -136,26 +136,17 @@ public class RenderEventHandler {
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         EntityAura aura = data.auraEntity;
 
-        if (ConfigDBCClient.EnableBloom) {
-            PostProcessing.drawToBuffers(0, 2);
-            processBloom = true;
-        }
-
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Aura
         if (aura != null && aura.shouldRender()) {
             glPushMatrix();
             glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
-            AuraRenderer.Instance.renderAura(aura, partialTicks);
+            //  AuraRenderer.Instance.renderAura(aura, partialTicks);
+            NewAura.renderAura(aura, partialTicks);
             glPopMatrix();
         }
-        glPushMatrix();
-        glDisable(GL_DEPTH_TEST);
-        glScalef(10, 10, 10);
-        ModernModels.quad.render(ShaderHelper.modern, null);
-        glEnable(GL_DEPTH_TEST);
-        glPopMatrix();
+
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Custom Particles
@@ -173,6 +164,11 @@ public class RenderEventHandler {
         }
         glPopMatrix();
 
+
+        if (ConfigDBCClient.EnableBloom) {
+            PostProcessing.drawToBuffers(0, 2);
+            processBloom = true;
+        }
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
@@ -187,12 +183,19 @@ public class RenderEventHandler {
             glTranslatef(0, 0, -sphereTrans);
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-            PlayerOutline.renderOutline(render, player, partialTicks, isArm);
+          //  PlayerOutline.renderOutline(render, player, partialTicks, isArm);
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
             ((IEntityMC) player).setRenderPass(0);
         }
 
-
+        glPushMatrix();
+        //   glDisable(GL_DEPTH_TEST);
+        //  glDisable(GL_BLEND);
+        glScalef(5, 12, 4);
+        ModernModels.quad.render(ShaderHelper.modern, null);
+        //ModernGLHelper.drawWorkingQuad();
+        glEnable(GL_DEPTH_TEST);
+        glPopMatrix();
         ////////////////////////////////////////
         ////////////////////////////////////////
         if (processBloom)

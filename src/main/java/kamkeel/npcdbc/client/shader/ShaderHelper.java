@@ -169,7 +169,7 @@ public final class ShaderHelper {
 			ARBShaderObjects.glCompileShaderARB(shader);
 
 			if (ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL11.GL_FALSE)
-                CommonProxy.LOGGER.error("Error creating shader: " + getLogInfo(shader));
+                CommonProxy.LOGGER.error("Error creating shader " + filename + ": " + getLogInfo(shader));
 
 			return shader;
 		} catch (Exception e) {
