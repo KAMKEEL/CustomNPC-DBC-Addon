@@ -17,34 +17,36 @@ uniform vec3 center;
 const float frameWidth = 1./4;
 const float aura[] = float[](0, 0.5, 0.7, 0.97);
 
+vec4 adjustColor(vec4 color){
+    vec3 newColor = color.rrr;
+    if (color.r >=aura[3]){
+        newColor *= color1.rgb;
+        newColor *= color1.a;
+
+    } else if (color.r >=aura[2]){
+        newColor *= color2.rgb;
+        newColor *= color2.a;
+
+    } else if (color.r > aura[1]){
+        newColor *= color3.rgb;
+        newColor *=color3.a;
+
+    } else if (color.r > 0){
+        newColor *= color4.rgb;
+        newColor *= color4.a;
+    }
+
+    return vec4(newColor, 1.0);
+}
+
 void main() {
 
     vec4 currentFrame = texture2D(mainTexture, texCoord);
     if (currentFrame.r <= 0)
     discard;
 
-    vec4 nextFrame = texture2D(mainTexture, vec2(texCoord.x +frameWidth, texCoord.y));
-    vec4 frameColor = mix(currentFrame, nextFrame, fract(speed));
+    currentFrame = adjustColor(currentFrame);
+    vec4 nextFrame = adjustColor(texture2D(mainTexture, vec2(texCoord.x +frameWidth, texCoord.y)));
 
-
-    vec3 color =  frameColor.rrr;
-    if (frameColor.r >=aura[3]){
-        color *= color1.rgb;
-        color *= color1.a;
-
-    } else if (frameColor.r >=aura[2]){
-        color*= color2.rgb;
-        color *=color2.a;
-
-    } else if (frameColor.r > aura[1]){
-        color *= color3.rgb;
-        color *=color3.a;
-
-    } else if (frameColor.r > 0){
-        color *=color4.rgb;
-        color *=color4.a;
-    }
-
-
-    gl_FragColor = vec4(color, 1);
+    gl_FragColor = mix(currentFrame, nextFrame, fract(speed));
 }

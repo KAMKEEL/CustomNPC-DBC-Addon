@@ -16,13 +16,13 @@ uniform float time;
 
 
 void main() {
+    texCoord = vec2(gl_MultiTexCoord0);
     vec4 noiseColor = texture2D(noiseTexture, texCoord*2);
     float displacement = fract(noiseColor.r + time) / 10;
     vec3 newPosition = gl_Vertex.xyz + gl_Normal.xyz *displacement;
     gl_Position = gl_ModelViewProjectionMatrix* gl_Vertex ;//vec4(newPosition, 1.0);
     vertPos = gl_Vertex.xyz;
 
-    texCoord = vec2(gl_MultiTexCoord0);
     clippingPos = gl_Position;
 
     fragNormal = gl_Normal.xyz;// Pass vertex normal

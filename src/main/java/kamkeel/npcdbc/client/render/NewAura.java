@@ -37,10 +37,10 @@ public class NewAura {
 
 
         ShaderHelper.useShader(ShaderHelper.aura, () -> {
-            ShaderHelper.uniformColor("color1", 0xffff00, 1f);
+            ShaderHelper.uniformColor("color1", 0xffffff, 1f);
             ShaderHelper.uniformColor("color2", 0xffff00, 0.75f);
-            ShaderHelper.uniformColor("color3", 0x00ffff, 0.5f);
-            ShaderHelper.uniformColor("color4", 0xff00ff, 0.15f);
+            ShaderHelper.uniformColor("color3", 0x00ffff, 0.25f);
+            ShaderHelper.uniformColor("color4", 0xff00ff, 0.255f);
 
             ShaderHelper.uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
             ShaderHelper.uniform1f("speed", speed);
