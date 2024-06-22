@@ -8,6 +8,7 @@ import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.client.renderer.ImageData;
 import org.lwjgl.opengl.GL11;
 
@@ -31,12 +32,8 @@ public class NewAura {
 
         Entity ren = Minecraft.getMinecraft().renderViewEntity;
         float yaw = ren.rotationYaw, pitch = ren.rotationPitch;
-        glDepthMask(false);
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_LIGHTING);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        int thirdPerson = Minecraft.getMinecraft().gameSettings.thirdPersonView;
+
         ShaderHelper.useShader(ShaderHelper.aura, () -> {
             ShaderHelper.uniformColor("color1", 0xffff00, 0.5f);
             ShaderHelper.uniformColor("color2", 0x555500, 0.45f);
@@ -44,35 +41,38 @@ public class NewAura {
             ShaderHelper.uniformColor("color4", 0xAAAA00, 0.155f);
 
             ShaderHelper.uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
+            ShaderHelper.uniformTexture("cross", 3, AURA_DIR + "enhanced_aura_crosssection.png");
             ShaderHelper.uniform1f("speed", speed);
-        });
+            ShaderHelper.uniform1f("pitch", pitch);
 
-        glPushMatrix();
+        });
+        glDisable(GL_LIGHTING);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glDepthFunc(GL_NOTEQUAL);
+        glDepthMask(false);
+
         float scale = 7.4f;
-        glTranslatef(0, 0.4f, 0);
+        glPushMatrix();
+        glTranslatef(0, 0.2f, 0);
         glScalef(scale + 1, scale + 3, scale + 1);
-        GL11.glRotated((double) (180.0F - ren.rotationYaw), 0.0, 1.0, 0.0);
-        GL11.glRotated((double) (360 - ren.rotationPitch), 1.0, 0.0, 0.0);
-        float pitchTranslation = ren.rotationPitch < 0 ? -0.0005f :  0.000005f;
-        glTranslatef(0, pitchTranslation * ren.rotationPitch, 0);
-     //   if(pitch > 55)
-        //  glTranslatef(0, 20 * pitchTranslation * ren.rotationPitch, 0);
-        if (ren.rotationPitch < -45) {
-            scale = 45 / Math.abs(pitch) * 1;
+
+        GL11.glRotatef(180.0F - yaw, 0, 1, 0);
+        GL11.glRotatef(360f - pitch, 1, 0, 0);
+        if (pitch > 60 && thirdPerson == 1 || pitch < -60 && thirdPerson == 2) {
+            scale = (60 / Math.abs(pitch) * 1) * 1f;
             glScalef(scale, scale, scale);
-        } else if (ren.rotationPitch > 45) {
-            scale = 45 / Math.abs(pitch) * 1.25f ;
-               glScalef(scale, scale, scale);
+            glTranslatef(0, 0.015f * scale, 0);
         }
 
         renderQuad(image, frameStartU, 0, frameStartU + frameWidth, height);
         glPopMatrix();
-        ;
 
         ShaderHelper.releaseShader();
         glEnable(GL_LIGHTING);
         glDisable(GL_BLEND);
-        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
     }
 
 

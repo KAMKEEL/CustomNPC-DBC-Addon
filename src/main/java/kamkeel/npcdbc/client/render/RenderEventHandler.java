@@ -165,7 +165,7 @@ public class RenderEventHandler {
 //        if (processBloom)
 //            PostProcessing.resetDrawBuffer();
         disableStencilWriting(player.getEntityId(), false);
-        enableStencilWriting(player.getEntityId());
+       // enableStencilWriting(player.getEntityId());
 
         ////////////////////////////////////////
         ////////////////////////////////////////
