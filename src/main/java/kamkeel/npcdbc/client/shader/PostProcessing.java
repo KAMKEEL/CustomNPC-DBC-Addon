@@ -315,11 +315,18 @@ public class PostProcessing {
         TextureUtil.deleteTexture(blankTexture);
     }
 
-    public static void copyBuffer(int copyFBO, int pasteFBO, int width, int height, int bufferBit) {
+    public static void copyBuffer(int copyFBO, int pasteFBO, int width, int height, int... bufferBits) { //GL_COLOR_BUFFER_BIT,GL_DEPTH_BUFFER_BIT,GL_STENCIL_BUFFER_BIT
         int previousBuffer = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
         glBindFramebuffer(GL_READ_BUFFER, copyFBO);
         glBindFramebuffer(GL_DRAW_BUFFER, pasteFBO);
-        GL30.glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, bufferBit, GL_NEAREST);
+        for (int i : bufferBits)
+            if (i == GL_COLOR_BUFFER_BIT || i == GL_DEPTH_BUFFER_BIT || i == GL_STENCIL_BUFFER_BIT)
+                GL30.glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, i, GL_NEAREST);
+
+        int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
+        if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
+            CommonProxy.LOGGER.error("Copying FBO " + pasteFBO + " is not complete: " + status);
+
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, previousBuffer);
 
     }
