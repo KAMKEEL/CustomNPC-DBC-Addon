@@ -196,7 +196,7 @@ public class PostProcessing {
 
     public static void init(int width, int height) {
         int previousBuffer = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
-
+        Framebuffer main = getMainBuffer();
         for (int i = 0; i < bloomBuffers.length; i++) {
 
             int mipWidth = width >> (i + 1);
@@ -226,7 +226,7 @@ public class PostProcessing {
             glClear(GL_COLOR_BUFFER_BIT);
         }
 
-        getMainBuffer().bindFramebuffer(false);
+        main.bindFramebuffer(false);
         MAIN_BLOOM_TEXTURE = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, MAIN_BLOOM_TEXTURE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
@@ -263,14 +263,12 @@ public class PostProcessing {
             glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
             OpenGlHelper.func_153188_a(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, auraTextures[i], 0);
         }
-        OpenGlHelper.func_153176_h(OpenGlHelper.field_153199_f, auraDepth);
+
         if (net.minecraftforge.client.MinecraftForgeClient.getStencilBits() == 0) {
-            OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, 33190, width, height);
-            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, OpenGlHelper.field_153201_h, OpenGlHelper.field_153199_f, auraDepth);
+            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, OpenGlHelper.field_153201_h, OpenGlHelper.field_153199_f, main.depthBuffer);
         } else {
-            OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, width, height);
-            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, auraDepth);
-            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, auraDepth);
+            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, main.depthBuffer);
+            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, main.depthBuffer);
         }
 
         status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
