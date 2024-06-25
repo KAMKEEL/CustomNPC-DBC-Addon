@@ -10,6 +10,7 @@ import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -109,7 +110,22 @@ public class PlayerOutline {
                 render.modelMain.renderHairs(0.0625F, ts != 0 && ts != -1 ? (ts == 1 ? "SJT2" : "") : "SJT1");
             } else if (race == DBCRace.ARCOSIAN) {
                 byte ts = Byte.parseByte(JRMCoreH.dat19[data.stats.getJRMCPlayerID()].split(";")[0]);
-                render.modelMain.renderHairs(0.0625F, (ts == 4 ? "n" : "") + "FR" + JRMCoreH.TransFrHrn[data.State]);
+                int state = data.State;
+                Form form = data.getForm();
+                if (form != null) {
+                    if (form.display.bodyType.equals("firstform"))
+                        state = 0;
+                    else if (form.display.bodyType.equals("secondform"))
+                        state = 2;
+                    else if (form.display.bodyType.equals("thirdform"))
+                        state = 3;
+                    else if (form.display.bodyType.equals("finalform"))
+                        state = 4;
+                    else if (form.display.bodyType.equals("ultimatecooler"))
+                        state = 5;
+                }
+
+                render.modelMain.renderHairs(0.0625F, (ts == 4 ? "n" : "") + "FR" + JRMCoreH.TransFrHrn[state]);
             }
 
             glPopMatrix();
@@ -169,6 +185,7 @@ public class PlayerOutline {
         boolean renderHair = DBCUtils.shouldRenderHair(player, pl);
         boolean customHair = hairPreset == 12 && dnsH.length() > 3;
 
+        Form form = data.getForm();
         if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             if (!renderHair) {
                 if (hairPreset == 10) //bald LMAO
@@ -177,13 +194,13 @@ public class PlayerOutline {
             }
 
             if (customHair) {
-                if (st == 6)
+                if (st == 6 || form != null && form.display.hairType.equals("ssj3"))
                     renderer.modelMain.renderHairs(0.0625F, "" + JRMCoreH.HairsT[6] + JRMCoreH.Hairs[0]);
                 else if (st == 14)
                     renderer.modelMain.renderHairsV2(0.0625F, "373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820", 0.0F, 0, 0, pl, race, renderer, (AbstractClientPlayer) player);
                 else
                     renderer.modelMain.renderHairsV2(0.0625F, dnsH, 0.0F, st, rg, pl, race, renderer, (AbstractClientPlayer) player);
-            } else if (st == 14)
+            } else if (st == 14 || form != null && form.display.hairType.equals("ssj4"))
                 renderer.modelMain.renderHairsV2(0.0625F, "373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820", 0.0F, 0, 0, pl, race, renderer, (AbstractClientPlayer) player);
             else
                 renderer.modelMain.renderHairs(0.0625F, "" + JRMCoreH.HairsT[st] + JRMCoreH.Hairs[hairPreset]);
