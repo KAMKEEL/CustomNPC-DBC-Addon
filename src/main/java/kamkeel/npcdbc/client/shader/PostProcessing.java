@@ -34,7 +34,7 @@ public class PostProcessing {
     public static int[] bloomBuffers = new int[BLOOM_BUFFERS_LENGTH];
     public static int[] bloomTextures = new int[bloomBuffers.length];
 
-    public static int auraBuffer, auraDepth;
+    public static int auraBuffer;
     public static int[] auraTextures = new int[3];
 
 
