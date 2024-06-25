@@ -19,10 +19,13 @@ public class NewAura {
     public static final int FRAMES = 4;
     public static int currentFrame;
 
+    public static ImageData verticalAura = new ImageData(AURA_DIR + "enhanced_aura.png");
+    public static ImageData horizontalAura = new ImageData(AURA_DIR + "enhanced_aura_crosssection.png");
+
     public static void renderAura(EntityAura aura, float partialTicks) {
         float speed = ClientProxy.getTimeSinceStart() * 10;
         currentFrame = (int) (speed % FRAMES);
-        ImageData image = new ImageData(AURA_DIR + "enhanced_aura.png");
+        ImageData image = verticalAura;
         if (!image.imageLoaded())
             return;
 
@@ -30,20 +33,12 @@ public class NewAura {
         int width = image.getTotalWidth(), height = image.getTotalHeight();
         int frameWidth = width / 4, frameStartU = currentFrame * frameWidth;
 
-        Entity ren = Minecraft.getMinecraft().renderViewEntity;
-        float yaw = ren.rotationYaw, pitch = ren.rotationPitch;
-        int thirdPerson = Minecraft.getMinecraft().gameSettings.thirdPersonView;
-        boolean client = Minecraft.getMinecraft().thePlayer == aura.entity;
-        float clientOffset = !client ? 1.62f : 0;
 
-        double interPosX = aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks - RenderManager.renderPosX;
-        double interPosY = aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks - RenderManager.renderPosY;
-        double interPosZ = aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks - RenderManager.renderPosZ;
         ShaderHelper.useShader(ShaderHelper.aura, () -> {
             ShaderHelper.uniformColor("color1", 0xffff00, 1f);
-            ShaderHelper.uniformColor("color2", 0x555500, 1f);
-            ShaderHelper.uniformColor("color3", 0xAAAA00, 0.35f);
-            ShaderHelper.uniformColor("color4", 0xAAAA00, 0.155f);
+            ShaderHelper.uniformColor("color2", 0xFFFF00, 0.6f);
+            ShaderHelper.uniformColor("color3", 0xFFFF00, 0.35f);
+            ShaderHelper.uniformColor("color4", 0xFFFF00, 0.155f);
 
             ShaderHelper.uniform1f("speed", speed);
 
@@ -52,45 +47,22 @@ public class NewAura {
         glEnable(GL_BLEND);
         glDisable(GL_CULL_FACE);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         glDepthFunc(GL_NOTEQUAL);
         glDepthMask(false);
 
         float scale = 5, yScale = scale + 2;
         glPushMatrix();
 
-        glTranslated(interPosX, interPosY + clientOffset - aura.entity.height, interPosZ);
+//        glTranslated(interPosX, interPosY + clientOffset - aura.entity.height, interPosZ);
         glTranslatef(0, 0.2f * yScale, 0);
         glScalef(scale, yScale, scale);
 
-        GL11.glRotatef(180.0F - yaw, 0, 1, 0);
-        GL11.glRotatef(360f - pitch, 1, 0, 0);
-        if (pitch > 60 && thirdPerson == 1 || pitch < -60 && thirdPerson == 2) {
-            scale = (60 / Math.abs(pitch) * 1) * 1f;
-            glScalef(scale, scale, scale);
-            glTranslatef(0, 0.015f * scale, 0);
-        }
+//        GL11.glRotatef(180.0F - yaw, 0, 1, 0);
+
 
         renderQuad(image, frameStartU, 0, frameStartU + frameWidth, height);
-        renderQuad(image, frameStartU, 0, frameStartU + frameWidth, height);
-        glTranslated(interPosX, interPosY + clientOffset, interPosZ);
         ShaderHelper.releaseShader();
-
-        glPopMatrix();
-        glPushMatrix();
-        glTranslated(interPosX, interPosY + clientOffset, interPosZ);
-        glTranslatef(0, -1.6f, 0);
-        glScalef(scale, scale + 3, scale);
-        ImageData cross = new ImageData(AURA_DIR + "enhanced_aura_crosssection.png");
-        if (!cross.imageLoaded())
-            return;
-        cross.bindTexture();
-        width = cross.getTotalWidth();
-        height = cross.getTotalHeight();
-        frameWidth = width / 4;
-        frameStartU = currentFrame * frameWidth;
-
-        glRotatef(90, 1, 0, 0);
 
         glPopMatrix();
 
