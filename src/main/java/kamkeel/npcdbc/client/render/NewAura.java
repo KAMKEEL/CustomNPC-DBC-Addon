@@ -45,10 +45,7 @@ public class NewAura {
             ShaderHelper.uniformColor("color3", 0xAAAA00, 0.35f);
             ShaderHelper.uniformColor("color4", 0xAAAA00, 0.155f);
 
-            ShaderHelper.uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
-            ShaderHelper.uniformTexture("cross", 3, AURA_DIR + "enhanced_aura_crosssection.png");
             ShaderHelper.uniform1f("speed", speed);
-            ShaderHelper.uniform1f("pitch", pitch);
 
         });
         glDisable(GL_LIGHTING);
@@ -94,7 +91,6 @@ public class NewAura {
         frameStartU = currentFrame * frameWidth;
 
         glRotatef(90, 1, 0, 0);
-        // renderQuad(cross, frameStartU, 0, frameStartU + frameWidth, height);
 
         glPopMatrix();
 
@@ -102,11 +98,6 @@ public class NewAura {
         glDisable(GL_BLEND);
         glEnable(GL_CULL_FACE);
         glDepthFunc(GL_LEQUAL);
-        if (aura.ticksExisted % 20 == 0) {
-            //   PostProcessing.captureSceneDepth();
-            //   PostProcessing.saveTextureToPNG(DEPTH_TEXTURE);
-
-        }
     }
 
 
