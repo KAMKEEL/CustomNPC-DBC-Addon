@@ -56,9 +56,9 @@ public class MixinRenderGlobal {
             sorted = true;
         }
 
-      //  if (sortedEntityList != null)
-          //  return sortedEntityList;
-      //  /else
+        if (sortedEntityList != null)
+            return sortedEntityList;
+        else
             return instance.getLoadedEntityList();
     }
 }

@@ -80,7 +80,7 @@ public class AuraRenderer extends RenderDBC {
         alpha = (isFirstPerson ? aura.isKaioken ? 0.015f : 0.0125f : alpha) * alphaConfig;
         aura.setTexture(1, CustomNpcPlusDBC.ID + ":textures/aura/auraalpha.png");
 
-        pulseMax = 0;
+        pulseMax = 5;
         if (pulseMax > 0)
             animatePulsing();
         else
@@ -104,8 +104,6 @@ public class AuraRenderer extends RenderDBC {
         double yOffset = aura.getYOffset(size);
         if (stateSizeFactor < 4)  //fixes bug in which offset is not// correct if size is too small
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
-        //RenderEventHandler.disableStencilWriting(aura.entity.getEntityId() + 1, false);
-
         if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
             glShadeModel(GL_SMOOTH);
         glDisable(GL_LIGHTING);

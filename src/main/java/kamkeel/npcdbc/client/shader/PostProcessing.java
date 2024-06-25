@@ -312,14 +312,6 @@ public class PostProcessing {
         TextureUtil.deleteTexture(blankTexture);
     }
 
-    /**
-     * @param copyFBO
-     * @param pasteFBO
-     * @param width
-     * @param height
-     * @param bufferBits GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT,GL_STENCIL_BUFFER_BIT
-     *                   bitwise | also works
-     */
     public static void copyBuffer(int copyFBO, int pasteFBO, int width, int height, int bufferBits) {
         int previousBuffer = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
         glBindFramebuffer(GL_READ_BUFFER, copyFBO);
@@ -335,8 +327,6 @@ public class PostProcessing {
     }
 
     public static void saveTextureToPNG(int textureID) {
-        // Framebuffer fbo = PostProcessing.getMainBuffer();
-        //  System.out.println("Main FBO res: " + fbo.framebufferTextureWidth + "x" + fbo.framebufferTextureHeight);
         if (Minecraft.getMinecraft().isGamePaused())
             return;
 
@@ -344,7 +334,6 @@ public class PostProcessing {
         int width = (int) GL11.glGetTexLevelParameterf(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
         int height = (int) GL11.glGetTexLevelParameterf(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
 
-        //System.out.println("res: " + width + "x" + height);
         ByteBuffer buffer = ByteBuffer.allocateDirect(width * height * 4);
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 

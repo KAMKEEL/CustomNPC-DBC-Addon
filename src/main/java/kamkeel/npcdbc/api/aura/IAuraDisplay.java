@@ -143,12 +143,12 @@ public interface IAuraDisplay {
 
     boolean hasSpeed();
 
-    float getSpeed();
+    int getSpeed();
 
     /**
      * @param speed How fast aura should go through its lifecycle in ticks. DBC Default is 40 ticks. The lower, the faster
      */
-    void setSpeed(float speed);
+    void setSpeed(int speed);
 
 
 
