@@ -316,9 +316,11 @@ public class PostProcessing {
     }
 
     public static void copyBuffer(int copyFBO, int pasteFBO, int width, int height, int bufferBit) {
+        int previousBuffer = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
         glBindFramebuffer(GL_READ_BUFFER, copyFBO);
         glBindFramebuffer(GL_DRAW_BUFFER, pasteFBO);
         GL30.glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, bufferBit, GL_NEAREST);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, previousBuffer);
 
     }
 
