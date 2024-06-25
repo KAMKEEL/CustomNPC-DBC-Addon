@@ -53,6 +53,7 @@ public class NewAura {
         });
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
+        glDisable(GL_CULL_FACE);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         glDepthFunc(GL_NOTEQUAL);
@@ -99,6 +100,7 @@ public class NewAura {
 
         glEnable(GL_LIGHTING);
         glDisable(GL_BLEND);
+        glEnable(GL_CULL_FACE);
         glDepthFunc(GL_LEQUAL);
         if (aura.ticksExisted % 20 == 0) {
             //   PostProcessing.captureSceneDepth();
@@ -122,27 +124,23 @@ public class NewAura {
         float u2 = endU * (1f / totalWidth);
         float v2 = endV * (1f / totalHeight);
 
-        for (int i = 0; i < 2; i++) {
-            glPushMatrix();
-            if (i == 1)
-                glRotatef(180, 0, 1, 0);
+        glPushMatrix();
 
-            if (totalWidth > totalHeight) {
-                textureYScale = (float) totalHeight / totalWidth;
-                glScalef(1 / textureYScale / 2, 1 / textureYScale / 2, 1 / textureYScale / 2);
-            } else if (totalHeight > totalWidth) {
-                textureXScale = (float) totalWidth / totalHeight;
-                glScalef(1 / textureXScale / 2, 1 / textureXScale / 2, 1 / textureXScale / 2);
-            }
-            tessellator.startDrawingQuads();
-            tessellator.addVertexWithUV(textureXScale * -(u2 - u1) / 2, textureYScale * (v2 - v1) / 2, 0, u1, v1); //-1, 0.5   0 1
-            tessellator.addVertexWithUV(textureXScale * (u2 - u1) / 2, textureYScale * (v2 - v1) / 2, 0, u2, v1); //1, 0.5    1 , 1
-            tessellator.addVertexWithUV(textureXScale * (u2 - u1) / 2, textureYScale * -(v2 - v1) / 2, 0, u2, v2); //1, -0.5
-            tessellator.addVertexWithUV(textureXScale * -(u2 - u1) / 2, textureYScale * -(v2 - v1) / 2, 0, u1, v2); //-1, -0.5
-            tessellator.draw();
-
-            glPopMatrix();
+        if (totalWidth > totalHeight) {
+            textureYScale = (float) totalHeight / totalWidth;
+            glScalef(1 / textureYScale / 2, 1 / textureYScale / 2, 1 / textureYScale / 2);
+        } else if (totalHeight > totalWidth) {
+            textureXScale = (float) totalWidth / totalHeight;
+            glScalef(1 / textureXScale / 2, 1 / textureXScale / 2, 1 / textureXScale / 2);
         }
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV(textureXScale * -(u2 - u1) / 2, textureYScale * (v2 - v1) / 2, 0, u1, v1); //-1, 0.5   0 1
+        tessellator.addVertexWithUV(textureXScale * (u2 - u1) / 2, textureYScale * (v2 - v1) / 2, 0, u2, v1); //1, 0.5    1 , 1
+        tessellator.addVertexWithUV(textureXScale * (u2 - u1) / 2, textureYScale * -(v2 - v1) / 2, 0, u2, v2); //1, -0.5
+        tessellator.addVertexWithUV(textureXScale * -(u2 - u1) / 2, textureYScale * -(v2 - v1) / 2, 0, u1, v2); //-1, -0.5
+        tessellator.draw();
+
+        glPopMatrix();
 
     }
 }
