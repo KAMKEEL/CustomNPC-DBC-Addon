@@ -27,12 +27,16 @@ import static org.lwjgl.opengl.GL30.GL_RGBA16F;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 public class PostProcessing {
-    public static int MAIN_BLOOM_TEXTURE, DEPTH_TEXTURE, AURA_TEXTURE;
+    public static int MAIN_BLOOM_TEXTURE, DEPTH_TEXTURE;
     public static int blankTexture;
 
     public static int BLOOM_BUFFERS_LENGTH = 10;
     public static int[] bloomBuffers = new int[BLOOM_BUFFERS_LENGTH];
     public static int[] bloomTextures = new int[bloomBuffers.length];
+
+    public static int auraBuffer, auraDepth;
+    public static int[] auraTextures = new int[3];
+
 
     public static boolean processBloom;
 
@@ -232,14 +236,6 @@ public class PostProcessing {
         glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
         OpenGlHelper.func_153188_a(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, MAIN_BLOOM_TEXTURE, 0);
 
-        AURA_TEXTURE = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, AURA_TEXTURE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
-        OpenGlHelper.func_153188_a(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, AURA_TEXTURE, 0);
 
         int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
         if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
@@ -253,6 +249,35 @@ public class PostProcessing {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_DEPTH_COMPONENT32F, width, height, 0, GL11.GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
         // GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, DEPTH_TEXTURE, 0);
+
+
+        auraBuffer = OpenGlHelper.func_153165_e();
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, auraBuffer);
+        for (int i = 0; i < auraTextures.length; i++) {
+            auraTextures[i] = glGenTextures();
+            glBindTexture(GL_TEXTURE_2D, auraTextures[i]);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
+            OpenGlHelper.func_153188_a(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, auraTextures[i], 0);
+        }
+        OpenGlHelper.func_153176_h(OpenGlHelper.field_153199_f, auraDepth);
+        if (net.minecraftforge.client.MinecraftForgeClient.getStencilBits() == 0) {
+            OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, 33190, width, height);
+            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, OpenGlHelper.field_153201_h, OpenGlHelper.field_153199_f, auraDepth);
+        } else {
+            OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, width, height);
+            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, auraDepth);
+            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, auraDepth);
+        }
+
+        status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
+        if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
+            CommonProxy.LOGGER.error("Aura framebuffer is not complete: " + status);
+        glClearColor(0, 0, 0, 1f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, previousBuffer);
 
@@ -274,13 +299,27 @@ public class PostProcessing {
             if (bloomBuffers[i] > 0)
                 OpenGlHelper.func_153174_h(bloomBuffers[i]);
         }
+
+        OpenGlHelper.func_153174_h(auraBuffer);
+        OpenGlHelper.func_153184_g(auraBuffer);
+        for (int i = 0; i < auraTextures.length; i++) {
+            if (auraTextures[i] > 0)
+                TextureUtil.deleteTexture(auraTextures[i]);
+        }
+
         bloomBuffers = new int[BLOOM_BUFFERS_LENGTH];
         bloomTextures = new int[bloomBuffers.length];
 
         TextureUtil.deleteTexture(MAIN_BLOOM_TEXTURE);
-        TextureUtil.deleteTexture(AURA_TEXTURE);
         TextureUtil.deleteTexture(DEPTH_TEXTURE);
         TextureUtil.deleteTexture(blankTexture);
+    }
+
+    public static void copyBuffer(int copyFBO, int pasteFBO, int width, int height, int bufferBit) {
+        glBindFramebuffer(GL_READ_BUFFER, copyFBO);
+        glBindFramebuffer(GL_DRAW_BUFFER, pasteFBO);
+        GL30.glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, bufferBit, GL_NEAREST);
+
     }
 
     public static void saveTextureToPNG(int textureID) {
