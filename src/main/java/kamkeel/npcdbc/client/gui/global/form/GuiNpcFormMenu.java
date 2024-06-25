@@ -2,7 +2,7 @@ package kamkeel.npcdbc.client.gui.global.form;
 
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.gui.SaveForm;
+import kamkeel.npcdbc.network.packets.form.DBCSaveForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import noppes.npcs.client.NoppesUtil;
@@ -72,7 +72,7 @@ public class GuiNpcFormMenu {
         Keyboard.enableRepeatEvents(false);
         if (this.parent != null) {
             ((SubGuiInterface)this.parent).close();
-            PacketHandler.Instance.sendToServer(new SaveForm(form.writeToNBT()).generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT()).generatePacket());
         }
     }
 

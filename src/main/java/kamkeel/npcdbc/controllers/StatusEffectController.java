@@ -8,6 +8,7 @@ import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.types.*;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.api.entity.IPlayer;
 
@@ -49,6 +50,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         standardEffects.put(Effects.DARKNESS, new Darkness());      // TODO: Finish it
         standardEffects.put(Effects.ZENKAI, new Zenkai());
         standardEffects.put(Effects.POTARA, new PotaraFusion());
+        standardEffects.put(Effects.EXHAUSTED, new Exhausted());
     }
 
     /**
@@ -191,7 +193,11 @@ public class StatusEffectController implements IStatusEffectHandler {
     public void clearEffects(IPlayer player) {
         if(player == null || player.getMCEntity() == null)
             return;
-        HashMap<Integer, PlayerEffect> effects = playerEffects.get(player.getMCEntity().getUniqueID());
+        clearEffects(player.getMCEntity());
+    }
+
+    public void clearEffects(Entity player) {
+        HashMap<Integer, PlayerEffect> effects = playerEffects.get(player.getUniqueID());
         if(effects != null){
             effects.clear();
         }

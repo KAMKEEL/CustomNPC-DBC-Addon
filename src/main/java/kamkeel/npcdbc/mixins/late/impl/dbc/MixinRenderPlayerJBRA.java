@@ -172,9 +172,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             HD = ConfigDBCClient.EnableHDTextures;
             //only saiyans
             if (race.get() == 1 || race.get() == 2) {
+                if(form.display.hasBodyFur())
+                    renderBodyFur(form, gender.get(), bodyCM.get());
+
                 //renders all ssj4
                 if (form.display.hairType.equals("ssj4")) {
-                    renderSSJ4Fur(form, gender.get(), bodyCM.get());
                     renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get());
                     if (hairback.get() != 12)
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
@@ -206,7 +208,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
 
     @Unique
-    private void renderSSJ4Fur(Form form, int gender, int bodyCM) {
+    private void renderBodyFur(Form form, int gender, int bodyCM) {
         String bodyTexture = (gender == 1 ? "f" : "") + "hum.png";
         this.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + bodyTexture));
         RenderPlayerJBRA.glColor3f(bodyCM);
@@ -308,7 +310,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         Form form = DBCData.getForm(par1EntityPlayer);
         if (form != null && (race.get() == 1 || race.get() == 2)) {
             if (this.renderManager != null && this.renderManager.renderEngine != null) {
-                if (form.display.hairType.equals("ssj4")) {
+                if (form.display.hasBodyFur) {
                     renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get());
                 } else if (form.display.hairType.equals("oozaru")) {
                     renderOozaruArm(form.display.furColor, par1EntityPlayer, id.get(), bodyCM.get());

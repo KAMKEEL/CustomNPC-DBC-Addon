@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.network.packets;
+package kamkeel.npcdbc.network.packets.form;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.FormController;

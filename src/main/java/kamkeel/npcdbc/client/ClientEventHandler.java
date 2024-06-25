@@ -9,8 +9,6 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
-import kamkeel.npcdbc.client.shader.PostProcessing;
-import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -30,15 +28,12 @@ import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
@@ -46,16 +41,6 @@ import static noppes.npcs.NoppesStringUtils.translate;
 public class ClientEventHandler {
 
     private int soundTicker = -1;
-    public static int ticksInGame;
-
-    @SubscribeEvent
-    public void clientTickEnd(TickEvent.ClientTickEvent event) {
-        GuiScreen gui = Minecraft.getMinecraft().currentScreen;
-        if (gui == null || !gui.doesGuiPauseGame())
-            ticksInGame++;
-       // ticksInGame = 0;
-
-    }
 
     @SubscribeEvent
     public void onSkill(TickEvent.PlayerTickEvent event) {
@@ -68,18 +53,6 @@ public class ClientEventHandler {
                     performAscend();
                 } else {
                     TransformController.decrementRage();
-                }
-
-
-            }
-            if (Mouse.isButtonDown(3) || Mouse.isButtonDown(2)) {
-                Minecraft.getMinecraft().refreshResources();
-                ShaderHelper.loadShaders(true);
-            }
-            if (Keyboard.isKeyDown(Keyboard.KEY_F10)) {
-                for (int i : PostProcessing.bloomTextures) {
-                    if (i > 0)
-                        PostProcessing.saveTextureToPNG(i);
                 }
             }
         }
@@ -114,7 +87,6 @@ public class ClientEventHandler {
     private boolean verifyFormTransform(Form form) {
         if (form == null)
             return false;
-
 
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.thePlayer == null)
@@ -247,12 +219,12 @@ public class ClientEventHandler {
                         return;
                     aura = display.getToggledAura();
 
-                    if (aura == null && display.isAuraOn())
+                    if (aura == null && display.isAuraOn()){
+                        aura = new Aura().display.setOverrideDBCAura(true);
                         vanillaAura = true;
-                    else
+                    }
+                    else if(aura == null)
                         return;
-
-
                 } else if (isPlayer) {
                     dbcData = DBCData.get((EntityPlayer) event.entity);
                     aura = dbcData.getToggledAura();
@@ -261,13 +233,12 @@ public class ClientEventHandler {
                         return;
 
                     isInKaioken = dbcData.isForm(DBCForm.Kaioken) && aura.display.hasKaiokenAura;
-
                 }
                 EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
                 if (ConfigDBCClient.RevampAura) {
                     if (enhancedAura == null)
                         if(vanillaAura)
-                            new EntityAura(event.entity, new Aura().display.setOverrideDBCAura(true)).setIsVanilla(true).load(true).spawn();
+                            new EntityAura(event.entity, aura).setIsVanilla(true).load(true).spawn();
                         else
                             new EntityAura(event.entity, aura).load(true).spawn();
                 } else {
@@ -304,6 +275,9 @@ public class ClientEventHandler {
         boolean rotate90 = isPlayer && (dbcData.containsSE(7));
         EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, isPlayer ? dbcData.State : 0, isPlayer ? dbcData.State2 : 0, isPlayer ? dbcData.Release : 100, rotate90);
         aur.setAlp(0.2F);
+
+        if (isNPC)
+            ((IEntityAura) aur).setSize((float) ((EntityNPCInterface) entity).display.modelSize / 5);
 
         if (aura.display.hasSize())
             ((IEntityAura) aur).setSize(aura.display.size);
@@ -446,7 +420,7 @@ public class ClientEventHandler {
             aur.setAlp((float) aura.display.alpha / 255);
 
         if (aura.display.hasSpeed())
-            aur.setSpd((int) aura.display.speed);
+            aur.setSpd(aura.display.speed);
 
         //Kettle Mode stuff
         if (aura.display.kettleModeCharging)
@@ -497,7 +471,7 @@ public class ClientEventHandler {
             kaiokenAura.setCol(aura.display.kaiokenColor);
 
         if (aura.display.hasSpeed())
-            kaiokenAura.setSpd((int) aura.display.speed);
+            kaiokenAura.setSpd(aura.display.speed);
 
         ((IEntityAura) kaiokenAura).setSize(aura.display.size * aura.display.kaiokenSize);
         ((IEntityAura) kaiokenAura).setHasLightning(aura.display.hasLightning);

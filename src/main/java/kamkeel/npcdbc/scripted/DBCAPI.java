@@ -66,7 +66,13 @@ public class DBCAPI extends AbstractDBCAPI {
         return BonusController.Instance;
     }
 
+    @Override
     public IForm createForm(String name) {
+        return FormController.getInstance().createForm(name);
+    }
+
+    @Override
+    public IForm getOrCreateForm(String name) {
         return FormController.getInstance().createForm(name);
     }
 

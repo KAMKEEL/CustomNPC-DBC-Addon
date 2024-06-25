@@ -83,7 +83,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             if (form != null) {
                 hair = Hair.get();
                 DBCData dbcData = DBCData.get(ClientEventHandler.renderingPlayer);
-                boolean isMonke = form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru");
+                boolean isMonke = form.display.hasBodyFur || form.display.hairType.equals("oozaru");
                 HD = ConfigDBCClient.EnableHDTextures;
                 boolean isSaiyan = dbcData.Race == 1 || dbcData.Race == 2;
 

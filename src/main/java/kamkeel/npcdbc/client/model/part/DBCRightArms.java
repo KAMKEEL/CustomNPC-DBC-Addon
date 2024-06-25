@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.client.model.part;
 
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
+import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.model.ModelRenderer;
@@ -49,15 +51,28 @@ public class DBCRightArms extends ModelDBCPartInterface {
         this.ArcoRightShoulder.rotateAngleZ = base.bipedRightArm.rotateAngleZ;
 
         if (display.useSkin) {
-            this.useColor = 0;
+            bodyCM = display.bodyCM;
+            bodyC2 = display.bodyC2;
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            //Forms
+            Form form = display.getForm();
+            if (form != null) {
+                FormDisplay d = form.display;
+                if (d.hasColor("bodycm"))
+                    bodyCM = d.bodyCM;
+                if (d.hasColor("bodyc2"))
+                    bodyC2 = d.bodyC2;
+            }
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/0B20.png");
             useColor = 0;
-            bodyCM = display.bodyCM;
             super.render(par1);
 
             location = new ResourceLocation("jinryuudragonbc:cc/arc/m/2B20.png");
             useColor = 2;
-            bodyC2 = display.bodyC2;
             super.render(par1);
 
             useColor = 0;

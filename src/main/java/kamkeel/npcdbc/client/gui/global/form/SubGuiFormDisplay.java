@@ -129,6 +129,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         addButton(new GuiNpcButton(1206, guiLeft + 133, y, 50, 20,  new String[]{"display.hide", "display.show"}, showAura ? 1 : 0));
 
         y += 22;
+        addLabel(new GuiNpcLabel(124, "display.hudColor", guiLeft + 7, y + 5));
+        addButton(new GuiNpcButton(124, guiLeft + 61, y, 50, 20, getColor(display.hudColor)));
+        getButton(124).packedFGColour = display.hudColor;
+        addButton(new GuiNpcButton(1124, guiLeft + 112, y, 20, 20, "X"));
+        getButton(1124).enabled = display.hudColor != -1;
+
+        y += 22;
         addLabel(new GuiNpcLabel(107, "display.eye", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(107, guiLeft + 61, y, 50, 20, getColor(display.eyeColor)));
         getButton(107).packedFGColour = display.eyeColor;
@@ -165,16 +172,18 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             y = addHairOptions(y);
         }
 
+        if (visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
+            y = addFurOptions(y);
+        }
+
         if(visualDisplay.race == DBCRace.ARCOSIAN){
             y += 22;
-            addLabel(new GuiNpcLabel(113, "display.arcoMask=", guiLeft + 7, y + 5));
+            addLabel(new GuiNpcLabel(113, "display.arcoMask", guiLeft + 7, y + 5));
             addButton(new GuiNpcButtonYesNo(113, guiLeft + 61, y, 50, 20, visualDisplay.hasArcoMask));
 
-            y += 22;
             int index = getArcoForm();
-
-            addLabel(new GuiNpcLabel(114, "display.form", guiLeft + 7, y + 5));
-            addButton(new GuiNpcButton(114, guiLeft + 61, y, 50, 20, arcoForms, index));
+            addLabel(new GuiNpcLabel(114, "display.form", guiLeft + 130, y + 5));
+            addButton(new GuiNpcButton(114, guiLeft + 167, y, 50, 20, arcoForms, index));
         }
     }
 
@@ -211,7 +220,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             addButton(new GuiNpcButton(101, guiLeft + 51, y, 50, 20, "gui.paste"));
             getButton(103).enabled = false;
         } else {
-            addButton(new GuiNpcButton(102, guiLeft + 51, y, 60, 20, "gui.copy"));
+            addButton(new GuiNpcButton(102, guiLeft + 51, y, 45, 20, "gui.copy"));
         }
         addButton(new GuiNpcButton(104, guiLeft + 147, y, 50, 20, getColor(visualDisplay.hairColor)));
         getButton(104).packedFGColour = visualDisplay.hairColor;
@@ -222,6 +231,14 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         int index = getHairType();
         addLabel(new GuiNpcLabel(140, "display.hairType", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(140, guiLeft + 61, y, 50, 20, hairTypes, index));
+        return y;
+    }
+
+    private int addFurOptions(int y) {
+        y += 22;
+        addLabel(new GuiNpcLabel(123, "display.bodyFur", guiLeft + 7, y + 5));
+        addButton(new GuiNpcButtonYesNo(123, guiLeft + 61, y, 50, 20, display.hasBodyFur));
+
         return y;
     }
 
@@ -263,6 +280,17 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         if(button.id == 1406){
             display.auraID = -1;
+            refreshValues();
+            updateButtons();
+        }
+        // Hud Color
+        if(button.id == 124){
+            lastColorClicked = 8;
+            setSubGui(new SubGuiColorSelector(display.hudColor));
+        }
+        // Hud Color Clear
+        if(button.id == 1124){
+            display.hudColor = -1;
             refreshValues();
             updateButtons();
         }
@@ -344,6 +372,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             refreshValues();
             updateButtons();
         }
+        // Body Fur
+        if(button.id == 123){
+            display.hasBodyFur = !display.hasBodyFur;
+            refreshValues();
+            updateButtons();
+        }
+
         // Form
         if(button.id == 114){
             display.bodyType = getArcoString(button.getValue());
@@ -435,6 +470,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 display.furColor = color;
             } else if(lastColorClicked == 7){
                 display.hairColor = color;
+            } else if(lastColorClicked == 8){
+                display.hudColor = color;
             }
             refreshValues();
             updateButtons();
@@ -587,7 +624,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                     aur.setAlp((float) aura.display.alpha / 255);
 
                 if (aura.display.hasSpeed())
-                    aur.setSpd((int) aura.display.speed);
+                    aur.setSpd(aura.display.speed);
             }
             try {
                 GL11.glPushMatrix();
@@ -657,8 +694,17 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         else
             visualDisplay.race = (byte) racePage;
 
-        visualDisplay.eyeColor = 0x000000;
+        visualDisplay.hasArcoMask = false;
+        if(visualDisplay.race == DBCRace.ARCOSIAN){
+            visualDisplay.hasArcoMask = display.hasArcoMask;
+        }
 
+        visualDisplay.hairType = display.hairType;
+        visualDisplay.hairColor = display.hairColor == -1 ? 0xffffff : display.hairColor;
+        if(visualDisplay.race == DBCRace.NAMEKIAN || visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.MAJIN)
+            visualDisplay.hairColor = display.bodyCM;
+
+        visualDisplay.eyeColor = 0x000000;
         if (visualDisplay.race < 3) {
             visualDisplay.bodyCM = 16297621;
         } else if (visualDisplay.race == DBCRace.NAMEKIAN) {
@@ -677,15 +723,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             visualDisplay.eyeColor = 0xFF0000;
         }
 
-        visualDisplay.hasArcoMask = false;
-        if(visualDisplay.race == DBCRace.ARCOSIAN){
-            visualDisplay.hasArcoMask = display.hasArcoMask;
-        }
-
-        visualDisplay.hairType = display.hairType;
-        visualDisplay.hairColor = display.hairColor == -1 ? 0xffffff : display.hairColor;
-        if(visualDisplay.race == DBCRace.NAMEKIAN || visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.MAJIN)
-            visualDisplay.hairColor = display.bodyCM;
+        visualDisplay.furColor = display.furColor;
 
         visualDisplay.hairCode = "";
         if(visualDisplay.race == DBCRace.HUMAN || visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
@@ -727,7 +765,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 tail.color = visualDisplay.bodyC3;
             }
         }
-
 
         if(visualDisplay.race == DBCRace.ARCOSIAN){
             ModelPartData horn = data.getOrCreatePart("dbcHorn");
@@ -771,6 +808,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             }
         }
 
+        if(visualDisplay.race == DBCRace.NAMEKIAN){
+            ModelPartData horn = data.getOrCreatePart("dbcHorn");
+            horn.setTexture("tail/monkey1", 5);
+        }
+
         // Copy Form to Fake Form
         spoofForm.race = form.race;
         spoofForm.display.hairType = display.hairType;
@@ -781,6 +823,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         spoofForm.display.bodyC2 = display.bodyC2;
         spoofForm.display.bodyC3 = display.bodyC3;
         spoofForm.display.bodyType = display.bodyType;
+        spoofForm.display.hudColor = display.hudColor;
         spoofForm.display.eyeColor = display.eyeColor;
         spoofForm.display.effectMajinHair = display.effectMajinHair;
         spoofForm.display.furColor = display.furColor;
@@ -789,6 +832,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         spoofForm.display.keepOriginalSize = display.keepOriginalSize;
         spoofForm.display.formSize = display.formSize;
         spoofForm.display.hasArcoMask = display.hasArcoMask;
+        spoofForm.display.hasBodyFur = display.hasBodyFur;
 
         visualDisplay.formID = spoofForm.id;
     }

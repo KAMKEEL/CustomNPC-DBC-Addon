@@ -13,12 +13,12 @@ public class MixinEntity implements IEntityMC {
     private int renderPass = 0;
     @Unique
     public boolean renderPassTampered;
-    
+
     @Unique
     public void setRenderPass(int renderPass) {
         this.renderPass = renderPass;
         renderPassTampered = renderPass == ClientProxy.MiddleRenderPass;
-       
+
     }
 
     @Unique

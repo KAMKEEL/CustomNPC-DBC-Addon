@@ -73,7 +73,7 @@ public interface IAuraDisplay {
      * @return legal types: ssgod, godofdestruction, ui, mui, ssb, ssrose, ssroseevo, ssbkk, shinka
      */
     void setType2D(String type2D);
-    
+
     boolean hasColor(String type);
 
     /**

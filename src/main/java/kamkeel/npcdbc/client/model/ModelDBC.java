@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.model;
 
+import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
@@ -112,6 +113,7 @@ public class ModelDBC extends ModelBase {
         if (display.useSkin) {
             int eyeColor = display.eyeColor;
             int eyeBrowColor = display.race == DBCRace.NAMEKIAN ? display.bodyCM : display.hairColor;
+            int bodyCM = display.bodyCM;
             boolean hasArcoMask = display.hasArcoMask;
 
             //////////////////////////////////////////////////////
@@ -125,14 +127,15 @@ public class ModelDBC extends ModelBase {
                     eyeColor = d.eyeColor;
                 if (d.hasColor("hair"))
                     eyeBrowColor = d.hairColor;
+                if (d.hasColor("bodycm"))
+                    bodyCM = d.bodyCM;
 
                 if (d.hasArcoMask)
                     hasArcoMask = true;
-
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
-            ColorMode.applyModelColor(display.bodyCM, isHurt);
+            ColorMode.applyModelColor(bodyCM, isHurt);
             ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
             this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
@@ -192,48 +195,80 @@ public class ModelDBC extends ModelBase {
 
     public void renderBodySkin(DBCDisplay display, ModelRenderer model) {
         if (display.useSkin) {
+            int bodyCM = display.bodyCM;
+            int bodyC1 = display.bodyC1;
+            int bodyC2 = display.bodyC2;
+            int bodyC3 = display.bodyC3;
+            int furColor = display.furColor;
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            //Forms
+            Form form = display.getForm();
+            if (form != null) {
+                FormDisplay d = form.display;
+                if (d.hasColor("bodycm"))
+                    bodyCM = d.bodyCM;
+                if (d.hasColor("bodyc1"))
+                    bodyC1 = d.bodyC1;
+                if (d.hasColor("bodyc2"))
+                    bodyC2 = d.bodyC2;
+                if (d.hasColor("bodyc3"))
+                    bodyC3 = d.bodyC3;
+                if (d.hasColor("fur"))
+                    furColor = d.furColor;
+            }
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+
             int race = display.race;
             if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
-                ColorMode.applyModelColor(display.bodyCM, isHurt);
+                ColorMode.applyModelColor(bodyCM, isHurt);
+
+                if(display.hasFur){
+                    model.render(0.0625F);
+                    ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/ss4b.png"));
+                    ColorMode.applyModelColor(furColor, isHurt);
+                }
+
             } else if (race == DBCRace.NAMEKIAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
-                ColorMode.applyModelColor(display.bodyCM, isHurt);
+                ColorMode.applyModelColor(bodyCM, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
-                ColorMode.applyModelColor(display.bodyC1, isHurt);
+                ColorMode.applyModelColor(bodyC1, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
-                ColorMode.applyModelColor(display.bodyC2, isHurt);
+                ColorMode.applyModelColor(bodyC2, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
                 GL11.glColor3f(1f, 1f, 1f);
             } else if (race == DBCRace.ARCOSIAN) {
                 int st = display.getCurrentArcoState();
-                ColorMode.applyModelColor(display.bodyCM, isHurt);
+                ColorMode.applyModelColor(bodyCM, isHurt);
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                ColorMode.applyModelColor(display.bodyC1, isHurt);
+                ColorMode.applyModelColor(bodyC1, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                ColorMode.applyModelColor(display.bodyC2, isHurt);
+                ColorMode.applyModelColor(bodyC2, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                ColorMode.applyModelColor(display.bodyC3, isHurt);
+                ColorMode.applyModelColor(bodyC3, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
                 GL11.glColor3f(1f, 1f, 1f);
             } else if (race == DBCRace.MAJIN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
-                ColorMode.applyModelColor(display.bodyCM, isHurt);
+                ColorMode.applyModelColor(bodyCM, isHurt);
             }
         }
     }

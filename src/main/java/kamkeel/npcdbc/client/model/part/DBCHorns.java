@@ -3,6 +3,8 @@ package kamkeel.npcdbc.client.model.part;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.model.ModelRenderer;
@@ -36,6 +38,13 @@ public class DBCHorns extends ModelDBCPartInterface {
     public ModelRenderer CSpike3;
     public ModelRenderer CSpike4;
     public ModelRenderer CSpike5;
+
+    // Namekian Horn
+    public ModelRenderer NamekianAntennas;
+    public ModelRenderer ant1;
+    public ModelRenderer ant2;
+    public ModelRenderer ant3;
+    public ModelRenderer ant4;
 
     public DBCHorns(ModelMPM base) {
         super(base);
@@ -124,44 +133,88 @@ public class DBCHorns extends ModelDBCPartInterface {
         this.CoolerHeadSpikes.addChild(this.CSpike5);
 
 
+        // Namekian Antenna
+        (this.NamekianAntennas = new ModelRenderer(base, 0, 0)).addBox(-0.0f, -0.0f, -0.0f, 0, 0, 0, 0.02f);
+        this.NamekianAntennas.setRotationPoint(0.0f, 0.0f, 0.0f);
+        (this.ant1 = new ModelRenderer(base, 24, 4)).addBox(0.0f, -5.0f, -8.0f, 1, 1, 2);
+        this.ant1.setRotationPoint(0.0f, 0.0f, 0.0f);
+        this.setRotation(this.ant1, -0.3490659f, -0.4363323f, 0.0f);
+        (this.ant2 = new ModelRenderer(base, 24, 4)).addBox(0.0f, -8.533334f, -6.2f, 1, 1, 2);
+        this.ant2.setRotationPoint(0.0f, 0.0f, 0.0f);
+        this.setRotation(this.ant2, 0.2094395f, -0.4364196f, 0.0f);
+        (this.ant3 = new ModelRenderer(base, 24, 4)).addBox(-1.0f, -5.0f, -8.0f, 1, 1, 2);
+        this.ant3.setRotationPoint(0.0f, 0.0f, 0.0f);
+        this.setRotation(this.ant3, -0.3490659f, 0.4363323f, 0.0f);
+        (this.ant4 = new ModelRenderer(base, 24, 4)).addBox(-1.0f, -8.533334f, -6.2f, 1, 1, 2);
+        this.ant4.setRotationPoint(0.0f, 0.0f, 0.0f);
+        this.setRotation(this.ant4, 0.2094395f, 0.4364196f, 0.0f);
+        this.NamekianAntennas.addChild(this.ant1);
+        this.NamekianAntennas.addChild(this.ant2);
+        this.NamekianAntennas.addChild(this.ant3);
+        this.NamekianAntennas.addChild(this.ant4);
+
         this.addChild(SpikePair);
         this.addChild(SpikePairExtended);
         this.addChild(ThirdFormBigHead);
         this.addChild(CoolerHeadSpikes);
+        this.addChild(NamekianAntennas);
     }
 
     @Override
     public void render(float par1) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
-        if (display.useSkin) {
+        if (display.useSkin){
             int state = ValueUtil.clamp(display.getCurrentArcoState(), 0, 7);
             if (display.race != DBCRace.ARCOSIAN)
                 state = 3;
 
-            useColor = 0;
-            this.bodyCM = display.bodyCM;
-            location = new ResourceLocation("jinryuudragonbc:cc/arc/m/0B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            super.render(par1);
 
-            useColor = 1;
-            location = new ResourceLocation("jinryuudragonbc:cc/arc/m/1B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC1 = display.bodyC1;
-            super.render(par1);
+            bodyCM = display.bodyCM;
+            bodyC1 = display.bodyC1;
+            bodyC2 = display.bodyC2;
+            bodyC3 = display.bodyC3;
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            //Forms
+            Form form = display.getForm();
+            if (form != null) {
+                FormDisplay d = form.display;
+                if (d.hasColor("bodycm"))
+                    bodyCM = d.bodyCM;
+                if (d.hasColor("bodyc1"))
+                    bodyC1 = d.bodyC1;
+                if (d.hasColor("bodyc2"))
+                    bodyC2 = d.bodyC2;
+                if (d.hasColor("bodyc3"))
+                    bodyC3 = d.bodyC3;
+            }
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            if(!NamekianAntennas.isHidden){
+                useColor = 0;
+                super.render(par1);
+            }
+            else {
+                useColor = 0;
+                location = new ResourceLocation("jinryuudragonbc:cc/arc/m/0B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
+                super.render(par1);
 
-            useColor = 2;
-            location = new ResourceLocation("jinryuudragonbc:cc/arc/m/2B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC2 = display.bodyC2;
-            super.render(par1);
+                useColor = 1;
+                location = new ResourceLocation("jinryuudragonbc:cc/arc/m/1B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
+                super.render(par1);
 
-            useColor = 3;
-            location = new ResourceLocation("jinryuudragonbc:cc/arc/m/3B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyC3 = display.bodyC3;
-            super.render(par1);
+                useColor = 2;
+                location = new ResourceLocation("jinryuudragonbc:cc/arc/m/2B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
+                super.render(par1);
 
-            useColor = 0;
-            location = new ResourceLocation("jinryuudragonbc:cc/arc/m/4B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
-            this.bodyCM = display.bodyCM;
-            super.render(par1);
+                useColor = 3;
+                location = new ResourceLocation("jinryuudragonbc:cc/arc/m/3B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
+                super.render(par1);
+
+                useColor = 0;
+                location = new ResourceLocation("jinryuudragonbc:cc/arc/m/4B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
+                super.render(par1);
+            }
         } else {
             super.render(par1);
         }
@@ -181,6 +234,7 @@ public class DBCHorns extends ModelDBCPartInterface {
         SpikePairExtended.isHidden = config.type != 2 && config.type != 3;
         ThirdFormBigHead.isHidden = config.type != 3;
         CoolerHeadSpikes.isHidden = config.type != 4;
+        NamekianAntennas.isHidden = config.type != 5;
 
         if (!config.playerTexture) {
             location = config.getResource();

@@ -162,40 +162,4 @@ public class MixinDBCAddon {
     public void syncPlayer(EntityPlayerMP playerMP) {
         DBCSyncController.syncPlayer(playerMP);
     }
-
-    /**
-     * @author Kamkeel
-     * @reason Performs Syncing | SyncController
-     */
-    @Overwrite(remap = false)
-    public void formPacketGet(EntityPlayer player, ByteBuf buffer) {
-        Form customForm = (Form) FormController.getInstance().get(buffer.readInt());
-        NBTTagCompound compound = customForm.writeToNBT();
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
-    }
-
-    /**
-     * @author Kamkeel
-     * @reason Performs Syncing | SyncController
-     */
-    @Overwrite(remap = false)
-    public void formPacketRemove(EntityPlayer player, ByteBuf buffer) {
-        FormController.getInstance().delete(buffer.readInt());
-        NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
-        NBTTagCompound compound = (new Form()).writeToNBT();
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
-    }
-
-    /**
-     * @author Kamkeel
-     * @reason Performs Syncing | SyncController
-     */
-    @Overwrite(remap = false)
-    public void formPacketSave(EntityPlayer player, ByteBuf buffer) throws IOException {
-        Form customForm = new Form();
-        customForm.readFromNBT(Server.readNBT(buffer));
-        FormController.getInstance().saveForm(customForm);
-        NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, customForm.writeToNBT());
-    }
 }

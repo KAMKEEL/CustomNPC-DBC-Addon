@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.network.packets;
+package kamkeel.npcdbc.network.packets.form;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.FormController;
@@ -13,17 +13,17 @@ import noppes.npcs.constants.EnumPacketClient;
 
 import java.io.IOException;
 
-public final class RequestForm extends AbstractPacket {
+public final class DBCRequestForm extends AbstractPacket {
     public static final String packetName = "NPC|RequestForm";
     private int formID;
     private boolean onlyPlayers;
 
-    public RequestForm(int formID, boolean players) {
+    public DBCRequestForm(int formID, boolean players) {
         this.formID = formID;
         this.onlyPlayers = players;
     }
 
-    public RequestForm() {}
+    public DBCRequestForm() {}
 
     @Override
     public String getChannel() {

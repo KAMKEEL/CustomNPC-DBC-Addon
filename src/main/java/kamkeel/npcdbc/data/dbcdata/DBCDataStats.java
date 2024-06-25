@@ -70,7 +70,7 @@ public class DBCDataStats {
     }
 
     public void decrementActiveEffects() {
-        HashMap<Integer, PlayerEffect> currentEffects = StatusEffectController.Instance.playerEffects.get(Utility.getUUID(data.player));
+        HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>(StatusEffectController.Instance.playerEffects.get(Utility.getUUID(data.player)));
         Iterator<Map.Entry<Integer, PlayerEffect>> iterator = currentEffects.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Integer, PlayerEffect> entry = iterator.next();

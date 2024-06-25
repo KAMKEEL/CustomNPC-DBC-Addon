@@ -42,7 +42,6 @@ public class ConfigDBCEffects
     public final static String Meditation = "Meditation";
     public static int MeditationSpiBoostPercent = 20;
 
-
     public final static String Potara = "Potara";
     public static double TierOneMulti = 0.5;
     public static double TierTwoMulti = 0.7;
@@ -50,6 +49,11 @@ public class ConfigDBCEffects
 
     public final static String OVERPOWER = "OVERPOWER";
     public static int OVERPOWER_AMOUNT = 25;
+
+    public final static String EXHAUST = "EXHAUST";
+    public static int EXHAUST_TIME = 15;
+    public static boolean EXHAUST_ZENAKI = true;
+    public static boolean EXHAUST_OVERPOWER = true;
 
     public static void init(File configFile)
     {
@@ -104,6 +108,15 @@ public class ConfigDBCEffects
                     "The range of accepted values are [0 to 25].").getInt(25);
 
             OVERPOWER_AMOUNT = ValueUtil.clamp(OVERPOWER_AMOUNT, 0, 25);
+
+
+            config.addCustomCategoryComment(EXHAUST,
+                "Exhausted prevents specific effects from being applied to the player." +
+                    "\nSimilar to Pain or NoFuse, it acts as a Cooldown");
+            EXHAUST_TIME = config.get(Potara, "Exhaust Time", 15, "Amount of Time in Minutes for Exhaust").getInt(15);
+            EXHAUST_ZENAKI = config.get(EXHAUST, "Exhaust Zenkai", true).getBoolean(true);
+            EXHAUST_OVERPOWER = config.get(EXHAUST, "Exhaust Overpower", true).getBoolean(true);
+
         }
         catch (Exception e)
         {

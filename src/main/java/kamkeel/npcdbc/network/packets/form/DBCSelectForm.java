@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.network.packets;
+package kamkeel.npcdbc.network.packets.form;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
@@ -48,7 +48,7 @@ public final class DBCSelectForm extends AbstractPacket {
         if (formID != -1 && FormController.getInstance().has(formID)){
             Form form = (Form) FormController.getInstance().get(formID);
             if(form != null && formData.hasFormUnlocked(formID)){
-                if(form.hasParent()){
+                if(form.hasParent() && form.fromParentOnly){
                     if(ConfigDBCGameplay.InstantTransform){
                         boolean canInstant = form.mastery.canInstantTransform(formData.getFormLevel(formID));
                         if(!canInstant){

@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.network.packets.gui;
+package kamkeel.npcdbc.network.packets.form;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.api.form.IForm;
@@ -16,16 +16,16 @@ import java.io.IOException;
 
 import static kamkeel.npcdbc.network.DBCAddonPermissions.GLOBAL_DBCFORM;
 
-public class SaveForm extends AbstractPacket {
+public class DBCSaveForm extends AbstractPacket {
     public static final String packetName = "NPC|SaveForm";
 
     private NBTTagCompound form;
 
-    public SaveForm(NBTTagCompound compound){
+    public DBCSaveForm(NBTTagCompound compound){
         this.form = compound;
     }
 
-    public SaveForm() {
+    public DBCSaveForm() {
 
     }
 

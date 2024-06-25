@@ -165,7 +165,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             //Custom form handling
             if(dataClient != null && dataClient.isInCustomForm()){
                 curLevel = dataClient.getFormLevel(dataClient.currentForm);
-            //DBC Form handling
+                //DBC Form handling
             }else{
                 curLevel = Float.parseFloat(JRMCoreH.getFormMasteryData().split(",")[1]);
             }
@@ -328,7 +328,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             .updateDisplay(formColor+JRMCoreH.numSep(longValue))
             .setTooltip(
                 getDescription(
-                    JRMCoreH.trl("jrmc", JRMCoreH.attrNms(1, 0)),
+                    JRMCoreH.attrNms(1, 0),
                     incrementVal,
                     JRMCoreH.numSep(stat),
                     null,
@@ -360,14 +360,14 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             chargingDef = JRMCoreH.numSep((int) (longValue * (ClientCache.chargingDexValues.get((int) dbcClient.Class) / 100)));
 
         String defDesc = getDescription(
-            JRMCoreH.trl("jrmc", JRMCoreH.attrNms(1, 1)),
+            JRMCoreH.attrNms(1, 1),
             incrementVal,
             JRMCoreH.numSep(stat),
             passiveDef,
             chargingDef,
             (bonusOutput > 0 ? JRMCoreH.numSep(bonusOutput) : null),
             0,
-                (int) (100.0F - JRMCoreH.weightPerc(1) * 100.0F)
+            (int) (100.0F - JRMCoreH.weightPerc(1) * 100.0F)
         );
         dynamicLabels.get("defense")
             .updateDisplay(formColor+JRMCoreH.numSep(longValue))
@@ -399,7 +399,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             .updateDisplay(JRMCoreH.numSep(stat) + (isReductionWorthDisplaying ? " R" + dmgReduction + "%" : ""))
             .setTooltip(
                 getDescription(
-                    JRMCoreH.trl("jrmc", JRMCoreH.attrNms(1, 2)),
+                    JRMCoreH.attrNms(1, 2),
                     incrementVal,
                     null,
                     null,
@@ -417,7 +417,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             .updateDisplay(JRMCoreH.numSep(stat))
             .setTooltip(
                 getDescription(
-                    JRMCoreH.trl("jrmc", JRMCoreH.attrNms(1, 2)),
+                    JRMCoreH.attrNms(1, 2),
                     incrementVal,
                     null,
                     null,
@@ -622,10 +622,10 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             dynamicLabels.put("attr_"+i+"_button_desc", new JRMCoreLabel(button, "%s", null));
             upgradeButtons[i] = button;
             dynamicLabels.put("attr_"+i, new JRMCoreLabel(
-    (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + statNames[i]+": §4%s",
-    "%s",
-            guiWidthOffset+17,
-            yPos+5
+                (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + statNames[i]+": §4%s",
+                "%s",
+                guiWidthOffset+17,
+                yPos+5
             ));
 
 

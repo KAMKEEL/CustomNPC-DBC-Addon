@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
+import noppes.npcs.util.ValueUtil;
 
 import java.util.Arrays;
 
@@ -267,7 +268,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             case "mystic":
                 found = true;
                 isMysticOn = true;
-
+                break;
             case "ultrainstict":
                 found = true;
                 isUltraInstinctOn = true;
@@ -532,7 +533,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public boolean isMUI() {
         return dbcData.isForm(DBCForm.MasteredUltraInstinct);
     }
-    
+
     public boolean isMystic() {
         return dbcData.isForm(DBCForm.Mystic);
     }
@@ -566,6 +567,47 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public boolean isFlying() {
         return dbcData.isFlying;
     }
+
+    @Override
+    public void setAllowFlight(boolean allowFlight) {
+        dbcData.flightEnabled = allowFlight;
+        dbcData.saveNBTData(false);
+    }
+
+    @Override
+    public void setFlightSpeedRelease(int release) {
+        dbcData.flightSpeedRelease = ValueUtil.clamp(release, 1, 100);
+        dbcData.saveNBTData(false);
+    }
+
+    @Override
+    public void setBaseFlightSpeed(int speed) {
+        dbcData.baseFlightSpeed = ValueUtil.clamp(speed, 1, 10);
+        dbcData.saveNBTData(false);
+    }
+
+    @Override
+    public void setDynamicFlightSpeed(int speed) {
+        dbcData.dynamicFlightSpeed = ValueUtil.clamp(speed, 1, 10);
+        dbcData.saveNBTData(false);
+    }
+
+    @Override
+    public void setFlightGravity(boolean isEffected) {
+        dbcData.flightGravity = isEffected;
+        dbcData.saveNBTData(false);
+    }
+
+    @Override
+    public void setFlightDefaults() {
+        dbcData.baseFlightSpeed = 1.0f;
+        dbcData.dynamicFlightSpeed = 1.0f;
+        dbcData.flightEnabled = true;
+        dbcData.flightSpeedRelease = 100;
+        dbcData.flightGravity = true;
+        dbcData.saveNBTData(false);
+    }
+
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     // Form stuff

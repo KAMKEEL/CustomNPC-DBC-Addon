@@ -45,12 +45,12 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
 
         int y = guiTop + 3;
 
-        // TODO: Fix Resizing Bug
         GuiScrollWindow scrollWindow = new GuiScrollWindow(this, guiLeft +4, y, xSize-9, ySize-7, 0);
         addScrollableGui(0, scrollWindow);
         int maxScroll = -20;
 
-        y -= 15;
+
+        y = 5;
 
         scrollWindow.addLabel(new GuiNpcLabel(1,"mastery.maxLevel", 4, y + 5));
         scrollWindow.addTextField(new GuiNpcTextField(1, this, 135, y, 40, 20, String.valueOf(form.mastery.maxLevel)));
@@ -652,6 +652,30 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             mastery.fireKiMindBonusMax = txtField.getFloat();
         } else if(txtField.id == 55){
             mastery.fireKiMultiDivPlus = txtField.getFloat();
+        } else if(txtField.id == 401){
+            mastery.painTime = txtField.getInteger();
+        } else if(txtField.id == 402){
+            mastery.painMultiFlat = txtField.getFloat();
+        } else if(txtField.id == 403){
+            mastery.painMultiPerLevel = txtField.getFloat();
+        } else if(txtField.id == 404){
+            mastery.painMultiMinOrMax = txtField.getFloat();
+        } else if(txtField.id == 501){
+            mastery.dodgeChance = txtField.getFloat();
+        } else if(txtField.id == 502){
+            mastery.dodgeMultiFlat = txtField.getFloat();
+        } else if(txtField.id == 503){
+            mastery.dodgeMultiPerLevel = txtField.getFloat();
+        } else if(txtField.id == 504){
+            mastery.dodgeMultiMinOrMax = txtField.getFloat();
+        } else if(txtField.id == 601){
+            mastery.damageNegation = txtField.getFloat();
+        } else if(txtField.id == 602){
+            mastery.damageNegationMultiFlat = txtField.getFloat();
+        } else if(txtField.id == 603){
+            mastery.damageNegationMultiPerLevel = txtField.getFloat();
+        } else if(txtField.id == 604){
+            mastery.damageNegationMultiMinOrMax = txtField.getFloat();
         }
     }
 

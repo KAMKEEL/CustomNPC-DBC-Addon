@@ -4,7 +4,9 @@ import kamkeel.npcdbc.api.effect.IBonusHandler;
 import kamkeel.npcdbc.api.effect.IPlayerBonus;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.api.entity.IPlayer;
 
@@ -147,6 +149,20 @@ public class BonusController implements IBonusHandler {
             playerBonus.put(uuid, current);
         current.remove(name);
         syncBonus(player);
+    }
+
+    @Override
+    public void clearBonuses(IPlayer player) {
+        if(player == null || player.getMCEntity() == null)
+            return;
+        clearBonuses(player.getMCEntity());
+    }
+
+    public void clearBonuses(Entity player) {
+        HashMap<String, PlayerBonus> effects = playerBonus.get(player.getUniqueID());
+        if(effects != null){
+            effects.clear();
+        }
     }
 
     @Override

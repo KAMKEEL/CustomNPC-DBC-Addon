@@ -16,10 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinJRMCoreHDBC {
     @Inject(method = "getPlayerColor", at = @At("HEAD"), cancellable = true)
     private static void onGetPlayerColor(int type, int def, int p, int r, int s, boolean divine, boolean y, boolean ui, boolean ui2, boolean gd, CallbackInfoReturnable<Integer> ci) {
-        //if this method is not called by RenderPlayerJBRA, as rendering data is already handled, and this method is heavily used in rendering in DBC
-        // To be improved by kAM
         if (!ClientCache.fromRenderPlayerJBRA) {
-            if (ClientCache.isChangePart && CommonProxy.CurrentAuraPlayer != null) { //IForm auraColor
+            if (ClientCache.isChangePart && CommonProxy.CurrentAuraPlayer != null) {
                 Form form = DBCData.get(CommonProxy.CurrentAuraPlayer).getForm();
                 if (form != null && form.display.auraColor != -1)
                     ci.setReturnValue(form.display.auraColor);
@@ -27,7 +25,9 @@ public class MixinJRMCoreHDBC {
             } else { //IForm ki bar color
                 Form form = DBCData.getClient().getForm();
                 if (form != null) {
-                    if (form.display.furColor != -1 && (form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")))
+                    if(form.display.hudColor != -1)
+                        ci.setReturnValue(form.display.hudColor);
+                    else if (form.display.furColor != -1 && (form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")))
                         ci.setReturnValue(form.display.furColor);
                     else if (form.display.hairColor != -1)
                         ci.setReturnValue(form.display.hairColor);

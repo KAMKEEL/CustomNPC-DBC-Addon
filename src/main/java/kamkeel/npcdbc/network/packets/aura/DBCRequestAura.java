@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.network.packets;
+package kamkeel.npcdbc.network.packets.aura;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.AuraController;
@@ -13,17 +13,17 @@ import noppes.npcs.constants.EnumPacketClient;
 
 import java.io.IOException;
 
-public final class RequestAura extends AbstractPacket {
+public final class DBCRequestAura extends AbstractPacket {
     public static final String packetName = "NPC|RequestAura";
     private int auraID;
     private boolean onlyPlayers;
 
-    public RequestAura(int auraID, boolean players) {
+    public DBCRequestAura(int auraID, boolean players) {
         this.auraID = auraID;
         this.onlyPlayers = players;
     }
 
-    public RequestAura() {}
+    public DBCRequestAura() {}
 
     @Override
     public String getChannel() {

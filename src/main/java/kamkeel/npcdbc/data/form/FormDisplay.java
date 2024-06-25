@@ -20,8 +20,10 @@ public class FormDisplay implements IFormDisplay {
     public int hairColor = -1;
     public int eyeColor = -1;
     public int auraColor = -1;
+    public int hudColor = -1;
     public String bodyType = "";
     public int bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
+    public boolean hasBodyFur = false;
     public boolean hasArcoMask = false;
     public boolean effectMajinHair = false;
 
@@ -36,6 +38,7 @@ public class FormDisplay implements IFormDisplay {
         auraColor = rendering.getInteger("auraColor");
         eyeColor = rendering.getInteger("eyeColor");
         hairColor = rendering.getInteger("hairColor");
+        hudColor = rendering.getInteger("hudColor");
 
         furColor = rendering.getInteger("furColor");
         hairCode = rendering.getString("hairCode");
@@ -49,6 +52,7 @@ public class FormDisplay implements IFormDisplay {
 
         hasArcoMask = rendering.getBoolean("hasArcoMask");
         effectMajinHair = rendering.getBoolean("effectMajinHair");
+        hasBodyFur = rendering.getBoolean("hasBodyFur");
 
         formSize = rendering.getFloat("formSize");
         keepOriginalSize = rendering.getBoolean("keepOriginalSize");
@@ -61,6 +65,7 @@ public class FormDisplay implements IFormDisplay {
         rendering.setInteger("auraColor", auraColor);
         rendering.setInteger("eyeColor", eyeColor);
         rendering.setInteger("hairColor", hairColor);
+        rendering.setInteger("hudColor", hudColor);
 
         rendering.setString("hairCode", hairCode);
         rendering.setString("hairType", hairType);
@@ -74,6 +79,7 @@ public class FormDisplay implements IFormDisplay {
 
         rendering.setBoolean("hasArcoMask", hasArcoMask);
         rendering.setBoolean("effectMajinHair", effectMajinHair);
+        rendering.setBoolean("hasBodyFur", hasBodyFur);
 
         rendering.setFloat("formSize", formSize);
         rendering.setBoolean("keepOriginalSize", keepOriginalSize);
@@ -137,6 +143,8 @@ public class FormDisplay implements IFormDisplay {
     @Override
     public boolean hasColor(String type) {
         switch (type.toLowerCase()) {
+            case "hud":
+                return hudColor != -1;
             case "aura":
                 return auraColor != -1;
             case "hair":
@@ -153,14 +161,16 @@ public class FormDisplay implements IFormDisplay {
                 return bodyC3 != -1;
             case "fur":
                 return furColor != -1;
-
         }
-        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
+        throw new CustomNPCsException("Invalid type! Legal types: hud, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
 
     @Override
     public void setColor(String type, int color) {
         switch (type.toLowerCase()) {
+            case "hud":
+                hudColor = color;
+                break;
             case "aura":
                 auraColor = color;
                 break;
@@ -186,7 +196,7 @@ public class FormDisplay implements IFormDisplay {
                 furColor = color;
                 break;
             default:
-                throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
+                throw new CustomNPCsException("Invalid type! Legal types: hud, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
         }
     }
 
@@ -215,6 +225,8 @@ public class FormDisplay implements IFormDisplay {
     @Override
     public int getColor(String type) {
         switch (type.toLowerCase()) {
+            case "hud":
+                return hudColor;
             case "aura":
                 return auraColor;
             case "hair":
@@ -232,7 +244,7 @@ public class FormDisplay implements IFormDisplay {
             case "fur":
                 return furColor;
         }
-        throw new CustomNPCsException("Invalid type! Legal types: aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
+        throw new CustomNPCsException("Invalid type! Legal types: hud, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
 
 
@@ -244,6 +256,16 @@ public class FormDisplay implements IFormDisplay {
     @Override
     public void hasArcoMask(boolean hasMask) {
         this.hasArcoMask = hasMask;
+    }
+
+    @Override
+    public boolean hasBodyFur() {
+        return hasBodyFur;
+    }
+
+    @Override
+    public void hasBodyFur(boolean hasFur) {
+        this.hasBodyFur = hasFur;
     }
 
     @Override

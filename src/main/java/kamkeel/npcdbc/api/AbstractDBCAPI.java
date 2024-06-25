@@ -50,6 +50,11 @@ public abstract class AbstractDBCAPI {
 
     public abstract IAura getAura(String name);
 
+    /**
+     * @return Fake DBC Data for Simulating Damage
+     */
+    public abstract IForm getOrCreateForm(String name);
+
     public abstract IForm getForm(String name);
 
     /**

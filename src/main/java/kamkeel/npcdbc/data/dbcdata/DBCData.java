@@ -45,8 +45,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "", Fusion = "";
 
     // Custom Form / Custom Aura
-    public int addonFormID, auraID;
-    public float addonFormLevel, addonCurrentHeat;
+    public int addonFormID = -1, auraID = -1;
+    public float addonFormLevel = 0, addonCurrentHeat = 0;
     public HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
     public HashMap<String, PlayerBonus> currentBonuses = new HashMap<>();
 
@@ -171,29 +171,37 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         MajinAbsorptionData = c.getString("jrmcMajinAbsorptionData");
         Fusion = c.getString("jrmcFuzion");
 
+        isFlying = c.getBoolean("DBCisFlying");
+
         // DBC Addon
+        if (!c.hasKey("addonFormID"))
+            c.setInteger("addonFormID", addonFormID);
         addonFormID = c.getInteger("addonFormID");
+
         addonFormLevel = c.getFloat("addonFormLevel");
         addonCurrentHeat = c.getFloat("addonCurrentHeat");
+
+        if (!c.hasKey("auraID"))
+            c.setInteger("auraID", auraID);
         auraID = c.getInteger("auraID");
 
         if (!c.hasKey("DBCBaseFlightSpeed"))
             c.setFloat("DBCBaseFlightSpeed", baseFlightSpeed);
         baseFlightSpeed = c.getFloat("DBCBaseFlightSpeed");
 
-        if (!c.hasKey("DBCBaseFlightSpeed"))
+        if (!c.hasKey("DBCDynamicFlightSpeed"))
             c.setFloat("DBCDynamicFlightSpeed", dynamicFlightSpeed);
         dynamicFlightSpeed = c.getFloat("DBCDynamicFlightSpeed");
 
-        if (!c.hasKey("DBCBaseFlightSpeed"))
+        if (!c.hasKey("DBCFlightSpeedRelease"))
             c.setInteger("DBCFlightSpeedRelease", flightSpeedRelease);
         flightSpeedRelease = c.getInteger("DBCFlightSpeedRelease");
 
-        if (!c.hasKey("DBCBaseFlightSpeed"))
+        if (!c.hasKey("DBCFlightEnabled"))
             c.setBoolean("DBCFlightEnabled", flightEnabled);
         flightEnabled = c.getBoolean("DBCFlightEnabled");
 
-        if (!c.hasKey("DBCBaseFlightSpeed"))
+        if (!c.hasKey("DBCFlightGravity"))
             c.setBoolean("DBCFlightGravity", flightGravity);
         flightGravity = c.getBoolean("DBCFlightGravity");
 
@@ -255,8 +263,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
         stats.saveEffectsNBT(dbc);
         bonus.saveBonusNBT(dbc);
-        //dbc.setFloat("DBCFlightSpeedRelease", 100f);
-        // dbc.setBoolean("DBCFlightGravity", false);
         loadFromNBT(dbc);
         if (syncALL)
             syncTracking();

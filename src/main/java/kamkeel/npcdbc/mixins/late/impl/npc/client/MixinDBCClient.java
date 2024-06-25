@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.late.impl.npc.client;
 import kamkeel.addon.client.DBCClient;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.gui.SubGuiDBCProperties;
+import kamkeel.npcdbc.client.gui.global.auras.GuiNPCManageAuras;
 import kamkeel.npcdbc.client.gui.global.form.GuiNPCManageForms;
 import kamkeel.npcdbc.client.gui.inventory.GuiDBC;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -69,6 +70,13 @@ public class MixinDBCClient {
     @Overwrite(remap = false)
     public GuiNPCInterface2 manageCustomForms(EntityNPCInterface npcInterface){ return new GuiNPCManageForms(npcInterface); }
 
+
+    /**
+     * @author Kam
+     * @reason Manages Custom Auras
+     */
+    @Overwrite(remap = false)
+    public GuiNPCInterface2 manageCustomAuras(EntityNPCInterface npcInterface){ return new GuiNPCManageAuras(npcInterface); }
 
     /**
      * @author Kam

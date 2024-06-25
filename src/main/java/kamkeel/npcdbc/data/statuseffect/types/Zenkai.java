@@ -5,6 +5,7 @@ import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.BonusController;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
@@ -37,9 +38,12 @@ public class Zenkai extends StatusEffect {
 
     @Override
     public void kill(EntityPlayer player, PlayerEffect playerEffect) {
-        if(playerEffect.getName().equals(saiyanZenkai.getName()))
+        DBCData dbcData = DBCData.get(player);
+        if(dbcData.Race == DBCRace.SAIYAN)
             BonusController.getInstance().removeBonus(player, saiyanZenkai);
         else
             BonusController.getInstance().removeBonus(player, halfSaiyanZenkai);
+
+        StatusEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED);
     }
 }
