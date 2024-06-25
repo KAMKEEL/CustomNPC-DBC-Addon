@@ -299,7 +299,6 @@ public class PostProcessing {
         }
 
         OpenGlHelper.func_153174_h(auraBuffer);
-        OpenGlHelper.func_153184_g(auraBuffer);
         for (int i = 0; i < auraTextures.length; i++) {
             if (auraTextures[i] > 0)
                 TextureUtil.deleteTexture(auraTextures[i]);
