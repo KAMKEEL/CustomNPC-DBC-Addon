@@ -62,7 +62,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
     public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
-    public float XZSize, YSize;
+
+
+    //RENDERING DATA
+    public float XZSize, YSize, age;
+    public int renderingHairColor;
 
     public DBCData() {
         this.side = Side.SERVER;

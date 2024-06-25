@@ -9,6 +9,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.TransformController;
@@ -123,8 +124,12 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     }
                 }
                 //hair color for all forms
-                if (form.display.hairColor != -1 && (isHairPreset(hair) || hair.contains("EYEBROW")))
-                    RenderPlayerJBRA.glColor3f(form.display.hairColor);
+                if ((isHairPreset(hair) || hair.contains("EYEBROW"))) {
+                    if (form.display.hairColor == -1)
+                        ColorMode.glColorInt(dbcData.renderingHairColor, 1f);
+                    else
+                        RenderPlayerJBRA.glColor3f(form.display.hairColor);
+                }
 
 
                 //sets hairstates for default presets
@@ -212,8 +217,11 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     race.set(1);
                 }
 
+                DBCData data = DBCData.get(abstractClientPlayer);
                 //color CH
-                if (form.display.hairColor != -1)
+                if (form.display.hairColor == -1)
+                    RenderPlayerJBRA.glColor3f(data.renderingHairColor);
+                else
                     RenderPlayerJBRA.glColor3f(form.display.hairColor);
 
                 //if bald or invalid CH, remove. Set SSJ4 to default if invalid
@@ -225,7 +233,6 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     else if (form.display.hairCode.length() < 5 && form.display.hairType.equals("ssj4"))  //if hairCode empty && ssj4, set to default ssj4 hair
                         hair.set("373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820");
                 }
-
                 //remove CH if SSJ3/Oozaru
                 if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("oozaru") && (isSaiyan))
                     ci.cancel();

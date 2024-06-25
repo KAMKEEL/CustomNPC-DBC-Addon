@@ -44,6 +44,8 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 @Mixin(value = RenderPlayerJBRA.class, remap = false)
 public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Shadow
+    private static float age;
+    @Shadow
     public ModelBipedDBC modelMain;
     @Unique
     boolean HD;
@@ -74,13 +76,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     public void postRenderArm(EntityPlayer par1EntityPlayer, CallbackInfo ci) {
         MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderArmEvent.Post(par1EntityPlayer, (RenderPlayerJBRA) (Object) this, Minecraft.getMinecraft().timer.renderPartialTicks));
     }
-    
+
     @ModifyArgs(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 1))
     protected void setDamage(Args args, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
         DBCData.get(player.get()).XZSize = args.get(0);
         DBCData.get(player.get()).YSize = args.get(1);
     }
-    
+
     @Inject(method = "glColor3f(I)V", at = @At("HEAD"), cancellable = true)
     private static void mixAuraColor(int c, CallbackInfo ci) {
         EntityPlayer player = ClientEventHandler.renderingPlayer;
@@ -168,6 +170,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                                             bodyCM, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef
                                             race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
         Form form = DBCData.getForm(par1AbstractClientPlayer);
+        DBCData data = DBCData.get(par1AbstractClientPlayer);
         if (form != null) {
             HD = ConfigDBCClient.EnableHDTextures;
             //only saiyans
@@ -177,7 +180,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
                 //renders all ssj4
                 if (form.display.hairType.equals("ssj4")) {
-                    renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get());
+                    renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get(), data.renderingHairColor, data.age);
                     if (hairback.get() != 12)
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
                     //all oozaru rendering
@@ -207,6 +210,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
 
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.AFTER))
+    public void captureDefaultHairColor(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hc") LocalIntRef hairCol) {
+        DBCData data = DBCData.get(par1AbstractClientPlayer);
+        data.renderingHairColor = hairCol.get();
+        data.age = age;
+    }
+
     @Unique
     private void renderBodyFur(Form form, int gender, int bodyCM) {
         String bodyTexture = (gender == 1 ? "f" : "") + "hum.png";
@@ -220,7 +230,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Unique
-    private void renderSSJ4Face(Form form, int gender, int nose, int bodyCM) {
+    private void renderSSJ4Face(Form form, int gender, int nose, int bodyCM, int defaultHairColor, float age) {
         if (ConfigDBCClient.EnableHDTextures) {
             GL11.glColor3f(1.0f, 1.0f, 1.0f);
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4eyewhite.png"));
@@ -231,7 +241,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             RenderPlayerJBRA.glColor3f(form.display.furColor);
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows.png"));
             this.modelMain.renderBody(1F / 16F);
-            RenderPlayerJBRA.glColor3f(form.display.hairColor);
+
+            int hairColor = form.display.hairColor;
+            RenderPlayerJBRA.glColor3f(hairColor < 0 ? defaultHairColor : hairColor, age);
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows2.png"));
             this.modelMain.renderBody(1F / 16F);
             RenderPlayerJBRA.glColor3f(bodyCM);
