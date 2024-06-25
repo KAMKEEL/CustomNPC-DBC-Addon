@@ -96,12 +96,8 @@ public class EntityAura extends Entity {
             type3D = EnumAuraTypes3D.getType(auraData);
 
         type2D = display.type2D;
-        if (aura.display.type2D == EnumAuraTypes2D.Default) {
-            if (type3D != EnumAuraTypes3D.None)
-                type2D = EnumAuraTypes2D.getFrom3D(type3D);
-            else
+        if (aura.display.type2D == EnumAuraTypes2D.Default)
                 type2D = EnumAuraTypes2D.getType(auraData);
-        }
 
 
         // Vanilla DBC form colors
@@ -155,13 +151,8 @@ public class EntityAura extends Entity {
             //loadType();
 
             if (display.hasAlpha("aura")){
-                // New Aura has many layers and gets extremely dark without
-                // this modification. Even alphas set to 30 will become fully
-                // solid without this change, due to the mass amount of layers
-                // rendered and overlapping
                 maxAlpha = (float) display.alpha / (255 * 5);
             }
-            //  maxAlpha = 0.51f;
 
 
             if (display.hasSpeed())
@@ -315,7 +306,6 @@ public class EntityAura extends Entity {
     }
 
     public void onUpdate() {
-
         if (isRoot() && !fadeOut) { //check aura death conditions
             Aura currentAura = PlayerDataUtil.getToggledAura(entity);
             if (!isVanillaDefault && (entity == null || entity.isDead || currentAura == null || aura != currentAura || auraData.getAuraEntity() != this))
