@@ -43,6 +43,8 @@ public class RenderEventHandler {
         glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
         glEnable(GL_STENCIL_TEST);
         enableStencilWriting(e.entity.getEntityId());
+
+
     }
 
     @SubscribeEvent
@@ -87,9 +89,9 @@ public class RenderEventHandler {
         EntityAura aura = display.auraEntity;
         if (aura != null && aura.shouldRender()) {
             glPushMatrix();
-            glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
-         //   AuraRenderer.Instance.renderAura(aura, partialTicks);
-          //  NewAura.renderAura(aura, partialTicks);
+            // glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
+            //  AuraRenderer.Instance.renderAura(aura, partialTicks);
+            NewAura.renderAura(aura, partialTicks);
 
             glPopMatrix();
         }
@@ -162,9 +164,9 @@ public class RenderEventHandler {
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
             ((IEntityMC) player).setRenderPass(0);
         }
-//        if (processBloom)
-//            PostProcessing.resetDrawBuffer();
-        disableStencilWriting(player.getEntityId(), false);
+        if (processBloom)
+            PostProcessing.resetDrawBuffer();
+        //  disableStencilWriting(player.getEntityId(), false);
        // enableStencilWriting(player.getEntityId());
 
         ////////////////////////////////////////

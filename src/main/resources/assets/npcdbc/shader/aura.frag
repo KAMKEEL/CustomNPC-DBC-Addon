@@ -53,14 +53,14 @@ void main() {
 
     float absPitch = abs(pitch);
 
-    if (absPitch > 45){
+    if (absPitch > 60){
         float factor = 0.0;
         vec4 currentCross = adjustColor(texture2D(cross, texCoord));
         vec4 nextCross = adjustColor(texture2D(cross, vec2(texCoord.x +frameWidth, texCoord.y)));
         vec4 crossColor = mix(currentCross, nextCross, fract(speed));
 
-        factor = (absPitch - 45) / 45;
-        factor = clamp(factor * 4, 0.0, 1.0);
+        factor = (absPitch -60) / 30;
+        factor = clamp(factor * 2, 0.0, 1.0);
 
         color = mix(color * max(0, (1- factor)), crossColor , factor);
 

@@ -23,10 +23,11 @@ import java.util.Date;
 
 import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.GL_RGBA16F;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 public class PostProcessing {
-    public static int MAIN_BLOOM_TEXTURE;
+    public static int MAIN_BLOOM_TEXTURE, DEPTH_TEXTURE, AURA_TEXTURE;
     public static int blankTexture;
 
     public static int BLOOM_BUFFERS_LENGTH = 10;
@@ -41,6 +42,7 @@ public class PostProcessing {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         resetDrawBuffer();
     }
+
 
     public static void postProcess() {
         if (!processBloom)
@@ -121,12 +123,57 @@ public class PostProcessing {
         releaseShader();
         processBloom = false;
 
+
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //testing shit
         // renderQuad(bloomTextures[0], 0, 0, buff.framebufferWidth, buff.framebufferHeight); //367
     }
 
+    public static void captureSceneDepth() {
+        Framebuffer buff = getMainBuffer();
+        int width = buff.framebufferWidth, height = buff.framebufferHeight;
+        //   GL11.glBindTexture(GL11.GL_TEXTURE_2D, DEPTH_TEXTURE);
+        //  GL11.glCopyTexImage2D(GL11.GL_TEXTURE_2D, 0, GL14.GL_DEPTH_COMPONENT24, 0, 0, buff.framebufferWidth, buff.framebufferHeight, 0);
+
+//
+//        int tempFbo = GL30.glGenFramebuffers();
+//        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, tempFbo);
+//
+//        // Attach the depth texture to the temporary framebuffer
+//        GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, DEPTH_TEXTURE, 0);
+//
+//        // Read pixels from the original framebuffer's depth attachment and write to the depth texture
+//        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, buff.framebufferObject);
+//        GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, tempFbo);
+//        GL30.glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+//
+//        buff.bindFramebuffer(false);
+//        GL30.glDeleteFramebuffers(tempFbo);
+
+        ByteBuffer depthBuff = BufferUtils.createByteBuffer(width * height * 4); // Assuming 4 bytes per pixel for depth
+        GL11.glReadPixels(0, 0, width, height, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, depthBuff);
+
+        ByteBuffer rgbaBuffer = BufferUtils.createByteBuffer(width * height * 4); // RGBA buffer (4 bytes per pixel)
+        for (int i = 0; i < width * height; i++) {
+            float depth = depthBuff.getFloat(i * Float.BYTES);
+            float depth2 = depth == 1 ? 0 : 1;
+            rgbaBuffer.put((byte) (depth * 255)); // R
+            rgbaBuffer.put((byte) (depth * 255));             // G
+            rgbaBuffer.put((byte) (depth * 255));             // B
+            rgbaBuffer.put((byte) (depth == 1 ? 0 : 255));           // A
+
+            if (depth < 0.5) {
+                System.out.println();
+            }
+        }
+        rgbaBuffer.flip();
+
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, DEPTH_TEXTURE);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, rgbaBuffer);
+
+
+    }
     public static void blurFilter(int textureID, float blurIntensity, float startX, float startY, float width, float height) {
         useShader(blur, () -> {
             uniformVec2("u_resolution", width - startX, height - startY);
@@ -185,9 +232,27 @@ public class PostProcessing {
         glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
         OpenGlHelper.func_153188_a(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, MAIN_BLOOM_TEXTURE, 0);
 
+        AURA_TEXTURE = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, AURA_TEXTURE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
+        OpenGlHelper.func_153188_a(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, AURA_TEXTURE, 0);
+
         int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
         if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
             CommonProxy.LOGGER.error("Framebuffer is not complete: " + status);
+
+        DEPTH_TEXTURE = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, DEPTH_TEXTURE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_DEPTH_COMPONENT32F, width, height, 0, GL11.GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
+        // GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, DEPTH_TEXTURE, 0);
 
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, previousBuffer);
 
@@ -201,6 +266,7 @@ public class PostProcessing {
 
     }
 
+
     public static void delete() {
         for (int i = 0; i < bloomBuffers.length; i++) {
             if (bloomTextures[i] > 0)
@@ -211,13 +277,17 @@ public class PostProcessing {
         bloomBuffers = new int[BLOOM_BUFFERS_LENGTH];
         bloomTextures = new int[bloomBuffers.length];
 
-        TextureUtil.deleteTexture(PostProcessing.MAIN_BLOOM_TEXTURE);
-        TextureUtil.deleteTexture(PostProcessing.blankTexture);
+        TextureUtil.deleteTexture(MAIN_BLOOM_TEXTURE);
+        TextureUtil.deleteTexture(AURA_TEXTURE);
+        TextureUtil.deleteTexture(DEPTH_TEXTURE);
+        TextureUtil.deleteTexture(blankTexture);
     }
 
     public static void saveTextureToPNG(int textureID) {
         // Framebuffer fbo = PostProcessing.getMainBuffer();
         //  System.out.println("Main FBO res: " + fbo.framebufferTextureWidth + "x" + fbo.framebufferTextureHeight);
+        if (Minecraft.getMinecraft().isGamePaused())
+            return;
 
         glBindTexture(GL_TEXTURE_2D, textureID);
         int width = (int) GL11.glGetTexLevelParameterf(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
