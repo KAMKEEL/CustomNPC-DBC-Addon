@@ -33,7 +33,9 @@ public class ConfigDBCClient
     public static Property AdvancedGuiModeProperty;
     public static boolean AdvancedGui = false;
 
-    public static boolean UseShaders = true;
+    public static Property EnableShadersProperty;
+    public static boolean EnableShaders = true;
+    public static Property EnableBloomProperty;
     public static boolean EnableBloom = true;
 
     public static void init(File configFile)
@@ -60,6 +62,12 @@ public class ConfigDBCClient
             DarkMode = DarkModeProperty.getBoolean(true);
             AdvancedGuiModeProperty = config.get(GUI, "Advanced GUI", false, "Shows Advanced Status Effects and Calculations in Menu");
             AdvancedGui = AdvancedGuiModeProperty.getBoolean(false);
+
+            EnableShadersProperty = config.get(GUI, "Enable Shaders", true, "Enables the use of shaders when rendering");
+            EnableShaders = EnableShadersProperty.getBoolean(false);
+
+            EnableBloomProperty = config.get(GUI, "Enable Bloom", true, "Enables the bloom effect for player outlines and auras");
+            EnableBloom = EnableBloomProperty.getBoolean(false);
         }
         catch (Exception e)
         {

@@ -43,7 +43,7 @@ public class PostProcessing {
     public static boolean processBloom;
 
     public static void startBlooming() {
-        if (!ConfigDBCClient.EnableBloom)
+        if (!ConfigDBCClient.EnableBloom || !ConfigDBCClient.EnableShaders)
             return;
 
         drawToBuffers(2);

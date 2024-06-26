@@ -108,7 +108,7 @@ public final class ShaderHelper {
 	}
 
 	public static boolean useShaders() {
-		return ConfigDBCClient.UseShaders && OpenGlHelper.shadersSupported;
+		return ConfigDBCClient.EnableShaders && OpenGlHelper.shadersSupported;
 	}
 
 	// Most of the code taken from the LWJGL wiki
