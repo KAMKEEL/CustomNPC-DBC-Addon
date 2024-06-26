@@ -66,8 +66,8 @@ public class PlayerOutline {
         //Outer
         useShader(ShaderHelper.outline, () -> {
             uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
-            uniformColor("innerColor", 0x00ffff, 1);
-            uniformColor("outerColor", 0xffffff, 1);
+            uniformColor("innerColor", outline.innerColor, 1);
+            uniformColor("outerColor", outline.outerColor, 1);
             uniform1f("noiseSize", 1f);
             uniform1f("range", 0.21f);
             uniform1f("threshold", 0.55f);

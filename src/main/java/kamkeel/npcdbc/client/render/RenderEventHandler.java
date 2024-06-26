@@ -4,7 +4,6 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.client.shader.PostProcessing;
-import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
@@ -25,8 +24,8 @@ import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 
-import static kamkeel.npcdbc.client.shader.PostProcessing.captureSceneDepth;
-import static kamkeel.npcdbc.client.shader.PostProcessing.processBloom;
+import static kamkeel.npcdbc.client.shader.PostProcessing.endBlooming;
+import static kamkeel.npcdbc.client.shader.PostProcessing.startBlooming;
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
@@ -131,21 +130,15 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
-        if (ConfigDBCClient.EnableBloom) {
-            PostProcessing.drawToBuffers(0, 2);
-            processBloom = true;
-        }
-
-        data.outline = new PlayerOutline(0x00ffff, 0xffffff);
+        startBlooming();
+        data.outline = new PlayerOutline(0xff0000, 0xffffff);
         //  data.outline = null;
         if (data.outline != null) {
             glStencilFunc(GL_NOTEQUAL, player.getEntityId(), 0xFF);  // Test stencil value
             PlayerOutline.renderOutline(render, player, partialTicks, isArm);
-        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered()) {
+        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered())
             ((IEntityMC) player).setRenderPass(0);
-        }
-        if (processBloom)
-            PostProcessing.resetDrawBuffer();
+        endBlooming();
 
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -177,6 +170,7 @@ public class RenderEventHandler {
                 iter.remove();
         }
         glPopMatrix();
+
         ////////////////////////////////////////
         ////////////////////////////////////////
         postStencilRendering();

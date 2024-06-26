@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.shader;
 
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -48,6 +49,17 @@ public class PostProcessing {
         resetDrawBuffer();
     }
 
+    public static void startBlooming() {
+        if (!ConfigDBCClient.EnableBloom)
+            return;
+
+        drawToBuffers(2);
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        PostProcessing.drawToBuffers(0, 2);
+        processBloom = true;
+    }
 
     public static void bloom(float lightExposure) {
         if (!processBloom)
@@ -64,7 +76,7 @@ public class PostProcessing {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glColorMask(true, true, true, false);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(false);
+        GL11.glDepthMask(true);
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glDisable(GL11.GL_LIGHTING);
@@ -148,6 +160,11 @@ public class PostProcessing {
         //////////////////////////////////////////////////////////////////
         //testing shit
         // renderQuad(bloomTextures[0], 0, 0, buff.framebufferWidth, buff.framebufferHeight); //367
+    }
+
+    public static void endBlooming() {
+        if (processBloom)
+            PostProcessing.resetDrawBuffer();
     }
 
     public static void captureSceneDepth() {
