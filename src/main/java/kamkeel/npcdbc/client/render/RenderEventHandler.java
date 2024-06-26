@@ -56,7 +56,7 @@ public class RenderEventHandler {
             glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
             glEnable(GL_STENCIL_TEST);
             enableStencilWriting(e.entity.getEntityId());
-            Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+           // Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         }
         glDepthMask(true); //fixes a native MC RP1 entity bug in which the depth test is disabled
     }
