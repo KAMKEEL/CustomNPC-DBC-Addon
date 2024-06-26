@@ -11,12 +11,12 @@ import kamkeel.npcdbc.mixins.early.IEntityMC;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IRenderCusPar;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.BufferUtils;
@@ -32,12 +32,6 @@ public class RenderEventHandler {
     public static final int TAIL_STENCIL_ID = 2;
     public static FloatBuffer PRE_RENDER_MODELVIEW = BufferUtils.createFloatBuffer(16);
 
-    @SubscribeEvent
-    public void enablePlayerStencil(RenderPlayerEvent.Pre e) {
-        glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
-        glEnable(GL_STENCIL_TEST);
-        enableStencilWriting(e.entity.getEntityId());
-    }
 
     @SubscribeEvent
     public void enableHandStencil(DBCPlayerEvent.RenderArmEvent.Pre e) {
@@ -48,17 +42,15 @@ public class RenderEventHandler {
 
     @SubscribeEvent
     public void enableEntityStencil(RenderLivingEvent.Pre e) {
-        if ((e.entity instanceof EntityPlayer)) {
+        if ((e.entity instanceof EntityPlayer || e.entity instanceof EntityNPCInterface) && PlayerDataUtil.useStencilBuffer(e.entity)) {
             //IMPORTANT, SAVES THE MODEL VIEW MATRIX PRE ENTITYLIVING TRANSFORMATIONS
-            glGetFloat(GL_MODELVIEW_MATRIX, PRE_RENDER_MODELVIEW);
-        } else if ((e.entity instanceof EntityNPCInterface)) {
             glGetFloat(GL_MODELVIEW_MATRIX, PRE_RENDER_MODELVIEW);
             glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
             glEnable(GL_STENCIL_TEST);
             enableStencilWriting(e.entity.getEntityId());
-           // Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+            Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+            glDepthMask(true); //fixes a native MC RP1 entity bug in which the depth test is disabled
         }
-        glDepthMask(true); //fixes a native MC RP1 entity bug in which the depth test is disabled
     }
 
     @SubscribeEvent
@@ -130,15 +122,15 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
-        startBlooming();
         data.outline = new PlayerOutline(0xff0000, 0xffffff);
         //  data.outline = null;
         if (data.outline != null) {
+            startBlooming();
             glStencilFunc(GL_NOTEQUAL, player.getEntityId(), 0xFF);  // Test stencil value
             PlayerOutline.renderOutline(render, player, partialTicks, isArm);
+            endBlooming();
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered())
             ((IEntityMC) player).setRenderPass(0);
-        endBlooming();
 
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -156,20 +148,22 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Custom Particles
-        glPushMatrix();
-        glLoadMatrix(PRE_RENDER_MODELVIEW); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
-         glStencilFunc(GL_GREATER, player.getEntityId(), 0xFF);
-        IRenderCusPar particleRender = null;
-        for (Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator(); iter.hasNext(); ) {
-            EntityCusPar particle = iter.next();
-            if (particleRender == null)
-                particleRender = (IRenderCusPar) RenderManager.instance.getEntityRenderObject(particle);
+        if (!data.particleRenderQueue.isEmpty()) {  //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
+            glPushMatrix();
+            glLoadMatrix(PRE_RENDER_MODELVIEW);
+            glStencilFunc(GL_GREATER, player.getEntityId(), 0xFF);
+            IRenderCusPar particleRender = null;
+            for (Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator(); iter.hasNext(); ) {
+                EntityCusPar particle = iter.next();
+                if (particleRender == null)
+                    particleRender = (IRenderCusPar) RenderManager.instance.getEntityRenderObject(particle);
 
-            particleRender.renderParticle(particle, partialTicks);
-            if (particle.isDead)
-                iter.remove();
+                particleRender.renderParticle(particle, partialTicks);
+                if (particle.isDead)
+                    iter.remove();
+            }
+            glPopMatrix();
         }
-        glPopMatrix();
 
         ////////////////////////////////////////
         ////////////////////////////////////////

@@ -113,4 +113,17 @@ public class PlayerDataUtil {
 
         return null;
     }
+
+    public static boolean useStencilBuffer(Entity entity) {
+        boolean auraOn = false, outlineOn = false;
+        if (entity instanceof EntityPlayer) {
+            auraOn = DBCData.get((EntityPlayer) entity).isAuraOn();
+            outlineOn = DBCData.get((EntityPlayer) entity).outline != null;
+        } else if (entity instanceof EntityNPCInterface) {
+            auraOn = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().isAuraOn();
+            outlineOn = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().outline != null;
+        }
+
+        return auraOn || outlineOn;
+    }
 }
