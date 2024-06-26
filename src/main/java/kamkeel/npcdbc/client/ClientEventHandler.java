@@ -9,6 +9,8 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.client.shader.PostProcessing;
+import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -34,6 +36,8 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
@@ -53,6 +57,16 @@ public class ClientEventHandler {
                     performAscend();
                 } else {
                     TransformController.decrementRage();
+                }
+            }
+            if (Mouse.isButtonDown(3) || Mouse.isButtonDown(2)) {
+                Minecraft.getMinecraft().refreshResources();
+                ShaderHelper.loadShaders(true);
+                }
+            if (Keyboard.isKeyDown(Keyboard.KEY_F10)) {
+                for (int i : PostProcessing.bloomTextures) {
+                    if (i > 0)
+                        PostProcessing.saveTextureToPNG(i);
                 }
             }
         }

@@ -54,10 +54,10 @@ public class PlayerOutline {
           //  ((IEntityMC) player).setRenderPass(ClientProxy.MiddleRenderPass);
 
 
-        GL11.glEnable(GL_BLEND);
-        GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDisable(GL_LIGHTING);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_2D);
         glDepthMask(true);
         glPushMatrix();
 

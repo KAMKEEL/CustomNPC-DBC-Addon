@@ -25,6 +25,7 @@ import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 
+import static kamkeel.npcdbc.client.shader.PostProcessing.captureSceneDepth;
 import static kamkeel.npcdbc.client.shader.PostProcessing.processBloom;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -176,12 +177,11 @@ public class RenderEventHandler {
                 iter.remove();
         }
         glPopMatrix();
-
         ////////////////////////////////////////
         ////////////////////////////////////////
-        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         postStencilRendering();
-
+        PostProcessing.bloom(1f);
+        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
     }
 
     @SubscribeEvent

@@ -17,13 +17,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.GL_RGBA16F;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 public class PostProcessing {
@@ -48,11 +49,13 @@ public class PostProcessing {
     }
 
 
-    public static void postProcess() {
+    public static void bloom(float lightExposure) {
         if (!processBloom)
             return;
 
         Framebuffer buff = getMainBuffer();
+        FloatBuffer prevModelView = getModelView();
+        FloatBuffer prevProjection = getProjection();
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
         GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -67,24 +70,24 @@ public class PostProcessing {
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+        glDisable(GL_FOG);
 
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //Down Sampling in a mip chain
-        glBindFramebuffer(GL30.GL_FRAMEBUFFER, bloomBuffers[0]);
+        glBindFramebuffer(GL_FRAMEBUFFER, bloomBuffers[0]);
         glClearColor(0, 0, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
         glViewport(0, 0, buff.framebufferWidth >> 1, buff.framebufferHeight >> 1);
         useShader(downsample13);
         renderQuad(MAIN_BLOOM_TEXTURE, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
         blurFilter(bloomTextures[0], 2.5f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-
         int downSamples = 0;
         for (int i = 0; i < bloomBuffers.length; i++) {
             if (bloomBuffers[i] <= 0 || i + 1 >= bloomBuffers.length)
                 continue;
             int mipWidth = buff.framebufferWidth >> (i + 2), mipHeight = buff.framebufferHeight >> (i + 2);
-            glBindFramebuffer(GL30.GL_FRAMEBUFFER, bloomBuffers[i + 1]);
+            glBindFramebuffer(GL_FRAMEBUFFER, bloomBuffers[i + 1]);
             glViewport(0, 0, mipWidth, mipHeight);
             useShader(downsample13);
             renderQuad(bloomTextures[i], 0, 0, buff.framebufferWidth, buff.framebufferHeight);
@@ -97,11 +100,11 @@ public class PostProcessing {
         for (int i = downSamples; i > 0; i--) {
             int lower = bloomTextures[i];
             int mipWidth = buff.framebufferWidth >> (i), mipHeight = buff.framebufferHeight >> (i);
-
-            glBindFramebuffer(GL30.GL_FRAMEBUFFER, bloomBuffers[i - 1]);
+            glBindFramebuffer(GL_FRAMEBUFFER, bloomBuffers[i - 1]);
             glBindTexture(GL_TEXTURE_2D, blankTexture);
+
             glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, mipWidth, mipHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
-            OpenGlHelper.func_153188_a(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, blankTexture, 0);
+            OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, blankTexture, 0);
 
             drawToBuffers(2);
             glViewport(0, 0, mipWidth, mipHeight);
@@ -115,18 +118,31 @@ public class PostProcessing {
             glDisable(GL_BLEND);
         }
 
+
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //Both textures combined in default buffer
         buff.bindFramebuffer(false);
         glViewport(0, 0, buff.framebufferWidth, buff.framebufferHeight);
         useShader(additiveCombine, () -> {
-            uniformTexture("texture2", 2, bloomTextures[0]);
+            uniformTexture("bloomTexture", 2, bloomTextures[0]);
+            uniform1f("exposure", lightExposure);
+
         });
         renderQuad(buff.framebufferTexture, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
         releaseShader();
         processBloom = false;
 
+        glMatrixMode(GL11.GL_PROJECTION);
+        glLoadMatrix(prevProjection);
+        glMatrixMode(GL11.GL_MODELVIEW);
+        glLoadMatrix(prevModelView);
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(true);
+        glEnable(GL_LIGHTING);
+        glEnable(GL_ALPHA_TEST);
+        glColorMask(true, true, true, true);
+        glEnable(GL_FOG);
 
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
@@ -174,7 +190,7 @@ public class PostProcessing {
         rgbaBuffer.flip();
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, DEPTH_TEXTURE);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, rgbaBuffer);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgbaBuffer);
 
 
     }
@@ -205,7 +221,7 @@ public class PostProcessing {
                 break;
 
             bloomBuffers[i] = OpenGlHelper.func_153165_e();
-            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, bloomBuffers[i]);
+            GL30.glBindFramebuffer(GL_FRAMEBUFFER, bloomBuffers[i]);
 
             bloomTextures[i] = TextureUtil.glGenTextures();
             glBindTexture(GL_TEXTURE_2D, bloomTextures[i]);
@@ -215,10 +231,10 @@ public class PostProcessing {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, mipWidth, mipHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
 
-            OpenGlHelper.func_153188_a(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bloomTextures[i], 0);
+            OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, bloomTextures[i], 0);
 
 
-            int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
+            int status = GL30.glCheckFramebufferStatus(GL_FRAMEBUFFER);
             if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
                 CommonProxy.LOGGER.error("Framebuffer " + i + " is not complete: " + status);
 
@@ -234,10 +250,10 @@ public class PostProcessing {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
-        OpenGlHelper.func_153188_a(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, MAIN_BLOOM_TEXTURE, 0);
+        OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, MAIN_BLOOM_TEXTURE, 0);
 
 
-        int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
+        int status = GL30.glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
             CommonProxy.LOGGER.error("Framebuffer is not complete: " + status);
 
@@ -246,13 +262,13 @@ public class PostProcessing {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_DEPTH_COMPONENT32F, width, height, 0, GL11.GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
         // GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, DEPTH_TEXTURE, 0);
 
 
         auraBuffer = OpenGlHelper.func_153165_e();
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, auraBuffer);
+        GL30.glBindFramebuffer(GL_FRAMEBUFFER, auraBuffer);
         for (int i = 0; i < auraTextures.length; i++) {
             auraTextures[i] = glGenTextures();
             glBindTexture(GL_TEXTURE_2D, auraTextures[i]);
@@ -261,7 +277,7 @@ public class PostProcessing {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
-            OpenGlHelper.func_153188_a(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, auraTextures[i], 0);
+            OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, auraTextures[i], 0);
         }
 
         if (net.minecraftforge.client.MinecraftForgeClient.getStencilBits() == 0) {
@@ -271,13 +287,13 @@ public class PostProcessing {
             OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, main.depthBuffer);
         }
 
-        status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
+        status = GL30.glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
             CommonProxy.LOGGER.error("Aura framebuffer is not complete: " + status);
         glClearColor(0, 0, 0, 1f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, previousBuffer);
+        GL30.glBindFramebuffer(GL_FRAMEBUFFER, previousBuffer);
 
         blankTexture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, blankTexture);
@@ -318,11 +334,11 @@ public class PostProcessing {
         glBindFramebuffer(GL_DRAW_BUFFER, pasteFBO);
         GL30.glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, bufferBits, GL_NEAREST);
 
-        int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
+        int status = GL30.glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
             CommonProxy.LOGGER.error("Copying FBO " + pasteFBO + " is not complete: " + status);
 
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, previousBuffer);
+        GL30.glBindFramebuffer(GL_FRAMEBUFFER, previousBuffer);
 
     }
 
