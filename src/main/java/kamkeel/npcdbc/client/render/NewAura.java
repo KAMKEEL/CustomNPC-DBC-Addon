@@ -63,7 +63,7 @@ public class NewAura {
         glAlphaFunc(GL_GREATER,0);
         glDepthMask(false);
         glStencilMask(0x00);
-        float scale = 7*loadSize, yScale = scale + 2;
+        float scale = 10*loadSize, yScale = scale + 2;
         glPushMatrix();
         glTranslatef(0, -1.75f, 0);
         glTranslatef(0, 0.20f * yScale, 0);
@@ -83,8 +83,8 @@ public class NewAura {
 //        glDisable(GL_DEPTH_TEST);
 
         glTranslatef(0, -0.045f, 0);
-        glScalef(0.7f, 0.7f, 0.7f);
-        glColor4f(1, 0, 1, 1f);
+        glScalef(0.95f, 0.95f, 0.95f);
+        glColor4f((float) 0x67 /0xFF, (float) 0x3a /0xFF, (float) 0xb7 /0xFF, 1f);
         drawAuraModel(5, frameStartU, frameWidth, height);
 
 //        if(!!(boolean) NpcAPI.Instance().getEngineObjects().getOrDefault("isLoaded", false)){
@@ -92,13 +92,13 @@ public class NewAura {
 //        }
 //        PostProcessing.saveTextureToPNG(PostProcessing.auraTextures[0]);
 //        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(""+NpcAPI.Instance().getEngineObjects().getOrDefault("isLoaded", false)));
-
-        PostProcessing.drawToBuffers(1);
-
-        glScalef(0.8f, 0.95f, 0.8f);
-        glTranslatef(0, -0.025f, 0);
-        glColor4f(0, 0, 1, 1f);
-        drawAuraModel(5, frameStartU, frameWidth, height);
+//
+//        PostProcessing.drawToBuffers(1);
+//
+//        glScalef(0.8f, 0.95f, 0.8f);
+//        glTranslatef(0, -0.025f, 0);
+//        glColor4f(0, 0, 1, 1f);
+//        drawAuraModel(5, frameStartU, frameWidth, height);
         glPopMatrix();
 
         PostProcessing.getMainBuffer().bindFramebuffer(false);
@@ -108,7 +108,7 @@ public class NewAura {
         }
 
         glEnable(GL_STENCIL_TEST);
-        glEnable(GL_DEPTH_TEST);
+//        glEnable(GL_DEPTH_TEST);
 
         ShaderHelper.useShader(ShaderHelper.aura, () -> {
             Framebuffer main = PostProcessing.getMainBuffer();

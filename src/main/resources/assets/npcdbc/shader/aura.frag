@@ -46,20 +46,20 @@ void main() {
     vec4 small = texture2D(auraSmall, gl_FragCoord.xy / resolution);
     vec4 med1 = texture2D(auraMediumSmall, gl_FragCoord.xy / resolution);
     vec4 med2 = texture2D(auraMediumLarge, gl_FragCoord.xy / resolution);
-
-    vec4 color = currentFrame;
-    vec4 tempColor;
     if (currentFrame.a < 0.01){
         discard;
     }
+
+    vec4 color = currentFrame * vec4(0.0, 0.0, 0.0, 1.0);
+    vec4 tempColor;
     if(small.a >= 0.01){
-        color = mix(color, small, color.a-small.a);
+        color = mix(color, small, small.a);
     }
     if(med1.a >= 0.01){
-        color = mix(color, med1, color.a-med1.a);
+        color = mix(color, med1, med1.a);
     }
     if(med2.a >= 0.01){
-        color = mix(color, med2, color.a-med2.a);
+        color = mix(color, med2, med2.a);
     }
 
 
