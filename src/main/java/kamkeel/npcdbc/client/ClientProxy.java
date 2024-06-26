@@ -29,7 +29,7 @@ import java.time.Instant;
 
 
 public class ClientProxy extends CommonProxy {
-    public static boolean RenderingOutline;
+    public static boolean renderingOutline,renderingGUI,renderingArm;
     public static final int MiddleRenderPass = 1684;
     public static Instant startTime;
 

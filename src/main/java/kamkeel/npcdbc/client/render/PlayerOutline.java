@@ -11,6 +11,7 @@ import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.mixins.early.IEntityMC;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,11 +48,11 @@ public class PlayerOutline {
 
     public static void renderOutline(RenderPlayerJBRA render, EntityPlayer player, float partialTicks, boolean isArm) {
         PlayerOutline outline = DBCData.get(player).outline;
-        ClientProxy.RenderingOutline = true;
-      //  if (player.isInWater())
-          //  ((IEntityMC) player).setRenderPass(0);
-      //  else
-          //  ((IEntityMC) player).setRenderPass(ClientProxy.MiddleRenderPass);
+        ClientProxy.renderingOutline = true;
+        if (player.isInWater())
+            ((IEntityMC) player).setRenderPass(0);
+        else
+            ((IEntityMC) player).setRenderPass(ClientProxy.MiddleRenderPass);
 
 
         glEnable(GL_BLEND);
@@ -169,7 +170,7 @@ public class PlayerOutline {
         GL11.glEnable(GL_LIGHTING);
         GL11.glDisable(GL_BLEND);
         GL11.glEnable(GL_TEXTURE_2D);
-        ClientProxy.RenderingOutline = false;
+        ClientProxy.renderingOutline = false;
 
     }
 

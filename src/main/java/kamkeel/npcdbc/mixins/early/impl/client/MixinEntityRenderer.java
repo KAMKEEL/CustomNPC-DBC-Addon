@@ -3,7 +3,6 @@ package kamkeel.npcdbc.mixins.early.impl.client;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.client.ClientProxy;
-import kamkeel.npcdbc.client.shader.PostProcessing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.culling.Frustrum;
@@ -27,13 +26,29 @@ public class MixinEntityRenderer {
 
     }
 
-    @Inject(method = "renderWorld", at = @At("HEAD"))
-    private void pre(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
-        PostProcessing.preProcess();
-    }
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/OpenGlHelper;shadersSupported:Z", shift = At.Shift.BEFORE))
     private void post(float p_78480_1_, CallbackInfo ci) {
-      PostProcessing.bloom(1f);
+        // PostProcessing.bloom(1f);
+    }
+
+    @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;drawScreen(IIF)V", shift = At.Shift.BEFORE))
+    private void preGUIRender(float p_78480_1_, CallbackInfo ci) {
+        ClientProxy.renderingGUI = true;
+    }
+
+    @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;drawScreen(IIF)V", shift = At.Shift.AFTER))
+    private void postGUIRender(float p_78480_1_, CallbackInfo ci) {
+        ClientProxy.renderingGUI = false;
+    }
+
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/EntityRenderer;renderHand(FI)V", shift = At.Shift.BEFORE))
+    private void preArmRender(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
+        ClientProxy.renderingArm = true;
+    }
+
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/EntityRenderer;renderHand(FI)V", shift = At.Shift.AFTER))
+    private void postArmRender(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
+        ClientProxy.renderingArm = false;
     }
 }

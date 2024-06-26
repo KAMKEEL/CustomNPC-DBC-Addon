@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.shader;
 
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -39,15 +40,7 @@ public class PostProcessing {
     public static int auraBuffer;
     public static int[] auraTextures = new int[3];
 
-
     public static boolean processBloom;
-
-    public static void preProcess() {
-        drawToBuffers(2);
-        glClearColor(0, 0, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        resetDrawBuffer();
-    }
 
     public static void startBlooming() {
         if (!ConfigDBCClient.EnableBloom)
@@ -82,7 +75,8 @@ public class PostProcessing {
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        glDisable(GL_FOG);
+        if (!ClientProxy.renderingGUI && !ClientProxy.renderingArm)
+            glDisable(GL_FOG);
 
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
@@ -154,7 +148,8 @@ public class PostProcessing {
         glEnable(GL_LIGHTING);
         glEnable(GL_ALPHA_TEST);
         glColorMask(true, true, true, true);
-        glEnable(GL_FOG);
+        if (!ClientProxy.renderingGUI && !ClientProxy.renderingArm)
+            glEnable(GL_FOG);
 
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
