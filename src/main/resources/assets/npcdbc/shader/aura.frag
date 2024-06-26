@@ -4,6 +4,8 @@ varying vec3 vertPos;
 varying vec2 texCoord;
 varying vec3 clippingPos;
 
+varying vec4 glColor;
+
 uniform vec2 resolution;
 
 uniform vec4 color1;
@@ -42,25 +44,26 @@ vec4 adjustColor(vec4 color){
 
 void main() {
 
-    vec4 currentFrame = texture2D(mainTexture, texCoord);
+    vec4 currentFrame = texture2D(mainTexture, texCoord) * glColor;
     vec4 small = texture2D(auraSmall, gl_FragCoord.xy / resolution);
     vec4 med1 = texture2D(auraMediumSmall, gl_FragCoord.xy / resolution);
     vec4 med2 = texture2D(auraMediumLarge, gl_FragCoord.xy / resolution);
-    if (currentFrame.a < 0.01){
+    if (currentFrame.a < 0.0005){
         discard;
     }
 
-    vec4 color = currentFrame * vec4(0.0, 0.0, 0.0, 1.0);
+
+    vec4 color = currentFrame * color1;
     vec4 tempColor;
-    if(small.a >= 0.01){
-        color = mix(color, small, small.a);
+    if(small.a >= 0.005){
+        color = mix(vec4(color.rgb, min(color.a, 1.0)), small*color2, small.a);
     }
-    if(med1.a >= 0.01){
-        color = mix(color, med1, med1.a);
+    if(med1.a >= 0.005){
+        color = mix(vec4(color.rgb, min(color.a, 1.0)), med1*color3, med1.a);
     }
-    if(med2.a >= 0.01){
-        color = mix(color, med2, med2.a);
-    }
+//    if(med2.a >= 0.005){
+//        color = mix(color, med2*color4, med2.a*2.5);
+//    }
 
 
 

@@ -7,6 +7,7 @@ import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.entity.EntityAura;
+import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -16,9 +17,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ChatComponentText;
 import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.scripted.NpcAPI;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
+
+import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -28,7 +32,7 @@ public class NewAura {
     public static int currentFrame;
 
     public static ImageData verticalAura = new ImageData(AURA_DIR + "new_aura_2.png");
-    public static ImageData horizontalAura = new ImageData(AURA_DIR + "enhanced_aura_crosssection.png");
+    public static ImageData horizontalAura = new ImageData(AURA_DIR + "new_aura_2_horiz.png");
 
     public static void renderAura(EntityAura aura, float partialTicks) {
         float speed = ClientProxy.getTimeSinceStart() * 15;
@@ -63,7 +67,7 @@ public class NewAura {
         glAlphaFunc(GL_GREATER,0);
         glDepthMask(false);
         glStencilMask(0x00);
-        float scale = 10*loadSize, yScale = scale + 2;
+        float scale = 8*loadSize, yScale = scale+1;
         glPushMatrix();
         glTranslatef(0, -1.75f, 0);
         glTranslatef(0, 0.20f * yScale, 0);
@@ -83,9 +87,10 @@ public class NewAura {
 //        glDisable(GL_DEPTH_TEST);
 
         glTranslatef(0, -0.045f, 0);
-        glScalef(0.95f, 0.95f, 0.95f);
-        glColor4f((float) 0x67 /0xFF, (float) 0x3a /0xFF, (float) 0xb7 /0xFF, 1f);
-        drawAuraModel(5, frameStartU, frameWidth, height);
+        glScalef(0.8f, 0.8f, 0.8f);
+        glColor4f(1, 1, 1,1);
+
+        drawAuraModel(13, frameStartU, frameWidth, height, speed);
 
 //        if(!!(boolean) NpcAPI.Instance().getEngineObjects().getOrDefault("isLoaded", false)){
 //            NpcAPI.Instance().getEngineObjects().put("isLoaded", true);
@@ -93,12 +98,12 @@ public class NewAura {
 //        PostProcessing.saveTextureToPNG(PostProcessing.auraTextures[0]);
 //        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(""+NpcAPI.Instance().getEngineObjects().getOrDefault("isLoaded", false)));
 //
-//        PostProcessing.drawToBuffers(1);
-//
-//        glScalef(0.8f, 0.95f, 0.8f);
-//        glTranslatef(0, -0.025f, 0);
-//        glColor4f(0, 0, 1, 1f);
-//        drawAuraModel(5, frameStartU, frameWidth, height);
+        PostProcessing.drawToBuffers(1);
+
+        glScalef(0.8f, 0.95f, 0.8f);
+        glTranslatef(0, -0.025f, 0);
+        glColor4f(1, 1, 1, 1.5f);
+        drawAuraModel(13, frameStartU, frameWidth, height, speed);
         glPopMatrix();
 
         PostProcessing.getMainBuffer().bindFramebuffer(false);
@@ -106,16 +111,20 @@ public class NewAura {
             OpenGlHelper.setActiveTexture(GL13.GL_TEXTURE0 + i+1);
             glBindTexture(GL_TEXTURE_2D, PostProcessing.auraTextures[i]);
         }
-
+        OpenGlHelper.setActiveTexture(GL13.GL_TEXTURE0);
         glEnable(GL_STENCIL_TEST);
 //        glEnable(GL_DEPTH_TEST);
 
         ShaderHelper.useShader(ShaderHelper.aura, () -> {
             Framebuffer main = PostProcessing.getMainBuffer();
-            ShaderHelper.uniformColor("color1", 0x120C15, 1f);
-            ShaderHelper.uniformColor("color2", 0x120C15, 0.9f);
-            ShaderHelper.uniformColor("color3", 0x360248, 0.6f);
-            ShaderHelper.uniformColor("color4", 0x3F0458, 0.6f);
+            ShaderHelper.uniformColor("color1", (int) (0xFFD700), 1.5f);
+            ShaderHelper.uniformColor("color2", (int) (0xFFD700*0.4), 0.5f);
+            ShaderHelper.uniformColor("color3", (int) (0xFFD700*0.4), -0.2f);
+
+//            ShaderHelper.uniformColor("color1", (int) (0x050005), 1.5f);
+//            ShaderHelper.uniformColor("color2", (int) (0x450061), 0.5f);
+//            ShaderHelper.uniformColor("color3", (int) (0x450061), 0.8f);
+
             ShaderHelper.uniformVec2("resolution", main.framebufferWidth, main.framebufferHeight);
 
             ShaderHelper.uniform1f("speed", speed);
@@ -123,11 +132,8 @@ public class NewAura {
         });
 
         glPushMatrix();
-        glColor4f(1, 1, 1, 1f*load);
-        for(int i = 0; i < 5; i++) {
-            glRotatef((float) 180 / 5, 0, 1, 0);
-            renderQuad(image, frameStartU, 0, frameStartU + frameWidth, height);
-        }
+        glColor4f(1, 1, 1, 1f);
+        drawAuraModel(13, frameStartU, frameWidth, height, speed);
         glPopMatrix();
 
 //        PostProcessing.saveTextureToPNG(PostProcessing.auraTextures[0]);
@@ -147,11 +153,46 @@ public class NewAura {
         glEnable(GL_CULL_FACE);
     }
 
-    private static void drawAuraModel(int amountOfFaces, int start, int width, int height){
+    private static void drawAuraModel(int amountOfFaces, int start, int width, int height, float a){
+        boolean isEven = amountOfFaces % 2 == 0;
+        verticalAura.bindTexture();
+        FloatBuffer color = BufferUtils.createFloatBuffer(16);
+        GL11.glGetFloat(GL_CURRENT_COLOR, color);
+
+        glColor4f(1, 1, 1, (1-(Math.abs(Minecraft.getMinecraft().thePlayer.rotationPitch)/90)) * color.get(3));
+        glRotatef(a*30, 0, 1, 0);
+        GL11.glRotated(180-( Minecraft.getMinecraft().thePlayer.rotationYaw), 0.0, 1.0, 0.0);
+        glPushMatrix();
         for(int i = 0; i < amountOfFaces; i++) {
-            glRotatef((float) 180 / amountOfFaces, 0, 1, 0);
+            if(i == 0 && isEven){
+                glRotatef(45, 0, 1, 0);
+            }
+            glRotatef( 180f / amountOfFaces, 0, 1, 0);
             renderQuad(verticalAura, start, 0, start + width, height);
         }
+        glPopMatrix();
+        horizontalAura.bindTexture();
+        glPushMatrix();
+
+
+        glColor4f(1, 1, 1, (Math.abs(Minecraft.getMinecraft().thePlayer.rotationPitch)/90) * color.get(3) * 2);
+        float offset = 0.03f;
+        glTranslatef(0, -offset, 0);
+        glPushMatrix();
+        glScalef(1, 1.0f, 0.9f);
+        glScalef(0.32f, 0.32f, 0.32f);
+        glRotatef(90, 1, 0, 0);
+        renderQuad(horizontalAura, 0, 0, horizontalAura.getTotalWidth(), horizontalAura.getTotalHeight());
+        glPopMatrix();
+
+        glTranslatef(0, -0.168f+offset, 0);
+        glPushMatrix();
+        glScalef(0.25f, 0.25f, 0.25f);
+        glRotatef(90, 1, 0, 0);
+        renderQuad(horizontalAura, 0, 0, horizontalAura.getTotalWidth(), horizontalAura.getTotalHeight());
+        glPopMatrix();
+
+        glPopMatrix();
     }
 
 
@@ -170,7 +211,6 @@ public class NewAura {
         float v2 = endV * (1f / totalHeight);
 
         glPushMatrix();
-        GL11.glRotated(180-( Minecraft.getMinecraft().thePlayer.rotationYaw), 0.0, 1.0, 0.0);
 
         if (totalWidth > totalHeight) {
             textureYScale = (float) totalHeight / totalWidth;

@@ -6,6 +6,8 @@ varying vec4 clippingPos;
 varying vec3 normals;
 varying vec4 colors;
 
+varying vec4 glColor;
+
 // Output varying variables
 varying vec3 fragPos;// Fragment position
 varying vec3 fragNormal;// Fragment normal
@@ -22,6 +24,8 @@ void main() {
     vec3 newPosition = gl_Vertex.xyz + gl_Normal.xyz *displacement;
     gl_Position = gl_ModelViewProjectionMatrix* gl_Vertex ;//vec4(newPosition, 1.0);
     vertPos = gl_Vertex.xyz;
+
+    glColor = gl_Color;
 
     clippingPos = gl_Position;
 
