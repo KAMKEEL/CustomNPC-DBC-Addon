@@ -13,14 +13,8 @@ public class ConfigDBCClient
 
     public final static String GENERAL = "General";
 
-    public static Property EnableHDTexturesProperty;
-    public static boolean EnableHDTextures = false;
-
     public static Property HideInfoMessageProperty;
     public static boolean HideInfoMessage = false;
-
-    public static Property RevampAuraProperty;
-    public static boolean RevampAura = true;
 
 
     public final static String GUI = "Gui";
@@ -32,6 +26,14 @@ public class ConfigDBCClient
 
     public static Property AdvancedGuiModeProperty;
     public static boolean AdvancedGui = false;
+
+    public final static String RENDERING = "Rendering";
+
+    public static Property EnableHDTexturesProperty;
+    public static boolean EnableHDTextures = false;
+
+    public static Property RevampAuraProperty;
+    public static boolean RevampAura = true;
 
     public static Property EnableOutlinesProperty;
     public static boolean EnableOutlines = true;
@@ -49,15 +51,10 @@ public class ConfigDBCClient
             config.load();
 
             // General
-            EnableHDTexturesProperty = config.get(GENERAL, "Enable HD Textures", false, "Uses internal DBC Addon HD Textures");
-            EnableHDTextures = EnableHDTexturesProperty.getBoolean(false);
-
             HideInfoMessageProperty = config.get(GENERAL, "Hide Info Messages", false, "Hides Change Form and other various transformation messages in game");
             HideInfoMessage = HideInfoMessageProperty.getBoolean(false);
 
-            RevampAuraProperty = config.get(GENERAL, "Revamp Aura", true, "Renders with the new DBC Addon style of auras");
-            RevampAura = RevampAuraProperty.getBoolean(true);
-
+            // GUI
             EnhancedGuiProperty = config.get(GUI, "Enable Enhanced Gui", true, "Uses DBC Addons GUI for Coloring and Manipulation");
             EnhancedGui = EnhancedGuiProperty.getBoolean(true);
             DarkModeProperty = config.get(GUI, "Dark Mode", true, "Uses Dark Mode GUI in Enhanced Menu");
@@ -65,13 +62,20 @@ public class ConfigDBCClient
             AdvancedGuiModeProperty = config.get(GUI, "Advanced GUI", false, "Shows Advanced Status Effects and Calculations in Menu");
             AdvancedGui = AdvancedGuiModeProperty.getBoolean(false);
 
-            EnableOutlinesProperty = config.get(GUI, "Enable Outlines", true, "Enables outlines for players and NPCs");
+            // Rendering
+            RevampAuraProperty = config.get(RENDERING, "Revamp Aura", true, "Renders with the new DBC Addon style of auras");
+            RevampAura = RevampAuraProperty.getBoolean(true);
+
+            EnableHDTexturesProperty = config.get(RENDERING, "Enable HD Textures", false, "Uses internal DBC Addon HD Textures");
+            EnableHDTextures = EnableHDTexturesProperty.getBoolean(false);
+
+            EnableOutlinesProperty = config.get(RENDERING, "Enable Outlines", true, "Enables outlines for players and NPCs");
             EnableOutlines = EnableOutlinesProperty.getBoolean(true);
 
-            EnableShadersProperty = config.get(GUI, "Enable Shaders", true, "Enables the use of shaders when rendering");
+            EnableShadersProperty = config.get(RENDERING, "Enable Shaders", true, "Enables the use of shaders when rendering");
             EnableShaders = EnableShadersProperty.getBoolean(true);
 
-            EnableBloomProperty = config.get(GUI, "Enable Bloom", true, "Enables the bloom effect for player outlines and auras");
+            EnableBloomProperty = config.get(RENDERING, "Enable Bloom", true, "Enables the bloom effect for player outlines and auras");
             EnableBloom = EnableBloomProperty.getBoolean(true);
         }
         catch (Exception e)

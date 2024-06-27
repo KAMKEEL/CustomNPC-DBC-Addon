@@ -93,14 +93,13 @@ public class ClientProxy extends CommonProxy {
     }
 
     public static void forceStencilEnable() {
-        System.setProperty("forge.forceDisplayStencil", "true");
-        Field field;
         try {
-            field = ForgeHooksClient.class.getDeclaredField("stencilBits");
+            System.setProperty("forge.forceDisplayStencil", "true");
+            Field field = ForgeHooksClient.class.getDeclaredField("stencilBits");
             field.setAccessible(true);
             field.setInt(ForgeHooksClient.class, 8);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to enable stencil bits!");
         }
     }
 }
