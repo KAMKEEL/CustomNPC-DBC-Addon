@@ -38,7 +38,7 @@ public class Color {
     }
 
     public void readFromNBT(NBTTagCompound compound, String name) {
-        setColor(compound.getInteger(name + "color"), compound.getFloat(name + "alpha"));
+        setColor(compound.getInteger(name + "Color"), compound.getFloat(name + "Alpha"));
     }
 
     public int getRed() {

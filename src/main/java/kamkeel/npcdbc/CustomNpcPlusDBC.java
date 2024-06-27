@@ -55,12 +55,13 @@ public class CustomNpcPlusDBC {
         CapsuleController.getInstance().load();
         StatusEffectController.getInstance().load();
         BonusController.getInstance().load();
+        OutlineController.getInstance().load();
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
-        
+
         PacketHandler.Instance = new PacketHandler();
         PacketHandler.Instance.register();
     }

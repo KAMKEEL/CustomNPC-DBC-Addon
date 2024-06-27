@@ -8,7 +8,7 @@ import noppes.npcs.controllers.AnimationController;
 import noppes.npcs.util.ValueUtil;
 
 public class Outline implements IOutline {
-    public int id;
+    public int id = -1;
     public String name, menuName;
 
     public Color innerColor = new Color(0x00ffff, 1), outerColor = new Color(0xffffff, 1);
