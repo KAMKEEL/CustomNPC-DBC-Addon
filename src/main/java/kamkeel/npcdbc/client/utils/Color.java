@@ -26,8 +26,8 @@ public class Color {
     }
 
     @SideOnly(Side.CLIENT)
-    public void uniform() {
-        ShaderHelper.uniformColor("outerColor", color, alpha);
+    public void uniform(String name) {
+        ShaderHelper.uniformColor(name, color, alpha);
 
     }
     public NBTTagCompound writeToNBT(NBTTagCompound compound, String name) {
