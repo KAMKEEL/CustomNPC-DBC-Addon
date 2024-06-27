@@ -383,6 +383,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         return isTransforming()|| containsSE(3) || containsSE(4) || containsSE(5) || containsSE(7);
     }
 
+    @Override
+    public boolean isFusionSpectator() {
+        return stats.isFusionSpectator();
+    }
+
     public boolean isTransforming() {
         if (TransformController.ascending)
             return true;

@@ -399,6 +399,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return auraOn || isTransforming;
     }
 
+    @Override
+    public boolean isFusionSpectator() {
+        return false;
+    }
+
     public Aura getToggledAura() {
         if (!auraOn && !isTransforming)
             return null;

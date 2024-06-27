@@ -308,9 +308,9 @@ public class EntityAura extends Entity {
     public void onUpdate() {
         if (isRoot() && !fadeOut) { //check aura death conditions
             Aura currentAura = PlayerDataUtil.getToggledAura(entity);
-            if (!isVanillaDefault && (entity == null || entity.isDead || currentAura == null || aura != currentAura || auraData.getAuraEntity() != this))
+            if (!isVanillaDefault && (entity == null || entity.isDead || currentAura == null || aura != currentAura || auraData.getAuraEntity() != this || auraData.isFusionSpectator()))
                 despawn();
-            else if (isVanillaDefault && (!auraData.isAuraOn() || entity == null || entity.isDead || currentAura != null || !ConfigDBCClient.RevampAura))
+            else if (isVanillaDefault && (!auraData.isAuraOn() || auraData.isFusionSpectator() || entity == null || entity.isDead || currentAura != null || !ConfigDBCClient.RevampAura || auraData.isFusionSpectator()))
                 despawn();
 
 
@@ -382,8 +382,15 @@ public class EntityAura extends Entity {
     }
 
     public double getYOffset(float size) { //for correctly offsetting aura size
-        float scaledAuraHeight = height * size;
-        float yOffset = -0.05f + scaledAuraHeight + scaledAuraHeight * (scaledAuraHeight / 50) * 2.25f;
+        float scaledAuraHeight = height * size, yOffset = 0;
+        if (entity instanceof EntityNPCInterface) {
+            //  scaledAuraHeight = ((float) ((EntityNPCInterface) entity).display.modelSize) / 5f;
+            //   yOffset = scaledAuraHeight;
+        }
+        if (entity instanceof EntityNPCInterface)
+            scaledAuraHeight = entity.height + 0.75f * size;
+
+        yOffset = -0.05f + scaledAuraHeight + scaledAuraHeight * (scaledAuraHeight / 50) * 2.25f;
 
         boolean client = Minecraft.getMinecraft().thePlayer == entity;
         float clientOffset = !client ? 1.62f : 0;

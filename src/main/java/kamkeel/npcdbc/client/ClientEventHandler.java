@@ -223,7 +223,7 @@ public class ClientEventHandler {
                 boolean isNPC = event.entity instanceof EntityNPCInterface;
                 DBCData dbcData = null;
                 DBCDisplay display = null;
-                boolean isInKaioken = false;
+                boolean isInKaioken = false, isSpectator = false;
 
                 boolean vanillaAura = false;
                 if (isNPC) {
@@ -242,15 +242,16 @@ public class ClientEventHandler {
                 } else if (isPlayer) {
                     dbcData = DBCData.get((EntityPlayer) event.entity);
                     aura = dbcData.getToggledAura();
+                    isSpectator = dbcData.stats.isFusionSpectator();
 
-                    if (aura == null)
+                    if (aura == null || isSpectator)
                         return;
 
                     isInKaioken = dbcData.isForm(DBCForm.Kaioken) && aura.display.hasKaiokenAura;
                 }
                 EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
                 if (ConfigDBCClient.RevampAura) {
-                    if (enhancedAura == null)
+                    if (enhancedAura == null && !isSpectator)
                         if(vanillaAura)
                             new EntityAura(event.entity, aura).setIsVanilla(true).load(true).spawn();
                         else

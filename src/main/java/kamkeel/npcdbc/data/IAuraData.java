@@ -21,7 +21,8 @@ public interface IAuraData {
 
     public int getDBCColor();
     public boolean isAuraOn();
-    
+    public boolean isFusionSpectator();
+
     // Aura Color
     // Aura Size
     // Aura State
