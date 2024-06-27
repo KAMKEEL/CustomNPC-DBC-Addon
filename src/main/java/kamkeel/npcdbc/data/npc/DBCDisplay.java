@@ -11,10 +11,12 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import net.minecraft.nbt.NBTTagCompound;
@@ -444,6 +446,18 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     public IForm getCurrentForm() {
         return getForm();
+    }
+
+    public Outline getOutline() {
+        Aura aura = getToggledAura();
+        if (aura != null && aura.display.outlineID != -1)
+            return (Outline) OutlineController.getInstance().get(aura.display.outlineID);
+
+        Form form = getForm();
+        if (form != null && form.display.outlineID != -1)
+            return (Outline) OutlineController.getInstance().get(getForm().display.outlineID);
+
+        return (Outline) OutlineController.getInstance().get(outlineID);
     }
 
     public Form getForm() {
