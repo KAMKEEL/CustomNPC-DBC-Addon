@@ -5,7 +5,6 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
 import kamkeel.npcdbc.client.ClientProxy;
-import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -43,19 +42,18 @@ public class OutlineRenderer {
         //Outer
         useShader(ShaderHelper.outline, () -> {
             uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
-            uniformColor("innerColor", outline.innerColor, 1);
-            uniformColor("outerColor", outline.outerColor, 1);
-            uniform1f("noiseSize", 1f);
-            uniform1f("range", 0.21f);
-            uniform1f("threshold", 0.55f);
-            uniform1f("noiseSpeed", 1);
-            uniform1f("throbSpeed", 0f);
+            uniformColor("innerColor", outline.innerColor.color, outline.innerColor.alpha);
+            uniformColor("outerColor", outline.outerColor.color, outline.outerColor.alpha);
+            uniform1f("noiseSize", outline.noiseSize);
+            uniform1f("range", outline.colorSmoothness);
+            uniform1f("threshold", outline.colorInterpolation);
+            uniform1f("noiseSpeed", outline.speed);
+            uniform1f("throbSpeed", outline.pulsingSpeed);
         });
 
         float scale = 1.025f, factor = 1.025f;
         glPushMatrix();
-        ColorMode.glColorInt(outline.outerColor, outline.outerAlpha);
-        float size = scale * factor * outline.innerSize;
+        float size = scale * factor * outline.size;
         glScalef(size, 1.025f * factor, size);
 
         glPushMatrix();
@@ -75,7 +73,7 @@ public class OutlineRenderer {
         if (!isArm) {
             disableStencilWriting(player.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID, false);
             glPushMatrix();
-            glScalef(1.02f * 1.01f * outline.outerSize, 1, 1.02f * 1.02f * outline.outerSize);
+            glScalef(1.02f * 1.01f * outline.size, 1, 1.02f * 1.02f * outline.size);
 
             DBCData data = DBCData.get(player);
             int race = data.Race;

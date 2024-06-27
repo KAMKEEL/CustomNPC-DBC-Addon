@@ -1,32 +1,36 @@
 package kamkeel.npcdbc.data.outline;
 
+import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.controllers.AnimationController;
+import noppes.npcs.util.ValueUtil;
 
 public class Outline implements IOutline {
     public int id;
     public String name, menuName;
 
-    public int innerColor, outerColor;
-    public float innerAlpha = 1f, outerAlpha = 1f, innerSize = 1f, outerSize = 1f;
+    public Color innerColor = new Color(0x00ffff, 1), outerColor = new Color(0xffffff, 1);
+    public float size = 1f, speed = 1f, noiseSize = 1f, colorSmoothness = 0.2f, colorInterpolation = 0.55f, pulsingSpeed = 0;
 
     public Outline() {
     }
 
-    public Outline(int innerColor, int outerColor) {
-        this.innerColor = innerColor;
-        this.outerColor = outerColor;
-    }
 
     public NBTTagCompound writeToNBT() {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger("ID", id);
         compound.setString("name", name);
-        compound.setInteger("innerColor", innerColor);
-        compound.setInteger("outerColor", outerColor);
+        compound.setFloat("size", size);
+        compound.setFloat("speed", speed);
+        compound.setFloat("noiseSize", noiseSize);
+        compound.setFloat("colorSmoothness", colorSmoothness);
+        compound.setFloat("colorInterpolation", colorInterpolation);
+        compound.setFloat("pulsingSpeed", pulsingSpeed);
 
+        innerColor.writeToNBT(compound, "inner");
+        outerColor.writeToNBT(compound, "outer");
         return compound;
     }
 
@@ -35,34 +39,63 @@ public class Outline implements IOutline {
             id = compound.getInteger("ID");
         else if (AnimationController.Instance != null)
             id = FormController.Instance.getUnusedId();
-
         name = compound.getString("name");
-        outerColor = compound.getInteger("outerColor");
-        innerColor = compound.getInteger("innerColor");
+        size = compound.getFloat("size");
+        speed = compound.getFloat("speed");
+        noiseSize = compound.getFloat("noiseSize");
+        colorSmoothness = compound.getFloat("colorSmoothness");
+        colorInterpolation = compound.getFloat("colorInterpolation");
+        pulsingSpeed = compound.getFloat("pulsingSpeed");
 
+        innerColor.readFromNBT(compound, "inner");
+        outerColor.readFromNBT(compound, "outer");
     }
 
-    public void setColor() {
-        innerColor = 0xff0000;
-        outerColor = 0x0;
+    @Override
+    public void setInnerColor(int color, float alpha) {
+        innerColor.setColor(color, ValueUtil.clamp(alpha, 0, 1));
     }
 
-    public Outline setAlpha(float inner, float outer) {
-        if (inner > 0)
-            innerAlpha = Math.min(inner, 1f);
-        if (outer > 0)
-            outerAlpha = Math.min(outer, 1f);
+    @Override
+    public void setOuterColor(int color, float alpha) {
+        outerColor.setColor(color, ValueUtil.clamp(alpha, 0, 1));
+    }
+
+    @Override
+    public Outline setSize(float size) {
+        this.size = ValueUtil.clamp(size, 0, 5);
         return this;
     }
 
-    public Outline setSize(float inner, float outer) {
-        if (inner > 0)
-            innerSize = Math.min(inner, 5f);
-        if (outer > 0)
-            outerSize = Math.min(outer, 5f);
+    @Override
+    public Outline setNoiseSize(float size) {
+        this.noiseSize = ValueUtil.clamp(size, 0, 50);
         return this;
     }
 
+    @Override
+    public Outline setSpeed(float speed) {
+        this.speed = ValueUtil.clamp(size, 0, 50);
+        return this;
+    }
+
+    @Override
+    public Outline setPulsingSpeed(float speed) {
+        this.pulsingSpeed = ValueUtil.clamp(speed, 0, 50);
+        return this;
+    }
+
+    @Override
+    public Outline setColorSmoothness(float smoothness) {
+        this.colorSmoothness = ValueUtil.clamp(smoothness, 0, 1);
+        return this;
+    }
+
+    @Override
+    public Outline setColorInterpolation(float interp) {
+        this.colorInterpolation = ValueUtil.clamp(interp, 0, 1);
+        return this;
+    }
     @Override
     public String getName() {
         return name;
@@ -72,7 +105,6 @@ public class Outline implements IOutline {
     public void setName(String name) {
         this.name = name;
     }
-
 
     @Override
     public String getMenuName() {
@@ -97,16 +129,15 @@ public class Outline implements IOutline {
         id = newID;
     }
 
-
-    @Override
-    public IOutline save() {
-        return OutlineController.Instance.saveOutline(this);
-    }
-
     @Override
     public IOutline clone() {
         Outline outline = new Outline();
         outline.readFromNBT(writeToNBT());
         return outline;
+    }
+
+    @Override
+    public IOutline save() {
+        return OutlineController.Instance.saveOutline(this);
     }
 }

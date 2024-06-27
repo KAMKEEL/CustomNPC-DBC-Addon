@@ -6,6 +6,22 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public interface IOutline {
 
+    void setInnerColor(int color, float alpha);
+
+    void setOuterColor(int color, float alpha);
+
+    Outline setSize(float size);
+
+    Outline setNoiseSize(float size);
+
+    Outline setSpeed(float speed);
+
+    Outline setPulsingSpeed(float speed);
+
+    Outline setColorSmoothness(float smoothness);
+
+    Outline setColorInterpolation(float interp);
+
     String getName();
 
     /**
@@ -26,8 +42,6 @@ public interface IOutline {
      * Do not use this unless you know what you are changing. Dangerous to change.
      */
     void setID(int newID);
-
-
 
     /**
      *
