@@ -9,6 +9,7 @@ import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.scripted.entity.ScriptPlayer;
 
 import java.util.Random;
 
@@ -26,7 +27,7 @@ public class NPCEventHandler {
                 Random rand = new Random();
                 float dodgeChance = form.mastery.dodgeChance * form.mastery.calculateMulti("dodge", formData.getCurrentLevel());
                 if (dodgeChance >= rand.nextInt(100)) {
-                    if (Dodge.dodge((Entity) event.player, event.damageSource.getMCDamageSource().getEntity())) {
+                    if (Dodge.dodge(event.player.getMCEntity(), event.damageSource.getMCDamageSource().getEntity())) {
                         event.setCanceled(true);
                         return;
                     }
