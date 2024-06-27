@@ -9,6 +9,7 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
+import kamkeel.npcdbc.data.outline.IOutline;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -56,6 +57,10 @@ public abstract class AbstractDBCAPI {
     public abstract IForm getOrCreateForm(String name);
 
     public abstract IForm getForm(String name);
+
+    public abstract IOutline createOutline(String name);
+
+    public abstract IOutline getOutline(String name);
 
     /**
      * @return Fake DBC Data for Simulating Damage

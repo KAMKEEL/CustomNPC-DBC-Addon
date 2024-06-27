@@ -6,6 +6,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.early.IEntityMC;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -122,12 +123,13 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
-        data.outline = new PlayerOutline(0xff0000, 0xffffff);
+        // data.outline = new Outline(0xff0000, 0xffffff);
         //  data.outline = null;
-        if (data.outline != null) {
+        Outline outline = data.getOutline();
+        if (outline != null) {
             startBlooming();
             glStencilFunc(GL_NOTEQUAL, player.getEntityId(), 0xFF);  // Test stencil value
-            PlayerOutline.renderOutline(render, player, partialTicks, isArm);
+            OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
             endBlooming();
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered())
             ((IEntityMC) player).setRenderPass(0);
@@ -175,7 +177,7 @@ public class RenderEventHandler {
     @SubscribeEvent
     public void renderPlayer(DBCPlayerEvent.RenderEvent.Pre e) {
         EntityAura aura = DBCData.get(e.entityPlayer).auraEntity;
-        if ((aura != null && aura.shouldRender()) || DBCData.get(e.entityPlayer).outline != null)
+        if ((aura != null && aura.shouldRender()) || DBCData.get(e.entityPlayer).outlineID != -1)
             Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
     }
 

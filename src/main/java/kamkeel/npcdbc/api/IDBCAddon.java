@@ -3,6 +3,7 @@ package kamkeel.npcdbc.api;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.outline.IOutline;
 import noppes.npcs.api.entity.IDBCPlayer;
 
 public interface IDBCAddon extends IDBCPlayer {
@@ -285,4 +286,8 @@ public interface IDBCAddon extends IDBCPlayer {
     boolean isInAura();
 
     boolean isInAura(IAura aura);
+
+    void setOutline(IOutline outline);
+
+    IOutline getOutline();
 }

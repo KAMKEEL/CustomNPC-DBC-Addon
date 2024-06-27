@@ -6,7 +6,7 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
-import kamkeel.npcdbc.client.render.PlayerOutline;
+import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
@@ -66,7 +66,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public static Form fakeForm;
     public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
 
-    public PlayerOutline outline;
+    public int outlineID;
 
     public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;

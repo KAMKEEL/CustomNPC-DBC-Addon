@@ -12,6 +12,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.outline.IOutline;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -852,4 +853,17 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
     //////////////////////////////////////////////
     //////////////////////////////////////////////
+
+    @Override
+    public void setOutline(IOutline outline) {
+        int id = outline != null ? outline.getID() : -1;
+        dbcData.getRawCompound().setInteger("outlineID", id);
+    }
+
+    @Override
+    public IOutline getOutline() {
+        return dbcData.getOutline();
+    }
+
+
 }

@@ -14,12 +14,10 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.BonusController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.npc.DBCStats;
+import kamkeel.npcdbc.data.outline.IOutline;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.util.DBCUtils;
@@ -89,6 +87,16 @@ public class DBCAPI extends AbstractDBCAPI {
     @Override
     public IAura getAura(String name) {
         return AuraController.getInstance().get(name);
+    }
+
+    @Override
+    public IOutline createOutline(String name) {
+        return OutlineController.getInstance().createOutline(name);
+    }
+
+    @Override
+    public IOutline getOutline(String name) {
+        return OutlineController.getInstance().get(name);
     }
 
 

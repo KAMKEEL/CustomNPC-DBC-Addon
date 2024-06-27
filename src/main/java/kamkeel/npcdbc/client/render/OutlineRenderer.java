@@ -11,6 +11,7 @@ import kamkeel.npcdbc.client.shader.ShaderResources;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.mixins.early.IEntityMC;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -21,33 +22,8 @@ import static kamkeel.npcdbc.client.render.RenderEventHandler.disableStencilWrit
 import static kamkeel.npcdbc.client.shader.ShaderHelper.*;
 import static org.lwjgl.opengl.GL11.*;
 
-public class PlayerOutline {
-    public int innerColor, outerColor;
-    public float innerAlpha = 1f, outerAlpha = 1f, innerSize = 1f, outerSize = 1f;
-
-    public PlayerOutline(int innerColor, int outerColor) {
-        this.innerColor = innerColor;
-        this.outerColor = outerColor;
-    }
-
-    public PlayerOutline setAlpha(float inner, float outer) {
-        if (inner > 0)
-            innerAlpha = Math.min(inner, 1f);
-        if (outer > 0)
-            outerAlpha = Math.min(outer, 1f);
-        return this;
-    }
-
-    public PlayerOutline setSize(float inner, float outer) {
-        if (inner > 0)
-            innerSize = Math.min(inner, 5f);
-        if (outer > 0)
-            outerSize = Math.min(outer, 5f);
-        return this;
-    }
-
-    public static void renderOutline(RenderPlayerJBRA render, EntityPlayer player, float partialTicks, boolean isArm) {
-        PlayerOutline outline = DBCData.get(player).outline;
+public class OutlineRenderer {
+    public static void renderOutline(RenderPlayerJBRA render, Outline outline, EntityPlayer player, float partialTicks, boolean isArm) {
         ClientProxy.renderingOutline = true;
         if (player.isInWater())
             ((IEntityMC) player).setRenderPass(0);
@@ -315,5 +291,4 @@ public class PlayerOutline {
             }
         }
     }
-
 }

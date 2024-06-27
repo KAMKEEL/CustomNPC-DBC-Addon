@@ -6,7 +6,6 @@ import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
-import kamkeel.npcdbc.client.render.PlayerOutline;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.IAuraData;
@@ -14,6 +13,7 @@ import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.PacketHandler;
@@ -45,7 +45,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "", Fusion = "";
 
     // Custom Form / Custom Aura
-    public int addonFormID = -1, auraID = -1;
+    public int addonFormID = -1, auraID = -1, outlineID = -1;
     public float addonFormLevel = 0, addonCurrentHeat = 0;
     public HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
     public HashMap<String, PlayerBonus> currentBonuses = new HashMap<>();
@@ -57,8 +57,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public boolean isFnPressed;
 
     public EntityAura auraEntity;
-    public PlayerOutline outline = null;
-
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
     public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
@@ -121,6 +119,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         // DBC Addon
         comp.setInteger("addonFormID", addonFormID);
         comp.setInteger("auraID", auraID);
+        comp.setInteger("outlineID", outlineID);
+
         comp.setFloat("addonFormLevel", addonFormLevel);
         comp.setFloat("addonCurrentHeat", addonCurrentHeat);
 
@@ -189,6 +189,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             c.setInteger("auraID", auraID);
         auraID = c.getInteger("auraID");
 
+        if (!c.hasKey("outlineID"))
+            c.setInteger("outlineID", outlineID);
+        outlineID = c.getInteger("outlineID");
+
         if (!c.hasKey("DBCBaseFlightSpeed"))
             c.setFloat("DBCBaseFlightSpeed", baseFlightSpeed);
         baseFlightSpeed = c.getFloat("DBCBaseFlightSpeed");
@@ -248,6 +252,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         nbt.setInteger("addonFormID", addonFormID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
         nbt.setInteger("auraID", auraID);
+        nbt.setInteger("outlineID", outlineID);
+
         stats.saveEffectsNBT(nbt);
         bonus.saveBonusNBT(nbt);
         this.player.getEntityData().setTag(DBCPersisted, nbt);
@@ -423,6 +429,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     public Form getForm() {
         return (Form) FormController.getInstance().get(addonFormID);
+    }
+
+    public Outline getOutline() {
+        return (Outline) OutlineController.getInstance().get(outlineID);
     }
 
     public void setFlight(boolean flightOn) {

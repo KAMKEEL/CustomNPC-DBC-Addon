@@ -3,6 +3,7 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCInfoSync;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -46,6 +47,22 @@ public class DBCSyncController {
         compound = new NBTTagCompound();
         compound.setTag("Data", list);
         PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_END, compound, -1).generatePacket(), player);
+
+        // Sync All Custom Outlines
+        list = new NBTTagList();
+        compound = new NBTTagCompound();
+        for (Outline outline : OutlineController.getInstance().customOutlines.values()) {
+            list.appendTag(outline.writeToNBT());
+            if (list.tagCount() > 5) {
+                compound = new NBTTagCompound();
+                compound.setTag("Data", list);
+                PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_ADD, compound, -1).generatePacket(), player);
+                list = new NBTTagList();
+            }
+        }
+        compound = new NBTTagCompound();
+        compound.setTag("Data", list);
+        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_END, compound, -1).generatePacket(), player);
 	}
 
 
@@ -59,10 +76,9 @@ public class DBCSyncController {
             }
             if (syncEnd) {
                 FormController.getInstance().customForms = FormController.getInstance().customFormsSync;
-                FormController.getInstance().customFormsSync = new HashMap<Integer, Form>();
+                FormController.getInstance().customFormsSync = new HashMap<>();
             }
-        }
-        else if(synctype == DBCSyncType.AURA){
+        } else if (synctype == DBCSyncType.AURA) {
             NBTTagList list = compound.getTagList("Data", 10);
             for (int i = 0; i < list.tagCount(); i++) {
                 Aura aura = new Aura();
@@ -71,7 +87,18 @@ public class DBCSyncController {
             }
             if (syncEnd) {
                 AuraController.getInstance().customAuras = AuraController.getInstance().customAurasSync;
-                AuraController.getInstance().customAurasSync = new HashMap<Integer, Aura>();
+                AuraController.getInstance().customAurasSync = new HashMap<>();
+            }
+        } else if (synctype == DBCSyncType.OUTLINE) {
+            NBTTagList list = compound.getTagList("Data", 10);
+            for (int i = 0; i < list.tagCount(); i++) {
+                Outline outline = new Outline();
+                outline.readFromNBT(list.getCompoundTagAt(i));
+                OutlineController.getInstance().customOutlinesSync.put(outline.id, outline);
+            }
+            if (syncEnd) {
+                OutlineController.getInstance().customOutlines = OutlineController.getInstance().customOutlinesSync;
+                OutlineController.getInstance().customOutlinesSync = new HashMap<>();
             }
         }
 	}
@@ -81,20 +108,24 @@ public class DBCSyncController {
             Form form = new Form();
             form.readFromNBT(compound);
             FormController.getInstance().customForms.put(form.id, form);
-        }
-        else if(synctype == DBCSyncType.AURA){
+        } else if (synctype == DBCSyncType.AURA) {
             Aura aura = new Aura();
             aura.readFromNBT(compound);
             AuraController.getInstance().customAuras.put(aura.id, aura);
+        } else if (synctype == DBCSyncType.OUTLINE) {
+            Outline outline = new Outline();
+            outline.readFromNBT(compound);
+            OutlineController.getInstance().customOutlinesSync.put(outline.id, outline);
         }
 	}
 
 	public static void clientSyncRemove(int synctype, int id) {
 		if(synctype == DBCSyncType.FORM){
             Form form = FormController.Instance.customForms.remove(id);
-        }
-        else if(synctype == DBCSyncType.AURA){
+        } else if (synctype == DBCSyncType.AURA) {
             Aura aura = AuraController.Instance.customAuras.remove(id);
+        } else if (synctype == DBCSyncType.OUTLINE) {
+            Outline outline = OutlineController.Instance.customOutlines.remove(id);
         }
 	}
 }
