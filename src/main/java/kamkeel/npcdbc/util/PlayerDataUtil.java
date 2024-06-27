@@ -118,7 +118,7 @@ public class PlayerDataUtil {
         boolean auraOn = false, outlineOn = false;
         if (entity instanceof EntityPlayer) {
             auraOn = DBCData.get((EntityPlayer) entity).isAuraOn();
-            outlineOn = DBCData.get((EntityPlayer) entity).outlineID != -1;
+            outlineOn = DBCData.get((EntityPlayer) entity).getOutline() != null;
         } else if (entity instanceof EntityNPCInterface) {
             auraOn = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().isAuraOn();
             outlineOn = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().outlineID != -1;
