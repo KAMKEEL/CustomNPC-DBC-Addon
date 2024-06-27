@@ -25,8 +25,8 @@ public class MixinJRMCoreHDBC {
             } else { //IForm ki bar color
                 Form form = DBCData.getClient().getForm();
                 if (form != null) {
-                    if(form.display.hudColor != -1)
-                        ci.setReturnValue(form.display.hudColor);
+                    if (form.display.kiBarColor != -1)
+                        ci.setReturnValue(form.display.kiBarColor);
                     else if (form.display.furColor != -1 && (form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")))
                         ci.setReturnValue(form.display.furColor);
                     else if (form.display.hairColor != -1)

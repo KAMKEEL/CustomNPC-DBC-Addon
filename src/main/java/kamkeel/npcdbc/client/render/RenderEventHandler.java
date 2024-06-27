@@ -123,8 +123,6 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
-        // data.outline = new Outline(0xff0000, 0xffffff);
-        //  data.outline = null;
         Outline outline = data.getOutline();
         if (outline != null) {
             startBlooming();

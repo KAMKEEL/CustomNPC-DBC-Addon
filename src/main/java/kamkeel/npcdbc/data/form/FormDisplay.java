@@ -22,7 +22,7 @@ public class FormDisplay implements IFormDisplay {
     public int hairColor = -1;
     public int eyeColor = -1;
     public int auraColor = -1;
-    public int hudColor = -1;
+    public int kiBarColor = -1;
     public String bodyType = "";
     public int bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
     public boolean hasBodyFur = false;
@@ -40,7 +40,7 @@ public class FormDisplay implements IFormDisplay {
         auraColor = rendering.getInteger("auraColor");
         eyeColor = rendering.getInteger("eyeColor");
         hairColor = rendering.getInteger("hairColor");
-        hudColor = rendering.getInteger("hudColor");
+        kiBarColor = rendering.getInteger("kiBarColor");
 
         furColor = rendering.getInteger("furColor");
         hairCode = rendering.getString("hairCode");
@@ -68,7 +68,7 @@ public class FormDisplay implements IFormDisplay {
         rendering.setInteger("auraColor", auraColor);
         rendering.setInteger("eyeColor", eyeColor);
         rendering.setInteger("hairColor", hairColor);
-        rendering.setInteger("hudColor", hudColor);
+        rendering.setInteger("kiBarColor", kiBarColor);
 
         rendering.setString("hairCode", hairCode);
         rendering.setString("hairType", hairType);
@@ -147,8 +147,8 @@ public class FormDisplay implements IFormDisplay {
     @Override
     public boolean hasColor(String type) {
         switch (type.toLowerCase()) {
-            case "hud":
-                return hudColor != -1;
+            case "kibar":
+                return kiBarColor != -1;
             case "aura":
                 return auraColor != -1;
             case "hair":
@@ -166,14 +166,14 @@ public class FormDisplay implements IFormDisplay {
             case "fur":
                 return furColor != -1;
         }
-        throw new CustomNPCsException("Invalid type! Legal types: hud, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
+        throw new CustomNPCsException("Invalid type! Legal types: kiBar, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
 
     @Override
     public void setColor(String type, int color) {
         switch (type.toLowerCase()) {
-            case "hud":
-                hudColor = color;
+            case "kibar":
+                kiBarColor = color;
                 break;
             case "aura":
                 auraColor = color;
@@ -200,7 +200,7 @@ public class FormDisplay implements IFormDisplay {
                 furColor = color;
                 break;
             default:
-                throw new CustomNPCsException("Invalid type! Legal types: hud, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
+                throw new CustomNPCsException("Invalid type! Legal types: kiBar, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
         }
     }
 
@@ -229,8 +229,8 @@ public class FormDisplay implements IFormDisplay {
     @Override
     public int getColor(String type) {
         switch (type.toLowerCase()) {
-            case "hud":
-                return hudColor;
+            case "kibar":
+                return kiBarColor;
             case "aura":
                 return auraColor;
             case "hair":
@@ -248,7 +248,7 @@ public class FormDisplay implements IFormDisplay {
             case "fur":
                 return furColor;
         }
-        throw new CustomNPCsException("Invalid type! Legal types: hud, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
+        throw new CustomNPCsException("Invalid type! Legal types: kiBar, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
 
 

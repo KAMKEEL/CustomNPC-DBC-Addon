@@ -2,16 +2,13 @@ package kamkeel.npcdbc.client.gui.global.form;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
-import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
-import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -23,7 +20,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.SubGuiColorSelector;
-import noppes.npcs.client.gui.select.GuiSoundSelection;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelData;
@@ -129,11 +125,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         addButton(new GuiNpcButton(1206, guiLeft + 133, y, 50, 20,  new String[]{"display.hide", "display.show"}, showAura ? 1 : 0));
 
         y += 22;
-        addLabel(new GuiNpcLabel(124, "display.hudColor", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(124, guiLeft + 61, y, 50, 20, getColor(display.hudColor)));
-        getButton(124).packedFGColour = display.hudColor;
+        addLabel(new GuiNpcLabel(124, "display.kiBarColor", guiLeft + 7, y + 5));
+        addButton(new GuiNpcButton(124, guiLeft + 61, y, 50, 20, getColor(display.kiBarColor)));
+        getButton(124).packedFGColour = display.kiBarColor;
         addButton(new GuiNpcButton(1124, guiLeft + 112, y, 20, 20, "X"));
-        getButton(1124).enabled = display.hudColor != -1;
+        getButton(1124).enabled = display.kiBarColor != -1;
 
         y += 22;
         addLabel(new GuiNpcLabel(107, "display.eye", guiLeft + 7, y + 5));
@@ -286,11 +282,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Hud Color
         if(button.id == 124){
             lastColorClicked = 8;
-            setSubGui(new SubGuiColorSelector(display.hudColor));
+            setSubGui(new SubGuiColorSelector(display.kiBarColor));
         }
         // Hud Color Clear
         if(button.id == 1124){
-            display.hudColor = -1;
+            display.kiBarColor = -1;
             refreshValues();
             updateButtons();
         }
@@ -471,7 +467,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             } else if(lastColorClicked == 7){
                 display.hairColor = color;
             } else if(lastColorClicked == 8){
-                display.hudColor = color;
+                display.kiBarColor = color;
             }
             refreshValues();
             updateButtons();
@@ -823,7 +819,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         spoofForm.display.bodyC2 = display.bodyC2;
         spoofForm.display.bodyC3 = display.bodyC3;
         spoofForm.display.bodyType = display.bodyType;
-        spoofForm.display.hudColor = display.hudColor;
+        spoofForm.display.kiBarColor = display.kiBarColor;
         spoofForm.display.eyeColor = display.eyeColor;
         spoofForm.display.effectMajinHair = display.effectMajinHair;
         spoofForm.display.furColor = display.furColor;
