@@ -4,6 +4,7 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.client.shader.PostProcessing;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -124,7 +125,7 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         //Outline
         Outline outline = data.getOutline();
-        if (outline != null) {
+        if (outline != null && ConfigDBCClient.EnableOutlines) {
             startBlooming();
             glStencilFunc(GL_GREATER, player.getEntityId() % 255, 0xFF);  // Test stencil value
             OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);

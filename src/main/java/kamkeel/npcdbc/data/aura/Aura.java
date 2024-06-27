@@ -152,7 +152,8 @@ public class Aura implements IAura {
 
     @Override
     public void setSecondaryAura(Aura aura) {
-        setSecondaryAura(aura.id);
+        int id = aura == null ? -1 : aura.id;
+        setSecondaryAura(id);
     }
 
     public boolean hasSecondaryAura() {
