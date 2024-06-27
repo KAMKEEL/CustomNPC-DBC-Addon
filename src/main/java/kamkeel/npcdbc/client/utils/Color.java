@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.utils;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.shader.ShaderHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.opengl.GL11;
 
@@ -24,6 +25,11 @@ public class Color {
         GL11.glColor4f(getRedF(), getGreenF(), getBlueF(), alpha);
     }
 
+    @SideOnly(Side.CLIENT)
+    public void uniform() {
+        ShaderHelper.uniformColor("outerColor", color, alpha);
+
+    }
     public NBTTagCompound writeToNBT(NBTTagCompound compound, String name) {
         compound.setInteger(name + "Color", color);
         compound.setFloat(name + "Alpha", alpha);
@@ -32,7 +38,7 @@ public class Color {
     }
 
     public void readFromNBT(NBTTagCompound compound, String name) {
-        setColor(compound.getInteger( name +"color"), compound.getFloat(name +"alpha"));
+        setColor(compound.getInteger(name + "color"), compound.getFloat(name + "alpha"));
     }
 
     public int getRed() {

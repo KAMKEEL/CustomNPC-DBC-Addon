@@ -42,8 +42,8 @@ public class OutlineRenderer {
         //Outer
         useShader(ShaderHelper.outline, () -> {
             uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
-            uniformColor("innerColor", outline.innerColor.color, outline.innerColor.alpha);
-            uniformColor("outerColor", outline.outerColor.color, outline.outerColor.alpha);
+            outline.innerColor.uniform();
+            outline.outerColor.uniform();
             uniform1f("noiseSize", outline.noiseSize);
             uniform1f("range", outline.colorSmoothness);
             uniform1f("threshold", outline.colorInterpolation);
