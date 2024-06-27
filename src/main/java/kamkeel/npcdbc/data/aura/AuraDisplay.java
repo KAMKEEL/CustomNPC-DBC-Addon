@@ -3,6 +3,8 @@ package kamkeel.npcdbc.data.aura;
 import kamkeel.npcdbc.api.aura.IAuraDisplay;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
+import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.data.outline.IOutline;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
@@ -31,6 +33,7 @@ public class AuraDisplay implements IAuraDisplay {
 
     public String auraSound = "", kaiokenSound = "";
 
+    public int outlineID = -1;
     public AuraDisplay(Aura parent) {
         this.parent = parent;
     }
@@ -82,6 +85,9 @@ public class AuraDisplay implements IAuraDisplay {
         // Sounds
         auraSound = rendering.hasKey("auraSound") ? rendering.getString("auraSound") : "";
         kaiokenSound = rendering.hasKey("kaiokenSound") ? rendering.getString("kaiokenSound") : "";
+
+        outlineID = rendering.getInteger("outlineID");
+
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -120,6 +126,8 @@ public class AuraDisplay implements IAuraDisplay {
 
         rendering.setString("auraSound", auraSound);
         rendering.setString("kaiokenSound", kaiokenSound);
+
+        rendering.setInteger("outlineID", outlineID);
 
         compound.setTag("rendering", rendering);
         return compound;
@@ -452,7 +460,19 @@ public class AuraDisplay implements IAuraDisplay {
         this.speed = speed;
     }
 
+    @Override
+    public void setOutline(int id) {
+        if (OutlineController.Instance.has(id))
+            this.outlineID = id;
+        else
+            outlineID = -1;
+    }
 
+    @Override
+    public void setOutline(IOutline outline) {
+        int id = outline != null ? outline.getID() : -1;
+        setOutline(id);
+    }
     @Override
     public IAuraDisplay save() {
         if (parent != null)

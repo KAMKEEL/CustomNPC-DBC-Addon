@@ -3,7 +3,9 @@ package kamkeel.npcdbc.data.form;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IFormDisplay;
 import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.outline.IOutline;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
@@ -27,7 +29,7 @@ public class FormDisplay implements IFormDisplay {
     public boolean hasArcoMask = false;
     public boolean effectMajinHair = false;
 
-    public int auraID = -1;
+    public int auraID = -1, outlineID = -1;
 
     public FormDisplay(Form parent) {
         this.parent = parent;
@@ -58,6 +60,7 @@ public class FormDisplay implements IFormDisplay {
         keepOriginalSize = rendering.getBoolean("keepOriginalSize");
 
         auraID = rendering.getInteger("auraID");
+        outlineID = rendering.getInteger("outlineID");
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -85,6 +88,7 @@ public class FormDisplay implements IFormDisplay {
         rendering.setBoolean("keepOriginalSize", keepOriginalSize);
 
         rendering.setInteger("auraID", auraID);
+        rendering.setInteger("outlineID", outlineID);
 
         compound.setTag("rendering", rendering);
         return compound;
@@ -304,6 +308,20 @@ public class FormDisplay implements IFormDisplay {
     //internal usage
     public Aura getAur() {
         return (Aura) AuraController.getInstance().get(auraID);
+    }
+
+    @Override
+    public void setOutline(int id) {
+        if (OutlineController.Instance.has(id))
+            this.outlineID = id;
+        else
+            outlineID = -1;
+    }
+
+    @Override
+    public void setOutline(IOutline outline) {
+        int id = outline != null ? outline.getID() : -1;
+        setOutline(id);
     }
 
     public IFormDisplay save() {

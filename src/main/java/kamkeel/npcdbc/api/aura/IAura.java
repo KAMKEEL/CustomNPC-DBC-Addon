@@ -51,9 +51,8 @@ public interface IAura {
 
     void setSecondaryAura(Aura aura);
 
-
     /**
-     * 
+     *
      * @return clones this IAura object and returns a new IAura with the same exact properties
      */
     IAura clone();

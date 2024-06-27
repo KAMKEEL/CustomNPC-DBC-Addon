@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.api.form;
 
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.data.outline.IOutline;
 
 /**
  * This interface is heavily based on how DBC calculates its form masteries. Please check any race's form_mastery.cfg config to
@@ -119,6 +120,10 @@ public interface IFormDisplay {
      * @param auraID ID of IAura object
      */
     void setAura(int auraID);
+
+    void setOutline(int id);
+
+    void setOutline(IOutline outline);
 
     /**
      * Saves CustomForm with the New Form Display Modifications

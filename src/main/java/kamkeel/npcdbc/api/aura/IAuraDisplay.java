@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.api.aura;
 
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.outline.IOutline;
 
 public interface IAuraDisplay {
 
@@ -164,6 +165,10 @@ public interface IAuraDisplay {
      */
     void setTexture(String textureType, String textureLocation);
 
+
+    void setOutline(int id);
+
+    void setOutline(IOutline outline);
 
     IAuraDisplay save();
 
