@@ -196,5 +196,6 @@ public class RenderEventHandler {
 
     public static void postStencilRendering() {
         glStencilFunc(GL_ALWAYS, 0, 0xFF);
+        glStencilMask(0xff);
     }
 }
