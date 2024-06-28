@@ -13,6 +13,10 @@ public interface IDBCStats {
 
     void setFriendlyFist(boolean friendlyFist);
 
+    int getFriendlyFistAmount();
+
+    void setFriendlyFistAmount(int seconds);
+
     boolean isIgnoreDex();
 
     void setIgnoreDex(boolean ignoreDex);

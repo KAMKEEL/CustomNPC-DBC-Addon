@@ -3,20 +3,26 @@ package kamkeel.npcdbc.data.npc;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.util.ValueUtil;
 
 public class DBCStats implements IDBCStats {
     public boolean enabled = ConfigDBCGeneral.STATS_BY_DEFAULT;
     public boolean friendlyFist = false, ignoreDex = false, ignoreBlock = false, ignoreEndurance = false, ignoreKiProtection = false, ignoreFormReduction = false, hasDefensePenetration = false;
 
     public int defensePenetration = 10;
+    public int friendlyFistTime = 6;
     public byte release = 100;
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         nbttagcompound.setBoolean("DBCStatsEnabled", enabled);
+        if(friendlyFistTime <= 0)
+            friendlyFistTime = 6;
+
         if (enabled) {
             NBTTagCompound dbcStats = new NBTTagCompound();
 
             dbcStats.setBoolean("DBCFriendlyFist", friendlyFist);
+            dbcStats.setInteger("DBCFriendlyFistTime", friendlyFistTime);
             dbcStats.setBoolean("DBCIgnoreDex", ignoreDex);
             dbcStats.setBoolean("DBCIgnoreBlock", ignoreBlock);
             dbcStats.setBoolean("DBCIgnoreEndurance", ignoreEndurance);
@@ -39,6 +45,7 @@ public class DBCStats implements IDBCStats {
             NBTTagCompound dbcStats = nbttagcompound.getCompoundTag("DBCStats");
 
             friendlyFist = dbcStats.getBoolean("DBCFriendlyFist");
+            friendlyFistTime = dbcStats.getInteger("DBCFriendlyFistTime");
             ignoreDex = dbcStats.getBoolean("DBCIgnoreDex");
             ignoreBlock = dbcStats.getBoolean("DBCIgnoreBlock");
             ignoreEndurance = dbcStats.getBoolean("DBCIgnoreEndurance");
@@ -50,6 +57,9 @@ public class DBCStats implements IDBCStats {
         } else {
             nbttagcompound.removeTag("DBCStats");
         }
+
+        if(friendlyFistTime <= 0)
+            friendlyFistTime = 6;
     }
 
     @Override
@@ -80,6 +90,16 @@ public class DBCStats implements IDBCStats {
     @Override
     public void setFriendlyFist(boolean friendlyFist) {
         this.friendlyFist = friendlyFist;
+    }
+
+    @Override
+    public int getFriendlyFistAmount() {
+        return friendlyFistTime;
+    }
+
+    @Override
+    public void setFriendlyFistAmount(int seconds) {
+        friendlyFistTime = ValueUtil.clamp(seconds, 1, 60);
     }
 
     @Override
