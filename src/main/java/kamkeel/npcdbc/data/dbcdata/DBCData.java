@@ -452,6 +452,25 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         PacketHandler.Instance.sendToPlayer(new DBCSetFlight(flightOn).generatePacket(), (EntityPlayerMP) player);
     }
 
+    public float getBaseFlightSpeed() {
+        float formSpeed = 0;
+        Form form = getForm();
+        if (form != null) {
+            formSpeed = form.mastery.flightSpeed * form.mastery.calculateMulti("flightSpeed", addonFormLevel);
+
+        }
+        return baseFlightSpeed + formSpeed;
+    }
+
+    public float getDynamicFlightSpeed() {
+        float formSpeed = 0;
+        Form form = getForm();
+        if (form != null) {
+            formSpeed = form.mastery.flightSpeed * form.mastery.calculateMulti("flightSpeed", addonFormLevel);
+        }
+        return dynamicFlightSpeed + formSpeed;
+    }
+
     /**
      * Fuse with another player
      *

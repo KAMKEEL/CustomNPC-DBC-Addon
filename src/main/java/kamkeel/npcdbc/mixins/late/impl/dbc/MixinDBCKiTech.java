@@ -55,14 +55,14 @@ public class MixinDBCKiTech {
     @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
     private static void changeBaseSpeed(Args args) {
         float speed = args.get(3);
-        args.set(3, speed * DBCData.getClient().baseFlightSpeed * DBCData.getClient().flightSpeedRelease / 100);
+        args.set(3, speed * DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
 
     }
 
     @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private static void changeDynamic(Args args) {
         float speed = args.get(4);
-        args.set(4, speed * DBCData.getClient().dynamicFlightSpeed * DBCData.getClient().flightSpeedRelease / 100);
+        args.set(4, speed * DBCData.getClient().getDynamicFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
 
     }
 

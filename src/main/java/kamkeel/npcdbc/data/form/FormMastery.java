@@ -39,6 +39,8 @@ public class FormMastery implements IFormMastery {
     public float damageNegation = 0f;
     public float damageNegationMultiFlat = 1.0f, damageNegationMultiPerLevel = 0.01f, damageNegationMultiMinOrMax = 2f;
 
+    public float flightSpeed = 1f;
+    public float flightSpeedMultiFlat = 1.0f, flightSpeedMultiPerLevel = 0.01f, flightSpeedMultiMinOrMax = 2f;
 
     public FormMastery(Form parent) {
         this.parent = parent;
@@ -204,7 +206,15 @@ public class FormMastery implements IFormMastery {
                     case "minormax":
                         return damageNegationMultiMinOrMax;
                 }
-
+            case "flightspeed":
+                switch (type1.toLowerCase()) {
+                    case "flat":
+                        return flightSpeedMultiFlat;
+                    case "perlevel":
+                        return flightSpeedMultiPerLevel;
+                    case "minormax":
+                        return flightSpeedMultiMinOrMax;
+                }
         }
         return 1.0f;
     }
@@ -299,6 +309,18 @@ public class FormMastery implements IFormMastery {
                         break;
                     case "minormax":
                         damageNegationMultiMinOrMax = value;
+                        break;
+                }
+            case "flightspeed":
+                switch (type1.toLowerCase()) {
+                    case "flat":
+                        flightSpeedMultiFlat = value;
+                        break;
+                    case "perlevel":
+                        flightSpeedMultiPerLevel = value;
+                        break;
+                    case "minormax":
+                        flightSpeedMultiMinOrMax = value;
                         break;
                 }
 
@@ -524,6 +546,7 @@ public class FormMastery implements IFormMastery {
         damageNegation = formMastery.getFloat("damageNegation");
         painTime = formMastery.getInteger("painTime");
         maxHeat = formMastery.getInteger("maxHeat");
+        flightSpeed = formMastery.getFloat("flightSpeed");
 
         NBTTagCompound attributeMulti = formMastery.getCompoundTag("attributeMulti");
         attributeMultiFlat = attributeMulti.getFloat("flat");
@@ -560,6 +583,10 @@ public class FormMastery implements IFormMastery {
         damageNegationMultiPerLevel = damageNegationMulti.getFloat("perLevel");
         damageNegationMultiMinOrMax = damageNegationMulti.getFloat("minOrMax");
 
+        NBTTagCompound flightSpeedMulti = formMastery.getCompoundTag("flightSpeedMulti");
+        flightSpeedMultiFlat = flightSpeedMulti.getFloat("flat");
+        flightSpeedMultiPerLevel = flightSpeedMulti.getFloat("perLevel");
+        flightSpeedMultiMinOrMax = flightSpeedMulti.getFloat("minOrMax");
 
         NBTTagCompound update = formMastery.getCompoundTag("update");
         updateGain = update.getFloat("gain");
@@ -602,6 +629,7 @@ public class FormMastery implements IFormMastery {
         formMastery.setFloat("damageNegation", damageNegation);
         formMastery.setInteger("maxHeat", maxHeat);
         formMastery.setInteger("painTime", painTime);
+        formMastery.setFloat("flightSpeed", flightSpeed);
 
         NBTTagCompound attributeMulti = new NBTTagCompound();
         attributeMulti.setFloat("flat", attributeMultiFlat);
@@ -622,9 +650,9 @@ public class FormMastery implements IFormMastery {
         formMastery.setTag("heatMulti", heatMulti);
 
         NBTTagCompound painMulti = new NBTTagCompound();
-        painMulti.setFloat("flat", heatMultiFlat);
-        painMulti.setFloat("perLevel", heatMultiPerLevel);
-        painMulti.setFloat("minOrMax", heatMultiMinOrMax);
+        painMulti.setFloat("flat", painMultiFlat);
+        painMulti.setFloat("perLevel", painMultiPerLevel);
+        painMulti.setFloat("minOrMax", painMultiMinOrMax);
         formMastery.setTag("painMulti", painMulti);
 
         NBTTagCompound healthRequirementMulti = new NBTTagCompound();
@@ -634,16 +662,22 @@ public class FormMastery implements IFormMastery {
         formMastery.setTag("healthRequirementMulti", healthRequirementMulti);
 
         NBTTagCompound dodgeMulti = new NBTTagCompound();
-        dodgeMulti.setFloat("flat", heatMultiFlat);
-        dodgeMulti.setFloat("perLevel", heatMultiPerLevel);
-        dodgeMulti.setFloat("minOrMax", heatMultiMinOrMax);
+        dodgeMulti.setFloat("flat", dodgeMultiFlat);
+        dodgeMulti.setFloat("perLevel", dodgeMultiPerLevel);
+        dodgeMulti.setFloat("minOrMax", dodgeMultiMinOrMax);
         formMastery.setTag("dodgeMulti", dodgeMulti);
 
         NBTTagCompound damageNegationMulti = new NBTTagCompound();
-        damageNegationMulti.setFloat("flat", heatMultiFlat);
-        damageNegationMulti.setFloat("perLevel", heatMultiPerLevel);
-        damageNegationMulti.setFloat("minOrMax", heatMultiMinOrMax);
+        damageNegationMulti.setFloat("flat", damageNegationMultiFlat);
+        damageNegationMulti.setFloat("perLevel", damageNegationMultiPerLevel);
+        damageNegationMulti.setFloat("minOrMax", damageNegationMultiMinOrMax);
         formMastery.setTag("damageNegationMulti", damageNegationMulti);
+
+        NBTTagCompound flightSpeedMulti = new NBTTagCompound();
+        flightSpeedMulti.setFloat("flat", flightSpeedMultiFlat);
+        flightSpeedMulti.setFloat("perLevel", flightSpeedMultiPerLevel);
+        flightSpeedMulti.setFloat("minOrMax", flightSpeedMultiMinOrMax);
+        formMastery.setTag("flightSpeedMulti", flightSpeedMulti);
 
         NBTTagCompound update = new NBTTagCompound();
         update.setFloat("gain", updateGain);
