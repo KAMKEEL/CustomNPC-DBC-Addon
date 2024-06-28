@@ -39,7 +39,7 @@ public class RenderEventHandler {
     public void enableHandStencil(DBCPlayerEvent.RenderArmEvent.Pre e) {
         glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
         glEnable(GL_STENCIL_TEST);
-        enableStencilWriting(e.entity.getEntityId() % 255);
+        enableStencilWriting(e.entity.getEntityId() % 256);
     }
 
     @SubscribeEvent
@@ -49,7 +49,7 @@ public class RenderEventHandler {
             glGetFloat(GL_MODELVIEW_MATRIX, PRE_RENDER_MODELVIEW);
             glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
             glEnable(GL_STENCIL_TEST);
-            enableStencilWriting(e.entity.getEntityId() % 255);
+            enableStencilWriting(e.entity.getEntityId() % 256);
             Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
             glDepthMask(true); //fixes a native MC RP1 entity bug in which the depth test is disabled
         }
@@ -64,7 +64,7 @@ public class RenderEventHandler {
         RenderCustomNpc r = (RenderCustomNpc) e.renderer;
         float partialTicks = Minecraft.getMinecraft().timer.renderPartialTicks;
 
-        disableStencilWriting(entity.getEntityId() % 255, false);
+        disableStencilWriting(entity.getEntityId() % 256, false);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
 
@@ -107,7 +107,7 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
-        enableStencilWriting(e.entity.getEntityId() % 255);
+        enableStencilWriting(e.entity.getEntityId() % 256);
         // postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
         glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
         glDisable(GL_STENCIL_TEST);
@@ -169,7 +169,7 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         postStencilRendering();
-        PostProcessing.bloom(1f);
+        PostProcessing.bloom(1.5f);
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
     }
 
