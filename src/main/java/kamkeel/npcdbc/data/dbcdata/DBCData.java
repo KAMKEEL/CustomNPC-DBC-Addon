@@ -51,7 +51,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public HashMap<String, PlayerBonus> currentBonuses = new HashMap<>();
 
     // NON VANILLA DBC
-    public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f;
+    public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f, sprintSpeed = 1.0f;
     public int flightSpeedRelease = 100;
     public boolean isFlying, flightEnabled = true, flightGravity = true;
     public boolean isFnPressed;
@@ -126,10 +126,12 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         comp.setFloat("DBCBaseFlightSpeed", baseFlightSpeed);
         comp.setFloat("DBCDynamicFlightSpeed", dynamicFlightSpeed);
+        comp.setFloat("DBCSprintSpeed", sprintSpeed);
         comp.setInteger("DBCFlightSpeedRelease", flightSpeedRelease);
         comp.setBoolean("DBCisFlying", isFlying);
         comp.setBoolean("DBCFlightEnabled", flightEnabled);
         comp.setBoolean("DBCFlightGravity", flightGravity);
+
 
         comp.setBoolean("DBCIsFnPressed", isFnPressed);
         stats.saveEffectsNBT(comp);
@@ -200,6 +202,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         if (!c.hasKey("DBCDynamicFlightSpeed"))
             c.setFloat("DBCDynamicFlightSpeed", dynamicFlightSpeed);
         dynamicFlightSpeed = c.getFloat("DBCDynamicFlightSpeed");
+
+        if (!c.hasKey("DBCSprintSpeed"))
+            c.setFloat("DBCSprintSpeed", sprintSpeed);
+        sprintSpeed = c.getFloat("DBCSprintSpeed");
 
         if (!c.hasKey("DBCFlightSpeedRelease"))
             c.setInteger("DBCFlightSpeedRelease", flightSpeedRelease);
@@ -456,7 +462,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         float formSpeed = 0;
         Form form = getForm();
         if (form != null) {
-            formSpeed = form.mastery.flightSpeed * form.mastery.calculateMulti("flightSpeed", addonFormLevel);
+            formSpeed = form.mastery.movementSpeed * form.mastery.calculateMulti("flightSpeed", addonFormLevel);
 
         }
         return baseFlightSpeed + formSpeed;
@@ -466,11 +472,19 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         float formSpeed = 0;
         Form form = getForm();
         if (form != null) {
-            formSpeed = form.mastery.flightSpeed * form.mastery.calculateMulti("flightSpeed", addonFormLevel);
+            formSpeed = form.mastery.movementSpeed * form.mastery.calculateMulti("flightSpeed", addonFormLevel);
         }
         return dynamicFlightSpeed + formSpeed;
     }
 
+    public float getSprintSpeed() {
+        float formSpeed = 0;
+        Form form = getForm();
+        if (form != null) {
+            formSpeed = form.mastery.movementSpeed * form.mastery.calculateMulti("flightSpeed", addonFormLevel);
+        }
+        return sprintSpeed + formSpeed;
+    }
     /**
      * Fuse with another player
      *

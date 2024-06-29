@@ -207,13 +207,15 @@ public interface IDBCAddon extends IDBCPlayer {
 
     void setFlightSpeedRelease(int release);
 
-    void setBaseFlightSpeed(int speed);
+    void setBaseFlightSpeed(float speed);
 
-    void setDynamicFlightSpeed(int speed);
+    void setDynamicFlightSpeed(float speed);
 
     void setFlightGravity(boolean isEffected);
 
     void setFlightDefaults();
+
+    void setSprintSpeed(float speed);
 
     void giveForm(String formName);
 

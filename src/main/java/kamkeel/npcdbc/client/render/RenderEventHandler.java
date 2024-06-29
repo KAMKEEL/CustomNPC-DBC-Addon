@@ -127,7 +127,7 @@ public class RenderEventHandler {
         Outline outline = data.getOutline();
         if (outline != null && ConfigDBCClient.EnableOutlines) {
             startBlooming();
-            glStencilFunc(GL_GREATER, player.getEntityId() % 255, 0xFF);  // Test stencil value
+            glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
             OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
             endBlooming();
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered())
@@ -139,7 +139,7 @@ public class RenderEventHandler {
         if (aura != null && aura.shouldRender()) {
             glPushMatrix();
             glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
-            glStencilFunc(GL_GREATER, player.getEntityId() % 255, 0xFF);
+            glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
             glStencilMask(0x0);
             AuraRenderer.Instance.renderAura(aura, partialTicks);
             // NewAura.renderAura(aura, partialTicks);

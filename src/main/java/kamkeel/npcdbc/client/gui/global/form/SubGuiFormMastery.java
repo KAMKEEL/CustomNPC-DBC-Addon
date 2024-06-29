@@ -24,7 +24,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
     public boolean showPain = false;
     public boolean showDodge = false;
     public boolean showDamageNegation = false;
-    public boolean showFlightSpeed = false;
+    public boolean showMovementSpeed = false;
 
     public SubGuiFormMastery(GuiNPCManageForms parent, Form form)
 	{
@@ -331,21 +331,21 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
 
         maxScroll += 23;
         y += 23;
-        scrollWindow.addLabel(new GuiNpcLabel(700, "mastery.flightSpeedSettings", 4, y + 5));
+        scrollWindow.addLabel(new GuiNpcLabel(700, "mastery.movementSpeedSettings", 4, y + 5));
         scrollWindow.getLabel(700).color = 0xffffff;
-        scrollWindow.addButton(new GuiNpcButton(700, 200, y, 120, 20, new String[]{"display.hide", "display.show"}, showFlightSpeed ? 1 : 0));
-        if (showFlightSpeed) {
+        scrollWindow.addButton(new GuiNpcButton(700, 200, y, 120, 20, new String[]{"display.hide", "display.show"}, showMovementSpeed ? 1 : 0));
+        if (showMovementSpeed) {
             maxScroll += 23 * 2;
             y += 23;
-            scrollWindow.addLabel(new GuiNpcLabel(701, "mastery.flightSpeed", 4, y + 5));
-            scrollWindow.addTextField(new GuiNpcTextField(701, this, 135, y, 40, 20, String.valueOf(mastery.flightSpeed)));
+            scrollWindow.addLabel(new GuiNpcLabel(701, "mastery.movementSpeed", 4, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(701, this, 135, y, 40, 20, String.valueOf(mastery.movementSpeed)));
             scrollWindow.getTextField(701).setMaxStringLength(10);
             scrollWindow.getTextField(701).floatsOnly = true;
             scrollWindow.getTextField(701).setMinMaxDefaultFloat(0, 100f, 1f);
             scrollWindow.getLabel(701).color = 0xffffff;
 
             scrollWindow.addLabel(new GuiNpcLabel(702, "mastery.flatMulti", 180, y + 5));
-            scrollWindow.addTextField(new GuiNpcTextField(702, this, 295, y, 40, 20, String.valueOf(mastery.flightSpeedMultiFlat)));
+            scrollWindow.addTextField(new GuiNpcTextField(702, this, 295, y, 40, 20, String.valueOf(mastery.movementSpeedMultiFlat)));
             scrollWindow.getTextField(702).setMaxStringLength(10);
             scrollWindow.getTextField(702).floatsOnly = true;
             scrollWindow.getTextField(702).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
@@ -353,14 +353,14 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
 
             y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(703, "mastery.perLevel", 4, y + 5));
-            scrollWindow.addTextField(new GuiNpcTextField(703, this, 135, y, 40, 20, String.valueOf(mastery.flightSpeedMultiPerLevel)));
+            scrollWindow.addTextField(new GuiNpcTextField(703, this, 135, y, 40, 20, String.valueOf(mastery.movementSpeedMultiPerLevel)));
             scrollWindow.getTextField(703).setMaxStringLength(10);
             scrollWindow.getTextField(703).floatsOnly = true;
             scrollWindow.getTextField(703).setMinMaxDefaultFloat(-10000, 10000f, 0.01f);
             scrollWindow.getLabel(703).color = 0xffffff;
 
             scrollWindow.addLabel(new GuiNpcLabel(704, "mastery.minMax", 180, y + 5));
-            scrollWindow.addTextField(new GuiNpcTextField(704, this, 295, y, 40, 20, String.valueOf(mastery.flightSpeedMultiMinOrMax)));
+            scrollWindow.addTextField(new GuiNpcTextField(704, this, 295, y, 40, 20, String.valueOf(mastery.movementSpeedMultiMinOrMax)));
             scrollWindow.getTextField(704).setMaxStringLength(10);
             scrollWindow.getTextField(704).floatsOnly = true;
             scrollWindow.getTextField(704).setMinMaxDefaultFloat(0f, 10000f, 2f);
@@ -608,7 +608,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             showDamageNegation = !showDamageNegation;
         }
         if (button.id == 700) {
-            showFlightSpeed = !showFlightSpeed;
+            showMovementSpeed = !showMovementSpeed;
         }
 
         initGui();
@@ -720,13 +720,13 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
         } else if(txtField.id == 604){
             mastery.damageNegationMultiMinOrMax = txtField.getFloat();
         } else if (txtField.id == 701) {
-            mastery.flightSpeed = txtField.getFloat();
+            mastery.movementSpeed = txtField.getFloat();
         } else if (txtField.id == 702) {
-            mastery.flightSpeedMultiFlat = txtField.getFloat();
+            mastery.movementSpeedMultiFlat = txtField.getFloat();
         } else if (txtField.id == 703) {
-            mastery.flightSpeedMultiPerLevel = txtField.getFloat();
+            mastery.movementSpeedMultiPerLevel = txtField.getFloat();
         } else if (txtField.id == 704) {
-            mastery.flightSpeedMultiMinOrMax = txtField.getFloat();
+            mastery.movementSpeedMultiMinOrMax = txtField.getFloat();
         }
     }
 

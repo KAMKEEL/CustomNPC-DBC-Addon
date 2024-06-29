@@ -48,6 +48,11 @@ public class MixinDBCKiTech {
             ci.cancel();
     }
 
+    @ModifyArgs(method = "DashKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
+    private static void changeSprintSpeed(Args args) {
+        float speed = args.get(3);
+        args.set(3, speed * DBCData.getClient().getSprintSpeed());
+    }
 
     /**
      * Prevents player from transforming to other DBC forms if they are in custom form, except stackable ones
