@@ -4,6 +4,7 @@ import JinRyuu.DragonBC.common.DBCConfig;
 import JinRyuu.DragonBC.common.Items.ItemsDBC;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.items.ItemVanity;
 import JinRyuu.JRMCore.mod_JRMCore;
@@ -16,6 +17,7 @@ import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -80,7 +82,7 @@ public class DBCUtils {
     public static boolean hasMUI(EntityPlayer p) {
         return lastUIlvl(true, p) > 0;
     }
-    
+
 
     public static double getMaxFormMasteryLvl(int st, int race) {
         // int n = JRMCoreH.trans[JRMCoreH.Race].length - 1; // kk? n + 1 : mys? n + 2 :
@@ -522,6 +524,111 @@ public class DBCUtils {
         }
     }
 
+    public static int calculateAttackStat(EntityPlayer player, DamageSource source) {
+
+        float amount = 1;
+        EntityPlayer attacker;
+        DBCData data = DBCData.get(player);
+        if (data.isFusionSpectator())
+            return 0;
+        if (source.getEntity() != null && source.getEntity() instanceof EntityPlayer) {
+            attacker = (EntityPlayer) source.getEntity();
+            int powerType = data.Powertype;
+            if (!JRMCoreH.isPowerTypeKi(powerType))
+                return 0;
+
+            boolean ultraInstinctCounter = source.getDamageType().equals("UICounter");
+            boolean Melee = ultraInstinctCounter || source.getSourceOfDamage() == source.getEntity() && source.getDamageType().equals("player");
+            boolean energyAtt = source.getDamageType().equals("EnergyAttack") && source.getSourceOfDamage() instanceof EntityEnergyAtt;
+            boolean Projectile = source.getSourceOfDamage() instanceof IProjectile && !energyAtt;
+
+            int race = data.Race;
+            int state = data.State;
+            int state2 = data.State2;
+            int classID = data.Class;
+            double release = data.Release;
+            int currentEnergy = data.Ki;
+            String sklx = data.RacialSkills;
+            int resrv = data.ArcReserve;
+            String absorption = data.MajinAbsorptionData;
+            int[] PlyrAttrbts = data.stats.getAllAttributes();
+            String[] PlyrSkills = data.Skills.split(",");
+            String statusEffects = data.StatusEffects;
+            boolean mj = JRMCoreH.StusEfcts(12, statusEffects);
+            boolean lg = JRMCoreH.StusEfcts(14, statusEffects);
+            boolean kk = JRMCoreH.StusEfcts(5, statusEffects);
+            boolean mc = JRMCoreH.StusEfcts(13, statusEffects);
+            boolean mn = JRMCoreH.StusEfcts(19, statusEffects);
+            boolean gd = JRMCoreH.StusEfcts(20, statusEffects);
+
+            boolean c = JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects);
+            int STR = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 0, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
+            float dam = 0;
+            int cstF = 0;
+
+            if (Melee) {
+                int sklkf = JRMCoreH.SklLvl(12, PlyrSkills);
+                boolean sklkfe = !JRMCoreH.PlyrSettingsB(attacker, 9);
+                int sklks = 0;
+                if (sklkf > 0 && sklkfe) {
+                    int SPI = PlyrAttrbts[5];
+                    int statSPI = JRMCoreH.stat(attacker, 5, powerType, 5, SPI, race, classID, JRMCoreH.SklLvl_KiBs(PlyrSkills, powerType));
+                    sklks = (int) ((double) sklkf * 0.0025 * (double) statSPI * release * 0.01);
+                    if (sklks > 0) {
+                        cstF = (int) ((double) sklks * DBCConfig.cnfKFc);
+                        if (currentEnergy <= cstF) {
+                            sklks = 0;
+                        }
+
+                        sklks = (int) ((double) sklks * DBCConfig.cnfKFd);
+                    }
+                }
+
+                int dmg = JRMCoreH.stat(attacker, 0, powerType, 0, STR, race, classID, 0.0F);
+                double curAtr = (double) dmg * release * 0.01 * (double) JRMCoreH.weightPerc(0, attacker);
+                boolean sklkfe2 = JRMCoreH.PlyrSettingsB(attacker, 13);
+                boolean sklkfe3 = JRMCoreH.PlyrSettingsI(attacker, 13, 1);
+                int skf = JRMCoreH.SklLvl(15, PlyrSkills);
+                boolean hasKiWeaponEnabled = sklkf > 0 && skf > 0 && sklkfe2;
+                if (hasKiWeaponEnabled) {
+                    int WIL = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 3, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
+
+
+                    int dmg1 = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
+                    float data1 = (float) ((int) (0.005 * (double) dmg1 * release * 0.01 * (sklkfe3 ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5699));
+                    float data2 = (float) ((int) (0.005 * (double) dmg1 * release * 0.01 * (sklkfe3 ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc)));
+                    int kiWeaponCost = (int) (data2 / (sklkf > 1 ? (float) sklkf * 0.3F + 1.0F : 1.0F));
+                    int kiWeaponDamage = (int) ((float) sklkf * data1);
+
+                    dmg1 = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
+                    data1 = (float) ((double) dmg1 * release * 0.01F * (double) JRMCoreH.weightPerc(1, attacker) * (sklkfe3 ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5700);
+                    data2 = (float) ((double) dmg1 * release * 0.01F * (double) JRMCoreH.weightPerc(1, attacker) * (sklkfe3 ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc));
+                    kiWeaponCost = (int) ((float) kiWeaponCost + data2 / (skf > 1 ? (float) skf * 0.3F + 1.0F : 1.0F));
+                    kiWeaponDamage = (int) ((float) kiWeaponDamage + (float) skf * data1);
+
+                    if (kiWeaponCost > 0 && currentEnergy >= kiWeaponCost) {
+                        dam = amount + (float) kiWeaponDamage;
+
+                    }
+                }
+
+
+                dam = (float) ((double) dam + curAtr + (double) sklks);
+            } else if (Projectile) {
+                int WIL = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 3, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
+                int dmg = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
+                int skf = JRMCoreH.SklLvl(15, PlyrSkills);
+                dam = (float) ((double) amount + (double) dmg * release * 0.005F * (double) skf * (double) JRMCoreH.weightPerc(1, attacker));
+            }
+            if (ultraInstinctCounter) {
+                dam *= (float) JGConfigUltraInstinct.CONFIG_UI_ATTACK_DAMAGE_PERCENTAGE[JRMCoreH.state2UltraInstinct(!mn, (byte) state2)] * 0.01F;
+            }
+
+            return (int) (dam <= 0.0F ? 1.0F : dam);
+        }
+
+        return 0;
+    }
     public static boolean noBonusEffects = false;
     public static int calculateKiDrainMight(DBCData dbcData, EntityPlayer player){
         int[] playerAttributes = JRMCoreH.PlyrAttrbts(dbcData.player); //Need to get fused attributes, major refactor of DBCData later on?

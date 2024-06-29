@@ -105,6 +105,16 @@ public class PlayerDataUtil {
         return null;
     }
 
+    public static float getFormLevel(Entity entity) {
+        if (entity instanceof EntityPlayer)
+            return DBCData.get((EntityPlayer) entity).addonFormLevel;
+        else if (entity instanceof EntityNPCInterface)
+            return ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().formLevel;
+
+        return 0;
+    }
+
+
     public static Aura getToggledAura(Entity entity) {
         if (entity instanceof EntityPlayer)
             return DBCData.get((EntityPlayer) entity).getToggledAura();

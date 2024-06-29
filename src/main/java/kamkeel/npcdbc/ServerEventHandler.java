@@ -3,6 +3,7 @@ package kamkeel.npcdbc;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.combat.Dodge;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -20,18 +21,23 @@ import kamkeel.npcdbc.network.packets.LoginInfo;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityCustomNpc;
+import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
+
+import java.util.Random;
 
 public class ServerEventHandler {
 
@@ -176,7 +182,7 @@ public class ServerEventHandler {
     }
 
     @SubscribeEvent
-    public void entityAura(LivingEvent.LivingUpdateEvent event) {
+    public void NPCAscend(LivingEvent.LivingUpdateEvent event) {
         if (event.entity instanceof EntityCustomNpc && Utility.isServer(event.entity)) {
             EntityCustomNpc npc = (EntityCustomNpc) event.entity;
             DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
@@ -186,6 +192,30 @@ public class ServerEventHandler {
                 TransformController.npcAscend(npc, (Form) FormController.Instance.get(display.selectedForm));
             } else
                 TransformController.npcDecrementRage(npc, display);
+        }
+    }
+
+    @SubscribeEvent
+    public void attackEvent(LivingAttackEvent event) {
+        if (event.entity.worldObj.isRemote)
+            return;
+
+        if (event.entity instanceof EntityPlayer || event.entity instanceof EntityNPCInterface) {
+            Entity attacker = event.source.getEntity();
+            Form form = PlayerDataUtil.getForm(event.entity);
+            if (form != null) {
+                float formLevel = PlayerDataUtil.getFormLevel(event.entity);
+
+                if (form.mastery.hasDodge()) {
+                    Random rand = new Random();
+                    float dodgeChance = form.mastery.dodgeChance * form.mastery.calculateMulti("dodge", formLevel);
+                    if (dodgeChance >= rand.nextInt(100)) {
+                        if (Dodge.dodge(event.entity, attacker)) {
+                            event.setCanceled(true);
+                        }
+                    }
+                }
+            }
         }
     }
 
