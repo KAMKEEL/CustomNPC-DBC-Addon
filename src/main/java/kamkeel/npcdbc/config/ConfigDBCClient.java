@@ -1,9 +1,8 @@
 package kamkeel.npcdbc.config;
 
-import cpw.mods.fml.common.FMLLog;
+import kamkeel.npcdbc.client.ClientProxy;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import org.apache.logging.log4j.Level;
 
 import java.io.File;
 
@@ -80,7 +79,7 @@ public class ConfigDBCClient
         }
         catch (Exception e)
         {
-            FMLLog.log(Level.ERROR, e, "DBC Addon has had a problem loading its client configuration");
+            ClientProxy.LOGGER.error("Error loading client configuration: " + e.getMessage());
         }
         finally
         {

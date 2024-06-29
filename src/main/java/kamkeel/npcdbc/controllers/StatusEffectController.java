@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class StatusEffectController implements IStatusEffectHandler {
 
@@ -24,7 +25,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     public HashMap<Integer, StatusEffect> standardEffects = new HashMap<>();
     public HashMap<Integer, CustomEffect> customEffects = new HashMap<>(); // TODO: I will implement later - Kam
 
-    public HashMap<UUID, HashMap<Integer, PlayerEffect>> playerEffects = new HashMap<>();
+    public ConcurrentHashMap<UUID, HashMap<Integer, PlayerEffect>> playerEffects = new ConcurrentHashMap<>();
 
     public StatusEffectController(){
 

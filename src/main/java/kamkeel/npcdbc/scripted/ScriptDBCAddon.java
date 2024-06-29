@@ -582,13 +582,13 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public void setBaseFlightSpeed(int speed) {
+    public void setBaseFlightSpeed(float speed) {
         dbcData.baseFlightSpeed = ValueUtil.clamp(speed, 1, 10);
         dbcData.saveNBTData(false);
     }
 
     @Override
-    public void setDynamicFlightSpeed(int speed) {
+    public void setDynamicFlightSpeed(float speed) {
         dbcData.dynamicFlightSpeed = ValueUtil.clamp(speed, 1, 10);
         dbcData.saveNBTData(false);
     }
@@ -609,6 +609,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         dbcData.saveNBTData(false);
     }
 
+    @Override
+    public void setSprintSpeed(float speed) {
+        dbcData.sprintSpeed = ValueUtil.clamp(speed, 1, 20);
+        dbcData.saveNBTData(false);
+    }
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     // Form stuff

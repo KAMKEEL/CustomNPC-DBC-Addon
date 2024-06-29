@@ -68,13 +68,13 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At("TAIL"), cancellable = true)
     public void tailStencil(float par1, String hair, String anim, CallbackInfoReturnable<String> ci) {
         if (!ClientProxy.renderingOutline && (hair.contains("SJT") || hair.contains("FR") || hair.equals("N")))
-            RenderEventHandler.enableStencilWriting(ClientEventHandler.renderingPlayer.getEntityId() % 255);
+            RenderEventHandler.enableStencilWriting(ClientEventHandler.renderingPlayer.getEntityId() % 256);
     }
 
     @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At("HEAD"), cancellable = true)
     public void formRendering(float par1, String hair, String anim, CallbackInfoReturnable<String> ci, @Local(ordinal = 0) LocalRef<String> Hair) {
         if (!ClientProxy.renderingOutline && (hair.contains("SJT") || hair.contains("FR") || hair.equals("N")))
-            RenderEventHandler.enableStencilWriting((ClientEventHandler.renderingPlayer.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 255);
+            RenderEventHandler.enableStencilWriting((ClientEventHandler.renderingPlayer.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
 
         if (ClientEventHandler.renderingPlayer != null) {
             Form form = DBCData.getForm(ClientEventHandler.renderingPlayer);

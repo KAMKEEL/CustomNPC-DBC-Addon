@@ -71,7 +71,7 @@ public class OutlineRenderer {
         glPopMatrix();
 
         if (!isArm) {
-            disableStencilWriting((player.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 255, false);
+            disableStencilWriting((player.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
             glPushMatrix();
             glScalef(1.02f * 1.01f * outline.size, 1, 1.02f * 1.02f * outline.size);
 
@@ -104,7 +104,7 @@ public class OutlineRenderer {
             }
 
             glPopMatrix();
-            disableStencilWriting(player.getEntityId() % 255, false);
+            disableStencilWriting(player.getEntityId() % 256, false);
         }
 
         releaseShader();
