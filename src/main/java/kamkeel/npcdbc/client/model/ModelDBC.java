@@ -16,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.EntityCustomNpc;
+import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.opengl.GL11;
 
 public class ModelDBC extends ModelBase {
@@ -91,22 +92,29 @@ public class ModelDBC extends ModelBase {
     }
 
     public void setPlayerData(EntityCustomNpc entity) {
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
-        isHurt = false;
-        if (display.isEnabled() && display.useSkin && entity.hurtTime > 0) {
-            isHurt = true;
-            GL11.glDepthFunc(GL11.GL_LEQUAL);
-            GL11.glDisable(GL11.GL_BLEND);
-            GL11.glEnable(GL11.GL_ALPHA_TEST);
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-        }
-
         this.DBCHair.setData(entity.modelData, entity);
         this.DBCHorns.setData(entity.modelData, entity);
         this.DBCEars.setData(entity.modelData, entity);
         this.DBCBody.setData(entity.modelData, entity);
         this.DBCRightArms.setData(entity.modelData, entity);
         this.DBCLeftArms.setData(entity.modelData, entity);
+    }
+
+    public void setHurt(EntityCustomNpc entity){
+        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        isHurt = false;
+        if (display.isEnabled() && display.useSkin && (entity.hurtTime > 0 || entity.isKilled())) {
+            isHurt = true;
+            GL11.glDepthFunc(GL11.GL_LEQUAL);
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glEnable(GL11.GL_ALPHA_TEST);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+        }
+    }
+
+    public void clearHurt(){
+        isHurt = false;
+        GL11.glEnable(GL11.GL_BLEND);
     }
 
     public void renderFace(DBCDisplay display) {
