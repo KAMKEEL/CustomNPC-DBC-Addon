@@ -7,6 +7,7 @@ import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.constants.enums.*;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
@@ -121,14 +122,16 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         }
     }
 
+    @Cancelable
     public static class DamagedEvent extends DBCPlayerEvent implements IDBCEvent.DamagedEvent {
 
+        public EntityPlayer player;
         public final IDamageSource damageSource;
         public final int sourceType;
         public float damage;
 
-        public DamagedEvent(IPlayer player, float damage, DamageSource damageSource, int type) {
-            super(player);
+        public DamagedEvent(EntityPlayer player, float damage, DamageSource damageSource, int type) {
+            super(PlayerDataUtil.getIPlayer(player));
             this.damage = damage;
             this.damageSource = NpcAPI.Instance().getIDamageSource(damageSource);
             this.sourceType = type;
@@ -178,6 +181,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         }
     }
 
+    @Cancelable
     public static class KnockoutEvent extends DBCPlayerEvent implements IDBCEvent.DBCKnockout {
 
         public final IDamageSource damageSource;
@@ -218,7 +222,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
     }
 
     public static class RenderArmEvent extends RenderPlayerEvent {
-        
+
         public RenderArmEvent(EntityPlayer player, RenderPlayer renderer, float partialRenderTick) {
             super(player, renderer, partialRenderTick);
         }
