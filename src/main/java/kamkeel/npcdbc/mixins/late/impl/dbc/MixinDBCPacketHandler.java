@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JRMCore.p.DBC.DBCPacketHandlerServer;
+import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -39,5 +40,15 @@ public class MixinDBCPacketHandler {
                 StatusEffectController.getInstance().applyEffect(p, Effects.ZENKAI);
             }
         }
+    }
+
+    @Inject(method = "handleDBCenergy", at = @At("HEAD"), cancellable = true)
+    public void fixEnergy10xKi(byte b, byte p, EntityPlayer pl, CallbackInfo ci) {
+        CommonProxy.CurrentJRMCTickPlayer = pl;
+    }
+
+    @Inject(method = "handleDBCenergy", at = @At("TAIL"), cancellable = true)
+    public void fixEnergy10xKi2(byte b, byte p, EntityPlayer pl, CallbackInfo ci) {
+        CommonProxy.CurrentJRMCTickPlayer = null;
     }
 }
