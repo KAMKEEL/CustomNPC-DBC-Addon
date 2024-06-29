@@ -1,5 +1,6 @@
 package kamkeel.npcdbc;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
@@ -8,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class NPCEventHandler {
 
+    @SubscribeEvent
     public void DBCAttackEvent(DBCPlayerEvent.DamagedEvent event) {
         if (event.player == null || event.player == null || event.player.getMCEntity() == null || event.player.getMCEntity().worldObj.isRemote)
             return;
