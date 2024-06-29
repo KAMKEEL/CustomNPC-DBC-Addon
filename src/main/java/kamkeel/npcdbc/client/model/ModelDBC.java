@@ -105,16 +105,15 @@ public class ModelDBC extends ModelBase {
         isHurt = false;
         if (display.isEnabled() && display.useSkin && (entity.hurtTime > 0 || entity.isKilled())) {
             isHurt = true;
-            GL11.glDepthFunc(GL11.GL_LEQUAL);
-            GL11.glDisable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_ALPHA_TEST);
             GL11.glEnable(GL11.GL_TEXTURE_2D);
         }
     }
 
     public void clearHurt(){
+        if(!isHurt)
+            return;
         isHurt = false;
-        GL11.glEnable(GL11.GL_BLEND);
     }
 
     public void renderFace(DBCDisplay display) {
