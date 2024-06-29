@@ -193,6 +193,17 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                     fontRendererObj.drawString(label, guiLeft + 143, stats += 12, CustomNpcResourceListener.DefaultTextColor, true);
                     fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
                 }
+                if (viewingForm.mastery.hasDodge()) {
+                    label = "§fDodge:";
+                    double dodgeChance = viewingForm.mastery.getDodgeChance();
+                    double dodgeMultiplier = viewingForm.mastery.calculateMulti("dodge", dbcInfo.getFormLevel(viewingForm.id));
+                    double result = dodgeChance * dodgeMultiplier;
+
+                    String resultString = String.format("%.1f", result);
+                    info = String.join("§6, ", resultString + "%");
+                    fontRendererObj.drawString(label, guiLeft + 143, stats += 12, CustomNpcResourceListener.DefaultTextColor, true);
+                    fontRendererObj.drawString("§6" + info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
+                }
             }
             if (selectedForm != null) {
                 String drawSelected = "§fSelected: " + selectedForm.getMenuName();
