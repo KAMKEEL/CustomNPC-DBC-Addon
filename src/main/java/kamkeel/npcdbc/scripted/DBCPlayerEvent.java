@@ -125,7 +125,6 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
     @Cancelable
     public static class DamagedEvent extends DBCPlayerEvent implements IDBCEvent.DamagedEvent {
 
-        public EntityPlayer player;
         public final IDamageSource damageSource;
         public final int sourceType;
         public float damage;
