@@ -7,11 +7,9 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.*;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
-import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -58,6 +56,17 @@ public class MixinRenderAura2 {
             lightVertN = intensity;
             nu2.set(intensity);
         }
+        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+
+    }
+
+    @Inject(method = "lightning", at = @At("TAIL"))
+    private void enableLightMap(EntityAura2 e, double par2, double par4, double par6, float par9, float var20, float var13, boolean rot, CallbackInfo ci) {
+        IEntityAura aura = (IEntityAura) e;
+        if (!aura.hasLightning())
+            return;
+
+        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
 
     }
 
