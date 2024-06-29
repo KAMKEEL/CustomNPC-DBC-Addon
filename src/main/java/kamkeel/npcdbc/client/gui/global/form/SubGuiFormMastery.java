@@ -287,7 +287,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.addTextField(new GuiNpcTextField(504, this, 295, y, 40, 20, String.valueOf(mastery.dodgeMultiMinOrMax)));
             scrollWindow.getTextField(504).setMaxStringLength(10);
             scrollWindow.getTextField(504).floatsOnly = true;
-            scrollWindow.getTextField(504).setMinMaxDefaultFloat(0f, 10000f, 1f);
+            scrollWindow.getTextField(504).setMinMaxDefaultFloat(0f, 10000f, 2f);
             scrollWindow.getLabel(504).color = 0xffffff;
         }
 
@@ -325,7 +325,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.addTextField(new GuiNpcTextField(604, this, 295, y, 40, 20, String.valueOf(mastery.damageNegationMultiMinOrMax)));
             scrollWindow.getTextField(604).setMaxStringLength(10);
             scrollWindow.getTextField(604).floatsOnly = true;
-            scrollWindow.getTextField(604).setMinMaxDefaultFloat(0f, 10000f, 1f);
+            scrollWindow.getTextField(604).setMinMaxDefaultFloat(0f, 10000f, 2f);
             scrollWindow.getLabel(604).color = 0xffffff;
         }
 
