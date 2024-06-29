@@ -10,7 +10,6 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.client.shader.PostProcessing;
-import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -37,7 +36,6 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
@@ -308,41 +306,47 @@ public class ClientEventHandler {
         int mimicColor = EnumAuraTypes3D.getManualAuraColor(aura.display.type, false);
         if (mimicColor != -1)
             formColor = mimicColor;
+        boolean has2D = aura.display.type2D != EnumAuraTypes2D.None;
 
         if (aura.display.type == EnumAuraTypes3D.SaiyanGod) {
             aur.setAlp(0.2F);
             aur.setTex("aurai");
             aur.setTexL2("aurai2");
             aur.setColL2(16747301);
-            aur.setBol6(0);
+            if (has2D)
+                aur.setBol6(0);
         } else if (aura.display.type == EnumAuraTypes3D.SaiyanBlue) {
             aur.setSpd(40);
             aur.setAlp(0.5F);
             aur.setTex("aurag");
             aur.setColL3(15727354);
             aur.setTexL3("auragb");
-            aur.setBol6(1);
+            if (has2D)
+                aur.setBol6(1);
         } else if (aura.display.type == EnumAuraTypes3D.SaiyanBlueEvo) {
             aur.setSpd(40);
             aur.setAlp(0.5F);
             aur.setTex("aurag");
             aur.setColL3(12310271);
             aur.setTexL3("auragb");
-            aur.setBol6(2);
+            if (has2D)
+                aur.setBol6(2);
         } else if (aura.display.type == EnumAuraTypes3D.SaiyanRose) {
             aur.setSpd(30);
             aur.setAlp(0.2F);
             aur.setTex("aurai");
             aur.setTexL2("aurai2");
             aur.setColL2(7872713);
-            aur.setBol6(3);
+            if (has2D)
+                aur.setBol6(3);
         } else if (aura.display.type == EnumAuraTypes3D.SaiyanRoseEvo) {
             aur.setSpd(30);
             aur.setAlp(0.2F);
             aur.setTex("aurai");
             aur.setTexL2("aurai2");
             aur.setColL2(8592109);
-            aur.setBol6(5);
+            if (has2D)
+                aur.setBol6(5);
         } else if (aura.display.type == EnumAuraTypes3D.UI) {
             aur.setSpd(100);
             aur.setAlp(0.15F);
@@ -350,25 +354,30 @@ public class ClientEventHandler {
             aur.setCol(15790320);
             aur.setColL3(4746495);
             aur.setTexL3("auragb");
-            aur.setBol4(true);
-            aur.setBol4a(true);
+            if (has2D) {
+                aur.setBol4(true);
+                aur.setBol4a(true);
+            }
         } else if (aura.display.type == EnumAuraTypes3D.GoD) {
             aur.setSpd(100);
             aur.setAlp(0.2F);
             aur.setTex("aurag");
             aur.setTexL3("auragb");
             aur.setColL2(12464847);
-            aur.setBol6(6);
+            if (has2D)
+                aur.setBol6(6);
         } else if (aura.display.type == EnumAuraTypes3D.UltimateArco) {
             aur.setAlp(0.5F);
             aur.setTex("aurau");
             aur.setTexL2("aurau2");
             aur.setColL2(16776724);
-            aur.setBol6(4);
+            if (has2D)
+                aur.setBol6(4);
         }
 
-
-        if (aura.display.type2D == EnumAuraTypes2D.SaiyanGod) {
+        if (aura.display.type2D == EnumAuraTypes2D.None) {
+            aur.setBol6(-10);
+        } else if (aura.display.type2D == EnumAuraTypes2D.SaiyanGod) {
             aur.setBol6(0);
         } else if (aura.display.type2D == EnumAuraTypes2D.SaiyanBlue) {
             aur.setBol6(1);
@@ -389,6 +398,7 @@ public class ClientEventHandler {
             aur.setBol6(4);
         }
 
+        ((IEntityAura) aur).setType2D(aura.display.type2D);
 
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////

@@ -1,11 +1,13 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
+import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.sound.ClientSound;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.util.Utility;
@@ -15,6 +17,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = EntityAura2.class, remap = false)
@@ -34,6 +37,8 @@ public class MixinEntityAura2 implements IEntityAura {
     private int lightningIntensity;
     @Unique
     private float getSize = 1;
+    @Unique
+    private EnumAuraTypes2D type2D = null;
 
     @Unique
     private EntityAura2 parent;
@@ -57,6 +62,17 @@ public class MixinEntityAura2 implements IEntityAura {
         if (entity != null) {
             player.set(entity);
         }
+    }
+
+    @Redirect(method = "onUpdate", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_GR0:Z"))
+    private boolean fixBuiltInParticles() {
+        if (type2D != null) {
+            if (type2D == EnumAuraTypes2D.None)
+                return false;
+        }
+
+        return JGConfigClientSettings.CLIENT_GR0;
+
     }
 
     @Unique
@@ -83,6 +99,17 @@ public class MixinEntityAura2 implements IEntityAura {
         return hasLightning;
     }
 
+    @Unique
+    @Override
+    public void setType2D(EnumAuraTypes2D types2D) {
+        type2D = types2D;
+    }
+
+    @Unique
+    @Override
+    public EnumAuraTypes2D getType2D() {
+        return type2D;
+    }
     @Unique
     @Override
     public void setHasLightning(boolean hasLightning) {
