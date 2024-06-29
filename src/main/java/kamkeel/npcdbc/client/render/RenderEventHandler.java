@@ -13,11 +13,13 @@ import kamkeel.npcdbc.mixins.early.IEntityMC;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IRenderCusPar;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -75,7 +77,7 @@ public class RenderEventHandler {
         if (aura != null && aura.shouldRender()) {
             glPushMatrix();
             glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
-            glStencilFunc(GL_GREATER, entity.getEntityId(), 0xFF);
+            glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
             AuraRenderer.Instance.renderAura(aura, partialTicks);
             //  NewAura.renderAura(aura, partialTicks);
             glPopMatrix();
@@ -152,7 +154,7 @@ public class RenderEventHandler {
         if (!data.particleRenderQueue.isEmpty()) {  //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
             glPushMatrix();
             glLoadMatrix(PRE_RENDER_MODELVIEW);
-            glStencilFunc(GL_GREATER, player.getEntityId(), 0xFF);
+            glStencilFunc(GL_GREATER, player.getEntityId()% 256, 0xFF);
             IRenderCusPar particleRender = null;
             for (Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator(); iter.hasNext(); ) {
                 EntityCusPar particle = iter.next();
