@@ -47,6 +47,10 @@ public abstract class MixinModelMPM extends ModelNPCMale {
     @Inject(method = "setPlayerData", at = @At("RETURN"))
     private void setPartData(EntityCustomNpc entity, CallbackInfo ci) {
         this.NPCDBCModel.setPlayerData(entity);
+        if(!isArmor)
+            this.NPCDBCModel.setHurt(entity);
+        if(isArmor)
+            this.NPCDBCModel.clearHurt();
     }
 
     @Inject(method = "render", at = @At(value = "HEAD"), remap = true)
