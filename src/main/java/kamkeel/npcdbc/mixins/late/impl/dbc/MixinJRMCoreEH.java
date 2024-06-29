@@ -33,8 +33,6 @@ public class MixinJRMCoreEH {
                     float newDamage = damage * (100 - damageNegation) / 100;
                     dam.set(newDamage);
                 }
-
-
             }
         }
     }

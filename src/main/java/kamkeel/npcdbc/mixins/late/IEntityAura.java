@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.mixins.late;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import org.spongepowered.asm.mixin.Unique;
 
 public interface IEntityAura {
@@ -9,6 +10,12 @@ public interface IEntityAura {
     void setState(float ok);
 
     boolean hasLightning();
+
+    @Unique
+    void setType2D(EnumAuraTypes2D types2D);
+
+    @Unique
+    EnumAuraTypes2D getType2D();
 
     void setHasLightning(boolean hasLightning);
 
