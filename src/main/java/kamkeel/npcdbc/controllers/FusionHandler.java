@@ -9,6 +9,7 @@ import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -170,8 +171,10 @@ public class FusionHandler {
                     StatusEffectController.getInstance().applyEffect(player, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
                     StatusEffectController.getInstance().applyEffect(nearbyPlayer, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
 
-                    DBCData.fusePlayers(player, nearbyPlayer, potaraType.getLength());
+                    destroyPlayerEarring(nearbyPlayer);
+                    destroyPlayerEarring(player);
 
+                    DBCData.fusePlayers(player, nearbyPlayer, potaraType.getLength());
                 }
                 else {
                     NetworkUtility.sendServerMessage(player, "§a", "npcdbc.fusionFound");
@@ -216,5 +219,23 @@ public class FusionHandler {
         String wornHash = ItemPotara.getHash(potara);
         boolean wearingRight = ItemPotara.isRightSide(potara);
         return tier == wornTier && wornHash.equals(hashToCheck) && wearingRight == isRight;
+    }
+
+    private static void destroyPlayerEarring(EntityPlayer player){
+        ItemStack potara = player.getCurrentArmor(3);
+        if(potara == null)
+            return;
+
+        if(!(potara.getItem() instanceof ItemPotara))
+            return;
+
+        // Remove the helmet
+        player.inventory.armorInventory[3] = null;
+
+        // Update the client inventory
+        if (player instanceof EntityPlayerMP) {
+            EntityPlayerMP playerMP = (EntityPlayerMP) player;
+            playerMP.inventoryContainer.detectAndSendChanges();
+        }
     }
 }
