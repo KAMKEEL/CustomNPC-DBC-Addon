@@ -50,10 +50,10 @@ public class OutlineRenderer {
             uniform1f("noiseSpeed", outline.speed);
             uniform1f("throbSpeed", outline.pulsingSpeed);
         });
+        float scale = 1.025f, factor = 1.025f, outlineSize = isArm ? 1f : outline.size;
 
-        float scale = 1.025f, factor = 1.025f;
         glPushMatrix();
-        float size = scale * factor * outline.size;
+        float size = scale * factor * outlineSize;
         glScalef(size, 1.025f * factor, size);
 
         glPushMatrix();
@@ -73,7 +73,7 @@ public class OutlineRenderer {
         if (!isArm) {
             disableStencilWriting((player.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
             glPushMatrix();
-            glScalef(1.02f * 1.01f * outline.size, 1, 1.02f * 1.02f * outline.size);
+            glScalef(1.02f * 1.01f * outlineSize, 1, 1.02f * 1.02f * outlineSize);
 
             DBCData data = DBCData.get(player);
             int race = data.Race;
@@ -217,7 +217,7 @@ public class OutlineRenderer {
             } else if (id == 3) {
                 GL11.glPushMatrix();
                 GL11.glTranslatef(0.1F, -0.2F, -0.5F);
-                GL11.glTranslatef(-0.2F, 0.0F, -0.1F);
+                GL11.glTranslatef(-0.25F, 0.0F, -0.045F);
                 GL11.glRotatef(10.0F, -1.0F, 0.0F, 0.0F);
                 GL11.glRotatef(20.0F, 0.0F, 0.0F, -1.0F);
                 GL11.glRotatef(115.0F, 0.0F, 1.0F, 0.0F);
@@ -227,10 +227,11 @@ public class OutlineRenderer {
                 GL11.glPushMatrix();
                 GL11.glTranslatef(-0.2F, -0.4F, -0.8F);
                 GL11.glTranslatef(-0.4F, 0.1F, -0.1F);
+
                 GL11.glRotatef(42.0F, -1.0F, 0.0F, 0.0F);
                 GL11.glRotatef(10.0F, 0.0F, 0.0F, 1.0F);
                 GL11.glRotatef(115.0F, 0.0F, 1.0F, 0.0F);
-                GL11.glTranslatef(-0.6F, 0.08F, 0.3F);
+                GL11.glTranslatef(-0.631F, 0.02125F, 0.235F);
                 renderer.modelMain.LA.render(0.0625F);
                 GL11.glPopMatrix();
             }
@@ -239,7 +240,7 @@ public class OutlineRenderer {
                 if (id != 2 && id != 3) {
                     if (id == 4 || id == 5) {
                         GL11.glPushMatrix();
-                        GL11.glTranslatef(-0.2F, 0.4F, -0.1F);
+                        GL11.glTranslatef(-0.2F, 0.4F, -0.105F);
                         GL11.glRotatef(10.0F, -1.0F, 0.0F, 0.0F);
                         GL11.glRotatef(20.0F, 0.0F, 0.0F, -1.0F);
                         GL11.glRotatef(40.0F, 0.0F, 0.0F, 1.0F);
@@ -266,11 +267,7 @@ public class OutlineRenderer {
                     }
 
                     GL11.glPushMatrix();
-                    GL11.glEnable(3042);
-                    GL11.glBlendFunc(770, 771);
-                    GL11.glAlphaFunc(516, 0.003921569F);
-                    GL11.glDepthMask(false);
-                    GL11.glTranslatef(-0.5F, -0.1F, -0.1F);
+                    GL11.glTranslatef(-0.48F, -0.14F, -0.13515F);
                     GL11.glRotatef(40.0F, 0.0F, 0.0F, -1.0F);
                     GL11.glRotatef(80.0F, -1.0F, 0.0F, 0.0F);
                     GL11.glRotatef((float) (id == 0 ? -20 : 30), 0.0F, 0.0F, 1.0F);
