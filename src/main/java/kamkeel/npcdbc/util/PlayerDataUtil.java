@@ -8,6 +8,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import net.minecraft.client.Minecraft;
@@ -125,15 +126,21 @@ public class PlayerDataUtil {
     }
 
     public static boolean useStencilBuffer(Entity entity) {
-        boolean auraOn = false, outlineOn = false;
+        boolean auraOn = false, outlineOn = false, particlesOn = false;
         if (entity instanceof EntityPlayer) {
-            auraOn = DBCData.get((EntityPlayer) entity).isAuraOn();
-            outlineOn = DBCData.get((EntityPlayer) entity).getOutline() != null;
+            DBCData data = DBCData.get((EntityPlayer) entity);
+            auraOn = data.isAuraOn();
+            outlineOn = data.getOutline() != null;
+            particlesOn = !data.particleRenderQueue.isEmpty();
+
         } else if (entity instanceof EntityNPCInterface) {
-            auraOn = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().isAuraOn();
-            outlineOn = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay().getOutline() != null;
+            DBCDisplay data = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
+            auraOn = data.isAuraOn();
+            outlineOn = data.getOutline() != null;
+            particlesOn = !data.particleRenderQueue.isEmpty();
+
         }
 
-        return auraOn || outlineOn;
+        return auraOn || outlineOn || particlesOn;
     }
 }
