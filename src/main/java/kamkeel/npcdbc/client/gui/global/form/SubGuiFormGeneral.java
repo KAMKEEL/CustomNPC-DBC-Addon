@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
+import kamkeel.npcdbc.client.gui.component.SubGuiSetParents;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import net.minecraft.client.gui.GuiButton;
@@ -142,6 +143,9 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         if(button.id == 31){
             setAscendSound = false;
             setSubGui(new GuiSoundSelection((getTextField(31).getText())));
+        }
+        if(button.id == 50){
+            setSubGui(new SubGuiSetParents(form));
         }
         if(button.id == 1010101){
             initGui();
