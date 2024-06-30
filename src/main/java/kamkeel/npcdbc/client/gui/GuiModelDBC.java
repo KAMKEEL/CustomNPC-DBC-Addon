@@ -227,12 +227,12 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         }
         if(button.id == 101){
             String newDNSHair = getClipboardContents();
-            if(newDNSHair.length() != 786 && newDNSHair.length() != 784 && newDNSHair.length() != 392)
-                newDNSHair = "";
-            display.hairCode = dnsHairG1toG2(newDNSHair);
-            initGui();
+            if (isStringNumber(newDNSHair) && (newDNSHair.length() == 786 || newDNSHair.length() == 784 || newDNSHair.length() == 392)) {
+                display.hairCode = dnsHairG1toG2(newDNSHair);
+                initGui();
+            }
         }
-        if(button.id == 102){
+        if (button.id == 102) {
             setClipboardContents(display.hairCode);
         }
         if(button.id == 103){
@@ -412,5 +412,14 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         } else {
             playerdata.removePart("tail");
         }
+    }
+
+    public static boolean isStringNumber(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (!Character.isDigit(c))
+                return false;
+        }
+        return true;
     }
 }
