@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.constants;
 
+import java.util.HashMap;
+
 public class DBCForm {
     public static final int Base = 0;
 
@@ -91,4 +93,47 @@ public class DBCForm {
         }
         return false;
     }
+
+    public static HashMap<Integer, String> getFormsMap(int race) {
+        HashMap<Integer, String> forms = new HashMap<>();
+        forms.put(Base, "Base");
+        if (race == DBCRace.HUMAN) {
+            forms.put(HumanBuffed, "HumanBuffed");
+            forms.put(HumanFullRelease, "HumanFullRelease");
+            forms.put(HumanGod, "HumanGod");
+        } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            forms.put(SuperSaiyan, "SuperSaiyan");
+            forms.put(SuperSaiyanG2, "SuperSaiyanG2");
+            forms.put(SuperSaiyanG3, "SuperSaiyanG3");
+            forms.put(MasteredSuperSaiyan, "MasteredSuperSaiyan");
+            forms.put(SuperSaiyan2, "SuperSaiyan2");
+            forms.put(SuperSaiyan3, "SuperSaiyan3");
+            forms.put(SuperSaiyan4, "SuperSaiyan4");
+            forms.put(GreatApe, "GreatApe");
+            forms.put(SuperGreatApe, "SuperGreatApe");
+            forms.put(SuperSaiyanGod, "SuperSaiyanGod");
+            forms.put(SuperSaiyanBlue, "SuperSaiyanBlue");
+            forms.put(BlueEvo, "BlueEvo");
+        } else if (race == DBCRace.NAMEKIAN) {
+            forms.put(NamekGiant, "NamekGiant");
+            forms.put(NamekFullRelease, "NamekFullRelease");
+            forms.put(NamekGod, "NamekGod");
+        } else if (race == DBCRace.ARCOSIAN) {
+            forms.put(Minimal, "Minimal");
+            forms.put(FirstForm, "FirstForm");
+            forms.put(SecondForm, "SecondForm");
+            forms.put(ThirdForm, "ThirdForm");
+            forms.put(FinalForm, "FinalForm");
+            forms.put(SuperForm, "SuperForm");
+            forms.put(UltimateForm, "UltimateForm");
+            forms.put(ArcoGod, "ArcoGod");
+        } else if (race == DBCRace.MAJIN) {
+            forms.put(MajinEvil, "MajinEvil");
+            forms.put(MajinFullPower, "MajinFullPower");
+            forms.put(MajinPure, "MajinPure");
+            forms.put(MajinGod, "MajinGod");
+        }
+        return forms;
+    }
+
 }
