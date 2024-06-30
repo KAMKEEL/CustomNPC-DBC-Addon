@@ -4,6 +4,7 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.client.shader.PostProcessing;
+import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -32,7 +33,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
     public static final int TAIL_STENCIL_ID = 2;
-    public static FloatBuffer PRE_RENDER_MODELVIEW = BufferUtils.createFloatBuffer(16);
+    public static FloatBuffer PRE_RENDER_MODELVIEW = BufferUtils.createFloatBuffer(16), FP_MODELVIEW = BufferUtils.createFloatBuffer(16), FP_PROJECTION = BufferUtils.createFloatBuffer(16);
 
 
     @SubscribeEvent
@@ -74,25 +75,43 @@ public class RenderEventHandler {
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered())
             ((IEntityMC) player).setRenderPass(0);
 
+
+        boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !data.particleRenderQueue.isEmpty();
+        FloatBuffer currentMV = null, currentProj = null;
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Aura
-        if (aura != null && aura.shouldRender() && !isArm) {
+        if (renderAura && !isArm) {
+            if (isItem) {
+                currentMV = ShaderHelper.getModelView();
+                currentProj = ShaderHelper.getProjection();
+                loadMatrices(FP_MODELVIEW, FP_PROJECTION);
+            } else
+                glLoadMatrix(PRE_RENDER_MODELVIEW);
+
             glPushMatrix();
-            glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
             glStencilMask(0x0);
             AuraRenderer.Instance.renderAura(aura, partialTicks);
             // NewAura.renderAura(aura, partialTicks);
             glPopMatrix();
+
+            if (isItem && !renderParticles)
+                loadMatrices(currentMV, currentProj);
         }
 
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Custom Particles
-        if (!data.particleRenderQueue.isEmpty() && !isArm) {
+        if (renderParticles && !isArm) {
+            if (isItem) {
+                currentMV = ShaderHelper.getModelView();
+                currentProj = ShaderHelper.getProjection();
+                loadMatrices(FP_MODELVIEW, FP_PROJECTION);
+            } else
+                glLoadMatrix(PRE_RENDER_MODELVIEW);
+
             glPushMatrix();
-            glLoadMatrix(PRE_RENDER_MODELVIEW);
             glStencilFunc(GL_GREATER, player.getEntityId()% 256, 0xFF);
             IRenderCusPar particleRender = null;
             for (Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator(); iter.hasNext(); ) {
@@ -105,6 +124,8 @@ public class RenderEventHandler {
                     iter.remove();
             }
             glPopMatrix();
+            if (isItem)
+                loadMatrices(currentMV, currentProj);
         }
 
         ////////////////////////////////////////
@@ -202,5 +223,12 @@ public class RenderEventHandler {
     public static void postStencilRendering() {
         glStencilFunc(GL_ALWAYS, 0, 0xFF);
         glStencilMask(0xff);
+    }
+
+    public static void loadMatrices(FloatBuffer modelView, FloatBuffer projection) {
+        glMatrixMode(GL_PROJECTION);
+        glLoadMatrix(projection);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadMatrix(modelView);
     }
 }
