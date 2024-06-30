@@ -237,7 +237,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         }
         if(button.id == 103){
             display.hairCode = "";
-            display.hairColor = 0xffffff;
+            display.hairColor = 0x0;
             initGui();
         }
         if(button.id == 104){
