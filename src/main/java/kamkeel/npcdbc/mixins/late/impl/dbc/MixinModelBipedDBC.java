@@ -18,25 +18,51 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientEventHandler;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = ModelBipedDBC.class, remap = false)
 public class MixinModelBipedDBC extends ModelBipedBody {
-
+    @Shadow
+    public ModelRenderer SaiT1;
+    @Shadow
+    public ModelRenderer FroB;
     @Unique
     boolean HD;
     @Unique
     String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
     @Unique
     String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+
+    @Redirect(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelRenderer;render(F)V", ordinal = 10))
+    public void fixTailAnimNotSyncingSai(ModelRenderer instance, float i) {
+
+    }
+
+    @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPopMatrix()V", ordinal = 3))
+    public void fixTailAnimNotSyncingSai2(float par1, String hair, String anim, CallbackInfoReturnable<String> ci) {
+        SaiT1.render(par1);
+    }
+
+    @Redirect(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelRenderer;render(F)V", ordinal = 6))
+    public void fixTailAnimNotSyncingArco(ModelRenderer instance, float i) {
+
+    }
+
+    @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPopMatrix()V", ordinal = 2))
+    public void fixTailAnimNotSyncingArco2(float par1, String hair, String anim, CallbackInfoReturnable<String> ci) {
+        FroB.render(par1);
+    }
 
     /**
      * there's a bug where if you go ssj2 then revert to ssj1 then try to go ssj2 again,
@@ -75,6 +101,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     public void formRendering(float par1, String hair, String anim, CallbackInfoReturnable<String> ci, @Local(ordinal = 0) LocalRef<String> Hair) {
         if (!ClientProxy.renderingOutline && (hair.contains("SJT") || hair.contains("FR") || hair.equals("N")))
             RenderEventHandler.enableStencilWriting((ClientEventHandler.renderingPlayer.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
+
 
         if (ClientEventHandler.renderingPlayer != null) {
             Form form = DBCData.getForm(ClientEventHandler.renderingPlayer);
