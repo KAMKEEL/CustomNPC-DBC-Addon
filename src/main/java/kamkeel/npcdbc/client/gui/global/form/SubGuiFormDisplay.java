@@ -395,7 +395,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Hair Paste
         if(button.id == 101){
             String newDNSHair = getClipboardContents();
-            display.hairCode = newDNSHair.length() != 786 ? dnsHairG1toG2(newDNSHair) : newDNSHair;
+            if(newDNSHair.length() != 786 && newDNSHair.length() != 784 && newDNSHair.length() != 392)
+                newDNSHair = "";
+            display.hairCode = dnsHairG1toG2(newDNSHair);
             refreshValues();
             updateButtons();
         }

@@ -111,6 +111,8 @@ public class FormDisplay implements IFormDisplay {
 
     @Override
     public void setHairCode(String hairCode) {
+        if(hairCode.length() != 786 && hairCode.length() != 784 && hairCode.length() != 392)
+            hairCode = "";
         this.hairCode = hairCode;
     }
 
