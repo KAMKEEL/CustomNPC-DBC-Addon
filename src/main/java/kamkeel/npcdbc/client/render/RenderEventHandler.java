@@ -77,11 +77,12 @@ public class RenderEventHandler {
 
 
         boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !data.particleRenderQueue.isEmpty();
-        FloatBuffer currentMV = null, currentProj = null;
+        //  renderParticles = false;
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Aura
         if (renderAura && !isArm) {
+            FloatBuffer currentMV = null, currentProj = null;
             if (isItem) {
                 currentMV = ShaderHelper.getModelView();
                 currentProj = ShaderHelper.getProjection();
@@ -96,7 +97,7 @@ public class RenderEventHandler {
             // NewAura.renderAura(aura, partialTicks);
             glPopMatrix();
 
-            if (isItem && !renderParticles)
+            if (isItem)
                 loadMatrices(currentMV, currentProj);
         }
 
@@ -104,6 +105,7 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         //Custom Particles
         if (renderParticles && !isArm) {
+            FloatBuffer currentMV = null, currentProj = null;
             if (isItem) {
                 currentMV = ShaderHelper.getModelView();
                 currentProj = ShaderHelper.getProjection();
