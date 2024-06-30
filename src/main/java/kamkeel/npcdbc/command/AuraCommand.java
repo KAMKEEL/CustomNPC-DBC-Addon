@@ -1,10 +1,10 @@
 package kamkeel.npcdbc.command;
 
 import kamkeel.command.CommandKamkeelBase;
-import kamkeel.npcdbc.api.form.IForm;
-import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -13,29 +13,29 @@ import noppes.npcs.controllers.data.PlayerData;
 
 import java.util.List;
 
-public class FormCommand extends CommandKamkeelBase {
+public class AuraCommand extends CommandKamkeelBase {
 
-	@Override
-	public String getCommandName() {
-		return "form";
-	}
+    @Override
+    public String getCommandName() {
+        return "aura";
+    }
 
-	@Override
-	public String getDescription() {
-		return "Form operations";
-	}
+    @Override
+    public String getDescription() {
+        return "Custom Aura operations";
+    }
 
     @SubCommand(
-            desc = "give a form to a player",
-            usage = "<player> <num>"
+        desc = "give an aura to a player",
+        usage = "<player> <num>"
     )
-    public void give(ICommandSender sender, String args[]) throws CommandException{
+    public void give(ICommandSender sender, String args[]) throws CommandException {
         String playername=args[0];
-        int formID;
+        int auraID;
         try {
-            formID = Integer.parseInt(args[1]);
+            auraID = Integer.parseInt(args[1]);
         } catch (NumberFormatException ex) {
-            sendError(sender, "Form num must be an integer: " + args[1]);
+            sendError(sender, "Overlay num must be an integer: " + args[1]);
             return;
         }
         List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
@@ -44,33 +44,34 @@ public class FormCommand extends CommandKamkeelBase {
             return;
         }
 
-        Form form = FormController.getInstance().customForms.get(formID);
-        if (form == null) {
-            sendError(sender, "Unknown form: " + formID);
+        Aura aura = AuraController.getInstance().customAuras.get(auraID);
+        if (aura == null) {
+            sendError(sender, "Unknown aura: " + auraID);
             return;
         }
 
 
+
         for(PlayerData playerdata : data){
             PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
-            playerDBCInfo.addForm(form);
+            playerDBCInfo.addAura(aura);
             playerdata.save();
-            sendResult(sender, String.format("%s\u00A7e added to Player '\u00A7b%s\u00A77'", form.getName(), playerdata.playername, formID));
+            sendResult(sender, String.format("%s\u00A7e added to Player '\u00A7b%s\u00A77'", aura.getName(), playerdata.playername, auraID));
             return;
         }
     }
 
     @SubCommand(
-            desc = "remove a form from a player",
-            usage = "<player> <num>"
+        desc = "remove an aura from a player",
+        usage = "<player> <num>"
     )
     public void remove(ICommandSender sender, String args[]) throws CommandException{
         String playername=args[0];
-        int formID;
+        int auraID;
         try {
-            formID = Integer.parseInt(args[1]);
+            auraID = Integer.parseInt(args[1]);
         } catch (NumberFormatException ex) {
-            sendError(sender, "Form num must be an integer: " + args[1]);
+            sendError(sender, "Aura num must be an integer: " + args[1]);
             return;
         }
         List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
@@ -79,33 +80,33 @@ public class FormCommand extends CommandKamkeelBase {
             return;
         }
 
-        Form form = FormController.getInstance().customForms.get(formID);
-        if (form == null) {
-            sendError(sender, "Unknown form: " + formID);
+        Aura aura = AuraController.getInstance().customAuras.get(auraID);
+        if (aura == null) {
+            sendError(sender, "Unknown aura: " + auraID);
             return;
         }
 
 
         for(PlayerData playerdata : data){
             PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
-            if(playerDBCInfo.hasForm(form)){
-                playerDBCInfo.removeForm(form);
-                if(playerDBCInfo.selectedForm == formID)
-                    playerDBCInfo.selectedForm = -1;
-                if(playerDBCInfo.currentForm == formID)
-                    playerDBCInfo.currentForm = -1;
+            if(playerDBCInfo.hasAura(aura)){
+                playerDBCInfo.removeAura(aura);
+                if(playerDBCInfo.selectedAura == auraID)
+                    playerDBCInfo.selectedAura = -1;
+                if(playerDBCInfo.currentAura == auraID)
+                    playerDBCInfo.currentAura = -1;
                 playerdata.save();
-                sendResult(sender, String.format("%s\u00A7e added to Player '\u00A7b%s\u00A77'", form.getName(), playerdata.playername, formID));
+                sendResult(sender, String.format("%s\u00A7e added to Player '\u00A7b%s\u00A77'", aura.getName(), playerdata.playername, auraID));
             } else {
-                sendResult(sender, String.format("%s\u00A7e not found on Player '\u00A7b%s\u00A77'", form.getName(), playerdata.playername, formID));
+                sendResult(sender, String.format("%s\u00A7e not found on Player '\u00A7b%s\u00A77'", aura.getName(), playerdata.playername, auraID));
             }
             return;
         }
     }
 
     @SubCommand(
-            desc = "clears all forms from a player",
-            usage = "<player>"
+        desc = "clears all auras from a player",
+        usage = "<player>"
     )
     public void clear(ICommandSender sender, String args[]) throws CommandException{
         String playername=args[0];
@@ -116,18 +117,18 @@ public class FormCommand extends CommandKamkeelBase {
         }
         for(PlayerData playerdata : data){
             PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
-            playerDBCInfo.unlockedForms.clear();
-            playerDBCInfo.currentForm = -1;
-            playerDBCInfo.selectedForm = -1;
+            playerDBCInfo.unlockedAuras.clear();
+            playerDBCInfo.currentAura = -1;
+            playerDBCInfo.selectedAura = -1;
             playerdata.save();
-            sendResult(sender, String.format("Forms cleared from Player '\u00A7b%s\u00A77'", playerdata.playername));
+            sendResult(sender, String.format("Custom auras cleared from Player '\u00A7b%s\u00A77'", playerdata.playername));
             return;
         }
     }
 
     @SubCommand(
-            desc = "List all forms on a player",
-            usage = "<player>"
+        desc = "List all auras on a player",
+        usage = "<player>"
     )
     public void info(ICommandSender sender, String args[]) throws CommandException {
         String playername=args[0];
@@ -140,12 +141,12 @@ public class FormCommand extends CommandKamkeelBase {
         for(PlayerData playerdata : data){
             sendResult(sender, "--------------------");
             PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
-            if(playerDBCInfo.unlockedForms.isEmpty()){
-                sendResult(sender, String.format("No Forms found for Player '\u00A7b%s\u00A77'", playerdata.playername));
+            if(playerDBCInfo.unlockedAuras.isEmpty()){
+                sendResult(sender, String.format("No Auras found for Player '\u00A7b%s\u00A77'", playerdata.playername));
             }
             else {
-                for(int formID : playerDBCInfo.unlockedForms){
-                    IForm form = FormController.getInstance().get(formID);
+                for(int formID : playerDBCInfo.unlockedAuras){
+                    IAura form = AuraController.getInstance().get(formID);
                     if(form != null){
                         sendResult(sender, String.format("%s", form.getMenuName()));
                     }
