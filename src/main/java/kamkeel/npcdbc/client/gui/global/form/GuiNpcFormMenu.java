@@ -7,6 +7,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.util.GuiMenuTopButton;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.ITextfieldListener;
 import noppes.npcs.client.gui.util.SubGuiInterface;
 import org.lwjgl.input.Keyboard;
 
@@ -71,6 +73,7 @@ public class GuiNpcFormMenu {
     public void close() {
         Keyboard.enableRepeatEvents(false);
         if (this.parent != null) {
+            GuiNpcTextField.unfocus();
             ((SubGuiInterface)this.parent).close();
             PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT()).generatePacket());
         }
