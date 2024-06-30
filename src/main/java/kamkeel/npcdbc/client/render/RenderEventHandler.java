@@ -70,6 +70,7 @@ public class RenderEventHandler {
         if (outline != null && ConfigDBCClient.EnableOutlines && !isItem) {
             startBlooming();
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
+            glStencilMask(0xff);
             OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
             endBlooming();
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered())
@@ -82,12 +83,10 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         //Aura
         if (renderAura && !isArm) {
-            FloatBuffer currentMV = null, currentProj = null;
-            if (isItem) {
-                currentMV = ShaderHelper.getModelView();
-                currentProj = ShaderHelper.getProjection();
+            FloatBuffer currentMV = ShaderHelper.getModelView(), currentProj = ShaderHelper.getProjection();
+            if (isItem)
                 loadMatrices(FP_MODELVIEW, FP_PROJECTION);
-            } else
+            else
                 glLoadMatrix(PRE_RENDER_MODELVIEW);
 
             glPushMatrix();
@@ -96,25 +95,22 @@ public class RenderEventHandler {
             AuraRenderer.Instance.renderAura(aura, partialTicks);
             // NewAura.renderAura(aura, partialTicks);
             glPopMatrix();
-
-            if (isItem)
-                loadMatrices(currentMV, currentProj);
+            loadMatrices(currentMV, currentProj);
         }
 
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Custom Particles
         if (renderParticles && !isArm) {
-            FloatBuffer currentMV = null, currentProj = null;
-            if (isItem) {
-                currentMV = ShaderHelper.getModelView();
-                currentProj = ShaderHelper.getProjection();
+            FloatBuffer currentMV = ShaderHelper.getModelView(), currentProj = ShaderHelper.getProjection();
+            if (isItem)
                 loadMatrices(FP_MODELVIEW, FP_PROJECTION);
-            } else
+            else
                 glLoadMatrix(PRE_RENDER_MODELVIEW);
 
             glPushMatrix();
             glStencilFunc(GL_GREATER, player.getEntityId()% 256, 0xFF);
+            glStencilMask(0x0);
             IRenderCusPar particleRender = null;
             for (Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator(); iter.hasNext(); ) {
                 EntityCusPar particle = iter.next();
@@ -126,8 +122,7 @@ public class RenderEventHandler {
                     iter.remove();
             }
             glPopMatrix();
-            if (isItem)
-                loadMatrices(currentMV, currentProj);
+            loadMatrices(currentMV, currentProj);
         }
 
         ////////////////////////////////////////

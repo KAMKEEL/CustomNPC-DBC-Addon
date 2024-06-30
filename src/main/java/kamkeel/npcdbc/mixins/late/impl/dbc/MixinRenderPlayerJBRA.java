@@ -95,7 +95,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         if (aura.fadeOut)
             aura.skinColorAlpha = (float) Math.max(0.0f, aura.skinColorAlpha - Math.pow(aura.fadeFactor, 1 + (aura.alpha / 1) * 7));
 
-        int col = ColorMode.mixColors(c, aura.color1, aura.skinColorAlpha);
+        int col = ColorMode.mixColors(c, aura.color1, aura.skinColorAlpha * 0.75f);
 
         float r = (float) (col >> 16 & 255) / 255.0F;
         float g = (float) (col >> 8 & 255) / 255.0F;

@@ -399,8 +399,9 @@ public class EntityAura extends Entity {
     }
 
     public EntityAura spawn() {
-        //((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
+        ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
         renderPass = ClientProxy.MiddleRenderPass;
+
         entity.ignoreFrustumCheck = true;
 
         entity.worldObj.spawnEntityInWorld(this);

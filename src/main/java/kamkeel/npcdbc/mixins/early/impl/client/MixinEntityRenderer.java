@@ -35,15 +35,8 @@ public class MixinEntityRenderer {
     private void setFPMatrics(float partialTick, long idk, CallbackInfo info, @Local(name = "frustrum") LocalRef<Frustrum> frustrum) {
         glGetFloat(GL_MODELVIEW_MATRIX, RenderEventHandler.FP_MODELVIEW);
         glGetFloat(GL_PROJECTION_MATRIX, RenderEventHandler.FP_PROJECTION);
-
-
     }
 
-    //    @Inject(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemRenderer;renderItemInFirstPerson(F)V", shift = At.Shift.BEFORE), cancellable = true)
-//    public void renderItemEvent(float p_78476_1_, int p_78476_2_, CallbackInfo ci) {
-//        if (MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderArmEvent.Item(mc.thePlayer, null, mc.timer.renderPartialTicks)))
-//            ci.cancel();
-//    }
     @Inject(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemRenderer;renderItemInFirstPerson(F)V", shift = At.Shift.BEFORE), cancellable = true)
     public void renderItemEvent(float p_78476_1_, int p_78476_2_, CallbackInfo ci) {
         if (MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderArmEvent.Item(mc.thePlayer, null, mc.timer.renderPartialTicks)))
