@@ -225,6 +225,13 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         public RenderArmEvent(EntityPlayer player, RenderPlayer renderer, float partialRenderTick) {
             super(player, renderer, partialRenderTick);
         }
+
+        @Cancelable
+        public static class Item extends RenderPlayerEvent {
+            public Item(EntityPlayer player, RenderPlayer renderer, float partialRenderTick) {
+                super(player, renderer, partialRenderTick);
+            }
+        }
         @Cancelable
         public static class Pre extends RenderPlayerEvent {
             public Pre(EntityPlayer player, RenderPlayer renderer, float partialRenderTick) {

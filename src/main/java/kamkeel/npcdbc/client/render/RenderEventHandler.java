@@ -13,13 +13,11 @@ import kamkeel.npcdbc.mixins.early.IEntityMC;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IRenderCusPar;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
-import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.DamageSource;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -55,6 +53,65 @@ public class RenderEventHandler {
             Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
             glDepthMask(true); //fixes a native MC RP1 entity bug in which the depth test is disabled
         }
+    }
+
+
+    public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm, boolean isItem) {
+        RenderPlayerJBRA render = (RenderPlayerJBRA) renderer;
+        DBCData data = DBCData.get(player);
+        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+        EntityAura aura = data.auraEntity;
+
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //Outline
+        Outline outline = data.getOutline();
+        if (outline != null && ConfigDBCClient.EnableOutlines && !isItem) {
+            startBlooming();
+            glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
+            OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
+            endBlooming();
+        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered())
+            ((IEntityMC) player).setRenderPass(0);
+
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //Aura
+        if (aura != null && aura.shouldRender() && !isArm) {
+            glPushMatrix();
+            glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
+            glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
+            glStencilMask(0x0);
+            AuraRenderer.Instance.renderAura(aura, partialTicks);
+            // NewAura.renderAura(aura, partialTicks);
+            glPopMatrix();
+        }
+
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //Custom Particles
+        if (!data.particleRenderQueue.isEmpty() && !isArm) {
+            glPushMatrix();
+            glLoadMatrix(PRE_RENDER_MODELVIEW);
+            glStencilFunc(GL_GREATER, player.getEntityId()% 256, 0xFF);
+            IRenderCusPar particleRender = null;
+            for (Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator(); iter.hasNext(); ) {
+                EntityCusPar particle = iter.next();
+                if (particleRender == null)
+                    particleRender = (IRenderCusPar) RenderManager.instance.getEntityRenderObject(particle);
+
+                particleRender.renderParticle(particle, partialTicks);
+                if (particle.isDead)
+                    iter.remove();
+            }
+            glPopMatrix();
+        }
+
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        postStencilRendering();
+        PostProcessing.bloom(1.5f);
+        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
     }
 
     @SubscribeEvent
@@ -116,74 +173,19 @@ public class RenderEventHandler {
 
     }
 
-
-    public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm) {
-        RenderPlayerJBRA render = (RenderPlayerJBRA) renderer;
-        DBCData data = DBCData.get(player);
-        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
-        EntityAura aura = data.auraEntity;
-
-        ////////////////////////////////////////
-        ////////////////////////////////////////
-        //Outline
-        Outline outline = data.getOutline();
-        if (outline != null && ConfigDBCClient.EnableOutlines) {
-            startBlooming();
-            glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
-            OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
-            endBlooming();
-        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered())
-            ((IEntityMC) player).setRenderPass(0);
-
-        ////////////////////////////////////////
-        ////////////////////////////////////////
-        //Aura
-        if (aura != null && aura.shouldRender()) {
-            glPushMatrix();
-            glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
-            glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
-            glStencilMask(0x0);
-            AuraRenderer.Instance.renderAura(aura, partialTicks);
-            // NewAura.renderAura(aura, partialTicks);
-            glPopMatrix();
-        }
-
-        ////////////////////////////////////////
-        ////////////////////////////////////////
-        //Custom Particles
-        if (!data.particleRenderQueue.isEmpty()) {  //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
-            glPushMatrix();
-            glLoadMatrix(PRE_RENDER_MODELVIEW);
-            glStencilFunc(GL_GREATER, player.getEntityId()% 256, 0xFF);
-            IRenderCusPar particleRender = null;
-            for (Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator(); iter.hasNext(); ) {
-                EntityCusPar particle = iter.next();
-                if (particleRender == null)
-                    particleRender = (IRenderCusPar) RenderManager.instance.getEntityRenderObject(particle);
-
-                particleRender.renderParticle(particle, partialTicks);
-                if (particle.isDead)
-                    iter.remove();
-            }
-            glPopMatrix();
-        }
-
-        ////////////////////////////////////////
-        ////////////////////////////////////////
-        postStencilRendering();
-        PostProcessing.bloom(1.5f);
-        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
-    }
-
-
     @SubscribeEvent
     public void renderPlayer(DBCPlayerEvent.RenderEvent.Post e) {
-        renderPlayer(e.entityPlayer, e.renderer, e.partialRenderTick, false);
+        renderPlayer(e.entityPlayer, e.renderer, e.partialRenderTick, false, false);
     }
 
     @SubscribeEvent
-    public void renderHand(DBCPlayerEvent.RenderArmEvent.Post e) {
-        renderPlayer(e.entityPlayer, e.renderer, e.partialRenderTick, true);
+    public void renderHandPost(DBCPlayerEvent.RenderArmEvent.Post e) {
+        renderPlayer(e.entityPlayer, e.renderer, e.partialRenderTick, true, false);
+    }
+
+    @SubscribeEvent
+    public void renderHandItem(DBCPlayerEvent.RenderArmEvent.Item e) {
+        renderPlayer(e.entityPlayer, e.renderer, e.partialRenderTick, false, true);
     }
 
     public static void enableStencilWriting(int id) {
