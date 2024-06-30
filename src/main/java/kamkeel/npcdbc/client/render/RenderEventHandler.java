@@ -78,7 +78,6 @@ public class RenderEventHandler {
 
 
         boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !data.particleRenderQueue.isEmpty();
-        //  renderParticles = false;
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Aura

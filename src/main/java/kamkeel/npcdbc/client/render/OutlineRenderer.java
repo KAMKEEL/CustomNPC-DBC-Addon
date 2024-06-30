@@ -15,6 +15,7 @@ import kamkeel.npcdbc.mixins.early.IEntityMC;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 
 import static kamkeel.npcdbc.client.render.RenderEventHandler.disableStencilWriting;
@@ -50,11 +51,15 @@ public class OutlineRenderer {
             uniform1f("noiseSpeed", outline.speed);
             uniform1f("throbSpeed", outline.pulsingSpeed);
         });
-        float scale = 1.025f, factor = 1.025f, outlineSize = isArm ? 1f : outline.size;
+        float scale = 1.025f, yScale = 1.025f, outlineSize = isArm ? 1f : outline.size;
+        ItemStack chestPlate = player.getEquipmentInSlot(3);
+        if (chestPlate != null) {
+            scale = yScale = 1.035f;
+        }
 
         glPushMatrix();
-        float size = scale * factor * outlineSize;
-        glScalef(size, 1.025f * factor, size);
+        float size = scale * yScale * outlineSize;
+        glScalef(size, 1.025f * yScale, size);
 
         glPushMatrix();
         glTranslatef(0, -0.020f, 0);
@@ -66,8 +71,12 @@ public class OutlineRenderer {
             render.modelMain.renderBody(0.0625F);
         glPopMatrix();
 
-        if (!isArm)
+        if (!isArm) {
+            float hairSize = 1.015f;
+            glScalef(hairSize, hairSize, hairSize);
+            glTranslatef(0, 0.025f, 0);
             renderHair(player, render);
+        }
         glPopMatrix();
 
         if (!isArm) {
