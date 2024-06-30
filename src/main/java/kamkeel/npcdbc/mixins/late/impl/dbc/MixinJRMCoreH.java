@@ -1,12 +1,14 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 
+import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -18,6 +20,7 @@ import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,9 +39,37 @@ import static kamkeel.npcdbc.util.DBCUtils.lastSetDamage;
 
 @Mixin(value = JRMCoreH.class, remap = false)
 public abstract class MixinJRMCoreH {
+    private static boolean calculatingKi;
+
+    @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
+    private static void fix10xKiCost(String[] listOfAttacks, int playerStat, byte[] kiAttackStats, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 0) LocalIntRef stat) {
+        calculatingKi = true;
+        EntityPlayer player = Utility.isServer() ? CommonProxy.CurrentJRMCTickPlayer : JRMCoreClient.mc.thePlayer;
+
+        DBCData data = DBCData.get(player);
+        boolean majin = JRMCoreH.StusEfcts(12, data.StatusEffects);
+        boolean fusion = (JRMCoreH.StusEfcts(10, data.StatusEffects) || JRMCoreH.StusEfcts(11, data.StatusEffects));
+        boolean legendary = JRMCoreH.StusEfcts(14, data.StatusEffects);
+        boolean kaioken = JRMCoreH.StusEfcts(5, data.StatusEffects);
+        boolean mystic = JRMCoreH.StusEfcts(13, data.StatusEffects);
+        boolean ui = JRMCoreH.StusEfcts(19, data.StatusEffects);
+        boolean GoD = JRMCoreH.StusEfcts(20, data.StatusEffects);
+
+        int wil = JRMCoreH.getPlayerAttribute(data.player, data.stats.getAllAttributes(), 3, 0, 0, data.Race, data.RacialSkills, data.Release, data.ArcReserve, legendary, majin, kaioken, mystic, ui, GoD, data.Powertype, data.Skills.split(","), fusion, data.MajinAbsorptionData);
+        int stat2 = JRMCoreH.stat(player, 3, data.Powertype, 4, wil, data.Race, data.Class, 0.0F);
+
+        stat.set(stat2);
+        calculatingKi = false;
+
+
+    }
+
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onGetPlayerAttribute(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info) {
+        if (calculatingKi)
+            return;
+
         if (player != null && DBCData.get(player) != null) {
             DBCData dbcData = DBCData.get(player);
             Form form = dbcData.getForm();
