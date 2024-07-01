@@ -104,8 +104,6 @@ public class AuraRenderer extends RenderDBC {
         double yOffset = aura.getYOffset(size);
         if (stateSizeFactor < 4)  //fixes bug in which offset is not// correct if size is too small
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
-        if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
-            glShadeModel(GL_SMOOTH);
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -152,8 +150,7 @@ public class AuraRenderer extends RenderDBC {
         glDisable(GL_BLEND);
         glAlphaFunc(GL_GREATER, 0.5f);
         glEnable(GL_LIGHTING);
-        if (Minecraft.getMinecraft().gameSettings.fancyGraphics)
-            glShadeModel(GL_FLAT);
+
     }
 
     public void renderAura(EntityAura aura, int color, float alpha, float intensity) {
