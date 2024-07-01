@@ -14,6 +14,7 @@ import noppes.npcs.scripted.NpcAPI;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class InstantTransmission {
     public static Map<Entity, Integer> itType = new HashMap<Entity, Integer>();
@@ -24,14 +25,16 @@ public class InstantTransmission {
         if (!differentFromLast(p, type))
             return false;
 
-        int rand = (int) (Math.random() * 99) + 1;
+        Random random = new Random();
+        int rand = random.nextInt(100) + 1;
         if (rand >= r1 && rand <= r2) {
             double angle = tar.rotationYaw + a;
             double dx = -Math.sin((angle * Math.PI) / 180) * distance;
             double dz = Math.cos((angle * Math.PI) / 180) * distance;
             if (blockSuitable(tar, (int) (tar.posX + dx), (int) tar.posY, (int) (tar.posZ + dz))) {
                 IEntity<?> pl = NpcAPI.Instance().getIEntity(p);
-                SoundSource soundSource = new SoundSource("jinryuudragonbc:DBC5.instant_transmission", p);
+                int random1 = random.nextInt(3) + 1;
+                SoundSource soundSource = new SoundSource("jinryuudragonbc:DBC4.dodge" + random1, p);
                 PacketHandler.Instance.sendToTrackingPlayers(soundSource.entity, new PlaySound(soundSource).generatePacket());
 
                 pl.setPosition(tar.posX + dx, tar.posY, tar.posZ + dz); // y needs fixing
