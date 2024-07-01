@@ -33,9 +33,6 @@ public class InstantTransmission {
             double dz = Math.cos((angle * Math.PI) / 180) * distance;
             if (blockSuitable(tar, (int) (tar.posX + dx), (int) tar.posY, (int) (tar.posZ + dz))) {
                 IEntity<?> pl = NpcAPI.Instance().getIEntity(p);
-                int random1 = random.nextInt(3) + 1;
-                SoundSource soundSource = new SoundSource("jinryuudragonbc:DBC4.dodge" + random1, p);
-                PacketHandler.Instance.sendToTrackingPlayers(soundSource.entity, new PlaySound(soundSource).generatePacket());
 
                 pl.setPosition(tar.posX + dx, tar.posY, tar.posZ + dz); // y needs fixing
                 pl.setRotation((float) (angle + lookinga));

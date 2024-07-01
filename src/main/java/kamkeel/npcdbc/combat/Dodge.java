@@ -1,7 +1,11 @@
 package kamkeel.npcdbc.combat;
 
+import kamkeel.npcdbc.data.SoundSource;
+import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.PlaySound;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+
+import java.util.Random;
 
 public class Dodge {
     public static float kiCost = 1;
@@ -10,9 +14,9 @@ public class Dodge {
                                             int r2, int type) {
 
         if (InstantTransmission.instantTrans(p, tar, a, lookinga, distance, r1, r2, type)) {
-            if (p instanceof EntityPlayer) {
-                //DBCUtils.kiCostAsPercentOfMax((EntityPlayer) p, kiCost);
-            }
+            int random1 = new Random().nextInt(3) + 1;
+            SoundSource soundSource = new SoundSource("jinryuudragonbc:DBC4.dodge" + random1, p);
+            PacketHandler.Instance.sendToTrackingPlayers(soundSource.entity, new PlaySound(soundSource).generatePacket());
             return true;
         }
 
