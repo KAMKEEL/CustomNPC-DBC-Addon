@@ -38,7 +38,7 @@ public class MixinRenderAura2 {
     @Redirect(method = "lightning", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;getLightLivingTime()I"))
     private int setLightningSpeed(EntityAura2 instance) {
         IEntityAura aura = (IEntityAura) instance;
-        if (aura.getLightningSpeed() != -1)
+        if (aura.hasLightning() && aura.getLightningSpeed() != -1)
             return aura.getLightningSpeed();
 
         return instance.getLightLivingTime();
