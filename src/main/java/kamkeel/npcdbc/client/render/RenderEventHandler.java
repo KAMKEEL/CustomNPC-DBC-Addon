@@ -38,9 +38,12 @@ public class RenderEventHandler {
 
     @SubscribeEvent
     public void enableHandStencil(DBCPlayerEvent.RenderArmEvent.Pre e) {
-        glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
-        glEnable(GL_STENCIL_TEST);
-        enableStencilWriting(e.entity.getEntityId() % 256);
+        if (PlayerDataUtil.useStencilBuffer(e.entity)) {
+            glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
+            glEnable(GL_STENCIL_TEST);
+            Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+            enableStencilWriting(e.entity.getEntityId() % 256);
+        }
     }
 
     @SubscribeEvent
