@@ -101,7 +101,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             UPDATE_VANITY_BUTTON.enabled = true;
         }
 
-        String formColor = "";
+        String formStatColor = "";
         String formName;
         String formTooltip = null;
         Form customForm = dbcClient.getForm();
@@ -118,43 +118,66 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         boolean isInKaioken = JRMCoreH.StusEfctsMe(5);
 
         if(isMajin && isLegendary && isLegendaryEnabled){
-            formColor = "§5";
+            formStatColor = "§5";
         }else if(isMajin){
-            formColor = "§c";
+            formStatColor = "§c";
         }else if(isLegendary && isLegendaryEnabled){
-            formColor = "§2";
+            formStatColor = "§2";
         }
 
         boolean isFused = dbcClient.containsSE(10) || dbcClient.containsSE(11);
         if(isFused){
-            formColor = "§d";
+            formStatColor = "§d";
         }
 
-        if(customForm != null){
-            formName = Utility.removeColorCodes(customForm.getMenuName());
-            formColor = dataClient.getFormColorCode(customForm);
-        }else {
+        String formNameColor = "";
+
+        if(customForm == null){
             formName = JRMCoreH.trl("jrmc", JRMCoreH.getTransformationName(JRMCoreH.Race, JRMCoreH.isPowerTypeChakra() ? 0 : JRMCoreH.State, isRose, isMystic, isUI, isGoD));
 
 
-            boolean ascendedAboveBase = (dbcClient.Race == 4 && dbcClient.State > 4) || dbcClient.State > 0;
-            if (formColor.isEmpty()){
+            boolean ascendedAboveBase = dbcClient.Race == 4 ? dbcClient.State != 4 : dbcClient.State != 0;
+            if (formStatColor.isEmpty()){
                 if(ascendedAboveBase)
-                    formColor = "§6";
+                    formStatColor = "§6";
                 if(ascendedAboveBase && isRose)
-                    formColor = "§5";
+                    formStatColor = "§5";
                 if(isMystic)
-                    formColor = "§3";
+                    formStatColor = "§3";
                 if(isUI)
-                    formColor = "§b";
+                    formStatColor = "§b";
                 if(isGoD)
-                    formColor = "§5";
+                    formStatColor = "§5";
+            }
+
+        }else {
+            formName = Utility.removeColorCodes(customForm.getMenuName());
+            formStatColor = dataClient.getFormColorCode(customForm);
+
+            formNameColor = formStatColor;
+
+            if (formStatColor.isEmpty() || formStatColor.equals("§4")){
+                formStatColor = "§6";
+                if(isRose)
+                    formStatColor = "§5";
+                if(isMystic)
+                    formStatColor = "§3";
+                if(isUI)
+                    formStatColor = "§b";
+                if(isGoD)
+                    formStatColor = "§5";
             }
         }
-        formColor = (formColor.equals("§4") ? "" : formColor); //Makes stats pop out when your form color is the same as the default stat color
-        String darkFormColor = Utility.getDarkColorCode(formColor);
-        if(!ConfigDBCClient.DarkMode)
-            formColor = darkFormColor;
+
+
+
+
+        formStatColor = (formStatColor.equals("§4") ? "" : formStatColor); //Makes stats pop out when your form color is the same as the default stat color
+        String darkFormColor = Utility.getDarkColorCode(formStatColor);
+        if(!ConfigDBCClient.DarkMode) {
+            formStatColor = darkFormColor;
+            formNameColor = Utility.getDarkColorCode(formNameColor);
+        }
 
         //Form Mastery
         if(JGConfigDBCFormMastery.FM_Enabled){
@@ -196,7 +219,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         genderIcon.textureY = (JRMCoreH.dnsGender(JRMCoreH.dns) < 1 ? 128 : 112);
 
         dynamicLabels.get("form")
-            .updateDisplay(formColor+formName)
+            .updateDisplay(formNameColor+formName)
             .setTooltip(formTooltip);
 
         dynamicLabels.get("class")
@@ -281,7 +304,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             attributeDesc += getAttributeBonusDescription(i);
 
             dynamicLabels.get("attr_"+i)
-                .updateDisplay((isSTRDEXWIL ? formColor : "")+statDisplay)
+                .updateDisplay((isSTRDEXWIL ? formStatColor : "")+statDisplay)
                 .updateTooltip(attributeDesc);
 
 
@@ -325,7 +348,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             longValue = 2147483647L;
         }
         dynamicLabels.get("melee")
-            .updateDisplay(formColor+JRMCoreH.numSep(longValue))
+            .updateDisplay(formStatColor+JRMCoreH.numSep(longValue))
             .setTooltip(
                 getDescription(
                     JRMCoreH.attrNms(1, 0),
@@ -370,18 +393,18 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             (int) (100.0F - JRMCoreH.weightPerc(1) * 100.0F)
         );
         dynamicLabels.get("defense")
-            .updateDisplay(formColor+JRMCoreH.numSep(longValue))
+            .updateDisplay(formStatColor+JRMCoreH.numSep(longValue))
             .setTooltip(defDesc);
 
 
         dynamicLabels.get("passive")
-            .updateDisplay(formColor+passiveDef)
+            .updateDisplay(formStatColor+passiveDef)
             .setTooltip(defDesc);
 
 
         if(dynamicLabels.get("charging") != null) {
             dynamicLabels.get("charging")
-                .updateDisplay(formColor + chargingDef)
+                .updateDisplay(formStatColor + chargingDef)
                 .setTooltip(defDesc);
         }
 
@@ -432,7 +455,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         incrementVal = JRMCoreH.statInc(1, 4, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
         curAtr = (int) (stat*0.01*dbcClient.Release);
         dynamicLabels.get("kiPower")
-            .updateDisplay(formColor+JRMCoreH.numSep(curAtr))
+            .updateDisplay(formStatColor+JRMCoreH.numSep(curAtr))
             .setTooltip(
                 getDescription(
                     JRMCoreH.attrNms(1, 3),
