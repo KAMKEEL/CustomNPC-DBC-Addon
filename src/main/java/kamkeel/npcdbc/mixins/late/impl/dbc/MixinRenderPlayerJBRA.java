@@ -77,7 +77,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderArmEvent.Post(par1EntityPlayer, (RenderPlayerJBRA) (Object) this, Minecraft.getMinecraft().timer.renderPartialTicks));
     }
 
-    @ModifyArgs(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 1))
+    @ModifyArgs(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 1), remap = true)
     protected void setDamage(Args args, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
         DBCData.get(player.get()).XZSize = args.get(0);
         DBCData.get(player.get()).YSize = args.get(1);
