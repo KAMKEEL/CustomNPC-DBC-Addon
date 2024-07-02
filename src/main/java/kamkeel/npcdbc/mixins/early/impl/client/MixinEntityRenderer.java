@@ -31,6 +31,9 @@ public class MixinEntityRenderer {
         ForgeHooksClient.setRenderPass(ClientProxy.MiddleRenderPass);
         this.mc.renderGlobal.renderEntities(this.mc.renderViewEntity, frustrum.get(), partialTick);
         ForgeHooksClient.setRenderPass(-1);
+
+        glGetFloat(GL_MODELVIEW_MATRIX, RenderEventHandler.FP_MODELVIEW);
+        glGetFloat(GL_PROJECTION_MATRIX, RenderEventHandler.FP_PROJECTION);
     }
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/client/ForgeHooksClient;renderFirstPersonHand(Lnet/minecraft/client/renderer/RenderGlobal;FI)Z", shift = At.Shift.BEFORE))

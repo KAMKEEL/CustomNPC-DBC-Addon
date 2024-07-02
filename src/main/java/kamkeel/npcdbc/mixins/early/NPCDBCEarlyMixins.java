@@ -60,6 +60,8 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
             }
 
             mixins.add("client.MixinMinecraft");
+            mixins.add("client.MixinDynamicLights");
+
         }
 
         return mixins;
