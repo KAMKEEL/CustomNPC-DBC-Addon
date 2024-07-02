@@ -56,6 +56,8 @@ public class FormCommand extends CommandKamkeelBase {
             playerDBCInfo.addForm(form);
             playerdata.save();
             sendResult(sender, String.format("%s\u00A7e added to Player '\u00A7b%s\u00A77'", form.getName(), playerdata.playername, formID));
+            if(sender != playerdata.player)
+                sendResult(playerdata.player, String.format("\u00A77Form &s\u00A7e added.", form.getName()));
             return;
         }
     }
@@ -95,7 +97,9 @@ public class FormCommand extends CommandKamkeelBase {
                 if(playerDBCInfo.currentForm == formID)
                     playerDBCInfo.currentForm = -1;
                 playerdata.save();
-                sendResult(sender, String.format("%s\u00A7e added to Player '\u00A7b%s\u00A77'", form.getName(), playerdata.playername, formID));
+                sendResult(sender, String.format("%s\u00A7e removed to Player '\u00A7b%s\u00A77'", form.getName(), playerdata.playername, formID));
+                if(sender != playerdata.player)
+                    sendResult(playerdata.player, String.format("\u00A77Form &s\u00A7e removed.", form.getName()));
             } else {
                 sendResult(sender, String.format("%s\u00A7e not found on Player '\u00A7b%s\u00A77'", form.getName(), playerdata.playername, formID));
             }
@@ -121,6 +125,8 @@ public class FormCommand extends CommandKamkeelBase {
             playerDBCInfo.selectedForm = -1;
             playerdata.save();
             sendResult(sender, String.format("Forms cleared from Player '\u00A7b%s\u00A77'", playerdata.playername));
+            if(sender != playerdata.player)
+                sendResult(playerdata.player, String.format("All custom forms removed."));
             return;
         }
     }

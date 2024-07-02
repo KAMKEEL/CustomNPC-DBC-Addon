@@ -57,6 +57,8 @@ public class AuraCommand extends CommandKamkeelBase {
             playerDBCInfo.addAura(aura);
             playerdata.save();
             sendResult(sender, String.format("%s\u00A7e added to Player '\u00A7b%s\u00A77'", aura.getName(), playerdata.playername, auraID));
+            if(sender != playerdata.player)
+                sendResult(playerdata.player, String.format("\u00A77Aura &s\u00A7e added.", aura.getName()));
             return;
         }
     }
@@ -96,7 +98,9 @@ public class AuraCommand extends CommandKamkeelBase {
                 if(playerDBCInfo.currentAura == auraID)
                     playerDBCInfo.currentAura = -1;
                 playerdata.save();
-                sendResult(sender, String.format("%s\u00A7e added to Player '\u00A7b%s\u00A77'", aura.getName(), playerdata.playername, auraID));
+                sendResult(sender, String.format("%s\u00A7e removed to Player '\u00A7b%s\u00A77'", aura.getName(), playerdata.playername, auraID));
+                if(sender != playerdata.player)
+                    sendResult(playerdata.player, String.format("\u00A77Aura &s\u00A7e removed.", aura.getName()));
             } else {
                 sendResult(sender, String.format("%s\u00A7e not found on Player '\u00A7b%s\u00A77'", aura.getName(), playerdata.playername, auraID));
             }
@@ -122,6 +126,8 @@ public class AuraCommand extends CommandKamkeelBase {
             playerDBCInfo.selectedAura = -1;
             playerdata.save();
             sendResult(sender, String.format("Custom auras cleared from Player '\u00A7b%s\u00A77'", playerdata.playername));
+            if(sender != playerdata.player)
+                sendResult(playerdata.player, String.format("All custom auras removed."));
             return;
         }
     }
