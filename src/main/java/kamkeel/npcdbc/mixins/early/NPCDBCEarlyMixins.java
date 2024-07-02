@@ -14,6 +14,7 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
 
     public static final MixinEnvironment.Side side = MixinEnvironment.getCurrentEnvironment().getSide();
 
+
     @Override
     public void onLoad(String mixinPackage) {
 
@@ -36,6 +37,15 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
 
     @Override
     public List<String> getMixins() {
+
+        boolean isOptifineLoaded = false;
+        try{
+            Class.forName("optifine.OptiFineForgeTweaker");
+            isOptifineLoaded = true;
+        }catch(Exception ignored){
+
+        }
+
         ArrayList<String> mixins = new ArrayList<>();
 
         System.out.println("hi1");
@@ -44,6 +54,11 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
             mixins.add("client.MixinEntity");
             mixins.add("client.MixinRenderGlobal");
             mixins.add("client.MixinEntityRenderer");
+
+            if(isOptifineLoaded){
+                mixins.add("optifine.client.MixinEntityRendererOptifine");
+            }
+
             mixins.add("client.MixinMinecraft");
         }
 

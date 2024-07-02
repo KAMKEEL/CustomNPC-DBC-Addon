@@ -26,14 +26,6 @@ public class MixinEntityRenderer {
     public Minecraft mc;
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderHelper;enableStandardItemLighting()V",ordinal = 1, shift = At.Shift.AFTER))
-    private void secondRendPassOptifine(float partialTick, long idk, CallbackInfo info, @Local(name = "var14") LocalRef<Frustrum> frustrum) {
-        mc.mcProfiler.endStartSection("NPCDBCEntities");
-        ForgeHooksClient.setRenderPass(ClientProxy.MiddleRenderPass);
-        this.mc.renderGlobal.renderEntities(this.mc.renderViewEntity, frustrum.get(), partialTick);
-        ForgeHooksClient.setRenderPass(-1);
-    }
-
-    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderHelper;enableStandardItemLighting()V",ordinal = 1, shift = At.Shift.AFTER))
     private void secondRendPass(float partialTick, long idk, CallbackInfo info, @Local(name = "frustrum") LocalRef<Frustrum> frustrum) {
         mc.mcProfiler.endStartSection("NPCDBCEntities");
         ForgeHooksClient.setRenderPass(ClientProxy.MiddleRenderPass);
@@ -49,8 +41,10 @@ public class MixinEntityRenderer {
 
     @Inject(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemRenderer;renderItemInFirstPerson(F)V", shift = At.Shift.BEFORE), cancellable = true)
     public void renderItemEvent(float p_78476_1_, int p_78476_2_, CallbackInfo ci) {
-        if (MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderArmEvent.Item(mc.thePlayer, null, mc.timer.renderPartialTicks)))
+        if (MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderArmEvent.Item(mc.thePlayer, null, mc.timer.renderPartialTicks))) {
             ci.cancel();
+            glPopMatrix();
+        }
     }
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/OpenGlHelper;shadersSupported:Z", shift = At.Shift.BEFORE))
