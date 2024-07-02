@@ -41,6 +41,7 @@ public class PostProcessing {
     public static int[] auraTextures = new int[3];
 
     public static boolean processBloom;
+    public static Minecraft mc = Minecraft.getMinecraft();
 
     public static void startBlooming() {
         if (!ConfigDBCClient.EnableBloom || !ConfigDBCClient.EnableShaders)

@@ -27,8 +27,7 @@ import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
 import java.util.Iterator;
 
-import static kamkeel.npcdbc.client.shader.PostProcessing.endBlooming;
-import static kamkeel.npcdbc.client.shader.PostProcessing.startBlooming;
+import static kamkeel.npcdbc.client.shader.PostProcessing.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
@@ -38,7 +37,7 @@ public class RenderEventHandler {
 
     @SubscribeEvent
     public void enableHandStencil(DBCPlayerEvent.RenderArmEvent.Pre e) {
-        if (PlayerDataUtil.useStencilBuffer(e.entity)) {
+        if (mc.theWorld != null && PlayerDataUtil.useStencilBuffer(e.entity)) {
             glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
             glEnable(GL_STENCIL_TEST);
             Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
@@ -48,7 +47,7 @@ public class RenderEventHandler {
 
     @SubscribeEvent
     public void enableEntityStencil(RenderLivingEvent.Pre e) {
-        if ((e.entity instanceof EntityPlayer || e.entity instanceof EntityNPCInterface) && PlayerDataUtil.useStencilBuffer(e.entity)) {
+        if (mc.theWorld != null && (e.entity instanceof EntityPlayer || e.entity instanceof EntityNPCInterface) && PlayerDataUtil.useStencilBuffer(e.entity)) {
             //IMPORTANT, SAVES THE MODEL VIEW MATRIX PRE ENTITYLIVING TRANSFORMATIONS
             glGetFloat(GL_MODELVIEW_MATRIX, PRE_RENDER_MODELVIEW);
             glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
@@ -140,12 +139,15 @@ public class RenderEventHandler {
             return;
 
         EntityNPCInterface entity = (EntityNPCInterface) e.entity;
+        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        if (!display.enabled)
+            return;
+
         RenderCustomNpc r = (RenderCustomNpc) e.renderer;
         float partialTicks = Minecraft.getMinecraft().timer.renderPartialTicks;
 
         disableStencilWriting(entity.getEntityId() % 256, false);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
 
         ////////////////////////////////////////
         ////////////////////////////////////////

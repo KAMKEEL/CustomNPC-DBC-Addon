@@ -53,6 +53,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
     @Unique
     String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+    @Unique
+    private Minecraft mc = Minecraft.getMinecraft();
 
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
@@ -79,6 +81,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @ModifyArgs(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 1), remap = true)
     protected void setDamage(Args args, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
+        if (mc.theWorld == null)
+            return;
         DBCData.get(player.get()).XZSize = args.get(0);
         DBCData.get(player.get()).YSize = args.get(1);
     }
