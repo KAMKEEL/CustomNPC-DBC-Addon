@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.early.impl.optifine.client;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -15,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.*;
 
 @Mixin(EntityRenderer.class)
 public class MixinEntityRendererOptifine {
@@ -30,6 +31,9 @@ public class MixinEntityRendererOptifine {
         ForgeHooksClient.setRenderPass(ClientProxy.MiddleRenderPass);
         this.mc.renderGlobal.renderEntities(this.mc.renderViewEntity, frustrum.get(), partialTick);
         ForgeHooksClient.setRenderPass(-1);
+
+        glGetFloat(GL_MODELVIEW_MATRIX, RenderEventHandler.FP_MODELVIEW);
+        glGetFloat(GL_PROJECTION_MATRIX, RenderEventHandler.FP_PROJECTION);
     }
 
     @Inject(method = "renderHand(FIZZZ)V", remap = false, at = @At(value="INVOKE", target="Lnet/minecraft/client/renderer/EntityRenderer;enableLightmap(D)V", remap = true), cancellable = true)
