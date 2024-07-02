@@ -27,7 +27,6 @@ public class MixinEntityRenderer {
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderHelper;disableStandardItemLighting()V",ordinal = 3, shift = At.Shift.BEFORE))
     private void secondRendPassOptifine(float partialTick, long idk, CallbackInfo info, @Local(name = "var14") LocalRef<Frustrum> frustrum) {
-        System.out.println("Middle render pass here we go!!!");
         ForgeHooksClient.setRenderPass(ClientProxy.MiddleRenderPass);
         this.mc.renderGlobal.renderEntities(this.mc.renderViewEntity, frustrum.get(), partialTick);
         ForgeHooksClient.setRenderPass(-1);
