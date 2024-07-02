@@ -12,6 +12,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,6 +32,9 @@ public class MixinEntityRenderer {
         ForgeHooksClient.setRenderPass(ClientProxy.MiddleRenderPass);
         this.mc.renderGlobal.renderEntities(this.mc.renderViewEntity, frustrum.get(), partialTick);
         ForgeHooksClient.setRenderPass(-1);
+
+        glGetFloat(GL_MODELVIEW_MATRIX, RenderEventHandler.FP_MODELVIEW);
+        glGetFloat(GL_PROJECTION_MATRIX, RenderEventHandler.FP_PROJECTION);
     }
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderHelper;enableStandardItemLighting()V",ordinal = 1, shift = At.Shift.AFTER))
@@ -39,6 +43,9 @@ public class MixinEntityRenderer {
         ForgeHooksClient.setRenderPass(ClientProxy.MiddleRenderPass);
         this.mc.renderGlobal.renderEntities(this.mc.renderViewEntity, frustrum.get(), partialTick);
         ForgeHooksClient.setRenderPass(-1);
+
+        glGetFloat(GL_MODELVIEW_MATRIX, RenderEventHandler.FP_MODELVIEW);
+        glGetFloat(GL_PROJECTION_MATRIX, RenderEventHandler.FP_PROJECTION);
     }
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/client/ForgeHooksClient;renderFirstPersonHand(Lnet/minecraft/client/renderer/RenderGlobal;FI)Z", shift = At.Shift.BEFORE))
@@ -47,10 +54,13 @@ public class MixinEntityRenderer {
         glGetFloat(GL_PROJECTION_MATRIX, RenderEventHandler.FP_PROJECTION);
     }
 
-    @Inject(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemRenderer;renderItemInFirstPerson(F)V", shift = At.Shift.BEFORE), cancellable = true)
-    public void renderItemEvent(float p_78476_1_, int p_78476_2_, CallbackInfo ci) {
-        if (MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderArmEvent.Item(mc.thePlayer, null, mc.timer.renderPartialTicks)))
-            ci.cancel();
+    @Inject(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/EntityRenderer;enableLightmap(D)V", shift = At.Shift.AFTER), cancellable = true)
+    private void renderItemEvent(float p_78476_1_, int p_78476_2_, CallbackInfo ci) {
+        System.out.println("wah");
+
+//        if (MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderArmEvent.Item(mc.thePlayer, null, mc.timer.renderPartialTicks)))
+//            ci.cancel();
+        System.out.println("wah guan delilah");
     }
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/OpenGlHelper;shadersSupported:Z", shift = At.Shift.BEFORE))
