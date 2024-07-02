@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.mixins.early.impl.client;
+package kamkeel.npcdbc.mixins.early.impl.client.optifine;
 
 
 import kamkeel.npcdbc.entity.EntityAura;

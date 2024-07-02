@@ -1,9 +1,9 @@
-package kamkeel.npcdbc.mixins.early.impl.optifine.client;
+package kamkeel.npcdbc.mixins.early.impl.client.optifine;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.client.ClientProxy;
-import kamkeel.npcdbc.client.render.RenderEventHandler;
+import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -24,6 +24,11 @@ public class MixinEntityRendererOptifine {
     @Shadow
     public Minecraft mc;
 
+    @Inject(method = "renderWorld", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/EntityRenderer;debugViewDirection:I", ordinal = 0, shift = At.Shift.BEFORE))
+    private void captureDefaultMatrices(float partialTick, long idk, CallbackInfo info) {
+        glGetFloat(GL_MODELVIEW_MATRIX, PostProcessing.DEFAULT_MODELVIEW);
+        glGetFloat(GL_PROJECTION_MATRIX, PostProcessing.DEFAULT_PROJECTION);
+    }
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderHelper;enableStandardItemLighting()V",ordinal = 1, shift = At.Shift.AFTER))
     private void secondRendPassOptifine(float partialTick, long idk, CallbackInfo info, @Local(name = "var14") LocalRef<Frustrum> frustrum) {
@@ -31,9 +36,6 @@ public class MixinEntityRendererOptifine {
         ForgeHooksClient.setRenderPass(ClientProxy.MiddleRenderPass);
         this.mc.renderGlobal.renderEntities(this.mc.renderViewEntity, frustrum.get(), partialTick);
         ForgeHooksClient.setRenderPass(-1);
-
-        glGetFloat(GL_MODELVIEW_MATRIX, RenderEventHandler.FP_MODELVIEW);
-        glGetFloat(GL_PROJECTION_MATRIX, RenderEventHandler.FP_PROJECTION);
     }
 
     @Inject(method = "renderHand(FIZZZ)V", remap = false, at = @At(value="INVOKE", target="Lnet/minecraft/client/renderer/EntityRenderer;enableLightmap(D)V", remap = true), cancellable = true)
@@ -42,5 +44,25 @@ public class MixinEntityRendererOptifine {
             ci.cancel();
             glPopMatrix();
         }
+    }
+
+    @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;drawScreen(IIF)V", shift = At.Shift.BEFORE))
+    private void preGUIRender(float p_78480_1_, CallbackInfo ci) {
+        ClientProxy.renderingGUI = true;
+    }
+
+    @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;drawScreen(IIF)V", shift = At.Shift.AFTER))
+    private void postGUIRender(float p_78480_1_, CallbackInfo ci) {
+        ClientProxy.renderingGUI = false;
+    }
+
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/EntityRenderer;renderHand(FI)V", shift = At.Shift.BEFORE))
+    private void preArmRender(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
+        ClientProxy.renderingArm = true;
+    }
+
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/EntityRenderer;renderHand(FI)V", shift = At.Shift.AFTER))
+    private void postArmRender(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
+        ClientProxy.renderingArm = false;
     }
 }

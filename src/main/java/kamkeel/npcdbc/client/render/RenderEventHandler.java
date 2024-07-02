@@ -22,7 +22,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
-import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
 import java.util.Iterator;
@@ -32,26 +31,23 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
     public static final int TAIL_STENCIL_ID = 2;
-    public static FloatBuffer PRE_RENDER_MODELVIEW = BufferUtils.createFloatBuffer(16), FP_MODELVIEW = BufferUtils.createFloatBuffer(16), FP_PROJECTION = BufferUtils.createFloatBuffer(16);
 
 
     @SubscribeEvent
     public void enableHandStencil(DBCPlayerEvent.RenderArmEvent.Pre e) {
         if (mc.theWorld != null && PlayerDataUtil.useStencilBuffer(e.entity)) {
-            glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
             glEnable(GL_STENCIL_TEST);
-            Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+            glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
             enableStencilWriting(e.entity.getEntityId() % 256);
+            Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         }
     }
 
     @SubscribeEvent
     public void enableEntityStencil(RenderLivingEvent.Pre e) {
         if (mc.theWorld != null && (e.entity instanceof EntityPlayer || e.entity instanceof EntityNPCInterface) && PlayerDataUtil.useStencilBuffer(e.entity)) {
-            //IMPORTANT, SAVES THE MODEL VIEW MATRIX PRE ENTITYLIVING TRANSFORMATIONS
-            glGetFloat(GL_MODELVIEW_MATRIX, PRE_RENDER_MODELVIEW);
-            glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
             glEnable(GL_STENCIL_TEST);
+            glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
             enableStencilWriting(e.entity.getEntityId() % 256);
             Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
             glDepthMask(true); //fixes a native MC RP1 entity bug in which the depth test is disabled
@@ -86,14 +82,15 @@ public class RenderEventHandler {
         if (renderAura && !isArm) {
             FloatBuffer currentMV = ShaderHelper.getModelView(), currentProj = ShaderHelper.getProjection();
             if (isItem)
-                loadMatrices(FP_MODELVIEW, FP_PROJECTION);
+                loadMatrices(DEFAULT_MODELVIEW, DEFAULT_PROJECTION);
             else
-                glLoadMatrix(PRE_RENDER_MODELVIEW);
+                glLoadMatrix(DEFAULT_MODELVIEW);
 
             glPushMatrix();
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
             glStencilMask(0x0);
             AuraRenderer.Instance.renderAura(aura, partialTicks);
+
             // NewAura.renderAura(aura, partialTicks);
             glPopMatrix();
             loadMatrices(currentMV, currentProj);
@@ -105,9 +102,9 @@ public class RenderEventHandler {
         if (renderParticles && !isArm) {
             FloatBuffer currentMV = ShaderHelper.getModelView(), currentProj = ShaderHelper.getProjection();
             if (isItem)
-                loadMatrices(FP_MODELVIEW, FP_PROJECTION);
+                loadMatrices(DEFAULT_MODELVIEW, DEFAULT_PROJECTION);
             else
-                glLoadMatrix(PRE_RENDER_MODELVIEW);
+                glLoadMatrix(DEFAULT_MODELVIEW);
 
             glPushMatrix();
             glStencilFunc(GL_GREATER, player.getEntityId()% 256, 0xFF);
@@ -155,7 +152,7 @@ public class RenderEventHandler {
         EntityAura aura = display.auraEntity;
         if (aura != null && aura.shouldRender()) {
             glPushMatrix();
-            glLoadMatrix(PRE_RENDER_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
+            glLoadMatrix(DEFAULT_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
             glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
             AuraRenderer.Instance.renderAura(aura, partialTicks);
             //  NewAura.renderAura(aura, partialTicks);
@@ -167,7 +164,7 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         //Custom Particles
         glPushMatrix();
-        glLoadMatrix(PRE_RENDER_MODELVIEW); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
+        glLoadMatrix(DEFAULT_MODELVIEW); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
         IRenderCusPar particleRender = null;
         for (Iterator<EntityCusPar> iter = display.particleRenderQueue.iterator(); iter.hasNext(); ) {
             EntityCusPar particle = iter.next();

@@ -3,17 +3,15 @@ package kamkeel.npcdbc.mixins.early.impl.client;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.client.ClientProxy;
-import kamkeel.npcdbc.client.render.RenderEventHandler;
+import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.culling.Frustrum;
-import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -25,22 +23,20 @@ public class MixinEntityRenderer {
     @Shadow
     public Minecraft mc;
 
+    @Inject(method = "renderWorld", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/EntityRenderer;debugViewDirection:I", ordinal = 0, shift = At.Shift.BEFORE))
+    private void captureDefaultMatrices(float partialTick, long idk, CallbackInfo info, @Local(name = "frustrum") LocalRef<Frustrum> frustrum) {
+        glGetFloat(GL_MODELVIEW_MATRIX, PostProcessing.DEFAULT_MODELVIEW);
+        glGetFloat(GL_PROJECTION_MATRIX, PostProcessing.DEFAULT_PROJECTION);
+    }
+
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderHelper;enableStandardItemLighting()V",ordinal = 1, shift = At.Shift.AFTER))
     private void secondRendPass(float partialTick, long idk, CallbackInfo info, @Local(name = "frustrum") LocalRef<Frustrum> frustrum) {
         mc.mcProfiler.endStartSection("NPCDBCEntities");
         ForgeHooksClient.setRenderPass(ClientProxy.MiddleRenderPass);
         this.mc.renderGlobal.renderEntities(this.mc.renderViewEntity, frustrum.get(), partialTick);
         ForgeHooksClient.setRenderPass(-1);
-
-        glGetFloat(GL_MODELVIEW_MATRIX, RenderEventHandler.FP_MODELVIEW);
-        glGetFloat(GL_PROJECTION_MATRIX, RenderEventHandler.FP_PROJECTION);
     }
 
-    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/client/ForgeHooksClient;renderFirstPersonHand(Lnet/minecraft/client/renderer/RenderGlobal;FI)Z", shift = At.Shift.BEFORE))
-    private void setFPMatrics(float partialTick, long idk, CallbackInfo info, @Local(name = "frustrum") LocalRef<Frustrum> frustrum) {
-        glGetFloat(GL_MODELVIEW_MATRIX, RenderEventHandler.FP_MODELVIEW);
-        glGetFloat(GL_PROJECTION_MATRIX, RenderEventHandler.FP_PROJECTION);
-    }
 
     @Inject(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemRenderer;renderItemInFirstPerson(F)V", shift = At.Shift.BEFORE), cancellable = true)
     public void renderItemEvent(float p_78476_1_, int p_78476_2_, CallbackInfo ci) {

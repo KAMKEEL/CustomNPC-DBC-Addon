@@ -38,29 +38,30 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
     @Override
     public List<String> getMixins() {
 
-        boolean isOptifineLoaded = false;
-        try{
-            Class.forName("optifine.OptiFineForgeTweaker");
-            isOptifineLoaded = true;
-        }catch(Exception ignored){
-
-        }
 
         ArrayList<String> mixins = new ArrayList<>();
 
-        System.out.println("hi1");
         if (side == MixinEnvironment.Side.CLIENT) {
             mixins.add("client.MixinSoundManager");
             mixins.add("client.MixinEntity");
             mixins.add("client.MixinRenderGlobal");
             mixins.add("client.MixinEntityRenderer");
+            mixins.add("client.MixinMinecraft");
 
-            if(isOptifineLoaded){
-                mixins.add("optifine.client.MixinEntityRendererOptifine");
+
+            boolean isOptifineLoaded = false;
+            try {
+                Class.forName("optifine.OptiFineForgeTweaker");
+                isOptifineLoaded = true;
+            } catch (Exception ignored) {
             }
 
-            mixins.add("client.MixinMinecraft");
-            mixins.add("client.MixinDynamicLights");
+            if(isOptifineLoaded){
+                System.out.println("excuse me is that your girl");
+                mixins.add("client.optifine.MixinEntityRendererOptifine");
+                mixins.add("client.optifine.MixinDynamicLights");
+            }
+
 
         }
 

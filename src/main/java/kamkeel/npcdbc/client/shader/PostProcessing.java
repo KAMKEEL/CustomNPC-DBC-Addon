@@ -41,6 +41,9 @@ public class PostProcessing {
     public static int[] auraTextures = new int[3];
 
     public static boolean processBloom;
+
+    public static FloatBuffer DEFAULT_MODELVIEW = BufferUtils.createFloatBuffer(16);
+    public static FloatBuffer DEFAULT_PROJECTION = BufferUtils.createFloatBuffer(16);
     public static Minecraft mc = Minecraft.getMinecraft();
 
     public static void startBlooming() {
