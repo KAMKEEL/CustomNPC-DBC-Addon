@@ -138,6 +138,8 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
             boolean ascendedAboveBase = dbcClient.Race == 4 ? dbcClient.State != 4 : dbcClient.State != 0;
             if (formStatColor.isEmpty()){
+                if(isInKaioken)
+                    formStatColor = "§c";
                 if(ascendedAboveBase)
                     formStatColor = "§6";
                 if(ascendedAboveBase && isRose)
@@ -158,6 +160,8 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
             if (formStatColor.isEmpty() || formStatColor.equals("§4")){
                 formStatColor = "§6";
+                if(isInKaioken)
+                    formStatColor = "§c";
                 if(isRose)
                     formStatColor = "§5";
                 if(isMystic)
@@ -167,6 +171,9 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 if(isGoD)
                     formStatColor = "§5";
             }
+        }
+        if(formNameColor.isEmpty() && isInKaioken){
+            formNameColor = formStatColor;
         }
 
 
