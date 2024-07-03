@@ -46,23 +46,4 @@ public class MixinEntityRendererOptifine {
         }
     }
 
-    @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;drawScreen(IIF)V", shift = At.Shift.BEFORE))
-    private void preGUIRender(float p_78480_1_, CallbackInfo ci) {
-        ClientProxy.renderingGUI = true;
-    }
-
-    @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;drawScreen(IIF)V", shift = At.Shift.AFTER))
-    private void postGUIRender(float p_78480_1_, CallbackInfo ci) {
-        ClientProxy.renderingGUI = false;
-    }
-
-    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/EntityRenderer;renderHand(FI)V", shift = At.Shift.BEFORE))
-    private void preArmRender(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
-        ClientProxy.renderingArm = true;
-    }
-
-    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/EntityRenderer;renderHand(FI)V", shift = At.Shift.AFTER))
-    private void postArmRender(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
-        ClientProxy.renderingArm = false;
-    }
 }
