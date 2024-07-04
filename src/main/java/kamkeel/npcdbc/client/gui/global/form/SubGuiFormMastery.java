@@ -363,7 +363,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.addTextField(new GuiNpcTextField(704, this, 295, y, 40, 20, String.valueOf(mastery.movementSpeedMultiMinOrMax)));
             scrollWindow.getTextField(704).setMaxStringLength(10);
             scrollWindow.getTextField(704).floatsOnly = true;
-            scrollWindow.getTextField(704).setMinMaxDefaultFloat(0f, 10000f, 2f);
+            scrollWindow.getTextField(704).setMinMaxDefaultFloat(0f, 10000f, 1.5f);
             scrollWindow.getLabel(704).color = 0xffffff;
         }
 

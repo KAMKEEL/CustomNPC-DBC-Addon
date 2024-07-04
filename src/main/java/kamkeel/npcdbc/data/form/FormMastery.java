@@ -40,7 +40,7 @@ public class FormMastery implements IFormMastery {
     public float damageNegationMultiFlat = 1.0f, damageNegationMultiPerLevel = 0.01f, damageNegationMultiMinOrMax = 2f;
 
     public float movementSpeed = 1f;
-    public float movementSpeedMultiFlat = 1.0f, movementSpeedMultiPerLevel = 0.01f, movementSpeedMultiMinOrMax = 2f;
+    public float movementSpeedMultiFlat = 1.0f, movementSpeedMultiPerLevel = 0.01f, movementSpeedMultiMinOrMax = 1.5f;
 
     public FormMastery(Form parent) {
         this.parent = parent;
