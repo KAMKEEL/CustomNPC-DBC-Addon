@@ -180,7 +180,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             //only saiyans
             if (race.get() == 1 || race.get() == 2) {
                 if(form.display.hasBodyFur())
-                    renderBodyFur(form, gender.get(), bodyCM.get());
+                    renderBodyFur(form, gender.get(), bodyCM.get(), data.DNS);
 
                 //renders all ssj4
                 if (form.display.hairType.equals("ssj4")) {
@@ -189,7 +189,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
                     //all oozaru rendering
                 } else if (form.display.hairType.equals("oozaru")) {
-                    renderOozaru(bodyCM.get(), form.display.eyeColor, form.display.furColor);
+                    renderOozaru(bodyCM.get(), form.display.eyeColor, form.display.getFurColor(data.DNS));
                     //ssj3 hair rendering
                 } else if (form.display.hairType.equals("ssj3")) {
                     String hairTexture = "normall.png";
@@ -222,14 +222,14 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Unique
-    private void renderBodyFur(Form form, int gender, int bodyCM) {
+    private void renderBodyFur(Form form, int gender, int bodyCM, String dns) {
         String bodyTexture = (gender == 1 ? "f" : "") + "hum.png";
         this.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + bodyTexture));
         RenderPlayerJBRA.glColor3f(bodyCM);
         this.modelMain.renderBody(0.0625F);
 
         this.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
-        RenderPlayerJBRA.glColor3f(form.display.furColor);
+        RenderPlayerJBRA.glColor3f(form.display.getFurColor(dns));
         this.modelMain.renderBody(0.0625F);
     }
 
@@ -326,10 +326,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         Form form = DBCData.getForm(par1EntityPlayer);
         if (form != null && (race.get() == 1 || race.get() == 2)) {
             if (this.renderManager != null && this.renderManager.renderEngine != null) {
+                String dns = DBCData.get(par1EntityPlayer).DNS;
                 if (form.display.hasBodyFur) {
-                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get());
+                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get(), dns);
                 } else if (form.display.hairType.equals("oozaru")) {
-                    renderOozaruArm(form.display.furColor, par1EntityPlayer, id.get(), bodyCM.get());
+                    renderOozaruArm(form, par1EntityPlayer, id.get(), bodyCM.get(), dns);
                 }
             }
         }
@@ -338,21 +339,21 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
 
     @Unique
-    private void renderSSJ4Arm(Form form, EntityPlayer player, int id, int gender, int bodyCM) {
+    private void renderSSJ4Arm(Form form, EntityPlayer player, int id, int gender, int bodyCM, String dns) {
         String bodyTexture = (gender == 1 ? "f" : "") + "hum.png";
         this.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + bodyTexture));
         RenderPlayerJBRA.glColor3f(bodyCM);
         renderArm(id, player);
 
         this.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
-        RenderPlayerJBRA.glColor3f(form.display.furColor);
+        RenderPlayerJBRA.glColor3f(form.display.getFurColor(dns));
         renderArm(id, player);
 
     }
 
 
     @Unique
-    private void renderOozaruArm(int furColor, EntityPlayer player, int id, int bodyCM) {
+    private void renderOozaruArm(Form form, EntityPlayer player, int id, int bodyCM, String dns) {
         ResourceLocation bdyskn = new ResourceLocation((HD ? HDDir + "oozaru/" : "jinryuudragonbc:cc/") + "oozaru1.png");
         this.bindTexture(bdyskn);
         RenderPlayerJBRA.glColor3f(bodyCM);
@@ -360,7 +361,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
         bdyskn = new ResourceLocation((HD ? HDDir + "oozaru/" : "jinryuudragonbc:cc/") + "oozaru2.png");
         this.bindTexture(bdyskn);
-        RenderPlayerJBRA.glColor3f(furColor);
+        RenderPlayerJBRA.glColor3f(form.display.getFurColor(dns));
         renderArm(id, player);
     }
 
