@@ -48,13 +48,14 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Shadow
     public ModelBipedDBC modelMain;
     @Unique
+    private Minecraft mc = Minecraft.getMinecraft();
+    @Unique
     boolean HD;
     @Unique
-    String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
+    private String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
     @Unique
-    String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
-    @Unique
-    private Minecraft mc = Minecraft.getMinecraft();
+    private String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+
 
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
@@ -184,7 +185,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
                 //renders all ssj4
                 if (form.display.hairType.equals("ssj4")) {
-                    renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get(), data.renderingHairColor, data.age);
+                    renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get(), data.renderingHairColor, data.age,  data.DNS);
                     if (hairback.get() != 12)
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
                     //all oozaru rendering
@@ -234,7 +235,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Unique
-    private void renderSSJ4Face(Form form, int gender, int nose, int bodyCM, int defaultHairColor, float age) {
+    private void renderSSJ4Face(Form form, int gender, int nose, int bodyCM, int defaultHairColor, float age, String dns) {
         if (ConfigDBCClient.EnableHDTextures) {
             GL11.glColor3f(1.0f, 1.0f, 1.0f);
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4eyewhite.png"));
@@ -242,7 +243,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             RenderPlayerJBRA.glColor3f(form.display.eyeColor);
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4pupils.png"));
             this.modelMain.renderBody(0.0625F);
-            RenderPlayerJBRA.glColor3f(form.display.furColor);
+            RenderPlayerJBRA.glColor3f(form.display.getFurColor(dns));
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows.png"));
             this.modelMain.renderBody(1F / 16F);
 
