@@ -462,28 +462,28 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         float formSpeed = 0;
         Form form = getForm();
         if (form != null) {
-            formSpeed = form.mastery.movementSpeed * form.mastery.calculateMulti("flightSpeed", addonFormLevel);
+            formSpeed = form.mastery.movementSpeed * form.mastery.calculateMulti("movementspeed", addonFormLevel);
 
         }
-        return baseFlightSpeed + formSpeed;
+        return formSpeed < 1 ? baseFlightSpeed * formSpeed : baseFlightSpeed + formSpeed;
     }
 
     public float getDynamicFlightSpeed() {
         float formSpeed = 0;
         Form form = getForm();
         if (form != null) {
-            formSpeed = form.mastery.movementSpeed * form.mastery.calculateMulti("flightSpeed", addonFormLevel);
+            formSpeed = form.mastery.movementSpeed * form.mastery.calculateMulti("movementspeed", addonFormLevel);
         }
-        return dynamicFlightSpeed + formSpeed;
+        return formSpeed < 1 ? dynamicFlightSpeed * formSpeed : dynamicFlightSpeed + formSpeed;
     }
 
     public float getSprintSpeed() {
         float formSpeed = 0;
         Form form = getForm();
         if (form != null) {
-            formSpeed = form.mastery.movementSpeed * form.mastery.calculateMulti("flightSpeed", addonFormLevel);
+            formSpeed = form.mastery.movementSpeed * form.mastery.calculateMulti("movementspeed", addonFormLevel);
         }
-        return sprintSpeed + formSpeed;
+        return formSpeed < 1 ? sprintSpeed * formSpeed : sprintSpeed + formSpeed;
     }
     /**
      * Fuse with another player
