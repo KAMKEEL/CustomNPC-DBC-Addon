@@ -170,7 +170,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 }
                 // Tail Color
                 if (hair.contains("SJT")) {
-                    int color = isMonke ? form.display.furColor : form.display.hairColor;
+                    int color = isMonke ? form.display.getFurColor(dbcData.DNS) : form.display.hairColor;
                     if (color != -1) {
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
                         RenderPlayerJBRA.glColor3f(color);

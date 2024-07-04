@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.form;
 
+import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IFormDisplay;
 import kamkeel.npcdbc.controllers.AuraController;
@@ -94,6 +95,14 @@ public class FormDisplay implements IFormDisplay {
         return compound;
     }
 
+    //internal usage
+    public int getFurColor(String dns) {
+        int c1 = JRMCoreH.dnsBodyC1(dns);
+        if (c1 != 6498048 && furColor == -1)  //default
+            return c1;
+        else
+            return furColor;
+    }
     @Override
     public boolean getKeepOriginalSize() {
         return this.keepOriginalSize;
