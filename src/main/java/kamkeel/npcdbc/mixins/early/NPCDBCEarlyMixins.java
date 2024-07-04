@@ -45,7 +45,6 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
             mixins.add("client.MixinSoundManager");
             mixins.add("client.MixinEntity");
             mixins.add("client.MixinRenderGlobal");
-            mixins.add("client.MixinEntityRenderer");
             mixins.add("client.MixinMinecraft");
 
 
@@ -60,6 +59,8 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
                 System.out.println("excuse me is that your girl");
                 mixins.add("client.optifine.MixinEntityRendererOptifine");
                 mixins.add("client.optifine.MixinDynamicLights");
+            }else{
+                mixins.add("client.MixinEntityRenderer");
             }
 
 

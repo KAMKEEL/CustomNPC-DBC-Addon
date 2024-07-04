@@ -25,7 +25,7 @@ public class MixinEntityRendererOptifine {
     public Minecraft mc;
 
     @Inject(method = "renderWorld", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/EntityRenderer;debugViewDirection:I", ordinal = 0, shift = At.Shift.BEFORE))
-    private void captureDefaultMatrices(float partialTick, long idk, CallbackInfo info) {
+    private void captureDefaultMatricesOptifine(float partialTick, long idk, CallbackInfo info) {
         glGetFloat(GL_MODELVIEW_MATRIX, PostProcessing.DEFAULT_MODELVIEW);
         glGetFloat(GL_PROJECTION_MATRIX, PostProcessing.DEFAULT_PROJECTION);
     }
@@ -47,22 +47,22 @@ public class MixinEntityRendererOptifine {
     }
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;drawScreen(IIF)V", shift = At.Shift.BEFORE))
-    private void preGUIRender(float p_78480_1_, CallbackInfo ci) {
+    private void preGUIRenderOptifine(float p_78480_1_, CallbackInfo ci) {
         ClientProxy.renderingGUI = true;
     }
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;drawScreen(IIF)V", shift = At.Shift.AFTER))
-    private void postGUIRender(float p_78480_1_, CallbackInfo ci) {
+    private void postGUIRenderOptifine(float p_78480_1_, CallbackInfo ci) {
         ClientProxy.renderingGUI = false;
     }
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/EntityRenderer;renderHand(FI)V", shift = At.Shift.BEFORE))
-    private void preArmRender(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
+    private void preArmRenderOptifine(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
         ClientProxy.renderingArm = true;
     }
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/EntityRenderer;renderHand(FI)V", shift = At.Shift.AFTER))
-    private void postArmRender(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
+    private void postArmRenderOptifine(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
         ClientProxy.renderingArm = false;
     }
 }
