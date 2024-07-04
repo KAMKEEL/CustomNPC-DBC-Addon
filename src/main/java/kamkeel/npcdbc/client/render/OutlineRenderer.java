@@ -7,6 +7,7 @@ import JinRyuu.JRMCore.i.ExtendedPlayer;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.shader.ShaderResources;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -25,11 +26,11 @@ import static org.lwjgl.opengl.GL11.*;
 public class OutlineRenderer {
     public static void renderOutline(RenderPlayerJBRA render, Outline outline, EntityPlayer player, float partialTicks, boolean isArm) {
         ClientProxy.renderingOutline = true;
+        DBCData data = DBCData.get(player);
         if (player.isInWater())
             ((IEntityMC) player).setRenderPass(0);
         else
             ((IEntityMC) player).setRenderPass(ClientProxy.MiddleRenderPass);
-
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -71,7 +72,7 @@ public class OutlineRenderer {
             render.modelMain.renderBody(0.0625F);
         glPopMatrix();
 
-        if (!isArm) {
+        if (!isArm && !DBCForm.isMonke(data.Race, data.State)) {
             float hairSize = 1.015f;
             glScalef(hairSize, hairSize, hairSize);
             glTranslatef(0, 0.025f, 0);
@@ -84,9 +85,7 @@ public class OutlineRenderer {
             glPushMatrix();
             glScalef(1.02f * 1.01f * outlineSize, 1, 1.02f * 1.02f * outlineSize);
 
-            DBCData data = DBCData.get(player);
             int race = data.Race;
-
             if (race == DBCRace.NAMEKIAN) {
                 render.modelMain.renderHairs(0.0625F, "N");
             } else if (DBCRace.isSaiyan(race)) {

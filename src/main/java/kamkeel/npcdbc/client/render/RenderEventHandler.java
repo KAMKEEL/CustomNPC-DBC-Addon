@@ -32,7 +32,6 @@ import static org.lwjgl.opengl.GL11.*;
 public class RenderEventHandler {
     public static final int TAIL_STENCIL_ID = 2;
 
-
     @SubscribeEvent
     public void enableHandStencil(DBCPlayerEvent.RenderArmEvent.Pre e) {
         if (mc.theWorld != null && PlayerDataUtil.useStencilBuffer(e.entity)) {

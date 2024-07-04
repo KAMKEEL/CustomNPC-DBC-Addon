@@ -70,6 +70,10 @@ public class DBCForm {
     public static final int Majin = 27;
 
 
+    public static boolean isMonke(int race, int state) {
+        return DBCRace.isSaiyan(race) && (state == GreatApe || state == SuperGreatApe);
+    }
+
     public static boolean isSaiyanGod(int state) {
         return state == SuperSaiyanGod || state == SuperSaiyanBlue || state == BlueEvo;
     }

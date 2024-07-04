@@ -133,7 +133,7 @@ public class AuraRenderer extends RenderDBC {
 
         // ShaderHelper.useShader(ShaderHelper.aura, uniforms);
 
-        ShaderHelper.releaseShader();
+  //      ShaderHelper.releaseShader();
 
 
         ////////////////////////////////////////
