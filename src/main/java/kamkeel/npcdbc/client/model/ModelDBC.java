@@ -123,7 +123,7 @@ public class ModelDBC extends ModelBase {
             int eyeColor = display.eyeColor;
             int eyeBrowColor = display.race == DBCRace.NAMEKIAN ? display.bodyCM : display.hairColor;
             int bodyCM = display.bodyCM;
-            boolean hasArcoMask = display.hasArcoMask;
+            boolean hasArcoMask = display.hasArcoMask, isBerserk = false;
 
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
@@ -141,6 +141,8 @@ public class ModelDBC extends ModelBase {
 
                 if (d.hasArcoMask)
                     hasArcoMask = true;
+
+                isBerserk = d.isBerserk;
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
@@ -205,29 +207,31 @@ public class ModelDBC extends ModelBase {
             }
 
 
-            ColorMode.applyModelColor(eyeColor, isHurt);
-            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
-            this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
-            this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
-            this.eyeleft.rotationPointX = parent.bipedHead.rotationPointX;
-            this.eyeleft.rotationPointY = parent.bipedHead.rotationPointY;
+            if (!isBerserk) {
+                ColorMode.applyModelColor(eyeColor, isHurt);
+                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
+                this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
+                this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
+                this.eyeleft.rotationPointX = parent.bipedHead.rotationPointX;
+                this.eyeleft.rotationPointY = parent.bipedHead.rotationPointY;
 
-            GL11.glPushMatrix();
-            GL11.glTranslatef(0, y, 0);
-            GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-            this.eyeleft.render(0.0625F);
-            GL11.glPopMatrix();
+                GL11.glPushMatrix();
+                GL11.glTranslatef(0, y, 0);
+                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                this.eyeleft.render(0.0625F);
+                GL11.glPopMatrix();
 
-            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "r" + display.eyeType)));
-            this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
-            this.eyeright.rotateAngleX = parent.bipedHead.rotateAngleX;
-            this.eyeright.rotationPointX = parent.bipedHead.rotationPointX;
-            this.eyeright.rotationPointY = parent.bipedHead.rotationPointY;
-            GL11.glPushMatrix();
-            GL11.glTranslatef(0, y, 0);
-            GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-            this.eyeright.render(0.0625F);
-            GL11.glPopMatrix();
+                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "r" + display.eyeType)));
+                this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
+                this.eyeright.rotateAngleX = parent.bipedHead.rotateAngleX;
+                this.eyeright.rotationPointX = parent.bipedHead.rotationPointX;
+                this.eyeright.rotationPointY = parent.bipedHead.rotationPointY;
+                GL11.glPushMatrix();
+                GL11.glTranslatef(0, y, 0);
+                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                this.eyeright.render(0.0625F);
+                GL11.glPopMatrix();
+            }
         }
     }
 

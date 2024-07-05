@@ -49,6 +49,10 @@ public interface IFormDisplay {
     boolean hasColor(String type);
 
 
+    boolean isBerserk();
+
+    void setBerserk(boolean isBerserk);
+
     /**
      * @return form's size, default is 1.0f of player's current size
      */

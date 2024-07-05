@@ -138,6 +138,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         addButton(new GuiNpcButton(1107, guiLeft + 112, y, 20, 20, "X"));
         getButton(1107).enabled = display.eyeColor != -1;
 
+        addLabel(new GuiNpcLabel(1072, "display.isBerserk", guiLeft + 145, y + 5));
+        addButton(new GuiNpcButtonYesNo(1072, guiLeft + 192, y, 30, 20, display.isBerserk));
+
         y += 22;
         addLabel(new GuiNpcLabel(108, "model.body", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(108, guiLeft + 61, y, 50, 20, getColor(display.bodyCM)));
@@ -181,6 +184,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             addLabel(new GuiNpcLabel(114, "display.form", guiLeft + 130, y + 5));
             addButton(new GuiNpcButton(114, guiLeft + 167, y, 50, 20, arcoForms, index));
         }
+
+
     }
 
     private int addBodyColors(int y) {
@@ -300,6 +305,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             display.eyeColor = -1;
             refreshValues();
             updateButtons();
+        }
+        //Berserk
+        if (button.id == 1072) {
+            display.isBerserk = button.getValue() == 1;
+            refreshValues();
         }
         // Body
         if(button.id == 108){
@@ -831,6 +841,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         spoofForm.display.formSize = display.formSize;
         spoofForm.display.hasArcoMask = display.hasArcoMask;
         spoofForm.display.hasBodyFur = display.hasBodyFur;
+        spoofForm.display.isBerserk = display.isBerserk;
 
         visualDisplay.formID = spoofForm.id;
     }

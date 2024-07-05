@@ -32,6 +32,7 @@ public class ClientProxy extends CommonProxy {
     public static boolean renderingOutline,renderingGUI,renderingArm;
     public static final int MiddleRenderPass = 1684;
     public static Instant startTime;
+    public static boolean isKasaiLoaded;
 
     public static void eventsInit() {
         FMLCommonHandler.instance().bus().register(new ClientEventHandler());
