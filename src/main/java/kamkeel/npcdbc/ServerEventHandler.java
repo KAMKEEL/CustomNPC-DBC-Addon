@@ -136,6 +136,7 @@ public class ServerEventHandler {
         DBCData dbcData = DBCData.get(player);
         Form form = dbcData.getForm();
         if (form != null) {
+            boolean isInSurvival = !player.capabilities.isCreativeMode;
             PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
             // Reverts player from form when ki or release are 0
             if (dbcData.Release <= 0 || dbcData.Ki <= 0) {
@@ -150,7 +151,7 @@ public class ServerEventHandler {
                 if (player.ticksExisted % 20 == 0)
                     formData.updateClient();
             }
-            if (form.mastery.hasKiDrain()) {
+            if (form.mastery.hasKiDrain() && isInSurvival) {
                 if (player.ticksExisted % 10 == 0) {
 
                     int might = DBCUtils.calculateKiDrainMight(dbcData, player);
