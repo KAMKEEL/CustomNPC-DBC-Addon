@@ -114,6 +114,9 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 //eye colors for ALL forms except ssj4
                 if (form.display.eyeColor != -1 && (hair.contains("EYELEFT") || hair.contains("EYERIGHT"))) {
+                    if (form.display.isBerserk)
+                        ci.cancel();
+
                     if (form.display.hairType.equals("ssj4") && isSaiyan && HD) {
                     } else
                         RenderPlayerJBRA.glColor3f(form.display.eyeColor);

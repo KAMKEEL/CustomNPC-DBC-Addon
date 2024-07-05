@@ -29,6 +29,7 @@ public class FormDisplay implements IFormDisplay {
     public boolean hasBodyFur = false;
     public boolean hasArcoMask = false;
     public boolean effectMajinHair = false;
+    public boolean isBerserk;
 
     public int auraID = -1, outlineID = -1;
 
@@ -56,6 +57,7 @@ public class FormDisplay implements IFormDisplay {
         hasArcoMask = rendering.getBoolean("hasArcoMask");
         effectMajinHair = rendering.getBoolean("effectMajinHair");
         hasBodyFur = rendering.getBoolean("hasBodyFur");
+        isBerserk = rendering.getBoolean("isBerserk");
 
         formSize = rendering.getFloat("formSize");
         keepOriginalSize = rendering.getBoolean("keepOriginalSize");
@@ -84,6 +86,7 @@ public class FormDisplay implements IFormDisplay {
         rendering.setBoolean("hasArcoMask", hasArcoMask);
         rendering.setBoolean("effectMajinHair", effectMajinHair);
         rendering.setBoolean("hasBodyFur", hasBodyFur);
+        rendering.setBoolean("isBerserk", isBerserk);
 
         rendering.setFloat("formSize", formSize);
         rendering.setBoolean("keepOriginalSize", keepOriginalSize);
@@ -139,6 +142,17 @@ public class FormDisplay implements IFormDisplay {
             throw new CustomNPCsException("Invalid type! Legal: firstform, secondform, thirdform, finalform, ultimatecooler");
 
     }
+
+    @Override
+    public boolean isBerserk() {
+        return isBerserk;
+    }
+
+    @Override
+    public void setBerserk(boolean isBerserk) {
+        this.isBerserk = isBerserk;
+    }
+
 
     @Override
     public float getSize() {
