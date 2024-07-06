@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 
-import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
@@ -9,6 +8,7 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -44,7 +44,7 @@ public abstract class MixinJRMCoreH {
     @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
     private static void fix10xKiCost(String[] listOfAttacks, int playerStat, byte[] kiAttackStats, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 0) LocalIntRef stat) {
         calculatingKi = true;
-        EntityPlayer player = Utility.isServer() ? CommonProxy.CurrentJRMCTickPlayer : JRMCoreClient.mc.thePlayer;
+        EntityPlayer player = Utility.isServer() ? CommonProxy.CurrentJRMCTickPlayer : CustomNpcPlusDBC.proxy.getClientPlayer();
 
         DBCData data = DBCData.get(player);
         boolean majin = JRMCoreH.StusEfcts(12, data.StatusEffects);
