@@ -2,6 +2,8 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 
 import JinRyuu.JRMCore.JRMCoreClient;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
@@ -27,6 +29,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.util.ValueUtil;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -44,7 +47,7 @@ public abstract class MixinJRMCoreH {
     @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
     private static void fix10xKiCost(String[] listOfAttacks, int playerStat, byte[] kiAttackStats, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 0) LocalIntRef stat) {
         calculatingKi = true;
-        EntityPlayer player = Utility.isServer() ? CommonProxy.CurrentJRMCTickPlayer : JRMCoreClient.mc.thePlayer;
+        EntityPlayer player = Utility.isServer() ? CommonProxy.CurrentJRMCTickPlayer : getJRMCoreClientPlayer();
 
         DBCData data = DBCData.get(player);
         boolean majin = JRMCoreH.StusEfcts(12, data.StatusEffects);
@@ -60,8 +63,12 @@ public abstract class MixinJRMCoreH {
 
         stat.set(stat2);
         calculatingKi = false;
+    }
 
-
+    @Unique
+    @SideOnly(Side.CLIENT)
+    private static EntityPlayer getJRMCoreClientPlayer(){
+        return JRMCoreClient.mc.thePlayer;
     }
 
 
