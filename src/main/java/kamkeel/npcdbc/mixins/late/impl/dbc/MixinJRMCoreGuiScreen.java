@@ -212,7 +212,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
     }
 
 
-    @Inject(method = "drawScreen", at=@At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"), remap = true)
+    @Inject(method = "drawScreen", at=@At(value = "INVOKE", target = "Ljava/util/List;clear()V", shift = At.Shift.AFTER), remap = true)
     private void onDrawScreen(CallbackInfo ci){
         if(this.guiID != 10)
             return;
