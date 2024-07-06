@@ -7,7 +7,6 @@ import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.model.ModelAura;
-import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -326,12 +325,33 @@ public class AuraRenderer extends RenderDBC {
                 intensityFactor = 10f;
 
             else if (state == DBCForm.SuperSaiyanGod)
-                intensityFactor = 10f;
+                intensityFactor = 15f;
             else if (state == DBCForm.SuperSaiyanBlue)
                 intensityFactor = 15f;
             else if (state == DBCForm.BlueEvo)
                 intensityFactor = 15f;
+        } else if (race == DBCRace.NAMEKIAN) {
+            if (state == DBCForm.NamekFullRelease)
+                intensityFactor = 60f;
+        } else if (race == DBCRace.ARCOSIAN) {
+            if (state == DBCForm.Base)
+                intensityFactor = 150;
+            else if (state == DBCForm.FirstForm)
+                intensityFactor = 120;
+            else if (state == DBCForm.SecondForm)
+                intensityFactor = 100;
+            else if (state == DBCForm.ThirdForm)
+                intensityFactor = 90;
+            else if (state == DBCForm.FinalForm)
+                intensityFactor = 60;
+            else if (state == DBCForm.SuperForm)
+                intensityFactor = 40;
+            else if (state == DBCForm.UltimateForm)
+                intensityFactor = 50f;
+
         }
+        if (DBCForm.isGod(race, state))
+            intensityFactor = 20f;
 
         if (state < 1)
             state = 1;
@@ -364,12 +384,37 @@ public class AuraRenderer extends RenderDBC {
             else if (state == DBCForm.BlueEvo)
                 sizeFactor = 6;
 
+        } else if (race == DBCRace.NAMEKIAN) {
+            if (state == DBCForm.NamekFullRelease)
+                sizeFactor = 4;
+            else if (state == DBCForm.NamekGod)
+                sizeFactor = 1f;
+        } else if (race == DBCRace.ARCOSIAN) {
+            if (state == DBCForm.Base)
+                sizeFactor = 0.5f;
+            else if (state == DBCForm.FirstForm)
+                sizeFactor = 1;
+            else if (state == DBCForm.SecondForm)
+                sizeFactor = 1.5f;
+            else if (state == DBCForm.ThirdForm)
+                sizeFactor = 2;
+            else if (state == DBCForm.FinalForm)
+                sizeFactor = 3;
+            else if (state == DBCForm.SuperForm)
+                sizeFactor = 4;
+            else if (state == DBCForm.UltimateForm)
+                sizeFactor = 4;
+            else if (state == DBCForm.ArcoGod)
+                sizeFactor = 1;
         }
 
-        if (data.getFormID() > -1) {
+        if (DBCForm.isGod(race, state))
+            sizeFactor = 1f;
+
+        if (data.getFormID() > -1 || race == DBCRace.NAMEKIAN && state == DBCForm.NamekGiant) {
             int release = data.getRelease();
             float size = JRMCoreHDBC.DBCsizeBasedOnRace2(race, state);
-            float effectiveSize = size * ValueUtil.clamp(release, 15, 25) * 0.015f;
+            float effectiveSize = size * ValueUtil.clamp(release, 15, 25) * 0.025f;
             float factor = effectiveSize / size * 10;
             return size * factor;
         }

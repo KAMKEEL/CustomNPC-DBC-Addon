@@ -22,8 +22,10 @@ import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.culling.Frustrum;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -55,6 +57,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
     @Unique
     private String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+
 
 
 

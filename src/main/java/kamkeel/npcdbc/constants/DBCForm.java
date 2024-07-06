@@ -33,8 +33,8 @@ public class DBCForm {
     ////////////////////////////////
     ////////////////////////////////
     // Namekian forms
-    public static final int NamekGiant = 1;
-    public static final int NamekFullRelease = 2;
+    public static final int NamekFullRelease = 1;
+    public static final int NamekGiant = 2;
     public static final int NamekGod = 3;
 
     ////////////////////////////////
