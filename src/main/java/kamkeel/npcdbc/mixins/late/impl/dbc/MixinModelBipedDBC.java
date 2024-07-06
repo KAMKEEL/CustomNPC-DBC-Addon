@@ -12,6 +12,7 @@ import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -152,8 +153,11 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 }
                 //hair color for all forms
                 if ((isHairPreset(hair) || hair.contains("EYEBROW"))) {
-                    if (form.display.hairColor == -1)
-                        ColorMode.glColorInt(dbcData.renderingHairColor, 1f);
+                    if (form.display.hairColor == -1){
+                        if(dbcData.Race != DBCRace.NAMEKIAN){
+                            ColorMode.glColorInt(dbcData.renderingHairColor, 1f);
+                        }
+                    }
                     else
                         RenderPlayerJBRA.glColor3f(form.display.hairColor);
                 }
