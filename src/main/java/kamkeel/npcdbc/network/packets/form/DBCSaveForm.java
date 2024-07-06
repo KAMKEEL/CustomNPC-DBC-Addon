@@ -61,7 +61,7 @@ public class DBCSaveForm extends AbstractPacket {
 
         if(newParentForm != oldParentForm || newChildForm != oldChildForm){
             form.removeParentForm();
-            if(newParentForm == -1)
+            if(newParentForm != -1)
                 form.linkParent(newParentForm);
 
             form.removeChildForm();
