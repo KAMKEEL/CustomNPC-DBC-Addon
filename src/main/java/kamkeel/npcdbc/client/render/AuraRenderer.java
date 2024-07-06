@@ -330,6 +330,11 @@ public class AuraRenderer extends RenderDBC {
                 intensityFactor = 15f;
             else if (state == DBCForm.BlueEvo)
                 intensityFactor = 15f;
+        } else if (race == DBCRace.HUMAN) {
+            if (state == DBCForm.HumanBuffed)
+                intensityFactor = 150;
+            if (state == DBCForm.HumanFullRelease)
+                intensityFactor = 150f;
         } else if (race == DBCRace.NAMEKIAN) {
             if (state == DBCForm.NamekFullRelease)
                 intensityFactor = 60f;
@@ -384,6 +389,11 @@ public class AuraRenderer extends RenderDBC {
             else if (state == DBCForm.BlueEvo)
                 sizeFactor = 6;
 
+        } else if (race == DBCRace.HUMAN) {
+            if (state == DBCForm.HumanBuffed)
+                sizeFactor = 4;
+            if (state == DBCForm.HumanFullRelease)
+                sizeFactor = 4;
         } else if (race == DBCRace.NAMEKIAN) {
             if (state == DBCForm.NamekFullRelease)
                 sizeFactor = 4;

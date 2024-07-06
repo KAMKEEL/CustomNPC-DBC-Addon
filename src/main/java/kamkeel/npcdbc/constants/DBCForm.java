@@ -8,8 +8,8 @@ public class DBCForm {
     ////////////////////////////////
     ////////////////////////////////
     // Human forms
-    public static final int HumanBuffed = 1;
-    public static final int HumanFullRelease = 2;
+    public static final int HumanFullRelease = 1;
+    public static final int HumanBuffed = 2;
     public static final int HumanGod = 3;
 
 
