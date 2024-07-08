@@ -25,6 +25,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -160,7 +161,7 @@ public class ServerEventHandler {
                     cost *= ((double) dbcData.Release / 100);
                     cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
 
-                    dbcData.stats.restoreKiFlat((int) (-cost  / form.mastery.kiDrainTimer * 10));
+                    dbcData.stats.restoreKiFlat((int) (cost  / form.mastery.kiDrainTimer * 10));
                 }
             }
 

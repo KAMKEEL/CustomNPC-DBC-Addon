@@ -22,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 
 import static JinRyuu.JRMCore.JRMCoreH.*;
@@ -636,9 +637,9 @@ public class DBCUtils {
         String skillX = dbcData.RacialSkills;
         noBonusEffects = true;
 
-        int strengthBuff = JRMCoreH.getPlayerAttribute(dbcData.player, playerAttributes, 0, dbcData.State, 0, 1, skillX, dbcData.Release, dbcData.ArcReserve,  false, false, false, false, false, false, 1, null, false, "") - playerAttributes[0];
-        int dexBuff = JRMCoreH.getPlayerAttribute(dbcData.player, playerAttributes, 1, dbcData.State, 0, 1, skillX, dbcData.Release, dbcData.ArcReserve,  false, false, false, false, false, false, 1, null, false, "") - playerAttributes[1];
-        int willBuff = JRMCoreH.getPlayerAttribute(dbcData.player, playerAttributes, 3, dbcData.State, 0, 1, skillX, dbcData.Release, dbcData.ArcReserve,  false, false, false, false, false, false, 1, null, false, "") - playerAttributes[3];
+        int strengthBuff = JRMCoreH.getPlayerAttribute(dbcData.player, playerAttributes, 0, dbcData.State, 0, dbcData.Race, skillX, dbcData.Release, dbcData.ArcReserve,  false, false, false, false, false, false, 1, null, false, "") - playerAttributes[0];
+        int dexBuff = JRMCoreH.getPlayerAttribute(dbcData.player, playerAttributes, 1, dbcData.State, 0, dbcData.Race, skillX, dbcData.Release, dbcData.ArcReserve,  false, false, false, false, false, false, 1, null, false, "") - playerAttributes[1];
+        int willBuff = JRMCoreH.getPlayerAttribute(dbcData.player, playerAttributes, 3, dbcData.State, 0, dbcData.Race, skillX, dbcData.Release, dbcData.ArcReserve,  false, false, false, false, false, false, 1, null, false, "") - playerAttributes[3];
 
         noBonusEffects = false;
 
