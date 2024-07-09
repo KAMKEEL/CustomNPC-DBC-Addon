@@ -12,12 +12,11 @@ import java.util.HashMap;
 
 public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollListener {
 
-    private HashMap<String, Integer> data = new HashMap<>();
-
     private final Form form;
     private GuiCustomScroll dbcRaces;
     private GuiCustomScroll dbcForms;
     private final HashMap<Integer, HashMap<Integer, String>> allForms = new HashMap<>();
+    private ArrayList<Integer> stateIDs = new ArrayList<>();
     private final ArrayList<String> races = new ArrayList<>();
     private int selectedRace = 0;
 
@@ -68,8 +67,8 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
         dbcForms.guiLeft = guiLeft + 190;
         dbcForms.guiTop = guiTop + 24;
         dbcForms.setUnsortedList(new ArrayList<>(allForms.get(selectedRace).values()));
-        int selected = form.getFormRequirement(selectedRace);
-        dbcForms.selected = selected == 14 ? 11 : selected == 15 ? 12 : selected;
+        stateIDs = new ArrayList<>(allForms.get(selectedRace).keySet());
+        dbcForms.selected = form.getFormRequirement(selectedRace);
         this.addScroll(dbcForms);
 
         addButton(new GuiNpcButton(10, guiLeft + 190, guiTop + 184, 72, 20, "gui.remove"));
@@ -106,8 +105,7 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
             initGui();
         }
         if(guiCustomScroll.id == 1){
-            int selected = guiCustomScroll.selected == 11 ? 14 : guiCustomScroll.selected == 12 ? 15 : guiCustomScroll.selected; //ssj4 and ssbevo fix
-            form.addFormRequirement(selectedRace, (byte) selected);
+            form.addFormRequirement(selectedRace, stateIDs.get(guiCustomScroll.selected).byteValue());
         }
     }
 
