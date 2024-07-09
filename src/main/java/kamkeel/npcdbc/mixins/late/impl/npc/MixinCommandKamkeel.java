@@ -4,6 +4,7 @@ import kamkeel.command.CommandKamkeel;
 import kamkeel.command.CommandKamkeelBase;
 import kamkeel.npcdbc.command.AuraCommand;
 import kamkeel.npcdbc.command.FormCommand;
+import kamkeel.npcdbc.command.FormMasteryCommand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,6 +18,7 @@ public abstract class MixinCommandKamkeel {
     public void init(CallbackInfo ci) {
         registerCommand(new FormCommand());
         registerCommand(new AuraCommand());
+        registerCommand(new FormMasteryCommand());
     }
 
     @Shadow
