@@ -263,9 +263,9 @@ public class EntityAura extends Entity {
     }
 
     public void updateDisplay() {
-        if (entity.isInWater())
+        if (entity.isInWater() && !isKaioken)
             ((IEntityMC) entity).setRenderPass(renderPass = 0);
-        else if (renderPass == 0)
+        else if (renderPass == 0 && !isKaioken)
            ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
 
         if (isKaioken) {
@@ -399,8 +399,9 @@ public class EntityAura extends Entity {
     }
 
     public EntityAura spawn() {
-        ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
-        renderPass = ClientProxy.MiddleRenderPass;
+        if (!isKaioken)
+            renderPass = ClientProxy.MiddleRenderPass;
+        ((IEntityMC) entity).setRenderPass(ClientProxy.MiddleRenderPass);
 
         entity.ignoreFrustumCheck = true;
 

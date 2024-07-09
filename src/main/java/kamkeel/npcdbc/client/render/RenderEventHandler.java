@@ -88,7 +88,11 @@ public class RenderEventHandler {
             glPushMatrix();
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
             glStencilMask(0x0);
+
+            for (EntityAura child : aura.children.values())
+                AuraRenderer.Instance.renderAura(child, partialTicks);
             AuraRenderer.Instance.renderAura(aura, partialTicks);
+
 
             // NewAura.renderAura(aura, partialTicks);
             glPopMatrix();
@@ -153,7 +157,11 @@ public class RenderEventHandler {
             glPushMatrix();
             glLoadMatrix(DEFAULT_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
             glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
+
+            for (EntityAura child : aura.children.values())
+                AuraRenderer.Instance.renderAura(child, partialTicks);
             AuraRenderer.Instance.renderAura(aura, partialTicks);
+
             //  NewAura.renderAura(aura, partialTicks);
             glPopMatrix();
         }
