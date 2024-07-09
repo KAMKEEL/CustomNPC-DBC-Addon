@@ -3,16 +3,12 @@ package kamkeel.npcdbc.client.gui.component;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.form.DBCRequestForm;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.util.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
 
 public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollListener {
 
@@ -33,7 +29,7 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
         setBackground("menubg.png");
         xSize = 360;
         ySize = 216;
-        
+
         allForms.put(DBCRace.HUMAN, DBCForm.getFormsMap(DBCRace.HUMAN));
         allForms.put(DBCRace.SAIYAN, DBCForm.getFormsMap(DBCRace.SAIYAN));
         allForms.put(DBCRace.HALFSAIYAN, DBCForm.getFormsMap(DBCRace.HALFSAIYAN));
@@ -100,7 +96,8 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
             initGui();
         }
         if(guiCustomScroll.id == 1){
-            form.addFormRequirement(selectedRace, (byte) guiCustomScroll.selected);
+            int selected = guiCustomScroll.selected == 11 ? 14 : guiCustomScroll.selected == 12 ? 15 : guiCustomScroll.selected; //ssj4 and ssbevo fix
+            form.addFormRequirement(selectedRace, (byte) selected);
         }
     }
 
