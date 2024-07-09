@@ -105,7 +105,9 @@ display.godRatio=GoD Multiplier
 display.mysticStackable=Mystic Stackable
 display.mysticRatio=Mystic Multiplier
 display.legendaryMulti=Legendary Multiplier
+display.legendaryColor=Legendary Color
 display.divineMulti=Divine Multiplier
+display.divineColor=Divine Color
 display.majinMulti=Majin Multiplier
 
 display.selectAura=No Aura

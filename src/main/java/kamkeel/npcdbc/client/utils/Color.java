@@ -65,4 +65,10 @@ public class Color {
         return (float) (color & 0xFF) / 255f;
     }
 
+    public static String getColor(int input) {
+        String str;
+        for (str = Integer.toHexString(input); str.length() < 6; str = "0" + str) {
+        }
+        return str;
+    }
 }

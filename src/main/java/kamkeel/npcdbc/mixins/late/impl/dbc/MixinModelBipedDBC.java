@@ -152,13 +152,13 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 }
                 //hair color for all forms
                 if ((isHairPreset(hair) || hair.contains("EYEBROW"))) {
-                    if (form.display.hairColor == -1){
+                    if (!form.display.hasHairCol(dbcData)) {
                         if(dbcData.Race != DBCRace.NAMEKIAN){
                             ColorMode.glColorInt(dbcData.renderingHairColor, 1f);
                         }
                     }
                     else
-                        RenderPlayerJBRA.glColor3f(form.display.hairColor);
+                        RenderPlayerJBRA.glColor3f(form.display.getHairColor(dbcData));
                 }
 
 
@@ -176,7 +176,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 }
                 // Tail Color
                 if (hair.contains("SJT")) {
-                    int color = isMonke ? form.display.getFurColor(dbcData.DNS) : form.display.hairColor;
+                    int color = isMonke ? form.display.getFurColor(dbcData) : form.display.getHairColor(dbcData);
                     if (color != -1) {
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
                         RenderPlayerJBRA.glColor3f(color);
@@ -247,10 +247,10 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 DBCData data = DBCData.get(abstractClientPlayer);
                 //color CH
-                if (form.display.hairColor == -1)
+                if (!form.display.hasHairCol(data))
                     RenderPlayerJBRA.glColor3f(data.renderingHairColor);
                 else
-                    RenderPlayerJBRA.glColor3f(form.display.hairColor);
+                    RenderPlayerJBRA.glColor3f(form.display.getHairColor(data));
 
                 //if bald or invalid CH, remove. Set SSJ4 to default if invalid
                 if (form.display.hairType.toLowerCase().equals("bald"))

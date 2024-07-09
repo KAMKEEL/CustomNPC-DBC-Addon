@@ -43,35 +43,42 @@ public class TransformController {
     //////////////////////////////////////////////////
     // Client  side handling
 
-    //WIP, only 85% done, but is functional and won't break
     @SideOnly(Side.CLIENT)
     public static void Ascend(Form form) {
-        Form currentForm = DBCData.getForm(Minecraft.getMinecraft().thePlayer);
+        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        Form currentForm = DBCData.getForm(player);
         if (cantTransform || (rage > 0 && transformed) || currentForm != null && currentForm.getID() == form.id)
             return;
         dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
         if (dbcData == null || JRMCoreH.curRelease <= 0 || JRMCoreH.curEnergy <= 0)
             return;
 
+        float formLevel = PlayerDataUtil.getClientDBCInfo().getFormLevel(form.id);
         time++;
         releaseTime++;
         soundTime++;
         TransformController.setAscending(true);
-        rageValue = getRageMeterIncrementation(form, PlayerDataUtil.getClientDBCInfo().getFormLevel(form.id));
+        rageValue = getRageMeterIncrementation(form, formLevel);
         rage += rageValue;
         JRMCoreH.TransSaiCurRg = (byte) rage;
         PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
 
-
-
         if (time >= 6) { //increments rage meter and drain ki cost every 6 ticks
             time = 0;
-            int cost = JRMCoreH.maxEnergy / 20;
+            int cost = JRMCoreH.maxEnergy / 50;
             if (JRMCoreH.curEnergy < cost)
                 return;
             JRMCoreH.Cost(cost);
 
         }
+//        if (player.ticksExisted % 5 == 0) { //increments rage meter and drain ki cost every 6 ticks
+//            float toDrain = form.mastery.kiDrain * form.mastery.calculateMulti("kiDrain", formLevel);
+//
+//            dbcData.stats.restoreKiPercent(-toDrain / form.mastery.kiDrainTimer * 10);
+//            PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcEnrgy", (int) dbcData.Ki).generatePacket());
+//
+//
+//        }
         if (JRMCoreH.curRelease < 50 && releaseTime >= 10) { //if release is less than 50%, increment it until it is so
             float en = 100.0F / JRMCoreH.maxEnergy * JRMCoreH.curEnergy;
             float re = JRMCoreH.curRelease;
