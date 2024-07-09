@@ -68,11 +68,16 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
         dbcForms.guiLeft = guiLeft + 190;
         dbcForms.guiTop = guiTop + 24;
         dbcForms.setUnsortedList(new ArrayList<>(allForms.get(selectedRace).values()));
-        dbcForms.selected = form.getFormRequirement(selectedRace);
+        int selected = form.getFormRequirement(selectedRace);
+        dbcForms.selected = selected == 14 ? 11 : selected == 15 ? 12 : selected;
         this.addScroll(dbcForms);
 
-        addButton(new GuiNpcButton(10, guiLeft + 219, guiTop + 184, 95, 20, "gui.remove"));
-        addButton(new GuiNpcButton(1, guiLeft + xSize - 25, guiTop + ySize - 25, 20, 20, "X"));
+        addButton(new GuiNpcButton(10, guiLeft + 190, guiTop + 184, 72, 20, "gui.remove"));
+        addButton(new GuiNpcButton(11, guiLeft + 268, guiTop + 184, 72, 20, "Remove All")); //#TODO: add localisation
+
+        addButton(new GuiNpcButton(1, guiLeft + xSize - 25, guiTop + 3, 20, 20, "X"));
+
+
     }
 
     @Override
@@ -84,6 +89,11 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
         }
         if(id == 10){
             form.removeFormRequirement(selectedRace);
+            dbcForms.selected = -1;
+        }
+        if (id == 11) {
+            for (int i = 0; i < 6; i++)
+                form.removeFormRequirement(i);
             dbcForms.selected = -1;
         }
     }
