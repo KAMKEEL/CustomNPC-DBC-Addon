@@ -10,7 +10,7 @@ public class FormStackable implements IFormStackable {
 
     public boolean vanillaStackable = false;
     public boolean kaiokenStackable = true, uiStackable = true, godStackable = true, mysticStackable = true;
-    public float kaiokenStrength = 1.0f, uiStrength = 1.0f, godStrength = 1.0f, mysticStrength = 1.0f;
+    public float kaiokenStrength = 1.0f, uiStrength = 1.0f, godStrength = 1.0f, mysticStrength = 1.0f, legendaryStrength = 1.0f, divineStrength = 1.0f, majinStrength = 1.0f;
     public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
 
     public FormStackable(Form parent) {
@@ -30,6 +30,11 @@ public class FormStackable implements IFormStackable {
         godStackable = stack.getBoolean("godStackable");
         mysticStrength = stack.getFloat("mysticStrength");
         mysticStackable = stack.getBoolean("mysticStackable");
+
+        legendaryStrength = !stack.hasKey("legendaryStrength") ? 1 : stack.getFloat("legendaryStrength");
+        divineStrength = !stack.hasKey("divineStrength") ? 1 : stack.getFloat("divineStrength");
+        majinStrength = !stack.hasKey("majinStrength") ? 1 : stack.getFloat("majinStrength");
+
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -45,6 +50,11 @@ public class FormStackable implements IFormStackable {
         stack.setBoolean("godStackable", godStackable);
         stack.setFloat("mysticStrength", mysticStrength);
         stack.setBoolean("mysticStackable", mysticStackable);
+
+        stack.setFloat("legendaryStrength", legendaryStrength);
+        stack.setFloat("divineStrength", divineStrength);
+        stack.setFloat("majinStrength", majinStrength);
+
         compound.setTag("stackableForms", stack);
         return compound;
     }
@@ -108,6 +118,15 @@ public class FormStackable implements IFormStackable {
             case DBCForm.Mystic:
                 mysticStrength = multi;
                 break;
+            case DBCForm.Legendary:
+                legendaryStrength = multi;
+                break;
+            case DBCForm.Divine:
+                divineStrength = multi;
+                break;
+            case DBCForm.Majin:
+                majinStrength = multi;
+                break;
         }
     }
 
@@ -122,6 +141,12 @@ public class FormStackable implements IFormStackable {
                 return godStrength;
             case DBCForm.Mystic:
                 return mysticStrength;
+            case DBCForm.Legendary:
+                return legendaryStrength;
+            case DBCForm.Divine:
+                return divineStrength;
+            case DBCForm.Majin:
+                return majinStrength;
             default:
                 return 1.0f;
         }

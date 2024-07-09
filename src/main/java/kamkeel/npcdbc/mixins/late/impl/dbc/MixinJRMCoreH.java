@@ -112,11 +112,11 @@ public abstract class MixinJRMCoreH {
             JGConfigDBCFormMastery.FM_Enabled = masteryCalc;
 
             DBCData d = DBCData.get(player);
-            float[] multis = form.getAllMulti();
+            float[] formMulti = form.getAllMulti();
             float stackableMulti = d.isForm(DBCForm.Kaioken) ? form.stackable.getFormMulti(DBCForm.Kaioken) : d.isForm(DBCForm.UltraInstinct) ? form.stackable.getFormMulti(DBCForm.UltraInstinct) : d.isForm(DBCForm.GodOfDestruction) ? form.stackable.getFormMulti(DBCForm.GodOfDestruction) : d.isForm(DBCForm.Mystic) ? form.stackable.getFormMulti(DBCForm.Mystic) : 1.0f;
             double fmvalue = 1.0f;
 
-            //don't forget to multiply this by legend/divine/majin multis
+            //don't forget to multiply this by legend/divine/majin formMulti
             if (d.isForm(DBCForm.Kaioken) && d.State2 > 1) {
                 fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Kaioken", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
                 stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.Kaioken) * d.State2 / (JRMCoreH.TransKaiDmg.length - 1);
@@ -130,19 +130,29 @@ public abstract class MixinJRMCoreH {
 
             stackableMulti *= (float) fmvalue;
 
+            float statusMulti = 1;
+            if (d.isForm(DBCForm.Legendary))
+                statusMulti += statusMulti * form.stackable.legendaryStrength;
+            if (d.isForm(DBCForm.Divine))
+                statusMulti += statusMulti * form.stackable.divineStrength;
+            if (d.isForm(DBCForm.Majin))
+                statusMulti += statusMulti * form.stackable.majinStrength;
+
             float currentFormLevel = dbcData.addonFormLevel;
 
             float[] multiBonus = dbcData.bonus.getMultiBonus();
             if (attribute == DBCAttribute.Strength) // STR
-                result *= (multis[0] + multiBonus[0]);
+                result *= (formMulti[0] + multiBonus[0] + statusMulti);
             else if (attribute == DBCAttribute.Dexterity) // DEX
-                result *= (multis[1] + multiBonus[1]);
+                result *= (formMulti[1] + multiBonus[1] + statusMulti);
             else if (attribute == DBCAttribute.Willpower) // WIL
-                result *= (multis[2] + multiBonus[2]);
+                result *= (formMulti[2] + multiBonus[2] + statusMulti);
 
 
-            if (attribute == 0 || attribute == 1 || attribute == 3)
+            if (attribute == 0 || attribute == 1 || attribute == 3) {
                 result *= (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
+                //      result += statusMulti;
+            }
 
             // Add Bonus Multi to Base Attributes
             if (attribute == DBCAttribute.Strength) // STR
