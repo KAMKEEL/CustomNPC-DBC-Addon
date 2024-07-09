@@ -45,9 +45,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     @Unique
     String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
 
-    @Redirect(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelRenderer;render(F)V", ordinal = 10))
+    @Redirect(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelRenderer;render(F)V", ordinal = 10, remap = true))
     public void fixTailAnimNotSyncingSai(ModelRenderer instance, float i) {
-
     }
 
     @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPopMatrix()V", ordinal = 3))
@@ -55,7 +54,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
         SaiT1.render(par1);
     }
 
-    @Redirect(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelRenderer;render(F)V", ordinal = 6))
+    @Redirect(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelRenderer;render(F)V", ordinal = 6, remap = true))
     public void fixTailAnimNotSyncingArco(ModelRenderer instance, float i) {
 
     }
