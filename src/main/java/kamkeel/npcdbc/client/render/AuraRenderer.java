@@ -137,12 +137,13 @@ public class AuraRenderer extends RenderDBC {
 
         ////////////////////////////////////////
         ////////////////////////////////////////
-        RenderEventHandler.enableStencilWriting(aura.entity.getEntityId()% 256);
+        glStencilFunc(GL_ALWAYS, aura.entity.getEntityId() % 256, 0xFF);
+        glStencilMask(0xFF);
         float r = rand.nextInt(50);
         if (aura.hasLightning && r < 10 && age < 10)
             lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
-        RenderEventHandler.disableStencilWriting(aura.entity.getEntityId() % 256,false);
-
+        glStencilFunc(GL_GREATER, aura.entity.getEntityId() % 256, 0xFF);
+        glStencilMask(0x0);
 
         glPopMatrix();
         glDepthMask(true);
