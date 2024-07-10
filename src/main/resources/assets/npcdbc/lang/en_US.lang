@@ -189,7 +189,20 @@ aura.hidden=Hidden
 editor.invalid=Editor cannot show
 
 ############################
-## Status Effects
+## Form/Aura information displayed in the CNPC->DBC inventory
+############################
+npcdbc.inventory.dodge=Dodge
+npcdbc.inventory.stackable=Stackable
+npcdbc.inventory.strength=Strength
+npcdbc.inventory.dexterity=Dexterity
+npcdbc.inventory.willpower=Will Power
+npcdbc.inventory.mastery=Mastery
+npcdbc.inventory.selected=Selected
+npcdbc.inventory.noauraselected=No Aura Selected
+
+############################
+## Status Effects 
+## (Shows when hovering over status effects in Modern GUI mode)
 ############################
 dbc.se.blocking=Blocking
 dbc.se.flying=Flying

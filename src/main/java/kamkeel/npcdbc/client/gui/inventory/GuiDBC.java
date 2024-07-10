@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.client.gui.inventory;
 
-import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.gui.component.GuiFormAuraScroll;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -9,18 +8,19 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.aura.DBCGetAura;
-import kamkeel.npcdbc.network.packets.aura.DBCRequestAura;
 import kamkeel.npcdbc.network.packets.aura.DBCSelectAura;
 import kamkeel.npcdbc.network.packets.aura.DBCSetAura;
+import kamkeel.npcdbc.network.packets.aura.DBCRequestAura;
 import kamkeel.npcdbc.network.packets.form.DBCGetForm;
-import kamkeel.npcdbc.network.packets.form.DBCRequestForm;
 import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
+import kamkeel.npcdbc.network.packets.form.DBCRequestForm;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.gui.player.inventory.GuiCNPCInventory;
 import noppes.npcs.client.gui.util.*;
@@ -77,13 +77,13 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             guiScroll.setSize(135, 118);
         }
 
-        GuiNpcButton formsButton = new GuiNpcButton(40, guiLeft + 5, guiTop + 4, "Forms");
+        GuiNpcButton formsButton = new GuiNpcButton(40, guiLeft + 5, guiTop + 4, "global.customforms");
         formsButton.width = 65;
         formsButton.enabled = activePage != 0;
         formsButton.packedFGColour = 0xffc626;
         this.addButton(formsButton);
 
-        GuiNpcButton auras = new GuiNpcButton(41, guiLeft + 75, guiTop + 4, "Auras");
+        GuiNpcButton auras = new GuiNpcButton(41, guiLeft + 75, guiTop + 4, "global.customauras");
         auras.packedFGColour = 0xf04fff;
         auras.enabled = activePage != 1;
         auras.width = 65;
@@ -165,23 +165,23 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 }
 
                 int stats = guiTop + 18 + 48;
-                String label = "§f" + JRMCoreH.trl("jrmc", "Strength");
+                String label = "§f" + StatCollector.translateToLocal("npcdbc.inventory.strength") + ":";
                 String info = "§4x§c" + viewingForm.strengthMulti;
                 fontRendererObj.drawString(label, guiLeft + 143, stats, CustomNpcResourceListener.DefaultTextColor, true);
                 fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
 
-                label = "§f" + JRMCoreH.trl("jrmc", "Dexterity");
+                label = "§f" + StatCollector.translateToLocal("npcdbc.inventory.dexterity") + ":";
                 info = "§3x§b" + viewingForm.dexMulti;
                 fontRendererObj.drawString(label, guiLeft + 143, stats += 12, CustomNpcResourceListener.DefaultTextColor, true);
                 fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
 
-                label = "§f" + JRMCoreH.trl("jrmc", "Willpower");
+                label = "§f" + StatCollector.translateToLocal("npcdbc.inventory.willpower") + ":";
                 info = "§6x§e" + viewingForm.willMulti;
                 fontRendererObj.drawString(label, guiLeft + 143, stats += 12, CustomNpcResourceListener.DefaultTextColor, true);
                 fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
 
                 if (this.dbcInfo != null && this.dbcInfo.formLevels.containsKey(viewingForm.id)) {
-                    label = "§fMastery:";
+                    label = "§f" + StatCollector.translateToLocal("npcdbc.inventory.mastery") + ":";
                     double masteryValue = this.dbcInfo.formLevels.get(viewingForm.id);
                     String roundedMastery = String.format("%.2f", masteryValue);
                     info = "§a" + roundedMastery + " §7/ §a" + viewingForm.mastery.maxLevel;
@@ -189,13 +189,13 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                     fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
                 }
                 if (!stackables.isEmpty()) {
-                    label = "§fStackable:";
+                    label = "§f" + StatCollector.translateToLocal("npcdbc.inventory.stackable") + ":";
                     info = String.join("§7, ", stackables);
                     fontRendererObj.drawString(label, guiLeft + 143, stats += 12, CustomNpcResourceListener.DefaultTextColor, true);
                     fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
                 }
                 if (viewingForm.mastery.hasDodge()) {
-                    label = "§fDodge:";
+                    label = "§f" + StatCollector.translateToLocal("npcdbc.inventory.dodge") + ":";
                     double dodgeChance = viewingForm.mastery.getDodgeChance();
                     double dodgeMultiplier = viewingForm.mastery.calculateMulti("dodge", dbcInfo.getFormLevel(viewingForm.id));
                     double result = dodgeChance * dodgeMultiplier;
@@ -207,11 +207,11 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 }
             }
             if (selectedForm != null) {
-                String drawSelected = "§fSelected: " + selectedForm.getMenuName();
+                String drawSelected = "§f" + StatCollector.translateToLocal("npcdbc.inventory.selected") + ":" + selectedForm.getMenuName();
                 fontRendererObj.drawString(drawSelected, guiLeft + 145, guiTop + ySize - 5, CustomNpcResourceListener.DefaultTextColor, true);
             }
         } else if (loaded) {
-            String drawString = "§fNo Aura Selected";
+            String drawString = "§f" + StatCollector.translateToLocal("npcdbc.inventory.noauraselected") + ":";
             if (viewingAura != null) {
                 drawString = viewingAura.getMenuName();
             }
