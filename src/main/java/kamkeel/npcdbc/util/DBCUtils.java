@@ -644,7 +644,6 @@ public class DBCUtils {
         noBonusEffects = false;
 
         float might = strengthBuff * 0.4F + dexBuff * 0.25F + willBuff * 0.35F;
-        player.addChatMessage(new ChatComponentText(""+strengthBuff+",,,,"+ playerAttributes[0]));
 
         return Math.abs((int) might);
     }
