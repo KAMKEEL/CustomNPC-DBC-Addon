@@ -207,11 +207,11 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 }
             }
             if (selectedForm != null) {
-                String drawSelected = "§f" + StatCollector.translateToLocal("npcdbc.inventory.selected") + ":" + selectedForm.getMenuName();
+                String drawSelected = "§f" + StatCollector.translateToLocal("npcdbc.inventory.selected") + ": " + selectedForm.getMenuName();
                 fontRendererObj.drawString(drawSelected, guiLeft + 145, guiTop + ySize - 5, CustomNpcResourceListener.DefaultTextColor, true);
             }
         } else if (loaded) {
-            String drawString = "§f" + StatCollector.translateToLocal("npcdbc.inventory.noauraselected") + ":";
+            String drawString = "§f" + StatCollector.translateToLocal("npcdbc.inventory.noauraselected");
             if (viewingAura != null) {
                 drawString = viewingAura.getMenuName();
             }
