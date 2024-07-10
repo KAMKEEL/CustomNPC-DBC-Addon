@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui.inventory;
 
+import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.gui.component.GuiFormAuraScroll;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -8,12 +9,12 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.aura.DBCGetAura;
+import kamkeel.npcdbc.network.packets.aura.DBCRequestAura;
 import kamkeel.npcdbc.network.packets.aura.DBCSelectAura;
 import kamkeel.npcdbc.network.packets.aura.DBCSetAura;
-import kamkeel.npcdbc.network.packets.aura.DBCRequestAura;
 import kamkeel.npcdbc.network.packets.form.DBCGetForm;
-import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
 import kamkeel.npcdbc.network.packets.form.DBCRequestForm;
+import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -164,17 +165,17 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 }
 
                 int stats = guiTop + 18 + 48;
-                String label = "§fStrength:";
+                String label = "§f" + JRMCoreH.trl("jrmc", "Strength");
                 String info = "§4x§c" + viewingForm.strengthMulti;
                 fontRendererObj.drawString(label, guiLeft + 143, stats, CustomNpcResourceListener.DefaultTextColor, true);
                 fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
 
-                label = "§fDexterity:";
+                label = "§f" + JRMCoreH.trl("jrmc", "Dexterity");
                 info = "§3x§b" + viewingForm.dexMulti;
                 fontRendererObj.drawString(label, guiLeft + 143, stats += 12, CustomNpcResourceListener.DefaultTextColor, true);
                 fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
 
-                label = "§fWillpower:";
+                label = "§f" + JRMCoreH.trl("jrmc", "Willpower");
                 info = "§6x§e" + viewingForm.willMulti;
                 fontRendererObj.drawString(label, guiLeft + 143, stats += 12, CustomNpcResourceListener.DefaultTextColor, true);
                 fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);

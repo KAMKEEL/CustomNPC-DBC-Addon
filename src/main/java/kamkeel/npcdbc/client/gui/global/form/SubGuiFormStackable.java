@@ -49,7 +49,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         y += 23;
         maxScroll += 23;
-        scrollWindow.addLabel(new GuiNpcLabel(2, "Kaioken Stackable", guiLeft + 4, y + 5));
+        scrollWindow.addLabel(new GuiNpcLabel(2, "display.kkStackable", guiLeft + 4, y + 5));
         scrollWindow.addButton(new GuiNpcButtonYesNo(2, guiLeft + 115, y, 50, 20, stackable.kaiokenStackable));
         scrollWindow.getLabel(2).color = 0xffffff;
 
