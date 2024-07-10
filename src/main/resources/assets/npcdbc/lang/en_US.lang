@@ -200,6 +200,13 @@ npcdbc.inventory.mastery=Mastery
 npcdbc.inventory.selected=Selected
 npcdbc.inventory.noauraselected=No Aura Selected
 
+npcdbc.inventory.stackable.dbc=DBC
+npcdbc.inventory.stackable.kk=KK
+npcdbc.inventory.stackable.ui=UI
+npcdbc.inventory.stackable.godofdestruction=GoD
+npcdbc.inventory.stackable.mystic=Mystic
+
+
 ############################
 ## Status Effects 
 ## (Shows when hovering over status effects in Modern GUI mode)

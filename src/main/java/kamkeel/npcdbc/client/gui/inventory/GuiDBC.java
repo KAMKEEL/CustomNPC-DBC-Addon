@@ -459,19 +459,19 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         stackables.clear();
         if (viewingForm != null) {
             if (viewingForm.stackable.vanillaStackable) {
-                stackables.add("§eDBC");
+                stackables.add("§e"+StatCollector.translateToLocal("npcdbc.inventory.stackable.dbc"));
             }
             if (viewingForm.stackable.kaiokenStackable) {
-                stackables.add("§cKK");
+                stackables.add("§c"+StatCollector.translateToLocal("npcdbc.inventory.stackable.kk"));
             }
             if (viewingForm.stackable.uiStackable) {
-                stackables.add("§7UI");
+                stackables.add("§7"+StatCollector.translateToLocal("npcdbc.inventory.stackable.ui"));
             }
             if (viewingForm.stackable.godStackable) {
-                stackables.add("§5GoD");
+                stackables.add("§5"+StatCollector.translateToLocal("npcdbc.inventory.stackable.godofdestruction"));
             }
             if (viewingForm.stackable.mysticStackable) {
-                stackables.add("§dMystic");
+                stackables.add("§d"+StatCollector.translateToLocal("npcdbc.inventory.stackable.mystic"));
             }
         }
     }
