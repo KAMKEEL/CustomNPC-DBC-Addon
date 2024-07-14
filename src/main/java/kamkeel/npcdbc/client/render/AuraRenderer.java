@@ -17,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
+import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.Random;
@@ -421,6 +422,15 @@ public class AuraRenderer extends RenderDBC {
 
         if (DBCForm.isGod(race, state))
             sizeFactor = 1f;
+
+        if (data.getAuraEntity().entity instanceof EntityNPCInterface) {
+            EntityNPCInterface npc = (EntityNPCInterface) data.getAuraEntity().entity;
+            int release = data.getRelease();
+            float size = (float) ValueUtil.clamp(npc.display.modelSize, 1, 20) / 5;
+            float effectiveSize = (float) (size * ValueUtil.clamp(release, 15, 25) * 0.025f );
+            float factor = effectiveSize / size * 10;
+            return size * factor;
+        }
 
         if (data.getFormID() > -1 || race == DBCRace.NAMEKIAN && state == DBCForm.NamekGiant) {
             int release = data.getRelease();

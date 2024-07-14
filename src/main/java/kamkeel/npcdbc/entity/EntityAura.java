@@ -387,8 +387,8 @@ public class EntityAura extends Entity {
             //  scaledAuraHeight = ((float) ((EntityNPCInterface) entity).display.modelSize) / 5f;
             //   yOffset = scaledAuraHeight;
         }
-        if (entity instanceof EntityNPCInterface)
-            scaledAuraHeight = entity.height + 0.75f * size;
+    //    if (entity instanceof EntityNPCInterface)
+            //scaledAuraHeight = entity.height + 0.75f * size;
 
         yOffset = -0.05f + scaledAuraHeight + scaledAuraHeight * (scaledAuraHeight / 50) * 2.25f;
 
