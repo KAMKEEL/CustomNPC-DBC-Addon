@@ -12,7 +12,9 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.SoundSource;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.entity.EntityAura;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -424,6 +426,7 @@ public class AuraRenderer extends RenderDBC {
         if (DBCForm.isGod(race, state))
             sizeFactor = 1f;
 
+
         if (data.getAuraEntity().entity instanceof EntityNPCInterface) {
             EntityNPCInterface npc = (EntityNPCInterface) data.getAuraEntity().entity;
 //            int release = 100;
@@ -431,7 +434,17 @@ public class AuraRenderer extends RenderDBC {
 //            float effectiveSize = size * release* 0.025f;//(float) (size * ValueUtil.clamp(release, 15, 25) *(1) );
             //   float factor = effectiveSize / size * 10;
             //   return effectiveSize ;
-
+            if (data.getFormID() > -1) {
+                Form form = PlayerDataUtil.getForm(data.getAuraEntity().entity);
+                if (form.display.hairType.equals("ssj"))
+                    sizeFactor = 1;
+                else if (form.display.hairType.equals("ssj2"))
+                    sizeFactor = 1.5f;
+                else if (form.display.hairType.equals("ssj3"))
+                    sizeFactor = 2;
+                else if (form.display.hairType.equals("ssj4"))
+                    sizeFactor = 2.5f;
+            }
             int release = data.getRelease();
             float size = (float) ValueUtil.clamp(npc.display.modelSize, 1, 20) / 5;
 
