@@ -164,6 +164,7 @@ public class AuraRenderer extends RenderDBC {
             float layerTemp = layerPercent * 20f;
 
             for (float j = 1; j < 2; j += 0.05f) {
+                this.renderManager.renderEngine.bindTexture(aura.text1);
 
                 model.auraModel.offsetY = -(i / maxLayers) * aura.height;
                 model.auraModel.offsetZ = layerTemp < 7F ? 0.2F - 1 * 0.075F : 0.35F + (1 - 7.0F) * 0.055F;
@@ -425,11 +426,19 @@ public class AuraRenderer extends RenderDBC {
 
         if (data.getAuraEntity().entity instanceof EntityNPCInterface) {
             EntityNPCInterface npc = (EntityNPCInterface) data.getAuraEntity().entity;
+//            int release = 100;
+//            float size = (float) ValueUtil.clamp(npc.display.modelSize, 1, 20) / 5;
+//            float effectiveSize = size * release* 0.025f;//(float) (size * ValueUtil.clamp(release, 15, 25) *(1) );
+            //   float factor = effectiveSize / size * 10;
+            //   return effectiveSize ;
+
             int release = data.getRelease();
             float size = (float) ValueUtil.clamp(npc.display.modelSize, 1, 20) / 5;
-            float effectiveSize = (float) (size * ValueUtil.clamp(release, 15, 25) * 0.025f );
+
+            float effectiveSize = size * ValueUtil.clamp(release, 15, 25) * 0.025f;
             float factor = effectiveSize / size * 10;
-            return size * factor;
+            // return size * factor;
+            return sizeFactor * (float) ValueUtil.clamp(npc.display.modelSize, 1, 20) * (1f + (float) ValueUtil.clamp(npc.display.modelSize, 1, 20) / 15);
         }
 
         if (data.getFormID() > -1 || race == DBCRace.NAMEKIAN && state == DBCForm.NamekGiant) {
