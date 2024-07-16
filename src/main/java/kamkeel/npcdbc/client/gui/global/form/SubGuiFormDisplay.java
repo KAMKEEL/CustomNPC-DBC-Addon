@@ -148,6 +148,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         addButton(new GuiNpcButton(1108, guiLeft + 112, y, 20, 20, "X"));
         getButton(1108).enabled = display.bodyCM != -1;
 
+        addLabel(new GuiNpcLabel(1082, "display.hasEyebrows", guiLeft + 145, y + 5));
+        addButton(new GuiNpcButtonYesNo(1082, guiLeft + 192, y, 30, 20, display.hasEyebrows));
+
         if (visualDisplay.race == DBCRace.NAMEKIAN || visualDisplay.race == DBCRace.ARCOSIAN) {
             y = addBodyColors(y);
         }
@@ -321,6 +324,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             display.bodyCM = -1;
             refreshValues();
             updateButtons();
+        }
+        //Has Eyebrows
+        if (button.id == 1082) {
+            display.hasEyebrows = button.getValue() == 1;
+            refreshValues();
         }
         // Body C1
         if(button.id == 109){
@@ -529,7 +537,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             int xPos = (scaledWidth - this.xSize) / 2 + 280;
             int yPos = (scaledHeight - this.ySize) / 2 - 15;
             if(visualDisplay.hairType.equals("ssj3")){
-                fontRendererObj.drawString(StatCollector.translateToLocal("editor.invalid") + " SSJ3", xPos, yPos, 0xffffff);
+                //    fontRendererObj.drawString(StatCollector.translateToLocal("editor.invalid") + " SSJ3", xPos, yPos, 0xffffff);
             }
             if(visualDisplay.hairType.equals("oozaru")){
                 fontRendererObj.drawString(StatCollector.translateToLocal("editor.invalid") + " Oozaru", xPos, yPos, 0xffffff);
@@ -841,6 +849,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         spoofForm.display.formSize = display.formSize;
         spoofForm.display.hasArcoMask = display.hasArcoMask;
         spoofForm.display.hasBodyFur = display.hasBodyFur;
+        spoofForm.display.hasEyebrows = display.hasEyebrows;
         spoofForm.display.isBerserk = display.isBerserk;
 
         visualDisplay.formID = spoofForm.id;

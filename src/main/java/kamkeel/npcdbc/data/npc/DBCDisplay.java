@@ -41,7 +41,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public boolean useSkin = false;
     public int bodyType = 0;
     public int bodyCM = 0xffffff, bodyC1 = 0xffffff, bodyC2 = 0xffffff, bodyC3 = 0xffffff;
-    public boolean hasArcoMask = false;
+    public boolean hasArcoMask = false, hasEyebrows = true;
     public int furColor = -1;
     public boolean hasFur = false;
 
@@ -99,6 +99,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             dbcDisplay.setInteger("DBCArcoState", arcoState);
             dbcDisplay.setBoolean("DBCArcoMask", hasArcoMask);
             dbcDisplay.setBoolean("DBCFur", hasFur);
+            dbcDisplay.setBoolean("DBCHasEyebrows", hasEyebrows);
 
             dbcDisplay.setInteger("DBCRage", rage);
             dbcDisplay.setBoolean("DBCIsTransforming", isTransforming);
@@ -146,6 +147,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             arcoState = dbcDisplay.getInteger("DBCArcoState");
             hasArcoMask = dbcDisplay.getBoolean("DBCArcoMask");
             hasFur =  dbcDisplay.getBoolean("DBCFur");
+            hasEyebrows = !dbcDisplay.hasKey("DBCHasEyebrows") ? true : dbcDisplay.getBoolean("DBCHasEyebrows");
 
             auraID = dbcDisplay.getInteger("DBCAuraID");
             enumAuraTypes = EnumAuraTypes2D.values()[dbcDisplay.getInteger("DBCDisplayAura") % EnumAuraTypes2D.values().length];
@@ -336,6 +338,16 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public void hasCoolerMask(boolean has) {
         hasArcoMask = has;
+    }
+
+    @Override
+    public boolean hasEyebrows() {
+        return hasEyebrows;
+    }
+
+    @Override
+    public void hasEyebrows(boolean has) {
+        hasEyebrows = has;
     }
 
     @Override

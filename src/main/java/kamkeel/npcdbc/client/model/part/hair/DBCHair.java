@@ -29,6 +29,61 @@ public class DBCHair extends ModelHairRenderer {
     public ModelHairRenderer hairCluster;
     public ModelHairRenderer[] hairall;
 
+    public ModelHairRenderer bipedHeadAll;
+    public ModelHairRenderer radlike1;
+    public ModelHairRenderer radlike2;
+    public ModelHairRenderer radlike3;
+    public ModelHairRenderer radlike4;
+    public ModelHairRenderer radlike5;
+    public ModelHairRenderer radlike7;
+    public ModelHairRenderer radlike8;
+    public ModelHairRenderer radlike10;
+    public ModelHairRenderer radlike11;
+    public ModelHairRenderer radlike12;
+    public ModelHairRenderer radlike13;
+    public ModelHairRenderer radlike14;
+    public ModelHairRenderer radlike15;
+    public ModelHairRenderer radlike16;
+    public ModelHairRenderer radlike17;
+    public ModelHairRenderer radlike18;
+    public ModelHairRenderer radlike19;
+    public ModelHairRenderer radlike20;
+    public ModelHairRenderer radlike21;
+    public ModelHairRenderer radlike22;
+    public ModelHairRenderer radlike23;
+    public ModelHairRenderer radlike24;
+    public ModelHairRenderer radlike25;
+    public ModelHairRenderer radlike26;
+    public ModelHairRenderer radlike27;
+    public ModelHairRenderer radlike28;
+    public ModelHairRenderer radlike29;
+    public ModelHairRenderer radlike30;
+    public ModelHairRenderer radlike31;
+    public ModelHairRenderer radlike32;
+    public ModelHairRenderer radlik6;
+    public ModelHairRenderer radlik7;
+    public ModelHairRenderer radlik15;
+    public ModelHairRenderer radlik1;
+    public ModelHairRenderer radlik2;
+    public ModelHairRenderer radlik3;
+    public ModelHairRenderer radlik4;
+    public ModelHairRenderer radlik5;
+    public ModelHairRenderer radlik8;
+    public ModelHairRenderer radlik9;
+    public ModelHairRenderer radlik10;
+    public ModelHairRenderer radlik11;
+    public ModelHairRenderer radlik12;
+    public ModelHairRenderer radlik13;
+    public ModelHairRenderer radlik14;
+    public ModelHairRenderer radlik16;
+    public ModelHairRenderer radlik17;
+    public ModelHairRenderer radlik18;
+
+    public ModelHairRenderer bipedHeadrad;
+    public ModelHairRenderer bipedHeadradl2;
+    public ModelHairRenderer bipedHeadradl;
+    public ModelHairRenderer ssj3, ssj3strand1;
+
     public DBCHair(ModelMPM base) {
         super(base);
         this.base = base;
@@ -59,6 +114,276 @@ public class DBCHair extends ModelHairRenderer {
         }
 
         this.addChild(hairCluster);
+        initSSJ3();
+    }
+
+    public void initSSJ3() {
+        this.bipedHeadAll = new ModelHairRenderer(base, 0, 0);
+        this.bipedHeadAll.addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8, 0.01F);
+        this.bipedHeadAll.setRotationPoint(0.0F, 0.0F, 0.0F);
+
+        this.radlike1 = new ModelHairRenderer(base, 32, 0);
+        this.radlike1.addBox(-1.0F, -10.0F, -6.05F, 4, 4, 4);
+        this.radlike1.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike1, -0.3141593F, 0.0F, 0.0F);
+        this.radlike2 = new ModelHairRenderer(base, 32, 0);
+        this.radlike2.addBox(-6.8F, -6.5F, -1.0F, 4, 3, 3);
+        this.radlike2.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike2, 0.0F, 0.1745329F, -0.1396263F);
+        this.radlike3 = new ModelHairRenderer(base, 32, 0);
+        this.radlike3.addBox(-6.3F, -4.0F, 0.0F, 3, 2, 2);
+        this.radlike3.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike3, 0.0F, (float) (Math.PI / 12), -0.1919862F);
+        this.radlike4 = new ModelHairRenderer(base, 32, 0);
+        this.radlike4.addBox(2.8F, -7.0F, -1.0F, 4, 3, 3);
+        this.radlike4.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike4, 0.0F, -0.1745329F, 0.1919862F);
+        this.radlike5 = new ModelHairRenderer(base, 32, 0);
+        this.radlike5.addBox(2.8F, -4.0F, 0.7F, 3, 2, 2);
+        this.radlike5.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike5, 0.0F, -0.1745329F, 0.1570796F);
+        this.radlike7 = new ModelHairRenderer(base, 32, 0);
+        this.radlike7.addBox(-1.5F, -11.0F, -8.0F, 3, 3, 3);
+        this.radlike7.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike7, -0.5934119F, 0.0F, 0.1047198F);
+        this.radlike8 = new ModelHairRenderer(base, 32, 0);
+        this.radlike8.addBox(-5.0F, -12.0F, -8.0F, 2, 3, 2);
+        this.radlike8.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike8, (float) (-Math.PI * 2.0 / 9.0), 0.0F, 0.4363323F);
+        this.radlike10 = new ModelHairRenderer(base, 32, 0);
+        this.radlike10.addBox(-1.0F, -10.3F, -6.3F, 4, 6, 4);
+        this.radlike10.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike10, -0.4363323F, 0.0F, -0.3665191F);
+        this.radlike11 = new ModelHairRenderer(base, 32, 0);
+        this.radlike11.addBox(1.0F, -11.3F, -6.0F, 5, 4, 3);
+        this.radlike11.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike11, -0.5410521F, 0.0F, -0.4886922F);
+        this.radlike12 = new ModelHairRenderer(base, 32, 0);
+        this.radlike12.addBox(3.5F, -11.5F, -8.0F, 3, 3, 3);
+        this.radlike12.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike12, -0.8552113F, 0.0F, -0.6108652F);
+        this.radlike13 = new ModelHairRenderer(base, 32, 0);
+        this.radlike13.addBox(6.0F, -12.4F, -8.0F, 2, 3, 2);
+        this.radlike13.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike13, -0.9948377F, 0.0F, -0.7679449F);
+        this.radlike14 = new ModelHairRenderer(base, 32, 0);
+        this.radlike14.addBox(-1.3F, -9.3F, -5.5F, 3, 5, 3);
+        this.radlike14.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike14, -0.3665191F, 0.0F, 0.4014257F);
+        this.radlike15 = new ModelHairRenderer(base, 32, 0);
+        this.radlike15.addBox(-5.5F, -9.8F, -6.0F, 3, 3, 3);
+        this.radlike15.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike15, -0.5410521F, 0.0F, 0.837758F);
+        this.radlike16 = new ModelHairRenderer(base, 32, 0);
+        this.radlike16.addBox(-9.0F, -8.533334F, -6.0F, 2, 3, 2);
+        this.radlike16.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike16, -0.837758F, 0.0F, 1.27409F);
+        this.radlike17 = new ModelHairRenderer(base, 32, 0);
+        this.radlike17.addBox(-2.0F, -2.0F, 4.0F, 4, 5, 4);
+        this.radlike17.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike17, 0.4886922F, 0.0F, 0.0F);
+        this.radlike18 = new ModelHairRenderer(base, 32, 0);
+        this.radlike18.addBox(-1.0F, -5.0F, 5.0F, 4, 5, 4);
+        this.radlike18.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike18, 0.5061455F, (float) (Math.PI / 12), 0.0174533F);
+        this.radlike19 = new ModelHairRenderer(base, 32, 0);
+        this.radlike19.addBox(-4.0F, -6.0F, 5.0F, 4, 6, 4);
+        this.radlike19.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike19, (float) (Math.PI / 6), (float) (-Math.PI / 12), 0.0F);
+        this.radlike20 = new ModelHairRenderer(base, 32, 0);
+        this.radlike20.addBox(-2.4F, -5.2F, 7.0F, 4, 5, 4);
+        this.radlike20.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike20, (float) (Math.PI * 2.0 / 9.0), 0.0F, 0.0F);
+        this.radlike21 = new ModelHairRenderer(base, 32, 0);
+        this.radlike21.addBox(0.1333333F, -6.5F, 7.533333F, 3, 5, 3);
+        this.radlike21.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike21, 0.7679449F, 0.1745329F, 0.0F);
+        this.radlike22 = new ModelHairRenderer(base, 32, 0);
+        this.radlike22.addBox(-2.866667F, -7.2F, 7.333333F, 3, 4, 3);
+        this.radlike22.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike22, 0.5934119F, (float) (-Math.PI / 12), 0.0F);
+        this.radlike23 = new ModelHairRenderer(base, 32, 0);
+        this.radlike23.addBox(1.0F, -9.0F, -4.05F, 3, 4, 4);
+        this.radlike23.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike23, -0.3141593F, 0.0F, -0.8726646F);
+        this.radlike24 = new ModelHairRenderer(base, 32, 0);
+        this.radlike24.addBox(3.533333F, -10.0F, -4.716667F, 3, 4, 3);
+        this.radlike24.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike24, -0.5585054F, 0.0F, -1.082104F);
+        this.radlike25 = new ModelHairRenderer(base, 32, 0);
+        this.radlike25.addBox(3.533333F, -12.0F, -4.716667F, 2, 4, 2);
+        this.radlike25.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike25, -0.5934119F, 0.0F, -0.8203047F);
+        this.radlike26 = new ModelHairRenderer(base, 32, 0);
+        this.radlike26.addBox(3.533333F, -9.666667F, -3.116667F, 3, 4, 3);
+        this.radlike26.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike26, -0.5585054F, 0.0F, -1.396263F);
+        this.radlike27 = new ModelHairRenderer(base, 32, 0);
+        this.radlike27.addBox(-4.5F, -6.8F, -5.0F, 3, 4, 3);
+        this.radlike27.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike27, -0.5410521F, 0.0F, 1.047198F);
+        this.radlike28 = new ModelHairRenderer(base, 32, 0);
+        this.radlike28.addBox(-6.8F, -7.533333F, -5.0F, 3, 4, 3);
+        this.radlike28.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike28, -0.837758F, 0.0F, 1.308997F);
+        this.radlike29 = new ModelHairRenderer(base, 32, 0);
+        this.radlike29.addBox(6.0F, -10.2F, -5.0F, 2, 3, 2);
+        this.radlike29.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike29, -0.7679449F, 0.0F, -1.291544F);
+        this.radlike30 = new ModelHairRenderer(base, 32, 0);
+        this.radlike30.addBox(-2.433333F, -10.6F, -7.666667F, 3, 3, 3);
+        this.radlike30.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike30, -0.7330383F, 0.0F, 0.3839724F);
+        this.radlike31 = new ModelHairRenderer(base, 32, 0);
+        this.radlike31.addBox(-5.466667F, -11.0F, -8.333333F, 2, 3, 2);
+        this.radlike31.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike31, (float) (-Math.PI * 3.0 / 10.0), 0.0F, 0.6806784F);
+        this.radlike32 = new ModelHairRenderer(base, 32, 0);
+        this.radlike32.addBox(-1.4F, -14.0F, -3.0F, 3, 4, 3);
+        this.radlike32.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlike32, -0.4363323F, 0.0F, -0.0349066F);
+        this.radlik6 = new ModelHairRenderer(base, 32, 0);
+        this.radlik6.addBox(-6.8F, -1.733333F, 3.2F, 3, 6, 3);
+        this.radlik6.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik6, 0.4363323F, 0.0F, 0.3490659F);
+        this.radlik7 = new ModelHairRenderer(base, 32, 0);
+        this.radlik7.addBox(4.0F, -3.066667F, 2.6F, 3, 6, 3);
+        this.radlik7.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik7, 0.4363323F, 0.0F, -0.3490659F);
+        this.radlik15 = new ModelHairRenderer(base, 32, 0);
+        this.radlik15.addBox(-2.266667F, -3.2F, 5.4F, 4, 4, 4);
+        this.radlik15.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik15, 0.4363323F, 0.0F, 0.0F);
+        this.radlik1 = new ModelHairRenderer(base, 32, 0);
+        this.radlik1.addBox(-4.466667F, 6.2F, 4.0F, 3, 3, 2);
+        this.radlik1.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik1, 0.0872665F, 0.0F, 0.0698132F);
+        this.radlik2 = new ModelHairRenderer(base, 32, 0);
+        this.radlik2.addBox(2.533333F, 4.2F, 3.0F, 3, 3, 3);
+        this.radlik2.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik2, 0.1396263F, 0.0F, -0.0872665F);
+        this.radlik3 = new ModelHairRenderer(base, 32, 0);
+        this.radlik3.addBox(-5.466667F, 4.2F, 3.0F, 3, 3, 3);
+        this.radlik3.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik3, 0.1396263F, 0.0F, 0.0872665F);
+        this.radlik4 = new ModelHairRenderer(base, 32, 0);
+        this.radlik4.addBox(-6.133333F, 0.7333333F, 3.0F, 3, 5, 3);
+        this.radlik4.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik4, 0.2268928F, 0.0F, 0.2094395F);
+        this.radlik5 = new ModelHairRenderer(base, 32, 0);
+        this.radlik5.addBox(3.266667F, 0.7333333F, 3.0F, 3, 5, 3);
+        this.radlik5.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik5, 0.2268928F, 0.0F, -0.2094395F);
+        this.radlik8 = new ModelHairRenderer(base, 32, 0);
+        this.radlik8.addBox(-1.466667F, 6.0F, 4.0F, 3, 5, 4);
+        this.radlik8.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik8, 0.0872665F, (float) (-Math.PI / 12), 0.0F);
+        this.radlik9 = new ModelHairRenderer(base, 32, 0);
+        this.radlik9.addBox(-2.466667F, 2.0F, 4.0F, 4, 5, 4);
+        this.radlik9.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik9, 0.1570796F, (float) (-Math.PI / 12), 0.0F);
+        this.radlik10 = new ModelHairRenderer(base, 32, 0);
+        this.radlik10.addBox(-2.0F, 7.266667F, 4.0F, 4, 4, 4);
+        this.radlik10.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik10, 0.0698132F, (float) (Math.PI / 12), 0.0F);
+        this.radlik11 = new ModelHairRenderer(base, 32, 0);
+        this.radlik11.addBox(-1.0F, 4.266667F, 4.0F, 4, 4, 4);
+        this.radlik11.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik11, 0.1047198F, (float) (Math.PI / 12), 0.0F);
+        this.radlik12 = new ModelHairRenderer(base, 32, 0);
+        this.radlik12.addBox(-0.9F, 1.266667F, 4.0F, 4, 4, 4);
+        this.radlik12.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik12, 0.1745329F, (float) (Math.PI / 12), 0.0F);
+        this.radlik13 = new ModelHairRenderer(base, 32, 0);
+        this.radlik13.addBox(-1.933333F, 5.0F, 4.0F, 4, 5, 4);
+        this.radlik13.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik13, 0.1745329F, 0.0F, 0.0F);
+        this.radlik14 = new ModelHairRenderer(base, 32, 0);
+        this.radlik14.addBox(-1.4F, 8.0F, 5.6F, 3, 5, 3);
+        this.radlik14.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik14, 0.0872665F, 0.0F, 0.0F);
+        this.radlik16 = new ModelHairRenderer(base, 32, 0);
+        this.radlik16.addBox(-2.533333F, -2.0F, 3.333333F, 4, 6, 4);
+        this.radlik16.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik16, 0.3490659F, (float) (-Math.PI / 12), 0.0F);
+        this.radlik17 = new ModelHairRenderer(base, 32, 0);
+        this.radlik17.addBox(-1.0F, -2.0F, 4.0F, 4, 5, 4);
+        this.radlik17.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.radlik17, 0.3316126F, (float) (Math.PI / 12), 0.0F);
+        this.radlik18 = new ModelHairRenderer(base, 32, 0);
+        this.radlik18.addBox(-2.0F, 1.0F, 4.0F, 4, 5, 4);
+        this.radlik18.setRotationPoint(0.0F, 0.0F, 0.0F);
+
+        this.bipedHeadrad = new ModelHairRenderer(base, 0, 0);
+        this.bipedHeadrad.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
+        this.bipedHeadrad.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.bipedHeadradl = new ModelHairRenderer(base, 0, 0);
+        this.bipedHeadradl.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
+        this.bipedHeadradl.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.bipedHeadradl2 = new ModelHairRenderer(base, 0, 0);
+        this.bipedHeadradl2.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
+        this.bipedHeadradl2.setRotationPoint(0.0F, 0.0F, 0.0F);
+
+
+        this.bipedHeadrad.addChild(this.bipedHeadAll);
+        this.bipedHeadrad.addChild(this.radlike1);
+        this.bipedHeadrad.addChild(this.radlike2);
+        this.bipedHeadrad.addChild(this.radlike3);
+        this.bipedHeadrad.addChild(this.radlike4);
+        this.bipedHeadrad.addChild(this.radlike5);
+        this.bipedHeadrad.addChild(this.radlike7);
+        this.bipedHeadrad.addChild(this.radlike8);
+        this.bipedHeadrad.addChild(this.radlike10);
+        this.bipedHeadrad.addChild(this.radlike11);
+        this.bipedHeadrad.addChild(this.radlike12);
+        this.bipedHeadrad.addChild(this.radlike13);
+        this.bipedHeadrad.addChild(this.radlike14);
+        this.bipedHeadrad.addChild(this.radlike15);
+        this.bipedHeadrad.addChild(this.radlike16);
+        this.bipedHeadrad.addChild(this.radlike18);
+        this.bipedHeadrad.addChild(this.radlike19);
+        this.bipedHeadrad.addChild(this.radlike20);
+        this.bipedHeadrad.addChild(this.radlike21);
+        this.bipedHeadrad.addChild(this.radlike22);
+        this.bipedHeadrad.addChild(this.radlike23);
+        this.bipedHeadrad.addChild(this.radlike24);
+        this.bipedHeadrad.addChild(this.radlike25);
+        this.bipedHeadrad.addChild(this.radlike26);
+        this.bipedHeadrad.addChild(this.radlike27);
+        this.bipedHeadrad.addChild(this.radlike28);
+        this.bipedHeadrad.addChild(this.radlike29);
+        this.bipedHeadrad.addChild(this.radlike30);
+        this.bipedHeadrad.addChild(this.radlike31);
+        this.bipedHeadrad.addChild(this.radlike32);
+        this.bipedHeadradl.addChild(this.radlik1);
+        this.bipedHeadradl.addChild(this.radlik2);
+        this.bipedHeadradl.addChild(this.radlik3);
+        this.bipedHeadradl.addChild(this.radlik4);
+        this.bipedHeadradl.addChild(this.radlik5);
+        this.bipedHeadradl.addChild(this.radlik8);
+        this.bipedHeadradl.addChild(this.radlik9);
+        this.bipedHeadradl.addChild(this.radlik10);
+        this.bipedHeadradl.addChild(this.radlik11);
+        this.bipedHeadradl.addChild(this.radlik12);
+        this.bipedHeadradl.addChild(this.radlik13);
+        this.bipedHeadradl.addChild(this.radlik14);
+        this.bipedHeadradl.addChild(this.radlik18);
+        this.bipedHeadradl2.addChild(this.radlik6);
+        this.bipedHeadradl2.addChild(this.radlik7);
+        this.bipedHeadradl2.addChild(this.radlik15);
+        this.bipedHeadradl2.addChild(this.radlike17);
+        this.bipedHeadradl2.addChild(this.radlik16);
+        this.bipedHeadradl2.addChild(this.radlik17);
+
+        this.ssj3 = new ModelHairRenderer(base, 0, 0);
+        this.ssj3.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
+        this.ssj3.setRotationPoint(0.0F, 0.0F, 0.0F);
+
+        this.ssj3strand1 = new ModelHairRenderer(base, 32, 0);
+        this.ssj3strand1.addBox(2.866667F, -5.533333F, -6.25F, 2, 4, 1);
+        this.ssj3strand1.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.ssj3strand1, -0.3141593F, 0.0F, -0.4712389F);
+        this.ssj3.addChild(this.ssj3strand1);
     }
 
     @Override
@@ -134,6 +459,36 @@ public class DBCHair extends ModelHairRenderer {
         return s.length() > n ? a : 0;
     }
 
+    public void renderSSJ3Hair(boolean renderBang) {
+        this.bipedHeadrad.rotateAngleY = base.bipedBody.rotateAngleY;
+        this.bipedHeadrad.rotateAngleX = base.bipedBody.rotateAngleX;
+        this.bipedHeadrad.rotationPointX = base.bipedBody.rotationPointX;
+        this.bipedHeadrad.rotationPointY = base.bipedBody.rotationPointY;
+        this.bipedHeadrad.render(0.0625f);
+        this.bipedHeadradl.rotateAngleY = base.bipedBody.rotateAngleY;
+        this.bipedHeadradl.rotateAngleX = base.bipedBody.rotateAngleX / 4.0F;
+        this.bipedHeadradl.rotationPointX = base.bipedBody.rotationPointX;
+        this.bipedHeadradl.rotationPointY = base.bipedBody.rotationPointY;
+        this.bipedHeadradl.render(0.0625f);
+        this.bipedHeadradl2.rotateAngleY = base.bipedBody.rotateAngleY;
+        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 2.0F;
+        this.bipedHeadradl2.rotationPointX = base.bipedBody.rotationPointX;
+        this.bipedHeadradl2.rotationPointY = base.bipedBody.rotationPointY;
+        this.bipedHeadradl2.render(0.0625f);
+        this.bipedHeadradl2.rotateAngleY = base.bipedBody.rotateAngleY;
+        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 1.2F;
+        this.bipedHeadradl2.rotationPointX = base.bipedBody.rotationPointX;
+        this.bipedHeadradl2.rotationPointY = base.bipedBody.rotationPointY;
+        this.bipedHeadradl2.render(0.0625f);
+
+        if (renderBang) {
+            this.ssj3.rotateAngleY = base.bipedBody.rotateAngleY;
+            this.ssj3.rotateAngleX = base.bipedBody.rotateAngleX;
+            this.ssj3.rotationPointX = base.bipedBody.rotationPointX;
+            this.ssj3.rotationPointY = base.bipedBody.rotationPointY;
+            this.ssj3.render(0.0625f);
+        }
+    }
     public void renderHairs(DBCDisplay display) {
         if (display.hairCode.length() < 5) {
             if (display.hairCode.equalsIgnoreCase("bald"))
@@ -154,6 +509,8 @@ public class DBCHair extends ModelHairRenderer {
         boolean isKaioken = false;//kaioken anim JRMCoreH.StusEfctsClient(5, pl);
         boolean isTransforming = false; //transforming anim JRMCoreH.StusEfctsClient(1, pl);
 
+        boolean isSSJ3 = false;
+
         String hairCode = display.hairCode;
         int state = 0;
         int race = display.race;
@@ -166,12 +523,16 @@ public class DBCHair extends ModelHairRenderer {
             state = 1;
         else if (display.hairType.equals("ssj2"))
             state = 5;
+        else if (display.hairType.equals("ssj3"))
+            isSSJ3 = true;
+
         else if (display.hairType.equals("ssj4"))
             hairCode = "373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820";
 
         int hairColor = display.hairColor;
         if (display.hairColor == -1 && display.race == 5)
             hairColor = display.bodyCM;
+
 
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
@@ -188,8 +549,6 @@ public class DBCHair extends ModelHairRenderer {
                 else if (d.hairCode.length() > 3)
                     hairCode = d.hairCode;
 
-                if (d.hairType.equals("ssj4"))
-                    hairCode = "373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820";
 
                 if (d.hasColor("hair"))
                     hairColor = d.hairColor;
@@ -200,12 +559,22 @@ public class DBCHair extends ModelHairRenderer {
                     state = 1;
                 else if (d.hairType.equals("ssj2"))
                     state = 5;
+                else if (d.hairType.equals("ssj3"))
+                    isSSJ3 = true;
+                else if (d.hairType.equals("ssj4"))
+                    hairCode = "373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820";
+
             }
         }
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
         ColorMode.applyModelColor(hairColor, ModelDBC.isHurt);
         ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
+
+        if (isSSJ3) {
+            renderSSJ3Hair(true);
+            return;
+        }
 
         int trTime = canUse ? 2 : 200;
         int arTime = canUse ? 2 : 200;

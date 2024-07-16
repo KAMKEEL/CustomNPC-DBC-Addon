@@ -31,7 +31,7 @@ public class FormDisplay implements IFormDisplay {
     public boolean hasBodyFur = false;
     public boolean hasArcoMask = false;
     public boolean effectMajinHair = false;
-    public boolean isBerserk;
+    public boolean isBerserk, hasEyebrows = true;
 
     public int legendaryColor = 1, divineColor = -1;
     public int auraID = -1, outlineID = -1;
@@ -61,6 +61,7 @@ public class FormDisplay implements IFormDisplay {
         effectMajinHair = rendering.getBoolean("effectMajinHair");
         hasBodyFur = rendering.getBoolean("hasBodyFur");
         isBerserk = rendering.getBoolean("isBerserk");
+        hasEyebrows = !rendering.hasKey("hasEyebrows") ? true : rendering.getBoolean("hasEyebrows");
 
         formSize = rendering.getFloat("formSize");
         keepOriginalSize = rendering.getBoolean("keepOriginalSize");
@@ -93,6 +94,7 @@ public class FormDisplay implements IFormDisplay {
         rendering.setBoolean("effectMajinHair", effectMajinHair);
         rendering.setBoolean("hasBodyFur", hasBodyFur);
         rendering.setBoolean("isBerserk", isBerserk);
+        rendering.setBoolean("hasEyebrows", hasEyebrows);
 
         rendering.setFloat("formSize", formSize);
         rendering.setBoolean("keepOriginalSize", keepOriginalSize);
@@ -184,6 +186,16 @@ public class FormDisplay implements IFormDisplay {
     @Override
     public void setBerserk(boolean isBerserk) {
         this.isBerserk = isBerserk;
+    }
+
+    @Override
+    public boolean hasEyebrows() {
+        return hasEyebrows;
+    }
+
+    @Override
+    public void hasEyebrows(boolean has) {
+        hasEyebrows = has;
     }
 
 

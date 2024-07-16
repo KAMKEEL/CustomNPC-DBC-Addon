@@ -53,6 +53,10 @@ public interface IFormDisplay {
 
     void setBerserk(boolean isBerserk);
 
+    boolean hasEyebrows();
+
+    void hasEyebrows(boolean has);
+
     /**
      * @return form's size, default is 1.0f of player's current size
      */

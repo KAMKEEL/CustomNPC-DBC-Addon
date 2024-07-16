@@ -123,7 +123,7 @@ public class ModelDBC extends ModelBase {
             int eyeColor = display.eyeColor;
             int eyeBrowColor = display.race == DBCRace.NAMEKIAN ? display.bodyCM : display.hairColor;
             int bodyCM = display.bodyCM;
-            boolean hasArcoMask = display.hasArcoMask, isBerserk = false;
+            boolean hasArcoMask = display.hasArcoMask, isBerserk = false, hasEyebrows = display.hasEyebrows;
 
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
@@ -141,6 +141,10 @@ public class ModelDBC extends ModelBase {
 
                 if (d.hasArcoMask)
                     hasArcoMask = true;
+
+                hasEyebrows = d.hasEyebrows;
+                if (d.hairType.equals("ssj3"))
+                    hasEyebrows = false;
 
                 isBerserk = d.isBerserk;
             }
@@ -193,7 +197,10 @@ public class ModelDBC extends ModelBase {
 
             if (display.race < 4) {
                 ColorMode.applyModelColor(eyeBrowColor, isHurt);
-                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
+                if (!hasEyebrows)
+                    ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + "humw" + display.eyeType + ".png"));
+                else
+                    ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
                 this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
                 this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
                 this.eyebrow.rotationPointX = parent.bipedHead.rotationPointX;

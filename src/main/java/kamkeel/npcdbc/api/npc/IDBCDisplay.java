@@ -35,6 +35,10 @@ public interface IDBCDisplay {
 
     void hasCoolerMask(boolean has);
 
+    boolean hasEyebrows();
+
+    void hasEyebrows(boolean has);
+
     String getHairType(String type);
 
     boolean hasAura();
