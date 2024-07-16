@@ -1,9 +1,11 @@
 package kamkeel.npcdbc.client.model;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
@@ -44,6 +46,9 @@ public class ModelDBC extends ModelBase {
     public ModelRenderer eyeright;
     public ModelRenderer eyebase;
     public ModelRenderer eyebrow;
+
+    private String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
+    private String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
 
     public ModelDBC(ModelMPM mpm) {
         this.parent = mpm;
@@ -124,6 +129,9 @@ public class ModelDBC extends ModelBase {
             int eyeBrowColor = display.race == DBCRace.NAMEKIAN ? display.bodyCM : display.hairColor;
             int bodyCM = display.bodyCM;
             boolean hasArcoMask = display.hasArcoMask, isBerserk = false, hasEyebrows = display.hasEyebrows;
+            boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru");
+
+            boolean HD = ConfigDBCClient.EnableHDTextures;
 
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
@@ -145,11 +153,34 @@ public class ModelDBC extends ModelBase {
                 hasEyebrows = d.hasEyebrows;
                 if (d.hairType.equals("ssj3"))
                     hasEyebrows = false;
+                else if (d.hairType.equals("ssj4"))
+                    isSSJ4 = true;
+                else if (d.hairType.equals("oozaru"))
+                    isOozaru = true;
 
                 isBerserk = d.isBerserk;
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
+            if (isOozaru) {
+                ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + "oozaru/oozarueyes.png")); //eyes
+                ColorMode.applyModelColor(eyeColor, isHurt);
+                this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
+                this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
+                this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
+                this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
+                eyebase.render(0.0625f);
+
+                ColorMode.applyModelColor(bodyCM, isHurt);
+                DBCBody.Oozaru.rotateAngleY = parent.bipedHead.rotateAngleY;
+                DBCBody.Oozaru.rotateAngleX = parent.bipedHead.rotateAngleX;
+                DBCBody.Oozaru.rotationPointX = parent.bipedHead.rotationPointX;
+                DBCBody.Oozaru.rotationPointY = parent.bipedHead.rotationPointY;
+                DBCBody.Oozaru.render(0.0625f);
+                return;
+            } else if (isSSJ4) {
+
+            }
             ColorMode.applyModelColor(bodyCM, isHurt);
             ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
@@ -249,6 +280,10 @@ public class ModelDBC extends ModelBase {
             int bodyC2 = display.bodyC2;
             int bodyC3 = display.bodyC3;
             int furColor = display.furColor;
+            boolean hasFur = display.hasFur;
+            boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru");
+
+            boolean HD = ConfigDBCClient.EnableHDTextures;
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
             //Forms
@@ -265,6 +300,12 @@ public class ModelDBC extends ModelBase {
                     bodyC3 = d.bodyC3;
                 if (d.hasColor("fur"))
                     furColor = d.furColor;
+
+                hasFur = d.hasBodyFur;
+                if (d.hairType.equals("ssj4"))
+                    isSSJ4 = true;
+                else if (d.hairType.equals("oozaru"))
+                    isOozaru = true;
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
@@ -274,9 +315,16 @@ public class ModelDBC extends ModelBase {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
                 ColorMode.applyModelColor(bodyCM, isHurt);
 
-                if(display.hasFur){
+                if (hasFur || isSSJ4 || isOozaru) {
                     model.render(0.0625F);
-                    ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/ss4b.png"));
+                    if (isOozaru) {
+                        ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png")); //oozaru hairless body
+                        ColorMode.applyModelColor(bodyCM, isHurt);
+                        model.render(0.0625F);
+
+                        ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
+                    } else
+                        ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/ss4b.png"));
                     ColorMode.applyModelColor(furColor, isHurt);
                 }
 

@@ -6,6 +6,7 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -36,9 +37,9 @@ import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
 
 public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener,ITextfieldListener, ClipboardOwner
 {
-    private final String[] arrRace = new String[]{"Human", "Saiyan", "HalfSaiyan", "Namekian", "Arcosian", "Majin"};
+    private final String[] arrRace = new String[]{"Human", "Saiyan", "Half-Saiyan", "Namekian", "Arcosian", "Majin"};
     private final String[] arcoForms = new String[]{"None", "First", "Second", "Third", "Final", "Ultimate"};
-    private final String[] hairTypes = new String[]{"None", "Base", "SSJ", "SSJ2", "SSJ3", "SSJ4", "OOZARU", "RADITZ"};
+    private final String[] hairTypes = new String[]{"None", "Base", "SSJ", "SSJ2", "SSJ3", "SSJ4", "Oozaru", "Raditz"};
     private final GuiNpcFormMenu menu;
 	public Form form;
     public FormDisplay display;
@@ -99,6 +100,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         raceButtons(y);
         controlButtons();
+        refreshValues();
     }
 
     private void raceButtons(int y) {
@@ -247,7 +249,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     }
 
     private void controlButtons() {
-        addButton(new GuiNpcButton(1, this.guiLeft + 125 + this.xOffset, this.guiTop + 200 + this.yOffset, 60, 20, arrRace, racePage));
+        addButton(new GuiNpcButton(1, this.guiLeft + 125 + this.xOffset, this.guiTop + 200 + this.yOffset, 60, 20, arrRace, racePage = DBCData.getClient().Race));
         getButton(1).enabled = !hasRace;
         addButton(this.left = new GuiNpcButton(668, this.guiLeft + 210 + this.xOffset, this.guiTop + 200 + this.yOffset, 20, 20, "<"));
         addButton(this.right = new GuiNpcButton(669, this.guiLeft + 235 + this.xOffset, this.guiTop + 200 + this.yOffset, 20, 20, ">"));
@@ -525,25 +527,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         menu.drawElements(fontRendererObj, par1, par2, mc, par3);
         GL11.glColor4f(1, 1, 1, 1);
-
-        if(visualDisplay.race == DBCRace.HUMAN || visualDisplay.race == DBCRace.SAIYAN
-            || visualDisplay.race == DBCRace.HALFSAIYAN || (visualDisplay.race == DBCRace.MAJIN && display.effectMajinHair)){
-            GL11.glPushMatrix();
-            GL11.glScalef(0.7f, 0.7f, 0.7f);
-            // Calculate dynamic positions based on GUI dimensions
-            // Calculate the dynamic positions based on the scaled dimensions
-            int scaledWidth = (int) (this.width / 0.7f);
-            int scaledHeight = (int) (this.height / 0.7f);
-            int xPos = (scaledWidth - this.xSize) / 2 + 280;
-            int yPos = (scaledHeight - this.ySize) / 2 - 15;
-            if(visualDisplay.hairType.equals("ssj3")){
-                //    fontRendererObj.drawString(StatCollector.translateToLocal("editor.invalid") + " SSJ3", xPos, yPos, 0xffffff);
-            }
-            if(visualDisplay.hairType.equals("oozaru")){
-                fontRendererObj.drawString(StatCollector.translateToLocal("editor.invalid") + " Oozaru", xPos, yPos, 0xffffff);
-            }
-            GL11.glPopMatrix();
-        }
 
         EntityLivingBase entity = this.npc;
 

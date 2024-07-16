@@ -16,6 +16,7 @@ public class DBCBody extends ModelDBCPartInterface {
     public ModelRenderer BackSpikes;
     public ModelRenderer backSpike1;
     public ModelRenderer backSpike2;
+    public ModelRenderer Oozaru, OozaruMouth;
 
     public DBCBody(ModelMPM base) {
         super(base);
@@ -36,6 +37,15 @@ public class DBCBody extends ModelDBCPartInterface {
         this.BackSpikes.addChild(this.backSpike1);
         this.BackSpikes.addChild(this.backSpike2);
         this.addChild(BackSpikes);
+
+        this.OozaruMouth = new ModelRenderer(base, 0, 8);
+        this.OozaruMouth.addBox(-2.0F, -3.0F, -8.0F, 4, 3, 4);
+        this.OozaruMouth.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.setRotation(this.OozaruMouth, 0.0F, 0.0F, 0.0F);
+        this.Oozaru = new ModelRenderer(base, 0, 0);
+        this.Oozaru.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
+        this.Oozaru.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.Oozaru.addChild(this.OozaruMouth);
     }
 
     @Override
