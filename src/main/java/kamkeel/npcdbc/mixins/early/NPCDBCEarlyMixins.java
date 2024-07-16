@@ -59,6 +59,7 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
                 System.out.println("excuse me is that your girl");
                 mixins.add("client.optifine.MixinEntityRendererOptifine");
                 mixins.add("client.optifine.MixinDynamicLights");
+                mixins.add("client.optifine.MixinShaders");
             }else{
                 mixins.add("client.MixinEntityRenderer");
             }

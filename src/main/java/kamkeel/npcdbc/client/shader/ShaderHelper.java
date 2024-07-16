@@ -25,8 +25,9 @@ public final class ShaderHelper {
 	private static final int VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB;
 	private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;
 	private static List<Integer> programs = new ArrayList<>();
+    public static Class Shaders;
     public static boolean optifineShadersLoaded;
-	public static int currentProgram;
+    public static int currentProgram, currentOptifineProgram;
     public static int defaultTexture = 0;
 
 	public static int pylonGlow = 0;
@@ -49,7 +50,8 @@ public final class ShaderHelper {
     public static int upsampleTent = 0;
 	public static int modern;
 
-	public static void loadShaders(boolean reload) {
+
+    public static void loadShaders(boolean reload) {
 		if (!useShaders())
 			return;
 
@@ -104,11 +106,15 @@ public final class ShaderHelper {
 	}
 
 	public static void releaseShader() {
-		useShader(0);
+
+        if (currentOptifineProgram != 0)
+            bindOptifineShader();
+        else
+            useShader(0);
 	}
 
 	public static boolean useShaders() {
-		return ConfigDBCClient.EnableShaders && OpenGlHelper.shadersSupported;
+        return ConfigDBCClient.EnableShaders && OpenGlHelper.shadersSupported;
 	}
 
 	// Most of the code taken from the LWJGL wiki
@@ -244,20 +250,21 @@ public final class ShaderHelper {
 			ARBShaderObjects.glDeleteObjectARB(p);
 	}
 
+    public static void bindOptifineShader() {
+        try {
+            Shaders.getMethod("useProgram").invoke(null, currentOptifineProgram);
+        //    System.out.println("a");
+        } catch (Exception e) {
+          //  System.out.println("b");
+        }
+    }
     public static boolean areOptifineShadersLoaded() {
         try {
-            Class<?> shaders = Class.forName("shadersmod.client.Shaders");
-            try {
-                String shaderPack = (String) shaders.getMethod("getShaderPackName").invoke(null);
-                if (shaderPack != null) {
-                    return optifineShadersLoaded = true;
-                }
-            } catch (Exception e) {
-                ClientProxy.LOGGER.warn("Failed to get shader pack name");
-                e.printStackTrace();
-            }
-        } catch (ClassNotFoundException e) {
-
+            Shaders = Class.forName("shadersmod.client.Shaders");
+            String shaderPack = (String) Shaders.getMethod("getShaderPackName").invoke(null);
+            if (shaderPack != null)
+                return optifineShadersLoaded = true;
+        } catch (Exception e) {
         }
         return optifineShadersLoaded = false;
     }

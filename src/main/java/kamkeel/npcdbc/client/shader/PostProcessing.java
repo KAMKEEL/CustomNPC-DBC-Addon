@@ -47,7 +47,7 @@ public class PostProcessing {
     public static Minecraft mc = Minecraft.getMinecraft();
 
     public static void startBlooming() {
-        if (!ConfigDBCClient.EnableBloom || !ConfigDBCClient.EnableShaders)
+        if (!ConfigDBCClient.EnableBloom || !ShaderHelper.useShaders())
             return;
 
         drawToBuffers(2);

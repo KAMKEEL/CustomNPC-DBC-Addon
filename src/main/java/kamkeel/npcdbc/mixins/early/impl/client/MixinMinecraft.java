@@ -26,6 +26,7 @@ public class MixinMinecraft {
     private void onRefresh(CallbackInfo ci) {
         String packs = gameSettings.resourcePacks.toString().toLowerCase();
         ClientProxy.isKasaiLoaded = packs.contains("kasai_dbc");
+        ShaderHelper.areOptifineShadersLoaded();
 
     }
 }
