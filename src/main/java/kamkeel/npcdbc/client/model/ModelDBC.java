@@ -13,6 +13,7 @@ import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;
@@ -49,6 +50,7 @@ public class ModelDBC extends ModelBase {
 
     private String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
     private String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+    public DBCDisplay display;
 
     public ModelDBC(ModelMPM mpm) {
         this.parent = mpm;
@@ -102,6 +104,8 @@ public class ModelDBC extends ModelBase {
         this.DBCBody.setData(entity.modelData, entity);
         this.DBCRightArms.setData(entity.modelData, entity);
         this.DBCLeftArms.setData(entity.modelData, entity);
+
+        display = ((INPCDisplay) entity.display).getDBCDisplay();
     }
 
     public void setHurt(EntityCustomNpc entity){
@@ -128,6 +132,7 @@ public class ModelDBC extends ModelBase {
             int eyeColor = display.eyeColor;
             int eyeBrowColor = display.race == DBCRace.NAMEKIAN ? display.bodyCM : display.hairColor;
             int bodyCM = display.bodyCM;
+
             boolean hasArcoMask = display.hasArcoMask, isBerserk = false, hasEyebrows = display.hasEyebrows;
             boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru");
 
@@ -169,16 +174,38 @@ public class ModelDBC extends ModelBase {
                 this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
                 this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
                 this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
-                eyebase.render(0.0625f);
+                GL11.glPushMatrix();
+                GL11.glTranslatef(0, y, 0);
+                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                this.eyebase.render(0.0625F);
+                GL11.glPopMatrix();
 
                 ColorMode.applyModelColor(bodyCM, isHurt);
                 DBCBody.Oozaru.rotateAngleY = parent.bipedHead.rotateAngleY;
                 DBCBody.Oozaru.rotateAngleX = parent.bipedHead.rotateAngleX;
                 DBCBody.Oozaru.rotationPointX = parent.bipedHead.rotationPointX;
                 DBCBody.Oozaru.rotationPointY = parent.bipedHead.rotationPointY;
+                GL11.glPushMatrix();
+                GL11.glTranslatef(0, y, 0);
+                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
                 DBCBody.Oozaru.render(0.0625f);
+                GL11.glPopMatrix();
+
                 return;
-            } else if (isSSJ4) {
+            } else if (isSSJ4 && hasEyebrows) {
+                ColorMode.applyModelColor(bodyCM, isHurt);
+                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
+
+                this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
+                this.nose.rotateAngleX = parent.bipedHead.rotateAngleX;
+                this.nose.rotationPointX = parent.bipedHead.rotationPointX;
+                this.nose.rotationPointY = parent.bipedHead.rotationPointY;
+                GL11.glPushMatrix();
+                GL11.glTranslatef(0, y, 0);
+                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                this.nose.render(0.0625F);
+                GL11.glPopMatrix();
+                return;
 
             }
             ColorMode.applyModelColor(bodyCM, isHurt);
@@ -273,15 +300,48 @@ public class ModelDBC extends ModelBase {
         }
     }
 
+    public void renderSSJ4Face(int eyeColor, int furColor, int hairColor, int bodyCM, boolean isBerserk, boolean hasEyebrows, int eyeType) {
+        ColorMode.applyModelColor(0xffffff, isHurt);
+        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4eyewhite.png"));
+        parent.bipedHead.render(1F / 16F);
+
+
+        if (!isBerserk) {
+            ColorMode.applyModelColor(eyeColor, isHurt);
+            ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4pupils.png"));
+            parent.bipedHead.render(0.0625F);
+        }
+
+        ColorMode.applyModelColor(furColor, isHurt);
+        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows.png"));
+        parent.bipedHead.render(1F / 16F);
+
+        ColorMode.applyModelColor(hairColor, isHurt);
+        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows2.png"));
+        parent.bipedHead.render(1F / 16F);
+
+
+        ColorMode.applyModelColor(bodyCM, isHurt);
+        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4mouth0.png"));
+        parent.bipedHead.render(1F / 16F);
+
+        ColorMode.applyModelColor(bodyCM, isHurt);
+        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4shade.png"));
+        parent.bipedHead.render(1F / 16F);
+    }
     public void renderBodySkin(DBCDisplay display, ModelRenderer model) {
         if (display.useSkin) {
+
+            int eyeColor = display.eyeColor;
+            int hairColor = display.hairColor;
+
             int bodyCM = display.bodyCM;
             int bodyC1 = display.bodyC1;
             int bodyC2 = display.bodyC2;
             int bodyC3 = display.bodyC3;
             int furColor = display.furColor;
             boolean hasFur = display.hasFur;
-            boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru");
+            boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru"), hasEyebrows = display.hasEyebrows, isBerserk = false;
 
             boolean HD = ConfigDBCClient.EnableHDTextures;
             //////////////////////////////////////////////////////
@@ -290,6 +350,10 @@ public class ModelDBC extends ModelBase {
             Form form = display.getForm();
             if (form != null) {
                 FormDisplay d = form.display;
+                if (d.hasColor("eye"))
+                    eyeColor = d.eyeColor;
+                if (d.hasColor("hair"))
+                    hairColor = d.hairColor;
                 if (d.hasColor("bodycm"))
                     bodyCM = d.bodyCM;
                 if (d.hasColor("bodyc1"))
@@ -306,6 +370,8 @@ public class ModelDBC extends ModelBase {
                     isSSJ4 = true;
                 else if (d.hairType.equals("oozaru"))
                     isOozaru = true;
+                hasEyebrows = d.hasEyebrows;
+                isBerserk = d.isBerserk;
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
@@ -316,7 +382,10 @@ public class ModelDBC extends ModelBase {
                 ColorMode.applyModelColor(bodyCM, isHurt);
 
                 if (hasFur || isSSJ4 || isOozaru) {
-                    model.render(0.0625F);
+                    model.render(0.0625F); //important
+                    if (isSSJ4 && HD && hasEyebrows)
+                        renderSSJ4Face(eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType);
+
                     if (isOozaru) {
                         ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png")); //oozaru hairless body
                         ColorMode.applyModelColor(bodyCM, isHurt);
@@ -325,6 +394,7 @@ public class ModelDBC extends ModelBase {
                         ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
                     } else
                         ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/ss4b.png"));
+
                     ColorMode.applyModelColor(furColor, isHurt);
                 }
 
@@ -368,6 +438,9 @@ public class ModelDBC extends ModelBase {
                 ColorMode.applyModelColor(bodyCM, isHurt);
             }
         }
+    }
+
+    public void setRotationAngles(float par1, float par2, float par3, float par4, float par5, float par6, Entity entity) {
     }
 
     public String getFaceTexture(DBCDisplay display, String t) {
