@@ -509,7 +509,7 @@ public class DBCHair extends ModelHairRenderer {
         boolean isKaioken = false;//kaioken anim JRMCoreH.StusEfctsClient(5, pl);
         boolean isTransforming = false; //transforming anim JRMCoreH.StusEfctsClient(1, pl);
 
-        boolean isSSJ3 = false;
+        boolean isSSJ3 = false, isRaditz = false;
 
         String hairCode = display.hairCode;
         int state = 0;
@@ -519,7 +519,9 @@ public class DBCHair extends ModelHairRenderer {
         if (display.rage > 0 && display.selectedForm == display.formID)
             rage = 0;
 
-        if(display.hairType.equals("ssj"))
+        if (display.hairType.equals("raditz"))
+            isRaditz = true;
+        else if (display.hairType.equals("ssj"))
             state = 1;
         else if (display.hairType.equals("ssj2"))
             state = 5;
@@ -555,6 +557,8 @@ public class DBCHair extends ModelHairRenderer {
 
                 if (d.hairType.equals("base"))
                     state = 0;
+                else if (d.hairType.equals("raditz"))
+                    isRaditz = true;
                 else if (d.hairType.equals("ssj"))
                     state = 1;
                 else if (d.hairType.equals("ssj2"))
@@ -571,8 +575,8 @@ public class DBCHair extends ModelHairRenderer {
         ColorMode.applyModelColor(hairColor, ModelDBC.isHurt);
         ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
 
-        if (isSSJ3) {
-            renderSSJ3Hair(true);
+        if (isRaditz || isSSJ3) {
+            renderSSJ3Hair(isSSJ3);
             return;
         }
 

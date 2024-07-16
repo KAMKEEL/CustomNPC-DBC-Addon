@@ -38,7 +38,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 {
     private final String[] arrRace = new String[]{"Human", "Saiyan", "HalfSaiyan", "Namekian", "Arcosian", "Majin"};
     private final String[] arcoForms = new String[]{"None", "First", "Second", "Third", "Final", "Ultimate"};
-    private final String[] hairTypes = new String[]{"None", "Base", "SSJ", "SSJ2", "SSJ3", "SSJ4", "OOZARU"};
+    private final String[] hairTypes = new String[]{"None", "Base", "SSJ", "SSJ2", "SSJ3", "SSJ4", "OOZARU", "RADITZ"};
     private final GuiNpcFormMenu menu;
 	public Form form;
     public FormDisplay display;
@@ -932,6 +932,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 index = 5;
             else if(display.hairType.toLowerCase().contains("oozaru"))
                 index = 6;
+            else if (display.hairType.toLowerCase().contains("raditz"))
+                index = 7;
         }
         return index;
     }
@@ -950,6 +952,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 return "ssj4";
             case 6:
                 return "oozaru";
+            case 7:
+                return "raditz";
             default:
                 return "";
         }

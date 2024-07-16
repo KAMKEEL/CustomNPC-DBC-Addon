@@ -139,16 +139,20 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                             ci.cancel();
                     }
                 }
-                if (form.display.hairType.equals("ssj3")) {
-                    if (isHairPreset(hair) && !hair.startsWith("D"))
-                        Hair.set("" + JRMCoreH.HairsT[6] + JRMCoreH.Hairs[0]);
-
-                    //render brows
-                    if (hair.contains("EYEBROW") && dbcData.Race != 3) { //bind ssj3 eyebrow texture to ssj3 hair type
-                        int gen = JRMCoreH.dnsGender(dbcData.DNS);
-                        int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
-                        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
+                boolean isSSJ3 = false;
+                if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")) {
+                    if (isHairPreset(hair) && !hair.startsWith("D")) {
+                        String hair1 = form.display.hairType.equals("raditz") ? "D" : "D01";
+                        Hair.set(hair1);
                     }
+                    isSSJ3 = form.display.hairType.equals("ssj3") ? true : false;
+
+                }
+                //render brows
+                if (hair.contains("EYEBROW") && dbcData.Race != 3 && (isSSJ3 || !form.display.hasEyebrows)) { //bind ssj3 eyebrow texture to ssj3 hair type
+                    int gen = JRMCoreH.dnsGender(dbcData.DNS);
+                    int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
+                    Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
                 }
                 //hair color for all forms
                 if ((isHairPreset(hair) || hair.contains("EYEBROW"))) {
@@ -213,6 +217,9 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             if (form != null) {
                 HD = ConfigDBCClient.EnableHDTextures;
                 boolean isSaiyan = rc == 1 || rc == 2;
+                //remove CH if SSJ3/Oozaru
+                if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz") || form.display.hairType.equals("oozaru") && (isSaiyan))
+                    ci.cancel();
 
                 String hairTexture = "normall.png";
                 TextureManager texMan = Minecraft.getMinecraft().renderEngine;
@@ -261,9 +268,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     else if (form.display.hairCode.length() < 5 && form.display.hairType.equals("ssj4"))  //if hairCode empty && ssj4, set to default ssj4 hair
                         hair.set("373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820");
                 }
-                //remove CH if SSJ3/Oozaru
-                if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("oozaru") && (isSaiyan))
-                    ci.cancel();
+
 
             }
         }

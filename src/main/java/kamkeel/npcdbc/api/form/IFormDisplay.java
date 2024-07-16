@@ -30,14 +30,14 @@ public interface IFormDisplay {
     void setColor(String type, int color);
 
     /**
-     * @param type Legal types: "base", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
+     * @param type Legal types: "base", "raditz", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
      *             Only saiyans and half-saiyans are eligible for ssj4 and oozaru
      */
     void setHairType(String type);
 
 
     /**
-     * @param type Legal types: "base", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
+     * @param type Legal types: "base", "raditz", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
      */
     String getHairType(String type);
 

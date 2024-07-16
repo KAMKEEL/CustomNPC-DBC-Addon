@@ -3,7 +3,6 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreConfig;
-import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
@@ -159,12 +158,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                     mask.set(false);
 
                 //render ssj3 hair for humans/majins
-            } else if (form.display.hairType.equals("ssj3") && (race.get() == 0 || race.get() == 5)) {
+            } else if ((form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")) && (race.get() == 0 || race.get() == 5)) {
 
                 String hairTexture = "normall.png";
                 TextureManager texMan = Minecraft.getMinecraft().renderEngine;
                 texMan.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + hairTexture));
-                this.modelMain.renderHairs(0.0625F, "D01");
+                String hair = form.display.hairType.equals("raditz") ? "D" : "D01";
+                this.modelMain.renderHairs(0.0625F, hair);
             }
         }
     }
@@ -193,11 +193,12 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 } else if (form.display.hairType.equals("oozaru")) {
                     renderOozaru(bodyCM.get(), form.display.eyeColor, form.display.getFurColor(data));
                     //ssj3 hair rendering
-                } else if (form.display.hairType.equals("ssj3")) {
+                } else if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")) {
                     String hairTexture = "normall.png";
                     TextureManager texMan = Minecraft.getMinecraft().renderEngine;
                     texMan.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + hairTexture));
-                    this.modelMain.renderHairs(0.0625F, "" + JRMCoreH.HairsT[6] + JRMCoreH.Hairs[0]);
+                    String hair = form.display.hairType.equals("raditz") ? "D" : "D01";
+                    this.modelMain.renderHairs(0.0625F, hair);
                 }
 
             }
