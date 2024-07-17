@@ -77,34 +77,31 @@ public abstract class MixinJRMCoreH {
             if (form == null)
                 return;
 
-            int skillX = powerType == 1 ? JRMCoreH.SklLvlX(1, SklX) - 1 : 0;
+            int skillX = powerType == 1 ? JRMCoreH.SklLvlX(1, SklX) : 0;
             int mysticLvl = powerType == 1 ? JRMCoreH.SklLvl(10, 1, Skls) : 0;
             int result = 0;
-            mysticOn = false;
-            uiOn = false;
-            GoDOn = false;
 
             boolean masteryCalc = JGConfigDBCFormMastery.FM_Enabled;
             JGConfigDBCFormMastery.FM_Enabled = masteryCalc && form.stackable.vanillaStackable;
             int state = form.stackable.vanillaStackable ? st : 0;
             switch (race) {
                 case 0:
-                    result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                    result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
                     break;
                 case 1:
-                    result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                    result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
                     break;
                 case 2:
-                    result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                    result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
                     break;
                 case 3:
-                    result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                    result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
                     break;
                 case 4:
-                    result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, state, currRelease, arcRel, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn);
+                    result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, state, currRelease, arcRel, skillX, false, mysticLvl, isFused, false, powerType, false);
                     break;
                 case 5:
-                    result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, state, skillX, mysticOn, mysticLvl, isFused, uiOn, powerType, GoDOn, majinAbs);
+                    result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false, majinAbs);
                     break;
                 default:
                     result = currAttributes[attribute];
@@ -117,26 +114,39 @@ public abstract class MixinJRMCoreH {
             double fmvalue = 1.0f;
 
             //don't forget to multiply this by legend/divine/majin formMulti
-            if (d.isForm(DBCForm.Kaioken) && d.State2 > 1) {
+            if (kaiokenOn && d.State2 > 0) {
                 fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Kaioken", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
                 stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.Kaioken) * d.State2 / (JRMCoreH.TransKaiDmg.length - 1);
-            } else if (d.isForm(DBCForm.UltraInstinct) && d.State2 > 1) {
+            } else if (uiOn && d.State2 > 0) {
                 fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "UltraInstict", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
                 stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.UltraInstinct) * d.State2 / JGConfigUltraInstinct.CONFIG_UI_LEVELS;
-            } else if (d.isForm(DBCForm.GodOfDestruction))
+            } else if (GoDOn) {
                 fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "GodOfDestruction", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
-            else if (d.isForm(DBCForm.Mystic))
+            } else if (mysticOn) {
                 fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Mystic", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
+            }
 
             stackableMulti *= (float) fmvalue;
 
             float statusMulti = 1;
-            if (d.isForm(DBCForm.Legendary))
+
+            /*
+                FIXME: Rework it a little to match DBC's system
+                 (Huss note: I wanna rework it but ya know my work ethic. If I don't get to it by 22/07/2024, someone beat me with a bat)
+
+                DBC's multi modifiers are applied based on the "base" multi, they don't amplify each other.
+                Only exception to this are PowerPoints and Absorption
+
+                stat = getAttribute<Race> <-- this applies form appropriate multi + PP/Absorption
+                stat = stat*kaio + stat*majin + stat*legend
+             */
+            if (majinOn)
+                statusMulti += statusMulti * form.stackable.majinStrength;
+            if (legendOn)
                 statusMulti += statusMulti * form.stackable.legendaryStrength;
             if (d.isForm(DBCForm.Divine))
                 statusMulti += statusMulti * form.stackable.divineStrength;
-            if (d.isForm(DBCForm.Majin))
-                statusMulti += statusMulti * form.stackable.majinStrength;
+
 
             float currentFormLevel = dbcData.addonFormLevel;
 
