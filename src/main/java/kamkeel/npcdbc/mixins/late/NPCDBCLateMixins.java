@@ -28,6 +28,7 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
             mixins.add("npc.client.MixinGuiCreationScreen");
             mixins.add("npc.client.MixinModelTail");
             mixins.add("npc.client.MixinRenderNPCInterface");
+            mixins.add("npc.client.MixinGuiModeLegs");
 
             mixins.add("dbc.MixinDBCKiTech");
             mixins.add("dbc.MixinJRMCoreCliTickH");

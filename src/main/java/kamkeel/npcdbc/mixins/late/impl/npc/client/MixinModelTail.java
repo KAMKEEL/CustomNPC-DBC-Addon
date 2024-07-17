@@ -1,17 +1,18 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
 
-import kamkeel.npcdbc.constants.DBCScriptType;
+import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.util.ResourceLocation;
+import noppes.npcs.client.ClientProxy;
+import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.client.model.part.ModelTail;
 import noppes.npcs.client.model.part.tails.ModelMonkeyTail;
 import noppes.npcs.client.model.util.ModelScaleRenderer;
 import noppes.npcs.entity.EntityCustomNpc;
-import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,6 +24,10 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
 
     @Shadow
     private ModelMonkeyTail monkey;
+    @Shadow
+    private EntityCustomNpc entity;
+    @Shadow
+    private ModelMPM base;
 
     @Shadow
     private int color;
@@ -44,6 +49,42 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
                 if(color == -1){
                     color = display.getColor("hair");
                 }
+            }
+        }
+    }
+
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.BEFORE, remap = true), remap = true)
+    private void colorCorrectionTail2(float par1, CallbackInfo ci) {
+        if (!this.isHidden && !monkey.isHidden) {
+            DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+            if (display != null && display.enabled) {
+                if (monkey.monkey_large.isHidden)
+                    ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
+
+                int tailColor = color;
+
+                boolean hasFur = display.hasFur;
+                boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru");
+                int furColor = display.furColor;
+
+                Form form = display.getForm();
+                if (form != null) {
+                    if (form.display.hasColor("hair"))
+                        tailColor = form.display.hairColor;
+                    if (form.display.hasColor("fur"))
+                        furColor = form.display.furColor;
+
+                    if (form.display.hairType.equals("ssj4"))
+                        isSSJ4 = true;
+                    else if (form.display.hairType.equals("oozaru"))
+                        isOozaru = true;
+                }
+                if (isSSJ4 || hasFur || isOozaru)
+                    tailColor = furColor;
+
+                new Color(tailColor, base.alpha).glColor();
+
+
             }
         }
     }
