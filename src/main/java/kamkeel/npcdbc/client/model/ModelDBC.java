@@ -192,24 +192,12 @@ public class ModelDBC extends ModelBase {
                 GL11.glPopMatrix();
 
                 return;
-            } else if (isSSJ4 && hasEyebrows) {
-                ColorMode.applyModelColor(bodyCM, isHurt);
-                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
-
-                this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
-                this.nose.rotateAngleX = parent.bipedHead.rotateAngleX;
-                this.nose.rotationPointX = parent.bipedHead.rotationPointX;
-                this.nose.rotationPointY = parent.bipedHead.rotationPointY;
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                this.nose.render(0.0625F);
-                GL11.glPopMatrix();
-                return;
-
             }
             ColorMode.applyModelColor(bodyCM, isHurt);
-            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
+            if (isSSJ4 && HD && hasEyebrows)
+                ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + "humn" + display.noseType + ".png"));
+            else
+                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
             this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
             this.nose.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -221,6 +209,9 @@ public class ModelDBC extends ModelBase {
             GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
             this.nose.render(0.0625F);
             GL11.glPopMatrix();
+
+            if (isSSJ4 && HD && hasEyebrows)
+                return;
 
             String mouthDir = "";
             if (display.race == 4 && hasArcoMask)
@@ -382,6 +373,7 @@ public class ModelDBC extends ModelBase {
                 ColorMode.applyModelColor(bodyCM, isHurt);
 
                 if (hasFur || isSSJ4 || isOozaru) {
+                    ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + "hum.png"));
                     model.render(0.0625F); //important
                     if (isSSJ4 && HD && hasEyebrows)
                         renderSSJ4Face(eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType);
@@ -393,7 +385,7 @@ public class ModelDBC extends ModelBase {
 
                         ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
                     } else
-                        ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/ss4b.png"));
+                        ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
 
                     ColorMode.applyModelColor(furColor, isHurt);
                 }

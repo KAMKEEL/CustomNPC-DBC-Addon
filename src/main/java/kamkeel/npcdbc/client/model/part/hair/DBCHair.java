@@ -3,8 +3,10 @@ package kamkeel.npcdbc.client.model.part.hair;
 import JinRyuu.JBRA.mod_JBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.ModelDBC;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -571,8 +573,9 @@ public class DBCHair extends ModelHairRenderer {
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
         ColorMode.applyModelColor(hairColor, ModelDBC.isHurt);
-        ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:gui/normall.png"));
-
+        String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+        boolean HD = ConfigDBCClient.EnableHDTextures;
+        ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + "normall.png"));
         if (isRaditz || isSSJ3) {
             renderSSJ3Hair(isSSJ3);
             return;
