@@ -333,6 +333,7 @@ public class ModelDBC extends ModelBase {
             int furColor = display.furColor;
             boolean hasFur = display.hasFur;
             boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru"), hasEyebrows = display.hasEyebrows, isBerserk = false;
+            //  ModelPartData tailData = ((EntityCustomNpc) display.npc).modelData.getOrCreatePart("tail");
 
             boolean HD = ConfigDBCClient.EnableHDTextures;
             //////////////////////////////////////////////////////
@@ -368,26 +369,27 @@ public class ModelDBC extends ModelBase {
             //////////////////////////////////////////////////////
 
             int race = display.race;
-            if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            if (race == DBCRace.HUMAN || DBCRace.isSaiyan(race)) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
                 ColorMode.applyModelColor(bodyCM, isHurt);
 
-                if (hasFur || isSSJ4 || isOozaru) {
-                    ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + "hum.png"));
-                    model.render(0.0625F); //important
-                    if (isSSJ4 && HD && hasEyebrows)
-                        renderSSJ4Face(eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType);
+                if (DBCRace.isSaiyan(race)) {
+                    if (hasFur || isSSJ4 || isOozaru) {
+                        ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + "hum.png"));
+                        model.render(0.0625F); //important
+                        if (isSSJ4 && HD && hasEyebrows)
+                            renderSSJ4Face(eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType);
 
-                    if (isOozaru) {
-                        ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png")); //oozaru hairless body
-                        ColorMode.applyModelColor(bodyCM, isHurt);
-                        model.render(0.0625F);
+                        if (isOozaru) {
+                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png")); //oozaru hairless body
+                            ColorMode.applyModelColor(bodyCM, isHurt);
+                            model.render(0.0625F);
 
-                        ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
-                    } else
-                        ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
-
-                    ColorMode.applyModelColor(furColor, isHurt);
+                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
+                        } else
+                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
+                        ColorMode.applyModelColor(furColor, isHurt);
+                    }
                 }
 
             } else if (race == DBCRace.NAMEKIAN) {
@@ -431,6 +433,7 @@ public class ModelDBC extends ModelBase {
             }
         }
     }
+
 
     public void setRotationAngles(float par1, float par2, float par3, float par4, float par5, float par6, Entity entity) {
     }
