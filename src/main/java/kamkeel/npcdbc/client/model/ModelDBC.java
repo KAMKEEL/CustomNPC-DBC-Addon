@@ -167,6 +167,7 @@ public class ModelDBC extends ModelBase {
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
+            boolean renderSSJ4Face = isSSJ4 && HD && hasEyebrows && DBCRace.isSaiyan(display.race);
             if (isOozaru) {
                 ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + "oozaru/oozarueyes.png")); //eyes
                 ColorMode.applyModelColor(eyeColor, isHurt);
@@ -194,7 +195,7 @@ public class ModelDBC extends ModelBase {
                 return;
             }
             ColorMode.applyModelColor(bodyCM, isHurt);
-            if (isSSJ4 && HD && hasEyebrows)
+            if (renderSSJ4Face)
                 ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + "humn" + display.noseType + ".png"));
             else
                 ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
@@ -210,7 +211,7 @@ public class ModelDBC extends ModelBase {
             this.nose.render(0.0625F);
             GL11.glPopMatrix();
 
-            if (isSSJ4 && HD && hasEyebrows)
+            if (renderSSJ4Face)
                 return;
 
             String mouthDir = "";
