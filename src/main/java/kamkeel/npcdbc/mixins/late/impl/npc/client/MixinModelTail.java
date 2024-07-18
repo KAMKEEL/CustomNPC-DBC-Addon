@@ -41,18 +41,7 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
         super(par1ModelBase, par2, par3);
     }
 
-    @Inject(method = "initData", at = @At(value = "TAIL"))
-    private void colorCorrectionTail(EntityCustomNpc data, CallbackInfo ci) {
-        if(this.isHidden && !monkey.isHidden){
-            DBCDisplay display = ((INPCDisplay) data.display).getDBCDisplay();
-            if(display != null && display.enabled){
-                color = display.getColor("fur");
-                if(color == -1){
-                    color = display.getColor("hair");
-                }
-            }
-        }
-    }
+
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.BEFORE, remap = true), remap = true)
     private void colorCorrectionTail2(float par1, CallbackInfo ci) {
@@ -62,7 +51,7 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
                 if (monkey.monkey_large.isHidden)
                     ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
 
-                int tailColor = color;
+                int tailColor = display.bodyC1;
 
                 boolean hasFur = display.hasFur;
                 boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru");
@@ -75,6 +64,8 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
                     if (form.display.hasColor("fur"))
                         furColor = form.display.furColor;
 
+                    if (form.display.hasBodyFur)
+                        hasFur = true;
                     if (form.display.hairType.equals("ssj4"))
                         isSSJ4 = true;
                     else if (form.display.hairType.equals("oozaru"))

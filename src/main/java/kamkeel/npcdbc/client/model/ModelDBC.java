@@ -133,6 +133,7 @@ public class ModelDBC extends ModelBase {
             int eyeBrowColor = display.race == DBCRace.NAMEKIAN ? display.bodyCM : display.hairColor;
             int bodyCM = display.bodyCM;
 
+            boolean isSaiyan = DBCRace.isSaiyan(display.race);
             boolean hasArcoMask = display.hasArcoMask, isBerserk = false, hasEyebrows = display.hasEyebrows;
             boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru");
 
@@ -167,8 +168,8 @@ public class ModelDBC extends ModelBase {
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
-            boolean renderSSJ4Face = isSSJ4 && HD && hasEyebrows && DBCRace.isSaiyan(display.race);
-            if (isOozaru) {
+            boolean renderSSJ4Face = isSSJ4 && HD && hasEyebrows && isSaiyan;
+            if (isOozaru && isSaiyan) {
                 ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + "oozaru/oozarueyes.png")); //eyes
                 ColorMode.applyModelColor(eyeColor, isHurt);
                 this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;

@@ -19,7 +19,6 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityCustomNpc;
@@ -38,8 +37,8 @@ import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
 public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener,ITextfieldListener, ClipboardOwner
 {
     private final String[] arrRace = new String[]{"Human", "Saiyan", "Half-Saiyan", "Namekian", "Arcosian", "Majin"};
-    private final String[] arcoForms = new String[]{"None", "First", "Second", "Third", "Final", "Ultimate"};
-    private final String[] hairTypes = new String[]{"None", "Base", "SSJ", "SSJ2", "SSJ3", "SSJ4", "Oozaru", "Raditz"};
+    private final String[] arcoForms = new String[]{"First", "Second", "Third", "Final", "Ultimate"};
+    private final String[] hairTypes = new String[]{"Base", "SSJ", "SSJ2", "SSJ3", "SSJ4", "Oozaru", "Raditz"};
     private final GuiNpcFormMenu menu;
 	public Form form;
     public FormDisplay display;
@@ -186,8 +185,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             addButton(new GuiNpcButtonYesNo(113, guiLeft + 61, y, 50, 20, visualDisplay.hasArcoMask));
 
             int index = getArcoForm();
-            addLabel(new GuiNpcLabel(114, "display.form", guiLeft + 130, y + 5));
-            addButton(new GuiNpcButton(114, guiLeft + 167, y, 50, 20, arcoForms, index));
+            addLabel(new GuiNpcLabel(114, "display.form", guiLeft + 115, y + 5));
+            addButton(new GuiButtonBiDirectional(114, guiLeft + 142, y, 73, 20, arcoForms, index));
+
         }
 
 
@@ -236,7 +236,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         y += 22;
         int index = getHairType();
         addLabel(new GuiNpcLabel(140, "display.hairType", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(140, guiLeft + 61, y, 50, 20, hairTypes, index));
+        //     addButton(new GuiNpcButton(140, guiLeft + 61, y, 50, 20, hairTypes, index));
+        addButton(new GuiButtonBiDirectional(140, guiLeft + 61, y, 79, 20, hairTypes, index));
+
         return y;
     }
 
@@ -249,7 +251,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     }
 
     private void controlButtons() {
-        addButton(new GuiNpcButton(1, this.guiLeft + 125 + this.xOffset, this.guiTop + 200 + this.yOffset, 60, 20, arrRace, racePage = DBCData.getClient().Race));
+        //  addButton(new GuiNpcButton(1, this.guiLeft + 125 + this.xOffset, this.guiTop + 200 + this.yOffset, 60, 20, arrRace, racePage = DBCData.getClient().Race));
+        addButton(new GuiButtonBiDirectional(1, this.guiLeft + 113 + this.xOffset, this.guiTop + 200 + this.yOffset, 94, 20, arrRace, racePage = DBCData.getClient().Race));
         getButton(1).enabled = !hasRace;
         addButton(this.left = new GuiNpcButton(668, this.guiLeft + 210 + this.xOffset, this.guiTop + 200 + this.yOffset, 20, 20, "<"));
         addButton(this.right = new GuiNpcButton(669, this.guiLeft + 235 + this.xOffset, this.guiTop + 200 + this.yOffset, 20, 20, ">"));
@@ -730,10 +733,12 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             if (visualDisplay.hairCode.isEmpty())
                 visualDisplay.hairCode = "255625542850212261234927501822325618275021283063192850180147507467503248505072675043255250726750360150505667501922475071675038255050716750380152507167503202475071675032025250716750300050507167503000505047655036205250276550362250502765503620475027655036225250306550363150503065503622475030655034015250276550250147502765503000505027655036175050505050803150505050508028505050505080225050505050801750505050508022505050505080255050505050801750505050508011505050505080115050505050801150505050508011505050505080005050505050800050505050508000505050505080005050505050803154508067504931545080615028285450766150472854506561506551525080675038655250806150786052507861503451525069615050625050806950528250508061503485505078615030625050696150585149508069506157495080615080624950786150805149506961504920";
         } else if (visualDisplay.race == DBCRace.MAJIN){
-            visualDisplay.hairCode = "005050555050000050505550500000505055505000005050455050000050505250500000505052505000005050555050000050505450500000505052505000005050525050000150433450500000505055505000005050525050000054395050500000505045505000005050475050000050504750500000505047505000015043655050000050504750500000505047505000005050475050000050504750500000544545505000005250505050000052505050500000525050505000005250505050000050505050500000505050505000005050505050000052505050500000525050505000005250505050000052505050500000525050505000005245505050000054505050500000525050505000005252505050000070505050500000705050505000007050505050000070505050500000705050505000347050505050003470505050500000705050505000007050505050000069505050500000695050505000007050505050000070505050500000705050505000007050505050000070505050500020";
-            if(display.effectMajinHair){
+            if (display.effectMajinHair) {
                 visualDisplay.hairCode = display.hairCode;
                 visualDisplay.hairColor = display.hairColor;
+                if (visualDisplay.hairCode.isEmpty())
+                    visualDisplay.hairCode = "005050555050000050505550500000505055505000005050455050000050505250500000505052505000005050555050000050505450500000505052505000005050525050000150433450500000505055505000005050525050000054395050500000505045505000005050475050000050504750500000505047505000015043655050000050504750500000505047505000005050475050000050504750500000544545505000005250505050000052505050500000525050505000005250505050000050505050500000505050505000005050505050000052505050500000525050505000005250505050000052505050500000525050505000005245505050000054505050500000525050505000005252505050000070505050500000705050505000007050505050000070505050500000705050505000347050505050003470505050500000705050505000007050505050000069505050500000695050505000007050505050000070505050500000705050505000007050505050000070505050500020";
+
             }
         }
 
@@ -868,30 +873,30 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         int index = 0;
         if(!display.bodyType.isEmpty()){
             if(display.bodyType.toLowerCase().contains("first"))
-                index = 1;
+                index = 0;
             else if(display.bodyType.toLowerCase().contains("second"))
-                index = 2;
+                index = 1;
             else if(display.bodyType.toLowerCase().contains("third"))
-                index = 3;
+                index = 2;
             else if(display.bodyType.toLowerCase().contains("final"))
-                index = 4;
+                index = 3;
             else if(display.bodyType.toLowerCase().contains("ultimate"))
-                index = 5;
+                index = 4;
         }
         return index;
     }
 
     private String getArcoString(int i) {
         switch (i) {
-            case 1:
+            case 0:
                 return "firstform";
-            case 2:
+            case 1:
                 return "secondform";
-            case 3:
+            case 2:
                 return "thirdform";
-            case 4:
+            case 3:
                 return "finalform";
-            case 5:
+            case 4:
                 return "ultimatecooler";
             default:
                 return "";
@@ -904,38 +909,38 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         //  "base", "ssj", "ssj2", "ssj3", "ssj4", "oozaru"
         if(!display.hairType.isEmpty()){
             if(display.hairType.toLowerCase().contains("base"))
-                index = 1;
+                index = 0;
             else if(display.hairType.equalsIgnoreCase("ssj"))
-                index = 2;
+                index = 1;
             else if(display.hairType.toLowerCase().contains("ssj2"))
-                index = 3;
+                index = 2;
             else if(display.hairType.toLowerCase().contains("ssj3"))
-                index = 4;
+                index = 3;
             else if(display.hairType.toLowerCase().contains("ssj4"))
-                index = 5;
+                index = 4;
             else if(display.hairType.toLowerCase().contains("oozaru"))
-                index = 6;
+                index = 5;
             else if (display.hairType.toLowerCase().contains("raditz"))
-                index = 7;
+                index = 6;
         }
         return index;
     }
 
     private String getHairString(int i) {
         switch (i) {
-            case 1:
+            case 0:
                 return "base";
-            case 2:
+            case 1:
                 return "ssj";
-            case 3:
+            case 2:
                 return "ssj2";
-            case 4:
+            case 3:
                 return "ssj3";
-            case 5:
+            case 4:
                 return "ssj4";
-            case 6:
+            case 5:
                 return "oozaru";
-            case 7:
+            case 6:
                 return "raditz";
             default:
                 return "";
