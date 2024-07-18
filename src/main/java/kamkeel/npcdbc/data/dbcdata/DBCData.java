@@ -439,7 +439,25 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public Form getForm() {
-        return (Form) FormController.getInstance().get(addonFormID);
+        Form form = (Form) FormController.getInstance().get(addonFormID);
+        if (form != null) {
+            if (form.stackable.divineID != -1 && isForm(DBCForm.Divine)) {
+                Form divine = (Form) FormController.getInstance().get(form.stackable.divineID);
+                if (divine != null)
+                    return divine;
+            }
+            if (form.stackable.legendaryID != -1 && isForm(DBCForm.Legendary)) {
+                Form legendary = (Form) FormController.getInstance().get(form.stackable.legendaryID);
+                if (legendary != null)
+                    return legendary;
+            }
+            if (form.stackable.majinID != -1 && isForm(DBCForm.Majin)) {
+                Form majin = (Form) FormController.getInstance().get(form.stackable.majinID);
+                if (majin != null)
+                    return majin;
+            }
+        }
+        return form;
     }
 
     public Outline getOutline() {

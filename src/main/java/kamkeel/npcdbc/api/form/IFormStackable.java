@@ -18,6 +18,35 @@ public interface IFormStackable {
     float getFormMulti(int DBCForm);
 
     /**
+     * @param form Sets the form that this form is redirected to when in Legendary status effect
+     */
+    void setLegendaryForm(IForm form);
+
+    int getLegendaryFormID();
+
+    IForm getLegendaryForm();
+
+
+    /**
+     * @param form Sets the form that this form is redirected to when in Divine status effect
+     */
+    void setDivineForm(IForm form);
+
+    int getDivineFormID();
+
+    IForm getDivineForm();
+
+
+    /**
+     * @param form Sets the form that this form is redirected to when in Majin status effect
+     */
+    void setMajinForm(IForm form);
+
+    int getMajinFormID();
+
+    IForm getMajinForm();
+
+    /**
      * @param DBCNonRacialFormID Non-racial DBC Forms, 20 Kaioken, 21 Mystic, 22 UI, 23 GoD
      * @return True if can stack DBCNonRacialFormID on Custom Form
      */

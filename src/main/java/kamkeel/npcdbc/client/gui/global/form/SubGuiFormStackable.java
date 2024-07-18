@@ -1,10 +1,10 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
-import kamkeel.npcdbc.client.utils.Color;
+import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormStackable;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.util.*;
 
 public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener,ITextfieldListener
@@ -12,7 +12,6 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
     private GuiNpcFormMenu menu;
 	public Form form;
     public FormStackable stackable;
-    public int lastColorClicked = 0;
     public GuiScrollWindow scrollWindow;
 
 	public SubGuiFormStackable(GuiNPCManageForms parent, Form form)
@@ -124,45 +123,70 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         y += 23;
         maxScroll += 23;
-        scrollWindow.addLabel(new GuiNpcLabel(6, "display.legendaryMulti", guiLeft + 4, y + 5));
-        scrollWindow.addTextField(new GuiNpcTextField(6, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.legendaryStrength)));
-        scrollWindow.getTextField(6).setMaxStringLength(22);
-        scrollWindow.getTextField(6).floatsOnly = true;
-        scrollWindow.getTextField(6).setMinMaxDefaultFloat(-10000, 10000, 1);
-        scrollWindow.getLabel(6).color = 0xffffff;
+        y += 23;
+        maxScroll += 23;
 
-        scrollWindow.addLabel(new GuiNpcLabel(61, "display.legendaryColor", guiLeft + 175, y + 5));
-        scrollWindow.addButton(new GuiNpcButton(62, guiLeft + 265, y, 50, 20, Color.getColor(form.display.legendaryColor)));
-        scrollWindow.getButton(62).packedFGColour = form.display.legendaryColor;
-        scrollWindow.addButton(new GuiNpcButton(621, guiLeft + 318, y, 20, 20, "X"));
-        scrollWindow.getButton(621).enabled = form.display.legendaryColor != -1;
-        scrollWindow.getLabel(61).color = 0xffffff;
+        scrollWindow.addButton(new GuiNpcButton(6, guiLeft + 75, y, 120, 20, "general.noParent"));
+        scrollWindow.addButton(new GuiNpcButton(61, guiLeft + 197, y, 20, 20, "X"));
+        scrollWindow.addLabel(new GuiNpcLabel(62, "Legendary", guiLeft + 4, y + 5));
+        scrollWindow.getButton(61).enabled = stackable.legendaryID != -1;
+        scrollWindow.getLabel(62).color = 0xffffff;
+
+        if (stackable.legendaryID != -1) {
+            if (FormController.getInstance().has(form.parentID))
+                scrollWindow.getButton(6).setDisplayText(FormController.getInstance().get(stackable.legendaryID).getName());
+        } else {
+            scrollWindow.addLabel(new GuiNpcLabel(63, "Multiplier", guiLeft + 235, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(64, this, guiLeft + 285, y, 50, 20, String.valueOf(stackable.legendaryStrength)));
+            scrollWindow.getTextField(64).setMaxStringLength(22);
+            scrollWindow.getTextField(64).floatsOnly = true;
+            scrollWindow.getTextField(64).setMinMaxDefaultFloat(-10000, 10000, 1);
+            scrollWindow.getLabel(63).color = 0xffffff;
+        }
 
 
         y += 23;
         maxScroll += 23;
-        scrollWindow.addLabel(new GuiNpcLabel(7, "display.divineMulti", guiLeft + 4, y + 5));
-        scrollWindow.addTextField(new GuiNpcTextField(7, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.divineStrength)));
-        scrollWindow.getTextField(7).setMaxStringLength(22);
-        scrollWindow.getTextField(7).floatsOnly = true;
-        scrollWindow.getTextField(7).setMinMaxDefaultFloat(-10000, 10000, 1);
-        scrollWindow.getLabel(7).color = 0xffffff;
 
-        scrollWindow.addLabel(new GuiNpcLabel(71, "display.divineColor", guiLeft + 175, y + 5));
-        scrollWindow.addButton(new GuiNpcButton(72, guiLeft + 265, y, 50, 20, Color.getColor(form.display.divineColor)));
-        scrollWindow.getButton(72).packedFGColour = form.display.divineColor;
-        scrollWindow.addButton(new GuiNpcButton(721, guiLeft + 318, y, 20, 20, "X"));
-        scrollWindow.getButton(721).enabled = form.display.divineColor != -1;
-        scrollWindow.getLabel(71).color = 0xffffff;
+        scrollWindow.addButton(new GuiNpcButton(7, guiLeft + 75, y, 120, 20, "general.noParent"));
+        scrollWindow.addButton(new GuiNpcButton(71, guiLeft + 197, y, 20, 20, "X"));
+        scrollWindow.addLabel(new GuiNpcLabel(72, "Divine", guiLeft + 4, y + 5));
+        scrollWindow.getButton(71).enabled = stackable.divineID != -1;
+        scrollWindow.getLabel(72).color = 0xffffff;
+
+        if (stackable.divineID != -1) {
+            if (FormController.getInstance().has(form.parentID))
+                scrollWindow.getButton(7).setDisplayText(FormController.getInstance().get(stackable.divineID).getName());
+        } else {
+            scrollWindow.addLabel(new GuiNpcLabel(73, "Multiplier", guiLeft + 235, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(74, this, guiLeft + 285, y, 50, 20, String.valueOf(stackable.divineStrength)));
+            scrollWindow.getTextField(74).setMaxStringLength(22);
+            scrollWindow.getTextField(74).floatsOnly = true;
+            scrollWindow.getTextField(74).setMinMaxDefaultFloat(-10000, 10000, 1);
+            scrollWindow.getLabel(73).color = 0xffffff;
+        }
+
 
         y += 23;
         maxScroll += 23;
-        scrollWindow.addLabel(new GuiNpcLabel(8, "display.majinMulti", guiLeft + 4, y + 5));
-        scrollWindow.addTextField(new GuiNpcTextField(8, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.majinStrength)));
-        scrollWindow.getTextField(8).setMaxStringLength(22);
-        scrollWindow.getTextField(8).floatsOnly = true;
-        scrollWindow.getTextField(8).setMinMaxDefaultFloat(-10000, 10000, 1);
-        scrollWindow.getLabel(8).color = 0xffffff;
+
+        scrollWindow.addButton(new GuiNpcButton(8, guiLeft + 75, y, 120, 20, "general.noParent"));
+        scrollWindow.addButton(new GuiNpcButton(81, guiLeft + 197, y, 20, 20, "X"));
+        scrollWindow.addLabel(new GuiNpcLabel(82, "Majin", guiLeft + 4, y + 5));
+        scrollWindow.getButton(81).enabled = stackable.majinID != -1;
+        scrollWindow.getLabel(82).color = 0xffffff;
+
+        if (stackable.majinID != -1) {
+            if (FormController.getInstance().has(form.parentID))
+                scrollWindow.getButton(8).setDisplayText(FormController.getInstance().get(stackable.majinID).getName());
+        } else {
+            scrollWindow.addLabel(new GuiNpcLabel(83, "Multiplier", guiLeft + 235, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(84, this, guiLeft + 285, y, 50, 20, String.valueOf(stackable.majinStrength)));
+            scrollWindow.getTextField(84).setMaxStringLength(22);
+            scrollWindow.getTextField(84).floatsOnly = true;
+            scrollWindow.getTextField(84).setMinMaxDefaultFloat(-10000, 10000, 1);
+            scrollWindow.getLabel(83).color = 0xffffff;
+        }
 
         scrollWindow.maxScrollY = maxScroll;
     }
@@ -185,23 +209,28 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         if(button.id == 5){
             stackable.mysticStackable = button.getValue() == 1;
         }
-        // Legendary
-        if (button.id == 62) {
-            lastColorClicked = 0;
-            setSubGui(new SubGuiColorSelector(form.display.legendaryColor));
+
+
+        if (button.id == 6) {
+            this.setSubGui(new SubGuiSelectForm(6));
         }
-        // Legendary Clear
-        if (button.id == 621) {
-            form.display.legendaryColor = -1;
+        if (button.id == 61) {
+            stackable.legendaryID = -1;
+            initGui();
         }
-        // Divine
-        if (button.id == 72) {
-            lastColorClicked = 1;
-            setSubGui(new SubGuiColorSelector(form.display.divineColor));
+        if (button.id == 7) {
+            this.setSubGui(new SubGuiSelectForm(7));
         }
-        // Divine Clear
-        if (button.id == 721) {
-            form.display.divineColor = -1;
+        if (button.id == 71) {
+            stackable.divineID = -1;
+            initGui();
+        }
+        if (button.id == 8) {
+            this.setSubGui(new SubGuiSelectForm(8));
+        }
+        if (button.id == 81) {
+            stackable.majinID = -1;
+            initGui();
         }
         initGui();
 	}
@@ -230,13 +259,13 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         if (guiNpcTextField.id == 52) {
             stackable.mysticStrength = guiNpcTextField.getFloat();
         }
-        if (guiNpcTextField.id == 6) {
+        if (guiNpcTextField.id == 64) {
             stackable.legendaryStrength = guiNpcTextField.getFloat();
         }
-        if (guiNpcTextField.id == 7) {
+        if (guiNpcTextField.id == 74) {
             stackable.divineStrength = guiNpcTextField.getFloat();
         }
-        if (guiNpcTextField.id == 8) {
+        if (guiNpcTextField.id == 84) {
             stackable.majinStrength = guiNpcTextField.getFloat();
         }
 	}
@@ -251,12 +280,21 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
 	@Override
     public void subGuiClosed(SubGuiInterface subgui) {
-        if (subgui instanceof SubGuiColorSelector) {
-            int color = ((SubGuiColorSelector) subgui).color;
-            if (lastColorClicked == 0) {
-                form.display.legendaryColor = color;
-            } else if (lastColorClicked == 1) {
-                form.display.divineColor = color;
+        if (subgui instanceof SubGuiSelectForm) {
+            if (form != null) {
+                SubGuiSelectForm guiSelectForm = ((SubGuiSelectForm) subgui);
+                if (guiSelectForm.confirmed) {
+                    if (guiSelectForm.selectedFormID == form.id)
+                        return;
+                    if (guiSelectForm.buttonID == 6) {
+                        form.stackable.legendaryID = guiSelectForm.selectedFormID;
+                    } else if (guiSelectForm.buttonID == 7) {
+                        form.stackable.divineID = guiSelectForm.selectedFormID;
+                    } else if (guiSelectForm.buttonID == 8) {
+                        form.stackable.majinID = guiSelectForm.selectedFormID;
+
+                    }
+                }
             }
             initGui();
         }

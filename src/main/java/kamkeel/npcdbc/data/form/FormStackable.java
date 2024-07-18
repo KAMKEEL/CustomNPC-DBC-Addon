@@ -1,7 +1,9 @@
 package kamkeel.npcdbc.data.form;
 
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormStackable;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.controllers.FormController;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class FormStackable implements IFormStackable {
@@ -12,6 +14,8 @@ public class FormStackable implements IFormStackable {
     public boolean kaiokenStackable = true, uiStackable = true, godStackable = true, mysticStackable = true;
     public float kaiokenStrength = 1.0f, uiStrength = 1.0f, godStrength = 1.0f, mysticStrength = 1.0f, legendaryStrength = 1.0f, divineStrength = 1.0f, majinStrength = 1.0f;
     public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
+
+    public int legendaryID = -1, divineID = -1, majinID = -1;
 
     public FormStackable(Form parent) {
         this.parent = parent;
@@ -35,6 +39,10 @@ public class FormStackable implements IFormStackable {
         divineStrength = !stack.hasKey("divineStrength") ? 1 : stack.getFloat("divineStrength");
         majinStrength = !stack.hasKey("majinStrength") ? 1 : stack.getFloat("majinStrength");
 
+        legendaryID = !stack.hasKey("legendaryID") ? -1 : stack.getInteger("legendaryID");
+        divineID = !stack.hasKey("divineID") ? -1 : stack.getInteger("divineID");
+        majinID = !stack.hasKey("majinID") ? -1 : stack.getInteger("majinID");
+
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -55,8 +63,85 @@ public class FormStackable implements IFormStackable {
         stack.setFloat("divineStrength", divineStrength);
         stack.setFloat("majinStrength", majinStrength);
 
+        stack.setInteger("legendaryID", legendaryID);
+        stack.setInteger("divineID", divineID);
+        stack.setInteger("majinID", majinID);
+
         compound.setTag("stackableForms", stack);
         return compound;
+    }
+
+    @Override
+    public void setLegendaryForm(IForm form) {
+        if (form == null)
+            return;
+
+        int id = form.getID();
+        if (form.getID() == this.legendaryID)
+            return;
+
+        if (id > -1) {
+            legendaryID = id;
+        }
+    }
+
+    @Override
+    public int getLegendaryFormID() {
+        return legendaryID;
+    }
+
+    @Override
+    public IForm getLegendaryForm() {
+        return FormController.Instance.get(legendaryID);
+    }
+
+
+    @Override
+    public void setDivineForm(IForm form) {
+        if (form == null)
+            return;
+
+        int id = form.getID();
+        if (form.getID() == this.divineID)
+            return;
+
+        if (id > -1) {
+            divineID = id;
+        }
+    }
+
+    @Override
+    public int getDivineFormID() {
+        return divineID;
+    }
+
+    @Override
+    public IForm getDivineForm() {
+        return FormController.Instance.get(divineID);
+    }
+
+    @Override
+    public void setMajinForm(IForm form) {
+        if (form == null)
+            return;
+
+        int id = form.getID();
+        if (form.getID() == this.majinID)
+            return;
+
+        if (id > -1) {
+            majinID = id;
+        }
+    }
+
+    @Override
+    public int getMajinFormID() {
+        return majinID;
+    }
+
+    @Override
+    public IForm getMajinForm() {
+        return FormController.Instance.get(majinID);
     }
 
     @Override

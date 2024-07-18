@@ -3,7 +3,6 @@ package kamkeel.npcdbc.data.form;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IFormDisplay;
-import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -33,7 +32,6 @@ public class FormDisplay implements IFormDisplay {
     public boolean effectMajinHair = false;
     public boolean isBerserk, hasEyebrows = true;
 
-    public int legendaryColor = 1, divineColor = -1;
     public int auraID = -1, outlineID = -1;
 
     public FormDisplay(Form parent) {
@@ -66,9 +64,6 @@ public class FormDisplay implements IFormDisplay {
         formSize = rendering.getFloat("formSize");
         keepOriginalSize = rendering.getBoolean("keepOriginalSize");
 
-        legendaryColor = !rendering.hasKey("legendaryColor") ? -1 : rendering.getInteger("legendaryColor");
-        divineColor = !rendering.hasKey("divineColor") ? -1 : rendering.getInteger("divineColor");
-
         auraID = rendering.getInteger("auraID");
         outlineID = rendering.getInteger("outlineID");
     }
@@ -99,8 +94,7 @@ public class FormDisplay implements IFormDisplay {
         rendering.setFloat("formSize", formSize);
         rendering.setBoolean("keepOriginalSize", keepOriginalSize);
 
-        rendering.setInteger("legendaryColor", legendaryColor);
-        rendering.setInteger("divineColor", divineColor);
+
 
         rendering.setInteger("auraID", auraID);
         rendering.setInteger("outlineID", outlineID);
@@ -114,31 +108,18 @@ public class FormDisplay implements IFormDisplay {
         int c1 = JRMCoreH.dnsBodyC1(data.DNS);
         if (c1 != 6498048 && furColor == -1)  //default
             return c1;
-        if (data.isForm(DBCForm.Divine) && divineColor != -1)
-            return divineColor;
-        if (data.isForm(DBCForm.Legendary) && legendaryColor != -1)
-            return legendaryColor;
-        else
-            return furColor;
+
+        return furColor;
     }
     //internal usage
 
     public boolean hasHairCol(DBCData data) {
-        boolean legend = false;
-        if (data.isForm(DBCForm.Divine) && divineColor != -1)
-            legend = true;
-        boolean divine = false;
-        if (data.isForm(DBCForm.Legendary) && legendaryColor != -1)
-            divine = true;
-        return legend || divine || hairColor != -1;
+
+        return hairColor != -1;
     }
 
     //internal usage
     public int getHairColor(DBCData data) {
-        if (data.isForm(DBCForm.Divine) && divineColor != -1)
-            return divineColor;
-        if (data.isForm(DBCForm.Legendary) && legendaryColor != -1)
-            return legendaryColor;
         return hairColor;
     }
     @Override
@@ -235,10 +216,7 @@ public class FormDisplay implements IFormDisplay {
                 return bodyC3 != -1;
             case "fur":
                 return furColor != -1;
-            case "legendary":
-                return legendaryColor != -1;
-            case "divine":
-                return divineColor != -1;
+
         }
         throw new CustomNPCsException("Invalid type! Legal types: kiBar, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
@@ -273,10 +251,6 @@ public class FormDisplay implements IFormDisplay {
             case "fur":
                 furColor = color;
                 break;
-            case "legendary":
-                legendaryColor = color;
-            case "divine":
-                divineColor = color;
             default:
                 throw new CustomNPCsException("Invalid type! Legal types: kiBar, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
         }
@@ -325,10 +299,6 @@ public class FormDisplay implements IFormDisplay {
                 return bodyC3;
             case "fur":
                 return furColor;
-            case "legendary":
-                return legendaryColor;
-            case "divine":
-                return divineColor;
         }
         throw new CustomNPCsException("Invalid type! Legal types: kiBar, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }

@@ -123,14 +123,14 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
             form.fromParentOnly = button.getValue() == 1;
         }
         if(button.id == 11){
-            this.setSubGui(new SubGuiSelectForm(false));
+            this.setSubGui(new SubGuiSelectForm(11));
         }
         if(button.id == 12){
             form.parentID = -1;
             initGui();
         }
         if(button.id == 13){
-            this.setSubGui(new SubGuiSelectForm(true));
+            this.setSubGui(new SubGuiSelectForm(13));
         }
         if(button.id == 14){
             form.childID = -1;
@@ -211,15 +211,14 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
                 if(guiSelectForm.confirmed){
                     if(guiSelectForm.selectedFormID == form.id)
                         return;
-                    if(guiSelectForm.selectionChild){
+                    if (guiSelectForm.buttonID == 13) {
                         form.childID = guiSelectForm.selectedFormID;
                         if(form.parentID == form.childID)
                             form.parentID = -1;
-                    }
-                    else {
+                    } else if (guiSelectForm.buttonID == 11) {
                         form.parentID = guiSelectForm.selectedFormID;
                         if(form.parentID == form.childID)
-                            form.childID = -1;
+                            form.parentID = -1;
                     }
                 }
             }

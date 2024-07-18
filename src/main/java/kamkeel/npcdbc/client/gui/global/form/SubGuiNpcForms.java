@@ -120,14 +120,14 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
             form.race = button.getValue() - 1;
         }
         if(button.id == 11){
-            this.setSubGui(new SubGuiSelectForm(false));
+            this.setSubGui(new SubGuiSelectForm(11));
         }
         if(button.id == 12){
             parentForm = -1;
             initGui();
         }
         if(button.id == 13){
-            this.setSubGui(new SubGuiSelectForm(true));
+            this.setSubGui(new SubGuiSelectForm(13));
         }
         if(button.id == 14){
             childForm = -1;
@@ -197,12 +197,11 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
                 if(guiSelectForm.confirmed){
                     if(guiSelectForm.selectedFormID == form.id)
                         return;
-                    if(guiSelectForm.selectionChild){
+                    if (guiSelectForm.buttonID == 13) {
                         childForm = guiSelectForm.selectedFormID;
                         if(parentForm == childForm)
                             parentForm = -1;
-                    }
-                    else {
+                    } else if (guiSelectForm.buttonID == 11) {
                         parentForm = guiSelectForm.selectedFormID;
                         if(parentForm == childForm)
                             childForm = -1;
