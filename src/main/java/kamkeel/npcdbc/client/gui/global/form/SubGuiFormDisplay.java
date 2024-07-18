@@ -6,7 +6,6 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -66,6 +65,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         spoofForm = DBCDisplay.fakeForm;
         menu = new GuiNpcFormMenu(parent, this, -2, form);
 
+        EntityCustomNpc originalNPC = ((EntityCustomNpc) menu.formsParent.npc);
+        DBCDisplay origDisplay = ((INPCDisplay) originalNPC.display).getDBCDisplay();
+
         this.form = form;
         this.display = form.display;
 
@@ -81,8 +83,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         visualDisplay.enabled = true;
         visualDisplay.useSkin = true;
         hasRace = form.race != -1;
-        visualDisplay.race = (byte) (form.race == -1 ? 0 : form.race);
-        racePage = DBCData.getClient().Race;
+        visualDisplay.race = (byte) (form.race < 0 ? 1 : form.race);
+        racePage = origDisplay.race < 0 ? 1 : origDisplay.race;
 
         visualDisplay.formID = spoofForm.id;
         refreshValues();
@@ -99,6 +101,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         raceButtons(y);
         controlButtons();
         refreshValues();
+        updateButtons();
     }
 
     private void raceButtons(int y) {
@@ -767,7 +770,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             ModelPartData original = ((EntityCustomNpc) menu.formsParent.npc).modelData.getPartData("tail");
             ModelPartData tail = data.getOrCreatePart("tail");
             tail.setTexture("tail/monkey1", 8);
-            if(visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN){
+            if ((visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) && original != null) {
                 tail.pattern = original.pattern;
                 tail.color = display.hairColor == -1 ? origDisplay.bodyC2 : (visualDisplay.bodyC1 = display.hairColor);
             }
