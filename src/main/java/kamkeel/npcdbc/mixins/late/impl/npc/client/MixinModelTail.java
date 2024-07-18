@@ -47,11 +47,16 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
     private void colorCorrectionTail2(float par1, CallbackInfo ci) {
         if (!this.isHidden && !monkey.isHidden) {
             DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
-            if (display != null && display.enabled && DBCRace.isSaiyan(display.race)) {
+            if (display == null || !display.enabled)
+                return;
+
+            int tailColor = 0;
+            if (DBCRace.isSaiyan(display.race)) {
                 if (monkey.monkey_large.isHidden)
                     ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
 
-                int tailColor = display.bodyC1;
+                tailColor = display.bodyC1;
+
 
                 boolean hasFur = display.hasFur;
                 boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru");
@@ -73,10 +78,28 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
                 if (isSSJ4 || hasFur || isOozaru)
                     tailColor = furColor;
 
-                new Color(tailColor, base.alpha).glColor();
 
+            } else if (display.race == DBCRace.ARCOSIAN) {
+                if (!monkey.monkey_large.isHidden)
+                    ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3B00.png"));
+                if (display.arcoState < 4 || display.arcoState == 6)
+                    tailColor = display.bodyC3;
+                else
+                    tailColor = display.bodyCM;
+
+                Form form = display.getForm();
+                if (form != null) {
+                    if ((form.display.bodyType.contains("first") || form.display.bodyType.contains("second") || form.display.bodyType.contains("third"))) {
+                        if (form.display.hasColor("bodyc3"))
+                            tailColor = form.display.bodyC3;
+                    } else if (form.display.hasColor("bodycm"))
+                        tailColor = form.display.bodyCM;
+
+                }
 
             }
+
+            new Color(tailColor, base.alpha).glColor();
         }
     }
 }

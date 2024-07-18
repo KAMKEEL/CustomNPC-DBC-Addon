@@ -773,11 +773,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             if ((visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) && original != null) {
                 tail.pattern = original.pattern;
                 tail.color = display.hairColor == -1 ? origDisplay.bodyC2 : (visualDisplay.bodyC1 = display.hairColor);
-            }
-            if(visualDisplay.race == DBCRace.ARCOSIAN){
+            } else if (visualDisplay.race == DBCRace.ARCOSIAN)
                 tail.pattern = 2;
-                tail.color = visualDisplay.bodyC3;
-            }
+
         }
 
         if(visualDisplay.race == DBCRace.ARCOSIAN){
@@ -802,8 +800,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 case "finalform":
                     visualDisplay.arcoState = 4;
                     data.removePart("dbcHorn");
-                    tail = data.getOrCreatePart("tail");
-                    tail.color = visualDisplay.bodyCM;
                     break;
                 case "ultimatecooler":
                     visualDisplay.arcoState = 5;
@@ -812,8 +808,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                     arms.setTexture("tail/monkey1", 1);
                     ModelPartData body = data.getOrCreatePart("dbcBody");
                     body.setTexture("tail/monkey1", 1);
-                    tail = data.getOrCreatePart("tail");
-                    tail.color = visualDisplay.bodyCM;
                     break;
                 default:
                     visualDisplay.arcoState = 0;
