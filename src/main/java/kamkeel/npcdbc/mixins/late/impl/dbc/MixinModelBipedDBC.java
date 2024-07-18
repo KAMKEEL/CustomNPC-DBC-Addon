@@ -117,7 +117,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     if (form.display.isBerserk)
                         ci.cancel();
 
-                    if (form.display.hairType.equals("ssj4") && isSaiyan && HD) {
+                    if (form.display.hairType.equals("ssj4") && isSaiyan && HD && form.display.hasEyebrows) {
                     } else
                         RenderPlayerJBRA.glColor3f(form.display.eyeColor);
                 }
@@ -129,7 +129,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 if (isSaiyan) {
                     //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
                     if (form.display.hairType.equals("ssj4")) {
-                        if (HD)
+                        if (HD && form.display.hasEyebrows)
                             disableFace(hair, ci);
                         if (isHairPreset(hair))
                             ci.cancel();

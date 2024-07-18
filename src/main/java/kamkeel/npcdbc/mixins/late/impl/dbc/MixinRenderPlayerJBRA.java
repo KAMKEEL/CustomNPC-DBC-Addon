@@ -187,7 +187,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
                 //renders all ssj4
                 if (isSSJ4) {
-                    renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get(), data.renderingHairColor, data.age, data.DNS, data);
+                    if (form.display.hasEyebrows)
+                        renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get(), data.renderingHairColor, data.age, data.DNS, data);
                     if (hairback.get() != 12)
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
                     //all oozaru rendering
