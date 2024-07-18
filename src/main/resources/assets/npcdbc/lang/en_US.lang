@@ -72,6 +72,7 @@ display.maskOff=Mask Off
 display.furOn=Fur On
 display.furOff=Fur Off
 display.tail=Tail
+display.normalTail=Normal
 display.wrappedTail=Wrapped
 display.noTail=No Tail
 display.kiBarColor=Ki Bar
