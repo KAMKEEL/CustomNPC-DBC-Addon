@@ -232,6 +232,8 @@ public class FormController implements IFormHandler {
     }
 
     public IForm get(int id) {
+        if (id == -1)
+            return null;
         return this.customForms.get(id);
     }
 

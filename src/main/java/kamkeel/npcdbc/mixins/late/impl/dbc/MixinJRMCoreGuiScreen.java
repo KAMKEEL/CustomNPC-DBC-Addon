@@ -64,19 +64,20 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
         boolean isDrawingAttributes = (s1.contains("STR:") || s1.contains("DEX:") || s1.contains("WIL:")) && s1.contains("§");
         boolean isDrawingStats = s1.contains(JRMCoreH.trl("jrmc", "mleDB") + ":") || s1.contains(JRMCoreH.trl("jrmc", "DefDB") + ":") || s1.contains(JRMCoreH.trl("jrmc", "Passive") + ":") || s1.contains(JRMCoreH.trl("jrmc", "EnPwDB") + ":") && s1.contains("§");
         if (PlayerDataUtil.getClientDBCInfo().isInCustomForm()) {
-            Form form = PlayerDataUtil.getClientDBCInfo().getCurrentForm();
+            DBCData dbcData = DBCData.getClient();
+            Form form = dbcData.getForm();
             PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
             if (s1.contains(JRMCoreH.trl("jrmc", "TRState") + ":")) {
                 final String TRState2 = JRMCoreH.trl("jrmc", "TRState"); // "Form : SS4"
-                if (formData != null && formData.isInCustomForm()) {
+                if (form != null) {
 
                     //Form : menuName
-                    String name = formData.getCurrentForm().getMenuName();
+                    String name = form.getMenuName();
                     s1 = TRState2 + ": " + name;
 
                     //Form Mastery
                     DecimalFormat formatter = new DecimalFormat("#.##");
-                    float curLevel = formData.getFormLevel(formData.currentForm);
+                    float curLevel = formData.getFormLevel(form.id);
 
                     boolean removeBase = s2.contains(JRMCoreH.trl("jrmc", "Base"));
                     boolean isInKaioken = JRMCoreH.StusEfctsMe(5);
@@ -88,7 +89,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
                 }
                 //adds the form color to STR,DEX and WIL attribute values
             } else if (isDrawingAttributes) {
-                String currentColor = formData.getFormColorCode(formData.getCurrentForm());
+                String currentColor = formData.getFormColorCode(form);
                 currentColor = Utility.removeBoldColorCode(currentColor);
 
                 String[] data = getAdjustedAttributeData(s1, s2, currentColor);
@@ -100,11 +101,11 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
                 float multi = (float) DBCData.getClient().stats.getCurrentMulti();
                 if (s1.contains("x"))
                     s1 = s1.substring(0, s1.indexOf("x") - 1);
-                s1 = s1 + (JRMCoreH.round(multi, 1) != 1.0 ? formData.getFormColorCode(formData.getCurrentForm()) + " x" + JRMCoreH.round(multi, 1) : "");
+                s1 = s1 + (JRMCoreH.round(multi, 1) != 1.0 ? formData.getFormColorCode(form) + " x" + JRMCoreH.round(multi, 1) : "");
 
                 //Corrects Statistics colors
             } else if (isDrawingStats) {
-                s1 = replaceFormColor(s1, formData.getFormColorCode(formData.getCurrentForm()));
+                s1 = replaceFormColor(s1, formData.getFormColorCode(form));
             }
 
         } else if (DBCData.getClient().isForm(DBCForm.Legendary) && isInBaseForm(DBCData.getClient())) {

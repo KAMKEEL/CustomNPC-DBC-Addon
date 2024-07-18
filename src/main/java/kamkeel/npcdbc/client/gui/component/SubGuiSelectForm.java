@@ -20,13 +20,16 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
     public boolean confirmed = false;
     public boolean selectionChild;
     public int selectedFormID = -1;
+    public int buttonID = -1;
 
-    public SubGuiSelectForm(boolean selectionChild){
+    public SubGuiSelectForm(int buttonID){
         this.selectionChild = selectionChild;
+        this.buttonID = buttonID;
         this.closeOnEsc = true;
         this.drawDefaultBackground = true;
         xSize = 256;
         this.setBackground("menubg.png");
+
 
         PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, false).generatePacket());
     }
