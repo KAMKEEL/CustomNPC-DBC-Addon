@@ -24,6 +24,7 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.util.ValueUtil;
 import org.spongepowered.asm.mixin.Mixin;
@@ -70,124 +71,140 @@ public abstract class MixinJRMCoreH {
         if (calculatingKi)
             return;
 
-        if (player != null && DBCData.get(player) != null) {
-            DBCData dbcData = DBCData.get(player);
-            Form form = dbcData.getForm();
+        DBCData dbcData = DBCData.get(player);
+        if(player == null || dbcData == null)
+            return;
 
-            if (form == null)
-                return;
+        Form form = dbcData.getForm();
+        if (form == null)
+            return;
 
-            int skillX = powerType == 1 ? JRMCoreH.SklLvlX(1, SklX) : 0;
-            int mysticLvl = powerType == 1 ? JRMCoreH.SklLvl(10, 1, Skls) : 0;
-            int result = 0;
+        int skillX = powerType == 1 ? JRMCoreH.SklLvlX(1, SklX) : 0;
+        int mysticLvl = powerType == 1 ? JRMCoreH.SklLvl(10, 1, Skls) : 0;
+        int result = 0;
 
-            boolean masteryCalc = JGConfigDBCFormMastery.FM_Enabled;
-            JGConfigDBCFormMastery.FM_Enabled = masteryCalc && form.stackable.vanillaStackable;
-            int state = form.stackable.vanillaStackable ? st : 0;
+        boolean masteryCalc = JGConfigDBCFormMastery.FM_Enabled;
+        JGConfigDBCFormMastery.FM_Enabled = masteryCalc && form.stackable.vanillaStackable;
+
+        // @TODO: Add a Absorption / PowerPoint config in a form!!!!
+        if(form.stackable.vanillaStackable && race >= 0 && race <= 5){
             switch (race) {
                 case 0:
-                    result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
+                    result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, st, skillX, false, mysticLvl, isFused, false, powerType, false);
                     break;
                 case 1:
-                    result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
+                    result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, st, skillX, false, mysticLvl, isFused, false, powerType, false);
                     break;
                 case 2:
-                    result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
+                    result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, st, skillX, false, mysticLvl, isFused, false, powerType, false);
                     break;
                 case 3:
-                    result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
+                    result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, st, skillX, false, mysticLvl, isFused, false, powerType, false);
                     break;
                 case 4:
-                    result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, state, currRelease, arcRel, skillX, false, mysticLvl, isFused, false, powerType, false);
+                    result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, st, currRelease, arcRel, skillX, false, mysticLvl, isFused, false, powerType, false);
                     break;
                 case 5:
-                    result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false, majinAbs);
+                    result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, st, skillX, false, mysticLvl, isFused, false, powerType, false, majinAbs);
                     break;
-                default:
-                    result = currAttributes[attribute];
-            }
-            JGConfigDBCFormMastery.FM_Enabled = masteryCalc;
-
-            DBCData d = DBCData.get(player);
-            float[] formMulti = form.getAllMulti();
-            float stackableMulti = d.isForm(DBCForm.Kaioken) ? form.stackable.getFormMulti(DBCForm.Kaioken) : d.isForm(DBCForm.UltraInstinct) ? form.stackable.getFormMulti(DBCForm.UltraInstinct) : d.isForm(DBCForm.GodOfDestruction) ? form.stackable.getFormMulti(DBCForm.GodOfDestruction) : d.isForm(DBCForm.Mystic) ? form.stackable.getFormMulti(DBCForm.Mystic) : 1.0f;
-            double fmvalue = 1.0f;
-
-            //don't forget to multiply this by legend/divine/majin formMulti
-            if (kaiokenOn && d.State2 > 0) {
-                fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Kaioken", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
-                stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.Kaioken) * d.State2 / (JRMCoreH.TransKaiDmg.length - 1);
-            } else if (uiOn && d.State2 > 0) {
-                fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "UltraInstict", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
-                stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.UltraInstinct) * d.State2 / JGConfigUltraInstinct.CONFIG_UI_LEVELS;
-            } else if (GoDOn) {
-                fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "GodOfDestruction", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
-            } else if (mysticOn) {
-                fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Mystic", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
             }
 
-            stackableMulti *= (float) fmvalue;
+            // THIS FIXES RELYING ON BASE FORM (form id 0)!!!!!!
+            // Very important for races like Arcosian as their true base form is usually configured to be below 1.0 multi.
+        } else {
+            result = currAttributes[attribute];
 
-            float statusMulti = 1;
-
-            /*
-                FIXME: Rework it a little to match DBC's system
-                 (Huss note: I wanna rework it but ya know my work ethic. If I don't get to it by 22/07/2024, someone beat me with a bat)
-
-                DBC's multi modifiers are applied based on the "base" multi, they don't amplify each other.
-                Only exception to this are PowerPoints and Absorption
-
-                stat = getAttribute<Race> <-- this applies form appropriate multi + PP/Absorption
-                stat = stat*kaio + stat*majin + stat*legend
-             */
-            if (majinOn)
-                statusMulti += statusMulti * form.stackable.majinStrength;
-            if (legendOn)
-                statusMulti += statusMulti * form.stackable.legendaryStrength;
-            if (d.isForm(DBCForm.Divine))
-                statusMulti += statusMulti * form.stackable.divineStrength;
-
-
-            float currentFormLevel = dbcData.addonFormLevel;
-
-            float[] multiBonus = dbcData.bonus.getMultiBonus();
-            if (attribute == DBCAttribute.Strength) // STR
-                result *= (formMulti[0] + multiBonus[0] + statusMulti);
-            else if (attribute == DBCAttribute.Dexterity) // DEX
-                result *= (formMulti[1] + multiBonus[1] + statusMulti);
-            else if (attribute == DBCAttribute.Willpower) // WIL
-                result *= (formMulti[2] + multiBonus[2] + statusMulti);
-
-
-            if (attribute == 0 || attribute == 1 || attribute == 3) {
-                result *= (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
-                //      result += statusMulti;
+            if(race == 4){
+                // @TODO: Apply PP
             }
 
-            // Add Bonus Multi to Base Attributes
-            if (attribute == DBCAttribute.Strength) // STR
-                result += (currAttributes[0] * multiBonus[0]);
-            else if (attribute == DBCAttribute.Dexterity) // DEX
-                result += (currAttributes[1] * multiBonus[1]);
-            else if (attribute == DBCAttribute.Willpower) // WIL
-                result += (currAttributes[3] * multiBonus[2]);
-
-            float[] flatBonus = dbcData.bonus.getFlatBonus();
-            // Add Bonus Flat to Base Attributes at the end
-            if (attribute == DBCAttribute.Strength) // STR
-                result += flatBonus[0];
-            else if (attribute == DBCAttribute.Dexterity) // DEX
-                result += flatBonus[1];
-            else if (attribute == DBCAttribute.Willpower) // WIL
-                result += flatBonus[2];
-            else if (attribute == DBCAttribute.Constitution) // CON
-                result += flatBonus[3];
-            else if (attribute == DBCAttribute.Spirit) // SPI
-                result += flatBonus[4];
-
-            result = ValueUtil.clamp(result, 0, Integer.MAX_VALUE);
-            info.setReturnValue(result);
+            if(race == 5){
+                // @TODO: Apply Majin Absorption
+            }
         }
+        JGConfigDBCFormMastery.FM_Enabled = masteryCalc;
+
+        DBCData d = DBCData.get(player);
+        float[] formMulti = form.getAllMulti();
+        float stackableMulti = d.isForm(DBCForm.Kaioken) ? form.stackable.getFormMulti(DBCForm.Kaioken) : d.isForm(DBCForm.UltraInstinct) ? form.stackable.getFormMulti(DBCForm.UltraInstinct) : d.isForm(DBCForm.GodOfDestruction) ? form.stackable.getFormMulti(DBCForm.GodOfDestruction) : d.isForm(DBCForm.Mystic) ? form.stackable.getFormMulti(DBCForm.Mystic) : 1.0f;
+        double fmvalue = 1.0f;
+
+        //don't forget to multiply this by legend/divine/majin formMulti
+        if (kaiokenOn && d.State2 > 0) {
+            fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Kaioken", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
+            stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.Kaioken) * d.State2 / (JRMCoreH.TransKaiDmg.length - 1);
+        } else if (uiOn && d.State2 > 0) {
+            fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "UltraInstict", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
+            stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.UltraInstinct) * d.State2 / JGConfigUltraInstinct.CONFIG_UI_LEVELS;
+        } else if (GoDOn) {
+            fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "GodOfDestruction", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
+        } else if (mysticOn) {
+            fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Mystic", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
+        }
+
+        stackableMulti *= (float) fmvalue;
+
+        float statusMulti = 1;
+
+        /*
+            FIXME: Rework it a little to match DBC's system
+             (Huss note: I wanna rework it but ya know my work ethic. If I don't get to it by 22/07/2024, someone beat me with a bat)
+
+            DBC's multi modifiers are applied based on the "base" multi, they don't amplify each other.
+            Only exception to this are PowerPoints and Absorption
+
+            stat = getAttribute<Race> <-- this applies form appropriate multi + PP/Absorption
+            stat = stat*kaio + stat*majin + stat*legend
+         */
+        if (majinOn)
+            statusMulti += form.stackable.majinStrength;
+        if (legendOn)
+            statusMulti += form.stackable.legendaryStrength;
+        if (d.isForm(DBCForm.Divine))
+            statusMulti += form.stackable.divineStrength;
+
+
+        float currentFormLevel = dbcData.addonFormLevel;
+
+        float[] multiBonus = dbcData.bonus.getMultiBonus();
+
+        if (attribute == 0 || attribute == 1 || attribute == 3) {
+            result *= (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
+            //      result += statusMulti;
+        }
+
+        if (attribute == DBCAttribute.Strength) // STR
+            result = (int) (result * (formMulti[0]*statusMulti + multiBonus[0]));
+        else if (attribute == DBCAttribute.Dexterity) // DEX
+            result = (int) (result * (formMulti[1]*statusMulti + multiBonus[1]));
+        else if (attribute == DBCAttribute.Willpower) // WIL
+            result = (int) (result * (formMulti[2]+statusMulti + multiBonus[2]));
+
+
+        // Add Bonus Multi to Base Attributes
+        if (attribute == DBCAttribute.Strength) // STR
+            result += (currAttributes[0] * multiBonus[0]);
+        else if (attribute == DBCAttribute.Dexterity) // DEX
+            result += (currAttributes[1] * multiBonus[1]);
+        else if (attribute == DBCAttribute.Willpower) // WIL
+            result += (currAttributes[3] * multiBonus[2]);
+
+        float[] flatBonus = dbcData.bonus.getFlatBonus();
+        // Add Bonus Flat to Base Attributes at the end
+        if (attribute == DBCAttribute.Strength) // STR
+            result += flatBonus[0];
+        else if (attribute == DBCAttribute.Dexterity) // DEX
+            result += flatBonus[1];
+        else if (attribute == DBCAttribute.Willpower) // WIL
+            result += flatBonus[2];
+        else if (attribute == DBCAttribute.Constitution) // CON
+            result += flatBonus[3];
+        else if (attribute == DBCAttribute.Spirit) // SPI
+            result += flatBonus[4];
+
+        result = ValueUtil.clamp(result, 0, Integer.MAX_VALUE);
+        info.setReturnValue(result);
+
 
     }
 
