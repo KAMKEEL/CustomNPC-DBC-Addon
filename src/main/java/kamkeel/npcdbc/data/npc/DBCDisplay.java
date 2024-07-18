@@ -552,7 +552,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             bodyC1 = 0;
             bodyC2 = 0;
             bodyC3 = 0;
-            hairColor = bodyCM;
         }
 
     }

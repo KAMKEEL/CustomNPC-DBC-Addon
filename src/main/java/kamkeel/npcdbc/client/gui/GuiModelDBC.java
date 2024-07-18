@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui;
 
+import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -232,14 +233,26 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             if (isStringNumber(newDNSHair) && (newDNSHair.length() == 786 || newDNSHair.length() == 784 || newDNSHair.length() == 392)) {
                 display.hairCode = dnsHairG1toG2(newDNSHair);
                 initGui();
+            } else if (newDNSHair.equalsIgnoreCase("bald")) {
+                display.hairCode = "bald";
+                initGui();
             }
         }
         if (button.id == 102) {
             setClipboardContents(display.hairCode);
         }
         if(button.id == 103){
-            display.hairCode = "";
             display.hairColor = 0x0;
+            if (display.race < 3)
+                display.hairCode = DBCHair.GOKU_HAIR;
+            else if (display.race < 5)
+                display.hairCode = "";
+            else if (display.race == DBCRace.MAJIN) {
+                display.hairCode = DBCHair.MAJIN_HAIR;
+                display.hairColor = display.bodyCM;
+            }
+
+            display.hairType = "base";
             initGui();
         }
         if(button.id == 104){
