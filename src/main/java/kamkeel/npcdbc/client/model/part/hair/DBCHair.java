@@ -396,6 +396,9 @@ public class DBCHair extends ModelHairRenderer {
 
         if(base.isArmor)
             return;
+        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        if (!display.enabled)
+            return;
 
         GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
         ClientProxy.bindTexture(hairResource);
@@ -419,7 +422,6 @@ public class DBCHair extends ModelHairRenderer {
             GL11.glColor4f(increasedRed, green, blue, this.base.alpha);
         }
 
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         this.renderHairs(display);
         this.base.currentlyPlayerTexture = false;
         if (showColor) {

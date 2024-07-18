@@ -42,6 +42,9 @@ public class DBCEars extends ModelDBCPartInterface {
     @Override
     public void render(float par1) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        if (!display.enabled)
+            return;
+
         if(display.useSkin){
             this.useColor = 0;
             bodyCM = display.bodyCM;

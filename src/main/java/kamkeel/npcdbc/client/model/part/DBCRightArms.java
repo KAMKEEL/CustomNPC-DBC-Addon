@@ -46,6 +46,9 @@ public class DBCRightArms extends ModelDBCPartInterface {
     @Override
     public void render(float par1) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        if (!display.enabled)
+            return;
+
         this.ArcoRightShoulder.rotateAngleY = base.bipedRightArm.rotateAngleY;
         this.ArcoRightShoulder.rotateAngleX = base.bipedRightArm.rotateAngleX;
         this.ArcoRightShoulder.rotateAngleZ = base.bipedRightArm.rotateAngleZ;

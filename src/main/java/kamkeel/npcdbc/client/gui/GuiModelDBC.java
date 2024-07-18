@@ -200,20 +200,11 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         }
         if(button.id == 0){
             display.enabled = button.getValue() == 1;
-            if(!display.enabled){
-                playerdata.removePart("dbcHorn");
-                playerdata.removePart("dbcEars");
-                playerdata.removePart("dbcBody");
-                playerdata.removePart("dbcArms");
+            if(!display.enabled)
                 playerdata.removePart("tail");
-                display.hairCode = "";
-                display.useSkin = false;
-                display.arcoState = 0;
-                display.bodyType = 0;
-                display.noseType = 0;
-                display.mouthType = 0;
-                display.eyeType = 0;
-            }
+             else if (DBCRace.isSaiyan(display.race) || display.race == DBCRace.ARCOSIAN)
+                verifyRaceTail();
+
             initGui();
         }
         if(button.id == 1){
@@ -411,17 +402,11 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         if(display.useSkin && (display.race == DBCRace.SAIYAN || display.race == DBCRace.HALFSAIYAN  || display.race == DBCRace.ARCOSIAN)){
             ModelPartData tail = playerdata.getOrCreatePart("tail");
             tail.setTexture("tail/monkey1", 8);
-            if(display.race == DBCRace.SAIYAN || display.race == DBCRace.HALFSAIYAN){
+            if (display.race == DBCRace.SAIYAN || display.race == DBCRace.HALFSAIYAN)
                 tail.pattern = 0;
-                tail.color = display.hairColor;
-                if(display.furColor != -1){
-                    tail.color = display.furColor;
-                }
-            }
-            if(display.race == DBCRace.ARCOSIAN){
+            else if (display.race == DBCRace.ARCOSIAN)
                 tail.pattern = 2;
-                tail.color = display.bodyC3;
-            }
+
         } else {
             playerdata.removePart("tail");
         }

@@ -163,6 +163,9 @@ public class DBCHorns extends ModelDBCPartInterface {
     @Override
     public void render(float par1) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        if (!display.enabled)
+            return;
+
         if (display.useSkin){
             int state = ValueUtil.clamp(display.getCurrentArcoState(), 0, 7);
             if (display.race != DBCRace.ARCOSIAN)
