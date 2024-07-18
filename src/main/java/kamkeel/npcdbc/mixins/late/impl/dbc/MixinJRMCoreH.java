@@ -168,7 +168,7 @@ public abstract class MixinJRMCoreH {
         else if (attribute == DBCAttribute.Dexterity) // DEX
             result = (int) (result * (formMulti[1]*statusMulti + multiBonus[1]));
         else if (attribute == DBCAttribute.Willpower) // WIL
-            result = (int) (result * (formMulti[2]+statusMulti + multiBonus[2]));
+            result = (int) (result * (formMulti[2]*statusMulti + multiBonus[2]));
 
 
         // Add Bonus Multi to Base Attributes
