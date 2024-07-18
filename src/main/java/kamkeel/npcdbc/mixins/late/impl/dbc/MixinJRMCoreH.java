@@ -146,16 +146,6 @@ public abstract class MixinJRMCoreH {
 
         float statusMulti = 1;
 
-        /*
-            FIXME: Rework it a little to match DBC's system
-             (Huss note: I wanna rework it but ya know my work ethic. If I don't get to it by 22/07/2024, someone beat me with a bat)
-
-            DBC's multi modifiers are applied based on the "base" multi, they don't amplify each other.
-            Only exception to this are PowerPoints and Absorption
-
-            stat = getAttribute<Race> <-- this applies form appropriate multi + PP/Absorption
-            stat = stat*kaio + stat*majin + stat*legend
-         */
         if (majinOn)
             statusMulti += form.stackable.majinStrength;
         if (legendOn)
