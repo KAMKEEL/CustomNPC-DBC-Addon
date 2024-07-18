@@ -7,6 +7,7 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -67,7 +68,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         menu = new GuiNpcFormMenu(parent, this, -2, form);
 
         EntityCustomNpc originalNPC = ((EntityCustomNpc) menu.formsParent.npc);
-        DBCDisplay origDisplay = ((INPCDisplay) originalNPC.display).getDBCDisplay();
+        DBCDisplay origDisplay = null;
+        if (originalNPC != null)
+            origDisplay = ((INPCDisplay) originalNPC.display).getDBCDisplay();
 
         this.form = form;
         this.display = form.display;
@@ -85,7 +88,10 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         visualDisplay.useSkin = true;
         hasRace = form.race != -1;
         visualDisplay.race = (byte) (form.race < 0 ? 1 : form.race);
-        racePage = origDisplay.race < 0 ? 1 : origDisplay.race;
+        if (origDisplay != null)
+            racePage = origDisplay.race < 0 ? 1 : origDisplay.race;
+        else
+            racePage = DBCData.getClient().Race;
 
         visualDisplay.formID = spoofForm.id;
         refreshValues();
@@ -700,7 +706,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     public void refreshValues() {
         EntityCustomNpc originalNPC = ((EntityCustomNpc) menu.formsParent.npc);
-        DBCDisplay origDisplay = ((INPCDisplay) originalNPC.display).getDBCDisplay();
+        DBCDisplay origDisplay = null;
+        if (originalNPC != null)
+            origDisplay = ((INPCDisplay) originalNPC.display).getDBCDisplay();
         if (hasRace)
             visualDisplay.race = (byte) form.race;
         else
@@ -713,7 +721,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             visualDisplay.bodyC1 = 6498048;
             visualDisplay.bodyC2 = 0;
             visualDisplay.bodyC3 = 0;
-            visualDisplay.furColor = display.furColor == -1 ? origDisplay.furColor : display.furColor;
+            visualDisplay.furColor = origDisplay != null && display.furColor == -1 ? origDisplay.furColor : display.furColor;
 
         } else if (visualDisplay.race == DBCRace.NAMEKIAN) {
             visualDisplay.bodyCM = 5095183;
@@ -734,8 +742,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             visualDisplay.hasArcoMask = display.hasArcoMask;
         }
 
-        visualDisplay.hairType = display.hairType.isEmpty() ? origDisplay.hairType : display.hairType;
-        visualDisplay.hairColor = display.hairColor == -1 ? origDisplay.hairColor : display.hairColor;
+        visualDisplay.hairType = origDisplay != null && display.hairType.isEmpty() ? origDisplay.hairType : display.hairType;
+        visualDisplay.hairColor = origDisplay != null && display.hairColor == -1 ? origDisplay.hairColor : display.hairColor;
         if (visualDisplay.race == DBCRace.NAMEKIAN || visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.MAJIN)
             visualDisplay.hairColor = display.bodyCM;
 
@@ -769,12 +777,18 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         if(visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN || visualDisplay.race == DBCRace.ARCOSIAN){
             //
-            ModelPartData original = ((EntityCustomNpc) menu.formsParent.npc).modelData.getPartData("tail");
+            ModelPartData original = null;
+            if (originalNPC != null)
+                original = ((EntityCustomNpc) menu.formsParent.npc).modelData.getPartData("tail");
+
             ModelPartData tail = data.getOrCreatePart("tail");
             tail.setTexture("tail/monkey1", 8);
-            if ((visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) && original != null) {
-                tail.pattern = original.pattern == 2 ? 0 : original.pattern;
-                tail.color = display.hairColor == -1 ? origDisplay.bodyC2 : (visualDisplay.bodyC1 = display.hairColor);
+            if ((visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN)) {
+                if (original != null)
+                    tail.pattern = original.pattern == 2 ? 0 : original.pattern;
+                else
+                    tail.pattern = 0;
+                tail.color = origDisplay != null && display.hairColor == -1 ? origDisplay.bodyC2 : (visualDisplay.bodyC1 = display.hairColor);
             } else if (visualDisplay.race == DBCRace.ARCOSIAN)
                 tail.pattern = 2;
 
