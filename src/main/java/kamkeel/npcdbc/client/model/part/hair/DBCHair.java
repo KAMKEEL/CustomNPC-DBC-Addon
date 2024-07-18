@@ -515,7 +515,7 @@ public class DBCHair extends ModelHairRenderer {
         boolean hasAura = display.auraOn;//aura anim JRMCoreH.StusEfctsClient(4, pl);
         boolean isTurbo = false; //turbo anim JRMCoreH.StusEfctsClient(3, pl);
         boolean isKaioken = false;//kaioken anim JRMCoreH.StusEfctsClient(5, pl);
-        boolean isTransforming = false; //transforming anim JRMCoreH.StusEfctsClient(1, pl);
+        boolean isTransforming = display.isTransforming; //transforming anim JRMCoreH.StusEfctsClient(1, pl);
 
         boolean isSaiyan = DBCRace.isSaiyan(display.race);
         boolean isSSJ3 = false, isRaditz = false;
@@ -738,7 +738,6 @@ public class DBCHair extends ModelHairRenderer {
         if (display.tempState != state)
             display.tempState = state;
 
-
         int hairState = race == 5 && isTransforming ? 0 : state;
         if (!JRMCoreH.HairsT(display.tempState, "A") && JRMCoreH.HairsT(hairState, "A")) {
             if ((!JRMCoreH.HairsT(display.tempState, hairState) || rage == 0) && display.stateChange > 0) {
@@ -754,8 +753,6 @@ public class DBCHair extends ModelHairRenderer {
         ///////////////////////////////////////////////////////
 
         GL11.glPushMatrix();
-        GL11.glScalef((0.5F + 0.5F / 1.0F) * 1.0F, 0.5F + 0.5F / 1.0F, (0.5F + 0.5F / 1.0F) * 1.0F);
-        GL11.glTranslatef(0.0F, (1.0F - 1.0F) / 1.0F * (2.0F - (1.0F >= 1.5F && 1.0F <= 2.0F ? (2.0F - 1.0F) / 2.5F : (1.0F < 1.5F && 1.0F >= 1.0F ? (1.0F * 2.0F - 2.0F) * 0.2F : 0.0F))), 0.0F);
 
         int[] hairRightPosZ = new int[]{3, 2, 1, 0, 3, 2, 1, 3, 2, 3};
         int[] hairRightPosY = new int[]{0, 0, 0, 0, 1, 1, 1, 2, 2, 3};
@@ -766,17 +763,16 @@ public class DBCHair extends ModelHairRenderer {
         int[] hairTopPosX = new int[]{0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3};
         int[] hairTopPosZ = new int[]{0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3};
         int[] hairPos = new int[]{0, 4, 14, 24, 40, 56};
-        String hairdns = hairCode;
 
         for (int face = 0; face < 56; ++face) {
-            int l = dnsHair2(hairdns, face * 14);
+            int l = dnsHair2(hairCode, face * 14);
             if (l != 0) {
-                int X = dnsHair2(hairdns, face * 14 + 2);
-                int Y = dnsHair2(hairdns, face * 14 + 4);
-                int Z = dnsHair2(hairdns, face * 14 + 6);
-                int B = dnsHair2(hairdns, face * 14 + 8);
-                int P = dnsHair2(hairdns, face * 14 + 10);
-                int T = dnsHair2(hairdns, face * 14 + 12);
+                int X = dnsHair2(hairCode, face * 14 + 2);
+                int Y = dnsHair2(hairCode, face * 14 + 4);
+                int Z = dnsHair2(hairCode, face * 14 + 6);
+                int B = dnsHair2(hairCode, face * 14 + 8);
+                int P = dnsHair2(hairCode, face * 14 + 10);
+                int T = dnsHair2(hairCode, face * 14 + 12);
                 X = X > 82 ? 82 : (X < 18 ? 18 : X);
                 Y = Y > 82 ? 82 : (Y < 18 ? 18 : Y);
                 Z = Z > 82 ? 82 : (Z < 18 ? 18 : Z);

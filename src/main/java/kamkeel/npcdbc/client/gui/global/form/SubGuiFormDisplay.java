@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.gui.global.form;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
+import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.AuraController;
@@ -238,7 +239,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         y += 22;
         int index = getHairType();
         addLabel(new GuiNpcLabel(140, "display.hairType", guiLeft + 7, y + 5));
-        //     addButton(new GuiNpcButton(140, guiLeft + 61, y, 50, 20, hairTypes, index));
         addButton(new GuiButtonBiDirectional(140, guiLeft + 61, y, 79, 20, hairTypes, index));
 
         return y;
@@ -404,12 +404,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             display.bodyType = getArcoString(button.getValue());
             refreshValues();
         }
-        if(button.id == 140){
-            display.hairType = getHairString(button.getValue());
-            visualDisplay.hairType = display.hairType;
-            refreshValues();
-            updateButtons();
-        }
+
         // Hair Clear
         if(button.id == 103){
             display.hairCode = "";
@@ -442,6 +437,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Hair Color Clear
         if(button.id == 1104){
             display.hairColor = -1;
+            refreshValues();
+            updateButtons();
+        }
+        //Hair Type
+        if (button.id == 140) {
+            display.hairType = getHairString(button.getValue());
+            visualDisplay.hairType = display.hairType;
             refreshValues();
             updateButtons();
         }
@@ -665,7 +667,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         // Render Entity
         try {
-            RenderManager.instance.renderEntityWithPosYaw((Entity)entity, 0.0, 0.0, 0.0, 0.0F, 1.0F);
+            RenderManager.instance.renderEntityWithPosYaw(entity, 0.0, 0.0, 0.0, 0.0F, 1F);
         } catch (Exception ignored) {}
 
 
@@ -741,14 +743,14 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         if(visualDisplay.race == DBCRace.HUMAN || visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
             visualDisplay.hairCode = display.hairCode;
             if (visualDisplay.hairCode.isEmpty())
-                visualDisplay.hairCode = "255625542850212261234927501822325618275021283063192850180147507467503248505072675043255250726750360150505667501922475071675038255050716750380152507167503202475071675032025250716750300050507167503000505047655036205250276550362250502765503620475027655036225250306550363150503065503622475030655034015250276550250147502765503000505027655036175050505050803150505050508028505050505080225050505050801750505050508022505050505080255050505050801750505050508011505050505080115050505050801150505050508011505050505080005050505050800050505050508000505050505080005050505050803154508067504931545080615028285450766150472854506561506551525080675038655250806150786052507861503451525069615050625050806950528250508061503485505078615030625050696150585149508069506157495080615080624950786150805149506961504920";
+                visualDisplay.hairCode = DBCHair.GOKU_HAIR;
         } else if (visualDisplay.race == DBCRace.MAJIN) {
             if (display.effectMajinHair)
                 visualDisplay.hairColor = display.hairColor;
 
             visualDisplay.hairCode = display.hairCode;
             if (visualDisplay.hairCode.isEmpty())
-                visualDisplay.hairCode = "005050555050000050505550500000505055505000005050455050000050505250500000505052505000005050555050000050505450500000505052505000005050525050000150433450500000505055505000005050525050000054395050500000505045505000005050475050000050504750500000505047505000015043655050000050504750500000505047505000005050475050000050504750500000544545505000005250505050000052505050500000525050505000005250505050000050505050500000505050505000005050505050000052505050500000525050505000005250505050000052505050500000525050505000005245505050000054505050500000525050505000005252505050000070505050500000705050505000007050505050000070505050500000705050505000347050505050003470505050500000705050505000007050505050000069505050500000695050505000007050505050000070505050500000705050505000007050505050000070505050500020";
+                visualDisplay.hairCode = DBCHair.MAJIN_HAIR;
         }
 
 
