@@ -37,7 +37,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 {
     private final String[] arrRace = new String[]{"Human", "Saiyan", "Half-Saiyan", "Namekian", "Arcosian", "Majin"};
     private final String[] arcoForms = new String[]{"First", "Second", "Third", "Final", "Ultimate"};
-    private final String[] hairTypes = new String[]{"Base", "SSJ", "SSJ2", "SSJ3", "SSJ4", "Oozaru", "Raditz"};
+    private final String[] hairTypes = new String[]{"display.base", "display.ssj", "display.ssj2", "display.ssj3", "display.ssj4", "display.oozaru", "display.raditz"};
     private final GuiNpcFormMenu menu;
 	public Form form;
     public FormDisplay display;
@@ -556,12 +556,12 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         GL11.glRotatef(135F, 0.0F, 1.0F, 0.0F);
         RenderHelper.enableStandardItemLighting();
         GL11.glRotatef(-135F, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(-(float)Math.atan(f6 / 80F) * 20F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(-(float) Math.atan(f6 / 800F) * 20F, 1.0F, 0.0F, 0.0F);
         entity.prevRenderYawOffset = entity.renderYawOffset = rotation;
         entity.prevRotationYaw = entity.rotationYaw = (float)Math.atan(f5 / 80F) * 40F + rotation;
-        entity.rotationPitch = -(float)Math.atan(f6 / 80F) * 20F;
+        entity.rotationPitch = -(float) Math.atan(f6 / 40F) * 20F;
         entity.prevRotationYawHead = entity.rotationYawHead = entity.rotationYaw;
-        GL11.glTranslatef(0.0F, entity.yOffset, 0.0F);
+        GL11.glTranslatef(0.0F, entity.yOffset, 1F);
         RenderManager.instance.playerViewY = 180F;
 
         if(showAura) {
@@ -703,14 +703,14 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             visualDisplay.race = (byte) form.race;
         else
             visualDisplay.race = (byte) racePage;
-
+        visualDisplay.setDefaultColors();
 
         visualDisplay.eyeColor = 0x0;
         if (visualDisplay.race < 3) {
-            visualDisplay.bodyCM = origDisplay.bodyCM;
-            visualDisplay.bodyC1 = origDisplay.bodyC1;
-            visualDisplay.bodyC2 = origDisplay.bodyC2;
-            visualDisplay.bodyC3 = origDisplay.bodyC3;
+            visualDisplay.bodyCM = 16297621;
+            visualDisplay.bodyC1 = 6498048;
+            visualDisplay.bodyC2 = 0;
+            visualDisplay.bodyC3 = 0;
             visualDisplay.furColor = display.furColor == -1 ? origDisplay.furColor : display.furColor;
 
         } else if (visualDisplay.race == DBCRace.NAMEKIAN) {
@@ -771,7 +771,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             ModelPartData tail = data.getOrCreatePart("tail");
             tail.setTexture("tail/monkey1", 8);
             if ((visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) && original != null) {
-                tail.pattern = original.pattern;
+                tail.pattern = original.pattern == 2 ? 0 : original.pattern;
                 tail.color = display.hairColor == -1 ? origDisplay.bodyC2 : (visualDisplay.bodyC1 = display.hairColor);
             } else if (visualDisplay.race == DBCRace.ARCOSIAN)
                 tail.pattern = 2;

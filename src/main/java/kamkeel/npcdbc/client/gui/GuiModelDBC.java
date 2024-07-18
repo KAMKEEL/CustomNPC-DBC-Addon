@@ -20,6 +20,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
 	private final GuiScreen parent;
     private final String[] arrRace = new String[]{"gui.no","Human", "Saiyan", "HalfSaiyan", "Namekian", "Arcosian", "Majin"};
     private final String[] arrHorns = new String[]{"gui.no","display.part.spike","display.part.spike2","display.part.long","display.part.ultimate","display.part.antenna"};
+    private final String[] arrHair = new String[]{"display.base", "display.ssj", "display.ssj2", "display.ssj3", "display.ssj4", "display.oozaru", "display.raditz"};
     private final String[] arrRaceEars = new String[]{"gui.no","Arco"};
     private final String[] arrBody = new String[]{"gui.no","display.part.backSpike"};
     private final String[] arrArm = new String[]{"gui.no","display.part.armSpikes",  "display.part.shoulder"};
@@ -54,7 +55,10 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             addLabel(new GuiNpcLabel(100, "display.hair", guiLeft, y + 5, 0xFFFFFF));
             addButton(new GuiNpcButton(104, guiLeft + 101, y+=22, 50, 20, getColor(display.hairColor)));
             addButton(new GuiNpcButton(103, guiLeft + 40, y, 60, 20, "gui.clear"));
+            int index = getHairType();
+            addButton(new GuiButtonBiDirectional(105, guiLeft + 47, y += 22, 100, 20, arrHair, index));
             getButton(104).packedFGColour = display.hairColor != 0 ? display.hairColor : 1;
+            getButton(105).enabled = display.hairCode.length() == 786 || display.hairCode.length() == 784 || display.hairCode.length() == 392;
 
             ModelPartData dbcHorn = playerdata.getPartData("dbcHorn");
             addButton(new GuiNpcButton(2, guiLeft + 40, y+=22, 60, 20, arrHorns, dbcHorn == null ? 0 : dbcHorn.type));
@@ -237,6 +241,10 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         if(button.id == 104){
             this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 4));
         }
+        if (button.id == 105) {
+            display.hairType = getHairString(button.getValue());
+            initGui();
+        }
         if(button.id == 305){
             this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 5));
         }
@@ -411,6 +419,50 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             playerdata.removePart("tail");
         }
     }
+
+    private int getHairType() {
+        int index = 0;
+        //  "base", "ssj", "ssj2", "ssj3", "ssj4", "oozaru"
+        if (!display.hairType.isEmpty()) {
+            if (display.hairType.toLowerCase().contains("base"))
+                index = 0;
+            else if (display.hairType.equalsIgnoreCase("ssj"))
+                index = 1;
+            else if (display.hairType.toLowerCase().contains("ssj2"))
+                index = 2;
+            else if (display.hairType.toLowerCase().contains("ssj3"))
+                index = 3;
+            else if (display.hairType.toLowerCase().contains("ssj4"))
+                index = 4;
+            else if (display.hairType.toLowerCase().contains("oozaru"))
+                index = 5;
+            else if (display.hairType.toLowerCase().contains("raditz"))
+                index = 6;
+        }
+        return index;
+    }
+
+    private String getHairString(int i) {
+        switch (i) {
+            case 0:
+                return "base";
+            case 1:
+                return "ssj";
+            case 2:
+                return "ssj2";
+            case 3:
+                return "ssj3";
+            case 4:
+                return "ssj4";
+            case 5:
+                return "oozaru";
+            case 6:
+                return "raditz";
+            default:
+                return "";
+        }
+    }
+
 
     public static boolean isStringNumber(String s) {
         for (int i = 0; i < s.length(); i++) {
