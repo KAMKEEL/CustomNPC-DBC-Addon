@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
+import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
@@ -33,11 +34,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public boolean enabled = ConfigDBCGeneral.DISPLAY_BY_DEFAULT;
 
     // Hair Display //
-    public String hairCode = "", hairType = "";
-    public int hairColor = -1;
+    public String hairCode = DBCHair.GOKU_HAIR, hairType = "";
+    public int hairColor = 0;
 
     // Race Display //
-    public byte race = -1;
+    public byte race = 1;
     public boolean useSkin = false;
     public int bodyType = 0;
     public int bodyCM = 0xffffff, bodyC1 = 0xffffff, bodyC2 = 0xffffff, bodyC3 = 0xffffff;
@@ -46,7 +47,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public boolean hasFur = false;
 
     // Face Display //
-    public int eyeColor = -1;
+    public int eyeColor = 0;
     public int noseType = 0, mouthType = 0, eyeType = 0, arcoState;
 
     // Aura Display //
