@@ -595,7 +595,6 @@ public class DBCHair extends ModelHairRenderer {
             renderSSJ3Hair(isSSJ3);
             return;
         }
-
         int trTime = canUse ? 2 : 200;
         int arTime = canUse ? 2 : 200;
         if (JRMCoreH.HairsT(state, "B") &&  display.stateChange < 200) {
@@ -739,7 +738,7 @@ public class DBCHair extends ModelHairRenderer {
             display.tempState = state;
 
 
-        int hairState = race == 5 ? 0 : state;
+        int hairState = race == 5 && isTransforming ? 0 : state;
         if (!JRMCoreH.HairsT(display.tempState, "A") && JRMCoreH.HairsT(hairState, "A")) {
             if ((!JRMCoreH.HairsT(display.tempState, hairState) || rage == 0) && display.stateChange > 0) {
                 display.stateChange -= trTime;

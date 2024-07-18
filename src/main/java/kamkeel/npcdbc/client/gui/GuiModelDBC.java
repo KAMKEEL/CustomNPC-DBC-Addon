@@ -18,7 +18,7 @@ import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
 public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
 
 	private final GuiScreen parent;
-    private final String[] arrRace = new String[]{"gui.no","Human", "Saiyan", "HalfSaiyan", "Namekian", "Arcosian", "Majin"};
+    private final String[] arrRace = new String[]{"gui.no","display.human", "display.saiyan", "display.halfsaiyan", "display.namekian", "display.arcosian", "display.majin"};
     private final String[] arrHorns = new String[]{"gui.no","display.part.spike","display.part.spike2","display.part.long","display.part.ultimate","display.part.antenna"};
     private final String[] arrHair = new String[]{"display.base", "display.ssj", "display.ssj2", "display.ssj3", "display.ssj4", "display.oozaru", "display.raditz"};
     private final String[] arrRaceEars = new String[]{"gui.no","Arco"};
@@ -47,6 +47,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         addButton(new GuiNpcButton(50, guiLeft, y += 22, 60, 20, "display.parts"));
         getButton(50).enabled = tab != 0;
         addButton(new GuiNpcButton(51, guiLeft + 64, y, 60, 20, "display.race"));
+
         getButton(51).enabled = tab != 1;
 
         if(tab == 0){
@@ -96,7 +97,8 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
                 getButton(15).packedFGColour = dbcArms.color != 0 ? dbcArms.color : 1;
             }
         } else {
-            addButton(new GuiNpcButton(1, guiLeft + 64, y += 22, 60, 20, arrRace, display.race+1));
+            //  addButton(new GuiNpcButton(1, guiLeft + 64, y += 22, 60, 20, arrRace, display.race+1));
+            addButton(new GuiButtonBiDirectional(1, guiLeft + 46, y += 22, 94, 20, arrRace, display.race + 1));
             addLabel(new GuiNpcLabel(1, "display.race", guiLeft, y + 5, 0xFFFFFF));
             if(display.race > -1){
                 addButton(new GuiNpcButtonYesNo(304, guiLeft + 64, y+=22, 60, 20, display.useSkin));
@@ -139,9 +141,8 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
 
                     } else {
                         if(display.race == DBCRace.ARCOSIAN){
-                            addButton(new GuiButtonBiDirectional(201,guiLeft + 35, y+=22, 52, 20, new String[]{"0", "1", "2", "3", "4", "5", "6", "7"}, display.arcoState));
+                            addButton(new GuiButtonBiDirectional(201, guiLeft + 35, y += 22, 78, 20, new String[]{"0", "1", "2", "3", "4", "5", "6", "7"}, display.arcoState));
                             addLabel(new GuiNpcLabel(201, "display.state", guiLeft, y + 5, 0xFFFFFF));
-                            addButton(new GuiNpcButton(206, guiLeft + 94, y, 70, 20, new String[]{"display.maskOff", "display.maskOn"}, display.hasArcoMask ? 1 : 0));
                         }
 
                         String[] mouths = new String[]{"0", "1", "2", "3", "4"};
@@ -154,19 +155,22 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
                         if(display.race == DBCRace.NAMEKIAN)
                             eyes = new String[]{"0", "1", "2"};
 
-                        addButton(new GuiButtonBiDirectional(203,guiLeft + 35, y+=22, 52, 20, eyes, display.eyeType));
+                        addButton(new GuiButtonBiDirectional(203, guiLeft + 35, y += 22, 78, 20, eyes, display.eyeType));
                         addLabel(new GuiNpcLabel(203, "display.eye", guiLeft, y + 5, 0xFFFFFF));
 
 
-                        addButton(new GuiButtonBiDirectional(204,guiLeft + 35, y+=22, 52, 20, mouths, display.mouthType));
+                        addButton(new GuiButtonBiDirectional(204, guiLeft + 35, y += 22, 78, 20, mouths, display.mouthType));
                         addLabel(new GuiNpcLabel(204, "display.mouth", guiLeft, y + 5, 0xFFFFFF));
 
-                        addButton(new GuiButtonBiDirectional(202,guiLeft + 35, y+=22, 52, 20, new String[]{"0", "1", "2", "3", "4"}, display.noseType));
+                        addButton(new GuiButtonBiDirectional(202, guiLeft + 35, y += 22, 78, 20, new String[]{"0", "1", "2", "3", "4"}, display.noseType));
                         addLabel(new GuiNpcLabel(202, "display.nose", guiLeft, y + 5, 0xFFFFFF));
 
                         if(display.race == DBCRace.ARCOSIAN || display.race == DBCRace.NAMEKIAN){
-                            addButton(new GuiButtonBiDirectional(200,guiLeft + 35, y+=22, 52, 20, new String[]{"0", "1", "2"}, display.bodyType));
+                            addButton(new GuiButtonBiDirectional(200, guiLeft + 35, y += 22, 78, 20, new String[]{"0", "1", "2"}, display.bodyType));
                             addLabel(new GuiNpcLabel(200, "model.body", guiLeft, y + 5, 0xFFFFFF));
+                            if (display.race == DBCRace.ARCOSIAN)
+                                addButton(new GuiNpcButton(206, guiLeft + 2, y += 22, 90, 20, new String[]{"display.maskOff", "display.maskOn"}, display.hasArcoMask ? 1 : 0));
+
                         }
 
                         if(display.race == DBCRace.SAIYAN || display.race == DBCRace.HALFSAIYAN){

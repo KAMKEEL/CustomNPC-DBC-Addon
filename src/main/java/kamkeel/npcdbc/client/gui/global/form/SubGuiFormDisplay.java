@@ -35,8 +35,8 @@ import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
 
 public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener,ITextfieldListener, ClipboardOwner
 {
-    private final String[] arrRace = new String[]{"Human", "Saiyan", "Half-Saiyan", "Namekian", "Arcosian", "Majin"};
-    private final String[] arcoForms = new String[]{"First", "Second", "Third", "Final", "Ultimate"};
+    private final String[] arrRace = new String[]{"display.human", "display.saiyan", "display.halfsaiyan", "display.namekian", "display.arcosian", "display.majin"};
+    private final String[] arcoForms = new String[]{"display.arcofirst", "display.arcosecond", "display.arcothird", "display.arcofinal", "display.arcoultimatecooler"};
     private final String[] hairTypes = new String[]{"display.base", "display.ssj", "display.ssj2", "display.ssj3", "display.ssj4", "display.oozaru", "display.raditz"};
     private final GuiNpcFormMenu menu;
 	public Form form;
