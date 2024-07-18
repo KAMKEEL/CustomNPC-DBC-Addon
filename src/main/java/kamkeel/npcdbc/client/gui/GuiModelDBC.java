@@ -54,7 +54,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             addLabel(new GuiNpcLabel(100, "display.hair", guiLeft, y + 5, 0xFFFFFF));
             addButton(new GuiNpcButton(104, guiLeft + 101, y+=22, 50, 20, getColor(display.hairColor)));
             addButton(new GuiNpcButton(103, guiLeft + 40, y, 60, 20, "gui.clear"));
-            getButton(104).packedFGColour = display.hairColor;
+            getButton(104).packedFGColour = display.hairColor != 0 ? display.hairColor : 1;
 
             ModelPartData dbcHorn = playerdata.getPartData("dbcHorn");
             addButton(new GuiNpcButton(2, guiLeft + 40, y+=22, 60, 20, arrHorns, dbcHorn == null ? 0 : dbcHorn.type));
@@ -62,7 +62,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             if(dbcHorn != null){
                 addButton(new GuiNpcButton(12, guiLeft + 101, y, 50, 20, dbcHorn.getColor()));
                 getButton(12).enabled = !display.useSkin;
-                getButton(12).packedFGColour = dbcHorn.color;
+                getButton(12).packedFGColour = dbcHorn.color != 0 ? dbcHorn.color : 1;
             }
 
             ModelPartData dbcEars = playerdata.getPartData("dbcEars");
@@ -71,7 +71,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             if(dbcEars != null){
                 addButton(new GuiNpcButton(13, guiLeft + 101, y, 50, 20, dbcEars.getColor()));
                 getButton(13).enabled = !display.useSkin;
-                getButton(13).packedFGColour = dbcEars.color;
+                getButton(13).packedFGColour = dbcEars.color != 0 ? dbcEars.color : 1;
             }
 
             ModelPartData dbcBody = playerdata.getPartData("dbcBody");
@@ -80,7 +80,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             if(dbcBody != null){
                 addButton(new GuiNpcButton(14, guiLeft + 101, y, 50, 20, dbcBody.getColor()));
                 getButton(14).enabled = !display.useSkin;
-                getButton(14).packedFGColour = dbcBody.color;
+                getButton(14).packedFGColour = dbcBody.color != 0 ? dbcBody.color : 1;
             }
 
             ModelPartData dbcArms = playerdata.getPartData("dbcArms");
@@ -89,7 +89,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             if(dbcArms != null){
                 addButton(new GuiNpcButton(15, guiLeft + 101, y, 50, 20, dbcArms.getColor()));
                 getButton(15).enabled = !display.useSkin;
-                getButton(15).packedFGColour = dbcArms.color;
+                getButton(15).packedFGColour = dbcArms.color != 0 ? dbcArms.color : 1;
             }
         } else {
             addButton(new GuiNpcButton(1, guiLeft + 64, y += 22, 60, 20, arrRace, display.race+1));
@@ -106,30 +106,33 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
                     if(raceTab == 0){
                         addButton(new GuiNpcButton(305, guiLeft + 20, y+=22, 42, 20, getColor(display.eyeColor)));
                         addLabel(new GuiNpcLabel(305, "display.eye", guiLeft, y + 5, 0xFFFFFF));
-                        getButton(305).packedFGColour = display.eyeColor;
+                        getButton(305).packedFGColour = display.eyeColor != 0 ? display.eyeColor : 1;
 
                         addButton(new GuiNpcButton(320, guiLeft + 68, y, 76, 20, "display.setDefault"));
 
                         addButton(new GuiNpcButton(300, guiLeft + 20, y+=22, 42, 20, getColor(display.bodyCM)));
                         addLabel(new GuiNpcLabel(300, "CM", guiLeft, y + 5, 0xFFFFFF));
-                        getButton(300).packedFGColour = display.bodyCM;
+                        getButton(300).packedFGColour = display.bodyCM != 0 ? display.bodyCM : 1;
 
                         addButton(new GuiNpcButton(301, guiLeft + 101, y, 42, 20, getColor(display.bodyC1)));
                         addLabel(new GuiNpcLabel(301, "C1", guiLeft + 80, y + 5, 0xFFFFFF));
-                        getButton(301).packedFGColour = display.bodyC1;
+                        getButton(301).packedFGColour = display.bodyC1 != 0 ? display.bodyC1 : 1;
 
                         addButton(new GuiNpcButton(302, guiLeft + 20, y+=22, 42, 20, getColor(display.bodyC2)));
                         addLabel(new GuiNpcLabel(302, "C2", guiLeft, y + 5, 0xFFFFFF));
-                        getButton(302).packedFGColour = display.bodyC2;
+                        getButton(302).packedFGColour = display.bodyC2 != 0 ? display.bodyC2 : 1;
 
                         addButton(new GuiNpcButton(303, guiLeft + 101, y, 42, 20, getColor(display.bodyC3)));
                         addLabel(new GuiNpcLabel(303, "C3", guiLeft + 80, y + 5, 0xFFFFFF));
-                        getButton(303).packedFGColour = display.bodyC3;
+                        getButton(303).packedFGColour = display.bodyC3 != 0 ? display.bodyC3 : 1;
 
                         if(display.race == DBCRace.SAIYAN || display.race == DBCRace.HALFSAIYAN){
                             addButton(new GuiNpcButton(311, guiLeft + 20, y+=22, 42, 20, getColor(display.furColor)));
-                            addLabel(new GuiNpcLabel(311, "FUR", guiLeft, y + 5, 0xFFFFFF));
-                            getButton(311).packedFGColour = display.furColor;
+                            addLabel(new GuiNpcLabel(311, "display.fur", guiLeft, y + 5, 0xFFFFFF));
+                            getButton(311).packedFGColour = display.furColor != 0 ? display.furColor : 1;
+
+                            ModelPartData tail = this.playerdata.getPartData("tail");
+                            addButton(new GuiButtonBiDirectional(312, this.guiLeft + 75, y, 80, 20, new String[]{"display.tail", "display.wrappedTail", "display.noTail"}, tail.pattern));
                         }
 
                     } else {
@@ -323,6 +326,16 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         if(button.id == 311){
             this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 6));
         }
+        if (button.id == 312) {
+            int value = button.getValue();
+            ModelPartData data = this.playerdata.getOrCreatePart("tail");
+            if (value == 2)
+                this.playerdata.removePart("tail");
+            else
+                data.type = (byte) (8);
+            data.pattern = (byte) value;
+        }
+
         if(button.id == 320){
             display.setDefaultColors();
             verifyRaceTail();

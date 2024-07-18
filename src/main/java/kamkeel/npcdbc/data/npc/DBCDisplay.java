@@ -525,16 +525,20 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     public void setDefaultColors() {
-        eyeColor = 0x000000;
-        furColor = 0x3e2b17;
+        eyeColor = 0x0;
 
         if (race < 3) {
             bodyCM = 16297621;
+            bodyC1 = 6498048;
+            bodyC2 = 0;
+            bodyC3 = 0;
+            furColor = 0xDA152C;
         } else if (race == DBCRace.NAMEKIAN) {
             hairColor = 5095183;
             bodyCM = 5095183;
             bodyC1 = 13796998;
             bodyC2 = 12854822;
+            bodyC3 = 0;
         } else if (race == DBCRace.ARCOSIAN) {
             eyeColor = 0xFF0000;
             bodyCM = 15460342;
@@ -544,6 +548,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         } else if (race == DBCRace.MAJIN){
             eyeColor = 0xFF0000;
             bodyCM = 16757199;
+            bodyC1 = 0;
+            bodyC2 = 0;
+            bodyC3 = 0;
         }
 
     }
