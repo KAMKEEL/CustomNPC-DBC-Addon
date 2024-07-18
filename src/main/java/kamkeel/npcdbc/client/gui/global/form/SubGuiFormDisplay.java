@@ -64,6 +64,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         if(DBCDisplay.fakeForm == null)
             DBCDisplay.fakeForm = new Form(-100, "EXTREME_FAKE_FORM");
         spoofForm = DBCDisplay.fakeForm;
+        menu = new GuiNpcFormMenu(parent, this, -2, form);
 
         this.form = form;
         this.display = form.display;
@@ -81,13 +82,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         visualDisplay.useSkin = true;
         hasRace = form.race != -1;
         visualDisplay.race = (byte) (form.race == -1 ? 0 : form.race);
-        racePage = visualDisplay.race;
+        racePage = DBCData.getClient().Race;
 
         visualDisplay.formID = spoofForm.id;
         refreshValues();
-
-        menu = new GuiNpcFormMenu(parent, this, -2, form);
-	}
+    }
 
     public void initGui()
     {
@@ -171,7 +170,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             addButton(new GuiNpcButtonYesNo(115, guiLeft + 61, y, 50, 20, display.effectMajinHair));
         }
 
-        if (visualDisplay.race == DBCRace.HUMAN || visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN ||  display.effectMajinHair) {
+        if (visualDisplay.race == DBCRace.HUMAN || visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN || visualDisplay.race == DBCRace.MAJIN && display.effectMajinHair) {
             y = addHairOptions(y);
         }
 
@@ -228,8 +227,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         } else {
             addButton(new GuiNpcButton(102, guiLeft + 51, y, 45, 20, "gui.copy"));
         }
-        addButton(new GuiNpcButton(104, guiLeft + 147, y, 50, 20, getColor(visualDisplay.hairColor)));
-        getButton(104).packedFGColour = visualDisplay.hairColor;
+        addButton(new GuiNpcButton(104, guiLeft + 147, y, 50, 20, getColor(display.hairColor)));
+        getButton(104).packedFGColour = display.hairColor;
         addButton(new GuiNpcButton(1104, guiLeft + 199, y, 20, 20, "X"));
         getButton(1104).enabled = display.hairColor != -1;
 
@@ -251,8 +250,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     }
 
     private void controlButtons() {
-        //  addButton(new GuiNpcButton(1, this.guiLeft + 125 + this.xOffset, this.guiTop + 200 + this.yOffset, 60, 20, arrRace, racePage = DBCData.getClient().Race));
-        addButton(new GuiButtonBiDirectional(1, this.guiLeft + 113 + this.xOffset, this.guiTop + 200 + this.yOffset, 94, 20, arrRace, racePage = DBCData.getClient().Race));
+        addButton(new GuiButtonBiDirectional(1, this.guiLeft + 113 + this.xOffset, this.guiTop + 200 + this.yOffset, 94, 20, arrRace, racePage));
         getButton(1).enabled = !hasRace;
         addButton(this.left = new GuiNpcButton(668, this.guiLeft + 210 + this.xOffset, this.guiTop + 200 + this.yOffset, 20, 20, "<"));
         addButton(this.right = new GuiNpcButton(669, this.guiLeft + 235 + this.xOffset, this.guiTop + 200 + this.yOffset, 20, 20, ">"));
@@ -418,11 +416,16 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Hair Paste
         if(button.id == 101){
             String newDNSHair = getClipboardContents();
-            if(newDNSHair.length() != 786 && newDNSHair.length() != 784 && newDNSHair.length() != 392)
-                newDNSHair = "";
-            display.hairCode = dnsHairG1toG2(newDNSHair);
-            refreshValues();
-            updateButtons();
+            if (newDNSHair.length() == 786 || newDNSHair.length() == 784 || newDNSHair.length() == 392) {
+                display.hairCode = dnsHairG1toG2(newDNSHair);
+                refreshValues();
+                updateButtons();
+            } else if (newDNSHair.equalsIgnoreCase("bald")) {
+                display.hairCode = "bald";
+                refreshValues();
+                updateButtons();
+            }
+
         }
         // Hair Copy
         if(button.id == 102){
@@ -691,26 +694,23 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 	public void selected(int id, String name) {}
 
     public void refreshValues() {
+        EntityCustomNpc originalNPC = ((EntityCustomNpc) menu.formsParent.npc);
+        DBCDisplay origDisplay = ((INPCDisplay) originalNPC.display).getDBCDisplay();
         if (hasRace)
             visualDisplay.race = (byte) form.race;
         else
             visualDisplay.race = (byte) racePage;
 
-        visualDisplay.hasArcoMask = false;
-        if(visualDisplay.race == DBCRace.ARCOSIAN){
-            visualDisplay.hasArcoMask = display.hasArcoMask;
-        }
 
-        visualDisplay.hairType = display.hairType;
-        visualDisplay.hairColor = display.hairColor == -1 ? 0xffffff : display.hairColor;
-        if(visualDisplay.race == DBCRace.NAMEKIAN || visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.MAJIN)
-            visualDisplay.hairColor = display.bodyCM;
-
-        visualDisplay.eyeColor = 0x000000;
+        visualDisplay.eyeColor = 0x0;
         if (visualDisplay.race < 3) {
-            visualDisplay.bodyCM = 16297621;
+            visualDisplay.bodyCM = origDisplay.bodyCM;
+            visualDisplay.bodyC1 = origDisplay.bodyC1;
+            visualDisplay.bodyC2 = origDisplay.bodyC2;
+            visualDisplay.bodyC3 = origDisplay.bodyC3;
+            visualDisplay.furColor = display.furColor == -1 ? origDisplay.furColor : display.furColor;
+
         } else if (visualDisplay.race == DBCRace.NAMEKIAN) {
-            visualDisplay.hairColor = 5095183;
             visualDisplay.bodyCM = 5095183;
             visualDisplay.bodyC1 = 13796998;
             visualDisplay.bodyC2 = 12854822;
@@ -724,24 +724,32 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             visualDisplay.bodyCM = 16757199;
             visualDisplay.eyeColor = 0xFF0000;
         }
+        visualDisplay.hasArcoMask = false;
+        if (visualDisplay.race == DBCRace.ARCOSIAN) {
+            visualDisplay.hasArcoMask = display.hasArcoMask;
+        }
 
-        visualDisplay.furColor = display.furColor;
+        visualDisplay.hairType = display.hairType.isEmpty() ? origDisplay.hairType : display.hairType;
+        visualDisplay.hairColor = display.hairColor == -1 ? origDisplay.hairColor : display.hairColor;
+        if (visualDisplay.race == DBCRace.NAMEKIAN || visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.MAJIN)
+            visualDisplay.hairColor = display.bodyCM;
 
         visualDisplay.hairCode = "";
         if(visualDisplay.race == DBCRace.HUMAN || visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
             visualDisplay.hairCode = display.hairCode;
             if (visualDisplay.hairCode.isEmpty())
                 visualDisplay.hairCode = "255625542850212261234927501822325618275021283063192850180147507467503248505072675043255250726750360150505667501922475071675038255050716750380152507167503202475071675032025250716750300050507167503000505047655036205250276550362250502765503620475027655036225250306550363150503065503622475030655034015250276550250147502765503000505027655036175050505050803150505050508028505050505080225050505050801750505050508022505050505080255050505050801750505050508011505050505080115050505050801150505050508011505050505080005050505050800050505050508000505050505080005050505050803154508067504931545080615028285450766150472854506561506551525080675038655250806150786052507861503451525069615050625050806950528250508061503485505078615030625050696150585149508069506157495080615080624950786150805149506961504920";
-        } else if (visualDisplay.race == DBCRace.MAJIN){
-            if (display.effectMajinHair) {
-                visualDisplay.hairCode = display.hairCode;
+        } else if (visualDisplay.race == DBCRace.MAJIN) {
+            if (display.effectMajinHair)
                 visualDisplay.hairColor = display.hairColor;
-                if (visualDisplay.hairCode.isEmpty())
-                    visualDisplay.hairCode = "005050555050000050505550500000505055505000005050455050000050505250500000505052505000005050555050000050505450500000505052505000005050525050000150433450500000505055505000005050525050000054395050500000505045505000005050475050000050504750500000505047505000015043655050000050504750500000505047505000005050475050000050504750500000544545505000005250505050000052505050500000525050505000005250505050000050505050500000505050505000005050505050000052505050500000525050505000005250505050000052505050500000525050505000005245505050000054505050500000525050505000005252505050000070505050500000705050505000007050505050000070505050500000705050505000347050505050003470505050500000705050505000007050505050000069505050500000695050505000007050505050000070505050500000705050505000007050505050000070505050500020";
 
-            }
+            visualDisplay.hairCode = display.hairCode;
+            if (visualDisplay.hairCode.isEmpty())
+                visualDisplay.hairCode = "005050555050000050505550500000505055505000005050455050000050505250500000505052505000005050555050000050505450500000505052505000005050525050000150433450500000505055505000005050525050000054395050500000505045505000005050475050000050504750500000505047505000015043655050000050504750500000505047505000005050475050000050504750500000544545505000005250505050000052505050500000525050505000005250505050000050505050500000505050505000005050505050000052505050500000525050505000005250505050000052505050500000525050505000005245505050000054505050500000525050505000005252505050000070505050500000705050505000007050505050000070505050500000705050505000347050505050003470505050500000705050505000007050505050000069505050500000695050505000007050505050000070505050500000705050505000007050505050000070505050500020";
         }
 
+
+        //   visualDisplay.hairColor = 0;
         visualDisplay.bodyCM = display.bodyCM == -1 ? visualDisplay.bodyCM : display.bodyCM;
         visualDisplay.bodyC1 = display.bodyC1 == -1 ? visualDisplay.bodyC1 : display.bodyC1;
         visualDisplay.bodyC2 = display.bodyC2 == -1 ? visualDisplay.bodyC2 : display.bodyC2;
@@ -755,14 +763,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         data.removePart("dbcBody");
 
         if(visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN || visualDisplay.race == DBCRace.ARCOSIAN){
+            //
+            ModelPartData original = ((EntityCustomNpc) menu.formsParent.npc).modelData.getPartData("tail");
             ModelPartData tail = data.getOrCreatePart("tail");
             tail.setTexture("tail/monkey1", 8);
             if(visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN){
-                tail.pattern = 0;
-                tail.color = display.hairColor;
-                if(display.furColor != -1){
-                    tail.color = display.furColor;
-                }
+                tail.pattern = original.pattern;
+                tail.color = display.hairColor == -1 ? origDisplay.bodyC2 : (visualDisplay.bodyC1 = display.hairColor);
             }
             if(visualDisplay.race == DBCRace.ARCOSIAN){
                 tail.pattern = 2;

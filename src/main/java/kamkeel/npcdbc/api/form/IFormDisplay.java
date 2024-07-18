@@ -13,7 +13,8 @@ public interface IFormDisplay {
     String getHairCode();
 
     /**
-     * @param hairCode The hair code to set transformation's hair to, usually gotten from the JinGames Hair Salon
+     * @param hairCode The hair code to set transformation's hair to, usually gotten from the JinGames Hair Salon,
+     *                 "bald" for no hair
      */
     void setHairCode(String hairCode);
 

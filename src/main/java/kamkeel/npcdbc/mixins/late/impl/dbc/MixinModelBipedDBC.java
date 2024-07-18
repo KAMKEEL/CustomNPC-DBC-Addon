@@ -260,7 +260,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     RenderPlayerJBRA.glColor3f(form.display.getHairColor(data));
 
                 //if bald or invalid CH, remove. Set SSJ4 to default if invalid
-                if (form.display.hairType.toLowerCase().equals("bald"))
+                if (form.display.hairType.equalsIgnoreCase("bald"))
                     hair.set("");
                 else {
                     if (form.display.hairCode.length() > 5) //if valid hair

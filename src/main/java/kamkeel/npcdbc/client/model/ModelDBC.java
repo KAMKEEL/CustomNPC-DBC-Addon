@@ -248,7 +248,7 @@ public class ModelDBC extends ModelBase {
 
             if (display.race < 4) {
                 ColorMode.applyModelColor(eyeBrowColor, isHurt);
-                if (!hasEyebrows)
+                if (!hasEyebrows && display.race != DBCRace.NAMEKIAN)
                     ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + "humw" + display.eyeType + ".png"));
                 else
                     ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));

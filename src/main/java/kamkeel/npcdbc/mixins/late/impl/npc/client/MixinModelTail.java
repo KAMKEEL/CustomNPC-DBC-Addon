@@ -64,8 +64,7 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
                     if (form.display.hasColor("fur"))
                         furColor = form.display.furColor;
 
-                    if (form.display.hasBodyFur)
-                        hasFur = true;
+                    hasFur = form.display.hasBodyFur;
                     if (form.display.hairType.equals("ssj4"))
                         isSSJ4 = true;
                     else if (form.display.hairType.equals("oozaru"))
