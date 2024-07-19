@@ -1,7 +1,9 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
 
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.utils.Color;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -53,7 +55,7 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
             int tailColor = 0;
             if (DBCRace.isSaiyan(display.race)) {
                 if (monkey.monkey_large.isHidden)
-                    ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
+                    ClientProxy.bindTexture(new ResourceLocation((ConfigDBCClient.EnableHDTextures ? CustomNpcPlusDBC.ID + ":textures/hd/base/" : "jinryuudragonbc:gui/") + "allw.png"));
 
                 tailColor = display.bodyC1;
 
