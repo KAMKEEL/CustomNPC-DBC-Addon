@@ -219,17 +219,11 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
         if(data.useSkin && (data.race == DBCRace.SAIYAN || data.race == DBCRace.HALFSAIYAN  || data.race == DBCRace.ARCOSIAN)){
             ModelPartData tail = playerdata.getOrCreatePart("tail");
             tail.setTexture("tail/monkey1", 8);
-            if(data.race == DBCRace.SAIYAN || data.race == DBCRace.HALFSAIYAN){
-                tail.pattern = 0;
-                tail.color = data.hairColor;
-                if(data.furColor != -1){
-                    tail.color = data.furColor;
-                }
-            }
-            if(data.race == DBCRace.ARCOSIAN){
+            if (data.race == DBCRace.SAIYAN || data.race == DBCRace.HALFSAIYAN)
+                tail.pattern = data.tailState < 2 ? data.tailState : 0;
+            else if (data.race == DBCRace.ARCOSIAN)
                 tail.pattern = 2;
-                tail.color = data.bodyC3;
-            }
+
         } else {
             playerdata.removePart("tail");
         }

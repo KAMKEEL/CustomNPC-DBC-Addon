@@ -16,12 +16,12 @@ import noppes.npcs.util.ValueUtil;
 
 public class DBCHorns extends ModelDBCPartInterface {
     // First Form
-    public ModelRenderer SpikePair;
+    public ModelRenderer FirstFormSpikes;
     public ModelRenderer spikePairOne;
     public ModelRenderer spikePairTwo;
 
     // Second Form
-    public ModelRenderer SpikePairExtended;
+    public ModelRenderer SecondFormSpikes;
     public ModelRenderer spikePairEOne;
     public ModelRenderer spikePairETwo;
 
@@ -52,9 +52,9 @@ public class DBCHorns extends ModelDBCPartInterface {
         textureWidth = 64;
 
         // First Form
-        this.SpikePair = new ModelRenderer(base, 0, 0);
-        this.SpikePair.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.SpikePair.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.FirstFormSpikes = new ModelRenderer(base, 0, 0);
+        this.FirstFormSpikes.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
+        this.FirstFormSpikes.setRotationPoint(0.0F, 0.0F, 0.0F);
         this.spikePairOne = new ModelRenderer(base, 8, 6);
         this.spikePairOne.addBox(1.5F, -11.0F, -3.5F, 2, 4, 2);
         this.spikePairOne.setRotationPoint(0.0F, 0.0F, 0.0F);
@@ -63,13 +63,13 @@ public class DBCHorns extends ModelDBCPartInterface {
         this.spikePairTwo.addBox(-3.5F, -11.0F, -3.5F, 2, 4, 2);
         this.spikePairTwo.setRotationPoint(0.0F, 0.0F, 0.0F);
         this.setRotation(this.spikePairTwo, 0.0F, 0.0F, (float) (Math.PI / 4));
-        this.SpikePair.addChild(this.spikePairOne);
-        this.SpikePair.addChild(this.spikePairTwo);
+        this.FirstFormSpikes.addChild(this.spikePairOne);
+        this.FirstFormSpikes.addChild(this.spikePairTwo);
 
         // Second Form = First Form + Spike Pair Extended
-        this.SpikePairExtended = new ModelRenderer(base, 0, 0);
-        this.SpikePairExtended.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
-        this.SpikePairExtended.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.SecondFormSpikes = new ModelRenderer(base, 0, 0);
+        this.SecondFormSpikes.addBox(-0.0F, -0.0F, -0.0F, 0, 0, 0, 0.02F);
+        this.SecondFormSpikes.setRotationPoint(0.0F, 0.0F, 0.0F);
         this.spikePairEOne = new ModelRenderer(base, 8, 6);
         this.spikePairEOne.addBox(2.5F, -14.0F, -3.5F, 2, 4, 2);
         this.spikePairEOne.setRotationPoint(0.0F, 0.0F, 0.0F);
@@ -78,8 +78,8 @@ public class DBCHorns extends ModelDBCPartInterface {
         this.spikePairETwo.addBox(-4.5F, -14.0F, -3.5F, 2, 4, 2);
         this.spikePairETwo.setRotationPoint(0.0F, 0.0F, 0.0F);
         this.setRotation(this.spikePairETwo, 0.0F, 0.0F, -0.2094395F);
-        this.SpikePairExtended.addChild(this.spikePairEOne);
-        this.SpikePairExtended.addChild(this.spikePairETwo);
+        this.SecondFormSpikes.addChild(this.spikePairEOne);
+        this.SecondFormSpikes.addChild(this.spikePairETwo);
 
         // Big Head Spikes
         this.ThirdFormBigHead = new ModelRenderer(base, 0, 0);
@@ -153,8 +153,8 @@ public class DBCHorns extends ModelDBCPartInterface {
         this.NamekianAntennas.addChild(this.ant3);
         this.NamekianAntennas.addChild(this.ant4);
 
-        this.addChild(SpikePair);
-        this.addChild(SpikePairExtended);
+        this.addChild(FirstFormSpikes);
+        this.addChild(SecondFormSpikes);
         this.addChild(ThirdFormBigHead);
         this.addChild(CoolerHeadSpikes);
         this.addChild(NamekianAntennas);
@@ -233,11 +233,11 @@ public class DBCHorns extends ModelDBCPartInterface {
         bodyCM = config.color;
         isHidden = false;
 
-        SpikePair.isHidden = config.type != 1 && config.type != 2 && config.type != 3;
-        SpikePairExtended.isHidden = config.type != 2 && config.type != 3;
-        ThirdFormBigHead.isHidden = config.type != 3;
-        CoolerHeadSpikes.isHidden = config.type != 4;
-        NamekianAntennas.isHidden = config.type != 5;
+        NamekianAntennas.isHidden = config.type != 1;
+        FirstFormSpikes.isHidden = config.type != 2 && config.type != 3 && config.type != 4;
+        SecondFormSpikes.isHidden = config.type != 3 && config.type != 4;
+        ThirdFormBigHead.isHidden = config.type != 4;
+        CoolerHeadSpikes.isHidden = config.type != 5;
 
         if (!config.playerTexture) {
             location = config.getResource();

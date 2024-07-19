@@ -20,13 +20,13 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
 
 	private final GuiScreen parent;
     private final String[] arrRace = new String[]{"gui.no","display.human", "display.saiyan", "display.halfsaiyan", "display.namekian", "display.arcosian", "display.majin"};
-    private final String[] arrHorns = new String[]{"gui.no","display.part.spike","display.part.spike2","display.part.long","display.part.ultimate","display.part.antenna"};
+    private final String[] arrHorns = new String[]{"gui.no", "display.part.antenna", "display.part.firstformspikes", "display.part.secondformspikes", "display.part.thirdformbighead", "display.part.ultimatespikes"};
     private final String[] arrHair = new String[]{"display.base", "display.ssj", "display.ssj2", "display.ssj3", "display.ssj4", "display.oozaru", "display.raditz"};
-    private final String[] arrRaceEars = new String[]{"gui.no","Arco"};
+    private final String[] arrRaceEars = new String[]{"gui.no", "display.part.arcoEars"};
     private final String[] arrBody = new String[]{"gui.no","display.part.backSpike"};
     private final String[] arrArm = new String[]{"gui.no","display.part.armSpikes",  "display.part.shoulder"};
     private DBCDisplay display;
-    private int tab = 0;
+    private int tab = 1;
     private int raceTab = 0;
 
     public GuiModelDBC(GuiScreen parent, EntityCustomNpc npc){
@@ -62,39 +62,36 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             getButton(104).packedFGColour = display.hairColor != 0 ? display.hairColor : 1;
             getButton(105).enabled = display.hairCode.length() == 786 || display.hairCode.length() == 784 || display.hairCode.length() == 392;
 
+            y += 22;
             ModelPartData dbcHorn = playerdata.getPartData("dbcHorn");
-            addButton(new GuiNpcButton(2, guiLeft + 40, y+=22, 60, 20, arrHorns, dbcHorn == null ? 0 : dbcHorn.type));
+            addButton(new GuiButtonBiDirectional(2, guiLeft + 47, y += 22, 100, 20, arrHorns, dbcHorn == null ? 0 : dbcHorn.type));
             addLabel(new GuiNpcLabel(2, "part.horns", guiLeft, y + 5, 0xFFFFFF));
-            if(dbcHorn != null){
-                addButton(new GuiNpcButton(12, guiLeft + 101, y, 50, 20, dbcHorn.getColor()));
-                getButton(12).enabled = !display.useSkin;
+            if (dbcHorn != null && !display.useSkin) {
+                addButton(new GuiNpcButton(12, guiLeft + 151, y, 35, 20, dbcHorn.getColor()));
                 getButton(12).packedFGColour = dbcHorn.color != 0 ? dbcHorn.color : 1;
             }
 
             ModelPartData dbcEars = playerdata.getPartData("dbcEars");
-            addButton(new GuiNpcButton(3, guiLeft + 40, y += 22, 60, 20, arrRaceEars, dbcEars == null ? 0 : dbcEars.type));
+            addButton(new GuiButtonBiDirectional(3, guiLeft + 47, y += 22, 100, 20, arrRaceEars, dbcEars == null ? 0 : dbcEars.type));
             addLabel(new GuiNpcLabel(3, "part.ears", guiLeft, y + 5, 0xFFFFFF));
-            if(dbcEars != null){
-                addButton(new GuiNpcButton(13, guiLeft + 101, y, 50, 20, dbcEars.getColor()));
-                getButton(13).enabled = !display.useSkin;
+            if (dbcEars != null && !display.useSkin) {
+                addButton(new GuiNpcButton(13, guiLeft + 151, y, 35, 20, dbcEars.getColor()));
                 getButton(13).packedFGColour = dbcEars.color != 0 ? dbcEars.color : 1;
             }
 
             ModelPartData dbcBody = playerdata.getPartData("dbcBody");
-            addButton(new GuiNpcButton(4, guiLeft + 40, y += 22, 60, 20, arrBody, dbcBody == null ? 0 : dbcBody.type));
+            addButton(new GuiButtonBiDirectional(4, guiLeft + 47, y += 22, 100, 20, arrBody, dbcBody == null ? 0 : dbcBody.type));
             addLabel(new GuiNpcLabel(4, "model.body", guiLeft, y + 5, 0xFFFFFF));
-            if(dbcBody != null){
-                addButton(new GuiNpcButton(14, guiLeft + 101, y, 50, 20, dbcBody.getColor()));
-                getButton(14).enabled = !display.useSkin;
+            if (dbcBody != null && !display.useSkin) {
+                addButton(new GuiNpcButton(14, guiLeft + 151, y, 35, 20, dbcBody.getColor()));
                 getButton(14).packedFGColour = dbcBody.color != 0 ? dbcBody.color : 1;
             }
 
             ModelPartData dbcArms = playerdata.getPartData("dbcArms");
-            addButton(new GuiNpcButton(5, guiLeft + 40, y += 22, 60, 20, arrArm, dbcArms == null ? 0 : dbcArms.type));
+            addButton(new GuiButtonBiDirectional(5, guiLeft + 47, y += 22, 100, 20, arrArm, dbcArms == null ? 0 : dbcArms.type));
             addLabel(new GuiNpcLabel(5, "model.arms", guiLeft, y + 5, 0xFFFFFF));
-            if(dbcArms != null){
-                addButton(new GuiNpcButton(15, guiLeft + 101, y, 50, 20, dbcArms.getColor()));
-                getButton(15).enabled = !display.useSkin;
+            if (dbcArms != null && !display.useSkin) {
+                addButton(new GuiNpcButton(15, guiLeft + 151, y, 35, 20, dbcArms.getColor()));
                 getButton(15).packedFGColour = dbcArms.color != 0 ? dbcArms.color : 1;
             }
         } else {
