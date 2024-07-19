@@ -216,11 +216,6 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             int value = button.getValue();
             display.race = (byte) (value - 1);
             display.useSkin = display.race != -1;
-            display.arcoState = 0;
-            display.bodyType = 0;
-            display.noseType = 0;
-            display.mouthType = 0;
-            display.eyeType = 0;
             verifyRaceTail();
             initGui();
         }
