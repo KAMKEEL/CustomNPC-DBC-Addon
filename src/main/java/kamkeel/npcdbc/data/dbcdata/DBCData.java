@@ -40,7 +40,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     // Original DBC
     public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXSeconds, Rage, Heat, Pain, AuraColor, ArcReserve;
-    public byte Class, Race, Powertype, Accept, State, State2, Release, Alignment;
+    public byte Class, Race, Powertype, Accept, State, State2, Release, Alignment, Tail;
     public boolean Alive, isKO;
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "", Fusion = "";
 
@@ -105,6 +105,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setByte("jrmcClass", Class);
         comp.setByte("jrmcAccept", Accept);
         comp.setByte("jrmcAlign", Alignment);
+        comp.setByte("jrmcTlmd", Tail);
 
         comp.setString("jrmcStatusEff", StatusEffects);
         comp.setString("jrmcSSltX", RacialSkills);
@@ -165,6 +166,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         Class = c.getByte("jrmcClass");
         Accept = c.getByte("jrmcAccept");
         Alignment = c.getByte("jrmcAlign");
+        Tail = c.getByte("jrmcTlmd");
 
         StatusEffects = c.getString("jrmcStatusEff");
         RacialSkills = c.getString("jrmcSSltX");
