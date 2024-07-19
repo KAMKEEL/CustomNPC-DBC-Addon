@@ -29,6 +29,10 @@ public interface IDBCDisplay {
 
     void getBodyType(int bodyType);
 
+    byte getTailState();
+
+    void setTailState(byte tail);
+
     void setHairType(String type);
 
     boolean hasCoolerMask();

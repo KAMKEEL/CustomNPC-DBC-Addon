@@ -175,8 +175,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
                         }
 
                         if(display.race == DBCRace.SAIYAN || display.race == DBCRace.HALFSAIYAN){
-                            ModelPartData tail = this.playerdata.getPartData("tail");
-                            addButton(new GuiButtonBiDirectional(208, this.guiLeft + 35, y += 22, 78, 20, new String[]{"display.normalTail", "display.wrappedTail", "display.noTail"}, tail.pattern));
+                            addButton(new GuiButtonBiDirectional(208, this.guiLeft + 35, y += 22, 78, 20, new String[]{"display.normalTail", "display.wrappedTail", "display.noTail"}, display.tailState));
                             addLabel(new GuiNpcLabel(208, "display.tail", guiLeft, y + 5, 0xFFFFFF));
 
                             addButton(new GuiNpcButton(207, guiLeft + 2, y+=22, 90, 20, new String[]{"display.furOff", "display.furOn"}, display.hasFur ? 1 : 0));
@@ -351,7 +350,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
                 this.playerdata.removePart("tail");
             else
                 data.type = (byte) (8);
-            data.pattern = (byte) value;
+            display.tailState = data.pattern = (byte) value;
         }
 
         if(button.id == 320){
@@ -428,7 +427,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             ModelPartData tail = playerdata.getOrCreatePart("tail");
             tail.setTexture("tail/monkey1", 8);
             if (display.race == DBCRace.SAIYAN || display.race == DBCRace.HALFSAIYAN)
-                tail.pattern = 0;
+                tail.pattern = display.tailState < 2 ? display.tailState : 0;
             else if (display.race == DBCRace.ARCOSIAN)
                 tail.pattern = 2;
 

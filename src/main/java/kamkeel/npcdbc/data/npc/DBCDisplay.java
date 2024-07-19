@@ -45,6 +45,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public boolean hasArcoMask = false, hasEyebrows = true;
     public int furColor = -1;
     public boolean hasFur = false;
+    public byte tailState;
 
     // Face Display //
     public int eyeColor = 0;
@@ -88,6 +89,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             dbcDisplay.setInteger("DBCMouthType", mouthType);
             dbcDisplay.setInteger("DBCNoseType", noseType);
             dbcDisplay.setInteger("DBCBodyType", bodyType);
+            dbcDisplay.setByte("DBCTailState", tailState);
 
             dbcDisplay.setInteger("DBCRace", race);
             dbcDisplay.setBoolean("DBCUseSkin", useSkin);
@@ -136,6 +138,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             mouthType = dbcDisplay.getInteger("DBCMouthType");
             noseType = dbcDisplay.getInteger("DBCNoseType");
             bodyType = dbcDisplay.getInteger("DBCBodyType");
+            tailState = dbcDisplay.getByte("DBCTailState");
 
             hairColor = dbcDisplay.getInteger("DBCHairColor");
             eyeColor = dbcDisplay.getInteger("DBCEyeColor");
@@ -317,6 +320,16 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public void getBodyType(int bodyType) {
         this.bodyType = ValueUtil.clamp(bodyType, 0, 2);
+    }
+
+    @Override
+    public byte getTailState() {
+        return tailState;
+    }
+
+    @Override
+    public void setTailState(byte tail) {
+        this.tailState = ValueUtil.clamp(tail, (byte) 0, (byte) 2);
     }
 
     @Override
