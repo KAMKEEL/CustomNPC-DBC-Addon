@@ -38,7 +38,7 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
 
         addTextField(new GuiNpcTextField(1, this, this.fontRendererObj, guiLeft + 36, y, 200, 20, form.name));
         addLabel(new GuiNpcLabel(1,"gui.name", guiLeft + 4, y + 5));
-        addButton(new GuiNpcButton(3, guiLeft + 260, y, 95, 20, new String[]{"All Races", "Human", "Saiyan", "Half Saiyan", "Namekian", "Arcosian", "Majin"}, form.race + 1));
+        addButton(new GuiNpcButton(3, guiLeft + 260, y, 95, 20, new String[]{"All Races", "Human", "Saiyan", "Half Saiyan", "Namekian", "Arcosian", "Majin"}, getRaceIndex(form.getRace())));
 
         addLabel(new GuiNpcLabel(0,"ID", guiLeft + 238, y + 1));
         addLabel(new GuiNpcLabel(2,	form.id + "", guiLeft + 238, y + 11));
@@ -117,7 +117,7 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
     {
 		GuiNpcButton button = (GuiNpcButton) guibutton;
         if(button.id == 3){
-            form.race = button.getValue() - 1;
+            form.setRace(getRaceButton(button.getValue()));
         }
         if(button.id == 11){
             this.setSubGui(new SubGuiSelectForm(11));
@@ -225,6 +225,49 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
             }
         }
 	}
+
+    private int getRaceButton(int button) {
+        switch (button) {
+            case 1:
+                return 0;
+            case 2:
+                return 12;
+            case 3:
+                return 1;
+            case 4:
+                return 2;
+            case 5:
+                return 3;
+            case 6:
+                return 4;
+            case 7:
+                return 5;
+            default:
+                return -1;
+        }
+    }
+
+    private int getRaceIndex(int button) {
+        switch (button) {
+            case 0:
+                return 1;
+            case 12:
+                return 2;
+            case 1:
+                return 3;
+            case 2:
+                return 4;
+            case 4:
+                return 5;
+            case 5:
+                return 6;
+            case 6:
+                return 7;
+            default:
+                return 0;
+
+        }
+    }
 
 	@Override
 	public void selected(int id, String name) {}

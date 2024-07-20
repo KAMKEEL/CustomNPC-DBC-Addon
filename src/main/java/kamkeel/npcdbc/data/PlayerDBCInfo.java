@@ -112,21 +112,12 @@ public class PlayerDBCInfo {
         return (Form) FormController.Instance.get(selectedForm);
     }
 
-    public void resetChar() {
+    public void clearAllForms() {
         TransformController.handleFormDescend(parent.player, -10);
         currentForm = -1;
         selectedForm = -1;
         unlockedForms.clear();
         formLevels.clear();
-
-        unlockedAuras.clear();
-        currentAura = -1;
-        selectedAura = -1;
-
-        StatusEffectController.getInstance().clearEffects(parent.player);
-        BonusController.getInstance().clearBonuses(parent.player);
-
-        updateClient();
     }
 
     ////////////////////////////////////////////////
@@ -298,10 +289,24 @@ public class PlayerDBCInfo {
         return (Aura) AuraController.Instance.get(selectedAura);
     }
 
+    public void clearAllAuras() {
+        unlockedAuras.clear();
+        currentAura = -1;
+        selectedAura = -1;
+    }
 
     ///////////////////////////////////////////
     ///////////////////////////////////////////
     // Data handler
+    public void resetChar() {
+        clearAllForms();
+        clearAllAuras();
+
+        StatusEffectController.getInstance().clearEffects(parent.player);
+        BonusController.getInstance().clearBonuses(parent.player);
+
+        updateClient();
+    }
     public void updateClient() {
         ((IPlayerDBCInfo) parent).updateDBCInfo();
     }

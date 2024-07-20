@@ -38,7 +38,7 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
 
         addTextField(new GuiNpcTextField(1, this, this.fontRendererObj, guiLeft + 36, y, 200, 20, form.name));
         addLabel(new GuiNpcLabel(1,"gui.name", guiLeft + 4, y + 5));
-        addButton(new GuiNpcButton(3, guiLeft + 260, y, 95, 20, new String[]{"general.allRaces", "Human", "Saiyan", "Half Saiyan", "Namekian", "Arcosian", "Majin"}, form.race + 1));
+        addButton(new GuiNpcButton(3, guiLeft + 260, y, 95, 20, new String[]{"general.allRaces", "Human", "general.allSaiyans", "Pure Saiyan", "Half-Saiyan", "Namekian", "Arcosian", "Majin"}, getRaceIndex(form.getRace())));
 
         addLabel(new GuiNpcLabel(0,"ID", guiLeft + 238, y + 1));
         addLabel(new GuiNpcLabel(2,	form.id + "", guiLeft + 238, y + 11));
@@ -117,7 +117,7 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
     {
 		GuiNpcButton button = (GuiNpcButton) guibutton;
         if(button.id == 3){
-            form.race = button.getValue() - 1;
+            form.setRace(getRaceButton(button.getValue()));
         }
         if(button.id == 10){
             form.fromParentOnly = button.getValue() == 1;
@@ -152,6 +152,52 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         }
 	}
 
+    private int getRaceButton(int button) {
+        switch (button) {
+            case 0:
+                return -1;
+            case 1:
+                return 0;
+            case 2:
+                return 12;
+            case 3:
+                return 1;
+            case 4:
+                return 2;
+            case 5:
+                return 3;
+            case 6:
+                return 4;
+            case 7:
+                return 5;
+
+        }
+        return -1;
+    }
+
+    private int getRaceIndex(int race) {
+        switch (race) {
+            case -1:
+                return 0;
+            case 0:
+                return 1;
+            case 12:
+                return 2;
+            case 1:
+                return 3;
+            case 2:
+                return 4;
+            case 3:
+                return 5;
+            case 4:
+                return 6;
+            case 5:
+                return 7;
+
+
+        }
+        return 0;
+    }
 
 	@Override
 	public void unFocused(GuiNpcTextField guiNpcTextField) {

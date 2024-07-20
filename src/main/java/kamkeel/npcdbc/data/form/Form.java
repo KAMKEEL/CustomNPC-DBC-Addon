@@ -24,7 +24,7 @@ public class Form implements IForm {
     public String name = "";
 
     public String menuName = "§aNEW";
-    public int race = DBCRace.ALL;
+    private int race = DBCRace.ALL;
     public int timer = -1;
 
     public FormMastery mastery = new FormMastery(this);
@@ -150,6 +150,13 @@ public class Form implements IForm {
         this.menuName = name;
     }
 
+    //internal usage
+    public int race() {
+        if (race == DBCRace.ALL_SAIYANS)
+            return 1;
+        else
+            return race;
+    }
 
     @Override
     public int getRace() {
@@ -158,9 +165,20 @@ public class Form implements IForm {
 
     @Override
     public void setRace(int race) {
+        if ((race > 5 || race < -1) && race != DBCRace.ALL_SAIYANS)
+            return;
+
         this.race = race;
     }
 
+
+    public boolean raceEligible(EntityPlayer player) {
+        int plRace = DBCData.get(player).Race;
+        if (race ==  DBCRace.ALL_SAIYANS)
+            return DBCRace.isSaiyan(plRace);
+
+        return race == DBCRace.ALL || race == plRace;
+    }
 
     @Override
     public void setAttributeMulti(int id, float multi) {
@@ -194,7 +212,7 @@ public class Form implements IForm {
 
     @Override
     public void assignToPlayer(EntityPlayer player) {
-        if (race == DBCRace.ALL || race == DBCData.get(player).Race) {
+        if (raceEligible(player)) {
             PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
             formData.addForm(this);
             formData.updateClient();
@@ -297,7 +315,7 @@ public class Form implements IForm {
 
     @Override
     public void addFormRequirement(int race, byte state) {
-        if (race > 5 || race < 0)
+        if ((race > 5 || race < 0) && race != 12)
             return;
 
         // Add some kind of validate State Index Here
@@ -308,7 +326,7 @@ public class Form implements IForm {
 
     @Override
     public void removeFormRequirement(int race) {
-        if (race > 5 || race < 0)
+        if ((race > 5 || race < 0) && race != 12)
             return;
         requiredForm.remove(race);
     }

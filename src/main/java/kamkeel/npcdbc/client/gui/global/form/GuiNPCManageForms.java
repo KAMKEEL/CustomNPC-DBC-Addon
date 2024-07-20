@@ -1,11 +1,12 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCGetForm;
-import kamkeel.npcdbc.network.packets.form.DBCRequestForm;
 import kamkeel.npcdbc.network.packets.form.DBCRemoveForm;
+import kamkeel.npcdbc.network.packets.form.DBCRequestForm;
 import kamkeel.npcdbc.network.packets.form.DBCSaveForm;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.Utility;
@@ -128,7 +129,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
             fontRendererObj.drawString(drawString, centerX, guiTop + 10, CustomNpcResourceListener.DefaultTextColor, true);
             int y = guiTop + 18;
 
-            String race = "§fRace: §e" + (customForm.race == -1 ? "All" : JRMCoreH.Races[customForm.race]);
+            String race = "§fRace: §e" + (customForm.getRace() == -1 ? "All" : customForm.getRace() == DBCRace.ALL_SAIYANS ? "All Saiyans" : customForm.getRace() == 1 ? "Pure Saiyan" : JRMCoreH.Races[customForm.race()]);
             fontRendererObj.drawString(race, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
 
             String label = "§fStrength:";
@@ -159,26 +160,26 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
             }
             if (customForm.hasChild() && customForm.getChild() != null) {
                 String child = "§fChild Form: ";
-                String childName = Utility.removeBoldColorCode(customForm.getChild().getMenuName());
+                String childName = "§7" + customForm.getChild().getName();
                 fontRendererObj.drawString(child, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
                 fontRendererObj.drawString(childName, guiLeft + 80, y, CustomNpcResourceListener.DefaultTextColor, true);
             }
-            if(customForm.race != -1){
-                if (customForm.requiredForm.containsKey(customForm.race)) {
+            if (customForm.race() != -1) {
+                if (customForm.requiredForm.containsKey(customForm.race())) {
                     String parent = "§fParent Form: ";
-                    String parentName = Utility.removeBoldColorCode(DBCUtils.getFormattedStateName(customForm.race , customForm.requiredForm.get(customForm.race)));
+                    String parentName = Utility.removeBoldColorCode(DBCUtils.getFormattedStateName(customForm.race(), customForm.requiredForm.get(customForm.race())));
                     fontRendererObj.drawString(parent, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
                     fontRendererObj.drawString(parentName, guiLeft + 80, y, CustomNpcResourceListener.DefaultTextColor, true);
                 } else if (customForm.hasParent() && customForm.getParent() != null) {
                     String parent = "§fParent Form: ";
-                    String parentName = Utility.removeBoldColorCode(customForm.getParent().getMenuName());
+                    String parentName = "§7" + customForm.getParent().getName();
                     fontRendererObj.drawString(parent, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
                     fontRendererObj.drawString(parentName, guiLeft + 80, y, CustomNpcResourceListener.DefaultTextColor, true);
                 }
             } else if (!customForm.requiredForm.isEmpty() || (customForm.hasParent() && customForm.getParent() != null)) {
                 if (customForm.hasParent() && customForm.getParent() != null) {
                     String parent = "§fParent Form: ";
-                    String parentName = Utility.removeBoldColorCode(customForm.getParent().getMenuName());
+                    String parentName = "§7" + customForm.getParent().getName();
                     fontRendererObj.drawString(parent, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
                     fontRendererObj.drawString(parentName, guiLeft + 80, y, CustomNpcResourceListener.DefaultTextColor, true);
                 }

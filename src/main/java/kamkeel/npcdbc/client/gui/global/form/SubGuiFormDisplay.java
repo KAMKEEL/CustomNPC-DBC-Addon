@@ -50,7 +50,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     boolean hasRace;
     boolean showAura = false;
     public int auraTicks = 1;
-    int racePage = 0;
+    byte racePage = 0;
     private float rotation = 0.0F;
     private GuiNpcButton left;
     private GuiNpcButton right;
@@ -87,12 +87,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         visualDisplay = ((INPCDisplay) npc.display).getDBCDisplay();
         visualDisplay.enabled = true;
         visualDisplay.useSkin = true;
-        hasRace = form.race != -1;
-        visualDisplay.race = (byte) (form.race < 0 ? 1 : form.race);
+        hasRace = form.race() != -1;
         if (origDisplay != null)
             racePage = origDisplay.race < 0 ? 1 : origDisplay.race;
         else
-            racePage = DBCData.getClient().Race;
+            racePage = visualDisplay.race = DBCData.getClient().Race;
+
+        visualDisplay.race = racePage = (byte) (form.race() < 0 ? racePage : form.race());
 
         visualDisplay.formID = spoofForm.id;
         refreshValues();
@@ -261,7 +262,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     private void controlButtons() {
         addButton(new GuiButtonBiDirectional(1, this.guiLeft + 113 + this.xOffset, this.guiTop + 200 + this.yOffset, 94, 20, arrRace, racePage));
-        getButton(1).enabled = !hasRace;
+        //  getButton(1).enabled = !hasRace;
         addButton(this.left = new GuiNpcButton(668, this.guiLeft + 210 + this.xOffset, this.guiTop + 200 + this.yOffset, 20, 20, "<"));
         addButton(this.right = new GuiNpcButton(669, this.guiLeft + 235 + this.xOffset, this.guiTop + 200 + this.yOffset, 20, 20, ">"));
     }
@@ -270,7 +271,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     protected void actionPerformed(GuiButton btn) {
         GuiNpcButton button = (GuiNpcButton) btn;
         if (button.id == 1) {
-            racePage = button.getValue();
+            racePage = (byte) button.getValue();
             refreshValues();
             updateButtons();
         }
@@ -720,10 +721,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         int hairColor = !originalNull ? (display.hairColor == -1 ? origDisplay.hairColor : display.hairColor) : dbcData.renderingHairColor;
         int furColor = display.furColor == -1 ? (!originalNull ? origDisplay.furColor : (DBCRace.isSaiyan(dbcData.Race) ? display.getFurColor(dbcData) : 0xDA152C)) : display.furColor;
 
-        if (hasRace)
-            visualDisplay.race = (byte) form.race;
-        else
-            visualDisplay.race = (byte) racePage;
+
+        visualDisplay.race = (byte) racePage;
         visualDisplay.setDefaultColors();
 
         visualDisplay.eyeColor = 0x0;
@@ -867,7 +866,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
 
         // Copy Form to Fake Form
-        spoofForm.race = form.race;
+        spoofForm.setRace(form.getRace());
         spoofForm.display.hairType = display.hairType;
         spoofForm.display.hairCode = display.hairCode;
         spoofForm.display.hairColor = display.hairColor;
