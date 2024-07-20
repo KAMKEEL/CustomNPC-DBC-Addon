@@ -199,7 +199,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             }else{
                 curLevel = Float.parseFloat(JRMCoreH.getFormMasteryData().split(",")[1]);
             }
-            formTooltip = Utility.removeBoldColorCode(dataClient.getCurrentForm().menuName) + " §8Mastery Lvl: §4" + formatter.format(curLevel);
+            formTooltip = formName + " §8Mastery Lvl: §4" + formatter.format(curLevel);
 
             if(isInKaioken){
                 int kaiokenID = JRMCoreH.getFormID("Kaioken", JRMCoreH.Race);
