@@ -278,6 +278,13 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             menu.mouseClicked(i, j, k);
     }
 
+    @Override
+    public void keyTyped(char c, int i) {
+        super.keyTyped(c, i);
+        if (i == 1)
+            menu.formsParent.closeSubGui(null);
+
+    }
 	@Override
     public void subGuiClosed(SubGuiInterface subgui) {
         if (subgui instanceof SubGuiSelectForm) {

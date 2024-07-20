@@ -738,6 +738,13 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             menu.mouseClicked(i, j, k);
     }
 
+    @Override
+    public void keyTyped(char c, int i) {
+        super.keyTyped(c, i);
+        if (i == 1)
+            menu.formsParent.closeSubGui(null);
+
+    }
 	@Override
 	public void subGuiClosed(SubGuiInterface subgui){}
 

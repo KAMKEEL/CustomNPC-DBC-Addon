@@ -48,7 +48,10 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
         addButton(new GuiNpcButton(1, guiLeft + 368, guiTop + 32, 45, 20, "gui.remove"));
         getButton(1).enabled = customForm != null && customForm.id != -1;
 
-        addButton(new GuiNpcButton(2, guiLeft + 368, guiTop + 56, 45, 20, "gui.edit"));
+        addButton(new GuiNpcButton(3, guiLeft + 368, guiTop + 56, 45, 20, "gui.clone"));
+        getButton(3).enabled = customForm != null && customForm.id != -1;
+
+        addButton(new GuiNpcButton(2, guiLeft + 368, guiTop + 80, 45, 20, "gui.edit"));
         getButton(2).enabled = customForm != null && customForm.id != -1;
 
         if (scrollForms == null) {
@@ -72,28 +75,32 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
     @Override
     protected void actionPerformed(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
-        switch(button.id){
-            case 0:
-                save();
-                String name = "New";
-                while (data.containsKey(name))
-                    name += "_";
-                Form form = new Form(-1, name);
-                PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT()).generatePacket());
-                break;
-
-            case 1:
-                if (data.containsKey(scrollForms.getSelected())) {
-                    GuiYesNo guiyesno = new GuiYesNo(this, scrollForms.getSelected(), StatCollector.translateToLocal("gui.delete"), 1);
-                    displayGuiScreen(guiyesno);
-                }
-                break;
-            case 2:
-                if (data.containsKey(scrollForms.getSelected()) && customForm != null && customForm.id >= 0) {
-                    setSubGui(new SubGuiFormGeneral(this, customForm));
-                }
-                break;
+        if (button.id == 0) {
+            save();
+            String name = "New";
+            while (data.containsKey(name))
+                name += "_";
+            Form form = new Form(-1, name);
+            PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT()).generatePacket());
         }
+        if (button.id == 1) {
+            if (data.containsKey(scrollForms.getSelected())) {
+                GuiYesNo guiyesno = new GuiYesNo(this, scrollForms.getSelected(), StatCollector.translateToLocal("gui.delete"), 1);
+                displayGuiScreen(guiyesno);
+            }
+        }
+        if (button.id == 2) {
+            if (data.containsKey(scrollForms.getSelected()) && customForm != null && customForm.id >= 0) {
+                setSubGui(new SubGuiFormGeneral(this, customForm));
+            }
+        }
+        if (button.id == 3) {
+            Form form = (Form) customForm.clone();
+            while (data.containsKey(form.name))
+                form.name += "_";
+            PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT()).generatePacket());
+        }
+
     }
 
     @Override
@@ -221,6 +228,9 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
     @Override
     public void keyTyped(char c, int i) {
         super.keyTyped(c, i);
+        if (i == 1)
+            close();
+
         if (getTextField(55) != null) {
             if (getTextField(55).isFocused()) {
                 if (search.equals(getTextField(55).getText()))

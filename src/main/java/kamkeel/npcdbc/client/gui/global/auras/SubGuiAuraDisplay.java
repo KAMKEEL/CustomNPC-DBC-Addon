@@ -225,7 +225,7 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
     {
         GuiNpcButton button = (GuiNpcButton) guibutton;
         if(button.id == 10000){
-            close(); // Close the GUI
+            parent.closeSubGui(null); // Close the GUI
         } else if(button.id == 2000) {
            selectedTab = 0;
            initGui();
@@ -310,6 +310,13 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         }
     }
 
+    @Override
+    public void keyTyped(char c, int i) {
+        super.keyTyped(c,i);
+        if (i == 1)
+            parent.closeSubGui(null);
+
+    }
 
 	@Override
     public void unFocused(GuiNpcTextField guiNpcTextField) {

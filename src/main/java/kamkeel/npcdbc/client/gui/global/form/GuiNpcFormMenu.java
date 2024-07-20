@@ -53,7 +53,7 @@ public class GuiNpcFormMenu {
             NoppesUtil.clickSound();
             int id = button.id;
             if (id == -5) {
-                this.close();
+                formsParent.closeSubGui(null);
             } else {
                 if (id == -1) {
                     formsParent.setSubGui(new SubGuiFormGeneral(formsParent, form));

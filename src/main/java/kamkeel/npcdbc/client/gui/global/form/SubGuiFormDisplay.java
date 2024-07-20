@@ -472,6 +472,14 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     }
 
 
+    @Override
+    public void keyTyped(char c, int i) {
+        super.keyTyped(c,i);
+        if (i == 1)
+            menu.formsParent.closeSubGui(null);
+
+    }
+
 	@Override
     public void unFocused(GuiNpcTextField txtField) {
         if(txtField.id == 200){

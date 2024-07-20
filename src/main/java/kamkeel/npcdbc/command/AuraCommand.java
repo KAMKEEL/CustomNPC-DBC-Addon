@@ -26,7 +26,7 @@ public class AuraCommand extends CommandKamkeelBase {
         return "Custom Aura operations";
     }
 
-    @SubCommand(desc = "give an aura to a player", usage = "<player> <num>"
+    @SubCommand(desc = "give an aura to a player", usage = "<player> <auraname>"
     )
     public void give(ICommandSender sender, String args[]) throws CommandException {
         String playername=args[0];

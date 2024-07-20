@@ -151,6 +151,13 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
             initGui();
         }
 	}
+    @Override
+    public void keyTyped(char c, int i) {
+        super.keyTyped(c,i);
+        if (i == 1)
+            menu.formsParent.closeSubGui(null);
+
+    }
 
     private int getRaceButton(int button) {
         switch (button) {

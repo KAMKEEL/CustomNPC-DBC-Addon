@@ -44,6 +44,9 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         addButton(new GuiNpcButton(1, guiLeft + 368, guiTop + 32, 45, 20, "gui.remove"));
         getButton(1).enabled = aura != null && aura.id != -1;
 
+        addButton(new GuiNpcButton(2, guiLeft + 368, guiTop + 56, 45, 20, "gui.clone"));
+        getButton(2).enabled = aura != null && aura.id != -1;
+
         if (scrollAuras == null) {
             scrollAuras = new GuiCustomScroll(this, 0, 0);
             scrollAuras.setSize(143, 185);
@@ -98,28 +101,28 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
     @Override
     protected void actionPerformed(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
-        switch(button.id){
-            case 0:
-                save();
-                String name = "New";
-                while (data.containsKey(name))
-                    name += "_";
-                Aura aura = new Aura(-1, name);
-                PacketHandler.Instance.sendToServer(new DBCSaveAura(aura.writeToNBT(), "").generatePacket());
-                break;
-
-            case 1:
-                if (data.containsKey(scrollAuras.getSelected())) {
-                    GuiYesNo guiyesno = new GuiYesNo(this, scrollAuras.getSelected(), StatCollector.translateToLocal("gui.delete"), 1);
-                    displayGuiScreen(guiyesno);
-                }
-                break;
-            case 2:
-                if (data.containsKey(scrollAuras.getSelected()) && this.aura != null && this.aura.id >= 0) {
-                    // Edit Aura
-                }
-                break;
+        if (button.id == 0) {
+            save();
+            String name = "New";
+            while (data.containsKey(name))
+                name += "_";
+            Aura aura = new Aura(-1, name);
+            PacketHandler.Instance.sendToServer(new DBCSaveAura(aura.writeToNBT(), "").generatePacket());
         }
+
+        if (button.id == 1) {
+            if (data.containsKey(scrollAuras.getSelected())) {
+                GuiYesNo guiyesno = new GuiYesNo(this, scrollAuras.getSelected(), StatCollector.translateToLocal("gui.delete"), 1);
+                displayGuiScreen(guiyesno);
+            }
+        }
+        if (button.id == 2) {
+            Aura aura = (Aura) this.aura.clone();
+            while (data.containsKey(aura.name))
+                aura.name += "_";
+            PacketHandler.Instance.sendToServer(new DBCSaveAura(aura.writeToNBT(), "").generatePacket());
+        }
+
         if(aura == null)
             return;
         if(button.id == 1306){
@@ -168,6 +171,9 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
     @Override
     public void keyTyped(char c, int i) {
         super.keyTyped(c, i);
+        if (i == 1)
+            close();
+
         if (getTextField(55) != null) {
             if (getTextField(55).isFocused()) {
                 if (search.equals(getTextField(55).getText()))

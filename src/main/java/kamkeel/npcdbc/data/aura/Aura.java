@@ -164,6 +164,7 @@ public class Aura implements IAura {
     public IAura clone() {
         Aura aura = new Aura();
         aura.readFromNBT(writeToNBT());
+        aura.id = AuraController.Instance.getUnusedId();
         return aura;
     }
     @Override

@@ -424,6 +424,7 @@ public class Form implements IForm {
     public IForm clone() {
         Form form = new Form();
         form.readFromNBT(writeToNBT());
+        form.id = FormController.Instance.getUnusedId();
         return form;
     }
     @Override
