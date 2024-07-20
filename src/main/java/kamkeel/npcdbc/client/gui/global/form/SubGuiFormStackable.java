@@ -34,9 +34,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         int y = guiTop + 3;
 
-        if (scrollWindow == null) {
-            scrollWindow = new GuiScrollWindow(this, guiLeft, y, xSize - 9, ySize - 7, 0);
-        }
+        GuiScrollWindow scrollWindow = new GuiScrollWindow(this, guiLeft+4, y, xSize - 9, ySize - 7, 0);
         addScrollableGui(0, scrollWindow);
 
         int maxScroll = -20;
@@ -326,6 +324,10 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
     public void drawScreen(int i, int j, float f) {
         super.drawScreen(i, j, f);
+
+        if(hasSubGui())
+            return;
+
         menu.drawElements(fontRendererObj, i, j, mc, f);
     }
 
