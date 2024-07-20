@@ -346,12 +346,15 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Unique
     private void renderSSJ4Arm(Form form, EntityPlayer player, int id, int gender, int bodyCM, DBCData data) {
+        if (data.skinType != 0) {
         String bodyTexture = (gender == 1 ? "f" : "") + "hum.png";
         this.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + bodyTexture));
         RenderPlayerJBRA.glColor3f(bodyCM);
-        renderArm(id, player);
+            renderArm(id, player);
+        }
 
-        this.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
+        String fur = "ss4" + (data.skinType == 0 ? "a" : "b") + ".png";
+        this.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/" + fur : "jinryuudragonbc:cc/" + fur));
         RenderPlayerJBRA.glColor3f(form.display.getFurColor(data));
         renderArm(id, player);
 
