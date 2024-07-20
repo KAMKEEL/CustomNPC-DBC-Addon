@@ -171,8 +171,6 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
     @Override
     public void keyTyped(char c, int i) {
         super.keyTyped(c, i);
-        if (i == 1)
-            close();
 
         if (getTextField(55) != null) {
             if (getTextField(55).isFocused()) {

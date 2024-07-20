@@ -246,7 +246,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             GL11.glColor3f(1.0f, 1.0f, 1.0f);
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4eyewhite.png"));
             this.modelMain.renderBody(1F / 16F);
-            RenderPlayerJBRA.glColor3f(form.display.eyeColor);
+            RenderPlayerJBRA.glColor3f(form.display.eyeColor == -1 ? 0xF3C807 : form.display.eyeColor);
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4pupils.png"));
             this.modelMain.renderBody(0.0625F);
             RenderPlayerJBRA.glColor3f(form.display.getFurColor(data));

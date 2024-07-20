@@ -24,8 +24,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
         return "formmastery";
     }
 
-    @SubCommand(desc = "Give a player form mastery", usage = "<player> <amount> <formname>"
-    )
+    @SubCommand(desc = "Give a player form mastery", usage = "<player> <amount> <formname>")
     public void give(ICommandSender sender, String[] args) throws CommandException {
         String playername=args[0];
         float amount;
@@ -72,8 +71,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
         }
     }
 
-    @SubCommand(desc = "Set a player form mastery", usage = "<player> <amount> <formname>"
-    )
+    @SubCommand(desc = "Set a player form mastery", usage = "<player> <amount> <formname>")
     public void set(ICommandSender sender, String[] args) throws CommandException {
         String playername=args[0];
         float amount;
@@ -119,8 +117,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
         }
     }
 
-    @SubCommand(desc = "Get info about a players form mastery", usage = "<player>"
-    )
+    @SubCommand(desc = "Get info about a players form mastery", usage = "<player>")
     public void info(ICommandSender sender, String[] args) throws CommandException {
         String playername=args[0];
 

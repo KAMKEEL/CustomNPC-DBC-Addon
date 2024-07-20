@@ -112,8 +112,9 @@ public class FormDisplay implements IFormDisplay {
         if (c1 != 6498048 && furColor == -1)  //default
             return c1;
 
-        if (JRMCoreH.dnsSkinT(data.DNS) == 0)
+        if (furColor == -1)
             return 0xDA152C;
+
         return furColor;
     }
     //internal usage

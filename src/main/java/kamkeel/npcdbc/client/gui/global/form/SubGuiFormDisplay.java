@@ -729,6 +729,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         int hairColor = !originalNull ? (display.hairColor == -1 ? origDisplay.hairColor : display.hairColor) : dbcData.renderingHairColor;
         int furColor = display.furColor == -1 ? (!originalNull ? origDisplay.furColor : (DBCRace.isSaiyan(dbcData.Race) ? display.getFurColor(dbcData) : 0xDA152C)) : display.furColor;
 
+        boolean racePageSaiyan = DBCRace.isSaiyan(racePage);
 
         visualDisplay.race = (byte) racePage;
         visualDisplay.setDefaultColors();
@@ -820,7 +821,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         }
         if (originalNull) {
-            if (DBCRace.isSaiyan(racePage)) {
+            if (racePageSaiyan) {
                 if (DBCRace.isSaiyan(dbcData.Race))
                     visualDisplay.bodyC1 = JRMCoreH.dnsBodyC1(dbcData.DNS);
                 else {
@@ -884,7 +885,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         spoofForm.display.bodyC3 = display.bodyC3;
         spoofForm.display.bodyType = display.bodyType;
         spoofForm.display.kiBarColor = display.kiBarColor;
-        spoofForm.display.eyeColor = display.eyeColor;
+        spoofForm.display.eyeColor = display.eyeColor == -1 && racePageSaiyan && display.hairType.equals("ssj4") ? 0xF3C807 : display.eyeColor;
         spoofForm.display.effectMajinHair = display.effectMajinHair;
         spoofForm.display.furColor = furColor == -1 ? 0xDA152C : furColor;
         spoofForm.display.auraColor = display.auraColor;
