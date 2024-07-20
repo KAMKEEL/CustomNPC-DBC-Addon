@@ -15,6 +15,7 @@ public class FormStackable implements IFormStackable {
     public float kaiokenStrength = 1.0f, uiStrength = 1.0f, godStrength = 1.0f, mysticStrength = 1.0f, legendaryStrength = 1.0f, divineStrength = 1.0f, majinStrength = 1.0f;
     public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
 
+    public boolean useLegendaryConfig, useDivineConfig, useMajinConfig;
     public int legendaryID = -1, divineID = -1, majinID = -1;
 
     public FormStackable(Form parent) {
@@ -39,6 +40,11 @@ public class FormStackable implements IFormStackable {
         divineStrength = !stack.hasKey("divineStrength") ? 1 : stack.getFloat("divineStrength");
         majinStrength = !stack.hasKey("majinStrength") ? 1 : stack.getFloat("majinStrength");
 
+        useLegendaryConfig = !stack.hasKey("useLegendaryConfig") ? true : stack.getBoolean("useLegendaryConfig");
+        useDivineConfig = !stack.hasKey("useDivineConfig") ? true : stack.getBoolean("useDivineConfig");
+        useMajinConfig = !stack.hasKey("useMajinConfig") ? true : stack.getBoolean("useMajinConfig");
+
+
         legendaryID = !stack.hasKey("legendaryID") ? -1 : stack.getInteger("legendaryID");
         divineID = !stack.hasKey("divineID") ? -1 : stack.getInteger("divineID");
         majinID = !stack.hasKey("majinID") ? -1 : stack.getInteger("majinID");
@@ -62,6 +68,10 @@ public class FormStackable implements IFormStackable {
         stack.setFloat("legendaryStrength", legendaryStrength);
         stack.setFloat("divineStrength", divineStrength);
         stack.setFloat("majinStrength", majinStrength);
+
+        stack.setBoolean("useLegendaryConfig", useLegendaryConfig);
+        stack.setBoolean("useDivineConfig", useDivineConfig);
+        stack.setBoolean("useMajinConfig", useMajinConfig);
 
         stack.setInteger("legendaryID", legendaryID);
         stack.setInteger("divineID", divineID);
@@ -142,6 +152,35 @@ public class FormStackable implements IFormStackable {
     @Override
     public IForm getMajinForm() {
         return FormController.Instance.get(majinID);
+    }
+
+    @Override
+    public void useConfigMulti(int DBCNonRacialFormID, boolean useConfig) {
+        switch (DBCNonRacialFormID) {
+            case DBCForm.Legendary:
+                useLegendaryConfig = useConfig;
+                break;
+            case DBCForm.Divine:
+                useDivineConfig = useConfig;
+                break;
+            case DBCForm.Majin:
+                useMajinConfig = useConfig;
+                break;
+        }
+    }
+
+    @Override
+    public boolean useConfigMulti(int DBCNonRacialFormID) {
+        switch (DBCNonRacialFormID) {
+            case DBCForm.Legendary:
+                return useLegendaryConfig;
+            case DBCForm.Divine:
+                return useDivineConfig;
+            case DBCForm.Majin:
+                return useMajinConfig;
+            default:
+                return false;
+        }
     }
 
     @Override

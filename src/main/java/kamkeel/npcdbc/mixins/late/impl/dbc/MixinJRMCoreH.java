@@ -12,6 +12,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -24,7 +25,6 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.util.ValueUtil;
 import org.spongepowered.asm.mixin.Mixin;
@@ -75,7 +75,7 @@ public abstract class MixinJRMCoreH {
         if(player == null || dbcData == null)
             return;
 
-        Form form = dbcData.getForm();
+        Form form = (Form) FormController.getInstance().get(dbcData.addonFormID);
         if (form == null)
             return;
 
@@ -147,11 +147,11 @@ public abstract class MixinJRMCoreH {
         float statusMulti = 1;
 
         if (majinOn)
-            statusMulti += form.stackable.majinStrength;
+            statusMulti += form.stackable.useConfigMulti(DBCForm.Majin) ? JRMCoreConfig.mjn * 0.01F : form.stackable.majinStrength;
         if (legendOn)
-            statusMulti += form.stackable.legendaryStrength;
+            statusMulti += form.stackable.useConfigMulti(DBCForm.Legendary) ? JRMCoreConfig.lgnd * 0.01F : form.stackable.legendaryStrength;
         if (d.isForm(DBCForm.Divine))
-            statusMulti += form.stackable.divineStrength;
+            statusMulti += form.stackable.useConfigMulti(DBCForm.Divine) ? ConfigDBCGameplay.DivineMulti * 0.01F : form.stackable.divineStrength;
 
 
         float currentFormLevel = dbcData.addonFormLevel;
@@ -160,7 +160,6 @@ public abstract class MixinJRMCoreH {
 
         if (attribute == 0 || attribute == 1 || attribute == 3) {
             result *= (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
-            //      result += statusMulti;
         }
 
         if (attribute == DBCAttribute.Strength) // STR

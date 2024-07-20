@@ -126,67 +126,73 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         y += 23;
         maxScroll += 23;
 
-        scrollWindow.addButton(new GuiNpcButton(6, guiLeft + 75, y, 120, 20, "general.noParent"));
-        scrollWindow.addButton(new GuiNpcButton(61, guiLeft + 197, y, 20, 20, "X"));
+        scrollWindow.addButton(new GuiNpcButton(6, guiLeft + 75, y, 90, 20, "general.noParent"));
+        scrollWindow.addButton(new GuiNpcButton(61, guiLeft + 167, y, 20, 20, "X"));
         scrollWindow.addLabel(new GuiNpcLabel(62, "Legendary", guiLeft + 4, y + 5));
         scrollWindow.getButton(61).enabled = stackable.legendaryID != -1;
         scrollWindow.getLabel(62).color = 0xffffff;
-
         if (stackable.legendaryID != -1) {
-            if (FormController.getInstance().has(form.parentID))
+            if (FormController.getInstance().has(stackable.legendaryID))
                 scrollWindow.getButton(6).setDisplayText(FormController.getInstance().get(stackable.legendaryID).getName());
-        } else {
-            scrollWindow.addLabel(new GuiNpcLabel(63, "Multiplier", guiLeft + 235, y + 5));
-            scrollWindow.addTextField(new GuiNpcTextField(64, this, guiLeft + 285, y, 50, 20, String.valueOf(stackable.legendaryStrength)));
+        }
+        scrollWindow.addLabel(new GuiNpcLabel(63, "Config Multi", guiLeft + 197, y + 5));
+        scrollWindow.addButton(new GuiNpcButtonYesNo(65, guiLeft + 260, y, 30, 20, stackable.useLegendaryConfig));
+        if (!stackable.useLegendaryConfig) {
+            scrollWindow.addTextField(new GuiNpcTextField(64, this, guiLeft + 293, y, 44, 20, String.valueOf(stackable.legendaryStrength)));
             scrollWindow.getTextField(64).setMaxStringLength(22);
             scrollWindow.getTextField(64).floatsOnly = true;
             scrollWindow.getTextField(64).setMinMaxDefaultFloat(-10000, 10000, 1);
-            scrollWindow.getLabel(63).color = 0xffffff;
         }
+        scrollWindow.getLabel(63).color = 0xffffff;
 
 
         y += 23;
         maxScroll += 23;
 
-        scrollWindow.addButton(new GuiNpcButton(7, guiLeft + 75, y, 120, 20, "general.noParent"));
-        scrollWindow.addButton(new GuiNpcButton(71, guiLeft + 197, y, 20, 20, "X"));
+        scrollWindow.addButton(new GuiNpcButton(7, guiLeft + 75, y, 90, 20, "general.noParent"));
+        scrollWindow.addButton(new GuiNpcButton(71, guiLeft + 167, y, 20, 20, "X"));
         scrollWindow.addLabel(new GuiNpcLabel(72, "Divine", guiLeft + 4, y + 5));
         scrollWindow.getButton(71).enabled = stackable.divineID != -1;
         scrollWindow.getLabel(72).color = 0xffffff;
 
         if (stackable.divineID != -1) {
-            if (FormController.getInstance().has(form.parentID))
+            if (FormController.getInstance().has(stackable.divineID))
                 scrollWindow.getButton(7).setDisplayText(FormController.getInstance().get(stackable.divineID).getName());
-        } else {
-            scrollWindow.addLabel(new GuiNpcLabel(73, "Multiplier", guiLeft + 235, y + 5));
-            scrollWindow.addTextField(new GuiNpcTextField(74, this, guiLeft + 285, y, 50, 20, String.valueOf(stackable.divineStrength)));
+        }
+        scrollWindow.addLabel(new GuiNpcLabel(73, "Config Multi", guiLeft + 197, y + 5));
+        scrollWindow.addButton(new GuiNpcButtonYesNo(75, guiLeft + 260, y, 30, 20, stackable.useDivineConfig));
+        if (!stackable.useDivineConfig) {
+            scrollWindow.addTextField(new GuiNpcTextField(74, this, guiLeft + 293, y, 44, 20, String.valueOf(stackable.divineStrength)));
             scrollWindow.getTextField(74).setMaxStringLength(22);
             scrollWindow.getTextField(74).floatsOnly = true;
             scrollWindow.getTextField(74).setMinMaxDefaultFloat(-10000, 10000, 1);
-            scrollWindow.getLabel(73).color = 0xffffff;
         }
+        scrollWindow.getLabel(73).color = 0xffffff;
 
 
         y += 23;
         maxScroll += 23;
 
-        scrollWindow.addButton(new GuiNpcButton(8, guiLeft + 75, y, 120, 20, "general.noParent"));
-        scrollWindow.addButton(new GuiNpcButton(81, guiLeft + 197, y, 20, 20, "X"));
+        scrollWindow.addButton(new GuiNpcButton(8, guiLeft + 75, y, 90, 20, "general.noParent"));
+        scrollWindow.addButton(new GuiNpcButton(81, guiLeft + 167, y, 20, 20, "X"));
         scrollWindow.addLabel(new GuiNpcLabel(82, "Majin", guiLeft + 4, y + 5));
         scrollWindow.getButton(81).enabled = stackable.majinID != -1;
         scrollWindow.getLabel(82).color = 0xffffff;
 
         if (stackable.majinID != -1) {
-            if (FormController.getInstance().has(form.parentID))
+            if (FormController.getInstance().has(stackable.majinID))
                 scrollWindow.getButton(8).setDisplayText(FormController.getInstance().get(stackable.majinID).getName());
-        } else {
-            scrollWindow.addLabel(new GuiNpcLabel(83, "Multiplier", guiLeft + 235, y + 5));
-            scrollWindow.addTextField(new GuiNpcTextField(84, this, guiLeft + 285, y, 50, 20, String.valueOf(stackable.majinStrength)));
+        }
+        scrollWindow.addLabel(new GuiNpcLabel(83, "Config Multi", guiLeft + 197, y + 5));
+        scrollWindow.addButton(new GuiNpcButtonYesNo(85, guiLeft + 260, y, 30, 20, stackable.useMajinConfig));
+        if (!stackable.useMajinConfig) {
+            scrollWindow.addTextField(new GuiNpcTextField(84, this, guiLeft + 293, y, 44, 20, String.valueOf(stackable.majinStrength)));
             scrollWindow.getTextField(84).setMaxStringLength(22);
             scrollWindow.getTextField(84).floatsOnly = true;
             scrollWindow.getTextField(84).setMinMaxDefaultFloat(-10000, 10000, 1);
-            scrollWindow.getLabel(83).color = 0xffffff;
         }
+        scrollWindow.getLabel(83).color = 0xffffff;
+
 
         scrollWindow.maxScrollY = maxScroll;
     }
@@ -218,6 +224,10 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             stackable.legendaryID = -1;
             initGui();
         }
+        if (button.id == 65) {
+            stackable.useLegendaryConfig = button.getValue() == 1;
+        }
+
         if (button.id == 7) {
             this.setSubGui(new SubGuiSelectForm(7));
         }
@@ -225,12 +235,19 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             stackable.divineID = -1;
             initGui();
         }
+        if (button.id == 75) {
+            stackable.useDivineConfig = button.getValue() == 1;
+        }
+
         if (button.id == 8) {
             this.setSubGui(new SubGuiSelectForm(8));
         }
         if (button.id == 81) {
             stackable.majinID = -1;
             initGui();
+        }
+        if (button.id == 85) {
+            stackable.useMajinConfig = button.getValue() == 1;
         }
         initGui();
 	}

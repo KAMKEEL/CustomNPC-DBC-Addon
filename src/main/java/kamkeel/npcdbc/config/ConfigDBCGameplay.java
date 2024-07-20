@@ -46,6 +46,7 @@ public class ConfigDBCGameplay
     public static boolean KiPotentialUnlock = true;
     public static int KiChargeRate = 1;
 
+    public static float DivineMulti = 1;
     public static void init(File configFile)
     {
         config = new Configuration(configFile);

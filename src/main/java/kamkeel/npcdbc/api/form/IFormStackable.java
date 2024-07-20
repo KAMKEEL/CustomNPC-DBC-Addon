@@ -47,6 +47,15 @@ public interface IFormStackable {
     IForm getMajinForm();
 
     /**
+     *
+     * @param DBCNonRacialFormID Legal values: 25 for Legendary, 26 Divine, 27 Majin
+     * @param useConfig True to use the DBC config multis for legendary majin, DBC addon config multi for Divine since DBC config doesn't have divine multi
+     */
+    void useConfigMulti(int DBCNonRacialFormID, boolean useConfig);
+
+    boolean useConfigMulti(int DBCNonRacialFormID);
+
+    /**
      * @param DBCNonRacialFormID Non-racial DBC Forms, 20 Kaioken, 21 Mystic, 22 UI, 23 GoD
      * @return True if can stack DBCNonRacialFormID on Custom Form
      */
