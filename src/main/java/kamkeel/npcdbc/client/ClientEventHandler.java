@@ -84,8 +84,7 @@ public class ClientEventHandler {
             if (form.mastery.hasHeat() && dbcData.Pain > 0)
                 return;
 
-            if (formData.isInCustomForm()) {
-                form = formData.getCurrentForm();
+            if (formData.isInCustomForm() && (form = formData.getCurrentForm()).id == formData.selectedForm) {
                 if (form.hasChild() && formData.hasFormUnlocked(form.getChildID())) {
                     IForm child = form.getChild();
                     if (verifyFormTransform((Form) child))
