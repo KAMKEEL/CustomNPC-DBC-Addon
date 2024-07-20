@@ -8,7 +8,6 @@ import net.minecraft.client.gui.FontRenderer;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.util.GuiMenuTopButton;
 import noppes.npcs.client.gui.util.GuiNpcTextField;
-import noppes.npcs.client.gui.util.ITextfieldListener;
 import noppes.npcs.client.gui.util.SubGuiInterface;
 import org.lwjgl.input.Keyboard;
 
@@ -49,11 +48,10 @@ public class GuiNpcFormMenu {
 
     private void topButtonPressed(GuiMenuTopButton button) {
         if (!button.displayString.equals(this.activeMenu)) {
-            Minecraft mc = Minecraft.getMinecraft();
             NoppesUtil.clickSound();
             int id = button.id;
             if (id == -5) {
-                formsParent.closeSubGui(null);
+                close();
             } else {
                 if (id == -1) {
                     formsParent.setSubGui(new SubGuiFormGeneral(formsParent, form));

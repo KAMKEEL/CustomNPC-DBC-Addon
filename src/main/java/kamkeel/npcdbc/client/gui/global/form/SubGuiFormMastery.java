@@ -742,7 +742,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
     public void keyTyped(char c, int i) {
         super.keyTyped(c, i);
         if (i == 1)
-            menu.formsParent.closeSubGui(null);
+            menu.close();
 
     }
 	@Override

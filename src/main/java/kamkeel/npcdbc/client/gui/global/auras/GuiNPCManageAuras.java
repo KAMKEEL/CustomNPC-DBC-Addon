@@ -295,7 +295,8 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
                 this.data.put(this.aura.name, this.aura.id);
                 this.selected = name;
                 this.scrollAuras.replace(old, this.aura.name);
-            }
+            } else
+                guiNpcTextField.setText(aura.name);
         }
         if(guiNpcTextField.id == 14){
             String menuName = guiNpcTextField.getText();
