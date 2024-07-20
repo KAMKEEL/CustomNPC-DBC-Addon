@@ -117,8 +117,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
-    private void changeFormData(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "rg") LocalIntRef rg, @Local(name = "st") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3, @Local(name = "msk") LocalBooleanRef mask) {
+    private void changeFormData(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "rg") LocalIntRef rg, @Local(name = "st") LocalIntRef st, @Local(name = "skintype") LocalIntRef skintype, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3, @Local(name = "msk") LocalBooleanRef mask) {
         Form form = DBCData.getForm(par1AbstractClientPlayer);
+        DBCData data = DBCData.get(par1AbstractClientPlayer);
+        data.skinType = (byte) skintype.get();
         //this prevents ssj2 hair animating immediately into ssj1 when going into ssj1 type forms from base
         if (TransformController.rage > 0) {
             if (TransformController.transformedInto != null) { //if just transformed into ssj type, don't display ssj2 hair
@@ -171,10 +173,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
-    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo
-            ci, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef
-                                            bodyCM, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef
-                                            race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
+    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
         Form form = DBCData.getForm(par1AbstractClientPlayer);
         DBCData data = DBCData.get(par1AbstractClientPlayer);
         if (form != null) {
@@ -183,11 +182,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             if (race.get() == 1 || race.get() == 2) {
                 boolean isSSJ4 = form.display.hairType.equals("ssj4");
                 if (form.display.hasBodyFur() || isSSJ4)
-                    renderBodyFur(form, gender.get(), bodyCM.get(), data);
+                    renderBodyFur(form, gender.get(), bodyCM.get(), data, data.skinType);
 
                 //renders all ssj4
                 if (isSSJ4) {
-                    if (form.display.hasEyebrows)
+                    if (form.display.hasEyebrows && data.skinType != 0)
                         renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get(), data.renderingHairColor, data.age, data.DNS, data);
                     if (hairback.get() != 12)
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
@@ -227,13 +226,16 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Unique
-    private void renderBodyFur(Form form, int gender, int bodyCM, DBCData data) {
-        String bodyTexture = (gender == 1 ? "f" : "") + "hum.png";
-        this.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + bodyTexture));
-        RenderPlayerJBRA.glColor3f(bodyCM);
-        this.modelMain.renderBody(0.0625F);
+    private void renderBodyFur(Form form, int gender, int bodyCM, DBCData data, int skintype) {
+        if (skintype != 0) {
+            String bodyTexture = (gender == 1 ? "f" : "") + "hum.png";
+            this.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + bodyTexture));
+            RenderPlayerJBRA.glColor3f(bodyCM);
+            this.modelMain.renderBody(0.0625F);
+        }
 
-        this.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
+        String fur = "ss4" + (skintype == 0 ? "a" : "b") + ".png";
+        this.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/" + fur : "jinryuudragonbc:cc/" + fur));
         RenderPlayerJBRA.glColor3f(form.display.getFurColor(data));
         this.modelMain.renderBody(0.0625F);
     }

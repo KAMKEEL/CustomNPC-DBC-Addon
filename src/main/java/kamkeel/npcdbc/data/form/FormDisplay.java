@@ -105,10 +105,15 @@ public class FormDisplay implements IFormDisplay {
 
     //internal usage
     public int getFurColor(DBCData data) {
+        if (data.skinType == 0)
+            return 0xDA152C;
+
         int c1 = JRMCoreH.dnsBodyC1(data.DNS);
         if (c1 != 6498048 && furColor == -1)  //default
             return c1;
 
+        if (JRMCoreH.dnsSkinT(data.DNS) == 0)
+            return 0xDA152C;
         return furColor;
     }
     //internal usage

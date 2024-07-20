@@ -65,6 +65,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     //RENDERING DATA
     public float XZSize, YSize, age;
     public int renderingHairColor;
+    public byte skinType;
 
     public DBCData() {
         this.side = Side.SERVER;
