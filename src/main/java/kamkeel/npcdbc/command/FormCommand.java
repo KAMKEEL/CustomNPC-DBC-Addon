@@ -1,10 +1,14 @@
 package kamkeel.npcdbc.command;
 
+import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.command.CommandKamkeelBase;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.scripted.DBCAPI;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -25,90 +29,96 @@ public class FormCommand extends CommandKamkeelBase {
 		return "Form operations";
 	}
 
-    @SubCommand(
-            desc = "give a form to a player",
-            usage = "<player> <num>"
+    @SubCommand(desc = "Gives a form to a player", usage = "<player> <formname>"
     )
     public void give(ICommandSender sender, String args[]) throws CommandException{
+        FormCommand hi = this;
         String playername=args[0];
-        int formID;
-        try {
-            formID = Integer.parseInt(args[1]);
-        } catch (NumberFormatException ex) {
-            sendError(sender, "Form num must be an integer: " + args[1]);
-            return;
-        }
+        String name = "";
+        for (int i = 1; i < args.length; i++)
+            name += args[i] + (i != args.length - 1 ? " " : "");
+
+
+
         List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
         if (data.isEmpty()) {
             sendError(sender, "Unknown player: " + playername);
             return;
         }
 
-        Form form = FormController.getInstance().customForms.get(formID);
+        Form form = (Form) DBCAPI.Instance().getForm(name);
         if (form == null) {
-            sendError(sender, "Unknown form: " + formID);
+            sendError(sender, "Unknown form: " + name);
             return;
         }
 
-
         for(PlayerData playerdata : data){
-            PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
-            playerDBCInfo.addForm(form);
-            playerdata.save();
-            sendResult(sender, String.format("%s\u00A7e added to Player '\u00A7b%s\u00A77'", form.getName(), playerdata.playername, formID));
-            if(sender != playerdata.player)
-                sendResult(playerdata.player, String.format("\u00A77Form &s\u00A7e added.", form.getName()));
+            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
+            if (!info.hasFormUnlocked(form.id)) {
+                if (form.raceEligible(playerdata.player)) {
+                    info.addForm(form);
+                    playerdata.save();
+                    sendResult(sender, String.format("%s §agiven to §7'§b%s§7'", form.getName(), playerdata.playername));
+                    if (sender != playerdata.player)
+                        sendResult(playerdata.player, String.format("§aForm §7%s §aadded.", form.getName()));
+                } else {
+                    int playerRace = DBCData.get(playerdata.player).Race;
+                    sendResult(sender, String.format("§b%s's §crace §b(%s)§c is not eligible for §7%s", playerdata.playername, JRMCoreH.Races[playerRace], form.getName()));
+                }
+
+            } else
+                sendResult(sender, String.format("§7'§b%s§7' §ealready has §7%s §eunlocked!", playerdata.playername, form.getName()));
+
+
             return;
         }
     }
 
-    @SubCommand(
-            desc = "remove a form from a player",
-            usage = "<player> <num>"
+    @SubCommand(desc = "Removes a form from a player", usage = "<player> <formname>"
     )
     public void remove(ICommandSender sender, String args[]) throws CommandException{
         String playername=args[0];
-        int formID;
-        try {
-            formID = Integer.parseInt(args[1]);
-        } catch (NumberFormatException ex) {
-            sendError(sender, "Form num must be an integer: " + args[1]);
-            return;
-        }
+        String name = "";
+        for (int i = 1; i < args.length; i++)
+            name += args[i] + (i != args.length - 1 ? " " : "");
+
+
+
         List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
         if (data.isEmpty()) {
             sendError(sender, "Unknown player: " + playername);
             return;
         }
 
-        Form form = FormController.getInstance().customForms.get(formID);
+        Form form = (Form) DBCAPI.Instance().getForm(name);
         if (form == null) {
-            sendError(sender, "Unknown form: " + formID);
+            sendError(sender, "Unknown form: " + name);
             return;
         }
 
 
         for(PlayerData playerdata : data){
-            PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
-            if(playerDBCInfo.hasForm(form)){
-                playerDBCInfo.removeForm(form);
-                if(playerDBCInfo.selectedForm == formID)
-                    playerDBCInfo.selectedForm = -1;
-                if(playerDBCInfo.currentForm == formID)
-                    playerDBCInfo.currentForm = -1;
+            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
+            if (info.hasForm(form)) {
+                if (info.selectedForm == form.id)
+                    info.selectedForm = -1;
+                if (info.currentForm == form.id) {
+                    TransformController.handleFormDescend(playerdata.player, -10);
+                    info.currentForm = -1;
+                }
+                info.removeForm(form);
                 playerdata.save();
-                sendResult(sender, String.format("%s\u00A7e removed to Player '\u00A7b%s\u00A77'", form.getName(), playerdata.playername, formID));
+                sendResult(sender, String.format("%s §cremoved from §7'§b%s§7'", form.getName(), playerdata.playername));
                 if(sender != playerdata.player)
-                    sendResult(playerdata.player, String.format("\u00A77Form &s\u00A7e removed.", form.getName()));
+                    sendResult(playerdata.player, String.format("§c Form §7%s §cremoved.", form.getName()));
             } else {
-                sendResult(sender, String.format("%s\u00A7e not found on Player '\u00A7b%s\u00A77'", form.getName(), playerdata.playername, formID));
+                sendResult(sender, String.format("%s §enot found on §7'§b%s§7'", form.getName(), playerdata.playername, form.id));
             }
             return;
         }
     }
 
-    @SubCommand(
-            desc = "clears all forms from a player",
+    @SubCommand(desc = "Clears all forms from a player",
             usage = "<player>"
     )
     public void clear(ICommandSender sender, String args[]) throws CommandException{
@@ -119,12 +129,10 @@ public class FormCommand extends CommandKamkeelBase {
             return;
         }
         for(PlayerData playerdata : data){
-            PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
-            playerDBCInfo.unlockedForms.clear();
-            playerDBCInfo.currentForm = -1;
-            playerDBCInfo.selectedForm = -1;
+            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
+            info.clearAllForms();
             playerdata.save();
-            sendResult(sender, String.format("Forms cleared from Player '\u00A7b%s\u00A77'", playerdata.playername));
+            sendResult(sender, String.format("Removed all forms from '\u00A7b%s\u00A77'", playerdata.playername));
             if(sender != playerdata.player)
                 sendResult(playerdata.player, String.format("All custom forms removed."));
             return;
@@ -153,12 +161,27 @@ public class FormCommand extends CommandKamkeelBase {
                 for(int formID : playerDBCInfo.unlockedForms){
                     IForm form = FormController.getInstance().get(formID);
                     if(form != null){
-                        sendResult(sender, String.format("%s", form.getMenuName()));
+                        sendResult(sender, String.format("%s", form.getName()));
                     }
                 }
             }
             sendResult(sender, "--------------------");
             return;
         }
+    }
+
+    @SubCommand(desc = "Lists all existing forms")
+    public void infoall(ICommandSender sender, String args[]) throws CommandException {
+        sendResult(sender, "--------------------");
+        for (Form form : FormController.getInstance().customForms.values())
+            sendResult(sender, String.format("%s", form.getName()));
+        sendResult(sender, "--------------------");
+
+    }
+
+    @SubCommand(desc = "Reloads all forms")
+    public void reload(ICommandSender sender, String[] args) {
+        FormController.Instance.load();
+        sendResult(sender, "Forms reloaded!");
     }
 }
