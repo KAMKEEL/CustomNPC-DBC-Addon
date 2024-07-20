@@ -1,9 +1,9 @@
 package kamkeel.npcdbc.command;
 
 import kamkeel.command.CommandKamkeelBase;
-import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.scripted.DBCAPI;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -24,26 +24,23 @@ public class FormMasteryCommand extends CommandKamkeelBase {
         return "formmastery";
     }
 
-    @SubCommand(
-        desc = "Give a player form mastery",
-        usage = "<player> <formID> <amount>"
+    @SubCommand(desc = "Give a player form mastery", usage = "<player> <amount> <formname>"
     )
     public void give(ICommandSender sender, String[] args) throws CommandException {
         String playername=args[0];
-        int formID;
         float amount;
 
-        try {
-            formID = Integer.parseInt(args[1]);
-        } catch (NumberFormatException ex) {
-            sendError(sender, "Form num must be an integer: " + args[1]);
-            return;
-        }
+        String name = "";
+        for (int i = 2; i < args.length; i++)
+            name += args[i] + (i != args.length - 1 ? " " : "");
+
+
+
 
         try{
-            amount = Float.parseFloat(args[2]);
+            amount = Float.parseFloat(args[1]);
         } catch (NumberFormatException ex) {
-            sendError(sender, "Mastery amount must be an float: " + args[2]);
+            sendError(sender, "Mastery amount must be a float: " + args[1]);
             return;
         }
 
@@ -53,48 +50,44 @@ public class FormMasteryCommand extends CommandKamkeelBase {
             return;
         }
 
-        Form form = FormController.getInstance().customForms.get(formID);
+        Form form = (Form) DBCAPI.Instance().getForm(name);
         if (form == null) {
-            sendError(sender, "Unknown form: " + formID);
+            sendError(sender, "Unknown form: " + name);
             return;
         }
 
         for(PlayerData playerdata : data){
-            PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
+            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
 
-            if(!playerDBCInfo.hasForm(form)){
+            if(!info.hasForm(form)){
                 sendResult(sender, String.format("\u00A7ePlayer '\u00A7b%s\u00A7e' doesn't have '\u00A7b%s\u00A77' unlocked.", playerdata.playername, form.getName()));
                 return;
             }
 
-            playerDBCInfo.addFormLevel(formID, amount);
+            info.addFormLevel(form.id, amount);
             playerdata.save();
-            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was adjusted by \u00A77%s", playerdata.playername, form.getName(), amount));
+            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was adjusted by \u00A77%s §d(%s)", playerdata.playername, form.getName(), amount, info.getFormLevel(form.id)));
 
             return;
         }
     }
 
-    @SubCommand(
-        desc = "Set a player form mastery",
-        usage = "<player> <formID> <amount>"
+    @SubCommand(desc = "Set a player form mastery", usage = "<player> <amount> <formname>"
     )
     public void set(ICommandSender sender, String[] args) throws CommandException {
         String playername=args[0];
-        int formID;
         float amount;
 
-        try {
-            formID = Integer.parseInt(args[1]);
-        } catch (NumberFormatException ex) {
-            sendError(sender, "Form num must be an integer: " + args[1]);
-            return;
-        }
+        String name = "";
+        for (int i = 2; i < args.length; i++)
+            name += args[i] + (i != args.length - 1 ? " " : "");
+
+
 
         try{
-            amount = Float.parseFloat(args[2]);
+            amount = Float.parseFloat(args[1]);
         } catch (NumberFormatException ex) {
-            sendError(sender, "Mastery amount must be an float: " + args[2]);
+            sendError(sender, "Mastery amount must be a float: " + args[1]);
             return;
         }
 
@@ -104,68 +97,57 @@ public class FormMasteryCommand extends CommandKamkeelBase {
             return;
         }
 
-        Form form = FormController.getInstance().customForms.get(formID);
+        Form form = (Form) DBCAPI.Instance().getForm(name);
         if (form == null) {
-            sendError(sender, "Unknown form: " + formID);
+            sendError(sender, "Unknown form: " + name);
             return;
         }
 
         for(PlayerData playerdata : data){
-            PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
+            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
 
-            if(!playerDBCInfo.hasForm(form)){
+            if (!info.hasForm(form)) {
                 sendResult(sender, String.format("\u00A7ePlayer '\u00A7b%s\u00A7e' doesn't have '\u00A7b%s\u00A77' unlocked.", playerdata.playername, form.getName()));
                 return;
             }
 
-            playerDBCInfo.setFormLevel(formID, amount);
+            info.setFormLevel(form.id, amount);
             playerdata.save();
-            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was set to \u00A77%s", playerdata.playername, form.getName(), amount));
+            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was set to §d%s", playerdata.playername, form.getName(), info.getFormLevel(form.id)));
 
             return;
         }
     }
 
-    @SubCommand(
-        desc = "Get info about a players form mastery",
-        usage = "<player> <formID>"
+    @SubCommand(desc = "Get info about a players form mastery", usage = "<player>"
     )
     public void info(ICommandSender sender, String[] args) throws CommandException {
         String playername=args[0];
-        int formID;
-        try {
-            formID = Integer.parseInt(args[1]);
-        } catch (NumberFormatException ex) {
-            sendError(sender, "Form num must be an integer: " + args[1]);
-            return;
-        }
+
         List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
         if (data.isEmpty()) {
             sendError(sender, "Unknown player: " + playername);
-            return;
-        }
-
-        Form form = FormController.getInstance().customForms.get(formID);
-        if (form == null) {
-            sendError(sender, "Unknown form: " + formID);
             return;
         }
 
         for(PlayerData playerdata : data) {
-            PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
-            if(!playerDBCInfo.hasForm(form)){
-                sendResult(sender, String.format("\u00A7ePlayer '\u00A7b%s\u00A7e' doesn't have '\u00A7b%s\u00A77' unlocked.", playerdata.playername, form.getName()));
-                return;
+            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
+
+            sendResult(sender, "--------------------");
+            sendResult(sender, String.format("§b%s's §emastery:", playerdata.playername));
+            for (int id : info.unlockedForms) {
+                Form form = info.getForm(id);
+                if (form == null)
+                    continue;
+
+                float formLevel = info.getFormLevel(form.id);
+                float formMaxLevel = form.getMastery().getMaxLevel();
+                String formatted = new DecimalFormat("#.##").format(formLevel / formMaxLevel * 100);
+
+                sendResult(sender, String.format("§7%s  §b%s/%s", form.getName(), formLevel, formMaxLevel) + "%s", " §d(" + formatted + "%)");
             }
-
-            float formLevel = playerDBCInfo.getFormLevel(formID);
-            float formMaxLevel = form.getMastery().getMaxLevel();
-
-            String formatted = new DecimalFormat("#.##").format(formLevel/formMaxLevel*100);
-
-
-
-            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e is \u00A77%s/%s ", playername, form.getName(), formLevel, formMaxLevel)+"%s", "\u00A7b("+formatted+"%)");
+            sendResult(sender, "--------------------");
+            return;
         }
     }
 }
