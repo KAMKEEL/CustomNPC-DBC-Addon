@@ -77,7 +77,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
 
                     //Form Mastery
                     DecimalFormat formatter = new DecimalFormat("#.##");
-                    float curLevel = formData.getFormLevel(form.id);
+                    float curLevel = dbcData.addonFormLevel;
 
                     boolean removeBase = s2.contains(JRMCoreH.trl("jrmc", "Base"));
                     boolean isInKaioken = JRMCoreH.StusEfctsMe(5);
@@ -85,7 +85,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
                     double kaiokenLevel = JRMCoreH.getFormMasteryValue(JRMCoreClient.mc.thePlayer, kaiokenID);
                     String kaiokenString = "\n" + JRMCoreH.cldgy + "§cKaioken §8Mastery Lvl: " + JRMCoreH.cldr + formatter.format(kaiokenLevel);
 
-                    s2 = Utility.removeBoldColorCode(name) + " §8Mastery Lvl: §4" + formatter.format(curLevel) + (removeBase ? (isInKaioken ? kaiokenString : "") : "\n§8" + s2);
+                    s2 = Utility.removeBoldColorCode(formData.getCurrentForm().menuName) + " §8Mastery Lvl: §4" + formatter.format(curLevel) + (removeBase ? (isInKaioken ? kaiokenString : "") : "\n§8" + s2);
                 }
                 //adds the form color to STR,DEX and WIL attribute values
             } else if (isDrawingAttributes) {

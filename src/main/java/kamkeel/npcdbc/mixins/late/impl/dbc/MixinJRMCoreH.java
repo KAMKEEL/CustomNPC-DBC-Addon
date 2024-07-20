@@ -159,7 +159,7 @@ public abstract class MixinJRMCoreH {
         float[] multiBonus = dbcData.bonus.getMultiBonus();
 
         if (attribute == 0 || attribute == 1 || attribute == 3) {
-            result *= (stackableMulti * ((FormMastery) form.getMastery()).calculateMulti("attribute", currentFormLevel));
+            result *= (stackableMulti * ((FormMastery) dbcData.getForm().getMastery()).calculateMulti("attribute", currentFormLevel));
         }
 
         if (attribute == DBCAttribute.Strength) // STR

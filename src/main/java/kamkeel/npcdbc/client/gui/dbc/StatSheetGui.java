@@ -194,12 +194,12 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
             //Custom form handling
             if(dataClient != null && dataClient.isInCustomForm()){
-                curLevel = dataClient.getFormLevel(dataClient.currentForm);
+                curLevel = dbcClient.addonFormLevel;
                 //DBC Form handling
             }else{
                 curLevel = Float.parseFloat(JRMCoreH.getFormMasteryData().split(",")[1]);
             }
-            formTooltip = Utility.removeBoldColorCode(formName) + " §8Mastery Lvl: §4" + formatter.format(curLevel);
+            formTooltip = Utility.removeBoldColorCode(dataClient.getCurrentForm().menuName) + " §8Mastery Lvl: §4" + formatter.format(curLevel);
 
             if(isInKaioken){
                 int kaiokenID = JRMCoreH.getFormID("Kaioken", JRMCoreH.Race);
