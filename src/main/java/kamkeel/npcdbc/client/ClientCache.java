@@ -19,6 +19,8 @@ public class ClientCache {
 
     public static boolean kiRevamp = true;
 
+    public static float divineMulti = 1.0f;
+
     public static DBCData getClientData(EntityPlayer player){
         synchronized (clientDataCache) {
             if (!clientDataCache.containsKey(player.getCommandSenderName()))

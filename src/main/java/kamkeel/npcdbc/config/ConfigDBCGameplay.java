@@ -45,8 +45,6 @@ public class ConfigDBCGameplay
     public static boolean RevampKiCharging = true;
     public static boolean KiPotentialUnlock = true;
     public static int KiChargeRate = 1;
-
-    public static float DivineMulti = 1;
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -108,6 +106,8 @@ public class ConfigDBCGameplay
             KiChargeRate = config.get(KiCharge, "Ki Charge Rate", 1,
                 "Tweaking this number will allow for more precise ki charging. Default for DBC is 5.").getInt(1);
             KiChargeRate = ValueUtil.clamp(KiChargeRate, 1, 50);
+
+
         }
         catch (Exception e)
         {

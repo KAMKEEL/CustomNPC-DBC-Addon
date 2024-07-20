@@ -9,6 +9,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -147,11 +148,11 @@ public abstract class MixinJRMCoreH {
         float statusMulti = 1;
 
         if (majinOn)
-            statusMulti += form.stackable.useConfigMulti(DBCForm.Majin) ? JRMCoreConfig.mjn * 0.01F : form.stackable.majinStrength;
+            statusMulti += form.stackable.useConfigMulti(DBCForm.Majin) ? JRMCoreConfig.mjn * 0.01F : form.stackable.majinStrength - 1;
         if (legendOn)
-            statusMulti += form.stackable.useConfigMulti(DBCForm.Legendary) ? JRMCoreConfig.lgnd * 0.01F : form.stackable.legendaryStrength;
+            statusMulti += form.stackable.useConfigMulti(DBCForm.Legendary) ? JRMCoreConfig.lgnd * 0.01F : form.stackable.legendaryStrength - 1;
         if (d.isForm(DBCForm.Divine))
-            statusMulti += form.stackable.useConfigMulti(DBCForm.Divine) ? ConfigDBCGameplay.DivineMulti * 0.01F : form.stackable.divineStrength;
+            statusMulti += (form.stackable.useConfigMulti(DBCForm.Divine) ? ConfigDBCEffects.getDivineMulti() : form.stackable.divineStrength) - 1;
 
 
         float currentFormLevel = dbcData.addonFormLevel;

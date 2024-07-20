@@ -3,6 +3,7 @@ package kamkeel.npcdbc.network.packets;
 import JinRyuu.DragonBC.common.DBCConfig;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCClass;
 import kamkeel.npcdbc.network.AbstractPacket;
@@ -20,6 +21,7 @@ public final class LoginInfo extends AbstractPacket {
     private final double kiProtectionValue;
     private final double kiFistValue;
     private final boolean kiRevamp;
+    private final float divineMulti;
 
     public LoginInfo(){
         this.chargeDex = ConfigDBCGameplay.EnableChargingDex;
@@ -30,6 +32,7 @@ public final class LoginInfo extends AbstractPacket {
         this.kiProtectionValue = DBCConfig.ccnfKDd;
         this.kiFistValue = DBCConfig.ccnfKFd;
         this.kiRevamp = ConfigDBCGameplay.RevampKiCharging;
+        this.divineMulti = ConfigDBCEffects.getDivineMulti();
     }
 
     @Override
@@ -50,6 +53,8 @@ public final class LoginInfo extends AbstractPacket {
         out.writeDouble(this.kiFistValue);
 
         out.writeBoolean(this.kiRevamp);
+
+        out.writeFloat(this.divineMulti);
     }
 
     @Override
@@ -70,6 +75,8 @@ public final class LoginInfo extends AbstractPacket {
             DBCConfig.cnfKFd = in.readDouble();
 
             ClientCache.kiRevamp = in.readBoolean();
+
+            ClientCache.divineMulti = in.readFloat();
         }
     }
 }

@@ -1,6 +1,9 @@
 package kamkeel.npcdbc.config;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.client.ClientCache;
 import net.minecraftforge.common.config.Configuration;
 import noppes.npcs.util.ValueUtil;
 import org.apache.logging.log4j.Level;
@@ -54,6 +57,21 @@ public class ConfigDBCEffects
     public static int EXHAUST_TIME = 15;
     public static boolean EXHAUST_ZENAKI = true;
     public static boolean EXHAUST_OVERPOWER = true;
+
+    public final static String DIVINE = "DIVINE";
+    private static float divineMulti = 1;
+
+    /**
+     * Ugly, roundabout way of persisting configs between multiplayer and singleplayer.
+     *
+     * @return Divine multiplier that should be used in the current world (singleplayer or multiplayer).
+     */
+    public static float getDivineMulti(){
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+            return divineMulti;
+        else
+            return ClientCache.divineMulti;
+    }
 
     public static void init(File configFile)
     {
@@ -116,6 +134,23 @@ public class ConfigDBCEffects
             EXHAUST_TIME = config.get(Potara, "Exhaust Time", 15, "Amount of Time in Minutes for Exhaust").getInt(15);
             EXHAUST_ZENAKI = config.get(EXHAUST, "Exhaust Zenkai", true).getBoolean(true);
             EXHAUST_OVERPOWER = config.get(EXHAUST, "Exhaust Overpower", true).getBoolean(true);
+
+
+            config.addCustomCategoryComment(DIVINE,
+                "Forms (only **custom** forms so far) can now benefit from an additional multi" +
+                    "\n" +
+                    "\nDivine is applied in a similar manner as Majin and Legendary" +
+                    "\n" +
+                    "\nFormula:" +
+                    "\n formMulti = ( multi x racialBoost ) x masteryMultiModifier" +
+                    "\n result = baseStat x [(formMulti x kaiokenMulti) + (formMulti x majin) + (formMulti x legendary) + (formMulti x divine)" +
+                    "\n" +
+                    "\nWHERE:" +
+                    "\n - racialBoost is the multi gained from Arcosian PowerPoints or Majin Absorption" +
+                    "\n - kaiokenMulti is the multi gained from kaioken. If you're not in kaioken, the multi is 1.0"
+
+            );
+            divineMulti = (float) config.get(DIVINE, "Divine status effect multi", 1.0, "Put the boost in multiplier form. 1.0 is no boost, 1.15 = 15% boost").getDouble(1.0);
 
         }
         catch (Exception e)
