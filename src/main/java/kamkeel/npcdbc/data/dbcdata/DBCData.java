@@ -13,6 +13,7 @@ import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.outline.IOutline;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.entity.EntityAura;
@@ -473,6 +474,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             return (Outline) OutlineController.getInstance().get(form.display.outlineID);
 
         return (Outline) OutlineController.getInstance().get(outlineID);
+    }
+
+    public void setOutline(IOutline outline) {
+        int id = outline != null ? outline.getID() : -1;
+        getRawCompound().setInteger("outlineID", id);
     }
 
     public void setFlight(boolean flightOn) {

@@ -861,8 +861,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setOutline(IOutline outline) {
-        int id = outline != null ? outline.getID() : -1;
-        dbcData.getRawCompound().setInteger("outlineID", id);
+        dbcData.setOutline(outline);
     }
 
     @Override
