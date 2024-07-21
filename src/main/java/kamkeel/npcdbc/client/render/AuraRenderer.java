@@ -6,6 +6,7 @@ import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelAura;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -21,6 +22,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
+import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
 
@@ -72,6 +74,11 @@ public class AuraRenderer extends RenderDBC {
         double interPosX = aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks - RenderManager.renderPosX;
         double interPosY = aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks - RenderManager.renderPosY;
         double interPosZ = aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks - RenderManager.renderPosZ;
+
+        if (ClientProxy.renderingGUI) {
+            interPosY = 1;
+            interPosX = interPosZ = 0;
+        }
 
         int speed = aura.speed;
         int age = Math.max(1, aura.ticksExisted % speed);

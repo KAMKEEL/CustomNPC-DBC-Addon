@@ -308,7 +308,7 @@ public class EntityAura extends Entity {
     public void onUpdate() {
         if (isRoot() && !fadeOut) { //check aura death conditions
             Aura currentAura = PlayerDataUtil.getToggledAura(entity);
-            if (!isVanillaDefault && (entity == null || entity.isDead || currentAura == null || aura != currentAura || auraData.getAuraEntity() != this || auraData.isFusionSpectator()))
+            if (!isVanillaDefault && (entity == null || entity.isDead || currentAura == null || aura.id != currentAura.id || auraData.getAuraEntity() != this || auraData.isFusionSpectator()))
                 despawn();
             else if (isVanillaDefault && (!auraData.isAuraOn() || auraData.isFusionSpectator() || entity == null || entity.isDead || currentAura != null || !ConfigDBCClient.RevampAura || auraData.isFusionSpectator()))
                 despawn();

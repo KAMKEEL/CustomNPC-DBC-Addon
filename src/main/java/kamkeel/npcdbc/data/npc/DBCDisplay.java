@@ -21,7 +21,10 @@ import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
+import noppes.npcs.entity.data.ModelData;
+import noppes.npcs.entity.data.ModelPartData;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
@@ -622,6 +625,65 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public int getDBCColor() {
         return getAuraColor();
+    }
+
+    public void setRacialExtras() {
+        ModelData data = ((EntityCustomNpc) npc).modelData;
+        data.removePart("dbcHorn");
+        data.removePart("tail");
+        data.removePart("dbcArms");
+        data.removePart("dbcBody");
+
+        if (DBCRace.isSaiyan(this.race)) {
+            ModelPartData tail = data.getOrCreatePart("tail");
+            tail.setTexture("tail/monkey1", 8);
+            tail.pattern = tailState < 2 ? tailState : 0;
+        } else if (this.race == DBCRace.ARCOSIAN) {
+            ModelPartData tail = data.getOrCreatePart("tail");
+            tail.setTexture("tail/monkey1", 8);
+            tail.pattern = 2;
+
+            ModelPartData horn = data.getOrCreatePart("dbcHorn");
+            ModelPartData arms;
+            switch (arcoState) {
+                case 0:
+                    horn.setTexture("tail/monkey1", 2);
+                    break;
+                case 2:
+                    horn.setTexture("tail/monkey1", 3);
+                    break;
+                case 3:
+                    horn.setTexture("tail/monkey1", 4);
+                    arms = data.getOrCreatePart("dbcArms");
+                    arms.setTexture("tail/monkey1", 2);
+                    break;
+                case 4:
+                    data.removePart("dbcHorn");
+                    break;
+                case 5:
+                    horn.setTexture("tail/monkey1", 5);
+                    arms = data.getOrCreatePart("dbcArms");
+                    arms.setTexture("tail/monkey1", 1);
+                    ModelPartData body = data.getOrCreatePart("dbcBody");
+                    body.setTexture("tail/monkey1", 1);
+                    break;
+                default:
+                    this.arcoState = 0;
+                    data.removePart("dbcHorn");
+                    break;
+            }
+        } else if (this.race == DBCRace.NAMEKIAN) {
+            ModelPartData horn = data.getOrCreatePart("dbcHorn");
+            horn.setTexture("tail/monkey1", 1);
+        }
+
+    }
+
+    @Override
+    public IDBCDisplay clone() {
+        DBCDisplay aura = new DBCDisplay(null);
+        aura.readFromNBT(writeToNBT(new NBTTagCompound()));
+        return aura;
     }
 
 }

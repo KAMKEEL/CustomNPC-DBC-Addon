@@ -1,10 +1,16 @@
 package kamkeel.npcdbc.client.gui.global.auras;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
+import kamkeel.npcdbc.client.model.part.hair.DBCHair;
+import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -14,6 +20,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityCustomNpc;
@@ -22,11 +29,14 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import static kamkeel.npcdbc.client.ClientEventHandler.spawnAura;
+
 public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener,ITextfieldListener
 {
     private final GuiNPCManageAuras parent;
 	public Aura aura;
-    public AuraDisplay auraDisplay;
+    public AuraDisplay display;
+    private final DBCDisplay visualDisplay;
     public int lastColorClicked = 0;
     boolean showAura = false;
     public int auraTicks = 1;
@@ -38,12 +48,17 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
     public int xOffset = 0;
     public int yOffset = 0;
     int selectedTab = 0;
+    DBCDisplay origDisplay = null;
 
 	public SubGuiAuraDisplay(GuiNPCManageAuras parent, Aura aura)
 	{
 		this.aura = aura;
-        this.auraDisplay = aura.display;
+        this.display = aura.display;
         this.parent = parent;
+
+        EntityCustomNpc originalNPC = ((EntityCustomNpc) parent.npc);
+        if (originalNPC != null)
+            origDisplay = ((INPCDisplay) originalNPC.display).getDBCDisplay();
 
 		setBackground("menubg.png");
 		xSize = 360;
@@ -53,8 +68,41 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         yOffset = -10;
 
         npc = new EntityCustomNpc(Minecraft.getMinecraft().theWorld);
+        npc.display.name = "aura man";
         npc.display.texture = "customnpcs:textures/entity/humanmale/AnimationBody.png";
-        ((INPCDisplay) npc.display).getDBCDisplay().enabled = true;
+        visualDisplay = ((INPCDisplay) npc.display).getDBCDisplay();
+        visualDisplay.enabled = true;
+        visualDisplay.useSkin = true;
+        if (origDisplay != null && origDisplay.enabled && origDisplay.useSkin) {
+            visualDisplay.readFromNBT(origDisplay.writeToNBT(new NBTTagCompound()));
+            visualDisplay.setRacialExtras();
+
+        } else {
+            visualDisplay.race = DBCData.getClient().Race;
+            visualDisplay.setDefaultColors();
+            updateDisplay();
+            visualDisplay.setRacialExtras();
+
+        }
+        visualDisplay.setAura(aura);
+        visualDisplay.auraOn = true;
+
+    }
+
+    public void updateDisplay() {
+        DBCData data = DBCData.getClient();
+        boolean isSaiyan = DBCRace.isSaiyan(visualDisplay.race);
+        if (isSaiyan) {
+            visualDisplay.tailState = (data.Tail == 0 || data.Tail == 1) ? data.Tail : (byte) (data.Tail == -1 ? 0 : 1);
+        }
+
+        if (visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.NAMEKIAN) {
+            visualDisplay.hairCode = "";
+        } else if (visualDisplay.race == DBCRace.MAJIN) {
+            visualDisplay.hairCode = DBCHair.MAJIN_HAIR;
+            visualDisplay.hairColor = visualDisplay.bodyCM;
+        }
+
     }
 
     public void initGui()
@@ -75,77 +123,72 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
 
         if(selectedTab == 0){
             addLabel(new GuiNpcLabel(3003, "display.alpha", guiLeft + 138, y + 5));
-            addTextField(new GuiNpcTextField(3003, this, guiLeft + 190, y, 40, 20, String.valueOf(auraDisplay.alpha)));
+            addTextField(new GuiNpcTextField(3003, this, guiLeft + 190, y, 40, 20, String.valueOf(display.alpha)));
             getTextField(3003).setMaxStringLength(4);
             getTextField(3003).integersOnly = true;
             getTextField(3003).setMinMaxDefault(-1, 255, -1);
 
             y += 23;
             addLabel(new GuiNpcLabel(3004, "display.overrideDBC", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButtonYesNo(3004, guiLeft + 265, y, 90, 20, auraDisplay.overrideDBCAura));
+            addButton(new GuiNpcButtonYesNo(3004, guiLeft + 265, y, 90, 20, display.overrideDBCAura));
 
             y += 23;
             addLabel(new GuiNpcLabel(3000, "display.color1", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButton(3000, guiLeft + 265, y, 50, 20, getColor(auraDisplay.color1)));
-            getButton(3000).packedFGColour = auraDisplay.color1;
+            addButton(new GuiNpcButton(3000, guiLeft + 265, y, 50, 20, getColor(display.color1)));
+            getButton(3000).packedFGColour = display.color1;
             addButton(new GuiNpcButton(3100, guiLeft + 320, y, 20, 20, "X"));
-            getButton(3100).enabled = auraDisplay.color1 != -1;
+            getButton(3100).enabled = display.color1 != -1;
 
             y += 23;
             addLabel(new GuiNpcLabel(3001, "display.color2", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButton(3001, guiLeft + 265, y, 50, 20, getColor(auraDisplay.color2)));
-            getButton(3001).packedFGColour = auraDisplay.color2;
+            addButton(new GuiNpcButton(3001, guiLeft + 265, y, 50, 20, getColor(display.color2)));
+            getButton(3001).packedFGColour = display.color2;
             addButton(new GuiNpcButton(3101, guiLeft + 320, y, 20, 20, "X"));
-            getButton(3101).enabled = auraDisplay.color2 != -1;
+            getButton(3101).enabled = display.color2 != -1;
 
             y += 23;
             addLabel(new GuiNpcLabel(3002, "display.color3", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButton(3002, guiLeft + 265, y, 50, 20, getColor(auraDisplay.color3)));
-            getButton(3002).packedFGColour = auraDisplay.color3;
+            addButton(new GuiNpcButton(3002, guiLeft + 265, y, 50, 20, getColor(display.color3)));
+            getButton(3002).packedFGColour = display.color3;
             addButton(new GuiNpcButton(3102, guiLeft + 320, y, 20, 20, "X"));
-            getButton(3102).enabled = auraDisplay.color3 != -1;
+            getButton(3102).enabled = display.color3 != -1;
 
             y += 23;
 
             addLabel(new GuiNpcLabel(200, "display.size", guiLeft + 138, y + 5));
-            addTextField(new GuiNpcTextField(200, this, guiLeft + 190, y, 40, 20, String.valueOf(auraDisplay.size)));
+            addTextField(new GuiNpcTextField(200, this, guiLeft + 190, y, 40, 20, String.valueOf(display.size)));
             getTextField(200).setMaxStringLength(10);
             getTextField(200).floatsOnly = true;
             getTextField(200).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
 
             addLabel(new GuiNpcLabel(201, "display.speed", guiLeft + 240, y + 5));
-            addTextField(new GuiNpcTextField(201, this, guiLeft + 315, y, 40, 20, String.valueOf(auraDisplay.speed)));
+            addTextField(new GuiNpcTextField(201, this, guiLeft + 315, y, 40, 20, String.valueOf(display.speed)));
             getTextField(201).setMaxStringLength(10);
             getTextField(201).integersOnly = true;
             getTextField(201).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
 
             y += 23;
             addLabel(new GuiNpcLabel(3006, "display.3DType", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButton(3006, guiLeft + 245, y, 110, 20,
-                new String[]{"auratype.none", "auratype.default","auratype.ssgod","auratype.ssb","auratype.shinka",
-                    "auratype.ssrose","auratype.ssroseevo","auratype.ultimate","auratype.ui","auratype.god"}, auraDisplay.type.ordinal()));
+            addButton(new GuiNpcButton(3006, guiLeft + 245, y, 110, 20, new String[]{"auratype.none", "auratype.default", "auratype.ssgod", "auratype.ssb", "auratype.shinka", "auratype.ssrose", "auratype.ssroseevo", "auratype.ultimate", "auratype.ui", "auratype.god"}, display.type.ordinal()));
 
             y += 23;
             addLabel(new GuiNpcLabel(3007, "display.2DType", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButton(3007, guiLeft + 245, y, 110, 20,
-                new String[]{"auratype.none", "auratype.default","auratype.base","auratype.god","auratype.god_toppo",
-                    "auratype.ui","auratype.mui","auratype.ultimate","auratype.legendary","auratype.ssj",
-                    "auratype.ssgod", "auratype.ssb", "auratype.shinka", "auratype.ssrose", "auratype.ssroseevo", "auratype.jiren"}, auraDisplay.type2D.ordinal()));
+            addButton(new GuiNpcButton(3007, guiLeft + 245, y, 110, 20, new String[]{"auratype.none", "auratype.default", "auratype.base", "auratype.god", "auratype.god_toppo", "auratype.ui", "auratype.mui", "auratype.ultimate", "auratype.legendary", "auratype.ssj", "auratype.ssgod", "auratype.ssb", "auratype.shinka", "auratype.ssrose", "auratype.ssroseevo", "auratype.jiren"}, display.type2D.ordinal()));
         }
         if(selectedTab == 1){
             addLabel(new GuiNpcLabel(202, "display.lightning", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButtonYesNo(202, guiLeft + 220, y, 40, 20, auraDisplay.hasLightning));
+            addButton(new GuiNpcButtonYesNo(202, guiLeft + 220, y, 40, 20, display.hasLightning));
 
-            if(auraDisplay.hasLightning){
-                addButton(new GuiNpcButton(109, guiLeft + 265, y, 50, 20, getColor(auraDisplay.lightningColor)));
-                getButton(109).packedFGColour = auraDisplay.lightningColor;
+            if (display.hasLightning) {
+                addButton(new GuiNpcButton(109, guiLeft + 265, y, 50, 20, getColor(display.lightningColor)));
+                getButton(109).packedFGColour = display.lightningColor;
                 addButton(new GuiNpcButton(1109, guiLeft + 320, y, 20, 20, "X"));
-                getButton(1109).enabled = auraDisplay.lightningColor != -1;
+                getButton(1109).enabled = display.lightningColor != -1;
 
                 y += 23;
 
                 addLabel(new GuiNpcLabel(203, "display.lAlpha", guiLeft + 138, y + 5));
-                addTextField(new GuiNpcTextField(203, this, guiLeft + 220, y, 40, 20, String.valueOf(auraDisplay.lightningAlpha)));
+                addTextField(new GuiNpcTextField(203, this, guiLeft + 220, y, 40, 20, String.valueOf(display.lightningAlpha)));
                 getTextField(203).setMaxStringLength(4);
                 getTextField(203).integersOnly = true;
                 getTextField(203).setMinMaxDefault(-1, 255, -1);
@@ -153,7 +196,7 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
                 y += 23;
 
                 addLabel(new GuiNpcLabel(204, "display.lSpeed", guiLeft + 138, y + 5));
-                addTextField(new GuiNpcTextField(204, this, guiLeft + 220, y, 40, 20, String.valueOf(auraDisplay.lightningSpeed)));
+                addTextField(new GuiNpcTextField(204, this, guiLeft + 220, y, 40, 20, String.valueOf(display.lightningSpeed)));
                 getTextField(204).setMaxStringLength(4);
                 getTextField(204).integersOnly = true;
                 getTextField(204).setMinMaxDefault(-1, 100, -1);
@@ -161,7 +204,7 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
                 y += 23;
 
                 addLabel(new GuiNpcLabel(205, "display.lIntensity", guiLeft + 138, y + 5));
-                addTextField(new GuiNpcTextField(205, this, guiLeft + 220, y, 40, 20, String.valueOf(auraDisplay.lightningAlpha)));
+                addTextField(new GuiNpcTextField(205, this, guiLeft + 220, y, 40, 20, String.valueOf(display.lightningAlpha)));
                 getTextField(205).setMaxStringLength(4);
                 getTextField(205).integersOnly = true;
                 getTextField(205).setMinMaxDefault(-1, 100, -1);
@@ -169,24 +212,24 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         }
         if(selectedTab == 2){
             addLabel(new GuiNpcLabel(302, "display.kaioken", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButtonYesNo(302, guiLeft + 220, y, 40, 20, auraDisplay.hasKaiokenAura));
+            addButton(new GuiNpcButtonYesNo(302, guiLeft + 220, y, 40, 20, display.hasKaiokenAura));
 
-            if(auraDisplay.hasKaiokenAura){
-                addButton(new GuiNpcButton(309, guiLeft + 265, y, 50, 20, getColor(auraDisplay.kaiokenColor)));
-                getButton(309).packedFGColour = auraDisplay.kaiokenColor;
+            if (display.hasKaiokenAura) {
+                addButton(new GuiNpcButton(309, guiLeft + 265, y, 50, 20, getColor(display.kaiokenColor)));
+                getButton(309).packedFGColour = display.kaiokenColor;
                 addButton(new GuiNpcButton(1309, guiLeft + 320, y, 20, 20, "X"));
-                getButton(1309).enabled = auraDisplay.kaiokenColor != -1;
+                getButton(1309).enabled = display.kaiokenColor != -1;
 
                 y += 23;
 
                 addLabel(new GuiNpcLabel(303, "display.kAlpha", guiLeft + 138, y + 5));
-                addTextField(new GuiNpcTextField(303, this, guiLeft + 190, y, 40, 20, String.valueOf(auraDisplay.kaiokenAlpha)));
+                addTextField(new GuiNpcTextField(303, this, guiLeft + 190, y, 40, 20, String.valueOf(display.kaiokenAlpha)));
                 getTextField(303).setMaxStringLength(4);
                 getTextField(303).integersOnly = true;
                 getTextField(303).setMinMaxDefault(-1, 255, -1);
 
                 addLabel(new GuiNpcLabel(304, "display.kSize", guiLeft + 240, y + 5));
-                addTextField(new GuiNpcTextField(304, this, guiLeft + 315, y, 40, 20, String.valueOf(auraDisplay.kaiokenSize)));
+                addTextField(new GuiNpcTextField(304, this, guiLeft + 315, y, 40, 20, String.valueOf(display.kaiokenSize)));
                 getTextField(304).setMaxStringLength(4);
                 getTextField(304).integersOnly = true;
                 getTextField(304).setMinMaxDefault(-1, 100, -1);
@@ -194,22 +237,21 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
                 y += 23;
 
                 addLabel(new GuiNpcLabel(305, "display.kaiokenOverride", guiLeft + 138, y + 5));
-                addButton(new GuiNpcButtonYesNo(305, guiLeft + 280, y, 40, 20, auraDisplay.kaiokenOverrides));
+                addButton(new GuiNpcButtonYesNo(305, guiLeft + 280, y, 40, 20, display.kaiokenOverrides));
             }
 
             y += 23;
             y += 23;
             addLabel(new GuiNpcLabel(400, "display.kettleModeCharging", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButtonYesNo(400, guiLeft + 280, y, 40, 20, auraDisplay.kettleModeCharging));
+            addButton(new GuiNpcButtonYesNo(400, guiLeft + 280, y, 40, 20, display.kettleModeCharging));
 
             y += 23;
             addLabel(new GuiNpcLabel(401, "display.kettleModeAura", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButtonYesNo(401, guiLeft + 280, y, 40, 20, auraDisplay.kettleModeAura));
+            addButton(new GuiNpcButtonYesNo(401, guiLeft + 280, y, 40, 20, display.kettleModeAura));
 
             y += 23;
             addLabel(new GuiNpcLabel(402, "display.kettleModeType", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButton(402, guiLeft + 280, y, 40, 20,
-                new String[]{"0", "1"}, auraDisplay.kettleModeType));
+            addButton(new GuiNpcButton(402, guiLeft + 280, y, 40, 20, new String[]{"0", "1"}, display.kettleModeType));
         }
 
         addButton(new GuiNpcButton(10000, guiLeft + 60, guiTop + 200 + this.yOffset, 75, 20, "gui.done"));
@@ -236,76 +278,76 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
             selectedTab = 2;
             initGui();
         } else if(button.id == 3004) {
-            auraDisplay.overrideDBCAura = !auraDisplay.overrideDBCAura;
+            display.overrideDBCAura = !display.overrideDBCAura;
             initGui();
         } else if(button.id == 3000) {
             // Change color1
             lastColorClicked = 0;
-            setSubGui(new SubGuiColorSelector(auraDisplay.color1));
+            setSubGui(new SubGuiColorSelector(display.color1));
         } else if(button.id == 3100) {
             // Clear color1
-            auraDisplay.color1 = -1;
+            display.color1 = -1;
             initGui();
         } else if(button.id == 3001) {
             lastColorClicked = 1;
-            setSubGui(new SubGuiColorSelector(auraDisplay.color2));
+            setSubGui(new SubGuiColorSelector(display.color2));
         } else if(button.id == 3101) {
             // Clear color2
-            auraDisplay.color2 = -1;
+            display.color2 = -1;
             initGui();
         } else if(button.id == 3002) {
             // Change color3
             lastColorClicked = 2;
-            setSubGui(new SubGuiColorSelector(auraDisplay.color3));
+            setSubGui(new SubGuiColorSelector(display.color3));
         } else if(button.id == 3102) {
             // Clear color3
-            auraDisplay.color3 = -1;
+            display.color3 = -1;
             initGui();
         } else if(button.id == 3006) {
             // Change 3D Type
-            auraDisplay.type = EnumAuraTypes3D.values()[button.getValue()];
+            display.type = EnumAuraTypes3D.values()[button.getValue()];
         } else if(button.id == 3007) {
             // Change 2D Type
-            auraDisplay.type2D = EnumAuraTypes2D.values()[button.getValue()];
+            display.type2D = EnumAuraTypes2D.values()[button.getValue()];
         } else if(button.id == 202) {
             // Toggle Lightning
-            auraDisplay.hasLightning = !auraDisplay.hasLightning;
+            display.hasLightning = !display.hasLightning;
             initGui();
         } else if(button.id == 109) {
             // Change Lightning color
             lastColorClicked = 3;
-            setSubGui(new SubGuiColorSelector(auraDisplay.lightningColor));
+            setSubGui(new SubGuiColorSelector(display.lightningColor));
         } else if(button.id == 1109) {
             // Clear Lightning color
-            auraDisplay.lightningColor = -1;
+            display.lightningColor = -1;
             initGui();
         } else if(button.id == 302) {
             // Toggle Kaioken Aura
-            auraDisplay.hasKaiokenAura = !auraDisplay.hasKaiokenAura;
+            display.hasKaiokenAura = !display.hasKaiokenAura;
             initGui();
         } else if(button.id == 309) {
             // Change Kaioken color
             lastColorClicked = 4;
-            setSubGui(new SubGuiColorSelector(auraDisplay.kaiokenColor));
+            setSubGui(new SubGuiColorSelector(display.kaiokenColor));
         } else if(button.id == 1309) {
             // Clear Kaioken color
-            auraDisplay.kaiokenColor = -1;
+            display.kaiokenColor = -1;
             initGui();
         } else if(button.id == 305) {
             // Toggle Kaioken Override
-            auraDisplay.kaiokenOverrides = !auraDisplay.kaiokenOverrides;
+            display.kaiokenOverrides = !display.kaiokenOverrides;
             initGui();
         } else if(button.id == 400) {
             // Toggle Kettle Charging
-            auraDisplay.kettleModeCharging = !auraDisplay.kettleModeCharging;
+            display.kettleModeCharging = !display.kettleModeCharging;
             initGui();
         } else if(button.id == 401) {
             // Toggle Kettle Charging
-            auraDisplay.kettleModeAura = !auraDisplay.kettleModeAura;
+            display.kettleModeAura = !display.kettleModeAura;
             initGui();
         } else if(button.id == 402) {
             // Toggle Kettle Charging
-            auraDisplay.kettleModeType = (byte) ((GuiNpcButton) guibutton).getValue();
+            display.kettleModeType = (byte) ((GuiNpcButton) guibutton).getValue();
             initGui();
         }
     }
@@ -321,36 +363,36 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
 	@Override
     public void unFocused(GuiNpcTextField guiNpcTextField) {
         if(guiNpcTextField.id == 200) {
-            auraDisplay.size = guiNpcTextField.getFloat();
+            display.size = guiNpcTextField.getFloat();
         }
         else if(guiNpcTextField.id == 201) {
             // Speed
-            auraDisplay.speed = guiNpcTextField.getInteger();
+            display.speed = guiNpcTextField.getInteger();
         }
         else if(guiNpcTextField.id == 203) {
             // TextField for lightning alpha in the "Lightning" tab
-            auraDisplay.lightningAlpha = guiNpcTextField.getInteger();
+            display.lightningAlpha = guiNpcTextField.getInteger();
         }
         else if(guiNpcTextField.id == 204) {
             // TextField for lightning speed in the "Lightning" tab
-            auraDisplay.lightningSpeed = guiNpcTextField.getInteger();
+            display.lightningSpeed = guiNpcTextField.getInteger();
         }
         else if(guiNpcTextField.id == 205) {
             // TextField for lightning intensity in the "Lightning" tab
-            auraDisplay.lightningIntensity = guiNpcTextField.getInteger();
-            auraDisplay.lightningIntensity = ValueUtil.clamp(auraDisplay.lightningIntensity, 0 , 8);
+            display.lightningIntensity = guiNpcTextField.getInteger();
+            display.lightningIntensity = ValueUtil.clamp(display.lightningIntensity, 0, 8);
         }
         else if(guiNpcTextField.id == 3003) {
             // TextField for alpha in the "General" tab
-            auraDisplay.alpha = guiNpcTextField.getInteger();
+            display.alpha = guiNpcTextField.getInteger();
         }
         else if(guiNpcTextField.id == 303) {
             // TextField for kaioken alpha in the "Extra" tab
-            auraDisplay.kaiokenAlpha = guiNpcTextField.getInteger();
+            display.kaiokenAlpha = guiNpcTextField.getInteger();
         }
         else if(guiNpcTextField.id == 304) {
             // TextField for kaioken size in the "Extra" tab
-            auraDisplay.kaiokenSize = guiNpcTextField.getInteger();
+            display.kaiokenSize = guiNpcTextField.getInteger();
         }
     }
 
@@ -365,15 +407,15 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         if(subgui instanceof  SubGuiColorSelector){
             int color = ((SubGuiColorSelector) subgui).color;
             if(lastColorClicked == 0){
-                auraDisplay.color1 = color;
+                display.color1 = color;
             } else if(lastColorClicked == 1){
-                auraDisplay.color2 = color;
+                display.color2 = color;
             } else if(lastColorClicked == 2){
-                auraDisplay.color3 = color;
+                display.color3 = color;
             } else if(lastColorClicked == 3){
-                auraDisplay.lightningColor = color;
+                display.lightningColor = color;
             } else if(lastColorClicked == 4){
-                auraDisplay.kaiokenColor = color;
+                display.kaiokenColor = color;
             }
             initGui();
         }
@@ -401,8 +443,29 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         if(hasSubGui())
             return;
 
+        EntityAura enhancedAura = visualDisplay.auraEntity;
+        boolean isInKaioken = false;
+        if (ConfigDBCClient.RevampAura) {
+            if (enhancedAura == null)
+                new EntityAura(npc, aura).load(true).spawn();
+        } else {
+            if (enhancedAura != null)
+                enhancedAura.despawn();
+
+            if (isInKaioken && aura.display.kaiokenOverrides) {
+                //     spawnKaiokenAura(aura, dbcData);
+            } else {
+                spawnAura(npc, aura);
+                if (aura.hasSecondaryAura())
+                    spawnAura(npc, aura.getSecondaryAur());
+                //   if (isInKaioken)
+                // spawnKaiokenAura(aura, dbcData);
+            }
+        }
+
+
         GL11.glColor4f(1, 1, 1, 1);
-        EntityLivingBase entity = this.npc;
+        EntityLivingBase entity = this.npc; // DBCData.getClient().player;//
 
         int l = guiLeft + 190 + xOffset;
         int i1 =  guiTop + 180 + yOffset;
@@ -421,12 +484,12 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         GL11.glRotatef(135F, 0.0F, 1.0F, 0.0F);
         RenderHelper.enableStandardItemLighting();
         GL11.glRotatef(-135F, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(-(float)Math.atan(f6 / 80F) * 20F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(-(float) Math.atan(f6 / 800F) * 20F, 1.0F, 0.0F, 0.0F);
         entity.prevRenderYawOffset = entity.renderYawOffset = rotation;
         entity.prevRotationYaw = entity.rotationYaw = (float)Math.atan(f5 / 80F) * 40F + rotation;
         entity.rotationPitch = -(float)Math.atan(f6 / 80F) * 20F;
         entity.prevRotationYawHead = entity.rotationYawHead = entity.rotationYaw;
-        GL11.glTranslatef(0.0F, entity.yOffset, 0.0F);
+        GL11.glTranslatef(0.0F, entity.yOffset, 1F);
         RenderManager.instance.playerViewY = 180F;
 
         if(showAura && this.aura != null) {
@@ -434,7 +497,7 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
             EntityAura2 aur = new EntityAura2(entity.worldObj, Utility.getEntityID(entity), 0, 0, 0, 100, false);
             aur.setAlp(0.5F);
             aur.setInner(true);
-            aur.setCol(auraDisplay.color1);
+            aur.setCol(display.color1);
 
             Aura aura = this.aura;
             if (aura.display.type == EnumAuraTypes3D.SaiyanGod) {
@@ -545,6 +608,8 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         GL11.glPopMatrix();
+
+
     }
 
 	@Override

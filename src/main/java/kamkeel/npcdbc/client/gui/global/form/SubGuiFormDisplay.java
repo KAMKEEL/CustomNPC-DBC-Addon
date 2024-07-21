@@ -96,7 +96,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         visualDisplay.race = racePage = (byte) (form.race() < 0 ? racePage : form.race());
 
         visualDisplay.formID = spoofForm.id;
-        refreshValues();
+        updateDisplay();
     }
 
     public void initGui()
@@ -109,7 +109,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         raceButtons(y);
         controlButtons();
-        refreshValues();
+        updateDisplay();
         updateButtons();
     }
 
@@ -272,7 +272,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         GuiNpcButton button = (GuiNpcButton) btn;
         if (button.id == 1) {
             racePage = (byte) button.getValue();
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         // Aura Color
@@ -283,14 +283,14 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Aura Color Clear
         if(button.id == 1106){
             display.auraColor = -1;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         // Aura Show
         if(button.id == 1206){
             showAura = !showAura;
             auraTicks = 1;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         if(button.id == 1306){
@@ -298,7 +298,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         if(button.id == 1406){
             display.auraID = -1;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         // Hud Color
@@ -309,7 +309,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Hud Color Clear
         if(button.id == 1124){
             display.kiBarColor = -1;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         // Eye Color
@@ -320,13 +320,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Eye Color Clear
         if(button.id == 1107){
             display.eyeColor = -1;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         //Berserk
         if (button.id == 1072) {
             display.isBerserk = button.getValue() == 1;
-            refreshValues();
+            updateDisplay();
         }
         // Body
         if(button.id == 108){
@@ -336,13 +336,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Body Clear
         if(button.id == 1108){
             display.bodyCM = -1;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         //Has Eyebrows
         if (button.id == 1082) {
             display.hasEyebrows = button.getValue() == 1;
-            refreshValues();
+            updateDisplay();
         }
         // Body C1
         if(button.id == 109){
@@ -352,7 +352,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Body C1 Clear
         if(button.id == 1109){
             display.bodyC1 = -1;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         // Body C2
@@ -363,7 +363,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Body C2 Clear
         if(button.id == 1110){
             display.bodyC2 = -1;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         // Body C3
@@ -374,7 +374,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Body C3 Clear
         if(button.id == 1111){
             display.bodyC3 = -1;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         // Fur Color
@@ -385,38 +385,38 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Fur Color Clear
         if(button.id == 1112){
             display.furColor = -1;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         // Majin Hair
         if(button.id == 115){
             display.effectMajinHair = !display.effectMajinHair;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         // Arco Mask
         if(button.id == 113){
             display.hasArcoMask = !display.hasArcoMask;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         // Body Fur
         if(button.id == 123){
             display.hasBodyFur = !display.hasBodyFur;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
 
         // Form
         if(button.id == 114){
             display.bodyType = getArcoString(button.getValue());
-            refreshValues();
+            updateDisplay();
         }
 
         // Hair Clear
         if(button.id == 103){
             display.hairCode = "";
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         // Hair Paste
@@ -424,11 +424,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             String newDNSHair = getClipboardContents();
             if (newDNSHair.length() == 786 || newDNSHair.length() == 784 || newDNSHair.length() == 392) {
                 display.hairCode = dnsHairG1toG2(newDNSHair);
-                refreshValues();
+                updateDisplay();
                 updateButtons();
             } else if (newDNSHair.equalsIgnoreCase("bald")) {
                 display.hairCode = "bald";
-                refreshValues();
+                updateDisplay();
                 updateButtons();
             }
 
@@ -445,14 +445,14 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Hair Color Clear
         if(button.id == 1104){
             display.hairColor = -1;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         //Hair Type
         if (button.id == 140) {
             display.hairType = getHairString(button.getValue());
             visualDisplay.hairType = display.hairType;
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
     }
@@ -518,7 +518,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             } else if(lastColorClicked == 8){
                 display.kiBarColor = color;
             }
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
         if (subgui instanceof SubGuiSelectAura) {
@@ -531,7 +531,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                     display.auraID = guiSelectForm.selectedAuraID;
                 }
             }
-            refreshValues();
+            updateDisplay();
             updateButtons();
         }
     }
@@ -714,7 +714,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 	@Override
 	public void selected(int id, String name) {}
 
-    public void refreshValues() {
+    public void updateDisplay() {
         DBCData dbcData = DBCData.getClient();
         EntityCustomNpc originalNPC = ((EntityCustomNpc) menu.formsParent.npc);
         boolean originalNull = originalNPC == null;
@@ -814,7 +814,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             tail.setTexture("tail/monkey1", 8);
             if ((visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN)) {
 
-                tail.pattern = !originalNull ? (original.pattern == 2 ? 1 : original.pattern) : ((dbcData.Tail == 0 || dbcData.Tail == 1) ? dbcData.Tail : 1);
+                tail.pattern = !originalNull ? (original.pattern == 2 ? 1 : original.pattern) : (dbcData.Tail == 0 || dbcData.Tail == 1) ? dbcData.Tail : (byte) (dbcData.Tail == -1 ? 0 : 1);
                 tail.color = !originalNull && display.hairColor == -1 ? origDisplay.bodyC2 : (visualDisplay.bodyC1 = display.hairColor);
             } else if (visualDisplay.race == DBCRace.ARCOSIAN)
                 tail.pattern = 2;
