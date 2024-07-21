@@ -10,6 +10,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.TransformController;
@@ -217,7 +218,15 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         return JRMCoreConfig.HHWHO;
     }
 
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/ModelBipedDBC;renderHairs(FLjava/lang/String;)V", ordinal = 34, shift = At.Shift.BEFORE))
+    public void beforeMajinSE(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
+        ClientProxy.renderingMajinSE = true;
+    }
 
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/ModelBipedDBC;renderHairs(FLjava/lang/String;)V", ordinal = 34, shift = At.Shift.AFTER))
+    public void afterMajinSE(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
+        ClientProxy.renderingMajinSE = false;
+    }
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.AFTER))
     public void captureDefaultHairColor(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hc") LocalIntRef hairCol) {
         DBCData data = DBCData.get(par1AbstractClientPlayer);
@@ -245,23 +254,23 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         if (ConfigDBCClient.EnableHDTextures) {
             GL11.glColor3f(1.0f, 1.0f, 1.0f);
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4eyewhite.png"));
-            this.modelMain.renderBody(1F / 16F);
+            this.modelMain.bipedHead.render(1F / 16F);
             RenderPlayerJBRA.glColor3f(form.display.eyeColor == -1 ? 0xF3C807 : form.display.eyeColor);
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4pupils.png"));
-            this.modelMain.renderBody(0.0625F);
+            this.modelMain.bipedHead.render(0.0625F);
             RenderPlayerJBRA.glColor3f(form.display.getFurColor(data));
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows.png"));
-            this.modelMain.renderBody(1F / 16F);
+            this.modelMain.bipedHead.render(1F / 16F);
 
             int hairColor = form.display.getHairColor(data);
             RenderPlayerJBRA.glColor3f(hairColor < 0 ? defaultHairColor : hairColor, age);
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows2.png"));
-            this.modelMain.renderBody(1F / 16F);
+            this.modelMain.bipedHead.render(1F / 16F);
             RenderPlayerJBRA.glColor3f(bodyCM);
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4mouth0.png"));
-            this.modelMain.renderBody(1F / 16F);
+            this.modelMain.bipedHead.render(1F / 16F);
             this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4shade.png"));
-            this.modelMain.renderBody(0.0625F);
+            this.modelMain.bipedHead.render(0.0625F);
         }
 
         RenderPlayerJBRA.glColor3f(bodyCM);
