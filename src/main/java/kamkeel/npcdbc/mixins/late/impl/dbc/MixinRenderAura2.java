@@ -5,14 +5,19 @@ import JinRyuu.DragonBC.common.Npcs.RenderAura2;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.*;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
+import kamkeel.npcdbc.mixins.late.IRenderEntityAura2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -21,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(value = RenderAura2.class, remap = false)
-public class MixinRenderAura2 {
+public class MixinRenderAura2 implements IRenderEntityAura2 {
 
     @Shadow
     private int lightVertN;
@@ -134,5 +139,24 @@ public class MixinRenderAura2 {
          s.set(s.get() == 0 ? 1 : s.get() * Math.min(dbcData.Release, 100) * 0.01f);
             return;
         }
+    }
+
+    @Inject(method = "doRender", at = @At("HEAD"), cancellable = true)
+    private void disableRendering(Entity par1Entity, double par2, double par4, double par6, float par8, float par9, CallbackInfo ci) {
+        IEntityAura particle = (IEntityAura) par1Entity;
+        if (particle.isEnhancedRendering())
+            ci.cancel();
+    }
+
+    @Unique
+    public void renderParticle(EntityAura2 aura, float partialTicks) {
+        double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - (ClientProxy.renderingGUI ? 0 : RenderManager.renderPosX);
+        double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - (ClientProxy.renderingGUI ? -0.25 : RenderManager.renderPosY);
+        double interPosZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - (ClientProxy.renderingGUI ? 0 : RenderManager.renderPosZ);
+        float interYaw = aura.prevRotationYaw + (aura.rotationYaw - aura.prevRotationYaw) * partialTicks;
+
+
+        ((RenderAura2) (Object) this).renderAura(aura, interPosX, interPosY, interPosZ, interYaw, partialTicks);
+
     }
 }

@@ -6,13 +6,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ParticleFormHandler;
+import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
-import kamkeel.npcdbc.controllers.EntityLightController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -37,15 +37,14 @@ import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.Default;
 public class EntityAura extends Entity {
 
     public final Entity entity;
-    public final Aura aura;
+    public Aura aura;
     public IAuraData auraData;
 
     @SideOnly(Side.CLIENT)
     public AuraSound auraSound;
 
 
-    public EntityLightController light;
-    public boolean isKaioken, isInKaioken;
+    public boolean isKaioken, isInKaioken, isGUIAura;
     public boolean isTransforming;
     public boolean isCharging;
     public boolean isVanillaDefault; // when custom aura is hidden and revamp is enabled
@@ -72,6 +71,8 @@ public class EntityAura extends Entity {
         super(entity.worldObj);
         this.entity = entity;
         this.aura = aura;
+        if (SubGuiAuraDisplay.useGUIAura)
+            this.aura = SubGuiAuraDisplay.aura;
 
         if (entity instanceof EntityPlayer) {
             auraData = DBCData.get((EntityPlayer) entity);
@@ -82,8 +83,8 @@ public class EntityAura extends Entity {
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
         text1 = new ResourceLocation( "jinryuudragonbc:aura.png");
 
-        if (aura.hasSecondaryAura() && children.containsKey("Secondary"))
-            new EntityAura(entity, aura.getSecondaryAur()).load(true).setParent(this, "Secondary").spawn();
+        if (this.aura.hasSecondaryAura() && children.containsKey("Secondary"))
+            new EntityAura(entity, this.aura.getSecondaryAur()).load(true).setParent(this, "Secondary").spawn();
     }
 
 
@@ -160,7 +161,6 @@ public class EntityAura extends Entity {
             if (display.hasSize())
                 size = display.size;
 
-            light = new EntityLightController(entity);
 
             hasLightning = display.hasLightning;
             if (display.hasColor("lightning"))
@@ -280,7 +280,7 @@ public class EntityAura extends Entity {
             load(false);
 
 
-        if (!fadeOut && aura.display.type2D != EnumAuraTypes2D.None && JGConfigClientSettings.CLIENT_DA13) {
+        if (!fadeOut && aura.display.type2D != EnumAuraTypes2D.None) {
             float height = effectiveSize <= 0 ? entity.height : (this.height * 0.53f) * effectiveSize;
             ParticleFormHandler.spawnAura2D(entity, auraData, height);
         }

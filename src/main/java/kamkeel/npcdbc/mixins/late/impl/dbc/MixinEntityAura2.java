@@ -9,9 +9,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.data.SoundSource;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
+import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -44,23 +49,49 @@ public class MixinEntityAura2 implements IEntityAura {
     private EntityAura2 parent;
     @Unique
     private boolean isKaiokenAura;
+    @Unique
+    private boolean init;
+    @Unique
+    private boolean enhancedRendering;
+    @Unique
+    private Entity entity;
 
     @Shadow
     private String mot;
 
 
+    @Override
+    public boolean isEnhancedRendering() {
+        return enhancedRendering;
+    }
+
     @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", shift = At.Shift.AFTER), remap = true)
     private void redirect(CallbackInfo ci, @Local(name = "other") LocalRef<Entity> player) {
         EntityAura2 aura = (EntityAura2) (Object) this;
 
-        if (player.get() != null) {
-            if (aura.getAge() < aura.getLightLivingTime() && hasLightning && aura.getAge() == 2)
-                playSound(player.get(), aura);
-            return;
-        }
+
         Entity entity = Utility.getEntityFromID(aura.worldObj, mot);
         if (entity != null) {
             player.set(entity);
+        } else {
+            entity = player.get();
+        }
+        if (!init) {
+            if (this.entity instanceof EntityPlayer) {
+          //     DBCData.get((EntityPlayer) this.entity).dbcAuraQueue.add((EntityAura2) (Object) this);
+           //   enhancedRendering = true;
+            } else if (this.entity instanceof EntityNPCInterface) {
+                DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) this.entity).display).getDBCDisplay();
+                if (display != null) {
+                    display.dbcAuraQueue.add((EntityAura2) (Object) this);
+                //    enhancedRendering = true;
+                }
+            }
+            init = true;
+        }
+        if (entity != null) {
+            if (aura.getAge() < aura.getLightLivingTime() && hasLightning && aura.getAge() == 2)
+                playSound(player.get(), aura);
         }
     }
 
@@ -208,5 +239,15 @@ public class MixinEntityAura2 implements IEntityAura {
         return isKaiokenAura;
     }
 
+    @Unique
+    @Override
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
 
+    @Unique
+    @Override
+    public Entity getEntity() {
+        return this.entity;
+    }
 }

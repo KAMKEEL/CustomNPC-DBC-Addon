@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.npc;
 
+import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -71,6 +72,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public EntityAura auraEntity;
     public static Form fakeForm;
     public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
+    public Queue<EntityAura2> dbcAuraQueue = new LinkedList<>();
 
     public int outlineID;
 

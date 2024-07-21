@@ -286,6 +286,7 @@ public class ClientEventHandler {
 
         boolean rotate90 = isPlayer && (dbcData.containsSE(7));
         EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, isPlayer ? dbcData.State : 0, isPlayer ? dbcData.State2 : 0, isPlayer ? dbcData.Release : 100, rotate90);
+        ((IEntityAura) aur).setEntity(entity);
         aur.setAlp(0.2F);
 
         if (isNPC)
@@ -476,6 +477,7 @@ public class ClientEventHandler {
         boolean rotate90 = dbcData.containsSE(7) ? true : false;
 
         EntityAura2 kaiokenAura = new EntityAura2(dbcData.player.worldObj, dbcData.player.getCommandSenderName(), 16646144, 2.0F + dbcData.State, dbcData.State2 * 1.5f, dbcData.Release, rotate90);
+        ((IEntityAura) kaiokenAura).setEntity(dbcData.player);
         ((IEntityAura) kaiokenAura).setIsKaioken(true);
         if (override) {
             kaiokenAura.setAlp(0.2F);

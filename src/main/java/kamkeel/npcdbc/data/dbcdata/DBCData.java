@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.dbcdata;
 
 
+import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.entity.EntityCusPar;
@@ -61,6 +62,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
     public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
+    public Queue<EntityAura2> dbcAuraQueue = new LinkedList<>();
 
 
     //RENDERING DATA

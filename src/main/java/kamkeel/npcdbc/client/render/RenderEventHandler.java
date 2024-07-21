@@ -1,8 +1,10 @@
 package kamkeel.npcdbc.client.render;
 
+import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -13,6 +15,7 @@ import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.early.IEntityMC;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IRenderCusPar;
+import kamkeel.npcdbc.mixins.late.IRenderEntityAura2;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
@@ -57,13 +60,13 @@ public class RenderEventHandler {
     public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm, boolean isItem) {
         RenderPlayerJBRA render = (RenderPlayerJBRA) renderer;
         DBCData data = DBCData.get(player);
-        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+        //  Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         EntityAura aura = data.auraEntity;
 
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
-        Outline outline = data.getOutline();
+        Outline outline = null;// data.getOutline();
         if (outline != null && ConfigDBCClient.EnableOutlines && !isItem) {
             startBlooming();
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
@@ -73,8 +76,7 @@ public class RenderEventHandler {
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered())
             ((IEntityMC) player).setRenderPass(0);
 
-
-        boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !data.particleRenderQueue.isEmpty();
+        boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !data.particleRenderQueue.isEmpty(), renderDBCAura = !data.dbcAuraQueue.isEmpty();
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Aura
@@ -98,6 +100,41 @@ public class RenderEventHandler {
             glPopMatrix();
             loadMatrices(currentMV, currentProj);
         }
+
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //DBC Aura
+        if (renderDBCAura && !isArm) {
+            if (player.isInWater())
+                ((IEntityMC) player).setRenderPass(0);
+            else
+                ((IEntityMC) player).setRenderPass(ClientProxy.MiddleRenderPass);
+            FloatBuffer currentMV = ShaderHelper.getModelView(), currentProj = ShaderHelper.getProjection();
+            if (isItem)
+                loadMatrices(DEFAULT_MODELVIEW, DEFAULT_PROJECTION);
+            else
+                glLoadMatrix(DEFAULT_MODELVIEW);
+
+            glPushMatrix();
+            postStencilRendering();
+            //  glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
+            // glStencilMask(0x0);
+            IRenderEntityAura2 auraRenderer = null;
+            for (Iterator<EntityAura2> iter = data.dbcAuraQueue.iterator(); iter.hasNext(); ) {
+                EntityAura2 aur = iter.next();
+                if (auraRenderer == null)
+                    auraRenderer = (IRenderEntityAura2) RenderManager.instance.getEntityRenderObject(aur);
+
+                float alpha = aur.getAlp();
+              //  aur.setAlp(0.1f);
+                auraRenderer.renderParticle(aur, partialTicks);
+                if (aur.isDead)
+                    iter.remove();
+            }
+            glPopMatrix();
+            loadMatrices(currentMV, currentProj);
+        } else if (!renderAura && ((IEntityMC) player).getRenderPassTampered())
+            ((IEntityMC) player).setRenderPass(0);
 
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -143,19 +180,21 @@ public class RenderEventHandler {
         if (!display.enabled)
             return;
 
+        EntityAura aura = display.auraEntity;
         RenderCustomNpc r = (RenderCustomNpc) e.renderer;
         float partialTicks = Minecraft.getMinecraft().timer.renderPartialTicks;
 
         disableStencilWriting(entity.getEntityId() % 256, false);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
+        boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !display.particleRenderQueue.isEmpty(), renderDBCAura = !display.dbcAuraQueue.isEmpty();
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Aura
-        EntityAura aura = display.auraEntity;
         if (aura != null && aura.shouldRender()) {
             glPushMatrix();
-            glLoadMatrix(DEFAULT_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
+            if (!ClientProxy.renderingGUI)
+                glLoadMatrix(DEFAULT_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
             glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
 
             for (EntityAura child : aura.children.values())
@@ -169,22 +208,49 @@ public class RenderEventHandler {
 
         ////////////////////////////////////////
         ////////////////////////////////////////
-        //Custom Particles
-        glPushMatrix();
-        glLoadMatrix(DEFAULT_MODELVIEW); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
-        IRenderCusPar particleRender = null;
-        for (Iterator<EntityCusPar> iter = display.particleRenderQueue.iterator(); iter.hasNext(); ) {
-            EntityCusPar particle = iter.next();
-            if (particleRender == null)
-                particleRender = (IRenderCusPar) RenderManager.instance.getEntityRenderObject(particle);
+        //DBC Aura
+        if (renderDBCAura) {
+            if (!ClientProxy.renderingGUI)
+                glLoadMatrix(DEFAULT_MODELVIEW);
 
-            particleRender.renderParticle(particle, partialTicks);
-            if (particle.isDead)
-                iter.remove();
+            glPushMatrix();
+            postStencilRendering();
+            // glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
+            // glStencilMask(0x0);
+            IRenderEntityAura2 auraRenderer = null;
+            for (Iterator<EntityAura2> iter = display.dbcAuraQueue.iterator(); iter.hasNext(); ) {
+                EntityAura2 particle = iter.next();
+                if (auraRenderer == null)
+                    auraRenderer = (IRenderEntityAura2) RenderManager.instance.getEntityRenderObject(particle);
+
+                auraRenderer.renderParticle(particle, partialTicks);
+                if (particle.isDead)
+                    iter.remove();
+            }
+            glPopMatrix();
         }
-        glPopMatrix();
 
+        ////////////////////////////////////////
+        ////////////////////////////////////////
+        //Custom Particles
+        if (renderParticles) {
 
+            glPushMatrix();
+            if (!ClientProxy.renderingGUI)
+                glLoadMatrix(DEFAULT_MODELVIEW); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
+            IRenderCusPar particleRender = null;
+            for (Iterator<EntityCusPar> iter = display.particleRenderQueue.iterator(); iter.hasNext(); ) {
+                EntityCusPar particle = iter.next();
+                if (particleRender == null)
+                    particleRender = (IRenderCusPar) RenderManager.instance.getEntityRenderObject(particle);
+
+                particleRender.renderParticle(particle, partialTicks);
+                if (particle.isDead)
+                    iter.remove();
+            }
+            glPopMatrix();
+
+        }
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline

@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client;
 
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import JinRyuu.JRMCore.entity.EntityCusPar;
+import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.data.IAuraData;
@@ -16,7 +17,7 @@ public class ParticleFormHandler {
     }
 
     public static void spawnAura2D(Entity entity, IAuraData data, float height) {
-        if (!entity.worldObj.isRemote || !JGConfigClientSettings.CLIENT_DA13 ||  !JGConfigClientSettings.CLIENT_DA8 || data == null || data.getAuraEntity() == null)
+        if (!entity.worldObj.isRemote || (!JGConfigClientSettings.CLIENT_DA13 || !JGConfigClientSettings.CLIENT_DA8) && !data.getAuraEntity().isGUIAura || data == null || data.getAuraEntity() == null)
             return;
 
         EnumAuraTypes2D types = data.getAuraEntity().type2D;

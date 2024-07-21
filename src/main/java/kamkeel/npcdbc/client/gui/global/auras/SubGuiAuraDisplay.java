@@ -34,7 +34,8 @@ import static kamkeel.npcdbc.client.ClientEventHandler.spawnAura;
 public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener,ITextfieldListener
 {
     private final GuiNPCManageAuras parent;
-	public Aura aura;
+    public static boolean useGUIAura;
+    public static Aura aura;
     public AuraDisplay display;
     private final DBCDisplay visualDisplay;
     public int lastColorClicked = 0;
@@ -42,15 +43,17 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
     public int auraTicks = 1;
     public EntityCustomNpc npc;
     private float rotation = 0.0F;
-    private GuiNpcButton left;
-    private GuiNpcButton right;
+    private GuiNpcButton left, right, zoom, unzoom;
     private float zoomed = 60.0F;
     public int xOffset = 0;
     public int yOffset = 0;
     int selectedTab = 0;
     DBCDisplay origDisplay = null;
 
-	public SubGuiAuraDisplay(GuiNPCManageAuras parent, Aura aura)
+    public GuiScrollWindow scrollWindow;
+
+
+    public SubGuiAuraDisplay(GuiNPCManageAuras parent, Aura aura)
 	{
 		this.aura = aura;
         this.display = aura.display;
@@ -110,158 +113,232 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         super.initGui();
         int y = guiTop + 5;
 
-        addButton(new GuiNpcButton(2000, guiLeft + 138, y, 69, 20, "display.general"));
-        getButton(2000).enabled = selectedTab != 0;
+        if (scrollWindow == null) {
+            scrollWindow = new GuiScrollWindow(this, guiLeft + 139, y, 215, ySize - 10, 0);
+        } else {
+            scrollWindow.xPos = guiLeft + 139;
+            scrollWindow.yPos = y;
+            scrollWindow.clipWidth = 215;
+            scrollWindow.clipHeight = ySize - 10;
+        }
 
-        addButton(new GuiNpcButton(2001, guiLeft + 212, y, 69, 20, "display.lightning"));
-        getButton(2001).enabled = selectedTab != 1;
+        addScrollableGui(0, scrollWindow);
+        int maxScroll = -20;
 
-        addButton(new GuiNpcButton(2002, guiLeft + 287, y, 69, 20, "display.extra"));
-        getButton(2002).enabled = selectedTab != 2;
+//        scrollWindow.addButton(new GuiNpcButton(2000, 3, y, 69, 20, "display.general"));
+//        scrollWindow.getButton(2000).enabled = selectedTab != 0;
+//
+//        scrollWindow.addButton(new GuiNpcButton(2001, guiLeft + 212, y, 69, 20, "display.lightning"));
+//        scrollWindow.getButton(2001).enabled = selectedTab != 1;
+//
+//        scrollWindow.addButton(new GuiNpcButton(2002, guiLeft + 287, y, 69, 20, "display.extra"));
+//        scrollWindow.getButton(2002).enabled = selectedTab != 2;
 
-        y += 23;
+        // y += 23;
+
+        maxScroll += 23;
+        int guiX = 0;
+        y = 0;
 
         if(selectedTab == 0){
-            addLabel(new GuiNpcLabel(3003, "display.alpha", guiLeft + 138, y + 5));
-            addTextField(new GuiNpcTextField(3003, this, guiLeft + 190, y, 40, 20, String.valueOf(display.alpha)));
-            getTextField(3003).setMaxStringLength(4);
-            getTextField(3003).integersOnly = true;
-            getTextField(3003).setMinMaxDefault(-1, 255, -1);
+            scrollWindow.addLabel(new GuiNpcLabel(3004, "display.overrideDBC", 3, y + 5));
+            scrollWindow.getLabel(3004).color = 0xffffff;
+            scrollWindow.addButton(new GuiNpcButtonYesNo(3004, guiX + 110, y, 80, 20, display.overrideDBCAura));
 
-            y += 23;
-            addLabel(new GuiNpcLabel(3004, "display.overrideDBC", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButtonYesNo(3004, guiLeft + 265, y, 90, 20, display.overrideDBCAura));
-
-            y += 23;
-            addLabel(new GuiNpcLabel(3000, "display.color1", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButton(3000, guiLeft + 265, y, 50, 20, getColor(display.color1)));
-            getButton(3000).packedFGColour = display.color1;
-            addButton(new GuiNpcButton(3100, guiLeft + 320, y, 20, 20, "X"));
-            getButton(3100).enabled = display.color1 != -1;
-
-            y += 23;
-            addLabel(new GuiNpcLabel(3001, "display.color2", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButton(3001, guiLeft + 265, y, 50, 20, getColor(display.color2)));
-            getButton(3001).packedFGColour = display.color2;
-            addButton(new GuiNpcButton(3101, guiLeft + 320, y, 20, 20, "X"));
-            getButton(3101).enabled = display.color2 != -1;
-
-            y += 23;
-            addLabel(new GuiNpcLabel(3002, "display.color3", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButton(3002, guiLeft + 265, y, 50, 20, getColor(display.color3)));
-            getButton(3002).packedFGColour = display.color3;
-            addButton(new GuiNpcButton(3102, guiLeft + 320, y, 20, 20, "X"));
-            getButton(3102).enabled = display.color3 != -1;
 
             y += 23;
 
-            addLabel(new GuiNpcLabel(200, "display.size", guiLeft + 138, y + 5));
-            addTextField(new GuiNpcTextField(200, this, guiLeft + 190, y, 40, 20, String.valueOf(display.size)));
-            getTextField(200).setMaxStringLength(10);
-            getTextField(200).floatsOnly = true;
-            getTextField(200).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
-
-            addLabel(new GuiNpcLabel(201, "display.speed", guiLeft + 240, y + 5));
-            addTextField(new GuiNpcTextField(201, this, guiLeft + 315, y, 40, 20, String.valueOf(display.speed)));
-            getTextField(201).setMaxStringLength(10);
-            getTextField(201).integersOnly = true;
-            getTextField(201).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
+            scrollWindow.addLabel(new GuiNpcLabel(3000, "display.color1", 3, y + 5));
+            scrollWindow.getLabel(3000).color = 0xffffff;
+            scrollWindow.addButton(new GuiNpcButton(3000, guiX + 110, y, 60, 20, getColor(display.color1)));
+            scrollWindow.getButton(3000).packedFGColour = display.color1;
+            scrollWindow.addButton(new GuiNpcButton(3100, guiX + 170, y, 20, 20, "X"));
+            scrollWindow.getButton(3100).enabled = display.color1 != -1;
 
             y += 23;
-            addLabel(new GuiNpcLabel(3006, "display.3DType", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButton(3006, guiLeft + 245, y, 110, 20, new String[]{"auratype.none", "auratype.default", "auratype.ssgod", "auratype.ssb", "auratype.shinka", "auratype.ssrose", "auratype.ssroseevo", "auratype.ultimate", "auratype.ui", "auratype.god"}, display.type.ordinal()));
+            scrollWindow.addLabel(new GuiNpcLabel(3001, "display.color2", 3, y + 5));
+            scrollWindow.getLabel(3001).color = 0xffffff;
+            scrollWindow.addButton(new GuiNpcButton(3001, guiX + 110, y, 60, 20, getColor(display.color2)));
+            scrollWindow.getButton(3001).packedFGColour = display.color2;
+            scrollWindow.addButton(new GuiNpcButton(3101, guiX + 170, y, 20, 20, "X"));
+            scrollWindow.getButton(3101).enabled = display.color2 != -1;
 
+            maxScroll += 23;
             y += 23;
-            addLabel(new GuiNpcLabel(3007, "display.2DType", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButton(3007, guiLeft + 245, y, 110, 20, new String[]{"auratype.none", "auratype.default", "auratype.base", "auratype.god", "auratype.god_toppo", "auratype.ui", "auratype.mui", "auratype.ultimate", "auratype.legendary", "auratype.ssj", "auratype.ssgod", "auratype.ssb", "auratype.shinka", "auratype.ssrose", "auratype.ssroseevo", "auratype.jiren"}, display.type2D.ordinal()));
+            scrollWindow.addLabel(new GuiNpcLabel(3002, "display.color3", 3, y + 5));
+            scrollWindow.getLabel(3002).color = 0xffffff;
+            scrollWindow.addButton(new GuiNpcButton(3002, guiX + 110, y, 60, 20, getColor(display.color3)));
+            scrollWindow.getButton(3002).packedFGColour = display.color3;
+            scrollWindow.addButton(new GuiNpcButton(3102, guiX + 170, y, 20, 20, "X"));
+            scrollWindow.getButton(3102).enabled = display.color3 != -1;
+
+            maxScroll += 23;
+            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(3006, "display.3DType", 3, y + 5));
+            scrollWindow.getLabel(3006).color = 0xffffff;
+            scrollWindow.addButton(new GuiButtonBiDirectional(3006, guiX + 100, y, 100, 20, new String[]{"auratype.none", "auratype.default", "auratype.ssgod", "auratype.ssb", "auratype.shinka", "auratype.ssrose", "auratype.ssroseevo", "auratype.ultimate", "auratype.ui", "auratype.god"}, display.type.ordinal()));
+
+            maxScroll += 23;
+            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(3007, "display.2DType", 3, y + 5));
+            scrollWindow.getLabel(3007).color = 0xffffff;
+            scrollWindow.addButton(new GuiButtonBiDirectional(3007, guiX + 100, y, 100, 20, new String[]{"auratype.none", "auratype.default", "auratype.base", "auratype.god", "auratype.god_toppo", "auratype.ui", "auratype.mui", "auratype.ultimate", "auratype.legendary", "auratype.ssj", "auratype.ssgod", "auratype.ssb", "auratype.shinka", "auratype.ssrose", "auratype.ssroseevo", "auratype.jiren"}, display.type2D.ordinal()));
+
+            maxScroll += 2;
+            y += 2;
+
+
+            maxScroll += 23;
+            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(3003, "display.alpha", 1, y + 5));
+            scrollWindow.getLabel(3003).color = 0xffffff;
+            scrollWindow.addTextField(new GuiNpcTextField(3003, this, guiX + 130, y, 40, 18, String.valueOf(display.alpha)));
+            scrollWindow.getTextField(3003).setMaxStringLength(4);
+            scrollWindow.getTextField(3003).integersOnly = true;
+            scrollWindow.getTextField(3003).setMinMaxDefault(-1, 255, -1);
+
+            maxScroll += 23;
+            y += 23;
+
+            scrollWindow.addLabel(new GuiNpcLabel(200, "display.size", 1, y + 5));
+            scrollWindow.getLabel(200).color = 0xffffff;
+            scrollWindow.addTextField(new GuiNpcTextField(200, this, guiX + 130, y, 40, 18, String.valueOf(display.size)));
+            scrollWindow.getTextField(200).setMaxStringLength(10);
+            scrollWindow.getTextField(200).floatsOnly = true;
+            scrollWindow.getTextField(200).setMinMaxDefaultFloat(-10000f, 10, 1.0f);
+
+            maxScroll += 23;
+            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(201, "display.speed", 1, y + 5));
+            scrollWindow.getLabel(201).color = 0xffffff;
+            scrollWindow.addTextField(new GuiNpcTextField(201, this, guiX + 130, y, 40, 18, String.valueOf(display.speed)));
+            scrollWindow.getTextField(201).setMaxStringLength(10);
+            scrollWindow.getTextField(201).integersOnly = true;
+            scrollWindow.getTextField(201).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
+
         }
-        if(selectedTab == 1){
-            addLabel(new GuiNpcLabel(202, "display.lightning", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButtonYesNo(202, guiLeft + 220, y, 40, 20, display.hasLightning));
+        y += 50;
+        scrollWindow.addLabel(new GuiNpcLabel(202, "display.hasLightning", 1, y + 5));
+        scrollWindow.getLabel(202).color = 0xffffff;
+        scrollWindow.addButton(new GuiNpcButtonYesNo(202, guiX + 110, y, 80, 20, display.hasLightning));
 
             if (display.hasLightning) {
-                addButton(new GuiNpcButton(109, guiLeft + 265, y, 50, 20, getColor(display.lightningColor)));
-                getButton(109).packedFGColour = display.lightningColor;
-                addButton(new GuiNpcButton(1109, guiLeft + 320, y, 20, 20, "X"));
-                getButton(1109).enabled = display.lightningColor != -1;
+                maxScroll += 23;
+                y += 23;
+                scrollWindow.addLabel(new GuiNpcLabel(109, "display.lightningColor", 1, y + 5));
+                scrollWindow.getLabel(109).color = 0xffffff;
+                scrollWindow.addButton(new GuiNpcButton(109, guiX + 110, y, 60, 20, getColor(display.lightningColor)));
+                scrollWindow.getButton(109).packedFGColour = display.lightningColor;
+                scrollWindow.addButton(new GuiNpcButton(1109, guiX + 170, y, 20, 20, "X"));
+                scrollWindow.getButton(1109).enabled = display.lightningColor != -1;
 
+                maxScroll += 23;
                 y += 23;
 
-                addLabel(new GuiNpcLabel(203, "display.lAlpha", guiLeft + 138, y + 5));
-                addTextField(new GuiNpcTextField(203, this, guiLeft + 220, y, 40, 20, String.valueOf(display.lightningAlpha)));
-                getTextField(203).setMaxStringLength(4);
-                getTextField(203).integersOnly = true;
-                getTextField(203).setMinMaxDefault(-1, 255, -1);
+                scrollWindow.addLabel(new GuiNpcLabel(203, "display.lightningAlpha", 1, y + 5));
+                scrollWindow.getLabel(203).color = 0xffffff;
+                scrollWindow.addTextField(new GuiNpcTextField(203, this, guiX + 135, y, 30, 18, String.valueOf(display.lightningAlpha)));
+                scrollWindow.getTextField(203).setMaxStringLength(4);
+                scrollWindow.getTextField(203).integersOnly = true;
+                scrollWindow.getTextField(203).setMinMaxDefault(-1, 255, -1);
 
+                maxScroll += 23;
                 y += 23;
 
-                addLabel(new GuiNpcLabel(204, "display.lSpeed", guiLeft + 138, y + 5));
-                addTextField(new GuiNpcTextField(204, this, guiLeft + 220, y, 40, 20, String.valueOf(display.lightningSpeed)));
-                getTextField(204).setMaxStringLength(4);
-                getTextField(204).integersOnly = true;
-                getTextField(204).setMinMaxDefault(-1, 100, -1);
+                scrollWindow.addLabel(new GuiNpcLabel(205, "display.lightningIntensity", 1, y + 5));
+                scrollWindow.getLabel(205).color = 0xffffff;
+                scrollWindow.addTextField(new GuiNpcTextField(205, this, guiX + 135, y, 30, 18, String.valueOf(display.lightningAlpha)));
+                scrollWindow.getTextField(205).setMaxStringLength(4);
+                scrollWindow.getTextField(205).integersOnly = true;
+                scrollWindow.getTextField(205).setMinMaxDefault(-1, 100, -1);
 
+                maxScroll += 23;
                 y += 23;
 
-                addLabel(new GuiNpcLabel(205, "display.lIntensity", guiLeft + 138, y + 5));
-                addTextField(new GuiNpcTextField(205, this, guiLeft + 220, y, 40, 20, String.valueOf(display.lightningAlpha)));
-                getTextField(205).setMaxStringLength(4);
-                getTextField(205).integersOnly = true;
-                getTextField(205).setMinMaxDefault(-1, 100, -1);
+                scrollWindow.addLabel(new GuiNpcLabel(204, "display.lightningSpeed", 1, y + 5));
+                scrollWindow.getLabel(204).color = 0xffffff;
+                scrollWindow.addTextField(new GuiNpcTextField(204, this, guiX + 135, y, 30, 18, String.valueOf(display.lightningSpeed)));
+                scrollWindow.getTextField(204).setMaxStringLength(4);
+                scrollWindow.getTextField(204).integersOnly = true;
+                scrollWindow.getTextField(204).setMinMaxDefault(-1, 100, -1);
+
+
             }
-        }
-        if(selectedTab == 2){
-            addLabel(new GuiNpcLabel(302, "display.kaioken", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButtonYesNo(302, guiLeft + 220, y, 40, 20, display.hasKaiokenAura));
+        y += 50;
+        scrollWindow.addLabel(new GuiNpcLabel(302, "display.hasKaioken", 1, y + 5));
+        scrollWindow.getLabel(302).color = 0xffffff;
+        scrollWindow.addButton(new GuiNpcButtonYesNo(302, guiX + 110, y, 80, 20, display.hasKaiokenAura));
 
             if (display.hasKaiokenAura) {
-                addButton(new GuiNpcButton(309, guiLeft + 265, y, 50, 20, getColor(display.kaiokenColor)));
-                getButton(309).packedFGColour = display.kaiokenColor;
-                addButton(new GuiNpcButton(1309, guiLeft + 320, y, 20, 20, "X"));
-                getButton(1309).enabled = display.kaiokenColor != -1;
+                maxScroll += 23;
+                y += 23;
+                scrollWindow.addLabel(new GuiNpcLabel(305, "display.kaiokenOverride", 1, y + 5));
+                scrollWindow.getLabel(305).color = 0xffffff;
+                scrollWindow.addButton(new GuiNpcButtonYesNo(305, guiX + 110, y, 80, 20, display.kaiokenOverrides));
 
+                maxScroll += 23;
+                y += 23;
+                scrollWindow.addLabel(new GuiNpcLabel(309, "display.kaiokenColor", 1, y + 5));
+                scrollWindow.getLabel(309).color = 0xffffff;
+                scrollWindow.addButton(new GuiNpcButton(309, guiX + 110, y, 60, 20, getColor(display.kaiokenColor)));
+                scrollWindow.getButton(309).packedFGColour = display.kaiokenColor;
+                scrollWindow.addButton(new GuiNpcButton(1309, guiX + 170, y, 20, 20, "X"));
+                scrollWindow.getButton(1309).enabled = display.kaiokenColor != -1;
+
+                maxScroll += 23;
                 y += 23;
 
-                addLabel(new GuiNpcLabel(303, "display.kAlpha", guiLeft + 138, y + 5));
-                addTextField(new GuiNpcTextField(303, this, guiLeft + 190, y, 40, 20, String.valueOf(display.kaiokenAlpha)));
-                getTextField(303).setMaxStringLength(4);
-                getTextField(303).integersOnly = true;
-                getTextField(303).setMinMaxDefault(-1, 255, -1);
+                scrollWindow.addLabel(new GuiNpcLabel(303, "display.kaiokenAlpha", 1, y + 5));
+                scrollWindow.getLabel(303).color = 0xffffff;
+                scrollWindow.addTextField(new GuiNpcTextField(303, this, guiX + 135, y, 30, 18, String.valueOf(display.kaiokenAlpha)));
+                scrollWindow.getTextField(303).setMaxStringLength(4);
+                scrollWindow.getTextField(303).integersOnly = true;
+                scrollWindow.getTextField(303).setMinMaxDefault(-1, 255, -1);
 
-                addLabel(new GuiNpcLabel(304, "display.kSize", guiLeft + 240, y + 5));
-                addTextField(new GuiNpcTextField(304, this, guiLeft + 315, y, 40, 20, String.valueOf(display.kaiokenSize)));
-                getTextField(304).setMaxStringLength(4);
-                getTextField(304).integersOnly = true;
-                getTextField(304).setMinMaxDefault(-1, 100, -1);
-
+                maxScroll += 23;
                 y += 23;
 
-                addLabel(new GuiNpcLabel(305, "display.kaiokenOverride", guiLeft + 138, y + 5));
-                addButton(new GuiNpcButtonYesNo(305, guiLeft + 280, y, 40, 20, display.kaiokenOverrides));
+                scrollWindow.addLabel(new GuiNpcLabel(304, "display.kaiokenSize", 1, y + 5));
+                scrollWindow.getLabel(304).color = 0xffffff;
+                scrollWindow.addTextField(new GuiNpcTextField(304, this, guiX + 135, y, 30, 18, String.valueOf(display.kaiokenSize)));
+                scrollWindow.getTextField(304).setMaxStringLength(4);
+                scrollWindow.getTextField(304).integersOnly = true;
+                scrollWindow.getTextField(304).setMinMaxDefault(-1, 100, -1);
+
             }
 
-            y += 23;
-            y += 23;
-            addLabel(new GuiNpcLabel(400, "display.kettleModeCharging", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButtonYesNo(400, guiLeft + 280, y, 40, 20, display.kettleModeCharging));
 
-            y += 23;
-            addLabel(new GuiNpcLabel(401, "display.kettleModeAura", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButtonYesNo(401, guiLeft + 280, y, 40, 20, display.kettleModeAura));
+//        y += 43;
+//        scrollWindow.addLabel(new GuiNpcLabel(401, "display.kettleModeAura", 1, y + 5));
+//        scrollWindow.getLabel(401).color = 0xffffff;
+//        scrollWindow.addButton(new GuiNpcButtonYesNo(401, guiX + 110, y, 80, 20, display.kettleModeAura));
 
+        y += 43;
+        scrollWindow.addLabel(new GuiNpcLabel(402, "display.kettleModeType", 1, y + 5));
+        scrollWindow.getLabel(402).color = 0xffffff;
+        scrollWindow.addButton(new GuiButtonBiDirectional(402, guiX + 98, y, 104, 20, new String[]{"display.kettleOff", "display.kettleOnly", "display.kettlePlusAura"}, display.kettleModeType));
+
+
+        if (display.kettleModeType > 0) {
+            maxScroll += 23;
             y += 23;
-            addLabel(new GuiNpcLabel(402, "display.kettleModeType", guiLeft + 138, y + 5));
-            addButton(new GuiNpcButton(402, guiLeft + 280, y, 40, 20, new String[]{"0", "1"}, display.kettleModeType));
+            scrollWindow.addLabel(new GuiNpcLabel(400, "display.kettleModeCharging", 1, y + 5));
+            scrollWindow.getLabel(400).color = 0xffffff;
+            scrollWindow.addButton(new GuiNpcButtonYesNo(400, guiX + 110, y, 80, 20, display.kettleModeCharging));
+
         }
+        maxScroll += 10;
 
-        addButton(new GuiNpcButton(10000, guiLeft + 60, guiTop + 200 + this.yOffset, 75, 20, "gui.done"));
-        controlButtons();
+        //   scrollWindow.addButton(new GuiNpcButton(10000, guiLeft + 60, guiTop + 200 + this.yOffset, 75, 20, "gui.done"));
+        addButton(this.unzoom = new GuiNpcButton(666, this.guiLeft + 5, this.guiTop + 200 + this.yOffset, 15, 20, "-"));
+        addButton(this.left = new GuiNpcButton(668, this.guiLeft + 20, this.guiTop + 200 + this.yOffset, 15, 20, "<"));
+        addButton(this.right = new GuiNpcButton(669, this.guiLeft + 35, this.guiTop + 200 + this.yOffset, 15, 20, ">"));
+        addButton(this.zoom = new GuiNpcButton(667, this.guiLeft + 50, this.guiTop + 200 + this.yOffset, 15, 20, "+"));
+
+        scrollWindow.maxScrollY = maxScroll;
+
     }
 
-    private void controlButtons() {
-        addButton(this.left = new GuiNpcButton(668, this.guiLeft + 5, this.guiTop + 200 + this.yOffset, 20, 20, "<"));
-        addButton(this.right = new GuiNpcButton(669, this.guiLeft + 30, this.guiTop + 200 + this.yOffset, 20, 20, ">"));
-    }
 
 	public void buttonEvent(GuiButton guibutton)
     {
@@ -348,6 +425,12 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         } else if(button.id == 402) {
             // Toggle Kettle Charging
             display.kettleModeType = (byte) ((GuiNpcButton) guibutton).getValue();
+            scrollWindow.mouseScroll = 1;
+            if (scrollWindow.nextScrollY > (float) scrollWindow.maxScrollY) {
+                scrollWindow.nextScrollY = (float) scrollWindow.maxScrollY;
+                scrollWindow.clipHeight = scrollWindow.maxScrollY;
+
+            }
             initGui();
         }
     }
@@ -363,7 +446,7 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
 	@Override
     public void unFocused(GuiNpcTextField guiNpcTextField) {
         if(guiNpcTextField.id == 200) {
-            display.size = guiNpcTextField.getFloat();
+            display.setSize(guiNpcTextField.getFloat());
         }
         else if(guiNpcTextField.id == 201) {
             // Speed
@@ -434,9 +517,13 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
     public void drawScreen(int par1, int par2, float par3) {
         if (Mouse.isButtonDown(0)) {
             if (this.left.mousePressed(this.mc, par1, par2)) {
-                rotation += par3 * 2.0F;
+                rotation += 0.2 * 2.0F;
             } else if (this.right.mousePressed(this.mc, par1, par2)) {
-                rotation -= par3 * 2.0F;
+                rotation -= 0.2 * 2.0F;
+            } else if (this.zoom.mousePressed(this.mc, par1, par2) && zoomed < 100.0F) {
+                zoomed += 0.05 * 2.0F;
+            } else if (this.unzoom.mousePressed(this.mc, par1, par2) && zoomed > 10.0F) {
+                zoomed -= 0.05 * 2.0F;
             }
         }
         super.drawScreen(par1, par2, par3);
@@ -444,10 +531,16 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
             return;
 
         EntityAura enhancedAura = visualDisplay.auraEntity;
+        useGUIAura = true;
         boolean isInKaioken = false;
         if (ConfigDBCClient.RevampAura) {
-            if (enhancedAura == null)
-                new EntityAura(npc, aura).load(true).spawn();
+            if (enhancedAura == null) {
+                enhancedAura = new EntityAura(npc, aura).load(true).spawn();
+                enhancedAura.isGUIAura = true;
+            } else {
+                if (enhancedAura.ticksExisted % 10 == 0)
+                    enhancedAura.load(true);
+            }
         } else {
             if (enhancedAura != null)
                 enhancedAura.despawn();
@@ -462,6 +555,7 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
                 // spawnKaiokenAura(aura, dbcData);
             }
         }
+        useGUIAura = false;
 
 
         GL11.glColor4f(1, 1, 1, 1);
@@ -565,19 +659,19 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
                 GL11.glPushMatrix();
                 RenderHelper.disableStandardItemLighting();
                 GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE); // Additive blending for brightness
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE); //  scrollWindow.additive blending for brightness
                 GL11.glDisable(GL11.GL_LIGHTING); // Disable standard lighting
                 GL11.glScalef(0.8f, 0.8f, 0.8f);
 
 
-//                int add = auraTicks % 5;
-//                aur.setSpd(5 + add);
+//                int  scrollWindow.add = auraTicks % 5;
+//                aur.setSpd(5 +  scrollWindow.add);
 //                RenderManager.instance.renderEntityWithPosYaw((Entity) aur, 0.0, 1.0, 0.0, 0.0F, 1.0F);
-//                aur.setSpd((5 * 2) + add);
+//                aur.setSpd((5 * 2) +  scrollWindow.add);
 //                RenderManager.instance.renderEntityWithPosYaw((Entity) aur, 0.0, 1.0, 0.0, 0.0F, 1.0F);
-//                aur.setSpd((5 * 3) + add);
+//                aur.setSpd((5 * 3) +  scrollWindow.add);
 //                RenderManager.instance.renderEntityWithPosYaw((Entity) aur, 0.0, 1.0, 0.0, 0.0F, 1.0F);
-//                aur.setSpd((5 * 4) + add);
+//                aur.setSpd((5 * 4) +  scrollWindow.add);
                 RenderManager.instance.renderEntityWithPosYaw((Entity) aur, 0.0, 1.0, 0.0, 0.0F, 1.0F);
 
                 // Restore the settings

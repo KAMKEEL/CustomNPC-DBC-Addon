@@ -22,7 +22,6 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
 
@@ -75,10 +74,9 @@ public class AuraRenderer extends RenderDBC {
         double interPosY = aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks - RenderManager.renderPosY;
         double interPosZ = aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks - RenderManager.renderPosZ;
 
-        if (ClientProxy.renderingGUI) {
-            interPosY = 1;
-            interPosX = interPosZ = 0;
-        }
+        if (ClientProxy.renderingGUI)
+            interPosX = interPosY = interPosZ = 0;
+
 
         int speed = aura.speed;
         int age = Math.max(1, aura.ticksExisted % speed);
