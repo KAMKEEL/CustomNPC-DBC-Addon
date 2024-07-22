@@ -19,6 +19,8 @@ import kamkeel.npcdbc.mixins.late.IRenderEntityAura2;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -60,18 +62,18 @@ public class RenderEventHandler {
     public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm, boolean isItem) {
         RenderPlayerJBRA render = (RenderPlayerJBRA) renderer;
         DBCData data = DBCData.get(player);
-        //  Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         EntityAura aura = data.auraEntity;
 
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
-        Outline outline = null;// data.getOutline();
+        Outline outline = data.getOutline();
         if (outline != null && ConfigDBCClient.EnableOutlines && !isItem) {
             startBlooming();
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
             glStencilMask(0xff);
-            OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
+            //  OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
             endBlooming();
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered())
             ((IEntityMC) player).setRenderPass(0);
@@ -105,6 +107,8 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         //DBC Aura
         if (renderDBCAura && !isArm) {
+            mc.entityRenderer.enableLightmap(0);
+
             if (player.isInWater())
                 ((IEntityMC) player).setRenderPass(0);
             else
@@ -119,6 +123,8 @@ public class RenderEventHandler {
             postStencilRendering();
             //  glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
             // glStencilMask(0x0);
+            RenderHelper.enableStandardItemLighting();
+
             IRenderEntityAura2 auraRenderer = null;
             for (Iterator<EntityAura2> iter = data.dbcAuraQueue.iterator(); iter.hasNext(); ) {
                 EntityAura2 aur = iter.next();
@@ -127,6 +133,9 @@ public class RenderEventHandler {
 
                 float alpha = aur.getAlp();
               //  aur.setAlp(0.1f);
+                int i = aur.getBrightnessForRender(partialTicks);
+                int j = i % 65536, k = i / 65536;
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j / 1.0F, (float) k / 1.0F);
                 auraRenderer.renderParticle(aur, partialTicks);
                 if (aur.isDead)
                     iter.remove();
@@ -140,6 +149,8 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         //Custom Particles
         if (renderParticles && !isArm) {
+            if (!renderDBCAura)
+                mc.entityRenderer.disableLightmap(0);
             FloatBuffer currentMV = ShaderHelper.getModelView(), currentProj = ShaderHelper.getProjection();
             if (isItem)
                 loadMatrices(DEFAULT_MODELVIEW, DEFAULT_PROJECTION);
@@ -210,21 +221,27 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         //DBC Aura
         if (renderDBCAura) {
-            if (!ClientProxy.renderingGUI)
+            if (!ClientProxy.renderingGUI) {
                 glLoadMatrix(DEFAULT_MODELVIEW);
+                postStencilRendering();
+            } else {
+                glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
+                glStencilMask(0x0);
+            }
 
             glPushMatrix();
-            postStencilRendering();
-            // glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
-            // glStencilMask(0x0);
             IRenderEntityAura2 auraRenderer = null;
             for (Iterator<EntityAura2> iter = display.dbcAuraQueue.iterator(); iter.hasNext(); ) {
-                EntityAura2 particle = iter.next();
+                EntityAura2 aur = iter.next();
                 if (auraRenderer == null)
-                    auraRenderer = (IRenderEntityAura2) RenderManager.instance.getEntityRenderObject(particle);
+                    auraRenderer = (IRenderEntityAura2) RenderManager.instance.getEntityRenderObject(aur);
 
-                auraRenderer.renderParticle(particle, partialTicks);
-                if (particle.isDead)
+                int i = aur.getBrightnessForRender(partialTicks);
+                int j = i % 65536, k = i / 65536;
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j / 1.0F, (float) k / 1.0F);
+
+                auraRenderer.renderParticle(aur, partialTicks);
+                if (aur.isDead)
                     iter.remove();
             }
             glPopMatrix();

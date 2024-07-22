@@ -153,6 +153,8 @@ public class EntityAura extends Entity {
 
             if (display.hasAlpha("aura")){
                 maxAlpha = (float) display.alpha / (255 * 5);
+                if (SubGuiAuraDisplay.useGUIAura)
+                    alpha = maxAlpha;
             }
 
 

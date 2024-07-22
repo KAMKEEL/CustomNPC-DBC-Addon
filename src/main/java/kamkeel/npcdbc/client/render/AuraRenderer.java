@@ -85,6 +85,7 @@ public class AuraRenderer extends RenderDBC {
         float alphaConfig = (float) JGConfigClientSettings.CLIENT_DA21 / 10.0F;
         boolean isFirstPerson = DBCClient.mc.thePlayer == aura.entity && DBCClient.mc.gameSettings.thirdPersonView == 0;
         alpha = (isFirstPerson ? aura.isKaioken ? 0.015f : 0.0125f : alpha) * alphaConfig;
+      // alpha = 1f;
         aura.setTexture(1, CustomNpcPlusDBC.ID + ":textures/aura/auraalpha.png");
 
         pulseMax = 5;

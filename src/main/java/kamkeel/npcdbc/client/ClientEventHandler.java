@@ -9,6 +9,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
@@ -17,6 +18,7 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -283,9 +285,14 @@ public class ClientEventHandler {
 
         if (isPlayer)
             dbcData = DBCData.get((EntityPlayer) entity);
+        else
+            display = ((INPCDisplay) ((EntityCustomNpc) entity).display).getDBCDisplay();
 
         boolean rotate90 = isPlayer && (dbcData.containsSE(7));
-        EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, isPlayer ? dbcData.State : 0, isPlayer ? dbcData.State2 : 0, isPlayer ? dbcData.Release : 100, rotate90);
+        IAuraData data = isPlayer ? dbcData : display;
+
+        int release = SubGuiAuraDisplay.useGUIAura ? 5 : data.getRelease();
+        EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, data.getState(), data.getState2(), release, rotate90);
         ((IEntityAura) aur).setEntity(entity);
         aur.setAlp(0.2F);
 
@@ -441,8 +448,10 @@ public class ClientEventHandler {
             aur.setColL3(aura.display.color3);
 
 
-        if (aura.display.hasAlpha("aura"))
-            aur.setAlp((float) aura.display.alpha / 255);
+        if (aura.display.hasAlpha("aura")) {
+            float factor = aura.display.alpha < 15 ? 3 : 3;
+            aur.setAlp((float) aura.display.alpha / (255 * factor));
+        }
 
         if (aura.display.hasSpeed())
             aur.setSpd(aura.display.speed);

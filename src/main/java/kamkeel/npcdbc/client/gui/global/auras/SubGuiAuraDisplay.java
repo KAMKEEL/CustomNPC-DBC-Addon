@@ -6,11 +6,13 @@ import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
+import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
+import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -530,32 +532,35 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         if(hasSubGui())
             return;
 
-        EntityAura enhancedAura = visualDisplay.auraEntity;
-        useGUIAura = true;
-        boolean isInKaioken = false;
-        if (ConfigDBCClient.RevampAura) {
-            if (enhancedAura == null) {
-                enhancedAura = new EntityAura(npc, aura).load(true).spawn();
-                enhancedAura.isGUIAura = true;
+        if (Minecraft.getMinecraft().thePlayer.ticksExisted % 5 == 0) {
+            EntityAura enhancedAura = visualDisplay.auraEntity;
+            useGUIAura = true;
+            boolean isInKaioken = false;
+            if (ConfigDBCClient.RevampAura) {
+                if (enhancedAura == null) {
+                    enhancedAura = new EntityAura(npc, aura).load(true).spawn();
+                    enhancedAura.isGUIAura = true;
+                } else {
+                    if (enhancedAura.ticksExisted % 10 == 0)
+                        enhancedAura.load(true);
+                }
             } else {
-                if (enhancedAura.ticksExisted % 10 == 0)
-                    enhancedAura.load(true);
-            }
-        } else {
-            if (enhancedAura != null)
-                enhancedAura.despawn();
+                if (enhancedAura != null)
+                    enhancedAura.despawn();
 
-            if (isInKaioken && aura.display.kaiokenOverrides) {
-                //     spawnKaiokenAura(aura, dbcData);
-            } else {
-                spawnAura(npc, aura);
-                if (aura.hasSecondaryAura())
-                    spawnAura(npc, aura.getSecondaryAur());
-                //   if (isInKaioken)
-                // spawnKaiokenAura(aura, dbcData);
+                if (isInKaioken && aura.display.kaiokenOverrides) {
+                    //     spawnKaiokenAura(aura, dbcData);
+                } else {
+                    spawnAura(npc, aura);
+                    if (aura.hasSecondaryAura())
+                        spawnAura(npc, aura.getSecondaryAur());
+                    //   if (isInKaioken)
+                    // spawnKaiokenAura(aura, dbcData);
+                }
             }
+            useGUIAura = false;
         }
-        useGUIAura = false;
+
 
 
         GL11.glColor4f(1, 1, 1, 1);
@@ -563,7 +568,7 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
 
         int l = guiLeft + 190 + xOffset;
         int i1 =  guiTop + 180 + yOffset;
-        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+        // GL11.glEnable(GL11.GL_COLOR_MATERIAL);
         GL11.glPushMatrix();
         GL11.glTranslatef(l, i1, 50F);
 
@@ -586,9 +591,11 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
         GL11.glTranslatef(0.0F, entity.yOffset, 1F);
         RenderManager.instance.playerViewY = 180F;
 
-        if(showAura && this.aura != null) {
+        if (showAura && this.aura != null && Minecraft.getMinecraft().thePlayer.ticksExisted % 5 == 0) {
             // Render Aura
-            EntityAura2 aur = new EntityAura2(entity.worldObj, Utility.getEntityID(entity), 0, 0, 0, 100, false);
+            IAuraData data = visualDisplay;
+            EntityAura2 aur = new EntityAura2(entity.worldObj, Utility.getEntityID(entity), 0, data.getState(), data.getState2(), 100, false);
+            ((IEntityAura) aur).setEntity(entity);
             aur.setAlp(0.5F);
             aur.setInner(true);
             aur.setCol(display.color1);
@@ -655,13 +662,15 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
             if (aura.display.hasSpeed())
                 aur.setSpd(aura.display.speed);
 
+            ((IEntityAura) aur).setType2D(aura.display.type2D);
+            aur.onUpdate();
             try {
                 GL11.glPushMatrix();
                 RenderHelper.disableStandardItemLighting();
-                GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE); //  scrollWindow.additive blending for brightness
-                GL11.glDisable(GL11.GL_LIGHTING); // Disable standard lighting
-                GL11.glScalef(0.8f, 0.8f, 0.8f);
+                // GL11.glEnable(GL11.GL_BLEND);
+                // GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE); //  scrollWindow.additive blending for brightness
+                //  GL11.glDisable(GL11.GL_LIGHTING); // Disable standard lighting
+                //  GL11.glScalef(0.8f, 0.8f, 0.8f);
 
 
 //                int  scrollWindow.add = auraTicks % 5;

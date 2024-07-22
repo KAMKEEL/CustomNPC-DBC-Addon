@@ -25,6 +25,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
+import static org.lwjgl.opengl.GL11.*;
+
 @Mixin(value = RenderAura2.class, remap = false)
 public class MixinRenderAura2 implements IRenderEntityAura2 {
 
@@ -61,6 +63,10 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
             lightVertN = intensity;
             nu2.set(intensity);
         }
+        float scale = 0.75f;
+        GL11.glScalef(scale, scale, scale);
+        glStencilFunc(GL_ALWAYS, aura.getEntity().getEntityId() % 256, 0xFF);
+        glStencilMask(0xFF);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
     }
@@ -71,6 +77,8 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
         if (!aura.hasLightning())
             return;
 
+        glStencilFunc(GL_GREATER, aura.getEntity().getEntityId() % 256, 0xFF);
+        glStencilMask(0x0);
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
 
     }
