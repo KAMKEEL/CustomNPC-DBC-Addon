@@ -79,8 +79,8 @@ public class MixinEntityAura2 implements IEntityAura {
         }
         if (!init) {
             if (this.entity instanceof EntityPlayer) {
-                DBCData.get((EntityPlayer) this.entity).dbcAuraQueue.add((EntityAura2) (Object) this);
-                enhancedRendering = true;
+//                DBCData.get((EntityPlayer) this.entity).dbcAuraQueue.add((EntityAura2) (Object) this);
+//                enhancedRendering = true;
             } else if (this.entity instanceof EntityNPCInterface) {
                 DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) this.entity).display).getDBCDisplay();
                 if (display != null) {

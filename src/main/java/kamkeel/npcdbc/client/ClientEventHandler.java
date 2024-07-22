@@ -449,9 +449,11 @@ public class ClientEventHandler {
 
 
         if (aura.display.hasAlpha("aura")) {
-            float factor = aura.display.alpha < 15 ? 3 : 3;
-            aur.setAlp((float) aura.display.alpha / (255 * factor));
+            aur.setAlp((float) aura.display.alpha / (255));
         }
+        if (SubGuiAuraDisplay.useGUIAura)
+            aur.setAlp(aur.getAlp() / 10);
+
 
         if (aura.display.hasSpeed())
             aur.setSpd(aura.display.speed);
