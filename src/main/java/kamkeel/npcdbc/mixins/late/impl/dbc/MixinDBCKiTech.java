@@ -223,11 +223,13 @@ public class MixinDBCKiTech {
     @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", ordinal = 0))
     private static void setEntity(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "aura") LocalRef<Entity> aura) {
         ((IEntityAura) aura.get()).setEntity(p);
+        ((IEntityAura) aura.get()).setAuraData(DBCData.get(p));
     }
 
     @Inject(method = "chargePart(Lnet/minecraft/entity/player/EntityPlayer;IIIIIZLjava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", ordinal = 1))
     private static void setEntity2(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci, @Local(name = "aura2") LocalRef<Entity> aura) {
         ((IEntityAura) aura.get()).setEntity(p);
+        ((IEntityAura) aura.get()).setAuraData(DBCData.get(p));
 
     }
 

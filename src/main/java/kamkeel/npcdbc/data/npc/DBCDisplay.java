@@ -29,6 +29,7 @@ import noppes.npcs.entity.data.ModelPartData;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -72,7 +73,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public EntityAura auraEntity;
     public static Form fakeForm;
     public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
-    public Queue<EntityAura2> dbcAuraQueue = new LinkedList<>();
+    public HashMap<Integer, EntityAura2> dbcAuraQueue = new HashMap<>();
 
     public int outlineID;
 
@@ -433,6 +434,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public boolean isFusionSpectator() {
         return false;
+    }
+
+    @Override
+    public HashMap getDBCAuras() {
+        return dbcAuraQueue;
     }
 
     public Aura getToggledAura() {

@@ -2,6 +2,7 @@ package kamkeel.npcdbc.mixins.late;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
+import kamkeel.npcdbc.data.IAuraData;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -69,4 +70,17 @@ public interface IEntityAura {
 
     @Unique
     Entity getEntity();
+
+    @Unique
+    void setRendered(boolean is);
+
+    @Unique
+    boolean isRendered();
+
+    @Unique
+    void setAuraData(IAuraData data);
+
+    @Unique
+    IAuraData getAuraData();
 }
+

@@ -6,16 +6,16 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
+import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.SoundSource;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,6 +30,10 @@ public class MixinEntityAura2 implements IEntityAura {
 
     @Shadow
     private float state;
+    @Shadow
+    private int Age;
+    @Shadow
+    private int speed;
     @Unique
     private boolean hasLightning;
     @Unique
@@ -59,10 +63,26 @@ public class MixinEntityAura2 implements IEntityAura {
     @Shadow
     private String mot;
 
+    @Unique
+    private boolean renderedThisTick;
+
+    @Unique
+    private int prevTick;
+
+    @Unique
+    private IAuraData data;
 
     @Override
     public boolean isEnhancedRendering() {
         return enhancedRendering;
+    }
+
+
+    @Inject(method = "<init>(Lnet/minecraft/world/World;Ljava/lang/String;IFFIZ)V", at = @At("TAIL"))
+    private void init(CallbackInfo ci) {
+        EntityAura2 aura = (EntityAura2) (Object) this;
+
+
     }
 
     @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", shift = At.Shift.AFTER), remap = true)
@@ -77,19 +97,8 @@ public class MixinEntityAura2 implements IEntityAura {
             player.set(this.entity);
             mot = this.entity.getCommandSenderName();
         }
-        if (!init) {
-            if (this.entity instanceof EntityPlayer) {
-//                DBCData.get((EntityPlayer) this.entity).dbcAuraQueue.add((EntityAura2) (Object) this);
-//                enhancedRendering = true;
-            } else if (this.entity instanceof EntityNPCInterface) {
-                DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) this.entity).display).getDBCDisplay();
-                if (display != null) {
-                    display.dbcAuraQueue.add((EntityAura2) (Object) this);
-                    enhancedRendering = true;
-                }
-            }
-            init = true;
-        }
+
+
         if (entity != null) {
             if (aura.getAge() < aura.getLightLivingTime() && hasLightning && aura.getAge() == 2)
                 playSound(player.get(), aura);
@@ -105,6 +114,43 @@ public class MixinEntityAura2 implements IEntityAura {
 
         return JGConfigClientSettings.CLIENT_GR0;
 
+    }
+
+    @Inject(method = "onUpdate", at = @At("TAIL"))
+    private void tail(CallbackInfo ci) {
+        EntityAura2 aura = (EntityAura2) (Object) this;
+
+        if (aura.ticksExisted == 0)
+            prevTick = 0;
+        else if (prevTick == aura.ticksExisted - 1) {
+            prevTick = aura.ticksExisted;
+            renderedThisTick = false;
+        }
+
+
+        if (Age == speed) {
+            //   data.getDBCAuras().remove(aura.getEntityId());
+        }
+    }
+
+    @Unique
+    @Override
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+        EntityAura2 aura = (EntityAura2) (Object) this;
+        if (this.entity instanceof EntityNPCInterface && SubGuiAuraDisplay.useGUIAura) {
+            DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) this.entity).display).getDBCDisplay();
+            if (display != null) {
+                display.dbcAuraQueue.put(aura.getEntityId(), aura);
+                enhancedRendering = true;
+            }
+        }
+    }
+
+    @Unique
+    @Override
+    public Entity getEntity() {
+        return this.entity;
     }
 
     @Unique
@@ -242,13 +288,29 @@ public class MixinEntityAura2 implements IEntityAura {
 
     @Unique
     @Override
-    public void setEntity(Entity entity) {
-        this.entity = entity;
+    public void setRendered(boolean is) {
+        this.renderedThisTick = is;
+    }
+
+
+    @Unique
+    @Override
+    public boolean isRendered() {
+        return renderedThisTick;
     }
 
     @Unique
     @Override
-    public Entity getEntity() {
-        return this.entity;
+    public void setAuraData(IAuraData data) {
+        this.data = data;
     }
+
+
+    @Unique
+    @Override
+    public IAuraData getAuraData() {
+        return data;
+    }
+
+
 }

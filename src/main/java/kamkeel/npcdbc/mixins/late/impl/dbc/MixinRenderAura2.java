@@ -6,6 +6,7 @@ import JinRyuu.JRMCore.JRMCoreHDBC;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.*;
 import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.mixins.late.IRenderEntityAura2;
@@ -63,10 +64,13 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
             lightVertN = intensity;
             nu2.set(intensity);
         }
-        float scale = 0.75f;
-        GL11.glScalef(scale, scale, scale);
-        glStencilFunc(GL_ALWAYS, aura.getEntity().getEntityId() % 256, 0xFF);
-        glStencilMask(0xFF);
+
+        if (SubGuiAuraDisplay.useGUIAura) {
+            float scale = 0.75f;
+            GL11.glScalef(scale, scale, scale);
+            glStencilFunc(GL_ALWAYS, aura.getEntity().getEntityId() % 256, 0xFF);
+            glStencilMask(0xFF);
+        }
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
     }
@@ -77,8 +81,10 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
         if (!aura.hasLightning())
             return;
 
-        glStencilFunc(GL_GREATER, aura.getEntity().getEntityId() % 256, 0xFF);
-        glStencilMask(0x0);
+        if (SubGuiAuraDisplay.useGUIAura) {
+            glStencilFunc(GL_GREATER, aura.getEntity().getEntityId() % 256, 0xFF);
+            glStencilMask(0x0);
+        }
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
 
     }
@@ -151,20 +157,19 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
 
     @Inject(method = "doRender", at = @At("HEAD"), cancellable = true)
     private void disableRendering(Entity par1Entity, double par2, double par4, double par6, float par8, float par9, CallbackInfo ci) {
-        IEntityAura particle = (IEntityAura) par1Entity;
-        if (particle.isEnhancedRendering())
+        IEntityAura aura = (IEntityAura) par1Entity;
+        if (aura.isEnhancedRendering())
             ci.cancel();
     }
 
     @Unique
     public void renderParticle(EntityAura2 aura, float partialTicks) {
         double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - (ClientProxy.renderingGUI ? 0 : RenderManager.renderPosX);
-        double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - (ClientProxy.renderingGUI ? -0.25 : RenderManager.renderPosY);
+        double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - (ClientProxy.renderingGUI ? -0.05 : RenderManager.renderPosY);
         double interPosZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - (ClientProxy.renderingGUI ? 0 : RenderManager.renderPosZ);
         float interYaw = aura.prevRotationYaw + (aura.rotationYaw - aura.prevRotationYaw) * partialTicks;
 
 
         ((RenderAura2) (Object) this).renderAura(aura, interPosX, interPosY, interPosZ, interYaw, partialTicks);
-
     }
 }

@@ -44,7 +44,7 @@ import static noppes.npcs.NoppesStringUtils.translate;
 
 public class ClientEventHandler {
 
-    private int soundTicker = -1;
+    public static int ticks;
 
     @SubscribeEvent
     public void onSkill(TickEvent.PlayerTickEvent event) {
@@ -203,13 +203,12 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void handleSounds(TickEvent.ClientTickEvent event) {
-        if (event.side == Side.CLIENT) {
-            if (soundTicker % 5 == 0) {
+        if (event.side == Side.CLIENT && event.phase == TickEvent.Phase.END) {
+            if (ticks % 5 == 0) {
                 SoundHandler.verifySounds();
-                soundTicker = 0;
             }
 
-            soundTicker++;
+            ticks++;
         }
     }
 
@@ -294,6 +293,7 @@ public class ClientEventHandler {
         int release = SubGuiAuraDisplay.useGUIAura ? 5 : data.getRelease();
         EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, data.getState(), data.getState2(), release, rotate90);
         ((IEntityAura) aur).setEntity(entity);
+        ((IEntityAura) aur).setAuraData(data);
         aur.setAlp(0.2F);
 
         if (isNPC)
@@ -451,8 +451,8 @@ public class ClientEventHandler {
         if (aura.display.hasAlpha("aura")) {
             aur.setAlp((float) aura.display.alpha / (255));
         }
-        if (SubGuiAuraDisplay.useGUIAura)
-            aur.setAlp(aur.getAlp() / 10);
+//        if (SubGuiAuraDisplay.useGUIAura)
+//            aur.setAlp(aur.getAlp() / 10);
 
 
         if (aura.display.hasSpeed())
@@ -489,6 +489,7 @@ public class ClientEventHandler {
 
         EntityAura2 kaiokenAura = new EntityAura2(dbcData.player.worldObj, dbcData.player.getCommandSenderName(), 16646144, 2.0F + dbcData.State, dbcData.State2 * 1.5f, dbcData.Release, rotate90);
         ((IEntityAura) kaiokenAura).setEntity(dbcData.player);
+        ((IEntityAura) kaiokenAura).setAuraData(dbcData);
         ((IEntityAura) kaiokenAura).setIsKaioken(true);
         if (override) {
             kaiokenAura.setAlp(0.2F);
