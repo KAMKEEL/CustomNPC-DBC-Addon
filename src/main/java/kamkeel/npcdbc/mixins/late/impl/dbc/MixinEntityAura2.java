@@ -3,9 +3,11 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
@@ -22,8 +24,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(value = EntityAura2.class, remap = false)
 public class MixinEntityAura2 implements IEntityAura {
@@ -31,9 +35,7 @@ public class MixinEntityAura2 implements IEntityAura {
     @Shadow
     private float state;
     @Shadow
-    private int Age;
-    @Shadow
-    private int speed;
+    private int rendpass;
     @Unique
     private boolean hasLightning;
     @Unique
@@ -53,24 +55,24 @@ public class MixinEntityAura2 implements IEntityAura {
     private EntityAura2 parent;
     @Unique
     private boolean isKaiokenAura;
-    @Unique
-    private boolean init;
+
     @Unique
     private boolean enhancedRendering;
+    @Unique
+    private boolean isGUIAura;
     @Unique
     private Entity entity;
 
     @Shadow
     private String mot;
 
-    @Unique
-    private boolean renderedThisTick;
-
-    @Unique
-    private int prevTick;
-
+    @Shadow
+    private byte bol6;
+    @Shadow
+    private int color;
     @Unique
     private IAuraData data;
+
 
     @Override
     public boolean isEnhancedRendering() {
@@ -86,10 +88,8 @@ public class MixinEntityAura2 implements IEntityAura {
     }
 
     @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", shift = At.Shift.AFTER), remap = true)
-    private void redirect(CallbackInfo ci, @Local(name = "other") LocalRef<Entity> player) {
+    private void redirect(CallbackInfo ci, @Local(name = "other") LocalRef<Entity> player, @Local(name = "aura_type") LocalBooleanRef aura_type, @Local(name = "aura_type2") LocalBooleanRef aura_type2) {
         EntityAura2 aura = (EntityAura2) (Object) this;
-
-
         Entity entity = Utility.getEntityFromID(aura.worldObj, mot);
         if (entity != null) {
             player.set(entity);
@@ -103,7 +103,22 @@ public class MixinEntityAura2 implements IEntityAura {
             if (aura.getAge() < aura.getLightLivingTime() && hasLightning && aura.getAge() == 2)
                 playSound(player.get(), aura);
         }
+        if (isGUIAura) {
+            aura_type.set(true);
+           aura_type2.set(false);
+        }
+        if (bol6 == -2) {
+            float height = getSize <= 0 ? this.entity.height : (getSize * 1.3f);
+            ParticleFormHandler.spawnAura2D(type2D, color, this.entity, data, height);
+        }
     }
+
+
+    @ModifyArgs(method = "onUpdate", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/entity/EntityCusPar;<init>(Ljava/lang/String;Lnet/minecraft/world/World;FFDDDDDDDDDFIIIIZFZFILjava/lang/String;IIFFFIFFFFFFFFFIFFFFFZIZLnet/minecraft/entity/Entity;)V", ordinal = 0))
+    private void setDamage(Args args) {
+        args.set(48, entity);
+    }
+
 
     @Redirect(method = "onUpdate", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_GR0:Z"))
     private boolean fixBuiltInParticles() {
@@ -116,22 +131,7 @@ public class MixinEntityAura2 implements IEntityAura {
 
     }
 
-    @Inject(method = "onUpdate", at = @At("TAIL"))
-    private void tail(CallbackInfo ci) {
-        EntityAura2 aura = (EntityAura2) (Object) this;
 
-        if (aura.ticksExisted == 0)
-            prevTick = 0;
-        else if (prevTick == aura.ticksExisted - 1) {
-            prevTick = aura.ticksExisted;
-            renderedThisTick = false;
-        }
-
-
-        if (Age == speed) {
-            //   data.getDBCAuras().remove(aura.getEntityId());
-        }
-    }
 
     @Unique
     @Override
@@ -141,8 +141,12 @@ public class MixinEntityAura2 implements IEntityAura {
         if (this.entity instanceof EntityNPCInterface && SubGuiAuraDisplay.useGUIAura) {
             DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) this.entity).display).getDBCDisplay();
             if (display != null) {
-                display.dbcAuraQueue.put(aura.getEntityId(), aura);
+                if (rendpass == 0)
+                    display.dbcSecondaryAuraQueue.put(aura.getEntityId(), aura);
+                else
+                    display.dbcAuraQueue.put(aura.getEntityId(), aura);
                 enhancedRendering = true;
+
             }
         }
     }
@@ -286,18 +290,6 @@ public class MixinEntityAura2 implements IEntityAura {
         return isKaiokenAura;
     }
 
-    @Unique
-    @Override
-    public void setRendered(boolean is) {
-        this.renderedThisTick = is;
-    }
-
-
-    @Unique
-    @Override
-    public boolean isRendered() {
-        return renderedThisTick;
-    }
 
     @Unique
     @Override
@@ -312,5 +304,23 @@ public class MixinEntityAura2 implements IEntityAura {
         return data;
     }
 
+    @Unique
+    @Override
+    public int getRenderPass() {
+        return rendpass;
+    }
+
+    @Unique
+    @Override
+    public void setGUIAura(boolean is) {
+        this.isGUIAura = is;
+    }
+
+
+    @Unique
+    @Override
+    public boolean isGUIAura() {
+        return isGUIAura;
+    }
 
 }

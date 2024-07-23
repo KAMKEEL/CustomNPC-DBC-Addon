@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.DragonBC.common.Npcs.RenderAura2;
 import JinRyuu.JRMCore.JRMCoreHDBC;
+import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.*;
 import kamkeel.npcdbc.client.ClientProxy;
@@ -34,7 +35,54 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
     @Shadow
     private int lightVertN;
 
+    @Inject(method = "renderAura", at = @At("HEAD"), cancellable = true)
+    private void enableLightMap(EntityAura2 par1Entity, double parX, double parY, double parZ, float par8, float par9, CallbackInfo ci) {
+        IEntityAura aura = (IEntityAura) par1Entity;
 
+        boolean dontRender = aura.getRenderPass() == -1;
+        if (dontRender)
+            ci.cancel();
+
+        if ((JGConfigClientSettings.CLIENT_DA12 || SubGuiAuraDisplay.useGUIAura) && dontRender) {
+            this.lightning(par1Entity, parX, parY, parZ, par9, 1.0F, par1Entity.getAge(), par1Entity.getRot());
+        }
+
+    }
+
+    @Redirect(method = "renderAura", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;getBol6()B"))
+    private byte redirect5(EntityAura2 instance) {
+        byte i = instance.getBol6();
+        if (i == -10)
+            return -1;
+        return i;
+    }
+
+    @Redirect(method = "renderAura", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA12:Z"))
+    private boolean redirect(EntityAura2 instance) {
+        return JGConfigClientSettings.CLIENT_DA12 || SubGuiAuraDisplay.useGUIAura;
+    }
+
+    @Redirect(method = "renderAura", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA14:Z"))
+    private boolean redirect2(EntityAura2 instance) {
+        return JGConfigClientSettings.CLIENT_DA14 || SubGuiAuraDisplay.useGUIAura;
+    }
+
+    @Redirect(method = "renderAura", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA20:Z"))
+    private boolean redirect3(EntityAura2 instance) {
+        if (SubGuiAuraDisplay.useGUIAura)
+            return false;
+        return JGConfigClientSettings.CLIENT_DA20;
+    }
+
+    @Redirect(method = "func_tad", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA12:Z"))
+    private boolean redirect4(EntityAura2 instance) {
+        return JGConfigClientSettings.CLIENT_DA12 || SubGuiAuraDisplay.useGUIAura;
+    }
+
+    @Shadow
+    private void lightning(EntityAura2 e, double par2, double par4, double par6, float par9, float var20, float var13, boolean rot) {
+
+    }
     @Redirect(method = "lightning", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;getState()F"))
     private float setHasLightning(EntityAura2 instance) {
         IEntityAura aura = (IEntityAura) instance;
@@ -66,7 +114,7 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
         }
 
         if (SubGuiAuraDisplay.useGUIAura) {
-            float scale = 0.75f;
+            float scale = 0.55f;
             GL11.glScalef(scale, scale, scale);
             glStencilFunc(GL_ALWAYS, aura.getEntity().getEntityId() % 256, 0xFF);
             glStencilMask(0xFF);
@@ -136,14 +184,17 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
             float fixedOffset = (float) (parY.get() + 3.0F * aura.getSize());
             args.set(1, fixedOffset);
         }
+
+
     }
 
 
     @Inject(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;getState2()F", ordinal = 0, shift = At.Shift.BEFORE))
     private void fixAuraSize(EntityAura2 par1Entity, double parX, double parY, double parZ, float par8, float par9, CallbackInfo ci, @Local(name = "s1") LocalFloatRef s1, @Local(name = "s") LocalFloatRef s, @Local(name = "cr") LocalFloatRef cr) {
-        EntityPlayer auraOwner = par1Entity.worldObj.getPlayerEntityByName(par1Entity.getmot());
+        IEntityAura aura = (IEntityAura) par1Entity;
+        Entity auraOwner = aura.getEntity();
         if (auraOwner instanceof EntityPlayer) {
-            DBCData dbcData = DBCData.get(auraOwner);
+            DBCData dbcData = DBCData.get((EntityPlayer) auraOwner);
             float size = JRMCoreHDBC.DBCsizeBasedOnRace2(dbcData.Race, dbcData.State);
 
             if (dbcData.addonFormID > -1)

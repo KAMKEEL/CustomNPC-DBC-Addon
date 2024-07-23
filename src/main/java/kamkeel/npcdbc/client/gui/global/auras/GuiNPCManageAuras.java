@@ -8,6 +8,7 @@ import kamkeel.npcdbc.network.packets.aura.DBCGetAura;
 import kamkeel.npcdbc.network.packets.aura.DBCRemoveAura;
 import kamkeel.npcdbc.network.packets.aura.DBCRequestAura;
 import kamkeel.npcdbc.network.packets.aura.DBCSaveAura;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
@@ -16,6 +17,7 @@ import net.minecraft.util.StatCollector;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.select.GuiSoundSelection;
 import noppes.npcs.client.gui.util.*;
+import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.ArrayList;
@@ -72,16 +74,16 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
             getTextField(14).setMaxStringLength(20);
             addLabel(new GuiNpcLabel(14, "general.menuName", guiLeft + 4, y+5));
 
-            y += 23;
-            addLabel(new GuiNpcLabel(1206,"aura.secondary", guiLeft + 4, y + 5));
-            addButton(new GuiNpcButton(1306, guiLeft + 95, y, 100, 20,  "display.selectAura"));
-            if(aura.secondaryAuraID != -1 && AuraController.getInstance().has(aura.secondaryAuraID))
-                getButton(1306).setDisplayText(AuraController.getInstance().get(aura.secondaryAuraID).getName());
-            addButton(new GuiNpcButton(1406, guiLeft + 196, y, 20, 20, "X"));
-            getButton(1406).enabled = aura.secondaryAuraID != -1;
+//            y += 23;
+//            addLabel(new GuiNpcLabel(1206,"aura.secondary", guiLeft + 4, y + 5));
+//            addButton(new GuiNpcButton(1306, guiLeft + 95, y, 100, 20,  "display.selectAura"));
+//            if(aura.secondaryAuraID != -1 && AuraController.getInstance().has(aura.secondaryAuraID))
+//                getButton(1306).setDisplayText(AuraController.getInstance().get(aura.secondaryAuraID).getName());
+//            addButton(new GuiNpcButton(1406, guiLeft + 196, y, 20, 20, "X"));
+//            getButton(1406).enabled = aura.secondaryAuraID != -1;
 
-            y += 40;
-            addButton(new GuiNpcButton(1500, guiLeft + 7, y, 200, 20, "display.displaySettings"));
+            y += 60;
+            addButton(new GuiNpcButton(1500, guiLeft + 7, y, 208, 20, "display.displaySettings"));
 
             y += 40;
 
@@ -125,9 +127,9 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
 
         if(aura == null)
             return;
-        if(button.id == 1306){
-            this.setSubGui(new SubGuiSelectAura());
-        }
+//        if(button.id == 1306){
+//            this.setSubGui(new SubGuiSelectAura());
+//        }
         if(button.id == 1406){
             aura.secondaryAuraID = -1;
         }
@@ -140,7 +142,12 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
             setSubGui(new GuiSoundSelection((getTextField(31).getText())));
         }
         if(button.id == 1500){
-            setSubGui(new SubGuiAuraDisplay(this, aura));
+            EntityCustomNpc npc = (EntityCustomNpc) this.npc;
+            if (npc == null) {
+                npc = new EntityCustomNpc(Minecraft.getMinecraft().theWorld);
+
+            }
+            Minecraft.getMinecraft().displayGuiScreen(new SubGuiAuraDisplay(this, npc, aura));
         }
     }
 
@@ -241,14 +248,14 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
     @Override
     public void subGuiClosed(SubGuiInterface subgui){
         if (subgui instanceof SubGuiSelectAura) {
-            if(aura != null){
-                SubGuiSelectAura guiSelectForm = ((SubGuiSelectAura)subgui);
-                if(guiSelectForm.confirmed){
-                    if(guiSelectForm.selectedAuraID == aura.secondaryAuraID)
-                        return;
-                    aura.secondaryAuraID = guiSelectForm.selectedAuraID;
-                }
-            }
+//            if(aura != null){
+//                SubGuiSelectAura guiSelectForm = ((SubGuiSelectAura)subgui);
+//                if(guiSelectForm.confirmed){
+//                    if(guiSelectForm.selectedAuraID == aura.secondaryAuraID)
+//                        return;
+//                    aura.secondaryAuraID = guiSelectForm.selectedAuraID;
+//                }
+//            }
         } else if (subgui instanceof GuiSoundSelection){
             GuiSoundSelection gss = (GuiSoundSelection) subgui;
             if(gss.selectedResource != null) {

@@ -72,12 +72,12 @@ public class RenderEventHandler {
             startBlooming();
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
             glStencilMask(0xff);
-            //  OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
+            OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
             endBlooming();
         } else if (aura == null && ((IEntityMC) player).getRenderPassTampered())
             ((IEntityMC) player).setRenderPass(0);
 
-        boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !data.particleRenderQueue.isEmpty(), renderDBCAura = !data.dbcAuraQueue.isEmpty();
+        boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !data.particleRenderQueue.isEmpty();
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Aura
@@ -90,12 +90,14 @@ public class RenderEventHandler {
 
             glPushMatrix();
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
-            glStencilMask(0x0);
+            glStencilMask(0x00);
 
+
+            //  glStencilMask(0xff);
             for (EntityAura child : aura.children.values())
                 AuraRenderer.Instance.renderAura(child, partialTicks);
-            AuraRenderer.Instance.renderAura(aura, partialTicks);
 
+            AuraRenderer.Instance.renderAura(aura, partialTicks);
 
             // NewAura.renderAura(aura, partialTicks);
             glPopMatrix();
@@ -107,8 +109,6 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         //Custom Particles
         if (renderParticles && !isArm) {
-            if (!renderDBCAura)
-                mc.entityRenderer.disableLightmap(0);
             FloatBuffer currentMV = ShaderHelper.getModelView(), currentProj = ShaderHelper.getProjection();
             if (isItem)
                 loadMatrices(DEFAULT_MODELVIEW, DEFAULT_PROJECTION);
@@ -156,16 +156,18 @@ public class RenderEventHandler {
         disableStencilWriting(entity.getEntityId() % 256, false);
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
-        boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !display.particleRenderQueue.isEmpty(), renderDBCAura = !display.dbcAuraQueue.isEmpty();
+        boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !display.particleRenderQueue.isEmpty();
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Aura
-        if (aura != null && aura.shouldRender()) {
+        if (renderAura && aura.shouldRender()) {
             glPushMatrix();
             if (!ClientProxy.renderingGUI)
                 glLoadMatrix(DEFAULT_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
             glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
+            // glStencilMask(0xff);
 
+            //    glStencilMask(0x0);
             for (EntityAura child : aura.children.values())
                 AuraRenderer.Instance.renderAura(child, partialTicks);
             AuraRenderer.Instance.renderAura(aura, partialTicks);
@@ -178,7 +180,29 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         //DBC Aura
-        if (renderDBCAura) {
+        if (!display.dbcSecondaryAuraQueue.isEmpty()) {
+            glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
+            glStencilMask(0x0);
+            glPushMatrix();
+            IRenderEntityAura2 auraRenderer = null;
+
+            for (Iterator<EntityAura2> iter = display.dbcSecondaryAuraQueue.values().iterator(); iter.hasNext(); ) {
+                EntityAura2 aur = iter.next();
+                IEntityAura au = (IEntityAura) aur;
+                if (aur.isDead)
+                    iter.remove();
+
+                if (auraRenderer == null)
+                    auraRenderer = (IRenderEntityAura2) RenderManager.instance.getEntityRenderObject(aur);
+
+
+                auraRenderer.renderParticle(aur, partialTicks);
+            }
+            glPopMatrix();
+        }
+
+
+        if (!display.dbcAuraQueue.isEmpty()) {
             glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
             glStencilMask(0x0);
             glPushMatrix();
@@ -198,6 +222,7 @@ public class RenderEventHandler {
             }
             glPopMatrix();
         }
+
 
         ////////////////////////////////////////
         ////////////////////////////////////////

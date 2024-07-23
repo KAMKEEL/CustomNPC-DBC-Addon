@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.data.dbcdata;
 
 
-import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.entity.EntityCusPar;
@@ -23,6 +22,7 @@ import kamkeel.npcdbc.network.packets.DBCSetFlight;
 import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,7 +33,6 @@ import noppes.npcs.util.ValueUtil;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 public class DBCData extends DBCDataUniversal implements IAuraData {
 
@@ -63,7 +62,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
-    public HashMap<Integer,EntityAura2> dbcAuraQueue = new HashMap<>();
 
 
     //RENDERING DATA
@@ -412,6 +410,12 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public boolean isChargingKi() {
         return containsSE(4);
     }
+
+    @Override
+    public boolean isInKaioken() {
+        return isForm(DBCForm.Kaioken);
+    }
+
     public int getDBCColor() {
         return JRMCoreHDBC.getPlayerColor2(2, JRMCoreH.Algnmnt_rc(Alignment), 1, Race, State, isForm(DBCForm.Divine), isForm(DBCForm.Legendary), isForm(DBCForm.UltraInstinct), isForm(DBCForm.GodOfDestruction));
 
@@ -585,6 +589,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     @Override
+    public Entity getEntity() {
+        return player;
+    }
+
+    @Override
     public void setAuraEntity(EntityAura aura) {
         this.auraEntity = aura;
     }
@@ -620,8 +629,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     @Override
-    public HashMap getDBCAuras() {
-        return dbcAuraQueue;
+    public HashMap getDBCAuras(boolean secondary) {
+        return null;
     }
 
 }

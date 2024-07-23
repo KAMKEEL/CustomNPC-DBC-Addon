@@ -71,16 +71,21 @@ public interface IEntityAura {
     @Unique
     Entity getEntity();
 
-    @Unique
-    void setRendered(boolean is);
 
-    @Unique
-    boolean isRendered();
 
     @Unique
     void setAuraData(IAuraData data);
 
     @Unique
     IAuraData getAuraData();
+
+    @Unique
+    int getRenderPass();
+
+    @Unique
+    void setGUIAura(boolean is);
+
+    @Unique
+    boolean isGUIAura();
 }
 

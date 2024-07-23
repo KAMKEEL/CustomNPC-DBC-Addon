@@ -1,17 +1,20 @@
 package kamkeel.npcdbc.data;
 
 import kamkeel.npcdbc.entity.EntityAura;
+import net.minecraft.entity.Entity;
 
 import java.util.HashMap;
 import java.util.Queue;
 
 public interface IAuraData {
     public EntityAura getAuraEntity();
+    public Entity getEntity();
     public void setAuraEntity(EntityAura aura);
     public int getAuraColor();
     public boolean isTransforming();
 
     public boolean isChargingKi();
+    public boolean isInKaioken();
 
     public byte getRace();
 
@@ -26,7 +29,7 @@ public interface IAuraData {
     public boolean isAuraOn();
     public boolean isFusionSpectator();
 
-    public HashMap getDBCAuras();
+    public HashMap getDBCAuras(boolean secondary);
 
     // Aura Color
     // Aura Size

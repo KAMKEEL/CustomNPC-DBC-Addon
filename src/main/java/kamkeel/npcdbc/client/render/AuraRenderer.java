@@ -11,6 +11,7 @@ import kamkeel.npcdbc.client.model.ModelAura;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.form.Form;
@@ -70,16 +71,29 @@ public class AuraRenderer extends RenderDBC {
     }
 
     public void renderAura(EntityAura aura, float partialTicks) {
+
         double interPosX = aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks - RenderManager.renderPosX;
         double interPosY = aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks - RenderManager.renderPosY;
         double interPosZ = aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks - RenderManager.renderPosZ;
-
         if (ClientProxy.renderingGUI)
             interPosX = interPosY = interPosZ = 0;
 
-
         int speed = aura.speed;
         int age = Math.max(1, aura.ticksExisted % speed);
+        Random rand = new Random();
+
+        glStencilFunc(GL_ALWAYS, aura.entity.getEntityId() % 256, 0xFF);
+        glStencilMask(0xFF);
+        float r = rand.nextInt(50);
+        if (aura.hasLightning && r < 10 && age < 10)
+            lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
+        glStencilFunc(GL_GREATER, aura.entity.getEntityId() % 256, 0xFF);
+        glStencilMask(0x0);
+
+
+        if (aura.type3D == EnumAuraTypes3D.None)
+            return;
+
         float release = Math.max(5, aura.auraData.getRelease());
         float alpha = aura.alpha;
         float alphaConfig = (float) JGConfigClientSettings.CLIENT_DA21 / 10.0F;
@@ -94,7 +108,6 @@ public class AuraRenderer extends RenderDBC {
         else
             pulseAnimation = 0;
 
-        Random rand = new Random();
         float pulsingSize = pulseAnimation * 0.03f;
         float kaiokenSize = 0;
 
@@ -115,6 +128,8 @@ public class AuraRenderer extends RenderDBC {
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //   if (aura.isKaioken)
+        //   glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         glAlphaFunc(GL_GREATER, 0);
         glDepthMask(false);
         glPushMatrix();
@@ -146,13 +161,7 @@ public class AuraRenderer extends RenderDBC {
 
         ////////////////////////////////////////
         ////////////////////////////////////////
-        glStencilFunc(GL_ALWAYS, aura.entity.getEntityId() % 256, 0xFF);
-        glStencilMask(0xFF);
-        float r = rand.nextInt(50);
-        if (aura.hasLightning && r < 10 && age < 10)
-            lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
-        glStencilFunc(GL_GREATER, aura.entity.getEntityId() % 256, 0xFF);
-        glStencilMask(0x0);
+
 
         glPopMatrix();
         glDepthMask(true);

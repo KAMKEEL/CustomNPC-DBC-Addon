@@ -12,7 +12,7 @@ import noppes.npcs.util.ValueUtil;
 public class AuraDisplay implements IAuraDisplay {
     public Aura parent;
 
-    public EnumAuraTypes3D type = EnumAuraTypes3D.Default;
+    public EnumAuraTypes3D type = EnumAuraTypes3D.Base;
     public EnumAuraTypes2D type2D = EnumAuraTypes2D.Default;
 
     public String texture1 = "", texture2 = "", texture3 = "";
@@ -24,7 +24,7 @@ public class AuraDisplay implements IAuraDisplay {
 
     public int kaiokenColor = -1, kaiokenAlpha = -1;
     public boolean hasKaiokenAura = true, kaiokenOverrides = true;
-    public float kaiokenSize = 1.1f; //kaioken size is always 1.1x bigger than aura size by default
+    public float kaiokenSize = 1f; //kaioken size is always 1.1x bigger than aura size by default
 
     public boolean overrideDBCAura = false;
 
@@ -43,7 +43,7 @@ public class AuraDisplay implements IAuraDisplay {
         NBTTagCompound rendering = compound.getCompoundTag("rendering");
 
         EnumAuraTypes3D auraTypes3D = EnumAuraTypes3D.getEnumFromName(rendering.getString("type"));
-        type = auraTypes3D == null ? EnumAuraTypes3D.Default : auraTypes3D;
+        type = auraTypes3D == null ? EnumAuraTypes3D.Base : auraTypes3D;
 
         EnumAuraTypes2D auraTypes2D = EnumAuraTypes2D.getEnumFromName(rendering.getString("type2D"));
         type2D = auraTypes2D == null ? EnumAuraTypes2D.Default : auraTypes2D;

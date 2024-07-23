@@ -237,6 +237,7 @@ public class ClientEventHandler {
                     }
                     else if(aura == null)
                         return;
+                    isInKaioken = display.isKaioken;
                 } else if (isPlayer) {
                     dbcData = DBCData.get((EntityPlayer) event.entity);
                     aura = dbcData.getToggledAura();
@@ -275,6 +276,7 @@ public class ClientEventHandler {
     }
 
     public static void spawnAura(Entity entity, Aura aura) {
+
         boolean isPlayer = entity instanceof EntityPlayer;
         boolean isNPC = entity instanceof EntityNPCInterface;
         DBCData dbcData = null;
@@ -292,9 +294,12 @@ public class ClientEventHandler {
 
         int release = SubGuiAuraDisplay.useGUIAura ? 5 : data.getRelease();
         EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, data.getState(), data.getState2(), release, rotate90);
-        ((IEntityAura) aur).setEntity(entity);
         ((IEntityAura) aur).setAuraData(data);
         aur.setAlp(0.2F);
+
+        if (SubGuiAuraDisplay.useGUIAura) {
+            ((IEntityAura) aur).setGUIAura(true);
+        }
 
         if (isNPC)
             ((IEntityAura) aur).setSize((float) ((EntityNPCInterface) entity).display.modelSize / 5);
@@ -370,7 +375,7 @@ public class ClientEventHandler {
             aur.setAlp(0.2F);
             aur.setTex("aurag");
             aur.setTexL3("auragb");
-            aur.setColL2(12464847);
+            aur.setColL3(12464847);
             if (has2D)
                 aur.setBol6(6);
         } else if (aura.display.type == EnumAuraTypes3D.UltimateArco) {
@@ -403,10 +408,15 @@ public class ClientEventHandler {
             aur.setBol6(6);
         } else if (aura.display.type2D == EnumAuraTypes2D.UltimateArco) {
             aur.setBol6(4);
+        } else if (aura.display.type2D != EnumAuraTypes2D.Default && aura.display.type2D != EnumAuraTypes2D.Base) {
+            aur.setBol6(-2);
+
         }
 
         ((IEntityAura) aur).setType2D(aura.display.type2D);
 
+        if (aura.display.type == EnumAuraTypes3D.None)
+            aur.setRendPass(-1);
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
         //Forms & Aura Ring
@@ -459,9 +469,9 @@ public class ClientEventHandler {
             aur.setSpd(aura.display.speed);
 
         //Kettle Mode stuff
-        if (aura.display.kettleModeCharging)
+        if (aura.display.kettleModeCharging && !SubGuiAuraDisplay.useGUIAura)
             aur.kettleMode = isCharging ? aura.display.kettleModeType : 0;
-        if (aura.display.kettleModeAura)
+        else
             aur.kettleMode = aura.display.kettleModeType;
 
         ////////////////////////////////////////////////////
@@ -477,20 +487,30 @@ public class ClientEventHandler {
         if (isTransforming)
             spawnAuraRing(entity, aur.getCol());
 
+        ((IEntityAura) aur).setEntity(entity);
         aur.worldObj.spawnEntityInWorld(aur);
     }
 
-    public static EntityAura2 spawnKaiokenAura(Aura aura, DBCData dbcData) {
-        if (dbcData == null)
+    public static EntityAura2 spawnKaiokenAura(Aura aura, IAuraData data) {
+        if (data == null)
             return null;
 
         boolean override = aura.display.kaiokenOverrides;
-        boolean rotate90 = dbcData.containsSE(7) ? true : false;
+        //  boolean rotate90 = data.containsSE(7) ? true : false;
 
-        EntityAura2 kaiokenAura = new EntityAura2(dbcData.player.worldObj, dbcData.player.getCommandSenderName(), 16646144, 2.0F + dbcData.State, dbcData.State2 * 1.5f, dbcData.Release, rotate90);
-        ((IEntityAura) kaiokenAura).setEntity(dbcData.player);
-        ((IEntityAura) kaiokenAura).setAuraData(dbcData);
+        Entity entity = data.getEntity();
+        boolean isPlayer = entity instanceof EntityPlayer;
+        String auraOwner = isPlayer ? entity.getCommandSenderName() : Utility.getEntityID(entity);
+
+        int release = SubGuiAuraDisplay.useGUIAura ? 5 : data.getRelease();
+        EntityAura2 kaiokenAura = new EntityAura2(entity.worldObj, entity.getCommandSenderName(), 16646144, 2.0F + data.getState(), data.getState2() * 1.5f, release, false);
+        ((IEntityAura) kaiokenAura).setAuraData(data);
         ((IEntityAura) kaiokenAura).setIsKaioken(true);
+
+        if (SubGuiAuraDisplay.useGUIAura) {
+            ((IEntityAura) kaiokenAura).setGUIAura(true);
+        }
+
         if (override) {
             kaiokenAura.setAlp(0.2F);
             kaiokenAura.setSpd(20);
@@ -515,20 +535,22 @@ public class ClientEventHandler {
         ((IEntityAura) kaiokenAura).setHasLightning(aura.display.hasLightning);
         ((IEntityAura) kaiokenAura).setLightningColor(aura.display.lightningColor);
         ((IEntityAura) kaiokenAura).setLightningAlpha(aura.display.lightningAlpha);
-
+        ((IEntityAura) kaiokenAura).setLightningSpeed(aura.display.lightningSpeed);
+        ((IEntityAura) kaiokenAura).setLightningIntensity(aura.display.lightningIntensity);
 
         String kkSound = aura.display.getFinalKKSound();
-        if (kkSound != null && !SoundHandler.isPlayingSound(dbcData.player, kkSound)) {
-            AuraSound kaiokenSound = new AuraSound(aura, new SoundSource(kkSound, dbcData.player));
+        if (kkSound != null && !SoundHandler.isPlayingSound(entity, kkSound)) {
+            AuraSound kaiokenSound = new AuraSound(aura, new SoundSource(kkSound, entity));
 
             kaiokenSound.isKaiokenSound = true;
             kaiokenSound.setRepeat(true).play(false);
         }
 
-        if (dbcData.isTransforming() && override)
-            spawnAuraRing(dbcData.player, kaiokenAura.getCol());
+        if (data.isTransforming() && override)
+            spawnAuraRing(entity, kaiokenAura.getCol());
 
-        dbcData.player.worldObj.spawnEntityInWorld(kaiokenAura);
+        ((IEntityAura) kaiokenAura).setEntity(entity);
+        entity.worldObj.spawnEntityInWorld(kaiokenAura);
         return kaiokenAura;
     }
 

@@ -32,7 +32,7 @@ import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.HashMap;
 
-import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.Default;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.Base;
 
 public class EntityAura extends Entity {
 
@@ -93,12 +93,13 @@ public class EntityAura extends Entity {
         AuraDisplay display = aura.display;
 
         type3D = display.type;
-        if (aura.display.type == Default)
+        if (aura.display.type == Base)
             type3D = EnumAuraTypes3D.getType(auraData);
 
         type2D = display.type2D;
         if (aura.display.type2D == EnumAuraTypes2D.Default)
                 type2D = EnumAuraTypes2D.getType(auraData);
+
 
 
         // Vanilla DBC form colors
@@ -180,7 +181,7 @@ public class EntityAura extends Entity {
 
         text1 = new ResourceLocation("jinryuudragonbc:aurak.png");
         renderPass = 0;
-        maxAlpha = 0.2f;
+        maxAlpha = 0.1f;
 
         if (aura.display.hasAlpha("kaioken"))
             maxAlpha = (float) display.kaiokenAlpha / 255;
@@ -284,7 +285,7 @@ public class EntityAura extends Entity {
 
         if (!fadeOut && aura.display.type2D != EnumAuraTypes2D.None) {
             float height = effectiveSize <= 0 ? entity.height : (this.height * 0.53f) * effectiveSize;
-            ParticleFormHandler.spawnAura2D(entity, auraData, height);
+            ParticleFormHandler.spawnAura2D(type2D, color1, entity, auraData, height);
         }
 
 
@@ -317,7 +318,7 @@ public class EntityAura extends Entity {
 
 
         }
-        isInKaioken = auraData.isForm(DBCForm.Kaioken);
+        isInKaioken = auraData.isInKaioken();
         if (!isInKaioken && isKaioken && !fadeOut)
             despawn();
 
@@ -413,7 +414,7 @@ public class EntityAura extends Entity {
     }
 
     public boolean shouldRender() {
-        return type3D != EnumAuraTypes3D.None && aura.display.kettleModeType != 1 && JGConfigClientSettings.CLIENT_DA14;
+        return (type3D != EnumAuraTypes3D.None || type3D == EnumAuraTypes3D.None && hasLightning) && aura.display.kettleModeType != 1 && (JGConfigClientSettings.CLIENT_DA14|| SubGuiAuraDisplay.useGUIAura);
     }
     public void setDead() {
         super.setDead();

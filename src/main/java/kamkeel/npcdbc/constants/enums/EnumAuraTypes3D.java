@@ -9,7 +9,7 @@ import java.util.List;
 
 public enum EnumAuraTypes3D {
     None(""),
-    Default("default"),
+    Base("default"),
     SaiyanGod("ssgod"),
     SaiyanBlue("ssb"),
     SaiyanBlueEvo("shinka"),
@@ -69,7 +69,7 @@ public enum EnumAuraTypes3D {
                     return SaiyanBlueEvo;
 
         }
-        return Default;
+        return Base;
     }
 
     public static int getManualAuraColor(EnumAuraTypes3D playerAuraTypes, boolean revampedAura) {

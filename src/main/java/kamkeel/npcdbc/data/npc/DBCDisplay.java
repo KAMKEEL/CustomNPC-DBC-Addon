@@ -21,6 +21,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCStats;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -63,7 +64,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     // Form Display //
     public int formID = -1, selectedForm = -1, rage;
     public float formLevel = 0;
-    public boolean isTransforming;
+    public boolean isTransforming, isKaioken;
 
     // Server Side Usage
     public float rageValue;
@@ -74,6 +75,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public static Form fakeForm;
     public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
     public HashMap<Integer, EntityAura2> dbcAuraQueue = new HashMap<>();
+    public HashMap<Integer, EntityAura2> dbcSecondaryAuraQueue = new HashMap<>();
 
     public int outlineID;
 
@@ -112,6 +114,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
             dbcDisplay.setInteger("DBCRage", rage);
             dbcDisplay.setBoolean("DBCIsTransforming", isTransforming);
+            dbcDisplay.setBoolean("DBCIsKaioken", isKaioken);
             dbcDisplay.setInteger("DBCFormID", formID);
             dbcDisplay.setFloat("DBCFormLevel", formLevel);
             dbcDisplay.setInteger("DBCSelectedForm", selectedForm);
@@ -164,6 +167,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
             rage = dbcDisplay.getInteger("DBCRage");
             isTransforming = dbcDisplay.getBoolean("DBCIsTransforming");
+            isKaioken = dbcDisplay.getBoolean("DBCIsisKaioken");
             formID = dbcDisplay.getInteger("DBCFormID");
             selectedForm = dbcDisplay.getInteger("DBCSelectedForm");
         } else {
@@ -437,8 +441,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public HashMap getDBCAuras() {
-        return dbcAuraQueue;
+    public HashMap getDBCAuras(boolean secondary) {
+        if (!secondary)
+            return dbcAuraQueue;
+        else
+            return dbcSecondaryAuraQueue;
     }
 
     public Aura getToggledAura() {
@@ -586,6 +593,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
+    public Entity getEntity() {
+        return npc;
+    }
+
+    @Override
     public void setAuraEntity(EntityAura aura) {
         this.auraEntity = aura;
     }
@@ -603,6 +615,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public boolean isChargingKi() {
         return auraOn;
+    }
+
+    @Override
+    public boolean isInKaioken() {
+        return isKaioken;
     }
 
 
