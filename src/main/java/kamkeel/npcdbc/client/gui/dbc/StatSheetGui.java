@@ -666,7 +666,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             dynamicLabels.put("attr_"+i+"_button_desc", new JRMCoreLabel(button, "%s", null));
             upgradeButtons[i] = button;
             dynamicLabels.put("attr_"+i, new JRMCoreLabel(
-                (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + statNames[i]+": §4%s",
+                (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + LocalizationHelper.getLocalizedString("statsheet.attribute."+statNames[i]) +": §4%s",
                 "%s",
                 guiWidthOffset+17,
                 yPos+5
