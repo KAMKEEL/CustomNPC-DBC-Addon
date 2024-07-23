@@ -59,6 +59,18 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         super(guiReplacementID);
     }
 
+    /**
+     *
+     * @param attrName
+     * @param inc
+     * @param maxRelease
+     * @param passive
+     * @param charging
+     * @param extraOutput
+     * @param dmgReduction
+     * @param statReduction
+     * @return
+     */
     private String getDescription(String attrName, float inc, String maxRelease, String passive, String charging, String extraOutput, int dmgReduction, int statReduction){
         String format = JRMCoreH.trl("jrmc", "StatIncreaseDesc");
         if(maxRelease != null)
@@ -214,6 +226,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         dynamicLabels.get("level")
             .updateDisplay(JRMCoreH.numSep(JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts)))
             .updateTooltip(isMaxLevel ? JRMCoreH.trl("jrmc", "LevelMax") : JRMCoreH.trl("jrmc", "LevelNext", JRMCoreH.cllr + JRMCoreH.attrLvlNext(JRMCoreH.PlyrAttrbts) + JRMCoreH.cldgy));
+
 
         dynamicLabels.get("tp")
             .updateDisplay(JRMCoreH.numSep(JRMCoreH.curTP))

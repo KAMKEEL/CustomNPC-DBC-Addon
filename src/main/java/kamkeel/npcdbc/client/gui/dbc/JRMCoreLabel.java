@@ -107,11 +107,10 @@ public class JRMCoreLabel extends Gui implements HoverableLabel {
      */
     public void drawLabel(Minecraft client, int mouseX, int mouseY){
         client.fontRenderer.drawString(display, xPosition, yPosition, ColorMode.textColor(), ConfigDBCClient.DarkMode);
-
     }
 
     protected boolean isHovered(int mouseX, int mouseY){
-        return xPosition < mouseX && xPosition + hoverableAreaWidth > mouseX && yPosition -3 < mouseY && yPosition + hoverableAreaHeight > mouseY;
+        return xPosition < mouseX && xPosition + hoverableAreaWidth > mouseX && yPosition - 3 < mouseY && yPosition + hoverableAreaHeight > mouseY;
     }
 
     @Override

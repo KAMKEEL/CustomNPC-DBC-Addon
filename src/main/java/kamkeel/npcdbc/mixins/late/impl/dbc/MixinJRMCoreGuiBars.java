@@ -64,7 +64,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
                     }
                 }
 
-                addHoverable(text, var51 + i.get(), var61 + j.get());
+                addHoverable(text, (var51 + i.get()+10), (var61 + j.get()+10));
                 if (var71 == 0) {
                     i.set(i.get() + 18);
                 } else
@@ -76,7 +76,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
     @Inject(method = "drawIcon(III)V", at = @At("HEAD"))
     private void onDrawIcon(int var51, int var61, int resourceID, CallbackInfo ci) {
         String name = LocalizationHelper.getLocalizedString(this.statusEffectFromResourceID(resourceID));
-        addHoverable(name, var51, var61);
+        addHoverable(name, var51+2, var61+2);
     }
 
     @Unique
@@ -85,7 +85,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
             return;
         if (this.mc.currentScreen instanceof AbstractJRMCGui) {
             AbstractJRMCGui gui = (AbstractJRMCGui) this.mc.currentScreen;
-            gui.horribleDBCDynamicLabels.put(i, new JRMCoreLabel(null, name, i, i1, 15, 15));
+            gui.horribleDBCDynamicLabels.put(i, new JRMCoreLabel(null, name, i, i1, 16, 16));
         }
     }
 
