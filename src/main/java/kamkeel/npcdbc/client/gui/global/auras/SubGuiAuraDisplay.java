@@ -94,6 +94,25 @@ public class SubGuiAuraDisplay extends SubGuiInterface implements ISubGuiListene
 
     }
 
+    /**
+     * FIXME: Remove this function after ScrollWindow gets fixed in main CNPC+.
+     */
+    @Override
+    public void updateScreen(){
+        if(scrollWindow != null){
+            if (scrollWindow.scrollY > scrollWindow.maxScrollY || scrollWindow.nextScrollY > scrollWindow.maxScrollY) {
+                scrollWindow.nextScrollY = scrollWindow.maxScrollY;
+                scrollWindow.scrollY = scrollWindow.maxScrollY;
+            }
+
+            if (scrollWindow.nextScrollY < 0.0F) {
+                scrollWindow.nextScrollY = 0.0F;
+            }
+        }
+
+        super.updateScreen();
+    }
+
     public void updateDisplay() {
         DBCData data = DBCData.getClient();
         boolean isSaiyan = DBCRace.isSaiyan(visualDisplay.race);
