@@ -217,6 +217,8 @@ statsheet.old=Old
 statsheet.advanced=Advanced
 statsheet.simple=Simple
 statsheet.tooltip=Tooltip Modifications
+statsheet.stat.charging=Charging
+statsheet.stat.charging.description=/n§8Charging Output §5%6$s §8
 
 part.horns=Horns
 part.ears=Ears
