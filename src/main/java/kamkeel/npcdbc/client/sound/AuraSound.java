@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.sound;
 
+import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.SoundSource;
@@ -7,13 +8,14 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
 
 public class AuraSound extends ClientSound {
     private final Aura aura;
-    public boolean isKaiokenSound = false;
+    public boolean isKaiokenSound = false, isGUIAura;
 
     public AuraSound(Aura aura, SoundSource soundSource) {
         super(soundSource);
@@ -46,16 +48,36 @@ public class AuraSound extends ClientSound {
 
             }
 
-            if (aura != this.aura || !isInKaioken && isKaiokenSound) {
-                if (aura != null)
-                    soundSource.fadeFactor = 0.1f;
+            if (aura == null) {
+                soundSource.fadeFactor = isGUIAura ? 0.075f : soundSource.fadeFactor;
+                soundSource.fadeOut = true;
+            } else if (aura.id != this.aura.id || !isInKaioken && isKaiokenSound) {
+
+                soundSource.fadeFactor = isGUIAura ? 0.075f : 0.1f;
                 soundSource.fadeOut = true;
             }
         }
     }
 
+    public float getXPosF() {
+        if (isGUIAura)
+            return (float) Minecraft.getMinecraft().thePlayer.posX;
+        return this.xPosF;
+    }
+
+    public float getYPosF() {
+        if (isGUIAura)
+            return (float) Minecraft.getMinecraft().thePlayer.posY;
+        return this.yPosF;
+    }
+
+    public float getZPosF() {
+        if (isGUIAura)
+            return (float) Minecraft.getMinecraft().thePlayer.posZ;
+        return this.zPosF;
+    }
     public static void play(Entity entity, Aura aura) {
-        if (entity == null || aura == null)
+        if (entity == null || aura == null || SubGuiAuraDisplay.useGUIAura)
             return;
 
         boolean isTransforming = false;

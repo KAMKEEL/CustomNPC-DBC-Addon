@@ -30,7 +30,7 @@ public class AuraDisplay implements IAuraDisplay {
 
     public boolean kettleModeCharging, kettleModeEnabled;
 
-    public String auraSound = "", kaiokenSound = "";
+    public String auraSound = "jinryuudragonbc:DBC.aura", kaiokenSound = "";
 
     public int outlineID = -1;
     public AuraDisplay(Aura parent) {
@@ -71,7 +71,7 @@ public class AuraDisplay implements IAuraDisplay {
         // Kaioken
         kaiokenColor = rendering.hasKey("kaiokenColor") ? rendering.getInteger("kaiokenColor") : -1;
         kaiokenAlpha = rendering.hasKey("kaiokenAlpha") ? rendering.getInteger("kaiokenAlpha") : -1;
-        kaiokenSize = rendering.hasKey("kaiokenSize") ? rendering.getFloat("kaiokenSize") : 1.1f;
+        kaiokenSize = rendering.hasKey("kaiokenSize") ? rendering.getFloat("kaiokenSize") : 1f;
         hasKaiokenAura = !rendering.hasKey("kaiokenOn") || rendering.getBoolean("kaiokenOn");
         kaiokenOverrides = !rendering.hasKey("kaiokenOverrides") || rendering.getBoolean("kaiokenOverrides");
         overrideDBCAura = rendering.hasKey("overrideDBCAura") && rendering.getBoolean("overrideDBCAura");
@@ -81,7 +81,7 @@ public class AuraDisplay implements IAuraDisplay {
         kettleModeEnabled = rendering.hasKey("kettleMode") && rendering.getBoolean("kettleMode");
 
         // Sounds
-        auraSound = rendering.hasKey("auraSound") ? rendering.getString("auraSound") : "";
+        auraSound = rendering.hasKey("auraSound") ? rendering.getString("auraSound") : "jinryuudragonbc:DBC.aura";
         kaiokenSound = rendering.hasKey("kaiokenSound") ? rendering.getString("kaiokenSound") : "";
 
         outlineID = rendering.getInteger("outlineID");
@@ -188,12 +188,12 @@ public class AuraDisplay implements IAuraDisplay {
 
     @Override
     public boolean hasSound() {
-        return auraSound.length() > 3;
+        return auraSound.length() > 3 && !auraSound.equals("jinryuudragonbc:DBC.aura");
     }
 
     @Override
     public String getAuraSound() {
-        return auraSound;
+        return auraSound.isEmpty() ? null : auraSound;
     }
 
     @Override

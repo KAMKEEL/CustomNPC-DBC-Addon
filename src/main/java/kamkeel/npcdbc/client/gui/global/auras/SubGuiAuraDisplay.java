@@ -2,10 +2,13 @@ package kamkeel.npcdbc.client.gui.global.auras;
 
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
+import kamkeel.npcdbc.client.sound.AuraSound;
+import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -35,7 +38,8 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 {
     private final GuiNPCManageAuras parent;
     public static boolean useGUIAura;
-    public static Aura aura, kaiokenAura, secondaryAura;
+    public static Aura aura;
+    public static AuraSound auraSound, secondarySound, kaiokenSound, kettleSound;
     public AuraDisplay display;
     private final DBCDisplay visualDisplay;
     public int lastColorClicked = 0;
@@ -94,6 +98,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         }
         visualDisplay.setAura(aura);
         visualDisplay.auraOn = true;
+        playSound();
 
     }
 
@@ -388,6 +393,36 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
     }
 
+    public void playSound() {
+        String soundLoc = display.getAuraSound();
+        String secondLoc = aura.hasSecondaryAura() ? aura.getSecondaryAur().display.getFinalSound() : null;
+        String kaiokenLoc = visualDisplay.isKaioken ? display.getKaiokenSound() : null;
+        String kettleLoc = display.kettleModeEnabled ? "jinryuudragonbc:DBC5.majin_cattle" : null;
+
+        if (soundLoc != null && !SoundHandler.isPlayingSound(npc, soundLoc)) {
+            auraSound = new AuraSound(aura, new SoundSource(soundLoc, npc));
+            auraSound.isGUIAura = true;
+            auraSound.setRepeat(true).play(false);
+        }
+
+        if (secondLoc != null && !SoundHandler.isPlayingSound(npc, secondLoc)) {
+            secondarySound = new AuraSound(aura, new SoundSource(secondLoc, npc));
+            secondarySound.isGUIAura = true;
+            secondarySound.setRepeat(true).play(false);
+        }
+
+        if (kaiokenLoc != null && !SoundHandler.isPlayingSound(npc, kaiokenLoc)) {
+            kaiokenSound = new AuraSound(aura, new SoundSource(kaiokenLoc, npc));
+            kaiokenSound.isGUIAura = true;
+            kaiokenSound.setRepeat(true).play(false);
+        }
+        if (kettleLoc != null && !SoundHandler.isPlayingSound(npc, kettleLoc)) {
+            kettleSound = new AuraSound(aura, new SoundSource(kettleLoc, npc));
+            kettleSound.isGUIAura = true;
+            kettleSound.soundSource.fadeFactor *= 10;
+            kettleSound.setRepeat(true).play(false);
+        }
+    }
     public void buttonEvent(GuiButton guibutton)
     {
         GuiNpcButton button = (GuiNpcButton) guibutton;
@@ -451,13 +486,31 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             initGui();
         } else if(button.id == 302) {
             // Toggle Kaioken Aura
+            boolean on = button.getValue() == 1;
             display.hasKaiokenAura = !display.hasKaiokenAura;
-            if (button.getValue() == 0)
+            if (!on) {
                 visualDisplay.isKaioken = false;
+                if (kaiokenSound != null) {
+                    kaiokenSound.soundSource.fadeOut = true;
+                    kaiokenSound.soundSource.fadeFactor = 0.025f;
+                    kaiokenSound = null;
+                }
+            }
+
             initGui();
         } else if (button.id == 310) {
             // Toggle Kaioken Aura
-            visualDisplay.isKaioken = button.getValue() == 1;
+            boolean is = button.getValue() == 1;
+            visualDisplay.isKaioken = is;
+
+            if (is)
+                playSound();
+            else if (kaiokenSound != null) {
+                kaiokenSound.soundSource.fadeOut = true;
+                kaiokenSound.soundSource.fadeFactor = 0.025f;
+                kaiokenSound = null;
+            }
+
             initGui();
         } else if (button.id == 309) {
             // Change Kaioken color
@@ -482,6 +535,13 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         } else if(button.id == 402) {
             // Toggle Kettle Charging
             display.kettleModeEnabled = !display.kettleModeEnabled;
+            if (display.kettleModeEnabled)
+                playSound();
+            else if (kettleSound != null) {
+                kettleSound.soundSource.fadeOut = true;
+                kettleSound.soundSource.fadeFactor = 0.075f;
+                kettleSound = null;
+            }
             initGui();
         } else if (button.id == 670) {
             revampedAura = button.getValue();
@@ -521,6 +581,11 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             this.setSubGui(new SubGuiSelectAura());
         } else if (button.id == 1406) {
             aura.secondaryAuraID = -1;
+            if (secondarySound != null) {
+                secondarySound.soundSource.fadeOut = true;
+                secondarySound.soundSource.fadeFactor = 0.025f;
+                secondarySound = null;
+            }
             initGui();
         }
     }
@@ -606,6 +671,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
                     if (guiSelectForm.selectedAuraID == aura.secondaryAuraID)
                         return;
                     aura.secondaryAuraID = guiSelectForm.selectedAuraID;
+                    playSound();
                     initGui();
 
                 }
@@ -760,6 +826,9 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
     public void close() {
         NoppesUtil.openGUI(player, parent);
+        if (visualDisplay.auraEntity != null)
+            visualDisplay.auraEntity.despawn();
+        visualDisplay.auraID = -1;
         save();
     }
     public String getColor(int input) {

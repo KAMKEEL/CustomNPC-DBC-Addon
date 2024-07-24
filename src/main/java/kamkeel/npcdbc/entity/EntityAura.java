@@ -388,6 +388,9 @@ public class EntityAura extends Entity {
 
     @SideOnly(Side.CLIENT)
     public void playSound() {
+        if (SubGuiAuraDisplay.useGUIAura)
+            return;
+
         String sound = !isKaioken ? aura.display.getFinalSound() : aura.display.getFinalKKSound();
         if (sound != null) {
             auraSound = new AuraSound(aura, new SoundSource(sound, entity));
