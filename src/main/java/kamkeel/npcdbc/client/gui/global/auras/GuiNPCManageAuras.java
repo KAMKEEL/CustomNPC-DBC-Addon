@@ -1,7 +1,5 @@
 package kamkeel.npcdbc.client.gui.global.auras;
 
-import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
-import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.aura.DBCGetAura;
@@ -28,11 +26,11 @@ import java.util.Vector;
 public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScrollListener, IScrollData, IGuiData, ISubGuiListener, GuiYesNoCallback, ITextfieldListener {
     public GuiCustomScroll scrollAuras;
     public HashMap<String, Integer> data = new HashMap<>();
+    boolean setNormalSound = true;
     private Aura aura = new Aura();
     private String selected = null;
     private String search = "";
     private String originalName = "";
-    boolean setNormalSound = true;
 
     public GuiNPCManageAuras(EntityNPCInterface npc) {
         super(npc);
@@ -59,28 +57,20 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         scrollAuras.setList(getSearchList());
 
         addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 220, guiTop + 4 + 3 + 185, 143, 20, search));
-        if(aura != null && aura.id != -1) {
+        if (aura != null && aura.id != -1) {
             addLabel(new GuiNpcLabel(10, "ID", guiLeft + 368, guiTop + 4 + 3 + 185));
             addLabel(new GuiNpcLabel(11, aura.id + "", guiLeft + 368, guiTop + 4 + 3 + 195));
 
             int y = guiTop + 3;
 
             addTextField(new GuiNpcTextField(13, this, this.fontRendererObj, guiLeft + 36, y, 180, 20, aura.name));
-            addLabel(new GuiNpcLabel(13,"gui.name", guiLeft + 4, y + 5));
+            addLabel(new GuiNpcLabel(13, "gui.name", guiLeft + 4, y + 5));
 
             y += 23;
 
             addTextField(new GuiNpcTextField(14, this, guiLeft + 70, y, 146, 20, aura.menuName.replaceAll("§", "&")));
             getTextField(14).setMaxStringLength(20);
-            addLabel(new GuiNpcLabel(14, "general.menuName", guiLeft + 4, y+5));
-
-//            y += 23;
-//            addLabel(new GuiNpcLabel(1206,"aura.secondary", guiLeft + 4, y + 5));
-//            addButton(new GuiNpcButton(1306, guiLeft + 95, y, 100, 20,  "display.selectAura"));
-//            if(aura.secondaryAuraID != -1 && AuraController.getInstance().has(aura.secondaryAuraID))
-//                getButton(1306).setDisplayText(AuraController.getInstance().get(aura.secondaryAuraID).getName());
-//            addButton(new GuiNpcButton(1406, guiLeft + 196, y, 20, 20, "X"));
-//            getButton(1406).enabled = aura.secondaryAuraID != -1;
+            addLabel(new GuiNpcLabel(14, "general.menuName", guiLeft + 4, y + 5));
 
             y += 60;
             addButton(new GuiNpcButton(1500, guiLeft + 7, y, 208, 20, "display.displaySettings"));
@@ -125,23 +115,18 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
             PacketHandler.Instance.sendToServer(new DBCSaveAura(aura.writeToNBT(), "").generatePacket());
         }
 
-        if(aura == null)
+        if (aura == null)
             return;
-//        if(button.id == 1306){
-//            this.setSubGui(new SubGuiSelectAura());
-//        }
-        if(button.id == 1406){
-            aura.secondaryAuraID = -1;
-        }
-        if(button.id == 30){
+
+        if (button.id == 30) {
             setNormalSound = true;
             setSubGui(new GuiSoundSelection((getTextField(30).getText())));
         }
-        if(button.id == 31){
+        if (button.id == 31) {
             setNormalSound = false;
             setSubGui(new GuiSoundSelection((getTextField(31).getText())));
         }
-        if(button.id == 1500){
+        if (button.id == 1500) {
             EntityCustomNpc npc = (EntityCustomNpc) this.npc;
             if (npc == null) {
                 npc = new EntityCustomNpc(Minecraft.getMinecraft().theWorld);
@@ -225,7 +210,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
             save();
             selected = scrollAuras.getSelected();
             originalName = scrollAuras.getSelected();
-            if(selected != null && !selected.isEmpty()){
+            if (selected != null && !selected.isEmpty()) {
                 PacketHandler.Instance.sendToServer(new DBCGetAura(data.get(selected)).generatePacket());
             }
         }
@@ -244,26 +229,15 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
     }
 
 
-
     @Override
-    public void subGuiClosed(SubGuiInterface subgui){
-        if (subgui instanceof SubGuiSelectAura) {
-//            if(aura != null){
-//                SubGuiSelectAura guiSelectForm = ((SubGuiSelectAura)subgui);
-//                if(guiSelectForm.confirmed){
-//                    if(guiSelectForm.selectedAuraID == aura.secondaryAuraID)
-//                        return;
-//                    aura.secondaryAuraID = guiSelectForm.selectedAuraID;
-//                }
-//            }
-        } else if (subgui instanceof GuiSoundSelection){
+    public void subGuiClosed(SubGuiInterface subgui) {
+        if (subgui instanceof GuiSoundSelection) {
             GuiSoundSelection gss = (GuiSoundSelection) subgui;
-            if(gss.selectedResource != null) {
-                if(setNormalSound){
+            if (gss.selectedResource != null) {
+                if (setNormalSound) {
                     getTextField(30).setText(gss.selectedResource.toString());
                     unFocused(getTextField(30));
-                }
-                else {
+                } else {
                     getTextField(31).setText(gss.selectedResource.toString());
                     unFocused(getTextField(31));
                 }
@@ -289,9 +263,9 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
 
     @Override
     public void unFocused(GuiNpcTextField guiNpcTextField) {
-        if(aura == null || aura.id == -1)
+        if (aura == null || aura.id == -1)
             return;
-        if(guiNpcTextField.id == 13) {
+        if (guiNpcTextField.id == 13) {
             String name = guiNpcTextField.getText();
             if (!name.isEmpty() && !this.data.containsKey(name)) {
                 String old = this.aura.name;
@@ -303,9 +277,9 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
             } else
                 guiNpcTextField.setText(aura.name);
         }
-        if(guiNpcTextField.id == 14){
+        if (guiNpcTextField.id == 14) {
             String menuName = guiNpcTextField.getText();
-            if(!menuName.isEmpty()){
+            if (!menuName.isEmpty()) {
                 aura.menuName = menuName.replaceAll("&", "§");
             }
         }

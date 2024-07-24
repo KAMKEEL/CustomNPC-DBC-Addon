@@ -4,6 +4,7 @@
 
 global.customforms=Forms
 global.customauras=Auras
+global.customoutlines=Outlines
 
 stats.dbcsettings=DBC Settings
 
@@ -110,6 +111,7 @@ display.color=Color
 display.modify=Modify
 display.formSize=Form Size
 display.aura=Aura
+display.auraOn=Aura On
 display.fur=Fur
 display.hair=Hair
 display.hairType=Hair Type
@@ -142,6 +144,9 @@ display.majinMulti=Majin Multiplier
 
 display.selectAura=No Aura
 display.displaySettings=Display Settings
+display.secondaryAura=Secondary Aura
+display.outline=Outline
+display.selectOutline=No Outline
 display.extra=Extra
 display.size=Size
 display.speed=Speed
@@ -152,6 +157,8 @@ display.color3=Color 3
 display.alpha=Alpha
 display.3DType=3D Type
 display.2DType=2D Type
+
+
 auratype.none=None
 auratype.default=Default
 auratype.base=Base
@@ -188,7 +195,10 @@ display.kettlePlusAura=Kettle + Aura
 display.revampAura=Revamped
 display.dbcAura=DBC
 
-
+outline.noiseSize=Noise Size
+outline.colorSmoothness=Color Smoothness
+outline.colorInterpolation=Color Interpolation
+outline.pulsingSpeed=Pulsing Speed
 
 general.menuName=Menu Name
 general.strength=Strength
@@ -206,7 +216,6 @@ general.descendSound=Descend Sound
 general.allRaces=All Races
 general.allSaiyans= All Saiyans
 
-aura.secondary=Secondary Aura
 general.auraSound=Sound
 general.kaiokenSound=Kaioken Sound
 

@@ -17,10 +17,14 @@ import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.outline.IOutline;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.entity.EntityAura;
+import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.entity.EntityCustomNpc;
@@ -36,13 +40,12 @@ import java.util.Queue;
 
 public class DBCDisplay implements IDBCDisplay, IAuraData {
 
+    public static Form fakeForm;
     public final EntityNPCInterface npc;
     public boolean enabled = ConfigDBCGeneral.DISPLAY_BY_DEFAULT;
-
     // Hair Display //
     public String hairCode = DBCHair.GOKU_HAIR, hairType = "";
     public int hairColor = 0;
-
     // Race Display //
     public byte race = 1;
     public boolean useSkin = false;
@@ -52,32 +55,25 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public int furColor = -1;
     public boolean hasFur = false;
     public byte tailState;
-
     // Face Display //
     public int eyeColor = 0;
     public int noseType = 0, mouthType = 0, eyeType = 0, arcoState;
-
     // Aura Display //
     public boolean auraOn = false;
     public int auraID = -1;
-
     // Form Display //
     public int formID = -1, selectedForm = -1, rage;
     public float formLevel = 0;
     public boolean isTransforming, isKaioken;
-
     // Server Side Usage
     public float rageValue;
     public int tempState, stateChange, state2Change, auraTime, auraType, bendTime;
-    private EnumAuraTypes2D enumAuraTypes = EnumAuraTypes2D.None;
-
     public EntityAura auraEntity;
-    public static Form fakeForm;
     public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
     public HashMap<Integer, EntityAura2> dbcAuraQueue = new HashMap<>();
     public HashMap<Integer, EntityAura2> dbcSecondaryAuraQueue = new HashMap<>();
-
     public int outlineID;
+    private EnumAuraTypes2D enumAuraTypes = EnumAuraTypes2D.None;
 
     public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;
@@ -123,6 +119,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             dbcDisplay.setBoolean("DBCAuraOn", auraOn);
             dbcDisplay.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
 
+            dbcDisplay.setInteger("DBCOutlineID", outlineID);
+
             comp.setTag("DBCDisplay", dbcDisplay);
         } else {
             comp.removeTag("DBCDisplay");
@@ -159,11 +157,13 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
             arcoState = dbcDisplay.getInteger("DBCArcoState");
             hasArcoMask = dbcDisplay.getBoolean("DBCArcoMask");
-            hasFur =  dbcDisplay.getBoolean("DBCFur");
+            hasFur = dbcDisplay.getBoolean("DBCFur");
             hasEyebrows = !dbcDisplay.hasKey("DBCHasEyebrows") ? true : dbcDisplay.getBoolean("DBCHasEyebrows");
 
             auraID = dbcDisplay.getInteger("DBCAuraID");
             enumAuraTypes = EnumAuraTypes2D.values()[dbcDisplay.getInteger("DBCDisplayAura") % EnumAuraTypes2D.values().length];
+
+            outlineID = dbcDisplay.getInteger("DBCOutlineID");
 
             rage = dbcDisplay.getInteger("DBCRage");
             isTransforming = dbcDisplay.getBoolean("DBCIsTransforming");
@@ -319,7 +319,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     @Override
     public void setRace(byte race) {
-        this.race = ValueUtil.clamp(race, (byte) 0,  (byte) 5);
+        this.race = ValueUtil.clamp(race, (byte) 0, (byte) 5);
     }
 
     @Override
@@ -509,9 +509,13 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return (Outline) OutlineController.getInstance().get(outlineID);
     }
 
+    public void setOutline(IOutline outline) {
+        outlineID = outline != null ? outline.getID() : -1;
+    }
+
     public Form getForm() {
-        if(formID == - 100 && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT){
-            if(fakeForm == null)
+        if (formID == -100 && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+            if (fakeForm == null)
                 fakeForm = new Form(-100, "EXTREME_FAKE_FORM");
             return fakeForm;
         }
@@ -536,7 +540,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         if (f != null)
             formID = f.id;
     }
-
 
     public boolean isInForm() {
         return formID > -1 && getForm() != null;
@@ -577,7 +580,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             bodyC1 = 16111595;
             bodyC2 = 8533141;
             bodyC3 = 16550015;
-        } else if (race == DBCRace.MAJIN){
+        } else if (race == DBCRace.MAJIN) {
             eyeColor = 0xFF0000;
             bodyCM = 16757199;
             bodyC1 = 0;
@@ -593,13 +596,13 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public Entity getEntity() {
-        return npc;
+    public void setAuraEntity(EntityAura aura) {
+        this.auraEntity = aura;
     }
 
     @Override
-    public void setAuraEntity(EntityAura aura) {
-        this.auraEntity = aura;
+    public Entity getEntity() {
+        return npc;
     }
 
     @Override
@@ -622,7 +625,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return isKaioken;
     }
 
-
     @Override
     public int getFormID() {
         return formID;
@@ -642,6 +644,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public byte getState2() {
         return 0;
     }
+
     @Override
     public boolean isForm(int form) {
         return false;
@@ -716,6 +719,42 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         DBCDisplay aura = new DBCDisplay(null);
         aura.readFromNBT(writeToNBT(new NBTTagCompound()));
         return aura;
+    }
+
+    public static EntityCustomNpc setupGUINPC(EntityCustomNpc npc) {
+        DBCDisplay origDisplay = null;
+        if (npc == null)
+            npc = new EntityCustomNpc(Minecraft.getMinecraft().theWorld);
+        else
+            origDisplay = ((INPCDisplay) npc.display).getDBCDisplay();
+
+        DBCDisplay visualDisplay = ((INPCDisplay) npc.display).getDBCDisplay();
+        if (origDisplay != null && origDisplay.enabled && origDisplay.useSkin) {
+            visualDisplay.readFromNBT(origDisplay.writeToNBT(new NBTTagCompound()));
+            visualDisplay.setRacialExtras();
+
+        } else {
+            visualDisplay.enabled = true;
+            visualDisplay.useSkin = true;
+            visualDisplay.race = DBCData.getClient().Race;
+            visualDisplay.setDefaultColors();
+            DBCData data = DBCData.getClient();
+            boolean isSaiyan = DBCRace.isSaiyan(visualDisplay.race);
+            if (isSaiyan) {
+                visualDisplay.tailState = (data.Tail == 0 || data.Tail == 1) ? data.Tail : (byte) (data.Tail == -1 ? 0 : 1);
+            }
+
+            if (visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.NAMEKIAN) {
+                visualDisplay.hairCode = "";
+            } else if (visualDisplay.race == DBCRace.MAJIN) {
+                visualDisplay.hairCode = DBCHair.MAJIN_HAIR;
+                visualDisplay.hairColor = visualDisplay.bodyCM;
+            }
+            visualDisplay.setRacialExtras();
+
+
+        }
+        return npc;
     }
 
 }

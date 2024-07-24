@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
 import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.shader.ShaderResources;
@@ -12,12 +13,18 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.mixins.early.IEntityMC;
+import kamkeel.npcdbc.mixins.late.IModelMPM;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import noppes.npcs.client.model.ModelMPM;
+import noppes.npcs.client.renderer.RenderCustomNpc;
+import noppes.npcs.entity.EntityCustomNpc;
+import noppes.npcs.entity.data.ModelScalePart;
 import org.lwjgl.opengl.GL11;
 
 import static kamkeel.npcdbc.client.render.RenderEventHandler.disableStencilWriting;
@@ -68,8 +75,7 @@ public class OutlineRenderer {
         if (isArm) {
             glTranslatef(0.018f, 0, 0);
             renderDBCArm(player, render);
-        }
-        else
+        } else
             render.modelMain.renderBody(0.0625F);
         glPopMatrix();
 
@@ -157,6 +163,136 @@ public class OutlineRenderer {
 
     }
 
+    public static void renderOutlineNPC(ModelMPM model, Outline outline, EntityCustomNpc npc, DBCDisplay display, float partialTicks) {
+        ClientProxy.renderingOutline = true;
+        DBCDisplay data = display;
+//        if (npc.isInWater())
+//            ((IEntityMC) npc).setRenderPass(0);
+//        else
+//            ((IEntityMC) npc).setRenderPass(ClientProxy.MiddleRenderPass);
+      //  ((IEntityMC) npc).setRenderPass(0);
+       // ModelMPM model = (ModelMPM) ((IModelMPM) render).getMainModel();
+        ModelDBC dbcModel = ((IModelMPM) model).getDBCModel();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //  glAlphaFunc(GL_GREATER,0.9f);
+        glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_2D);
+        glDepthMask(true);
+        glPushMatrix();
+
+        ///////////////////////////////////
+        ///////////////////////////////////
+        //Outer
+        useShader(ShaderHelper.outline, () -> {
+            uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
+            outline.innerColor.uniform("innerColor");
+            outline.outerColor.uniform("outerColor");
+            uniform1f("noiseSize", outline.noiseSize);
+            uniform1f("range", outline.colorSmoothness);
+            uniform1f("threshold", outline.colorInterpolation);
+            uniform1f("noiseSpeed", outline.speed);
+            uniform1f("throbSpeed", outline.pulsingSpeed);
+        });
+        float scale = 1.025f, yScale = 1.025f, outlineSize = outline.size;
+        ItemStack chestPlate = npc.getEquipmentInSlot(3);
+        if (chestPlate != null) {
+            scale = yScale = 1.035f;
+        }
+
+      //  glRotatef(180, 1, 0, 0);
+     //   glTranslatef(0, -1.425f, 0);
+        glPushMatrix();
+        float size = scale * yScale * outlineSize;
+         glScalef(size, 1.025f * yScale, size);
+        model.renderBody(npc, 0.0625f);
+
+        glPushMatrix();
+        float scale2 = 1.01f;
+        glScalef(scale2, scale2, scale2);
+        glTranslatef(0, -0.0125f, 0);
+        model.renderArms(npc, 0.0625f, false);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslatef(0, -0.05f, 0);
+
+        float x = npc.rotationYaw;
+        boolean hasTail = false;
+        if (!model.tail.isHidden) {
+            hasTail = true;
+            ModelScalePart legs = npc.modelData.modelScale.legs;
+            float y = npc.modelData.getLegsY();
+            float z = 0.0F;
+            model.tail.setConfig(legs, 0.0F, y, z);
+            glPushMatrix();
+            scale2 = 1.05f;
+            glScalef(1,scale2,1);
+            glTranslatef(0, -0.035f, 0);
+            model.tail.render(0.0625f);
+            glPopMatrix();
+            model.tail.isHidden = true;
+        }
+        model.renderLegs(npc, 0.0625f);
+        if (hasTail)
+            model.tail.isHidden = false;
+        glPopMatrix();
+
+        float hairSize = 1.015f;
+         glScalef(hairSize, hairSize, hairSize);
+        glTranslatef(0, 0.025f, 0);
+        //  glScalef(1,1,0.145f);
+        model.renderHead(npc, 0.0625f);
+        glPopMatrix();
+
+
+        disableStencilWriting((npc.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
+        glPushMatrix();
+        glScalef(1.02f * 1.01f * outlineSize, 1, 1.02f * 1.02f * outlineSize);
+
+//            int race = data.Race;
+//            if (race == DBCRace.NAMEKIAN) {
+//                render.modelMain.renderHairs(0.0625F, "N");
+//            } else if (DBCRace.isSaiyan(race)) {
+//                byte ts = Byte.parseByte(JRMCoreH.dat19[data.stats.getJRMCPlayerID()].split(";")[0]);
+//                render.modelMain.renderHairs(0.0625F, ts != 0 && ts != -1 ? (ts == 1 ? "SJT2" : "") : "SJT1");
+//            } else if (race == DBCRace.ARCOSIAN) {
+//                byte ts = Byte.parseByte(JRMCoreH.dat19[data.stats.getJRMCPlayerID()].split(";")[0]);
+//                int state = data.State;
+//                Form form = data.getForm();
+//                if (form != null) {
+//                    if (form.display.bodyType.equals("firstform"))
+//                        state = 0;
+//                    else if (form.display.bodyType.equals("secondform"))
+//                        state = 2;
+//                    else if (form.display.bodyType.equals("thirdform"))
+//                        state = 3;
+//                    else if (form.display.bodyType.equals("finalform"))
+//                        state = 4;
+//                    else if (form.display.bodyType.equals("ultimatecooler"))
+//                        state = 5;
+//                }
+
+//                render.modelMain.renderHairs(0.0625F, (ts == 4 ? "n" : "") + "FR" + JRMCoreH.TransFrHrn[state]);
+
+
+        glPopMatrix();
+        disableStencilWriting(npc.getEntityId() % 256, false);
+
+
+        releaseShader();
+
+
+        ///////////////////////////////////
+        ///////////////////////////////////
+        glPopMatrix();
+        GL11.glEnable(GL_LIGHTING);
+        GL11.glDisable(GL_BLEND);
+        GL11.glEnable(GL_TEXTURE_2D);
+        ClientProxy.renderingOutline = false;
+
+    }
+
     public static void renderHair(EntityPlayer player, RenderPlayerJBRA renderer) {
         DBCData data = DBCData.get(player);
         int race = data.Race;
@@ -178,7 +314,7 @@ public class OutlineRenderer {
             }
 
             if (customHair) {
-                if (st == 6 || form != null && (form.display.hairType.equals("ssj3")||form.display.hairType.equals("raditz")))
+                if (st == 6 || form != null && (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")))
                     renderer.modelMain.renderHairs(0.0625F, "" + JRMCoreH.HairsT[6] + JRMCoreH.Hairs[0]);
                 else if (st == 14)
                     renderer.modelMain.renderHairsV2(0.0625F, DBCHair.SSJ4_HAIR, 0.0F, 0, 0, pl, race, renderer, (AbstractClientPlayer) player);

@@ -116,7 +116,7 @@ public class RenderEventHandler {
                 glLoadMatrix(DEFAULT_MODELVIEW);
 
             glPushMatrix();
-            glStencilFunc(GL_GREATER, player.getEntityId()% 256, 0xFF);
+            glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
             glStencilMask(0x0);
             IRenderCusPar particleRender = null;
             for (Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator(); iter.hasNext(); ) {
