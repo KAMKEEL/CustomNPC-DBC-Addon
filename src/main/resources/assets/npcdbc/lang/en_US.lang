@@ -280,6 +280,7 @@ dbc.se.fatigue=Fatigue
 
 npcdbc.noFormSelected=No Form Selected
 npcdbc.cooldown=You need to cooldown
+npcdbc.noTail=Transformation requires a grown tail
 npcdbc.nextUnlocked=You do not have the next transformation unlocked
 npcdbc.spectator=You cannot transform as a spectator
 npcdbc.healthRequirement=You need to be below %d percent health to access the selected form

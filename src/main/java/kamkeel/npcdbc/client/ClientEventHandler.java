@@ -15,6 +15,7 @@ import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.TransformController;
@@ -114,6 +115,9 @@ public class ClientEventHandler {
             return true;
 
         DBCData dbcData = DBCData.getClient();
+        if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail())
+            return false;
+
         if (!form.stackable.kaiokenStackable && dbcData.isForm(DBCForm.Kaioken))
             return false;
         if (!form.stackable.uiStackable && dbcData.isForm(DBCForm.UltraInstinct))
@@ -122,6 +126,7 @@ public class ClientEventHandler {
             return false;
         if (!form.stackable.godStackable && dbcData.isForm(DBCForm.GodOfDestruction))
             return false;
+
 
         if (form.requiredForm.containsKey((int) dbcData.Race)) {
             return form.requiredForm.get((int) dbcData.Race) == dbcData.State;
@@ -140,6 +145,9 @@ public class ClientEventHandler {
             PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
             if (formData != null) {
                 if (KeyHandler.AscendKey.isPressed()) {
+                    DBCData dbcData = DBCData.getClient();
+                    Form form = formData.getCurrentForm();
+
                     if (formData.selectedForm == -1)
                         Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.noFormSelected"));
                     else if (formData.isInCustomForm()) {
@@ -147,13 +155,42 @@ public class ClientEventHandler {
                             Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.cooldown"));
                             return;
                         }
-                        Form form = formData.getCurrentForm();
-                        if (form.hasChild() && !formData.hasFormUnlocked(form.getChildID()))
-                            Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.nextUnlocked"));
+
+                        if (form.hasChild()) {
+                            form = (Form) form.getChild();
+                            if (!formData.hasFormUnlocked(form.getID())) {
+                                Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.nextUnlocked"));
+                                return;
+                            }
+
+                            if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail()) {
+                                Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.noTail"));
+                                return;
+                            }
+                        }
                     } else {
-                        Form form = formData.getSelectedForm();
+                        form = formData.getSelectedForm();
                         if (form != null) {
-                            DBCData dbcData = DBCData.getClient();
+
+                            if (form.requiredForm.containsKey((int) dbcData.Race)) {
+                                if (form.requiredForm.get((int) dbcData.Race) != dbcData.State) {
+                                    Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.wrongDBC"));
+                                    return;
+                                }
+                            } else {
+                                // Must be in Parent Form to Transform
+                                if (form.parentID != -1 && form.isFromParentOnly()) {
+                                    if (form.parentID != formData.currentForm) {
+                                        Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.transformFromParent"));
+                                        return;
+                                    }
+                                }
+                            }
+                            if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail()) {
+                                Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.noTail"));
+                                return;
+                            }
+
                             if (dbcData.stats.isFusionSpectator()) {
                                 Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.spectator"));
                                 return;
@@ -174,20 +211,7 @@ public class ClientEventHandler {
                             if (allowBypass)
                                 return;
 
-                            if (form.requiredForm.containsKey((int) dbcData.Race)) {
-                                if (form.requiredForm.get((int) dbcData.Race) != dbcData.State) {
-                                    Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.wrongDBC"));
-                                    return;
-                                }
-                            } else {
-                                // Must be in Parent Form to Transform
-                                if (form.parentID != -1 && form.isFromParentOnly()) {
-                                    if (form.parentID != formData.currentForm) {
-                                        Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.transformFromParent"));
-                                        return;
-                                    }
-                                }
-                            }
+
                         }
                     }
                 }

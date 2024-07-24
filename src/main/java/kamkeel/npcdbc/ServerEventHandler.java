@@ -25,7 +25,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -179,6 +178,10 @@ public class ServerEventHandler {
                 }
 
                 dbcData.getRawCompound().setFloat("addonCurrentHeat", newHeat);
+            }
+
+            if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail()) {
+                TransformController.handleFormDescend(player, -10);
             }
         }
     }

@@ -7,6 +7,7 @@ import JinRyuu.JRMCore.entity.EntityCusPar;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerBonus;
@@ -427,6 +428,14 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         return getAura();
     }
 
+    public boolean hasTail() {
+        if (DBCRace.isSaiyan(Race))
+            return Tail == -1 || Tail == 0 || Tail == 1;
+        else if (Race == DBCRace.ARCOSIAN)
+            return true;
+
+        return false;
+    }
 
     public Aura getAura() {
         Form form = getForm();
