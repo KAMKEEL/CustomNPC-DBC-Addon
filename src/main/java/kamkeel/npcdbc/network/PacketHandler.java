@@ -10,6 +10,10 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.network.packets.*;
 import kamkeel.npcdbc.network.packets.aura.*;
 import kamkeel.npcdbc.network.packets.form.*;
+import kamkeel.npcdbc.network.packets.outline.DBCGetOutline;
+import kamkeel.npcdbc.network.packets.outline.DBCRemoveOutline;
+import kamkeel.npcdbc.network.packets.outline.DBCRequestOutline;
+import kamkeel.npcdbc.network.packets.outline.DBCSaveOutline;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -47,6 +51,11 @@ public final class PacketHandler {
         map.put(DBCSetFlight.packetName, new DBCSetFlight());
         map.put(DBCRemoveAura.packetName, new DBCRemoveAura());
         map.put(DBCSaveAura.packetName, new DBCSaveAura());
+
+        map.put(DBCRequestOutline.packetName, new DBCRequestOutline());
+        map.put(DBCRemoveOutline.packetName, new DBCRemoveOutline());
+        map.put(DBCGetOutline.packetName, new DBCGetOutline());
+        map.put(DBCSaveOutline.packetName, new DBCSaveOutline());
         this.register();
     }
 

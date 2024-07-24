@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.outline;
 
 import kamkeel.npcdbc.client.utils.Color;
+import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,7 +10,7 @@ import noppes.npcs.util.ValueUtil;
 
 public class Outline implements IOutline {
     public int id = -1;
-    public String name, menuName;
+    public String name = "", menuName ="§aNEW";
 
     public Color innerColor = new Color(0x00ffff, 1), outerColor = new Color(0xffffff, 1);
     public float size = 1f, speed = 1f, noiseSize = 1f, colorSmoothness = 0.2f, colorInterpolation = 0.55f, pulsingSpeed = 0;
@@ -17,11 +18,16 @@ public class Outline implements IOutline {
     public Outline() {
     }
 
+    public Outline(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public NBTTagCompound writeToNBT() {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger("ID", id);
         compound.setString("name", name);
+        compound.setString("menuName", name);
         compound.setFloat("size", size);
         compound.setFloat("speed", speed);
         compound.setFloat("noiseSize", noiseSize);
@@ -40,6 +46,7 @@ public class Outline implements IOutline {
         else if (AnimationController.Instance != null)
             id = FormController.Instance.getUnusedId();
         name = compound.getString("name");
+        menuName = compound.getString("menuName");
         size = compound.getFloat("size");
         speed = compound.getFloat("speed");
         noiseSize = compound.getFloat("noiseSize");
@@ -96,6 +103,7 @@ public class Outline implements IOutline {
         this.colorInterpolation = ValueUtil.clamp(interp, 0, 1);
         return this;
     }
+
     @Override
     public String getName() {
         return name;
@@ -133,6 +141,7 @@ public class Outline implements IOutline {
     public IOutline clone() {
         Outline outline = new Outline();
         outline.readFromNBT(writeToNBT());
+        outline.id = OutlineController.Instance.getUnusedId();
         return outline;
     }
 
