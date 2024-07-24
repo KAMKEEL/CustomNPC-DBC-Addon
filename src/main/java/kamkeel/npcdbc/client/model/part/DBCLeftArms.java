@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.client.model.part;
 
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -10,6 +12,9 @@ import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.data.ModelData;
 import noppes.npcs.entity.data.ModelPartData;
+import org.lwjgl.opengl.GL11;
+
+import static kamkeel.npcdbc.client.render.RenderEventHandler.disableStencilWriting;
 
 public class DBCLeftArms extends ModelDBCPartInterface {
 
@@ -49,6 +54,14 @@ public class DBCLeftArms extends ModelDBCPartInterface {
         if (!display.enabled)
             return;
 
+        if (!ClientProxy.renderingOutline && display.outlineID != -1)
+            RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
+
+        if (ClientProxy.renderingOutline) {
+            GL11.glTranslatef(-.02f,-0.016f,0);
+            disableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
+        }
+
         this.ArcoLeftShoulder.rotateAngleY = base.bipedLeftArm.rotateAngleY;
         this.ArcoLeftShoulder.rotateAngleX = base.bipedLeftArm.rotateAngleX;
         this.ArcoLeftShoulder.rotateAngleZ = base.bipedLeftArm.rotateAngleZ;
@@ -81,6 +94,12 @@ public class DBCLeftArms extends ModelDBCPartInterface {
             useColor = 0;
         } else {
              super.render(par1);
+        }
+        if (!ClientProxy.renderingOutline && display.outlineID != -1)
+            RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
+
+        if (ClientProxy.renderingOutline) {
+            disableStencilWriting((entity.getEntityId()) % 256, false);
         }
     }
 

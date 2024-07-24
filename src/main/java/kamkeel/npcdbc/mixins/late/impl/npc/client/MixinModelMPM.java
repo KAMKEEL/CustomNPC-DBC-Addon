@@ -100,9 +100,10 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
 
         ////////////////////////////////////////
         ////////////////////////////////////////
-        mc.entityRenderer.enableLightmap(0);
         RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
         PostProcessing.bloom(1.5f);
+        mc.entityRenderer.enableLightmap(0);
+
     }
 
     @Inject(method = "renderHead", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 2, shift = At.Shift.BEFORE, remap = true), cancellable = true)

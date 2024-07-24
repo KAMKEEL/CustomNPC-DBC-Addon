@@ -1,7 +1,9 @@
 package kamkeel.npcdbc.client.model.part;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
@@ -13,6 +15,9 @@ import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.data.ModelData;
 import noppes.npcs.entity.data.ModelPartData;
 import noppes.npcs.util.ValueUtil;
+import org.lwjgl.opengl.GL11;
+
+import static kamkeel.npcdbc.client.render.RenderEventHandler.disableStencilWriting;
 
 public class DBCHorns extends ModelDBCPartInterface {
     // First Form
@@ -166,7 +171,15 @@ public class DBCHorns extends ModelDBCPartInterface {
         if (!display.enabled)
             return;
 
-        if (display.useSkin){
+        if (!ClientProxy.renderingOutline && display.outlineID != -1)
+            RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
+
+        if (ClientProxy.renderingOutline) {
+            GL11.glTranslatef(0.00f, -0.02f, 0.015f);
+            GL11.glScaled(0.98, 0.98, 0.98);
+            disableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
+        }
+        if (display.useSkin) {
             int state = ValueUtil.clamp(display.getCurrentArcoState(), 0, 7);
             if (display.race != DBCRace.ARCOSIAN)
                 state = 3;
@@ -193,11 +206,10 @@ public class DBCHorns extends ModelDBCPartInterface {
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
-            if(!NamekianAntennas.isHidden){
+            if (!NamekianAntennas.isHidden) {
                 useColor = 0;
                 super.render(par1);
-            }
-            else {
+            } else {
                 useColor = 0;
                 location = new ResourceLocation("jinryuudragonbc:cc/arc/m/0B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
                 super.render(par1);
@@ -217,6 +229,13 @@ public class DBCHorns extends ModelDBCPartInterface {
                 useColor = 0;
                 location = new ResourceLocation("jinryuudragonbc:cc/arc/m/4B" + JRMCoreH.TransFrSkn2[state] + display.bodyType + ".png");
                 super.render(par1);
+
+            }
+            if (!ClientProxy.renderingOutline && display.outlineID != -1)
+                RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
+
+            if (ClientProxy.renderingOutline) {
+                disableStencilWriting((entity.getEntityId()) % 256, false);
             }
         } else {
             super.render(par1);

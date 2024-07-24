@@ -61,7 +61,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             getLabel(1306).color = 0xffffff;
             addButton(new GuiNpcButtonYesNo(13061, guiLeft + 64, y, 60, 20, display.auraOn));
 
-            y += 24;
+            y += 23;
             addLabel(new GuiNpcLabel(1206, "display.aura", guiLeft, y + 5));
             getLabel(1206).color = 0xffffff;
             addButton(new GuiNpcButton(1306, guiLeft + 40, y, 91, 20, "display.selectAura"));

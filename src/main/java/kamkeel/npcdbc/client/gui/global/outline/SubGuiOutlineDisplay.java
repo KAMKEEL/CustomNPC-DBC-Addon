@@ -386,14 +386,14 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
 
 
         int outlineID = visualDisplay.outlineID;
-        if (outlineID != -1)
-            visualDisplay.outlineID = outline.id;
+        visualDisplay.outlineID = outline.id;
 
         int hideName = npc.display.showName;
         int size = npc.display.modelSize;
         npc.display.showName = 1;
         npc.display.modelSize = 5;
         GL11.glColor4f(1, 1, 1, 1);
+
         EntityLivingBase entity = this.npc;
 
         int l = guiLeft + 190 + xOffset;

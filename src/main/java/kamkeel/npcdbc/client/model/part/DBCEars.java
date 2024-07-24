@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.client.model.part;
 
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -9,6 +11,9 @@ import net.minecraft.client.model.ModelRenderer;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.data.ModelData;
 import noppes.npcs.entity.data.ModelPartData;
+import org.lwjgl.opengl.GL11;
+
+import static kamkeel.npcdbc.client.render.RenderEventHandler.disableStencilWriting;
 
 public class DBCEars extends ModelDBCPartInterface {
 
@@ -45,7 +50,15 @@ public class DBCEars extends ModelDBCPartInterface {
         if (!display.enabled)
             return;
 
-        if(display.useSkin){
+        if (!ClientProxy.renderingOutline && display.outlineID != -1)
+            RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
+        if (ClientProxy.renderingOutline) {
+            GL11.glTranslatef(0, 0.005f, -0.0225f);
+            GL11.glScaled(0.985, 0.985, 0.985);
+            disableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
+        }
+
+        if (display.useSkin) {
             this.useColor = 0;
             bodyCM = display.bodyCM;
             //////////////////////////////////////////////////////
@@ -64,13 +77,18 @@ public class DBCEars extends ModelDBCPartInterface {
         } else {
             super.render(par1);
         }
+        if (!ClientProxy.renderingOutline && display.outlineID != -1)
+            RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
+
+        if (ClientProxy.renderingOutline) {
+            disableStencilWriting((entity.getEntityId()) % 256, false);
+        }
     }
 
     @Override
     public void initData(ModelData modelData) {
         ModelPartData config = data.getPartData("dbcEars");
-        if(config == null)
-        {
+        if (config == null) {
             isHidden = true;
             return;
         }
@@ -79,10 +97,9 @@ public class DBCEars extends ModelDBCPartInterface {
 
         ArcoEars.isHidden = config.type != 1;
 
-        if(!config.playerTexture){
+        if (!config.playerTexture) {
             location = config.getResource();
-        }
-        else
+        } else
             location = null;
     }
 }

@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.global.outline;
 
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectOutline;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -47,7 +48,6 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
         this.npc = DBCDisplay.setupGUINPC((EntityCustomNpc) npc);
         this.npc.display.name = "outline man";
         visualDisplay = ((INPCDisplay) this.npc.display).getDBCDisplay();
-        //  visualDisplay.outlineID = -1;
 
         PacketHandler.Instance.sendToServer(new DBCRequestOutline(-1).generatePacket());
 
@@ -157,7 +157,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
         this.outline = new Outline();
         outline.readFromNBT(compound);
         setSelected(outline.name);
-       // visualDisplay.setOutline(outline);
+        // visualDisplay.setOutline(outline);
         initGui();
     }
 
@@ -167,20 +167,16 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
 
         if (hasSubGui())
             return;
-//        if (outline == null || outline.id == -1)
-//            return;
-
 
         int outlineID = visualDisplay.outlineID;
-        if (outlineID != -1)
-            visualDisplay.outlineID = outline.id;
+        visualDisplay.outlineID = outline.id;
         int hideName = npc.display.showName;
         int size = npc.display.modelSize;
         npc.display.showName = 1;
         npc.display.modelSize = 5;
         GL11.glColor4f(1, 1, 1, 1);
         EntityLivingBase entity = this.npc; // DBCData.getClient().player;//
-
+      //  entity = DBCData.getClient().player;
         int l = guiLeft + 110;
         int i1 = guiTop + 187;
 

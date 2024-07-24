@@ -2,6 +2,7 @@ package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -44,13 +45,15 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
     }
 
 
-
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.BEFORE, remap = true), remap = true)
     private void colorCorrectionTail2(float par1, CallbackInfo ci) {
         if (!this.isHidden && !monkey.isHidden) {
             DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
             if (display == null || !display.enabled)
                 return;
+
+            if (!kamkeel.npcdbc.client.ClientProxy.renderingOutline && display.outlineID != -1)
+                RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
 
             int tailColor = 0;
             if (DBCRace.isSaiyan(display.race)) {
@@ -103,5 +106,13 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
 
             new Color(tailColor, base.alpha).glColor();
         }
+    }
+
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.AFTER, remap = true), remap = true)
+    private void after(float par1, CallbackInfo ci) {
+        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+
+        if (!kamkeel.npcdbc.client.ClientProxy.renderingOutline && display.outlineID != -1)
+            RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
     }
 }
