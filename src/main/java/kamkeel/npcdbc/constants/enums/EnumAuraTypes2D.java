@@ -21,7 +21,8 @@ public enum EnumAuraTypes2D {
     MasteredUI("mui"),
     GoD("godofdestruction"),
     GoDToppo("godofdestructiontoppo"),
-    Jiren("jiren");
+    Jiren("jiren"),
+    KettleMode("kettle");
 
 
     public final String name;

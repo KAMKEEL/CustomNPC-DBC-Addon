@@ -102,7 +102,7 @@ public class MixinEntityAura2 implements IEntityAura {
         }
         if (bol6 == -2) {
             float height = getSize <= 0 ? this.entity.height : (getSize * 1.3f);
-            ParticleFormHandler.spawnAura2D(type2D, color, this.entity, data, height);
+            ParticleFormHandler.spawnAura2D(type2D, color, this.entity, data, height,isGUIAura);
         }
     }
 

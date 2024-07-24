@@ -28,8 +28,7 @@ public class AuraDisplay implements IAuraDisplay {
 
     public boolean overrideDBCAura = false;
 
-    public boolean kettleModeCharging, kettleModeAura;
-    public byte kettleModeType = 0;
+    public boolean kettleModeCharging, kettleModeEnabled;
 
     public String auraSound = "", kaiokenSound = "";
 
@@ -79,8 +78,7 @@ public class AuraDisplay implements IAuraDisplay {
 
         // Kettle Mode
         kettleModeCharging = rendering.hasKey("kettleModeCharging") && rendering.getBoolean("kettleModeCharging");
-        kettleModeAura = rendering.hasKey("kettleMode") && rendering.getBoolean("kettleMode");
-        kettleModeType = rendering.hasKey("kettleModeType") ? rendering.getByte("kettleModeType") : 0;
+        kettleModeEnabled = rendering.hasKey("kettleMode") && rendering.getBoolean("kettleMode");
 
         // Sounds
         auraSound = rendering.hasKey("auraSound") ? rendering.getString("auraSound") : "";
@@ -121,8 +119,7 @@ public class AuraDisplay implements IAuraDisplay {
         rendering.setBoolean("overrideDBCAura", overrideDBCAura);
 
         rendering.setBoolean("kettleModeCharging", kettleModeCharging);
-        rendering.setBoolean("kettleMode", kettleModeAura);
-        rendering.setByte("kettleModeType", kettleModeType);
+        rendering.setBoolean("kettleMode", kettleModeEnabled);
 
         rendering.setString("auraSound", auraSound);
         rendering.setString("kaiokenSound", kaiokenSound);
@@ -134,13 +131,13 @@ public class AuraDisplay implements IAuraDisplay {
     }
 
     @Override
-    public boolean getKettleModeAura() {
-        return this.kettleModeAura;
+    public boolean getKettleModeEnabled() {
+        return this.kettleModeEnabled;
     }
 
     @Override
-    public void setKettleModeAura(boolean set) {
-        this.kettleModeAura = set;
+    public void setKettleModeEnabled(boolean set) {
+        this.kettleModeEnabled = set;
     }
 
     @Override
@@ -151,16 +148,6 @@ public class AuraDisplay implements IAuraDisplay {
     @Override
     public void setKettleModeCharging(boolean set) {
         this.kettleModeCharging = set;
-    }
-
-    @Override
-    public byte getKettleModeType() {
-        return this.kettleModeType;
-    }
-
-    @Override
-    public void setKettleModeType(byte type) {
-        this.kettleModeType = type;
     }
 
     @Override

@@ -6,20 +6,25 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 
 public class ParticleFormHandler {
     public static void spawnAura2D(DBCDisplay display) {
         if (display != null && display.auraEntity != null)
-            spawnAura2D(display.auraEntity.type2D, display.auraEntity.color1, display.npc, display.auraEntity.auraData, display.npc.height);
+            spawnAura2D(display.auraEntity.type2D, display.auraEntity.color1, display.npc, display.auraEntity.auraData, display.npc.height, false);
     }
 
-    public static void spawnAura2D(EnumAuraTypes2D type, int color, Entity entity, IAuraData data, float height) {
+    public static void spawnAura2D(EnumAuraTypes2D type, int color, Entity entity, IAuraData data, float height, boolean isGUI) {
         if (!entity.worldObj.isRemote || data == null)
             return;
+        if ((!JGConfigClientSettings.CLIENT_DA13 || !JGConfigClientSettings.CLIENT_DA8) && !isGUI)
+            return;
+
 //|| (!JGConfigClientSettings.CLIENT_DA13 || !JGConfigClientSettings.CLIENT_DA8) && !data.getAuraEntity().isGUIAura  || data.getAuraEntity() == null
         float numberOfParticles = EnumAuraTypes2D.getParticleWidth(data);
+        int ticks = isGUI ? Minecraft.getMinecraft().thePlayer.ticksExisted : entity.ticksExisted;
 
         boolean isMUI = false;
         if (type == EnumAuraTypes2D.MasteredUI) {
@@ -586,14 +591,14 @@ public class ParticleFormHandler {
                             particle.worldObj.spawnEntityInWorld(particle);
                         }
                     }
-                    if (entity.ticksExisted % (isMUI ? 1 : 4) == 0) {//checked
+                    if (ticks % (isMUI ? 1 : 4) == 0) {//checked
                         x = Math.random() * 1.5 - 0.75;
                         y = (Math.random() * (double) height - 0.5) * 0.800000011920929;
                         z = Math.random() * 1.5 - 0.75;
                         particle = new EntityCusPar("jinryuudragonbc:bens_particles.png", entity.worldObj, 0.2F, 0.2F, entity.posX, posY, entity.posZ, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 8.0) + 32, 32, 8, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.019999999552965164) + 0.02F) * life * 0.5F * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F * 0.5F, 0.2F * life * 0.5F * 0.5F, 0, red2, green2, red, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.4F * (isMUI ? 1.2F : 1.0F) * alpha, 0.45F * (isMUI ? 1.2F : 1.0F) * alpha, 0.015F * (isMUI ? 1.2F : 1.0F) * alpha, false, -1, true, entity);
                         particle.worldObj.spawnEntityInWorld(particle);
                     }
-                    if (entity.ticksExisted % 4 == 0) { //checked
+                    if (ticks % 4 == 0) { //checked
                         x = Math.random() * 0.6000000238418579 - 0.30000001192092896;
                         y = (Math.random() * (double) height - 0.5) * 0.800000011920929;
                         z = Math.random() * 0.6000000238418579 - 0.30000001192092896;
@@ -747,7 +752,7 @@ public class ParticleFormHandler {
                             particle2 = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, 0.0, Math.random() * 0.05000000074505806, 0.0, 0.0F, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, ((float) (Math.random() * 0.029999999329447746) + 0.03F) * life * 0.5F, ((float) (Math.random() * 0.009999999776482582) + 0.02F) * life * 0.5F, 0.2F * life * 0.5F, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.0F, 0.0F, 0.18F, 0.21000001F, 0.006F, false, -1, true, entity);
                             particle2.worldObj.spawnEntityInWorld(particle2);
                         }
-                        if (entity.ticksExisted % 4 == 0) {
+                        if (ticks % 4 == 0) {
                             x = Math.random() * (double)outNew - (double)(outNew / 2.0F);
                             y = Math.random() * (double) height - 0.5;
                             z = Math.random() * (double)outNew - (double)(outNew / 2.0F);
@@ -799,7 +804,7 @@ public class ParticleFormHandler {
                             }
                         }
 
-                        if (entity.ticksExisted % 4 == 0) {
+                        if (ticks % 4 == 0) {
                             x = Math.random() * 0.6000000238418579 - 0.30000001192092896;
                             y = (Math.random() * (double) height - 0.5) * 0.800000011920929;
                             z = Math.random() * 0.6000000238418579 - 0.30000001192092896;
@@ -813,6 +818,29 @@ public class ParticleFormHandler {
                             particle.worldObj.spawnEntityInWorld(particle);
                         }
                     }
+                break;
+            case KettleMode:
+                for (int k = 0; k < JGConfigClientSettings.get_da1(); ++k) {
+                    for (int i = 0; i < 3; ++i) {
+                        double posXOth = entity.posX;
+                        double posYOth = entity.posY + (double) (entity instanceof EntityPlayerSP ? -1.6F : 0.0F);
+                        double posZOth = entity.posZ;
+                        float red = 250.0F;
+                        float green = 250.0F;
+                        float blue = 250.0F;
+
+                        float life = 0.8F * entity.height;
+                        float outNew = 0.99F;
+                        float alpha = 1.0F;
+                        float speed = 1.2F;
+
+                        double y = entity.height * 0.8F;
+                        double x = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+                        double z = Math.random() * (double) outNew - (double) (outNew / 2.0F);
+                        EntityCusPar particle = new EntityCusPar("jinryuumodscore:bens_particles.png", entity.worldObj, 0.2F, 0.2F, posXOth, posYOth, posZOth, x, y, z, Math.random() * 0.3F - 0.15F, 0.25 + Math.random() * 0.125 * (double) speed, Math.random() * 0.3F - 0.15F, -0.02F * speed, (int) (Math.random() * 3.0) + 8, 8, 3, 32, false, 0.0F, false, 0.0F, 1, "", 50, 2, 0.05F + ((float) (Math.random() * 0.03F) + 0.03F) * life * 1.2F, ((float) (Math.random() * 0.01F) + 0.02F) * life * 1.2F / 2.0F, 0.3F * life * 1.2F, 0, red, green, blue, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F, 2, 0.1F, 0.0F, 0.4F * alpha, 0.45F * alpha, 0.02F * alpha, false, -1, false, entity);
+                        entity.worldObj.spawnEntityInWorld(particle);
+                    }
+                }
                 break;
         }
 

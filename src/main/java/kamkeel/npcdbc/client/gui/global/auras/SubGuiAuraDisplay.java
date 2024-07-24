@@ -228,7 +228,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
                         maxScroll += 23;
                         y += 23;
-
                         scrollWindow.addLabel(new GuiNpcLabel(200, "display.size", 3, y + 5));
                         scrollWindow.getLabel(200).color = 0xffffff;
                         scrollWindow.addTextField(new GuiNpcTextField(200, this, guiX + 165, y, 33, 18, String.valueOf(display.size)));
@@ -278,7 +277,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
             maxScroll += 23;
             y += 23;
-
             scrollWindow.addLabel(new GuiNpcLabel(203, "display.lightningAlpha", 3, y + 5));
             scrollWindow.getLabel(203).color = 0xffffff;
             scrollWindow.addTextField(new GuiNpcTextField(203, this, guiX + 165, y, 33, 18, String.valueOf(display.lightningAlpha)));
@@ -290,7 +288,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
             maxScroll += 23;
             y += 23;
-
             scrollWindow.addLabel(new GuiNpcLabel(204, "display.lightningSpeed", 3, y + 5));
             scrollWindow.getLabel(204).color = 0xffffff;
             scrollWindow.addTextField(new GuiNpcTextField(204, this, guiX + 165, y, 33, 18, String.valueOf(display.lightningSpeed)));
@@ -302,7 +299,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
             maxScroll += 23;
             y += 23;
-
             scrollWindow.addLabel(new GuiNpcLabel(205, "display.lightningIntensity", 3, y + 5));
             scrollWindow.getLabel(205).color = 0xffffff;
             scrollWindow.addTextField(new GuiNpcTextField(205, this, guiX + 165, y, 33, 18, String.valueOf(display.lightningIntensity)));
@@ -343,7 +339,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
             maxScroll += 23;
             y += 23;
-
             scrollWindow.addLabel(new GuiNpcLabel(303, "display.kaiokenAlpha", 3, y + 5));
             scrollWindow.getLabel(303).color = 0xffffff;
             scrollWindow.addTextField(new GuiNpcTextField(303, this, guiX + 165, y, 33, 18, String.valueOf(display.kaiokenAlpha)));
@@ -352,9 +347,9 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             scrollWindow.getTextField(303).setMinMaxDefault(-1, 255, -1);
             scrollWindow.addButton(new GuiNpcButton(3103, guiX + 200, y - 1, 20, 20, "X"));
             scrollWindow.getButton(3103).enabled = display.kaiokenAlpha != -1;
+
             maxScroll += 23;
             y += 23;
-
             scrollWindow.addLabel(new GuiNpcLabel(304, "display.kaiokenSize", 3, y + 5));
             scrollWindow.getLabel(304).color = 0xffffff;
             scrollWindow.addTextField(new GuiNpcTextField(304, this, guiX + 165, y, 33, 18, String.valueOf(display.kaiokenSize)));
@@ -367,18 +362,12 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         }
 
 
-//        y += 43;
-//        scrollWindow.addLabel(new GuiNpcLabel(401, "display.kettleModeAura", 3, y + 5));
-//        scrollWindow.getLabel(401).color = 0xffffff;
-//        scrollWindow.addButton(new GuiNpcButtonYesNo(401, guiX + 140, y, 80, 20, display.kettleModeAura));
-
         y += 50;
-        scrollWindow.addLabel(new GuiNpcLabel(402, "display.kettleModeType", 3, y + 5));
+        scrollWindow.addLabel(new GuiNpcLabel(402, "display.kettleModeEnabled", 3, y + 5));
         scrollWindow.getLabel(402).color = 0xffffff;
-        scrollWindow.addButton(new GuiButtonBiDirectional(402, guiX + 122, y, 104, 20, new String[]{"display.kettleOff", "display.kettleOnly", "display.kettlePlusAura"}, display.kettleModeType));
+        scrollWindow.addButton(new GuiNpcButtonYesNo(402, guiX + 140, y, 80, 20, display.kettleModeEnabled));
 
-
-        if (display.kettleModeType > 0) {
+        if (display.kettleModeEnabled) {
             maxScroll += 23;
             y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(400, "display.kettleModeCharging", 3, y + 5));
@@ -445,7 +434,8 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             initGui();
         } else if(button.id == 3007) {
             // Change 2D Type
-            display.type2D = EnumAuraTypes2D.values()[button.getValue()];
+            int val = button.getValue();
+            display.type2D = EnumAuraTypes2D.values()[val <= 13 ? val : 0];
             initGui();
         } else if(button.id == 202) {
             // Toggle Lightning
@@ -487,19 +477,12 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             initGui();
         } else if(button.id == 401) {
             // Toggle Kettle Charging
-            display.kettleModeAura = !display.kettleModeAura;
+            display.kettleModeEnabled = !display.kettleModeEnabled;
             initGui();
         } else if(button.id == 402) {
             // Toggle Kettle Charging
-            display.kettleModeType = (byte) ((GuiNpcButton) guibutton).getValue();
-            scrollWindow.mouseScroll = 1;
-            if (scrollWindow.nextScrollY > (float) scrollWindow.maxScrollY) {
-                scrollWindow.nextScrollY = (float) scrollWindow.maxScrollY;
-                scrollWindow.clipHeight = scrollWindow.maxScrollY;
-
-            }
+            display.kettleModeEnabled = !display.kettleModeEnabled;
             initGui();
-
         } else if (button.id == 670) {
             revampedAura = button.getValue();
         } else if (button.id == 2102) {
@@ -545,8 +528,9 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
     @Override
     public void keyTyped(char c, int i) {
         super.keyTyped(c,i);
-        if (i == 1)
-            NoppesUtil.openGUI(player, parent);
+        if (i == 1) {
+            close();
+        }
 
     }
 
@@ -733,8 +717,8 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         try {
             RenderManager.instance.renderEntityWithPosYaw(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F);
         } catch (Exception ignored) {}
-
         useGUIAura = false;
+
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
         entity.prevRotationYaw = entity.rotationYaw = f3;
         entity.rotationPitch = f4;
@@ -774,6 +758,10 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
 	public void save(){}
 
+    public void close() {
+        NoppesUtil.openGUI(player, parent);
+        save();
+    }
     public String getColor(int input) {
         String str;
         for(str = Integer.toHexString(input); str.length() < 6; str = "0" + str) {}

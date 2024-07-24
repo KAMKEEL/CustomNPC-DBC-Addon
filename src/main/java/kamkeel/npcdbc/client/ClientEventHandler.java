@@ -493,10 +493,12 @@ public class ClientEventHandler {
             aur.setSpd(aura.display.speed);
 
         //Kettle Mode stuff
-        if (aura.display.kettleModeCharging && !SubGuiAuraDisplay.useGUIAura)
-            aur.kettleMode = isCharging ? aura.display.kettleModeType : 0;
-        else
-            aur.kettleMode = aura.display.kettleModeType;
+        if (aura.display.kettleModeEnabled) {
+            if (aura.display.kettleModeCharging && !SubGuiAuraDisplay.useGUIAura)
+                aur.kettleMode = (byte) (isCharging ? 2 : 0);
+            else
+                aur.kettleMode = 2;
+        }
 
         ////////////////////////////////////////////////////
         ////////////////////////////////////////////////////

@@ -85,7 +85,7 @@ public class EntityAura extends Entity {
 
 
     public EntityAura load(boolean all) {
-        if (isRoot())
+        if (isRoot() && !isDead && auraData.getAuraEntity() != this)
             auraData.setAuraEntity(this);
 
         color1 = auraData.getAuraColor();
@@ -99,7 +99,7 @@ public class EntityAura extends Entity {
         if (aura.display.type2D == EnumAuraTypes2D.Default)
             type2D = EnumAuraTypes2D.getFrom3D(type3D);
 
-        if (aura.display.type == None && aura.display.type2D == EnumAuraTypes2D.Default)
+        if ((type3D == None || type3D == Base) && aura.display.type2D == EnumAuraTypes2D.Default)
             type2D = EnumAuraTypes2D.Base;
 
 
@@ -303,9 +303,13 @@ public class EntityAura extends Entity {
 
         if (!fadeOut && aura.display.type2D != EnumAuraTypes2D.None) {
             float height = effectiveSize <= 0 ? entity.height : (this.height * 0.53f) * effectiveSize;
-            ParticleFormHandler.spawnAura2D(type2D, color1, entity, auraData, height);
+            ParticleFormHandler.spawnAura2D(type2D, color1, entity, auraData, height, isGUIAura);
         }
 
+        if (aura.display.kettleModeEnabled) {
+            ParticleFormHandler.spawnAura2D(EnumAuraTypes2D.KettleMode, 0, entity, auraData, 0, isGUIAura);
+
+        }
 
         String auraDir = "jinryuudragonbc:";
         //  setTexture(1, auraDir + "auragbpng");
@@ -324,6 +328,20 @@ public class EntityAura extends Entity {
 
         for (EntityAura child : children.values()) //children of root cannot have children
             child.despawn();
+    }
+
+    public void setDead() {
+        super.setDead();
+        ((IEntityMC) entity).setRenderPass(0); //rest player renderpass on aura despawn
+        entity.ignoreFrustumCheck = false;
+
+
+        if (isRoot() && auraData.getAuraEntity() == this)
+            auraData.setAuraEntity(null);
+
+        if (parent != null && parent.children != null && parent.children.containsKey(name))
+            parent.children.remove(name);
+
     }
 
     public void onUpdate() {
@@ -432,22 +450,8 @@ public class EntityAura extends Entity {
     }
 
     public boolean shouldRender() {
-        return (type3D != EnumAuraTypes3D.None || type3D == EnumAuraTypes3D.None && hasLightning) && aura.display.kettleModeType != 1 && (JGConfigClientSettings.CLIENT_DA14|| SubGuiAuraDisplay.useGUIAura);
+        return (type3D != EnumAuraTypes3D.None || type3D == EnumAuraTypes3D.None && hasLightning) && (JGConfigClientSettings.CLIENT_DA14 || SubGuiAuraDisplay.useGUIAura);
     }
-    public void setDead() {
-        super.setDead();
-        ((IEntityMC) entity).setRenderPass(0); //rest player renderpass on aura despawn
-        entity.ignoreFrustumCheck = false;
-
-
-        if (auraData.getAuraEntity() == this)
-            auraData.setAuraEntity(null);
-
-        if (parent != null && parent.children != null && parent.children.containsKey(name))
-            parent.children.remove(name);
-
-    }
-
     public void setTexture(int type, String path){
         ResourceLocation loc = path == null ? null : new ResourceLocation(path);
         switch (type){
