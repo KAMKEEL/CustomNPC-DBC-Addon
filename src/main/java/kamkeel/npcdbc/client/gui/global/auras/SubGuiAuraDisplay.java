@@ -207,7 +207,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
                     scrollWindow.addLabel(new GuiNpcLabel(3002, "display.color3", 3, y + 5));
                     scrollWindow.getLabel(3002).color = 0xffffff;
                     scrollWindow.addButton(new GuiNpcButton(3002, guiX + 140, y, 60, 20, getColor(display.color3)));
-                    scrollWindow.getButton(3002).enabled = t == None && (t2 == EnumAuraTypes2D.Default || t2 == EnumAuraTypes2D.Base) || t == Base || t == SaiyanBlue || t == SaiyanBlueEvo || t == SaiyanRoseEvo || t == UI || t == GoD;
+                    scrollWindow.getButton(3002).enabled = t == None && (t2 == EnumAuraTypes2D.Default || t2 == EnumAuraTypes2D.Base) || t == Base && (t2 == EnumAuraTypes2D.Default || t2 == EnumAuraTypes2D.Base) || t == SaiyanBlue || t == SaiyanBlueEvo || t == SaiyanRoseEvo || t == UI || t == GoD;
 
                     scrollWindow.getButton(3002).packedFGColour = display.color3;
                     scrollWindow.addButton(new GuiNpcButton(3102, guiX + 200, y, 20, 20, "X"));
@@ -218,7 +218,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
                         y += 23;
                         scrollWindow.addLabel(new GuiNpcLabel(2102, "display.alpha", 3, y + 5));
                         scrollWindow.getLabel(2102).color = 0xffffff;
-                        scrollWindow.addTextField(new GuiNpcTextField(202, this, guiX + 155, y, 43, 18, String.valueOf(display.alpha)));
+                        scrollWindow.addTextField(new GuiNpcTextField(202, this, guiX + 165, y, 33, 18, String.valueOf(display.alpha)));
                         scrollWindow.getTextField(202).setMaxStringLength(4);
                         scrollWindow.getTextField(202).integersOnly = true;
                         scrollWindow.getTextField(202).setMinMaxDefault(-1, 255, -1);
@@ -231,7 +231,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
                         scrollWindow.addLabel(new GuiNpcLabel(200, "display.size", 3, y + 5));
                         scrollWindow.getLabel(200).color = 0xffffff;
-                        scrollWindow.addTextField(new GuiNpcTextField(200, this, guiX + 155, y, 43, 18, String.valueOf(display.size)));
+                        scrollWindow.addTextField(new GuiNpcTextField(200, this, guiX + 165, y, 33, 18, String.valueOf(display.size)));
                         scrollWindow.getTextField(200).setMaxStringLength(10);
                         scrollWindow.getTextField(200).floatsOnly = true;
                         scrollWindow.getTextField(200).setMinMaxDefaultFloat(-10000f, 10, 1.0f);
@@ -243,7 +243,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
                         y += 23;
                         scrollWindow.addLabel(new GuiNpcLabel(201, "display.speed", 3, y + 5));
                         scrollWindow.getLabel(201).color = 0xffffff;
-                        scrollWindow.addTextField(new GuiNpcTextField(201, this, guiX + 155, y, 43, 18, String.valueOf(display.speed)));
+                        scrollWindow.addTextField(new GuiNpcTextField(201, this, guiX + 165, y, 33, 18, String.valueOf(display.speed)));
                         scrollWindow.getTextField(201).setMaxStringLength(10);
                         scrollWindow.getTextField(201).integersOnly = true;
                         scrollWindow.getTextField(201).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
