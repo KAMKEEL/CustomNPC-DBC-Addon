@@ -16,7 +16,6 @@ import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
@@ -90,22 +89,16 @@ public class MixinEntityAura2 implements IEntityAura {
     @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", shift = At.Shift.AFTER), remap = true)
     private void redirect(CallbackInfo ci, @Local(name = "other") LocalRef<Entity> player, @Local(name = "aura_type") LocalBooleanRef aura_type, @Local(name = "aura_type2") LocalBooleanRef aura_type2) {
         EntityAura2 aura = (EntityAura2) (Object) this;
-        Entity entity = Utility.getEntityFromID(aura.worldObj, mot);
-        if (entity != null) {
-            player.set(entity);
-        } else {
-            player.set(this.entity);
-            mot = this.entity.getCommandSenderName();
-        }
 
+        player.set(this.entity);
+        mot = this.entity.getCommandSenderName();
 
-        if (entity != null) {
-            if (aura.getAge() < aura.getLightLivingTime() && hasLightning && aura.getAge() == 2)
-                playSound(player.get(), aura);
-        }
+        if (aura.getAge() < aura.getLightLivingTime() && hasLightning && aura.getAge() == 2)
+            playSound(this.entity, aura);
+
         if (isGUIAura) {
             aura_type.set(true);
-           aura_type2.set(false);
+            aura_type2.set(false);
         }
         if (bol6 == -2) {
             float height = getSize <= 0 ? this.entity.height : (getSize * 1.3f);
