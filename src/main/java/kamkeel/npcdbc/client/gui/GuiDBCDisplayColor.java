@@ -103,7 +103,6 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
                 this.textfield.setText(prev);
             }
         }
-        verifyRaceTail();
     }
 
     protected void actionPerformed(GuiButton btn) {
@@ -156,7 +155,6 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
                     }
                     this.textfield.setTextColor(color);
                     this.textfield.setText(getColor(color));
-                    verifyRaceTail();
                 }
             } catch (IOException ignored) {
             } finally {
@@ -204,7 +202,6 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
                 break;
         }
         textfield.setTextColor(color);
-        verifyRaceTail();
     }
 
     public String getColor(int input) {
@@ -215,17 +212,5 @@ public class GuiDBCDisplayColor extends GuiModelInterface implements ITextfieldL
         return str;
     }
 
-    public void verifyRaceTail(){
-        if(data.useSkin && (data.race == DBCRace.SAIYAN || data.race == DBCRace.HALFSAIYAN  || data.race == DBCRace.ARCOSIAN)){
-            ModelPartData tail = playerdata.getOrCreatePart("tail");
-            tail.setTexture("tail/monkey1", 8);
-            if (data.race == DBCRace.SAIYAN || data.race == DBCRace.HALFSAIYAN)
-                tail.pattern = data.tailState < 2 ? data.tailState : 0;
-            else if (data.race == DBCRace.ARCOSIAN)
-                tail.pattern = 2;
 
-        } else {
-            playerdata.removePart("tail");
-        }
-    }
 }

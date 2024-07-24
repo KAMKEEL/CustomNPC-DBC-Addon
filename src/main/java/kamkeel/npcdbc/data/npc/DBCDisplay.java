@@ -658,6 +658,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         data.removePart("tail");
         data.removePart("dbcArms");
         data.removePart("dbcBody");
+        data.removePart("dbcEars");
+
+        if (!enabled || !useSkin)
+            return;
 
         if (DBCRace.isSaiyan(this.race)) {
             ModelPartData tail = data.getOrCreatePart("tail");
@@ -668,10 +672,14 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             tail.setTexture("tail/monkey1", 8);
             tail.pattern = 2;
 
+            ModelPartData ears = data.getOrCreatePart("dbcEars");
+            ears.setTexture("tail/monkey1", 1);
+
             ModelPartData horn = data.getOrCreatePart("dbcHorn");
             ModelPartData arms;
             switch (arcoState) {
                 case 0:
+                case 1:
                     horn.setTexture("tail/monkey1", 2);
                     break;
                 case 2:
@@ -693,7 +701,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
                     body.setTexture("tail/monkey1", 1);
                     break;
                 default:
-                    this.arcoState = 0;
                     data.removePart("dbcHorn");
                     break;
             }

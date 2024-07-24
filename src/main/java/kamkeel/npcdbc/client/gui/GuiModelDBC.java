@@ -205,18 +205,14 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         }
         if(button.id == 0){
             display.enabled = button.getValue() == 1;
-            if(!display.enabled)
-                playerdata.removePart("tail");
-             else if (DBCRace.isSaiyan(display.race) || display.race == DBCRace.ARCOSIAN)
-                verifyRaceTail();
-
+            display.setRacialExtras();
             initGui();
         }
         if(button.id == 1){
             int value = button.getValue();
             display.race = (byte) (value - 1);
             display.useSkin = display.race != -1;
-            verifyRaceTail();
+            display.setRacialExtras();
             initGui();
         }
         if(button.id == 101){
@@ -347,7 +343,6 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
 
         if(button.id == 320){
             display.setDefaultColors();
-            verifyRaceTail();
             initGui();
         }
         if(button.id == 304){
@@ -355,7 +350,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
             display.useSkin = button.getValue() == 1;
             if(display.useSkin)
                 npc.display.modelType = 0;
-            verifyRaceTail();
+            display.setRacialExtras();
             initGui();
         }
         if(button.id == 200){
@@ -363,6 +358,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
         }
         if(button.id == 201){
             display.arcoState = button.getValue();
+            display.setRacialExtras();
         }
         if(button.id == 202){
             display.noseType = button.getValue();
@@ -414,19 +410,6 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner {
     @Override
     public void lostOwnership(Clipboard clipboard, Transferable contents) {}
 
-    public void verifyRaceTail(){
-        if(display.useSkin && (display.race == DBCRace.SAIYAN || display.race == DBCRace.HALFSAIYAN  || display.race == DBCRace.ARCOSIAN)){
-            ModelPartData tail = playerdata.getOrCreatePart("tail");
-            tail.setTexture("tail/monkey1", 8);
-            if (display.race == DBCRace.SAIYAN || display.race == DBCRace.HALFSAIYAN)
-                tail.pattern = display.tailState < 2 ? display.tailState : 0;
-            else if (display.race == DBCRace.ARCOSIAN)
-                tail.pattern = 2;
-
-        } else {
-            playerdata.removePart("tail");
-        }
-    }
 
     private int getHairType() {
         int index = 0;
