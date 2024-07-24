@@ -7,6 +7,7 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -59,6 +60,18 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         super(guiReplacementID);
     }
 
+    /**
+     *
+     * @param attrName
+     * @param inc
+     * @param maxRelease
+     * @param passive
+     * @param charging
+     * @param extraOutput
+     * @param dmgReduction
+     * @param statReduction
+     * @return
+     */
     private String getDescription(String attrName, float inc, String maxRelease, String passive, String charging, String extraOutput, int dmgReduction, int statReduction){
         String format = JRMCoreH.trl("jrmc", "StatIncreaseDesc");
         if(maxRelease != null)
@@ -66,10 +79,10 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         if(passive != null)
             format += JRMCoreH.trl("jrmc", "StatIncreaseDesc3");
         if(charging != null)
-            format += "\n§8Charging Output §5"+charging+"§8"; //@TODO add localization
+            format += LocalizationHelper.getLocalizedString("statsheet.stat.charging.description");
         if(extraOutput != null)
             format += JRMCoreH.trl("jrmc", "StatIncreaseDesc4");
-        format = String.format(format, attrName, inc, maxRelease, passive, extraOutput);
+        format = String.format(format, attrName, inc, maxRelease, passive, extraOutput, charging);
 
         if(statReduction != 0)
             format += "\n"+JRMCoreH.trl("jrmc", "weightreduction")+": §c"+statReduction+"% §7";
@@ -215,12 +228,13 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             .updateDisplay(JRMCoreH.numSep(JRMCoreH.getPlayerLevel(JRMCoreH.PlyrAttrbts)))
             .updateTooltip(isMaxLevel ? JRMCoreH.trl("jrmc", "LevelMax") : JRMCoreH.trl("jrmc", "LevelNext", JRMCoreH.cllr + JRMCoreH.attrLvlNext(JRMCoreH.PlyrAttrbts) + JRMCoreH.cldgy));
 
+
         dynamicLabels.get("tp")
             .updateDisplay(JRMCoreH.numSep(JRMCoreH.curTP))
             .updateTooltip(JRMCoreH.cllr + JRMCoreH.numSep(JRMCoreH.attrCst(JRMCoreH.PlyrAttrbts, 0)) + JRMCoreH.cldgy);
 
         dynamicLabels.get("race")
-            .updateDisplay(JRMCoreH.trl(JRMCoreH.Races[dbcClient.Race]));
+            .updateDisplay(JRMCoreH.trl("jrmc",JRMCoreH.Races[dbcClient.Race]));
 
         genderIcon.xPosition = guiWidthOffset+5+Minecraft.getMinecraft().fontRenderer.getStringWidth(dynamicLabels.get("race").display);
         genderIcon.textureY = (JRMCoreH.dnsGender(JRMCoreH.dns) < 1 ? 128 : 112);
@@ -652,7 +666,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             dynamicLabels.put("attr_"+i+"_button_desc", new JRMCoreLabel(button, "%s", null));
             upgradeButtons[i] = button;
             dynamicLabels.put("attr_"+i, new JRMCoreLabel(
-                (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + statNames[i]+": §4%s",
+                (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + LocalizationHelper.getLocalizedString("statsheet.attribute."+statNames[i]) +": §4%s",
                 "%s",
                 guiWidthOffset+17,
                 yPos+5
@@ -716,7 +730,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
         if(ClientCache.hasChargingDex){
             this.dynamicLabels.put("charging", new JRMCoreLabel(
-                (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + "Charging: §4%s",
+                (ConfigDBCClient.DarkMode ? DARKMODE_ACCENT : "") + LocalizationHelper.getLocalizedString("statsheet.stat.charging") + ": §4%s",
                 "%s",
                 guiWidthOffset+138,
                 guiHeightOffset+index*10+11
