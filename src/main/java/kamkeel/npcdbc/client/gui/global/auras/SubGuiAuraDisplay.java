@@ -394,7 +394,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         this.addButton(this.left = new GuiNpcButton(668, this.guiLeft + 170 + this.xOffset, this.guiTop + 200 + yOffset, 20, 20, "<"));
         this.addButton(this.right = new GuiNpcButton(669, this.guiLeft + 192 + this.xOffset, this.guiTop + 200 + yOffset, 20, 20, ">"));
 
-     //   addButton(new GuiNpcButton(670, this.guiLeft + 165 + this.xOffset, this.guiTop + 222 + yOffset, 55, 20, new String[]{"display.dbcAura", "display.revampAura"}, revampedAura));
+        addButton(new GuiNpcButton(670, this.guiLeft + 165 + this.xOffset, this.guiTop + 222 + yOffset, 55, 20, new String[]{"display.dbcAura", "display.revampAura"}, revampedAura));
         scrollWindow.maxScrollY = maxScroll;
 
     }
@@ -631,11 +631,11 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
     @Override
     protected void drawBackground() {
-        //   super.drawBackground();
+        //  super.drawBackground();
 
         int xPosGradient = guiLeft + 5;
         int yPosGradient = guiTop + 5;
-        //  drawGradientRect(xPosGradient, yPosGradient, 130 + xPosGradient, 180 + yPosGradient, 0xc0101010, 0xd0101010);
+        // drawGradientRect(xPosGradient, yPosGradient, 130 + xPosGradient, 180 + yPosGradient, 0xc0101010, 0xd0101010);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
@@ -655,36 +655,45 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         if(hasSubGui())
             return;
 
-        if (auraTicks != Minecraft.getMinecraft().thePlayer.ticksExisted) {
+        int ticks = Minecraft.getMinecraft().thePlayer.ticksExisted;
+        if (auraTicks != ticks) {
             renderAura = true;
         }
 
         useGUIAura = true;
-        if (Minecraft.getMinecraft().thePlayer.ticksExisted % 5 == 0 && renderAura) {
+        if (ticks % 5 == 0 && renderAura) {
             EntityAura enhancedAura = visualDisplay.auraEntity;
+            boolean kaioken = visualDisplay.isKaioken;
             if (revampedAura == 1) {
                 if (enhancedAura == null) {
                     enhancedAura = new EntityAura(npc, aura).load(true).spawn();
+                    enhancedAura.isInKaioken = kaioken;
                     enhancedAura.isGUIAura = true;
                 } else {
-                    if (enhancedAura.ticksExisted % 10 == 0)
+                    if (ticks % 10 == 0) {
                         enhancedAura.load(true);
+                        if (kaioken) {
+                            EntityAura kaiokenAura = enhancedAura.children.get("Kaioken");
+                            if (kaiokenAura != null)
+                                kaiokenAura.loadKaioken();
+                        }
+                    }
                 }
             } else {
                 if (enhancedAura != null)
                     enhancedAura.despawn();
 
-                if (visualDisplay.isKaioken && aura.display.kaiokenOverrides) {
+                if (kaioken && aura.display.kaiokenOverrides) {
                     spawnKaiokenAura(aura, visualDisplay);
                 } else {
                     spawnAura(npc, aura);
                     if (aura.hasSecondaryAura())
                         spawnAura(npc, aura.getSecondaryAur());
-                    if (visualDisplay.isKaioken)
+                    if (kaioken)
                         spawnKaiokenAura(aura, visualDisplay);
                 }
             }
-            auraTicks = Minecraft.getMinecraft().thePlayer.ticksExisted;
+            auraTicks = ticks;
             renderAura = false;
         }
 

@@ -33,6 +33,7 @@ import noppes.npcs.entity.EntityNPCInterface;
 import java.util.HashMap;
 
 import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.Base;
+import static kamkeel.npcdbc.constants.enums.EnumAuraTypes3D.None;
 
 public class EntityAura extends Entity {
 
@@ -71,24 +72,22 @@ public class EntityAura extends Entity {
         super(entity.worldObj);
         this.entity = entity;
         this.aura = aura;
-        if (SubGuiAuraDisplay.useGUIAura)
-            this.aura = SubGuiAuraDisplay.aura;
 
         if (entity instanceof EntityPlayer) {
             auraData = DBCData.get((EntityPlayer) entity);
         } else if (entity instanceof EntityNPCInterface) {
             auraData = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
         }
-        auraData.setAuraEntity(this);
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
         text1 = new ResourceLocation( "jinryuudragonbc:aura.png");
 
-        if (this.aura.hasSecondaryAura() && children.containsKey("Secondary"))
-            new EntityAura(entity, this.aura.getSecondaryAur()).load(true).setParent(this, "Secondary").spawn();
     }
 
 
     public EntityAura load(boolean all) {
+        if (isRoot())
+            auraData.setAuraEntity(this);
+
         color1 = auraData.getAuraColor();
         AuraDisplay display = aura.display;
 
@@ -98,7 +97,10 @@ public class EntityAura extends Entity {
 
         type2D = display.type2D;
         if (aura.display.type2D == EnumAuraTypes2D.Default)
-                type2D = EnumAuraTypes2D.getType(auraData);
+            type2D = EnumAuraTypes2D.getFrom3D(type3D);
+
+        if (aura.display.type == None && aura.display.type2D == EnumAuraTypes2D.Default)
+            type2D = EnumAuraTypes2D.Base;
 
 
 
@@ -125,6 +127,17 @@ public class EntityAura extends Entity {
                 hasLightning = false;
         }
 
+        if (this.aura.hasSecondaryAura()) {
+            if (!children.containsKey("Secondary"))
+                new EntityAura(entity, this.aura.getSecondaryAur()).setParent(this, "Secondary").load(true).spawn();
+        } else {
+            if (children.containsKey("Secondary")) {
+                EntityAura secondaryAura = children.get("Secondary");
+                secondaryAura.despawn();
+            }
+        }
+
+
 
         if (isInKaioken) {
             boolean kaiokenOverride = display.kaiokenOverrides;
@@ -133,7 +146,13 @@ public class EntityAura extends Entity {
 
 
             if (!kaiokenOverride && !children.containsKey("Kaioken"))
-                new EntityAura(entity, aura).loadKaioken().setParent(this, "Kaioken").spawn();
+                new EntityAura(entity, aura).setParent(this, "Kaioken").loadKaioken().spawn();
+
+            if (children.containsKey("Kaioken")) {
+                EntityAura kaiokenAura = children.get("Kaioken");
+                if (kaiokenOverride)
+                    kaiokenAura.despawn();
+            }
 
             if (kaiokenOverride) {
                 color1 = lightningColor = 16646144;
@@ -254,7 +273,6 @@ public class EntityAura extends Entity {
 
     public EntityAura setParent(EntityAura aura, String thisName) {
         parent = aura;
-        auraData.setAuraEntity(aura);
         parent.children.put(name = thisName, this);
         return this;
     }
