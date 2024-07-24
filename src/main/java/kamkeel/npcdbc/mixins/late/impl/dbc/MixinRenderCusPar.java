@@ -30,6 +30,7 @@ public class MixinRenderCusPar implements IRenderCusPar {
         double interPosZ = (particle.lastTickPosZ + (particle.posZ - particle.lastTickPosZ) * (double) partialTicks) - (ClientProxy.renderingGUI ? -0 : RenderManager.renderPosZ);
         float interYaw = particle.getEnt().prevRotationYaw + (particle.getEnt().rotationYaw - particle.getEnt().prevRotationYaw) * partialTicks;
 
+
         ((RenderCusPar) (Object) this).renderAura(particle, interPosX, interPosY, interPosZ, interYaw, partialTicks);
 
     }

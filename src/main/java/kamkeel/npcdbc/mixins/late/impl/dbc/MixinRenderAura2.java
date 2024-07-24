@@ -133,7 +133,6 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
             glStencilFunc(GL_GREATER, aura.getEntity().getEntityId() % 256, 0xFF);
             glStencilMask(0x0);
         }
-        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
 
     }
 
@@ -184,10 +183,16 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
             float fixedOffset = (float) (parY.get() + 3.0F * aura.getSize());
             args.set(1, fixedOffset);
         }
-
+        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
     }
 
+
+    @Inject(method = "func_tad", at = @At("TAIL"))
+    private void enableLight(EntityAura2 par1Entity, double parX, double parY, double parZ, float par8, float par9, CallbackInfo ci) {
+        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+
+    }
 
     @Inject(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;getState2()F", ordinal = 0, shift = At.Shift.BEFORE))
     private void fixAuraSize(EntityAura2 par1Entity, double parX, double parY, double parZ, float par8, float par9, CallbackInfo ci, @Local(name = "s1") LocalFloatRef s1, @Local(name = "s") LocalFloatRef s, @Local(name = "cr") LocalFloatRef cr) {

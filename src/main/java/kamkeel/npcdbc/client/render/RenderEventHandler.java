@@ -154,7 +154,7 @@ public class RenderEventHandler {
         float partialTicks = Minecraft.getMinecraft().timer.renderPartialTicks;
 
         disableStencilWriting(entity.getEntityId() % 256, false);
-        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+        mc.entityRenderer.disableLightmap(0);
 
         boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !display.particleRenderQueue.isEmpty();
         ////////////////////////////////////////
@@ -228,7 +228,7 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         //Custom Particles
         if (renderParticles) {
-
+            mc.entityRenderer.disableLightmap(0);
             glPushMatrix();
             if (!ClientProxy.renderingGUI)
                 glLoadMatrix(DEFAULT_MODELVIEW); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
