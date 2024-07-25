@@ -32,12 +32,12 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class AuraRenderer extends RenderDBC {
     public static AuraRenderer Instance;
-    private ModelAura model;
     String auraDir = "jinryuudragonbc:";
     int pulseAnimation;
     int pulseMax = 8;
     long animationStartTime;
     boolean throbOut;
+    private ModelAura model;
     private float[][] lightVertRotation;
     private int lightVertN;
 
@@ -99,7 +99,7 @@ public class AuraRenderer extends RenderDBC {
         float alphaConfig = (float) JGConfigClientSettings.CLIENT_DA21 / 10.0F;
         boolean isFirstPerson = DBCClient.mc.thePlayer == aura.entity && DBCClient.mc.gameSettings.thirdPersonView == 0;
         alpha = (isFirstPerson ? aura.isKaioken ? 0.015f : 0.0125f : alpha) * alphaConfig;
-      // alpha = 1f;
+        // alpha = 1f;
         aura.setTexture(1, CustomNpcPlusDBC.ID + ":textures/aura/auraalpha.png");
 
         pulseMax = 5;
@@ -156,7 +156,7 @@ public class AuraRenderer extends RenderDBC {
 
         // ShaderHelper.useShader(ShaderHelper.aura, uniforms);
 
-  //      ShaderHelper.releaseShader();
+        //      ShaderHelper.releaseShader();
 
 
         ////////////////////////////////////////
@@ -326,12 +326,21 @@ public class AuraRenderer extends RenderDBC {
                 }
             }
         }
-        if (rand.nextInt(15) < 2 && aura.ticksExisted % 5 == 0)
-            new ClientSound(new SoundSource("jinryuudragonbc:1610.spark", aura.entity)).setVolume(0.1f).setPitch(0.90f + rand.nextInt(3) * 0.05f).play(false);
+        if (rand.nextInt(100) < 50) {
+            if (aura.isGUIAura)
+                Minecraft.getMinecraft().thePlayer.playSound("jinryuudragonbc:1610.spark", 0.0375F, 00.90f + rand.nextInt(3) * 0.05f);
+            else
+                new ClientSound(new SoundSource("jinryuudragonbc:1610.spark", aura.entity)).setVolume(0.1f).setPitch(0.90f + rand.nextInt(3) * 0.05f).play(false);
+        }
         glPopMatrix();
         glEnable(GL_TEXTURE_2D);
 
     }
+
+    public void doRender(Entity aura, double posX, double posY, double posZ, float yaw, float partialTickTime) {
+        // this.renderAura((EntityAura) aura,partialTickTime);
+    }
+
     public static float getStateIntensity(int state, int race) {
         float intensityFactor = 150f; //the higher, the more intensely the aura moves in Y axis
         if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
@@ -479,9 +488,5 @@ public class AuraRenderer extends RenderDBC {
 
         return sizeFactor;
 
-    }
-
-    public void doRender(Entity aura, double posX, double posY, double posZ, float yaw, float partialTickTime) {
-      // this.renderAura((EntityAura) aura,partialTickTime);
     }
 }
