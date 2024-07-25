@@ -87,7 +87,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
             addButton(new GuiNpcButton(311, guiLeft + 201, y, 16, 20, "X"));
             getButton(311).enabled = !aura.display.kaiokenSound.isEmpty();
 
-            y += 52;
+            y += 59;
             addButton(new GuiNpcButton(1500, guiLeft + 7, y, 202, 20, "display.displaySettings"));
         }
     }
