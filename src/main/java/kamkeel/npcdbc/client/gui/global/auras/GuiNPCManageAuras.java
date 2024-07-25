@@ -67,26 +67,28 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
             addLabel(new GuiNpcLabel(13, "gui.name", guiLeft + 4, y + 5));
 
             y += 23;
-
             addTextField(new GuiNpcTextField(14, this, guiLeft + 70, y, 146, 20, aura.menuName.replaceAll("§", "&")));
             getTextField(14).setMaxStringLength(20);
             addLabel(new GuiNpcLabel(14, "general.menuName", guiLeft + 4, y + 5));
 
-            y += 60;
-            addButton(new GuiNpcButton(1500, guiLeft + 7, y, 208, 20, "display.displaySettings"));
-
             y += 40;
-
             addLabel(new GuiNpcLabel(30, "general.auraSound", guiLeft + 5, y + 5));
             y += 16;
-            addTextField(new GuiNpcTextField(30, this, fontRendererObj, guiLeft + 5, y, 151, 20, aura.display.auraSound));
-            addButton(new GuiNpcButton(30, guiLeft + 158, y, 60, 20, "gui.select"));
+            addTextField(new GuiNpcTextField(30, this, fontRendererObj, guiLeft + 5, y, 155, 20, aura.display.auraSound));
+            addButton(new GuiNpcButton(30, guiLeft + 161, y, 40, 20, "gui.select"));
+            addButton(new GuiNpcButton(301, guiLeft + 201, y, 16, 20, "X"));
+            getButton(301).enabled = !aura.display.auraSound.equals("jinryuudragonbc:DBC.aura");
 
             y += 23;
             addLabel(new GuiNpcLabel(31, "general.kaiokenSound", guiLeft + 5, y + 5));
             y += 16;
-            addTextField(new GuiNpcTextField(31, this, fontRendererObj, guiLeft + 5, y, 151, 20, aura.display.kaiokenSound));
-            addButton(new GuiNpcButton(31, guiLeft + 158, y, 60, 20, "gui.select"));
+            addTextField(new GuiNpcTextField(31, this, fontRendererObj, guiLeft + 5, y, 155, 20, aura.display.kaiokenSound));
+            addButton(new GuiNpcButton(31, guiLeft + 161, y, 40, 20, "gui.select"));
+            addButton(new GuiNpcButton(311, guiLeft + 201, y, 16, 20, "X"));
+            getButton(311).enabled = !aura.display.kaiokenSound.isEmpty();
+
+            y += 52;
+            addButton(new GuiNpcButton(1500, guiLeft + 7, y, 202, 20, "display.displaySettings"));
         }
     }
 
@@ -100,15 +102,12 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
                 name += "_";
             Aura aura = new Aura(-1, name);
             PacketHandler.Instance.sendToServer(new DBCSaveAura(aura.writeToNBT(), "").generatePacket());
-        }
-
-        if (button.id == 1) {
+        } else if (button.id == 1) {
             if (data.containsKey(scrollAuras.getSelected())) {
                 GuiYesNo guiyesno = new GuiYesNo(this, scrollAuras.getSelected(), StatCollector.translateToLocal("gui.delete"), 1);
                 displayGuiScreen(guiyesno);
             }
-        }
-        if (button.id == 2) {
+        } else if (button.id == 2) {
             Aura aura = (Aura) this.aura.clone();
             while (data.containsKey(aura.name))
                 aura.name += "_";
@@ -121,12 +120,16 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         if (button.id == 30) {
             setNormalSound = true;
             setSubGui(new GuiSoundSelection((getTextField(30).getText())));
-        }
-        if (button.id == 31) {
+        } else if (button.id == 301) {
+            aura.display.auraSound = "jinryuudragonbc:DBC.aura";
+            initGui();
+        } else if (button.id == 31) {
             setNormalSound = false;
             setSubGui(new GuiSoundSelection((getTextField(31).getText())));
-        }
-        if (button.id == 1500) {
+        } else if (button.id == 311) {
+            aura.display.kaiokenSound = "";
+            initGui();
+        } else if (button.id == 1500) {
             EntityCustomNpc npc = new EntityCustomNpc(Minecraft.getMinecraft().theWorld);
             Minecraft.getMinecraft().displayGuiScreen(new SubGuiAuraDisplay(this, npc, aura));
         }
@@ -281,9 +284,11 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         }
         if (guiNpcTextField.id == 30) {
             aura.display.auraSound = guiNpcTextField.getText();
+            getButton(301).enabled = !aura.display.auraSound.equals("jinryuudragonbc:DBC.aura");
         }
         if (guiNpcTextField.id == 31) {
             aura.display.kaiokenSound = guiNpcTextField.getText();
+            getButton(311).enabled = !aura.display.kaiokenSound.isEmpty();
         }
     }
 }
