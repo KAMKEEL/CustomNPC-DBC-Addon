@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = GuiNPCGlobalMainMenu.class, remap = false)
+@Mixin(value = GuiNPCGlobalMainMenu.class)
 public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
 
 
@@ -33,7 +33,7 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
 
     }
 
-    @Inject(method = "actionPerformed", at = @At("TAIL"), remap = true)
+    @Inject(method = "actionPerformed", at = @At("TAIL"))
     protected void doButtonJob(GuiButton guibutton, CallbackInfo ci) {
         int id = guibutton.id;
 
