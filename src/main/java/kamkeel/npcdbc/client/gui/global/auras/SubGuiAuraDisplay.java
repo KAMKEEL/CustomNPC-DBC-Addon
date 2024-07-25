@@ -700,13 +700,13 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
     public void drawScreen(int par1, int par2, float par3) {
         if (Mouse.isButtonDown(0)) {
             if (this.left.mousePressed(this.mc, par1, par2)) {
-                rotation += 0.2 * 2.0F;
+                rotation += par3 * 1.5F;
             } else if (this.right.mousePressed(this.mc, par1, par2)) {
-                rotation -= 0.2 * 2.0F;
+                rotation -= par3 * 1.5F;
             } else if (this.zoom.mousePressed(this.mc, par1, par2) && zoomed < 100.0F) {
-                zoomed += 0.05 * 2.0F;
+                zoomed += par3 * 1.0F;
             } else if (this.unzoom.mousePressed(this.mc, par1, par2) && zoomed > 10.0F) {
-                zoomed -= 0.05 * 2.0F;
+                zoomed -= par3 * 1.0F;
             }
         }
         super.drawScreen(par1, par2, par3);

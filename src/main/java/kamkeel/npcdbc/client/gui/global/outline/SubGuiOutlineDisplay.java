@@ -370,13 +370,13 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
     public void drawScreen(int i, int j, float f) {
         if (Mouse.isButtonDown(0)) {
             if (this.left.mousePressed(this.mc, i, j)) {
-                rotation += 0.2 * 2.0F;
+                rotation += f * 1.5F;
             } else if (this.right.mousePressed(this.mc, i, j)) {
-                rotation -= 0.2 * 2.0F;
+                rotation -= f * 1.5F;
             } else if (this.zoom.mousePressed(this.mc, i, j) && zoomed < 100.0F) {
-                zoomed += 0.05 * 2.0F;
+                zoomed += f * 1.0F;
             } else if (this.unzoom.mousePressed(this.mc, i, j) && zoomed > 10.0F) {
-                zoomed -= 0.05 * 2.0F;
+                zoomed -= f * 1.0F;
             }
         }
         super.drawScreen(i, j, f);
