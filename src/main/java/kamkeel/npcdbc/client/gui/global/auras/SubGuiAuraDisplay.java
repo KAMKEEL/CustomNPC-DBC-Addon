@@ -95,7 +95,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
         }
         visualDisplay.setAura(aura);
-        visualDisplay.auraOn = true;
+        visualDisplay.outlineID = aura.display.outlineID;
         playSound();
 
     }
@@ -113,7 +113,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             visualDisplay.hairCode = DBCHair.MAJIN_HAIR;
             visualDisplay.hairColor = visualDisplay.bodyCM;
         }
-
+        visualDisplay.auraOn = true;
     }
 
     public void initGui() {
@@ -133,20 +133,9 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         addScrollableGui(0, scrollWindow);
         int maxScroll = -20;
 
-//        scrollWindow.addButton(new GuiNpcButton(2000, 3, y, 69, 20, "display.general"));
-//        scrollWindow.getButton(2000).enabled = selectedTab != 0;
-//
-//        scrollWindow.addButton(new GuiNpcButton(2001, guiLeft + 212, y, 69, 20, "display.lightning"));
-//        scrollWindow.getButton(2001).enabled = selectedTab != 1;
-//
-//        scrollWindow.addButton(new GuiNpcButton(2002, guiLeft + 287, y, 69, 20, "display.extra"));
-//        scrollWindow.getButton(2002).enabled = selectedTab != 2;
-
-        // y += 23;
 
         int guiX = -5;
-        y = 0;
-
+        y = 7;
 
         scrollWindow.addLabel(new GuiNpcLabel(3004, "display.overrideDBC", 3, y + 5));
         scrollWindow.getLabel(3004).color = 0xffffff;
@@ -598,6 +587,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             this.setSubGui(new SubGuiSelectOutline());
         } else if (button.id == 2406) {
             aura.display.outlineID = -1;
+            visualDisplay.outlineID = -1;
             initGui();
         }
     }
@@ -689,6 +679,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
                     if (selectOutline.selectedOutlineID == aura.display.outlineID)
                         return;
                     aura.display.outlineID = selectOutline.selectedOutlineID;
+                    visualDisplay.outlineID = aura.display.outlineID;
                     initGui();
 
                 }
@@ -767,10 +758,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
         GL11.glColor4f(1, 1, 1, 1);
         EntityLivingBase entity = this.npc; // DBCData.getClient().player;//
-        int hideName = npc.display.showName;
-        int size = npc.display.modelSize;
-        npc.display.showName = 1;
-        npc.display.modelSize = 5;
 
         int l = guiLeft + 190 + xOffset;
         int i1 = guiTop + 180 + yOffset - 5;
@@ -818,8 +805,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         GL11.glPopMatrix();
-        npc.display.showName = hideName;
-        npc.display.modelSize = size;
 
 
     }
@@ -855,6 +840,29 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         if (visualDisplay.auraEntity != null)
             visualDisplay.auraEntity.despawn();
         visualDisplay.auraID = -1;
+
+        if (auraSound != null) {
+            auraSound.soundSource.fadeOut = true;
+            auraSound.soundSource.fadeFactor = 0.075f;
+            auraSound = null;
+        }
+
+        if (secondarySound != null) {
+            secondarySound.soundSource.fadeOut = true;
+            secondarySound.soundSource.fadeFactor = 0.025f;
+            secondarySound = null;
+        }
+
+        if (kaiokenSound != null) {
+            kaiokenSound.soundSource.fadeOut = true;
+            kaiokenSound.soundSource.fadeFactor = 0.025f;
+            kaiokenSound = null;
+        }
+        if (kettleSound != null) {
+            kettleSound.soundSource.fadeOut = true;
+            kettleSound.soundSource.fadeFactor = 0.075f;
+            kettleSound = null;
+        }
         save();
     }
 

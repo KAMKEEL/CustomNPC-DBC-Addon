@@ -4,7 +4,7 @@ plugins {
     id 'com.gtnewhorizons.gtnhconvention'
 }
 
-version = "1.0-24w29-06"
+version = "1.0-24w30-2"
 group= "kamkeel.npcdbc"
 
 tasks.runServer { setWorkingDir(file("run/server")) }

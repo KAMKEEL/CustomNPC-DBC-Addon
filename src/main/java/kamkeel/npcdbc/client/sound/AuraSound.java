@@ -3,6 +3,7 @@ package kamkeel.npcdbc.client.sound;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -15,7 +16,8 @@ import noppes.npcs.entity.EntityNPCInterface;
 
 public class AuraSound extends ClientSound {
     private final Aura aura;
-    public boolean isKaiokenSound = false, isGUIAura;
+    public boolean isKaiokenSound = false, isGUIAura, isVanillaAura;
+    public IAuraData data;
 
     public AuraSound(Aura aura, SoundSource soundSource) {
         super(soundSource);
@@ -48,13 +50,19 @@ public class AuraSound extends ClientSound {
 
             }
 
-            if (aura == null) {
-                soundSource.fadeFactor = isGUIAura ? 0.075f : soundSource.fadeFactor;
-                soundSource.fadeOut = true;
-            } else if (aura.id != this.aura.id || !isInKaioken && isKaiokenSound) {
+            if (isVanillaAura) {
+                if (!data.isAuraOn())
+                    soundSource.fadeOut = true;
+            } else if (isGUIAura) {
+            } else {
+                if (aura == null && !isVanillaAura) {
+                    soundSource.fadeFactor = isGUIAura ? 0.075f : soundSource.fadeFactor;
+                    soundSource.fadeOut = true;
+                } else if (aura.id != this.aura.id || !isInKaioken && isKaiokenSound) {
 
-                soundSource.fadeFactor = isGUIAura ? 0.075f : 0.1f;
-                soundSource.fadeOut = true;
+                    soundSource.fadeFactor = isGUIAura ? 0.075f : 0.1f;
+                    soundSource.fadeOut = true;
+                }
             }
         }
     }
@@ -76,7 +84,8 @@ public class AuraSound extends ClientSound {
             return (float) Minecraft.getMinecraft().thePlayer.posZ;
         return this.zPosF;
     }
-    public static void play(Entity entity, Aura aura) {
+
+    public static void play(Entity entity, Aura aura, IAuraData data) {
         if (entity == null || aura == null || SubGuiAuraDisplay.useGUIAura)
             return;
 
@@ -100,6 +109,10 @@ public class AuraSound extends ClientSound {
             if (isTransforming)
                 auraSound.setVolume(0.2f);
 
+            if (aura.id == -1)
+                auraSound.isVanillaAura = true;
+
+            auraSound.data = data;
             auraSound.setRepeat(true).play(false);
         }
 
@@ -107,6 +120,8 @@ public class AuraSound extends ClientSound {
             AuraSound secondarySound = new AuraSound(aura, new SoundSource(secondSound, entity));
             if (isTransforming)
                 secondarySound.setVolume(0.2f);
+
+            secondarySound.data = data;
             secondarySound.setRepeat(true).play(false);
         }
     }

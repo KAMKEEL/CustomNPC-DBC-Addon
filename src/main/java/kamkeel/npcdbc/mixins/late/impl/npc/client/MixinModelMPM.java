@@ -84,7 +84,6 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
 
         float partialTicks = Minecraft.getMinecraft().timer.renderPartialTicks;
         mc.entityRenderer.disableLightmap(0);
-
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
@@ -95,8 +94,8 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
             glStencilMask(0xff);
             OutlineRenderer.renderOutlineNPC((ModelMPM) (Object) this, outline, (EntityCustomNpc) entity, display, partialTicks);
             endBlooming();
-        }// else if (aura == null && ((IEntityMC) entity).getRenderPassTampered())
-        //  ((IEntityMC) entity).setRenderPass(0);
+        } //else if (aura == null && ((IEntityMC) entity).getRenderPassTampered())
+        // ((IEntityMC) entity).setRenderPass(0);
 
         ////////////////////////////////////////
         ////////////////////////////////////////

@@ -127,11 +127,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
             setSubGui(new GuiSoundSelection((getTextField(31).getText())));
         }
         if (button.id == 1500) {
-            EntityCustomNpc npc = (EntityCustomNpc) this.npc;
-            if (npc == null) {
-                npc = new EntityCustomNpc(Minecraft.getMinecraft().theWorld);
-
-            }
+            EntityCustomNpc npc = new EntityCustomNpc(Minecraft.getMinecraft().theWorld);
             Minecraft.getMinecraft().displayGuiScreen(new SubGuiAuraDisplay(this, npc, aura));
         }
     }

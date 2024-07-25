@@ -255,11 +255,10 @@ public class ClientEventHandler {
                         return;
                     aura = display.getToggledAura();
 
-                    if (aura == null && display.isAuraOn()){
+                    if (aura == null && display.isAuraOn()) {
                         aura = new Aura().display.setOverrideDBCAura(true);
                         vanillaAura = true;
-                    }
-                    else if(aura == null)
+                    } else if (aura == null)
                         return;
                     isInKaioken = display.isKaioken;
                 } else if (isPlayer) {
@@ -275,7 +274,7 @@ public class ClientEventHandler {
                 EntityAura enhancedAura = isPlayer ? dbcData.auraEntity : display.auraEntity;
                 if (ConfigDBCClient.RevampAura) {
                     if (enhancedAura == null && !isSpectator)
-                        if(vanillaAura)
+                        if (vanillaAura)
                             new EntityAura(event.entity, aura).setIsVanilla(true).load(true).spawn();
                         else
                             new EntityAura(event.entity, aura).load(true).spawn();
@@ -505,7 +504,7 @@ public class ClientEventHandler {
         // This block indefinitely loops through aura sound as long as aura is enabled
         // regardless of the sound.ogg duration. The second the sound ends, it insta-replays
 
-        AuraSound.play(entity, aura);
+        AuraSound.play(entity, aura, data);
 
         ////////////////////////////////////////////////////
         ////////////////////////////////////////////////////

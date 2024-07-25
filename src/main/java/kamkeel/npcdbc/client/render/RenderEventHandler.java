@@ -165,9 +165,8 @@ public class RenderEventHandler {
             if (!ClientProxy.renderingGUI)
                 glLoadMatrix(DEFAULT_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
             glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
-            // glStencilMask(0xff);
-
-            //    glStencilMask(0x0);
+            glStencilMask(0xff);
+            glStencilMask(0x0);
             for (EntityAura child : aura.children.values())
                 AuraRenderer.Instance.renderAura(child, partialTicks);
             AuraRenderer.Instance.renderAura(aura, partialTicks);
