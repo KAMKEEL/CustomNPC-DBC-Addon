@@ -33,6 +33,7 @@ public class AuraDisplay implements IAuraDisplay {
     public String auraSound = "jinryuudragonbc:DBC.aura", kaiokenSound = "";
 
     public int outlineID = -1;
+
     public AuraDisplay(Aura parent) {
         this.parent = parent;
     }
@@ -84,7 +85,7 @@ public class AuraDisplay implements IAuraDisplay {
         auraSound = rendering.hasKey("auraSound") ? rendering.getString("auraSound") : "jinryuudragonbc:DBC.aura";
         kaiokenSound = rendering.hasKey("kaiokenSound") ? rendering.getString("kaiokenSound") : "";
 
-        outlineID = rendering.getInteger("outlineID");
+        outlineID = rendering.hasKey("outlineID") ? rendering.getInteger("outlineID") : -1;
 
     }
 
@@ -269,6 +270,7 @@ public class AuraDisplay implements IAuraDisplay {
             throw new CustomNPCsException("Invalid type! Legal types: %s", String.join(", ", EnumAuraTypes2D.getAllNames()));
         this.type2D = s;
     }
+
     @Override
     public String getTexture(String textureType) {
         return null;
@@ -460,6 +462,7 @@ public class AuraDisplay implements IAuraDisplay {
         int id = outline != null ? outline.getID() : -1;
         setOutline(id);
     }
+
     @Override
     public IAuraDisplay save() {
         if (parent != null)

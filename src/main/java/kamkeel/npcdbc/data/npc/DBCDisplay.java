@@ -65,14 +65,20 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public int formID = -1, selectedForm = -1, rage;
     public float formLevel = 0;
     public boolean isTransforming, isKaioken;
+
+    // Outline
+    public int outlineID;
+
     // Server Side Usage
     public float rageValue;
     public int tempState, stateChange, state2Change, auraTime, auraType, bendTime;
+
+    //Rendering
+    public boolean useStencilBuffer;
     public EntityAura auraEntity;
     public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
     public HashMap<Integer, EntityAura2> dbcAuraQueue = new HashMap<>();
     public HashMap<Integer, EntityAura2> dbcSecondaryAuraQueue = new HashMap<>();
-    public int outlineID;
     private EnumAuraTypes2D enumAuraTypes = EnumAuraTypes2D.None;
 
     public DBCDisplay(EntityNPCInterface npc) {
@@ -158,7 +164,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             arcoState = dbcDisplay.getInteger("DBCArcoState");
             hasArcoMask = dbcDisplay.getBoolean("DBCArcoMask");
             hasFur = dbcDisplay.getBoolean("DBCFur");
-            hasEyebrows = !dbcDisplay.hasKey("DBCHasEyebrows") ? true : dbcDisplay.getBoolean("DBCHasEyebrows");
+            hasEyebrows = !dbcDisplay.hasKey("DBCHasEyebrows") || dbcDisplay.getBoolean("DBCHasEyebrows");
 
             auraID = dbcDisplay.getInteger("DBCAuraID");
             enumAuraTypes = EnumAuraTypes2D.values()[dbcDisplay.getInteger("DBCDisplayAura") % EnumAuraTypes2D.values().length];
@@ -459,7 +465,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     //internal usage
     public Aura getAur() {
         if (isInForm()) {
-            Form form = (Form) getForm();
+            Form form = getForm();
             if (form.display.hasAura())
                 return form.display.getAur();
         }

@@ -34,10 +34,6 @@ public class OutlineRenderer {
     public static void renderOutline(RenderPlayerJBRA render, Outline outline, EntityPlayer player, float partialTicks, boolean isArm) {
         ClientProxy.renderingOutline = true;
         DBCData data = DBCData.get(player);
-        if (player.isInWater())
-            ((IEntityMC) player).setRenderPass(0);
-        else
-            ((IEntityMC) player).setRenderPass(ClientProxy.MiddleRenderPass);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -165,23 +161,17 @@ public class OutlineRenderer {
     public static void renderOutlineNPC(ModelMPM model, Outline outline, EntityCustomNpc npc, DBCDisplay display, float partialTicks) {
         ClientProxy.renderingOutline = true;
         DBCDisplay data = display;
-//        if (npc.isInWater())
-//            ((IEntityMC) npc).setRenderPass(0);
-//        else
-//            ((IEntityMC) npc).setRenderPass(ClientProxy.MiddleRenderPass);
-        //  ((IEntityMC) npc).setRenderPass(0);
+
         // ModelMPM model = (ModelMPM) ((IModelMPM) render).getMainModel();
+
         ModelDBC dbcModel = ((IModelMPM) model).getDBCModel();
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D);
-        glDepthMask(true);
+        //glDepthMask(true);
         glPushMatrix();
 
-        ///////////////////////////////////
-        ///////////////////////////////////
-        //Outer
         useShader(ShaderHelper.outline, () -> {
             uniformTexture("noiseTexture", 2, ShaderResources.PERLIN_NOISE);
             outline.innerColor.uniform("innerColor");
@@ -192,6 +182,9 @@ public class OutlineRenderer {
             uniform1f("noiseSpeed", outline.speed);
             uniform1f("throbSpeed", outline.pulsingSpeed);
         });
+        ///////////////////////////////////
+        ///////////////////////////////////
+        //Outer
         float scale = 1.025f, yScale = 1.025f, outlineSize = outline.size;
         ItemStack chestPlate = npc.getEquipmentInSlot(3);
         if (chestPlate != null) {
@@ -254,7 +247,7 @@ public class OutlineRenderer {
             //dbcModel.DBCHorns.NamekianAntennas.render(0.0625f);
             glPopMatrix();
             disableStencilWriting(npc.getEntityId() % 256, false);
-           // dbcModel.DBCHorns.NamekianAntennas.isHidden = true;
+            // dbcModel.DBCHorns.NamekianAntennas.isHidden = true;
         }
         model.bipedHeadwear.isHidden = true;
         glPushMatrix();

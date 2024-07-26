@@ -95,6 +95,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
         }
         visualDisplay.setAura(aura);
+        visualDisplay.auraOn = true;
         visualDisplay.outlineID = aura.display.outlineID;
         playSound();
 

@@ -33,6 +33,7 @@ public class MixinEntityRenderer {
     private void secondRendPass(float partialTick, long idk, CallbackInfo info, @Local(name = "frustrum") LocalRef<Frustrum> frustrum) {
         mc.mcProfiler.endStartSection("NPCDBCEntities");
         ForgeHooksClient.setRenderPass(ClientProxy.MiddleRenderPass);
+        glDepthMask(true);
         this.mc.renderGlobal.renderEntities(this.mc.renderViewEntity, frustrum.get(), partialTick);
         ForgeHooksClient.setRenderPass(-1);
     }
