@@ -108,7 +108,7 @@ public class ModelDBC extends ModelBase {
         display = ((INPCDisplay) entity.display).getDBCDisplay();
     }
 
-    public void setHurt(EntityCustomNpc entity){
+    public void setHurt(EntityCustomNpc entity) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         isHurt = false;
         if (display.isEnabled() && display.useSkin && (entity.hurtTime > 0 || entity.isKilled())) {
@@ -118,8 +118,8 @@ public class ModelDBC extends ModelBase {
         }
     }
 
-    public void clearHurt(){
-        if(!isHurt)
+    public void clearHurt() {
+        if (!isHurt)
             return;
         isHurt = false;
     }
@@ -294,10 +294,12 @@ public class ModelDBC extends ModelBase {
     }
 
     public void renderSSJ4Face(int eyeColor, int furColor, int hairColor, int bodyCM, boolean isBerserk, boolean hasEyebrows, int eyeType) {
+        boolean isHidden = DBCHair.isHidden;
+        DBCHair.isHidden = true;
+
         ColorMode.applyModelColor(0xffffff, isHurt);
         ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4eyewhite.png"));
         parent.bipedHead.render(1F / 16F);
-
 
         if (!isBerserk) {
             ColorMode.applyModelColor(eyeColor, isHurt);
@@ -321,7 +323,10 @@ public class ModelDBC extends ModelBase {
         ColorMode.applyModelColor(bodyCM, isHurt);
         ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4shade.png"));
         parent.bipedHead.render(1F / 16F);
+
+        DBCHair.isHidden = isHidden;
     }
+
     public void renderBodySkin(DBCDisplay display, ModelRenderer model) {
         if (display.useSkin) {
 

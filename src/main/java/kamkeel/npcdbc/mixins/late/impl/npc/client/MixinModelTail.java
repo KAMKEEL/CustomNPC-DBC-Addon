@@ -60,11 +60,15 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
                 RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
 
             if (kamkeel.npcdbc.client.ClientProxy.renderingOutline) {
-                if (!monkey.monkey.isHidden)
-                    glTranslatef(0, 0.075f, 0);
-               else if (!monkey.monkey_large.isHidden)
-                    glTranslatef(0, 0.075f, 0);
-                GL11.glScaled(0.945, 0.945, 0.945);
+                if (!monkey.monkey_wrapped.isHidden)
+                    glTranslatef(0, 0.0375f, 0);
+                else {
+                    if (!monkey.monkey.isHidden)
+                        glTranslatef(0, 0.075f, 0);
+                    else if (!monkey.monkey_large.isHidden)
+                        glTranslatef(0, 0.075f, 0);
+                    GL11.glScaled(0.945, 0.945, 0.945);
+                }
                 disableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
             }
 
