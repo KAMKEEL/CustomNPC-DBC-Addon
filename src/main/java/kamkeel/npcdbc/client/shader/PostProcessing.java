@@ -46,19 +46,21 @@ public class PostProcessing {
     public static FloatBuffer DEFAULT_PROJECTION = BufferUtils.createFloatBuffer(16);
     public static Minecraft mc = Minecraft.getMinecraft();
 
-    public static void startBlooming() {
+    public static void startBlooming(boolean clearBloomBuffer) {
         if (!ConfigDBCClient.EnableBloom || !ShaderHelper.useShaders())
             return;
 
-        drawToBuffers(2);
-        glClearColor(0, 0, 0, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
+        if (clearBloomBuffer) {
+            drawToBuffers(2);
+            glClearColor(0, 0, 0, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
+        }
 
         PostProcessing.drawToBuffers(0, 2);
         processBloom = true;
     }
 
-    public static void bloom(float lightExposure) {
+    public static void bloom(float lightExposure, boolean resetGLState) {
         if (!processBloom)
             return;
 
@@ -79,7 +81,8 @@ public class PostProcessing {
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        if (!ClientProxy.renderingGUI && !ClientProxy.renderingArm)
+
+        if (resetGLState && !ClientProxy.renderingGUI && !ClientProxy.renderingArm)
             glDisable(GL_FOG);
 
         //////////////////////////////////////////////////////////////////
@@ -143,18 +146,24 @@ public class PostProcessing {
         releaseShader();
         processBloom = false;
 
-        glMatrixMode(GL11.GL_PROJECTION);
-        glLoadMatrix(prevProjection);
-        glMatrixMode(GL11.GL_MODELVIEW);
-        glLoadMatrix(prevModelView);
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(true);
-        glEnable(GL_LIGHTING);
-        glEnable(GL_ALPHA_TEST);
-        glColorMask(true, true, true, true);
-        if (!ClientProxy.renderingGUI && !ClientProxy.renderingArm)
-            glEnable(GL_FOG);
-
+        if (resetGLState) {
+            glMatrixMode(GL11.GL_PROJECTION);
+            glLoadMatrix(prevProjection);
+            glMatrixMode(GL11.GL_MODELVIEW);
+            glLoadMatrix(prevModelView);
+            glEnable(GL_DEPTH_TEST);
+            glDepthMask(true);
+            glEnable(GL_LIGHTING);
+            glEnable(GL_ALPHA_TEST);
+            glColorMask(true, true, true, true);
+            if (!ClientProxy.renderingGUI && !ClientProxy.renderingArm)
+                glEnable(GL_FOG);
+        } else {
+            drawToBuffers(2);
+            glClearColor(0, 0, 0, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
+            resetDrawBuffer();
+        }
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //testing shit
@@ -210,6 +219,7 @@ public class PostProcessing {
 
 
     }
+
     public static void blurFilter(int textureID, float blurIntensity, float startX, float startY, float width, float height) {
         useShader(blur, () -> {
             uniformVec2("u_resolution", width - startX, height - startY);

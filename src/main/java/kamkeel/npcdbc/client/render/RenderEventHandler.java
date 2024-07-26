@@ -83,7 +83,7 @@ public class RenderEventHandler {
         //Outline
         Outline outline = data.getOutline();
         if (outline != null && ConfigDBCClient.EnableOutlines && !isItem) {
-            startBlooming();
+            startBlooming(false);
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
             glStencilMask(0xff);
             OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
@@ -104,9 +104,6 @@ public class RenderEventHandler {
             glPushMatrix();
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
             glStencilMask(0x00);
-
-
-            //  glStencilMask(0xff);
             for (EntityAura child : aura.children.values())
                 AuraRenderer.Instance.renderAura(child, partialTicks);
 
@@ -148,7 +145,8 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         postStencilRendering();
-        PostProcessing.bloom(1.5f);
+        if (ClientProxy.renderingGUI)
+            PostProcessing.bloom(1.5f, true);
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
     }
 
@@ -258,7 +256,8 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         enableStencilWriting(e.entity.getEntityId() % 256);
-        PostProcessing.bloom(1.5f);
+        if (ClientProxy.renderingGUI)
+            PostProcessing.bloom(1.5f, true);
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         // postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
         glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there

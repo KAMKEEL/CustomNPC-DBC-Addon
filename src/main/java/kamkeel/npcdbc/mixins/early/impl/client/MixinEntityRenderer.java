@@ -29,7 +29,7 @@ public class MixinEntityRenderer {
         glGetFloat(GL_PROJECTION_MATRIX, PostProcessing.DEFAULT_PROJECTION);
     }
 
-    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderHelper;enableStandardItemLighting()V",ordinal = 1, shift = At.Shift.AFTER))
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderHelper;enableStandardItemLighting()V", ordinal = 1, shift = At.Shift.AFTER))
     private void secondRendPass(float partialTick, long idk, CallbackInfo info, @Local(name = "frustrum") LocalRef<Frustrum> frustrum) {
         mc.mcProfiler.endStartSection("NPCDBCEntities");
         ForgeHooksClient.setRenderPass(ClientProxy.MiddleRenderPass);
@@ -49,7 +49,7 @@ public class MixinEntityRenderer {
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/OpenGlHelper;shadersSupported:Z", shift = At.Shift.BEFORE))
     private void post(float p_78480_1_, CallbackInfo ci) {
-        // PostProcessing.bloom(1f);
+       PostProcessing.bloom(1.5f, false);
     }
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;drawScreen(IIF)V", shift = At.Shift.BEFORE))
