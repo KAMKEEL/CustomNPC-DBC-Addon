@@ -24,7 +24,7 @@ public class DBCHair extends ModelHairRenderer {
     public static final String GOKU_HAIR = "025050545050210250505450501801505045505021025050475050180147507467503248505072675043255250726750360150505667501922475071675038255050716750380152507167503202475071675032025250716750300050507167503000505047655036205250276550362250502765503620475027655036225250306550363150503065503622475030655034015250276550250147502765503000505027655036175050505050803150505050508028505050505080225050505050801750505050508022505050505080255050505050801750505050508000505050505080005050505050800050505050508000505050505080005050505050800050505050508000505050505080005050505050803154508067504931545080615028285450766150472854506561506551525080675038655250806150786052507861503451525069615050625050806950528250508061503485505078615030625050696150585149508069506157495080615080624950786150805149506961504920";
     public static final String SSJ4_HAIR = "373852546750347428545480193462285654801934283647478050340147507467501848505072675018255250726750183760656580501822475071675018255050716750189730327158501802475071675018973225673850189765616160501820414547655019545654216550195754542165501920475027655019943669346576193161503065231900475030655019406534276538199465393460501997654138655019976345453950189760494941501897615252415018976354563850189763494736501897614949395018976152523950189763525234501897584749395018976150493850189760545234501897585250415018885445474550189754475041501897545250435018885454523950185143607861501897415874585018514369196150185147768078391865525680565018974356806150188843567861501868396374615018975056805650189750568056501885582374615018975823726150187149568054501877495680565018774950785650189163236961501820";
     public static final String MAJIN_HAIR = "005050555050000050505550500000505055505000005050455050000050505250500000505052505000005050555050000050505450500000505052505000005050525050000150433450500000505055505000005050525050000054395050500000505045505000005050475050000050504750500000505047505000015043655050000050504750500000505047505000005050475050000050504750500000544545505000005250505050000052505050500000525050505000005250505050000050505050500000505050505000005050505050000052505050500000525050505000005250505050000052505050500000525050505000005245505050000054505050500000525050505000005252505050000070505050500000705050505000007050505050000070505050500000705050505000347050505050003470505050500000705050505000007050505050000069505050500000695050505000007050505050000070505050500000705050505000007050505050000070505050500020";
-    public static ResourceLocation hairResource = new ResourceLocation( "jinryuumodscore:gui/normall.png");
+    public static ResourceLocation hairResource = new ResourceLocation("jinryuumodscore:gui/normall.png");
 
     public ModelData data;
     public EntityCustomNpc entity;
@@ -96,7 +96,7 @@ public class DBCHair extends ModelHairRenderer {
         textureHeight = 32;
         textureWidth = 64;
 
-        this.hairCluster = new ModelHairRenderer(base, 0 ,0);
+        this.hairCluster = new ModelHairRenderer(base, 0, 0);
         this.hairall = new ModelHairRenderer[224];
         int hossz;
         int face;
@@ -394,10 +394,10 @@ public class DBCHair extends ModelHairRenderer {
 
     @Override
     public void render(float par1) {
-        if(isHidden)
+        if (isHidden)
             return;
 
-        if(base.isArmor)
+        if (base.isArmor)
             return;
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!display.enabled)
@@ -409,15 +409,15 @@ public class DBCHair extends ModelHairRenderer {
         boolean showColor = !this.base.isArmor && tintData.processColor(this.entity.hurtTime > 0 || this.entity.deathTime > 0);
         if (showColor) {
             int color = this.hairColor;
-            float red = (float)(color >> 16 & 255) / 255.0F;
-            float green = (float)(color >> 8 & 255) / 255.0F;
-            float blue = (float)(color & 255) / 255.0F;
+            float red = (float) (color >> 16 & 255) / 255.0F;
+            float green = (float) (color >> 8 & 255) / 255.0F;
+            float blue = (float) (color & 255) / 255.0F;
             GL11.glColor4f(red, green, blue, this.base.alpha);
-        } else if(this.entity.hurtTime > 0 || this.entity.deathTime > 0){
+        } else if (this.entity.hurtTime > 0 || this.entity.deathTime > 0) {
             int color = this.hairColor;
-            float red = (float)(color >> 16 & 255) / 255.0F;
-            float green = (float)(color >> 8 & 255) / 255.0F;
-            float blue = (float)(color & 255) / 255.0F;
+            float red = (float) (color >> 16 & 255) / 255.0F;
+            float green = (float) (color >> 8 & 255) / 255.0F;
+            float blue = (float) (color & 255) / 255.0F;
 
             // Increase the red component
             float increasedRed = Math.min(red + 0.3F, 1.0F); // Increase red by 0.1, ensuring it doesn't exceed 1.0
@@ -441,8 +441,7 @@ public class DBCHair extends ModelHairRenderer {
 
     public void initData() {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
-        if(display.hairCode.isEmpty())
-        {
+        if (display.hairCode.isEmpty()) {
             isHidden = true;
             return;
         }
@@ -497,6 +496,7 @@ public class DBCHair extends ModelHairRenderer {
             this.ssj3.render(0.0625f);
         }
     }
+
     public void renderHairs(DBCDisplay display) {
         if (display.hairCode.length() < 5) {
             if (display.hairCode.equalsIgnoreCase("bald"))
@@ -523,6 +523,7 @@ public class DBCHair extends ModelHairRenderer {
 
         if ((display.hairCode.equalsIgnoreCase("bald") || display.hairType.equals("oozaru")) && isSaiyan)
             return;
+
 
         String hairCode = display.hairCode;
         int state = 0;
@@ -598,7 +599,7 @@ public class DBCHair extends ModelHairRenderer {
         }
         int trTime = canUse ? 2 : 200;
         int arTime = canUse ? 2 : 200;
-        if (JRMCoreH.HairsT(state, "B") &&  display.stateChange < 200) {
+        if (JRMCoreH.HairsT(state, "B") && display.stateChange < 200) {
             display.stateChange += trTime;
         }
 
@@ -612,7 +613,7 @@ public class DBCHair extends ModelHairRenderer {
             }
         }
 
-        if (JRMCoreH.HairsT( display.tempState, "A") && !JRMCoreH.HairsT(state, "A")) {
+        if (JRMCoreH.HairsT(display.tempState, "A") && !JRMCoreH.HairsT(state, "A")) {
             if (!JRMCoreH.HairsT(display.tempState, state) && display.stateChange < 200) {
                 display.stateChange += trTime;
             }
@@ -753,6 +754,10 @@ public class DBCHair extends ModelHairRenderer {
         ///////////////////////////////////////////////////////
 
         GL11.glPushMatrix();
+        if (kamkeel.npcdbc.client.ClientProxy.renderingOutline) {
+            GL11.glScalef(1.04f, 1.04f, 1.04f);
+            GL11.glTranslatef(0,0.03f,0);
+        }
 
         int[] hairRightPosZ = new int[]{3, 2, 1, 0, 3, 2, 1, 3, 2, 3};
         int[] hairRightPosY = new int[]{0, 0, 0, 0, 1, 1, 1, 2, 2, 3};

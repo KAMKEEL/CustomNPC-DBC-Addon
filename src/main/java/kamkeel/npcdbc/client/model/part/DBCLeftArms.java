@@ -54,19 +54,26 @@ public class DBCLeftArms extends ModelDBCPartInterface {
         if (!display.enabled)
             return;
 
-        if (!ClientProxy.renderingOutline && display.outlineID != -1)
-            RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
+        if (!ClientProxy.renderingOutline && display.outlineID != -1) {
+            int id = !ArcoLeftShoulder.isHidden ? 0 : RenderEventHandler.TAIL_STENCIL_ID;
+            RenderEventHandler.enableStencilWriting((entity.getEntityId() +id) % 256);
+        }
 
+        GL11.glPushMatrix();
         if (ClientProxy.renderingOutline) {
-            GL11.glTranslatef(-.02f,-0.016f,0);
-            disableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
+            if (!LeftArmSpike.isHidden) {
+                GL11.glTranslatef(-.0585f, -0.045f, 0);
+                GL11.glScaled(1.15, 1.15, 1.15);
+            }
+            int id = !ArcoLeftShoulder.isHidden ? 0 : RenderEventHandler.TAIL_STENCIL_ID;
+            disableStencilWriting((entity.getEntityId() + id) % 256, false);
         }
 
         this.ArcoLeftShoulder.rotateAngleY = base.bipedLeftArm.rotateAngleY;
         this.ArcoLeftShoulder.rotateAngleX = base.bipedLeftArm.rotateAngleX;
         this.ArcoLeftShoulder.rotateAngleZ = base.bipedLeftArm.rotateAngleZ;
 
-        if(display.useSkin){;
+        if (display.useSkin) {
             bodyCM = display.bodyCM;
             bodyC2 = display.bodyC2;
             //////////////////////////////////////////////////////
@@ -93,8 +100,9 @@ public class DBCLeftArms extends ModelDBCPartInterface {
 
             useColor = 0;
         } else {
-             super.render(par1);
+            super.render(par1);
         }
+        GL11.glPopMatrix();
         if (!ClientProxy.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
 
@@ -106,8 +114,7 @@ public class DBCLeftArms extends ModelDBCPartInterface {
     @Override
     public void initData(ModelData modelData) {
         ModelPartData config = data.getPartData("dbcArms");
-        if(config == null)
-        {
+        if (config == null) {
             isHidden = true;
             return;
         }
@@ -117,10 +124,9 @@ public class DBCLeftArms extends ModelDBCPartInterface {
 
         LeftArmSpike.isHidden = config.type != 1;
         ArcoLeftShoulder.isHidden = config.type != 2;
-        if(!config.playerTexture){
+        if (!config.playerTexture) {
             location = config.getResource();
-        }
-        else
+        } else
             location = null;
     }
 }

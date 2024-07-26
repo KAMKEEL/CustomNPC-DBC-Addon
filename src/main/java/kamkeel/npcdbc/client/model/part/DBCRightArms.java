@@ -54,14 +54,19 @@ public class DBCRightArms extends ModelDBCPartInterface {
         if (!display.enabled)
             return;
 
-        if (!ClientProxy.renderingOutline && display.outlineID != -1)
-            RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
+        if (!ClientProxy.renderingOutline && display.outlineID != -1) {
+            int id = !ArcoRightShoulder.isHidden ? 0 : RenderEventHandler.TAIL_STENCIL_ID;
+            RenderEventHandler.enableStencilWriting((entity.getEntityId() + id) % 256);
+        }
 
+        GL11.glPushMatrix();
         if (ClientProxy.renderingOutline) {
-            GL11.glTranslatef(.02f, -0.016f, 0);
-            disableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
-
-            disableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
+            if (!RightArmSpike.isHidden) {
+                GL11.glTranslatef(.0525f, -0.045f, 0);
+                GL11.glScaled(1.15, 1.15, 1.15);
+            }
+            int id = !ArcoRightShoulder.isHidden ? 0 : RenderEventHandler.TAIL_STENCIL_ID;
+            disableStencilWriting((entity.getEntityId() + id) % 256, false);
         }
 
         this.ArcoRightShoulder.rotateAngleY = base.bipedRightArm.rotateAngleY;
@@ -97,6 +102,7 @@ public class DBCRightArms extends ModelDBCPartInterface {
         } else {
             super.render(par1);
         }
+        GL11.glPopMatrix();
         if (!ClientProxy.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
 

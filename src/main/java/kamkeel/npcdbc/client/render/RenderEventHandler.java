@@ -257,9 +257,9 @@ public class RenderEventHandler {
 
         ////////////////////////////////////////
         ////////////////////////////////////////
-        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         enableStencilWriting(e.entity.getEntityId() % 256);
         PostProcessing.bloom(1.5f);
+        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         // postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
         glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
         glDisable(GL_STENCIL_TEST);

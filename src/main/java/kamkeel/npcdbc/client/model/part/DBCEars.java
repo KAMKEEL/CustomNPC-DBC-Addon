@@ -52,9 +52,11 @@ public class DBCEars extends ModelDBCPartInterface {
 
         if (!ClientProxy.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
+
+        GL11.glPushMatrix();
         if (ClientProxy.renderingOutline) {
-            GL11.glTranslatef(0, 0.005f, -0.0225f);
-            GL11.glScaled(0.985, 0.985, 0.985);
+            GL11.glTranslatef(0, 0.0275f,0.005f);
+            GL11.glScaled(1.05, 1.05, 1.05);
             disableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
         }
 
@@ -77,6 +79,7 @@ public class DBCEars extends ModelDBCPartInterface {
         } else {
             super.render(par1);
         }
+        GL11.glPopMatrix();
         if (!ClientProxy.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
 

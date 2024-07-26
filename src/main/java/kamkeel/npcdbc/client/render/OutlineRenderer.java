@@ -5,7 +5,6 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
 import kamkeel.npcdbc.client.ClientProxy;
-import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.shader.ShaderResources;
@@ -15,15 +14,12 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
-import kamkeel.npcdbc.mixins.early.IEntityMC;
-import kamkeel.npcdbc.mixins.late.IModelMPM;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.EntityCustomNpc;
-import noppes.npcs.entity.data.ModelScalePart;
 import org.lwjgl.opengl.GL11;
 
 import static kamkeel.npcdbc.client.render.RenderEventHandler.disableStencilWriting;
@@ -159,17 +155,12 @@ public class OutlineRenderer {
     }
 
     public static void renderOutlineNPC(ModelMPM model, Outline outline, EntityCustomNpc npc, DBCDisplay display, float partialTicks) {
+
         ClientProxy.renderingOutline = true;
-        DBCDisplay data = display;
-
-        // ModelMPM model = (ModelMPM) ((IModelMPM) render).getMainModel();
-
-        ModelDBC dbcModel = ((IModelMPM) model).getDBCModel();
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D);
-        //glDepthMask(true);
         glPushMatrix();
 
         useShader(ShaderHelper.outline, () -> {
@@ -191,68 +182,43 @@ public class OutlineRenderer {
             scale = yScale = 1.035f;
         }
 
-
-        boolean hasTail = false;
-        if (!model.tail.isHidden) {
-            hasTail = true;
-            ModelScalePart legs = npc.modelData.modelScale.legs;
-            float y = npc.modelData.getLegsY();
-            float z = 0.0F;
-            model.tail.setConfig(legs, 0.0F, y, z);
-            disableStencilWriting((npc.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
-            glPushMatrix();
-            glScalef(1.02f * 1.01f * outlineSize, 1, 1.02f * 1.02f * outlineSize);
-            model.tail.render(0.0625f);
-            glPopMatrix();
-
-            model.tail.isHidden = true;
-            disableStencilWriting(npc.getEntityId() % 256, false);
-
-        }
-
         float size = scale * yScale * outlineSize;
-        glScalef(size, 1.025f * yScale, size);
+        glScalef(size, size, size);
+
+        glPushMatrix();
+        glScaled(1.03, 1.03, 1.03);
         model.renderBody(npc, 0.0625f);
+        glPopMatrix();
 
         glPushMatrix();
         float size2 = 1.03f;
         glScalef(size2, size2, size2);
         glTranslatef(0, -0.09f, 0);
         model.renderLegs(npc, 0.0625f);
-        if (hasTail)
-            model.tail.isHidden = false;
         glPopMatrix();
 
+        //Left
+        byte hideArms = npc.modelData.hideArms;
         glPushMatrix();
-        glTranslatef(0, -0.0175f, 0);
+        glTranslatef(-.0375f, -0.0275f, 0);
+        glScaled(1.05, 1.03, 1.05);
+        npc.modelData.hideArms = 2;
         model.renderArms(npc, 0.0625f, false);
         glPopMatrix();
+        npc.modelData.hideArms = hideArms;
 
-        float hairSize = 1.04f;
+        //Right
+        glPushMatrix();
+        glTranslatef(.0375f, -0.025f, 0);
+        glScaled(1.05, 1.02, 1.02);
+        npc.modelData.hideArms = 3;
+        model.renderArms(npc, 0.0625f, false);
+        glPopMatrix();
+        npc.modelData.hideArms = hideArms;
+
         boolean hideHeadWear = model.bipedHeadwear.isHidden;
-        boolean hideAntenna = dbcModel.DBCHorns.NamekianAntennas.isHidden;
-        if (!hideAntenna) {
-            dbcModel.DBCHorns.NamekianAntennas.rotateAngleY = model.bipedHead.rotateAngleY;
-            dbcModel.DBCHorns.NamekianAntennas.rotateAngleX = model.bipedHead.rotateAngleX;
-            dbcModel.DBCHorns.NamekianAntennas.rotateAngleZ = model.bipedHead.rotateAngleZ;
-
-            dbcModel.DBCHorns.NamekianAntennas.rotationPointX = model.bipedHead.rotationPointX;
-            dbcModel.DBCHorns.NamekianAntennas.rotationPointY = model.bipedHead.rotationPointY;
-            dbcModel.DBCHorns.NamekianAntennas.rotationPointZ = model.bipedHead.rotationPointZ;
-
-            disableStencilWriting((npc.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
-            glPushMatrix();
-            glScalef(1.02f * 1.01f * outlineSize, 1, 1.02f * 1.02f * outlineSize);
-            glTranslatef(0, 0.025f, 0);
-            //dbcModel.DBCHorns.NamekianAntennas.render(0.0625f);
-            glPopMatrix();
-            disableStencilWriting(npc.getEntityId() % 256, false);
-            // dbcModel.DBCHorns.NamekianAntennas.isHidden = true;
-        }
         model.bipedHeadwear.isHidden = true;
         glPushMatrix();
-        glScalef(hairSize, hairSize, hairSize);
-        glTranslatef(0, 0.03f, 0);
         model.renderHead(npc, 0.0625f);
         glPopMatrix();
         model.bipedHeadwear.isHidden = hideHeadWear;

@@ -171,13 +171,22 @@ public class DBCHorns extends ModelDBCPartInterface {
         if (!display.enabled)
             return;
 
-        if (!ClientProxy.renderingOutline && display.outlineID != -1)
-            RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
+        if (!ClientProxy.renderingOutline && display.outlineID != -1) {
+            int id = !ThirdFormBigHead.isHidden ? 0 : RenderEventHandler.TAIL_STENCIL_ID;
+            RenderEventHandler.enableStencilWriting((entity.getEntityId() + id) % 256);
+        }
 
+        GL11.glPushMatrix();
         if (ClientProxy.renderingOutline) {
-            GL11.glTranslatef(0.00f, -0.02f, 0.015f);
-            GL11.glScaled(0.98, 0.98, 0.98);
-            disableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
+            if (!NamekianAntennas.isHidden) {
+                GL11.glTranslatef(0.00f, 0.07f,0.023f);
+               GL11.glScaled(0.96, 1.12, 1.02);
+            } else {
+                GL11.glTranslatef(0.00f, 0.01f, 0.015f);
+                GL11.glScaled(1.03 ,0.99, 1.03);
+            }
+            int id = !ThirdFormBigHead.isHidden ? 0 : RenderEventHandler.TAIL_STENCIL_ID;
+            disableStencilWriting((entity.getEntityId() + id) % 256, false);
         }
         if (display.useSkin) {
             int state = ValueUtil.clamp(display.getCurrentArcoState(), 0, 7);
@@ -240,6 +249,7 @@ public class DBCHorns extends ModelDBCPartInterface {
         } else {
             super.render(par1);
         }
+        GL11.glPopMatrix();
     }
 
     @Override
