@@ -248,7 +248,7 @@ public class RenderEventHandler {
                     particleRender = (IRenderCusPar) RenderManager.instance.getEntityRenderObject(particle);
 
                 particleRender.renderParticle(particle, partialTicks);
-                if (particle.isDead)
+                if (particle.isDead || particle.ticksExisted == 0)
                     iter.remove();
             }
             glPopMatrix();
