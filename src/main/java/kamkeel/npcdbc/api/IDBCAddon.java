@@ -5,9 +5,16 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.outline.IOutline;
 import noppes.npcs.api.entity.IDBCPlayer;
+import noppes.npcs.api.entity.IEntityLivingBase;
 
 public interface IDBCAddon extends IDBCPlayer {
     int[] getAllFullAttributes();
+
+    /**
+     * Set a players lock on state!
+     * @param lockOnTarget Reference to new target Entity or null to remove lock on.
+     */
+    void setLockOnTarget(IEntityLivingBase<?> lockOnTarget);
 
     /**
      * @return Player's max body

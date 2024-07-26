@@ -20,10 +20,13 @@ import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetFlight;
+import kamkeel.npcdbc.network.packets.DBCUpdateLockOn;
 import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -635,6 +638,27 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     @Override
     public byte getState2() {
         return State2;
+    }
+
+    /**
+     * Set a players lock on state!
+     * @param lockOnTarget Reference to new target Entity or null to remove lock on.
+     */
+    public void setLockOnTarget(EntityLivingBase lockOnTarget){
+        if(side == Side.CLIENT){
+            if(player == Minecraft.getMinecraft().thePlayer){
+                DBCUpdateLockOn.setLockOnTarget(lockOnTarget);
+            }
+            return;
+        }
+
+        DBCUpdateLockOn packet;
+        if(lockOnTarget == null){
+            packet = new DBCUpdateLockOn();
+        } else {
+            packet = new DBCUpdateLockOn(lockOnTarget.getEntityId());
+        }
+        PacketHandler.Instance.sendToPlayer(packet.generatePacket(), (EntityPlayerMP) player);
     }
 
     @Override

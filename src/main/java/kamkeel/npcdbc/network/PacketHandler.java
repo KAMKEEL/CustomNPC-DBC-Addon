@@ -56,6 +56,7 @@ public final class PacketHandler {
         map.put(DBCRemoveOutline.packetName, new DBCRemoveOutline());
         map.put(DBCGetOutline.packetName, new DBCGetOutline());
         map.put(DBCSaveOutline.packetName, new DBCSaveOutline());
+        map.put(DBCUpdateLockOn.packetName, new DBCUpdateLockOn());
         this.register();
     }
 

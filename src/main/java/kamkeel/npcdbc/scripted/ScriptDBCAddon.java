@@ -16,6 +16,7 @@ import kamkeel.npcdbc.data.outline.IOutline;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.api.entity.IEntityLivingBase;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.util.ValueUtil;
@@ -35,6 +36,15 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         this.player = player;
         this.nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
         dbcData = DBCData.get(player);
+    }
+
+
+    /**
+     * Set a players lock on state!
+     * @param lockOnTarget Reference to new target Entity or null to remove lock on.
+     */
+    public void setLockOnTarget(IEntityLivingBase<?> lockOnTarget){
+        this.dbcData.setLockOnTarget(lockOnTarget == null ? null : lockOnTarget.getMCEntity());
     }
 
 
