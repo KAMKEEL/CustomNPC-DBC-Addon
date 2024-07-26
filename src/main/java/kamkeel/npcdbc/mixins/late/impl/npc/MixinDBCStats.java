@@ -21,6 +21,8 @@ public class MixinDBCStats implements INPCStats {
     @Unique
     private final DBCStats customNPC_DBCAddon$dbcStats = new DBCStats();
 
+
+
     @Inject(method = "writeToNBT", at = @At("HEAD"), remap = false)
     public void writeToNBT(NBTTagCompound nbttagcompound, CallbackInfoReturnable<NBTTagCompound> cir) {
         if(hasDBCData())

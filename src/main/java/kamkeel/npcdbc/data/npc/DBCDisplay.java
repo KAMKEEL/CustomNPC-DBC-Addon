@@ -4,6 +4,7 @@ import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
@@ -727,6 +728,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return aura;
     }
 
+    @SideOnly(Side.CLIENT)
     public static EntityCustomNpc setupGUINPC(EntityCustomNpc originalNPC) {
         DBCDisplay origDisplay = null;
         EntityCustomNpc npc = new EntityCustomNpc(Minecraft.getMinecraft().theWorld);

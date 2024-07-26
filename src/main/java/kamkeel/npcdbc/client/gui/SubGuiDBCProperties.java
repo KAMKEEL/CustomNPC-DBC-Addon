@@ -22,6 +22,11 @@ public class SubGuiDBCProperties extends SubGuiInterface implements ITextfieldLi
         super.initGui();
         int y = guiTop + 4;
 
+        addLabel(new GuiNpcLabel(-1, "stats.lockOnState", guiLeft + 5, y + 5));
+        addButton(new GuiNpcButtonYesNo(-1, guiLeft + 145, y, 50, 20, getDBCData(npc).canBeLockedOn()));
+
+        y+=22;
+
         addLabel(new GuiNpcLabel(0,"gui.enabled", guiLeft + 5, y + 5));
         addButton(new GuiNpcButtonYesNo(0, guiLeft + 145, y, 50, 20, getDBCData(npc).enabled));
 
@@ -66,6 +71,9 @@ public class SubGuiDBCProperties extends SubGuiInterface implements ITextfieldLi
 	protected void actionPerformed(GuiButton guibutton)
     {
 		GuiNpcButton button = (GuiNpcButton) guibutton;
+        if(button.id == -1){
+            getDBCData(npc).canBeLockedOn = ((GuiNpcButtonYesNo) button).getBoolean();
+        }
         if (button.id == 0) {
             getDBCData(npc).enabled = ((GuiNpcButtonYesNo) button).getBoolean();
             initGui();

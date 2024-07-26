@@ -13,8 +13,11 @@ public class DBCStats implements IDBCStats {
     public int friendlyFistTime = 6;
     public byte release = 100;
 
+    public boolean canBeLockedOn = false;
+
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         nbttagcompound.setBoolean("DBCStatsEnabled", enabled);
+        nbttagcompound.setBoolean("DBCCanBeLockedOn", canBeLockedOn);
         if(friendlyFistTime <= 0)
             friendlyFistTime = 6;
 
@@ -41,6 +44,7 @@ public class DBCStats implements IDBCStats {
 
     public void readFromNBT(NBTTagCompound nbttagcompound) {
         enabled = nbttagcompound.getBoolean("DBCStatsEnabled");
+        canBeLockedOn = nbttagcompound.getBoolean("DBCCanBeLockedOn");
         if (enabled) {
             NBTTagCompound dbcStats = nbttagcompound.getCompoundTag("DBCStats");
 
@@ -170,5 +174,15 @@ public class DBCStats implements IDBCStats {
     @Override
     public void setDefensePenetration(int defensePenetration) {
         this.defensePenetration = defensePenetration;
+    }
+
+    @Override
+    public boolean canBeLockedOn() {
+        return canBeLockedOn;
+    }
+
+    @Override
+    public void setLockOnState(boolean canBeLockedOn) {
+        this.canBeLockedOn = canBeLockedOn;
     }
 }

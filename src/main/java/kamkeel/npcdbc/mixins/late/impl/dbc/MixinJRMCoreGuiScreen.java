@@ -6,6 +6,7 @@ import JinRyuu.JRMCore.JRMCoreGuiScreen;
 import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -15,18 +16,24 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.mixins.late.IDBCGuiScreen;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.util.ChatComponentText;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import scala.Tuple2;
+import scala.Tuple4;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.function.Function;
 
 @Mixin(value = JRMCoreGuiScreen.class, remap = false)
 
@@ -47,6 +54,20 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
     private int newGuiID;
     @Unique
     private boolean ignoreInit = false;
+
+    @Shadow
+    private static int cs_mode;
+    @Shadow
+    private static int cs_page;
+
+    @Shadow
+    private int wid;
+
+    @Shadow
+    private int hei;
+
+    @Shadow
+    public static JRMCoreGuiScreen instance;
 
     @Inject(method = "updateScreen", at=@At("HEAD"), remap = true)
     private void onUpdateScreen(CallbackInfo ci){
@@ -228,6 +249,30 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
             ConfigDBCClient.EnhancedGui = true;
             ConfigDBCClient.EnhancedGuiProperty.set(true);
         }
+    }
+
+    @Inject(method="drawHUD_clntsett", at=@At("RETURN"), remap=false)
+    public void addClientSettings(int posX, int posY, ScaledResolution var5, int var6, FontRenderer var8, CallbackInfo ci){
+
+        int xSize = 256;
+        int ySize = 159;
+        int guiLeft = (this.width - xSize) / 2;
+        int guiTop = (this.height - ySize) / 2 + 7;
+
+        Function<Tuple4<String, Integer, Integer, Integer>, Integer> test;
+
+        if(cs_mode == 0 && cs_page == 3){
+            enhancedGUIdrawString(var8, "Test", guiLeft+5, guiTop + 3*15 , 0);
+        }
+    }
+
+    private static int enhancedGUIdrawString(FontRenderer instance, String text, int x, int y, int color){
+        if(ConfigDBCClient.EnhancedGui){
+            return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), ConfigDBCClient.DarkMode);
+        }
+        Function<Tuple2<String, Integer>, ?> test = (a) -> instance.drawString(a._1, a._2, 0, 0, false);
+        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(""));
+        return instance.drawString(text, x, y, color);
     }
 
     @Unique

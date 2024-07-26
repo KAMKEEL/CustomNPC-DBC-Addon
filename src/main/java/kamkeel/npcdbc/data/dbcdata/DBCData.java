@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -647,20 +648,25 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
      * @param lockOnTarget Reference to new target Entity or null to remove lock on.
      */
     public void setLockOnTarget(EntityLivingBase lockOnTarget){
+
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+            DBCUpdateLockOn packet;
+            if (lockOnTarget == null) {
+                packet = new DBCUpdateLockOn();
+            } else {
+                packet = new DBCUpdateLockOn(lockOnTarget.getEntityId());
+            }
+            PacketHandler.Instance.sendToPlayer(packet.generatePacket(), (EntityPlayerMP) player);
+            return;
+        }
+
+
         if(side == Side.CLIENT){
             if(player == Minecraft.getMinecraft().thePlayer){
                 DBCUpdateLockOn.setLockOnTarget(lockOnTarget);
             }
             return;
         }
-
-        DBCUpdateLockOn packet;
-        if(lockOnTarget == null){
-            packet = new DBCUpdateLockOn();
-        } else {
-            packet = new DBCUpdateLockOn(lockOnTarget.getEntityId());
-        }
-        PacketHandler.Instance.sendToPlayer(packet.generatePacket(), (EntityPlayerMP) player);
     }
 
     @Override
