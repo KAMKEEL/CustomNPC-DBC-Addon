@@ -36,13 +36,12 @@ import java.util.Iterator;
 
 import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
 
-public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener,ITextfieldListener, ClipboardOwner
-{
+public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener, ClipboardOwner {
     private final String[] arrRace = new String[]{"display.human", "display.saiyan", "display.halfsaiyan", "display.namekian", "display.arcosian", "display.majin"};
     private final String[] arcoForms = new String[]{"display.arcofirst", "display.arcosecond", "display.arcothird", "display.arcofinal", "display.arcoultimatecooler"};
     private final String[] hairTypes = new String[]{"display.base", "display.ssj", "display.ssj2", "display.ssj3", "display.ssj4", "display.oozaru", "display.raditz"};
     private final GuiNpcFormMenu menu;
-	public Form form;
+    public Form form;
     public FormDisplay display;
     private final DBCDisplay visualDisplay;
     public EntityCustomNpc npc;
@@ -61,9 +60,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     public Form spoofForm;
 
-    public SubGuiFormDisplay(GuiNPCManageForms parent, Form form)
-	{
-        if(DBCDisplay.fakeForm == null)
+    public SubGuiFormDisplay(GuiNPCManageForms parent, Form form) {
+        if (DBCDisplay.fakeForm == null)
             DBCDisplay.fakeForm = new Form(-100, "EXTREME_FAKE_FORM");
         spoofForm = DBCDisplay.fakeForm;
         menu = new GuiNpcFormMenu(parent, this, -2, form);
@@ -76,9 +74,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         this.form = form;
         this.display = form.display;
 
-		setBackground("menubg.png");
-		xSize = 360;
-		ySize = 216;
+        setBackground("menubg.png");
+        xSize = 360;
+        ySize = 216;
         xOffset = 100;
         yOffset = -10;
 
@@ -99,8 +97,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         updateDisplay();
     }
 
-    public void initGui()
-    {
+    public void initGui() {
         super.initGui();
         guiTop += 7;
         menu.initGui(guiLeft, guiTop, xSize);
@@ -120,8 +117,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         getTextField(200).floatsOnly = true;
         getTextField(200).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
 
-        addButton(new GuiNpcButton(1306, guiLeft + 101, y, 100, 20,  "display.selectAura"));
-        if(display.auraID != -1 && AuraController.getInstance().has(display.auraID))
+        addButton(new GuiNpcButton(1306, guiLeft + 101, y, 100, 20, "display.selectAura"));
+        if (display.auraID != -1 && AuraController.getInstance().has(display.auraID))
             getButton(1306).setDisplayText(AuraController.getInstance().get(display.auraID).getName());
         addButton(new GuiNpcButton(1406, guiLeft + 202, y, 20, 20, "X"));
         getButton(1406).enabled = display.auraID != -1;
@@ -134,7 +131,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         addButton(new GuiNpcButton(1106, guiLeft + 112, y, 20, 20, "X"));
         getButton(1106).enabled = display.auraColor != -1;
-        addButton(new GuiNpcButton(1206, guiLeft + 133, y, 50, 20,  new String[]{"display.hide", "display.show"}, showAura ? 1 : 0));
+        addButton(new GuiNpcButton(1206, guiLeft + 133, y, 50, 20, new String[]{"display.hide", "display.show"}, showAura ? 1 : 0));
 
         y += 22;
         addLabel(new GuiNpcLabel(124, "display.kiBarColor", guiLeft + 7, y + 5));
@@ -176,7 +173,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             getButton(1112).enabled = display.furColor != -1;
         }
 
-        if(visualDisplay.race == DBCRace.MAJIN){
+        if (visualDisplay.race == DBCRace.MAJIN) {
             y += 22;
             addLabel(new GuiNpcLabel(115, "display.majinHair", guiLeft + 7, y + 5));
             addButton(new GuiNpcButtonYesNo(115, guiLeft + 61, y, 50, 20, display.effectMajinHair));
@@ -190,7 +187,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             y = addFurOptions(y);
         }
 
-        if(visualDisplay.race == DBCRace.ARCOSIAN){
+        if (visualDisplay.race == DBCRace.ARCOSIAN) {
             y += 22;
             addLabel(new GuiNpcLabel(113, "display.arcoMask", guiLeft + 7, y + 5));
             addButton(new GuiNpcButtonYesNo(113, guiLeft + 61, y, 50, 20, visualDisplay.hasArcoMask));
@@ -276,49 +273,49 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             updateButtons();
         }
         // Aura Color
-        if(button.id == 106){
+        if (button.id == 106) {
             lastColorClicked = 0;
             setSubGui(new SubGuiColorSelector(display.auraColor));
         }
         // Aura Color Clear
-        if(button.id == 1106){
+        if (button.id == 1106) {
             display.auraColor = -1;
             updateDisplay();
             updateButtons();
         }
         // Aura Show
-        if(button.id == 1206){
+        if (button.id == 1206) {
             showAura = !showAura;
             auraTicks = 1;
             updateDisplay();
             updateButtons();
         }
-        if(button.id == 1306){
+        if (button.id == 1306) {
             this.setSubGui(new SubGuiSelectAura());
         }
-        if(button.id == 1406){
+        if (button.id == 1406) {
             display.auraID = -1;
             updateDisplay();
             updateButtons();
         }
         // Hud Color
-        if(button.id == 124){
+        if (button.id == 124) {
             lastColorClicked = 8;
             setSubGui(new SubGuiColorSelector(display.kiBarColor));
         }
         // Hud Color Clear
-        if(button.id == 1124){
+        if (button.id == 1124) {
             display.kiBarColor = -1;
             updateDisplay();
             updateButtons();
         }
         // Eye Color
-        if(button.id == 107){
+        if (button.id == 107) {
             lastColorClicked = 1;
             setSubGui(new SubGuiColorSelector(display.eyeColor));
         }
         // Eye Color Clear
-        if(button.id == 1107){
+        if (button.id == 1107) {
             display.eyeColor = -1;
             updateDisplay();
             updateButtons();
@@ -329,12 +326,12 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             updateDisplay();
         }
         // Body
-        if(button.id == 108){
+        if (button.id == 108) {
             lastColorClicked = 2;
             setSubGui(new SubGuiColorSelector(display.bodyCM));
         }
         // Body Clear
-        if(button.id == 1108){
+        if (button.id == 1108) {
             display.bodyCM = -1;
             updateDisplay();
             updateButtons();
@@ -345,82 +342,82 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             updateDisplay();
         }
         // Body C1
-        if(button.id == 109){
+        if (button.id == 109) {
             lastColorClicked = 3;
             setSubGui(new SubGuiColorSelector(display.bodyC1));
         }
         // Body C1 Clear
-        if(button.id == 1109){
+        if (button.id == 1109) {
             display.bodyC1 = -1;
             updateDisplay();
             updateButtons();
         }
         // Body C2
-        if(button.id == 110){
+        if (button.id == 110) {
             lastColorClicked = 4;
             setSubGui(new SubGuiColorSelector(display.bodyC2));
         }
         // Body C2 Clear
-        if(button.id == 1110){
+        if (button.id == 1110) {
             display.bodyC2 = -1;
             updateDisplay();
             updateButtons();
         }
         // Body C3
-        if(button.id == 111){
+        if (button.id == 111) {
             lastColorClicked = 5;
             setSubGui(new SubGuiColorSelector(display.bodyC3));
         }
         // Body C3 Clear
-        if(button.id == 1111){
+        if (button.id == 1111) {
             display.bodyC3 = -1;
             updateDisplay();
             updateButtons();
         }
         // Fur Color
-        if(button.id == 112){
+        if (button.id == 112) {
             lastColorClicked = 6;
             setSubGui(new SubGuiColorSelector(display.furColor));
         }
         // Fur Color Clear
-        if(button.id == 1112){
+        if (button.id == 1112) {
             display.furColor = -1;
             updateDisplay();
             updateButtons();
         }
         // Majin Hair
-        if(button.id == 115){
+        if (button.id == 115) {
             display.effectMajinHair = !display.effectMajinHair;
             updateDisplay();
             updateButtons();
         }
         // Arco Mask
-        if(button.id == 113){
+        if (button.id == 113) {
             display.hasArcoMask = !display.hasArcoMask;
             updateDisplay();
             updateButtons();
         }
         // Body Fur
-        if(button.id == 123){
+        if (button.id == 123) {
             display.hasBodyFur = !display.hasBodyFur;
             updateDisplay();
             updateButtons();
         }
 
         // Form
-        if(button.id == 114){
+        if (button.id == 114) {
             display.bodyType = getArcoString(button.getValue());
             updateDisplay();
         }
 
         // Hair Clear
-        if(button.id == 103){
+        if (button.id == 103) {
             display.hairCode = "";
             updateDisplay();
             updateButtons();
         }
         // Hair Paste
-        if(button.id == 101){
+        if (button.id == 101) {
             String newDNSHair = getClipboardContents();
             if (newDNSHair.length() == 786 || newDNSHair.length() == 784 || newDNSHair.length() == 392) {
                 display.hairCode = dnsHairG1toG2(newDNSHair);
@@ -434,16 +431,16 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         }
         // Hair Copy
-        if(button.id == 102){
+        if (button.id == 102) {
             setClipboardContents(display.hairCode);
         }
         // Hair Color
-        if(button.id == 104){
+        if (button.id == 104) {
             lastColorClicked = 7;
             setSubGui(new SubGuiColorSelector(display.hairColor));
         }
         // Hair Color Clear
-        if(button.id == 1104){
+        if (button.id == 1104) {
             display.hairColor = -1;
             updateDisplay();
             updateButtons();
@@ -474,58 +471,57 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     @Override
     public void keyTyped(char c, int i) {
-        super.keyTyped(c,i);
+        super.keyTyped(c, i);
         if (i == 1)
             menu.close();
 
     }
 
-	@Override
+    @Override
     public void unFocused(GuiNpcTextField txtField) {
-        if(txtField.id == 200){
+        if (txtField.id == 200) {
             display.formSize = txtField.getFloat();
         }
     }
 
     @Override
-    public void mouseClicked(int i, int j, int k)
-    {
+    public void mouseClicked(int i, int j, int k) {
         super.mouseClicked(i, j, k);
-        if(!hasSubGui())
+        if (!hasSubGui())
             menu.mouseClicked(i, j, k);
     }
 
-	@Override
-	public void subGuiClosed(SubGuiInterface subgui){
-        if(subgui instanceof  SubGuiColorSelector){
+    @Override
+    public void subGuiClosed(SubGuiInterface subgui) {
+        if (subgui instanceof SubGuiColorSelector) {
             int color = ((SubGuiColorSelector) subgui).color;
-            if(lastColorClicked == 0){
+            if (lastColorClicked == 0) {
                 display.auraColor = color;
-            } else if(lastColorClicked == 1){
+            } else if (lastColorClicked == 1) {
                 display.eyeColor = color;
-            } else if(lastColorClicked == 2){
+            } else if (lastColorClicked == 2) {
                 display.bodyCM = color;
-            } else if(lastColorClicked == 3){
+            } else if (lastColorClicked == 3) {
                 display.bodyC1 = color;
-            } else if(lastColorClicked == 4){
+            } else if (lastColorClicked == 4) {
                 display.bodyC2 = color;
-            } else if(lastColorClicked == 5){
+            } else if (lastColorClicked == 5) {
                 display.bodyC3 = color;
-            } else if(lastColorClicked == 6){
+            } else if (lastColorClicked == 6) {
                 display.furColor = color;
-            } else if(lastColorClicked == 7){
+            } else if (lastColorClicked == 7) {
                 display.hairColor = color;
-            } else if(lastColorClicked == 8){
+            } else if (lastColorClicked == 8) {
                 display.kiBarColor = color;
             }
             updateDisplay();
             updateButtons();
         }
         if (subgui instanceof SubGuiSelectAura) {
-            if(form != null){
-                SubGuiSelectAura guiSelectForm = ((SubGuiSelectAura)subgui);
-                if(guiSelectForm.confirmed){
-                    if(guiSelectForm.selectedAuraID == display.auraID)
+            if (form != null) {
+                SubGuiSelectAura guiSelectForm = ((SubGuiSelectAura) subgui);
+                if (guiSelectForm.confirmed) {
+                    if (guiSelectForm.selectedAuraID == display.auraID)
                         return;
 
                     display.auraID = guiSelectForm.selectedAuraID;
@@ -540,6 +536,10 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         return false;
     }
 
+    public boolean isMouseOverRenderer(int x, int y) {
+        return x >= guiLeft + 225 && x <= guiLeft + 225 + 130 && y >= guiTop + 5 && y <= guiTop + 5 + 180;
+    }
+
     public void drawScreen(int par1, int par2, float par3) {
         if (Mouse.isButtonDown(0)) {
             if (this.left.mousePressed(this.mc, par1, par2)) {
@@ -548,8 +548,19 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 rotation -= par3 * 2.0F;
             }
         }
+        if (isMouseOverRenderer(par1, par2)) {
+            zoomed += Mouse.getDWheel() * 0.035f;
+            if (zoomed > 100)
+                zoomed = 100;
+            if (zoomed < 10)
+                zoomed = 10;
+
+            if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
+                rotation -= Mouse.getDX() * 0.75f;
+            }
+        }
         super.drawScreen(par1, par2, par3);
-        if(hasSubGui())
+        if (hasSubGui())
             return;
 
         menu.drawElements(fontRendererObj, par1, par2, mc, par3);
@@ -558,7 +569,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         EntityLivingBase entity = this.npc;
 
         int l = guiLeft + 190 + xOffset;
-        int i1 =  guiTop + 180 + yOffset;
+        int i1 = guiTop + 180 + yOffset;
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
         GL11.glPushMatrix();
         GL11.glTranslatef(l, i1, 50F);
@@ -569,27 +580,27 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         float f3 = entity.rotationYaw;
         float f4 = entity.rotationPitch;
         float f7 = entity.rotationYawHead;
-        float f5 = (float)(l) - par1;
-        float f6 = (float)(i1 - 50) - par2;
+        float f5 = (float) (l) - par1;
+        float f6 = (float) (i1 - 50) - par2;
         GL11.glRotatef(135F, 0.0F, 1.0F, 0.0F);
         RenderHelper.enableStandardItemLighting();
         GL11.glRotatef(-135F, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(-(float) Math.atan(f6 / 800F) * 20F, 1.0F, 0.0F, 0.0F);
         entity.prevRenderYawOffset = entity.renderYawOffset = rotation;
-        entity.prevRotationYaw = entity.rotationYaw = (float)Math.atan(f5 / 80F) * 40F + rotation;
+        entity.prevRotationYaw = entity.rotationYaw = (float) Math.atan(f5 / 80F) * 40F + rotation;
         entity.rotationPitch = -(float) Math.atan(f6 / 40F) * 20F;
         entity.prevRotationYawHead = entity.rotationYawHead = entity.rotationYaw;
         GL11.glTranslatef(0.0F, entity.yOffset, 1F);
         RenderManager.instance.playerViewY = 180F;
 
-        if(showAura) {
+        if (showAura) {
             // Render Aura
             EntityAura2 aur = new EntityAura2(entity.worldObj, Utility.getEntityID(entity), 0, 0, 0, 100, false);
             aur.setAlp(0.5F);
             aur.setInner(true);
             aur.setCol(display.auraColor);
 
-            if(display.auraID != -1 && AuraController.getInstance().has(display.auraID)){
+            if (display.auraID != -1 && AuraController.getInstance().has(display.auraID)) {
                 Aura aura = AuraController.getInstance().customAuras.get(display.auraID);
                 if (aura.display.type == EnumAuraTypes3D.SaiyanGod) {
                     aur.setAlp(0.2F);
@@ -639,7 +650,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                     aur.setTexL2("aurau2");
                     aur.setColL2(16776724);
                 }
-                if(aura.display.hasColor("color1"))
+                if (aura.display.hasColor("color1"))
                     aur.setCol(aura.display.color1);
                 if (aura.display.hasColor("color2"))
                     aur.setColL2(aura.display.color2);
@@ -684,7 +695,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Render Entity
         try {
             RenderManager.instance.renderEntityWithPosYaw(entity, 0.0, 0.0, 0.0, 0.0F, 1F);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
 
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
@@ -707,12 +719,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         int xPosGradient = guiLeft + 225;
         int yPosGradient = guiTop + 5;
-        drawGradientRect(xPosGradient, yPosGradient, 130 + xPosGradient ,180 + yPosGradient, 0xc0101010, 0xd0101010);
+        drawGradientRect(xPosGradient, yPosGradient, 130 + xPosGradient, 180 + yPosGradient, 0xc0101010, 0xd0101010);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
-	@Override
-	public void selected(int id, String name) {}
+    @Override
+    public void selected(int id, String name) {
+    }
 
     public void updateDisplay() {
         DBCData dbcData = DBCData.getClient();
@@ -752,7 +765,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             visualDisplay.bodyC2 = 8533141;
             visualDisplay.bodyC3 = 16550015;
             visualDisplay.eyeColor = 0xFF0000;
-        } else if (visualDisplay.race == DBCRace.MAJIN){
+        } else if (visualDisplay.race == DBCRace.MAJIN) {
             visualDisplay.bodyCM = 16757199;
             visualDisplay.eyeColor = 0xFF0000;
         }
@@ -767,7 +780,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             visualDisplay.hairColor = display.bodyCM;
 
         visualDisplay.hairCode = "";
-        if(visualDisplay.race == DBCRace.HUMAN || visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
+        if (visualDisplay.race == DBCRace.HUMAN || visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
             visualDisplay.hairCode = display.hairCode;
             if (visualDisplay.hairCode.isEmpty())
                 visualDisplay.hairCode = DBCHair.GOKU_HAIR;
@@ -803,7 +816,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         data.removePart("dbcArms");
         data.removePart("dbcBody");
 
-        if(visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN || visualDisplay.race == DBCRace.ARCOSIAN){
+        if (visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN || visualDisplay.race == DBCRace.ARCOSIAN) {
             //
             ModelPartData original = null;
             if (!originalNull)
@@ -831,10 +844,10 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             }
 
         }
-        if(visualDisplay.race == DBCRace.ARCOSIAN){
+        if (visualDisplay.race == DBCRace.ARCOSIAN) {
             ModelPartData horn = data.getOrCreatePart("dbcHorn");
             ModelPartData arms;
-            switch (display.bodyType){
+            switch (display.bodyType) {
                 case "firstform":
                     visualDisplay.arcoState = 0;
                     horn.setTexture("tail/monkey1", 2);
@@ -868,7 +881,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             }
         }
 
-        if(visualDisplay.race == DBCRace.NAMEKIAN){
+        if (visualDisplay.race == DBCRace.NAMEKIAN) {
             ModelPartData horn = data.getOrCreatePart("dbcHorn");
             horn.setTexture("tail/monkey1", 1);
         }
@@ -902,19 +915,21 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     public String getColor(int input) {
         String str;
-        for(str = Integer.toHexString(input); str.length() < 6; str = "0" + str) {}
+        for (str = Integer.toHexString(input); str.length() < 6; str = "0" + str) {
+        }
         return str;
     }
 
     public String getClipboardContents() {
         String result = "";
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        Transferable contents = clipboard.getContents((Object)null);
+        Transferable contents = clipboard.getContents((Object) null);
         boolean hasTransferableText = contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
         if (hasTransferableText) {
             try {
-                result = (String)contents.getTransferData(DataFlavor.stringFlavor);
-            } catch (Exception ignored) {}
+                result = (String) contents.getTransferData(DataFlavor.stringFlavor);
+            } catch (Exception ignored) {
+            }
         }
         return result;
     }
@@ -928,16 +943,16 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     private int getArcoForm() {
         int index = 0;
-        if(!display.bodyType.isEmpty()){
-            if(display.bodyType.toLowerCase().contains("first"))
+        if (!display.bodyType.isEmpty()) {
+            if (display.bodyType.toLowerCase().contains("first"))
                 index = 0;
-            else if(display.bodyType.toLowerCase().contains("second"))
+            else if (display.bodyType.toLowerCase().contains("second"))
                 index = 1;
-            else if(display.bodyType.toLowerCase().contains("third"))
+            else if (display.bodyType.toLowerCase().contains("third"))
                 index = 2;
-            else if(display.bodyType.toLowerCase().contains("final"))
+            else if (display.bodyType.toLowerCase().contains("final"))
                 index = 3;
-            else if(display.bodyType.toLowerCase().contains("ultimate"))
+            else if (display.bodyType.toLowerCase().contains("ultimate"))
                 index = 4;
         }
         return index;
@@ -964,18 +979,18 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     private int getHairType() {
         int index = 0;
         //  "base", "ssj", "ssj2", "ssj3", "ssj4", "oozaru"
-        if(!display.hairType.isEmpty()){
-            if(display.hairType.toLowerCase().contains("base"))
+        if (!display.hairType.isEmpty()) {
+            if (display.hairType.toLowerCase().contains("base"))
                 index = 0;
-            else if(display.hairType.equalsIgnoreCase("ssj"))
+            else if (display.hairType.equalsIgnoreCase("ssj"))
                 index = 1;
-            else if(display.hairType.toLowerCase().contains("ssj2"))
+            else if (display.hairType.toLowerCase().contains("ssj2"))
                 index = 2;
-            else if(display.hairType.toLowerCase().contains("ssj3"))
+            else if (display.hairType.toLowerCase().contains("ssj3"))
                 index = 3;
-            else if(display.hairType.toLowerCase().contains("ssj4"))
+            else if (display.hairType.toLowerCase().contains("ssj4"))
                 index = 4;
-            else if(display.hairType.toLowerCase().contains("oozaru"))
+            else if (display.hairType.toLowerCase().contains("oozaru"))
                 index = 5;
             else if (display.hairType.toLowerCase().contains("raditz"))
                 index = 6;
@@ -1006,5 +1021,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
 
     @Override
-    public void lostOwnership(Clipboard clipboard, Transferable contents) {}
+    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+    }
 }

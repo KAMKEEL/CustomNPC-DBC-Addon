@@ -37,6 +37,7 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         int y = guiTop + 3;
 
         addTextField(new GuiNpcTextField(1, this, this.fontRendererObj, guiLeft + 36, y, 200, 20, form.name));
+        getTextField(1).setMaxStringLength(40);
         addLabel(new GuiNpcLabel(1,"gui.name", guiLeft + 4, y + 5));
         addButton(new GuiNpcButton(3, guiLeft + 260, y, 95, 20, new String[]{"general.allRaces", "Human", "general.allSaiyans", "Pure Saiyan", "Half-Saiyan", "Namekian", "Arcosian", "Majin"}, getRaceIndex(form.getRace())));
 
@@ -46,7 +47,7 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
         y += 23;
 
         addTextField(new GuiNpcTextField(4, this, guiLeft + 70, y, 166, 20, form.menuName.replaceAll("§", "&")));
-        getTextField(4).setMaxStringLength(20);
+        getTextField(4).setMaxStringLength(40);
         addLabel(new GuiNpcLabel(4, "general.menuName", guiLeft + 4, y+5));
 
         addLabel(new GuiNpcLabel(19,"general.strength", guiLeft + 239, y + 5));

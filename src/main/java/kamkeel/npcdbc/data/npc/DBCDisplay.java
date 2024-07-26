@@ -727,12 +727,12 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return aura;
     }
 
-    public static EntityCustomNpc setupGUINPC(EntityCustomNpc npc) {
+    public static EntityCustomNpc setupGUINPC(EntityCustomNpc originalNPC) {
         DBCDisplay origDisplay = null;
-        if (npc == null)
-            npc = new EntityCustomNpc(Minecraft.getMinecraft().theWorld);
-        else
-            origDisplay = ((INPCDisplay) npc.display).getDBCDisplay();
+        EntityCustomNpc npc = new EntityCustomNpc(Minecraft.getMinecraft().theWorld);
+
+        if (originalNPC != null)
+            origDisplay = ((INPCDisplay) originalNPC.display).getDBCDisplay();
 
         DBCDisplay visualDisplay = ((INPCDisplay) npc.display).getDBCDisplay();
         if (origDisplay != null && origDisplay.enabled && origDisplay.useSkin) {

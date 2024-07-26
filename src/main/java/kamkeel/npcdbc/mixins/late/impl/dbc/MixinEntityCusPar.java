@@ -45,7 +45,7 @@ public class MixinEntityCusPar implements IEntityCusPar {
             enhancedRendering = true;
         } else if (ent instanceof EntityNPCInterface) {
             DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) ent).display).getDBCDisplay();
-            if (display != null && display.auraEntity != null) {
+            if (display != null && (display.auraEntity != null || !display.dbcSecondaryAuraQueue.isEmpty() || !display.dbcAuraQueue.isEmpty())) {
                 display.particleRenderQueue.add((EntityCusPar) (Object) this);
                 enhancedRendering = true;
             }
@@ -59,7 +59,7 @@ public class MixinEntityCusPar implements IEntityCusPar {
             enhancedRendering = true;
         } else if (ent instanceof EntityNPCInterface) {
             DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) ent).display).getDBCDisplay();
-            if (display != null && display.auraEntity != null) {
+            if (display != null && (display.auraEntity != null || !display.dbcSecondaryAuraQueue.isEmpty() || !display.dbcAuraQueue.isEmpty())) {
                 display.particleRenderQueue.add((EntityCusPar) (Object) this);
                 enhancedRendering = true;
             }

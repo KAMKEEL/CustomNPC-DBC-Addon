@@ -3,7 +3,6 @@ package kamkeel.npcdbc.client.gui.global.outline;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectOutline;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -85,7 +84,7 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
             scrollWindow.clipWidth = 235;
             scrollWindow.clipHeight = 250;
         }
-
+        scrollWindow.scrollSpeed = 2;
         addScrollableGui(0, scrollWindow);
         int maxScroll = 0;
 
@@ -93,18 +92,17 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
         int guiX = 0;
         y = 6;
 
-        OutlineController.getInstance().customOutlines.replace(outline.id, outline);
 
         scrollWindow.addLabel(new GuiNpcLabel(1, "gui.name", 3, y + 5));
         scrollWindow.getLabel(1).color = 0xffffff;
-        scrollWindow.addTextField(new GuiNpcTextField(1, this, this.fontRendererObj, guiX + 120, y, 100, 20, outline.name));
-        scrollWindow.getTextField(1).setMaxStringLength(20);
+        scrollWindow.addTextField(new GuiNpcTextField(1, this, this.fontRendererObj, guiX + 110, y, 110, 20, outline.name));
+        scrollWindow.getTextField(1).setMaxStringLength(40);
 
-        y += 26;
-        scrollWindow.addLabel(new GuiNpcLabel(2, "general.menuName", 3, y + 5));
-        scrollWindow.getLabel(2).color = 0xffffff;
-        scrollWindow.addTextField(new GuiNpcTextField(2, this, this.fontRendererObj, guiX + 120, y, 100, 20, outline.menuName.replaceAll("§", "&")));
-        scrollWindow.getTextField(2).setMaxStringLength(20);
+//        y += 26;
+//        scrollWindow.addLabel(new GuiNpcLabel(2, "general.menuName", 3, y + 5));
+//        scrollWindow.getLabel(2).color = 0xffffff;
+//        scrollWindow.addTextField(new GuiNpcTextField(2, this, this.fontRendererObj, guiX + 110, y, 110, 20, outline.menuName.replaceAll("§", "&")));
+//        scrollWindow.getTextField(2).setMaxStringLength(40);
 
         y += 50;
         scrollWindow.addLabel(new GuiNpcLabel(3, "display.color1", 3, y + 5));
@@ -125,7 +123,7 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
 //        scrollWindow.addButton(new GuiNpcButton(41, guiX + 200, y - 1, 20, 20, "X"));
 //        scrollWindow.getButton(41).enabled = outline.innerColor.alpha != 255;
 
-        y += 50;
+        y += 23;
         scrollWindow.addLabel(new GuiNpcLabel(5, "display.color2", 3, y + 5));
         scrollWindow.getLabel(5).color = 0xffffff;
         scrollWindow.addButton(new GuiNpcButton(5, guiX + 140, y, 60, 20, getColor(outline.outerColor.color)));
@@ -155,7 +153,7 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
         scrollWindow.getButton(71).enabled = outline.size != 1;
 
         y += 23;
-       // maxScroll += 23;
+        // maxScroll += 23;
         scrollWindow.addLabel(new GuiNpcLabel(8, "display.speed", 3, y + 5));
         scrollWindow.getLabel(8).color = 0xffffff;
         scrollWindow.addTextField(new GuiNpcTextField(8, this, guiX + 165, y, 33, 18, String.valueOf(outline.speed)));
@@ -166,7 +164,7 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
         scrollWindow.getButton(81).enabled = outline.speed != 1;
 
         y += 23;
-       // maxScroll += 23;
+        // maxScroll += 23;
         scrollWindow.addLabel(new GuiNpcLabel(9, "outline.noiseSize", 3, y + 5));
         scrollWindow.getLabel(9).color = 0xffffff;
         scrollWindow.addTextField(new GuiNpcTextField(9, this, guiX + 165, y, 33, 19, String.valueOf(outline.noiseSize)));
@@ -177,7 +175,7 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
         scrollWindow.getButton(91).enabled = outline.noiseSize != 1;
 
         y += 23;
-        maxScroll += 23;
+        //   maxScroll += 23;
         scrollWindow.addLabel(new GuiNpcLabel(10, "outline.colorSmoothness", 3, y + 5));
         scrollWindow.getLabel(10).color = 0xffffff;
         scrollWindow.addTextField(new GuiNpcTextField(10, this, guiX + 165, y, 33, 18, String.valueOf(outline.colorSmoothness)));
@@ -188,7 +186,7 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
         scrollWindow.getButton(101).enabled = outline.colorSmoothness != 0.2f;
 
         y += 23;
-        maxScroll += 23;
+        //  maxScroll += 23;
         scrollWindow.addLabel(new GuiNpcLabel(11, "outline.colorInterpolation", 3, y + 5));
         scrollWindow.getLabel(11).color = 0xffffff;
         scrollWindow.addTextField(new GuiNpcTextField(11, this, guiX + 165, y, 33, 18, String.valueOf(outline.colorInterpolation)));
@@ -208,7 +206,7 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
         scrollWindow.addButton(new GuiNpcButton(121, guiX + 200, y - 1, 20, 20, "X"));
         scrollWindow.getButton(121).enabled = outline.pulsingSpeed != 0;
 
-        maxScroll += 10;
+        maxScroll -= 5;
 
         int yOffset = this.yOffset;
         this.addButton(this.unzoom = new GuiNpcButton(666, this.guiLeft + 148 + this.xOffset, this.guiTop + 200 + yOffset, 20, 20, "-"));
@@ -365,6 +363,11 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
+    public boolean isMouseOverRenderer(int x, int y) {
+        return x >= guiLeft + 60 + xOffset && x <= guiLeft + 60 + xOffset + 300 && y >= guiTop - 120 + yOffset - 5 && y <= guiTop + 50 + yOffset - 5 + 310;
+
+    }
+
     public void drawScreen(int i, int j, float f) {
         if (Mouse.isButtonDown(0)) {
             if (this.left.mousePressed(this.mc, i, j)) {
@@ -375,6 +378,18 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
                 zoomed += f * 1.0F;
             } else if (this.unzoom.mousePressed(this.mc, i, j) && zoomed > 10.0F) {
                 zoomed -= f * 1.0F;
+            }
+        }
+
+        if (isMouseOverRenderer(i, j)) {
+            zoomed += Mouse.getDWheel() * 0.035f;
+            if (zoomed > 100)
+                zoomed = 100;
+            if (zoomed < 10)
+                zoomed = 10;
+
+            if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
+                rotation -= Mouse.getDX() * 0.75f;
             }
         }
         super.drawScreen(i, j, f);

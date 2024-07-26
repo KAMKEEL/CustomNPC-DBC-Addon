@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -125,6 +126,15 @@ public class PlayerDataUtil {
         return null;
     }
 
+    public static IAuraData getAuraData(Entity entity) {
+        if (entity instanceof EntityPlayer)
+            return DBCData.get((EntityPlayer) entity);
+        else if (entity instanceof EntityNPCInterface)
+            return ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
+
+        return null;
+    }
+
     public static boolean useStencilBuffer(Entity entity) {
         boolean auraOn = false, outlineOn = false, particlesOn = false, use = false;
         if (entity instanceof EntityPlayer) {
@@ -139,7 +149,7 @@ public class PlayerDataUtil {
             auraOn = data.auraEntity != null;
             outlineOn = data.getOutline() != null;
             particlesOn = !data.particleRenderQueue.isEmpty();
-            data.useStencilBuffer = use = auraOn || outlineOn || particlesOn;
+            data.useStencilBuffer = use = auraOn || outlineOn || particlesOn || !data.dbcSecondaryAuraQueue.isEmpty() || !data.dbcAuraQueue.isEmpty();
 
         }
 

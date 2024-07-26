@@ -8,6 +8,7 @@ import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -64,7 +65,16 @@ public class RenderEventHandler {
             } else {
                 if (((IEntityMC) e.entity).getRenderPassTampered())
                     ((IEntityMC) e.entity).setRenderPass(0);
+
+                IAuraData data = PlayerDataUtil.getAuraData(e.entity);
+                if (data != null) {
+                    if (data.isAuraOn()) {
+                        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+                    }
+
+                }
             }
+
         }
     }
 
@@ -83,7 +93,7 @@ public class RenderEventHandler {
         //Outline
         Outline outline = data.getOutline();
         if (outline != null && ConfigDBCClient.EnableOutlines && !isItem) {
-            startBlooming(false);
+            startBlooming(ClientProxy.renderingGUI);
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
             glStencilMask(0xff);
             OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
@@ -246,7 +256,7 @@ public class RenderEventHandler {
                     particleRender = (IRenderCusPar) RenderManager.instance.getEntityRenderObject(particle);
 
                 particleRender.renderParticle(particle, partialTicks);
-                if (particle.isDead || particle.ticksExisted == 0)
+                if (particle.isDead)
                     iter.remove();
             }
             glPopMatrix();
