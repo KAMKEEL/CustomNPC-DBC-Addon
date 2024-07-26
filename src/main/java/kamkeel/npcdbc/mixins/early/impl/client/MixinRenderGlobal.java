@@ -48,10 +48,12 @@ public class MixinRenderGlobal {
                 float planeX = (float) (RenderManager.renderPosX - nearPlane[3] * nearPlane[0]); //posX of the near plane center
                 float planeY = (float) (RenderManager.renderPosY - nearPlane[3] * nearPlane[1]); //posY
                 float planeZ = (float) (RenderManager.renderPosZ - nearPlane[3] * nearPlane[2]); //posZ
+
+
                 Collections.sort(sortedEntityList, (Comparator<Entity>) (entity1, entity2) -> {
                     double distanceToEntity1 = entity1.getDistanceSq(planeX, planeY, planeZ);
                     double distanceToEntity2 = entity2.getDistanceSq(planeX, planeY, planeZ);
-                    return Double.compare(distanceToEntity2, distanceToEntity1); // Sorting from furthest to nearest
+                    return Double.compare(distanceToEntity1, distanceToEntity2); // Sorting from nearest to furthest
                 });
                 sorted = true;
             } catch (Exception e) {

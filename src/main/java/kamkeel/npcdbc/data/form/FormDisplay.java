@@ -64,8 +64,8 @@ public class FormDisplay implements IFormDisplay {
         formSize = rendering.getFloat("formSize");
         keepOriginalSize = rendering.getBoolean("keepOriginalSize");
 
-        auraID = rendering.getInteger("auraID");
-        outlineID = rendering.getInteger("outlineID");
+        auraID = rendering.hasKey("auraID") ? rendering.getInteger("auraID") : -1;
+        outlineID = rendering.hasKey("outlineID") ? rendering.getInteger("outlineID") : -1;
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -93,7 +93,6 @@ public class FormDisplay implements IFormDisplay {
 
         rendering.setFloat("formSize", formSize);
         rendering.setBoolean("keepOriginalSize", keepOriginalSize);
-
 
 
         rendering.setInteger("auraID", auraID);
@@ -128,6 +127,7 @@ public class FormDisplay implements IFormDisplay {
     public int getHairColor(DBCData data) {
         return hairColor;
     }
+
     @Override
     public boolean getKeepOriginalSize() {
         return this.keepOriginalSize;
@@ -145,7 +145,7 @@ public class FormDisplay implements IFormDisplay {
 
     @Override
     public void setHairCode(String hairCode) {
-        if(hairCode.length() != 786 && hairCode.length() != 784 && hairCode.length() != 392)
+        if (hairCode.length() != 786 && hairCode.length() != 784 && hairCode.length() != 392)
             hairCode = "";
         this.hairCode = hairCode;
     }

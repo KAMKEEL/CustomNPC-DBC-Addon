@@ -62,16 +62,17 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public boolean isFlying, flightEnabled = true, flightGravity = true;
     public boolean isFnPressed;
 
-    public EntityAura auraEntity;
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
-    public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
-
 
     //RENDERING DATA
     public float XZSize, YSize, age;
     public int renderingHairColor;
     public byte skinType;
+    public boolean useStencilBuffer;
+    public EntityAura auraEntity;
+    public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
+
 
     public DBCData() {
         this.side = Side.SERVER;
@@ -395,7 +396,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public boolean isAuraOn() {
-        return isTransforming()|| containsSE(3) || containsSE(4) || containsSE(5) || containsSE(7);
+        return isTransforming() || containsSE(3) || containsSE(4) || containsSE(5) || containsSE(7);
     }
 
     @Override
@@ -531,6 +532,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         }
         return sprintSpeed * formSpeed;
     }
+
     /**
      * Fuse with another player
      *

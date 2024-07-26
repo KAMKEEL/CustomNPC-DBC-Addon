@@ -8,6 +8,7 @@ import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -48,12 +49,32 @@ public class RenderEventHandler {
 
     @SubscribeEvent
     public void enableEntityStencil(RenderLivingEvent.Pre e) {
-        if (mc.theWorld != null && (e.entity instanceof EntityPlayer || e.entity instanceof EntityNPCInterface) && PlayerDataUtil.useStencilBuffer(e.entity)) {
-            glEnable(GL_STENCIL_TEST);
-            glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
-            enableStencilWriting(e.entity.getEntityId() % 256);
-            Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
-            glDepthMask(true); //fixes a native MC RP1 entity bug in which the depth test is disabled
+        if (mc.theWorld != null && (e.entity instanceof EntityPlayer || e.entity instanceof EntityNPCInterface)) {
+            if (PlayerDataUtil.useStencilBuffer(e.entity)) {
+                glEnable(GL_STENCIL_TEST);
+                glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
+                enableStencilWriting(e.entity.getEntityId() % 256);
+                Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+                glDepthMask(true); //fixes a native MC RP1 entity bug in which the depth test is disabled
+
+                if (e.entity.isInWater())
+                    ((IEntityMC) e.entity).setRenderPass(0);
+                else
+                    ((IEntityMC) e.entity).setRenderPass(ClientProxy.MiddleRenderPass);
+
+            } else {
+                if (((IEntityMC) e.entity).getRenderPassTampered())
+                    ((IEntityMC) e.entity).setRenderPass(0);
+
+                IAuraData data = PlayerDataUtil.getAuraData(e.entity);
+                if (data != null) {
+                    if (data.isAuraOn()) {
+                        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+                    }
+
+                }
+            }
+
         }
     }
 
@@ -61,6 +82,9 @@ public class RenderEventHandler {
     public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm, boolean isItem) {
         RenderPlayerJBRA render = (RenderPlayerJBRA) renderer;
         DBCData data = DBCData.get(player);
+        if (!data.useStencilBuffer)
+            return;
+
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
         EntityAura aura = data.auraEntity;
 
@@ -69,13 +93,12 @@ public class RenderEventHandler {
         //Outline
         Outline outline = data.getOutline();
         if (outline != null && ConfigDBCClient.EnableOutlines && !isItem) {
-            startBlooming();
+            startBlooming(ClientProxy.renderingGUI);
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
             glStencilMask(0xff);
             OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
             endBlooming();
-        } else if (aura == null && ((IEntityMC) player).getRenderPassTampered())
-            ((IEntityMC) player).setRenderPass(0);
+        }
 
         boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !data.particleRenderQueue.isEmpty();
         ////////////////////////////////////////
@@ -91,9 +114,6 @@ public class RenderEventHandler {
             glPushMatrix();
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
             glStencilMask(0x00);
-
-
-            //  glStencilMask(0xff);
             for (EntityAura child : aura.children.values())
                 AuraRenderer.Instance.renderAura(child, partialTicks);
 
@@ -135,7 +155,8 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         postStencilRendering();
-        PostProcessing.bloom(1.5f);
+        if (ClientProxy.renderingGUI)
+            PostProcessing.bloom(1.5f, true);
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
     }
 
@@ -146,7 +167,7 @@ public class RenderEventHandler {
 
         EntityNPCInterface entity = (EntityNPCInterface) e.entity;
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
-        if (!display.enabled)
+        if (!display.enabled || !display.useStencilBuffer)
             return;
 
         EntityAura aura = display.auraEntity;
@@ -165,7 +186,6 @@ public class RenderEventHandler {
             if (!ClientProxy.renderingGUI)
                 glLoadMatrix(DEFAULT_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
             glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
-            glStencilMask(0xff);
             glStencilMask(0x0);
             for (EntityAura child : aura.children.values())
                 AuraRenderer.Instance.renderAura(child, partialTicks);
@@ -174,7 +194,6 @@ public class RenderEventHandler {
             //  NewAura.renderAura(aura, partialTicks);
             glPopMatrix();
         }
-
 
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -188,18 +207,17 @@ public class RenderEventHandler {
             for (Iterator<EntityAura2> iter = display.dbcSecondaryAuraQueue.values().iterator(); iter.hasNext(); ) {
                 EntityAura2 aur = iter.next();
                 IEntityAura au = (IEntityAura) aur;
+
                 if (aur.isDead)
                     iter.remove();
 
                 if (auraRenderer == null)
                     auraRenderer = (IRenderEntityAura2) RenderManager.instance.getEntityRenderObject(aur);
 
-
                 auraRenderer.renderParticle(aur, partialTicks);
             }
             glPopMatrix();
         }
-
 
         if (!display.dbcAuraQueue.isEmpty()) {
             glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
@@ -210,18 +228,17 @@ public class RenderEventHandler {
             for (Iterator<EntityAura2> iter = display.dbcAuraQueue.values().iterator(); iter.hasNext(); ) {
                 EntityAura2 aur = iter.next();
                 IEntityAura au = (IEntityAura) aur;
+
                 if (aur.isDead)
                     iter.remove();
 
                 if (auraRenderer == null)
                     auraRenderer = (IRenderEntityAura2) RenderManager.instance.getEntityRenderObject(aur);
 
-
                 auraRenderer.renderParticle(aur, partialTicks);
             }
             glPopMatrix();
         }
-
 
         ////////////////////////////////////////
         ////////////////////////////////////////
@@ -234,6 +251,7 @@ public class RenderEventHandler {
             IRenderCusPar particleRender = null;
             for (Iterator<EntityCusPar> iter = display.particleRenderQueue.iterator(); iter.hasNext(); ) {
                 EntityCusPar particle = iter.next();
+
                 if (particleRender == null)
                     particleRender = (IRenderCusPar) RenderManager.instance.getEntityRenderObject(particle);
 
@@ -244,14 +262,13 @@ public class RenderEventHandler {
             glPopMatrix();
 
         }
-        ////////////////////////////////////////
-        ////////////////////////////////////////
-        //Outline
 
         ////////////////////////////////////////
         ////////////////////////////////////////
-        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         enableStencilWriting(e.entity.getEntityId() % 256);
+        if (ClientProxy.renderingGUI)
+            PostProcessing.bloom(1.5f, true);
+        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         // postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
         glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
         glDisable(GL_STENCIL_TEST);

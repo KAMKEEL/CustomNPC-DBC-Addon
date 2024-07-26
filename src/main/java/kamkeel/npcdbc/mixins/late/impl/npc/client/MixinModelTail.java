@@ -17,11 +17,15 @@ import noppes.npcs.client.model.part.ModelTail;
 import noppes.npcs.client.model.part.tails.ModelMonkeyTail;
 import noppes.npcs.client.model.util.ModelScaleRenderer;
 import noppes.npcs.entity.EntityCustomNpc;
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static kamkeel.npcdbc.client.render.RenderEventHandler.disableStencilWriting;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 
 @Mixin(value = ModelTail.class, remap = false)
 public abstract class MixinModelTail extends ModelScaleRenderer {
@@ -54,6 +58,19 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
 
             if (!kamkeel.npcdbc.client.ClientProxy.renderingOutline && display.outlineID != -1)
                 RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
+
+            if (kamkeel.npcdbc.client.ClientProxy.renderingOutline) {
+                if (!monkey.monkey_wrapped.isHidden)
+                    glTranslatef(0, 0.0375f, 0);
+                else {
+                    if (!monkey.monkey.isHidden)
+                        glTranslatef(0, 0.075f, 0);
+                    else if (!monkey.monkey_large.isHidden)
+                        glTranslatef(0, 0.075f, 0);
+                    GL11.glScaled(0.945, 0.945, 0.945);
+                }
+                disableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
+            }
 
             int tailColor = 0;
             if (DBCRace.isSaiyan(display.race)) {
@@ -114,5 +131,9 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
 
         if (!kamkeel.npcdbc.client.ClientProxy.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
+
+        if (kamkeel.npcdbc.client.ClientProxy.renderingOutline)
+            disableStencilWriting((entity.getEntityId()) % 256, false);
+
     }
 }

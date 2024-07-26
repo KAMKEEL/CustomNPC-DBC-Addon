@@ -72,8 +72,12 @@ public abstract class MixinJRMCoreH {
         if (calculatingKi)
             return;
 
+        if (player == null)
+            return;
+
         DBCData dbcData = DBCData.get(player);
-        if(player == null || dbcData == null)
+
+        if (dbcData == null)
             return;
 
         Form form = (Form) FormController.getInstance().get(dbcData.addonFormID);
@@ -88,7 +92,7 @@ public abstract class MixinJRMCoreH {
         JGConfigDBCFormMastery.FM_Enabled = masteryCalc && form.stackable.vanillaStackable;
 
         // @TODO: Add a Absorption / PowerPoint config in a form!!!!
-        if(form.stackable.vanillaStackable && race >= 0 && race <= 5){
+        if (form.stackable.vanillaStackable && race >= 0 && race <= 5) {
             switch (race) {
                 case 0:
                     result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, st, skillX, false, mysticLvl, isFused, false, powerType, false);
@@ -115,11 +119,11 @@ public abstract class MixinJRMCoreH {
         } else {
             result = currAttributes[attribute];
 
-            if(race == 4){
+            if (race == 4) {
                 // @TODO: Apply PP
             }
 
-            if(race == 5){
+            if (race == 5) {
                 // @TODO: Apply Majin Absorption
             }
         }
@@ -164,11 +168,11 @@ public abstract class MixinJRMCoreH {
         }
 
         if (attribute == DBCAttribute.Strength) // STR
-            result = (int) (result * (formMulti[0]*statusMulti + multiBonus[0]));
+            result = (int) (result * (formMulti[0] * statusMulti + multiBonus[0]));
         else if (attribute == DBCAttribute.Dexterity) // DEX
-            result = (int) (result * (formMulti[1]*statusMulti + multiBonus[1]));
+            result = (int) (result * (formMulti[1] * statusMulti + multiBonus[1]));
         else if (attribute == DBCAttribute.Willpower) // WIL
-            result = (int) (result * (formMulti[2]*statusMulti + multiBonus[2]));
+            result = (int) (result * (formMulti[2] * statusMulti + multiBonus[2]));
 
 
         // Add Bonus Multi to Base Attributes
@@ -205,7 +209,7 @@ public abstract class MixinJRMCoreH {
         DBCData dbcData = DBCData.get(player);
         int resultOriginal = result.get();
 
-        if(!DBCUtils.noBonusEffects){
+        if (!DBCUtils.noBonusEffects) {
             float[] bonus = dbcData.bonus.getMultiBonus();
             if (attribute == 0 && bonus[0] != 0) //str
                 resultOriginal += (currAttributes[0] * bonus[0]);
@@ -307,9 +311,7 @@ public abstract class MixinJRMCoreH {
         }
     }
 
-    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I",
-        at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setByte(BLnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V",
-            ordinal = 0, shift = At.Shift.BEFORE))
+    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setByte(BLnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", ordinal = 0, shift = At.Shift.BEFORE))
     private static void callKOEvent(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir) {
         DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer((EntityPlayer) Player), s));
     }

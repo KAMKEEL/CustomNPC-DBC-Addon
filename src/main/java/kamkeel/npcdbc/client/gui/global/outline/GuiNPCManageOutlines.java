@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.client.gui.global.outline;
 
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectOutline;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -25,6 +25,7 @@ import noppes.npcs.client.gui.select.GuiSoundSelection;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -42,15 +43,16 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
     public String originalName = "";
     public DBCDisplay visualDisplay;
     boolean setNormalSound = true;
+    private float zoomed = 70.0F, rotation;
 
     public GuiNPCManageOutlines(EntityNPCInterface npc) {
         super(npc);
         this.npc = DBCDisplay.setupGUINPC((EntityCustomNpc) npc);
         this.npc.display.name = "outline man";
         visualDisplay = ((INPCDisplay) this.npc.display).getDBCDisplay();
+        visualDisplay.auraOn = false;
 
         PacketHandler.Instance.sendToServer(new DBCRequestOutline(-1).generatePacket());
-
     }
 
     public void initGui() {
@@ -157,12 +159,35 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
         this.outline = new Outline();
         outline.readFromNBT(compound);
         setSelected(outline.name);
-        // visualDisplay.setOutline(outline);
+        OutlineController.getInstance().customOutlines.replace(outline.id, outline);
         initGui();
+    }
+
+    public boolean isMouseOverRenderer(int x, int y) {
+        return x >= guiLeft + 10 && x <= guiLeft + 10 + 200 && y >= guiTop + 6 && y <= guiTop + 6 + 204;
     }
 
     @Override
     public void drawScreen(int i, int j, float f) {
+        if (isMouseOverRenderer(i, j)) {
+            zoomed += Mouse.getDWheel() * 0.035f;
+            if (zoomed > 100)
+                zoomed = 100;
+            if (zoomed < 10)
+                zoomed = 10;
+        }
+
+        if (isMouseOverRenderer(i, j)) {
+            zoomed += Mouse.getDWheel() * 0.035f;
+            if (zoomed > 100)
+                zoomed = 100;
+            if (zoomed < 10)
+                zoomed = 10;
+
+            if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
+                rotation -= Mouse.getDX() * 0.75f;
+            }
+        }
         super.drawScreen(i, j, f);
 
         if (hasSubGui())
@@ -176,7 +201,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
         npc.display.modelSize = 5;
         GL11.glColor4f(1, 1, 1, 1);
         EntityLivingBase entity = this.npc; // DBCData.getClient().player;//
-      //  entity = DBCData.getClient().player;
+        //  entity = DBCData.getClient().player;
         int l = guiLeft + 110;
         int i1 = guiTop + 187;
 
@@ -184,7 +209,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
         GL11.glPushMatrix();
         GL11.glTranslatef(l, i1, 60F);
 
-        GL11.glScalef(-70, 70, 70);
+        GL11.glScalef(-zoomed, zoomed, zoomed);
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
         float f2 = entity.renderYawOffset;
         float f3 = entity.rotationYaw;
@@ -196,8 +221,8 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
         RenderHelper.enableStandardItemLighting();
         GL11.glRotatef(-135F, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(-(float) Math.atan(f6 / 800F) * 20F, 1.0F, 0.0F, 0.0F);
-        entity.prevRenderYawOffset = entity.renderYawOffset = 0;
-        entity.prevRotationYaw = entity.rotationYaw = (float) Math.atan(f5 / 80F) * 40F + 0;
+        entity.prevRenderYawOffset = entity.renderYawOffset = rotation;
+        entity.prevRotationYaw = entity.rotationYaw = (float) Math.atan(f5 / 80F) * 40F + rotation;
         entity.rotationPitch = -(float) Math.atan(f6 / 80F) * 20F;
         entity.prevRotationYawHead = entity.rotationYawHead = entity.rotationYaw;
         GL11.glTranslatef(0.0F, entity.yOffset, 1F);

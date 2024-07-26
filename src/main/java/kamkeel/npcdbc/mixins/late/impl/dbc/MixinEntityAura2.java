@@ -16,6 +16,7 @@ import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
@@ -69,6 +70,8 @@ public class MixinEntityAura2 implements IEntityAura {
     private byte bol6;
     @Shadow
     private int color;
+    @Shadow
+    private int speed;
     @Unique
     private IAuraData data;
 
@@ -93,8 +96,12 @@ public class MixinEntityAura2 implements IEntityAura {
         player.set(this.entity);
         mot = this.entity.getCommandSenderName();
 
-        if (aura.getAge() < aura.getLightLivingTime() && hasLightning && aura.getAge() == 2)
-            playSound(this.entity, aura);
+        if (aura.getAge() < aura.getLightLivingTime() && hasLightning && aura.getAge() == 1) {
+            if (isGUIAura) {
+                Minecraft.getMinecraft().thePlayer.playSound("jinryuudragonbc:1610.spark", 0.0375F, 0.85F + aura.getLightLivingTime() * 0.05F);
+            } else
+                playSound(this.entity, aura);
+        }
 
         if (isGUIAura) {
             aura_type.set(true);
@@ -102,7 +109,7 @@ public class MixinEntityAura2 implements IEntityAura {
         }
         if (bol6 == -2) {
             float height = getSize <= 0 ? this.entity.height : (getSize * 1.3f);
-            ParticleFormHandler.spawnAura2D(type2D, color, this.entity, data, height,isGUIAura);
+            ParticleFormHandler.spawnAura2D(type2D, color, this.entity, data, height, isGUIAura);
         }
     }
 
@@ -124,7 +131,11 @@ public class MixinEntityAura2 implements IEntityAura {
 
     }
 
-
+    @Unique
+    @Override
+    public Entity getEntity() {
+        return this.entity;
+    }
 
     @Unique
     @Override
@@ -145,14 +156,8 @@ public class MixinEntityAura2 implements IEntityAura {
     }
 
     @Unique
-    @Override
-    public Entity getEntity() {
-        return this.entity;
-    }
-
-    @Unique
     @SideOnly(Side.CLIENT)
-    public void playSound(Entity player, EntityAura2 aura){
+    public void playSound(Entity player, EntityAura2 aura) {
         new ClientSound(new SoundSource("jinryuudragonbc:1610.spark", player)).setVolume(0.0375F).setPitch(0.85F + aura.getLightLivingTime() * 0.05F).play(false);
     }
 
@@ -176,15 +181,16 @@ public class MixinEntityAura2 implements IEntityAura {
 
     @Unique
     @Override
-    public void setType2D(EnumAuraTypes2D types2D) {
-        type2D = types2D;
+    public EnumAuraTypes2D getType2D() {
+        return type2D;
     }
 
     @Unique
     @Override
-    public EnumAuraTypes2D getType2D() {
-        return type2D;
+    public void setType2D(EnumAuraTypes2D types2D) {
+        type2D = types2D;
     }
+
     @Unique
     @Override
     public void setHasLightning(boolean hasLightning) {
@@ -283,18 +289,16 @@ public class MixinEntityAura2 implements IEntityAura {
         return isKaiokenAura;
     }
 
+    @Unique
+    @Override
+    public IAuraData getAuraData() {
+        return data;
+    }
 
     @Unique
     @Override
     public void setAuraData(IAuraData data) {
         this.data = data;
-    }
-
-
-    @Unique
-    @Override
-    public IAuraData getAuraData() {
-        return data;
     }
 
     @Unique
@@ -305,15 +309,14 @@ public class MixinEntityAura2 implements IEntityAura {
 
     @Unique
     @Override
-    public void setGUIAura(boolean is) {
-        this.isGUIAura = is;
+    public boolean isGUIAura() {
+        return isGUIAura;
     }
-
 
     @Unique
     @Override
-    public boolean isGUIAura() {
-        return isGUIAura;
+    public void setGUIAura(boolean is) {
+        this.isGUIAura = is;
     }
 
 }

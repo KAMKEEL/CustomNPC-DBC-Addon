@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -32,7 +33,7 @@ public class PlayerDataUtil {
      * Since PlayerDBCInfo is a Mixin Class designed to append to
      * PlayerData it is simpler to call a UTIL Function. Calling functions
      * directly from Mixin Classes itself, are sloppy.
-     *
+     * <p>
      * PlayerDBCInfo is intended to hold valuable PlayerData information on the CNPC+
      * side. Unlocked Aura, Forms IDs. Form Mastery, selected/current Aura and Forms.
      * These are then outsourced to DBC Data to save on their player persisted.
@@ -125,22 +126,33 @@ public class PlayerDataUtil {
         return null;
     }
 
+    public static IAuraData getAuraData(Entity entity) {
+        if (entity instanceof EntityPlayer)
+            return DBCData.get((EntityPlayer) entity);
+        else if (entity instanceof EntityNPCInterface)
+            return ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
+
+        return null;
+    }
+
     public static boolean useStencilBuffer(Entity entity) {
-        boolean auraOn = false, outlineOn = false, particlesOn = false;
+        boolean auraOn = false, outlineOn = false, particlesOn = false, use = false;
         if (entity instanceof EntityPlayer) {
             DBCData data = DBCData.get((EntityPlayer) entity);
-            auraOn = data.isAuraOn();
+            auraOn = data.auraEntity != null;
             outlineOn = data.getOutline() != null;
             particlesOn = !data.particleRenderQueue.isEmpty();
+            data.useStencilBuffer = use = auraOn || outlineOn || particlesOn;
 
         } else if (entity instanceof EntityNPCInterface) {
             DBCDisplay data = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
-            auraOn = data.isAuraOn();
+            auraOn = data.auraEntity != null;
             outlineOn = data.getOutline() != null;
             particlesOn = !data.particleRenderQueue.isEmpty();
+            data.useStencilBuffer = use = auraOn || outlineOn || particlesOn || !data.dbcSecondaryAuraQueue.isEmpty() || !data.dbcAuraQueue.isEmpty();
 
         }
 
-        return auraOn || outlineOn || particlesOn;
+        return use;
     }
 }

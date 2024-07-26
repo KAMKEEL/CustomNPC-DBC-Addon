@@ -36,7 +36,7 @@ public class DBCDataUniversal {
 
     public static DBCData get(EntityPlayer player) {
         DBCData data;
-        if (player.worldObj.isRemote) {
+        if (player != null && player.worldObj != null && player.worldObj.isRemote) {
             data = ClientCache.getClientData(player);
         } else {
             data = getData(player);
@@ -94,19 +94,21 @@ public class DBCDataUniversal {
 
     /**
      * Fuse two players
+     *
      * @param controller player that is supposed to be the controller
-     * @param spectator player that is supposed to be the spectator
-     * @param time time in minutes
+     * @param spectator  player that is supposed to be the spectator
+     * @param time       time in minutes
      */
-    public static void fusePlayers(EntityPlayer controller, EntityPlayer spectator, float time){
+    public static void fusePlayers(EntityPlayer controller, EntityPlayer spectator, float time) {
         fusePlayers(get(controller), get(spectator), time);
     }
 
     /**
      * Fuse two players
+     *
      * @param controller player that is supposed to be the controller
-     * @param spectator player that is supposed to be the spectator
-     * @param time time in minutes
+     * @param spectator  player that is supposed to be the spectator
+     * @param time       time in minutes
      */
     private static void fusePlayers(DBCData controller, DBCData spectator, float time) {
         controller.fuseWith(spectator, time);

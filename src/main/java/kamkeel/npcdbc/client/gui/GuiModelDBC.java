@@ -49,7 +49,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
         if (!display.enabled)
             return;
 
-        addButton(new GuiNpcButton(50, guiLeft, y += 22, 60, 20, "display.parts"));
+        addButton(new GuiNpcButton(50, guiLeft, y += 22, 60, 20, "display.cosmetics"));
         getButton(50).enabled = tab != 0;
         addButton(new GuiNpcButton(51, guiLeft + 64, y, 60, 20, "display.race"));
 

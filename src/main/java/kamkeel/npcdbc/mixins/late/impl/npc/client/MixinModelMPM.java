@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.render.OutlineRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
@@ -89,19 +90,17 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         //Outline
         Outline outline = display.getOutline();
         if (outline != null && ConfigDBCClient.EnableOutlines) {
-            startBlooming();
+            startBlooming(ClientProxy.renderingGUI);
             glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);  // Test stencil value
             glStencilMask(0xff);
             OutlineRenderer.renderOutlineNPC((ModelMPM) (Object) this, outline, (EntityCustomNpc) entity, display, partialTicks);
             endBlooming();
-        } //else if (aura == null && ((IEntityMC) entity).getRenderPassTampered())
-        // ((IEntityMC) entity).setRenderPass(0);
+        }
 
         ////////////////////////////////////////
         ////////////////////////////////////////
         RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
-        PostProcessing.bloom(1.5f);
-        mc.entityRenderer.enableLightmap(0);
+        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
 
     }
 

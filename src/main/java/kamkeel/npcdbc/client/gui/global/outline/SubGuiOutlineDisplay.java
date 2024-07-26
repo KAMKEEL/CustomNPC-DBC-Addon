@@ -3,7 +3,6 @@ package kamkeel.npcdbc.client.gui.global.outline;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectOutline;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -85,7 +84,7 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
             scrollWindow.clipWidth = 235;
             scrollWindow.clipHeight = 250;
         }
-
+        scrollWindow.scrollSpeed = 2;
         addScrollableGui(0, scrollWindow);
         int maxScroll = 0;
 
@@ -93,108 +92,105 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
         int guiX = 0;
         y = 6;
 
-        OutlineController.getInstance().customOutlines.replace(outline.id, outline);
 
         scrollWindow.addLabel(new GuiNpcLabel(1, "gui.name", 3, y + 5));
         scrollWindow.getLabel(1).color = 0xffffff;
-        scrollWindow.addTextField(new GuiNpcTextField(1, this, this.fontRendererObj, guiX + 120, y, 100, 20, outline.name));
-        scrollWindow.getTextField(1).setMaxStringLength(20);
+        scrollWindow.addTextField(new GuiNpcTextField(1, this, this.fontRendererObj, guiX + 110, y, 110, 20, outline.name));
+        scrollWindow.getTextField(1).setMaxStringLength(40);
 
-        y += 26;
-        scrollWindow.addLabel(new GuiNpcLabel(2, "general.menuName", 3, y + 5));
-        scrollWindow.getLabel(2).color = 0xffffff;
-        scrollWindow.addTextField(new GuiNpcTextField(2, this, this.fontRendererObj, guiX + 120, y, 100, 20, outline.menuName.replaceAll("§", "&")));
-        scrollWindow.getTextField(2).setMaxStringLength(20);
+//        y += 26;
+//        scrollWindow.addLabel(new GuiNpcLabel(2, "general.menuName", 3, y + 5));
+//        scrollWindow.getLabel(2).color = 0xffffff;
+//        scrollWindow.addTextField(new GuiNpcTextField(2, this, this.fontRendererObj, guiX + 110, y, 110, 20, outline.menuName.replaceAll("§", "&")));
+//        scrollWindow.getTextField(2).setMaxStringLength(40);
 
         y += 50;
         scrollWindow.addLabel(new GuiNpcLabel(3, "display.color1", 3, y + 5));
         scrollWindow.getLabel(3).color = 0xffffff;
         scrollWindow.addButton(new GuiNpcButton(3, guiX + 140, y, 60, 20, getColor(outline.innerColor.color)));
-        // scrollWindow.getButton(3).enabled = t != None || (t2 == EnumAuraTypes2D.Default || t2 == EnumAuraTypes2D.Base);
 
         scrollWindow.getButton(3).packedFGColour = outline.innerColor.color;
         scrollWindow.addButton(new GuiNpcButton(31, guiX + 200, y, 20, 20, "X"));
         scrollWindow.getButton(31).enabled = outline.innerColor.color != 0x00ffff;
 
-        y += 23;
-        scrollWindow.addLabel(new GuiNpcLabel(4, "display.alpha", 3, y + 5));
-        scrollWindow.getLabel(4).color = 0xffffff;
-        scrollWindow.addTextField(new GuiNpcTextField(4, this, guiX + 165, y, 33, 18, String.valueOf(outline.innerColor.alpha)));
-        scrollWindow.getTextField(4).setMaxStringLength(4);
-        scrollWindow.getTextField(4).integersOnly = true;
-        scrollWindow.getTextField(4).setMinMaxDefault(-1, 255, -1);
-        scrollWindow.addButton(new GuiNpcButton(41, guiX + 200, y - 1, 20, 20, "X"));
-        scrollWindow.getButton(41).enabled = outline.innerColor.alpha != -1;
+//        y += 23;
+//        scrollWindow.addLabel(new GuiNpcLabel(4, "display.alpha", 3, y + 5));
+//        scrollWindow.getLabel(4).color = 0xffffff;
+//        scrollWindow.addTextField(new GuiNpcTextField(4, this, guiX + 165, y, 33, 18, String.valueOf(outline.innerColor.alpha)));
+//        scrollWindow.getTextField(4).setMaxStringLength(5);
+//        scrollWindow.getTextField(4).integersOnly = true;
+//        scrollWindow.getTextField(4).setMinMaxDefault(0, 255, 255);
+//        scrollWindow.addButton(new GuiNpcButton(41, guiX + 200, y - 1, 20, 20, "X"));
+//        scrollWindow.getButton(41).enabled = outline.innerColor.alpha != 255;
 
-        y += 50;
+        y += 23;
         scrollWindow.addLabel(new GuiNpcLabel(5, "display.color2", 3, y + 5));
         scrollWindow.getLabel(5).color = 0xffffff;
         scrollWindow.addButton(new GuiNpcButton(5, guiX + 140, y, 60, 20, getColor(outline.outerColor.color)));
-        //  scrollWindow.getButton(5).enabled = t == SaiyanGod || t == SaiyanRose || t == UltimateArco;
 
         scrollWindow.getButton(5).packedFGColour = outline.outerColor.color;
         scrollWindow.addButton(new GuiNpcButton(51, guiX + 200, y, 20, 20, "X"));
         scrollWindow.getButton(51).enabled = outline.outerColor.color != 0xffffff;
 
-        y += 23;
-        scrollWindow.addLabel(new GuiNpcLabel(6, "display.alpha", 3, y + 5));
-        scrollWindow.getLabel(6).color = 0xffffff;
-        scrollWindow.addTextField(new GuiNpcTextField(6, this, guiX + 165, y, 33, 18, String.valueOf(outline.outerColor.alpha)));
-        scrollWindow.getTextField(6).setMaxStringLength(4);
-        scrollWindow.getTextField(6).integersOnly = true;
-        scrollWindow.getTextField(6).setMinMaxDefault(-1, 255, -1);
-        scrollWindow.addButton(new GuiNpcButton(61, guiX + 200, y - 1, 20, 20, "X"));
-        scrollWindow.getButton(61).enabled = outline.outerColor.alpha != -1;
+//        y += 23;
+//        scrollWindow.addLabel(new GuiNpcLabel(6, "display.alpha", 3, y + 5));
+//        scrollWindow.getLabel(6).color = 0xffffff;
+//        scrollWindow.addTextField(new GuiNpcTextField(6, this, guiX + 165, y, 33, 18, String.valueOf(outline.outerColor.alpha)));
+//        scrollWindow.getTextField(6).setMaxStringLength(5);
+//        scrollWindow.getTextField(6).integersOnly = true;
+//        scrollWindow.getTextField(6).setMinMaxDefault(0, 255, 255);
+//        scrollWindow.addButton(new GuiNpcButton(61, guiX + 200, y - 1, 20, 20, "X"));
+//        scrollWindow.getButton(61).enabled = outline.outerColor.alpha != 255;
 
         y += 50;
         scrollWindow.addLabel(new GuiNpcLabel(7, "display.size", 3, y + 5));
         scrollWindow.getLabel(7).color = 0xffffff;
         scrollWindow.addTextField(new GuiNpcTextField(7, this, guiX + 165, y, 33, 18, String.valueOf(outline.size)));
-        scrollWindow.getTextField(7).setMaxStringLength(4);
+        scrollWindow.getTextField(7).setMaxStringLength(5);
         scrollWindow.getTextField(7).floatsOnly = true;
         scrollWindow.getTextField(7).setMinMaxDefaultFloat(0, 10, 1);
         scrollWindow.addButton(new GuiNpcButton(71, guiX + 200, y - 1, 20, 20, "X"));
         scrollWindow.getButton(71).enabled = outline.size != 1;
 
         y += 23;
-        maxScroll += 23;
+        // maxScroll += 23;
         scrollWindow.addLabel(new GuiNpcLabel(8, "display.speed", 3, y + 5));
         scrollWindow.getLabel(8).color = 0xffffff;
         scrollWindow.addTextField(new GuiNpcTextField(8, this, guiX + 165, y, 33, 18, String.valueOf(outline.speed)));
-        scrollWindow.getTextField(8).setMaxStringLength(4);
+        scrollWindow.getTextField(8).setMaxStringLength(5);
         scrollWindow.getTextField(8).floatsOnly = true;
         scrollWindow.getTextField(8).setMinMaxDefaultFloat(0, 50, 1);
         scrollWindow.addButton(new GuiNpcButton(81, guiX + 200, y - 1, 20, 20, "X"));
         scrollWindow.getButton(81).enabled = outline.speed != 1;
 
         y += 23;
-        maxScroll += 23;
+        // maxScroll += 23;
         scrollWindow.addLabel(new GuiNpcLabel(9, "outline.noiseSize", 3, y + 5));
         scrollWindow.getLabel(9).color = 0xffffff;
         scrollWindow.addTextField(new GuiNpcTextField(9, this, guiX + 165, y, 33, 19, String.valueOf(outline.noiseSize)));
-        scrollWindow.getTextField(9).setMaxStringLength(4);
+        scrollWindow.getTextField(9).setMaxStringLength(5);
         scrollWindow.getTextField(9).floatsOnly = true;
         scrollWindow.getTextField(9).setMinMaxDefaultFloat(0, 50, 1);
         scrollWindow.addButton(new GuiNpcButton(91, guiX + 200, y - 1, 20, 20, "X"));
         scrollWindow.getButton(91).enabled = outline.noiseSize != 1;
 
         y += 23;
-        maxScroll += 23;
+        //   maxScroll += 23;
         scrollWindow.addLabel(new GuiNpcLabel(10, "outline.colorSmoothness", 3, y + 5));
         scrollWindow.getLabel(10).color = 0xffffff;
         scrollWindow.addTextField(new GuiNpcTextField(10, this, guiX + 165, y, 33, 18, String.valueOf(outline.colorSmoothness)));
-        scrollWindow.getTextField(10).setMaxStringLength(4);
+        scrollWindow.getTextField(10).setMaxStringLength(5);
         scrollWindow.getTextField(10).floatsOnly = true;
         scrollWindow.getTextField(10).setMinMaxDefaultFloat(0, 1, 0.2f);
         scrollWindow.addButton(new GuiNpcButton(101, guiX + 200, y - 1, 20, 20, "X"));
         scrollWindow.getButton(101).enabled = outline.colorSmoothness != 0.2f;
 
         y += 23;
-        maxScroll += 23;
+        //  maxScroll += 23;
         scrollWindow.addLabel(new GuiNpcLabel(11, "outline.colorInterpolation", 3, y + 5));
         scrollWindow.getLabel(11).color = 0xffffff;
         scrollWindow.addTextField(new GuiNpcTextField(11, this, guiX + 165, y, 33, 18, String.valueOf(outline.colorInterpolation)));
-        scrollWindow.getTextField(11).setMaxStringLength(4);
+        scrollWindow.getTextField(11).setMaxStringLength(5);
         scrollWindow.getTextField(11).floatsOnly = true;
         scrollWindow.getTextField(11).setMinMaxDefaultFloat(0, 1, 0.55f);
         scrollWindow.addButton(new GuiNpcButton(111, guiX + 200, y - 1, 20, 20, "X"));
@@ -204,13 +200,13 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
         scrollWindow.addLabel(new GuiNpcLabel(12, "outline.pulsingSpeed", 3, y + 5));
         scrollWindow.getLabel(12).color = 0xffffff;
         scrollWindow.addTextField(new GuiNpcTextField(12, this, guiX + 165, y, 33, 18, String.valueOf(outline.pulsingSpeed)));
-        scrollWindow.getTextField(12).setMaxStringLength(4);
+        scrollWindow.getTextField(12).setMaxStringLength(5);
         scrollWindow.getTextField(12).floatsOnly = true;
         scrollWindow.getTextField(12).setMinMaxDefaultFloat(0, 50, 0);
         scrollWindow.addButton(new GuiNpcButton(121, guiX + 200, y - 1, 20, 20, "X"));
         scrollWindow.getButton(121).enabled = outline.pulsingSpeed != 0;
 
-        maxScroll += 10;
+        maxScroll -= 5;
 
         int yOffset = this.yOffset;
         this.addButton(this.unzoom = new GuiNpcButton(666, this.guiLeft + 148 + this.xOffset, this.guiTop + 200 + yOffset, 20, 20, "-"));
@@ -367,16 +363,33 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
+    public boolean isMouseOverRenderer(int x, int y) {
+        return x >= guiLeft + 60 + xOffset && x <= guiLeft + 60 + xOffset + 300 && y >= guiTop - 120 + yOffset - 5 && y <= guiTop + 50 + yOffset - 5 + 310;
+
+    }
+
     public void drawScreen(int i, int j, float f) {
         if (Mouse.isButtonDown(0)) {
             if (this.left.mousePressed(this.mc, i, j)) {
-                rotation += 0.2 * 2.0F;
+                rotation += f * 1.5F;
             } else if (this.right.mousePressed(this.mc, i, j)) {
-                rotation -= 0.2 * 2.0F;
+                rotation -= f * 1.5F;
             } else if (this.zoom.mousePressed(this.mc, i, j) && zoomed < 100.0F) {
-                zoomed += 0.05 * 2.0F;
+                zoomed += f * 1.0F;
             } else if (this.unzoom.mousePressed(this.mc, i, j) && zoomed > 10.0F) {
-                zoomed -= 0.05 * 2.0F;
+                zoomed -= f * 1.0F;
+            }
+        }
+
+        if (isMouseOverRenderer(i, j)) {
+            zoomed += Mouse.getDWheel() * 0.035f;
+            if (zoomed > 100)
+                zoomed = 100;
+            if (zoomed < 10)
+                zoomed = 10;
+
+            if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
+                rotation -= Mouse.getDX() * 0.75f;
             }
         }
         super.drawScreen(i, j, f);

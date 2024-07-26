@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.gui.global.form;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCGetForm;
@@ -66,7 +67,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
         addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 220, guiTop + 4 + 3 + 185, 143, 20, search));
 
         registerStackables();
-        if(customForm != null && customForm.id != -1) {
+        if (customForm != null && customForm.id != -1) {
             addLabel(new GuiNpcLabel(10, "ID", guiLeft + 368, guiTop + 4 + 3 + 185));
             addLabel(new GuiNpcLabel(11, customForm.id + "", guiLeft + 368, guiTop + 4 + 3 + 195));
         }
@@ -110,6 +111,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
         parentForm = customForm.parentID;
         childForm = customForm.childID;
         setSelected(customForm.name);
+        FormController.getInstance().customForms.replace(customForm.id, customForm);
         initGui();
     }
 
@@ -161,7 +163,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
                 fontRendererObj.drawString(info, guiLeft + 65, y, CustomNpcResourceListener.DefaultTextColor, true);
             }
 
-            if(!customForm.requiredForm.isEmpty() || customForm.hasParent() || customForm.hasChild()){
+            if (!customForm.requiredForm.isEmpty() || customForm.hasParent() || customForm.hasChild()) {
                 String parent = "§f------- Links -------";
                 fontRendererObj.drawString(parent, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
             }
@@ -190,13 +192,13 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
                     fontRendererObj.drawString(parent, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
                     fontRendererObj.drawString(parentName, guiLeft + 80, y, CustomNpcResourceListener.DefaultTextColor, true);
                 }
-                if(!customForm.requiredForm.isEmpty()){
+                if (!customForm.requiredForm.isEmpty()) {
                     String ok = "§f-- Parent Forms --";
                     fontRendererObj.drawString(ok, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
-                    for(int i = 0; i < 6; i++){
-                        if(customForm.requiredForm.containsKey(i)){
+                    for (int i = 0; i < 6; i++) {
+                        if (customForm.requiredForm.containsKey(i)) {
                             String parent = "§f" + JRMCoreH.Races[i] + "§f: ";
-                            String parentName = Utility.removeBoldColorCode(DBCUtils.getFormattedStateName(i , customForm.requiredForm.get(i)));
+                            String parentName = Utility.removeBoldColorCode(DBCUtils.getFormattedStateName(i, customForm.requiredForm.get(i)));
                             fontRendererObj.drawString(parent, guiLeft + 8, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
                             fontRendererObj.drawString(parentName, guiLeft + 80, y, CustomNpcResourceListener.DefaultTextColor, true);
                         }
@@ -273,13 +275,14 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
         if (guiCustomScroll.id == 0) {
             save();
             selected = scrollForms.getSelected();
-            if(selected != null && !selected.isEmpty())
+            if (selected != null && !selected.isEmpty())
                 PacketHandler.Instance.sendToServer(new DBCGetForm(data.get(selected)).generatePacket());
         }
     }
 
     @Override
-    public void save() {}
+    public void save() {
+    }
 
     public void registerStackables() {
         stackables.clear();
@@ -303,7 +306,8 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
     }
 
     @Override
-    public void subGuiClosed(SubGuiInterface subgui) {}
+    public void subGuiClosed(SubGuiInterface subgui) {
+    }
 
     @Override
     public void confirmClicked(boolean result, int id) {
