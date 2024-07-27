@@ -64,6 +64,7 @@ public class PostProcessing {
         if (!processBloom)
             return;
 
+
         Framebuffer buff = getMainBuffer();
         FloatBuffer prevModelView = getModelView();
         FloatBuffer prevProjection = getProjection();
@@ -81,6 +82,7 @@ public class PostProcessing {
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+        mc.entityRenderer.disableLightmap(0);
 
         if (resetGLState && !ClientProxy.renderingGUI && !ClientProxy.renderingArm)
             glDisable(GL_FOG);
@@ -144,9 +146,9 @@ public class PostProcessing {
         });
         renderQuad(buff.framebufferTexture, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
         releaseShader();
-        processBloom = false;
 
         if (resetGLState) {
+            mc.entityRenderer.enableLightmap(0);
             glMatrixMode(GL11.GL_PROJECTION);
             glLoadMatrix(prevProjection);
             glMatrixMode(GL11.GL_MODELVIEW);
@@ -158,12 +160,14 @@ public class PostProcessing {
             glColorMask(true, true, true, true);
             if (!ClientProxy.renderingGUI && !ClientProxy.renderingArm)
                 glEnable(GL_FOG);
-        } else {
-            drawToBuffers(2);
-            glClearColor(0, 0, 0, 1);
-            glClear(GL_COLOR_BUFFER_BIT);
-            resetDrawBuffer();
         }
+
+        drawToBuffers(2);
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        resetDrawBuffer();
+
+        processBloom = false;
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //testing shit
