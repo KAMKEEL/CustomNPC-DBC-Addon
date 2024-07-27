@@ -72,7 +72,7 @@ public class SubGuiDBCProperties extends SubGuiInterface implements ITextfieldLi
     {
 		GuiNpcButton button = (GuiNpcButton) guibutton;
         if(button.id == -1){
-            getDBCData(npc).canBeLockedOn = ((GuiNpcButtonYesNo) button).getBoolean();
+            getDBCData(npc).setLockOnState(((GuiNpcButtonYesNo) button).getBoolean());
         }
         if (button.id == 0) {
             getDBCData(npc).enabled = ((GuiNpcButtonYesNo) button).getBoolean();

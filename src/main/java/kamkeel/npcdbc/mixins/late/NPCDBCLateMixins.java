@@ -64,6 +64,8 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
         mixins.add("npc.MixinDBCAddon");
         mixins.add("npc.MixinDBCDisplay");
 
+        mixins.add("npc.MixinEntityNPCInterface");
+
         return mixins;
     }
 }

@@ -77,14 +77,8 @@ public class DBCUpdateLockOn extends AbstractPacket {
             EntityPlayer player = Minecraft.getMinecraft().thePlayer;
             if(player.getDistanceSqToEntity(newEntity) >= 35*35)
                 return;
-            JRMCoreCliTicH.lockOn = newEntity;
 
-            if(newEntity instanceof EntityNPCInterface){
-                EntityNPCInterface npc = (EntityNPCInterface) newEntity;
-                if(!((INPCStats) npc.stats).getDBCStats().canBeLockedOn){
-                    player.addChatMessage(new ChatComponentText("Hm. This shouldn't happen... Oh well!"));
-                }
-            }
+            JRMCoreCliTicH.lockOn = newEntity;
 
             player.worldObj.playSound(player.posX, player.posY, player.posZ, "jinryuudragonbc:DBC4.lockon", 1.0F, 1.0F, true);
         }

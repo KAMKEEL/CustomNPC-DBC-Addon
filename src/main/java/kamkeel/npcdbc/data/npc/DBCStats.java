@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.npc;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
 
 public class DBCStats implements IDBCStats {
@@ -13,7 +14,13 @@ public class DBCStats implements IDBCStats {
     public int friendlyFistTime = 6;
     public byte release = 100;
 
-    public boolean canBeLockedOn = false;
+    private boolean canBeLockedOn = true;
+
+    private EntityNPCInterface npc;
+
+    public DBCStats(EntityNPCInterface npc) {
+        this.npc = npc;
+    }
 
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         nbttagcompound.setBoolean("DBCStatsEnabled", enabled);
@@ -44,7 +51,7 @@ public class DBCStats implements IDBCStats {
 
     public void readFromNBT(NBTTagCompound nbttagcompound) {
         enabled = nbttagcompound.getBoolean("DBCStatsEnabled");
-        canBeLockedOn = nbttagcompound.getBoolean("DBCCanBeLockedOn");
+        setLockOnState(nbttagcompound.getBoolean("DBCCanBeLockedOn"));
         if (enabled) {
             NBTTagCompound dbcStats = nbttagcompound.getCompoundTag("DBCStats");
 
@@ -178,11 +185,16 @@ public class DBCStats implements IDBCStats {
 
     @Override
     public boolean canBeLockedOn() {
+        if(npc != null)
+            return npc.getDataWatcher().getWatchableObjectInt(31) == 1;
+
         return canBeLockedOn;
     }
 
     @Override
     public void setLockOnState(boolean canBeLockedOn) {
         this.canBeLockedOn = canBeLockedOn;
+        if(npc != null)
+            npc.getDataWatcher().updateObject(31, Integer.valueOf(canBeLockedOn ? 1 : 0));
     }
 }

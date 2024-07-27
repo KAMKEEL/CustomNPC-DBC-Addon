@@ -102,7 +102,7 @@ public class DBCAPI extends AbstractDBCAPI {
 
     @Override
     public IDBCStats abstractDBCData() {
-        DBCStats dbcStats = new DBCStats();
+        DBCStats dbcStats = new DBCStats(null);
         dbcStats.enabled = true;
         return dbcStats;
     }

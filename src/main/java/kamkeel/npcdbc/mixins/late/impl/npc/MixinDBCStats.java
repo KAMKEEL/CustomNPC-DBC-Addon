@@ -19,7 +19,12 @@ public class MixinDBCStats implements INPCStats {
     @Shadow(remap = false) public EntityNPCInterface npc;
 
     @Unique
-    private final DBCStats customNPC_DBCAddon$dbcStats = new DBCStats();
+    private DBCStats customNPC_DBCAddon$dbcStats;
+
+    @Inject(method="<init>", at=@At("RETURN"))
+    public void injectStats(EntityNPCInterface npc, CallbackInfo ci){
+        customNPC_DBCAddon$dbcStats = new DBCStats(npc);
+    }
 
 
 

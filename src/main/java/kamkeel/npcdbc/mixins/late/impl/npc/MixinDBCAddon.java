@@ -58,15 +58,9 @@ public class MixinDBCAddon {
             INPCDisplay display = (INPCDisplay) npc.display;
             INPCDisplay receiverDisplay = (INPCDisplay) receiverNPC.display;
 
-            receiverStats.getDBCStats().setEnabled(stats.getDBCStats().isEnabled());
-            receiverStats.getDBCStats().setFriendlyFist(stats.getDBCStats().isFriendlyFist());
-            receiverStats.getDBCStats().setIgnoreDex(stats.getDBCStats().isIgnoreDex());
-            receiverStats.getDBCStats().setIgnoreBlock(stats.getDBCStats().isIgnoreBlock());
-            receiverStats.getDBCStats().setIgnoreEndurance(stats.getDBCStats().isIgnoreEndurance());
-            receiverStats.getDBCStats().setIgnoreKiProtection(stats.getDBCStats().isIgnoreKiProtection());
-            receiverStats.getDBCStats().setIgnoreFormReduction(stats.getDBCStats().isIgnoreFormReduction());
-            receiverStats.getDBCStats().setHasDefensePenetration(stats.getDBCStats().hasDefensePenetration());
-            receiverStats.getDBCStats().setDefensePenetration(stats.getDBCStats().getDefensePenetration());
+            NBTTagCompound dbcStats = new NBTTagCompound();
+            stats.getDBCStats().writeToNBT(dbcStats);
+            receiverStats.getDBCStats().readFromNBT(dbcStats);
 
             receiverDisplay.getDBCDisplay().setEnabled(display.getDBCDisplay().isEnabled());
             receiverDisplay.getDBCDisplay().setFormAuraTypes(display.getDBCDisplay().getFormAuraTypes());
