@@ -67,6 +67,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         visualDisplay = ((INPCDisplay) this.npc.display).getDBCDisplay();
 
         visualDisplay.auraID = -1;
+        visualDisplay.formID = -1;
         visualDisplay.outlineID = -1;
 
         this.display = aura.display;

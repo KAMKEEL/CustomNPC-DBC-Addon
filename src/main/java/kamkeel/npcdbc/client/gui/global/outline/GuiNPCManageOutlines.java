@@ -49,8 +49,11 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
         super(npc);
         this.npc = DBCDisplay.setupGUINPC((EntityCustomNpc) npc);
         this.npc.display.name = "outline man";
+
+
         visualDisplay = ((INPCDisplay) this.npc.display).getDBCDisplay();
         visualDisplay.auraOn = false;
+        visualDisplay.formID = -1;
 
         PacketHandler.Instance.sendToServer(new DBCRequestOutline(-1).generatePacket());
     }
