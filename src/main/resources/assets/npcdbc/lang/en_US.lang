@@ -11,6 +11,7 @@ stats.dbcsettings=DBC Settings
 gui.clone=Clone
 
 stats.dbc=DBC Settings
+stats.lockOnState=Can NPC be locked onto?
 stats.friendlyFist=Friendly Fist
 stats.ignoreDex=Ignore Dex
 stats.ignoreBlock=Ignore Block
