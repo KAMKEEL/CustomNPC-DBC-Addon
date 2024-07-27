@@ -176,21 +176,22 @@ public class DBCHorns extends ModelDBCPartInterface {
             RenderEventHandler.enableStencilWriting((entity.getEntityId() + id) % 256);
         }
 
+        boolean isArco = display.race == DBCRace.ARCOSIAN;
         GL11.glPushMatrix();
         if (ClientProxy.renderingOutline) {
             if (!NamekianAntennas.isHidden) {
-                GL11.glTranslatef(0.00f, 0.07f,0.023f);
-               GL11.glScaled(0.96, 1.12, 1.02);
+                GL11.glTranslatef(0.00f, 0.07f, 0.023f);
+                GL11.glScaled(0.96, 1.12, 1.02);
             } else {
                 GL11.glTranslatef(0.00f, 0.01f, 0.015f);
-                GL11.glScaled(1.03 ,0.99, 1.03);
+                GL11.glScaled(1.03, 0.99, 1.03);
             }
             int id = !ThirdFormBigHead.isHidden ? 0 : RenderEventHandler.TAIL_STENCIL_ID;
             disableStencilWriting((entity.getEntityId() + id) % 256, false);
         }
         if (display.useSkin) {
             int state = ValueUtil.clamp(display.getCurrentArcoState(), 0, 7);
-            if (display.race != DBCRace.ARCOSIAN)
+            if (!isArco)
                 state = 3;
 
 
@@ -212,6 +213,20 @@ public class DBCHorns extends ModelDBCPartInterface {
                     bodyC2 = d.bodyC2;
                 if (d.hasColor("bodyc3"))
                     bodyC3 = d.bodyC3;
+
+                if (isArco) {
+                    if (form.display.bodyType.equals("firstform")) {
+                        state = 0;
+                    } else if (form.display.bodyType.equals("secondform")) {
+                        state = 2;
+                    } else if (form.display.bodyType.equals("thirdform")) {
+                        state = 3;
+                    } else if (form.display.bodyType.equals("finalform")) {
+                        state = 4;
+                    } else if (form.display.bodyType.equals("ultimatecooler")) {
+                        state = 5;
+                    }
+                }
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
@@ -253,7 +268,7 @@ public class DBCHorns extends ModelDBCPartInterface {
     }
 
     @Override
-    public void initData(ModelData modelData) {
+    public void initData(ModelData modelData, DBCDisplay display) {
         ModelPartData config = data.getPartData("dbcHorn");
         if (config == null) {
             isHidden = true;
@@ -261,6 +276,28 @@ public class DBCHorns extends ModelDBCPartInterface {
         }
         bodyCM = config.color;
         isHidden = false;
+
+        //////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////
+        //Forms
+        Form form = display.getForm();
+        if (form != null) {
+            if (display.race == DBCRace.ARCOSIAN) {
+                if (form.display.bodyType.equals("firstform")) {
+                    config.type = 2;
+                } else if (form.display.bodyType.equals("secondform")) {
+                    config.type = 3;
+                } else if (form.display.bodyType.equals("thirdform")) {
+                    config.type = 4;
+                } else if (form.display.bodyType.equals("finalform")) {
+                    config.type = 0;
+                } else if (form.display.bodyType.equals("ultimatecooler")) {
+                    config.type = 5;
+                }
+            }
+        }
+        //////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////
 
         NamekianAntennas.isHidden = config.type != 1;
         FirstFormSpikes.isHidden = config.type != 2 && config.type != 3 && config.type != 4;

@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.model;
 
+import kamkeel.npcdbc.data.npc.DBCDisplay;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -41,10 +42,10 @@ public abstract class ModelDBCPartInterface extends ModelRenderer {
     public void setLivingAnimations(ModelPartData data, EntityLivingBase entityliving, float f, float f1, float f2) {
     }
 
-    public void setData(ModelData data, EntityCustomNpc entity) {
+    public void setData(ModelData data, EntityCustomNpc entity, DBCDisplay display) {
         this.data = data;
         this.entity = entity;
-        this.initData(data);
+        this.initData(data,display);
     }
 
     public void render(float par1) {
@@ -62,7 +63,7 @@ public abstract class ModelDBCPartInterface extends ModelRenderer {
         boolean showColor = !this.base.isArmor && tintData.processColor(this.entity.hurtTime > 0 || this.entity.deathTime > 0);
         if (showColor) {
             int color = this.bodyCM;
-            switch (useColor){
+            switch (useColor) {
                 case 1:
                     color = this.bodyC1;
                     break;
@@ -74,9 +75,9 @@ public abstract class ModelDBCPartInterface extends ModelRenderer {
                     break;
             }
 
-            float red = (float)(color >> 16 & 255) / 255.0F;
-            float green = (float)(color >> 8 & 255) / 255.0F;
-            float blue = (float)(color & 255) / 255.0F;
+            float red = (float) (color >> 16 & 255) / 255.0F;
+            float green = (float) (color >> 8 & 255) / 255.0F;
+            float blue = (float) (color & 255) / 255.0F;
             GL11.glColor4f(red, green, blue, this.base.alpha);
         }
 
@@ -86,5 +87,5 @@ public abstract class ModelDBCPartInterface extends ModelRenderer {
         }
     }
 
-    public abstract void initData(ModelData var1);
+    public abstract void initData(ModelData var1, DBCDisplay display);
 }

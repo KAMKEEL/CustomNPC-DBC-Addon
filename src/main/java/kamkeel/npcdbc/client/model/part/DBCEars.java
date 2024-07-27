@@ -89,7 +89,7 @@ public class DBCEars extends ModelDBCPartInterface {
     }
 
     @Override
-    public void initData(ModelData modelData) {
+    public void initData(ModelData modelData, DBCDisplay display) {
         ModelPartData config = data.getPartData("dbcEars");
         if (config == null) {
             isHidden = true;

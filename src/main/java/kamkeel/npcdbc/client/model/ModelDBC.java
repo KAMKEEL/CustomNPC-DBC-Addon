@@ -98,14 +98,14 @@ public class ModelDBC extends ModelBase {
     }
 
     public void setPlayerData(EntityCustomNpc entity) {
-        this.DBCHair.setData(entity.modelData, entity);
-        this.DBCHorns.setData(entity.modelData, entity);
-        this.DBCEars.setData(entity.modelData, entity);
-        this.DBCBody.setData(entity.modelData, entity);
-        this.DBCRightArms.setData(entity.modelData, entity);
-        this.DBCLeftArms.setData(entity.modelData, entity);
-
         display = ((INPCDisplay) entity.display).getDBCDisplay();
+        this.DBCHair.setData(entity.modelData, entity, display);
+        this.DBCHorns.setData(entity.modelData, entity, display);
+        this.DBCEars.setData(entity.modelData, entity, display);
+        this.DBCBody.setData(entity.modelData, entity, display);
+        this.DBCRightArms.setData(entity.modelData, entity, display);
+        this.DBCLeftArms.setData(entity.modelData, entity, display);
+
     }
 
     public void setHurt(EntityCustomNpc entity) {
@@ -161,8 +161,11 @@ public class ModelDBC extends ModelBase {
                     hasEyebrows = false;
                 else if (d.hairType.equals("ssj4"))
                     isSSJ4 = true;
-                else if (d.hairType.equals("oozaru"))
+                else if (d.hairType.equals("oozaru")) {
                     isOozaru = true;
+                    if (d.eyeColor == -1)
+                        eyeColor = 0xFF0000;
+                }
 
                 isBerserk = d.isBerserk;
             }
@@ -365,10 +368,13 @@ public class ModelDBC extends ModelBase {
                     furColor = d.furColor;
 
                 hasFur = d.hasBodyFur;
-                if (d.hairType.equals("ssj4"))
+                if (d.hairType.equals("ssj4")) {
                     isSSJ4 = true;
-                else if (d.hairType.equals("oozaru"))
+                    if (d.eyeColor == -1)
+                        eyeColor = 0xF3C807;
+                } else if (d.hairType.equals("oozaru")) {
                     isOozaru = true;
+                }
                 hasEyebrows = d.hasEyebrows;
                 isBerserk = d.isBerserk;
             }
@@ -384,17 +390,24 @@ public class ModelDBC extends ModelBase {
                     if (hasFur || isSSJ4 || isOozaru) {
                         ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + "hum.png"));
                         model.render(0.0625F); //important
-                        if (isSSJ4 && HD && hasEyebrows)
-                            renderSSJ4Face(eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType);
+                        if (isSSJ4) {
+                            if (furColor == -1)
+                                furColor = 0xDA152C;
+                            if (HD && hasEyebrows)
+                                renderSSJ4Face(eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType);
+                        }
 
                         if (isOozaru) {
+                            if (furColor == -1)
+                                furColor = 6498048;
                             ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png")); //oozaru hairless body
                             ColorMode.applyModelColor(bodyCM, isHurt);
                             model.render(0.0625F);
 
                             ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
-                        } else
+                        } else {
                             ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
+                        }
                         ColorMode.applyModelColor(furColor, isHurt);
                     }
                 }
@@ -448,14 +461,14 @@ public class ModelDBC extends ModelBase {
     public String getFaceTexture(DBCDisplay display, String t) {
         int race = display.race;
         String tex = "";
-        int st = display.arcoState;
+        int arcoState = display.getArco();
 
         if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN)
             tex = "jinryuumodscore:cc/hum" + t + ".png";
         else if (race == DBCRace.NAMEKIAN)
             tex = "jinryuudragonbc:cc/nam/4nam" + t + ".png";
         else if (race == DBCRace.ARCOSIAN)
-            tex = "jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + t + ".png";
+            tex = "jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[arcoState] + display.bodyType + t + ".png";
         else if (race == DBCRace.MAJIN)
             tex = "jinryuudragonbc:cc/majin/majin" + t + ".png";
         return tex;

@@ -3,12 +3,15 @@ package kamkeel.npcdbc.data.form;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IFormDisplay;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.IOutline;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
@@ -380,6 +383,23 @@ public class FormDisplay implements IFormDisplay {
     public void setOutline(IOutline outline) {
         int id = outline != null ? outline.getID() : -1;
         setOutline(id);
+    }
+
+    public void setupGUINPC(EntityCustomNpc npc, DBCDisplay display){
+        if (display.race == DBCRace.ARCOSIAN) {
+            if (bodyType.equals("firstform")) {
+                display.arcoState  = 2;
+            } else if (bodyType.equals("secondform")) {
+                display.arcoState  = 3;
+            } else if (bodyType.equals("thirdform")) {
+                display.arcoState = 4;
+            } else if (bodyType.equals("finalform")) {
+                display.arcoState  = 0;
+            } else if (bodyType.equals("ultimatecooler")) {
+                display.arcoState  = 5;
+            }
+        }
+
     }
 
     public IFormDisplay save() {

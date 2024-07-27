@@ -92,11 +92,18 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
                         furColor = form.display.furColor;
 
                     hasFur = form.display.hasBodyFur;
+
                     if (form.display.hairType.equals("ssj4"))
                         isSSJ4 = true;
                     else if (form.display.hairType.equals("oozaru"))
                         isOozaru = true;
                 }
+
+                if (isSSJ4 && furColor == -1)
+                    furColor = 0xDA152C;
+                if (isOozaru && furColor == -1)
+                    furColor = 6498048;
+
                 if (isSSJ4 || hasFur || isOozaru)
                     tailColor = furColor;
 
@@ -104,7 +111,9 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
             } else if (display.race == DBCRace.ARCOSIAN) {
                 if (!monkey.monkey_large.isHidden)
                     ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3B00.png"));
-                if (display.arcoState < 4 || display.arcoState == 6)
+
+                int arcoState = display.getArco();
+                if (arcoState < 4 || arcoState == 6)
                     tailColor = display.bodyC3;
                 else
                     tailColor = display.bodyCM;
