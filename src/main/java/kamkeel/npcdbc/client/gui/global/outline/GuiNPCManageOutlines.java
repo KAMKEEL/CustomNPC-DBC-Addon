@@ -159,7 +159,10 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
         this.outline = new Outline();
         outline.readFromNBT(compound);
         setSelected(outline.name);
-        OutlineController.getInstance().customOutlines.replace(outline.id, outline);
+
+        if (outline.id != -1) {
+            OutlineController.getInstance().customOutlines.replace(outline.id, outline);
+        }
         initGui();
     }
 
@@ -372,6 +375,8 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
                 PacketHandler.Instance.sendToServer(new DBCRemoveOutline(data.get(scrollOutlines.getSelected())).generatePacket());
                 scrollOutlines.clear();
                 outline = new Outline();
+
+                visualDisplay.outlineID = -1;
                 initGui();
             }
         }

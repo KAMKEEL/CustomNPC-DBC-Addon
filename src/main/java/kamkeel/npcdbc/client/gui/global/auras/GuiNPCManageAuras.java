@@ -98,8 +98,8 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
 
         addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 220, guiTop + 4 + 3 + 185, 143, 20, search));
         if (aura != null && aura.id != -1) {
-//            addLabel(new GuiNpcLabel(10, "ID", guiLeft + 368, guiTop + 4 + 3 + 185));
-//            addLabel(new GuiNpcLabel(11, aura.id + "", guiLeft + 368, guiTop + 4 + 3 + 195));
+            addLabel(new GuiNpcLabel(10, "ID", guiLeft + 368, guiTop + 4 + 3 + 185));
+            addLabel(new GuiNpcLabel(11, aura.id + "", guiLeft + 368, guiTop + 4 + 3 + 195));
 //
 //            int y = guiTop + 3;
 //
@@ -233,22 +233,25 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         this.aura = new Aura();
         aura.readFromNBT(compound);
         setSelected(aura.name);
-        AuraController.getInstance().customAuras.replace(aura.id, aura);
-        display = aura.display;
-        visualDisplay.auraID = aura.id;
-        visualDisplay.outlineID = display.outlineID;
-        visualDisplay.auraOn = true;
+
+        if (aura.id != -1) {
+            AuraController.getInstance().customAuras.replace(aura.id, aura);
+            display = aura.display;
+            visualDisplay.auraID = aura.id;
+            visualDisplay.outlineID = display.outlineID;
+            visualDisplay.auraOn = true;
 
 
-        boolean sameID = aura.id == oldID;
-        if (!sameID) {
-            stopSound(auraSound, false);
-            stopSound(kaiokenSound, false);
-            stopSound(secondarySound, false);
-            stopSound(kettleSound, false);
-            stopSound(secondaryKettleSound, false);
+            boolean sameID = aura.id == oldID;
+            if (!sameID) {
+                stopSound(auraSound, false);
+                stopSound(kaiokenSound, false);
+                stopSound(secondarySound, false);
+                stopSound(kettleSound, false);
+                stopSound(secondaryKettleSound, false);
 
-            playSound(true);
+                playSound(true);
+            }
         }
         initGui();
     }
@@ -505,6 +508,15 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
                 PacketHandler.Instance.sendToServer(new DBCRemoveAura(data.get(scrollAuras.getSelected())).generatePacket());
                 scrollAuras.clear();
                 aura = new Aura();
+
+                visualDisplay.auraOn = false;
+                visualDisplay.auraID = -1;
+                visualDisplay.outlineID = -1;
+                stopSound(auraSound, false);
+                stopSound(kaiokenSound, false);
+                stopSound(secondarySound, false);
+                stopSound(kettleSound, false);
+                stopSound(secondaryKettleSound, false);
                 initGui();
             }
         }

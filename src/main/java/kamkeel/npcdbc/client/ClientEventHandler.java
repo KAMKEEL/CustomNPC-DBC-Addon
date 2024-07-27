@@ -298,7 +298,7 @@ public class ClientEventHandler {
         }
     }
 
-    public static void spawnAura(Entity entity, Aura aura) {
+    public static EntityAura2 spawnAura(Entity entity, Aura aura) {
 
         boolean isPlayer = entity instanceof EntityPlayer;
         boolean isNPC = entity instanceof EntityNPCInterface;
@@ -514,6 +514,8 @@ public class ClientEventHandler {
 
         ((IEntityAura) aur).setEntity(entity);
         aur.worldObj.spawnEntityInWorld(aur);
+
+        return aur;
     }
 
     public static EntityAura2 spawnKaiokenAura(Aura aura, IAuraData data) {

@@ -212,6 +212,8 @@ general.noParent=No Parent
 general.parentForm=Parent Form
 general.noChild=No Child
 general.childForm=Child Form
+general.noForm=No Form
+
 general.ascendSound=Ascend Sound
 general.descendSound=Descend Sound
 general.allRaces=All Races

@@ -776,6 +776,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         DBCDisplay visualDisplay = ((INPCDisplay) npc.display).getDBCDisplay();
         if (origDisplay != null && origDisplay.enabled && origDisplay.useSkin) {
             visualDisplay.readFromNBT(origDisplay.writeToNBT(new NBTTagCompound()));
+            if (DBCRace.isSaiyan(visualDisplay.race))
+                visualDisplay.tailState = 1;
+
             visualDisplay.setRacialExtras();
 
         } else {
@@ -783,10 +786,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             visualDisplay.useSkin = true;
             visualDisplay.race = DBCData.getClient().Race;
             visualDisplay.setDefaultColors();
-            DBCData data = DBCData.getClient();
             boolean isSaiyan = DBCRace.isSaiyan(visualDisplay.race);
             if (isSaiyan) {
-                visualDisplay.tailState = (data.Tail == 0 || data.Tail == 1) ? data.Tail : (byte) (data.Tail == -1 ? 0 : 1);
+                visualDisplay.tailState = 1;
             }
 
             if (visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.NAMEKIAN) {
