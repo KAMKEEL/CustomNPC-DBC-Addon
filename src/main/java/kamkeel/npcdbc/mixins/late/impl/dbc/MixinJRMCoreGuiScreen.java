@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.JRMCore.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -19,6 +20,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.StatCollector;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -275,8 +277,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
         int guiTop = (this.height - ySize) / 2 + 7;
 
         if(cs_mode == 0 && cs_page == 3){
-            // @TODO: ADD LANG FILES
-            enhancedGUIdrawString(var8, String.format("First person 3D Aura Opacity: %s%%", ConfigDBCClient.FirstPerson3DAuraOpacity), guiLeft+5, guiTop + 3*15 , 0);
+            enhancedGUIdrawString(var8, StatCollector.translateToLocalFormatted("dbc.clientsettings.aura.firstPersonOpacity", ConfigDBCClient.FirstPerson3DAuraOpacity), guiLeft+5, guiTop + 3*15 , 0);
             this.buttonList.add(new JRMCoreGuiButtonsA2(CLIENT_FIRST_PERSON_3D_OPACITY_REMOVE, guiLeft - 10 - 13, guiTop - 2 + 3*15, "<"));
             this.buttonList.add(new JRMCoreGuiButtonsA2(CLIENT_FIRST_PERSON_3D_OPACITY_ADD, guiLeft - 10, guiTop - 2 + 3*15, ">"));
         }

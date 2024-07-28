@@ -1,5 +1,12 @@
+###########################
+## CONFIG NAME IN MENU
+###########################
+
+# %s is the input value. %% is the percent sign. It is important to use %% to show the percent sign
+dbc.clientsettings.aura.firstPersonOpacity=First person 3D Aura Opacity: %s%%
+
 ############################
-## BUTTONS
+## BUTTONS / LABELS
 ############################
 
 global.customforms=Forms
