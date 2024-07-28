@@ -46,11 +46,6 @@ public class MixinEntityRendererOptifine {
         }
     }
 
-    @Inject(method = "updateCameraAndRender", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/OpenGlHelper;shadersSupported:Z", shift = At.Shift.BEFORE))
-    private void post(float p_78480_1_, CallbackInfo ci) {
-        PostProcessing.bloom(1.5f, false);
-    }
-
     @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;drawScreen(IIF)V", shift = At.Shift.BEFORE))
     private void preGUIRenderOptifine(float p_78480_1_, CallbackInfo ci) {
         ClientProxy.renderingGUI = true;
