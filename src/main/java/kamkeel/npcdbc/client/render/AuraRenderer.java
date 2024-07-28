@@ -9,6 +9,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelAura;
 import kamkeel.npcdbc.client.sound.ClientSound;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
@@ -98,7 +99,7 @@ public class AuraRenderer extends RenderDBC {
         float alpha = aura.alpha;
         float alphaConfig = (float) JGConfigClientSettings.CLIENT_DA21 / 10.0F;
         boolean isFirstPerson = DBCClient.mc.thePlayer == aura.entity && DBCClient.mc.gameSettings.thirdPersonView == 0;
-        alpha = (isFirstPerson ? aura.isKaioken ? 0.015f : 0.0125f : alpha) * alphaConfig;
+        alpha = (isFirstPerson ? aura.isKaioken ? 0.015f : 0.0125f : alpha) * alphaConfig * (isFirstPerson ? (float) ConfigDBCClient.FirstPerson3DAuraOpacity / 100 : 1.0f);
         // alpha = 1f;
         aura.setTexture(1, CustomNpcPlusDBC.ID + ":textures/aura/auraalpha.png");
 

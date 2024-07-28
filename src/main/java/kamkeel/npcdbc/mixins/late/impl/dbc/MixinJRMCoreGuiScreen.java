@@ -1,11 +1,9 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
-import JinRyuu.JRMCore.JRMCoreClient;
-import JinRyuu.JRMCore.JRMCoreGuiButtons00;
-import JinRyuu.JRMCore.JRMCoreGuiScreen;
-import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.*;
 import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -22,6 +20,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.StatCollector;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -38,6 +37,10 @@ import java.util.function.Function;
 @Mixin(value = JRMCoreGuiScreen.class, remap = false)
 
 public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
+
+    private static final int GUI_CHANGE_BUTTON = 303030303;
+    private static final int CLIENT_FIRST_PERSON_3D_OPACITY_ADD = GUI_CHANGE_BUTTON + 1;
+    private static final int CLIENT_FIRST_PERSON_3D_OPACITY_REMOVE = GUI_CHANGE_BUTTON + 2;
 
     @Shadow
     protected static List<Object[]> detailList;
@@ -245,9 +248,23 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
 
     @Inject(method="actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", at=@At("HEAD"), remap = true)
     public void onActionPerformed(GuiButton button, CallbackInfo ci){
-        if(button.id == 303030303){
+        if(button.id == GUI_CHANGE_BUTTON){
             ConfigDBCClient.EnhancedGui = true;
             ConfigDBCClient.EnhancedGuiProperty.set(true);
+            ConfigDBCClient.config.save();
+        }
+
+        if(button.id == CLIENT_FIRST_PERSON_3D_OPACITY_ADD){
+            int value = Math.min(ConfigDBCClient.FirstPerson3DAuraOpacity + 10, 100);
+            ConfigDBCClient.FirstPerson3DAuraOpacity = value;
+            ConfigDBCClient.FirstPerson3DAuraOpacityProperty.set(value);
+            ConfigDBCClient.config.save();
+        }
+        if(button.id == CLIENT_FIRST_PERSON_3D_OPACITY_REMOVE){
+            int value = Math.max(ConfigDBCClient.FirstPerson3DAuraOpacity - 10, 0);
+            ConfigDBCClient.FirstPerson3DAuraOpacity = value;
+            ConfigDBCClient.FirstPerson3DAuraOpacityProperty.set(value);
+            ConfigDBCClient.config.save();
         }
     }
 
@@ -259,10 +276,10 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
         int guiLeft = (this.width - xSize) / 2;
         int guiTop = (this.height - ySize) / 2 + 7;
 
-        Function<Tuple4<String, Integer, Integer, Integer>, Integer> test;
-
         if(cs_mode == 0 && cs_page == 3){
-            enhancedGUIdrawString(var8, "Test", guiLeft+5, guiTop + 3*15 , 0);
+            enhancedGUIdrawString(var8, StatCollector.translateToLocalFormatted("dbc.clientsettings.aura.firstPersonOpacity", ConfigDBCClient.FirstPerson3DAuraOpacity), guiLeft+5, guiTop + 3*15 , 0);
+            this.buttonList.add(new JRMCoreGuiButtonsA2(CLIENT_FIRST_PERSON_3D_OPACITY_REMOVE, guiLeft - 10 - 13, guiTop - 2 + 3*15, "<"));
+            this.buttonList.add(new JRMCoreGuiButtonsA2(CLIENT_FIRST_PERSON_3D_OPACITY_ADD, guiLeft - 10, guiTop - 2 + 3*15, ">"));
         }
     }
 
@@ -270,8 +287,6 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
         if(ConfigDBCClient.EnhancedGui){
             return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), ConfigDBCClient.DarkMode);
         }
-        Function<Tuple2<String, Integer>, ?> test = (a) -> instance.drawString(a._1, a._2, 0, 0, false);
-        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(""));
         return instance.drawString(text, x, y, color);
     }
 

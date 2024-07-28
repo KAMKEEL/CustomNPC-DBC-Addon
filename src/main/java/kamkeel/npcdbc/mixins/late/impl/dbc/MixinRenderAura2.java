@@ -8,6 +8,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.*;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.mixins.late.IRenderEntityAura2;
@@ -77,6 +78,13 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
     @Redirect(method = "func_tad", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA12:Z"))
     private boolean redirect4(EntityAura2 instance) {
         return JGConfigClientSettings.CLIENT_DA12 || SubGuiAuraDisplay.useGUIAura;
+    }
+
+    @Inject(method = "func_tad", at=@At(value = "INVOKE", target="LJinRyuu/DragonBC/common/Npcs/RenderAura2;glColor4f(IF)V", ordinal = 0, shift = At.Shift.BEFORE))
+    private void adjustFirstPersonOpacity(EntityAura2 par1Entity, double parX, double parY, double parZ, float par8, float par9, CallbackInfo ci, @Local(name="p") LocalFloatRef opacity, @Local(name="plyrSP") boolean isFirstPerson){
+        if(isFirstPerson)
+            opacity.set(opacity.get() * ((float) ConfigDBCClient.FirstPerson3DAuraOpacity / 100));
+
     }
 
     @Shadow
