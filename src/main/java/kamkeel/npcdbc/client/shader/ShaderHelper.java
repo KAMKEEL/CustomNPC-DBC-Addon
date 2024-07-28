@@ -20,6 +20,9 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
+/**
+ * TODO: CLEAN UP OLD OPTIFINE "SUPPORT"
+ */
 public final class ShaderHelper {
 
 	private static final int VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB;
@@ -28,6 +31,10 @@ public final class ShaderHelper {
     public static Class Shaders;
     public static boolean optifineShadersLoaded;
     public static int currentProgram, currentOptifineProgram;
+
+    private static int lastUsedProgram = 0;
+    public static boolean usingDBCShader = false;
+
     public static int defaultTexture = 0;
 
 	public static int pylonGlow = 0;
@@ -85,6 +92,11 @@ public final class ShaderHelper {
 	public static void useShader(int shader, IShaderUniform uniforms) {
 		if (!useShaders())
 			return;
+
+        if(!usingDBCShader) {
+            lastUsedProgram = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
+            usingDBCShader = true;
+        }
 		//binds shader
 		ARBShaderObjects.glUseProgramObjectARB(currentProgram = shader);
 
@@ -107,10 +119,12 @@ public final class ShaderHelper {
 
 	public static void releaseShader() {
 
-        if (currentOptifineProgram != 0)
-            bindOptifineShader();
-        else
-            useShader(0);
+        useShader(lastUsedProgram);
+        usingDBCShader = false;
+//        if (currentOptifineProgram != 0)
+//            bindOptifineShader();
+//        else
+//            useShader(0);
 	}
 
 	public static boolean useShaders() {
