@@ -80,7 +80,9 @@ public class ConfigDBCClient
             EnableBloomProperty = config.get(RENDERING, "Enable Bloom", true, "Enables the bloom effect for player outlines and auras");
             EnableBloom = EnableBloomProperty.getBoolean(true);
 
-            FirstPerson3DAuraOpacityProperty = config.get(RENDERING, "First person 3D Aura Opacity", 100, "The opacity of the first person 3D Aura. \nModifying this makes it so auras on other players render normally without blinding you");
+            FirstPerson3DAuraOpacityProperty = config.get(RENDERING, "First person 3D Aura Opacity", 100, "The opacity of the first person 3D Aura." +
+                "\nModifying this makes it so auras on other players render normally without blinding you" +
+                "\n(Min: 0, Max: 100)");
             FirstPerson3DAuraOpacity = Math.max(Math.min(100, FirstPerson3DAuraOpacityProperty.getInt(100)), 0);
         }
         catch (Exception e)
