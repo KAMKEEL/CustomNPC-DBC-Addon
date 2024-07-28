@@ -248,6 +248,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
         if(button.id == 303030303){
             ConfigDBCClient.EnhancedGui = true;
             ConfigDBCClient.EnhancedGuiProperty.set(true);
+            ConfigDBCClient.config.save();
         }
     }
 
@@ -270,8 +271,6 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
         if(ConfigDBCClient.EnhancedGui){
             return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), ConfigDBCClient.DarkMode);
         }
-        Function<Tuple2<String, Integer>, ?> test = (a) -> instance.drawString(a._1, a._2, 0, 0, false);
-        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(""));
         return instance.drawString(text, x, y, color);
     }
 
