@@ -1,0 +1,49 @@
+name: 🐞 Bug Report
+description: Report an issue with the Minecraft mod
+labels: ["bug"]
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+      options:
+        - label: I have searched the existing issues
+          required: true
+  - type: textarea
+    attributes:
+      label: 🐛 Describe the Bug
+      description: A concise description of the issue you are experiencing in the mod.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: ✔️ Expected Behavior
+      description: Describe what you expected to happen within the mod.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 👣 Steps to Reproduce
+      description: Steps to reproduce the issue within the mod.
+      placeholder: |
+        1. In this environment...
+        2. With this config...
+        3. Run '...'
+        4. See error...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 🛠️ Mod Version
+      description: What version of the mod are you using?
+      placeholder: "e.g. 1.9.2"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: ✍️ Additional Context
+      description: |
+        Any other information, links, or context that would help understand the issue.
+        Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+    validations:
+      required: false
