@@ -433,14 +433,13 @@ public class DBCHair extends ModelHairRenderer {
         GL11.glPopAttrib();
     }
 
-    public void setData(ModelData data, EntityCustomNpc entity) {
+    public void setData(ModelData data, EntityCustomNpc entity, DBCDisplay display) {
         this.data = data;
         this.entity = entity;
-        this.initData();
+        this.initData(data, display);
     }
 
-    public void initData() {
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+    public void initData(ModelData data, DBCDisplay display) {
         if (display.hairCode.isEmpty()) {
             isHidden = true;
             return;
@@ -756,7 +755,7 @@ public class DBCHair extends ModelHairRenderer {
         GL11.glPushMatrix();
         if (kamkeel.npcdbc.client.ClientProxy.renderingOutline) {
             GL11.glScalef(1.04f, 1.04f, 1.04f);
-            GL11.glTranslatef(0,0.03f,0);
+            GL11.glTranslatef(0, 0.03f, 0);
         }
 
         int[] hairRightPosZ = new int[]{3, 2, 1, 0, 3, 2, 1, 3, 2, 3};

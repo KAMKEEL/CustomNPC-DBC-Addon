@@ -53,12 +53,12 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         scrollWindow.getLabel(1).color = 0xffffff;
 
         y += 23;
-        maxScroll += 23;
         scrollWindow.addLabel(new GuiNpcLabel(2, "display.kkStackable", guiLeft + 4, y + 5));
         scrollWindow.addButton(new GuiNpcButtonYesNo(2, guiLeft + 115, y, 50, 20, stackable.kaiokenStackable));
         scrollWindow.getLabel(2).color = 0xffffff;
 
         if(stackable.kaiokenStackable){
+            maxScroll += 23;
             y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(22, "display.kkRatio", guiLeft + 4, y + 5));
             scrollWindow.addTextField(new GuiNpcTextField(22, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.kaiokenStrength)));
@@ -81,6 +81,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         scrollWindow.getLabel(3).color = 0xffffff;
 
         if(stackable.uiStackable){
+            maxScroll += 23;
             y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(32, "display.uiRatio", guiLeft + 4, y + 5));
             scrollWindow.addTextField(new GuiNpcTextField(32, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.uiStrength)));
@@ -103,6 +104,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         scrollWindow.getLabel(4).color = 0xffffff;
 
         if(stackable.godStackable){
+            maxScroll += 23;
             y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(42, "display.godRatio", guiLeft + 4, y + 5));
             scrollWindow.addTextField(new GuiNpcTextField(42, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.godStrength)));
@@ -118,6 +120,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         scrollWindow.getLabel(5).color = 0xffffff;
 
         if(stackable.mysticStackable){
+            maxScroll += 23;
             y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(52, "display.mysticRatio", guiLeft + 4, y + 5));
             scrollWindow.addTextField(new GuiNpcTextField(52, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.mysticStrength)));
@@ -127,12 +130,11 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             scrollWindow.getLabel(52).color = 0xffffff;
         }
 
-        y += 23;
-        maxScroll += 23;
-        y += 23;
+
+        y += 46;
         maxScroll += 23;
 
-        scrollWindow.addButton(new GuiNpcButton(6, guiLeft + 75, y, 90, 20, "general.noParent"));
+        scrollWindow.addButton(new GuiNpcButton(6, guiLeft + 75, y, 90, 20, "general.noForm"));
         scrollWindow.addButton(new GuiNpcButton(61, guiLeft + 167, y, 20, 20, "X"));
         scrollWindow.addLabel(new GuiNpcLabel(62, "Legendary", guiLeft + 4, y + 5));
         scrollWindow.getButton(61).enabled = stackable.legendaryID != -1;
@@ -153,9 +155,8 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
 
         y += 23;
-        maxScroll += 23;
 
-        scrollWindow.addButton(new GuiNpcButton(7, guiLeft + 75, y, 90, 20, "general.noParent"));
+        scrollWindow.addButton(new GuiNpcButton(7, guiLeft + 75, y, 90, 20, "general.noForm"));
         scrollWindow.addButton(new GuiNpcButton(71, guiLeft + 167, y, 20, 20, "X"));
         scrollWindow.addLabel(new GuiNpcLabel(72, "Divine", guiLeft + 4, y + 5));
         scrollWindow.getButton(71).enabled = stackable.divineID != -1;
@@ -177,9 +178,8 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
 
         y += 23;
-        maxScroll += 23;
 
-        scrollWindow.addButton(new GuiNpcButton(8, guiLeft + 75, y, 90, 20, "general.noParent"));
+        scrollWindow.addButton(new GuiNpcButton(8, guiLeft + 75, y, 90, 20, "general.noForm"));
         scrollWindow.addButton(new GuiNpcButton(81, guiLeft + 167, y, 20, 20, "X"));
         scrollWindow.addLabel(new GuiNpcLabel(82, "Majin", guiLeft + 4, y + 5));
         scrollWindow.getButton(81).enabled = stackable.majinID != -1;
@@ -198,7 +198,6 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             scrollWindow.getTextField(84).setMinMaxDefaultFloat(-10000, 10000, 1);
         }
         scrollWindow.getLabel(83).color = 0xffffff;
-
 
         scrollWindow.maxScrollY = maxScroll;
     }

@@ -3,6 +3,7 @@ package kamkeel.npcdbc.client.model.part;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -56,7 +57,7 @@ public class DBCLeftArms extends ModelDBCPartInterface {
 
         if (!ClientProxy.renderingOutline && display.outlineID != -1) {
             int id = !ArcoLeftShoulder.isHidden ? 0 : RenderEventHandler.TAIL_STENCIL_ID;
-            RenderEventHandler.enableStencilWriting((entity.getEntityId() +id) % 256);
+            RenderEventHandler.enableStencilWriting((entity.getEntityId() + id) % 256);
         }
 
         GL11.glPushMatrix();
@@ -112,7 +113,7 @@ public class DBCLeftArms extends ModelDBCPartInterface {
     }
 
     @Override
-    public void initData(ModelData modelData) {
+    public void initData(ModelData modelData, DBCDisplay display) {
         ModelPartData config = data.getPartData("dbcArms");
         if (config == null) {
             isHidden = true;
@@ -121,6 +122,28 @@ public class DBCLeftArms extends ModelDBCPartInterface {
         useColor = 0;
         bodyCM = config.color;
         isHidden = false;
+
+        //////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////
+        //Forms
+        Form form = display.getForm();
+        if (form != null) {
+            if (display.race == DBCRace.ARCOSIAN) {
+                if (form.display.bodyType.equals("firstform")) {
+                    config.type = 0;
+                } else if (form.display.bodyType.equals("secondform")) {
+                    config.type = 0;
+                } else if (form.display.bodyType.equals("thirdform")) {
+                    config.type = 2;
+                } else if (form.display.bodyType.equals("finalform")) {
+                    config.type = 0;
+                } else if (form.display.bodyType.equals("ultimatecooler")) {
+                    config.type = 1;
+                }
+            }
+        }
+        //////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////
 
         LeftArmSpike.isHidden = config.type != 1;
         ArcoLeftShoulder.isHidden = config.type != 2;

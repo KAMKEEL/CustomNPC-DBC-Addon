@@ -1,31 +1,19 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
-import JinRyuu.DragonBC.common.Npcs.EntityAura2;
-import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
-import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.data.aura.Aura;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
-import kamkeel.npcdbc.mixins.late.INPCDisplay;
-import kamkeel.npcdbc.util.Utility;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityCustomNpc;
-import noppes.npcs.entity.data.ModelData;
-import noppes.npcs.entity.data.ModelPartData;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -61,40 +49,18 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     public Form spoofForm;
 
     public SubGuiFormDisplay(GuiNPCManageForms parent, Form form) {
-        if (DBCDisplay.fakeForm == null)
-            DBCDisplay.fakeForm = new Form(-100, "EXTREME_FAKE_FORM");
-        spoofForm = DBCDisplay.fakeForm;
         menu = new GuiNpcFormMenu(parent, this, -2, form);
 
-        EntityCustomNpc originalNPC = ((EntityCustomNpc) menu.formsParent.npc);
-        DBCDisplay origDisplay = null;
-        if (originalNPC != null)
-            origDisplay = ((INPCDisplay) originalNPC.display).getDBCDisplay();
-
-        this.form = form;
-        this.display = form.display;
+        this.npc = (EntityCustomNpc) parent.npc;
+        this.form = parent.form;
+        this.display = parent.display;
+        this.visualDisplay = parent.visualDisplay;
 
         setBackground("menubg.png");
         xSize = 360;
         ySize = 216;
         xOffset = 100;
         yOffset = -10;
-
-        npc = new EntityCustomNpc(Minecraft.getMinecraft().theWorld);
-        npc.display.texture = "customnpcs:textures/entity/humanmale/AnimationBody.png";
-        visualDisplay = ((INPCDisplay) npc.display).getDBCDisplay();
-        visualDisplay.enabled = true;
-        visualDisplay.useSkin = true;
-        hasRace = form.race() != -1;
-        if (origDisplay != null)
-            racePage = origDisplay.race < 0 ? 1 : origDisplay.race;
-        else
-            racePage = visualDisplay.race = DBCData.getClient().Race;
-
-        visualDisplay.race = racePage = (byte) (form.race() < 0 ? racePage : form.race());
-
-        visualDisplay.formID = spoofForm.id;
-        updateDisplay();
     }
 
     public void initGui() {
@@ -106,7 +72,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         raceButtons(y);
         controlButtons();
-        updateDisplay();
         updateButtons();
     }
 
@@ -269,7 +234,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         GuiNpcButton button = (GuiNpcButton) btn;
         if (button.id == 1) {
             racePage = (byte) button.getValue();
-            updateDisplay();
+
             updateButtons();
         }
         // Aura Color
@@ -280,14 +245,14 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Aura Color Clear
         if (button.id == 1106) {
             display.auraColor = -1;
-            updateDisplay();
+
             updateButtons();
         }
         // Aura Show
         if (button.id == 1206) {
             showAura = !showAura;
             auraTicks = 1;
-            updateDisplay();
+
             updateButtons();
         }
         if (button.id == 1306) {
@@ -295,7 +260,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         if (button.id == 1406) {
             display.auraID = -1;
-            updateDisplay();
+
             updateButtons();
         }
         // Hud Color
@@ -306,7 +271,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Hud Color Clear
         if (button.id == 1124) {
             display.kiBarColor = -1;
-            updateDisplay();
+
             updateButtons();
         }
         // Eye Color
@@ -317,13 +282,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Eye Color Clear
         if (button.id == 1107) {
             display.eyeColor = -1;
-            updateDisplay();
+
             updateButtons();
         }
         //Berserk
         if (button.id == 1072) {
             display.isBerserk = button.getValue() == 1;
-            updateDisplay();
+            //
         }
         // Body
         if (button.id == 108) {
@@ -333,13 +298,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Body Clear
         if (button.id == 1108) {
             display.bodyCM = -1;
-            updateDisplay();
+
             updateButtons();
         }
         //Has Eyebrows
         if (button.id == 1082) {
             display.hasEyebrows = button.getValue() == 1;
-            updateDisplay();
+
         }
         // Body C1
         if (button.id == 109) {
@@ -349,7 +314,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Body C1 Clear
         if (button.id == 1109) {
             display.bodyC1 = -1;
-            updateDisplay();
+
             updateButtons();
         }
         // Body C2
@@ -360,7 +325,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Body C2 Clear
         if (button.id == 1110) {
             display.bodyC2 = -1;
-            updateDisplay();
+
             updateButtons();
         }
         // Body C3
@@ -371,7 +336,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Body C3 Clear
         if (button.id == 1111) {
             display.bodyC3 = -1;
-            updateDisplay();
+
             updateButtons();
         }
         // Fur Color
@@ -382,38 +347,38 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Fur Color Clear
         if (button.id == 1112) {
             display.furColor = -1;
-            updateDisplay();
+
             updateButtons();
         }
         // Majin Hair
         if (button.id == 115) {
             display.effectMajinHair = !display.effectMajinHair;
-            updateDisplay();
+
             updateButtons();
         }
         // Arco Mask
         if (button.id == 113) {
             display.hasArcoMask = !display.hasArcoMask;
-            updateDisplay();
+
             updateButtons();
         }
         // Body Fur
         if (button.id == 123) {
             display.hasBodyFur = !display.hasBodyFur;
-            updateDisplay();
+
             updateButtons();
         }
 
         // Form
         if (button.id == 114) {
             display.bodyType = getArcoString(button.getValue());
-            updateDisplay();
+
         }
 
         // Hair Clear
         if (button.id == 103) {
             display.hairCode = "";
-            updateDisplay();
+
             updateButtons();
         }
         // Hair Paste
@@ -421,11 +386,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             String newDNSHair = getClipboardContents();
             if (newDNSHair.length() == 786 || newDNSHair.length() == 784 || newDNSHair.length() == 392) {
                 display.hairCode = dnsHairG1toG2(newDNSHair);
-                updateDisplay();
+
                 updateButtons();
             } else if (newDNSHair.equalsIgnoreCase("bald")) {
                 display.hairCode = "bald";
-                updateDisplay();
+
                 updateButtons();
             }
 
@@ -442,14 +407,14 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Hair Color Clear
         if (button.id == 1104) {
             display.hairColor = -1;
-            updateDisplay();
+
             updateButtons();
         }
         //Hair Type
         if (button.id == 140) {
             display.hairType = getHairString(button.getValue());
             visualDisplay.hairType = display.hairType;
-            updateDisplay();
+
             updateButtons();
         }
     }
@@ -514,7 +479,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             } else if (lastColorClicked == 8) {
                 display.kiBarColor = color;
             }
-            updateDisplay();
+
             updateButtons();
         }
         if (subgui instanceof SubGuiSelectAura) {
@@ -527,7 +492,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                     display.auraID = guiSelectForm.selectedAuraID;
                 }
             }
-            updateDisplay();
+
             updateButtons();
         }
     }
@@ -541,6 +506,10 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     }
 
     public void drawScreen(int par1, int par2, float par3) {
+        super.drawScreen(par1, par2, par3);
+        if (hasSubGui())
+            return;
+
         if (Mouse.isButtonDown(0)) {
             if (this.left.mousePressed(this.mc, par1, par2)) {
                 rotation += par3 * 2.0F;
@@ -548,6 +517,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 rotation -= par3 * 2.0F;
             }
         }
+
         if (isMouseOverRenderer(par1, par2)) {
             zoomed += Mouse.getDWheel() * 0.035f;
             if (zoomed > 100)
@@ -559,10 +529,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 rotation -= Mouse.getDX() * 0.75f;
             }
         }
-        super.drawScreen(par1, par2, par3);
-        if (hasSubGui())
-            return;
-
         menu.drawElements(fontRendererObj, par1, par2, mc, par3);
         GL11.glColor4f(1, 1, 1, 1);
 
@@ -593,103 +559,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         GL11.glTranslatef(0.0F, entity.yOffset, 1F);
         RenderManager.instance.playerViewY = 180F;
 
-        if (showAura) {
-            // Render Aura
-            EntityAura2 aur = new EntityAura2(entity.worldObj, Utility.getEntityID(entity), 0, 0, 0, 100, false);
-            aur.setAlp(0.5F);
-            aur.setInner(true);
-            aur.setCol(display.auraColor);
-
-            if (display.auraID != -1 && AuraController.getInstance().has(display.auraID)) {
-                Aura aura = AuraController.getInstance().customAuras.get(display.auraID);
-                if (aura.display.type == EnumAuraTypes3D.SaiyanGod) {
-                    aur.setAlp(0.2F);
-                    aur.setTex("aurai");
-                    aur.setTexL2("aurai2");
-                    aur.setColL2(16747301);
-                } else if (aura.display.type == EnumAuraTypes3D.SaiyanBlue) {
-                    aur.setSpd(40);
-                    aur.setAlp(0.5F);
-                    aur.setTex("aurag");
-                    aur.setColL3(15727354);
-                    aur.setTexL3("auragb");
-                } else if (aura.display.type == EnumAuraTypes3D.SaiyanBlueEvo) {
-                    aur.setSpd(40);
-                    aur.setAlp(0.5F);
-                    aur.setTex("aurag");
-                    aur.setColL3(12310271);
-                    aur.setTexL3("auragb");
-                } else if (aura.display.type == EnumAuraTypes3D.SaiyanRose) {
-                    aur.setSpd(30);
-                    aur.setAlp(0.2F);
-                    aur.setTex("aurai");
-                    aur.setTexL2("aurai2");
-                    aur.setColL2(7872713);
-                } else if (aura.display.type == EnumAuraTypes3D.SaiyanRoseEvo) {
-                    aur.setSpd(30);
-                    aur.setAlp(0.2F);
-                    aur.setTex("aurai");
-                    aur.setTexL2("aurai2");
-                    aur.setColL2(8592109);
-                } else if (aura.display.type == EnumAuraTypes3D.UI) {
-                    aur.setSpd(100);
-                    aur.setAlp(0.15F);
-                    aur.setTex("auras");
-                    aur.setCol(15790320);
-                    aur.setColL3(4746495);
-                    aur.setTexL3("auragb");
-                } else if (aura.display.type == EnumAuraTypes3D.GoD) {
-                    aur.setSpd(100);
-                    aur.setAlp(0.2F);
-                    aur.setTex("aurag");
-                    aur.setTexL3("auragb");
-                    aur.setColL2(12464847);
-                } else if (aura.display.type == EnumAuraTypes3D.UltimateArco) {
-                    aur.setAlp(0.5F);
-                    aur.setTex("aurau");
-                    aur.setTexL2("aurau2");
-                    aur.setColL2(16776724);
-                }
-                if (aura.display.hasColor("color1"))
-                    aur.setCol(aura.display.color1);
-                if (aura.display.hasColor("color2"))
-                    aur.setColL2(aura.display.color2);
-                if (aura.display.hasColor("color3"))
-                    aur.setColL3(aura.display.color3);
-
-                if (aura.display.hasAlpha("aura"))
-                    aur.setAlp((float) aura.display.alpha / 255);
-
-                if (aura.display.hasSpeed())
-                    aur.setSpd(aura.display.speed);
-            }
-            try {
-                GL11.glPushMatrix();
-                RenderHelper.disableStandardItemLighting();
-                GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE); // Additive blending for brightness
-                GL11.glDisable(GL11.GL_LIGHTING); // Disable standard lighting
-                GL11.glScalef(0.8f, 0.8f, 0.8f);
-
-
-//                int add = auraTicks % 5;
-//                aur.setSpd(5 + add);
-//                RenderManager.instance.renderEntityWithPosYaw((Entity) aur, 0.0, 1.0, 0.0, 0.0F, 1.0F);
-//                aur.setSpd((5 * 2) + add);
-//                RenderManager.instance.renderEntityWithPosYaw((Entity) aur, 0.0, 1.0, 0.0, 0.0F, 1.0F);
-//                aur.setSpd((5 * 3) + add);
-//                RenderManager.instance.renderEntityWithPosYaw((Entity) aur, 0.0, 1.0, 0.0, 0.0F, 1.0F);
-//                aur.setSpd((5 * 4) + add);
-                RenderManager.instance.renderEntityWithPosYaw((Entity) aur, 0.0, 1.0, 0.0, 0.0F, 1.0F);
-
-                // Restore the settings
-                GL11.glEnable(GL11.GL_LIGHTING); // Re-enable standard lighting
-                GL11.glDisable(GL11.GL_BLEND);
-                GL11.glPopMatrix();
-                RenderHelper.enableStandardItemLighting();
-            } catch (Exception ignored) {
-            }
-        }
         auraTicks++;
 
         // Render Entity
@@ -725,192 +594,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     @Override
     public void selected(int id, String name) {
-    }
-
-    public void updateDisplay() {
-        DBCData dbcData = DBCData.getClient();
-        EntityCustomNpc originalNPC = ((EntityCustomNpc) menu.formsParent.npc);
-        boolean originalNull = originalNPC == null;
-        DBCDisplay origDisplay = null;
-
-        if (!originalNull)
-            origDisplay = ((INPCDisplay) originalNPC.display).getDBCDisplay();
-
-        if (!originalNull && !origDisplay.enabled)
-            originalNull = true;
-
-        int hairColor = !originalNull ? (display.hairColor == -1 ? origDisplay.hairColor : display.hairColor) : dbcData.renderingHairColor;
-        int furColor = display.furColor == -1 ? (!originalNull ? origDisplay.furColor : (DBCRace.isSaiyan(dbcData.Race) ? display.getFurColor(dbcData) : 0xDA152C)) : display.furColor;
-
-        boolean racePageSaiyan = DBCRace.isSaiyan(racePage);
-
-        visualDisplay.race = (byte) racePage;
-        visualDisplay.setDefaultColors();
-
-        visualDisplay.eyeColor = 0x0;
-        if (visualDisplay.race < 3) {
-            visualDisplay.bodyCM = 16297621;
-            visualDisplay.bodyC1 = 6498048;
-            visualDisplay.bodyC2 = 0;
-            visualDisplay.bodyC3 = 0;
-            visualDisplay.furColor = furColor;
-
-        } else if (visualDisplay.race == DBCRace.NAMEKIAN) {
-            visualDisplay.bodyCM = 5095183;
-            visualDisplay.bodyC1 = 13796998;
-            visualDisplay.bodyC2 = 12854822;
-        } else if (visualDisplay.race == DBCRace.ARCOSIAN) {
-            visualDisplay.bodyCM = 15460342;
-            visualDisplay.bodyC1 = 16111595;
-            visualDisplay.bodyC2 = 8533141;
-            visualDisplay.bodyC3 = 16550015;
-            visualDisplay.eyeColor = 0xFF0000;
-        } else if (visualDisplay.race == DBCRace.MAJIN) {
-            visualDisplay.bodyCM = 16757199;
-            visualDisplay.eyeColor = 0xFF0000;
-        }
-        visualDisplay.hasArcoMask = false;
-        if (visualDisplay.race == DBCRace.ARCOSIAN) {
-            visualDisplay.hasArcoMask = display.hasArcoMask;
-        }
-
-        visualDisplay.hairType = !originalNull && display.hairType.isEmpty() ? origDisplay.hairType : display.hairType;
-        visualDisplay.hairColor = hairColor;
-        if (visualDisplay.race == DBCRace.NAMEKIAN || visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.MAJIN)
-            visualDisplay.hairColor = display.bodyCM;
-
-        visualDisplay.hairCode = "";
-        if (visualDisplay.race == DBCRace.HUMAN || visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
-            visualDisplay.hairCode = display.hairCode;
-            if (visualDisplay.hairCode.isEmpty())
-                visualDisplay.hairCode = DBCHair.GOKU_HAIR;
-        } else if (visualDisplay.race == DBCRace.MAJIN) {
-            if (display.effectMajinHair)
-                visualDisplay.hairColor = display.hairColor;
-
-            visualDisplay.hairCode = display.hairCode;
-            if (visualDisplay.hairCode.isEmpty())
-                visualDisplay.hairCode = DBCHair.MAJIN_HAIR;
-        }
-
-
-        //   visualDisplay.hairColor = 0;
-        visualDisplay.bodyCM = display.bodyCM == -1 ? visualDisplay.bodyCM : display.bodyCM;
-        visualDisplay.bodyC1 = display.bodyC1 == -1 ? visualDisplay.bodyC1 : display.bodyC1;
-        visualDisplay.bodyC2 = display.bodyC2 == -1 ? visualDisplay.bodyC2 : display.bodyC2;
-        visualDisplay.bodyC3 = display.bodyC3 == -1 ? visualDisplay.bodyC3 : display.bodyC3;
-        visualDisplay.eyeColor = display.eyeColor == -1 ? visualDisplay.eyeColor : display.eyeColor;
-
-//        visualDisplay.bodyCM = display.bodyCM == -1 ? (!originalNull ? origDisplay.bodyCM : JRMCoreH.dnsBodyCM(dbcData.DNS)) : display.bodyCM;
-//
-//        if(DBCRace.isSaiyan(race))
-//            visualDisplay.bodyC1 = display.bodyC1 == -1 ? (!originalNull ? origDisplay.bodyC1 : JRMCoreH.dnsBodyC1(dbcData.DNS)) : display.bodyC1;
-//        visualDisplay.bodyC2 = display.bodyC2 == -1 ? (!originalNull ? origDisplay.bodyC2 : JRMCoreH.dnsBodyC2(dbcData.DNS)) : display.bodyC2;
-//        visualDisplay.bodyC3 = display.bodyC3 == -1 ? (!originalNull ? origDisplay.bodyC3 : JRMCoreH.dnsBodyC3(dbcData.DNS)) : display.bodyC3;
-//        visualDisplay.eyeColor = display.eyeColor == -1 ? (!originalNull ? origDisplay.eyeColor : JRMCoreH.dnsEyeC1(dbcData.DNS)) : display.eyeColor;
-
-
-        ModelData data = npc.modelData;
-        data.removePart("dbcHorn");
-        data.removePart("tail");
-        data.removePart("dbcArms");
-        data.removePart("dbcBody");
-
-        if (visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN || visualDisplay.race == DBCRace.ARCOSIAN) {
-            //
-            ModelPartData original = null;
-            if (!originalNull)
-                original = ((EntityCustomNpc) menu.formsParent.npc).modelData.getPartData("tail");
-
-            ModelPartData tail = data.getOrCreatePart("tail");
-
-            tail.setTexture("tail/monkey1", 8);
-            if ((visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN)) {
-
-                tail.pattern = !originalNull ? (original.pattern == 2 ? 1 : original.pattern) : (dbcData.Tail == 0 || dbcData.Tail == 1) ? dbcData.Tail : (byte) (dbcData.Tail == -1 ? 0 : 1);
-                tail.color = !originalNull && display.hairColor == -1 ? origDisplay.bodyC2 : (visualDisplay.bodyC1 = display.hairColor);
-            } else if (visualDisplay.race == DBCRace.ARCOSIAN)
-                tail.pattern = 2;
-
-        }
-        if (originalNull) {
-            if (racePageSaiyan) {
-                if (DBCRace.isSaiyan(dbcData.Race))
-                    visualDisplay.bodyC1 = JRMCoreH.dnsBodyC1(dbcData.DNS);
-                else {
-                    visualDisplay.bodyCM = 16297621;
-                    visualDisplay.bodyC1 = 6498048;
-                }
-            }
-
-        }
-        if (visualDisplay.race == DBCRace.ARCOSIAN) {
-            ModelPartData horn = data.getOrCreatePart("dbcHorn");
-            ModelPartData arms;
-            switch (display.bodyType) {
-                case "firstform":
-                    visualDisplay.arcoState = 0;
-                    horn.setTexture("tail/monkey1", 2);
-                    break;
-                case "secondform":
-                    visualDisplay.arcoState = 2;
-                    horn.setTexture("tail/monkey1", 3);
-                    break;
-                case "thirdform":
-                    visualDisplay.arcoState = 3;
-                    horn.setTexture("tail/monkey1", 4);
-                    arms = data.getOrCreatePart("dbcArms");
-                    arms.setTexture("tail/monkey1", 2);
-                    break;
-                case "finalform":
-                    visualDisplay.arcoState = 4;
-                    data.removePart("dbcHorn");
-                    break;
-                case "ultimatecooler":
-                    visualDisplay.arcoState = 5;
-                    horn.setTexture("tail/monkey1", 5);
-                    arms = data.getOrCreatePart("dbcArms");
-                    arms.setTexture("tail/monkey1", 1);
-                    ModelPartData body = data.getOrCreatePart("dbcBody");
-                    body.setTexture("tail/monkey1", 1);
-                    break;
-                default:
-                    visualDisplay.arcoState = 0;
-                    data.removePart("dbcHorn");
-                    break;
-            }
-        }
-
-        if (visualDisplay.race == DBCRace.NAMEKIAN) {
-            ModelPartData horn = data.getOrCreatePart("dbcHorn");
-            horn.setTexture("tail/monkey1", 1);
-        }
-
-
-        // Copy Form to Fake Form
-        spoofForm.setRace(form.getRace());
-        spoofForm.display.hairType = display.hairType;
-        spoofForm.display.hairCode = display.hairCode;
-        spoofForm.display.hairColor = display.hairColor;
-        spoofForm.display.bodyCM = display.bodyCM;
-        spoofForm.display.bodyC1 = display.bodyC1;
-        spoofForm.display.bodyC2 = display.bodyC2;
-        spoofForm.display.bodyC3 = display.bodyC3;
-        spoofForm.display.bodyType = display.bodyType;
-        spoofForm.display.kiBarColor = display.kiBarColor;
-        spoofForm.display.eyeColor = display.eyeColor == -1 && racePageSaiyan && display.hairType.equals("ssj4") ? 0xF3C807 : display.eyeColor;
-        spoofForm.display.effectMajinHair = display.effectMajinHair;
-        spoofForm.display.furColor = furColor == -1 ? 0xDA152C : furColor;
-        spoofForm.display.auraColor = display.auraColor;
-        spoofForm.display.auraID = display.auraID;
-        spoofForm.display.keepOriginalSize = display.keepOriginalSize;
-        spoofForm.display.formSize = display.formSize;
-        spoofForm.display.hasArcoMask = display.hasArcoMask;
-        spoofForm.display.hasBodyFur = display.hasBodyFur;
-        spoofForm.display.hasEyebrows = display.hasEyebrows;
-        spoofForm.display.isBerserk = display.isBerserk;
-
-        visualDisplay.formID = spoofForm.id;
     }
 
     public String getColor(int input) {

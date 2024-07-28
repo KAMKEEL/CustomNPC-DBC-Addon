@@ -2,7 +2,6 @@ package kamkeel.npcdbc.client.gui;
 
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectOutline;
-import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -257,17 +256,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             setClipboardContents(display.hairCode);
         }
         if (button.id == 103) {
-            display.hairColor = 0x0;
-            if (display.race < 3)
-                display.hairCode = DBCHair.GOKU_HAIR;
-            else if (display.race < 5)
-                display.hairCode = "";
-            else if (display.race == DBCRace.MAJIN) {
-                display.hairCode = DBCHair.MAJIN_HAIR;
-                display.hairColor = display.bodyCM;
-            }
-
-            display.hairType = "base";
+            display.setDefaultHair();
             initGui();
         }
         if (button.id == 104) {

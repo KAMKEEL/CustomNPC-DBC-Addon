@@ -78,7 +78,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             scrollWindow.clipWidth = 235;
             scrollWindow.clipHeight = 225;
         }
-        scrollWindow.scrollSpeed = 2;
+        scrollWindow.scrollSpeed = 3.5f;
 
         addScrollableGui(0, scrollWindow);
         int maxScroll = -20;
@@ -89,13 +89,13 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
         scrollWindow.addLabel(new GuiNpcLabel(101, "gui.name", 3, y + 5));
         scrollWindow.getLabel(101).color = 0xffffff;
-        scrollWindow.addTextField(new GuiNpcTextField(101, this, this.fontRendererObj, guiX + 110, y, 110, 20, aura.name));
+        scrollWindow.addTextField(new GuiNpcTextField(101, this, this.fontRendererObj, guiX + 100, y, 120, 20, aura.name));
         scrollWindow.getTextField(101).setMaxStringLength(40);
 
         y += 26;
         scrollWindow.addLabel(new GuiNpcLabel(102, "general.menuName", 3, y + 5));
         scrollWindow.getLabel(102).color = 0xffffff;
-        scrollWindow.addTextField(new GuiNpcTextField(102, this, this.fontRendererObj, guiX + 110, y, 110, 20, aura.menuName.replaceAll("§", "&")));
+        scrollWindow.addTextField(new GuiNpcTextField(102, this, this.fontRendererObj, guiX + 100, y, 120, 20, aura.menuName.replaceAll("§", "&")));
         scrollWindow.getTextField(102).setMaxStringLength(40);
 
         y += 26;

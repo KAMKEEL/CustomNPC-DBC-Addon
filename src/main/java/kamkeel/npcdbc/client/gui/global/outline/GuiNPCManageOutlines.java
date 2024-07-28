@@ -49,8 +49,11 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
         super(npc);
         this.npc = DBCDisplay.setupGUINPC((EntityCustomNpc) npc);
         this.npc.display.name = "outline man";
+
+
         visualDisplay = ((INPCDisplay) this.npc.display).getDBCDisplay();
         visualDisplay.auraOn = false;
+        visualDisplay.formID = -1;
 
         PacketHandler.Instance.sendToServer(new DBCRequestOutline(-1).generatePacket());
     }
@@ -159,7 +162,10 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
         this.outline = new Outline();
         outline.readFromNBT(compound);
         setSelected(outline.name);
-        OutlineController.getInstance().customOutlines.replace(outline.id, outline);
+
+        if (outline.id != -1) {
+            OutlineController.getInstance().customOutlines.replace(outline.id, outline);
+        }
         initGui();
     }
 
@@ -372,6 +378,8 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
                 PacketHandler.Instance.sendToServer(new DBCRemoveOutline(data.get(scrollOutlines.getSelected())).generatePacket());
                 scrollOutlines.clear();
                 outline = new Outline();
+
+                visualDisplay.outlineID = -1;
                 initGui();
             }
         }

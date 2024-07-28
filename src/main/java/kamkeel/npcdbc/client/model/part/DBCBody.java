@@ -3,6 +3,7 @@ package kamkeel.npcdbc.client.model.part;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -102,7 +103,7 @@ public class DBCBody extends ModelDBCPartInterface {
     }
 
     @Override
-    public void initData(ModelData modelData) {
+    public void initData(ModelData modelData, DBCDisplay display) {
         ModelPartData config = data.getPartData("dbcBody");
         if (config == null) {
             isHidden = true;
@@ -110,6 +111,28 @@ public class DBCBody extends ModelDBCPartInterface {
         }
         bodyCM = config.color;
         isHidden = false;
+
+        //////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////
+        //Forms
+        Form form = display.getForm();
+        if (form != null) {
+            if (display.race == DBCRace.ARCOSIAN) {
+                if (form.display.bodyType.equals("firstform")) {
+                    config.type = 0;
+                } else if (form.display.bodyType.equals("secondform")) {
+                    config.type = 0;
+                } else if (form.display.bodyType.equals("thirdform")) {
+                    config.type = 0;
+                } else if (form.display.bodyType.equals("finalform")) {
+                    config.type = 0;
+                } else if (form.display.bodyType.equals("ultimatecooler")) {
+                    config.type = 1;
+                }
+            }
+        }
+        //////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////
 
         BackSpikes.isHidden = config.type != 1;
 

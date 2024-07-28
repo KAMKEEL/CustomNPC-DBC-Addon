@@ -572,15 +572,15 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         if (race < 3) {
             bodyCM = 16297621;
             bodyC1 = 6498048;
-            bodyC2 = 0;
-            bodyC3 = 0;
-            furColor = 0xDA152C;
+            bodyC2 = -1;
+            bodyC3 = -1;
+            furColor = -1;
         } else if (race == DBCRace.NAMEKIAN) {
             hairColor = 5095183;
             bodyCM = 5095183;
             bodyC1 = 13796998;
             bodyC2 = 12854822;
-            bodyC3 = 0;
+            bodyC3 = -1;
         } else if (race == DBCRace.ARCOSIAN) {
             eyeColor = 0xFF0000;
             bodyCM = 15460342;
@@ -590,11 +590,25 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         } else if (race == DBCRace.MAJIN) {
             eyeColor = 0xFF0000;
             bodyCM = 16757199;
-            bodyC1 = 0;
-            bodyC2 = 0;
-            bodyC3 = 0;
+            bodyC1 = -1;
+            bodyC2 = -1;
+            bodyC3 = -1;
         }
 
+    }
+
+    public void setDefaultHair() {
+        hairColor = 0x0;
+        if (race < 3)
+            hairCode = DBCHair.GOKU_HAIR;
+        else if (race < 5)
+            hairCode = "";
+        else if (race == DBCRace.MAJIN) {
+            hairCode = DBCHair.MAJIN_HAIR;
+            hairColor = bodyCM;
+        }
+
+        hairType = "base";
     }
 
     @Override
@@ -687,6 +701,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
             ModelPartData horn = data.getOrCreatePart("dbcHorn");
             ModelPartData arms;
+
+            int arcoState = getArco();
             switch (arcoState) {
                 case 0:
                 case 1:
@@ -721,6 +737,27 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     }
 
+    //Integral
+    public int getArco() {
+        int arcoState = this.arcoState;
+        Form form = getForm();
+        if (form != null) {
+            if (form.display.bodyType.equals("firstform")) {
+                arcoState = 0;
+            } else if (form.display.bodyType.equals("secondform")) {
+                arcoState = 2;
+            } else if (form.display.bodyType.equals("thirdform")) {
+                arcoState = 3;
+            } else if (form.display.bodyType.equals("finalform")) {
+                arcoState = 4;
+            } else if (form.display.bodyType.equals("ultimatecooler")) {
+                arcoState = 5;
+            }
+
+        }
+        return arcoState;
+    }
+
     @Override
     public IDBCDisplay clone() {
         DBCDisplay aura = new DBCDisplay(null);
@@ -739,6 +776,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         DBCDisplay visualDisplay = ((INPCDisplay) npc.display).getDBCDisplay();
         if (origDisplay != null && origDisplay.enabled && origDisplay.useSkin) {
             visualDisplay.readFromNBT(origDisplay.writeToNBT(new NBTTagCompound()));
+            if (DBCRace.isSaiyan(visualDisplay.race))
+                visualDisplay.tailState = 1;
+
             visualDisplay.setRacialExtras();
 
         } else {
@@ -746,10 +786,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             visualDisplay.useSkin = true;
             visualDisplay.race = DBCData.getClient().Race;
             visualDisplay.setDefaultColors();
-            DBCData data = DBCData.getClient();
             boolean isSaiyan = DBCRace.isSaiyan(visualDisplay.race);
             if (isSaiyan) {
-                visualDisplay.tailState = (data.Tail == 0 || data.Tail == 1) ? data.Tail : (byte) (data.Tail == -1 ? 0 : 1);
+                visualDisplay.tailState = 1;
             }
 
             if (visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.NAMEKIAN) {
