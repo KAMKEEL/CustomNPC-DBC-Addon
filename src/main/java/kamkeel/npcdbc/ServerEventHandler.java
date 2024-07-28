@@ -129,6 +129,12 @@ public class ServerEventHandler {
 
         if (event.entityLiving.worldObj instanceof WorldServer && event.entityLiving instanceof EntityPlayer) {
             StatusEffectController.getInstance().killEffects((EntityPlayer) event.entityLiving);
+
+            PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo((EntityPlayer) event.entityLiving);
+            DBCData dbcData = DBCData.get((EntityPlayer) event.entityLiving);
+            dbcData.addonFormID = -1;
+            dbcInfo.currentForm = -1;
+            dbcInfo.updateClient();
         }
     }
 
