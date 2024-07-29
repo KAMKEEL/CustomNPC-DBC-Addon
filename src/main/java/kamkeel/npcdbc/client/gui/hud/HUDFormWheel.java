@@ -22,9 +22,9 @@ public class HUDFormWheel extends GuiScreen {
 
     @Override
     public void updateScreen() {
-        if(!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode())){
-            mc.displayGuiScreen(null);
-        }
+//        if(!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode())){
+//            mc.displayGuiScreen(null);
+//        }
     }
 
     @Override
@@ -32,17 +32,32 @@ public class HUDFormWheel extends GuiScreen {
     {
 
         super.drawScreen(mouseX, mouseY, partialTicks);
+//        this.drawGradientRect(0, 0, this.width, this.height, 0x33000000, 0x33000000);
         int index = 0;
         double width = 124;
         double height = 124-28;
-        mc.getTextureManager().bindTexture(resourceLocation);
         GL11.glPushMatrix();
 //        GL11.glTranslatef((float) (-width/2), -28.0f - 69f, 0);
 
 //        WheelSegment segment = new WheelSegment(2);
 
+        final float HALF_WIDTH = (float) this.width /2;
+        final float HALF_HEIGHT = (float) this.height /2;
 
-        GL11.glTranslatef((float) this.width /2, (float) this.height /2, 0);
+        final float deltaX = HALF_WIDTH - mouseX;
+        final float deltaY = HALF_HEIGHT - mouseY;
+
+        final float radians = (float) Math.atan2(deltaY, deltaX);
+        final float degree = Math.round(radians * (180 / Math.PI));
+
+        index = (int) ((degree-180) / -60)-1;
+        if(index == -1)
+            index = 5;
+
+
+
+        mc.getTextureManager().bindTexture(resourceLocation);
+        GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
         GL11.glScalef(1.4f, 1.4f, 0);
         for(int i = 0; i < 6; i++) {
             GL11.glPushMatrix();
@@ -50,11 +65,19 @@ public class HUDFormWheel extends GuiScreen {
 
 
             GL11.glRotatef(i * -60, 0, 0, 1);
-            if (i % 3 == 0) {
-                GL11.glTranslatef(0, -85f, 0);
-            } else {
-                GL11.glTranslatef(0, -100f, 0);
+            if(i == index){
+                GL11.glScalef(1.1f, 1.1f, 0);
+                GL11.glColor4f(173f/255, 216f/255, 230f/255, 1);
+            }else{
+                GL11.glColor4f(1, 1, 1, 0.5f);
             }
+            if (i % 3 == 0) {
+                GL11.glTranslatef(0, -80f, 0);
+            } else {
+                GL11.glTranslatef(0, -95f, 0);
+            }
+
+
             GL11.glRotatef(i * 60, 0, 0, 1);
             if (i == 0 || i == 3){
 
@@ -67,6 +90,7 @@ public class HUDFormWheel extends GuiScreen {
             GL11.glPopMatrix();
         }
         GL11.glPopMatrix();
+        drawCenteredString(fontRendererObj, degree+"", mouseX, mouseY, 0xFFFFFFFF);
     }
 
     @Override
