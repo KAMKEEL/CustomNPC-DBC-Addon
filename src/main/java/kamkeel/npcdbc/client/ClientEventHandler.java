@@ -145,7 +145,7 @@ public class ClientEventHandler {
         if (mc.currentScreen == null) {
             PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
             if (formData != null) {
-                if(KeyHandler.FormWheelKey.isPressed()){
+                if (KeyHandler.FormWheelKey.isPressed()) {
                     mc.displayGuiScreen(new HUDFormWheel());
                     return;
                 }

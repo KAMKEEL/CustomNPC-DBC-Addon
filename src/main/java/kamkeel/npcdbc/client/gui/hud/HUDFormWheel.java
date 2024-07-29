@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.gui.hud;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.KeyHandler;
+import kamkeel.npcdbc.client.utils.Color;
 import net.minecraft.client.gui.*;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
@@ -10,8 +11,10 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.lwjgl.opengl.GL11.*;
 public class HUDFormWheel extends GuiScreen {
 
+    public static float BLUR_INTENSITY = 3;
     List<Gui> guiList = new ArrayList<>();
     ResourceLocation resourceLocation = new ResourceLocation(CustomNpcPlusDBC.ID + ":/textures/gui/hud/formwheel/GuiWheel.png");
 
@@ -58,7 +61,9 @@ public class HUDFormWheel extends GuiScreen {
 
         mc.getTextureManager().bindTexture(resourceLocation);
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
-        GL11.glScalef(1.4f, 1.4f, 0);
+        float scale = 1.4f;
+        GL11.glScalef(scale, scale, 0);
+      //  new Color(0x8f8a86,0.5f).glColor();
 
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.shader;
 
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.gui.hud.HUDFormWheel;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -58,6 +59,29 @@ public class PostProcessing {
 
         PostProcessing.drawToBuffers(0, 2);
         processBloom = true;
+    }
+
+    public static void postProcess() {
+        PostProcessing.bloom(1.5f, false);
+
+        if (mc.currentScreen instanceof HUDFormWheel) {
+            Framebuffer buff = getMainBuffer();
+            GL11.glMatrixMode(GL11.GL_MODELVIEW);
+            GL11.glLoadIdentity();
+            GL11.glMatrixMode(GL11.GL_PROJECTION);
+            GL11.glLoadIdentity();
+            GL11.glOrtho(0.0D, buff.framebufferWidth, buff.framebufferHeight, 0.0D, 0, 1);
+
+            buff.bindFramebuffer(false);
+            disableGLState();
+            blurFilter(buff.framebufferTexture, HUDFormWheel.BLUR_INTENSITY, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+            enableGLState();
+
+            glEnable(GL_DEPTH_TEST);
+            glDepthMask(true);
+            glEnable(GL_TEXTURE_2D);
+            glEnable(GL_COLOR_MATERIAL);
+        }
     }
 
     public static void bloom(float lightExposure, boolean resetGLState) {
@@ -146,6 +170,10 @@ public class PostProcessing {
         });
         renderQuad(buff.framebufferTexture, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
         releaseShader();
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(true);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
 
         if (resetGLState) {
             mc.entityRenderer.enableLightmap(0);
@@ -153,8 +181,6 @@ public class PostProcessing {
             glLoadMatrix(prevProjection);
             glMatrixMode(GL11.GL_MODELVIEW);
             glLoadMatrix(prevModelView);
-            glEnable(GL_DEPTH_TEST);
-            glDepthMask(true);
             glEnable(GL_LIGHTING);
             glEnable(GL_ALPHA_TEST);
             glColorMask(true, true, true, true);
@@ -222,6 +248,31 @@ public class PostProcessing {
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgbaBuffer);
 
 
+    }
+
+    public static void disableGLState() {
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glColorMask(true, true, true, false);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthMask(true);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+        mc.entityRenderer.disableLightmap(0);
+    }
+
+    public static void enableGLState() {
+        mc.entityRenderer.enableLightmap(0);
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(true);
+        glEnable(GL_BLEND);
+        glEnable(GL_ALPHA_TEST);
+        glEnable(GL_LIGHTING);
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_COLOR_MATERIAL);
+        glColorMask(true, true, true, true);
     }
 
     public static void blurFilter(int textureID, float blurIntensity, float startX, float startY, float width, float height) {
