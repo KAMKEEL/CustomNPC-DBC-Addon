@@ -75,7 +75,6 @@ public class PostProcessing {
             buff.bindFramebuffer(false);
             disableGLState();
             blurFilter(buff.framebufferTexture, HUDFormWheel.BLUR_INTENSITY, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-            enableGLState();
 
             glEnable(GL_DEPTH_TEST);
             glDepthMask(true);
