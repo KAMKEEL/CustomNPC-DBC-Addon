@@ -36,10 +36,10 @@ class WheelSegment extends Gui {
 
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
-        tessellator.addVertexWithUV(posX-width/2, posY+(height/2), (double)this.zLevel, (index)*f, 1);
-        tessellator.addVertexWithUV(posX+width/2, posY+(height/2), (double)this.zLevel, (index+1)*f, 1);
-        tessellator.addVertexWithUV(posX+width/2, posY-(height/2), (double)this.zLevel, (index+1)*f, 0);
-        tessellator.addVertexWithUV(posX-width/2, posY-(height/2), (double)this.zLevel, (index)*f, 0);
+        tessellator.addVertexWithUV(posX-width/2, posY+(height/2), (double)this.zLevel+1, (index)*f, 1);
+        tessellator.addVertexWithUV(posX+width/2, posY+(height/2), (double)this.zLevel+1, (index+1)*f, 1);
+        tessellator.addVertexWithUV(posX+width/2, posY-(height/2), (double)this.zLevel+1, (index+1)*f, 0);
+        tessellator.addVertexWithUV(posX-width/2, posY-(height/2), (double)this.zLevel+1, (index)*f, 0);
         tessellator.draw();
 
     }

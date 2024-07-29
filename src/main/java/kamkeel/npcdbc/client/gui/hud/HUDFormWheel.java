@@ -32,7 +32,7 @@ public class HUDFormWheel extends GuiScreen {
     {
 
         super.drawScreen(mouseX, mouseY, partialTicks);
-//        this.drawGradientRect(0, 0, this.width, this.height, 0x33000000, 0x33000000);
+        this.drawGradientRect(0, 0, this.width, this.height, 0x33000000, 0x33000000);
         int index = 0;
         double width = 124;
         double height = 124-28;
@@ -59,6 +59,9 @@ public class HUDFormWheel extends GuiScreen {
         mc.getTextureManager().bindTexture(resourceLocation);
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
         GL11.glScalef(1.4f, 1.4f, 0);
+
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         for(int i = 0; i < 6; i++) {
             GL11.glPushMatrix();
 //            GL11.glTranslatef(0, , 0);
@@ -67,9 +70,9 @@ public class HUDFormWheel extends GuiScreen {
             GL11.glRotatef(i * -60, 0, 0, 1);
             if(i == index){
                 GL11.glScalef(1.1f, 1.1f, 0);
-                GL11.glColor4f(173f/255, 216f/255, 230f/255, 1);
+                GL11.glColor4f(173f/255, 216f/255, 230f/255, 0.9f);
             }else{
-                GL11.glColor4f(1, 1, 1, 0.5f);
+                GL11.glColor4f(1, 1, 1, 0.6f);
             }
             if (i % 3 == 0) {
                 GL11.glTranslatef(0, -80f, 0);
@@ -91,6 +94,7 @@ public class HUDFormWheel extends GuiScreen {
         }
         GL11.glPopMatrix();
         drawCenteredString(fontRendererObj, degree+"", mouseX, mouseY, 0xFFFFFFFF);
+        GL11.glDisable(GL11.GL_BLEND);
     }
 
     @Override
