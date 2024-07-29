@@ -10,6 +10,7 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
+import kamkeel.npcdbc.client.gui.hud.HUDFormWheel;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
@@ -144,6 +145,11 @@ public class ClientEventHandler {
         if (mc.currentScreen == null) {
             PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
             if (formData != null) {
+                if(KeyHandler.FormWheelKey.isPressed()){
+                    mc.displayGuiScreen(new HUDFormWheel());
+                    return;
+                }
+
                 if (KeyHandler.AscendKey.isPressed()) {
                     DBCData dbcData = DBCData.getClient();
                     Form form = formData.getCurrentForm();
