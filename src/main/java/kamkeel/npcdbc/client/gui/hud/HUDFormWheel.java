@@ -6,6 +6,7 @@ import kamkeel.npcdbc.client.utils.Color;
 import net.minecraft.client.gui.*;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class HUDFormWheel extends GuiScreen {
 
     @Override
     public void initGui() {
-
+        Mouse.setGrabbed(true);
     }
 
     @Override
@@ -98,7 +99,7 @@ public class HUDFormWheel extends GuiScreen {
             GL11.glPopMatrix();
         }
         GL11.glPopMatrix();
-        drawCenteredString(fontRendererObj, degree+"", mouseX, mouseY, 0xFFFFFFFF);
+//        drawCenteredString(fontRendererObj, degree+"", mouseX, mouseY, 0xFFFFFFFF);
         GL11.glDisable(GL11.GL_BLEND);
     }
 
