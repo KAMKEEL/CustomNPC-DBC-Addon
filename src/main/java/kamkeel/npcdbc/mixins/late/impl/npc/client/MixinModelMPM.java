@@ -4,7 +4,6 @@ import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.render.OutlineRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
-import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -100,6 +99,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         ////////////////////////////////////////
         ////////////////////////////////////////
         RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
+        RenderEventHandler.postStencilRendering();
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
 
     }

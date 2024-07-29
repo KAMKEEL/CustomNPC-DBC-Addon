@@ -29,13 +29,18 @@ import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import static kamkeel.npcdbc.client.shader.PostProcessing.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
     public static final int TAIL_STENCIL_ID = 2;
+    public static List<RenderLivingEvent> renderObjectQueue = new ArrayList<>();
+    public static boolean hi = true;
 
     @SubscribeEvent
     public void enableHandStencil(DBCPlayerEvent.RenderArmEvent.Pre e) {
@@ -52,15 +57,16 @@ public class RenderEventHandler {
         if (mc.theWorld != null && (e.entity instanceof EntityPlayer || e.entity instanceof EntityNPCInterface)) {
             if (PlayerDataUtil.useStencilBuffer(e.entity)) {
                 glEnable(GL_STENCIL_TEST);
-                glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
+                //     glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
                 enableStencilWriting(e.entity.getEntityId() % 256);
                 Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
                 glDepthMask(true); //fixes a native MC RP1 entity bug in which the depth test is disabled
 
-                if (e.entity.isInWater())
-                    ((IEntityMC) e.entity).setRenderPass(0);
-                else
-                    ((IEntityMC) e.entity).setRenderPass(ClientProxy.MiddleRenderPass);
+                renderObjectQueue.add(e);
+//                if (e.entity.isInWater())
+//                    ((IEntityMC) e.entity).setRenderPass(0);
+//                else
+                ((IEntityMC) e.entity).setRenderPass(0);
 
             } else {
                 if (((IEntityMC) e.entity).getRenderPassTampered())
@@ -78,6 +84,79 @@ public class RenderEventHandler {
         }
     }
 
+    public static void test() {
+        for (ListIterator<RenderLivingEvent> iter = renderObjectQueue.listIterator(renderObjectQueue.size()); iter.hasPrevious(); ) {
+            RenderLivingEvent e = iter.previous();
+            if ((e.entity instanceof EntityNPCInterface)) {
+                EntityNPCInterface entity = (EntityNPCInterface) e.entity;
+                DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+                if (!display.enabled || !display.useStencilBuffer)
+                    return;
+
+                EntityAura aura = display.auraEntity;
+                RenderCustomNpc r = (RenderCustomNpc) e.renderer;
+                float partialTicks = Minecraft.getMinecraft().timer.renderPartialTicks;
+
+                glEnable(GL_STENCIL_TEST);
+                mc.entityRenderer.disableLightmap(0);
+
+                boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !display.particleRenderQueue.isEmpty();
+                ////////////////////////////////////////
+                ////////////////////////////////////////
+                //Aura
+                if (renderAura && aura.shouldRender()) {
+                    glPushMatrix();
+                    if (!ClientProxy.renderingGUI)
+                        glLoadMatrix(DEFAULT_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
+                    glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
+                    glStencilMask(0x0);
+                    for (EntityAura child : aura.children.values())
+                        AuraRenderer.Instance.renderAura(child, partialTicks);
+                    AuraRenderer.Instance.renderAura(aura, partialTicks);
+
+                    //  NewAura.renderAura(aura, partialTicks);
+                    glPopMatrix();
+                }
+
+                ////////////////////////////////////////
+                ////////////////////////////////////////
+                //Custom Particles
+                if (renderParticles) {
+                    mc.entityRenderer.disableLightmap(0);
+                    glPushMatrix();
+                    if (!ClientProxy.renderingGUI)
+                        glLoadMatrix(DEFAULT_MODELVIEW); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
+                    IRenderCusPar particleRender = null;
+                    for (Iterator<EntityCusPar> it = display.particleRenderQueue.iterator(); it.hasNext(); ) {
+                        EntityCusPar particle = it.next();
+
+                        if (particleRender == null)
+                            particleRender = (IRenderCusPar) RenderManager.instance.getEntityRenderObject(particle);
+
+                        particleRender.renderParticle(particle, partialTicks);
+                        if (particle.isDead)
+                            it.remove();
+                    }
+                    glPopMatrix();
+                }
+
+                ////////////////////////////////////////
+                ////////////////////////////////////////
+                // enableStencilWriting(e.entity.getEntityId() % 256);
+                postStencilRendering();
+                if (ClientProxy.renderingGUI)
+                    PostProcessing.bloom(1.5f, true);
+                Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+                //  postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
+                iter.remove();
+            }
+        }
+
+        renderObjectQueue.clear();
+        //glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
+        glDisable(GL_STENCIL_TEST);
+
+    }
 
     public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm, boolean isItem) {
         RenderPlayerJBRA render = (RenderPlayerJBRA) renderer;
@@ -139,6 +218,8 @@ public class RenderEventHandler {
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);
             glStencilMask(0x0);
             IRenderCusPar particleRender = null;
+
+
             for (Iterator<EntityCusPar> iter = data.particleRenderQueue.iterator(); iter.hasNext(); ) {
                 EntityCusPar particle = iter.next();
                 if (particleRender == null)
@@ -148,6 +229,8 @@ public class RenderEventHandler {
                 if (particle.isDead)
                     iter.remove();
             }
+
+
             glPopMatrix();
             loadMatrices(currentMV, currentProj);
         }
@@ -162,9 +245,12 @@ public class RenderEventHandler {
 
     @SubscribeEvent
     public void renderNPC(RenderLivingEvent.Post e) {
-        if (!(e.entity instanceof EntityNPCInterface))
+        glDisable(GL_STENCIL_TEST);
+        postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
+        if (!(e.entity instanceof EntityNPCInterface) || !ClientProxy.renderingGUI)
             return;
 
+        glEnable(GL_STENCIL_TEST);
         EntityNPCInterface entity = (EntityNPCInterface) e.entity;
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!display.enabled || !display.useStencilBuffer)
@@ -270,7 +356,7 @@ public class RenderEventHandler {
             PostProcessing.bloom(1.5f, true);
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         // postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
-        glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
+        //  glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
         glDisable(GL_STENCIL_TEST);
 
     }

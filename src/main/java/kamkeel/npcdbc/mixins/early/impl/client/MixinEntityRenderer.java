@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.early.impl.client;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.client.Minecraft;
@@ -27,6 +28,7 @@ public class MixinEntityRenderer {
     private void captureDefaultMatrices(float partialTick, long idk, CallbackInfo info, @Local(name = "frustrum") LocalRef<Frustrum> frustrum) {
         glGetFloat(GL_MODELVIEW_MATRIX, PostProcessing.DEFAULT_MODELVIEW);
         glGetFloat(GL_PROJECTION_MATRIX, PostProcessing.DEFAULT_PROJECTION);
+        glClear(GL_STENCIL_BUFFER_BIT);
     }
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderHelper;enableStandardItemLighting()V", ordinal = 1, shift = At.Shift.AFTER))
@@ -36,6 +38,11 @@ public class MixinEntityRenderer {
         glDepthMask(true);
         this.mc.renderGlobal.renderEntities(this.mc.renderViewEntity, frustrum.get(), partialTick);
         ForgeHooksClient.setRenderPass(-1);
+    }
+
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderGlobal;renderEntities(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/client/renderer/culling/ICamera;F)V", ordinal = 0, shift = At.Shift.AFTER))
+    private void onetwo(float partialTick, long idk, CallbackInfo info) {
+        RenderEventHandler.test();
     }
 
 
@@ -49,7 +56,7 @@ public class MixinEntityRenderer {
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/OpenGlHelper;shadersSupported:Z", shift = At.Shift.BEFORE))
     private void post(float p_78480_1_, CallbackInfo ci) {
-       PostProcessing.bloom(1.5f, false);
+        PostProcessing.bloom(1.5f, false);
     }
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;drawScreen(IIF)V", shift = At.Shift.BEFORE))

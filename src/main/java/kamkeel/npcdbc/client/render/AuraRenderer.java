@@ -88,7 +88,7 @@ public class AuraRenderer extends RenderDBC {
         float r = rand.nextInt(50);
         if (aura.hasLightning && r < 10 && age < 10)
             lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
-        glStencilFunc(GL_GREATER, aura.entity.getEntityId() % 256, 0xFF);
+        glStencilFunc(GL_NOTEQUAL, aura.entity.getEntityId() % 256, 0xFF);
         glStencilMask(0x0);
 
 
@@ -128,11 +128,12 @@ public class AuraRenderer extends RenderDBC {
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         //   if (aura.isKaioken)
         //   glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         glAlphaFunc(GL_GREATER, 0);
-        glDepthMask(false);
+     glDepthMask(false);
+       glDepthFunc(GL_LESS);
         glPushMatrix();
 
 
@@ -141,7 +142,7 @@ public class AuraRenderer extends RenderDBC {
         glRotatef(180, 0, 0, 1);
         glScalef((size + pulsingSize), size, (size + pulsingSize));
         glRotatef(aura.ticksExisted % 360 * speed, 0.0F, 1.0F, 0.0F);
-        renderAura(aura, aura.color1, alpha, 1f);
+        renderAura(aura, 0x50eeee / 3, 0.35f, 1f);
         glPopMatrix();
 
 
@@ -162,7 +163,7 @@ public class AuraRenderer extends RenderDBC {
 
         ////////////////////////////////////////
         ////////////////////////////////////////
-
+        glDepthFunc(GL_LEQUAL);
 
         glPopMatrix();
         glDepthMask(true);
@@ -181,7 +182,7 @@ public class AuraRenderer extends RenderDBC {
             float layerPercent = i / maxLayers;
             float layerTemp = layerPercent * 20f;
 
-            for (float j = 1; j < 2; j += 0.05f) {
+            for (float j = 1; j < 2; j += 0.1f) {
                 this.renderManager.renderEngine.bindTexture(aura.text1);
 
                 model.auraModel.offsetY = -(i / maxLayers) * aura.height;

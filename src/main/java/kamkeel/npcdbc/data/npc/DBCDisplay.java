@@ -37,6 +37,7 @@ import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class DBCDisplay implements IDBCDisplay, IAuraData {
@@ -77,7 +78,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     //Rendering
     public boolean useStencilBuffer;
     public EntityAura auraEntity;
-    public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
+    public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
     public HashMap<Integer, EntityAura2> dbcAuraQueue = new HashMap<>();
     public HashMap<Integer, EntityAura2> dbcSecondaryAuraQueue = new HashMap<>();
     private EnumAuraTypes2D enumAuraTypes = EnumAuraTypes2D.None;

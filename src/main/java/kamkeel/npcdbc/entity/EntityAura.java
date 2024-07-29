@@ -284,10 +284,10 @@ public class EntityAura extends Entity {
     }
 
     public void updateDisplay() {
-        if (entity.isInWater() && !isKaioken)
-            ((IEntityMC) entity).setRenderPass(renderPass = 0);
-        else if (renderPass == 0 && !isKaioken)
-           ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
+//        if (entity.isInWater() && !isKaioken)
+//            ((IEntityMC) entity).setRenderPass(renderPass = 0);
+//        else if (renderPass == 0 && !isKaioken)
+//           ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
 
         if (isKaioken) {
             if (parent.isVanillaDefault && !DBCForm.isSaiyanGod(auraData.getState()))
@@ -332,7 +332,7 @@ public class EntityAura extends Entity {
 
     public void setDead() {
         super.setDead();
-        ((IEntityMC) entity).setRenderPass(0); //rest player renderpass on aura despawn
+//        ((IEntityMC) entity).setRenderPass(0); //rest player renderpass on aura despawn
         entity.ignoreFrustumCheck = false;
 
 
@@ -441,9 +441,9 @@ public class EntityAura extends Entity {
     }
 
     public EntityAura spawn() {
-        if (!isKaioken)
-            renderPass = ClientProxy.MiddleRenderPass;
-        ((IEntityMC) entity).setRenderPass(ClientProxy.MiddleRenderPass);
+//        if (!isKaioken)
+//            renderPass = ClientProxy.MiddleRenderPass;
+//        ((IEntityMC) entity).setRenderPass(ClientProxy.MiddleRenderPass);
 
         entity.ignoreFrustumCheck = true;
 
