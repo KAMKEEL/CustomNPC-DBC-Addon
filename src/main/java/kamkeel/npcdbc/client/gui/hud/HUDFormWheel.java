@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.hud;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -25,7 +26,7 @@ public class HUDFormWheel extends GuiScreen {
 
         // Prevents replaying the open animation on screen resize
         if(timeOpened == 0)
-            timeOpened = System.currentTimeMillis();
+            timeOpened = Minecraft.getSystemTime();
 
         BLUR_INTENSITY = 0;
     }
@@ -35,10 +36,10 @@ public class HUDFormWheel extends GuiScreen {
 //        if(!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode())){
 //            mc.displayGuiScreen(null);
 //        }
-        float updateTime = (float) (System.currentTimeMillis() - timeOpened) / 250;
+        float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 250;
         float temp = Math.min(updateTime, 1);
-        BLUR_INTENSITY = (BLUR_INTENSITY + 0.25f * (temp*MAX_BLUR - BLUR_INTENSITY));
         guiAnimationScale = (guiAnimationScale + 0.25f * (temp - guiAnimationScale));
+        BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
     }
 
     @Override
@@ -47,7 +48,7 @@ public class HUDFormWheel extends GuiScreen {
         ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
-        int gradientColor = ((int) (255 * (BLUR_INTENSITY / MAX_BLUR) * 0.2) << 24);
+        int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
         int index = -1;
         double width = 124;
@@ -111,7 +112,7 @@ public class HUDFormWheel extends GuiScreen {
                 GL11.glScalef(1.1f, 1.1f, 0);
                 GL11.glColor4f(173f/255, 216f/255, 230f/255, 0.9f);
             }else{
-                GL11.glColor4f(1, 1, 1, 0.6f);
+                GL11.glColor4f(1, 1, 1, 0.7f);
             }
             if (i % 3 == 0) {
                 GL11.glTranslatef(0, -80f, 0);
