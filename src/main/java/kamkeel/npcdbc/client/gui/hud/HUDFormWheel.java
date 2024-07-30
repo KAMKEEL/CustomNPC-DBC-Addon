@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.hud;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -19,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.NBTTags;
 import noppes.npcs.client.gui.util.*;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -58,6 +60,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         int y = guiTop + 5;
         int guiX = guiTop + 4;
+
+        FormWheelSegment.variant = 1;
 
         Form form = wheelSlot[0].form;
         addLabel(new GuiNpcLabel(0, "Slot 1", guiX + 2, y + 5));
@@ -175,12 +179,12 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     @Override
     public void updateScreen() {
-//        if (!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode()) && !hasSubGui()) {
-//            if (hoveredSlot != -1)
-//                wheelSlot[hoveredSlot].selectForm();
-//
-//            close();
-//        }
+        if (!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode()) && !hasSubGui()) {
+            if (hoveredSlot != -1)
+                wheelSlot[hoveredSlot].selectForm();
+
+            close();
+        }
         float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 250;
         animationScaleFactor = Math.min(updateTime, 1);
         guiAnimationScale = (guiAnimationScale + 0.25f * (animationScaleFactor - guiAnimationScale));
@@ -226,11 +230,20 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             final float radians = (float) Math.atan2(deltaY, deltaX);
             final float degree = Math.round(radians * (180 / Math.PI));
 
-            hoveredSlot = (int) ((degree - 180) / -60) - 1;
-            if (hoveredSlot == -1)
-                hoveredSlot = 5;
+            int tempHoveredSlot = (int) ((degree - 180) / -60) - 1;
+            if (tempHoveredSlot == -1) {
+                tempHoveredSlot = 5;
+            }
+            if(tempHoveredSlot != hoveredSlot) {
+                if(hoveredSlot != -1)
+                    wheelSlot[hoveredSlot].setHoveredState(false);
+                wheelSlot[tempHoveredSlot].setHoveredState(true);
+                hoveredSlot = tempHoveredSlot;
+            }
         }else{
-//            hoveredSlot = -1;
+            if(hoveredSlot != -1)
+                wheelSlot[hoveredSlot].setHoveredState(false);
+            hoveredSlot = -1;
         }
 
 
@@ -257,12 +270,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
 
             GL11.glRotatef(i * -60, 0, 0, 1);
-            if (i == hoveredSlot) {
-                GL11.glScalef(1.1f, 1.1f, 0);
-                GL11.glColor4f(173f / 255, 216f / 255, 230f / 255, 0.9f);
-            } else {
-                GL11.glColor4f(1, 1, 1, 0.7f);
-            }
+            float segmentScale = 1f + 0.1f * wheelSlot[i].getSegmentScale();
+            GL11.glScalef(segmentScale, segmentScale, 0);
+
             if (i % 3 == 0) {
                 GL11.glTranslatef(0, -80f, 0);
             } else {
@@ -296,19 +306,19 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         }
 
         GL11.glPopMatrix();
-        String text = mouseX + "," + mouseY + ", " + hoveredSlot;
-        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
         GL11.glDisable(GL11.GL_BLEND);
 
         GL11.glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
-        GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
+//        GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
         float guiVariantScale = (FormWheelSegment.variant == 0 ? 0.75f : 0.9f);
         float playerScale = guiAnimationScale * guiVariantScale;
         GL11.glScalef(playerScale, playerScale, playerScale);
         GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT, 0);
         renderPlayer(mouseX, mouseY);
         GL11.glPopMatrix();
+        String text = mouseX + "," + mouseY + ", " + hoveredSlot;
+        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
 
     }
 

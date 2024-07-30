@@ -1,16 +1,27 @@
 package kamkeel.npcdbc.client.gui.hud;
 
+import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCSaveFormWheel;
 import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
+import net.minecraft.client.Minecraft;
 
 class FormWheelSegment extends WheelSegment {
 
     public HUDFormWheel parent;
     public Form form;
     public int formID;
+
+    public static Color HOVERED = new Color(0xADD8E6, 0.9f);
+    public static Color NOT_HOVERED = new Color(0xFFFFFF, 0.7f);
+
+    private boolean isHovered = false;
+    private long startHoverTime = 0;
+    private long stopHoverTime = 0;
+    private float hoverScale = 0;
+    private Color currentColor;
 
     FormWheelSegment(HUDFormWheel parent, int index) {
         this(parent, 0, 0, index);
@@ -23,6 +34,17 @@ class FormWheelSegment extends WheelSegment {
         this.posX = posX;
         this.posY = posY;
         this.index = index;
+
+        this.currentColor = NOT_HOVERED;
+    }
+
+    @Override
+    public void draw(){
+        System.out.println("Current color: " + currentColor.color +" * " +hoverScale);
+        currentColor = Color.lerpRGBA(NOT_HOVERED, HOVERED, hoverScale);
+        System.out.println("New color: " + currentColor.color +" * " +hoverScale);
+        currentColor.glColor();
+        super.draw();
     }
 
 
@@ -41,6 +63,35 @@ class FormWheelSegment extends WheelSegment {
         formID = -1;
         form = null;
         PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, -1).generatePacket());
+    }
+
+    public void setHoveredState(boolean newHoverState){
+
+        if(!isHovered && newHoverState){
+            startHoverTime = Minecraft.getSystemTime();
+        }
+        if(isHovered && !newHoverState){
+            stopHoverTime = Minecraft.getSystemTime();
+        }
+        isHovered = newHoverState;
+    }
+
+    public float getSegmentScale(){
+        float updateTime;
+        if(isHovered){
+            updateTime = (float) (Minecraft.getSystemTime() - startHoverTime) / 100;
+            updateTime = Math.min(updateTime, 1);
+            hoverScale = (hoverScale + 0.25f * (updateTime - hoverScale));
+        } else {
+            updateTime = (float) (Minecraft.getSystemTime() - stopHoverTime) / 100;
+            updateTime = -Math.min(updateTime, 1);
+            hoverScale = (hoverScale + 0.25f * (1+updateTime - hoverScale));
+        }
+
+        hoverScale = Math.min(1, Math.max(hoverScale, 0));
+
+
+        return hoverScale;
     }
 
 }
