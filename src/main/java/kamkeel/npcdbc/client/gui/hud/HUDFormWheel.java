@@ -1,18 +1,15 @@
 package kamkeel.npcdbc.client.gui.hud;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.KeyHandler;
-import kamkeel.npcdbc.client.utils.Color;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.lwjgl.opengl.GL11.*;
 public class HUDFormWheel extends GuiScreen {
 
     public static float BLUR_INTENSITY = 3;
@@ -21,7 +18,7 @@ public class HUDFormWheel extends GuiScreen {
 
     @Override
     public void initGui() {
-        Mouse.setGrabbed(true);
+//        Mouse.setGrabbed(true);
     }
 
     @Override
@@ -34,10 +31,11 @@ public class HUDFormWheel extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
+        ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.drawGradientRect(0, 0, this.width, this.height, 0x33000000, 0x33000000);
-        int index = 0;
+        int index = -1;
         double width = 124;
         double height = 124-28;
         GL11.glPushMatrix();
@@ -51,17 +49,36 @@ public class HUDFormWheel extends GuiScreen {
         final float deltaX = HALF_WIDTH - mouseX;
         final float deltaY = HALF_HEIGHT - mouseY;
 
-        final float radians = (float) Math.atan2(deltaY, deltaX);
-        final float degree = Math.round(radians * (180 / Math.PI));
-
-        index = (int) ((degree-180) / -60)-1;
-        if(index == -1)
-            index = 5;
 
 
+        if(Math.sqrt(deltaX*deltaX + deltaY*deltaY) > 50){
+            final float radians = (float) Math.atan2(deltaY, deltaX);
+            final float degree = Math.round(radians * (180 / Math.PI));
 
-        mc.getTextureManager().bindTexture(resourceLocation);
+            index = (int) ((degree-180) / -60)-1;
+            if(index == -1)
+                index = 5;
+        }
+
+
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
+
+//        if(scaledResolution.getScaleFactor() == 1) {
+//            float undoMCScaling = 1f / scaledResolution.getScaleFactor();
+//            GL11.glScalef(undoMCScaling, undoMCScaling, 0);
+//        }
+        float undoMCScaling = 1;
+        switch(scaledResolution.getScaleFactor()){
+            case 1:
+                undoMCScaling = 1f / scaledResolution.getScaleFactor();
+                break;
+            case 2:
+                if(mc.displayHeight < 720){
+                    undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1.5f;
+                }
+                break;
+        }
+        GL11.glScalef(undoMCScaling, undoMCScaling, 0);
         float scale = 1.4f;
         GL11.glScalef(scale, scale, 0);
       //  new Color(0x8f8a86,0.5f).glColor();
@@ -99,7 +116,7 @@ public class HUDFormWheel extends GuiScreen {
             GL11.glPopMatrix();
         }
         GL11.glPopMatrix();
-//        drawCenteredString(fontRendererObj, degree+"", mouseX, mouseY, 0xFFFFFFFF);
+        drawCenteredString(fontRendererObj, mc.displayHeight+"", mouseX, mouseY, 0xFFFFFFFF);
         GL11.glDisable(GL11.GL_BLEND);
     }
 

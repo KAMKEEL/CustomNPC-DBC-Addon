@@ -1,17 +1,21 @@
 package kamkeel.npcdbc.client.gui.hud;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 
 class WheelSegment extends Gui {
 
-    static ResourceLocation segments = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/formwheel/GuiWheel.png");
+    static ResourceLocation variant1 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/formwheel/GuiWheelVariant1.png");
+    static ResourceLocation variant2 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/formwheel/GuiWheelVariant2.png");
 
     static double width = 124;
     static double height = 124;
     static double f = 124.0 / 744;
+
+    static int variant = 0;
 
     int posX;
     int posY;
@@ -33,6 +37,11 @@ class WheelSegment extends Gui {
 
 
     private void drawIndexedTexture(){
+
+        if(variant == 0)
+            Minecraft.getMinecraft().getTextureManager().bindTexture(variant1);
+        else
+            Minecraft.getMinecraft().getTextureManager().bindTexture(variant2);
 
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
