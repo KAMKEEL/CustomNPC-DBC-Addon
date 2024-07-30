@@ -57,7 +57,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         this.drawDefaultBackground = false;
         title = "";
         if (activePage == 0)
-            PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, true).generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, true,false).generatePacket());
         else
             PacketHandler.Instance.sendToServer(new DBCRequestAura(-1, true).generatePacket());
 
@@ -257,7 +257,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         }
         if (guibutton.id == 40 && activePage != 0) {
             activePage = 0;
-            PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, true).generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, true,false).generatePacket());
             loaded = false;
         }
         if (guibutton.id == 41 && activePage != 1) {

@@ -73,7 +73,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
 
         this.display = form.display;
 
-        PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, false).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, false,false).generatePacket());
     }
 
     public void initGui() {

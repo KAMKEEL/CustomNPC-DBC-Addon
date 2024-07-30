@@ -49,8 +49,8 @@ public class NetworkUtility {
         sendScrollData(player, map);
     }
 
-    public static void sendPlayersForms(EntityPlayer player) {
-        PlayerDataUtil.sendFormDBCInfo((EntityPlayerMP) player);
+    public static void sendPlayersForms(EntityPlayer player, boolean useMenuName) {
+        PlayerDataUtil.sendFormDBCInfo((EntityPlayerMP) player, useMenuName);
         PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
         NBTTagCompound compound = new NBTTagCompound();
         if (data != null && data.selectedForm != -1) {
@@ -62,7 +62,7 @@ public class NetworkUtility {
     }
 
     public static void sendPlayerFormWheel(EntityPlayer player) {
-        PlayerDataUtil.sendFormDBCInfo((EntityPlayerMP) player);
+        PlayerDataUtil.sendFormDBCInfo((EntityPlayerMP) player, false);
         PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
         NBTTagCompound compound = new NBTTagCompound();
         if (data != null) {

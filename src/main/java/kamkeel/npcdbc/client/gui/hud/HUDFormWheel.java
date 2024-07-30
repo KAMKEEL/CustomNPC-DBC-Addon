@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.client.gui.hud;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -20,7 +19,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.NBTTags;
 import noppes.npcs.client.gui.util.*;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -140,7 +138,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public void buttonEvent(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
         if (button.id <= 6) {
-            this.setSubGui(new SubGuiSelectForm(button.id, true));
+            this.setSubGui(new SubGuiSelectForm(button.id, true, true));
         } else if (button.id == 100) {
             wheelSlot[0].removeForm();
         } else if (button.id == 11) {
@@ -177,12 +175,12 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     @Override
     public void updateScreen() {
-        if (!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode())) {
-            if (hoveredSlot != -1)
-                wheelSlot[hoveredSlot].selectForm();
-
-            close();
-        }
+//        if (!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode())) {
+//            if (hoveredSlot != -1)
+//                wheelSlot[hoveredSlot].selectForm();
+//
+//            close();
+//        }
         float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 250;
         animationScaleFactor = Math.min(updateTime, 1);
         guiAnimationScale = (guiAnimationScale + 0.25f * (animationScaleFactor - guiAnimationScale));
@@ -293,7 +291,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         GL11.glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
-        GL11.glScalef(animationScaleFactor, animationScaleFactor, animationScaleFactor);
+        GL11.glScalef(guiAnimationScale, guiAnimationScale, guiAnimationScale);
         GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT, 0);
         renderPlayer(mouseX, mouseY);
         GL11.glPopMatrix();
