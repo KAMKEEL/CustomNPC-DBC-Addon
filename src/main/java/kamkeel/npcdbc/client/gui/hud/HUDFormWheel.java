@@ -5,20 +5,29 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
 public class HUDFormWheel extends GuiScreen {
 
-    public static float BLUR_INTENSITY = 3;
+    public static float BLUR_INTENSITY = 0;
+    public static float MAX_BLUR = 3;
     List<Gui> guiList = new ArrayList<>();
     ResourceLocation resourceLocation = new ResourceLocation(CustomNpcPlusDBC.ID + ":/textures/gui/hud/formwheel/GuiWheel.png");
 
+    float guiAnimationScale = 0;
+
+    long timeOpened;
+
     @Override
     public void initGui() {
-//        Mouse.setGrabbed(true);
+
+        // Prevents replaying the open animation on screen resize
+        if(timeOpened == 0)
+            timeOpened = System.currentTimeMillis();
+
+        BLUR_INTENSITY = 0;
     }
 
     @Override
@@ -26,6 +35,10 @@ public class HUDFormWheel extends GuiScreen {
 //        if(!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode())){
 //            mc.displayGuiScreen(null);
 //        }
+        float updateTime = (float) (System.currentTimeMillis() - timeOpened) / 250;
+        float temp = Math.min(updateTime, 1);
+        BLUR_INTENSITY = (BLUR_INTENSITY + 0.25f * (temp*MAX_BLUR - BLUR_INTENSITY));
+        guiAnimationScale = (guiAnimationScale + 0.25f * (temp - guiAnimationScale));
     }
 
     @Override
@@ -34,7 +47,8 @@ public class HUDFormWheel extends GuiScreen {
         ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawGradientRect(0, 0, this.width, this.height, 0x33000000, 0x33000000);
+        int gradientColor = ((int) (255 * (BLUR_INTENSITY / MAX_BLUR) * 0.2) << 24);
+        this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
         int index = -1;
         double width = 124;
         double height = 124-28;
@@ -51,7 +65,7 @@ public class HUDFormWheel extends GuiScreen {
 
 
 
-        if(Math.sqrt(deltaX*deltaX + deltaY*deltaY) > 50){
+        if(Math.sqrt(deltaX*deltaX + deltaY*deltaY) > 40){
             final float radians = (float) Math.atan2(deltaY, deltaX);
             final float degree = Math.round(radians * (180 / Math.PI));
 
@@ -67,6 +81,8 @@ public class HUDFormWheel extends GuiScreen {
 //            float undoMCScaling = 1f / scaledResolution.getScaleFactor();
 //            GL11.glScalef(undoMCScaling, undoMCScaling, 0);
 //        }
+        GL11.glScalef(guiAnimationScale, guiAnimationScale, 0);
+
         float undoMCScaling = 1;
         switch(scaledResolution.getScaleFactor()){
             case 1:
