@@ -47,8 +47,7 @@ public class MixinJRMCoreHDBC {
             if (form != null && form.display.hasSize()) {
                 if (ClientProxy.renderingGUI)
                     cir.setReturnValue(1f);
-
-                if (form.display.keepOriginalSize)
+                else if (form.display.keepOriginalSize)
                     cir.setReturnValue(size.get() * form.display.formSize);
                 else
                     cir.setReturnValue(form.display.formSize);
