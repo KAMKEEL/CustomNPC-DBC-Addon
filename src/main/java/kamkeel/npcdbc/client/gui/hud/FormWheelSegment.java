@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui.hud;
 
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCSaveFormWheel;
@@ -31,9 +32,15 @@ class FormWheelSegment extends WheelSegment {
 
     }
 
-    public void reset() {
-        form = null;
+    public void setForm(int formID) {
+        this.formID = formID;
+        form = (Form) FormController.getInstance().get(formID);
+        PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, formID).generatePacket());
+    }
+
+    public void removeForm() {
         formID = -1;
+        form = null;
         PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, -1).generatePacket());
     }
 

@@ -120,14 +120,14 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
             form.setRace(getRaceButton(button.getValue()));
         }
         if(button.id == 11){
-            this.setSubGui(new SubGuiSelectForm(11));
+            this.setSubGui(new SubGuiSelectForm(11,false));
         }
         if(button.id == 12){
             parentForm = -1;
             initGui();
         }
         if(button.id == 13){
-            this.setSubGui(new SubGuiSelectForm(13));
+            this.setSubGui(new SubGuiSelectForm(13,false));
         }
         if(button.id == 14){
             childForm = -1;

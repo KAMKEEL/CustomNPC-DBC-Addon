@@ -223,7 +223,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
 
         if (button.id == 6) {
-            this.setSubGui(new SubGuiSelectForm(6));
+            this.setSubGui(new SubGuiSelectForm(6,false));
         }
         if (button.id == 61) {
             stackable.legendaryID = -1;
@@ -234,7 +234,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
 
         if (button.id == 7) {
-            this.setSubGui(new SubGuiSelectForm(7));
+            this.setSubGui(new SubGuiSelectForm(7,false));
         }
         if (button.id == 71) {
             stackable.divineID = -1;
@@ -245,7 +245,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
 
         if (button.id == 8) {
-            this.setSubGui(new SubGuiSelectForm(8));
+            this.setSubGui(new SubGuiSelectForm(8,false));
         }
         if (button.id == 81) {
             stackable.majinID = -1;

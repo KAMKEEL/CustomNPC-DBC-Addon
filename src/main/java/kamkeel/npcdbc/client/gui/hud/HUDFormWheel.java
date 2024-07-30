@@ -7,7 +7,6 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCRequestFormWheel;
-import kamkeel.npcdbc.network.packets.form.DBCSaveFormWheel;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -120,19 +119,19 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public void buttonEvent(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
         if (button.id <= 6) {
-            this.setSubGui(new SubGuiSelectForm(button.id));
+            this.setSubGui(new SubGuiSelectForm(button.id,true));
         } else if (button.id == 100) {
-            wheelSlot[0].reset();
+            wheelSlot[0].removeForm();
         } else if (button.id == 11) {
-            wheelSlot[1].reset();
+            wheelSlot[1].removeForm();
         } else if (button.id == 22) {
-            wheelSlot[2].reset();
+            wheelSlot[2].removeForm();
         } else if (button.id == 33) {
-            wheelSlot[3].reset();
+            wheelSlot[3].removeForm();
         } else if (button.id == 44) {
-            wheelSlot[4].reset();
+            wheelSlot[4].removeForm();
         } else if (button.id == 55) {
-            wheelSlot[5].reset();
+            wheelSlot[5].removeForm();
         }
         initGui();
     }
@@ -148,10 +147,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 if (form != null && selectForm.selectedFormID == form.id)
                     return;
 
-                slot.formID = selectForm.selectedFormID;
-                slot.form = (Form) FormController.getInstance().get(slot.formID);
-                PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(slotID, selectForm.selectedFormID).generatePacket());
-
+                slot.setForm(selectForm.selectedFormID);
             }
         }
         initGui();

@@ -22,7 +22,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
     public int selectedFormID = -1;
     public int buttonID = -1;
 
-    public SubGuiSelectForm(int buttonID){
+    public SubGuiSelectForm(int buttonID, boolean playerFormsOnly){
         this.selectionChild = selectionChild;
         this.buttonID = buttonID;
         this.closeOnEsc = true;
@@ -31,7 +31,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         this.setBackground("menubg.png");
 
 
-        PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, false).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, playerFormsOnly).generatePacket());
     }
 
     @Override
