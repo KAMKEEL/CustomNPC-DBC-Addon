@@ -3,11 +3,9 @@ package kamkeel.npcdbc.client.gui.hud;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCRequestFormWheel;
-import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -36,9 +34,10 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public int hoveredSlot;
 
     public HUDFormWheel() {
+        setBackground("menubg.png");
+
         for (int i = 0; i < 6; i++)
             wheelSlot[i] = new FormWheelSegment(this, i);
-        setBackground("menubg.png");
         PacketHandler.Instance.sendToServer(new DBCRequestFormWheel().generatePacket());
     }
 
@@ -50,8 +49,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         int y = guiTop + 5;
         int guiX = guiTop + 4;
-
-        PlayerDBCInfo data = PlayerDataUtil.getClientDBCInfo();
 
         Form form = wheelSlot[0].form;
         addLabel(new GuiNpcLabel(0, "Slot 1", guiX + 2, y + 5));
@@ -116,10 +113,23 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         BLUR_INTENSITY = 0;
     }
 
+
+    @Override
+    public void setGuiData(NBTTagCompound compound) {
+        Map<Integer, Integer> playerWheel = NBTTags.getIntegerIntegerMap(compound.getTagList("FormWheel", 10));
+        for (int i = 0; i < 6; i++) {
+            int formID = playerWheel.get(i);
+            wheelSlot[i].formID = formID;
+            wheelSlot[i].form = (Form) FormController.getInstance().get(formID);
+        }
+
+        initGui();
+    }
+
     public void buttonEvent(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
         if (button.id <= 6) {
-            this.setSubGui(new SubGuiSelectForm(button.id,true));
+            this.setSubGui(new SubGuiSelectForm(button.id, true));
         } else if (button.id == 100) {
             wheelSlot[0].removeForm();
         } else if (button.id == 11) {
@@ -167,12 +177,11 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
-
         super.drawScreen(mouseX, mouseY, partialTicks);
         if (hasSubGui())
             return;
-        ;
+
+        ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
         int index = -1;
@@ -282,17 +291,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         //     super.drawDefaultBackground();
     }
 
-
-    @Override
-    public void setGuiData(NBTTagCompound compound) {
-        Map<Integer, Integer> playerWheel = NBTTags.getIntegerIntegerMap(compound.getTagList("FormWheel", 10));
-        for (int i = 0; i < 6; i++) {
-            int formID = playerWheel.get(i);
-            wheelSlot[i].form = (Form) FormController.getInstance().get(formID);
-        }
-
-        initGui();
-    }
 
     @Override
     public void keyTyped(char typedChar, int keyCode) {
