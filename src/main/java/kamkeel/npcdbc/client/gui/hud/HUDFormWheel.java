@@ -177,7 +177,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     @Override
     public void updateScreen() {
-        if (!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode())) {
+        if (!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode()) && !hasSubGui()) {
             if (hoveredSlot != -1)
                 wheelSlot[hoveredSlot].selectForm();
 
@@ -191,13 +191,13 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
+        this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
         super.drawScreen(mouseX, mouseY, partialTicks);
         if (hasSubGui())
             return;
 
         ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
-        int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
-        this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
         //       hoveredSlot = -1;
         double width = 124;
         double height = 124 - 28;
@@ -231,6 +231,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             hoveredSlot = (int) ((degree - 180) / -60) - 1;
             if (hoveredSlot == -1)
                 hoveredSlot = 5;
+        }else{
+            hoveredSlot = -1;
         }
 
 
@@ -278,8 +280,17 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             } else {
                 GL11.glTranslatef(-10, 0, 0);
             }
-            WheelSegment.variant = 1;
             wheelSlot[i].draw();
+
+            if(i == 0){
+//                GL11.glTranslatef(0, 5, 0);
+            } else if (i == 3) {
+//                GL11.glTranslatef(0, -5, 0);
+            } else if (i == 1 || i == 5) {
+                GL11.glTranslatef(0, 10, 0);
+            } else {
+                GL11.glTranslatef(0, -10, 0);
+            }
             if (form != null)
                 drawCenteredString(fontRendererObj, form.menuName, 0, 0, 0xFFFFFFFF);
 
@@ -293,7 +304,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         GL11.glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
-        GL11.glScalef(animationScaleFactor, animationScaleFactor, animationScaleFactor);
+        float guiVariantScale = (FormWheelSegment.variant == 0 ? 0.75f : 0.9f);
+        float playerScale = guiAnimationScale * guiVariantScale;
+        GL11.glScalef(playerScale, playerScale, playerScale);
         GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT, 0);
         renderPlayer(mouseX, mouseY);
         GL11.glPopMatrix();
