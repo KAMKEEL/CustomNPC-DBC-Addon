@@ -302,6 +302,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         GL11.glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
+        GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
         float guiVariantScale = (FormWheelSegment.variant == 0 ? 0.75f : 0.9f);
         float playerScale = guiAnimationScale * guiVariantScale;
         GL11.glScalef(playerScale, playerScale, playerScale);
