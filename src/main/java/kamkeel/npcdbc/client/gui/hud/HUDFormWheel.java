@@ -1,8 +1,10 @@
 package kamkeel.npcdbc.client.gui.hud;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCRequestFormWheel;
@@ -10,11 +12,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.NBTTags;
 import noppes.npcs.client.gui.util.*;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +37,12 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     ResourceLocation resourceLocation = new ResourceLocation(CustomNpcPlusDBC.ID + ":/textures/gui/hud/formwheel/GuiWheel.png");
     public FormWheelSegment[] wheelSlot = new FormWheelSegment[6];
 
-    float guiAnimationScale = 0;
+    private float zoomed = 70, rotation;
+    float guiAnimationScale = 0, animationScaleFactor;
     long timeOpened;
 
-    public int hoveredSlot;
+    public int hoveredSlot = -1;
+
 
     public HUDFormWheel() {
         setBackground("menubg.png");
@@ -55,7 +66,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         getLabel(0).color = 0xffffff;
         addButton(new GuiNpcButton(0, guiX, y += 15, 80, 20, "general.noForm"));
         if (form != null)
-            getButton(0).setDisplayText(form.getName());
+            getButton(0).setDisplayText(form.getMenuName());
         addButton(new GuiNpcButton(100, guiX + 80, y, 16, 20, "X"));
         getButton(100).enabled = form != null;
 
@@ -65,7 +76,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         getLabel(1).color = 0xffffff;
         addButton(new GuiNpcButton(1, guiX, y += 15, 80, 20, "general.noForm"));
         if (form != null)
-            getButton(1).setDisplayText(form.getName());
+            getButton(1).setDisplayText(form.getMenuName());
         addButton(new GuiNpcButton(11, guiX + 80, y, 16, 20, "X"));
         getButton(11).enabled = form != null;
 
@@ -75,7 +86,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         getLabel(2).color = 0xffffff;
         addButton(new GuiNpcButton(2, guiX, y += 15, 80, 20, "general.noForm"));
         if (form != null)
-            getButton(2).setDisplayText(form.getName());
+            getButton(2).setDisplayText(form.getMenuName());
         addButton(new GuiNpcButton(22, guiX + 80, y, 16, 20, "X"));
         getButton(22).enabled = form != null;
 
@@ -85,7 +96,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         getLabel(3).color = 0xffffff;
         addButton(new GuiNpcButton(3, guiX, y += 15, 80, 20, "general.noForm"));
         if (form != null)
-            getButton(3).setDisplayText(form.getName());
+            getButton(3).setDisplayText(form.getMenuName());
         addButton(new GuiNpcButton(33, guiX + 80, y, 16, 20, "X"));
         getButton(33).enabled = form != null;
 
@@ -95,7 +106,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         getLabel(4).color = 0xffffff;
         addButton(new GuiNpcButton(4, guiX, y += 15, 80, 20, "general.noForm"));
         if (form != null)
-            getButton(4).setDisplayText(form.getName());
+            getButton(4).setDisplayText(form.getMenuName());
         addButton(new GuiNpcButton(44, guiX + 80, y, 16, 20, "X"));
         getButton(44).enabled = form != null;
 
@@ -105,7 +116,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         getLabel(5).color = 0xffffff;
         addButton(new GuiNpcButton(5, guiX, y += 15, 80, 20, "general.noForm"));
         if (form != null)
-            getButton(5).setDisplayText(form.getName());
+            getButton(5).setDisplayText(form.getMenuName());
         addButton(new GuiNpcButton(55, guiX + 80, y, 16, 20, "X"));
         getButton(55).enabled = form != null;
 
@@ -166,12 +177,15 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     @Override
     public void updateScreen() {
-//        if(!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode())){
-//           close();
-//        }
+        if (!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode())) {
+            if (hoveredSlot != -1)
+                wheelSlot[hoveredSlot].selectForm();
+
+            close();
+        }
         float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 250;
-        float temp = Math.min(updateTime, 1);
-        guiAnimationScale = (guiAnimationScale + 0.25f * (temp - guiAnimationScale));
+        animationScaleFactor = Math.min(updateTime, 1);
+        guiAnimationScale = (guiAnimationScale + 0.25f * (animationScaleFactor - guiAnimationScale));
         BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
     }
 
@@ -184,7 +198,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
-        int index = -1;
+        //       hoveredSlot = -1;
         double width = 124;
         double height = 124 - 28;
         GL11.glPushMatrix();
@@ -214,9 +228,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             final float radians = (float) Math.atan2(deltaY, deltaX);
             final float degree = Math.round(radians * (180 / Math.PI));
 
-            index = (int) ((degree - 180) / -60) - 1;
-            if (index == -1)
-                index = 5;
+            hoveredSlot = (int) ((degree - 180) / -60) - 1;
+            if (hoveredSlot == -1)
+                hoveredSlot = 5;
         }
 
 
@@ -243,7 +257,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
 
             GL11.glRotatef(i * -60, 0, 0, 1);
-            if (i == index) {
+            if (i == hoveredSlot) {
                 GL11.glScalef(1.1f, 1.1f, 0);
                 GL11.glColor4f(173f / 255, 216f / 255, 230f / 255, 0.9f);
             } else {
@@ -264,16 +278,26 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             } else {
                 GL11.glTranslatef(-10, 0, 0);
             }
+            WheelSegment.variant = 1;
             wheelSlot[i].draw();
             if (form != null)
                 drawCenteredString(fontRendererObj, form.menuName, 0, 0, 0xFFFFFFFF);
 
             GL11.glPopMatrix();
         }
+
         GL11.glPopMatrix();
-        String text = mouseX + "," + mouseY;
+        String text = mouseX + "," + mouseY + ", " + hoveredSlot;
         drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
         GL11.glDisable(GL11.GL_BLEND);
+
+        GL11.glPushMatrix();
+        GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
+        GL11.glScalef(animationScaleFactor, animationScaleFactor, animationScaleFactor);
+        GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT, 0);
+        renderPlayer(mouseX, mouseY);
+        GL11.glPopMatrix();
+
     }
 
     @Override
@@ -297,6 +321,90 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         super.keyTyped(typedChar, keyCode);
         if (keyCode == 1)
             close();
+
+    }
+
+    public boolean isMouseOverRenderer(int x, int y) {
+        int width = this.width / 2;
+        int height = this.height / 2;
+        return x >= width - 60 && x <= width + 60 && y >= height - 90 && y <= height + 90;
+    }
+
+    public void renderPlayer(int i, int j) {
+
+        if (isMouseOverRenderer(i, j)) {
+//            zoomed += Mouse.getDWheel() * 0.035f;
+//            if (zoomed > 100)
+//                zoomed = 100;
+//            if (zoomed < 10)
+//                zoomed = 10;
+
+            if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
+                rotation -= Mouse.getDX() * 0.75f;
+            }
+        }
+
+
+        EntityLivingBase entity = mc.thePlayer;
+        DBCData data = DBCData.getClient();
+
+        int l = this.width / 2;
+        int i1 = this.height / 2 + 60;
+
+        boolean changeForm = hoveredSlot != -1;
+        int oldForm = data.addonFormID;
+        data.addonFormID = -1;
+        if (changeForm) {
+            data.addonFormID = wheelSlot[hoveredSlot].formID;
+        }
+
+
+        GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+        GL11.glPushMatrix();
+        GL11.glTranslatef(l, i1, 60F);
+
+        GL11.glScalef(-zoomed, zoomed, zoomed);
+        GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
+        float f2 = entity.renderYawOffset;
+        float f3 = entity.rotationYaw;
+        float f4 = entity.rotationPitch;
+        float f7 = entity.rotationYawHead;
+        float f5 = (float) (l) - i;
+        float f6 = (float) (i1 - 50) - j;
+        GL11.glRotatef(135F, 0.0F, 1.0F, 0.0F);
+        RenderHelper.enableStandardItemLighting();
+        GL11.glRotatef(-135F, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(-(float) Math.atan(f6 / 800F) * 20F, 1.0F, 0.0F, 0.0F);
+        entity.prevRenderYawOffset = entity.renderYawOffset = rotation;
+        entity.prevRotationYaw = entity.rotationYaw = (float) Math.atan(f5 / 80F) * 40F + rotation;
+        entity.rotationPitch = -(float) Math.atan(f6 / 80F) * 20F;
+        entity.prevRotationYawHead = entity.rotationYawHead = entity.rotationYaw;
+        GL11.glTranslatef(0.0F, entity.yOffset, 1F);
+        RenderManager.instance.playerViewY = 180F;
+
+
+        // Render Entity
+        try {
+            RenderManager.instance.renderEntityWithPosYaw(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F);
+        } catch (Exception ignored) {
+        }
+
+        entity.prevRenderYawOffset = entity.renderYawOffset = f2;
+        entity.prevRotationYaw = entity.rotationYaw = f3;
+        entity.rotationPitch = f4;
+        entity.prevRotationYawHead = entity.rotationYawHead = f7;
+
+        RenderHelper.disableStandardItemLighting();
+        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+        GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+        GL11.glPopMatrix();
+
+
+        data.addonFormID = oldForm;
+
 
     }
 

@@ -27,7 +27,8 @@ public final class DBCSelectForm extends AbstractPacket {
         this.formID = formID;
     }
 
-    public DBCSelectForm() {}
+    public DBCSelectForm() {
+    }
 
     @Override
     public String getChannel() {
@@ -44,14 +45,17 @@ public final class DBCSelectForm extends AbstractPacket {
         int formID = in.readInt();
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(playerData);
+        if (formID == formData.selectedForm)
+            return;
+
         NBTTagCompound compound = new NBTTagCompound();
-        if (formID != -1 && FormController.getInstance().has(formID)){
+        if (formID != -1 && FormController.getInstance().has(formID)) {
             Form form = (Form) FormController.getInstance().get(formID);
-            if(form != null && formData.hasFormUnlocked(formID)){
-                if(form.hasParent() && form.fromParentOnly){
-                    if(ConfigDBCGameplay.InstantTransform){
+            if (form != null && formData.hasFormUnlocked(formID)) {
+                if (form.hasParent() && form.fromParentOnly) {
+                    if (ConfigDBCGameplay.InstantTransform) {
                         boolean canInstant = form.mastery.canInstantTransform(formData.getFormLevel(formID));
-                        if(!canInstant){
+                        if (!canInstant) {
                             NetworkUtility.sendServerMessage(player, "§c", "npcdbc.notEnoughMastery");
                             compound.setBoolean("Skip", true);
                             Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
