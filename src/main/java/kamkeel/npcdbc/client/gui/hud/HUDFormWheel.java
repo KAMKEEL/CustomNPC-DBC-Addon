@@ -302,9 +302,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         GL11.glPushMatrix();
         glTranslatef(190, -100, 0);
         GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
-        int mousX = Mouse.getX();
-        int mousY = Mouse.getY();
-        super.drawScreen((int) mousX, (int) mousY, partialTicks);
+
+        super.drawScreen((int) (mouseX - HALF_WIDTH) -190, (int) (mouseY-HALF_HEIGHT)+100, partialTicks);
         GL11.glPopMatrix();
 
 
@@ -366,15 +365,15 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         GL11.glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
-//        GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
+        GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
         float guiVariantScale = (FormWheelSegment.variant == 0 ? 0.75f : 0.9f);
         float playerScale = guiAnimationScale * guiVariantScale;
         GL11.glScalef(playerScale, playerScale, playerScale);
         GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT, 0);
         renderPlayer(mouseX, mouseY);
         GL11.glPopMatrix();
-        String text = mousX + "," + mousY + ", " + hoveredSlot;
-        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
+//        String text = mousX + "," + mousY + ", " + hoveredSlot;
+        drawCenteredString(fontRendererObj, "goatee sucks", mouseX, mouseY, 0xFFFFFFFF);
 
     }
 
