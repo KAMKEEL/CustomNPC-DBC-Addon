@@ -254,10 +254,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 wheelSlot[tempHoveredSlot].setHoveredState(true);
                 hoveredSlot = tempHoveredSlot;
             }
-        } else {
-            if (hoveredSlot != -1)
-                wheelSlot[hoveredSlot].setHoveredState(false);
-            hoveredSlot = -1;
         }
 
         GL11.glPushMatrix();
