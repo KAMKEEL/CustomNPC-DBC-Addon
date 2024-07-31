@@ -484,7 +484,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             }
         }
 
-
+        renderingPlayer = true;
         EntityLivingBase entity = mc.thePlayer;
         DBCData data = DBCData.getClient();
 
@@ -493,7 +493,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         boolean changeForm = hoveredSlot != -1;
         int oldForm = data.addonFormID;
+        float oldLimbSwing = entity.limbSwingAmount;
         data.addonFormID = -1;
+        entity.limbSwingAmount = 0;
         if (changeForm) {
             data.addonFormID = wheelSlot[hoveredSlot].formID;
         }
@@ -544,7 +546,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
 
         data.addonFormID = oldForm;
-
+        entity.limbSwingAmount = oldLimbSwing;
+        renderingPlayer = false;
 
     }
 
