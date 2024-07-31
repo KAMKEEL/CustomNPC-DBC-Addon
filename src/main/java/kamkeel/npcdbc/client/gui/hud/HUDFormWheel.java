@@ -19,8 +19,6 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.MovementInput;
-import net.minecraft.util.MovementInputFromOptions;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.NBTTags;
 import noppes.npcs.client.gui.util.*;
@@ -206,9 +204,10 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        if (hasSubGui())
+        if(hasSubGui()) {
+            super.drawScreen(mouseX, mouseY, partialTicks);
             return;
+        }
 
         ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         //       hoveredSlot = -1;
@@ -226,16 +225,15 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         final float deltaY = HALF_HEIGHT - mouseY;
 
         float undoMCScaling = 1;
-        switch (scaledResolution.getScaleFactor()) {
-            case 1:
-                undoMCScaling = 1f / scaledResolution.getScaleFactor();
-                break;
-            case 2:
-                if (mc.displayHeight < 720) {
-                    undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1.5f;
-                }
-                break;
+
+        // TODO: Add more support for higher scale factors / GUI sizes when people start complaining.
+        //       Use a switch case
+        if(scaledResolution.getScaleFactor() == 2){
+            if (mc.displayHeight < 720) {
+                undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1.5f;
+            }
         }
+
         float radius = 74 * undoMCScaling;
         if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) > radius) {
             final float radians = (float) Math.atan2(deltaY, deltaX);
@@ -256,6 +254,11 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 wheelSlot[hoveredSlot].setHoveredState(false);
             hoveredSlot = -1;
         }
+
+        GL11.glPushMatrix();
+        GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
+        super.drawScreen((int) (mouseX/undoMCScaling), (int) (mouseY/undoMCScaling), partialTicks);
+        GL11.glPopMatrix();
 
 
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
