@@ -37,6 +37,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     public static float BLUR_INTENSITY = 0;
     public static float MAX_BLUR = 3;
+    public static boolean renderingPlayer = false;
     List<Gui> guiList = new ArrayList<>();
     ResourceLocation resourceLocation = new ResourceLocation(CustomNpcPlusDBC.ID + ":/textures/gui/hud/formwheel/GuiWheel.png");
     public FormWheelSegment[] wheelSlot = new FormWheelSegment[6];
