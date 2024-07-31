@@ -40,9 +40,7 @@ class FormWheelSegment extends WheelSegment {
 
     @Override
     public void draw(){
-        System.out.println("Current color: " + currentColor.color +" * " +hoverScale);
         currentColor = Color.lerpRGBA(NOT_HOVERED, HOVERED, hoverScale);
-        System.out.println("New color: " + currentColor.color +" * " +hoverScale);
         currentColor.glColor();
         super.draw();
     }
@@ -89,7 +87,6 @@ class FormWheelSegment extends WheelSegment {
         }
 
         hoverScale = Math.min(1, Math.max(hoverScale, 0));
-
 
         return hoverScale;
     }

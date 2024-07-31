@@ -15,8 +15,11 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.MovementInput;
+import net.minecraft.util.MovementInputFromOptions;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.NBTTags;
 import noppes.npcs.client.gui.util.*;
@@ -46,7 +49,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     public HUDFormWheel() {
         setBackground("menubg.png");
-
+        allowUserInput = true;
         for (int i = 0; i < 6; i++)
             wheelSlot[i] = new FormWheelSegment(this, i);
         PacketHandler.Instance.sendToServer(new DBCRequestFormWheel().generatePacket());
@@ -180,14 +183,16 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     @Override
     public void updateScreen() {
         if (!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode()) && !hasSubGui()) {
-            if (hoveredSlot != -1)
-                wheelSlot[hoveredSlot].selectForm();
-
-            close();
+//            if (hoveredSlot != -1)
+//                wheelSlot[hoveredSlot].selectForm();
+//
+//            close();
         }
+//        mc.thePlayer.movementInput.updatePlayerMoveState();
         float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 250;
         animationScaleFactor = Math.min(updateTime, 1);
-        guiAnimationScale = (guiAnimationScale + 0.25f * (animationScaleFactor - guiAnimationScale));
+        guiAnimationScale = (guiAnimationScale + 0.2f * (animationScaleFactor - guiAnimationScale));
+        guiAnimationScale = Math.min(1, Math.max(guiAnimationScale, 0));
         BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
     }
 
@@ -433,6 +438,24 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     @Override
     public void save() {
     }
+
+    @Override
+    public void handleKeyboardInput()
+    {
+        super.handleKeyboardInput();
+        KeyBinding.setKeyBindState(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+
+//        if (Keyboard.getEventKeyState())
+//        {
+//            this.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
+//        }
+//
+//        this.mc.func_152348_aa();
+//        mc.thePlayer.movementInput.updatePlayerMoveState();
+//        mc.thePlayer.updateEntityActionState();
+//        mc.gameSettings.keyBindForward.
+    }
+
 
     /**
      * Called when the mouse is clicked.
