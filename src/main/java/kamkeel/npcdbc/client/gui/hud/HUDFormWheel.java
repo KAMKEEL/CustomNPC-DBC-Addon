@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui.hud;
 
+import JinRyuu.JRMCore.JRMCoreKeyHandler;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
@@ -46,13 +47,18 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     public int hoveredSlot = -1;
 
+    boolean unpressedAllKeys = false;
+
 
     public HUDFormWheel() {
         setBackground("menubg.png");
-        allowUserInput = true;
         for (int i = 0; i < 6; i++)
             wheelSlot[i] = new FormWheelSegment(this, i);
         PacketHandler.Instance.sendToServer(new DBCRequestFormWheel().generatePacket());
+
+        // Stops the GUI from un-pressing all keys for you.
+        Minecraft.getMinecraft().inGameHasFocus = false;
+        Minecraft.getMinecraft().mouseHelper.ungrabMouseCursor();
     }
 
     @Override
@@ -183,10 +189,10 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     @Override
     public void updateScreen() {
         if (!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode()) && !hasSubGui()) {
-//            if (hoveredSlot != -1)
-//                wheelSlot[hoveredSlot].selectForm();
-//
-//            close();
+            if (hoveredSlot != -1)
+                wheelSlot[hoveredSlot].selectForm();
+
+            close();
         }
 //        mc.thePlayer.movementInput.updatePlayerMoveState();
         float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 250;
@@ -323,7 +329,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         renderPlayer(mouseX, mouseY);
         GL11.glPopMatrix();
         String text = mouseX + "," + mouseY + ", " + hoveredSlot;
-        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
+        drawCenteredString(fontRendererObj, JRMCoreKeyHandler.Fn.getIsKeyPressed()+"", mouseX, mouseY, 0xFFFFFFFF);
 
     }
 
@@ -443,17 +449,19 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public void handleKeyboardInput()
     {
         super.handleKeyboardInput();
-        KeyBinding.setKeyBindState(Keyboard.getEventKey(), Keyboard.getEventKeyState());
 
-//        if (Keyboard.getEventKeyState())
-//        {
-//            this.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
-//        }
-//
-//        this.mc.func_152348_aa();
-//        mc.thePlayer.movementInput.updatePlayerMoveState();
-//        mc.thePlayer.updateEntityActionState();
-//        mc.gameSettings.keyBindForward.
+        // Handles keeping movement keys still fluid.
+        if(hasSubGui()){
+            if(!unpressedAllKeys) {
+                KeyBinding.unPressAllKeys();
+                unpressedAllKeys = true;
+            }
+            return;
+        }
+        KeyBinding.setKeyBindState(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+        unpressedAllKeys = false;
+
+
     }
 
 
