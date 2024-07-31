@@ -8,6 +8,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCRequestFormWheel;
+import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -195,6 +196,10 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     @Override
     public void updateScreen() {
+        if (Mouse.isButtonDown(1)) {
+            PacketHandler.Instance.sendToServer(new DBCSelectForm(-1).generatePacket());
+            close();
+        }
 //        if (!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode()) && !hasSubGui()) {
 //            if (hoveredSlot != -1)
 //                wheelSlot[hoveredSlot].selectForm();
@@ -299,7 +304,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
         int mousX = Mouse.getX();
         int mousY = Mouse.getY();
-        super.drawScreen((int)mousX, (int)mousY, partialTicks);
+        super.drawScreen((int) mousX, (int) mousY, partialTicks);
         GL11.glPopMatrix();
 
 
@@ -379,7 +384,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         int xPosGradient = 0;
         int yPosGradient = 0;
-    //    drawGradientRect(xPosGradient, yPosGradient, 100 + xPosGradient, 223 + yPosGradient, 0xc0101010, 0xd0101010);
+        //    drawGradientRect(xPosGradient, yPosGradient, 100 + xPosGradient, 223 + yPosGradient, 0xc0101010, 0xd0101010);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
     }
