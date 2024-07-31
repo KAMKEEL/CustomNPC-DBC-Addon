@@ -4,12 +4,10 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCRequestFormWheel;
-import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -20,6 +18,8 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.MovementInput;
+import net.minecraft.util.MovementInputFromOptions;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.NBTTags;
 import noppes.npcs.client.gui.util.*;
@@ -36,7 +36,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     public static float BLUR_INTENSITY = 0;
     public static float MAX_BLUR = 3;
-    public static boolean renderingPlayer;
     List<Gui> guiList = new ArrayList<>();
     ResourceLocation resourceLocation = new ResourceLocation(CustomNpcPlusDBC.ID + ":/textures/gui/hud/formwheel/GuiWheel.png");
     public FormWheelSegment[] wheelSlot = new FormWheelSegment[6];
@@ -188,10 +187,10 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     @Override
     public void updateScreen() {
         if (!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode()) && !hasSubGui()) {
-//            if (hoveredSlot != -1)
-//                wheelSlot[hoveredSlot].selectForm();
-//
-//            close();
+            if (hoveredSlot != -1)
+                wheelSlot[hoveredSlot].selectForm();
+
+            close();
         }
 //        mc.thePlayer.movementInput.updatePlayerMoveState();
         float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 250;
@@ -205,9 +204,10 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        if (hasSubGui())
+        if(hasSubGui()) {
+            super.drawScreen(mouseX, mouseY, partialTicks);
             return;
+        }
 
         ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         //       hoveredSlot = -1;
@@ -225,16 +225,15 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         final float deltaY = HALF_HEIGHT - mouseY;
 
         float undoMCScaling = 1;
-        switch (scaledResolution.getScaleFactor()) {
-            case 1:
-                undoMCScaling = 1f / scaledResolution.getScaleFactor();
-                break;
-            case 2:
-                if (mc.displayHeight < 720) {
-                    undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1.5f;
-                }
-                break;
+
+        // TODO: Add more support for higher scale factors / GUI sizes when people start complaining.
+        //       Use a switch case
+        if(scaledResolution.getScaleFactor() == 2){
+            if (mc.displayHeight < 720) {
+                undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1.5f;
+            }
         }
+
         float radius = 74 * undoMCScaling;
         if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) > radius) {
             final float radians = (float) Math.atan2(deltaY, deltaX);
@@ -244,17 +243,22 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             if (tempHoveredSlot == -1) {
                 tempHoveredSlot = 5;
             }
-            if (tempHoveredSlot != hoveredSlot) {
-                if (hoveredSlot != -1)
+            if(tempHoveredSlot != hoveredSlot) {
+                if(hoveredSlot != -1)
                     wheelSlot[hoveredSlot].setHoveredState(false);
                 wheelSlot[tempHoveredSlot].setHoveredState(true);
                 hoveredSlot = tempHoveredSlot;
             }
-        } else {
-            if (hoveredSlot != -1)
+        }else{
+            if(hoveredSlot != -1)
                 wheelSlot[hoveredSlot].setHoveredState(false);
             hoveredSlot = -1;
         }
+
+        GL11.glPushMatrix();
+        GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
+        super.drawScreen((int) (mouseX/undoMCScaling), (int) (mouseY/undoMCScaling), partialTicks);
+        GL11.glPopMatrix();
 
 
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
@@ -300,7 +304,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             }
             wheelSlot[i].draw();
 
-            if (i == 0) {
+            if(i == 0){
 //                GL11.glTranslatef(0, 5, 0);
             } else if (i == 3) {
 //                GL11.glTranslatef(0, -5, 0);
@@ -328,7 +332,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         renderPlayer(mouseX, mouseY);
         GL11.glPopMatrix();
         String text = mouseX + "," + mouseY + ", " + hoveredSlot;
-        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
+        drawCenteredString(fontRendererObj, JRMCoreKeyHandler.Fn.getIsKeyPressed()+"", mouseX, mouseY, 0xFFFFFFFF);
 
     }
 
@@ -445,19 +449,22 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     }
 
     @Override
-    public void handleKeyboardInput() {
+    public void handleKeyboardInput()
+    {
         super.handleKeyboardInput();
-        KeyBinding.setKeyBindState(Keyboard.getEventKey(), Keyboard.getEventKeyState());
 
-//        if (Keyboard.getEventKeyState())
-//        {
-//            this.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
-//        }
-//
-//        this.mc.func_152348_aa();
-//        mc.thePlayer.movementInput.updatePlayerMoveState();
-//        mc.thePlayer.updateEntityActionState();
-//        mc.gameSettings.keyBindForward.
+        // Handles keeping movement keys still fluid.
+        if(hasSubGui()){
+            if(!unpressedAllKeys) {
+                KeyBinding.unPressAllKeys();
+                unpressedAllKeys = true;
+            }
+            return;
+        }
+        KeyBinding.setKeyBindState(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+        unpressedAllKeys = false;
+
+
     }
 
 
