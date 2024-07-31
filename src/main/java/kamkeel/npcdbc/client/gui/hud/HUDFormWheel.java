@@ -88,7 +88,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         addButton(new GuiNpcButton(6, x, y, 60, 20, new String[]{"Configure", "Done"}, !configureEnabled ? 0 : 1));
 
         if (configureEnabled) {
-            addButton(new GuiNpcButton(7, x += 62, y, 80, 20, "Switch Texture"));
+            addButton(new GuiNpcButton(7, x += 62, y, 80, 20, "Switch Variant"));
 
 
             float undoMCScaling = 1;
@@ -473,8 +473,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         renderPlayer(mouseX, mouseY);
         GL11.glPopMatrix();
-        String text = mouseX + "," + mouseY + ", " + hoveredSlot + "," + (keyDown ? "HOLDING KEY" : "NOT HOLDING");
-        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
+//        String text = mouseX + "," + mouseY + ", " + hoveredSlot + "," + (keyDown ? "HOLDING KEY" : "NOT HOLDING");
+//        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
 
     }
 
