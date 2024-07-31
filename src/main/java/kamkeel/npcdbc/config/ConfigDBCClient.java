@@ -43,8 +43,8 @@ public class ConfigDBCClient {
     public static Property FirstPerson3DAuraOpacityProperty;
     public static int FirstPerson3DAuraOpacity = 100;
 
-    public static Property ModernWheelTextureProperty;
-    public static boolean ModernWheelTexture = true;
+    public static Property AlternateSelectionWheelTextureProperty;
+    public static boolean AlteranteSelectionWheelTexture = true;
 
     public static void init(File configFile) {
         config = new Configuration(configFile);
@@ -63,8 +63,8 @@ public class ConfigDBCClient {
             DarkMode = DarkModeProperty.getBoolean(true);
             AdvancedGuiModeProperty = config.get(GUI, "Advanced GUI", false, "Shows Advanced Status Effects and Calculations in Menu");
             AdvancedGui = AdvancedGuiModeProperty.getBoolean(false);
-            ModernWheelTextureProperty = config.get(GUI, "Use Modern Wheel GUI Texture", true, "Uses modern texture for Wheel GUIs");
-            ModernWheelTexture = ModernWheelTextureProperty.getBoolean(true);
+            AlternateSelectionWheelTextureProperty = config.get(GUI, "Use Alternate Wheel GUI Texture", false, "Uses alternate texture for Wheel GUIs");
+            AlteranteSelectionWheelTexture = AlternateSelectionWheelTextureProperty.getBoolean(false);
 
             // Rendering
             RevampAuraProperty = config.get(RENDERING, "Revamp Aura", true, "Renders with the new DBC Addon style of auras");

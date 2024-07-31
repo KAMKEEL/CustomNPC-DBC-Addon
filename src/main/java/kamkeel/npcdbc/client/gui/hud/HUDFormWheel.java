@@ -208,7 +208,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             }
 
         } else if (button.id == 7) {
-            ConfigDBCClient.ModernWheelTexture = !ConfigDBCClient.ModernWheelTexture;
+            ConfigDBCClient.AlteranteSelectionWheelTexture = !ConfigDBCClient.AlteranteSelectionWheelTexture;
+            ConfigDBCClient.AlternateSelectionWheelTextureProperty.set((ConfigDBCClient.AlteranteSelectionWheelTexture));
             timeClosedSubGui = Minecraft.getSystemTime();
 
         }
@@ -435,7 +436,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 GL11.glTranslatef(0, -10, 0);
             }
             if (form != null) {
-                if (ConfigDBCClient.ModernWheelTexture) {
+                if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
                     glScaled(0.7, 0.7, 1);
                     if (i == 0) {
                         glTranslatef(0, -15f, 0);
@@ -465,9 +466,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
         GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
         float guiVariantScale = (FormWheelSegment.variant == 0 ? 0.75f : 0.9f);
-        float playerScale = guiAnimationScale * guiVariantScale * (ConfigDBCClient.ModernWheelTexture ? 1.5f : 1);
+        float playerScale = guiAnimationScale * guiVariantScale * (ConfigDBCClient.AlteranteSelectionWheelTexture ? 1.5f : 1);
         GL11.glScalef(playerScale, playerScale, playerScale);
-        GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT + (ConfigDBCClient.ModernWheelTexture ? 5 : 0), 0);
+        GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT + (ConfigDBCClient.AlteranteSelectionWheelTexture ? 5 : 0), 0);
 
 
         renderPlayer(mouseX, mouseY);

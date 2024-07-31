@@ -83,7 +83,7 @@ class WheelSegment extends Gui {
 
     private void drawIndexedTexture() {
 
-        if (!ConfigDBCClient.ModernWheelTexture)
+        if (!ConfigDBCClient.AlteranteSelectionWheelTexture)
             Minecraft.getMinecraft().getTextureManager().bindTexture(variant1);
         else
             Minecraft.getMinecraft().getTextureManager().bindTexture(variant2);
