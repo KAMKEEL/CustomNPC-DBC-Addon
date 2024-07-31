@@ -42,12 +42,16 @@ public class MixinJRMCoreHDBC {
     @Inject(method = "DBCsizeBasedOnRace2(IIZ)F", at = @At(value = "TAIL"), cancellable = true)
     private static void setCustomFormSize(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir, @Local(name = "f3") LocalFloatRef size) {
         if (CommonProxy.CurrentJRMCTickPlayer != null) {
+            if (ClientProxy.renderingGUI) {
+                cir.setReturnValue(1f);
+                return;
+            }
+
             Form form = DBCData.get(CommonProxy.CurrentJRMCTickPlayer).getForm();
 
             if (form != null && form.display.hasSize()) {
-                if (ClientProxy.renderingGUI)
-                    cir.setReturnValue(1f);
-                else if (form.display.keepOriginalSize)
+
+                if (form.display.keepOriginalSize)
                     cir.setReturnValue(size.get() * form.display.formSize);
                 else
                     cir.setReturnValue(form.display.formSize);
