@@ -14,8 +14,8 @@ class FormWheelSegment extends WheelSegment {
     public Form form;
     public int formID;
 
-    public static Color HOVERED = new Color(0xADD8E6, 0.9f);
-    public static Color NOT_HOVERED = new Color(0xFFFFFF, 0.7f);
+    public static Color HOVERED = new Color(0xADD8E6, 0.7f);
+    public static Color NOT_HOVERED = new Color(0xFFFFFF, 0.35f);
 
     private boolean isHovered = false;
     private long startHoverTime = 0;
