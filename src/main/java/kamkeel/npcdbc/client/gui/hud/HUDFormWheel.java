@@ -1,8 +1,6 @@
 package kamkeel.npcdbc.client.gui.hud;
 
-import JinRyuu.JRMCore.JRMCoreKeyHandler;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -14,6 +12,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -30,8 +29,11 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static org.lwjgl.opengl.GL11.glTranslatef;
 
 public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiListener {
 
@@ -50,7 +52,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     boolean unpressedAllKeys = false;
 
     public HUDFormWheel() {
+        mc = Minecraft.getMinecraft();
         setBackground("menubg.png");
+
 
         PlayerDBCInfo data = PlayerDataUtil.getClientDBCInfo();
         for (int i = 0; i < 6; i++) {
@@ -60,8 +64,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         PacketHandler.Instance.sendToServer(new DBCRequestFormWheel().generatePacket());
 
         // Stops the GUI from un-pressing all keys for you.
-        Minecraft.getMinecraft().inGameHasFocus = false;
-        Minecraft.getMinecraft().mouseHelper.ungrabMouseCursor();
+        mc.inGameHasFocus = false;
+        mc.mouseHelper.ungrabMouseCursor();
     }
 
     @Override
@@ -70,8 +74,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         if (timeOpened == 0)
             timeOpened = Minecraft.getSystemTime();
 
-        int y = guiTop + 5;
-        int guiX = guiTop + 4;
+        int y = 0;
+        int guiX = 0;
 
         FormWheelSegment.variant = 1;
 
@@ -191,18 +195,48 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     @Override
     public void updateScreen() {
-        if (!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode()) && !hasSubGui()) {
-            if (hoveredSlot != -1)
-                wheelSlot[hoveredSlot].selectForm();
-
-            close();
-        }
+//        if (!Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode()) && !hasSubGui()) {
+//            if (hoveredSlot != -1)
+//                wheelSlot[hoveredSlot].selectForm();
+//
+//            close();
+//        }
 //        mc.thePlayer.movementInput.updatePlayerMoveState();
         float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 250;
         animationScaleFactor = Math.min(updateTime, 1);
         guiAnimationScale = (guiAnimationScale + 0.2f * (animationScaleFactor - guiAnimationScale));
         guiAnimationScale = Math.min(1, Math.max(guiAnimationScale, 0));
         BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
+    }
+
+    public void drawButtons(int i, int j) {
+
+        boolean subGui = this.hasSubGui();
+        Iterator var5 = this.labels.values().iterator();
+        while (var5.hasNext()) {
+            GuiNpcLabel label = (GuiNpcLabel) var5.next();
+            label.drawLabel(this, this.fontRendererObj);
+        }
+
+        var5 = this.buttons.values().iterator();
+        while (var5.hasNext()) {
+            GuiNpcButton button = (GuiNpcButton) var5.next();
+            button.updateSubGUI(subGui);
+            if (!button.hoverableText.isEmpty()) {
+                button.drawHover(i, j, subGui);
+            }
+        }
+
+        int k;
+
+        for (k = 0; k < this.buttonList.size(); ++k) {
+            ((GuiButton) this.buttonList.get(k)).drawButton(this.mc, mouseX, mouseY);
+        }
+
+        for (k = 0; k < this.labelList.size(); ++k) {
+            ((GuiLabel) this.labelList.get(k)).func_146159_a(this.mc, mouseX, mouseY);
+        }
+
     }
 
     @Override
@@ -256,22 +290,24 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             }
         }
 
+        GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
+        GL11.glScalef(undoMCScaling, undoMCScaling, 0);
+
+
         GL11.glPushMatrix();
+        glTranslatef(190, -100, 0);
         GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
-        super.drawScreen((int) (mouseX / undoMCScaling), (int) (mouseY / undoMCScaling), partialTicks);
+        int mousX = Mouse.getX();
+        int mousY = Mouse.getY();
+        super.drawScreen((int)mousX, (int)mousY, partialTicks);
         GL11.glPopMatrix();
 
-
-        GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
 
 //        if(scaledResolution.getScaleFactor() == 1) {
 //            float undoMCScaling = 1f / scaledResolution.getScaleFactor();
 //            GL11.glScalef(undoMCScaling, undoMCScaling, 0);
 //        }
         GL11.glScalef(guiAnimationScale, guiAnimationScale, 0);
-
-
-        GL11.glScalef(undoMCScaling, undoMCScaling, 0);
         float scale = 1.4f;
         GL11.glScalef(scale, scale, 0);
         //  new Color(0x8f8a86,0.5f).glColor();
@@ -332,7 +368,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT, 0);
         renderPlayer(mouseX, mouseY);
         GL11.glPopMatrix();
-        String text = mouseX + "," + mouseY + ", " + hoveredSlot;
+        String text = mousX + "," + mousY + ", " + hoveredSlot;
         drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
 
     }
@@ -341,9 +377,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     protected void drawBackground() {
         //  super.drawBackground();
 
-        int xPosGradient = 3;
-        int yPosGradient = 6;
-        drawGradientRect(xPosGradient, yPosGradient, 100 + xPosGradient, 236 + yPosGradient, 0xc0101010, 0xd0101010);
+        int xPosGradient = 0;
+        int yPosGradient = 0;
+    //    drawGradientRect(xPosGradient, yPosGradient, 100 + xPosGradient, 223 + yPosGradient, 0xc0101010, 0xd0101010);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
     }
