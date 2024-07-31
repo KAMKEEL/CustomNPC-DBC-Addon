@@ -62,6 +62,11 @@ class FormWheelSegment extends WheelSegment {
         formID = -1;
         form = null;
         PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, -1).generatePacket());
+        if (parent.hoveredSlot == index)
+            parent.selectSlot(-1);
+
+        parent.timeClosedSubGui = Minecraft.getSystemTime();
+
     }
 
     public void setHoveredState(boolean newHoverState) {
