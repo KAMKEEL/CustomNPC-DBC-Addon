@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreConfig;
+import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
@@ -114,6 +115,20 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         ci.cancel();
 
 
+    }
+
+    @Redirect(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/RenderPlayerJBRA;b(Ljava/lang/String;)B"))
+    private byte changeFormD2ata(RenderPlayerJBRA instance, String n, @Local(name = "pl") LocalIntRef pl, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
+        String[] state = JRMCoreH.data2 == null ? new String[]{"0", "0", "0"} : JRMCoreH.data2[pl.get()].split(";");
+        DBCData data = DBCData.get(player.get());
+        boolean equal = data.State == data.State2;
+        if (equal)
+            return data.State;
+        else if (n.equals(state[0]))
+            return data.State;
+        else if (n.equals(state[1]))
+            return data.State2;
+        return 0;
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
@@ -426,6 +441,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Shadow
     abstract int i(String n);
+
+    @Shadow
+    public static float r;
 
     /**
      * Methods Below so we don't need

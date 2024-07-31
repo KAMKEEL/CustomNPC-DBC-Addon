@@ -491,11 +491,16 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         int l = this.width / 2;
         int i1 = this.height / 2 + 60;
 
+        float oldLimbSwing = entity.limbSwingAmount;
+        entity.limbSwingAmount = 0;
+
         boolean changeForm = hoveredSlot != -1;
         int oldForm = data.addonFormID;
-        float oldLimbSwing = entity.limbSwingAmount;
+        byte oldState = data.State, oldState2 = data.State2;
         data.addonFormID = -1;
-        entity.limbSwingAmount = 0;
+        data.State = 0;
+        data.State2 = 0;
+
         if (changeForm) {
             data.addonFormID = wheelSlot[hoveredSlot].formID;
         }
@@ -546,6 +551,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
 
         data.addonFormID = oldForm;
+        data.State = oldState;
+        data.State2 = oldState2;
+
         entity.limbSwingAmount = oldLimbSwing;
         renderingPlayer = false;
 
