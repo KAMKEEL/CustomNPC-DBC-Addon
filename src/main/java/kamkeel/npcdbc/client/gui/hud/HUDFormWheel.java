@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.gui.hud;
 
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -18,7 +19,11 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.client.gui.util.*;
@@ -30,6 +35,9 @@ import org.lwjgl.opengl.GL12;
 
 import java.util.Iterator;
 import java.util.Map;
+
+import static org.lwjgl.opengl.GL11.glScaled;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 
 public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiListener {
 
@@ -72,7 +80,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             timeOpened = Minecraft.getSystemTime();
 
         scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
-        FormWheelSegment.variant = 1;
+        // FormWheelSegment.variant = 1;
 
 
         int x = (this.width / 2) + 94;
@@ -80,6 +88,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         addButton(new GuiNpcButton(6, x, y, 60, 20, new String[]{"Configure", "Done"}, !configureEnabled ? 0 : 1));
 
         if (configureEnabled) {
+            addButton(new GuiNpcButton(7, x += 62, y, 80, 20, "Switch Texture"));
+
+
             float undoMCScaling = 1;
             // TODO: Add more support for higher scale factors / GUI sizes when people start complaining.
             //       Use a switch case
@@ -195,6 +206,10 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 selectSlot(-1);
                 timeClosedSubGui = Minecraft.getSystemTime();
             }
+
+        } else if (button.id == 7) {
+            ConfigDBCClient.ModernWheelTexture = !ConfigDBCClient.ModernWheelTexture;
+            timeClosedSubGui = Minecraft.getSystemTime();
 
         }
         initGui();
@@ -419,8 +434,26 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             } else {
                 GL11.glTranslatef(0, -10, 0);
             }
-            if (form != null)
+            if (form != null) {
+                if (ConfigDBCClient.ModernWheelTexture) {
+                    glScaled(0.7, 0.7, 1);
+                    if (i == 0) {
+                        glTranslatef(0, -15f, 0);
+                    } else if (i == 1) {
+                        glTranslatef(-17, -5, 0);
+                    } else if (i == 2) {
+                        glTranslatef(-11, 3, 0);
+                    } else if (i == 3) {
+                        glTranslatef(0, 12f, 0);
+                    } else if (i == 4) {
+                        glTranslatef(10, 3, 0);
+                    } else {
+                        glTranslatef(13, -5, 0);
+                    }
+
+                }
                 drawCenteredString(fontRendererObj, form.menuName, 0, 0, 0xFFFFFFFF);
+            }
 
             GL11.glPopMatrix();
         }
@@ -432,9 +465,11 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
         GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
         float guiVariantScale = (FormWheelSegment.variant == 0 ? 0.75f : 0.9f);
-        float playerScale = guiAnimationScale * guiVariantScale;
+        float playerScale = guiAnimationScale * guiVariantScale * (ConfigDBCClient.ModernWheelTexture ? 1.5f : 1);
         GL11.glScalef(playerScale, playerScale, playerScale);
-        GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT, 0);
+        GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT + (ConfigDBCClient.ModernWheelTexture ? 5 : 0), 0);
+
+
         renderPlayer(mouseX, mouseY);
         GL11.glPopMatrix();
         String text = mouseX + "," + mouseY + ", " + hoveredSlot + "," + (keyDown ? "HOLDING KEY" : "NOT HOLDING");
@@ -492,14 +527,25 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         int i1 = this.height / 2 + 60;
 
         float oldLimbSwing = entity.limbSwingAmount;
-        entity.limbSwingAmount = 0;
+        boolean isSneaking = entity.isSneaking(), isInvisible = entity.isInvisible(), isImmunetoFire = entity.isImmuneToFire;
+        int fire = entity.fire;
+        Entity oldRidingEntity = entity.ridingEntity;
+        entity.limbSwingAmount = 0; // Removes moving animation
+        entity.setSneaking(false); // Removes sneaking animation
+        entity.ridingEntity = null; // Removes riding animation
+        entity.setInvisible(false); // Removes invisibility
+        entity.isImmuneToFire = true; // Prevents burning
+
+        InventoryPlayer inv = ((EntityPlayer) entity).inventory;
+        ItemStack oldItem = inv.mainInventory[inv.currentItem];
+        inv.mainInventory[inv.currentItem] = null; //Removes held item
 
         boolean changeForm = hoveredSlot != -1;
         int oldForm = data.addonFormID;
         byte oldState = data.State, oldState2 = data.State2;
-        data.addonFormID = -1;
-        data.State = 0;
-        data.State2 = 0;
+        data.addonFormID = -1; // Removes addon forms
+        data.State = 0; // Removes DBC state
+        data.State2 = 0; // Removes DBC state 2
 
         if (changeForm) {
             data.addonFormID = wheelSlot[hoveredSlot].formID;
@@ -555,6 +601,11 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         data.State2 = oldState2;
 
         entity.limbSwingAmount = oldLimbSwing;
+        entity.setSneaking(isSneaking);
+        entity.ridingEntity = oldRidingEntity;
+        entity.setInvisible(isInvisible);
+        entity.isImmuneToFire = isImmunetoFire;
+        inv.mainInventory[inv.currentItem] = oldItem;
         renderingPlayer = false;
 
     }

@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.gui.hud;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.utils.Color;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
@@ -74,7 +75,7 @@ class WheelSegment extends Gui {
     }
 
     public void draw() {
-        currentColor =Color.lerpRGBA(NOT_HOVERED, HOVERED, hoverScale);
+        currentColor = Color.lerpRGBA(NOT_HOVERED, HOVERED, hoverScale);
         currentColor.glColor();
         drawIndexedTexture();
     }
@@ -82,7 +83,7 @@ class WheelSegment extends Gui {
 
     private void drawIndexedTexture() {
 
-        if (variant == 0)
+        if (!ConfigDBCClient.ModernWheelTexture)
             Minecraft.getMinecraft().getTextureManager().bindTexture(variant1);
         else
             Minecraft.getMinecraft().getTextureManager().bindTexture(variant2);
