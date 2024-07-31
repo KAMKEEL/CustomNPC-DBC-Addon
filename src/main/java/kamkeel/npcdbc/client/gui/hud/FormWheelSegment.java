@@ -39,7 +39,7 @@ class FormWheelSegment extends WheelSegment {
     }
 
     @Override
-    public void draw(){
+    public void draw() {
         currentColor = Color.lerpRGBA(NOT_HOVERED, HOVERED, hoverScale);
         currentColor.glColor();
         super.draw();
@@ -47,14 +47,15 @@ class FormWheelSegment extends WheelSegment {
 
 
     public void selectForm() {
-            PacketHandler.Instance.sendToServer(new DBCSelectForm(formID).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCSelectForm(formID).generatePacket());
 
     }
 
-    public void setForm(int formID) {
+    public void setForm(int formID, boolean updateServer) {
         this.formID = formID;
         form = (Form) FormController.getInstance().get(formID);
-        PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, formID).generatePacket());
+        if (updateServer)
+            PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, formID).generatePacket());
     }
 
     public void removeForm() {
@@ -63,27 +64,27 @@ class FormWheelSegment extends WheelSegment {
         PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, -1).generatePacket());
     }
 
-    public void setHoveredState(boolean newHoverState){
+    public void setHoveredState(boolean newHoverState) {
 
-        if(!isHovered && newHoverState){
+        if (!isHovered && newHoverState) {
             startHoverTime = Minecraft.getSystemTime();
         }
-        if(isHovered && !newHoverState){
+        if (isHovered && !newHoverState) {
             stopHoverTime = Minecraft.getSystemTime();
         }
         isHovered = newHoverState;
     }
 
-    public float getSegmentScale(){
+    public float getSegmentScale() {
         float updateTime;
-        if(isHovered){
+        if (isHovered) {
             updateTime = (float) (Minecraft.getSystemTime() - startHoverTime) / 100;
             updateTime = Math.min(updateTime, 1);
             hoverScale = (hoverScale + 0.25f * (updateTime - hoverScale));
         } else {
             updateTime = (float) (Minecraft.getSystemTime() - stopHoverTime) / 100;
             updateTime = -Math.min(updateTime, 1);
-            hoverScale = (hoverScale + 0.25f * (1+updateTime - hoverScale));
+            hoverScale = (hoverScale + 0.25f * (1 + updateTime - hoverScale));
         }
 
         hoverScale = Math.min(1, Math.max(hoverScale, 0));

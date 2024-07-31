@@ -4,10 +4,12 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCRequestFormWheel;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -18,8 +20,6 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.MovementInput;
-import net.minecraft.util.MovementInputFromOptions;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.NBTTags;
 import noppes.npcs.client.gui.util.*;
@@ -36,6 +36,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     public static float BLUR_INTENSITY = 0;
     public static float MAX_BLUR = 3;
+    public static boolean renderingPlayer;
     List<Gui> guiList = new ArrayList<>();
     ResourceLocation resourceLocation = new ResourceLocation(CustomNpcPlusDBC.ID + ":/textures/gui/hud/formwheel/GuiWheel.png");
     public FormWheelSegment[] wheelSlot = new FormWheelSegment[6];
@@ -50,8 +51,12 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public HUDFormWheel() {
         setBackground("menubg.png");
         allowUserInput = true;
-        for (int i = 0; i < 6; i++)
+
+        PlayerDBCInfo data = PlayerDataUtil.getClientDBCInfo();
+        for (int i = 0; i < 6; i++) {
             wheelSlot[i] = new FormWheelSegment(this, i);
+            wheelSlot[i].setForm(data.getWheelSlotID(i), false);
+        }
         PacketHandler.Instance.sendToServer(new DBCRequestFormWheel().generatePacket());
     }
 
@@ -173,7 +178,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 if (form != null && selectForm.selectedFormID == form.id)
                     return;
 
-                slot.setForm(selectForm.selectedFormID);
+                slot.setForm(selectForm.selectedFormID, true);
             }
         }
         initGui();
@@ -239,14 +244,14 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             if (tempHoveredSlot == -1) {
                 tempHoveredSlot = 5;
             }
-            if(tempHoveredSlot != hoveredSlot) {
-                if(hoveredSlot != -1)
+            if (tempHoveredSlot != hoveredSlot) {
+                if (hoveredSlot != -1)
                     wheelSlot[hoveredSlot].setHoveredState(false);
                 wheelSlot[tempHoveredSlot].setHoveredState(true);
                 hoveredSlot = tempHoveredSlot;
             }
-        }else{
-            if(hoveredSlot != -1)
+        } else {
+            if (hoveredSlot != -1)
                 wheelSlot[hoveredSlot].setHoveredState(false);
             hoveredSlot = -1;
         }
@@ -295,7 +300,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             }
             wheelSlot[i].draw();
 
-            if(i == 0){
+            if (i == 0) {
 //                GL11.glTranslatef(0, 5, 0);
             } else if (i == 3) {
 //                GL11.glTranslatef(0, -5, 0);
@@ -440,8 +445,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     }
 
     @Override
-    public void handleKeyboardInput()
-    {
+    public void handleKeyboardInput() {
         super.handleKeyboardInput();
         KeyBinding.setKeyBindState(Keyboard.getEventKey(), Keyboard.getEventKeyState());
 

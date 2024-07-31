@@ -645,11 +645,12 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     /**
      * Set a players lock on state!
+     *
      * @param lockOnTarget Reference to new target Entity or null to remove lock on.
      */
-    public void setLockOnTarget(EntityLivingBase lockOnTarget){
+    public void setLockOnTarget(EntityLivingBase lockOnTarget) {
 
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
             DBCUpdateLockOn packet;
             if (lockOnTarget == null) {
                 packet = new DBCUpdateLockOn();
@@ -661,8 +662,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         }
 
 
-        if(side == Side.CLIENT){
-            if(player == Minecraft.getMinecraft().thePlayer){
+        if (side == Side.CLIENT) {
+            if (player == Minecraft.getMinecraft().thePlayer) {
                 DBCUpdateLockOn.setLockOnTarget(lockOnTarget);
             }
             return;

@@ -74,6 +74,10 @@ public class PlayerDBCInfo {
         return (Form) FormController.getInstance().get(formWheel.get(wheelSlot));
     }
 
+    public int getWheelSlotID(int wheelSlot) {
+        return formWheel.get(wheelSlot);
+    }
+
     public Form getForm(int id) {
         if (unlockedForms.contains(id))
             return (Form) FormController.getInstance().get(id);
