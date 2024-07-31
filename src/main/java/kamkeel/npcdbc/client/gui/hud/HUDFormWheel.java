@@ -51,7 +51,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     public HUDFormWheel() {
         setBackground("menubg.png");
-        allowUserInput = true;
 
         PlayerDBCInfo data = PlayerDataUtil.getClientDBCInfo();
         for (int i = 0; i < 6; i++) {
@@ -59,6 +58,10 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             wheelSlot[i].setForm(data.getWheelSlotID(i), false);
         }
         PacketHandler.Instance.sendToServer(new DBCRequestFormWheel().generatePacket());
+
+        // Stops the GUI from un-pressing all keys for you.
+        Minecraft.getMinecraft().inGameHasFocus = false;
+        Minecraft.getMinecraft().mouseHelper.ungrabMouseCursor();
     }
 
     @Override
@@ -334,7 +337,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         renderPlayer(mouseX, mouseY);
         GL11.glPopMatrix();
         String text = mouseX + "," + mouseY + ", " + hoveredSlot;
-        drawCenteredString(fontRendererObj, JRMCoreKeyHandler.Fn.getIsKeyPressed() + "", mouseX, mouseY, 0xFFFFFFFF);
+        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
 
     }
 
