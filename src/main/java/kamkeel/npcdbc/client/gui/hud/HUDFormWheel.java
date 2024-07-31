@@ -1,13 +1,16 @@
 package kamkeel.npcdbc.client.gui.hud;
 
+import JinRyuu.JRMCore.JRMCoreKeyHandler;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCRequestFormWheel;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -18,8 +21,6 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.MovementInput;
-import net.minecraft.util.MovementInputFromOptions;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.NBTTags;
 import noppes.npcs.client.gui.util.*;
@@ -45,7 +46,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     long timeOpened;
 
     public int hoveredSlot = -1;
-
+    boolean unpressedAllKeys = false;
 
     public HUDFormWheel() {
         setBackground("menubg.png");
@@ -204,7 +205,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
-        if(hasSubGui()) {
+        if (hasSubGui()) {
             super.drawScreen(mouseX, mouseY, partialTicks);
             return;
         }
@@ -228,7 +229,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         // TODO: Add more support for higher scale factors / GUI sizes when people start complaining.
         //       Use a switch case
-        if(scaledResolution.getScaleFactor() == 2){
+        if (scaledResolution.getScaleFactor() == 2) {
             if (mc.displayHeight < 720) {
                 undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1.5f;
             }
@@ -243,21 +244,21 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             if (tempHoveredSlot == -1) {
                 tempHoveredSlot = 5;
             }
-            if(tempHoveredSlot != hoveredSlot) {
-                if(hoveredSlot != -1)
+            if (tempHoveredSlot != hoveredSlot) {
+                if (hoveredSlot != -1)
                     wheelSlot[hoveredSlot].setHoveredState(false);
                 wheelSlot[tempHoveredSlot].setHoveredState(true);
                 hoveredSlot = tempHoveredSlot;
             }
-        }else{
-            if(hoveredSlot != -1)
+        } else {
+            if (hoveredSlot != -1)
                 wheelSlot[hoveredSlot].setHoveredState(false);
             hoveredSlot = -1;
         }
 
         GL11.glPushMatrix();
         GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
-        super.drawScreen((int) (mouseX/undoMCScaling), (int) (mouseY/undoMCScaling), partialTicks);
+        super.drawScreen((int) (mouseX / undoMCScaling), (int) (mouseY / undoMCScaling), partialTicks);
         GL11.glPopMatrix();
 
 
@@ -304,7 +305,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             }
             wheelSlot[i].draw();
 
-            if(i == 0){
+            if (i == 0) {
 //                GL11.glTranslatef(0, 5, 0);
             } else if (i == 3) {
 //                GL11.glTranslatef(0, -5, 0);
@@ -332,7 +333,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         renderPlayer(mouseX, mouseY);
         GL11.glPopMatrix();
         String text = mouseX + "," + mouseY + ", " + hoveredSlot;
-        drawCenteredString(fontRendererObj, JRMCoreKeyHandler.Fn.getIsKeyPressed()+"", mouseX, mouseY, 0xFFFFFFFF);
+        drawCenteredString(fontRendererObj, JRMCoreKeyHandler.Fn.getIsKeyPressed() + "", mouseX, mouseY, 0xFFFFFFFF);
 
     }
 
@@ -449,13 +450,12 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     }
 
     @Override
-    public void handleKeyboardInput()
-    {
+    public void handleKeyboardInput() {
         super.handleKeyboardInput();
 
         // Handles keeping movement keys still fluid.
-        if(hasSubGui()){
-            if(!unpressedAllKeys) {
+        if (hasSubGui()) {
+            if (!unpressedAllKeys) {
                 KeyBinding.unPressAllKeys();
                 unpressedAllKeys = true;
             }
