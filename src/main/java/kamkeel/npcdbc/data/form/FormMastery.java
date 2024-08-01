@@ -42,6 +42,10 @@ public class FormMastery implements IFormMastery {
     public float movementSpeed = 1f;
     public float movementSpeedMultiFlat = 1.0f, movementSpeedMultiPerLevel = 0.01f, movementSpeedMultiMinOrMax = 1.5f;
 
+    public float tailCutChance = 100;
+    public float tailCutChanceMultiFlat = 1.0f, tailCutChanceMultiPerLevel = -0.01f, tailCutChanceMultiMinOrMax = 0f;
+
+
     public FormMastery(Form parent) {
         this.parent = parent;
     }
@@ -215,6 +219,15 @@ public class FormMastery implements IFormMastery {
                     case "minormax":
                         return movementSpeedMultiMinOrMax;
                 }
+            case "tailcutchance":
+                switch (type1.toLowerCase()) {
+                    case "flat":
+                        return tailCutChanceMultiFlat;
+                    case "perlevel":
+                        return tailCutChanceMultiPerLevel;
+                    case "minormax":
+                        return tailCutChanceMultiMinOrMax;
+                }
         }
         return 1.0f;
     }
@@ -323,6 +336,19 @@ public class FormMastery implements IFormMastery {
                         movementSpeedMultiMinOrMax = value;
                         break;
                 }
+            case "tailcutchance":
+                switch (type1.toLowerCase()) {
+                    case "flat":
+                        tailCutChanceMultiFlat = value;
+                        break;
+                    case "perlevel":
+                        tailCutChanceMultiPerLevel = value;
+                        break;
+                    case "minormax":
+                        tailCutChanceMultiMinOrMax = value;
+                        break;
+                }
+
 
         }
     }
@@ -588,6 +614,11 @@ public class FormMastery implements IFormMastery {
         movementSpeedMultiPerLevel = movementSpeedMulti.getFloat("perLevel");
         movementSpeedMultiMinOrMax = movementSpeedMulti.getFloat("minOrMax");
 
+        NBTTagCompound tailCutChanceMulti = formMastery.getCompoundTag("tailCutChance");
+        tailCutChanceMultiFlat = tailCutChanceMulti.getFloat("flat");
+        tailCutChanceMultiPerLevel = tailCutChanceMulti.getFloat("perLevel");
+        tailCutChanceMultiMinOrMax = tailCutChanceMulti.getFloat("minOrMax");
+
         NBTTagCompound update = formMastery.getCompoundTag("update");
         updateGain = update.getFloat("gain");
         updateMultiDivPlus = update.getFloat("multiDivPlus");
@@ -678,6 +709,12 @@ public class FormMastery implements IFormMastery {
         movementSpeedMulti.setFloat("perLevel", movementSpeedMultiPerLevel);
         movementSpeedMulti.setFloat("minOrMax", movementSpeedMultiMinOrMax);
         formMastery.setTag("movementSpeedMulti", movementSpeedMulti);
+
+        NBTTagCompound tailCutChanceMulti = new NBTTagCompound();
+        tailCutChanceMulti.setFloat("flat", tailCutChanceMultiFlat);
+        tailCutChanceMulti.setFloat("perLevel", tailCutChanceMultiPerLevel);
+        tailCutChanceMulti.setFloat("minOrMax", tailCutChanceMultiMinOrMax);
+        formMastery.setTag("tailCutChance", tailCutChanceMulti);
 
         NBTTagCompound update = new NBTTagCompound();
         update.setFloat("gain", updateGain);
