@@ -359,7 +359,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
         }
 
 
-        if (form.display.hairType.equals("ssj4")) {
+        if (form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) {
             maxScroll += 23;
             y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(800, "mastery.tailCutChanceSettings", 4, y + 5));

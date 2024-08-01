@@ -311,6 +311,30 @@ public abstract class MixinJRMCoreH {
         }
     }
 
+
+    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;B)I", at = @At("HEAD"), cancellable = true)
+    private static void tailCutMastery(Entity Player, int dbcA, DamageSource s, byte t, CallbackInfoReturnable<Integer> cir) {
+        if (!Player.worldObj.isRemote && Player instanceof EntityPlayer && t == 2) {
+            DBCData dbcData = DBCData.get((EntityPlayer) Player);
+            Form form = dbcData.getForm();
+            if (form != null) {
+                if (form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) {
+                    float cutChance = form.mastery.tailCutChance * form.mastery.calculateMulti("tailcutchance", dbcData.addonFormLevel);
+                    double rand = Math.random();
+                    if ((cutChance / 100) >= rand) {
+                        Player.worldObj.playSoundAtEntity(Player, "jinryuudragonbc:DBC4.disckill", 1.0F, 1.0F);
+                        setByte((byte) 4, (EntityPlayer) Player, "jrmcTlmd");
+                        int state = getByte((EntityPlayer) Player, "jrmcState");
+                        if (state == 7 || state == 8 || state == 14) {
+                            setByte(0, (EntityPlayer) Player, "jrmcState");
+                        }
+                    }
+                    cir.setReturnValue(jrmcDam(Player, dbcA, s));
+                }
+            }
+        }
+    }
+
     @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setByte(BLnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", ordinal = 0, shift = At.Shift.BEFORE))
     private static void callKOEvent(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir) {
         DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer((EntityPlayer) Player), s));

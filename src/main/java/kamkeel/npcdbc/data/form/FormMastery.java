@@ -573,6 +573,7 @@ public class FormMastery implements IFormMastery {
         painTime = formMastery.getInteger("painTime");
         maxHeat = formMastery.getInteger("maxHeat");
         movementSpeed = formMastery.getFloat("movementSpeed");
+        tailCutChance = formMastery.getFloat("tailCutChance");
 
         NBTTagCompound attributeMulti = formMastery.getCompoundTag("attributeMulti");
         attributeMultiFlat = attributeMulti.getFloat("flat");
@@ -614,7 +615,7 @@ public class FormMastery implements IFormMastery {
         movementSpeedMultiPerLevel = movementSpeedMulti.getFloat("perLevel");
         movementSpeedMultiMinOrMax = movementSpeedMulti.getFloat("minOrMax");
 
-        NBTTagCompound tailCutChanceMulti = formMastery.getCompoundTag("tailCutChance");
+        NBTTagCompound tailCutChanceMulti = formMastery.getCompoundTag("tailCutMulti");
         tailCutChanceMultiFlat = tailCutChanceMulti.getFloat("flat");
         tailCutChanceMultiPerLevel = tailCutChanceMulti.getFloat("perLevel");
         tailCutChanceMultiMinOrMax = tailCutChanceMulti.getFloat("minOrMax");
@@ -661,6 +662,7 @@ public class FormMastery implements IFormMastery {
         formMastery.setInteger("maxHeat", maxHeat);
         formMastery.setInteger("painTime", painTime);
         formMastery.setFloat("movementSpeed", movementSpeed);
+        formMastery.setFloat("tailCutChance", tailCutChance);
 
         NBTTagCompound attributeMulti = new NBTTagCompound();
         attributeMulti.setFloat("flat", attributeMultiFlat);
@@ -714,7 +716,7 @@ public class FormMastery implements IFormMastery {
         tailCutChanceMulti.setFloat("flat", tailCutChanceMultiFlat);
         tailCutChanceMulti.setFloat("perLevel", tailCutChanceMultiPerLevel);
         tailCutChanceMulti.setFloat("minOrMax", tailCutChanceMultiMinOrMax);
-        formMastery.setTag("tailCutChance", tailCutChanceMulti);
+        formMastery.setTag("tailCutMulti", tailCutChanceMulti);
 
         NBTTagCompound update = new NBTTagCompound();
         update.setFloat("gain", updateGain);
