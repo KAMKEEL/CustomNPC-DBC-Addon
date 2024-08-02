@@ -28,7 +28,7 @@ class FormWheelSegment extends WheelSegment {
     }
 
     public void selectForm() {
-        PacketHandler.Instance.sendToServer(new DBCSelectForm(data.formID).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCSelectForm(data.formID, data.isDBC).generatePacket());
     }
 
     public void setForm(int formID, boolean isDBC, boolean updateServer) {

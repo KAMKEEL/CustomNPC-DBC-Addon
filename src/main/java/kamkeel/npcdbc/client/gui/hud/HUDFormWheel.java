@@ -257,7 +257,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                     mc.mouseHelper.grabMouseCursor();
                 }
             } else {
-                PacketHandler.Instance.sendToServer(new DBCSelectForm(-1).generatePacket());
+                PacketHandler.Instance.sendToServer(new DBCSelectForm(-1, false).generatePacket());
                 close();
             }
         } else {
@@ -316,7 +316,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public void calculateHoveredSlot(float HALF_WIDTH, float HALF_HEIGHT, boolean configureEnabled) {
         final float deltaX = HALF_WIDTH - mouseX;
         final float deltaY = HALF_HEIGHT - mouseY;
-        float radius = 74 * undoMCScaling;
+        float radius = ConfigDBCClient.AlteranteSelectionWheelTexture ? 98 : 74;
+        radius *= undoMCScaling;
         if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) > radius) {
             final float radians = (float) Math.atan2(deltaY, deltaX);
             final float degree = Math.round(radians * (180 / Math.PI));

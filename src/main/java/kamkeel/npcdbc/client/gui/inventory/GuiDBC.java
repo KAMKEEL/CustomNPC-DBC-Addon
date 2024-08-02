@@ -271,12 +271,12 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 if (selected != null) {
                     if (loadedData.containsKey(selected)) {
                         int formID = loadedData.get(selected);
-                        PacketHandler.Instance.sendToServer(new DBCSelectForm(formID).generatePacket());
+                        PacketHandler.Instance.sendToServer(new DBCSelectForm(formID, false).generatePacket());
                         loaded = false;
                     }
                 }
             } else if (guibutton.id == 2) {
-                PacketHandler.Instance.sendToServer(new DBCSelectForm(-1).generatePacket());
+                PacketHandler.Instance.sendToServer(new DBCSelectForm(-1, false).generatePacket());
                 selected = null;
                 guiScroll.selected = -1;
                 loaded = false;

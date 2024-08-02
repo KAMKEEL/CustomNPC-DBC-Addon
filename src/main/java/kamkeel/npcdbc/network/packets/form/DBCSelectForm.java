@@ -2,6 +2,7 @@ package kamkeel.npcdbc.network.packets.form;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -22,9 +23,12 @@ import java.io.IOException;
 public final class DBCSelectForm extends AbstractPacket {
     public static final String packetName = "NPC|SelectForm";
     private int formID;
+    private boolean isDBC;
 
-    public DBCSelectForm(int formID) {
+
+    public DBCSelectForm(int formID, boolean isDBC) {
         this.formID = formID;
+        this.isDBC = isDBC;
     }
 
     public DBCSelectForm() {
@@ -38,18 +42,28 @@ public final class DBCSelectForm extends AbstractPacket {
     @Override
     public void sendData(ByteBuf out) throws IOException {
         out.writeInt(this.formID);
+        out.writeBoolean(this.isDBC);
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         int formID = in.readInt();
+        boolean isDBC = in.readBoolean();
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(playerData);
-        if (formID == formData.selectedForm)
-            return;
-
         NBTTagCompound compound = new NBTTagCompound();
-        if (formID != -1 && FormController.getInstance().has(formID)) {
+        if (isDBC && formID != -1) {
+            if (formID == formData.selectedDBCForm)
+                return;
+
+            DBCData dbc = DBCData.get(player);
+            formData.selectedDBCForm = formID;
+            if (formID != -1)
+                NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", DBCForm.getMenuName(dbc.Race, formID));
+        } else if (formID != -1 && FormController.getInstance().has(formID)) {
+            if (formID == formData.selectedForm)
+                return;
+
             Form form = (Form) FormController.getInstance().get(formID);
             if (form != null && formData.hasFormUnlocked(formID)) {
                 if (form.hasParent() && form.fromParentOnly) {
@@ -74,9 +88,10 @@ public final class DBCSelectForm extends AbstractPacket {
                 compound = form.writeToNBT();
             }
         } else {
-            formData.selectedForm = -1;
+            formData.selectedForm = formData.selectedDBCForm = -1;
             NetworkUtility.sendServerMessage(player, "§9", "npcdbc.clearedSelection");
         }
+
 
         formData.updateClient();
         Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
