@@ -383,62 +383,61 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         if (race == DBCRace.HUMAN) {
             if (racialSkill >= 1)
-                dbcForms.put(HumanBuffed, "Buffed");
+                dbcForms.put(HumanBuffed, "§3Buffed");
             if (racialSkill >= 2)
-                dbcForms.put(HumanFullRelease, "Full Release");
+                dbcForms.put(HumanFullRelease, "§4Full Release");
             if (racialSkill >= 5 && godSkill >= 1)
-                dbcForms.put(HumanGod, "God");
+                dbcForms.put(HumanGod, "§cGod");
         } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             if (racialSkill >= 1)
-                dbcForms.put(SuperSaiyan, "Super Saiyan");
+                dbcForms.put(SuperSaiyan, "§eSuper Saiyan");
             if (racialSkill >= 2)
-                dbcForms.put(SuperSaiyanG2, "Super Saiyan G2");
+                dbcForms.put(SuperSaiyanG2, "§eSuper Saiyan G2");
             if (racialSkill >= 3)
-                dbcForms.put(SuperSaiyanG3, "Super Saiyan G3");
+                dbcForms.put(SuperSaiyanG3, "§eSuper Saiyan G3");
             if (racialSkill >= 4)
-                dbcForms.put(MasteredSuperSaiyan, "Mastered Super Saiyan");
+                dbcForms.put(MasteredSuperSaiyan, "§eMastered Super Saiyan");
             if (racialSkill >= 5)
-                dbcForms.put(SuperSaiyan2, "Super Saiyan 2");
+                dbcForms.put(SuperSaiyan2, "§eSuper Saiyan 2");
             if (racialSkill >= 6)
-                dbcForms.put(SuperSaiyan3, "Super Saiyan 3");
+                dbcForms.put(SuperSaiyan3, "§eSuper Saiyan 3");
             if (racialSkill >= 7)
-                dbcForms.put(SuperSaiyan4, "Super Saiyan 4");
+                dbcForms.put(SuperSaiyan4, "§4Super Saiyan 4");
             if (racialSkill >= 1 && godSkill >= 1)
-                dbcForms.put(SuperSaiyanGod, "Super Saiyan God");
+                dbcForms.put(SuperSaiyanGod, "§cSuper Saiyan God");
             if (racialSkill >= 1 && godSkill >= 2)
-                dbcForms.put(SuperSaiyanBlue, "Super Saiyan Blue");
+                dbcForms.put(SuperSaiyanBlue, "§bSuper Saiyan Blue");
             if (racialSkill >= 1 && godSkill >= 3)
-                dbcForms.put(BlueEvo, "Super Saiyan Blue Evo");
+                dbcForms.put(BlueEvo, "§1Super Saiyan Blue Evo");
         } else if (race == DBCRace.NAMEKIAN) {
-            dbcForms.put(NamekGiant, "Giant");
+            dbcForms.put(NamekGiant, "§2Giant");
             if (racialSkill >= 1)
-                dbcForms.put(NamekFullRelease, "Full Release");
+                dbcForms.put(NamekFullRelease, "§aFull Release");
             if (racialSkill >= 5 && godSkill >= 1)
-                dbcForms.put(NamekGod, "God");
+                dbcForms.put(NamekGod, "§cGod");
         } else if (race == DBCRace.ARCOSIAN) {
-            dbcForms.put(Minimal, "Minimal");
             if (racialSkill >= 1)
-                dbcForms.put(FirstForm, "First Form");
+                dbcForms.put(FirstForm, "§5irst Form");
             if (racialSkill >= 2)
-                dbcForms.put(SecondForm, "Second Form");
+                dbcForms.put(SecondForm, "§5Second Form");
             if (racialSkill >= 3)
-                dbcForms.put(ThirdForm, "Third Form");
+                dbcForms.put(ThirdForm, "§5Third Form");
             if (racialSkill >= 4)
-                dbcForms.put(FinalForm, "Final Form");
+                dbcForms.put(FinalForm, "§5Final Form");
             if (racialSkill >= 5)
-                dbcForms.put(SuperForm, "Super Form");
+                dbcForms.put(SuperForm, "§5Super Form");
             if (racialSkill >= 6)
-                dbcForms.put(UltimateForm, "Ultimate Form");
+                dbcForms.put(UltimateForm, "§6Ultimate Form");
             if (racialSkill >= 6 && godSkill >= 1)
-                dbcForms.put(ArcoGod, "God");
+                dbcForms.put(ArcoGod, "§cGod");
         } else if (race == DBCRace.MAJIN) {
-            dbcForms.put(MajinEvil, "Evil");
+            dbcForms.put(MajinEvil, "§8Evil");
             if (racialSkill >= 1)
-                dbcForms.put(MajinFullPower, "Full Power");
+                dbcForms.put(MajinFullPower, "§5Full Power");
             if (racialSkill >= 2)
-                dbcForms.put(MajinPure, "Pure");
+                dbcForms.put(MajinPure, "§dPure");
             if (racialSkill >= 5 && godSkill >= 1)
-                dbcForms.put(MajinGod, "God");
+                dbcForms.put(MajinGod, "§cGod");
         }
         return dbcForms;
     }
