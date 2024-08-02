@@ -137,6 +137,10 @@ public class MixinDBCKiTech {
     @Redirect(method = "Ascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;isInState(I)Z"))
     private static boolean fixSomeFormsNotAscendingProperly(int state) {
         PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
+        if (state == 4) { //SSG2/SSJ4/SSBE condition
+            if (dbc.selectedDBCForm != -1 && dbc.selectedDBCForm != JRMCoreH.State)
+                return true;
+        }
         if (dbc.selectedDBCForm != -1)
             return false;
 
