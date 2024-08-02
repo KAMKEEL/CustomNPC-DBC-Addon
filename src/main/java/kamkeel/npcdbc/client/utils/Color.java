@@ -14,12 +14,21 @@ public class Color {
         setColor(color, alpha);
     }
 
+    public Color(int red, int green, int blue, float alpha) {
+        setColor(red, green, blue, alpha);
+    }
+
     public void setColor(int color, float alpha) {
         this.color = color;
         this.alpha = alpha;
     }
 
-    public static Color lerpRGBA(Color color1, Color color2, float fraction){
+    public void setColor(int red, int green, int blue, float alpha) {
+        this.color = (red << 16) + (green << 8) + blue;
+        this.alpha = alpha;
+    }
+
+    public static Color lerpRGBA(Color color1, Color color2, float fraction) {
         fraction = Math.min(fraction, 1f);
         int red = (int) (color1.getRed() + ((color2.getRed() - color1.getRed()) * fraction));
         int green = (int) (color1.getGreen() + ((color2.getGreen() - color1.getGreen()) * fraction));
@@ -29,7 +38,7 @@ public class Color {
         return new Color(newColor, newAlpha);
     }
 
-    public Color lerpRGBA(Color color2, float fraction){
+    public Color lerpRGBA(Color color2, float fraction) {
         return Color.lerpRGBA(this, color2, fraction);
     }
 
@@ -43,6 +52,7 @@ public class Color {
         ShaderHelper.uniformColor(name, color, alpha);
 
     }
+
     public NBTTagCompound writeToNBT(NBTTagCompound compound, String name) {
         compound.setInteger(name + "Color", color);
         compound.setFloat(name + "Alpha", alpha);
