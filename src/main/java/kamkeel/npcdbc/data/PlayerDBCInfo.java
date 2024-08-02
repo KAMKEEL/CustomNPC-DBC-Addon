@@ -7,7 +7,6 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.NBTTags;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.util.ValueUtil;
@@ -73,7 +72,6 @@ public class PlayerDBCInfo {
     }
 
 
-
     public Form getForm(int id) {
         if (unlockedForms.contains(id))
             return (Form) FormController.getInstance().get(id);
@@ -137,6 +135,9 @@ public class PlayerDBCInfo {
         selectedForm = -1;
         unlockedForms.clear();
         formLevels.clear();
+
+        for (int i = 0; i < formWheel.length; i++)
+            formWheel[i].reset();
     }
 
     ////////////////////////////////////////////////
