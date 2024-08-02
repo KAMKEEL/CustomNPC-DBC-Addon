@@ -98,6 +98,79 @@ public class DBCForm {
         return false;
     }
 
+    public static String getMenuName(int race, int form) {
+        String name = null;
+        if (race == DBCRace.HUMAN) {
+            if (form == HumanBuffed)
+                name = "Buffed";
+            else if (form == HumanFullRelease)
+                name = "Full Release";
+            else if (form == HumanGod)
+                name = "God";
+        } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            if (form == SuperSaiyan)
+                name = "§eSuper Saiyan";
+            else if (form == SuperSaiyanG2)
+                name = "§eSuper Saiyan G2";
+            else if (form == SuperSaiyanG3)
+                name = "§eSuper Saiyan G3";
+            else if (form == MasteredSuperSaiyan)
+                name = "§eMastered Super Saiyan";
+            else if (form == SuperSaiyan2)
+                name = "§eSuper Saiyan 2";
+            else if (form == SuperSaiyan3)
+                name = "§eSuper Saiyan 3";
+            else if (form == SuperSaiyan4)
+                name = "§eSuper Saiyan 4";
+            else if (form == GreatApe)
+                name = "§6Great Ape";
+            else if (form == SuperGreatApe)
+                name = "§eSuper Great Ape";
+            else if (form == SuperSaiyanGod)
+                name = "§cSuper Saiyan God";
+            else if (form == SuperSaiyanBlue)
+                name = "§bSuper Saiyan Blue";
+            else if (form == BlueEvo)
+                name = "§1Super Saiyan Blue Evo";
+
+        } else if (race == DBCRace.NAMEKIAN) {
+            if (form == NamekGiant)
+                name = "Giant";
+            else if (form == NamekFullRelease)
+                name = "Full Release";
+            else if (form == NamekGod)
+                name = "God";
+        } else if (race == DBCRace.ARCOSIAN) {
+            if (form == Minimal)
+                name = "Minimal";
+            else if (form == FirstForm)
+                name = "First Form";
+            else if (form == SecondForm)
+                name = "Second Form";
+            else if (form == ThirdForm)
+                name = "Third Form";
+            else if (form == FinalForm)
+                name = "Final Form";
+            else if (form == SuperForm)
+                name = "Super Form";
+            else if (form == UltimateForm)
+                name = "Ultimate Form";
+            else if (form == ArcoGod)
+                name = "God";
+        } else if (race == DBCRace.MAJIN) {
+            if (form == MajinEvil)
+                name = "Evil";
+            else if (form == MajinFullPower)
+                name = "Full Power";
+            else if (form == MajinPure)
+                name = "Pure";
+            else if (form == MajinGod)
+                name = "God";
+
+        }
+        return name;
+    }
+
     public static HashMap<Integer, String> getFormsMap(int race) {
         HashMap<Integer, String> forms = new HashMap<>();
         forms.put(Base, "Base");

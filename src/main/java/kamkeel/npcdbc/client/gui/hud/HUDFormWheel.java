@@ -3,6 +3,7 @@ package kamkeel.npcdbc.client.gui.hud;
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -107,68 +108,72 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
 
             Form form = wheelSlot[0].form;
+
+
             addLabel(new GuiNpcLabel(0, "Slot 1", x, y + 5));
             getLabel(0).color = 14737632;
             addButton(new GuiNpcButton(0, x, y += 15, 80, 20, "general.noForm"));
-            if (form != null)
-                getButton(0).setDisplayText(form.getMenuName());
+            getButton(0).setDisplayText(getFormName(0));
             addButton(new GuiNpcButton(100, x + 80, y, 16, 20, "X"));
-            getButton(100).enabled = form != null;
+            getButton(100).enabled = wheelSlot[0].data.formID != -1;
 
             y += 22;
             form = wheelSlot[1].form;
             addLabel(new GuiNpcLabel(1, "Slot 2", x + 2, y + 5));
             getLabel(1).color = 14737632;
             addButton(new GuiNpcButton(1, x, y += 15, 80, 20, "general.noForm"));
-            if (form != null)
-                getButton(1).setDisplayText(form.getMenuName());
+            getButton(1).setDisplayText(getFormName(1));
             addButton(new GuiNpcButton(11, x + 80, y, 16, 20, "X"));
-            getButton(11).enabled = form != null;
+            getButton(11).enabled = wheelSlot[1].data.formID != -1;
 
             y += 22;
             form = wheelSlot[2].form;
             addLabel(new GuiNpcLabel(2, "Slot 3", x + 2, y + 5));
             getLabel(2).color = 14737632;
             addButton(new GuiNpcButton(2, x, y += 15, 80, 20, "general.noForm"));
-            if (form != null)
-                getButton(2).setDisplayText(form.getMenuName());
+            getButton(2).setDisplayText(getFormName(2));
             addButton(new GuiNpcButton(22, x + 80, y, 16, 20, "X"));
-            getButton(22).enabled = form != null;
+            getButton(22).enabled = wheelSlot[2].data.formID != -1;
 
             y += 22;
             form = wheelSlot[3].form;
             addLabel(new GuiNpcLabel(3, "Slot 4", x + 2, y + 5));
             getLabel(3).color = 14737632;
             addButton(new GuiNpcButton(3, x, y += 15, 80, 20, "general.noForm"));
-            if (form != null)
-                getButton(3).setDisplayText(form.getMenuName());
+            getButton(3).setDisplayText(getFormName(3));
             addButton(new GuiNpcButton(33, x + 80, y, 16, 20, "X"));
-            getButton(33).enabled = form != null;
+            getButton(33).enabled = wheelSlot[3].data.formID != -1;
 
             y += 22;
             form = wheelSlot[4].form;
             addLabel(new GuiNpcLabel(4, "Slot 5", x + 2, y + 5));
             getLabel(4).color = 14737632;
             addButton(new GuiNpcButton(4, x, y += 15, 80, 20, "general.noForm"));
-            if (form != null)
-                getButton(4).setDisplayText(form.getMenuName());
+            getButton(4).setDisplayText(getFormName(4));
             addButton(new GuiNpcButton(44, x + 80, y, 16, 20, "X"));
-            getButton(44).enabled = form != null;
+            getButton(44).enabled = wheelSlot[4].data.formID != -1;
 
             y += 22;
             form = wheelSlot[5].form;
             addLabel(new GuiNpcLabel(5, "Slot 6", x + 2, y + 5));
             getLabel(5).color = 14737632;
             addButton(new GuiNpcButton(5, x, y += 15, 80, 20, "general.noForm"));
-            if (form != null)
-                getButton(5).setDisplayText(form.getMenuName());
+
+            getButton(5).setDisplayText(getFormName(5));
             addButton(new GuiNpcButton(55, x + 80, y, 16, 20, "X"));
-            getButton(55).enabled = form != null;
+            getButton(55).enabled = wheelSlot[5].data.formID != -1;
         }
 
         BLUR_INTENSITY = 0;
     }
 
+    public String getFormName(int wheelSlot) {
+        DBCData dbcData = DBCData.getClient();
+        FormWheelData data = this.wheelSlot[wheelSlot].data;
+        Form form = this.wheelSlot[wheelSlot].form;
+
+        return !data.isDBC ? form != null ? form.menuName : "general.noForm" : DBCForm.getMenuName(dbcData.Race, data.formID);
+    }
 
     @Override
     public void setGuiData(NBTTagCompound compound) {
@@ -337,6 +342,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
         if (hasSubGui()) {
@@ -394,11 +400,10 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         float scale = 1.4f;
         GL11.glScalef(scale, scale, 0);
         //  new Color(0x8f8a86,0.5f).glColor();
-
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         for (int i = 0; i < 6; i++) {
-            Form form = wheelSlot[i].form;
+            FormWheelData data = wheelSlot[i].data;
             GL11.glPushMatrix();
 //            GL11.glTranslatef(0, , 0);
 
@@ -433,7 +438,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             } else {
                 GL11.glTranslatef(0, -10, 0);
             }
-            if (form != null) {
+            if (data.formID != -1) {
+
                 if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
                     glScaled(0.7, 0.7, 1);
                     if (i == 0) {
@@ -451,7 +457,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                     }
 
                 }
-                drawCenteredString(fontRendererObj, form.menuName, 0, 0, 0xFFFFFFFF);
+
+                drawCenteredString(fontRendererObj, getFormName(i), 0, 0, 0xFFFFFFFF);
             }
 
             GL11.glPopMatrix();
@@ -547,7 +554,11 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         data.State2 = 0; // Removes DBC state 2
 
         if (changeForm) {
-            data.addonFormID = wheelSlot[hoveredSlot].data.formID;
+            FormWheelData wheelData = wheelSlot[hoveredSlot].data;
+            if (!wheelData.isDBC)
+                data.addonFormID = wheelSlot[hoveredSlot].data.formID;
+            else
+                data.State = (byte) wheelData.formID;
         }
 
 
