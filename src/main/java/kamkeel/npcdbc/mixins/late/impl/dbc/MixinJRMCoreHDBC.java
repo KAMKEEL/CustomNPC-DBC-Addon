@@ -43,7 +43,11 @@ public class MixinJRMCoreHDBC {
     private static void setCustomFormSize(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir, @Local(name = "f3") LocalFloatRef size) {
         if (CommonProxy.CurrentJRMCTickPlayer != null) {
             if (ClientProxy.renderingGUI) {
-                cir.setReturnValue(1f);
+                float sz = size.get();
+                if (sz > 1.5f)
+                    cir.setReturnValue(1f);
+                else if (sz > 1.1f)
+                    cir.setReturnValue(sz * 0.9f);
                 return;
             }
 

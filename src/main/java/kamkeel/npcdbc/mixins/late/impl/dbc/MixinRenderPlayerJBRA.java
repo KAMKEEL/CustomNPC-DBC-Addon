@@ -117,6 +117,12 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     }
 
+    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data2:[Ljava/lang/String;"), remap = true)
+    private String[] changeFormDAata(@Local(name = "pl") LocalIntRef pl, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
+        DBCData data = DBCData.get(player.get());
+        return new String[]{data.State + "", data.State2 + ""};
+    }
+
     @Redirect(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/RenderPlayerJBRA;b(Ljava/lang/String;)B"))
     private byte changeFormD2ata(RenderPlayerJBRA instance, String n, @Local(name = "pl") LocalIntRef pl, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
         String[] state = JRMCoreH.data2 == null ? new String[]{"0", "0", "0"} : JRMCoreH.data2[pl.get()].split(";");
