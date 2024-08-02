@@ -112,55 +112,54 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
             addLabel(new GuiNpcLabel(0, "Slot 1", x, y + 5));
             getLabel(0).color = 14737632;
-            addButton(new GuiNpcButton(0, x, y += 15, 80, 20, "general.noForm"));
-            getButton(0).setDisplayText(getFormName(0));
             addButton(new GuiNpcButton(100, x + 80, y, 16, 20, "X"));
+            addButton(new GuiNpcButton(0, x, y, 80, 20, "general.noForm"));
+            getButton(0).setDisplayText(getFormName(0));
             getButton(100).enabled = wheelSlot[0].data.formID != -1;
 
             y += 22;
-            form = wheelSlot[1].form;
             addLabel(new GuiNpcLabel(1, "Slot 2", x + 2, y + 5));
             getLabel(1).color = 14737632;
-            addButton(new GuiNpcButton(1, x, y += 15, 80, 20, "general.noForm"));
-            getButton(1).setDisplayText(getFormName(1));
+            y += 15;
             addButton(new GuiNpcButton(11, x + 80, y, 16, 20, "X"));
+            addButton(new GuiNpcButton(1, x, y, 80, 20, "general.noForm"));
+            getButton(1).setDisplayText(getFormName(1));
             getButton(11).enabled = wheelSlot[1].data.formID != -1;
 
             y += 22;
-            form = wheelSlot[2].form;
             addLabel(new GuiNpcLabel(2, "Slot 3", x + 2, y + 5));
             getLabel(2).color = 14737632;
-            addButton(new GuiNpcButton(2, x, y += 15, 80, 20, "general.noForm"));
-            getButton(2).setDisplayText(getFormName(2));
+            y += 15;
             addButton(new GuiNpcButton(22, x + 80, y, 16, 20, "X"));
+            addButton(new GuiNpcButton(2, x, y, 80, 20, "general.noForm"));
+            getButton(2).setDisplayText(getFormName(2));
             getButton(22).enabled = wheelSlot[2].data.formID != -1;
 
             y += 22;
-            form = wheelSlot[3].form;
             addLabel(new GuiNpcLabel(3, "Slot 4", x + 2, y + 5));
             getLabel(3).color = 14737632;
-            addButton(new GuiNpcButton(3, x, y += 15, 80, 20, "general.noForm"));
-            getButton(3).setDisplayText(getFormName(3));
+            y += 15;
             addButton(new GuiNpcButton(33, x + 80, y, 16, 20, "X"));
+            addButton(new GuiNpcButton(3, x, y, 80, 20, "general.noForm"));
+            getButton(3).setDisplayText(getFormName(3));
             getButton(33).enabled = wheelSlot[3].data.formID != -1;
 
             y += 22;
-            form = wheelSlot[4].form;
             addLabel(new GuiNpcLabel(4, "Slot 5", x + 2, y + 5));
             getLabel(4).color = 14737632;
-            addButton(new GuiNpcButton(4, x, y += 15, 80, 20, "general.noForm"));
-            getButton(4).setDisplayText(getFormName(4));
+            y += 15;
             addButton(new GuiNpcButton(44, x + 80, y, 16, 20, "X"));
+            addButton(new GuiNpcButton(4, x, y, 80, 20, "general.noForm"));
+            getButton(4).setDisplayText(getFormName(4));
             getButton(44).enabled = wheelSlot[4].data.formID != -1;
 
             y += 22;
-            form = wheelSlot[5].form;
             addLabel(new GuiNpcLabel(5, "Slot 6", x + 2, y + 5));
             getLabel(5).color = 14737632;
-            addButton(new GuiNpcButton(5, x, y += 15, 80, 20, "general.noForm"));
-
-            getButton(5).setDisplayText(getFormName(5));
+            y += 15;
             addButton(new GuiNpcButton(55, x + 80, y, 16, 20, "X"));
+            addButton(new GuiNpcButton(5, x, y, 80, 20, "general.noForm"));
+            getButton(5).setDisplayText(getFormName(5));
             getButton(55).enabled = wheelSlot[5].data.formID != -1;
         }
 
