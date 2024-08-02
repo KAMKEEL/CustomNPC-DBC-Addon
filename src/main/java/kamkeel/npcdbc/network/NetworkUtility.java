@@ -3,6 +3,7 @@ package kamkeel.npcdbc.network;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
@@ -13,7 +14,6 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.NBTTags;
 import noppes.npcs.Server;
 import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.controllers.PlayerDataController;
@@ -66,13 +66,12 @@ public class NetworkUtility {
         PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
         NBTTagCompound compound = new NBTTagCompound();
         if (data != null) {
-            Map<Integer, Integer> wheel = data.getFormWheel();
             for (int i = 0; i < 6; i++) {
-                int formID = wheel.get(i);
-                if (formID != -1 && !FormController.getInstance().has(formID))
-                    wheel.replace(i, -1);
+                FormWheelData wheelData = data.formWheel[i];
+                if (wheelData.formID != -1 && !wheelData.isDBC && !FormController.getInstance().has(wheelData.formID))
+                    wheelData.formID = -1;
+                wheelData.writeToNBT(compound);
             }
-            compound.setTag("FormWheel", NBTTags.nbtIntegerIntegerMap(wheel));
         }
         Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
     }

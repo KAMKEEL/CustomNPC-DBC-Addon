@@ -3,7 +3,7 @@ package kamkeel.npcdbc.client.gui.hud;
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.config.ConfigDBCClient;
-import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -25,7 +25,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.NBTTags;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.util.ValueUtil;
 import org.lwjgl.input.Keyboard;
@@ -34,7 +33,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import java.util.Iterator;
-import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.glScaled;
 import static org.lwjgl.opengl.GL11.glTranslatef;
@@ -63,7 +61,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         PlayerDBCInfo data = PlayerDataUtil.getClientDBCInfo();
         for (int i = 0; i < 6; i++) {
             wheelSlot[i] = new FormWheelSegment(this, i);
-            wheelSlot[i].setForm(data.getWheelSlotID(i), false);
+            wheelSlot[i].setForm(data.formWheel[i], false);
         }
         PacketHandler.Instance.sendToServer(new DBCRequestFormWheel().generatePacket());
 
@@ -174,11 +172,10 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     @Override
     public void setGuiData(NBTTagCompound compound) {
-        Map<Integer, Integer> playerWheel = NBTTags.getIntegerIntegerMap(compound.getTagList("FormWheel", 10));
         for (int i = 0; i < 6; i++) {
-            int formID = playerWheel.get(i);
-            wheelSlot[i].formID = formID;
-            wheelSlot[i].form = (Form) FormController.getInstance().get(formID);
+            FormWheelData data = new FormWheelData(i);
+            data.readFromNBT(compound.getCompoundTag("FormWheel" + i));
+            wheelSlot[i].setForm(data, false);
         }
 
         initGui();
@@ -232,7 +229,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 if (form != null && selectForm.selectedFormID == form.id)
                     return;
 
-                slot.setForm(selectForm.selectedFormID, true);
+
+                slot.setForm(selectForm.selectedFormID, selectForm.isDBC, true);
             }
         }
         initGui();
@@ -549,7 +547,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         data.State2 = 0; // Removes DBC state 2
 
         if (changeForm) {
-            data.addonFormID = wheelSlot[hoveredSlot].formID;
+            data.addonFormID = wheelSlot[hoveredSlot].data.formID;
         }
 
 
