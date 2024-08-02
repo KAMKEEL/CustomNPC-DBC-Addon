@@ -39,6 +39,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import static kamkeel.npcdbc.constants.DBCForm.*;
+
 public class DBCData extends DBCDataUniversal implements IAuraData {
 
     public static String DBCPersisted = "PlayerPersisted";
@@ -338,6 +340,108 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         }
     }
 
+    public boolean hasForm(int dbcForm) {
+
+
+        if (dbcForm == DBCForm.Kaioken)
+            return JRMCoreH.SklLvl(8) > 0;
+        if (dbcForm == DBCForm.UltraInstinct)
+            if (dbcForm == DBCForm.MasteredUltraInstinct)
+                return JRMCoreH.SklLvl(16) > 0;
+        if (dbcForm == DBCForm.GodOfDestruction)
+            return JRMCoreH.SklLvl(18) > 0;
+        if (dbcForm == DBCForm.Mystic)
+            return JRMCoreH.SklLvl(10) > 0;
+
+        int racial = JRMCoreH.SklLvlX(Powertype, RacialSkills) - 1;
+        int godForm = JRMCoreH.SklLvl(9);
+        switch (Race) {
+            case 1:
+            case 2:
+                switch (dbcForm) {
+                    case DBCForm.SuperSaiyanGod:
+                        return godForm >= 1;
+                    case DBCForm.SuperSaiyanBlue:
+                        return godForm >= 2;
+                    case DBCForm.BlueEvo:
+                        return godForm >= 3;
+                    case DBCForm.SuperSaiyan4:
+                        return racial >= 7 && getRawCompound().getInteger("jrmcAfGFtStFT") > 0 && hasTail();
+                    default:
+                        return false;
+                }
+            default:
+                return false;
+        }
+    }
+
+    public HashMap<Integer, String> getUnlockedDBCFormsMap() {
+        HashMap<Integer, String> dbcForms = new HashMap<>();
+        int race = Race;
+        int racialSkill = JRMCoreH.SklLvlX(1, RacialSkills);
+        int godSkill = JRMCoreH.SklLvl(9);
+
+        if (race == DBCRace.HUMAN) {
+            if (racialSkill >= 1)
+                dbcForms.put(HumanBuffed, "Buffed");
+            if (racialSkill >= 2)
+                dbcForms.put(HumanFullRelease, "Full Release");
+            if (racialSkill >= 5 && godSkill >= 1)
+                dbcForms.put(HumanGod, "God");
+        } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            if (racialSkill >= 1)
+                dbcForms.put(SuperSaiyan, "Super Saiyan");
+            if (racialSkill >= 2)
+                dbcForms.put(SuperSaiyanG2, "Super Saiyan G2");
+            if (racialSkill >= 3)
+                dbcForms.put(SuperSaiyanG3, "Super Saiyan G3");
+            if (racialSkill >= 4)
+                dbcForms.put(MasteredSuperSaiyan, "Mastered Super Saiyan");
+            if (racialSkill >= 5)
+                dbcForms.put(SuperSaiyan2, "Super Saiyan 2");
+            if (racialSkill >= 6)
+                dbcForms.put(SuperSaiyan3, "Super Saiyan 3");
+            if (racialSkill >= 7)
+                dbcForms.put(SuperSaiyan4, "Super Saiyan 4");
+            if (racialSkill >= 1 && godSkill >= 1)
+                dbcForms.put(SuperSaiyanGod, "Super Saiyan God");
+            if (racialSkill >= 1 && godSkill >= 2)
+                dbcForms.put(SuperSaiyanBlue, "Super Saiyan Blue");
+            if (racialSkill >= 1 && godSkill >= 3)
+                dbcForms.put(BlueEvo, "Super Saiyan Blue Evo");
+        } else if (race == DBCRace.NAMEKIAN) {
+            dbcForms.put(NamekGiant, "Giant");
+            if (racialSkill >= 1)
+                dbcForms.put(NamekFullRelease, "Full Release");
+            if (racialSkill >= 5 && godSkill >= 1)
+                dbcForms.put(NamekGod, "God");
+        } else if (race == DBCRace.ARCOSIAN) {
+            dbcForms.put(Minimal, "Minimal");
+            if (racialSkill >= 1)
+                dbcForms.put(FirstForm, "First Form");
+            if (racialSkill >= 2)
+                dbcForms.put(SecondForm, "Second Form");
+            if (racialSkill >= 3)
+                dbcForms.put(ThirdForm, "Third Form");
+            if (racialSkill >= 4)
+                dbcForms.put(FinalForm, "Final Form");
+            if (racialSkill >= 5)
+                dbcForms.put(SuperForm, "Super Form");
+            if (racialSkill >= 6)
+                dbcForms.put(UltimateForm, "Ultimate Form");
+            if (racialSkill >= 6 && godSkill >= 1)
+                dbcForms.put(ArcoGod, "God");
+        } else if (race == DBCRace.MAJIN) {
+            dbcForms.put(MajinEvil, "Evil");
+            if (racialSkill >= 1)
+                dbcForms.put(MajinFullPower, "Full Power");
+            if (racialSkill >= 2)
+                dbcForms.put(MajinPure, "Pure");
+            if (racialSkill >= 5 && godSkill >= 1)
+                dbcForms.put(MajinGod, "God");
+        }
+        return dbcForms;
+    }
 
     public boolean containsSE(int id) {
         return JRMCoreH.StusEfcts(id, StatusEffects);
