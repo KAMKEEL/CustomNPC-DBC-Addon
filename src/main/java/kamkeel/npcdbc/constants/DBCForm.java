@@ -102,40 +102,40 @@ public class DBCForm {
         HashMap<Integer, String> forms = new HashMap<>();
         forms.put(Base, "Base");
         if (race == DBCRace.HUMAN) {
-            forms.put(HumanBuffed, "HumanBuffed");
-            forms.put(HumanFullRelease, "HumanFullRelease");
-            forms.put(HumanGod, "HumanGod");
+            forms.put(HumanBuffed, "Buffed");
+            forms.put(HumanFullRelease, "Full Release");
+            forms.put(HumanGod, "God");
         } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-            forms.put(SuperSaiyan, "SuperSaiyan");
-            forms.put(SuperSaiyanG2, "SuperSaiyanG2");
-            forms.put(SuperSaiyanG3, "SuperSaiyanG3");
-            forms.put(MasteredSuperSaiyan, "MasteredSuperSaiyan");
-            forms.put(SuperSaiyan2, "SuperSaiyan2");
-            forms.put(SuperSaiyan3, "SuperSaiyan3");
-            forms.put(SuperSaiyan4, "SuperSaiyan4");
-            forms.put(GreatApe, "GreatApe");
-            forms.put(SuperGreatApe, "SuperGreatApe");
-            forms.put(SuperSaiyanGod, "SuperSaiyanGod");
-            forms.put(SuperSaiyanBlue, "SuperSaiyanBlue");
-            forms.put(BlueEvo, "BlueEvo");
+            forms.put(SuperSaiyan, "Super Saiyan");
+            forms.put(SuperSaiyanG2, "Super Saiyan G2");
+            forms.put(SuperSaiyanG3, "Super Saiyan G3");
+            forms.put(MasteredSuperSaiyan, "Mastered Super Saiyan");
+            forms.put(SuperSaiyan2, "Super Saiyan 2");
+            forms.put(SuperSaiyan3, "Super Saiyan 3");
+            forms.put(SuperSaiyan4, "Super Saiyan 4");
+            forms.put(GreatApe, "Great Ape");
+            forms.put(SuperGreatApe, "Super Great Ape");
+            forms.put(SuperSaiyanGod, "Super Saiyan God");
+            forms.put(SuperSaiyanBlue, "Super Saiyan Blue");
+            forms.put(BlueEvo, "Super Saiyan Blue Evo");
         } else if (race == DBCRace.NAMEKIAN) {
-            forms.put(NamekGiant, "NamekGiant");
-            forms.put(NamekFullRelease, "NamekFullRelease");
-            forms.put(NamekGod, "NamekGod");
+            forms.put(NamekGiant, "Giant");
+            forms.put(NamekFullRelease, "Full Release");
+            forms.put(NamekGod, "God");
         } else if (race == DBCRace.ARCOSIAN) {
             forms.put(Minimal, "Minimal");
-            forms.put(FirstForm, "FirstForm");
-            forms.put(SecondForm, "SecondForm");
-            forms.put(ThirdForm, "ThirdForm");
-            forms.put(FinalForm, "FinalForm");
-            forms.put(SuperForm, "SuperForm");
-            forms.put(UltimateForm, "UltimateForm");
-            forms.put(ArcoGod, "ArcoGod");
+            forms.put(FirstForm, "First Form");
+            forms.put(SecondForm, "Second Form");
+            forms.put(ThirdForm, "Third Form");
+            forms.put(FinalForm, "Final Form");
+            forms.put(SuperForm, "Super Form");
+            forms.put(UltimateForm, "Ultimate Form");
+            forms.put(ArcoGod, "God");
         } else if (race == DBCRace.MAJIN) {
-            forms.put(MajinEvil, "MajinEvil");
-            forms.put(MajinFullPower, "MajinFullPower");
-            forms.put(MajinPure, "MajinPure");
-            forms.put(MajinGod, "MajinGod");
+            forms.put(MajinEvil, "Evil");
+            forms.put(MajinFullPower, "Full Power");
+            forms.put(MajinPure, "Pure");
+            forms.put(MajinGod, "God");
         }
         return forms;
     }
