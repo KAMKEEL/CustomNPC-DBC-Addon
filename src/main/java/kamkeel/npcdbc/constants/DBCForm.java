@@ -102,11 +102,11 @@ public class DBCForm {
         String name = null;
         if (race == DBCRace.HUMAN) {
             if (form == HumanBuffed)
-                name = "Buffed";
+                name = "§3Buffed";
             else if (form == HumanFullRelease)
-                name = "Full Release";
+                name = "§4Full Release";
             else if (form == HumanGod)
-                name = "God";
+                name = "§cGod";
         } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             if (form == SuperSaiyan)
                 name = "§eSuper Saiyan";
@@ -135,37 +135,37 @@ public class DBCForm {
 
         } else if (race == DBCRace.NAMEKIAN) {
             if (form == NamekGiant)
-                name = "Giant";
+                name = "§2Giant";
             else if (form == NamekFullRelease)
-                name = "Full Release";
+                name = "§aFull Release";
             else if (form == NamekGod)
-                name = "God";
+                name = "§cGod";
         } else if (race == DBCRace.ARCOSIAN) {
             if (form == Minimal)
-                name = "Minimal";
+                name = "§dMinimal";
             else if (form == FirstForm)
-                name = "First Form";
+                name = "§dFirst Form";
             else if (form == SecondForm)
-                name = "Second Form";
+                name = "§dSecond Form";
             else if (form == ThirdForm)
-                name = "Third Form";
+                name = "§dThird Form";
             else if (form == FinalForm)
-                name = "Final Form";
+                name = "§dFinal Form";
             else if (form == SuperForm)
-                name = "Super Form";
+                name = "§7Super Form";
             else if (form == UltimateForm)
-                name = "Ultimate Form";
+                name = "§6Ultimate Form";
             else if (form == ArcoGod)
-                name = "God";
+                name = "§cGod";
         } else if (race == DBCRace.MAJIN) {
             if (form == MajinEvil)
-                name = "Evil";
+                name = "§8Evil";
             else if (form == MajinFullPower)
-                name = "Full Power";
+                name = "§5Full Power";
             else if (form == MajinPure)
-                name = "Pure";
+                name = "§dPure";
             else if (form == MajinGod)
-                name = "God";
+                name = "§cGod";
 
         }
         return name;
