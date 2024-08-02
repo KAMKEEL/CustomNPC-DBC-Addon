@@ -127,7 +127,7 @@ public interface IDBCAddon extends IDBCPlayer {
     /**
      * @return True if player is charging a ki attack
      */
-    boolean isChargingKi();
+    boolean isChargingKiAttack();
 
     /**
      * @param skillname Check JRMCoreH.DBCSkillNames
@@ -202,9 +202,9 @@ public interface IDBCAddon extends IDBCPlayer {
 
     boolean isMajin();
 
-    void setForm(int formID);
+    void setCustomForm(int formID);
 
-    void setForm(IForm form);
+    void setCustomForm(IForm form);
 
     void setFlight(boolean flightOn);
 
@@ -224,13 +224,13 @@ public interface IDBCAddon extends IDBCPlayer {
 
     void setSprintSpeed(float speed);
 
-    void giveForm(String formName);
+    void giveCustomForm(String formName);
 
-    void giveForm(IForm form);
+    void giveCustomForm(IForm form);
 
-    void removeForm(String formName);
+    void removeCustomForm(String formName);
 
-    void removeForm(IForm form);
+    void removeCustomForm(IForm form);
 
     //form player transforms to on transformation
     void setSelectedForm(IForm form);
@@ -264,15 +264,15 @@ public interface IDBCAddon extends IDBCPlayer {
     /**
      * @return True if player is in any CNPC+ custom form
      */
-    boolean isInForm();
+    boolean isInCustomForm();
 
-    boolean isInForm(IForm form);
+    boolean isInCustomForm(IForm form);
 
     /**
      * @param formID
      * @return True if player is in formID
      */
-    boolean isInForm(int formID);
+    boolean isInCustomForm(int formID);
 
     void setCustomMastery(int formID, float value);
 

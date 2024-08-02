@@ -417,7 +417,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public boolean isChargingKi() {
+    public boolean isChargingKiAttack() {
         return dbcData.stats.isChargingKiAttack();
     }
 
@@ -628,24 +628,24 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     //////////////////////////////////////////////
     // Form stuff
 
-    public void giveForm(String formName) {
+    public void giveCustomForm(String formName) {
         IForm form = FormController.Instance.get(formName);
         form.assignToPlayer(player);
     }
 
     @Override
-    public void giveForm(IForm form) {
-        giveForm(form.getName());
+    public void giveCustomForm(IForm form) {
+        giveCustomForm(form.getName());
     }
 
-    public void removeForm(String formName) {
+    public void removeCustomForm(String formName) {
         IForm f = FormController.Instance.get(formName);
         f.removeFromPlayer(player);
     }
 
     @Override
-    public void removeForm(IForm form) {
-        removeForm(form.getName());
+    public void removeCustomForm(IForm form) {
+        removeCustomForm(form.getName());
     }
 
     @Override
@@ -671,16 +671,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         formData.updateClient();
     }
 
-    public boolean isInForm() {
+    public boolean isInCustomForm() {
         return PlayerDataUtil.getDBCInfo(player).isInCustomForm();
     }
 
     @Override
-    public boolean isInForm(IForm form) {
+    public boolean isInCustomForm(IForm form) {
         return dbcData.addonFormID == form.getID();
     }
 
-    public boolean isInForm(int formID) {
+    public boolean isInCustomForm(int formID) {
         return PlayerDataUtil.getDBCInfo(player).isInForm(formID);
     }
 
@@ -688,7 +688,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return dbcData.getForm();
     }
 
-    public void setForm(int formID) {
+    public void setCustomForm(int formID) {
         Form f = (Form) FormController.Instance.get(formID);
         if (f == null)
             throw new CustomNPCsException("Form does not exist!");
@@ -719,8 +719,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public void setForm(IForm form) {
-        setForm(form.getID());
+    public void setCustomForm(IForm form) {
+        setCustomForm(form.getID());
     }
 
     //////////////////////////////////////////////
