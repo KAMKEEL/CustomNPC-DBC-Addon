@@ -50,7 +50,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         super.initGui();
         guiTop += 10;
         if (showDBCForms)
-            addButton(new GuiNpcButton(3, guiLeft + 159, guiTop + 10, 89, 20, new String[]{"DBC", "Custom"}, page));
+            addButton(new GuiNpcButton(3, guiLeft + 159, guiTop + 57, 89, 20, new String[]{"DBC", "Custom"}, page));
 
         if (scrollForms == null) {
             scrollForms = new GuiCustomScroll(this, 0, 0);
@@ -70,8 +70,8 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
 
         addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 8, guiTop + 192, 143, 20, search));
 
-        addButton(new GuiNpcButton(0, guiLeft + 159, guiTop + 4 + 166, 89, 20, "gui.add"));
-        addButton(new GuiNpcButton(1, guiLeft + 159, guiTop + 26 + 166, 89, 20, "gui.cancel"));
+        addButton(new GuiNpcButton(0, guiLeft + 159, guiTop + 4 , 89, 20, "gui.add"));
+        addButton(new GuiNpcButton(1, guiLeft + 159, guiTop + 26 , 89, 20, "gui.cancel"));
     }
 
     public SubGuiSelectForm displayDBCForms(DBCData data) {
