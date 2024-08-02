@@ -410,31 +410,29 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             if (racialSkill >= 1 && godSkill >= 3)
                 dbcForms.put(BlueEvo, "§1Super Saiyan Blue Evo");
         } else if (race == DBCRace.NAMEKIAN) {
-            dbcForms.put(NamekGiant, "§2Giant");
             if (racialSkill >= 1)
+                dbcForms.put(NamekGiant, "§2Giant");
+            if (racialSkill >= 2)
                 dbcForms.put(NamekFullRelease, "§aFull Release");
             if (racialSkill >= 5 && godSkill >= 1)
                 dbcForms.put(NamekGod, "§cGod");
         } else if (race == DBCRace.ARCOSIAN) {
-            if (racialSkill >= 1)
-                dbcForms.put(FirstForm, "§5irst Form");
-            if (racialSkill >= 2)
-                dbcForms.put(SecondForm, "§5Second Form");
+            dbcForms.put(FirstForm, "§5irst Form");
+            dbcForms.put(SecondForm, "§5Second Form");
+            dbcForms.put(ThirdForm, "§5Third Form");
+            dbcForms.put(FinalForm, "§5Final Form");
             if (racialSkill >= 3)
-                dbcForms.put(ThirdForm, "§5Third Form");
-            if (racialSkill >= 4)
-                dbcForms.put(FinalForm, "§5Final Form");
-            if (racialSkill >= 5)
                 dbcForms.put(SuperForm, "§5Super Form");
             if (racialSkill >= 6)
                 dbcForms.put(UltimateForm, "§6Ultimate Form");
             if (racialSkill >= 6 && godSkill >= 1)
                 dbcForms.put(ArcoGod, "§cGod");
         } else if (race == DBCRace.MAJIN) {
-            dbcForms.put(MajinEvil, "§8Evil");
-            if (racialSkill >= 1)
-                dbcForms.put(MajinFullPower, "§5Full Power");
             if (racialSkill >= 2)
+                dbcForms.put(MajinEvil, "§8Evil");
+            if (racialSkill >= 3)
+                dbcForms.put(MajinFullPower, "§5Full Power");
+            if (racialSkill >= 5)
                 dbcForms.put(MajinPure, "§dPure");
             if (racialSkill >= 5 && godSkill >= 1)
                 dbcForms.put(MajinGod, "§cGod");
