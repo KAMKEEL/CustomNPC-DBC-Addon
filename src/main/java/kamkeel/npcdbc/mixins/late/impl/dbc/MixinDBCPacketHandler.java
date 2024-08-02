@@ -1,12 +1,16 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JRMCore.p.DBC.DBCPacketHandlerServer;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalByteRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
@@ -16,6 +20,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static kamkeel.npcdbc.constants.DBCForm.*;
 
 @Mixin(value = DBCPacketHandlerServer.class, remap = false)
 public class MixinDBCPacketHandler {
@@ -28,18 +34,97 @@ public class MixinDBCPacketHandler {
 
         DBCData dbcData = DBCData.get(p);
 
-        if(StatusEffectController.Instance.hasEffect(p, Effects.EXHAUSTED))
+        if (StatusEffectController.Instance.hasEffect(p, Effects.EXHAUSTED))
             return;
 
-        if((ConfigDBCGameplay.SaiyanZenkai && dbcData.Race == DBCRace.SAIYAN ) ||
-            (ConfigDBCGameplay.HalfSaiyanZenkai && dbcData.Race == DBCRace.HALFSAIYAN)){
+        if ((ConfigDBCGameplay.SaiyanZenkai && dbcData.Race == DBCRace.SAIYAN) || (ConfigDBCGameplay.HalfSaiyanZenkai && dbcData.Race == DBCRace.HALFSAIYAN)) {
 
-            if(dbcData.Race == DBCRace.SAIYAN){
+            if (dbcData.Race == DBCRace.SAIYAN) {
                 StatusEffectController.getInstance().applyEffect(p, Effects.ZENKAI, ConfigDBCEffects.ZenkaiSaiyanLength);
             } else {
                 StatusEffectController.getInstance().applyEffect(p, Effects.ZENKAI);
             }
         }
+    }
+
+    @Inject(method = "handleDBCascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;isRaceSaiyan(I)Z", ordinal = 1), cancellable = true)
+    public void fixEnergy10xKi(byte dbcascend, EntityPlayer p, CallbackInfo ci, @Local(name = "st") LocalByteRef st, @Local(name = "st2") LocalByteRef st2, @Local(name = "playerAscendNormal") LocalBooleanRef playerAscendNormal, @Local(name = "playerAscendGod") LocalBooleanRef playerAscendGod, @Local(name = "playerAscendBlue") LocalBooleanRef playerAscendBlue, @Local(name = "playerAscendSS4") LocalBooleanRef playerAscendSS4) {
+        PlayerDBCInfo dbc = PlayerDataUtil.getDBCInfo(p);
+        DBCData data = DBCData.get(p);
+        int race = data.Race, selected = dbc.selectedDBCForm;
+        if (selected == -1 || st.get() == dbc.selectedDBCForm)
+            return;
+        if (race == DBCRace.HUMAN) {
+            if (selected == SuperSaiyanGod) {
+                st.set((byte) 0);
+                playerAscendGod.set(true);
+            }
+        } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            st.set((byte) 0);
+            playerAscendNormal.set(false);
+            playerAscendGod.set(false);
+            playerAscendBlue.set(false);
+            playerAscendSS4.set(false);
+
+            if (selected == SuperSaiyan) {
+                st.set((byte) 0);
+            }
+            if (selected == SuperSaiyanG2) {
+                st.set((byte) 1);
+                playerAscendNormal.set(true);
+            }
+            if (selected == SuperSaiyanG3) {
+                st.set((byte) 2);
+                playerAscendNormal.set(true);
+            }
+            if (selected == MasteredSuperSaiyan) {
+                st.set((byte) 0);
+            }
+
+            if (selected == SuperSaiyan2) {
+                st.set((byte) 4);
+                playerAscendNormal.set(true);
+            }
+            if (selected == SuperSaiyan3) {
+                st.set((byte) 5);
+                playerAscendNormal.set(true);
+            }
+
+            if (selected == SuperSaiyanGod) {
+                st.set((byte) 0);
+                playerAscendGod.set(true);
+            }
+            if (selected == SuperSaiyanBlue) {
+                st.set((byte) SuperSaiyanGod);
+                playerAscendBlue.set(true);
+            }
+            if (selected == BlueEvo) {
+                st.set((byte) SuperSaiyanBlue);
+                playerAscendBlue.set(true);
+            }
+            if (selected == SuperSaiyan4) {
+                st.set((byte) 0);
+                playerAscendSS4.set(true);
+            }
+        } else if (race == DBCRace.NAMEKIAN) {
+            if (selected == SuperSaiyanGod) {
+                st.set((byte) 0);
+                playerAscendGod.set(true);
+            }
+        } else if (race == DBCRace.ARCOSIAN) {
+            if (selected == SuperSaiyanGod) {
+                st.set((byte) 0);
+                playerAscendGod.set(true);
+            }
+        } else if (race == DBCRace.MAJIN) {
+            if (selected == SuperSaiyanGod) {
+                st.set((byte) 0);
+                playerAscendGod.set(true);
+            }
+
+        }
+
+
     }
 
     @Inject(method = "handleDBCenergy", at = @At("HEAD"), cancellable = true)
