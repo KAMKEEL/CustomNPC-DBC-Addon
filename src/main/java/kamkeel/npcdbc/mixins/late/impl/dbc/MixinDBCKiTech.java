@@ -14,6 +14,7 @@ import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -23,6 +24,7 @@ import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.TransformPacket;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
@@ -132,6 +134,14 @@ public class MixinDBCKiTech {
 
     }
 
+    @Redirect(method = "Ascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;isInState(I)Z"))
+    private static boolean fixSomeFormsNotAscendingProperly(int state) {
+        PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
+        if (dbc.selectedDBCForm != -1)
+            return false;
+
+        return JRMCoreH.isInState(state);
+    }
 
     /**
      * Prevents player from transforming to other DBC forms if they are in custom form, except stackable ones
