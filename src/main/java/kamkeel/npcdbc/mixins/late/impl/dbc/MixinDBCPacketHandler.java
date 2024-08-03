@@ -51,8 +51,8 @@ public class MixinDBCPacketHandler {
     public void fixEnergy10xKi(byte dbcascend, EntityPlayer p, CallbackInfo ci, @Local(name = "st") LocalByteRef st, @Local(name = "st2") LocalByteRef st2, @Local(name = "playerAscendNormal") LocalBooleanRef playerAscendNormal, @Local(name = "playerAscendGod") LocalBooleanRef playerAscendGod, @Local(name = "playerAscendBlue") LocalBooleanRef playerAscendBlue, @Local(name = "playerAscendSS4") LocalBooleanRef playerAscendSS4) {
         PlayerDBCInfo dbc = PlayerDataUtil.getDBCInfo(p);
         DBCData data = DBCData.get(p);
-        int race = data.Race, selected = dbc.selectedDBCForm;
-        if (selected == -1 || st.get() == dbc.selectedDBCForm)
+        int race = data.Race, selected = dbc.tempSelectedDBCForm;
+        if (selected == -1 || st.get() == selected)
             return;
         if (race == DBCRace.HUMAN) {
             if (selected == SuperSaiyanGod) {
@@ -141,6 +141,7 @@ public class MixinDBCPacketHandler {
             }
 
         }
+        dbc.tempSelectedDBCForm = -1;
 
 
     }

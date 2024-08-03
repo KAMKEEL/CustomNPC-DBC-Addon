@@ -21,7 +21,7 @@ public class PlayerDBCInfo {
     public PlayerData parent;
 
     public int currentForm = -1;
-    public int selectedForm = -1, selectedDBCForm = -1;
+    public int selectedForm = -1, selectedDBCForm = -1,tempSelectedDBCForm = -1;
 
     public int currentAura = -1;
     public int selectedAura = -1;

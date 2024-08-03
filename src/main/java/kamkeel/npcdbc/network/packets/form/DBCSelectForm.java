@@ -53,11 +53,11 @@ public final class DBCSelectForm extends AbstractPacket {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(playerData);
         NBTTagCompound compound = new NBTTagCompound();
         if (isDBC && formID != -1) {
-            if (formID == formData.selectedDBCForm)
+            if (formID == formData.tempSelectedDBCForm)
                 return;
 
             DBCData dbc = DBCData.get(player);
-            formData.selectedDBCForm = formID;
+            formData.selectedDBCForm = formData.tempSelectedDBCForm = formID;
             if (formID != -1)
                 NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", DBCForm.getMenuName(dbc.Race, formID));
         } else if (formID != -1 && FormController.getInstance().has(formID)) {
@@ -88,7 +88,7 @@ public final class DBCSelectForm extends AbstractPacket {
                 compound = form.writeToNBT();
             }
         } else {
-            formData.selectedForm = formData.selectedDBCForm = -1;
+            formData.selectedForm = formData.selectedDBCForm = formData.tempSelectedDBCForm = -1;
             NetworkUtility.sendServerMessage(player, "§9", "npcdbc.clearedSelection");
         }
 
