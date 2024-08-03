@@ -67,45 +67,63 @@ public class MixinDBCPacketHandler {
             playerAscendSS4.set(false);
 
             if (selected == SuperSaiyan) {
+                data.setSetting(1, -1);
                 st.set((byte) 0);
             }
+
             if (selected == SuperSaiyanG2) {
+                data.setSetting(1, -1);
                 st.set((byte) 1);
                 playerAscendNormal.set(true);
             }
+
             if (selected == SuperSaiyanG3) {
+                data.setSetting(1, -1);
                 st.set((byte) 2);
                 playerAscendNormal.set(true);
             }
+
             if (selected == MasteredSuperSaiyan) {
+                data.setSetting(1, 9);
                 st.set((byte) 0);
             }
 
             if (selected == SuperSaiyan2) {
+                data.setSetting(1, 0);
                 st.set((byte) 4);
                 playerAscendNormal.set(true);
             }
+
             if (selected == SuperSaiyan3) {
+                data.setSetting(1, 0);
                 st.set((byte) 5);
                 playerAscendNormal.set(true);
             }
 
             if (selected == SuperSaiyanGod) {
+                data.setSetting(1, 1);
                 st.set((byte) 0);
                 playerAscendGod.set(true);
             }
+
             if (selected == SuperSaiyanBlue) {
+                data.setSetting(1, 2);
                 st.set((byte) SuperSaiyanGod);
                 playerAscendBlue.set(true);
             }
+
             if (selected == BlueEvo) {
+                data.setSetting(1, 2);
                 st.set((byte) SuperSaiyanBlue);
                 playerAscendBlue.set(true);
             }
+
             if (selected == SuperSaiyan4) {
+                data.setSetting(1, 3);
                 st.set((byte) 0);
                 playerAscendSS4.set(true);
             }
+
         } else if (race == DBCRace.NAMEKIAN) {
             if (selected == SuperSaiyanGod) {
                 st.set((byte) 0);
