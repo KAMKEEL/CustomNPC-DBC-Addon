@@ -54,8 +54,26 @@ public class MixinDBCPacketHandler {
         int race = data.Race, selected = dbc.tempSelectedDBCForm;
         if (selected == -1 || st.get() == selected)
             return;
-        if (race == DBCRace.HUMAN) {
-            if (selected == SuperSaiyanGod) {
+        if (race == DBCRace.HUMAN || race == DBCRace.NAMEKIAN) {
+            playerAscendGod.set(false);
+
+            boolean human = race == DBCRace.HUMAN;
+            if (selected == (human ? HumanFullRelease : NamekFullRelease)) {
+                data.setSetting(1, 0);
+                st.set((byte) 0);
+                playerAscendNormal.set(true);
+
+            }
+
+            if (selected == (human ? HumanBuffed : NamekGiant)) {
+                data.setSetting(1, -1);
+                st.set((byte) 0);
+                playerAscendNormal.set(false);
+            }
+
+
+            if (selected == (human ? HumanGod : NamekGod)) {
+                data.setSetting(1, 1);
                 st.set((byte) 0);
                 playerAscendGod.set(true);
             }
@@ -125,10 +143,7 @@ public class MixinDBCPacketHandler {
             }
 
         } else if (race == DBCRace.NAMEKIAN) {
-            if (selected == SuperSaiyanGod) {
-                st.set((byte) 0);
-                playerAscendGod.set(true);
-            }
+
         } else if (race == DBCRace.ARCOSIAN) {
             if (selected == SuperSaiyanGod) {
                 st.set((byte) 0);
