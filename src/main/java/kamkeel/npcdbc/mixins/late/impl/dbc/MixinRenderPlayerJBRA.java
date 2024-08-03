@@ -85,8 +85,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     protected void setDamage(Args args, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
         if (mc.theWorld == null)
             return;
+        float ySize = args.get(1);
         DBCData.get(player.get()).XZSize = args.get(0);
-        DBCData.get(player.get()).YSize = args.get(1);
+        DBCData.get(player.get()).YSize = ySize;
+        if (HUDFormWheel.renderingPlayer && ySize > 0.8f) {
+            float f = ConfigDBCClient.AlteranteSelectionWheelTexture ? 6f : 4f;
+            GL11.glTranslatef(0, ySize / f, 0);
+        }
     }
 
     @Inject(method = "glColor3f(I)V", at = @At("HEAD"), cancellable = true)

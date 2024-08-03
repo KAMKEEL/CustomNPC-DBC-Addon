@@ -445,7 +445,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                     if (i == 0) {
                         glTranslatef(0, -15f, 0);
                     } else if (i == 1) {
-                        glTranslatef(-17, -5, 0);
+                        glTranslatef(-12, -5, 0);
                     } else if (i == 2) {
                         glTranslatef(-11, 3, 0);
                     } else if (i == 3) {

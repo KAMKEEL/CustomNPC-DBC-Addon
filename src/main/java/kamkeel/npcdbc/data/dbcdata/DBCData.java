@@ -36,6 +36,7 @@ import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -376,7 +377,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public HashMap<Integer, String> getUnlockedDBCFormsMap() {
-        HashMap<Integer, String> dbcForms = new HashMap<>();
+        HashMap<Integer, String> dbcForms = new LinkedHashMap<>();
         int race = Race;
         int racialSkill = JRMCoreH.SklLvlX(1, RacialSkills) - 1;
         int godSkill = JRMCoreH.SklLvl(9);
@@ -389,14 +390,14 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             if (racialSkill >= 5 && godSkill >= 1)
                 dbcForms.put(HumanGod, "§cGod");
         } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-            if (racialSkill >= 1)
+            if (racialSkill >= 1 && racialSkill < 4)
                 dbcForms.put(SuperSaiyan, "§eSuper Saiyan");
+            if (racialSkill >= 4)
+                dbcForms.put(MasteredSuperSaiyan, "§eSuper Saiyan (FP)");
             if (racialSkill >= 2)
                 dbcForms.put(SuperSaiyanG2, "§eSuper Saiyan G2");
             if (racialSkill >= 3)
                 dbcForms.put(SuperSaiyanG3, "§eSuper Saiyan G3");
-            if (racialSkill >= 4)
-                dbcForms.put(MasteredSuperSaiyan, "§eMastered Super Saiyan");
             if (racialSkill >= 5)
                 dbcForms.put(SuperSaiyan2, "§eSuper Saiyan 2");
             if (racialSkill >= 6)

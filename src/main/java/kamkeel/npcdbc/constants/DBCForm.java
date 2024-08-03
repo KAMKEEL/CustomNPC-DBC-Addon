@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.constants;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class DBCForm {
     public static final int Base = 0;
@@ -115,7 +116,7 @@ public class DBCForm {
             else if (form == SuperSaiyanG3)
                 name = "§eSuper Saiyan G3";
             else if (form == MasteredSuperSaiyan)
-                name = "§eMastered Super Saiyan";
+                name = "§eSuper Saiyan (FP)";
             else if (form == SuperSaiyan2)
                 name = "§eSuper Saiyan 2";
             else if (form == SuperSaiyan3)
@@ -172,7 +173,7 @@ public class DBCForm {
     }
 
     public static HashMap<Integer, String> getFormsMap(int race) {
-        HashMap<Integer, String> forms = new HashMap<>();
+        HashMap<Integer, String> forms = new LinkedHashMap<>();
         forms.put(Base, "§3Base");
         if (race == DBCRace.HUMAN) {
             forms.put(HumanBuffed, "§3Buffed");
