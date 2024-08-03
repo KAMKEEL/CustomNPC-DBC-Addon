@@ -402,7 +402,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
                 dbcForms.put(SuperSaiyan2, "§eSuper Saiyan 2");
             if (racialSkill >= 6)
                 dbcForms.put(SuperSaiyan3, "§eSuper Saiyan 3");
-            if (racialSkill >= 7)
+            if (racialSkill >= 7 && getRawCompound().getInteger("jrmcAfGFtStFT") > 0 && hasTail())
                 dbcForms.put(SuperSaiyan4, "§4Super Saiyan 4");
             if (racialSkill >= 1 && godSkill >= 1)
                 dbcForms.put(SuperSaiyanGod, "§cSuper Saiyan God");
