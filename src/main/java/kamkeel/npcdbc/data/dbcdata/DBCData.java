@@ -417,7 +417,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             if (racialSkill >= 5 && godSkill >= 1)
                 dbcForms.put(NamekGod, "§cGod");
         } else if (race == DBCRace.ARCOSIAN) {
-            dbcForms.put(FirstForm, "§5irst Form");
+            dbcForms.put(FirstForm, "§5First Form");
             dbcForms.put(SecondForm, "§5Second Form");
             dbcForms.put(ThirdForm, "§5Third Form");
             dbcForms.put(FinalForm, "§5Final Form");

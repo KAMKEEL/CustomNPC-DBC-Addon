@@ -145,10 +145,42 @@ public class MixinDBCPacketHandler {
         } else if (race == DBCRace.NAMEKIAN) {
 
         } else if (race == DBCRace.ARCOSIAN) {
-            if (selected == SuperSaiyanGod) {
+            playerAscendNormal.set(false);
+            playerAscendGod.set(false);
+
+            if (selected == FirstForm) {
                 st.set((byte) 0);
+            }
+
+            if (selected == SecondForm) {
+                st.set((byte) 1);
+            }
+
+            if (selected == ThirdForm) {
+                st.set((byte) 2);
+            }
+
+            if (selected == FinalForm) {
+                st.set((byte) 3);
+            }
+
+            if (selected == SuperForm) {
+                data.setSetting(1, -1);
+                st.set((byte) 4);
+            }
+
+            if (selected == UltimateForm) {
+                data.setSetting(1, 0);
+                st.set((byte) 4);
+                playerAscendNormal.set(true);
+            }
+
+            if (selected == ArcoGod) {
+                data.setSetting(1, 1);
+                st.set((byte) 4);
                 playerAscendGod.set(true);
             }
+
         } else if (race == DBCRace.MAJIN) {
             playerAscendGod.set(false);
             playerAscendNormal.set(false);

@@ -144,11 +144,26 @@ public class MixinDBCKiTech {
             if (state == 4 && data.Race == DBCRace.MAJIN && dbc.selectedDBCForm != state)
                 return 3;
 
+            if (data.Race == DBCRace.ARCOSIAN && (state == 5 || state == 6))
+                return 3;
+
         }
 
         return state;
     }
 
+    @Redirect(method = "Ascend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;State:B", ordinal = 7))
+    private static byte fixSomeFormsNotAscendingProperly3() {
+        PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
+        byte state = JRMCoreH.State;
+        if (dbc.selectedDBCForm != -1 && dbc.selectedDBCForm != state) {
+            if (JRMCoreH.Race == DBCRace.ARCOSIAN && state > 3)
+                return 3;
+
+        }
+
+        return state;
+    }
 
     @Redirect(method = "Ascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;isInState(I)Z"))
     private static boolean fixSomeFormsNotAscendingProperly(int state) {
@@ -158,6 +173,9 @@ public class MixinDBCKiTech {
             if (dbc.selectedDBCForm != -1 && dbc.selectedDBCForm != JRMCoreH.State)
                 return true;
         }
+        if (data.Race == DBCRace.ARCOSIAN && (state == 5 || state == 6))
+            return false;
+
         if (state == 2 && data.Race == DBCRace.MAJIN && (data.State == DBCForm.MajinPure || data.State == DBCForm.MajinFullPower))
             return true;
 
