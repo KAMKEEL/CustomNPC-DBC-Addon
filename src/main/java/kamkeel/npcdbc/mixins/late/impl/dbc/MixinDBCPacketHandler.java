@@ -51,7 +51,7 @@ public class MixinDBCPacketHandler {
     public void fixEnergy10xKi(byte dbcascend, EntityPlayer p, CallbackInfo ci, @Local(name = "st") LocalByteRef st, @Local(name = "st2") LocalByteRef st2, @Local(name = "playerAscendNormal") LocalBooleanRef playerAscendNormal, @Local(name = "playerAscendGod") LocalBooleanRef playerAscendGod, @Local(name = "playerAscendBlue") LocalBooleanRef playerAscendBlue, @Local(name = "playerAscendSS4") LocalBooleanRef playerAscendSS4) {
         PlayerDBCInfo dbc = PlayerDataUtil.getDBCInfo(p);
         DBCData data = DBCData.get(p);
-        int race = data.Race, selected = dbc.tempSelectedDBCForm;
+        int race = data.Race, selected = dbc.selectedDBCForm;
         if (selected == -1 || st.get() == selected)
             return;
         if (race == DBCRace.HUMAN || race == DBCRace.NAMEKIAN) {
@@ -150,13 +150,37 @@ public class MixinDBCPacketHandler {
                 playerAscendGod.set(true);
             }
         } else if (race == DBCRace.MAJIN) {
-            if (selected == SuperSaiyanGod) {
+            playerAscendGod.set(false);
+            playerAscendNormal.set(false);
+
+            if (selected == MajinEvil) {
+                data.setSetting(1, -1);
+                st.set((byte) 0);
+
+            }
+            if (selected == MajinFullPower) {
+                data.setSetting(1, -1);
+                st.set((byte) 1);
+
+            }
+
+            if (selected == MajinPure) {
+                data.setSetting(1, 0);
+                st.set((byte) 0);
+                playerAscendNormal.set(true);
+            }
+
+
+            if (selected == MajinGod) {
+                data.setSetting(1, 1);
                 st.set((byte) 0);
                 playerAscendGod.set(true);
             }
 
+
         }
-        dbc.tempSelectedDBCForm = -1;
+        dbc.selectedDBCForm = -1;
+        dbc.updateClient();
 
 
     }
