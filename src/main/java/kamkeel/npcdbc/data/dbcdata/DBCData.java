@@ -479,11 +479,31 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public boolean settingOn(int id) {
-        return Utility.isServer(player) ? JRMCoreH.PlyrSettingsB(player, id) : JRMCoreH.PlyrSettingsB(id);
+        return JRMCoreH.PlyrSettingsB(getRawCompound(), id);
     }
+
+    public boolean settingIsValue(int id, int value) {
+        return JRMCoreH.PlyrSettingsI(getRawCompound(), id, value);
+    }
+
+
+    public void setSetting(int id, int value) {
+        JRMCoreH.PlyrSettingsSet(getRawCompound(), id, value);
+    }
+
 
     public boolean formSettingOn(int dbcForm) {
         switch (dbcForm) {
+            case SuperSaiyanG2:
+                return settingIsValue(1, -1);
+            case SuperSaiyan2:
+                return settingIsValue(1, 0);
+            case SuperSaiyanGod:
+                return settingIsValue(1, 1);
+            case SuperSaiyanBlue:
+                return settingIsValue(1, 2);
+            case SuperSaiyan4:
+                return settingIsValue(1, 3);
             case DBCForm.Kaioken:
                 return settingOn(0);
             case DBCForm.UltraInstinct:
