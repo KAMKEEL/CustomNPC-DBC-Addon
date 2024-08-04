@@ -38,7 +38,8 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         this.buttonID = buttonID;
         this.closeOnEsc = true;
         this.drawDefaultBackground = true;
-        xSize = 256;
+        guiLeft -= 10;
+        xSize = 256 + 10;
         this.setBackground("menubg.png");
 
         this.useMenuName = useMenuName;
@@ -50,14 +51,14 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         super.initGui();
         guiTop += 10;
         if (showDBCForms)
-            addButton(new GuiNpcButton(3, guiLeft + 159, guiTop + 57, 89, 20, new String[]{"DBC", "Custom"}, page));
+            addButton(new GuiNpcButton(3, guiLeft + 183, guiTop + 57, 79, 20, new String[]{"DBC", "Custom"}, page));
 
         if (scrollForms == null) {
             scrollForms = new GuiCustomScroll(this, 0, 0);
-            scrollForms.setSize(143, 185);
+            scrollForms.setSize(177, 185);
         }
 
-        scrollForms.guiLeft = guiLeft + 8;
+        scrollForms.guiLeft = guiLeft + 4;
         scrollForms.guiTop = guiTop + 4;
         addScroll(scrollForms);
         if (page == 0) {
@@ -68,10 +69,10 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
             scrollForms.setUnsortedList(getSearchList());
         }
 
-        addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 8, guiTop + 192, 143, 20, search));
+        addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 4, guiTop + 192, 177, 20, search));
 
-        addButton(new GuiNpcButton(0, guiLeft + 159, guiTop + 4 , 89, 20, "gui.add"));
-        addButton(new GuiNpcButton(1, guiLeft + 159, guiTop + 26 , 89, 20, "gui.cancel"));
+        addButton(new GuiNpcButton(0, guiLeft + 183, guiTop + 4, 79, 20, "gui.add"));
+        addButton(new GuiNpcButton(1, guiLeft + 183, guiTop + 26, 79, 20, "gui.cancel"));
     }
 
     public SubGuiSelectForm displayDBCForms(DBCData data) {
@@ -104,6 +105,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         }
         if (id == 3) {
             page = bttn.getValue();
+            scrollForms.resetScroll();
             initGui();
         }
     }

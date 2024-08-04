@@ -252,7 +252,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 boolean singleClick = Minecraft.getSystemTime() - timeSinceM1 < 75;
                 if (singleClick) {
                     selectSlot(-1);
-                } else {
+                } else if (!hasSubGui()) {
                     mc.inGameHasFocus = true;
                     mc.mouseHelper.grabMouseCursor();
                 }
@@ -502,6 +502,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     @Override
     public void keyTyped(char typedChar, int keyCode) {
         super.keyTyped(typedChar, keyCode);
+        if (keyCode == 1 && configureEnabled)
+            configureEnabled = false;
 
     }
 
