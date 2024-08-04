@@ -1,5 +1,9 @@
 package kamkeel.npcdbc.constants;
 
+import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
+import kamkeel.npcdbc.util.DBCUtils;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -61,14 +65,21 @@ public class DBCForm {
     ////////////////////////////////
     ////////////////////////////////
     // Non-Racial forms
-    public static final int Kaioken = 20;
     public static final int Mystic = 21;
-    public static final int UltraInstinct = 22;
-    public static final int MasteredUltraInstinct = 23;
     public static final int GodOfDestruction = 24;
     public static final int Legendary = 25;
     public static final int Divine = 26;
     public static final int Majin = 27;
+
+    public static final int Kaioken = 31;
+    public static final int Kaioken2 = 32;
+    public static final int Kaioken3 = 33;
+    public static final int Kaioken4 = 34;
+    public static final int Kaioken5 = 35;
+    public static final int Kaioken6 = 36;
+
+    public static final int MasteredUltraInstinct = 40;
+    public static final int UltraInstinct = 41;
 
 
     public static boolean isMonke(int race, int state) {
@@ -169,6 +180,27 @@ public class DBCForm {
                 name = "§cGod";
 
         }
+
+        if (form == Mystic)
+            name = "Mystic";
+
+        for (int i = 0; i < 6; i++) {
+            if (form == Kaioken + i) {
+                name = "§cKaioken " + JRMCoreH.TransKaiNms[i + 1];
+                break;
+            }
+        }
+
+        for (int i = 0; i < JGConfigUltraInstinct.CONFIG_UI_LEVELS; i++) {
+            if (form == UltraInstinct + i) {
+                name = "§7" + DBCUtils.CONFIG_UI_NAME[i];
+                break;
+            }
+        }
+
+        if (form == GodOfDestruction)
+            name = "§dGod of Destruction";
+
         return name;
     }
 

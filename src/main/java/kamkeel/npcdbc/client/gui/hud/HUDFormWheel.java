@@ -35,6 +35,7 @@ import org.lwjgl.opengl.GL12;
 
 import java.util.Iterator;
 
+import static kamkeel.npcdbc.constants.DBCForm.*;
 import static org.lwjgl.opengl.GL11.glScaled;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 
@@ -548,7 +549,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         ItemStack oldItem = inv.mainInventory[inv.currentItem];
         inv.mainInventory[inv.currentItem] = null; //Removes held item
 
-        boolean changeForm = hoveredSlot != -1;
+        boolean changeForm = hoveredSlot != -1, isGoD = false, isMystic = false, isKaioken = false, isUI = false;
         int oldForm = data.addonFormID;
         byte oldState = data.State, oldState2 = data.State2;
         data.addonFormID = -1; // Removes addon forms
@@ -557,10 +558,22 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         if (changeForm) {
             FormWheelData wheelData = wheelSlot[hoveredSlot].data;
+            int id = wheelData.formID;
+
             if (!wheelData.isDBC)
                 data.addonFormID = wheelSlot[hoveredSlot].data.formID;
-            else
-                data.State = (byte) wheelData.formID;
+            else if (id < 20)
+                data.State = (byte) id;
+            else if (isMystic = id == Mystic) {
+            } else if (isKaioken = id >= Kaioken && id <= Kaioken6) {
+                data.renderKK = true;
+                data.State2 = (byte) (id - Kaioken + 1);
+            } else if (isUI = id >= UltraInstinct && id <= UltraInstinct + 10) {
+                data.renderUI = true;
+                data.State2 = (byte) (id - UltraInstinct + 1);
+            } else if (isGoD = id == GodOfDestruction) {
+                data.renderGoD = true;
+            }
         }
 
 
@@ -611,6 +624,12 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         data.addonFormID = oldForm;
         data.State = oldState;
         data.State2 = oldState2;
+        if (isKaioken)
+            data.renderKK = false;
+        else if (isUI)
+            data.renderUI = false;
+        else if (isGoD)
+            data.renderGoD = false;
 
         entity.limbSwingAmount = oldLimbSwing;
         entity.setSneaking(isSneaking);

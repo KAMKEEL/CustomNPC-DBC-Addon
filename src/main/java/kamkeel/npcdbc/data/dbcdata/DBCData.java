@@ -23,6 +23,7 @@ import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetFlight;
 import kamkeel.npcdbc.network.packets.DBCUpdateLockOn;
 import kamkeel.npcdbc.network.packets.PingPacket;
+import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -74,6 +75,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public int renderingHairColor;
     public byte skinType;
     public boolean useStencilBuffer;
+    public boolean renderGoD, renderKK, renderUI;
     public EntityAura auraEntity;
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
 
@@ -438,6 +440,24 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             if (racialSkill >= 5 && godSkill >= 1)
                 dbcForms.put(MajinGod, "§cGod");
         }
+        if (JRMCoreH.SklLvl(10) > 0)
+            dbcForms.put(Mystic, "Mystic");
+
+        int kaiokenSkill = JRMCoreH.SklLvl(8);
+        for (int i = 0; i < 6; i++) {
+            if (kaiokenSkill >= i + 1)
+                dbcForms.put(Kaioken + i, "§cKaioken " + JRMCoreH.TransKaiNms[i + 1]);
+        }
+
+        int uiSkill = JRMCoreH.SklLvl(16);
+        for (int i = 0; i < JGConfigUltraInstinct.CONFIG_UI_LEVELS; i++) {
+            if (uiSkill >= i + 1)
+                dbcForms.put(UltraInstinct + i, "§7" + DBCUtils.CONFIG_UI_NAME[i]);
+        }
+
+        if (JRMCoreH.SklLvl(18) > 0)
+            dbcForms.put(GodOfDestruction, "§dGod of Destruction");
+
         return dbcForms;
     }
 
