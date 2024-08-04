@@ -4,8 +4,8 @@ import JinRyuu.JRMCore.JRMCoreHDBC;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
-import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import org.spongepowered.asm.mixin.Mixin;
@@ -52,7 +52,7 @@ public class MixinJRMCoreHDBC {
                     cir.setReturnValue(sz = form.display.formSize);
             }
 
-            if (ClientProxy.renderingGUI) {
+            if (CustomNpcPlusDBC.proxy.isRenderingGUI()) {
                 if (sz > 1.35f)
                     cir.setReturnValue(1.35f);
             }

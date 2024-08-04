@@ -53,4 +53,8 @@ public class CommonProxy {
     public int getNewRenderId() {
         return -1;
     }
+
+    public boolean isRenderingGUI() {
+        return false;
+    }
 }
