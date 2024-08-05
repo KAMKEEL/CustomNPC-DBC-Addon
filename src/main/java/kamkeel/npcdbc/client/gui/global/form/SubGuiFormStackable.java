@@ -264,7 +264,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             stackable.kaiokenStrength = guiNpcTextField.getFloat();
         }
         if (guiNpcTextField.id == 23) {
-            stackable.kaiokenStrength = guiNpcTextField.getFloat();
+            stackable.kaiokenState2Factor = guiNpcTextField.getFloat();
         }
 
         if (guiNpcTextField.id == 32) {
