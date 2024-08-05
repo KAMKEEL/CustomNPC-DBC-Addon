@@ -11,6 +11,8 @@ public interface IAuraData {
     public Entity getEntity();
     public void setAuraEntity(EntityAura aura);
     public int getAuraColor();
+    public int getActiveAuraColor();
+    public void setActiveAuraColor(int color);
     public boolean isTransforming();
 
     public boolean isChargingKi();

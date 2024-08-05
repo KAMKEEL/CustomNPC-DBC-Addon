@@ -72,6 +72,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public byte skinType;
     public boolean useStencilBuffer;
     public EntityAura auraEntity;
+    public int activeAuraColor = -1;
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
 
 
@@ -673,6 +674,16 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     @Override
     public HashMap getDBCAuras(boolean secondary) {
         return null;
+    }
+
+    @Override
+    public int getActiveAuraColor() {
+        return activeAuraColor;
+    }
+
+    @Override
+    public void setActiveAuraColor(int color) {
+        activeAuraColor = color;
     }
 
 }
