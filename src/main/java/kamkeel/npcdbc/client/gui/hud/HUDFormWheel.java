@@ -14,7 +14,6 @@ import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -34,7 +33,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 import static kamkeel.npcdbc.constants.DBCForm.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -59,8 +57,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     public HUDFormWheel() {
         mc = Minecraft.getMinecraft();
-        setBackground("menubg.png");
-
 
         PlayerDBCInfo data = PlayerDataUtil.getClientDBCInfo();
         for (int i = 0; i < 6; i++) {
@@ -85,7 +81,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             timeOpened = Minecraft.getSystemTime();
 
         scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
-        // FormWheelSegment.variant = 1;
 
 
         int x = (this.width / 2) + 94;
@@ -93,7 +88,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         addButton(new GuiNpcButton(6, x, y, 60, 20, new String[]{"Configure", "Done"}, !configureEnabled ? 0 : 1));
 
         if (configureEnabled) {
-            addButton(new GuiNpcButton(8, x - 94 - 75, y - 27, 150, 20, "Edit"));
+            addButton(new GuiNpcButton(8, x - 94 - 75, y - 25, 150, 20, "Edit"));
             addButton(new GuiNpcButton(7, x += 62, y, 80, 20, "Switch Wheel"));
 
 
@@ -255,6 +250,36 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     }
 
 
+    public void calculateHoveredSlot(float HALF_WIDTH, float HALF_HEIGHT, boolean configureEnabled) {
+        final float deltaX = HALF_WIDTH - mouseX;
+        final float deltaY = HALF_HEIGHT - mouseY;
+        float radius = ConfigDBCClient.AlteranteSelectionWheelTexture ? 98 : 74;
+        radius *= undoMCScaling;
+        if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) > radius) {
+            final float radians = (float) Math.atan2(deltaY, deltaX);
+            final float degree = Math.round(radians * (180 / Math.PI));
+
+            int tempHoveredSlot = (int) ((degree - 180) / -60) - 1;
+            if (tempHoveredSlot == -1)
+                tempHoveredSlot = 5;
+
+            if (tempHoveredSlot != hoveredSlot && !configureEnabled)
+                selectSlot(tempHoveredSlot);
+
+        }
+    }
+
+    public void selectSlot(int slotID) {
+        if (hoveredSlot == slotID)
+            return;
+
+        if (hoveredSlot != -1)
+            wheelSlot[hoveredSlot].setHoveredState(false);
+        if (slotID != -1)
+            wheelSlot[slotID].setHoveredState(true);
+        hoveredSlot = slotID;
+    }
+
     @Override
     public void updateScreen() {
         if (mc.thePlayer.ticksExisted % 10 == 0)
@@ -304,93 +329,17 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     }
 
-    public void drawButtons(int i, int j) {
-
-        boolean subGui = this.hasSubGui();
-        Iterator var5 = this.labels.values().iterator();
-        while (var5.hasNext()) {
-            GuiNpcLabel label = (GuiNpcLabel) var5.next();
-            label.drawLabel(this, this.fontRendererObj);
-        }
-
-        var5 = this.buttons.values().iterator();
-        while (var5.hasNext()) {
-            GuiNpcButton button = (GuiNpcButton) var5.next();
-            button.updateSubGUI(subGui);
-            if (!button.hoverableText.isEmpty()) {
-                button.drawHover(i, j, subGui);
-            }
-        }
-
-        int k;
-
-        for (k = 0; k < this.buttonList.size(); ++k) {
-            ((GuiButton) this.buttonList.get(k)).drawButton(this.mc, mouseX, mouseY);
-        }
-
-        for (k = 0; k < this.labelList.size(); ++k) {
-            ((GuiLabel) this.labelList.get(k)).func_146159_a(this.mc, mouseX, mouseY);
-        }
-
-    }
-
-    public void calculateHoveredSlot(float HALF_WIDTH, float HALF_HEIGHT, boolean configureEnabled) {
-        final float deltaX = HALF_WIDTH - mouseX;
-        final float deltaY = HALF_HEIGHT - mouseY;
-        float radius = ConfigDBCClient.AlteranteSelectionWheelTexture ? 98 : 74;
-        radius *= undoMCScaling;
-        if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) > radius) {
-            final float radians = (float) Math.atan2(deltaY, deltaX);
-            final float degree = Math.round(radians * (180 / Math.PI));
-
-            int tempHoveredSlot = (int) ((degree - 180) / -60) - 1;
-            if (tempHoveredSlot == -1)
-                tempHoveredSlot = 5;
-
-            if (tempHoveredSlot != hoveredSlot && !configureEnabled)
-                selectSlot(tempHoveredSlot);
-
-        }
-    }
-
-    public void selectSlot(int slotID) {
-        if (hoveredSlot == slotID)
-            return;
-
-        if (hoveredSlot != -1)
-            wheelSlot[hoveredSlot].setHoveredState(false);
-        if (slotID != -1)
-            wheelSlot[slotID].setHoveredState(true);
-        hoveredSlot = slotID;
-    }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
-        if (hasSubGui()) {
-            //   super.drawScreen(mouseX, mouseY, partialTicks);
-            //  return;
-        }
 
-
-        //       hoveredSlot = -1;
-        double width = 124;
-        double height = 124 - 28;
         GL11.glPushMatrix();
-//        GL11.glTranslatef((float) (-width/2), -28.0f - 69f, 0);
-
-//        WheelSegment segment = new WheelSegment(2);
-
         final float HALF_WIDTH = (float) this.width / 2;
         final float HALF_HEIGHT = (float) this.height / 2;
 
-
-        undoMCScaling = 1;
-
-        // TODO: Add more support for higher scale factors / GUI sizes when people start complaining.
-        //       Use a switch case
         float factor = scaledResolution.getScaleFactor();
         undoMCScaling = 1f / factor * 3f;
         if (factor == 1) {
@@ -400,7 +349,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 undoMCScaling = 0.45f;
             else if (mc.displayHeight < 720)
                 undoMCScaling = 0.7f;
-
             else if (mc.displayWidth < 650)
                 undoMCScaling = 1f;
         } else if (factor == 2) {
@@ -408,7 +356,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
             undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
         } else if (factor == 3) {
-            if (mc.displayHeight < 720)
+            if (mc.displayHeight < 730)
                 undoMCScaling = 1f / 3;
             else if (mc.displayHeight < 930)
                 undoMCScaling = 0.425f;
@@ -421,43 +369,21 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 glTranslatef(0, -15, 0);
             } else
                 undoMCScaling = 0.99f;
-
-
         }
+
         calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, configureEnabled);
         glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
         GL11.glScalef(undoMCScaling, undoMCScaling, 0);
-
-
-//        GL11.glPushMatrix();
-//        glTranslatef(190, -100, 0);
-//
-//        int mousX = Mouse.getX();
-//        int mousY = mc.displayHeight - Mouse.getY();
-//
-//        int adjustedMouseX = (int) ((mouseX - HALF_WIDTH) * 1 - 190);
-//        int adjustedMouseY = (int) ((mouseY - HALF_HEIGHT) * 1 + 100);
-//        super.drawScreen((int) (adjustedMouseX), (int) (adjustedMouseY), partialTicks);
-//        GL11.glPopMatrix();
-
-
-//        if(scaledResolution.getScaleFactor() == 1) {
-//            float undoMCScaling = 1f / scaledResolution.getScaleFactor();
-//            GL11.glScalef(undoMCScaling, undoMCScaling, 0);
-//        }
         GL11.glScalef(guiAnimationScale, guiAnimationScale, 0);
-        float scale = 1.4f;
-        GL11.glScalef(scale, scale, 0);
-        //  new Color(0x8f8a86,0.5f).glColor();
+        float wheelDiameter = 1.4f;
+        GL11.glScalef(wheelDiameter, wheelDiameter, 0);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
         for (int i = 0; i < 6; i++) {
             FormWheelData data = wheelSlot[i].data;
             GL11.glPushMatrix();
-//            GL11.glTranslatef(0, , 0);
-
-
             GL11.glRotatef(i * -60, 0, 0, 1);
             float segmentScale = 1f + 0.1f * wheelSlot[i].getSegmentScale();
             GL11.glScalef(segmentScale, segmentScale, 0);
@@ -470,26 +396,20 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
 
             GL11.glRotatef(i * 60, 0, 0, 1);
-            if (i == 0 || i == 3) {
-
-            } else if (i == 1 || i == 2) {
+            if (i == 1 || i == 2) {
                 GL11.glTranslatef(10, 0, 0);
-            } else {
+            } else if (i == 4 || i == 5) {
                 GL11.glTranslatef(-10, 0, 0);
             }
             wheelSlot[i].draw();
 
-            if (i == 0) {
-//                GL11.glTranslatef(0, 5, 0);
-            } else if (i == 3) {
-//                GL11.glTranslatef(0, -5, 0);
-            } else if (i == 1 || i == 5) {
+            if (i == 1 || i == 5) {
                 GL11.glTranslatef(0, 10, 0);
-            } else {
+            } else if (i == 2 || i == 4) {
                 GL11.glTranslatef(0, -10, 0);
             }
-            if (data.formID != -1) {
 
+            if (data.formID != -1) {
                 if (dbcForms.containsKey(data.formID)) {
                     if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
                         glScaled(0.7, 0.7, 1);
@@ -506,9 +426,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                         } else {
                             glTranslatef(13, -5, 0);
                         }
-
                     }
-
                     drawCenteredString(fontRendererObj, getFormName(i), 0, 0, 0xFFFFFFFF);
                 } else
                     wheelSlot[i].removeForm();
@@ -516,6 +434,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
             GL11.glPopMatrix();
         }
+
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_BLEND);
 
@@ -532,26 +451,13 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         glPopMatrix();
         glPopMatrix();
 
+        super.drawScreen(mouseX, mouseY, partialTicks);
 //        String text = mouseX + "," + mouseY + ", " + hoveredSlot + "," + (keyDown ? "HOLDING KEY" : "NOT HOLDING");
 //        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
-
-        super.drawScreen(mouseX, mouseY, partialTicks);
-
     }
 
-    @Override
-    protected void drawBackground() {
-        //  super.drawBackground();
-
-        int xPosGradient = 0;
-        int yPosGradient = 0;
-        //    drawGradientRect(xPosGradient, yPosGradient, 100 + xPosGradient, 223 + yPosGradient, 0xc0101010, 0xd0101010);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-
-    }
 
     public void drawDefaultBackground() {
-        //     super.drawDefaultBackground();
     }
 
 
@@ -570,17 +476,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     }
 
     public void renderPlayer(int i, int j) {
-
-        if (isMouseOverRenderer(i, j)) {
-//            zoomed += Mouse.getDWheel() * 0.035f;
-//            if (zoomed > 100)
-//                zoomed = 100;
-//            if (zoomed < 10)
-//                zoomed = 10;
-
-            if (Mouse.isButtonDown(0)) {
-                rotation -= Mouse.getDX() * 0.75f;
-            }
+        if (isMouseOverRenderer(i, j) && Mouse.isButtonDown(0)) {
+            rotation -= Mouse.getDX() * 0.75f;
         }
 
         renderingPlayer = true;
@@ -592,7 +489,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         float oldLimbSwing = entity.limbSwingAmount;
         boolean isSneaking = entity.isSneaking(), isInvisible = entity.isInvisible(), isImmunetoFire = entity.isImmuneToFire;
-        int fire = entity.fire;
         Entity oldRidingEntity = entity.ridingEntity;
         entity.limbSwingAmount = 0; // Removes moving animation
         entity.setSneaking(false); // Removes sneaking animation
@@ -604,7 +500,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         ItemStack oldItem = inv.mainInventory[inv.currentItem];
         inv.mainInventory[inv.currentItem] = null; //Removes held item
 
-        boolean changeForm = hoveredSlot != -1, isGoD = false, isMystic = false, isKaioken = false, isUI = false;
+        boolean changeForm = hoveredSlot != -1, isGoD = false, isKaioken = false, isUI = false;
         int oldForm = data.addonFormID;
         byte oldState = data.State, oldState2 = data.State2;
         data.addonFormID = -1; // Removes addon forms
@@ -619,8 +515,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 data.addonFormID = wheelSlot[hoveredSlot].data.formID;
             else if (id < 20)
                 data.State = (byte) id;
-            else if (isMystic = id == Mystic) {
-            } else if (isKaioken = id >= Kaioken && id <= Kaioken6) {
+            else if (isKaioken = id >= Kaioken && id <= Kaioken6) {
                 data.renderKK = true;
                 data.State2 = (byte) (id - Kaioken + 1);
             } else if (isUI = id >= UltraInstinct && id <= UltraInstinct + 10) {
@@ -717,7 +612,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
 
     }
-
 
     /**
      * Called when the mouse is clicked.
