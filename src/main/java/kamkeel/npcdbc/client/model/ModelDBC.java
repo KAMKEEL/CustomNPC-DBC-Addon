@@ -525,7 +525,7 @@ public class ModelDBC extends ModelBase {
 //        ((ModelScaleRenderer)this.bipedLeftArm).setConfig(arms, -x, y, z);
 
         KiWeaponData leftArm = display.kiWeaponLeft;
-        if (!parent.bipedLeftArm.isHidden && leftArm.isEnabled()) {
+        if (!parent.bipedLeftArm.isHidden && leftArm.isEnabled) {
             GL11.glPushMatrix();
             GL11.glTranslatef(-x + (0.5f * 0.25f * (alexArms ? 0.75f : 1)), y, z);
             if (arms != null) {
@@ -541,7 +541,7 @@ public class ModelDBC extends ModelBase {
         }
 
         KiWeaponData rightArm = display.kiWeaponRight;
-        if (!parent.bipedRightArm.isHidden && rightArm.isEnabled()) {
+        if (!parent.bipedRightArm.isHidden && rightArm.isEnabled) {
             GL11.glPushMatrix();
             GL11.glTranslatef(x, y, z);
             if (arms != null) {
@@ -585,25 +585,25 @@ public class ModelDBC extends ModelBase {
 
         if (weaponData.weaponType == 1) {
             // float scl = (float)kiFistLevel * 0.02F + (float)kiInfuseLevel * 0.02F;
-            float scl = weaponData.scaleY;
-            GL11.glTranslatef(0.0F, -scl * 0.75f, 0.0F);
-            GL11.glScalef(1.0F, 1.0F + scl, 1.0F);
+            float scl = weaponData.scaleY - 1;
+            GL11.glTranslatef(weaponData.offsetX, -scl * 0.75f + weaponData.offsetY, weaponData.offsetZ);
+            GL11.glScalef(weaponData.scaleX, 1.0f + scl, weaponData.scaleZ);
             float ex = (float) entity.ticksExisted;
             float r4 = (MathHelper.cos(ex / 2.0F) / 3.0F - 0.2F) / 8.0F;
 
-            GL11.glTranslatef(0.0F, -r4, 0.0F);
             weaponData.color.glColor();
+            GL11.glTranslatef(0.0F, -r4, 0.0F);
             GL11.glRotatef(ex * 25.0F, 0.0F, 1.0F, 0.0F);
             JRMCoreHJBRA.model2.render(0.0625F, weaponData.weaponType);
 
+            weaponData.color.multiply(0.8f).glColor();
             GL11.glTranslatef(0.0F, -0.12F, 0.0F);
             GL11.glScalef(1.3F, 1.18F, 1.3F);
-            weaponData.color.multiply(0.8f).glColor();
             JRMCoreHJBRA.model2.render(0.0625F, weaponData.weaponType);
         }
 
         if (weaponData.weaponType == 2) {
-            GL11.glTranslatef(0.0F, 0.6F, 0.0F);
+            GL11.glTranslatef(weaponData.offsetX, 0.6F + weaponData.offsetY, weaponData.offsetZ);
             weaponData.color.glColor();
             GL11.glRotatef(-3.0F, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(5.0F, 0.0F, 0.0F, 1.0F);
