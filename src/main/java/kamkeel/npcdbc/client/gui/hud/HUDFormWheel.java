@@ -33,7 +33,9 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 import static kamkeel.npcdbc.constants.DBCForm.*;
 import static org.lwjgl.opengl.GL11.glScaled;
@@ -54,6 +56,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public int hoveredSlot = -1;
     boolean keyDown, unpressedAllKeys = false;
     boolean configureEnabled;
+    public HashMap<Integer, String> dbcForms;
+    public DBCData dbcData;
 
     public HUDFormWheel() {
         mc = Minecraft.getMinecraft();
@@ -70,6 +74,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         // Stops the GUI from un-pressing all keys for you.
         mc.inGameHasFocus = false;
         mc.mouseHelper.ungrabMouseCursor();
+
+        dbcData = DBCData.getClient();
+        dbcForms = dbcData.getUnlockedDBCFormsMap();
     }
 
     @Override
@@ -244,6 +251,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     @Override
     public void updateScreen() {
+        if (mc.thePlayer.ticksExisted % 10 == 0)
+            dbcForms = dbcData.getUnlockedDBCFormsMap();
+
 
         if (Mouse.isButtonDown(1)) {
             if (configureEnabled) {
@@ -282,6 +292,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         guiAnimationScale = (guiAnimationScale + 0.2f * (animationScaleFactor - guiAnimationScale));
         guiAnimationScale = ValueUtil.clamp(guiAnimationScale, 0, 1);
         BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
+
     }
 
     public void drawButtons(int i, int j) {
@@ -441,25 +452,28 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             }
             if (data.formID != -1) {
 
-                if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
-                    glScaled(0.7, 0.7, 1);
-                    if (i == 0) {
-                        glTranslatef(0, -15f, 0);
-                    } else if (i == 1) {
-                        glTranslatef(-12, -5, 0);
-                    } else if (i == 2) {
-                        glTranslatef(-11, 3, 0);
-                    } else if (i == 3) {
-                        glTranslatef(0, 12f, 0);
-                    } else if (i == 4) {
-                        glTranslatef(10, 3, 0);
-                    } else {
-                        glTranslatef(13, -5, 0);
+                if (dbcForms.containsKey(data.formID)) {
+                    if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
+                        glScaled(0.7, 0.7, 1);
+                        if (i == 0) {
+                            glTranslatef(0, -15f, 0);
+                        } else if (i == 1) {
+                            glTranslatef(-12, -5, 0);
+                        } else if (i == 2) {
+                            glTranslatef(-11, 3, 0);
+                        } else if (i == 3) {
+                            glTranslatef(0, 12f, 0);
+                        } else if (i == 4) {
+                            glTranslatef(10, 3, 0);
+                        } else {
+                            glTranslatef(13, -5, 0);
+                        }
+
                     }
 
-                }
-
-                drawCenteredString(fontRendererObj, getFormName(i), 0, 0, 0xFFFFFFFF);
+                    drawCenteredString(fontRendererObj, getFormName(i), 0, 0, 0xFFFFFFFF);
+                } else
+                    wheelSlot[i].removeForm();
             }
 
             GL11.glPopMatrix();
