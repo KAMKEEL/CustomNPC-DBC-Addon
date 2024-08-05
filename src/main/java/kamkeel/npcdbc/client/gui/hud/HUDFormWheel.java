@@ -263,7 +263,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             if (tempHoveredSlot == -1)
                 tempHoveredSlot = 5;
 
-            if (tempHoveredSlot != hoveredSlot && !configureEnabled)
+            boolean justOpened = Minecraft.getSystemTime() - timeOpened < 50;
+            if (!justOpened && tempHoveredSlot != hoveredSlot && !configureEnabled)
                 selectSlot(tempHoveredSlot);
 
         }
