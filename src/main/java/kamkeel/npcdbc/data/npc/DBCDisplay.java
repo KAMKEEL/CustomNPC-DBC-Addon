@@ -155,8 +155,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         if (enabled) {
             NBTTagCompound dbcDisplay = comp.getCompoundTag("DBCDisplay");
 
-            kiWeaponLeft.readFromNBT(comp.getCompoundTag("kiWeaponLeft"));
-            kiWeaponRight.readFromNBT(comp.getCompoundTag("kiWeaponRight"));
+            kiWeaponLeft.readFromNBT(dbcDisplay.getCompoundTag("kiWeaponLeft"));
+            kiWeaponRight.readFromNBT(dbcDisplay.getCompoundTag("kiWeaponRight"));
 
             race = dbcDisplay.getByte("DBCRace");
             auraID = dbcDisplay.getInteger("DBCAuraID");
