@@ -252,8 +252,10 @@ public class ClientEventHandler {
                 DBCData dbcData = null;
                 DBCDisplay display = null;
                 boolean isInKaioken = false, isSpectator = false;
+                IAuraData data = isPlayer ? dbcData : display;
 
                 boolean vanillaAura = false;
+                data.setActiveAuraColor(-1);
                 if (isNPC) {
                     EntityCustomNpc npc = (EntityCustomNpc) event.entity;
                     display = ((INPCDisplay) npc.display).getDBCDisplay();
@@ -291,7 +293,9 @@ public class ClientEventHandler {
                     if (isInKaioken && aura.display.kaiokenOverrides) {
                         spawnKaiokenAura(aura, dbcData);
                     } else {
-                        spawnAura(event.entity, aura);
+                        EntityAura2 aur = spawnAura(event.entity, aura);
+                        data.setActiveAuraColor(aur.getCol());
+
                         if (aura.hasSecondaryAura())
                             spawnAura(event.entity, aura.getSecondaryAur());
                         if (isInKaioken)

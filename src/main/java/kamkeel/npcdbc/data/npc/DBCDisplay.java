@@ -78,6 +78,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     //Rendering
     public boolean useStencilBuffer;
     public EntityAura auraEntity;
+    public int activeAuraColor = -1;
     public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
     public HashMap<Integer, EntityAura2> dbcAuraQueue = new HashMap<>();
     public HashMap<Integer, EntityAura2> dbcSecondaryAuraQueue = new HashMap<>();
@@ -653,6 +654,16 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public int getAuraColor() {
         return 11075583;
+    }
+
+    @Override
+    public int getActiveAuraColor() {
+        return activeAuraColor;
+    }
+
+    @Override
+    public void setActiveAuraColor(int color) {
+        activeAuraColor = color;
     }
 
     @Override

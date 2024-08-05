@@ -79,13 +79,14 @@ public class EntityAura extends Entity {
             auraData = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
         }
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
-        text1 = new ResourceLocation( "jinryuudragonbc:aura.png");
+        text1 = new ResourceLocation("jinryuudragonbc:aura.png");
 
     }
 
 
     public EntityAura load(boolean all) {
-        if (isRoot() && !isDead && auraData.getAuraEntity() != this)
+        boolean isRoot = isRoot();
+        if (isRoot && !isDead && auraData.getAuraEntity() != this)
             auraData.setAuraEntity(this);
 
         color1 = auraData.getAuraColor();
@@ -101,7 +102,6 @@ public class EntityAura extends Entity {
 
         if ((type3D == None || type3D == Base) && aura.display.type2D == EnumAuraTypes2D.Default)
             type2D = EnumAuraTypes2D.Base;
-
 
 
         // Vanilla DBC form colors
@@ -138,7 +138,6 @@ public class EntityAura extends Entity {
         }
 
 
-
         if (isInKaioken) {
             boolean kaiokenOverride = display.kaiokenOverrides;
             if (isVanillaDefault && DBCForm.isSaiyanGod(auraData.getState()))
@@ -163,6 +162,9 @@ public class EntityAura extends Entity {
                 lightningColor = 0x25c9cf;
         }
 
+        if (isRoot)
+            auraData.setActiveAuraColor(color1);
+
         if (all) {
             if (display.hasColor("color2"))
                 color2 = display.color2;
@@ -171,7 +173,7 @@ public class EntityAura extends Entity {
 
             //loadType();
 
-            if (display.hasAlpha("aura")){
+            if (display.hasAlpha("aura")) {
                 maxAlpha = (float) display.alpha / (255 * 5);
                 if (SubGuiAuraDisplay.useGUIAura)
                     alpha = maxAlpha;
@@ -276,9 +278,10 @@ public class EntityAura extends Entity {
         parent.children.put(name = thisName, this);
         return this;
     }
+
     protected void entityInit() {
-         ignoreFrustumCheck = true;
-        renderPass =1;
+        ignoreFrustumCheck = true;
+        renderPass = 1;
         height = 20 * 0.11f;
 
     }
@@ -287,7 +290,7 @@ public class EntityAura extends Entity {
         if (entity.isInWater() && !isKaioken)
             ((IEntityMC) entity).setRenderPass(renderPass = 0);
         else if (renderPass == 0 && !isKaioken)
-           ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
+            ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
 
         if (isKaioken) {
             if (parent.isVanillaDefault && !DBCForm.isSaiyanGod(auraData.getState()))
@@ -336,11 +339,14 @@ public class EntityAura extends Entity {
         entity.ignoreFrustumCheck = false;
 
 
-        if (isRoot() && auraData.getAuraEntity() == this)
+        if (isRoot() && auraData.getAuraEntity() == this) {
             auraData.setAuraEntity(null);
+            auraData.setActiveAuraColor(-1);
+        }
 
         if (parent != null && parent.children != null && parent.children.containsKey(name))
             parent.children.remove(name);
+
 
     }
 
@@ -401,7 +407,7 @@ public class EntityAura extends Entity {
     }
 
     @SideOnly(Side.CLIENT)
-    public void fadeOutSound(){
+    public void fadeOutSound() {
         if (auraSound != null)
             auraSound.soundSource.fadeOut = true;
     }
@@ -429,8 +435,8 @@ public class EntityAura extends Entity {
             //  scaledAuraHeight = ((float) ((EntityNPCInterface) entity).display.modelSize) / 5f;
             //   yOffset = scaledAuraHeight;
         }
-    //    if (entity instanceof EntityNPCInterface)
-            //scaledAuraHeight = entity.height + 0.75f * size;
+        //    if (entity instanceof EntityNPCInterface)
+        //scaledAuraHeight = entity.height + 0.75f * size;
 
         yOffset = -0.05f + scaledAuraHeight + scaledAuraHeight * (scaledAuraHeight / 50) * 2.25f;
 
@@ -455,9 +461,10 @@ public class EntityAura extends Entity {
     public boolean shouldRender() {
         return (type3D != EnumAuraTypes3D.None || type3D == EnumAuraTypes3D.None && hasLightning) && (JGConfigClientSettings.CLIENT_DA14 || SubGuiAuraDisplay.useGUIAura);
     }
-    public void setTexture(int type, String path){
+
+    public void setTexture(int type, String path) {
         ResourceLocation loc = path == null ? null : new ResourceLocation(path);
-        switch (type){
+        switch (type) {
             case 2:
                 text2 = loc;
                 break;

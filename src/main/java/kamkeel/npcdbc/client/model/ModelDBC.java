@@ -577,8 +577,12 @@ public class ModelDBC extends ModelBase {
                 color = KiWeaponData.getColorByAuraTypeName("");
             }
         }
+        if (weaponData.syncAuraColor) {
+            Aura aura = display.getToggledAura();
+            if (aura != null)
+                weaponData.color.color = display.activeAuraColor;
+        }
 
-        weaponData.color.color = color;
 
         GL11.glTranslatef(-0.06F, -0.05F, 0.0F);
         JRMCoreClient.mc.renderEngine.bindTexture(new ResourceLocation(JRMCoreH.tjjrmc + ":allw.png"));
