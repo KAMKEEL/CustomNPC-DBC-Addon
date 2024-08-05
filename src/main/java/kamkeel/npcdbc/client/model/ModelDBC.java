@@ -578,14 +578,10 @@ public class ModelDBC extends ModelBase {
                 color = KiWeaponData.getColorByAuraTypeName("");
             }
         }
-        float alfa = 0.6F;
-        float h1 = 1.0F;
-        float h2 = (float)(color >> 16 & 255) / 255.0F;
-        float h3 = (float)(color >> 8 & 255) / 255.0F;
-        float h4 = (float)(color & 255) / 255.0F;
-        float red = h1 * h2;
-        float green = h1 * h3;
-        float blue = h1 * h4;
+        float alpha = 0.6F;
+        float red = (float)(color >> 16 & 255) / 255.0F;
+        float green = (float)(color >> 8 & 255) / 255.0F;
+        float blue = (float)(color & 255) / 255.0F;
         if (red > 1.0F) {
             red = 1.0F;
         }
@@ -603,24 +599,24 @@ public class ModelDBC extends ModelBase {
 
         if (weaponData.weaponType == 0) {
             // float scl = (float)kiFistLevel * 0.02F + (float)kiInfuseLevel * 0.02F;
-            float scl = weaponData.scaleY;
-            GL11.glTranslatef(0.0F, -scl*0.75f, 0.0F);
-            GL11.glScalef(1.0F, 1.0F + scl, 1.0F);
+            float scl = weaponData.scaleY - 1;
+            GL11.glTranslatef(weaponData.offsetX, -scl*0.75f+weaponData.offsetY, weaponData.offsetZ);
+            GL11.glScalef(weaponData.scaleX, 1.0f +scl, weaponData.scaleZ);
             float ex = (float)entity.ticksExisted;
             float r4 = (MathHelper.cos(ex / 2.0F) / 3.0F - 0.2F) / 8.0F;
             GL11.glTranslatef(0.0F, -r4, 0.0F);
-            GL11.glColor4f(red, green, blue, alfa);
+            GL11.glColor4f(red, green, blue, alpha);
             GL11.glRotatef(ex * 25.0F, 0.0F, 1.0F, 0.0F);
             JRMCoreHJBRA.model2.render(0.0625F, weaponData.weaponType);
             GL11.glTranslatef(0.0F, -0.12F, 0.0F);
             GL11.glScalef(1.3F, 1.18F, 1.3F);
-            GL11.glColor4f(red * 0.8F, green * 0.8F, blue * 0.8F, alfa * 0.8F);
+            GL11.glColor4f(red * 0.8F, green * 0.8F, blue * 0.8F, alpha * 0.8F);
             JRMCoreHJBRA.model2.render(0.0625F, weaponData.weaponType);
         }
 
         if (weaponData.weaponType == 1) {
-            GL11.glTranslatef(0.0F, 0.6F, 0.0F);
-            GL11.glColor4f(red, green, blue, alfa);
+            GL11.glTranslatef(weaponData.offsetX, 0.6F+weaponData.offsetY, weaponData.offsetZ);
+            GL11.glColor4f(red, green, blue, alpha);
             GL11.glRotatef(-3.0F, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(5.0F, 0.0F, 0.0F, 1.0F);
             GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
