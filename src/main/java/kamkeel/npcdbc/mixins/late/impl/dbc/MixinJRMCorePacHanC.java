@@ -18,12 +18,13 @@ public class MixinJRMCorePacHanC {
     @Inject(method = "handleTri", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct;CONFIG_UI_ATTACK_RATE:[[B", ordinal = 0, shift = At.Shift.AFTER), cancellable = true)
     private void UI_CONFIG2(ByteBuf buffer, CallbackInfo ci) {
         DBCUtils.CONFIG_UI_NAME = new String[JGConfigUltraInstinct.CONFIG_UI_LEVELS];
+        JGConfigUltraInstinct.CONFIG_UI_SKIP = new boolean[JGConfigUltraInstinct.CONFIG_UI_LEVELS];
     }
-
 
     @Inject(method = "handleTri", at = @At(value = "INVOKE", target = "Lio/netty/buffer/ByteBuf;readInt()I", ordinal = 23), cancellable = true)
     private void UI_CONFIG(ByteBuf buffer, CallbackInfo ci, @Local(name = "i") LocalIntRef i) {
         DBCUtils.CONFIG_UI_NAME[i.get()] = ByteBufUtils.readUTF8String(buffer);
+        JGConfigUltraInstinct.CONFIG_UI_SKIP[i.get()] = buffer.readBoolean();
     }
 
 
