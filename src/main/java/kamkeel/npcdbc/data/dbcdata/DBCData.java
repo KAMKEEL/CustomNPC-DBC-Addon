@@ -451,7 +451,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         int uiSkill = JRMCoreH.SklLvl(16);
         for (int i = 0; i < JGConfigUltraInstinct.CONFIG_UI_LEVELS; i++) {
-            if (uiSkill >= i + 1)
+            if (uiSkill >= i + 1 && !JGConfigUltraInstinct.CONFIG_UI_SKIP[i])
                 dbcForms.put(UltraInstinct + i, "§7" + DBCUtils.CONFIG_UI_NAME[i]);
         }
 
@@ -465,38 +465,38 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         return JRMCoreH.StusEfcts(id, StatusEffects);
     }
 
-    public void setSE(int id, boolean bo) {
-        JRMCoreH.StusEfcts(id, StatusEffects, player, bo);
+    public String setSE(int id, boolean bo) {
+        return JRMCoreH.StusEfcts(id, StatusEffects, getRawCompound(), bo);
     }
 
-    public void setForm(int dbcForm, boolean on) {
+    public String setForm(int dbcForm, boolean on) {
+
         switch (dbcForm) {
             case DBCForm.Kaioken:
-                setSE(5, on);
-                if (on)
-                    State2 = 1;
+                StatusEffects = setSE(5, on);
+                getRawCompound().setByte("jrmcState2", (byte) (on ? 1 : 0));
                 break;
             case DBCForm.UltraInstinct:
-                setSE(19, on);
-                if (on)
-                    State2 = 1;
+                StatusEffects = setSE(19, on);
+                getRawCompound().setByte("jrmcState2", (byte) (on ? 1 : 0));
                 break;
             case DBCForm.GodOfDestruction:
-                setSE(20, on);
+                StatusEffects = setSE(20, on);
                 break;
             case DBCForm.Mystic:
-                setSE(13, on);
+                StatusEffects = setSE(13, on);
                 break;
             case DBCForm.Legendary:
-                setSE(14, on);
+                StatusEffects = setSE(14, on);
                 break;
             case DBCForm.Divine:
-                setSE(17, on);
+                StatusEffects = setSE(17, on);
                 break;
             case DBCForm.Majin:
-                setSE(12, on);
+                StatusEffects = setSE(12, on);
                 break;
         }
+        return StatusEffects;
     }
 
     public boolean settingOn(int id) {

@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreKeyHandler;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
@@ -38,6 +39,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
+
+import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 
 @Mixin(value = DBCKiTech.class, remap = false)
 public class MixinDBCKiTech {
@@ -134,6 +137,37 @@ public class MixinDBCKiTech {
 
 
     }
+
+    @Inject(method = "Ascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;isRaceMajin()Z", ordinal = 0), cancellable = true)
+    private static void fixSomeFormsNotAscendingProperly4(KeyBinding K, CallbackInfo ci, @Local(name = "isInBase") LocalBooleanRef isInBase, @Local(name = "isInKaioken") LocalBooleanRef isInKaioken, @Local(name = "isInMystic") LocalBooleanRef isInMystic, @Local(name = "isInGoD") LocalBooleanRef isInGoD, @Local(name = "isInUI") LocalBooleanRef isInUI, @Local(name = "useGodOfDestruction") LocalBooleanRef useGodOfDestruction, @Local(name = "isInUltraInstinct") LocalBooleanRef isInUltraInstinct) {
+        PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
+        int id = dbc.selectedDBCForm;
+        if (id != -1) {
+            if (id == DBCForm.GodOfDestruction || (id >= UltraInstinct && id <= UltraInstinct + 10)) {
+                isInBase.set(true);
+                isInUI.set(false);
+            }
+            isInGoD.set(false);
+            isInMystic.set(false);
+            isInKaioken.set(false);
+
+        }
+    }
+
+    @Redirect(method = "Ascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;StusEfctsMe(I)Z"))
+    private static boolean fixSomeFormsNotAscendingProperly5(int ste, @Local(name = "useUltraInstinct2") LocalBooleanRef useUltraInstinct2) {
+        PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
+        int id = dbc.selectedDBCForm;
+        if (id != -1) {
+            if ((id >= UltraInstinct && id <= UltraInstinct + 10) && ste == 5) {
+                useUltraInstinct2.set(true);
+                return false;
+            }
+
+        }
+        return JRMCoreH.StusEfctsMe(ste);
+    }
+
 
     @Redirect(method = "Ascend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;State:B", ordinal = 11))
     private static byte fixSomeFormsNotAscendingProperly2() {

@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.network.packets.form;
 
+import JinRyuu.JRMCore.JRMCoreH;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -19,6 +20,8 @@ import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 
 import java.io.IOException;
+
+import static kamkeel.npcdbc.constants.DBCForm.*;
 
 public final class DBCSelectForm extends AbstractPacket {
     public static final String packetName = "NPC|SelectForm";
@@ -53,11 +56,38 @@ public final class DBCSelectForm extends AbstractPacket {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(playerData);
         NBTTagCompound compound = new NBTTagCompound();
         if (isDBC && formID != -1) {
-            if (formID == formData.tempSelectedDBCForm)
+            if (formID == formData.selectedDBCForm)
                 return;
 
             DBCData dbc = DBCData.get(player);
-            formData.selectedDBCForm = formData.tempSelectedDBCForm = formID;
+            int selected = 0;
+            formData.selectedDBCForm = formData.tempSelectedDBCForm = selected = formID;
+            if (selected == Mystic) {
+                JRMCoreH.PlyrSettingsRem(player, 0);
+                JRMCoreH.PlyrSettingsRem(player, 11);
+                JRMCoreH.PlyrSettingsRem(player, 16);
+                JRMCoreH.PlyrSettingsOn(player, 6);
+            } else if (selected >= Kaioken && selected <= Kaioken6) {
+                JRMCoreH.PlyrSettingsRem(player, 6);
+                JRMCoreH.PlyrSettingsRem(player, 11);
+                JRMCoreH.PlyrSettingsRem(player, 16);
+                JRMCoreH.PlyrSettingsOn(player, 0);
+            } else if (selected >= UltraInstinct && selected <= UltraInstinct + 10) {
+                JRMCoreH.PlyrSettingsRem(player, 0);
+                JRMCoreH.PlyrSettingsRem(player, 6);
+                JRMCoreH.PlyrSettingsRem(player, 16);
+                JRMCoreH.PlyrSettingsOn(player, 11);
+            } else if (selected == GodOfDestruction) {
+                JRMCoreH.PlyrSettingsRem(player, 0);
+                JRMCoreH.PlyrSettingsRem(player, 6);
+                JRMCoreH.PlyrSettingsRem(player, 11);
+                JRMCoreH.PlyrSettingsOn(player, 16);
+            } else {
+                JRMCoreH.PlyrSettingsRem(player, 0);
+                JRMCoreH.PlyrSettingsRem(player, 6);
+                JRMCoreH.PlyrSettingsRem(player, 11);
+                JRMCoreH.PlyrSettingsRem(player, 16);
+            }
             if (formID != -1)
                 NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", DBCForm.getMenuName(dbc.Race, formID));
         } else if (formID != -1 && FormController.getInstance().has(formID)) {
