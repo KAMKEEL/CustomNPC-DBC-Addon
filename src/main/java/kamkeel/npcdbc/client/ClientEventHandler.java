@@ -252,13 +252,13 @@ public class ClientEventHandler {
                 DBCData dbcData = null;
                 DBCDisplay display = null;
                 boolean isInKaioken = false, isSpectator = false;
-
+                IAuraData data = null;
 
                 boolean vanillaAura = false;
                 if (isNPC) {
                     EntityCustomNpc npc = (EntityCustomNpc) event.entity;
                     display = ((INPCDisplay) npc.display).getDBCDisplay();
-                    IAuraData data = display;
+                    data = display;
                     data.setActiveAuraColor(-1);
                     if (!display.enabled)
                         return;
@@ -272,7 +272,7 @@ public class ClientEventHandler {
                     isInKaioken = display.isKaioken;
                 } else if (isPlayer) {
                     dbcData = DBCData.get((EntityPlayer) event.entity);
-                    IAuraData data = dbcData;
+                    data = dbcData;
                     aura = dbcData.getToggledAura();
                     isSpectator = dbcData.stats.isFusionSpectator();
                     data.setActiveAuraColor(-1);
