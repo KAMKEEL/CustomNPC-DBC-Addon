@@ -15,6 +15,7 @@ import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -276,9 +277,36 @@ public class MixinDBCPacketHandler {
 
             }
         }
+
         dbc.selectedDBCForm = -1;
         dbc.updateClient();
         StE.set(stus);
+
+        Form form = data.getForm();
+        if (form != null) {
+            if (!form.stackable.godStackable) {
+                if (isGoDAvailable.get()) {
+                    isGoDAvailable.set(false);
+                }
+            }
+            if (!form.stackable.mysticStackable) {
+                if (isMysticAvailable.get()) {
+                    isMysticAvailable.set(false);
+                }
+            }
+            if (!form.stackable.uiStackable) {
+                if (isUIAvailable.get()) {
+                    isUIAvailable.set(false);
+                    st2.set((byte) 0);
+                }
+            }
+            if (!form.stackable.kaiokenStackable) {
+                if (isKaiokenAvailable.get()) {
+                    isKaiokenAvailable.set(false);
+                    st2.set((byte) 0);
+                }
+            }
+        }
 
     }
 
