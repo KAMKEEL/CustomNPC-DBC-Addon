@@ -75,7 +75,7 @@ public class KiWeaponData implements IKiWeaponData {
 
     @Override
     public int getColor(){
-        return this.getColor();
+        return this.color;
     }
 
     @Override
