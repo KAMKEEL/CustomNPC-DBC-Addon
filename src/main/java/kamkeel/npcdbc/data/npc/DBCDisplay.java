@@ -8,6 +8,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
+import kamkeel.npcdbc.api.npc.IKiWeaponData;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -82,14 +83,28 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public HashMap<Integer, EntityAura2> dbcSecondaryAuraQueue = new HashMap<>();
     private EnumAuraTypes2D enumAuraTypes = EnumAuraTypes2D.None;
 
+    public KiWeaponData kiWeaponRight;
+    public KiWeaponData kiWeaponLeft;
+
     public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;
+        this.kiWeaponLeft = new KiWeaponData();
+        this.kiWeaponRight = new KiWeaponData();
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
         comp.setBoolean("DBCDisplayEnabled", enabled);
         if (enabled) {
             NBTTagCompound dbcDisplay = new NBTTagCompound();
+
+            NBTTagCompound kiWeaponLeftData = new NBTTagCompound();
+            kiWeaponLeft.saveToNBT(kiWeaponLeftData);
+            NBTTagCompound kiWeaponRightData = new NBTTagCompound();
+            kiWeaponRight.saveToNBT(kiWeaponRightData);
+
+            dbcDisplay.setTag("kiWeaponLeft", kiWeaponLeftData);
+            dbcDisplay.setTag("kiWeaponRight", kiWeaponRightData);
+
 
             dbcDisplay.setString("DBCHair", hairCode);
             dbcDisplay.setInteger("DBCHairColor", hairColor);
@@ -139,6 +154,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         enabled = comp.getBoolean("DBCDisplayEnabled");
         if (enabled) {
             NBTTagCompound dbcDisplay = comp.getCompoundTag("DBCDisplay");
+
+            kiWeaponLeft.readFromNBT(comp.getCompoundTag("kiWeaponLeft"));
+            kiWeaponRight.readFromNBT(comp.getCompoundTag("kiWeaponRight"));
 
             race = dbcDisplay.getByte("DBCRace");
             auraID = dbcDisplay.getInteger("DBCAuraID");
@@ -316,6 +334,15 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public void setHairCode(String hairCode) {
         this.hairCode = hairCode;
+    }
+
+    @Override
+    public IKiWeaponData getKiWeapon(int arm) {
+        if(arm == 0)
+            return kiWeaponRight;
+        if(arm == 1)
+            return  kiWeaponLeft;
+        return null;
     }
 
 
