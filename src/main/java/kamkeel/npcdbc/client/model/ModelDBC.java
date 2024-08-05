@@ -5,6 +5,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
+import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
@@ -250,7 +251,11 @@ public class ModelDBC extends ModelBase {
             GL11.glPopMatrix();
 
             if (display.race < 4) {
-                ColorMode.applyModelColor(eyeBrowColor, isHurt);
+                if(display.race != DBCRace.NAMEKIAN)
+                    ColorMode.applyModelColor(eyeBrowColor, isHurt);
+                else{
+                    ColorMode.applyModelColor(bodyCM, isHurt);
+                }
                 if (!hasEyebrows && display.race != DBCRace.NAMEKIAN)
                     ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + "humw" + display.eyeType + ".png"));
                 else

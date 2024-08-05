@@ -84,4 +84,12 @@ public class Color {
         }
         return str;
     }
+
+    public Color multiplty(float multi){
+        int r = (int) ((getRed()*multi));
+        int g = (int) ((getGreen()*multi));
+        int b = (int) ((getBlue()*multi));
+        float a = alpha * multi;
+        return new Color((r<<16) + (g<<8) + b, a);
+    }
 }
