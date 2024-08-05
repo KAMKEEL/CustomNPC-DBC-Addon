@@ -9,8 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class KiWeaponData implements IKiWeaponData {
     public byte weaponType;
 
-    public Color color = new Color(0xA8FFFF, 0.6f);
-    public boolean syncAuraColor;
+    public Color color = new Color(-1, 0.6f);
 
     public float offsetX, offsetY, offsetZ;
 
@@ -22,7 +21,6 @@ public class KiWeaponData implements IKiWeaponData {
         NBTTagCompound weapon = compound.getCompoundTag(name);
         weaponType = weapon.getByte("weaponType");
         color.readFromNBT(weapon, "color");
-        syncAuraColor = weapon.getBoolean("syncAuraColor");
         offsetX = weapon.getFloat("offsetX");
         offsetY = weapon.getFloat("offsetY");
         offsetZ = weapon.getFloat("offsetZ");
@@ -42,7 +40,6 @@ public class KiWeaponData implements IKiWeaponData {
         // make it toggleable in a fight without losing color/scale data
         weapon.setByte("weaponType", weaponType);
         color.writeToNBT(weapon, "color");
-        weapon.setBoolean("syncAuraColor", syncAuraColor);
         weapon.setFloat("offsetX", offsetX);
         weapon.setFloat("offsetY", offsetY);
         weapon.setFloat("offsetZ", offsetZ);

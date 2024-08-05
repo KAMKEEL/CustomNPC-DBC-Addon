@@ -568,23 +568,23 @@ public class ModelDBC extends ModelBase {
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
         GL11.glDepthMask(true);
 
-        int color = weaponData.getColor();
-        if (color == -1) {
+        Color col = weaponData.color.clone();
+        if (col.color == -1) {
             if (display.auraID != -1) {
                 Aura aura = (Aura) AuraController.getInstance().get(display.auraID);
                 AuraDisplay auraDisplay = (aura != null ? aura.display : null);
-                color = KiWeaponData.getColorByAuraType(auraDisplay);
+                col.color = KiWeaponData.getColorByAuraType(auraDisplay);
             } else {
-                color = KiWeaponData.getColorByAuraTypeName("");
+                col.color = KiWeaponData.getColorByAuraTypeName("");
             }
         }
 
-        Color col = weaponData.color.clone();
-        if (weaponData.syncAuraColor) {
-            Aura aura = display.getToggledAura();
-            if (aura != null)
-                col.color = display.activeAuraColor;
-        }
+
+//        if (weaponData.syncAuraColor) {
+//            Aura aura = display.getToggledAura();
+//            if (aura != null)
+//                col.color = display.activeAuraColor;
+//        }
 
 
         GL11.glTranslatef(-0.06F, -0.05F, 0.0F);
