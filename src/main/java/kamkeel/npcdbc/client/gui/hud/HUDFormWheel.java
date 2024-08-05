@@ -35,11 +35,9 @@ import org.lwjgl.opengl.GL12;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 
 import static kamkeel.npcdbc.constants.DBCForm.*;
-import static org.lwjgl.opengl.GL11.glScaled;
-import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.*;
 
 public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiListener {
 
@@ -95,6 +93,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         addButton(new GuiNpcButton(6, x, y, 60, 20, new String[]{"Configure", "Done"}, !configureEnabled ? 0 : 1));
 
         if (configureEnabled) {
+            addButton(new GuiNpcButton(8, x - 94 - 75, y - 27, 150, 20, "Edit"));
             addButton(new GuiNpcButton(7, x += 62, y, 80, 20, "Switch Wheel"));
 
 
@@ -115,60 +114,62 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             }
 
 
-            Form form = wheelSlot[0].form;
+//            Form form = wheelSlot[0].form;
+//
+//
+//            addLabel(new GuiNpcLabel(0, "Slot 1", x, y + 5));
+//            getLabel(0).color = 14737632;
+//            addButton(new GuiNpcButton(100, x + 80, y, 16, 20, "X"));
+//            addButton(new GuiNpcButton(0, x, y, 80, 20, "general.noForm"));
+//            getButton(0).setDisplayText(getFormName(0));
+//            getButton(100).enabled = wheelSlot[0].data.formID != -1;
+//
+//            y += 22;
+//            addLabel(new GuiNpcLabel(1, "Slot 2", x + 2, y + 5));
+//            getLabel(1).color = 14737632;
+//            y += 15;
+//            addButton(new GuiNpcButton(11, x + 80, y, 16, 20, "X"));
+//            addButton(new GuiNpcButton(1, x, y, 80, 20, "general.noForm"));
+//            getButton(1).setDisplayText(getFormName(1));
+//            getButton(11).enabled = wheelSlot[1].data.formID != -1;
+//
+//            y += 22;
+//            addLabel(new GuiNpcLabel(2, "Slot 3", x + 2, y + 5));
+//            getLabel(2).color = 14737632;
+//            y += 15;
+//            addButton(new GuiNpcButton(22, x + 80, y, 16, 20, "X"));
+//            addButton(new GuiNpcButton(2, x, y, 80, 20, "general.noForm"));
+//            getButton(2).setDisplayText(getFormName(2));
+//            getButton(22).enabled = wheelSlot[2].data.formID != -1;
+//
+//            y += 22;
+//            addLabel(new GuiNpcLabel(3, "Slot 4", x + 2, y + 5));
+//            getLabel(3).color = 14737632;
+//            y += 15;
+//            addButton(new GuiNpcButton(33, x + 80, y, 16, 20, "X"));
+//            addButton(new GuiNpcButton(3, x, y, 80, 20, "general.noForm"));
+//            getButton(3).setDisplayText(getFormName(3));
+//            getButton(33).enabled = wheelSlot[3].data.formID != -1;
+//
+//            y += 22;
+//            addLabel(new GuiNpcLabel(4, "Slot 5", x + 2, y + 5));
+//            getLabel(4).color = 14737632;
+//            y += 15;
+//            addButton(new GuiNpcButton(44, x + 80, y, 16, 20, "X"));
+//            addButton(new GuiNpcButton(4, x, y, 80, 20, "general.noForm"));
+//            getButton(4).setDisplayText(getFormName(4));
+//            getButton(44).enabled = wheelSlot[4].data.formID != -1;
+//
+//            y += 22;
+//            addLabel(new GuiNpcLabel(5, "Slot 6", x + 2, y + 5));
+//            getLabel(5).color = 14737632;
+//            y += 15;
+//            addButton(new GuiNpcButton(55, x + 80, y, 16, 20, "X"));
+//            addButton(new GuiNpcButton(5, x, y, 80, 20, "general.noForm"));
+//            getButton(5).setDisplayText(getFormName(5));
+//            getButton(55).enabled = wheelSlot[5].data.formID != -1;
 
 
-            addLabel(new GuiNpcLabel(0, "Slot 1", x, y + 5));
-            getLabel(0).color = 14737632;
-            addButton(new GuiNpcButton(100, x + 80, y, 16, 20, "X"));
-            addButton(new GuiNpcButton(0, x, y, 80, 20, "general.noForm"));
-            getButton(0).setDisplayText(getFormName(0));
-            getButton(100).enabled = wheelSlot[0].data.formID != -1;
-
-            y += 22;
-            addLabel(new GuiNpcLabel(1, "Slot 2", x + 2, y + 5));
-            getLabel(1).color = 14737632;
-            y += 15;
-            addButton(new GuiNpcButton(11, x + 80, y, 16, 20, "X"));
-            addButton(new GuiNpcButton(1, x, y, 80, 20, "general.noForm"));
-            getButton(1).setDisplayText(getFormName(1));
-            getButton(11).enabled = wheelSlot[1].data.formID != -1;
-
-            y += 22;
-            addLabel(new GuiNpcLabel(2, "Slot 3", x + 2, y + 5));
-            getLabel(2).color = 14737632;
-            y += 15;
-            addButton(new GuiNpcButton(22, x + 80, y, 16, 20, "X"));
-            addButton(new GuiNpcButton(2, x, y, 80, 20, "general.noForm"));
-            getButton(2).setDisplayText(getFormName(2));
-            getButton(22).enabled = wheelSlot[2].data.formID != -1;
-
-            y += 22;
-            addLabel(new GuiNpcLabel(3, "Slot 4", x + 2, y + 5));
-            getLabel(3).color = 14737632;
-            y += 15;
-            addButton(new GuiNpcButton(33, x + 80, y, 16, 20, "X"));
-            addButton(new GuiNpcButton(3, x, y, 80, 20, "general.noForm"));
-            getButton(3).setDisplayText(getFormName(3));
-            getButton(33).enabled = wheelSlot[3].data.formID != -1;
-
-            y += 22;
-            addLabel(new GuiNpcLabel(4, "Slot 5", x + 2, y + 5));
-            getLabel(4).color = 14737632;
-            y += 15;
-            addButton(new GuiNpcButton(44, x + 80, y, 16, 20, "X"));
-            addButton(new GuiNpcButton(4, x, y, 80, 20, "general.noForm"));
-            getButton(4).setDisplayText(getFormName(4));
-            getButton(44).enabled = wheelSlot[4].data.formID != -1;
-
-            y += 22;
-            addLabel(new GuiNpcLabel(5, "Slot 6", x + 2, y + 5));
-            getLabel(5).color = 14737632;
-            y += 15;
-            addButton(new GuiNpcButton(55, x + 80, y, 16, 20, "X"));
-            addButton(new GuiNpcButton(5, x, y, 80, 20, "general.noForm"));
-            getButton(5).setDisplayText(getFormName(5));
-            getButton(55).enabled = wheelSlot[5].data.formID != -1;
         }
 
         BLUR_INTENSITY = 0;
@@ -222,6 +223,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             timeClosedSubGui = Minecraft.getSystemTime();
 
         }
+        if (button.id == 8) {
+            this.setSubGui(new SubGuiSelectForm(button.id, true, true).displayDBCForms(DBCData.getClient()));
+        }
         initGui();
     }
 
@@ -231,7 +235,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         if (subgui instanceof SubGuiSelectForm) {
             SubGuiSelectForm selectForm = ((SubGuiSelectForm) subgui);
             if (selectForm.confirmed) {
-                int slotID = selectForm.buttonID;
+                int slotID = selectForm.buttonID == 8 ? hoveredSlot : selectForm.buttonID;
+
                 FormWheelSegment slot = wheelSlot[slotID];
                 Form form = slot.form;
 
@@ -244,6 +249,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
                 slot.setForm(selectForm.selectedFormID, selectForm.isDBC, true);
             }
+            timeClosedSubGui = Minecraft.getSystemTime();
         }
         initGui();
     }
@@ -253,6 +259,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public void updateScreen() {
         if (mc.thePlayer.ticksExisted % 10 == 0)
             dbcForms = dbcData.getUnlockedDBCFormsMap();
+
+        if (getButton(8) != null)
+            getButton(8).enabled = hoveredSlot != -1;
 
 
         if (Mouse.isButtonDown(1)) {
@@ -345,6 +354,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     }
 
     public void selectSlot(int slotID) {
+        if (hoveredSlot == slotID)
+            return;
+
         if (hoveredSlot != -1)
             wheelSlot[hoveredSlot].setHoveredState(false);
         if (slotID != -1)
@@ -358,12 +370,10 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
         if (hasSubGui()) {
-            super.drawScreen(mouseX, mouseY, partialTicks);
-            return;
+            //   super.drawScreen(mouseX, mouseY, partialTicks);
+            //  return;
         }
 
-
-        super.drawScreen(mouseX, mouseY, partialTicks);
 
         //       hoveredSlot = -1;
         double width = 124;
@@ -381,13 +391,41 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         // TODO: Add more support for higher scale factors / GUI sizes when people start complaining.
         //       Use a switch case
-        if (scaledResolution.getScaleFactor() == 2) {
-            if (mc.displayHeight < 720) {
+        float factor = scaledResolution.getScaleFactor();
+        undoMCScaling = 1f / factor * 3f;
+        if (factor == 1) {
+            if (mc.displayHeight < 260)
+                undoMCScaling = 0.3f;
+            else if (mc.displayHeight < 350)
+                undoMCScaling = 0.45f;
+            else if (mc.displayHeight < 720)
+                undoMCScaling = 0.7f;
+
+            else if (mc.displayWidth < 650)
+                undoMCScaling = 1f;
+        } else if (factor == 2) {
+            if (mc.displayHeight < 720)
                 undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
-            }
+            undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
+        } else if (factor == 3) {
+            if (mc.displayHeight < 720)
+                undoMCScaling = 1f / 3;
+            else if (mc.displayHeight < 930)
+                undoMCScaling = 0.425f;
+            else if (mc.displayHeight < 1000)
+                undoMCScaling = 0.6f;
+            else if (mc.displayWidth < 1300)
+                undoMCScaling = 0.8f;
+            else if (mc.displayHeight < 1250) {
+                undoMCScaling = 0.75f;
+                glTranslatef(0, -15, 0);
+            } else
+                undoMCScaling = 0.99f;
+
+
         }
         calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, configureEnabled);
-
+        glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
         GL11.glScalef(undoMCScaling, undoMCScaling, 0);
 
@@ -478,7 +516,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
             GL11.glPopMatrix();
         }
-
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_BLEND);
 
@@ -492,9 +529,13 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
 
         renderPlayer(mouseX, mouseY);
-        GL11.glPopMatrix();
+        glPopMatrix();
+        glPopMatrix();
+
 //        String text = mouseX + "," + mouseY + ", " + hoveredSlot + "," + (keyDown ? "HOLDING KEY" : "NOT HOLDING");
 //        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
+
+        super.drawScreen(mouseX, mouseY, partialTicks);
 
     }
 
@@ -686,7 +727,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
         boolean enoughTimeSinceClose = Minecraft.getSystemTime() - timeClosedSubGui > 50;
-        if (configureEnabled && enoughTimeSinceClose) {
+        if (configureEnabled && !hasSubGui() && enoughTimeSinceClose) {
             calculateHoveredSlot((float) this.width / 2, (float) this.height / 2, false);
         }
     }
