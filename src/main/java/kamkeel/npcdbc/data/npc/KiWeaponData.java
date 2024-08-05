@@ -17,32 +17,32 @@ public class KiWeaponData implements IKiWeaponData {
 
     public void readFromNBT(NBTTagCompound compound){
         isEnabled = compound.getBoolean("isEnabled");
-        if(isEnabled){
-            weaponType = compound.getByte("weaponType");
-            color = compound.getInteger("color");
-            offsetX = compound.getFloat("offsetX");
-            offsetY = compound.getFloat("offsetY");
-            offsetZ = compound.getFloat("offsetZ");
-            scaleX = compound.getFloat("scaleX");
-            scaleY = compound.getFloat("scaleY");
-            scaleZ = compound.getFloat("scaleZ");
-            damage = compound.getInteger("damage");
-        }
+        weaponType = compound.getByte("weaponType");
+        color = compound.getInteger("color");
+        offsetX = compound.getFloat("offsetX");
+        offsetY = compound.getFloat("offsetY");
+        offsetZ = compound.getFloat("offsetZ");
+        scaleX = compound.getFloat("scaleX");
+        scaleY = compound.getFloat("scaleY");
+        scaleZ = compound.getFloat("scaleZ");
+        damage = compound.getInteger("damage");
+
     }
 
     public void saveToNBT(NBTTagCompound compound){
         compound.setBoolean("isEnabled", isEnabled);
-        if(isEnabled){
-            compound.setByte("weaponType", weaponType);
-            compound.setInteger("color", color);
-            compound.setFloat("offsetX", offsetX);
-            compound.setFloat("offsetY", offsetY);
-            compound.setFloat("offsetZ", offsetZ);
-            compound.setFloat("scaleX", scaleX);
-            compound.setFloat("scaleY", scaleY);
-            compound.setFloat("scaleZ", scaleZ);
-            compound.setInteger("damage", damage);
-        }
+
+        // Not doing a `if(isEnabled)` check because I want this to persist if players want to
+        // make it toggleable in a fight without losing color/scale data
+        compound.setByte("weaponType", weaponType);
+        compound.setInteger("color", color);
+        compound.setFloat("offsetX", offsetX);
+        compound.setFloat("offsetY", offsetY);
+        compound.setFloat("offsetZ", offsetZ);
+        compound.setFloat("scaleX", scaleX);
+        compound.setFloat("scaleY", scaleY);
+        compound.setFloat("scaleZ", scaleZ);
+        compound.setInteger("damage", damage);
     }
 
 
