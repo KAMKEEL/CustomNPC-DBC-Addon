@@ -9,9 +9,14 @@ import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
+import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
@@ -520,7 +525,8 @@ public class ModelDBC extends ModelBase {
 
 //        ((ModelScaleRenderer)this.bipedLeftArm).setConfig(arms, -x, y, z);
 
-        if (!parent.bipedLeftArm.isHidden){
+        KiWeaponData leftArm = display.kiWeaponLeft;
+        if (!parent.bipedLeftArm.isHidden && leftArm.isEnabled){
             GL11.glPushMatrix();
             GL11.glTranslatef(-x + (0.5f * 0.25f * (alexArms ? 0.75f : 1)), y, z);
             if (arms != null) {
@@ -531,10 +537,12 @@ public class ModelDBC extends ModelBase {
             if (arms != null) {
                 GL11.glScalef(arms.scaleX, arms.scaleY, arms.scaleZ);
             }
-            renderKiWeapon(entity, false, 1, 3f);
+            renderKiWeapon(entity, leftArm);
             GL11.glPopMatrix();
         }
-        if(!parent.bipedRightArm.isHidden) {
+
+        KiWeaponData rightArm = display.kiWeaponRight;
+        if(!parent.bipedRightArm.isHidden && rightArm.isEnabled) {
             GL11.glPushMatrix();
             GL11.glTranslatef(x, y, z);
             if (arms != null) {
@@ -545,35 +553,39 @@ public class ModelDBC extends ModelBase {
             if (arms != null) {
                 GL11.glScalef(arms.scaleX, arms.scaleY, arms.scaleZ);
             }
-            renderKiWeapon(entity, false, 0, 1f);
+            renderKiWeapon(entity, rightArm);
             GL11.glPopMatrix();
         }
 
         GL11.glPopMatrix();
     }
 
-    private void renderKiWeapon(Entity entity, boolean b, int whichKiWeapon, float weaponScale) {
+    private void renderKiWeapon(Entity entity, KiWeaponData weaponData) {
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
         GL11.glDepthMask(true);
-        float scale = 1.0F;
-        GL11.glScalef(scale, scale, scale);
-        float red = 1.0F;
-        float green = 1.0F;
-        float blue = 1.0F;
 
-        int color = 0x880000;
+        int color = weaponData.getColor();
+        if(color == -1){
+            if(display.auraID != -1) {
+                Aura aura = (Aura) AuraController.getInstance().get(display.auraID);
+                AuraDisplay auraDisplay = (aura != null ? aura.display : null);
+                color = KiWeaponData.getColorByAuraType(auraDisplay);
+            }else{
+                color = KiWeaponData.getColorByAuraTypeName("");
+            }
+        }
         float alfa = 0.6F;
         float h1 = 1.0F;
         float h2 = (float)(color >> 16 & 255) / 255.0F;
         float h3 = (float)(color >> 8 & 255) / 255.0F;
         float h4 = (float)(color & 255) / 255.0F;
-        red = h1 * h2;
-        green = h1 * h3;
-        blue = h1 * h4;
+        float red = h1 * h2;
+        float green = h1 * h3;
+        float blue = h1 * h4;
         if (red > 1.0F) {
             red = 1.0F;
         }
@@ -589,9 +601,9 @@ public class ModelDBC extends ModelBase {
         GL11.glTranslatef(-0.06F, -0.05F, 0.0F);
         JRMCoreClient.mc.renderEngine.bindTexture(new ResourceLocation(JRMCoreH.tjjrmc + ":allw.png"));
 
-        if (whichKiWeapon == 0) {
+        if (weaponData.weaponType == 0) {
             // float scl = (float)kiFistLevel * 0.02F + (float)kiInfuseLevel * 0.02F;
-            float scl = weaponScale;
+            float scl = weaponData.scaleY;
             GL11.glTranslatef(0.0F, -scl*0.75f, 0.0F);
             GL11.glScalef(1.0F, 1.0F + scl, 1.0F);
             float ex = (float)entity.ticksExisted;
@@ -599,22 +611,22 @@ public class ModelDBC extends ModelBase {
             GL11.glTranslatef(0.0F, -r4, 0.0F);
             GL11.glColor4f(red, green, blue, alfa);
             GL11.glRotatef(ex * 25.0F, 0.0F, 1.0F, 0.0F);
-            JRMCoreHJBRA.model2.render(0.0625F, whichKiWeapon);
+            JRMCoreHJBRA.model2.render(0.0625F, weaponData.weaponType);
             GL11.glTranslatef(0.0F, -0.12F, 0.0F);
-            GL11.glScalef(scale * 1.3F, scale * 1.18F, scale * 1.3F);
+            GL11.glScalef(1.3F, 1.18F, 1.3F);
             GL11.glColor4f(red * 0.8F, green * 0.8F, blue * 0.8F, alfa * 0.8F);
-            JRMCoreHJBRA.model2.render(0.0625F, whichKiWeapon);
+            JRMCoreHJBRA.model2.render(0.0625F, weaponData.weaponType);
         }
 
-        if (whichKiWeapon == 1) {
+        if (weaponData.weaponType == 1) {
             GL11.glTranslatef(0.0F, 0.6F, 0.0F);
             GL11.glColor4f(red, green, blue, alfa);
             GL11.glRotatef(-3.0F, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(5.0F, 0.0F, 0.0F, 1.0F);
             GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
             GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
-            GL11.glScalef(weaponScale, weaponScale, 1);
-            JRMCoreHJBRA.model2.render(0.0625F, whichKiWeapon);
+            GL11.glScalef(weaponData.scaleX, weaponData.scaleY, weaponData.scaleZ);
+            JRMCoreHJBRA.model2.render(0.0625F, weaponData.weaponType);
         }
 
         GL11.glEnable(GL11.GL_LIGHTING);

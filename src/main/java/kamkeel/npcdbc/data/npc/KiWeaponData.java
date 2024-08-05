@@ -1,6 +1,9 @@
 package kamkeel.npcdbc.data.npc;
 
 import kamkeel.npcdbc.api.npc.IKiWeaponData;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
+import kamkeel.npcdbc.data.aura.AuraDisplay;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class KiWeaponData implements IKiWeaponData {
@@ -152,5 +155,47 @@ public class KiWeaponData implements IKiWeaponData {
     @Override
     public int getDamage() {
         return this.damage;
+    }
+
+    public static int getColorByAuraType(AuraDisplay auraDisplay){
+        if(auraDisplay == null)
+            return getColorByAuraTypeName("");
+
+        if(auraDisplay.color1 == -1){
+            if(auraDisplay.type != EnumAuraTypes3D.None && auraDisplay.type != EnumAuraTypes3D.Base){
+                return getColorByAuraTypeName(auraDisplay.type.getName());
+            }
+
+            return getColorByAuraTypeName(auraDisplay.type2D.getName());
+
+        }
+        return auraDisplay.color1;
+    }
+
+    public static int getColorByAuraTypeName(String name){
+        switch(name){
+            case "ssgod":
+                return 0xFFC125;
+            case "ssb":
+                return 0x2ACDEE;
+            case "shinka":
+                return 0x007FFF;
+            case "ssrose":
+                return 0x730015;
+            case "ssroseevo":
+                return 0xD6164C;
+            case "ultimate":
+                return 0xFAB513;
+            case "mui":
+            case "ui":
+                return 0xF0F0F0;
+            case "godofdestructiontoppo":
+            case "godofdestruction":
+                return 0xBE32CF;
+            case "jiren":
+                return 0xAA0000;
+            default:
+                return 0xA8FFFF;
+        }
     }
 }
