@@ -93,4 +93,8 @@ public class Color {
         }
         return str;
     }
+
+    public Color clone() {
+        return new Color(color, alpha);
+    }
 }

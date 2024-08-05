@@ -7,6 +7,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
+import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
@@ -577,10 +578,12 @@ public class ModelDBC extends ModelBase {
                 color = KiWeaponData.getColorByAuraTypeName("");
             }
         }
+
+        Color col = weaponData.color.clone();
         if (weaponData.syncAuraColor) {
             Aura aura = display.getToggledAura();
             if (aura != null)
-                weaponData.color.color = display.activeAuraColor;
+                col.color = display.activeAuraColor;
         }
 
 
@@ -595,12 +598,12 @@ public class ModelDBC extends ModelBase {
             float ex = (float) entity.ticksExisted;
             float r4 = (MathHelper.cos(ex / 2.0F) / 3.0F - 0.2F) / 8.0F;
 
-            weaponData.color.glColor();
+            col.glColor();
             GL11.glTranslatef(0.0F, -r4, 0.0F);
             GL11.glRotatef(ex * 25.0F, 0.0F, 1.0F, 0.0F);
             JRMCoreHJBRA.model2.render(0.0625F, 0);
 
-            weaponData.color.multiply(0.8f).glColor();
+            col.multiply(0.8f).glColor();
             GL11.glTranslatef(0.0F, -0.12F, 0.0F);
             GL11.glScalef(1.3F, 1.18F, 1.3F);
             JRMCoreHJBRA.model2.render(0.0625F, 0);
@@ -608,7 +611,7 @@ public class ModelDBC extends ModelBase {
 
         if (weaponData.weaponType == 2) {
             GL11.glTranslatef(weaponData.offsetX, 0.6F + weaponData.offsetY, weaponData.offsetZ);
-            weaponData.color.glColor();
+            col.glColor();
             GL11.glRotatef(-3.0F, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(5.0F, 0.0F, 0.0F, 1.0F);
             GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
