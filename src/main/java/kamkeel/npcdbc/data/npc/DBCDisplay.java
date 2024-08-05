@@ -83,28 +83,17 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public HashMap<Integer, EntityAura2> dbcSecondaryAuraQueue = new HashMap<>();
     private EnumAuraTypes2D enumAuraTypes = EnumAuraTypes2D.None;
 
-    public KiWeaponData kiWeaponRight;
-    public KiWeaponData kiWeaponLeft;
+    public KiWeaponData kiWeaponRight = new KiWeaponData();
+    public KiWeaponData kiWeaponLeft = new KiWeaponData();
 
     public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;
-        this.kiWeaponLeft = new KiWeaponData();
-        this.kiWeaponRight = new KiWeaponData();
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
         comp.setBoolean("DBCDisplayEnabled", enabled);
         if (enabled) {
             NBTTagCompound dbcDisplay = new NBTTagCompound();
-
-            NBTTagCompound kiWeaponLeftData = new NBTTagCompound();
-            kiWeaponLeft.saveToNBT(kiWeaponLeftData);
-            NBTTagCompound kiWeaponRightData = new NBTTagCompound();
-            kiWeaponRight.saveToNBT(kiWeaponRightData);
-
-            dbcDisplay.setTag("kiWeaponLeft", kiWeaponLeftData);
-            dbcDisplay.setTag("kiWeaponRight", kiWeaponRightData);
-
 
             dbcDisplay.setString("DBCHair", hairCode);
             dbcDisplay.setInteger("DBCHairColor", hairColor);
@@ -143,6 +132,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
             dbcDisplay.setInteger("DBCOutlineID", outlineID);
 
+
+            kiWeaponLeft.saveToNBT(dbcDisplay, "kiWeaponLeft");
+            kiWeaponRight.saveToNBT(dbcDisplay, "kiWeaponRight");
+
             comp.setTag("DBCDisplay", dbcDisplay);
         } else {
             comp.removeTag("DBCDisplay");
@@ -155,10 +148,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         if (enabled) {
             NBTTagCompound dbcDisplay = comp.getCompoundTag("DBCDisplay");
 
-            if(dbcDisplay.hasKey("kiWeaponLeft"))
-                kiWeaponLeft.readFromNBT(dbcDisplay.getCompoundTag("kiWeaponLeft"));
-            if(dbcDisplay.hasKey("kiWeaponRight"))
-                kiWeaponRight.readFromNBT(dbcDisplay.getCompoundTag("kiWeaponRight"));
 
             race = dbcDisplay.getByte("DBCRace");
             auraID = dbcDisplay.getInteger("DBCAuraID");
@@ -197,6 +186,12 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             isKaioken = dbcDisplay.getBoolean("DBCIsisKaioken");
             formID = dbcDisplay.getInteger("DBCFormID");
             selectedForm = dbcDisplay.getInteger("DBCSelectedForm");
+
+            if (dbcDisplay.hasKey("kiWeaponLeft"))
+                kiWeaponLeft.readFromNBT(comp, "kiWeaponLeft");
+            if (dbcDisplay.hasKey("kiWeaponRight"))
+                kiWeaponRight.readFromNBT(comp, "kiWeaponRight");
+
         } else {
             comp.removeTag("DBCDisplay");
         }
@@ -340,10 +335,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     @Override
     public IKiWeaponData getKiWeapon(int arm) {
-        if(arm == 0)
+        if (arm == 0)
             return kiWeaponRight;
-        if(arm == 1)
-            return  kiWeaponLeft;
+        if (arm == 1)
+            return kiWeaponLeft;
         return null;
     }
 

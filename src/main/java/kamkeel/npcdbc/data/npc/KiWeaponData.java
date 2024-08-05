@@ -1,84 +1,84 @@
 package kamkeel.npcdbc.data.npc;
 
 import kamkeel.npcdbc.api.npc.IKiWeaponData;
-import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
+import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class KiWeaponData implements IKiWeaponData {
-    public boolean isEnabled;
     public byte weaponType;
-    public int color = -1;
-    public float offsetX;
-    public float offsetY;
-    public float offsetZ;
-    public float scaleX = 1;
-    public float scaleY = 1;
-    public float scaleZ = 1;
-    public int damage;
 
-    public void readFromNBT(NBTTagCompound compound){
-        isEnabled = compound.getBoolean("isEnabled");
-        weaponType = compound.getByte("weaponType");
-        color = compound.getInteger("color");
-        offsetX = compound.getFloat("offsetX");
-        offsetY = compound.getFloat("offsetY");
-        offsetZ = compound.getFloat("offsetZ");
-        scaleX = compound.getFloat("scaleX");
-        scaleY = compound.getFloat("scaleY");
-        scaleZ = compound.getFloat("scaleZ");
-        damage = compound.getInteger("damage");
+    public Color color = new Color(0x00ffff, 0.6f);
+    public boolean syncAuraColor;
+
+    public float offsetX, offsetY, offsetZ;
+
+    public float scaleX = 1, scaleY = 1, scaleZ = 1;
+    public float damage;
+
+
+    public void readFromNBT(NBTTagCompound compound, String name) {
+        NBTTagCompound weapon = compound.getCompoundTag(name);
+        weaponType = weapon.getByte("weaponType");
+        color.readFromNBT(compound, "color");
+        syncAuraColor = weapon.getBoolean("syncAuraColor");
+        offsetX = weapon.getFloat("offsetX");
+        offsetY = weapon.getFloat("offsetY");
+        offsetZ = weapon.getFloat("offsetZ");
+        scaleX = weapon.getFloat("scaleX");
+        scaleY = weapon.getFloat("scaleY");
+        scaleZ = weapon.getFloat("scaleZ");
+        damage = weapon.getFloat("damage");
 
     }
 
-    public void saveToNBT(NBTTagCompound compound){
-        compound.setBoolean("isEnabled", isEnabled);
+    public void saveToNBT(NBTTagCompound comp, String name) {
+        NBTTagCompound weapon = new NBTTagCompound();
 
         // Not doing a `if(isEnabled)` check because I want this to persist if players want to
         // make it toggleable in a fight without losing color/scale data
-        compound.setByte("weaponType", weaponType);
-        compound.setInteger("color", color);
-        compound.setFloat("offsetX", offsetX);
-        compound.setFloat("offsetY", offsetY);
-        compound.setFloat("offsetZ", offsetZ);
-        compound.setFloat("scaleX", scaleX);
-        compound.setFloat("scaleY", scaleY);
-        compound.setFloat("scaleZ", scaleZ);
-        compound.setInteger("damage", damage);
+        weapon.setByte("weaponType", weaponType);
+        color.writeToNBT(weapon, "color");
+        weapon.setBoolean("syncAuraColor", syncAuraColor);
+        weapon.setFloat("offsetX", offsetX);
+        weapon.setFloat("offsetY", offsetY);
+        weapon.setFloat("offsetZ", offsetZ);
+        weapon.setFloat("scaleX", scaleX);
+        weapon.setFloat("scaleY", scaleY);
+        weapon.setFloat("scaleZ", scaleZ);
+        weapon.setFloat("damage", damage);
+
+        comp.setTag(name, weapon);
     }
 
 
     @Override
     public boolean isEnabled() {
-        return this.isEnabled;
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.isEnabled = enabled;
+        return weaponType != 0;
     }
 
     @Override
     public void setWeaponType(int type) {
-        if(type != 0 && type != 1)
+        if (type < 0 || type > 2)
             return;
+
         this.weaponType = (byte) type;
     }
 
     @Override
     public int getWeaponType() {
-        return 0;
+        return weaponType;
     }
 
     @Override
-    public void setColor(int color) {
-        this.color = color;
+    public void setColor(int color, float alpha) {
+        this.color.setColor(color, alpha);
     }
 
     @Override
-    public int getColor(){
-        return this.color;
+    public int getColor() {
+        return color.color;
     }
 
     @Override
@@ -113,21 +113,21 @@ public class KiWeaponData implements IKiWeaponData {
 
     @Override
     public void setXScale(float scale) {
-        if(scale < 0)
+        if (scale < 0)
             scale = 0;
         this.scaleX = scale;
     }
 
     @Override
     public void setYScale(float scale) {
-        if(scale < 0)
+        if (scale < 0)
             scale = 0;
         this.scaleY = scale;
     }
 
     @Override
     public void setZScale(float scale) {
-        if(scale < 0)
+        if (scale < 0)
             scale = 0;
         this.scaleZ = scale;
     }
@@ -148,21 +148,21 @@ public class KiWeaponData implements IKiWeaponData {
     }
 
     @Override
-    public void setDamage(int damage) {
+    public void setDamage(float damage) {
         this.damage = damage;
     }
 
     @Override
-    public int getDamage() {
+    public float getDamage() {
         return this.damage;
     }
 
-    public static int getColorByAuraType(AuraDisplay auraDisplay){
-        if(auraDisplay == null)
+    public static int getColorByAuraType(AuraDisplay auraDisplay) {
+        if (auraDisplay == null)
             return getColorByAuraTypeName("");
 
-        if(auraDisplay.color1 == -1){
-            if(auraDisplay.type != EnumAuraTypes3D.None && auraDisplay.type != EnumAuraTypes3D.Base){
+        if (auraDisplay.color1 == -1) {
+            if (auraDisplay.type != EnumAuraTypes3D.None && auraDisplay.type != EnumAuraTypes3D.Base) {
                 return getColorByAuraTypeName(auraDisplay.type.getName());
             }
 
@@ -172,8 +172,8 @@ public class KiWeaponData implements IKiWeaponData {
         return auraDisplay.color1;
     }
 
-    public static int getColorByAuraTypeName(String name){
-        switch(name){
+    public static int getColorByAuraTypeName(String name) {
+        switch (name) {
             case "ssgod":
                 return 0xFFC125;
             case "ssb":

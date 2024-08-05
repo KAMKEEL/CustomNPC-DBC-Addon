@@ -4,7 +4,6 @@ public interface IKiWeaponData {
 
     boolean isEnabled();
 
-    void setEnabled(boolean enabled);
 
     /**
      * Sets the weapon type
@@ -21,7 +20,8 @@ public interface IKiWeaponData {
      * Sets the weapon color.
      * @param color If it's set to -1, it relies on current aura color.
      */
-    void setColor(int color);
+
+    void setColor(int color, float alpha);
 
     int getColor();
 
@@ -53,11 +53,11 @@ public interface IKiWeaponData {
      * Unused right now.
      * @param damage
      */
-    void setDamage(int damage);
+    void setDamage(float damage);
 
     /**
      * Unused right now.
      * @return damage the weapon adds to the NPCs total
      */
-    int getDamage();
+    float getDamage();
 }

@@ -9,7 +9,6 @@ import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
@@ -526,7 +525,7 @@ public class ModelDBC extends ModelBase {
 //        ((ModelScaleRenderer)this.bipedLeftArm).setConfig(arms, -x, y, z);
 
         KiWeaponData leftArm = display.kiWeaponLeft;
-        if (!parent.bipedLeftArm.isHidden && leftArm.isEnabled){
+        if (!parent.bipedLeftArm.isHidden && leftArm.isEnabled()) {
             GL11.glPushMatrix();
             GL11.glTranslatef(-x + (0.5f * 0.25f * (alexArms ? 0.75f : 1)), y, z);
             if (arms != null) {
@@ -542,7 +541,7 @@ public class ModelDBC extends ModelBase {
         }
 
         KiWeaponData rightArm = display.kiWeaponRight;
-        if(!parent.bipedRightArm.isHidden && rightArm.isEnabled) {
+        if (!parent.bipedRightArm.isHidden && rightArm.isEnabled()) {
             GL11.glPushMatrix();
             GL11.glTranslatef(x, y, z);
             if (arms != null) {
@@ -569,58 +568,43 @@ public class ModelDBC extends ModelBase {
         GL11.glDepthMask(true);
 
         int color = weaponData.getColor();
-        if(color == -1){
-            if(display.auraID != -1) {
+        if (color == -1) {
+            if (display.auraID != -1) {
                 Aura aura = (Aura) AuraController.getInstance().get(display.auraID);
                 AuraDisplay auraDisplay = (aura != null ? aura.display : null);
                 color = KiWeaponData.getColorByAuraType(auraDisplay);
-            }else{
+            } else {
                 color = KiWeaponData.getColorByAuraTypeName("");
             }
         }
-        float alfa = 0.6F;
-        float h1 = 1.0F;
-        float h2 = (float)(color >> 16 & 255) / 255.0F;
-        float h3 = (float)(color >> 8 & 255) / 255.0F;
-        float h4 = (float)(color & 255) / 255.0F;
-        float red = h1 * h2;
-        float green = h1 * h3;
-        float blue = h1 * h4;
-        if (red > 1.0F) {
-            red = 1.0F;
-        }
 
-        if (green > 1.0F) {
-            green = 1.0F;
-        }
-
-        if (blue > 1.0F) {
-            blue = 1.0F;
-        }
+        weaponData.color.color = color;
 
         GL11.glTranslatef(-0.06F, -0.05F, 0.0F);
         JRMCoreClient.mc.renderEngine.bindTexture(new ResourceLocation(JRMCoreH.tjjrmc + ":allw.png"));
 
-        if (weaponData.weaponType == 0) {
+        if (weaponData.weaponType == 1) {
             // float scl = (float)kiFistLevel * 0.02F + (float)kiInfuseLevel * 0.02F;
             float scl = weaponData.scaleY;
-            GL11.glTranslatef(0.0F, -scl*0.75f, 0.0F);
+            GL11.glTranslatef(0.0F, -scl * 0.75f, 0.0F);
             GL11.glScalef(1.0F, 1.0F + scl, 1.0F);
-            float ex = (float)entity.ticksExisted;
+            float ex = (float) entity.ticksExisted;
             float r4 = (MathHelper.cos(ex / 2.0F) / 3.0F - 0.2F) / 8.0F;
+
             GL11.glTranslatef(0.0F, -r4, 0.0F);
-            GL11.glColor4f(red, green, blue, alfa);
+            weaponData.color.glColor();
             GL11.glRotatef(ex * 25.0F, 0.0F, 1.0F, 0.0F);
             JRMCoreHJBRA.model2.render(0.0625F, weaponData.weaponType);
+
             GL11.glTranslatef(0.0F, -0.12F, 0.0F);
             GL11.glScalef(1.3F, 1.18F, 1.3F);
-            GL11.glColor4f(red * 0.8F, green * 0.8F, blue * 0.8F, alfa * 0.8F);
+            weaponData.color.multiply(0.8f).glColor();
             JRMCoreHJBRA.model2.render(0.0625F, weaponData.weaponType);
         }
 
-        if (weaponData.weaponType == 1) {
+        if (weaponData.weaponType == 2) {
             GL11.glTranslatef(0.0F, 0.6F, 0.0F);
-            GL11.glColor4f(red, green, blue, alfa);
+            weaponData.color.glColor();
             GL11.glRotatef(-3.0F, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(5.0F, 0.0F, 0.0F, 1.0F);
             GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
