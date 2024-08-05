@@ -1,10 +1,12 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
+import JinRyuu.JRMCore.JRMCoreClient;
+import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.JRMCoreHJBRA;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.render.OutlineRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
-import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -13,10 +15,14 @@ import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.client.model.ModelNPCMale;
 import noppes.npcs.client.model.part.ModelLegs;
 import noppes.npcs.entity.EntityCustomNpc;
+import noppes.npcs.entity.data.ModelScalePart;
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -37,6 +43,9 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
 
     @Shadow
     private ModelLegs legs;
+    @Shadow
+    public boolean isAlexArmor;
+
 
     public MixinModelMPM(float f) {
         super(f);
@@ -47,14 +56,15 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     }
 
     @Inject(method = "<init>(FZ)V", at = @At("RETURN"))
-    private void addDBCModel(CallbackInfo ci) {
-        NPCDBCModel = new ModelDBC((ModelMPM) (Object) this);
+    private void addDBCModel(float par1, boolean alex, CallbackInfo ci) {
+        NPCDBCModel = new ModelDBC((ModelMPM) (Object) this, alex);
     }
 
     @Inject(method = "<init>(FI)V", at = @At("RETURN"))
-    private void addDBCModelAlex(CallbackInfo ci) {
-        NPCDBCModel = new ModelDBC((ModelMPM) (Object) this);
+    private void addDBCModelAlex(float par1, int alex, CallbackInfo ci) {
+        NPCDBCModel = new ModelDBC((ModelMPM) (Object) this, alex == 1);
     }
+
 
     @Inject(method = "setPlayerData", at = @At("RETURN"))
     private void setPartData(EntityCustomNpc entity, CallbackInfo ci) {
@@ -147,6 +157,19 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         if (!isArmor) {
             NPCDBCModel.setRotationAngles(par1, par2, par3, par4, par5, par6, entity);
         }
+    }
+
+    @Inject(method = "render", at = @At(value = "INVOKE", target="Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER, remap = true))
+    public void renderKiWeapon(Entity par1Entity, float par2, float par3, float par4, float par5, float par6, float par7, CallbackInfo ci){
+        if(this.isArmor){
+            return;
+        }
+
+        if((this.bipedRightArm.isHidden || !this.bipedRightArm.showModel) && (this.bipedLeftArm.isHidden || !this.bipedLeftArm.showModel)){
+            return;
+        }
+
+        NPCDBCModel.renderEnabledKiWeapons(par7);
     }
 
     @Unique
