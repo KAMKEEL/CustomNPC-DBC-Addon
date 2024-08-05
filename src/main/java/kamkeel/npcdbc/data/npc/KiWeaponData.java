@@ -193,7 +193,7 @@ public class KiWeaponData implements IKiWeaponData {
             case "godofdestruction":
                 return 0xBE32CF;
             case "jiren":
-                return 0xAA0000;
+                return 0xDD0000;
             default:
                 return 0xA8FFFF;
         }
