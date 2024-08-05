@@ -525,7 +525,7 @@ public class ModelDBC extends ModelBase {
 //        ((ModelScaleRenderer)this.bipedLeftArm).setConfig(arms, -x, y, z);
 
         KiWeaponData leftArm = display.kiWeaponLeft;
-        if (!parent.bipedLeftArm.isHidden && leftArm.isEnabled) {
+        if (!parent.bipedLeftArm.isHidden && leftArm.isEnabled()) {
             GL11.glPushMatrix();
             GL11.glTranslatef(-x + (0.5f * 0.25f * (alexArms ? 0.75f : 1)), y, z);
             if (arms != null) {
@@ -541,7 +541,7 @@ public class ModelDBC extends ModelBase {
         }
 
         KiWeaponData rightArm = display.kiWeaponRight;
-        if (!parent.bipedRightArm.isHidden && rightArm.isEnabled) {
+        if (!parent.bipedRightArm.isHidden && rightArm.isEnabled()) {
             GL11.glPushMatrix();
             GL11.glTranslatef(x, y, z);
             if (arms != null) {
@@ -599,7 +599,7 @@ public class ModelDBC extends ModelBase {
             weaponData.color.multiply(0.8f).glColor();
             GL11.glTranslatef(0.0F, -0.12F, 0.0F);
             GL11.glScalef(1.3F, 1.18F, 1.3F);
-            JRMCoreHJBRA.model2.render(0.0625F, weaponData.weaponType);
+            JRMCoreHJBRA.model2.render(0.0625F, 0);
         }
 
         if (weaponData.weaponType == 2) {
@@ -610,7 +610,7 @@ public class ModelDBC extends ModelBase {
             GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
             GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
             GL11.glScalef(weaponData.scaleX, weaponData.scaleY, weaponData.scaleZ);
-            JRMCoreHJBRA.model2.render(0.0625F, weaponData.weaponType);
+            JRMCoreHJBRA.model2.render(0.0625F, 1);
         }
 
         GL11.glEnable(GL11.GL_LIGHTING);
