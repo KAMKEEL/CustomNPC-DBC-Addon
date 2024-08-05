@@ -353,9 +353,14 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             else if (mc.displayWidth < 650)
                 undoMCScaling = 1f;
         } else if (factor == 2) {
-            if (mc.displayHeight < 720)
+            if (mc.displayHeight < 530)
+                undoMCScaling = 0.413f;
+           else  if (mc.displayHeight < 600)
+                undoMCScaling = 0.475f;
+            else if (mc.displayHeight < 720)
                 undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
-            undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
+            else
+                undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
         } else if (factor == 3) {
             if (mc.displayHeight < 730)
                 undoMCScaling = 1f / 3;
@@ -489,10 +494,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         int i1 = this.height / 2 + 60;
 
         float oldLimbSwing = entity.limbSwingAmount;
-        boolean isSneaking = entity.isSneaking(), isInvisible = entity.isInvisible(), isImmunetoFire = entity.isImmuneToFire;
+        boolean isInvisible = entity.isInvisible(), isImmunetoFire = entity.isImmuneToFire;
         Entity oldRidingEntity = entity.ridingEntity;
         entity.limbSwingAmount = 0; // Removes moving animation
-        entity.setSneaking(false); // Removes sneaking animation
         entity.ridingEntity = null; // Removes riding animation
         entity.setInvisible(false); // Removes invisibility
         entity.isImmuneToFire = true; // Prevents burning
@@ -583,7 +587,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             data.renderGoD = false;
 
         entity.limbSwingAmount = oldLimbSwing;
-        entity.setSneaking(isSneaking);
         entity.ridingEntity = oldRidingEntity;
         entity.setInvisible(isInvisible);
         entity.isImmuneToFire = isImmunetoFire;

@@ -96,7 +96,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Inject(method = "glColor3f(I)V", at = @At("HEAD"), cancellable = true)
     private static void mixAuraColor(int c, CallbackInfo ci) {
         EntityPlayer player = ClientEventHandler.renderingPlayer;
-        if (ClientEventHandler.renderingPlayer == null || DBCData.get(player) == null)
+        if (ClientEventHandler.renderingPlayer == null || HUDFormWheel.renderingPlayer || DBCData.get(player) == null)
             return;
         EntityAura aura = DBCData.get(player).auraEntity;
         if (aura == null || aura.color1 == -1 || !aura.shouldRender())
@@ -119,6 +119,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         ci.cancel();
 
 
+    }
+
+    @Redirect(method = "func_130009_a", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;isSneaking()Z"))
+    private boolean isSneaking(AbstractClientPlayer instance) {
+        if (HUDFormWheel.renderingPlayer)
+            return false;
+        return instance.isSneaking();
     }
 
     @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data2:[Ljava/lang/String;"), remap = true)
