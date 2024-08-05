@@ -594,7 +594,7 @@ public class ModelDBC extends ModelBase {
             weaponData.color.glColor();
             GL11.glTranslatef(0.0F, -r4, 0.0F);
             GL11.glRotatef(ex * 25.0F, 0.0F, 1.0F, 0.0F);
-            JRMCoreHJBRA.model2.render(0.0625F, weaponData.weaponType);
+            JRMCoreHJBRA.model2.render(0.0625F, 0);
 
             weaponData.color.multiply(0.8f).glColor();
             GL11.glTranslatef(0.0F, -0.12F, 0.0F);

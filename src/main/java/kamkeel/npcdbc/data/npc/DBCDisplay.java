@@ -188,9 +188,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             selectedForm = dbcDisplay.getInteger("DBCSelectedForm");
 
             if (dbcDisplay.hasKey("kiWeaponLeft"))
-                kiWeaponLeft.readFromNBT(comp, "kiWeaponLeft");
+                kiWeaponLeft.readFromNBT(dbcDisplay, "kiWeaponLeft");
             if (dbcDisplay.hasKey("kiWeaponRight"))
-                kiWeaponRight.readFromNBT(comp, "kiWeaponRight");
+                kiWeaponRight.readFromNBT(dbcDisplay, "kiWeaponRight");
 
         } else {
             comp.removeTag("DBCDisplay");

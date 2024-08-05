@@ -34,9 +34,9 @@ public class Color {
     }
 
     public Color multiply(float multi) {
-        int r = (int) ((getRed() * multi) * 255);
-        int g = (int) ((getGreen() * multi) * 255);
-        int b = (int) ((getBlue() * multi) * 255);
+        int r = (int) ((getRed() * multi));
+        int g = (int) ((getGreen() * multi));
+        int b = (int) ((getBlue() * multi));
         float a = alpha * multi;
         return new Color((r << 16) + (g << 8) + b, a);
     }

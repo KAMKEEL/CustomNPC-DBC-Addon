@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class KiWeaponData implements IKiWeaponData {
     public byte weaponType;
 
-    public Color color = new Color(0x00ffff, 0.6f);
+    public Color color = new Color(0xA8FFFF, 0.6f);
     public boolean syncAuraColor;
 
     public float offsetX, offsetY, offsetZ;
@@ -21,14 +21,16 @@ public class KiWeaponData implements IKiWeaponData {
     public void readFromNBT(NBTTagCompound compound, String name) {
         NBTTagCompound weapon = compound.getCompoundTag(name);
         weaponType = weapon.getByte("weaponType");
-        color.readFromNBT(compound, "color");
+        color.readFromNBT(weapon, "color");
         syncAuraColor = weapon.getBoolean("syncAuraColor");
         offsetX = weapon.getFloat("offsetX");
         offsetY = weapon.getFloat("offsetY");
         offsetZ = weapon.getFloat("offsetZ");
+
         scaleX = weapon.getFloat("scaleX");
         scaleY = weapon.getFloat("scaleY");
         scaleZ = weapon.getFloat("scaleZ");
+
         damage = weapon.getFloat("damage");
 
     }
@@ -44,10 +46,14 @@ public class KiWeaponData implements IKiWeaponData {
         weapon.setFloat("offsetX", offsetX);
         weapon.setFloat("offsetY", offsetY);
         weapon.setFloat("offsetZ", offsetZ);
+        weapon.setFloat("damage", damage);
+
+        NBTTagCompound scale = new NBTTagCompound();
         weapon.setFloat("scaleX", scaleX);
         weapon.setFloat("scaleY", scaleY);
         weapon.setFloat("scaleZ", scaleZ);
-        weapon.setFloat("damage", damage);
+
+//        weapon.setTag("scale", scale);
 
         comp.setTag(name, weapon);
     }

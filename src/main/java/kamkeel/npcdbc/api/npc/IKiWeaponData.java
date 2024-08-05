@@ -7,12 +7,12 @@ public interface IKiWeaponData {
 
     /**
      * Sets the weapon type
-     * @param type - 0 is Ki Blade, 1 is Ki Scythe
+     * @param type - 0 is off, 1 is Ki Blade, 2 is Ki Scythe
      */
     void setWeaponType(int type);
 
     /**
-     * @return - 0 is Ki Blade, 1 is Ki Scythe
+     * @return - 0 is off, 1 is Ki Blade, 2 is Ki Scythe
      */
     int getWeaponType();
 
