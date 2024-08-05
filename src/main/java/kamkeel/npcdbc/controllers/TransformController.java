@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.SoundSource;
@@ -24,6 +25,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
 
@@ -250,6 +252,27 @@ public class TransformController {
                         dbcData.State = 4;
                     else
                         dbcData.State = 0;
+                }
+            }
+
+            if(!form.stackable.godStackable){
+                if(dbcData.isForm(DBCForm.GodOfDestruction)){
+                    dbcData.setForm(DBCForm.GodOfDestruction, false);
+                }
+            }
+            if(!form.stackable.mysticStackable){
+                if(dbcData.isForm(DBCForm.Mystic)){
+                    dbcData.setForm(DBCForm.Mystic, false);
+                }
+            }
+            if(!form.stackable.uiStackable){
+                if(dbcData.isForm(DBCForm.UltraInstinct)){
+                    dbcData.setForm(DBCForm.UltraInstinct, false);
+                }
+            }
+            if(!form.stackable.kaiokenStackable){
+                if(dbcData.isForm(DBCForm.Kaioken)){
+                    dbcData.setForm(DBCForm.Kaioken, false);
                 }
             }
 
