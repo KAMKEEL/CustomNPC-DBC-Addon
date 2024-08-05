@@ -33,6 +33,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ChatComponentText;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
@@ -474,11 +475,13 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         switch (dbcForm) {
             case DBCForm.Kaioken:
                 StatusEffects = setSE(5, on);
-                getRawCompound().setByte("jrmcState2", (byte) (on ? 1 : 0));
+                State2 = (byte) (on ? 1 : 0);
+                getRawCompound().setByte("jrmcState2", State2);
                 break;
             case DBCForm.UltraInstinct:
                 StatusEffects = setSE(19, on);
-                getRawCompound().setByte("jrmcState2", (byte) (on ? 1 : 0));
+                State2 = (byte) (on ? 1 : 0);
+                getRawCompound().setByte("jrmcState2", State2);
                 break;
             case DBCForm.GodOfDestruction:
                 StatusEffects = setSE(20, on);
