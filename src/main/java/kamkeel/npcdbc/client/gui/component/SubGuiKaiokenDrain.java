@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui.component;
 
+import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormStackable;
 import net.minecraft.client.gui.GuiButton;
@@ -36,7 +37,7 @@ public class SubGuiKaiokenDrain extends SubGuiInterface implements ITextfieldLis
         y += 23;
         int color = editStrained ? 0xFF5555 : CustomNpcResourceListener.DefaultTextColor;
         for(int i = 0; i < 6; i++){
-            addLabel(new GuiNpcLabel(3+i, "Kaioken State "+(i+1)+": ", guiLeft+8, y+5, color));
+            addLabel(new GuiNpcLabel(3+i, "Kaioken " + JRMCoreH.TransKaiNms[i+1] + ": ", guiLeft+8, y+5, color));
             addTextField(new GuiNpcTextField(3+i, this, fontRendererObj, guiLeft+100, y, 50, 20, ""+stackable.getKaioState2Balance(i, editStrained)));
             getTextField(3+i).setMaxStringLength(22);
             getTextField(3+i).floatsOnly = true;
