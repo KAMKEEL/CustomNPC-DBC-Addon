@@ -18,6 +18,7 @@ import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -571,6 +572,7 @@ public class ModelDBC extends ModelBase {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
         GL11.glDepthMask(true);
+        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
 
         Color col = weaponData.color.clone();
         if (col.color == -1) {
@@ -624,6 +626,7 @@ public class ModelDBC extends ModelBase {
             JRMCoreHJBRA.model2.render(0.0625F, 1);
         }
 
+        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glDepthMask(true);
         GL11.glPopMatrix();
