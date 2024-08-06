@@ -14,7 +14,7 @@ public class KiWeaponData implements IKiWeaponData {
     public float offsetX, offsetY, offsetZ;
 
     public float scaleX = 1, scaleY = 1, scaleZ = 1;
-    public float damage;
+    public float damage = 1;
 
 
     public void readFromNBT(NBTTagCompound compound, String name) {

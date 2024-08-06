@@ -1,14 +1,19 @@
 package kamkeel.npcdbc.client.gui;
 
+import kamkeel.npcdbc.client.gui.component.SubGuiKiWeapon;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
+import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectOutline;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import noppes.npcs.client.gui.model.GuiCreationScreen;
 import noppes.npcs.client.gui.model.GuiModelColor;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityCustomNpc;
@@ -32,11 +37,16 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     private int tab = 1;
     private int raceTab = 0;
 
+    public GuiScrollWindow cosmeticsScrollWindow;
+
     public GuiModelDBC(GuiScreen parent, EntityCustomNpc npc) {
         super(npc);
         this.parent = parent;
-        this.xOffset = 110;
+        this.xOffset = 150;
+        this.yOffset = -10;
         this.display = ((INPCDisplay) npc.display).getDBCDisplay();
+        closeOnEsc = false;
+        ((GuiCreationScreen) parent).closeOnEsc = true;
     }
 
     @Override
@@ -56,71 +66,107 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
 
         if (tab == 0) {
             y += 33;
-            addLabel(new GuiNpcLabel(1306, "display.auraOn", guiLeft, y + 5));
-            getLabel(1306).color = 0xffffff;
-            addButton(new GuiNpcButtonYesNo(13061, guiLeft + 64, y, 60, 20, display.auraOn));
+            if (cosmeticsScrollWindow == null) {
+                cosmeticsScrollWindow = new GuiScrollWindow(this, guiLeft - 4, y - 5, 170, 255, 0);
+            } else {
+                cosmeticsScrollWindow.xPos = guiLeft - 4;
+                cosmeticsScrollWindow.yPos = y - 5;
+                cosmeticsScrollWindow.clipWidth = 170;
+                cosmeticsScrollWindow.clipHeight = 255;
+            }
+            cosmeticsScrollWindow.scrollSpeed = 3.5f;
+            cosmeticsScrollWindow.drawDefaultBackground = false;
+            addScrollableGui(0, cosmeticsScrollWindow);
+
+            int maxScroll = 0;
+            int guiLeft = 4;
+
+            y = 4;
+            KiWeaponData left = display.kiWeaponLeft;
+            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(1100, "Ki Weapons", guiLeft, y + 5));
+            cosmeticsScrollWindow.getLabel(1100).color = 0xffffff;
+//            cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(3, guiLeft + 47, y, 100, 20, new String[]{"gui.no", "Ki Blade", "Ki Scythe"}, left.weaponType));
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(1100, guiLeft + 64, y, 60, 20, "Edit"));
+
+            y += 22;
+            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(1306, "display.auraOn", guiLeft, y + 5));
+            cosmeticsScrollWindow.getLabel(1306).color = 0xffffff;
+            cosmeticsScrollWindow.addButton(new GuiNpcButtonYesNo(13061, guiLeft + 64, y, 60, 20, display.auraOn));
+
+            y += 34;
+            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(1106, "display.form", guiLeft, y + 5));
+            cosmeticsScrollWindow.getLabel(1106).color = 0xffffff;
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(1106, guiLeft + 40, y, 91, 20, "general.noForm"));
+            if (display.formID != -1 && FormController.getInstance().has(display.formID))
+                cosmeticsScrollWindow.getButton(1106).setDisplayText(FormController.getInstance().get(display.formID).getName());
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(1107, guiLeft + 131, y, 20, 20, "X"));
+            cosmeticsScrollWindow.getButton(1107).enabled = display.formID != -1;
 
             y += 23;
-            addLabel(new GuiNpcLabel(1206, "display.aura", guiLeft, y + 5));
-            getLabel(1206).color = 0xffffff;
-            addButton(new GuiNpcButton(1306, guiLeft + 40, y, 91, 20, "display.selectAura"));
+            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(1206, "display.aura", guiLeft, y + 5));
+            cosmeticsScrollWindow.getLabel(1206).color = 0xffffff;
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(1306, guiLeft + 40, y, 91, 20, "display.selectAura"));
             if (display.auraID != -1 && AuraController.getInstance().has(display.auraID))
-                getButton(1306).setDisplayText(AuraController.getInstance().get(display.auraID).getName());
-            addButton(new GuiNpcButton(1406, guiLeft + 131, y, 20, 20, "X"));
-            getButton(1406).enabled = display.auraID != -1;
+                cosmeticsScrollWindow.getButton(1306).setDisplayText(AuraController.getInstance().get(display.auraID).getName());
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(1406, guiLeft + 131, y, 20, 20, "X"));
+            cosmeticsScrollWindow.getButton(1406).enabled = display.auraID != -1;
 
             y += 23;
-            addLabel(new GuiNpcLabel(2206, "display.outline", guiLeft, y + 5));
-            getLabel(2206).color = 0xffffff;
-            addButton(new GuiNpcButton(2306, guiLeft + 40, y, 91, 20, "display.selectOutline"));
+            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(2206, "display.outline", guiLeft, y + 5));
+            cosmeticsScrollWindow.getLabel(2206).color = 0xffffff;
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(2306, guiLeft + 40, y, 91, 20, "display.selectOutline"));
             if (display.outlineID != -1 && OutlineController.getInstance().has(display.outlineID))
-                getButton(2306).setDisplayText(OutlineController.getInstance().get(display.outlineID).getName());
-            addButton(new GuiNpcButton(2406, guiLeft + 131, y, 20, 20, "X"));
-            getButton(2406).enabled = display.outlineID != -1;
+                cosmeticsScrollWindow.getButton(2306).setDisplayText(OutlineController.getInstance().get(display.outlineID).getName());
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(2406, guiLeft + 131, y, 20, 20, "X"));
+            cosmeticsScrollWindow.getButton(2406).enabled = display.outlineID != -1;
 
             y += 11;
-            addButton(new GuiNpcButton(101, guiLeft + 40, y += 22, 60, 20, "gui.paste"));
-            addButton(new GuiNpcButton(102, guiLeft + 101, y, 50, 20, "gui.copy"));
-            addLabel(new GuiNpcLabel(100, "display.hair", guiLeft, y + 5, 0xFFFFFF));
-            addButton(new GuiNpcButton(104, guiLeft + 101, y += 22, 50, 20, getColor(display.hairColor)));
-            addButton(new GuiNpcButton(103, guiLeft + 40, y, 60, 20, "gui.clear"));
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(101, guiLeft + 40, y += 22, 60, 20, "gui.paste"));
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(102, guiLeft + 101, y, 50, 20, "gui.copy"));
+            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(100, "display.hair", guiLeft, y + 5, 0xFFFFFF));
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(104, guiLeft + 101, y += 22, 50, 20, getColor(display.hairColor)));
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(103, guiLeft + 40, y, 60, 20, "gui.clear"));
             int index = getHairType();
-            addButton(new GuiButtonBiDirectional(105, guiLeft + 47, y += 22, 100, 20, arrHair, index));
-            getButton(104).packedFGColour = display.hairColor != 0 ? display.hairColor : 1;
-            getButton(105).enabled = display.hairCode.length() == 786 || display.hairCode.length() == 784 || display.hairCode.length() == 392;
+            cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(105, guiLeft + 47, y += 22, 100, 20, arrHair, index));
+            cosmeticsScrollWindow.getButton(104).packedFGColour = display.hairColor != 0 ? display.hairColor : 1;
+            cosmeticsScrollWindow.getButton(105).enabled = display.hairCode.length() == 786 || display.hairCode.length() == 784 || display.hairCode.length() == 392;
+
 
             y += 11;
             ModelPartData dbcHorn = playerdata.getPartData("dbcHorn");
-            addButton(new GuiButtonBiDirectional(2, guiLeft + 47, y += 22, 100, 20, arrHorns, dbcHorn == null ? 0 : dbcHorn.type));
-            addLabel(new GuiNpcLabel(2, "part.horns", guiLeft, y + 5, 0xFFFFFF));
+            cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(2, guiLeft + 47, y += 22, 100, 20, arrHorns, dbcHorn == null ? 0 : dbcHorn.type));
+            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(2, "part.horns", guiLeft, y + 5, 0xFFFFFF));
             if (dbcHorn != null && !display.useSkin) {
-                addButton(new GuiNpcButton(12, guiLeft + 151, y, 35, 20, dbcHorn.getColor()));
-                getButton(12).packedFGColour = dbcHorn.color != 0 ? dbcHorn.color : 1;
+                cosmeticsScrollWindow.addButton(new GuiNpcButton(12, guiLeft + 151, y, 35, 20, dbcHorn.getColor()));
+                cosmeticsScrollWindow.getButton(12).packedFGColour = dbcHorn.color != 0 ? dbcHorn.color : 1;
             }
 
             ModelPartData dbcEars = playerdata.getPartData("dbcEars");
-            addButton(new GuiButtonBiDirectional(3, guiLeft + 47, y += 22, 100, 20, arrRaceEars, dbcEars == null ? 0 : dbcEars.type));
-            addLabel(new GuiNpcLabel(3, "part.ears", guiLeft, y + 5, 0xFFFFFF));
+            cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(3, guiLeft + 47, y += 22, 100, 20, arrRaceEars, dbcEars == null ? 0 : dbcEars.type));
+            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(3, "part.ears", guiLeft, y + 5, 0xFFFFFF));
             if (dbcEars != null && !display.useSkin) {
-                addButton(new GuiNpcButton(13, guiLeft + 151, y, 35, 20, dbcEars.getColor()));
-                getButton(13).packedFGColour = dbcEars.color != 0 ? dbcEars.color : 1;
+                cosmeticsScrollWindow.addButton(new GuiNpcButton(13, guiLeft + 151, y, 35, 20, dbcEars.getColor()));
+                cosmeticsScrollWindow.getButton(13).packedFGColour = dbcEars.color != 0 ? dbcEars.color : 1;
             }
 
             ModelPartData dbcBody = playerdata.getPartData("dbcBody");
-            addButton(new GuiButtonBiDirectional(4, guiLeft + 47, y += 22, 100, 20, arrBody, dbcBody == null ? 0 : dbcBody.type));
-            addLabel(new GuiNpcLabel(4, "model.body", guiLeft, y + 5, 0xFFFFFF));
+            cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(4, guiLeft + 47, y += 22, 100, 20, arrBody, dbcBody == null ? 0 : dbcBody.type));
+            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(4, "model.body", guiLeft, y + 5, 0xFFFFFF));
             if (dbcBody != null && !display.useSkin) {
-                addButton(new GuiNpcButton(14, guiLeft + 151, y, 35, 20, dbcBody.getColor()));
-                getButton(14).packedFGColour = dbcBody.color != 0 ? dbcBody.color : 1;
+                cosmeticsScrollWindow.addButton(new GuiNpcButton(14, guiLeft + 151, y, 35, 20, dbcBody.getColor()));
+                cosmeticsScrollWindow.getButton(14).packedFGColour = dbcBody.color != 0 ? dbcBody.color : 1;
             }
 
             ModelPartData dbcArms = playerdata.getPartData("dbcArms");
-            addButton(new GuiButtonBiDirectional(5, guiLeft + 47, y += 22, 100, 20, arrArm, dbcArms == null ? 0 : dbcArms.type));
-            addLabel(new GuiNpcLabel(5, "model.arms", guiLeft, y + 5, 0xFFFFFF));
+            cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(5, guiLeft + 47, y += 22, 100, 20, arrArm, dbcArms == null ? 0 : dbcArms.type));
+            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(5, "model.arms", guiLeft, y + 5, 0xFFFFFF));
             if (dbcArms != null && !display.useSkin) {
-                addButton(new GuiNpcButton(15, guiLeft + 151, y, 35, 20, dbcArms.getColor()));
-                getButton(15).packedFGColour = dbcArms.color != 0 ? dbcArms.color : 1;
+                cosmeticsScrollWindow.addButton(new GuiNpcButton(15, guiLeft + 151, y, 35, 20, dbcArms.getColor()));
+                cosmeticsScrollWindow.getButton(15).packedFGColour = dbcArms.color != 0 ? dbcArms.color : 1;
             }
+            maxScroll += 34;
+            maxScroll+=22;
+            cosmeticsScrollWindow.maxScrollY = maxScroll;
         } else {
             //  addButton(new GuiNpcButton(1, guiLeft + 64, y += 22, 60, 20, arrRace, display.race+1));
             addButton(new GuiButtonBiDirectional(1, guiLeft + 46, y += 22, 94, 20, arrRace, display.race + 1));
@@ -260,14 +306,14 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             initGui();
         }
         if (button.id == 104) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 4));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 4, button.id));
         }
         if (button.id == 105) {
             display.hairType = getHairString(button.getValue());
             initGui();
         }
         if (button.id == 305) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 5));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 5, button.id));
         }
 
         if (button.id == 2) {
@@ -334,19 +380,19 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             this.mc.displayGuiScreen(new GuiModelColor(this, playerdata.getPartData("dbcArms"), npc));
         }
         if (button.id == 300) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 0));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 0, button.id));
         }
         if (button.id == 301) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 1));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 1, button.id));
         }
         if (button.id == 302) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 2));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 2, button.id));
         }
         if (button.id == 303) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 3));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 3, button.id));
         }
         if (button.id == 311) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 6));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 6, button.id));
         }
         if (button.id == 208) {
             int value = button.getValue();
@@ -392,7 +438,16 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
         if (button.id == 207) {
             display.hasFur = button.getValue() == 1;
         }
-        if (button.id == 1306) {
+        if (btn.id == 1100) {
+            setSubGui(new SubGuiKiWeapon(this, display));
+        }
+
+        if (button.id == 1106) {
+            this.setSubGui(new SubGuiSelectForm(button.id, false, false));
+        } else if (button.id == 1107) {
+            display.formID = -1;
+            initGui();
+        } else if (button.id == 1306) {
             this.setSubGui(new SubGuiSelectAura());
         } else if (button.id == 1406) {
             display.auraID = -1;
@@ -409,12 +464,20 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     }
 
     public void subGuiClosed(SubGuiInterface subgui) {
-        if (subgui instanceof SubGuiSelectAura) {
-            SubGuiSelectAura guiSelectForm = ((SubGuiSelectAura) subgui);
+        if (subgui instanceof SubGuiSelectForm) {
+            SubGuiSelectForm guiSelectForm = ((SubGuiSelectForm) subgui);
             if (guiSelectForm.confirmed) {
-                if (guiSelectForm.selectedAuraID == display.auraID)
+                if (guiSelectForm.selectedFormID == display.formID)
                     return;
-                display.auraID = guiSelectForm.selectedAuraID;
+                display.formID = guiSelectForm.selectedFormID;
+                initGui();
+            }
+        } else if (subgui instanceof SubGuiSelectAura) {
+            SubGuiSelectAura selectAura = ((SubGuiSelectAura) subgui);
+            if (selectAura.confirmed) {
+                if (selectAura.selectedAuraID == display.auraID)
+                    return;
+                display.auraID = selectAura.selectedAuraID;
                 initGui();
             }
         } else if (subgui instanceof SubGuiSelectOutline) {
@@ -427,6 +490,16 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
 
             }
         }
+    }
+
+    public boolean isMouseOverRenderer(int x, int y) {
+        boolean isOverSub = false;
+        if (hasSubGui()) {
+            SubGuiInterface sub = getSubGui();
+            isOverSub = x >= sub.guiLeft && x <= sub.guiLeft + sub.xSize && y >= sub.guiTop && y <= sub.guiTop + sub.ySize;
+        }
+
+        return !isOverSub && x >= guiLeft + 40 + xOffset && x <= guiLeft + 80 + xOffset + 250 && y >= guiTop - 50 + yOffset && y <= guiTop + 250 + yOffset;
     }
 
     @Override
@@ -463,6 +536,15 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
 
     @Override
     public void lostOwnership(Clipboard clipboard, Transferable contents) {
+    }
+
+    public void keyTyped(char par1, int par2) {
+        if (par2 == 1 && !hasSubGui()) {
+            this.close();
+        }
+        super.keyTyped(par1, par2);
+
+
     }
 
 

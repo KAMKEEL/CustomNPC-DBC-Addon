@@ -91,6 +91,15 @@ display.part.armSpikes=Spike
 display.part.shoulder=Shoulder
 display.part.arcoEars=Arcosian
 
+display.leftArm=Left Arm
+display.rightArm=Right Arm
+display.kiWeapon=Ki Weapon
+display.kiBlade=Ki Blade
+display.kiScythe=Ki Scythe
+display.offsetxyz=Offset (X/Y/Z)
+display.scalexyz=Scale (X/Y/Z)
+display.damageMulti=Damage Multiplier
+
 display.cosmetics=Cosmetics
 display.race=Race
 display.skinOverride=DBC Skin
