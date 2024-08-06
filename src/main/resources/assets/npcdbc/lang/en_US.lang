@@ -91,6 +91,15 @@ display.part.armSpikes=Spike
 display.part.shoulder=Shoulder
 display.part.arcoEars=Arcosian
 
+display.leftArm=Left Arm
+display.rightArm=Right Arm
+display.kiWeapon=Ki Weapon
+display.kiBlade=Ki Blade
+display.kiScythe=Ki Scythe
+display.offsetxyz=Offset (X/Y/Z)
+display.scalexyz=Scale (X/Y/Z)
+display.damageMulti=Damage Multiplier
+
 display.cosmetics=Cosmetics
 display.race=Race
 display.skinOverride=DBC Skin
@@ -215,7 +224,7 @@ general.strength=Strength
 general.dexterity=Dexterity
 general.willpower=Willpower
 general.dbcFormParents=DBC Form Parents
-general.transformOnly=Transform from Only Parent Form
+general.transformOnly=Transform from parent only
 general.editParents=Edit Parents
 general.noParent=No Parent
 general.parentForm=Parent Form
