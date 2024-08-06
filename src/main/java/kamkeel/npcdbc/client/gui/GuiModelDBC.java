@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui;
 
+import kamkeel.npcdbc.client.gui.component.SubGuiKiWeapon;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectOutline;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -38,8 +39,10 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     public GuiModelDBC(GuiScreen parent, EntityCustomNpc npc) {
         super(npc);
         this.parent = parent;
-        this.xOffset = 110;
+        this.xOffset = 150;
+        this.yOffset = -10;
         this.display = ((INPCDisplay) npc.display).getDBCDisplay();
+        closeOnEsc = false;
     }
 
     @Override
@@ -76,10 +79,10 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
 
             y = 4;
             KiWeaponData left = display.kiWeaponLeft;
-            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(402, "Ki Weapons", guiLeft, y + 5));
-            cosmeticsScrollWindow.getLabel(402).color = 0xffffff;
+            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(1100, "Ki Weapons", guiLeft, y + 5));
+            cosmeticsScrollWindow.getLabel(1100).color = 0xffffff;
 //            cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(3, guiLeft + 47, y, 100, 20, new String[]{"gui.no", "Ki Blade", "Ki Scythe"}, left.weaponType));
-            cosmeticsScrollWindow.addButton(new GuiNpcButton(13061, guiLeft + 64, y, 60, 20, "Edit"));
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(1100, guiLeft + 64, y, 60, 20, "Edit"));
 
             y += 22;
             cosmeticsScrollWindow.addLabel(new GuiNpcLabel(1306, "display.auraOn", guiLeft, y + 5));
@@ -114,16 +117,6 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             cosmeticsScrollWindow.addButton(new GuiButtonBiDirectional(105, guiLeft + 47, y += 22, 100, 20, arrHair, index));
             cosmeticsScrollWindow.getButton(104).packedFGColour = display.hairColor != 0 ? display.hairColor : 1;
             cosmeticsScrollWindow.getButton(105).enabled = display.hairCode.length() == 786 || display.hairCode.length() == 784 || display.hairCode.length() == 392;
-
-
-            if (left.isEnabled()) {
-                maxScroll += 23;
-                y += 23;
-//                cosmeticsScrollWindow.addLabel(new GuiNpcLabel(400, "display.kettleModeCharging", 3, y + 5));
-//                cosmeticsScrollWindow.getLabel(400).color = 0xffffff;
-//                cosmeticsScrollWindow.addButton(new GuiNpcButtonYesNo(400, guiX + 140, y, 80, 20, display.kettleModeCharging));
-
-            }
 
 
             y += 11;
@@ -299,14 +292,14 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             initGui();
         }
         if (button.id == 104) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 4));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 4, 0));
         }
         if (button.id == 105) {
             display.hairType = getHairString(button.getValue());
             initGui();
         }
         if (button.id == 305) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 5));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 5, 0));
         }
 
         if (button.id == 2) {
@@ -373,19 +366,19 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             this.mc.displayGuiScreen(new GuiModelColor(this, playerdata.getPartData("dbcArms"), npc));
         }
         if (button.id == 300) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 0));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 0, 0));
         }
         if (button.id == 301) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 1));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 1, 0));
         }
         if (button.id == 302) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 2));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 2, 0));
         }
         if (button.id == 303) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 3));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 3, 0));
         }
         if (button.id == 311) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 6));
+            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 6, 0));
         }
         if (button.id == 208) {
             int value = button.getValue();
@@ -431,6 +424,10 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
         if (button.id == 207) {
             display.hasFur = button.getValue() == 1;
         }
+        if (btn.id == 1100) {
+            setSubGui(new SubGuiKiWeapon(this, display));
+        }
+
         if (button.id == 1306) {
             this.setSubGui(new SubGuiSelectAura());
         } else if (button.id == 1406) {
@@ -469,7 +466,13 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     }
 
     public boolean isMouseOverRenderer(int x, int y) {
-        return x >= guiLeft + 40 + xOffset && x <= guiLeft + 80 + xOffset + 250 && y >= guiTop - 50 + yOffset && y <= guiTop + 250 + yOffset;
+        boolean isOverSub = false;
+        if (hasSubGui()) {
+            SubGuiInterface sub = getSubGui();
+            isOverSub = x >= sub.guiLeft && x <= sub.guiLeft + sub.xSize && y >= sub.guiTop && y <= sub.guiTop + sub.ySize;
+        }
+
+        return !isOverSub && x >= guiLeft + 40 + xOffset && x <= guiLeft + 80 + xOffset + 250 && y >= guiTop - 50 + yOffset && y <= guiTop + 250 + yOffset;
     }
 
     @Override
@@ -506,6 +509,15 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
 
     @Override
     public void lostOwnership(Clipboard clipboard, Transferable contents) {
+    }
+
+    public void keyTyped(char par1, int par2) {
+        if (par2 == 1 && !hasSubGui()) {
+            this.close();
+        }
+        super.keyTyped(par1, par2);
+
+
     }
 
 

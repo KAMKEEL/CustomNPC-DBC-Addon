@@ -87,11 +87,16 @@ public class Color {
         return (float) (color & 0xFF) / 255f;
     }
 
-    public static String getColor(int input) {
+    public static String getColor(int color) {
         String str;
-        for (str = Integer.toHexString(input); str.length() < 6; str = "0" + str) {
+        for (str = Integer.toHexString(color); str.length() < 6; str = "0" + str) {
         }
         return str;
+    }
+
+    public static String getColor(int color, float alpha) {
+        String str = getColor(color);
+        return str + " | " +(int) (alpha * 255);
     }
 
     public Color clone() {
