@@ -275,8 +275,6 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         }
         super.drawScreen(i, j, f);
 
-        Mouse.getEventDX();
-
         if (hasSubGui())
             return;
 
