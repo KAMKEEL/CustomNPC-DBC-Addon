@@ -355,7 +355,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         } else if (factor == 2) {
             if (mc.displayHeight < 530)
                 undoMCScaling = 0.413f;
-           else  if (mc.displayHeight < 600)
+            else if (mc.displayHeight < 600)
                 undoMCScaling = 0.475f;
             else if (mc.displayHeight < 720)
                 undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
@@ -416,26 +416,29 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             }
 
             if (data.formID != -1) {
-                if (dbcForms.containsKey(data.formID)) {
-                    if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
-                        glScaled(0.7, 0.7, 1);
-                        if (i == 0) {
-                            glTranslatef(0, -15f, 0);
-                        } else if (i == 1) {
-                            glTranslatef(-12, -5, 0);
-                        } else if (i == 2) {
-                            glTranslatef(-11, 3, 0);
-                        } else if (i == 3) {
-                            glTranslatef(0, 12f, 0);
-                        } else if (i == 4) {
-                            glTranslatef(10, 3, 0);
-                        } else {
-                            glTranslatef(13, -5, 0);
+                if (data.isDBC) {
+                    if (dbcForms.containsKey(data.formID)) {
+                        if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
+                            glScaled(0.7, 0.7, 1);
+                            if (i == 0) {
+                                glTranslatef(0, -15f, 0);
+                            } else if (i == 1) {
+                                glTranslatef(-12, -5, 0);
+                            } else if (i == 2) {
+                                glTranslatef(-11, 3, 0);
+                            } else if (i == 3) {
+                                glTranslatef(0, 12f, 0);
+                            } else if (i == 4) {
+                                glTranslatef(10, 3, 0);
+                            } else {
+                                glTranslatef(13, -5, 0);
+                            }
                         }
-                    }
-                    drawCenteredString(fontRendererObj, getFormName(i), 0, 0, 0xFFFFFFFF);
-                } else
-                    wheelSlot[i].removeForm();
+                    } else
+                        wheelSlot[i].removeForm();
+                }
+                drawCenteredString(fontRendererObj, getFormName(i), 0, 0, 0xFFFFFFFF);
+
             }
 
             GL11.glPopMatrix();
