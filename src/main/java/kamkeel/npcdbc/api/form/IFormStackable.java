@@ -87,4 +87,12 @@ public interface IFormStackable {
     float getState2Factor(int dbcForm);
 
     IFormStackable save();
+
+    float getKaioDrain();
+
+    void setKaioDrain(float drain);
+
+    float getKaioState2Balance(int state2, boolean strained);
+
+    void setKaioState2Balance(int state2, boolean strained, float value);
 }

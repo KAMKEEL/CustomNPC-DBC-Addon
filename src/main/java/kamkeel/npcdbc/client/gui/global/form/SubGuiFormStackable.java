@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
+import kamkeel.npcdbc.client.gui.component.SubGuiKaiokenDrain;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
@@ -73,6 +74,11 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             scrollWindow.getTextField(23).floatsOnly = true;
             scrollWindow.getTextField(23).setMinMaxDefaultFloat(-10000, 10000, 1);
             scrollWindow.getLabel(23).color = 0xffffff;
+
+            y += 23;
+
+            scrollWindow.addLabel(new GuiNpcLabel(100, "Kaioken drain config", guiLeft+4, y+5, 0xFFFFFF));
+            scrollWindow.addButton(new GuiNpcButton(100, guiLeft + 115, y, 50, 20, "Edit"));
         }
 
         y += 23;
@@ -253,6 +259,9 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
         if (button.id == 85) {
             stackable.useMajinConfig = button.getValue() == 1;
+        }
+        if(button.id == 100){
+            this.setSubGui(new SubGuiKaiokenDrain(form));
         }
         initGui();
 	}
