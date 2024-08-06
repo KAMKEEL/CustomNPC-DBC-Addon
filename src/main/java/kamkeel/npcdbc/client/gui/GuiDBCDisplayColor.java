@@ -2,7 +2,6 @@ package kamkeel.npcdbc.client.gui;
 
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.gui.util.*;
@@ -17,7 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class GuiDBCDisplayColor extends SubGuiInterface implements ITextfieldListener, ISliderListener {
-    private GuiScreen parent;
+    private GuiModelDBC parent;
     private ModelData modelData;
     private static final ResourceLocation color = new ResourceLocation("customnpcs:textures/gui/color.png");
     private int colorX;
@@ -32,12 +31,13 @@ public class GuiDBCDisplayColor extends SubGuiInterface implements ITextfieldLis
     public int xOffset, yOffset;
     public MutableInt col;
 
-    public GuiDBCDisplayColor(GuiScreen parent, ModelData modelData, DBCDisplay data, EntityCustomNpc npc, int type, int buttonID) {
+    public GuiDBCDisplayColor(GuiModelDBC parent, ModelData modelData, DBCDisplay data, EntityCustomNpc npc, int type, int buttonID) {
         super();
         this.parent = parent;
         this.modelData = modelData;
         this.data = data;
-        this.ySize = 230;
+        this.ySize = 200;
+        xOffset = 40;
         this.type = type;
         this.buttonID = buttonID;
         drawDefaultBackground = false;
@@ -90,7 +90,10 @@ public class GuiDBCDisplayColor extends SubGuiInterface implements ITextfieldLis
 
     public int getColor() {
         int color = -1;
-        if (type == 1) {
+        if (type == 0) {
+            color = this.data.bodyCM;
+        } else if (type == 1) {
+            color = this.data.bodyC1;
         } else if (type == 2) {
             color = this.data.bodyC2;
         } else if (type == 3) {
@@ -105,14 +108,16 @@ public class GuiDBCDisplayColor extends SubGuiInterface implements ITextfieldLis
             color = this.data.kiWeaponLeft.color.color;
         } else if (type == 8) {
             color = this.data.kiWeaponRight.color.color;
-        } else {
-            color = this.data.bodyCM;
         }
+
         return color;
     }
 
     public void setColor(int color) {
         switch (type) {
+            case 0:
+                this.data.bodyCM = color;
+                break;
             case 1:
                 this.data.bodyC1 = color;
                 break;

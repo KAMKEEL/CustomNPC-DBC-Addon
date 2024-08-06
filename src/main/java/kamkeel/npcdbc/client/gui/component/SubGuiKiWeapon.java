@@ -10,11 +10,10 @@ import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityCustomNpc;
 import org.lwjgl.opengl.GL11;
 
-public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListener, ISubGuiListener {
+public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListener {
     private DBCDisplay display;
     public KiWeaponData left, right;
     public GuiModelDBC parent;
-    public GuiDBCDisplayColor colorGUI;
 
     public SubGuiKiWeapon(GuiModelDBC parent, DBCDisplay display) {
         this.npc = display.npc;
@@ -176,16 +175,6 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
         //    addButton(new GuiNpcButton(66, guiLeft + xSize - 24, guiTop + 3, 20, 20, "X"));
     }
 
-    @Override
-    public void subGuiClosed(SubGuiInterface subgui) {
-        if (subgui == colorGUI) {
-            getButton(colorGUI.buttonID).displayString = Color.getColor(colorGUI.selectedColor, colorGUI.selectedAlpha);
-            getButton(colorGUI.buttonID).packedFGColour = colorGUI.selectedColor;
-
-            Color color = colorGUI.buttonID == 2 ? left.color : right.color;
-            getButton(colorGUI.buttonID + 1).enabled = color.color != -1 || color.alpha != 0.6f;
-        }
-    }
 
     protected void actionPerformed(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
@@ -193,10 +182,7 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
             left.weaponType = (byte) button.getValue();
             initGui();
         } else if (button.id == 2) {
-            colorGUI = new GuiDBCDisplayColor(this, null, display, (EntityCustomNpc) npc, 7, button.id).hasAlphaSlider(left.color.alpha);
-            colorGUI.xOffset = 40;
-            colorGUI.ySize -= 30;
-            setSubGui(colorGUI);
+            setSubGui(new GuiDBCDisplayColor(parent, null, display, (EntityCustomNpc) npc, 7, button.id).hasAlphaSlider(left.color.alpha));
 
         } else if (button.id == 3) {
             left.color.color = -1;
@@ -218,10 +204,7 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
             right.weaponType = (byte) button.getValue();
             initGui();
         } else if (button.id == 12) {
-            colorGUI = new GuiDBCDisplayColor(this, null, display, (EntityCustomNpc) npc, 8, button.id).hasAlphaSlider(right.color.alpha);
-            colorGUI.xOffset = 40;
-            colorGUI.ySize -= 30;
-            setSubGui(colorGUI);
+            setSubGui(new GuiDBCDisplayColor(parent, null, display, (EntityCustomNpc) npc, 8, button.id).hasAlphaSlider(right.color.alpha));
         } else if (button.id == 13) {
             right.color.color = -1;
             right.color.alpha = 0.6f;

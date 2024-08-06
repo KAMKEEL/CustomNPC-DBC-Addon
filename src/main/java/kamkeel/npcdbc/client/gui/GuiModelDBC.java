@@ -11,6 +11,7 @@ import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import noppes.npcs.client.gui.model.GuiCreationScreen;
 import noppes.npcs.client.gui.model.GuiModelColor;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityCustomNpc;
@@ -43,6 +44,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
         this.yOffset = -10;
         this.display = ((INPCDisplay) npc.display).getDBCDisplay();
         closeOnEsc = false;
+        ((GuiCreationScreen)parent).closeOnEsc = true;
     }
 
     @Override
@@ -292,14 +294,14 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             initGui();
         }
         if (button.id == 104) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 4, 0));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 4, button.id));
         }
         if (button.id == 105) {
             display.hairType = getHairString(button.getValue());
             initGui();
         }
         if (button.id == 305) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 5, 0));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 5, button.id));
         }
 
         if (button.id == 2) {
@@ -366,19 +368,19 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             this.mc.displayGuiScreen(new GuiModelColor(this, playerdata.getPartData("dbcArms"), npc));
         }
         if (button.id == 300) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 0, 0));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 0, button.id));
         }
         if (button.id == 301) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 1, 0));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 1, button.id));
         }
         if (button.id == 302) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 2, 0));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 2, button.id));
         }
         if (button.id == 303) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 3, 0));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 3, button.id));
         }
         if (button.id == 311) {
-            this.mc.displayGuiScreen(new GuiDBCDisplayColor(this, playerdata, display, npc, 6, 0));
+            setSubGui(new GuiDBCDisplayColor(this, playerdata, display, npc, 6, button.id));
         }
         if (button.id == 208) {
             int value = button.getValue();
