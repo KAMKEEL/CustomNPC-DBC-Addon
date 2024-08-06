@@ -2,9 +2,11 @@ package kamkeel.npcdbc.client.gui;
 
 import kamkeel.npcdbc.client.gui.component.SubGuiKiWeapon;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
+import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectOutline;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
@@ -44,7 +46,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
         this.yOffset = -10;
         this.display = ((INPCDisplay) npc.display).getDBCDisplay();
         closeOnEsc = false;
-        ((GuiCreationScreen)parent).closeOnEsc = true;
+        ((GuiCreationScreen) parent).closeOnEsc = true;
     }
 
     @Override
@@ -92,6 +94,15 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             cosmeticsScrollWindow.addButton(new GuiNpcButtonYesNo(13061, guiLeft + 64, y, 60, 20, display.auraOn));
 
             y += 34;
+            cosmeticsScrollWindow.addLabel(new GuiNpcLabel(1106, "display.form", guiLeft, y + 5));
+            cosmeticsScrollWindow.getLabel(1106).color = 0xffffff;
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(1106, guiLeft + 40, y, 91, 20, "general.noForm"));
+            if (display.formID != -1 && FormController.getInstance().has(display.formID))
+                cosmeticsScrollWindow.getButton(1106).setDisplayText(FormController.getInstance().get(display.formID).getName());
+            cosmeticsScrollWindow.addButton(new GuiNpcButton(1107, guiLeft + 131, y, 20, 20, "X"));
+            cosmeticsScrollWindow.getButton(1107).enabled = display.formID != -1;
+
+            y += 23;
             cosmeticsScrollWindow.addLabel(new GuiNpcLabel(1206, "display.aura", guiLeft, y + 5));
             cosmeticsScrollWindow.getLabel(1206).color = 0xffffff;
             cosmeticsScrollWindow.addButton(new GuiNpcButton(1306, guiLeft + 40, y, 91, 20, "display.selectAura"));
@@ -154,6 +165,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
                 cosmeticsScrollWindow.getButton(15).packedFGColour = dbcArms.color != 0 ? dbcArms.color : 1;
             }
             maxScroll += 34;
+            maxScroll+=22;
             cosmeticsScrollWindow.maxScrollY = maxScroll;
         } else {
             //  addButton(new GuiNpcButton(1, guiLeft + 64, y += 22, 60, 20, arrRace, display.race+1));
@@ -430,7 +442,12 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             setSubGui(new SubGuiKiWeapon(this, display));
         }
 
-        if (button.id == 1306) {
+        if (button.id == 1106) {
+            this.setSubGui(new SubGuiSelectForm(button.id, false, false));
+        } else if (button.id == 1107) {
+            display.formID = -1;
+            initGui();
+        } else if (button.id == 1306) {
             this.setSubGui(new SubGuiSelectAura());
         } else if (button.id == 1406) {
             display.auraID = -1;
@@ -447,12 +464,20 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     }
 
     public void subGuiClosed(SubGuiInterface subgui) {
-        if (subgui instanceof SubGuiSelectAura) {
-            SubGuiSelectAura guiSelectForm = ((SubGuiSelectAura) subgui);
+        if (subgui instanceof SubGuiSelectForm) {
+            SubGuiSelectForm guiSelectForm = ((SubGuiSelectForm) subgui);
             if (guiSelectForm.confirmed) {
-                if (guiSelectForm.selectedAuraID == display.auraID)
+                if (guiSelectForm.selectedFormID == display.formID)
                     return;
-                display.auraID = guiSelectForm.selectedAuraID;
+                display.formID = guiSelectForm.selectedFormID;
+                initGui();
+            }
+        } else if (subgui instanceof SubGuiSelectAura) {
+            SubGuiSelectAura selectAura = ((SubGuiSelectAura) subgui);
+            if (selectAura.confirmed) {
+                if (selectAura.selectedAuraID == display.auraID)
+                    return;
+                display.auraID = selectAura.selectedAuraID;
                 initGui();
             }
         } else if (subgui instanceof SubGuiSelectOutline) {
