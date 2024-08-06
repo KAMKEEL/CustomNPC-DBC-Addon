@@ -77,7 +77,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
             y += 23;
 
-            scrollWindow.addLabel(new GuiNpcLabel(100, "Kaioken drain config", guiLeft+4, y+5, 0xFFFFFF));
+            scrollWindow.addLabel(new GuiNpcLabel(100, "Kaioken drain config", guiLeft+4, y+5, 0xFF5555));
             scrollWindow.addButton(new GuiNpcButton(100, guiLeft + 115, y, 50, 20, "Edit"));
         }
 
