@@ -13,7 +13,6 @@ import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 /**
  * Store all player Addon DBC Info here
@@ -22,7 +21,7 @@ public class PlayerDBCInfo {
     public PlayerData parent;
 
     public int currentForm = -1;
-    public int selectedForm = -1;
+    public int selectedForm = -1, selectedDBCForm = -1,tempSelectedDBCForm = -1;
 
     public int currentAura = -1;
     public int selectedAura = -1;
@@ -31,10 +30,13 @@ public class PlayerDBCInfo {
     public HashSet<Integer> unlockedForms = new HashSet<Integer>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
-    private HashMap<Integer, Integer> formWheel = new HashMap<>();
+    public FormWheelData[] formWheel = new FormWheelData[6];
 
     public PlayerDBCInfo(PlayerData parent) {
         this.parent = parent;
+
+        for (int i = 0; i < formWheel.length; i++)
+            formWheel[i] = new FormWheelData(i);
     }
 
     public void addForm(Form form) {
@@ -44,10 +46,10 @@ public class PlayerDBCInfo {
         }
     }
 
-    public void addFormWheel(int wheelSlot, int formID) {
+    public void addFormWheel(int wheelSlot, FormWheelData data) {
         if (wheelSlot > 5)
             return;
-        formWheel.put(wheelSlot, formID);
+        formWheel[wheelSlot].readFromNBT(data.writeToNBT(new NBTTagCompound()));
     }
 
     public boolean hasFormUnlocked(int id) {
@@ -64,19 +66,11 @@ public class PlayerDBCInfo {
         return unlockedForms.remove(id);
     }
 
-    public boolean removeFormWheel(int wheelSlot) {
-        if (wheelSlot > 5)
-            return false;
-        return formWheel.remove(wheelSlot, -1);
+    public void removeFormWheel(int wheelSlot) {
+        if (wheelSlot <= 5)
+            formWheel[wheelSlot].reset();
     }
 
-    public Form getWheelSlot(int wheelSlot) {
-        return (Form) FormController.getInstance().get(formWheel.get(wheelSlot));
-    }
-
-    public int getWheelSlotID(int wheelSlot) {
-        return formWheel.get(wheelSlot);
-    }
 
     public Form getForm(int id) {
         if (unlockedForms.contains(id))
@@ -85,9 +79,6 @@ public class PlayerDBCInfo {
         return null;
     }
 
-    public Map getFormWheel() {
-        return formWheel;
-    }
 
     public boolean hasSelectedForm() {
         return selectedForm > -1 && getSelectedForm() != null;
@@ -144,6 +135,9 @@ public class PlayerDBCInfo {
         selectedForm = -1;
         unlockedForms.clear();
         formLevels.clear();
+
+        for (int i = 0; i < formWheel.length; i++)
+            formWheel[i].reset();
     }
 
     ////////////////////////////////////////////////
@@ -342,10 +336,13 @@ public class PlayerDBCInfo {
         NBTTagCompound dbcCompound = new NBTTagCompound();
         dbcCompound.setInteger("CurrentForm", currentForm);
         dbcCompound.setInteger("SelectedForm", selectedForm);
+        dbcCompound.setInteger("SelectedDBCForm", selectedDBCForm);
         dbcCompound.setTag("UnlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
         dbcCompound.setTag("FormMastery", NBTTags.nbtIntegerFloatMap(formLevels));
         dbcCompound.setTag("FormTimers", NBTTags.nbtIntegerIntegerMap(formTimers));
-        dbcCompound.setTag("FormWheel", NBTTags.nbtIntegerIntegerMap(formWheel));
+
+        for (int i = 0; i < formWheel.length; i++)
+            formWheel[i].writeToNBT(dbcCompound);
 
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
@@ -359,16 +356,13 @@ public class PlayerDBCInfo {
 
         currentForm = dbcCompound.getInteger("CurrentForm");
         selectedForm = dbcCompound.getInteger("SelectedForm");
+        selectedDBCForm = dbcCompound.hasKey("SelectedDBCForm") ? dbcCompound.getInteger("SelectedDBCForm") : -1;
         unlockedForms = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedForms", 10));
         formLevels = NBTTags.getIntegerFloatMap(dbcCompound.getTagList("FormMastery", 10));
         formTimers = NBTTags.getIntegerIntegerMap(dbcCompound.getTagList("FormTimers", 10));
 
-        if (!dbcCompound.hasKey("FormWheel")) {
-            for (int i = 0; i < 6; i++)
-                formWheel.put(i, -1);
-            dbcCompound.setTag("FormWheel", NBTTags.nbtIntegerIntegerMap(formWheel));
-        }
-        formWheel = NBTTags.getIntegerIntegerMap(dbcCompound.getTagList("FormWheel", 10));
+        for (int i = 0; i < formWheel.length; i++)
+            formWheel[i].readFromNBT(dbcCompound.getCompoundTag("FormWheel" + i));
 
         currentAura = dbcCompound.getInteger("CurrentAura");
         selectedAura = dbcCompound.getInteger("SelectedAura");

@@ -3,7 +3,8 @@ package kamkeel.npcdbc.client.gui.hud;
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.config.ConfigDBCClient;
-import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -13,7 +14,6 @@ import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -25,7 +25,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.NBTTags;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.util.ValueUtil;
 import org.lwjgl.input.Keyboard;
@@ -33,11 +32,10 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import java.util.Iterator;
-import java.util.Map;
+import java.util.HashMap;
 
-import static org.lwjgl.opengl.GL11.glScaled;
-import static org.lwjgl.opengl.GL11.glTranslatef;
+import static kamkeel.npcdbc.constants.DBCForm.*;
+import static org.lwjgl.opengl.GL11.*;
 
 public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiListener {
 
@@ -54,22 +52,25 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public int hoveredSlot = -1;
     boolean keyDown, unpressedAllKeys = false;
     boolean configureEnabled;
+    public HashMap<Integer, String> dbcForms;
+    public DBCData dbcData;
 
     public HUDFormWheel() {
         mc = Minecraft.getMinecraft();
-        setBackground("menubg.png");
-
 
         PlayerDBCInfo data = PlayerDataUtil.getClientDBCInfo();
         for (int i = 0; i < 6; i++) {
             wheelSlot[i] = new FormWheelSegment(this, i);
-            wheelSlot[i].setForm(data.getWheelSlotID(i), false);
+            wheelSlot[i].setForm(data.formWheel[i], false);
         }
         PacketHandler.Instance.sendToServer(new DBCRequestFormWheel().generatePacket());
 
         // Stops the GUI from un-pressing all keys for you.
         mc.inGameHasFocus = false;
         mc.mouseHelper.ungrabMouseCursor();
+
+        dbcData = DBCData.getClient();
+        dbcForms = dbcData.getUnlockedDBCFormsMap();
     }
 
     @Override
@@ -80,7 +81,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             timeOpened = Minecraft.getSystemTime();
 
         scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
-        // FormWheelSegment.variant = 1;
 
 
         int x = (this.width / 2) + 94;
@@ -88,7 +88,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         addButton(new GuiNpcButton(6, x, y, 60, 20, new String[]{"Configure", "Done"}, !configureEnabled ? 0 : 1));
 
         if (configureEnabled) {
-            addButton(new GuiNpcButton(7, x += 62, y, 80, 20, "Switch Variant"));
+            addButton(new GuiNpcButton(8, x - 94 - 75, y - 25, 150, 20, "Edit"));
+            addButton(new GuiNpcButton(7, x += 62, y, 80, 20, "Switch Wheel"));
 
 
             float undoMCScaling = 1;
@@ -108,77 +109,81 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             }
 
 
-            Form form = wheelSlot[0].form;
-            addLabel(new GuiNpcLabel(0, "Slot 1", x, y + 5));
-            getLabel(0).color = 14737632;
-            addButton(new GuiNpcButton(0, x, y += 15, 80, 20, "general.noForm"));
-            if (form != null)
-                getButton(0).setDisplayText(form.getMenuName());
-            addButton(new GuiNpcButton(100, x + 80, y, 16, 20, "X"));
-            getButton(100).enabled = form != null;
+//            Form form = wheelSlot[0].form;
+//
+//
+//            addLabel(new GuiNpcLabel(0, "Slot 1", x, y + 5));
+//            getLabel(0).color = 14737632;
+//            addButton(new GuiNpcButton(100, x + 80, y, 16, 20, "X"));
+//            addButton(new GuiNpcButton(0, x, y, 80, 20, "general.noForm"));
+//            getButton(0).setDisplayText(getFormName(0));
+//            getButton(100).enabled = wheelSlot[0].data.formID != -1;
+//
+//            y += 22;
+//            addLabel(new GuiNpcLabel(1, "Slot 2", x + 2, y + 5));
+//            getLabel(1).color = 14737632;
+//            y += 15;
+//            addButton(new GuiNpcButton(11, x + 80, y, 16, 20, "X"));
+//            addButton(new GuiNpcButton(1, x, y, 80, 20, "general.noForm"));
+//            getButton(1).setDisplayText(getFormName(1));
+//            getButton(11).enabled = wheelSlot[1].data.formID != -1;
+//
+//            y += 22;
+//            addLabel(new GuiNpcLabel(2, "Slot 3", x + 2, y + 5));
+//            getLabel(2).color = 14737632;
+//            y += 15;
+//            addButton(new GuiNpcButton(22, x + 80, y, 16, 20, "X"));
+//            addButton(new GuiNpcButton(2, x, y, 80, 20, "general.noForm"));
+//            getButton(2).setDisplayText(getFormName(2));
+//            getButton(22).enabled = wheelSlot[2].data.formID != -1;
+//
+//            y += 22;
+//            addLabel(new GuiNpcLabel(3, "Slot 4", x + 2, y + 5));
+//            getLabel(3).color = 14737632;
+//            y += 15;
+//            addButton(new GuiNpcButton(33, x + 80, y, 16, 20, "X"));
+//            addButton(new GuiNpcButton(3, x, y, 80, 20, "general.noForm"));
+//            getButton(3).setDisplayText(getFormName(3));
+//            getButton(33).enabled = wheelSlot[3].data.formID != -1;
+//
+//            y += 22;
+//            addLabel(new GuiNpcLabel(4, "Slot 5", x + 2, y + 5));
+//            getLabel(4).color = 14737632;
+//            y += 15;
+//            addButton(new GuiNpcButton(44, x + 80, y, 16, 20, "X"));
+//            addButton(new GuiNpcButton(4, x, y, 80, 20, "general.noForm"));
+//            getButton(4).setDisplayText(getFormName(4));
+//            getButton(44).enabled = wheelSlot[4].data.formID != -1;
+//
+//            y += 22;
+//            addLabel(new GuiNpcLabel(5, "Slot 6", x + 2, y + 5));
+//            getLabel(5).color = 14737632;
+//            y += 15;
+//            addButton(new GuiNpcButton(55, x + 80, y, 16, 20, "X"));
+//            addButton(new GuiNpcButton(5, x, y, 80, 20, "general.noForm"));
+//            getButton(5).setDisplayText(getFormName(5));
+//            getButton(55).enabled = wheelSlot[5].data.formID != -1;
 
-            y += 22;
-            form = wheelSlot[1].form;
-            addLabel(new GuiNpcLabel(1, "Slot 2", x + 2, y + 5));
-            getLabel(1).color = 14737632;
-            addButton(new GuiNpcButton(1, x, y += 15, 80, 20, "general.noForm"));
-            if (form != null)
-                getButton(1).setDisplayText(form.getMenuName());
-            addButton(new GuiNpcButton(11, x + 80, y, 16, 20, "X"));
-            getButton(11).enabled = form != null;
 
-            y += 22;
-            form = wheelSlot[2].form;
-            addLabel(new GuiNpcLabel(2, "Slot 3", x + 2, y + 5));
-            getLabel(2).color = 14737632;
-            addButton(new GuiNpcButton(2, x, y += 15, 80, 20, "general.noForm"));
-            if (form != null)
-                getButton(2).setDisplayText(form.getMenuName());
-            addButton(new GuiNpcButton(22, x + 80, y, 16, 20, "X"));
-            getButton(22).enabled = form != null;
-
-            y += 22;
-            form = wheelSlot[3].form;
-            addLabel(new GuiNpcLabel(3, "Slot 4", x + 2, y + 5));
-            getLabel(3).color = 14737632;
-            addButton(new GuiNpcButton(3, x, y += 15, 80, 20, "general.noForm"));
-            if (form != null)
-                getButton(3).setDisplayText(form.getMenuName());
-            addButton(new GuiNpcButton(33, x + 80, y, 16, 20, "X"));
-            getButton(33).enabled = form != null;
-
-            y += 22;
-            form = wheelSlot[4].form;
-            addLabel(new GuiNpcLabel(4, "Slot 5", x + 2, y + 5));
-            getLabel(4).color = 14737632;
-            addButton(new GuiNpcButton(4, x, y += 15, 80, 20, "general.noForm"));
-            if (form != null)
-                getButton(4).setDisplayText(form.getMenuName());
-            addButton(new GuiNpcButton(44, x + 80, y, 16, 20, "X"));
-            getButton(44).enabled = form != null;
-
-            y += 22;
-            form = wheelSlot[5].form;
-            addLabel(new GuiNpcLabel(5, "Slot 6", x + 2, y + 5));
-            getLabel(5).color = 14737632;
-            addButton(new GuiNpcButton(5, x, y += 15, 80, 20, "general.noForm"));
-            if (form != null)
-                getButton(5).setDisplayText(form.getMenuName());
-            addButton(new GuiNpcButton(55, x + 80, y, 16, 20, "X"));
-            getButton(55).enabled = form != null;
         }
 
         BLUR_INTENSITY = 0;
     }
 
+    public String getFormName(int wheelSlot) {
+        DBCData dbcData = DBCData.getClient();
+        FormWheelData data = this.wheelSlot[wheelSlot].data;
+        Form form = this.wheelSlot[wheelSlot].form;
+
+        return !data.isDBC ? form != null ? form.menuName : "general.noForm" : DBCForm.getMenuName(dbcData.Race, data.formID);
+    }
 
     @Override
     public void setGuiData(NBTTagCompound compound) {
-        Map<Integer, Integer> playerWheel = NBTTags.getIntegerIntegerMap(compound.getTagList("FormWheel", 10));
         for (int i = 0; i < 6; i++) {
-            int formID = playerWheel.get(i);
-            wheelSlot[i].formID = formID;
-            wheelSlot[i].form = (Form) FormController.getInstance().get(formID);
+            FormWheelData data = new FormWheelData(i);
+            data.readFromNBT(compound.getCompoundTag("FormWheel" + i));
+            wheelSlot[i].setForm(data, false);
         }
 
         initGui();
@@ -187,7 +192,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public void buttonEvent(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
         if (button.id <= 5) {
-            this.setSubGui(new SubGuiSelectForm(button.id, true, true));
+            this.setSubGui(new SubGuiSelectForm(button.id, true, true).displayDBCForms(DBCData.getClient()));
         } else if (button.id == 100) {
             wheelSlot[0].removeForm();
         } else if (button.id == 11) {
@@ -213,6 +218,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             timeClosedSubGui = Minecraft.getSystemTime();
 
         }
+        if (button.id == 8) {
+            this.setSubGui(new SubGuiSelectForm(button.id, true, true).displayDBCForms(DBCData.getClient()));
+        }
         initGui();
     }
 
@@ -222,7 +230,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         if (subgui instanceof SubGuiSelectForm) {
             SubGuiSelectForm selectForm = ((SubGuiSelectForm) subgui);
             if (selectForm.confirmed) {
-                int slotID = selectForm.buttonID;
+                int slotID = selectForm.buttonID == 8 ? hoveredSlot : selectForm.buttonID;
+
                 FormWheelSegment slot = wheelSlot[slotID];
                 Form form = slot.form;
 
@@ -232,15 +241,54 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 if (form != null && selectForm.selectedFormID == form.id)
                     return;
 
-                slot.setForm(selectForm.selectedFormID, true);
+
+                slot.setForm(selectForm.selectedFormID, selectForm.isDBC, true);
             }
+            timeClosedSubGui = Minecraft.getSystemTime();
         }
         initGui();
     }
 
 
+    public void calculateHoveredSlot(float HALF_WIDTH, float HALF_HEIGHT, boolean configureEnabled) {
+        final float deltaX = HALF_WIDTH - mouseX;
+        final float deltaY = HALF_HEIGHT - mouseY;
+        float radius = ConfigDBCClient.AlteranteSelectionWheelTexture ? 98 : 74;
+        radius *= undoMCScaling;
+        if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) > radius) {
+            final float radians = (float) Math.atan2(deltaY, deltaX);
+            final float degree = Math.round(radians * (180 / Math.PI));
+
+            int tempHoveredSlot = (int) ((degree - 180) / -60) - 1;
+            if (tempHoveredSlot == -1)
+                tempHoveredSlot = 5;
+
+            boolean justOpened = Minecraft.getSystemTime() - timeOpened < 50;
+            if (!justOpened && tempHoveredSlot != hoveredSlot && !configureEnabled)
+                selectSlot(tempHoveredSlot);
+
+        }
+    }
+
+    public void selectSlot(int slotID) {
+        if (hoveredSlot == slotID)
+            return;
+
+        if (hoveredSlot != -1)
+            wheelSlot[hoveredSlot].setHoveredState(false);
+        if (slotID != -1)
+            wheelSlot[slotID].setHoveredState(true);
+        hoveredSlot = slotID;
+    }
+
     @Override
     public void updateScreen() {
+        if (mc.thePlayer.ticksExisted % 10 == 0)
+            dbcForms = dbcData.getUnlockedDBCFormsMap();
+
+        if (getButton(8) != null)
+            getButton(8).enabled = hoveredSlot != -1;
+
 
         if (Mouse.isButtonDown(1)) {
             if (configureEnabled) {
@@ -250,12 +298,12 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                 boolean singleClick = Minecraft.getSystemTime() - timeSinceM1 < 75;
                 if (singleClick) {
                     selectSlot(-1);
-                } else {
+                } else if (!hasSubGui()) {
                     mc.inGameHasFocus = true;
                     mc.mouseHelper.grabMouseCursor();
                 }
             } else {
-                PacketHandler.Instance.sendToServer(new DBCSelectForm(-1).generatePacket());
+                PacketHandler.Instance.sendToServer(new DBCSelectForm(-1, false).generatePacket());
                 close();
             }
         } else {
@@ -279,132 +327,69 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         guiAnimationScale = (guiAnimationScale + 0.2f * (animationScaleFactor - guiAnimationScale));
         guiAnimationScale = ValueUtil.clamp(guiAnimationScale, 0, 1);
         BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
-    }
-
-    public void drawButtons(int i, int j) {
-
-        boolean subGui = this.hasSubGui();
-        Iterator var5 = this.labels.values().iterator();
-        while (var5.hasNext()) {
-            GuiNpcLabel label = (GuiNpcLabel) var5.next();
-            label.drawLabel(this, this.fontRendererObj);
-        }
-
-        var5 = this.buttons.values().iterator();
-        while (var5.hasNext()) {
-            GuiNpcButton button = (GuiNpcButton) var5.next();
-            button.updateSubGUI(subGui);
-            if (!button.hoverableText.isEmpty()) {
-                button.drawHover(i, j, subGui);
-            }
-        }
-
-        int k;
-
-        for (k = 0; k < this.buttonList.size(); ++k) {
-            ((GuiButton) this.buttonList.get(k)).drawButton(this.mc, mouseX, mouseY);
-        }
-
-        for (k = 0; k < this.labelList.size(); ++k) {
-            ((GuiLabel) this.labelList.get(k)).func_146159_a(this.mc, mouseX, mouseY);
-        }
 
     }
 
-    public void calculateHoveredSlot(float HALF_WIDTH, float HALF_HEIGHT, boolean configureEnabled) {
-        final float deltaX = HALF_WIDTH - mouseX;
-        final float deltaY = HALF_HEIGHT - mouseY;
-        float radius = 74 * undoMCScaling;
-        if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) > radius) {
-            final float radians = (float) Math.atan2(deltaY, deltaX);
-            final float degree = Math.round(radians * (180 / Math.PI));
-
-            int tempHoveredSlot = (int) ((degree - 180) / -60) - 1;
-            if (tempHoveredSlot == -1)
-                tempHoveredSlot = 5;
-
-            if (tempHoveredSlot != hoveredSlot && !configureEnabled)
-                selectSlot(tempHoveredSlot);
-
-        }
-    }
-
-    public void selectSlot(int slotID) {
-        if (hoveredSlot != -1)
-            wheelSlot[hoveredSlot].setHoveredState(false);
-        if (slotID != -1)
-            wheelSlot[slotID].setHoveredState(true);
-        hoveredSlot = slotID;
-    }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
-        if (hasSubGui()) {
-            super.drawScreen(mouseX, mouseY, partialTicks);
-            return;
-        }
 
-
-        super.drawScreen(mouseX, mouseY, partialTicks);
-
-        //       hoveredSlot = -1;
-        double width = 124;
-        double height = 124 - 28;
         GL11.glPushMatrix();
-//        GL11.glTranslatef((float) (-width/2), -28.0f - 69f, 0);
-
-//        WheelSegment segment = new WheelSegment(2);
-
         final float HALF_WIDTH = (float) this.width / 2;
         final float HALF_HEIGHT = (float) this.height / 2;
 
-
-        undoMCScaling = 1;
-
-        // TODO: Add more support for higher scale factors / GUI sizes when people start complaining.
-        //       Use a switch case
-        if (scaledResolution.getScaleFactor() == 2) {
-            if (mc.displayHeight < 720) {
+        float factor = scaledResolution.getScaleFactor();
+        undoMCScaling = 1f / factor * 2f;
+        if (factor == 1) {
+            if (mc.displayHeight < 260)
+                undoMCScaling = 0.3f;
+            else if (mc.displayHeight < 350)
+                undoMCScaling = 0.45f;
+            else if (mc.displayHeight < 720)
+                undoMCScaling = 0.7f;
+            else if (mc.displayWidth < 650)
+                undoMCScaling = 1f;
+        } else if (factor == 2) {
+            if (mc.displayHeight < 530)
+                undoMCScaling = 0.413f;
+            else if (mc.displayHeight < 600)
+                undoMCScaling = 0.475f;
+            else if (mc.displayHeight < 720)
                 undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
-            }
+            else
+                undoMCScaling = 1;
+        } else if (factor == 3) {
+            if (mc.displayHeight < 730)
+                undoMCScaling = 1f / 3;
+            else if (mc.displayHeight < 930)
+                undoMCScaling = 0.425f;
+            else if (mc.displayHeight < 1000)
+                undoMCScaling = 0.6f;
+            else if (mc.displayWidth < 1300)
+                undoMCScaling = 0.8f;
+            else if (mc.displayHeight < 1250) {
+                undoMCScaling = 0.75f;
+                glTranslatef(0, -15, 0);
+            } else
+                undoMCScaling = 0.99f;
         }
-        calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, configureEnabled);
 
+        calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, configureEnabled);
+        glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
         GL11.glScalef(undoMCScaling, undoMCScaling, 0);
-
-
-//        GL11.glPushMatrix();
-//        glTranslatef(190, -100, 0);
-//
-//        int mousX = Mouse.getX();
-//        int mousY = mc.displayHeight - Mouse.getY();
-//
-//        int adjustedMouseX = (int) ((mouseX - HALF_WIDTH) * 1 - 190);
-//        int adjustedMouseY = (int) ((mouseY - HALF_HEIGHT) * 1 + 100);
-//        super.drawScreen((int) (adjustedMouseX), (int) (adjustedMouseY), partialTicks);
-//        GL11.glPopMatrix();
-
-
-//        if(scaledResolution.getScaleFactor() == 1) {
-//            float undoMCScaling = 1f / scaledResolution.getScaleFactor();
-//            GL11.glScalef(undoMCScaling, undoMCScaling, 0);
-//        }
         GL11.glScalef(guiAnimationScale, guiAnimationScale, 0);
-        float scale = 1.4f;
-        GL11.glScalef(scale, scale, 0);
-        //  new Color(0x8f8a86,0.5f).glColor();
-
+        float wheelDiameter = 1.4f;
+        GL11.glScalef(wheelDiameter, wheelDiameter, 0);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
         for (int i = 0; i < 6; i++) {
-            Form form = wheelSlot[i].form;
+            FormWheelData data = wheelSlot[i].data;
             GL11.glPushMatrix();
-//            GL11.glTranslatef(0, , 0);
-
-
             GL11.glRotatef(i * -60, 0, 0, 1);
             float segmentScale = 1f + 0.1f * wheelSlot[i].getSegmentScale();
             GL11.glScalef(segmentScale, segmentScale, 0);
@@ -417,43 +402,43 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
 
             GL11.glRotatef(i * 60, 0, 0, 1);
-            if (i == 0 || i == 3) {
-
-            } else if (i == 1 || i == 2) {
+            if (i == 1 || i == 2) {
                 GL11.glTranslatef(10, 0, 0);
-            } else {
+            } else if (i == 4 || i == 5) {
                 GL11.glTranslatef(-10, 0, 0);
             }
             wheelSlot[i].draw();
 
-            if (i == 0) {
-//                GL11.glTranslatef(0, 5, 0);
-            } else if (i == 3) {
-//                GL11.glTranslatef(0, -5, 0);
-            } else if (i == 1 || i == 5) {
+            if (i == 1 || i == 5) {
                 GL11.glTranslatef(0, 10, 0);
-            } else {
+            } else if (i == 2 || i == 4) {
                 GL11.glTranslatef(0, -10, 0);
             }
-            if (form != null) {
-                if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
-                    glScaled(0.7, 0.7, 1);
-                    if (i == 0) {
-                        glTranslatef(0, -15f, 0);
-                    } else if (i == 1) {
-                        glTranslatef(-17, -5, 0);
-                    } else if (i == 2) {
-                        glTranslatef(-11, 3, 0);
-                    } else if (i == 3) {
-                        glTranslatef(0, 12f, 0);
-                    } else if (i == 4) {
-                        glTranslatef(10, 3, 0);
-                    } else {
-                        glTranslatef(13, -5, 0);
-                    }
 
+            if (data.formID != -1) {
+                if (data.isDBC) {
+                    if (dbcForms.containsKey(data.formID)) {
+                        if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
+                            glScaled(0.7, 0.7, 1);
+                            if (i == 0) {
+                                glTranslatef(0, -15f, 0);
+                            } else if (i == 1) {
+                                glTranslatef(-12, -5, 0);
+                            } else if (i == 2) {
+                                glTranslatef(-11, 3, 0);
+                            } else if (i == 3) {
+                                glTranslatef(0, 12f, 0);
+                            } else if (i == 4) {
+                                glTranslatef(10, 3, 0);
+                            } else {
+                                glTranslatef(13, -5, 0);
+                            }
+                        }
+                    } else
+                        wheelSlot[i].removeForm();
                 }
-                drawCenteredString(fontRendererObj, form.menuName, 0, 0, 0xFFFFFFFF);
+                drawCenteredString(fontRendererObj, getFormName(i), 0, 0, 0xFFFFFFFF);
+
             }
 
             GL11.glPopMatrix();
@@ -472,31 +457,24 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
 
         renderPlayer(mouseX, mouseY);
-        GL11.glPopMatrix();
+        glPopMatrix();
+        glPopMatrix();
+
+        super.drawScreen(mouseX, mouseY, partialTicks);
 //        String text = mouseX + "," + mouseY + ", " + hoveredSlot + "," + (keyDown ? "HOLDING KEY" : "NOT HOLDING");
 //        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
-
     }
 
-    @Override
-    protected void drawBackground() {
-        //  super.drawBackground();
-
-        int xPosGradient = 0;
-        int yPosGradient = 0;
-        //    drawGradientRect(xPosGradient, yPosGradient, 100 + xPosGradient, 223 + yPosGradient, 0xc0101010, 0xd0101010);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-
-    }
 
     public void drawDefaultBackground() {
-        //     super.drawDefaultBackground();
     }
 
 
     @Override
     public void keyTyped(char typedChar, int keyCode) {
         super.keyTyped(typedChar, keyCode);
+        if (keyCode == 1 && configureEnabled)
+            configureEnabled = false;
 
     }
 
@@ -507,17 +485,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     }
 
     public void renderPlayer(int i, int j) {
-
-        if (isMouseOverRenderer(i, j)) {
-//            zoomed += Mouse.getDWheel() * 0.035f;
-//            if (zoomed > 100)
-//                zoomed = 100;
-//            if (zoomed < 10)
-//                zoomed = 10;
-
-            if (Mouse.isButtonDown(0)) {
-                rotation -= Mouse.getDX() * 0.75f;
-            }
+        if (isMouseOverRenderer(i, j) && Mouse.isButtonDown(0)) {
+            rotation -= Mouse.getDX() * 0.75f;
         }
 
         renderingPlayer = true;
@@ -528,11 +497,9 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         int i1 = this.height / 2 + 60;
 
         float oldLimbSwing = entity.limbSwingAmount;
-        boolean isSneaking = entity.isSneaking(), isInvisible = entity.isInvisible(), isImmunetoFire = entity.isImmuneToFire;
-        int fire = entity.fire;
+        boolean isInvisible = entity.isInvisible(), isImmunetoFire = entity.isImmuneToFire;
         Entity oldRidingEntity = entity.ridingEntity;
         entity.limbSwingAmount = 0; // Removes moving animation
-        entity.setSneaking(false); // Removes sneaking animation
         entity.ridingEntity = null; // Removes riding animation
         entity.setInvisible(false); // Removes invisibility
         entity.isImmuneToFire = true; // Prevents burning
@@ -541,7 +508,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         ItemStack oldItem = inv.mainInventory[inv.currentItem];
         inv.mainInventory[inv.currentItem] = null; //Removes held item
 
-        boolean changeForm = hoveredSlot != -1;
+        boolean changeForm = hoveredSlot != -1, isGoD = false, isKaioken = false, isUI = false;
         int oldForm = data.addonFormID;
         byte oldState = data.State, oldState2 = data.State2;
         data.addonFormID = -1; // Removes addon forms
@@ -549,7 +516,22 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         data.State2 = 0; // Removes DBC state 2
 
         if (changeForm) {
-            data.addonFormID = wheelSlot[hoveredSlot].formID;
+            FormWheelData wheelData = wheelSlot[hoveredSlot].data;
+            int id = wheelData.formID;
+
+            if (!wheelData.isDBC)
+                data.addonFormID = wheelSlot[hoveredSlot].data.formID;
+            else if (id < 20)
+                data.State = (byte) id;
+            else if (isKaioken = id >= Kaioken && id <= Kaioken6) {
+                data.renderKK = true;
+                data.State2 = (byte) (id - Kaioken + 1);
+            } else if (isUI = id >= UltraInstinct && id <= UltraInstinct + 10) {
+                data.renderUI = true;
+                data.State2 = (byte) (id - UltraInstinct + 1);
+            } else if (isGoD = id == GodOfDestruction) {
+                data.renderGoD = true;
+            }
         }
 
 
@@ -600,9 +582,14 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         data.addonFormID = oldForm;
         data.State = oldState;
         data.State2 = oldState2;
+        if (isKaioken)
+            data.renderKK = false;
+        else if (isUI)
+            data.renderUI = false;
+        else if (isGoD)
+            data.renderGoD = false;
 
         entity.limbSwingAmount = oldLimbSwing;
-        entity.setSneaking(isSneaking);
         entity.ridingEntity = oldRidingEntity;
         entity.setInvisible(isInvisible);
         entity.isImmuneToFire = isImmunetoFire;
@@ -633,7 +620,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
     }
 
-
     /**
      * Called when the mouse is clicked.
      */
@@ -642,7 +628,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
         boolean enoughTimeSinceClose = Minecraft.getSystemTime() - timeClosedSubGui > 50;
-        if (configureEnabled && enoughTimeSinceClose) {
+        if (configureEnabled && !hasSubGui() && enoughTimeSinceClose) {
             calculateHoveredSlot((float) this.width / 2, (float) this.height / 2, false);
         }
     }

@@ -14,8 +14,17 @@ public class Color {
         setColor(color, alpha);
     }
 
+    public Color(int red, int green, int blue, float alpha) {
+        setColor(red, green, blue, alpha);
+    }
+
     public void setColor(int color, float alpha) {
         this.color = color;
+        this.alpha = alpha;
+    }
+
+    public void setColor(int red, int green, int blue, float alpha) {
+        this.color = (red << 16) + (green << 8) + blue;
         this.alpha = alpha;
     }
 
@@ -51,6 +60,7 @@ public class Color {
         ShaderHelper.uniformColor(name, color, alpha);
 
     }
+
     public NBTTagCompound writeToNBT(NBTTagCompound compound, String name) {
         compound.setInteger(name + "Color", color);
         compound.setFloat(name + "Alpha", alpha);

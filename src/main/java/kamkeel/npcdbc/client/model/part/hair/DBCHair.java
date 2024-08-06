@@ -6,6 +6,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.ModelDBC;
+import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
@@ -757,7 +758,7 @@ public class DBCHair extends ModelHairRenderer {
             GL11.glScalef(1.04f, 1.04f, 1.04f);
             GL11.glTranslatef(0, 0.03f, 0);
         }
-
+       // display.hasEyebrows = false;
         int[] hairRightPosZ = new int[]{3, 2, 1, 0, 3, 2, 1, 3, 2, 3};
         int[] hairRightPosY = new int[]{0, 0, 0, 0, 1, 1, 1, 2, 2, 3};
         int[] hairLeftPosZ = new int[]{0, 1, 2, 3, 1, 2, 3, 2, 3, 3};
@@ -945,6 +946,12 @@ public class DBCHair extends ModelHairRenderer {
                 this.hairall[1 + face * 4].showModel = (float) l > 0.0F;
                 this.hairall[2 + face * 4].showModel = (float) l > 33.0F;
                 this.hairall[3 + face * 4].showModel = (float) l > 66.0F;
+//                if (face > 23)
+//                    new Color(0x830099, 1).glColor();
+//                else if (face < 4)
+//                    new Color(0x830099, 1).glColor();
+//                else
+//                    new Color(0xedebe9, 1).glColor();
                 this.hairall[lng + face * 4].render(0.0625f);
                 GL11.glPopMatrix();
             }

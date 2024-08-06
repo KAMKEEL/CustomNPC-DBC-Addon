@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui.component;
 
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCRequestForm;
 import net.minecraft.client.gui.GuiButton;
@@ -13,23 +14,32 @@ import java.util.Vector;
 public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, ICustomScrollListener, ITextfieldListener {
 
     private HashMap<String, Integer> data = new HashMap<>();
-    private GuiCustomScroll scrollForms;
+    private GuiCustomScroll scrollForms, scrollDBCForms;
     private String selected = null;
     private String search = "";
 
+    public int page;
     public boolean confirmed = false;
     public boolean selectionChild;
     public int selectedFormID = -1;
     public int buttonID = -1;
+    public boolean isDBC;
 
-    public boolean useMenuName;
+    public boolean useMenuName, showDBCForms;
+
+    public HashMap<Integer, String> dbcForms = new HashMap<>();
+    private ArrayList<Integer> stateIDs = new ArrayList<>();
+
+    public DBCData dbcData;
+
 
     public SubGuiSelectForm(int buttonID, boolean playerFormsOnly, boolean useMenuName) {
         this.selectionChild = selectionChild;
         this.buttonID = buttonID;
         this.closeOnEsc = true;
         this.drawDefaultBackground = true;
-        xSize = 256;
+        guiLeft -= 10;
+        xSize = 256 + 10;
         this.setBackground("menubg.png");
 
         this.useMenuName = useMenuName;
@@ -39,31 +49,64 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
     @Override
     public void initGui() {
         super.initGui();
+        guiTop += 10;
+        if (showDBCForms)
+            addButton(new GuiNpcButton(3, guiLeft + 183, guiTop + 57, 79, 20, new String[]{"DBC", "Custom"}, page));
 
         if (scrollForms == null) {
             scrollForms = new GuiCustomScroll(this, 0, 0);
-            scrollForms.setSize(143, 185);
+            scrollForms.setSize(177, 185);
         }
-        scrollForms.guiLeft = guiLeft + 8;
+
+        scrollForms.guiLeft = guiLeft + 4;
         scrollForms.guiTop = guiTop + 4;
         addScroll(scrollForms);
-        addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 8, guiTop + 192, 143, 20, search));
+        if (page == 0) {
+            scrollForms.setList(getSearchList());
+        } else if (dbcData != null) {
+            dbcForms = dbcData.getUnlockedDBCFormsMap();
+            stateIDs = new ArrayList<>(dbcForms.keySet());
+            scrollForms.setUnsortedList(getSearchList());
+        }
 
-        addButton(new GuiNpcButton(0, guiLeft + 159, guiTop + 4, 89, 20, "gui.add"));
-        addButton(new GuiNpcButton(1, guiLeft + 159, guiTop + 26, 89, 20, "gui.cancel"));
+        addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 4, guiTop + 192, 177, 20, search));
+
+        addButton(new GuiNpcButton(0, guiLeft + 183, guiTop + 4, 79, 20, "gui.add"));
+        addButton(new GuiNpcButton(1, guiLeft + 183, guiTop + 26, 79, 20, "gui.cancel"));
+    }
+
+    public SubGuiSelectForm displayDBCForms(DBCData data) {
+        if (data == null) {
+            showDBCForms = false;
+            page = 0;
+        } else {
+            showDBCForms = true;
+            this.dbcData = data;
+        }
+        return this;
     }
 
     @Override
     public void actionPerformed(GuiButton button) {
+        GuiNpcButton bttn = (GuiNpcButton) button;
         int id = button.id;
 
         if (id == 0 && selected != null) {
             confirmed = true;
-            selectedFormID = data.get(selected);
+            if (page == 0)
+                selectedFormID = data.get(selected);
+            else
+                selectedFormID = stateIDs.get(scrollForms.selected).byteValue();
+            isDBC = page == 1;
             this.close();
         }
         if (id == 1) {
             this.close();
+        }
+        if (id == 3) {
+            page = bttn.getValue();
+            scrollForms.resetScroll();
+            initGui();
         }
     }
 
@@ -84,7 +127,10 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
 
     @Override
     public void customScrollClicked(int i, int i1, int i2, GuiCustomScroll guiCustomScroll) {
-        selected = scrollForms.getSelected();
+        if (guiCustomScroll == scrollForms)
+            selected = scrollForms.getSelected();
+        else
+            selected = scrollDBCForms.getSelected();
     }
 
     @Override
@@ -100,17 +146,20 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
                     return;
                 search = getTextField(55).getText().toLowerCase();
                 scrollForms.resetScroll();
-                scrollForms.setList(getSearchList());
+                if (page == 0)
+                    scrollForms.setList(getSearchList());
+                else
+                    scrollForms.setUnsortedList(getSearchList());
             }
         }
     }
 
     private List<String> getSearchList() {
         if (search.isEmpty()) {
-            return new ArrayList<String>(this.data.keySet());
+            return new ArrayList<String>(page == 0 ? this.data.keySet() : dbcForms.values());
         }
         List<String> list = new ArrayList<String>();
-        for (String name : this.data.keySet()) {
+        for (String name : page == 0 ? this.data.keySet() : dbcForms.values()) {
             if (name.toLowerCase().contains(search))
                 list.add(name);
         }

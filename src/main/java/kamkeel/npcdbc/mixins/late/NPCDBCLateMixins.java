@@ -61,9 +61,11 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
         mixins.add("dbc.MixinJRMCoreEH");
         mixins.add("dbc.MixinJRMCoreH");
         mixins.add("dbc.MixinJRMCoreHDBC");
+        mixins.add("dbc.MixinJGConfigUltraInstinct");
+        mixins.add("dbc.MixinJRMCorePacHanC");
+
         mixins.add("npc.MixinDBCAddon");
         mixins.add("npc.MixinDBCDisplay");
-
         mixins.add("npc.MixinEntityNPCInterface");
 
         return mixins;

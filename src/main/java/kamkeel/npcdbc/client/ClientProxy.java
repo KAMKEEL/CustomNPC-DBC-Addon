@@ -63,7 +63,7 @@ public class ClientProxy extends CommonProxy {
     public void postInit(FMLPostInitializationEvent ev) {
         PostProcessing.init(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
         ModernModels.loadModels();
-   }
+    }
 
     public static float getTimeSinceStart() {
         return Duration.between(startTime, Instant.now()).toMillis() / 1000f;
@@ -91,6 +91,10 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void registerItem(Item item) {
+    }
+
+    public boolean isRenderingGUI() {
+        return renderingGUI;
     }
 
     private void forceStencilEnable() {

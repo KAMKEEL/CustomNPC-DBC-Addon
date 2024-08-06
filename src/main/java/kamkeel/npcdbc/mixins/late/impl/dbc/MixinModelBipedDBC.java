@@ -5,11 +5,13 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ColorMode;
+import kamkeel.npcdbc.client.gui.hud.HUDFormWheel;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -114,7 +116,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 boolean isSaiyan = dbcData.Race == 1 || dbcData.Race == 2;
 
                 //eye colors for ALL forms except ssj4
-                if ( (hair.contains("EYELEFT") || hair.contains("EYERIGHT"))) {
+                if ((hair.contains("EYELEFT") || hair.contains("EYERIGHT"))) {
                     if (form.display.isBerserk && !ClientProxy.renderingMajinSE)
                         ci.cancel();
 
@@ -130,7 +132,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 if (isSaiyan) {
                     //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
                     if (form.display.hairType.equals("ssj4")) {
-                        if (HD && form.display.hasEyebrows&& !ClientProxy.renderingMajinSE)
+                        if (HD && form.display.hasEyebrows && !ClientProxy.renderingMajinSE)
                             disableFace(hair, ci);
                         if (isHairPreset(hair))
                             ci.cancel();
@@ -158,11 +160,10 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 //hair color for all forms
                 if ((isHairPreset(hair) || hair.contains("EYEBROW"))) {
                     if (!form.display.hasHairCol(dbcData)) {
-                        if(dbcData.Race != DBCRace.NAMEKIAN){
+                        if (dbcData.Race != DBCRace.NAMEKIAN) {
                             ColorMode.glColorInt(dbcData.renderingHairColor, 1f);
                         }
-                    }
-                    else
+                    } else
                         RenderPlayerJBRA.glColor3f(form.display.getHairColor(dbcData));
                 }
 
@@ -196,11 +197,19 @@ public class MixinModelBipedDBC extends ModelBipedBody {
         }
     }
 
+    @Inject(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At(value = "INVOKE_ASSIGN", target = "LJinRyuu/JRMCore/JRMCoreH;StusEfctsClient(II)Z", ordinal = 3, shift = At.Shift.AFTER), cancellable = true)
+    public void disableHairAnimGUI(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(name = "playerName") LocalRef<String> playerName, @Local(name = "aura") LocalBooleanRef aura, @Local(name = "trbo") LocalBooleanRef trbo, @Local(name = "kken") LocalBooleanRef kken, @Local(name = "trty") LocalBooleanRef trty) {
+        if (HUDFormWheel.renderingPlayer) {
+            playerName.set("HUDFormWheelPlayer");
+            aura.set(false);
+            trbo.set(false);
+            kken.set(false);
+            trty.set(false);
+        }
+    }
+
     @Inject(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At("HEAD"), cancellable = true)
-    public void DNSHairRendering(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA
-            rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo
-                                         ci, @Local(ordinal = 0) LocalRef<String> hair, @Local(ordinal = 0) LocalIntRef
-                                         st, @Local(ordinal = 3) LocalIntRef race) {
+    public void DNSHairRendering(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(ordinal = 0) LocalRef<String> hair, @Local(ordinal = 0) LocalIntRef st, @Local(ordinal = 3) LocalIntRef race) {
         if (ClientEventHandler.renderingPlayer != null) {
             Form form = DBCData.getForm(ClientEventHandler.renderingPlayer);
 
@@ -227,8 +236,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 texMan.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + hairTexture));
 
                 //majin effect check
-                if (rc == 5 && !form.display.effectMajinHair){
-                    if(form.display.bodyCM != -1)
+                if (rc == 5 && !form.display.effectMajinHair) {
+                    if (form.display.bodyCM != -1)
                         RenderPlayerJBRA.glColor3f(form.display.bodyCM);
                     return;
                 }
