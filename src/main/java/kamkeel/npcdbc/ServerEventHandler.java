@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.combat.Dodge;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.*;
@@ -77,7 +78,7 @@ public class ServerEventHandler {
             if (player.ticksExisted % ConfigDBCGameplay.CheckEffectsTick == 0)
                 StatusEffectController.Instance.runEffects(player);
 
-            if(ConfigDBCGameplay.WearableEarrings)
+            if (ConfigDBCGameplay.WearableEarrings)
                 if (player.ticksExisted % 60 == 0)
                     FusionHandler.checkNearbyPlayers(player);
 
@@ -95,7 +96,7 @@ public class ServerEventHandler {
             }
             handleFormProcesses(player);
 
-            if(ConfigDBCGameplay.RevampKiCharging){
+            if (ConfigDBCGameplay.RevampKiCharging) {
                 chargeKi(player);
             }
         }
@@ -104,19 +105,18 @@ public class ServerEventHandler {
     public void chargeKi(EntityPlayer player) {
         DBCData dbcData = DBCData.getData(player);
         dbcData.loadCharging();
-        if(!dbcData.isChargingKi())
+        if (!dbcData.isChargingKi())
             return;
 
         int chargeTick = 16 - (ConfigDBCGameplay.KiPotentialUnlock ? dbcData.stats.getPotentialUnlockLevel() : 6);
-        if(player.ticksExisted % chargeTick != 0)
+        if (player.ticksExisted % chargeTick != 0)
             return;
 
         int releaseFactor = ConfigDBCGameplay.KiChargeRate;
         boolean powerDown = dbcData.isFnPressed;
         byte release = dbcData.Release;
 
-        byte maxRelease = (byte) ((byte) (50 + dbcData.stats.getPotentialUnlockLevel() * 5)
-                    + (byte) (StatusEffectController.Instance.hasEffect(player,  Effects.OVERPOWER) ? ConfigDBCEffects.OVERPOWER_AMOUNT : 0));
+        byte maxRelease = (byte) ((byte) (50 + dbcData.stats.getPotentialUnlockLevel() * 5) + (byte) (StatusEffectController.Instance.hasEffect(player, Effects.OVERPOWER) ? ConfigDBCEffects.OVERPOWER_AMOUNT : 0));
 
         int newRelease = ValueUtil.clamp(!powerDown ? release + releaseFactor : release - releaseFactor, (byte) releaseFactor, maxRelease);
         dbcData.getRawCompound().setByte("jrmcRelease", (byte) newRelease);
@@ -151,6 +151,19 @@ public class ServerEventHandler {
                 dbcData.loadNBTData(true);
             }
 
+            if (!form.stackable.godStackable && dbcData.isForm(DBCForm.GodOfDestruction))
+                dbcData.setForm(DBCForm.GodOfDestruction, false);
+
+            if (!form.stackable.mysticStackable && dbcData.isForm(DBCForm.Mystic))
+                dbcData.setForm(DBCForm.Mystic, false);
+
+            if (!form.stackable.uiStackable && dbcData.isForm(DBCForm.UltraInstinct))
+                dbcData.setForm(DBCForm.UltraInstinct, false);
+
+            if (!form.stackable.kaiokenStackable && dbcData.isForm(DBCForm.Kaioken))
+                dbcData.setForm(DBCForm.Kaioken, false);
+
+
             // Updates form Timer
             if (formData.hasTimer(form.id)) {
                 formData.decrementTimer(form.id);
@@ -166,7 +179,7 @@ public class ServerEventHandler {
                     cost *= ((double) dbcData.Release / 100);
                     cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
 
-                    dbcData.stats.restoreKiFlat((int) (-cost  / form.mastery.kiDrainTimer * 10));
+                    dbcData.stats.restoreKiFlat((int) (-cost / form.mastery.kiDrainTimer * 10));
                 }
             }
 
