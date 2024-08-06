@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreKeyHandler;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
@@ -12,8 +13,10 @@ import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -23,6 +26,7 @@ import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.TransformPacket;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
@@ -35,6 +39,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
+
+import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 
 @Mixin(value = DBCKiTech.class, remap = false)
 public class MixinDBCKiTech {
@@ -132,6 +138,90 @@ public class MixinDBCKiTech {
 
     }
 
+    @Inject(method = "Ascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;isRaceMajin()Z", ordinal = 0), cancellable = true)
+    private static void fixSomeFormsNotAscendingProperly4(KeyBinding K, CallbackInfo ci, @Local(name = "isInBase") LocalBooleanRef isInBase, @Local(name = "isInKaioken") LocalBooleanRef isInKaioken, @Local(name = "isInMystic") LocalBooleanRef isInMystic, @Local(name = "isInGoD") LocalBooleanRef isInGoD, @Local(name = "isInUI") LocalBooleanRef isInUI, @Local(name = "useGodOfDestruction") LocalBooleanRef useGodOfDestruction, @Local(name = "isInUltraInstinct") LocalBooleanRef isInUltraInstinct) {
+        PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
+        int id = dbc.selectedDBCForm;
+        if (id != -1) {
+            if (id == DBCForm.GodOfDestruction || (id >= UltraInstinct && id <= UltraInstinct + 10)) {
+                isInBase.set(true);
+                isInUI.set(false);
+            }
+            isInGoD.set(false);
+            isInMystic.set(false);
+            isInKaioken.set(false);
+
+        }
+    }
+
+    @Redirect(method = "Ascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;StusEfctsMe(I)Z"))
+    private static boolean fixSomeFormsNotAscendingProperly5(int ste, @Local(name = "useUltraInstinct2") LocalBooleanRef useUltraInstinct2) {
+        PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
+        int id = dbc.selectedDBCForm;
+        if (id != -1) {
+            if ((id >= UltraInstinct && id <= UltraInstinct + 10) && ste == 5) {
+                useUltraInstinct2.set(true);
+                return false;
+            }
+
+        }
+        return JRMCoreH.StusEfctsMe(ste);
+    }
+
+
+    @Redirect(method = "Ascend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;State:B", ordinal = 11))
+    private static byte fixSomeFormsNotAscendingProperly2() {
+        PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
+        DBCData data = DBCData.getClient();
+        byte state = JRMCoreH.State;
+        if (dbc.selectedDBCForm != -1) {
+            if (state == 4 && data.Race == DBCRace.MAJIN && dbc.selectedDBCForm != state)
+                return 3;
+
+            if (data.Race == DBCRace.ARCOSIAN && (state == 5 || state == 6))
+                return 3;
+
+        }
+
+        return state;
+    }
+
+    @Redirect(method = "Ascend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;State:B", ordinal = 7))
+    private static byte fixSomeFormsNotAscendingProperly3() {
+        PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
+        byte state = JRMCoreH.State;
+        if (dbc.selectedDBCForm != -1 && dbc.selectedDBCForm != state) {
+            if (JRMCoreH.Race == DBCRace.ARCOSIAN && state > 3)
+                return 3;
+
+        }
+
+        return state;
+    }
+
+    @Redirect(method = "Ascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;isInState(I)Z"))
+    private static boolean fixSomeFormsNotAscendingProperly(int state) {
+        PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
+        DBCData data = DBCData.getClient();
+        if (state == 4) { //SSG2/SSJ4/SSBE condition
+            if (dbc.selectedDBCForm != -1 && dbc.selectedDBCForm != JRMCoreH.State)
+                return true;
+        }
+        if (data.Race == DBCRace.ARCOSIAN && (state == 5 || state == 6))
+            return false;
+
+        if (state == 2 && data.Race == DBCRace.MAJIN && (data.State == DBCForm.MajinPure || data.State == DBCForm.MajinFullPower))
+            return true;
+
+        if (dbc.selectedDBCForm != -1 && dbc.selectedDBCForm != JRMCoreH.State) {
+            if (state == 0 && (data.Race == DBCRace.NAMEKIAN || data.Race == DBCRace.HUMAN || data.Race == DBCRace.MAJIN))
+                return true;
+            else
+                return false;
+        }
+
+        return JRMCoreH.isInState(state);
+    }
 
     /**
      * Prevents player from transforming to other DBC forms if they are in custom form, except stackable ones

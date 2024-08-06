@@ -1,6 +1,11 @@
 package kamkeel.npcdbc.constants;
 
+import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
+import kamkeel.npcdbc.util.DBCUtils;
+
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class DBCForm {
     public static final int Base = 0;
@@ -60,14 +65,21 @@ public class DBCForm {
     ////////////////////////////////
     ////////////////////////////////
     // Non-Racial forms
-    public static final int Kaioken = 20;
     public static final int Mystic = 21;
-    public static final int UltraInstinct = 22;
-    public static final int MasteredUltraInstinct = 23;
     public static final int GodOfDestruction = 24;
     public static final int Legendary = 25;
     public static final int Divine = 26;
     public static final int Majin = 27;
+
+    public static final int Kaioken = 31;
+    public static final int Kaioken2 = 32;
+    public static final int Kaioken3 = 33;
+    public static final int Kaioken4 = 34;
+    public static final int Kaioken5 = 35;
+    public static final int Kaioken6 = 36;
+
+    public static final int MasteredUltraInstinct = 40;
+    public static final int UltraInstinct = 41;
 
 
     public static boolean isMonke(int race, int state) {
@@ -98,44 +110,138 @@ public class DBCForm {
         return false;
     }
 
-    public static HashMap<Integer, String> getFormsMap(int race) {
-        HashMap<Integer, String> forms = new HashMap<>();
-        forms.put(Base, "Base");
+    public static String getMenuName(int race, int form) {
+        String name = null;
         if (race == DBCRace.HUMAN) {
-            forms.put(HumanBuffed, "HumanBuffed");
-            forms.put(HumanFullRelease, "HumanFullRelease");
-            forms.put(HumanGod, "HumanGod");
+            if (form == HumanBuffed)
+                name = "§3Buffed";
+            else if (form == HumanFullRelease)
+                name = "§4Full Release";
+            else if (form == HumanGod)
+                name = "§cGod";
         } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-            forms.put(SuperSaiyan, "SuperSaiyan");
-            forms.put(SuperSaiyanG2, "SuperSaiyanG2");
-            forms.put(SuperSaiyanG3, "SuperSaiyanG3");
-            forms.put(MasteredSuperSaiyan, "MasteredSuperSaiyan");
-            forms.put(SuperSaiyan2, "SuperSaiyan2");
-            forms.put(SuperSaiyan3, "SuperSaiyan3");
-            forms.put(SuperSaiyan4, "SuperSaiyan4");
-            forms.put(GreatApe, "GreatApe");
-            forms.put(SuperGreatApe, "SuperGreatApe");
-            forms.put(SuperSaiyanGod, "SuperSaiyanGod");
-            forms.put(SuperSaiyanBlue, "SuperSaiyanBlue");
-            forms.put(BlueEvo, "BlueEvo");
+            if (form == SuperSaiyan)
+                name = "§eSuper Saiyan";
+            else if (form == SuperSaiyanG2)
+                name = "§eSuper Saiyan G2";
+            else if (form == SuperSaiyanG3)
+                name = "§eSuper Saiyan G3";
+            else if (form == MasteredSuperSaiyan)
+                name = "§eSuper Saiyan (FP)";
+            else if (form == SuperSaiyan2)
+                name = "§eSuper Saiyan 2";
+            else if (form == SuperSaiyan3)
+                name = "§eSuper Saiyan 3";
+            else if (form == SuperSaiyan4)
+                name = "§4Super Saiyan 4";
+            else if (form == GreatApe)
+                name = "§6Great Ape";
+            else if (form == SuperGreatApe)
+                name = "§6Super Great Ape";
+            else if (form == SuperSaiyanGod)
+                name = "§cSuper Saiyan God";
+            else if (form == SuperSaiyanBlue)
+                name = "§bSuper Saiyan Blue";
+            else if (form == BlueEvo)
+                name = "§1Super Saiyan Blue Evo";
+
         } else if (race == DBCRace.NAMEKIAN) {
-            forms.put(NamekGiant, "NamekGiant");
-            forms.put(NamekFullRelease, "NamekFullRelease");
-            forms.put(NamekGod, "NamekGod");
+            if (form == NamekGiant)
+                name = "§2Giant";
+            else if (form == NamekFullRelease)
+                name = "§aFull Release";
+            else if (form == NamekGod)
+                name = "§cGod";
         } else if (race == DBCRace.ARCOSIAN) {
-            forms.put(Minimal, "Minimal");
-            forms.put(FirstForm, "FirstForm");
-            forms.put(SecondForm, "SecondForm");
-            forms.put(ThirdForm, "ThirdForm");
-            forms.put(FinalForm, "FinalForm");
-            forms.put(SuperForm, "SuperForm");
-            forms.put(UltimateForm, "UltimateForm");
-            forms.put(ArcoGod, "ArcoGod");
+            if (form == Minimal)
+                name = "§5Minimal";
+            else if (form == FirstForm)
+                name = "§5First Form";
+            else if (form == SecondForm)
+                name = "§5Second Form";
+            else if (form == ThirdForm)
+                name = "§5Third Form";
+            else if (form == FinalForm)
+                name = "§5Final Form";
+            else if (form == SuperForm)
+                name = "§5Super Form";
+            else if (form == UltimateForm)
+                name = "§6Ultimate Form";
+            else if (form == ArcoGod)
+                name = "§cGod";
         } else if (race == DBCRace.MAJIN) {
-            forms.put(MajinEvil, "MajinEvil");
-            forms.put(MajinFullPower, "MajinFullPower");
-            forms.put(MajinPure, "MajinPure");
-            forms.put(MajinGod, "MajinGod");
+            if (form == MajinEvil)
+                name = "§8Evil";
+            else if (form == MajinFullPower)
+                name = "§5Full Power";
+            else if (form == MajinPure)
+                name = "§dPure";
+            else if (form == MajinGod)
+                name = "§cGod";
+
+        }
+
+        if (form == Mystic)
+            name = "Mystic";
+
+        for (int i = 0; i < 6; i++) {
+            if (form == Kaioken + i) {
+                name = "§cKaioken " + JRMCoreH.TransKaiNms[i + 1];
+                break;
+            }
+        }
+
+        for (int i = 0; i < JGConfigUltraInstinct.CONFIG_UI_LEVELS; i++) {
+            if (form == UltraInstinct + i) {
+                name = "§7" + DBCUtils.CONFIG_UI_NAME[i];
+                break;
+            }
+        }
+
+        if (form == GodOfDestruction)
+            name = "§dGod of Destruction";
+
+        return name;
+    }
+
+    public static HashMap<Integer, String> getFormsMap(int race) {
+        HashMap<Integer, String> forms = new LinkedHashMap<>();
+        forms.put(Base, "§3Base");
+        if (race == DBCRace.HUMAN) {
+            forms.put(HumanBuffed, "§3Buffed");
+            forms.put(HumanFullRelease, "§4Full Release");
+            forms.put(HumanGod, "§cGod");
+        } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            forms.put(SuperSaiyan, "§eSuper Saiyan");
+            forms.put(SuperSaiyanG2, "§eSuper Saiyan G2");
+            forms.put(SuperSaiyanG3, "§eSuper Saiyan G3");
+            forms.put(MasteredSuperSaiyan, "§eMastered Super Saiyan");
+            forms.put(SuperSaiyan2, "§eSuper Saiyan 2");
+            forms.put(SuperSaiyan3, "§eSuper Saiyan 3");
+            forms.put(SuperSaiyan4, "§4Super Saiyan 4");
+            forms.put(GreatApe, "§6Great Ape");
+            forms.put(SuperGreatApe, "§6Super Great Ape");
+            forms.put(SuperSaiyanGod, "§cSuper Saiyan God");
+            forms.put(SuperSaiyanBlue, "§bSuper Saiyan Blue");
+            forms.put(BlueEvo, "§1Super Saiyan Blue Evo");
+        } else if (race == DBCRace.NAMEKIAN) {
+            forms.put(NamekGiant, "§2Giant");
+            forms.put(NamekFullRelease, "§aFull Release");
+            forms.put(NamekGod, "§cGod");
+        } else if (race == DBCRace.ARCOSIAN) {
+            forms.put(Minimal, "§5Minimal");
+            forms.put(FirstForm, "§5First Form");
+            forms.put(SecondForm, "§5Second Form");
+            forms.put(ThirdForm, "§5Third Form");
+            forms.put(FinalForm, "§5Final Form");
+            forms.put(SuperForm, "§5Super Form");
+            forms.put(UltimateForm, "§6Ultimate Form");
+            forms.put(ArcoGod, "§cGod");
+        } else if (race == DBCRace.MAJIN) {
+            forms.put(MajinEvil, "§8Evil");
+            forms.put(MajinFullPower, "§5Full Power");
+            forms.put(MajinPure, "§dPure");
+            forms.put(MajinGod, "§cGod");
         }
         return forms;
     }

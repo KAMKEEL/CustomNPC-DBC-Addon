@@ -23,6 +23,7 @@ import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetFlight;
 import kamkeel.npcdbc.network.packets.DBCUpdateLockOn;
 import kamkeel.npcdbc.network.packets.PingPacket;
+import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
@@ -32,12 +33,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ChatComponentText;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+
+import static kamkeel.npcdbc.constants.DBCForm.*;
 
 public class DBCData extends DBCDataUniversal implements IAuraData {
 
@@ -71,6 +76,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public int renderingHairColor;
     public byte skinType;
     public boolean useStencilBuffer;
+    public boolean renderGoD, renderKK, renderUI;
     public EntityAura auraEntity;
     public int activeAuraColor = -1;
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
@@ -339,51 +345,190 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         }
     }
 
+    public boolean hasForm(int dbcForm) {
+
+
+        if (dbcForm == DBCForm.Kaioken)
+            return JRMCoreH.SklLvl(8) > 0;
+        if (dbcForm == DBCForm.UltraInstinct)
+            if (dbcForm == DBCForm.MasteredUltraInstinct)
+                return JRMCoreH.SklLvl(16) > 0;
+        if (dbcForm == DBCForm.GodOfDestruction)
+            return JRMCoreH.SklLvl(18) > 0;
+        if (dbcForm == DBCForm.Mystic)
+            return JRMCoreH.SklLvl(10) > 0;
+
+        int racial = JRMCoreH.SklLvlX(Powertype, RacialSkills) - 1;
+        int godForm = JRMCoreH.SklLvl(9);
+        switch (Race) {
+            case 1:
+            case 2:
+                switch (dbcForm) {
+                    case DBCForm.SuperSaiyanGod:
+                        return godForm >= 1;
+                    case DBCForm.SuperSaiyanBlue:
+                        return godForm >= 2;
+                    case DBCForm.BlueEvo:
+                        return godForm >= 3;
+                    case DBCForm.SuperSaiyan4:
+                        return racial >= 7 && getRawCompound().getInteger("jrmcAfGFtStFT") > 0 && hasTail();
+                    default:
+                        return false;
+                }
+            default:
+                return false;
+        }
+    }
+
+    public HashMap<Integer, String> getUnlockedDBCFormsMap() {
+        HashMap<Integer, String> dbcForms = new LinkedHashMap<>();
+        int race = Race;
+        int racialSkill = JRMCoreH.SklLvlX(1, RacialSkills) - 1;
+        int godSkill = JRMCoreH.SklLvl(9);
+
+        if (race == DBCRace.HUMAN) {
+            if (racialSkill >= 1)
+                dbcForms.put(HumanBuffed, "§3Buffed");
+            if (racialSkill >= 2)
+                dbcForms.put(HumanFullRelease, "§4Full Release");
+            if (racialSkill >= 5 && godSkill >= 1)
+                dbcForms.put(HumanGod, "§cGod");
+        } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            if (racialSkill >= 1 && racialSkill < 4)
+                dbcForms.put(SuperSaiyan, "§eSuper Saiyan");
+            if (racialSkill >= 4)
+                dbcForms.put(MasteredSuperSaiyan, "§eSuper Saiyan (FP)");
+            if (racialSkill >= 2)
+                dbcForms.put(SuperSaiyanG2, "§eSuper Saiyan G2");
+            if (racialSkill >= 3)
+                dbcForms.put(SuperSaiyanG3, "§eSuper Saiyan G3");
+            if (racialSkill >= 5)
+                dbcForms.put(SuperSaiyan2, "§eSuper Saiyan 2");
+            if (racialSkill >= 6)
+                dbcForms.put(SuperSaiyan3, "§eSuper Saiyan 3");
+            if (racialSkill >= 7 && getRawCompound().getInteger("jrmcAfGFtStFT") > 0 && hasTail())
+                dbcForms.put(SuperSaiyan4, "§4Super Saiyan 4");
+            if (racialSkill >= 1 && godSkill >= 1)
+                dbcForms.put(SuperSaiyanGod, "§cSuper Saiyan God");
+            if (racialSkill >= 1 && godSkill >= 2)
+                dbcForms.put(SuperSaiyanBlue, "§bSuper Saiyan Blue");
+            if (racialSkill >= 1 && godSkill >= 3)
+                dbcForms.put(BlueEvo, "§1Super Saiyan Blue Evo");
+        } else if (race == DBCRace.NAMEKIAN) {
+            if (racialSkill >= 1)
+                dbcForms.put(NamekGiant, "§2Giant");
+            if (racialSkill >= 2)
+                dbcForms.put(NamekFullRelease, "§aFull Release");
+            if (racialSkill >= 5 && godSkill >= 1)
+                dbcForms.put(NamekGod, "§cGod");
+        } else if (race == DBCRace.ARCOSIAN) {
+            dbcForms.put(FirstForm, "§5First Form");
+            dbcForms.put(SecondForm, "§5Second Form");
+            dbcForms.put(ThirdForm, "§5Third Form");
+            dbcForms.put(FinalForm, "§5Final Form");
+            if (racialSkill >= 3)
+                dbcForms.put(SuperForm, "§5Super Form");
+            if (racialSkill >= 6)
+                dbcForms.put(UltimateForm, "§6Ultimate Form");
+            if (racialSkill >= 6 && godSkill >= 1)
+                dbcForms.put(ArcoGod, "§cGod");
+        } else if (race == DBCRace.MAJIN) {
+            if (racialSkill >= 2)
+                dbcForms.put(MajinEvil, "§8Evil");
+            if (racialSkill >= 3)
+                dbcForms.put(MajinFullPower, "§5Full Power");
+            if (racialSkill >= 5)
+                dbcForms.put(MajinPure, "§dPure");
+            if (racialSkill >= 5 && godSkill >= 1)
+                dbcForms.put(MajinGod, "§cGod");
+        }
+        if (JRMCoreH.SklLvl(10) > 0)
+            dbcForms.put(Mystic, "Mystic");
+
+        int kaiokenSkill = JRMCoreH.SklLvl(8);
+        for (int i = 0; i < 6; i++) {
+            if (kaiokenSkill >= i + 1)
+                dbcForms.put(Kaioken + i, "§cKaioken " + JRMCoreH.TransKaiNms[i + 1]);
+        }
+
+        int uiSkill = JRMCoreH.SklLvl(16);
+        for (int i = 0; i < JGConfigUltraInstinct.CONFIG_UI_LEVELS; i++) {
+            if (uiSkill >= i + 1 && !JGConfigUltraInstinct.CONFIG_UI_SKIP[i])
+                dbcForms.put(UltraInstinct + i, "§7" + DBCUtils.CONFIG_UI_NAME[i]);
+        }
+
+        if (JRMCoreH.SklLvl(18) > 0)
+            dbcForms.put(GodOfDestruction, "§dGod of Destruction");
+
+        return dbcForms;
+    }
 
     public boolean containsSE(int id) {
         return JRMCoreH.StusEfcts(id, StatusEffects);
     }
 
-    public void setSE(int id, boolean bo) {
-        JRMCoreH.StusEfcts(id, StatusEffects, player, bo);
+    public String setSE(int id, boolean bo) {
+        return JRMCoreH.StusEfcts(id, StatusEffects, getRawCompound(), bo);
     }
 
-    public void setForm(int dbcForm, boolean on) {
+    public String setForm(int dbcForm, boolean on) {
+
         switch (dbcForm) {
             case DBCForm.Kaioken:
-                setSE(5, on);
-                if (on)
-                    State2 = 1;
+                StatusEffects = setSE(5, on);
+                State2 = (byte) (on ? 1 : 0);
+                getRawCompound().setByte("jrmcState2", State2);
                 break;
             case DBCForm.UltraInstinct:
-                setSE(19, on);
-                if (on)
-                    State2 = 1;
+                StatusEffects = setSE(19, on);
+                State2 = (byte) (on ? 1 : 0);
+                getRawCompound().setByte("jrmcState2", State2);
                 break;
             case DBCForm.GodOfDestruction:
-                setSE(20, on);
+                StatusEffects = setSE(20, on);
                 break;
             case DBCForm.Mystic:
-                setSE(13, on);
+                StatusEffects = setSE(13, on);
                 break;
             case DBCForm.Legendary:
-                setSE(14, on);
+                StatusEffects = setSE(14, on);
                 break;
             case DBCForm.Divine:
-                setSE(17, on);
+                StatusEffects = setSE(17, on);
                 break;
             case DBCForm.Majin:
-                setSE(12, on);
+                StatusEffects = setSE(12, on);
                 break;
         }
+        return StatusEffects;
     }
 
     public boolean settingOn(int id) {
-        return Utility.isServer(player) ? JRMCoreH.PlyrSettingsB(player, id) : JRMCoreH.PlyrSettingsB(id);
+        return JRMCoreH.PlyrSettingsB(getRawCompound(), id);
     }
+
+    public boolean settingIsValue(int id, int value) {
+        return JRMCoreH.PlyrSettingsI(getRawCompound(), id, value);
+    }
+
+
+    public void setSetting(int id, int value) {
+        JRMCoreH.PlyrSettingsSet(getRawCompound(), id, value);
+    }
+
 
     public boolean formSettingOn(int dbcForm) {
         switch (dbcForm) {
+            case SuperSaiyanG2:
+                return settingIsValue(1, -1);
+            case SuperSaiyan2:
+                return settingIsValue(1, 0);
+            case SuperSaiyanGod:
+                return settingIsValue(1, 1);
+            case SuperSaiyanBlue:
+                return settingIsValue(1, 2);
+            case SuperSaiyan4:
+                return settingIsValue(1, 3);
             case DBCForm.Kaioken:
                 return settingOn(0);
             case DBCForm.UltraInstinct:

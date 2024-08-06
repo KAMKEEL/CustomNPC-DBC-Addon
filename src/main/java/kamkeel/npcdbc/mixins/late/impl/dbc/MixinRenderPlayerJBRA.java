@@ -3,7 +3,6 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreConfig;
-import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
@@ -85,14 +84,19 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     protected void setDamage(Args args, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
         if (mc.theWorld == null)
             return;
+        float ySize = args.get(1);
         DBCData.get(player.get()).XZSize = args.get(0);
-        DBCData.get(player.get()).YSize = args.get(1);
+        DBCData.get(player.get()).YSize = ySize;
+        if (HUDFormWheel.renderingPlayer && ySize > 0.8f) {
+            float f = ConfigDBCClient.AlteranteSelectionWheelTexture ? 6f : 4f;
+            GL11.glTranslatef(0, ySize / f, 0);
+        }
     }
 
     @Inject(method = "glColor3f(I)V", at = @At("HEAD"), cancellable = true)
     private static void mixAuraColor(int c, CallbackInfo ci) {
         EntityPlayer player = ClientEventHandler.renderingPlayer;
-        if (ClientEventHandler.renderingPlayer == null || DBCData.get(player) == null)
+        if (ClientEventHandler.renderingPlayer == null || HUDFormWheel.renderingPlayer || DBCData.get(player) == null)
             return;
         EntityAura aura = DBCData.get(player).auraEntity;
         if (aura == null || aura.color1 == -1 || !aura.shouldRender())
@@ -117,19 +121,46 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     }
 
-    @Redirect(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/RenderPlayerJBRA;b(Ljava/lang/String;)B"))
-    private byte changeFormD2ata(RenderPlayerJBRA instance, String n, @Local(name = "pl") LocalIntRef pl, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
-        String[] state = JRMCoreH.data2 == null ? new String[]{"0", "0", "0"} : JRMCoreH.data2[pl.get()].split(";");
-        DBCData data = DBCData.get(player.get());
-        boolean equal = data.State == data.State2;
-        if (equal)
-            return data.State;
-        else if (n.equals(state[0]))
-            return data.State;
-        else if (n.equals(state[1]))
-            return data.State2;
-        return 0;
+    @Redirect(method = "func_130009_a", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;isSneaking()Z"))
+    private boolean isSneaking(AbstractClientPlayer instance) {
+        if (HUDFormWheel.renderingPlayer)
+            return false;
+        return instance.isSneaking();
     }
+
+    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data2:[Ljava/lang/String;"), remap = true)
+    private String[] changeFormDAata(@Local(name = "pl") LocalIntRef pl, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
+        DBCData data = DBCData.get(player.get());
+        return new String[]{data.State + "", data.State2 + ""};
+    }
+
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JBRA/RenderPlayerJBRA;kk2:Z", ordinal = 1))
+    private void changeFormDAata4(AbstractClientPlayer p, float p_77041_2_, CallbackInfo ci) {
+        DBCData data = DBCData.get(p);
+        if (HUDFormWheel.renderingPlayer) {
+            kk2 = data.renderKK;
+        }
+    }
+
+
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Ljava/lang/Integer;parseInt(Ljava/lang/String;)I", ordinal = 1, shift = At.Shift.BEFORE))
+    private void changeFormData35(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "state") LocalRef<String[]> state) {
+        DBCData data = DBCData.get(par1AbstractClientPlayer);
+        if (HUDFormWheel.renderingPlayer) {
+            state.set(new String[]{data.State + "", data.State2 + ""});
+        }
+    }
+
+
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 2, shift = At.Shift.BEFORE))
+    private void changeFormData3(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "l") LocalBooleanRef ui, @Local(name = "gd") LocalBooleanRef GoD) {
+        DBCData data = DBCData.get(par1AbstractClientPlayer);
+        if (HUDFormWheel.renderingPlayer) {
+            ui.set(data.renderUI);
+            GoD.set(data.renderGoD);
+        }
+    }
+
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
     private void changeFormData(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "rg") LocalIntRef rg, @Local(name = "st") LocalIntRef st, @Local(name = "skintype") LocalIntRef skintype, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3, @Local(name = "msk") LocalBooleanRef mask) {
@@ -444,6 +475,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Shadow
     public static float r;
+
+    @Shadow
+    private static boolean kk2;
 
     /**
      * Methods Below so we don't need

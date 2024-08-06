@@ -40,6 +40,9 @@ public class DBCUtils {
     };
     public static int lastSetDamage = -1;
 
+    public static String[] CONFIG_UI_NAME;
+    public static String[] cCONFIG_UI_NAME;
+
     public static String getFormattedStateName(int race, int state) {
         String out = "";
         try {

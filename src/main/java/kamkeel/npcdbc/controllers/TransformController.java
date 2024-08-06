@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.SoundSource;
@@ -252,6 +253,17 @@ public class TransformController {
                         dbcData.State = 0;
                 }
             }
+            if (!form.stackable.godStackable && dbcData.isForm(DBCForm.GodOfDestruction))
+                dbcData.setForm(DBCForm.GodOfDestruction, false);
+
+            if (!form.stackable.mysticStackable && dbcData.isForm(DBCForm.Mystic))
+                dbcData.setForm(DBCForm.Mystic, false);
+
+            if (!form.stackable.uiStackable && dbcData.isForm(DBCForm.UltraInstinct))
+                dbcData.setForm(DBCForm.UltraInstinct, false);
+
+            if (!form.stackable.kaiokenStackable && dbcData.isForm(DBCForm.Kaioken))
+                dbcData.setForm(DBCForm.Kaioken, false);
 
             formData.currentForm = formID;
             if (formData.getForm(formID).hasTimer())
