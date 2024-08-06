@@ -342,7 +342,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         final float HALF_HEIGHT = (float) this.height / 2;
 
         float factor = scaledResolution.getScaleFactor();
-        undoMCScaling = 1f / factor * 3f;
+        undoMCScaling = 1f / factor * 2f;
         if (factor == 1) {
             if (mc.displayHeight < 260)
                 undoMCScaling = 0.3f;
@@ -360,7 +360,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             else if (mc.displayHeight < 720)
                 undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
             else
-                undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
+                undoMCScaling = 1;
         } else if (factor == 3) {
             if (mc.displayHeight < 730)
                 undoMCScaling = 1f / 3;
