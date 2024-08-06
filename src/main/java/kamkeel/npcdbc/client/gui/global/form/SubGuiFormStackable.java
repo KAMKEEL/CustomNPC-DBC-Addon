@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
+import kamkeel.npcdbc.client.gui.component.SubGuiKaiokenDrain;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
@@ -73,6 +74,11 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             scrollWindow.getTextField(23).floatsOnly = true;
             scrollWindow.getTextField(23).setMinMaxDefaultFloat(-10000, 10000, 1);
             scrollWindow.getLabel(23).color = 0xffffff;
+
+            y += 23;
+
+            scrollWindow.addLabel(new GuiNpcLabel(100, "Kaioken drain config", guiLeft+4, y+5, 0xFF5555));
+            scrollWindow.addButton(new GuiNpcButton(100, guiLeft + 115, y, 50, 20, "Edit"));
         }
 
         y += 23;
@@ -223,7 +229,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
 
         if (button.id == 6) {
-            this.setSubGui(new SubGuiSelectForm(6));
+            this.setSubGui(new SubGuiSelectForm(6,false, false));
         }
         if (button.id == 61) {
             stackable.legendaryID = -1;
@@ -234,7 +240,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
 
         if (button.id == 7) {
-            this.setSubGui(new SubGuiSelectForm(7));
+            this.setSubGui(new SubGuiSelectForm(7,false, false));
         }
         if (button.id == 71) {
             stackable.divineID = -1;
@@ -245,7 +251,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
 
         if (button.id == 8) {
-            this.setSubGui(new SubGuiSelectForm(8));
+            this.setSubGui(new SubGuiSelectForm(8,false, false));
         }
         if (button.id == 81) {
             stackable.majinID = -1;
@@ -253,6 +259,9 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
         if (button.id == 85) {
             stackable.useMajinConfig = button.getValue() == 1;
+        }
+        if(button.id == 100){
+            this.setSubGui(new SubGuiKaiokenDrain(form));
         }
         initGui();
 	}
@@ -264,7 +273,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             stackable.kaiokenStrength = guiNpcTextField.getFloat();
         }
         if (guiNpcTextField.id == 23) {
-            stackable.kaiokenStrength = guiNpcTextField.getFloat();
+            stackable.kaiokenState2Factor = guiNpcTextField.getFloat();
         }
 
         if (guiNpcTextField.id == 32) {

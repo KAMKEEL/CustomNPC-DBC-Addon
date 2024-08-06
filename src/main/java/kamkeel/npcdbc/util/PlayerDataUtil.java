@@ -65,14 +65,14 @@ public class PlayerDataUtil {
      * Compress Player information intpo CNPC+ Pre-Built
      * Scroll Packets for Inventory Menu
      */
-    public static void sendFormDBCInfo(EntityPlayerMP player) {
+    public static void sendFormDBCInfo(EntityPlayerMP player, boolean useMenuName) {
         PlayerDBCInfo data = ((IPlayerDBCInfo) PlayerDataController.Instance.getPlayerData(player)).getPlayerDBCInfo();
 
         Map<String, Integer> map = new HashMap<String, Integer>();
         for (int formID : data.unlockedForms) {
             Form form = (Form) FormController.getInstance().get(formID);
             if (form != null) {
-                map.put(form.name, form.id);
+                map.put(useMenuName ? form.menuName : form.name, form.id);
             }
         }
         sendScrollData(player, map);

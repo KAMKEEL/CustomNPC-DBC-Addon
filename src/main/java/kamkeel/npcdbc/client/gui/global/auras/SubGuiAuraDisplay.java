@@ -110,6 +110,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         scrollWindow.addButton(new GuiNpcButton(1306, guiX + 100, y, 100, 20, "display.selectAura"));
         if (aura.secondaryAuraID != -1 && AuraController.getInstance().has(aura.secondaryAuraID))
             scrollWindow.getButton(1306).setDisplayText(AuraController.getInstance().get(aura.secondaryAuraID).getName());
+
         scrollWindow.addButton(new GuiNpcButton(1406, guiX + 200, y, 20, 20, "X"));
         scrollWindow.getButton(1406).enabled = aura.secondaryAuraID != -1;
 

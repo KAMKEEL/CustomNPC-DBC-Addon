@@ -13,6 +13,7 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.entity.Entity;
@@ -669,7 +670,9 @@ public class DBCUtils {
                 vanityHelmetOn = vanityItem instanceof ItemVanity && ((ItemVanity) vanityItem).armorType == 5 && vanitySlots[i] != Item.getIdFromItem(ItemsDBC.Coat_2) && vanitySlots[i] != Item.getIdFromItem(ItemsDBC.Coat);
             }
         }
+        if(helmetStack != null && helmetStack.getItem() instanceof ItemPotara)
+            vanityHelmetOn = true;
 
-        return JRMCoreConfig.HHWHO ? !helmetOn && !vanityHelmetOn : true;
+        return JRMCoreConfig.HHWHO ? !helmetOn && !vanityHelmetOn || vanityHelmetOn : true;
     }
 }

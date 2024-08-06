@@ -6,8 +6,7 @@ import net.minecraftforge.common.config.Property;
 
 import java.io.File;
 
-public class ConfigDBCClient
-{
+public class ConfigDBCClient {
     public static Configuration config;
 
     public final static String GENERAL = "General";
@@ -44,12 +43,13 @@ public class ConfigDBCClient
     public static Property FirstPerson3DAuraOpacityProperty;
     public static int FirstPerson3DAuraOpacity = 100;
 
-    public static void init(File configFile)
-    {
+    public static Property AlternateSelectionWheelTextureProperty;
+    public static boolean AlteranteSelectionWheelTexture = true;
+
+    public static void init(File configFile) {
         config = new Configuration(configFile);
 
-        try
-        {
+        try {
             config.load();
 
             // General
@@ -63,6 +63,8 @@ public class ConfigDBCClient
             DarkMode = DarkModeProperty.getBoolean(true);
             AdvancedGuiModeProperty = config.get(GUI, "Advanced GUI", false, "Shows Advanced Status Effects and Calculations in Menu");
             AdvancedGui = AdvancedGuiModeProperty.getBoolean(false);
+            AlternateSelectionWheelTextureProperty = config.get(GUI, "Use Alternate Wheel GUI Texture", false, "Uses alternate texture for Wheel GUIs");
+            AlteranteSelectionWheelTexture = AlternateSelectionWheelTextureProperty.getBoolean(false);
 
             // Rendering
             RevampAuraProperty = config.get(RENDERING, "Revamp Aura", true, "Renders with the new DBC Addon style of auras");
@@ -80,17 +82,11 @@ public class ConfigDBCClient
             EnableBloomProperty = config.get(RENDERING, "Enable Bloom", true, "Enables the bloom effect for player outlines and auras");
             EnableBloom = EnableBloomProperty.getBoolean(true);
 
-            FirstPerson3DAuraOpacityProperty = config.get(RENDERING, "First person 3D Aura Opacity", 100, "The opacity of the first person 3D Aura." +
-                "\nModifying this makes it so auras on other players render normally without blinding you" +
-                "\n(Min: 0, Max: 100)");
+            FirstPerson3DAuraOpacityProperty = config.get(RENDERING, "First person 3D Aura Opacity", 100, "The opacity of the first person 3D Aura." + "\nModifying this makes it so auras on other players render normally without blinding you" + "\n(Min: 0, Max: 100)");
             FirstPerson3DAuraOpacity = Math.max(Math.min(100, FirstPerson3DAuraOpacityProperty.getInt(100)), 0);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             ClientProxy.LOGGER.error("Error loading client configuration: " + e.getMessage());
-        }
-        finally
-        {
+        } finally {
             if (config.hasChanged()) {
                 config.save();
             }

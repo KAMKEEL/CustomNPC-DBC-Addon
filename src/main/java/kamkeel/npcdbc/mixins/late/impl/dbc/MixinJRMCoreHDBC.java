@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,9 +42,15 @@ public class MixinJRMCoreHDBC {
     @Inject(method = "DBCsizeBasedOnRace2(IIZ)F", at = @At(value = "TAIL"), cancellable = true)
     private static void setCustomFormSize(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir, @Local(name = "f3") LocalFloatRef size) {
         if (CommonProxy.CurrentJRMCTickPlayer != null) {
+            if (ClientProxy.renderingGUI) {
+                cir.setReturnValue(1f);
+                return;
+            }
+
             Form form = DBCData.get(CommonProxy.CurrentJRMCTickPlayer).getForm();
 
             if (form != null && form.display.hasSize()) {
+
                 if (form.display.keepOriginalSize)
                     cir.setReturnValue(size.get() * form.display.formSize);
                 else

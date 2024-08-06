@@ -51,7 +51,12 @@ public class DBCStats implements IDBCStats {
 
     public void readFromNBT(NBTTagCompound nbttagcompound) {
         enabled = nbttagcompound.getBoolean("DBCStatsEnabled");
-        setLockOnState(nbttagcompound.getBoolean("DBCCanBeLockedOn"));
+
+        if(nbttagcompound.hasKey("DBCCanBeLockedOn"))
+            setLockOnState(nbttagcompound.getBoolean("DBCCanBeLockedOn"));
+        else
+            setLockOnState(true);
+
         if (enabled) {
             NBTTagCompound dbcStats = nbttagcompound.getCompoundTag("DBCStats");
 

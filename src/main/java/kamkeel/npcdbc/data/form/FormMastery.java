@@ -42,6 +42,10 @@ public class FormMastery implements IFormMastery {
     public float movementSpeed = 1f;
     public float movementSpeedMultiFlat = 1.0f, movementSpeedMultiPerLevel = 0.01f, movementSpeedMultiMinOrMax = 1.5f;
 
+    public float tailCutChance = 100;
+    public float tailCutChanceMultiFlat = 1.0f, tailCutChanceMultiPerLevel = -0.01f, tailCutChanceMultiMinOrMax = 0f;
+
+
     public FormMastery(Form parent) {
         this.parent = parent;
     }
@@ -215,6 +219,15 @@ public class FormMastery implements IFormMastery {
                     case "minormax":
                         return movementSpeedMultiMinOrMax;
                 }
+            case "tailcutchance":
+                switch (type1.toLowerCase()) {
+                    case "flat":
+                        return tailCutChanceMultiFlat;
+                    case "perlevel":
+                        return tailCutChanceMultiPerLevel;
+                    case "minormax":
+                        return tailCutChanceMultiMinOrMax;
+                }
         }
         return 1.0f;
     }
@@ -323,6 +336,19 @@ public class FormMastery implements IFormMastery {
                         movementSpeedMultiMinOrMax = value;
                         break;
                 }
+            case "tailcutchance":
+                switch (type1.toLowerCase()) {
+                    case "flat":
+                        tailCutChanceMultiFlat = value;
+                        break;
+                    case "perlevel":
+                        tailCutChanceMultiPerLevel = value;
+                        break;
+                    case "minormax":
+                        tailCutChanceMultiMinOrMax = value;
+                        break;
+                }
+
 
         }
     }
@@ -547,6 +573,7 @@ public class FormMastery implements IFormMastery {
         painTime = formMastery.getInteger("painTime");
         maxHeat = formMastery.getInteger("maxHeat");
         movementSpeed = formMastery.getFloat("movementSpeed");
+        tailCutChance = formMastery.getFloat("tailCutChance");
 
         NBTTagCompound attributeMulti = formMastery.getCompoundTag("attributeMulti");
         attributeMultiFlat = attributeMulti.getFloat("flat");
@@ -587,6 +614,11 @@ public class FormMastery implements IFormMastery {
         movementSpeedMultiFlat = movementSpeedMulti.getFloat("flat");
         movementSpeedMultiPerLevel = movementSpeedMulti.getFloat("perLevel");
         movementSpeedMultiMinOrMax = movementSpeedMulti.getFloat("minOrMax");
+
+        NBTTagCompound tailCutChanceMulti = formMastery.getCompoundTag("tailCutMulti");
+        tailCutChanceMultiFlat = tailCutChanceMulti.getFloat("flat");
+        tailCutChanceMultiPerLevel = tailCutChanceMulti.getFloat("perLevel");
+        tailCutChanceMultiMinOrMax = tailCutChanceMulti.getFloat("minOrMax");
 
         NBTTagCompound update = formMastery.getCompoundTag("update");
         updateGain = update.getFloat("gain");
@@ -630,6 +662,7 @@ public class FormMastery implements IFormMastery {
         formMastery.setInteger("maxHeat", maxHeat);
         formMastery.setInteger("painTime", painTime);
         formMastery.setFloat("movementSpeed", movementSpeed);
+        formMastery.setFloat("tailCutChance", tailCutChance);
 
         NBTTagCompound attributeMulti = new NBTTagCompound();
         attributeMulti.setFloat("flat", attributeMultiFlat);
@@ -678,6 +711,12 @@ public class FormMastery implements IFormMastery {
         movementSpeedMulti.setFloat("perLevel", movementSpeedMultiPerLevel);
         movementSpeedMulti.setFloat("minOrMax", movementSpeedMultiMinOrMax);
         formMastery.setTag("movementSpeedMulti", movementSpeedMulti);
+
+        NBTTagCompound tailCutChanceMulti = new NBTTagCompound();
+        tailCutChanceMulti.setFloat("flat", tailCutChanceMultiFlat);
+        tailCutChanceMulti.setFloat("perLevel", tailCutChanceMultiPerLevel);
+        tailCutChanceMulti.setFloat("minOrMax", tailCutChanceMultiMinOrMax);
+        formMastery.setTag("tailCutMulti", tailCutChanceMulti);
 
         NBTTagCompound update = new NBTTagCompound();
         update.setFloat("gain", updateGain);

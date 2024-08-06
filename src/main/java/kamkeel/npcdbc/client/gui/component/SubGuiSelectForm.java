@@ -22,7 +22,9 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
     public int selectedFormID = -1;
     public int buttonID = -1;
 
-    public SubGuiSelectForm(int buttonID){
+    public boolean useMenuName;
+
+    public SubGuiSelectForm(int buttonID, boolean playerFormsOnly, boolean useMenuName) {
         this.selectionChild = selectionChild;
         this.buttonID = buttonID;
         this.closeOnEsc = true;
@@ -30,12 +32,12 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         xSize = 256;
         this.setBackground("menubg.png");
 
-
-        PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, false).generatePacket());
+        this.useMenuName = useMenuName;
+        PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, playerFormsOnly, this.useMenuName).generatePacket());
     }
 
     @Override
-    public void initGui(){
+    public void initGui() {
         super.initGui();
 
         if (scrollForms == null) {
@@ -52,15 +54,15 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
     }
 
     @Override
-    public void actionPerformed(GuiButton button){
+    public void actionPerformed(GuiButton button) {
         int id = button.id;
 
-        if(id == 0 && selected != null){
+        if (id == 0 && selected != null) {
             confirmed = true;
             selectedFormID = data.get(selected);
             this.close();
         }
-        if(id == 1){
+        if (id == 1) {
             this.close();
         }
     }
@@ -86,7 +88,8 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
     }
 
     @Override
-    public void unFocused(GuiNpcTextField guiNpcTextField) {}
+    public void unFocused(GuiNpcTextField guiNpcTextField) {
+    }
 
     @Override
     public void keyTyped(char c, int i) {
@@ -113,4 +116,5 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         }
         return list;
     }
+
 }

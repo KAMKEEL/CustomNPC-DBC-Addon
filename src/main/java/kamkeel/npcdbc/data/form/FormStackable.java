@@ -6,6 +6,8 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.FormController;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.Arrays;
+
 public class FormStackable implements IFormStackable {
 
     private final Form parent;
@@ -18,8 +20,14 @@ public class FormStackable implements IFormStackable {
     public boolean useLegendaryConfig, useDivineConfig, useMajinConfig;
     public int legendaryID = -1, divineID = -1, majinID = -1;
 
+    public float kaiokenDrainMulti = 1;
+    public float[] kaiokenBalanceValue = new float[6];
+    public float[] kaiokenStrainedBalanceValue = new float[6];
+
     public FormStackable(Form parent) {
         this.parent = parent;
+        Arrays.fill(kaiokenBalanceValue, 1);
+        Arrays.fill(kaiokenStrainedBalanceValue, 1);
     }
 
     public void readFromNBT(NBTTagCompound compound) {
@@ -49,6 +57,20 @@ public class FormStackable implements IFormStackable {
         divineID = !stack.hasKey("divineID") ? -1 : stack.getInteger("divineID");
         majinID = !stack.hasKey("majinID") ? -1 : stack.getInteger("majinID");
 
+        if(stack.hasKey("kaiokenDrainData")){
+            NBTTagCompound kaioDrain = stack.getCompoundTag("kaiokenDrainData");
+            kaiokenDrainMulti = kaioDrain.getFloat("multi");
+
+            NBTTagCompound balanceNormal = kaioDrain.getCompoundTag("balanceNormal");
+            for(int i = 0; i < 6; i++){
+                kaiokenBalanceValue[i] = balanceNormal.getFloat(i+"");
+            }
+            NBTTagCompound balanceStrained = kaioDrain.getCompoundTag("balanceStrained");
+            for(int i = 0; i < 6; i++){
+                kaiokenStrainedBalanceValue[i] = balanceStrained.getFloat(i+"");
+            }
+        }
+
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -77,6 +99,21 @@ public class FormStackable implements IFormStackable {
         stack.setInteger("divineID", divineID);
         stack.setInteger("majinID", majinID);
 
+        NBTTagCompound kaioDrainData = new NBTTagCompound();
+        kaioDrainData.setFloat("multi", kaiokenDrainMulti);
+        NBTTagCompound kaioBalanceNormal = new NBTTagCompound();
+        for(int i = 0; i < 6; i++){
+            kaioBalanceNormal.setFloat(i+"", kaiokenBalanceValue[i]);
+        }
+        NBTTagCompound kaioBalanceStrained = new NBTTagCompound();
+        for(int i = 0; i < 6; i++){
+            kaioBalanceStrained.setFloat(i+"", kaiokenStrainedBalanceValue[i]);
+        }
+
+        kaioDrainData.setTag("balanceNormal", kaioBalanceNormal);
+        kaioDrainData.setTag("balanceStrained", kaioBalanceStrained);
+
+        stack.setTag("kaiokenDrainData", kaioDrainData);
         compound.setTag("stackableForms", stack);
         return compound;
     }
@@ -304,5 +341,36 @@ public class FormStackable implements IFormStackable {
         if (parent != null)
             parent.save();
         return this;
+    }
+
+    @Override
+    public float getKaioDrain() {
+        return kaiokenDrainMulti;
+    }
+
+    @Override
+    public void setKaioDrain(float drain){
+        this.kaiokenDrainMulti = drain;
+    }
+
+    @Override
+    public float getKaioState2Balance(int state2, boolean strained) {
+        if(state2 < 0)
+            state2 = 0;
+        if(state2 > 5)
+            state2 = 5;
+
+        return (strained ? kaiokenStrainedBalanceValue[state2] : kaiokenBalanceValue[state2]);
+    }
+
+    @Override
+    public void setKaioState2Balance(int state2, boolean strained, float value){
+        if(state2 < 0)
+            state2 = 0;
+        if(state2 > 5)
+            state2 = 5;
+
+        float[] array = strained ? kaiokenStrainedBalanceValue : kaiokenBalanceValue;
+        array[state2] = value;
     }
 }

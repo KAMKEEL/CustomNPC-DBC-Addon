@@ -8,6 +8,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -137,6 +138,9 @@ public class MixinDBCKiTech {
      */
     @Inject(method = "Ascend", at = @At("HEAD"), cancellable = true)
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
+        if (KeyHandler.AscendKey.getIsKeyPressed() && K.getIsKeyPressed())
+            KeyBinding.setKeyBindState(K.getKeyCode(), false);
+
         if (K.getIsKeyPressed()) {
             if (TransformController.ascending)
                 ci.cancel();

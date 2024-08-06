@@ -29,6 +29,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.util.ValueUtil;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -311,6 +312,30 @@ public abstract class MixinJRMCoreH {
         }
     }
 
+
+    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;B)I", at = @At("HEAD"), cancellable = true)
+    private static void tailCutMastery(Entity Player, int dbcA, DamageSource s, byte t, CallbackInfoReturnable<Integer> cir) {
+        if (!Player.worldObj.isRemote && Player instanceof EntityPlayer && t == 2) {
+            DBCData dbcData = DBCData.get((EntityPlayer) Player);
+            Form form = dbcData.getForm();
+            if (form != null) {
+                if (form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) {
+                    float cutChance = form.mastery.tailCutChance * form.mastery.calculateMulti("tailcutchance", dbcData.addonFormLevel);
+                    double rand = Math.random();
+                    if ((cutChance / 100) >= rand) {
+                        Player.worldObj.playSoundAtEntity(Player, "jinryuudragonbc:DBC4.disckill", 1.0F, 1.0F);
+                        setByte((byte) 4, (EntityPlayer) Player, "jrmcTlmd");
+                        int state = getByte((EntityPlayer) Player, "jrmcState");
+                        if (state == 7 || state == 8 || state == 14) {
+                            setByte(0, (EntityPlayer) Player, "jrmcState");
+                        }
+                    }
+                    cir.setReturnValue(jrmcDam(Player, dbcA, s));
+                }
+            }
+        }
+    }
+
     @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setByte(BLnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", ordinal = 0, shift = At.Shift.BEFORE))
     private static void callKOEvent(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir) {
         DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer((EntityPlayer) Player), s));
@@ -355,6 +380,44 @@ public abstract class MixinJRMCoreH {
             cir.setReturnValue(currentHeat / form.mastery.maxHeat * 100);
         }
 
+    }
+
+    @Inject(method = "KaiKCost", at=@At("HEAD"), cancellable = true)
+    private static void customFormKaiokenDrain(EntityPlayer p, CallbackInfoReturnable<Double> cir){
+
+        DBCData dbcData = DBCData.get(p);
+        if(dbcData == null)
+            return;
+        Form form = dbcData.getForm();
+        if(form == null)
+            return;
+
+        int race = dbcData.Race;
+        int state2 = dbcData.State2;
+
+        if(state2 <= 0)
+            return;
+
+        int strain = getInt(p, "jrmcStrain");
+        int might = dbcData.STR / 2 + dbcData.WIL / 2;
+        int cons = dbcData.CON;
+        double c = (double)(10 - SklLvl(8, p) + state2) * 0.01;
+        float kc = kaiokenBalanceValue(form, state2, strain > 0);
+        c += JRMCoreConfig.sskai ? 0.0F : kc;
+        double cost = 1.0 / (double)cons * (double)might * c * (double)TransKaiDrainRace[race] * (double)TransKaiDrainLevel[state2] * (double)(DBC() ? form.stackable.getKaioDrain() : 1.0F);
+
+        if (JGConfigDBCFormMastery.FM_Enabled) {
+            int kkID = getFormID("Kaioken", race);
+            double kkMasteryLevel = getFormMasteryValue(p, kkID);
+            float costMulti = (float)JGConfigDBCFormMastery.getCostMulti(kkMasteryLevel, race, kkID, JGConfigDBCFormMastery.DATA_ID_KAIOKEN_HEALTH_COST_MULTI);
+            cost *= costMulti;
+        }
+
+        cir.setReturnValue(cost);
+    }
+
+    private static float kaiokenBalanceValue(Form form, int state2, boolean strained){
+        return form.stackable.getKaioState2Balance(state2-1, strained);
     }
 }
 

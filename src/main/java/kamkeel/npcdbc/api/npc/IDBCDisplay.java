@@ -21,6 +21,12 @@ public interface IDBCDisplay {
     void setHairCode(String hairCode);
 
 
+    /**
+     * @param arm 0 is right arm, 1 is left arm
+     * @return Ki Weapon Data for the given arm.
+     */
+    IKiWeaponData getKiWeapon(int arm);
+
     byte getRace();
 
     void setRace(byte race);

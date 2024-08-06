@@ -24,6 +24,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
     public boolean showDodge = false;
     public boolean showDamageNegation = false;
     public boolean showMovementSpeed = false;
+    public boolean showTailCutChance = false;
 
     public SubGuiFormMastery(GuiNPCManageForms parent, Form form) {
         this.form = form;
@@ -319,6 +320,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.getLabel(604).color = 0xffffff;
         }
 
+
         y += 23;
         scrollWindow.addLabel(new GuiNpcLabel(700, "mastery.movementSpeedSettings", 4, y + 5));
         scrollWindow.getLabel(700).color = 0xffffff;
@@ -356,6 +358,46 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.getLabel(704).color = 0xffffff;
         }
 
+
+        if (form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) {
+            maxScroll += 23;
+            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(800, "mastery.tailCutChanceSettings", 4, y + 5));
+            scrollWindow.getLabel(800).color = 0xffffff;
+            scrollWindow.addButton(new GuiNpcButton(800, 200, y, 120, 20, new String[]{"display.hide", "display.show"}, showTailCutChance ? 1 : 0));
+            if (showTailCutChance) {
+                maxScroll += 23 * 2;
+                y += 23;
+                scrollWindow.addLabel(new GuiNpcLabel(801, "mastery.tailCutChance", 4, y + 5));
+                scrollWindow.addTextField(new GuiNpcTextField(801, this, 135, y, 40, 20, String.valueOf(mastery.tailCutChance)));
+                scrollWindow.getTextField(801).setMaxStringLength(10);
+                scrollWindow.getTextField(801).floatsOnly = true;
+                scrollWindow.getTextField(801).setMinMaxDefaultFloat(0, 100f, 100f);
+                scrollWindow.getLabel(801).color = 0xffffff;
+
+                scrollWindow.addLabel(new GuiNpcLabel(802, "mastery.flatMulti", 180, y + 5));
+                scrollWindow.addTextField(new GuiNpcTextField(802, this, 295, y, 40, 20, String.valueOf(mastery.tailCutChanceMultiFlat)));
+                scrollWindow.getTextField(802).setMaxStringLength(10);
+                scrollWindow.getTextField(802).floatsOnly = true;
+                scrollWindow.getTextField(802).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
+                scrollWindow.getLabel(802).color = 0xffffff;
+
+                y += 23;
+                scrollWindow.addLabel(new GuiNpcLabel(803, "mastery.perLevel", 4, y + 5));
+                scrollWindow.addTextField(new GuiNpcTextField(803, this, 135, y, 40, 20, String.valueOf(mastery.tailCutChanceMultiPerLevel)));
+                scrollWindow.getTextField(803).setMaxStringLength(10);
+                scrollWindow.getTextField(803).floatsOnly = true;
+                scrollWindow.getTextField(803).setMinMaxDefaultFloat(-10000, 10000f, -0.01f);
+                scrollWindow.getLabel(803).color = 0xffffff;
+
+                scrollWindow.addLabel(new GuiNpcLabel(804, "mastery.minMax", 180, y + 5));
+                scrollWindow.addTextField(new GuiNpcTextField(804, this, 295, y, 40, 20, String.valueOf(mastery.tailCutChanceMultiMinOrMax)));
+                scrollWindow.getTextField(804).setMaxStringLength(10);
+                scrollWindow.getTextField(804).floatsOnly = true;
+                scrollWindow.getTextField(804).setMinMaxDefaultFloat(0f, 10000f, 0);
+                scrollWindow.getLabel(804).color = 0xffffff;
+            }
+        }
         y += 23;
         scrollWindow.addLabel(new GuiNpcLabel(19, "mastery.levelGainSettings", 4, y + 5));
         scrollWindow.getLabel(19).color = 0xffffff;
@@ -597,6 +639,9 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
         if (button.id == 700) {
             showMovementSpeed = !showMovementSpeed;
         }
+        if (button.id == 800) {
+            showTailCutChance = !showTailCutChance;
+        }
 
         initGui();
         prevY = ValueUtil.clamp(prevY, 0, getScrollableGui(0).maxScrollY);
@@ -714,7 +759,16 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             mastery.movementSpeedMultiPerLevel = txtField.getFloat();
         } else if (txtField.id == 704) {
             mastery.movementSpeedMultiMinOrMax = txtField.getFloat();
+        } else if (txtField.id == 801) {
+            mastery.tailCutChance = txtField.getFloat();
+        } else if (txtField.id == 802) {
+            mastery.tailCutChanceMultiFlat = txtField.getFloat();
+        } else if (txtField.id == 803) {
+            mastery.tailCutChanceMultiPerLevel = txtField.getFloat();
+        } else if (txtField.id == 804) {
+            mastery.tailCutChanceMultiMinOrMax = txtField.getFloat();
         }
+
     }
 
     @Override

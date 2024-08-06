@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreConfig;
+import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
@@ -12,6 +13,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ColorMode;
+import kamkeel.npcdbc.client.gui.hud.HUDFormWheel;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -57,8 +59,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
 
 
-
-
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     public void preRender(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
         if (MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderEvent.Pre(par1AbstractClientPlayer, (RenderPlayerJBRA) (Object) this, par2)))
@@ -76,7 +76,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             ci.cancel();
     }
 
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPopMatrix()V",  ordinal = 11, shift = At.Shift.AFTER))
+    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPopMatrix()V", ordinal = 11, shift = At.Shift.AFTER))
     public void postRenderArm(EntityPlayer par1EntityPlayer, CallbackInfo ci) {
         MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderArmEvent.Post(par1EntityPlayer, (RenderPlayerJBRA) (Object) this, Minecraft.getMinecraft().timer.renderPartialTicks));
     }
@@ -115,6 +115,20 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         ci.cancel();
 
 
+    }
+
+    @Redirect(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/RenderPlayerJBRA;b(Ljava/lang/String;)B"))
+    private byte changeFormD2ata(RenderPlayerJBRA instance, String n, @Local(name = "pl") LocalIntRef pl, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
+        String[] state = JRMCoreH.data2 == null ? new String[]{"0", "0", "0"} : JRMCoreH.data2[pl.get()].split(";");
+        DBCData data = DBCData.get(player.get());
+        boolean equal = data.State == data.State2;
+        if (equal)
+            return data.State;
+        else if (n.equals(state[0]))
+            return data.State;
+        else if (n.equals(state[1]))
+            return data.State2;
+        return 0;
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.AFTER))
@@ -208,6 +222,14 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     }
 
+    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;onGround:Z", remap = true), remap = true)
+    public boolean fixP2otaraHair(AbstractClientPlayer instance) {
+        if (HUDFormWheel.renderingPlayer)
+            return true;
+        return instance.onGround;
+
+    }
+
     @Redirect(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", opcode = Opcodes.GETSTATIC))
     public boolean fixPotaraHair(@Local(name = "abstractClientPlayer") AbstractClientPlayer abstractClientPlayer) {
         ItemStack item = abstractClientPlayer.getCurrentArmor(3);
@@ -227,6 +249,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     public void afterMajinSE(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
         ClientProxy.renderingMajinSE = false;
     }
+
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.AFTER))
     public void captureDefaultHairColor(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hc") LocalIntRef hairCol) {
         DBCData data = DBCData.get(par1AbstractClientPlayer);
@@ -257,8 +280,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             this.modelMain.bipedHead.render(1F / 16F);
 
             if (!form.display.isBerserk) {
-            RenderPlayerJBRA.glColor3f(form.display.eyeColor == -1 ? 0xF3C807 : form.display.eyeColor);
-            this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4pupils.png"));
+                RenderPlayerJBRA.glColor3f(form.display.eyeColor == -1 ? 0xF3C807 : form.display.eyeColor);
+                this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4pupils.png"));
                 this.modelMain.bipedHead.render(0.0625F);
             }
             RenderPlayerJBRA.glColor3f(form.display.getFurColor(data));
@@ -303,10 +326,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER), remap = true)
-    private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo
-            ci, @Local(name = "race") LocalIntRef race, @Local(name = "State") LocalIntRef
-                                           st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef
-                                           bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
+    private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "State") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
         Form form = DBCData.getForm(par1EntityPlayer);
         if (form != null) {
 
@@ -338,9 +358,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 0, shift = At.Shift.BEFORE), remap = true)
-    private void renderSaiyanArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef
-            race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef
-                                         bodyCM, @Local(name = "gen") LocalIntRef gender) {
+    private void renderSaiyanArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
 
         Form form = DBCData.getForm(par1EntityPlayer);
         if (form != null && (race.get() == 1 || race.get() == 2)) {
@@ -359,9 +377,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     private void renderSSJ4Arm(Form form, EntityPlayer player, int id, int gender, int bodyCM, DBCData data) {
         if (data.skinType != 0) {
-        String bodyTexture = (gender == 1 ? "f" : "") + "hum.png";
-        this.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + bodyTexture));
-        RenderPlayerJBRA.glColor3f(bodyCM);
+            String bodyTexture = (gender == 1 ? "f" : "") + "hum.png";
+            this.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + bodyTexture));
+            RenderPlayerJBRA.glColor3f(bodyCM);
             renderArm(id, player);
         }
 
@@ -420,6 +438,12 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         return 0;
     }
 
+
+    @Shadow
+    abstract int i(String n);
+
+    @Shadow
+    public static float r;
 
     /**
      * Methods Below so we don't need

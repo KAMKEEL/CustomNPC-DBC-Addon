@@ -21,6 +21,7 @@ public final class DBCRequestAura extends AbstractPacket {
     public DBCRequestAura(int auraID, boolean players) {
         this.auraID = auraID;
         this.onlyPlayers = players;
+
     }
 
     public DBCRequestAura() {}

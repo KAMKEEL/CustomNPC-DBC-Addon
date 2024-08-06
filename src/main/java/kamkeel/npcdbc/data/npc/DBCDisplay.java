@@ -8,6 +8,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
+import kamkeel.npcdbc.api.npc.IKiWeaponData;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -77,10 +78,14 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     //Rendering
     public boolean useStencilBuffer;
     public EntityAura auraEntity;
+    public int activeAuraColor = -1;
     public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
     public HashMap<Integer, EntityAura2> dbcAuraQueue = new HashMap<>();
     public HashMap<Integer, EntityAura2> dbcSecondaryAuraQueue = new HashMap<>();
     private EnumAuraTypes2D enumAuraTypes = EnumAuraTypes2D.None;
+
+    public KiWeaponData kiWeaponRight = new KiWeaponData();
+    public KiWeaponData kiWeaponLeft = new KiWeaponData();
 
     public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;
@@ -128,6 +133,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
             dbcDisplay.setInteger("DBCOutlineID", outlineID);
 
+
+            kiWeaponLeft.saveToNBT(dbcDisplay, "kiWeaponLeft");
+            kiWeaponRight.saveToNBT(dbcDisplay, "kiWeaponRight");
+
             comp.setTag("DBCDisplay", dbcDisplay);
         } else {
             comp.removeTag("DBCDisplay");
@@ -139,6 +148,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         enabled = comp.getBoolean("DBCDisplayEnabled");
         if (enabled) {
             NBTTagCompound dbcDisplay = comp.getCompoundTag("DBCDisplay");
+
 
             race = dbcDisplay.getByte("DBCRace");
             auraID = dbcDisplay.getInteger("DBCAuraID");
@@ -177,6 +187,12 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             isKaioken = dbcDisplay.getBoolean("DBCIsisKaioken");
             formID = dbcDisplay.getInteger("DBCFormID");
             selectedForm = dbcDisplay.getInteger("DBCSelectedForm");
+
+            if (dbcDisplay.hasKey("kiWeaponLeft"))
+                kiWeaponLeft.readFromNBT(dbcDisplay, "kiWeaponLeft");
+            if (dbcDisplay.hasKey("kiWeaponRight"))
+                kiWeaponRight.readFromNBT(dbcDisplay, "kiWeaponRight");
+
         } else {
             comp.removeTag("DBCDisplay");
         }
@@ -316,6 +332,15 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public void setHairCode(String hairCode) {
         this.hairCode = hairCode;
+    }
+
+    @Override
+    public IKiWeaponData getKiWeapon(int arm) {
+        if (arm == 0)
+            return kiWeaponRight;
+        if (arm == 1)
+            return kiWeaponLeft;
+        return null;
     }
 
 
@@ -629,6 +654,16 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public int getAuraColor() {
         return 11075583;
+    }
+
+    @Override
+    public int getActiveAuraColor() {
+        return activeAuraColor;
+    }
+
+    @Override
+    public void setActiveAuraColor(int color) {
+        activeAuraColor = color;
     }
 
     @Override

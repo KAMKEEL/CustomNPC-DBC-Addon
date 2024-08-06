@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.form;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IFormDisplay;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -119,12 +120,13 @@ public class FormDisplay implements IFormDisplay {
     //internal usage
 
     public boolean hasHairCol(DBCData data) {
-
-        return hairColor != -1;
+        return hairColor != -1 && data.Race != DBCRace.NAMEKIAN;
     }
 
     //internal usage
     public int getHairColor(DBCData data) {
+        if(data.Race == DBCRace.NAMEKIAN)
+            return bodyCM;
         return hairColor;
     }
 

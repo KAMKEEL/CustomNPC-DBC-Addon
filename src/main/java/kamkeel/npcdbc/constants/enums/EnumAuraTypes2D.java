@@ -125,5 +125,9 @@ public enum EnumAuraTypes2D {
         }
         return 5;
     }
+
+    public String getName(){
+        return name;
+    }
 }
 

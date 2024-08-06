@@ -72,6 +72,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public byte skinType;
     public boolean useStencilBuffer;
     public EntityAura auraEntity;
+    public int activeAuraColor = -1;
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
 
 
@@ -645,11 +646,12 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     /**
      * Set a players lock on state!
+     *
      * @param lockOnTarget Reference to new target Entity or null to remove lock on.
      */
-    public void setLockOnTarget(EntityLivingBase lockOnTarget){
+    public void setLockOnTarget(EntityLivingBase lockOnTarget) {
 
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
             DBCUpdateLockOn packet;
             if (lockOnTarget == null) {
                 packet = new DBCUpdateLockOn();
@@ -661,8 +663,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         }
 
 
-        if(side == Side.CLIENT){
-            if(player == Minecraft.getMinecraft().thePlayer){
+        if (side == Side.CLIENT) {
+            if (player == Minecraft.getMinecraft().thePlayer) {
                 DBCUpdateLockOn.setLockOnTarget(lockOnTarget);
             }
             return;
@@ -672,6 +674,16 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     @Override
     public HashMap getDBCAuras(boolean secondary) {
         return null;
+    }
+
+    @Override
+    public int getActiveAuraColor() {
+        return activeAuraColor;
+    }
+
+    @Override
+    public void setActiveAuraColor(int color) {
+        activeAuraColor = color;
     }
 
 }

@@ -1,22 +1,31 @@
 package kamkeel.npcdbc.client.model;
 
+import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.JRMCoreHJBRA;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
+import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;
+import noppes.npcs.constants.EnumAnimation;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelScalePart;
 import org.lwjgl.opengl.GL11;
@@ -52,10 +61,13 @@ public class ModelDBC extends ModelBase {
     private String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
     public DBCDisplay display;
 
-    public ModelDBC(ModelMPM mpm) {
+    public final boolean alexArms;
+
+    public ModelDBC(ModelMPM mpm, boolean alexArms) {
         this.parent = mpm;
         this.textureHeight = mpm.textureHeight;
         this.textureWidth = mpm.textureWidth;
+        this.alexArms = alexArms;
 
         this.nose = new ModelRenderer(this, 0, 0);
         this.nose.addBox(-4.0F, -8.0F, -4.006F, 8, 8, 0);
@@ -250,7 +262,11 @@ public class ModelDBC extends ModelBase {
             GL11.glPopMatrix();
 
             if (display.race < 4) {
-                ColorMode.applyModelColor(eyeBrowColor, isHurt);
+                if(display.race != DBCRace.NAMEKIAN)
+                    ColorMode.applyModelColor(eyeBrowColor, isHurt);
+                else{
+                    ColorMode.applyModelColor(bodyCM, isHurt);
+                }
                 if (!hasEyebrows && display.race != DBCRace.NAMEKIAN)
                     ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + "humw" + display.eyeType + ".png"));
                 else
@@ -494,5 +510,122 @@ public class ModelDBC extends ModelBase {
         if (m.rotateAngleX != 0.0F) {
             GL11.glRotatef(m.rotateAngleX * (180.0F / (float) Math.PI), 1.0F, 0.0F, 0.0F);
         }
+    }
+
+    public void renderEnabledKiWeapons(float partialTicks) {
+        EntityCustomNpc entity = (EntityCustomNpc) display.npc;
+        ModelScalePart arms = entity.modelData.modelScale.arms;
+
+        float x = (1.0F - entity.modelData.modelScale.body.scaleX) * 0.25F + (1.0F - arms.scaleX) * 0.075F;
+        float y = entity.modelData.getBodyY() + (1.0F - arms.scaleY) * -0.1F - 0.025f;
+        float z = 0.0F;
+
+        GL11.glPushMatrix();
+
+        if (entity.currentAnimation == EnumAnimation.DANCING) {
+            float dancing = (float) entity.ticksExisted / 4.0F;
+            GL11.glTranslatef((float) Math.sin((double) dancing) * 0.025F, (float) Math.abs(Math.cos((double) dancing)) * 0.125F - 0.02F, 0.0F);
+        }
+
+//        ((ModelScaleRenderer)this.bipedLeftArm).setConfig(arms, -x, y, z);
+
+        KiWeaponData leftArm = display.kiWeaponLeft;
+        if (!parent.bipedLeftArm.isHidden && leftArm.isEnabled()) {
+            GL11.glPushMatrix();
+            GL11.glTranslatef(-x + (0.5f * 0.25f * (alexArms ? 0.75f : 1)), y, z);
+            if (arms != null) {
+                GL11.glTranslatef(0.0F, 0.0F, 0.0F);
+            }
+
+            parent.bipedLeftArm.postRender(partialTicks);
+            if (arms != null) {
+                GL11.glScalef(arms.scaleX, arms.scaleY, arms.scaleZ);
+            }
+            renderKiWeapon(entity, leftArm);
+            GL11.glPopMatrix();
+        }
+
+        KiWeaponData rightArm = display.kiWeaponRight;
+        if (!parent.bipedRightArm.isHidden && rightArm.isEnabled()) {
+            GL11.glPushMatrix();
+            GL11.glTranslatef(x, y, z);
+            if (arms != null) {
+                GL11.glTranslatef(0.0F, 0.0F, 0.0F);
+            }
+
+            parent.bipedRightArm.postRender(partialTicks);
+            if (arms != null) {
+                GL11.glScalef(arms.scaleX, arms.scaleY, arms.scaleZ);
+            }
+            renderKiWeapon(entity, rightArm);
+            GL11.glPopMatrix();
+        }
+
+        GL11.glPopMatrix();
+    }
+
+    private void renderKiWeapon(Entity entity, KiWeaponData weaponData) {
+        GL11.glPushMatrix();
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
+        GL11.glDepthMask(true);
+
+        Color col = weaponData.color.clone();
+        if (col.color == -1) {
+            if (display.auraID != -1) {
+                Aura aura = (Aura) AuraController.getInstance().get(display.auraID);
+                AuraDisplay auraDisplay = (aura != null ? aura.display : null);
+                col.color = KiWeaponData.getColorByAuraType(auraDisplay);
+            } else {
+                col.color = KiWeaponData.getColorByAuraTypeName("");
+            }
+        }
+
+
+//        if (weaponData.syncAuraColor) {
+//            Aura aura = display.getToggledAura();
+//            if (aura != null)
+//                col.color = display.activeAuraColor;
+//        }
+
+
+        GL11.glTranslatef(-0.06F, -0.05F, 0.0F);
+        JRMCoreClient.mc.renderEngine.bindTexture(new ResourceLocation(JRMCoreH.tjjrmc + ":allw.png"));
+
+        if (weaponData.weaponType == 1) {
+            // float scl = (float)kiFistLevel * 0.02F + (float)kiInfuseLevel * 0.02F;
+            float scl = weaponData.scaleY - 1;
+            GL11.glTranslatef(weaponData.offsetX, -scl * 0.75f + weaponData.offsetY, weaponData.offsetZ);
+            GL11.glScalef(weaponData.scaleX, 1.0f + scl, weaponData.scaleZ);
+            float ex = (float) entity.ticksExisted;
+            float r4 = (MathHelper.cos(ex / 2.0F) / 3.0F - 0.2F) / 8.0F;
+
+            col.glColor();
+            GL11.glTranslatef(0.0F, -r4, 0.0F);
+            GL11.glRotatef(ex * 25.0F, 0.0F, 1.0F, 0.0F);
+            JRMCoreHJBRA.model2.render(0.0625F, 0);
+
+            col.multiply(0.8f).glColor();
+            GL11.glTranslatef(0.0F, -0.12F, 0.0F);
+            GL11.glScalef(1.3F, 1.18F, 1.3F);
+            JRMCoreHJBRA.model2.render(0.0625F, 0);
+        }
+
+        if (weaponData.weaponType == 2) {
+            GL11.glTranslatef(weaponData.offsetX, 0.6F + weaponData.offsetY, weaponData.offsetZ);
+            col.glColor();
+            GL11.glRotatef(-3.0F, 0.0F, 1.0F, 0.0F);
+            GL11.glRotatef(5.0F, 0.0F, 0.0F, 1.0F);
+            GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
+            GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
+            GL11.glScalef(weaponData.scaleX, weaponData.scaleY, weaponData.scaleZ);
+            JRMCoreHJBRA.model2.render(0.0625F, 1);
+        }
+
+        GL11.glEnable(GL11.GL_LIGHTING);
+        GL11.glDepthMask(true);
+        GL11.glPopMatrix();
     }
 }
