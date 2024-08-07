@@ -198,7 +198,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.addTextField(new GuiNpcTextField(903, this, 295, y, 40, 20, String.valueOf(mastery.powerPointMultiBasedOnPoints)));
             scrollWindow.getTextField(903).floatsOnly = true;
             scrollWindow.getTextField(903).setMaxStringLength(10);
-            scrollWindow.getTextField(903).setMinMaxDefaultFloat(0, 10000, 1);
+            scrollWindow.getTextField(903).setMinMaxDefaultFloat(-1, 10000, 1);
 
             y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(904, "mastery.powerPointGrowth", 4, y + 5));
