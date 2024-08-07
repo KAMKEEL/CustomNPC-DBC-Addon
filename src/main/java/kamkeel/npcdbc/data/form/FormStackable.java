@@ -23,6 +23,7 @@ public class FormStackable implements IFormStackable {
     public float kaiokenDrainMulti = 1;
     public float[] kaiokenBalanceValue = new float[6];
     public float[] kaiokenStrainedBalanceValue = new float[6];
+    public boolean kaiokenMultipliesCurrentFormDrain;
 
     public FormStackable(Form parent) {
         this.parent = parent;
@@ -69,6 +70,9 @@ public class FormStackable implements IFormStackable {
             for(int i = 0; i < 6; i++){
                 kaiokenStrainedBalanceValue[i] = balanceStrained.getFloat(i+"");
             }
+            kaiokenMultipliesCurrentFormDrain = kaioDrain.getBoolean("multipliesCurrentFormDrain");
+        }else{
+            kaiokenMultipliesCurrentFormDrain = true;
         }
 
     }
@@ -112,6 +116,7 @@ public class FormStackable implements IFormStackable {
 
         kaioDrainData.setTag("balanceNormal", kaioBalanceNormal);
         kaioDrainData.setTag("balanceStrained", kaioBalanceStrained);
+        kaioDrainData.setBoolean("multipliesCurrentFormDrain", kaiokenMultipliesCurrentFormDrain);
 
         stack.setTag("kaiokenDrainData", kaioDrainData);
         compound.setTag("stackableForms", stack);

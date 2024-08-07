@@ -394,6 +394,9 @@ public abstract class MixinJRMCoreH {
         if(form == null)
             return;
 
+        if(form.stackable.kaiokenMultipliesCurrentFormDrain)
+            return;
+
         int race = dbcData.Race;
         int state2 = dbcData.State2;
 
@@ -416,6 +419,20 @@ public abstract class MixinJRMCoreH {
         }
 
         cir.setReturnValue(cost);
+    }
+
+    @Inject(method="KaiKCost", at=@At("RETURN"), cancellable = true)
+    private static void customFormKaiokenDrainMultiply(EntityPlayer p, CallbackInfoReturnable<Double> cir){
+        DBCData dbcData = DBCData.get(p);
+        if(dbcData == null)
+            return;
+        Form form = dbcData.getForm();
+        if(form == null)
+            return;
+
+        if(!form.stackable.kaiokenMultipliesCurrentFormDrain)
+            return;
+        cir.setReturnValue(cir.getReturnValueD() * form.stackable.kaiokenDrainMulti);
     }
 
     private static float kaiokenBalanceValue(Form form, int state2, boolean strained){

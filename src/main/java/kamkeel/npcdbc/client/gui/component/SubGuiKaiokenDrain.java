@@ -16,29 +16,34 @@ public class SubGuiKaiokenDrain extends SubGuiInterface implements ITextfieldLis
         this.stackable = form.stackable;
 
         setBackground("menubg.png");
-        xSize = 256;
+        xSize = 300;
     }
 
     @Override
     public void initGui(){
         super.initGui();
 
-        int y = guiTop + 10;
+        int y = guiTop + 5;
         addLabel(new GuiNpcLabel(1, "Drain multi: ", guiLeft+8, y + 5));
-        addTextField(new GuiNpcTextField(1, this, guiLeft+68, y, 50, 20, ""+stackable.kaiokenDrainMulti));
+        addTextField(new GuiNpcTextField(1, this, guiLeft+150, y, 50, 20, ""+stackable.kaiokenDrainMulti));
         getTextField(1).setMaxStringLength(22);
         getTextField(1).floatsOnly = true;
         getTextField(1).setMinMaxDefaultFloat(-50, 50, 1);
-        addButton(new GuiNpcButton(10, guiLeft + 200, y, 50, 20, "gui.close"));
+        addButton(new GuiNpcButton(10, guiLeft + 240, y, 50, 20, "gui.close"));
 
-        y += 35;
-        addLabel(new GuiNpcLabel(2, "Strained Balance:", guiLeft+8, y+5));
-        addButton(new GuiNpcButtonYesNo(2, guiLeft+100, y, editStrained));
+        y += 23;
+        addLabel(new GuiNpcLabel(11, "Multiply current form drain:", guiLeft+8, y+5));
+        addButton(new GuiNpcButtonYesNo(11, guiLeft+150, y, stackable.kaiokenMultipliesCurrentFormDrain));
+        if(stackable.kaiokenMultipliesCurrentFormDrain)
+            return;
+        y += 23;
+        addLabel(new GuiNpcLabel(2, "Strained Kaioken Multis:", guiLeft+8, y+5));
+        addButton(new GuiNpcButtonYesNo(2, guiLeft+150, y, editStrained));
         y += 23;
         int color = editStrained ? 0xFF5555 : CustomNpcResourceListener.DefaultTextColor;
         for(int i = 0; i < 6; i++){
-            addLabel(new GuiNpcLabel(3+i, "Kaioken " + JRMCoreH.TransKaiNms[i+1] + ": ", guiLeft+8, y+5, color));
-            addTextField(new GuiNpcTextField(3+i, this, fontRendererObj, guiLeft+100, y, 50, 20, ""+stackable.getKaioState2Balance(i, editStrained)));
+            addLabel(new GuiNpcLabel(3+i, "Kaioken " + JRMCoreH.TransKaiNms[i+1] + " Drain Multi: ", guiLeft+8, y+5, color));
+            addTextField(new GuiNpcTextField(3+i, this, fontRendererObj, guiLeft+150, y, 50, 20, ""+stackable.getKaioState2Balance(i, editStrained)));
             getTextField(3+i).setMaxStringLength(22);
             getTextField(3+i).floatsOnly = true;
             getTextField(3+i).setMinMaxDefaultFloat(-50, 50, 1);
@@ -61,6 +66,10 @@ public class SubGuiKaiokenDrain extends SubGuiInterface implements ITextfieldLis
 
     @Override
     public void actionPerformed(GuiButton button){
+        if(button.id == 11){
+            stackable.kaiokenMultipliesCurrentFormDrain = !stackable.kaiokenMultipliesCurrentFormDrain;
+            initGui();
+        }
         if(button.id == 2){
             editStrained = !editStrained;
             initGui();
