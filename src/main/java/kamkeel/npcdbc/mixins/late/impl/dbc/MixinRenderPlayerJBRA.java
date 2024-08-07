@@ -25,6 +25,7 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -511,6 +512,16 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Inject(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE), remap = true)
     public void setCurrentlyRenderedJRMCTickPlayer(AbstractClientPlayer p, float p_77041_2_, CallbackInfo ci) {
         CommonProxy.CurrentJRMCTickPlayer = p;
+    }
+
+
+    @Inject(method = "kss", at=@At("HEAD"), remap = false)
+    private static void disableLightMapForKiBlade(Entity e, boolean b, int id, int kf, int ki, CallbackInfo ci){
+        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+    }
+    @Inject(method = "kss", at=@At("RETURN"), remap = false)
+    private static void reEnableLightMapAfterKiBlade(Entity e, boolean b, int id, int kf, int ki, CallbackInfo ci){
+        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
     }
 
 }

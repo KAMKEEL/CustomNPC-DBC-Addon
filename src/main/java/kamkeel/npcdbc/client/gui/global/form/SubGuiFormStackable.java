@@ -59,7 +59,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         scrollWindow.getLabel(2).color = 0xffffff;
 
         if(stackable.kaiokenStackable){
-            maxScroll += 23;
+            maxScroll += 46;
             y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(22, "display.kkRatio", guiLeft + 4, y + 5));
             scrollWindow.addTextField(new GuiNpcTextField(22, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.kaiokenStrength)));
@@ -135,7 +135,6 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             scrollWindow.getTextField(52).setMinMaxDefaultFloat(-10000, 10000, 1);
             scrollWindow.getLabel(52).color = 0xffffff;
         }
-
 
         y += 46;
         maxScroll += 23;

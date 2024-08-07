@@ -66,6 +66,13 @@ mastery.requirement=Requirement
 mastery.flatMulti=Flat Multi
 mastery.perLevel=Per Level
 mastery.minMax=Min Max
+mastery.powerPointSettings=Power Point Settings
+mastery.absorptionSettings=Absorption Settings
+mastery.absorptionMulti=Absorption Bonus
+mastery.powerPointNormalMulti=Power Point bonus
+mastery.powerPointMultiOnPoints=Bonus at full points
+mastery.powerPointCost=Cost
+mastery.powerPointGrowth=Growth
 
 display.human=Human
 display.saiyan=Saiyan

@@ -95,4 +95,5 @@ public interface IFormStackable {
     float getKaioState2Balance(int state2, boolean strained);
 
     void setKaioState2Balance(int state2, boolean strained, float value);
+
 }

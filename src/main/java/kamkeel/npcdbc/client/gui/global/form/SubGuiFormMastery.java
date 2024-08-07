@@ -25,6 +25,8 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
     public boolean showDamageNegation = false;
     public boolean showMovementSpeed = false;
     public boolean showTailCutChance = false;
+    public boolean showPowerPoint = false;
+    public boolean showAbsorption = false;
 
     public SubGuiFormMastery(GuiNPCManageForms parent, Form form) {
         this.form = form;
@@ -169,6 +171,94 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.getTextField(205).floatsOnly = true;
             scrollWindow.getTextField(205).setMinMaxDefaultFloat(-10000f, 10000f, 0.1f);
             scrollWindow.getLabel(205).color = 0xffffff;
+        }
+
+        y += 23;
+        maxScroll += 23;
+        scrollWindow.addLabel(new GuiNpcLabel(900, "mastery.powerPointSettings", 4, y+5));
+        scrollWindow.getLabel(900).color = 0xffffff;
+        scrollWindow.addButton(new GuiNpcButton(900, 200, y, 120, 20, new String[]{"display.hide", "display.show"}, showPowerPoint ? 1 : 0));
+        if(showPowerPoint){
+            y += 23;
+            maxScroll += (int) (23*6.5);
+            scrollWindow.addLabel(new GuiNpcLabel(901, "gui.enabled", 4, y+5));
+            scrollWindow.getLabel(901).color = 0xffffff;
+            scrollWindow.addButton(new GuiNpcButtonYesNo(901, 135, y, 40, 20, mastery.powerPointEnabled));
+
+            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(902, "mastery.powerPointNormalMulti", 4, y+5));
+            scrollWindow.getLabel(902).color = 0xffffff;
+            scrollWindow.addTextField(new GuiNpcTextField(902, this, 135, y, 40, 20, String.valueOf(mastery.powerPointMultiNormal)));
+            scrollWindow.getTextField(902).floatsOnly = true;
+            scrollWindow.getTextField(902).setMaxStringLength(10);
+            scrollWindow.getTextField(902).setMinMaxDefaultFloat(0, 10000, 1);
+
+            scrollWindow.addLabel(new GuiNpcLabel(903, "mastery.powerPointMultiOnPoints", 180, y+5));
+            scrollWindow.getLabel(903).color = 0xffffff;
+            scrollWindow.addTextField(new GuiNpcTextField(903, this, 295, y, 40, 20, String.valueOf(mastery.powerPointMultiBasedOnPoints)));
+            scrollWindow.getTextField(903).floatsOnly = true;
+            scrollWindow.getTextField(903).setMaxStringLength(10);
+            scrollWindow.getTextField(903).setMinMaxDefaultFloat(0, 10000, 1);
+
+            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(904, "mastery.powerPointGrowth", 4, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(904, this, 135, y, 40, 20, String.valueOf(mastery.powerPointGrowth)));
+            scrollWindow.getTextField(904).setMaxStringLength(10);
+            scrollWindow.getTextField(904).integersOnly = true;
+            scrollWindow.getTextField(904).setMinMaxDefault(0, 10000, 0);
+            scrollWindow.getLabel(904).color = 0xffffff;
+
+            y += (int) (23*1.5);
+            scrollWindow.addLabel(new GuiNpcLabel(905, "mastery.powerPointCost", 4, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(905, this, 135, y, 40, 20, String.valueOf(mastery.powerPointCost)));
+            scrollWindow.getTextField(905).setMaxStringLength(10);
+            scrollWindow.getTextField(905).integersOnly = true;
+            scrollWindow.getTextField(905).setMinMaxDefault(0, 10000, 100);
+            scrollWindow.getLabel(905).color = 0xffffff;
+
+            scrollWindow.addLabel(new GuiNpcLabel(906, "mastery.flatMulti", 180, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(906, this, 295, y, 40, 20, String.valueOf(mastery.powerPointCostMultiFlat)));
+            scrollWindow.getTextField(906).setMaxStringLength(10);
+            scrollWindow.getTextField(906).floatsOnly = true;
+            scrollWindow.getTextField(906).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
+            scrollWindow.getLabel(906).color = 0xffffff;
+
+
+            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(907, "mastery.perLevel", 4, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(907, this, 135, y, 40, 20, String.valueOf(mastery.powerPointCostPerLevel)));
+            scrollWindow.getTextField(907).setMaxStringLength(10);
+            scrollWindow.getTextField(907).floatsOnly = true;
+            scrollWindow.getTextField(907).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
+            scrollWindow.getLabel(907).color = 0xffffff;
+
+            scrollWindow.addLabel(new GuiNpcLabel(908, "mastery.minMax", 180, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(908, this, 295, y, 40, 20, String.valueOf(mastery.powerPointCostMinOrMax)));
+            scrollWindow.getTextField(908).setMaxStringLength(10);
+            scrollWindow.getTextField(908).floatsOnly = true;
+            scrollWindow.getTextField(908).setMinMaxDefaultFloat(-10000f, 10000f, -0.01f);
+            scrollWindow.getLabel(908).color = 0xffffff;
+        }
+
+        y += 23;
+        maxScroll += 23;
+        scrollWindow.addLabel(new GuiNpcLabel(1000, "mastery.absorptionSettings", 4, y+5));
+        scrollWindow.getLabel(1000).color = 0xffffff;
+        scrollWindow.addButton(new GuiNpcButton(1000, 200, y, 120, 20, new String[]{"display.hide", "display.show"}, showAbsorption ? 1 : 0));
+        if(showAbsorption){
+            y += 23;
+            maxScroll += 23*2;
+            scrollWindow.addLabel(new GuiNpcLabel(1001, "gui.enabled", 4, y+5));
+            scrollWindow.getLabel(1001).color = 0xffffff;
+            scrollWindow.addButton(new GuiNpcButtonYesNo(1001, 135, y, 40, 20, mastery.absorptionEnabled));
+
+            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(1002, "mastery.absorptionMulti", 4, y+5));
+            scrollWindow.getLabel(1002).color = 0xffffff;
+            scrollWindow.addTextField(new GuiNpcTextField(1002, this, 135, y, 40, 20, String.valueOf(mastery.absorptionMulti)));
+            scrollWindow.getTextField(1002).floatsOnly = true;
+            scrollWindow.getTextField(1002).setMaxStringLength(10);
+            scrollWindow.getTextField(1002).setMinMaxDefaultFloat(0, 10000, 1);
         }
 
         y += 23;
@@ -643,6 +733,20 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             showTailCutChance = !showTailCutChance;
         }
 
+        if(button.id == 900){
+            showPowerPoint = !showPowerPoint;
+        }
+        if(button.id == 901){
+            mastery.powerPointEnabled = !mastery.powerPointEnabled;
+        }
+
+        if(button.id == 1000){
+            showAbsorption = !showAbsorption;
+        }
+        if(button.id == 1001){
+            mastery.absorptionEnabled = !mastery.absorptionEnabled;
+        }
+
         initGui();
         prevY = ValueUtil.clamp(prevY, 0, getScrollableGui(0).maxScrollY);
         getScrollableGui(0).nextScrollY = getScrollableGui(0).scrollY = prevY;
@@ -767,6 +871,22 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             mastery.tailCutChanceMultiPerLevel = txtField.getFloat();
         } else if (txtField.id == 804) {
             mastery.tailCutChanceMultiMinOrMax = txtField.getFloat();
+        } else if (txtField.id == 902) {
+            mastery.powerPointMultiNormal = txtField.getFloat();
+        } else if (txtField.id == 903) {
+            mastery.powerPointMultiBasedOnPoints = txtField.getFloat();
+        } else if (txtField.id == 904) {
+            mastery.powerPointGrowth = txtField.getInteger();
+        } else if (txtField.id == 905) {
+            mastery.powerPointCost = txtField.getInteger();
+        } else if (txtField.id == 906) {
+            mastery.powerPointCostMultiFlat = txtField.getFloat();
+        } else if (txtField.id == 907) {
+            mastery.powerPointCostPerLevel = txtField.getFloat();
+        } else if (txtField.id == 908) {
+            mastery.powerPointCostMinOrMax = txtField.getFloat();
+        } else if (txtField.id == 1002) {
+            mastery.absorptionMulti = txtField.getFloat();
         }
 
     }
