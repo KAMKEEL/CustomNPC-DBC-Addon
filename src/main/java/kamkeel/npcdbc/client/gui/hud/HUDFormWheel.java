@@ -416,33 +416,31 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             }
 
             if (data.formID != -1) {
+                if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
+                    glScaled(0.7, 0.7, 1);
+                    if (i == 0) {
+                        glTranslatef(0, -15f, 0);
+                    } else if (i == 1) {
+                        glTranslatef(-12, -5, 0);
+                    } else if (i == 2) {
+                        glTranslatef(-11, 3, 0);
+                    } else if (i == 3) {
+                        glTranslatef(0, 12f, 0);
+                    } else if (i == 4) {
+                        glTranslatef(10, 3, 0);
+                    } else {
+                        glTranslatef(13, -5, 0);
+                    }
+                }
+                drawCenteredString(fontRendererObj, getFormName(i), 0, 0, 0xFFFFFFFF);
+
                 if (data.isDBC) {
-                    if (dbcForms.containsKey(data.formID)) {
-                        if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
-                            glScaled(0.7, 0.7, 1);
-                            if (i == 0) {
-                                glTranslatef(0, -15f, 0);
-                            } else if (i == 1) {
-                                glTranslatef(-12, -5, 0);
-                            } else if (i == 2) {
-                                glTranslatef(-11, 3, 0);
-                            } else if (i == 3) {
-                                glTranslatef(0, 12f, 0);
-                            } else if (i == 4) {
-                                glTranslatef(10, 3, 0);
-                            } else {
-                                glTranslatef(13, -5, 0);
-                            }
-                        }
-                    } else
+                    if (!dbcForms.containsKey(data.formID))
                         wheelSlot[i].removeForm();
                 } else {
                     if (!dbcInfo.hasFormUnlocked(data.formID))
                         wheelSlot[i].removeForm();
-
                 }
-                drawCenteredString(fontRendererObj, getFormName(i), 0, 0, 0xFFFFFFFF);
-
             }
 
             GL11.glPopMatrix();
