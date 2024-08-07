@@ -652,10 +652,14 @@ public class FormMastery implements IFormMastery {
 
             absorptionEnabled = racialBonuses.getBoolean("absorptionEnabled");
             absorptionMulti = racialBonuses.getFloat("absorptionMulti");
+
+
             powerPointEnabled = racialBonuses.getBoolean("powerPointEnabled");
+            powerPointCost = racialBonuses.getInteger("powerPointCost");
+            powerPointGrowth = racialBonuses.getInteger("powerPointCost");
+
             powerPointMultiNormal = racialBonuses.getFloat("powerPointMultiNormal");
             powerPointMultiBasedOnPoints = racialBonuses.getFloat("powerPointMultiBasedOnPoints");
-            powerPointCost = racialBonuses.getInteger("powerPointCost");
 
             NBTTagCompound powerPointMastery = racialBonuses.getCompoundTag("powerPointMastery");
             powerPointCostMultiFlat = powerPointMastery.getFloat("flat");
@@ -767,8 +771,11 @@ public class FormMastery implements IFormMastery {
         NBTTagCompound racialBonuses = new NBTTagCompound();
             racialBonuses.setBoolean("powerPointEnabled", powerPointEnabled);
             racialBonuses.setInteger("powerPointCost", powerPointCost);
+            racialBonuses.setInteger("powerPointGrowth", powerPointGrowth);
+
             racialBonuses.setFloat("powerPointMultiNormal", powerPointMultiNormal);
             racialBonuses.setFloat("powerPointMultiBasedOnPoints", powerPointMultiBasedOnPoints);
+
             racialBonuses.setBoolean("absorptionEnabled", absorptionEnabled);
             racialBonuses.setFloat("absorptionMulti", absorptionMulti);
 
