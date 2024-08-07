@@ -46,7 +46,7 @@ public class FormMastery implements IFormMastery {
     public float tailCutChanceMultiFlat = 1.0f, tailCutChanceMultiPerLevel = -0.01f, tailCutChanceMultiMinOrMax = 0f;
 
     public boolean powerPointEnabled;
-    public int powerPointCost = 0, powerPointGrowth = 0;
+    public int powerPointCost = 100, powerPointGrowth = 0;
     public float powerPointMultiNormal = 1, powerPointMultiBasedOnPoints = 0;
     public float powerPointCostMultiFlat = 1.0f, powerPointCostPerLevel = -0.01f, powerPointCostMinOrMax = 0f;
 
@@ -656,7 +656,7 @@ public class FormMastery implements IFormMastery {
 
             powerPointEnabled = racialBonuses.getBoolean("powerPointEnabled");
             powerPointCost = racialBonuses.getInteger("powerPointCost");
-            powerPointGrowth = racialBonuses.getInteger("powerPointCost");
+            powerPointGrowth = racialBonuses.getInteger("powerPointGrowth");
 
             powerPointMultiNormal = racialBonuses.getFloat("powerPointMultiNormal");
             powerPointMultiBasedOnPoints = racialBonuses.getFloat("powerPointMultiBasedOnPoints");
@@ -664,9 +664,7 @@ public class FormMastery implements IFormMastery {
             NBTTagCompound powerPointMastery = racialBonuses.getCompoundTag("powerPointMastery");
             powerPointCostMultiFlat = powerPointMastery.getFloat("flat");
             powerPointCostPerLevel = powerPointMastery.getFloat("perLevel");
-            powerPointCostPerLevel = powerPointMastery.getFloat("minOrMax");
-
-
+            powerPointCostMinOrMax = powerPointMastery.getFloat("minOrMax");
         }
 
 
@@ -781,7 +779,7 @@ public class FormMastery implements IFormMastery {
 
             NBTTagCompound powerPointMastery = new NBTTagCompound();
                 powerPointMastery.setFloat("flat", powerPointCostMultiFlat);
-                powerPointMastery.setFloat("perlevel", powerPointCostPerLevel);
+                powerPointMastery.setFloat("perLevel", powerPointCostPerLevel);
                 powerPointMastery.setFloat("minOrMax", powerPointCostMinOrMax);
             racialBonuses.setTag("powerPointMastery", powerPointMastery);
 
