@@ -36,7 +36,7 @@ import java.util.HashMap;
 import static kamkeel.npcdbc.constants.DBCForm.*;
 import static org.lwjgl.opengl.GL11.*;
 
-public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiListener {
+public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
 
     public static float BLUR_INTENSITY = 0;
     public static float MAX_BLUR = 2;
@@ -177,17 +177,6 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         Form form = this.wheelSlot[wheelSlot].form;
 
         return !data.isDBC ? form != null ? form.menuName : "" : DBCForm.getMenuName(dbcData.Race, data.formID);
-    }
-
-    @Override
-    public void setGuiData(NBTTagCompound compound) {
-        for (int i = 0; i < 6; i++) {
-            FormWheelData data = new FormWheelData(i);
-            data.readFromNBT(compound.getCompoundTag("FormWheel" + i));
-            //      wheelSlot[i].setForm(data, false);
-        }
-
-        initGui();
     }
 
     public void buttonEvent(GuiButton guibutton) {
