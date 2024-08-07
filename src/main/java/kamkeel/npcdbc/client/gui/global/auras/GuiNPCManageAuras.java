@@ -344,7 +344,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         GL11.glRotatef(-(float) Math.atan(f6 / 800F) * 20F, 1.0F, 0.0F, 0.0F);
         entity.prevRenderYawOffset = entity.renderYawOffset = rotation;
         entity.prevRotationYaw = entity.rotationYaw = (float) Math.atan(f5 / 80F) * 40F + rotation;
-        entity.rotationPitch = -(float) Math.atan(f6 / 80F) * 20F;
+        entity.rotationPitch=  entity.prevRotationPitch = -(float) Math.atan(f6 / 80F) * 10F;
         entity.prevRotationYawHead = entity.rotationYawHead = entity.rotationYaw;
         GL11.glTranslatef(0.0F, 0.1f + entity.yOffset, 1F);
         RenderManager.instance.playerViewY = 180F;
@@ -352,13 +352,13 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
 
         // Render Entity
         try {
-            RenderManager.instance.renderEntityWithPosYaw(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F);
+            RenderManager.instance.renderEntityWithPosYaw(entity, 0.0, 0.0, 0.0, 0.0F, f);
         } catch (Exception ignored) {
         }
         SubGuiAuraDisplay.useGUIAura = false;
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
         entity.prevRotationYaw = entity.rotationYaw = f3;
-        entity.rotationPitch = f4;
+        entity.rotationPitch = entity.prevRotationPitch =f4;
         entity.prevRotationYawHead = entity.rotationYawHead = f7;
 
         RenderHelper.disableStandardItemLighting();

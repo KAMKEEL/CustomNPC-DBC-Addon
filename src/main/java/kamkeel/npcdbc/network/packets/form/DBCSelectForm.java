@@ -55,6 +55,9 @@ public final class DBCSelectForm extends AbstractPacket {
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(playerData);
         NBTTagCompound compound = new NBTTagCompound();
+        if (formID == -1 && (isDBC ? formData.selectedDBCForm == -1 : formData.selectedForm == -1))
+            return;
+
         if (isDBC && formID != -1) {
             if (formID == formData.selectedDBCForm)
                 return;

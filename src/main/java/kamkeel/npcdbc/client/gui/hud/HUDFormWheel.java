@@ -26,7 +26,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.client.gui.util.*;
-import noppes.npcs.util.ValueUtil;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -37,7 +36,7 @@ import java.util.HashMap;
 import static kamkeel.npcdbc.constants.DBCForm.*;
 import static org.lwjgl.opengl.GL11.*;
 
-public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiListener {
+public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
 
     public static float BLUR_INTENSITY = 0;
     public static float MAX_BLUR = 2;
@@ -55,6 +54,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     public HashMap<Integer, String> dbcForms;
     public DBCData dbcData;
     public PlayerDBCInfo dbcInfo;
+
+    public boolean isClosing;
 
     public HUDFormWheel() {
         mc = Minecraft.getMinecraft();
@@ -175,18 +176,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         FormWheelData data = this.wheelSlot[wheelSlot].data;
         Form form = this.wheelSlot[wheelSlot].form;
 
-        return !data.isDBC ? form != null ? form.menuName : "general.noForm" : DBCForm.getMenuName(dbcData.Race, data.formID);
-    }
-
-    @Override
-    public void setGuiData(NBTTagCompound compound) {
-        for (int i = 0; i < 6; i++) {
-            FormWheelData data = new FormWheelData(i);
-            data.readFromNBT(compound.getCompoundTag("FormWheel" + i));
-            wheelSlot[i].setForm(data, false);
-        }
-
-        initGui();
+        return !data.isDBC ? form != null ? form.menuName : "" : DBCForm.getMenuName(dbcData.Race, data.formID);
     }
 
     public void buttonEvent(GuiButton guibutton) {
@@ -251,6 +241,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
 
     public void calculateHoveredSlot(float HALF_WIDTH, float HALF_HEIGHT, boolean configureEnabled) {
+        if (isClosing)
+            return;
         final float deltaX = HALF_WIDTH - mouseX;
         final float deltaY = HALF_HEIGHT - mouseY;
         float radius = ConfigDBCClient.AlteranteSelectionWheelTexture ? 98 : 74;
@@ -309,28 +301,38 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         } else {
             if (timeSinceM1 != 0)
                 timeSinceM1 = 0;
-            if (mc.inGameHasFocus) {
+            if (!isClosing && mc.inGameHasFocus) {
                 mc.inGameHasFocus = false;
                 Mouse.setGrabbed(false);
             }
         }
         keyDown = Keyboard.isKeyDown(KeyHandler.FormWheelKey.getKeyCode());
-        if (!keyDown && !hasSubGui() && !configureEnabled) {
+        if (!keyDown && !hasSubGui() && !configureEnabled && !isClosing) {
             if (hoveredSlot != -1)
                 wheelSlot[hoveredSlot].selectForm();
 
-            close();
+            mc.inGameHasFocus = true;
+            mc.mouseHelper.grabMouseCursor();
+            isClosing = true;
         }
     }
 
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 250;
-        animationScaleFactor = Math.min(updateTime, 1);
-        guiAnimationScale = (guiAnimationScale + 0.2f * (animationScaleFactor - guiAnimationScale));
-        guiAnimationScale = ValueUtil.clamp(guiAnimationScale, 0, 1);
+        if (isClosing && guiAnimationScale >= 0) {
+            guiAnimationScale -= 0.015f;
+            guiAnimationScale = Math.max(0, guiAnimationScale);
+            if (guiAnimationScale <= 0)
+                close();
+        } else if (guiAnimationScale < 1) {
+            float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 200;
+            animationScaleFactor = Math.min(updateTime, 1) - guiAnimationScale;
+            guiAnimationScale += 0.016f * animationScaleFactor;
+            guiAnimationScale = Math.min(1, guiAnimationScale);
+        }
         BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
+
 
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
@@ -456,7 +458,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT + (ConfigDBCClient.AlteranteSelectionWheelTexture ? 5 : 0), 0);
 
 
-        renderPlayer(mouseX, mouseY);
+        renderPlayer(mouseX, mouseY, partialTicks);
         glPopMatrix();
         glPopMatrix();
 
@@ -473,7 +475,8 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     @Override
     public void keyTyped(char typedChar, int keyCode) {
         super.keyTyped(typedChar, keyCode);
-        if (keyCode == 1 && configureEnabled)
+        boolean enoughTimeSinceClose = Minecraft.getSystemTime() - timeClosedSubGui > 50;
+        if (keyCode == 1 && configureEnabled && enoughTimeSinceClose)
             configureEnabled = false;
 
     }
@@ -484,7 +487,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         return x >= width - 60 && x <= width + 60 && y >= height - 90 && y <= height + 90;
     }
 
-    public void renderPlayer(int i, int j) {
+    public void renderPlayer(int i, int j, float partialTicks) {
         if (isMouseOverRenderer(i, j) && Mouse.isButtonDown(0)) {
             rotation -= Mouse.getDX() * 0.75f;
         }
@@ -499,7 +502,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         float oldLimbSwing = entity.limbSwingAmount;
         boolean isInvisible = entity.isInvisible(), isImmunetoFire = entity.isImmuneToFire;
         Entity oldRidingEntity = entity.ridingEntity;
-        entity.limbSwingAmount = 0; // Removes moving animation
+        entity.limbSwingAmount = entity.prevLimbSwingAmount = 0; // Removes moving animation
         entity.ridingEntity = null; // Removes riding animation
         entity.setInvisible(false); // Removes invisibility
         entity.isImmuneToFire = true; // Prevents burning
@@ -553,7 +556,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         GL11.glRotatef(-(float) Math.atan(f6 / 800F) * 20F, 1.0F, 0.0F, 0.0F);
         entity.prevRenderYawOffset = entity.renderYawOffset = rotation;
         entity.prevRotationYaw = entity.rotationYaw = (float) Math.atan(f5 / 80F) * 40F + rotation;
-        entity.rotationPitch = -(float) Math.atan(f6 / 80F) * 20F;
+        entity.rotationPitch = entity.prevRotationPitch = -(float) Math.atan(f6 / 80F) * 20F;
         entity.prevRotationYawHead = entity.rotationYawHead = entity.rotationYaw;
         GL11.glTranslatef(0.0F, entity.yOffset, 1F);
         RenderManager.instance.playerViewY = 180F;
@@ -561,13 +564,13 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
         // Render Entity
         try {
-            RenderManager.instance.renderEntityWithPosYaw(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F);
+            RenderManager.instance.renderEntityWithPosYaw(entity, 0.0, 0.0, 0.0, 0.0F, partialTicks);
         } catch (Exception ignored) {
         }
 
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
         entity.prevRotationYaw = entity.rotationYaw = f3;
-        entity.rotationPitch = f4;
+        entity.rotationPitch = entity.prevRotationPitch = f4;
         entity.prevRotationYawHead = entity.rotationYawHead = f7;
 
         RenderHelper.disableStandardItemLighting();
@@ -589,7 +592,7 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
         else if (isGoD)
             data.renderGoD = false;
 
-        entity.limbSwingAmount = oldLimbSwing;
+        entity.limbSwingAmount = entity.prevLimbSwingAmount = oldLimbSwing;
         entity.ridingEntity = oldRidingEntity;
         entity.setInvisible(isInvisible);
         entity.isImmuneToFire = isImmunetoFire;

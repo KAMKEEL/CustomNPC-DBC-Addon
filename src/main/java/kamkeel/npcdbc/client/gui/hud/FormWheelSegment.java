@@ -11,7 +11,6 @@ import net.minecraft.client.Minecraft;
 class FormWheelSegment extends WheelSegment {
     public HUDFormWheel parent;
     public Form form;
-    public int formID;
     public FormWheelData data = new FormWheelData();
 
     FormWheelSegment(HUDFormWheel parent, int index) {
