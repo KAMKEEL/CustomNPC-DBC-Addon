@@ -46,7 +46,7 @@ public class FormMastery implements IFormMastery {
     public float tailCutChanceMultiFlat = 1.0f, tailCutChanceMultiPerLevel = -0.01f, tailCutChanceMultiMinOrMax = 0f;
 
     public boolean powerPointEnabled;
-    public int powerPointCost = 0;
+    public int powerPointCost = 0, powerPointGrowth = 0;
     public float powerPointMultiNormal = 1, powerPointMultiBasedOnPoints = 0;
     public float powerPointCostMultiFlat = 1.0f, powerPointCostPerLevel = -0.01f, powerPointCostMinOrMax = 0f;
 
@@ -825,8 +825,18 @@ public class FormMastery implements IFormMastery {
 
     @Override
     public void setPowerPointCost(int cost) {
+        if(cost < 0)
+            cost = 0;
         this.powerPointCost = cost;
     }
+
+    @Override
+    public void setPowerPointGrowth(int growth) {
+        if(growth < 0)
+            growth = 0;
+        this.powerPointGrowth = growth;
+    }
+
     @Override
     public void setPowerPointMultiNormal(float multi) {
         if(multi < 0)
@@ -851,6 +861,11 @@ public class FormMastery implements IFormMastery {
     @Override
     public int getPowerPointCost() {
         return this.powerPointCost;
+    }
+
+    @Override
+    public int getPowerPointGrowth() {
+        return this.powerPointGrowth;
     }
 
     @Override

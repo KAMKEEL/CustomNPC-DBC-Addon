@@ -76,7 +76,7 @@ public abstract class MixinJRMCoreComTickH {
         if(form == null || (!form.mastery.powerPointEnabled && form.stackable.vanillaStackable))
             return JRMCoreConfig.ArcosianPPGrowth;
 
-        if(form.mastery.powerPointCost < 0 || !form.stackable.vanillaStackable){
+        if(form.mastery.powerPointGrowth > 0 || !form.stackable.vanillaStackable){
             return customNPC_DBC_Addon$emptyPowerPointGrowthArray;
         }
         return JRMCoreConfig.ArcosianPPGrowth;
@@ -113,7 +113,7 @@ public abstract class MixinJRMCoreComTickH {
 
         if(form.mastery.powerPointCost > 0 && dbcData.Release >= 100){
             updatePowerPointCost(dbcData, form);
-        }else if(form.mastery.powerPointCost < 0 && dbcData.Release < 50){
+        }else if(form.mastery.powerPointGrowth > 0 && dbcData.Release < 50){
             updatePowerPointRegen(dbcData, form);
         }
 
@@ -123,7 +123,7 @@ public abstract class MixinJRMCoreComTickH {
         int racialSkill = JRMCoreH.SklLvlX(1, dbcData.RacialSkills) - 1;
         if(racialSkill < 0)
             racialSkill = 0;
-        int pointGain = (int) (form.mastery.powerPointCost * JRMCoreConfig.appm);
+        int pointGain = (int) (form.mastery.powerPointGrowth * JRMCoreConfig.appm);
 
         int newPowerPoints = dbcData.ArcReserve + pointGain;
         if(newPowerPoints > JRMCoreConfig.ArcosianPPMax[racialSkill])

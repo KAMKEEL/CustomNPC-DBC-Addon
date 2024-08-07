@@ -160,15 +160,20 @@ public interface IFormMastery {
     IFormMastery save();
 
 
-    void setPowerPointCost(int cost);
-    void setPowerPointMultiNormal(float multi);
-    void setPowerPointMultiBasedOnPoints(float multi);
-    void setAbsorptionMulti(float multi);
-    int getPowerPointCost();
-    float getPowerPointMultiNormal();
-    float getPowerPointMultiBasedOnPoints();
-    float getAbsorptionMulti();
-
     boolean isAbsorptionBoostEnabled();
     boolean isPowerPointBoostEnabled();
+    void setPowerPointCost(int cost);
+    void setPowerPointGrowth(int growth);
+
+    int getPowerPointCost();
+    int getPowerPointGrowth();
+
+    void setPowerPointMultiNormal(float multi);
+    void setPowerPointMultiBasedOnPoints(float multi);
+
+    float getPowerPointMultiNormal();
+    float getPowerPointMultiBasedOnPoints();
+
+    void setAbsorptionMulti(float multi);
+    float getAbsorptionMulti();
 }
