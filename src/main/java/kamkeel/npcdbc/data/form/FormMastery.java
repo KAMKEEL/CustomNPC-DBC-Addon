@@ -47,7 +47,7 @@ public class FormMastery implements IFormMastery {
 
     public boolean powerPointEnabled;
     public int powerPointCost = 100, powerPointGrowth = 0;
-    public float powerPointMultiNormal = 1, powerPointMultiBasedOnPoints = 0;
+    public float powerPointMultiNormal = 1, powerPointMultiBasedOnPoints = -1;
     public float powerPointCostMultiFlat = 1.0f, powerPointCostPerLevel = -0.01f, powerPointCostMinOrMax = 0f;
 
     public boolean absorptionEnabled;

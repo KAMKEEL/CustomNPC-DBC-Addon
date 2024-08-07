@@ -107,10 +107,12 @@ public abstract class MixinJRMCoreH {
 
         float oldValue = -1f;
 
+        float absorptionMulti = 1;
+
         if(!form.stackable.vanillaStackable){
             oldValue = replaceOldMulti(race, attribute);
         }
-        // @TODO: Add a Absorption / PowerPoint config in a form!!!!
+
         switch (race) {
             case 0:
                 result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
@@ -142,13 +144,13 @@ public abstract class MixinJRMCoreH {
 
         if (race == DBCRace.ARCOSIAN) {
             if(powerType == 1 && currRelease >= 100 && arcRel > 0){
-                result = customNPC_DBC_Addon$calculateArcosianPowerPoint(result, dbcData, form, arcRel);
+                result = customNPC_DBC_Addon$calculateArcosianPowerPoint(result, form, arcRel);
             }
         }
 
         if (race == DBCRace.MAJIN) {
             if(powerType == 1 && majinAbs.length() > 0 && JGConfigRaces.CONFIG_MAJIN_ENABLED && JGConfigRaces.CONFIG_MAJIN_ABSORPTION_ENABLED){
-                result = customNPC_DBC_Addon$calculateMajnAbsorption(result, dbcData, form, majinAbs);
+                absorptionMulti = customNPC_DBC_Addon$calculateMajnAbsorption(form, majinAbs);
             }
         }
 
@@ -171,6 +173,14 @@ public abstract class MixinJRMCoreH {
         }
 
         stackableMulti *= (float) fmvalue;
+
+        if(race == DBCRace.MAJIN){
+            if (JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MULTIPLIES_BONUS_ATTRIBUTE_MULTIPLIERS) {
+                stackableMulti *= 1.0f + absorptionMulti;
+            } else {
+                stackableMulti += absorptionMulti;
+            }
+        }
 
         float statusMulti = 1;
 
@@ -267,13 +277,14 @@ public abstract class MixinJRMCoreH {
     }
 
     @Unique
-    private static int customNPC_DBC_Addon$calculateArcosianPowerPoint(int original, DBCData dbcData, Form form, int arcRel) {
-        return original;
+    private static int customNPC_DBC_Addon$calculateArcosianPowerPoint(int original, Form form, int arcRel) {
+        boolean addPointValue = form.mastery.powerPointMultiBasedOnPoints != -1;
+        return (int) ((float) original * form.mastery.powerPointMultiNormal * (addPointValue ? 1.0F + getArcosianReserveMaxPointPercentage(arcRel) * form.mastery.powerPointMultiBasedOnPoints : 1f));
     }
 
     @Unique
-    private static int customNPC_DBC_Addon$calculateMajnAbsorption(int original, DBCData dbcData, Form form, String majinAbs) {
-        return original;
+    private static float customNPC_DBC_Addon$calculateMajnAbsorption(Form form, String majinAbs) {
+        return form.mastery.absorptionMulti * (float)getMajinAbsorptionValueS(majinAbs);
     }
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;OverAtrLimit:Z"), remap = false, cancellable = true)
