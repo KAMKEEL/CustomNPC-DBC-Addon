@@ -57,7 +57,7 @@ public class FormCommand extends CommandKamkeelBase {
             if (!info.hasFormUnlocked(form.id)) {
                 if (form.raceEligible(playerdata.player)) {
                     info.addForm(form);
-                    playerdata.save();
+                    info.updateClient();
                     sendResult(sender, String.format("%s §agiven to §7'§b%s§7'", form.getName(), playerdata.playername));
                     if (sender != playerdata.player)
                         sendResult(playerdata.player, String.format("§aForm §7%s §aadded.", form.getName()));
@@ -107,7 +107,7 @@ public class FormCommand extends CommandKamkeelBase {
                     info.currentForm = -1;
                 }
                 info.removeForm(form);
-                playerdata.save();
+                info.updateClient();
                 sendResult(sender, String.format("%s §cremoved from §7'§b%s§7'", form.getName(), playerdata.playername));
                 if(sender != playerdata.player)
                     sendResult(playerdata.player, String.format("§c Form §7%s §cremoved.", form.getName()));
@@ -131,7 +131,7 @@ public class FormCommand extends CommandKamkeelBase {
         for(PlayerData playerdata : data){
             PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
             info.clearAllForms();
-            playerdata.save();
+            info.updateClient();
             sendResult(sender, String.format("Removed all forms from '\u00A7b%s\u00A77'", playerdata.playername));
             if(sender != playerdata.player)
                 sendResult(playerdata.player, String.format("All custom forms removed."));
