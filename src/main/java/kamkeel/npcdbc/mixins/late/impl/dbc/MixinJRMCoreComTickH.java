@@ -2,12 +2,16 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreComTickH;
 import JinRyuu.JRMCore.JRMCoreConfig;
+import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.JGPlayerMP;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import com.llamalad7.mixinextras.sugar.Local;
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormStackable;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -24,6 +28,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = JRMCoreComTickH.class, remap = false)
 public abstract class MixinJRMCoreComTickH {
 
+    @Shadow
+    private boolean dbc;
+    @Shadow
+    private boolean charge;
     @Shadow
     public static MinecraftServer server;
     @Shadow
@@ -114,11 +122,28 @@ public abstract class MixinJRMCoreComTickH {
     }
 
     private void updatePowerPointRegen(DBCData dbcData, Form form) {
+        int racialSkill = JRMCoreH.SklLvlX(1, dbcData.RacialSkills) - 1;
+        if(racialSkill < 0)
+            racialSkill = 0;
+        int pointGain = (int) (form.stackable.powerPointCost * JRMCoreConfig.appm);
 
+        int newPowerPoints = dbcData.ArcReserve + pointGain;
+        if(newPowerPoints > JRMCoreConfig.ArcosianPPMax[racialSkill])
+            newPowerPoints = JRMCoreConfig.ArcosianPPMax[racialSkill];
+        dbcData.ArcReserve = newPowerPoints;
+        dbcData.saveNBTData(false);
     }
 
     private void updatePowerPointCost(DBCData dbcData, Form form) {
-
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(dbcData.player);
+        float ppCost = form.stackable.powerPointCost;
+        if(JGConfigDBCFormMastery.FM_Enabled && ppCost != 0){
+            ppCost *= form.mastery.calculateMulti("ppcost", formData.getCurrentLevel());
+        }
+        dbcData.ArcReserve -= (int) ppCost;
+        if(dbcData.ArcReserve < 0)
+            dbcData.ArcReserve = 0;
+        dbcData.saveNBTData(false);
     }
 
     @Shadow
