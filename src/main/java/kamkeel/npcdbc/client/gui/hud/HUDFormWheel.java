@@ -321,18 +321,16 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
             close();
         }
-        mc.thePlayer.movementInput.updatePlayerMoveState();
-        float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 250;
-        animationScaleFactor = Math.min(updateTime, 1);
-        guiAnimationScale = (guiAnimationScale + 0.2f * (animationScaleFactor - guiAnimationScale));
-        guiAnimationScale = ValueUtil.clamp(guiAnimationScale, 0, 1);
-        BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
-
     }
 
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 250;
+        animationScaleFactor = Math.min(updateTime, 1);
+        guiAnimationScale = (guiAnimationScale + 0.2f * (animationScaleFactor - guiAnimationScale));
+        guiAnimationScale = ValueUtil.clamp(guiAnimationScale, 0, 1);
+        BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
 
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
