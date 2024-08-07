@@ -25,6 +25,10 @@ public class FormStackable implements IFormStackable {
     public float[] kaiokenStrainedBalanceValue = new float[6];
     public boolean kaiokenMultipliesCurrentFormDrain;
 
+    public float powerPointMulti = 1.0f;
+    public int powerPointCost = 100;
+    public float absorptionMulti = 1.0f;
+
     public FormStackable(Form parent) {
         this.parent = parent;
         Arrays.fill(kaiokenBalanceValue, 1);
@@ -53,6 +57,9 @@ public class FormStackable implements IFormStackable {
         useDivineConfig = !stack.hasKey("useDivineConfig") ? true : stack.getBoolean("useDivineConfig");
         useMajinConfig = !stack.hasKey("useMajinConfig") ? true : stack.getBoolean("useMajinConfig");
 
+        powerPointCost = !stack.hasKey("powerPointCost") ? 100 : stack.getInteger("powerPointCost");
+        powerPointMulti = !stack.hasKey("powerPointMulti") ? 1f : stack.getInteger("powerPointMulti");
+        absorptionMulti = !stack.hasKey("absorptionMulti") ? 1f : stack.getInteger("absorptionMulti");
 
         legendaryID = !stack.hasKey("legendaryID") ? -1 : stack.getInteger("legendaryID");
         divineID = !stack.hasKey("divineID") ? -1 : stack.getInteger("divineID");
@@ -377,5 +384,45 @@ public class FormStackable implements IFormStackable {
 
         float[] array = strained ? kaiokenStrainedBalanceValue : kaiokenBalanceValue;
         array[state2] = value;
+    }
+
+    @Override
+    public void setPowerPointCost(int cost) {
+        this.powerPointCost = cost;
+    }
+
+    @Override
+    public void setPowerPointMulti(float multi) {
+        this.powerPointMulti = multi;
+    }
+
+    @Override
+    public void setAbsorptionMulti(float multi) {
+        this.absorptionMulti = multi;
+    }
+
+    @Override
+    public int getPowerPointCost() {
+        return this.powerPointCost;
+    }
+
+    @Override
+    public float getPowerPointMulti() {
+        return this.powerPointMulti;
+    }
+
+    @Override
+    public float getAbsorptionMulti() {
+        return this.absorptionMulti;
+    }
+
+    @Override
+    public boolean isAbsorptionBoostEnabled() {
+        return this.absorptionMulti != 1;
+    }
+
+    @Override
+    public boolean isPowerPointBoostEnabled() {
+        return this.powerPointMulti != 1;
     }
 }

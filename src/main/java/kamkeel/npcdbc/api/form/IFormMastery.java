@@ -23,20 +23,14 @@ public interface IFormMastery {
     void setHealthRequirement(float healthRequirementInPercent);
 
     /**
-     * @param type 3 Legal: "flat", "perlevel", "max"
-     * @return value of specified type
-     */
-
-
-    /**
-     * @param type  4 Legal: "attribute","kidrain","heat","pain","healthrequirement,"damageNegation","dodge"
+     * @param type Legal: "attribute","kidrain","heat","pain","healthrequirement,"damageNegation","dodge","tailcutchance"
      * @param type1 3 Legal: "flat", "perlevel", "minormax"
      * @return value of specified type
      */
     float getMulti(String type, String type1);
 
     /**
-     * @param type  4 Legal: "attribute","kidrain","heat","pain","healthrequirement,"damageNegation","dodge"
+     * @param type  Legal: "attribute","kidrain","heat","pain","healthrequirement,"damageNegation","dodge","tailcutchance"
      * @param type1 3 Legal: "flat", "perlevel", "minormax"
      * @param value amount to change type1 of type by
      */

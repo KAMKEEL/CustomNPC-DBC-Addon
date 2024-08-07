@@ -95,4 +95,14 @@ public interface IFormStackable {
     float getKaioState2Balance(int state2, boolean strained);
 
     void setKaioState2Balance(int state2, boolean strained, float value);
+
+    void setPowerPointCost(int cost);
+    void setPowerPointMulti(float multi);
+    void setAbsorptionMulti(float multi);
+    int getPowerPointCost();
+    float getPowerPointMulti();
+    float getAbsorptionMulti();
+
+    boolean isAbsorptionBoostEnabled();
+    boolean isPowerPointBoostEnabled();
 }

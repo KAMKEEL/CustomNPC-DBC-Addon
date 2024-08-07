@@ -45,6 +45,8 @@ public class FormMastery implements IFormMastery {
     public float tailCutChance = 100;
     public float tailCutChanceMultiFlat = 1.0f, tailCutChanceMultiPerLevel = -0.01f, tailCutChanceMultiMinOrMax = 0f;
 
+    public float powerPointCostMultiFlat = 1.0f, powerPointCostPerLevel = -0.01f, powerPointCostMinOrMax = 0f;
+
 
     public FormMastery(Form parent) {
         this.parent = parent;
@@ -145,6 +147,7 @@ public class FormMastery implements IFormMastery {
         this.healthRequirement = ValueUtil.clamp(healthRequirementInPercent, 1, 100);
     }
 
+    @Override
     public float getMulti(String type, String type1) {
         switch (type.toLowerCase()) {
             case "attribute":
@@ -227,6 +230,15 @@ public class FormMastery implements IFormMastery {
                         return tailCutChanceMultiPerLevel;
                     case "minormax":
                         return tailCutChanceMultiMinOrMax;
+                }
+            case "ppcost":
+                switch (type1.toLowerCase()){
+                    case "flat":
+                        return powerPointCostMultiFlat;
+                    case "perlevel":
+                        return powerPointCostPerLevel;
+                    case "minormax":
+                        return powerPointCostMinOrMax;
                 }
         }
         return 1.0f;
@@ -347,6 +359,15 @@ public class FormMastery implements IFormMastery {
                     case "minormax":
                         tailCutChanceMultiMinOrMax = value;
                         break;
+                }
+            case "ppcost":
+                switch (type1.toLowerCase()){
+                    case "flat":
+                        powerPointCostMultiFlat = value;
+                    case "perlevel":
+                        powerPointCostPerLevel = value;
+                    case "minormax":
+                        powerPointCostMinOrMax = value;
                 }
 
 
@@ -620,6 +641,13 @@ public class FormMastery implements IFormMastery {
         tailCutChanceMultiPerLevel = tailCutChanceMulti.getFloat("perLevel");
         tailCutChanceMultiMinOrMax = tailCutChanceMulti.getFloat("minOrMax");
 
+        if(formMastery.hasKey("powerPointCostMulti")){
+            NBTTagCompound powerPointCostMulti = formMastery.getCompoundTag("powerPointCostMulti");
+            powerPointCostMultiFlat = powerPointCostMulti.getFloat("flat");
+            powerPointCostPerLevel = powerPointCostMulti.getFloat("perLevel");
+            powerPointCostPerLevel = powerPointCostMulti.getFloat("minOrMax");
+        }
+
         NBTTagCompound update = formMastery.getCompoundTag("update");
         updateGain = update.getFloat("gain");
         updateMultiDivPlus = update.getFloat("multiDivPlus");
@@ -717,6 +745,12 @@ public class FormMastery implements IFormMastery {
         tailCutChanceMulti.setFloat("perLevel", tailCutChanceMultiPerLevel);
         tailCutChanceMulti.setFloat("minOrMax", tailCutChanceMultiMinOrMax);
         formMastery.setTag("tailCutMulti", tailCutChanceMulti);
+
+        NBTTagCompound powerPointCostMulti = new NBTTagCompound();
+        powerPointCostMulti.setFloat("flat", powerPointCostMultiFlat);
+        powerPointCostMulti.setFloat("perlevel", powerPointCostPerLevel);
+        powerPointCostMulti.setFloat("minOrMax", powerPointCostMinOrMax);
+        formMastery.setTag("powerPointCostMulti", powerPointCostMulti);
 
         NBTTagCompound update = new NBTTagCompound();
         update.setFloat("gain", updateGain);
