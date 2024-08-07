@@ -54,23 +54,23 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     boolean configureEnabled;
     public HashMap<Integer, String> dbcForms;
     public DBCData dbcData;
+    public PlayerDBCInfo dbcInfo;
 
     public HUDFormWheel() {
         mc = Minecraft.getMinecraft();
+        dbcData = DBCData.getClient();
+        dbcForms = dbcData.getUnlockedDBCFormsMap();
+        dbcInfo = PlayerDataUtil.getClientDBCInfo();
 
-        PlayerDBCInfo data = PlayerDataUtil.getClientDBCInfo();
         for (int i = 0; i < 6; i++) {
             wheelSlot[i] = new FormWheelSegment(this, i);
-            wheelSlot[i].setForm(data.formWheel[i], false);
+            wheelSlot[i].setForm(dbcInfo.formWheel[i], false);
         }
         PacketHandler.Instance.sendToServer(new DBCRequestFormWheel().generatePacket());
 
         // Stops the GUI from un-pressing all keys for you.
         mc.inGameHasFocus = false;
         mc.mouseHelper.ungrabMouseCursor();
-
-        dbcData = DBCData.getClient();
-        dbcForms = dbcData.getUnlockedDBCFormsMap();
     }
 
     @Override
@@ -436,6 +436,10 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
                         }
                     } else
                         wheelSlot[i].removeForm();
+                } else {
+                    if (!dbcInfo.hasFormUnlocked(data.formID))
+                        wheelSlot[i].removeForm();
+
                 }
                 drawCenteredString(fontRendererObj, getFormName(i), 0, 0, 0xFFFFFFFF);
 
