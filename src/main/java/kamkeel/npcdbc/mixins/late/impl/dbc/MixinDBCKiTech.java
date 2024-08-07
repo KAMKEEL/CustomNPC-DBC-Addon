@@ -228,22 +228,23 @@ public class MixinDBCKiTech {
      */
     @Inject(method = "Ascend", at = @At("HEAD"), cancellable = true)
     private static void Ascend(KeyBinding K, CallbackInfo ci) {
-        if (KeyHandler.AscendKey.getIsKeyPressed() && K.getIsKeyPressed())
-            KeyBinding.setKeyBindState(K.getKeyCode(), false);
-
+        PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
         if (K.getIsKeyPressed()) {
-            if (TransformController.ascending)
+            if (dbc.selectedForm != -1)
                 ci.cancel();
 
             Form form = DBCData.getClient().getForm();
 
             if (form != null) {
-                if (JRMCoreH.PlyrSettingsB(0) && form.stackable.isFormStackable(DBCForm.Kaioken)) {
-                } else if (JRMCoreH.PlyrSettingsB(11) && form.stackable.isFormStackable(DBCForm.UltraInstinct)) {
-                } else if (JRMCoreH.PlyrSettingsB(16) && form.stackable.isFormStackable(DBCForm.GodOfDestruction)) {
-                } else if (JRMCoreH.PlyrSettingsB(6) && form.stackable.isFormStackable(DBCForm.Mystic)) {
-                } else
+                if (JRMCoreH.PlyrSettingsB(0) && !form.stackable.isFormStackable(DBCForm.Kaioken)) {
                     ci.cancel();
+                } else if (JRMCoreH.PlyrSettingsB(11) && !form.stackable.isFormStackable(DBCForm.UltraInstinct)) {
+                    ci.cancel();
+                } else if (JRMCoreH.PlyrSettingsB(16) && !form.stackable.isFormStackable(DBCForm.GodOfDestruction)) {
+                    ci.cancel();
+                } else if (JRMCoreH.PlyrSettingsB(6) && !form.stackable.isFormStackable(DBCForm.Mystic)) {
+                    ci.cancel();
+                }
             }
 
         }
@@ -254,40 +255,41 @@ public class MixinDBCKiTech {
      */
     @Inject(method = "Descend", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;kiInSuper:I", shift = At.Shift.AFTER), cancellable = true)
     private static void DescendModified(KeyBinding K, CallbackInfo ci) {
+        PlayerDBCInfo dbc = PlayerDataUtil.getClientDBCInfo();
         DBCData dbcData = DBCData.getClient();
         Form form = dbcData.getForm();
 
-        boolean returnEarly = true;
+
         if (form != null) {
-            if (dbcData.formSettingOn(DBCForm.Kaioken)) {
+            if (dbc.selectedForm != -1) {
+            } else if (JRMCoreH.PlyrSettingsB(0)) {
                 if (dbcData.isForm(DBCForm.Kaioken))
-                    returnEarly = false;
-            } else if (dbcData.formSettingOn(DBCForm.UltraInstinct)) {
+                    return;
+            } else if (JRMCoreH.PlyrSettingsB(11)) {
                 if (dbcData.isForm(DBCForm.UltraInstinct))
-                    returnEarly = false;
-            } else if (dbcData.formSettingOn(DBCForm.GodOfDestruction)) {
+                    return;
+            } else if (JRMCoreH.PlyrSettingsB(16)) {
                 if (dbcData.isForm(DBCForm.GodOfDestruction))
-                    returnEarly = false;
-            } else if (dbcData.formSettingOn(DBCForm.Mystic))
+                    return;
+            } else if (JRMCoreH.PlyrSettingsB(6))
                 if (dbcData.isForm(DBCForm.Mystic))
-                    returnEarly = false;
+                    return;
 
 
-            if (returnEarly) {
-                if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
-                    PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -10, false).generatePacket());
-                else {
-                    if (form.requiredForm.containsKey((int) JRMCoreH.Race)) {
-                        int id = dbcData.stats.getJRMCPlayerID();
-                        JRMCoreH.State = form.requiredForm.get((int) JRMCoreH.Race);
-                        JRMCoreH.data2[id] = JRMCoreH.State + JRMCoreH.data2[id].substring(1);
-                    }
-
-                    PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false).generatePacket());
+            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
+                PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -10, false).generatePacket());
+            else {
+                if (form.requiredForm.containsKey((int) JRMCoreH.Race)) {
+                    int id = dbcData.stats.getJRMCPlayerID();
+                    JRMCoreH.State = form.requiredForm.get((int) JRMCoreH.Race);
+                    JRMCoreH.data2[id] = JRMCoreH.State + JRMCoreH.data2[id].substring(1);
                 }
-                new ClientSound(new SoundSource(form.getDescendSound(), dbcData.player)).play(true);
-                ci.cancel();
+
+                PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false).generatePacket());
             }
+            new ClientSound(new SoundSource(form.getDescendSound(), dbcData.player)).play(true);
+            ci.cancel();
+
         }
     }
 

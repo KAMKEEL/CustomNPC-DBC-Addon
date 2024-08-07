@@ -57,256 +57,240 @@ public class MixinDBCPacketHandler {
     public void fixEnergy10xKi(byte dbcascend, EntityPlayer p, CallbackInfo ci, @Local(name = "isInBaseForm") LocalBooleanRef isInBaseForm, @Local(name = "StE") LocalRef<String> StE, @Local(name = "st") LocalByteRef st, @Local(name = "statusKaiokenOn") LocalBooleanRef statusKaiokenOn, @Local(name = "statusMysticOn") LocalBooleanRef statusMysticOn, @Local(name = "statusUltraInstinctOn") LocalBooleanRef statusUltraInstinctOn, @Local(name = "statusGodOfDestructionOn") LocalBooleanRef statusGodOfDestructionOn, @Local(name = "st2") LocalByteRef st2, @Local(name = "isKaiokenAvailable") LocalBooleanRef isKaiokenAvailable, @Local(name = "isUIAvailable") LocalBooleanRef isUIAvailable, @Local(name = "isGoDAvailable") LocalBooleanRef isGoDAvailable, @Local(name = "isMysticAvailable") LocalBooleanRef isMysticAvailable, @Local(name = "playerAscendNormal") LocalBooleanRef playerAscendNormal, @Local(name = "playerAscendGod") LocalBooleanRef playerAscendGod, @Local(name = "playerAscendBlue") LocalBooleanRef playerAscendBlue, @Local(name = "playerAscendSS4") LocalBooleanRef playerAscendSS4) {
         PlayerDBCInfo dbc = PlayerDataUtil.getDBCInfo(p);
         DBCData data = DBCData.get(p);
+
+        boolean update = false;
         int race = data.Race, selected = dbc.selectedDBCForm;
-        if (selected == -1 || st.get() == selected)
-            return;
+        if (selected != -1 && st.get() != selected) {
+            //  data.setForm(GodOfDestruction, true);
+            NBTTagCompound nbt = JRMCoreH.nbt(p);
+            String stus = StE.get();
 
-        //  data.setForm(GodOfDestruction, true);
-        NBTTagCompound nbt = JRMCoreH.nbt(p);
-        String stus = StE.get();
-
-        if (selected == Mystic) {
-            st.set((byte) (race == 4 ? 4 : 0));
-            st2.set((byte) 0);
-            statusKaiokenOn.set(true);
-            isMysticAvailable.set(true);
-            stus = data.setForm(GodOfDestruction, false);
-            if (!DBCConfig.MysticKaiokenOn) {
-                data.setForm(Kaioken, false);
-            }
-            if (statusUltraInstinctOn.get())
-                stus = data.setForm(UltraInstinct, false);
-            else
-                stus = JRMCoreH.StusEfcts(19, stus, nbt, false);
-            statusUltraInstinctOn.set(false);
-        } else if (selected >= Kaioken && selected <= Kaioken6) {
-            int chosen = (selected - Kaioken + 1);
-            isKaiokenAvailable.set(true);
-            st2.set((byte) (chosen - 1));
-            if (!DBCConfig.MysticKaiokenOn)
-                data.setForm(Mystic, false);
-            stus = data.setForm(GodOfDestruction, false);
-            stus = JRMCoreH.StusEfcts(19, stus, nbt, false);
-        } else if (selected >= UltraInstinct && selected <= UltraInstinct + 10) {
-            isInBaseForm.set(true);
-            int chosen = (selected - UltraInstinct + 1);
-            isUIAvailable.set(true);
-            statusMysticOn.set(false);
-            st.set((byte) (race == 4 ? 4 : 0));
-            st2.set((byte) (chosen - 1));
-            data.setForm(Mystic, false);
-            stus = data.setForm(GodOfDestruction, false);
-            stus = JRMCoreH.StusEfcts(4, stus, nbt, false);
-        } else if (selected == GodOfDestruction) {
-            isInBaseForm.set(true);
-            st.set((byte) (race == 4 ? 4 : 0));
-            st2.set((byte) 0);
-            statusUltraInstinctOn.set(false);
-            isGoDAvailable.set(true);
-            data.setForm(Kaioken, false);
-            data.setForm(UltraInstinct, false);
-            stus = data.setForm(Mystic, false);
-
-        } else {
-            if (statusMysticOn.get()) {
-                statusMysticOn.set(false);
-                data.setForm(Mystic, false);
-
-            }
-            if (statusUltraInstinctOn.get()) {
+            if (selected == Mystic) {
+                st.set((byte) (race == 4 ? 4 : 0));
+                st2.set((byte) 0);
+                statusKaiokenOn.set(true);
+                isMysticAvailable.set(true);
+                stus = data.setForm(GodOfDestruction, false);
+                if (!DBCConfig.MysticKaiokenOn) {
+                    data.setForm(Kaioken, false);
+                }
+                if (statusUltraInstinctOn.get())
+                    stus = data.setForm(UltraInstinct, false);
+                else
+                    stus = JRMCoreH.StusEfcts(19, stus, nbt, false);
                 statusUltraInstinctOn.set(false);
+            } else if (selected >= Kaioken && selected <= Kaioken6) {
+                int chosen = (selected - Kaioken + 1);
+                isKaiokenAvailable.set(true);
+                st2.set((byte) (chosen - 1));
+                if (!DBCConfig.MysticKaiokenOn)
+                    data.setForm(Mystic, false);
+                stus = data.setForm(GodOfDestruction, false);
+                stus = JRMCoreH.StusEfcts(19, stus, nbt, false);
+            } else if (selected >= UltraInstinct && selected <= UltraInstinct + 10) {
+                isInBaseForm.set(true);
+                int chosen = (selected - UltraInstinct + 1);
+                isUIAvailable.set(true);
+                statusMysticOn.set(false);
+                st.set((byte) (race == 4 ? 4 : 0));
+                st2.set((byte) (chosen - 1));
+                data.setForm(Mystic, false);
+                stus = data.setForm(GodOfDestruction, false);
+                stus = JRMCoreH.StusEfcts(4, stus, nbt, false);
+            } else if (selected == GodOfDestruction) {
+                isInBaseForm.set(true);
+                st.set((byte) (race == 4 ? 4 : 0));
+                st2.set((byte) 0);
+                statusUltraInstinctOn.set(false);
+                isGoDAvailable.set(true);
+                data.setForm(Kaioken, false);
                 data.setForm(UltraInstinct, false);
+                stus = data.setForm(Mystic, false);
 
-            }
+            } else {
+                if (statusMysticOn.get()) {
+                    statusMysticOn.set(false);
+                    data.setForm(Mystic, false);
 
-            if (race == DBCRace.HUMAN || race == DBCRace.NAMEKIAN) {
-                playerAscendGod.set(false);
-
-                boolean human = race == DBCRace.HUMAN;
-                if (selected == (human ? HumanFullRelease : NamekFullRelease)) {
-                    data.setSetting(1, 0);
-                    st.set((byte) 0);
-                    playerAscendNormal.set(true);
+                }
+                if (statusUltraInstinctOn.get()) {
+                    statusUltraInstinctOn.set(false);
+                    data.setForm(UltraInstinct, false);
 
                 }
 
-                if (selected == (human ? HumanBuffed : NamekGiant)) {
-                    data.setSetting(1, -1);
+                if (race == DBCRace.HUMAN || race == DBCRace.NAMEKIAN) {
+                    playerAscendGod.set(false);
+
+                    boolean human = race == DBCRace.HUMAN;
+                    if (selected == (human ? HumanFullRelease : NamekFullRelease)) {
+                        data.setSetting(1, 0);
+                        st.set((byte) 0);
+                        playerAscendNormal.set(true);
+
+                    }
+
+                    if (selected == (human ? HumanBuffed : NamekGiant)) {
+                        data.setSetting(1, -1);
+                        st.set((byte) 0);
+                        playerAscendNormal.set(false);
+                    }
+
+
+                    if (selected == (human ? HumanGod : NamekGod)) {
+                        data.setSetting(1, 1);
+                        st.set((byte) 0);
+                        playerAscendGod.set(true);
+                    }
+                } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
                     st.set((byte) 0);
                     playerAscendNormal.set(false);
+                    playerAscendGod.set(false);
+                    playerAscendBlue.set(false);
+                    playerAscendSS4.set(false);
+
+                    if (selected == SuperSaiyan) {
+                        data.setSetting(1, -1);
+                        st.set((byte) 0);
+                    }
+
+                    if (selected == SuperSaiyanG2) {
+                        data.setSetting(1, -1);
+                        st.set((byte) 1);
+                        playerAscendNormal.set(true);
+                    }
+
+                    if (selected == SuperSaiyanG3) {
+                        data.setSetting(1, -1);
+                        st.set((byte) 2);
+                        playerAscendNormal.set(true);
+                    }
+
+                    if (selected == MasteredSuperSaiyan) {
+                        data.setSetting(1, 9);
+                        st.set((byte) 0);
+                    }
+
+                    if (selected == SuperSaiyan2) {
+                        data.setSetting(1, 0);
+                        st.set((byte) 4);
+                        playerAscendNormal.set(true);
+                    }
+
+                    if (selected == SuperSaiyan3) {
+                        data.setSetting(1, 0);
+                        st.set((byte) 5);
+                        playerAscendNormal.set(true);
+                    }
+
+                    if (selected == SuperSaiyanGod) {
+                        data.setSetting(1, 1);
+                        st.set((byte) 0);
+                        playerAscendGod.set(true);
+                    }
+
+                    if (selected == SuperSaiyanBlue) {
+                        data.setSetting(1, 2);
+                        st.set((byte) SuperSaiyanGod);
+                        playerAscendBlue.set(true);
+                    }
+
+                    if (selected == BlueEvo) {
+                        data.setSetting(1, 2);
+                        st.set((byte) SuperSaiyanBlue);
+                        playerAscendBlue.set(true);
+                    }
+
+                    if (selected == SuperSaiyan4) {
+                        data.setSetting(1, 3);
+                        st.set((byte) 0);
+                        playerAscendSS4.set(true);
+                    }
+
+                } else if (race == DBCRace.NAMEKIAN) {
+
+                } else if (race == DBCRace.ARCOSIAN) {
+                    playerAscendNormal.set(false);
+                    playerAscendGod.set(false);
+
+                    if (selected == FirstForm) {
+                        st.set((byte) 0);
+                    }
+
+                    if (selected == SecondForm) {
+                        st.set((byte) 1);
+                    }
+
+                    if (selected == ThirdForm) {
+                        st.set((byte) 2);
+                    }
+
+                    if (selected == FinalForm) {
+                        st.set((byte) 3);
+                    }
+
+                    if (selected == SuperForm) {
+                        data.setSetting(1, -1);
+                        st.set((byte) 4);
+                    }
+
+                    if (selected == UltimateForm) {
+                        data.setSetting(1, 0);
+                        st.set((byte) 4);
+                        playerAscendNormal.set(true);
+                    }
+
+                    if (selected == ArcoGod) {
+                        data.setSetting(1, 1);
+                        st.set((byte) 4);
+                        playerAscendGod.set(true);
+                    }
+
+                } else if (race == DBCRace.MAJIN) {
+                    playerAscendGod.set(false);
+                    playerAscendNormal.set(false);
+
+                    if (selected == MajinEvil) {
+                        data.setSetting(1, -1);
+                        st.set((byte) 0);
+
+                    }
+                    if (selected == MajinFullPower) {
+                        data.setSetting(1, -1);
+                        st.set((byte) 1);
+
+                    }
+
+                    if (selected == MajinPure) {
+                        data.setSetting(1, 0);
+                        st.set((byte) 0);
+                        playerAscendNormal.set(true);
+                    }
+
+
+                    if (selected == MajinGod) {
+                        data.setSetting(1, 1);
+                        st.set((byte) 0);
+                        playerAscendGod.set(true);
+                    }
+
+
                 }
-
-
-                if (selected == (human ? HumanGod : NamekGod)) {
-                    data.setSetting(1, 1);
-                    st.set((byte) 0);
-                    playerAscendGod.set(true);
-                }
-            } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-                st.set((byte) 0);
-                playerAscendNormal.set(false);
-                playerAscendGod.set(false);
-                playerAscendBlue.set(false);
-                playerAscendSS4.set(false);
-
-                if (selected == SuperSaiyan) {
-                    data.setSetting(1, -1);
-                    st.set((byte) 0);
-                }
-
-                if (selected == SuperSaiyanG2) {
-                    data.setSetting(1, -1);
-                    st.set((byte) 1);
-                    playerAscendNormal.set(true);
-                }
-
-                if (selected == SuperSaiyanG3) {
-                    data.setSetting(1, -1);
-                    st.set((byte) 2);
-                    playerAscendNormal.set(true);
-                }
-
-                if (selected == MasteredSuperSaiyan) {
-                    data.setSetting(1, 9);
-                    st.set((byte) 0);
-                }
-
-                if (selected == SuperSaiyan2) {
-                    data.setSetting(1, 0);
-                    st.set((byte) 4);
-                    playerAscendNormal.set(true);
-                }
-
-                if (selected == SuperSaiyan3) {
-                    data.setSetting(1, 0);
-                    st.set((byte) 5);
-                    playerAscendNormal.set(true);
-                }
-
-                if (selected == SuperSaiyanGod) {
-                    data.setSetting(1, 1);
-                    st.set((byte) 0);
-                    playerAscendGod.set(true);
-                }
-
-                if (selected == SuperSaiyanBlue) {
-                    data.setSetting(1, 2);
-                    st.set((byte) SuperSaiyanGod);
-                    playerAscendBlue.set(true);
-                }
-
-                if (selected == BlueEvo) {
-                    data.setSetting(1, 2);
-                    st.set((byte) SuperSaiyanBlue);
-                    playerAscendBlue.set(true);
-                }
-
-                if (selected == SuperSaiyan4) {
-                    data.setSetting(1, 3);
-                    st.set((byte) 0);
-                    playerAscendSS4.set(true);
-                }
-
-            } else if (race == DBCRace.NAMEKIAN) {
-
-            } else if (race == DBCRace.ARCOSIAN) {
-                playerAscendNormal.set(false);
-                playerAscendGod.set(false);
-
-                if (selected == FirstForm) {
-                    st.set((byte) 0);
-                }
-
-                if (selected == SecondForm) {
-                    st.set((byte) 1);
-                }
-
-                if (selected == ThirdForm) {
-                    st.set((byte) 2);
-                }
-
-                if (selected == FinalForm) {
-                    st.set((byte) 3);
-                }
-
-                if (selected == SuperForm) {
-                    data.setSetting(1, -1);
-                    st.set((byte) 4);
-                }
-
-                if (selected == UltimateForm) {
-                    data.setSetting(1, 0);
-                    st.set((byte) 4);
-                    playerAscendNormal.set(true);
-                }
-
-                if (selected == ArcoGod) {
-                    data.setSetting(1, 1);
-                    st.set((byte) 4);
-                    playerAscendGod.set(true);
-                }
-
-            } else if (race == DBCRace.MAJIN) {
-                playerAscendGod.set(false);
-                playerAscendNormal.set(false);
-
-                if (selected == MajinEvil) {
-                    data.setSetting(1, -1);
-                    st.set((byte) 0);
-
-                }
-                if (selected == MajinFullPower) {
-                    data.setSetting(1, -1);
-                    st.set((byte) 1);
-
-                }
-
-                if (selected == MajinPure) {
-                    data.setSetting(1, 0);
-                    st.set((byte) 0);
-                    playerAscendNormal.set(true);
-                }
-
-
-                if (selected == MajinGod) {
-                    data.setSetting(1, 1);
-                    st.set((byte) 0);
-                    playerAscendGod.set(true);
-                }
-
-
             }
+            dbc.selectedDBCForm = -1;
+            update = true;
+            StE.set(stus);
         }
-
-        dbc.selectedDBCForm = -1;
-        dbc.updateClient();
-        StE.set(stus);
 
         Form form = data.getForm();
         if (form != null) {
-            if (!form.stackable.godStackable) {
-                if (isGoDAvailable.get()) {
-                    isGoDAvailable.set(false);
-                }
-            }
-            if (!form.stackable.mysticStackable) {
-                if (isMysticAvailable.get()) {
-                    isMysticAvailable.set(false);
-                }
-            }
-            if (!form.stackable.uiStackable) {
-                if (isUIAvailable.get()) {
-                    isUIAvailable.set(false);
-                    st2.set((byte) 0);
-                }
-            }
-            if (!form.stackable.kaiokenStackable) {
-                if (isKaiokenAvailable.get()) {
-                    isKaiokenAvailable.set(false);
-                    st2.set((byte) 0);
-                }
+            if (!form.stackable.vanillaStackable && !isGoDAvailable.get() && !isMysticAvailable.get() && !isUIAvailable.get() && !isKaiokenAvailable.get()) {
+                dbc.currentForm = -1;
+                update = true;
             }
         }
+        if (update)
+            dbc.updateClient();
 
     }
 

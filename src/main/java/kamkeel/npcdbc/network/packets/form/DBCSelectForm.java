@@ -62,6 +62,7 @@ public final class DBCSelectForm extends AbstractPacket {
             DBCData dbc = DBCData.get(player);
             int selected = 0;
             formData.selectedDBCForm = formData.tempSelectedDBCForm = selected = formID;
+            formData.selectedForm = -1;
             if (selected == Mystic) {
                 JRMCoreH.PlyrSettingsRem(player, 0);
                 JRMCoreH.PlyrSettingsRem(player, 11);
@@ -114,6 +115,7 @@ public final class DBCSelectForm extends AbstractPacket {
                 }
 
                 formData.selectedForm = formID;
+                formData.selectedDBCForm = formData.tempSelectedDBCForm = -1;
                 NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", form.getMenuName());
                 compound = form.writeToNBT();
             }
