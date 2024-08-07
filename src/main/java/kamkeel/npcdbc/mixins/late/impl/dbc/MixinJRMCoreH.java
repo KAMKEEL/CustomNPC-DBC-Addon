@@ -176,7 +176,7 @@ public abstract class MixinJRMCoreH {
 
         if(race == DBCRace.MAJIN){
             if (JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MULTIPLIES_BONUS_ATTRIBUTE_MULTIPLIERS) {
-                stackableMulti *= 1.0f + absorptionMulti;
+                stackableMulti *= absorptionMulti;
             } else {
                 stackableMulti += absorptionMulti;
             }
@@ -284,7 +284,7 @@ public abstract class MixinJRMCoreH {
 
     @Unique
     private static float customNPC_DBC_Addon$calculateMajnAbsorption(Form form, String majinAbs) {
-        return form.mastery.absorptionMulti * (float)getMajinAbsorptionValueS(majinAbs);
+        return form.mastery.absorptionMulti * ((float)getMajinAbsorptionValueS(majinAbs) / JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL);
     }
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;OverAtrLimit:Z"), remap = false, cancellable = true)
