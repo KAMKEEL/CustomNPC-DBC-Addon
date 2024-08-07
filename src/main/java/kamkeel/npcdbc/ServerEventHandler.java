@@ -1,5 +1,6 @@
 package kamkeel.npcdbc;
 
+import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -177,7 +178,9 @@ public class ServerEventHandler {
 
                     double cost = might * form.mastery.getKiDrain();
                     cost *= ((double) dbcData.Release / 100);
-                    cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
+
+                    if(JGConfigDBCFormMastery.FM_Enabled)
+                        cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
 
                     dbcData.stats.restoreKiFlat((int) (-cost / form.mastery.kiDrainTimer * 10));
                 }
