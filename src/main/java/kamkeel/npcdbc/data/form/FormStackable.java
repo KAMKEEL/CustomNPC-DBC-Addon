@@ -26,8 +26,9 @@ public class FormStackable implements IFormStackable {
     public boolean kaiokenMultipliesCurrentFormDrain;
 
     public float powerPointMulti = 1.0f;
-    public int powerPointCost = 100;
+    public int powerPointCost;
     public float absorptionMulti = 1.0f;
+    public boolean racialBonusesOn;
 
     public FormStackable(Form parent) {
         this.parent = parent;
@@ -57,6 +58,7 @@ public class FormStackable implements IFormStackable {
         useDivineConfig = !stack.hasKey("useDivineConfig") ? true : stack.getBoolean("useDivineConfig");
         useMajinConfig = !stack.hasKey("useMajinConfig") ? true : stack.getBoolean("useMajinConfig");
 
+        racialBonusesOn = stack.getBoolean("racialBonusesOn");
         powerPointCost = !stack.hasKey("powerPointCost") ? 100 : stack.getInteger("powerPointCost");
         powerPointMulti = !stack.hasKey("powerPointMulti") ? 1f : stack.getInteger("powerPointMulti");
         absorptionMulti = !stack.hasKey("absorptionMulti") ? 1f : stack.getInteger("absorptionMulti");
@@ -124,8 +126,13 @@ public class FormStackable implements IFormStackable {
         kaioDrainData.setTag("balanceNormal", kaioBalanceNormal);
         kaioDrainData.setTag("balanceStrained", kaioBalanceStrained);
         kaioDrainData.setBoolean("multipliesCurrentFormDrain", kaiokenMultipliesCurrentFormDrain);
-
         stack.setTag("kaiokenDrainData", kaioDrainData);
+
+        stack.setFloat("powerPointMulti", powerPointMulti);
+        stack.setInteger("powerPointCost", powerPointCost);
+        stack.setFloat("absorptionMulti", absorptionMulti);
+        stack.setBoolean("racialBonusesOn", racialBonusesOn);
+
         compound.setTag("stackableForms", stack);
         return compound;
     }
@@ -384,6 +391,16 @@ public class FormStackable implements IFormStackable {
 
         float[] array = strained ? kaiokenStrainedBalanceValue : kaiokenBalanceValue;
         array[state2] = value;
+    }
+
+    @Override
+    public void setRacialBonusesOn(boolean racialBonusesOn) {
+        this.racialBonusesOn = racialBonusesOn;
+    }
+
+    @Override
+    public boolean getRacialBonusesOn() {
+        return this.racialBonusesOn;
     }
 
     @Override

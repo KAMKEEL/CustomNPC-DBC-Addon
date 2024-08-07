@@ -59,7 +59,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         scrollWindow.getLabel(2).color = 0xffffff;
 
         if(stackable.kaiokenStackable){
-            maxScroll += 23;
+            maxScroll += 46;
             y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(22, "display.kkRatio", guiLeft + 4, y + 5));
             scrollWindow.addTextField(new GuiNpcTextField(22, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.kaiokenStrength)));
@@ -139,6 +139,41 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         y += 46;
         maxScroll += 23;
+
+        scrollWindow.addLabel(new GuiNpcLabel(200, "Racial stackables", guiLeft + 4, y + 5));
+        scrollWindow.addButton(new GuiNpcButtonYesNo(200, guiLeft + 115, y, 50, 20, stackable.racialBonusesOn));
+        scrollWindow.getLabel(200).color = 0xffffff;
+
+        y += 23;
+        maxScroll += 46;
+
+        if(stackable.racialBonusesOn){
+            scrollWindow.addLabel(new GuiNpcLabel(201, "Absorption Multiplier:", guiLeft + 4, y+5));
+            scrollWindow.addTextField(new GuiNpcTextField(201, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.absorptionMulti)));
+            scrollWindow.getTextField(201).setMaxStringLength(22);
+            scrollWindow.getTextField(201).floatsOnly = true;
+            scrollWindow.getTextField(201).setMinMaxDefaultFloat(-10000, 10000, 1);
+            scrollWindow.getLabel(201).color = 0xffffff;
+
+            y += 26;
+            scrollWindow.addLabel(new GuiNpcLabel(202, "PowerPoint Multiplier:", guiLeft + 4, y+5));
+            scrollWindow.addTextField(new GuiNpcTextField(202, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.powerPointMulti)));
+            scrollWindow.getTextField(202).setMaxStringLength(22);
+            scrollWindow.getTextField(202).floatsOnly = true;
+            scrollWindow.getTextField(202).setMinMaxDefaultFloat(-10000, 10000, 1);
+            scrollWindow.getLabel(202).color = 0xffffff;
+
+            scrollWindow.addLabel(new GuiNpcLabel(203, "PowerPoint Cost:", guiLeft + 175, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(203, this, guiLeft + 265, y, 50, 20, String.valueOf(stackable.powerPointCost)));
+            scrollWindow.getTextField(203).setMaxStringLength(22);
+            scrollWindow.getTextField(203).integersOnly = true;
+            scrollWindow.getTextField(203).setMinMaxDefault(-10000, 10000, 1);
+            scrollWindow.getLabel(203).color = 0xffffff;
+
+            y += 23;
+            maxScroll += 46;
+        }
+        y += 23;
 
         scrollWindow.addButton(new GuiNpcButton(6, guiLeft + 75, y, 90, 20, "general.noForm"));
         scrollWindow.addButton(new GuiNpcButton(61, guiLeft + 167, y, 20, 20, "X"));
@@ -263,6 +298,9 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         if(button.id == 100){
             this.setSubGui(new SubGuiKaiokenDrain(form));
         }
+        if(button.id == 200){
+            stackable.racialBonusesOn = !stackable.racialBonusesOn;
+        }
         initGui();
 	}
 
@@ -298,6 +336,15 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
         if (guiNpcTextField.id == 84) {
             stackable.majinStrength = guiNpcTextField.getFloat();
+        }
+        if(guiNpcTextField.id == 201){
+            stackable.absorptionMulti = guiNpcTextField.getFloat();
+        }
+        if(guiNpcTextField.id == 202){
+            stackable.powerPointMulti = guiNpcTextField.getFloat();
+        }
+        if(guiNpcTextField.id == 203){
+            stackable.powerPointCost = guiNpcTextField.getInteger();
         }
 	}
 
