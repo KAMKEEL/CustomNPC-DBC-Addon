@@ -24,7 +24,7 @@ public class SubGuiKaiokenDrain extends SubGuiInterface implements ITextfieldLis
         super.initGui();
 
         int y = guiTop + 5;
-        addLabel(new GuiNpcLabel(1, "Drain multi: ", guiLeft+8, y + 5));
+        addLabel(new GuiNpcLabel(1, "Drain multi scaling: ", guiLeft+8, y + 5));
         addTextField(new GuiNpcTextField(1, this, guiLeft+150, y, 50, 20, ""+stackable.kaiokenDrainMulti));
         getTextField(1).setMaxStringLength(22);
         getTextField(1).floatsOnly = true;
