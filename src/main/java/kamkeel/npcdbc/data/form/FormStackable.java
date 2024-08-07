@@ -410,11 +410,15 @@ public class FormStackable implements IFormStackable {
 
     @Override
     public void setPowerPointMulti(float multi) {
+        if(multi < 0)
+            multi = 0;
         this.powerPointMulti = multi;
     }
 
     @Override
     public void setAbsorptionMulti(float multi) {
+        if(multi < 0)
+            multi = 0;
         this.absorptionMulti = multi;
     }
 

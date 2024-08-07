@@ -152,7 +152,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             scrollWindow.addTextField(new GuiNpcTextField(201, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.absorptionMulti)));
             scrollWindow.getTextField(201).setMaxStringLength(22);
             scrollWindow.getTextField(201).floatsOnly = true;
-            scrollWindow.getTextField(201).setMinMaxDefaultFloat(-10000, 10000, 1);
+            scrollWindow.getTextField(201).setMinMaxDefaultFloat(0, 10000, 1);
             scrollWindow.getLabel(201).color = 0xffffff;
 
             y += 26;
@@ -160,7 +160,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             scrollWindow.addTextField(new GuiNpcTextField(202, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.powerPointMulti)));
             scrollWindow.getTextField(202).setMaxStringLength(22);
             scrollWindow.getTextField(202).floatsOnly = true;
-            scrollWindow.getTextField(202).setMinMaxDefaultFloat(-10000, 10000, 1);
+            scrollWindow.getTextField(202).setMinMaxDefaultFloat(0, 10000, 1);
             scrollWindow.getLabel(202).color = 0xffffff;
 
             scrollWindow.addLabel(new GuiNpcLabel(203, "PowerPoint Cost:", guiLeft + 175, y + 5));
