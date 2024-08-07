@@ -54,23 +54,23 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
     boolean configureEnabled;
     public HashMap<Integer, String> dbcForms;
     public DBCData dbcData;
+    public PlayerDBCInfo dbcInfo;
 
     public HUDFormWheel() {
         mc = Minecraft.getMinecraft();
+        dbcData = DBCData.getClient();
+        dbcForms = dbcData.getUnlockedDBCFormsMap();
+        dbcInfo = PlayerDataUtil.getClientDBCInfo();
 
-        PlayerDBCInfo data = PlayerDataUtil.getClientDBCInfo();
         for (int i = 0; i < 6; i++) {
             wheelSlot[i] = new FormWheelSegment(this, i);
-            wheelSlot[i].setForm(data.formWheel[i], false);
+            wheelSlot[i].setForm(dbcInfo.formWheel[i], false);
         }
         PacketHandler.Instance.sendToServer(new DBCRequestFormWheel().generatePacket());
 
         // Stops the GUI from un-pressing all keys for you.
         mc.inGameHasFocus = false;
         mc.mouseHelper.ungrabMouseCursor();
-
-        dbcData = DBCData.getClient();
-        dbcForms = dbcData.getUnlockedDBCFormsMap();
     }
 
     @Override
@@ -321,18 +321,16 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
 
             close();
         }
-        mc.thePlayer.movementInput.updatePlayerMoveState();
-        float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 250;
-        animationScaleFactor = Math.min(updateTime, 1);
-        guiAnimationScale = (guiAnimationScale + 0.2f * (animationScaleFactor - guiAnimationScale));
-        guiAnimationScale = ValueUtil.clamp(guiAnimationScale, 0, 1);
-        BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
-
     }
 
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 250;
+        animationScaleFactor = Math.min(updateTime, 1);
+        guiAnimationScale = (guiAnimationScale + 0.2f * (animationScaleFactor - guiAnimationScale));
+        guiAnimationScale = ValueUtil.clamp(guiAnimationScale, 0, 1);
+        BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
 
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
         this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
@@ -416,29 +414,31 @@ public class HUDFormWheel extends GuiNPCInterface implements IGuiData, ISubGuiLi
             }
 
             if (data.formID != -1) {
-                if (data.isDBC) {
-                    if (dbcForms.containsKey(data.formID)) {
-                        if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
-                            glScaled(0.7, 0.7, 1);
-                            if (i == 0) {
-                                glTranslatef(0, -15f, 0);
-                            } else if (i == 1) {
-                                glTranslatef(-12, -5, 0);
-                            } else if (i == 2) {
-                                glTranslatef(-11, 3, 0);
-                            } else if (i == 3) {
-                                glTranslatef(0, 12f, 0);
-                            } else if (i == 4) {
-                                glTranslatef(10, 3, 0);
-                            } else {
-                                glTranslatef(13, -5, 0);
-                            }
-                        }
-                    } else
-                        wheelSlot[i].removeForm();
+                if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
+                    glScaled(0.7, 0.7, 1);
+                    if (i == 0) {
+                        glTranslatef(0, -15f, 0);
+                    } else if (i == 1) {
+                        glTranslatef(-12, -5, 0);
+                    } else if (i == 2) {
+                        glTranslatef(-11, 3, 0);
+                    } else if (i == 3) {
+                        glTranslatef(0, 12f, 0);
+                    } else if (i == 4) {
+                        glTranslatef(10, 3, 0);
+                    } else {
+                        glTranslatef(13, -5, 0);
+                    }
                 }
                 drawCenteredString(fontRendererObj, getFormName(i), 0, 0, 0xFFFFFFFF);
 
+                if (data.isDBC) {
+                    if (!dbcForms.containsKey(data.formID))
+                        wheelSlot[i].removeForm();
+                } else {
+                    if (!dbcInfo.hasFormUnlocked(data.formID))
+                        wheelSlot[i].removeForm();
+                }
             }
 
             GL11.glPopMatrix();

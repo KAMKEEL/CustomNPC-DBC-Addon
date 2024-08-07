@@ -179,7 +179,7 @@ public class ServerEventHandler {
                     double cost = might * form.mastery.getKiDrain();
                     cost *= ((double) dbcData.Release / 100);
 
-                    if(JGConfigDBCFormMastery.FM_Enabled)
+                    if (JGConfigDBCFormMastery.FM_Enabled)
                         cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
 
                     dbcData.stats.restoreKiFlat((int) (-cost / form.mastery.kiDrainTimer * 10));
@@ -230,6 +230,7 @@ public class ServerEventHandler {
         if (event.entity instanceof EntityPlayer || event.entity instanceof EntityNPCInterface) {
             Entity attacker = event.source.getEntity();
             Form form = PlayerDataUtil.getForm(event.entity);
+
             if (form != null) {
                 float formLevel = PlayerDataUtil.getFormLevel(event.entity);
 

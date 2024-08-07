@@ -174,7 +174,7 @@ public class Form implements IForm {
 
     public boolean raceEligible(EntityPlayer player) {
         int plRace = DBCData.get(player).Race;
-        if (race ==  DBCRace.ALL_SAIYANS)
+        if (race == DBCRace.ALL_SAIYANS)
             return DBCRace.isSaiyan(plRace);
 
         return race == DBCRace.ALL || race == plRace;
@@ -340,6 +340,15 @@ public class Form implements IForm {
     }
 
 
+    public boolean isChildOf(Form parent) {
+        while (parent.childID != -1) {
+            if (parent.id == id || parent.childID == id)
+                return true;
+            parent = (Form) parent.getChild();
+        }
+        return false;
+    }
+
     public IForm getChild() {
         return FormController.Instance.get(childID);
     }
@@ -357,9 +366,9 @@ public class Form implements IForm {
 
 
     public void removeChildForm() {
-        if(childID != -1){
+        if (childID != -1) {
             Form child = (Form) getChild();
-            if(child != null)
+            if (child != null)
                 child.parentID = -1;
         }
         childID = -1;
@@ -397,9 +406,9 @@ public class Form implements IForm {
     }
 
     public void removeParentForm() {
-        if(parentID != -1){
+        if (parentID != -1) {
             Form parent = (Form) getParent();
-            if(parent != null)
+            if (parent != null)
                 parent.childID = -1;
         }
         parentID = -1;
@@ -427,6 +436,7 @@ public class Form implements IForm {
         form.id = FormController.Instance.getUnusedId();
         return form;
     }
+
     @Override
     public IForm save() {
         return FormController.Instance.saveForm(this);

@@ -132,6 +132,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data2:[Ljava/lang/String;"), remap = true)
     private String[] changeFormDAata(@Local(name = "pl") LocalIntRef pl, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
         DBCData data = DBCData.get(player.get());
+        if (data.State > 0) {
+            Form form = data.getForm();
+            if (form != null && !form.stackable.vanillaStackable)
+                data.State = 0;
+        }
         return new String[]{data.State + "", data.State2 + ""};
     }
 
@@ -147,9 +152,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Ljava/lang/Integer;parseInt(Ljava/lang/String;)I", ordinal = 1, shift = At.Shift.BEFORE))
     private void changeFormData35(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "state") LocalRef<String[]> state) {
         DBCData data = DBCData.get(par1AbstractClientPlayer);
-        if (HUDFormWheel.renderingPlayer) {
-            state.set(new String[]{data.State + "", data.State2 + ""});
-        }
+        state.set(new String[]{data.State + "", data.State2 + ""});
+
     }
 
 
@@ -220,9 +224,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
-    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
+    private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hc") LocalIntRef hairCol, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
         Form form = DBCData.getForm(par1AbstractClientPlayer);
         DBCData data = DBCData.get(par1AbstractClientPlayer);
+
         if (form != null) {
             HD = ConfigDBCClient.EnableHDTextures;
             //only saiyans
@@ -282,7 +287,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         ClientProxy.renderingMajinSE = false;
     }
 
-    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.AFTER))
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/ModelBipedDBC;renderHairs(FLjava/lang/String;)V", ordinal = 30, shift = At.Shift.BEFORE))
     public void captureDefaultHairColor(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hc") LocalIntRef hairCol) {
         DBCData data = DBCData.get(par1AbstractClientPlayer);
         data.renderingHairColor = hairCol.get();

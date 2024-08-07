@@ -26,7 +26,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
 
     @SubCommand(desc = "Give a player form mastery", usage = "<player> <amount> <formname>")
     public void give(ICommandSender sender, String[] args) throws CommandException {
-        String playername=args[0];
+        String playername = args[0];
         float amount;
 
         String name = "";
@@ -34,9 +34,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
             name += args[i] + (i != args.length - 1 ? " " : "");
 
 
-
-
-        try{
+        try {
             amount = Float.parseFloat(args[1]);
         } catch (NumberFormatException ex) {
             sendError(sender, "Mastery amount must be a float: " + args[1]);
@@ -55,16 +53,16 @@ public class FormMasteryCommand extends CommandKamkeelBase {
             return;
         }
 
-        for(PlayerData playerdata : data){
+        for (PlayerData playerdata : data) {
             PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
 
-            if(!info.hasForm(form)){
+            if (!info.hasForm(form)) {
                 sendResult(sender, String.format("\u00A7ePlayer '\u00A7b%s\u00A7e' doesn't have '\u00A7b%s\u00A77' unlocked.", playerdata.playername, form.getName()));
                 return;
             }
 
             info.addFormLevel(form.id, amount);
-            playerdata.save();
+            info.updateClient();
             sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was adjusted by \u00A77%s §d(%s)", playerdata.playername, form.getName(), amount, info.getFormLevel(form.id)));
 
             return;
@@ -73,7 +71,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
 
     @SubCommand(desc = "Set a player form mastery", usage = "<player> <amount> <formname>")
     public void set(ICommandSender sender, String[] args) throws CommandException {
-        String playername=args[0];
+        String playername = args[0];
         float amount;
 
         String name = "";
@@ -81,8 +79,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
             name += args[i] + (i != args.length - 1 ? " " : "");
 
 
-
-        try{
+        try {
             amount = Float.parseFloat(args[1]);
         } catch (NumberFormatException ex) {
             sendError(sender, "Mastery amount must be a float: " + args[1]);
@@ -101,7 +98,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
             return;
         }
 
-        for(PlayerData playerdata : data){
+        for (PlayerData playerdata : data) {
             PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
 
             if (!info.hasForm(form)) {
@@ -110,7 +107,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
             }
 
             info.setFormLevel(form.id, amount);
-            playerdata.save();
+            info.updateClient();
             sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was set to §d%s", playerdata.playername, form.getName(), info.getFormLevel(form.id)));
 
             return;
@@ -119,7 +116,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
 
     @SubCommand(desc = "Get info about a players form mastery", usage = "<player>")
     public void info(ICommandSender sender, String[] args) throws CommandException {
-        String playername=args[0];
+        String playername = args[0];
 
         List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
         if (data.isEmpty()) {
@@ -127,7 +124,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
             return;
         }
 
-        for(PlayerData playerdata : data) {
+        for (PlayerData playerdata : data) {
             PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
 
             sendResult(sender, "--------------------");

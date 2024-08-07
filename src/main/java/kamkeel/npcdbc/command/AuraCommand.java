@@ -54,7 +54,7 @@ public class AuraCommand extends CommandKamkeelBase {
             PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
             if (!info.hasAuraUnlocked(aura.id)) {
                 info.addAura(aura);
-                playerdata.save();
+                info.updateClient();
                 sendResult(sender, String.format("%s §agiven to §7'§b%s§7'", aura.getName(), playerdata.playername));
                 if (sender != playerdata.player)
                     sendResult(playerdata.player, String.format("§Aura §7%s §aadded.", aura.getName()));
@@ -94,7 +94,7 @@ public class AuraCommand extends CommandKamkeelBase {
                     playerDBCInfo.selectedAura = -1;
                 if (playerDBCInfo.currentAura == aura.id)
                     playerDBCInfo.currentAura = -1;
-                playerdata.save();
+                playerDBCInfo.updateClient();
                 sendResult(sender, String.format("%s §cremoved from §7'§b%s§7'", aura.getName(), playerdata.playername));
                 if(sender != playerdata.player)
                     sendResult(playerdata.player, String.format("§cForm §7%s §cremoved.", aura.getName()));
@@ -122,7 +122,7 @@ public class AuraCommand extends CommandKamkeelBase {
             playerDBCInfo.unlockedAuras.clear();
             playerDBCInfo.currentAura = -1;
             playerDBCInfo.selectedAura = -1;
-            playerdata.save();
+            playerDBCInfo.updateClient();
             sendResult(sender, String.format("Removed all auras from §7'§b%s§7'", playerdata.playername));
             if(sender != playerdata.player)
                 sendResult(playerdata.player, String.format("All custom auras removed."));

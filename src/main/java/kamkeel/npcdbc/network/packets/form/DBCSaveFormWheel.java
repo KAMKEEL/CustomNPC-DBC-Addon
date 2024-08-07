@@ -42,7 +42,8 @@ public final class DBCSaveFormWheel extends AbstractPacket {
         int wheelSlot = in.readInt();
 
         PlayerDBCInfo data = PlayerDataUtil.getDBCInfo(player);
-        data.formWheel[wheelSlot].readFromNBT(ByteBufUtils.readNBT(in).getCompoundTag("FormWheel" + wheelSlot));
+        NBTTagCompound newSlot = ByteBufUtils.readNBT(in).getCompoundTag("FormWheel" + wheelSlot);
+        data.formWheel[wheelSlot].readFromNBT(newSlot);
         data.updateClient();
     }
 }

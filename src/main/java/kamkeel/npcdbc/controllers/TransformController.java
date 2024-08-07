@@ -282,7 +282,7 @@ public class TransformController {
             DBCData dbcData = DBCData.get(player);
 
 
-            Form parent = FormController.getInstance().customForms.get(form.getParentID());
+            Form parent = (Form) form.getParent();
             boolean intoParent = parent != null && formData.hasFormUnlocked(form.getParentID());
 
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;

@@ -3,12 +3,12 @@ package kamkeel.npcdbc.client;
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
 import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.JRMCoreKeyHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
-import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.client.gui.hud.HUDFormWheel;
 import kamkeel.npcdbc.client.shader.PostProcessing;
@@ -55,7 +55,7 @@ public class ClientEventHandler {
         if (event.phase == TickEvent.Phase.START) {
             Minecraft mc = Minecraft.getMinecraft();
             if (mc.currentScreen == null) {
-                if (KeyHandler.AscendKey.getIsKeyPressed()) {
+                if (JRMCoreKeyHandler.KiAscend.getIsKeyPressed()) {
                     performAscend();
                 } else {
                     TransformController.decrementRage();
@@ -77,25 +77,28 @@ public class ClientEventHandler {
 
     private void performAscend() {
         PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
-        if (formData != null && formData.hasSelectedForm()) {
-            Form form = formData.getSelectedForm();
+        Form selectedForm = formData.getSelectedForm();
+        Form currentForm = formData.getCurrentForm();
+
+
+        if (formData != null && selectedForm != null) {
             DBCData dbcData = DBCData.getClient();
             if (dbcData.stats.isFusionSpectator())
                 return;
-            float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ? 150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
+            float healthReq = (selectedForm.mastery.healthRequirement >= 100f || selectedForm.mastery.healthRequirement <= 0f) ? 150 : selectedForm.mastery.healthRequirement * selectedForm.mastery.calculateMulti("healthRequirement", formData.getFormLevel(selectedForm.id));
             if (dbcData.stats.getCurrentBodyPercentage() > healthReq)
                 return;
-            if (form.mastery.hasHeat() && dbcData.Pain > 0)
+            if (selectedForm.mastery.hasHeat() && dbcData.Pain > 0)
                 return;
 
-            if (formData.isInCustomForm() && (form = formData.getCurrentForm()).id == formData.selectedForm) {
-                if (form.hasChild() && formData.hasFormUnlocked(form.getChildID())) {
-                    IForm child = form.getChild();
-                    if (verifyFormTransform((Form) child))
-                        TransformController.Ascend((Form) child);
-                }
-            } else if (verifyFormTransform(formData.getSelectedForm()))
-                TransformController.Ascend(formData.getSelectedForm());
+
+            if (currentForm != null && currentForm.isChildOf(selectedForm)) {
+                Form child = (Form) currentForm.getChild();
+                if (child != null && formData.hasFormUnlocked(child.id) && verifyFormTransform(child))
+                    TransformController.Ascend(child);
+
+            } else if (verifyFormTransform(selectedForm))
+                TransformController.Ascend(selectedForm);
         }
     }
 
@@ -150,13 +153,13 @@ public class ClientEventHandler {
                     return;
                 }
 
-                if (KeyHandler.AscendKey.isPressed()) {
+                if (JRMCoreKeyHandler.KiAscend.isPressed()) {
                     DBCData dbcData = DBCData.getClient();
                     Form form = formData.getCurrentForm();
 
-                    if (formData.selectedForm == -1)
-                        Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.noFormSelected"));
-                    else if (formData.isInCustomForm()) {
+                    //   if (formData.selectedForm == -1)
+                    //       Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.noFormSelected"));
+                    if (formData.isInCustomForm()) {
                         if (TransformController.rage > 0 && TransformController.transformed) {
                             Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.cooldown"));
                             return;
