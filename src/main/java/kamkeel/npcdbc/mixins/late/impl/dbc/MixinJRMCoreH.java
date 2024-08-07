@@ -4,6 +4,7 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
@@ -15,6 +16,7 @@ import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -32,6 +34,7 @@ import net.minecraft.util.DamageSource;
 import noppes.npcs.util.ValueUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -44,6 +47,13 @@ import static kamkeel.npcdbc.util.DBCUtils.lastSetDamage;
 
 @Mixin(value = JRMCoreH.class, remap = false)
 public abstract class MixinJRMCoreH {
+
+    @Shadow
+    public static float[][] TransSaiStBnP;
+    @Shadow
+    public static float[][] TransNaStBnP;
+    @Shadow
+    public static float[][] TransMaStBnP;
     private static boolean calculatingKi;
 
     @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
@@ -91,46 +101,56 @@ public abstract class MixinJRMCoreH {
         int mysticLvl = powerType == 1 ? JRMCoreH.SklLvl(10, 1, Skls) : 0;
         int result = 0;
 
+        int state = form.stackable.vanillaStackable ? st : 0;
         boolean masteryCalc = JGConfigDBCFormMastery.FM_Enabled;
         JGConfigDBCFormMastery.FM_Enabled = masteryCalc && form.stackable.vanillaStackable;
 
+        float oldValue = -1f;
+
+        if(!form.stackable.vanillaStackable){
+            oldValue = replaceOldMulti(race, attribute);
+        }
         // @TODO: Add a Absorption / PowerPoint config in a form!!!!
-        if (form.stackable.vanillaStackable && race >= 0 && race <= 5) {
-            switch (race) {
-                case 0:
-                    result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, st, skillX, false, mysticLvl, isFused, false, powerType, false);
-                    break;
-                case 1:
-                    result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, st, skillX, false, mysticLvl, isFused, false, powerType, false);
-                    break;
-                case 2:
-                    result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, st, skillX, false, mysticLvl, isFused, false, powerType, false);
-                    break;
-                case 3:
-                    result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, st, skillX, false, mysticLvl, isFused, false, powerType, false);
-                    break;
-                case 4:
-                    result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, st, currRelease, arcRel, skillX, false, mysticLvl, isFused, false, powerType, false);
-                    break;
-                case 5:
-                    result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, st, skillX, false, mysticLvl, isFused, false, powerType, false, majinAbs);
-                    break;
-            }
+        switch (race) {
+            case 0:
+                result = JRMCoreH.getAttributeHuman(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
+                break;
+            case 1:
+                result = JRMCoreH.getAttributeSaiyan(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
+                break;
+            case 2:
+                result = JRMCoreH.getAttributeHalfSaiyan(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
+                break;
+            case 3:
+                result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
+                break;
+            case 4:
+                result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, state, currRelease, arcRel, skillX, false, mysticLvl, isFused, false, powerType, false);
+                break;
+            case 5:
+                result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false, majinAbs);
+                break;
+            default:
+                result = currAttributes[attribute];
+        }
+        if(!form.stackable.vanillaStackable && oldValue > 0){
+            resetOldMulti(race, attribute, oldValue);
+        }
 
-            // THIS FIXES RELYING ON BASE FORM (form id 0)!!!!!!
-            // Very important for races like Arcosian as their true base form is usually configured to be below 1.0 multi.
-        } else {
-            result = currAttributes[attribute];
 
-            if (race == 4) {
-                // @TODO: Apply PP
-            }
+        JGConfigDBCFormMastery.FM_Enabled = masteryCalc;
 
-            if (race == 5) {
-                // @TODO: Apply Majin Absorption
+        if (race == DBCRace.ARCOSIAN) {
+            if(powerType == 1 && currRelease >= 100 && arcRel > 0){
+                result = customNPC_DBC_Addon$calculateArcosianPowerPoint(result, dbcData, form, arcRel);
             }
         }
-        JGConfigDBCFormMastery.FM_Enabled = masteryCalc;
+
+        if (race == DBCRace.MAJIN) {
+            if(powerType == 1 && majinAbs.length() > 0 && JGConfigRaces.CONFIG_MAJIN_ENABLED && JGConfigRaces.CONFIG_MAJIN_ABSORPTION_ENABLED){
+                result = customNPC_DBC_Addon$calculateMajnAbsorption(result, dbcData, form, majinAbs);
+            }
+        }
 
         DBCData d = DBCData.get(player);
         float[] formMulti = form.getAllMulti();
@@ -203,6 +223,57 @@ public abstract class MixinJRMCoreH {
         info.setReturnValue(result);
 
 
+    }
+
+    private static float[][] getRightMultiArray(int race){
+        switch(race){
+            case 0:
+                return TransHmStBnP;
+            case 1:
+                return TransSaiStBnP;
+            case 2:
+                return TransHalfSaiStBnP;
+            case 3:
+                return TransNaStBnP;
+            case 4:
+                return TransFrStBnP;
+            case 5:
+                return TransMaStBnP;
+
+        }
+        return null;
+    }
+
+    private static void resetOldMulti(int race, int attribute, float oldValue) {
+        float[] array = getRightMultiArray(race)[0];
+        if(attribute < 0)
+            attribute = 0;
+        if(attribute >= array.length)
+            attribute = array.length - 1;
+
+        array[attribute] = oldValue;
+    }
+
+    private static float replaceOldMulti(int race, int attribute) {
+        float[] array = getRightMultiArray(race)[0];
+        if(attribute < 0)
+            attribute = 0;
+        if(attribute >= array.length)
+            attribute = array.length - 1;
+
+        float oldValue = array[attribute];
+        array[attribute] = 1;
+        return oldValue;
+    }
+
+    @Unique
+    private static int customNPC_DBC_Addon$calculateArcosianPowerPoint(int original, DBCData dbcData, Form form, int arcRel) {
+        return original;
+    }
+
+    @Unique
+    private static int customNPC_DBC_Addon$calculateMajnAbsorption(int original, DBCData dbcData, Form form, String majinAbs) {
+        return original;
     }
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;OverAtrLimit:Z"), remap = false, cancellable = true)

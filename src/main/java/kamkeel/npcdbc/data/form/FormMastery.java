@@ -45,7 +45,13 @@ public class FormMastery implements IFormMastery {
     public float tailCutChance = 100;
     public float tailCutChanceMultiFlat = 1.0f, tailCutChanceMultiPerLevel = -0.01f, tailCutChanceMultiMinOrMax = 0f;
 
+    public boolean powerPointEnabled;
+    public int powerPointCost = 0;
+    public float powerPointMultiNormal = 1, powerPointMultiBasedOnPoints = 0;
     public float powerPointCostMultiFlat = 1.0f, powerPointCostPerLevel = -0.01f, powerPointCostMinOrMax = 0f;
+
+    public boolean absorptionEnabled;
+    public float absorptionMulti = 1;
 
 
     public FormMastery(Form parent) {
@@ -641,12 +647,24 @@ public class FormMastery implements IFormMastery {
         tailCutChanceMultiPerLevel = tailCutChanceMulti.getFloat("perLevel");
         tailCutChanceMultiMinOrMax = tailCutChanceMulti.getFloat("minOrMax");
 
-        if(formMastery.hasKey("powerPointCostMulti")){
-            NBTTagCompound powerPointCostMulti = formMastery.getCompoundTag("powerPointCostMulti");
-            powerPointCostMultiFlat = powerPointCostMulti.getFloat("flat");
-            powerPointCostPerLevel = powerPointCostMulti.getFloat("perLevel");
-            powerPointCostPerLevel = powerPointCostMulti.getFloat("minOrMax");
+        if(formMastery.hasKey("racialBonuses")){
+            NBTTagCompound racialBonuses = formMastery.getCompoundTag("racialBonuses");
+
+            absorptionEnabled = racialBonuses.getBoolean("absorptionEnabled");
+            absorptionMulti = racialBonuses.getFloat("absorptionMulti");
+            powerPointEnabled = racialBonuses.getBoolean("powerPointEnabled");
+            powerPointMultiNormal = racialBonuses.getFloat("powerPointMultiNormal");
+            powerPointMultiBasedOnPoints = racialBonuses.getFloat("powerPointMultiBasedOnPoints");
+            powerPointCost = racialBonuses.getInteger("powerPointCost");
+
+            NBTTagCompound powerPointMastery = racialBonuses.getCompoundTag("powerPointMastery");
+            powerPointCostMultiFlat = powerPointMastery.getFloat("flat");
+            powerPointCostPerLevel = powerPointMastery.getFloat("perLevel");
+            powerPointCostPerLevel = powerPointMastery.getFloat("minOrMax");
+
+
         }
+
 
         NBTTagCompound update = formMastery.getCompoundTag("update");
         updateGain = update.getFloat("gain");
@@ -746,11 +764,22 @@ public class FormMastery implements IFormMastery {
         tailCutChanceMulti.setFloat("minOrMax", tailCutChanceMultiMinOrMax);
         formMastery.setTag("tailCutMulti", tailCutChanceMulti);
 
-        NBTTagCompound powerPointCostMulti = new NBTTagCompound();
-        powerPointCostMulti.setFloat("flat", powerPointCostMultiFlat);
-        powerPointCostMulti.setFloat("perlevel", powerPointCostPerLevel);
-        powerPointCostMulti.setFloat("minOrMax", powerPointCostMinOrMax);
-        formMastery.setTag("powerPointCostMulti", powerPointCostMulti);
+        NBTTagCompound racialBonuses = new NBTTagCompound();
+            racialBonuses.setBoolean("powerPointEnabled", powerPointEnabled);
+            racialBonuses.setInteger("powerPointCost", powerPointCost);
+            racialBonuses.setFloat("powerPointMultiNormal", powerPointMultiNormal);
+            racialBonuses.setFloat("powerPointMultiBasedOnPoints", powerPointMultiBasedOnPoints);
+            racialBonuses.setBoolean("absorptionEnabled", absorptionEnabled);
+            racialBonuses.setFloat("absorptionMulti", absorptionMulti);
+
+            NBTTagCompound powerPointMastery = new NBTTagCompound();
+                powerPointMastery.setFloat("flat", powerPointCostMultiFlat);
+                powerPointMastery.setFloat("perlevel", powerPointCostPerLevel);
+                powerPointMastery.setFloat("minOrMax", powerPointCostMinOrMax);
+            racialBonuses.setTag("powerPointMastery", powerPointMastery);
+
+        formMastery.setTag("racialBonuses", racialBonuses);
+
 
         NBTTagCompound update = new NBTTagCompound();
         update.setFloat("gain", updateGain);
@@ -792,5 +821,59 @@ public class FormMastery implements IFormMastery {
         if (parent != null)
             parent.save();
         return this;
+    }
+
+    @Override
+    public void setPowerPointCost(int cost) {
+        this.powerPointCost = cost;
+    }
+    @Override
+    public void setPowerPointMultiNormal(float multi) {
+        if(multi < 0)
+            multi = 0;
+        this.powerPointMultiNormal = multi;
+    }
+
+    @Override
+    public void setPowerPointMultiBasedOnPoints(float multi) {
+        if(multi < 0)
+            multi = 0;
+        this.powerPointMultiBasedOnPoints = multi;
+    }
+
+    @Override
+    public void setAbsorptionMulti(float multi) {
+        if(multi < 0)
+            multi = 0;
+        this.absorptionMulti = multi;
+    }
+
+    @Override
+    public int getPowerPointCost() {
+        return this.powerPointCost;
+    }
+
+    @Override
+    public float getPowerPointMultiNormal() {
+        return this.powerPointMultiNormal;
+    }
+
+    @Override
+    public float getPowerPointMultiBasedOnPoints() {
+        return this.powerPointMultiBasedOnPoints;
+    }
+
+    public float getAbsorptionMulti() {
+        return this.absorptionMulti;
+    }
+
+    @Override
+    public boolean isAbsorptionBoostEnabled() {
+        return this.absorptionEnabled;
+    }
+
+    @Override
+    public boolean isPowerPointBoostEnabled() {
+        return this.powerPointEnabled;
     }
 }

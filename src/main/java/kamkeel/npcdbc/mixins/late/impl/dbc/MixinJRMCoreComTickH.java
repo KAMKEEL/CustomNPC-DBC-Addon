@@ -73,10 +73,10 @@ public abstract class MixinJRMCoreComTickH {
         if(dbcData == null)
             return JRMCoreConfig.ArcosianPPGrowth;
         Form form = dbcData.getForm();
-        if(form == null || (!form.stackable.racialBonusesOn && form.stackable.vanillaStackable))
+        if(form == null || (!form.mastery.powerPointEnabled && form.stackable.vanillaStackable))
             return JRMCoreConfig.ArcosianPPGrowth;
 
-        if(form.stackable.powerPointCost < 0 || !form.stackable.vanillaStackable){
+        if(form.mastery.powerPointCost < 0 || !form.stackable.vanillaStackable){
             return customNPC_DBC_Addon$emptyPowerPointGrowthArray;
         }
         return JRMCoreConfig.ArcosianPPGrowth;
@@ -88,10 +88,10 @@ public abstract class MixinJRMCoreComTickH {
             return JRMCoreConfig.ArcosianPPCost;
 
         Form form = dbcData.getForm();
-        if(form == null || (!form.stackable.racialBonusesOn && form.stackable.vanillaStackable))
+        if(form == null || (!form.mastery.powerPointEnabled && form.stackable.vanillaStackable))
             return JRMCoreConfig.ArcosianPPCost;
 
-        if(form.stackable.powerPointCost > 0 || !form.stackable.vanillaStackable){
+        if(form.mastery.powerPointCost > 0 || !form.stackable.vanillaStackable){
 
             return customNPC_DBC_Addon$emptyPowerPointCostArray;
         }
@@ -108,14 +108,12 @@ public abstract class MixinJRMCoreComTickH {
         if(form == null)
             return;
 
-        FormStackable stackable = form.stackable;
-
-        if(!stackable.racialBonusesOn)
+        if(!form.mastery.powerPointEnabled)
             return;
 
-        if(stackable.powerPointCost > 0 && dbcData.Release >= 100){
+        if(form.mastery.powerPointCost > 0 && dbcData.Release >= 100){
             updatePowerPointCost(dbcData, form);
-        }else if(stackable.powerPointCost < 0 && dbcData.Release < 50){
+        }else if(form.mastery.powerPointCost < 0 && dbcData.Release < 50){
             updatePowerPointRegen(dbcData, form);
         }
 
@@ -125,7 +123,7 @@ public abstract class MixinJRMCoreComTickH {
         int racialSkill = JRMCoreH.SklLvlX(1, dbcData.RacialSkills) - 1;
         if(racialSkill < 0)
             racialSkill = 0;
-        int pointGain = (int) (form.stackable.powerPointCost * JRMCoreConfig.appm);
+        int pointGain = (int) (form.mastery.powerPointCost * JRMCoreConfig.appm);
 
         int newPowerPoints = dbcData.ArcReserve + pointGain;
         if(newPowerPoints > JRMCoreConfig.ArcosianPPMax[racialSkill])
@@ -136,7 +134,7 @@ public abstract class MixinJRMCoreComTickH {
 
     private void updatePowerPointCost(DBCData dbcData, Form form) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(dbcData.player);
-        float ppCost = form.stackable.powerPointCost;
+        float ppCost = form.mastery.powerPointCost;
         if(JGConfigDBCFormMastery.FM_Enabled && ppCost != 0){
             ppCost *= form.mastery.calculateMulti("ppcost", formData.getCurrentLevel());
         }

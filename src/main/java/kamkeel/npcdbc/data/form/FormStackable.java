@@ -25,10 +25,6 @@ public class FormStackable implements IFormStackable {
     public float[] kaiokenStrainedBalanceValue = new float[6];
     public boolean kaiokenMultipliesCurrentFormDrain;
 
-    public float powerPointMulti = 1.0f;
-    public int powerPointCost;
-    public float absorptionMulti = 1.0f;
-    public boolean racialBonusesOn;
 
     public FormStackable(Form parent) {
         this.parent = parent;
@@ -57,11 +53,6 @@ public class FormStackable implements IFormStackable {
         useLegendaryConfig = !stack.hasKey("useLegendaryConfig") ? true : stack.getBoolean("useLegendaryConfig");
         useDivineConfig = !stack.hasKey("useDivineConfig") ? true : stack.getBoolean("useDivineConfig");
         useMajinConfig = !stack.hasKey("useMajinConfig") ? true : stack.getBoolean("useMajinConfig");
-
-        racialBonusesOn = stack.getBoolean("racialBonusesOn");
-        powerPointCost = !stack.hasKey("powerPointCost") ? 100 : stack.getInteger("powerPointCost");
-        powerPointMulti = !stack.hasKey("powerPointMulti") ? 1f : stack.getInteger("powerPointMulti");
-        absorptionMulti = !stack.hasKey("absorptionMulti") ? 1f : stack.getInteger("absorptionMulti");
 
         legendaryID = !stack.hasKey("legendaryID") ? -1 : stack.getInteger("legendaryID");
         divineID = !stack.hasKey("divineID") ? -1 : stack.getInteger("divineID");
@@ -127,11 +118,6 @@ public class FormStackable implements IFormStackable {
         kaioDrainData.setTag("balanceStrained", kaioBalanceStrained);
         kaioDrainData.setBoolean("multipliesCurrentFormDrain", kaiokenMultipliesCurrentFormDrain);
         stack.setTag("kaiokenDrainData", kaioDrainData);
-
-        stack.setFloat("powerPointMulti", powerPointMulti);
-        stack.setInteger("powerPointCost", powerPointCost);
-        stack.setFloat("absorptionMulti", absorptionMulti);
-        stack.setBoolean("racialBonusesOn", racialBonusesOn);
 
         compound.setTag("stackableForms", stack);
         return compound;
@@ -391,59 +377,5 @@ public class FormStackable implements IFormStackable {
 
         float[] array = strained ? kaiokenStrainedBalanceValue : kaiokenBalanceValue;
         array[state2] = value;
-    }
-
-    @Override
-    public void setRacialBonusesOn(boolean racialBonusesOn) {
-        this.racialBonusesOn = racialBonusesOn;
-    }
-
-    @Override
-    public boolean getRacialBonusesOn() {
-        return this.racialBonusesOn;
-    }
-
-    @Override
-    public void setPowerPointCost(int cost) {
-        this.powerPointCost = cost;
-    }
-
-    @Override
-    public void setPowerPointMulti(float multi) {
-        if(multi < 0)
-            multi = 0;
-        this.powerPointMulti = multi;
-    }
-
-    @Override
-    public void setAbsorptionMulti(float multi) {
-        if(multi < 0)
-            multi = 0;
-        this.absorptionMulti = multi;
-    }
-
-    @Override
-    public int getPowerPointCost() {
-        return this.powerPointCost;
-    }
-
-    @Override
-    public float getPowerPointMulti() {
-        return this.powerPointMulti;
-    }
-
-    @Override
-    public float getAbsorptionMulti() {
-        return this.absorptionMulti;
-    }
-
-    @Override
-    public boolean isAbsorptionBoostEnabled() {
-        return this.absorptionMulti != 1;
-    }
-
-    @Override
-    public boolean isPowerPointBoostEnabled() {
-        return this.powerPointMulti != 1;
     }
 }

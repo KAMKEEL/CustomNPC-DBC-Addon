@@ -158,4 +158,17 @@ public interface IFormMastery {
      * @return IFormMastery self object
      */
     IFormMastery save();
+
+
+    void setPowerPointCost(int cost);
+    void setPowerPointMultiNormal(float multi);
+    void setPowerPointMultiBasedOnPoints(float multi);
+    void setAbsorptionMulti(float multi);
+    int getPowerPointCost();
+    float getPowerPointMultiNormal();
+    float getPowerPointMultiBasedOnPoints();
+    float getAbsorptionMulti();
+
+    boolean isAbsorptionBoostEnabled();
+    boolean isPowerPointBoostEnabled();
 }
