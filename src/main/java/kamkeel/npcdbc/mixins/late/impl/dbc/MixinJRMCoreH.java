@@ -64,6 +64,7 @@ public abstract class MixinJRMCoreH {
     @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
     private static void fix10xKiCost(String[] listOfAttacks, int playerStat, byte[] kiAttackStats, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 0) LocalIntRef stat) {
         calculatingKiAttackCost = true;
+        DBCUtils.calculatingKiDrain = true;
         EntityPlayer player = Utility.isServer() ? CommonProxy.CurrentJRMCTickPlayer : CustomNpcPlusDBC.proxy.getClientPlayer();
 
         DBCData data = DBCData.get(player);
@@ -80,6 +81,7 @@ public abstract class MixinJRMCoreH {
 
         stat.set(stat2);
         calculatingKiAttackCost = false;
+        DBCUtils.calculatingKiDrain = false;
 
 
     }
