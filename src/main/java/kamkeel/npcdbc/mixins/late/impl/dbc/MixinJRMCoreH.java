@@ -127,10 +127,10 @@ public abstract class MixinJRMCoreH {
                 result = JRMCoreH.getAttributeNamekian(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false);
                 break;
             case 4:
-                result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, state, currRelease, arcRel, skillX, false, mysticLvl, isFused, false, powerType, false);
+                result = JRMCoreH.getAttributeArcosian(player, currAttributes, attribute, state, currRelease, 0, skillX, false, mysticLvl, isFused, false, powerType, false);
                 break;
             case 5:
-                result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false, majinAbs);
+                result = JRMCoreH.getAttributeMajin(player, currAttributes, attribute, state, skillX, false, mysticLvl, isFused, false, powerType, false, "");
                 break;
             default:
                 result = currAttributes[attribute];
@@ -174,11 +174,11 @@ public abstract class MixinJRMCoreH {
 
         stackableMulti *= (float) fmvalue;
 
-        if(race == DBCRace.MAJIN){
+        if(race == DBCRace.MAJIN && absorptionMulti != 1){
             if (JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MULTIPLIES_BONUS_ATTRIBUTE_MULTIPLIERS) {
                 stackableMulti *= absorptionMulti;
             } else {
-                stackableMulti += absorptionMulti;
+                result = (int) (result * absorptionMulti);
             }
         }
 
