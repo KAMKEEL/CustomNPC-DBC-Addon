@@ -203,7 +203,7 @@ public class ConfigDBCEffects
                     legalValuesComment.append(legalValues[y]);
                 }
 
-                String[] formNames = config.getStringList(JRMCoreH.Races[i]+" - Divine affected forms", DIVINE_RACES, defaultDivineRaces[i], "Forms affected by divine multi.\nLegal values: "+legalValuesComment, legalValues);
+                String[] formNames = config.getStringList(JRMCoreH.Races[i]+" - Divine affected forms", DIVINE_RACES, defaultDivineRaces[i], "Forms affected by divine multi.\nLegal values: "+legalValuesComment+"\n", legalValues);
                 for(String name : formNames){
                     formsAffected.put(name, true);
                 }
