@@ -182,7 +182,8 @@ public class ConfigDBCEffects
                 {"SSGod", "SSB", "SSGodR", "SSBE"},
                 {"SSGod", "SSB", "SSGodR", "SSBE"},
                 {"God"},
-                {"Ultimate", "God"}
+                {"Ultimate", "God"},
+                {"Pure", "God"}
             };
             for(int i = 0; i < JRMCoreH.Races.length; i++){
                 HashMap<String, Boolean> formsAffected = new HashMap<>();
