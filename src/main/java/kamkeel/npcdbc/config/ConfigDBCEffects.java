@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.config;
 
+import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
@@ -73,6 +74,12 @@ public class ConfigDBCEffects
             return ClientCache.divineMulti;
     }
 
+    public static boolean canDivineBeApplied(int race, int state){
+
+        return true;
+    }
+
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -137,7 +144,7 @@ public class ConfigDBCEffects
 
 
             config.addCustomCategoryComment(DIVINE,
-                "Forms (only **custom** forms so far) can now benefit from an additional multi" +
+                "Forms can now benefit from an additional multi" +
                     "\n" +
                     "\nDivine is applied in a similar manner as Majin and Legendary" +
                     "\n" +
@@ -152,6 +159,14 @@ public class ConfigDBCEffects
             );
             divineMulti = (float) config.get(DIVINE, "Divine status effect multi", 1.0, "Put the boost in multiplier form. 1.0 is no boost, 1.15 = 15% boost").getDouble(1.0);
 
+            for(int i = 0; i < JRMCoreH.Races.length; i++){
+//                HashMap<String, Boolean> formsAffected = new HashMap<>();
+//                String[] formNames = config.getStringList(JRMCoreH.Races[i]+" - Divine affected forms", DIVINE, JRMCoreH.trans[i], "Forms affected by divine multi:", JRMCoreH.trans[i]);
+//                for(String name : formNames){
+//                    formsAffected.put(name, true);
+//                }
+//                divineApplicableForms.put(i, formsAffected);
+            }
         }
         catch (Exception e)
         {

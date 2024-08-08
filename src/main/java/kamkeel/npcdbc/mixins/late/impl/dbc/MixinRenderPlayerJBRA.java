@@ -536,6 +536,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             return JRMCoreHDBC.getPlayerColor2(t, d, p, r, s, v, y, ui, gd);
 
         PlayerDBCInfo playerInfo = PlayerDataUtil.getDBCInfo((EntityPlayer) entity);
+        DBCData dbcData = DBCData.get((EntityPlayer) entity);
         if(playerInfo.isInCustomForm()){
             FormDisplay formDisplay = playerInfo.getCurrentForm().display;
             if(formDisplay.auraColor != -1){
@@ -549,7 +550,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
         if(playerInfo.isInCustomAura()){
             AuraDisplay auraDisplay = playerInfo.getCurrentAura().display;
-            if(auraDisplay.overrideDBCAura && auraDisplay.color1 != -1)
+            boolean overrideDBC = auraDisplay.overrideDBCAura || (dbcData.getRace() == 4 ? dbcData.State <= 4 : dbcData.State == 0);
+            if(overrideDBC && auraDisplay.color1 != -1)
                 return auraDisplay.color1;
         }
 

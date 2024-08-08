@@ -30,14 +30,17 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.util.ValueUtil;
+import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
@@ -54,7 +57,11 @@ public abstract class MixinJRMCoreH {
     public static float[][] TransNaStBnP;
     @Shadow
     public static float[][] TransMaStBnP;
+    @Unique
     private static boolean calculatingKi;
+
+    @Unique
+    private static int currentResult;
 
     @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
     private static void fix10xKiCost(String[] listOfAttacks, int playerStat, byte[] kiAttackStats, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 0) LocalIntRef stat) {
@@ -76,6 +83,22 @@ public abstract class MixinJRMCoreH {
         stat.set(stat2);
         calculatingKi = false;
 
+
+    }
+
+    @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at=@At(value = "FIELD", opcode = Opcodes.GETSTATIC, target="LJinRyuu/JRMCore/JRMCoreH;TransKaiDmg:[F", ordinal = 1, shift = At.Shift.BEFORE))
+    private static void applyDivineToNormalFormsPre(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> cir, @Local(name = "result") int result){
+        if(attribute == 0 || attribute == 1 || attribute == 3){
+            currentResult = result;
+        }
+    }
+    @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at=@At("RETURN"), cancellable = true)
+    private static void applyDivineToNormalFormsPost(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> cir){
+        if(attribute == 0 || attribute == 1 || attribute == 3){
+            if(currentResult != 0 && DBCData.get(player).isForm(DBCForm.Divine) && ConfigDBCEffects.canDivineBeApplied(race, st))
+                cir.setReturnValue((int) (cir.getReturnValue() + (currentResult * (ConfigDBCEffects.getDivineMulti() - 1))));
+            currentResult = 0;
+        }
 
     }
 
