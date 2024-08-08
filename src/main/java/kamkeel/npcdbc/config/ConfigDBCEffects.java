@@ -10,7 +10,10 @@ import noppes.npcs.util.ValueUtil;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class ConfigDBCEffects
 {
@@ -83,16 +86,14 @@ public class ConfigDBCEffects
         return ClientCache.divineApplicableForms;
     }
 
-    public static boolean canDivineBeApplied(int race, int state){
+    public static boolean canDivineBeApplied(int race, String formName){
         HashMap<Integer, HashMap<String, Boolean>> raceMap = getDivineApplicableForms();
         HashMap<String, Boolean> formMap = raceMap.get(race);
         if(formMap == null || formMap.isEmpty())
             return false;
         if(race >= JRMCoreH.trans.length)
             return false;
-        if(state >= JRMCoreH.trans[race].length)
-            return false;
-        return formMap.getOrDefault(JRMCoreH.trans[race][state], false);
+        return formMap.getOrDefault(formName, false);
     }
 
 
@@ -185,13 +186,23 @@ public class ConfigDBCEffects
             };
             for(int i = 0; i < JRMCoreH.Races.length; i++){
                 HashMap<String, Boolean> formsAffected = new HashMap<>();
-                String legalValues = "";
-                for(int y = 0; y < JRMCoreH.trans[i].length; y++){
-                    if(y != 0)
-                        legalValues += ",";
-                    legalValues += JRMCoreH.trans[i][y];
+
+                List<String> result = new ArrayList(JRMCoreH.trans[i].length + JRMCoreH.transNonRacial.length-1);
+                Collections.addAll(result, JRMCoreH.trans[i]);
+                // Skip adding Kaioken.
+                for(int x = 1; x < JRMCoreH.transNonRacial.length; x++){
+                    result.add(JRMCoreH.transNonRacial[x]);
                 }
-                String[] formNames = config.getStringList(JRMCoreH.Races[i]+" - Divine affected forms", DIVINE_RACES, defaultDivineRaces[i], "Forms affected by divine multi.\nLegal values: "+legalValues, JRMCoreH.trans[i]);
+                String[] legalValues = result.toArray(new String[0]);
+
+                StringBuilder legalValuesComment = new StringBuilder();
+                for(int y = 0; y < legalValues.length; y++){
+                    if(y != 0)
+                        legalValuesComment.append(",");
+                    legalValuesComment.append(legalValues[y]);
+                }
+
+                String[] formNames = config.getStringList(JRMCoreH.Races[i]+" - Divine affected forms", DIVINE_RACES, defaultDivineRaces[i], "Forms affected by divine multi.\nLegal values: "+legalValuesComment, legalValues);
                 for(String name : formNames){
                     formsAffected.put(name, true);
                 }
