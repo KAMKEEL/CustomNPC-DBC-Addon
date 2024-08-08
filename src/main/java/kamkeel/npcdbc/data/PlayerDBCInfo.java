@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data;
 
+import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -130,11 +131,16 @@ public class PlayerDBCInfo {
     }
 
     public void clearAllForms() {
+        resetFormData(true, true);
+    }
+    public void resetFormData(boolean removeForms, boolean removeMasteries) {
         TransformController.handleFormDescend(parent.player, -10);
         currentForm = -1;
         selectedForm = -1;
-        unlockedForms.clear();
-        formLevels.clear();
+        if(removeForms)
+            unlockedForms.clear();
+        if(removeMasteries)
+            formLevels.clear();
 
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i].reset();
@@ -319,8 +325,13 @@ public class PlayerDBCInfo {
     ///////////////////////////////////////////
     // Data handler
     public void resetChar() {
-        clearAllForms();
-        clearAllAuras();
+        resetChar(ConfigDBCGeneral.FORMS_CLEAR_ON_RESET, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_RESET);
+    }
+
+    public void resetChar(boolean removeForms, boolean removeMasteries) {
+        resetFormData(removeForms, removeMasteries);
+        if(ConfigDBCGeneral.AURAS_CLEAR_ON_RESET)
+            clearAllAuras();
 
         StatusEffectController.getInstance().clearEffects(parent.player);
         BonusController.getInstance().clearBonuses(parent.player);

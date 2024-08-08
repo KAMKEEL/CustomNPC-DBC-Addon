@@ -176,7 +176,7 @@ public abstract class MixinJRMCoreH {
 
         if(race == DBCRace.MAJIN){
             if (JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MULTIPLIES_BONUS_ATTRIBUTE_MULTIPLIERS) {
-                stackableMulti *= 1.0f + absorptionMulti;
+                stackableMulti *= absorptionMulti;
             } else {
                 stackableMulti += absorptionMulti;
             }
@@ -284,7 +284,7 @@ public abstract class MixinJRMCoreH {
 
     @Unique
     private static float customNPC_DBC_Addon$calculateMajnAbsorption(Form form, String majinAbs) {
-        return form.mastery.absorptionMulti * (float)getMajinAbsorptionValueS(majinAbs);
+        return form.mastery.absorptionMulti * ((float)getMajinAbsorptionValueS(majinAbs) / JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL);
     }
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;OverAtrLimit:Z"), remap = false, cancellable = true)
@@ -334,7 +334,7 @@ public abstract class MixinJRMCoreH {
     //delete all player CF data on jrmc startnew
     @Inject(method = "resetChar(Lnet/minecraft/entity/player/EntityPlayer;ZZZF)V", at = @At("TAIL"))
     private static void resetChar(EntityPlayer p, boolean keepSkills, boolean keepTechs, boolean keepMasteries, float perc, CallbackInfo ci) {
-        PlayerDataUtil.getDBCInfo(p).resetChar();
+        PlayerDataUtil.getDBCInfo(p).resetChar(!keepSkills, !keepMasteries);
         if (!keepMasteries) {
             NBTTagCompound PlayerPersisted = nbt(p);
             for (int i = 0; i < Races.length; i++)
