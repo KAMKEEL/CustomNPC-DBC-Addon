@@ -176,6 +176,13 @@ public class ConfigDBCEffects
 
             divineMulti = (float) config.get(DIVINE, "Divine status effect multi", 1.0, "Put the boost in multiplier form. 1.0 is no boost, 1.15 = 15% boost").getDouble(1.0);
 
+            String[][] defaultDivineRaces = new String[][]{
+                {"God"},
+                {"SSGod", "SSB", "SSGodR", "SSBE"},
+                {"SSGod", "SSB", "SSGodR", "SSBE"},
+                {"God"},
+                {"Ultimate", "God"}
+            };
             for(int i = 0; i < JRMCoreH.Races.length; i++){
                 HashMap<String, Boolean> formsAffected = new HashMap<>();
                 String legalValues = "";
@@ -184,7 +191,7 @@ public class ConfigDBCEffects
                         legalValues += ",";
                     legalValues += JRMCoreH.trans[i][y];
                 }
-                String[] formNames = config.getStringList(JRMCoreH.Races[i]+" - Divine affected forms", DIVINE_RACES, new String[0], "Forms affected by divine multi.\nLegal values: "+legalValues, JRMCoreH.trans[i]);
+                String[] formNames = config.getStringList(JRMCoreH.Races[i]+" - Divine affected forms", DIVINE_RACES, defaultDivineRaces[i], "Forms affected by divine multi.\nLegal values: "+legalValues, JRMCoreH.trans[i]);
                 for(String name : formNames){
                     formsAffected.put(name, true);
                 }
