@@ -10,6 +10,7 @@ import noppes.npcs.util.ValueUtil;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.util.HashMap;
 
 public class ConfigDBCEffects
 {
@@ -60,7 +61,9 @@ public class ConfigDBCEffects
     public static boolean EXHAUST_OVERPOWER = true;
 
     public final static String DIVINE = "DIVINE";
+    public final static String DIVINE_RACES = "DIVINE RACES";
     private static float divineMulti = 1;
+    private static final HashMap<Integer, HashMap<String, Boolean>> divineApplicableForms = new HashMap<>();
 
     /**
      * Ugly, roundabout way of persisting configs between multiplayer and singleplayer.
@@ -74,9 +77,22 @@ public class ConfigDBCEffects
             return ClientCache.divineMulti;
     }
 
-    public static boolean canDivineBeApplied(int race, int state){
+    public static HashMap<Integer, HashMap<String, Boolean>> getDivineApplicableForms(){
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+            return divineApplicableForms;
+        return ClientCache.divineApplicableForms;
+    }
 
-        return true;
+    public static boolean canDivineBeApplied(int race, int state){
+        HashMap<Integer, HashMap<String, Boolean>> raceMap = getDivineApplicableForms();
+        HashMap<String, Boolean> formMap = raceMap.get(race);
+        if(formMap == null || formMap.isEmpty())
+            return false;
+        if(race >= JRMCoreH.trans.length)
+            return false;
+        if(state >= JRMCoreH.trans[race].length)
+            return false;
+        return formMap.getOrDefault(JRMCoreH.trans[race][state], false);
     }
 
 
@@ -157,15 +173,22 @@ public class ConfigDBCEffects
                     "\n - kaiokenMulti is the multi gained from kaioken. If you're not in kaioken, the multi is 1.0"
 
             );
+
             divineMulti = (float) config.get(DIVINE, "Divine status effect multi", 1.0, "Put the boost in multiplier form. 1.0 is no boost, 1.15 = 15% boost").getDouble(1.0);
 
             for(int i = 0; i < JRMCoreH.Races.length; i++){
-//                HashMap<String, Boolean> formsAffected = new HashMap<>();
-//                String[] formNames = config.getStringList(JRMCoreH.Races[i]+" - Divine affected forms", DIVINE, JRMCoreH.trans[i], "Forms affected by divine multi:", JRMCoreH.trans[i]);
-//                for(String name : formNames){
-//                    formsAffected.put(name, true);
-//                }
-//                divineApplicableForms.put(i, formsAffected);
+                HashMap<String, Boolean> formsAffected = new HashMap<>();
+                String legalValues = "";
+                for(int y = 0; y < JRMCoreH.trans[i].length; y++){
+                    if(y != 0)
+                        legalValues += ",";
+                    legalValues += JRMCoreH.trans[i][y];
+                }
+                String[] formNames = config.getStringList(JRMCoreH.Races[i]+" - Divine affected forms", DIVINE_RACES, new String[0], "Forms affected by divine multi.\nLegal values: "+legalValues, JRMCoreH.trans[i]);
+                for(String name : formNames){
+                    formsAffected.put(name, true);
+                }
+                divineApplicableForms.put(i, formsAffected);
             }
         }
         catch (Exception e)
