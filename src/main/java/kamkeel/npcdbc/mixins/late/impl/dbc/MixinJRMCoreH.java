@@ -30,7 +30,6 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.util.ValueUtil;
 import org.spongepowered.asm.lib.Opcodes;
@@ -40,7 +39,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
@@ -58,14 +56,14 @@ public abstract class MixinJRMCoreH {
     @Shadow
     public static float[][] TransMaStBnP;
     @Unique
-    private static boolean calculatingKi;
+    private static boolean calculatingKiAttackCost;
 
     @Unique
     private static int currentResult;
 
     @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
     private static void fix10xKiCost(String[] listOfAttacks, int playerStat, byte[] kiAttackStats, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 0) LocalIntRef stat) {
-        calculatingKi = true;
+        calculatingKiAttackCost = true;
         EntityPlayer player = Utility.isServer() ? CommonProxy.CurrentJRMCTickPlayer : CustomNpcPlusDBC.proxy.getClientPlayer();
 
         DBCData data = DBCData.get(player);
@@ -81,7 +79,7 @@ public abstract class MixinJRMCoreH {
         int stat2 = JRMCoreH.stat(player, 3, data.Powertype, 4, wil, data.Race, data.Class, 0.0F);
 
         stat.set(stat2);
-        calculatingKi = false;
+        calculatingKiAttackCost = false;
 
 
     }
@@ -110,7 +108,7 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onGetPlayerAttribute(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info) {
-        if (calculatingKi)
+        if (calculatingKiAttackCost)
             return;
 
         if (player == null)
@@ -216,7 +214,7 @@ public abstract class MixinJRMCoreH {
             statusMulti += form.stackable.useConfigMulti(DBCForm.Majin) ? JRMCoreConfig.mjn * 0.01F : form.stackable.majinStrength - 1;
         if (legendOn)
             statusMulti += form.stackable.useConfigMulti(DBCForm.Legendary) ? JRMCoreConfig.lgnd * 0.01F : form.stackable.legendaryStrength - 1;
-        if (d.isForm(DBCForm.Divine))
+        if (d.isForm(DBCForm.Divine) && !DBCUtils.calculatingKiDrain)
             statusMulti += (form.stackable.useConfigMulti(DBCForm.Divine) ? ConfigDBCEffects.getDivineMulti() : form.stackable.divineStrength) - 1;
 
 
