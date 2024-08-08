@@ -542,7 +542,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 return formDisplay.auraColor;
             }
             if(formDisplay.getAura() != null){
-                return ((AuraDisplay) formDisplay.getAura().getDisplay()).color1;
+                AuraDisplay formAuraDisplay = ((AuraDisplay) formDisplay.getAura().getDisplay());
+                if(formAuraDisplay.overrideDBCAura && formAuraDisplay.color1 != -1)
+                    return formAuraDisplay.color1;
             }
         }
         if(playerInfo.isInCustomAura()){
