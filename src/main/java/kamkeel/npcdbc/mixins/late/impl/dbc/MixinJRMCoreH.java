@@ -554,5 +554,65 @@ public abstract class MixinJRMCoreH {
 
     }
 
+    @Inject(method = "getKiRegenArcosian", at = @At("HEAD"))
+    private static void fixDivineDrainPreArcosian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+        DBCUtils.calculatingKiDrain = true;
+    }
+
+    @Inject(method = "getKiRegenArcosian", at = @At("RETURN"))
+    private static void fixDivineDrainPostArcosian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+        DBCUtils.calculatingKiDrain = false;
+    }
+    @Inject(method = "getKiRegenHalfSaiyan", at = @At("HEAD"))
+    private static void fixDivineDrainPreHalfSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+        DBCUtils.calculatingKiDrain = true;
+    }
+
+    @Inject(method = "getKiRegenHalfSaiyan", at = @At("RETURN"))
+    private static void fixDivineDrainPostHalfSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+        DBCUtils.calculatingKiDrain = false;
+    }
+    @Inject(method = "getKiRegenSaiyan", at = @At("HEAD"))
+    private static void fixDivineDrainPreSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+        DBCUtils.calculatingKiDrain = true;
+    }
+
+    @Inject(method = "getKiRegenSaiyan", at = @At("RETURN"))
+    private static void fixDivineDrainPostSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+        DBCUtils.calculatingKiDrain = false;
+    }
+    @Inject(method = "getKiRegenHuman", at = @At("HEAD"))
+    private static void fixDivineDrainPreHuman(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+        DBCUtils.calculatingKiDrain = true;
+    }
+
+    @Inject(method = "getKiRegenHuman", at = @At("RETURN"))
+    private static void fixDivineDrainPostHuman(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+        DBCUtils.calculatingKiDrain = false;
+    }
+
+    @Inject(method = "getKiRegenNamekian", at = @At("HEAD"))
+    private static void fixDivineDrainPreNamekian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+        DBCUtils.calculatingKiDrain = true;
+    }
+
+    @Inject(method = "getKiRegenNamekian", at = @At("RETURN"))
+    private static void fixDivineDrainPostNamekian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+        DBCUtils.calculatingKiDrain = false;
+    }
+
+    @Inject(method = "getKiRegenMajin", at = @At("HEAD"))
+    private static void fixDivineDrainPreMajin(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+        DBCUtils.calculatingKiDrain = true;
+    }
+
+    @Inject(method = "getKiRegenMajin", at = @At("RETURN"))
+    private static void fixDivineDrainPostMajin(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+        DBCUtils.calculatingKiDrain = false;
+    }
+
+
+
+
 }
 
