@@ -92,11 +92,14 @@ public abstract class MixinJRMCoreH {
             currentResult = result;
         }
     }
+
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at=@At("RETURN"), cancellable = true)
     private static void applyDivineToNormalFormsPost(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> cir){
         if(attribute == 0 || attribute == 1 || attribute == 3){
-            if(currentResult != 0 && DBCData.get(player).isForm(DBCForm.Divine) && ConfigDBCEffects.canDivineBeApplied(race, getCurrentFormName(race, st, st2, false, mysticOn, uiOn, GoDOn)))
-                cir.setReturnValue((int) (cir.getReturnValue() + (currentResult * (ConfigDBCEffects.getDivineMulti() - 1))));
+            if(!DBCData.get(player).isForm(DBCForm.Divine))
+                return;
+            if(ConfigDBCEffects.canDivineBeApplied(race, getCurrentFormName(race, st, st2, false, mysticOn, uiOn, GoDOn)))
+                cir.setReturnValue((int) (cir.getReturnValue() + ((uiOn ? cir.getReturnValue() : currentResult) * (ConfigDBCEffects.getDivineMulti() - 1))));
             currentResult = 0;
         }
 
