@@ -20,242 +20,256 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
+/**
+ * TODO: CLEAN UP OLD OPTIFINE "SUPPORT"
+ */
 public final class ShaderHelper {
 
-	private static final int VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB;
-	private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;
-	private static List<Integer> programs = new ArrayList<>();
+    private static final int VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB;
+    private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;
+    private static List<Integer> programs = new ArrayList<>();
     public static Class Shaders;
     public static boolean optifineShadersLoaded;
     public static int currentProgram, currentOptifineProgram;
+
+    private static int lastUsedProgram = 0;
+    public static boolean usingDBCShader = false;
+
     public static int defaultTexture = 0;
 
-	public static int pylonGlow = 0;
-	public static int enchanterRune = 0;
-	public static int manaPool = 0;
-	public static int doppleganger = 0;
-	public static int halo = 0;
-	public static int dopplegangerBar = 0;
-	public static int terraPlateRune = 0;
-	public static int filmGrain = 0;
-	public static int gold = 0;
-	public static int categoryButton = 0;
+    public static int pylonGlow = 0;
+    public static int enchanterRune = 0;
+    public static int manaPool = 0;
+    public static int doppleganger = 0;
+    public static int halo = 0;
+    public static int dopplegangerBar = 0;
+    public static int terraPlateRune = 0;
+    public static int filmGrain = 0;
+    public static int gold = 0;
+    public static int categoryButton = 0;
 
-	public static int aura = 0;
-	public static int outline = 0;
-	public static int perlinNoise = 0;
+    public static int aura = 0;
+    public static int outline = 0;
+    public static int perlinNoise = 0;
     public static int blur = 0;
     public static int additiveCombine = 0;
     public static int downsample13 = 0;
     public static int upsampleTent = 0;
-	public static int modern;
+    public static int modern;
 
 
     public static void loadShaders(boolean reload) {
-		if (!useShaders())
-			return;
+        if (!useShaders())
+            return;
 
-		if (reload)
-			deleteShaders();
+        if (reload)
+            deleteShaders();
         defaultTexture = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.DEFAULT_TEXTURE_FRAG);
 
-		pylonGlow = createProgram(null, ShaderResources.PYLON_GLOW_FRAG);
-		enchanterRune = createProgram(null, ShaderResources.ENCHANTER_RUNE_FRAG);
-		manaPool = createProgram(null, ShaderResources.MANA_POOL_FRAG);
-		doppleganger = createProgram(ShaderResources.DOPLLEGANGER_VERT, ShaderResources.DOPLLEGANGER_FRAG);
-		halo = createProgram(null, ShaderResources.HALO_FRAG);
-		dopplegangerBar = createProgram(null, ShaderResources.DOPLLEGANGER_BAR_FRAG);
-		terraPlateRune = createProgram(null, ShaderResources.TERRA_PLATE_RUNE_FRAG);
-		filmGrain = createProgram(null, ShaderResources.FILM_GRAIN_FRAG);
-		gold = createProgram(null, ShaderResources.GOLD_FRAG);
-		categoryButton = createProgram(null, ShaderResources.CATEGORY_BUTTON_FRAG);
+        pylonGlow = createProgram(null, ShaderResources.PYLON_GLOW_FRAG);
+        enchanterRune = createProgram(null, ShaderResources.ENCHANTER_RUNE_FRAG);
+        manaPool = createProgram(null, ShaderResources.MANA_POOL_FRAG);
+        doppleganger = createProgram(ShaderResources.DOPLLEGANGER_VERT, ShaderResources.DOPLLEGANGER_FRAG);
+        halo = createProgram(null, ShaderResources.HALO_FRAG);
+        dopplegangerBar = createProgram(null, ShaderResources.DOPLLEGANGER_BAR_FRAG);
+        terraPlateRune = createProgram(null, ShaderResources.TERRA_PLATE_RUNE_FRAG);
+        filmGrain = createProgram(null, ShaderResources.FILM_GRAIN_FRAG);
+        gold = createProgram(null, ShaderResources.GOLD_FRAG);
+        categoryButton = createProgram(null, ShaderResources.CATEGORY_BUTTON_FRAG);
 
-		aura = createProgram(ShaderResources.AURA_VERT, ShaderResources.AURA_FRAG);
-		outline = createProgram(ShaderResources.OUTLINE_VERT, ShaderResources.OUTLINE_FRAG);
-		perlinNoise = createProgram(ShaderResources.PERLIN_VERT, ShaderResources.PERLIN_FRAG);
+        aura = createProgram(ShaderResources.AURA_VERT, ShaderResources.AURA_FRAG);
+        outline = createProgram(ShaderResources.OUTLINE_VERT, ShaderResources.OUTLINE_FRAG);
+        perlinNoise = createProgram(ShaderResources.PERLIN_VERT, ShaderResources.PERLIN_FRAG);
 
-		blur = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.BLUR_FRAG);
+        blur = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.BLUR_FRAG);
         additiveCombine = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.ADDITIVE_COMBINE_FRAG);
         downsample13 = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.DOWNSAMPLE_13TAP_FRAG);
         upsampleTent = createProgram(ShaderResources.DEFAULT_VERT, ShaderResources.UPSAMPLE_FILTER);
         modern = createProgram(ShaderResources.MODERN_DEFAULT_VERT, ShaderResources.MODERN_DEFAULT_TEXTURE_FRAG);
-	}
+    }
 
 
-	public static void useShader(int shader, IShaderUniform uniforms) {
-		if (!useShaders())
-			return;
-		//binds shader
-		ARBShaderObjects.glUseProgramObjectARB(currentProgram = shader);
+    public static void useShader(int shader, IShaderUniform uniforms) {
+        if (!useShaders())
+            return;
 
-		if (shader != 0) { //loads all uniforms
-			uniform1f("time", ClientProxy.getTimeSinceStart());
-			uniformVec2("u_resolution", Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+        if(!usingDBCShader) {
+            lastUsedProgram = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
+            usingDBCShader = true;
+        }
+        //binds shader
+        ARBShaderObjects.glUseProgramObjectARB(currentProgram = shader);
+
+        if (shader != 0) { //loads all uniforms
+            uniform1f("time", ClientProxy.getTimeSinceStart());
+            uniformVec2("u_resolution", Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
 
             if (uniforms != null)
                 loadUniforms(uniforms);
-		}
-	}
+        }
+    }
 
     public static void loadUniforms(IShaderUniform uniforms) {
         uniforms.load();
-	}
+    }
 
-	public static void useShader(int shader) {
-		useShader(shader, null);
-	}
+    public static void useShader(int shader) {
+        useShader(shader, null);
+    }
 
-	public static void releaseShader() {
+    public static void releaseShader() {
 
-        if (currentOptifineProgram != 0)
-            bindOptifineShader();
-        else
-            useShader(0);
-	}
+        useShader(lastUsedProgram);
+        usingDBCShader = false;
+//        if (currentOptifineProgram != 0)
+//            bindOptifineShader();
+//        else
+//            useShader(0);
+    }
 
-	public static boolean useShaders() {
+    public static boolean useShaders() {
         return ConfigDBCClient.EnableShaders && OpenGlHelper.shadersSupported;
-	}
+    }
 
-	// Most of the code taken from the LWJGL wiki
-	// http://lwjgl.org/wiki/index.php?title=GLSL_Shaders_with_LWJGL
+    // Most of the code taken from the LWJGL wiki
+    // http://lwjgl.org/wiki/index.php?title=GLSL_Shaders_with_LWJGL
 
-	private static int createProgram(String vert, String frag) {
-		int vertexShader = 0, fragmentShader = 0, program = 0;
-		if (vert != null)
-			vertexShader = createShader(vert, VERT);
-		if (frag != null)
-			fragmentShader = createShader(frag, FRAG);
+    private static int createProgram(String vert, String frag) {
+        int vertexShader = 0, fragmentShader = 0, program = 0;
+        if (vert != null)
+            vertexShader = createShader(vert, VERT);
+        if (frag != null)
+            fragmentShader = createShader(frag, FRAG);
 
-		program = currentProgram = ARBShaderObjects.glCreateProgramObjectARB();
-		if (program == 0)
-			return 0;
+        program = currentProgram = ARBShaderObjects.glCreateProgramObjectARB();
+        if (program == 0)
+            return 0;
 
-		if (vert != null)
-			ARBShaderObjects.glAttachObjectARB(program, vertexShader);
-		if (frag != null)
-			ARBShaderObjects.glAttachObjectARB(program, fragmentShader);
+        if (vert != null)
+            ARBShaderObjects.glAttachObjectARB(program, vertexShader);
+        if (frag != null)
+            ARBShaderObjects.glAttachObjectARB(program, fragmentShader);
 
-		ARBShaderObjects.glLinkProgramARB(program);
-		if (ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB) == GL11.GL_FALSE) {
+        ARBShaderObjects.glLinkProgramARB(program);
+        if (ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB) == GL11.GL_FALSE) {
             CommonProxy.LOGGER.error(getLogInfo(program));
-			return 0;
-		}
+            return 0;
+        }
 
-		ARBShaderObjects.glValidateProgramARB(program);
-		if (ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL11.GL_FALSE) {
+        ARBShaderObjects.glValidateProgramARB(program);
+        if (ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL11.GL_FALSE) {
             CommonProxy.LOGGER.error(getLogInfo(program));
-			return 0;
-		}
+            return 0;
+        }
 
-		ARBShaderObjects.glDeleteObjectARB(vertexShader);
-		ARBShaderObjects.glDeleteObjectARB(fragmentShader);
+        ARBShaderObjects.glDeleteObjectARB(vertexShader);
+        ARBShaderObjects.glDeleteObjectARB(fragmentShader);
 
 
-		bindAttribute(0, "vertexPosition");
-		bindAttribute(1, "colors");
-		bindAttribute(2, "texCoords");
+        bindAttribute(0, "vertexPosition");
+        bindAttribute(1, "colors");
+        bindAttribute(2, "texCoords");
 
-		programs.add(program);
-		return program;
-	}
+        programs.add(program);
+        return program;
+    }
 
-	public static void bindAttribute(int attribute, String variableName) {
-		GL20.glBindAttribLocation(currentProgram, attribute, variableName);
-	}
-	private static int createShader(String filename, int shaderType) {
-		int shader = 0;
-		try {
-			shader = ARBShaderObjects.glCreateShaderObjectARB(shaderType);
+    public static void bindAttribute(int attribute, String variableName) {
+        GL20.glBindAttribLocation(currentProgram, attribute, variableName);
+    }
+    private static int createShader(String filename, int shaderType) {
+        int shader = 0;
+        try {
+            shader = ARBShaderObjects.glCreateShaderObjectARB(shaderType);
 
-			if (shader == 0)
-				return 0;
+            if (shader == 0)
+                return 0;
 
-			ARBShaderObjects.glShaderSourceARB(shader, readFile(filename));
-			ARBShaderObjects.glCompileShaderARB(shader);
+            ARBShaderObjects.glShaderSourceARB(shader, readFile(filename));
+            ARBShaderObjects.glCompileShaderARB(shader);
 
-			if (ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL11.GL_FALSE)
+            if (ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL11.GL_FALSE)
                 CommonProxy.LOGGER.error("Error creating shader " + filename + ": " + getLogInfo(shader));
 
-			return shader;
-		} catch (Exception e) {
-			ARBShaderObjects.glDeleteObjectARB(shader);
-			e.printStackTrace();
-			return -1;
-		}
-	}
+            return shader;
+        } catch (Exception e) {
+            ARBShaderObjects.glDeleteObjectARB(shader);
+            e.printStackTrace();
+            return -1;
+        }
+    }
 
-	public static String getLogInfo(int obj) {
-		return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects.glGetObjectParameteriARB(obj, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
-	}
+    public static String getLogInfo(int obj) {
+        return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects.glGetObjectParameteriARB(obj, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
+    }
 
-	private static String readFile(String filename) throws Exception {
-		StringBuilder source = new StringBuilder();
+    private static String readFile(String filename) throws Exception {
+        StringBuilder source = new StringBuilder();
         //   ResourceLocation rscloc = new ResourceLocation(filename);
         //   IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(rscloc);
 
         InputStream in = ShaderHelper.class.getResourceAsStream(filename);//resource.getInputStream();
-		Exception exception = null;
-		BufferedReader reader;
+        Exception exception = null;
+        BufferedReader reader;
 
         if (in == null) {
             CommonProxy.LOGGER.error("Resource not found: " + filename);
             return "";
         }
 
-		try {
-			reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+        try {
+            reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
 
-			Exception innerExc = null;
-			try {
-				String line;
-				while ((line = reader.readLine()) != null)
-					source.append(line).append('\n');
-			} catch (Exception exc) {
-				exception = exc;
-			} finally {
-				try {
-					reader.close();
-				} catch (Exception exc) {
-					if (innerExc == null)
-						innerExc = exc;
-					else
-						exc.printStackTrace();
-				}
-			}
+            Exception innerExc = null;
+            try {
+                String line;
+                while ((line = reader.readLine()) != null)
+                    source.append(line).append('\n');
+            } catch (Exception exc) {
+                exception = exc;
+            } finally {
+                try {
+                    reader.close();
+                } catch (Exception exc) {
+                    if (innerExc == null)
+                        innerExc = exc;
+                    else
+                        exc.printStackTrace();
+                }
+            }
 
-			if (innerExc != null)
-				throw innerExc;
-		} catch (Exception exc) {
-			exception = exc;
-		} finally {
-			try {
-				in.close();
-			} catch (Exception exc) {
-				if (exception == null)
-					exception = exc;
-				else
-					exc.printStackTrace();
-			}
+            if (innerExc != null)
+                throw innerExc;
+        } catch (Exception exc) {
+            exception = exc;
+        } finally {
+            try {
+                in.close();
+            } catch (Exception exc) {
+                if (exception == null)
+                    exception = exc;
+                else
+                    exc.printStackTrace();
+            }
 
-			if (exception != null)
-				throw exception;
-		}
+            if (exception != null)
+                throw exception;
+        }
 
-		return source.toString();
-	}
+        return source.toString();
+    }
 
-	public static void deleteShaders() {
-		for (Integer p : programs)
-			ARBShaderObjects.glDeleteObjectARB(p);
-	}
+    public static void deleteShaders() {
+        for (Integer p : programs)
+            ARBShaderObjects.glDeleteObjectARB(p);
+    }
 
     public static void bindOptifineShader() {
         try {
             Shaders.getMethod("useProgram").invoke(null, currentOptifineProgram);
-        //    System.out.println("a");
+            //    System.out.println("a");
         } catch (Exception e) {
-          //  System.out.println("b");
+            //  System.out.println("b");
         }
     }
     public static boolean areOptifineShadersLoaded() {
@@ -268,60 +282,60 @@ public final class ShaderHelper {
         }
         return optifineShadersLoaded = false;
     }
-	//////////////////////////////////////////////////
-	//////////////////////////////////////////////////
-	//Uniform helpers
-	public static void uniform1f(String name, float x) {
-		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
-		ARBShaderObjects.glUniform1fARB(uniformLocation, x);
-	}
+    //////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    //Uniform helpers
+    public static void uniform1f(String name, float x) {
+        int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+        ARBShaderObjects.glUniform1fARB(uniformLocation, x);
+    }
 
     public static void uniform1i(String name, int x) {
         int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
         ARBShaderObjects.glUniform1iARB(uniformLocation, x);
     }
-	public static void uniformArray(String name, float[] array) {
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(array.length);
-		buffer.put(array);
-		buffer.flip();
+    public static void uniformArray(String name, float[] array) {
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(array.length);
+        buffer.put(array);
+        buffer.flip();
 
-		uniformBuffer(name, buffer);
-	}
+        uniformBuffer(name, buffer);
+    }
 
-	public static void uniformArray(String name, int[] array) {
-		IntBuffer buffer = BufferUtils.createIntBuffer(array.length);
-		buffer.put(array);
-		buffer.flip();
-		uniformBuffer(name, buffer);
-	}
+    public static void uniformArray(String name, int[] array) {
+        IntBuffer buffer = BufferUtils.createIntBuffer(array.length);
+        buffer.put(array);
+        buffer.flip();
+        uniformBuffer(name, buffer);
+    }
 
-	public static void uniformVec2(String name, float x, float y) {
-		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
-		ARBShaderObjects.glUniform2fARB(uniformLocation, x, y);
-	}
+    public static void uniformVec2(String name, float x, float y) {
+        int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+        ARBShaderObjects.glUniform2fARB(uniformLocation, x, y);
+    }
 
-	public static void uniformVec3(String name, float x, float y, float z) {
-		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
-		ARBShaderObjects.glUniform3fARB(uniformLocation, x, y, z);
-	}
+    public static void uniformVec3(String name, float x, float y, float z) {
+        int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+        ARBShaderObjects.glUniform3fARB(uniformLocation, x, y, z);
+    }
 
-	public static void uniformVec4(String name, float x, float y, float z, float w) {
-		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
-		ARBShaderObjects.glUniform4fARB(uniformLocation, x, y, z, w);
-	}
+    public static void uniformVec4(String name, float x, float y, float z, float w) {
+        int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+        ARBShaderObjects.glUniform4fARB(uniformLocation, x, y, z, w);
+    }
 
     public static void loadTextureUnit(int textureUnit, String textureLoc) {
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		OpenGlHelper.setActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
-		noppes.npcs.client.ClientProxy.bindTexture(new ResourceLocation(textureLoc));
-		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
-	}
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        OpenGlHelper.setActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
+        noppes.npcs.client.ClientProxy.bindTexture(new ResourceLocation(textureLoc));
+        OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+    }
 
-	public static void uniformTexture(String name, int textureUnit, String textureLoc) {
-		ShaderHelper.loadTextureUnit(textureUnit, textureLoc);
-		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
-		ARBShaderObjects.glUniform1iARB(uniformLocation, textureUnit);
-	}
+    public static void uniformTexture(String name, int textureUnit, String textureLoc) {
+        ShaderHelper.loadTextureUnit(textureUnit, textureLoc);
+        int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+        ARBShaderObjects.glUniform1iARB(uniformLocation, textureUnit);
+    }
 
     public static void uniformTexture(String name, int textureUnit, int textureID) {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -334,32 +348,32 @@ public final class ShaderHelper {
 
 
     public static void uniformTextureResolution(String name, String textureLoc) {
-		int previousTexture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
-		noppes.npcs.client.ClientProxy.bindTexture(new ResourceLocation(textureLoc));
+        int previousTexture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+        noppes.npcs.client.ClientProxy.bindTexture(new ResourceLocation(textureLoc));
 
-		float width = GL11.glGetTexLevelParameterf(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
-		float height = GL11.glGetTexLevelParameterf(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
-		uniformVec2(name, width, height);
+        float width = GL11.glGetTexLevelParameterf(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+        float height = GL11.glGetTexLevelParameterf(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
+        uniformVec2(name, width, height);
 
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, previousTexture);
-	}
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, previousTexture);
+    }
 
-	public static void uniformColor(String name, int color, float alpha) {
-		float r = (color >> 16 & 255) / 255f;
-		float g = (color >> 8 & 255) / 255f;
-		float b = (color & 255) / 255f;
-		uniformVec4(name, r, g, b, alpha);
-	}
+    public static void uniformColor(String name, int color, float alpha) {
+        float r = (color >> 16 & 255) / 255f;
+        float g = (color >> 8 & 255) / 255f;
+        float b = (color & 255) / 255f;
+        uniformVec4(name, r, g, b, alpha);
+    }
 
-	public static void uniformBuffer(String name, FloatBuffer buffer) {
-		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
-		ARBShaderObjects.glUniform1ARB(uniformLocation, buffer);
-	}
+    public static void uniformBuffer(String name, FloatBuffer buffer) {
+        int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+        ARBShaderObjects.glUniform1ARB(uniformLocation, buffer);
+    }
 
-	public static void uniformBuffer(String name, IntBuffer buffer) {
-		int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
-		ARBShaderObjects.glUniform1ARB(uniformLocation, buffer);
-	}
+    public static void uniformBuffer(String name, IntBuffer buffer) {
+        int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
+        ARBShaderObjects.glUniform1ARB(uniformLocation, buffer);
+    }
 
     public static void uniformMatrix4x4(String name, FloatBuffer buffer) {
         int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
