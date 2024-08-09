@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.config;
 
+import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
@@ -9,6 +10,10 @@ import noppes.npcs.util.ValueUtil;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class ConfigDBCEffects
 {
@@ -59,7 +64,9 @@ public class ConfigDBCEffects
     public static boolean EXHAUST_OVERPOWER = true;
 
     public final static String DIVINE = "DIVINE";
+    public final static String DIVINE_RACES = "DIVINE RACES";
     private static float divineMulti = 1;
+    private static final HashMap<Integer, HashMap<String, Boolean>> divineApplicableForms = new HashMap<>();
 
     /**
      * Ugly, roundabout way of persisting configs between multiplayer and singleplayer.
@@ -72,6 +79,23 @@ public class ConfigDBCEffects
         else
             return ClientCache.divineMulti;
     }
+
+    public static HashMap<Integer, HashMap<String, Boolean>> getDivineApplicableForms(){
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+            return divineApplicableForms;
+        return ClientCache.divineApplicableForms;
+    }
+
+    public static boolean canDivineBeApplied(int race, String formName){
+        HashMap<Integer, HashMap<String, Boolean>> raceMap = getDivineApplicableForms();
+        HashMap<String, Boolean> formMap = raceMap.get(race);
+        if(formMap == null || formMap.isEmpty())
+            return false;
+        if(race >= JRMCoreH.trans.length)
+            return false;
+        return formMap.getOrDefault(formName, false);
+    }
+
 
     public static void init(File configFile)
     {
@@ -137,7 +161,7 @@ public class ConfigDBCEffects
 
 
             config.addCustomCategoryComment(DIVINE,
-                "Forms (only **custom** forms so far) can now benefit from an additional multi" +
+                "Forms can now benefit from an additional multi" +
                     "\n" +
                     "\nDivine is applied in a similar manner as Majin and Legendary" +
                     "\n" +
@@ -150,8 +174,41 @@ public class ConfigDBCEffects
                     "\n - kaiokenMulti is the multi gained from kaioken. If you're not in kaioken, the multi is 1.0"
 
             );
+
             divineMulti = (float) config.get(DIVINE, "Divine status effect multi", 1.0, "Put the boost in multiplier form. 1.0 is no boost, 1.15 = 15% boost").getDouble(1.0);
 
+            String[][] defaultDivineRaces = new String[][]{
+                {"God"},
+                {"SSGod", "SSB", "SSGodR", "SSBE"},
+                {"SSGod", "SSB", "SSGodR", "SSBE"},
+                {"God"},
+                {"Ultimate", "God"},
+                {"Pure", "God"}
+            };
+            for(int i = 0; i < JRMCoreH.Races.length; i++){
+                HashMap<String, Boolean> formsAffected = new HashMap<>();
+
+                List<String> result = new ArrayList(JRMCoreH.trans[i].length + JRMCoreH.transNonRacial.length-1);
+                Collections.addAll(result, JRMCoreH.trans[i]);
+                // Skip adding Kaioken.
+                for(int x = 1; x < JRMCoreH.transNonRacial.length; x++){
+                    result.add(JRMCoreH.transNonRacial[x]);
+                }
+                String[] legalValues = result.toArray(new String[0]);
+
+                StringBuilder legalValuesComment = new StringBuilder();
+                for(int y = 0; y < legalValues.length; y++){
+                    if(y != 0)
+                        legalValuesComment.append(",");
+                    legalValuesComment.append(legalValues[y]);
+                }
+
+                String[] formNames = config.getStringList(JRMCoreH.Races[i]+" - Divine affected forms", DIVINE_RACES, defaultDivineRaces[i], "Forms affected by divine multi.\nLegal values: "+legalValuesComment+"\n", legalValues);
+                for(String name : formNames){
+                    formsAffected.put(name, true);
+                }
+                divineApplicableForms.put(i, formsAffected);
+            }
         }
         catch (Exception e)
         {

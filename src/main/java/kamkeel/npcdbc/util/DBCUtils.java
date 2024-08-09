@@ -42,6 +42,7 @@ public class DBCUtils {
 
     public static String[] CONFIG_UI_NAME;
     public static String[] cCONFIG_UI_NAME;
+    public static boolean calculatingKiDrain;
 
     public static String getFormattedStateName(int race, int state) {
         String out = "";
@@ -636,7 +637,9 @@ public class DBCUtils {
     }
     public static boolean noBonusEffects = false;
     public static int calculateKiDrainMight(DBCData dbcData, EntityPlayer player){
+        calculatingKiDrain = true;
         int[] playerAttributes = JRMCoreH.PlyrAttrbts(dbcData.player); //Need to get fused attributes, major refactor of DBCData later on?
+        calculatingKiDrain = false;
 
         String skillX = dbcData.RacialSkills;
         noBonusEffects = true;

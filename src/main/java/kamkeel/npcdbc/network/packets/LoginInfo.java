@@ -7,9 +7,15 @@ import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCClass;
 import kamkeel.npcdbc.network.AbstractPacket;
+import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Set;
 
 public final class LoginInfo extends AbstractPacket {
     public static final String packetName = "NPC|Login";
@@ -55,6 +61,25 @@ public final class LoginInfo extends AbstractPacket {
         out.writeBoolean(this.kiRevamp);
 
         out.writeFloat(this.divineMulti);
+
+        HashMap<Integer, HashMap<String, Boolean>> divineRaces = ConfigDBCEffects.getDivineApplicableForms();
+
+        NBTTagList divineApplicableRaces = new NBTTagList();
+        for(int i : divineRaces.keySet()){
+            HashMap<String, Boolean> divineForms = divineRaces.get(i);
+            if(divineForms == null)
+                continue;
+            NBTTagCompound divineApplicableForms = new NBTTagCompound();
+            for(String form : divineForms.keySet()){
+                divineApplicableForms.setBoolean(form, divineForms.getOrDefault(form, false));
+            }
+            divineApplicableRaces.appendTag(divineApplicableForms);
+        }
+
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setTag("divineRaces", divineApplicableRaces);
+        ByteBufUtils.writeNBT(out, compound);
+
     }
 
     @Override
@@ -77,6 +102,20 @@ public final class LoginInfo extends AbstractPacket {
             ClientCache.kiRevamp = in.readBoolean();
 
             ClientCache.divineMulti = in.readFloat();
+
+            ClientCache.divineApplicableForms.clear();
+            NBTTagCompound compound = ByteBufUtils.readNBT(in);
+            NBTTagList divineRaces = compound.getTagList("divineRaces", Constants.NBT.TAG_COMPOUND);
+            for(int i = 0; i < divineRaces.tagCount(); i++){
+                NBTTagCompound forms = divineRaces.getCompoundTagAt(i);
+                HashMap<String, Boolean> formMap = new HashMap<>();
+
+                for(String key : (Set<String>) forms.func_150296_c()){
+                    formMap.put(key, forms.getBoolean(key));
+                }
+                ClientCache.divineApplicableForms.put(i, formMap);
+            }
+
         }
     }
 }

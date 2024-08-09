@@ -20,6 +20,7 @@ public class ClientCache {
     public static boolean kiRevamp = true;
 
     public static float divineMulti = 1.0f;
+    public static HashMap<Integer, HashMap<String, Boolean>> divineApplicableForms = new HashMap<>();
 
     public static DBCData getClientData(EntityPlayer player){
         synchronized (clientDataCache) {

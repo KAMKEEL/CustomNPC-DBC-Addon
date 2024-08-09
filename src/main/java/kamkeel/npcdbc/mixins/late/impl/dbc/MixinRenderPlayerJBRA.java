@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreConfig;
+import JinRyuu.JRMCore.JRMCoreHDBC;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
@@ -15,11 +16,16 @@ import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.gui.hud.HUDFormWheel;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.aura.Aura;
+import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
@@ -522,6 +528,34 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Inject(method = "kss", at=@At("RETURN"), remap = false)
     private static void reEnableLightMapAfterKiBlade(Entity e, boolean b, int id, int kf, int ki, CallbackInfo ci){
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+    }
+
+    @Redirect(method = "kss", at=@At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;getPlayerColor2(IIIIIZZZZ)I"))
+    private static int fixKiBladeColor(int t, int d, int p, int r, int s, boolean v, boolean y, boolean ui, boolean gd, @Local(name = "e") Entity entity){
+        if(!(entity instanceof EntityPlayer))
+            return JRMCoreHDBC.getPlayerColor2(t, d, p, r, s, v, y, ui, gd);
+
+        PlayerDBCInfo playerInfo = PlayerDataUtil.getDBCInfo((EntityPlayer) entity);
+        DBCData dbcData = DBCData.get((EntityPlayer) entity);
+        if(playerInfo.isInCustomForm()){
+            FormDisplay formDisplay = playerInfo.getCurrentForm().display;
+            if(formDisplay.auraColor != -1){
+                return formDisplay.auraColor;
+            }
+            if(formDisplay.getAura() != null){
+                AuraDisplay formAuraDisplay = ((AuraDisplay) formDisplay.getAura().getDisplay());
+                if(formAuraDisplay.color1 != -1)
+                    return formAuraDisplay.color1;
+            }
+        }
+        if(playerInfo.isInCustomAura()){
+            AuraDisplay auraDisplay = playerInfo.getCurrentAura().display;
+            boolean overrideDBC = auraDisplay.overrideDBCAura || (dbcData.getRace() == 4 ? dbcData.State <= 4 : dbcData.State == 0);
+            if(overrideDBC && auraDisplay.color1 != -1)
+                return auraDisplay.color1;
+        }
+
+        return JRMCoreHDBC.getPlayerColor2(t, d, p, r, s, v, y, ui, gd);
     }
 
 }
