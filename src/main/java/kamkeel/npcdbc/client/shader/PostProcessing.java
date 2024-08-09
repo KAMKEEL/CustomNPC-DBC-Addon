@@ -72,12 +72,9 @@ public class PostProcessing {
 
     public static void endBlooming() {
         if (processBloom) {
-            if (mc.thePlayer.ticksExisted % 40 == 0) {
-                // saveTextureToPNG(MAIN_BLOOM_TEXTURE);
-            }
             System.out.println("hi8");
             //    PostProcessing.resetDrawBuffer();
-          //  getMainBuffer().bindFramebuffer(false);
+            //  getMainBuffer().bindFramebuffer(false);
             System.out.println("hi7");
         }
     }
