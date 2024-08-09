@@ -31,7 +31,9 @@ import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 public class PostProcessing {
-    public static int MAIN_BLOOM_TEXTURE, DEPTH_TEXTURE;
+
+    public static Framebuffer MAIN;
+    public static int MAIN_BLOOM_BUFFER, MAIN_BLOOM_TEXTURE, DEPTH_TEXTURE;
     public static int blankTexture;
 
     public static int BLOOM_BUFFERS_LENGTH = 10;
@@ -51,19 +53,37 @@ public class PostProcessing {
     public static void startBlooming(boolean clearBloomBuffer) {
         if (!ConfigDBCClient.EnableBloom || !ShaderHelper.useShaders())
             return;
+        System.out.println("hi0");
 
-        if (clearBloomBuffer) {
-            drawToBuffers(2);
-            glClearColor(0, 0, 0, 1);
-            glClear(GL_COLOR_BUFFER_BIT);
-        }
 
-        PostProcessing.drawToBuffers(0, 2);
+//
+//        glBindFramebuffer(GL_FRAMEBUFFER, MAIN_BLOOM_BUFFER);
+//        if (clearBloomBuffer) {
+//            drawToBuffers(2);
+//            glClearColor(0, 0, 0, 1);
+//            glClear(GL_COLOR_BUFFER_BIT);
+//        }
+        System.out.println("hi01");
+
+//        PostProcessing.drawToBuffers(0, 2);
         processBloom = true;
+        System.out.println("hi02");
+    }
+
+    public static void endBlooming() {
+        if (processBloom) {
+            if (mc.thePlayer.ticksExisted % 40 == 0) {
+                // saveTextureToPNG(MAIN_BLOOM_TEXTURE);
+            }
+            System.out.println("hi8");
+            //    PostProcessing.resetDrawBuffer();
+          //  getMainBuffer().bindFramebuffer(false);
+            System.out.println("hi7");
+        }
     }
 
     public static void postProcess() {
-        PostProcessing.bloom(1.5f, false);
+        //  PostProcessing.bloom(1.5f, false);
 
         if (mc.currentScreen instanceof HUDFormWheel) {
             Framebuffer buff = getMainBuffer();
@@ -88,15 +108,14 @@ public class PostProcessing {
         if (!processBloom)
             return;
 
-
-        Framebuffer buff = getMainBuffer();
+        System.out.println("hi1");
         FloatBuffer prevModelView = getModelView();
         FloatBuffer prevProjection = getProjection();
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0.0D, buff.framebufferWidth, buff.framebufferHeight, 0.0D, 0, 1);
+        GL11.glOrtho(0.0D, MAIN.framebufferWidth, MAIN.framebufferHeight, 0.0D, 0, 1);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glColorMask(true, true, true, false);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -107,70 +126,74 @@ public class PostProcessing {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
         mc.entityRenderer.disableLightmap(0);
+        IntBuffer drawBuffers = BufferUtils.createIntBuffer(15);
+
+        // Get the current draw buffers
 
         if (resetGLState && !ClientProxy.renderingGUI && !ClientProxy.renderingArm)
             glDisable(GL_FOG);
 
+        System.out.println("hi2");
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //Down Sampling in a mip chain
         glBindFramebuffer(GL_FRAMEBUFFER, bloomBuffers[0]);
         glClearColor(0, 0, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
-        glViewport(0, 0, buff.framebufferWidth >> 1, buff.framebufferHeight >> 1);
+        glViewport(0, 0, MAIN.framebufferWidth >> 1, MAIN.framebufferHeight >> 1);
         useShader(downsample13);
-        renderQuad(MAIN_BLOOM_TEXTURE, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
-        blurFilter(bloomTextures[0], 2.5f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+        renderQuad(MAIN_BLOOM_TEXTURE, 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
+        blurFilter(bloomTextures[0], 2.5f, 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
         int downSamples = 0;
         for (int i = 0; i < bloomBuffers.length; i++) {
             if (bloomBuffers[i] <= 0 || i + 1 >= bloomBuffers.length)
                 continue;
-            int mipWidth = buff.framebufferWidth >> (i + 2), mipHeight = buff.framebufferHeight >> (i + 2);
+            int mipWidth = MAIN.framebufferWidth >> (i + 2), mipHeight = MAIN.framebufferHeight >> (i + 2);
             glBindFramebuffer(GL_FRAMEBUFFER, bloomBuffers[i + 1]);
             glViewport(0, 0, mipWidth, mipHeight);
             useShader(downsample13);
-            renderQuad(bloomTextures[i], 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+            renderQuad(bloomTextures[i], 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
             downSamples = i + 1;
         }
-
+        System.out.println("hi3");
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //Up sampling the mip chain while applying a tent filter
         for (int i = downSamples; i > 0; i--) {
             int lower = bloomTextures[i];
-            int mipWidth = buff.framebufferWidth >> (i), mipHeight = buff.framebufferHeight >> (i);
+            int mipWidth = MAIN.framebufferWidth >> (i), mipHeight = MAIN.framebufferHeight >> (i);
             glBindFramebuffer(GL_FRAMEBUFFER, bloomBuffers[i - 1]);
 
             drawToBuffers(2);
             glViewport(0, 0, mipWidth, mipHeight);
-            blurFilter(lower, 1f, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+            blurFilter(lower, 1f, 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
             resetDrawBuffer();
             int lowerUpscaled = bloomTextures2[i - 1];
 
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE);
-            renderQuad(lowerUpscaled, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+            renderQuad(lowerUpscaled, 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
             glDisable(GL_BLEND);
         }
 
-
+        System.out.println("hi4");
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //Both textures combined in default buffer
-        buff.bindFramebuffer(false);
-        glViewport(0, 0, buff.framebufferWidth, buff.framebufferHeight);
+        MAIN.bindFramebuffer(false);
+        glViewport(0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
         useShader(additiveCombine, () -> {
             uniformTexture("bloomTexture", 2, bloomTextures[0]);
             uniform1f("exposure", lightExposure);
 
         });
-        renderQuad(buff.framebufferTexture, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+        renderQuad(MAIN.framebufferTexture, 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
         releaseShader();
         glEnable(GL_DEPTH_TEST);
         glDepthMask(true);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-
+        System.out.println("hi5");
         if (resetGLState) {
             mc.entityRenderer.enableLightmap(0);
             glMatrixMode(GL11.GL_PROJECTION);
@@ -184,22 +207,21 @@ public class PostProcessing {
                 glEnable(GL_FOG);
         }
 
+        glBindFramebuffer(GL_FRAMEBUFFER, MAIN_BLOOM_BUFFER);
         drawToBuffers(2);
         glClearColor(0, 0, 0, 1);
         glClear(GL_COLOR_BUFFER_BIT);
-        resetDrawBuffer();
+        //  resetDrawBuffer();
 
+        MAIN.bindFramebuffer(false);
         processBloom = false;
+        System.out.println("hi6");
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //testing shit
-        // renderQuad(bloomTextures[0], 0, 0, buff.framebufferWidth, buff.framebufferHeight); //367
+        // renderQuad(bloomTextures[0], 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight); //367
     }
 
-    public static void endBlooming() {
-        if (processBloom)
-            PostProcessing.resetDrawBuffer();
-    }
 
     public static void captureSceneDepth() {
         Framebuffer buff = getMainBuffer();
@@ -287,9 +309,42 @@ public class PostProcessing {
         releaseShader();
     }
 
+    public static void setupDepthAndStencil() {
+        OpenGlHelper.func_153176_h(OpenGlHelper.field_153199_f, MAIN.depthBuffer);
+        if (net.minecraftforge.client.MinecraftForgeClient.getStencilBits() == 0) {
+            OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, 33190, MAIN.framebufferTextureWidth, MAIN.framebufferTextureHeight);
+            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, OpenGlHelper.field_153201_h, OpenGlHelper.field_153199_f, MAIN.depthBuffer);
+        } else {
+            OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, MAIN.framebufferTextureWidth, MAIN.framebufferTextureHeight);
+            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, MAIN.depthBuffer);
+            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, MAIN.depthBuffer);
+        }
+    }
+
     public static void init(int width, int height) {
         int previousBuffer = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
-        Framebuffer main = getMainBuffer();
+        MAIN = getMainBuffer();
+
+        MAIN_BLOOM_BUFFER = OpenGlHelper.func_153165_e();
+        GL30.glBindFramebuffer(GL_FRAMEBUFFER, MAIN_BLOOM_BUFFER);
+        System.out.println("init1");
+
+        OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, MAIN.framebufferTexture, 0);
+
+        MAIN_BLOOM_TEXTURE = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, MAIN_BLOOM_TEXTURE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
+        OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, MAIN_BLOOM_TEXTURE, 0);
+        setupDepthAndStencil();
+
+        drawToBuffers(0, 2);
+        glClearColor(0, 0, 0, 1f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        System.out.println("init2");
         for (int i = 0; i < bloomBuffers.length; i++) {
 
             int mipWidth = width >> (i + 1);
@@ -323,22 +378,12 @@ public class PostProcessing {
             if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
                 CommonProxy.LOGGER.error("Framebuffer " + i + " is not complete: " + status);
 
-            drawToBuffers(0, 2);
             glClearColor(0, 0, 0, 1f);
             glClear(GL_COLOR_BUFFER_BIT);
-            resetDrawBuffer();
         }
-
-        main.bindFramebuffer(false);
-        MAIN_BLOOM_TEXTURE = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, MAIN_BLOOM_TEXTURE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
-        OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, MAIN_BLOOM_TEXTURE, 0);
-
+        resetDrawBuffer();
+        MAIN.bindFramebuffer(false);
+        System.out.println("init3");
 
         int status = GL30.glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
@@ -352,7 +397,7 @@ public class PostProcessing {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_DEPTH_COMPONENT32F, width, height, 0, GL11.GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
         // GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, DEPTH_TEXTURE, 0);
-
+        System.out.println("init4");
 
         auraBuffer = OpenGlHelper.func_153165_e();
         GL30.glBindFramebuffer(GL_FRAMEBUFFER, auraBuffer);
@@ -366,14 +411,8 @@ public class PostProcessing {
             glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
             OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, auraTextures[i], 0);
         }
-
-        if (net.minecraftforge.client.MinecraftForgeClient.getStencilBits() == 0) {
-            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, OpenGlHelper.field_153201_h, OpenGlHelper.field_153199_f, main.depthBuffer);
-        } else {
-            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, main.depthBuffer);
-            OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, main.depthBuffer);
-        }
-
+        setupDepthAndStencil();
+        System.out.println("init5");
         status = GL30.glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
             CommonProxy.LOGGER.error("Aura framebuffer is not complete: " + status);
@@ -389,7 +428,7 @@ public class PostProcessing {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
-
+        System.out.println("init6");
     }
 
 
@@ -482,10 +521,14 @@ public class PostProcessing {
         buffer.flip();
 
         GL20.glDrawBuffers(buffer);
+
     }
 
     public static void resetDrawBuffer() {
+        System.out.println("Bef bind");
+
         GL20.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
+        System.out.println("aft bind");
     }
 
 
