@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.network.packets;
 
 import JinRyuu.DragonBC.common.DBCConfig;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
@@ -28,6 +29,7 @@ public final class LoginInfo extends AbstractPacket {
     private final double kiFistValue;
     private final boolean kiRevamp;
     private final float divineMulti;
+    private final int maxAbsorptionLevel;
 
     public LoginInfo(){
         this.chargeDex = ConfigDBCGameplay.EnableChargingDex;
@@ -39,6 +41,7 @@ public final class LoginInfo extends AbstractPacket {
         this.kiFistValue = DBCConfig.ccnfKFd;
         this.kiRevamp = ConfigDBCGameplay.RevampKiCharging;
         this.divineMulti = ConfigDBCEffects.getDivineMulti();
+        this.maxAbsorptionLevel = JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL;
     }
 
     @Override
@@ -61,6 +64,7 @@ public final class LoginInfo extends AbstractPacket {
         out.writeBoolean(this.kiRevamp);
 
         out.writeFloat(this.divineMulti);
+        out.writeInt(this.maxAbsorptionLevel);
 
         HashMap<Integer, HashMap<String, Boolean>> divineRaces = ConfigDBCEffects.getDivineApplicableForms();
 
@@ -102,6 +106,7 @@ public final class LoginInfo extends AbstractPacket {
             ClientCache.kiRevamp = in.readBoolean();
 
             ClientCache.divineMulti = in.readFloat();
+            ClientCache.maxAbsorptionLevel = in.readInt();
 
             ClientCache.divineApplicableForms.clear();
             NBTTagCompound compound = ByteBufUtils.readNBT(in);

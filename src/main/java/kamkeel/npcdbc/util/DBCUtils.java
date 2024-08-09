@@ -9,8 +9,12 @@ import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.items.ItemVanity;
 import JinRyuu.JRMCore.mod_JRMCore;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.npc.IDBCStats;
+import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.items.ItemPotara;
@@ -51,6 +55,13 @@ public class DBCUtils {
         } catch (IndexOutOfBoundsException ignored) {
         }
         return out;
+    }
+
+    public static int getMaxAbsorptionLevel(){
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+            return JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL;
+        }
+        return ClientCache.maxAbsorptionLevel;
     }
 
 

@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client;
 
+import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.config.ConfigClient;
@@ -21,6 +22,7 @@ public class ClientCache {
 
     public static float divineMulti = 1.0f;
     public static HashMap<Integer, HashMap<String, Boolean>> divineApplicableForms = new HashMap<>();
+    public static int maxAbsorptionLevel = JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL;
 
     public static DBCData getClientData(EntityPlayer player){
         synchronized (clientDataCache) {
