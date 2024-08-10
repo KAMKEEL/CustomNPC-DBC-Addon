@@ -49,38 +49,34 @@ public class PostProcessing {
     public static FloatBuffer DEFAULT_MODELVIEW = BufferUtils.createFloatBuffer(16);
     public static FloatBuffer DEFAULT_PROJECTION = BufferUtils.createFloatBuffer(16);
     public static Minecraft mc = Minecraft.getMinecraft();
+    public static int PREVIOUS_BUFFER;
+    public static int VIEWPORT_WIDTH, VIEWPORT_HEIGHT;
 
     public static void startBlooming(boolean clearBloomBuffer) {
         if (!ConfigDBCClient.EnableBloom || !ShaderHelper.useShaders())
             return;
-        System.out.println("hi0");
 
+        PREVIOUS_BUFFER = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
+        glBindFramebuffer(GL_FRAMEBUFFER, MAIN_BLOOM_BUFFER);
+        if (clearBloomBuffer) {
+            drawToBuffers(2);
+            glClearColor(0, 0, 0, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
+        }
 
-//
-//        glBindFramebuffer(GL_FRAMEBUFFER, MAIN_BLOOM_BUFFER);
-//        if (clearBloomBuffer) {
-//            drawToBuffers(2);
-//            glClearColor(0, 0, 0, 1);
-//            glClear(GL_COLOR_BUFFER_BIT);
-//        }
-        System.out.println("hi01");
+        PostProcessing.drawToBuffers(0, 2);
 
-//        PostProcessing.drawToBuffers(0, 2);
         processBloom = true;
-        System.out.println("hi02");
     }
 
     public static void endBlooming() {
         if (processBloom) {
-            System.out.println("hi8");
-            //    PostProcessing.resetDrawBuffer();
-            //  getMainBuffer().bindFramebuffer(false);
-            System.out.println("hi7");
+            glBindFramebuffer(GL_FRAMEBUFFER, PREVIOUS_BUFFER);
         }
     }
 
     public static void postProcess() {
-        //  PostProcessing.bloom(1.5f, false);
+        PostProcessing.bloom(1.5f, false);
 
         if (mc.currentScreen instanceof HUDFormWheel) {
             Framebuffer buff = getMainBuffer();
@@ -88,11 +84,11 @@ public class PostProcessing {
             GL11.glLoadIdentity();
             GL11.glMatrixMode(GL11.GL_PROJECTION);
             GL11.glLoadIdentity();
-            GL11.glOrtho(0.0D, buff.framebufferWidth, buff.framebufferHeight, 0.0D, 0, 1);
+            GL11.glOrtho(0.0D, mc.displayWidth, mc.displayHeight, 0.0D, 0, 1);
 
             buff.bindFramebuffer(false);
             disableGLState();
-            blurFilter(buff.framebufferTexture, HUDFormWheel.BLUR_INTENSITY, 0, 0, buff.framebufferWidth, buff.framebufferHeight);
+            blurFilter(buff.framebufferTexture, HUDFormWheel.BLUR_INTENSITY, 0, 0, mc.displayWidth, mc.displayHeight);
 
             glEnable(GL_DEPTH_TEST);
             glDepthMask(true);
@@ -105,14 +101,15 @@ public class PostProcessing {
         if (!processBloom)
             return;
 
-        System.out.println("hi1");
+        updateViewportDimensions();
+        int width = VIEWPORT_WIDTH, height = VIEWPORT_HEIGHT;
         FloatBuffer prevModelView = getModelView();
         FloatBuffer prevProjection = getProjection();
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0.0D, MAIN.framebufferWidth, MAIN.framebufferHeight, 0.0D, 0, 1);
+        GL11.glOrtho(0.0D, width, height, 0.0D, 0, 1);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glColorMask(true, true, true, false);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -130,67 +127,63 @@ public class PostProcessing {
         if (resetGLState && !ClientProxy.renderingGUI && !ClientProxy.renderingArm)
             glDisable(GL_FOG);
 
-        System.out.println("hi2");
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //Down Sampling in a mip chain
         glBindFramebuffer(GL_FRAMEBUFFER, bloomBuffers[0]);
         glClearColor(0, 0, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
-        glViewport(0, 0, MAIN.framebufferWidth >> 1, MAIN.framebufferHeight >> 1);
+        glViewport(0, 0, width >> 1, height >> 1);
         useShader(downsample13);
-        renderQuad(MAIN_BLOOM_TEXTURE, 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
-        blurFilter(bloomTextures[0], 2.5f, 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
+        renderQuad(MAIN_BLOOM_TEXTURE, 0, 0, width, height);
+        blurFilter(bloomTextures[0], 2.5f, 0, 0, width, height);
         int downSamples = 0;
         for (int i = 0; i < bloomBuffers.length; i++) {
             if (bloomBuffers[i] <= 0 || i + 1 >= bloomBuffers.length)
                 continue;
-            int mipWidth = MAIN.framebufferWidth >> (i + 2), mipHeight = MAIN.framebufferHeight >> (i + 2);
+            int mipWidth = width >> (i + 2), mipHeight = height >> (i + 2);
             glBindFramebuffer(GL_FRAMEBUFFER, bloomBuffers[i + 1]);
             glViewport(0, 0, mipWidth, mipHeight);
             useShader(downsample13);
-            renderQuad(bloomTextures[i], 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
+            renderQuad(bloomTextures[i], 0, 0, width, height);
             downSamples = i + 1;
         }
-        System.out.println("hi3");
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //Up sampling the mip chain while applying a tent filter
         for (int i = downSamples; i > 0; i--) {
             int lower = bloomTextures[i];
-            int mipWidth = MAIN.framebufferWidth >> (i), mipHeight = MAIN.framebufferHeight >> (i);
+            int mipWidth = width >> (i), mipHeight = height >> (i);
             glBindFramebuffer(GL_FRAMEBUFFER, bloomBuffers[i - 1]);
 
             drawToBuffers(2);
             glViewport(0, 0, mipWidth, mipHeight);
-            blurFilter(lower, 1f, 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
+            blurFilter(lower, 1f, 0, 0, width, height);
             resetDrawBuffer();
             int lowerUpscaled = bloomTextures2[i - 1];
 
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE);
-            renderQuad(lowerUpscaled, 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
+            renderQuad(lowerUpscaled, 0, 0, width, height);
             glDisable(GL_BLEND);
         }
 
-        System.out.println("hi4");
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //Both textures combined in default buffer
         MAIN.bindFramebuffer(false);
-        glViewport(0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
+        glViewport(0, 0, width, height);
         useShader(additiveCombine, () -> {
             uniformTexture("bloomTexture", 2, bloomTextures[0]);
             uniform1f("exposure", lightExposure);
 
         });
-        renderQuad(MAIN.framebufferTexture, 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight);
+        renderQuad(MAIN.framebufferTexture, 0, 0, width, height);
         releaseShader();
         glEnable(GL_DEPTH_TEST);
         glDepthMask(true);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        System.out.println("hi5");
         if (resetGLState) {
             mc.entityRenderer.enableLightmap(0);
             glMatrixMode(GL11.GL_PROJECTION);
@@ -212,19 +205,18 @@ public class PostProcessing {
 
         MAIN.bindFramebuffer(false);
         processBloom = false;
-        System.out.println("hi6");
         //////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////
         //testing shit
-        // renderQuad(bloomTextures[0], 0, 0, MAIN.framebufferWidth, MAIN.framebufferHeight); //367
+        // renderQuad(bloomTextures[0], 0, 0, width, height); //367
     }
 
 
     public static void captureSceneDepth() {
         Framebuffer buff = getMainBuffer();
-        int width = buff.framebufferWidth, height = buff.framebufferHeight;
+        int width = mc.displayWidth, height = mc.displayHeight;
         //   GL11.glBindTexture(GL11.GL_TEXTURE_2D, DEPTH_TEXTURE);
-        //  GL11.glCopyTexImage2D(GL11.GL_TEXTURE_2D, 0, GL14.GL_DEPTH_COMPONENT24, 0, 0, buff.framebufferWidth, buff.framebufferHeight, 0);
+        //  GL11.glCopyTexImage2D(GL11.GL_TEXTURE_2D, 0, GL14.GL_DEPTH_COMPONENT24, 0, 0, mc.displayWidth, mc.displayHeight, 0);
 
 //
 //        int tempFbo = GL30.glGenFramebuffers();
@@ -253,9 +245,7 @@ public class PostProcessing {
             rgbaBuffer.put((byte) (depth * 255));             // B
             rgbaBuffer.put((byte) (depth == 1 ? 0 : 255));           // A
 
-            if (depth < 0.5) {
-                System.out.println();
-            }
+
         }
         rgbaBuffer.flip();
 
@@ -319,12 +309,12 @@ public class PostProcessing {
     }
 
     public static void init(int width, int height) {
+        System.out.println("width height " + width + " " + height);
         int previousBuffer = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
         MAIN = getMainBuffer();
 
         MAIN_BLOOM_BUFFER = OpenGlHelper.func_153165_e();
         GL30.glBindFramebuffer(GL_FRAMEBUFFER, MAIN_BLOOM_BUFFER);
-        System.out.println("init1");
 
         OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, MAIN.framebufferTexture, 0);
 
@@ -341,7 +331,6 @@ public class PostProcessing {
         drawToBuffers(0, 2);
         glClearColor(0, 0, 0, 1f);
         glClear(GL_COLOR_BUFFER_BIT);
-        System.out.println("init2");
         for (int i = 0; i < bloomBuffers.length; i++) {
 
             int mipWidth = width >> (i + 1);
@@ -380,7 +369,6 @@ public class PostProcessing {
         }
         resetDrawBuffer();
         MAIN.bindFramebuffer(false);
-        System.out.println("init3");
 
         int status = GL30.glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
@@ -394,7 +382,6 @@ public class PostProcessing {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_DEPTH_COMPONENT32F, width, height, 0, GL11.GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
         // GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, DEPTH_TEXTURE, 0);
-        System.out.println("init4");
 
         auraBuffer = OpenGlHelper.func_153165_e();
         GL30.glBindFramebuffer(GL_FRAMEBUFFER, auraBuffer);
@@ -409,7 +396,6 @@ public class PostProcessing {
             OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, auraTextures[i], 0);
         }
         setupDepthAndStencil();
-        System.out.println("init5");
         status = GL30.glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL30.GL_FRAMEBUFFER_COMPLETE)
             CommonProxy.LOGGER.error("Aura framebuffer is not complete: " + status);
@@ -425,7 +411,6 @@ public class PostProcessing {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
-        System.out.println("init6");
     }
 
 
@@ -508,6 +493,14 @@ public class PostProcessing {
         return Minecraft.getMinecraft().getFramebuffer();
     }
 
+    public static void updateViewportDimensions() {
+        IntBuffer viewport = BufferUtils.createIntBuffer(16);
+        glGetInteger(GL_VIEWPORT, viewport);
+        VIEWPORT_WIDTH = viewport.get(2);
+        VIEWPORT_HEIGHT = viewport.get(3);
+
+    }
+
     public static void drawToBuffers(int... colorBuffers) {
         IntBuffer buffer = BufferUtils.createIntBuffer(colorBuffers.length);
         for (int colorBuffer : colorBuffers) {
@@ -522,10 +515,7 @@ public class PostProcessing {
     }
 
     public static void resetDrawBuffer() {
-        System.out.println("Bef bind");
-
         GL20.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
-        System.out.println("aft bind");
     }
 
 
