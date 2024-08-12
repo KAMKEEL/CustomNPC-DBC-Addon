@@ -88,19 +88,46 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         int y = this.height - 22;
         addButton(new GuiNpcButton(6, x, y, 60, 20, new String[]{"Configure", "Done"}, !configureEnabled ? 0 : 1));
 
+        float factor = scaledResolution.getScaleFactor();
+        undoMCScaling = 1f / factor * 2f;
+        if (factor == 1) {
+            if (mc.displayHeight < 260)
+                undoMCScaling = 0.3f;
+            else if (mc.displayHeight < 350)
+                undoMCScaling = 0.45f;
+            else if (mc.displayHeight < 720)
+                undoMCScaling = 0.7f;
+            else if (mc.displayWidth < 650)
+                undoMCScaling = 1f;
+        } else if (factor == 2) {
+            if (mc.displayHeight < 530)
+                undoMCScaling = 0.413f;
+            else if (mc.displayHeight < 600)
+                undoMCScaling = 0.475f;
+            else if (mc.displayHeight < 720)
+                undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
+            else
+                undoMCScaling = 1;
+        } else if (factor == 3) {
+            if (mc.displayHeight < 730)
+                undoMCScaling = 1f / 3;
+            else if (mc.displayHeight < 930)
+                undoMCScaling = 0.425f;
+            else if (mc.displayHeight < 1000)
+                undoMCScaling = 0.6f;
+            else if (mc.displayWidth < 1300)
+                undoMCScaling = 0.8f;
+            else if (mc.displayHeight < 1250) {
+                undoMCScaling = 0.75f;
+                glTranslatef(0, -15, 0);
+            } else
+                undoMCScaling = 0.99f;
+        }
+
         if (configureEnabled) {
             addButton(new GuiNpcButton(8, x - 94 - 75, y - 25, 150, 20, "Edit"));
             addButton(new GuiNpcButton(7, x += 62, y, 80, 20, "Switch Wheel"));
 
-
-            float undoMCScaling = 1;
-            // TODO: Add more support for higher scale factors / GUI sizes when people start complaining.
-            //       Use a switch case
-            if (scaledResolution.getScaleFactor() == 2) {
-                if (mc.displayHeight < 720) {
-                    undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
-                }
-            }
 
             x = (int) ((this.width / 2) * undoMCScaling + 190);
             y = (this.height / 2) - 100;
@@ -341,41 +368,6 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         final float HALF_WIDTH = (float) this.width / 2;
         final float HALF_HEIGHT = (float) this.height / 2;
 
-        float factor = scaledResolution.getScaleFactor();
-        undoMCScaling = 1f / factor * 2f;
-        if (factor == 1) {
-            if (mc.displayHeight < 260)
-                undoMCScaling = 0.3f;
-            else if (mc.displayHeight < 350)
-                undoMCScaling = 0.45f;
-            else if (mc.displayHeight < 720)
-                undoMCScaling = 0.7f;
-            else if (mc.displayWidth < 650)
-                undoMCScaling = 1f;
-        } else if (factor == 2) {
-            if (mc.displayHeight < 530)
-                undoMCScaling = 0.413f;
-            else if (mc.displayHeight < 600)
-                undoMCScaling = 0.475f;
-            else if (mc.displayHeight < 720)
-                undoMCScaling = 1f / scaledResolution.getScaleFactor() * 1;
-            else
-                undoMCScaling = 1;
-        } else if (factor == 3) {
-            if (mc.displayHeight < 730)
-                undoMCScaling = 1f / 3;
-            else if (mc.displayHeight < 930)
-                undoMCScaling = 0.425f;
-            else if (mc.displayHeight < 1000)
-                undoMCScaling = 0.6f;
-            else if (mc.displayWidth < 1300)
-                undoMCScaling = 0.8f;
-            else if (mc.displayHeight < 1250) {
-                undoMCScaling = 0.75f;
-                glTranslatef(0, -15, 0);
-            } else
-                undoMCScaling = 0.99f;
-        }
 
         calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, configureEnabled);
         glPushMatrix();
