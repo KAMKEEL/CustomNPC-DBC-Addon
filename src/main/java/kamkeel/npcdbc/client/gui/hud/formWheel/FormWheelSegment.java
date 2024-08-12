@@ -96,8 +96,6 @@ class FormWheelSegment extends WheelSegment {
                         glTranslatef(13, -5, 0);
                 }
             }
-            drawCenteredString(fontRenderer, getFormName(), 0, 0, 0xFFFFFFFF);
-
             if (data.isDBC) {
                 if (!parent.dbcForms.containsKey(data.formID))
                     removeForm();
@@ -105,6 +103,8 @@ class FormWheelSegment extends WheelSegment {
                 if (!parent.dbcInfo.hasFormUnlocked(data.formID))
                     removeForm();
             }
+            drawCenteredString(fontRenderer, getFormName(), 0, 0, 0xFFFFFFFF);
+
         }
     }
 
