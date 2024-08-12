@@ -1,9 +1,8 @@
-package kamkeel.npcdbc.client.gui.hud;
+package kamkeel.npcdbc.client.gui.hud.formWheel;
 
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.config.ConfigDBCClient;
-import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -24,7 +23,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.client.gui.util.*;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;

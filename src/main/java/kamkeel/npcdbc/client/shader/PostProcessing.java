@@ -2,7 +2,7 @@ package kamkeel.npcdbc.client.shader;
 
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientProxy;
-import kamkeel.npcdbc.client.gui.hud.HUDFormWheel;
+import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;

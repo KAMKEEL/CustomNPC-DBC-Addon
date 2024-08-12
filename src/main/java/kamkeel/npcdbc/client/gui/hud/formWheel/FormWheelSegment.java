@@ -1,5 +1,6 @@
-package kamkeel.npcdbc.client.gui.hud;
+package kamkeel.npcdbc.client.gui.hud.formWheel;
 
+import kamkeel.npcdbc.client.gui.hud.WheelSegment;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.FormController;

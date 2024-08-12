@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.glScaled;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 
-abstract class WheelSegment extends Gui {
+public abstract class WheelSegment extends Gui {
 
     public static ResourceLocation variant1 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/formwheel/GuiWheelVariant1.png");
     public static ResourceLocation variant2 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/formwheel/GuiWheelVariant2.png");
@@ -40,12 +40,12 @@ abstract class WheelSegment extends Gui {
     public float hoverScale = 0;
 
 
-    WheelSegment(int index) {
+    public WheelSegment(int index) {
         this(0, 0, index);
 
     }
 
-    WheelSegment(int posX, int posY, int index) {
+    public WheelSegment(int posX, int posY, int index) {
         this.posX = posX;
         this.posY = posY;
         this.index = index;
