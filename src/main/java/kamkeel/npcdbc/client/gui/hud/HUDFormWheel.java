@@ -198,14 +198,6 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         BLUR_INTENSITY = 0;
     }
 
-    public String getFormName(int wheelSlot) {
-        DBCData dbcData = DBCData.getClient();
-        FormWheelData data = this.wheelSlot[wheelSlot].data;
-        Form form = this.wheelSlot[wheelSlot].form;
-
-        return !data.isDBC ? form != null ? form.menuName : "" : DBCForm.getMenuName(dbcData.Race, data.formID);
-    }
-
     public void buttonEvent(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
         if (button.id <= 5) {
@@ -399,41 +391,8 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
             } else if (i == 4 || i == 5) {
                 GL11.glTranslatef(-10, 0, 0);
             }
-            wheelSlot[i].draw();
+            wheelSlot[i].draw(fontRendererObj);
 
-            if (i == 1 || i == 5) {
-                GL11.glTranslatef(0, 10, 0);
-            } else if (i == 2 || i == 4) {
-                GL11.glTranslatef(0, -10, 0);
-            }
-
-            if (data.formID != -1) {
-                if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
-                    glScaled(0.7, 0.7, 1);
-                    if (i == 0) {
-                        glTranslatef(0, -15f, 0);
-                    } else if (i == 1) {
-                        glTranslatef(-12, -5, 0);
-                    } else if (i == 2) {
-                        glTranslatef(-11, 3, 0);
-                    } else if (i == 3) {
-                        glTranslatef(0, 12f, 0);
-                    } else if (i == 4) {
-                        glTranslatef(10, 3, 0);
-                    } else {
-                        glTranslatef(13, -5, 0);
-                    }
-                }
-                drawCenteredString(fontRendererObj, getFormName(i), 0, 0, 0xFFFFFFFF);
-
-                if (data.isDBC) {
-                    if (!dbcForms.containsKey(data.formID))
-                        wheelSlot[i].removeForm();
-                } else {
-                    if (!dbcInfo.hasFormUnlocked(data.formID))
-                        wheelSlot[i].removeForm();
-                }
-            }
 
             GL11.glPopMatrix();
         }

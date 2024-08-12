@@ -4,11 +4,16 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
-class WheelSegment extends Gui {
+import static org.lwjgl.opengl.GL11.glScaled;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+
+abstract class WheelSegment extends Gui {
 
     public static ResourceLocation variant1 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/formwheel/GuiWheelVariant1.png");
     public static ResourceLocation variant2 = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/hud/formwheel/GuiWheelVariant2.png");
@@ -74,11 +79,14 @@ class WheelSegment extends Gui {
         return hoverScale;
     }
 
-    public void draw() {
+    public void draw(FontRenderer fontRenderer) {
         currentColor = Color.lerpRGBA(NOT_HOVERED, HOVERED, hoverScale);
         currentColor.glColor();
         drawIndexedTexture();
+        drawWheelItem(fontRenderer);
     }
+
+    protected abstract void drawWheelItem(FontRenderer fontRenderer);
 
 
     private void drawIndexedTexture() {
