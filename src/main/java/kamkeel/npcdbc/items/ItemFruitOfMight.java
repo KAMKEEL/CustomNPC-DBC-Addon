@@ -21,6 +21,7 @@ public class ItemFruitOfMight extends ItemFood {
         this.setAlwaysEdible();
         this.setMaxDamage(0);
         this.setCreativeTab(CustomItems.tabMisc);
+        this.setUnlocalizedName("fruitofmight");
     }
 
     @Override

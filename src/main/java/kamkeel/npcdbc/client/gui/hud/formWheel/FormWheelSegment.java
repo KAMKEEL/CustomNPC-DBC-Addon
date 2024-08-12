@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.hud.formWheel;
 
 import kamkeel.npcdbc.client.gui.hud.WheelSegment;
+import kamkeel.npcdbc.client.gui.hud.formWheel.icon.FormIcon;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.FormController;
@@ -14,13 +15,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import org.lwjgl.opengl.GL11;
 
-import static org.lwjgl.opengl.GL11.glScaled;
-import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.*;
 
 class FormWheelSegment extends WheelSegment {
     public HUDFormWheel parent;
     public Form form;
     public FormWheelData data = new FormWheelData();
+    private FormIcon icon = null;
 
     FormWheelSegment(HUDFormWheel parent, int index) {
         this(parent, 0, 0, index);
@@ -70,9 +71,9 @@ class FormWheelSegment extends WheelSegment {
     protected void drawWheelItem(FontRenderer fontRenderer) {
         if (data.formID != -1) {
             if (index == 1 || index == 5) {
-                GL11.glTranslatef(0, 10, 0);
+                glTranslatef(0, 10, 0);
             } else if (index == 2 || index == 4) {
-                GL11.glTranslatef(0, -10, 0);
+                glTranslatef(0, -10, 0);
             }
             if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
                 glScaled(0.7, 0.7, 1);
@@ -102,6 +103,11 @@ class FormWheelSegment extends WheelSegment {
             } else {
                 if (!parent.dbcInfo.hasFormUnlocked(data.formID))
                     removeForm();
+            }
+            if(icon != null){
+                glTranslatef(0, (float) -icon.height /2, 0);
+                icon.draw();
+                glTranslatef(0, icon.height, 0);
             }
             drawCenteredString(fontRenderer, getFormName(), 0, 0, 0xFFFFFFFF);
 
