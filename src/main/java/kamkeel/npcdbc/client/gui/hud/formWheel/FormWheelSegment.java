@@ -46,6 +46,7 @@ class FormWheelSegment extends WheelSegment {
         form = !data.isDBC ? (Form) FormController.getInstance().get(data.formID) : null;
         if (updateServer)
             PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data).generatePacket());
+        icon = form != null ? new FormIcon(form) : new FormIcon(data.formID);
     }
 
     public void setForm(FormWheelData data, boolean updateServer) {
@@ -53,6 +54,7 @@ class FormWheelSegment extends WheelSegment {
         form = !data.isDBC ? (Form) FormController.getInstance().get(data.formID) : null;
         if (updateServer)
             PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data).generatePacket());
+        icon = form != null ? new FormIcon(form) : new FormIcon(data.formID);
     }
 
     public void removeForm() {
@@ -63,7 +65,7 @@ class FormWheelSegment extends WheelSegment {
             parent.selectSlot(-1);
 
         parent.timeClosedSubGui = Minecraft.getSystemTime();
-
+        icon = null;
     }
 
 
@@ -110,7 +112,6 @@ class FormWheelSegment extends WheelSegment {
                 glTranslatef(0, icon.height, 0);
             }
             drawCenteredString(fontRenderer, getFormName(), 0, 0, 0xFFFFFFFF);
-
         }
     }
 
