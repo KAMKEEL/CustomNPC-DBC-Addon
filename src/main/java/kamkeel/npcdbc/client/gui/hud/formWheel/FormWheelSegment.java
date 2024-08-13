@@ -46,7 +46,7 @@ class FormWheelSegment extends WheelSegment {
         form = !data.isDBC ? (Form) FormController.getInstance().get(data.formID) : null;
         if (updateServer)
             PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data).generatePacket());
-        icon = form != null ? new FormIcon(form) : new FormIcon(data.formID);
+        icon = form != null ? new FormIcon(parent, form) : new FormIcon(parent, data.formID);
     }
 
     public void setForm(FormWheelData data, boolean updateServer) {
@@ -54,7 +54,7 @@ class FormWheelSegment extends WheelSegment {
         form = !data.isDBC ? (Form) FormController.getInstance().get(data.formID) : null;
         if (updateServer)
             PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data).generatePacket());
-        icon = form != null ? new FormIcon(form) : new FormIcon(data.formID);
+        icon = form != null ? new FormIcon(parent, form) : new FormIcon(parent, data.formID);
     }
 
     public void removeForm() {
