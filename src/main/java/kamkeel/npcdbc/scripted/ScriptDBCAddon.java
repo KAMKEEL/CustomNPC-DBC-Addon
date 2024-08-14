@@ -417,7 +417,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public boolean isChargingKiAttack() {
+    public boolean isChargingKi() {
         return dbcData.stats.isChargingKiAttack();
     }
 

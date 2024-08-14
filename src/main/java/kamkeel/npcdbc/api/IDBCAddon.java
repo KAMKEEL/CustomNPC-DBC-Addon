@@ -127,7 +127,7 @@ public interface IDBCAddon extends IDBCPlayer {
     /**
      * @return True if player is charging a ki attack
      */
-    boolean isChargingKiAttack();
+    boolean isChargingKi();
 
     /**
      * @param skillname Check JRMCoreH.DBCSkillNames
