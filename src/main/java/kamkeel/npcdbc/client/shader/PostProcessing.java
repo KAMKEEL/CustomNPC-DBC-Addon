@@ -34,6 +34,7 @@ public class PostProcessing {
 
     public static Framebuffer MAIN;
     public static int MAIN_BLOOM_BUFFER, MAIN_BLOOM_TEXTURE, DEPTH_TEXTURE;
+    public static int MAIN_BLUR_BUFFER, MAIN_BLUR_TEXTURE;
     public static int blankTexture;
 
     public static int BLOOM_BUFFERS_LENGTH = 10;
@@ -86,9 +87,16 @@ public class PostProcessing {
             GL11.glLoadIdentity();
             GL11.glOrtho(0.0D, mc.displayWidth, mc.displayHeight, 0.0D, 0, 1);
 
+            glBindFramebuffer(GL_FRAMEBUFFER, MAIN_BLUR_BUFFER);
+            drawToBuffers(0);
+            disableGLState();
+
+            blurVertical(buff.framebufferTexture, HUDFormWheel.BLUR_INTENSITY, 0, 0, mc.displayWidth, mc.displayHeight);
+
             buff.bindFramebuffer(false);
             disableGLState();
-            blurFilter(buff.framebufferTexture, HUDFormWheel.BLUR_INTENSITY, 0, 0, mc.displayWidth, mc.displayHeight);
+            blurHorizontal(MAIN_BLUR_TEXTURE, HUDFormWheel.BLUR_INTENSITY, 0, 0, mc.displayWidth, mc.displayHeight);
+            releaseShader();
 
             glEnable(GL_DEPTH_TEST);
             glDepthMask(true);
@@ -280,7 +288,7 @@ public class PostProcessing {
         glColorMask(true, true, true, true);
     }
 
-    public static void blurFilter(int textureID, float blurIntensity, float startX, float startY, float width, float height) {
+    public static void blurVertical(int textureID, float blurIntensity, float startX, float startY, float width, float height){
         useShader(blur, () -> {
             uniformVec2("u_resolution", width - startX, height - startY);
             uniform1i("horizontal", 0);
@@ -288,10 +296,20 @@ public class PostProcessing {
         });
         renderQuad(textureID, startX, startY, width, height); //vertical blur
 
-        loadUniforms(() -> {
+    }
+
+    public static void blurHorizontal(int textureID, float blurIntensity, float startX, float startY, float width, float height){
+        useShader(blur, () -> {
+            uniformVec2("u_resolution", width - startX, height - startY);
             uniform1i("horizontal", 1);
+            uniform1f("blurIntensity", blurIntensity);
         });
-        renderQuad(textureID, startX, startY, width, height); //horizontal blur
+        renderQuad(textureID, startX, startY, width, height);
+    }
+
+    public static void blurFilter(int textureID, float blurIntensity, float startX, float startY, float width, float height) {
+        blurVertical(textureID, blurIntensity, startX, startY, width, height);
+        blurHorizontal(textureID, blurIntensity, startX, startY, width, height);
 
         releaseShader();
     }
@@ -312,6 +330,19 @@ public class PostProcessing {
         System.out.println("width height " + width + " " + height);
         int previousBuffer = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
         MAIN = getMainBuffer();
+
+
+        MAIN_BLUR_BUFFER = OpenGlHelper.func_153165_e();
+        GL30.glBindFramebuffer(GL_FRAMEBUFFER, MAIN_BLUR_BUFFER);
+
+        MAIN_BLUR_TEXTURE = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, MAIN_BLUR_TEXTURE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
+        OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, MAIN_BLUR_TEXTURE, 0);
 
         MAIN_BLOOM_BUFFER = OpenGlHelper.func_153165_e();
         GL30.glBindFramebuffer(GL_FRAMEBUFFER, MAIN_BLOOM_BUFFER);
@@ -382,6 +413,7 @@ public class PostProcessing {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_DEPTH_COMPONENT32F, width, height, 0, GL11.GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
         // GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, DEPTH_TEXTURE, 0);
+
 
         auraBuffer = OpenGlHelper.func_153165_e();
         GL30.glBindFramebuffer(GL_FRAMEBUFFER, auraBuffer);
