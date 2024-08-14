@@ -3,6 +3,9 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.p.DBC.DBCPacketHandlerServer;
+import JinRyuu.JRMCore.server.JGPlayerMP;
+import JinRyuu.JRMCore.server.JGRaceHelper;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
@@ -30,10 +33,12 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.util.ValueUtil;
 import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -42,6 +47,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
+
+import java.text.DecimalFormat;
 
 import static JinRyuu.JRMCore.JRMCoreH.*;
 import static kamkeel.npcdbc.util.DBCUtils.lastSetDamage;
@@ -60,6 +67,7 @@ public abstract class MixinJRMCoreH {
 
     @Unique
     private static int currentResult;
+
 
     @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
     private static void fix10xKiCost(String[] listOfAttacks, int playerStat, byte[] kiAttackStats, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 0) LocalIntRef stat) {
@@ -615,6 +623,169 @@ public abstract class MixinJRMCoreH {
         DBCUtils.calculatingKiDrain = false;
     }
 
+    /**
+     * @author somehussar
+     * @reason Ben didn't make Array-size checks.
+     */
+    @Overwrite
+    public static String convertFormMasteryToFormat(String formMastery, String decimalFormat) {
+        DecimalFormat format = new DecimalFormat(decimalFormat);
+        String[] data = formMastery.split(";");
+        String newFormMastery = "";
+
+        for(int i = 0; i < data.length; ++i) {
+            String[] values = data[i].split(",");
+            if(values.length < 2){
+                continue;
+            }
+            double value = Double.parseDouble(format.format(Double.parseDouble(values[1])).replace(",", "."));
+            newFormMastery = newFormMastery + values[0] + "," + (value == (double)((int)value) ? (int)value + "" : value) + (i + 1 < data.length ? ";" : "");
+        }
+
+        return newFormMastery;
+    }
+
+
+    /**
+     * @author somehussar
+     * @reason Ben forgor to check array sizes again.
+     */
+    @Overwrite
+    public static void autoLearnFormMastery(EntityPlayer player, int race) {
+        if (JGConfigDBCFormMastery.FM_Enabled) {
+            if (!isFused(player)) {
+                String[] data = getFormMasteryData(player).split(";");
+                int formID = 0;
+                String[] var4 = data;
+                int var5 = data.length;
+
+                for(int var6 = 0; var6 < var5; ++var6) {
+                    String mastery = var4[var6];
+                    String[] values = mastery.split(",");
+                    if(values.length < 2)
+                        continue;
+                    double value = Double.parseDouble(values[1]);
+                    String FM_AutoLearnOnLevel = JGConfigDBCFormMastery.getString(race, formID, JGConfigDBCFormMastery.DATA_ID_AUTO_LEARN_ON_LEVEL, 0);
+                    if (FM_AutoLearnOnLevel != null && FM_AutoLearnOnLevel.length() > 0 && FM_AutoLearnOnLevel.contains(",")) {
+                        String[] autoUnlocks = FM_AutoLearnOnLevel.split(";");
+                        String[] var13 = autoUnlocks;
+                        int var14 = autoUnlocks.length;
+
+                        for(int var15 = 0; var15 < var14; ++var15) {
+                            String autoUnlock = var13[var15];
+                            String[] valuesUnlock = autoUnlock.split(",");
+                            double valueUnlock = Double.parseDouble(valuesUnlock[2]);
+                            if (value >= valueUnlock) {
+                                String nameUnlock = valuesUnlock[0];
+                                String nameUnlockID = nameUnlock;
+                                int levelID = Integer.parseInt(valuesUnlock[1]);
+                                if (levelID < 0) {
+                                    levelID = 0;
+                                }
+
+                                JGPlayerMP jgPlayer = new JGPlayerMP(player);
+                                jgPlayer.connectBaseNBT();
+                                NBTTagCompound nbt = jgPlayer.getNBT();
+                                String nameFullUnlock;
+                                int id;
+                                if (nameUnlockID.equals("Racial")) {
+                                    nameFullUnlock = nbt.getString("jrmcSSltX");
+                                    id = SklLvlX(1, nameFullUnlock);
+                                    int maxLevel = JGRaceHelper.getMaxRacialSkillLevel(DBC(), NC(), (byte)race);
+                                    if (levelID > maxLevel) {
+                                        levelID = maxLevel;
+                                    }
+
+                                    if (id < levelID + 1 && nameFullUnlock.length() > 2 && !nameFullUnlock.contains("pty")) {
+                                        String name = nameFullUnlock.substring(0, 2);
+                                        nbt.setString("jrmcSSltX", name + levelID);
+                                        player.addChatMessage((new ChatComponentText("Form Mastery: Auto Unlocked Racial Skill Level " + levelID)).setChatStyle(DBCPacketHandlerServer.styleYellow));
+                                    }
+                                } else {
+                                    --levelID;
+                                    if (levelID < 0) {
+                                        levelID = 0;
+                                    }
+
+                                    nameFullUnlock = "";
+                                    id = 0;
+                                    String[] var27 = DBCSkillsIDs;
+                                    int maxLevel = var27.length;
+
+                                    for(int var29 = 0; var29 < maxLevel; ++var29) {
+                                        String ids = var27[var29];
+                                        if (ids.equals(nameUnlockID)) {
+                                            nameFullUnlock = DBCSkillNames[id];
+                                            break;
+                                        }
+
+                                        ++id;
+                                    }
+
+                                    boolean isUI = id == 16;
+                                    maxLevel = isUI ? JGConfigUltraInstinct.CONFIG_UI_LEVELS : vlblSklsUps[id] + 1;
+                                    if (levelID > maxLevel) {
+                                        levelID = maxLevel;
+                                    }
+
+                                    String[] s1 = nbt.getString("jrmcSSlts").split(",");
+                                    id = 0;
+                                    boolean foundSkill = false;
+                                    boolean learn = false;
+                                    String[] var32 = s1;
+                                    int var33 = s1.length;
+
+                                    int var34;
+                                    String name;
+                                    for(var34 = 0; var34 < var33; ++var34) {
+                                        String skill = var32[var34];
+                                        if (skill.length() > 2) {
+                                            name = skill.substring(0, 2);
+                                            if (name.equals(nameUnlockID)) {
+                                                foundSkill = true;
+                                                int skillLevel = Integer.parseInt(skill.substring(2, 3));
+                                                if (skillLevel < levelID) {
+                                                    s1[id] = name + levelID;
+                                                    player.addChatMessage((new ChatComponentText("Form Mastery: Auto Unlocked Skill " + nameFullUnlock + " Level " + (levelID + (isUI ? 0 : 1)))).setChatStyle(DBCPacketHandlerServer.styleYellow));
+                                                    learn = true;
+                                                }
+                                            }
+                                        }
+
+                                        ++id;
+                                    }
+
+                                    String skills = "";
+                                    String[] var44 = s1;
+                                    var34 = s1.length;
+
+                                    for(int var45 = 0; var45 < var34; ++var45) {
+                                        name = var44[var45];
+                                        if (s1.length > 0) {
+                                            skills = skills + name + ",";
+                                        }
+                                    }
+
+                                    if (!foundSkill) {
+                                        skills = skills + nameUnlockID + levelID + ",";
+                                        player.addChatMessage((new ChatComponentText("Form Mastery: Auto Unlocked Skill " + nameFullUnlock + " Level " + (levelID + (isUI ? 0 : 1)))).setChatStyle(DBCPacketHandlerServer.styleYellow));
+                                        learn = true;
+                                    }
+
+                                    if (learn) {
+                                        nbt.setString("jrmcSSlts", skills);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    ++formID;
+                }
+
+            }
+        }
+    }
 
 
 
