@@ -25,6 +25,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
 
@@ -227,6 +228,10 @@ public class TransformController {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
+
+            if(!form.raceEligible(player)){
+                return;
+            }
 
             boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ConfigDBCGameplay.InstantTransform;
             if (!allowBypass) {
