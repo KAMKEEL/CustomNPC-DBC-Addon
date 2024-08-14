@@ -24,8 +24,8 @@ public abstract class MixinGuiModeLegs extends GuiModelInterface {
     }
 
     @Inject(method = "initGui", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/gui/model/GuiModelLegs;addButton(Lnoppes/npcs/client/gui/util/GuiNpcButton;)V", ordinal = 6, shift = At.Shift.AFTER))
-    public void addDBCModelButton(CallbackInfo ci, @Local(name = "y") LocalIntRef y, @Local(name = "tail") LocalRef<ModelPartData> tail1) {
-        ModelPartData tail = tail1.get();
+    public void addDBCModelButton(CallbackInfo ci, @Local(name = "y") LocalIntRef y) {
+        ModelPartData tail = this.playerdata.getPartData("tail");
         if (tail != null && tail.type == 8) {
             this.addButton(new GuiNpcButton(122, this.guiLeft + 163, y.get(), 20, 20, "X"));
             getButton(122).enabled = !tail.getColor().equals("632700");
