@@ -24,6 +24,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
     public int selectedFormID = -1;
     public int buttonID = -1;
     public boolean isDBC;
+    public boolean removeForm = false;
 
     public boolean useMenuName, showDBCForms;
 
@@ -73,6 +74,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
 
         addButton(new GuiNpcButton(0, guiLeft + 183, guiTop + 4, 79, 20, "gui.add"));
         addButton(new GuiNpcButton(1, guiLeft + 183, guiTop + 26, 79, 20, "gui.cancel"));
+        addButton(new GuiNpcButton(2, guiLeft + 183, guiTop + 88, 79, 20, "gui.remove"));
     }
 
     public SubGuiSelectForm displayDBCForms(DBCData data) {
@@ -101,6 +103,10 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
             this.close();
         }
         if (id == 1) {
+            this.close();
+        }
+        if(id == 2){
+            this.removeForm = true;
             this.close();
         }
         if (id == 3) {
