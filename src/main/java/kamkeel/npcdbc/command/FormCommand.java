@@ -29,8 +29,7 @@ public class FormCommand extends CommandKamkeelBase {
 		return "Form operations";
 	}
 
-    @SubCommand(desc = "Gives a form to a player", usage = "<player> <formname>"
-    )
+    @SubCommand(desc = "Gives a form to a player by name", usage = "<player> <form_name>")
     public void give(ICommandSender sender, String args[]) throws CommandException{
         FormCommand hi = this;
         String playername=args[0];
@@ -74,7 +73,47 @@ public class FormCommand extends CommandKamkeelBase {
         }
     }
 
-    @SubCommand(desc = "Removes a form from a player", usage = "<player> <formname>"
+    @SubCommand(desc = "Gives a form to a player by numerical ID", usage = "<player> <form_ID>")
+    public void giveid(ICommandSender sender, String args[]) throws CommandException{
+        FormCommand hi = this;
+        String playername=args[0];
+        int id = Integer.parseInt(args[1]);
+
+        List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
+        if (data.isEmpty()) {
+            sendError(sender, "Unknown player: " + playername);
+            return;
+        }
+
+        Form form = (Form) DBCAPI.Instance().getFormHandler().get(id);
+        if (form == null) {
+            sendError(sender, "Unknown form: " + id);
+            return;
+        }
+
+        for(PlayerData playerdata : data){
+            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
+            if (!info.hasFormUnlocked(form.id)) {
+                if (form.raceEligible(playerdata.player)) {
+                    info.addForm(form);
+                    info.updateClient();
+                    sendResult(sender, String.format("%s §agiven to §7'§b%s§7'", form.getName(), playerdata.playername));
+                    if (sender != playerdata.player)
+                        sendResult(playerdata.player, String.format("§aForm §7%s §aadded.", form.getName()));
+                } else {
+                    int playerRace = DBCData.get(playerdata.player).Race;
+                    sendResult(sender, String.format("§b%s's §crace §b(%s)§c is not eligible for §7%s", playerdata.playername, JRMCoreH.Races[playerRace], form.getName()));
+                }
+
+            } else
+                sendResult(sender, String.format("§7'§b%s§7' §ealready has §7%s §eunlocked!", playerdata.playername, form.getName()));
+
+
+            return;
+        }
+    }
+
+    @SubCommand(desc = "Removes a form from a player by name", usage = "<player> <form_name>"
     )
     public void remove(ICommandSender sender, String args[]) throws CommandException{
         String playername=args[0];
@@ -93,6 +132,46 @@ public class FormCommand extends CommandKamkeelBase {
         Form form = (Form) DBCAPI.Instance().getForm(name);
         if (form == null) {
             sendError(sender, "Unknown form: " + name);
+            return;
+        }
+
+
+        for(PlayerData playerdata : data){
+            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
+            if (info.hasForm(form)) {
+                if (info.selectedForm == form.id)
+                    info.selectedForm = -1;
+                if (info.currentForm == form.id) {
+                    TransformController.handleFormDescend(playerdata.player, -10);
+                    info.currentForm = -1;
+                }
+                info.removeForm(form);
+                info.updateClient();
+                sendResult(sender, String.format("%s §cremoved from §7'§b%s§7'", form.getName(), playerdata.playername));
+                if(sender != playerdata.player)
+                    sendResult(playerdata.player, String.format("§c Form §7%s §cremoved.", form.getName()));
+            } else {
+                sendResult(sender, String.format("%s §enot found on §7'§b%s§7'", form.getName(), playerdata.playername, form.id));
+            }
+            return;
+        }
+    }
+
+    @SubCommand(desc = "Removes a form from a player by numerical ID", usage = "<player> <form_ID>"
+    )
+    public void removeid(ICommandSender sender, String args[]) throws CommandException{
+        String playername=args[0];
+        int id = Integer.parseInt(args[1]);
+
+        List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
+        if (data.isEmpty()) {
+            sendError(sender, "Unknown player: " + playername);
+            return;
+        }
+
+        Form form = (Form) DBCAPI.Instance().getFormHandler().get(id);
+        if (form == null) {
+            sendError(sender, "Unknown form: " + id);
             return;
         }
 

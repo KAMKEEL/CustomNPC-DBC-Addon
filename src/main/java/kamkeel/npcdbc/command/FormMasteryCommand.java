@@ -24,7 +24,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
         return "formmastery";
     }
 
-    @SubCommand(desc = "Give a player form mastery", usage = "<player> <amount> <formname>")
+    @SubCommand(desc = "Give a player form mastery by name", usage = "<player> <amount> <form_name>")
     public void give(ICommandSender sender, String[] args) throws CommandException {
         String playername = args[0];
         float amount;
@@ -69,7 +69,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
         }
     }
 
-    @SubCommand(desc = "Set a player form mastery", usage = "<player> <amount> <formname>")
+    @SubCommand(desc = "Set a player form mastery by name", usage = "<player> <amount> <form_name>")
     public void set(ICommandSender sender, String[] args) throws CommandException {
         String playername = args[0];
         float amount;
@@ -95,6 +95,87 @@ public class FormMasteryCommand extends CommandKamkeelBase {
         Form form = (Form) DBCAPI.Instance().getForm(name);
         if (form == null) {
             sendError(sender, "Unknown form: " + name);
+            return;
+        }
+
+        for (PlayerData playerdata : data) {
+            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
+
+            if (!info.hasForm(form)) {
+                sendResult(sender, String.format("\u00A7ePlayer '\u00A7b%s\u00A7e' doesn't have '\u00A7b%s\u00A77' unlocked.", playerdata.playername, form.getName()));
+                return;
+            }
+
+            info.setFormLevel(form.id, amount);
+            info.updateClient();
+            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was set to §d%s", playerdata.playername, form.getName(), info.getFormLevel(form.id)));
+
+            return;
+        }
+    }
+    @SubCommand(desc = "Give a player form mastery by numerical id", usage = "<player> <amount> <form_ID>")
+    public void giveid(ICommandSender sender, String[] args) throws CommandException {
+        String playername = args[0];
+        float amount;
+        int id = Integer.parseInt(args[2]);
+
+        try {
+            amount = Float.parseFloat(args[1]);
+        } catch (NumberFormatException ex) {
+            sendError(sender, "Mastery amount must be a float: " + args[1]);
+            return;
+        }
+
+        List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
+        if (data.isEmpty()) {
+            sendError(sender, "Unknown player: " + playername);
+            return;
+        }
+
+        Form form = (Form) DBCAPI.Instance().getFormHandler().get(id);
+        if (form == null) {
+            sendError(sender, "Unknown form: " + id);
+            return;
+        }
+
+        for (PlayerData playerdata : data) {
+            PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
+
+            if (!info.hasForm(form)) {
+                sendResult(sender, String.format("\u00A7ePlayer '\u00A7b%s\u00A7e' doesn't have '\u00A7b%s\u00A77' unlocked.", playerdata.playername, form.getName()));
+                return;
+            }
+
+            info.addFormLevel(form.id, amount);
+            info.updateClient();
+            sendResult(sender, String.format("\u00A7b%s's\u00A7e mastery of \u00A77'%s'\u00A7e was adjusted by \u00A77%s §d(%s)", playerdata.playername, form.getName(), amount, info.getFormLevel(form.id)));
+
+            return;
+        }
+    }
+
+    @SubCommand(desc = "Set a player form mastery by numerical id", usage = "<player> <amount> <form_ID>")
+    public void setid(ICommandSender sender, String[] args) throws CommandException {
+        String playername = args[0];
+        float amount;
+        int id = Integer.parseInt(args[2]);
+
+        try {
+            amount = Float.parseFloat(args[1]);
+        } catch (NumberFormatException ex) {
+            sendError(sender, "Mastery amount must be a float: " + args[1]);
+            return;
+        }
+
+        List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
+        if (data.isEmpty()) {
+            sendError(sender, "Unknown player: " + playername);
+            return;
+        }
+
+        Form form = (Form) DBCAPI.Instance().getFormHandler().get(id);
+        if (form == null) {
+            sendError(sender, "Unknown form: " + id);
             return;
         }
 
