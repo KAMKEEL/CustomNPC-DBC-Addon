@@ -93,7 +93,7 @@ public final class DBCSelectForm extends AbstractPacket {
                 JRMCoreH.PlyrSettingsRem(player, 16);
             }
             if (formID != -1)
-                NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", DBCForm.getMenuName(dbc.Race, formID));
+                NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", DBCForm.getMenuName(dbc.Race, formID, dbc.isForm(DBCForm.Divine)));
         } else if (formID != -1 && FormController.getInstance().has(formID)) {
             if (formID == formData.selectedForm)
                 return;

@@ -411,9 +411,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             if (racialSkill >= 1 && godSkill >= 1)
                 dbcForms.put(SuperSaiyanGod, "§cSuper Saiyan God");
             if (racialSkill >= 1 && godSkill >= 2)
-                dbcForms.put(SuperSaiyanBlue, "§bSuper Saiyan Blue");
+                dbcForms.put(SuperSaiyanBlue,  !isForm(Divine) ? "§bSuper Saiyan Blue" :  "§5Super Saiyan Rosé");
             if (racialSkill >= 1 && godSkill >= 3)
-                dbcForms.put(BlueEvo, "§1Super Saiyan Blue Evo");
+                dbcForms.put(BlueEvo, !isForm(Divine) ? "§1Super Saiyan Blue Evo" : "§dSuper Saiyan Rosé Evo");
         } else if (race == DBCRace.NAMEKIAN) {
             if (racialSkill >= 1)
                 dbcForms.put(NamekGiant, "§2Giant");

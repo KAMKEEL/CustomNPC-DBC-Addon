@@ -8,6 +8,7 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormStackable;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCSaveFormWheel;
 import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
@@ -119,8 +120,28 @@ class FormWheelSegment extends WheelSegment {
         DBCData dbcData = DBCData.get(parent.dbcInfo.parent.player);
 
         if(!data.isDBC)
-            return form != null ? form.menuName : "";
+            return form != null ? getFormVariant(form, dbcData).menuName : "";
 
-        return DBCForm.getMenuName(dbcData.Race, data.formID);
+        return DBCForm.getMenuName(dbcData.Race, data.formID, dbcData.isForm(DBCForm.Divine));
+    }
+
+    private Form getFormVariant(Form form, DBCData dbcData) {
+        boolean isLegendary = dbcData.isForm(DBCForm.Legendary);
+        boolean isDivine = dbcData.isForm(DBCForm.Divine);
+        boolean isMajin = dbcData.isForm(DBCForm.Majin);
+
+        FormStackable stackable = form.stackable;
+
+        FormController formController = FormController.Instance;
+
+        if (formController.has(stackable.divineID) && isDivine) {
+            form = (Form) formController.get(stackable.divineID);
+        } else if (formController.has(stackable.legendaryID) && isLegendary) {
+            form = (Form) formController.get(stackable.legendaryID);
+        } else if (formController.has(stackable.majinID) && isMajin) {
+            form = (Form) formController.get(stackable.majinID);
+        }
+
+        return form;
     }
 }

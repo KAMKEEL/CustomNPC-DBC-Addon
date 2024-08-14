@@ -110,7 +110,7 @@ public class DBCForm {
         return false;
     }
 
-    public static String getMenuName(int race, int form) {
+    public static String getMenuName(int race, int form, boolean isDivine) {
         String name = null;
         if (race == DBCRace.HUMAN) {
             if (form == HumanBuffed)
@@ -141,9 +141,10 @@ public class DBCForm {
             else if (form == SuperSaiyanGod)
                 name = "§cSuper Saiyan God";
             else if (form == SuperSaiyanBlue)
-                name = "§bSuper Saiyan Blue";
+                name = !isDivine ? "§bSuper Saiyan Blue" :  "§5Super Saiyan Rosé";
             else if (form == BlueEvo)
-                name = "§1Super Saiyan Blue Evo";
+                name = !isDivine ? "§1Super Saiyan Blue Evo" : "§dSuper Saiyan Rosé Evo";
+
 
         } else if (race == DBCRace.NAMEKIAN) {
             if (form == NamekGiant)
