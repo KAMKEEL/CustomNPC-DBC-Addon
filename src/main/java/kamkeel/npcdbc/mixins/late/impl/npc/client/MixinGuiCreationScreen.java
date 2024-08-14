@@ -21,7 +21,7 @@ public abstract class MixinGuiCreationScreen extends GuiModelInterface {
     }
 
     @Inject(method = "showPlayerButtons", at = @At("TAIL"))
-    private void addDBCModelButton(CallbackInfo ci, @Local(name = "y") LocalIntRef y) {
+    private void addDBCModelButton(CallbackInfo ci) {
         this.addButton(new GuiNpcButton(500, this.guiLeft + 310, this.guiTop + 62, 80, 20, "DBC Model"));
     }
 
