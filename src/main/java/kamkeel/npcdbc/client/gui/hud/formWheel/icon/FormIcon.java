@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui.hud.formWheel.icon;
 
+import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
@@ -25,11 +26,11 @@ public class FormIcon extends Gui {
     public HUDFormWheel parent;
 
     public Color hairColor = new Color(0, 1), auraColor = new Color(0xADD8E6, 1);
-    public int width = 16, height = 16;
+    public float width = 16, height = 16;
 
-    private AuraIcon aura;
-    private BodyIcon body;
-    private HairIcon hair;
+    private AuraIconType aura;
+    private BodyIconType body;
+    private HairIconType hair;
 
 
     public FormIcon(HUDFormWheel parent, Form formToCopy){
@@ -42,6 +43,7 @@ public class FormIcon extends Gui {
 
         if(DBCFormID >= 20){
             setNonRacialForms(DBCFormID);
+            return;
         }
 
         switch(parent.dbcData.Race){
@@ -74,23 +76,23 @@ public class FormIcon extends Gui {
         // TODO Replace textures
         //      The current textures are too small (only take up 1/3rd of the size)
         //      So I have to scale up the result.
-        GL11.glScalef(3, 3, 3);
-        if (aura != null) {
+        GL11.glScalef(3.5f, 3.5f, 3.5f);
+        if (aura != AuraIconType.NONE) {
             renderEngine.bindTexture(auraIcon);
             auraColor.glColor();
-            drawTexturedRect(-width/2, -height/2, width/2, height/2, aura.ordinal(), AuraIcon.values().length);
+            drawTexturedRect(-width/2, -height/2, width/2, height/2, aura.ordinal(), AuraIconType.values().length-1);
         }
 
-        if (body != null) {
+        if (body != BodyIconType.NONE) {
             renderEngine.bindTexture(bodyIcon);
             GL11.glColor4f(1, 1, 1, 1);
-            drawTexturedRect(-width/2, -height/2, width/2, height/2, body.ordinal(), BodyIcon.values().length);
+            drawTexturedRect(-width/2, -height/2, width/2, height/2, body.ordinal(), BodyIconType.values().length-1);
         }
 
-        if(hair != null){
+        if(hair != HairIconType.NONE){
             renderEngine.bindTexture(hairIcon);
             hairColor.glColor();
-            drawTexturedRect(-width/2, -height/2, width/2, height/2, hair.ordinal(), HairIcon.values().length);
+            drawTexturedRect(-width/2, -height/2, width/2, height/2, hair.ordinal(), HairIconType.values().length-1);
         }
         GL11.glPopMatrix();
     }
@@ -116,40 +118,65 @@ public class FormIcon extends Gui {
     }
 
     private void setNonRacialForms(int state) {
+        aura = AuraIconType.DEFAULT;
+        body = BodyIconType.HUMANOID;
+        hair = HairIconType.NONE;
+        auraColor = new Color(0xe42e3f, 1);
+        hairColor = new Color(0, 1);
 
+        switch(state){
+            case DBCForm.Mystic:
+                auraColor = new Color(0xFFFFFF, 1);
+                break;
+            case DBCForm.GodOfDestruction:
+                aura = AuraIconType.DESTROYER;
+                auraColor = new Color(0x902377, 1);
+                break;
+        }
+        if(state >= DBCForm.UltraInstinct){
+            hair = HairIconType.HUMANOID;
+            aura = AuraIconType.UI;
+            auraColor = new Color(0xFFFFFF, 1);
+
+            int index = state - DBCForm.UltraInstinct;
+            boolean[] whiteHair = JGConfigUltraInstinct.CONFIG_UI_HAIR_WHITE;
+            if(whiteHair.length > index && whiteHair[index]){
+                hairColor = new Color(0xD0D0D0, 1);
+            }
+        }
     }
 
     private void setHumanForms(int state){
         hairColor = new Color(0, 1);
         auraColor = new Color(0xADD8E6, 1);
-        body = BodyIcon.HUMANOID;
-        hair = HairIcon.HUMANOID;
-        aura = AuraIcon.DEFAULT;
+        body = BodyIconType.HUMANOID;
+        hair = HairIconType.NONE;
+        aura = AuraIconType.DEFAULT;
         if(state == DBCForm.HumanBuffed){
             auraColor = new Color(0xFCE892, 1);
-            body = BodyIcon.BUFF;
+            body = BodyIconType.BUFF;
         }
         if(state == DBCForm.HumanGod){
-            aura = AuraIcon.GOD;
+            aura = AuraIconType.GOD;
             auraColor = new Color(0xFFC125, 1);
         }
     }
     private void setSaiyanForms(int state, boolean isLegendary, boolean isDivine){
         Color basicSSJAuraColor = new Color(isLegendary ? 0x99FF66 : 0xFCE892, 1);
-        Color basicSSJHairColor = basicSSJAuraColor.lerpRGBA(new Color(0, 1), 0.2f);
+        Color basicSSJHairColor = basicSSJAuraColor.lerpRGBA(new Color(0xFFFF00, 1), 0.3f);
 
         Color ssbAuraColor = new Color(isDivine ? 0x730015 : 0x2ACDEE, 1);
         Color ssbHairColor = isDivine ? new Color(0xE4A8AE, 1) : ssbAuraColor.lerpRGBA(new Color(0, 1), 0.2f);
 
-        body = BodyIcon.HUMANOID;
-        hair = HairIcon.HUMANOID;
-        aura = AuraIcon.DEFAULT;
+        body = BodyIconType.HUMANOID;
+        hair = HairIconType.HUMANOID;
+        aura = AuraIconType.DEFAULT;
         auraColor = new Color(0xADD8E6, 1);
         hairColor = new Color(0, 1);
         switch(state){
             case DBCForm.SuperSaiyanG2:
             case DBCForm.SuperSaiyanG3:
-                body = BodyIcon.BUFF;
+                body = BodyIconType.BUFF;
                 auraColor = basicSSJAuraColor;
                 hairColor = basicSSJHairColor;
                 break;
@@ -160,41 +187,41 @@ public class FormIcon extends Gui {
                 hairColor = basicSSJHairColor;
                 break;
             case DBCForm.SuperSaiyan3:
-                hair = HairIcon.SS3;
-                body = BodyIcon.SS3;
+                hair = HairIconType.SS3;
+                body = BodyIconType.SS3;
                 auraColor = basicSSJAuraColor;
                 hairColor = basicSSJHairColor;
                 break;
             case DBCForm.GreatApe:
-                hair = HairIcon.OOZARU;
-                body = BodyIcon.OOZARU;
+                hair = HairIconType.OOZARU;
+                body = BodyIconType.OOZARU;
                 hairColor = new Color(0x42280E, 1);
                 break;
             case DBCForm.SuperGreatApe:
-                hair = HairIcon.OOZARU;
-                body = BodyIcon.OOZARU;
+                hair = HairIconType.OOZARU;
+                body = BodyIconType.OOZARU;
                 auraColor = basicSSJAuraColor;
                 hairColor = basicSSJHairColor;
                 break;
             case DBCForm.SuperSaiyanGod:
-                aura = AuraIcon.GOD;
+                aura = AuraIconType.GOD;
                 auraColor = new Color(0xFFC125, 1);
                 hairColor = new Color(0xD60D6B, 1);
                 break;
             case DBCForm.SuperSaiyanBlue:
-                aura = AuraIcon.GOD;
+                aura = AuraIconType.GOD;
                 auraColor = ssbAuraColor;
                 hairColor = ssbHairColor;
                 break;
             case DBCForm.BlueEvo:
-                aura = AuraIcon.GOD;
-                body = BodyIcon.BUFF;
+                aura = AuraIconType.GOD;
+                body = BodyIconType.BUFF;
                 auraColor = isDivine ? ssbAuraColor.lerpRGBA(new Color(0xFC6C85, 1), 0.6f) : new Color(0x2233FF, 1);
                 hairColor = isDivine ? ssbHairColor.lerpRGBA(new Color(0x090909, 1), 0.2f) : new Color(0x2233FF, 1).lerpRGBA(new Color(0, 1), 0.15f);
                 break;
             case DBCForm.SuperSaiyan4:
-                body = BodyIcon.SS4;
-                hair = HairIcon.SS4;
+                body = BodyIconType.SS4;
+                hair = HairIconType.SS4;
                 hairColor = new Color(0, 1);
                 auraColor = basicSSJAuraColor;
                 break;
@@ -203,32 +230,90 @@ public class FormIcon extends Gui {
     }
     private void setNamekForms(int state){
         hairColor = new Color(0x6DB43A, 1);
-        auraColor = new Color(0xADD8E6, 1);
-        aura = AuraIcon.DEFAULT;
-        body = BodyIcon.NAMEK;
-        hair = HairIcon.NAMEK;
+        auraColor = new Color(0xFCE892, 1);
+        aura = AuraIconType.DEFAULT;
+        body = BodyIconType.NAMEK;
+        hair = HairIconType.NAMEK;
         if(state == DBCForm.NamekGiant){
-            auraColor = new Color(0xFCE892, 1);
+            auraColor = new Color(0xADD8E6, 1);
         }
         if(state == DBCForm.NamekGod){
-            aura = AuraIcon.GOD;
+            aura = AuraIconType.GOD;
             auraColor = new Color(0xFFC125, 1);
         }
     }
     private void setArcoForms(int state){
+        hairColor = new Color(0x992b95, 1);
+        auraColor = new Color(0xb70d0e, 1);
+        aura = AuraIconType.DEFAULT;
+        body = BodyIconType.ARC_FIRST;
+        hair = HairIconType.ARC_FIRST;
+        switch(state){
+            case DBCForm.SecondForm:
+                body = BodyIconType.ARC_SECOND;
+                hair = HairIconType.ARC_SECOND;
+                break;
+            case DBCForm.ThirdForm:
+                body = BodyIconType.ARC_THIRD;
+                hair = HairIconType.ARC_THIRD;
+                break;
+            case DBCForm.FinalForm:
+                body = BodyIconType.ARC_FOURTH;
+                hair = HairIconType.ARC_FOURTH;
+                break;
+            case DBCForm.SuperForm:
+                body = BodyIconType.ARC_FIFTH;
+                hair = HairIconType.ARC_FIFTH;
+                auraColor = new Color(0xADD8E6, 1);
+                break;
+            case DBCForm.UltimateForm:
+                body = BodyIconType.ARC_FOURTH;
+                hair = HairIconType.ARC_FOURTH;
+                aura = AuraIconType.DESTROYER;
+                auraColor = new Color(0xFFBF00, 1);
+                break;
+            case DBCForm.ArcoGod:
+                body = BodyIconType.ARC_FOURTH;
+                hair = HairIconType.ARC_FOURTH;
+                aura = AuraIconType.GOD;
+                auraColor = new Color(0xFFC125, 1);
+                break;
+        }
 
     }
     private void setMajinForms(int state){
+        hairColor = new Color(0xfaaacc, 1);
+        auraColor = new Color(0xADD8E6, 1);
+        aura = AuraIconType.DEFAULT;
+        body = BodyIconType.MAJIN;
+        hair = HairIconType.MAJIN;
+        switch(state){
+            case DBCForm.MajinEvil:
+                auraColor = new Color(0xa6a6a6, 1);
+                hairColor = new Color(0xa6a6a6, 1);
+                break;
+            case DBCForm.MajinPure:
+                auraColor = new Color(0xFFB6C1, 1);
+                body = BodyIconType.MAJIN_PURE;
+                hair = HairIconType.MAJIN_PURE;
+                break;
+            case DBCForm.MajinGod:
+                aura = AuraIconType.GOD;
+                auraColor = new Color(0xFFC125, 1);
+                break;
+        }
 
     }
 
-    private enum AuraIcon {
+    private enum AuraIconType {
         DEFAULT,
         GOD,
         DESTROYER,
-        UI
+        UI,
+
+        NONE
     }
-    private enum BodyIcon {
+    private enum BodyIconType {
         HUMANOID,
         SS4,
         SS3,
@@ -244,9 +329,13 @@ public class FormIcon extends Gui {
         NAMEK,
 
         MAJIN,
-        MAJIN_PURE
+        MAJIN_PURE,
+
+
+
+        NONE
     }
-    private enum HairIcon {
+    private enum HairIconType {
         HUMANOID,
         SS4,
         SS3,
@@ -262,6 +351,10 @@ public class FormIcon extends Gui {
         NAMEK,
 
         MAJIN,
-        MAJIN_PURE
+        MAJIN_PURE,
+
+
+
+        NONE
     }
 }
