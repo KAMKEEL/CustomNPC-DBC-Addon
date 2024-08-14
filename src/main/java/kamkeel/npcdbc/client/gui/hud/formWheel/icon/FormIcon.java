@@ -121,18 +121,10 @@ public class FormIcon extends Gui {
         aura = AuraIconType.DEFAULT;
         body = BodyIconType.HUMANOID;
         hair = HairIconType.NONE;
-        auraColor = new Color(0xe42e3f, 1);
+        auraColor = new Color(0xADD8E6, 1);
         hairColor = new Color(0, 1);
 
-        switch(state){
-            case DBCForm.Mystic:
-                auraColor = new Color(0xFFFFFF, 1);
-                break;
-            case DBCForm.GodOfDestruction:
-                aura = AuraIconType.DESTROYER;
-                auraColor = new Color(0x902377, 1);
-                break;
-        }
+
         if(state >= DBCForm.UltraInstinct){
             hair = HairIconType.HUMANOID;
             aura = AuraIconType.UI;
@@ -140,9 +132,32 @@ public class FormIcon extends Gui {
 
             int index = state - DBCForm.UltraInstinct;
             boolean[] whiteHair = JGConfigUltraInstinct.CONFIG_UI_HAIR_WHITE;
+
             if(whiteHair.length > index && whiteHair[index]){
                 hairColor = new Color(0xD0D0D0, 1);
             }
+
+            return;
+        }
+
+
+
+        switch(state){
+            case DBCForm.Kaioken:
+            case DBCForm.Kaioken2:
+            case DBCForm.Kaioken3:
+            case DBCForm.Kaioken4:
+            case DBCForm.Kaioken5:
+            case DBCForm.Kaioken6:
+                auraColor = new Color(0xb62049, 1).lerpRGBA(new Color(0xFF0000, 1), (state+0.5f-30f) / 6f);
+                break;
+            case DBCForm.Mystic:
+                auraColor = new Color(0xFFFFFF, 1);
+                break;
+            case DBCForm.GodOfDestruction:
+                aura = AuraIconType.DESTROYER;
+                auraColor = new Color(0x902377, 1);
+                break;
         }
     }
 
