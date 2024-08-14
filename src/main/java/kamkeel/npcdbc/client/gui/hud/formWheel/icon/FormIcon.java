@@ -10,10 +10,13 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
+import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.form.FormStackable;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
+import kamkeel.npcdbc.scripted.DBCAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
@@ -41,6 +44,23 @@ public class FormIcon extends Gui {
 
     public FormIcon(HUDFormWheel parent, Form formToCopy){
         this.parent = parent;
+        boolean isLegendary = parent.dbcData.isForm(DBCForm.Legendary);
+        boolean isDivine = parent.dbcData.isForm(DBCForm.Divine);
+        boolean isMajin = parent.dbcData.isForm(DBCForm.Majin);
+
+        FormStackable stackable = formToCopy.stackable;
+
+        FormController formController = FormController.Instance;
+
+        if (formController.has(stackable.divineID) && isDivine) {
+            formToCopy = (Form) formController.get(stackable.divineID);
+        } else if (formController.has(stackable.legendaryID) && isLegendary) {
+            formToCopy = (Form) formController.get(stackable.legendaryID);
+        } else if (formController.has(stackable.majinID) && isMajin) {
+            formToCopy = (Form) formController.get(stackable.majinID);
+        }
+
+
         aura = AuraIconType.DEFAULT;
         body = BodyIconType.HUMANOID;
         hair = HairIconType.HUMANOID;
