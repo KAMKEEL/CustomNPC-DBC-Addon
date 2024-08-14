@@ -48,81 +48,76 @@ public class FormIcon extends Gui {
         hairColor = new Color(0, 1);
 
         FormDisplay display = formToCopy.display;
+        int race = parent.dbcData.Race;
 
-        switch(formToCopy.getRace()){
-            case DBCRace.ALL:
-                hair = HairIconType.NONE;
-                if(display.formSize >= 1.1f)
-                    body = BodyIconType.BUFF;
-                break;
-            case DBCRace.ALL_SAIYANS:
-            case DBCRace.SAIYAN:
-            case DBCRace.HALFSAIYAN:
-            case DBCRace.HUMAN:
-                boolean buff = false;
-                if(display.formSize >= 1.1f)
-                    buff = true;
+        boolean isEligible = formToCopy.raceEligible(parent.player);
 
-                if(display.hairColor != -1){
-                    hairColor = new Color(display.hairColor, 1);
+        boolean isHumanoid = race == DBCRace.HUMAN || race == DBCRace.ALL_SAIYANS || race == DBCRace.HALFSAIYAN || race == DBCRace.SAIYAN;
+        if(isHumanoid && isEligible){
+            boolean buff = false;
+            if(display.formSize >= 1.1f)
+                buff = true;
+
+            if(display.hairColor != -1){
+                hairColor = new Color(display.hairColor, 1);
+            }
+            if (!display.hairType.isEmpty()) {
+
+                if (display.hairType.toLowerCase().contains("ssj3")) {
+                    hair = buff ? HairIconType.SS3_BUFF : HairIconType.SS3;
+                    body = buff ? BodyIconType.BUFF : BodyIconType.HUMANOID;
+                }else if (display.hairType.toLowerCase().contains("ssj4")) {
+                    hair = HairIconType.SS4;
+                    body = BodyIconType.SS4;
+                }else if (display.hairType.toLowerCase().contains("oozaru")) {
+                    hair = HairIconType.OOZARU;
+                    body = BodyIconType.OOZARU;
+                    hairColor = new Color(display.furColor == -1 ? 0x6F4E37 : display.furColor, 1);
+                }else {
+                    body = buff ? BodyIconType.BUFF : BodyIconType.HUMANOID;
                 }
-                if (!display.hairType.isEmpty()) {
-
-                    if (display.hairType.toLowerCase().contains("ssj3")) {
-                        hair = buff ? HairIconType.SS3_BUFF : HairIconType.SS3;
-                        body = buff ? BodyIconType.BUFF : BodyIconType.HUMANOID;
-                    }else if (display.hairType.toLowerCase().contains("ssj4")) {
-                        hair = HairIconType.SS4;
-                        body = BodyIconType.SS4;
-                    }else if (display.hairType.toLowerCase().contains("oozaru")) {
-                        hair = HairIconType.OOZARU;
-                        body = BodyIconType.OOZARU;
-                        hairColor = new Color(display.furColor == -1 ? 0x6F4E37 : display.furColor, 1);
-                    }else {
-                        body = buff ? BodyIconType.BUFF : BodyIconType.HUMANOID;
-                    }
-                }
-                break;
-            case DBCRace.NAMEKIAN:
-                hair = HairIconType.NAMEK;
-                body = BodyIconType.NAMEK;
-                hairColor = new Color(display.bodyCM == -1 ? 0x6DB43A : display.bodyCM, 1);
-                break;
-            case DBCRace.ARCOSIAN:
-                auraColor = new Color(0xb70d0e, 1);
-                hairColor = new Color(display.bodyC2 == -1 ? 0x992b95 : display.bodyC2, 1);
-                if (!display.bodyType.isEmpty()) {
-                    if (display.bodyType.toLowerCase().contains("first")) {
-                        body = BodyIconType.ARC_FIRST;
-                        hair = HairIconType.ARC_FIRST;
-                    }else if (display.bodyType.toLowerCase().contains("second")) {
-                        body = BodyIconType.ARC_SECOND;
-                        hair = HairIconType.ARC_SECOND;
-                    }else if (display.bodyType.toLowerCase().contains("third")) {
-                        body = BodyIconType.ARC_THIRD;
-                        hair = HairIconType.ARC_THIRD;
-                    }else if (display.bodyType.toLowerCase().contains("final")) {
-                        body = BodyIconType.ARC_FOURTH;
-                        hair = HairIconType.ARC_FOURTH;
-                    }else if (display.bodyType.toLowerCase().contains("ultimate")) {
-                        body = BodyIconType.ARC_FIFTH;
-                        hair = HairIconType.ARC_FIFTH;
-                    }
-                }else{
+            }
+        } else if(race == DBCRace.ARCOSIAN && isEligible){
+            auraColor = new Color(0xb70d0e, 1);
+            hairColor = new Color(display.bodyC2 == -1 ? 0x992b95 : display.bodyC2, 1);
+            if (!display.bodyType.isEmpty()) {
+                if (display.bodyType.toLowerCase().contains("first")) {
                     body = BodyIconType.ARC_FIRST;
                     hair = HairIconType.ARC_FIRST;
+                }else if (display.bodyType.toLowerCase().contains("second")) {
+                    body = BodyIconType.ARC_SECOND;
+                    hair = HairIconType.ARC_SECOND;
+                }else if (display.bodyType.toLowerCase().contains("third")) {
+                    body = BodyIconType.ARC_THIRD;
+                    hair = HairIconType.ARC_THIRD;
+                }else if (display.bodyType.toLowerCase().contains("final")) {
+                    body = BodyIconType.ARC_FOURTH;
+                    hair = HairIconType.ARC_FOURTH;
+                }else if (display.bodyType.toLowerCase().contains("ultimate")) {
+                    body = BodyIconType.ARC_FIFTH;
+                    hair = HairIconType.ARC_FIFTH;
                 }
-                break;
-            case DBCRace.MAJIN:
-                if(display.formSize <= 0.9f){
-                    hair = HairIconType.MAJIN_PURE;
-                    body = BodyIconType.MAJIN_PURE;
-                }else{
-                    hair = HairIconType.MAJIN;
-                    body = BodyIconType.MAJIN;
-                }
-                hairColor = new Color(display.bodyCM == -1 ? 0xfaaacc : display.bodyCM, 1);
-                break;
+            }else{
+                body = BodyIconType.ARC_FIRST;
+                hair = HairIconType.ARC_FIRST;
+            }
+        }else if(race == DBCRace.NAMEKIAN && isEligible){
+            hair = HairIconType.NAMEK;
+            body = BodyIconType.NAMEK;
+            hairColor = new Color(display.bodyCM == -1 ? 0x6DB43A : display.bodyCM, 1);
+        }else if(race == DBCRace.MAJIN && isEligible){
+            if(display.formSize <= 0.9f){
+                hair = HairIconType.MAJIN_PURE;
+                body = BodyIconType.MAJIN_PURE;
+            }else{
+                hair = HairIconType.MAJIN;
+                body = BodyIconType.MAJIN;
+            }
+            hairColor = new Color(display.bodyCM == -1 ? 0xfaaacc : display.bodyCM, 1);
+        }else{
+            hair = HairIconType.NONE;
+            if(display.formSize >= 1.1f)
+                body = BodyIconType.BUFF;
         }
 
         int formAuraColor = formToCopy.display.auraColor;
