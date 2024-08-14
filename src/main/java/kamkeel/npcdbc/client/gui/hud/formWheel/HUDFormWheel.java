@@ -37,7 +37,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
 
     public static float BLUR_INTENSITY = 0;
-    public static float MAX_BLUR = 2;
+    public static float MAX_BLUR = 4;
     public static boolean renderingPlayer = false;
     ScaledResolution scaledResolution;
     public FormWheelSegment[] wheelSlot = new FormWheelSegment[6];
@@ -70,6 +70,8 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         // Stops the GUI from un-pressing all keys for you.
         mc.inGameHasFocus = false;
         mc.mouseHelper.ungrabMouseCursor();
+
+        BLUR_INTENSITY = 0;
     }
 
     @Override
@@ -193,7 +195,8 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
 
         }
 
-        BLUR_INTENSITY = 0;
+
+//        BLUR_INTENSITY = 0;
     }
 
     public void buttonEvent(GuiButton guibutton) {
