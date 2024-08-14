@@ -7,7 +7,13 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
+import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
+import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.npc.KiWeaponData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
@@ -35,6 +41,95 @@ public class FormIcon extends Gui {
 
     public FormIcon(HUDFormWheel parent, Form formToCopy){
         this.parent = parent;
+        aura = AuraIconType.DEFAULT;
+        body = BodyIconType.HUMANOID;
+        hair = HairIconType.HUMANOID;
+        auraColor = new Color(0xADD8E6, 1);
+        hairColor = new Color(0, 1);
+
+        FormDisplay display = formToCopy.display;
+
+        switch(formToCopy.getRace()){
+            case DBCRace.ALL:
+                hair = HairIconType.NONE;
+                if(display.formSize >= 1.1f)
+                    body = BodyIconType.BUFF;
+                break;
+            case DBCRace.ALL_SAIYANS:
+            case DBCRace.SAIYAN:
+            case DBCRace.HALFSAIYAN:
+            case DBCRace.HUMAN:
+                boolean buff = false;
+                if(display.formSize >= 1.1f)
+                    buff = true;
+
+                if(display.hairColor != -1){
+                    hairColor = new Color(display.hairColor, 1);
+                }
+                if (!display.hairType.isEmpty()) {
+
+                    if (display.hairType.toLowerCase().contains("ssj3")) {
+                        hair = buff ? HairIconType.SS3_BUFF : HairIconType.SS3;
+                        body = buff ? BodyIconType.BUFF : BodyIconType.HUMANOID;
+                    }else if (display.hairType.toLowerCase().contains("ssj4")) {
+                        hair = HairIconType.SS4;
+                        body = BodyIconType.SS4;
+                    }else if (display.hairType.toLowerCase().contains("oozaru")) {
+                        hair = HairIconType.OOZARU;
+                        body = BodyIconType.OOZARU;
+                        hairColor = new Color(display.furColor == -1 ? 0x6F4E37 : display.furColor, 1);
+                    }else {
+                        body = buff ? BodyIconType.BUFF : BodyIconType.HUMANOID;
+                    }
+                }
+                break;
+            case DBCRace.NAMEKIAN:
+                hair = HairIconType.NAMEK;
+                body = BodyIconType.NAMEK;
+                hairColor = new Color(display.bodyCM == -1 ? 0x6DB43A : display.bodyCM, 1);
+                break;
+            case DBCRace.ARCOSIAN:
+                auraColor = new Color(0xb70d0e, 1);
+                hairColor = new Color(display.bodyC2 == -1 ? 0x992b95 : display.bodyC2, 1);
+                if (!display.bodyType.isEmpty()) {
+                    if (display.bodyType.toLowerCase().contains("first")) {
+                        body = BodyIconType.ARC_FIRST;
+                        hair = HairIconType.ARC_FIRST;
+                    }else if (display.bodyType.toLowerCase().contains("second")) {
+                        body = BodyIconType.ARC_SECOND;
+                        hair = HairIconType.ARC_SECOND;
+                    }else if (display.bodyType.toLowerCase().contains("third")) {
+                        body = BodyIconType.ARC_THIRD;
+                        hair = HairIconType.ARC_THIRD;
+                    }else if (display.bodyType.toLowerCase().contains("final")) {
+                        body = BodyIconType.ARC_FOURTH;
+                        hair = HairIconType.ARC_FOURTH;
+                    }else if (display.bodyType.toLowerCase().contains("ultimate")) {
+                        body = BodyIconType.ARC_FIFTH;
+                        hair = HairIconType.ARC_FIFTH;
+                    }
+                }else{
+                    body = BodyIconType.ARC_FIRST;
+                    hair = HairIconType.ARC_FIRST;
+                }
+                break;
+            case DBCRace.MAJIN:
+                if(display.formSize <= 0.9f){
+                    hair = HairIconType.MAJIN_PURE;
+                    body = BodyIconType.MAJIN_PURE;
+                }else{
+                    hair = HairIconType.MAJIN;
+                    body = BodyIconType.MAJIN;
+                }
+                hairColor = new Color(display.bodyCM == -1 ? 0xfaaacc : display.bodyCM, 1);
+                break;
+        }
+
+        int formAuraColor = formToCopy.display.auraColor;
+        if(display.hasAura())
+            setAuraType((AuraDisplay) display.getAura().getDisplay(), formAuraColor);
+        else if(formAuraColor != -1)
+            auraColor = new Color(formAuraColor, 1);
     }
     public FormIcon(HUDFormWheel parent, int DBCFormID){
         this.parent = parent;
@@ -69,12 +164,10 @@ public class FormIcon extends Gui {
 
     public void draw(){
         TextureManager renderEngine = Minecraft.getMinecraft().renderEngine;
-//        drawRect(-width/2, -height/2, width/2, height/2, 0x55FF0000);
-//        GL11.glEnable(GL11.GL_BLEND);
         GL11.glPushMatrix();
 
         // TODO Replace textures
-        //      The current textures are too small (only take up 1/3rd of the size)
+        //      The current textures are too small (only take up 1/3rd of the space)
         //      So I have to scale up the result.
         GL11.glScalef(3.5f, 3.5f, 3.5f);
         if (aura != AuraIconType.NONE) {
@@ -95,6 +188,17 @@ public class FormIcon extends Gui {
             drawTexturedRect(-width/2, -height/2, width/2, height/2, hair.ordinal(), HairIconType.values().length-1);
         }
         GL11.glPopMatrix();
+    }
+
+    private void setAuraType(AuraDisplay auraDisplay, int formAuraColor){
+        auraColor = new Color(0xADD8E6, 1);
+        if(formAuraColor == -1){
+            auraColor = new Color(KiWeaponData.getColorByAuraType(auraDisplay), 1);
+        }else{
+            auraColor = new Color(formAuraColor, 1);
+        }
+        aura = AuraIconType.getAuraType(auraDisplay);
+
     }
 
     private void drawTexturedRect(float left, float top, float right, float bottom, int index, int maxIndex){
@@ -176,6 +280,7 @@ public class FormIcon extends Gui {
             auraColor = new Color(0xFFC125, 1);
         }
     }
+
     private void setSaiyanForms(int state, boolean isLegendary, boolean isDivine){
         Color basicSSJAuraColor = new Color(isLegendary ? 0x99FF66 : 0xFCE892, 1);
         Color basicSSJHairColor = basicSSJAuraColor.lerpRGBA(new Color(0xFFFF00, 1), 0.3f);
@@ -243,6 +348,7 @@ public class FormIcon extends Gui {
         }
 
     }
+
     private void setNamekForms(int state){
         hairColor = new Color(0x6DB43A, 1);
         auraColor = new Color(0xFCE892, 1);
@@ -257,6 +363,7 @@ public class FormIcon extends Gui {
             auraColor = new Color(0xFFC125, 1);
         }
     }
+
     private void setArcoForms(int state){
         hairColor = new Color(0x992b95, 1);
         auraColor = new Color(0xb70d0e, 1);
@@ -296,6 +403,7 @@ public class FormIcon extends Gui {
         }
 
     }
+
     private void setMajinForms(int state){
         hairColor = new Color(0xfaaacc, 1);
         auraColor = new Color(0xADD8E6, 1);
@@ -326,8 +434,46 @@ public class FormIcon extends Gui {
         DESTROYER,
         UI,
 
-        NONE
+        NONE;
+
+        static AuraIconType getAuraType(AuraDisplay display){
+            String name = null;
+            if(name == null && display.type != EnumAuraTypes3D.None){
+                name = display.type.getName();
+            }
+
+            if(name == null && display.type2D != EnumAuraTypes2D.None){
+                name = display.type2D.getName();
+            }
+            if(name == null)
+                name = "";
+            return getTypeByName(name);
+        }
+        private static AuraIconType getTypeByName(String name) {
+            switch (name) {
+                case "default":
+                case "base":
+                    return DEFAULT;
+                case "ssgod":
+                case "ssb":
+                case "shinka":
+                case "ssrose":
+                case "ssroseevo":
+                    return GOD;
+                case "jiren":
+                case "mui":
+                case "ui":
+                    return UI;
+                case "ultimate":
+                case "godofdestructiontoppo":
+                case "godofdestruction":
+                    return DESTROYER;
+                default:
+                    return NONE;
+            }
+        }
     }
+
     private enum BodyIconType {
         HUMANOID,
         SS4,
@@ -350,6 +496,7 @@ public class FormIcon extends Gui {
 
         NONE
     }
+
     private enum HairIconType {
         HUMANOID,
         SS4,
