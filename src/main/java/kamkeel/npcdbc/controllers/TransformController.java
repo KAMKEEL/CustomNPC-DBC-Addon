@@ -26,7 +26,9 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
+import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
+import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.util.ValueUtil;
 
 import static JinRyuu.JRMCore.JRMCoreH.isInBaseForm;
@@ -229,7 +231,7 @@ public class TransformController {
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
 
-            if(!form.raceEligible(player)){
+            if(!form.raceEligible((IPlayer) NpcAPI.Instance().getIEntity(player))){
                 return;
             }
 

@@ -1,8 +1,6 @@
-package kamkeel.npcdbc.data.outline;
+package kamkeel.npcdbc.api.outline;
 
-import kamkeel.npcdbc.api.aura.IAuraDisplay;
-import kamkeel.npcdbc.data.aura.Aura;
-import net.minecraft.entity.player.EntityPlayer;
+import kamkeel.npcdbc.data.outline.Outline;
 
 public interface IOutline {
 

@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.api.form;
 
 import kamkeel.npcdbc.api.aura.IAura;
-import kamkeel.npcdbc.data.outline.IOutline;
+import kamkeel.npcdbc.api.outline.IOutline;
 
 /**
  * This interface is heavily based on how DBC calculates its form masteries. Please check any race's form_mastery.cfg config to

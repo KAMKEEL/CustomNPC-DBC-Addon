@@ -2,6 +2,7 @@ package kamkeel.npcdbc.api.aura;
 
 import kamkeel.npcdbc.data.aura.Aura;
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.api.entity.IPlayer;
 
 public interface IAura {
 
@@ -30,9 +31,9 @@ public interface IAura {
     /**
      * @param player Player to give this aura to
      */
-    void assignToPlayer(EntityPlayer player);
+    void assignToPlayer(IPlayer player);
 
-    void removeFromPlayer(EntityPlayer player);
+    void removeFromPlayer(IPlayer player);
 
     void assignToPlayer(String playerName);
 
@@ -50,7 +51,7 @@ public interface IAura {
 
     void setSecondaryAura(int id);
 
-    void setSecondaryAura(Aura aura);
+    void setSecondaryAura(IAura aura);
 
     /**
      *

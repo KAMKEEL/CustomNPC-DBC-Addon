@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.api.aura;
 
 import kamkeel.npcdbc.data.aura.Aura;
-import kamkeel.npcdbc.data.outline.IOutline;
+import kamkeel.npcdbc.api.outline.IOutline;
 
 public interface IAuraDisplay {
 
