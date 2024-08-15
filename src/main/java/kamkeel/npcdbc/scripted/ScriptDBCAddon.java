@@ -857,7 +857,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         setAura(Aura.getName());
     }
 
-    @Override
     public DBCData getDBCData() {
         return dbcData;
     }

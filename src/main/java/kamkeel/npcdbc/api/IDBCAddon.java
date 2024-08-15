@@ -296,8 +296,6 @@ public interface IDBCAddon extends IDBCPlayer {
 
     IForm getCurrentForm();
 
-    DBCData getDBCData();
-
     boolean isInAura();
 
     boolean isInAura(IAura aura);
