@@ -47,6 +47,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         this.dbcData.setLockOnTarget(lockOnTarget == null ? null : lockOnTarget.getMCEntity());
     }
 
+    @Override
+    public boolean isTurboOn() {
+        return dbcData.containsSE(3);
+    }
+
 
     /**
      * @return Player's max body

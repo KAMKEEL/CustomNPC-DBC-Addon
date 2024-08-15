@@ -17,6 +17,12 @@ public interface IDBCAddon extends IDBCPlayer {
     void setLockOnTarget(IEntityLivingBase<?> lockOnTarget);
 
     /**
+     * Checks if player has turbo on.
+     * @return True or false
+     */
+    boolean isTurboOn();
+
+    /**
      * @return Player's max body
      */
     int getMaxBody();
