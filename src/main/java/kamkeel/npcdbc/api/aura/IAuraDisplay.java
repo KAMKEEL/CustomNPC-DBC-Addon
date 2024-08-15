@@ -57,14 +57,14 @@ public interface IAuraDisplay {
     String getType();
 
     /**
-     * @return legal types: ssgod, godofdestruction, ui, ssb, ssrose, ssroseevo, ssbkk, shinka
+     * @param auraType legal types: ssgod, godofdestruction, ui, ssb, ssrose, ssroseevo, ssbkk, shinka
      */
     void setType(String auraType);
 
     String getType2D();
 
     /**
-     * @return legal types: ssgod, godofdestruction, ui, mui, ssb, ssrose, ssroseevo, ssbkk, shinka
+     * @param type2D legal types: ssgod, godofdestruction, ui, mui, ssb, ssrose, ssroseevo, ssbkk, shinka
      */
     void setType2D(String type2D);
 
@@ -75,7 +75,7 @@ public interface IAuraDisplay {
      * Individual IAura Color Precedence:
      * 1. IForm's IAura object color followed by IForm's auraColor (Highest)
      * 2. Individual IAura Color
-     * 3. IF overrideDBCForm & in DBC Form -> IAura uses DBC Form Colors [SSJ (yellow), Legendary (green), Divine (purple)]
+     * 3. IF overrideDBCForm in DBC Form : IAura uses DBC Form Colors [SSJ (yellow), Legendary (green), Divine (purple)]
      * 4. Individual IAura's Type Colors [GoD, UI, SSGod]
      * 5. Base Aura Color (Lowest)
      *
@@ -89,7 +89,7 @@ public interface IAuraDisplay {
      * Individual IAura Color Precedence:
      * 1. Form's Aura
      * 2. Individual IAura Color
-     * 3. IF overrideDBCForm & in DBC Form > Use DBC Form Colors [SSJ, Shinka, Rose]
+     * 3. IF overrideDBCForm in DBC Form : Use DBC Form Colors [SSJ, Shinka, Rose]
      * 4. Individual IAura's Type Colors [GoD, UI, SSGod]
      * 5. Base Aura Color
      *

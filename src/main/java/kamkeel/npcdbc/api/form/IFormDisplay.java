@@ -39,6 +39,7 @@ public interface IFormDisplay {
 
     /**
      * @param type Legal types: "base", "raditz", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
+     * @return hair type
      */
     String getHairType(String type);
 

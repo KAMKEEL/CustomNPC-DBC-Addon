@@ -275,7 +275,7 @@ public interface IDBCAddon extends IDBCPlayer {
     boolean isInCustomForm(IForm form);
 
     /**
-     * @param formID
+     * @param formID formID
      * @return True if player is in formID
      */
     boolean isInCustomForm(int formID);

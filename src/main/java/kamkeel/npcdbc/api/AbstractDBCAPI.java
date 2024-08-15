@@ -52,7 +52,8 @@ public abstract class AbstractDBCAPI {
     public abstract IAura getAura(String name);
 
     /**
-     * @return Fake DBC Data for Simulating Damage
+     * @param name name
+     * @return new form
      */
     public abstract IForm getOrCreateForm(String name);
 
@@ -129,11 +130,11 @@ public abstract class AbstractDBCAPI {
      * @param speed         Speed of Ki Attack [0 - 100]
      * @param damage        Damage for Ki Attack
      * @param hasEffect     True for Explosion
-     * @param color         Color of Ki Attack [0 - 30] ->
+     * @param color         Color of Ki Attack [0 - 30]
      *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
      *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
      *                      21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
-     * @param density       Density of Ki Attack > 0
+     * @param density       Density of Ki Attack greater than 0
      * @param hasSound      Play Impact Sound of Ki Attack
      * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
      * @return IKiAttack Object with Set Values
@@ -142,16 +143,16 @@ public abstract class AbstractDBCAPI {
 
     /**
      * Fires a Ki Attack in the Head Direction of the NPC
-     *
+     * @param npc the NPC firing this attack.
      * @param type          Type of Ki Attack [0 - 8] "Wave", "Blast", "Disk", "Laser", "Spiral", "BigBlast", "Barrage", "Shield", "Explosion"
      * @param speed         Speed of Ki Attack [0 - 100]
      * @param damage        Damage for Ki Attack
      * @param hasEffect     True for Explosion
-     * @param color         Color of Ki Attack [0 - 30] ->
+     * @param color         Color of Ki Attack [0 - 30]
      *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
      *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
      *                      21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
-     * @param density       Density of Ki Attack > 0
+     * @param density       Density of Ki Attack greater than 0
      * @param hasSound      Play Impact Sound of Ki Attack
      * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
      */
@@ -159,6 +160,8 @@ public abstract class AbstractDBCAPI {
 
     /**
      * Fires an IKiAttack with its internal params
+     * @param npc NPC shooting this attack
+     * @param kiAttack ki attack to shoot
      */
     public abstract void fireKiAttack(ICustomNpc<EntityNPCInterface> npc, IKiAttack kiAttack);
 }

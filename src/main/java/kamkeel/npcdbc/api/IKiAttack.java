@@ -29,7 +29,7 @@ public interface IKiAttack {
     void setHasEffect(boolean hasEffect);
 
     /**
-     * @return Color of Ki Attack [0 - 30] ->
+     * @return Color of Ki Attack [0 - 30]
      *              0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
      *              11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
      *              21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
@@ -37,7 +37,7 @@ public interface IKiAttack {
     byte getColor();
 
     /**
-     * @param color Color of Ki Attack [0 - 30] ->
+     * @param color Color of Ki Attack [0 - 30]
      *              0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
      *              11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
      *              21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"

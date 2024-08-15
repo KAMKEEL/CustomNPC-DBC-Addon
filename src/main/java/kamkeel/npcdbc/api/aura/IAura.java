@@ -15,7 +15,7 @@ public interface IAura {
     String getMenuName();
 
     /**
-     * @param name Name of aura to be displayed in all aura rendering, whether Aura Selection GUI or DBC stat sheet or chat. Minecraft Color codes are allowed "&4&l"
+     * @param name Name of aura to be displayed in all aura rendering, whether Aura Selection GUI or DBC stat sheet or chat. Minecraft Color codes are allowed
      */
     void setMenuName(String name);
 

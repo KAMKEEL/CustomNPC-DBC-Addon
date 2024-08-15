@@ -8,6 +8,7 @@ public interface IFormStackable {
 
     /**
      * @param DBCForm Non-racial DBC Forms, 20 Kaioken, 21 Mystic, 22 UI, 23 GoD
+     * @param multi multiplier
      */
     void setFormMulti(int DBCForm, float multi);
 
@@ -71,6 +72,7 @@ public interface IFormStackable {
 
     /**
      * @param DBCNonRacialFormID Non-racial DBC Forms, 20 Kaioken, 21 Mystic, 22 UI, 23 GoD
+     * @param stackForm true or false
      */
     void allowStackForm(int DBCNonRacialFormID, boolean stackForm);
 

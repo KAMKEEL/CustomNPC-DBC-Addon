@@ -19,6 +19,7 @@ public interface IKiWeaponData {
     /**
      * Sets the weapon color.
      * @param color If it's set to -1, it relies on current aura color.
+     * @param alpha opacity of the color. 0 - Transparent, 1 - Opaque
      */
 
     void setColor(int color, float alpha);
@@ -51,7 +52,7 @@ public interface IKiWeaponData {
 
     /**
      * Unused right now.
-     * @param damage
+     * @param damage damage the weapon adds to the NPCs total
      */
     void setDamage(float damage);
 

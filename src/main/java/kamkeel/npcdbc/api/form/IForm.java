@@ -14,7 +14,7 @@ public interface IForm {
     String getMenuName();
 
     /**
-     * @param name Name of form to be displayed in all form rendering, whether Form Selection GUI or DBC stat sheet or chat. Minecraft Color codes are allowed "&4&l"
+     * @param name Name of form to be displayed in all form rendering, whether Form Selection GUI or DBC stat sheet or chat. Minecraft Color codes are allowed
      */
 
     void setMenuName(String name);
