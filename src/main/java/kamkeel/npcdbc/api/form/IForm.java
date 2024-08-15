@@ -14,7 +14,7 @@ public interface IForm {
     String getMenuName();
 
     /**
-     * @param name Name of form to be displayed in all form rendering, whether Form Selection GUI or DBC stat sheet or chat. Minecraft Color codes are allowed
+     * @param name Name of form to be displayed in all form rendering, whether Form Selection GUI or DBC stat sheet or chat. Minecraft Color codes are allowed "&amp;4&amp;l"
      */
 
     void setMenuName(String name);
@@ -40,12 +40,13 @@ public interface IForm {
 
     /**
      * @param id    0 for Strength, 1 for Dex, 3 for Willpower
-     * @param multi
+     * @param multi attribute multiplier for given stat
      */
     void setAttributeMulti(int id, float multi);
 
     /**
      * @param id 0 for Strength, 1 for Dex, 3 for Willpower
+     * @return Attribute multiplier for given stat
      */
     float getAttributeMulti(int id);
 
@@ -78,6 +79,7 @@ public interface IForm {
 
     /**
      * Do not use this unless you know what you are changing. Dangerous to change.
+     * @param newID new ID of the form.
      */
     void setID(int newID);
 
