@@ -366,7 +366,7 @@ public class PlayerDBCInfo {
         NBTTagCompound dbcCompound = compound.getCompoundTag("DBCInfo");
 
         currentForm = dbcCompound.getInteger("CurrentForm");
-        selectedForm = dbcCompound.getInteger("SelectedForm");
+        selectedForm = dbcCompound.hasKey("SelectedForm") ? dbcCompound.getInteger("SelectedForm") : -1;
         selectedDBCForm = dbcCompound.hasKey("SelectedDBCForm") ? dbcCompound.getInteger("SelectedDBCForm") : -1;
         unlockedForms = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedForms", 10));
         formLevels = NBTTags.getIntegerFloatMap(dbcCompound.getTagList("FormMastery", 10));
