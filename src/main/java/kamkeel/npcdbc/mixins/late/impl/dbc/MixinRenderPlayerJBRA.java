@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreConfig;
+import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
@@ -133,14 +134,15 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data2:[Ljava/lang/String;"), remap = true)
-    private String[] changeFormDAata(@Local(name = "pl") LocalIntRef pl, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
-        DBCData data = DBCData.get(player.get());
+    private String[] changeFormDAata(@Local(name = "pl") int pl, @Local(ordinal = 0) AbstractClientPlayer player) {
+        DBCData data = DBCData.get(player);
         if (data.State > 0) {
             Form form = data.getForm();
             if (form != null && !form.stackable.vanillaStackable)
                 data.State = 0;
         }
-        return new String[]{data.State + "", data.State2 + ""};
+        JRMCoreH.data2[pl] = data.State + ";" + data.State2;
+        return JRMCoreH.data2;
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JBRA/RenderPlayerJBRA;kk2:Z", ordinal = 1))
@@ -230,7 +232,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hc") LocalIntRef hairCol, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
         Form form = DBCData.getForm(par1AbstractClientPlayer);
         DBCData data = DBCData.get(par1AbstractClientPlayer);
-
         if (form != null) {
             HD = ConfigDBCClient.EnableHDTextures;
             //only saiyans
