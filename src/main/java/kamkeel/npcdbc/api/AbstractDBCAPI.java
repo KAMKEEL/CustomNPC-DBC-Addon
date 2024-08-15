@@ -10,6 +10,7 @@ import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -40,6 +41,8 @@ public abstract class AbstractDBCAPI {
     public abstract IFormHandler getFormHandler();
 
     public abstract IAuraHandler getAuraHandler();
+
+    public abstract IOutlineHandler getOutlineHandler();
 
     public abstract IStatusEffectHandler getStatusEffectHandler();
 

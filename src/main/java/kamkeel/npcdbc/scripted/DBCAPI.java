@@ -14,6 +14,7 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
+import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.npc.DBCStats;
@@ -51,6 +52,11 @@ public class DBCAPI extends AbstractDBCAPI {
     @Override
     public IAuraHandler getAuraHandler() {
         return AuraController.Instance;
+    }
+
+    @Override
+    public IOutlineHandler getOutlineHandler() {
+        return OutlineController.Instance;
     }
 
 
