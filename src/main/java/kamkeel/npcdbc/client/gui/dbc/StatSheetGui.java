@@ -399,7 +399,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             longValue = 2147483647L;
         }
 
-        String passiveDef = JRMCoreH.numSep((int) (longValue * ((float) JRMCoreConfig.cStatPasDef / 100)));
+        String passiveDef = JRMCoreH.numSep((int) (longValue * ((float) JRMCoreConfig.StatPasDef / 100)));
         String chargingDef = null;
         if(ClientCache.hasChargingDex)
             chargingDef = JRMCoreH.numSep((int) (longValue * (ClientCache.chargingDexValues.get((int) dbcClient.Class) / 100)));
