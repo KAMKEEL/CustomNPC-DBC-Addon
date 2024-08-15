@@ -8,6 +8,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.AnimationController;
 import noppes.npcs.scripted.NpcAPI;
 
@@ -90,9 +91,9 @@ public class Aura implements IAura {
     }
 
     @Override
-    public void assignToPlayer(EntityPlayer player) {
+    public void assignToPlayer(IPlayer player) {
 
-        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo((EntityPlayer) player.getMCEntity());
         formData.addAura(this);
         formData.updateClient();
 
@@ -100,13 +101,13 @@ public class Aura implements IAura {
     }
 
     public void assignToPlayer(String playerName) {
-        assignToPlayer(NpcAPI.Instance().getPlayer(playerName).getMCEntity());
+        assignToPlayer(NpcAPI.Instance().getPlayer(playerName));
     }
 
 
     @Override
-    public void removeFromPlayer(EntityPlayer player) {
-        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+    public void removeFromPlayer(IPlayer player) {
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo((EntityPlayer) player.getMCEntity());
         formData.removeAura(this);
         if (formData.selectedAura == this.id)
             formData.selectedAura = -1;
@@ -115,7 +116,7 @@ public class Aura implements IAura {
     }
 
     public void removeFromPlayer(String playerName) {
-        removeFromPlayer(NpcAPI.Instance().getPlayer(playerName).getMCEntity());
+        removeFromPlayer(NpcAPI.Instance().getPlayer(playerName));
     }
 
     @Override
@@ -151,8 +152,8 @@ public class Aura implements IAura {
     }
 
     @Override
-    public void setSecondaryAura(Aura aura) {
-        int id = aura == null ? -1 : aura.id;
+    public void setSecondaryAura(IAura aura) {
+        int id = aura == null ? -1 : aura.getID();
         setSecondaryAura(id);
     }
 

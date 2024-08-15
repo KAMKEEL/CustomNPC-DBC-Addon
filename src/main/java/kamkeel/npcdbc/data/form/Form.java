@@ -13,6 +13,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
+import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.AnimationController;
 import noppes.npcs.scripted.NpcAPI;
 
@@ -172,7 +173,16 @@ public class Form implements IForm {
     }
 
 
-    public boolean raceEligible(EntityPlayer player) {
+    @Override
+    public boolean raceEligible(IPlayer player) {
+        int plRace = DBCData.get((EntityPlayer) player.getMCEntity()).Race;
+        if (race == DBCRace.ALL_SAIYANS)
+            return DBCRace.isSaiyan(plRace);
+
+        return race == DBCRace.ALL || race == plRace;
+    }
+
+    public boolean raceEligible(EntityPlayer player){
         int plRace = DBCData.get(player).Race;
         if (race == DBCRace.ALL_SAIYANS)
             return DBCRace.isSaiyan(plRace);
@@ -211,22 +221,23 @@ public class Form implements IForm {
 
 
     @Override
-    public void assignToPlayer(EntityPlayer player) {
+    public void assignToPlayer(IPlayer player) {
         if (raceEligible(player)) {
-            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo((EntityPlayer) player.getMCEntity());
             formData.addForm(this);
             formData.updateClient();
         }
     }
 
+    @Override
     public void assignToPlayer(String playerName) {
-        assignToPlayer(NpcAPI.Instance().getPlayer(playerName).getMCEntity());
+        assignToPlayer(NpcAPI.Instance().getPlayer(playerName));
     }
 
 
     @Override
-    public void removeFromPlayer(EntityPlayer player) {
-        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+    public void removeFromPlayer(IPlayer player) {
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo((EntityPlayer) player.getMCEntity());
         formData.removeForm(this);
         if (formData.selectedForm == this.id)
             formData.selectedForm = -1;
@@ -236,7 +247,7 @@ public class Form implements IForm {
     }
 
     public void removeFromPlayer(String playerName) {
-        removeFromPlayer(NpcAPI.Instance().getPlayer(playerName).getMCEntity());
+        removeFromPlayer(NpcAPI.Instance().getPlayer(playerName));
     }
 
     @Override
@@ -339,16 +350,17 @@ public class Form implements IForm {
         return requiredForm.get(race);
     }
 
-
-    public boolean isChildOf(Form parent) {
-        while (parent.childID != -1) {
-            if (parent.id == id || parent.childID == id)
+    @Override
+    public boolean isChildOf(IForm parent) {
+        while (parent.getChildID() != -1) {
+            if (parent.getID() == id || parent.getChildID() == id)
                 return true;
-            parent = (Form) parent.getChild();
+            parent = parent.getChild();
         }
         return false;
     }
 
+    @Override
     public IForm getChild() {
         return FormController.Instance.get(childID);
     }

@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.api.form;
 
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.api.entity.IPlayer;
 
 public interface IForm {
 
@@ -38,6 +39,8 @@ public interface IForm {
 
     void setAllMulti(float allMulti);
 
+    boolean raceEligible(IPlayer player);
+
     /**
      * @param id    0 for Strength, 1 for Dex, 3 for Willpower
      * @param multi attribute multiplier for given stat
@@ -53,9 +56,9 @@ public interface IForm {
     /**
      * @param player Player to give this form to
      */
-    void assignToPlayer(EntityPlayer player);
+    void assignToPlayer(IPlayer player);
 
-    void removeFromPlayer(EntityPlayer player);
+    void removeFromPlayer(IPlayer player);
 
     void assignToPlayer(String playerName);
 
@@ -106,6 +109,8 @@ public interface IForm {
     void removeFormRequirement(int race);
 
     int getFormRequirement(int race);
+
+    boolean isChildOf(IForm parent);
 
     /**
      * @return the child of this form i.e if SSJ2 Red is child of SSJ Red(this), returns SSJ2 Red

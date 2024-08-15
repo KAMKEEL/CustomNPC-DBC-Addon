@@ -14,10 +14,11 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
+import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.npc.DBCStats;
-import kamkeel.npcdbc.data.outline.IOutline;
+import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.util.DBCUtils;
@@ -51,6 +52,11 @@ public class DBCAPI extends AbstractDBCAPI {
     @Override
     public IAuraHandler getAuraHandler() {
         return AuraController.Instance;
+    }
+
+    @Override
+    public IOutlineHandler getOutlineHandler() {
+        return OutlineController.Instance;
     }
 
 
@@ -108,16 +114,16 @@ public class DBCAPI extends AbstractDBCAPI {
     }
 
     @Override
-    public IDBCStats getDBCData(ICustomNpc<EntityNPCInterface> npc) {
+    public IDBCStats getDBCData(ICustomNpc npc) {
         if (npc.getMCEntity() instanceof EntityNPCInterface)
-            return ((INPCStats) npc.getMCEntity().stats).getDBCStats();
+            return ((INPCStats) ((EntityNPCInterface) npc.getMCEntity()).stats).getDBCStats();
         return null;
     }
 
     @Override
-    public IDBCDisplay getDBCDisplay(ICustomNpc<EntityNPCInterface> npc) {
+    public IDBCDisplay getDBCDisplay(ICustomNpc npc) {
         if (npc.getMCEntity() instanceof EntityNPCInterface)
-            return ((INPCDisplay) npc.getMCEntity().display).getDBCDisplay();
+            return ((INPCDisplay) ((EntityNPCInterface) npc.getMCEntity()).display).getDBCDisplay();
         return null;
     }
 
@@ -284,7 +290,7 @@ public class DBCAPI extends AbstractDBCAPI {
      * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
      */
     @Override
-    public void fireKiAttack(ICustomNpc<EntityNPCInterface> npc, byte type, byte speed, int damage, boolean hasEffect, byte color, byte density, boolean hasSound, byte chargePercent) {
+    public void fireKiAttack(ICustomNpc npc, byte type, byte speed, int damage, boolean hasEffect, byte color, byte density, boolean hasSound, byte chargePercent) {
         if (npc == null)
             return;
 
@@ -308,7 +314,7 @@ public class DBCAPI extends AbstractDBCAPI {
                 chargePercent = ValueUtil.clamp(chargePercent, (byte) 0, (byte) 100);
                 byte[] sts = JRMCoreH.techDBCstatsDefault;
 
-                EntityNPCInterface trueNpc = npc.getMCEntity();
+                EntityNPCInterface trueNpc = (EntityNPCInterface) npc.getMCEntity();
                 npc.getMCEntity().worldObj.playSoundAtEntity(trueNpc, "jinryuudragonbc:DBC2.basicbeam_fire", 0.5F, 1.0F);
                 entityEnergyAtt = new EntityEnergyAtt(trueNpc, type, speed, 50, effect, color, density, (byte) 0, (byte) 0, playSound, chargePercent, damage, 0, sts, (byte) 0);
                 trueNpc.worldObj.spawnEntityInWorld(entityEnergyAtt);
@@ -321,7 +327,7 @@ public class DBCAPI extends AbstractDBCAPI {
      * Fires an IKiAttack with its internal params
      */
     @Override
-    public void fireKiAttack(ICustomNpc<EntityNPCInterface> npc, IKiAttack kiAttack) {
+    public void fireKiAttack(ICustomNpc npc, IKiAttack kiAttack) {
         if (npc == null || npc.getMCEntity() == null || kiAttack == null)
             return;
 
@@ -352,7 +358,7 @@ public class DBCAPI extends AbstractDBCAPI {
                 chargePercent = ValueUtil.clamp(chargePercent, (byte) 0, (byte) 100);
                 byte[] sts = JRMCoreH.techDBCstatsDefault;
 
-                EntityNPCInterface trueNpc = npc.getMCEntity();
+                EntityNPCInterface trueNpc = (EntityNPCInterface) npc.getMCEntity();
                 npc.getMCEntity().worldObj.playSoundAtEntity(trueNpc, "jinryuudragonbc:DBC2.basicbeam_fire", 0.5F, 1.0F);
                 entityEnergyAtt = new EntityEnergyAtt(trueNpc, type, speed, 50, effect, color, density, (byte) 0, (byte) 0, playSound, chargePercent, damage, 0, sts, (byte) 0);
                 trueNpc.worldObj.spawnEntityInWorld(entityEnergyAtt);

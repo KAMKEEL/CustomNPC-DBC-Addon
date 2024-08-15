@@ -22,6 +22,8 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
+import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.scripted.NpcAPI;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)

@@ -9,7 +9,8 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
-import kamkeel.npcdbc.data.outline.IOutline;
+import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -40,6 +41,8 @@ public abstract class AbstractDBCAPI {
     public abstract IFormHandler getFormHandler();
 
     public abstract IAuraHandler getAuraHandler();
+
+    public abstract IOutlineHandler getOutlineHandler();
 
     public abstract IStatusEffectHandler getStatusEffectHandler();
 
@@ -72,9 +75,9 @@ public abstract class AbstractDBCAPI {
      * @param npc NPC
      * @return DBC Data attached to an NPC
      */
-    public abstract IDBCStats getDBCData(ICustomNpc<EntityNPCInterface> npc);
+    public abstract IDBCStats getDBCData(ICustomNpc npc);
 
-    public abstract IDBCDisplay getDBCDisplay(ICustomNpc<EntityNPCInterface> npc);
+    public abstract IDBCDisplay getDBCDisplay(ICustomNpc npc);
 
     /**
      * Performs DBC Damage based on the DBC Stats
@@ -156,12 +159,12 @@ public abstract class AbstractDBCAPI {
      * @param hasSound      Play Impact Sound of Ki Attack
      * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
      */
-    public abstract void fireKiAttack(ICustomNpc<EntityNPCInterface> npc, byte type, byte speed, int damage, boolean hasEffect, byte color, byte density, boolean hasSound, byte chargePercent);
+    public abstract void fireKiAttack(ICustomNpc npc, byte type, byte speed, int damage, boolean hasEffect, byte color, byte density, boolean hasSound, byte chargePercent);
 
     /**
      * Fires an IKiAttack with its internal params
      * @param npc NPC shooting this attack
      * @param kiAttack ki attack to shoot
      */
-    public abstract void fireKiAttack(ICustomNpc<EntityNPCInterface> npc, IKiAttack kiAttack);
+    public abstract void fireKiAttack(ICustomNpc npc, IKiAttack kiAttack);
 }

@@ -12,7 +12,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.outline.IOutline;
+import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -43,7 +43,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      * Set a players lock on state!
      * @param lockOnTarget Reference to new target Entity or null to remove lock on.
      */
-    public void setLockOnTarget(IEntityLivingBase<?> lockOnTarget){
+    public void setLockOnTarget(IEntityLivingBase lockOnTarget){
         this.dbcData.setLockOnTarget(lockOnTarget == null ? null : lockOnTarget.getMCEntity());
     }
 
@@ -635,7 +635,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     public void giveCustomForm(String formName) {
         IForm form = FormController.Instance.get(formName);
-        form.assignToPlayer(player);
+        form.assignToPlayer(this);
     }
 
     @Override
@@ -645,7 +645,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     public void removeCustomForm(String formName) {
         IForm f = FormController.Instance.get(formName);
-        f.removeFromPlayer(player);
+        f.removeFromPlayer(this);
     }
 
     @Override
@@ -800,13 +800,13 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     public void giveAura(String AuraName) {
         IAura aura = AuraController.Instance.get(AuraName);
-        aura.assignToPlayer(player);
+        aura.assignToPlayer(this);
     }
 
     @Override
     public void removeAura(String AuraName) {
         IAura aura = AuraController.Instance.get(AuraName);
-        aura.removeFromPlayer(player);
+        aura.removeFromPlayer(this);
     }
 
     @Override

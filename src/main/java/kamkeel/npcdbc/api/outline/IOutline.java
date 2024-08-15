@@ -1,8 +1,6 @@
-package kamkeel.npcdbc.data.outline;
+package kamkeel.npcdbc.api.outline;
 
-import kamkeel.npcdbc.api.aura.IAuraDisplay;
-import kamkeel.npcdbc.data.aura.Aura;
-import net.minecraft.entity.player.EntityPlayer;
+import kamkeel.npcdbc.data.outline.Outline;
 
 public interface IOutline {
 
@@ -32,7 +30,7 @@ public interface IOutline {
     String getMenuName();
 
     /**
-     * @param name Name of aura to be displayed in all aura rendering, whether Aura Selection GUI or DBC stat sheet or chat. Minecraft Color codes are allowed "&4&l"
+     * @param name Name of aura to be displayed in all aura rendering, whether Aura Selection GUI or DBC stat sheet or chat. Minecraft Color codes are allowed "&amp;4&amp;l"
      */
     void setMenuName(String name);
 
@@ -40,6 +38,7 @@ public interface IOutline {
 
     /**
      * Do not use this unless you know what you are changing. Dangerous to change.
+     * @param newID new ID.
      */
     void setID(int newID);
 

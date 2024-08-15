@@ -1,7 +1,8 @@
 package kamkeel.npcdbc.controllers;
 
+import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
-import kamkeel.npcdbc.data.outline.IOutline;
+import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCInfoSync;
@@ -19,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
-public class OutlineController {
+public class OutlineController implements IOutlineHandler {
     public static OutlineController Instance = new OutlineController();
     public HashMap<Integer, Outline> customOutlinesSync = new HashMap();
     public HashMap<Integer, Outline> customOutlines;
@@ -41,6 +42,7 @@ public class OutlineController {
         LogWriter.info("Done loading custom outlines.");
     }
 
+    @Override
     public IOutline createOutline(String name) {
         if (hasName(name))
             return get(name);
@@ -64,6 +66,7 @@ public class OutlineController {
         }
     }
 
+    @Override
     public IOutline saveOutline(IOutline customOutline) {
         if (customOutline.getID() < 0) {
             customOutline.setID(getUnusedId());
@@ -101,6 +104,7 @@ public class OutlineController {
         return customOutlines.get(customOutline.getID());
     }
 
+    @Override
     public void deleteOutlineFile(String name) {
         File dir = this.getDir();
         if (!dir.exists())
@@ -154,6 +158,7 @@ public class OutlineController {
         saveOutlineLoadMap();
     }
 
+    @Override
     public boolean hasName(String newName) {
         if (newName.trim().isEmpty())
             return true;
@@ -164,22 +169,27 @@ public class OutlineController {
     }
 
 
+    @Override
     public IOutline get(String name) {
         return getOutlineFromName(name);
     }
 
+    @Override
     public IOutline get(int id) {
         return this.customOutlines.get(id);
     }
 
+    @Override
     public boolean has(String name) {
         return getOutlineFromName(name) != null;
     }
 
+    @Override
     public boolean has(int id) {
         return get(id) != null;
     }
 
+    @Override
     public void delete(int id) {
         if (!this.customOutlines.containsKey(id))
             return;
@@ -200,8 +210,9 @@ public class OutlineController {
         }
     }
 
+    @Override
     public void delete(String name) {
-        Outline delete = getOutlineFromName(name);
+        Outline delete = (Outline) getOutlineFromName(name);
         if (delete != null) {
             Outline foundOutline = this.customOutlines.remove(delete.getID());
             if (foundOutline != null && foundOutline.name != null) {
@@ -233,6 +244,7 @@ public class OutlineController {
         return lastUsedID;
     }
 
+    @Override
     public String[] getNames() {
         String[] names = new String[customOutlines.size()];
         int i = 0;
@@ -243,12 +255,14 @@ public class OutlineController {
         return names;
     }
 
+    @Override
     public IOutline[] getOutlines() {
         ArrayList<IOutline> outlines = new ArrayList<>(this.customOutlines.values());
         return outlines.toArray(new IOutline[0]);
     }
 
-    public Outline getOutlineFromName(String outlineName) {
+    @Override
+    public IOutline getOutlineFromName(String outlineName) {
         for (Map.Entry<Integer, Outline> entryOutline : customOutlines.entrySet()) {
             if (entryOutline.getValue().name.equalsIgnoreCase(outlineName)) {
                 return entryOutline.getValue();
