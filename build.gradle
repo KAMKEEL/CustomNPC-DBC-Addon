@@ -2,9 +2,20 @@
 
 plugins {
     id 'com.gtnewhorizons.gtnhconvention'
+    id 'java'
 }
 
 version = "1.0-Release_Candidate_1"
 group= "kamkeel.npcdbc"
 
 tasks.runServer { setWorkingDir(file("run/server")) }
+
+javadoc {
+    def links = [
+        "https://docs.oracle.com/javase/8/docs/api/",
+        "https://kamkeel.github.io/CustomNPC-Plus"
+    ]
+    destinationDir = file("${buildDir}/docs/")
+    include 'kamkeel/npcdbc/api/**'
+    options.setLinks(links)
+}
