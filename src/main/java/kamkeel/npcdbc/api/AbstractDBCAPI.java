@@ -131,8 +131,8 @@ public abstract class AbstractDBCAPI {
      * @param damage        Damage for Ki Attack
      * @param hasEffect     True for Explosion
      * @param color         Color of Ki Attack [0 - 30] -&gt;
-     *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
-     *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
+     *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", <br>
+     *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", <br>
      *                      21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
      * @param density       Density of Ki Attack &gt; 0
      * @param hasSound      Play Impact Sound of Ki Attack
@@ -149,8 +149,8 @@ public abstract class AbstractDBCAPI {
      * @param damage        Damage for Ki Attack
      * @param hasEffect     True for Explosion
      * @param color         Color of Ki Attack [0 - 30] -&gt;
-     *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
-     *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
+     *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", <br>
+     *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", <br>
      *                      21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
      * @param density       Density of Ki Attack &gt; 0
      * @param hasSound      Play Impact Sound of Ki Attack
