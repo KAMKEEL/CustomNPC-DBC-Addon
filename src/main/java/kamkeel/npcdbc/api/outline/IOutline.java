@@ -8,17 +8,17 @@ public interface IOutline {
 
     void setOuterColor(int color, float alpha);
 
-    Outline setSize(float size);
+    IOutline setSize(float size);
 
-    Outline setNoiseSize(float size);
+    IOutline setNoiseSize(float size);
 
-    Outline setSpeed(float speed);
+    IOutline setSpeed(float speed);
 
-    Outline setPulsingSpeed(float speed);
+    IOutline setPulsingSpeed(float speed);
 
-    Outline setColorSmoothness(float smoothness);
+    IOutline setColorSmoothness(float smoothness);
 
-    Outline setColorInterpolation(float interp);
+    IOutline setColorInterpolation(float interp);
 
     String getName();
 

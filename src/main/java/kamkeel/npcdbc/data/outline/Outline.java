@@ -69,37 +69,37 @@ public class Outline implements IOutline {
     }
 
     @Override
-    public Outline setSize(float size) {
+    public IOutline setSize(float size) {
         this.size = ValueUtil.clamp(size, 0, 5);
         return this;
     }
 
     @Override
-    public Outline setNoiseSize(float size) {
+    public IOutline setNoiseSize(float size) {
         this.noiseSize = ValueUtil.clamp(size, 0, 50);
         return this;
     }
 
     @Override
-    public Outline setSpeed(float speed) {
+    public IOutline setSpeed(float speed) {
         this.speed = ValueUtil.clamp(size, 0, 50);
         return this;
     }
 
     @Override
-    public Outline setPulsingSpeed(float speed) {
+    public IOutline setPulsingSpeed(float speed) {
         this.pulsingSpeed = ValueUtil.clamp(speed, 0, 50);
         return this;
     }
 
     @Override
-    public Outline setColorSmoothness(float smoothness) {
+    public IOutline setColorSmoothness(float smoothness) {
         this.colorSmoothness = ValueUtil.clamp(smoothness, 0, 1);
         return this;
     }
 
     @Override
-    public Outline setColorInterpolation(float interp) {
+    public IOutline setColorInterpolation(float interp) {
         this.colorInterpolation = ValueUtil.clamp(interp, 0, 1);
         return this;
     }
