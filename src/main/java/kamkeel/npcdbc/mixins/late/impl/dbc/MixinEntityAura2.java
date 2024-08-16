@@ -93,15 +93,12 @@ public class MixinEntityAura2 implements IEntityAura {
     private void redirect(CallbackInfo ci, @Local(name = "other") LocalRef<Entity> player, @Local(name = "aura_type") LocalBooleanRef aura_type, @Local(name = "aura_type2") LocalBooleanRef aura_type2) {
         EntityAura2 aura = (EntityAura2) (Object) this;
 
+        aura.lastTickPosX = this.entity.lastTickPosX;
+        aura.lastTickPosY = this.entity.lastTickPosY;
+        aura.lastTickPosZ = this.entity.lastTickPosZ;
 
-        if (this.entity != null) {
-            aura.lastTickPosX = this.entity.lastTickPosX;
-            aura.lastTickPosY = this.entity.lastTickPosY;
-            aura.lastTickPosZ = this.entity.lastTickPosZ;
-
-            player.set(this.entity);
-            mot = this.entity.getCommandSenderName();
-        }
+        player.set(this.entity);
+        mot = this.entity.getCommandSenderName();
 
 
         if (aura.getAge() < aura.getLightLivingTime() && hasLightning && aura.getAge() == 1) {
