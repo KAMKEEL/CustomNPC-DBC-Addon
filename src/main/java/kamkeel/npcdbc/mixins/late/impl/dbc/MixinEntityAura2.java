@@ -94,7 +94,7 @@ public class MixinEntityAura2 implements IEntityAura {
         EntityAura2 aura = (EntityAura2) (Object) this;
 
         aura.lastTickPosX = this.entity.lastTickPosX;
-        aura.lastTickPosY = this.entity.lastTickPosY;
+        aura.lastTickPosY = this.entity.lastTickPosY + (this.entity instanceof EntityPlayerSP ? -1.6F : 0.0F);
         aura.lastTickPosZ = this.entity.lastTickPosZ;
 
         player.set(this.entity);
