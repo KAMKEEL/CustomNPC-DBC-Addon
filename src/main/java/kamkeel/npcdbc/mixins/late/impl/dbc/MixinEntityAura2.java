@@ -19,6 +19,8 @@ import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
@@ -93,9 +95,11 @@ public class MixinEntityAura2 implements IEntityAura {
     private void redirect(CallbackInfo ci, @Local(name = "other") LocalRef<Entity> player, @Local(name = "aura_type") LocalBooleanRef aura_type, @Local(name = "aura_type2") LocalBooleanRef aura_type2) {
         EntityAura2 aura = (EntityAura2) (Object) this;
 
-        aura.lastTickPosX = this.entity.lastTickPosX;
-        aura.lastTickPosY = this.entity.lastTickPosY + (this.entity instanceof EntityPlayerSP ? -1.6F : 0.0F);
-        aura.lastTickPosZ = this.entity.lastTickPosZ;
+        if(!(this.entity instanceof EntityPlayer)){
+            aura.lastTickPosX = this.entity.lastTickPosX;
+            aura.lastTickPosY = this.entity.lastTickPosY;
+            aura.lastTickPosZ = this.entity.lastTickPosZ;
+        }
 
         player.set(this.entity);
         mot = this.entity.getCommandSenderName();
