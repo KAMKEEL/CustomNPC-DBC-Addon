@@ -17,7 +17,9 @@ import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
+import net.minecraft.world.World;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -85,16 +87,22 @@ public class MixinEntityAura2 implements IEntityAura {
     @Inject(method = "<init>(Lnet/minecraft/world/World;Ljava/lang/String;IFFIZ)V", at = @At("TAIL"))
     private void init(CallbackInfo ci) {
         EntityAura2 aura = (EntityAura2) (Object) this;
-
-
     }
 
     @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", shift = At.Shift.AFTER), remap = true)
     private void redirect(CallbackInfo ci, @Local(name = "other") LocalRef<Entity> player, @Local(name = "aura_type") LocalBooleanRef aura_type, @Local(name = "aura_type2") LocalBooleanRef aura_type2) {
         EntityAura2 aura = (EntityAura2) (Object) this;
 
-        player.set(this.entity);
-        mot = this.entity.getCommandSenderName();
+
+        if (this.entity != null) {
+            aura.lastTickPosX = this.entity.lastTickPosX;
+            aura.lastTickPosY = this.entity.lastTickPosY;
+            aura.lastTickPosZ = this.entity.lastTickPosZ;
+
+            player.set(this.entity);
+            mot = this.entity.getCommandSenderName();
+        }
+
 
         if (aura.getAge() < aura.getLightLivingTime() && hasLightning && aura.getAge() == 1) {
             if (isGUIAura) {
@@ -109,7 +117,7 @@ public class MixinEntityAura2 implements IEntityAura {
         }
         if (bol6 == -2) {
             float height = getSize <= 0 ? this.entity.height : (getSize * 1.3f);
-            ParticleFormHandler.spawnAura2D(type2D, color, this.entity, data, height, isGUIAura);
+                ParticleFormHandler.spawnAura2D(type2D, color, this.entity, data, height, isGUIAura);
         }
     }
 
