@@ -336,6 +336,8 @@ public class ClientEventHandler {
         ((IEntityAura) aur).setAuraData(data);
         aur.setAlp(0.2F);
 
+
+
         if (SubGuiAuraDisplay.useGUIAura) {
             ((IEntityAura) aur).setGUIAura(true);
         }
@@ -344,7 +346,7 @@ public class ClientEventHandler {
             ((IEntityAura) aur).setSize((float) ((EntityNPCInterface) entity).display.modelSize / 5);
 
         if (aura.display.hasSize())
-            ((IEntityAura) aur).setSize(aura.display.size);
+            ((IEntityAura) aur).setSize(((IEntityAura) aur).getSize() * aura.display.size);
 
         ((IEntityAura) aur).setHasLightning(aura.display.hasLightning);
         ((IEntityAura) aur).setLightningColor(aura.display.lightningColor);
