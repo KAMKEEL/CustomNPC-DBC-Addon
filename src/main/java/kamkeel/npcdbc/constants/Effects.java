@@ -14,4 +14,7 @@ public class Effects {
     public static final int ZENKAI = 11;
     public static final int POTARA = 12;
     public static final int EXHAUSTED = 13;
+    public static final int HUMAN_SPIRIT = 14;
+    public static final int COLD_BLOODED = 15;
+    public static final int KI_DEFENSE = 16;
 }

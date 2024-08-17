@@ -68,6 +68,12 @@ public class ConfigDBCEffects
     private static float divineMulti = 1;
     private static final HashMap<Integer, HashMap<String, Boolean>> divineApplicableForms = new HashMap<>();
 
+    public final static String HumanSpirit = "HumanSpirit";
+    public static double HumanSpiritStr = 1.0;
+    public static double HumanSpiritDex = 1.0;
+    public static double HumanSpiritWil = 1.0;
+    public static int HumanSpiritLength = 360;
+
     /**
      * Ugly, roundabout way of persisting configs between multiplayer and singleplayer.
      *
