@@ -2,7 +2,6 @@ package kamkeel.npcdbc.api;
 
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.api.outline.IOutline;
 import noppes.npcs.api.entity.IDBCPlayer;
 import noppes.npcs.api.entity.IEntityLivingBase;
@@ -303,19 +302,19 @@ public interface IDBCAddon extends IDBCPlayer {
      * Sets the current custom aura <b>if the player has it unlocked.</b>
      * @param auraName Name of the aura to set.
      */
-    void setAura(String auraName);
+    void setAuraSelection(String auraName);
 
     /**
      * Sets the current custom aura <b>if the player has it unlocked.</b>
      * @param aura Aura object to set.
      */
-    void setAura(IAura aura);
+    void setAuraSelection(IAura aura);
 
     /**
      * Sets the current custom aura <b>if the player has it unlocked.</b>
      * @param auraID ID of the aura to set.
      */
-    void setAura(int auraID);
+    void setAuraSelection(int auraID);
 
     /**
      * Unlocks the given aura for the player.
@@ -358,26 +357,26 @@ public interface IDBCAddon extends IDBCPlayer {
      * <h2>THE PLAYER DOESN'T NEED TO HAVE THIS AURA UNLOCKED</h2>
      * @param auraName ID of the aura.
      */
-    void setSelectedAura(String auraName);
+    void setAura(String auraName);
 
     /**
      * Sets the custom aura for the player <br>
      * <h2>THE PLAYER DOESN'T NEED TO HAVE THIS AURA UNLOCKED</h2>
      * @param aura Aura object
      */
-    void setSelectedAura(IAura aura);
+    void setAura(IAura aura);
 
     /**
      * Sets the custom aura for the player <br>
      * <h2>THE PLAYER DOESN'T NEED TO HAVE THIS AURA UNLOCKED</h2>
      * @param auraID ID of the aura.
      */
-    void setSelectedAura(int auraID);
+    void setAura(int auraID);
 
     /**
      * Removes a custom aura selection for the player.
      */
-    void removeSelectedAura();
+    void removeAuraSelection();
 
     /**
      * @return True if player is in any CNPC+ custom form

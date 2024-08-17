@@ -9,7 +9,6 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.api.outline.IOutline;
@@ -795,61 +794,91 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     // Aura stuff
     @Override
     public void giveAura(IAura aura) {
-        giveAura(aura.getName());
+        if(aura != null)
+            aura.assignToPlayer(this);
+        throw new CustomNPCsException("This aura doesn't exist");
     }
 
     @Override
     public void giveAura(int auraID) {
-        AuraController.getInstance().get(auraID).assignToPlayer(this);
+        IAura aura = AuraController.getInstance().get(auraID);
+        if(aura != null)
+            giveAura(aura);
+        else
+            throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
     }
 
     @Override
-    public void giveAura(String AuraName) {
-        IAura aura = AuraController.Instance.get(AuraName);
-        aura.assignToPlayer(this);
+    public void giveAura(String auraName) {
+        IAura aura = AuraController.Instance.get(auraName);
+        if(aura != null)
+            giveAura(aura);
+        else
+            throw new CustomNPCsException(String.format("There is no aura with given name (name: \"%s\")", auraName));
     }
 
     @Override
     public void removeAura(String auraName) {
         IAura aura = AuraController.Instance.get(auraName);
-        aura.removeFromPlayer(this);
+        if(aura != null)
+            removeAura(aura);
+        else
+            throw new CustomNPCsException(String.format("There is no aura with given name (name: \"%s\")", auraName));
     }
 
     @Override
     public void removeAura(IAura aura) {
-        removeAura(aura.getName());
+        if(aura != null)
+            aura.removeFromPlayer(this);
+        throw new CustomNPCsException("This aura doesn't exist");
     }
     @Override
     public void removeAura(int auraID) {
         IAura aura = AuraController.getInstance().get(auraID);
         if(aura != null)
             removeAura(aura);
-    }
-
-    @Override
-    public void setSelectedAura(String auraName) {
-        setSelectedAura(AuraController.getInstance().get(auraName));
-    }
-
-
-    @Override
-    public void setSelectedAura(IAura aura) {
-        setSelectedAura(aura != null ? aura.getID() : -1);
-    }
-
-    @Override
-    public void setSelectedAura(int Auraid) {
-        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
-        if (AuraController.getInstance().has(Auraid))
-            c.selectedAura = Auraid;
         else
-            c.selectedAura = -1;
-
-        c.updateClient();
+            throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
     }
 
     @Override
-    public void removeSelectedAura() {
+    public void setAura(String auraName) {
+        if(auraName == null) {
+            removeAuraSelection();
+            return;
+        }
+
+        IAura aura = AuraController.Instance.get(auraName);
+        if(aura == null)
+            throw new CustomNPCsException(String.format("There is no aura with given name (name: \"%s\")", auraName));
+        setAura(aura);
+    }
+
+
+    @Override
+    public void setAura(IAura aura) {
+        setAura(aura != null ? aura.getID() : -1);
+    }
+
+    @Override
+    public void setAura(int auraID) {
+        if (auraID == -1){
+            removeAuraSelection();
+            return;
+        }
+
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        if (AuraController.getInstance().has(auraID)){
+            c.selectedAura = auraID;
+            c.updateClient();
+        } else {
+            throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
+        }
+
+    }
+
+    @Override
+    public void removeAuraSelection() {
         PlayerDBCInfo AuraData = PlayerDataUtil.getDBCInfo(player);
         AuraData.selectedAura = -1;
         AuraData.updateClient();
@@ -860,26 +889,49 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public void setAura(String auraName) {
-        Aura aura = (Aura) AuraController.Instance.get(auraName);
+    public void setAuraSelection(String auraName) {
+        if(auraName == null) {
+            removeAuraSelection();
+            return;
+        }
+
+        IAura aura = AuraController.Instance.get(auraName);
+        if(aura == null)
+            throw new CustomNPCsException(String.format("There is no aura with given name (name: \"%s\")", auraName));
+
+        setAuraSelection(aura);
+    }
+
+    @Override
+    public void setAuraSelection(IAura aura) {
+        if(aura == null) {
+            removeAuraSelection();
+            return;
+        }
+
+        final int auraID = aura.getID();
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
-        if (c.hasAura(aura)) {
-            c.currentAura = aura.id;
+
+        if(c.hasAuraUnlocked(auraID)){
+            c.currentAura = auraID;
             c.updateClient();
-        } else
-            throw new CustomNPCsException("Player doesn't have aura " + auraName + " unlocked!");
+        }else{
+            throw new CustomNPCsException(String.format("Player \"%s\" doesn't have aura \"%s\" (ID: %d) unlocked.", player.getCommandSenderName(), aura.getName(), auraID));
+        }
     }
 
     @Override
-    public void setAura(IAura aura) {
-        setAura(aura.getName());
-    }
+    public void setAuraSelection(int auraID) {
+        if(auraID == -1){
+            removeAuraSelection();
+            return;
+        }
 
-    @Override
-    public void setAura(int auraID) {
-        IAura aura = AuraController.getInstance().get(auraID);
-        if(aura != null)
-            setAura(aura);
+        IAura aura = AuraController.Instance.get(auraID);
+        if(aura == null)
+            throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
+
+        setAuraSelection(aura);
     }
 
     public DBCData getDBCData() {
@@ -893,6 +945,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isInAura(IAura aura) {
+        if(aura == null)
+            return dbcData.auraID == -1;
         return aura.getID() == dbcData.auraID;
     }
     //////////////////////////////////////////////
