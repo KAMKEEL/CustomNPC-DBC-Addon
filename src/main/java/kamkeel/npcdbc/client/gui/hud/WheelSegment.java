@@ -41,7 +41,7 @@ public abstract class WheelSegment extends Gui {
     public float hoverScale = 0;
 
 
-    public double easeInSine(float x) {
+    public double easeInOutCirc(float x) {
         return x < 0.5
             ? (1 - Math.sqrt(1 - Math.pow(2 * x, 2))) / 2
             : (Math.sqrt(1 - Math.pow(-2 * x + 2, 2)) + 1) / 2;
@@ -74,11 +74,11 @@ public abstract class WheelSegment extends Gui {
         if (isHovered) {
             updateTime = (float) (Minecraft.getSystemTime() - startHoverTime) / HOVER_TIME;
             updateTime = Math.min(updateTime, 1);
-            hoverScale = (float) easeInSine(updateTime);
+            hoverScale = (float) easeInOutCirc(updateTime);
         } else {
             updateTime = (float) (Minecraft.getSystemTime() - stopHoverTime) / HOVER_TIME;
             updateTime = Math.min(updateTime, 1);
-            hoverScale = (float) easeInSine(1 - updateTime);
+            hoverScale = (float) easeInOutCirc(1 - updateTime);
         }
 
         hoverScale = Math.min(1, Math.max(hoverScale, 0));
