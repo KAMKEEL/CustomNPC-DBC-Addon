@@ -13,6 +13,7 @@ import noppes.npcs.api.entity.IPlayer;
  * It extends features of the base IDBCPlayer as well adds
  * functionality to integrate it with the various CNPC+ DBC Addon frameworks such as custom forms and auras.
  */
+@SuppressWarnings({"rawtypes", "unused"})
 public interface IDBCAddon extends IDBCPlayer {
     int[] getAllFullAttributes();
 

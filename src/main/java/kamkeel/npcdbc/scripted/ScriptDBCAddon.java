@@ -26,6 +26,7 @@ import java.util.Arrays;
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
 
 // Implemented by Kam, Ported from Goatee Design
+@SuppressWarnings({"rawtypes", "unused"})
 public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T> implements IDBCAddon {
     public T player;
     public NBTTagCompound nbt;
@@ -250,7 +251,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public String getCurrentDBCFormName() {
         int race = this.getRace();
-        int form = (int) this.getForm();
+        int form = this.getForm();
         return DBCAPI.Instance().getFormName(race, form);
     }
 
@@ -264,7 +265,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         JGPlayerMP JG = new JGPlayerMP(player);
         NBTTagCompound nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
         JG.setNBT(nbt);
-        int race = (int) JG.getRace();
+        int race = JG.getRace();
 
         boolean found = false;
         boolean isKaiokenOn = false;
@@ -320,7 +321,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                             break;
                         case 2:
                             newnonracial = masteries[0] + ";" + masteries[1] + ";" + masteryvalues[0] + "," + newvalue + ";" + masteries[3];
-                            ;
                             break;
                         case 3:
                             newnonracial = masteries[0] + ";" + masteries[1] + ";" + masteries[2] + ";" + masteryvalues[0] + "," + newvalue;
@@ -357,7 +357,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         JGPlayerMP JG = new JGPlayerMP(player);
         NBTTagCompound nbt = player.getEntityData().getCompoundTag("PlayerPersisted");
         JG.setNBT(nbt);
-        int race = (int) JG.getRace();
+        int race = JG.getRace();
         boolean found = false;
         double valuetoreturn = -1.0;
 
@@ -449,7 +449,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             }
         }
         if (!skillFound) {
-            throw new CustomNPCsException("\nInvalid Skill ID :" + skillname + ". Please re-enter the skill name \nwithout any spaces in between. \ni.e: GodOfDestruction, KiProtection, \nDefensePenetration", new Object[0]);
+            throw new CustomNPCsException("\nInvalid Skill ID :" + skillname + ". Please re-enter the skill name \nwithout any spaces in between. \ni.e: GodOfDestruction, KiProtection, \nDefensePenetration");
         }
         if (!playerHasSkill) {
             throw new CustomNPCsException("\nPlayer doesn't have skill " + skillname + "!", new Object[1]);
