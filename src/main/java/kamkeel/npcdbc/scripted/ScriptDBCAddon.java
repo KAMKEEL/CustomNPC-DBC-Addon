@@ -794,29 +794,47 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     //////////////////////////////////////////////
     // Aura stuff
     @Override
-    public void giveAura(IAura Aura) {
-        giveAura(Aura.getName());
+    public void giveAura(IAura aura) {
+        giveAura(aura.getName());
     }
 
+    @Override
+    public void giveAura(int auraID) {
+        AuraController.getInstance().get(auraID).assignToPlayer(this);
+    }
+
+    @Override
     public void giveAura(String AuraName) {
         IAura aura = AuraController.Instance.get(AuraName);
         aura.assignToPlayer(this);
     }
 
     @Override
-    public void removeAura(String AuraName) {
-        IAura aura = AuraController.Instance.get(AuraName);
+    public void removeAura(String auraName) {
+        IAura aura = AuraController.Instance.get(auraName);
         aura.removeFromPlayer(this);
     }
 
     @Override
-    public void removeAura(IAura Aura) {
-        removeAura(Aura.getName());
+    public void removeAura(IAura aura) {
+        removeAura(aura.getName());
+    }
+    @Override
+    public void removeAura(int auraID) {
+        IAura aura = AuraController.getInstance().get(auraID);
+        if(aura != null)
+            removeAura(aura);
     }
 
     @Override
-    public void setSelectedAura(IAura Aura) {
-        setSelectedAura(Aura != null ? Aura.getID() : -1);
+    public void setSelectedAura(String auraName) {
+        setSelectedAura(AuraController.getInstance().get(auraName));
+    }
+
+
+    @Override
+    public void setSelectedAura(IAura aura) {
+        setSelectedAura(aura != null ? aura.getID() : -1);
     }
 
     @Override
@@ -853,8 +871,15 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public void setAura(IAura Aura) {
-        setAura(Aura.getName());
+    public void setAura(IAura aura) {
+        setAura(aura.getName());
+    }
+
+    @Override
+    public void setAura(int auraID) {
+        IAura aura = AuraController.getInstance().get(auraID);
+        if(aura != null)
+            setAura(aura);
     }
 
     public DBCData getDBCData() {

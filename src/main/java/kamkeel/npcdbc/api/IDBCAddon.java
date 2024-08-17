@@ -6,7 +6,14 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.api.outline.IOutline;
 import noppes.npcs.api.entity.IDBCPlayer;
 import noppes.npcs.api.entity.IEntityLivingBase;
+import noppes.npcs.api.entity.IPlayer;
 
+/**
+ * This interface acts as a replacement for {@link IPlayer#getDBCPlayer()}
+ *
+ * It extends features of the base IDBCPlayer as well adds
+ * functionality to integrate it with the various CNPC+ DBC Addon frameworks such as custom forms and auras.
+ */
 public interface IDBCAddon extends IDBCPlayer {
     int[] getAllFullAttributes();
 
@@ -192,7 +199,7 @@ public interface IDBCAddon extends IDBCPlayer {
     boolean isKaioken();
 
     /**
-     * @return True if in GoD
+     * @return True if in God of Destruction
      */
     boolean isGOD();
 
@@ -206,10 +213,21 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     boolean isDivine();
 
+    /**
+     * @return True if player is using Majin
+     */
     boolean isMajin();
 
+    /**
+     * If the player has a given form, it forces them to transform to that form.
+     * @param formID Form ID of the custom form you want to force the player into
+     */
     void setCustomForm(int formID);
 
+    /**
+     * If the player has a given form, it forces them to transform to that form.
+     * @param form Form object of the custom form you want to force the player into
+     */
     void setCustomForm(IForm form);
 
     void setFlight(boolean flightOn);
@@ -230,41 +248,135 @@ public interface IDBCAddon extends IDBCPlayer {
 
     void setSprintSpeed(float speed);
 
+    /**
+     * Gives a player a custom form by the given name.
+     * @param formName Name of the form to give the player.
+     */
     void giveCustomForm(String formName);
 
+    /**
+     * Gives a player a custom form.
+     * @param form Form object to give the player.
+     */
     void giveCustomForm(IForm form);
 
+    /**
+     * Removes the given form by name.
+     * @param formName Name of the form to remove.
+     */
     void removeCustomForm(String formName);
 
+    /**
+     * Removes the given form.
+     * @param form Form object to remove.
+     */
     void removeCustomForm(IForm form);
 
-    //form player transforms to on transformation
+    /**
+     * Selects a custom form for the player.
+     * <br>
+     * This does not force a transformation. <br>
+     * It only selects the form they will transform into whenever they choose to transform.
+     * @param form Form object.
+     */
     void setSelectedForm(IForm form);
 
-
+    /**
+     * Selects a custom form for the player.
+     * <br>
+     * This does not force a transformation. <br>
+     * It only selects the form they will transform into whenever they choose to transform.
+     * @param formID Form ID.
+     */
     void setSelectedForm(int formID);
 
+    /**
+     * Clears form selection.
+     */
     void removeSelectedForm();
 
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     // Aura stuff
+
+    /**
+     * Sets the current custom aura <b>if the player has it unlocked.</b>
+     * @param auraName Name of the aura to set.
+     */
     void setAura(String auraName);
 
-    void setAura(IAura Aura);
+    /**
+     * Sets the current custom aura <b>if the player has it unlocked.</b>
+     * @param aura Aura object to set.
+     */
+    void setAura(IAura aura);
 
-    void removeCustomMastery(IForm form);
+    /**
+     * Sets the current custom aura <b>if the player has it unlocked.</b>
+     * @param auraID ID of the aura to set.
+     */
+    void setAura(int auraID);
 
-    void giveAura(IAura Aura);
+    /**
+     * Unlocks the given aura for the player.
+     * @param auraName Name of the aura to unlock.
+     */
+    void giveAura(String auraName);
 
-    void removeAura(String AuraName);
+    /**
+     * Unlocks the given aura for the player.
+     * @param aura Aura object to unlock for the player.
+     */
+    void giveAura(IAura aura);
 
-    void removeAura(IAura Aura);
+    /**
+     * Unlocks the given aura for the player.
+     * @param auraID ID of the aura to unlock for the player.
+     */
+    void giveAura(int auraID);
 
-    void setSelectedAura(IAura Aura);
+    /**
+     * Removes an aura from the player.
+     * @param auraName Name of the aura to remove.
+     */
+    void removeAura(String auraName);
 
-    void setSelectedAura(int formID);
+    /**
+     * Remove an aura from the player.
+     * @param aura Aura object to remove.
+     */
+    void removeAura(IAura aura);
 
+    /**
+     * Remove an aura from the player.
+     * @param auraID ID of the aura to remove.
+     */
+    void removeAura(int auraID);
+
+    /**
+     * Sets the custom aura for the player <br>
+     * <h2>THE PLAYER DOESN'T NEED TO HAVE THIS AURA UNLOCKED</h2>
+     * @param auraName ID of the aura.
+     */
+    void setSelectedAura(String auraName);
+
+    /**
+     * Sets the custom aura for the player <br>
+     * <h2>THE PLAYER DOESN'T NEED TO HAVE THIS AURA UNLOCKED</h2>
+     * @param aura Aura object
+     */
+    void setSelectedAura(IAura aura);
+
+    /**
+     * Sets the custom aura for the player <br>
+     * <h2>THE PLAYER DOESN'T NEED TO HAVE THIS AURA UNLOCKED</h2>
+     * @param auraID ID of the aura.
+     */
+    void setSelectedAura(int auraID);
+
+    /**
+     * Removes a custom aura selection for the player.
+     */
     void removeSelectedAura();
 
     /**
@@ -272,6 +384,10 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     boolean isInCustomForm();
 
+    /**
+     * @param form Form object.
+     * @return True if the player is in a given form.
+     */
     boolean isInCustomForm(IForm form);
 
     /**
@@ -293,6 +409,8 @@ public interface IDBCAddon extends IDBCPlayer {
     float getCustomMastery(IForm form);
 
     void removeCustomMastery(int formID);
+
+    void removeCustomMastery(IForm form);
 
     IForm getCurrentForm();
 
