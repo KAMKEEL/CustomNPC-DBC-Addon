@@ -49,16 +49,4 @@ public interface IKiWeaponData {
     float getYScale();
 
     float getZScale();
-
-    /**
-     * Unused right now.
-     * @param damage damage the weapon adds to the NPCs total
-     */
-    void setDamage(float damage);
-
-    /**
-     * Unused right now.
-     * @return damage the weapon adds to the NPCs total
-     */
-    float getDamage();
 }

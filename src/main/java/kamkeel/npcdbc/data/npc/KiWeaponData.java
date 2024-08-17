@@ -12,10 +12,7 @@ public class KiWeaponData implements IKiWeaponData {
     public Color color = new Color(-1, 0.6f);
 
     public float offsetX, offsetY, offsetZ;
-
     public float scaleX = 1, scaleY = 1, scaleZ = 1;
-    public float damage = 1;
-
 
     public void readFromNBT(NBTTagCompound compound, String name) {
         NBTTagCompound weapon = compound.getCompoundTag(name);
@@ -28,9 +25,6 @@ public class KiWeaponData implements IKiWeaponData {
         scaleX = weapon.getFloat("scaleX");
         scaleY = weapon.getFloat("scaleY");
         scaleZ = weapon.getFloat("scaleZ");
-
-        damage = weapon.getFloat("damage");
-
     }
 
     public void saveToNBT(NBTTagCompound comp, String name) {
@@ -43,7 +37,6 @@ public class KiWeaponData implements IKiWeaponData {
         weapon.setFloat("offsetX", offsetX);
         weapon.setFloat("offsetY", offsetY);
         weapon.setFloat("offsetZ", offsetZ);
-        weapon.setFloat("damage", damage);
 
         NBTTagCompound scale = new NBTTagCompound();
         weapon.setFloat("scaleX", scaleX);
@@ -148,16 +141,6 @@ public class KiWeaponData implements IKiWeaponData {
     @Override
     public float getZScale() {
         return this.scaleZ;
-    }
-
-    @Override
-    public void setDamage(float damage) {
-        this.damage = damage;
-    }
-
-    @Override
-    public float getDamage() {
-        return this.damage;
     }
 
     public static int getColorByAuraType(AuraDisplay auraDisplay) {
