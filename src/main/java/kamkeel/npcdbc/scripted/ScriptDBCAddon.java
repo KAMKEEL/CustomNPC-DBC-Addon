@@ -798,7 +798,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public void giveAura(IAura aura) {
         if(aura != null)
             aura.assignToPlayer(this);
-        throw new CustomNPCsException("This aura doesn't exist");
+        else
+            throw new CustomNPCsException("This aura doesn't exist");
     }
 
     @Override
@@ -832,7 +833,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public void removeAura(IAura aura) {
         if(aura != null)
             aura.removeFromPlayer(this);
-        throw new CustomNPCsException("This aura doesn't exist");
+        else
+            throw new CustomNPCsException("This aura doesn't exist");
     }
     @Override
     public void removeAura(int auraID) {
