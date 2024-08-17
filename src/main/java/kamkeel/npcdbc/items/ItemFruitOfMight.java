@@ -9,9 +9,6 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import noppes.npcs.CustomItems;
-
-;
-
 public class ItemFruitOfMight extends ItemFood {
 
     public ItemFruitOfMight(int saturation, float eatTime, boolean wolfFeed){
