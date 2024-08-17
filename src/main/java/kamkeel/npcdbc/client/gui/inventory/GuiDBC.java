@@ -314,6 +314,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             else if (guibutton.id == 5) {
                 ConfigDBCClient.RevampAura = ((GuiNpcButton) guibutton).getValue() == 1;
                 ConfigDBCClient.RevampAuraProperty.set(ConfigDBCClient.RevampAura);
+                ConfigDBCClient.config.save();
             }
         }
     }
