@@ -46,16 +46,6 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
             getButton(3).enabled = left.color.color != -1 || left.color.alpha != 0.6f;
 
             y += 25;
-            addLabel(new GuiNpcLabel(6, "display.damageMulti", guiLeft + 5, y + 5));
-            getLabel(6).color = 0xffffff;
-            addTextField(new GuiNpcTextField(6, this, guiLeft + 116, y, 44, 18, left.damage + ""));
-            getTextField(6).setMaxStringLength(7);
-            getTextField(6).floatsOnly = true;
-            getTextField(6).setMinMaxDefaultFloat(0, 1000, 1);
-            addButton(new GuiNpcButton(6, guiLeft + 162, y - 1, 20, 20, "X"));
-            getButton(6).enabled = left.damage != 1;
-
-            y += 25;
             addLabel(new GuiNpcLabel(4, "display.scalexyz", guiLeft + 5, y + 5));
             getLabel(4).color = 0xffffff;
             int x = 0;
@@ -114,16 +104,6 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
 
             addButton(new GuiNpcButton(13, guiLeft + 162, y, 20, 20, "X"));
             getButton(13).enabled = right.color.color != -1 || right.color.alpha != 0.6f;
-
-            y += 25;
-            addLabel(new GuiNpcLabel(16, "display.damageMulti", guiLeft + 5, y + 5));
-            getLabel(16).color = 0xffffff;
-            addTextField(new GuiNpcTextField(16, this, guiLeft + 116, y, 44, 18, right.damage + ""));
-            getTextField(16).setMaxStringLength(7);
-            getTextField(16).floatsOnly = true;
-            getTextField(16).setMinMaxDefaultFloat(0, 1000, 1);
-            addButton(new GuiNpcButton(16, guiLeft + 162, y - 1, 20, 20, "X"));
-            getButton(16).enabled = right.damage != 1;
 
             y += 25;
             addLabel(new GuiNpcLabel(14, "display.scalexyz", guiLeft + 5, y + 5));
@@ -194,9 +174,6 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
         } else if (button.id == 5) {
             left.offsetX = left.offsetY = left.offsetZ = 0;
             initGui();
-        } else if (button.id == 6) {
-            left.damage = 1;
-            initGui();
         }
 
 
@@ -215,11 +192,7 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
         } else if (button.id == 15) {
             right.offsetX = right.offsetY = right.offsetZ = 0;
             initGui();
-        } else if (button.id == 16) {
-            right.damage = 1;
-            initGui();
         }
-
 
         if (button.id == 66) {
             close();
@@ -253,10 +226,6 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
             left.offsetZ = textfield.getFloat();
             getButton(5).enabled = left.offsetX != 0 || left.offsetY != 0 || left.offsetZ != 0;
         }
-        if (textfield.id == 6) {
-            left.damage = textfield.getFloat();
-            getButton(6).enabled = left.damage != 1;
-        }
 
         if (textfield.id == 14) {
             right.scaleX = textfield.getFloat();
@@ -281,10 +250,6 @@ public class SubGuiKiWeapon extends SubGuiInterface implements ITextfieldListene
         if (textfield.id == 1502) {
             right.offsetZ = textfield.getFloat();
             getButton(15).enabled = right.offsetX != 0 || right.offsetY != 0 || right.offsetZ != 0;
-        }
-        if (textfield.id == 16) {
-            right.damage = textfield.getFloat();
-            getButton(16).enabled = right.damage != 1;
         }
     }
 
