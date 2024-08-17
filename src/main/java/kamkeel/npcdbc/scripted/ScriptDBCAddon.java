@@ -8,6 +8,7 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -716,6 +717,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                 d.setForm(DBCForm.Mystic, false);
             }
 
+
             c.currentForm = f.id;
             c.updateClient();
         } else
@@ -874,7 +876,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         } else {
             throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
         }
-
     }
 
     @Override
@@ -949,13 +950,44 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             return dbcData.auraID == -1;
         return aura.getID() == dbcData.auraID;
     }
+
+    @Override
+    public boolean isInAura(String auraName) {
+        return isInAura(AuraController.getInstance().get(auraName));
+    }
+    @Override
+    public boolean isInAura(int auraID) {
+        return auraID == dbcData.auraID;
+    }
     //////////////////////////////////////////////
     //////////////////////////////////////////////
 
     @Override
     public void setOutline(IOutline outline) {
-        dbcData.setOutline(outline);
+        if(outline != null)
+            dbcData.setOutline(outline);
+        else
+            throw new CustomNPCsException("This outline doesn't exist!");
     }
+
+    @Override
+    public void setOutline(String outlineName) {
+        IOutline outline = OutlineController.getInstance().getOutlineFromName(outlineName);
+        if(outline != null)
+            setOutline(outline);
+        else
+            throw new CustomNPCsException(String.format("There is no outline with given name (name: \"%s\")", outlineName));
+    }
+
+    @Override
+    public void setOutline(int outlineID) {
+        IOutline outline = OutlineController.getInstance().get(outlineID);
+        if(outline != null)
+            setOutline(outline);
+        else
+            throw new CustomNPCsException(String.format("There is no outline with given ID (ID: \"%s\")", outline));
+    }
+
 
     @Override
     public IOutline getOutline() {

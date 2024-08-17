@@ -417,7 +417,15 @@ public interface IDBCAddon extends IDBCPlayer {
 
     boolean isInAura(IAura aura);
 
+    boolean isInAura(String auraName);
+
+    boolean isInAura(int auraID);
+
     void setOutline(IOutline outline);
+
+    void setOutline(String outlineName);
+
+    void setOutline(int outlineID);
 
     IOutline getOutline();
 }
