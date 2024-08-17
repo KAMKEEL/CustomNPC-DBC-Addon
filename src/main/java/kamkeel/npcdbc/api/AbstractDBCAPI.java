@@ -133,7 +133,7 @@ public abstract class AbstractDBCAPI {
      * @param speed         Speed of Ki Attack [0 - 100]
      * @param damage        Damage for Ki Attack
      * @param hasEffect     True for Explosion
-     * @param color         Color of Ki Attack [0 - 30] -&gt;
+     * @param color         Color of Ki Attack [0 - 30] -&gt; <br>
      *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", <br>
      *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", <br>
      *                      21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
@@ -151,7 +151,7 @@ public abstract class AbstractDBCAPI {
      * @param speed         Speed of Ki Attack [0 - 100]
      * @param damage        Damage for Ki Attack
      * @param hasEffect     True for Explosion
-     * @param color         Color of Ki Attack [0 - 30] -&gt;
+     * @param color         Color of Ki Attack [0 - 30] -&gt; <br>
      *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", <br>
      *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", <br>
      *                      21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
