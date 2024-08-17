@@ -701,18 +701,18 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         if (c.hasForm(f)) {
             DBCData d = DBCData.get(player);
             d.State = 0;
-            if (d.isForm(DBCForm.Kaioken) && !f.stackable.isFormStackable(DBCForm.Kaioken)) {
+            if (!f.stackable.isFormStackable(DBCForm.Kaioken) && d.isForm(DBCForm.Kaioken)) {
                 d.State2 = 0;
                 d.setForm(DBCForm.Kaioken, false);
             }
-            if (d.isForm(DBCForm.UltraInstinct) && !f.stackable.isFormStackable(DBCForm.UltraInstinct)) {
+            if (!f.stackable.isFormStackable(DBCForm.UltraInstinct) && d.isForm(DBCForm.UltraInstinct)) {
                 d.State2 = 0;
                 d.setForm(DBCForm.UltraInstinct, false);
             }
-            if (d.isForm(DBCForm.GodOfDestruction) && !f.stackable.isFormStackable(DBCForm.GodOfDestruction)) {
+            if (!f.stackable.isFormStackable(DBCForm.GodOfDestruction) && d.isForm(DBCForm.GodOfDestruction)) {
                 d.setForm(DBCForm.GodOfDestruction, false);
             }
-            if (d.isForm(DBCForm.Mystic) && !f.stackable.isFormStackable(DBCForm.Mystic)) {
+            if (!f.stackable.isFormStackable(DBCForm.Mystic) && d.isForm(DBCForm.Mystic)) {
                 d.setForm(DBCForm.Mystic, false);
             }
 
