@@ -44,7 +44,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
 
     private float zoomed = 70, rotation;
     float guiAnimationScale = 0, animationScaleFactor, undoMCScaling = 1;
-    long timeOpened, timeClosedSubGui, timeSinceM1;
+    long timeOpened, timeClosedSubGui, timeSinceM1, timeClosed;
 
     public int hoveredSlot = -1;
     boolean keyDown, unpressedAllKeys = false;
@@ -54,6 +54,13 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
     public PlayerDBCInfo dbcInfo;
 
     public boolean isClosing;
+
+    public static final int CLOSE_TIME = 600;
+    public static final int OPEN_TIME = 1500;
+
+    public double easeOutExpo(double x){
+        return x == 1 ? 1 : 1 - Math.pow(2, -10 * x);
+    }
 
     public HUDFormWheel() {
         mc = Minecraft.getMinecraft();
@@ -340,6 +347,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
             mc.inGameHasFocus = true;
             mc.mouseHelper.grabMouseCursor();
             isClosing = true;
+            timeClosed = (long) (Minecraft.getSystemTime() - (1 - guiAnimationScale) * CLOSE_TIME);
         }
     }
 
@@ -347,15 +355,16 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         if (isClosing && guiAnimationScale >= 0) {
-            guiAnimationScale -= 0.015f;
-            guiAnimationScale = Math.max(0, guiAnimationScale);
-            if (guiAnimationScale <= 0)
+            float updateTime = (float) (Minecraft.getSystemTime() - timeClosed) / CLOSE_TIME;
+            updateTime = Math.min(1, updateTime);
+            guiAnimationScale = (float) (1 - easeOutExpo(updateTime));
+            if (guiAnimationScale <= 0.05)
                 close();
         } else if (guiAnimationScale < 1) {
-            float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / 200;
-            animationScaleFactor = Math.min(updateTime, 1) - guiAnimationScale;
-            guiAnimationScale += 0.016f * animationScaleFactor;
-            guiAnimationScale = Math.min(1, guiAnimationScale);
+            float updateTime = (float) (Minecraft.getSystemTime() - timeOpened) / OPEN_TIME;
+            updateTime = Math.min(1, updateTime);
+
+            guiAnimationScale = (float) easeOutExpo(updateTime);
         }
         BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
 

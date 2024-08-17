@@ -65,8 +65,8 @@ public class ConfigDBCGameplay
             SpiritualistCharge = config.get(ChargingDex, "2. Spiritualist Percent", 60).getInt(60);
             WarriorCharge = config.get(ChargingDex, "3. Warrior Percent", 60).getInt(60);
 
-            MartialArtistCharge = ValueUtil.clamp(WarriorCharge, 0, 100);
-            SpiritualistCharge = ValueUtil.clamp(WarriorCharge, 0, 100);
+            MartialArtistCharge = ValueUtil.clamp(MartialArtistCharge, 0, 100);
+            SpiritualistCharge = ValueUtil.clamp(SpiritualistCharge, 0, 100);
             WarriorCharge = ValueUtil.clamp(WarriorCharge, 0, 100);
 
             EnableNamekianRegen = config.get(NamekianRegeneration, "Enable Namekian Regeneration", true,
