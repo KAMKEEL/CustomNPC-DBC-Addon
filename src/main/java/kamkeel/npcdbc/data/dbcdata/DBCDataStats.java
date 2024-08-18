@@ -39,6 +39,8 @@ public class DBCDataStats {
         NBTTagCompound raw = data.getRawCompound();
         data.currentEffects = updateEffects(setVals);
         saveEffectsNBT(raw);
+        if(this.data.player != null)
+            StatusEffectController.getInstance().playerEffects.put(this.data.player.getUniqueID(), data.currentEffects);
     }
 
     public HashMap<Integer, PlayerEffect> updateEffects(HashMap<Integer, PlayerEffect> setVals) {
