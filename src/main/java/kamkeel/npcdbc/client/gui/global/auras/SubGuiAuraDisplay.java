@@ -458,11 +458,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             display.hasKaiokenAura = !display.hasKaiokenAura;
             if (!on) {
                 visualDisplay.isKaioken = false;
-                //                if (parent.kaiokenSound != null) {
-                //                    parent.kaiokenSound.soundSource.fadeOut = true;
-                //                    parent.kaiokenSound.soundSource.fadeFactor = 0.025f;
-                //                    parent.kaiokenSound = null;
-                //                }
                 parent.stopSound(parent.kaiokenSound, false);
             }
 
@@ -475,9 +470,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             if (is)
                 parent.playSound(false);
             else if (parent.kaiokenSound != null) {
-                //                parent.kaiokenSound.soundSource.fadeOut = true;
-                //                parent.kaiokenSound.soundSource.fadeFactor = 0.025f;
-                //                parent.kaiokenSound = null;
                 parent.stopSound(parent.kaiokenSound, false);
             }
 
@@ -508,9 +500,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             if (display.kettleModeEnabled)
                 parent.playSound(false);
             else if (parent.kettleSound != null) {
-                //                parent.kettleSound.soundSource.fadeOut = true;
-                //                parent.kettleSound.soundSource.fadeFactor = 0.075f;
-                //                parent.kettleSound = null;
                 parent.stopSound(parent.kettleSound, false);
             }
             initGui();
@@ -552,11 +541,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             this.setSubGui(new SubGuiSelectAura());
         } else if (button.id == 1406) {
             aura.secondaryAuraID = -1;
-            //            if (parent.secondarySound != null) {
-            //                parent.secondarySound.soundSource.fadeOut = true;
-            //                parent.secondarySound.soundSource.fadeFactor = 0.025f;
-            //                parent.secondarySound = null;
-            //            }
             parent.stopSound(parent.secondarySound, false);
             parent.stopSound(parent.secondaryKettleSound, false);
             initGui();
@@ -571,11 +555,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             setSubGui(new GuiSoundSelection((scrollWindow.getTextField(1).getText())));
         } else if (button.id == 11) {
             display.auraSound = "jinryuudragonbc:DBC.aura";
-            //            if (parent.kaiokenSound != null) {
-            //                parent.kaiokenSound.soundSource.fadeOut = true;
-            //                parent.kaiokenSound.soundSource.fadeFactor = 0.025f;
-            //                parent.kaiokenSound = null;
-            //            }
             parent.stopSound(parent.auraSound, false);
             parent.playSound(false);
             initGui();
@@ -584,11 +563,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             setSubGui(new GuiSoundSelection((scrollWindow.getTextField(2).getText())));
         } else if (button.id == 21) {
             display.kaiokenSound = "";
-            //            if (parent.kaiokenSound != null) {
-            //                parent.kaiokenSound.soundSource.fadeOut = true;
-            //                parent.kaiokenSound.soundSource.fadeFactor = 0.025f;
-            //                parent.kaiokenSound = null;
-            //            }
             parent.stopSound(parent.kaiokenSound, false);
             parent.playSound(false);
             initGui();
@@ -732,10 +706,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
     @Override
     protected void drawBackground() {
         super.drawBackground();
-
-        int xPosGradient = guiLeft + 5;
-        int yPosGradient = guiTop + 5;
-        // drawGradientRect(xPosGradient, yPosGradient, 130 + xPosGradient, 180 + yPosGradient, 0xc0101010, 0xd0101010);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
