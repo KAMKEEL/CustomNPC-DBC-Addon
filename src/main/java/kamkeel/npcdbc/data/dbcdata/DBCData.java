@@ -1,12 +1,12 @@
 package kamkeel.npcdbc.data.dbcdata;
 
-
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
+import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.*;
@@ -15,7 +15,6 @@ import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.entity.EntityAura;
@@ -80,7 +79,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public int activeAuraColor = -1;
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
 
-
     public DBCData() {
         this.side = Side.SERVER;
     }
@@ -92,7 +90,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         if (side == Side.SERVER)
             loadNBTData(true);
     }
-
 
     public NBTTagCompound saveFromNBT(NBTTagCompound comp) {
         comp.setInteger("jrmcStrI", STR);
@@ -317,7 +314,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         return this.player.getEntityData().getCompoundTag(DBCPersisted);
     }
 
-
     public boolean isForm(int dbcForm) {
         switch (dbcForm) {
             case DBCForm.Base:
@@ -410,7 +406,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             if (racialSkill >= 1 && godSkill >= 1)
                 dbcForms.put(SuperSaiyanGod, "§cSuper Saiyan God");
             if (racialSkill >= 1 && godSkill >= 2)
-                dbcForms.put(SuperSaiyanBlue,  !isForm(Divine) ? "§bSuper Saiyan Blue" :  "§5Super Saiyan Rosé");
+                dbcForms.put(SuperSaiyanBlue, !isForm(Divine) ? "§bSuper Saiyan Blue" : "§5Super Saiyan Rosé");
             if (racialSkill >= 1 && godSkill >= 3)
                 dbcForms.put(BlueEvo, !isForm(Divine) ? "§1Super Saiyan Blue Evo" : "§dSuper Saiyan Rosé Evo");
         } else if (race == DBCRace.NAMEKIAN) {
@@ -510,11 +506,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         return JRMCoreH.PlyrSettingsI(getRawCompound(), id, value);
     }
 
-
     public void setSetting(int id, int value) {
         JRMCoreH.PlyrSettingsSet(getRawCompound(), id, value);
     }
-
 
     public boolean formSettingOn(int dbcForm) {
         switch (dbcForm) {
@@ -550,13 +544,17 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         return stats.isFusionSpectator();
     }
 
+    @Override
+    public void useStencilBuffer(boolean use) {
+        this.useStencilBuffer = use;
+    }
+
     public boolean isTransforming() {
         if (TransformController.ascending)
             return true;
 
         return containsSE(1);
     }
-
 
     public boolean isChargingKi() {
         return containsSE(4);
@@ -569,7 +567,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     public int getDBCColor() {
         return JRMCoreHDBC.getPlayerColor2(2, JRMCoreH.Algnmnt_rc(Alignment), 1, Race, State, isForm(DBCForm.Divine), isForm(DBCForm.Legendary), isForm(DBCForm.UltraInstinct), isForm(DBCForm.GodOfDestruction));
-
     }
 
     public Aura getToggledAura() {
@@ -602,8 +599,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
                 return null;
             else
                 return aura;
-
-
         }
         return null;
     }
@@ -656,7 +651,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         Form form = getForm();
         if (form != null) {
             formSpeed = form.mastery.movementSpeed * form.mastery.calculateMulti("movementspeed", addonFormLevel);
-
         }
         return baseFlightSpeed * formSpeed;
     }
@@ -749,13 +743,13 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     @Override
-    public Entity getEntity() {
-        return player;
+    public void setAuraEntity(EntityAura aura) {
+        this.auraEntity = aura;
     }
 
     @Override
-    public void setAuraEntity(EntityAura aura) {
-        this.auraEntity = aura;
+    public Entity getEntity() {
+        return player;
     }
 
     @Override
@@ -829,5 +823,4 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public void setActiveAuraColor(int color) {
         activeAuraColor = color;
     }
-
 }

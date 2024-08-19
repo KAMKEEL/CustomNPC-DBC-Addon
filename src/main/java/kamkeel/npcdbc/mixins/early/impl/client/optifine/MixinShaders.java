@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.mixins.early.impl.client.optifine;
 
 
+import kamkeel.npcdbc.client.OptifineHelper;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,8 +23,18 @@ public class MixinShaders {
     @Shadow
     public static int renderHeight = 0;
 
+    @Shadow
+    public static boolean shaderPackLoaded;
 
-    @Inject(method = "setupFrameBuffer()V", at = @At("HEAD"))
+
+    @Inject(method = "loadShaderPack()V", at = @At("TAIL"))
+    private static void loadPack(CallbackInfo ci) {
+        OptifineHelper.shaderPackLoaded = shaderPackLoaded;
+
+    }
+
+
+    @Inject(method = "setupFrameBuffer()V", at = @At("TAIL"))
     private static void init(CallbackInfo ci) {
         System.out.println("hiey");
         PostProcessing.init(renderWidth, renderHeight);

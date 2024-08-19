@@ -2,6 +2,7 @@ package kamkeel.npcdbc.util;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.OptifineHelper;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.IAuraData;
@@ -136,22 +137,41 @@ public class PlayerDataUtil {
     }
 
     public static boolean useStencilBuffer(Entity entity) {
+
+        IAuraData dat = PlayerDataUtil.getAuraData(entity);
+
+        if (OptifineHelper.shaderPackLoaded && OptifineHelper.isQueued(entity)) {
+            dat.useStencilBuffer(true);
+            //  System.out.println("in queue: " + entity);
+            return true;
+        }
+
         boolean auraOn = false, outlineOn = false, particlesOn = false, use = false;
         if (entity instanceof EntityPlayer) {
-            DBCData data = DBCData.get((EntityPlayer) entity);
+            DBCData data = (DBCData) dat;
             auraOn = data.auraEntity != null;
             outlineOn = data.getOutline() != null;
             particlesOn = !data.particleRenderQueue.isEmpty();
-            data.useStencilBuffer = use = auraOn || outlineOn || particlesOn;
+            use = auraOn || outlineOn || particlesOn;
 
         } else if (entity instanceof EntityNPCInterface) {
-            DBCDisplay data = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
+            DBCDisplay data = (DBCDisplay) dat;
             auraOn = data.auraEntity != null;
             outlineOn = data.getOutline() != null;
             particlesOn = !data.particleRenderQueue.isEmpty();
-            data.useStencilBuffer = use = auraOn || outlineOn || particlesOn || !data.dbcSecondaryAuraQueue.isEmpty() || !data.dbcAuraQueue.isEmpty();
+            use = auraOn || outlineOn || particlesOn || !data.dbcSecondaryAuraQueue.isEmpty() || !data.dbcAuraQueue.isEmpty();
 
         }
+
+        if (use && OptifineHelper.shaderPackLoaded && !OptifineHelper.isQueued(entity)) {
+            OptifineHelper.enqueue(entity);
+            dat.useStencilBuffer(false);
+            //    System.out.println("queued " + entity);
+            return false;
+        }
+
+        if (use)
+            dat.useStencilBuffer(true);
 
         return use;
     }

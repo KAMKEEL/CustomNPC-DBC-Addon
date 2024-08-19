@@ -61,7 +61,6 @@ public class RenderEventHandler {
                     ((IEntityMC) e.entity).setRenderPass(0);
                 else
                     ((IEntityMC) e.entity).setRenderPass(ClientProxy.MiddleRenderPass);
-
             } else {
                 if (((IEntityMC) e.entity).getRenderPassTampered())
                     ((IEntityMC) e.entity).setRenderPass(0);
@@ -71,13 +70,10 @@ public class RenderEventHandler {
                     if (data.isAuraOn()) {
                         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
                     }
-
                 }
             }
-
         }
     }
-
 
     public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm, boolean isItem) {
         RenderPlayerJBRA render = (RenderPlayerJBRA) renderer;
@@ -260,7 +256,6 @@ public class RenderEventHandler {
                     iter.remove();
             }
             glPopMatrix();
-
         }
 
         ////////////////////////////////////////
@@ -272,7 +267,6 @@ public class RenderEventHandler {
         // postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN
         glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
         glDisable(GL_STENCIL_TEST);
-
     }
 
     @SubscribeEvent

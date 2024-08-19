@@ -31,6 +31,7 @@ public interface IAuraData {
     public boolean isAuraOn();
     public boolean isFusionSpectator();
 
+    public void useStencilBuffer(boolean use);
     public HashMap getDBCAuras(boolean secondary);
 
     // Aura Color

@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.early.impl.client.optifine;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.OptifineHelper;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.client.Minecraft;
@@ -45,6 +46,13 @@ public class MixinEntityRendererOptifine {
             glPopMatrix();
         }
     }
+
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lshadersmod/client/Shaders;endRender()V", shift = At.Shift.AFTER))
+    private void processEntities(float partialTick, long idk, CallbackInfo info) {
+        System.out.println("hellohi");
+        OptifineHelper.process();
+    }
+
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/OpenGlHelper;shadersSupported:Z", shift = At.Shift.BEFORE))
     private void post(float p_78480_1_, CallbackInfo ci) {

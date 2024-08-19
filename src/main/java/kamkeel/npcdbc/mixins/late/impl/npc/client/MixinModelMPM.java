@@ -1,8 +1,5 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
-import JinRyuu.JRMCore.JRMCoreClient;
-import JinRyuu.JRMCore.JRMCoreH;
-import JinRyuu.JRMCore.JRMCoreHJBRA;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.render.OutlineRenderer;
@@ -15,14 +12,10 @@ import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.client.model.ModelNPCMale;
 import noppes.npcs.client.model.part.ModelLegs;
 import noppes.npcs.entity.EntityCustomNpc;
-import noppes.npcs.entity.data.ModelScalePart;
-import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -43,8 +36,6 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
 
     @Shadow
     private ModelLegs legs;
-    @Shadow
-    public boolean isAlexArmor;
 
 
     public MixinModelMPM(float f) {
@@ -90,7 +81,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
 
         EntityCustomNpc npc = (EntityCustomNpc) entity;
         DBCDisplay display = ((INPCDisplay) npc.display).getDBCDisplay();
-        if (!display.enabled)
+        if (!display.enabled || !display.useStencilBuffer)
             return;
 
         float partialTicks = Minecraft.getMinecraft().timer.renderPartialTicks;
@@ -159,13 +150,13 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         }
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target="Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER, remap = true))
-    public void renderKiWeapon(Entity par1Entity, float par2, float par3, float par4, float par5, float par6, float par7, CallbackInfo ci){
-        if(this.isArmor){
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER, remap = true))
+    public void renderKiWeapon(Entity par1Entity, float par2, float par3, float par4, float par5, float par6, float par7, CallbackInfo ci) {
+        if (this.isArmor) {
             return;
         }
 
-        if((this.bipedRightArm.isHidden || !this.bipedRightArm.showModel) && (this.bipedLeftArm.isHidden || !this.bipedLeftArm.showModel)){
+        if ((this.bipedRightArm.isHidden || !this.bipedRightArm.showModel) && (this.bipedLeftArm.isHidden || !this.bipedLeftArm.showModel)) {
             return;
         }
 

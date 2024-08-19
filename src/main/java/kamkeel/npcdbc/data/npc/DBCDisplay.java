@@ -473,6 +473,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
+    public void useStencilBuffer(boolean use) {
+        this.useStencilBuffer = use;
+    }
+
+    @Override
     public HashMap getDBCAuras(boolean secondary) {
         if (!secondary)
             return dbcAuraQueue;
