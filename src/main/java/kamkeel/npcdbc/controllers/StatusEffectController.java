@@ -99,6 +99,22 @@ public class StatusEffectController implements IStatusEffectHandler {
         }
     }
 
+    public StatusEffect getFromName(String name) {
+        for (StatusEffect effect : standardEffects.values()) {
+            if (effect.getName().equalsIgnoreCase(name)) {
+                return effect;
+            }
+        }
+
+        for (CustomEffect effect : customEffects.values()) {
+            if (effect.getName().equalsIgnoreCase(name)) {
+                return effect;
+            }
+        }
+
+        return null;
+    }
+
     public StatusEffect get(int id) {
         StatusEffect statusEffect = standardEffects.get(id);
         if(statusEffect == null)
