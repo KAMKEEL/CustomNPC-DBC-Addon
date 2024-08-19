@@ -59,26 +59,25 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         ySize = 216;
 
         this.xOffset = 120;
-        this.yOffset = -15;
+        this.yOffset = -20;
 
         zoomed = 50;
         parent.playSound(false);
     }
 
-
     public void initGui() {
         super.initGui();
         int x = guiLeft - 27;
-        int y = guiTop - 5;
+        int y = guiTop - 30;
         int rightOffset = 25;
 
         if (scrollWindow == null) {
-            scrollWindow = new GuiScrollWindow(this, x, y, 230 + rightOffset, 225, 0);
+            scrollWindow = new GuiScrollWindow(this, x, y, 230 + rightOffset, 215, 0);
         } else {
             scrollWindow.xPos = x;
             scrollWindow.yPos = y;
             scrollWindow.clipWidth = 230 + rightOffset;
-            scrollWindow.clipHeight = 225;
+            scrollWindow.clipHeight = 215;
         }
         scrollWindow.scrollSpeed = 3.5f;
 
@@ -105,26 +104,26 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         scrollWindow.getLabel(3004).color = 0xffffff;
         scrollWindow.addButton(new GuiNpcButtonYesNo(3004, guiX + 140 + rightOffset, y, 80, 20, display.overrideDBCAura));
 
-        y += 26;
-        scrollWindow.addLabel(new GuiNpcLabel(1, "general.auraSound", 3, y + 5));
-        scrollWindow.getLabel(1).color = 0xffffff;
-        y += 16;
-        scrollWindow.addTextField(new GuiNpcTextField(1, this, fontRendererObj, 3, y, 145 + rightOffset, 20, display.auraSound));
-        scrollWindow.addButton(new GuiNpcButton(11, 3 + 179 + 13 + rightOffset, y, 20, 20, "X"));
-        scrollWindow.addButton(new GuiNpcButton(1, 3 + 133 + 13 + rightOffset, y, 47, 20, "gui.select"));
-        scrollWindow.getButton(11).enabled = !display.auraSound.equals("jinryuudragonbc:DBC.aura") && !display.auraSound.isEmpty();
-        maxScroll += 16;
-
-
-        y += 23;
-        scrollWindow.addLabel(new GuiNpcLabel(2, "general.kaiokenSound", 3, y + 5));
-        scrollWindow.getLabel(2).color = 0xffffff;
-        y += 16;
-        scrollWindow.addTextField(new GuiNpcTextField(2, this, fontRendererObj, 3, y, 145 + rightOffset, 20, display.kaiokenSound));
-        scrollWindow.addButton(new GuiNpcButton(21, 3 + 179 + 13 + rightOffset, y, 20, 20, "X"));
-        scrollWindow.addButton(new GuiNpcButton(2, 3 + 133 + 13 + rightOffset, y, 47, 20, "gui.select"));
-        scrollWindow.getButton(21).enabled = !display.kaiokenSound.isEmpty();
-        maxScroll += 23;
+//        y += 26;
+//        scrollWindow.addLabel(new GuiNpcLabel(1, "general.auraSound", 3, y + 5));
+//        scrollWindow.getLabel(1).color = 0xffffff;
+//        y += 16;
+//        scrollWindow.addTextField(new GuiNpcTextField(1, this, fontRendererObj, 3, y, 145 + rightOffset, 20, display.auraSound));
+//        scrollWindow.addButton(new GuiNpcButton(11, 3 + 179 + 13 + rightOffset, y, 20, 20, "X"));
+//        scrollWindow.addButton(new GuiNpcButton(1, 3 + 133 + 13 + rightOffset, y, 47, 20, "gui.select"));
+//        scrollWindow.getButton(11).enabled = !display.auraSound.equals("jinryuudragonbc:DBC.aura") && !display.auraSound.isEmpty();
+//        maxScroll += 16;
+//
+//
+//        y += 23;
+//        scrollWindow.addLabel(new GuiNpcLabel(2, "general.kaiokenSound", 3, y + 5));
+//        scrollWindow.getLabel(2).color = 0xffffff;
+//        y += 16;
+//        scrollWindow.addTextField(new GuiNpcTextField(2, this, fontRendererObj, 3, y, 145 + rightOffset, 20, display.kaiokenSound));
+//        scrollWindow.addButton(new GuiNpcButton(21, 3 + 179 + 13 + rightOffset, y, 20, 20, "X"));
+//        scrollWindow.addButton(new GuiNpcButton(2, 3 + 133 + 13 + rightOffset, y, 47, 20, "gui.select"));
+//        scrollWindow.getButton(21).enabled = !display.kaiokenSound.isEmpty();
+//        maxScroll += 23;
 
         y += 50;
         maxScroll += 50;
@@ -294,7 +293,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             scrollWindow.getTextField(205).setMinMaxDefault(-1, 8, -1);
             scrollWindow.addButton(new GuiNpcButton(2105, guiX + 200 + rightOffset, y - 1, 20, 20, "X"));
             scrollWindow.getButton(2105).enabled = display.lightningIntensity != -1;
-
         }
 
         y += 50;
@@ -348,7 +346,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         }
 
 
-        maxScroll += 50;
+        maxScroll += 10;
         y += 50;
         scrollWindow.addLabel(new GuiNpcLabel(402, "display.kettleModeEnabled", 3, y + 5));
         scrollWindow.getLabel(402).color = 0xffffff;
@@ -360,12 +358,31 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             scrollWindow.addLabel(new GuiNpcLabel(400, "display.kettleModeCharging", 3, y + 5));
             scrollWindow.getLabel(400).color = 0xffffff;
             scrollWindow.addButton(new GuiNpcButtonYesNo(400, guiX + 140 + rightOffset, y, 80, 20, display.kettleModeCharging));
-
         }
 
         maxScroll += 23 * 3 + 10;
 
+        y = guiTop + 186;
+
+        addLabel(new GuiNpcLabel(1, "general.auraSound", guiLeft - 25 , y + 5));
+        getLabel(1).color = 0xffffff;
+        y += 16;
+        addTextField(new GuiNpcTextField(1, this, fontRendererObj, guiLeft - 25, y, 186, 20, display.auraSound));
+        addButton(new GuiNpcButton(1, guiLeft + 163, y, 47, 20, "gui.select"));
+        addButton(new GuiNpcButton(11, guiLeft + 209, y, 16, 20, "X"));
+        getButton(11).enabled = !display.auraSound.equals("jinryuudragonbc:DBC.aura");
+
+        y += 23;
+        addLabel(new GuiNpcLabel(2, "general.kaiokenSound", guiLeft - 25, y + 5));
+        getLabel(2).color = 0xffffff;
+        y += 16;
+        addTextField(new GuiNpcTextField(2, this, fontRendererObj, guiLeft - 25, y, 186, 20, display.kaiokenSound));
+        addButton(new GuiNpcButton(2, guiLeft + 163, y, 47, 20, "gui.select"));
+        addButton(new GuiNpcButton(21, guiLeft + 209, y, 16, 20, "X"));
+        getButton(21).enabled = !display.kaiokenSound.isEmpty();
+
         //   scrollWindow.addButton(new GuiNpcButton(10000, guiLeft + 60, guiTop + 200 + this.yOffset, 75, 20, "gui.done"));
+        int yOffset = this.yOffset + 10;
         this.addButton(this.unzoom = new GuiNpcButton(666, this.guiLeft + 148 + this.xOffset, this.guiTop + 200 + yOffset, 20, 20, "-"));
         this.addButton(this.zoom = new GuiNpcButton(667, this.guiLeft + 214 + this.xOffset, this.guiTop + 200 + yOffset, 20, 20, "+"));
         this.addButton(this.left = new GuiNpcButton(668, this.guiLeft + 170 + this.xOffset, this.guiTop + 200 + yOffset, 20, 20, "<"));
@@ -373,9 +390,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
 
         addButton(new GuiNpcButton(670, this.guiLeft + 165 + this.xOffset, this.guiTop + 222 + yOffset, 55, 20, new String[]{"display.dbcAura", "display.revampAura"}, revampedAura));
         scrollWindow.maxScrollY = maxScroll;
-
     }
-
 
     public void buttonEvent(GuiButton guibutton) {
         GuiNpcButton button = (GuiNpcButton) guibutton;
@@ -443,11 +458,11 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             display.hasKaiokenAura = !display.hasKaiokenAura;
             if (!on) {
                 visualDisplay.isKaioken = false;
-//                if (parent.kaiokenSound != null) {
-//                    parent.kaiokenSound.soundSource.fadeOut = true;
-//                    parent.kaiokenSound.soundSource.fadeFactor = 0.025f;
-//                    parent.kaiokenSound = null;
-//                }
+                //                if (parent.kaiokenSound != null) {
+                //                    parent.kaiokenSound.soundSource.fadeOut = true;
+                //                    parent.kaiokenSound.soundSource.fadeFactor = 0.025f;
+                //                    parent.kaiokenSound = null;
+                //                }
                 parent.stopSound(parent.kaiokenSound, false);
             }
 
@@ -460,9 +475,9 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             if (is)
                 parent.playSound(false);
             else if (parent.kaiokenSound != null) {
-//                parent.kaiokenSound.soundSource.fadeOut = true;
-//                parent.kaiokenSound.soundSource.fadeFactor = 0.025f;
-//                parent.kaiokenSound = null;
+                //                parent.kaiokenSound.soundSource.fadeOut = true;
+                //                parent.kaiokenSound.soundSource.fadeFactor = 0.025f;
+                //                parent.kaiokenSound = null;
                 parent.stopSound(parent.kaiokenSound, false);
             }
 
@@ -493,9 +508,9 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             if (display.kettleModeEnabled)
                 parent.playSound(false);
             else if (parent.kettleSound != null) {
-//                parent.kettleSound.soundSource.fadeOut = true;
-//                parent.kettleSound.soundSource.fadeFactor = 0.075f;
-//                parent.kettleSound = null;
+                //                parent.kettleSound.soundSource.fadeOut = true;
+                //                parent.kettleSound.soundSource.fadeFactor = 0.075f;
+                //                parent.kettleSound = null;
                 parent.stopSound(parent.kettleSound, false);
             }
             initGui();
@@ -537,11 +552,11 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             this.setSubGui(new SubGuiSelectAura());
         } else if (button.id == 1406) {
             aura.secondaryAuraID = -1;
-//            if (parent.secondarySound != null) {
-//                parent.secondarySound.soundSource.fadeOut = true;
-//                parent.secondarySound.soundSource.fadeFactor = 0.025f;
-//                parent.secondarySound = null;
-//            }
+            //            if (parent.secondarySound != null) {
+            //                parent.secondarySound.soundSource.fadeOut = true;
+            //                parent.secondarySound.soundSource.fadeFactor = 0.025f;
+            //                parent.secondarySound = null;
+            //            }
             parent.stopSound(parent.secondarySound, false);
             parent.stopSound(parent.secondaryKettleSound, false);
             initGui();
@@ -556,11 +571,11 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             setSubGui(new GuiSoundSelection((scrollWindow.getTextField(1).getText())));
         } else if (button.id == 11) {
             display.auraSound = "jinryuudragonbc:DBC.aura";
-//            if (parent.kaiokenSound != null) {
-//                parent.kaiokenSound.soundSource.fadeOut = true;
-//                parent.kaiokenSound.soundSource.fadeFactor = 0.025f;
-//                parent.kaiokenSound = null;
-//            }
+            //            if (parent.kaiokenSound != null) {
+            //                parent.kaiokenSound.soundSource.fadeOut = true;
+            //                parent.kaiokenSound.soundSource.fadeFactor = 0.025f;
+            //                parent.kaiokenSound = null;
+            //            }
             parent.stopSound(parent.auraSound, false);
             parent.playSound(false);
             initGui();
@@ -569,11 +584,11 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             setSubGui(new GuiSoundSelection((scrollWindow.getTextField(2).getText())));
         } else if (button.id == 21) {
             display.kaiokenSound = "";
-//            if (parent.kaiokenSound != null) {
-//                parent.kaiokenSound.soundSource.fadeOut = true;
-//                parent.kaiokenSound.soundSource.fadeFactor = 0.025f;
-//                parent.kaiokenSound = null;
-//            }
+            //            if (parent.kaiokenSound != null) {
+            //                parent.kaiokenSound.soundSource.fadeOut = true;
+            //                parent.kaiokenSound.soundSource.fadeFactor = 0.025f;
+            //                parent.kaiokenSound = null;
+            //            }
             parent.stopSound(parent.kaiokenSound, false);
             parent.playSound(false);
             initGui();
@@ -586,7 +601,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         if (i == 1) {
             close();
         }
-
     }
 
     @Override
@@ -644,7 +658,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             scrollWindow.getButton(11).enabled = !display.auraSound.equals("jinryuudragonbc:DBC.aura");
             parent.stopSound(parent.auraSound, false);
             parent.playSound(false);
-
         } else if (guiNpcTextField.id == 2) {
             display.kaiokenSound = guiNpcTextField.getText();
             scrollWindow.getButton(21).enabled = !display.kaiokenSound.isEmpty();
@@ -683,7 +696,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
                     aura.secondaryAuraID = guiSelectForm.selectedAuraID;
                     parent.playSound(false);
                     initGui();
-
                 }
             }
         } else if (subgui instanceof SubGuiSelectOutline) {
@@ -695,7 +707,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
                     display.outlineID = selectOutline.selectedOutlineID;
                     visualDisplay.outlineID = display.outlineID;
                     initGui();
-
                 }
             }
         } else if (subgui instanceof GuiSoundSelection) {
@@ -729,9 +740,8 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
     }
 
     public boolean isMouseOverRenderer(int x, int y) {
-        return x >= guiLeft + 60 + xOffset && x <= guiLeft + 60 + xOffset + 300 && y >= guiTop - 120 + yOffset - 5 && y <= guiTop + 50 + yOffset - 5 + 310;
+        return x >= guiLeft + xOffset + 110 && x <= guiLeft + xOffset + 300 && y >= guiTop - 120 + yOffset - 5 && y <= guiTop + 50 + yOffset - 5 + 310;
     }
-
 
     public void drawScreen(int par1, int par2, float par3) {
         if (Mouse.isButtonDown(0)) {
@@ -854,8 +864,6 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         GL11.glPopMatrix();
-
-
     }
 
     /**
