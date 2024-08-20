@@ -468,7 +468,6 @@ public abstract class MixinJRMCoreH {
     @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "FIELD", opcode = Opcodes.GETSTATIC, target="LJinRyuu/JRMCore/JRMCoreConfig;StatPasDef:I"))
     private static int applyChargingDex(@Local(ordinal = 0) Entity player){
         DBCData dbcData = DBCData.get((EntityPlayer) player);
-        dbcData.stats.restoreHealthPercent(100);
         if(dbcData.stats.isChargingKiAttack()){
             switch(dbcData.Class){
                 case 0:
