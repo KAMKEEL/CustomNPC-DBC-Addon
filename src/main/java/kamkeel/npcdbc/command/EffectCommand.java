@@ -8,8 +8,7 @@ import net.minecraft.command.ICommandSender;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class EffectCommand extends CommandKamkeelBase {
 
@@ -25,8 +24,8 @@ public class EffectCommand extends CommandKamkeelBase {
 
     // info all
     @SubCommand(desc = "Lists all effects")
-    public void infoAll(ICommandSender sender, String args[]) throws CommandException {
-        Collection<StatusEffect> effects = StatusEffectController.getInstance().standardEffects.values();
+    public void infoAll(ICommandSender sender, String[] args) throws CommandException {
+        Set<Map.Entry<Integer, StatusEffect>> effects = StatusEffectController.getInstance().standardEffects.entrySet();
         if (effects.isEmpty()) {
             sendError(sender, "No effects found.");
             return;
@@ -34,15 +33,15 @@ public class EffectCommand extends CommandKamkeelBase {
 
         sendResult(sender, "--------------------");
 
-        for (StatusEffect effect : effects) {
-            sendResult(sender, String.format("%s", effect.getName()));
+        for (Map.Entry<Integer, StatusEffect> entry : effects) {
+            sendResult(sender, String.format("\u00a7b%2$s \u00a77(ID: %1$s)", entry.getKey(), entry.getValue().getName()));
         }
 
         sendResult(sender, "--------------------");
     }
 
     @SubCommand(desc = "Gives a effect to a player", usage = "<player> <time> <effectName>")
-    public void give(ICommandSender sender, String args[]) throws CommandException {
+    public void give(ICommandSender sender, String[] args) throws CommandException {
         String playername = args[0];
         int time = Integer.parseInt(args[1]);
         String name = "";
@@ -73,7 +72,7 @@ public class EffectCommand extends CommandKamkeelBase {
 
 
     @SubCommand(desc = "Removes a effect from a player", usage = "<player> <effectName>")
-    public void remove(ICommandSender sender, String args[]) throws CommandException {
+    public void remove(ICommandSender sender, String[] args) throws CommandException {
         String playername = args[0];
         String name = "";
         for (int i = 1; i < args.length; i++) {
@@ -99,7 +98,7 @@ public class EffectCommand extends CommandKamkeelBase {
     }
 
     @SubCommand(desc = "Gives a effect to a player", usage = "<player> <time> <effectId>")
-    public void giveId(ICommandSender sender, String args[]) throws CommandException {
+    public void giveId(ICommandSender sender, String[] args) throws CommandException {
         String playername = args[0];
         int time = Integer.parseInt(args[1]);
 
@@ -117,7 +116,7 @@ public class EffectCommand extends CommandKamkeelBase {
     }
 
     @SubCommand(desc = "Removes a effect from a player", usage = "<player> <effectId>")
-    public void removeId(ICommandSender sender, String args[]) throws CommandException {
+    public void removeId(ICommandSender sender, String[] args) throws CommandException {
         String playername = args[0];
         List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
         if (data.isEmpty()) {
