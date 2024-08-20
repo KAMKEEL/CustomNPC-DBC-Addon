@@ -232,6 +232,12 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private void renderSaiyanStates(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hc") LocalIntRef hairCol, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose) {
         Form form = DBCData.getForm(par1AbstractClientPlayer);
         DBCData data = DBCData.get(par1AbstractClientPlayer);
+
+        /**
+         * @INFO: This fixes base hair color.
+         */
+        data.renderingHairColor = hairCol.get();
+
         if (form != null) {
             HD = ConfigDBCClient.EnableHDTextures;
             //only saiyans
@@ -243,7 +249,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 //renders all ssj4
                 if (isSSJ4) {
                     if (form.display.hasEyebrows && data.skinType != 0)
-                        renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get(), data.renderingHairColor, data.age, data.DNS, data);
+                        renderSSJ4Face(form, gender.get(), nose.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
                     if (hairback.get() != 12)
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
                     //all oozaru rendering
@@ -289,13 +295,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/ModelBipedDBC;renderHairs(FLjava/lang/String;)V", ordinal = 34, shift = At.Shift.AFTER))
     public void afterMajinSE(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
         ClientProxy.renderingMajinSE = false;
-    }
-
-    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/ModelBipedDBC;renderHairs(FLjava/lang/String;)V", ordinal = 30, shift = At.Shift.BEFORE))
-    public void captureDefaultHairColor(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hc") LocalIntRef hairCol) {
-        DBCData data = DBCData.get(par1AbstractClientPlayer);
-        data.renderingHairColor = hairCol.get();
-        data.age = age;
     }
 
     @Unique
