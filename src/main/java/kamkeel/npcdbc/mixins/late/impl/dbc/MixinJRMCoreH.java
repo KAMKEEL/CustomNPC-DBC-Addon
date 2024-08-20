@@ -45,6 +45,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
@@ -464,31 +465,24 @@ public abstract class MixinJRMCoreH {
         DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer((EntityPlayer) Player), s));
     }
 
-    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;StatPasDef:I", shift = At.Shift.AFTER))
-    private static void applyChargingDex(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir, @Local(name = "def") LocalIntRef def, @Local(name = "kiProtection") LocalIntRef kiProtection) {
-        DBCData dbcData = DBCData.get((EntityPlayer) Player);
-        byte classID = dbcData.Class;
-        boolean isChargingKi = DBCData.get((EntityPlayer) Player).stats.isChargingKiAttack();
-        float newDef = def.get();
-        int kiProt = kiProtection.get();
-        if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
-            // Charging Dex
-            switch (classID) {
+    @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "FIELD", opcode = Opcodes.GETSTATIC, target="LJinRyuu/JRMCore/JRMCoreConfig;StatPasDef:I"))
+    private static int applyChargingDex(@Local(ordinal = 0) Entity player){
+        DBCData dbcData = DBCData.get((EntityPlayer) player);
+        dbcData.stats.restoreHealthPercent(100);
+        if(dbcData.stats.isChargingKiAttack()){
+            switch(dbcData.Class){
                 case 0:
-                    newDef = ((newDef - kiProt) * ConfigDBCGameplay.MartialArtistCharge * 0.01F) + kiProt;
-                    break;
+                    return ConfigDBCGameplay.MartialArtistCharge;
                 case 1:
-                    newDef = ((newDef - kiProt) * ConfigDBCGameplay.SpiritualistCharge * 0.01F) + kiProt;
-                    break;
+                    return ConfigDBCGameplay.SpiritualistCharge;
                 case 2:
-                    newDef = ((newDef - kiProt) * ConfigDBCGameplay.WarriorCharge * 0.01F) + kiProt;
-                    break;
+                    return ConfigDBCGameplay.WarriorCharge;
                 default:
-                    newDef = ((newDef - kiProt) * JRMCoreConfig.StatPasDef * 0.01F) + kiProt;
-                    break;
+                    return JRMCoreConfig.StatPasDef;
             }
+        }else{
+            return JRMCoreConfig.StatPasDef;
         }
-        def.set((int) newDef);
     }
 
     @Inject(method = "getHeatPercentageClient", at = @At("HEAD"), cancellable = true)
