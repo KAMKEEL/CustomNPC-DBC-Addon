@@ -106,11 +106,15 @@ public class StatusEffectController implements IStatusEffectHandler {
             }
         }
 
-        for (CustomEffect effect : customEffects.values()) {
-            if (effect.getName().equalsIgnoreCase(name)) {
-                return effect;
-            }
-        }
+        /**
+         * TODO Uncomment this when custom effects get properly implemented.
+         *      Namespaces may be polluted otherwise (Especially for the EffectCommand).
+         */
+//        for (CustomEffect effect : customEffects.values()) {
+//            if (effect.getName().equalsIgnoreCase(name)) {
+//                return effect;
+//            }
+//        }
 
         return null;
     }
