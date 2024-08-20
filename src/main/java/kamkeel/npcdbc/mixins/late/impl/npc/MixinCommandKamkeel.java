@@ -2,10 +2,7 @@ package kamkeel.npcdbc.mixins.late.impl.npc;
 
 import kamkeel.command.CommandKamkeel;
 import kamkeel.command.CommandKamkeelBase;
-import kamkeel.npcdbc.command.AuraCommand;
-import kamkeel.npcdbc.command.FormCommand;
-import kamkeel.npcdbc.command.FormMasteryCommand;
-import kamkeel.npcdbc.command.OutlineCommand;
+import kamkeel.npcdbc.command.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,6 +18,7 @@ public abstract class MixinCommandKamkeel {
         registerCommand(new AuraCommand());
         registerCommand(new OutlineCommand());
         registerCommand(new FormMasteryCommand());
+        registerCommand(new EffectCommand());
     }
 
     @Shadow
