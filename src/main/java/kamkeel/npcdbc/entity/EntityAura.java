@@ -44,7 +44,6 @@ public class EntityAura extends Entity {
     @SideOnly(Side.CLIENT)
     public AuraSound auraSound;
 
-
     public boolean isKaioken, isInKaioken, isGUIAura;
     public boolean isTransforming;
     public boolean isCharging;
@@ -80,9 +79,7 @@ public class EntityAura extends Entity {
         }
         setPositionAndRotation(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
         text1 = new ResourceLocation("jinryuudragonbc:aura.png");
-
     }
-
 
     public EntityAura load(boolean all) {
         boolean isRoot = isRoot();
@@ -128,8 +125,9 @@ public class EntityAura extends Entity {
         }
 
         if (this.aura.hasSecondaryAura()) {
-            if (!children.containsKey("Secondary"))
-                new EntityAura(entity, this.aura.getSecondaryAur()).setParent(this, "Secondary").load(true).spawn();
+            Aura secondaryAura = this.aura.getSecondaryAur();
+            if (!children.containsKey("Secondary") && auraData.getAuraEntity().aura.id != secondaryAura.id)
+                new EntityAura(entity, secondaryAura).setParent(this, "Secondary").load(true).spawn();
         } else {
             if (children.containsKey("Secondary")) {
                 EntityAura secondaryAura = children.get("Secondary");
@@ -156,7 +154,6 @@ public class EntityAura extends Entity {
             if (kaiokenOverride) {
                 color1 = lightningColor = 16646144;
             }
-
         } else {
             if (lightningColor == 16646144)
                 lightningColor = 0x25c9cf;
@@ -270,7 +267,6 @@ public class EntityAura extends Entity {
             text2 = new ResourceLocation(auraDir + "aurau2.png");
             color2 = 16776724;
         }
-
     }
 
     public EntityAura setParent(EntityAura aura, String thisName) {
@@ -283,7 +279,6 @@ public class EntityAura extends Entity {
         ignoreFrustumCheck = true;
         renderPass = 1;
         height = 20 * 0.11f;
-
     }
 
     public void updateDisplay() {
@@ -311,7 +306,6 @@ public class EntityAura extends Entity {
 
         if (aura.display.kettleModeEnabled) {
             ParticleFormHandler.spawnAura2D(EnumAuraTypes2D.KettleMode, 0, entity, auraData, 0, isGUIAura);
-
         }
 
         String auraDir = "jinryuudragonbc:";
@@ -346,8 +340,6 @@ public class EntityAura extends Entity {
 
         if (parent != null && parent.children != null && parent.children.containsKey(name))
             parent.children.remove(name);
-
-
     }
 
     public void onUpdate() {
@@ -357,8 +349,6 @@ public class EntityAura extends Entity {
                 despawn();
             else if (isVanillaDefault && (!auraData.isAuraOn() || auraData.isFusionSpectator() || entity == null || entity.isDead || currentAura != null || !ConfigDBCClient.RevampAura || auraData.isFusionSpectator()))
                 despawn();
-
-
         }
         isInKaioken = auraData.isInKaioken();
         if (!isInKaioken && isKaioken && !fadeOut)
@@ -387,10 +377,7 @@ public class EntityAura extends Entity {
         isCharging = auraData.isChargingKi() || isTransforming;
 
         updateDisplay();
-
-
     }
-
 
     @SideOnly(Side.CLIENT)
     public void playSound() {
@@ -412,7 +399,6 @@ public class EntityAura extends Entity {
             auraSound.soundSource.fadeOut = true;
     }
 
-
     public EntityAuraRing spawnAuraRing(Entity entity, int color) {
         if (entity.ticksExisted % 20 != 0)
             return null;
@@ -422,7 +408,6 @@ public class EntityAura extends Entity {
 
         entity.worldObj.spawnEntityInWorld(ring);
         return ring;
-
     }
 
     public boolean shouldRenderInPass(int pass) {
