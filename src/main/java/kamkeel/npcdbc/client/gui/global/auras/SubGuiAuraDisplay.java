@@ -629,12 +629,12 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             scrollWindow.getButton(3104).enabled = display.kaiokenSize != 1;
         } else if (guiNpcTextField.id == 1) {
             display.auraSound = guiNpcTextField.getText();
-            scrollWindow.getButton(11).enabled = !display.auraSound.equals("jinryuudragonbc:DBC.aura");
+            getButton(11).enabled = !display.auraSound.equals("jinryuudragonbc:DBC.aura");
             parent.stopSound(parent.auraSound, false);
             parent.playSound(false);
         } else if (guiNpcTextField.id == 2) {
             display.kaiokenSound = guiNpcTextField.getText();
-            scrollWindow.getButton(21).enabled = !display.kaiokenSound.isEmpty();
+           getButton(21).enabled = !display.kaiokenSound.isEmpty();
             parent.stopSound(parent.kaiokenSound, false);
             parent.playSound(false);
         }
