@@ -65,12 +65,12 @@ public class ClientEventHandler {
 //                Minecraft.getMinecraft().refreshResources();
 //                ShaderHelper.loadShaders(true);
 //            }
-            if (Keyboard.isKeyDown(Keyboard.KEY_F10)) {
-                for (int i : PostProcessing.bloomTextures) {
-                    if (i > 0)
-                        PostProcessing.saveTextureToPNG(i);
-                }
-            }
+//            if (Keyboard.isKeyDown(Keyboard.KEY_F10)) {
+//                for (int i : PostProcessing.bloomTextures) {
+//                    if (i > 0)
+//                        PostProcessing.saveTextureToPNG(i);
+//                }
+//            }
         }
     }
 
