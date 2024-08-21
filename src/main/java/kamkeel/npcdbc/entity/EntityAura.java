@@ -126,7 +126,8 @@ public class EntityAura extends Entity {
 
         if (this.aura.hasSecondaryAura()) {
             Aura secondaryAura = this.aura.getSecondaryAur();
-            if (!children.containsKey("Secondary") && auraData.getAuraEntity().aura.id != secondaryAura.id)
+            EntityAura root = auraData.getAuraEntity();
+            if (!children.containsKey("Secondary") && root != null && root.aura.id != secondaryAura.id)
                 new EntityAura(entity, secondaryAura).setParent(this, "Secondary").load(true).spawn();
         } else {
             if (children.containsKey("Secondary")) {
