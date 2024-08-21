@@ -667,7 +667,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
                 if (guiSelectForm.confirmed) {
                     if (guiSelectForm.selectedAuraID == aura.secondaryAuraID)
                         return;
-                    aura.secondaryAuraID = guiSelectForm.selectedAuraID;
+                    aura.setSecondaryAura(guiSelectForm.selectedAuraID);
                     parent.playSound(false);
                     initGui();
                 }

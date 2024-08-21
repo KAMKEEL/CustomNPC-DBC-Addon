@@ -145,7 +145,8 @@ public class Aura implements IAura {
 
     @Override
     public void setSecondaryAura(int id) {
-        if (AuraController.Instance.has(id))
+        Aura secondaryAura = (Aura) AuraController.Instance.get(id);
+        if (secondaryAura != null && secondaryAura.secondaryAuraID != this.id)
             this.secondaryAuraID = id;
         else
             secondaryAuraID = -1;

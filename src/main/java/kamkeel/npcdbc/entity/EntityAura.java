@@ -124,7 +124,7 @@ public class EntityAura extends Entity {
                 hasLightning = false;
         }
 
-        if (this.aura.hasSecondaryAura()) {
+        if (isRoot && this.aura.hasSecondaryAura()) {
             Aura secondaryAura = this.aura.getSecondaryAur();
             EntityAura root = auraData.getAuraEntity();
             if (!children.containsKey("Secondary") && root != null && root.aura.id != secondaryAura.id)
