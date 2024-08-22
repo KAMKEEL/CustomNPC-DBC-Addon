@@ -101,7 +101,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             return;
         }
 
-        if(!ConfigDBCClient.EnhancedGui || dbcClient.Accept == 0 || dbcClient.Powertype != 1){
+        if((!ConfigDBCClient.EnhancedGui && ConfigDBCClient.EnableDebugStatSheetSwitching)|| dbcClient.Accept == 0 || dbcClient.Powertype != 1){
             JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
             ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(10);
             FMLCommonHandler.instance().showGuiScreen(DBCScreen);
@@ -558,15 +558,18 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
     public void initGui(){
         super.initGui();
 
-        if(!ConfigDBCClient.EnhancedGui){
+        if(ConfigDBCClient.EnableDebugStatSheetSwitching && !ConfigDBCClient.EnhancedGui){
             return;
         }
         addServerButtons();
 
         //Button to adjust GUI
-        String s = (!ConfigDBCClient.EnhancedGui ? "Old" : "§aModern") +" GUI";
-        int button1Width = this.fontRendererObj.getStringWidth(s)+10;
-        this.buttonList.add(new JRMCoreGuiButtons00(303030303, guiWidthOffset + 260, height/2 - 10, button1Width + 8, 20, s, 0));
+
+        if(ConfigDBCClient.EnableDebugStatSheetSwitching){
+            String s = (!ConfigDBCClient.EnhancedGui ? "Old" : "§aModern") +" GUI";
+            int button1Width = this.fontRendererObj.getStringWidth(s)+10;
+            this.buttonList.add(new JRMCoreGuiButtons00(303030303, guiWidthOffset + 260, height/2 - 10, button1Width + 8, 20, s, 0));
+        }
 
         //Difficulty button
         GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.DIFFICULTY;

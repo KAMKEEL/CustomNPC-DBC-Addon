@@ -14,8 +14,9 @@ public class ConfigDBCClient {
     public static Property HideInfoMessageProperty;
     public static boolean HideInfoMessage = false;
 
-
     public final static String GUI = "Gui";
+
+    public static boolean EnableDebugStatSheetSwitching = false;
 
     public static Property EnhancedGuiProperty;
     public static boolean EnhancedGui = true;
@@ -57,7 +58,10 @@ public class ConfigDBCClient {
             HideInfoMessage = HideInfoMessageProperty.getBoolean(false);
 
             // GUI
-            EnhancedGuiProperty = config.get(GUI, "Enable Enhanced Gui", true, "Uses DBC Addons GUI for Coloring and Manipulation");
+            EnableDebugStatSheetSwitching = config.get(GUI, "Enable old stat sheet toggle", false, "DEBUG ONLY\n" +
+                "this for finding inconsistencies between the GUIs, nothing else as old GUI is depracted due to lack of custom form support.\n\n" +
+                "Enables toggling between old DBC GUI and Addon replacements. ").getBoolean(false);
+            EnhancedGuiProperty = config.get(GUI, "Enable Enhanced Gui", true, "Uses DBC Addons GUI for Coloring and Manipulation\n\nINFO: If DebugStatSheet switching is off, you cannot use old DBC GUI");
             EnhancedGui = EnhancedGuiProperty.getBoolean(true);
             DarkModeProperty = config.get(GUI, "Dark Mode", true, "Uses Dark Mode GUI in Enhanced Menu");
             DarkMode = DarkModeProperty.getBoolean(true);
