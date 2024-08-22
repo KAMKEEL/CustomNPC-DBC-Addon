@@ -59,7 +59,7 @@ public class ConfigDBCClient {
 
             // GUI
             EnableDebugStatSheetSwitching = config.get(GUI, "Enable old stat sheet toggle", false, "DEBUG ONLY\n" +
-                "this for finding inconsistencies between the GUIs, nothing else as old GUI is deprecated due to: \n" +
+                "This for finding inconsistencies between the GUIs, nothing else as old GUI is deprecated due to: \n" +
                 " >Incomplete custom form support.\n" +
                 " >Lacks DBC-related fixes in the GUI (Ki protection, passive protection shenanigans, etc.)\n" +
                 "\n" +
