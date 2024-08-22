@@ -59,7 +59,7 @@ public class ConfigDBCClient {
 
             // GUI
             EnableDebugStatSheetSwitching = config.get(GUI, "Enable old stat sheet toggle", false, "DEBUG ONLY\n" +
-                "this for finding inconsistencies between the GUIs, nothing else as old GUI is depracted due to lack of custom form support.\n\n" +
+                "this for finding inconsistencies between the GUIs, nothing else as old GUI is deprecated due to lack of custom form support.\n\n" +
                 "Enables toggling between old DBC GUI and Addon replacements. ").getBoolean(false);
             EnhancedGuiProperty = config.get(GUI, "Enable Enhanced Gui", true, "Uses DBC Addons GUI for Coloring and Manipulation\n\nINFO: If DebugStatSheet switching is off, you cannot use old DBC GUI");
             EnhancedGui = EnhancedGuiProperty.getBoolean(true);
