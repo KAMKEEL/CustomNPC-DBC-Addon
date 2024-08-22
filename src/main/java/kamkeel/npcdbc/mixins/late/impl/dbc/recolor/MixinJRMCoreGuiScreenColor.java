@@ -17,7 +17,7 @@ public class MixinJRMCoreGuiScreenColor extends GuiScreen  {
 
     @Redirect(method = "drawScreen", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I"), remap = true)
     private int drawScreenFix(FontRenderer instance, String text, int x, int y, int color){
-        if(ConfigDBCClient.EnhancedGui){
+        if(ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching){
             return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), ConfigDBCClient.DarkMode);
         }
         return instance.drawString(text, x, y, color);
@@ -25,7 +25,7 @@ public class MixinJRMCoreGuiScreenColor extends GuiScreen  {
 
     @Redirect(method = "drawHUD_helpgmodeselect", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true))
     private int HelpSelect(FontRenderer instance, String text, int x, int y, int color){
-        if(ConfigDBCClient.EnhancedGui){
+        if(ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching){
             return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), ConfigDBCClient.DarkMode);
         }
         return instance.drawString(text, x, y, color);
@@ -33,7 +33,7 @@ public class MixinJRMCoreGuiScreenColor extends GuiScreen  {
 
     @Redirect(method = "drawHUD_instantTransmissionPicker", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true))
     private int instantTrans(FontRenderer instance, String text, int x, int y, int color){
-        if(ConfigDBCClient.EnhancedGui){
+        if(ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching){
             return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), ConfigDBCClient.DarkMode);
         }
         return instance.drawString(text, x, y, color);
@@ -41,7 +41,7 @@ public class MixinJRMCoreGuiScreenColor extends GuiScreen  {
 
     @Redirect(method = "drawHUD_clntsett", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true))
     private int drawHUD_clntsett(FontRenderer instance, String text, int x, int y, int color){
-        if(ConfigDBCClient.EnhancedGui){
+        if(ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching){
             return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), ConfigDBCClient.DarkMode);
         }
         return instance.drawString(text, x, y, color);
@@ -49,7 +49,7 @@ public class MixinJRMCoreGuiScreenColor extends GuiScreen  {
 
     @Redirect(method = "drawDetails(Ljava/lang/String;Ljava/lang/String;IIIILnet/minecraft/client/gui/FontRenderer;)V", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true))
     private static int drawDetails(FontRenderer instance, String text, int x, int y, int color){
-        if(ConfigDBCClient.EnhancedGui){
+        if(ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching){
             return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), ConfigDBCClient.DarkMode);
         }
         return instance.drawString(text, x, y, color);
@@ -57,7 +57,7 @@ public class MixinJRMCoreGuiScreenColor extends GuiScreen  {
 
     @Redirect(method = "current", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true))
     private int current(FontRenderer instance, String text, int x, int y, int color){
-        if(ConfigDBCClient.EnhancedGui){
+        if(ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching){
             return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), ConfigDBCClient.DarkMode);
         }
         return instance.drawString(text, x, y, color);
@@ -65,7 +65,7 @@ public class MixinJRMCoreGuiScreenColor extends GuiScreen  {
 
     @Inject(method = "textLevel", at= @At(value = "HEAD"), cancellable = true)
     private void textLevel(int lvl, CallbackInfoReturnable<String> cir){
-        if(ConfigDBCClient.EnhancedGui){
+        if(ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching){
             if(ConfigDBCClient.DarkMode){
                 cir.setReturnValue("§7(lvl: " + lvl + ")");
             }
