@@ -237,7 +237,7 @@ public abstract class MixinJRMCoreH {
 
         float[] multiBonus = dbcData.bonus.getMultiBonus();
 
-        if (attribute == 0 || attribute == 1 || attribute == 3) {
+        if (attribute == 0 || attribute == 1 || attribute == 2 || attribute == 3) {
             result *= (stackableMulti * ((FormMastery) dbcData.getForm().getMastery()).calculateMulti("attribute", currentFormLevel));
         }
 
@@ -247,6 +247,10 @@ public abstract class MixinJRMCoreH {
             result = (int) (result * (formMulti[1] * statusMulti + multiBonus[1]));
         else if (attribute == DBCAttribute.Willpower) // WIL
             result = (int) (result * (formMulti[2] * statusMulti + multiBonus[2]));
+        else if (attribute == DBCAttribute.Constitution) {// CON - for damage reduction
+            float averageMulti = (formMulti[0] + formMulti[1] + formMulti[2]) / 3;
+            result = (int) (result * (averageMulti * statusMulti));
+        }
 
 
         // Add Bonus Multi to Base Attributes
@@ -272,8 +276,6 @@ public abstract class MixinJRMCoreH {
 
         result = ValueUtil.clamp(result, 0, Integer.MAX_VALUE);
         info.setReturnValue(result);
-
-
     }
 
     private static float[][] getRightMultiArray(int race){
