@@ -1,9 +1,11 @@
 package kamkeel.npcdbc.data;
 
+import JinRyuu.JRMCore.entity.EntityCusPar;
 import kamkeel.npcdbc.entity.EntityAura;
 import net.minecraft.entity.Entity;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Queue;
 
 public interface IAuraData {
@@ -33,6 +35,7 @@ public interface IAuraData {
 
     public void useStencilBuffer(boolean use);
     public HashMap getDBCAuras(boolean secondary);
+    public List<EntityCusPar> getParticles();
 
     // Aura Color
     // Aura Size

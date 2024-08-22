@@ -1,5 +1,6 @@
 package kamkeel.npcdbc;
 
+import JinRyuu.JRMCore.entity.EntityCusPar;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -11,10 +12,12 @@ import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
@@ -29,6 +32,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -39,6 +43,7 @@ import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
 
+import java.util.Iterator;
 import java.util.Random;
 
 public class ServerEventHandler {
@@ -57,6 +62,24 @@ public class ServerEventHandler {
         BonusController.getInstance().loadBonus(event.player);
     }
 
+    @SubscribeEvent
+    public void joinWorld(EntityJoinWorldEvent event) {
+        Entity e = event.entity;
+
+        if (e instanceof EntityPlayer || e instanceof EntityCustomNpc) {
+            IAuraData auraData = PlayerDataUtil.getAuraData(e);
+            EntityAura aura = auraData.getAuraEntity();
+            if (aura != null) {
+                aura.setDead();
+                for (EntityAura child : aura.children.values()) //children of root cannot have children
+                    child.setDead();
+            }
+            for (Iterator<EntityCusPar> iter = auraData.getParticles().iterator(); iter.hasNext(); ) {
+                iter.next().setDead();
+                iter.remove();
+            }
+        }
+    }
 
     @SubscribeEvent
     public void onServerTick(TickEvent.PlayerTickEvent event) {
@@ -246,5 +269,4 @@ public class ServerEventHandler {
             }
         }
     }
-
 }

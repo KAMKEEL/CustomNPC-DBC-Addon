@@ -815,6 +815,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     @Override
+    public List<EntityCusPar> getParticles() {
+        return particleRenderQueue;
+    }
+
+    @Override
     public int getActiveAuraColor() {
         return activeAuraColor;
     }

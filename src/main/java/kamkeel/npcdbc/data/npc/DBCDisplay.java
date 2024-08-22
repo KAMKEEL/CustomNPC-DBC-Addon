@@ -9,6 +9,7 @@ import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IKiWeaponData;
+import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -21,7 +22,6 @@ import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -38,6 +38,7 @@ import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class DBCDisplay implements IDBCDisplay, IAuraData {
@@ -79,7 +80,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public boolean useStencilBuffer;
     public EntityAura auraEntity;
     public int activeAuraColor = -1;
-    public Queue<EntityCusPar> particleRenderQueue = new LinkedList<>();
+    public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
     public HashMap<Integer, EntityAura2> dbcAuraQueue = new HashMap<>();
     public HashMap<Integer, EntityAura2> dbcSecondaryAuraQueue = new HashMap<>();
     private EnumAuraTypes2D enumAuraTypes = EnumAuraTypes2D.None;
@@ -192,7 +193,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
                 kiWeaponLeft.readFromNBT(dbcDisplay, "kiWeaponLeft");
             if (dbcDisplay.hasKey("kiWeaponRight"))
                 kiWeaponRight.readFromNBT(dbcDisplay, "kiWeaponRight");
-
         } else {
             comp.removeTag("DBCDisplay");
         }
@@ -272,7 +272,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
 
-
     public int getCurrentArcoState() {
         int state = this.arcoState;
         Form form = this.getForm();
@@ -298,12 +297,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return state;
     }
 
-
     @Override
     public boolean isEnabled() {
         return enabled;
     }
-
 
     @Override
     public void setEnabled(boolean enabled) {
@@ -343,7 +340,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return null;
     }
 
-
     @Override
     public byte getRace() {
         return race;
@@ -379,7 +375,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         String s = type.toLowerCase();
         if (s.equals("base") || s.equals("ssj") || s.equals("ssj2") || s.equals("ssj3") || s.equals("ssj4") || s.equals("oozaru") || s.equals("raditz") || s.equals("")) {
             hairType = s;
-
         } else {
             hairType = "";
             throw new CustomNPCsException("Invalid type!");
@@ -452,7 +447,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return auraOn;
     }
 
-
     @Override
     public void toggleAura(boolean toggle) {
         this.auraOn = toggle;
@@ -492,7 +486,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return getAur();
     }
 
-
     //internal usage
     public Aura getAur() {
         if (isInForm()) {
@@ -527,7 +520,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     public void descend(int id) {
         TransformController.npcDescend(npc, id);
-
     }
 
     public IForm getCurrentForm() {
@@ -624,7 +616,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             bodyC2 = -1;
             bodyC3 = -1;
         }
-
     }
 
     public void setDefaultHair() {
@@ -716,6 +707,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return getAuraColor();
     }
 
+    @Override
+    public List<EntityCusPar> getParticles() {
+        return particleRenderQueue;
+    }
+
     public void setRacialExtras() {
         ModelData data = ((EntityCustomNpc) npc).modelData;
         data.removePart("dbcHorn");
@@ -774,7 +770,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             ModelPartData horn = data.getOrCreatePart("dbcHorn");
             horn.setTexture("tail/monkey1", 1);
         }
-
     }
 
     //Integral
@@ -793,7 +788,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             } else if (form.display.bodyType.equals("ultimatecooler")) {
                 arcoState = 5;
             }
-
         }
         return arcoState;
     }
@@ -820,7 +814,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
                 visualDisplay.tailState = 1;
 
             visualDisplay.setRacialExtras();
-
         } else {
             visualDisplay.enabled = true;
             visualDisplay.useSkin = true;
@@ -838,10 +831,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
                 visualDisplay.hairColor = visualDisplay.bodyCM;
             }
             visualDisplay.setRacialExtras();
-
-
         }
         return npc;
     }
-
 }
