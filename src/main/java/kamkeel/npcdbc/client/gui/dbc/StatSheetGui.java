@@ -512,7 +512,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 )
             );
 
-        float speedScaling = (customForm == null ? 1 : customForm.mastery.calculateMulti("movementspeed", dbcClient.addonFormLevel));
+        float speedScaling = (customForm == null ? 1 : customForm.mastery.movementSpeed * customForm.mastery.calculateMulti("movementspeed", dbcClient.addonFormLevel));
         int formID = JRMCoreH.StusEfctsMe(13) ? (JRMCoreH.rc_sai(JRMCoreH.Race) ? JRMCoreH.mstc_sai(JRMCoreH.SklLvlX(1, JRMCoreH.PlyrSkillX) - 1) : (JRMCoreH.rc_arc(JRMCoreH.Race) ? JRMCoreH.mstc_arc() : (JRMCoreH.rc_humNam(JRMCoreH.Race) ? JRMCoreH.mstc_humnam() : 1))) : JRMCoreH.State;
         incrementVal = JRMCoreH.statInc(1, 7, 100, JRMCoreH.Race, JRMCoreH.Class, 0.0F) * 0.01F;
         stat = (int)(JRMCoreH.spdFrm(JRMCoreH.PlyrAttrbts[1], JRMCoreH.SklLvl(2, (byte) 1), 100.0F, true, false, formID, JRMCoreH.State2, incrementVal) * 100.0F * speedScaling);
