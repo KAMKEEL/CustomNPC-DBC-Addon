@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.dbcdata;
 
+import JinRyuu.DragonBC.common.DBCKiTech;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.entity.EntityCusPar;
@@ -22,6 +23,7 @@ import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetFlight;
 import kamkeel.npcdbc.network.packets.DBCUpdateLockOn;
 import kamkeel.npcdbc.network.packets.PingPacket;
+import kamkeel.npcdbc.network.packets.TurboPacket;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -560,6 +562,16 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         return containsSE(4);
     }
 
+    public void setTurboState(boolean on) {
+        StatusEffects = setSE(3, on);
+
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+            PacketHandler.Instance.sendToPlayer(new TurboPacket(on).generatePacket(), (EntityPlayerMP) player);
+        } else {
+            DBCKiTech.turbo = on;
+        }
+    }
+
     @Override
     public boolean isInKaioken() {
         return isForm(DBCForm.Kaioken);
@@ -828,4 +840,5 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public void setActiveAuraColor(int color) {
         activeAuraColor = color;
     }
+
 }
