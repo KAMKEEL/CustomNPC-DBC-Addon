@@ -31,7 +31,14 @@ public abstract class MixinEntityEnergyAtt extends EntityEnAttacks {
     }
 
     @Redirect(method = "setDead", at=@At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;isShtng:Z", opcode = Opcodes.PUTSTATIC), remap = true)
-    private void fixKiChargeReset(boolean value){
+    private void fixKiChargeReset_setDead(boolean value){
+        if(this.shootingEntity == Minecraft.getMinecraft().thePlayer){
+            JRMCoreH.isShtng = value;
+        }
+    }
+
+    @Redirect(method = "onUpdate", at=@At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;isShtng:Z", opcode = Opcodes.PUTSTATIC), remap = true)
+    private void fixKiChargeReset_onUpdate(boolean value){
         if(this.shootingEntity == Minecraft.getMinecraft().thePlayer){
             JRMCoreH.isShtng = value;
         }
