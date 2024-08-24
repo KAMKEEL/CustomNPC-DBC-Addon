@@ -33,6 +33,8 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
             mixins.add("npc.client.MixinRenderCustomNpc");
             mixins.add("npc.client.MixinGuiSoundSelection");
 
+            mixins.add("dbc.client.ClientMixinEntityEnergyAtt");
+
             mixins.add("dbc.MixinDBCKiTech");
             mixins.add("dbc.MixinJRMCoreCliTickH");
             mixins.add("dbc.MixinJRMCoreGuiBars");
