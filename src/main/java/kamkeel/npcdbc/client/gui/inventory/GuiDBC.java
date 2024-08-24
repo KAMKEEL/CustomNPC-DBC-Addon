@@ -27,6 +27,7 @@ import noppes.npcs.client.gui.util.*;
 import org.lwjgl.opengl.GL11;
 import tconstruct.client.tabs.AbstractTab;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +50,8 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
     private Aura selectedAura;
     private Aura viewingAura;
     private HashMap<String, Integer> loadedData = new HashMap<String, Integer>();
+
+    private static DecimalFormat decimalFormat = new DecimalFormat("#.###");
 
     public GuiDBC() {
         super();
@@ -164,19 +167,22 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                     fontRendererObj.drawString(child, guiLeft + 143, y += 12, CustomNpcResourceListener.DefaultTextColor, true);
                 }
 
+
+                double masteryMulti = viewingForm.mastery.calculateMulti("attribute", dbcInfo.getFormLevel(viewingForm.id));
+
                 int stats = guiTop + 18 + 48;
                 String label = "§f" + StatCollector.translateToLocal("npcdbc.inventory.strength") + ":";
-                String info = "§4x§c" + viewingForm.strengthMulti;
+                String info = "§4x§c" + decimalFormat.format(viewingForm.strengthMulti * masteryMulti);
                 fontRendererObj.drawString(label, guiLeft + 143, stats, CustomNpcResourceListener.DefaultTextColor, true);
                 fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
 
                 label = "§f" + StatCollector.translateToLocal("npcdbc.inventory.dexterity") + ":";
-                info = "§3x§b" + viewingForm.dexMulti;
+                info = "§3x§b" + decimalFormat.format(viewingForm.dexMulti * masteryMulti);
                 fontRendererObj.drawString(label, guiLeft + 143, stats += 12, CustomNpcResourceListener.DefaultTextColor, true);
                 fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
 
                 label = "§f" + StatCollector.translateToLocal("npcdbc.inventory.willpower") + ":";
-                info = "§6x§e" + viewingForm.willMulti;
+                info = "§6x§e" + decimalFormat.format(viewingForm.willMulti * masteryMulti);
                 fontRendererObj.drawString(label, guiLeft + 143, stats += 12, CustomNpcResourceListener.DefaultTextColor, true);
                 fontRendererObj.drawString(info, guiLeft + 200, stats, CustomNpcResourceListener.DefaultTextColor, true);
 
