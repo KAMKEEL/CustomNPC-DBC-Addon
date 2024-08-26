@@ -50,6 +50,16 @@ public class RenderEventHandler {
     @SubscribeEvent
     public void enableEntityStencil(RenderLivingEvent.Pre e) {
         if (mc.theWorld != null && (e.entity instanceof EntityPlayer || e.entity instanceof EntityNPCInterface)) {
+
+            if(e.entity instanceof EntityPlayer){
+                DBCData data = DBCData.get((EntityPlayer) e.entity);
+                if(ClientProxy.isRenderingWorld() && data.isFusionSpectator()) {
+                    e.setCanceled(true);
+                    return;
+                }
+
+            }
+
             if (PlayerDataUtil.useStencilBuffer(e.entity)) {
                 glEnable(GL_STENCIL_TEST);
                 glClear(GL_STENCIL_BUFFER_BIT); //TODO: needs to be put somewhere else i.e RenderWorldLastEvent, but for some reason doesn't work when put there
@@ -78,6 +88,7 @@ public class RenderEventHandler {
     public void renderPlayer(EntityPlayer player, Render renderer, float partialTicks, boolean isArm, boolean isItem) {
         RenderPlayerJBRA render = (RenderPlayerJBRA) renderer;
         DBCData data = DBCData.get(player);
+
         if (!data.useStencilBuffer)
             return;
 

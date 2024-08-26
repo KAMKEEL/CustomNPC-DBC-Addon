@@ -6,6 +6,7 @@ import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.OptifineHelper;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.culling.Frustrum;
@@ -24,6 +25,16 @@ public class MixinEntityRendererOptifine {
 
     @Shadow
     public Minecraft mc;
+
+    @Inject(method = "renderWorld", at = @At(value = "HEAD"))
+    private void startRenderingWorld(float p_78471_1_, long p_78471_2_, CallbackInfo ci){
+        ClientProxy.renderingWorld = true;
+    }
+
+    @Inject(method = "renderWorld", at = @At(value = "RETURN"))
+    private void endRenderingWorld(float p_78471_1_, long p_78471_2_, CallbackInfo ci){
+        ClientProxy.renderingWorld = false;
+    }
 
     @Inject(method = "renderWorld", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/EntityRenderer;debugViewDirection:I", ordinal = 0, shift = At.Shift.BEFORE))
     private void captureDefaultMatricesOptifine(float partialTick, long idk, CallbackInfo info) {

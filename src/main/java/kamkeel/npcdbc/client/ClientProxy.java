@@ -33,6 +33,7 @@ public class ClientProxy extends CommonProxy {
     public static final int MiddleRenderPass = 1684;
     public static Instant startTime;
     public static boolean isKasaiLoaded;
+    public static boolean renderingWorld;
 
     public static void eventsInit() {
         FMLCommonHandler.instance().bus().register(new ClientEventHandler());
@@ -95,6 +96,10 @@ public class ClientProxy extends CommonProxy {
 
     public boolean isRenderingGUI() {
         return renderingGUI;
+    }
+
+    public static boolean isRenderingWorld(){
+        return renderingWorld;
     }
 
     private void forceStencilEnable() {
