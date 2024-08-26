@@ -74,7 +74,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
 
     @Inject(method = "updateScreen", at=@At("HEAD"), remap = true)
     private void onUpdateScreen(CallbackInfo ci){
-        if(this.guiID == 10 && ConfigDBCClient.EnhancedGui && DBCData.getClient().Powertype == 1)
+        if(this.guiID == 10 && (ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching) && DBCData.getClient().Powertype == 1)
             FMLCommonHandler.instance().showGuiScreen(new StatSheetGui());
     }
 
@@ -224,7 +224,7 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
         if(ignoreInit)
             this.guiID = newGuiID;
 
-        if(ConfigDBCClient.EnhancedGui){
+        if(ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching){
             if(ConfigDBCClient.DarkMode){
                 wish = CustomNpcPlusDBC.ID + ":textures/gui/gui_dark.png";
                 button1 = CustomNpcPlusDBC.ID + ":textures/gui/button_dark.png";
@@ -240,6 +240,8 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
     @Inject(method = "drawScreen", at=@At(value = "INVOKE", target = "Ljava/util/List;clear()V", shift = At.Shift.AFTER), remap = true)
     private void onDrawScreen(CallbackInfo ci){
         if(this.guiID != 10)
+            return;
+        if(!ConfigDBCClient.EnableDebugStatSheetSwitching)
             return;
         String s = (!ConfigDBCClient.EnhancedGui ? "Old" : "§aModern") +" GUI";
         int i = this.fontRendererObj.getStringWidth(s)+10;

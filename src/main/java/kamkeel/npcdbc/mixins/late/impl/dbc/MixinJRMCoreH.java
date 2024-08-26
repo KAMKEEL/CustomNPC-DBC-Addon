@@ -25,6 +25,7 @@ import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormKaiokenStackableData;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
@@ -236,7 +237,7 @@ public abstract class MixinJRMCoreH {
 
         float[] multiBonus = dbcData.bonus.getMultiBonus();
 
-        if (attribute == 0 || attribute == 1 || attribute == 3) {
+        if (attribute == 0 || attribute == 1 || attribute == 2 || attribute == 3) {
             result *= (stackableMulti * ((FormMastery) dbcData.getForm().getMastery()).calculateMulti("attribute", currentFormLevel));
         }
 
@@ -246,6 +247,10 @@ public abstract class MixinJRMCoreH {
             result = (int) (result * (formMulti[1] * statusMulti + multiBonus[1]));
         else if (attribute == DBCAttribute.Willpower) // WIL
             result = (int) (result * (formMulti[2] * statusMulti + multiBonus[2]));
+        else if (attribute == DBCAttribute.Constitution) {// CON - for damage reduction
+            float averageMulti = (formMulti[0] + formMulti[1] + formMulti[2]) / 3;
+            result = (int) (result * (averageMulti * statusMulti));
+        }
 
 
         // Add Bonus Multi to Base Attributes
@@ -271,8 +276,6 @@ public abstract class MixinJRMCoreH {
 
         result = ValueUtil.clamp(result, 0, Integer.MAX_VALUE);
         info.setReturnValue(result);
-
-
     }
 
     private static float[][] getRightMultiArray(int race){
@@ -374,7 +377,7 @@ public abstract class MixinJRMCoreH {
     //delete all player CF data on jrmc startnew
     @Inject(method = "resetChar(Lnet/minecraft/entity/player/EntityPlayer;ZZZF)V", at = @At("TAIL"))
     private static void resetChar(EntityPlayer p, boolean keepSkills, boolean keepTechs, boolean keepMasteries, float perc, CallbackInfo ci) {
-        PlayerDataUtil.getDBCInfo(p).resetChar(!keepSkills, !(keepMasteries || !ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_RESET));
+        PlayerDataUtil.getDBCInfo(p).resetChar(!(keepSkills || !ConfigDBCGeneral.FORMS_CLEAR_ON_RESET), !(keepMasteries || !ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_RESET));
         if (!keepMasteries) {
             NBTTagCompound PlayerPersisted = nbt(p);
             for (int i = 0; i < Races.length; i++)
@@ -508,7 +511,8 @@ public abstract class MixinJRMCoreH {
         if(form == null)
             return;
 
-        if(form.stackable.kaiokenMultipliesCurrentFormDrain)
+        FormKaiokenStackableData kaioStackable = form.stackable.kaiokenData;
+        if(kaioStackable.kaiokenMultipliesCurrentFormDrain)
             return;
 
         int race = dbcData.Race;
@@ -523,7 +527,7 @@ public abstract class MixinJRMCoreH {
         double c = (double)(10 - SklLvl(8, p) + state2) * 0.01;
         float kc = kaiokenBalanceValue(form, state2, strain > 0);
         c += JRMCoreConfig.sskai ? 0.0F : kc;
-        double cost = 1.0 / (double)cons * (double)might * c * (double)TransKaiDrainRace[race] * (double)TransKaiDrainLevel[state2] * (double)(DBC() ? form.stackable.getKaioDrain() : 1.0F);
+        double cost = 1.0 / (double)cons * (double)might * c * (double)TransKaiDrainRace[race] * (double)TransKaiDrainLevel[state2] * (double)(DBC() ? kaioStackable.getKaioDrain() : 1.0F);
 
         if (JGConfigDBCFormMastery.FM_Enabled) {
             int kkID = getFormID("Kaioken", race);
@@ -544,13 +548,14 @@ public abstract class MixinJRMCoreH {
         if(form == null)
             return;
 
-        if(!form.stackable.kaiokenMultipliesCurrentFormDrain)
+        FormKaiokenStackableData kaioStackable = form.stackable.kaiokenData;
+        if(!kaioStackable.kaiokenMultipliesCurrentFormDrain)
             return;
-        cir.setReturnValue(cir.getReturnValueD() * form.stackable.kaiokenDrainMulti);
+        cir.setReturnValue(cir.getReturnValueD() * kaioStackable.kaiokenDrainMulti);
     }
 
     private static float kaiokenBalanceValue(Form form, int state2, boolean strained){
-        return form.stackable.getKaioState2Balance(state2-1, strained);
+        return form.stackable.kaiokenData.getKaioState2Balance(state2-1, strained);
     }
 
     @Inject(method = "configToClient(Lio/netty/buffer/ByteBuf;)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct;cCONFIG_UI_HEAT_DURATION:[I", shift = At.Shift.BEFORE))

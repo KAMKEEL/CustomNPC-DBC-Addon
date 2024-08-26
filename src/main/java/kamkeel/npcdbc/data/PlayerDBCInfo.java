@@ -43,7 +43,8 @@ public class PlayerDBCInfo {
     public void addForm(Form form) {
         if (!unlockedForms.contains(form.id)) {
             unlockedForms.add(form.id);
-            formLevels.put(form.id, 0f);
+            if(!formLevels.containsKey(form.id))
+                formLevels.put(form.id, 0f);
         }
     }
 
@@ -142,8 +143,7 @@ public class PlayerDBCInfo {
         if(removeMasteries)
             formLevels.clear();
 
-        for (int i = 0; i < formWheel.length; i++)
-            formWheel[i].reset();
+        for (FormWheelData formWheelData : formWheel) formWheelData.reset();
     }
 
     ////////////////////////////////////////////////
@@ -164,7 +164,7 @@ public class PlayerDBCInfo {
 
         FormMastery fm = (FormMastery) f.getMastery();
         if (!formLevels.containsKey(f.id))
-            return;
+            formLevels.put(f.id, 0f);
 
         float playerLevel = formLevels.get(f.id);
         float fullGain = fm.calculateFullGain(gainType, playerLevel, data.MND);

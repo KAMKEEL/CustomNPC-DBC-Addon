@@ -30,6 +30,12 @@ public interface IDBCAddon extends IDBCPlayer {
     boolean isTurboOn();
 
     /**
+     * Sets the turbo state for the player
+     * @param on true turns turbo on, false turns it off.
+     */
+    void setTurboState(boolean on);
+
+    /**
      * @return Player's max body
      */
     int getMaxBody();

@@ -53,6 +53,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return dbcData.containsSE(3);
     }
 
+    @Override
+    public void setTurboState(boolean on){
+        dbcData.setTurboState(on);
+    }
+
 
     /**
      * @return Player's max body
