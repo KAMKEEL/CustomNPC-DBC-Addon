@@ -134,6 +134,7 @@ public abstract class MixinJRMCoreComTickH {
 
     private void updatePowerPointCost(DBCData dbcData, Form form) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(dbcData.player);
+        int racialSkill = JRMCoreH.SklLvlX(1, dbcData.RacialSkills) - 1;
         float ppCost = form.mastery.powerPointCost;
         if(JGConfigDBCFormMastery.FM_Enabled && ppCost != 0){
             ppCost *= form.mastery.calculateMulti("ppcost", formData.getCurrentLevel());
@@ -141,6 +142,8 @@ public abstract class MixinJRMCoreComTickH {
         dbcData.ArcReserve -= (int) ppCost;
         if(dbcData.ArcReserve < 0)
             dbcData.ArcReserve = 0;
+        if(dbcData.ArcReserve > JRMCoreConfig.ArcosianPPMax[racialSkill])
+            dbcData.ArcReserve = JRMCoreConfig.ArcosianPPMax[racialSkill];
         dbcData.saveNBTData(false);
     }
 
