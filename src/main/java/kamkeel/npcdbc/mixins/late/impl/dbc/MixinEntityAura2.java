@@ -36,7 +36,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(value = EntityAura2.class, remap = false)
-public class MixinEntityAura2 implements IEntityAura {
+public abstract class MixinEntityAura2 extends Entity implements IEntityAura {
 
     @Shadow
     private float state;
@@ -81,6 +81,10 @@ public class MixinEntityAura2 implements IEntityAura {
     @Unique
     private IAuraData data;
 
+    public MixinEntityAura2(World worldIn) {
+        super(worldIn);
+    }
+
 
     @Override
     public boolean isEnhancedRendering() {
@@ -104,6 +108,8 @@ public class MixinEntityAura2 implements IEntityAura {
             ci.cancel();
             return;
         }
+
+        this.setSize(2.2f * getSize, 3.5f * getSize);
 
         if(this.entity != null){
             float offset = (isMCPlayer ? -1.6F : 0);
