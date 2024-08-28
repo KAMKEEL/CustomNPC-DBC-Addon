@@ -576,7 +576,12 @@ public class ModelDBC extends ModelBase {
 
         Color col = weaponData.color.clone();
         if (col.color == -1) {
-            if (display.auraID != -1) {
+            Form fakeForm = display.getForm();
+            if(fakeForm != null && fakeForm.display.auraID != -1){
+                Aura aura = (Aura) AuraController.getInstance().get(fakeForm.display.auraID);
+                AuraDisplay auraDisplay = (aura != null ? aura.display : null);
+                col.color = KiWeaponData.getColorByAuraType(auraDisplay);
+            } else if (display.auraID != -1) {
                 Aura aura = (Aura) AuraController.getInstance().get(display.auraID);
                 AuraDisplay auraDisplay = (aura != null ? aura.display : null);
                 col.color = KiWeaponData.getColorByAuraType(auraDisplay);
