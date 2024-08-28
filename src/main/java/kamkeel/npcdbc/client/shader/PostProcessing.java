@@ -34,7 +34,7 @@ public class PostProcessing {
 
     public static Framebuffer MAIN;
     public static int MAIN_BLOOM_BUFFER, MAIN_BLOOM_TEXTURE, DEPTH_TEXTURE;
-    public static int MAIN_BLUR_BUFFER, MAIN_BLUR_TEXTURE;
+    public static int MISC_POST_PROCESSING_BUFFER, BLUR_TEXTURE, ALPHA_MASK;
     public static int blankTexture;
 
     public static int BLOOM_BUFFERS_LENGTH = 10;
@@ -87,7 +87,7 @@ public class PostProcessing {
             GL11.glLoadIdentity();
             GL11.glOrtho(0.0D, mc.displayWidth, mc.displayHeight, 0.0D, 0, 1);
 
-            glBindFramebuffer(GL_FRAMEBUFFER, MAIN_BLUR_BUFFER);
+            glBindFramebuffer(GL_FRAMEBUFFER, MISC_POST_PROCESSING_BUFFER);
             drawToBuffers(0);
             disableGLState();
 
@@ -95,7 +95,7 @@ public class PostProcessing {
 
             buff.bindFramebuffer(false);
             disableGLState();
-            blurHorizontal(MAIN_BLUR_TEXTURE, HUDFormWheel.BLUR_INTENSITY, 0, 0, mc.displayWidth, mc.displayHeight);
+            blurHorizontal(BLUR_TEXTURE, HUDFormWheel.BLUR_INTENSITY, 0, 0, mc.displayWidth, mc.displayHeight);
             releaseShader();
 
             glEnable(GL_DEPTH_TEST);
@@ -183,11 +183,20 @@ public class PostProcessing {
         glViewport(0, 0, width, height);
         useShader(additiveCombine, () -> {
             uniformTexture("bloomTexture", 2, bloomTextures[0]);
+            uniformTexture("alphaMaskTexture", 3, ALPHA_MASK);
             uniform1f("exposure", lightExposure);
 
         });
         renderQuad(MAIN.framebufferTexture, 0, 0, width, height);
         releaseShader();
+
+        PREVIOUS_BUFFER = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
+        glBindFramebuffer(GL_FRAMEBUFFER, PostProcessing.MISC_POST_PROCESSING_BUFFER);
+        glColorMask(true, true, true, true);
+        glDepthMask(true);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glBindFramebuffer(GL_FRAMEBUFFER, PREVIOUS_BUFFER);
+
         glEnable(GL_DEPTH_TEST);
         glDepthMask(true);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -332,17 +341,27 @@ public class PostProcessing {
         MAIN = getMainBuffer();
 
 
-        MAIN_BLUR_BUFFER = OpenGlHelper.func_153165_e();
-        GL30.glBindFramebuffer(GL_FRAMEBUFFER, MAIN_BLUR_BUFFER);
+        MISC_POST_PROCESSING_BUFFER = OpenGlHelper.func_153165_e();
+        GL30.glBindFramebuffer(GL_FRAMEBUFFER, MISC_POST_PROCESSING_BUFFER);
 
-        MAIN_BLUR_TEXTURE = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, MAIN_BLUR_TEXTURE);
+        BLUR_TEXTURE = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, BLUR_TEXTURE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
-        OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, MAIN_BLUR_TEXTURE, 0);
+        OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, BLUR_TEXTURE, 0);
+
+
+        ALPHA_MASK = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, ALPHA_MASK);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL30.GL_RGBA16F, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
+        OpenGlHelper.func_153188_a(GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, ALPHA_MASK, 0);
 
         MAIN_BLOOM_BUFFER = OpenGlHelper.func_153165_e();
         GL30.glBindFramebuffer(GL_FRAMEBUFFER, MAIN_BLOOM_BUFFER);
@@ -459,12 +478,15 @@ public class PostProcessing {
             if (auraTextures[i] > 0)
                 TextureUtil.deleteTexture(auraTextures[i]);
         }
+        OpenGlHelper.func_153174_h(MISC_POST_PROCESSING_BUFFER);
 
         bloomBuffers = new int[BLOOM_BUFFERS_LENGTH];
         bloomTextures = new int[bloomBuffers.length];
 
         TextureUtil.deleteTexture(MAIN_BLOOM_TEXTURE);
         TextureUtil.deleteTexture(DEPTH_TEXTURE);
+        TextureUtil.deleteTexture(BLUR_TEXTURE);
+        TextureUtil.deleteTexture(ALPHA_MASK);
         TextureUtil.deleteTexture(blankTexture);
     }
 
