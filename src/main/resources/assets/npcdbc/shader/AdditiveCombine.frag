@@ -4,13 +4,9 @@ varying vec2 texCoord;
 
 uniform sampler2D sceneTexture;
 uniform sampler2D bloomTexture;
-uniform sampler2D alphaMaskTexture;
 uniform float exposure;
 
 void main() {
-    if(texture2D(alphaMaskTexture, texCoord).a >= 1.0){
-        discard;
-    }
     vec4 sceneColor = texture2D(sceneTexture, texCoord);
     vec4 bloomColor = texture2D(bloomTexture, texCoord);
 

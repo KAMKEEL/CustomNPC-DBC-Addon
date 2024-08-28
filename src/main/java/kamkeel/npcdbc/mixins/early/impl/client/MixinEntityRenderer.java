@@ -61,19 +61,7 @@ public class MixinEntityRenderer {
             ci.cancel();
             glPopMatrix();
         }
-    }
-
-    @Redirect(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemRenderer;renderItemInFirstPerson(F)V"))
-    private void createAlphaMask(ItemRenderer instance, float f5){
-        glPushMatrix();
-         instance.renderItemInFirstPerson(f5);
-        glPopMatrix();
-
-        int PREVIOUS_BUFFER = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
-        glBindFramebuffer(GL_FRAMEBUFFER, PostProcessing.MISC_POST_PROCESSING_BUFFER);
-        PostProcessing.drawToBuffers(1);
-        instance.renderItemInFirstPerson(f5);
-        glBindFramebuffer(GL_FRAMEBUFFER, PREVIOUS_BUFFER);
+        PostProcessing.bloom(1.5f, true);
     }
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/OpenGlHelper;shadersSupported:Z", shift = At.Shift.BEFORE))

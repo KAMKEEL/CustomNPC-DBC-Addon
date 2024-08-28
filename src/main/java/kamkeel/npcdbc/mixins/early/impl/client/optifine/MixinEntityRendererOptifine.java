@@ -63,19 +63,6 @@ public class MixinEntityRendererOptifine {
         }
     }
 
-    @Redirect(method = "renderHand(FIZZZ)V", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemRenderer;renderItemInFirstPerson(F)V", remap = true))
-    private void createAlphaMask(ItemRenderer instance, float f5){
-        glPushMatrix();
-        instance.renderItemInFirstPerson(f5);
-        glPopMatrix();
-
-        int PREVIOUS_BUFFER = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
-        glBindFramebuffer(GL_FRAMEBUFFER, PostProcessing.MISC_POST_PROCESSING_BUFFER);
-        PostProcessing.drawToBuffers(1);
-        instance.renderItemInFirstPerson(f5);
-        glBindFramebuffer(GL_FRAMEBUFFER, PREVIOUS_BUFFER);
-    }
-
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lshadersmod/client/Shaders;endRender()V", shift = At.Shift.AFTER))
     private void processEntities(float partialTick, long idk, CallbackInfo info) {
         OptifineHelper.process();
