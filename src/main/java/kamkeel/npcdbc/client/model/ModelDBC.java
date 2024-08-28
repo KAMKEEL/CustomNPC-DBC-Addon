@@ -576,18 +576,7 @@ public class ModelDBC extends ModelBase {
 
         Color col = weaponData.color.clone();
         if (col.color == -1) {
-            Form fakeForm = display.getForm();
-            if(fakeForm != null && fakeForm.display.auraID != -1){
-                Aura aura = (Aura) AuraController.getInstance().get(fakeForm.display.auraID);
-                AuraDisplay auraDisplay = (aura != null ? aura.display : null);
-                col.color = KiWeaponData.getColorByAuraType(auraDisplay);
-            } else if (display.auraID != -1) {
-                Aura aura = (Aura) AuraController.getInstance().get(display.auraID);
-                AuraDisplay auraDisplay = (aura != null ? aura.display : null);
-                col.color = KiWeaponData.getColorByAuraType(auraDisplay);
-            } else {
-                col.color = KiWeaponData.getColorByAuraTypeName("");
-            }
+            col.color = getKiWeaponColor();
         }
 
 
@@ -635,5 +624,25 @@ public class ModelDBC extends ModelBase {
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glDepthMask(true);
         GL11.glPopMatrix();
+    }
+
+    private int getKiWeaponColor() {
+        Form fakeForm = display.getForm();
+        if(fakeForm != null){
+            if(fakeForm.display.auraColor > -1){
+                return fakeForm.display.auraColor;
+            } else if (fakeForm.display.auraID != -1) {
+                Aura aura = (Aura) AuraController.getInstance().get(fakeForm.display.auraID);
+                AuraDisplay auraDisplay = (aura != null ? aura.display : null);
+                return KiWeaponData.getColorByAuraType(auraDisplay);
+            }
+        }
+        if (display.auraID != -1) {
+            Aura aura = (Aura) AuraController.getInstance().get(display.auraID);
+            AuraDisplay auraDisplay = (aura != null ? aura.display : null);
+            return KiWeaponData.getColorByAuraType(auraDisplay);
+        } else {
+            return KiWeaponData.getColorByAuraTypeName("");
+        }
     }
 }
