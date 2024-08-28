@@ -61,6 +61,7 @@ public class MixinEntityRendererOptifine {
             ci.cancel();
             glPopMatrix();
         }
+        PostProcessing.bloom(1.5f, true);
     }
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lshadersmod/client/Shaders;endRender()V", shift = At.Shift.AFTER))
