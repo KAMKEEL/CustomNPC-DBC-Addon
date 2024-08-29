@@ -7,12 +7,14 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.SoundSource;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -34,7 +36,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(value = EntityAura2.class, remap = false)
-public class MixinEntityAura2 implements IEntityAura {
+public abstract class MixinEntityAura2 extends Entity implements IEntityAura {
 
     @Shadow
     private float state;
@@ -79,6 +81,10 @@ public class MixinEntityAura2 implements IEntityAura {
     @Unique
     private IAuraData data;
 
+    public MixinEntityAura2(World worldIn) {
+        super(worldIn);
+    }
+
 
     @Override
     public boolean isEnhancedRendering() {
@@ -91,17 +97,29 @@ public class MixinEntityAura2 implements IEntityAura {
         EntityAura2 aura = (EntityAura2) (Object) this;
     }
 
-    @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", shift = At.Shift.AFTER), remap = true)
+    @Inject(method = "onUpdate", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getPlayerEntityByName(Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayer;", shift = At.Shift.AFTER), remap = true, cancellable = true)
     private void redirect(CallbackInfo ci, @Local(name = "other") LocalRef<Entity> player, @Local(name = "aura_type") LocalBooleanRef aura_type, @Local(name = "aura_type2") LocalBooleanRef aura_type2) {
         EntityAura2 aura = (EntityAura2) (Object) this;
 
-        if(!(this.entity instanceof EntityPlayer)){
+
+        boolean isMCPlayer = this.entity == Minecraft.getMinecraft().thePlayer;
+        if(this.entity instanceof EntityPlayer && DBCData.get((EntityPlayer) this.entity).isFusionSpectator()){
+            aura.setDead();
+            ci.cancel();
+            return;
+        }
+
+        this.setSize(2.2f * getSize, 3.5f * getSize);
+
+        if(this.entity != null){
+            float offset = (isMCPlayer ? -1.6F : 0);
             aura.lastTickPosX = this.entity.lastTickPosX;
-            aura.lastTickPosY = this.entity.lastTickPosY;
+            aura.lastTickPosY = this.entity.lastTickPosY + offset;
             aura.lastTickPosZ = this.entity.lastTickPosZ;
         }
 
         player.set(this.entity);
+
         mot = this.entity.getCommandSenderName();
 
 

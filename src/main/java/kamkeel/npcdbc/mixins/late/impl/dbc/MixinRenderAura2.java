@@ -195,6 +195,25 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
 
     }
 
+    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V", ordinal = 1))
+    private void fixAuraRotationOffset_PRE(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(ordinal = 1) LocalDoubleRef parY) {
+        IEntityAura aura = (IEntityAura) entityAura.get();
+        if (aura.getSize() != 1f) {
+            float fixedOffset = (float) args.get(1) + ( (float) args.get(1) * (aura.getSize()-1) * 1.5f * 1.25f);
+            args.set(1, fixedOffset);
+        }
+
+    }
+
+    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V", ordinal = 2))
+    private void fixAuraRotationOffset_POST(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(ordinal = 1) LocalDoubleRef parY) {
+        IEntityAura aura = (IEntityAura) entityAura.get();
+        if (aura.getSize() != 1f) {
+            float fixedOffset = (float) args.get(1) + ( (float) args.get(1) * (aura.getSize()-1) * 1.5f * (aura.getSize() > 1 ? 0.625f : 1.25f));
+            args.set(1, fixedOffset);
+        }
+    }
+
 
     @Inject(method = "func_tad", at = @At("TAIL"))
     private void enableLight(EntityAura2 par1Entity, double parX, double parY, double parZ, float par8, float par9, CallbackInfo ci) {

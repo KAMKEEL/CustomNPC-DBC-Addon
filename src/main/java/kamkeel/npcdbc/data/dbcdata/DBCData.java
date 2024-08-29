@@ -695,7 +695,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         if (spectator == null || this.player == null)
             return;
 
-        if (spectator == this)
+        if (spectator.player == this.player)
             throw new CustomNPCsException("Tried to fuse the player with themselves");
 
         time *= 12; //Gets DBC time

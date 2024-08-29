@@ -44,12 +44,17 @@ public class MixinJRMCoreHDBC {
         if (CommonProxy.CurrentJRMCTickPlayer != null) {
             float sz = size.get();
             Form form = DBCData.get(CommonProxy.CurrentJRMCTickPlayer).getForm();
-            if (form != null && form.display.hasSize()) {
 
-                if (form.display.keepOriginalSize)
-                    cir.setReturnValue(sz *= form.display.formSize);
-                else
+            if(form != null) {
+                if (form.display.hasSize()) {
+                    if (form.display.keepOriginalSize && form.stackable.vanillaStackable) {
+                        cir.setReturnValue(sz *= form.display.formSize);
+                    } else {
+                        cir.setReturnValue(sz = form.display.formSize);
+                    }
+                } else if (form.display.keepOriginalSize && form.stackable.vanillaStackable) {
                     cir.setReturnValue(sz = form.display.formSize);
+                }
             }
 
             if (CustomNpcPlusDBC.proxy.isRenderingGUI()) {

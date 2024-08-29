@@ -4,7 +4,7 @@ varying vec2 texCoord;
 
 uniform sampler2D sceneTexture;
 uniform sampler2D bloomTexture;
-uniform  float exposure;
+uniform float exposure;
 
 void main() {
     vec4 sceneColor = texture2D(sceneTexture, texCoord);

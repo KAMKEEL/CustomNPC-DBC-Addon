@@ -352,6 +352,12 @@ public class EntityAura extends Entity {
             else if (isVanillaDefault && (!auraData.isAuraOn() || common || !ConfigDBCClient.RevampAura))
                 despawn();
         }
+
+        if(this.entity instanceof EntityPlayer && DBCData.get((EntityPlayer) this.entity).isFusionSpectator()){
+            despawn();
+            return;
+        }
+
         isInKaioken = auraData.isInKaioken();
         if (!isInKaioken && isKaioken && !fadeOut)
             despawn();
