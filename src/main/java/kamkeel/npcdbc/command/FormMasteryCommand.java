@@ -219,7 +219,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
                 float formMaxLevel = form.getMastery().getMaxLevel();
                 String formatted = new DecimalFormat("#.##").format(formLevel / formMaxLevel * 100);
 
-                sendResult(sender, String.format("§7%s  §b%s/%s", form.getName(), formLevel, formMaxLevel) + "%s", " §d(" + formatted + "%)");
+                sendResult(sender, String.format("§7%s (ID: %d) §b%s/%s", form.getName(), form.id, formLevel, formMaxLevel) + "%s", " §d(" + formatted + "%)");
             }
             sendResult(sender, "--------------------");
             return;
