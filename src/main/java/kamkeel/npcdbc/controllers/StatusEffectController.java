@@ -83,7 +83,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     }
 
     public void killEffects(EntityPlayer player) {
-        HashMap<Integer, PlayerEffect> current = getPlayerEffects(player);
+        HashMap<Integer, PlayerEffect> current = (HashMap<Integer, PlayerEffect>) getPlayerEffects(player).clone();
         Iterator<Map.Entry<Integer, PlayerEffect>> iterator = current.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Integer, PlayerEffect> entry = iterator.next();
@@ -97,6 +97,7 @@ public class StatusEffectController implements IStatusEffectHandler {
                 iterator.remove(); // Use iterator to remove the current element
             }
         }
+        playerEffects.put(Utility.getUUID(player), current);
     }
 
     public StatusEffect getFromName(String name) {
