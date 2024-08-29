@@ -51,7 +51,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public EntityPlayer player;
 
     // Original DBC
-    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXSeconds, Rage, Heat, Pain, AuraColor, ArcReserve;
+    public int STR, DEX, CON, WIL, MND, SPI, TP, Body, Ki, Stamina, KOforXSeconds, Rage, Heat, Pain, AuraColor, ArcReserve, hasSSJ4;
     public byte Class, Race, Powertype, Accept, State, State2, Release, Alignment, Tail;
     public boolean Alive, isKO;
     public String Skills = "", RacialSkills = "", StatusEffects = "", Settings = "", FormMasteryRacial = "", FormMasteryNR = "", DNS = "", DNSHair = "", MajinAbsorptionData = "", Fusion = "";
@@ -109,7 +109,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setInteger("jrmcGyJ7dp", Pain);
         comp.setInteger("jrmcAuraColor", AuraColor);
         comp.setInteger("jrmcArcRsrv", ArcReserve);
-
+        comp.setInteger("jrmcAfGFtStFT", hasSSJ4);
 
         comp.setByte("jrmcState", State);
         comp.setByte("jrmcState2", State2);
@@ -169,6 +169,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         Heat = c.getInteger("jrmcEf8slc");
         Pain = c.getInteger("jrmcGyJ7dp");
         isKO = c.getInteger("jrmcHar4va") > 0;
+        hasSSJ4 = c.getInteger("jrmcAfGFtStFT");
         AuraColor = c.getInteger("jrmcAuraColor");
         ArcReserve = c.getInteger("jrmcArcRsrv");
 
@@ -403,7 +404,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
                 dbcForms.put(SuperSaiyan2, "§eSuper Saiyan 2");
             if (racialSkill >= 6)
                 dbcForms.put(SuperSaiyan3, "§eSuper Saiyan 3");
-            if (racialSkill >= 7 && getRawCompound().getInteger("jrmcAfGFtStFT") > 0 && hasTail())
+            if (racialSkill >= 7 && hasSSJ4 > 0 && hasTail())
                 dbcForms.put(SuperSaiyan4, "§4Super Saiyan 4");
             if (racialSkill >= 1 && godSkill >= 1)
                 dbcForms.put(SuperSaiyanGod, "§cSuper Saiyan God");
@@ -565,7 +566,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public void setTurboState(boolean on) {
         StatusEffects = setSE(3, on);
 
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
             PacketHandler.Instance.sendToPlayer(new TurboPacket(on).generatePacket(), (EntityPlayerMP) player);
         } else {
             DBCKiTech.turbo = on;
@@ -840,5 +841,4 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public void setActiveAuraColor(int color) {
         activeAuraColor = color;
     }
-
 }
