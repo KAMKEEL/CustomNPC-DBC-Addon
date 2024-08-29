@@ -176,4 +176,10 @@ public interface IFormMastery {
 
     void setAbsorptionMulti(float multi);
     float getAbsorptionMulti();
+
+    void setDestroyerOn(boolean isOn);
+    boolean isDestroyerOn();
+
+    void setDestroyerEnergyDamage(float energyDamage);
+    float getDestroyerEnergyDamage();
 }
