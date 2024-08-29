@@ -54,7 +54,7 @@ public class FormMastery implements IFormMastery {
     public float absorptionMulti = 1;
 
 
-    public boolean destroyerEnabled = true;
+    public boolean destroyerEnabled = false;
     public float destroyerKiDamage = 0.8f;
     public float destroyerKiDamageMultiFlat = 1.0f, destroyerKiDamageMultiPerLevel = 0.01f, destroyerKiDamageMultiMinOrMax = 1.5f;
 
@@ -251,7 +251,7 @@ public class FormMastery implements IFormMastery {
                     case "minormax":
                         return powerPointCostMinOrMax;
                 }
-            case "destroyerKiDamage":
+            case "destroyerkidamage":
                 switch(type1.toLowerCase()){
                     case "flat":
                         return destroyerKiDamageMultiFlat;
@@ -389,7 +389,7 @@ public class FormMastery implements IFormMastery {
                     case "minormax":
                         powerPointCostMinOrMax = value;
                 }
-            case "destroyerKiDamage":
+            case "destroyerkidamage":
                 switch(type1.toLowerCase()){
                     case "flat":
                         destroyerKiDamageMultiFlat = value;
