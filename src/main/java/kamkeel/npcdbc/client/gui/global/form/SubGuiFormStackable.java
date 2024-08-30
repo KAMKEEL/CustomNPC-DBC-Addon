@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import kamkeel.npcdbc.client.gui.component.SubGuiKaiokenDrain;
+import kamkeel.npcdbc.client.gui.component.SubGuiKaiokenMulti;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
@@ -59,26 +60,28 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         scrollWindow.getLabel(2).color = 0xffffff;
 
         if(stackable.kaiokenStackable){
-            maxScroll += 46;
+            maxScroll += 23;
             y += 23;
-            scrollWindow.addLabel(new GuiNpcLabel(22, "display.kkRatio", guiLeft + 4, y + 5));
-            scrollWindow.addTextField(new GuiNpcTextField(22, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.kaiokenStrength)));
-            scrollWindow.getTextField(22).setMaxStringLength(22);
-            scrollWindow.getTextField(22).floatsOnly = true;
-            scrollWindow.getTextField(22).setMinMaxDefaultFloat(-10000, 10000, 1);
-            scrollWindow.getLabel(22).color = 0xffffff;
+//            scrollWindow.addLabel(new GuiNpcLabel(22, "display.kkRatio", guiLeft + 4, y + 5));
+//            scrollWindow.addTextField(new GuiNpcTextField(22, this, guiLeft + 115, y, 50, 20, String.valueOf(stackable.kaiokenStrength)));
+//            scrollWindow.getTextField(22).setMaxStringLength(22);
+//            scrollWindow.getTextField(22).floatsOnly = true;
+//            scrollWindow.getTextField(22).setMinMaxDefaultFloat(-10000, 10000, 1);
+//            scrollWindow.getLabel(22).color = 0xffffff;
+//
+//            scrollWindow.addLabel(new GuiNpcLabel(23, "display.kkLevelRatio", guiLeft + 175, y + 5));
+//            scrollWindow.addTextField(new GuiNpcTextField(23, this, guiLeft + 265, y, 50, 20, String.valueOf(stackable.kaiokenState2Factor)));
+//            scrollWindow.getTextField(23).setMaxStringLength(23);
+//            scrollWindow.getTextField(23).floatsOnly = true;
+//            scrollWindow.getTextField(23).setMinMaxDefaultFloat(-10000, 10000, 1);
+//            scrollWindow.getLabel(23).color = 0xffffff;
 
-            scrollWindow.addLabel(new GuiNpcLabel(23, "display.kkLevelRatio", guiLeft + 175, y + 5));
-            scrollWindow.addTextField(new GuiNpcTextField(23, this, guiLeft + 265, y, 50, 20, String.valueOf(stackable.kaiokenState2Factor)));
-            scrollWindow.getTextField(23).setMaxStringLength(23);
-            scrollWindow.getTextField(23).floatsOnly = true;
-            scrollWindow.getTextField(23).setMinMaxDefaultFloat(-10000, 10000, 1);
-            scrollWindow.getLabel(23).color = 0xffffff;
 
-            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(100, "display.kaiokenDrain", guiLeft+4, y+5, 0xFF5555));
+            scrollWindow.addButton(new GuiNpcButton(100, guiLeft + 115, y, 50, 20, "gui.edit"));
 
-            scrollWindow.addLabel(new GuiNpcLabel(100, "Kaioken drain config", guiLeft+4, y+5, 0xFF5555));
-            scrollWindow.addButton(new GuiNpcButton(100, guiLeft + 115, y, 50, 20, "Edit"));
+            scrollWindow.addLabel(new GuiNpcLabel(101, "display.kaiokenMulti", guiLeft+175, y+5, 0xFFFFFF));
+            scrollWindow.addButton(new GuiNpcButton(101, guiLeft + 265, y, 50, 20, "gui.edit"));
         }
 
         y += 23;
@@ -262,19 +265,15 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         if(button.id == 100){
             this.setSubGui(new SubGuiKaiokenDrain(form));
         }
+        if(button.id == 101){
+            this.setSubGui(new SubGuiKaiokenMulti(form));
+        }
         initGui();
 	}
 
 
 	@Override
 	public void unFocused(GuiNpcTextField guiNpcTextField) {
-        if (guiNpcTextField.id == 22) {
-            stackable.kaiokenStrength = guiNpcTextField.getFloat();
-        }
-        if (guiNpcTextField.id == 23) {
-            stackable.kaiokenState2Factor = guiNpcTextField.getFloat();
-        }
-
         if (guiNpcTextField.id == 32) {
             stackable.uiStrength = guiNpcTextField.getFloat();
         }

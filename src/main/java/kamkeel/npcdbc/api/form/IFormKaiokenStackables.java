@@ -2,24 +2,6 @@ package kamkeel.npcdbc.api.form;
 
 public interface IFormKaiokenStackables {
 
-    /**
-     * @return true if this form is using global kaioken configs (the ones specified in <code>jinryuujrmcore.cfg</code>)
-     */
-    boolean isUsingGlobalKaiokenMultis();
-
-    /**
-     * @param useGlobal True to rely on global configs, false to rely on the forms internal configs.
-     */
-    void toggleGlobalKaiokenMulti(boolean useGlobal);
-
-    /**
-     * @param state2 0 - Lowest kaioken state (Ex. Kaioken x2), 5 - highest kaioken state
-     * @param multi Kaioken multiplier for this form
-     */
-    void setKaioStateMulti(int state2, float multi);
-
-    float getKaioStateMulti(int state2);
-
     void setKaioDrain(float drain);
 
     float getKaioDrain();
@@ -34,11 +16,11 @@ public interface IFormKaiokenStackables {
      * Advanced configs replace the current DBC forms kaioken balance values, <code>globalMulti</code> is simply just a scalar value.
      * @param isOn
      */
-    void toggleAdvanedDrain(boolean isOn);
+    void setMultiplyingCurrentFormDrain(boolean isOn);
     /**
      * @return True if using advanced configs.
      */
-    boolean usingAdvancedDrain();
+    boolean isMultiplyingCurrentFormDrain();
 
     /**
      *
@@ -54,5 +36,41 @@ public interface IFormKaiokenStackables {
      * @return State specific drain multi
      */
     float getKaioState2Balance(int state2, boolean strained);
+
+    /**
+     * @param state2  0 - Lowest kaioken state (Ex. Kaioken x2), 5 - highest kaioken state
+     * @return The current attribute multiplier for that state.
+     */
+    float getKaiokenAttributeMulti(int state2);
+
+    /**
+     * <code>state2Multi * mutliScalar</code> is the final attribute multiplier.
+     * @return multiScalar
+     */
+    float getKaiokenMultiScalar();
+
+    /**
+     * @param state2 0 - Lowest kaioken state (Ex. Kaioken x2), 5 - highest kaioken state
+     * @param multi Multi for this current state
+     */
+    void setKaiokenAttributeMulti(int state2, float multi);
+
+    /**
+     * <code>state2Multi * mutliScalar</code> is the final drain.
+     * @param scalar How much to scale the multi
+     */
+    void setKaiokenMultiScalar(float scalar);
+
+    /**
+     * @return If this is using normal Kaioken multis (defined in <code>jinryuujrmcore.cfg</code>)
+     */
+    boolean isUsingGlobalAttributeMultis();
+
+    /**
+     *
+     * @param isUsing If this form should use global Kaioken multis (defined in <code>jinryuujrmcore.cfg</code>)
+     */
+    void setUsingGlobalAttributeMultis(boolean isUsing);
+
 
 }

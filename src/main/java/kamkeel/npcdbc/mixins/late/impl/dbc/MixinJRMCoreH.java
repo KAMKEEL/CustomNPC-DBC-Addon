@@ -201,10 +201,7 @@ public abstract class MixinJRMCoreH {
         double fmvalue = 1.0f;
 
         //don't forget to multiply this by legend/divine/majin formMulti
-        if (kaiokenOn && d.State2 > 0) {
-            fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Kaioken", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
-            stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.Kaioken) * d.State2 / (JRMCoreH.TransKaiDmg.length - 1);
-        } else if (uiOn && d.State2 > 0) {
+        if (uiOn && d.State2 > 0) {
             fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "UltraInstict", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
             stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.UltraInstinct) * d.State2 / JGConfigUltraInstinct.CONFIG_UI_LEVELS;
         } else if (GoDOn) {
@@ -225,6 +222,10 @@ public abstract class MixinJRMCoreH {
 
         float statusMulti = 1;
 
+        if (kaiokenOn && d.State2 > 0) {
+            fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Kaioken", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
+            statusMulti += (float) ((((FormKaiokenStackableData)form.stackable.getKaiokenConfigs()).getCurrentFormMulti(st2-1) * fmvalue)) - 1;
+        }
         if (majinOn)
             statusMulti += form.stackable.useConfigMulti(DBCForm.Majin) ? JRMCoreConfig.mjn * 0.01F : form.stackable.majinStrength - 1;
         if (legendOn)
