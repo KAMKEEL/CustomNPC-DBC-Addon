@@ -310,6 +310,16 @@ public class MixinDBCPacketHandler {
         CommonProxy.CurrentJRMCTickPlayer = null;
     }
 
+    @Inject(method = "handleDBCascend", at = @At("HEAD"), cancellable = true)
+    public void setCurrentPlayer(byte dbcascend, EntityPlayer p, CallbackInfo ci) {
+        CommonProxy.CurrentJRMCTickPlayer = p;
+    }
+
+    @Inject(method = "handleDBCascend", at = @At("TAIL"), cancellable = true)
+    public void setCurrentPlayerPOST(byte dbcascend, EntityPlayer p, CallbackInfo ci) {
+        CommonProxy.CurrentJRMCTickPlayer = null;
+    }
+
     @Redirect(method = "handleDBCenergy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", ordinal = 2))
     public boolean addDestroyerConfigsToAttack(World instance, Entity entity){
         EntityEnergyAtt kiAttack = (EntityEnergyAtt) entity;
@@ -322,5 +332,20 @@ public class MixinDBCPacketHandler {
         }
 
         return instance.spawnEntityInWorld(kiAttack);
+    }
+
+    @Redirect(method = "handleDBCascend", at = @At(value = "INVOKE", target="LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", ordinal = 5))
+    public void adjustKaiokenStrain(int s, EntityPlayer Player, String string, @Local(name = "strainMulti") float strainMulti, @Local(name = "kaiokenSkillLevel") int kaiokenSkillLevel){
+        DBCData dbcData = DBCData.get(Player);
+        if(dbcData != null && dbcData.getForm() != null){
+            Form form = dbcData.getForm();
+            if(form.stackable.kaiokenStackable){
+                int oldStrain = JRMCoreH.getInt(Player, string);
+                int strain = (int) ((12 + 20 - kaiokenSkillLevel) * strainMulti);
+                s = strain+oldStrain;
+            }
+        }
+
+        JRMCoreH.setInt(s, Player, string);
     }
 }
