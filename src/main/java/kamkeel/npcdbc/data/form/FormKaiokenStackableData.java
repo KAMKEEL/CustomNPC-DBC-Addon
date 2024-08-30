@@ -29,7 +29,6 @@ public class FormKaiokenStackableData implements IFormKaiokenStackables {
         Arrays.fill(kaiokenBalanceValue, 1);
         Arrays.fill(kaiokenStrainedBalanceValue, 1);
         this.kaiokenMultis = Arrays.copyOfRange(JRMCoreH.TransKaiDmg, 1, JRMCoreH.TransKaiDmg.length);
-        System.out.println(this.kaiokenMultis.length);
     }
 
     public void readFromNBT(NBTTagCompound stack){
