@@ -221,7 +221,7 @@ public class AuraCommand extends CommandKamkeelBase {
     public void infoall(ICommandSender sender, String args[]) throws CommandException {
         sendResult(sender, "--------------------");
         for (Aura aura : AuraController.getInstance().customAuras.values())
-            sendResult(sender, String.format("%s", aura.getName()));
+            sendResult(sender, String.format("\u00a7b%s \u00a77(ID: %d)", aura.getName(), aura.id));
         sendResult(sender, "--------------------");
 
     }

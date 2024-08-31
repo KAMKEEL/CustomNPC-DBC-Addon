@@ -10,8 +10,8 @@ import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.form.FormStackable;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -50,10 +50,21 @@ public abstract class MixinJRMCoreComTickH {
         }
     }
 
-    @Inject(method = "updatePlayersData", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE))
-    public void setCurrentTickPlayerServer(MinecraftServer server, int playerID, EntityPlayerMP player, JGPlayerMP jgPlayer, NBTTagCompound nbt, CallbackInfo ci) {
+    @Redirect(method = "serverTick", at=@At(value = "INVOKE", target="LJinRyuu/JRMCore/JRMCoreH;getPlayerForUsername(Lnet/minecraft/server/MinecraftServer;Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayerMP;"))
+    public EntityPlayerMP setCurrentTickPlayerServerPRE(MinecraftServer server, String s){
+        EntityPlayerMP player = JRMCoreH.getPlayerForUsername(server, s);
         CommonProxy.CurrentJRMCTickPlayer = player;
+        return player;
     }
+    @Inject(method = "serverTick", at=@At("RETURN"))
+    public void setCurrentTickPlayerServerPOST(MinecraftServer server, CallbackInfo ci){
+        CommonProxy.CurrentJRMCTickPlayer = null;
+    }
+
+//    @Inject(method = "updatePlayersData", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE))
+//    public void setCurrentTickPlayerServer(MinecraftServer server, int playerID, EntityPlayerMP player, JGPlayerMP jgPlayer, NBTTagCompound nbt, CallbackInfo ci) {
+//        CommonProxy.CurrentJRMCTickPlayer = player;
+//    }
 
     @Redirect(method = "serverTick", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreComTickH;updatePlayersData(Lnet/minecraft/server/MinecraftServer;ILnet/minecraft/entity/player/EntityPlayerMP;LJinRyuu/JRMCore/server/JGPlayerMP;Lnet/minecraft/nbt/NBTTagCompound;)V"))
     public void tryCatchPlayerData(JRMCoreComTickH instance, MinecraftServer server, int chunkcoordinates, EntityPlayerMP A, JGPlayerMP divine, NBTTagCompound isp2,

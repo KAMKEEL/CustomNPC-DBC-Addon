@@ -54,6 +54,11 @@ public class FormMastery implements IFormMastery {
     public float absorptionMulti = 1;
 
 
+    public boolean destroyerEnabled = false;
+    public float destroyerKiDamage = 0.8f;
+    public float destroyerKiDamageMultiFlat = 1.0f, destroyerKiDamageMultiPerLevel = 0.01f, destroyerKiDamageMultiMinOrMax = 1.5f;
+
+
     public FormMastery(Form parent) {
         this.parent = parent;
     }
@@ -246,6 +251,15 @@ public class FormMastery implements IFormMastery {
                     case "minormax":
                         return powerPointCostMinOrMax;
                 }
+            case "destroyerkidamage":
+                switch(type1.toLowerCase()){
+                    case "flat":
+                        return destroyerKiDamageMultiFlat;
+                    case "perlevel":
+                        return destroyerKiDamageMultiPerLevel;
+                    case "minormax":
+                        return destroyerKiDamageMultiMinOrMax;
+                }
         }
         return 1.0f;
     }
@@ -375,7 +389,15 @@ public class FormMastery implements IFormMastery {
                     case "minormax":
                         powerPointCostMinOrMax = value;
                 }
-
+            case "destroyerkidamage":
+                switch(type1.toLowerCase()){
+                    case "flat":
+                        destroyerKiDamageMultiFlat = value;
+                    case "perlevel":
+                        destroyerKiDamageMultiPerLevel = value;
+                    case "minormax":
+                        destroyerKiDamageMultiMinOrMax = value;
+                }
 
         }
     }
@@ -667,6 +689,15 @@ public class FormMastery implements IFormMastery {
             powerPointCostMinOrMax = powerPointMastery.getFloat("minOrMax");
         }
 
+        if(formMastery.hasKey("destroyerConfigs")){
+            NBTTagCompound destroyerConfigs = formMastery.getCompoundTag("destroyerConfigs");
+            destroyerEnabled = destroyerConfigs.getBoolean("enabled");
+            destroyerKiDamageMultiFlat = destroyerConfigs.getFloat("flat");
+            destroyerKiDamageMultiPerLevel = destroyerConfigs.getFloat("perLevel");
+            destroyerKiDamageMultiMinOrMax = destroyerConfigs.getFloat("minOrMax");
+            destroyerKiDamage = destroyerConfigs.getFloat("damage");
+        }
+
 
         NBTTagCompound update = formMastery.getCompoundTag("update");
         updateGain = update.getFloat("gain");
@@ -785,6 +816,13 @@ public class FormMastery implements IFormMastery {
 
         formMastery.setTag("racialBonuses", racialBonuses);
 
+        NBTTagCompound destroyerConfigs = new NBTTagCompound();
+            destroyerConfigs.setBoolean("enabled", destroyerEnabled);
+            destroyerConfigs.setFloat("flat", destroyerKiDamageMultiFlat);
+            destroyerConfigs.setFloat("perLevel", destroyerKiDamageMultiPerLevel);
+            destroyerConfigs.setFloat("minOrMax", destroyerKiDamageMultiMinOrMax);
+            destroyerConfigs.setFloat("damage", destroyerKiDamage);
+        formMastery.setTag("destroyerConfigs", destroyerConfigs);
 
         NBTTagCompound update = new NBTTagCompound();
         update.setFloat("gain", updateGain);
@@ -885,6 +923,26 @@ public class FormMastery implements IFormMastery {
 
     public float getAbsorptionMulti() {
         return this.absorptionMulti;
+    }
+
+    @Override
+    public void setDestroyerOn(boolean isOn) {
+        this.destroyerEnabled = isOn;
+    }
+
+    @Override
+    public boolean isDestroyerOn() {
+        return this.destroyerEnabled;
+    }
+
+    @Override
+    public void setDestroyerEnergyDamage(float energyDamage) {
+        this.destroyerKiDamage = Math.max(energyDamage, 0);
+    }
+
+    @Override
+    public float getDestroyerEnergyDamage() {
+        return this.destroyerKiDamage;
     }
 
     @Override

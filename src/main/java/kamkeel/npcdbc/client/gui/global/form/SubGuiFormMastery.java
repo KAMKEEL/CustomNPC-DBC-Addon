@@ -27,6 +27,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
     public boolean showTailCutChance = false;
     public boolean showPowerPoint = false;
     public boolean showAbsorption = false;
+    public boolean showDestroyer = false;
 
     public SubGuiFormMastery(GuiNPCManageForms parent, Form form) {
         this.form = form;
@@ -178,9 +179,9 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
         scrollWindow.addLabel(new GuiNpcLabel(900, "mastery.powerPointSettings", 4, y+5));
         scrollWindow.getLabel(900).color = 0xffffff;
         scrollWindow.addButton(new GuiNpcButton(900, 200, y, 120, 20, new String[]{"display.hide", "display.show"}, showPowerPoint ? 1 : 0));
-        if(showPowerPoint){
+        if (showPowerPoint) {
             y += 23;
-            maxScroll += (int) (23*6.5);
+            maxScroll += (int) (23*5.5);
             scrollWindow.addLabel(new GuiNpcLabel(901, "gui.enabled", 4, y+5));
             scrollWindow.getLabel(901).color = 0xffffff;
             scrollWindow.addButton(new GuiNpcButtonYesNo(901, 135, y, 40, 20, mastery.powerPointEnabled));
@@ -245,7 +246,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
         scrollWindow.addLabel(new GuiNpcLabel(1000, "mastery.absorptionSettings", 4, y+5));
         scrollWindow.getLabel(1000).color = 0xffffff;
         scrollWindow.addButton(new GuiNpcButton(1000, 200, y, 120, 20, new String[]{"display.hide", "display.show"}, showAbsorption ? 1 : 0));
-        if(showAbsorption){
+        if (showAbsorption) {
             y += 23;
             maxScroll += 23*2;
             scrollWindow.addLabel(new GuiNpcLabel(1001, "gui.enabled", 4, y+5));
@@ -259,6 +260,50 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.getTextField(1002).floatsOnly = true;
             scrollWindow.getTextField(1002).setMaxStringLength(10);
             scrollWindow.getTextField(1002).setMinMaxDefaultFloat(0, 10000, 1);
+        }
+
+        y += 23;
+        maxScroll += 23;
+        scrollWindow.addLabel(new GuiNpcLabel(2000, "mastery.destroyerSettings", 4, y+5));
+        scrollWindow.getLabel(2000).color = 0xffffff;
+        scrollWindow.addButton(new GuiNpcButton(2000, 200, y, 120, 20, new String[]{"display.hide", "display.show"}, showDestroyer ? 1 : 0));
+        if (showDestroyer) {
+            y += 23;
+            maxScroll += 23*3;
+            scrollWindow.addLabel(new GuiNpcLabel(2001, "gui.enabled", 4, y+5));
+            scrollWindow.getLabel(2001).color = 0xffffff;
+            scrollWindow.addButton(new GuiNpcButtonYesNo(2001, 135, y, 40, 20, mastery.destroyerEnabled));
+
+            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(2002, "mastery.destroyerKiDamage", 4, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(2002, this, 135, y, 40, 20, String.valueOf(mastery.destroyerKiDamage)));
+            scrollWindow.getTextField(2002).setMaxStringLength(10);
+            scrollWindow.getTextField(2002).floatsOnly = true;
+            scrollWindow.getTextField(2002).setMinMaxDefaultFloat(0, 10000, 100);
+            scrollWindow.getLabel(2002).color = 0xffffff;
+
+            scrollWindow.addLabel(new GuiNpcLabel(2003, "mastery.flatMulti", 180, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(2003, this, 295, y, 40, 20, String.valueOf(mastery.destroyerKiDamageMultiFlat)));
+            scrollWindow.getTextField(2003).setMaxStringLength(10);
+            scrollWindow.getTextField(2003).floatsOnly = true;
+            scrollWindow.getTextField(2003).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
+            scrollWindow.getLabel(2003).color = 0xffffff;
+
+
+            y += 23;
+            scrollWindow.addLabel(new GuiNpcLabel(2004, "mastery.perLevel", 4, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(2004, this, 135, y, 40, 20, String.valueOf(mastery.destroyerKiDamageMultiPerLevel)));
+            scrollWindow.getTextField(2004).setMaxStringLength(10);
+            scrollWindow.getTextField(2004).floatsOnly = true;
+            scrollWindow.getTextField(2004).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
+            scrollWindow.getLabel(2004).color = 0xffffff;
+
+            scrollWindow.addLabel(new GuiNpcLabel(2005, "mastery.minMax", 180, y + 5));
+            scrollWindow.addTextField(new GuiNpcTextField(2005, this, 295, y, 40, 20, String.valueOf(mastery.destroyerKiDamageMultiMinOrMax)));
+            scrollWindow.getTextField(2005).setMaxStringLength(10);
+            scrollWindow.getTextField(2005).floatsOnly = true;
+            scrollWindow.getTextField(2005).setMinMaxDefaultFloat(-10000f, 10000f, -0.01f);
+            scrollWindow.getLabel(2005).color = 0xffffff;
         }
 
         y += 23;
@@ -746,6 +791,11 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
         if(button.id == 1001){
             mastery.absorptionEnabled = !mastery.absorptionEnabled;
         }
+
+        if(button.id == 2000)
+            showDestroyer = !showDestroyer;
+        if(button.id == 2001)
+            mastery.destroyerEnabled = !mastery.destroyerEnabled;
 
         initGui();
         prevY = ValueUtil.clamp(prevY, 0, getScrollableGui(0).maxScrollY);

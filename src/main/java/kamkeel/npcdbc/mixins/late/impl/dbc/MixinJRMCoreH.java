@@ -34,6 +34,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
@@ -201,10 +202,7 @@ public abstract class MixinJRMCoreH {
         double fmvalue = 1.0f;
 
         //don't forget to multiply this by legend/divine/majin formMulti
-        if (kaiokenOn && d.State2 > 0) {
-            fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Kaioken", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
-            stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.Kaioken) * d.State2 / (JRMCoreH.TransKaiDmg.length - 1);
-        } else if (uiOn && d.State2 > 0) {
+        if (uiOn && d.State2 > 0) {
             fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "UltraInstict", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
             stackableMulti += stackableMulti * form.stackable.getState2Factor(DBCForm.UltraInstinct) * d.State2 / JGConfigUltraInstinct.CONFIG_UI_LEVELS;
         } else if (GoDOn) {
@@ -225,6 +223,10 @@ public abstract class MixinJRMCoreH {
 
         float statusMulti = 1;
 
+        if (kaiokenOn && d.State2 > 0) {
+            fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Kaioken", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
+            statusMulti += (float) ((((FormKaiokenStackableData)form.stackable.getKaiokenConfigs()).getCurrentFormMulti(st2-1) * fmvalue)) - 1;
+        }
         if (majinOn)
             statusMulti += form.stackable.useConfigMulti(DBCForm.Majin) ? JRMCoreConfig.mjn * 0.01F : form.stackable.majinStrength - 1;
         if (legendOn)
@@ -501,42 +503,20 @@ public abstract class MixinJRMCoreH {
 
     }
 
-    @Inject(method = "KaiKCost", at=@At("HEAD"), cancellable = true)
-    private static void customFormKaiokenDrain(EntityPlayer p, CallbackInfoReturnable<Double> cir){
+    @Redirect(method = "KaiKCost", at=@At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;KaiokenFormHealthCost:[[F", opcode = Opcodes.GETSTATIC, ordinal = 1))
+    private static float[][] getKaiokenHealthCost(@Local(name = "p") EntityPlayer player, @Local(name = "race") int race, @Local(name = "kaiokenState") int kaioState){
 
-        DBCData dbcData = DBCData.get(p);
-        if(dbcData == null)
-            return;
-        Form form = dbcData.getForm();
-        if(form == null)
-            return;
-
-        FormKaiokenStackableData kaioStackable = form.stackable.kaiokenData;
-        if(kaioStackable.kaiokenMultipliesCurrentFormDrain)
-            return;
-
-        int race = dbcData.Race;
-        int state2 = dbcData.State2;
-
-        if(state2 <= 0)
-            return;
-
-        int strain = getInt(p, "jrmcStrain");
-        int might = dbcData.STR / 2 + dbcData.WIL / 2;
-        int cons = dbcData.CON;
-        double c = (double)(10 - SklLvl(8, p) + state2) * 0.01;
-        float kc = kaiokenBalanceValue(form, state2, strain > 0);
-        c += JRMCoreConfig.sskai ? 0.0F : kc;
-        double cost = 1.0 / (double)cons * (double)might * c * (double)TransKaiDrainRace[race] * (double)TransKaiDrainLevel[state2] * (double)(DBC() ? kaioStackable.getKaioDrain() : 1.0F);
-
-        if (JGConfigDBCFormMastery.FM_Enabled) {
-            int kkID = getFormID("Kaioken", race);
-            double kkMasteryLevel = getFormMasteryValue(p, kkID);
-            float costMulti = (float)JGConfigDBCFormMastery.getCostMulti(kkMasteryLevel, race, kkID, JGConfigDBCFormMastery.DATA_ID_KAIOKEN_HEALTH_COST_MULTI);
-            cost *= costMulti;
+        DBCData dbcData = DBCData.get(player);
+        if(dbcData != null){
+            Form form = dbcData.getForm();
+            if(form != null){
+                float[][] newArr = new float[race+1][kaioState+1];
+                newArr[race][kaioState] = form.stackable.kaiokenData.getKaioDrain();
+                return newArr;
+            }
         }
 
-        cir.setReturnValue(cost);
+        return JRMCoreConfig.KaiokenFormHealthCost;
     }
 
     @Inject(method="KaiKCost", at=@At("RETURN"), cancellable = true)
@@ -552,6 +532,19 @@ public abstract class MixinJRMCoreH {
         if(!kaioStackable.kaiokenMultipliesCurrentFormDrain)
             return;
         cir.setReturnValue(cir.getReturnValueD() * kaioStackable.kaiokenDrainMulti);
+    }
+
+    @Inject(method = "KaiKFBal", at = @At("HEAD"), cancellable = true)
+    private static void kaiokenBalanceValue(int rc, int st, int st2, int skl, int strn, CallbackInfoReturnable<Float> cir){
+        if(CommonProxy.CurrentJRMCTickPlayer != null){
+            Form form = DBCData.get(CommonProxy.CurrentJRMCTickPlayer).getForm();
+            if(form == null)
+                return;
+            if(form.stackable.kaiokenData.kaiokenMultipliesCurrentFormDrain)
+                return;
+
+            cir.setReturnValue(kaiokenBalanceValue(form, st2, strn > 1));
+        }
     }
 
     private static float kaiokenBalanceValue(Form form, int state2, boolean strained){

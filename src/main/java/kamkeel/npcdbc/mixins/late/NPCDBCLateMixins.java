@@ -54,6 +54,8 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
         mixins.add("npc.MixinScriptPlayer");
         mixins.add("npc.MixinCommandKamkeel");
 
+        mixins.add("dbc.MixinJRMCExtendedPlayer");
+
         mixins.add("dbc.MixinDBCPacketHandler");
         mixins.add("dbc.MixinEntityAura2");
         mixins.add("dbc.MixinEntityCusPar");

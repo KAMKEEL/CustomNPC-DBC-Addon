@@ -255,7 +255,7 @@ public class FormCommand extends CommandKamkeelBase {
     public void infoall(ICommandSender sender, String args[]) throws CommandException {
         sendResult(sender, "--------------------");
         for (Form form : FormController.getInstance().customForms.values())
-            sendResult(sender, String.format("%s", form.getName()));
+            sendResult(sender, String.format("\u00a7b%s \u00a77(ID: %d)", form.getName(), form.id));
         sendResult(sender, "--------------------");
 
     }

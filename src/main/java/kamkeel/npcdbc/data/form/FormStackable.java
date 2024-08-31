@@ -13,8 +13,8 @@ public class FormStackable implements IFormStackable {
 
     public boolean vanillaStackable = false;
     public boolean kaiokenStackable = true, uiStackable = true, godStackable = true, mysticStackable = true;
-    public float kaiokenStrength = 1.0f, uiStrength = 1.0f, godStrength = 1.0f, mysticStrength = 1.0f, legendaryStrength = 1.0f, divineStrength = 1.0f, majinStrength = 1.0f;
-    public float kaiokenState2Factor = 1.0f, uiState2Factor = 1.0f;
+    public float uiStrength = 1.0f, godStrength = 1.0f, mysticStrength = 1.0f, legendaryStrength = 1.0f, divineStrength = 1.0f, majinStrength = 1.0f;
+    public float uiState2Factor = 1.0f;
 
     public boolean useLegendaryConfig, useDivineConfig, useMajinConfig;
     public int legendaryID = -1, divineID = -1, majinID = -1;
@@ -29,9 +29,7 @@ public class FormStackable implements IFormStackable {
     public void readFromNBT(NBTTagCompound compound) {
         NBTTagCompound stack = compound.getCompoundTag("stackableForms");
         vanillaStackable = stack.getBoolean("vanillaStackable");
-        kaiokenStrength = stack.getFloat("kaiokenStrength");
         kaiokenStackable = stack.getBoolean("kaiokenStackable");
-        kaiokenState2Factor = stack.getFloat("kaiokenState2Factor");
         uiStrength = stack.getFloat("uiStrength");
         uiStackable = stack.getBoolean("uiStackable");
         uiState2Factor = stack.getFloat("uiState2Factor");
@@ -59,9 +57,7 @@ public class FormStackable implements IFormStackable {
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound stack = new NBTTagCompound();
         stack.setBoolean("vanillaStackable", vanillaStackable);
-        stack.setFloat("kaiokenStrength", kaiokenStrength);
         stack.setBoolean("kaiokenStackable", kaiokenStackable);
-        stack.setFloat("kaiokenState2Factor", kaiokenState2Factor);
         stack.setFloat("uiStrength", uiStrength);
         stack.setBoolean("uiStackable", uiStackable);
         stack.setFloat("uiState2Factor", uiState2Factor);
@@ -242,9 +238,6 @@ public class FormStackable implements IFormStackable {
     @Override
     public void setFormMulti(int dbcForm, float multi) {
         switch (dbcForm) {
-            case DBCForm.Kaioken:
-                kaiokenStrength = multi;
-                break;
             case DBCForm.UltraInstinct:
                 uiStrength = multi;
                 break;
@@ -269,8 +262,6 @@ public class FormStackable implements IFormStackable {
     @Override
     public float getFormMulti(int dbcForm) {
         switch (dbcForm) {
-            case DBCForm.Kaioken:
-                return kaiokenStrength;
             case DBCForm.UltraInstinct:
                 return uiStrength;
             case DBCForm.GodOfDestruction:
@@ -291,9 +282,6 @@ public class FormStackable implements IFormStackable {
     @Override
     public void setState2Factor(int dbcForm, float factor) {
         switch (dbcForm) {
-            case DBCForm.Kaioken:
-                kaiokenState2Factor = factor;
-                break;
             case DBCForm.UltraInstinct:
                 uiState2Factor = factor;
                 break;
@@ -303,8 +291,6 @@ public class FormStackable implements IFormStackable {
     @Override
     public float getState2Factor(int dbcForm) {
         switch (dbcForm) {
-            case DBCForm.Kaioken:
-                return kaiokenState2Factor;
             case DBCForm.UltraInstinct:
                 return uiState2Factor;
             default:

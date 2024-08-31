@@ -2,7 +2,9 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.DragonBC.common.DBCConfig;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.p.DBC.DBCPacketHandlerServer;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCGoD;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalByteRef;
@@ -19,11 +21,15 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static kamkeel.npcdbc.constants.DBCForm.*;
@@ -302,5 +308,44 @@ public class MixinDBCPacketHandler {
     @Inject(method = "handleDBCenergy", at = @At("TAIL"), cancellable = true)
     public void fixEnergy10xKi2(byte b, byte p, EntityPlayer pl, CallbackInfo ci) {
         CommonProxy.CurrentJRMCTickPlayer = null;
+    }
+
+    @Inject(method = "handleDBCascend", at = @At("HEAD"), cancellable = true)
+    public void setCurrentPlayer(byte dbcascend, EntityPlayer p, CallbackInfo ci) {
+        CommonProxy.CurrentJRMCTickPlayer = p;
+    }
+
+    @Inject(method = "handleDBCascend", at = @At("TAIL"), cancellable = true)
+    public void setCurrentPlayerPOST(byte dbcascend, EntityPlayer p, CallbackInfo ci) {
+        CommonProxy.CurrentJRMCTickPlayer = null;
+    }
+
+    @Redirect(method = "handleDBCenergy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", ordinal = 2))
+    public boolean addDestroyerConfigsToAttack(World instance, Entity entity){
+        EntityEnergyAtt kiAttack = (EntityEnergyAtt) entity;
+        DBCData dbcData = DBCData.get(CommonProxy.CurrentJRMCTickPlayer);
+        Form form = dbcData.getForm();
+
+        if(form != null && form.mastery.destroyerEnabled && JGConfigDBCGoD.CONFIG_GOD_ENERGY_ENABLED && JGConfigDBCGoD.CONFIG_GOD_ENABLED){
+            kiAttack.destroyer = true;
+            kiAttack.DAMAGE_REDUCTION = form.mastery.calculateMulti("destroyerKiDamage", dbcData.addonFormLevel);
+        }
+
+        return instance.spawnEntityInWorld(kiAttack);
+    }
+
+    @Redirect(method = "handleDBCascend", at = @At(value = "INVOKE", target="LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", ordinal = 5))
+    public void adjustKaiokenStrain(int s, EntityPlayer Player, String string, @Local(name = "strainMulti") float strainMulti, @Local(name = "kaiokenSkillLevel") int kaiokenSkillLevel){
+        DBCData dbcData = DBCData.get(Player);
+        if(dbcData != null && dbcData.getForm() != null){
+            Form form = dbcData.getForm();
+            if(form.stackable.kaiokenStackable){
+                int oldStrain = JRMCoreH.getInt(Player, string);
+                int strain = (int) ((12 + 20 - kaiokenSkillLevel) * strainMulti);
+                s = strain+oldStrain;
+            }
+        }
+
+        JRMCoreH.setInt(s, Player, string);
     }
 }

@@ -53,6 +53,8 @@ public class PostProcessing {
     public static int PREVIOUS_BUFFER;
     public static int VIEWPORT_WIDTH, VIEWPORT_HEIGHT;
 
+    public static boolean hasInitialized;
+
     public static void startBlooming(boolean clearBloomBuffer) {
         if (!ConfigDBCClient.EnableBloom || !ShaderHelper.useShaders())
             return;
@@ -329,6 +331,7 @@ public class PostProcessing {
 
     public static void init(int width, int height) {
         System.out.println("width height " + width + " " + height);
+        hasInitialized = true;
         int previousBuffer = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
         MAIN = getMainBuffer();
 
@@ -449,6 +452,8 @@ public class PostProcessing {
 
 
     public static void delete() {
+        if(!hasInitialized)
+            return;
         for (int i = 0; i < bloomBuffers.length; i++) {
             if (bloomTextures[i] > 0)
                 TextureUtil.deleteTexture(bloomTextures[i]);

@@ -16,10 +16,22 @@ public class MixinMinecraft {
     @Shadow
     public GameSettings gameSettings;
 
+    @Shadow
+    public int displayWidth;
+
+    @Shadow
+    public int displayHeight;
+
     @Inject(method = "resize", at = @At("TAIL"))
     private void onResize(int width, int height, CallbackInfo ci) {
         PostProcessing.delete();
         PostProcessing.init(width, height);
+    }
+
+    @Inject(method = "toggleFullscreen", at = @At("TAIL"))
+    private void updateDisplayMode(CallbackInfo ci){
+        PostProcessing.delete();
+        PostProcessing.init(this.displayWidth, this.displayHeight);
     }
 
     @Inject(method = "refreshResources", at = @At("TAIL"))
