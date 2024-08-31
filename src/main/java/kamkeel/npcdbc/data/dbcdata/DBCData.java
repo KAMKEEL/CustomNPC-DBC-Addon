@@ -37,10 +37,8 @@ import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static kamkeel.npcdbc.constants.DBCForm.*;
 
@@ -59,7 +57,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     // Custom Form / Custom Aura
     public int addonFormID = -1, auraID = -1, outlineID = -1;
     public float addonFormLevel = 0, addonCurrentHeat = 0;
-    public HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
+    public Map<Integer, PlayerEffect> currentEffects = new ConcurrentHashMap<>();
     public HashMap<String, PlayerBonus> currentBonuses = new HashMap<>();
 
     // NON VANILLA DBC

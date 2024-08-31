@@ -20,6 +20,7 @@ import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static JinRyuu.JRMCore.JRMCoreH.getMajinAbsorptionValueS;
 import static JinRyuu.JRMCore.JRMCoreH.nbt;
@@ -31,11 +32,11 @@ public class DBCDataStats {
         this.data = dbcData;
     }
 
-    public HashMap<Integer, PlayerEffect> getPlayerEffects() {
+    public Map<Integer, PlayerEffect> getPlayerEffects() {
         return data.currentEffects;
     }
 
-    public void setCurrentEffects(HashMap<Integer, PlayerEffect> setVals) {
+    public void setCurrentEffects(Map<Integer, PlayerEffect> setVals) {
         NBTTagCompound raw = data.getRawCompound();
         data.currentEffects = updateEffects(setVals);
         saveEffectsNBT(raw);
@@ -43,8 +44,8 @@ public class DBCDataStats {
             StatusEffectController.getInstance().playerEffects.put(this.data.player.getUniqueID(), data.currentEffects);
     }
 
-    public HashMap<Integer, PlayerEffect> updateEffects(HashMap<Integer, PlayerEffect> setVals) {
-        HashMap<Integer, PlayerEffect> createdMap = new HashMap<>();
+    public Map<Integer, PlayerEffect> updateEffects(Map<Integer, PlayerEffect> setVals) {
+        Map<Integer, PlayerEffect> createdMap = new ConcurrentHashMap<>();
         for (PlayerEffect playerEffect : setVals.values()) {
             PlayerEffect newEffect;
             if (data.currentEffects.containsKey(playerEffect.id)) {

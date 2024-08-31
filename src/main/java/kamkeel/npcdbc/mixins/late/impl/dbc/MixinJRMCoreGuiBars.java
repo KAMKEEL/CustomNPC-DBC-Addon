@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 @Mixin(value = JRMCoreGuiBars.class, remap = false)
@@ -44,7 +45,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
         DBCData dbcData = DBCData.getClient();
         if (dbcData == null)
             return;
-        HashMap<Integer, PlayerEffect> current = dbcData.stats.getPlayerEffects();
+        Map<Integer, PlayerEffect> current = dbcData.stats.getPlayerEffects();
         for (int id : current.keySet()) {
             StatusEffect effect = StatusEffectController.Instance.get(id);
             if (effect == null)
