@@ -25,7 +25,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     public HashMap<Integer, StatusEffect> standardEffects = new HashMap<>();
     public HashMap<Integer, CustomEffect> customEffects = new HashMap<>(); // TODO: I will implement later - Kam
 
-    public ConcurrentHashMap<UUID, HashMap<Integer, PlayerEffect>> playerEffects = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<UUID, Map<Integer, PlayerEffect>> playerEffects = new ConcurrentHashMap<>();
 
     public StatusEffectController(){
 
@@ -64,7 +64,7 @@ public class StatusEffectController implements IStatusEffectHandler {
      */
     public void loadEffects(EntityPlayer player) {
         DBCData dbcData = DBCData.get(player);
-        HashMap<Integer, PlayerEffect> playerEffectHashMap = new HashMap<>();
+        Map<Integer, PlayerEffect> playerEffectHashMap = new ConcurrentHashMap<>();
         for(PlayerEffect val : dbcData.currentEffects.values()){
             PlayerEffect playerEffect = new PlayerEffect(val.id, val.duration, val.level);
             playerEffectHashMap.put(playerEffect.id, playerEffect);
@@ -73,7 +73,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     }
 
     public void runEffects(EntityPlayer player) {
-        HashMap<Integer, PlayerEffect> current = getPlayerEffects(player);
+        Map<Integer, PlayerEffect> current = getPlayerEffects(player);
         for (int active : current.keySet()) {
             StatusEffect effect = get(active);
             if (effect != null) {
@@ -83,7 +83,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     }
 
     public void killEffects(EntityPlayer player) {
-        HashMap<Integer, PlayerEffect> current = getPlayerEffects(player);
+        Map<Integer, PlayerEffect> current = getPlayerEffects(player);
         Iterator<Map.Entry<Integer, PlayerEffect>> iterator = current.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Integer, PlayerEffect> entry = iterator.next();
@@ -127,7 +127,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         return statusEffect;
     }
 
-    public HashMap<Integer, PlayerEffect> getPlayerEffects(EntityPlayer player) {
+    public Map<Integer, PlayerEffect> getPlayerEffects(EntityPlayer player) {
         return playerEffects.get(Utility.getUUID(player));
     }
 
@@ -153,7 +153,7 @@ public class StatusEffectController implements IStatusEffectHandler {
 
         StatusEffect parent = get(effect.id);
         if(parent != null){
-            HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
+            Map<Integer, PlayerEffect> currentEffects = new ConcurrentHashMap<>();
             UUID uuid = Utility.getUUID(player);
             if (playerEffects.containsKey(uuid))
                 currentEffects = playerEffects.get(Utility.getUUID(player));
@@ -169,7 +169,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         if(effect == null)
             return;
 
-        HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
+        Map<Integer, PlayerEffect> currentEffects = new ConcurrentHashMap<>();
         UUID uuid = Utility.getUUID(player);
         if (playerEffects.containsKey(uuid))
             currentEffects = playerEffects.get(Utility.getUUID(player));
@@ -222,14 +222,14 @@ public class StatusEffectController implements IStatusEffectHandler {
     }
 
     public void clearEffects(Entity player) {
-        HashMap<Integer, PlayerEffect> effects = playerEffects.get(player.getUniqueID());
+        Map<Integer, PlayerEffect> effects = playerEffects.get(player.getUniqueID());
         if(effects != null){
             effects.clear();
         }
     }
 
     public boolean hasEffect(EntityPlayer player, int id) {
-        HashMap<Integer, PlayerEffect> currentEffects;
+        Map<Integer, PlayerEffect> currentEffects;
         UUID uuid = Utility.getUUID(player);
         if (playerEffects.containsKey(uuid))
             currentEffects = playerEffects.get(uuid);
@@ -240,7 +240,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     }
 
     public int getEffectDuration(EntityPlayer player, int id) {
-        HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
+        Map<Integer, PlayerEffect> currentEffects = new ConcurrentHashMap<>();
         UUID uuid = Utility.getUUID(player);
         if (playerEffects.containsKey(uuid))
             currentEffects = playerEffects.get(uuid);
@@ -257,7 +257,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         if(player == null || id <= 0)
             return;
 
-        HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
+        Map<Integer, PlayerEffect> currentEffects = new ConcurrentHashMap<>();
         UUID uuid = Utility.getUUID(player);
         if (playerEffects.containsKey(uuid))
             currentEffects = playerEffects.get(Utility.getUUID(player));
@@ -276,7 +276,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         if(player == null || id <= 0)
             return;
 
-        HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>();
+        Map<Integer, PlayerEffect> currentEffects = new ConcurrentHashMap<>();
         UUID uuid = Utility.getUUID(player);
         if (playerEffects.containsKey(uuid))
             currentEffects = playerEffects.get(Utility.getUUID(player));
