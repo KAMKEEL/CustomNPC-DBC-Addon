@@ -41,11 +41,12 @@ public class PlayerDBCInfo {
     }
 
     public void addForm(Form form) {
-        if (!unlockedForms.contains(form.id)) {
-            unlockedForms.add(form.id);
-            if(!formLevels.containsKey(form.id))
-                formLevels.put(form.id, 0f);
-        }
+        if(form == null)
+            return;
+
+        unlockedForms.add(form.id);
+        if(!formLevels.containsKey(form.id))
+            formLevels.put(form.id, 0f);
     }
 
     public void addFormWheel(int wheelSlot, FormWheelData data) {
@@ -59,6 +60,8 @@ public class PlayerDBCInfo {
     }
 
     public boolean removeForm(Form form) {
+        if(form == null)
+            return false;
         formLevels.remove(form.id);
         return unlockedForms.remove(form.id);
     }
@@ -69,7 +72,7 @@ public class PlayerDBCInfo {
     }
 
     public void removeFormWheel(int wheelSlot) {
-        if (wheelSlot <= 5)
+        if (wheelSlot <= 5 && wheelSlot >= 0)
             formWheel[wheelSlot].reset();
     }
 
@@ -87,6 +90,8 @@ public class PlayerDBCInfo {
     }
 
     public boolean hasForm(Form form) {
+        if(form == null)
+            return false;
         return unlockedForms.contains(form.id);
     }
 
@@ -95,7 +100,7 @@ public class PlayerDBCInfo {
     }
 
     public String getFormColorCode(Form f) {
-        if (f.getMenuName().contains("§")) {
+        if (f != null && f.getMenuName().contains("§")) {
             String s = f.getMenuName();
             int i = s.indexOf("§");
             return s.substring(i, 2);
@@ -104,11 +109,16 @@ public class PlayerDBCInfo {
     }
 
     public String getColoredName(Form f) {
+        if(f == null)
+            return "";
         return getFormColorCode(f) + f.getName();
     }
 
     public boolean isInForm(String formName) {
-        return getCurrentForm().getName().equals(formName);
+        Form form = getCurrentForm();
+        if(form == null)
+            return false;
+        return form.getName().equals(formName);
     }
 
     public boolean isInForm(int formID) {
@@ -253,18 +263,20 @@ public class PlayerDBCInfo {
     ///////////////////////////////////////////
     // Aura stuff
 
-    public void addAura(Aura Aura) {
-        if (!unlockedAuras.contains(Aura.id)) {
-            unlockedAuras.add(Aura.id);
-        }
+    public void addAura(Aura aura) {
+        if(aura == null)
+            return;
+        unlockedAuras.add(aura.id);
     }
 
     public boolean hasAuraUnlocked(int id) {
         return unlockedAuras.contains(id);
     }
 
-    public boolean removeAura(Aura Aura) {
-        return unlockedAuras.remove(Aura.id);
+    public boolean removeAura(Aura aura) {
+        if(aura == null)
+            return false;
+        return unlockedAuras.remove(aura.id);
     }
 
     public boolean removeAura(int id) {
@@ -282,8 +294,10 @@ public class PlayerDBCInfo {
         return selectedAura > -1 && getSelectedAura() != null;
     }
 
-    public boolean hasAura(Aura Aura) {
-        return unlockedAuras.contains(Aura.id);
+    public boolean hasAura(Aura aura) {
+        if(aura == null)
+            return false;
+        return unlockedAuras.contains(aura.id);
     }
 
     public boolean isInCustomAura() {
@@ -291,7 +305,10 @@ public class PlayerDBCInfo {
     }
 
     public boolean isInAura(String AuraName) {
-        return getCurrentAura().getName().equals(AuraName);
+        Aura aura = getCurrentAura();
+        if(aura == null)
+            return false;
+        return aura.getName().equals(AuraName);
     }
 
     public Aura getCurrentAura() {
