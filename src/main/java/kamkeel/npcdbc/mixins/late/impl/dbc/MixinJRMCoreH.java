@@ -505,7 +505,7 @@ public abstract class MixinJRMCoreH {
 
     /**
      * @author somehussar
-     * @reason fixes mixin issues
+     * @reason Fixes Mixin issues with <code>@At(value = "FIELD")</code> crashing one server for no reason whatsoever.
      */
     @Overwrite
     public static double KaiKCost(EntityPlayer p){
