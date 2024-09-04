@@ -503,36 +503,52 @@ public abstract class MixinJRMCoreH {
 
     }
 
-    @Redirect(method = "KaiKCost", at=@At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;KaiokenFormHealthCost:[[F", opcode = Opcodes.GETSTATIC, ordinal = 1))
-    private static float[][] getKaiokenHealthCost(@Local(name = "p") EntityPlayer player, @Local(name = "race") int race, @Local(name = "kaiokenState") int kaioState){
+    /**
+     * @author somehussar
+     * @reason fixes mixin issues
+     */
+    @Overwrite
+    public static double KaiKCost(EntityPlayer p){
+        int[] attributes = PlyrAttrbts(p);
+        int skl = SklLvlX(1, getString(p, "jrmcSSltX"));
+        int race = getByte(p, "jrmcRace");
+        int state = getByte(p, "jrmcState");
+        int state2 = getByte(p, "jrmcState2");
+        int strnTmp = getInt(p, "jrmcStrainTemp");
+        int strn = getInt(p, "jrmcStrain");
+        boolean mystic = StusEfcts(13, getString(p, "jrmcStatusEff"));
+        int might = attributes[0] / 2 + attributes[3] / 2;
+        int cons = attributes[2];
+        double c = (double)(10 - SklLvl(8, (EntityPlayer)p) + state2) * 0.01;
+        float kc = KaiKFBal(race, state, state2, skl, strn);
+        c += (double)(JRMCoreConfig.sskai ? 0.0F : kc);
+        int kaiokenState = !DBC() ? 0 : (mystic ? JRMCoreConfig.KaiokenFormHealthCost[race].length - 1 : state);
+        double cost = 1.0 / (double)cons * (double)might * c * (double)TransKaiDrainRace[race] * (double)TransKaiDrainLevel[state2] * (double)(DBC() ? getFormDrain(p, race, kaiokenState) : 1.0F);
+        if (JGConfigDBCFormMastery.FM_Enabled) {
+            int kkID = getFormID("Kaioken", race);
+            double kkMasteryLevel = getFormMasteryValue(p, kkID);
+            float costMulti = (float)JGConfigDBCFormMastery.getCostMulti(kkMasteryLevel, race, kkID, JGConfigDBCFormMastery.DATA_ID_KAIOKEN_HEALTH_COST_MULTI);
+            cost *= (double)costMulti;
+        }
 
+        return cost;
+    }
+
+    @Unique
+    private static float getFormDrain(EntityPlayer player, int race, int kaiokenState) {
         DBCData dbcData = DBCData.get(player);
         if(dbcData != null){
             Form form = dbcData.getForm();
             if(form != null){
-                float[][] newArr = new float[race+1][kaioState+1];
-                newArr[race][kaioState] = form.stackable.kaiokenData.getKaioDrain();
-                return newArr;
+                if(form.stackable.kaiokenData.isMultiplyingCurrentFormDrain())
+                    return form.stackable.kaiokenData.getKaioDrain() * JRMCoreConfig.KaiokenFormHealthCost[race][kaiokenState];
+                else
+                    return form.stackable.kaiokenData.getKaioDrain();
             }
         }
-
-        return JRMCoreConfig.KaiokenFormHealthCost;
+        return JRMCoreConfig.KaiokenFormHealthCost[race][kaiokenState];
     }
 
-    @Inject(method="KaiKCost", at=@At("RETURN"), cancellable = true)
-    private static void customFormKaiokenDrainMultiply(EntityPlayer p, CallbackInfoReturnable<Double> cir){
-        DBCData dbcData = DBCData.get(p);
-        if(dbcData == null)
-            return;
-        Form form = dbcData.getForm();
-        if(form == null)
-            return;
-
-        FormKaiokenStackableData kaioStackable = form.stackable.kaiokenData;
-        if(!kaioStackable.kaiokenMultipliesCurrentFormDrain)
-            return;
-        cir.setReturnValue(cir.getReturnValueD() * kaioStackable.kaiokenDrainMulti);
-    }
 
     @Inject(method = "KaiKFBal", at = @At("HEAD"), cancellable = true)
     private static void kaiokenBalanceValue(int rc, int st, int st2, int skl, int strn, CallbackInfoReturnable<Float> cir){
