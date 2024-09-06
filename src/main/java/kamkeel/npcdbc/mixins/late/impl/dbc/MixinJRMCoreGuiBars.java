@@ -46,6 +46,8 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
         if (dbcData == null)
             return;
         Map<Integer, PlayerEffect> current = dbcData.stats.getPlayerEffects();
+        if(current == null)
+            return;
         for (int id : current.keySet()) {
             StatusEffect effect = StatusEffectController.Instance.get(id);
             if (effect == null)

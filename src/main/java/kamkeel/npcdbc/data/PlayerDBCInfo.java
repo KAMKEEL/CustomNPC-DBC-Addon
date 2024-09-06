@@ -1,19 +1,25 @@
 package kamkeel.npcdbc.data;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
+import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.NBTTags;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Store all player Addon DBC Info here
@@ -32,6 +38,8 @@ public class PlayerDBCInfo {
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
     public FormWheelData[] formWheel = new FormWheelData[6];
+
+    public Map<Integer, PlayerEffect> currentEffects;
 
     public PlayerDBCInfo(PlayerData parent) {
         this.parent = parent;
@@ -375,6 +383,8 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
+        DBCData.get(parent.player).stats.saveEffectsNBT(dbcCompound);
+
 
         compound.setTag("DBCInfo", dbcCompound);
     }
@@ -395,5 +405,26 @@ public class PlayerDBCInfo {
         currentAura = dbcCompound.getInteger("CurrentAura");
         selectedAura = dbcCompound.getInteger("SelectedAura");
         unlockedAuras = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAuras", 10));
+
+        loadEffects(dbcCompound);
+    }
+
+    private void loadEffects(NBTTagCompound dbcCompound){
+        if(FMLCommonHandler.instance().getEffectiveSide().isClient() || this.parent.player == null)
+            return;
+
+        ConcurrentHashMap<Integer, PlayerEffect> currentEffects = new ConcurrentHashMap<>();
+        if (dbcCompound.hasKey("addonActiveEffects", 9)) {
+            NBTTagList nbttaglist = dbcCompound.getTagList("addonActiveEffects", 10);
+            for (int i = 0; i < nbttaglist.tagCount(); ++i) {
+                NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+                PlayerEffect playerEffect = PlayerEffect.readEffectData(nbttagcompound1);
+                if (playerEffect != null) {
+                    currentEffects.put(playerEffect.id, playerEffect);
+                }
+            }
+        }
+        StatusEffectController.Instance.playerEffects.put(Utility.getUUID(parent.player), currentEffects);
+
     }
 }

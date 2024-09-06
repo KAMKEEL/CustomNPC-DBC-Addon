@@ -58,7 +58,6 @@ public class ServerEventHandler {
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.STRENGTH).generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.EFFECT_TIME).generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new LoginInfo().generatePacket(), (EntityPlayerMP) event.player);
-        StatusEffectController.getInstance().loadEffects(event.player);
         BonusController.getInstance().loadBonus(event.player);
     }
 
@@ -113,7 +112,7 @@ public class ServerEventHandler {
                     dbcData.stats.applyNamekianRegen();
 
                 if (player.ticksExisted % 20 == 0)
-                    dbcData.stats.decrementActiveEffects();
+                    StatusEffectController.Instance.decrementEffects(dbcData.player);
 
                 dbcData.syncTracking();
                 // ChargeKi

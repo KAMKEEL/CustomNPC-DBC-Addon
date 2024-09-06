@@ -7,6 +7,7 @@ import JinRyuu.JRMCore.entity.EntityCusPar;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -57,8 +58,16 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     // Custom Form / Custom Aura
     public int addonFormID = -1, auraID = -1, outlineID = -1;
     public float addonFormLevel = 0, addonCurrentHeat = 0;
-    public Map<Integer, PlayerEffect> currentEffects = new ConcurrentHashMap<>();
+//    public Map<Integer, PlayerEffect> currentEffects = new ConcurrentHashMap<>();
     public HashMap<String, PlayerBonus> currentBonuses = new HashMap<>();
+
+    /**
+     * Client-side effect store. Needed for proper rendering of status effects.
+     *
+     * Server-side stores them in StatusEffectHandler.
+     */
+    @SideOnly(Side.CLIENT)
+    public Map<Integer, PlayerEffect> currentEffects;
 
     // NON VANILLA DBC
     public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f, sprintSpeed = 1.0f;
@@ -238,14 +247,21 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             c.setBoolean("DBCIsFnPressed", isFnPressed);
         isFnPressed = c.getBoolean("DBCIsFnPressed");
 
-        this.currentEffects.clear();
-        if (c.hasKey("addonActiveEffects", 9)) {
-            NBTTagList nbttaglist = c.getTagList("addonActiveEffects", 10);
-            for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-                NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-                PlayerEffect playerEffect = PlayerEffect.readEffectData(nbttagcompound1);
-                if (playerEffect != null) {
-                    this.currentEffects.put(playerEffect.id, playerEffect);
+        // Made StatusEffects only load here if you're on the client for proper display.
+        if(FMLCommonHandler.instance().getEffectiveSide().isClient()){
+            if(this.currentEffects == null)
+                currentEffects = new HashMap<>();
+            else
+                currentEffects.clear();
+
+            if (c.hasKey("addonActiveEffects", 9)) {
+                NBTTagList nbttaglist = c.getTagList("addonActiveEffects", 10);
+                for (int i = 0; i < nbttaglist.tagCount(); ++i) {
+                    NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+                    PlayerEffect playerEffect = PlayerEffect.readEffectData(nbttagcompound1);
+                    if (playerEffect != null) {
+                        this.currentEffects.put(playerEffect.id, playerEffect);
+                    }
                 }
             }
         }
@@ -268,7 +284,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         addonFormID = formData.currentForm;
         addonFormLevel = formData.getCurrentLevel();
         auraID = formData.currentAura;
-        stats.setCurrentEffects(StatusEffectController.Instance.playerEffects.get(Utility.getUUID(player)));
         bonus.setCurrentBonuses(BonusController.Instance.playerBonus.get(Utility.getUUID(player)));
         nbt.setInteger("addonFormID", addonFormID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
@@ -292,7 +307,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         dbc.setInteger("addonFormID", formData.currentForm);
         dbc.setInteger("auraID", formData.currentAura);
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
-        stats.saveEffectsNBT(dbc);
         bonus.saveBonusNBT(dbc);
         loadFromNBT(dbc);
         if (syncALL)

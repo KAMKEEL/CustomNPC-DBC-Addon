@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.controllers;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -7,6 +8,7 @@ import kamkeel.npcdbc.data.statuseffect.CustomEffect;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.types.*;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -56,20 +58,6 @@ public class StatusEffectController implements IStatusEffectHandler {
         standardEffects.put(Effects.HUMAN_SPIRIT, new Exhausted()); // TODO: Finish it
         standardEffects.put(Effects.COLD_BLOODED, new Exhausted()); // TODO: Finish it
         standardEffects.put(Effects.KI_DEFENSE, new Exhausted()); // TODO: Finish it
-    }
-
-    /**
-     * Loads Effects from Players Player Persisted NBT
-     * @param player Player Logging in
-     */
-    public void loadEffects(EntityPlayer player) {
-        DBCData dbcData = DBCData.get(player);
-        Map<Integer, PlayerEffect> playerEffectHashMap = new ConcurrentHashMap<>();
-        for(PlayerEffect val : dbcData.currentEffects.values()){
-            PlayerEffect playerEffect = new PlayerEffect(val.id, val.duration, val.level);
-            playerEffectHashMap.put(playerEffect.id, playerEffect);
-        }
-        playerEffects.put(Utility.getUUID(player), playerEffectHashMap);
     }
 
     public void runEffects(EntityPlayer player) {
@@ -292,6 +280,33 @@ public class StatusEffectController implements IStatusEffectHandler {
             }
 
             currentEffects.remove(id);
+        }
+    }
+
+    public void decrementEffects(EntityPlayer player) {
+
+        Iterator<PlayerEffect> iterator = getPlayerEffects(player).values().iterator();
+
+        while(iterator.hasNext()) {
+            PlayerEffect effect = iterator.next();
+
+            if(effect == null) {
+                iterator.remove();
+                continue;
+            }
+            if(effect.duration == -100)
+                continue;
+
+            if(effect.duration <= 0) {
+                StatusEffect parent = StatusEffectController.Instance.get(effect.id);
+                if (parent != null){
+                    parent.runout(player, effect);
+                    parent.kill(player, effect);
+                }
+                iterator.remove();
+                continue;
+            }
+            effect.duration--;
         }
     }
 }

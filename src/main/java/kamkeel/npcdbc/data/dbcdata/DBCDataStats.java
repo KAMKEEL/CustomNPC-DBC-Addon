@@ -5,6 +5,8 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -32,70 +34,35 @@ public class DBCDataStats {
         this.data = dbcData;
     }
 
+    /**
+     * @return The current player effects or null.
+     */
     public Map<Integer, PlayerEffect> getPlayerEffects() {
-        return data.currentEffects;
+        if(FMLCommonHandler.instance().getEffectiveSide().isClient())
+            return data.currentEffects;
+
+        return StatusEffectController.getInstance().getPlayerEffects(data.player);
     }
 
-    public void setCurrentEffects(Map<Integer, PlayerEffect> setVals) {
-        NBTTagCompound raw = data.getRawCompound();
-        data.currentEffects = updateEffects(setVals);
-        saveEffectsNBT(raw);
-        if(this.data.player != null)
-            StatusEffectController.getInstance().playerEffects.put(this.data.player.getUniqueID(), data.currentEffects);
-    }
-
-    public Map<Integer, PlayerEffect> updateEffects(Map<Integer, PlayerEffect> setVals) {
-        Map<Integer, PlayerEffect> createdMap = new ConcurrentHashMap<>();
-        for (PlayerEffect playerEffect : setVals.values()) {
-            PlayerEffect newEffect;
-            if (data.currentEffects.containsKey(playerEffect.id)) {
-                newEffect = data.currentEffects.get(playerEffect.id);
-                newEffect.duration = playerEffect.duration;
-                newEffect.level = playerEffect.level;
-                createdMap.put(playerEffect.id, newEffect);
-            } else {
-                createdMap.put(playerEffect.id, new PlayerEffect(playerEffect.id, playerEffect.duration, playerEffect.level));
-            }
-        }
-        return createdMap;
-    }
-
+    /**
+     * Saves status effects to NBT.
+     * Only works on the serverside.
+     * @param nbt Compound in which these should be stored in.
+     */
     public void saveEffectsNBT(NBTTagCompound nbt) {
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+            return;
+
+        Map<Integer, PlayerEffect> effects = StatusEffectController.Instance.getPlayerEffects(data.player);
+        if(effects == null)
+            return;
         NBTTagList nbttaglist = new NBTTagList();
 
-        // Copy the collection to avoid ConcurrentModificationException
-        List<PlayerEffect> effectsCopy = new ArrayList<>(data.currentEffects.values());
-        for (PlayerEffect playerEffect : effectsCopy) {
+        for (PlayerEffect playerEffect : effects.values()) {
             nbttaglist.appendTag(playerEffect.writeEffectData(new NBTTagCompound()));
         }
 
         nbt.setTag("addonActiveEffects", nbttaglist);
-    }
-
-    public void decrementActiveEffects() {
-        HashMap<Integer, PlayerEffect> currentEffects = new HashMap<>(StatusEffectController.Instance.playerEffects.get(Utility.getUUID(data.player)));
-        Iterator<Map.Entry<Integer, PlayerEffect>> iterator = currentEffects.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Integer, PlayerEffect> entry = iterator.next();
-            PlayerEffect currentEffect = entry.getValue();
-            if (currentEffect == null) {
-                iterator.remove();
-                continue;
-            }
-
-            if (currentEffect.duration == -100)
-                continue;
-            else if (currentEffect.duration <= 0) {
-                StatusEffect parent = StatusEffectController.Instance.get(currentEffect.id);
-                if (parent != null){
-                    parent.runout(data.player, currentEffect);
-                    parent.kill(data.player, currentEffect);
-                }
-                iterator.remove();
-            } else
-                currentEffect.duration--;
-        }
-        setCurrentEffects(currentEffects);
     }
 
     public int[] getAllAttributes() {
