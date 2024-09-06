@@ -40,8 +40,6 @@ public class PlayerDBCInfo {
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
     public FormWheelData[] formWheel = new FormWheelData[6];
 
-    public Map<Integer, PlayerEffect> currentEffects;
-
     public PlayerDBCInfo(PlayerData parent) {
         this.parent = parent;
 
