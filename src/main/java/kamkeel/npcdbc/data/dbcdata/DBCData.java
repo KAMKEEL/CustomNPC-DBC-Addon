@@ -66,14 +66,14 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
      * Server-side stores them in StatusEffectHandler.
      */
     @SideOnly(Side.CLIENT)
-    public Map<Integer, PlayerEffect> currentEffects = new HashMap<>();
+    public Map<Integer, PlayerEffect> currentEffects;
     /**
      * Client-side bonus store. Needed for proper Battle Power calculations on the client.
      *
      * Server-side stores them in BonusController
      */
     @SideOnly(Side.CLIENT)
-    public Map<String, PlayerBonus> currentBonuses = new HashMap<>();
+    public Map<String, PlayerBonus> currentBonuses;
 
     // NON VANILLA DBC
     public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f, sprintSpeed = 1.0f;

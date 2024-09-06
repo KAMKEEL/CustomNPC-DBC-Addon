@@ -19,9 +19,12 @@ public class DBCDataBonus {
         this.data = dbcData;
     }
 
-    private Map<String, PlayerBonus> getCurrentBonuses() {
-        if(FMLCommonHandler.instance().getEffectiveSide().isClient())
+    public Map<String, PlayerBonus> getCurrentBonuses() {
+        if(FMLCommonHandler.instance().getEffectiveSide().isClient()){
+            if(data.currentBonuses == null)
+                data.currentBonuses = new HashMap<>();
             return data.currentBonuses;
+        }
 
         return BonusController.getInstance().getPlayerBonus(data.player);
     }

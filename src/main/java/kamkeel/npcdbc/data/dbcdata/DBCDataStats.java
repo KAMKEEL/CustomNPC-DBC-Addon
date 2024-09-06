@@ -38,8 +38,11 @@ public class DBCDataStats {
      * @return The current player effects or null.
      */
     public Map<Integer, PlayerEffect> getPlayerEffects() {
-        if(FMLCommonHandler.instance().getEffectiveSide().isClient())
+        if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+            if (data.currentEffects == null)
+                data.currentEffects = new HashMap<>();
             return data.currentEffects;
+        }
 
         return StatusEffectController.getInstance().getPlayerEffects(data.player);
     }

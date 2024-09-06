@@ -39,10 +39,12 @@ public class DBCDataUniversal {
         if (player != null && player.worldObj != null && player.worldObj.isRemote) {
             data = ClientCache.getClientData(player);
         } else {
+            assert player != null;
             data = getData(player);
             data.loadNBTData(false);
         }
-        data.player = player;
+        if(data != null)
+            data.player = player;
         return data;
     }
 

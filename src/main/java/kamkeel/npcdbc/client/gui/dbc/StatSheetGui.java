@@ -927,9 +927,9 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
     public String getAddonBonus(int attributeID) {
         String description = "";
         DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
-        if(!dbcData.currentBonuses.isEmpty()){
+        if(!dbcData.bonus.getCurrentBonuses().isEmpty()){
             description += "\nBonus Stats:";
-            for(PlayerBonus playerBonus : dbcData.currentBonuses.values()){
+            for(PlayerBonus playerBonus : dbcData.bonus.getCurrentBonuses().values()){
                 if(attributeID == DBCAttribute.Strength && playerBonus.strength != 0){
                     description += "\n>> " + playerBonus.name + ": " + (playerBonus.type == 1 ? " " : "x ") + playerBonus.strength;
                 } else if(attributeID == DBCAttribute.Dexterity && playerBonus.dexterity != 0){
@@ -949,8 +949,8 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
     public long getAddonBonusStat(int attributeID) {
         DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
         long extra = 0;
-        if(!dbcData.currentBonuses.isEmpty()){
-            for(PlayerBonus playerBonus : dbcData.currentBonuses.values()){
+        if(!dbcData.bonus.getCurrentBonuses().isEmpty()){
+            for(PlayerBonus playerBonus : dbcData.bonus.getCurrentBonuses().values()){
                 if(attributeID == DBCAttribute.Strength && playerBonus.strength != 0){
                     extra += playerBonus.strength;
                 } else if(attributeID == DBCAttribute.Dexterity && playerBonus.dexterity != 0){
