@@ -320,7 +320,7 @@ public class MixinDBCPacketHandler {
         CommonProxy.CurrentJRMCTickPlayer = null;
     }
 
-    @Redirect(method = "handleDBCenergy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", ordinal = 2))
+    @Redirect(method = "handleDBCenergy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", ordinal = 2, remap = true), remap = false)
     public boolean addDestroyerConfigsToAttack(World instance, Entity entity){
         EntityEnergyAtt kiAttack = (EntityEnergyAtt) entity;
         DBCData dbcData = DBCData.get(CommonProxy.CurrentJRMCTickPlayer);
