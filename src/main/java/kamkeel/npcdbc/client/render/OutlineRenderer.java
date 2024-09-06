@@ -288,7 +288,7 @@ public class OutlineRenderer {
         int id = ExtendedPlayer.get(player).getBlocking() != 0 ? (instantTransmission ? 6 : 0) : (ExtendedPlayer.get(player).getAnimKiShoot() != 0 ? an[ExtendedPlayer.get(player).getAnimKiShoot() - 1] + 2 : -1);
         renderer.modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, player);
 
-        if (id == -1)
+        if (id == -1 || !JGConfigClientSettings.CLIENT_DA4)
             renderer.modelMain.RA.render(0.0625F);
         else {
             if (id == 0) {
