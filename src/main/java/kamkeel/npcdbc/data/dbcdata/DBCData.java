@@ -253,8 +253,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             c.setBoolean("DBCIsFnPressed", isFnPressed);
         isFnPressed = c.getBoolean("DBCIsFnPressed");
 
+
         // Made StatusEffects/PlayerBonuses only load here if you're on the client for proper display.
-        boolean isRemote = FMLCommonHandler.instance().getEffectiveSide().isClient() && (player != null && player.worldObj != null && player.worldObj.isRemote);
+        // isRemote checks if the player is truly on client side. Helpful for Bukkit interactions.
+        boolean isRemote = (player != null && player.worldObj != null && player.worldObj.isRemote);
         if(isRemote){
             loadClientSideData(c);
         }
