@@ -303,6 +303,8 @@ public class DBCDataStats {
     }
 
     public boolean isFused() {
+        if(data.containsSE(10) || data.containsSE(11))
+            return true;
         if (data.Fusion.contains(",")) {
             String[] fusionMembers = data.Fusion.split(",");
             return fusionMembers.length == 3;
@@ -311,6 +313,8 @@ public class DBCDataStats {
     }
 
     public boolean isFusionSpectator() {
+        if(data.containsSE(11))
+            return true;
         if (data.Fusion.contains(",")) {
             String[] fusionMembers = data.Fusion.split(",");
             if (fusionMembers.length == 3)
