@@ -3,20 +3,21 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.api.effect.IBonusHandler;
 import kamkeel.npcdbc.api.effect.IPlayerBonus;
 import kamkeel.npcdbc.data.PlayerBonus;
+import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.api.entity.IPlayer;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class BonusController implements IBonusHandler {
 
     public static BonusController Instance = new BonusController();
-    public HashMap<UUID, HashMap<String, PlayerBonus>> playerBonus = new HashMap<>();
+    public HashMap<UUID, Map<String, PlayerBonus>> playerBonus = new HashMap<>();
 
     public static BonusController getInstance() {
         return Instance;
@@ -26,18 +27,8 @@ public class BonusController implements IBonusHandler {
         playerBonus.clear();
     }
 
-    public void loadBonus(EntityPlayer player) {
-        DBCData dbcData = DBCData.get(player);
-        HashMap<String, PlayerBonus> playerBonusHashMap = new HashMap<>();
-        for(PlayerBonus val : dbcData.currentBonuses.values()){
-            PlayerBonus bonus = new PlayerBonus(val.name, val.type, val.strength, val.dexterity, val.willpower, val.constituion, val.spirit);
-            playerBonusHashMap.put(bonus.name, bonus);
-        }
-        playerBonus.put(Utility.getUUID(player), playerBonusHashMap);
-    }
-
     public float[] getCurrentBonuses(EntityPlayer player) {
-        HashMap<String, PlayerBonus> currentBonus = new HashMap<>();
+        Map<String, PlayerBonus> currentBonus = new HashMap<>();
         UUID uuid = Utility.getUUID(player);
         if (playerBonus.containsKey(uuid))
             currentBonus = playerBonus.get(Utility.getUUID(player));
@@ -53,7 +44,7 @@ public class BonusController implements IBonusHandler {
         return bonuses;
     }
 
-    public HashMap<String, PlayerBonus> getPlayerBonus(EntityPlayer player) {
+    public Map<String, PlayerBonus> getPlayerBonus(EntityPlayer player) {
         return playerBonus.get(Utility.getUUID(player));
     }
 
@@ -61,7 +52,7 @@ public class BonusController implements IBonusHandler {
         if(bon == null)
             return;
 
-        HashMap<String, PlayerBonus> currentBonus = new HashMap<>();
+        Map<String, PlayerBonus> currentBonus = new HashMap<>();
         UUID uuid = Utility.getUUID(player);
         if (playerBonus.containsKey(uuid))
             currentBonus = playerBonus.get(Utility.getUUID(player));
@@ -69,86 +60,78 @@ public class BonusController implements IBonusHandler {
             playerBonus.put(uuid, currentBonus);
 
         currentBonus.put(bon.name, bon);
-        syncBonus(player);
     }
 
     public void removeEffect(EntityPlayer player, String bonusName) {
         if(bonusName == null)
             return;
-        HashMap<String, PlayerBonus> current = new HashMap<>();
+        Map<String, PlayerBonus> current;
         UUID uuid = Utility.getUUID(player);
         if (playerBonus.containsKey(uuid))
             current = playerBonus.get(Utility.getUUID(player));
         else
-            playerBonus.put(uuid, current);
+            playerBonus.put(uuid, current = new HashMap<>());
         current.remove(bonusName);
-        syncBonus(player);
     }
 
     public boolean hasBonus(EntityPlayer player, String id) {
-        HashMap<String, PlayerBonus> currentEffects;
         UUID uuid = Utility.getUUID(player);
         if (playerBonus.containsKey(uuid))
-            currentEffects = playerBonus.get(uuid);
+            return playerBonus.get(uuid).containsKey(id);
         else
             return false;
-
-        return currentEffects.containsKey(id);
     }
 
     public void applyBonus(EntityPlayer player, PlayerBonus bonus) {
         if(player == null || bonus == null)
             return;
-        HashMap<String, PlayerBonus> currentbonus = new HashMap<>();
+        Map<String, PlayerBonus> currentBonus;
         UUID uuid = Utility.getUUID(player);
         if (playerBonus.containsKey(uuid))
-            currentbonus = playerBonus.get(Utility.getUUID(player));
+            currentBonus = playerBonus.get(Utility.getUUID(player));
         else
-            playerBonus.put(uuid, currentbonus);
-        currentbonus.put(bonus.name, bonus);
-        syncBonus(player);
+            playerBonus.put(uuid, currentBonus = new HashMap<>());
+        currentBonus.put(bonus.name, bonus);
     }
 
     public void applyBonus(EntityPlayer player, String name, byte type, float str, float dex, float wil) {
         if(player == null || name.isEmpty())
             return;
 
-        HashMap<String, PlayerBonus> currentbonus = new HashMap<>();
+        Map<String, PlayerBonus> currentbonus;
         UUID uuid = Utility.getUUID(player);
         if (playerBonus.containsKey(uuid))
             currentbonus = playerBonus.get(Utility.getUUID(player));
         else
-            playerBonus.put(uuid, currentbonus);
+            playerBonus.put(uuid, currentbonus = new HashMap<>());
 
         PlayerBonus bonus = new PlayerBonus(name,  type, str, dex, wil);
         currentbonus.put(name, bonus);
-        syncBonus(player);
     }
 
     public void removeBonus(EntityPlayer player, PlayerBonus bonus) {
         if(player == null || bonus == null)
             return;
-        HashMap<String, PlayerBonus> current = new HashMap<>();
+        Map<String, PlayerBonus> current;
         UUID uuid = Utility.getUUID(player);
         if (playerBonus.containsKey(uuid))
             current = playerBonus.get(Utility.getUUID(player));
         else
-            playerBonus.put(uuid, current);
+            playerBonus.put(uuid, current = new HashMap<>());
         current.remove(bonus.name);
-        syncBonus(player);
+
     }
 
     public void removeBonus(EntityPlayer player, String name) {
         if(player == null || name.isEmpty())
             return;
-        HashMap<String, PlayerBonus> current = new HashMap<>();
+        Map<String, PlayerBonus> current;
         UUID uuid = Utility.getUUID(player);
         if (playerBonus.containsKey(uuid))
             current = playerBonus.get(Utility.getUUID(player));
         else
-            playerBonus.put(uuid, current);
+            playerBonus.put(uuid, current = new HashMap<>());
         current.remove(name);
-        syncBonus(player);
     }
 
     @Override
@@ -159,7 +142,7 @@ public class BonusController implements IBonusHandler {
     }
 
     public void clearBonuses(Entity player) {
-        HashMap<String, PlayerBonus> effects = playerBonus.get(player.getUniqueID());
+        Map<String, PlayerBonus> effects = playerBonus.get(player.getUniqueID());
         if(effects != null){
             effects.clear();
         }
@@ -215,9 +198,5 @@ public class BonusController implements IBonusHandler {
         if(player == null || player.getMCEntity() == null)
             return;
         removeBonus((EntityPlayer) player.getMCEntity(), bonus.getName());
-    }
-
-    public void syncBonus(EntityPlayer player){
-        DBCData.get(player).bonus.setCurrentBonuses(playerBonus.get(Utility.getUUID(player)));
     }
 }

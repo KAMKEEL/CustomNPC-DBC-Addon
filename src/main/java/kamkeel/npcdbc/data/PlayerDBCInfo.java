@@ -383,7 +383,9 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
-        DBCData.get(parent.player).stats.saveEffectsNBT(dbcCompound);
+        DBCData data = DBCData.get(parent.player);
+        data.stats.saveEffectsNBT(dbcCompound);
+        data.bonus.saveBonusNBT(dbcCompound);
 
 
         compound.setTag("DBCInfo", dbcCompound);
@@ -407,6 +409,24 @@ public class PlayerDBCInfo {
         unlockedAuras = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAuras", 10));
 
         loadEffects(dbcCompound);
+        loadBonuses(dbcCompound);
+    }
+
+    private void loadBonuses(NBTTagCompound dbcCompound) {
+        if(FMLCommonHandler.instance().getEffectiveSide().isClient() || this.parent.player == null)
+            return;
+
+        ConcurrentHashMap<String, PlayerBonus> currentBonuses = new ConcurrentHashMap<>();
+        if (dbcCompound.hasKey("addonBonus", 9)) {
+            NBTTagList nbttaglist = dbcCompound.getTagList("addonBonus", 10);
+            for (int i = 0; i < nbttaglist.tagCount(); ++i) {
+                NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+                PlayerBonus bonus = PlayerBonus.readBonusData(nbttagcompound1);
+                currentBonuses.put(bonus.name, bonus);
+            }
+        }
+
+        BonusController.getInstance().playerBonus.put(Utility.getUUID(parent.player), currentBonuses);
     }
 
     private void loadEffects(NBTTagCompound dbcCompound){

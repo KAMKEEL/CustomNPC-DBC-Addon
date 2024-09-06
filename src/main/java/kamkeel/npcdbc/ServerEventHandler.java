@@ -58,7 +58,6 @@ public class ServerEventHandler {
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.STRENGTH).generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.EFFECT_TIME).generatePacket(), (EntityPlayerMP) event.player);
         PacketHandler.Instance.sendToPlayer(new LoginInfo().generatePacket(), (EntityPlayerMP) event.player);
-        BonusController.getInstance().loadBonus(event.player);
     }
 
     @SubscribeEvent

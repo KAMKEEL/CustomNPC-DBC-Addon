@@ -58,8 +58,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     // Custom Form / Custom Aura
     public int addonFormID = -1, auraID = -1, outlineID = -1;
     public float addonFormLevel = 0, addonCurrentHeat = 0;
-//    public Map<Integer, PlayerEffect> currentEffects = new ConcurrentHashMap<>();
-    public HashMap<String, PlayerBonus> currentBonuses = new HashMap<>();
+
 
     /**
      * Client-side effect store. Needed for proper rendering of status effects.
@@ -67,7 +66,14 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
      * Server-side stores them in StatusEffectHandler.
      */
     @SideOnly(Side.CLIENT)
-    public Map<Integer, PlayerEffect> currentEffects;
+    public Map<Integer, PlayerEffect> currentEffects = new HashMap<>();
+    /**
+     * Client-side bonus store. Needed for proper Battle Power calculations on the client.
+     *
+     * Server-side stores them in BonusController
+     */
+    @SideOnly(Side.CLIENT)
+    public Map<String, PlayerBonus> currentBonuses = new HashMap<>();
 
     // NON VANILLA DBC
     public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f, sprintSpeed = 1.0f;
@@ -247,26 +253,36 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             c.setBoolean("DBCIsFnPressed", isFnPressed);
         isFnPressed = c.getBoolean("DBCIsFnPressed");
 
-        // Made StatusEffects only load here if you're on the client for proper display.
+        // Made StatusEffects/PlayerBonuses only load here if you're on the client for proper display.
         if(FMLCommonHandler.instance().getEffectiveSide().isClient()){
-            if(this.currentEffects == null)
-                currentEffects = new HashMap<>();
-            else
-                currentEffects.clear();
+            loadClientSideData(c);
+        }
 
-            if (c.hasKey("addonActiveEffects", 9)) {
-                NBTTagList nbttaglist = c.getTagList("addonActiveEffects", 10);
-                for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-                    NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-                    PlayerEffect playerEffect = PlayerEffect.readEffectData(nbttagcompound1);
-                    if (playerEffect != null) {
-                        this.currentEffects.put(playerEffect.id, playerEffect);
-                    }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void loadClientSideData(NBTTagCompound c) {
+        if(this.currentEffects == null)
+            currentEffects = new HashMap<>();
+        else
+            currentEffects.clear();
+
+        if (c.hasKey("addonActiveEffects", 9)) {
+            NBTTagList nbttaglist = c.getTagList("addonActiveEffects", 10);
+            for (int i = 0; i < nbttaglist.tagCount(); ++i) {
+                NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+                PlayerEffect playerEffect = PlayerEffect.readEffectData(nbttagcompound1);
+                if (playerEffect != null) {
+                    this.currentEffects.put(playerEffect.id, playerEffect);
                 }
             }
         }
 
-        this.currentBonuses.clear();
+        if(this.currentBonuses == null)
+            this.currentBonuses = new HashMap<>();
+        else
+            this.currentBonuses.clear();
+
         if (c.hasKey("addonBonus", 9)) {
             NBTTagList nbttaglist = c.getTagList("addonBonus", 10);
             for (int i = 0; i < nbttaglist.tagCount(); ++i) {
@@ -284,7 +300,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         addonFormID = formData.currentForm;
         addonFormLevel = formData.getCurrentLevel();
         auraID = formData.currentAura;
-        bonus.setCurrentBonuses(BonusController.Instance.playerBonus.get(Utility.getUUID(player)));
         nbt.setInteger("addonFormID", addonFormID);
         nbt.setFloat("addonFormLevel", addonFormLevel);
         nbt.setInteger("auraID", auraID);
@@ -307,7 +322,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         dbc.setInteger("addonFormID", formData.currentForm);
         dbc.setInteger("auraID", formData.currentAura);
         dbc.setFloat("addonFormLevel", formData.getCurrentLevel());
-        bonus.saveBonusNBT(dbc);
         loadFromNBT(dbc);
         if (syncALL)
             syncTracking();
