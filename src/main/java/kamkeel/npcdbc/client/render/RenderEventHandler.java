@@ -5,14 +5,19 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.model.ModelPotara;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.entity.EntityAura;
+import kamkeel.npcdbc.items.ItemPotara;
+import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.mixins.early.IEntityMC;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -21,10 +26,13 @@ import kamkeel.npcdbc.mixins.late.IRenderEntityAura2;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 
@@ -36,6 +44,45 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
     public static final int TAIL_STENCIL_ID = 2;
+
+
+    @SubscribeEvent
+    public void renderPotaraWhenFused(RenderPlayerEvent.SetArmorModel event){
+        if(event.slot != 3 || event.stack != null)
+            return;
+
+
+        DBCData dbcData = DBCData.get(event.entityPlayer);
+
+        if(!dbcData.stats.isFused()) {
+            return;
+        }
+
+        PlayerEffect potaraFusion = dbcData.stats.getPlayerEffects().get(Effects.POTARA);
+        if(potaraFusion == null) {
+            return;
+        }
+
+        event.result = 1;
+
+        int slot = event.slot+3;
+        float partialTick = event.partialRenderTick;
+        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(((ItemPotara) ModItems.Potaras).getArmorTextureByMeta(potaraFusion.level)));
+        ModelBiped modelbiped = event.renderer.modelArmorChestplate;
+        modelbiped.bipedHead.showModel = false;
+        modelbiped.bipedHeadwear.showModel = false;
+        modelbiped.bipedBody.showModel = false;
+        modelbiped.bipedRightArm.showModel = false;
+        modelbiped.bipedLeftArm.showModel = false;
+        modelbiped.bipedRightLeg.showModel = false;
+        modelbiped.bipedLeftLeg.showModel = false;
+        modelbiped = ModelPotara.BOTH_EARS;
+        event.renderer.setRenderPassModel(modelbiped);
+        modelbiped.onGround = event.renderer.mainModel.onGround;
+        modelbiped.isRiding = event.renderer.mainModel.isRiding;
+        modelbiped.isChild = event.renderer.mainModel.isChild;
+
+    }
 
     @SubscribeEvent
     public void enableHandStencil(DBCPlayerEvent.RenderArmEvent.Pre e) {

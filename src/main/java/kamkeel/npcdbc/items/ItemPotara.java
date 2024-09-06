@@ -201,6 +201,10 @@ public class ItemPotara extends ItemArmor {
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type) {
         int meta = stack.getItemDamageForDisplay();
+        return getArmorTextureByMeta(meta);
+    }
+
+    public String getArmorTextureByMeta(int meta) {
         return "npcdbc:textures/armor/dbcvanity/potara_"+meta+".png";
     }
 
