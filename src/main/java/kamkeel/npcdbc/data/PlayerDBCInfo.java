@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -383,9 +384,8 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
-        DBCData data = DBCData.get(parent.player);
-        data.stats.saveEffectsNBT(dbcCompound);
-        data.bonus.saveBonusNBT(dbcCompound);
+        saveEffects(dbcCompound);
+        saveBonuses(dbcCompound);
 
 
         compound.setTag("DBCInfo", dbcCompound);
@@ -446,5 +446,33 @@ public class PlayerDBCInfo {
         }
         StatusEffectController.Instance.playerEffects.put(Utility.getUUID(parent.player), currentEffects);
 
+    }
+
+    private void saveBonuses(NBTTagCompound dbcCompound) {
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT || parent.player == null)
+            return;
+
+        NBTTagList nbttaglist = new NBTTagList();
+
+        for (PlayerBonus bonus : BonusController.getInstance().getPlayerBonus(parent.player).values()) {
+            nbttaglist.appendTag(bonus.writeBonusData(new NBTTagCompound()));
+        }
+        dbcCompound.setTag("addonBonus", nbttaglist);
+    }
+
+    private void saveEffects(NBTTagCompound dbcCompound) {
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT || parent.player == null)
+            return;
+
+        Map<Integer, PlayerEffect> effects = StatusEffectController.Instance.getPlayerEffects(parent.player);
+        if(effects == null)
+            return;
+        NBTTagList nbttaglist = new NBTTagList();
+
+        for (PlayerEffect playerEffect : effects.values()) {
+            nbttaglist.appendTag(playerEffect.writeEffectData(new NBTTagCompound()));
+        }
+
+        dbcCompound.setTag("addonActiveEffects", nbttaglist);
     }
 }
