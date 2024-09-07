@@ -72,6 +72,14 @@ public abstract class MixinJRMCoreH {
     @Unique
     private static int currentResult;
 
+    @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At("HEAD"))
+    private static void meditationEffectFix(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 3, argsOnly = true) LocalIntRef attr) {
+        if(attributeID == 5 && player instanceof EntityPlayer){
+            attr.set((int) (attribute + DBCData.get((EntityPlayer) player).bonus.getFlatBonus()[4]));
+        }
+
+    }
+
 
     @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
     private static void fix10xKiCost(String[] listOfAttacks, int playerStat, byte[] kiAttackStats, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 0) LocalIntRef stat) {
