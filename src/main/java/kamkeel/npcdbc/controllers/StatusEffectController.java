@@ -116,6 +116,9 @@ public class StatusEffectController implements IStatusEffectHandler {
     }
 
     public Map<Integer, PlayerEffect> getPlayerEffects(EntityPlayer player) {
+        UUID playerId = Utility.getUUID(player);
+        if(!playerEffects.containsKey(playerId))
+            playerEffects.put(playerId, new ConcurrentHashMap<>());
         return playerEffects.get(Utility.getUUID(player));
     }
 

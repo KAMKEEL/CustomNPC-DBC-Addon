@@ -13,6 +13,7 @@ import noppes.npcs.api.entity.IPlayer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BonusController implements IBonusHandler {
 
@@ -45,6 +46,9 @@ public class BonusController implements IBonusHandler {
     }
 
     public Map<String, PlayerBonus> getPlayerBonus(EntityPlayer player) {
+        UUID playerId = Utility.getUUID(player);
+        if(!playerBonus.containsKey(playerId))
+            playerBonus.put(playerId, new ConcurrentHashMap<>());
         return playerBonus.get(Utility.getUUID(player));
     }
 
