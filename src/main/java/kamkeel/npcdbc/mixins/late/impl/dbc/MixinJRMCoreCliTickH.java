@@ -24,14 +24,14 @@ public class MixinJRMCoreCliTickH {
     public static EntityLivingBase lockOn;
 
     @Inject(method = "onTickInGame", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data1:[Ljava/lang/String;", ordinal = 0, shift = At.Shift.BEFORE))
-    public void setCurrentTickPlayerClientMain(CallbackInfo ci, @Local(name = "plyr") LocalRef<EntityPlayer> plyr) {
-        CommonProxy.CurrentJRMCTickPlayer = plyr.get();
+    public void setCurrentTickPlayerClientMain(CallbackInfo ci, @Local(name = "plyr") EntityPlayer plyr) {
+        CommonProxy.CurrentJRMCTickPlayer = plyr;
 
     }
 
     @Inject(method = "onTickInGame", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;data(Ljava/lang/String;ILjava/lang/String;)Ljava/lang/String;", ordinal = 0, shift = At.Shift.BEFORE))
-    public void setCurrentTickPlayerClientOthers(CallbackInfo ci, @Local(name = "plyr1") LocalRef<EntityPlayer> plyr1) {
-        CommonProxy.CurrentJRMCTickPlayer = plyr1.get();
+    public void setCurrentTickPlayerClientOthers(CallbackInfo ci, @Local(name = "plyr1") EntityPlayer plyr1) {
+        CommonProxy.CurrentJRMCTickPlayer = plyr1;
 
     }
 
