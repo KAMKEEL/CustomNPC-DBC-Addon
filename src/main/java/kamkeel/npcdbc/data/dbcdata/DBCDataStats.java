@@ -396,7 +396,7 @@ public class DBCDataStats {
 
     public void setDBCMastery(int formID, double level) {
         String formName = DBCForm.getJRMCName(formID, data.Race);
-        if(formName == null) {
+        if (formName == null) {
             return;
         }
         boolean isRacial = formID <= DBCForm.BlueEvo;
@@ -404,12 +404,11 @@ public class DBCDataStats {
         String masteryData = isRacial ? data.FormMasteryRacial : data.FormMasteryNR;
 
 
-        if(level > maxMasteryLevel)
-            level = maxMasteryLevel;
+        level = ValueUtil.clamp(level, 0.0, maxMasteryLevel);
 
-        if(masteryData.contains(formName))
-            masteryData = masteryData.replace("("+formName+",)[^;]*", "$1"+ level);
-        else {
+        if (masteryData.contains(formName)) {
+            masteryData = masteryData.replaceAll("(" + formName + ",)[^;]*", "$1" + level);
+        }else {
             String formData = formName + "," + level;
             masteryData += (masteryData.endsWith(";") ? formData : ";" + formData);
         }
