@@ -1,16 +1,14 @@
 package kamkeel.npcdbc.data.form;
 
 import kamkeel.npcdbc.api.form.IFormMastery;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.scripted.ScriptDBCAddon;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.util.ValueUtil;
 
 public class FormMastery implements IFormMastery {
 
     private final Form parent;
+
+    public FormMasteryLinkData masteryLink = new FormMasteryLinkData(this);
 
     public float maxLevel = 100;
     public float instantTransformationUnlockLevel = -1;
@@ -730,6 +728,8 @@ public class FormMastery implements IFormMastery {
         fireKiMindBonusFlat = fireKi.getFloat("flat");
         fireKiMindBonusPerMind = fireKi.getFloat("perMind");
         fireKiMindBonusMax = fireKi.getFloat("max");
+
+        masteryLink.loadFromNBT(formMastery);
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -861,6 +861,8 @@ public class FormMastery implements IFormMastery {
         formMastery.setTag("fireKi", fireKi);
 
         compound.setTag("formMastery", formMastery);
+
+        masteryLink.saveToNBT(formMastery);
         return compound;
     }
 
@@ -959,7 +961,4 @@ public class FormMastery implements IFormMastery {
         return this.powerPointEnabled;
     }
 
-    public void handleLinkedMasteryAdding(DBCData data) {
-
-    }
 }
