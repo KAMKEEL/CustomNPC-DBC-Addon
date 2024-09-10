@@ -3,6 +3,7 @@ package kamkeel.npcdbc.constants;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.util.DBCUtils;
+import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -247,4 +248,52 @@ public class DBCForm {
         return forms;
     }
 
+
+    public static String getJRMCName(int formID, int race) {
+        if(JRMCoreH.trans.length > race && formID < JRMCoreH.trans[race].length)
+            return JRMCoreH.TransNms[race][formID];
+
+        switch(formID){
+            case Kaioken:
+            case Kaioken2:
+            case Kaioken3:
+            case Kaioken4:
+            case Kaioken5:
+            case Kaioken6:
+                return JRMCoreH.transNonRacial[0];
+            case Mystic:
+                return JRMCoreH.transNonRacial[1];
+            case UltraInstinct:
+            case MasteredUltraInstinct:
+                return JRMCoreH.transNonRacial[2];
+            case GodOfDestruction:
+                return JRMCoreH.transNonRacial[3];
+            default:
+                return null;
+        }
+    }
+
+    public static int getJRMCFormID(int formID, int race){
+
+        boolean isMysticOn = formID == Mystic;
+        boolean isGoDOn = formID == GodOfDestruction;
+        boolean isKaiokenOn = formID >= Kaioken && formID <= Kaioken6;
+        boolean isUltraInstinctOn = formID == MasteredUltraInstinct || formID == UltraInstinct;
+        int currentFormID;
+
+        if (isMysticOn) {
+            currentFormID = JRMCoreH.trans[race].length + 1;
+        } else if (isGoDOn) {
+            currentFormID = JRMCoreH.trans[race].length + 3;
+        } else if (isKaiokenOn) {
+            currentFormID = JRMCoreH.trans[race].length;
+        } else if (isUltraInstinctOn) {
+            currentFormID = JRMCoreH.trans[race].length + 2;
+        } else {
+            formID = ValueUtil.clamp(formID, 0, JRMCoreH.trans[race].length-1);
+            currentFormID = formID;
+        }
+
+        return currentFormID;
+    }
 }

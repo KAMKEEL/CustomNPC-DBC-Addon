@@ -190,6 +190,7 @@ public class PlayerDBCInfo {
 
         playerLevel = ValueUtil.clamp(playerLevel + fullGain, 0, fm.maxLevel); //updated level
         formLevels.replace(f.id, playerLevel);
+        fm.handleLinkedMasteryAdding(data);
         updateClient();
     }
 

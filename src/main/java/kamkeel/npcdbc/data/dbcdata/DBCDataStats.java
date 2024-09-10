@@ -13,8 +13,7 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
-import kamkeel.npcdbc.data.statuseffect.StatusEffect;
-import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -22,7 +21,8 @@ import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static JinRyuu.JRMCore.JRMCoreH.getMajinAbsorptionValueS;
 import static JinRyuu.JRMCore.JRMCoreH.nbt;
@@ -375,4 +375,54 @@ public class DBCDataStats {
         return (byte) JRMCoreH.SklLvl(5, data.Skills.split(","));
     }
 
+
+    public double getDBCMastery(int formID) {
+        String formName = DBCForm.getJRMCName(formID, data.Race);
+        if(formName == null) {
+            return 0f;
+        }
+        boolean isRacial = formID <= DBCForm.BlueEvo;
+        String masteryData = isRacial ? data.FormMasteryRacial : data.FormMasteryNR;
+
+
+        Pattern pattern = Pattern.compile(formName+",([^;]*)");
+        Matcher matcher = pattern.matcher(masteryData);
+
+        if(matcher.find())
+            return Double.parseDouble(matcher.group(1));
+
+        return 0f;
+    }
+
+    public void setDBCMastery(int formID, double level) {
+        String formName = DBCForm.getJRMCName(formID, data.Race);
+        if(formName == null) {
+            return;
+        }
+        boolean isRacial = formID <= DBCForm.BlueEvo;
+        double maxMasteryLevel = DBCUtils.getMaxFormMasteryLvl(DBCForm.getJRMCFormID(formID, data.Race), data.Race);
+        String masteryData = isRacial ? data.FormMasteryRacial : data.FormMasteryNR;
+
+
+        if(level > maxMasteryLevel)
+            level = maxMasteryLevel;
+
+        masteryData = masteryData.replace("("+formName+",)[^;]*", "$1"+ level);
+
+        updateMastery(masteryData, isRacial);
+    }
+
+    public void addDBCMastery(int formID, float level) {
+        this.setDBCMastery(formID, getDBCMastery(formID)+level);
+    }
+
+    private void updateMastery(String newMastery, boolean isRacial) {
+        if(isRacial){
+            data.FormMasteryRacial = newMastery;
+            data.getRawCompound().setString("jrmcFormMasteryRacial_" + JRMCoreH.Races[data.Race], newMastery);
+        } else {
+            data.FormMasteryNR = newMastery;
+            data.getRawCompound().setString("jrmcFormMasteryNonRacial", newMastery);
+        }
+    }
 }

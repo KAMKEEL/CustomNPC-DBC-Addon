@@ -1,7 +1,11 @@
 package kamkeel.npcdbc.data.form;
 
 import kamkeel.npcdbc.api.form.IFormMastery;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.scripted.ScriptDBCAddon;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.util.ValueUtil;
 
 public class FormMastery implements IFormMastery {
@@ -953,5 +957,9 @@ public class FormMastery implements IFormMastery {
     @Override
     public boolean isPowerPointBoostEnabled() {
         return this.powerPointEnabled;
+    }
+
+    public void handleLinkedMasteryAdding(DBCData data) {
+
     }
 }
