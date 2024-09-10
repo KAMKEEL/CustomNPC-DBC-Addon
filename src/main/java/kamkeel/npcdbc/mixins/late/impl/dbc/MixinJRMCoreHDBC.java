@@ -39,6 +39,11 @@ public class MixinJRMCoreHDBC {
         }
     }
 
+    @Inject(method = "DBCsizeBasedOnRace(IIZ)F", at = @At(value = "HEAD"), cancellable = true)
+    private static void setCustomFormWidth(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir){
+        // TODO: Add form width code
+    }
+
     @Inject(method = "DBCsizeBasedOnRace2(IIZ)F", at = @At(value = "TAIL"), cancellable = true)
     private static void setCustomFormSize(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir, @Local(name = "f3") LocalFloatRef size) {
         if (CommonProxy.CurrentJRMCTickPlayer != null) {

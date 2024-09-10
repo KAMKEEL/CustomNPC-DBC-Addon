@@ -10,7 +10,9 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.NBTTags;
@@ -219,9 +221,24 @@ public class PlayerDBCInfo {
     }
 
     public float getFormLevel(int formID) {
-        if (formID != -1 && formLevels.containsKey(formID))
-            return formLevels.get(formID);
-        return 0f;
+        if(formID == -1)
+            return 0f;
+
+        DBCData dbcData = DBCData.get(parent.player);
+
+        float mastery = formLevels.getOrDefault(formID, 0f);
+        if(dbcData.stats.isFused()) {
+            EntityPlayer fusedPlayer = dbcData.stats.getSpectatorEntity();
+            if (fusedPlayer != null) {
+                float otherPlayerMastery = PlayerDataUtil.getDBCInfo(fusedPlayer).formLevels.getOrDefault(formID, 0f);
+                Form form = (Form) FormController.getInstance().get(formID);
+
+                float maxFormMastery = form != null ? form.mastery.maxLevel : 0;
+                mastery = ValueUtil.clamp(mastery + otherPlayerMastery, 0, maxFormMastery);
+            }
+        }
+
+        return mastery;
     }
 
     public float getCurrentLevel() {
