@@ -407,7 +407,12 @@ public class DBCDataStats {
         if(level > maxMasteryLevel)
             level = maxMasteryLevel;
 
-        masteryData = masteryData.replace("("+formName+",)[^;]*", "$1"+ level);
+        if(masteryData.contains(formName))
+            masteryData = masteryData.replace("("+formName+",)[^;]*", "$1"+ level);
+        else {
+            String formData = formName + "," + level;
+            masteryData += (masteryData.endsWith(";") ? formData : ";" + formData);
+        }
 
         updateMastery(masteryData, isRacial);
     }
