@@ -400,7 +400,9 @@ public class DBCDataStats {
             return;
         }
         boolean isRacial = formID <= DBCForm.BlueEvo;
-        double maxMasteryLevel = DBCUtils.getMaxFormMasteryLvl(DBCForm.getJRMCFormID(formID, data.Race), data.Race);
+        double maxMasteryLevel = DBCForm.getJRMCMaxFormLevel(formID, data.Race);
+        if(maxMasteryLevel == -1)
+            return;
         String masteryData = isRacial ? data.FormMasteryRacial : data.FormMasteryNR;
 
 

@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data;
 
+import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
@@ -10,12 +11,15 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
+import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ChatComponentText;
 import noppes.npcs.NBTTags;
+import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.util.ValueUtil;
 
@@ -190,7 +194,6 @@ public class PlayerDBCInfo {
 
         playerLevel = ValueUtil.clamp(playerLevel + fullGain, 0, fm.maxLevel); //updated level
         formLevels.replace(f.id, playerLevel);
-        fm.handleLinkedMasteryAdding(data);
         updateClient();
     }
 
@@ -225,11 +228,14 @@ public class PlayerDBCInfo {
         if(formID == -1)
             return 0f;
 
-        DBCData dbcData = DBCData.get(parent.player);
 
         float mastery = formLevels.getOrDefault(formID, 0f);
-        if(dbcData.stats.isFused()) {
-            EntityPlayer fusedPlayer = dbcData.stats.getSpectatorEntity();
+        if(parent.player == null)
+            return mastery;
+
+        NBTTagCompound compound = parent.player.getEntityData().getCompoundTag("PlayerPersisted");
+        if(isFused(compound)) {
+            EntityPlayer fusedPlayer = getSpectatorEntity(compound);
             if (fusedPlayer != null) {
                 float otherPlayerMastery = PlayerDataUtil.getDBCInfo(fusedPlayer).formLevels.getOrDefault(formID, 0f);
                 Form form = (Form) FormController.getInstance().get(formID);
@@ -382,6 +388,7 @@ public class PlayerDBCInfo {
     }
 
     public void updateClient() {
+        this.handleLinkedFormMastery();
         ((IPlayerDBCInfo) parent).updateDBCInfo();
     }
 
@@ -490,5 +497,66 @@ public class PlayerDBCInfo {
         }
 
         dbcCompound.setTag("addonActiveEffects", nbttaglist);
+    }
+
+    private void handleLinkedFormMastery() {
+        Form form = getCurrentForm();
+        if(form == null)
+            return;
+
+    }
+
+    private boolean isFused(NBTTagCompound compound) {
+        String statusEffects = compound.getString("jrmcStatusEff");
+        String fusionString = compound.getString("jrmcFuzion");
+        if(JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects))
+            return true;
+        if (fusionString.contains(",")) {
+            String[] fusionMembers = fusionString.split(",");
+            return fusionMembers.length == 3;
+        }
+        return false;
+    }
+
+    private String getSpectatorName(NBTTagCompound compound) {
+        String fusionString = compound.getString("jrmcFuzion");
+        if (fusionString.contains(",")) {
+            String[] fusionMembers = fusionString.split(",");
+            if (fusionMembers.length == 3)
+                return fusionMembers[1];
+
+        }
+        return "";
+    }
+
+    private boolean isFusionSpectator(NBTTagCompound compound) {
+        String statusEffects = compound.getString("jrmcStatusEff");
+        if(JRMCoreH.StusEfcts(11, statusEffects)) {
+            return true;
+        }
+        String fusionString = compound.getString("jrmcFuzion");
+        if (fusionString.contains(",")) {
+            String[] fusionMembers = fusionString.split(",");
+            if (fusionMembers.length == 3)
+                return fusionMembers[1].equalsIgnoreCase(parent.player.getCommandSenderName());
+
+        }
+        return false;
+    }
+
+    private EntityPlayer getSpectatorEntity(NBTTagCompound compound) {
+        if(isFused(compound) && !isFusionSpectator(compound)){
+            String spectator = getSpectatorName(compound);
+            if(!spectator.isEmpty()){
+                EntityPlayer specEntity = null;
+                if(parent.player.worldObj.isRemote){
+                    specEntity = parent.player.worldObj.getPlayerEntityByName(spectator);
+                } else {
+                    specEntity = NoppesUtilServer.getPlayerByName(spectator);
+                }
+                return specEntity;
+            }
+        }
+        return null;
     }
 }

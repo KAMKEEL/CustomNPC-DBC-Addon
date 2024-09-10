@@ -290,10 +290,18 @@ public class DBCForm {
         } else if (isUltraInstinctOn) {
             currentFormID = JRMCoreH.trans[race].length + 2;
         } else {
-            formID = ValueUtil.clamp(formID, 0, JRMCoreH.trans[race].length-1);
+            if(formID < 0 || formID > JRMCoreH.trans[race].length-1)
+                formID = -1;
             currentFormID = formID;
         }
 
         return currentFormID;
+    }
+
+    public static double getJRMCMaxFormLevel(int formID, int race) {
+        int properFormID = DBCForm.getJRMCFormID(formID, race);
+        if(properFormID < 0)
+            return -1;
+        return DBCUtils.getMaxFormMasteryLvl(properFormID, race);
     }
 }
