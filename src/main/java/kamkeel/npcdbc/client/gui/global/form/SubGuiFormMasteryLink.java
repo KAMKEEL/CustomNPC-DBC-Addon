@@ -138,7 +138,6 @@ public class SubGuiFormMasteryLink extends SubGuiInterface implements ICustomScr
 
         if(guibutton.id == 3) {
             formMastery.masteryLink.removeLinkData(selectedRace);
-            this.selectedRace = -1;
             formSearch = "";
             selectedFormString = null;
             this.scrollForms.setSelected(null);
