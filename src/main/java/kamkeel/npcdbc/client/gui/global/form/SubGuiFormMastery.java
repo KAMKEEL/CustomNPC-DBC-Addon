@@ -92,7 +92,10 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
         scrollWindow.getTextField(2).setMinMaxDefaultFloat(-10000, 10000, 1);
         scrollWindow.getLabel(2).color = 0xffffff;
 
-        y += 23;
+        scrollWindow.addButton(new GuiNpcButton(3, 200, y, 120, 20, "mastery.linkedMastery"));
+
+        y += (int) (23 * 1.5f);
+        maxScroll += (int) (23 * 0.5f);
         scrollWindow.addLabel(new GuiNpcLabel(100, "mastery.healthReqSettings", 4, y + 5));
         scrollWindow.getLabel(100).color = 0xffffff;
         scrollWindow.addButton(new GuiNpcButton(100, 200, y, 120, 20, new String[]{"display.hide", "display.show"}, showHealthRequirement ? 1 : 0));
@@ -738,6 +741,10 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
         GuiNpcButton button = (GuiNpcButton) guibutton;
         float prevY = getScrollableGui(0).scrollY;
 
+        if (button.id == 3) {
+            setSubGui(new SubGuiFormMasteryLink(this));
+        }
+
         if (button.id == 19) {
             showLevelGain = !showLevelGain;
         }
@@ -962,7 +969,8 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
 
     public void drawScreen(int i, int j, float f) {
         super.drawScreen(i, j, f);
-        menu.drawElements(fontRendererObj, i, j, mc, f);
+        if(!hasSubGui())
+            menu.drawElements(fontRendererObj, i, j, mc, f);
     }
 
     @Override

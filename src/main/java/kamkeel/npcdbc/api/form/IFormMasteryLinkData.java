@@ -19,4 +19,6 @@ public interface IFormMasteryLinkData {
     void setMasteryLink(int formID, int race, boolean isCustomFormLink);
 
     void removeLinkData(int race);
+
+    void removeAllLinkData();
 }

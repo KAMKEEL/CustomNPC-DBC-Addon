@@ -108,6 +108,11 @@ public class FormMasteryLinkData implements IFormMasteryLinkData {
         masteryLinks.remove(race);
     }
 
+    @Override
+    public void removeAllLinkData() {
+        masteryLinks.clear();
+    }
+
 
     public static class LinkData {
         public int formID;
