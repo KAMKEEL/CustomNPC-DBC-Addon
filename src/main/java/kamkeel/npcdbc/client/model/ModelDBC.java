@@ -529,16 +529,21 @@ public class ModelDBC extends ModelBase {
         }
 
 //        ((ModelScaleRenderer)this.bipedLeftArm).setConfig(arms, -x, y, z);
+        byte hideArms = entity.modelData.hideArms;
 
         KiWeaponData leftArm = display.kiWeaponLeft;
-        if (!parent.bipedLeftArm.isHidden && leftArm.isEnabled()) {
+        boolean isLeftHidden = hideArms == 3 || hideArms == 1;
+        if (!isLeftHidden && leftArm.isEnabled()) {
             GL11.glPushMatrix();
             GL11.glTranslatef(-x + (0.5f * 0.25f * (alexArms ? 0.75f : 1)), y, z);
             if (arms != null) {
                 GL11.glTranslatef(0.0F, 0.0F, 0.0F);
             }
 
+            boolean test = parent.bipedLeftArm.isHidden;
+            parent.bipedLeftArm.isHidden = false;
             parent.bipedLeftArm.postRender(partialTicks);
+            parent.bipedLeftArm.isHidden = test;
             if (arms != null) {
                 GL11.glScalef(arms.scaleX, arms.scaleY, arms.scaleZ);
             }
@@ -547,14 +552,18 @@ public class ModelDBC extends ModelBase {
         }
 
         KiWeaponData rightArm = display.kiWeaponRight;
-        if (!parent.bipedRightArm.isHidden && rightArm.isEnabled()) {
+        boolean isRightHidden = hideArms == 2 || hideArms == 1;
+        if (!isRightHidden && rightArm.isEnabled()) {
             GL11.glPushMatrix();
             GL11.glTranslatef(x, y, z);
             if (arms != null) {
                 GL11.glTranslatef(0.0F, 0.0F, 0.0F);
             }
 
+            boolean test = parent.bipedRightArm.isHidden;
+            parent.bipedRightArm.isHidden = false;
             parent.bipedRightArm.postRender(partialTicks);
+            parent.bipedRightArm.isHidden = test;
             if (arms != null) {
                 GL11.glScalef(arms.scaleX, arms.scaleY, arms.scaleZ);
             }

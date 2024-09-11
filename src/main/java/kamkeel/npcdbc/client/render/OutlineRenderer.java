@@ -199,22 +199,27 @@ public class OutlineRenderer {
 
         //Left
         byte hideArms = npc.modelData.hideArms;
-        glPushMatrix();
-        glTranslatef(-.0375f, -0.0275f, 0);
-        glScaled(1.05, 1.03, 1.05);
-        npc.modelData.hideArms = 2;
-        model.renderArms(npc, 0.0625f, false);
-        glPopMatrix();
-        npc.modelData.hideArms = hideArms;
+
+        if (hideArms != 1 && hideArms != 3) {
+            glPushMatrix();
+            glTranslatef(-.0375f, -0.0275f, 0);
+            glScaled(1.05, 1.03, 1.05);
+            npc.modelData.hideArms = 2;
+            model.renderArms(npc, 0.0625f, false);
+            glPopMatrix();
+            npc.modelData.hideArms = hideArms;
+        }
 
         //Right
-        glPushMatrix();
-        glTranslatef(.0375f, -0.025f, 0);
-        glScaled(1.05, 1.02, 1.02);
-        npc.modelData.hideArms = 3;
-        model.renderArms(npc, 0.0625f, false);
-        glPopMatrix();
-        npc.modelData.hideArms = hideArms;
+        if (hideArms != 1 && hideArms != 2) {
+            glPushMatrix();
+            glTranslatef(.0375f, -0.025f, 0);
+            glScaled(1.05, 1.02, 1.02);
+            npc.modelData.hideArms = 3;
+            model.renderArms(npc, 0.0625f, false);
+            glPopMatrix();
+            npc.modelData.hideArms = hideArms;
+        }
 
         boolean hideHeadWear = model.bipedHeadwear.isHidden;
         model.bipedHeadwear.isHidden = true;
