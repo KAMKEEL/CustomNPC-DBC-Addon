@@ -4,11 +4,13 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
+import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormMastery;
+import kamkeel.npcdbc.data.form.FormMasteryLinkData;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.util.DBCUtils;
@@ -208,11 +210,16 @@ public class PlayerDBCInfo {
     }
 
     public void setFormLevel(int formID, float amount) {
+        this.setFormLevel(formID, amount, true);
+    }
+
+    public void setFormLevel(int formID, float amount, boolean updateClient) {
         Form form = FormController.getInstance().customForms.get(formID);
         if (form != null) {
             float updated = ValueUtil.clamp(amount, 0, ((FormMastery) form.getMastery()).maxLevel);
             formLevels.put(formID, updated);
-            updateClient();
+            if(updateClient)
+                updateClient();
         }
     }
 
@@ -504,7 +511,46 @@ public class PlayerDBCInfo {
         if(form == null)
             return;
 
+        DBCData data = DBCData.get(parent.player);
+
+        if(!form.mastery.masteryLink.hasLinkData(data.getRace()))
+            return;
+
+        FormMasteryLinkData.LinkData linkData = form.mastery.masteryLink.masteryLinks.get((int) data.Race);
+        if(linkData.isCustomLink) {
+            handleCustomLinking(data, form, linkData.formID);
+        } else {
+            handleDBCLinking(data, form, linkData.formID);
+        }
     }
+
+    private void handleCustomLinking(DBCData data, Form form, int formID) {
+        Form otherForm = (Form) FormController.getInstance().get(formID);
+        if(otherForm == null)
+            return;
+
+        float currentFormMastery = formLevels.getOrDefault(form.id, 0.0f);
+        float otherFormMastery = formLevels.getOrDefault(otherForm.id, 0.0f);
+
+        float highest = Math.max(currentFormMastery, otherFormMastery);
+        setFormLevel(form.id, highest, false);
+        setFormLevel(otherForm.id, highest, false);
+    }
+
+    private void handleDBCLinking(DBCData data, Form form, int dbcForm) {
+        int jrmcFormID = DBCForm.getJRMCFormID(dbcForm, data.Race);
+
+        if (jrmcFormID == -1)
+            return;
+
+        double currentDBCFormLevel = data.stats.getDBCMastery(jrmcFormID);
+        float currentCustomMastery = formLevels.getOrDefault(form.id, 0.0f);
+
+        double highest = Math.max(currentCustomMastery, currentDBCFormLevel);
+        data.stats.setDBCMastery(jrmcFormID, highest);
+        setFormLevel(form.id, (float) highest, false);
+    }
+
 
     private boolean isFused(NBTTagCompound compound) {
         String statusEffects = compound.getString("jrmcStatusEff");
