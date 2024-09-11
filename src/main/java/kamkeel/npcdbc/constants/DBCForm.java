@@ -251,7 +251,7 @@ public class DBCForm {
 
     public static String getJRMCName(int formID, int race) {
         if(JRMCoreH.trans.length > race && formID < JRMCoreH.trans[race].length)
-            return JRMCoreH.TransNms[race][formID];
+            return JRMCoreH.trans[race][formID];
 
         switch(formID){
             case Kaioken:
