@@ -582,7 +582,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public boolean isTransforming() {
-        if (TransformController.ascending)
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient() && player == Minecraft.getMinecraft().thePlayer && TransformController.ascending)
             return true;
 
         return containsSE(1);

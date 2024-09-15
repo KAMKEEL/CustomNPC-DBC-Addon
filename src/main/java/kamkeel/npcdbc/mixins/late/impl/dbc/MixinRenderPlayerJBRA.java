@@ -178,7 +178,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         DBCData data = DBCData.get(par1AbstractClientPlayer);
         data.skinType = (byte) skintype.get();
         //this prevents ssj2 hair animating immediately into ssj1 when going into ssj1 type forms from base
-        if (TransformController.rage > 0) {
+        if (TransformController.rage > 0 && data.player == mc.thePlayer) {
             if (TransformController.transformedInto != null) { //if just transformed into ssj type, don't display ssj2 hair
                 if (TransformController.transformedInto.display.hairType.equals("ssj"))
                     rg.set(0);
