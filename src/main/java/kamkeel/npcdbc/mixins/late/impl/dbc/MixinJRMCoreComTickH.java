@@ -11,7 +11,6 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.PlayerDataUtil;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -59,6 +58,27 @@ public abstract class MixinJRMCoreComTickH {
     @Inject(method = "serverTick", at=@At("RETURN"))
     public void setCurrentTickPlayerServerPOST(MinecraftServer server, CallbackInfo ci){
         CommonProxy.CurrentJRMCTickPlayer = null;
+    }
+
+    @Redirect(method = "updatePlayersData", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;rSai(I)Z"))
+    public boolean fixOozaruCustomFormSize(int r){
+        boolean isSaiyan = JRMCoreH.rSai(r);
+
+        // if isn't saiyan, skip useless routine
+        if(!isSaiyan)
+            return false;
+
+        // isSaiyan is now confirmed to be true
+        // If there isn't a JRMCTickPlayer stored, just return isSaiyan (true)
+        if (CommonProxy.CurrentJRMCTickPlayer == null) {
+            return true;
+        }
+
+        Form form = DBCData.getForm(CommonProxy.CurrentJRMCTickPlayer);
+        if(form == null)
+            return true;
+
+        return form.stackable.vanillaStackable;
     }
 
 //    @Inject(method = "updatePlayersData", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE))

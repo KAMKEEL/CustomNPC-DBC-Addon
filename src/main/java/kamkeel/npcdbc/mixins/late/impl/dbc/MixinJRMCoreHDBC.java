@@ -51,13 +51,9 @@ public class MixinJRMCoreHDBC {
             Form form = DBCData.get(CommonProxy.CurrentJRMCTickPlayer).getForm();
 
             if(form != null) {
-                if (form.display.hasSize()) {
-                    if (form.display.keepOriginalSize && form.stackable.vanillaStackable) {
-                        cir.setReturnValue(sz *= form.display.formSize);
-                    } else {
-                        cir.setReturnValue(sz = form.display.formSize);
-                    }
-                } else if (form.display.keepOriginalSize && form.stackable.vanillaStackable) {
+                if (form.display.keepOriginalSize && form.stackable.vanillaStackable) {
+                    cir.setReturnValue(sz *= form.display.formSize);
+                } else {
                     cir.setReturnValue(sz = form.display.formSize);
                 }
             }
