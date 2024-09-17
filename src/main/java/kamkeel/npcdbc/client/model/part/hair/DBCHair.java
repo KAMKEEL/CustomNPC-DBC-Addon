@@ -589,7 +589,7 @@ public class DBCHair extends ModelHairRenderer {
         }
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
-        ColorMode.applyModelColor(hairColor, ModelDBC.isHurt);
+        ColorMode.applyModelColor(hairColor, this.base.alpha, ModelDBC.isHurt);
         String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
         boolean HD = ConfigDBCClient.EnableHDTextures;
         ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:gui/") + "normall.png"));
