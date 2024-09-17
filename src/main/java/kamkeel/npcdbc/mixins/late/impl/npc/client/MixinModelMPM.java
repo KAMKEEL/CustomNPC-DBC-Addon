@@ -157,7 +157,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         }
 
         EntityCustomNpc npc = (EntityCustomNpc) par1Entity;
-        if (npc.modelData.hideArms < 1 || npc.modelData.hideArms > 3) {
+        if (npc.modelData.hideArms < 0 || npc.modelData.hideArms > 3) {
             return;
         }
 
