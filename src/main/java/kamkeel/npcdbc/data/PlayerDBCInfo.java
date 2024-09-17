@@ -243,10 +243,8 @@ public class PlayerDBCInfo {
             EntityPlayer fusedPlayer = getSpectatorEntity(compound);
             if (fusedPlayer != null) {
                 float otherPlayerMastery = PlayerDataUtil.getDBCInfo(fusedPlayer).formLevels.getOrDefault(formID, 0f);
-                Form form = (Form) FormController.getInstance().get(formID);
 
-                float maxFormMastery = form != null ? form.mastery.maxLevel : 0;
-                mastery = ValueUtil.clamp(mastery + otherPlayerMastery, 0, maxFormMastery);
+                mastery = mastery + otherPlayerMastery;
             }
         }
 
