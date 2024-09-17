@@ -47,7 +47,8 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
             mixins.add("dbc.recolor.MixinJRMCoreGuiButtons");
             mixins.add("dbc.recolor.MixinJRMCoreGuiScreenColor");
             mixins.add("dbc.MixinJRMCoreGui");
-
+            mixins.add("dbc.MixinEntityAura2");
+            mixins.add("dbc.MixinEntityAuraRing");
         }
         mixins.add("npc.MixinDBCStats");
         mixins.add("npc.MixinPlayerData");
@@ -57,10 +58,8 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
         mixins.add("dbc.MixinJRMCExtendedPlayer");
 
         mixins.add("dbc.MixinDBCPacketHandler");
-        mixins.add("dbc.MixinEntityAura2");
         mixins.add("dbc.MixinEntityCusPar");
         mixins.add("dbc.MixinEntityEnergyAtt");
-        mixins.add("dbc.MixinEntityAuraRing");
         mixins.add("dbc.MixinJGPlayerMP");
         mixins.add("dbc.MixinJRMCoreComTickH");
         mixins.add("dbc.MixinJRMCoreEH");
