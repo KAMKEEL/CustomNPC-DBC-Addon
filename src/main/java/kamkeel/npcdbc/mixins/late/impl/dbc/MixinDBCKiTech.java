@@ -9,7 +9,6 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientCache;
-import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -28,6 +27,7 @@ import kamkeel.npcdbc.network.packets.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.TransformPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,6 +45,15 @@ import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 @Mixin(value = DBCKiTech.class, remap = false)
 public class MixinDBCKiTech {
 
+
+    @Redirect(method = "Ascend", at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/EntityClientPlayerMP;rotationPitch:F", remap = true, ordinal = 0))
+    private static float disableOozaruTransformInCustomForm(EntityClientPlayerMP instance){
+        Form form = DBCData.getForm(instance);
+        if(form == null)
+            return instance.rotationPitch;
+
+        return form.stackable.vanillaStackable ? instance.rotationPitch : 0;
+    }
 
     @Inject(method = "ChargeKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;time:I", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     private static void ChargeKi(CallbackInfo ci) {

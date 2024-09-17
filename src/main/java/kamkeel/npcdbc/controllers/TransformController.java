@@ -292,6 +292,12 @@ public class TransformController {
             Form parent = (Form) form.getParent();
             boolean intoParent = parent != null && formData.hasFormUnlocked(form.getParentID());
 
+            if (!intoParent && !form.stackable.vanillaStackable) {
+                if(JRMCoreH.rSai(dbcData.Race) && (dbcData.State == 7 || dbcData.State == 8)) {
+                    dbcData.State = 0;
+                }
+            }
+
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, intoParent ? form.getParentID() : -1)))
                 return;
