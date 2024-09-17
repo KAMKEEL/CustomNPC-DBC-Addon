@@ -182,4 +182,6 @@ public interface IFormMastery {
 
     void setDestroyerEnergyDamage(float energyDamage);
     float getDestroyerEnergyDamage();
+
+    IFormMasteryLinkData getMasteryLinks();
 }

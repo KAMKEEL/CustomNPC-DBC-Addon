@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.form;
 
 import kamkeel.npcdbc.api.form.IFormMastery;
+import kamkeel.npcdbc.api.form.IFormMasteryLinkData;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.util.ValueUtil;
 
@@ -961,4 +962,9 @@ public class FormMastery implements IFormMastery {
         return this.powerPointEnabled;
     }
 
+
+    @Override
+    public IFormMasteryLinkData getMasteryLinks() {
+        return masteryLink;
+    }
 }
