@@ -648,6 +648,10 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public Form getForm() {
         Form form = (Form) FormController.getInstance().get(addonFormID);
         if (form != null) {
+            Form fusionForm = (Form) FormController.getInstance().get(form.stackable.fusionID);
+            if(fusionForm != null && stats.isFused())
+                form = fusionForm;
+
             if (form.stackable.divineID != -1 && isForm(DBCForm.Divine)) {
                 Form divine = (Form) FormController.getInstance().get(form.stackable.divineID);
                 if (divine != null)

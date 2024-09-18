@@ -21,6 +21,7 @@ import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
@@ -556,9 +557,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
         if(dbcData.getAura() != null){
             AuraDisplay auraDisplay = dbcData.getAura().display;
-            boolean overrideDBC = auraDisplay.overrideDBCAura || (dbcData.getRace() == 4 ? dbcData.State <= 4 : dbcData.State == 0);
-            if(overrideDBC && auraDisplay.color1 != -1)
-                return auraDisplay.color1;
+            boolean overrideDBC = (auraDisplay.overrideDBCAura && !auraDisplay.copyDBCSuperformColors)|| (dbcData.getRace() == 4 ? dbcData.State <= 4 : dbcData.State == 0);
+            if (overrideDBC) {
+                return KiWeaponData.getColorByAuraType(auraDisplay);
+            }
         }
 
         return JRMCoreHDBC.getPlayerColor2(t, d, p, r, s, v, y, ui, gd);

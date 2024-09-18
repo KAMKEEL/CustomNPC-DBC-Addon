@@ -18,6 +18,12 @@ public interface IFormStackable {
      */
     float getFormMulti(int DBCForm);
 
+    void setFusionForm(IForm form);
+
+    int getFusionFormID();
+
+    IForm getFusionForm();
+
     /**
      * @param form Sets the form that this form is redirected to when in Legendary status effect
      */

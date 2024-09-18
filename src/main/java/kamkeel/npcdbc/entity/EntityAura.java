@@ -102,7 +102,7 @@ public class EntityAura extends Entity {
 
 
         // Vanilla DBC form colors
-        if (auraData instanceof DBCData && ((DBCData) auraData).State > 0)
+        if (auraData instanceof DBCData && ((DBCData) auraData).State > 0 && display.copyDBCSuperformColors)
             color1 = auraData.getDBCColor();
 
         int mimicColor = EnumAuraTypes3D.getManualAuraColor(type3D, true);
