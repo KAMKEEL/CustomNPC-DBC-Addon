@@ -26,7 +26,7 @@ import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
 
 public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener, ClipboardOwner {
     private final String[] arrRace = new String[]{"display.human", "display.saiyan", "display.halfsaiyan", "display.namekian", "display.arcosian", "display.majin"};
-    private final String[] arcoForms = new String[]{"display.arcofirst", "display.arcosecond", "display.arcothird", "display.arcofinal", "display.arcoultimatecooler"};
+    private final String[] arcoForms = new String[]{"display.arcofirst", "display.arcosecond", "display.arcothird", "display.arcofinal", "display.arcoultimatecooler", "display.arcogoldenform"};
     private final String[] hairTypes = new String[]{"display.base", "display.ssj", "display.ssj2", "display.ssj3", "display.ssj4", "display.oozaru", "display.raditz"};
     private final GuiNpcFormMenu menu;
     public Form form;
@@ -626,6 +626,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 index = 3;
             else if (display.bodyType.toLowerCase().contains("ultimate"))
                 index = 4;
+            else if (display.bodyType.toLowerCase().contains("golden"))
+                index = 5;
         }
         return index;
     }
@@ -642,6 +644,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
                 return "finalform";
             case 4:
                 return "ultimatecooler";
+            case 5:
+                return "golden";
             default:
                 return "";
         }

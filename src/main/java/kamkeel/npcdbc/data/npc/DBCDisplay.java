@@ -292,6 +292,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
                 case "ultimatecooler":
                     state = 5;
                     break;
+                case "golden":
+                    state = 6;
+                    break;
             }
         }
         return state;
@@ -792,6 +795,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
                 arcoState = 4;
             } else if (form.display.bodyType.equals("ultimatecooler")) {
                 arcoState = 5;
+            } else if (form.display.bodyType.equals("golden")) {
+                arcoState = 6;
             }
         }
         return arcoState;
