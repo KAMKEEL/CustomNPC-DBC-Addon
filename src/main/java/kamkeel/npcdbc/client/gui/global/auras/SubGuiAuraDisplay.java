@@ -141,10 +141,19 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         scrollWindow.addLabel(new GuiNpcLabel(2206, "display.outline", 3, y + 5));
         scrollWindow.getLabel(2206).color = 0xffffff;
         scrollWindow.addButton(new GuiNpcButton(2306, guiX + 100 + rightOffset, y, 100, 20, "display.selectOutline"));
-        if (display.outlineID != -1 && OutlineController.getInstance().has(display.outlineID))
+        boolean hasOutline = display.outlineID != -1 && OutlineController.getInstance().has(display.outlineID);
+        if (hasOutline)
             scrollWindow.getButton(2306).setDisplayText(OutlineController.getInstance().get(display.outlineID).getName());
         scrollWindow.addButton(new GuiNpcButton(2406, guiX + 200 + rightOffset, y, 20, 20, "X"));
         scrollWindow.getButton(2406).enabled = display.outlineID != -1;
+
+        if(hasOutline) {
+            maxScroll += 23;
+            y+= 23;
+            scrollWindow.addLabel(new GuiNpcLabel(2207, "display.aura.alwaysShowOutline", 3, y + 5));
+            scrollWindow.getLabel(2207).color = 0xffffff;
+            scrollWindow.addButton(new GuiNpcButtonYesNo(2307, guiX + 100 + rightOffset, y, 100, 20, display.outlineAlwaysOn));
+        }
 
         maxScroll += 50;
         y += 50;
@@ -546,6 +555,8 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             initGui();
         } else if (button.id == 2306) {
             this.setSubGui(new SubGuiSelectOutline());
+        } else if (button.id == 2307) {
+            display.outlineAlwaysOn = !display.outlineAlwaysOn;
         } else if (button.id == 2406) {
             display.outlineID = -1;
             visualDisplay.outlineID = -1;

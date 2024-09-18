@@ -141,6 +141,7 @@ display.modify=Modify
 display.formSize=Form Size
 display.aura=Aura
 display.auraOn=Aura On
+display.aura.alwaysShowOutline=Outline always on
 display.fur=Fur
 display.hair=Hair
 display.hairType=Hair Type

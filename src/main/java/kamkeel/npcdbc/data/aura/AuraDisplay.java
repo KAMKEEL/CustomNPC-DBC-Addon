@@ -33,6 +33,7 @@ public class AuraDisplay implements IAuraDisplay {
     public String auraSound = "jinryuudragonbc:DBC.aura", kaiokenSound = "";
 
     public int outlineID = -1;
+    public boolean outlineAlwaysOn;
 
     public AuraDisplay(Aura parent) {
         this.parent = parent;
@@ -86,6 +87,7 @@ public class AuraDisplay implements IAuraDisplay {
         kaiokenSound = rendering.hasKey("kaiokenSound") ? rendering.getString("kaiokenSound") : "";
 
         outlineID = rendering.hasKey("outlineID") ? rendering.getInteger("outlineID") : -1;
+        outlineAlwaysOn = rendering.getBoolean("outlineAlwaysOn");
 
     }
 
@@ -126,6 +128,7 @@ public class AuraDisplay implements IAuraDisplay {
         rendering.setString("kaiokenSound", kaiokenSound);
 
         rendering.setInteger("outlineID", outlineID);
+        rendering.setBoolean("outlineAlwaysOn", outlineAlwaysOn);
 
         compound.setTag("rendering", rendering);
         return compound;
@@ -447,6 +450,16 @@ public class AuraDisplay implements IAuraDisplay {
     @Override
     public void setSpeed(int speed) {
         this.speed = speed;
+    }
+
+    @Override
+    public boolean getOutlineAlwaysOn() {
+        return this.outlineAlwaysOn;
+    }
+
+    @Override
+    public void setOutlineAlwaysOn(boolean alwaysOn) {
+        this.outlineAlwaysOn = alwaysOn;
     }
 
     @Override

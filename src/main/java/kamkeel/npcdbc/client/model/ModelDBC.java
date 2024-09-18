@@ -187,7 +187,7 @@ public class ModelDBC extends ModelBase {
             boolean renderSSJ4Face = isSSJ4 && HD && hasEyebrows && isSaiyan;
             if (isOozaru && isSaiyan) {
                 ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + "oozaru/oozarueyes.png")); //eyes
-                ColorMode.applyModelColor(eyeColor, isHurt);
+                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                 this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
                 this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
                 this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
@@ -198,7 +198,7 @@ public class ModelDBC extends ModelBase {
                 this.eyebase.render(0.0625F);
                 GL11.glPopMatrix();
 
-                ColorMode.applyModelColor(bodyCM, isHurt);
+                ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
                 DBCBody.Oozaru.rotateAngleY = parent.bipedHead.rotateAngleY;
                 DBCBody.Oozaru.rotateAngleX = parent.bipedHead.rotateAngleX;
                 DBCBody.Oozaru.rotationPointX = parent.bipedHead.rotationPointX;
@@ -211,7 +211,7 @@ public class ModelDBC extends ModelBase {
 
                 return;
             }
-            ColorMode.applyModelColor(bodyCM, isHurt);
+            ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
             if (renderSSJ4Face)
                 ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + "humn" + display.noseType + ".png"));
             else
@@ -249,7 +249,7 @@ public class ModelDBC extends ModelBase {
             this.mouth.render(0.0625F);
             GL11.glPopMatrix();
 
-            GL11.glColor3f(1.0f, 1.0f, 1.0f);
+            GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
             ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
             this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
             this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -264,9 +264,9 @@ public class ModelDBC extends ModelBase {
 
             if (display.race < 4) {
                 if(display.race != DBCRace.NAMEKIAN)
-                    ColorMode.applyModelColor(eyeBrowColor, isHurt);
+                    ColorMode.applyModelColor(eyeBrowColor, this.parent.alpha, isHurt);
                 else{
-                    ColorMode.applyModelColor(bodyCM, isHurt);
+                    ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
                 }
                 if (!hasEyebrows && display.race != DBCRace.NAMEKIAN)
                     ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + "humw" + display.eyeType + ".png"));
@@ -286,7 +286,7 @@ public class ModelDBC extends ModelBase {
 
 
             if (!isBerserk) {
-                ColorMode.applyModelColor(eyeColor, isHurt);
+                ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                 ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
                 this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
                 this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -317,30 +317,30 @@ public class ModelDBC extends ModelBase {
         boolean isHidden = DBCHair.isHidden;
         DBCHair.isHidden = true;
 
-        ColorMode.applyModelColor(0xffffff, isHurt);
+        ColorMode.applyModelColor(0xffffff, this.parent.alpha, isHurt);
         ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4eyewhite.png"));
         parent.bipedHead.render(1F / 16F);
 
         if (!isBerserk) {
-            ColorMode.applyModelColor(eyeColor, isHurt);
+            ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
             ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4pupils.png"));
             parent.bipedHead.render(0.0625F);
         }
 
-        ColorMode.applyModelColor(furColor, isHurt);
+        ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
         ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows.png"));
         parent.bipedHead.render(1F / 16F);
 
-        ColorMode.applyModelColor(hairColor, isHurt);
+        ColorMode.applyModelColor(hairColor, this.parent.alpha, isHurt);
         ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows2.png"));
         parent.bipedHead.render(1F / 16F);
 
 
-        ColorMode.applyModelColor(bodyCM, isHurt);
+        ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
         ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4mouth0.png"));
         parent.bipedHead.render(1F / 16F);
 
-        ColorMode.applyModelColor(bodyCM, isHurt);
+        ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
         ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4shade.png"));
         parent.bipedHead.render(1F / 16F);
 
@@ -401,7 +401,7 @@ public class ModelDBC extends ModelBase {
             int race = display.race;
             if (race == DBCRace.HUMAN || DBCRace.isSaiyan(race)) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
-                ColorMode.applyModelColor(bodyCM, isHurt);
+                ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
 
                 if (DBCRace.isSaiyan(race)) {
                     if (hasFur || isSSJ4 || isOozaru) {
@@ -418,55 +418,55 @@ public class ModelDBC extends ModelBase {
                             if (furColor == -1)
                                 furColor = 6498048;
                             ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png")); //oozaru hairless body
-                            ColorMode.applyModelColor(bodyCM, isHurt);
+                            ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
                             model.render(0.0625F);
 
                             ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
                         } else {
                             ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
                         }
-                        ColorMode.applyModelColor(furColor, isHurt);
+                        ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
                     }
                 }
 
             } else if (race == DBCRace.NAMEKIAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
-                ColorMode.applyModelColor(bodyCM, isHurt);
+                ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
-                ColorMode.applyModelColor(bodyC1, isHurt);
+                ColorMode.applyModelColor(bodyC1, this.parent.alpha, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
-                ColorMode.applyModelColor(bodyC2, isHurt);
+                ColorMode.applyModelColor(bodyC2, this.parent.alpha, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
-                GL11.glColor3f(1f, 1f, 1f);
+                GL11.glColor4f(1f, 1f, 1f, this.parent.alpha);
             } else if (race == DBCRace.ARCOSIAN) {
                 int st = display.getCurrentArcoState();
-                ColorMode.applyModelColor(bodyCM, isHurt);
+                ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/0A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/1A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                ColorMode.applyModelColor(bodyC1, isHurt);
+                ColorMode.applyModelColor(bodyC1, this.parent.alpha, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/2A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                ColorMode.applyModelColor(bodyC2, isHurt);
+                ColorMode.applyModelColor(bodyC2, this.parent.alpha, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                ColorMode.applyModelColor(bodyC3, isHurt);
+                ColorMode.applyModelColor(bodyC3, this.parent.alpha, isHurt);
                 model.render(0.0625F);
 
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
-                GL11.glColor3f(1f, 1f, 1f);
+                GL11.glColor4f(1f, 1f, 1f, this.parent.alpha);
             } else if (race == DBCRace.MAJIN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
-                ColorMode.applyModelColor(bodyCM, isHurt);
+                ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
             }
         }
     }

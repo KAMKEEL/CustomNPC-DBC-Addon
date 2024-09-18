@@ -672,6 +672,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         if (aura != null && aura.display.outlineID != -1)
             return (Outline) OutlineController.getInstance().get(aura.display.outlineID);
 
+        aura = (Aura) AuraController.Instance.get(auraID);
+        if (aura != null && aura.display.outlineAlwaysOn && aura.display.outlineID != -1){
+            return (Outline) OutlineController.getInstance().get(aura.display.outlineID);
+        }
+
         Form form = getForm();
         if (form != null && form.display.outlineID != -1)
             return (Outline) OutlineController.getInstance().get(form.display.outlineID);
