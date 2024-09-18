@@ -221,6 +221,9 @@ public class AuraRenderer extends RenderDBC {
     }
 
     private void lightning(EntityAura aura, double par2, double par4, double par6) {
+        if(!JGConfigClientSettings.CLIENT_DA12)
+            return;
+
         Random rand = new Random();
 
         if (aura.ticksExisted % 100 > 0 && rand.nextLong() < 1)
