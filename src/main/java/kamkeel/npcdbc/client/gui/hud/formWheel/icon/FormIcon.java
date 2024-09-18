@@ -112,7 +112,7 @@ public class FormIcon extends Gui {
                 }else if (display.bodyType.toLowerCase().contains("third")) {
                     body = BodyIconType.ARC_THIRD;
                     hair = HairIconType.ARC_THIRD;
-                }else if (display.bodyType.toLowerCase().contains("final")) {
+                }else if (display.bodyType.toLowerCase().contains("final") || display.bodyType.toLowerCase().contains("golden")) {
                     body = BodyIconType.ARC_FOURTH;
                     hair = HairIconType.ARC_FOURTH;
                 }else if (display.bodyType.toLowerCase().contains("ultimate")) {

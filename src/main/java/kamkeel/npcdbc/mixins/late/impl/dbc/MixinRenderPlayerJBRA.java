@@ -399,7 +399,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                     st.set(2);
                 else if (form.display.bodyType.equals("thirdform"))
                     st.set(3);
-                else if (form.display.bodyType.equals("finalform"))
+                else if (form.display.bodyType.equals("finalform") || form.display.bodyType.equals("golden"))
                     st.set(4);
                 else if (form.display.bodyType.equals("ultimatecooler"))
                     st.set(5);

@@ -221,7 +221,7 @@ public class DBCHorns extends ModelDBCPartInterface {
                         state = 2;
                     } else if (form.display.bodyType.equals("thirdform")) {
                         state = 3;
-                    } else if (form.display.bodyType.equals("finalform")) {
+                    } else if (form.display.bodyType.equals("finalform") || form.display.bodyType.equals("golden")) {
                         state = 4;
                     } else if (form.display.bodyType.equals("ultimatecooler")) {
                         state = 5;
