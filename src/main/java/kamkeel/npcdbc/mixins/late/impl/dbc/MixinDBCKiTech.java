@@ -129,6 +129,10 @@ public class MixinDBCKiTech {
     private static void cancelAura2(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci) {
         DBCData dbcData = DBCData.get(p);
         Aura aura = dbcData.getAura();
+        if(dbcData.isFusionSpectator()){
+            ci.cancel();
+            return;
+        }
         if (aura != null) {
             if (aura.display.overrideDBCAura)
                 ci.cancel();
