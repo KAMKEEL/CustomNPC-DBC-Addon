@@ -104,6 +104,12 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         scrollWindow.getLabel(3004).color = 0xffffff;
         scrollWindow.addButton(new GuiNpcButtonYesNo(3004, guiX + 140 + rightOffset, y, 80, 20, display.overrideDBCAura));
 
+        maxScroll += 26;
+        y += 26;
+        scrollWindow.addLabel(new GuiNpcLabel(3005, "display.copyDBCColors", 3, y + 5));
+        scrollWindow.getLabel(3005).color = 0xffffff;
+        scrollWindow.addButton(new GuiNpcButtonYesNo(3005, guiX + 140 + rightOffset, y, 80, 20, display.copyDBCSuperformColors));
+
         //        y += 26;
         //        scrollWindow.addLabel(new GuiNpcLabel(1, "general.auraSound", 3, y + 5));
         //        scrollWindow.getLabel(1).color = 0xffffff;
@@ -417,6 +423,9 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         } else if (button.id == 3004) {
             display.overrideDBCAura = !display.overrideDBCAura;
             initGui();
+        } else if (button.id == 3005) {
+            display.copyDBCSuperformColors = !display.copyDBCSuperformColors;
+            initGui();
         } else if (button.id == 3000) {
             // Change color1
             lastColorClicked = 0;
@@ -557,6 +566,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             this.setSubGui(new SubGuiSelectOutline());
         } else if (button.id == 2307) {
             display.outlineAlwaysOn = !display.outlineAlwaysOn;
+            initGui();
         } else if (button.id == 2406) {
             display.outlineID = -1;
             visualDisplay.outlineID = -1;

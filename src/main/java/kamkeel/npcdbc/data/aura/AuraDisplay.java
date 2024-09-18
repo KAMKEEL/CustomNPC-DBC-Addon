@@ -27,6 +27,7 @@ public class AuraDisplay implements IAuraDisplay {
     public float kaiokenSize = 1f; //kaioken size is always 1.1x bigger than aura size by default
 
     public boolean overrideDBCAura = false;
+    public boolean copyDBCSuperformColors = false;
 
     public boolean kettleModeCharging, kettleModeEnabled;
 
@@ -58,6 +59,7 @@ public class AuraDisplay implements IAuraDisplay {
         size = rendering.hasKey("size") ? rendering.getFloat("size") : 1.0f;
 
         // Colors and Alpha
+        copyDBCSuperformColors = !rendering.hasKey("copyDBCSuperformColors") || rendering.getBoolean("copyDBCSuperformColors");
         color1 = rendering.hasKey("color1") ? rendering.getInteger("color1") : -1;
         color2 = rendering.hasKey("color2") ? rendering.getInteger("color2") : -1;
         color3 = rendering.hasKey("color3") ? rendering.getInteger("color3") : -1;
@@ -102,6 +104,7 @@ public class AuraDisplay implements IAuraDisplay {
         rendering.setInteger("speed", speed);
         rendering.setFloat("size", size);
 
+        rendering.setBoolean("copyDBCSuperformColors", copyDBCSuperformColors);
         rendering.setInteger("color1", color1);
         rendering.setInteger("color2", color2);
         rendering.setInteger("color3", color3);
@@ -483,5 +486,13 @@ public class AuraDisplay implements IAuraDisplay {
         return this;
     }
 
+    @Override
+    public boolean doesAuraCopyDBCSuperformColors() {
+        return copyDBCSuperformColors;
+    }
 
+    @Override
+    public void setDoesAuraCopyDBCSuperformColors(boolean copyDBCSuperformColors) {
+        this.copyDBCSuperformColors = copyDBCSuperformColors;
+    }
 }

@@ -11,7 +11,6 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
-import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.sound.AuraSound;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -39,7 +38,6 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
-import org.lwjgl.input.Keyboard;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
@@ -423,7 +421,7 @@ public class ClientEventHandler {
             aur.setAlp(0.5F);
             aur.setTex("aurau");
             aur.setTexL2("aurau2");
-            aur.setColL2(16776724);
+                aur.setColL2(16776724);
             if (has2D)
                 aur.setBol6(4);
         }
@@ -482,7 +480,7 @@ public class ClientEventHandler {
         //////////////////////////////////////////////////////
 
 
-        if (isPlayer && dbcData.State > 0)//vanilla DBC form colors
+        if (isPlayer && aura.display.copyDBCSuperformColors && dbcData.State > 0)//vanilla DBC form colors
             formColor = dbcData.getDBCColor();
 
         if (aura.display.hasColor("color1")) //IAura color

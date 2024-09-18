@@ -170,4 +170,7 @@ public interface IAuraDisplay {
     IAuraDisplay save();
 
 
+    boolean doesAuraCopyDBCSuperformColors();
+
+    void setDoesAuraCopyDBCSuperformColors(boolean copyDBCSuperformColors);
 }
