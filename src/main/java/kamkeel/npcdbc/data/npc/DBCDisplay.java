@@ -531,6 +531,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         if (aura != null && aura.display.outlineID != -1)
             return (Outline) OutlineController.getInstance().get(aura.display.outlineID);
 
+        aura = (Aura) getAura();
+        if (aura != null && aura.display.outlineAlwaysOn && aura.display.outlineID != -1){
+            return (Outline) OutlineController.getInstance().get(aura.display.outlineID);
+        }
+
         Form form = getForm();
         if (form != null && form.display.outlineID != -1)
             return (Outline) OutlineController.getInstance().get(getForm().display.outlineID);

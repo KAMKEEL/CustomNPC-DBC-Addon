@@ -159,6 +159,10 @@ public interface IAuraDisplay {
     void setTexture(String textureType, String textureLocation);
 
 
+    boolean getOutlineAlwaysOn();
+
+    void setOutlineAlwaysOn(boolean alwaysOn);
+
     void setOutline(int id);
 
     void setOutline(IOutline outline);
