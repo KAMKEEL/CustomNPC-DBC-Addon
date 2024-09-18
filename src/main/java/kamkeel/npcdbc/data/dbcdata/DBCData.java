@@ -8,6 +8,7 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -671,21 +672,42 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         return form;
     }
 
+    /**
+     * Order of getting outline from player:
+     *
+     * >Currently toggled aura
+     * >Currently selected form outline / selected form aura's outline
+     * >Currently manually selected aura
+     * >Force-set outline
+     * @return The outline object a player is using
+     */
     public Outline getOutline() {
-        Aura aura = getToggledAura();
-        if (aura != null && aura.display.outlineID != -1)
-            return (Outline) OutlineController.getInstance().get(aura.display.outlineID);
+        OutlineController OC = OutlineController.getInstance();
 
-        aura = (Aura) AuraController.Instance.get(auraID);
-        if (aura != null && aura.display.outlineAlwaysOn && aura.display.outlineID != -1){
-            return (Outline) OutlineController.getInstance().get(aura.display.outlineID);
-        }
+        Aura aura = getToggledAura();
+
+        if (aura != null && OC.has(aura.display.outlineID))
+            return (Outline) OC.get(aura.display.outlineID);
 
         Form form = getForm();
-        if (form != null && form.display.outlineID != -1)
-            return (Outline) OutlineController.getInstance().get(form.display.outlineID);
+        if (form != null && OC.has(form.display.outlineID))
+            return (Outline) OC.get(form.display.outlineID);
 
-        return (Outline) OutlineController.getInstance().get(outlineID);
+        IAura formAura = form != null ? form.display.getAura() : null;
+
+        if(formAura != null) {
+            aura = (Aura) formAura;
+            if (aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)){
+                return (Outline) OC.get(aura.display.outlineID);
+            }
+        }
+
+        aura = (Aura) AuraController.Instance.get(auraID);
+        if (aura != null && aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)){
+            return (Outline) OC.get(aura.display.outlineID);
+        }
+
+        return (Outline) OC.get(outlineID);
     }
 
     public void setOutline(IOutline outline) {
