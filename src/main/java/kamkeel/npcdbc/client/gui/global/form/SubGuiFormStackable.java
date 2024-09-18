@@ -140,7 +140,20 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
 
         y += 46;
-        maxScroll += 23;
+        maxScroll += 46;
+
+        scrollWindow.addButton(new GuiNpcButton(9, guiLeft + 75, y, 90, 20, "general.noForm"));
+        scrollWindow.addButton(new GuiNpcButton(91, guiLeft + 167, y, 20, 20, "X"));
+        scrollWindow.addLabel(new GuiNpcLabel(92, "Fusion", guiLeft + 4, y + 5));
+        scrollWindow.getButton(91).enabled = stackable.fusionID != -1;
+        scrollWindow.getLabel(92).color = 0xffffff;
+
+        if (stackable.fusionID != -1) {
+            if (FormController.getInstance().has(stackable.fusionID))
+                scrollWindow.getButton(9).setDisplayText(FormController.getInstance().get(stackable.fusionID).getName());
+        }
+
+        y += 23;
 
         scrollWindow.addButton(new GuiNpcButton(6, guiLeft + 75, y, 90, 20, "general.noForm"));
         scrollWindow.addButton(new GuiNpcButton(61, guiLeft + 167, y, 20, 20, "X"));
@@ -207,6 +220,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
         scrollWindow.getLabel(83).color = 0xffffff;
 
+
         scrollWindow.maxScrollY = maxScroll;
     }
 
@@ -257,6 +271,13 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
         if (button.id == 81) {
             stackable.majinID = -1;
+            initGui();
+        }
+        if (button.id == 9) {
+            this.setSubGui(new SubGuiSelectForm(9,false, false));
+        }
+        if (button.id == 91) {
+            stackable.fusionID = -1;
             initGui();
         }
         if (button.id == 85) {
@@ -328,7 +349,8 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
                         form.stackable.divineID = guiSelectForm.selectedFormID;
                     } else if (guiSelectForm.buttonID == 8) {
                         form.stackable.majinID = guiSelectForm.selectedFormID;
-
+                    } else if (guiSelectForm.buttonID == 9) {
+                        form.stackable.fusionID = guiSelectForm.selectedFormID;
                     }
                 }
             }

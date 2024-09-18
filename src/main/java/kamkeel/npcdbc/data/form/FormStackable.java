@@ -17,7 +17,7 @@ public class FormStackable implements IFormStackable {
     public float uiState2Factor = 1.0f;
 
     public boolean useLegendaryConfig, useDivineConfig, useMajinConfig;
-    public int legendaryID = -1, divineID = -1, majinID = -1;
+    public int legendaryID = -1, divineID = -1, majinID = -1, fusionID = -1;
 
     public FormKaiokenStackableData kaiokenData;
 
@@ -49,6 +49,7 @@ public class FormStackable implements IFormStackable {
         legendaryID = !stack.hasKey("legendaryID") ? -1 : stack.getInteger("legendaryID");
         divineID = !stack.hasKey("divineID") ? -1 : stack.getInteger("divineID");
         majinID = !stack.hasKey("majinID") ? -1 : stack.getInteger("majinID");
+        fusionID = !stack.hasKey("fusionID") ? -1 : stack.getInteger("fusionID");
 
         kaiokenData.readFromNBT(stack);
 
@@ -77,6 +78,7 @@ public class FormStackable implements IFormStackable {
         stack.setInteger("legendaryID", legendaryID);
         stack.setInteger("divineID", divineID);
         stack.setInteger("majinID", majinID);
+        stack.setInteger("fusionID", fusionID);
 
         kaiokenData.saveToNBT(stack);
 
@@ -85,9 +87,37 @@ public class FormStackable implements IFormStackable {
     }
 
     @Override
-    public void setLegendaryForm(IForm form) {
-        if (form == null)
+    public void setFusionForm(IForm form) {
+        if (form == null) {
+            fusionID = -1;
             return;
+        }
+
+        int id = form.getID();
+        if (form.getID() == this.fusionID)
+            return;
+
+        if (id > -1) {
+            fusionID = id;
+        }
+    }
+
+    @Override
+    public int getFusionFormID() {
+        return fusionID;
+    }
+
+    @Override
+    public IForm getFusionForm() {
+        return FormController.Instance.get(fusionID);
+    }
+
+    @Override
+    public void setLegendaryForm(IForm form) {
+        if (form == null) {
+            legendaryID = -1;
+            return;
+        }
 
         int id = form.getID();
         if (form.getID() == this.legendaryID)
@@ -111,8 +141,10 @@ public class FormStackable implements IFormStackable {
 
     @Override
     public void setDivineForm(IForm form) {
-        if (form == null)
+        if (form == null) {
+            divineID = -1;
             return;
+        }
 
         int id = form.getID();
         if (form.getID() == this.divineID)
@@ -135,8 +167,10 @@ public class FormStackable implements IFormStackable {
 
     @Override
     public void setMajinForm(IForm form) {
-        if (form == null)
+        if (form == null) {
+            majinID = -1;
             return;
+        }
 
         int id = form.getID();
         if (form.getID() == this.majinID)

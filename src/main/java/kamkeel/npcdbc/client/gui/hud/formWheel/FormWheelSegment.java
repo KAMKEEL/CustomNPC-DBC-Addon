@@ -129,10 +129,16 @@ class FormWheelSegment extends WheelSegment {
         boolean isLegendary = dbcData.isForm(DBCForm.Legendary);
         boolean isDivine = dbcData.isForm(DBCForm.Divine);
         boolean isMajin = dbcData.isForm(DBCForm.Majin);
+        boolean isFused = dbcData.stats.isFused();
 
         FormStackable stackable = form.stackable;
 
         FormController formController = FormController.Instance;
+
+        if(formController.has(stackable.fusionID) && isFused) {
+            form = (Form) formController.get(stackable.fusionID);
+            stackable = form.stackable;
+        }
 
         if (formController.has(stackable.divineID) && isDivine) {
             form = (Form) formController.get(stackable.divineID);
