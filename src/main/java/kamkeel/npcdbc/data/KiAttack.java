@@ -13,6 +13,8 @@ public class KiAttack implements IKiAttack {
     private byte density = 100;
     private boolean hasSound;
     private byte chargePercent;
+    private boolean forceDestroyerMode;
+    private boolean respectFormDestroyerMode = true;
 
     public KiAttack() {}
 
@@ -91,5 +93,25 @@ public class KiAttack implements IKiAttack {
 
     public void setChargePercent(byte chargePercent) {
         this.chargePercent = ValueUtil.clamp(chargePercent, (byte) 0, (byte) 100);
+    }
+
+    @Override
+    public boolean respectFormDestoryerConfig() {
+        return this.respectFormDestroyerMode;
+    }
+
+    @Override
+    public void setRespectFormDestroyerConfig(boolean respectFormConfig) {
+        this.respectFormDestroyerMode = respectFormConfig;
+    }
+
+    @Override
+    public boolean isDestroyerAttack() {
+        return this.forceDestroyerMode;
+    }
+
+    @Override
+    public void setDestroyerAttack(boolean isDestroyer) {
+        this.forceDestroyerMode = isDestroyer;
     }
 }
