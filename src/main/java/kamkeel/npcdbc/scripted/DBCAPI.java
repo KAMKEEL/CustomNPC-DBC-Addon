@@ -12,11 +12,13 @@ import kamkeel.npcdbc.api.effect.IBonusHandler;
 import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
+import kamkeel.npcdbc.api.form.IFormMastery;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.KiAttack;
+import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -260,10 +262,10 @@ public class DBCAPI extends AbstractDBCAPI {
      * @param speed         Speed of Ki Attack [0 - 100]
      * @param damage        Damage for Ki Attack
      * @param hasEffect     True for Explosion
-     * @param color         Color of Ki Attack [0 - 30] ->
-     *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
-     *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
-     *                      21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
+     * @param color         Color of Ki Attack [0 - 30] -> <br>
+     *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", <br>
+     *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", <br>
+     *                      21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown" <br>
      * @param density       Density of Ki Attack > 0
      * @param hasSound      Play Impact Sound of Ki Attack
      * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
@@ -281,9 +283,9 @@ public class DBCAPI extends AbstractDBCAPI {
      * @param speed         Speed of Ki Attack [0 - 100]
      * @param damage        Damage for Ki Attack
      * @param hasEffect     True for Explosion
-     * @param color         Color of Ki Attack [0 - 30] ->
-     *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta",
-     *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple",
+     * @param color         Color of Ki Attack [0 - 30] -> <br>
+     *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", <br>
+     *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", <br>
      *                      21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
      * @param density       Density of Ki Attack > 0
      * @param hasSound      Play Impact Sound of Ki Attack
@@ -314,9 +316,21 @@ public class DBCAPI extends AbstractDBCAPI {
                 chargePercent = ValueUtil.clamp(chargePercent, (byte) 0, (byte) 100);
                 byte[] sts = JRMCoreH.techDBCstatsDefault;
 
+                IForm npcForm = ((DBCDisplay) DBCAPI.Instance().getDBCData(npc)).getForm();
+                float destroyerDmgRed = -1;
+                boolean enableDestroyer = false;
+                if (npcForm != null) {
+                    enableDestroyer = npcForm.getMastery().isDestroyerOn();
+                    destroyerDmgRed = npcForm.getMastery().getDestroyerEnergyDamage();
+                }
+
                 EntityNPCInterface trueNpc = (EntityNPCInterface) npc.getMCEntity();
                 npc.getMCEntity().worldObj.playSoundAtEntity(trueNpc, "jinryuudragonbc:DBC2.basicbeam_fire", 0.5F, 1.0F);
                 entityEnergyAtt = new EntityEnergyAtt(trueNpc, type, speed, 50, effect, color, density, (byte) 0, (byte) 0, playSound, chargePercent, damage, 0, sts, (byte) 0);
+                if (enableDestroyer) {
+                    entityEnergyAtt.destroyer = true;
+                    entityEnergyAtt.DAMAGE_REDUCTION = destroyerDmgRed;
+                }
                 trueNpc.worldObj.spawnEntityInWorld(entityEnergyAtt);
             }
         } catch (IndexOutOfBoundsException ignored) {
@@ -359,8 +373,31 @@ public class DBCAPI extends AbstractDBCAPI {
                 byte[] sts = JRMCoreH.techDBCstatsDefault;
 
                 EntityNPCInterface trueNpc = (EntityNPCInterface) npc.getMCEntity();
+
+                IForm npcForm = ((DBCDisplay) DBCAPI.Instance().getDBCData(npc)).getForm();
+                boolean useFormConfig = false;
+                boolean enableDestroyer = false;
+                float destroyerDmgRed = -1;
+                if (kiAttack.isDestroyerAttack()) {
+                    enableDestroyer = true;
+                }
+                if (npcForm != null && (enableDestroyer || kiAttack.respectFormDestoryerConfig())) {
+                    IFormMastery formMasteryConfig = npcForm.getMastery();
+                    if (formMasteryConfig.isDestroyerOn()) {
+                        enableDestroyer = true;
+                        useFormConfig = true;
+                        destroyerDmgRed = formMasteryConfig.getDestroyerEnergyDamage();
+                    }
+                }
                 npc.getMCEntity().worldObj.playSoundAtEntity(trueNpc, "jinryuudragonbc:DBC2.basicbeam_fire", 0.5F, 1.0F);
                 entityEnergyAtt = new EntityEnergyAtt(trueNpc, type, speed, 50, effect, color, density, (byte) 0, (byte) 0, playSound, chargePercent, damage, 0, sts, (byte) 0);
+                if (enableDestroyer) {
+                    entityEnergyAtt.destroyer = true;
+
+                    if (useFormConfig) {
+                        entityEnergyAtt.DAMAGE_REDUCTION = destroyerDmgRed;
+                    }
+                }
                 trueNpc.worldObj.spawnEntityInWorld(entityEnergyAtt);
             }
         } catch (IndexOutOfBoundsException ignored) {
