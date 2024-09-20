@@ -316,7 +316,7 @@ public class DBCAPI extends AbstractDBCAPI {
                 chargePercent = ValueUtil.clamp(chargePercent, (byte) 0, (byte) 100);
                 byte[] sts = JRMCoreH.techDBCstatsDefault;
 
-                IForm npcForm = ((DBCDisplay) DBCAPI.Instance().getDBCData(npc)).getForm();
+                IForm npcForm = ((DBCDisplay) DBCAPI.Instance().getDBCDisplay(npc)).getForm();
                 float destroyerDmgRed = -1;
                 boolean enableDestroyer = false;
                 if (npcForm != null) {
@@ -374,7 +374,7 @@ public class DBCAPI extends AbstractDBCAPI {
 
                 EntityNPCInterface trueNpc = (EntityNPCInterface) npc.getMCEntity();
 
-                IForm npcForm = ((DBCDisplay) DBCAPI.Instance().getDBCData(npc)).getForm();
+                IForm npcForm = ((DBCDisplay) DBCAPI.Instance().getDBCDisplay(npc)).getForm();
                 boolean useFormConfig = false;
                 boolean enableDestroyer = false;
                 float destroyerDmgRed = -1;
