@@ -142,7 +142,6 @@ display.modify=Modify
 display.formSize=Form Size
 display.aura=Aura
 display.auraOn=Aura On
-display.aura.alwaysShowOutline=Outline always on
 display.fur=Fur
 display.hair=Hair
 display.hairType=Hair Type
@@ -188,6 +187,8 @@ display.color3=Color 3
 display.alpha=Alpha
 display.3DType=3D Type
 display.2DType=2D Type
+display.aura.alwaysShowOutline=Outline always on
+display.copyDBCColors=Copy DBC Aura colors
 
 
 auratype.none=None
