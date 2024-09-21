@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.client.gui.hud.formWheel;
 
+import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -565,6 +567,9 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         entity.isImmuneToFire = isImmunetoFire;
         inv.mainInventory[inv.currentItem] = oldItem;
         renderingPlayer = false;
+
+        if(ClientProxy.lastRendererGUIPlayerID >= 0 && JRMCoreH.data2.length > ClientProxy.lastRendererGUIPlayerID)
+            JRMCoreH.data2[ClientProxy.lastRendererGUIPlayerID] = data.State + ";" + data.State2;
 
     }
 

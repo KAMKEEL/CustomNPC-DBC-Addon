@@ -142,6 +142,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             if (form != null && !form.stackable.vanillaStackable)
                 data.State = 0;
         }
+        if(!ClientProxy.isRenderingWorld() || CustomNpcPlusDBC.proxy.isRenderingGUI())
+            ClientProxy.lastRendererGUIPlayerID = pl;
+        else
+            ClientProxy.lastRendererGUIPlayerID = -1;
         JRMCoreH.data2[pl] = data.State + ";" + data.State2;
         return JRMCoreH.data2;
     }
