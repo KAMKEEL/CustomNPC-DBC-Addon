@@ -32,7 +32,7 @@ public class ConfigDBCClient {
     public static boolean EnableHDTextures = false;
 
     public static Property RevampAuraProperty;
-    public static boolean RevampAura = true;
+    public static boolean RevampAura = false;
 
     public static Property EnableOutlinesProperty;
     public static boolean EnableOutlines = true;
@@ -77,8 +77,8 @@ public class ConfigDBCClient {
             AlteranteSelectionWheelTexture = AlternateSelectionWheelTextureProperty.getBoolean(false);
 
             // Rendering
-            RevampAuraProperty = config.get(RENDERING, "Revamp Aura", true, "Renders with the new DBC Addon style of auras");
-            RevampAura = RevampAuraProperty.getBoolean(true);
+            RevampAuraProperty = config.get(RENDERING, "Revamp Aura", false, "Renders with the new DBC Addon style of auras");
+            RevampAura = RevampAuraProperty.getBoolean(false);
 
             EnableHDTexturesProperty = config.get(RENDERING, "Enable HD Textures", false, "Uses internal DBC Addon HD Textures");
             EnableHDTextures = EnableHDTexturesProperty.getBoolean(false);
