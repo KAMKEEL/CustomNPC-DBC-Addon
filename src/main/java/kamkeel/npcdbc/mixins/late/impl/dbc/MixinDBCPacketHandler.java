@@ -347,4 +347,16 @@ public class MixinDBCPacketHandler {
 
         JRMCoreH.setInt(s, Player, string);
     }
+
+    @Redirect(method = "handleDBCdescend", at = @At(value = "INVOKE", target="Lnet/minecraft/nbt/NBTTagCompound;setByte(Ljava/lang/String;B)V", remap = true), remap = false)
+    public void DBCTransformEventDescend(NBTTagCompound instance, String key, byte value, @Local(argsOnly = true) EntityPlayer player) {
+        if (key.equals("jrmcState")) {
+            int oldForm = DBCData.get(player).State;
+
+            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), false, oldForm, false, value)))
+                return;
+        }
+
+        instance.setByte(key, value);
+    }
 }
