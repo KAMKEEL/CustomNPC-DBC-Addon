@@ -142,6 +142,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             if (form != null && !form.stackable.vanillaStackable)
                 data.State = 0;
         }
+        if(!ClientProxy.isRenderingWorld() || CustomNpcPlusDBC.proxy.isRenderingGUI())
+            ClientProxy.lastRendererGUIPlayerID = pl;
+        else
+            ClientProxy.lastRendererGUIPlayerID = -1;
         JRMCoreH.data2[pl] = data.State + ";" + data.State2;
         return JRMCoreH.data2;
     }
@@ -200,16 +204,26 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
             //set bodytypes for arcos
             if (race.get() == 4) {
-                if (form.display.bodyType.equals("firstform"))
-                    st.set(0);
-                else if (form.display.bodyType.equals("secondform"))
-                    st.set(2);
-                else if (form.display.bodyType.equals("thirdform"))
-                    st.set(3);
-                else if (form.display.bodyType.equals("finalform"))
-                    st.set(4);
-                else if (form.display.bodyType.equals("ultimatecooler"))
-                    st.set(5);
+                switch (form.display.bodyType) {
+                    case "firstform":
+                        st.set(0);
+                        break;
+                    case "secondform":
+                        st.set(2);
+                        break;
+                    case "thirdform":
+                        st.set(3);
+                        break;
+                    case "finalform":
+                        st.set(4);
+                        break;
+                    case "ultimatecooler":
+                        st.set(5);
+                        break;
+                    case "golden":
+                        st.set(6);
+                        break;
+                }
 
                 if (form.display.hasArcoMask())
                     mask.set(true);
@@ -389,7 +403,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                     st.set(2);
                 else if (form.display.bodyType.equals("thirdform"))
                     st.set(3);
-                else if (form.display.bodyType.equals("finalform"))
+                else if (form.display.bodyType.equals("finalform") || form.display.bodyType.equals("golden"))
                     st.set(4);
                 else if (form.display.bodyType.equals("ultimatecooler"))
                     st.set(5);

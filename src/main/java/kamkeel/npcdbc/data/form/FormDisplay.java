@@ -158,10 +158,10 @@ public class FormDisplay implements IFormDisplay {
     @Override
     public void setBodyType(String type) {
         String s = type.toLowerCase();
-        if (s.equals("firstform") || s.equals("secondform") || s.equals("thirdform") || s.equals("finalform") || s.equals("ultimatecooler") || s.equals(""))
+        if (s.equals("firstform") || s.equals("secondform") || s.equals("thirdform") || s.equals("finalform") || s.equals("ultimatecooler") || s.equals("golden") || s.equals(""))
             bodyType = s;
         else
-            throw new CustomNPCsException("Invalid type! Legal: firstform, secondform, thirdform, finalform, ultimatecooler");
+            throw new CustomNPCsException("Invalid type! Legal: firstform, secondform, thirdform, finalform, ultimatecooler, golden");
 
     }
 

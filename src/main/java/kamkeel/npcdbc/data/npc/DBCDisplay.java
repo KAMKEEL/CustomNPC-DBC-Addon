@@ -292,6 +292,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
                 case "ultimatecooler":
                     state = 5;
                     break;
+                case "golden":
+                    state = 6;
+                    break;
             }
         }
         return state;
@@ -528,17 +531,30 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     public Outline getOutline() {
         Aura aura = getToggledAura();
-        if (aura != null && aura.display.outlineID != -1)
-            return (Outline) OutlineController.getInstance().get(aura.display.outlineID);
+        OutlineController OC = OutlineController.getInstance();
 
-        aura = (Aura) getAura();
-        if (aura != null && aura.display.outlineAlwaysOn && aura.display.outlineID != -1){
-            return (Outline) OutlineController.getInstance().get(aura.display.outlineID);
-        }
+        if (aura != null && OC.has(aura.display.outlineID))
+            return (Outline) OC.get(aura.display.outlineID);
 
         Form form = getForm();
-        if (form != null && form.display.outlineID != -1)
-            return (Outline) OutlineController.getInstance().get(getForm().display.outlineID);
+
+        if (form != null && OC.has(form.display.outlineID))
+            return (Outline) OC.get(form.display.outlineID);
+
+        IAura formAura = form != null ? form.display.getAura() : null;
+
+        if(formAura != null) {
+            aura = (Aura) formAura;
+            if (aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)){
+                return (Outline) OC.get(aura.display.outlineID);
+            }
+        }
+
+        aura = (Aura) AuraController.Instance.get(auraID);
+        if (aura != null && aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)){
+            return (Outline) OC.get(aura.display.outlineID);
+        }
+
 
         return (Outline) OutlineController.getInstance().get(outlineID);
     }
@@ -792,6 +808,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
                 arcoState = 4;
             } else if (form.display.bodyType.equals("ultimatecooler")) {
                 arcoState = 5;
+            } else if (form.display.bodyType.equals("golden")) {
+                arcoState = 6;
             }
         }
         return arcoState;

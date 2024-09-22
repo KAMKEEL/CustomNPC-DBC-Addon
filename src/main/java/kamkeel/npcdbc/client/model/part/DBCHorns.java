@@ -221,7 +221,7 @@ public class DBCHorns extends ModelDBCPartInterface {
                         state = 2;
                     } else if (form.display.bodyType.equals("thirdform")) {
                         state = 3;
-                    } else if (form.display.bodyType.equals("finalform")) {
+                    } else if (form.display.bodyType.equals("finalform") || form.display.bodyType.equals("golden")) {
                         state = 4;
                     } else if (form.display.bodyType.equals("ultimatecooler")) {
                         state = 5;
@@ -283,16 +283,23 @@ public class DBCHorns extends ModelDBCPartInterface {
         Form form = display.getForm();
         if (form != null) {
             if (display.race == DBCRace.ARCOSIAN) {
-                if (form.display.bodyType.equals("firstform")) {
-                    config.type = 2;
-                } else if (form.display.bodyType.equals("secondform")) {
-                    config.type = 3;
-                } else if (form.display.bodyType.equals("thirdform")) {
-                    config.type = 4;
-                } else if (form.display.bodyType.equals("finalform")) {
-                    config.type = 0;
-                } else if (form.display.bodyType.equals("ultimatecooler")) {
-                    config.type = 5;
+                switch(form.display.bodyType) {
+                    case "firstform":
+                        config.type = 2;
+                        break;
+                    case "secondform":
+                        config.type = 3;
+                        break;
+                    case "thirdform":
+                        config.type = 4;
+                        break;
+                    case "finalform":
+                    case "golden":
+                        config.type = 0;
+                        break;
+                    case "ultimatecooler":
+                        config.type = 5;
+                        break;
                 }
             }
         }

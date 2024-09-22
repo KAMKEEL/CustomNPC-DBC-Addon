@@ -14,7 +14,7 @@ public interface IFormKaiokenStackables {
      * (For example, if base form normally drains 20 HP per tick, and the <code>globalMulti</code> is 5, the drain in now 20x5 = 100)<br><br>
      *
      * Advanced configs replace the current DBC forms kaioken balance values, <code>globalMulti</code> is simply just a scalar value.
-     * @param isOn
+     * @param isOn true or false
      */
     void setMultiplyingCurrentFormDrain(boolean isOn);
     /**

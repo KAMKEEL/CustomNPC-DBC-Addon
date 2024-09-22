@@ -124,7 +124,7 @@ public class DBCBody extends ModelDBCPartInterface {
                     config.type = 0;
                 } else if (form.display.bodyType.equals("thirdform")) {
                     config.type = 0;
-                } else if (form.display.bodyType.equals("finalform")) {
+                } else if (form.display.bodyType.equals("finalform") || form.display.bodyType.equals("golden")) {
                     config.type = 0;
                 } else if (form.display.bodyType.equals("ultimatecooler")) {
                     config.type = 1;

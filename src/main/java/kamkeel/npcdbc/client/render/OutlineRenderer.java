@@ -104,6 +104,8 @@ public class OutlineRenderer {
                         state = 4;
                     else if (form.display.bodyType.equals("ultimatecooler"))
                         state = 5;
+                    else if (form.display.bodyType.equals("golden"))
+                        state = 6;
                 }
 
                 render.modelMain.renderHairs(0.0625F, (ts == 4 ? "n" : "") + "FR" + JRMCoreH.TransFrHrn[state]);

@@ -19,7 +19,7 @@ import java.io.File;
 public class CustomNpcPlusDBC {
 
     public static final String name = "CustomNPC+ DBC Addon";
-    public static final String version = "1.0-Release_Candidate-4B";
+    public static final String version = "1.0.0";
     public static final String ID = "npcdbc";
     @SidedProxy(clientSide = "kamkeel.npcdbc.client.ClientProxy", serverSide = "kamkeel.npcdbc.CommonProxy")
     public static CommonProxy proxy;

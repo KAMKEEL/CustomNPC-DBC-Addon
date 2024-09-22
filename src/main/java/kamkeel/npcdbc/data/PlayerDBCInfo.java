@@ -478,9 +478,13 @@ public class PlayerDBCInfo {
         if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT || parent.player == null)
             return;
 
+        Map<String, PlayerBonus> test = BonusController.getInstance().getPlayerBonus(parent.player);
+        if(test == null || test.isEmpty())
+            return;
+
         NBTTagList nbttaglist = new NBTTagList();
 
-        for (PlayerBonus bonus : BonusController.getInstance().getPlayerBonus(parent.player).values()) {
+        for (PlayerBonus bonus : test.values()) {
             nbttaglist.appendTag(bonus.writeBonusData(new NBTTagCompound()));
         }
         dbcCompound.setTag("addonBonus", nbttaglist);

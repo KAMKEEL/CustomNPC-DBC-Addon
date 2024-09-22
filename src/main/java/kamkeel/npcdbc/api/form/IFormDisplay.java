@@ -87,7 +87,7 @@ public interface IFormDisplay {
     /**
      * So far this is only for arcosian race.
      *
-     * @param type Legal: firstform, secondform, thirdform, finalform, ultimatecooler
+     * @param type Legal: firstform, secondform, thirdform, finalform, ultimatecooler, ultimate
      */
     void setBodyType(String type);
 

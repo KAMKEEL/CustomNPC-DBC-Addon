@@ -52,5 +52,36 @@ public interface IKiAttack {
 
     byte getChargePercent();
     void setChargePercent(byte chargePercent);
+
+    /**
+     * If the NPC's current form has Destroyer configs enabled, <br>
+     * this ki attack will be granted Destroyer effects even if <br>
+     * `isDestroyerAttack` is false
+     *
+     * @return True if it should respect those configs.
+     */
+    boolean respectFormDestoryerConfig();
+
+    /**
+     * If the NPC's current form has Destroyer configs enabled, <br>
+     * this ki attack will be granted Destroyer effects even if <br>
+     * `isDestroyerAttack` is false
+     *
+     * @param respectFormConfig True if it should respect those configs.
+     */
+    void setRespectFormDestroyerConfig(boolean respectFormConfig);
+
+    /**
+     * @return Checks if the ki attack is forced to be a Destroyer attack
+     */
+    boolean isDestroyerAttack();
+
+    /**
+     * Forcefully set the ki attack to be a Destroyer type
+     * @param isDestroyer true or false
+     */
+    void setDestroyerAttack(boolean isDestroyer);
+
+
 }
 
