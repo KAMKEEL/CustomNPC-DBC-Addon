@@ -739,40 +739,59 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     // Form Mastery stuff
     @Override
     public void setCustomMastery(int formID, float value) {
-        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        if (formData.hasFormUnlocked(formID)) {
-            formData.setFormLevel(formID, value);
-            formData.updateClient();
-        }
-
+        setCustomMastery(formID, value, false);
     }
 
     @Override
     public void setCustomMastery(IForm form, float value) {
-        setCustomMastery(form.getID(), value);
+        setCustomMastery(form.getID(), value, false);
+    }
+
+    @Override
+    public void setCustomMastery(int formID, float value, boolean ignoreUnlockCheck) {
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        if (ignoreUnlockCheck || formData.hasFormUnlocked(formID)) {
+            formData.setFormLevel(formID, value);
+            formData.updateClient();
+        }
+    }
+
+    @Override
+    public void setCustomMastery(IForm form, float value, boolean ignoreUnlockCheck) {
+        setCustomMastery(form.getID(), value, ignoreUnlockCheck);
     }
 
     @Override
     public void addCustomMastery(int formID, float value) {
+        addCustomMastery(formID, value, false);
+    }
+
+    @Override
+    public void addCustomMastery(IForm form, float value) {
+        addCustomMastery(form.getID(), value, false);
+    }
+
+    @Override
+    public void addCustomMastery(int formID, float value, boolean ignoreUnlockCheck) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-        if (formData.hasFormUnlocked(formID)) {
+        if (ignoreUnlockCheck || formData.hasFormUnlocked(formID)) {
             formData.addFormLevel(formID, value);
             formData.updateClient();
         }
     }
 
     @Override
-    public void addCustomMastery(IForm form, float value) {
-        addCustomMastery(form.getID(), value);
+    public void addCustomMastery(IForm form, float value, boolean ignoreUnlockCheck) {
+        addCustomMastery(form.getID(), value, ignoreUnlockCheck);
     }
 
     @Override
     public float getCustomMastery(int formID) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         float level = 0;
-        if (formData.hasFormUnlocked(formID)) {
-            level = formData.getFormLevel(formID);
-        }
+
+        level = formData.getFormLevel(formID);
+
         return level;
     }
 
