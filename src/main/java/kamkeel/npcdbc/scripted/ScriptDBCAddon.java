@@ -787,17 +787,27 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public float getCustomMastery(int formID) {
+        return getCustomMastery(formID, true);
+    }
+
+    @Override
+    public float getCustomMastery(IForm form) {
+        return getCustomMastery(form.getID(), true);
+    }
+
+    @Override
+    public float getCustomMastery(int formID, boolean checkFusion) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         float level = 0;
 
-        level = formData.getFormLevel(formID);
+        level = formData.getFormLevel(formID, checkFusion);
 
         return level;
     }
 
     @Override
-    public float getCustomMastery(IForm form) {
-        return getCustomMastery(form.getID());
+    public float getCustomMastery(IForm form, boolean checkFusion) {
+        return getCustomMastery(form.getID(), checkFusion);
     }
 
     @Override
