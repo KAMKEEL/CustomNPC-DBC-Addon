@@ -402,17 +402,95 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     boolean isInCustomForm(int formID);
 
+    /**
+     * Sets the mastery of a form if the player has it unlocked, otherwise it won't change anything.
+     * @param formID ID of the form to change the mastery of.
+     * @param value New mastery value.
+     */
     void setCustomMastery(int formID, float value);
 
+    /**
+     * Sets the mastery of a form if the player has it unlocked, otherwise it won't change anything.
+     * @param form The form you want to change the mastery of.
+     * @param value New mastery value.
+     */
     void setCustomMastery(IForm form, float value);
 
+    /**
+     * Sets the mastery of a form.
+     * @param formID ID of the form to change the mastery of.
+     * @param value New mastery value.
+     * @param ignoreUnlockCheck If set to true, it will adjust the form mastery even if the player doesn't have the form unlocked.
+     */
+    void setCustomMastery(int formID, float value, boolean ignoreUnlockCheck);
+
+    /**
+     * Sets the mastery of a form.
+     * @param form The form you want to change the mastery of.
+     * @param value New mastery value.
+     * @param ignoreUnlockCheck If set to true, it will adjust the form mastery even if the player doesn't have the form unlocked.
+     */
+    void setCustomMastery(IForm form, float value, boolean ignoreUnlockCheck);
+
+    /**
+     * Modifies the mastery of a form ONLY if the player has the form unlocked.
+     * @param formID ID of the form to change the mastery of.
+     * @param value Amount of mastery to add.
+     */
     void addCustomMastery(int formID, float value);
 
+    /**
+     * Modifies the mastery of a form ONLY if the player has the form unlocked.
+     * @param form The form you want to change the mastery of.
+     * @param value Amount of mastery to add.
+     */
     void addCustomMastery(IForm form, float value);
 
+    /**
+     * Modifies the mastery of a form.
+     * @param formID ID of the form to change the mastery of.
+     * @param value Amount of mastery to add.
+     * @param ignoreUnlockCheck If set to true, it will adjust the form mastery even if the player doesn't have the form unlocked.
+     */
+    void addCustomMastery(int formID, float value, boolean ignoreUnlockCheck);
+
+    /**
+     * Modifies the mastery of a form.
+     * @param form The form you want to change the mastery of.
+     * @param value Amount of mastery to add.
+     * @param ignoreUnlockCheck If set to true, it will adjust the form mastery even if the player doesn't have the form unlocked.
+     */
+    void addCustomMastery(IForm form, float value, boolean ignoreUnlockCheck);
+
+    /**
+     * Check the form mastery. If the player is fused, it sums masteries of both players.
+     * @param formID Form ID to check.
+     * @return Mastery of the given form.
+     */
     float getCustomMastery(int formID);
 
+    /**
+     * Check the form mastery. If the player is fused, it sums masteries of both players.
+     * @param form Form to check.
+     * @return Mastery of the given form.
+     */
     float getCustomMastery(IForm form);
+
+    /**
+     * Check the form mastery.
+     * @param formID Form ID to check.
+     * @param checkFusion Should it perform a fusion check? If the player is fused, it sums masteries of both players.
+     * @return Mastery of the given form.
+     */
+    float getCustomMastery(int formID, boolean checkFusion);
+
+    /**
+     * Check the form mastery.
+     * @param form Form to check.
+     * @param checkFusion Should it perform a fusion check? If the player is fused, it sums masteries of both players.
+     * @return Mastery of the given form.
+     */
+    float getCustomMastery(IForm form, boolean checkFusion);
 
     void removeCustomMastery(int formID);
 

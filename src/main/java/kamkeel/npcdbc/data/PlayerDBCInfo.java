@@ -230,12 +230,16 @@ public class PlayerDBCInfo {
     }
 
     public float getFormLevel(int formID) {
+        return getFormLevel(formID, true);
+    }
+
+    public float getFormLevel(int formID, boolean checkFusion) {
         if(formID == -1)
             return 0f;
 
 
         float mastery = formLevels.getOrDefault(formID, 0f);
-        if(parent.player == null)
+        if(!checkFusion || parent.player == null)
             return mastery;
 
         NBTTagCompound compound = parent.player.getEntityData().getCompoundTag("PlayerPersisted");
