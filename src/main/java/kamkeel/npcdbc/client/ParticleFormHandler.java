@@ -328,9 +328,9 @@ public class ParticleFormHandler {
                     blue = 246;
                     float offset = 0;
                     alpha = 0.75f;
-                    for (int i = 0; i < 3; ++i) { //super light blue particles
+                    for (int i = 0; i < 2; ++i) { //super light blue particles
                         // x = Math.random() * 1.600000023841858 - 0.800000011920929;
-                        width = height * 0.6f * 0.8f;
+                        width = height * 0.65f;
                         life = 0.5F * height;
                         x = offset + (Math.random() - 0.5) * width;
                         y = Math.random() * (double) height - 0.5;
