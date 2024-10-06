@@ -20,10 +20,11 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
     private final ArrayList<String> races = new ArrayList<>();
     private int selectedRace = 0;
 
-    public SubGuiSetParents(Form form1){
+    public SubGuiSetParents(Form form1) {
         this.closeOnEsc = true;
         this.form = form1;
         this.drawDefaultBackground = true;
+        this.selectedRace = form.race();
 
         setBackground("menubg.png");
         xSize = 360;
@@ -45,12 +46,12 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
     }
 
     @Override
-    public void initGui(){
+    public void initGui() {
         super.initGui();
 
         addLabel(new GuiNpcLabel(1, StatCollector.translateToLocal("Races"), guiLeft + 22, guiTop + 11));
-        if(dbcRaces == null){
-            dbcRaces = new GuiCustomScroll(this,0);
+        if (dbcRaces == null) {
+            dbcRaces = new GuiCustomScroll(this, 0);
             dbcRaces.setSize(150, 180);
         }
         dbcRaces.guiLeft = guiLeft + 20;
@@ -60,33 +61,33 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
         this.addScroll(dbcRaces);
 
         addLabel(new GuiNpcLabel(2, StatCollector.translateToLocal("Forms"), guiLeft + 192, guiTop + 11));
-        if(dbcForms == null){
-            dbcForms = new GuiCustomScroll(this,1);
+        if (dbcForms == null) {
+            dbcForms = new GuiCustomScroll(this, 1);
             dbcForms.setSize(150, 155);
         }
         dbcForms.guiLeft = guiLeft + 190;
         dbcForms.guiTop = guiTop + 24;
         dbcForms.setUnsortedList(new ArrayList<>(allForms.get(selectedRace).values()));
         stateIDs = new ArrayList<>(allForms.get(selectedRace).keySet());
-        dbcForms.selected = form.getFormRequirement(selectedRace);
+        int selected = form.getFormRequirement(selectedRace);
+        dbcForms.selected = selected == 14 ? 7 : selected == 15 ? 12 : selected > 6? selected + 1 : selected;
+        dbcForms.resetScroll();
         this.addScroll(dbcForms);
 
         addButton(new GuiNpcButton(10, guiLeft + 190, guiTop + 184, 72, 20, "gui.remove"));
         addButton(new GuiNpcButton(11, guiLeft + 268, guiTop + 184, 72, 20, "Remove All")); //#TODO: add localisation
 
         addButton(new GuiNpcButton(1, guiLeft + xSize - 25, guiTop + 3, 20, 20, "X"));
-
-
     }
 
     @Override
-    public void actionPerformed(GuiButton button){
+    public void actionPerformed(GuiButton button) {
         int id = button.id;
 
-        if(id == 1){
+        if (id == 1) {
             this.close();
         }
-        if(id == 10){
+        if (id == 10) {
             form.removeFormRequirement(selectedRace);
             dbcForms.selected = -1;
         }
@@ -100,13 +101,13 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
     @Override
     public void customScrollClicked(int i, int i1, int i2, GuiCustomScroll guiCustomScroll) {
         // Do Selection
-        if(guiCustomScroll.id == 0){
+        if (guiCustomScroll.id == 0) {
             selectedRace = guiCustomScroll.selected;
             initGui();
         }
-        if(guiCustomScroll.id == 1){
-            form.addFormRequirement(selectedRace, stateIDs.get(guiCustomScroll.selected).byteValue());
+        if (guiCustomScroll.id == 1) {
+            int selected = guiCustomScroll.selected == 7 ? 14 : guiCustomScroll.selected == 12 ? 15 : guiCustomScroll.selected > 7 ? guiCustomScroll.selected - 1 : guiCustomScroll.selected; //ssj4 and ssbevo fix
+            form.addFormRequirement(selectedRace, (byte) selected);
         }
     }
-
 }

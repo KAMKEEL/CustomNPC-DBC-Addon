@@ -210,8 +210,8 @@ public class DBCForm {
         HashMap<Integer, String> forms = new LinkedHashMap<>();
         forms.put(Base, "§3Base");
         if (race == DBCRace.HUMAN) {
-            forms.put(HumanBuffed, "§3Buffed");
             forms.put(HumanFullRelease, "§4Full Release");
+            forms.put(HumanBuffed, "§3Buffed");
             forms.put(HumanGod, "§cGod");
         } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             forms.put(SuperSaiyan, "§eSuper Saiyan");
@@ -227,8 +227,8 @@ public class DBCForm {
             forms.put(SuperSaiyanBlue, "§bSuper Saiyan Blue");
             forms.put(BlueEvo, "§1Super Saiyan Blue Evo");
         } else if (race == DBCRace.NAMEKIAN) {
-            forms.put(NamekGiant, "§2Giant");
             forms.put(NamekFullRelease, "§aFull Release");
+            forms.put(NamekGiant, "§2Giant");
             forms.put(NamekGod, "§cGod");
         } else if (race == DBCRace.ARCOSIAN) {
             forms.put(Minimal, "§5Minimal");
