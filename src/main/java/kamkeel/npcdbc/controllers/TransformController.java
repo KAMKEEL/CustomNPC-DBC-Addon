@@ -25,10 +25,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
-import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
-import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.util.ValueUtil;
 
 import static JinRyuu.JRMCore.JRMCoreH.isInBaseForm;
@@ -73,16 +70,15 @@ public class TransformController {
             if (JRMCoreH.curEnergy < cost)
                 return;
             JRMCoreH.Cost(cost);
-
         }
-//        if (player.ticksExisted % 5 == 0) { //increments rage meter and drain ki cost every 6 ticks
-//            float toDrain = form.mastery.kiDrain * form.mastery.calculateMulti("kiDrain", formLevel);
-//
-//            dbcData.stats.restoreKiPercent(-toDrain / form.mastery.kiDrainTimer * 10);
-//            PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcEnrgy", (int) dbcData.Ki).generatePacket());
-//
-//
-//        }
+        //        if (player.ticksExisted % 5 == 0) { //increments rage meter and drain ki cost every 6 ticks
+        //            float toDrain = form.mastery.kiDrain * form.mastery.calculateMulti("kiDrain", formLevel);
+        //
+        //            dbcData.stats.restoreKiPercent(-toDrain / form.mastery.kiDrainTimer * 10);
+        //            PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcEnrgy", (int) dbcData.Ki).generatePacket());
+        //
+        //
+        //        }
         if (JRMCoreH.curRelease < 50 && releaseTime >= 10) { //if release is less than 50%, increment it until it is so
             float en = 100.0F / JRMCoreH.maxEnergy * JRMCoreH.curEnergy;
             float re = JRMCoreH.curRelease;
@@ -90,7 +86,6 @@ public class TransformController {
             if (re >= 50.0F ? (re - 50.0F < (en - 50.0F) * 2.0F) : (re < ((en <= 10.0F) ? (en * 5.0F) : 50.0F)))
                 JRMCoreH.Rls((byte) 1);
             releaseTime = 0;
-
         }
         if (rage >= 100) { //transform when rage meter reaches 100 (max)
             PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getID(), true).generatePacket());
@@ -197,7 +192,6 @@ public class TransformController {
             display.isTransforming = false;
         }
         npc.updateClient();
-
     }
 
     public static void npcDescend(EntityNPCInterface npc, int id) {
@@ -231,9 +225,6 @@ public class TransformController {
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
 
-            if(!form.raceEligible((IPlayer) NpcAPI.Instance().getIEntity(player))){
-                return;
-            }
 
             boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ConfigDBCGameplay.InstantTransform;
             if (!allowBypass) {
@@ -293,7 +284,7 @@ public class TransformController {
             boolean intoParent = parent != null && formData.hasFormUnlocked(form.getParentID());
 
             if (!intoParent && !form.stackable.vanillaStackable) {
-                if(JRMCoreH.rSai(dbcData.Race) && (dbcData.State == 7 || dbcData.State == 8)) {
+                if (JRMCoreH.rSai(dbcData.Race) && (dbcData.State == 7 || dbcData.State == 8)) {
                     dbcData.State = 0;
                 }
             }
@@ -306,7 +297,6 @@ public class TransformController {
                 float heatRatio = dbcData.addonCurrentHeat / form.mastery.maxHeat;
                 dbcData.Pain = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()) * heatRatio);
                 dbcData.addonCurrentHeat = 0;
-
             }
             if (formID == -10) {
                 formData.currentForm = -1;

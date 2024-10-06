@@ -39,6 +39,7 @@ public interface IForm {
 
     void setAllMulti(float allMulti);
 
+    boolean raceEligible(int race);
     boolean raceEligible(IPlayer player);
 
     /**
