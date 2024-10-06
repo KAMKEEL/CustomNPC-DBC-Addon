@@ -481,7 +481,7 @@ public class ParticleFormHandler {
                     blue = 200;
                     life = height * 0.65f;
                     offset = 0.1f;
-                    for (int i = 0; i < 2; ++i) {   //dark blue
+                    for (int i = 0; i < 1; ++i) {   //dark blue
                         width = height * 0.9f;
                         life = 0.8F * height;
 
