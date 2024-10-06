@@ -47,7 +47,6 @@ public class AuraSound extends ClientSound {
                 DBCData dbcData = DBCData.get((EntityPlayer) entity);
                 aura = dbcData.getToggledAura();
                 isInKaioken = dbcData.isForm(DBCForm.Kaioken);
-
             }
 
             if (isVanillaAura) {
@@ -94,15 +93,14 @@ public class AuraSound extends ClientSound {
         if (entity instanceof EntityPlayer) {
             DBCData dbcData = DBCData.get((EntityPlayer) entity);
             isTransforming = dbcData.isTransforming();
-
         } else if (entity instanceof EntityNPCInterface) {
             DBCDisplay display = ((INPCDisplay) ((EntityNPCInterface) entity).display).getDBCDisplay();
             isTransforming = display.isTransforming;
         }
 
 
-        String sound = aura.display.getFinalSound();
-        String secondSound = aura.hasSecondaryAura() ? aura.getSecondaryAur().display.getFinalSound() : null;
+        String sound = aura.display.getFinalSound(aura.display.type);
+        String secondSound = aura.hasSecondaryAura() ? aura.getSecondaryAur().display.getFinalSound(aura.getSecondaryAur().display.type.Base) : null;
 
         if (!SoundHandler.isPlayingSound(entity, sound)) {
             AuraSound auraSound = new AuraSound(aura, new SoundSource(sound, entity));

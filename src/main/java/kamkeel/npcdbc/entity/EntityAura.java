@@ -47,7 +47,7 @@ public class EntityAura extends Entity {
     public boolean isKaioken, isInKaioken, isGUIAura;
     public boolean isTransforming;
     public boolean isCharging;
-    public boolean isVanillaDefault; // when custom aura is hidden and revamp is enabled
+    public boolean isVanillaDefault; // when no custom aura selected but revamp is enabled
 
     public EnumAuraTypes3D type3D;
     public EnumAuraTypes2D type2D;
@@ -89,9 +89,15 @@ public class EntityAura extends Entity {
         color1 = auraData.getAuraColor();
         AuraDisplay display = aura.display;
 
-        type3D = display.type;
-        if (aura.display.type == Base)
-            type3D = EnumAuraTypes3D.getType(auraData);
+
+        if (aura.display.type == Base) {
+            EnumAuraTypes3D newType = EnumAuraTypes3D.getType(auraData);
+            if (newType != type3D)
+                onTypeChange(newType);
+
+            type3D = newType;
+        } else
+            type3D = display.type;
 
         type2D = display.type2D;
         if (aura.display.type2D == EnumAuraTypes2D.Default)
@@ -192,6 +198,15 @@ public class EntityAura extends Entity {
         }
 
         return this;
+    }
+
+    public void onTypeChange(EnumAuraTypes3D newType) {
+        if (auraSound != null) {
+            auraSound.soundSource.fadeOut = true;
+            auraSound.soundSource.fadeFactor = 0.075f;
+
+            playSound(newType);
+        }
     }
 
     public EntityAura loadKaioken() {
@@ -381,11 +396,14 @@ public class EntityAura extends Entity {
     }
 
     @SideOnly(Side.CLIENT)
-    public void playSound() {
+    public void playSound(EnumAuraTypes3D soundType) {
         if (SubGuiAuraDisplay.useGUIAura)
             return;
 
-        String sound = !isKaioken ? aura.display.getFinalSound() : aura.display.getFinalKKSound();
+        if (isVanillaDefault)
+            aura.display.auraSound = "default";
+
+        String sound = !isKaioken ? aura.display.getFinalSound(soundType) : aura.display.getFinalKKSound();
         if (sound != null) {
             auraSound = new AuraSound(aura, new SoundSource(sound, entity));
             if (isTransforming)
@@ -440,7 +458,7 @@ public class EntityAura extends Entity {
         entity.ignoreFrustumCheck = true;
 
         entity.worldObj.spawnEntityInWorld(this);
-        playSound();
+        playSound(type3D);
         return this;
     }
 

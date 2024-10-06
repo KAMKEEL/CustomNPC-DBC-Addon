@@ -101,45 +101,45 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         if (aura != null && aura.id != -1) {
             addLabel(new GuiNpcLabel(10, "ID", guiLeft + 368, guiTop + 4 + 3 + 185));
             addLabel(new GuiNpcLabel(11, aura.id + "", guiLeft + 368, guiTop + 4 + 3 + 195));
-//
-//            int y = guiTop + 3;
-//
-//            addTextField(new GuiNpcTextField(13, this, this.fontRendererObj, guiLeft + 36, y, 180, 20, aura.name));
-//            addLabel(new GuiNpcLabel(13, "gui.name", guiLeft + 4, y + 5));
-//
-//            y += 23;
-//            addTextField(new GuiNpcTextField(14, this, guiLeft + 70, y, 146, 20, aura.menuName.replaceAll("§", "&")));
-//            getTextField(14).setMaxStringLength(20);
-//            addLabel(new GuiNpcLabel(14, "general.menuName", guiLeft + 4, y + 5));
+            //
+            //            int y = guiTop + 3;
+            //
+            //            addTextField(new GuiNpcTextField(13, this, this.fontRendererObj, guiLeft + 36, y, 180, 20, aura.name));
+            //            addLabel(new GuiNpcLabel(13, "gui.name", guiLeft + 4, y + 5));
+            //
+            //            y += 23;
+            //            addTextField(new GuiNpcTextField(14, this, guiLeft + 70, y, 146, 20, aura.menuName.replaceAll("§", "&")));
+            //            getTextField(14).setMaxStringLength(20);
+            //            addLabel(new GuiNpcLabel(14, "general.menuName", guiLeft + 4, y + 5));
 
-//            y += 40;
-//            addLabel(new GuiNpcLabel(30, "general.auraSound", guiLeft + 5, y + 5));
-//            y += 16;
-//            addTextField(new GuiNpcTextField(30, this, fontRendererObj, guiLeft + 5, y, 155, 20, aura.display.auraSound));
-//            addButton(new GuiNpcButton(30, guiLeft + 161, y, 40, 20, "gui.select"));
-//            addButton(new GuiNpcButton(301, guiLeft + 201, y, 16, 20, "X"));
-//            getButton(301).enabled = !aura.display.auraSound.equals("jinryuudragonbc:DBC.aura");
-//
-//            y += 23;
-//            addLabel(new GuiNpcLabel(31, "general.kaiokenSound", guiLeft + 5, y + 5));
-//            y += 16;
-//            addTextField(new GuiNpcTextField(31, this, fontRendererObj, guiLeft + 5, y, 155, 20, aura.display.kaiokenSound));
-//            addButton(new GuiNpcButton(31, guiLeft + 161, y, 40, 20, "gui.select"));
-//            addButton(new GuiNpcButton(311, guiLeft + 201, y, 16, 20, "X"));
-//            getButton(311).enabled = !aura.display.kaiokenSound.isEmpty();
+            //            y += 40;
+            //            addLabel(new GuiNpcLabel(30, "general.auraSound", guiLeft + 5, y + 5));
+            //            y += 16;
+            //            addTextField(new GuiNpcTextField(30, this, fontRendererObj, guiLeft + 5, y, 155, 20, aura.display.auraSound));
+            //            addButton(new GuiNpcButton(30, guiLeft + 161, y, 40, 20, "gui.select"));
+            //            addButton(new GuiNpcButton(301, guiLeft + 201, y, 16, 20, "X"));
+            //            getButton(301).enabled = !aura.display.auraSound.equals("jinryuudragonbc:DBC.aura");
+            //
+            //            y += 23;
+            //            addLabel(new GuiNpcLabel(31, "general.kaiokenSound", guiLeft + 5, y + 5));
+            //            y += 16;
+            //            addTextField(new GuiNpcTextField(31, this, fontRendererObj, guiLeft + 5, y, 155, 20, aura.display.kaiokenSound));
+            //            addButton(new GuiNpcButton(31, guiLeft + 161, y, 40, 20, "gui.select"));
+            //            addButton(new GuiNpcButton(311, guiLeft + 201, y, 16, 20, "X"));
+            //            getButton(311).enabled = !aura.display.kaiokenSound.isEmpty();
 
-//            y += 59;
-//            addButton(new GuiNpcButton(1500, guiLeft + 7, y, 202, 20, "display.displaySettings"));
+            //            y += 59;
+            //            addButton(new GuiNpcButton(1500, guiLeft + 7, y, 202, 20, "display.displaySettings"));
         }
     }
 
     public void playSound(boolean allowRepeats) {
-        String soundLoc = display.getAuraSound();
+        String soundLoc = display.getFinalSound(display.type);
         String kaiokenLoc = visualDisplay.isKaioken ? display.getKaiokenSound() : null;
         String kettleLoc = display.kettleModeEnabled ? "jinryuudragonbc:DBC5.majin_cattle" : null;
 
         Aura secondary = aura.getSecondaryAur();
-        String secondLoc = secondary != null ? secondary.display.getFinalSound() : null;
+        String secondLoc = secondary != null ? secondary.display.getFinalSound(secondary.display.type) : null;
         String secondaryKettleLoc = secondary != null && secondary.display.kettleModeEnabled ? "jinryuudragonbc:DBC5.majin_cattle" : null;
 
         if (soundLoc != null && (allowRepeats ? true : !SoundHandler.isPlayingSound(npc, soundLoc))) {
@@ -344,7 +344,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         GL11.glRotatef(-(float) Math.atan(f6 / 800F) * 20F, 1.0F, 0.0F, 0.0F);
         entity.prevRenderYawOffset = entity.renderYawOffset = rotation;
         entity.prevRotationYaw = entity.rotationYaw = (float) Math.atan(f5 / 80F) * 40F + rotation;
-        entity.rotationPitch=  entity.prevRotationPitch = -(float) Math.atan(f6 / 80F) * 10F;
+        entity.rotationPitch = entity.prevRotationPitch = -(float) Math.atan(f6 / 80F) * 10F;
         entity.prevRotationYawHead = entity.rotationYawHead = entity.rotationYaw;
         GL11.glTranslatef(0.0F, 0.1f + entity.yOffset, 1F);
         RenderManager.instance.playerViewY = 180F;
@@ -358,7 +358,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         SubGuiAuraDisplay.useGUIAura = false;
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
         entity.prevRotationYaw = entity.rotationYaw = f3;
-        entity.rotationPitch = entity.prevRotationPitch =f4;
+        entity.rotationPitch = entity.prevRotationPitch = f4;
         entity.prevRotationYawHead = entity.rotationYawHead = f7;
 
         RenderHelper.disableStandardItemLighting();
@@ -368,7 +368,6 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         GL11.glPopMatrix();
-
     }
 
     @Override
@@ -381,10 +380,8 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
         renderScreen();
     }
 
-
     private void renderScreen() {
     }
-
 
     @Override
     public void keyTyped(char c, int i) {
@@ -421,8 +418,6 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
 
         if (name != null)
             scrollAuras.setSelected(name);
-
-
     }
 
     @Override

@@ -153,9 +153,9 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         scrollWindow.addButton(new GuiNpcButton(2406, guiX + 200 + rightOffset, y, 20, 20, "X"));
         scrollWindow.getButton(2406).enabled = display.outlineID != -1;
 
-        if(hasOutline) {
+        if (hasOutline) {
             maxScroll += 23;
-            y+= 23;
+            y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(2207, "display.aura.alwaysShowOutline", 3, y + 5));
             scrollWindow.getLabel(2207).color = 0xffffff;
             scrollWindow.addButton(new GuiNpcButtonYesNo(2307, guiX + 100 + rightOffset, y, 100, 20, display.outlineAlwaysOn));
@@ -452,6 +452,10 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
         } else if (button.id == 3006) {
             // Change 3D Type
             display.type = EnumAuraTypes3D.values()[button.getValue()];
+            if (display.auraSound.equalsIgnoreCase("default")) {
+                parent.stopSound(parent.auraSound, false);
+                parent.playSound(true);
+            }
             initGui();
         } else if (button.id == 3007) {
             // Change 2D Type
@@ -655,7 +659,7 @@ public class SubGuiAuraDisplay extends GuiNPCInterface implements ISubGuiListene
             parent.playSound(false);
         } else if (guiNpcTextField.id == 2) {
             display.kaiokenSound = guiNpcTextField.getText();
-           getButton(21).enabled = !display.kaiokenSound.isEmpty();
+            getButton(21).enabled = !display.kaiokenSound.isEmpty();
             parent.stopSound(parent.kaiokenSound, false);
             parent.playSound(false);
         }

@@ -44,7 +44,8 @@ public interface IAuraDisplay {
     String getAuraSound();
 
     /**
-     * @param soundDirectory i.e "customnpcs:auras.majin_aura"
+     * @param soundDirectory resource location of sound i.e "customnpcs:auras.majin_aura"
+     *                       Setting this to "default" allows the sound to dynamically change according to the aura's getType()
      */
     void setAuraSound(String soundDirectory);
 

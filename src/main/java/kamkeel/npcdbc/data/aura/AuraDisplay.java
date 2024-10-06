@@ -1,10 +1,11 @@
 package kamkeel.npcdbc.data.aura;
 
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.aura.IAuraDisplay;
+import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes3D;
 import kamkeel.npcdbc.controllers.OutlineController;
-import kamkeel.npcdbc.api.outline.IOutline;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
@@ -39,7 +40,6 @@ public class AuraDisplay implements IAuraDisplay {
     public AuraDisplay(Aura parent) {
         this.parent = parent;
     }
-
 
     public void readFromNBT(NBTTagCompound compound) {
         NBTTagCompound rendering = compound.getCompoundTag("rendering");
@@ -90,7 +90,6 @@ public class AuraDisplay implements IAuraDisplay {
 
         outlineID = rendering.hasKey("outlineID") ? rendering.getInteger("outlineID") : -1;
         outlineAlwaysOn = rendering.getBoolean("outlineAlwaysOn");
-
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -208,23 +207,28 @@ public class AuraDisplay implements IAuraDisplay {
         this.auraSound = soundDirectory;
     }
 
-    public String getFinalSound() {
-        String sound = "jinryuudragonbc:DBC.aura";
+    public String getFinalSound(EnumAuraTypes3D type) {
+        String sound = auraSound;
 
-        if (type == EnumAuraTypes3D.SaiyanGod)
-            sound = "jinryuudragonbc:1610.aurag";
-        else if (type == EnumAuraTypes3D.UI)
-            sound = "jinryuudragonbc:DBC5.aura_ui";
-        else if (type == EnumAuraTypes3D.GoD)
-            sound = "jinryuudragonbc:DBC5.aura_destroyer";
-        else if (EnumAuraTypes3D.isBlue(type))
-            sound = "jinryuudragonbc:1610.aurab";
+        if (auraSound.equalsIgnoreCase("default")) {
+            sound = "jinryuudragonbc:DBC.aura";
+
+            if (type == EnumAuraTypes3D.None)
+                sound = "";
+            if (type == EnumAuraTypes3D.SaiyanGod || type == EnumAuraTypes3D.UltimateArco)
+                sound = "jinryuudragonbc:1610.aurag";
+            else if (type == EnumAuraTypes3D.UI)
+                sound = "jinryuudragonbc:DBC5.aura_ui";
+            else if (type == EnumAuraTypes3D.GoD)
+                sound = "jinryuudragonbc:DBC5.aura_destroyer";
+            else if (type == EnumAuraTypes3D.SaiyanBlue || type == EnumAuraTypes3D.SaiyanRose)
+                sound = "jinryuudragonbc:1610.aurab";
+            else if (type == EnumAuraTypes3D.SaiyanBlueEvo || type == EnumAuraTypes3D.SaiyanRoseEvo)
+                sound = CustomNpcPlusDBC.ID + ":aura.ssbeaura";
+        }
 
 
-        if (hasSound())
-            sound = auraSound;
         return sound;
-
     }
 
     public String getFinalKKSound() {
@@ -249,7 +253,6 @@ public class AuraDisplay implements IAuraDisplay {
     public boolean isKaiokenToggled() {
         return hasKaiokenAura;
     }
-
 
     @Override
     public String getType() {
@@ -300,7 +303,6 @@ public class AuraDisplay implements IAuraDisplay {
                 return lightningColor > -1;
             case "kaioken":
                 return kaiokenColor > -1;
-
         }
         throw new CustomNPCsException("Invalid type! Legal types: color1, color2, color3, lightningColor, kaioken");
     }
@@ -325,11 +327,8 @@ public class AuraDisplay implements IAuraDisplay {
                 break;
             default:
                 throw new CustomNPCsException("Invalid type! Legal types: color1, color2, color3, lightning, kaioken");
-
         }
-
     }
-
 
     @Override
     public int getColor(String colorType) {
@@ -357,7 +356,6 @@ public class AuraDisplay implements IAuraDisplay {
                 return lightningAlpha > -1;
             case "kaioken":
                 return kaiokenAlpha > -1;
-
         }
         throw new CustomNPCsException("Invalid type! Legal types:  aura, lightning, kaioken");
     }
@@ -438,7 +436,6 @@ public class AuraDisplay implements IAuraDisplay {
     public void setSize(float size) {
         this.size = ValueUtil.clamp(size, 0.05f, 10);
     }
-
 
     @Override
     public boolean hasSpeed() {
