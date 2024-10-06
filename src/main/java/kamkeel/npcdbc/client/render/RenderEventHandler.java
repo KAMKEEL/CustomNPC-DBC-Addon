@@ -221,7 +221,7 @@ public class RenderEventHandler {
 
         EntityNPCInterface entity = (EntityNPCInterface) e.entity;
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
-        if (!display.enabled || !display.useStencilBuffer)
+        if (!display.useStencilBuffer)
             return;
 
         EntityAura aura = display.auraEntity;
