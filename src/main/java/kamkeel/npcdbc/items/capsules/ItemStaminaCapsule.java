@@ -100,15 +100,15 @@ public class ItemStaminaCapsule extends Item {
         if (meta < 0 || meta >= EnumStaminaCapsules.count())
             meta = 0;
 
-        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.STAMINA, meta)))
-            return itemStack;
-
         UUID playerUUID = player.getUniqueID();
         long remainingTime = CapsuleController.canUseStaminaCapsule(playerUUID, meta);
         if(remainingTime > 0){
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
+
+        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.STAMINA, meta)))
+            return itemStack;
 
         EnumStaminaCapsules staminaCapsules = EnumStaminaCapsules.values()[meta];
         // Percentage of Stamina to Restore

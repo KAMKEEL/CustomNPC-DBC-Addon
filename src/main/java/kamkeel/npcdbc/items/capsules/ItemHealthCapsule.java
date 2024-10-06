@@ -101,9 +101,6 @@ public class ItemHealthCapsule extends Item {
         if (meta < 0 || meta >= EnumHealthCapsules.count())
             meta = 0;
 
-        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.HP, meta)))
-            return itemStack;
-
         EnumHealthCapsules healthCapsules = EnumHealthCapsules.values()[meta];
         UUID playerUUID = player.getUniqueID();
         long remainingTime = CapsuleController.canUseHealthCapsule(playerUUID, meta);
@@ -111,6 +108,9 @@ public class ItemHealthCapsule extends Item {
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
+
+        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.HP, meta)))
+            return itemStack;
 
         // Percentage of Health to Restore
         int healthRestored = healthCapsules.getStrength();

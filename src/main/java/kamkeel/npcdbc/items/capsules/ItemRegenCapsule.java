@@ -94,10 +94,6 @@ public class ItemRegenCapsule extends Item {
         if (meta < 0 || meta >= EnumRegenCapsules.count())
             meta = 0;
 
-        // Fire Event
-        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.REGEN, meta)))
-            return itemStack;
-
         EnumRegenCapsules regenCapsules = EnumRegenCapsules.values()[meta];
         UUID playerUUID = player.getUniqueID();
 
@@ -108,6 +104,8 @@ public class ItemRegenCapsule extends Item {
             return itemStack;
         }
 
+        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.REGEN, meta)))
+            return itemStack;
 
         // Apply status effect
         StatusEffectController.getInstance().applyEffect(player, regenCapsules.getStatusEffectId(), regenCapsules.getEffectTime(), (byte) regenCapsules.getStrength());

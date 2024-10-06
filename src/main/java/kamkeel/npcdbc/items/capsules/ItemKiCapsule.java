@@ -101,9 +101,6 @@ public class ItemKiCapsule extends Item {
         if (meta < 0 || meta >= EnumKiCapsules.count())
             meta = 0;
 
-        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.KI, meta)))
-            return itemStack;
-
         EnumKiCapsules kiCapsules = EnumKiCapsules.values()[meta];
         UUID playerUUID = player.getUniqueID();
         long remainingTime = CapsuleController.canUseKiCapsule(playerUUID, meta);
@@ -111,6 +108,9 @@ public class ItemKiCapsule extends Item {
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
+
+        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.KI, meta)))
+            return itemStack;
 
         // Percentage of Ki to Restore
         int kiRestored = kiCapsules.getStrength();

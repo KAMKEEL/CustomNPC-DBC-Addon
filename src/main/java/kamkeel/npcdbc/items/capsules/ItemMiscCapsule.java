@@ -97,15 +97,15 @@ public class ItemMiscCapsule extends Item {
         if (meta < 0 || meta >= EnumMiscCapsules.count())
             meta = 0;
 
-        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.MISC, meta)))
-            return itemStack;
-
         UUID playerUUID = player.getUniqueID();
         long remainingTime = CapsuleController.canUseMiscCapsule(playerUUID, meta);
         if(remainingTime > 0){
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
+
+        if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.MISC, meta)))
+            return itemStack;
 
         if(meta == EnumMiscCapsules.KO.getMeta()){
             int currentKO = getInt(player, "jrmcHar4va");
