@@ -23,6 +23,7 @@ import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientEventHandler;
@@ -41,6 +42,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     public ModelRenderer SaiT1;
     @Shadow
     public ModelRenderer FroB;
+    @Shadow
+    public ModelRenderer hairc71;
     @Unique
     boolean HD;
     @Unique
@@ -149,7 +152,6 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                         Hair.set(hair1);
                     }
                     isSSJ3 = form.display.hairType.equals("ssj3") ? true : false;
-
                 }
                 //render brows
                 if (hair.contains("EYEBROW") && dbcData.Race != 3 && (isSSJ3 || !form.display.hasEyebrows)) { //bind ssj3 eyebrow texture to ssj3 hair type
@@ -178,7 +180,6 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     else if (form.display.hairType.equals("ssj2"))
                         oldHair = oldHair.replace(oldHair.charAt(0), 'C');
                     Hair.set(oldHair);
-
                 }
                 // Tail Color
                 if (hair.contains("SJT")) {
@@ -193,8 +194,23 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     }
                 }
 
+
+                if (isHairPreset(hair)) {
+                    if (!form.display.hairType.equalsIgnoreCase("bald")) {
+                        if (form.display.hairCode.length() > 5 || form.display.hairType.equals("ssj4")) {//if valid hair
+                            RenderPlayerJBRA renderer = (RenderPlayerJBRA) RenderManager.instance.getEntityRenderObject(ClientEventHandler.renderingPlayer);
+                            renderHairsV2(0.0625F, form.display.hairCode, 0.0F, 0, 0, dbcData.stats.getJRMCPlayerID(), (int) dbcData.Race, renderer, (AbstractClientPlayer) ClientEventHandler.renderingPlayer);
+                            ci.cancel();
+                        }
+                    }
+                }
             }
         }
+    }
+
+    @Shadow
+    public void renderHairsV2(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer) {
+
     }
 
     @Inject(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At(value = "INVOKE_ASSIGN", target = "LJinRyuu/JRMCore/JRMCoreH;StusEfctsClient(II)Z", ordinal = 3, shift = At.Shift.AFTER), cancellable = true)
@@ -278,8 +294,6 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     else if (form.display.hairCode.length() < 5 && form.display.hairType.equals("ssj4"))  //if hairCode empty && ssj4, set to default ssj4 hair
                         hair.set(DBCHair.SSJ4_HAIR);
                 }
-
-
             }
         }
     }
@@ -292,8 +306,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
     @Unique
     public boolean isHairPreset(String hair) {
-        return hair.startsWith("A") || hair.startsWith("B") || hair.startsWith("C") || hair.contains("12") || hair.startsWith("D");
-
+        return hair.startsWith("A0") || hair.startsWith("A1") || hair.startsWith("B0") || hair.startsWith("C0") || hair.contains("12") || hair.startsWith("D");
     }
 }
 
