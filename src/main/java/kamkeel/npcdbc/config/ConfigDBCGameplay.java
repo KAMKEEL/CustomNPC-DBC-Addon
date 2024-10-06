@@ -78,9 +78,9 @@ public class ConfigDBCGameplay
             SaiyanZenkai = config.get(Zenkai, "Enable Saiyan Zenkai", true, "Enables Zenkai for Saiyans after Revive").getBoolean(true);
             HalfSaiyanZenkai = config.get(Zenkai, "Enable Half Saiyan Zenkai", true, "Enables Zenkai for Half Saiyans after Revive").getBoolean(true);
 
-            InstantTransform = config.get(Forms, "Instant Transform Bypass Parent", false,
+            InstantTransform = config.get(Forms, "Instant Transform Bypass Parent", true,
                 "Allows Instant Transform to Bypass the Parent Only Check\n" +
-                    "[If the player has Instant Transform Unlocked in Mastery, they can go to the form directly]").getBoolean(false);
+                    "[If the player has Instant Transform Unlocked in Mastery, they can go to the form directly]").getBoolean(true);
 
             config.setCategoryComment(PotaraFusion, "Potara Fusion comes with a Bonus Multi applied by the Potara Status Effect. This can be modified within the DBC Addon Effect Config");
             config.setCategoryPropertyOrder(PotaraFusion, new ArrayList<>(Arrays.asList("Unique Earrings", "Wearable Earrings", "Tier 1 Time", "Tier 2 Time", "Tier 3 Time")));
