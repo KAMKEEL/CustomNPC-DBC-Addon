@@ -119,32 +119,32 @@ public class OutlineRenderer {
         ///////////////////////////////////
         ///////////////////////////////////
         //Inner
-//        glPushMatrix();
-//        ColorMode.glColorInt(outline.innerColor, outline.innerAlpha); //inner
-//        glScalef(scale * outline.innerSize, 1.025f, scale * outline.innerSize);
-//
-//        glPushMatrix();
-//        glTranslatef(0, -0.015f, 0);
-//
-//        if (isArm)
-//            renderDBCArm(player, render);
-//        else
-//            renderDBCPlayer(player, render);
-//
-//        glPopMatrix();
-//
-//        if (!isArm)
-//            renderHair(player, render);
-//
-//        glPopMatrix();
-//
-//        glPushMatrix();
-//        glScalef(1.025f, 1.025f, 1.025f);
-//
-//        if (!isArm)
-//            renderMisc(player, render);
-//
-//        glPopMatrix();
+        //        glPushMatrix();
+        //        ColorMode.glColorInt(outline.innerColor, outline.innerAlpha); //inner
+        //        glScalef(scale * outline.innerSize, 1.025f, scale * outline.innerSize);
+        //
+        //        glPushMatrix();
+        //        glTranslatef(0, -0.015f, 0);
+        //
+        //        if (isArm)
+        //            renderDBCArm(player, render);
+        //        else
+        //            renderDBCPlayer(player, render);
+        //
+        //        glPopMatrix();
+        //
+        //        if (!isArm)
+        //            renderHair(player, render);
+        //
+        //        glPopMatrix();
+        //
+        //        glPushMatrix();
+        //        glScalef(1.025f, 1.025f, 1.025f);
+        //
+        //        if (!isArm)
+        //            renderMisc(player, render);
+        //
+        //        glPopMatrix();
 
         ///////////////////////////////////
         ///////////////////////////////////
@@ -153,7 +153,6 @@ public class OutlineRenderer {
         GL11.glDisable(GL_BLEND);
         GL11.glEnable(GL_TEXTURE_2D);
         ClientProxy.renderingOutline = false;
-
     }
 
     public static void renderOutlineNPC(ModelMPM model, Outline outline, EntityCustomNpc npc, DBCDisplay display, float partialTicks) {
@@ -239,7 +238,6 @@ public class OutlineRenderer {
         GL11.glDisable(GL_BLEND);
         GL11.glEnable(GL_TEXTURE_2D);
         ClientProxy.renderingOutline = false;
-
     }
 
     public static void renderHair(EntityPlayer player, RenderPlayerJBRA renderer) {
@@ -256,11 +254,12 @@ public class OutlineRenderer {
 
         Form form = data.getForm();
         if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-            if (!renderHair) {
-                if (hairPreset == 10) //bald LMAO
-                    renderer.modelMain.renderHeadwear(0.0625F);
+            if (hairPreset == 10) {//bald LMAO
+                renderer.modelMain.renderHeadwear(0.0625F);
                 return;
             }
+            if (!renderHair)
+                return;
 
             if (customHair) {
                 if (st == 6 || form != null && (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")))
@@ -273,8 +272,6 @@ public class OutlineRenderer {
                 renderer.modelMain.renderHairsV2(0.0625F, DBCHair.SSJ4_HAIR, 0.0F, 0, 0, pl, race, renderer, (AbstractClientPlayer) player);
             else
                 renderer.modelMain.renderHairs(0.0625F, "" + JRMCoreH.HairsT[st] + JRMCoreH.Hairs[hairPreset]);
-
-
         } else if (race == DBCRace.MAJIN) {
             if (!renderHair)
                 return;
@@ -285,7 +282,6 @@ public class OutlineRenderer {
                 renderer.modelMain.renderHairsV2(0.0625F, DBCHair.MAJIN_HAIR, 0.0F, 0, 0, pl, race, renderer, (AbstractClientPlayer) player);
             else if (hairPreset == 11)
                 renderer.modelMain.renderHairsV2(0.0625F, "345052545050001250545650500023505041505000345056455050000150505250500001505052505000015050555050000150505450500001505052505000015050525050000150433450500001505055505000015050525050000154395050500001505045505000015050475050000150504750500001505047505000015043655050000150504750500001505047505000015050475050000150504750500001544545505000015250505050003450505050500034505050505000015250505050000150505050500001505050505000015050505050000150505050500001525050505000015050505050000150505050500001525050505000235250505050003450505050500034505050505000235250505050000180501850500034695050505000346950505050000180501950500001805019505000345850505050003463505050500001805018505000018050185050003476505050500034765050505000018050195050003480501850500034505050505000345050505050003480501950500020", 0.0F, 0, 0, pl, race, renderer, (AbstractClientPlayer) player);
-
         }
     }
 
