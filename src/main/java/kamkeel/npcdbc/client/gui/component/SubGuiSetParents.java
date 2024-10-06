@@ -24,7 +24,7 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
         this.closeOnEsc = true;
         this.form = form1;
         this.drawDefaultBackground = true;
-        this.selectedRace = form.race();
+        this.selectedRace = form.race() != -1 ? form.race() : 0;
 
         setBackground("menubg.png");
         xSize = 360;
@@ -70,7 +70,7 @@ public class SubGuiSetParents extends SubGuiInterface implements ICustomScrollLi
         dbcForms.setUnsortedList(new ArrayList<>(allForms.get(selectedRace).values()));
         stateIDs = new ArrayList<>(allForms.get(selectedRace).keySet());
         int selected = form.getFormRequirement(selectedRace);
-        dbcForms.selected = selected == 14 ? 7 : selected == 15 ? 12 : selected > 6? selected + 1 : selected;
+        dbcForms.selected = selected == 14 ? 7 : selected == 15 ? 12 : selected > 6 ? selected + 1 : selected;
         dbcForms.resetScroll();
         this.addScroll(dbcForms);
 
