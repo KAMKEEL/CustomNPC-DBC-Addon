@@ -483,6 +483,7 @@ public class EntityAura extends Entity {
 
     public EntityAura setIsVanilla(boolean bo) {
         this.isVanillaDefault = bo;
+        this.aura.display.copyDBCSuperformColors = true;
         return this;
     }
 
