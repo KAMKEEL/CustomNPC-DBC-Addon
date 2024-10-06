@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 public class DBCSyncController {
 
-	public static void syncPlayer(EntityPlayerMP player){
+    public static void syncPlayer(EntityPlayerMP player) {
         // Sync All Custom Forms
         NBTTagList list = new NBTTagList();
         NBTTagCompound compound = new NBTTagCompound();
@@ -63,11 +63,10 @@ public class DBCSyncController {
         compound = new NBTTagCompound();
         compound.setTag("Data", list);
         PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_END, compound, -1).generatePacket(), player);
-	}
+    }
 
-
-	public static void clientSync(int synctype, NBTTagCompound compound, boolean syncEnd) {
-        if(synctype == DBCSyncType.FORM){
+    public static void clientSync(int synctype, NBTTagCompound compound, boolean syncEnd) {
+        if (synctype == DBCSyncType.FORM) {
             NBTTagList list = compound.getTagList("Data", 10);
             for (int i = 0; i < list.tagCount(); i++) {
                 Form form = new Form();
@@ -101,10 +100,10 @@ public class DBCSyncController {
                 OutlineController.getInstance().customOutlinesSync = new HashMap<>();
             }
         }
-	}
+    }
 
-	public static void clientSyncUpdate(int synctype, NBTTagCompound compound) {
-        if(synctype == DBCSyncType.FORM){
+    public static void clientSyncUpdate(int synctype, NBTTagCompound compound) {
+        if (synctype == DBCSyncType.FORM) {
             Form form = new Form();
             form.readFromNBT(compound);
             FormController.getInstance().customForms.put(form.id, form);
@@ -115,17 +114,17 @@ public class DBCSyncController {
         } else if (synctype == DBCSyncType.OUTLINE) {
             Outline outline = new Outline();
             outline.readFromNBT(compound);
-            OutlineController.getInstance().customOutlinesSync.put(outline.id, outline);
+            OutlineController.getInstance().customOutlines.put(outline.id, outline);
         }
-	}
+    }
 
-	public static void clientSyncRemove(int synctype, int id) {
-		if(synctype == DBCSyncType.FORM){
+    public static void clientSyncRemove(int synctype, int id) {
+        if (synctype == DBCSyncType.FORM) {
             Form form = FormController.Instance.customForms.remove(id);
         } else if (synctype == DBCSyncType.AURA) {
             Aura aura = AuraController.Instance.customAuras.remove(id);
         } else if (synctype == DBCSyncType.OUTLINE) {
             Outline outline = OutlineController.Instance.customOutlines.remove(id);
         }
-	}
+    }
 }
