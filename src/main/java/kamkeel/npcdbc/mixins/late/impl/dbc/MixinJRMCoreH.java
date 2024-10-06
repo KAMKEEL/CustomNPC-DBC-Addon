@@ -522,6 +522,10 @@ public abstract class MixinJRMCoreH {
         int race = getByte(p, "jrmcRace");
         int state = getByte(p, "jrmcState");
         int state2 = getByte(p, "jrmcState2");
+        // Fixes Index out of Bound for UI DBC Bug Fix
+        if(state2 >= 7){
+            return 0.0;
+        }
         int strnTmp = getInt(p, "jrmcStrainTemp");
         int strn = getInt(p, "jrmcStrain");
         boolean mystic = StusEfcts(13, getString(p, "jrmcStatusEff"));
