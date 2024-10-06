@@ -2,7 +2,6 @@ package kamkeel.npcdbc.network.packets.form;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -27,7 +26,6 @@ public final class DBCSelectForm extends AbstractPacket {
     public static final String packetName = "NPC|SelectForm";
     private int formID;
     private boolean isDBC;
-
 
     public DBCSelectForm(int formID, boolean isDBC) {
         this.formID = formID;
@@ -100,23 +98,6 @@ public final class DBCSelectForm extends AbstractPacket {
 
             Form form = (Form) FormController.getInstance().get(formID);
             if (form != null && formData.hasFormUnlocked(formID)) {
-                if (form.hasParent() && form.fromParentOnly) {
-                    if (ConfigDBCGameplay.InstantTransform) {
-                        boolean canInstant = form.mastery.canInstantTransform(formData.getFormLevel(formID));
-                        if (!canInstant) {
-                            NetworkUtility.sendServerMessage(player, "§c", "npcdbc.notEnoughMastery");
-                            compound.setBoolean("Skip", true);
-                            Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
-                            return;
-                        }
-                    } else {
-                        NetworkUtility.sendServerMessage(player, "§c", "npcdbc.cannotTransformDirect");
-                        compound.setBoolean("Skip", true);
-                        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
-                        return;
-                    }
-                }
-
                 formData.selectedForm = formID;
                 formData.selectedDBCForm = formData.tempSelectedDBCForm = -1;
                 NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", form.getMenuName());

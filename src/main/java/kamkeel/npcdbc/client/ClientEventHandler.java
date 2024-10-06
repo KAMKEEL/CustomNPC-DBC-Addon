@@ -109,10 +109,6 @@ public class ClientEventHandler {
         if (formData == null)
             return false;
 
-        boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ClientCache.allowTransformBypass;
-        if (allowBypass)
-            return true;
-
         DBCData dbcData = DBCData.getClient();
 
         if (!form.raceEligible(dbcData.Race))
@@ -130,11 +126,13 @@ public class ClientEventHandler {
             return false;
 
 
+        boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ClientCache.allowTransformBypass;
+
         if (form.requiredForm.containsKey((int) dbcData.Race)) {
-            return form.requiredForm.get((int) dbcData.Race) == dbcData.State;
+            return allowBypass || form.requiredForm.get((int) dbcData.Race) == dbcData.State;
         } else {
-            if (form.parentID != -1 && form.isFromParentOnly()) {
-                return form.parentID == formData.currentForm;
+            if (form.hasParent() && form.isFromParentOnly()) {
+                return allowBypass || form.parentID == formData.currentForm;
             }
         }
         return true;
@@ -184,14 +182,15 @@ public class ClientEventHandler {
                                 return;
                             }
 
+                            boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ClientCache.allowTransformBypass;
                             if (form.requiredForm.containsKey((int) dbcData.Race)) {
-                                if (form.requiredForm.get((int) dbcData.Race) != dbcData.State) {
+                                if (!allowBypass && form.requiredForm.get((int) dbcData.Race) != dbcData.State) {
                                     Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.wrongDBC"));
                                     return;
                                 }
                             } else {
                                 // Must be in Parent Form to Transform
-                                if (form.parentID != -1 && form.isFromParentOnly()) {
+                                if (form.parentID != -1 && form.isFromParentOnly() && !allowBypass) {
                                     if (form.parentID != formData.currentForm) {
                                         Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.transformFromParent"));
                                         return;
@@ -218,10 +217,6 @@ public class ClientEventHandler {
                                 Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.pain"));
                                 return;
                             }
-
-                            boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ClientCache.allowTransformBypass;
-                            if (allowBypass)
-                                return;
                         }
                     }
                 }
