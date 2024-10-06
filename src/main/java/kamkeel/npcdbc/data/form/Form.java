@@ -47,7 +47,6 @@ public class Form implements IForm {
     public float dexMulti = 1.0f;
     public float willMulti = 1.0f;
 
-
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
     public Form() {
@@ -116,7 +115,6 @@ public class Form implements IForm {
         return compound;
     }
 
-
     public float[] getAllMulti() {
         return new float[]{strengthMulti, dexMulti, willMulti};
     }
@@ -172,22 +170,20 @@ public class Form implements IForm {
         this.race = race;
     }
 
-
     @Override
     public boolean raceEligible(IPlayer player) {
-        int plRace = DBCData.get((EntityPlayer) player.getMCEntity()).Race;
-        if (race == DBCRace.ALL_SAIYANS)
-            return DBCRace.isSaiyan(plRace);
-
-        return race == DBCRace.ALL || race == plRace;
+        return raceEligible((EntityPlayer) player.getMCEntity());
     }
 
-    public boolean raceEligible(EntityPlayer player){
-        int plRace = DBCData.get(player).Race;
-        if (race == DBCRace.ALL_SAIYANS)
-            return DBCRace.isSaiyan(plRace);
+    public boolean raceEligible(EntityPlayer player) {
+        return raceEligible(DBCData.get(player).Race);
+    }
 
-        return race == DBCRace.ALL || race == plRace;
+    public boolean raceEligible(int race) {
+        if (this.race == DBCRace.ALL_SAIYANS)
+            return DBCRace.isSaiyan(race);
+
+        return this.race == DBCRace.ALL || this.race == race;
     }
 
     @Override
@@ -214,11 +210,9 @@ public class Form implements IForm {
                 return dexMulti;
             case 3:
                 return willMulti;
-
         }
         return 1.0f;
     }
-
 
     @Override
     public void assignToPlayer(IPlayer player) {
@@ -234,7 +228,6 @@ public class Form implements IForm {
         assignToPlayer(NpcAPI.Instance().getPlayer(playerName));
     }
 
-
     @Override
     public void removeFromPlayer(IPlayer player) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo((EntityPlayer) player.getMCEntity());
@@ -243,7 +236,6 @@ public class Form implements IForm {
             formData.selectedForm = -1;
 
         formData.updateClient();
-
     }
 
     public void removeFromPlayer(String playerName) {
@@ -365,7 +357,6 @@ public class Form implements IForm {
         return FormController.Instance.get(childID);
     }
 
-
     @Override
     public int getChildID() {
         return childID;
@@ -375,7 +366,6 @@ public class Form implements IForm {
     public boolean hasChild() {
         return childID != -1;
     }
-
 
     public void removeChildForm() {
         if (childID != -1) {
@@ -389,7 +379,6 @@ public class Form implements IForm {
     public IForm getParent() {
         return FormController.Instance.get(parentID);
     }
-
 
     @Override
     public int getTimer() {
@@ -405,7 +394,6 @@ public class Form implements IForm {
     public boolean hasTimer() {
         return timer > 0;
     }
-
 
     @Override
     public int getParentID() {

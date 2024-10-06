@@ -41,7 +41,6 @@ import noppes.npcs.entity.EntityNPCInterface;
 
 import static noppes.npcs.NoppesStringUtils.translate;
 
-
 public class ClientEventHandler {
 
     public static int ticks;
@@ -59,19 +58,18 @@ public class ClientEventHandler {
                     TransformController.decrementRage();
                 }
             }
-//            if (Mouse.isButtonDown(3) || Mouse.isButtonDown(2)) {
-//                Minecraft.getMinecraft().refreshResources();
-//                ShaderHelper.loadShaders(true);
-//            }
-//            if (Keyboard.isKeyDown(Keyboard.KEY_F10)) {
-//                for (int i : PostProcessing.bloomTextures) {
-//                    if (i > 0)
-//                        PostProcessing.saveTextureToPNG(i);
-//                }
-//            }
+            //            if (Mouse.isButtonDown(3) || Mouse.isButtonDown(2)) {
+            //                Minecraft.getMinecraft().refreshResources();
+            //                ShaderHelper.loadShaders(true);
+            //            }
+            //            if (Keyboard.isKeyDown(Keyboard.KEY_F10)) {
+            //                for (int i : PostProcessing.bloomTextures) {
+            //                    if (i > 0)
+            //                        PostProcessing.saveTextureToPNG(i);
+            //                }
+            //            }
         }
     }
-
 
     private void performAscend() {
         PlayerDBCInfo formData = PlayerDataUtil.getClientDBCInfo();
@@ -94,7 +92,6 @@ public class ClientEventHandler {
                 Form child = (Form) currentForm.getChild();
                 if (child != null && formData.hasFormUnlocked(child.id) && verifyFormTransform(child))
                     TransformController.Ascend(child);
-
             } else if (verifyFormTransform(selectedForm))
                 TransformController.Ascend(selectedForm);
         }
@@ -117,6 +114,9 @@ public class ClientEventHandler {
             return true;
 
         DBCData dbcData = DBCData.getClient();
+
+        if (!form.raceEligible(dbcData.Race))
+            return false;
         if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail())
             return false;
 
@@ -179,6 +179,11 @@ public class ClientEventHandler {
                         form = formData.getSelectedForm();
                         if (form != null) {
 
+                            if (!form.raceEligible(dbcData.Race)) {
+                                Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.raceIneligible"));
+                                return;
+                            }
+
                             if (form.requiredForm.containsKey((int) dbcData.Race)) {
                                 if (form.requiredForm.get((int) dbcData.Race) != dbcData.State) {
                                     Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.wrongDBC"));
@@ -217,14 +222,11 @@ public class ClientEventHandler {
                             boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ClientCache.allowTransformBypass;
                             if (allowBypass)
                                 return;
-
-
                         }
                     }
                 }
             }
         }
-
     }
 
     @SubscribeEvent
@@ -306,8 +308,6 @@ public class ClientEventHandler {
                             spawnKaiokenAura(aura, dbcData);
                     }
                 }
-
-
             }
         }
     }
@@ -333,7 +333,6 @@ public class ClientEventHandler {
         EntityAura2 aur = new EntityAura2(entity.worldObj, auraOwner, 0, data.getState(), data.getState2(), release, rotate90);
         ((IEntityAura) aur).setAuraData(data);
         aur.setAlp(0.2F);
-
 
 
         if (SubGuiAuraDisplay.useGUIAura) {
@@ -421,7 +420,7 @@ public class ClientEventHandler {
             aur.setAlp(0.5F);
             aur.setTex("aurau");
             aur.setTexL2("aurau2");
-                aur.setColL2(16776724);
+            aur.setColL2(16776724);
             if (has2D)
                 aur.setBol6(4);
         }
@@ -449,7 +448,6 @@ public class ClientEventHandler {
             aur.setBol6(4);
         } else if (aura.display.type2D != EnumAuraTypes2D.Default && aura.display.type2D != EnumAuraTypes2D.Base) {
             aur.setBol6(-2);
-
         }
 
         ((IEntityAura) aur).setType2D(aura.display.type2D);
@@ -468,8 +466,6 @@ public class ClientEventHandler {
             form = display.getForm();
             isTransforming = display.isTransforming;
             isCharging = isTransforming;
-
-
         } else if (isPlayer) {
             form = dbcData.getForm();
             isTransforming = dbcData.isTransforming();
@@ -500,8 +496,8 @@ public class ClientEventHandler {
         if (aura.display.hasAlpha("aura")) {
             aur.setAlp((float) aura.display.alpha / (255));
         }
-//        if (SubGuiAuraDisplay.useGUIAura)
-//            aur.setAlp(aur.getAlp() / 10);
+        //        if (SubGuiAuraDisplay.useGUIAura)
+        //            aur.setAlp(aur.getAlp() / 10);
 
 
         if (aura.display.hasSpeed())
@@ -606,8 +602,5 @@ public class ClientEventHandler {
 
         entity.worldObj.spawnEntityInWorld(ring);
         return ring;
-
     }
-
-
 }

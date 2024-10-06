@@ -101,20 +101,20 @@ public final class DBCSelectForm extends AbstractPacket {
             Form form = (Form) FormController.getInstance().get(formID);
             if (form != null && formData.hasFormUnlocked(formID)) {
                 if (form.hasParent() && form.fromParentOnly) {
-                    if (ConfigDBCGameplay.InstantTransform) {
-                        boolean canInstant = form.mastery.canInstantTransform(formData.getFormLevel(formID));
-                        if (!canInstant) {
-                            NetworkUtility.sendServerMessage(player, "§c", "npcdbc.notEnoughMastery");
-                            compound.setBoolean("Skip", true);
-                            Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
-                            return;
-                        }
-                    } else {
-                        NetworkUtility.sendServerMessage(player, "§c", "npcdbc.cannotTransformDirect");
-                        compound.setBoolean("Skip", true);
-                        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
-                        return;
-                    }
+//                    if (ConfigDBCGameplay.InstantTransform) {
+//                        boolean canInstant = form.mastery.canInstantTransform(formData.getFormLevel(formID));
+//                        if (!canInstant) {
+//                            NetworkUtility.sendServerMessage(player, "§c", "npcdbc.notEnoughMastery");
+//                            compound.setBoolean("Skip", true);
+//                            Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+//                            return;
+//                        }
+//                    } else {
+//                        NetworkUtility.sendServerMessage(player, "§c", "npcdbc.cannotTransformDirect");
+//                        compound.setBoolean("Skip", true);
+//                        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+//                        return;
+//                    }
                 }
 
                 formData.selectedForm = formID;
