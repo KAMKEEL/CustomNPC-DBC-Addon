@@ -344,19 +344,13 @@ public class EntityAura extends Entity {
     }
 
     public void onUpdate() {
-        if(isRoot() && auraData.isFusionSpectator()) {
-            despawn();
-            return;
-        }
         if (isRoot() && !fadeOut) { //check aura death conditions
             Aura currentAura = PlayerDataUtil.getToggledAura(entity);
-            boolean common = entity == null || entity.isDead || currentAura == null;
-            if (!isVanillaDefault && (common || aura.id != currentAura.id || auraData.getAuraEntity() != this))
+            if (!isVanillaDefault && (entity == null || entity.isDead || currentAura == null || aura.id != currentAura.id || auraData.getAuraEntity() != this || auraData.isFusionSpectator()))
                 despawn();
-            else if (isVanillaDefault && (!auraData.isAuraOn() || !ConfigDBCClient.RevampAura))
+            else if (isVanillaDefault && (!auraData.isAuraOn() || auraData.isFusionSpectator() || entity == null || entity.isDead || currentAura != null || !ConfigDBCClient.RevampAura || auraData.isFusionSpectator()))
                 despawn();
         }
-
         isInKaioken = auraData.isInKaioken();
         if (!isInKaioken && isKaioken && !fadeOut)
             despawn();
