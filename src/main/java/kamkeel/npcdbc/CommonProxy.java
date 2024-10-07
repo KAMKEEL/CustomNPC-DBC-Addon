@@ -22,7 +22,13 @@ public class CommonProxy {
 
     private static EntityPlayer CurrentJRMCTickPlayer = null;
     @SideOnly(Side.CLIENT)
-    private static EntityPlayer CurrentJRMCTickPlayerClient = null;
+    private static EntityPlayer CurrentJRMCTickPlayerClient;
+
+    static {
+        if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+            CurrentJRMCTickPlayerClient = null;
+        }
+    }
 
     public static EntityPlayer getCurrentJRMCTickPlayer() {
         if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
