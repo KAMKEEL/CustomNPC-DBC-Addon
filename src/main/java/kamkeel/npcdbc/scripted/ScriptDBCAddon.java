@@ -10,9 +10,11 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -638,6 +640,24 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     //////////////////////////////////////////////
     // Form stuff
 
+    @Override
+    public boolean hasCustomForm(String formName){
+        Form form = FormController.getInstance().getFormFromName(formName);
+        if(form == null)
+            throw new CustomNPCsException("No form found!");
+
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        int formID = form.getID();
+        return formData.hasFormUnlocked(formID);
+    }
+
+    @Override
+    public boolean hasCustomForm(int formID){
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        return formData.hasFormUnlocked(formID);
+    }
+
+
     public void giveCustomForm(String formName) {
         IForm form = FormController.Instance.get(formName);
         form.assignToPlayer(this);
@@ -828,6 +848,24 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     // Aura stuff
+
+    @Override
+    public boolean hasAura(String auraName){
+        Aura aura = AuraController.getInstance().getAuraFromName(auraName);
+        if(aura == null)
+            throw new CustomNPCsException("No aura found!");
+
+        PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(player);
+        int auraID = aura.getID();
+        return dbcInfo.hasAuraUnlocked(auraID);
+    }
+
+    @Override
+    public boolean hasAura(int auraId){
+        PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(player);
+        return dbcInfo.hasAuraUnlocked(auraId);
+    }
+
     @Override
     public void giveAura(IAura aura) {
         if(aura != null)

@@ -254,6 +254,10 @@ public interface IDBCAddon extends IDBCPlayer {
 
     void setSprintSpeed(float speed);
 
+    boolean hasCustomForm(String formName);
+
+    boolean hasCustomForm(int formID);
+
     /**
      * Gives a player a custom form by the given name.
      * @param formName Name of the form to give the player.
@@ -328,6 +332,10 @@ public interface IDBCAddon extends IDBCPlayer {
      * @param auraName Name of the aura to unlock.
      */
     void giveAura(String auraName);
+
+    boolean hasAura(String auraName);
+
+    boolean hasAura(int auraId);
 
     /**
      * Unlocks the given aura for the player.
