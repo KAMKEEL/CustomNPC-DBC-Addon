@@ -181,7 +181,7 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
         if (!JRMCoreConfig.ssurl.contains("empty") && JRMCoreConfig.ssurl.contains("ttp")) {
             s = GuiInfo.ReferenceIDs.SERVER_SHOP.getTranslation();
             i = this.fontRendererObj.getStringWidth(s);
-            this.buttonList.add(new JRMCoreGuiButtons00(3099, guiWidthOffset + 260, guiHeightOffset + 25, i + 8, 20, s, 0));
+            this.buttonList.add(new JRMCoreGuiButtons00(GuiInfo.ReferenceIDs.SERVER_SHOP.getButtonId(), guiWidthOffset + 260, guiHeightOffset + 25, i + 8, 20, s, 0));
         }
     }
 
@@ -197,7 +197,7 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
         if ((!JRMCoreConfig.ssurl.contains("empty") && JRMCoreConfig.ssurl.contains("ttp"))) {
             GuiInfo.ReferenceIDs ref = GuiInfo.ReferenceIDs.SERVER_SHOP;
             //String name = "Server Shop";
-            GuiButton button = new JRMCoreGuiButtons02(3099, guiWidthOffset, guiHeightOffset+menuImageHeight+2, "$", ref.getGuiID() == guiID ? 1 : 0, Color.GREEN.darker().darker().getRGB());
+            GuiButton button = new JRMCoreGuiButtons02(ref.getButtonId(), guiWidthOffset, guiHeightOffset+menuImageHeight+2, "$", ref.getGuiID() == guiID ? 1 : 0, Color.GREEN.darker().darker().getRGB());
             buttonList.add(button);
             hoverableStaticLabels.add(new JRMCoreLabel(button, ref.getTranslation()));
             //drawDetails(JRMCoreH.cct(name), guiLeft + i * 21, guiTop + ySize + 2 + 1, 20, 20, x, y, fontRendererObj);
