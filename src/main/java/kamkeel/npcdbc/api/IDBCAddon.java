@@ -236,6 +236,20 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     void setCustomForm(IForm form);
 
+    /**
+     * If the player has a given form or <code>ignoreUnlockCheck</code> is true, it forces them to transform to that form.
+     * @param formID Form ID of the custom form you want to force the player into
+     * @param ignoreUnlockCheck Should this ignore checking if a player has a form unlocked
+     */
+    void setCustomForm(int formID, boolean ignoreUnlockCheck);
+
+    /**
+     * If the player has a given form or <code>ignoreUnlockCheck</code> is true, it forces them to transform to that form.
+     * @param form Form object of the custom form you want to force the player into
+     * @param ignoreUnlockCheck Should this ignore checking if a player has a form unlocked
+     */
+    void setCustomForm(IForm form, boolean ignoreUnlockCheck);
+
     void setFlight(boolean flightOn);
 
     boolean isFlying();

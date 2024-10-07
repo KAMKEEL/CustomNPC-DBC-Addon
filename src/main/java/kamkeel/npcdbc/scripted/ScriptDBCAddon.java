@@ -719,12 +719,22 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     public void setCustomForm(int formID) {
+        setCustomForm(formID, false);
+    }
+
+    @Override
+    public void setCustomForm(IForm form) {
+        setCustomForm(form.getID(), false);
+    }
+
+    @Override
+    public void setCustomForm(int formID, boolean ignoreUnlockCheck) {
         Form f = (Form) FormController.Instance.get(formID);
         if (f == null)
             throw new CustomNPCsException("Form does not exist!");
 
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
-        if (c.hasForm(f)) {
+        if (ignoreUnlockCheck || c.hasForm(f)) {
             DBCData d = DBCData.get(player);
             d.State = 0;
             if (!f.stackable.isFormStackable(DBCForm.Kaioken) && d.isForm(DBCForm.Kaioken)) {
@@ -745,13 +755,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
             c.currentForm = f.id;
             c.updateClient();
-        } else
+        } else {
             throw new CustomNPCsException("Player doesn't have form " + f.name + " unlocked!");
+        }
     }
 
     @Override
-    public void setCustomForm(IForm form) {
-        setCustomForm(form.getID());
+    public void setCustomForm(IForm form, boolean ignoreUnlockCheck) {
+        setCustomForm(form.getID(), ignoreUnlockCheck);
     }
 
     //////////////////////////////////////////////
