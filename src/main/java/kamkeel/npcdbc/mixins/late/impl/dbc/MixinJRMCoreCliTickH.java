@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import com.llamalad7.mixinextras.sugar.Local;
 import kamkeel.npcdbc.CommonProxy;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCStats;
@@ -35,11 +36,11 @@ public class MixinJRMCoreCliTickH {
 
         // isSaiyan is now confirmed to be true
         // If there isn't a JRMCTickPlayer stored, just return isSaiyan (true)
-        if (CommonProxy.CurrentJRMCTickPlayer == null) {
+        if (CustomNpcPlusDBC.proxy.CurrentJRMCTickPlayer == null) {
             return true;
         }
 
-        Form form = DBCData.getForm(CommonProxy.CurrentJRMCTickPlayer);
+        Form form = DBCData.getForm(CustomNpcPlusDBC.proxy.CurrentJRMCTickPlayer);
         if(form == null)
             return true;
 
@@ -48,13 +49,13 @@ public class MixinJRMCoreCliTickH {
 
     @Inject(method = "onTickInGame", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data1:[Ljava/lang/String;", ordinal = 0, shift = At.Shift.BEFORE))
     public void setCurrentTickPlayerClientMain(CallbackInfo ci, @Local(name = "plyr") EntityPlayer plyr) {
-        CommonProxy.CurrentJRMCTickPlayer = plyr;
+        CustomNpcPlusDBC.proxy.CurrentJRMCTickPlayer = plyr;
 
     }
 
     @Inject(method = "onTickInGame", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;data(Ljava/lang/String;ILjava/lang/String;)Ljava/lang/String;", ordinal = 0, shift = At.Shift.BEFORE))
     public void setCurrentTickPlayerClientOthers(CallbackInfo ci, @Local(name = "plyr1") EntityPlayer plyr1) {
-        CommonProxy.CurrentJRMCTickPlayer = plyr1;
+        CustomNpcPlusDBC.proxy.CurrentJRMCTickPlayer = plyr1;
 
     }
 
