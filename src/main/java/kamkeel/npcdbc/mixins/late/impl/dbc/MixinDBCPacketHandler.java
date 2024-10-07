@@ -301,28 +301,28 @@ public class MixinDBCPacketHandler {
 
     @Inject(method = "handleDBCenergy", at = @At("HEAD"), cancellable = true)
     public void fixEnergy10xKi(byte b, byte p, EntityPlayer pl, CallbackInfo ci) {
-        CommonProxy.CurrentJRMCTickPlayer = pl;
+        CommonProxy.setCurrentJRMCTickPlayer(pl);
     }
 
     @Inject(method = "handleDBCenergy", at = @At("TAIL"), cancellable = true)
     public void fixEnergy10xKi2(byte b, byte p, EntityPlayer pl, CallbackInfo ci) {
-        CommonProxy.CurrentJRMCTickPlayer = null;
+        CommonProxy.setCurrentJRMCTickPlayer(null);
     }
 
     @Inject(method = "handleDBCascend", at = @At("HEAD"), cancellable = true)
     public void setCurrentPlayer(byte dbcascend, EntityPlayer p, CallbackInfo ci) {
-        CommonProxy.CurrentJRMCTickPlayer = p;
+        CommonProxy.setCurrentJRMCTickPlayer(p);
     }
 
     @Inject(method = "handleDBCascend", at = @At("TAIL"), cancellable = true)
     public void setCurrentPlayerPOST(byte dbcascend, EntityPlayer p, CallbackInfo ci) {
-        CommonProxy.CurrentJRMCTickPlayer = null;
+        CommonProxy.setCurrentJRMCTickPlayer(null);
     }
 
     @Redirect(method = "handleDBCenergy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", ordinal = 2, remap = true), remap = false)
     public boolean addDestroyerConfigsToAttack(World instance, Entity entity){
         EntityEnergyAtt kiAttack = (EntityEnergyAtt) entity;
-        DBCData dbcData = DBCData.get(CommonProxy.CurrentJRMCTickPlayer);
+        DBCData dbcData = DBCData.get(CommonProxy.getCurrentJRMCTickPlayer());
         Form form = dbcData.getForm();
 
         if(form != null && form.mastery.destroyerEnabled && JGConfigDBCGoD.CONFIG_GOD_ENERGY_ENABLED && JGConfigDBCGoD.CONFIG_GOD_ENABLED){

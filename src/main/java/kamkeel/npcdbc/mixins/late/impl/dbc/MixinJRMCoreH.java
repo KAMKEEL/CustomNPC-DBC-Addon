@@ -85,7 +85,7 @@ public abstract class MixinJRMCoreH {
     private static void fix10xKiCost(String[] listOfAttacks, int playerStat, byte[] kiAttackStats, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 0) LocalIntRef stat) {
         calculatingKiAttackCost = true;
         DBCUtils.calculatingKiDrain = true;
-        EntityPlayer player = Utility.isServer() ? CommonProxy.CurrentJRMCTickPlayer : CustomNpcPlusDBC.proxy.getClientPlayer();
+        EntityPlayer player = Utility.isServer() ? CommonProxy.getCurrentJRMCTickPlayer() : CustomNpcPlusDBC.proxy.getClientPlayer();
 
         DBCData data = DBCData.get(player);
         boolean majin = JRMCoreH.StusEfcts(12, data.StatusEffects);
@@ -564,8 +564,8 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "KaiKFBal", at = @At("HEAD"), cancellable = true)
     private static void kaiokenBalanceValue(int rc, int st, int st2, int skl, int strn, CallbackInfoReturnable<Float> cir){
-        if(CommonProxy.CurrentJRMCTickPlayer != null){
-            Form form = DBCData.get(CommonProxy.CurrentJRMCTickPlayer).getForm();
+        if(CommonProxy.getCurrentJRMCTickPlayer() != null){
+            Form form = DBCData.get(CommonProxy.getCurrentJRMCTickPlayer()).getForm();
             if(form == null)
                 return;
             if(form.stackable.kaiokenData.kaiokenMultipliesCurrentFormDrain)

@@ -5,6 +5,8 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.AbstractDBCAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -16,8 +18,27 @@ import org.apache.logging.log4j.Logger;
 
 public class CommonProxy {
     public static final Logger LOGGER = LogManager.getLogger(CustomNpcPlusDBC.ID);
-    public static EntityPlayer CurrentJRMCTickPlayer = null;
     public static EntityPlayer CurrentAuraPlayer = null;
+
+    public static EntityPlayer CurrentJRMCTickPlayer = null;
+    @SideOnly(Side.CLIENT)
+    private static EntityPlayer CurrentJRMCTickPlayerClient = null;
+
+    public static EntityPlayer getCurrentJRMCTickPlayer() {
+        if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+            return CurrentJRMCTickPlayerClient;
+        } else {
+            return CurrentJRMCTickPlayer;
+        }
+    }
+
+    public static void setCurrentJRMCTickPlayer(EntityPlayer player) {
+        if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+            CurrentJRMCTickPlayerClient = player;
+        } else {
+            CurrentJRMCTickPlayer = player;
+        }
+    }
 
     public static void eventsInit() {
         FMLCommonHandler.instance().bus().register(new ServerEventHandler());

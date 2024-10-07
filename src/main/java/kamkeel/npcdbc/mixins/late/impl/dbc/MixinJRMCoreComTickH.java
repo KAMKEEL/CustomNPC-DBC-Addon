@@ -52,12 +52,12 @@ public abstract class MixinJRMCoreComTickH {
     @Redirect(method = "serverTick", at=@At(value = "INVOKE", target="LJinRyuu/JRMCore/JRMCoreH;getPlayerForUsername(Lnet/minecraft/server/MinecraftServer;Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayerMP;"))
     public EntityPlayerMP setCurrentTickPlayerServerPRE(MinecraftServer server, String s){
         EntityPlayerMP player = JRMCoreH.getPlayerForUsername(server, s);
-        CommonProxy.CurrentJRMCTickPlayer = player;
+        CommonProxy.setCurrentJRMCTickPlayer(player);
         return player;
     }
     @Inject(method = "serverTick", at=@At("RETURN"))
     public void setCurrentTickPlayerServerPOST(MinecraftServer server, CallbackInfo ci){
-        CommonProxy.CurrentJRMCTickPlayer = null;
+        CommonProxy.setCurrentJRMCTickPlayer(null);
     }
 
     @Redirect(method = "updatePlayersData", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;rSai(I)Z"))
@@ -70,11 +70,11 @@ public abstract class MixinJRMCoreComTickH {
 
         // isSaiyan is now confirmed to be true
         // If there isn't a JRMCTickPlayer stored, just return isSaiyan (true)
-        if (CommonProxy.CurrentJRMCTickPlayer == null) {
+        if (CommonProxy.getCurrentJRMCTickPlayer() == null) {
             return true;
         }
 
-        Form form = DBCData.getForm(CommonProxy.CurrentJRMCTickPlayer);
+        Form form = DBCData.getForm(CommonProxy.getCurrentJRMCTickPlayer());
         if(form == null)
             return true;
 
