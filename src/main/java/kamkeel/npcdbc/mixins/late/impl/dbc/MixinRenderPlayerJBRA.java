@@ -539,7 +539,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Inject(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE), remap = true)
     public void setCurrentlyRenderedJRMCTickPlayer(AbstractClientPlayer p, float p_77041_2_, CallbackInfo ci) {
-        CustomNpcPlusDBC.proxy.CurrentJRMCTickPlayer = p;
+        CommonProxy.CurrentJRMCTickPlayer = p;
     }
 
 

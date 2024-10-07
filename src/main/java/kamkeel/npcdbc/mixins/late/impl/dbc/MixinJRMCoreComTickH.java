@@ -7,7 +7,6 @@ import JinRyuu.JRMCore.server.JGPlayerMP;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import com.llamalad7.mixinextras.sugar.Local;
 import kamkeel.npcdbc.CommonProxy;
-import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -53,12 +52,12 @@ public abstract class MixinJRMCoreComTickH {
     @Redirect(method = "serverTick", at=@At(value = "INVOKE", target="LJinRyuu/JRMCore/JRMCoreH;getPlayerForUsername(Lnet/minecraft/server/MinecraftServer;Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayerMP;"))
     public EntityPlayerMP setCurrentTickPlayerServerPRE(MinecraftServer server, String s){
         EntityPlayerMP player = JRMCoreH.getPlayerForUsername(server, s);
-        CustomNpcPlusDBC.proxy.CurrentJRMCTickPlayer = player;
+        CommonProxy.CurrentJRMCTickPlayer = player;
         return player;
     }
     @Inject(method = "serverTick", at=@At("RETURN"))
     public void setCurrentTickPlayerServerPOST(MinecraftServer server, CallbackInfo ci){
-        CustomNpcPlusDBC.proxy.CurrentJRMCTickPlayer = null;
+        CommonProxy.CurrentJRMCTickPlayer = null;
     }
 
     @Redirect(method = "updatePlayersData", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;rSai(I)Z"))
@@ -71,11 +70,11 @@ public abstract class MixinJRMCoreComTickH {
 
         // isSaiyan is now confirmed to be true
         // If there isn't a JRMCTickPlayer stored, just return isSaiyan (true)
-        if (CustomNpcPlusDBC.proxy.CurrentJRMCTickPlayer == null) {
+        if (CommonProxy.CurrentJRMCTickPlayer == null) {
             return true;
         }
 
-        Form form = DBCData.getForm(CustomNpcPlusDBC.proxy.CurrentJRMCTickPlayer);
+        Form form = DBCData.getForm(CommonProxy.CurrentJRMCTickPlayer);
         if(form == null)
             return true;
 

@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 public class CommonProxy {
     public static final Logger LOGGER = LogManager.getLogger(CustomNpcPlusDBC.ID);
-    public EntityPlayer CurrentJRMCTickPlayer = null;
+    public static EntityPlayer CurrentJRMCTickPlayer = null;
     public static EntityPlayer CurrentAuraPlayer = null;
 
     public static void eventsInit() {
