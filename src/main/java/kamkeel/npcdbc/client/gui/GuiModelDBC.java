@@ -302,7 +302,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             setClipboardContents(display.hairCode);
         }
         if (button.id == 103) {
-            display.setDefaultHair();
+            display.clearHairCode(false);
             initGui();
         }
         if (button.id == 104) {

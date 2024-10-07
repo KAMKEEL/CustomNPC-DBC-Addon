@@ -36,10 +36,7 @@ import noppes.npcs.entity.data.ModelPartData;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class DBCDisplay implements IDBCDisplay, IAuraData {
 
@@ -639,18 +636,23 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         }
     }
 
-    public void setDefaultHair() {
+    public void clearHairCode(boolean forceDefaultHair) {
         hairColor = 0x0;
+        boolean useDefaultHair = (forceDefaultHair || hairCode == null || hairCode.isEmpty());
         if (race < 3)
-            hairCode = DBCHair.GOKU_HAIR;
+            hairCode = useDefaultHair ? DBCHair.GOKU_HAIR : "";
         else if (race < 5)
             hairCode = "";
         else if (race == DBCRace.MAJIN) {
-            hairCode = DBCHair.MAJIN_HAIR;
+            hairCode = useDefaultHair ? DBCHair.MAJIN_HAIR : "";
             hairColor = bodyCM;
         }
 
         hairType = "base";
+    }
+
+    public void setDefaultHair() {
+        clearHairCode(true);
     }
 
     @Override
