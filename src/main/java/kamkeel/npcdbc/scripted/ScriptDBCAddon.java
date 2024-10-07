@@ -348,7 +348,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         }
 
         if (!found) {
-            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getformName(int race, int form) or getCurrentformName()", new Object[2]);
+            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getFormName(int race, int form) or getCurrentDBCFormName()", new Object[2]);
         }
     }
 
@@ -405,7 +405,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             }
         }
         if (!found) {
-            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getformName(int race, int form) or getCurrentformName()", new Object[2]);
+            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getFormName(int race, int form) or getCurrentDBCFormName()", new Object[2]);
         }
         throw new CustomNPCsException("Form Mastery value is -1.0", new Object[3]);
     }
