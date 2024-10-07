@@ -20,7 +20,7 @@ public class CommonProxy {
     public static final Logger LOGGER = LogManager.getLogger(CustomNpcPlusDBC.ID);
     public static EntityPlayer CurrentAuraPlayer = null;
 
-    public static EntityPlayer CurrentJRMCTickPlayer = null;
+    private static EntityPlayer CurrentJRMCTickPlayer = null;
     @SideOnly(Side.CLIENT)
     private static EntityPlayer CurrentJRMCTickPlayerClient = null;
 
