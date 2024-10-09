@@ -230,7 +230,7 @@ display.dbcAura=DBC
 display.bloom=Bloom
 display.outlines=Outlines
 display.shaders=Shaders
-display.povOpacity=POV Opacity
+display.firstPersonAura=1st Person Aura Opacity
 
 outline.noiseSize=Noise Size
 outline.colorSmoothness=Color Smoothness

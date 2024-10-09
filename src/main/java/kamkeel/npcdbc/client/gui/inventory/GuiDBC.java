@@ -113,31 +113,27 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
 
             int y = guiTop + 34;
             addLabel(new GuiNpcLabel(1,"npcdbc.inventory.revampAura", guiLeft + 144, y, 0xFFFFFF));
-            GuiNpcButton revampAura = new GuiNpcButtonYesNo(5, guiLeft + 250, y - 5, ConfigDBCClient.RevampAura);
-            revampAura.width = 65;
+            GuiNpcButton revampAura = new GuiNpcButton(5, guiLeft + 265, y - 5, 50, 20, new String[]{"gui.enabled","gui.disabled"}, ConfigDBCClient.RevampAura?0:1);
             this.addButton(revampAura);
 
             y += 22;
             addLabel(new GuiNpcLabel(10,"display.bloom", guiLeft + 144, y, 0xFFFFFF));
-            GuiNpcButton button = new GuiNpcButtonYesNo(10, guiLeft + 250, y - 5, ConfigDBCClient.EnableBloom);
-            button.width = 65;
+            GuiNpcButton button = new GuiNpcButton(10, guiLeft + 265, y - 5, 50, 20, new String[]{"gui.enabled","gui.disabled"}, ConfigDBCClient.EnableBloom?0:1);
             this.addButton(button);
 
             y += 22;
             addLabel(new GuiNpcLabel(11,"display.outlines", guiLeft + 144, y, 0xFFFFFF));
-            button = new GuiNpcButtonYesNo(11, guiLeft + 250, y - 5, ConfigDBCClient.EnableOutlines);
-            button.width = 65;
+            button = new GuiNpcButton(11, guiLeft + 265, y - 5,50, 20, new String[]{"gui.enabled","gui.disabled"}, ConfigDBCClient.EnableOutlines?0:1);
             this.addButton(button);
 
             y += 22;
             addLabel(new GuiNpcLabel(12,"display.shaders", guiLeft + 144, y, 0xFFFFFF));
-            button = new GuiNpcButtonYesNo(12, guiLeft + 250, y - 5, ConfigDBCClient.EnableShaders);
-            button.width = 65;
+            button = new GuiNpcButton(12, guiLeft + 265, y - 5,50, 20, new String[]{"gui.enabled","gui.disabled"}, ConfigDBCClient.EnableShaders?0:1);
             this.addButton(button);
 
             y += 22;
-            addLabel(new GuiNpcLabel(13,"display.povOpacity", guiLeft + 144, y, 0xFFFFFF));
-            addTextField(new GuiNpcTextField(66, this, fontRendererObj, guiLeft + 250 + 2, y - 5, 60, 20, ConfigDBCClient.FirstPerson3DAuraOpacity + ""));
+            addLabel(new GuiNpcLabel(13,"display.firstPersonAura", guiLeft + 144, y, 0xFFFFFF));
+            addTextField(new GuiNpcTextField(66, this, fontRendererObj, guiLeft + 279, y - 5, 35, 20, ConfigDBCClient.FirstPerson3DAuraOpacity + ""));
             getTextField(66).integersOnly = true;
         }
     }
@@ -336,22 +332,22 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 }
             }
             else if (guibutton.id == 5) {
-                ConfigDBCClient.RevampAura = ((GuiNpcButton) guibutton).getValue() == 1;
+                ConfigDBCClient.RevampAura = ((GuiNpcButton) guibutton).getValue() == 0;
                 ConfigDBCClient.RevampAuraProperty.set(ConfigDBCClient.RevampAura);
                 ConfigDBCClient.config.save();
             }
             else if (guibutton.id == 10) {
-                ConfigDBCClient.EnableBloom = ((GuiNpcButton) guibutton).getValue() == 1;
+                ConfigDBCClient.EnableBloom = ((GuiNpcButton) guibutton).getValue() == 0;
                 ConfigDBCClient.EnableBloomProperty.set(ConfigDBCClient.EnableBloom);
                 ConfigDBCClient.config.save();
             }
             else if (guibutton.id == 11) {
-                ConfigDBCClient.EnableOutlines = ((GuiNpcButton) guibutton).getValue() == 1;
+                ConfigDBCClient.EnableOutlines = ((GuiNpcButton) guibutton).getValue() == 0;
                 ConfigDBCClient.EnableOutlinesProperty.set(ConfigDBCClient.EnableOutlines);
                 ConfigDBCClient.config.save();
             }
             else if (guibutton.id == 12) {
-                ConfigDBCClient.EnableShaders = ((GuiNpcButton) guibutton).getValue() == 1;
+                ConfigDBCClient.EnableShaders = ((GuiNpcButton) guibutton).getValue() == 0;
                 ConfigDBCClient.EnableShadersProperty.set(ConfigDBCClient.EnableShaders);
                 ConfigDBCClient.config.save();
             }
