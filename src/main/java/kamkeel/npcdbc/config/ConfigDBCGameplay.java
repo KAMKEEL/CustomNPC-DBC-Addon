@@ -45,6 +45,12 @@ public class ConfigDBCGameplay
     public static boolean RevampKiCharging = true;
     public static boolean KiPotentialUnlock = true;
     public static int KiChargeRate = 1;
+
+    public final static String HumanSpirit = "Human_Spirit";
+    public static boolean EnableHumanSpirit = true;
+    public static int PercentDamageRequired = 400;
+    public static int DamageRequiredSeconds = 20;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);

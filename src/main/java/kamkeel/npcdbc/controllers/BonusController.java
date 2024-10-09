@@ -146,7 +146,7 @@ public class BonusController implements IBonusHandler {
     }
 
     public void clearBonuses(Entity player) {
-        Map<String, PlayerBonus> effects = playerBonus.get(player.getUniqueID());
+        Map<String, PlayerBonus> effects = playerBonus.get(Utility.getUUID(player));
         if(effects != null){
             effects.clear();
         }

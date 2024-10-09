@@ -68,13 +68,12 @@ public class ConfigDBCEffects
     private static float divineMulti = 1;
     private static final HashMap<Integer, HashMap<String, Boolean>> divineApplicableForms = new HashMap<>();
 
-    public final static String HumanSpirit = "HumanSpirit";
-    public static double HumanSpiritStr = 1.0;
-    public static double HumanSpiritDex = 1.0;
-    public static double HumanSpiritWil = 1.0;
+    public final static String HumanSpirit = "HUMAN SPIRIT";
+    public static double HumanSpiritConBoostPercent = 20;
+    public static double HumanSpiritDexBoostPercent = 20;
     public static int HumanSpiritLength = 360;
 
-    public final static String Bloated = "Bloated";
+    public final static String Bloated = "BLOATED";
     public static boolean AUTO_BLOATED = true; // Allow automatic application of the Bloated effect
     public static int BLOATED_THRESHOLD = 5; // Maximum number of Senzus that can be consumed without penalty
     public static int DECREASE_TIME = 100; // Time interval in ticks for consumption count decrease

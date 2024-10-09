@@ -11,6 +11,7 @@ import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -95,7 +96,7 @@ public class ItemRegenCapsule extends Item {
             meta = 0;
 
         EnumRegenCapsules regenCapsules = EnumRegenCapsules.values()[meta];
-        UUID playerUUID = player.getUniqueID();
+        UUID playerUUID = Utility.getUUID(player);
 
         // Check cooldowns
         long remainingTime = CapsuleController.canUseRegenCapsule(playerUUID, meta);

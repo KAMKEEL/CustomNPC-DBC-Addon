@@ -114,6 +114,9 @@ public class ServerEventHandler {
                 if (ConfigDBCGameplay.EnableNamekianRegen && dbcData.Race == DBCRace.NAMEKIAN)
                     dbcData.stats.applyNamekianRegen();
 
+                if (ConfigDBCGameplay.EnableHumanSpirit && dbcData.Race == DBCRace.HUMAN)
+                    StatusEffectController.Instance.checkHumanSpirit(player);
+
                 if (player.ticksExisted % 20 == 0)
                     StatusEffectController.Instance.decrementEffects(dbcData.player);
 

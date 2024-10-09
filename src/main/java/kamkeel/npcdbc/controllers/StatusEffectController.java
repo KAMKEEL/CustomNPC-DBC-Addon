@@ -3,10 +3,8 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.data.statuseffect.CustomEffect;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
-import kamkeel.npcdbc.data.statuseffect.SenzuConsumptionData;
-import kamkeel.npcdbc.data.statuseffect.StatusEffect;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.statuseffect.*;
 import kamkeel.npcdbc.data.statuseffect.types.*;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.Utility;
@@ -30,6 +28,9 @@ public class StatusEffectController implements IStatusEffectHandler {
     public HashMap<Integer, CustomEffect> customEffects = new HashMap<>(); // TODO: I will implement later - Kam
 
     public ConcurrentHashMap<UUID, Map<Integer, PlayerEffect>> playerEffects = new ConcurrentHashMap<>();
+
+    // Maps for Status Effects
+    private final ConcurrentHashMap<UUID, DamageTracker> damageTrackers = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, SenzuConsumptionData> playerSenzuConsumption = new ConcurrentHashMap<>();
     public StatusEffectController(){
 
@@ -57,7 +58,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         standardEffects.put(Effects.POTARA, new PotaraFusion());
         standardEffects.put(Effects.EXHAUSTED, new Exhausted());
 
-        standardEffects.put(Effects.HUMAN_SPIRIT, new Exhausted()); // TODO: Finish it
+        standardEffects.put(Effects.HUMAN_SPIRIT, new HumanSpirit());
         standardEffects.put(Effects.COLD_BLOODED, new Exhausted()); // TODO: Finish it
         standardEffects.put(Effects.KI_DEFENSE, new Exhausted()); // TODO: Finish it
     }
@@ -215,7 +216,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     }
 
     public void clearEffects(Entity player) {
-        Map<Integer, PlayerEffect> effects = playerEffects.get(player.getUniqueID());
+        Map<Integer, PlayerEffect> effects = playerEffects.get(Utility.getUUID(player));
         if(effects != null){
             effects.clear();
         }
@@ -328,7 +329,7 @@ public class StatusEffectController implements IStatusEffectHandler {
             return true; // Automatic bloated status effect is disabled.
         }
 
-        UUID playerId = player.getUniqueID();
+        UUID playerId = Utility.getUUID(player);
         SenzuConsumptionData consumptionData = getPlayerSenzuData(player);
         long currentTime = System.currentTimeMillis();
 
@@ -365,8 +366,31 @@ public class StatusEffectController implements IStatusEffectHandler {
         data.decreaseConsumption(ConfigDBCEffects.DECREASE_TIME);
     }
     private SenzuConsumptionData getPlayerSenzuData(EntityPlayer player) {
-        UUID playerId = player.getUniqueID();
+        UUID playerId = Utility.getUUID(player);
         return playerSenzuConsumption.computeIfAbsent(playerId, k -> new SenzuConsumptionData());
     }
 
+    /**
+     * Human Spirit
+     */
+    public void recordDamage(EntityPlayer player, double damageAmount) {
+        UUID playerId = Utility.getUUID(player);
+        damageTrackers.computeIfAbsent(playerId, k -> new DamageTracker(playerId)).recordDamage(damageAmount);
+    }
+
+    public void checkHumanSpirit(EntityPlayer player) {
+        UUID playerId = Utility.getUUID(player);
+        if (hasEffect(player, Effects.HUMAN_SPIRIT)) {
+            return;
+        }
+
+        DamageTracker tracker = damageTrackers.get(playerId);
+        DBCData dbcData = DBCData.get(player);
+        int maxHealth = dbcData.stats.getMaxBody();
+        if (tracker != null && tracker.checkForHumanSpirit(maxHealth)) {
+            applyEffect(player, Effects.HUMAN_SPIRIT);
+            NetworkUtility.sendServerMessage(player, "§d", "npcdbc.humanSpiritMessage");
+            tracker.cleanOldEntries(System.currentTimeMillis());
+        }
+    }
 }

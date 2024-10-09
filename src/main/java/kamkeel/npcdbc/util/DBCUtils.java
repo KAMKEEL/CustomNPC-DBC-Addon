@@ -16,6 +16,7 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
@@ -516,6 +517,7 @@ public class DBCUtils {
         if (lastSetDamage != -1) {
             damageToHP = Math.max(lastSetDamage, 0);
             lastSetDamage = -1;
+            StatusEffectController.getInstance().recordDamage(player, damageToHP);
             reducedHP = playerHP - damageToHP;
             newHP = Math.max(reducedHP, 0);
         }
