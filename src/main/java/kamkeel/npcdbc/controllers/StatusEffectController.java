@@ -340,9 +340,6 @@ public class StatusEffectController implements IStatusEffectHandler {
         int excessConsumption = consumptionData.getExcessConsumption(ConfigDBCEffects.BLOATED_THRESHOLD);
         int currentConsumption = consumptionData.getCurrentConsumption();
 
-        System.out.println("Current Consumption: " + currentConsumption);
-        System.out.println("Excess Consumption: " + excessConsumption);
-
         // Check for the warning threshold.
         if (excessConsumption > 0 && excessConsumption < ConfigDBCEffects.MAX_THRESHOLD_EXCEED) {
             NetworkUtility.sendServerMessage(player, "§c", "npcdbc.full");
