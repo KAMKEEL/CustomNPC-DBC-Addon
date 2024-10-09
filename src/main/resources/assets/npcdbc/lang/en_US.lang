@@ -298,7 +298,8 @@ npcdbc.inventory.willpower=Will Power
 npcdbc.inventory.mastery=Mastery
 npcdbc.inventory.selected=Selected
 npcdbc.inventory.noauraselected=No Aura Selected
-npcdbc.inventory.client=Client
+npcdbc.inventory.tweaks=Tweaks
+npcdbc.inventory.revampAura=Revamped Aura
 
 npcdbc.inventory.stackable.dbc=DBC
 npcdbc.inventory.stackable.kk=KK

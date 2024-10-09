@@ -112,7 +112,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             this.addButton(hideAura);
 
             int y = guiTop + 34;
-            addLabel(new GuiNpcLabel(1,"display.revampAura", guiLeft + 144, y, 0xFFFFFF));
+            addLabel(new GuiNpcLabel(1,"npcdbc.inventory.revampAura", guiLeft + 144, y, 0xFFFFFF));
             GuiNpcButton revampAura = new GuiNpcButtonYesNo(5, guiLeft + 250, y - 5, ConfigDBCClient.RevampAura);
             revampAura.width = 65;
             this.addButton(revampAura);
@@ -241,7 +241,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 fontRendererObj.drawString(drawSelected, guiLeft + 145, guiTop + ySize - 5, CustomNpcResourceListener.DefaultTextColor, true);
             }
         } else if (loaded) {
-            String drawString = "§f" + StatCollector.translateToLocal("npcdbc.inventory.client");
+            String drawString = "§f" + StatCollector.translateToLocal("npcdbc.inventory.tweaks");
             int textWidth = getStringWidthWithoutColor(drawString);
             int centerX = guiLeft + 140 + ((xSize - textWidth + 30 - 140) / 2);
             fontRendererObj.drawString(drawString, centerX, guiTop + 10, CustomNpcResourceListener.DefaultTextColor, true);
