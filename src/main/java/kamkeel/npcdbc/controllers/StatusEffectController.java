@@ -1,14 +1,14 @@
 package kamkeel.npcdbc.controllers;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
+import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
+import kamkeel.npcdbc.data.statuseffect.SenzuConsumptionData;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.types.*;
-import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static noppes.npcs.NoppesStringUtils.translate;
+
 public class StatusEffectController implements IStatusEffectHandler {
 
     public static StatusEffectController Instance = new StatusEffectController();
@@ -28,7 +30,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     public HashMap<Integer, CustomEffect> customEffects = new HashMap<>(); // TODO: I will implement later - Kam
 
     public ConcurrentHashMap<UUID, Map<Integer, PlayerEffect>> playerEffects = new ConcurrentHashMap<>();
-
+    private final ConcurrentHashMap<UUID, SenzuConsumptionData> playerSenzuConsumption = new ConcurrentHashMap<>();
     public StatusEffectController(){
 
     }
@@ -312,4 +314,63 @@ public class StatusEffectController implements IStatusEffectHandler {
             effect.duration--;
         }
     }
+
+    /**
+     * Checks if the player is allowed to consume Senzus based on current consumption rate.
+     * If the consumption exceeds the rate, apply the "Bloated" effect.
+     */
+    public boolean allowSenzuConsumption(EntityPlayer player) {
+        if (hasEffect(player, Effects.BLOATED)) {
+            return false; // Player already has the Bloated effect, cannot consume more.
+        }
+
+        if (!ConfigDBCEffects.AUTO_BLOATED) {
+            return true; // Automatic bloated status effect is disabled.
+        }
+
+        UUID playerId = player.getUniqueID();
+        SenzuConsumptionData consumptionData = getPlayerSenzuData(player);
+        long currentTime = System.currentTimeMillis();
+
+        // Clean old consumption entries based on current time and defined decrease time.
+        consumptionData.cleanOldConsumption(currentTime, ConfigDBCEffects.DECREASE_TIME);
+        consumptionData.addConsumption(currentTime);
+
+        // Calculate the excess consumption based on the defined threshold.
+        int excessConsumption = consumptionData.getExcessConsumption(ConfigDBCEffects.BLOATED_THRESHOLD);
+        int currentConsumption = consumptionData.getCurrentConsumption();
+
+        System.out.println("Current Consumption: " + currentConsumption);
+        System.out.println("Excess Consumption: " + excessConsumption);
+
+        // Check for the warning threshold.
+        if (excessConsumption > 0 && excessConsumption < ConfigDBCEffects.MAX_THRESHOLD_EXCEED) {
+            NetworkUtility.sendServerMessage(player, "§c", "npcdbc.full");
+        }
+
+        if (excessConsumption >= ConfigDBCEffects.MAX_THRESHOLD_EXCEED) {
+            // Player has consumed too many Senzus above the rate, apply the "Bloated" effect.
+            applyEffect(player, Effects.BLOATED, ConfigDBCEffects.BLOATED_TIME);
+            NetworkUtility.sendServerMessage(player, "§4", "npcdbc.bloated");
+            return false; // Deny further consumption.
+        }
+
+        playerSenzuConsumption.put(playerId, consumptionData);
+        return true; // Allow consumption.
+    }
+
+
+    /**
+     * Decreases the consumption count for each player in the map at the specified rate.
+     * This should be called every DECREASE_TIME ticks in the game.
+     */
+    public void decreaseSenzuConsumption(EntityPlayer player) {
+        SenzuConsumptionData data = getPlayerSenzuData(player);
+        data.decreaseConsumption(ConfigDBCEffects.DECREASE_TIME);
+    }
+    private SenzuConsumptionData getPlayerSenzuData(EntityPlayer player) {
+        UUID playerId = player.getUniqueID();
+        return playerSenzuConsumption.computeIfAbsent(playerId, k -> new SenzuConsumptionData());
+    }
+
 }

@@ -368,6 +368,8 @@ npcdbc.transform=Transformed to
 npcdbc.descend=Descended to
 npcdbc.descendFrom=Descended from
 npcdbc.timeExpired=Timer has run out!
+npcdbc.full=You are beginning to bloat!
+npcdbc.bloated=You are now bloated
 
 ############################
 ## ITEMS

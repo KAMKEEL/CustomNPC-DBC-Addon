@@ -74,6 +74,13 @@ public class ConfigDBCEffects
     public static double HumanSpiritWil = 1.0;
     public static int HumanSpiritLength = 360;
 
+    public final static String Bloated = "Bloated";
+    public static boolean AUTO_BLOATED = true; // Allow automatic application of the Bloated effect
+    public static int BLOATED_THRESHOLD = 5; // Maximum number of Senzus that can be consumed without penalty
+    public static int DECREASE_TIME = 100; // Time interval in ticks for consumption count decrease
+    public static int MAX_THRESHOLD_EXCEED = 5; // Maximum amount above threshold before triggering Bloated effect
+    public static int BLOATED_TIME = 300; // Duration of the Bloated effect in seconds (5 minutes)
+
     /**
      * Ugly, roundabout way of persisting configs between multiplayer and singleplayer.
      *
@@ -165,6 +172,59 @@ public class ConfigDBCEffects
             EXHAUST_ZENAKI = config.get(EXHAUST, "Exhaust Zenkai", true).getBoolean(true);
             EXHAUST_OVERPOWER = config.get(EXHAUST, "Exhaust Overpower", true).getBoolean(true);
 
+            // Configuration comment for Bloated settings
+            config.addCustomCategoryComment(Bloated,
+                "Settings related to the Bloated status effect." +
+                    "\nThis effect is applied when players consume too many Senzus." +
+                    "\n\nExample Config:" +
+                    "\nBLOATED_EFFECT {" +
+                    "\n  BLOATED_THRESHOLD: 20" +
+                    "\n  DECREASE_TIME: 5" +
+                    "\n  MAX_THRESHOLD_EXCEED: 5" +
+                    "\n  BLOATED_TIME: 300" +
+                    "\n}" +
+                    "\n\n--- Configuration Options ---" +
+                    "\n\nBLOATED_THRESHOLD: Maximum number of Senzus a player can safely consume within a specific time window." +
+                    "\n  - Strict Configuration: Set to a lower value (e.g., 10) for fewer Senzus before penalties." +
+                    "\n  - Lenient Configuration: Set to a higher value (e.g., 30) for more Senzus without penalty." +
+                    "\n  Example: Setting to 20 allows up to 20 Senzus without penalty." +
+                    "\n\nDECREASE_TIME: Time interval (in ticks) for the consumption count to decrease." +
+                    "\n  - Strict Configuration: Set to a smaller value (e.g., 3) for quicker reduction of the count." +
+                    "\n  - Lenient Configuration: Set to a larger value (e.g., 10) for slower decay of the count." +
+                    "\n  Example: Setting to 5 means the count is reduced every 5 ticks (0.25 seconds)." +
+                    "\n\nMAX_THRESHOLD_EXCEED: Maximum Senzus above the BLOATED_THRESHOLD before triggering the 'Bloated' effect." +
+                    "\n  - Strict Configuration: Set to a lower value (e.g., 2) for quicker triggering of the effect." +
+                    "\n  - Lenient Configuration: Set to a higher value (e.g., 10) for more excess consumption allowed." +
+                    "\n  Example: Setting to 5 means consuming 5 more Senzus leads to 'Bloated'." +
+                    "\n\nBLOATED_TIME: Duration (in seconds) for which the 'Bloated' effect lasts." +
+                    "\n  - Strict Configuration: Set to a lower value (e.g., 10) for shorter effect duration." +
+                    "\n  - Lenient Configuration: Set to a higher value (e.g., 60) for prolonged penalties." +
+                    "\n  Example: Setting to 300 means the effect lasts for 5 minutes (300 seconds).");
+
+            AUTO_BLOATED = config.get(Bloated, "Automatic Bloated", true,
+                    "Allow the bloated status effect to be automatically given using the threshold mechanic")
+                .getBoolean(true);
+
+            BLOATED_THRESHOLD = config.get(Bloated, "Bloated Threshold", 5,
+                    "Maximum number of Senzus a player can safely consume within a specific time window." +
+                        "\nExample: Setting to 20 means a player can consume up to 20 Senzus without penalty.")
+                .getInt(20);
+
+            DECREASE_TIME = config.get(Bloated, "Decrease Time", 100,
+                    "Time interval (in ticks) at which the player's consumption count is decreased." +
+                        "\nExample: Setting to 100 means that every 100 ticks (5 seconds), the count is reduced by 1.")
+                .getInt(100);
+
+            MAX_THRESHOLD_EXCEED = config.get(Bloated, "Max Threshold", 3,
+                    "Maximum amount of Senzus a player can consume above the BLOATED THRESHOLD" +
+                        "\nbefore triggering the 'Bloated' effect." +
+                        "\nExample: Setting to 3 means consuming 3 more Senzus leads to 'Bloated'.")
+                .getInt(10);
+
+            BLOATED_TIME = config.get(Bloated, "Bloated Time", 300, // Config in seconds
+                    "Duration (in seconds) for which the 'Bloated' effect will be applied automatically." +
+                        "\nExample: Setting to 300 means the effect lasts for 5 minutes (300 seconds).")
+                .getInt(300);
 
             config.addCustomCategoryComment(DIVINE,
                 "Forms can now benefit from an additional multi" +

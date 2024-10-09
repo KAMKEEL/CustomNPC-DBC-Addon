@@ -97,6 +97,10 @@ public class ServerEventHandler {
                 }
             }
 
+            if(ConfigDBCEffects.AUTO_BLOATED)
+                if (player.ticksExisted % ConfigDBCEffects.DECREASE_TIME == 0)
+                    StatusEffectController.Instance.decreaseSenzuConsumption(player);
+
             if (player.ticksExisted % ConfigDBCGameplay.CheckEffectsTick == 0)
                 StatusEffectController.Instance.runEffects(player);
 
