@@ -116,22 +116,22 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             GuiNpcButton revampAura = new GuiNpcButton(5, guiLeft + 265, y - 5, 50, 20, new String[]{"gui.enabled","gui.disabled"}, ConfigDBCClient.RevampAura?0:1);
             this.addButton(revampAura);
 
-            y += 22;
+            y += 24;
             addLabel(new GuiNpcLabel(10,"display.bloom", guiLeft + 144, y, 0xFFFFFF));
             GuiNpcButton button = new GuiNpcButton(10, guiLeft + 265, y - 5, 50, 20, new String[]{"gui.enabled","gui.disabled"}, ConfigDBCClient.EnableBloom?0:1);
             this.addButton(button);
 
-            y += 22;
+            y += 24;
             addLabel(new GuiNpcLabel(11,"display.outlines", guiLeft + 144, y, 0xFFFFFF));
             button = new GuiNpcButton(11, guiLeft + 265, y - 5,50, 20, new String[]{"gui.enabled","gui.disabled"}, ConfigDBCClient.EnableOutlines?0:1);
             this.addButton(button);
 
-            y += 22;
+            y += 24;
             addLabel(new GuiNpcLabel(12,"display.shaders", guiLeft + 144, y, 0xFFFFFF));
             button = new GuiNpcButton(12, guiLeft + 265, y - 5,50, 20, new String[]{"gui.enabled","gui.disabled"}, ConfigDBCClient.EnableShaders?0:1);
             this.addButton(button);
 
-            y += 22;
+            y += 24;
             addLabel(new GuiNpcLabel(13,"display.firstPersonAura", guiLeft + 144, y, 0xFFFFFF));
             addTextField(new GuiNpcTextField(66, this, fontRendererObj, guiLeft + 279, y - 5, 35, 20, ConfigDBCClient.FirstPerson3DAuraOpacity + ""));
             getTextField(66).integersOnly = true;
