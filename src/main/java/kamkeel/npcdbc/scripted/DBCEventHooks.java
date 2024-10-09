@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.scripted;
 
+import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import noppes.npcs.controllers.ScriptController;
 import noppes.npcs.controllers.data.PlayerDataScript;
@@ -23,6 +24,12 @@ public class DBCEventHooks {
         PlayerDataScript handler = ScriptController.Instance.playerScripts;
         handler.callScript(DBCScriptType.CAPSULEUSED.function, capsuleUsedEvent);
         return NpcAPI.EVENT_BUS.post(capsuleUsedEvent);
+    }
+
+    public static boolean onSenzuUsedEvent(DBCPlayerEvent.SenzuUsedEvent senzuUsedEvent) {
+        PlayerDataScript handler = ScriptController.Instance.playerScripts;
+        handler.callScript(DBCScriptType.SENZUUSED.function, senzuUsedEvent);
+        return NpcAPI.EVENT_BUS.post(senzuUsedEvent);
     }
 
     public static boolean onReviveEvent(DBCPlayerEvent.ReviveEvent reviveEvent) {
