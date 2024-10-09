@@ -338,7 +338,6 @@ public class StatusEffectController implements IStatusEffectHandler {
 
         // Calculate the excess consumption based on the defined threshold.
         int excessConsumption = consumptionData.getExcessConsumption(ConfigDBCEffects.BLOATED_THRESHOLD);
-        int currentConsumption = consumptionData.getCurrentConsumption();
 
         // Check for the warning threshold.
         if (excessConsumption > 0 && excessConsumption < ConfigDBCEffects.MAX_THRESHOLD_EXCEED) {
