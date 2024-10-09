@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollListener, IScrollData {
+public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollListener, IScrollData, ITextfieldListener {
     public static int activePage = 0;
     private final ResourceLocation resource = new ResourceLocation("customnpcs", "textures/gui/standardbg.png");
     public int prevAura = 0;
@@ -94,8 +94,6 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
 
         guiScroll.guiLeft = guiLeft + 4;
         guiScroll.guiTop = guiTop + 26;
-        this.addScroll(guiScroll);
-        addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 5, guiTop + ySize - 34, 134, 20, search));
 
         GuiNpcButton selectButton = new GuiNpcButton(1, guiLeft + 5, guiTop + ySize - 11, "form.select");
         selectButton.width = 65;
@@ -105,15 +103,42 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         clearButton.width = 65;
         this.addButton(clearButton);
 
-        if (activePage == 1) {
-            addLabel(new GuiNpcLabel(1,"display.revampAura", guiLeft + 170, guiTop + ySize - 11 - 24 + 5));
-            GuiNpcButton revampAura = new GuiNpcButtonYesNo(5, guiLeft + 250, guiTop + ySize - 11 - 24, ConfigDBCClient.RevampAura);
-            revampAura.width = 65;
-            this.addButton(revampAura);
+        this.addScroll(guiScroll);
+        addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 5, guiTop + ySize - 34, 134, 20, search));
 
+        if (activePage == 1) {
             GuiNpcButton hideAura = new GuiNpcButton(3, guiLeft + 250, guiTop + ySize - 11, new String[]{"aura.shown", "aura.hidden"}, showingAura);
             hideAura.width = 65;
             this.addButton(hideAura);
+
+            int y = guiTop + 34;
+            addLabel(new GuiNpcLabel(1,"display.revampAura", guiLeft + 144, y, 0xFFFFFF));
+            GuiNpcButton revampAura = new GuiNpcButtonYesNo(5, guiLeft + 250, y - 5, ConfigDBCClient.RevampAura);
+            revampAura.width = 65;
+            this.addButton(revampAura);
+
+            y += 22;
+            addLabel(new GuiNpcLabel(10,"display.bloom", guiLeft + 144, y, 0xFFFFFF));
+            GuiNpcButton button = new GuiNpcButtonYesNo(10, guiLeft + 250, y - 5, ConfigDBCClient.EnableBloom);
+            button.width = 65;
+            this.addButton(button);
+
+            y += 22;
+            addLabel(new GuiNpcLabel(11,"display.outlines", guiLeft + 144, y, 0xFFFFFF));
+            button = new GuiNpcButtonYesNo(11, guiLeft + 250, y - 5, ConfigDBCClient.EnableOutlines);
+            button.width = 65;
+            this.addButton(button);
+
+            y += 22;
+            addLabel(new GuiNpcLabel(12,"display.shaders", guiLeft + 144, y, 0xFFFFFF));
+            button = new GuiNpcButtonYesNo(12, guiLeft + 250, y - 5, ConfigDBCClient.EnableShaders);
+            button.width = 65;
+            this.addButton(button);
+
+            y += 22;
+            addLabel(new GuiNpcLabel(13,"display.povOpacity", guiLeft + 144, y, 0xFFFFFF));
+            addTextField(new GuiNpcTextField(66, this, fontRendererObj, guiLeft + 250 + 2, y - 5, 60, 20, ConfigDBCClient.FirstPerson3DAuraOpacity + ""));
+            getTextField(66).integersOnly = true;
         }
     }
 
@@ -125,7 +150,6 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, 252, 195);
         drawTexturedModalRect(guiLeft + 252, guiTop, 188, 0, 67, 195);
         renderScreen();
-
         super.drawScreen(i, j, f);
     }
 
@@ -217,16 +241,10 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 fontRendererObj.drawString(drawSelected, guiLeft + 145, guiTop + ySize - 5, CustomNpcResourceListener.DefaultTextColor, true);
             }
         } else if (loaded) {
-            String drawString = "§f" + StatCollector.translateToLocal("npcdbc.inventory.noauraselected");
-            if (viewingAura != null) {
-                drawString = viewingAura.getMenuName();
-            }
+            String drawString = "§f" + StatCollector.translateToLocal("npcdbc.inventory.client");
             int textWidth = getStringWidthWithoutColor(drawString);
             int centerX = guiLeft + 140 + ((xSize - textWidth + 30 - 140) / 2);
             fontRendererObj.drawString(drawString, centerX, guiTop + 10, CustomNpcResourceListener.DefaultTextColor, true);
-            if (viewingAura != null) {
-
-            }
             if (selectedAura != null) {
                 String drawSelected = selectedAura.getMenuName();
                 fontRendererObj.drawString(drawSelected, guiLeft + 145, guiTop + ySize - 5, CustomNpcResourceListener.DefaultTextColor, true);
@@ -320,6 +338,21 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             else if (guibutton.id == 5) {
                 ConfigDBCClient.RevampAura = ((GuiNpcButton) guibutton).getValue() == 1;
                 ConfigDBCClient.RevampAuraProperty.set(ConfigDBCClient.RevampAura);
+                ConfigDBCClient.config.save();
+            }
+            else if (guibutton.id == 10) {
+                ConfigDBCClient.EnableBloom = ((GuiNpcButton) guibutton).getValue() == 1;
+                ConfigDBCClient.EnableBloomProperty.set(ConfigDBCClient.EnableBloom);
+                ConfigDBCClient.config.save();
+            }
+            else if (guibutton.id == 11) {
+                ConfigDBCClient.EnableOutlines = ((GuiNpcButton) guibutton).getValue() == 1;
+                ConfigDBCClient.EnableOutlinesProperty.set(ConfigDBCClient.EnableOutlines);
+                ConfigDBCClient.config.save();
+            }
+            else if (guibutton.id == 12) {
+                ConfigDBCClient.EnableShaders = ((GuiNpcButton) guibutton).getValue() == 1;
+                ConfigDBCClient.EnableShadersProperty.set(ConfigDBCClient.EnableShaders);
                 ConfigDBCClient.config.save();
             }
         }
@@ -480,6 +513,15 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
             if (viewingForm.stackable.mysticStackable) {
                 stackables.add("§d"+StatCollector.translateToLocal("npcdbc.inventory.stackable.mystic"));
             }
+        }
+    }
+
+    @Override
+    public void unFocused(GuiNpcTextField textfield) {
+        if(textfield.id == 66){
+            ConfigDBCClient.FirstPerson3DAuraOpacity = textfield.getInteger();
+            ConfigDBCClient.FirstPerson3DAuraOpacityProperty.set(ConfigDBCClient.FirstPerson3DAuraOpacity);
+            ConfigDBCClient.config.save();
         }
     }
 }

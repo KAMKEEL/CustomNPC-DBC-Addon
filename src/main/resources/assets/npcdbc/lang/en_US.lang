@@ -227,6 +227,10 @@ display.kettleOnly=Kettle only
 display.kettlePlusAura=Kettle + Aura
 display.revampAura=Revamped
 display.dbcAura=DBC
+display.bloom=Bloom
+display.outlines=Outlines
+display.shaders=Shaders
+display.povOpacity=POV Opacity
 
 outline.noiseSize=Noise Size
 outline.colorSmoothness=Color Smoothness
@@ -294,6 +298,7 @@ npcdbc.inventory.willpower=Will Power
 npcdbc.inventory.mastery=Mastery
 npcdbc.inventory.selected=Selected
 npcdbc.inventory.noauraselected=No Aura Selected
+npcdbc.inventory.client=Client
 
 npcdbc.inventory.stackable.dbc=DBC
 npcdbc.inventory.stackable.kk=KK
