@@ -86,11 +86,11 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         formsButton.packedFGColour = 0xffc626;
         this.addButton(formsButton);
 
-        GuiNpcButton auras = new GuiNpcButton(41, guiLeft + 75, guiTop + 4, "global.customauras");
-        auras.packedFGColour = 0xf04fff;
-        auras.enabled = activePage != 1;
-        auras.width = 65;
-        this.addButton(auras);
+        GuiNpcButton extras = new GuiNpcButton(41, guiLeft + 75, guiTop + 4, "inventory.extras");
+        extras.packedFGColour = 0xf04fff;
+        extras.enabled = activePage != 1;
+        extras.width = 65;
+        this.addButton(extras);
 
         guiScroll.guiLeft = guiLeft + 4;
         guiScroll.guiTop = guiTop + 26;
@@ -106,7 +106,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         this.addButton(clearButton);
 
         if (activePage == 1) {
-            addLabel(new GuiNpcLabel(1,"Revamp Aura", guiLeft + 170, guiTop + ySize - 11 - 24 + 5));
+            addLabel(new GuiNpcLabel(1,"display.revampAura", guiLeft + 170, guiTop + ySize - 11 - 24 + 5));
             GuiNpcButton revampAura = new GuiNpcButtonYesNo(5, guiLeft + 250, guiTop + ySize - 11 - 24, ConfigDBCClient.RevampAura);
             revampAura.width = 65;
             this.addButton(revampAura);
