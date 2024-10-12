@@ -384,6 +384,10 @@ public class StatusEffectController implements IStatusEffectHandler {
             return;
         }
 
+        if (ConfigDBCEffects.EXHAUST_HUMANSPIRIT && hasEffect(player, Effects.EXHAUSTED)) {
+            return;
+        }
+
         DamageTracker tracker = damageTrackers.get(playerId);
         DBCData dbcData = DBCData.get(player);
         int maxHealth = dbcData.stats.getMaxBody();

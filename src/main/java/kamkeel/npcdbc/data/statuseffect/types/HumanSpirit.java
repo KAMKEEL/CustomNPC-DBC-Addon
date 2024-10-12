@@ -4,6 +4,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.BonusController;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
@@ -33,5 +34,8 @@ public class HumanSpirit extends StatusEffect {
     @Override
     public void kill(EntityPlayer player, PlayerEffect playerEffect) {
         BonusController.getInstance().removeBonus(player, name);
+
+        if(ConfigDBCEffects.EXHAUST_HUMANSPIRIT)
+            StatusEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED, ConfigDBCEffects.EXHAUST_HUMANSPIRIT_TIME * 60);
     }
 }

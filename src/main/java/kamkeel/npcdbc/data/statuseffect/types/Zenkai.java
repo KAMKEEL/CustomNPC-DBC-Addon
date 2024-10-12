@@ -44,6 +44,8 @@ public class Zenkai extends StatusEffect {
         else
             BonusController.getInstance().removeBonus(player, halfSaiyanZenkai);
 
-        StatusEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED);
+
+        if(ConfigDBCEffects.EXHAUST_ZENKAI)
+            StatusEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED, ConfigDBCEffects.EXHAUST_ZENKAI_TIME * 60);
     }
 }
