@@ -177,19 +177,19 @@ public class ConfigDBCEffects
             config.addCustomCategoryComment(EXHAUST,
                 "Exhausted prevents specific effects from being applied to the player." +
                     "\nSimilar to Pain or NoFuse, it acts as a Cooldown");
-            EXHAUST_ZENKAI = config.get(EXHAUST, "Exhaust Zenkai", true).getBoolean(true);
-            EXHAUST_TIME = config.get(Potara, "Exhaust Time", 15, "Amount of Time in Minutes for Exhaust [Default Apply]").getInt(15);
+            EXHAUST_TIME = config.get(EXHAUST, "0. Exhaust Time", 15, "Amount of Time in Minutes for Exhaust [Default Apply]").getInt(15);
 
-            EXHAUST_ZENKAI_TIME = config.get(Potara, "Exhaust Zenkai Time", 15, "Amount of Time in Minutes for Exhaust after Zenkai").getInt(15);
+            EXHAUST_ZENKAI = config.get(EXHAUST, "1. Exhaust Zenkai", true).getBoolean(true);
+            EXHAUST_ZENKAI_TIME = config.get(EXHAUST, "1. Exhaust Zenkai Time", 15, "Amount of Time in Minutes for Exhaust after Zenkai").getInt(15);
 
-            EXHAUST_OVERPOWER = config.get(EXHAUST, "Exhaust Overpower", true).getBoolean(true);
-            EXHAUST_OVERPOWER_TIME = config.get(Potara, "Exhaust Zenkai Time", 15, "Amount of Time in Minutes for Exhaust after Overpower").getInt(15);
+            EXHAUST_OVERPOWER = config.get(EXHAUST, "2. Exhaust Overpower", true).getBoolean(true);
+            EXHAUST_OVERPOWER_TIME = config.get(EXHAUST, "2. Exhaust Zenkai Time", 15, "Amount of Time in Minutes for Exhaust after Overpower").getInt(15);
 
-            EXHAUST_HUMANSPIRIT = config.get(EXHAUST, "Exhaust Human Spirit", true).getBoolean(true);
-            EXHAUST_HUMANSPIRIT_TIME = config.get(Potara, "Exhaust Human Spirit Time", 15, "Amount of Time in Minutes for Exhaust after Human Spirit").getInt(15);
+            EXHAUST_HUMANSPIRIT = config.get(EXHAUST, "3. Exhaust Human Spirit", true).getBoolean(true);
+            EXHAUST_HUMANSPIRIT_TIME = config.get(EXHAUST, "3. Exhaust Human Spirit Time", 15, "Amount of Time in Minutes for Exhaust after Human Spirit").getInt(15);
 
-            EXHAUST_COLDBLOODED = config.get(EXHAUST, "Exhaust Cold Blooded", true).getBoolean(true);
-            EXHAUST_COLDBLOODED_TIME = config.get(Potara, "Exhaust Cold Blooded Time", 15, "Amount of Time in Minutes for Exhaust").getInt(15);
+            EXHAUST_COLDBLOODED = config.get(EXHAUST, "4. Exhaust Cold Blooded", true).getBoolean(true);
+            EXHAUST_COLDBLOODED_TIME = config.get(EXHAUST, "4. Exhaust Cold Blooded Time", 15, "Amount of Time in Minutes for Exhaust").getInt(15);
 
             // Configuration comment for Bloated settings
             config.addCustomCategoryComment(Bloated,
