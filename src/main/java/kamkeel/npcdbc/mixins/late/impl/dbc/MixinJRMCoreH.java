@@ -481,7 +481,7 @@ public abstract class MixinJRMCoreH {
     @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "FIELD", opcode = Opcodes.GETSTATIC, target="LJinRyuu/JRMCore/JRMCoreConfig;StatPasDef:I"))
     private static int applyChargingDex(@Local(ordinal = 0) Entity player){
         DBCData dbcData = DBCData.get((EntityPlayer) player);
-        if(dbcData.stats.isChargingKiAttack()){
+        if(ConfigDBCGameplay.EnableChargingDex && dbcData.stats.isChargingKiAttack()){
             switch(dbcData.Class){
                 case 0:
                     return ConfigDBCGameplay.MartialArtistCharge;
@@ -492,7 +492,7 @@ public abstract class MixinJRMCoreH {
                 default:
                     return JRMCoreConfig.StatPasDef;
             }
-        }else{
+        } else{
             return JRMCoreConfig.StatPasDef;
         }
     }
