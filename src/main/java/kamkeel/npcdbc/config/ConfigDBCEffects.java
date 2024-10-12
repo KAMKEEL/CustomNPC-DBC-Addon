@@ -178,18 +178,23 @@ public class ConfigDBCEffects
                 "Exhausted prevents specific effects from being applied to the player." +
                     "\nSimilar to Pain or NoFuse, it acts as a Cooldown");
             EXHAUST_TIME = config.get(EXHAUST, "0. Exhaust Time", 15, "Amount of Time in Minutes for Exhaust [Default Apply]").getInt(15);
+            EXHAUST_TIME = Math.max(EXHAUST_TIME, 0);
 
             EXHAUST_ZENKAI = config.get(EXHAUST, "1. Exhaust Zenkai", true).getBoolean(true);
             EXHAUST_ZENKAI_TIME = config.get(EXHAUST, "1. Exhaust Zenkai Time", 15, "Amount of Time in Minutes for Exhaust after Zenkai").getInt(15);
+            EXHAUST_ZENKAI_TIME = Math.max(EXHAUST_ZENKAI_TIME, 0);
 
             EXHAUST_OVERPOWER = config.get(EXHAUST, "2. Exhaust Overpower", true).getBoolean(true);
             EXHAUST_OVERPOWER_TIME = config.get(EXHAUST, "2. Exhaust Zenkai Time", 15, "Amount of Time in Minutes for Exhaust after Overpower").getInt(15);
+            EXHAUST_OVERPOWER_TIME = Math.max(EXHAUST_OVERPOWER_TIME, 0);
 
             EXHAUST_HUMANSPIRIT = config.get(EXHAUST, "3. Exhaust Human Spirit", true).getBoolean(true);
             EXHAUST_HUMANSPIRIT_TIME = config.get(EXHAUST, "3. Exhaust Human Spirit Time", 15, "Amount of Time in Minutes for Exhaust after Human Spirit").getInt(15);
+            EXHAUST_HUMANSPIRIT_TIME = Math.max(EXHAUST_HUMANSPIRIT_TIME, 0);
 
             EXHAUST_COLDBLOODED = config.get(EXHAUST, "4. Exhaust Cold Blooded", true).getBoolean(true);
             EXHAUST_COLDBLOODED_TIME = config.get(EXHAUST, "4. Exhaust Cold Blooded Time", 15, "Amount of Time in Minutes for Exhaust").getInt(15);
+            EXHAUST_COLDBLOODED_TIME = Math.max(EXHAUST_COLDBLOODED_TIME, 0);
 
             // Configuration comment for Bloated settings
             config.addCustomCategoryComment(Bloated,
