@@ -31,7 +31,11 @@ public class NamekRegen extends StatusEffect {
                     percentToRegen = ConfigDBCGameplay.NamekianRegenMax - currentBodyPercent;
                     kill = true;
                 }
-                dbcData.stats.restoreHealthPercent(percentToRegen);
+
+                if(!ConfigDBCGameplay.OnlyNamekianRegenCharging || dbcData.isChargingKi()) {
+                    dbcData.stats.restoreHealthPercent(percentToRegen);
+                }
+
                 if (kill) {
                     playerEffect.kill();
                 }

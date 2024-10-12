@@ -27,6 +27,7 @@ public class ConfigDBCGameplay
 
     public final static String NamekianRegeneration = "Namek_Regen";
     public static boolean EnableNamekianRegen = true;
+    public static boolean OnlyNamekianRegenCharging = false;
     public static int NamekianRegenMin = 20;
     public static int NamekianRegenMax = 50;
 
@@ -81,6 +82,7 @@ public class ConfigDBCGameplay
             EnableNamekianRegen = config.get(NamekianRegeneration, "Enable Namekian Regeneration", true,
                 "Namekian Regeneration will automatically apply the Namek Regen Effect (dbc/effects.cfg), " +
                     "\nwhen the Player falls below MIN Health and will stop continue to MAX Health.").getBoolean(true);
+            OnlyNamekianRegenCharging = config.get(NamekianRegeneration, "Only Regen during Charging", false).getBoolean(false);
             NamekianRegenMin = config.get(NamekianRegeneration, "Min Namekian Regen", 20).getInt(20);
             NamekianRegenMax = config.get(NamekianRegeneration, "Max Namekian Regen", 50).getInt(50);
 
