@@ -22,6 +22,7 @@ import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -440,11 +441,14 @@ public abstract class MixinJRMCoreH {
 
     @ModifyArgs(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
     private static void setDamage(Args args) {
+        EntityPlayer player = args.get(1);
         String type = args.get(2);
         if (lastSetDamage != -1 && type.equals("jrmcBdy")) {
-            int curBody = getInt(args.get(1), "jrmcBdy");
-            int newHealth = curBody - lastSetDamage;
+            int damageToHP = Math.max(lastSetDamage, 0);
+            int playerHP = getInt(player, "jrmcBdy");
+            int newHealth = playerHP - damageToHP;
             args.set(0, Math.max(0, newHealth));
+            StatusEffectController.getInstance().recordDamage(player, damageToHP);
             lastSetDamage = -1;
         }
     }
