@@ -464,7 +464,7 @@ public class AuraRenderer extends RenderDBC {
             //   return effectiveSize ;
             if (data.getFormID() > -1) {
                 Form form = PlayerDataUtil.getForm(data.getAuraEntity().entity);
-                if (form.display.hairType.equals("ssj"))
+                if (form.display.hairType == null || form.display.hairType.equals("ssj"))
                     sizeFactor = 1;
                 else if (form.display.hairType.equals("ssj2"))
                     sizeFactor = 1.5f;
