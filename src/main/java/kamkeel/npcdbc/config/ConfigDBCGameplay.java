@@ -51,6 +51,9 @@ public class ConfigDBCGameplay
     public static int PercentDamageRequired = 400;
     public static int DamageRequiredSeconds = 20;
 
+    public final static String FruitOfMight = "FruitOfMight";
+    public static int FruitOfMightStackSize = 5;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -113,7 +116,8 @@ public class ConfigDBCGameplay
                 "Tweaking this number will allow for more precise ki charging. Default for DBC is 5.").getInt(1);
             KiChargeRate = ValueUtil.clamp(KiChargeRate, 1, 50);
 
-
+            FruitOfMightStackSize = config.get(FruitOfMight, "Fruit of Might Stack Size", 5).getInt(5);
+            FruitOfMightStackSize = ValueUtil.clamp(FruitOfMightStackSize, 1, 64);
         }
         catch (Exception e)
         {
