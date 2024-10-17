@@ -14,7 +14,6 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.api.outline.IOutline;
-import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -966,6 +965,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void removeAuraSelection() {
         PlayerDBCInfo AuraData = PlayerDataUtil.getDBCInfo(player);
+        AuraData.selectedAura = -1;
+        AuraData.updateClient();
+    }
+
+    @Override
+    public void removeCurrentAura() {
+        PlayerDBCInfo AuraData = PlayerDataUtil.getDBCInfo(player);
+        AuraData.currentAura = -1;
         AuraData.selectedAura = -1;
         AuraData.updateClient();
     }
