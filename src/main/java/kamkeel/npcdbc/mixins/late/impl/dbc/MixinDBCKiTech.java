@@ -109,7 +109,7 @@ public abstract class MixinDBCKiTech {
 
     @Redirect(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
     private static void changeDynamic(Entity e, double par1, double par3, double par5, float par7, float par8){
-        par8 *= DBCData.getClient().getDynamicFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100f;
+        par7 *= DBCData.getClient().getDynamicFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100f;
         setThrowableHeading(e, par1, par3, par5, par7, par8);
     }
 
