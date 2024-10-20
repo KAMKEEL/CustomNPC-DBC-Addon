@@ -139,6 +139,18 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
+    public void onMousePress(InputEvent.MouseInputEvent e) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.currentScreen != null)
+            return;
+
+        if (KeyHandler.FormWheelKey.isPressed()) {
+            if (PlayerDataUtil.getClientDBCInfo() != null)
+                mc.displayGuiScreen(new HUDFormWheel());
+        }
+    }
+
+    @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent e) {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.currentScreen == null) {
@@ -209,7 +221,7 @@ public class ClientEventHandler {
                             float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ? 150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
 
                             if (dbcData.stats.getCurrentBodyPercentage() > healthReq) {
-                                Utility.sendMessage(mc.thePlayer, "§c" + StatCollector.translateToLocalFormatted("npcdbc.healthRequirement", healthReq));
+                                Utility.sendMessage(mc.thePlayer, "§c" + StatCollector.translateToLocalFormatted("npcdbc.healthRequirement", healthReq, "§c"));
                                 return;
                             }
 

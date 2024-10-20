@@ -10,12 +10,20 @@ public class Color {
     public int color;
     public float alpha;
 
+    public Color(int color) {
+        this(color, -1);
+    }
+
     public Color(int color, float alpha) {
         setColor(color, alpha);
     }
 
     public Color(int red, int green, int blue, float alpha) {
         setColor(red, green, blue, alpha);
+    }
+
+    public Color(float red, float green, float blue, float alpha) {
+        setColor((int) red, (int) green, (int) blue, alpha);
     }
 
     public void setColor(int color, float alpha) {
@@ -33,32 +41,43 @@ public class Color {
         int red = (int) (color1.getRed() + ((color2.getRed() - color1.getRed()) * fraction));
         int green = (int) (color1.getGreen() + ((color2.getGreen() - color1.getGreen()) * fraction));
         int blue = (int) (color1.getBlue() + ((color2.getBlue() - color1.getBlue()) * fraction));
-        float newAlpha = color1.alpha + ((color2.alpha - color1.alpha) * fraction);
+        boolean noAlpha = color1.alpha == -1 || color2.alpha == -1;
+        float newAlpha = noAlpha ? -1 : color1.alpha + ((color2.alpha - color1.alpha) * fraction);
         int newColor = (red << 16) + (green << 8) + blue;
         return new Color(newColor, newAlpha);
+    }
+
+    public static Color lerpRGB(int color1, int color2, float fraction) {
+        return lerpRGBA(new Color(color1), new Color(color2), fraction);
     }
 
     public Color lerpRGBA(Color color2, float fraction) {
         return Color.lerpRGBA(this, color2, fraction);
     }
 
+    public Color lerpRGB(int color, float fraction) {
+        return Color.lerpRGB(this.color, color, fraction);
+    }
+
     public Color multiply(float multi) {
         int r = (int) ((getRed() * multi));
         int g = (int) ((getGreen() * multi));
         int b = (int) ((getBlue() * multi));
-        float a = alpha * multi;
+        float a = alpha == -1 ? -1 : (alpha * multi);
         return new Color((r << 16) + (g << 8) + b, a);
     }
 
     @SideOnly(Side.CLIENT)
     public void glColor() {
-        GL11.glColor4f(getRedF(), getGreenF(), getBlueF(), alpha);
+        if (alpha == -1)
+            GL11.glColor3f(getRedF(), getGreenF(), getBlueF());
+        else
+            GL11.glColor4f(getRedF(), getGreenF(), getBlueF(), alpha);
     }
 
     @SideOnly(Side.CLIENT)
     public void uniform(String name) {
         ShaderHelper.uniformColor(name, color, alpha);
-
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound, String name) {
@@ -105,7 +124,7 @@ public class Color {
 
     public static String getColor(int color, float alpha) {
         String str = getColor(color);
-        return str + " | " +(int) (alpha * 255);
+        return str + " | " + (int) (alpha * 255);
     }
 
     public Color clone() {

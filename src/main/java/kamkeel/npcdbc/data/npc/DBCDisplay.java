@@ -36,7 +36,9 @@ import noppes.npcs.entity.data.ModelPartData;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class DBCDisplay implements IDBCDisplay, IAuraData {
 
@@ -501,6 +503,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     /////////////////////////////////////////////
     // Forms
 
+    @Override
     public void transform(int id) {
         if (FormController.Instance.has(id)) {
             isTransforming = true;
@@ -509,17 +512,25 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             throw new CustomNPCsException("Form " + id + " does not exist!");
     }
 
+    @Override
     public void transform(IForm form) {
         transform(form.getID());
     }
 
-    public void cancelTransform() {
+    @Override
+    public void cancelTransformation() {
         selectedForm = -1;
         isTransforming = false;
     }
 
+    @Override
     public void descend(int id) {
         TransformController.npcDescend(npc, id);
+    }
+
+    @Override
+    public void descend(IForm form) {
+        TransformController.npcDescend(npc, form == null ? -1 : form.getID());
     }
 
     public IForm getCurrentForm() {
@@ -540,15 +551,15 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
         IAura formAura = form != null ? form.display.getAura() : null;
 
-        if(formAura != null) {
+        if (formAura != null) {
             aura = (Aura) formAura;
-            if (aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)){
+            if (aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)) {
                 return (Outline) OC.get(aura.display.outlineID);
             }
         }
 
         aura = (Aura) AuraController.Instance.get(auraID);
-        if (aura != null && aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)){
+        if (aura != null && aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)) {
             return (Outline) OC.get(aura.display.outlineID);
         }
 

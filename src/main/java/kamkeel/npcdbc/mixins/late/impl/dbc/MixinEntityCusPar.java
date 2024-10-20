@@ -30,6 +30,11 @@ public class MixinEntityCusPar implements IEntityCusPar {
         return enhancedRendering;
     }
 
+    @Override
+    public void setEntity(Entity ent) {
+        this.ent = ent;
+    }
+
     @Unique
     public boolean shouldRenderInPass(int pass) {
         if (ConfigDBCClient.RevampAura && ent != null && !ent.isInWater())

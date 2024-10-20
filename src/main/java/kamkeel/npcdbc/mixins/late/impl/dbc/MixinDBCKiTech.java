@@ -33,18 +33,26 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import static kamkeel.npcdbc.constants.DBCForm.UltraInstinct;
 
 @Mixin(value = DBCKiTech.class, remap = false)
-public class MixinDBCKiTech {
+public abstract class MixinDBCKiTech {
 
+    @Shadow
+    public static void mv(float strafe, float frward, EntityPlayer var4, float add) {
+
+    }
+
+    @Shadow
+    public static void setThrowableHeading(Entity e, double par1, double par3, double par5, float par7, float par8) {
+
+    }
 
     @Redirect(method = "Ascend", at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/EntityClientPlayerMP;rotationPitch:F", remap = true, ordinal = 0))
     private static float disableOozaruTransformInCustomForm(EntityClientPlayerMP instance){
@@ -67,28 +75,42 @@ public class MixinDBCKiTech {
         if (ClientCache.kiRevamp)
             ci.cancel();
     }
+//
+//    @ModifyArgs(method = "DashKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
+//    private static void changeSprintSpeed(Args args) {
+//        float speed = args.get(3);
+//        args.set(3, speed * DBCData.getClient().getSprintSpeed());
+//    }
 
-    @ModifyArgs(method = "DashKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
-    private static void changeSprintSpeed(Args args) {
-        float speed = args.get(3);
-        args.set(3, speed * DBCData.getClient().getSprintSpeed());
+    @Redirect(method = "DashKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
+    private static void changeSprintSpeed(float f4, float f5, EntityPlayer pitch, float speedY) {
+        speedY *= DBCData.getClient().getSprintSpeed();
+        mv(f4, f5, pitch, speedY);
     }
 
-    /**
-     * Prevents player from transforming to other DBC forms if they are in custom form, except stackable ones
-     */
-    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
-    private static void changeBaseSpeed(Args args) {
-        float speed = args.get(3);
-        args.set(3, speed * DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
-
+//    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
+//    private static void changeBaseSpeed(Args args) {
+//        float speed = args.get(3);
+//        args.set(3, speed * DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
+//
+//    }
+    @Redirect(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
+    private static void changeBaseSpeed(float f4, float f5, EntityPlayer pitch, float speedY){
+        speedY *= DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100f;
+        mv(f4, f5, pitch, speedY);
     }
 
-    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
-    private static void changeDynamic(Args args) {
-        float speed = args.get(4);
-        args.set(4, speed * DBCData.getClient().getDynamicFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
+//    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
+//    private static void changeDynamic(Args args) {
+//        float speed = args.get(4);
+//        args.set(4, speed * DBCData.getClient().getDynamicFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
+//
+//    }
 
+    @Redirect(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
+    private static void changeDynamic(Entity e, double par1, double par3, double par5, float par7, float par8){
+        par7 *= DBCData.getClient().getDynamicFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100f;
+        setThrowableHeading(e, par1, par3, par5, par7, par8);
     }
 
     @Inject(method = "FloatKi", at = @At(value = "FIELD", target = "LJinRyuu/DragonBC/common/DBCKiTech;floating:Z", ordinal = 7, shift = At.Shift.AFTER))
