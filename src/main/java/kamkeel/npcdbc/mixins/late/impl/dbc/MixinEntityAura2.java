@@ -7,7 +7,6 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.client.sound.ClientSound;
@@ -17,12 +16,11 @@ import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.IEntityAura;
+import kamkeel.npcdbc.mixins.late.IEntityCusPar;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,10 +28,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(value = EntityAura2.class, remap = false)
 public abstract class MixinEntityAura2 extends Entity implements IEntityAura {
@@ -141,10 +137,23 @@ public abstract class MixinEntityAura2 extends Entity implements IEntityAura {
     }
 
 
-    @ModifyArgs(method = "onUpdate", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/entity/EntityCusPar;<init>(Ljava/lang/String;Lnet/minecraft/world/World;FFDDDDDDDDDFIIIIZFZFILjava/lang/String;IIFFFIFFFFFFFFFIFFFFFZIZLnet/minecraft/entity/Entity;)V", ordinal = 0))
-    private void setDamage(Args args) {
-        args.set(48, entity);
+//    @ModifyArgs(method = "onUpdate", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/entity/EntityCusPar;<init>(Ljava/lang/String;Lnet/minecraft/world/World;FFDDDDDDDDDFIIIIZFZFILjava/lang/String;IIFFFIFFFFFFFFFIFFFFFZIZLnet/minecraft/entity/Entity;)V", ordinal = 0))
+//    private void setDamage(Args args) {
+//        args.set(48, entity);
+//    }
+
+    @Redirect(method = "onUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", ordinal = 0, remap = true))
+    private boolean setDamage(World instance, Entity particle){
+        if(particle instanceof IEntityCusPar) {
+            ((IEntityCusPar) particle).setEntity(this.entity);
+        }
+        return worldObj.spawnEntityInWorld(particle);
     }
+
+//    @Redirect(method = "onUpdate", at = @At(value = "INVOKE", target = "", ordinal = 0))
+//    private void setDamage(){
+//
+//    }
 
 
     @Redirect(method = "onUpdate", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_GR0:Z"))
