@@ -5,7 +5,6 @@ import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.config.ConfigDBCClient;
-import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -359,36 +358,6 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-
-        if (!hasSubGui()) {
-            int mouseScrolled = Mouse.getDWheel();
-
-            if (mouseScrolled != 0 && hoveredSlot != -1) {
-                int newForm = -1;
-                FormWheelSegment slot = wheelSlot[hoveredSlot];
-                Form form = slot.form;
-                if (mouseScrolled > 0) {
-                    if (form != null && form.hasParent() && dbcInfo.hasFormUnlocked(form.parentID))
-                        newForm = form.parentID;
-                    else if (slot.data.isDBC) {
-                        newForm = DBCForm.getParent(dbcData.Race, slot.data.formID, dbcData);
-                        if (!dbcData.isDBCFormUnlocked(newForm))
-                            newForm = -1;
-                    }
-                } else {
-                    if (form != null && form.hasChild() && dbcInfo.hasFormUnlocked(form.childID))
-                        newForm = form.childID;
-                    else if (slot.data.isDBC) {
-                        newForm = DBCForm.getChild(dbcData.Race, slot.data.formID, dbcData);
-                        if (!dbcData.isDBCFormUnlocked(newForm))
-                            newForm = -1;
-                    }
-                }
-
-                if (newForm != -1)
-                    slot.setForm(newForm, slot.data.isDBC, true);
-            }
-        }
         if (isClosing && guiAnimationScale >= 0) {
             float updateTime = (float) (Minecraft.getSystemTime() - timeClosed) / CLOSE_TIME;
             updateTime = Math.min(1, updateTime);
@@ -401,20 +370,18 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
 
             guiAnimationScale = (float) easeOutExpo(updateTime);
         }
-
         BLUR_INTENSITY = guiAnimationScale * MAX_BLUR;
 
+
         int gradientColor = ((int) (255 * 0.2f * guiAnimationScale) << 24);
-        this.
+        this.drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
 
-            drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
-
-        glPushMatrix();
+        GL11.glPushMatrix();
         final float HALF_WIDTH = (float) this.width / 2;
         final float HALF_HEIGHT = (float) this.height / 2;
 
-        calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, configureEnabled);
 
+        calculateHoveredSlot(HALF_WIDTH, HALF_HEIGHT, configureEnabled);
         glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
         GL11.glScalef(undoMCScaling, undoMCScaling, 0);
@@ -426,7 +393,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
 
         for (int i = 0; i < 6; i++) {
             FormWheelData data = wheelSlot[i].data;
-            glPushMatrix();
+            GL11.glPushMatrix();
             GL11.glRotatef(i * -60, 0, 0, 1);
             float segmentScale = 1f + 0.1f * wheelSlot[i].getSegmentScale();
             GL11.glScalef(segmentScale, segmentScale, 0);
@@ -447,13 +414,13 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
             wheelSlot[i].draw(fontRendererObj);
 
 
-            glPopMatrix();
+            GL11.glPopMatrix();
         }
 
-        glPopMatrix();
+        GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_BLEND);
 
-        glPushMatrix();
+        GL11.glPushMatrix();
         GL11.glTranslatef(HALF_WIDTH, HALF_HEIGHT, 0);
         GL11.glScalef(undoMCScaling, undoMCScaling, undoMCScaling);
         float guiVariantScale = (FormWheelSegment.variant == 0 ? 0.75f : 0.9f);
@@ -461,15 +428,12 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         GL11.glScalef(playerScale, playerScale, playerScale);
         GL11.glTranslatef(-HALF_WIDTH, -HALF_HEIGHT + (ConfigDBCClient.AlteranteSelectionWheelTexture ? 8 : 0), 0);
 
+
         renderPlayer(mouseX, mouseY, partialTicks);
-
+        glPopMatrix();
         glPopMatrix();
 
-        glPopMatrix();
-
-        super.
-
-            drawScreen(mouseX, mouseY, partialTicks);
+        super.drawScreen(mouseX, mouseY, partialTicks);
         //        String text = mouseX + "," + mouseY + ", " + hoveredSlot + "," + (keyDown ? "HOLDING KEY" : "NOT HOLDING");
         //        drawCenteredString(fontRendererObj, text, mouseX, mouseY, 0xFFFFFFFF);
     }
@@ -543,7 +507,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
 
 
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-        glPushMatrix();
+        GL11.glPushMatrix();
         GL11.glTranslatef(l, i1, 60F);
 
         GL11.glScalef(-zoomed, zoomed, zoomed);
@@ -583,7 +547,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-        glPopMatrix();
+        GL11.glPopMatrix();
 
 
         data.addonFormID = oldForm;
