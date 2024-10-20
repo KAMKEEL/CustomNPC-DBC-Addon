@@ -109,7 +109,7 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
 
 
             } else if (display.race == DBCRace.ARCOSIAN) {
-                if (!monkey.monkey_large.isHidden)
+                if (!monkey.monkey_large.isHidden && display.arcoState < 4)
                     ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3B00.png"));
 
                 int arcoState = display.getArco();
