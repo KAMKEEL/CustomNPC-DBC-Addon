@@ -402,10 +402,10 @@ public abstract class MixinJRMCoreH {
 
     //if release becomes 0%, force descend player from CF on server side
     @Inject(method = "setByte(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
-    private static void descendOn0Release(int s, EntityPlayer Player, String string, CallbackInfo ci) {
+    private static void descendOn0Release(int s, EntityPlayer player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcRelease")) {
-            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(Player);
-            Form form = DBCData.getForm(Player);
+            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+            Form form = DBCData.getForm(player);
             if (form != null) {
                 formData.currentForm = -1;
                 formData.updateClient();
@@ -415,10 +415,10 @@ public abstract class MixinJRMCoreH {
 
     //if ki becomes 0, force descend player from CF on server side
     @Inject(method = "setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
-    private static void descendOn0Ki(int s, EntityPlayer Player, String string, CallbackInfo ci) {
+    private static void descendOn0Ki(int s, EntityPlayer player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcEnrgy")) {
-            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(Player);
-            Form form = DBCData.getForm(Player);
+            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+            Form form = DBCData.getForm(player);
             if (form != null) {
                 formData.currentForm = -1;
                 formData.updateClient();
@@ -450,15 +450,15 @@ public abstract class MixinJRMCoreH {
 //    }
 
     @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
-    private static void setDamage(int s, EntityPlayer Player, String type) {
+    private static void setDamage(int s, EntityPlayer player, String type) {
         if (lastSetDamage != -1 && type.equals("jrmcBdy")) {
-            int curBody = getInt(Player, "jrmcBdy");
+            int curBody = getInt(player, "jrmcBdy");
             int newHealth = curBody - lastSetDamage;
 //            setInt(Math.max(0, newHealth), Player, type);
             s = Math.max(0, newHealth);
             lastSetDamage = -1;
         }
-        setInt(s, Player, type);
+        setInt(s, player, type);
     }
 
 
