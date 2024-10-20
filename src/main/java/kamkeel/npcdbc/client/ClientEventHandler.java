@@ -139,6 +139,18 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
+    public void onMousePress(InputEvent.MouseInputEvent e) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.currentScreen != null)
+            return;
+
+        if (KeyHandler.FormWheelKey.isPressed()) {
+            if (PlayerDataUtil.getClientDBCInfo() != null)
+                mc.displayGuiScreen(new HUDFormWheel());
+        }
+    }
+
+    @SubscribeEvent
     public void onKeyPress(InputEvent.KeyInputEvent e) {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.currentScreen == null) {
