@@ -120,6 +120,14 @@ public class ConfigDBCGameplay
 
             FruitOfMightStackSize = config.get(FruitOfMight, "Fruit of Might Stack Size", 5).getInt(5);
             FruitOfMightStackSize = ValueUtil.clamp(FruitOfMightStackSize, 1, 64);
+
+            EnableHumanSpirit = config.get(HumanSpirit, "Enable Human Spirit", true,
+                "Human Spirit will automatically apply the Human Spirit Effect (dbc/effects.cfg), " +
+                    "\nwhen the Player reaches a specific threshold of damage").getBoolean(true);
+            PercentDamageRequired = config.get(HumanSpirit, "Percent Damage Required", 400).getInt(400);
+            DamageRequiredSeconds = config.get(HumanSpirit, "Time Allotted", 20, "Amount of time to consider the Percent of Damage Required").getInt(50);
+
+
         }
         catch (Exception e)
         {
