@@ -45,27 +45,26 @@ import static org.lwjgl.opengl.GL11.*;
 public class RenderEventHandler {
     public static final int TAIL_STENCIL_ID = 2;
 
-
     @SubscribeEvent
-    public void renderPotaraWhenFused(RenderPlayerEvent.SetArmorModel event){
-        if(event.slot != 3 || event.stack != null)
+    public void renderPotaraWhenFused(RenderPlayerEvent.SetArmorModel event) {
+        if (event.slot != 3 || event.stack != null)
             return;
 
 
         DBCData dbcData = DBCData.get(event.entityPlayer);
 
-        if(!dbcData.stats.isFused()) {
+        if (!dbcData.stats.isFused()) {
             return;
         }
 
         PlayerEffect potaraFusion = dbcData.stats.getPlayerEffects().get(Effects.POTARA);
-        if(potaraFusion == null) {
+        if (potaraFusion == null) {
             return;
         }
 
         event.result = 1;
 
-        int slot = event.slot+3;
+        int slot = event.slot + 3;
         float partialTick = event.partialRenderTick;
         Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(((ItemPotara) ModItems.Potaras).getArmorTextureByMeta(potaraFusion.level)));
         ModelBiped modelbiped = event.renderer.modelArmorChestplate;
@@ -81,7 +80,6 @@ public class RenderEventHandler {
         modelbiped.onGround = event.renderer.mainModel.onGround;
         modelbiped.isRiding = event.renderer.mainModel.isRiding;
         modelbiped.isChild = event.renderer.mainModel.isChild;
-
     }
 
     @SubscribeEvent
@@ -98,13 +96,12 @@ public class RenderEventHandler {
     public void enableEntityStencil(RenderLivingEvent.Pre e) {
         if (mc.theWorld != null && (e.entity instanceof EntityPlayer || e.entity instanceof EntityNPCInterface)) {
 
-            if(e.entity instanceof EntityPlayer){
+            if (e.entity instanceof EntityPlayer) {
                 DBCData data = DBCData.get((EntityPlayer) e.entity);
-                if(ClientProxy.isRenderingWorld() && data.isFusionSpectator()) {
+                if (ClientProxy.isRenderingWorld() && data.isFusionSpectator()) {
                     e.setCanceled(true);
                     return;
                 }
-
             }
 
             if (PlayerDataUtil.useStencilBuffer(e.entity)) {
@@ -231,19 +228,22 @@ public class RenderEventHandler {
         disableStencilWriting(entity.getEntityId() % 256, false);
         mc.entityRenderer.disableLightmap(0);
 
-        boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !display.particleRenderQueue.isEmpty();
+        boolean renderAura = aura != null, renderParticles = !display.particleRenderQueue.isEmpty();
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Aura
-        if (renderAura && aura.shouldRender()) {
+        if (renderAura) {
             glPushMatrix();
             if (!ClientProxy.renderingGUI)
                 glLoadMatrix(DEFAULT_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
             glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
             glStencilMask(0x0);
             for (EntityAura child : aura.children.values())
-                AuraRenderer.Instance.renderAura(child, partialTicks);
-            AuraRenderer.Instance.renderAura(aura, partialTicks);
+                if (child.shouldRender())
+                    AuraRenderer.Instance.renderAura(child, partialTicks);
+
+            if (aura.shouldRender())
+                AuraRenderer.Instance.renderAura(aura, partialTicks);
 
             //  NewAura.renderAura(aura, partialTicks);
             glPopMatrix();

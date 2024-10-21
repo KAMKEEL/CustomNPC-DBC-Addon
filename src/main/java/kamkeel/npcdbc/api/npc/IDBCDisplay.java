@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.api.npc;
 
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 
 public interface IDBCDisplay {
@@ -19,7 +20,6 @@ public interface IDBCDisplay {
     String getHairCode();
 
     void setHairCode(String hairCode);
-
 
     /**
      * @param arm 0 is right arm, 1 is left arm
@@ -64,4 +64,31 @@ public interface IDBCDisplay {
     void toggleAura(boolean toggle);
 
     boolean isInAura(IAura aura);
+
+    /**
+     * @param id Transforms to the form with this ID
+     */
+    void transform(int id);
+
+    /**
+     * @param form Transforms to this form
+     */
+    void transform(IForm form);
+
+    /**
+     * if NPC is currently undergoing transformation, cancel it
+     */
+    void cancelTransformation();
+
+    /**
+     * @param id descends from current form to the form with this ID
+     *           Set ID to -1 if to base
+     */
+    void descend(int id);
+
+    /**
+     * @param form descends from current form to this form
+     *             set form to null for descending to base
+     */
+    void descend(IForm form);
 }

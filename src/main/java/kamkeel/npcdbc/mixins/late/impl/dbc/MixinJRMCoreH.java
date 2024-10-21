@@ -439,18 +439,18 @@ public abstract class MixinJRMCoreH {
             PlayerDataUtil.getDBCInfo(player).updateCurrentFormMastery("fireki");
     }
 
-    @ModifyArgs(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
-    private static void setDamage(Args args) {
-        EntityPlayer player = args.get(1);
-        String type = args.get(2);
+    @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
+    private static void setDamage(int s, EntityPlayer player, String type) {
         if (lastSetDamage != -1 && type.equals("jrmcBdy")) {
             int damageToHP = Math.max(lastSetDamage, 0);
             int playerHP = getInt(player, "jrmcBdy");
             int newHealth = playerHP - damageToHP;
-            args.set(0, Math.max(0, newHealth));
+            s = Math.max(0, newHealth);
             StatusEffectController.getInstance().recordDamage(player, damageToHP);
             lastSetDamage = -1;
         }
+
+        setInt(s, player, type);
     }
 
 
@@ -485,7 +485,7 @@ public abstract class MixinJRMCoreH {
     @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "FIELD", opcode = Opcodes.GETSTATIC, target="LJinRyuu/JRMCore/JRMCoreConfig;StatPasDef:I"))
     private static int applyChargingDex(@Local(ordinal = 0) Entity player){
         DBCData dbcData = DBCData.get((EntityPlayer) player);
-        if(ConfigDBCGameplay.EnableChargingDex && dbcData.stats.isChargingKiAttack()){
+        if(dbcData.stats.isChargingKiAttack()){
             switch(dbcData.Class){
                 case 0:
                     return ConfigDBCGameplay.MartialArtistCharge;
@@ -496,7 +496,7 @@ public abstract class MixinJRMCoreH {
                 default:
                     return JRMCoreConfig.StatPasDef;
             }
-        } else{
+        }else{
             return JRMCoreConfig.StatPasDef;
         }
     }

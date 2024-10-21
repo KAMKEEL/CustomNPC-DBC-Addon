@@ -14,7 +14,6 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.api.outline.IOutline;
-import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -41,12 +40,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         dbcData = DBCData.get(player);
     }
 
-
     /**
      * Set a players lock on state!
+     *
      * @param lockOnTarget Reference to new target Entity or null to remove lock on.
      */
-    public void setLockOnTarget(IEntityLivingBase lockOnTarget){
+    public void setLockOnTarget(IEntityLivingBase lockOnTarget) {
         this.dbcData.setLockOnTarget(lockOnTarget == null ? null : lockOnTarget.getMCEntity());
     }
 
@@ -56,7 +55,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public void setTurboState(boolean on){
+    public void setTurboState(boolean on) {
         dbcData.setTurboState(on);
     }
 
@@ -127,8 +126,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             for (int i = 0; i < stats.length; i++) {
                 newstats[i] = (int) ((double) (stats[i] + attri[i]) * multi);
                 nbt.setInteger(JRMCoreH.AttrbtNbtI[i], newstats[i]);
-
             }
+
             this.setBody(getMaxBody());
             this.setKi(getMaxKi());
             this.setStamina(getMaxStamina());
@@ -641,9 +640,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     // Form stuff
 
     @Override
-    public boolean hasCustomForm(String formName){
+    public boolean hasCustomForm(String formName) {
         Form form = FormController.getInstance().getFormFromName(formName);
-        if(form == null)
+        if (form == null)
             throw new CustomNPCsException("No form found!");
 
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
@@ -652,11 +651,10 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public boolean hasCustomForm(int formID){
+    public boolean hasCustomForm(int formID) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         return formData.hasFormUnlocked(formID);
     }
-
 
     public void giveCustomForm(String formName) {
         IForm form = FormController.Instance.get(formName);
@@ -724,16 +722,23 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setCustomForm(IForm form) {
-        setCustomForm(form.getID(), false);
+        setCustomForm(form, false);
     }
 
     @Override
     public void setCustomForm(int formID, boolean ignoreUnlockCheck) {
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        if (formID == -1) {
+            c.currentForm = -1;
+            c.updateClient();
+            return;
+        }
+
         Form f = (Form) FormController.Instance.get(formID);
         if (f == null)
             throw new CustomNPCsException("Form does not exist!");
 
-        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+
         if (ignoreUnlockCheck || c.hasForm(f)) {
             DBCData d = DBCData.get(player);
             d.State = 0;
@@ -762,7 +767,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setCustomForm(IForm form, boolean ignoreUnlockCheck) {
-        setCustomForm(form.getID(), ignoreUnlockCheck);
+        int id = form == null ? -1 : form.getID();
+        setCustomForm(id, ignoreUnlockCheck);
     }
 
     //////////////////////////////////////////////
@@ -861,9 +867,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     // Aura stuff
 
     @Override
-    public boolean hasAura(String auraName){
+    public boolean hasAura(String auraName) {
         Aura aura = AuraController.getInstance().getAuraFromName(auraName);
-        if(aura == null)
+        if (aura == null)
             throw new CustomNPCsException("No aura found!");
 
         PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(player);
@@ -872,14 +878,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public boolean hasAura(int auraId){
+    public boolean hasAura(int auraId) {
         PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(player);
         return dbcInfo.hasAuraUnlocked(auraId);
     }
 
     @Override
     public void giveAura(IAura aura) {
-        if(aura != null)
+        if (aura != null)
             aura.assignToPlayer(this);
         else
             throw new CustomNPCsException("This aura doesn't exist");
@@ -888,7 +894,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void giveAura(int auraID) {
         IAura aura = AuraController.getInstance().get(auraID);
-        if(aura != null)
+        if (aura != null)
             giveAura(aura);
         else
             throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
@@ -897,7 +903,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void giveAura(String auraName) {
         IAura aura = AuraController.Instance.get(auraName);
-        if(aura != null)
+        if (aura != null)
             giveAura(aura);
         else
             throw new CustomNPCsException(String.format("There is no aura with given name (name: \"%s\")", auraName));
@@ -906,7 +912,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void removeAura(String auraName) {
         IAura aura = AuraController.Instance.get(auraName);
-        if(aura != null)
+        if (aura != null)
             removeAura(aura);
         else
             throw new CustomNPCsException(String.format("There is no aura with given name (name: \"%s\")", auraName));
@@ -914,15 +920,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void removeAura(IAura aura) {
-        if(aura != null)
+        if (aura != null)
             aura.removeFromPlayer(this);
         else
             throw new CustomNPCsException("This aura doesn't exist");
     }
+
     @Override
     public void removeAura(int auraID) {
         IAura aura = AuraController.getInstance().get(auraID);
-        if(aura != null)
+        if (aura != null)
             removeAura(aura);
         else
             throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
@@ -930,17 +937,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setAura(String auraName) {
-        if(auraName == null) {
+        if (auraName == null) {
             removeAuraSelection();
             return;
         }
 
         IAura aura = AuraController.Instance.get(auraName);
-        if(aura == null)
+        if (aura == null)
             throw new CustomNPCsException(String.format("There is no aura with given name (name: \"%s\")", auraName));
         setAura(aura);
     }
-
 
     @Override
     public void setAura(IAura aura) {
@@ -949,13 +955,13 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setAura(int auraID) {
-        if (auraID == -1){
+        if (auraID == -1) {
             removeAuraSelection();
             return;
         }
 
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
-        if (AuraController.getInstance().has(auraID)){
+        if (AuraController.getInstance().has(auraID)) {
             c.selectedAura = auraID;
             c.updateClient();
         } else {
@@ -970,19 +976,27 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         AuraData.updateClient();
     }
 
+    @Override
+    public void removeCurrentAura() {
+        PlayerDBCInfo AuraData = PlayerDataUtil.getDBCInfo(player);
+        AuraData.currentAura = -1;
+        AuraData.selectedAura = -1;
+        AuraData.updateClient();
+    }
+
     public IAura getAura() {
         return dbcData.getAura();
     }
 
     @Override
     public void setAuraSelection(String auraName) {
-        if(auraName == null) {
+        if (auraName == null) {
             removeAuraSelection();
             return;
         }
 
         IAura aura = AuraController.Instance.get(auraName);
-        if(aura == null)
+        if (aura == null)
             throw new CustomNPCsException(String.format("There is no aura with given name (name: \"%s\")", auraName));
 
         setAuraSelection(aura);
@@ -990,7 +1004,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setAuraSelection(IAura aura) {
-        if(aura == null) {
+        if (aura == null) {
             removeAuraSelection();
             return;
         }
@@ -998,23 +1012,23 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         final int auraID = aura.getID();
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
 
-        if(c.hasAuraUnlocked(auraID)){
+        if (c.hasAuraUnlocked(auraID)) {
             c.currentAura = auraID;
             c.updateClient();
-        }else{
+        } else {
             throw new CustomNPCsException(String.format("Player \"%s\" doesn't have aura \"%s\" (ID: %d) unlocked.", player.getCommandSenderName(), aura.getName(), auraID));
         }
     }
 
     @Override
     public void setAuraSelection(int auraID) {
-        if(auraID == -1){
+        if (auraID == -1) {
             removeAuraSelection();
             return;
         }
 
         IAura aura = AuraController.Instance.get(auraID);
-        if(aura == null)
+        if (aura == null)
             throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
 
         setAuraSelection(aura);
@@ -1031,7 +1045,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isInAura(IAura aura) {
-        if(aura == null)
+        if (aura == null)
             return dbcData.auraID == -1;
         return aura.getID() == dbcData.auraID;
     }
@@ -1040,6 +1054,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public boolean isInAura(String auraName) {
         return isInAura(AuraController.getInstance().get(auraName));
     }
+
     @Override
     public boolean isInAura(int auraID) {
         return auraID == dbcData.auraID;
@@ -1049,7 +1064,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setOutline(IOutline outline) {
-        if(outline != null)
+        if (outline != null)
             dbcData.setOutline(outline);
         else
             throw new CustomNPCsException("This outline doesn't exist!");
@@ -1058,7 +1073,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void setOutline(String outlineName) {
         IOutline outline = OutlineController.getInstance().getOutlineFromName(outlineName);
-        if(outline != null)
+        if (outline != null)
             setOutline(outline);
         else
             throw new CustomNPCsException(String.format("There is no outline with given name (name: \"%s\")", outlineName));
@@ -1067,17 +1082,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void setOutline(int outlineID) {
         IOutline outline = OutlineController.getInstance().get(outlineID);
-        if(outline != null)
+        if (outline != null)
             setOutline(outline);
         else
             throw new CustomNPCsException(String.format("There is no outline with given ID (ID: \"%s\")", outline));
     }
 
-
     @Override
     public IOutline getOutline() {
         return dbcData.getOutline();
     }
-
-
 }
