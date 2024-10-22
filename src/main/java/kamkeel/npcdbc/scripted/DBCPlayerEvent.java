@@ -9,11 +9,14 @@ import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.constants.enums.*;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.api.IDamageSource;
+import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.scripted.event.PlayerEvent;
 
@@ -166,6 +169,51 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
 
         public String getHookName() {
             return DBCScriptType.DAMAGED.function;
+        }
+    }
+
+    @Cancelable
+    public static class AttackCreatureEvent extends DBCPlayerEvent implements IDBCEvent.AttackCreatureEvent {
+
+        public final IDamageSource damageSource;
+        public final IEntity<?> victim;
+        public float damage;
+
+        public AttackCreatureEvent(EntityPlayer player, EntityLivingBase victim, float damage, DamageSource damageSource) {
+            super(PlayerDataUtil.getIPlayer(player));
+            this.damageSource = NpcAPI.Instance().getIDamageSource(damageSource);
+            this.victim = NpcAPI.Instance().getIEntity(victim);
+            this.damage = damage;
+        }
+
+        @Override
+        public float getDamage() {
+            return damage;
+        }
+
+        @Override
+        public void setDamage(float damage){
+            this.damage = damage;
+        }
+
+        @Override
+        public IDamageSource getDamageSource() {
+            return damageSource;
+        }
+
+        @Override
+        public IEntity<?> getVictim() {
+            return victim;
+        }
+
+        @Override
+        public boolean isCustomNPC() {
+            return victim.getMCEntity() instanceof EntityNPCInterface;
+        }
+
+        @Override
+        public String getHookName() {
+            return DBCScriptType.ATTACK_CREATURE.function;
         }
     }
 

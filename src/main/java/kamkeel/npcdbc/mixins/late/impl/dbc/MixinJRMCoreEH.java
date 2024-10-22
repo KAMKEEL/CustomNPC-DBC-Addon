@@ -10,6 +10,8 @@ import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -18,6 +20,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = JRMCoreEH.class, remap = false)
 public class MixinJRMCoreEH {
@@ -35,6 +38,23 @@ public class MixinJRMCoreEH {
                 }
             }
         }
+
+        if (event.entity.isEntityInvulnerable()){
+            return;
+        }
+
+        Entity entity = event.source.getSourceOfDamage();
+        if (entity instanceof EntityPlayer == false) {
+            return; // Only handle player attacks
+        }
+
+        EntityPlayer player = (EntityPlayer) entity;
+        DBCPlayerEvent.AttackCreatureEvent attackCreatureEvent = new DBCPlayerEvent.AttackCreatureEvent(player, (EntityLivingBase) event.entity, dam.get(), event.source);
+        if (DBCEventHooks.onAttackCreatureEvent(attackCreatureEvent)) {
+            ci.cancel();
+        }
+
+        dam.set(attackCreatureEvent.getDamage());
     }
 
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;a1t3(Lnet/minecraft/entity/player/EntityPlayer;)V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
