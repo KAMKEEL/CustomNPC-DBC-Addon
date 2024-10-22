@@ -24,6 +24,13 @@ public class MixinJRMCoreEH {
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreEH;damageEntity(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/DamageSource;F)V", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
     public void NPCDamaged(LivingHurtEvent event, CallbackInfo ci, @Local(name = "dam") LocalFloatRef dam) {
         if (event.entity instanceof EntityNPCInterface) {
+
+            EntityNPCInterface npc = (EntityNPCInterface) event.entity;
+            DBCPlayerEvent.NPCDamagedEvent npcDamagedEvent = new DBCPlayerEvent.NPCDamagedEvent(npc.wrappedNPC, event.source.getEntity(), dam.get(), event.source, DBCDamageSource.KIATTACK);
+            if (DBCEventHooks.npcOnDBCDamageEvent(npc, npcDamagedEvent))
+                ci.cancel();
+
+
             Form form = PlayerDataUtil.getForm(event.entity);
             if (form != null) {
                 float formLevel = PlayerDataUtil.getFormLevel(event.entity);
