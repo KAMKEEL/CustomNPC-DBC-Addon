@@ -4,6 +4,7 @@ public enum DBCScriptType {
 
     FORMCHANGE("dbcFormChange"),
     DAMAGED("dbcDamaged"),
+    ATTACK_CREATURE("dbcAttackCreature"),
     CAPSULEUSED("dbcCapsuleUsed"),
     REVIVED("dbcRevived"),
     KNOCKOUT("dbcKnockout");

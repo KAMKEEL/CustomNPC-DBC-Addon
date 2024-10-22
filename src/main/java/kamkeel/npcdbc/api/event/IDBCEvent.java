@@ -2,6 +2,7 @@ package kamkeel.npcdbc.api.event;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import noppes.npcs.api.IDamageSource;
+import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.event.IPlayerEvent;
 
 public interface IDBCEvent extends IPlayerEvent {
@@ -85,6 +86,41 @@ public interface IDBCEvent extends IPlayerEvent {
          * @return 0: Unknown, 1: Player, 2: NPC, 3: Ki Attack
          */
         float getType();
+    }
+
+    @Cancelable
+    interface AttackCreatureEvent extends IDBCEvent {
+
+        /**
+         * Calculated based on Player's Stats, Dex, Blocking, etc.
+         *
+         * @return Damage Dealt to the HP of the Entity
+         */
+        float getDamage();
+
+        /**
+         * Allows you to change / intercept the damage to HP
+         * and modify to set new HP.
+         *
+         * @param damage The new damage to HP
+         */
+        void setDamage(float damage);
+
+        /**
+         * @return IDamageSource
+         */
+        IDamageSource getDamageSource();
+
+        /**
+         * @return The Entity being attacked
+         */
+        public IEntity<?> getVictim();
+
+        /**
+         * @return If the victim is a CustomNPC
+         */
+        public boolean isCustomNPC();
+
     }
 
     @Cancelable
