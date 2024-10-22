@@ -165,53 +165,86 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
 
     }
 
-    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 0))
-    private void setAuraSize(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(name = "cl3b") LocalBooleanRef hasColor3) {
-        EntityAura2 aur = entityAura.get();
-        IEntityAura aura = (IEntityAura) aur;
+//    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 0))
+//    private void setAuraSize(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(name = "cl3b") LocalBooleanRef hasColor3) {
+//        EntityAura2 aur = entityAura.get();
+//        IEntityAura aura = (IEntityAura) aur;
+//        if (aura.getSize() != 1f) {
+//            float size = aura.getSize();
+//            float xSize = (float) args.get(0) * size;
+//            float ySize = (float) args.get(1) * size;
+//            float zSize = (float) args.get(2) * size;
+//
+//            args.set(0, xSize);
+//            args.set(1, ySize);
+//            args.set(2, zSize);
+//
+//
+//        }
+//        hasColor3.set(aur.getColL3() > 0 && aur.getTexL3().length() > 2);
+//    }
+    @Redirect(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 0))
+    private void setAuraSize(float x, float y, float z, @Local(ordinal = 0, argsOnly = true) EntityAura2 entityAura, @Local(name = "cl3b") LocalBooleanRef hasColor3) {
+        IEntityAura aura = (IEntityAura) entityAura;
         if (aura.getSize() != 1f) {
             float size = aura.getSize();
-            float xSize = (float) args.get(0) * size;
-            float ySize = (float) args.get(1) * size;
-            float zSize = (float) args.get(2) * size;
-
-            args.set(0, xSize);
-            args.set(1, ySize);
-            args.set(2, zSize);
-
+            x *= size;
+            y *= size;
+            z *= size;
 
         }
-        hasColor3.set(aur.getColL3() > 0 && aur.getTexL3().length() > 2);
+        hasColor3.set(entityAura.getColL3() > 0 && entityAura.getTexL3().length() > 2);
+        GL11.glScalef(x, y, z);
     }
 
-    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V", ordinal = 0))
-    private void fixAuraOffset(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(ordinal = 1) LocalDoubleRef parY) {
-        IEntityAura aura = (IEntityAura) entityAura.get();
+//    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V", ordinal = 0))
+//    private void fixAuraOffset(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(ordinal = 1) LocalDoubleRef parY) {
+//        IEntityAura aura = (IEntityAura) entityAura.get();
+//        if (aura.getSize() != 1f) {
+//            float fixedOffset = (float) (parY.get() + 3.0F * aura.getSize());
+//            args.set(1, fixedOffset);
+//        }
+//        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+//
+//    }
+
+    @Redirect(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V", ordinal = 0))
+    private void fixAuraOffset(float x, float y, float z, @Local(ordinal = 0) EntityAura2 entityAura, @Local(ordinal = 1) double parY) {
+        IEntityAura aura = (IEntityAura) entityAura;
         if (aura.getSize() != 1f) {
-            float fixedOffset = (float) (parY.get() + 3.0F * aura.getSize());
-            args.set(1, fixedOffset);
+            y = (float) (parY + 3.0F * aura.getSize());
         }
         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
-
+        GL11.glTranslatef(x, y, z);
     }
 
-    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V", ordinal = 1))
-    private void fixAuraRotationOffset_PRE(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(ordinal = 1) LocalDoubleRef parY) {
+//    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V", ordinal = 1))
+//    private void fixAuraRotationOffset_PRE(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(ordinal = 1) LocalDoubleRef parY) {
+//        IEntityAura aura = (IEntityAura) entityAura.get();
+//        if (aura.getSize() != 1f) {
+//            float fixedOffset = (float) args.get(1) + ( (float) args.get(1) * (aura.getSize()-1) * 1.5f * 1.25f);
+//            args.set(1, fixedOffset);
+//        }
+//
+//    }
+
+    @Redirect(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V", ordinal = 1))
+    private void fixAuraRotationOffset_PRE(float x, float y, float z, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(ordinal = 1) LocalDoubleRef parY) {
         IEntityAura aura = (IEntityAura) entityAura.get();
         if (aura.getSize() != 1f) {
-            float fixedOffset = (float) args.get(1) + ( (float) args.get(1) * (aura.getSize()-1) * 1.5f * 1.25f);
-            args.set(1, fixedOffset);
-        }
+            y = y + ( y * (aura.getSize()-1) * 1.5f * 1.25f);
 
+        }
+        GL11.glTranslatef(x, y, z);
     }
 
-    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V", ordinal = 2))
-    private void fixAuraRotationOffset_POST(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(ordinal = 1) LocalDoubleRef parY) {
+    @Redirect(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glTranslatef(FFF)V", ordinal = 2))
+    private void fixAuraRotationOffset_POST(float x, float y, float z, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(ordinal = 1) LocalDoubleRef parY) {
         IEntityAura aura = (IEntityAura) entityAura.get();
         if (aura.getSize() != 1f) {
-            float fixedOffset = (float) args.get(1) + ( (float) args.get(1) * (aura.getSize()-1) * 1.5f * (aura.getSize() > 1 ? 0.625f : 1.25f));
-            args.set(1, fixedOffset);
+            y = y + ( y * (aura.getSize()-1) * 1.5f * (aura.getSize() > 1 ? 0.625f : 1.25f));
         }
+        GL11.glTranslatef(x, y, z);
     }
 
 

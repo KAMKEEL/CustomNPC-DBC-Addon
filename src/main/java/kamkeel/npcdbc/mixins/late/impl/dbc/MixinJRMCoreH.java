@@ -438,15 +438,27 @@ public abstract class MixinJRMCoreH {
             PlayerDataUtil.getDBCInfo(player).updateCurrentFormMastery("fireki");
     }
 
-    @ModifyArgs(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
-    private static void setDamage(Args args) {
-        String type = args.get(2);
+//    @ModifyArgs(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
+//    private static void setDamage(Args args) {
+//        String type = args.get(2);
+//        if (lastSetDamage != -1 && type.equals("jrmcBdy")) {
+//            int curBody = getInt(args.get(1), "jrmcBdy");
+//            int newHealth = curBody - lastSetDamage;
+//            args.set(0, Math.max(0, newHealth));
+//            lastSetDamage = -1;
+//        }
+//    }
+
+    @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
+    private static void setDamage(int s, EntityPlayer Player, String type) {
         if (lastSetDamage != -1 && type.equals("jrmcBdy")) {
-            int curBody = getInt(args.get(1), "jrmcBdy");
+            int curBody = getInt(Player, "jrmcBdy");
             int newHealth = curBody - lastSetDamage;
-            args.set(0, Math.max(0, newHealth));
+//            setInt(Math.max(0, newHealth), Player, type);
+            s = Math.max(0, newHealth);
             lastSetDamage = -1;
         }
+        setInt(s, Player, type);
     }
 
 
