@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import noppes.npcs.ScriptPlayerEventHandler;
 import noppes.npcs.scripted.event.NpcEvent;
+import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,18 +19,35 @@ public abstract class MixinScriptPlayerEventHandler {
     @Unique
     private float originalDamage;
 
-    @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnoppes/npcs/controllers/ScriptController;playerScripts:Lnoppes/npcs/controllers/data/PlayerDataScript;", shift = At.Shift.BEFORE))
-    public void fixDamagedEventDBCDamage(LivingAttackEvent event, CallbackInfo ci) {
-        if (event.source.getEntity() instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) event.source.getEntity();
+//    @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnoppes/npcs/controllers/ScriptController;playerScripts:Lnoppes/npcs/controllers/data/PlayerDataScript;", shift = At.Shift.BEFORE))
+//    public void fixDamagedEventDBCDamage(LivingAttackEvent event, CallbackInfo ci) {
+//        if (event.source.getEntity() instanceof EntityPlayer) {
+//            EntityPlayer player = (EntityPlayer) event.source.getEntity();
+//            DBCData data = DBCData.get(player);
+//            if (data.Powertype == 1) {
+//
+//                originalDamage = event.ammount;
+//
+////               event.ammount = DBCUtils.calculateAttackStat(player, event.ammount, event.source);
+//            }
+//        }
+//    }
+
+    @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode= Opcodes.GETFIELD))
+    public float test(LivingAttackEvent instance) {
+        if (instance.source.getEntity() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) instance.source.getEntity();
             DBCData data = DBCData.get(player);
             if (data.Powertype == 1) {
 
-                originalDamage = event.ammount;
+                originalDamage = instance.ammount;
 
-               event.ammount = DBCUtils.calculateAttackStat(player, event.ammount, event.source);
+
+//               event.ammount = DBCUtils.calculateAttackStat(player, event.ammount, event.source);
+                return DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
             }
         }
+        return instance.ammount;
     }
 
     @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Lnoppes/npcs/scripted/event/NpcEvent$DamagedEvent;getDamage()F"))
