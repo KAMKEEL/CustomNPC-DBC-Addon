@@ -238,6 +238,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return dbcData.stats.getAllFullAttributes();
     }
 
+    @Override
+    public int getUsedMind() {
+        return dbcData.getUsedMind();
+    }
+
+    @Override
+    public int getAvailableMind() {
+        return dbcData.getAvailableMind();
+    }
+
     /**
      * @return Player's race name
      */

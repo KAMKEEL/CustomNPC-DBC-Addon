@@ -999,7 +999,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public int calculateMindBonuses() {
-        int mindBonus = 6;
+        int mindBonus = 0;
+        // TODO: Think of a nice way to implement mind bonuses / penalties.
+        //      I do not quite like the idea of using `PlayerBonus`es.
 
         return mindBonus;
     }

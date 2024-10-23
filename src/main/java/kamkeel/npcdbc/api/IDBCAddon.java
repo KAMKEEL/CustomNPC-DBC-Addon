@@ -15,7 +15,20 @@ import noppes.npcs.api.entity.IPlayer;
  */
 @SuppressWarnings({"rawtypes", "unused"})
 public interface IDBCAddon extends IDBCPlayer {
+    /**
+     * @return Refer to {@link IDBCAddon#getAllAttributes()} and {@link IDBCAddon#getFullAttribute(int)}
+     */
     int[] getAllFullAttributes();
+
+    /**
+     * @return The mind a player is currently using for their skills
+     */
+    int getUsedMind();
+
+    /**
+     * @return The mind the player has currently available.
+     */
+    int getAvailableMind();
 
     /**
      * Set a players lock on state!
