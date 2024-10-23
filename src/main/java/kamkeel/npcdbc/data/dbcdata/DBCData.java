@@ -969,4 +969,35 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public void setActiveAuraColor(int color) {
         activeAuraColor = color;
     }
+
+    public int getUsedMind() {
+        int[][] rSklsMR = (int[][])null;
+        int[][] cSklsMR = (int[][])null;
+        String[] cSkls;
+        String[] skls;
+        int[][] sklsMR;
+
+
+        if (JRMCoreH.isPowerTypeChakra(this.Powertype)) {
+            cSkls = JRMCoreH.ncCSkls;
+            cSklsMR = JRMCoreH.NCRacialSkillMindCost;
+            skls = JRMCoreH.NCSkillIDs;
+            sklsMR = JRMCoreH.NCSkillMindCost;
+        } else {
+            rSklsMR = JRMCoreH.DBCRacialSkillMindCost;
+            cSkls = JRMCoreH.vlblCSkls;
+            skls = JRMCoreH.DBCSkillsIDs;
+            sklsMR = JRMCoreH.DBCSkillMindCost;
+        }
+
+        int mindSpentOnSkills = JRMCoreH.skillSlot_SpentMindRequirement(this.Skills.split(","), skls, sklsMR);
+        int mindSpentOnRacialForms = JRMCoreH.skillSlot_SpentMindRequirement_X(this.RacialSkills, this.Race, rSklsMR);
+        int raceStuff = JRMCoreH.skillSlot_SpentMindRequirement(this.getRawCompound().getString("jrmcSSltY"), cSkls, cSklsMR);
+
+        return mindSpentOnSkills + mindSpentOnRacialForms + raceStuff;
+    }
+
+    public int getAvailableMind() {
+        return this.MND - this.getUsedMind();
+    }
 }
