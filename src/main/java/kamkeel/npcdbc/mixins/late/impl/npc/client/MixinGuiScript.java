@@ -17,7 +17,6 @@ public abstract class MixinGuiScript {
     @Inject(method = "initGui", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 14, shift = At.Shift.AFTER))
     public void onConstructorComplete(CallbackInfo info, @Local(name = "list") LocalRef<List<String>> lis) {
         List<String> list = lis.get();
-        list.add(DBCScriptType.DAMAGED.function);
     }
 }
 

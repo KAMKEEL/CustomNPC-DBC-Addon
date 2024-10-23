@@ -14,7 +14,7 @@ public abstract class MixinGuiScriptAllNPCs extends GuiScriptInterface {
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     private void onConstructorComplete(CallbackInfo info) {
-        this.hookList.add(DBCScriptType.DAMAGED.function);
+
     }
 }
 
