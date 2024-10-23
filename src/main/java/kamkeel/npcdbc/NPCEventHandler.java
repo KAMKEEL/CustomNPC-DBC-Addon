@@ -11,7 +11,7 @@ public class NPCEventHandler {
 
     @SubscribeEvent
     public void DBCAttackEvent(DBCPlayerEvent.DamagedEvent event) {
-        if (event.player == null || event.player == null || event.player.getMCEntity() == null || event.player.getMCEntity().worldObj.isRemote)
+        if (event.player == null || event.player.getMCEntity() == null || event.player.getMCEntity().worldObj.isRemote)
             return;
 
         Form form = DBCData.getForm((EntityPlayer) event.player.getMCEntity());
@@ -23,7 +23,6 @@ public class NPCEventHandler {
                 float newDamage = event.getDamage() * (100 - damageNegation) / 100;
                 event.setDamage(newDamage);
             }
-
         }
     }
 }

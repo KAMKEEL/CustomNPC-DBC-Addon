@@ -284,37 +284,6 @@ public class DBCUtils {
                 }
 
                 dbcA = (int) ((double) dbcA / per);
-
-                if (JRMCoreConfig.DebugInfo || difp.length() > 0 && player.getCommandSenderName().equalsIgnoreCase(difp)) {
-                    mod_JRMCore.logger.info(player.getCommandSenderName() + " DM: A=" + dbcA + ", DF Div:" + per + ", " + ss);
-                }
-
-                if (DBC()) {
-                    ItemStack stackbody = ExtendedPlayer.get(player).inventory.getStackInSlot(1);
-                    ItemStack stackhead = ExtendedPlayer.get(player).inventory.getStackInSlot(2);
-                    if (stackbody != null) {
-                        stackbody.damageItem(1, player);
-                    }
-
-                    if (stackhead != null) {
-                        stackhead.damageItem(1, player);
-                    }
-                }
-
-                int currentHP = getInt(player, "jrmcBdy");
-                float all = currentHP - dbcA;
-                int newHP = all < 0 ? 0 : (int) all;
-                if (dse) {
-                    boolean friendlyFist = PlyrSettingsB((EntityPlayer) s.getEntity(), 12);
-                    if (friendlyFist && !s.getDamageType().equals("MajinAbsorption") && !s.getEntity().equals(Player)) {
-                        int ko = getInt(player, "jrmcHar4va");
-                        newHP = all < 20 ? 20 : (int) all;
-                        if (ko <= 0 && newHP == 20) {
-                            return 0;
-                        }
-                    }
-                }
-                return currentHP - newHP;
             }
         }
 
