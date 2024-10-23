@@ -17,6 +17,7 @@ import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
@@ -284,6 +285,49 @@ public class DBCUtils {
                 }
 
                 dbcA = (int) ((double) dbcA / per);
+
+                if (JRMCoreConfig.DebugInfo || difp.length() > 0 && player.getCommandSenderName().equalsIgnoreCase(difp)) {
+                    mod_JRMCore.logger.info(player.getCommandSenderName() + " DM: A=" + dbcA + ", DF Div:" + per + ", " + ss);
+                }
+
+                if (DBC()) {
+                    ItemStack stackbody = ExtendedPlayer.get(player).inventory.getStackInSlot(1);
+                    ItemStack stackhead = ExtendedPlayer.get(player).inventory.getStackInSlot(2);
+                    if (stackbody != null) {
+                        stackbody.damageItem(1, player);
+                    }
+
+                    if (stackhead != null) {
+                        stackhead.damageItem(1, player);
+                    }
+                }
+
+                int currentHP = getInt(player, "jrmcBdy");
+
+                // Damage Negation
+                Form form = DBCData.getForm(player);
+                if (form != null) {
+                    float formLevel = PlayerDataUtil.getFormLevel(player);
+                    if (form.mastery.hasDamageNegation()) {
+                        float damageNegation = form.mastery.damageNegation * form.mastery.calculateMulti("damageNegation", formLevel);
+                        dbcA = dbcA * (100 - damageNegation) / 100;
+                    }
+                }
+
+                dbcA = calculateDamageNegation(player, dbcA);
+                float all = currentHP - dbcA;
+                int newHP = all < 0 ? 0 : (int) all;
+                if (dse) {
+                    boolean friendlyFist = PlyrSettingsB((EntityPlayer) s.getEntity(), 12);
+                    if (friendlyFist && !s.getDamageType().equals("MajinAbsorption") && !s.getEntity().equals(Player)) {
+                        int ko = getInt(player, "jrmcHar4va");
+                        newHP = all < 20 ? 20 : (int) all;
+                        if (ko <= 0 && newHP == 20) {
+                            return 0;
+                        }
+                    }
+                }
+                return currentHP - newHP;
             }
         }
 
@@ -462,7 +506,8 @@ public class DBCUtils {
 
                 // Consider Stamina Cost or Con on the Damage Amount
                 damageAmount = (int) ((double) damageAmount / formDamageReduction);
-
+                damageAmount = (int) calculateDamageNegation(player, damageAmount);
+                
                 int playerHP = getInt(player, "jrmcBdy");
                 int reducedHP = playerHP - damageAmount;
                 int newHP = Math.max(reducedHP, 0);
@@ -508,6 +553,20 @@ public class DBCUtils {
 
             setInt(newHP, player, "jrmcBdy");
         }
+    }
+
+    public static float calculateDamageNegation(EntityPlayer player, float originalDamage){
+        // Damage Negation
+        Form form = DBCData.getForm(player);
+        if (form != null) {
+            float formLevel = PlayerDataUtil.getFormLevel(player);
+            if (form.mastery.hasDamageNegation()) {
+                float damageNegation = form.mastery.damageNegation * form.mastery.calculateMulti("damageNegation", formLevel);
+                return originalDamage * (100 - damageNegation) / 100;
+            }
+        }
+
+        return originalDamage;
     }
 
     public static int calculateAttackStat(EntityPlayer player, DamageSource source) {
