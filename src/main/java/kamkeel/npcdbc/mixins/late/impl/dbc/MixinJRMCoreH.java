@@ -454,7 +454,6 @@ public abstract class MixinJRMCoreH {
         if (lastSetDamage != -1 && type.equals("jrmcBdy")) {
             int curBody = getInt(player, "jrmcBdy");
             int newHealth = curBody - lastSetDamage;
-//            setInt(Math.max(0, newHealth), Player, type);
             s = Math.max(0, newHealth);
             lastSetDamage = -1;
         }

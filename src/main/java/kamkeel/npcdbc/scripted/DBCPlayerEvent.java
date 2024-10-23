@@ -168,61 +168,6 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         }
     }
 
-    @Cancelable
-    public static class NPCDamagedEvent extends NpcEvent {
-        public final IDamageSource damageSource;
-        public final IEntity source;
-        public float damage;
-
-        public final int sourceType;
-        public final DamageSource damagesource;
-
-        public NPCDamagedEvent(ICustomNpc npc, Entity source, float damage, DamageSource damagesource, int type) {
-            super(npc);
-            this.source = NpcAPI.Instance().getIEntity(source);
-            this.damage = damage;
-            this.damageSource = NpcAPI.Instance().getIDamageSource(damagesource);
-            this.damagesource = damagesource;
-            this.sourceType = type;
-        }
-
-        /**
-         * @return The source of the damage
-         */
-        public IEntity getSource() {
-            return source;
-        }
-
-        public IDamageSource getDamageSource() {
-            return damageSource;
-        }
-
-        /**
-         * @return Returns the damage value
-         */
-        public float getDamage() {
-            return damage;
-        }
-
-        /**
-         * @param damage The new damage value
-         */
-        public void setDamage(float damage) {
-            this.damage = damage;
-        }
-
-        public boolean isDamageSourceKiAttack() {
-            return sourceType == DBCDamageSource.KIATTACK;
-        }
-
-        public float getType() {
-            return sourceType;
-        }
-
-        public String getHookName() {
-            return DBCScriptType.DAMAGED.function;
-        }
-    }
 
     public static class ReviveEvent extends DBCPlayerEvent implements IDBCEvent.DBCReviveEvent {
 
