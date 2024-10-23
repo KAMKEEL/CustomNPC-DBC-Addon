@@ -993,8 +993,15 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         int mindSpentOnSkills = JRMCoreH.skillSlot_SpentMindRequirement(this.Skills.split(","), skls, sklsMR);
         int mindSpentOnRacialForms = JRMCoreH.skillSlot_SpentMindRequirement_X(this.RacialSkills, this.Race, rSklsMR);
         int raceStuff = JRMCoreH.skillSlot_SpentMindRequirement(this.getRawCompound().getString("jrmcSSltY"), cSkls, cSklsMR);
+        int addonTakenAwayMind = calculateMindBonuses();
 
-        return mindSpentOnSkills + mindSpentOnRacialForms + raceStuff;
+        return mindSpentOnSkills + mindSpentOnRacialForms + raceStuff - addonTakenAwayMind;
+    }
+
+    public int calculateMindBonuses() {
+        int mindBonus = 6;
+
+        return mindBonus;
     }
 
     public int getAvailableMind() {

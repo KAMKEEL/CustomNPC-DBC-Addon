@@ -34,7 +34,6 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
@@ -46,11 +45,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.text.DecimalFormat;
 
@@ -818,7 +815,9 @@ public abstract class MixinJRMCoreH {
         }
     }
 
-
-
+    @Inject(method = "skillSlot_MindUsed", at=@At("RETURN"), cancellable = true)
+    private static void applyMindFromBonuses(CallbackInfoReturnable<Integer> cir) {
+        cir.setReturnValue(cir.getReturnValue() - DBCData.getClient().calculateMindBonuses());
+    }
 }
 
