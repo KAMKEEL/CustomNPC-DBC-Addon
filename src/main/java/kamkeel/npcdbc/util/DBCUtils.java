@@ -42,7 +42,7 @@ public class DBCUtils {
             {"§7Minimal", "§7First Form", "§7Second Form", "§7Third Form", "§fBase", "§5Fifth Form", "§6Ultimate", "§4God"},
             {"§fBase", "§4Evil", "§cFull Power", "§dPurest", "§4God"}
     };
-    public static int lastSetDamage = -1;
+    public static int lastSetDamage = -1,npcLastSetDamage = -1;
 
     public static String[] CONFIG_UI_NAME;
     public static String[] cCONFIG_UI_NAME;
