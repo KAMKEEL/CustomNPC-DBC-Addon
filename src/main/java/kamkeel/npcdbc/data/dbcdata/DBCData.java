@@ -9,6 +9,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -25,6 +26,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.entity.EntityAura;
+import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetFlight;
 import kamkeel.npcdbc.network.packets.DBCUpdateLockOn;
@@ -1003,6 +1005,14 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         int mindBonus = 0;
         // TODO: Think of a nice way to implement mind bonuses / penalties.
         //      I do not quite like the idea of using `PlayerBonus`es.
+
+        PlayerDBCInfo formData = getDBCInfo();
+        FormController formController = FormController.getInstance();
+        for(int formID : formData.unlockedForms) {
+            IForm form = formController.get(formID);
+            if(form != null)
+                mindBonus -= form.getMindRequirement();
+        }
 
         return mindBonus;
     }
