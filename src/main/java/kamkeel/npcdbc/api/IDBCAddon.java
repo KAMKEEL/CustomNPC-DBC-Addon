@@ -37,6 +37,48 @@ public interface IDBCAddon extends IDBCPlayer {
     void setLockOnTarget(IEntityLivingBase lockOnTarget);
 
     /**
+     * This will only work if the player has the ki fist skill
+     * @param on Should ki fist be enabled
+     */
+    void setKiFistOn(boolean on);
+
+    /**
+     * This will only work if the player has the ki protection skill
+     * @param on Should ki protection be enabled
+     */
+    void setKiProtectionOn(boolean on);
+
+    /**
+     * This will only work if the player has Ki Fist & Ki Infuse skills <br>
+     * <br>
+     * 0 - No ki weapons <br>
+     * 1 - Ki Blade <br>
+     * 2 - Ki Scythe <br>
+     * @param type ki weapon type
+     */
+    void setKiWeaponType(int type);
+
+    /**
+     * @return True if ki fist is enabled
+     */
+    boolean kiFistOn();
+
+    /**
+     * @return True if ki protection is enabled
+     */
+    boolean kiProtectionOn();
+
+    /**
+     * Checks what ki weapon the player has enabled <br>
+     * <br>
+     * 0 - No ki weapons <br>
+     * 1 - Ki Blade <br>
+     * 2 - Ki Scythe <br>
+     * @return The ki weapon type
+     */
+    int getKiWeaponType();
+
+    /**
      * Checks if player has turbo on.
      * @return True or false
      */
