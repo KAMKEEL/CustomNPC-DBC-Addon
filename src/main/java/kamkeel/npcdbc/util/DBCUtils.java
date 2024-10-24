@@ -34,15 +34,11 @@ import static JinRyuu.JRMCore.JRMCoreH.*;
 
 // Created by Goatee
 public class DBCUtils {
-    public static String[][] formattedNames = new String[][]{
-            {"§fBase", "§eFull Release", "§cBuffed", "§f4God"},
-            {"§fBase", "§eSuper Saiyan", "§eSuper Saiyan (Grade 2)", "§eSuper Saiyan (Grade 3)", "§eMastered Super Saiyan", "§eSuper Saiyan 2", "§eSuper Saiyan 3", "§4Oozaru", "§6Golden Oozaru", "§cSuper Saiyan God", "§bSuper Saiyan Blue", "", "", "", "§4Super Saiyan 4", "§bShinka"},
-            {"§fBase", "§eSuper Saiyan", "§eSuper Saiyan (Grade 2)", "§eSuper Saiyan (Grade 3)", "§eMastered Super Saiyan", "§eSuper Saiyan 2", "§eSuper Saiyan 3", "§4Oozaru", "§6Golden Oozaru", "§cSuper Saiyan God", "§bSuper Saiyan Blue", "", "", "", "§4Super Saiyan 4", "§bShinka"},
-            {"§fBase", "§eFull Release", "§aGiant Form", "§4God"},
-            {"§7Minimal", "§7First Form", "§7Second Form", "§7Third Form", "§fBase", "§5Fifth Form", "§6Ultimate", "§4God"},
-            {"§fBase", "§4Evil", "§cFull Power", "§dPurest", "§4God"}
-    };
-    public static int lastSetDamage = -1,npcLastSetDamage = -1;
+    public static String[][] formattedNames = new String[][]{{"§fBase", "§eFull Release", "§cBuffed", "§f4God"}, {"§fBase", "§eSuper Saiyan", "§eSuper Saiyan (Grade 2)", "§eSuper Saiyan (Grade 3)", "§eMastered Super Saiyan", "§eSuper Saiyan 2", "§eSuper Saiyan 3", "§4Oozaru", "§6Golden Oozaru", "§cSuper Saiyan God", "§bSuper Saiyan Blue", "", "", "", "§4Super Saiyan 4", "§bShinka"}, {"§fBase", "§eSuper Saiyan", "§eSuper Saiyan (Grade 2)", "§eSuper Saiyan (Grade 3)", "§eMastered Super Saiyan", "§eSuper Saiyan 2", "§eSuper Saiyan 3", "§4Oozaru", "§6Golden Oozaru", "§cSuper Saiyan God", "§bSuper Saiyan Blue", "", "", "", "§4Super Saiyan 4", "§bShinka"}, {"§fBase", "§eFull Release", "§aGiant Form", "§4God"}, {"§7Minimal", "§7First Form", "§7Second Form", "§7Third Form", "§fBase", "§5Fifth Form", "§6Ultimate", "§4God"}, {"§fBase", "§4Evil", "§cFull Power", "§dPurest", "§4God"}};
+    //lastSetDamage works with player's DBCDamagedEvent
+    public static int lastSetDamage = -1, npcLastSetDamage = -1;
+    //this one is with the scripting player Attack/Attacked events. Separated these into 2 so both can be functional
+    public static int lastSetDamage2 = -1;
 
     public static String[] CONFIG_UI_NAME;
     public static String[] cCONFIG_UI_NAME;
@@ -530,6 +526,12 @@ public class DBCUtils {
             newHP = Math.max(reducedHP, 0);
         }
 
+        if (lastSetDamage2 != -1) {
+            damageToHP = Math.max(lastSetDamage2, 0);
+            lastSetDamage2 = -1;
+            reducedHP = playerHP - damageToHP;
+            newHP = Math.max(reducedHP, 0);
+        }
         boolean friendlyFist = dbcStats.isFriendlyFist();
 
         if (!isInCreativeMode(player)) {
