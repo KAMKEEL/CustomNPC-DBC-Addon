@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCClass;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.util.ByteBufUtils;
@@ -30,6 +31,7 @@ public final class LoginInfo extends AbstractPacket {
     private final boolean kiRevamp;
     private final float divineMulti;
     private final int maxAbsorptionLevel;
+    private final String discordURL;
 
     public LoginInfo(){
         this.chargeDex = ConfigDBCGameplay.EnableChargingDex;
@@ -42,6 +44,7 @@ public final class LoginInfo extends AbstractPacket {
         this.kiRevamp = ConfigDBCGameplay.RevampKiCharging;
         this.divineMulti = ConfigDBCEffects.getDivineMulti();
         this.maxAbsorptionLevel = JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL;
+        this.discordURL = ConfigDBCGeneral.getDiscordURL();
     }
 
     @Override
@@ -65,6 +68,7 @@ public final class LoginInfo extends AbstractPacket {
 
         out.writeFloat(this.divineMulti);
         out.writeInt(this.maxAbsorptionLevel);
+        ByteBufUtils.writeUTF8String(out, discordURL);
 
         HashMap<Integer, HashMap<String, Boolean>> divineRaces = ConfigDBCEffects.getDivineApplicableForms();
 
@@ -107,6 +111,8 @@ public final class LoginInfo extends AbstractPacket {
 
             ClientCache.divineMulti = in.readFloat();
             ClientCache.maxAbsorptionLevel = in.readInt();
+
+            ClientCache.discordURL = ByteBufUtils.readUTF8String(in);
 
             ClientCache.divineApplicableForms.clear();
             NBTTagCompound compound = ByteBufUtils.readNBT(in);

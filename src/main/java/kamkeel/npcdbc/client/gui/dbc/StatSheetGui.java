@@ -11,6 +11,7 @@ import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -826,7 +827,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             initGui();
         }
         if(id == 707070707){
-            mc.displayGuiScreen(new GuiConfirmOpenLink(this, "https://discord.com/invite/pQqRTvFeJ5", 0, true));
+            mc.displayGuiScreen(new GuiConfirmOpenLink(this, ConfigDBCGeneral.getDiscordURL(), 0, true));
         }
         if(id >= 0 && id <= 5){
             if(!JRMCoreH.isFused()){
@@ -1016,7 +1017,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
     public void confirmClicked(boolean flag, int i) {
         if (flag) {
             if (i == 0) {
-                String link = "https://discord.com/invite/pQqRTvFeJ5";
+                String link = ConfigDBCGeneral.getDiscordURL();
                 try{
                     Class oclass = java.lang.Class.forName("java.awt.Desktop");
                     Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object)null, new Object[0]);
