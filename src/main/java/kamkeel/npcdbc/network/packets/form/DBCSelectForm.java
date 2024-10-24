@@ -3,6 +3,7 @@ package kamkeel.npcdbc.network.packets.form;
 import JinRyuu.JRMCore.JRMCoreH;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -65,30 +66,30 @@ public final class DBCSelectForm extends AbstractPacket {
             formData.selectedDBCForm = formData.tempSelectedDBCForm = selected = formID;
             formData.selectedForm = -1;
             if (selected == Mystic) {
-                JRMCoreH.PlyrSettingsRem(player, 0);
-                JRMCoreH.PlyrSettingsRem(player, 11);
-                JRMCoreH.PlyrSettingsRem(player, 16);
-                JRMCoreH.PlyrSettingsOn(player, 6);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.KAIOKEN_ENABLED);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.ULTRA_INSTINCT);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.GOD_OF_DESTRUCTION);
+                JRMCoreH.PlyrSettingsOn(player, DBCSettings.POTENTIAL_UNLEASHED);
             } else if (selected >= Kaioken && selected <= Kaioken6) {
-                JRMCoreH.PlyrSettingsRem(player, 6);
-                JRMCoreH.PlyrSettingsRem(player, 11);
-                JRMCoreH.PlyrSettingsRem(player, 16);
-                JRMCoreH.PlyrSettingsOn(player, 0);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.POTENTIAL_UNLEASHED);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.ULTRA_INSTINCT);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.GOD_OF_DESTRUCTION);
+                JRMCoreH.PlyrSettingsOn(player, DBCSettings.KAIOKEN_ENABLED);
             } else if (selected >= UltraInstinct && selected <= UltraInstinct + 10) {
-                JRMCoreH.PlyrSettingsRem(player, 0);
-                JRMCoreH.PlyrSettingsRem(player, 6);
-                JRMCoreH.PlyrSettingsRem(player, 16);
-                JRMCoreH.PlyrSettingsOn(player, 11);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.KAIOKEN_ENABLED);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.POTENTIAL_UNLEASHED);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.GOD_OF_DESTRUCTION);
+                JRMCoreH.PlyrSettingsOn(player, DBCSettings.ULTRA_INSTINCT);
             } else if (selected == GodOfDestruction) {
-                JRMCoreH.PlyrSettingsRem(player, 0);
-                JRMCoreH.PlyrSettingsRem(player, 6);
-                JRMCoreH.PlyrSettingsRem(player, 11);
-                JRMCoreH.PlyrSettingsOn(player, 16);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.KAIOKEN_ENABLED);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.POTENTIAL_UNLEASHED);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.ULTRA_INSTINCT);
+                JRMCoreH.PlyrSettingsOn(player, DBCSettings.GOD_OF_DESTRUCTION);
             } else {
-                JRMCoreH.PlyrSettingsRem(player, 0);
-                JRMCoreH.PlyrSettingsRem(player, 6);
-                JRMCoreH.PlyrSettingsRem(player, 11);
-                JRMCoreH.PlyrSettingsRem(player, 16);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.KAIOKEN_ENABLED);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.POTENTIAL_UNLEASHED);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.ULTRA_INSTINCT);
+                JRMCoreH.PlyrSettingsRem(player, DBCSettings.GOD_OF_DESTRUCTION);
             }
             if (formID != -1)
                 NetworkUtility.sendServerMessage(player, "§a", "npcdbc.formSelect", " ", DBCForm.getMenuName(dbc.Race, formID, dbc.isForm(DBCForm.Divine)));

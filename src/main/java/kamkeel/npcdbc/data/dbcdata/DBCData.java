@@ -12,6 +12,7 @@ import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -846,8 +847,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         this.setSE(10, true);
         spectator.setSE(11, true);
 
-        JRMCoreH.PlyrSettingsRem(this.player, 4);
-        JRMCoreH.PlyrSettingsRem(spectator.player, 4);
+        JRMCoreH.PlyrSettingsRem(this.player, DBCSettings.FUSION_ENABLED);
+        JRMCoreH.PlyrSettingsRem(spectator.player, DBCSettings.FUSION_ENABLED);
 
         controllerTag.setByte("jrmcState2", (byte) 0);
         spectatorTag.setByte("jrmcState2", (byte) 0);

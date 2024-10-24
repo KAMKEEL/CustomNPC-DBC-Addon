@@ -16,6 +16,7 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.items.ItemPotara;
@@ -178,7 +179,7 @@ public class DBCUtils {
                     int SPI = PlyrAttrbts[5];
                     int energyPool = stat(player, 5, powerType, 5, SPI, race, classID, SklLvl_KiBs(ps, powerType));
                     def = (int) ((double) def * (double) release * 0.01 * (double) weightPerc(1, player));
-                    kiProtectOn = !PlyrSettingsB(player, 10);
+                    kiProtectOn = !PlyrSettingsB(player, DBCSettings.KI_PROTECTION);
                     int kiProtectLevel = SklLvl(11, ps);
                     if (kiProtectOn) {
                         kiProtection = (int) ((double) kiProtectLevel * 0.005 * (double) energyPool * (double) release * 0.01);
@@ -311,7 +312,7 @@ public class DBCUtils {
                 float all = currentHP - dbcA;
                 int newHP = all < 0 ? 0 : (int) all;
                 if (dse) {
-                    boolean friendlyFist = PlyrSettingsB((EntityPlayer) s.getEntity(), 12);
+                    boolean friendlyFist = PlyrSettingsB((EntityPlayer) s.getEntity(), DBCSettings.FRIENDLY_FIST);
                     if (friendlyFist && !s.getDamageType().equals("MajinAbsorption") && !s.getEntity().equals(Player)) {
                         int ko = getInt(player, "jrmcHar4va");
                         newHP = all < 20 ? 20 : (int) all;
@@ -369,7 +370,7 @@ public class DBCUtils {
 
                 int def = 0;
                 // KI STUFF
-                boolean kiProtectOn = !PlyrSettingsB((EntityPlayer) player, 10);
+                boolean kiProtectOn = !PlyrSettingsB((EntityPlayer) player, DBCSettings.KI_PROTECTION);
                 int kiProtection = 0;
                 int kiProtectionCost = 0;
                 int maxKiPool = JRMCoreH.stat(player, 5, powerType, 5, attributes[5], race, classID, JRMCoreH.SklLvl_KiBs(playerSkills, powerType));
@@ -610,7 +611,7 @@ public class DBCUtils {
             Melee = true;
             if (Melee) {
                 int sklkf = JRMCoreH.SklLvl(12, PlyrSkills);
-                boolean sklkfe = !JRMCoreH.PlyrSettingsB(attacker, 9);
+                boolean sklkfe = !JRMCoreH.PlyrSettingsB(attacker, DBCSettings.KI_FIST);
                 int sklks = 0;
                 if (sklkf > 0 && sklkfe) {
                     int SPI = PlyrAttrbts[5];
@@ -628,8 +629,8 @@ public class DBCUtils {
 
                 int dmg = JRMCoreH.stat(attacker, 0, powerType, 0, STR, race, classID, 0.0F);
                 double curAtr = (double) dmg * release * 0.01 * (double) JRMCoreH.weightPerc(0, attacker);
-                boolean sklkfe2 = JRMCoreH.PlyrSettingsB(attacker, 13);
-                boolean sklkfe3 = JRMCoreH.PlyrSettingsI(attacker, 13, 1);
+                boolean sklkfe2 = JRMCoreH.PlyrSettingsB(attacker, DBCSettings.KI_WEAPON_TOGGLE);
+                boolean sklkfe3 = JRMCoreH.PlyrSettingsI(attacker, DBCSettings.KI_WEAPON_TOGGLE, 1);
                 int skf = JRMCoreH.SklLvl(15, PlyrSkills);
                 boolean hasKiWeaponEnabled = sklkf > 0 && skf > 0 && sklkfe2;
                 if (hasKiWeaponEnabled) {
