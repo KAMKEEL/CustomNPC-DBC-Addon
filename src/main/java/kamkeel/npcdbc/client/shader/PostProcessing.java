@@ -330,7 +330,7 @@ public class PostProcessing {
     }
 
     public static void init(int width, int height) {
-        System.out.println("width height " + width + " " + height);
+        // System.out.println("width height " + width + " " + height);
         hasInitialized = true;
         int previousBuffer = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
         MAIN = getMainBuffer();
