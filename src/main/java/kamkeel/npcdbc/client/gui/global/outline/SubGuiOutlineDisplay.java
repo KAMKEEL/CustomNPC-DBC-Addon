@@ -56,22 +56,6 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
 
     }
 
-    public void updateDisplay() {
-        DBCData data = DBCData.getClient();
-        boolean isSaiyan = DBCRace.isSaiyan(visualDisplay.race);
-        if (isSaiyan) {
-            visualDisplay.tailState = (data.Tail == 0 || data.Tail == 1) ? data.Tail : (byte) (data.Tail == -1 ? 0 : 1);
-        }
-
-        if (visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.NAMEKIAN) {
-            visualDisplay.hairCode = "";
-        } else if (visualDisplay.race == DBCRace.MAJIN) {
-            visualDisplay.hairCode = DBCHair.MAJIN_HAIR;
-            visualDisplay.hairColor = visualDisplay.bodyCM;
-        }
-
-    }
-
     public void initGui() {
         super.initGui();
         int y = guiTop - 20;

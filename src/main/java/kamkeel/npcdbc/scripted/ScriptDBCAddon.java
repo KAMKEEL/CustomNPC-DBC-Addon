@@ -7,6 +7,7 @@ import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -47,6 +48,61 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     public void setLockOnTarget(IEntityLivingBase lockOnTarget) {
         this.dbcData.setLockOnTarget(lockOnTarget == null ? null : lockOnTarget.getMCEntity());
+    }
+
+    @Override
+    public void setKiFistOn(boolean on) {
+        if (dbcData.Skills.contains("KF")) {
+            if (!on)
+                JRMCoreH.PlyrSettingsOn(dbcData.player, DBCSettings.KI_FIST);
+            else
+                JRMCoreH.PlyrSettingsRem(dbcData.player, DBCSettings.KI_FIST);
+        }
+    }
+
+    @Override
+    public void setKiProtectionOn(boolean on) {
+        if (dbcData.Skills.contains("KP")) {
+            if (!on)
+                JRMCoreH.PlyrSettingsOn(dbcData.player, DBCSettings.KI_PROTECTION);
+            else
+                JRMCoreH.PlyrSettingsRem(dbcData.player, DBCSettings.KI_PROTECTION);
+        }
+    }
+
+    @Override
+    public void setKiWeaponType(int type) {
+        if(type < 0)
+            type = 0;
+        if (type > 2)
+            type = 2;
+        if (dbcData.Skills.contains("KI") && dbcData.Skills.contains("KF")) {
+            JRMCoreH.PlyrSettingsSet(dbcData.player, DBCSettings.KI_WEAPON_TOGGLE, type-1);
+        }
+    }
+
+    @Override
+    public boolean kiFistOn() {
+        if (dbcData.Skills.contains("KF")) {
+            return !JRMCoreH.PlyrSettingsB(dbcData.player, DBCSettings.KI_FIST);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean kiProtectionOn() {
+        if (dbcData.Skills.contains("KP")) {
+            return !JRMCoreH.PlyrSettingsB(dbcData.player, DBCSettings.KI_PROTECTION);
+        }
+        return false;
+    }
+
+    @Override
+    public int getKiWeaponType() {
+        if (dbcData.Skills.contains("KI") && dbcData.Skills.contains("KF")) {
+            return JRMCoreH.PlyrSettings(dbcData.player, DBCSettings.KI_WEAPON_TOGGLE) + 1;
+        }
+        return 0;
     }
 
     @Override
