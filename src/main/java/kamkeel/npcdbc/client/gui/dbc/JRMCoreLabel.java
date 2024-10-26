@@ -110,7 +110,7 @@ public class JRMCoreLabel extends Gui implements HoverableLabel {
     }
 
     protected boolean isHovered(int mouseX, int mouseY){
-        return xPosition <= mouseX && xPosition + hoverableAreaWidth > mouseX && yPosition - 3 <= mouseY && yPosition + hoverableAreaHeight > mouseY;
+        return xPosition <= mouseX && xPosition + hoverableAreaWidth > mouseX && yPosition - 1 <= mouseY && yPosition + hoverableAreaHeight > mouseY;
     }
 
     @Override
