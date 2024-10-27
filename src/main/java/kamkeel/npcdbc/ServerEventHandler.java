@@ -174,8 +174,6 @@ public class ServerEventHandler {
         }
         dbcData.lastTicked = player.ticksExisted;
 
-        FormMastery mastery = form.mastery;
-
         boolean isInSurvival = !player.capabilities.isCreativeMode;
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         // Reverts player from form when ki or release are 0
@@ -213,13 +211,13 @@ public class ServerEventHandler {
             if (player.ticksExisted % 10 == 0) {
                 double might = DBCUtils.calculateKiDrainMight(dbcData, player);
 
-                double cost = might * mastery.getKiDrain();
+                double cost = might * form.mastery.getKiDrain();
 
                 if (JGConfigDBCFormMastery.FM_Enabled) {
-                    cost *= mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
+                    cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
                 }
 
-                int actualCost = (int) ((-cost / mastery.kiDrainTimer) * 10);
+                int actualCost = (int) ((-cost / form.mastery.kiDrainTimer) * 10);
 
                 dbcData.stats.restoreKiFlat(actualCost);
             }
