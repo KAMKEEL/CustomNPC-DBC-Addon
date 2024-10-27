@@ -204,7 +204,11 @@ public interface IDBCAddon extends IDBCPlayer {
     boolean isChargingKi();
 
     /**
-     * @param skillname Check JRMCoreH.DBCSkillNames
+     * @param skillname Acceptable skill names:
+     *                  <code>"Fusion", "Jump", "Dash", "Fly", "Endurance", <br>
+     *                  "PotentialUnlock", "KiSense", "Meditation", "Kaioken", "GodForm", <br>
+     *                  "OldKaiUnlock", "KiProtection", "KiFist", "KiBoost", "DefensePenetration", <br>
+     *                  "KiInfuse", "UltraInstinct", "InstantTransmission", "GodOfDestruction"</code>
      * @return skill level from 1 to 10
      */
     int getSkillLevel(String skillname);

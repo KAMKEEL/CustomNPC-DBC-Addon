@@ -15,6 +15,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -490,20 +491,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getSkillLevel(String skillname) {
-        int i;
-        String[] playerskills = nbt.getString("jrmcSSlts").split(",");
-        String[] skillids = JRMCoreH.DBCSkillsIDs;
-        String[] skillnames = JRMCoreH.DBCSkillNames;
-        for (i = 0; i < skillnames.length; i++) {
-            if (skillname.equals(skillnames[i])) {
-                for (String playerskill : playerskills) {
-                    if (playerskill.contains(skillids[i])) {
-                        return JRMCoreH.SklLvl(i, playerskills);
-                    }
-                }
-            }
-        }
-        return 0;
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillname);
+        if (skillIndex == -1)
+            return 0;
+
+        String skillID = JRMCoreH.DBCSkillsIDs[skillIndex];
+        String playerSkillString = nbt.getString("jrmcSSlts");
+
+        return JRMCoreH.SklLvl(skillIndex, playerSkillString.split(","));
     }
 
     /**

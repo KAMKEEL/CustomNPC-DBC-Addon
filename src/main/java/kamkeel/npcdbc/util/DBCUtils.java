@@ -32,6 +32,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import static JinRyuu.JRMCore.JRMCoreH.*;
 
 // Created by Goatee
@@ -718,5 +721,9 @@ public class DBCUtils {
             vanityHelmetOn = true;
 
         return JRMCoreConfig.HHWHO ? !helmetOn && !vanityHelmetOn || vanityHelmetOn : true;
+    }
+
+    public static int getDBCSkillIndex(String skillName) {
+        return Arrays.stream(DBCSkillNames).map(String::toLowerCase).collect(Collectors.toList()).indexOf(skillName.toLowerCase());
     }
 }
