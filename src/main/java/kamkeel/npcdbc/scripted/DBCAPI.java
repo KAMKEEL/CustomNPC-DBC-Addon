@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.server.config.core.JGConfigSkills;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.api.AbstractDBCAPI;
 import kamkeel.npcdbc.api.IKiAttack;
 import kamkeel.npcdbc.api.aura.IAura;
@@ -462,6 +463,11 @@ public class DBCAPI extends AbstractDBCAPI {
     @Override
     public int getSkillRacialTPMindSingleRecursive(int race, int level) {
         return DBCUtils.calculateDBCRacialSkillMindCostRecursively(race, level);
+    }
+
+    @Override
+    public int getUltraInstinctMaxLevel() {
+        return JGConfigUltraInstinct.CONFIG_UI_LEVELS;
     }
 
 

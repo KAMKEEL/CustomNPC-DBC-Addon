@@ -228,4 +228,9 @@ public abstract class AbstractDBCAPI {
      */
     public abstract int getSkillRacialTPMindSingleRecursive(int race, int level);
 
+    /**
+     * @return Max level of UI
+     */
+    public abstract int getUltraInstinctMaxLevel();
+
 }
