@@ -542,7 +542,7 @@ public abstract class MixinJRMCoreH {
         float kc = KaiKFBal(race, state, state2, skl, strn);
         c += (double) (JRMCoreConfig.sskai ? 0.0F : kc);
         int kaiokenState = !DBC() ? 0 : (mystic ? JRMCoreConfig.KaiokenFormHealthCost[race].length - 1 : state);
-        double cost = 1.0 / (double) cons * (double) might * c * (double) TransKaiDrainRace[race] * (double) TransKaiDrainLevel[state2] * (double) (DBC() ? getFormDrain(p, race, kaiokenState) : 1.0F);
+        double cost = 1.0 / (double) cons * (double) might * c * (double) TransKaiDrainRace[race] * (double) TransKaiDrainLevel[state2] * (double) (DBC() ? getFormKaiokenDrain(p, race, kaiokenState) : 1.0F);
         if (JGConfigDBCFormMastery.FM_Enabled) {
             int kkID = getFormID("Kaioken", race);
             double kkMasteryLevel = getFormMasteryValue(p, kkID);
@@ -554,7 +554,7 @@ public abstract class MixinJRMCoreH {
     }
 
     @Unique
-    private static float getFormDrain(EntityPlayer player, int race, int kaiokenState) {
+    private static float getFormKaiokenDrain(EntityPlayer player, int race, int kaiokenState) {
         DBCData dbcData = DBCData.get(player);
         if (dbcData != null) {
             Form form = dbcData.getForm();
@@ -591,8 +591,12 @@ public abstract class MixinJRMCoreH {
         b.writeBoolean(JGConfigUltraInstinct.cCONFIG_UI_SKIP[i.get()]);
     }
 
-    @Inject(method = "getKiRegenArcosian", at = @At("HEAD"))
+    @Inject(method = "getKiRegenArcosian", at = @At("HEAD"), cancellable = true)
     private static void fixDivineDrainPreArcosian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
+        if(isDBCFormDrainCancelled()) {
+            cir.setReturnValue(0.0);
+            return;
+        }
         DBCUtils.calculatingKiDrain = true;
     }
 
@@ -601,8 +605,12 @@ public abstract class MixinJRMCoreH {
         DBCUtils.calculatingKiDrain = false;
     }
 
-    @Inject(method = "getKiRegenHalfSaiyan", at = @At("HEAD"))
+    @Inject(method = "getKiRegenHalfSaiyan", at = @At("HEAD"), cancellable = true)
     private static void fixDivineDrainPreHalfSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
+        if(isDBCFormDrainCancelled()) {
+            cir.setReturnValue(0.0);
+            return;
+        }
         DBCUtils.calculatingKiDrain = true;
     }
 
@@ -611,8 +619,12 @@ public abstract class MixinJRMCoreH {
         DBCUtils.calculatingKiDrain = false;
     }
 
-    @Inject(method = "getKiRegenSaiyan", at = @At("HEAD"))
+    @Inject(method = "getKiRegenSaiyan", at = @At("HEAD"), cancellable = true)
     private static void fixDivineDrainPreSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
+        if(isDBCFormDrainCancelled()) {
+            cir.setReturnValue(0.0);
+            return;
+        }
         DBCUtils.calculatingKiDrain = true;
     }
 
@@ -621,8 +633,12 @@ public abstract class MixinJRMCoreH {
         DBCUtils.calculatingKiDrain = false;
     }
 
-    @Inject(method = "getKiRegenHuman", at = @At("HEAD"))
+    @Inject(method = "getKiRegenHuman", at = @At("HEAD"), cancellable = true)
     private static void fixDivineDrainPreHuman(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
+        if(isDBCFormDrainCancelled()) {
+            cir.setReturnValue(0.0);
+            return;
+        }
         DBCUtils.calculatingKiDrain = true;
     }
 
@@ -631,8 +647,12 @@ public abstract class MixinJRMCoreH {
         DBCUtils.calculatingKiDrain = false;
     }
 
-    @Inject(method = "getKiRegenNamekian", at = @At("HEAD"))
+    @Inject(method = "getKiRegenNamekian", at = @At("HEAD"), cancellable = true)
     private static void fixDivineDrainPreNamekian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
+        if(isDBCFormDrainCancelled()) {
+            cir.setReturnValue(0.0);
+            return;
+        }
         DBCUtils.calculatingKiDrain = true;
     }
 
@@ -641,8 +661,12 @@ public abstract class MixinJRMCoreH {
         DBCUtils.calculatingKiDrain = false;
     }
 
-    @Inject(method = "getKiRegenMajin", at = @At("HEAD"))
+    @Inject(method = "getKiRegenMajin", at = @At("HEAD"), cancellable = true)
     private static void fixDivineDrainPreMajin(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
+        if(isDBCFormDrainCancelled()) {
+            cir.setReturnValue(0.0);
+            return;
+        }
         DBCUtils.calculatingKiDrain = true;
     }
 
@@ -816,6 +840,19 @@ public abstract class MixinJRMCoreH {
     @Inject(method = "skillSlot_MindUsed", at = @At("RETURN"), cancellable = true)
     private static void applyMindFromBonuses(CallbackInfoReturnable<Integer> cir) {
         cir.setReturnValue(cir.getReturnValue() - DBCData.getClient().calculateMindBonuses());
+    }
+
+    private static boolean isDBCFormDrainCancelled() {
+        EntityPlayer currentJRMCTickPlayer = CommonProxy.getCurrentJRMCTickPlayer();
+        if(currentJRMCTickPlayer == null) {
+            return false;
+        }
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(currentJRMCTickPlayer);
+        if (!info.isInCustomForm()) {
+            return false;
+        }
+
+        return !info.getCurrentForm().stackable.isVanillaStackable();
     }
 }
 
