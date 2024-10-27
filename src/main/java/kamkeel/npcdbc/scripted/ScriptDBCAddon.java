@@ -72,12 +72,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setKiWeaponType(int type) {
-        if(type < 0)
+        if (type < 0)
             type = 0;
         if (type > 2)
             type = 2;
         if (dbcData.Skills.contains("KI") && dbcData.Skills.contains("KF")) {
-            JRMCoreH.PlyrSettingsSet(dbcData.player, DBCSettings.KI_WEAPON_TOGGLE, type-1);
+            JRMCoreH.PlyrSettingsSet(dbcData.player, DBCSettings.KI_WEAPON_TOGGLE, type - 1);
         }
     }
 
@@ -409,10 +409,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                 }
             }
         }
-
-        if (!found) {
-            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getFormName(int race, int form) or getCurrentDBCFormName()", new Object[2]);
-        }
     }
 
     /**
@@ -459,17 +455,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                 if (mastery.toLowerCase().contains(formName.toLowerCase())) {
                     String[] masteryvalues = mastery.split(",");
                     double masteryvalue = Double.parseDouble(masteryvalues[1]);
-                    found = true;
-
                     valuetoreturn = masteryvalue;
                     return valuetoreturn;
                 }
             }
         }
-        if (!found) {
-            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getFormName(int race, int form) or getCurrentDBCFormName()", new Object[2]);
-        }
-        throw new CustomNPCsException("Form Mastery value is -1.0", new Object[3]);
+        return -1;
     }
 
     /**
@@ -503,23 +494,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         String[] playerskills = nbt.getString("jrmcSSlts").split(",");
         String[] skillids = JRMCoreH.DBCSkillsIDs;
         String[] skillnames = JRMCoreH.DBCSkillNames;
-        boolean skillFound = false;
-        boolean playerHasSkill = false;
         for (i = 0; i < skillnames.length; i++) {
             if (skillname.equals(skillnames[i])) {
-                skillFound = true;
                 for (String playerskill : playerskills) {
                     if (playerskill.contains(skillids[i])) {
                         return JRMCoreH.SklLvl(i, playerskills);
                     }
                 }
             }
-        }
-        if (!skillFound) {
-            throw new CustomNPCsException("\nInvalid Skill ID :" + skillname + ". Please re-enter the skill name \nwithout any spaces in between. \ni.e: GodOfDestruction, KiProtection, \nDefensePenetration");
-        }
-        if (!playerHasSkill) {
-            throw new CustomNPCsException("\nPlayer doesn't have skill " + skillname + "!", new Object[1]);
         }
         return 0;
     }
