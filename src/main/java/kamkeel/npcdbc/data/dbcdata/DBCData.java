@@ -97,6 +97,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public EntityAura auraEntity;
     public int activeAuraColor = -1;
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
+    // Some servers tend to repeat one tick multiple times (up to 3-4 times in under a second)
+    public int lastTicked = -1;
 
     public DBCData() {
         this.side = Side.SERVER;

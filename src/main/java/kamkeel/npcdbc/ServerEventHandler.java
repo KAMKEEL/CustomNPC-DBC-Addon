@@ -16,6 +16,7 @@ import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -163,69 +164,85 @@ public class ServerEventHandler {
     public void handleFormProcesses(EntityPlayer player) {
         DBCData dbcData = DBCData.get(player);
         Form form = dbcData.getForm();
-        if (form != null) {
-            boolean isInSurvival = !player.capabilities.isCreativeMode;
-            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-            // Reverts player from form when ki or release are 0
-            if (dbcData.Release <= 0 || dbcData.Ki <= 0) {
+
+        if (form == null) {
+            return;
+        }
+
+        if (dbcData.lastTicked == player.ticksExisted) {
+            return;
+        }
+        dbcData.lastTicked = player.ticksExisted;
+
+        FormMastery mastery = form.mastery;
+
+        boolean isInSurvival = !player.capabilities.isCreativeMode;
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        // Reverts player from form when ki or release are 0
+        if (dbcData.Release <= 0 || dbcData.Ki <= 0) {
+            formData.currentForm = -1;
+            formData.updateClient();
+            dbcData.loadNBTData(true);
+        }
+
+        if (!form.stackable.godStackable && dbcData.isForm(DBCForm.GodOfDestruction)) {
+            dbcData.setForm(DBCForm.GodOfDestruction, false);
+        }
+
+        if (!form.stackable.mysticStackable && dbcData.isForm(DBCForm.Mystic)) {
+            dbcData.setForm(DBCForm.Mystic, false);
+        }
+
+        if (!form.stackable.uiStackable && dbcData.isForm(DBCForm.UltraInstinct)) {
+            dbcData.setForm(DBCForm.UltraInstinct, false);
+        }
+
+        if (!form.stackable.kaiokenStackable && dbcData.isForm(DBCForm.Kaioken)) {
+            dbcData.setForm(DBCForm.Kaioken, false);
+        }
+
+
+        // Updates form Timer
+        if (formData.hasTimer(form.id)) {
+            formData.decrementTimer(form.id);
+            if (player.ticksExisted % 20 == 0)
+                formData.updateClient();
+        }
+
+        if (form.mastery.hasKiDrain() && isInSurvival) {
+            if (player.ticksExisted % 10 == 0) {
+                double might = DBCUtils.calculateKiDrainMight(dbcData, player);
+
+                double cost = might * mastery.getKiDrain();
+
+                if (JGConfigDBCFormMastery.FM_Enabled) {
+                    cost *= mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
+                }
+
+                int actualCost = (int) ((-cost / mastery.kiDrainTimer) * 10);
+
+                dbcData.stats.restoreKiFlat(actualCost);
+            }
+        }
+
+        if (form.mastery.hasHeat() && player.ticksExisted % 20 == 0) {
+            float heatToAdd = form.mastery.calculateMulti("heat", formData.getCurrentLevel());
+            float newHeat = ValueUtil.clamp(dbcData.addonCurrentHeat + heatToAdd, 0, form.mastery.maxHeat);
+
+            if (newHeat == form.mastery.maxHeat) {
+                int painTime = (int) (form.mastery.painTime * 60f / 5f * form.mastery.calculateMulti("pain", formData.getCurrentLevel()));
+                dbcData.getRawCompound().setInteger("jrmcGyJ7dp", painTime);
                 formData.currentForm = -1;
                 formData.updateClient();
-                dbcData.loadNBTData(true);
+
+                newHeat = 0;
             }
 
-            if (!form.stackable.godStackable && dbcData.isForm(DBCForm.GodOfDestruction))
-                dbcData.setForm(DBCForm.GodOfDestruction, false);
+            dbcData.getRawCompound().setFloat("addonCurrentHeat", newHeat);
+        }
 
-            if (!form.stackable.mysticStackable && dbcData.isForm(DBCForm.Mystic))
-                dbcData.setForm(DBCForm.Mystic, false);
-
-            if (!form.stackable.uiStackable && dbcData.isForm(DBCForm.UltraInstinct))
-                dbcData.setForm(DBCForm.UltraInstinct, false);
-
-            if (!form.stackable.kaiokenStackable && dbcData.isForm(DBCForm.Kaioken))
-                dbcData.setForm(DBCForm.Kaioken, false);
-
-
-            // Updates form Timer
-            if (formData.hasTimer(form.id)) {
-                formData.decrementTimer(form.id);
-                if (player.ticksExisted % 20 == 0)
-                    formData.updateClient();
-            }
-            if (form.mastery.hasKiDrain() && isInSurvival) {
-                if (player.ticksExisted % 10 == 0) {
-
-                    int might = DBCUtils.calculateKiDrainMight(dbcData, player);
-
-                    double cost = might * form.mastery.getKiDrain();
-                    cost *= ((double) dbcData.Release / 100);
-
-                    if (JGConfigDBCFormMastery.FM_Enabled)
-                        cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
-
-                    dbcData.stats.restoreKiFlat((int) (-cost / form.mastery.kiDrainTimer * 10));
-                }
-            }
-
-            if (form.mastery.hasHeat() && player.ticksExisted % 20 == 0) {
-                float heatToAdd = form.mastery.calculateMulti("heat", formData.getCurrentLevel());
-                float newHeat = ValueUtil.clamp(dbcData.addonCurrentHeat + heatToAdd, 0, form.mastery.maxHeat);
-
-                if (newHeat == form.mastery.maxHeat) {
-                    int painTime = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()));
-                    dbcData.getRawCompound().setInteger("jrmcGyJ7dp", painTime);
-                    formData.currentForm = -1;
-                    formData.updateClient();
-
-                    newHeat = 0;
-                }
-
-                dbcData.getRawCompound().setFloat("addonCurrentHeat", newHeat);
-            }
-
-            if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail()) {
-                TransformController.handleFormDescend(player, -10);
-            }
+        if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail()) {
+            TransformController.handleFormDescend(player, -10);
         }
     }
 
