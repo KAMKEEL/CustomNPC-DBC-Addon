@@ -167,4 +167,35 @@ public abstract class AbstractDBCAPI {
      * @param kiAttack ki attack to shoot
      */
     public abstract void fireKiAttack(ICustomNpc npc, IKiAttack kiAttack);
+
+
+    /**
+     * @param skillName Acceptable skill names:
+     *                  <code>"Fusion", "Jump", "Dash", "Fly", "Endurance", <br>
+     *                  "PotentialUnlock", "KiSense", "Meditation", "Kaioken", "GodForm", <br>
+     *                  "OldKaiUnlock", "KiProtection", "KiFist", "KiBoost", "DefensePenetration", <br>
+     *                  "KiInfuse", "UltraInstinct", "InstantTransmission", "GodOfDestruction"</code>
+     * @param level Level from 1 to 10 to check the cost of. <br>
+     *              Anything below 1 will be converted to 1 and anything above 10 will be converted to 10. <br>
+     *              <br>
+     *              If a skill has less than 10 levels, it will use the skills highest level.
+     * @return The TP Cost of said skill at that level.
+     */
+    public abstract int getSkillTPCost(String skillName, int level);
+
+    /**
+     * @param skillName Refer to {@link AbstractDBCAPI#getSkillTPCost(String, int)}
+     * @param level Level from 1 to 10 to check the cost of. <br>
+     *              Anything below 1 will be converted to 1 and anything above 10 will be converted to 10. <br>
+     *              <br>
+     *              If a skill has less than 10 levels, it will use the skills highest level.
+     * @return The Mind Cost of said skill at that level.
+     */
+    public abstract int getSkillMindCost(String skillName, int level);
+
+    /**
+     * @param skillName Refer to {@link AbstractDBCAPI#getSkillTPCost(String, int)}
+     * @return The max level of a skill.
+     */
+    public abstract int getMaxSkillLevel(String skillName);
 }

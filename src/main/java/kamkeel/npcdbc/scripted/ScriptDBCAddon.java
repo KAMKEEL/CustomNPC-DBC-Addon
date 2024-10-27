@@ -492,10 +492,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public int getSkillLevel(String skillname) {
         int skillIndex = DBCUtils.getDBCSkillIndex(skillname);
-        if (skillIndex == -1)
-            return 0;
-
-        String skillID = JRMCoreH.DBCSkillsIDs[skillIndex];
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
+        }
         String playerSkillString = nbt.getString("jrmcSSlts");
 
         return JRMCoreH.SklLvl(skillIndex, playerSkillString.split(","));

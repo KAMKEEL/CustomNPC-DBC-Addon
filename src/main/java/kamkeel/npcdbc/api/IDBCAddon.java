@@ -209,7 +209,7 @@ public interface IDBCAddon extends IDBCPlayer {
      *                  "PotentialUnlock", "KiSense", "Meditation", "Kaioken", "GodForm", <br>
      *                  "OldKaiUnlock", "KiProtection", "KiFist", "KiBoost", "DefensePenetration", <br>
      *                  "KiInfuse", "UltraInstinct", "InstantTransmission", "GodOfDestruction"</code>
-     * @return skill level from 1 to 10
+     * @return skill level from 1 to 10. Or 0 if the player doesn't have that skill
      */
     int getSkillLevel(String skillname);
 

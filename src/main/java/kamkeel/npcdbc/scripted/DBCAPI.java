@@ -403,4 +403,41 @@ public class DBCAPI extends AbstractDBCAPI {
         } catch (IndexOutOfBoundsException ignored) {
         }
     }
+
+    @Override
+    public int getSkillTPCost(String skillName, int level) {
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
+        }
+        level = Math.min(Math.max(1, level), this.getMaxSkillLevel(skillIndex)) - 1;
+
+        return JRMCoreH.DBCSkillTPCost[skillIndex][level];
+    }
+
+    @Override
+    public int getSkillMindCost(String skillName, int level) {
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
+        }
+        level = Math.min(Math.max(1, level), this.getMaxSkillLevel(skillIndex)) - 1;
+
+        return JRMCoreH.DBCSkillMindCost[skillIndex][level];
+    }
+
+    @Override
+    public int getMaxSkillLevel(String skillName) {
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
+
+        return getMaxSkillLevel(skillIndex);
+    }
+
+    private int getMaxSkillLevel(int skillIndex) {
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
+        }
+
+        return JRMCoreH.DBCSkillMindCost[skillIndex].length;
+    }
 }
