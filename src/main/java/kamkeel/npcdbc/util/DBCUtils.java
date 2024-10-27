@@ -8,6 +8,7 @@ import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.items.ItemVanity;
 import JinRyuu.JRMCore.mod_JRMCore;
+import JinRyuu.JRMCore.server.config.core.JGConfigSkills;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
@@ -31,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
+import noppes.npcs.scripted.CustomNPCsException;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -726,4 +728,128 @@ public class DBCUtils {
     public static int getDBCSkillIndex(String skillName) {
         return Arrays.stream(DBCSkillNames).map(String::toLowerCase).collect(Collectors.toList()).indexOf(skillName.toLowerCase());
     }
+
+    /**
+     * @param skillIndex Numeric ID of the skill
+     * @param level Level you would like to check
+     * @return The Mind cost of JUST this level
+     */
+    public static int calculateDBCSkillMindCost(int skillIndex, int level) {
+        if (level <= 0) {
+            return 0;
+        }
+        level -= 1;
+
+        if (skillIndex < 0) {
+            throw new CustomNPCsException("Unknown skill ID");
+        }
+        int[] skillCosts = DBCSkillMindCost[skillIndex];
+        float f = 1f;
+        if(skillCosts.length > 0) {
+            f = (float)(skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
+        }
+
+        return (int) (f * JGConfigSkills.GlobalSkillMindMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillMindMultiplierFirst : 1.0F) * (float)(JGConfigSkills.GlobalSkillMindMultiplierWithLevel ? level + 1 : 1));
+    }
+
+    /**
+     * @param skillIndex Numeric ID of the skill
+     * @param level Level you would like to check
+     * @return The TP cost of JUST this level
+     */
+    public static int calculateDBCSkillTPCost(int skillIndex, int level) {
+        if (level <= 0) {
+            return 0;
+        }
+        level -= 1;
+
+        if (skillIndex < 0) {
+            throw new CustomNPCsException("Unknown skill ID");
+        }
+        int[] skillCosts = DBCSkillTPCost[skillIndex];
+        float f = 1f;
+        if(skillCosts.length > 0) {
+            f = (float)(skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
+        }
+
+        return (int) (f * JGConfigSkills.GlobalSkillTPMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillTPMultiplierFirst : 1.0F) * (float)(JGConfigSkills.GlobalSkillTPMultiplierWithLevel ? level + 1 : 1));
+    }
+
+    /**
+     * @param skillIndex Numeric ID of the skill
+     * @param level Level you would like to check
+     * @return The Mind cost of ALL the levels it took to get to the current level.
+     */
+    public static int calculateDBCSkillMindCostRecursively(int skillIndex, int level) {
+        int cost = 0;
+
+        for(int i = 0; i < level; i++) {
+            cost += calculateDBCSkillMindCost(skillIndex, i+1);
+        }
+        return cost;
+    }
+    /**
+     * @param skillIndex Numeric ID of the skill
+     * @param level Level you would like to check
+     * @return The TP cost of ALL the levels it took to get to the current level.
+     */
+    public static int calculateDBCSkillTPCostRecursively(int skillIndex, int level) {
+        int cost = 0;
+        for(int i = 0; i < level; i++) {
+            cost += calculateDBCSkillTPCost(skillIndex, i+1);
+        }
+        return cost;
+    }
+
+    public static int calculateDBCRacialSkillTPCost(int race, int level) {
+        if (level <= 0) {
+            return 0;
+        }
+        level -= 1;
+
+        if (race < 0 || race > 5) {
+            throw new CustomNPCsException("Unknown Race ID");
+        }
+        int[] skillCosts = DBCRacialSkillTPCost[race];
+        float f = 1f;
+        if(skillCosts.length > 0) {
+            f = (float)(skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
+        }
+
+        return (int) (f * JGConfigSkills.GlobalSkillTPMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillTPMultiplierFirst : 1.0F) * (float)(JGConfigSkills.GlobalSkillTPMultiplierWithLevel ? level + 1 : 1));
+    }
+
+    public static int calculateDBCRacialSkillMindCost(int race, int level) {
+        if (level <= 0) {
+            return 0;
+        }
+        level -= 1;
+
+        if (race < 0 || race > 5) {
+            throw new CustomNPCsException("Unknown Race ID");
+        }
+        int[] skillCosts = DBCRacialSkillMindCost[race];
+        float f = 1f;
+        if(skillCosts.length > 0) {
+            f = (float)(skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
+        }
+
+        return (int) (f * JGConfigSkills.GlobalSkillMindMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillMindMultiplierFirst : 1.0F) * (float)(JGConfigSkills.GlobalSkillMindMultiplierWithLevel ? level + 1 : 1));
+    }
+
+    public static int calculateDBCRacialSkillTPCostRecursively(int race, int level) {
+        int cost = 0;
+        for(int i = 0; i < level; i++) {
+            cost += calculateDBCRacialSkillTPCost(race, i+1);
+        }
+        return cost;
+    }
+    public static int calculateDBCRacialSkillMindCostRecursively(int race, int level) {
+        int cost = 0;
+        for(int i = 0; i < level; i++) {
+            cost += calculateDBCRacialSkillMindCost(race, i+1);
+        }
+        return cost;
+    }
+
 }

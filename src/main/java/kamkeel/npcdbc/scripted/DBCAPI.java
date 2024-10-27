@@ -3,6 +3,7 @@ package kamkeel.npcdbc.scripted;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
+import JinRyuu.JRMCore.server.config.core.JGConfigSkills;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import kamkeel.npcdbc.api.AbstractDBCAPI;
 import kamkeel.npcdbc.api.IKiAttack;
@@ -405,39 +406,63 @@ public class DBCAPI extends AbstractDBCAPI {
     }
 
     @Override
-    public int getSkillTPCost(String skillName, int level) {
+    public int getSkillTPCostSingle(String skillName, int level) {
         int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
         if (skillIndex == -1) {
             throw new CustomNPCsException("Skill name not recognized");
         }
-        level = Math.min(Math.max(1, level), this.getMaxSkillLevel(skillIndex)) - 1;
-
-        return JRMCoreH.DBCSkillTPCost[skillIndex][level];
+        return DBCUtils.calculateDBCSkillTPCost(skillIndex, level);
     }
 
     @Override
-    public int getSkillMindCost(String skillName, int level) {
+    public int getSkillMindCostSingle(String skillName, int level) {
         int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
         if (skillIndex == -1) {
             throw new CustomNPCsException("Skill name not recognized");
         }
-        level = Math.min(Math.max(1, level), this.getMaxSkillLevel(skillIndex)) - 1;
 
-        return JRMCoreH.DBCSkillMindCost[skillIndex][level];
+        return DBCUtils.calculateDBCSkillMindCost(skillIndex, level);
     }
 
     @Override
-    public int getMaxSkillLevel(String skillName) {
+    public int getSkillMindCostRecursive(String skillName, int level) {
         int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
-
-        return getMaxSkillLevel(skillIndex);
-    }
-
-    private int getMaxSkillLevel(int skillIndex) {
         if (skillIndex == -1) {
             throw new CustomNPCsException("Skill name not recognized");
         }
 
-        return JRMCoreH.DBCSkillMindCost[skillIndex].length;
+        return DBCUtils.calculateDBCSkillMindCostRecursively(skillIndex, level);
     }
+
+    @Override
+    public int getSkillTPCostRecursive(String skillName, int level) {
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
+        }
+
+        return DBCUtils.calculateDBCSkillTPCostRecursively(skillIndex, level);
+    }
+
+    @Override
+    public int getSkillRacialTPCostSingle(int race, int level) {
+        return DBCUtils.calculateDBCRacialSkillTPCost(race, level);
+    }
+
+    @Override
+    public int getSkillRacialTPMindSingle(int race, int level) {
+        return DBCUtils.calculateDBCRacialSkillMindCost(race, level);
+    }
+
+    @Override
+    public int getSkillRacialTPCostSingleRecursive(int race, int level) {
+        return DBCUtils.calculateDBCRacialSkillTPCostRecursively(race, level);
+    }
+
+    @Override
+    public int getSkillRacialTPMindSingleRecursive(int race, int level) {
+        return DBCUtils.calculateDBCRacialSkillMindCostRecursively(race, level);
+    }
+
+
 }
