@@ -217,7 +217,7 @@ public class ServerEventHandler {
                     cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
                 }
 
-                int actualCost = (int) ((-cost / form.mastery.kiDrainTimer) * 10);
+                int actualCost = (int) Math.floor((-cost / form.mastery.kiDrainTimer) * 10);
 
                 dbcData.stats.restoreKiFlat(actualCost);
             }
