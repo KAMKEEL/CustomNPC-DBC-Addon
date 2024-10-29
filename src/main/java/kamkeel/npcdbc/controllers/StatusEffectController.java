@@ -57,6 +57,9 @@ public class StatusEffectController implements IStatusEffectHandler {
         standardEffects.put(Effects.HUMAN_SPIRIT, new Exhausted()); // TODO: Finish it
         standardEffects.put(Effects.COLD_BLOODED, new Exhausted()); // TODO: Finish it
         standardEffects.put(Effects.KI_DEFENSE, new Exhausted()); // TODO: Finish it
+
+        // NuanKi added effects
+        standardEffects.put(Effects.MAJIN_REGEN, new MajinRegen());
     }
 
     public void runEffects(EntityPlayer player) {

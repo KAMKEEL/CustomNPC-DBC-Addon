@@ -28,6 +28,9 @@ public class ConfigDBCEffects
     public final static String NAMEK_REGEN = "Namekian_Regen";
     public static int NamekRegenPercent = 3;
 
+    public final static String MAJIN_REGEN = "Majin_Regen";
+    public static int MajinRegenPercent = 3;
+
     public final static String FRUITOFMIGHT = "Fruit_of_Might";
     public static double FOM_Strength = 1.2;
     public static double FOM_Dex = 0.5;
@@ -116,6 +119,9 @@ public class ConfigDBCEffects
             StaminaRegenPercent = config.get(REGEN, "Stamina Regen", 5, "Amount of Percent to restore per Level of Regen").getInt(5);
 
             NamekRegenPercent = config.get(NAMEK_REGEN, "Namek Regen", 3,
+                "Namekian Regen is removed once the player reaches the specified amount in Gameplay Config." +
+                "\nThis value is percent health restored per second.").getInt(3);
+            MajinRegenPercent = config.get(MAJIN_REGEN, "Majin Regen", 3,
                 "Namekian Regen is removed once the player reaches the specified amount in Gameplay Config." +
                 "\nThis value is percent health restored per second.").getInt(3);
 

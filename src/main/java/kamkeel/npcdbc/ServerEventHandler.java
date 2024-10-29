@@ -111,6 +111,9 @@ public class ServerEventHandler {
                 if (ConfigDBCGameplay.EnableNamekianRegen && dbcData.Race == DBCRace.NAMEKIAN)
                     dbcData.stats.applyNamekianRegen();
 
+                if (ConfigDBCGameplay.EnableMajinRegen && dbcData.Race == DBCRace.MAJIN)
+                    dbcData.stats.applyMajinRegen();
+
                 if (player.ticksExisted % 20 == 0)
                     StatusEffectController.Instance.decrementEffects(dbcData.player);
 

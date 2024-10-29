@@ -372,6 +372,17 @@ public class DBCDataStats {
         }
     }
 
+    public void applyMajinRegen() {
+        if (data.player == null)
+            return;
+
+        if (getCurrentBodyPercentage() < 100) {
+            if (!StatusEffectController.getInstance().hasEffect(data.player, Effects.MAJIN_REGEN)) {
+                StatusEffectController.getInstance().applyEffect(data.player, Effects.MAJIN_REGEN, -100);
+            }
+        }
+    }
+
     public byte getPotentialUnlockLevel() {
         return (byte) JRMCoreH.SklLvl(5, data.Skills.split(","));
     }

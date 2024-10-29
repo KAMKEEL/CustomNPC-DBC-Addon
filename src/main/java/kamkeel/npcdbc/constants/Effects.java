@@ -19,4 +19,7 @@ public class Effects {
     public static final int HUMAN_SPIRIT = 14;
     public static final int COLD_BLOODED = 15;
     public static final int KI_DEFENSE = 16;
+
+    // NuanKi added effects
+    public static final int MAJIN_REGEN = 100;
 }

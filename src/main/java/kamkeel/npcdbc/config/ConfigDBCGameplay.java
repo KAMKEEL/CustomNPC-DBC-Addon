@@ -30,6 +30,9 @@ public class ConfigDBCGameplay
     public static int NamekianRegenMin = 20;
     public static int NamekianRegenMax = 50;
 
+    public final static String MajinRegeneration = "Majin_Regen";
+    public static boolean EnableMajinRegen = true;
+
     public final static String PotaraFusion = "Potara_Fusion";
     public static boolean UniqueEarrings = true;
     public static boolean WearableEarrings = true;
@@ -74,7 +77,9 @@ public class ConfigDBCGameplay
                     "\nwhen the Player falls below MIN Health and will stop continue to MAX Health.").getBoolean(true);
             NamekianRegenMin = config.get(NamekianRegeneration, "Min Namekian Regen", 20).getInt(20);
             NamekianRegenMax = config.get(NamekianRegeneration, "Max Namekian Regen", 50).getInt(50);
-
+            EnableMajinRegen = config.get(MajinRegeneration, "Enable Majin Regeneration", true,
+                "Majin Regeneration will automatically apply the Majin Regen Effect (dbc/effects.cfg), " +
+                    "\nwhen the Player falls below 100% Health and will stop continue to MAX Health.").getBoolean(true);
             SaiyanZenkai = config.get(Zenkai, "Enable Saiyan Zenkai", true, "Enables Zenkai for Saiyans after Revive").getBoolean(true);
             HalfSaiyanZenkai = config.get(Zenkai, "Enable Half Saiyan Zenkai", true, "Enables Zenkai for Half Saiyans after Revive").getBoolean(true);
 
