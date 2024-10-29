@@ -39,7 +39,13 @@ public interface IDBCDisplay {
 
     void setTailState(byte tail);
 
+    /**
+     * @param type Legal types: "base", "raditz", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
+     *             Only saiyans and half-saiyans are eligible for ssj4 and oozaru
+     */
     void setHairType(String type);
+
+    String getHairType();
 
     boolean hasCoolerMask();
 
@@ -48,8 +54,6 @@ public interface IDBCDisplay {
     boolean hasEyebrows();
 
     void hasEyebrows(boolean has);
-
-    String getHairType(String type);
 
     boolean hasAura();
 

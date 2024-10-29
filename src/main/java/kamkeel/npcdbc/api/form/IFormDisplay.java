@@ -18,6 +18,8 @@ public interface IFormDisplay {
      */
     void setHairCode(String hairCode);
 
+
+
     /**
      * @param type Legal types: hud, aura, hair, eye, bodycm, body1, body2, body3
      * @return Decimal color of type
@@ -37,11 +39,8 @@ public interface IFormDisplay {
     void setHairType(String type);
 
 
-    /**
-     * @param type Legal types: "base", "raditz", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
-     * @return hair type
-     */
-    String getHairType(String type);
+    String getHairType();
+
 
     /**
      * @param type Legal types: hud, aura, hair, eye, bodycm, body1, body2, body3
