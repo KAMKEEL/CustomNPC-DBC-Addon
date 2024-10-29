@@ -13,7 +13,6 @@ import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -82,7 +81,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
     public HashMap<Integer, EntityAura2> dbcAuraQueue = new HashMap<>();
     public HashMap<Integer, EntityAura2> dbcSecondaryAuraQueue = new HashMap<>();
-    private EnumAuraTypes2D enumAuraTypes = EnumAuraTypes2D.None;
 
     public KiWeaponData kiWeaponRight = new KiWeaponData();
     public KiWeaponData kiWeaponLeft = new KiWeaponData();
@@ -129,7 +127,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
             dbcDisplay.setInteger("DBCAuraID", auraID);
             dbcDisplay.setBoolean("DBCAuraOn", auraOn);
-            dbcDisplay.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
 
             dbcDisplay.setInteger("DBCOutlineID", outlineID);
 
@@ -178,7 +175,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             hasEyebrows = !dbcDisplay.hasKey("DBCHasEyebrows") || dbcDisplay.getBoolean("DBCHasEyebrows");
 
             auraID = dbcDisplay.getInteger("DBCAuraID");
-            enumAuraTypes = EnumAuraTypes2D.values()[dbcDisplay.getInteger("DBCDisplayAura") % EnumAuraTypes2D.values().length];
 
             outlineID = dbcDisplay.getInteger("DBCOutlineID");
 
@@ -310,20 +306,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public EnumAuraTypes2D getFormAuraTypes() {
-        return enumAuraTypes;
-    }
-
-    public void setFormAuraTypes(EnumAuraTypes2D enumAuraTypes) {
-        this.enumAuraTypes = enumAuraTypes;
-    }
-
-    @Override
-    public void setFormAuraTypes(String type) {
-        this.enumAuraTypes = EnumAuraTypes2D.valueOf(type);
-    }
-
-    @Override
     public String getHairCode() {
         return hairCode;
     }
@@ -352,13 +334,12 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         this.race = ValueUtil.clamp(race, (byte) 0, (byte) 5);
     }
 
-    @Override
-    public int setBodyType() {
+    public int getBodyType() {
         return bodyType;
     }
 
     @Override
-    public void getBodyType(int bodyType) {
+    public void setBodyType(int bodyType) {
         this.bodyType = ValueUtil.clamp(bodyType, 0, 2);
     }
 
@@ -392,7 +373,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public void hasCoolerMask(boolean has) {
+    public void setHasCoolerMask(boolean has) {
         hasArcoMask = has;
     }
 
@@ -402,8 +383,18 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public void hasEyebrows(boolean has) {
+    public void setHasEyebrows(boolean has) {
         hasEyebrows = has;
+    }
+
+    @Override
+    public boolean hasBodyFur() {
+        return hasFur;
+    }
+
+    @Override
+    public void setHasBodyFur(boolean hasFur) {
+        this.hasFur = hasFur;
     }
 
     /////////////////////////////////////////////
@@ -531,7 +522,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return getForm();
     }
 
-    public Outline getOutline() {
+    @Override
+    public IOutline getOutline() {
         Aura aura = getToggledAura();
         OutlineController OC = OutlineController.getInstance();
 
@@ -558,11 +550,21 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         }
 
 
-        return (Outline) OutlineController.getInstance().get(outlineID);
+        return OutlineController.getInstance().get(outlineID);
     }
 
+    @Override
+    public void setOutline(int id) {
+        if (OutlineController.Instance.has(id))
+            this.outlineID = id;
+        else
+            outlineID = -1;
+    }
+
+    @Override
     public void setOutline(IOutline outline) {
-        outlineID = outline != null ? outline.getID() : -1;
+        int id = outline != null ? outline.getID() : -1;
+        setOutline(id);
     }
 
     public Form getForm() {
