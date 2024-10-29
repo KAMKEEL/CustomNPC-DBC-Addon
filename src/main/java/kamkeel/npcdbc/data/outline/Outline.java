@@ -2,15 +2,13 @@ package kamkeel.npcdbc.data.outline;
 
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.client.utils.Color;
-import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.controllers.AnimationController;
 import noppes.npcs.util.ValueUtil;
 
 public class Outline implements IOutline {
     public int id = -1;
-    public String name = "", menuName ="§aNEW";
+    public String name = "", menuName = "§aNEW";
 
     public Color innerColor = new Color(0x00ffff, 1), outerColor = new Color(0xffffff, 1);
     public float size = 1f, speed = 1f, noiseSize = 1f, colorSmoothness = 0.2f, colorInterpolation = 0.55f, pulsingSpeed = 0;
@@ -43,8 +41,8 @@ public class Outline implements IOutline {
     public void readFromNBT(NBTTagCompound compound) {
         if (compound.hasKey("ID"))
             id = compound.getInteger("ID");
-        else if (AnimationController.Instance != null)
-            id = FormController.Instance.getUnusedId();
+        else
+            id = OutlineController.Instance.getUnusedId();
         name = compound.getString("name");
         menuName = compound.getString("menuName");
         size = compound.getFloat("size");
