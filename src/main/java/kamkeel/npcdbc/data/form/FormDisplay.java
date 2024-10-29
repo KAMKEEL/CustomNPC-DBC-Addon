@@ -268,20 +268,15 @@ public class FormDisplay implements IFormDisplay {
         if (s.equals("base") || s.equals("ssj") || s.equals("ssj2") || s.equals("ssj3") || s.equals("ssj4") || s.equals("oozaru") || s.equals("raditz") || s.equals("")) {
             hairType = s;
 
-        } else {
-            hairType = "";
-            throw new CustomNPCsException("Invalid type!");
-        }
+        } else
+            throw new CustomNPCsException("Invalid type! Legal types: base, raditz, ssj, ssj2, ssj3, ssj4, oozaru");
+
     }
 
 
     @Override
-    public String getHairType(String type) {
-        String s = type.toLowerCase();
-        if (s.equals("base") || s.equals("ssj") || s.equals("ssj2") || s.equals("ssj3") || s.equals("ssj4") || s.equals("oozaru") || s.equals("raditz") || s.equals(""))
-            return hairType;
-        else
-            throw new CustomNPCsException("Invalid type!");
+    public String getHairType() {
+        return hairType;
     }
 
     @Override
