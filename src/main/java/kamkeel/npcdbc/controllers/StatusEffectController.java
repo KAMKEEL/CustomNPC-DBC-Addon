@@ -125,6 +125,13 @@ public class StatusEffectController implements IStatusEffectHandler {
             customEffects.remove(effect.getId());
     }
 
+    public void delete(int id) {
+        IStatusEffect effect = get(id);
+        if (effect != null)
+            customEffects.remove(effect.getId());
+    }
+
+
     public int getUnusedId() {
         for (int catid : customEffects.keySet()) {
             if (catid > lastUsedID)

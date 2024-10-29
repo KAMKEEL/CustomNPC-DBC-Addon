@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.late.impl.npc.client;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.client.gui.global.auras.GuiNPCManageAuras;
+import kamkeel.npcdbc.client.gui.global.effects.GuiNPCManageEffects;
 import kamkeel.npcdbc.client.gui.global.form.GuiNPCManageForms;
 import kamkeel.npcdbc.client.gui.global.outline.GuiNPCManageOutlines;
 import net.minecraft.client.Minecraft;
@@ -31,6 +32,7 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
         this.addButton(new GuiNpcButton(200, guiLeft + 210, y + 132, 99, 20, "global.customforms"));
         this.addButton(new GuiNpcButton(201, guiLeft + 210 + 99 + 3, y + 132, 99, 20, "global.customauras"));
         this.addButton(new GuiNpcButton(202, guiLeft + 210, y + 154, 99, 20, "global.customoutlines"));
+        this.addButton(new GuiNpcButton(203, guiLeft + 210 + 99+ 3, y + 154, 99, 20, "Effects"));
 
 
     }
@@ -45,6 +47,9 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
             Minecraft.getMinecraft().displayGuiScreen(new GuiNPCManageAuras(npc));
         } else if (id == 202) {
             Minecraft.getMinecraft().displayGuiScreen(new GuiNPCManageOutlines(npc));
+        }
+        else if (id == 203) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiNPCManageEffects(npc));
         }
 
 

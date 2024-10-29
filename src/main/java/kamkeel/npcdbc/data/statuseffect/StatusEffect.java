@@ -38,6 +38,7 @@ public class StatusEffect implements IStatusEffect {
 
     public void onAdded(EntityPlayer player, PlayerEffect playerEffect) {
 
+
     }
 
     public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
