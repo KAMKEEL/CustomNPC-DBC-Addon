@@ -518,10 +518,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         TransformController.npcDescend(npc, form == null ? -1 : form.getID());
     }
 
-    public IForm getCurrentForm() {
-        return getForm();
-    }
-
     @Override
     public IOutline getOutline() {
         Aura aura = getToggledAura();
@@ -578,35 +574,39 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return null;
     }
 
-    public void setForm(IForm form) {
-        if (form != null)
-            formID = form.getID();
-    }
-
+    @Override
     public void setForm(int id) {
         Form f = (Form) FormController.Instance.get(id);
         if (f != null)
             formID = f.id;
     }
 
-    public void setForm(String formName) {
-        Form f = (Form) FormController.Instance.get(formName);
-        if (f != null)
-            formID = f.id;
+    @Override
+    public void setForm(IForm form) {
+        int id = form != null ? form.getID() : -1;
+        setForm(id);
     }
 
     public boolean isInForm() {
         return formID > -1 && getForm() != null;
     }
 
+    @Override
+    public IForm getCurrentForm() {
+        return getForm();
+    }
+
+    @Override
     public boolean isInForm(IForm form) {
         return formID == form.getID();
     }
 
+    @Override
     public void setFormLevel(float amount) {
         formLevel = amount;
     }
 
+    @Override
     public float getFormLevel(int formID) {
         if (formID != -1)
             return formLevel;
