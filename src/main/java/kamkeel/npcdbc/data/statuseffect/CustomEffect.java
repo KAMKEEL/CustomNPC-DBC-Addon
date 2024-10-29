@@ -1,7 +1,14 @@
 package kamkeel.npcdbc.data.statuseffect;
 
 import kamkeel.npcdbc.api.effect.ICustomEffect;
+import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.api.entity.IPlayer;
+
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 public class CustomEffect extends StatusEffect implements ICustomEffect {
     public CustomEffect(int id) {
@@ -68,13 +75,60 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         this.lossOnDeath = lossOnDeath;
     }
 
-    public void onAdded(EntityPlayer player, PlayerEffect playerEffect) {
+    public BiConsumer<IPlayer, PlayerEffect> onAddedConsumer, onTickConsumer, onRemovedConsumer;
 
+    public void onAdded(BiConsumer<IPlayer, PlayerEffect> function) {
+        onAddedConsumer = function;
+    }
+
+    public void onTick(BiConsumer<IPlayer, PlayerEffect> function) {
+        onTickConsumer = function;
+    }
+
+    public void onRemoved(BiConsumer<IPlayer, PlayerEffect> function) {
+        onRemovedConsumer = function;
+    }
+
+    public void onAdded(EntityPlayer player, PlayerEffect playerEffect) {
+        if (onAddedConsumer != null)
+            onAddedConsumer.accept(PlayerDataUtil.getIPlayer(player), playerEffect);
     }
 
     public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
+        if (onTickConsumer != null)
+            onTickConsumer.accept(PlayerDataUtil.getIPlayer(player), playerEffect);
     }
 
     public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
+        if (onRemovedConsumer != null)
+            onRemovedConsumer.accept(PlayerDataUtil.getIPlayer(player), playerEffect);
+    }
+
+    public NBTTagCompound writeToNBT() {
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger("ID", id);
+        compound.setString("name", name);
+        compound.setInteger("length", length);
+        compound.setInteger("everyXTick", everyXTick);
+        compound.setInteger("iconX", iconX);
+        compound.setInteger("iconY", iconY);
+        compound.setString("icon", icon);
+        compound.setBoolean("lossOnDeath", lossOnDeath);
+
+        return compound;
+    }
+
+    public void readFromNBT(NBTTagCompound compound) {
+        if (compound.hasKey("ID"))
+            id = compound.getInteger("ID");
+        else
+            id = StatusEffectController.Instance.getUnusedId();
+        name = compound.getString("name");
+        length = compound.getInteger("length");
+        everyXTick = compound.getInteger("everyXTick");
+        iconX = compound.getInteger("iconX");
+        iconY = compound.getInteger("iconY");
+        icon = compound.getString("icon");
+        lossOnDeath = compound.getBoolean("lossOnDeath");
     }
 }
