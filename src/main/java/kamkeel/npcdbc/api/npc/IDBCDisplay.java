@@ -124,4 +124,16 @@ public interface IDBCDisplay {
      *             set form to null for descending to base
      */
     void descend(IForm form);
+
+    void setForm(int id);
+
+    void setForm(IForm form);
+
+    IForm getCurrentForm();
+
+    boolean isInForm(IForm form);
+
+    void setFormLevel(float amount);
+
+    float getFormLevel(int formID);
 }
