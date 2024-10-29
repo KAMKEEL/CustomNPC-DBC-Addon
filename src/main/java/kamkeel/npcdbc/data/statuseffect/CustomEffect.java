@@ -1,11 +1,16 @@
 package kamkeel.npcdbc.data.statuseffect;
 
 import kamkeel.npcdbc.api.effect.ICustomEffect;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class CustomEffect extends StatusEffect implements ICustomEffect {
     public CustomEffect(int id) {
         this.isCustom = true;
         this.id = id;
+    }
+
+    public CustomEffect() {
+        isCustom = true;
     }
 
     @Override
@@ -61,5 +66,15 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
     @Override
     public void setLossOnDeath(boolean lossOnDeath) {
         this.lossOnDeath = lossOnDeath;
+    }
+
+    public void onAdded(EntityPlayer player, PlayerEffect playerEffect) {
+
+    }
+
+    public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
+    }
+
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
     }
 }

@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.constants;
 
 public class Effects {
+    public static final int CUSTOM_EFFECT = 200;
+
     public static final int REGEN_HEALTH = 1;
     public static final int REGEN_KI = 2;
     public static final int REGEN_STAMINA = 3;

@@ -55,7 +55,7 @@ public class EffectCommand extends CommandKamkeelBase {
             return;
         }
 
-        StatusEffect statusEffect = StatusEffectController.getInstance().getFromName(name);
+        StatusEffect statusEffect = StatusEffectController.getInstance().get(name);
         if (statusEffect == null) {
             sendError(sender, "Unknown effect: " + name);
             return;
@@ -85,7 +85,7 @@ public class EffectCommand extends CommandKamkeelBase {
             return;
         }
 
-        StatusEffect statusEffect = StatusEffectController.getInstance().getFromName(name);
+        StatusEffect statusEffect = StatusEffectController.getInstance().get(name);
         if (statusEffect == null) {
             sendError(sender, "Unknown effect: " + name);
             return;
