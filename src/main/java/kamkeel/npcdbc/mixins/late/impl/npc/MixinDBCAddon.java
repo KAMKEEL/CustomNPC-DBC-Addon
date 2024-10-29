@@ -63,7 +63,6 @@ public class MixinDBCAddon {
             receiverStats.getDBCStats().readFromNBT(dbcStats);
 
             receiverDisplay.getDBCDisplay().setEnabled(display.getDBCDisplay().isEnabled());
-            receiverDisplay.getDBCDisplay().setFormAuraTypes(display.getDBCDisplay().getFormAuraTypes());
         }
     }
 
