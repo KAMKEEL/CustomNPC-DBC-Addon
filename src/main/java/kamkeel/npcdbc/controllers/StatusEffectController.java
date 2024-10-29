@@ -103,7 +103,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         effect.name = name;
 
         if (effect.id == -1) {
-            int id = effect.id;
+            int  id = getUnusedId();
             while (customEffects.containsKey(id)) {
                 id = getUnusedId();
             }
