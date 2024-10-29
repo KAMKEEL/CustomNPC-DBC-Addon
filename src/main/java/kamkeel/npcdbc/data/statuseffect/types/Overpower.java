@@ -20,7 +20,7 @@ public class Overpower extends StatusEffect {
     }
 
     @Override
-    public void kill(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
         // Ensure Overpower Caps Release back to Default upon Removal
         DBCData dbcData = DBCData.getData(player);
         dbcData.loadCharging();

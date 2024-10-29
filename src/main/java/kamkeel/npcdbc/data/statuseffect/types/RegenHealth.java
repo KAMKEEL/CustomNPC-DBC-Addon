@@ -19,7 +19,7 @@ public class RegenHealth extends StatusEffect {
     }
 
     @Override
-    public void process(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
         int percentToRegen = ConfigDBCEffects.HealthRegenPercent * playerEffect.level;
         if(dbcData.Body > 0)

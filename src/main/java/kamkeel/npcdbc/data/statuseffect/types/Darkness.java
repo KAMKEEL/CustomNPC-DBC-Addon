@@ -17,5 +17,5 @@ public class Darkness extends StatusEffect {
     }
 
     @Override
-    public void process(EntityPlayer player, PlayerEffect playerEffect){}
+    public void onTick(EntityPlayer player, PlayerEffect playerEffect){}
 }

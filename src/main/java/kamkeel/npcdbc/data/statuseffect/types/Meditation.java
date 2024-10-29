@@ -21,7 +21,7 @@ public class Meditation extends StatusEffect {
     }
 
     @Override
-    public void init(EntityPlayer player, PlayerEffect playerEffect){
+    public void onAdded(EntityPlayer player, PlayerEffect playerEffect){
         DBCData dbcData = DBCData.get(player);
         PlayerBonus medBonus = new PlayerBonus(name, (byte) 1);
         medBonus.spirit = dbcData.SPI * ((float) ConfigDBCEffects.MeditationSpiBoostPercent / 100);
@@ -29,7 +29,7 @@ public class Meditation extends StatusEffect {
     }
 
     @Override
-    public void kill(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
         BonusController.getInstance().removeBonus(player, name);
     }
 }
