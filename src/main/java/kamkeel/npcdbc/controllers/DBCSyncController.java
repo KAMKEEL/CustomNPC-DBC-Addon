@@ -99,6 +99,8 @@ public class DBCSyncController {
                 OutlineController.getInstance().customOutlines = OutlineController.getInstance().customOutlinesSync;
                 OutlineController.getInstance().customOutlinesSync = new HashMap<>();
             }
+        } else if (synctype == DBCSyncType.CUSTOM_EFFECT) {
+
         }
     }
 

@@ -11,6 +11,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class CustomEffect extends StatusEffect implements ICustomEffect {
+
+    /**
+     * Experimental script stuff.
+     */
+    public BiConsumer<IPlayer, PlayerEffect> onAddedConsumer, onTickConsumer, onRemovedConsumer;
+
     public CustomEffect(int id) {
         this.isCustom = true;
         this.id = id;
@@ -75,7 +81,6 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         this.lossOnDeath = lossOnDeath;
     }
 
-    public BiConsumer<IPlayer, PlayerEffect> onAddedConsumer, onTickConsumer, onRemovedConsumer;
 
     public void onAdded(BiConsumer<IPlayer, PlayerEffect> function) {
         onAddedConsumer = function;
