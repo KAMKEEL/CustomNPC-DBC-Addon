@@ -40,7 +40,7 @@ public final class DBCRequestEffect extends AbstractPacket {
         if (effectID != -1) {
             CustomEffect effect = (CustomEffect) StatusEffectController.getInstance().get(effectID);
             if (effect != null) {
-                NBTTagCompound compound = effect.writeToNBT();
+                NBTTagCompound compound = effect.writeToNBT(false);
                 compound.setString("PACKETTYPE", "Effect");
                 Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
             }

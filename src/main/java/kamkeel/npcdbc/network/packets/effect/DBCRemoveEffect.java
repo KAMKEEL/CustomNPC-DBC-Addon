@@ -47,7 +47,7 @@ public class DBCRemoveEffect extends AbstractPacket {
         effectID = in.readInt();
         StatusEffectController.getInstance().delete(effectID);
         NetworkUtility.sendCustomEffectDataAll((EntityPlayerMP) player);
-        NBTTagCompound compound = (new CustomEffect()).writeToNBT();
+        NBTTagCompound compound = (new CustomEffect()).writeToNBT(false);
         Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
     }
 }

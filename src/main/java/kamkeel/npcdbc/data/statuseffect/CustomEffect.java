@@ -1,12 +1,20 @@
 package kamkeel.npcdbc.data.statuseffect;
 
+import cpw.mods.fml.common.eventhandler.Event;
 import kamkeel.npcdbc.api.effect.ICustomEffect;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.constants.EnumScriptType;
+import noppes.npcs.controllers.ScriptContainer;
+import noppes.npcs.controllers.data.INpcScriptHandler;
+import noppes.npcs.controllers.data.IScriptHandler;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -109,7 +117,7 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
             onRemovedConsumer.accept(PlayerDataUtil.getIPlayer(player), playerEffect);
     }
 
-    public NBTTagCompound writeToNBT() {
+    public NBTTagCompound writeToNBT(boolean saveScripts) {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger("ID", id);
         compound.setString("name", name);
@@ -119,6 +127,13 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         compound.setInteger("iconY", iconY);
         compound.setString("icon", icon);
         compound.setBoolean("lossOnDeath", lossOnDeath);
+
+//        if (saveScripts && scriptContainer != null) {
+        if (saveScripts) {
+//            NBTTagCompound scriptData = new NBTTagCompound();
+//            scriptContainer.writeToNBT(scriptData);
+//            compound.setTag("ScriptData", scriptData);
+        }
 
         return compound;
     }
@@ -135,5 +150,14 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         iconY = compound.getInteger("iconY");
         icon = compound.getString("icon");
         lossOnDeath = compound.getBoolean("lossOnDeath");
+
+        if (compound.hasKey("Scripts")) {
+//            scriptContainer = new ScriptContainer(this);
+//            scriptContainer.readFromNBT(compound.getCompoundTag("ScriptData"));
+        } else {
+//            scriptContainer = null;
+        }
+
     }
+
 }

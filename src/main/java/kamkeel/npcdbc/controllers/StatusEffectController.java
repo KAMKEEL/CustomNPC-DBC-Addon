@@ -23,7 +23,11 @@ public class StatusEffectController implements IStatusEffectHandler {
     public static StatusEffectController Instance = new StatusEffectController();
 
     public HashMap<Integer, StatusEffect> standardEffects = new HashMap<>();
-    public HashMap<Integer, CustomEffect> customEffects = new HashMap<>(); // TODO: I will implement later - Kam
+    // TODO: I will implement later - Kam
+    //      ...
+    //      Fucking Liar - Hussar (respectfully)
+    public HashMap<Integer, CustomEffect> customEffectsSync = new HashMap<>();
+    public HashMap<Integer, CustomEffect> customEffects = new HashMap<>();
     private int lastUsedID = Effects.CUSTOM_EFFECT;
 
     public ConcurrentHashMap<UUID, Map<Integer, PlayerEffect>> playerEffects = new ConcurrentHashMap<>();

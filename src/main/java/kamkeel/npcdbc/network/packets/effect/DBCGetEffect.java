@@ -40,7 +40,7 @@ public final class DBCGetEffect extends AbstractPacket {
         if (effectID != -1 && StatusEffectController.getInstance().has(effectID)) {
             CustomEffect Effect = (CustomEffect) StatusEffectController.getInstance().get(effectID);
             if (Effect != null) {
-                compound = Effect.writeToNBT();
+                compound = Effect.writeToNBT(true);
                 compound.setString("Type", "ViewEffect");
             }
         }
