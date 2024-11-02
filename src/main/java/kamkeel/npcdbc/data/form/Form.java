@@ -368,7 +368,7 @@ public class Form implements IForm {
 
     @Override
     public boolean hasChild() {
-        return childID != -1;
+        return childID != -1 && FormController.getInstance().has(childID);
     }
 
     public void removeChildForm() {
@@ -406,7 +406,7 @@ public class Form implements IForm {
 
     @Override
     public boolean hasParent() {
-        return parentID != -1;
+        return parentID != -1 && FormController.getInstance().has(parentID);
     }
 
     public void removeParentForm() {
