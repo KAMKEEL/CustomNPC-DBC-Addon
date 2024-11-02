@@ -8,6 +8,7 @@ import kamkeel.npcdbc.client.gui.global.form.GuiNPCManageForms;
 import kamkeel.npcdbc.client.gui.global.outline.GuiNPCManageOutlines;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.launchwrapper.Launch;
 import noppes.npcs.client.gui.mainmenu.GuiNPCGlobalMainMenu;
 import noppes.npcs.client.gui.util.GuiNPCInterface2;
 import noppes.npcs.client.gui.util.GuiNpcButton;
@@ -32,7 +33,16 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
         this.addButton(new GuiNpcButton(200, guiLeft + 210, y + 132, 99, 20, "global.customforms"));
         this.addButton(new GuiNpcButton(201, guiLeft + 210 + 99 + 3, y + 132, 99, 20, "global.customauras"));
         this.addButton(new GuiNpcButton(202, guiLeft + 210, y + 154, 99, 20, "global.customoutlines"));
-        this.addButton(new GuiNpcButton(203, guiLeft + 210 + 99+ 3, y + 154, 99, 20, "Effects"));
+
+        /**
+         * TODO: Uncomment this for release!!!!
+         *       VERY UIMPORTANT
+         *
+         * This only makes the button show in the dev environment.
+         */
+        if((Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment")) {
+            this.addButton(new GuiNpcButton(203, guiLeft + 210 + 99 + 3, y + 154, 99, 20, "Effects"));
+        }
 
 
     }
