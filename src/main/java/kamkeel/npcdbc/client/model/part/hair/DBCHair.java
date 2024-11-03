@@ -551,7 +551,6 @@ public class DBCHair extends ModelHairRenderer {
         if (display.hairColor == -1 && display.race == 5)
             hairColor = display.bodyCM;
 
-
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
         //Forms
@@ -572,6 +571,9 @@ public class DBCHair extends ModelHairRenderer {
 
                 if (d.hasColor("hair"))
                     hairColor = d.hairColor;
+                else if (display.race == 5 && d.hasColor("bodycm")) {
+                    hairColor = d.bodyCM;
+                }
 
                 if (d.hairType.equals("base"))
                     state = 0;
