@@ -201,13 +201,13 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
 
     @Override
     public void customScrollDoubleClicked(String selection, GuiCustomScroll scroll) {
-        ICustomScrollListener.super.customScrollDoubleClicked(selection, scroll);
+//        ICustomScrollListener.super.customScrollDoubleClicked(selection, scroll);
     }
 
     @Override
     public void save() {
         if (this.selected != null && this.data.containsKey(this.selected) && this.effect != null) {
-            PacketHandler.Instance.sendToServer(new DBCSaveOutline(effect.writeToNBT(false), originalName).generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCSaveOutline(effect.writeToNBT(true), originalName).generatePacket());
         }
     }
 
