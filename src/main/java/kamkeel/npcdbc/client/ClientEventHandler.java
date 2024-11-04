@@ -173,7 +173,7 @@ public class ClientEventHandler {
                             return;
                         }
 
-                        if (form.hasChild()) {
+                        if (form != null && form.hasChild()) {
                             form = (Form) form.getChild();
                             if (!formData.hasFormUnlocked(form.getID())) {
                                 Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.nextUnlocked"));
