@@ -79,6 +79,16 @@ public interface IFormDisplay {
      */
     void setKeepOriginalSize(boolean keepOriginalSize);
 
+    /**
+     * @return form's width, default is 1.0f of player's current size
+     */
+    float getWidth();
+
+    /**
+     * @param width size to set form to. 2.0f sets the player to 2x their normal size. Min: 0.2, Max: 3.0
+     */
+    void setWidth(float width);
+
     boolean hasSize();
 
     String getBodyType();

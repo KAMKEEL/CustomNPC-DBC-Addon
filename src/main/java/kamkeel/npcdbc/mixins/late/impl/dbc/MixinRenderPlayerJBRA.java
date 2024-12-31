@@ -312,7 +312,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
          * @INFO: This fixes base hair color.
          */
         data.renderingHairColor = hairCol.get();
-        System.out.println("A");
 
         if (form != null) {
             HD = ConfigDBCClient.EnableHDTextures;
