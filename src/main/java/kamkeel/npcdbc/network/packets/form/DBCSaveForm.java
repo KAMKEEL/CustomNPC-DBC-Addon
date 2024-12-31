@@ -3,6 +3,7 @@ package kamkeel.npcdbc.network.packets.form;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
@@ -19,10 +20,12 @@ import static kamkeel.npcdbc.network.DBCAddonPermissions.GLOBAL_DBCFORM;
 public class DBCSaveForm extends AbstractPacket {
     public static final String packetName = "NPC|SaveForm";
 
+    private String prevName;
     private NBTTagCompound form;
 
-    public DBCSaveForm(NBTTagCompound compound){
+    public DBCSaveForm(NBTTagCompound compound, String prevName){
         this.form = compound;
+        this.prevName = prevName;
     }
 
     public DBCSaveForm() {
@@ -36,6 +39,7 @@ public class DBCSaveForm extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
+        Server.writeString(out, prevName);
         Server.writeNBT(out, form);
     }
 
@@ -43,9 +47,14 @@ public class DBCSaveForm extends AbstractPacket {
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCFORM))
             return;
+        String prevName = Server.readString(in);
 
         Form form = new Form();
         form.readFromNBT(Server.readNBT(in));
+
+        if(!prevName.isEmpty() && !prevName.equals(form.name)){
+            FormController.getInstance().deleteFormFile(prevName);
+        }
 
         int oldParentForm = -1;
         int oldChildForm = -1;
