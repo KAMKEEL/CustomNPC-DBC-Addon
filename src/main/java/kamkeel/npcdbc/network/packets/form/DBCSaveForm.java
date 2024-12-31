@@ -52,9 +52,6 @@ public class DBCSaveForm extends AbstractPacket {
         Form form = new Form();
         form.readFromNBT(Server.readNBT(in));
 
-        if(!prevName.isEmpty() && !prevName.equals(form.name)){
-            FormController.getInstance().deleteFormFile(prevName);
-        }
 
         int oldParentForm = -1;
         int oldChildForm = -1;
@@ -94,7 +91,12 @@ public class DBCSaveForm extends AbstractPacket {
             if(oldChild != null)
                 oldChild.save();
         }
+
         FormController.getInstance().saveForm(form);
+        if(!prevName.isEmpty() && !prevName.equals(form.name)){
+            FormController.getInstance().deleteFormFile(prevName);
+        }
+
         NetworkUtility.sendCustomFormDataAll((EntityPlayerMP) player);
     }
 }
