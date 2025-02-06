@@ -1,0 +1,423 @@
+###########################
+## CONFIG NAME IN MENU
+###########################
+
+# %s is the input value. %% is the percent sign. It is important to use %% to show the percent sign
+dbc.clientsettings.aura.firstPersonOpacity=First person 3D Aura Opacity: %s%%
+
+############################
+## BUTTONS / LABELS
+############################
+
+global.customforms=Formas
+global.customauras=Auras
+global.customoutlines=Contornos
+
+stats.dbcsettings=DBC Configuracoes
+
+gui.clone=Clonar
+
+stats.dbc=DBC Configuracoes
+stats.lockOnState=O NPC Pode ser focado?
+stats.friendlyFist=Punho Amigavel
+stats.ignoreDex=Ignorar Destreza
+stats.ignoreBlock=Ignorar Bloqueio
+stats.ignoreEndurance=Ignorar Resistencia
+stats.ignoreKiDamage=Ignorar Protecao de Ki
+stats.ignoreFormDefense=Ignorar Defesa da Forma
+stats.hasDefensePenetration=Tem Penetracao de Defesa
+stats.defensePenetration=Penetracao de Defesa
+
+mastery.maxLevel=Nivel Maximo
+mastery.multiFlat=Multiplano
+mastery.multiMinMax=Multi Min/Max
+mastery.multiPerLevel=Multi Por Nivel
+mastery.instantTransform=Transformacao Instananea Lvl
+mastery.healthReqSettings=Configuracoes de Requisitos de Vida
+mastery.kiDrainSettings=Configuracoes de Drenagem de Ki
+mastery.heatSettings=Configuracoes de Calor
+mastery.painSettings=Configuracoes de Dor
+mastery.dodgeSettings=Configuracoes de Esquivas
+mastery.damageNegationSettings=Configuracoes de Negacao de Dano
+mastery.movementSpeedSettings=Configuracoes de Velocidade de Movimento
+mastery.tailCutChanceSettings=Configuracoes de Cauda
+mastery.levelGainSettings=Configuracoes de Nivel de Ganho
+mastery.updateGainSettings=Configuracoes de Ganho
+mastery.attackGainSettings=Configuracoes de Ganho de Ataque
+mastery.damagedGainSettings=Configuracoes de Ganho de Dano
+mastery.fireKiGainSettings=Configuracoes de Ganho de Ki Fogo
+mastery.updateGain=Atualizacao de Ganho
+mastery.attackGain=Ganho de Ataque
+mastery.damagedGain=Ganho de Dano
+mastery.fireKiGain=Atualizacao de Ganho
+mastery.flatMind=Mente Plana
+mastery.perMind=Por Mente
+mastery.maxMind=Mente Maxima
+mastery.multiDivPlus=Multi Div Plus
+mastery.dodgeChance=Chance de Esquiva
+mastery.damageNegation=Negacao de Dano
+mastery.movementSpeed=Velocidade de Movimento
+mastery.tailCutChance=Cortar Calda no Disco (%)
+mastery.painTime=Tempo de Dor
+mastery.heatTime=Tempo de Aquecimento
+mastery.drainPercent=Porcentagem de Drenagem
+mastery.drainTimer=Tempo de Drenagem
+mastery.requirement=Requirement
+mastery.flatMulti=Plano Multi
+mastery.perLevel=Por Nivel
+mastery.minMax=Minimo Maximo
+mastery.absorptionSettings=Configuracoes de Absorcao
+mastery.absorptionMulti=Bonus de Absorcao
+mastery.powerPointSettings=Configuracoes de Pontos de Poder
+mastery.powerPointNormalMulti=Bonus de Pontos de Poder
+mastery.powerPointMultiOnPoints=Bonus com Maximo de Pontos
+mastery.powerPointCost=Custo
+mastery.powerPointGrowth=Crescimento
+mastery.destroyerSettings=Configurações do Destruidor
+mastery.destroyerKiDamage=Dano de Ki Multi
+mastery.linkedMastery=Maestria Similar
+
+display.human=Humano
+display.saiyan=Saiyajin
+display.halfsaiyan=Metade-Saiyan
+display.namekian=Namekuseijin
+display.arcosian=Arcosiano
+display.majin=Majin
+display.raditz=Raditz
+display.arcofirst=Primeira
+display.arcosecond=Segunda
+display.arcothird=Terceira
+display.arcofinal=Final
+display.arcoultimatecooler=Ultimate
+display.arcogoldenform=Dourado
+display.majin=Majin
+display.raditz=Raditz
+display.part.antenna=Antena
+display.part.firstformspikes=Primeira
+display.part.secondformspikes=Segunda
+display.part.thirdformbighead=Terceira
+display.part.ultimatespikes=Ultimate
+display.part.backSpike=Espinho Traseira
+display.part.armSpikes=Espinho
+display.part.shoulder=Ombro
+display.part.arcoEars=Arcosiano
+
+display.leftArm=Braco Esquerdo
+display.rightArm=Braco Direito
+display.kiWeapon=Arma de Ki
+display.kiBlade=Lamina de Ki
+display.kiScythe=Foice de Ki
+display.offsetxyz=Desvio (X/Y/Z)
+display.scalexyz=Tamanho (X/Y/Z)
+display.damageMulti=Multiplicador de Dano
+
+display.cosmetics=Cosmeticos
+display.race=Raca
+display.skinOverride=DBC Skin
+display.state=Estado
+display.setDefault=Setar Comum
+display.maskOn=Mascara On
+display.maskOff=Mascara Off
+display.furOn=Pele On
+display.furOff=Pele Off
+display.tail=Cauda
+display.normalTail=Normal
+display.wrappedTail=Presa
+display.noTail=Sem Cauda
+display.base=Base
+display.ssj=SSJ
+display.ssj2=SSJ2
+display.ssj3=SSJ3
+display.ssj4=SSJ4
+display.oozaru=Oozaru
+display.raditz=Raditz
+display.kiBarColor=Barra de Ki
+display.eye=Olho
+display.isBerserk=Furioso
+display.hasEyebrows=Sobrancelhas
+display.mouth=Boca
+display.nose=Nariz
+display.color=Cores
+display.modify=Modificar
+display.formSize=Tamanho da Forma
+display.aura=Aura
+display.auraOn=Aura On
+display.fur=Pele
+display.hair=Cabelo
+display.hairType=Tipo de Cabelo
+display.majinHair=Cabelo de Majin
+display.arcoMask=Mascara de Arcosiano
+display.bodyFur=Pele do Corpo
+display.form=Forma
+display.mastery=Maestria
+display.stackable=Stackable
+display.general=Geral
+display.bodyc1=Corpo C1
+display.bodyc2=Corpo C2
+display.bodyc3=Corpo C3
+display.vanillaStackable=Vanilla Stackable
+display.kkStackable=Kaioken Stackable
+display.kaiokenMulti=KK Multiplicador
+display.kaiokenDrain=KK Drenagem Config
+display.uiStackable=UI Stackable
+display.uiRatio=UI Multiplicador
+display.uiLevelRatio=UI Proporcao de Nivel
+display.godStackable=Deus Stackable
+display.godRatio=Deus Multiplicador
+display.mysticStackable=Mystico Stackable
+display.mysticRatio=Mystico Multiplicador
+display.legendaryMulti=Lendario Multiplicador
+display.legendaryColor=Cor do Lendario
+display.divineMulti=Divino Multiplicador
+display.divineColor=Cor do Divino
+display.majinMulti=Majin Multiplicador
+
+display.selectAura=Sem aura
+display.displaySettings=Configuracoes de Exibicao
+display.secondaryAura=Aura Secundaria
+display.outline=Contorno
+display.selectOutline=Sem Contorno
+display.extra=Extra
+display.size=Tamanho
+display.speed=Velocidade
+display.overrideDBC=Substitui formas DBC
+display.color1=Cor 1
+display.color2=Cor 2
+display.color3=Cor 3
+display.alpha=Alpha
+display.3DType=3D Tipo
+display.2DType=2D Tipo
+display.aura.alwaysShowOutline=Contorno sempre ativo
+display.copyDBCColors=Copiar DBC Auras Cores
+
+
+auratype.none=Nenhum
+auratype.default=Comum
+auratype.base=Base
+auratype.ssgod=SS Deus
+auratype.ssb=SS Azul
+auratype.ssbevo=SS Azul Evo
+auratype.ssrose=SS Rosa
+auratype.ssroseevo=SS Rosa Evo
+auratype.ultimate=Dourado Arcosiano
+auratype.mui=MUI
+auratype.ui=UI
+auratype.god=Deus
+auratype.god_toppo=Deus Toppo
+auratype.legendary=Lendario
+auratype.ssj=SSJ
+auratype.jiren=Jiren
+display.hasLightning=Tem Relampago
+display.lightningColor=Cores de Relampago
+display.lightningAlpha=Alfa dos Relampago
+display.lightningSpeed=Velocidade do Relampago
+display.lightningIntensity=Intensidade dos Relampago
+display.hasKaioken=Tem Kaioken
+display.viewKaioken=Ver Kaioken
+display.kaiokenColor=Kaioken Cor
+display.kaiokenAlpha=Kaioken Alfa
+display.kaiokenSize=Kaioken Tamanho
+display.kaiokenOverride=Kaioken Substitui
+display.kettleModeEnabled=Kettle Modo Ativado
+display.kettleModeCharging=Apenas Carregando
+display.kettleOff=Desligado
+display.kettleModeType=Kettle Modo
+display.kettleOnly=Kettle Apenas
+display.kettlePlusAura=Kettle + Aura
+display.revampAura=Remasterizado
+display.dbcAura=DBC
+
+outline.noiseSize=Tamanho do ruido
+outline.colorSmoothness=Suavidade de Cor
+outline.colorInterpolation=Interpolacao de cores
+outline.pulsingSpeed=Velocidade de Pulsacao
+
+general.menuName=Nome do Menu
+general.strength=Forca
+general.dexterity=Destreza
+general.willpower=Forca do Ki
+general.dbcFormParents=Parente das Formas do DBC
+general.transformOnly=Transformar apenas dos parentes
+general.editParents=Editar Parentes
+general.noParent=Sem Parentes
+general.parentForm=Parentes Formas
+general.noChild=Sem Filho
+general.childForm=Forma do Filho
+general.noForm=Sem Forma
+
+general.ascendSound=Som de Transformacao
+general.descendSound=Som de Voltando a Base
+general.allRaces=Todas as Racas
+general.allSaiyans=Todos os Saiyajins
+
+general.auraSound=Som
+general.kaiokenSound=Kaioken Som
+
+statsheet.dark=Escuro
+statsheet.light=Iluminado
+statsheet.modern=Moderno
+statsheet.old=Antigo
+statsheet.advanced=Avancado
+statsheet.simple=Simples
+statsheet.tooltip=Modificacoes das Dicas
+
+statsheet.stat.charging=Carregando
+statsheet.stat.charging.description=/n§8Saida Carregando §5%6$s §8
+
+statsheet.attribute.STR=STR
+statsheet.attribute.DEX=DEX
+statsheet.attribute.CON=CON
+statsheet.attribute.WIL=WIL
+statsheet.attribute.MND=MND
+statsheet.attribute.SPI=SPI
+
+part.horns=Chifres
+part.ears=Ouvidos
+
+form.clear=Limpou
+form.select=Selecionou
+
+aura.shown=Aparecer
+aura.hidden=Esconder
+
+editor.invalid=O Editor nao pode mostrar
+
+############################
+## Form/Aura information displayed in the CNPC->DBC inventory
+############################
+npcdbc.inventory.dodge=Esquivas
+npcdbc.inventory.stackable=Stackable
+npcdbc.inventory.strength=Forca
+npcdbc.inventory.dexterity=Destreza
+npcdbc.inventory.willpower=Forca do Ki
+npcdbc.inventory.mastery=Maestria
+npcdbc.inventory.selected=Selecionou
+npcdbc.inventory.noauraselected=Nenhuma aura selecionada
+
+npcdbc.inventory.stackable.dbc=DBC
+npcdbc.inventory.stackable.kk=KK
+npcdbc.inventory.stackable.ui=UI
+npcdbc.inventory.stackable.godofdestruction=Deus
+npcdbc.inventory.stackable.mystic=Mystico
+
+
+############################
+## Status Effects 
+## (Shows when hovering over status effects in Modern GUI mode)
+############################
+dbc.se.blocking=Bloqueando
+dbc.se.flying=Voltando
+dbc.se.charging=Carregando
+dbc.se.kaioken=Kaioken
+dbc.se.swooping=Mergulhando
+dbc.se.strain=Tenso
+dbc.se.fullmoon=Lua Cheia
+dbc.se.godpower=Poder de Deus
+dbc.se.majin=Marca Majin
+dbc.se.legendary=Lendario
+dbc.se.divine=Divino
+dbc.se.pain=Dor
+dbc.se.ultrainstinct=Instinto Superior
+dbc.se.transforming=Transformando
+dbc.se.mystic=Mystico
+dbc.se.ko=KO
+dbc.se.fusion=Fusao
+dbc.se.god=Deus da Destruicao
+dbc.se.turbo=Turbo
+dbc.se.strainIn=Strain In
+dbc.se.fatigue=Fadiga
+
+############################
+## MESSAGES
+############################
+
+npcdbc.noFormSelected=Nenhuma forma selecionada
+npcdbc.cooldown=Voce precisa esperar
+npcdbc.noTail=Essa Transformacao requer que voce tenha uma cauda
+npcdbc.nextUnlocked=Voce nao tem a proxima transformacao liberada
+npcdbc.spectator=Voce nao pode se transformar sendo um espectador
+npcdbc.raceIneligible=Sua raca e inelegivel para essa forma
+npcdbc.healthRequirement=Voce precisa estar com a vida abaixo de %d para se transformar na forma selecionada
+npcdbc.pain=Nao pode se transformar com Dor
+npcdbc.wrongDBC=Voce esta na forma errada do DBC
+npcdbc.transformFromParent=Apenas Transforme pelo parente da forma
+npcdbc.fusionSkillFusion=Nao tem a habilidade fusao ativada
+npcdbc.holdPotara=Ambos os players precisam segurar os brincos potaras
+npcdbc.noFuse=Nao pode fundir com o status nofuse ativo
+npcdbc.disableFuse=Habilidade fusao desativada
+npcdbc.potaraTier=Brincos Potaras nao estao no mesmo nivel
+npcdbc.potaraSpit=Os brincos nao estao divididos
+npcdbc.potaraSides=Os Brincos Potaras devem estar em lados opostos
+npcdbc.potaraHash=Os Brincos Potaras devem ser do mesmo par
+npcdbc.potaraFusion=Voce se Fundiu com:
+npcdbc.potaraRequest=Solicitacao de Fusao de:
+npcdbc.fusionFound=Fusao Achada! Aperte SHIFT Para ser um espectador
+npcdbc.notEnoughMastery=Voce nao tem Maestria suficiente para transformacao instantanea
+npcdbc.cannotTransformDirect=Voce nao pode se transformar diretamente nessa forma
+npcdbc.clearedSelection=Selecao de Formas Limpas
+npcdbc.formSelect=Forma Selecionada:
+npcdbc.auraSelect=Aura Selecionada:
+npcdbc.transform=Voce se transformou em:
+npcdbc.descend=Voce se destransformou em:
+npcdbc.descendFrom=Voce desceu a forma para:
+npcdbc.timeExpired=O tempo Acabou!
+
+############################
+## ITEMS
+############################
+# Must have 2 %s - or Format Error
+# (1) - Amount Restored
+# (2) - Type
+capsule.cooldown=%ss Espere
+capsule.restore=Recupere %s %s
+capsule.ki=Ki
+capsule.hp=HP
+capsule.stamina=Stamina
+
+# Must have 3 %s - or Format Error
+# (1) - Status effect name
+# (2) - Status effect level
+# (3) - Effect time
+capsule.effect=Gives "%1s" at level%2s for%3s seconds
+
+item.npcdbc:base_healthcapsule.name=Capsula de Vida
+item.npcdbc:super_healthcapsule.name=Super Capsula de Vida
+item.npcdbc:mega_healthcapsule.name=Mega Capsula de Vida
+item.npcdbc:giga_healthcapsule.name=Giga Capsula de Vida
+item.npcdbc:superior_healthcapsule.name=Superior Capsula de Vida
+item.npcdbc:master_healthcapsule.name=Mestre Capsula de Vida
+
+item.npcdbc:base_kicapsule.name=Capsula de Ki
+item.npcdbc:super_kicapsule.name=Super Capsula de Ki
+item.npcdbc:mega_kicapsule.name=Mega Capsula de Ki
+item.npcdbc:giga_kicapsule.name=Giga Capsula de Ki
+item.npcdbc:superior_kicapsule.name=Superior Capsula de Ki
+item.npcdbc:master_kicapsule.name=Mestre Capsula de Ki
+
+item.npcdbc:base_staminacapsule.name=Capsula de Stamina
+item.npcdbc:super_staminacapsule.name=Super Capsula de Stamina
+item.npcdbc:mega_staminacapsule.name=Mega Capsula de Stamina
+item.npcdbc:giga_staminacapsule.name=Giga Capsula de Stamina
+item.npcdbc:superior_staminacapsule.name=Superior Capsula de Stamina
+item.npcdbc:master_staminacapsule.name=Master Capsula de Stamina
+
+item.npcdbc:base_hp_regencapsule.name=Capsula de Recuperacao de Vida
+item.npcdbc:super_hp_regencapsule.name=Super Capsula de Recuperacao de Vida
+item.npcdbc:mega_hp_regencapsule.name=Mega Capsula de Recuperacao de Vida
+item.npcdbc:base_ki_regencapsule.name=Capsula de Recuperacao de Ki
+item.npcdbc:super_ki_regencapsule.name=Super Capsula de Recuperacao de Ki
+item.npcdbc:mega_ki_regencapsule.name=Mega Capsula de Recuperacao de Ki
+item.npcdbc:base_stamina_regencapsule.name=Capsula de Recuperacao de Stamina
+item.npcdbc:super_stamina_regencapsule.name=Super Capsula de Recuperacao de Stamina
+item.npcdbc:mega_stamina_regencapsule.name=Mega Capsula de Recuperacao de Stamina
+
+item.npcdbc:ko_misccapsule.name=KO Capsula
+item.npcdbc:revive_misccapsule.name=Capsula de Reviver
+item.npcdbc:heat_misccapsule.name=Capsula de Aquecimento
+item.npcdbc:powerpoint_misccapsule.name=Capsula de Poder de Luta
+item.npcdbc:absorption_misccapsule.name=Capsula de Absorcao
+
+item.npcdbc:fruitofmight.name=Fruto do Poder
+item.npcdbc:one_potara.name=Brincos Potaras
+item.npcdbc:two_potara.name=Grandes Brincos Potaras
+item.npcdbc:three_potara.name=Supremos Brincos Potaras
