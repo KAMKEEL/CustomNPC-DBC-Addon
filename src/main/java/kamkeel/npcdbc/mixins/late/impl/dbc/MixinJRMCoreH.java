@@ -337,9 +337,9 @@ public abstract class MixinJRMCoreH {
             float[] bonus = dbcData.bonus.getMultiBonus();
             if (attribute == 0 && bonus[0] != 0) //str
                 resultOriginal += (currAttributes[0] * bonus[0]);
-            else if (attribute == 1 && bonus[0] != 0) //dex
+            else if (attribute == 1 && bonus[1] != 0) //dex
                 resultOriginal += (currAttributes[1] * bonus[1]);
-            else if (attribute == 3 && bonus[0] != 0) //will
+            else if (attribute == 3 && bonus[2] != 0) //will
                 resultOriginal += (currAttributes[3] * bonus[2]);
 
 
