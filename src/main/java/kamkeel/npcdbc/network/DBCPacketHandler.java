@@ -5,7 +5,6 @@ import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
-import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.network.packets.*;
 import kamkeel.npcdbc.network.packets.aura.*;
@@ -15,12 +14,12 @@ import kamkeel.npcdbc.network.packets.outline.DBCRemoveOutline;
 import kamkeel.npcdbc.network.packets.outline.DBCRequestOutline;
 import kamkeel.npcdbc.network.packets.outline.DBCSaveOutline;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.world.WorldServer;
+import noppes.npcs.LogWriter;
 
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 public final class DBCPacketHandler {
@@ -33,7 +32,7 @@ public final class DBCPacketHandler {
         map.put(PingPacket.packetName, new PingPacket());
         map.put(TransformPacket.packetName, new TransformPacket());
         map.put(DBCSetValPacket.packetName, new DBCSetValPacket());
-        map.put(DBCInfoSync.packetName, new DBCInfoSync());
+        map.put(DBCInfoSyncPacket.packetName, new DBCInfoSyncPacket());
         map.put(DBCSelectForm.packetName, new DBCSelectForm());
         map.put(DBCSelectAura.packetName, new DBCSelectAura());
         map.put(DBCSetAura.packetName, new DBCSetAura());
@@ -91,35 +90,73 @@ public final class DBCPacketHandler {
         }
     }
 
-    public void sendToPlayer(FMLProxyPacket packet, EntityPlayerMP player) {
-        if (packet != null && CustomNpcPlusDBC.side() == Side.SERVER) {
-            channels.get(packet.channel()).sendTo(packet, player);
+
+    /**
+     * Sends every FMLProxyPacket produced by packet.generatePackets()
+     */
+    private void sendAllPackets(AbstractPacket packet, SendAction action) {
+        // get all generated FMLProxyPacket objects (could be 1 for normal, or many for large)
+        List<FMLProxyPacket> proxyPackets = packet.generatePackets();
+        if (proxyPackets.isEmpty()) {
+            LogWriter.error("Warning: No packets generated for " + packet.getClass().getName());
+        }
+
+        for (FMLProxyPacket proxy : proxyPackets) {
+            action.send(proxy);
         }
     }
 
-    public void sendToServer(FMLProxyPacket packet) {
-        if (packet != null) {
-            packet.setTarget(Side.SERVER);
-            channels.get(packet.channel()).sendToServer(packet);
+    // ------------------------------------------------------------------------
+    // Public API methods for sending
+
+    public void sendToPlayer(AbstractPacket packet, EntityPlayerMP player) {
+        FMLEventChannel eventChannel = channels.get(packet.getChannel());
+        if (eventChannel == null) {
+            LogWriter.error("Error: Event channel is null for packet: " + packet.getClass().getName());
+            return;
         }
+        sendAllPackets(packet, p -> eventChannel.sendTo(p, player));
     }
 
-    public void sendToTrackingPlayers(Entity entity, FMLProxyPacket packet) {
-        if (packet != null && CustomNpcPlusDBC.side() == Side.SERVER) {
-            EntityTracker tracker = ((WorldServer) entity.worldObj).getEntityTracker();
-            tracker.func_151248_b(entity, packet); // Send packet to tracking players
+    public void sendToServer(AbstractPacket packet) {
+        FMLEventChannel eventChannel = channels.get(packet.getChannel());
+        if (eventChannel == null) {
+            LogWriter.error("Error: Event channel is null for packet: " + packet.getClass().getName());
+            return;
         }
+        sendAllPackets(packet, eventChannel::sendToServer);
     }
 
-    public void sendAround(Entity entity, double range, FMLProxyPacket packet) {
-        if (packet != null && CustomNpcPlusDBC.side() == Side.SERVER) {
-            channels.get(packet.channel()).sendToAllAround(packet, new NetworkRegistry.TargetPoint(entity.dimension, entity.posX, entity.posY, entity.posZ, range));
+    public void sendToAll(AbstractPacket packet) {
+        FMLEventChannel eventChannel = channels.get(packet.getChannel());
+        if (eventChannel == null) {
+            LogWriter.error("Error: Event channel is null for packet: " + packet.getClass().getName());
+            return;
         }
+        sendAllPackets(packet, eventChannel::sendToAll);
     }
 
-    public void sendToAll(FMLProxyPacket packet) {
-        if (packet != null && CustomNpcPlusDBC.side() == Side.SERVER) {
-            channels.get(packet.channel()).sendToAll(packet);
+    public void sendToDimension(AbstractPacket packet, final int dimensionId) {
+        FMLEventChannel eventChannel = channels.get(packet.getChannel());
+        if (eventChannel == null) {
+            LogWriter.error("Error: Event channel is null for packet: " + packet.getClass().getName());
+            return;
         }
+        sendAllPackets(packet, p -> eventChannel.sendToDimension(p, dimensionId));
+    }
+
+    public void sendToTrackingPlayers(final Entity entity, AbstractPacket packet) {
+        FMLEventChannel eventChannel = channels.get(packet.getChannel());
+        if (eventChannel == null) {
+            LogWriter.error("Error: Event channel is null for packet: " + packet.getClass().getName());
+            return;
+        }
+        final NetworkRegistry.TargetPoint point = new NetworkRegistry.TargetPoint(entity.dimension, entity.posX, entity.posY, entity.posZ, 60);
+        sendAllPackets(packet, p -> eventChannel.sendToAllAround(p, point));
+    }
+
+    // Simple functional interface to unify the "send" action
+    private interface SendAction {
+        void send(FMLProxyPacket proxy);
     }
 }

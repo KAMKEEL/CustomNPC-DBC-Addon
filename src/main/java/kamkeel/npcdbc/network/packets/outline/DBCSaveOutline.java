@@ -5,6 +5,7 @@ import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
+import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -37,8 +38,8 @@ public class DBCSaveOutline extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        Server.writeString(out, prevName);
-        Server.writeNBT(out, outline);
+        ByteBufUtils.writeString(out, prevName);
+        ByteBufUtils.writeNBT(out, outline);
     }
 
     @Override
@@ -46,10 +47,10 @@ public class DBCSaveOutline extends AbstractPacket {
         if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCAURA))
             return;
 
-        String prevName = Server.readString(in);
+        String prevName = ByteBufUtils.readString(in);
 
         Outline outline = new Outline();
-        outline.readFromNBT(Server.readNBT(in));
+        outline.readFromNBT(ByteBufUtils.readNBT(in));
 
         OutlineController.getInstance().saveOutline(outline);
 

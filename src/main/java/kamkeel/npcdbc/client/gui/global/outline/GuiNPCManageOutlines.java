@@ -55,7 +55,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
         visualDisplay.auraOn = false;
         visualDisplay.formID = -1;
 
-        DBCPacketHandler.Instance.sendToServer(new DBCRequestOutline(-1).generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestOutline(-1));
     }
 
     public void initGui() {
@@ -115,7 +115,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
             while (data.containsKey(name))
                 name += "_";
             Outline outline = new Outline(-1, name);
-            DBCPacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), "").generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), ""));
         }
 
         if (button.id == 1) {
@@ -128,7 +128,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
             Outline outline = (Outline) this.outline.clone();
             while (data.containsKey(outline.name))
                 outline.name += "_";
-            DBCPacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), "").generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), ""));
         }
 
         if (button.id == 3) {
@@ -324,7 +324,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
             selected = scrollOutlines.getSelected();
             originalName = scrollOutlines.getSelected();
             if (selected != null && !selected.isEmpty()) {
-                DBCPacketHandler.Instance.sendToServer(new DBCGetOutline(data.get(selected)).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new DBCGetOutline(data.get(selected)));
             }
         }
     }
@@ -337,7 +337,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
     @Override
     public void save() {
         if (this.selected != null && this.data.containsKey(this.selected) && this.outline != null) {
-            DBCPacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), originalName).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), originalName));
         }
     }
 
@@ -375,7 +375,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
             return;
         if (id == 1) {
             if (data.containsKey(scrollOutlines.getSelected())) {
-                DBCPacketHandler.Instance.sendToServer(new DBCRemoveOutline(data.get(scrollOutlines.getSelected())).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new DBCRemoveOutline(data.get(scrollOutlines.getSelected())));
                 scrollOutlines.clear();
                 outline = new Outline();
 

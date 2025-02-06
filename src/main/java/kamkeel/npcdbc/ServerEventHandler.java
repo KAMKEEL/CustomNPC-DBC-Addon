@@ -10,8 +10,12 @@ import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.FusionHandler;
+import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -22,10 +26,12 @@ import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.CapsuleInfo;
+import kamkeel.npcdbc.network.packets.DBCInfoSyncPacket;
 import kamkeel.npcdbc.network.packets.LoginInfo;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcs.network.enums.EnumSyncAction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -54,10 +60,10 @@ public class ServerEventHandler {
             return;
         DBCData dbcData = DBCData.get(event.player);
         dbcData.loadNBTData(true);
-        DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.COOLDOWN).generatePacket(), (EntityPlayerMP) event.player);
-        DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.STRENGTH).generatePacket(), (EntityPlayerMP) event.player);
-        DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.EFFECT_TIME).generatePacket(), (EntityPlayerMP) event.player);
-        DBCPacketHandler.Instance.sendToPlayer(new LoginInfo().generatePacket(), (EntityPlayerMP) event.player);
+        DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.COOLDOWN), (EntityPlayerMP) event.player);
+        DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.STRENGTH), (EntityPlayerMP) event.player);
+        DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.EFFECT_TIME), (EntityPlayerMP) event.player);
+        DBCPacketHandler.Instance.sendToPlayer(new LoginInfo(), (EntityPlayerMP) event.player);
     }
 
     @SubscribeEvent
@@ -92,7 +98,7 @@ public class ServerEventHandler {
                 if (((IPlayerDBCInfo) playerData).getDBCInfoUpdate()) {
                     NBTTagCompound formCompound = new NBTTagCompound();
                     playerData.getDBCSync(formCompound);
-                    NoppesUtilServer.sendDBCCompound((EntityPlayerMP) player, formCompound);
+                    DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.PLAYERDATA, EnumSyncAction.RELOAD, -1, formCompound), (EntityPlayerMP) player);
                     ((IPlayerDBCInfo) playerData).endDBCInfo();
                 }
             }

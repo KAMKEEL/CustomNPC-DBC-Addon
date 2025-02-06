@@ -343,7 +343,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public void syncTracking() {
-        DBCPacketHandler.Instance.sendToTrackingPlayers(player, new PingPacket(this).generatePacket());
+        DBCPacketHandler.Instance.sendToTrackingPlayers(player, new PingPacket(this));
     }
 
     public NBTTagCompound getRawCompound() {
@@ -668,7 +668,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         StatusEffects = setSE(3, on);
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-            DBCPacketHandler.Instance.sendToPlayer(new TurboPacket(on).generatePacket(), (EntityPlayerMP) player);
+            DBCPacketHandler.Instance.sendToPlayer(new TurboPacket(on), (EntityPlayerMP) player);
         } else {
             DBCKiTech.turbo = on;
         }
@@ -788,7 +788,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public void setFlight(boolean flightOn) {
-        DBCPacketHandler.Instance.sendToPlayer(new DBCSetFlight(flightOn).generatePacket(), (EntityPlayerMP) player);
+        DBCPacketHandler.Instance.sendToPlayer(new DBCSetFlight(flightOn), (EntityPlayerMP) player);
     }
 
     public float getBaseFlightSpeed() {
@@ -941,7 +941,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             } else {
                 packet = new DBCUpdateLockOn(lockOnTarget.getEntityId());
             }
-            DBCPacketHandler.Instance.sendToPlayer(packet.generatePacket(), (EntityPlayerMP) player);
+            DBCPacketHandler.Instance.sendToPlayer(packet, (EntityPlayerMP) player);
             return;
         }
 

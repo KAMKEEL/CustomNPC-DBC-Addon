@@ -70,7 +70,7 @@ public class ClientSound extends MovingSound {
 
     public void play(boolean forOthers) {
         if (forOthers)
-            DBCPacketHandler.Instance.sendToServer(new PlaySound(this.soundSource).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new PlaySound(this.soundSource));
         else {
             PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, soundSource.soundDir, volume, getPitch());
 
@@ -86,7 +86,7 @@ public class ClientSound extends MovingSound {
         donePlaying = true; // this is all we need, let game and verifySounds handle rest
 
         if (forOthers)
-            DBCPacketHandler.Instance.sendToServer(new StopSound(this.soundSource).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new StopSound(this.soundSource));
     }
 
     public boolean isPlaying() {

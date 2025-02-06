@@ -7,9 +7,7 @@ import kamkeel.npcdbc.data.PlayerBonus;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DBCDataBonus {

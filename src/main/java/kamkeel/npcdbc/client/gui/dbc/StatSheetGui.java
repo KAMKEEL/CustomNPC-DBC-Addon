@@ -28,7 +28,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
-import java.lang.Class;
 import java.net.URI;
 import java.text.DecimalFormat;
 import java.util.Arrays;

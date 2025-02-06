@@ -6,16 +6,26 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractPacket {
 
-    public final FMLProxyPacket generatePacket() {
+    public FMLProxyPacket generatePacket() {
         ByteBuf buf = Unpooled.buffer();
         try {
             sendData(buf);
             return new FMLProxyPacket(buf, getChannel());
         } catch (Exception ignored) {}
         return null;
+    }
+
+    public List<FMLProxyPacket> generatePackets() {
+        FMLProxyPacket single = generatePacket();
+        if (single == null) {
+            return Collections.emptyList();
+        }
+        return Collections.singletonList(single);
     }
 
     public abstract String getChannel();

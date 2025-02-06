@@ -13,6 +13,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
+import kamkeel.npcs.network.packets.data.large.ScrollDataPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -74,7 +75,7 @@ public class PlayerDataUtil {
                 map.put(useMenuName ? form.menuName : form.name, form.id);
             }
         }
-        sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map);
     }
 
     public static void sendAuraDBCInfo(EntityPlayerMP player) {
@@ -87,7 +88,7 @@ public class PlayerDataUtil {
                 map.put(aura.name, aura.id);
             }
         }
-        sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map);
     }
 
     /**

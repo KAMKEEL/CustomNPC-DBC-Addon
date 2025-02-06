@@ -16,7 +16,7 @@ public class Dodge {
         if (InstantTransmission.instantTrans(p, tar, a, lookinga, distance, r1, r2, type)) {
             int random1 = new Random().nextInt(3) + 1;
             SoundSource soundSource = new SoundSource("jinryuudragonbc:DBC4.dodge" + random1, p);
-            DBCPacketHandler.Instance.sendToTrackingPlayers(soundSource.entity, new PlaySound(soundSource).generatePacket());
+            DBCPacketHandler.Instance.sendToTrackingPlayers(soundSource.entity, new PlaySound(soundSource));
             return true;
         }
 

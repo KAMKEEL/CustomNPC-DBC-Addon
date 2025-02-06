@@ -75,7 +75,7 @@ public class GuiNpcFormMenu {
         if (this.parent != null) {
             GuiNpcTextField.unfocus();
             ((SubGuiInterface)this.parent).close();
-            DBCPacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), this.originalName).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), this.originalName));
         }
     }
 

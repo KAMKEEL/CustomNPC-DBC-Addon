@@ -52,7 +52,7 @@ public final class StopSound extends AbstractPacket {
     public static void stop(SoundSource sound) {
         if (sound == null || sound.entity == null)
             return;
-        DBCPacketHandler.Instance.sendToTrackingPlayers(sound.entity, new StopSound(sound).generatePacket());
+        DBCPacketHandler.Instance.sendToTrackingPlayers(sound.entity, new StopSound(sound));
     }
 
 

@@ -1,10 +1,10 @@
 package kamkeel.npcdbc.command;
 
-import kamkeel.command.CommandKamkeelBase;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.scripted.DBCAPI;
+import kamkeel.npcs.command.CommandKamkeelBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;

@@ -55,14 +55,14 @@ public final class PlaySound extends AbstractPacket {
         if (sound == null || sound.entity == null)
             return;
 
-        DBCPacketHandler.Instance.sendToTrackingPlayers(sound.entity, new PlaySound(sound).generatePacket());
+        DBCPacketHandler.Instance.sendToTrackingPlayers(sound.entity, new PlaySound(sound));
     }
 
     public static void play(Entity entity, String soundDir) {
         if (entity == null)
             return;
         SoundSource sound = new SoundSource(soundDir, entity);
-        DBCPacketHandler.Instance.sendToTrackingPlayers(sound.entity, new PlaySound(sound).generatePacket());
+        DBCPacketHandler.Instance.sendToTrackingPlayers(sound.entity, new PlaySound(sound));
     }
 
     @SideOnly(Side.CLIENT)

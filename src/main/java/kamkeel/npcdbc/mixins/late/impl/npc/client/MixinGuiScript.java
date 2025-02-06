@@ -1,8 +1,6 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import kamkeel.npcdbc.constants.DBCScriptType;
 import noppes.npcs.client.gui.GuiScript;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

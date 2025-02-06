@@ -1,19 +1,15 @@
 package kamkeel.npcdbc.mixins.late.impl.npc;
 
-import kamkeel.npcs.addon.DBCAddon;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.controllers.DBCSyncController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
-import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
-import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcs.addon.DBCAddon;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,8 +22,6 @@ import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-
-import java.io.IOException;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
 
