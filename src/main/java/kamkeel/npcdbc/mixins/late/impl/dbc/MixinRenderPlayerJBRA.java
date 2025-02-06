@@ -208,7 +208,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             ClientProxy.lastRendererGUIPlayerID = pl;
         else
             ClientProxy.lastRendererGUIPlayerID = -1;
-        JRMCoreH.data2[pl] = data.State + ";" + data.State2;
+        if(JRMCoreH.data2 != null)
+            JRMCoreH.data2[pl] = data.State + ";" + data.State2;
         return JRMCoreH.data2;
     }
 

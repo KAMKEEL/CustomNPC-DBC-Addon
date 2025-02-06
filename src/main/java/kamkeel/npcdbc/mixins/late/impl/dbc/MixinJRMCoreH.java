@@ -86,12 +86,8 @@ public abstract class MixinJRMCoreH {
         boolean majin = JRMCoreH.StusEfcts(12, data.StatusEffects);
         boolean fusion = (JRMCoreH.StusEfcts(10, data.StatusEffects) || JRMCoreH.StusEfcts(11, data.StatusEffects));
         boolean legendary = JRMCoreH.StusEfcts(14, data.StatusEffects);
-        boolean kaioken = JRMCoreH.StusEfcts(5, data.StatusEffects);
-        boolean mystic = JRMCoreH.StusEfcts(13, data.StatusEffects);
-        boolean ui = JRMCoreH.StusEfcts(19, data.StatusEffects);
-        boolean GoD = JRMCoreH.StusEfcts(20, data.StatusEffects);
 
-        int wil = JRMCoreH.getPlayerAttribute(data.player, data.stats.getAllAttributes(), 3, 0, 0, data.Race, data.RacialSkills, data.Release, data.ArcReserve, legendary, majin, kaioken, mystic, ui, GoD, data.Powertype, data.Skills.split(","), fusion, data.MajinAbsorptionData);
+        int wil = JRMCoreH.getPlayerAttribute(data.player, data.stats.getAllAttributes(), 3, 0, 0, data.Race, data.RacialSkills, data.Release, data.ArcReserve, legendary, majin, false, false, false, false, data.Powertype, data.Skills.split(","), fusion, data.MajinAbsorptionData);
         int stat2 = JRMCoreH.stat(player, 3, data.Powertype, 4, wil, data.Race, data.Class, 0.0F);
 
         stat.set(stat2);

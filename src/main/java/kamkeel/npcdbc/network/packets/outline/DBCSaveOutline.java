@@ -47,12 +47,16 @@ public class DBCSaveOutline extends AbstractPacket {
             return;
 
         String prevName = Server.readString(in);
-        if(!prevName.isEmpty()){
-            OutlineController.getInstance().deleteOutlineFile(prevName);
-        }
+
         Outline outline = new Outline();
         outline.readFromNBT(Server.readNBT(in));
+
         OutlineController.getInstance().saveOutline(outline);
+
+        if(!prevName.isEmpty() && !prevName.equals(outline.name)){
+            OutlineController.getInstance().deleteOutlineFile(prevName);
+        }
+
         NetworkUtility.sendCustomOutlineDataAll((EntityPlayerMP) player);
     }
 }

@@ -116,7 +116,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
             while (data.containsKey(name))
                 name += "_";
             Form form = new Form(-1, name);
-            PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT()).generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), name).generatePacket());
         }
         if (button.id == 1) {
             if (data.containsKey(scrollForms.getSelected())) {
@@ -133,7 +133,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
             Form form = (Form) this.form.clone();
             while (data.containsKey(form.name))
                 form.name += "_";
-            PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT()).generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), form.name).generatePacket());
         }
 
     }

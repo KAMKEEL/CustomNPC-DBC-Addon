@@ -47,12 +47,16 @@ public class DBCSaveAura extends AbstractPacket {
             return;
 
         String prevName = Server.readString(in);
-        if(!prevName.isEmpty()){
-            AuraController.getInstance().deleteAuraFile(prevName);
-        }
+
         Aura aura = new Aura();
         aura.readFromNBT(Server.readNBT(in));
+
         AuraController.getInstance().saveAura(aura);
+
+        if(!prevName.isEmpty() && !prevName.equals(aura.name)){
+            AuraController.getInstance().deleteAuraFile(prevName);
+        }
+
         NetworkUtility.sendCustomAuraDataAll((EntityPlayerMP) player);
     }
 }

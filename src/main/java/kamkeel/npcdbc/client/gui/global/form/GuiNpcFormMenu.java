@@ -17,6 +17,7 @@ public class GuiNpcFormMenu {
     public final SubGuiInterface parent;
     private GuiMenuTopButton[] topButtons;
     private int activeMenu;
+    private final String originalName;
     private Form form;
 
     public GuiNpcFormMenu(GuiNPCManageForms formsParent, SubGuiInterface parent, int activeMenu, Form form) {
@@ -24,6 +25,7 @@ public class GuiNpcFormMenu {
         this.parent = parent;
         this.activeMenu = activeMenu;
         this.form = form;
+        this.originalName = form.name;
     }
 
 
@@ -73,7 +75,7 @@ public class GuiNpcFormMenu {
         if (this.parent != null) {
             GuiNpcTextField.unfocus();
             ((SubGuiInterface)this.parent).close();
-            PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT()).generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), this.originalName).generatePacket());
         }
     }
 

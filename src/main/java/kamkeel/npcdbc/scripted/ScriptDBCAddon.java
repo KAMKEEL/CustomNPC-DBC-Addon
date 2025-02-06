@@ -766,6 +766,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (formID == -1) {
             c.currentForm = -1;
+            c.updateClient();
             return;
         }
 
