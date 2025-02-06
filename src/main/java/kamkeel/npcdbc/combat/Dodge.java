@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.combat;
 
 import kamkeel.npcdbc.data.SoundSource;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.PlaySound;
 import net.minecraft.entity.Entity;
 
@@ -16,7 +16,7 @@ public class Dodge {
         if (InstantTransmission.instantTrans(p, tar, a, lookinga, distance, r1, r2, type)) {
             int random1 = new Random().nextInt(3) + 1;
             SoundSource soundSource = new SoundSource("jinryuudragonbc:DBC4.dodge" + random1, p);
-            PacketHandler.Instance.sendToTrackingPlayers(soundSource.entity, new PlaySound(soundSource).generatePacket());
+            DBCPacketHandler.Instance.sendToTrackingPlayers(soundSource.entity, new PlaySound(soundSource).generatePacket());
             return true;
         }
 

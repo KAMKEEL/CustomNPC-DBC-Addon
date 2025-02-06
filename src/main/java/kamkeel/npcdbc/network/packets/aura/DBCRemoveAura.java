@@ -7,6 +7,7 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
+import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -51,6 +52,6 @@ public class DBCRemoveAura extends AbstractPacket {
         AuraController.getInstance().delete(auraID);
         NetworkUtility.sendCustomAuraDataAll((EntityPlayerMP) player);
         NBTTagCompound compound = (new Aura()).writeToNBT();
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
     }
 }

@@ -10,7 +10,7 @@ import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCRequestFormWheel;
 import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -78,7 +78,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
             wheelSlot[i] = new FormWheelSegment(this, i);
             wheelSlot[i].setForm(dbcInfo.formWheel[i], false);
         }
-        PacketHandler.Instance.sendToServer(new DBCRequestFormWheel().generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestFormWheel().generatePacket());
 
         // Stops the GUI from un-pressing all keys for you.
         mc.inGameHasFocus = false;
@@ -328,7 +328,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
                     mc.mouseHelper.grabMouseCursor();
                 }
             } else {
-                PacketHandler.Instance.sendToServer(new DBCSelectForm(-1, false).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(-1, false).generatePacket());
                 close();
             }
         } else {

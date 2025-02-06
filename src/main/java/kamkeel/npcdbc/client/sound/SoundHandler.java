@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.client.sound;
 
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.StopSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -18,7 +18,7 @@ public class SoundHandler {
             ClientSound sound = iter.next();
             if (sound.entity == entity && sound.soundSource.soundDir.toLowerCase().contains(soundContains.toLowerCase())) {
                 Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
-                PacketHandler.Instance.sendToServer(new StopSound(sound.soundSource).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new StopSound(sound.soundSource).generatePacket());
                 iter.remove();
             }
         }

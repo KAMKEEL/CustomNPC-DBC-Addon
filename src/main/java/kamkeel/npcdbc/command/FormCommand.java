@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.command;
 
 import JinRyuu.JRMCore.JRMCoreH;
-import kamkeel.command.CommandKamkeelBase;
+import kamkeel.npcs.command.CommandKamkeelBase;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.TransformController;

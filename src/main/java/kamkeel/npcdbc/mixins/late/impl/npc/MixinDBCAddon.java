@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.mixins.late.impl.npc;
 
-import io.netty.buffer.ByteBuf;
-import kamkeel.addon.DBCAddon;
+import kamkeel.npcs.addon.DBCAddon;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.controllers.DBCSyncController;
 import kamkeel.npcdbc.controllers.FormController;
@@ -22,8 +21,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.NpcDamageSource;
-import noppes.npcs.Server;
-import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;

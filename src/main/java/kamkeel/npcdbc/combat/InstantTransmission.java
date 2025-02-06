@@ -1,8 +1,5 @@
 package kamkeel.npcdbc.combat;
 
-import kamkeel.npcdbc.data.SoundSource;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.PlaySound;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockTallGrass;

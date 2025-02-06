@@ -5,6 +5,7 @@ import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
+import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -48,6 +49,6 @@ public class DBCRemoveOutline extends AbstractPacket {
         OutlineController.getInstance().delete(outlineID);
         NetworkUtility.sendCustomOutlineDataAll((EntityPlayerMP) player);
         NBTTagCompound compound = (new Outline()).writeToNBT();
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
     }
 }

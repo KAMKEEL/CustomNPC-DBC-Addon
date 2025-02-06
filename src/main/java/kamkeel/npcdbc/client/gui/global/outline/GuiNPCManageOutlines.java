@@ -5,7 +5,7 @@ import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.outline.DBCGetOutline;
 import kamkeel.npcdbc.network.packets.outline.DBCRemoveOutline;
 import kamkeel.npcdbc.network.packets.outline.DBCRequestOutline;
@@ -55,7 +55,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
         visualDisplay.auraOn = false;
         visualDisplay.formID = -1;
 
-        PacketHandler.Instance.sendToServer(new DBCRequestOutline(-1).generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestOutline(-1).generatePacket());
     }
 
     public void initGui() {
@@ -115,7 +115,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
             while (data.containsKey(name))
                 name += "_";
             Outline outline = new Outline(-1, name);
-            PacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), "").generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), "").generatePacket());
         }
 
         if (button.id == 1) {
@@ -128,7 +128,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
             Outline outline = (Outline) this.outline.clone();
             while (data.containsKey(outline.name))
                 outline.name += "_";
-            PacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), "").generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), "").generatePacket());
         }
 
         if (button.id == 3) {
@@ -324,7 +324,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
             selected = scrollOutlines.getSelected();
             originalName = scrollOutlines.getSelected();
             if (selected != null && !selected.isEmpty()) {
-                PacketHandler.Instance.sendToServer(new DBCGetOutline(data.get(selected)).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new DBCGetOutline(data.get(selected)).generatePacket());
             }
         }
     }
@@ -337,7 +337,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
     @Override
     public void save() {
         if (this.selected != null && this.data.containsKey(this.selected) && this.outline != null) {
-            PacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), originalName).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), originalName).generatePacket());
         }
     }
 
@@ -375,7 +375,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
             return;
         if (id == 1) {
             if (data.containsKey(scrollOutlines.getSelected())) {
-                PacketHandler.Instance.sendToServer(new DBCRemoveOutline(data.get(scrollOutlines.getSelected())).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new DBCRemoveOutline(data.get(scrollOutlines.getSelected())).generatePacket());
                 scrollOutlines.clear();
                 outline = new Outline();
 

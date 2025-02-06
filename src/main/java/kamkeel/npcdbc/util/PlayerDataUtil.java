@@ -26,8 +26,6 @@ import noppes.npcs.scripted.NpcAPI;
 import java.util.HashMap;
 import java.util.Map;
 
-import static noppes.npcs.NoppesUtilServer.sendScrollData;
-
 public class PlayerDataUtil {
 
     /**

@@ -26,8 +26,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.entity.EntityAura;
-import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetFlight;
 import kamkeel.npcdbc.network.packets.DBCUpdateLockOn;
 import kamkeel.npcdbc.network.packets.PingPacket;
@@ -344,7 +343,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public void syncTracking() {
-        PacketHandler.Instance.sendToTrackingPlayers(player, new PingPacket(this).generatePacket());
+        DBCPacketHandler.Instance.sendToTrackingPlayers(player, new PingPacket(this).generatePacket());
     }
 
     public NBTTagCompound getRawCompound() {
@@ -669,7 +668,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         StatusEffects = setSE(3, on);
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-            PacketHandler.Instance.sendToPlayer(new TurboPacket(on).generatePacket(), (EntityPlayerMP) player);
+            DBCPacketHandler.Instance.sendToPlayer(new TurboPacket(on).generatePacket(), (EntityPlayerMP) player);
         } else {
             DBCKiTech.turbo = on;
         }
@@ -789,7 +788,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public void setFlight(boolean flightOn) {
-        PacketHandler.Instance.sendToPlayer(new DBCSetFlight(flightOn).generatePacket(), (EntityPlayerMP) player);
+        DBCPacketHandler.Instance.sendToPlayer(new DBCSetFlight(flightOn).generatePacket(), (EntityPlayerMP) player);
     }
 
     public float getBaseFlightSpeed() {
@@ -942,7 +941,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             } else {
                 packet = new DBCUpdateLockOn(lockOnTarget.getEntityId());
             }
-            PacketHandler.Instance.sendToPlayer(packet.generatePacket(), (EntityPlayerMP) player);
+            DBCPacketHandler.Instance.sendToPlayer(packet.generatePacket(), (EntityPlayerMP) player);
             return;
         }
 
