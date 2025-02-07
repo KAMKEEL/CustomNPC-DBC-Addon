@@ -1,14 +1,13 @@
 package kamkeel.npcdbc.client.gui.global.effects;
 
-import akka.japi.Effect;
-import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.outline.DBCGetOutline;
 import kamkeel.npcdbc.network.packets.outline.DBCRemoveOutline;
 import kamkeel.npcdbc.network.packets.outline.DBCRequestOutline;
 import kamkeel.npcdbc.network.packets.outline.DBCSaveOutline;
+import kamkeel.npcs.network.PacketHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
@@ -35,7 +34,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
 
     public GuiNPCManageEffects(EntityNPCInterface npc) {
         super(npc);
-        PacketHandler.Instance.sendToServer(new DBCRequestOutline(-1).generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestOutline(-1));
     }
 
     public void initGui() {
@@ -95,7 +94,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
             while (data.containsKey(name))
                 name += "_";
             Outline outline = new Outline(-1, name);
-            PacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), "").generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), ""));
         }
 
         if (button.id == 1) {
@@ -194,7 +193,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
             selected = scrollEffects.getSelected();
             originalName = scrollEffects.getSelected();
             if (selected != null && !selected.isEmpty()) {
-                PacketHandler.Instance.sendToServer(new DBCGetOutline(data.get(selected)).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new DBCGetOutline(data.get(selected)));
             }
         }
     }
@@ -207,7 +206,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
     @Override
     public void save() {
         if (this.selected != null && this.data.containsKey(this.selected) && this.effect != null) {
-            PacketHandler.Instance.sendToServer(new DBCSaveOutline(effect.writeToNBT(true), originalName).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveOutline(effect.writeToNBT(true), originalName));
         }
     }
 
@@ -224,7 +223,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
             return;
         if (id == 1) {
             if (data.containsKey(scrollEffects.getSelected())) {
-                PacketHandler.Instance.sendToServer(new DBCRemoveOutline(data.get(scrollEffects.getSelected())).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new DBCRemoveOutline(data.get(scrollEffects.getSelected())));
                 scrollEffects.clear();
                 effect = new CustomEffect();
                 initGui();

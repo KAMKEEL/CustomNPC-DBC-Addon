@@ -5,11 +5,11 @@ import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
+import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.Server;
-import noppes.npcs.constants.EnumPacketClient;
 
 import java.io.IOException;
 
@@ -42,7 +42,7 @@ public final class DBCRequestEffect extends AbstractPacket {
             if (effect != null) {
                 NBTTagCompound compound = effect.writeToNBT(false);
                 compound.setString("PACKETTYPE", "Effect");
-                Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+                GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
             }
         } else {
             NetworkUtility.sendCustomOutlineDataAll((EntityPlayerMP) player);

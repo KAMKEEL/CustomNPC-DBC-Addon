@@ -4,11 +4,11 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
 import kamkeel.npcdbc.network.AbstractPacket;
+import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.Server;
-import noppes.npcs.constants.EnumPacketClient;
 
 import java.io.IOException;
 
@@ -44,6 +44,6 @@ public final class DBCGetEffect extends AbstractPacket {
                 compound.setString("Type", "ViewEffect");
             }
         }
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
     }
 }

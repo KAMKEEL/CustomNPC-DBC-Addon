@@ -5,12 +5,12 @@ import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
+import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.CustomNpcsPermissions;
 import noppes.npcs.Server;
-import noppes.npcs.constants.EnumPacketClient;
 
 import java.io.IOException;
 
@@ -48,6 +48,6 @@ public class DBCRemoveEffect extends AbstractPacket {
         StatusEffectController.getInstance().delete(effectID);
         NetworkUtility.sendCustomEffectDataAll((EntityPlayerMP) player);
         NBTTagCompound compound = (new CustomEffect()).writeToNBT(false);
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
     }
 }

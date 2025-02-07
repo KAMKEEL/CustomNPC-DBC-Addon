@@ -5,8 +5,6 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.DBCInfoSync;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.DBCInfoSyncPacket;
 import kamkeel.npcs.network.enums.EnumSyncAction;
@@ -45,6 +43,14 @@ public class DBCSyncController {
         }
         compound.setTag("Data", list);
         DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.RELOAD, -1, compound), player);
+
+        list = new NBTTagList();
+        compound = new NBTTagCompound();
+        for (CustomEffect effect : StatusEffectController.getInstance().customEffects.values()) {
+            list.appendTag(effect.writeToNBT(false));
+        }
+        compound.setTag("Data", list);
+        DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.CUSTOM_EFFECT, EnumSyncAction.RELOAD, -1, compound), player);
     }
 
     public static void clientSync(int synctype, NBTTagCompound compound) {
@@ -78,6 +84,16 @@ public class DBCSyncController {
 
             OutlineController.getInstance().customOutlines = OutlineController.getInstance().customOutlinesSync;
             OutlineController.getInstance().customOutlinesSync = new HashMap<>();
+        } else if (synctype == DBCSyncType.CUSTOM_EFFECT) {
+            NBTTagList list = compound.getTagList("Data", 10);
+            for (int i = 0; i < list.tagCount(); i++) {
+                CustomEffect effect = new CustomEffect();
+                effect.readFromNBT(list.getCompoundTagAt(i));
+                StatusEffectController.getInstance().customEffectsSync.put(effect.id, effect);
+            }
+
+            StatusEffectController.getInstance().customEffects = StatusEffectController.getInstance().customEffectsSync;
+            StatusEffectController.getInstance().customEffectsSync = new HashMap<>();
         }
     }
 
