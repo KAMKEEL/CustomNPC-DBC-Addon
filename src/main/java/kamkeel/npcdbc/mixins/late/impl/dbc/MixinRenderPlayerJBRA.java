@@ -318,7 +318,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
          * @INFO: This fixes base hair color.
          */
         data.renderingHairColor = hairCol.get();
-        System.out.println("A");
 
         if (form != null) {
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
@@ -469,7 +468,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             if (playerColors.hasAnyColor(form.display, "bodyC2"))
                 bodyC2.set(playerColors.getProperColor(form.display, "bodyC2"));
             if (playerColors.hasAnyColor(form.display, "bodyC3"))
-                bodyC3.set(playerColors.getProperColor(form.display, "bodyC3"));;
+                bodyC3.set(playerColors.getProperColor(form.display, "bodyC3"));
 
             //arm bodytype for arcosian
             if (race.get() == 4) {
