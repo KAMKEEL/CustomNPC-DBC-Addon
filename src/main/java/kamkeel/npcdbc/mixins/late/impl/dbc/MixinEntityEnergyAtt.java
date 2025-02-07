@@ -1,19 +1,11 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
-import JinRyuu.JRMCore.JRMCoreH;
-import JinRyuu.JRMCore.entity.EntityEnAttacks;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.world.World;
 import noppes.npcs.entity.EntityNPCInterface;
-import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = EntityEnergyAtt.class, remap = false)

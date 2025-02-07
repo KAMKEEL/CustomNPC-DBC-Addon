@@ -1,7 +1,5 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.client.gui.GuiModelDBC;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.model.GuiCreationScreen;

@@ -4,14 +4,14 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.DBCInfoSync;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.DBCInfoSyncPacket;
+import kamkeel.npcs.network.enums.EnumSyncAction;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
-import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.*;
@@ -163,7 +163,7 @@ public class FormController implements IFormHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1).generatePacket());
+            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.FORM, EnumSyncAction.UPDATE, -1, nbtTagCompound));
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -190,7 +190,7 @@ public class FormController implements IFormHandler {
                         continue;
                     if (file.getName().equals(foundForm.name + ".json")) {
                         file.delete();
-                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundForm.getID()).generatePacket());
+                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.FORM, EnumSyncAction.REMOVE, foundForm.getID(), new NBTTagCompound()));
                         break;
                     }
                 }
@@ -211,7 +211,7 @@ public class FormController implements IFormHandler {
                     continue;
                 if (file.getName().equals(foundForm.name + ".json")) {
                     file.delete();
-                    PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundForm.getID()).generatePacket());
+                    DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.FORM, EnumSyncAction.REMOVE, foundForm.getID(), new NBTTagCompound()));
                     break;
                 }
             }

@@ -1,12 +1,12 @@
 package kamkeel.npcdbc.command;
 
-import kamkeel.command.CommandKamkeelBase;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.scripted.DBCAPI;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcs.command.CommandKamkeelBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import noppes.npcs.controllers.PlayerDataController;

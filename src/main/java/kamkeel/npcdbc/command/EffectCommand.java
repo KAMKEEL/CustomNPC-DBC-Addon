@@ -1,14 +1,16 @@
 package kamkeel.npcdbc.command;
 
-import kamkeel.command.CommandKamkeelBase;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
+import kamkeel.npcs.command.CommandKamkeelBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class EffectCommand extends CommandKamkeelBase {
 

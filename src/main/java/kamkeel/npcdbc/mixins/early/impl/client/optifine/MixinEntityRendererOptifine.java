@@ -6,24 +6,18 @@ import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.OptifineHelper;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
-import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.culling.Frustrum;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
-import org.lwjgl.opengl.GL30;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
-import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
 @Mixin(EntityRenderer.class)
 public class MixinEntityRendererOptifine {

@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.network.AbstractPacket;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
@@ -55,14 +55,14 @@ public final class PlaySound extends AbstractPacket {
         if (sound == null || sound.entity == null)
             return;
 
-        PacketHandler.Instance.sendToTrackingPlayers(sound.entity, new PlaySound(sound).generatePacket());
+        DBCPacketHandler.Instance.sendToTrackingPlayers(sound.entity, new PlaySound(sound));
     }
 
     public static void play(Entity entity, String soundDir) {
         if (entity == null)
             return;
         SoundSource sound = new SoundSource(soundDir, entity);
-        PacketHandler.Instance.sendToTrackingPlayers(sound.entity, new PlaySound(sound).generatePacket());
+        DBCPacketHandler.Instance.sendToTrackingPlayers(sound.entity, new PlaySound(sound));
     }
 
     @SideOnly(Side.CLIENT)

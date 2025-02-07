@@ -5,11 +5,10 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
+import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.Server;
-import noppes.npcs.constants.EnumPacketClient;
 
 import java.io.IOException;
 
@@ -46,7 +45,7 @@ public final class DBCRequestAura extends AbstractPacket {
             if(aura != null){
                 NBTTagCompound compound = aura.writeToNBT();
                 compound.setString("PACKETTYPE", "Aura");
-                Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+                GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
             }
         }
         else if(onlyPlayers){

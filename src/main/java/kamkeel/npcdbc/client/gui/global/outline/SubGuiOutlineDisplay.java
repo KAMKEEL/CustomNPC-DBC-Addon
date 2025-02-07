@@ -1,9 +1,6 @@
 package kamkeel.npcdbc.client.gui.global.outline;
 
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectOutline;
-import kamkeel.npcdbc.client.model.part.hair.DBCHair;
-import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;

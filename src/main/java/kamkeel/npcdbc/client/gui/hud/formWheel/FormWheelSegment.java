@@ -9,14 +9,14 @@ import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormStackable;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.form.DBCSaveFormWheel;
 import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import org.lwjgl.opengl.GL11;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glScaled;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 
 class FormWheelSegment extends WheelSegment {
     public HUDFormWheel parent;
@@ -38,7 +38,7 @@ class FormWheelSegment extends WheelSegment {
     }
 
     public void selectForm() {
-        PacketHandler.Instance.sendToServer(new DBCSelectForm(data.formID, data.isDBC).generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(data.formID, data.isDBC));
     }
 
     public void setForm(int formID, boolean isDBC, boolean updateServer) {
@@ -46,7 +46,7 @@ class FormWheelSegment extends WheelSegment {
         data.isDBC = isDBC;
         form = !data.isDBC ? (Form) FormController.getInstance().get(data.formID) : null;
         if (updateServer)
-            PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
         icon = form != null ? new FormIcon(parent, form) : new FormIcon(parent, data.formID);
     }
 
@@ -54,14 +54,14 @@ class FormWheelSegment extends WheelSegment {
         this.data = data;
         form = !data.isDBC ? (Form) FormController.getInstance().get(data.formID) : null;
         if (updateServer)
-            PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
         icon = form != null ? new FormIcon(parent, form) : new FormIcon(parent, data.formID);
     }
 
     public void removeForm() {
         data.reset();
         form = null;
-        PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data).generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
         if (parent.hoveredSlot == index)
             parent.selectSlot(-1);
 

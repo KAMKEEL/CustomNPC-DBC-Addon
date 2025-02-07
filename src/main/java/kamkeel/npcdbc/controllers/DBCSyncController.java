@@ -7,10 +7,12 @@ import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCInfoSync;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.DBCInfoSyncPacket;
+import kamkeel.npcs.network.enums.EnumSyncAction;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import noppes.npcs.constants.EnumPacketClient;
 
 import java.util.HashMap;
 
@@ -19,69 +21,33 @@ public class DBCSyncController {
     public static void syncPlayer(EntityPlayerMP player) {
         // Sync All Custom Forms
         NBTTagList list = new NBTTagList();
-        NBTTagCompound compound = new NBTTagCompound();
         for (Form customForm : FormController.getInstance().customForms.values()) {
             list.appendTag(customForm.writeToNBT());
-            if (list.tagCount() > 5) {
-                compound = new NBTTagCompound();
-                compound.setTag("Data", list);
-                PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_ADD, compound, -1).generatePacket(), player);
-                list = new NBTTagList();
-            }
         }
-        compound = new NBTTagCompound();
+        NBTTagCompound compound = new NBTTagCompound();
         compound.setTag("Data", list);
-        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_END, compound, -1).generatePacket(), player);
+        DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.FORM, EnumSyncAction.RELOAD, -1, compound), player);
 
         // Sync All Custom Auras
         list = new NBTTagList();
         compound = new NBTTagCompound();
         for (Aura aura : AuraController.getInstance().customAuras.values()) {
             list.appendTag(aura.writeToNBT());
-            if (list.tagCount() > 5) {
-                compound = new NBTTagCompound();
-                compound.setTag("Data", list);
-                PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_ADD, compound, -1).generatePacket(), player);
-                list = new NBTTagList();
-            }
         }
-        compound = new NBTTagCompound();
         compound.setTag("Data", list);
-        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_END, compound, -1).generatePacket(), player);
+        DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.AURA, EnumSyncAction.RELOAD, -1, compound), player);
 
         // Sync All Custom Outlines
         list = new NBTTagList();
         compound = new NBTTagCompound();
         for (Outline outline : OutlineController.getInstance().customOutlines.values()) {
             list.appendTag(outline.writeToNBT());
-            if (list.tagCount() > 5) {
-                compound = new NBTTagCompound();
-                compound.setTag("Data", list);
-                PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_ADD, compound, -1).generatePacket(), player);
-                list = new NBTTagList();
-            }
         }
-        compound = new NBTTagCompound();
         compound.setTag("Data", list);
-        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_END, compound, -1).generatePacket(), player);
-
-        list = new NBTTagList();
-        compound = new NBTTagCompound();
-        for (CustomEffect effect : StatusEffectController.getInstance().customEffects.values()) {
-            list.appendTag(effect.writeToNBT(false));
-                if(list.tagCount() >5) {
-                    compound = new NBTTagCompound();
-                    compound.setTag("Data", list);
-                    PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_ADD, compound, -1).generatePacket(), player);
-                    list = new NBTTagList();
-                }
-        }
-        compound = new NBTTagCompound();
-        compound.setTag("Data", list);
-        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_ADD, compound, -1).generatePacket(), player);
+        DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.RELOAD, -1, compound), player);
     }
 
-    public static void clientSync(int synctype, NBTTagCompound compound, boolean syncEnd) {
+    public static void clientSync(int synctype, NBTTagCompound compound) {
         if (synctype == DBCSyncType.FORM) {
             NBTTagList list = compound.getTagList("Data", 10);
             for (int i = 0; i < list.tagCount(); i++) {
@@ -89,10 +55,9 @@ public class DBCSyncController {
                 form.readFromNBT(list.getCompoundTagAt(i));
                 FormController.getInstance().customFormsSync.put(form.id, form);
             }
-            if (syncEnd) {
-                FormController.getInstance().customForms = FormController.getInstance().customFormsSync;
-                FormController.getInstance().customFormsSync = new HashMap<>();
-            }
+
+            FormController.getInstance().customForms = FormController.getInstance().customFormsSync;
+            FormController.getInstance().customFormsSync = new HashMap<>();
         } else if (synctype == DBCSyncType.AURA) {
             NBTTagList list = compound.getTagList("Data", 10);
             for (int i = 0; i < list.tagCount(); i++) {
@@ -100,10 +65,9 @@ public class DBCSyncController {
                 aura.readFromNBT(list.getCompoundTagAt(i));
                 AuraController.getInstance().customAurasSync.put(aura.id, aura);
             }
-            if (syncEnd) {
-                AuraController.getInstance().customAuras = AuraController.getInstance().customAurasSync;
-                AuraController.getInstance().customAurasSync = new HashMap<>();
-            }
+
+            AuraController.getInstance().customAuras = AuraController.getInstance().customAurasSync;
+            AuraController.getInstance().customAurasSync = new HashMap<>();
         } else if (synctype == DBCSyncType.OUTLINE) {
             NBTTagList list = compound.getTagList("Data", 10);
             for (int i = 0; i < list.tagCount(); i++) {
@@ -111,21 +75,9 @@ public class DBCSyncController {
                 outline.readFromNBT(list.getCompoundTagAt(i));
                 OutlineController.getInstance().customOutlinesSync.put(outline.id, outline);
             }
-            if (syncEnd) {
-                OutlineController.getInstance().customOutlines = OutlineController.getInstance().customOutlinesSync;
-                OutlineController.getInstance().customOutlinesSync = new HashMap<>();
-            }
-        } else if (synctype == DBCSyncType.CUSTOM_EFFECT) {
-            NBTTagList list = compound.getTagList("Data", 10);
-            for (int i = 0; i < list.tagCount(); i++) {
-                CustomEffect effect = new CustomEffect();
-                effect.readFromNBT(list.getCompoundTagAt(i));
-                StatusEffectController.getInstance().customEffectsSync.put(effect.id, effect);
-            }
-            if (syncEnd) {
-                StatusEffectController.getInstance().customEffects= StatusEffectController.getInstance().customEffectsSync;
-                StatusEffectController.getInstance().customEffectsSync = new HashMap<>();
-            }
+
+            OutlineController.getInstance().customOutlines = OutlineController.getInstance().customOutlinesSync;
+            OutlineController.getInstance().customOutlinesSync = new HashMap<>();
         }
     }
 

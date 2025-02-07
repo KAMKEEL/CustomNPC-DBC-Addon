@@ -56,7 +56,7 @@ public abstract class MixinScriptPlayerEventHandler {
         return instance.ammount;
     }
 
-    @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;setCanceled(Z)V", shift = At.Shift.AFTER, remap = true, ordinal = 0))
+    @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "INVOKE", target = "Lnoppes/npcs/EventHooks;onPlayerAttacked(Lnoppes/npcs/controllers/data/PlayerDataScript;Lnoppes/npcs/scripted/event/PlayerEvent$AttackedEvent;)Z", shift = At.Shift.AFTER))
     public void attackedFixDamagedEventDBCDamage(LivingAttackEvent event, CallbackInfo ci, @Local(name = "pevent") PlayerEvent.AttackedEvent ev) {
         if (dbcAltered && dam1 != ev.getDamage() && !event.isCanceled()) {
             DBCUtils.lastSetDamage2 = (int) ev.getDamage();
@@ -65,7 +65,7 @@ public abstract class MixinScriptPlayerEventHandler {
         dam1 = 0;
     }
 
-    @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;setCanceled(Z)V", shift = At.Shift.AFTER, remap = true, ordinal = 1))
+    @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "INVOKE", target = "Lnoppes/npcs/EventHooks;onPlayerAttack(Lnoppes/npcs/controllers/data/PlayerDataScript;Lnoppes/npcs/scripted/event/PlayerEvent$AttackEvent;)Z", shift = At.Shift.AFTER))
     public void attackFixDamagedEventDBCDamage2(LivingAttackEvent event, CallbackInfo ci, @Local(name = "pevent1") PlayerEvent.AttackEvent ev) {
         if (dbcAltered && dam2 != ev.getDamage() && !event.isCanceled()) {
             if (event.entityLiving instanceof EntityNPCInterface)

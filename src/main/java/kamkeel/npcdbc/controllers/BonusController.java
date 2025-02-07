@@ -3,8 +3,6 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.api.effect.IBonusHandler;
 import kamkeel.npcdbc.api.effect.IPlayerBonus;
 import kamkeel.npcdbc.data.PlayerBonus;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;

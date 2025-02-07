@@ -1,10 +1,10 @@
 package kamkeel.npcdbc.command;
 
-import kamkeel.command.CommandKamkeelBase;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.scripted.DBCAPI;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcs.command.CommandKamkeelBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import noppes.npcs.controllers.PlayerDataController;

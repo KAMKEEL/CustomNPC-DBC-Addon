@@ -1,8 +1,8 @@
 package kamkeel.npcdbc.mixins.late.impl.npc;
 
-import kamkeel.command.CommandKamkeel;
-import kamkeel.command.CommandKamkeelBase;
 import kamkeel.npcdbc.command.*;
+import kamkeel.npcs.command.CommandKamkeel;
+import kamkeel.npcs.command.CommandKamkeelBase;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

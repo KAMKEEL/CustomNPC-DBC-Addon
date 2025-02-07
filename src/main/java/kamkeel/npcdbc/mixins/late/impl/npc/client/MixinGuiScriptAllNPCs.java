@@ -1,7 +1,5 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
-import kamkeel.npcdbc.constants.DBCScriptType;
-import noppes.npcs.client.gui.script.GuiNPCEventScripts;
 import noppes.npcs.client.gui.script.GuiScriptAllNPCs;
 import noppes.npcs.client.gui.script.GuiScriptInterface;
 import org.spongepowered.asm.mixin.Mixin;

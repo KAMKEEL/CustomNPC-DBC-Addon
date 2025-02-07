@@ -13,17 +13,16 @@ import kamkeel.npcdbc.data.statuseffect.CustomEffect;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.packets.SendChat;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
+import kamkeel.npcs.network.packets.data.large.ScrollDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.Server;
-import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.controllers.PlayerDataController;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static noppes.npcs.NoppesUtilServer.sendScrollData;
 
 public class NetworkUtility {
 
@@ -32,7 +31,7 @@ public class NetworkUtility {
         for (Form customForm : FormController.getInstance().customForms.values()) {
             map.put(customForm.name, customForm.id);
         }
-        sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map);
     }
 
     public static void sendCustomAuraDataAll(EntityPlayerMP player) {
@@ -40,7 +39,7 @@ public class NetworkUtility {
         for (Aura customAura : AuraController.getInstance().customAuras.values()) {
             map.put(customAura.name, customAura.id);
         }
-        sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map);
     }
 
     public static void sendCustomOutlineDataAll(EntityPlayerMP player) {
@@ -48,7 +47,7 @@ public class NetworkUtility {
         for (Outline outline : OutlineController.getInstance().customOutlines.values()) {
             map.put(outline.name, outline.id);
         }
-        sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map);
     }
 
     public static void sendCustomEffectDataAll(EntityPlayerMP player) {
@@ -68,7 +67,7 @@ public class NetworkUtility {
             if (customForm != null)
                 compound = customForm.writeToNBT();
         }
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
     }
 
     public static void sendPlayerFormWheel(EntityPlayer player) {
@@ -83,7 +82,7 @@ public class NetworkUtility {
                 wheelData.writeToNBT(compound);
             }
         }
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
     }
 
     public static void sendPlayersAuras(EntityPlayer player) {
@@ -95,14 +94,14 @@ public class NetworkUtility {
             if (customAura != null)
                 compound = customAura.writeToNBT();
         }
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
     }
 
     public static void sendServerMessage(EntityPlayer player, Object... message) {
-        PacketHandler.Instance.sendToPlayer(new SendChat(message).generatePacket(), (EntityPlayerMP) player);
+        DBCPacketHandler.Instance.sendToPlayer(new SendChat(message), (EntityPlayerMP) player);
     }
 
     public static void sendInfoMessage(EntityPlayer player, Object... message) {
-        PacketHandler.Instance.sendToPlayer(new SendChat(true, message).generatePacket(), (EntityPlayerMP) player);
+        DBCPacketHandler.Instance.sendToPlayer(new SendChat(true, message), (EntityPlayerMP) player);
     }
 }

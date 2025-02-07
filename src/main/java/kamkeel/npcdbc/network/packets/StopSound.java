@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.network.AbstractPacket;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
@@ -52,7 +52,7 @@ public final class StopSound extends AbstractPacket {
     public static void stop(SoundSource sound) {
         if (sound == null || sound.entity == null)
             return;
-        PacketHandler.Instance.sendToTrackingPlayers(sound.entity, new StopSound(sound).generatePacket());
+        DBCPacketHandler.Instance.sendToTrackingPlayers(sound.entity, new StopSound(sound));
     }
 
 

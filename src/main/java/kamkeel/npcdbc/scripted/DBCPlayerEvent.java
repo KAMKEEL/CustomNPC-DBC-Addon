@@ -8,16 +8,12 @@ import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.constants.enums.*;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.entity.RenderPlayer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.api.IDamageSource;
-import noppes.npcs.api.entity.ICustomNpc;
-import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.scripted.NpcAPI;
-import noppes.npcs.scripted.event.NpcEvent;
 import noppes.npcs.scripted.event.PlayerEvent;
 
 public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
