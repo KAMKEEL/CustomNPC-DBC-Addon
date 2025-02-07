@@ -12,6 +12,7 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.api.outline.IOutline;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
@@ -66,7 +67,8 @@ public class FormDisplay implements IFormDisplay {
         hasEyebrows = !rendering.hasKey("hasEyebrows") ? true : rendering.getBoolean("hasEyebrows");
 
         formSize = rendering.getFloat("formSize");
-        formWidth = rendering.getFloat("formWidth");
+        if (rendering.hasKey("formWidth", Constants.NBT.TAG_FLOAT))
+            formWidth = rendering.getFloat("formWidth");
         keepOriginalSize = rendering.getBoolean("keepOriginalSize");
 
         auraID = rendering.hasKey("auraID") ? rendering.getInteger("auraID") : -1;
