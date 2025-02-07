@@ -492,6 +492,9 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         return x >= width - 60 && x <= width + 60 && y >= height - 90 && y <= height + 90;
     }
 
+    /**
+     * TODO: Replace this with {@link kamkeel.npcdbc.client.gui.component.GuiRenderPlayer}
+     */
     public void renderPlayer(int i, int j, float partialTicks) {
         if (isMouseOverRenderer(i, j) && Mouse.isButtonDown(0)) {
             rotation -= Mouse.getDX() * 0.75f;
