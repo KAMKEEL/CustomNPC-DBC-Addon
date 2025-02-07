@@ -399,6 +399,9 @@ public class FormDisplay implements IFormDisplay {
         return isCustomizable;
     }
 
+    /**
+     * Class made for the purpose of letting players customize their forms from the default colors.
+     */
     public static class BodyColor {
         public int bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
         public int hairColor = -1;

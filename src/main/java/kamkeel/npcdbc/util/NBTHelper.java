@@ -10,6 +10,13 @@ import java.util.function.Function;
 
 public class NBTHelper {
 
+    /**
+     *
+     * @param map Map of objects you would like to save
+     * @param toNBT Lambda / callback used to write the object into NBT
+     * @return Taglist created from the provided hashmap
+     * @param <T> Type of the map's values
+     */
     public static <T> NBTTagList nbtIntegerObjectMap(Map<Integer, T> map, Function<T, NBTTagCompound> toNBT) {
         NBTTagList nbttaglist = new NBTTagList();
         if (map != null) {
@@ -25,6 +32,15 @@ public class NBTHelper {
         return nbttaglist;
     }
 
+    /**
+     *
+     * @param list tag list created using other functions from this map
+     * @param fromNBT Lambda / Callback used to read the object from a map from NBT.
+     * @param keepCondition Callback that checks if (currentID, newObject) should be kept in the newly created map or not <br>
+     *                      For further info refer to {@link KeepConditionCallback}
+     * @return HashMap of the newly created objects
+     * @param <T> Type of the object you'd like to read from NBT
+     */
     public static <T> HashMap<Integer, T> javaIntegerObjectMap(NBTTagList list, Function<NBTTagCompound, T> fromNBT, KeepConditionCallback<Integer, T> keepCondition) {
         HashMap<Integer, T> map = new HashMap<>();
 
@@ -40,10 +56,22 @@ public class NBTHelper {
         return map;
     }
 
+    /**
+     *
+     * @param list tag list created using other functions from this map
+     * @param fromNBT Lambda / Callback used to read the object from a map from NBT.
+     * @return HashMap of the newly created objects
+     * @param <T> Type of the object you'd like to read from NBT
+     */
     public static <T> HashMap<Integer, T> javaIntegerObjectMap(NBTTagList list, Function<NBTTagCompound, T> fromNBT) {
         return javaIntegerObjectMap(list, fromNBT, (ignore1, ignore2) -> true);
     }
 
+    /**
+     * Callback used to determine if an object should be kept or not while reading the list
+     * @param <Param1> First parameter type of the function
+     * @param <Param2> Second parameter type of the function
+     */
     @FunctionalInterface
     public interface KeepConditionCallback<Param1, Param2> {
         boolean check(Param1 param1, Param2 param2);
