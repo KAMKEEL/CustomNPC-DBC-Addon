@@ -29,7 +29,7 @@ public class GuiRenderPlayer extends GuiScreen {
     public int DBCForm = -1;
     public int customFormID = -1;
     private float rotation = 0;
-    private float zoomed = 60;
+    private float zoomed = 50;
     public int x, y, width, height;
     public FormDisplay.BodyColor playerColors;
 
@@ -47,10 +47,17 @@ public class GuiRenderPlayer extends GuiScreen {
 
     @Override
     public void drawScreen(int xPosMouse, int yPosMouse, float partialTicks) {
-        if (isMouseOverRenderer(xPosMouse, yPosMouse) && Mouse.isButtonDown(0)) {
-            rotation -= Mouse.getDX() * 0.75f;
-        }
 
+        if (isMouseOverRenderer(xPosMouse, yPosMouse)) {
+            zoomed += Mouse.getDWheel() * 0.035f;
+            if (zoomed > 100)
+                zoomed = 100;
+            if (zoomed < 10)
+                zoomed = 10;
+
+            if (Mouse.isButtonDown(0))
+                rotation -= Mouse.getDX() * 0.75f;
+        }
 
         RenderEventHandler.renderingPlayerInGUI = true;
         EntityLivingBase entity = mc.thePlayer;
