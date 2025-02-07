@@ -124,8 +124,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                         ci.cancel();
 
                     if (form.display.hairType.equals("ssj4") && isSaiyan && HD && form.display.hasEyebrows) {
-                    } else if (form.display.eyeColor != -1)
-                        RenderPlayerJBRA.glColor3f(form.display.eyeColor);
+                    } else if (form.display.bodyColors.eyeColor != -1)
+                        RenderPlayerJBRA.glColor3f(form.display.bodyColors.eyeColor);
                 }
 
                 //majin effect check
@@ -253,8 +253,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 //majin effect check
                 if (rc == 5 && !form.display.effectMajinHair) {
-                    if (form.display.bodyCM != -1)
-                        RenderPlayerJBRA.glColor3f(form.display.bodyCM);
+                    if (form.display.bodyColors.bodyCM != -1)
+                        RenderPlayerJBRA.glColor3f(form.display.bodyColors.bodyCM);
                     return;
                 }
 

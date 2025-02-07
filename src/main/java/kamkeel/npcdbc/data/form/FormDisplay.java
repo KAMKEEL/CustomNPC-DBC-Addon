@@ -23,16 +23,17 @@ public class FormDisplay implements IFormDisplay {
 
     public String hairCode = "";
     public String hairType = "";
-    public int hairColor = -1;
-    public int eyeColor = -1;
+
     public int auraColor = -1;
     public int kiBarColor = -1;
     public String bodyType = "";
-    public int bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
+
     public boolean hasBodyFur = false;
     public boolean hasArcoMask = false;
     public boolean effectMajinHair = false;
     public boolean isBerserk, hasEyebrows = true;
+
+    public BodyColor bodyColors = new BodyColor();
 
     public int auraID = -1, outlineID = -1;
 
@@ -43,19 +44,16 @@ public class FormDisplay implements IFormDisplay {
     public void readFromNBT(NBTTagCompound compound) {
         NBTTagCompound rendering = compound.getCompoundTag("rendering");
         auraColor = rendering.getInteger("auraColor");
-        eyeColor = rendering.getInteger("eyeColor");
-        hairColor = rendering.getInteger("hairColor");
+
         kiBarColor = rendering.getInteger("kiBarColor");
 
-        furColor = rendering.getInteger("furColor");
         hairCode = rendering.getString("hairCode");
         hairType = rendering.getString("hairType");
 
         bodyType = rendering.getString("bodyType");
-        bodyCM = rendering.getInteger("bodyCM");
-        bodyC1 = rendering.getInteger("bodyC1");
-        bodyC2 = rendering.getInteger("bodyC2");
-        bodyC3 = rendering.getInteger("bodyC3");
+
+
+        bodyColors.readFromNBT(rendering);
 
         hasArcoMask = rendering.getBoolean("hasArcoMask");
         effectMajinHair = rendering.getBoolean("effectMajinHair");
@@ -74,19 +72,13 @@ public class FormDisplay implements IFormDisplay {
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound rendering = new NBTTagCompound();
         rendering.setInteger("auraColor", auraColor);
-        rendering.setInteger("eyeColor", eyeColor);
-        rendering.setInteger("hairColor", hairColor);
         rendering.setInteger("kiBarColor", kiBarColor);
 
         rendering.setString("hairCode", hairCode);
         rendering.setString("hairType", hairType);
         rendering.setString("bodyType", bodyType);
 
-        rendering.setInteger("furColor", furColor);
-        rendering.setInteger("bodyCM", bodyCM);
-        rendering.setInteger("bodyC1", bodyC1);
-        rendering.setInteger("bodyC2", bodyC2);
-        rendering.setInteger("bodyC3", bodyC3);
+        bodyColors.writeToNBT(compound);
 
         rendering.setBoolean("hasArcoMask", hasArcoMask);
         rendering.setBoolean("effectMajinHair", effectMajinHair);
@@ -110,25 +102,25 @@ public class FormDisplay implements IFormDisplay {
     public int getFurColor(DBCData data) {
         int c1 = data.skinType == 1 ? JRMCoreH.dnsBodyC1(data.DNS) : JRMCoreH.dnsBodyC1_0(data.DNS);
 
-        if (c1 != 6498048 && furColor == -1)  //default
+        if (c1 != 6498048 && bodyColors.furColor == -1)  //default
             return c1;
 
-        if (furColor == -1)
+        if (bodyColors.furColor == -1)
             return 0xDA152C;
 
-        return furColor;
+        return bodyColors.furColor;
     }
     //internal usage
 
     public boolean hasHairCol(DBCData data) {
-        return hairColor != -1 && data.Race != DBCRace.NAMEKIAN;
+        return bodyColors.hairColor != -1 && data.Race != DBCRace.NAMEKIAN;
     }
 
     //internal usage
     public int getHairColor(DBCData data) {
         if(data.Race == DBCRace.NAMEKIAN)
-            return bodyCM;
-        return hairColor;
+            return bodyColors.bodyCM;
+        return bodyColors.hairColor;
     }
 
     @Override
@@ -222,19 +214,19 @@ public class FormDisplay implements IFormDisplay {
             case "aura":
                 return auraColor != -1;
             case "hair":
-                return hairColor != -1;
+                return bodyColors.hairColor != -1;
             case "eye":
-                return eyeColor != -1;
+                return bodyColors.eyeColor != -1;
             case "bodycm":
-                return bodyCM != -1;
+                return bodyColors.bodyCM != -1;
             case "bodyc1":
-                return bodyC1 != -1;
+                return bodyColors.bodyC1 != -1;
             case "bodyc2":
-                return bodyC2 != -1;
+                return bodyColors.bodyC2 != -1;
             case "bodyc3":
-                return bodyC3 != -1;
+                return bodyColors.bodyC3 != -1;
             case "fur":
-                return furColor != -1;
+                return bodyColors.furColor != -1;
 
         }
         throw new CustomNPCsException("Invalid type! Legal types: kiBar, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
@@ -250,25 +242,25 @@ public class FormDisplay implements IFormDisplay {
                 auraColor = color;
                 break;
             case "hair":
-                hairColor = color;
+                bodyColors.hairColor = color;
                 break;
             case "eye":
-                eyeColor = color;
+                bodyColors.eyeColor = color;
                 break;
             case "bodycm":
-                bodyCM = color;
+                bodyColors.bodyCM = color;
                 break;
             case "bodyc1":
-                bodyC1 = color;
+                bodyColors.bodyC1 = color;
                 break;
             case "bodyc2":
-                bodyC2 = color;
+                bodyColors.bodyC2 = color;
                 break;
             case "bodyc3":
-                bodyC3 = color;
+                bodyColors.bodyC3 = color;
                 break;
             case "fur":
-                furColor = color;
+                bodyColors.furColor = color;
                 break;
             default:
                 throw new CustomNPCsException("Invalid type! Legal types: kiBar, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
@@ -300,19 +292,19 @@ public class FormDisplay implements IFormDisplay {
             case "aura":
                 return auraColor;
             case "hair":
-                return hairColor;
+                return bodyColors.hairColor;
             case "eye":
-                return eyeColor;
+                return bodyColors.eyeColor;
             case "bodycm":
-                return bodyCM;
+                return bodyColors.bodyCM;
             case "bodyc1":
-                return bodyC1;
+                return bodyColors.bodyC1;
             case "bodyc2":
-                return bodyC2;
+                return bodyColors.bodyC2;
             case "bodyc3":
-                return bodyC3;
+                return bodyColors.bodyC3;
             case "fur":
-                return furColor;
+                return bodyColors.furColor;
         }
         throw new CustomNPCsException("Invalid type! Legal types: kiBar, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
@@ -394,5 +386,31 @@ public class FormDisplay implements IFormDisplay {
         if (parent != null)
             parent.save();
         return this;
+    }
+
+    public static class BodyColor {
+        public int bodyCM = -1, bodyC1 = -1, bodyC2 = -1, bodyC3 = -1, furColor = -1;
+        public int hairColor = -1;
+        public int eyeColor = -1;
+
+        public void readFromNBT(NBTTagCompound compound) {
+            eyeColor = compound.getInteger("eyeColor");
+            hairColor = compound.getInteger("hairColor");
+            bodyCM = compound.getInteger("bodyCM");
+            bodyC1 = compound.getInteger("bodyC1");
+            bodyC2 = compound.getInteger("bodyC2");
+            bodyC3 = compound.getInteger("bodyC3");
+            furColor = compound.getInteger("furColor");
+        }
+        public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+            compound.setInteger("eyeColor", eyeColor);
+            compound.setInteger("hairColor", hairColor);
+            compound.setInteger("furColor", furColor);
+            compound.setInteger("bodyCM", bodyCM);
+            compound.setInteger("bodyC1", bodyC1);
+            compound.setInteger("bodyC2", bodyC2);
+            compound.setInteger("bodyC3", bodyC3);
+            return compound;
+        }
     }
 }

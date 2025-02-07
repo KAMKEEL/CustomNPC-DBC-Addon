@@ -160,11 +160,11 @@ public class ModelDBC extends ModelBase {
                 FormDisplay d = form.display;
 
                 if (d.hasColor("eye"))
-                    eyeColor = d.eyeColor;
+                    eyeColor = d.bodyColors.eyeColor;
                 if (d.hasColor("hair"))
-                    eyeBrowColor = d.hairColor;
+                    eyeBrowColor = d.bodyColors.hairColor;
                 if (d.hasColor("bodycm"))
-                    bodyCM = d.bodyCM;
+                    bodyCM = d.bodyColors.bodyCM;
 
                 if (d.hasArcoMask)
                     hasArcoMask = true;
@@ -176,7 +176,7 @@ public class ModelDBC extends ModelBase {
                     isSSJ4 = true;
                 else if (d.hairType.equals("oozaru")) {
                     isOozaru = true;
-                    if (d.eyeColor == -1)
+                    if (d.bodyColors.eyeColor == -1)
                         eyeColor = 0xFF0000;
                 }
 
@@ -370,24 +370,24 @@ public class ModelDBC extends ModelBase {
             if (form != null) {
                 FormDisplay d = form.display;
                 if (d.hasColor("eye"))
-                    eyeColor = d.eyeColor;
+                    eyeColor = d.bodyColors.eyeColor;
                 if (d.hasColor("hair"))
-                    hairColor = d.hairColor;
+                    hairColor = d.bodyColors.hairColor;
                 if (d.hasColor("bodycm"))
-                    bodyCM = d.bodyCM;
+                    bodyCM = d.bodyColors.bodyCM;
                 if (d.hasColor("bodyc1"))
-                    bodyC1 = d.bodyC1;
+                    bodyC1 = d.bodyColors.bodyC1;
                 if (d.hasColor("bodyc2"))
-                    bodyC2 = d.bodyC2;
+                    bodyC2 = d.bodyColors.bodyC2;
                 if (d.hasColor("bodyc3"))
-                    bodyC3 = d.bodyC3;
+                    bodyC3 = d.bodyColors.bodyC3;
                 if (d.hasColor("fur"))
-                    furColor = d.furColor;
+                    furColor = d.bodyColors.furColor;
 
                 hasFur = d.hasBodyFur;
                 if (d.hairType.equals("ssj4")) {
                     isSSJ4 = true;
-                    if (d.eyeColor == -1)
+                    if (d.bodyColors.eyeColor == -1)
                         eyeColor = 0xF3C807;
                 } else if (d.hairType.equals("oozaru")) {
                     isOozaru = true;

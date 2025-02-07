@@ -77,8 +77,8 @@ public class FormIcon extends Gui {
             if (display.formSize >= 1.1f)
                 buff = true;
 
-            if (display.hairColor != -1) {
-                hairColor = new Color(display.hairColor, 1);
+            if (display.bodyColors.hairColor != -1) {
+                hairColor = new Color(display.bodyColors.hairColor, 1);
             }
             if (!display.hairType.isEmpty()) {
 
@@ -91,14 +91,14 @@ public class FormIcon extends Gui {
                 } else if (display.hairType.toLowerCase().contains("oozaru")) {
                     hair = HairIconType.OOZARU;
                     body = BodyIconType.OOZARU;
-                    hairColor = new Color(display.furColor == -1 ? 0x6F4E37 : display.furColor, 1);
+                    hairColor = new Color(display.bodyColors.furColor == -1 ? 0x6F4E37 : display.bodyColors.furColor, 1);
                 } else {
                     body = buff ? BodyIconType.BUFF : BodyIconType.HUMANOID;
                 }
             }
         } else if (race == DBCRace.ARCOSIAN && isEligible) {
             auraColor = new Color(0xb70d0e, 1);
-            hairColor = new Color(display.bodyC2 == -1 ? 0x992b95 : display.bodyC2, 1);
+            hairColor = new Color(display.bodyColors.bodyC2 == -1 ? 0x992b95 : display.bodyColors.bodyC2, 1);
             if (!display.bodyType.isEmpty()) {
                 if (display.bodyType.toLowerCase().contains("first")) {
                     body = BodyIconType.ARC_FIRST;
@@ -123,7 +123,7 @@ public class FormIcon extends Gui {
         } else if (race == DBCRace.NAMEKIAN && isEligible) {
             hair = HairIconType.NAMEK;
             body = BodyIconType.NAMEK;
-            hairColor = new Color(display.bodyCM == -1 ? 0x6DB43A : display.bodyCM, 1);
+            hairColor = new Color(display.bodyColors.bodyCM == -1 ? 0x6DB43A : display.bodyColors.bodyCM, 1);
         } else if (race == DBCRace.MAJIN && isEligible) {
             if (display.formSize <= 0.9f) {
                 hair = HairIconType.MAJIN_PURE;
@@ -132,7 +132,7 @@ public class FormIcon extends Gui {
                 hair = HairIconType.MAJIN;
                 body = BodyIconType.MAJIN;
             }
-            hairColor = new Color(display.bodyCM == -1 ? 0xfaaacc : display.bodyCM, 1);
+            hairColor = new Color(display.bodyColors.bodyCM == -1 ? 0xfaaacc : display.bodyColors.bodyCM, 1);
         } else {
             hair = HairIconType.NONE;
             if (display.formSize >= 1.1f)

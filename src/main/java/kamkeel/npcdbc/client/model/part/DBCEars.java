@@ -70,7 +70,7 @@ public class DBCEars extends ModelDBCPartInterface {
             if (form != null) {
                 FormDisplay d = form.display;
                 if (d.hasColor("bodycm"))
-                    bodyCM = d.bodyCM;
+                    bodyCM = d.bodyColors.bodyCM;
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////

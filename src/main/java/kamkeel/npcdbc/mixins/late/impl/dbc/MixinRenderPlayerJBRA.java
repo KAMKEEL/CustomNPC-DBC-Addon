@@ -252,13 +252,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         if (form != null) {
             //set body colors
             if (form.display.hasColor("bodycm"))
-                bodyCM.set(form.display.bodyCM);
+                bodyCM.set(form.display.bodyColors.bodyCM);
             if (form.display.hasColor("bodyC1"))
-                bodyC1.set(form.display.bodyC1);
+                bodyC1.set(form.display.bodyColors.bodyC1);
             if (form.display.hasColor("bodyC2"))
-                bodyC2.set(form.display.bodyC2);
+                bodyC2.set(form.display.bodyColors.bodyC2);
             if (form.display.hasColor("bodyC3"))
-                bodyC3.set(form.display.bodyC3);
+                bodyC3.set(form.display.bodyColors.bodyC3);
 
             if (data.Race == DBCRace.NAMEKIAN || data.Race == DBCRace.MAJIN) {
                 data.renderingHairColor = bodyCM.get();
@@ -331,7 +331,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
                     //all oozaru rendering
                 } else if (form.display.hairType.equals("oozaru")) {
-                    renderOozaru(bodyCM.get(), form.display.eyeColor, form.display.getFurColor(data));
+                    renderOozaru(bodyCM.get(), form.display.bodyColors.eyeColor, form.display.getFurColor(data));
                     //ssj3 hair rendering
                 } else if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")) {
                     String hairTexture = "normall.png";
@@ -394,7 +394,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             this.modelMain.bipedHead.render(1F / 16F);
 
             if (!form.display.isBerserk) {
-                RenderPlayerJBRA.glColor3f(form.display.eyeColor == -1 ? 0xF3C807 : form.display.eyeColor);
+                RenderPlayerJBRA.glColor3f(form.display.bodyColors.eyeColor == -1 ? 0xF3C807 : form.display.bodyColors.eyeColor);
                 this.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4pupils.png"));
                 this.modelMain.bipedHead.render(0.0625F);
             }
@@ -445,13 +445,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
             //arm colors
             if (form.display.hasColor("bodycm"))
-                bodyCM.set(form.display.bodyCM);
+                bodyCM.set(form.display.bodyColors.bodyCM);
             if (form.display.hasColor("bodyC1"))
-                bodyC1.set(form.display.bodyC1);
+                bodyC1.set(form.display.bodyColors.bodyC1);
             if (form.display.hasColor("bodyC2"))
-                bodyC2.set(form.display.bodyC2);
+                bodyC2.set(form.display.bodyColors.bodyC2);
             if (form.display.hasColor("bodyC3"))
-                bodyC3.set(form.display.bodyC3);
+                bodyC3.set(form.display.bodyColors.bodyC3);
 
             //arm bodytype for arcosian
             if (race.get() == 4) {

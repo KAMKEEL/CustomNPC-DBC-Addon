@@ -84,9 +84,9 @@ public class DBCLeftArms extends ModelDBCPartInterface {
             if (form != null) {
                 FormDisplay d = form.display;
                 if (d.hasColor("bodycm"))
-                    bodyCM = d.bodyCM;
+                    bodyCM = d.bodyColors.bodyCM;
                 if (d.hasColor("bodyc2"))
-                    bodyC2 = d.bodyC2;
+                    bodyC2 = d.bodyColors.bodyC2;
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////

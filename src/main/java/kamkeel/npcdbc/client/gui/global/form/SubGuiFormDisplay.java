@@ -111,20 +111,20 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         y += 22;
         addLabel(new GuiNpcLabel(107, "display.eye", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(107, guiLeft + 61, y, 50, 20, getColor(display.eyeColor)));
-        getButton(107).packedFGColour = display.eyeColor;
+        addButton(new GuiNpcButton(107, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.eyeColor)));
+        getButton(107).packedFGColour = display.bodyColors.eyeColor;
         addButton(new GuiNpcButton(1107, guiLeft + 112, y, 20, 20, "X"));
-        getButton(1107).enabled = display.eyeColor != -1;
+        getButton(1107).enabled = display.bodyColors.eyeColor != -1;
 
         addLabel(new GuiNpcLabel(1072, "display.isBerserk", guiLeft + 145, y + 5));
         addButton(new GuiNpcButtonYesNo(1072, guiLeft + 192, y, 30, 20, display.isBerserk));
 
         y += 22;
         addLabel(new GuiNpcLabel(108, "model.body", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(108, guiLeft + 61, y, 50, 20, getColor(display.bodyCM)));
-        getButton(108).packedFGColour = display.bodyCM;
+        addButton(new GuiNpcButton(108, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.bodyCM)));
+        getButton(108).packedFGColour = display.bodyColors.bodyCM;
         addButton(new GuiNpcButton(1108, guiLeft + 112, y, 20, 20, "X"));
-        getButton(1108).enabled = display.bodyCM != -1;
+        getButton(1108).enabled = display.bodyColors.bodyCM != -1;
 
         addLabel(new GuiNpcLabel(1082, "display.hasEyebrows", guiLeft + 145, y + 5));
         addButton(new GuiNpcButtonYesNo(1082, guiLeft + 192, y, 30, 20, display.hasEyebrows));
@@ -136,10 +136,10 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         if (visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
             y += 22;
             addLabel(new GuiNpcLabel(112, "display.fur", guiLeft + 7, y + 5));
-            addButton(new GuiNpcButton(112, guiLeft + 61, y, 50, 20, getColor(display.furColor)));
-            getButton(112).packedFGColour = display.furColor;
+            addButton(new GuiNpcButton(112, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.furColor)));
+            getButton(112).packedFGColour = display.bodyColors.furColor;
             addButton(new GuiNpcButton(1112, guiLeft + 112, y, 20, 20, "X"));
-            getButton(1112).enabled = display.furColor != -1;
+            getButton(1112).enabled = display.bodyColors.furColor != -1;
         }
 
         if (visualDisplay.race == DBCRace.MAJIN) {
@@ -169,25 +169,25 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     private int addBodyColors(int y) {
         y += 22;
-        addLabel(new GuiNpcLabel(109, "display.bodyc1", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(109, guiLeft + 61, y, 50, 20, getColor(display.bodyC1)));
-        getButton(109).packedFGColour = display.bodyC1;
+        addLabel(new GuiNpcLabel(109, "display.bodyColors.bodyC1", guiLeft + 7, y + 5));
+        addButton(new GuiNpcButton(109, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.bodyC1)));
+        getButton(109).packedFGColour = display.bodyColors.bodyC1;
         addButton(new GuiNpcButton(1109, guiLeft + 112, y, 20, 20, "X"));
-        getButton(1109).enabled = display.bodyC1 != -1;
+        getButton(1109).enabled = display.bodyColors.bodyC1 != -1;
 
         y += 22;
-        addLabel(new GuiNpcLabel(110, "display.bodyc2", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(110, guiLeft + 61, y, 50, 20, getColor(display.bodyC2)));
-        getButton(110).packedFGColour = display.bodyC2;
+        addLabel(new GuiNpcLabel(110, "display.bodyColors.bodyC2", guiLeft + 7, y + 5));
+        addButton(new GuiNpcButton(110, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.bodyC2)));
+        getButton(110).packedFGColour = display.bodyColors.bodyC2;
         addButton(new GuiNpcButton(1110, guiLeft + 112, y, 20, 20, "X"));
-        getButton(1110).enabled = display.bodyC2 != -1;
+        getButton(1110).enabled = display.bodyColors.bodyC2 != -1;
 
         y += 22;
-        addLabel(new GuiNpcLabel(111, "display.bodyc3", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(111, guiLeft + 61, y, 50, 20, getColor(display.bodyC3)));
-        getButton(111).packedFGColour = display.bodyC3;
+        addLabel(new GuiNpcLabel(111, "display.bodyColors.bodyC3", guiLeft + 7, y + 5));
+        addButton(new GuiNpcButton(111, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.bodyC3)));
+        getButton(111).packedFGColour = display.bodyColors.bodyC3;
         addButton(new GuiNpcButton(1111, guiLeft + 112, y, 20, 20, "X"));
-        getButton(1111).enabled = display.bodyC3 != -1;
+        getButton(1111).enabled = display.bodyColors.bodyC3 != -1;
 
         return y;
     }
@@ -202,10 +202,10 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         } else {
             addButton(new GuiNpcButton(102, guiLeft + 51, y, 45, 20, "gui.copy"));
         }
-        addButton(new GuiNpcButton(104, guiLeft + 147, y, 50, 20, getColor(display.hairColor)));
-        getButton(104).packedFGColour = display.hairColor;
+        addButton(new GuiNpcButton(104, guiLeft + 147, y, 50, 20, getColor(display.bodyColors.hairColor)));
+        getButton(104).packedFGColour = display.bodyColors.hairColor;
         addButton(new GuiNpcButton(1104, guiLeft + 199, y, 20, 20, "X"));
-        getButton(1104).enabled = display.hairColor != -1;
+        getButton(1104).enabled = display.bodyColors.hairColor != -1;
 
         y += 22;
         int index = getHairType();
@@ -287,11 +287,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Eye Color
         if (button.id == 107) {
             lastColorClicked = 1;
-            setSubGui(new SubGuiColorSelector(display.eyeColor));
+            setSubGui(new SubGuiColorSelector(display.bodyColors.eyeColor));
         }
         // Eye Color Clear
         if (button.id == 1107) {
-            display.eyeColor = -1;
+            display.bodyColors.eyeColor = -1;
             updateButtons();
         }
         //Berserk
@@ -301,11 +301,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Body
         if (button.id == 108) {
             lastColorClicked = 2;
-            setSubGui(new SubGuiColorSelector(display.bodyCM));
+            setSubGui(new SubGuiColorSelector(display.bodyColors.bodyCM));
         }
         // Body Clear
         if (button.id == 1108) {
-            display.bodyCM = -1;
+            display.bodyColors.bodyCM = -1;
             updateButtons();
         }
         //Has Eyebrows
@@ -315,41 +315,41 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Body C1
         if (button.id == 109) {
             lastColorClicked = 3;
-            setSubGui(new SubGuiColorSelector(display.bodyC1));
+            setSubGui(new SubGuiColorSelector(display.bodyColors.bodyC1));
         }
         // Body C1 Clear
         if (button.id == 1109) {
-            display.bodyC1 = -1;
+            display.bodyColors.bodyC1 = -1;
             updateButtons();
         }
         // Body C2
         if (button.id == 110) {
             lastColorClicked = 4;
-            setSubGui(new SubGuiColorSelector(display.bodyC2));
+            setSubGui(new SubGuiColorSelector(display.bodyColors.bodyC2));
         }
         // Body C2 Clear
         if (button.id == 1110) {
-            display.bodyC2 = -1;
+            display.bodyColors.bodyC2 = -1;
             updateButtons();
         }
         // Body C3
         if (button.id == 111) {
             lastColorClicked = 5;
-            setSubGui(new SubGuiColorSelector(display.bodyC3));
+            setSubGui(new SubGuiColorSelector(display.bodyColors.bodyC3));
         }
         // Body C3 Clear
         if (button.id == 1111) {
-            display.bodyC3 = -1;
+            display.bodyColors.bodyC3 = -1;
             updateButtons();
         }
         // Fur Color
         if (button.id == 112) {
             lastColorClicked = 6;
-            setSubGui(new SubGuiColorSelector(display.furColor));
+            setSubGui(new SubGuiColorSelector(display.bodyColors.furColor));
         }
         // Fur Color Clear
         if (button.id == 1112) {
-            display.furColor = -1;
+            display.bodyColors.furColor = -1;
             updateButtons();
         }
         // Majin Hair
@@ -396,11 +396,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Hair Color
         if (button.id == 104) {
             lastColorClicked = 7;
-            setSubGui(new SubGuiColorSelector(display.hairColor));
+            setSubGui(new SubGuiColorSelector(display.bodyColors.hairColor));
         }
         // Hair Color Clear
         if (button.id == 1104) {
-            display.hairColor = -1;
+            display.bodyColors.hairColor = -1;
             updateButtons();
         }
         //Hair Type
@@ -453,19 +453,19 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             if (lastColorClicked == 0) {
                 display.auraColor = color;
             } else if (lastColorClicked == 1) {
-                display.eyeColor = color;
+                display.bodyColors.eyeColor = color;
             } else if (lastColorClicked == 2) {
-                display.bodyCM = color;
+                display.bodyColors.bodyCM = color;
             } else if (lastColorClicked == 3) {
-                display.bodyC1 = color;
+                display.bodyColors.bodyC1 = color;
             } else if (lastColorClicked == 4) {
-                display.bodyC2 = color;
+                display.bodyColors.bodyC2 = color;
             } else if (lastColorClicked == 5) {
-                display.bodyC3 = color;
+                display.bodyColors.bodyC3 = color;
             } else if (lastColorClicked == 6) {
-                display.furColor = color;
+                display.bodyColors.furColor = color;
             } else if (lastColorClicked == 7) {
-                display.hairColor = color;
+                display.bodyColors.hairColor = color;
             } else if (lastColorClicked == 8) {
                 display.kiBarColor = color;
             }

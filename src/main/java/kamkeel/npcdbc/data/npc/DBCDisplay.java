@@ -227,19 +227,19 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         boolean inF = form != null;
         switch (type.toLowerCase()) {
             case "hair":
-                return (inF ? form.display.hairColor : hairColor) != -1;
+                return (inF ? form.display.bodyColors.hairColor : hairColor) != -1;
             case "eye":
-                return (inF ? form.display.eyeColor : eyeColor) != -1;
+                return (inF ? form.display.bodyColors.eyeColor : eyeColor) != -1;
             case "bodycm":
-                return (inF ? form.display.bodyCM : bodyCM) != -1;
+                return (inF ? form.display.bodyColors.bodyCM : bodyCM) != -1;
             case "bodyc1":
-                return (inF ? form.display.bodyC1 : bodyC1) != -1;
+                return (inF ? form.display.bodyColors.bodyC1 : bodyC1) != -1;
             case "bodyc2":
-                return (inF ? form.display.bodyC2 : bodyC2) != -1;
+                return (inF ? form.display.bodyColors.bodyC2 : bodyC2) != -1;
             case "bodyc3":
-                return (inF ? form.display.bodyC3 : bodyC3) != -1;
+                return (inF ? form.display.bodyColors.bodyC3 : bodyC3) != -1;
             case "fur":
-                return (inF ? form.display.furColor : furColor) != -1;
+                return (inF ? form.display.bodyColors.furColor : furColor) != -1;
         }
         throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
@@ -250,19 +250,19 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         boolean inF = form != null;
         switch (type.toLowerCase()) {
             case "hair":
-                return inF ? form.display.hairColor : hairColor;
+                return inF ? form.display.bodyColors.hairColor : hairColor;
             case "eye":
-                return inF ? form.display.eyeColor : eyeColor;
+                return inF ? form.display.bodyColors.eyeColor : eyeColor;
             case "bodycm":
-                return inF ? form.display.bodyCM : bodyCM;
+                return inF ? form.display.bodyColors.bodyCM : bodyCM;
             case "bodyc1":
-                return inF ? form.display.bodyC1 : bodyC1;
+                return inF ? form.display.bodyColors.bodyC1 : bodyC1;
             case "bodyc2":
-                return inF ? form.display.bodyC2 : bodyC2;
+                return inF ? form.display.bodyColors.bodyC2 : bodyC2;
             case "bodyc3":
-                return inF ? form.display.bodyC3 : bodyC3;
+                return inF ? form.display.bodyColors.bodyC3 : bodyC3;
             case "fur":
-                return inF ? form.display.furColor : furColor;
+                return inF ? form.display.bodyColors.furColor : furColor;
         }
         throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }

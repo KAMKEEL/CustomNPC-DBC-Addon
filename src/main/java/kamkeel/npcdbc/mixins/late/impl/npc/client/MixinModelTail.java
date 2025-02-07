@@ -87,9 +87,9 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
                 Form form = display.getForm();
                 if (form != null) {
                     if (form.display.hasColor("hair"))
-                        tailColor = form.display.hairColor;
+                        tailColor = form.display.bodyColors.hairColor;
                     if (form.display.hasColor("fur"))
-                        furColor = form.display.furColor;
+                        furColor = form.display.bodyColors.furColor;
 
                     hasFur = form.display.hasBodyFur;
 
@@ -122,9 +122,9 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
                 if (form != null) {
                     if ((form.display.bodyType.contains("first") || form.display.bodyType.contains("second") || form.display.bodyType.contains("third"))) {
                         if (form.display.hasColor("bodyc3"))
-                            tailColor = form.display.bodyC3;
+                            tailColor = form.display.bodyColors.bodyC3;
                     } else if (form.display.hasColor("bodycm"))
-                        tailColor = form.display.bodyCM;
+                        tailColor = form.display.bodyColors.bodyCM;
 
                 }
 
