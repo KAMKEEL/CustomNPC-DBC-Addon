@@ -317,7 +317,7 @@ public abstract class MixinDBCKiTech {
                 if (form.requiredForm.containsKey((int) JRMCoreH.Race)) {
                     int id = dbcData.stats.getJRMCPlayerID();
                     JRMCoreH.State = form.requiredForm.get((int) JRMCoreH.Race);
-                    JRMCoreH.data2[id] = JRMCoreH.State + JRMCoreH.data2[id].substring(1);
+                    JRMCoreH.data2[id] = JRMCoreH.State + ";" + JRMCoreH.data2[id].split(";")[1];
                 }
 
                 PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false).generatePacket());
