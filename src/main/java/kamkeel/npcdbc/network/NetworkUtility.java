@@ -53,9 +53,9 @@ public class NetworkUtility {
 
     public static void sendCustomEffectDataAll(EntityPlayerMP player) {
         Map<String, Integer> map = new HashMap<String, Integer>();
-        for (CustomEffect effect : StatusEffectController.getInstance().customEffects.values()) {
-            map.put(effect.name, effect.id);
-        }
+//        for (CustomEffect effect : StatusEffectController.getInstance().customEffects.values()) {
+//            map.put(effect.name, effect.id);
+//        }
         sendScrollData(player, map);
     }
 

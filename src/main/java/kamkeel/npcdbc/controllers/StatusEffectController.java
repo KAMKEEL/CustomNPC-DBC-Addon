@@ -26,8 +26,8 @@ public class StatusEffectController implements IStatusEffectHandler {
     // TODO: I will implement later - Kam
     //      ...
     //      Fucking Liar - Hussar (respectfully)
-    public HashMap<Integer, CustomEffect> customEffectsSync = new HashMap<>();
-    public HashMap<Integer, CustomEffect> customEffects = new HashMap<>();
+//    public HashMap<Integer, CustomEffect> customEffectsSync = new HashMap<>();
+//    public HashMap<Integer, CustomEffect> customEffects = new HashMap<>();
     private int lastUsedID = Effects.CUSTOM_EFFECT;
 
     public ConcurrentHashMap<UUID, Map<Integer, PlayerEffect>> playerEffects = new ConcurrentHashMap<>();
@@ -106,14 +106,14 @@ public class StatusEffectController implements IStatusEffectHandler {
         CustomEffect effect = new CustomEffect();
         effect.name = name;
 
-        if (effect.id == -1) {
-            int  id = getUnusedId();
-            while (customEffects.containsKey(id)) {
-                id = getUnusedId();
-            }
-            effect.id = id;
-        }
-        customEffects.put(effect.id, effect);
+//        if (effect.id == -1) {
+//            int  id = getUnusedId();
+//            while (customEffects.containsKey(id)) {
+//                id = getUnusedId();
+//            }
+//            effect.id = id;
+//        }
+//        customEffects.put(effect.id, effect);
         return effect;
     }
 
@@ -125,22 +125,22 @@ public class StatusEffectController implements IStatusEffectHandler {
     @Override
     public void deleteEffect(String name) {
         IStatusEffect effect = getEffect(name);
-        if (effect != null)
-            customEffects.remove(effect.getId());
+//        if (effect != null)
+//            customEffects.remove(effect.getId());
     }
 
     public void delete(int id) {
         IStatusEffect effect = get(id);
-        if (effect != null)
-            customEffects.remove(effect.getId());
+//        if (effect != null)
+//            customEffects.remove(effect.getId());
     }
 
 
     public int getUnusedId() {
-        for (int catid : customEffects.keySet()) {
-            if (catid > lastUsedID)
-                lastUsedID = catid;
-        }
+//        for (int catid : customEffects.keySet()) {
+//            if (catid > lastUsedID)
+//                lastUsedID = catid;
+//        }
         lastUsedID++;
         return lastUsedID;
     }
@@ -152,19 +152,19 @@ public class StatusEffectController implements IStatusEffectHandler {
             }
         }
 
-        for (CustomEffect effect : customEffects.values()) {
-            if (effect.getName().equalsIgnoreCase(name)) {
-                return effect;
-            }
-        }
+//        for (CustomEffect effect : customEffects.values()) {
+//            if (effect.getName().equalsIgnoreCase(name)) {
+//                return effect;
+//            }
+//        }
 
         return null;
     }
 
     public StatusEffect get(int id) {
         StatusEffect statusEffect = standardEffects.get(id);
-        if (statusEffect == null)
-            statusEffect = customEffects.get(id);
+//        if (statusEffect == null)
+//            statusEffect = customEffects.get(id);
 
         return statusEffect;
     }

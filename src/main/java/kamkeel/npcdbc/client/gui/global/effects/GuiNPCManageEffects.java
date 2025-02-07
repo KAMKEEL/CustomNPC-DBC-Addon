@@ -2,9 +2,11 @@ package kamkeel.npcdbc.client.gui.global.effects;
 
 import akka.japi.Effect;
 import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.effect.DBCRequestEffect;
 import kamkeel.npcdbc.network.packets.outline.DBCGetOutline;
 import kamkeel.npcdbc.network.packets.outline.DBCRemoveOutline;
 import kamkeel.npcdbc.network.packets.outline.DBCRequestOutline;
@@ -35,7 +37,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
 
     public GuiNPCManageEffects(EntityNPCInterface npc) {
         super(npc);
-        PacketHandler.Instance.sendToServer(new DBCRequestOutline(-1).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCRequestEffect(-1).generatePacket());
     }
 
     public void initGui() {
@@ -116,13 +118,13 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
 
     @Override
     public void setGuiData(NBTTagCompound compound) {
-//        this.effect = new CustomEffect();
-//        effect.readFromNBT(compound);
-//        setSelected(effect.name);
-//
-//        if (effect.id != -1) {
-//            OutlineController.getInstance().customOutlines.replace(effect.id, effect);
-//        }
+        this.effect = new CustomEffect();
+        effect.readFromNBT(compound);
+        setSelected(effect.name);
+
+        if (effect.id != -1) {
+//            StatusEffectController.getInstance().customEffects.replace(effect.id, effect);
+        }
         initGui();
     }
 

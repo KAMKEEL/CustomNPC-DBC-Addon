@@ -20,8 +20,8 @@ public class PlayerEffect implements IPlayerEffect {
     public static PlayerEffect readEffectData(NBTTagCompound nbt) {
         int id = nbt.getInteger("Id");
         if (id > 0) {
-            boolean found = StatusEffectController.getInstance().standardEffects.containsKey(id) ||
-                StatusEffectController.getInstance().customEffects.containsKey(id);
+            boolean found = StatusEffectController.getInstance().standardEffects.containsKey(id);
+//                StatusEffectController.getInstance().customEffects.containsKey(id);
             if (found) {
                 byte level = nbt.getByte("Level");
                 int dur = nbt.getInteger("Dur");
