@@ -345,15 +345,33 @@ public interface IDBCAddon extends IDBCPlayer {
 
     /**
      * Removes the given form by name.
+     * <br><br>
+     * Removing mastery is dependent on configs
      * @param formName Name of the form to remove.
      */
     void removeCustomForm(String formName);
 
     /**
      * Removes the given form.
+     * <br><br>
+     * Removing mastery is dependent on configs
      * @param form Form object to remove.
      */
     void removeCustomForm(IForm form);
+
+    /**
+     * Removes the given form by name.
+     * @param formName Name of the form to remove.
+     * @param removesMastery does removing this form remove mastery
+     */
+    void removeCustomForm(String formName, boolean removesMastery);
+
+    /**
+     * Removes the given form.
+     * @param form Form object to remove
+     * @param removesMastery does removing this form remove mastery
+     */
+    void removeCustomForm(IForm form, boolean removesMastery);
 
     /**
      * Selects a custom form for the player.

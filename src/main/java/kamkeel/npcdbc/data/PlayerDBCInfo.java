@@ -77,14 +77,23 @@ public class PlayerDBCInfo {
     }
 
     public boolean removeForm(Form form) {
-        if(form == null)
-            return false;
-        formLevels.remove(form.id);
-        return unlockedForms.remove(form.id);
+        return removeForm(form, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
     }
 
     public boolean removeForm(int id) {
-        formLevels.remove(id);
+        return removeForm(id, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
+    }
+    public boolean removeForm(Form form, boolean removesMastery) {
+        if(form == null)
+            return false;
+        if (removesMastery)
+            formLevels.remove(form.id);
+        return unlockedForms.remove(form.id);
+    }
+
+    public boolean removeForm(int id, boolean removesMastery) {
+        if (removesMastery)
+            formLevels.remove(id);
         return unlockedForms.remove(id);
     }
 
@@ -92,6 +101,7 @@ public class PlayerDBCInfo {
         if (wheelSlot <= 5 && wheelSlot >= 0)
             formWheel[wheelSlot].reset();
     }
+
 
 
     public Form getForm(int id) {

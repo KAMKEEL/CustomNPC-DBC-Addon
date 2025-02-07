@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.api.form;
 
+import kamkeel.npcdbc.scripted.ScriptDBCAddon;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import noppes.npcs.api.entity.IPlayer;
 
 public interface IForm {
@@ -64,6 +66,9 @@ public interface IForm {
     void assignToPlayer(String playerName);
 
     void removeFromPlayer(String playerName);
+
+    void removeFromPlayer(IPlayer ScriptDBCAddon, boolean removesMastery);
+    void removeFromPlayer(String playerName, boolean removesMastery);
 
     String getAscendSound();
 

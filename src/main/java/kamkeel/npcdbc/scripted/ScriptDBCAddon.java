@@ -6,6 +6,7 @@ import kamkeel.npcdbc.api.IDBCAddon;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.controllers.AuraController;
@@ -704,12 +705,23 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     public void removeCustomForm(String formName) {
         IForm f = FormController.Instance.get(formName);
-        f.removeFromPlayer(this);
+        removeCustomForm(f, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
     }
 
     @Override
     public void removeCustomForm(IForm form) {
-        removeCustomForm(form.getName());
+        removeCustomForm(form, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
+    }
+
+    @Override
+    public void removeCustomForm(String formName, boolean removesMastery) {
+        IForm f = FormController.Instance.get(formName);
+        removeCustomForm(f, removesMastery);
+    }
+
+    @Override
+    public void removeCustomForm(IForm form, boolean removesMastery) {
+        form.removeFromPlayer(this, removesMastery);
     }
 
     @Override

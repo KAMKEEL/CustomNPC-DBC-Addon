@@ -5,6 +5,7 @@ import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormDisplay;
 import kamkeel.npcdbc.api.form.IFormMastery;
 import kamkeel.npcdbc.api.form.IFormStackable;
+import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -234,16 +235,26 @@ public class Form implements IForm {
 
     @Override
     public void removeFromPlayer(IPlayer player) {
+        removeFromPlayer(player, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
+    }
+
+    public void removeFromPlayer(String playerName) {
+        removeFromPlayer(playerName, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
+    }
+
+    @Override
+    public void removeFromPlayer(IPlayer player, boolean removesMastery) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo((EntityPlayer) player.getMCEntity());
-        formData.removeForm(this);
+        formData.removeForm(this, removesMastery);
         if (formData.selectedForm == this.id)
             formData.selectedForm = -1;
 
         formData.updateClient();
     }
 
-    public void removeFromPlayer(String playerName) {
-        removeFromPlayer(NpcAPI.Instance().getPlayer(playerName));
+    @Override
+    public void removeFromPlayer(String playerName, boolean removesMastery) {
+        removeFromPlayer(NpcAPI.Instance().getPlayer(playerName), removesMastery);
     }
 
     @Override
