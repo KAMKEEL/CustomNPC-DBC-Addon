@@ -9,15 +9,18 @@ import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.data.form.FormMasteryLinkData;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
+import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 import noppes.npcs.NBTTags;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.data.PlayerData;
@@ -44,6 +47,7 @@ public class PlayerDBCInfo {
     public HashSet<Integer> unlockedForms = new HashSet<Integer>();
     public HashMap<Integer, Float> formLevels = new HashMap<Integer, Float>();
     public HashMap<Integer, Integer> formTimers = new HashMap<>();
+    public HashMap<Integer, FormDisplay.BodyColor> configuredFormColors = new HashMap<>();
     public FormWheelData[] formWheel = new FormWheelData[6];
 
     public PlayerDBCInfo(PlayerData parent) {
@@ -407,6 +411,7 @@ public class PlayerDBCInfo {
         dbcCompound.setTag("UnlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
         dbcCompound.setTag("FormMastery", NBTTags.nbtIntegerFloatMap(formLevels));
         dbcCompound.setTag("FormTimers", NBTTags.nbtIntegerIntegerMap(formTimers));
+        dbcCompound.setTag("ConfigurableFormColors", NBTHelper.nbtIntegerObjectMap(configuredFormColors, bodyColor -> bodyColor.writeToNBT(new NBTTagCompound())));
 
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i].writeToNBT(dbcCompound);
@@ -437,6 +442,19 @@ public class PlayerDBCInfo {
         currentAura = dbcCompound.getInteger("CurrentAura");
         selectedAura = dbcCompound.getInteger("SelectedAura");
         unlockedAuras = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedAuras", 10));
+
+        if (dbcCompound.hasKey("ConfigurableFormColors"))
+            configuredFormColors = NBTHelper.javaIntegerObjectMap(
+                dbcCompound.getTagList("ConfigurableFormColors", Constants.NBT.TAG_COMPOUND),
+
+                (colorCompound) -> {
+                    FormDisplay.BodyColor color = new FormDisplay.BodyColor();
+                    color.readFromNBT(colorCompound);
+                    return color;
+                },
+
+                (slot, ignored) -> FormController.getInstance().has(slot)
+            );
 
         loadEffects(dbcCompound);
         loadBonuses(dbcCompound);

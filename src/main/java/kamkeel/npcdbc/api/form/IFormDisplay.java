@@ -150,4 +150,6 @@ public interface IFormDisplay {
      * @return IFormDisplay self object
      */
     IFormDisplay save();
+
+    boolean isCustomizable();
 }

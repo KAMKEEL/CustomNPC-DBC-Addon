@@ -23,6 +23,7 @@ import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.entity.EntityAura;
@@ -41,6 +42,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
@@ -78,6 +80,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
      */
     @SideOnly(Side.CLIENT)
     public Map<String, PlayerBonus> currentBonuses;
+
+    @SideOnly(Side.CLIENT)
+    public FormDisplay.BodyColor currentCustomizedColors;
 
     // NON VANILLA DBC
     public float baseFlightSpeed = 1.0f, dynamicFlightSpeed = 1.0f, sprintSpeed = 1.0f;
@@ -165,6 +170,13 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setBoolean("DBCisFlying", isFlying);
         comp.setBoolean("DBCFlightEnabled", flightEnabled);
         comp.setBoolean("DBCFlightGravity", flightGravity);
+
+        FormDisplay.BodyColor currentColors = getCurrentFormColorCustomization();
+        if (currentColors != null) {
+            NBTTagCompound colorCompound = new NBTTagCompound();
+            currentColors.writeToNBT(colorCompound);
+            comp.setTag("CustomFormColors", colorCompound);
+        }
 
 
         comp.setBoolean("DBCIsFnPressed", isFnPressed);
@@ -298,6 +310,13 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
                 PlayerBonus bonus = PlayerBonus.readBonusData(nbttagcompound1);
                 this.currentBonuses.put(bonus.name, bonus);
             }
+        }
+
+        if (c.hasKey("CustomFormColors", Constants.NBT.TAG_COMPOUND)) {
+            currentCustomizedColors = new FormDisplay.BodyColor();
+            currentCustomizedColors.readFromNBT(c.getCompoundTag("CustomFormColors"));
+        } else {
+            currentCustomizedColors = null;
         }
     }
 
@@ -1021,5 +1040,17 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     public int getAvailableMind() {
         return this.MND - this.getUsedMind();
+    }
+
+    public FormDisplay.BodyColor getCurrentFormColorCustomization() {
+        if (side.isClient())
+            return currentCustomizedColors;
+
+        Form form = getForm();
+        if (form == null || !form.display.isCustomizable())
+            return null;
+
+        PlayerDBCInfo info = getDBCInfo();
+        return info.configuredFormColors.get(form.id);
     }
 }

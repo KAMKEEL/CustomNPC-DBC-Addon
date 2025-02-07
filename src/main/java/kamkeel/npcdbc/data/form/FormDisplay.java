@@ -33,6 +33,8 @@ public class FormDisplay implements IFormDisplay {
     public boolean effectMajinHair = false;
     public boolean isBerserk, hasEyebrows = true;
 
+    public boolean isCustomizable = false;
+
     public BodyColor bodyColors = new BodyColor();
 
     public int auraID = -1, outlineID = -1;
@@ -67,6 +69,8 @@ public class FormDisplay implements IFormDisplay {
 
         auraID = rendering.hasKey("auraID") ? rendering.getInteger("auraID") : -1;
         outlineID = rendering.hasKey("outlineID") ? rendering.getInteger("outlineID") : -1;
+
+        isCustomizable = rendering.getBoolean("isCustomizable");
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -93,6 +97,8 @@ public class FormDisplay implements IFormDisplay {
 
         rendering.setInteger("auraID", auraID);
         rendering.setInteger("outlineID", outlineID);
+
+        rendering.setBoolean("isCustomizable", isCustomizable);
 
         compound.setTag("rendering", rendering);
         return compound;
@@ -386,6 +392,11 @@ public class FormDisplay implements IFormDisplay {
         if (parent != null)
             parent.save();
         return this;
+    }
+
+    @Override
+    public boolean isCustomizable() {
+        return isCustomizable;
     }
 
     public static class BodyColor {
