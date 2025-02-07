@@ -8,6 +8,7 @@ import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.items.ItemVanity;
 import JinRyuu.JRMCore.mod_JRMCore;
+import JinRyuu.JRMCore.server.config.core.JGConfigSkills;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
@@ -16,8 +17,10 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
@@ -30,20 +33,27 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
+import noppes.npcs.scripted.CustomNPCsException;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static JinRyuu.JRMCore.JRMCoreH.*;
 
 // Created by Goatee
 public class DBCUtils {
     public static String[][] formattedNames = new String[][]{
-            {"§fBase", "§eFull Release", "§cBuffed", "§f4God"},
-            {"§fBase", "§eSuper Saiyan", "§eSuper Saiyan (Grade 2)", "§eSuper Saiyan (Grade 3)", "§eMastered Super Saiyan", "§eSuper Saiyan 2", "§eSuper Saiyan 3", "§4Oozaru", "§6Golden Oozaru", "§cSuper Saiyan God", "§bSuper Saiyan Blue", "", "", "", "§4Super Saiyan 4", "§bShinka"},
-            {"§fBase", "§eSuper Saiyan", "§eSuper Saiyan (Grade 2)", "§eSuper Saiyan (Grade 3)", "§eMastered Super Saiyan", "§eSuper Saiyan 2", "§eSuper Saiyan 3", "§4Oozaru", "§6Golden Oozaru", "§cSuper Saiyan God", "§bSuper Saiyan Blue", "", "", "", "§4Super Saiyan 4", "§bShinka"},
-            {"§fBase", "§eFull Release", "§aGiant Form", "§4God"},
-            {"§7Minimal", "§7First Form", "§7Second Form", "§7Third Form", "§fBase", "§5Fifth Form", "§6Ultimate", "§4God"},
-            {"§fBase", "§4Evil", "§cFull Power", "§dPurest", "§4God"}
+        {"§fBase", "§eFull Release", "§cBuffed", "§f4God"},
+        {"§fBase", "§eSuper Saiyan", "§eSuper Saiyan (Grade 2)", "§eSuper Saiyan (Grade 3)", "§eMastered Super Saiyan", "§eSuper Saiyan 2", "§eSuper Saiyan 3", "§4Oozaru", "§6Golden Oozaru", "§cSuper Saiyan God", "§bSuper Saiyan Blue", "", "", "", "§4Super Saiyan 4", "§bShinka"},
+        {"§fBase", "§eSuper Saiyan", "§eSuper Saiyan (Grade 2)", "§eSuper Saiyan (Grade 3)", "§eMastered Super Saiyan", "§eSuper Saiyan 2", "§eSuper Saiyan 3", "§4Oozaru", "§6Golden Oozaru", "§cSuper Saiyan God", "§bSuper Saiyan Blue", "", "", "", "§4Super Saiyan 4", "§bShinka"},
+        {"§fBase", "§eFull Release", "§aGiant Form", "§4God"},
+        {"§7Minimal", "§7First Form", "§7Second Form", "§7Third Form", "§fBase", "§5Fifth Form", "§6Ultimate", "§4God"},
+        {"§fBase", "§4Evil", "§cFull Power", "§dPurest", "§4God"}
     };
-    public static int lastSetDamage = -1;
+    //lastSetDamage works with player's DBCDamagedEvent
+    public static int lastSetDamage = -1, npcLastSetDamage = -1;
+    //this one is with the scripting player Attack/Attacked events. Separated these into 2 so both can be functional
+    public static int lastSetDamage2 = -1;
 
     public static String[] CONFIG_UI_NAME;
     public static String[] cCONFIG_UI_NAME;
@@ -58,13 +68,12 @@ public class DBCUtils {
         return out;
     }
 
-    public static int getMaxAbsorptionLevel(){
+    public static int getMaxAbsorptionLevel() {
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
             return JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL;
         }
         return ClientCache.maxAbsorptionLevel;
     }
-
 
     /**
      * A generic that checks if given st2 has white hair in the config
@@ -94,13 +103,11 @@ public class DBCUtils {
             return whitelevel;
         else
             return blacklevel;
-
     }
 
     public static boolean hasMUI(EntityPlayer p) {
         return lastUIlvl(true, p) > 0;
     }
-
 
     public static double getMaxFormMasteryLvl(int st, int race) {
         // int n = JRMCoreH.trans[JRMCoreH.Race].length - 1; // kk? n + 1 : mys? n + 2 :
@@ -185,7 +192,7 @@ public class DBCUtils {
                     int SPI = PlyrAttrbts[5];
                     int energyPool = stat(player, 5, powerType, 5, SPI, race, classID, SklLvl_KiBs(ps, powerType));
                     def = (int) ((double) def * (double) release * 0.01 * (double) weightPerc(1, player));
-                    kiProtectOn = !PlyrSettingsB(player, 10);
+                    kiProtectOn = !PlyrSettingsB(player, DBCSettings.KI_PROTECTION);
                     int kiProtectLevel = SklLvl(11, ps);
                     if (kiProtectOn) {
                         kiProtection = (int) ((double) kiProtectLevel * 0.005 * (double) energyPool * (double) release * 0.01);
@@ -303,10 +310,22 @@ public class DBCUtils {
                 }
 
                 int currentHP = getInt(player, "jrmcBdy");
+
+                // Damage Negation
+                Form form = DBCData.getForm(player);
+                if (form != null) {
+                    float formLevel = PlayerDataUtil.getFormLevel(player);
+                    if (form.mastery.hasDamageNegation()) {
+                        float damageNegation = form.mastery.damageNegation * form.mastery.calculateMulti("damageNegation", formLevel);
+                        dbcA = dbcA * (100 - damageNegation) / 100;
+                    }
+                }
+
+                dbcA = calculateDamageNegation(player, dbcA);
                 float all = currentHP - dbcA;
                 int newHP = all < 0 ? 0 : (int) all;
                 if (dse) {
-                    boolean friendlyFist = PlyrSettingsB((EntityPlayer) s.getEntity(), 12);
+                    boolean friendlyFist = PlyrSettingsB((EntityPlayer) s.getEntity(), DBCSettings.FRIENDLY_FIST);
                     if (friendlyFist && !s.getDamageType().equals("MajinAbsorption") && !s.getEntity().equals(Player)) {
                         int ko = getInt(player, "jrmcHar4va");
                         newHP = all < 20 ? 20 : (int) all;
@@ -319,9 +338,9 @@ public class DBCUtils {
             }
         }
 
+
         return (int) dbcA;
     }
-
 
     public static int calculateDBCStatDamage(EntityPlayer player, int damageAmount, IDBCStats dbcStats) {
         if (!player.worldObj.isRemote && dbcStats != null && damageAmount > 0) {
@@ -364,7 +383,7 @@ public class DBCUtils {
 
                 int def = 0;
                 // KI STUFF
-                boolean kiProtectOn = !PlyrSettingsB((EntityPlayer) player, 10);
+                boolean kiProtectOn = !PlyrSettingsB((EntityPlayer) player, DBCSettings.KI_PROTECTION);
                 int kiProtection = 0;
                 int kiProtectionCost = 0;
                 int maxKiPool = JRMCoreH.stat(player, 5, powerType, 5, attributes[5], race, classID, JRMCoreH.SklLvl_KiBs(playerSkills, powerType));
@@ -494,6 +513,7 @@ public class DBCUtils {
 
                 // Consider Stamina Cost or Con on the Damage Amount
                 damageAmount = (int) ((double) damageAmount / formDamageReduction);
+                damageAmount = (int) calculateDamageNegation(player, damageAmount);
 
                 int playerHP = getInt(player, "jrmcBdy");
                 int reducedHP = playerHP - damageAmount;
@@ -501,6 +521,7 @@ public class DBCUtils {
                 return playerHP - newHP;
             }
         }
+        player.addChatComponentMessage(new ChatComponentText(""+damageAmount));
         return damageAmount;
     }
 
@@ -522,6 +543,12 @@ public class DBCUtils {
             newHP = Math.max(reducedHP, 0);
         }
 
+        if (lastSetDamage2 != -1) {
+            damageToHP = Math.max(lastSetDamage2, 0);
+            lastSetDamage2 = -1;
+            reducedHP = playerHP - damageToHP;
+            newHP = Math.max(reducedHP, 0);
+        }
         boolean friendlyFist = dbcStats.isFriendlyFist();
 
         if (!isInCreativeMode(player)) {
@@ -543,21 +570,33 @@ public class DBCUtils {
         }
     }
 
-    public static int calculateAttackStat(EntityPlayer player, DamageSource source) {
+    public static float calculateDamageNegation(EntityPlayer player, float originalDamage) {
+        // Damage Negation
+        Form form = DBCData.getForm(player);
+        if (form != null) {
+            float formLevel = PlayerDataUtil.getFormLevel(player);
+            if (form.mastery.hasDamageNegation()) {
+                float damageNegation = form.mastery.damageNegation * form.mastery.calculateMulti("damageNegation", formLevel);
+                return originalDamage * (100 - damageNegation) / 100;
+            }
+        }
 
-        float amount = 1;
-        EntityPlayer attacker;
-        DBCData data = DBCData.get(player);
+        return originalDamage;
+    }
+
+    public static float calculateAttackStat(EntityPlayer attacker, float eventDamage, DamageSource source) {
+        float dam = eventDamage;
+        DBCData data = DBCData.get(attacker);
         if (data.isFusionSpectator())
             return 0;
-        if (source.getEntity() != null && source.getEntity() instanceof EntityPlayer) {
-            attacker = (EntityPlayer) source.getEntity();
+        if (source.getEntity() != null) {
+            //   attacker = (EntityPlayer) source.getEntity();
             int powerType = data.Powertype;
             if (!JRMCoreH.isPowerTypeKi(powerType))
                 return 0;
 
             boolean ultraInstinctCounter = source.getDamageType().equals("UICounter");
-            boolean Melee = ultraInstinctCounter || source.getSourceOfDamage() == source.getEntity() && source.getDamageType().equals("player");
+            boolean Melee = ultraInstinctCounter || source.getSourceOfDamage() == attacker && source.getDamageType().equals("player");
             boolean energyAtt = source.getDamageType().equals("EnergyAttack") && source.getSourceOfDamage() instanceof EntityEnergyAtt;
             boolean Projectile = source.getSourceOfDamage() instanceof IProjectile && !energyAtt;
 
@@ -582,12 +621,11 @@ public class DBCUtils {
 
             boolean c = JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects);
             int STR = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 0, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
-            float dam = 0;
             int cstF = 0;
-
+            Melee = true;
             if (Melee) {
                 int sklkf = JRMCoreH.SklLvl(12, PlyrSkills);
-                boolean sklkfe = !JRMCoreH.PlyrSettingsB(attacker, 9);
+                boolean sklkfe = !JRMCoreH.PlyrSettingsB(attacker, DBCSettings.KI_FIST);
                 int sklks = 0;
                 if (sklkf > 0 && sklkfe) {
                     int SPI = PlyrAttrbts[5];
@@ -605,8 +643,8 @@ public class DBCUtils {
 
                 int dmg = JRMCoreH.stat(attacker, 0, powerType, 0, STR, race, classID, 0.0F);
                 double curAtr = (double) dmg * release * 0.01 * (double) JRMCoreH.weightPerc(0, attacker);
-                boolean sklkfe2 = JRMCoreH.PlyrSettingsB(attacker, 13);
-                boolean sklkfe3 = JRMCoreH.PlyrSettingsI(attacker, 13, 1);
+                boolean sklkfe2 = JRMCoreH.PlyrSettingsB(attacker, DBCSettings.KI_WEAPON_TOGGLE);
+                boolean sklkfe3 = JRMCoreH.PlyrSettingsI(attacker, DBCSettings.KI_WEAPON_TOGGLE, 1);
                 int skf = JRMCoreH.SklLvl(15, PlyrSkills);
                 boolean hasKiWeaponEnabled = sklkf > 0 && skf > 0 && sklkfe2;
                 if (hasKiWeaponEnabled) {
@@ -626,8 +664,7 @@ public class DBCUtils {
                     kiWeaponDamage = (int) ((float) kiWeaponDamage + (float) skf * data1);
 
                     if (kiWeaponCost > 0 && currentEnergy >= kiWeaponCost) {
-                        dam = amount + (float) kiWeaponDamage;
-
+                        dam = eventDamage + (float) kiWeaponDamage;
                     }
                 }
 
@@ -637,7 +674,7 @@ public class DBCUtils {
                 int WIL = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 3, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
                 int dmg = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
                 int skf = JRMCoreH.SklLvl(15, PlyrSkills);
-                dam = (float) ((double) amount + (double) dmg * release * 0.005F * (double) skf * (double) JRMCoreH.weightPerc(1, attacker));
+                dam = (float) ((double) eventDamage + (double) dmg * release * 0.005F * (double) skf * (double) JRMCoreH.weightPerc(1, attacker));
             }
             if (ultraInstinctCounter) {
                 dam *= (float) JGConfigUltraInstinct.CONFIG_UI_ATTACK_DAMAGE_PERCENTAGE[JRMCoreH.state2UltraInstinct(!mn, (byte) state2)] * 0.01F;
@@ -646,10 +683,12 @@ public class DBCUtils {
             return (int) (dam <= 0.0F ? 1.0F : dam);
         }
 
-        return 0;
+        return dam;
     }
+
     public static boolean noBonusEffects = false;
-    public static int calculateKiDrainMight(DBCData dbcData, EntityPlayer player){
+
+    public static int calculateKiDrainMight(DBCData dbcData, EntityPlayer player) {
         calculatingKiDrain = true;
         int[] playerAttributes = JRMCoreH.PlyrAttrbts(dbcData.player); //Need to get fused attributes, major refactor of DBCData later on?
         calculatingKiDrain = false;
@@ -657,9 +696,9 @@ public class DBCUtils {
         String skillX = dbcData.RacialSkills;
         noBonusEffects = true;
 
-        int strengthBuff = JRMCoreH.getPlayerAttribute(dbcData.player, playerAttributes, 0, dbcData.State, 0, dbcData.Race, skillX, dbcData.Release, dbcData.ArcReserve,  false, false, false, false, false, false, 1, null, false, "") - playerAttributes[0];
-        int dexBuff = JRMCoreH.getPlayerAttribute(dbcData.player, playerAttributes, 1, dbcData.State, 0, dbcData.Race, skillX, dbcData.Release, dbcData.ArcReserve,  false, false, false, false, false, false, 1, null, false, "") - playerAttributes[1];
-        int willBuff = JRMCoreH.getPlayerAttribute(dbcData.player, playerAttributes, 3, dbcData.State, 0, dbcData.Race, skillX, dbcData.Release, dbcData.ArcReserve,  false, false, false, false, false, false, 1, null, false, "") - playerAttributes[3];
+        int strengthBuff = JRMCoreH.getPlayerAttribute(dbcData.player, playerAttributes, 0, dbcData.State, 0, dbcData.Race, skillX, dbcData.Release, dbcData.ArcReserve, false, false, false, false, false, false, 1, null, false, "") - playerAttributes[0];
+        int dexBuff = JRMCoreH.getPlayerAttribute(dbcData.player, playerAttributes, 1, dbcData.State, 0, dbcData.Race, skillX, dbcData.Release, dbcData.ArcReserve, false, false, false, false, false, false, 1, null, false, "") - playerAttributes[1];
+        int willBuff = JRMCoreH.getPlayerAttribute(dbcData.player, playerAttributes, 3, dbcData.State, 0, dbcData.Race, skillX, dbcData.Release, dbcData.ArcReserve, false, false, false, false, false, false, 1, null, false, "") - playerAttributes[3];
 
         noBonusEffects = false;
 
@@ -689,9 +728,137 @@ public class DBCUtils {
                 vanityHelmetOn = vanityItem instanceof ItemVanity && ((ItemVanity) vanityItem).armorType == 5 && vanitySlots[i] != Item.getIdFromItem(ItemsDBC.Coat_2) && vanitySlots[i] != Item.getIdFromItem(ItemsDBC.Coat);
             }
         }
-        if(helmetStack != null && helmetStack.getItem() instanceof ItemPotara)
+        if (helmetStack != null && helmetStack.getItem() instanceof ItemPotara)
             vanityHelmetOn = true;
 
         return JRMCoreConfig.HHWHO ? !helmetOn && !vanityHelmetOn || vanityHelmetOn : true;
     }
+
+    public static int getDBCSkillIndex(String skillName) {
+        return Arrays.stream(DBCSkillNames).map(String::toLowerCase).collect(Collectors.toList()).indexOf(skillName.toLowerCase());
+    }
+
+    /**
+     * @param skillIndex Numeric ID of the skill
+     * @param level Level you would like to check
+     * @return The Mind cost of JUST this level
+     */
+    public static int calculateDBCSkillMindCost(int skillIndex, int level) {
+        if (level <= 0) {
+            return 0;
+        }
+        level -= 1;
+
+        if (skillIndex < 0) {
+            throw new CustomNPCsException("Unknown skill ID");
+        }
+        int[] skillCosts = DBCSkillMindCost[skillIndex];
+        float f = 1f;
+        if(skillCosts.length > 0) {
+            f = (float)(skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
+        }
+
+        return (int) (f * JGConfigSkills.GlobalSkillMindMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillMindMultiplierFirst : 1.0F) * (float)(JGConfigSkills.GlobalSkillMindMultiplierWithLevel ? level + 1 : 1));
+    }
+
+    /**
+     * @param skillIndex Numeric ID of the skill
+     * @param level Level you would like to check
+     * @return The TP cost of JUST this level
+     */
+    public static int calculateDBCSkillTPCost(int skillIndex, int level) {
+        if (level <= 0) {
+            return 0;
+        }
+        level -= 1;
+
+        if (skillIndex < 0) {
+            throw new CustomNPCsException("Unknown skill ID");
+        }
+        int[] skillCosts = DBCSkillTPCost[skillIndex];
+        float f = 1f;
+        if(skillCosts.length > 0) {
+            f = (float)(skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
+        }
+
+        return (int) (f * JGConfigSkills.GlobalSkillTPMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillTPMultiplierFirst : 1.0F) * (float)(JGConfigSkills.GlobalSkillTPMultiplierWithLevel ? level + 1 : 1));
+    }
+
+    /**
+     * @param skillIndex Numeric ID of the skill
+     * @param level Level you would like to check
+     * @return The Mind cost of ALL the levels it took to get to the current level.
+     */
+    public static int calculateDBCSkillMindCostRecursively(int skillIndex, int level) {
+        int cost = 0;
+
+        for(int i = 0; i < level; i++) {
+            cost += calculateDBCSkillMindCost(skillIndex, i+1);
+        }
+        return cost;
+    }
+    /**
+     * @param skillIndex Numeric ID of the skill
+     * @param level Level you would like to check
+     * @return The TP cost of ALL the levels it took to get to the current level.
+     */
+    public static int calculateDBCSkillTPCostRecursively(int skillIndex, int level) {
+        int cost = 0;
+        for(int i = 0; i < level; i++) {
+            cost += calculateDBCSkillTPCost(skillIndex, i+1);
+        }
+        return cost;
+    }
+
+    public static int calculateDBCRacialSkillTPCost(int race, int level) {
+        if (level <= 0) {
+            return 0;
+        }
+        level -= 1;
+
+        if (race < 0 || race > 5) {
+            throw new CustomNPCsException("Unknown Race ID");
+        }
+        int[] skillCosts = DBCRacialSkillTPCost[race];
+        float f = 1f;
+        if(skillCosts.length > 0) {
+            f = (float)(skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
+        }
+
+        return (int) (f * JGConfigSkills.GlobalSkillTPMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillTPMultiplierFirst : 1.0F) * (float)(JGConfigSkills.GlobalSkillTPMultiplierWithLevel ? level + 1 : 1));
+    }
+
+    public static int calculateDBCRacialSkillMindCost(int race, int level) {
+        if (level <= 0) {
+            return 0;
+        }
+        level -= 1;
+
+        if (race < 0 || race > 5) {
+            throw new CustomNPCsException("Unknown Race ID");
+        }
+        int[] skillCosts = DBCRacialSkillMindCost[race];
+        float f = 1f;
+        if(skillCosts.length > 0) {
+            f = (float)(skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
+        }
+
+        return (int) (f * JGConfigSkills.GlobalSkillMindMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillMindMultiplierFirst : 1.0F) * (float)(JGConfigSkills.GlobalSkillMindMultiplierWithLevel ? level + 1 : 1));
+    }
+
+    public static int calculateDBCRacialSkillTPCostRecursively(int race, int level) {
+        int cost = 0;
+        for(int i = 0; i < level; i++) {
+            cost += calculateDBCRacialSkillTPCost(race, i+1);
+        }
+        return cost;
+    }
+    public static int calculateDBCRacialSkillMindCostRecursively(int race, int level) {
+        int cost = 0;
+        for(int i = 0; i < level; i++) {
+            cost += calculateDBCRacialSkillMindCost(race, i+1);
+        }
+        return cost;
+    }
+
 }

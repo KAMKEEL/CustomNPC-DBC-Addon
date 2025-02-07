@@ -136,7 +136,8 @@ public class DBCDataStats {
 
 
     public int getCurrentStat(int attribute) { // gets stat at current release
-        return (int) (getMaxStat(attribute) * data.Release * 0.01D * JRMCoreH.weightPerc(0, data.player));
+        float stat = (float) (getMaxStat(attribute) * (data.Release * 0.01D) * JRMCoreH.weightPerc(0, data.player));
+        return stat > Integer.MAX_VALUE? Integer.MAX_VALUE : (int) stat;
     }
 
     public double getCurrentMulti() {

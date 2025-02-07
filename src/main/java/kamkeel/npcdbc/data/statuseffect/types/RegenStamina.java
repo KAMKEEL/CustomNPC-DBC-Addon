@@ -19,7 +19,7 @@ public class RegenStamina extends StatusEffect {
     }
 
     @Override
-    public void process(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
         int percentToRegen = ConfigDBCEffects.StaminaRegenPercent * playerEffect.level;
         dbcData.stats.restoreStaminaPercent(percentToRegen);

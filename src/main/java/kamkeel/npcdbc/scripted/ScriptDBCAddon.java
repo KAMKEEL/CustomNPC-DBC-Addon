@@ -6,6 +6,7 @@ import kamkeel.npcdbc.api.IDBCAddon;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -14,6 +15,7 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,6 +49,61 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     public void setLockOnTarget(IEntityLivingBase lockOnTarget) {
         this.dbcData.setLockOnTarget(lockOnTarget == null ? null : lockOnTarget.getMCEntity());
+    }
+
+    @Override
+    public void setKiFistOn(boolean on) {
+        if (dbcData.Skills.contains("KF")) {
+            if (!on)
+                JRMCoreH.PlyrSettingsOn(dbcData.player, DBCSettings.KI_FIST);
+            else
+                JRMCoreH.PlyrSettingsRem(dbcData.player, DBCSettings.KI_FIST);
+        }
+    }
+
+    @Override
+    public void setKiProtectionOn(boolean on) {
+        if (dbcData.Skills.contains("KP")) {
+            if (!on)
+                JRMCoreH.PlyrSettingsOn(dbcData.player, DBCSettings.KI_PROTECTION);
+            else
+                JRMCoreH.PlyrSettingsRem(dbcData.player, DBCSettings.KI_PROTECTION);
+        }
+    }
+
+    @Override
+    public void setKiWeaponType(int type) {
+        if (type < 0)
+            type = 0;
+        if (type > 2)
+            type = 2;
+        if (dbcData.Skills.contains("KI") && dbcData.Skills.contains("KF")) {
+            JRMCoreH.PlyrSettingsSet(dbcData.player, DBCSettings.KI_WEAPON_TOGGLE, type - 1);
+        }
+    }
+
+    @Override
+    public boolean kiFistOn() {
+        if (dbcData.Skills.contains("KF")) {
+            return !JRMCoreH.PlyrSettingsB(dbcData.player, DBCSettings.KI_FIST);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean kiProtectionOn() {
+        if (dbcData.Skills.contains("KP")) {
+            return !JRMCoreH.PlyrSettingsB(dbcData.player, DBCSettings.KI_PROTECTION);
+        }
+        return false;
+    }
+
+    @Override
+    public int getKiWeaponType() {
+        if (dbcData.Skills.contains("KI") && dbcData.Skills.contains("KF")) {
+            return JRMCoreH.PlyrSettings(dbcData.player, DBCSettings.KI_WEAPON_TOGGLE) + 1;
+        }
+        return 0;
     }
 
     @Override
@@ -240,6 +297,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return dbcData.stats.getAllFullAttributes();
     }
 
+    @Override
+    public int getUsedMind() {
+        return dbcData.getUsedMind();
+    }
+
+    @Override
+    public int getAvailableMind() {
+        return dbcData.getAvailableMind();
+    }
+
     /**
      * @return Player's race name
      */
@@ -347,10 +414,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                 }
             }
         }
-
-        if (!found) {
-            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getFormName(int race, int form) or getCurrentDBCFormName()", new Object[2]);
-        }
     }
 
     /**
@@ -398,17 +461,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                 if (mastery.toLowerCase().contains(formName.toLowerCase())) {
                     String[] masteryvalues = mastery.split(",");
                     double masteryvalue = Double.parseDouble(masteryvalues[1]);
-                    found = true;
-
                     valuetoreturn = masteryvalue;
                     return valuetoreturn;
                 }
             }
         }
-        if (!found) {
-            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getFormName(int race, int form) or getCurrentDBCFormName()", new Object[2]);
-        }
-        throw new CustomNPCsException("Form Mastery value is -1.0", new Object[3]);
+        return -1;
     }
 
     /**
@@ -438,29 +496,13 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getSkillLevel(String skillname) {
-        int i;
-        String[] playerskills = nbt.getString("jrmcSSlts").split(",");
-        String[] skillids = JRMCoreH.DBCSkillsIDs;
-        String[] skillnames = JRMCoreH.DBCSkillNames;
-        boolean skillFound = false;
-        boolean playerHasSkill = false;
-        for (i = 0; i < skillnames.length; i++) {
-            if (skillname.equals(skillnames[i])) {
-                skillFound = true;
-                for (String playerskill : playerskills) {
-                    if (playerskill.contains(skillids[i])) {
-                        return JRMCoreH.SklLvl(i, playerskills);
-                    }
-                }
-            }
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillname);
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
         }
-        if (!skillFound) {
-            throw new CustomNPCsException("\nInvalid Skill ID :" + skillname + ". Please re-enter the skill name \nwithout any spaces in between. \ni.e: GodOfDestruction, KiProtection, \nDefensePenetration");
-        }
-        if (!playerHasSkill) {
-            throw new CustomNPCsException("\nPlayer doesn't have skill " + skillname + "!", new Object[1]);
-        }
-        return 0;
+        String playerSkillString = nbt.getString("jrmcSSlts");
+
+        return JRMCoreH.SklLvl(skillIndex, playerSkillString.split(","));
     }
 
     /**

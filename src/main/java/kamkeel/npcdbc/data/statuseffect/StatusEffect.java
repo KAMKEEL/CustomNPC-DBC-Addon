@@ -17,7 +17,8 @@ public class StatusEffect implements IStatusEffect {
     public int iconX = 0, iconY = 0;
     boolean isCustom = false;
 
-    public StatusEffect(){}
+    public StatusEffect() {
+    }
 
     @Override
     public int getId() {
@@ -31,18 +32,18 @@ public class StatusEffect implements IStatusEffect {
 
     public void runEffect(EntityPlayer player, PlayerEffect playerEffect) {
         if (player.ticksExisted % everyXTick == 0) {
-            process(player, playerEffect);
+            onTick(player, playerEffect);
         }
     }
 
-    public void init(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onAdded(EntityPlayer player, PlayerEffect playerEffect) {
+
 
     }
 
-    public void process(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
     }
 
-    public void runout(EntityPlayer player, PlayerEffect playerEffect) {}
-
-    public void kill(EntityPlayer player, PlayerEffect playerEffect) {}
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
+    }
 }

@@ -28,7 +28,7 @@ public class Zenkai extends StatusEffect {
     }
 
     @Override
-    public void init(EntityPlayer player, PlayerEffect playerEffect){
+    public void onAdded(EntityPlayer player, PlayerEffect playerEffect){
         DBCData dbcData = DBCData.get(player);
         if(dbcData.Race == DBCRace.SAIYAN)
             BonusController.getInstance().applyBonus(player, saiyanZenkai);
@@ -37,7 +37,7 @@ public class Zenkai extends StatusEffect {
     }
 
     @Override
-    public void kill(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
         if(dbcData.Race == DBCRace.SAIYAN)
             BonusController.getInstance().removeBonus(player, saiyanZenkai);

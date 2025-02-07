@@ -3,11 +3,13 @@ package kamkeel.npcdbc.network;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcdbc.data.statuseffect.CustomEffect;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.packets.SendChat;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -45,6 +47,14 @@ public class NetworkUtility {
         Map<String, Integer> map = new HashMap<String, Integer>();
         for (Outline outline : OutlineController.getInstance().customOutlines.values()) {
             map.put(outline.name, outline.id);
+        }
+        sendScrollData(player, map);
+    }
+
+    public static void sendCustomEffectDataAll(EntityPlayerMP player) {
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        for (CustomEffect effect : StatusEffectController.getInstance().customEffects.values()) {
+            map.put(effect.name, effect.id);
         }
         sendScrollData(player, map);
     }

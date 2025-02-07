@@ -9,10 +9,15 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.constants.DBCSettings;
+import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -21,6 +26,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.entity.EntityAura;
+import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCSetFlight;
 import kamkeel.npcdbc.network.packets.DBCUpdateLockOn;
@@ -28,7 +34,6 @@ import kamkeel.npcdbc.network.packets.PingPacket;
 import kamkeel.npcdbc.network.packets.TurboPacket;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
-import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -40,7 +45,6 @@ import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static kamkeel.npcdbc.constants.DBCForm.*;
 
@@ -60,17 +64,16 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public int addonFormID = -1, auraID = -1, outlineID = -1;
     public float addonFormLevel = 0, addonCurrentHeat = 0;
 
-
     /**
      * Client-side effect store. Needed for proper rendering of status effects.
-     *
+     * <p>
      * Server-side stores them in StatusEffectHandler.
      */
     @SideOnly(Side.CLIENT)
     public Map<Integer, PlayerEffect> currentEffects;
     /**
      * Client-side bonus store. Needed for proper Battle Power calculations on the client.
-     *
+     * <p>
      * Server-side stores them in BonusController
      */
     @SideOnly(Side.CLIENT)
@@ -94,6 +97,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public EntityAura auraEntity;
     public int activeAuraColor = -1;
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
+    // Some servers tend to repeat one tick multiple times (up to 3-4 times in under a second)
+    public int lastTicked = -1;
 
     public DBCData() {
         this.side = Side.SERVER;
@@ -258,15 +263,14 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         // Made StatusEffects/PlayerBonuses only load here if you're on the client for proper display.
         // isRemote checks if the player is truly on client side. Helpful for Bukkit interactions.
         boolean isRemote = (player != null && player.worldObj != null && player.worldObj.isRemote);
-        if(isRemote){
+        if (isRemote) {
             loadClientSideData(c);
         }
-
     }
 
     @SideOnly(Side.CLIENT)
     private void loadClientSideData(NBTTagCompound c) {
-        if(this.currentEffects == null)
+        if (this.currentEffects == null)
             currentEffects = new HashMap<>();
         else
             currentEffects.clear();
@@ -282,7 +286,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             }
         }
 
-        if(this.currentBonuses == null)
+        if (this.currentBonuses == null)
             this.currentBonuses = new HashMap<>();
         else
             this.currentBonuses.clear();
@@ -374,8 +378,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public boolean hasForm(int dbcForm) {
-
-
         if (dbcForm == DBCForm.Kaioken)
             return JRMCoreH.SklLvl(8) > 0;
         if (dbcForm == DBCForm.UltraInstinct)
@@ -386,26 +388,95 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         if (dbcForm == DBCForm.Mystic)
             return JRMCoreH.SklLvl(10) > 0;
 
-        int racial = JRMCoreH.SklLvlX(Powertype, RacialSkills) - 1;
-        int godForm = JRMCoreH.SklLvl(9);
+        int racialSkill = JRMCoreH.SklLvlX(Powertype, RacialSkills) - 1;
+        int godSkill = JRMCoreH.SklLvl(9);
         switch (Race) {
+            case 0:
+                switch (dbcForm) {
+                    case HumanFullRelease:
+                        return racialSkill >= 1;
+                    case HumanBuffed:
+                        return racialSkill >= 2;
+                    case HumanGod:
+                        return racialSkill >= 2 && godSkill >= 1;
+                }
+                return false;
+
             case 1:
             case 2:
                 switch (dbcForm) {
-                    case DBCForm.SuperSaiyanGod:
-                        return godForm >= 1;
-                    case DBCForm.SuperSaiyanBlue:
-                        return godForm >= 2;
-                    case DBCForm.BlueEvo:
-                        return godForm >= 3;
-                    case DBCForm.SuperSaiyan4:
-                        return racial >= 7 && getRawCompound().getInteger("jrmcAfGFtStFT") > 0 && hasTail();
+                    case SuperSaiyan:
+                        return racialSkill >= 1 && racialSkill < 4;
+                    case SuperSaiyanG2:
+                        return racialSkill >= 2;
+                    case SuperSaiyanG3:
+                        return racialSkill >= 3;
+                    case MasteredSuperSaiyan:
+                        return racialSkill >= 4;
+                    case SuperSaiyan2:
+                        return racialSkill >= 5;
+                    case SuperSaiyan3:
+                        return racialSkill >= 6;
+                    case SuperSaiyan4:
+                        return racialSkill >= 7 && hasSSJ4 > 0 && hasTail();
+
+                    case SuperSaiyanGod:
+                        return racialSkill >= 5 && godSkill >= 1;
+                    case SuperSaiyanBlue:
+                        return racialSkill >= 5 && godSkill >= 2;
+                    case BlueEvo:
+                        return racialSkill >= 5 && godSkill >= 3;
                     default:
                         return false;
                 }
+            case 3:
+                switch (dbcForm) {
+                    case NamekFullRelease:
+                        return racialSkill >= 1;
+                    case NamekGiant:
+                        return racialSkill >= 2;
+                    case NamekGod:
+                        return racialSkill >= 2 && godSkill >= 1;
+                }
+                return false;
+
+            case 4:
+                switch (dbcForm) {
+                    case Minimal:
+                    case FirstForm:
+                    case SecondForm:
+                    case ThirdForm:
+                    case FinalForm:
+                        return true;
+                    case SuperForm:
+                        return racialSkill >= 3;
+                    case UltimateForm:
+                        return racialSkill >= 6;
+                    case ArcoGod:
+                        return racialSkill >= 6 && godSkill >= 1;
+                }
+                return false;
+
+            case 5:
+                switch (dbcForm) {
+                    case MajinEvil:
+                        return racialSkill >= 2;
+                    case MajinFullPower:
+                        return racialSkill >= 3;
+                    case MajinPure:
+                        return racialSkill >= 5;
+                    case MajinGod:
+                        return racialSkill >= 5 && godSkill >= 1;
+                }
+                return false;
+
             default:
                 return false;
         }
+    }
+
+    public boolean isDBCFormUnlocked(int formID) {
+        return getUnlockedDBCFormsMap().containsKey(formID);
     }
 
     public HashMap<Integer, String> getUnlockedDBCFormsMap() {
@@ -419,7 +490,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
                 dbcForms.put(HumanBuffed, "§3Buffed");
             if (racialSkill >= 2)
                 dbcForms.put(HumanFullRelease, "§4Full Release");
-            if (racialSkill >= 5 && godSkill >= 1)
+
+            if (racialSkill >= 2 && godSkill >= 1)
                 dbcForms.put(HumanGod, "§cGod");
         } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
             if (racialSkill >= 1 && racialSkill < 4)
@@ -436,18 +508,18 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
                 dbcForms.put(SuperSaiyan3, "§eSuper Saiyan 3");
             if (racialSkill >= 7 && hasSSJ4 > 0 && hasTail())
                 dbcForms.put(SuperSaiyan4, "§4Super Saiyan 4");
-            if (racialSkill >= 1 && godSkill >= 1)
+            if (racialSkill >= 5 && godSkill >= 1)
                 dbcForms.put(SuperSaiyanGod, "§cSuper Saiyan God");
-            if (racialSkill >= 1 && godSkill >= 2)
+            if (racialSkill >= 5 && godSkill >= 2)
                 dbcForms.put(SuperSaiyanBlue, !isForm(Divine) ? "§bSuper Saiyan Blue" : "§5Super Saiyan Rosé");
-            if (racialSkill >= 1 && godSkill >= 3)
+            if (racialSkill >= 5 && godSkill >= 3)
                 dbcForms.put(BlueEvo, !isForm(Divine) ? "§1Super Saiyan Blue Evo" : "§dSuper Saiyan Rosé Evo");
         } else if (race == DBCRace.NAMEKIAN) {
             if (racialSkill >= 1)
                 dbcForms.put(NamekGiant, "§2Giant");
             if (racialSkill >= 2)
                 dbcForms.put(NamekFullRelease, "§aFull Release");
-            if (racialSkill >= 5 && godSkill >= 1)
+            if (racialSkill >= 2 && godSkill >= 1)
                 dbcForms.put(NamekGod, "§cGod");
         } else if (race == DBCRace.ARCOSIAN) {
             dbcForms.put(FirstForm, "§5First Form");
@@ -650,7 +722,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         Form form = (Form) FormController.getInstance().get(addonFormID);
         if (form != null) {
             Form fusionForm = (Form) FormController.getInstance().get(form.stackable.fusionID);
-            if(fusionForm != null && stats.isFused())
+            if (fusionForm != null && stats.isFused())
                 form = fusionForm;
 
             if (form.stackable.divineID != -1 && isForm(DBCForm.Divine)) {
@@ -674,11 +746,12 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     /**
      * Order of getting outline from player:
-     *
+     * <p>
      * >Currently toggled aura
      * >Currently selected form outline / selected form aura's outline
      * >Currently manually selected aura
      * >Force-set outline
+     *
      * @return The outline object a player is using
      */
     public Outline getOutline() {
@@ -695,15 +768,15 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         IAura formAura = form != null ? form.display.getAura() : null;
 
-        if(formAura != null) {
+        if (formAura != null) {
             aura = (Aura) formAura;
-            if (aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)){
+            if (aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)) {
                 return (Outline) OC.get(aura.display.outlineID);
             }
         }
 
         aura = (Aura) AuraController.Instance.get(auraID);
-        if (aura != null && aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)){
+        if (aura != null && aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)) {
             return (Outline) OC.get(aura.display.outlineID);
         }
 
@@ -778,8 +851,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         this.setSE(10, true);
         spectator.setSE(11, true);
 
-        JRMCoreH.PlyrSettingsRem(this.player, 4);
-        JRMCoreH.PlyrSettingsRem(spectator.player, 4);
+        JRMCoreH.PlyrSettingsRem(this.player, DBCSettings.FUSION_ENABLED);
+        JRMCoreH.PlyrSettingsRem(spectator.player, DBCSettings.FUSION_ENABLED);
 
         controllerTag.setByte("jrmcState2", (byte) 0);
         spectatorTag.setByte("jrmcState2", (byte) 0);
@@ -900,5 +973,53 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     @Override
     public void setActiveAuraColor(int color) {
         activeAuraColor = color;
+    }
+
+    public int getUsedMind() {
+        int[][] rSklsMR = (int[][])null;
+        int[][] cSklsMR = (int[][])null;
+        String[] cSkls;
+        String[] skls;
+        int[][] sklsMR;
+
+
+        if (JRMCoreH.isPowerTypeChakra(this.Powertype)) {
+            cSkls = JRMCoreH.ncCSkls;
+            cSklsMR = JRMCoreH.NCRacialSkillMindCost;
+            skls = JRMCoreH.NCSkillIDs;
+            sklsMR = JRMCoreH.NCSkillMindCost;
+        } else {
+            rSklsMR = JRMCoreH.DBCRacialSkillMindCost;
+            cSkls = JRMCoreH.vlblCSkls;
+            skls = JRMCoreH.DBCSkillsIDs;
+            sklsMR = JRMCoreH.DBCSkillMindCost;
+        }
+
+        int mindSpentOnSkills = JRMCoreH.skillSlot_SpentMindRequirement(this.Skills.split(","), skls, sklsMR);
+        int mindSpentOnRacialForms = JRMCoreH.skillSlot_SpentMindRequirement_X(this.RacialSkills, this.Race, rSklsMR);
+        int raceStuff = JRMCoreH.skillSlot_SpentMindRequirement(this.getRawCompound().getString("jrmcSSltY"), cSkls, cSklsMR);
+        int addonTakenAwayMind = calculateMindBonuses();
+
+        return mindSpentOnSkills + mindSpentOnRacialForms + raceStuff - addonTakenAwayMind;
+    }
+
+    public int calculateMindBonuses() {
+        int mindBonus = 0;
+        // TODO: Think of a nice way to implement mind bonuses / penalties.
+        //      I do not quite like the idea of using `PlayerBonus`es.
+
+        PlayerDBCInfo formData = getDBCInfo();
+        FormController formController = FormController.getInstance();
+        for(int formID : formData.unlockedForms) {
+            IForm form = formController.get(formID);
+            if(form != null)
+                mindBonus -= form.getMindRequirement();
+        }
+
+        return mindBonus;
+    }
+
+    public int getAvailableMind() {
+        return this.MND - this.getUsedMind();
     }
 }

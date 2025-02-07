@@ -89,7 +89,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Outline
-        Outline outline = display.getOutline();
+        Outline outline = (Outline) display.getOutline();
         if (outline != null && ConfigDBCClient.EnableOutlines) {
             startBlooming(ClientProxy.renderingGUI);
             glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);  // Test stencil value

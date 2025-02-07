@@ -18,6 +18,7 @@ public class FormDisplay implements IFormDisplay {
     private final Form parent;
 
     public float formSize = 1.0f;
+    public float formWidth = 1.0f;
     public boolean keepOriginalSize = true;
 
     public String hairCode = "";
@@ -63,6 +64,7 @@ public class FormDisplay implements IFormDisplay {
         hasEyebrows = !rendering.hasKey("hasEyebrows") ? true : rendering.getBoolean("hasEyebrows");
 
         formSize = rendering.getFloat("formSize");
+        formWidth = rendering.getFloat("formWidth");
         keepOriginalSize = rendering.getBoolean("keepOriginalSize");
 
         auraID = rendering.hasKey("auraID") ? rendering.getInteger("auraID") : -1;
@@ -93,6 +95,7 @@ public class FormDisplay implements IFormDisplay {
         rendering.setBoolean("hasEyebrows", hasEyebrows);
 
         rendering.setFloat("formSize", formSize);
+        rendering.setFloat("formWidth", formWidth);
         rendering.setBoolean("keepOriginalSize", keepOriginalSize);
 
 
@@ -197,6 +200,16 @@ public class FormDisplay implements IFormDisplay {
     }
 
     @Override
+    public float getWidth() {
+        return formWidth;
+    }
+
+    @Override
+    public void setWidth(float width) {
+        formSize = ValueUtil.clamp(width, 0.2f, 3);
+    }
+
+    @Override
     public boolean hasSize() {
         return formSize != 1f;
     }
@@ -268,20 +281,15 @@ public class FormDisplay implements IFormDisplay {
         if (s.equals("base") || s.equals("ssj") || s.equals("ssj2") || s.equals("ssj3") || s.equals("ssj4") || s.equals("oozaru") || s.equals("raditz") || s.equals("")) {
             hairType = s;
 
-        } else {
-            hairType = "";
-            throw new CustomNPCsException("Invalid type!");
-        }
+        } else
+            throw new CustomNPCsException("Invalid type! Legal types: base, raditz, ssj, ssj2, ssj3, ssj4, oozaru");
+
     }
 
 
     @Override
-    public String getHairType(String type) {
-        String s = type.toLowerCase();
-        if (s.equals("base") || s.equals("ssj") || s.equals("ssj2") || s.equals("ssj3") || s.equals("ssj4") || s.equals("oozaru") || s.equals("raditz") || s.equals(""))
-            return hairType;
-        else
-            throw new CustomNPCsException("Invalid type!");
+    public String getHairType() {
+        return hairType;
     }
 
     @Override

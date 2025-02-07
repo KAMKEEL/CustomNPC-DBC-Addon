@@ -3,7 +3,9 @@ package kamkeel.npcdbc.scripted;
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
+import JinRyuu.JRMCore.server.config.core.JGConfigSkills;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.api.AbstractDBCAPI;
 import kamkeel.npcdbc.api.IKiAttack;
 import kamkeel.npcdbc.api.aura.IAura;
@@ -403,4 +405,70 @@ public class DBCAPI extends AbstractDBCAPI {
         } catch (IndexOutOfBoundsException ignored) {
         }
     }
+
+    @Override
+    public int getSkillTPCostSingle(String skillName, int level) {
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
+        }
+        return DBCUtils.calculateDBCSkillTPCost(skillIndex, level);
+    }
+
+    @Override
+    public int getSkillMindCostSingle(String skillName, int level) {
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
+        }
+
+        return DBCUtils.calculateDBCSkillMindCost(skillIndex, level);
+    }
+
+    @Override
+    public int getSkillMindCostRecursive(String skillName, int level) {
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
+        }
+
+        return DBCUtils.calculateDBCSkillMindCostRecursively(skillIndex, level);
+    }
+
+    @Override
+    public int getSkillTPCostRecursive(String skillName, int level) {
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
+        }
+
+        return DBCUtils.calculateDBCSkillTPCostRecursively(skillIndex, level);
+    }
+
+    @Override
+    public int getSkillRacialTPCostSingle(int race, int level) {
+        return DBCUtils.calculateDBCRacialSkillTPCost(race, level);
+    }
+
+    @Override
+    public int getSkillRacialTPMindSingle(int race, int level) {
+        return DBCUtils.calculateDBCRacialSkillMindCost(race, level);
+    }
+
+    @Override
+    public int getSkillRacialTPCostSingleRecursive(int race, int level) {
+        return DBCUtils.calculateDBCRacialSkillTPCostRecursively(race, level);
+    }
+
+    @Override
+    public int getSkillRacialTPMindSingleRecursive(int race, int level) {
+        return DBCUtils.calculateDBCRacialSkillMindCostRecursively(race, level);
+    }
+
+    @Override
+    public int getUltraInstinctMaxLevel() {
+        return JGConfigUltraInstinct.CONFIG_UI_LEVELS;
+    }
+
+
 }

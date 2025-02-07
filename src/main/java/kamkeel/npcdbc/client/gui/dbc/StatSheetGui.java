@@ -11,6 +11,7 @@ import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -387,6 +388,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         stat = JRMCoreH.stat(mc.thePlayer, 1, 1, 1, statVals[1], dbcClient.Race, dbcClient.Class, 0);
         incrementVal = JRMCoreH.statInc(1, 1, 1, JRMCoreH.Race, JRMCoreH.Class, 0.0F);
         curAtr = (int)((double)stat * 0.01D * (double)JRMCoreH.curRelease * (double)JRMCoreH.weightPerc(1));
+        // Ki Protection Amount
         bonusOutput = 0;
         if(!JRMCoreH.PlyrSettingsB(10)){
             bonusOutput = (int)((double)JRMCoreH.SklLvl(11) *  0.005D * SPI * (double)JRMCoreH.curRelease * 0.01D);
@@ -394,15 +396,16 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 bonusOutput = 1;
             bonusOutput *= DBCConfig.cnfKDd;
         }
-        longValue = (long)curAtr + bonusOutput;
+        longValue = curAtr + bonusOutput;
         if (longValue > 2147483647L) {
             longValue = 2147483647L;
         }
 
-        String passiveDef = JRMCoreH.numSep((int) (longValue * ((float) JRMCoreConfig.StatPasDef / 100)));
+        int passiveDefInt = (int) ((float) ((longValue - bonusOutput) * JRMCoreConfig.StatPasDef) * 0.01F) + bonusOutput;
+        String passiveDef = JRMCoreH.numSep(passiveDefInt);
         String chargingDef = null;
         if(ClientCache.hasChargingDex)
-            chargingDef = JRMCoreH.numSep((int) (longValue * (ClientCache.chargingDexValues.get((int) dbcClient.Class) / 100)));
+            chargingDef = JRMCoreH.numSep((int) ((longValue - bonusOutput) * (ClientCache.chargingDexValues.get((int) dbcClient.Class) / 100)) + bonusOutput);
 
         String defDesc = getDescription(
             JRMCoreH.attrNms(1, 1),
@@ -826,7 +829,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             initGui();
         }
         if(id == 707070707){
-            mc.displayGuiScreen(new GuiConfirmOpenLink(this, "https://discord.com/invite/pQqRTvFeJ5", 0, true));
+            mc.displayGuiScreen(new GuiConfirmOpenLink(this, ConfigDBCGeneral.getDiscordURL(), 0, true));
         }
         if(id >= 0 && id <= 5){
             if(!JRMCoreH.isFused()){
@@ -1016,7 +1019,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
     public void confirmClicked(boolean flag, int i) {
         if (flag) {
             if (i == 0) {
-                String link = "https://discord.com/invite/pQqRTvFeJ5";
+                String link = ConfigDBCGeneral.getDiscordURL();
                 try{
                     Class oclass = java.lang.Class.forName("java.awt.Desktop");
                     Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object)null, new Object[0]);

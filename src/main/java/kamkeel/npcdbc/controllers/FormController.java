@@ -361,6 +361,15 @@ public class FormController implements IFormHandler {
         return Instance;
     }
 
+    public void deleteFormFile(String name) {
+        File dir = this.getDir();
+        if (!dir.exists())
+            dir.mkdirs();
+        File file2 = new File(dir, name + ".json");
+        if (file2.exists())
+            file2.delete();
+    }
+
     ////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////
 }

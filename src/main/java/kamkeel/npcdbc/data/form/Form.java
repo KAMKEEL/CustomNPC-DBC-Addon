@@ -47,6 +47,8 @@ public class Form implements IForm {
     public float dexMulti = 1.0f;
     public float willMulti = 1.0f;
 
+    public int mindRequirement = 0;
+
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
     public Form() {
@@ -71,6 +73,7 @@ public class Form implements IForm {
         parentID = compound.getInteger("parentID");
         fromParentOnly = compound.getBoolean("fromParentOnly");
         requiredForm = NBTTags.getIntegerByteMap(compound.getTagList("requiredForm", 10));
+        mindRequirement = compound.getInteger("mindRequirement");
 
         NBTTagCompound attributes = compound.getCompoundTag("attributes");
         strengthMulti = attributes.getFloat("strMulti");
@@ -96,6 +99,7 @@ public class Form implements IForm {
         compound.setInteger("childID", childID);
         compound.setInteger("parentID", parentID);
         compound.setBoolean("fromParentOnly", fromParentOnly);
+        compound.setInteger("mindRequirement", mindRequirement);
         compound.setTag("requiredForm", NBTTags.nbtIntegerByteMap(requiredForm));
 
         NBTTagCompound attributes = new NBTTagCompound();
@@ -364,7 +368,7 @@ public class Form implements IForm {
 
     @Override
     public boolean hasChild() {
-        return childID != -1;
+        return childID != -1 && FormController.getInstance().has(childID);
     }
 
     public void removeChildForm() {
@@ -402,7 +406,7 @@ public class Form implements IForm {
 
     @Override
     public boolean hasParent() {
-        return parentID != -1;
+        return parentID != -1 && FormController.getInstance().has(parentID);
     }
 
     public void removeParentForm() {
@@ -427,6 +431,19 @@ public class Form implements IForm {
     @Override
     public IFormStackable getStackable() {
         return stackable;
+    }
+
+    @Override
+    public void setMindRequirement(int mind) {
+        if(mind <= 0)
+            mindRequirement = 0;
+        else
+            mindRequirement = mind;
+    }
+
+    @Override
+    public int getMindRequirement() {
+        return mindRequirement;
     }
 
     @Override

@@ -82,7 +82,7 @@ public class PlayerEffect implements IPlayerEffect {
         if (player != null && player.getMCEntity() != null && player.getMCEntity() instanceof EntityPlayer) {
             StatusEffect effect = StatusEffectController.getInstance().get(this.id);
             if(effect != null)
-                effect.process((EntityPlayer) player.getMCEntity(), this);
+                effect.onTick((EntityPlayer) player.getMCEntity(), this);
         }
     }
 }

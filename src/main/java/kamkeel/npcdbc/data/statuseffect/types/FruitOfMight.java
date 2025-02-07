@@ -39,7 +39,7 @@ public class FruitOfMight extends StatusEffect {
     }
 
     @Override
-    public void init(EntityPlayer player, PlayerEffect playerEffect){
+    public void onAdded(EntityPlayer player, PlayerEffect playerEffect){
         BonusController.getInstance().applyBonus(player, fruitOfMightBonus);
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         c.currentAura = fruitOfMightAura.id;
@@ -47,7 +47,7 @@ public class FruitOfMight extends StatusEffect {
     }
 
     @Override
-    public void process(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
         dbcData.stats.restoreKiPercent(kiToDrain);
         if (dbcData.Ki <= 0)
@@ -55,7 +55,7 @@ public class FruitOfMight extends StatusEffect {
     }
 
     @Override
-    public void kill(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (c.currentAura == fruitOfMightAura.id) {
             c.currentAura = -1;

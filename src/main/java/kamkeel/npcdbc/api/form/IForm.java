@@ -174,6 +174,10 @@ public interface IForm {
      */
     IFormStackable getStackable();
 
+    void setMindRequirement(int mind);
+
+    int getMindRequirement();
+
     /**
      *
      * @return clones this IForm object and returns a new IForm with the same exact properties

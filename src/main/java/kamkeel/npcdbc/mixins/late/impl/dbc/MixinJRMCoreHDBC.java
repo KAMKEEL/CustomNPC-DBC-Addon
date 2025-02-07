@@ -39,15 +39,31 @@ public class MixinJRMCoreHDBC {
         }
     }
 
-    @Inject(method = "DBCsizeBasedOnRace(IIZ)F", at = @At(value = "HEAD"), cancellable = true)
-    private static void setCustomFormWidth(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir){
-        // TODO: Add form width code
+    @Inject(method = "DBCsizeBasedOnRace(IIZ)F", at = @At(value = "TAIL"), cancellable = true)
+    private static void setCustomFormWidth(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir, @Local(name = "f2") float size){
+        if (CommonProxy.getCurrentJRMCTickPlayer() != null) {
+            float sz = size;
+            Form form = DBCData.get(CommonProxy.getCurrentJRMCTickPlayer()).getForm();
+
+            if(form != null) {
+                if (form.display.keepOriginalSize && form.stackable.vanillaStackable) {
+                    cir.setReturnValue(sz *= form.display.formWidth);
+                } else {
+                    cir.setReturnValue(sz = form.display.formWidth);
+                }
+            }
+
+            if (CustomNpcPlusDBC.proxy.isRenderingGUI()) {
+                if (sz > 1.35f)
+                    cir.setReturnValue(1.35f);
+            }
+        }
     }
 
     @Inject(method = "DBCsizeBasedOnRace2(IIZ)F", at = @At(value = "TAIL"), cancellable = true)
-    private static void setCustomFormSize(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir, @Local(name = "f3") LocalFloatRef size) {
+    private static void setCustomFormSize(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir, @Local(name = "f3") float size) {
         if (CommonProxy.getCurrentJRMCTickPlayer() != null) {
-            float sz = size.get();
+            float sz = size;
             Form form = DBCData.get(CommonProxy.getCurrentJRMCTickPlayer()).getForm();
 
             if(form != null) {

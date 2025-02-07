@@ -18,6 +18,7 @@ import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
@@ -207,7 +208,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             ClientProxy.lastRendererGUIPlayerID = pl;
         else
             ClientProxy.lastRendererGUIPlayerID = -1;
-        JRMCoreH.data2[pl] = data.State + ";" + data.State2;
+        if(JRMCoreH.data2 != null)
+            JRMCoreH.data2[pl] = data.State + ";" + data.State2;
         return JRMCoreH.data2;
     }
 
@@ -258,6 +260,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             if (form.display.hasColor("bodyC3"))
                 bodyC3.set(form.display.bodyC3);
 
+            if (data.Race == DBCRace.NAMEKIAN || data.Race == DBCRace.MAJIN) {
+                data.renderingHairColor = bodyCM.get();
+            }
+
             //set bodytypes for arcos
             if (race.get() == 4) {
                 switch (form.display.bodyType) {
@@ -307,6 +313,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
          * @INFO: This fixes base hair color.
          */
         data.renderingHairColor = hairCol.get();
+        System.out.println("A");
 
         if (form != null) {
             HD = ConfigDBCClient.EnableHDTextures;

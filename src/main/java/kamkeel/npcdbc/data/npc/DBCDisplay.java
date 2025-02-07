@@ -13,7 +13,6 @@ import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -82,7 +81,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
     public HashMap<Integer, EntityAura2> dbcAuraQueue = new HashMap<>();
     public HashMap<Integer, EntityAura2> dbcSecondaryAuraQueue = new HashMap<>();
-    private EnumAuraTypes2D enumAuraTypes = EnumAuraTypes2D.None;
 
     public KiWeaponData kiWeaponRight = new KiWeaponData();
     public KiWeaponData kiWeaponLeft = new KiWeaponData();
@@ -129,7 +127,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
             dbcDisplay.setInteger("DBCAuraID", auraID);
             dbcDisplay.setBoolean("DBCAuraOn", auraOn);
-            dbcDisplay.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
 
             dbcDisplay.setInteger("DBCOutlineID", outlineID);
 
@@ -178,7 +175,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             hasEyebrows = !dbcDisplay.hasKey("DBCHasEyebrows") || dbcDisplay.getBoolean("DBCHasEyebrows");
 
             auraID = dbcDisplay.getInteger("DBCAuraID");
-            enumAuraTypes = EnumAuraTypes2D.values()[dbcDisplay.getInteger("DBCDisplayAura") % EnumAuraTypes2D.values().length];
 
             outlineID = dbcDisplay.getInteger("DBCOutlineID");
 
@@ -310,20 +306,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public EnumAuraTypes2D getFormAuraTypes() {
-        return enumAuraTypes;
-    }
-
-    public void setFormAuraTypes(EnumAuraTypes2D enumAuraTypes) {
-        this.enumAuraTypes = enumAuraTypes;
-    }
-
-    @Override
-    public void setFormAuraTypes(String type) {
-        this.enumAuraTypes = EnumAuraTypes2D.valueOf(type);
-    }
-
-    @Override
     public String getHairCode() {
         return hairCode;
     }
@@ -352,13 +334,12 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         this.race = ValueUtil.clamp(race, (byte) 0, (byte) 5);
     }
 
-    @Override
-    public int setBodyType() {
+    public int getBodyType() {
         return bodyType;
     }
 
     @Override
-    public void getBodyType(int bodyType) {
+    public void setBodyType(int bodyType) {
         this.bodyType = ValueUtil.clamp(bodyType, 0, 2);
     }
 
@@ -377,10 +358,13 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         String s = type.toLowerCase();
         if (s.equals("base") || s.equals("ssj") || s.equals("ssj2") || s.equals("ssj3") || s.equals("ssj4") || s.equals("oozaru") || s.equals("raditz") || s.equals("")) {
             hairType = s;
-        } else {
-            hairType = "";
-            throw new CustomNPCsException("Invalid type!");
-        }
+        } else
+            throw new CustomNPCsException("Invalid type! Legal types: base, raditz, ssj, ssj2, ssj3, ssj4, oozaru");
+    }
+
+    @Override
+    public String getHairType() {
+        return hairType;
     }
 
     @Override
@@ -389,7 +373,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public void hasCoolerMask(boolean has) {
+    public void setHasCoolerMask(boolean has) {
         hasArcoMask = has;
     }
 
@@ -399,17 +383,18 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public void hasEyebrows(boolean has) {
+    public void setHasEyebrows(boolean has) {
         hasEyebrows = has;
     }
 
     @Override
-    public String getHairType(String type) {
-        String s = type.toLowerCase();
-        if (s.equals("base") || s.equals("ssj") || s.equals("ssj2") || s.equals("ssj3") || s.equals("ssj4") || s.equals("oozaru") || s.equals("raditz") || s.equals(""))
-            return hairType;
-        else
-            throw new CustomNPCsException("Invalid type!");
+    public boolean hasBodyFur() {
+        return hasFur;
+    }
+
+    @Override
+    public void setHasBodyFur(boolean hasFur) {
+        this.hasFur = hasFur;
     }
 
     /////////////////////////////////////////////
@@ -533,11 +518,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         TransformController.npcDescend(npc, form == null ? -1 : form.getID());
     }
 
-    public IForm getCurrentForm() {
-        return getForm();
-    }
-
-    public Outline getOutline() {
+    @Override
+    public IOutline getOutline() {
         Aura aura = getToggledAura();
         OutlineController OC = OutlineController.getInstance();
 
@@ -564,11 +546,21 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         }
 
 
-        return (Outline) OutlineController.getInstance().get(outlineID);
+        return OutlineController.getInstance().get(outlineID);
     }
 
+    @Override
+    public void setOutline(int id) {
+        if (OutlineController.Instance.has(id))
+            this.outlineID = id;
+        else
+            outlineID = -1;
+    }
+
+    @Override
     public void setOutline(IOutline outline) {
-        outlineID = outline != null ? outline.getID() : -1;
+        int id = outline != null ? outline.getID() : -1;
+        setOutline(id);
     }
 
     public Form getForm() {
@@ -582,35 +574,39 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return null;
     }
 
-    public void setForm(IForm form) {
-        if (form != null)
-            formID = form.getID();
-    }
-
+    @Override
     public void setForm(int id) {
         Form f = (Form) FormController.Instance.get(id);
         if (f != null)
             formID = f.id;
     }
 
-    public void setForm(String formName) {
-        Form f = (Form) FormController.Instance.get(formName);
-        if (f != null)
-            formID = f.id;
+    @Override
+    public void setForm(IForm form) {
+        int id = form != null ? form.getID() : -1;
+        setForm(id);
     }
 
     public boolean isInForm() {
         return formID > -1 && getForm() != null;
     }
 
+    @Override
+    public IForm getCurrentForm() {
+        return getForm();
+    }
+
+    @Override
     public boolean isInForm(IForm form) {
         return formID == form.getID();
     }
 
+    @Override
     public void setFormLevel(float amount) {
         formLevel = amount;
     }
 
+    @Override
     public float getFormLevel(int formID) {
         if (formID != -1)
             return formLevel;

@@ -15,13 +15,68 @@ import noppes.npcs.api.entity.IPlayer;
  */
 @SuppressWarnings({"rawtypes", "unused"})
 public interface IDBCAddon extends IDBCPlayer {
+    /**
+     * @return Refer to {@link IDBCAddon#getAllAttributes()} and {@link IDBCAddon#getFullAttribute(int)}
+     */
     int[] getAllFullAttributes();
+
+    /**
+     * @return The mind a player is currently using for their skills
+     */
+    int getUsedMind();
+
+    /**
+     * @return The mind the player has currently available.
+     */
+    int getAvailableMind();
 
     /**
      * Set a players lock on state!
      * @param lockOnTarget Reference to new target Entity or null to remove lock on.
      */
     void setLockOnTarget(IEntityLivingBase lockOnTarget);
+
+    /**
+     * This will only work if the player has the ki fist skill
+     * @param on Should ki fist be enabled
+     */
+    void setKiFistOn(boolean on);
+
+    /**
+     * This will only work if the player has the ki protection skill
+     * @param on Should ki protection be enabled
+     */
+    void setKiProtectionOn(boolean on);
+
+    /**
+     * This will only work if the player has Ki Fist & Ki Infuse skills <br>
+     * <br>
+     * 0 - No ki weapons <br>
+     * 1 - Ki Blade <br>
+     * 2 - Ki Scythe <br>
+     * @param type ki weapon type
+     */
+    void setKiWeaponType(int type);
+
+    /**
+     * @return True if ki fist is enabled
+     */
+    boolean kiFistOn();
+
+    /**
+     * @return True if ki protection is enabled
+     */
+    boolean kiProtectionOn();
+
+    /**
+     * Checks what ki weapon the player has enabled <br>
+     * <br>
+     * 0 - No ki weapons <br>
+     * 1 - Ki Blade <br>
+     * 2 - Ki Scythe <br>
+     * @return The ki weapon type
+     */
+    int getKiWeaponType();
 
     /**
      * Checks if player has turbo on.
@@ -149,8 +204,12 @@ public interface IDBCAddon extends IDBCPlayer {
     boolean isChargingKi();
 
     /**
-     * @param skillname Check JRMCoreH.DBCSkillNames
-     * @return skill level from 1 to 10
+     * @param skillname Acceptable skill names:
+     *                  <code>"Fusion", "Jump", "Dash", "Fly", "Endurance", <br>
+     *                  "PotentialUnlock", "KiSense", "Meditation", "Kaioken", "GodForm", <br>
+     *                  "OldKaiUnlock", "KiProtection", "KiFist", "KiBoost", "DefensePenetration", <br>
+     *                  "KiInfuse", "UltraInstinct", "InstantTransmission", "GodOfDestruction"</code>
+     * @return skill level from 1 to 10. Or 0 if the player doesn't have that skill
      */
     int getSkillLevel(String skillname);
 

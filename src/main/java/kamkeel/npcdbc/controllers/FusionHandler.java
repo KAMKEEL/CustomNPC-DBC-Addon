@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.controllers;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumPotaraTypes;
 import kamkeel.npcdbc.data.FuseRequest;
@@ -22,8 +23,8 @@ public class FusionHandler {
     public static HashMap<UUID, FuseRequest> fuseRequest = new HashMap<>();
 
     public static boolean requestFusion(EntityPlayer sender, EntityPlayer target, boolean rightSide, String hash, int tier){
-        boolean senderFusion = JRMCoreH.PlyrSettingsB(sender, 4);
-        boolean targetFusion = JRMCoreH.PlyrSettingsB(target, 4);
+        boolean senderFusion = JRMCoreH.PlyrSettingsB(sender, DBCSettings.FUSION_ENABLED);
+        boolean targetFusion = JRMCoreH.PlyrSettingsB(target, DBCSettings.FUSION_ENABLED);
 
         if(!senderFusion){
             // Fusion is not on- Inform Sender
@@ -139,11 +140,11 @@ public class FusionHandler {
         if(!ItemPotara.isSplit(potara))
             return;
 
-        if(!JRMCoreH.PlyrSettingsB(player, 4))
+        if(!JRMCoreH.PlyrSettingsB(player, DBCSettings.FUSION_ENABLED))
             return;
 
         if(hasNoFuse(player)) {
-            JRMCoreH.PlyrSettingsRem(player, 4);
+            JRMCoreH.PlyrSettingsRem(player, DBCSettings.FUSION_ENABLED);
             NetworkUtility.sendServerMessage(player, "§c", player.getCommandSenderName(), " ", "npcdbc.noFuse");
             NetworkUtility.sendServerMessage(player, "§e", "npcdbc.disableFuse");
             return;
@@ -212,7 +213,7 @@ public class FusionHandler {
         if(!ItemPotara.isSplit(potara))
             return false;
 
-        if(!JRMCoreH.PlyrSettingsB(player, 4))
+        if(!JRMCoreH.PlyrSettingsB(player, DBCSettings.FUSION_ENABLED))
             return false;
 
         int wornTier = potara.getItemDamage();

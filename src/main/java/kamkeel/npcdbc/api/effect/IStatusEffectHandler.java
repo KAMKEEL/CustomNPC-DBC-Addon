@@ -4,6 +4,12 @@ import noppes.npcs.api.entity.IPlayer;
 
 public interface IStatusEffectHandler {
 
+    IStatusEffect createEffect(String name);
+
+    IStatusEffect getEffect(String name);
+
+    void deleteEffect(String name);
+
     /**
      *
      * @param player Player
@@ -11,6 +17,8 @@ public interface IStatusEffectHandler {
      * @return True if Player has Effect
      */
     boolean hasEffect(IPlayer player, int id);
+
+    boolean hasEffect(IPlayer player, IStatusEffect effect);
 
     /**
      *
@@ -23,6 +31,8 @@ public interface IStatusEffectHandler {
      */
     int getEffectDuration(IPlayer player, int id);
 
+    int getEffectDuration(IPlayer player, IStatusEffect effect);
+
     /**
      * @param player Player
      * @param id ID of Status Effect
@@ -31,11 +41,15 @@ public interface IStatusEffectHandler {
      */
     void applyEffect(IPlayer player, int id, int duration, byte level);
 
+    void applyEffect(IPlayer player, IStatusEffect effect, int duration, byte level);
+
     /**
      * @param player Player
      * @param id ID of Status Effect
      */
     void removeEffect(IPlayer player, int id);
+
+    void removeEffect(IPlayer player, IStatusEffect effect);
 
     void clearEffects(IPlayer player);
 }

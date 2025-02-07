@@ -13,7 +13,6 @@ import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.entity.EntityNPCInterface;
 
 public abstract class AbstractDBCAPI {
     private static AbstractDBCAPI instance = null;
@@ -167,4 +166,71 @@ public abstract class AbstractDBCAPI {
      * @param kiAttack ki attack to shoot
      */
     public abstract void fireKiAttack(ICustomNpc npc, IKiAttack kiAttack);
+
+
+    /**
+     * @param skillName Acceptable skill names:
+     *                  <code>"Fusion", "Jump", "Dash", "Fly", "Endurance", <br>
+     *                  "PotentialUnlock", "KiSense", "Meditation", "Kaioken", "GodForm", <br>
+     *                  "OldKaiUnlock", "KiProtection", "KiFist", "KiBoost", "DefensePenetration", <br>
+     *                  "KiInfuse", "UltraInstinct", "InstantTransmission", "GodOfDestruction"</code>
+     * @param level Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
+     * @return The TP Cost of said skill at just that level.
+     */
+    public abstract int getSkillTPCostSingle(String skillName, int level);
+
+    /**
+     * @param skillName Refer to {@link AbstractDBCAPI#getSkillTPCostSingle(String, int)}
+     * @param level Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
+     * @return The Mind Cost of said skill at just that level.
+     */
+    public abstract int getSkillMindCostSingle(String skillName, int level);
+
+    /**
+     * @param skillName Refer to {@link AbstractDBCAPI#getSkillTPCostSingle(String, int)}
+     * @param level Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
+     * @return TheMmind cost to get this skill to given level
+     */
+    public abstract int getSkillMindCostRecursive(String skillName, int level);
+
+    /**
+     * @param skillName Refer to {@link AbstractDBCAPI#getSkillTPCostSingle(String, int)}
+     * @param level Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
+     * @return The TP cost to get this skill to given level
+     */
+    public abstract int getSkillTPCostRecursive(String skillName, int level);
+
+    /**
+     * @param race Race ID from 0 to 5
+     * @param level Level of the Super form (uncapped).
+     * @return TP cost of this single level
+     */
+    public abstract int getSkillRacialTPCostSingle(int race, int level);
+
+    /**
+     * @param race Race ID from 0 to 5
+     * @param level Level of the Super form (uncapped).
+     * @return Mind cost of this single level
+     */
+    public abstract int getSkillRacialTPMindSingle(int race, int level);
+
+    /**
+     * @param race Race ID from 0 to 5
+     * @param level Level of the Super form (uncapped).
+     * @return TP Cost to get to this level
+     */
+    public abstract int getSkillRacialTPCostSingleRecursive(int race, int level);
+
+    /**
+     * @param race Race ID from 0 to 5
+     * @param level Level of the Super form (uncapped).
+     * @return Mind Cost to get to this level
+     */
+    public abstract int getSkillRacialTPMindSingleRecursive(int race, int level);
+
+    /**
+     * @return Max level of UI
+     */
+    public abstract int getUltraInstinctMaxLevel();
+
 }

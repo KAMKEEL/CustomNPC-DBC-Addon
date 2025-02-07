@@ -20,7 +20,7 @@ public class NamekRegen extends StatusEffect {
     }
 
     @Override
-    public void process(EntityPlayer player, PlayerEffect playerEffect){
+    public void onTick(EntityPlayer player, PlayerEffect playerEffect){
         DBCData dbcData = DBCData.get(player);
         float currentBodyPercent = dbcData.stats.getCurrentBodyPercentage();
         float percentToRegen = ConfigDBCEffects.NamekRegenPercent * playerEffect.level;
