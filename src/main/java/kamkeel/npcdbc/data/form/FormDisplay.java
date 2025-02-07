@@ -399,6 +399,11 @@ public class FormDisplay implements IFormDisplay {
     }
 
     @Override
+    public void setCustomizable(boolean customizable) {
+        this.isCustomizable = customizable;
+    }
+
+    @Override
     public boolean isCustomizable() {
         return isCustomizable;
     }

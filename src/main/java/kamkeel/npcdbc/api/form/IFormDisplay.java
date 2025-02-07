@@ -151,5 +151,14 @@ public interface IFormDisplay {
      */
     IFormDisplay save();
 
+    /**
+     * Allows the player to edit their custom form's appearance.
+     * @param customizable true or false.
+     */
+    void setCustomizable(boolean customizable);
+
+    /**
+     * @return If the player is customizable by players.
+     */
     boolean isCustomizable();
 }
