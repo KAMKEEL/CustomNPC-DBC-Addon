@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.data.form;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IFormDisplay;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -407,6 +409,40 @@ public class FormDisplay implements IFormDisplay {
         public int hairColor = -1;
         public int eyeColor = -1;
 
+        @SideOnly(Side.CLIENT)
+        public int getProperColor(FormDisplay formDisplay, String type) {
+            return getProperColor(formDisplay.getColor(type), type);
+        }
+
+        @SideOnly(Side.CLIENT)
+        public int getProperColor(int formColor, String type) {
+            int customColor = getColor(type);
+            if (customColor != -1)
+                return customColor;
+            return formColor;
+        }
+
+        @SideOnly(Side.CLIENT)
+        public boolean hasAnyColor(FormDisplay formDisplay, String type) {
+            if (hasColor(type))
+                return true;
+            return formDisplay.hasColor(type);
+        }
+
+        @SideOnly(Side.CLIENT)
+        public int getFurColor(FormDisplay display, DBCData data) {
+            if (this.furColor != -1)
+                return this.furColor;
+            return display.getFurColor(data);
+        }
+
+        @SideOnly(Side.CLIENT)
+        public boolean hasHairColor(DBCData data, FormDisplay display) {
+            if (data.Race == DBCRace.NAMEKIAN)
+                return false;
+            return hairColor != -1 || display.bodyColors.hairColor != -1;
+        }
+
         public void readFromNBT(NBTTagCompound compound) {
             eyeColor = compound.getInteger("eyeColor");
             hairColor = compound.getInteger("hairColor");
@@ -416,6 +452,7 @@ public class FormDisplay implements IFormDisplay {
             bodyC3 = compound.getInteger("bodyC3");
             furColor = compound.getInteger("furColor");
         }
+
         public NBTTagCompound writeToNBT(NBTTagCompound compound) {
             compound.setInteger("eyeColor", eyeColor);
             compound.setInteger("hairColor", hairColor);
@@ -425,6 +462,48 @@ public class FormDisplay implements IFormDisplay {
             compound.setInteger("bodyC2", bodyC2);
             compound.setInteger("bodyC3", bodyC3);
             return compound;
+        }
+
+        public boolean hasColor(String type) {
+            switch (type) {
+                case "hair":
+                    return this.hairColor != -1;
+                case "eye":
+                    return this.eyeColor != -1;
+                case "bodycm":
+                    return this.bodyCM != -1;
+                case "bodyc1":
+                    return this.bodyC1 != -1;
+                case "bodyc2":
+                    return this.bodyC2 != -1;
+                case "bodyc3":
+                    return this.bodyC3 != -1;
+                case "fur":
+                    return this.furColor != -1;
+                default:
+                    return false;
+            }
+        }
+
+        public int getColor(String type) {
+            switch (type.toLowerCase()) {
+                case "hair":
+                    return this.hairColor;
+                case "eye":
+                    return this.eyeColor;
+                case "bodycm":
+                    return this.bodyCM;
+                case "bodyc1":
+                    return this.bodyC1;
+                case "bodyc2":
+                    return this.bodyC2;
+                case "bodyc3":
+                    return this.bodyC3;
+                case "fur":
+                    return this.furColor;
+                default:
+                    return -1;
+            }
         }
     }
 }

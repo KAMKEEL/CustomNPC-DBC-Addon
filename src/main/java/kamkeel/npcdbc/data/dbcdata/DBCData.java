@@ -312,11 +312,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             }
         }
 
+        currentCustomizedColors = new FormDisplay.BodyColor();
         if (c.hasKey("CustomFormColors", Constants.NBT.TAG_COMPOUND)) {
-            currentCustomizedColors = new FormDisplay.BodyColor();
             currentCustomizedColors.readFromNBT(c.getCompoundTag("CustomFormColors"));
-        } else {
-            currentCustomizedColors = null;
         }
     }
 

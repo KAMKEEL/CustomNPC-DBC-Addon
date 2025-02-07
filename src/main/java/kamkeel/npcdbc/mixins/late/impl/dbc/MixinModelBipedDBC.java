@@ -19,6 +19,7 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -118,14 +119,17 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 HD = ConfigDBCClient.EnableHDTextures;
                 boolean isSaiyan = dbcData.Race == 1 || dbcData.Race == 2;
 
+                FormDisplay.BodyColor playerColors = dbcData.currentCustomizedColors;
+
                 //eye colors for ALL forms except ssj4
                 if ((hair.contains("EYELEFT") || hair.contains("EYERIGHT"))) {
                     if (form.display.isBerserk && !ClientProxy.renderingMajinSE)
                         ci.cancel();
 
+                    int eyeColor = playerColors.getProperColor(form.display, "eye");
                     if (form.display.hairType.equals("ssj4") && isSaiyan && HD && form.display.hasEyebrows) {
-                    } else if (form.display.bodyColors.eyeColor != -1)
-                        RenderPlayerJBRA.glColor3f(form.display.bodyColors.eyeColor);
+                    } else if (eyeColor != -1)
+                        RenderPlayerJBRA.glColor3f(eyeColor);
                 }
 
                 //majin effect check
@@ -161,12 +165,12 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 }
                 //hair color for all forms
                 if ((isHairPreset(hair) || hair.contains("EYEBROW"))) {
-                    if (!form.display.hasHairCol(dbcData)) {
+                    if (!playerColors.hasHairColor(dbcData, form.display)) {
                         if (dbcData.Race != DBCRace.NAMEKIAN) {
                             ColorMode.glColorInt(dbcData.renderingHairColor, 1f);
                         }
                     } else
-                        RenderPlayerJBRA.glColor3f(form.display.getHairColor(dbcData));
+                        RenderPlayerJBRA.glColor3f(playerColors.getProperColor(form.display.getHairColor(dbcData), "hair"));
                 }
 
 
@@ -183,7 +187,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 }
                 // Tail Color
                 if (hair.contains("SJT")) {
-                    int color = isMonke ? form.display.getFurColor(dbcData) : form.display.getHairColor(dbcData);
+                    int color = isMonke ? playerColors.getFurColor(form.display, dbcData) : playerColors.getProperColor(form.display, "hair");
                     if (color != -1) {
                         Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuudragonbc:gui/allw.png"));
                         RenderPlayerJBRA.glColor3f(color);
@@ -241,6 +245,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             }
 
             if (form != null) {
+                DBCData data = DBCData.get(abstractClientPlayer);
+                FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
                 HD = ConfigDBCClient.EnableHDTextures;
                 boolean isSaiyan = rc == 1 || rc == 2;
                 //remove CH if SSJ3/Oozaru
@@ -253,8 +259,9 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 //majin effect check
                 if (rc == 5 && !form.display.effectMajinHair) {
-                    if (form.display.bodyColors.bodyCM != -1)
-                        RenderPlayerJBRA.glColor3f(form.display.bodyColors.bodyCM);
+                    int bodyCMColor = playerColors.getProperColor(form.display, "bodyCM");
+                    if (bodyCMColor != -1)
+                        RenderPlayerJBRA.glColor3f(bodyCMColor);
                     return;
                 }
 
@@ -278,12 +285,11 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     race.set(1);
                 }
 
-                DBCData data = DBCData.get(abstractClientPlayer);
                 //color CH
-                if (!form.display.hasHairCol(data))
+                if (!playerColors.hasHairColor(data, form.display))
                     RenderPlayerJBRA.glColor3f(data.renderingHairColor);
                 else
-                    RenderPlayerJBRA.glColor3f(form.display.getHairColor(data));
+                    RenderPlayerJBRA.glColor3f(playerColors.getProperColor(form.display, "hair"));
 
                 //if bald or invalid CH, remove. Set SSJ4 to default if invalid
                 if (form.display.hairType.equalsIgnoreCase("bald"))
