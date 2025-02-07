@@ -14,7 +14,8 @@ public class NBTHelper {
      *
      * @param map Map of objects you would like to save
      * @param toNBT Lambda / callback used to write the object into NBT
-     * @return Taglist created from the provided hashmap
+     * @return Taglist of compounds with this format: <br>
+     *          {Slot: {@link Integer}, Content: {@link NBTTagCompound}}
      * @param <T> Type of the map's values
      */
     public static <T> NBTTagList nbtIntegerObjectMap(Map<Integer, T> map, Function<T, NBTTagCompound> toNBT) {
@@ -34,7 +35,8 @@ public class NBTHelper {
 
     /**
      *
-     * @param list tag list created using other functions from this map
+     * @param list tag list containing compounds with this format: <br>
+     *            {Slot: {@link Integer}, Content: {@link NBTTagCompound}}
      * @param fromNBT Lambda / Callback used to read the object from a map from NBT.
      * @param keepCondition Callback that checks if (currentID, newObject) should be kept in the newly created map or not <br>
      *                      For further info refer to {@link KeepConditionCallback}
@@ -58,7 +60,8 @@ public class NBTHelper {
 
     /**
      *
-     * @param list tag list created using other functions from this map
+     * @param list tag list containing compounds with this format: <br>
+     *            {Slot: {@link Integer}, Content: {@link NBTTagCompound}}
      * @param fromNBT Lambda / Callback used to read the object from a map from NBT.
      * @return HashMap of the newly created objects
      * @param <T> Type of the object you'd like to read from NBT
