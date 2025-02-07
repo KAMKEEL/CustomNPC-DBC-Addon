@@ -21,11 +21,13 @@ public class NBTHelper {
     public static <T> NBTTagList nbtIntegerObjectMap(Map<Integer, T> map, Function<T, NBTTagCompound> toNBT) {
         NBTTagList nbttaglist = new NBTTagList();
         if (map != null) {
-
-            for (int slot : map.keySet()) {
+            for (Map.Entry<Integer, T> entry : map.entrySet()) {
+                T value = entry.getValue();
+                if (value == null)
+                    continue;
                 NBTTagCompound nbttagcompound = new NBTTagCompound();
-                nbttagcompound.setInteger("Slot", slot);
-                nbttagcompound.setTag("Content", toNBT.apply(map.get(slot)));
+                nbttagcompound.setInteger("Slot", entry.getKey());
+                nbttagcompound.setTag("Content", toNBT.apply(value));
                 nbttaglist.appendTag(nbttagcompound);
             }
 
