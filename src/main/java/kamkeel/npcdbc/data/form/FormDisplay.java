@@ -84,7 +84,7 @@ public class FormDisplay implements IFormDisplay {
         rendering.setString("hairType", hairType);
         rendering.setString("bodyType", bodyType);
 
-        bodyColors.writeToNBT(compound);
+        bodyColors.writeToNBT(rendering);
 
         rendering.setBoolean("hasArcoMask", hasArcoMask);
         rendering.setBoolean("effectMajinHair", effectMajinHair);
