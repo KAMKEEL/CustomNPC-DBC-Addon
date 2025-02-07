@@ -411,6 +411,26 @@ public class FormDisplay implements IFormDisplay {
         public int hairColor = -1;
         public int eyeColor = -1;
 
+        public static boolean canBeCustomized(String type, int race, Form form) {
+            String hairType = form.display.hairType;
+            boolean isHumanoid = (DBCRace.isSaiyan(race) || race == DBCRace.HUMAN);
+            switch (type) {
+                case "bodycm":
+                    return !isHumanoid;
+                case "eye":
+                    return true;
+                case "bodyc1":
+                case "bodyc2":
+                case "bodyc3":
+                    return race == DBCRace.NAMEKIAN || race == DBCRace.ARCOSIAN;
+                case "hair":
+                    return isHumanoid && (!hairType.equals("oozaru") && !hairType.isEmpty());
+                case "fur":
+                    return DBCRace.isSaiyan(race) && (hairType.equals("ssj4") || form.display.hasBodyFur);
+            }
+            return true;
+        }
+
         @SideOnly(Side.CLIENT)
         public int getProperColor(FormDisplay formDisplay, String type) {
             return getProperColor(formDisplay.getColor(type), type);
@@ -506,6 +526,37 @@ public class FormDisplay implements IFormDisplay {
                 default:
                     return -1;
             }
+        }
+
+        public void setColor(String type, int color) {
+            switch (type.toLowerCase()) {
+                case "hair":
+                    hairColor = color;
+                    break;
+                case "eye":
+                    eyeColor = color;
+                    break;
+                case "bodycm":
+                    bodyCM = color;
+                    break;
+                case "bodyc1":
+                    bodyC1 = color;
+                    break;
+                case "bodyc2":
+                    bodyC2 = color;
+                    break;
+                case "bodyc3":
+                    bodyC3 = color;
+                    break;
+                case "fur":
+                    furColor = color;
+                    break;
+            }
+        }
+
+        public boolean isEmpty() {
+            return bodyCM == -1 && bodyC1 == -1 && bodyC2 == -1 && bodyC3 == -1 &&
+                furColor == -1 && hairColor == -1 && eyeColor == -1;
         }
     }
 }

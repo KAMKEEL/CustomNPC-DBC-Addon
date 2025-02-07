@@ -4,6 +4,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.FormWheelData;
@@ -44,7 +45,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
 
     public static float BLUR_INTENSITY = 0;
     public static float MAX_BLUR = 4;
-    public static boolean renderingPlayer = false;
+
     ScaledResolution scaledResolution;
     public FormWheelSegment[] wheelSlot = new FormWheelSegment[6];
 
@@ -496,7 +497,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
             rotation -= Mouse.getDX() * 0.75f;
         }
 
-        renderingPlayer = true;
+        RenderEventHandler.renderingPlayerInGUI = true;
         EntityLivingBase entity = mc.thePlayer;
         DBCData data = DBCData.getClient();
 
@@ -601,7 +602,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         entity.setInvisible(isInvisible);
         entity.isImmuneToFire = isImmunetoFire;
         inv.mainInventory[inv.currentItem] = oldItem;
-        renderingPlayer = false;
+        RenderEventHandler.renderingPlayerInGUI = false;
 
         if (ClientProxy.lastRendererGUIPlayerID >= 0 && JRMCoreH.data2.length > ClientProxy.lastRendererGUIPlayerID)
             JRMCoreH.data2[ClientProxy.lastRendererGUIPlayerID] = data.State + ";" + data.State2;

@@ -15,7 +15,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ColorMode;
-import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -47,10 +47,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(value = RenderPlayerJBRA.class, remap = false)
 public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
@@ -118,7 +116,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             return;
         DBCData.get(player.get()).XZSize = x;
         DBCData.get(player.get()).YSize = y;
-        if (HUDFormWheel.renderingPlayer && y > 0.8f) {
+        if (RenderEventHandler.renderingPlayerInGUI && y > 0.8f) {
             float f = ConfigDBCClient.AlteranteSelectionWheelTexture ? 6f : 4f;
             GL11.glTranslatef(0, y / f, 0);
         }
@@ -147,7 +145,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
 
         EntityAura aura = data.auraEntity;
-        if (!HUDFormWheel.renderingPlayer && aura != null && aura.color1 != -1 && aura.shouldRender()) {
+        if (!RenderEventHandler.renderingPlayerInGUI && aura != null && aura.color1 != -1 && aura.shouldRender()) {
 
             if (aura.fadeOut)
                 aura.skinColorAlpha = (float) Math.max(0.0f, aura.skinColorAlpha - Math.pow(aura.fadeFactor, 1 + (aura.alpha / 1) * 7));
@@ -191,7 +189,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Redirect(method = "func_130009_a", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;isSneaking()Z"))
     private boolean isSneaking(AbstractClientPlayer instance) {
-        if (HUDFormWheel.renderingPlayer)
+        if (RenderEventHandler.renderingPlayerInGUI)
             return false;
         return instance.isSneaking();
     }
@@ -216,7 +214,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JBRA/RenderPlayerJBRA;kk2:Z", ordinal = 1))
     private void changeFormDAata4(AbstractClientPlayer p, float p_77041_2_, CallbackInfo ci) {
         DBCData data = DBCData.get(p);
-        if (HUDFormWheel.renderingPlayer) {
+        if (RenderEventHandler.renderingPlayerInGUI) {
             kk2 = data.renderKK;
         }
     }
@@ -230,7 +228,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 2, shift = At.Shift.BEFORE))
     private void changeFormData3(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "l") LocalBooleanRef ui, @Local(name = "gd") LocalBooleanRef GoD) {
         DBCData data = DBCData.get(par1AbstractClientPlayer);
-        if (HUDFormWheel.renderingPlayer) {
+        if (RenderEventHandler.renderingPlayerInGUI) {
             ui.set(data.renderUI);
             GoD.set(data.renderGoD);
         }
@@ -354,7 +352,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;onGround:Z", remap = true), remap = true)
     public boolean fixP2otaraHair(AbstractClientPlayer instance) {
-        if (HUDFormWheel.renderingPlayer)
+        if (RenderEventHandler.renderingPlayerInGUI)
             return true;
         return instance.onGround;
     }

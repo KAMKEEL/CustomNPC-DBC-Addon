@@ -877,7 +877,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         }
 
         if (id == 10000) {
-            NoppesUtil.openGUI(mc.thePlayer, new GuiFormCustomizer(this, currentForm));
+            NoppesUtil.openGUI(mc.thePlayer, new GuiFormCustomizer(currentForm));
         }
 
     }

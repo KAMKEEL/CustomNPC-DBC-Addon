@@ -392,6 +392,7 @@ public class PlayerDBCInfo {
         if(ConfigDBCGeneral.AURAS_CLEAR_ON_RESET)
             clearAllAuras();
 
+        configuredFormColors.clear();
         StatusEffectController.getInstance().clearEffects(parent.player);
         BonusController.getInstance().clearBonuses(parent.player);
 
@@ -411,7 +412,12 @@ public class PlayerDBCInfo {
         dbcCompound.setTag("UnlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
         dbcCompound.setTag("FormMastery", NBTTags.nbtIntegerFloatMap(formLevels));
         dbcCompound.setTag("FormTimers", NBTTags.nbtIntegerIntegerMap(formTimers));
-        dbcCompound.setTag("ConfigurableFormColors", NBTHelper.nbtIntegerObjectMap(configuredFormColors, bodyColor -> bodyColor.writeToNBT(new NBTTagCompound())));
+        dbcCompound.setTag("ConfigurableFormColors",
+            NBTHelper.nbtIntegerObjectMap(
+                configuredFormColors,
+                bodyColor -> bodyColor.writeToNBT(new NBTTagCompound()),
+                (ignored, colors) -> !colors.isEmpty()
+            ));
 
         for (int i = 0; i < formWheel.length; i++)
             formWheel[i].writeToNBT(dbcCompound);
@@ -453,7 +459,7 @@ public class PlayerDBCInfo {
                     return color;
                 },
 
-                (slot, ignored) -> FormController.getInstance().has(slot)
+                (slot, color) -> FormController.getInstance().has(slot) && !color.isEmpty()
             );
 
         loadEffects(dbcCompound);
@@ -626,5 +632,12 @@ public class PlayerDBCInfo {
             }
         }
         return null;
+    }
+
+    public void setFormColorConfig(Form form, FormDisplay.BodyColor colors) {
+        if (colors.isEmpty())
+            configuredFormColors.remove(form.id);
+        else
+            configuredFormColors.put(form.id, colors);
     }
 }

@@ -36,6 +36,8 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
 
     private URI clickedUrl;
 
+    public boolean addDefaultButtons = true;
+
     /**
      * @param guiReplacementID ID of the JRMC Gui this object is replacing
      */
@@ -103,9 +105,11 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
         this.guiWidthOffset = (this.width - menuImageWidth) / 2;
         this.guiHeightOffset = (this.height - menuImageHeight) / 2;
 
-        addCloseButton();
-        addNavbarButtons();
-        addClientHelpButtons();
+        if (addDefaultButtons) {
+            addCloseButton();
+            addNavbarButtons();
+            addClientHelpButtons();
+        }
     }
 
     @Override

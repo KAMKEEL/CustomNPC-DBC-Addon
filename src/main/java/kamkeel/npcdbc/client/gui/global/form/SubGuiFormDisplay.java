@@ -169,21 +169,21 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
     private int addBodyColors(int y) {
         y += 22;
-        addLabel(new GuiNpcLabel(109, "display.bodyColors.bodyC1", guiLeft + 7, y + 5));
+        addLabel(new GuiNpcLabel(109, "display.bodyc1", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(109, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.bodyC1)));
         getButton(109).packedFGColour = display.bodyColors.bodyC1;
         addButton(new GuiNpcButton(1109, guiLeft + 112, y, 20, 20, "X"));
         getButton(1109).enabled = display.bodyColors.bodyC1 != -1;
 
         y += 22;
-        addLabel(new GuiNpcLabel(110, "display.bodyColors.bodyC2", guiLeft + 7, y + 5));
+        addLabel(new GuiNpcLabel(110, "display.bodyc2", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(110, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.bodyC2)));
         getButton(110).packedFGColour = display.bodyColors.bodyC2;
         addButton(new GuiNpcButton(1110, guiLeft + 112, y, 20, 20, "X"));
         getButton(1110).enabled = display.bodyColors.bodyC2 != -1;
 
         y += 22;
-        addLabel(new GuiNpcLabel(111, "display.bodyColors.bodyC3", guiLeft + 7, y + 5));
+        addLabel(new GuiNpcLabel(111, "display.bodyc3", guiLeft + 7, y + 5));
         addButton(new GuiNpcButton(111, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.bodyC3)));
         getButton(111).packedFGColour = display.bodyColors.bodyC3;
         addButton(new GuiNpcButton(1111, guiLeft + 112, y, 20, 20, "X"));

@@ -11,7 +11,6 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.ColorMode;
-import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -219,7 +218,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
     @Inject(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At(value = "INVOKE_ASSIGN", target = "LJinRyuu/JRMCore/JRMCoreH;StusEfctsClient(II)Z", ordinal = 3, shift = At.Shift.AFTER), cancellable = true)
     public void disableHairAnimGUI(float par1, String h, float hl, int s, int rg, int pl, int rc, RenderPlayerJBRA rp, AbstractClientPlayer abstractClientPlayer, CallbackInfo ci, @Local(name = "playerName") LocalRef<String> playerName, @Local(name = "aura") LocalBooleanRef aura, @Local(name = "trbo") LocalBooleanRef trbo, @Local(name = "kken") LocalBooleanRef kken, @Local(name = "trty") LocalBooleanRef trty) {
-        if (HUDFormWheel.renderingPlayer) {
+        if (RenderEventHandler.renderingPlayerInGUI) {
             playerName.set("HUDFormWheelPlayer");
             aura.set(false);
             trbo.set(false);

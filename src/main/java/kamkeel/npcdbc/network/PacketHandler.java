@@ -61,6 +61,8 @@ public final class PacketHandler {
         map.put(DBCRequestFormWheel.packetName, new DBCRequestFormWheel());
         map.put(DBCSaveFormWheel.packetName, new DBCSaveFormWheel());
         map.put(TurboPacket.packetName, new TurboPacket());
+
+        map.put(SaveFormCustomization.packetName, new SaveFormCustomization());
         this.register();
     }
 

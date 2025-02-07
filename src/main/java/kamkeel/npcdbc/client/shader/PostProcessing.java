@@ -55,6 +55,8 @@ public class PostProcessing {
 
     public static boolean hasInitialized;
 
+    private static boolean isScissorEnabled;
+
     public static void startBlooming(boolean clearBloomBuffer) {
         if (!ConfigDBCClient.EnableBloom || !ShaderHelper.useShaders())
             return;
@@ -105,9 +107,14 @@ public class PostProcessing {
             glEnable(GL_TEXTURE_2D);
             glEnable(GL_COLOR_MATERIAL);
         }
+
+        if (isScissorEnabled)
+            GL11.glEnable(GL_SCISSOR_TEST);
     }
 
     public static void bloom(float lightExposure, boolean resetGLState) {
+        isScissorEnabled = GL11.glIsEnabled(GL_SCISSOR_TEST);
+        GL11.glDisable(GL_SCISSOR_TEST);
         if (!processBloom)
             return;
 

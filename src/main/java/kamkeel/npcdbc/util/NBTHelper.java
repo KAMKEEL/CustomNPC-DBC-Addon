@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.util;
 
+import kamkeel.npcdbc.data.form.FormDisplay;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
@@ -19,11 +20,27 @@ public class NBTHelper {
      * @param <T> Type of the map's values
      */
     public static <T> NBTTagList nbtIntegerObjectMap(Map<Integer, T> map, Function<T, NBTTagCompound> toNBT) {
+        return nbtIntegerObjectMap(map, toNBT, (ignored, ignored2) -> true);
+    }
+
+    /**
+     *
+     * @param map Map of objects you would like to save
+     * @param toNBT Lambda / callback used to write the object into NBT
+     * @param keepCondition Callback that checks if (currentID, newObject) should be kept in the newly created map or not <br>
+     *                      For further info refer to {@link KeepConditionCallback}
+     * @return Taglist of compounds with this format: <br>
+     *          {Slot: {@link Integer}, Content: {@link NBTTagCompound}}
+     * @param <T> Type of the map's values
+     */
+    public static <T> NBTTagList nbtIntegerObjectMap(Map<Integer, T> map, Function<T, NBTTagCompound> toNBT, KeepConditionCallback<Integer, T> keepCondition) {
         NBTTagList nbttaglist = new NBTTagList();
         if (map != null) {
             for (Map.Entry<Integer, T> entry : map.entrySet()) {
                 T value = entry.getValue();
                 if (value == null)
+                    continue;
+                if (!keepCondition.check(entry.getKey(), value))
                     continue;
                 NBTTagCompound nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setInteger("Slot", entry.getKey());
@@ -53,7 +70,9 @@ public class NBTHelper {
                 NBTTagCompound compound = list.getCompoundTagAt(i);
                 int slot = compound.getInteger("Slot");
                 NBTTagCompound contentCompound = compound.getCompoundTag("Content");
-                map.put(slot, fromNBT.apply(contentCompound));
+                T newColor = fromNBT.apply(contentCompound);
+                if (keepCondition.check(slot, newColor))
+                    map.put(slot, newColor);
             }
         }
 
