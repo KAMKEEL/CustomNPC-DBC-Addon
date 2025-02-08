@@ -2,8 +2,6 @@ package kamkeel.npcdbc.client.gui.global.effects;
 
 import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.data.statuseffect.custom.EffectScriptHandler;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.effect.DBCRequestEffectScript;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.client.gui.script.GuiScriptInterface;
 
@@ -18,10 +16,18 @@ public class GuiEffectScript extends GuiScriptInterface {
         this.script = new EffectScriptHandler(effect);
         this.handler = this.script;
 
-        PacketHandler.Instance.sendToServer(new DBCRequestEffectScript().generatePacket());
+//        PacketHandler.Instance.sendToServer(new DBCRequestEffectScript().generatePacket());
     }
 
     public void setGuiData(NBTTagCompound compound) {
 
+    }
+
+    @Override
+    public void close() {
+        this.save();
+        parent.setWorldAndResolution(mc, width, height);
+        parent.initGui();
+        mc.currentScreen = parent;
     }
 }

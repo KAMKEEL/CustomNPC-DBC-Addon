@@ -18,10 +18,10 @@ public class EffectScriptHandler implements IScriptHandler {
         this.effect = effect;
     }
 
-
     @Override
     public void callScript(String s, Event event) {
-        container.run(s, event);
+        if (container != null)
+            container.run(s, event);
     }
 
     @Override
@@ -60,6 +60,8 @@ public class EffectScriptHandler implements IScriptHandler {
 
     @Override
     public List<ScriptContainer> getScripts() {
+        if (container == null)
+            return new ArrayList<>();
         return Collections.singletonList(container);
     }
 
