@@ -5,6 +5,8 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
+import kamkeel.npcdbc.network.packets.EnumPacketRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,7 +35,7 @@ public class DBCRemoveAura extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketRequest.AuraRemove;
     }
 
     @Override

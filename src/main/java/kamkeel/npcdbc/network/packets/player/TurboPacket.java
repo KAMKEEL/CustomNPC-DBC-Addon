@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketChannel;
@@ -26,7 +27,7 @@ public class TurboPacket extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketPlayer.Turbo;
     }
 
     @Override

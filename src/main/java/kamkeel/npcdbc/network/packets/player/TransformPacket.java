@@ -3,6 +3,7 @@ package kamkeel.npcdbc.network.packets.player;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import kamkeel.npcdbc.network.AbstractPacket;
@@ -29,7 +30,7 @@ public final class TransformPacket extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketPlayer.Transform;
     }
 
     @Override

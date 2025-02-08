@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import kamkeel.npcdbc.network.AbstractPacket;
@@ -31,7 +32,7 @@ public final class DBCSetValPacket extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketPlayer.SetVal;
     }
 
     @Override

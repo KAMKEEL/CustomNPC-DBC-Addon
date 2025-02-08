@@ -1,10 +1,11 @@
-package kamkeel.npcdbc.network.packets.get.effect;
+package kamkeel.npcdbc.network.packets.player.effect;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,7 +29,7 @@ public final class DBCRequestEffect extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketPlayer.EffectList;
     }
 
     @Override

@@ -5,6 +5,7 @@ import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,7 +36,7 @@ public class DBCSaveEffect extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketRequest.EffectSave;
     }
 
     @Override

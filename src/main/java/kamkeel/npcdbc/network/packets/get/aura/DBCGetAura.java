@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketGet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,7 +27,7 @@ public final class DBCGetAura extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketGet.Aura;
     }
 
     @Override

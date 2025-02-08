@@ -4,6 +4,7 @@ import JinRyuu.DragonBC.common.DBCClient;
 import JinRyuu.DragonBC.common.DBCKiTech;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketChannel;
@@ -23,7 +24,7 @@ public final class DBCSetFlight extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketPlayer.Flight;
     }
 
     @Override

@@ -3,6 +3,7 @@ package kamkeel.npcdbc.network.packets.player.form;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketChannel;
@@ -18,7 +19,7 @@ public final class DBCRequestFormWheel extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketPlayer.FormWheel;
     }
 
     @Override

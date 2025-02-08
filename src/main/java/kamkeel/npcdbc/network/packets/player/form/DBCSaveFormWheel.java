@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,7 +31,7 @@ public final class DBCSaveFormWheel extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketPlayer.FormWheelSave;
     }
 
     @Override

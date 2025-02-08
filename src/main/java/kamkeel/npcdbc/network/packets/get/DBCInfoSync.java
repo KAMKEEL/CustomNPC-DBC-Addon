@@ -3,6 +3,7 @@ package kamkeel.npcdbc.network.packets.get;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.DBCSyncController;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketGet;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,7 +31,7 @@ public final class DBCInfoSync extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketGet.InfoSync;
     }
 
     @Override

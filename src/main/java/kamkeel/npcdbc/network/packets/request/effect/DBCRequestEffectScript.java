@@ -2,6 +2,7 @@ package kamkeel.npcdbc.network.packets.request.effect;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketChannel;
@@ -13,7 +14,7 @@ public class DBCRequestEffectScript extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketRequest.EffectScriptGet;
     }
 
     @Override

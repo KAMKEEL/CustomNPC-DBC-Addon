@@ -5,6 +5,7 @@ import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,7 +29,7 @@ public final class DBCRequestOutline extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketPlayer.OutlineList;
     }
 
     @Override

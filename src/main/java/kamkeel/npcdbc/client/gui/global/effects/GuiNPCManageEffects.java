@@ -6,7 +6,7 @@ import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.get.effect.DBCGetEffect;
 import kamkeel.npcdbc.network.packets.request.effect.DBCRemoveEffect;
-import kamkeel.npcdbc.network.packets.get.effect.DBCRequestEffect;
+import kamkeel.npcdbc.network.packets.player.effect.DBCRequestEffect;
 import kamkeel.npcdbc.network.packets.request.effect.DBCSaveEffect;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;

@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,7 +30,7 @@ public final class StopSound extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketPlayer.StopSound;
     }
 
     @Override

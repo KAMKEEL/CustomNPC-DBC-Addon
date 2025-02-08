@@ -3,6 +3,7 @@ package kamkeel.npcdbc.network.packets.get;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.CapsuleController;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.EnumPacketGet;
 import net.minecraft.entity.player.EntityPlayer;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketChannel;
@@ -29,7 +30,7 @@ public final class CapsuleInfo extends AbstractPacket {
 
     @Override
     public Enum getType() {
-        return null;
+        return EnumPacketGet.CapsuleInfo;
     }
 
     @Override
