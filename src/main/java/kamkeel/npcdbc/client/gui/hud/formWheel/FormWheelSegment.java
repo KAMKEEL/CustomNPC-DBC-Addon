@@ -10,11 +10,10 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormStackable;
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.form.DBCSaveFormWheel;
-import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
+import kamkeel.npcdbc.network.packets.player.form.DBCSaveFormWheel;
+import kamkeel.npcdbc.network.packets.player.form.DBCSelectForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.*;
 

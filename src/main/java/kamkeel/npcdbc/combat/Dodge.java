@@ -2,7 +2,7 @@ package kamkeel.npcdbc.combat;
 
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.PlaySound;
+import kamkeel.npcdbc.network.packets.player.PlaySound;
 import net.minecraft.entity.Entity;
 
 import java.util.Random;

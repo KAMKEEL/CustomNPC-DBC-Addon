@@ -5,7 +5,7 @@ import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.DBCInfoSync;
+import kamkeel.npcdbc.network.packets.get.DBCInfoSync;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

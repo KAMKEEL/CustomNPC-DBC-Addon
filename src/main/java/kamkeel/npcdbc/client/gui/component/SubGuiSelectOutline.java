@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.outline.DBCRequestOutline;
+import kamkeel.npcdbc.network.packets.player.outline.DBCRequestOutline;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.*;
 

@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.client.sound;
 
 import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.StopSound;
+import kamkeel.npcdbc.network.packets.player.StopSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 
