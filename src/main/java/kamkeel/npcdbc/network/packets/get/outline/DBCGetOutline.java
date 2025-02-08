@@ -3,7 +3,7 @@ package kamkeel.npcdbc.network.packets.get.outline;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.outline.Outline;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketGet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -33,7 +33,7 @@ public final class DBCGetOutline extends AbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.GET_PACKETS;
+        return DBCPacketHandler.GET_PACKETS;
     }
 
     @Override

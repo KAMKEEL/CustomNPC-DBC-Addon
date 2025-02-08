@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.client.gui.component;
 
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.outline.DBCRequestOutline;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.*;
@@ -26,7 +26,7 @@ public class SubGuiSelectOutline extends SubGuiInterface implements IScrollData,
         xSize = 256;
         this.setBackground("menubg.png");
 
-        PacketHandler.Instance.sendToServer(new DBCRequestOutline(-1));
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestOutline(-1));
     }
 
     @Override

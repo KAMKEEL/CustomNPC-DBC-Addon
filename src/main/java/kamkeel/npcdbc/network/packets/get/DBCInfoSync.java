@@ -2,7 +2,7 @@ package kamkeel.npcdbc.network.packets.get;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.DBCSyncController;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketGet;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,7 +36,7 @@ public final class DBCInfoSync extends AbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.GET_PACKETS;
+        return DBCPacketHandler.GET_PACKETS;
     }
 
     @Override

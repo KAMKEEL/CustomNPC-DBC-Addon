@@ -7,7 +7,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -41,7 +41,7 @@ public class DBCUpdateLockOn extends AbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.PLAYER_PACKETS;
+        return DBCPacketHandler.PLAYER_PACKETS;
     }
 
     @Override

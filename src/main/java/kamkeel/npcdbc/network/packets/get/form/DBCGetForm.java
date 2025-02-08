@@ -3,7 +3,7 @@ package kamkeel.npcdbc.network.packets.get.form;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketGet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -32,7 +32,7 @@ public final class DBCGetForm extends AbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.GET_PACKETS;
+        return DBCPacketHandler.GET_PACKETS;
     }
 
     @Override

@@ -3,7 +3,7 @@ package kamkeel.npcdbc.network.packets.player;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,7 +37,7 @@ public final class DBCSetValPacket extends AbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.PLAYER_PACKETS;
+        return DBCPacketHandler.PLAYER_PACKETS;
     }
 
     @Override

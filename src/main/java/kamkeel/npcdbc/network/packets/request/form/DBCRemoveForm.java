@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.NetworkUtility;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -39,7 +39,7 @@ public class DBCRemoveForm extends AbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.REQUEST_PACKETS;
+        return DBCPacketHandler.REQUEST_PACKETS;
     }
 
     @Override

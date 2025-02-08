@@ -5,7 +5,7 @@ import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.network.NetworkUtility;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketRequest;
 import net.minecraft.entity.player.EntityPlayer;
 import kamkeel.npcdbc.network.AbstractPacket;
@@ -33,7 +33,7 @@ public class DBCRequestEffectScript extends AbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.REQUEST_PACKETS;
+        return DBCPacketHandler.REQUEST_PACKETS;
     }
 
     @Override

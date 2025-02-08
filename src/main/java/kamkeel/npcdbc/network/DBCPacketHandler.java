@@ -46,8 +46,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-public class PacketHandler {
-    public static PacketHandler Instance;
+public class DBCPacketHandler {
+    public static DBCPacketHandler Instance;
 
 //    public Map<String, AbstractPacket> map = new Hashtable<>();
 //    public Map<String, FMLEventChannel> channels = new Hashtable<>();
@@ -61,7 +61,7 @@ public class PacketHandler {
 
     public static final List<PacketChannel> packetChannels = new ArrayList<>();
 
-    public PacketHandler() {
+    public DBCPacketHandler() {
         packetChannels.add(REQUEST_PACKETS);
         packetChannels.add(GET_PACKETS);
         packetChannels.add(PLAYER_PACKETS);

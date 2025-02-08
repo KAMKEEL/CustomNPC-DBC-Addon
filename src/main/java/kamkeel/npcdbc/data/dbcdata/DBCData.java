@@ -27,7 +27,7 @@ import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.entity.EntityAura;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.DBCSetFlight;
 import kamkeel.npcdbc.network.packets.player.DBCUpdateLockOn;
 import kamkeel.npcdbc.network.packets.player.PingPacket;
@@ -360,7 +360,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public void syncTracking() {
-        PacketHandler.Instance.sendTracking(new PingPacket(this), player);
+        DBCPacketHandler.Instance.sendTracking(new PingPacket(this), player);
     }
 
     public NBTTagCompound getRawCompound() {
@@ -685,7 +685,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         StatusEffects = setSE(3, on);
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-            PacketHandler.Instance.sendToPlayer(new TurboPacket(on), (EntityPlayerMP) player);
+            DBCPacketHandler.Instance.sendToPlayer(new TurboPacket(on), (EntityPlayerMP) player);
         } else {
             DBCKiTech.turbo = on;
         }
@@ -805,7 +805,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public void setFlight(boolean flightOn) {
-        PacketHandler.Instance.sendToPlayer(new DBCSetFlight(flightOn), (EntityPlayerMP) player);
+        DBCPacketHandler.Instance.sendToPlayer(new DBCSetFlight(flightOn), (EntityPlayerMP) player);
     }
 
     public float getBaseFlightSpeed() {
@@ -958,7 +958,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             } else {
                 packet = new DBCUpdateLockOn(lockOnTarget.getEntityId());
             }
-            PacketHandler.Instance.sendToPlayer(packet, (EntityPlayerMP) player);
+            DBCPacketHandler.Instance.sendToPlayer(packet, (EntityPlayerMP) player);
             return;
         }
 

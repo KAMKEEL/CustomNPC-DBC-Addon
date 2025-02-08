@@ -4,7 +4,7 @@ import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.data.outline.Outline;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSync;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -97,7 +97,7 @@ public class OutlineController implements IOutlineHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1));
+            DBCPacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1));
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -202,7 +202,7 @@ public class OutlineController implements IOutlineHandler {
                     continue;
                 if (file.getName().equals(foundOutline.name + ".json")) {
                     file.delete();
-                    PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundOutline.getID()));
+                    DBCPacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundOutline.getID()));
                     break;
                 }
             }
@@ -222,7 +222,7 @@ public class OutlineController implements IOutlineHandler {
                         continue;
                     if (file.getName().equals(foundOutline.name + ".json")) {
                         file.delete();
-                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundOutline.getID()));
+                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundOutline.getID()));
                         break;
                     }
                 }

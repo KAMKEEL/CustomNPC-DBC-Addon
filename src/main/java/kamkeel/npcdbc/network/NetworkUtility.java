@@ -105,11 +105,11 @@ public class NetworkUtility {
     }
 
     public static void sendServerMessage(EntityPlayer player, Object... message) {
-        PacketHandler.Instance.sendToPlayer(new SendChat(message), (EntityPlayerMP) player);
+        DBCPacketHandler.Instance.sendToPlayer(new SendChat(message), (EntityPlayerMP) player);
     }
 
     public static void sendInfoMessage(EntityPlayer player, Object... message) {
-        PacketHandler.Instance.sendToPlayer(new SendChat(true, message), (EntityPlayerMP) player);
+        DBCPacketHandler.Instance.sendToPlayer(new SendChat(true, message), (EntityPlayerMP) player);
     }
 
     public static void getScripts(IScriptHandler data, EntityPlayerMP player) {
@@ -118,7 +118,7 @@ public class NetworkUtility {
         compound.setString("ScriptLanguage", data.getLanguage());
         compound.setTag("Languages", ScriptController.Instance.nbtLanguages());
         compound.setTag("ScriptConsole", NBTTags.NBTLongStringMap(data.getConsoleText()));
-        PacketHandler.Instance.sendToPlayer(new DBCReceiveEffectScript(compound), player);
+        DBCPacketHandler.Instance.sendToPlayer(new DBCReceiveEffectScript(compound), player);
         List<ScriptContainer> containers = data.getScripts();
         for (int i = 0; i < containers.size(); i++) {
             ScriptContainer container = containers.get(i);
@@ -126,7 +126,7 @@ public class NetworkUtility {
             tabCompound.setInteger("Tab",i);
             tabCompound.setTag("Script",container.writeToNBT(new NBTTagCompound()));
             tabCompound.setInteger("TotalScripts",containers.size());
-            PacketHandler.Instance.sendToPlayer(new DBCReceiveEffectScript(tabCompound), player);
+            DBCPacketHandler.Instance.sendToPlayer(new DBCReceiveEffectScript(tabCompound), player);
         }
     }
 }

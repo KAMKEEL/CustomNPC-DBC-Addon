@@ -20,7 +20,7 @@ import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.CapsuleInfo;
 import kamkeel.npcdbc.network.packets.player.LoginInfo;
 import kamkeel.npcdbc.util.DBCUtils;
@@ -54,10 +54,10 @@ public class ServerEventHandler {
             return;
         DBCData dbcData = DBCData.get(event.player);
         dbcData.loadNBTData(true);
-        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.COOLDOWN), (EntityPlayerMP) event.player);
-        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.STRENGTH), (EntityPlayerMP) event.player);
-        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.EFFECT_TIME), (EntityPlayerMP) event.player);
-        PacketHandler.Instance.sendToPlayer(new LoginInfo(), (EntityPlayerMP) event.player);
+        DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.COOLDOWN), (EntityPlayerMP) event.player);
+        DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.STRENGTH), (EntityPlayerMP) event.player);
+        DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.EFFECT_TIME), (EntityPlayerMP) event.player);
+        DBCPacketHandler.Instance.sendToPlayer(new LoginInfo(), (EntityPlayerMP) event.player);
     }
 
     @SubscribeEvent

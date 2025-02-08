@@ -7,8 +7,8 @@ import io.netty.buffer.Unpooled;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.data.statuseffect.custom.EffectScriptHandler;
-import kamkeel.npcdbc.network.PacketClient;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketClient;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketRequest;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.LogWriter;
 import noppes.npcs.config.ConfigDebug;
-import noppes.npcs.controllers.ScriptContainer;
 
 import java.io.IOException;
 
@@ -46,7 +45,7 @@ public class DBCSaveEffectScript extends LargeAbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.REQUEST_PACKETS;
+        return DBCPacketHandler.REQUEST_PACKETS;
     }
 
 
@@ -76,6 +75,6 @@ public class DBCSaveEffectScript extends LargeAbstractPacket {
     }
 
     public static void Save(int id, int page, int maxSize, NBTTagCompound compound) {
-        PacketClient.sendClient(new DBCSaveEffectScript(id, page, maxSize, compound));
+        DBCPacketClient.sendClient(new DBCSaveEffectScript(id, page, maxSize, compound));
     }
 }

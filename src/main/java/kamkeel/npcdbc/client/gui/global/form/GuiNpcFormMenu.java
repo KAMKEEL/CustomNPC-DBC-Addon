@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.request.form.DBCSaveForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -75,7 +75,7 @@ public class GuiNpcFormMenu {
         if (this.parent != null) {
             GuiNpcTextField.unfocus();
             ((SubGuiInterface)this.parent).close();
-            PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), this.originalName));
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), this.originalName));
         }
     }
 

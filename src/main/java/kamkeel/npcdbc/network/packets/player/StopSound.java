@@ -5,7 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.client.sound.SoundHandler;
 import kamkeel.npcdbc.data.SoundSource;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import kamkeel.npcdbc.util.Utility;
@@ -35,7 +35,7 @@ public final class StopSound extends AbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.PLAYER_PACKETS;
+        return DBCPacketHandler.PLAYER_PACKETS;
     }
 
     @Override
@@ -59,7 +59,7 @@ public final class StopSound extends AbstractPacket {
     public static void stop(SoundSource sound) {
         if (sound == null || sound.entity == null)
             return;
-        PacketHandler.Instance.sendTracking(new StopSound(sound), sound.entity);
+        DBCPacketHandler.Instance.sendTracking(new StopSound(sound), sound.entity);
     }
 
 

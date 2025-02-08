@@ -2,7 +2,7 @@ package kamkeel.npcdbc.network.packets.get;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketGet;
 import net.minecraft.entity.player.EntityPlayer;
 import kamkeel.npcdbc.network.AbstractPacket;
@@ -35,7 +35,7 @@ public final class CapsuleInfo extends AbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.GET_PACKETS;
+        return DBCPacketHandler.GET_PACKETS;
     }
 
     @Override

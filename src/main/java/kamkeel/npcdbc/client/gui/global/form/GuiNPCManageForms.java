@@ -7,7 +7,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.form.DBCGetForm;
 import kamkeel.npcdbc.network.packets.request.form.DBCRemoveForm;
 import kamkeel.npcdbc.network.packets.player.form.DBCRequestForm;
@@ -73,7 +73,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
 
         this.display = form.display;
 
-        PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, false,false));
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestForm(-1, false,false));
     }
 
     public void initGui() {
@@ -116,7 +116,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
             while (data.containsKey(name))
                 name += "_";
             Form form = new Form(-1, name);
-            PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), name));
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), name));
         }
         if (button.id == 1) {
             if (data.containsKey(scrollForms.getSelected())) {
@@ -133,7 +133,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
             Form form = (Form) this.form.clone();
             while (data.containsKey(form.name))
                 form.name += "_";
-            PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), form.name));
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), form.name));
         }
 
     }
@@ -405,7 +405,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
             save();
             selected = scrollForms.getSelected();
             if (selected != null && !selected.isEmpty())
-                PacketHandler.Instance.sendToServer(new DBCGetForm(data.get(selected)));
+                DBCPacketHandler.Instance.sendToServer(new DBCGetForm(data.get(selected)));
         }
     }
 
@@ -445,7 +445,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
             return;
         if (id == 1) {
             if (data.containsKey(scrollForms.getSelected())) {
-                PacketHandler.Instance.sendToServer(new DBCRemoveForm(data.get(scrollForms.getSelected())));
+                DBCPacketHandler.Instance.sendToServer(new DBCRemoveForm(data.get(scrollForms.getSelected())));
                 scrollForms.clear();
                 form = new Form();
 

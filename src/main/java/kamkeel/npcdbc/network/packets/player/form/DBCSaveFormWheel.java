@@ -3,7 +3,7 @@ package kamkeel.npcdbc.network.packets.player.form;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -36,7 +36,7 @@ public final class DBCSaveFormWheel extends AbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.PLAYER_PACKETS;
+        return DBCPacketHandler.PLAYER_PACKETS;
     }
 
     @Override

@@ -4,8 +4,7 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.network.NetworkUtility;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.EnumPacketGet;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -37,7 +36,7 @@ public final class DBCRequestAura extends AbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.PLAYER_PACKETS;
+        return DBCPacketHandler.PLAYER_PACKETS;
     }
 
     @Override

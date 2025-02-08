@@ -3,7 +3,7 @@ package kamkeel.npcdbc.network.packets.request.effect;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import kamkeel.npcdbc.client.gui.global.effects.GuiDBCEffectScript;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketRequest;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.client.Minecraft;
@@ -34,7 +34,7 @@ public class DBCReceiveEffectScript extends LargeAbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.REQUEST_PACKETS;
+        return DBCPacketHandler.REQUEST_PACKETS;
     }
 
 

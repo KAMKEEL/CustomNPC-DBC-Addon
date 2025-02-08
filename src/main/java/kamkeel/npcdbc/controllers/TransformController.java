@@ -15,7 +15,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.network.NetworkUtility;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.DBCSetValPacket;
 import kamkeel.npcdbc.network.packets.player.PlaySound;
 import kamkeel.npcdbc.network.packets.player.TransformPacket;
@@ -62,7 +62,7 @@ public class TransformController {
         rageValue = getRageMeterIncrementation(form, formLevel);
         rage += rageValue;
         JRMCoreH.TransSaiCurRg = (byte) rage;
-        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage));
+        DBCPacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage));
 
         if (time >= 6) { //increments rage meter and drain ki cost every 6 ticks
             time = 0;
@@ -88,7 +88,7 @@ public class TransformController {
             releaseTime = 0;
         }
         if (rage >= 100) { //transform when rage meter reaches 100 (max)
-            PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getID(), true));
+            DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getID(), true));
             new ClientSound(new SoundSource(form.getAscendSound(), dbcData.player)).play(true);
             resetTimers();
             cantTransform = true;
@@ -119,7 +119,7 @@ public class TransformController {
             setAscending(false);
 
         JRMCoreH.TransSaiCurRg = (byte) rage;
-        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage));
+        DBCPacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage));
     }
 
     @SideOnly(Side.CLIENT)

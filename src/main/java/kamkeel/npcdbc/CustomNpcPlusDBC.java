@@ -11,7 +11,7 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.items.ModItems;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 
 import java.io.File;
 
@@ -61,8 +61,8 @@ public class CustomNpcPlusDBC {
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
 
-        PacketHandler.Instance = new PacketHandler();
-        PacketHandler.Instance.registerChannels();
+        DBCPacketHandler.Instance = new DBCPacketHandler();
+        DBCPacketHandler.Instance.registerChannels();
     }
 
     public static Side side() {

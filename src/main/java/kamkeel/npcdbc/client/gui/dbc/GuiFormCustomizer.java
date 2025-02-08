@@ -5,7 +5,7 @@ import kamkeel.npcdbc.client.gui.component.GuiRenderPlayer;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.SaveFormCustomization;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.NoppesUtil;
@@ -114,7 +114,7 @@ public class GuiFormCustomizer extends AbstractJRMCGui implements ISubGuiListene
     }
 
     private void save() {
-        PacketHandler.Instance.sendToServer(new SaveFormCustomization(form, colors));
+        DBCPacketHandler.Instance.sendToServer(new SaveFormCustomization(form, colors));
     }
 
     @Override

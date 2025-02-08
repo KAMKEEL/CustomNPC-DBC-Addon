@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.form.DBCRequestForm;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.*;
@@ -44,7 +44,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         this.setBackground("menubg.png");
 
         this.useMenuName = useMenuName;
-        PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, playerFormsOnly, this.useMenuName));
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestForm(-1, playerFormsOnly, this.useMenuName));
     }
 
     @Override

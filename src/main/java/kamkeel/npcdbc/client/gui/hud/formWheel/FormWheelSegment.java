@@ -9,7 +9,7 @@ import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormStackable;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.form.DBCSaveFormWheel;
 import kamkeel.npcdbc.network.packets.player.form.DBCSelectForm;
 import net.minecraft.client.Minecraft;
@@ -37,7 +37,7 @@ class FormWheelSegment extends WheelSegment {
     }
 
     public void selectForm() {
-        PacketHandler.Instance.sendToServer(new DBCSelectForm(data.formID, data.isDBC));
+        DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(data.formID, data.isDBC));
     }
 
     public void setForm(int formID, boolean isDBC, boolean updateServer) {
@@ -45,7 +45,7 @@ class FormWheelSegment extends WheelSegment {
         data.isDBC = isDBC;
         form = !data.isDBC ? (Form) FormController.getInstance().get(data.formID) : null;
         if (updateServer)
-            PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
         icon = form != null ? new FormIcon(parent, form) : new FormIcon(parent, data.formID);
     }
 
@@ -53,14 +53,14 @@ class FormWheelSegment extends WheelSegment {
         this.data = data;
         form = !data.isDBC ? (Form) FormController.getInstance().get(data.formID) : null;
         if (updateServer)
-            PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
         icon = form != null ? new FormIcon(parent, form) : new FormIcon(parent, data.formID);
     }
 
     public void removeForm() {
         data.reset();
         form = null;
-        PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
+        DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
         if (parent.hoveredSlot == index)
             parent.selectSlot(-1);
 

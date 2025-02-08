@@ -9,7 +9,7 @@ import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.types.*;
-import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSync;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
@@ -152,7 +152,7 @@ public class StatusEffectController implements IStatusEffectHandler {
                         continue;
                     if (file.getName().equals(foundEffect.name + ".json")) {
                         file.delete();
-                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundEffect.getID()));
+                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundEffect.getID()));
                         break;
                     }
                 }
@@ -172,7 +172,7 @@ public class StatusEffectController implements IStatusEffectHandler {
                         continue;
                     if (file.getName().equals(foundEffect.name + ".json")) {
                         file.delete();
-                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundEffect.getID()));
+                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundEffect.getID()));
                         break;
                     }
                 }
@@ -365,7 +365,7 @@ public class StatusEffectController implements IStatusEffectHandler {
                 file2.delete();
             file.renameTo(file2);
             nbtTagCompound = ((CustomEffect) customEffect).writeToNBT(true);
-            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1));
+            DBCPacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1));
         } catch (Exception e) {
             LogWriter.except(e);
         }
