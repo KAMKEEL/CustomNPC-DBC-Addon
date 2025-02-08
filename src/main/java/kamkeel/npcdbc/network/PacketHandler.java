@@ -7,6 +7,29 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
+import kamkeel.npcdbc.network.packets.get.CapsuleInfo;
+import kamkeel.npcdbc.network.packets.get.DBCInfoSync;
+import kamkeel.npcdbc.network.packets.get.aura.DBCGetAura;
+import kamkeel.npcdbc.network.packets.get.effect.DBCGetEffect;
+import kamkeel.npcdbc.network.packets.get.form.DBCGetForm;
+import kamkeel.npcdbc.network.packets.get.outline.DBCGetOutline;
+import kamkeel.npcdbc.network.packets.player.*;
+import kamkeel.npcdbc.network.packets.player.aura.DBCRequestAura;
+import kamkeel.npcdbc.network.packets.player.aura.DBCSelectAura;
+import kamkeel.npcdbc.network.packets.player.aura.DBCSetAura;
+import kamkeel.npcdbc.network.packets.player.effect.DBCRequestEffect;
+import kamkeel.npcdbc.network.packets.player.form.DBCRequestForm;
+import kamkeel.npcdbc.network.packets.player.form.DBCRequestFormWheel;
+import kamkeel.npcdbc.network.packets.player.form.DBCSaveFormWheel;
+import kamkeel.npcdbc.network.packets.player.form.DBCSelectForm;
+import kamkeel.npcdbc.network.packets.player.outline.DBCRequestOutline;
+import kamkeel.npcdbc.network.packets.request.aura.DBCRemoveAura;
+import kamkeel.npcdbc.network.packets.request.aura.DBCSaveAura;
+import kamkeel.npcdbc.network.packets.request.effect.*;
+import kamkeel.npcdbc.network.packets.request.form.DBCRemoveForm;
+import kamkeel.npcdbc.network.packets.request.form.DBCSaveForm;
+import kamkeel.npcdbc.network.packets.request.outline.DBCRemoveOutline;
+import kamkeel.npcdbc.network.packets.request.outline.DBCSaveOutline;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -33,7 +56,7 @@ public class PacketHandler {
 
     public static final PacketChannel REQUEST_PACKETS = new PacketChannel("NPCDBC|REQUEST", EnumChannelType.REQUEST);
     public static final PacketChannel GET_PACKETS = new PacketChannel("NPCDBC|GET", EnumChannelType.GET);
-    public static final PacketChannel PLAYER_PACKETS = new PacketChannel("NPCDBC|PLAYER", EnumChannelType.PLAYER);;
+    public static final PacketChannel PLAYER_PACKETS = new PacketChannel("NPCDBC|PLAYER", EnumChannelType.PLAYER);
 
 
     public static final List<PacketChannel> packetChannels = new ArrayList<>();
@@ -41,6 +64,7 @@ public class PacketHandler {
     public PacketHandler() {
         packetChannels.add(REQUEST_PACKETS);
         packetChannels.add(GET_PACKETS);
+        packetChannels.add(PLAYER_PACKETS);
 
         this.registerRequestPackets();
         this.registerGetPackets();
@@ -87,12 +111,50 @@ public class PacketHandler {
     }
 
     private void registerPlayerPackets() {
+        PLAYER_PACKETS.registerPacket(new DBCRequestFormWheel());
+        PLAYER_PACKETS.registerPacket(new DBCRequestAura());
+        PLAYER_PACKETS.registerPacket(new DBCSelectAura());
+        PLAYER_PACKETS.registerPacket(new DBCRequestForm());
+        PLAYER_PACKETS.registerPacket(new DBCSetAura());
+        PLAYER_PACKETS.registerPacket(new DBCSelectForm());
+        PLAYER_PACKETS.registerPacket(new DBCRequestEffect());
+        PLAYER_PACKETS.registerPacket(new DBCSaveFormWheel());
+        PLAYER_PACKETS.registerPacket(new DBCSetFlight());
+        PLAYER_PACKETS.registerPacket(new DBCRequestOutline());
+        PLAYER_PACKETS.registerPacket(new TurboPacket());
+        PLAYER_PACKETS.registerPacket(new TransformPacket());
+        PLAYER_PACKETS.registerPacket(new StopSound());
+        PLAYER_PACKETS.registerPacket(new SendChat());
+        PLAYER_PACKETS.registerPacket(new SaveFormCustomization());
+        PLAYER_PACKETS.registerPacket(new PlaySound());
+        PLAYER_PACKETS.registerPacket(new PingPacket());
+        PLAYER_PACKETS.registerPacket(new LoginInfo());
+        PLAYER_PACKETS.registerPacket(new DBCUpdateLockOn());
+        PLAYER_PACKETS.registerPacket(new DBCSetValPacket());
     }
 
     private void registerGetPackets() {
+        GET_PACKETS.registerPacket(new DBCGetAura());
+        GET_PACKETS.registerPacket(new DBCGetEffect());
+        GET_PACKETS.registerPacket(new DBCGetForm());
+        GET_PACKETS.registerPacket(new DBCGetOutline());
+        GET_PACKETS.registerPacket(new CapsuleInfo());
+        GET_PACKETS.registerPacket(new DBCInfoSync());
     }
 
     private void registerRequestPackets() {
+        REQUEST_PACKETS.registerPacket(new DBCRemoveAura());
+        REQUEST_PACKETS.registerPacket(new DBCSaveAura());
+        REQUEST_PACKETS.registerPacket(new DBCReceiveEffectScript());
+        REQUEST_PACKETS.registerPacket(new DBCRemoveEffect());
+        REQUEST_PACKETS.registerPacket(new DBCRequestEffectScript());
+        REQUEST_PACKETS.registerPacket(new DBCSaveEffect());
+        REQUEST_PACKETS.registerPacket(new DBCSaveEffectScript());
+        REQUEST_PACKETS.registerPacket(new DBCRemoveForm());
+        REQUEST_PACKETS.registerPacket(new DBCSaveForm());
+        REQUEST_PACKETS.registerPacket(new DBCRemoveOutline());
+        REQUEST_PACKETS.registerPacket(new DBCSaveOutline());
+
     }
 
     public void registerChannels() {
