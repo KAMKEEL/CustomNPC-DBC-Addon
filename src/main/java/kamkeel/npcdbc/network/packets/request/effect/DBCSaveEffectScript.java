@@ -67,7 +67,7 @@ public class DBCSaveEffectScript extends LargeAbstractPacket {
         CustomEffect effect = (CustomEffect) StatusEffectController.getInstance().get(in.readInt());
         if (effect == null)
             return;
-        EffectScriptHandler data = effect.script;
+        EffectScriptHandler data = effect.getOrCreateScriptHandler();
         data.saveScript(in);
         if(ConfigDebug.PlayerLogging && FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER){
             LogWriter.script(String.format("[%s] (Player) %s SAVED EFFECT %s [%s]", "EFFECT SCRIPTS", player.getCommandSenderName(), effect.getName()));

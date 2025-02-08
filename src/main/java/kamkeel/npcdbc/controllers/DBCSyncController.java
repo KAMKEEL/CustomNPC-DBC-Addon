@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.controllers;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
@@ -116,6 +117,7 @@ public class DBCSyncController {
             CustomEffect effect = new CustomEffect();
             effect.readFromNBT(compound);
             ClientCacheHandler.getImageData(effect.icon);
+
             StatusEffectController.Instance.customEffects.put(effect.id, effect);
         }
     }

@@ -23,11 +23,10 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
      */
     public BiConsumer<IPlayer, PlayerEffect> onAddedConsumer, onTickConsumer, onRemovedConsumer;
     public String menuName = "§aNEW EFFECT";
-    public EffectScriptHandler script = new EffectScriptHandler(this);
 
 
     public CustomEffect(int id) {
-        super(true);
+        this();
         this.id = id;
     }
 
@@ -132,6 +131,11 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         IPlayer iPlayer = PlayerDataUtil.getIPlayer(player);
         if (onAddedConsumer != null)
             onAddedConsumer.accept(iPlayer, playerEffect);
+
+        EffectScriptHandler script = getScriptHandler();
+        if (script == null)
+            return;
+
         DBCPlayerEvent.EffectEvent.Added event = new DBCPlayerEvent.EffectEvent.Added(iPlayer, playerEffect);
         script.callScript(EffectScriptHandler.ScriptType.OnAdd, event);
     }
@@ -141,6 +145,10 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         if (onTickConsumer != null)
             onTickConsumer.accept(iPlayer, playerEffect);
 
+        EffectScriptHandler script = getScriptHandler();
+        if (script == null)
+            return;
+
         DBCPlayerEvent.EffectEvent.Ticked event = new DBCPlayerEvent.EffectEvent.Ticked(iPlayer, playerEffect);
         script.callScript(EffectScriptHandler.ScriptType.OnTick, event);
     }
@@ -149,6 +157,10 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         IPlayer iPlayer = PlayerDataUtil.getIPlayer(player);
         if (onRemovedConsumer != null)
             onRemovedConsumer.accept(iPlayer, playerEffect);
+
+        EffectScriptHandler script = getScriptHandler();
+        if (script == null)
+            return;
 
         DBCPlayerEvent.EffectEvent.Removed event = new DBCPlayerEvent.EffectEvent.Removed(iPlayer, playerEffect);
         script.callScript(EffectScriptHandler.ScriptType.OnRemove, event);
@@ -166,13 +178,12 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         compound.setString("icon", icon);
         compound.setBoolean("lossOnDeath", lossOnDeath);
 
-        if (FMLCommonHandler.instance().getEffectiveSide().isServer())
-            System.out.println("A");
-
 //        if (saveScripts && scriptContainer != null) {
         if (saveScripts) {
             NBTTagCompound scriptData = new NBTTagCompound();
-            script.writeToNBT(scriptData);
+            EffectScriptHandler handler = getScriptHandler();
+            if (handler != null)
+                handler.writeToNBT(scriptData);
             compound.setTag("ScriptData", scriptData);
         }
 
@@ -198,11 +209,10 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         icon = compound.getString("icon");
         lossOnDeath = compound.getBoolean("lossOnDeath");
 
-        if (FMLCommonHandler.instance().getEffectiveSide().isServer())
-            System.out.println("A");
-
         if (compound.hasKey("ScriptData", Constants.NBT.TAG_COMPOUND)) {
-            script.readFromNBT(compound.getCompoundTag("ScriptData"));
+            EffectScriptHandler handler = new EffectScriptHandler(this);
+            handler.readFromNBT(compound.getCompoundTag("ScriptData"));
+            setScriptHandler(handler);
         }
 
     }
@@ -213,4 +223,17 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         return newEffect;
     }
 
+    public EffectScriptHandler getScriptHandler() {
+        return StatusEffectController.getInstance().customEffectScriptHandlers.get(this.id);
+    }
+    public void setScriptHandler(EffectScriptHandler handler) {
+        StatusEffectController.getInstance().customEffectScriptHandlers.put(this.id, handler);
+    }
+
+    public EffectScriptHandler getOrCreateScriptHandler() {
+        EffectScriptHandler data = getScriptHandler();
+        if (data == null)
+            setScriptHandler(data =new EffectScriptHandler(this));
+        return data;
+    }
 }

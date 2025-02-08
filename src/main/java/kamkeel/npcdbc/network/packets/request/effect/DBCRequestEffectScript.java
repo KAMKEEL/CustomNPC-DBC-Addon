@@ -46,7 +46,7 @@ public class DBCRequestEffectScript extends AbstractPacket {
         StatusEffect effect = StatusEffectController.getInstance().get(in.readInt());
         if (effect instanceof CustomEffect) {
             CustomEffect effect1 = (CustomEffect) effect;
-            NetworkUtility.getScripts(effect1.script, (EntityPlayerMP) player);
+            NetworkUtility.getScripts(effect1.getOrCreateScriptHandler(), (EntityPlayerMP) player);
         }
     }
 }

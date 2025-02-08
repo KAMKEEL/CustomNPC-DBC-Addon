@@ -11,10 +11,12 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.*;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
+import kamkeel.npcdbc.data.statuseffect.custom.EffectScriptHandler;
 import kamkeel.npcdbc.data.statuseffect.types.*;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import kamkeel.npcs.network.enums.EnumSyncAction;
 import net.minecraft.entity.Entity;
@@ -25,7 +27,7 @@ import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
 import noppes.npcs.api.entity.IPlayer;
-;
+
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.*;
@@ -43,6 +45,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     //      Fucking Liar - Hussar (respectfully)
     public HashMap<Integer, CustomEffect> customEffectsSync = new HashMap<>();
     public HashMap<Integer, CustomEffect> customEffects = new HashMap<>();
+    public HashMap<Integer, EffectScriptHandler> customEffectScriptHandlers = new HashMap<>();
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = Effects.CUSTOM_EFFECT;
 
@@ -153,6 +156,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         IStatusEffect effect = getEffect(name);
         if (effect != null && effect.isCustom()) {
             CustomEffect foundEffect = customEffects.remove(effect.getID());
+            customEffectScriptHandlers.remove(effect.getID());
             if (foundEffect != null && foundEffect.name != null) {
                 File dir = this.getDir();
                 for (File file : dir.listFiles()) {
@@ -173,6 +177,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         IStatusEffect effect = get(id);
         if (effect != null && effect.isCustom()) {
             CustomEffect foundEffect = customEffects.remove(effect.getID());
+            customEffectScriptHandlers.remove(effect.getID());
             if (foundEffect != null && foundEffect.name != null) {
                 File dir = this.getDir();
                 for (File file : dir.listFiles()) {
@@ -457,6 +462,7 @@ public class StatusEffectController implements IStatusEffectHandler {
 
         Iterator<PlayerEffect> iterator = getPlayerEffects(player).values().iterator();
 
+        IPlayer iPlayer = PlayerDataUtil.getIPlayer(player);
         while (iterator.hasNext()) {
             PlayerEffect effect = iterator.next();
 
@@ -464,6 +470,7 @@ public class StatusEffectController implements IStatusEffectHandler {
                 iterator.remove();
                 continue;
             }
+
             if (effect.duration == -100)
                 continue;
 
