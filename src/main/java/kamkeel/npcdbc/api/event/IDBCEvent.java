@@ -1,10 +1,27 @@
 package kamkeel.npcdbc.api.event;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
+import kamkeel.npcdbc.api.effect.IPlayerEffect;
 import noppes.npcs.api.IDamageSource;
 import noppes.npcs.api.event.IPlayerEvent;
 
 public interface IDBCEvent extends IPlayerEvent {
+
+    interface EffectEvent extends IPlayerEvent {
+
+        IPlayerEffect getEffect();
+
+        interface Added extends EffectEvent {
+
+        }
+        interface Ticked extends EffectEvent {
+
+        }
+        interface Removed extends EffectEvent {
+
+        }
+
+    }
 
     @Cancelable
     interface CapsuleUsedEvent extends IDBCEvent {

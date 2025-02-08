@@ -2,6 +2,8 @@ package kamkeel.npcdbc.data.statuseffect.custom;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.Event;
+import kamkeel.npcdbc.api.event.IDBCEvent;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import noppes.npcs.controllers.ScriptContainer;
 import noppes.npcs.controllers.data.IScriptHandler;
 
@@ -9,6 +11,7 @@ import java.util.*;
 
 public class EffectScriptHandler implements IScriptHandler {
     public ScriptContainer container;
+    public List<ScriptContainer> scriptContainers = Arrays.asList(new ScriptContainer[]{new ScriptContainer(this)});
     public String scriptLanguage = "ECMAScript";
     public boolean enabled = false;
     public boolean hasInited = false;
@@ -16,6 +19,10 @@ public class EffectScriptHandler implements IScriptHandler {
 
     public EffectScriptHandler(CustomEffect effect) {
         this.effect = effect;
+    }
+
+    public void callScript(ScriptType type, DBCPlayerEvent.EffectEvent event) {
+        callScript(type.function, event);
     }
 
     @Override
@@ -97,6 +104,17 @@ public class EffectScriptHandler implements IScriptHandler {
         while(var1.hasNext()) {
             ScriptContainer script = (ScriptContainer)var1.next();
             script.console.clear();
+        }
+    }
+
+    public enum ScriptType {
+        OnAdd("onAdded"),
+        OnTick("onTick"),
+        OnRemove("onRemove");
+
+        public final String function;
+        ScriptType(String functionName) {
+            this.function = functionName;
         }
     }
 }

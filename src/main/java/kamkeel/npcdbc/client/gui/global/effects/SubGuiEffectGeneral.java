@@ -53,7 +53,7 @@ public class SubGuiEffectGeneral extends SubGuiInterface {
             return;
         }
         if (id == -2) {
-            GuiEffectScript scriptGUI = new GuiEffectScript(parent, effect);
+            GuiDBCEffectScript scriptGUI = new GuiDBCEffectScript(parent, effect);
             scriptGUI.setWorldAndResolution(mc, width, height);
             scriptGUI.initGui();
             mc.currentScreen = scriptGUI;

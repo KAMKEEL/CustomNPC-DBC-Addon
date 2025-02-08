@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.scripted;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
+import kamkeel.npcdbc.api.effect.IPlayerEffect;
 import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.DBCDamageSource;
@@ -8,22 +9,55 @@ import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.constants.enums.*;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.entity.RenderPlayer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.api.IDamageSource;
-import noppes.npcs.api.entity.ICustomNpc;
-import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.scripted.NpcAPI;
-import noppes.npcs.scripted.event.NpcEvent;
 import noppes.npcs.scripted.event.PlayerEvent;
 
 public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
 
     public DBCPlayerEvent(IPlayer player) {
         super(player);
+    }
+
+    public static class EffectEvent extends DBCPlayerEvent implements IDBCEvent.EffectEvent {
+
+        public final IPlayerEffect effect;
+
+        public EffectEvent(IPlayer player, IPlayerEffect statusEffect) {
+            super(player);
+            this.effect = statusEffect;
+        }
+
+        @Override
+        public IPlayerEffect getEffect() {
+            return this.effect;
+        }
+
+        public static class Added extends DBCPlayerEvent.EffectEvent implements IDBCEvent.EffectEvent.Added {
+
+            public Added(IPlayer player, IPlayerEffect statusEffect) {
+                super(player, statusEffect);
+            }
+
+        }
+        public static class Ticked extends DBCPlayerEvent.EffectEvent implements IDBCEvent.EffectEvent.Added {
+
+            public Ticked(IPlayer player, IPlayerEffect statusEffect) {
+                super(player, statusEffect);
+            }
+
+        }
+        public static class Removed extends DBCPlayerEvent.EffectEvent implements IDBCEvent.EffectEvent.Added {
+
+            public Removed(IPlayer player, IPlayerEffect statusEffect) {
+                super(player, statusEffect);
+            }
+
+        }
     }
 
     /**

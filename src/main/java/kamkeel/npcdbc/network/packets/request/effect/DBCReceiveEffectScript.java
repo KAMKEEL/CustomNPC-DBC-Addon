@@ -2,14 +2,11 @@ package kamkeel.npcdbc.network.packets.request.effect;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import kamkeel.npcdbc.client.gui.global.effects.GuiEffectScript;
-import kamkeel.npcdbc.data.statuseffect.StatusEffect;
-import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
+import kamkeel.npcdbc.client.gui.global.effects.GuiDBCEffectScript;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketRequest;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import kamkeel.npcdbc.network.LargeAbstractPacket;
@@ -52,8 +49,8 @@ public class DBCReceiveEffectScript extends LargeAbstractPacket {
     protected void handleCompleteData(ByteBuf data, EntityPlayer player) throws IOException {
         NBTTagCompound scriptData = ByteBufUtils.readNBT(data);
         GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-        if (screen instanceof GuiEffectScript) {
-            GuiEffectScript scriptGui = (GuiEffectScript) screen;
+        if (screen instanceof GuiDBCEffectScript) {
+            GuiDBCEffectScript scriptGui = (GuiDBCEffectScript) screen;
             scriptGui.setGuiData(scriptData);
         }
     }
