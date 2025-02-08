@@ -582,4 +582,13 @@ public class StatusEffectController implements IStatusEffectHandler {
             }
         }
     }
+
+    public void deleteEffectFile(String prevName) {
+        File dir = this.getDir();
+        if (!dir.exists())
+            dir.mkdirs();
+        File file2 = new File(dir, prevName + ".json");
+        if (file2.exists())
+            file2.delete();
+    }
 }

@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.network.packets.effect;
 
 import io.netty.buffer.ByteBuf;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
@@ -48,11 +49,11 @@ public class DBCSaveEffect extends AbstractPacket {
 
         String prevName = Server.readString(in);
         if(!prevName.isEmpty()){
-           // StatusEffectController.getInstance().deleteEffectFile(prevName);
+            StatusEffectController.getInstance().deleteEffectFile(prevName);
         }
         CustomEffect effect = new CustomEffect();
         effect.readFromNBT(Server.readNBT(in));
-      //  StatusEffectController.getInstance().saveEffect(Effect);
+        StatusEffectController.getInstance().saveEffect(effect);
         NetworkUtility.sendCustomEffectDataAll((EntityPlayerMP) player);
     }
 }

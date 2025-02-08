@@ -5,6 +5,7 @@ import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants;
 import noppes.npcs.api.entity.IPlayer;
 
 import java.util.function.BiConsumer;
@@ -15,6 +16,7 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
      * Experimental script stuff.
      */
     public BiConsumer<IPlayer, PlayerEffect> onAddedConsumer, onTickConsumer, onRemovedConsumer;
+    public String menuName;
 
     public CustomEffect(int id) {
         super(true);
@@ -23,6 +25,22 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
 
     public CustomEffect() {
         super(true);
+    }
+
+    public CustomEffect(int id, String name) {
+        this(id);
+        this.name = name;
+        this.menuName = name;
+    }
+
+    @Override
+    public void setMenuName(String name) {
+        this.menuName = menuName;
+    }
+
+    @Override
+    public String getMenuName() {
+        return menuName;
     }
 
     @Override
@@ -123,6 +141,7 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger("ID", id);
         compound.setString("name", name);
+        compound.setString("menuName", menuName);
         compound.setInteger("length", length);
         compound.setInteger("everyXTick", everyXTick);
         compound.setInteger("iconX", iconX);
@@ -146,6 +165,12 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         else
             id = StatusEffectController.Instance.getUnusedId();
         name = compound.getString("name");
+
+        if (compound.hasKey("menuName", Constants.NBT.TAG_STRING))
+            menuName = compound.getString("menuName");
+        else
+            menuName = name;
+
         length = compound.getInteger("length");
         everyXTick = compound.getInteger("everyXTick");
         iconX = compound.getInteger("iconX");
@@ -160,6 +185,12 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
 //            scriptContainer = null;
         }
 
+    }
+
+    public CustomEffect clone() {
+        CustomEffect newEffect = new CustomEffect();
+        newEffect.readFromNBT(this.writeToNBT(true));
+        return newEffect;
     }
 
 }

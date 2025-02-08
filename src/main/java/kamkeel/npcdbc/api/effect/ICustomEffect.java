@@ -2,6 +2,9 @@ package kamkeel.npcdbc.api.effect;
 
 public interface ICustomEffect extends IStatusEffect {
 
+    void setMenuName(String name);
+
+    String getMenuName();
 
     void setName(String name);
 

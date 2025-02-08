@@ -1,32 +1,28 @@
 package kamkeel.npcdbc.client.gui.global.effects;
 
-import akka.japi.Effect;
-import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.controllers.StatusEffectController;
-import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
 import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.effect.DBCGetEffect;
+import kamkeel.npcdbc.network.packets.effect.DBCRemoveEffect;
 import kamkeel.npcdbc.network.packets.effect.DBCRequestEffect;
-import kamkeel.npcdbc.network.packets.outline.DBCGetOutline;
-import kamkeel.npcdbc.network.packets.outline.DBCRemoveOutline;
-import kamkeel.npcdbc.network.packets.outline.DBCRequestOutline;
-import kamkeel.npcdbc.network.packets.outline.DBCSaveOutline;
+import kamkeel.npcdbc.network.packets.effect.DBCSaveEffect;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
+import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityNPCInterface;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScrollListener, IScrollData, IGuiData, ISubGuiListener, GuiYesNoCallback, ITextfieldListener {
+public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScrollListener, IScrollData, IGuiData, ISubGuiListener, GuiYesNoCallback {
     public GuiCustomScroll scrollEffects;
     public HashMap<String, Integer> data = new HashMap<>();
     public CustomEffect effect = new CustomEffect();
@@ -55,36 +51,17 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
 
         if (scrollEffects == null) {
             scrollEffects = new GuiCustomScroll(this, 0, 0);
-            scrollEffects.setSize(123, 185);
+            scrollEffects.setSize(143, 185);
         }
-        scrollEffects.guiLeft = guiLeft + 240;
+        scrollEffects.guiLeft = guiLeft + 220;
         scrollEffects.guiTop = guiTop + 4;
         addScroll(scrollEffects);
         scrollEffects.setList(getSearchList());
 
-        addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 240, guiTop + 4 + 3 + 185, 123, 20, search));
+        addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 220, guiTop + 4 + 3 + 185, 143, 20, search));
         if (effect != null && effect.id != -1) {
-            //   addButton(new GuiNpcButton(1500, guiLeft + 8, guiTop + 192, 203, 20, "display.displaySettings"));
             addLabel(new GuiNpcLabel(10, "ID", guiLeft + 368, guiTop + 4 + 3 + 185));
             addLabel(new GuiNpcLabel(11, effect.id + "", guiLeft + 368, guiTop + 4 + 3 + 195));
-//
-//            int y = guiTop + 3;
-//
-//            addTextField(new GuiNpcTextField(13, this, this.fontRendererObj, guiLeft + 36, y, 180, 20, outline.name));
-//            addLabel(new GuiNpcLabel(13, "gui.name", guiLeft + 4, y + 5));
-//
-//            y += 23;
-//
-//            addTextField(new GuiNpcTextField(14, this, guiLeft + 70, y, 146, 20, outline.menuName.replaceAll("§", "&")));
-//            getTextField(14).setMaxStringLength(20);
-//            addLabel(new GuiNpcLabel(14, "general.menuName", guiLeft + 4, y + 5));
-//
-//            y += 60;
-//            addButton(new GuiNpcButton(1500, guiLeft + 7, y, 208, 20, "display.displaySettings"));
-//
-//            y += 40;
-
-
         }
     }
 
@@ -96,8 +73,8 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
             String name = "New";
             while (data.containsKey(name))
                 name += "_";
-            Outline outline = new Outline(-1, name);
-            PacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), "").generatePacket());
+            CustomEffect effect = new CustomEffect(-1, name);
+            PacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), "").generatePacket());
         }
 
         if (button.id == 1) {
@@ -107,10 +84,10 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
             }
         }
         if (button.id == 2) {
-         //   Outline outline = (Outline) this.effect.clone();
-          //  while (data.containsKey(outline.name))
-             //   outline.name += "_";
-         //   PacketHandler.Instance.sendToServer(new DBCSaveOutline(outline.writeToNBT(), "").generatePacket());
+            CustomEffect effect = this.effect.clone();
+            while (data.containsKey(effect.name))
+                effect.name += "_";
+            PacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(true), "").generatePacket());
         }
 
 
@@ -123,7 +100,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
         setSelected(effect.name);
 
         if (effect.id != -1) {
-//            StatusEffectController.getInstance().customEffects.replace(effect.id, effect);
+            StatusEffectController.getInstance().customEffects.replace(effect.id, effect);
         }
         initGui();
     }
@@ -138,10 +115,21 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
     @Override
     public void drawBackground() {
         super.drawBackground();
-        int xPosGradient = guiLeft + 10;
-        int yPosGradient = guiTop + 6;
-        drawGradientRect(xPosGradient, yPosGradient, 220 + xPosGradient, 204 + yPosGradient, 0xc0101010, 0xd0101010);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        renderScreen();
+    }
+
+    private void renderScreen() {
+        drawGradientRect(guiLeft + 5, guiTop + 4, guiLeft + 218, guiTop + 24, 0xC0101010, 0xC0101010);
+        drawHorizontalLine(guiLeft + 5, guiLeft + 218, guiTop + 25, 0xFF000000 + CustomNpcResourceListener.DefaultTextColor);
+        drawGradientRect(guiLeft + 5, guiTop + 27, guiLeft + 218, guiTop + ySize + 9, 0xA0101010, 0xA0101010);
+
+        if (effect != null && effect.id != -1) {
+            String drawString = effect.getMenuName();
+            int textWidth = getStringWidthWithoutColor(drawString);
+            int centerX = guiLeft + 5 + ((218 - 10 - textWidth) / 2); // Adjusted centerX calculation
+            fontRendererObj.drawString(drawString, centerX, guiTop + 10, CustomNpcResourceListener.DefaultTextColor, true);
+            int y = guiTop + 18;
+        }
     }
 
 
@@ -193,10 +181,11 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
     public void customScrollClicked(int i, int j, int k, GuiCustomScroll guiCustomScroll) {
         if (guiCustomScroll.id == 0) {
             save();
+            effect = null;
             selected = scrollEffects.getSelected();
             originalName = scrollEffects.getSelected();
             if (selected != null && !selected.isEmpty()) {
-                PacketHandler.Instance.sendToServer(new DBCGetOutline(data.get(selected)).generatePacket());
+                PacketHandler.Instance.sendToServer(new DBCGetEffect(data.get(selected)).generatePacket());
             }
         }
     }
@@ -209,7 +198,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
     @Override
     public void save() {
         if (this.selected != null && this.data.containsKey(this.selected) && this.effect != null) {
-            PacketHandler.Instance.sendToServer(new DBCSaveOutline(effect.writeToNBT(true), originalName).generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(true), originalName).generatePacket());
         }
     }
 
@@ -226,7 +215,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
             return;
         if (id == 1) {
             if (data.containsKey(scrollEffects.getSelected())) {
-                PacketHandler.Instance.sendToServer(new DBCRemoveOutline(data.get(scrollEffects.getSelected())).generatePacket());
+                PacketHandler.Instance.sendToServer(new DBCRemoveEffect(data.get(scrollEffects.getSelected())).generatePacket());
                 scrollEffects.clear();
                 effect = new CustomEffect();
                 initGui();
@@ -234,23 +223,20 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
         }
     }
 
-    @Override
-    public void unFocused(GuiNpcTextField guiNpcTextField) {
-        if (effect == null || effect.id == -1)
-            return;
-        if (guiNpcTextField.id == 13) {
-            String name = guiNpcTextField.getText();
-            if (!name.isEmpty() && !this.data.containsKey(name)) {
-                String old = this.effect.name;
-                this.data.remove(this.effect.name);
-                this.effect.name = name;
-                this.data.put(this.effect.name, this.effect.id);
-                this.selected = name;
-                this.scrollEffects.replace(old, this.effect.name);
-            } else
-                guiNpcTextField.setText(effect.name);
+    public int getStringWidthWithoutColor(String text) {
+        int width = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            if (c == '§') {
+                if (i < text.length() - 1) {
+                    i += 1;
+                }
+            } else {
+                // If not a color code, calculate the width
+                width += fontRendererObj.getCharWidth(c);
+            }
         }
-
-
+        return width;
     }
 }
