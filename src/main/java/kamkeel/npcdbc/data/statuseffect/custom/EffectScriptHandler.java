@@ -137,11 +137,7 @@ public class EffectScriptHandler implements IScriptHandler {
             this.container = null;
         }
 
-        if (tab >= 0) {
-            if (totalScripts == 0) {
-                this.container = null;
-                return;
-            }
+        if (tab == 0) {
             NBTTagCompound tabCompound = ByteBufUtils.readNBT(buffer);
             ScriptContainer script = new ScriptContainer(this);
             script.readFromNBT(tabCompound);

@@ -339,13 +339,7 @@ public class GuiDBCEffectScript extends GuiNPCInterface implements GuiYesNoCallb
             int tab = compound.getInteger("Tab");
             ScriptContainer container = new ScriptContainer(this.scriptHandler);
             container.readFromNBT(compound.getCompoundTag("Script"));
-            if (this.scriptHandler.getScripts().isEmpty()) {
-                for(int i = 0; i < compound.getInteger("TotalScripts"); ++i) {
-                    this.scriptHandler.getScripts().add(new ScriptContainer(this.scriptHandler));
-                }
-            }
-
-            this.scriptHandler.getScripts().set(tab, container);
+            this.scriptHandler.container = container;
             this.initGui();
         }
 

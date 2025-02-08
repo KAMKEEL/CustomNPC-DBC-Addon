@@ -126,7 +126,7 @@ public class NetworkUtility {
             tabCompound.setInteger("Tab",i);
             tabCompound.setTag("Script",container.writeToNBT(new NBTTagCompound()));
             tabCompound.setInteger("TotalScripts",containers.size());
-            PacketHandler.Instance.sendToPlayer(new DBCReceiveEffectScript(compound), player);
+            PacketHandler.Instance.sendToPlayer(new DBCReceiveEffectScript(tabCompound), player);
         }
     }
 }
