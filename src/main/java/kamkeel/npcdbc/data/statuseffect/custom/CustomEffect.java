@@ -6,6 +6,7 @@ import kamkeel.npcdbc.api.effect.ICustomEffect;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -128,18 +129,29 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
     }
 
     public void onAdded(EntityPlayer player, PlayerEffect playerEffect) {
+        IPlayer iPlayer = PlayerDataUtil.getIPlayer(player);
         if (onAddedConsumer != null)
-            onAddedConsumer.accept(PlayerDataUtil.getIPlayer(player), playerEffect);
+            onAddedConsumer.accept(iPlayer, playerEffect);
+        DBCPlayerEvent.EffectEvent.Added event = new DBCPlayerEvent.EffectEvent.Added(iPlayer, playerEffect);
+        script.callScript(EffectScriptHandler.ScriptType.OnAdd, event);
     }
 
     public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
+        IPlayer iPlayer = PlayerDataUtil.getIPlayer(player);
         if (onTickConsumer != null)
-            onTickConsumer.accept(PlayerDataUtil.getIPlayer(player), playerEffect);
+            onTickConsumer.accept(iPlayer, playerEffect);
+
+        DBCPlayerEvent.EffectEvent.Ticked event = new DBCPlayerEvent.EffectEvent.Ticked(iPlayer, playerEffect);
+        script.callScript(EffectScriptHandler.ScriptType.OnTick, event);
     }
 
     public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
+        IPlayer iPlayer = PlayerDataUtil.getIPlayer(player);
         if (onRemovedConsumer != null)
-            onRemovedConsumer.accept(PlayerDataUtil.getIPlayer(player), playerEffect);
+            onRemovedConsumer.accept(iPlayer, playerEffect);
+
+        DBCPlayerEvent.EffectEvent.Removed event = new DBCPlayerEvent.EffectEvent.Removed(iPlayer, playerEffect);
+        script.callScript(EffectScriptHandler.ScriptType.OnRemove, event);
     }
 
     public NBTTagCompound writeToNBT(boolean saveScripts) {
