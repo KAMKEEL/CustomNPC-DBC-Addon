@@ -1,12 +1,16 @@
-package kamkeel.npcdbc.data.statuseffect;
+package kamkeel.npcdbc.data.statuseffect.custom;
 
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.effect.ICustomEffect;
 import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
+import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.controllers.ScriptContainer;
 
 import java.util.function.BiConsumer;
 
@@ -16,7 +20,8 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
      * Experimental script stuff.
      */
     public BiConsumer<IPlayer, PlayerEffect> onAddedConsumer, onTickConsumer, onRemovedConsumer;
-    public String menuName;
+    public String menuName = "§aNEW EFFECT";
+
 
     public CustomEffect(int id) {
         super(true);
@@ -30,7 +35,6 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
     public CustomEffect(int id, String name) {
         this(id);
         this.name = name;
-        this.menuName = name;
     }
 
     @Override
@@ -159,7 +163,7 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         return compound;
     }
 
-    public void readFromNBT(NBTTagCompound compound) {
+    public void readFromNBT(NBTTagCompound compound, boolean fromSavePacket) {
         if (compound.hasKey("ID"))
             id = compound.getInteger("ID");
         else
@@ -178,18 +182,18 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         icon = compound.getString("icon");
         lossOnDeath = compound.getBoolean("lossOnDeath");
 
-        if (compound.hasKey("Scripts")) {
-//            scriptContainer = new ScriptContainer(this);
-//            scriptContainer.readFromNBT(compound.getCompoundTag("ScriptData"));
-        } else {
-//            scriptContainer = null;
-        }
+//        if (compound.hasKey("Scripts")) {
+////            scriptContainer = new ScriptContainer(this);
+////            scriptContainer.readFromNBT(compound.getCompoundTag("ScriptData"));
+//        } else {
+////            scriptContainer = null;
+//        }
 
     }
 
     public CustomEffect clone() {
         CustomEffect newEffect = new CustomEffect();
-        newEffect.readFromNBT(this.writeToNBT(true));
+        newEffect.readFromNBT(this.writeToNBT(true), false);
         return newEffect;
     }
 

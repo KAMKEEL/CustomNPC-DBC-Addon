@@ -2,7 +2,7 @@ package kamkeel.npcdbc.network.packets.effect;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.StatusEffectController;
-import kamkeel.npcdbc.data.statuseffect.CustomEffect;
+import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
 import net.minecraft.entity.player.EntityPlayer;

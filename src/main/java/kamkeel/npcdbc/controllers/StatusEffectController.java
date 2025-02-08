@@ -5,7 +5,7 @@ import kamkeel.npcdbc.api.effect.IStatusEffect;
 import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.data.statuseffect.CustomEffect;
+import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.types.*;
@@ -24,10 +24,7 @@ import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 
@@ -39,7 +36,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     // TODO: I will implement later - Kam
     //      ...
     //      Fucking Liar - Hussar (respectfully)
-//    public HashMap<Integer, CustomEffect> customEffectsSync = new HashMap<>();
+    public HashMap<Integer, CustomEffect> customEffectsSync = new HashMap<>();
     public HashMap<Integer, CustomEffect> customEffects = new HashMap<>();
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = Effects.CUSTOM_EFFECT;
@@ -145,15 +142,43 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     @Override
     public void deleteEffect(String name) {
-        IStatusEffect effect = getEffect(name);;
-        if (effect != null && effect.isCustom())
-            customEffects.remove(effect.getID());
+        IStatusEffect effect = getEffect(name);
+        if (effect != null && effect.isCustom()) {
+            CustomEffect foundEffect = customEffects.remove(effect.getID());
+            if (foundEffect != null && foundEffect.name != null) {
+                File dir = this.getDir();
+                for (File file : dir.listFiles()) {
+                    if (!file.isFile() || !file.getName().endsWith(".json"))
+                        continue;
+                    if (file.getName().equals(foundEffect.name + ".json")) {
+                        file.delete();
+                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundEffect.getID()).generatePacket());
+                        break;
+                    }
+                }
+                saveEffectLoadMap();
+            }
+        }
     }
 
     public void delete(int id) {
         IStatusEffect effect = get(id);
-        if (effect != null && effect.isCustom())
-            customEffects.remove(effect.getID());
+        if (effect != null && effect.isCustom()) {
+            CustomEffect foundEffect = customEffects.remove(effect.getID());
+            if (foundEffect != null && foundEffect.name != null) {
+                File dir = this.getDir();
+                for (File file : dir.listFiles()) {
+                    if (!file.isFile() || !file.getName().endsWith(".json"))
+                        continue;
+                    if (file.getName().equals(foundEffect.name + ".json")) {
+                        file.delete();
+                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundEffect.getID()).generatePacket());
+                        break;
+                    }
+                }
+                saveEffectLoadMap();
+            }
+        }
     }
 
 
@@ -339,7 +364,8 @@ public class StatusEffectController implements IStatusEffectHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1).generatePacket());
+            nbtTagCompound = ((CustomEffect) customEffect).writeToNBT(false);
+            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1).generatePacket());
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -463,7 +489,7 @@ public class StatusEffectController implements IStatusEffectHandler {
                     continue;
                 try {
                     CustomEffect effect = new CustomEffect();
-                    effect.readFromNBT(NBTJsonUtil.LoadFile(file));
+                    effect.readFromNBT(NBTJsonUtil.LoadFile(file), false);
                     effect.name = file.getName().substring(0, file.getName().length() - 5);
 
                     if (effect.id == -1) {

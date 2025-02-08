@@ -2,6 +2,7 @@ package kamkeel.npcdbc.command;
 
 import kamkeel.command.CommandKamkeelBase;
 import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -26,7 +27,9 @@ public class EffectCommand extends CommandKamkeelBase {
     @SubCommand(desc = "Lists all effects")
     public void infoAll(ICommandSender sender, String[] args) throws CommandException {
         Set<Map.Entry<Integer, StatusEffect>> effects = StatusEffectController.getInstance().standardEffects.entrySet();
-        if (effects.isEmpty()) {
+        Set<Map.Entry<Integer, CustomEffect>> customEffects = StatusEffectController.getInstance().customEffects.entrySet();
+
+        if (effects.isEmpty() && customEffects.isEmpty()) {
             sendError(sender, "No effects found.");
             return;
         }
@@ -34,7 +37,10 @@ public class EffectCommand extends CommandKamkeelBase {
         sendResult(sender, "--------------------");
 
         for (Map.Entry<Integer, StatusEffect> entry : effects) {
-            sendResult(sender, String.format("\u00a7b%2$s \u00a77(ID: %1$s)", entry.getKey(), entry.getValue().getName()));
+            sendResult(sender, String.format("\u00a7b%2$s \u00a77(ID%3$s: %1$s)", entry.getKey(), entry.getValue().getName(), entry.getValue().isCustom() ? " - CUSTOM" : " "));
+        }
+        for (Map.Entry<Integer, CustomEffect> entry : customEffects) {
+            sendResult(sender, String.format("\u00a7b%2$s \u00a77(ID%3$s: %1$s)", entry.getKey(), entry.getValue().getName(), entry.getValue().isCustom() ? " - CUSTOM" : " "));
         }
 
         sendResult(sender, "--------------------");

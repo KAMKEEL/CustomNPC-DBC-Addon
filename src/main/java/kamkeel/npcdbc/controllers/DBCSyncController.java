@@ -4,7 +4,7 @@ import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
-import kamkeel.npcdbc.data.statuseffect.CustomEffect;
+import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.DBCInfoSync;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -117,15 +117,15 @@ public class DBCSyncController {
             }
         } else if (synctype == DBCSyncType.CUSTOM_EFFECT) {
             NBTTagList list = compound.getTagList("Data", 10);
-//            for (int i = 0; i < list.tagCount(); i++) {
-//                CustomEffect effect = new CustomEffect();
-//                effect.readFromNBT(list.getCompoundTagAt(i));
-//                StatusEffectController.getInstance().customEffectsSync.put(effect.id, effect);
-//            }
-//            if (syncEnd) {
-//                StatusEffectController.getInstance().customEffects= StatusEffectController.getInstance().customEffectsSync;
-//                StatusEffectController.getInstance().customEffectsSync = new HashMap<>();
-//            }
+            for (int i = 0; i < list.tagCount(); i++) {
+                CustomEffect effect = new CustomEffect();
+                effect.readFromNBT(list.getCompoundTagAt(i), false);
+                StatusEffectController.getInstance().customEffectsSync.put(effect.id, effect);
+            }
+            if (syncEnd) {
+                StatusEffectController.getInstance().customEffects= StatusEffectController.getInstance().customEffectsSync;
+                StatusEffectController.getInstance().customEffectsSync = new HashMap<>();
+            }
         }
     }
 
@@ -144,8 +144,8 @@ public class DBCSyncController {
             OutlineController.getInstance().customOutlines.put(outline.id, outline);
         } else if (synctype == DBCSyncType.CUSTOM_EFFECT) {
             CustomEffect effect = new CustomEffect();
-            effect.readFromNBT(compound);
-//            StatusEffectController.Instance.customEffects.put(effect.id, effect);
+            effect.readFromNBT(compound, false);
+            StatusEffectController.Instance.customEffects.put(effect.id, effect);
         }
     }
 
@@ -157,7 +157,7 @@ public class DBCSyncController {
         } else if (synctype == DBCSyncType.OUTLINE) {
             Outline outline = OutlineController.Instance.customOutlines.remove(id);
         } else if (synctype == DBCSyncType.CUSTOM_EFFECT) {
-//            StatusEffectController.Instance.customEffects.remove(id);
+            StatusEffectController.Instance.customEffects.remove(id);
         }
     }
 }

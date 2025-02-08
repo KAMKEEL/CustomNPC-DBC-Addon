@@ -9,7 +9,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
-import kamkeel.npcdbc.data.statuseffect.CustomEffect;
+import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.packets.SendChat;
 import kamkeel.npcdbc.util.PlayerDataUtil;

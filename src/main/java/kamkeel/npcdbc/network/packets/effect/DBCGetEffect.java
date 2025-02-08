@@ -2,7 +2,7 @@ package kamkeel.npcdbc.network.packets.effect;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.StatusEffectController;
-import kamkeel.npcdbc.data.statuseffect.CustomEffect;
+import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.network.AbstractPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -13,7 +13,6 @@ import noppes.npcs.constants.EnumPacketClient;
 
 import java.io.IOException;
 
-import static kamkeel.npcdbc.network.DBCAddonPermissions.GLOBAL_DBCAURA;
 import static kamkeel.npcdbc.network.DBCAddonPermissions.GLOBAL_DBCEFFECT;
 
 public final class DBCGetEffect extends AbstractPacket {
@@ -44,7 +43,7 @@ public final class DBCGetEffect extends AbstractPacket {
         if (effectID != -1 && StatusEffectController.getInstance().has(effectID)) {
             CustomEffect Effect = (CustomEffect) StatusEffectController.getInstance().get(effectID);
             if (Effect != null) {
-                compound = Effect.writeToNBT(CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCEFFECT));
+                compound = Effect.writeToNBT(false);
                 compound.setString("Type", "ViewEffect");
             }
         }

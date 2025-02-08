@@ -2,7 +2,8 @@ package kamkeel.npcdbc.network.packets.effect;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.StatusEffectController;
-import kamkeel.npcdbc.data.statuseffect.CustomEffect;
+import kamkeel.npcdbc.data.statuseffect.StatusEffect;
+import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,7 +14,6 @@ import noppes.npcs.Server;
 
 import java.io.IOException;
 
-import static kamkeel.npcdbc.network.DBCAddonPermissions.GLOBAL_DBCAURA;
 import static kamkeel.npcdbc.network.DBCAddonPermissions.GLOBAL_DBCEFFECT;
 
 public class DBCSaveEffect extends AbstractPacket {
@@ -21,8 +21,9 @@ public class DBCSaveEffect extends AbstractPacket {
 
     private String prevName;
     private NBTTagCompound effect;
+    private int id;
 
-    public DBCSaveEffect(NBTTagCompound compound, String prev){
+    public DBCSaveEffect(NBTTagCompound compound, int id, String prev){
         this.effect = compound;
         this.prevName = prev;
     }
@@ -39,6 +40,7 @@ public class DBCSaveEffect extends AbstractPacket {
     @Override
     public void sendData(ByteBuf out) throws IOException {
         Server.writeString(out, prevName);
+        out.writeInt(id);
         Server.writeNBT(out, effect);
     }
 
@@ -48,11 +50,16 @@ public class DBCSaveEffect extends AbstractPacket {
             return;
 
         String prevName = Server.readString(in);
+        int id = in.readInt();
+        if (id < 200)
+            return;
         if(!prevName.isEmpty()){
             StatusEffectController.getInstance().deleteEffectFile(prevName);
         }
-        CustomEffect effect = new CustomEffect();
-        effect.readFromNBT(Server.readNBT(in));
+        CustomEffect effect = (CustomEffect) StatusEffectController.getInstance().get(id);
+        if (effect == null)
+            effect = new CustomEffect();
+        effect.readFromNBT(Server.readNBT(in), true);
         StatusEffectController.getInstance().saveEffect(effect);
         NetworkUtility.sendCustomEffectDataAll((EntityPlayerMP) player);
     }
