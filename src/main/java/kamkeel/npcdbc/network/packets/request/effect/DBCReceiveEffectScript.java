@@ -1,16 +1,34 @@
 package kamkeel.npcdbc.network.packets.request.effect;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import kamkeel.npcdbc.client.gui.global.effects.GuiEffectScript;
+import kamkeel.npcdbc.data.statuseffect.StatusEffect;
+import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.network.PacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketRequest;
+import kamkeel.npcdbc.util.ByteBufUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import kamkeel.npcdbc.network.LargeAbstractPacket;
 import kamkeel.npcdbc.network.PacketChannel;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.io.IOException;
 
 public class DBCReceiveEffectScript extends LargeAbstractPacket {
     public static final String packetName = "NPC|ApplyEffectScript";
+    private NBTTagCompound compound;
+
+    public DBCReceiveEffectScript() {
+
+    }
+
+    public DBCReceiveEffectScript(NBTTagCompound compound) {
+        this.compound = compound;
+    }
 
     @Override
     public Enum getType() {
@@ -25,11 +43,18 @@ public class DBCReceiveEffectScript extends LargeAbstractPacket {
 
     @Override
     protected byte[] getData() throws IOException {
-        return new byte[0];
+        ByteBuf byteBuf = Unpooled.buffer();
+        ByteBufUtils.writeNBT(byteBuf, compound);
+        return byteBuf.array();
     }
 
     @Override
     protected void handleCompleteData(ByteBuf data, EntityPlayer player) throws IOException {
-
+        NBTTagCompound scriptData = ByteBufUtils.readNBT(data);
+        GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+        if (screen instanceof GuiEffectScript) {
+            GuiEffectScript scriptGui = (GuiEffectScript) screen;
+            scriptGui.setGuiData(scriptData);
+        }
     }
 }

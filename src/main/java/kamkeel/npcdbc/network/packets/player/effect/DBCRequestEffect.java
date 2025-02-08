@@ -45,6 +45,7 @@ public final class DBCRequestEffect extends AbstractPacket {
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         this.effectID = in.readInt();
+
         if (effectID != -1) {
             CustomEffect effect = (CustomEffect) StatusEffectController.getInstance().get(effectID);
             if (effect != null) {

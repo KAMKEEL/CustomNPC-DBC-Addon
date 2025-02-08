@@ -69,45 +69,6 @@ public class PacketHandler {
         this.registerRequestPackets();
         this.registerGetPackets();
         this.registerPlayerPackets();
-//        map.put(PingPacket.packetName, new PingPacket());
-//        map.put(TransformPacket.packetName, new TransformPacket());
-//        map.put(DBCSetValPacket.packetName, new DBCSetValPacket());
-//        map.put(DBCInfoSync.packetName, new DBCInfoSync());
-//        map.put(DBCSelectForm.packetName, new DBCSelectForm());
-//        map.put(DBCSelectAura.packetName, new DBCSelectAura());
-//        map.put(DBCSetAura.packetName, new DBCSetAura());
-//        map.put(DBCRequestAura.packetName, new DBCRequestAura());
-//        map.put(DBCGetAura.packetName, new DBCGetAura());
-//        map.put(DBCRequestForm.packetName, new DBCRequestForm());
-//        map.put(DBCGetForm.packetName, new DBCGetForm());
-//        map.put(CapsuleInfo.packetName, new CapsuleInfo());
-//        map.put(LoginInfo.packetName, new LoginInfo());
-//        map.put(SendChat.packetName, new SendChat());
-//        map.put(PlaySound.packetName, new PlaySound());
-//        map.put(StopSound.packetName, new StopSound());
-//        map.put(DBCSaveForm.packetName, new DBCSaveForm());
-//        map.put(DBCRemoveForm.packetName, new DBCRemoveForm());
-//        map.put(DBCSetFlight.packetName, new DBCSetFlight());
-//        map.put(DBCRemoveAura.packetName, new DBCRemoveAura());
-//        map.put(DBCSaveAura.packetName, new DBCSaveAura());
-//
-//        map.put(DBCRequestOutline.packetName, new DBCRequestOutline());
-//        map.put(DBCRemoveOutline.packetName, new DBCRemoveOutline());
-//        map.put(DBCGetOutline.packetName, new DBCGetOutline());
-//        map.put(DBCSaveOutline.packetName, new DBCSaveOutline());
-//        map.put(DBCUpdateLockOn.packetName, new DBCUpdateLockOn());
-//
-//        map.put(DBCSaveEffect.packetName, new DBCSaveEffect());
-//        map.put(DBCRemoveEffect.packetName, new DBCRemoveEffect());
-//        map.put(DBCGetEffect.packetName, new DBCGetEffect());
-//        map.put(DBCRequestEffect.packetName, new DBCRequestEffect());
-//
-//        map.put(DBCRequestFormWheel.packetName, new DBCRequestFormWheel());
-//        map.put(DBCSaveFormWheel.packetName, new DBCSaveFormWheel());
-//        map.put(TurboPacket.packetName, new TurboPacket());
-//
-//        map.put(SaveFormCustomization.packetName, new SaveFormCustomization());
-//        this.register();
     }
 
     private void registerPlayerPackets() {
@@ -257,8 +218,6 @@ public class PacketHandler {
         }
     }
 
-    // ------------------------------------------------------------------------
-    // Public API methods for sending
 
     public void sendToPlayer(AbstractPacket packet, EntityPlayerMP player) {
         FMLEventChannel eventChannel = getEventChannel(packet);

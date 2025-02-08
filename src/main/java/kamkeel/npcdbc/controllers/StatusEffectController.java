@@ -477,6 +477,7 @@ public class StatusEffectController implements IStatusEffectHandler {
             dir.mkdir();
         return dir;
     }
+
     private void loadCustomEffects() {
         customEffects.clear();
 

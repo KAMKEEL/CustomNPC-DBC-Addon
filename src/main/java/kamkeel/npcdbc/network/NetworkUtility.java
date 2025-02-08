@@ -12,15 +12,21 @@ import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.packets.player.SendChat;
+import kamkeel.npcdbc.network.packets.request.effect.DBCReceiveEffectScript;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.NBTTags;
 import noppes.npcs.Server;
 import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.controllers.PlayerDataController;
+import noppes.npcs.controllers.ScriptContainer;
+import noppes.npcs.controllers.ScriptController;
+import noppes.npcs.controllers.data.IScriptHandler;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static noppes.npcs.NoppesUtilServer.sendScrollData;
@@ -104,5 +110,23 @@ public class NetworkUtility {
 
     public static void sendInfoMessage(EntityPlayer player, Object... message) {
         PacketHandler.Instance.sendToPlayer(new SendChat(true, message), (EntityPlayerMP) player);
+    }
+
+    public static void getScripts(IScriptHandler data, EntityPlayerMP player) {
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setBoolean("ScriptEnabled", data.getEnabled());
+        compound.setString("ScriptLanguage", data.getLanguage());
+        compound.setTag("Languages", ScriptController.Instance.nbtLanguages());
+        compound.setTag("ScriptConsole", NBTTags.NBTLongStringMap(data.getConsoleText()));
+        PacketHandler.Instance.sendToPlayer(new DBCReceiveEffectScript(compound), player);
+        List<ScriptContainer> containers = data.getScripts();
+        for (int i = 0; i < containers.size(); i++) {
+            ScriptContainer container = containers.get(i);
+            NBTTagCompound tabCompound = new NBTTagCompound();
+            tabCompound.setInteger("Tab",i);
+            tabCompound.setTag("Script",container.writeToNBT(new NBTTagCompound()));
+            tabCompound.setInteger("TotalScripts",containers.size());
+            PacketHandler.Instance.sendToPlayer(new DBCReceiveEffectScript(compound), player);
+        }
     }
 }

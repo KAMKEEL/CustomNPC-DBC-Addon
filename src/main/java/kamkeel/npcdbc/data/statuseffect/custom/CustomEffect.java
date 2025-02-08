@@ -21,6 +21,7 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
      */
     public BiConsumer<IPlayer, PlayerEffect> onAddedConsumer, onTickConsumer, onRemovedConsumer;
     public String menuName = "§aNEW EFFECT";
+    public EffectScriptHandler script = new EffectScriptHandler(this);
 
 
     public CustomEffect(int id) {

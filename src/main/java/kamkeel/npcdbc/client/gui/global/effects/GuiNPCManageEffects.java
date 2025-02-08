@@ -34,6 +34,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
 
     public GuiNPCManageEffects(EntityNPCInterface npc) {
         super(npc);
+
         PacketHandler.Instance.sendToServer(new DBCRequestEffect(-1));
     }
 
