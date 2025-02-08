@@ -99,10 +99,10 @@ public class NetworkUtility {
     }
 
     public static void sendServerMessage(EntityPlayer player, Object... message) {
-        PacketHandler.Instance.sendToPlayer(new SendChat(message).generatePacket(), (EntityPlayerMP) player);
+        PacketHandler.Instance.sendToPlayer(new SendChat(message), (EntityPlayerMP) player);
     }
 
     public static void sendInfoMessage(EntityPlayer player, Object... message) {
-        PacketHandler.Instance.sendToPlayer(new SendChat(true, message).generatePacket(), (EntityPlayerMP) player);
+        PacketHandler.Instance.sendToPlayer(new SendChat(true, message), (EntityPlayerMP) player);
     }
 }

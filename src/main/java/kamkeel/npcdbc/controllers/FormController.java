@@ -163,7 +163,7 @@ public class FormController implements IFormHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1).generatePacket());
+            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1));
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -190,7 +190,7 @@ public class FormController implements IFormHandler {
                         continue;
                     if (file.getName().equals(foundForm.name + ".json")) {
                         file.delete();
-                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundForm.getID()).generatePacket());
+                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundForm.getID()));
                         break;
                     }
                 }
@@ -211,7 +211,7 @@ public class FormController implements IFormHandler {
                     continue;
                 if (file.getName().equals(foundForm.name + ".json")) {
                     file.delete();
-                    PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundForm.getID()).generatePacket());
+                    PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundForm.getID()));
                     break;
                 }
             }

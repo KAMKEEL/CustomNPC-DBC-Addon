@@ -26,7 +26,7 @@ public class SubGuiSelectOutline extends SubGuiInterface implements IScrollData,
         xSize = 256;
         this.setBackground("menubg.png");
 
-        PacketHandler.Instance.sendToServer(new DBCRequestOutline(-1).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCRequestOutline(-1));
     }
 
     @Override

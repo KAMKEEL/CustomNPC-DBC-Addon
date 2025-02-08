@@ -34,7 +34,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
 
     public GuiNPCManageEffects(EntityNPCInterface npc) {
         super(npc);
-        PacketHandler.Instance.sendToServer(new DBCRequestEffect(-1).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCRequestEffect(-1));
     }
 
     public void initGui() {
@@ -75,7 +75,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
             while (data.containsKey(name))
                 name += "_";
             CustomEffect effect = new CustomEffect(-1, name);
-            PacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), effect.id, "").generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), effect.id, ""));
         }
 
         if (button.id == 1) {
@@ -88,7 +88,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
             CustomEffect effect = this.effect.clone();
             while (data.containsKey(effect.name))
                 effect.name += "_";
-            PacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), effect.id, "").generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), effect.id, ""));
         }
         if (button.id == 3) {
             if (data.containsKey(scrollEffects.getSelected()) && effect != null && effect.id >= Effects.CUSTOM_EFFECT) {
@@ -191,7 +191,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
             selected = scrollEffects.getSelected();
             originalName = scrollEffects.getSelected();
             if (selected != null && !selected.isEmpty()) {
-                PacketHandler.Instance.sendToServer(new DBCGetEffect(data.get(selected)).generatePacket());
+                PacketHandler.Instance.sendToServer(new DBCGetEffect(data.get(selected)));
             }
         }
     }
@@ -204,7 +204,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
     @Override
     public void save() {
         if (this.selected != null && this.data.containsKey(this.selected) && this.effect != null) {
-            PacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), effect.id, originalName).generatePacket());
+            PacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), effect.id, originalName));
         }
     }
 
@@ -221,7 +221,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
             return;
         if (id == 1) {
             if (data.containsKey(scrollEffects.getSelected())) {
-                PacketHandler.Instance.sendToServer(new DBCRemoveEffect(data.get(scrollEffects.getSelected())).generatePacket());
+                PacketHandler.Instance.sendToServer(new DBCRemoveEffect(data.get(scrollEffects.getSelected())));
                 scrollEffects.clear();
                 effect = new CustomEffect();
                 initGui();

@@ -44,7 +44,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         this.setBackground("menubg.png");
 
         this.useMenuName = useMenuName;
-        PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, playerFormsOnly, this.useMenuName).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, playerFormsOnly, this.useMenuName));
     }
 
     @Override

@@ -18,7 +18,7 @@ public class SoundHandler {
             ClientSound sound = iter.next();
             if (sound.entity == entity && sound.soundSource.soundDir.toLowerCase().contains(soundContains.toLowerCase())) {
                 Minecraft.getMinecraft().getSoundHandler().stopSound(sound);
-                PacketHandler.Instance.sendToServer(new StopSound(sound.soundSource).generatePacket());
+                PacketHandler.Instance.sendToServer(new StopSound(sound.soundSource));
                 iter.remove();
             }
         }

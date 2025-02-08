@@ -95,7 +95,7 @@ public class AuraController implements IAuraHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1).generatePacket());
+            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1));
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -193,7 +193,7 @@ public class AuraController implements IAuraHandler {
                     continue;
                 if (file.getName().equals(foundAura.name + ".json")) {
                     file.delete();
-                    PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundAura.getID()).generatePacket());
+                    PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundAura.getID()));
                     break;
                 }
             }
@@ -212,7 +212,7 @@ public class AuraController implements IAuraHandler {
                         continue;
                     if (file.getName().equals(foundAura.name + ".json")) {
                         file.delete();
-                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundAura.getID()).generatePacket());
+                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundAura.getID()));
                         break;
                     }
                 }

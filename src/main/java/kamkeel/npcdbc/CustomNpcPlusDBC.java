@@ -63,7 +63,7 @@ public class CustomNpcPlusDBC {
         proxy.postInit(event);
 
         PacketHandler.Instance = new PacketHandler();
-        PacketHandler.Instance.register();
+        PacketHandler.Instance.registerChannels();
     }
 
     public static Side side() {

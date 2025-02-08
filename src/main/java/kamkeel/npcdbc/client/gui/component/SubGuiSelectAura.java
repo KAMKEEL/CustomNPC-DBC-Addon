@@ -26,7 +26,7 @@ public class SubGuiSelectAura extends SubGuiInterface implements IScrollData, IC
         xSize = 256;
         this.setBackground("menubg.png");
 
-        PacketHandler.Instance.sendToServer(new DBCRequestAura(-1, false).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCRequestAura(-1, false));
     }
 
     @Override

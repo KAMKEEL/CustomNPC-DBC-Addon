@@ -97,7 +97,7 @@ public class OutlineController implements IOutlineHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1).generatePacket());
+            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1));
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -202,7 +202,7 @@ public class OutlineController implements IOutlineHandler {
                     continue;
                 if (file.getName().equals(foundOutline.name + ".json")) {
                     file.delete();
-                    PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundOutline.getID()).generatePacket());
+                    PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundOutline.getID()));
                     break;
                 }
             }
@@ -222,7 +222,7 @@ public class OutlineController implements IOutlineHandler {
                         continue;
                     if (file.getName().equals(foundOutline.name + ".json")) {
                         file.delete();
-                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundOutline.getID()).generatePacket());
+                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundOutline.getID()));
                         break;
                     }
                 }

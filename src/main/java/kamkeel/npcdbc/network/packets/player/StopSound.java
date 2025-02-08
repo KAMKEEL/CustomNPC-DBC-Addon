@@ -58,7 +58,7 @@ public final class StopSound extends AbstractPacket {
     public static void stop(SoundSource sound) {
         if (sound == null || sound.entity == null)
             return;
-        PacketHandler.Instance.sendToTrackingPlayers(sound.entity, new StopSound(sound).generatePacket());
+        PacketHandler.Instance.sendTracking(new StopSound(sound), sound.entity);
     }
 
 

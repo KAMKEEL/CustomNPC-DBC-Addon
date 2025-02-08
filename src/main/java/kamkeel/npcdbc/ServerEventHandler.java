@@ -54,10 +54,10 @@ public class ServerEventHandler {
             return;
         DBCData dbcData = DBCData.get(event.player);
         dbcData.loadNBTData(true);
-        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.COOLDOWN).generatePacket(), (EntityPlayerMP) event.player);
-        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.STRENGTH).generatePacket(), (EntityPlayerMP) event.player);
-        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.EFFECT_TIME).generatePacket(), (EntityPlayerMP) event.player);
-        PacketHandler.Instance.sendToPlayer(new LoginInfo().generatePacket(), (EntityPlayerMP) event.player);
+        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.COOLDOWN), (EntityPlayerMP) event.player);
+        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.STRENGTH), (EntityPlayerMP) event.player);
+        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.EFFECT_TIME), (EntityPlayerMP) event.player);
+        PacketHandler.Instance.sendToPlayer(new LoginInfo(), (EntityPlayerMP) event.player);
     }
 
     @SubscribeEvent

@@ -25,13 +25,13 @@ public class DBCSyncController {
             if (list.tagCount() > 5) {
                 compound = new NBTTagCompound();
                 compound.setTag("Data", list);
-                PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_ADD, compound, -1).generatePacket(), player);
+                PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_ADD, compound, -1), player);
                 list = new NBTTagList();
             }
         }
         compound = new NBTTagCompound();
         compound.setTag("Data", list);
-        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_END, compound, -1).generatePacket(), player);
+        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_END, compound, -1), player);
 
         // Sync All Custom Auras
         list = new NBTTagList();
@@ -41,13 +41,13 @@ public class DBCSyncController {
             if (list.tagCount() > 5) {
                 compound = new NBTTagCompound();
                 compound.setTag("Data", list);
-                PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_ADD, compound, -1).generatePacket(), player);
+                PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_ADD, compound, -1), player);
                 list = new NBTTagList();
             }
         }
         compound = new NBTTagCompound();
         compound.setTag("Data", list);
-        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_END, compound, -1).generatePacket(), player);
+        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_END, compound, -1), player);
 
         // Sync All Custom Outlines
         list = new NBTTagList();
@@ -57,13 +57,13 @@ public class DBCSyncController {
             if (list.tagCount() > 5) {
                 compound = new NBTTagCompound();
                 compound.setTag("Data", list);
-                PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_ADD, compound, -1).generatePacket(), player);
+                PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_ADD, compound, -1), player);
                 list = new NBTTagList();
             }
         }
         compound = new NBTTagCompound();
         compound.setTag("Data", list);
-        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_END, compound, -1).generatePacket(), player);
+        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_END, compound, -1), player);
 
         list = new NBTTagList();
         compound = new NBTTagCompound();
@@ -72,13 +72,13 @@ public class DBCSyncController {
 //                if(list.tagCount() >5) {
 //                    compound = new NBTTagCompound();
 //                    compound.setTag("Data", list);
-//                    PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_ADD, compound, -1).generatePacket(), player);
+//                    PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_ADD, compound, -1), player);
 //                    list = new NBTTagList();
 //                }
 //        }
         compound = new NBTTagCompound();
         compound.setTag("Data", list);
-        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_ADD, compound, -1).generatePacket(), player);
+        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_ADD, compound, -1), player);
     }
 
     public static void clientSync(int synctype, NBTTagCompound compound, boolean syncEnd) {

@@ -62,7 +62,7 @@ public class TransformController {
         rageValue = getRageMeterIncrementation(form, formLevel);
         rage += rageValue;
         JRMCoreH.TransSaiCurRg = (byte) rage;
-        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage));
 
         if (time >= 6) { //increments rage meter and drain ki cost every 6 ticks
             time = 0;
@@ -75,7 +75,7 @@ public class TransformController {
         //            float toDrain = form.mastery.kiDrain * form.mastery.calculateMulti("kiDrain", formLevel);
         //
         //            dbcData.stats.restoreKiPercent(-toDrain / form.mastery.kiDrainTimer * 10);
-        //            PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcEnrgy", (int) dbcData.Ki).generatePacket());
+        //            PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcEnrgy", (int) dbcData.Ki));
         //
         //
         //        }
@@ -88,7 +88,7 @@ public class TransformController {
             releaseTime = 0;
         }
         if (rage >= 100) { //transform when rage meter reaches 100 (max)
-            PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getID(), true).generatePacket());
+            PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getID(), true));
             new ClientSound(new SoundSource(form.getAscendSound(), dbcData.player)).play(true);
             resetTimers();
             cantTransform = true;
@@ -119,7 +119,7 @@ public class TransformController {
             setAscending(false);
 
         JRMCoreH.TransSaiCurRg = (byte) rage;
-        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
+        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage));
     }
 
     @SideOnly(Side.CLIENT)

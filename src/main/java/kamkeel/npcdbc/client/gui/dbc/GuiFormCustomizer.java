@@ -114,7 +114,7 @@ public class GuiFormCustomizer extends AbstractJRMCGui implements ISubGuiListene
     }
 
     private void save() {
-        PacketHandler.Instance.sendToServer(new SaveFormCustomization(form, colors).generatePacket());
+        PacketHandler.Instance.sendToServer(new SaveFormCustomization(form, colors));
     }
 
     @Override
