@@ -7,6 +7,7 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketRequest;
+import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -46,18 +47,18 @@ public class DBCSaveForm extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        Server.writeString(out, prevName);
-        Server.writeNBT(out, form);
+        ByteBufUtils.writeString(out, prevName);
+        ByteBufUtils.writeNBT(out, form);
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCFORM))
             return;
-        String prevName = Server.readString(in);
+        String prevName = ByteBufUtils.readString(in);
 
         Form form = new Form();
-        form.readFromNBT(Server.readNBT(in));
+        form.readFromNBT(ByteBufUtils.readNBT(in));
 
 
         int oldParentForm = -1;

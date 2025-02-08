@@ -480,6 +480,11 @@ public interface IDBCAddon extends IDBCPlayer {
     void setAura(int auraID);
 
     /**
+     * Removes a custom aura selection and current aura running for the player.
+     */
+    void removeCurrentAura();
+
+    /**
      * Removes a custom aura selection for the player.
      */
     void removeAuraSelection();

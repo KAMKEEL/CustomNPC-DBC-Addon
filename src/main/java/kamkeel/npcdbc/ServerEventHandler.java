@@ -10,8 +10,12 @@ import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.FusionHandler;
+import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -22,10 +26,13 @@ import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.CapsuleInfo;
+import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcdbc.network.packets.player.LoginInfo;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcs.network.enums.EnumSyncAction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -92,10 +99,14 @@ public class ServerEventHandler {
                 if (((IPlayerDBCInfo) playerData).getDBCInfoUpdate()) {
                     NBTTagCompound formCompound = new NBTTagCompound();
                     playerData.getDBCSync(formCompound);
-                    NoppesUtilServer.sendDBCCompound((EntityPlayerMP) player, formCompound);
+                    DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.PLAYERDATA, EnumSyncAction.RELOAD, -1, formCompound), (EntityPlayerMP) player);
                     ((IPlayerDBCInfo) playerData).endDBCInfo();
                 }
             }
+
+            if(ConfigDBCEffects.AUTO_BLOATED)
+                if (player.ticksExisted % ConfigDBCEffects.DECREASE_TIME == 0)
+                    StatusEffectController.Instance.decreaseSenzuConsumption(player);
 
             if (player.ticksExisted % ConfigDBCGameplay.CheckEffectsTick == 0)
                 StatusEffectController.Instance.runEffects(player);
@@ -109,6 +120,9 @@ public class ServerEventHandler {
                 DBCData dbcData = DBCData.get(player);
                 if (ConfigDBCGameplay.EnableNamekianRegen && dbcData.Race == DBCRace.NAMEKIAN)
                     dbcData.stats.applyNamekianRegen();
+
+                if (ConfigDBCGameplay.EnableHumanSpirit && dbcData.Race == DBCRace.HUMAN)
+                    StatusEffectController.Instance.checkHumanSpirit(player);
 
                 if (player.ticksExisted % 20 == 0)
                     StatusEffectController.Instance.decrementEffects(dbcData.player);

@@ -49,6 +49,9 @@ public class MixinDBCPacketHandler {
             return;
 
         if ((ConfigDBCGameplay.SaiyanZenkai && dbcData.Race == DBCRace.SAIYAN) || (ConfigDBCGameplay.HalfSaiyanZenkai && dbcData.Race == DBCRace.HALFSAIYAN)) {
+            if (ConfigDBCEffects.EXHAUST_ZENKAI && StatusEffectController.getInstance().hasEffect(p, Effects.EXHAUSTED)) {
+                return;
+            }
 
             if (dbcData.Race == DBCRace.SAIYAN) {
                 StatusEffectController.getInstance().applyEffect(p, Effects.ZENKAI, ConfigDBCEffects.ZenkaiSaiyanLength);

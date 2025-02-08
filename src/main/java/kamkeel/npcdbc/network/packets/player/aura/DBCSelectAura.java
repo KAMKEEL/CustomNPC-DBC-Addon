@@ -9,11 +9,10 @@ import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.Server;
-import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import kamkeel.npcdbc.network.AbstractPacket;
@@ -67,7 +66,7 @@ public final class DBCSelectAura extends AbstractPacket {
         }
 
         dbcInfo.updateClient();
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
         DBCData.get(player).saveNBTData(true);
     }
 }

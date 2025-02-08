@@ -3,8 +3,6 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.api.effect.IBonusHandler;
 import kamkeel.npcdbc.api.effect.IPlayerBonus;
 import kamkeel.npcdbc.data.PlayerBonus;
-import kamkeel.npcdbc.data.PlayerDBCInfo;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -146,7 +144,7 @@ public class BonusController implements IBonusHandler {
     }
 
     public void clearBonuses(Entity player) {
-        Map<String, PlayerBonus> effects = playerBonus.get(player.getUniqueID());
+        Map<String, PlayerBonus> effects = playerBonus.get(Utility.getUUID(player));
         if(effects != null){
             effects.clear();
         }

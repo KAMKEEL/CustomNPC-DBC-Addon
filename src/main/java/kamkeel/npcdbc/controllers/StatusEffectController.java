@@ -3,15 +3,20 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.api.effect.ICustomEffect;
 import kamkeel.npcdbc.api.effect.IStatusEffect;
 import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
+import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.statuseffect.*;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.types.*;
 import kamkeel.npcdbc.network.DBCPacketHandler;
-import kamkeel.npcdbc.network.packets.get.DBCInfoSync;
+import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
+import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcs.network.enums.EnumSyncAction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -20,7 +25,7 @@ import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
 import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.constants.EnumPacketClient;
+;
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.*;
@@ -43,6 +48,9 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     public ConcurrentHashMap<UUID, Map<Integer, PlayerEffect>> playerEffects = new ConcurrentHashMap<>();
 
+    // Maps for Status Effects
+    private final ConcurrentHashMap<UUID, DamageTracker> damageTrackers = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, SenzuConsumptionData> playerSenzuConsumption = new ConcurrentHashMap<>();
     public StatusEffectController() {
 
     }
@@ -69,7 +77,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         standardEffects.put(Effects.POTARA, new PotaraFusion());
         standardEffects.put(Effects.EXHAUSTED, new Exhausted());
 
-        standardEffects.put(Effects.HUMAN_SPIRIT, new Exhausted()); // TODO: Finish it
+        standardEffects.put(Effects.HUMAN_SPIRIT, new HumanSpirit());
         standardEffects.put(Effects.COLD_BLOODED, new Exhausted()); // TODO: Finish it
         standardEffects.put(Effects.KI_DEFENSE, new Exhausted()); // TODO: Finish it
 
@@ -152,7 +160,7 @@ public class StatusEffectController implements IStatusEffectHandler {
                         continue;
                     if (file.getName().equals(foundEffect.name + ".json")) {
                         file.delete();
-                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundEffect.getID()));
+                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.CUSTOM_EFFECT, EnumSyncAction.REMOVE, foundEffect.getID(), new NBTTagCompound()));
                         break;
                     }
                 }
@@ -172,7 +180,7 @@ public class StatusEffectController implements IStatusEffectHandler {
                         continue;
                     if (file.getName().equals(foundEffect.name + ".json")) {
                         file.delete();
-                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundEffect.getID()));
+                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.CUSTOM_EFFECT, EnumSyncAction.REMOVE, foundEffect.getID(), new NBTTagCompound()));
                         break;
                     }
                 }
@@ -365,7 +373,7 @@ public class StatusEffectController implements IStatusEffectHandler {
                 file2.delete();
             file.renameTo(file2);
             nbtTagCompound = ((CustomEffect) customEffect).writeToNBT(true);
-            DBCPacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1));
+            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.CUSTOM_EFFECT, EnumSyncAction.UPDATE, customEffect.getID(), new NBTTagCompound()));
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -373,7 +381,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     }
 
     public void clearEffects(Entity player) {
-        Map<Integer, PlayerEffect> effects = playerEffects.get(player.getUniqueID());
+        Map<Integer, PlayerEffect> effects = playerEffects.get(Utility.getUUID(player));
         if (effects != null) {
             effects.clear();
         }
@@ -468,6 +476,88 @@ public class StatusEffectController implements IStatusEffectHandler {
                 continue;
             }
             effect.duration--;
+        }
+    }
+
+    /**
+     * Checks if the player is allowed to consume Senzus based on current consumption rate.
+     * If the consumption exceeds the rate, apply the "Bloated" effect.
+     */
+    public boolean allowSenzuConsumption(EntityPlayer player) {
+        if (hasEffect(player, Effects.BLOATED)) {
+            return false; // Player already has the Bloated effect, cannot consume more.
+        }
+
+        if (!ConfigDBCEffects.AUTO_BLOATED) {
+            return true; // Automatic bloated status effect is disabled.
+        }
+
+        UUID playerId = Utility.getUUID(player);
+        SenzuConsumptionData consumptionData = getPlayerSenzuData(player);
+        long currentTime = System.currentTimeMillis();
+
+        // Clean old consumption entries based on current time and defined decrease time.
+        consumptionData.cleanOldConsumption(currentTime, ConfigDBCEffects.DECREASE_TIME);
+        consumptionData.addConsumption(currentTime);
+
+        // Calculate the excess consumption based on the defined threshold.
+        int excessConsumption = consumptionData.getExcessConsumption(ConfigDBCEffects.BLOATED_THRESHOLD);
+
+        // Check for the warning threshold.
+        if (excessConsumption > 0 && excessConsumption < ConfigDBCEffects.MAX_THRESHOLD_EXCEED) {
+            NetworkUtility.sendServerMessage(player, "§c", "npcdbc.full");
+        }
+
+        if (excessConsumption >= ConfigDBCEffects.MAX_THRESHOLD_EXCEED) {
+            // Player has consumed too many Senzus above the rate, apply the "Bloated" effect.
+            applyEffect(player, Effects.BLOATED, ConfigDBCEffects.BLOATED_TIME);
+            NetworkUtility.sendServerMessage(player, "§4", "npcdbc.bloated");
+            return false; // Deny further consumption.
+        }
+
+        playerSenzuConsumption.put(playerId, consumptionData);
+        return true; // Allow consumption.
+    }
+
+
+    /**
+     * Decreases the consumption count for each player in the map at the specified rate.
+     * This should be called every DECREASE_TIME ticks in the game.
+     */
+    public void decreaseSenzuConsumption(EntityPlayer player) {
+        SenzuConsumptionData data = getPlayerSenzuData(player);
+        data.decreaseConsumption(ConfigDBCEffects.DECREASE_TIME);
+    }
+    private SenzuConsumptionData getPlayerSenzuData(EntityPlayer player) {
+        UUID playerId = Utility.getUUID(player);
+        return playerSenzuConsumption.computeIfAbsent(playerId, k -> new SenzuConsumptionData());
+    }
+
+    /**
+     * Human Spirit
+     */
+    public void recordDamage(EntityPlayer player, double damageAmount) {
+        UUID playerId = Utility.getUUID(player);
+        damageTrackers.computeIfAbsent(playerId, k -> new DamageTracker(playerId)).recordDamage(damageAmount);
+    }
+
+    public void checkHumanSpirit(EntityPlayer player) {
+        UUID playerId = Utility.getUUID(player);
+        if (hasEffect(player, Effects.HUMAN_SPIRIT)) {
+            return;
+        }
+
+        if (ConfigDBCEffects.EXHAUST_HUMANSPIRIT && hasEffect(player, Effects.EXHAUSTED)) {
+            return;
+        }
+
+        DamageTracker tracker = damageTrackers.get(playerId);
+        DBCData dbcData = DBCData.get(player);
+        int maxHealth = dbcData.stats.getMaxBody();
+        if (tracker != null && tracker.checkForHumanSpirit(maxHealth)) {
+            applyEffect(player, Effects.HUMAN_SPIRIT);
+            NetworkUtility.sendServerMessage(player, "§d", "npcdbc.humanSpiritMessage");
+            tracker.cleanOldEntries(System.currentTimeMillis());
         }
     }
 

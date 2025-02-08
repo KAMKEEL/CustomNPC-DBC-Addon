@@ -1,8 +1,5 @@
 package kamkeel.npcdbc.api.form;
 
-import kamkeel.npcdbc.scripted.ScriptDBCAddon;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import noppes.npcs.api.entity.IPlayer;
 
 public interface IForm {

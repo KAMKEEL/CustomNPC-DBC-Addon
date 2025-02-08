@@ -27,6 +27,7 @@ public class ConfigDBCGameplay
 
     public final static String NamekianRegeneration = "Namek_Regen";
     public static boolean EnableNamekianRegen = true;
+    public static boolean OnlyNamekianRegenCharging = false;
     public static int NamekianRegenMin = 20;
     public static int NamekianRegenMax = 50;
 
@@ -45,6 +46,15 @@ public class ConfigDBCGameplay
     public static boolean RevampKiCharging = true;
     public static boolean KiPotentialUnlock = true;
     public static int KiChargeRate = 1;
+
+    public final static String HumanSpirit = "Human_Spirit";
+    public static boolean EnableHumanSpirit = true;
+    public static int PercentDamageRequired = 400;
+    public static int DamageRequiredSeconds = 20;
+
+    public final static String FruitOfMight = "FruitOfMight";
+    public static int FruitOfMightStackSize = 5;
+
     public static void init(File configFile)
     {
         config = new Configuration(configFile);
@@ -72,6 +82,7 @@ public class ConfigDBCGameplay
             EnableNamekianRegen = config.get(NamekianRegeneration, "Enable Namekian Regeneration", true,
                 "Namekian Regeneration will automatically apply the Namek Regen Effect (dbc/effects.cfg), " +
                     "\nwhen the Player falls below MIN Health and will stop continue to MAX Health.").getBoolean(true);
+            OnlyNamekianRegenCharging = config.get(NamekianRegeneration, "Only Regen during Charging", false).getBoolean(false);
             NamekianRegenMin = config.get(NamekianRegeneration, "Min Namekian Regen", 20).getInt(20);
             NamekianRegenMax = config.get(NamekianRegeneration, "Max Namekian Regen", 50).getInt(50);
 
@@ -106,6 +117,15 @@ public class ConfigDBCGameplay
             KiChargeRate = config.get(KiCharge, "Ki Charge Rate", 1,
                 "Tweaking this number will allow for more precise ki charging. Default for DBC is 5.").getInt(1);
             KiChargeRate = ValueUtil.clamp(KiChargeRate, 1, 50);
+
+            FruitOfMightStackSize = config.get(FruitOfMight, "Fruit of Might Stack Size", 5).getInt(5);
+            FruitOfMightStackSize = ValueUtil.clamp(FruitOfMightStackSize, 1, 64);
+
+            EnableHumanSpirit = config.get(HumanSpirit, "Enable Human Spirit", true,
+                "Human Spirit will automatically apply the Human Spirit Effect (dbc/effects.cfg), " +
+                    "\nwhen the Player reaches a specific threshold of damage").getBoolean(true);
+            PercentDamageRequired = config.get(HumanSpirit, "Percent Damage Required", 400).getInt(400);
+            DamageRequiredSeconds = config.get(HumanSpirit, "Time Allotted", 20, "Amount of time to consider the Percent of Damage Required").getInt(50);
 
 
         }

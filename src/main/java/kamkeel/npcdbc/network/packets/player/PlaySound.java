@@ -6,13 +6,13 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
+import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import kamkeel.npcdbc.network.AbstractPacket;
-import kamkeel.npcdbc.network.PacketChannel;
 
 import java.io.IOException;
 

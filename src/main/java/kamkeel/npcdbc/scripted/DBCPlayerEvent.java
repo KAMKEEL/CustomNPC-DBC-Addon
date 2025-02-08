@@ -111,6 +111,21 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
     }
 
     /**
+     * senzuUsed
+     */
+    @Cancelable
+    public static class SenzuUsedEvent extends DBCPlayerEvent implements IDBCEvent.SenzuUsedEvent {
+
+        public SenzuUsedEvent(IPlayer player) {
+            super(player);
+        }
+
+        public String getHookName() {
+            return DBCScriptType.SENZUUSED.function;
+        }
+    }
+
+    /**
      * formChange
      */
     @Cancelable

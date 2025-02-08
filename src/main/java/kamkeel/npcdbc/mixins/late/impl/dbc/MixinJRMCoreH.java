@@ -21,6 +21,7 @@ import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -289,6 +290,7 @@ public abstract class MixinJRMCoreH {
                 return TransFrStBnP;
             case 5:
                 return TransMaStBnP;
+
         }
         return null;
     }
@@ -423,17 +425,6 @@ public abstract class MixinJRMCoreH {
             PlayerDataUtil.getDBCInfo(player).updateCurrentFormMastery("fireki");
     }
 
-    //    @ModifyArgs(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
-    //    private static void setDamage(Args args) {
-    //        String type = args.get(2);
-    //        if (lastSetDamage != -1 && type.equals("jrmcBdy")) {
-    //            int curBody = getInt(args.get(1), "jrmcBdy");
-    //            int newHealth = curBody - lastSetDamage;
-    //            args.set(0, Math.max(0, newHealth));
-    //            lastSetDamage = -1;
-    //        }
-    //    }
-
     @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
     private static void setDamage(int s, EntityPlayer player, String type) {
         if (type.equals("jrmcBdy")) {
@@ -451,6 +442,7 @@ public abstract class MixinJRMCoreH {
                 lastSetDamage2 = -1;
             }
         }
+
         setInt(s, player, type);
     }
 

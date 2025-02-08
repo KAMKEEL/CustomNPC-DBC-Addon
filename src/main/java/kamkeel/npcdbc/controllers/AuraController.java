@@ -5,13 +5,13 @@ import kamkeel.npcdbc.api.aura.IAuraHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.network.DBCPacketHandler;
-import kamkeel.npcdbc.network.packets.get.DBCInfoSync;
+import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
+import kamkeel.npcs.network.enums.EnumSyncAction;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
-import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.*;
@@ -95,7 +95,7 @@ public class AuraController implements IAuraHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            DBCPacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1));
+            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.AURA, EnumSyncAction.UPDATE, -1, nbtTagCompound));
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -193,7 +193,7 @@ public class AuraController implements IAuraHandler {
                     continue;
                 if (file.getName().equals(foundAura.name + ".json")) {
                     file.delete();
-                    DBCPacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundAura.getID()));
+                    DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.AURA, EnumSyncAction.REMOVE, foundAura.getID(), new NBTTagCompound()));
                     break;
                 }
             }
@@ -212,7 +212,7 @@ public class AuraController implements IAuraHandler {
                         continue;
                     if (file.getName().equals(foundAura.name + ".json")) {
                         file.delete();
-                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.AURA, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundAura.getID()));
+                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.AURA, EnumSyncAction.REMOVE, foundAura.getID(), new NBTTagCompound()));
                         break;
                     }
                 }

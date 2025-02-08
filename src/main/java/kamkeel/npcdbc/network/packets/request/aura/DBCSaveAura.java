@@ -6,6 +6,7 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketRequest;
+import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,8 +46,8 @@ public class DBCSaveAura extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        Server.writeString(out, prevName);
-        Server.writeNBT(out, aura);
+        ByteBufUtils.writeString(out, prevName);
+        ByteBufUtils.writeNBT(out, aura);
     }
 
     @Override
@@ -54,10 +55,10 @@ public class DBCSaveAura extends AbstractPacket {
         if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCAURA))
             return;
 
-        String prevName = Server.readString(in);
+        String prevName = ByteBufUtils.readString(in);
 
         Aura aura = new Aura();
-        aura.readFromNBT(Server.readNBT(in));
+        aura.readFromNBT(ByteBufUtils.readNBT(in));
 
         AuraController.getInstance().saveAura(aura);
 

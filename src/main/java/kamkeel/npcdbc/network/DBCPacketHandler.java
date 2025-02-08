@@ -8,7 +8,7 @@ import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.network.packets.get.CapsuleInfo;
-import kamkeel.npcdbc.network.packets.get.DBCInfoSync;
+import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcdbc.network.packets.get.aura.DBCGetAura;
 import kamkeel.npcdbc.network.packets.get.effect.DBCGetEffect;
 import kamkeel.npcdbc.network.packets.get.form.DBCGetForm;
@@ -100,7 +100,7 @@ public class DBCPacketHandler {
         GET_PACKETS.registerPacket(new DBCGetForm());
         GET_PACKETS.registerPacket(new DBCGetOutline());
         GET_PACKETS.registerPacket(new CapsuleInfo());
-        GET_PACKETS.registerPacket(new DBCInfoSync());
+        GET_PACKETS.registerPacket(new DBCInfoSyncPacket());
     }
 
     private void registerRequestPackets() {

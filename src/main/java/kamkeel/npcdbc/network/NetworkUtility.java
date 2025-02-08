@@ -14,12 +14,13 @@ import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.packets.player.SendChat;
 import kamkeel.npcdbc.network.packets.request.effect.DBCReceiveEffectScript;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
+import kamkeel.npcs.network.packets.data.large.ScrollDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
 import noppes.npcs.Server;
-import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.ScriptContainer;
 import noppes.npcs.controllers.ScriptController;
@@ -29,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static noppes.npcs.NoppesUtilServer.sendScrollData;
 
 public class NetworkUtility {
 
@@ -38,7 +38,7 @@ public class NetworkUtility {
         for (Form customForm : FormController.getInstance().customForms.values()) {
             map.put(customForm.name, customForm.id);
         }
-        sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map);
     }
 
     public static void sendCustomAuraDataAll(EntityPlayerMP player) {
@@ -46,7 +46,7 @@ public class NetworkUtility {
         for (Aura customAura : AuraController.getInstance().customAuras.values()) {
             map.put(customAura.name, customAura.id);
         }
-        sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map);
     }
 
     public static void sendCustomOutlineDataAll(EntityPlayerMP player) {
@@ -54,7 +54,7 @@ public class NetworkUtility {
         for (Outline outline : OutlineController.getInstance().customOutlines.values()) {
             map.put(outline.name, outline.id);
         }
-        sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map);
     }
 
     public static void sendCustomEffectDataAll(EntityPlayerMP player) {
@@ -62,7 +62,7 @@ public class NetworkUtility {
         for (CustomEffect effect : StatusEffectController.getInstance().customEffects.values()) {
             map.put(effect.name, effect.id);
         }
-        sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map);
     }
 
     public static void sendPlayersForms(EntityPlayer player, boolean useMenuName) {
@@ -74,7 +74,7 @@ public class NetworkUtility {
             if (customForm != null)
                 compound = customForm.writeToNBT();
         }
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
     }
 
     public static void sendPlayerFormWheel(EntityPlayer player) {
@@ -89,7 +89,7 @@ public class NetworkUtility {
                 wheelData.writeToNBT(compound);
             }
         }
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
     }
 
     public static void sendPlayersAuras(EntityPlayer player) {
@@ -101,7 +101,7 @@ public class NetworkUtility {
             if (customAura != null)
                 compound = customAura.writeToNBT();
         }
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
     }
 
     public static void sendServerMessage(EntityPlayer player, Object... message) {

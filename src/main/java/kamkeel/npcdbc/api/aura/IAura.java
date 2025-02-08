@@ -1,7 +1,5 @@
 package kamkeel.npcdbc.api.aura;
 
-import kamkeel.npcdbc.data.aura.Aura;
-import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.api.entity.IPlayer;
 
 public interface IAura {

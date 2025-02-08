@@ -45,6 +45,9 @@ public interface IDBCEvent extends IPlayerEvent {
     }
 
     @Cancelable
+    interface SenzuUsedEvent extends IDBCEvent { }
+
+    @Cancelable
     interface FormChangeEvent extends IDBCEvent {
         /**
          * @return The ID of the Form. If form before is vanilla DBC, returns the ID of that. i.e Base returns 0, SSGod returns 9. Else, returns ID of CNPC Custom Form

@@ -6,6 +6,7 @@ import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketRequest;
+import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -46,9 +47,9 @@ public class DBCSaveEffect extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        Server.writeString(out, prevName);
+        ByteBufUtils.writeString(out, prevName);
         out.writeInt(id);
-        Server.writeNBT(out, effect);
+        ByteBufUtils.writeNBT(out, effect);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class DBCSaveEffect extends AbstractPacket {
         if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCEFFECT))
             return;
 
-        String prevName = Server.readString(in);
+        String prevName = ByteBufUtils.readString(in);
         int id = in.readInt();
         if (id < 200)
             return;
@@ -66,7 +67,7 @@ public class DBCSaveEffect extends AbstractPacket {
         CustomEffect effect = (CustomEffect) StatusEffectController.getInstance().get(id);
         if (effect == null)
             effect = new CustomEffect();
-        effect.readFromNBT(Server.readNBT(in));
+        effect.readFromNBT(ByteBufUtils.readNBT(in));
         StatusEffectController.getInstance().saveEffect(effect);
         NetworkUtility.sendCustomEffectDataAll((EntityPlayerMP) player);
     }

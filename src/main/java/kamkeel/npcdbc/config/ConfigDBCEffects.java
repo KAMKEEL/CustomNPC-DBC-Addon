@@ -60,19 +60,35 @@ public class ConfigDBCEffects
 
     public final static String EXHAUST = "EXHAUST";
     public static int EXHAUST_TIME = 15;
-    public static boolean EXHAUST_ZENAKI = true;
+
+    public static boolean EXHAUST_ZENKAI = true;
+    public static int EXHAUST_ZENKAI_TIME = 15;
+
     public static boolean EXHAUST_OVERPOWER = true;
+    public static int EXHAUST_OVERPOWER_TIME = 15;
+
+    public static boolean EXHAUST_HUMANSPIRIT = true;
+    public static int EXHAUST_HUMANSPIRIT_TIME = 15;
+
+    public static boolean EXHAUST_COLDBLOODED = true;
+    public static int EXHAUST_COLDBLOODED_TIME = 15;
 
     public final static String DIVINE = "DIVINE";
     public final static String DIVINE_RACES = "DIVINE RACES";
     private static float divineMulti = 1;
     private static final HashMap<Integer, HashMap<String, Boolean>> divineApplicableForms = new HashMap<>();
 
-    public final static String HumanSpirit = "HumanSpirit";
-    public static double HumanSpiritStr = 1.0;
-    public static double HumanSpiritDex = 1.0;
-    public static double HumanSpiritWil = 1.0;
+    public final static String HumanSpirit = "HUMAN SPIRIT";
+    public static double HumanSpiritConBoostPercent = 20;
+    public static double HumanSpiritDexBoostPercent = 20;
     public static int HumanSpiritLength = 360;
+
+    public final static String Bloated = "BLOATED";
+    public static boolean AUTO_BLOATED = true; // Allow automatic application of the Bloated effect
+    public static int BLOATED_THRESHOLD = 5; // Maximum number of Senzus that can be consumed without penalty
+    public static int DECREASE_TIME = 100; // Time interval in ticks for consumption count decrease
+    public static int MAX_THRESHOLD_EXCEED = 5; // Maximum amount above threshold before triggering Bloated effect
+    public static int BLOATED_TIME = 300; // Duration of the Bloated effect in seconds (5 minutes)
 
     /**
      * Ugly, roundabout way of persisting configs between multiplayer and singleplayer.
@@ -161,10 +177,78 @@ public class ConfigDBCEffects
             config.addCustomCategoryComment(EXHAUST,
                 "Exhausted prevents specific effects from being applied to the player." +
                     "\nSimilar to Pain or NoFuse, it acts as a Cooldown");
-            EXHAUST_TIME = config.get(Potara, "Exhaust Time", 15, "Amount of Time in Minutes for Exhaust").getInt(15);
-            EXHAUST_ZENAKI = config.get(EXHAUST, "Exhaust Zenkai", true).getBoolean(true);
-            EXHAUST_OVERPOWER = config.get(EXHAUST, "Exhaust Overpower", true).getBoolean(true);
+            EXHAUST_TIME = config.get(EXHAUST, "0. Exhaust Time", 15, "Amount of Time in Minutes for Exhaust [Default Apply]").getInt(15);
+            EXHAUST_TIME = Math.max(EXHAUST_TIME, 0);
 
+            EXHAUST_ZENKAI = config.get(EXHAUST, "1. Exhaust Zenkai", true).getBoolean(true);
+            EXHAUST_ZENKAI_TIME = config.get(EXHAUST, "1. Exhaust Zenkai Time", 15, "Amount of Time in Minutes for Exhaust after Zenkai").getInt(15);
+            EXHAUST_ZENKAI_TIME = Math.max(EXHAUST_ZENKAI_TIME, 0);
+
+            EXHAUST_OVERPOWER = config.get(EXHAUST, "2. Exhaust Overpower", true).getBoolean(true);
+            EXHAUST_OVERPOWER_TIME = config.get(EXHAUST, "2. Exhaust Zenkai Time", 15, "Amount of Time in Minutes for Exhaust after Overpower").getInt(15);
+            EXHAUST_OVERPOWER_TIME = Math.max(EXHAUST_OVERPOWER_TIME, 0);
+
+            EXHAUST_HUMANSPIRIT = config.get(EXHAUST, "3. Exhaust Human Spirit", true).getBoolean(true);
+            EXHAUST_HUMANSPIRIT_TIME = config.get(EXHAUST, "3. Exhaust Human Spirit Time", 15, "Amount of Time in Minutes for Exhaust after Human Spirit").getInt(15);
+            EXHAUST_HUMANSPIRIT_TIME = Math.max(EXHAUST_HUMANSPIRIT_TIME, 0);
+
+            EXHAUST_COLDBLOODED = config.get(EXHAUST, "4. Exhaust Cold Blooded", true).getBoolean(true);
+            EXHAUST_COLDBLOODED_TIME = config.get(EXHAUST, "4. Exhaust Cold Blooded Time", 15, "Amount of Time in Minutes for Exhaust").getInt(15);
+            EXHAUST_COLDBLOODED_TIME = Math.max(EXHAUST_COLDBLOODED_TIME, 0);
+
+            // Configuration comment for Bloated settings
+            config.addCustomCategoryComment(Bloated,
+                "Settings related to the Bloated status effect." +
+                    "\nThis effect is applied when players consume too many Senzus." +
+                    "\n\nExample Config:" +
+                    "\nBLOATED_EFFECT {" +
+                    "\n  BLOATED_THRESHOLD: 20" +
+                    "\n  DECREASE_TIME: 5" +
+                    "\n  MAX_THRESHOLD_EXCEED: 5" +
+                    "\n  BLOATED_TIME: 300" +
+                    "\n}" +
+                    "\n\n--- Configuration Options ---" +
+                    "\n\nBLOATED_THRESHOLD: Maximum number of Senzus a player can safely consume within a specific time window." +
+                    "\n  - Strict Configuration: Set to a lower value (e.g., 10) for fewer Senzus before penalties." +
+                    "\n  - Lenient Configuration: Set to a higher value (e.g., 30) for more Senzus without penalty." +
+                    "\n  Example: Setting to 20 allows up to 20 Senzus without penalty." +
+                    "\n\nDECREASE_TIME: Time interval (in ticks) for the consumption count to decrease." +
+                    "\n  - Strict Configuration: Set to a smaller value (e.g., 3) for quicker reduction of the count." +
+                    "\n  - Lenient Configuration: Set to a larger value (e.g., 10) for slower decay of the count." +
+                    "\n  Example: Setting to 5 means the count is reduced every 5 ticks (0.25 seconds)." +
+                    "\n\nMAX_THRESHOLD_EXCEED: Maximum Senzus above the BLOATED_THRESHOLD before triggering the 'Bloated' effect." +
+                    "\n  - Strict Configuration: Set to a lower value (e.g., 2) for quicker triggering of the effect." +
+                    "\n  - Lenient Configuration: Set to a higher value (e.g., 10) for more excess consumption allowed." +
+                    "\n  Example: Setting to 5 means consuming 5 more Senzus leads to 'Bloated'." +
+                    "\n\nBLOATED_TIME: Duration (in seconds) for which the 'Bloated' effect lasts." +
+                    "\n  - Strict Configuration: Set to a lower value (e.g., 10) for shorter effect duration." +
+                    "\n  - Lenient Configuration: Set to a higher value (e.g., 60) for prolonged penalties." +
+                    "\n  Example: Setting to 300 means the effect lasts for 5 minutes (300 seconds).");
+
+            AUTO_BLOATED = config.get(Bloated, "Automatic Bloated", true,
+                    "Allow the bloated status effect to be automatically given using the threshold mechanic")
+                .getBoolean(true);
+
+            BLOATED_THRESHOLD = config.get(Bloated, "Bloated Threshold", 5,
+                    "Maximum number of Senzus a player can safely consume within a specific time window." +
+                        "\nExample: Setting to 20 means a player can consume up to 20 Senzus without penalty.")
+                .getInt(20);
+
+            DECREASE_TIME = config.get(Bloated, "Decrease Time", 100,
+                    "Time interval (in ticks) at which the player's consumption count is decreased." +
+                        "\nExample: Setting to 100 means that every 100 ticks (5 seconds), the count is reduced by 1.")
+                .getInt(100);
+
+            MAX_THRESHOLD_EXCEED = config.get(Bloated, "Max Threshold", 3,
+                    "Maximum amount of Senzus a player can consume above the BLOATED THRESHOLD" +
+                        "\nbefore triggering the 'Bloated' effect." +
+                        "\nExample: Setting to 3 means consuming 3 more Senzus leads to 'Bloated'.")
+                .getInt(10);
+
+            BLOATED_TIME = config.get(Bloated, "Bloated Time", 300, // Config in seconds
+                    "Duration (in seconds) for which the 'Bloated' effect will be applied automatically." +
+                        "\nExample: Setting to 300 means the effect lasts for 5 minutes (300 seconds).")
+                .getInt(300);
 
             config.addCustomCategoryComment(DIVINE,
                 "Forms can now benefit from an additional multi" +

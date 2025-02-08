@@ -29,7 +29,6 @@ import net.minecraft.util.StatCollector;
 import noppes.npcs.client.NoppesUtil;
 import org.lwjgl.opengl.GL11;
 
-import java.lang.Class;
 import java.net.URI;
 import java.text.DecimalFormat;
 import java.util.Arrays;

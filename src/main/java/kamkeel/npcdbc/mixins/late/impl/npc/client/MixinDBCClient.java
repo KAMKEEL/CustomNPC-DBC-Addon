@@ -1,12 +1,12 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
-import kamkeel.addon.client.DBCClient;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.gui.SubGuiDBCProperties;
 import kamkeel.npcdbc.client.gui.global.auras.GuiNPCManageAuras;
 import kamkeel.npcdbc.client.gui.global.form.GuiNPCManageForms;
 import kamkeel.npcdbc.client.gui.inventory.GuiDBC;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
+import kamkeel.npcs.addon.client.DBCClient;
 import net.minecraft.entity.EntityLivingBase;
 import noppes.npcs.client.gui.mainmenu.GuiNpcStats;
 import noppes.npcs.client.gui.player.inventory.GuiCNPCInventory;

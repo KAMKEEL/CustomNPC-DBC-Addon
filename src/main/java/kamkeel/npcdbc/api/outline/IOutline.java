@@ -1,7 +1,5 @@
 package kamkeel.npcdbc.api.outline;
 
-import kamkeel.npcdbc.data.outline.Outline;
-
 public interface IOutline {
 
     void setInnerColor(int color, float alpha);

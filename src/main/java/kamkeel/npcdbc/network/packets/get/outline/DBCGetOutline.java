@@ -5,11 +5,12 @@ import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketGet;
+import kamkeel.npcdbc.network.AbstractPacket;
+import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.Server;
-import noppes.npcs.constants.EnumPacketClient;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketChannel;
 
@@ -52,6 +53,6 @@ public final class DBCGetOutline extends AbstractPacket {
                 compound.setString("Type", "ViewOutline");
             }
         }
-        Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+        GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
     }
 }

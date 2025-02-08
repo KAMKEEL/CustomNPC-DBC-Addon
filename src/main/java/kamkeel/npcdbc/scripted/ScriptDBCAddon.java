@@ -16,6 +16,7 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -117,6 +118,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         dbcData.setTurboState(on);
     }
 
+
     /**
      * @return Player's max body
      */
@@ -184,6 +186,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                 newstats[i] = (int) ((double) (stats[i] + attri[i]) * multi);
                 nbt.setInteger(JRMCoreH.AttrbtNbtI[i], newstats[i]);
             }
+
             this.setBody(getMaxBody());
             this.setKi(getMaxKi());
             this.setStamina(getMaxStamina());
@@ -366,6 +369,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                 found = true;
                 isGoDOn = true;
                 break;
+
         }
         if (found) {
             String nonracial = nbt.getString("jrmcFormMasteryNonRacial");
@@ -408,6 +412,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                     state = i;
                     found = true;
                     JRMCoreH.changeFormMasteriesValue(player, amount, amountKK, add, race, state, state2, isKaiokenOn, isMysticOn, isUltraInstinctOn, isGoDOn, -1);
+
                 }
             }
         }
@@ -439,6 +444,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             case "godofdestruction":
                 found = true;
                 break;
+
         }
         if (found) {
             String nonracial = nbt.getString("jrmcFormMasteryNonRacial");
@@ -572,6 +578,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         str = str.substring(0, str.length() - 1);
         nbt.setString("jrmcMajinAbsorptionData", str);
     }
+
 
     /**
      * @return True if player is currently KO
@@ -1020,6 +1027,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void removeAuraSelection() {
         PlayerDBCInfo AuraData = PlayerDataUtil.getDBCInfo(player);
+        AuraData.selectedAura = -1;
+        AuraData.updateClient();
+    }
+
+    @Override
+    public void removeCurrentAura() {
+        PlayerDBCInfo AuraData = PlayerDataUtil.getDBCInfo(player);
+        AuraData.currentAura = -1;
         AuraData.selectedAura = -1;
         AuraData.updateClient();
     }

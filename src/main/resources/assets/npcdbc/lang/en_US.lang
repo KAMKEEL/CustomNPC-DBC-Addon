@@ -14,6 +14,7 @@ global.customauras=Auras
 global.customoutlines=Outlines
 
 stats.dbcsettings=DBC Settings
+inventory.extras=Extras
 
 gui.clone=Clone
 
@@ -226,6 +227,10 @@ display.kettleOnly=Kettle only
 display.kettlePlusAura=Kettle + Aura
 display.revampAura=Revamped
 display.dbcAura=DBC
+display.bloom=Bloom
+display.outlines=Outlines
+display.shaders=Shaders
+display.firstPersonAura=1st Person Aura Opacity
 
 outline.noiseSize=Noise Size
 outline.colorSmoothness=Color Smoothness
@@ -293,6 +298,8 @@ npcdbc.inventory.willpower=Will Power
 npcdbc.inventory.mastery=Mastery
 npcdbc.inventory.selected=Selected
 npcdbc.inventory.noauraselected=No Aura Selected
+npcdbc.inventory.tweaks=Tweaks
+npcdbc.inventory.revampAura=Revamped Aura
 
 npcdbc.inventory.stackable.dbc=DBC
 npcdbc.inventory.stackable.kk=KK
@@ -361,6 +368,9 @@ npcdbc.transform=Transformed to
 npcdbc.descend=Descended to
 npcdbc.descendFrom=Descended from
 npcdbc.timeExpired=Timer has run out!
+npcdbc.full=You are beginning to bloat!
+npcdbc.bloated=You are now bloated
+npcdbc.humanSpiritMessage=You feel your body empower with your Human Spirit!
 
 ############################
 ## ITEMS

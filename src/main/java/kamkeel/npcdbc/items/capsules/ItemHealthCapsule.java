@@ -11,6 +11,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -102,7 +103,7 @@ public class ItemHealthCapsule extends Item {
             meta = 0;
 
         EnumHealthCapsules healthCapsules = EnumHealthCapsules.values()[meta];
-        UUID playerUUID = player.getUniqueID();
+        UUID playerUUID = Utility.getUUID(player);
         long remainingTime = CapsuleController.canUseHealthCapsule(playerUUID, meta);
         if(remainingTime > 0){
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));

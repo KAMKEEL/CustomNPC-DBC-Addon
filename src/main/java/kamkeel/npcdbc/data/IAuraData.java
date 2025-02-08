@@ -6,7 +6,6 @@ import net.minecraft.entity.Entity;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Queue;
 
 public interface IAuraData {
     public EntityAura getAuraEntity();

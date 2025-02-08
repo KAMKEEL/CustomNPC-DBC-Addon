@@ -6,11 +6,11 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
+import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.Server;
-import noppes.npcs.constants.EnumPacketClient;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketChannel;
 
@@ -59,7 +59,7 @@ public final class DBCRequestForm extends AbstractPacket {
             if (customForm != null) {
                 NBTTagCompound compound = customForm.writeToNBT();
                 compound.setString("PACKETTYPE", "Form");
-                Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
+                GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
             }
         } else if (onlyPlayers) {
             NetworkUtility.sendPlayersForms(player, menuName);
