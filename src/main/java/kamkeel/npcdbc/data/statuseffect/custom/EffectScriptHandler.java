@@ -2,23 +2,46 @@ package kamkeel.npcdbc.data.statuseffect.custom;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.Event;
-import kamkeel.npcdbc.api.event.IDBCEvent;
+import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.ByteBufUtils;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants;
 import noppes.npcs.controllers.ScriptContainer;
+import noppes.npcs.controllers.ScriptController;
 import noppes.npcs.controllers.data.IScriptHandler;
 
+import java.io.IOException;
 import java.util.*;
 
 public class EffectScriptHandler implements IScriptHandler {
     public ScriptContainer container;
-    public List<ScriptContainer> scriptContainers = Arrays.asList(new ScriptContainer[]{new ScriptContainer(this)});
     public String scriptLanguage = "ECMAScript";
     public boolean enabled = false;
-    public boolean hasInited = false;
     private CustomEffect effect;
 
     public EffectScriptHandler(CustomEffect effect) {
         this.effect = effect;
+    }
+
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        compound.setString("ScriptLanguage", scriptLanguage);
+        compound.setBoolean("ScriptEnabled", enabled);
+
+        if (container != null)
+            compound.setTag("ScriptContent", container.writeToNBT(new NBTTagCompound()));
+        return compound;
+    }
+
+    public EffectScriptHandler readFromNBT(NBTTagCompound compound) {
+        scriptLanguage = compound.getString("ScriptLanguage");
+        enabled = compound.getBoolean("ScriptEnabled");
+
+        if (compound.hasKey("ScriptContent", Constants.NBT.TAG_COMPOUND)) {
+            container = new ScriptContainer(this);
+            container.readFromNBT(compound.getCompoundTag("ScriptContent"));
+        }
+        return this;
     }
 
     public void callScript(ScriptType type, DBCPlayerEvent.EffectEvent event) {
@@ -104,6 +127,36 @@ public class EffectScriptHandler implements IScriptHandler {
         while(var1.hasNext()) {
             ScriptContainer script = (ScriptContainer)var1.next();
             script.console.clear();
+        }
+    }
+
+    public void saveScript(ByteBuf buffer) throws IOException {
+        int tab = buffer.readInt();
+        int totalScripts = buffer.readInt();
+        if (totalScripts == 0) {
+            this.container = null;
+        }
+
+        if (tab >= 0) {
+            if (totalScripts == 0) {
+                this.container = null;
+                return;
+            }
+            NBTTagCompound tabCompound = ByteBufUtils.readNBT(buffer);
+            ScriptContainer script = new ScriptContainer(this);
+            script.readFromNBT(tabCompound);
+            this.container = script;
+        } else {
+            NBTTagCompound compound = ByteBufUtils.readNBT(buffer);
+            this.setLanguage(compound.getString("ScriptLanguage"));
+            if (!ScriptController.Instance.languages.containsKey(this.getLanguage())) {
+                if (!ScriptController.Instance.languages.isEmpty()) {
+                    this.setLanguage((String) ScriptController.Instance.languages.keySet().toArray()[0]);
+                } else {
+                    this.setLanguage("ECMAScript");
+                }
+            }
+            this.setEnabled(compound.getBoolean("ScriptEnabled"));
         }
     }
 

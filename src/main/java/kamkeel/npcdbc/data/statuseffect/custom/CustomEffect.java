@@ -105,7 +105,6 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
 
     @Override
     public ICustomEffect save() {
-
         return StatusEffectController.getInstance().saveEffect(this);
     }
 
@@ -156,9 +155,9 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
 
 //        if (saveScripts && scriptContainer != null) {
         if (saveScripts) {
-//            NBTTagCompound scriptData = new NBTTagCompound();
-//            scriptContainer.writeToNBT(scriptData);
-//            compound.setTag("ScriptData", scriptData);
+            NBTTagCompound scriptData = new NBTTagCompound();
+            script.writeToNBT(scriptData);
+            compound.setTag("ScriptData", scriptData);
         }
 
         return compound;
@@ -183,12 +182,9 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         icon = compound.getString("icon");
         lossOnDeath = compound.getBoolean("lossOnDeath");
 
-//        if (compound.hasKey("Scripts")) {
-////            scriptContainer = new ScriptContainer(this);
-////            scriptContainer.readFromNBT(compound.getCompoundTag("ScriptData"));
-//        } else {
-////            scriptContainer = null;
-//        }
+        if (compound.hasKey("ScriptData", Constants.NBT.TAG_COMPOUND)) {
+            script.readFromNBT(compound.getCompoundTag("ScriptData"));
+        }
 
     }
 

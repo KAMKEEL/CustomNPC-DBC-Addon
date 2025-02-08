@@ -4,6 +4,7 @@ import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.data.statuseffect.custom.EffectScriptHandler;
 import kamkeel.npcdbc.network.PacketClient;
 import kamkeel.npcdbc.network.packets.request.effect.DBCRequestEffectScript;
+import kamkeel.npcdbc.network.packets.request.effect.DBCSaveEffectScript;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiConfirmOpenLink;
 import net.minecraft.client.gui.GuiYesNo;
@@ -11,6 +12,7 @@ import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.StatCollector;
+import noppes.npcs.NBTTags;
 import noppes.npcs.NoppesStringUtils;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.util.*;
@@ -371,6 +373,17 @@ public class GuiDBCEffectScript extends GuiNPCInterface implements GuiYesNoCallb
 
     public void save() {
         this.setScript();
+
+        List<ScriptContainer> containers = this.scriptHandler.getScripts();
+        for (int i = 0; i < containers.size(); i++) {
+            ScriptContainer container = containers.get(i);
+            DBCSaveEffectScript.Save(effect.id, i, containers.size(), container.writeToNBT(new NBTTagCompound()));
+        }
+        NBTTagCompound scriptData = new NBTTagCompound();
+        scriptData.setString("ScriptLanguage", this.scriptHandler.getLanguage());
+        scriptData.setBoolean("ScriptEnabled", this.scriptHandler.getEnabled());
+        scriptData.setTag("ScriptConsole", NBTTags.NBTLongStringMap(this.scriptHandler.getConsoleText()));
+        DBCSaveEffectScript.Save(effect.id, -1, containers.size(), scriptData);
     }
 
     public void textUpdate(String text) {

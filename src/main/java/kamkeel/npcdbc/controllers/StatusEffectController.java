@@ -364,7 +364,7 @@ public class StatusEffectController implements IStatusEffectHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            nbtTagCompound = ((CustomEffect) customEffect).writeToNBT(false);
+            nbtTagCompound = ((CustomEffect) customEffect).writeToNBT(true);
             PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1));
         } catch (Exception e) {
             LogWriter.except(e);
