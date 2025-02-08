@@ -44,6 +44,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.client.renderer.RenderCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.input.Mouse;
@@ -51,6 +52,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import java.nio.FloatBuffer;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import static kamkeel.npcdbc.client.shader.PostProcessing.*;
@@ -62,6 +64,7 @@ public class RenderEventHandler {
     @SideOnly(Side.CLIENT)
     public static boolean renderingPlayerInGUI = false;
     public static final int TAIL_STENCIL_ID = 2;
+
 
     @SubscribeEvent
     public void renderPotaraWhenFused(RenderPlayerEvent.SetArmorModel event) {

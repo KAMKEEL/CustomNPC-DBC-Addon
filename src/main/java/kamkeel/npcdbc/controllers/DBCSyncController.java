@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.controllers;
 
+import kamkeel.npcdbc.client.ClientCache;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
@@ -10,6 +12,7 @@ import kamkeel.npcdbc.network.packets.get.DBCInfoSync;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.constants.EnumPacketClient;
 
 import java.util.HashMap;
@@ -67,18 +70,18 @@ public class DBCSyncController {
 
         list = new NBTTagList();
         compound = new NBTTagCompound();
-//        for (CustomEffect effect : StatusEffectController.getInstance().customEffects.values()) {
-//            list.appendTag(effect.writeToNBT(false));
-//                if(list.tagCount() >5) {
-//                    compound = new NBTTagCompound();
-//                    compound.setTag("Data", list);
-//                    PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_ADD, compound, -1), player);
-//                    list = new NBTTagList();
-//                }
-//        }
+        for (CustomEffect effect : StatusEffectController.getInstance().customEffects.values()) {
+            list.appendTag(effect.writeToNBT(false));
+                if(list.tagCount() >5) {
+                    compound = new NBTTagCompound();
+                    compound.setTag("Data", list);
+                    PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_ADD, compound, -1), player);
+                    list = new NBTTagList();
+                }
+        }
         compound = new NBTTagCompound();
         compound.setTag("Data", list);
-        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_ADD, compound, -1), player);
+        PacketHandler.Instance.sendToPlayer(new DBCInfoSync(DBCSyncType.CUSTOM_EFFECT, EnumPacketClient.SYNC_END, compound, -1), player);
     }
 
     public static void clientSync(int synctype, NBTTagCompound compound, boolean syncEnd) {
@@ -119,7 +122,8 @@ public class DBCSyncController {
             NBTTagList list = compound.getTagList("Data", 10);
             for (int i = 0; i < list.tagCount(); i++) {
                 CustomEffect effect = new CustomEffect();
-                effect.readFromNBT(list.getCompoundTagAt(i), false);
+                effect.readFromNBT(list.getCompoundTagAt(i));
+                ClientCacheHandler.getImageData(effect.icon);
                 StatusEffectController.getInstance().customEffectsSync.put(effect.id, effect);
             }
             if (syncEnd) {
@@ -144,7 +148,8 @@ public class DBCSyncController {
             OutlineController.getInstance().customOutlines.put(outline.id, outline);
         } else if (synctype == DBCSyncType.CUSTOM_EFFECT) {
             CustomEffect effect = new CustomEffect();
-            effect.readFromNBT(compound, false);
+            effect.readFromNBT(compound);
+            ClientCacheHandler.getImageData(effect.icon);
             StatusEffectController.Instance.customEffects.put(effect.id, effect);
         }
     }

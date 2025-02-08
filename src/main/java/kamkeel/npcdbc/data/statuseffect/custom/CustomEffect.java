@@ -163,7 +163,7 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         return compound;
     }
 
-    public void readFromNBT(NBTTagCompound compound, boolean fromSavePacket) {
+    public void readFromNBT(NBTTagCompound compound) {
         if (compound.hasKey("ID"))
             id = compound.getInteger("ID");
         else
@@ -190,7 +190,7 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
 
     public CustomEffect clone() {
         CustomEffect newEffect = new CustomEffect();
-        newEffect.readFromNBT(this.writeToNBT(true), false);
+        newEffect.readFromNBT(this.writeToNBT(true));
         return newEffect;
     }
 

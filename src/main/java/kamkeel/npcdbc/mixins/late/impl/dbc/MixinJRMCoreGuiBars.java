@@ -8,6 +8,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.gui.dbc.AbstractJRMCGui;
 import kamkeel.npcdbc.client.gui.dbc.JRMCoreLabel;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
@@ -15,6 +16,8 @@ import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
+import noppes.npcs.client.ClientCacheHandler;
+import noppes.npcs.client.renderer.ImageData;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -93,7 +96,8 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
 
     @Unique
     private void drawIcon(int x, int y, String iconDir, int iconX, int iconY) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(iconDir));
+//        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(iconDir));
+        ClientCacheHandler.getImageData(iconDir).bindTexture();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float w = 100f;
         int w2 = (int) (0.16F * (100.0F - w));
@@ -156,5 +160,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
                 return "ResourceID " + resourceID;
         }
     }
+
+
 
 }

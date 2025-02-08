@@ -103,7 +103,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
     @Override
     public void setGuiData(NBTTagCompound compound) {
         this.effect = new CustomEffect();
-        effect.readFromNBT(compound, false);
+        effect.readFromNBT(compound);
         setSelected(effect.name);
 
         if (effect.id != -1) {

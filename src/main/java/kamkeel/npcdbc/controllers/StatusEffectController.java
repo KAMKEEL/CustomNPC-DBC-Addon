@@ -490,7 +490,7 @@ public class StatusEffectController implements IStatusEffectHandler {
                     continue;
                 try {
                     CustomEffect effect = new CustomEffect();
-                    effect.readFromNBT(NBTJsonUtil.LoadFile(file), false);
+                    effect.readFromNBT(NBTJsonUtil.LoadFile(file));
                     effect.name = file.getName().substring(0, file.getName().length() - 5);
 
                     if (effect.id == -1) {

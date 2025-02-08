@@ -66,7 +66,7 @@ public class DBCSaveEffect extends AbstractPacket {
         CustomEffect effect = (CustomEffect) StatusEffectController.getInstance().get(id);
         if (effect == null)
             effect = new CustomEffect();
-        effect.readFromNBT(Server.readNBT(in), true);
+        effect.readFromNBT(Server.readNBT(in));
         StatusEffectController.getInstance().saveEffect(effect);
         NetworkUtility.sendCustomEffectDataAll((EntityPlayerMP) player);
     }
