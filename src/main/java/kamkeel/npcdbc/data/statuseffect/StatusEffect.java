@@ -15,19 +15,29 @@ public class StatusEffect implements IStatusEffect {
 
     public String icon = "";
     public int iconX = 0, iconY = 0;
-    boolean isCustom = false;
+    public final boolean isCustom;
 
     public StatusEffect() {
+        this(false);
+    }
+
+    protected StatusEffect(boolean isCustom) {
+        this.isCustom = isCustom;
     }
 
     @Override
-    public int getId() {
+    public int getID() {
         return id;
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean isCustom() {
+        return isCustom;
     }
 
     public void runEffect(EntityPlayer player, PlayerEffect playerEffect) {

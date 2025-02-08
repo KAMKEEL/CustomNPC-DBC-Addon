@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.api.effect;
 
+import kamkeel.npcdbc.data.statuseffect.CustomEffect;
 import noppes.npcs.api.entity.IPlayer;
 
 public interface IStatusEffectHandler {
@@ -52,4 +53,6 @@ public interface IStatusEffectHandler {
     void removeEffect(IPlayer player, IStatusEffect effect);
 
     void clearEffects(IPlayer player);
+
+    ICustomEffect saveEffect(ICustomEffect customEffect);
 }

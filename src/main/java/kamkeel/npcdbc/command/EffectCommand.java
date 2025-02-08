@@ -62,7 +62,7 @@ public class EffectCommand extends CommandKamkeelBase {
         }
 
         for (PlayerData playerdata : data) {
-            StatusEffectController.getInstance().applyEffect(playerdata.player, statusEffect.getId(), time);
+            StatusEffectController.getInstance().applyEffect(playerdata.player, statusEffect.getID(), time);
             sendResult(sender, String.format("%s §agiven to §7'§b%s§7'", statusEffect.getName(), playerdata.playername));
             if (sender != playerdata.player) {
                 sendResult(playerdata.player, String.format("§Effect §7%s §aadded.", statusEffect.getName()));
@@ -92,7 +92,7 @@ public class EffectCommand extends CommandKamkeelBase {
         }
 
         for (PlayerData playerData : data) {
-            StatusEffectController.getInstance().removeEffect(playerData.player, statusEffect.getId());
+            StatusEffectController.getInstance().removeEffect(playerData.player, statusEffect.getID());
             sendResult(sender, String.format("Effect %s removed from %s", statusEffect.getName(), playerData.playername));
         }
     }

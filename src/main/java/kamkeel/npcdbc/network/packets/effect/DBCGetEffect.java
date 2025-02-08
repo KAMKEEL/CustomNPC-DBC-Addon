@@ -7,10 +7,14 @@ import kamkeel.npcdbc.network.AbstractPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.CustomNpcsPermissions;
 import noppes.npcs.Server;
 import noppes.npcs.constants.EnumPacketClient;
 
 import java.io.IOException;
+
+import static kamkeel.npcdbc.network.DBCAddonPermissions.GLOBAL_DBCAURA;
+import static kamkeel.npcdbc.network.DBCAddonPermissions.GLOBAL_DBCEFFECT;
 
 public final class DBCGetEffect extends AbstractPacket {
     public static final String packetName = "NPC|GetEffect";
@@ -35,12 +39,12 @@ public final class DBCGetEffect extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-         effectID = in.readInt();
+        effectID = in.readInt();
         NBTTagCompound compound = new NBTTagCompound();
         if (effectID != -1 && StatusEffectController.getInstance().has(effectID)) {
             CustomEffect Effect = (CustomEffect) StatusEffectController.getInstance().get(effectID);
             if (Effect != null) {
-                compound = Effect.writeToNBT(true);
+                compound = Effect.writeToNBT(CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCEFFECT));
                 compound.setString("Type", "ViewEffect");
             }
         }

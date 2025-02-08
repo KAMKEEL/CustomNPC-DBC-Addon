@@ -24,4 +24,10 @@ public interface ICustomEffect extends IStatusEffect {
     boolean isLossOnDeath();
 
     void setLossOnDeath(boolean lossOnDeath);
+
+    ICustomEffect save();
+
+    void setID(int id);
 }
+
+

@@ -45,7 +45,7 @@ public final class DBCRequestEffect extends AbstractPacket {
                 Server.sendData((EntityPlayerMP) player, EnumPacketClient.GUI_DATA, compound);
             }
         } else {
-            NetworkUtility.sendCustomOutlineDataAll((EntityPlayerMP) player);
+            NetworkUtility.sendCustomEffectDataAll((EntityPlayerMP) player);
         }
     }
 }

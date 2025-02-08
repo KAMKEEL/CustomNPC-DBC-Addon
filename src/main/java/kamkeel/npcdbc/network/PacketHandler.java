@@ -9,6 +9,10 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.network.packets.*;
 import kamkeel.npcdbc.network.packets.aura.*;
+import kamkeel.npcdbc.network.packets.effect.DBCGetEffect;
+import kamkeel.npcdbc.network.packets.effect.DBCRemoveEffect;
+import kamkeel.npcdbc.network.packets.effect.DBCRequestEffect;
+import kamkeel.npcdbc.network.packets.effect.DBCSaveEffect;
 import kamkeel.npcdbc.network.packets.form.*;
 import kamkeel.npcdbc.network.packets.outline.DBCGetOutline;
 import kamkeel.npcdbc.network.packets.outline.DBCRemoveOutline;
@@ -57,6 +61,11 @@ public final class PacketHandler {
         map.put(DBCGetOutline.packetName, new DBCGetOutline());
         map.put(DBCSaveOutline.packetName, new DBCSaveOutline());
         map.put(DBCUpdateLockOn.packetName, new DBCUpdateLockOn());
+
+        map.put(DBCSaveEffect.packetName, new DBCSaveEffect());
+        map.put(DBCRemoveEffect.packetName, new DBCRemoveEffect());
+        map.put(DBCGetEffect.packetName, new DBCGetEffect());
+        map.put(DBCRequestEffect.packetName, new DBCRequestEffect());
 
         map.put(DBCRequestFormWheel.packetName, new DBCRequestFormWheel());
         map.put(DBCSaveFormWheel.packetName, new DBCSaveFormWheel());

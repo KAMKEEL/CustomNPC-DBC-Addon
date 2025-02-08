@@ -24,7 +24,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -55,8 +54,8 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
             if (effect.icon.length() > 3) {
                 drawIcon(var51 + i.get(), var61 + j.get(), effect.icon, effect.iconX, effect.iconY);
                 String text = effect.getName();
-                if(dbcData.stats.getPlayerEffects().containsKey(effect.getId())){
-                    PlayerEffect pe = current.get(effect.getId());
+                if(dbcData.stats.getPlayerEffects().containsKey(effect.getID())){
+                    PlayerEffect pe = current.get(effect.getID());
                     if(pe.getDuration() != -100)
                         text += "\nTime: " + pe.getDuration() + "s";
                     else

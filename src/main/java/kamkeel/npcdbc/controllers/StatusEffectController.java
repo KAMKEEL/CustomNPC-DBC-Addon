@@ -1,22 +1,35 @@
 package kamkeel.npcdbc.controllers;
 
+import kamkeel.npcdbc.api.effect.ICustomEffect;
 import kamkeel.npcdbc.api.effect.IStatusEffect;
 import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
+import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.statuseffect.CustomEffect;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.types.*;
+import kamkeel.npcdbc.network.PacketHandler;
+import kamkeel.npcdbc.network.packets.DBCInfoSync;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import noppes.npcs.CustomNpcs;
+import noppes.npcs.LogWriter;
 import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.constants.EnumPacketClient;
+import noppes.npcs.util.NBTJsonUtil;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.zip.GZIPInputStream;
 
 public class StatusEffectController implements IStatusEffectHandler {
 
@@ -27,7 +40,8 @@ public class StatusEffectController implements IStatusEffectHandler {
     //      ...
     //      Fucking Liar - Hussar (respectfully)
 //    public HashMap<Integer, CustomEffect> customEffectsSync = new HashMap<>();
-//    public HashMap<Integer, CustomEffect> customEffects = new HashMap<>();
+    public HashMap<Integer, CustomEffect> customEffects = new HashMap<>();
+    private HashMap<Integer, String> bootOrder;
     private int lastUsedID = Effects.CUSTOM_EFFECT;
 
     public ConcurrentHashMap<UUID, Map<Integer, PlayerEffect>> playerEffects = new ConcurrentHashMap<>();
@@ -61,7 +75,14 @@ public class StatusEffectController implements IStatusEffectHandler {
         standardEffects.put(Effects.HUMAN_SPIRIT, new Exhausted()); // TODO: Finish it
         standardEffects.put(Effects.COLD_BLOODED, new Exhausted()); // TODO: Finish it
         standardEffects.put(Effects.KI_DEFENSE, new Exhausted()); // TODO: Finish it
+
+        bootOrder = new HashMap<>();
+        LogWriter.info("Loading custom effects...");
+        readCustomEffectMap();
+        loadCustomEffects();
+        LogWriter.info("Done loading custom effects.");
     }
+
 
     public void runEffects(EntityPlayer player) {
         Map<Integer, PlayerEffect> current = getPlayerEffects(player);
@@ -106,14 +127,14 @@ public class StatusEffectController implements IStatusEffectHandler {
         CustomEffect effect = new CustomEffect();
         effect.name = name;
 
-//        if (effect.id == -1) {
-//            int  id = getUnusedId();
-//            while (customEffects.containsKey(id)) {
-//                id = getUnusedId();
-//            }
-//            effect.id = id;
-//        }
-//        customEffects.put(effect.id, effect);
+        if (effect.id == -1) {
+            int  id = getUnusedId();
+            while (customEffects.containsKey(id)) {
+                id = getUnusedId();
+            }
+            effect.id = id;
+        }
+        customEffects.put(effect.id, effect);
         return effect;
     }
 
@@ -124,23 +145,23 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     @Override
     public void deleteEffect(String name) {
-        IStatusEffect effect = getEffect(name);
-//        if (effect != null)
-//            customEffects.remove(effect.getId());
+        IStatusEffect effect = getEffect(name);;
+        if (effect != null && effect.isCustom())
+            customEffects.remove(effect.getID());
     }
 
     public void delete(int id) {
         IStatusEffect effect = get(id);
-//        if (effect != null)
-//            customEffects.remove(effect.getId());
+        if (effect != null && effect.isCustom())
+            customEffects.remove(effect.getID());
     }
 
 
     public int getUnusedId() {
-//        for (int catid : customEffects.keySet()) {
-//            if (catid > lastUsedID)
-//                lastUsedID = catid;
-//        }
+        for (int catid : customEffects.keySet()) {
+            if (catid > lastUsedID)
+                lastUsedID = catid;
+        }
         lastUsedID++;
         return lastUsedID;
     }
@@ -152,19 +173,21 @@ public class StatusEffectController implements IStatusEffectHandler {
             }
         }
 
-//        for (CustomEffect effect : customEffects.values()) {
-//            if (effect.getName().equalsIgnoreCase(name)) {
-//                return effect;
-//            }
-//        }
+        for (CustomEffect effect : customEffects.values()) {
+            if (effect.getName().equalsIgnoreCase(name)) {
+                return effect;
+            }
+        }
 
         return null;
     }
 
     public StatusEffect get(int id) {
-        StatusEffect statusEffect = standardEffects.get(id);
-//        if (statusEffect == null)
-//            statusEffect = customEffects.get(id);
+        StatusEffect statusEffect;
+        if (id < 200)
+            statusEffect = standardEffects.get(id);
+        else
+            statusEffect = customEffects.get(id);
 
         return statusEffect;
     }
@@ -239,7 +262,7 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     @Override
     public boolean hasEffect(IPlayer player, IStatusEffect effect) {
-        return hasEffect(player, effect.getId());
+        return hasEffect(player, effect.getID());
     }
 
     @Override
@@ -251,7 +274,7 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     @Override
     public int getEffectDuration(IPlayer player, IStatusEffect effect) {
-        return getEffectDuration(player, effect.getId());
+        return getEffectDuration(player, effect.getID());
     }
 
     @Override
@@ -263,7 +286,7 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     @Override
     public void applyEffect(IPlayer player, IStatusEffect effect, int duration, byte level) {
-        applyEffect(player, effect.getId(), duration, level);
+        applyEffect(player, effect.getID(), duration, level);
     }
 
     @Override
@@ -275,7 +298,7 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     @Override
     public void removeEffect(IPlayer player, IStatusEffect effect) {
-        removeEffect(player, effect.getId());
+        removeEffect(player, effect.getID());
     }
 
     @Override
@@ -283,6 +306,44 @@ public class StatusEffectController implements IStatusEffectHandler {
         if (player == null || player.getMCEntity() == null)
             return;
         clearEffects(player.getMCEntity());
+    }
+
+    @Override
+    public ICustomEffect saveEffect(ICustomEffect customEffect) {
+        if (customEffect.getID() < 0) {
+            customEffect.setID(getUnusedId());
+            while (has(customEffect.getName()))
+                customEffect.setName(customEffect.getName() + "_");
+        } else {
+            CustomEffect existing = customEffects.get(customEffect.getID());
+            if (existing != null && !existing.name.equals(customEffect.getName()))
+                while (has(customEffect.getName()))
+                    customEffect.setName(customEffect.getName() + "_");
+        }
+
+        customEffects.remove(customEffect.getID());
+        customEffects.put(customEffect.getID(), (CustomEffect) customEffect);
+
+        saveEffectLoadMap();
+
+        File dir = this.getDir();
+        if (!dir.exists())
+            dir.mkdirs();
+
+        File file = new File(dir, customEffect.getName() + ".json_new");
+        File file2 = new File(dir, customEffect.getName() + ".json");
+
+        try {
+            NBTTagCompound nbtTagCompound = ((CustomEffect) customEffect).writeToNBT(true);
+            NBTJsonUtil.SaveFile(file, nbtTagCompound);
+            if (file2.exists())
+                file2.delete();
+            file.renameTo(file2);
+            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.FORM, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1).generatePacket());
+        } catch (Exception e) {
+            LogWriter.except(e);
+        }
+        return customEffects.get(customEffect.getID());
     }
 
     public void clearEffects(Entity player) {
@@ -381,6 +442,144 @@ public class StatusEffectController implements IStatusEffectHandler {
                 continue;
             }
             effect.duration--;
+        }
+    }
+
+    public File getMapDir() {
+        File dir = CustomNpcs.getWorldSaveDirectory();
+        if (!dir.exists())
+            dir.mkdir();
+        return dir;
+    }
+    private void loadCustomEffects() {
+        customEffects.clear();
+
+        File dir = getDir();
+        if (!dir.exists()) {
+            dir.mkdir();
+        } else {
+            for (File file : dir.listFiles()) {
+                if (!file.isFile() || !file.getName().endsWith(".json"))
+                    continue;
+                try {
+                    CustomEffect effect = new CustomEffect();
+                    effect.readFromNBT(NBTJsonUtil.LoadFile(file));
+                    effect.name = file.getName().substring(0, file.getName().length() - 5);
+
+                    if (effect.id == -1) {
+                        effect.id = getUnusedId();
+                    }
+
+                    int originalID = effect.id;
+                    int setID = effect.id;
+                    while (bootOrder.containsKey(setID) || customEffects.containsKey(setID)) {
+                        if (bootOrder.containsKey(setID))
+                            if (bootOrder.get(setID).equals(effect.name))
+                                break;
+
+                        setID++;
+                    }
+
+                    effect.id = setID;
+                    if (originalID != setID) {
+                        LogWriter.info("Found Custom Effect ID Mismatch: " + effect.name + ", New ID: " + setID);
+                        effect.save();
+                    }
+
+                    customEffects.put(effect.id, effect);
+                } catch (Exception e) {
+                    LogWriter.error("Error loading: " + file.getAbsolutePath(), e);
+                }
+            }
+        }
+        saveEffectLoadMap();
+    }
+
+    private File getDir() {
+        return new File(CustomNpcs.getWorldSaveDirectory(), "customeffects");
+    }
+
+    private void saveEffectLoadMap() {
+        try {
+            File saveDir = getMapDir();
+            File file = new File(saveDir, "customeffects.dat_new");
+            File file1 = new File(saveDir, "customeffects.dat_old");
+            File file2 = new File(saveDir, "customeffects.dat");
+            CompressedStreamTools.writeCompressed(this.writeMapNBT(), new FileOutputStream(file));
+            if (file1.exists()) {
+                file1.delete();
+            }
+            file2.renameTo(file1);
+            if (file2.exists()) {
+                file2.delete();
+            }
+            file.renameTo(file2);
+            if (file.exists()) {
+                file.delete();
+            }
+        } catch (Exception e) {
+            LogWriter.except(e);
+        }
+    }
+
+    private NBTTagCompound writeMapNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        NBTTagList customEffects = new NBTTagList();
+        for (Integer key : this.customEffects.keySet()) {
+            CustomEffect customEffect = this.customEffects.get(key);
+            if (!customEffect.getName().isEmpty()) {
+                NBTTagCompound effectCompound = new NBTTagCompound();
+                effectCompound.setString("Name", customEffect.getName());
+                effectCompound.setInteger("ID", key);
+
+                customEffects.appendTag(effectCompound);
+            }
+        }
+        nbt.setTag("CustomEffects", customEffects);
+        nbt.setInteger("lastID", lastUsedID);
+        return nbt;
+    }
+
+    private void readCustomEffectMap() {
+        bootOrder.clear();
+
+        try {
+            File file = new File(getMapDir(), "customeffects.dat");
+            if (file.exists()) {
+                loadCustomEffectMap(file);
+            }
+        } catch (Exception e) {
+            try {
+                File file = new File(getMapDir(), "customeffects.dat_old");
+                if (file.exists()) {
+                    loadCustomEffectMap(file);
+                }
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    private void loadCustomEffectMap(File file) throws IOException {
+        DataInputStream var1 = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new FileInputStream(file))));
+        readCustomEffectMap(var1);
+        var1.close();
+    }
+
+    private void readCustomEffectMap(DataInputStream stream) throws IOException {
+        NBTTagCompound nbtCompound = CompressedStreamTools.read(stream);
+        this.readMapNBT(nbtCompound);
+    }
+
+    private void readMapNBT(NBTTagCompound compound) {
+        lastUsedID = compound.getInteger("lastID");
+        NBTTagList list = compound.getTagList("CustomEffects", 10);
+        if (list != null) {
+            for (int i = 0; i < list.tagCount(); i++) {
+                NBTTagCompound nbttagcompound = list.getCompoundTagAt(i);
+                String effectName = nbttagcompound.getString("Name");
+                Integer key = nbttagcompound.getInteger("ID");
+                bootOrder.put(key, effectName);
+            }
         }
     }
 }

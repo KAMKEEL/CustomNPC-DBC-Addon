@@ -2,8 +2,10 @@ package kamkeel.npcdbc.api.effect;
 
 public interface IStatusEffect {
 
-    int getId();
+    int getID();
 
     String getName();
+
+    boolean isCustom();
 
 }

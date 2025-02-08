@@ -1,22 +1,13 @@
 package kamkeel.npcdbc.data.statuseffect;
 
-import cpw.mods.fml.common.eventhandler.Event;
 import kamkeel.npcdbc.api.effect.ICustomEffect;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.constants.EnumScriptType;
-import noppes.npcs.controllers.ScriptContainer;
-import noppes.npcs.controllers.data.INpcScriptHandler;
-import noppes.npcs.controllers.data.IScriptHandler;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
 public class CustomEffect extends StatusEffect implements ICustomEffect {
 
@@ -26,12 +17,12 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
     public BiConsumer<IPlayer, PlayerEffect> onAddedConsumer, onTickConsumer, onRemovedConsumer;
 
     public CustomEffect(int id) {
-        this.isCustom = true;
+        super(true);
         this.id = id;
     }
 
     public CustomEffect() {
-        isCustom = true;
+        super(true);
     }
 
     @Override
@@ -87,6 +78,17 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
     @Override
     public void setLossOnDeath(boolean lossOnDeath) {
         this.lossOnDeath = lossOnDeath;
+    }
+
+    @Override
+    public ICustomEffect save() {
+
+        return StatusEffectController.getInstance().saveEffect(this);
+    }
+
+    @Override
+    public void setID(int id) {
+        this.id = id;
     }
 
 
