@@ -7,6 +7,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.LogWriter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,6 +17,47 @@ public abstract class LargeAbstractPacket extends AbstractPacket {
 
     private static final Map<UUID, PacketStorage> packetChunks = new ConcurrentHashMap<>();
     private static final int CHUNK_SIZE = 10000;
+
+    /**
+     * Create multiple FMLProxyPacket objects, each containing up to CHUNK_SIZE bytes.
+     */
+    @Override
+    public List<FMLProxyPacket> generatePackets() {
+        List<FMLProxyPacket> packets = new ArrayList<>();
+        PacketChannel packetChannel = getChannel();
+
+        byte[] fullData;
+        try {
+            fullData = getData();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return packets;
+        }
+
+        int totalSize = fullData.length;
+        UUID packetId = UUID.randomUUID();
+
+        // Break data into CHUNK_SIZE chunks
+        for (int offset = 0; offset < totalSize; offset += CHUNK_SIZE) {
+            int chunkSize = Math.min(CHUNK_SIZE, totalSize - offset);
+            ByteBuf chunkBuf = Unpooled.buffer();
+
+            chunkBuf.writeInt(packetChannel.getChannelType().ordinal());
+            chunkBuf.writeInt(getType().ordinal());
+
+            chunkBuf.writeLong(packetId.getMostSignificantBits());
+            chunkBuf.writeLong(packetId.getLeastSignificantBits());
+            chunkBuf.writeInt(totalSize);
+            chunkBuf.writeInt(offset);
+            chunkBuf.writeInt((totalSize + CHUNK_SIZE - 1) / CHUNK_SIZE);
+
+            chunkBuf.writeBytes(fullData, offset, chunkSize);
+
+            FMLProxyPacket proxyPacket = new FMLProxyPacket(chunkBuf, packetChannel.getChannelName());
+            packets.add(proxyPacket);
+        }
+        return packets;
+    }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
