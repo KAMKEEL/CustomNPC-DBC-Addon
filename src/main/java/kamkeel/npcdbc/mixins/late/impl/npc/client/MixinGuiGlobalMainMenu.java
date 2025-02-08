@@ -35,10 +35,16 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
 
 
     @Unique
+    private GuiNpcSquareButton formsButton;
+
+    @Unique
     private GuiNpcSquareButton aurasButton;
 
     @Unique
     private GuiNpcSquareButton outlinesButton;
+
+    @Unique
+    private GuiNpcSquareButton customEffectsButton;
 
     @Inject(method = "initGui", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/gui/mainmenu/GuiNPCGlobalMainMenu;layoutButtons()V", shift = At.Shift.BEFORE))
     public void addDBCModelButton(CallbackInfo ci) {
@@ -52,9 +58,8 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
         this.registerButton(this.outlinesButton = new GuiNpcSquareButton(202, 0, 0, 20, "global.customoutlines", -13421773));
         this.outlinesButton.setIconPos(24, 24, 96, 50).setIconTexture(GuiCNPCInventory.specialIcons);
 
-        if((Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment")) {
-            this.addButton(new GuiNpcButton(203, guiLeft + 210 + 99 + 3, y + 154, 99, 20, "Effects"));
-        }
+        this.registerButton(this.customEffectsButton = new GuiNpcSquareButton(203, 0, 0, 20, "global.customeffects", -13421773));
+        this.customEffectsButton.setIconPos(24, 24, 120, 50).setIconTexture(GuiCNPCInventory.specialIcons);
     }
 
     @Inject(method = "actionPerformed", at = @At("TAIL"))
@@ -67,8 +72,7 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
             Minecraft.getMinecraft().displayGuiScreen(new GuiNPCManageAuras(npc));
         } else if (id == 202) {
             Minecraft.getMinecraft().displayGuiScreen(new GuiNPCManageOutlines(npc));
-        }
-        else if (id == 203) {
+        } else if (id == 203) {
             Minecraft.getMinecraft().displayGuiScreen(new GuiNPCManageEffects(npc));
         }
     }
