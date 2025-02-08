@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.statuseffect.custom;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.effect.ICustomEffect;
 import kamkeel.npcdbc.controllers.StatusEffectController;
@@ -153,6 +154,9 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         compound.setString("icon", icon);
         compound.setBoolean("lossOnDeath", lossOnDeath);
 
+        if (FMLCommonHandler.instance().getEffectiveSide().isServer())
+            System.out.println("A");
+
 //        if (saveScripts && scriptContainer != null) {
         if (saveScripts) {
             NBTTagCompound scriptData = new NBTTagCompound();
@@ -181,6 +185,9 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         iconY = compound.getInteger("iconY");
         icon = compound.getString("icon");
         lossOnDeath = compound.getBoolean("lossOnDeath");
+
+        if (FMLCommonHandler.instance().getEffectiveSide().isServer())
+            System.out.println("A");
 
         if (compound.hasKey("ScriptData", Constants.NBT.TAG_COMPOUND)) {
             script.readFromNBT(compound.getCompoundTag("ScriptData"));

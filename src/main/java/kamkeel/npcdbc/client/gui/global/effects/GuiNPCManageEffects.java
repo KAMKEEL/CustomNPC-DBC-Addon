@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.client.gui.global.effects;
 
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.effect.DBCGetEffect;
@@ -106,9 +105,6 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
         effect.readFromNBT(compound);
         setSelected(effect.name);
 
-        if (effect.id != -1) {
-            StatusEffectController.getInstance().customEffects.replace(effect.id, effect);
-        }
         initGui();
     }
 

@@ -28,6 +28,7 @@ public class DBCSaveEffect extends AbstractPacket {
 
     public DBCSaveEffect(NBTTagCompound compound, int id, String prev){
         this.effect = compound;
+        this.id = id;
         this.prevName = prev;
     }
 
