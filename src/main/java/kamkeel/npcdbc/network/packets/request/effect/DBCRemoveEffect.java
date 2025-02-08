@@ -39,7 +39,7 @@ public class DBCRemoveEffect extends AbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.GET_PACKETS;
+        return PacketHandler.REQUEST_PACKETS;
     }
 
     @Override

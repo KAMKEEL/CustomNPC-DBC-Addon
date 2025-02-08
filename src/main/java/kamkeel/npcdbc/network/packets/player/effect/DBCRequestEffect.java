@@ -34,7 +34,7 @@ public final class DBCRequestEffect extends AbstractPacket {
 
     @Override
     public PacketChannel getChannel() {
-        return PacketHandler.GET_PACKETS;
+        return PacketHandler.PLAYER_PACKETS;
     }
 
     @Override
