@@ -377,7 +377,8 @@ public class StatusEffectController implements IStatusEffectHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.CUSTOM_EFFECT, EnumSyncAction.UPDATE, -1, new NBTTagCompound()));
+            nbtTagCompound.removeTag("ScriptData");
+            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.CUSTOM_EFFECT, EnumSyncAction.UPDATE, -1, nbtTagCompound));
         } catch (Exception e) {
             LogWriter.except(e);
         }
