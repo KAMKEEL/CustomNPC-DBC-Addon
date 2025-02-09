@@ -3,8 +3,10 @@ package kamkeel.npcdbc.data.statuseffect;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.effect.IStatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 
 public class StatusEffect implements IStatusEffect {
+    public static final ResourceLocation defaultTexture = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/icons.png");
     public int id = -1;
 
     public String name = "";

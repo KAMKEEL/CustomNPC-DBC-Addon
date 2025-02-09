@@ -12,6 +12,7 @@ dbc.clientsettings.aura.firstPersonOpacity=First person 3D Aura Opacity: %s%%
 global.customforms=Forms
 global.customauras=Auras
 global.customoutlines=Outlines
+global.customeffects=Effects
 
 stats.dbcsettings=DBC Settings
 inventory.extras=Extras
@@ -28,6 +29,13 @@ stats.ignoreKiDamage=Ignore Ki Protection
 stats.ignoreFormDefense=Ignore Form Defense
 stats.hasDefensePenetration=Has Defense Penetration
 stats.defensePenetration=Defense Penetration
+
+effect.runsEveryX=Runs every X tick
+effect.defaultLength=Default length
+
+# These are supposed to be shorter
+effect.editor.runsEveryX=Every X tick
+effect.editor.defaultLength=Length
 
 mastery.maxLevel=Max Level
 mastery.multiFlat=Multi Flat

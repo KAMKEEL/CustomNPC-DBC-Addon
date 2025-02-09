@@ -6,6 +6,7 @@ import kamkeel.npcdbc.client.gui.global.auras.GuiNPCManageAuras;
 import kamkeel.npcdbc.client.gui.global.effects.GuiNPCManageEffects;
 import kamkeel.npcdbc.client.gui.global.form.GuiNPCManageForms;
 import kamkeel.npcdbc.client.gui.global.outline.GuiNPCManageOutlines;
+import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.launchwrapper.Launch;
@@ -50,16 +51,16 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
     public void addDBCModelButton(CallbackInfo ci) {
 
         this.registerButton(this.formsButton = new GuiNpcSquareButton(200, 0, 0, 20, "global.customforms", -13421773));
-        this.formsButton.setIconPos(24, 24, 48, 50).setIconTexture(GuiCNPCInventory.specialIcons);
+        this.formsButton.setIconPos(24, 23, 24, 56).setIconTexture(GuiCNPCInventory.specialIcons);
 
         this.registerButton(this.aurasButton = new GuiNpcSquareButton(201, 0, 0, 20, "global.customauras", -13421773));
-        this.aurasButton.setIconPos(24, 24, 72, 50).setIconTexture(GuiCNPCInventory.specialIcons);
+        this.aurasButton.setIconPos(24, 23, 48, 56).setIconTexture(GuiCNPCInventory.specialIcons);
 
         this.registerButton(this.outlinesButton = new GuiNpcSquareButton(202, 0, 0, 20, "global.customoutlines", -13421773));
-        this.outlinesButton.setIconPos(24, 24, 96, 50).setIconTexture(GuiCNPCInventory.specialIcons);
+        this.outlinesButton.setIconPos(24, 23, 72, 56).setIconTexture(GuiCNPCInventory.specialIcons);
 
         this.registerButton(this.customEffectsButton = new GuiNpcSquareButton(203, 0, 0, 20, "global.customeffects", -13421773));
-        this.customEffectsButton.setIconPos(24, 24, 120, 50).setIconTexture(GuiCNPCInventory.specialIcons);
+        this.customEffectsButton.setIconPos(16, 16, 160, 0).setIconTexture(StatusEffect.defaultTexture);
     }
 
     @Inject(method = "actionPerformed", at = @At("TAIL"))

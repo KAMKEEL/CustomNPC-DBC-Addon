@@ -1,8 +1,8 @@
 package kamkeel.npcdbc.client.gui.global.effects;
 
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.StatusEffectController;
-import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.effect.DBCGetEffect;
@@ -12,12 +12,17 @@ import kamkeel.npcdbc.network.packets.request.effect.DBCSaveEffect;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
+import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.entity.EntityNPCInterface;
+import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,7 +89,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
                 displayGuiScreen(guiyesno);
             }
         } else if (button.id == 2) {
-            CustomEffect effect = this.effect.clone();
+            CustomEffect effect = this.effect.cloneEffect();
             while (data.containsKey(effect.name))
                 effect.name += "_";
             DBCPacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), ""));
@@ -135,13 +140,59 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
         drawHorizontalLine(guiLeft + 5, guiLeft + 218, guiTop + 25, 0xFF000000 + CustomNpcResourceListener.DefaultTextColor);
         drawGradientRect(guiLeft + 5, guiTop + 27, guiLeft + 218, guiTop + ySize + 9, 0xA0101010, 0xA0101010);
 
-        if (effect != null && effect.id != -1) {
-            String drawString = effect.getMenuName();
-            int textWidth = getStringWidthWithoutColor(drawString);
-            int centerX = guiLeft + 5 + ((218 - 10 - textWidth) / 2); // Adjusted centerX calculation
-            fontRendererObj.drawString(drawString, centerX, guiTop + 10, CustomNpcResourceListener.DefaultTextColor, true);
-            int y = guiTop + 18;
+
+        if (effect == null)
+            return;
+        if (effect.id == -1)
+            return;
+
+        String drawString = effect.getMenuName();
+        int textWidth = getStringWidthWithoutColor(drawString);
+        int centerX = guiLeft + 5 + ((218 - 10 - textWidth) / 2); // Adjusted centerX calculation
+        fontRendererObj.drawString(drawString, centerX, guiTop + 10, CustomNpcResourceListener.DefaultTextColor, true);
+        int y = guiTop + 33;
+        int x = guiLeft + 12;
+
+        int iconRenderSize = 48;
+
+        TextureManager textureManager = mc.getTextureManager();
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        ImageData data = ClientCacheHandler.getImageData(effect.icon);
+        if (data.imageLoaded()) {
+            data.bindTexture();
+            int iconX = effect.iconX;
+            int iconY = effect.iconY;
+            int iconWidth = effect.getWidth();
+            int iconHeight = effect.getHeight();
+            int width = effect.isCustom() ? data.getTotalWidth() : 256;
+            int height = effect.isCustom() ? data.getTotalWidth() : 256;
+
+
+            func_152125_a(x, y, iconX, iconY, iconWidth, iconHeight, iconRenderSize, iconRenderSize, width, height);
+
+        } else {
+            textureManager.bindTexture(new ResourceLocation("customnpcs", "textures/marks/question.png"));
+            func_152125_a(x, y, 0, 0, 1, 1, iconRenderSize, iconRenderSize, 1, 1);
         }
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        textureManager.bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/icons.png"));
+        func_152125_a(x, y, 0, 240, 16, 16, iconRenderSize, iconRenderSize, 256, 256);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+
+        x += iconRenderSize + 3;
+        y += 2;
+
+        String translated = StatCollector.translateToLocal("gui.name") + ": " + effect.name;
+        fontRendererObj.drawString(translated, x, y, 0xFFFFFF, false);
+        int transLength = getStringWidthWithoutColor(translated);
+        fontRendererObj.drawString(" (ID: "+ effect.id+ ")", x + transLength, y, 0xB5B5B5, false);
+        y += 12;
+        fontRendererObj.drawString(StatCollector.translateToLocal("general.menuName") + ": " + effect.menuName, x, y, 0xFFFFFF, false);
+        y += 12;
+        fontRendererObj.drawString(StatCollector.translateToLocal("effect.runsEveryX") + ": " + effect.everyXTick + "t", x, y, 0xB5B5B5, false);
+        y += 12;
+        fontRendererObj.drawString(StatCollector.translateToLocal("effect.defaultLength") + ": " + effect.length + "s", x, y, 0xB5B5B5, false);
+
     }
 
 
