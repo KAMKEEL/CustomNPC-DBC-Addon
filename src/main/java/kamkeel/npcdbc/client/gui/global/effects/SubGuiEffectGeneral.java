@@ -208,23 +208,16 @@ public class SubGuiEffectGeneral extends SubGuiInterface implements ITextfieldLi
     public void unFocused(GuiNpcTextField guiNpcTextField) {
         int id = guiNpcTextField.id;
 
-
         switch (id) {
             case 1:
-                effect.name = guiNpcTextField.getText();
+                effect.setName(guiNpcTextField.getText());
                 break;
             case 2:
-                effect.menuName = guiNpcTextField.getText().replaceAll("&", "§");
+                effect.setMenuName(guiNpcTextField.getText());
                 break;
             case 3:
-                int tickTime = guiNpcTextField.getInteger();
-                int remainder = tickTime % 10;
-                if (remainder >= 5)
-                    tickTime += 10 - remainder;
-                else
-                    tickTime -= remainder;
-                guiNpcTextField.setText(tickTime+"");
-                effect.everyXTick = tickTime;
+                effect.setEveryXTick(guiNpcTextField.getInteger());
+                guiNpcTextField.setText(effect.everyXTick+"");
                 break;
             case 4:
                 int length = guiNpcTextField.getInteger();

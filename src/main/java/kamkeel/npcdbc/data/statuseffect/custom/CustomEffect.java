@@ -44,7 +44,8 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
 
     @Override
     public void setMenuName(String name) {
-        this.menuName = name;
+        if (name != null && !name.isEmpty())
+            this.menuName = name.replaceAll("&", "§");
     }
 
     @Override
@@ -54,7 +55,8 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
 
     @Override
     public void setName(String name) {
-        this.name = name;
+        if (name != null && !name.isEmpty())
+            this.name = name;
     }
 
     @Override
@@ -74,6 +76,13 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
 
     @Override
     public void setEveryXTick(int everyXTick) {
+        if (everyXTick < 10)
+            everyXTick = 10;
+        int remainder = everyXTick % 10;
+        if (remainder >= 5)
+            everyXTick += 10 - remainder;
+        else
+            everyXTick -= remainder;
         this.everyXTick = everyXTick;
     }
 

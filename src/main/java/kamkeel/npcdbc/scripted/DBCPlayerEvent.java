@@ -61,7 +61,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
             }
 
             @Override
-            public boolean hasNaturallyRunOut() {
+            public boolean hasTimerRunOut() {
                 return type == ExpirationType.RUN_OUT;
             }
 

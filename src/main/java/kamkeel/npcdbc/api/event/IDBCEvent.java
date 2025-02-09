@@ -18,7 +18,14 @@ public interface IDBCEvent extends IPlayerEvent {
 
         }
         interface Removed extends EffectEvent {
-            boolean hasNaturallyRunOut();
+            /**
+             * @return If the effect timer has ticked down to 0.
+             */
+            boolean hasTimerRunOut();
+
+            /**
+             * @return If the effect was removed on death.
+             */
             boolean causedByDeath();
         }
 
