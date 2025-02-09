@@ -118,7 +118,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
 
             func_152125_a(x + 2 + (JGConfigClientSettings.CLIENT_hud0 > 1 ? 50 : 0), y + w2 + 2, iconX, iconY, iconWidth, iconHeight, 16, 16, width, height);
         } else {
-            TextureUtil.bindTexture(TextureUtil.missingTexture.getGlTextureId());
+            Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation("customnpcs", "textures/marks/question.png"));
             func_146110_a(x + 2 + (JGConfigClientSettings.CLIENT_hud0 > 1 ? 50 : 0), y + w2 + 2, 0, 0, 16, 16, 16, 16);
         }
 
