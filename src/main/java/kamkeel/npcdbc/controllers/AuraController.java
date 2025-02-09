@@ -21,11 +21,21 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 public class AuraController implements IAuraHandler {
-    public static AuraController Instance = new AuraController();
+    public static AuraController Instance;
     public HashMap<Integer, Aura> customAurasSync = new HashMap();
     public HashMap<Integer, Aura> customAuras;
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
+
+    public static void initialize() {
+        if (Instance == null)
+            Instance = new AuraController();
+        Instance.load();
+    }
+
+    public static void terminate() {
+        Instance = null;
+    }
 
     public AuraController() {
         Instance = this;

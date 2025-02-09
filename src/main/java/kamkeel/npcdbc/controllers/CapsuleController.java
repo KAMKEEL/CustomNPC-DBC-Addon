@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class CapsuleController {
 
-    public static CapsuleController Instance = new CapsuleController();
+    public static CapsuleController Instance;
 
     public HashMap<UUID, HashMap<Integer, Long>> miscCapsuleCooldown = new HashMap<>();
 
@@ -32,6 +32,16 @@ public class CapsuleController {
     public HashMap<Integer, HashMap<Integer, Integer>> capsuleStrength = new HashMap<>();
     public HashMap<Integer, HashMap<Integer, Integer>> capsuleCooldowns = new HashMap<>();
     public HashMap<Integer, HashMap<Integer, Integer>> capsuleEffectTimes = new HashMap<>();
+
+    public static void initialize() {
+        if (Instance == null)
+            Instance = new CapsuleController();
+        Instance.load();
+    }
+
+    public static void terminate() {
+        Instance = null;
+    }
 
     public static void setMiscCapsule(UUID playerUUID, int type){
         if(ConfigCapsules.EnableCapsuleCooldowns){

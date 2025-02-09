@@ -21,11 +21,21 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 public class OutlineController implements IOutlineHandler {
-    public static OutlineController Instance = new OutlineController();
+    public static OutlineController Instance;
     public HashMap<Integer, Outline> customOutlinesSync = new HashMap();
     public HashMap<Integer, Outline> customOutlines;
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
+
+    public static void initialize() {
+        if (Instance == null)
+            Instance = new OutlineController();
+        Instance.load();
+    }
+
+    public static void terminate() {
+        Instance = null;
+    }
 
     public OutlineController() {
         Instance = this;
