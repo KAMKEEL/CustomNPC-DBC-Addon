@@ -1,12 +1,15 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
+import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -22,6 +25,7 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 import java.util.Iterator;
 
+import static JinRyuu.JRMCore.JRMCoreH.cl;
 import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
 
 public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener, ClipboardOwner {
@@ -45,6 +49,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     public int xOffset = 0;
     public int yOffset = 0;
     public int lastColorClicked = 0;
+
+    private GuiScrollWindow window;
 
     public SubGuiFormDisplay(GuiNPCManageForms parent, Form form) {
         menu = new GuiNpcFormMenu(parent, this, -2, form);
@@ -80,148 +86,235 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     }
 
     private void raceButtons(int y) {
-        addLabel(new GuiNpcLabel(200, "display.formSize", guiLeft + 7, y + 5));
-        addTextField(new GuiNpcTextField(200, this, guiLeft + 61, y, 30, 20, String.valueOf(display.formSize)));
-        getTextField(200).setMaxStringLength(10);
-        getTextField(200).floatsOnly = true;
-        getTextField(200).setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
+        int width = 113 + this.xOffset - 10;
+        int height = ySize - (y - guiTop) - 2;
+        if (window == null) {
+            window = new GuiScrollWindow(this, guiLeft+4, y - 2, width, height, 0);
+        } else {
+            window.xPos = guiLeft + 4;
+            window.yPos = y-2;
+            window.clipWidth = width;
+            window.clipHeight = height;
+            window.maxScrollY = 0;
+        }
+        width = width - 7;
+        addScrollableGui(1000, window);
 
-        addButton(new GuiNpcButton(1306, guiLeft + 101, y, 100, 20, "display.selectAura"));
-        if (display.auraID != -1 && AuraController.getInstance().has(display.auraID))
-            getButton(1306).setDisplayText(AuraController.getInstance().get(display.auraID).getName());
-        addButton(new GuiNpcButton(1406, guiLeft + 202, y, 20, 20, "X"));
-        getButton(1406).enabled = display.auraID != -1;
+        IAura aura = AuraController.getInstance().get(display.auraID);
 
-        y += 22;
-        addLabel(new GuiNpcLabel(106, "display.aura", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(106, guiLeft + 61, y, 50, 20, getColor(display.auraColor)));
-        getButton(106).packedFGColour = display.auraColor;
-        getButton(106).enabled = display.auraID == -1;
+        y = 10;
+        int x = 7;
 
-        addButton(new GuiNpcButton(1106, guiLeft + 112, y, 20, 20, "X"));
-        getButton(1106).enabled = display.auraColor != -1;
-        addButton(new GuiNpcButton(1206, guiLeft + 133, y, 50, 20, new String[]{"display.hide", "display.show"}, showAura ? 1 : 0));
+        GuiNpcTextField field;
+        GuiNpcButton button;
 
-        y += 22;
-        addLabel(new GuiNpcLabel(124, "display.kiBarColor", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(124, guiLeft + 61, y, 50, 20, getColor(display.kiBarColor)));
-        getButton(124).packedFGColour = display.kiBarColor;
-        addButton(new GuiNpcButton(1124, guiLeft + 112, y, 20, 20, "X"));
-        getButton(1124).enabled = display.kiBarColor != -1;
+        window.addLabel(new GuiNpcLabel(200, "display.formSize", x, y, 0xFFFFFF));
+        field = new GuiNpcTextField(200, this, width-x-40, y - 5, 40, 20, String.valueOf(display.formSize));
+        field.setMaxStringLength(10);
+        field.floatsOnly = true;
+        field.setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
+        window.addTextField(field);
+        y += 25;
 
-        y += 22;
-        addLabel(new GuiNpcLabel(107, "display.eye", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(107, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.eyeColor)));
-        getButton(107).packedFGColour = display.bodyColors.eyeColor;
-        addButton(new GuiNpcButton(1107, guiLeft + 112, y, 20, 20, "X"));
-        getButton(1107).enabled = display.bodyColors.eyeColor != -1;
+        window.addLabel(new GuiNpcLabel(300, "display.formWidth", x, y, 0xFFFFFF));
+        field = new GuiNpcTextField(300, this, width-x-40, y - 5, 40, 20, String.valueOf(display.formWidth));
+        field.setMaxStringLength(10);
+        field.floatsOnly = true;
+        field.setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
+        window.addTextField(field);
 
-        addLabel(new GuiNpcLabel(1072, "display.isBerserk", guiLeft + 145, y + 5));
-        addButton(new GuiNpcButtonYesNo(1072, guiLeft + 192, y, 30, 20, display.isBerserk));
+        y += 25;
 
-        y += 22;
-        addLabel(new GuiNpcLabel(108, "model.body", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(108, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.bodyCM)));
-        getButton(108).packedFGColour = display.bodyColors.bodyCM;
-        addButton(new GuiNpcButton(1108, guiLeft + 112, y, 20, 20, "X"));
-        getButton(1108).enabled = display.bodyColors.bodyCM != -1;
+        button = new GuiNpcButton(1306, x, y, width-x-20 - 10, 20, "display.selectAura");
+        if (aura != null)
+            button.setDisplayText(aura.getName());
+        window.addButton(button);
 
-        addLabel(new GuiNpcLabel(1082, "display.hasEyebrows", guiLeft + 145, y + 5));
-        addButton(new GuiNpcButtonYesNo(1082, guiLeft + 192, y, 30, 20, display.hasEyebrows));
+        button = new GuiNpcButton(1406, width-x-20, y, 20, 20, "X");
+        button.enabled = aura != null;
+        window.addButton(button);
+
+        y += 30;
+
+        window.addLabel(new GuiNpcLabel(106, "display.aura", x, y, 0xFFFFFF));
+
+        button = new GuiNpcButton(106, width - x - 75, y - 5, 50, 20, getColor(display.auraColor));
+        button.packedFGColour = display.auraColor;
+        button.enabled = aura == null;
+        window.addButton(button);
+
+        button = new GuiNpcButton(1106, width - x - 20, y - 5, 20, 20, "X");
+        button.enabled = display.auraColor != -1;
+        window.addButton(button);
+
+        window.addButton(new GuiNpcButton(1206, x + 50, y - 5, 54, 20, new String[]{"display.hide", "display.show"}, showAura ? 1 : 0));
+
+        y += 30;
+        window.addLabel(new GuiNpcLabel(124, "display.kiBarColor", x, y, 0xFFFFFF));
+
+        button = new GuiNpcButton(124, width - x - 75, y - 5, 50, 20, getColor(display.kiBarColor));
+        button.packedFGColour = display.kiBarColor;
+        button.enabled = aura == null;
+        window.addButton(button);
+
+        button = new GuiNpcButton(1124, width - x - 20, y - 5, 20, 20, "X");
+        button.enabled = display.kiBarColor != -1;
+        window.addButton(button);
+
+
+        y += 30;
+        window.addLabel(new GuiNpcLabel(107, "display.eye", x, y, 0xFFFFFF));
+
+        button = new GuiNpcButton(107, width - x - 75, y - 5, 50, 20, getColor(display.bodyColors.eyeColor));
+        button.packedFGColour = display.bodyColors.eyeColor;
+        button.enabled = aura == null;
+        window.addButton(button);
+
+        button = new GuiNpcButton(1107, width - x - 20, y - 5, 20, 20, "X");
+        button.enabled = display.bodyColors.eyeColor != -1;
+        window.addButton(button);
+
+        window.addButton(new GuiNpcButton(1072, x + 50, y - 5, 54, 20, new String[]{"display.normalEye", "display.isBerserk"}, form.display.isBerserk ? 1 : 0));
+
+        if (DBCRace.isSaiyan(visualDisplay.race) || visualDisplay.race == DBCRace.HUMAN) {
+            y += 25;
+            window.addLabel(new GuiNpcLabel(1082, "display.hasEyebrows", x, y, 0xFFFFFF));
+            window.addButton(new GuiNpcButtonYesNo(1082, width - x - 75, y - 5, 50, 20, form.display.hasEyebrows));
+        }
+
+        y += 30;
+        window.addLabel(new GuiNpcLabel(108, "model.body", x, y, 0xFFFFFF));
+        button = new GuiNpcButton(108, width - x - 75, y - 5, 50, 20, getColor(display.bodyColors.bodyCM));
+        button.packedFGColour = display.bodyColors.bodyCM;
+        window.addButton(button);
+        button = new GuiNpcButton(1108, width - x - 20, y - 5, 20, 20, "X");
+        button.enabled = display.bodyColors.bodyCM != -1;
+        window.addButton(button);
 
         if (visualDisplay.race == DBCRace.NAMEKIAN || visualDisplay.race == DBCRace.ARCOSIAN) {
-            y = addBodyColors(y);
+            y = addBodyColors(x, y);
         }
 
-        if (visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
-            y += 22;
-            addLabel(new GuiNpcLabel(112, "display.fur", guiLeft + 7, y + 5));
-            addButton(new GuiNpcButton(112, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.furColor)));
-            getButton(112).packedFGColour = display.bodyColors.furColor;
-            addButton(new GuiNpcButton(1112, guiLeft + 112, y, 20, 20, "X"));
-            getButton(1112).enabled = display.bodyColors.furColor != -1;
+        if (DBCRace.isSaiyan(visualDisplay.race)) {
+            y += 25;
+            window.addLabel(new GuiNpcLabel(112, "display.fur", x, y, 0xFFFFFF));
+            button = new GuiNpcButton(112, width - x - 75, y - 5, 50, 20, getColor(display.bodyColors.furColor));
+            button.packedFGColour = display.bodyColors.furColor;
+            window.addButton(button);
+            button = new GuiNpcButton(1112, width - x - 20, y - 5, 20, 20, "X");
+            button.enabled = display.bodyColors.furColor != -1;
+            window.addButton(button);
+
+            window.addButton(new GuiNpcButtonYesNo(123, x + 50, y - 5, 54, 20, form.display.hasBodyFur));
         }
+
 
         if (visualDisplay.race == DBCRace.MAJIN) {
-            y += 22;
-            addLabel(new GuiNpcLabel(115, "display.majinHair", guiLeft + 7, y + 5));
-            addButton(new GuiNpcButtonYesNo(115, guiLeft + 61, y, 50, 20, display.effectMajinHair));
+            y += 25;
+            window.addLabel(new GuiNpcLabel(115, "display.majinHair", x, y, 0xFFFFFF));
+            window.addButton(new GuiNpcButtonYesNo(115, width - x - 75, y - 5, 50, 20, form.display.effectMajinHair));
         }
 
-        if (visualDisplay.race == DBCRace.HUMAN || visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN || visualDisplay.race == DBCRace.MAJIN && display.effectMajinHair) {
-            y = addHairOptions(y);
+        if (visualDisplay.race == DBCRace.HUMAN || DBCRace.isSaiyan(visualDisplay.race) || (visualDisplay.race == DBCRace.MAJIN && display.effectMajinHair)) {
+            y = addHairOptions(x, y);
         }
 
-        if (visualDisplay.race == DBCRace.SAIYAN || visualDisplay.race == DBCRace.HALFSAIYAN) {
-            y = addFurOptions(y);
-        }
 
+
+//
         if (visualDisplay.race == DBCRace.ARCOSIAN) {
-            y += 22;
-            addLabel(new GuiNpcLabel(113, "display.arcoMask", guiLeft + 7, y + 5));
-            addButton(new GuiNpcButtonYesNo(113, guiLeft + 61, y, 50, 20, visualDisplay.hasArcoMask));
+            y += 30;
+            window.addLabel(new GuiNpcLabel(113, "display.arcoMask", x, y, 0xFFFFFF));
+            window.addButton(new GuiNpcButtonYesNo(113, width - x - 75, y - 5, 50, 20, visualDisplay.hasArcoMask));
 
             int index = getArcoForm();
-            addLabel(new GuiNpcLabel(114, "display.form", guiLeft + 115, y + 5));
-            addButton(new GuiButtonBiDirectional(114, guiLeft + 142, y, 73, 20, arcoForms, index));
+            y += 25;
+            window.addLabel(new GuiNpcLabel(114, "display.form", x, y, 0xFFFFFF));
+            window.addButton(new GuiButtonBiDirectional(114, width - x - 75 - 12, y - 5, 73, 20, arcoForms, index));
         }
+
+        window.maxScrollY = (y - height) + 20 + 5;
     }
 
-    private int addBodyColors(int y) {
-        y += 22;
-        addLabel(new GuiNpcLabel(109, "display.bodyc1", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(109, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.bodyC1)));
-        getButton(109).packedFGColour = display.bodyColors.bodyC1;
-        addButton(new GuiNpcButton(1109, guiLeft + 112, y, 20, 20, "X"));
-        getButton(1109).enabled = display.bodyColors.bodyC1 != -1;
+    private int addBodyColors(int x, int y) {
+        y += 25;
+        int width = window.clipWidth - 7;
+        GuiNpcButton button;
 
-        y += 22;
-        addLabel(new GuiNpcLabel(110, "display.bodyc2", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(110, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.bodyC2)));
-        getButton(110).packedFGColour = display.bodyColors.bodyC2;
-        addButton(new GuiNpcButton(1110, guiLeft + 112, y, 20, 20, "X"));
-        getButton(1110).enabled = display.bodyColors.bodyC2 != -1;
+        window.addLabel(new GuiNpcLabel(109, "display.bodyc1", x, y, 0xFFFFFF));
+        button = new GuiNpcButton(109, width - x - 75, y - 5, 50, 20, getColor(display.bodyColors.bodyC1));
+        button.packedFGColour = display.bodyColors.bodyC1;
+        window.addButton(button);
+        button = new GuiNpcButton(1109, width - x - 20, y - 5, 20, 20, "X");
+        button.enabled = display.bodyColors.bodyC1 != -1;
+        window.addButton(button);
 
-        y += 22;
-        addLabel(new GuiNpcLabel(111, "display.bodyc3", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(111, guiLeft + 61, y, 50, 20, getColor(display.bodyColors.bodyC3)));
-        getButton(111).packedFGColour = display.bodyColors.bodyC3;
-        addButton(new GuiNpcButton(1111, guiLeft + 112, y, 20, 20, "X"));
-        getButton(1111).enabled = display.bodyColors.bodyC3 != -1;
+        y += 25;
+
+
+        window.addLabel(new GuiNpcLabel(110, "display.bodyc2", x, y, 0xFFFFFF));
+        button = new GuiNpcButton(110, width - x - 75, y - 5, 50, 20, getColor(display.bodyColors.bodyC2));
+        button.packedFGColour = display.bodyColors.bodyC2;
+        window.addButton(button);
+        button = new GuiNpcButton(1110, width - x - 20, y - 5, 20, 20, "X");
+        button.enabled = display.bodyColors.bodyC2 != -1;
+        window.addButton(button);
+
+        y += 25;
+
+        window.addLabel(new GuiNpcLabel(111, "display.bodyc3", x, y, 0xFFFFFF));
+        button = new GuiNpcButton(111, width - x - 75, y - 5, 50, 20, getColor(display.bodyColors.bodyC3));
+        button.packedFGColour = display.bodyColors.bodyC3;
+        window.addButton(button);
+        button = new GuiNpcButton(111, width - x - 20, y - 5, 20, 20, "X");
+        button.enabled = display.bodyColors.bodyC3 != -1;
+        window.addButton(button);
 
         return y;
     }
 
-    private int addHairOptions(int y) {
-        y += 23;
-        addLabel(new GuiNpcLabel(100, "display.hair", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButton(103, guiLeft + 102, y, 45, 20, "gui.clear"));
+    private int addHairOptions(int x, int y) {
+        y += 25;
+
+        int width = window.clipWidth - 7;
+        GuiNpcButton button;
+
+        window.addLabel(new GuiNpcLabel(100, "display.hair", x, y, 0xFFFFFF));
+
+        button = new GuiNpcButton(104, width - x - 75, y - 5, 50, 20, getColor(display.bodyColors.hairColor));
+        button.packedFGColour = display.bodyColors.hairColor;
+        window.addButton(button);
+
+        button = new GuiNpcButton(1104, width - x - 20, y - 5, 20, 20, "X");
+        button.enabled = display.bodyColors.hairColor != -1;
+        window.addButton(button);
+
+        boolean clearEnabled = true;
         if (display.hairCode.isEmpty()) {
-            addButton(new GuiNpcButton(101, guiLeft + 51, y, 50, 20, "gui.paste"));
-            getButton(103).enabled = false;
+            clearEnabled = false;
+            window.addButton(new GuiNpcButton(101, x + 50, y - 5, 54, 20, "gui.paste"));
         } else {
-            addButton(new GuiNpcButton(102, guiLeft + 51, y, 45, 20, "gui.copy"));
+            window.addButton(new GuiNpcButton(102, x + 50, y - 5, 54, 20, "gui.copy"));
         }
-        addButton(new GuiNpcButton(104, guiLeft + 147, y, 50, 20, getColor(display.bodyColors.hairColor)));
-        getButton(104).packedFGColour = display.bodyColors.hairColor;
-        addButton(new GuiNpcButton(1104, guiLeft + 199, y, 20, 20, "X"));
-        getButton(1104).enabled = display.bodyColors.hairColor != -1;
 
-        y += 22;
+
+        y += 25;
+
+        button = new GuiNpcButton(103, x + 50, y - 5, 54, 20, "gui.clear");
+        button.enabled = clearEnabled;
+        window.addButton(button);
+
+
+//        y += 25;
+
+
         int index = getHairType();
-        addLabel(new GuiNpcLabel(140, "display.hairType", guiLeft + 7, y + 5));
-        addButton(new GuiButtonBiDirectional(140, guiLeft + 61, y, 79, 20, hairTypes, index));
+
+        window.addButton(new GuiButtonBiDirectional(140, width - x - 75, y - 5, 73, 20, hairTypes, index));
 
         return y;
     }
 
-    private int addFurOptions(int y) {
-        y += 22;
-        addLabel(new GuiNpcLabel(123, "display.bodyFur", guiLeft + 7, y + 5));
-        addButton(new GuiNpcButtonYesNo(123, guiLeft + 61, y, 50, 20, display.hasBodyFur));
-
-        return y;
-    }
 
     private void controlButtons() {
         addButton(new GuiButtonBiDirectional(1, this.guiLeft + 113 + this.xOffset, this.guiTop + 200 + this.yOffset, 94, 20, arrRace, racePage));
