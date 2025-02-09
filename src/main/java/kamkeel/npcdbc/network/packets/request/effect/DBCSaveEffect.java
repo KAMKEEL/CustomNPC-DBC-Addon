@@ -11,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.CustomNpcsPermissions;
-import noppes.npcs.Server;
 import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.PacketChannel;
 
@@ -23,10 +22,10 @@ public class DBCSaveEffect extends AbstractPacket {
     public static final String packetName = "NPC|SaveEffect";
 
     private String prevName;
-    private NBTTagCompound effect;
+    private NBTTagCompound effectCompound;
 
     public DBCSaveEffect(NBTTagCompound compound, String prev){
-        this.effect = compound;
+        this.effectCompound = compound;
         this.prevName = prev;
     }
 
@@ -47,7 +46,7 @@ public class DBCSaveEffect extends AbstractPacket {
     @Override
     public void sendData(ByteBuf out) throws IOException {
         ByteBufUtils.writeString(out, prevName);
-        ByteBufUtils.writeNBT(out, effect);
+        ByteBufUtils.writeNBT(out, effectCompound);
     }
 
     @Override
