@@ -1,20 +1,23 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreGuiBars;
+import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.gui.dbc.AbstractJRMCGui;
 import kamkeel.npcdbc.client.gui.dbc.JRMCoreLabel;
-import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
+import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.client.renderer.ImageData;
@@ -54,9 +57,10 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
             StatusEffect effect = StatusEffectController.Instance.get(id);
             if (effect == null)
                 continue;
-            if (effect.icon.length() > 3) {
-                drawIcon(var51 + i.get(), var61 + j.get(), effect.icon, effect.iconX, effect.iconY);
-                String text = effect.getName();
+            if (effect.icon.length() > 3 || effect.isCustom()) {
+                drawIcon(var51 + i.get(), var61 + j.get(), effect);
+                String text = effect.isCustom() ? ((CustomEffect) effect).getMenuName() : effect.getName();
+                text += JRMCoreH.cldgy;
                 if(dbcData.stats.getPlayerEffects().containsKey(effect.getID())){
                     PlayerEffect pe = current.get(effect.getID());
                     if(pe.getDuration() != -100)
@@ -95,13 +99,33 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
     }
 
     @Unique
-    private void drawIcon(int x, int y, String iconDir, int iconX, int iconY) {
-//        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(iconDir));
-        ClientCacheHandler.getImageData(iconDir).bindTexture();
+    private void drawIcon(int x, int y, StatusEffect effect) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float w = 100f;
         int w2 = (int) (0.16F * (100.0F - w));
-        this.drawTexturedModalRect(x + 2 + (JGConfigClientSettings.CLIENT_hud0 > 1 ? 50 : 0), y + w2 + 2, iconX, iconY, 16, 16);
+
+        ImageData data = ClientCacheHandler.getImageData(effect.icon);
+
+        if (data.imageLoaded()) {
+            data.bindTexture();
+            int iconX = effect.iconX;
+            int iconY = effect.iconY;
+            int iconWidth = effect.getWidth();
+            int iconHeight = effect.getHeight();
+            int width = effect.isCustom() ? data.getTotalWidth() : 256;
+            int height = effect.isCustom() ? data.getTotalWidth() : 256;
+
+
+            func_152125_a(x + 2 + (JGConfigClientSettings.CLIENT_hud0 > 1 ? 50 : 0), y + w2 + 2, iconX, iconY, iconWidth, iconHeight, 16, 16, width, height);
+        } else {
+            TextureUtil.bindTexture(TextureUtil.missingTexture.getGlTextureId());
+            func_146110_a(x + 2 + (JGConfigClientSettings.CLIENT_hud0 > 1 ? 50 : 0), y + w2 + 2, 0, 0, 16, 16, 16, 16);
+        }
+
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/icons.png"));
+        this.drawTexturedModalRect(x + 2 + (JGConfigClientSettings.CLIENT_hud0 > 1 ? 50 : 0), y + w2 + 2, 0, 240, 16, 16);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
     }
 
     private String statusEffectFromResourceID(int resourceID) {

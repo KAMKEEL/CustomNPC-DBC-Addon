@@ -23,6 +23,7 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
      */
     public BiConsumer<IPlayer, PlayerEffect> onAddedConsumer, onTickConsumer, onRemovedConsumer;
     public String menuName = "§aNEW EFFECT";
+    public int width = 16, height = 16;
 
 
     public CustomEffect(int id) {
@@ -41,7 +42,7 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
 
     @Override
     public void setMenuName(String name) {
-        this.menuName = menuName;
+        this.menuName = name;
     }
 
     @Override
@@ -175,6 +176,8 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         compound.setInteger("everyXTick", everyXTick);
         compound.setInteger("iconX", iconX);
         compound.setInteger("iconY", iconY);
+        compound.setInteger("iconWidth", width);
+        compound.setInteger("iconHeight", height);
         compound.setString("icon", icon);
         compound.setBoolean("lossOnDeath", lossOnDeath);
 
@@ -206,6 +209,17 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         everyXTick = compound.getInteger("everyXTick");
         iconX = compound.getInteger("iconX");
         iconY = compound.getInteger("iconY");
+
+        if (compound.hasKey("iconWidth", Constants.NBT.TAG_INT))
+            width = compound.getInteger("iconWidth");
+        else
+            width = 16;
+
+        if (compound.hasKey("iconHeight", Constants.NBT.TAG_INT))
+            height = compound.getInteger("iconHeight");
+        else
+            height = 16;
+
         icon = compound.getString("icon");
         lossOnDeath = compound.getBoolean("lossOnDeath");
 

@@ -153,7 +153,7 @@ public class JRMCoreLabel extends Gui implements HoverableLabel {
 
             int linesWritten = 0;
             for (String text : toolTipSplit) {
-                client.fontRenderer.drawString(JRMCoreH.cldgy + text, mouseX + 5, tooltipY + 5 + linesWritten * 10, 0);
+                client.fontRenderer.drawString(text, mouseX + 5, tooltipY + 5 + linesWritten * 10, 0);
                 linesWritten++;
             }
         }

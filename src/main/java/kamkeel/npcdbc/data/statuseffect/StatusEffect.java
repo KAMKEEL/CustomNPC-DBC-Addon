@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.statuseffect;
 
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.effect.IStatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -13,7 +14,7 @@ public class StatusEffect implements IStatusEffect {
     // Must be a multiple of 10
     public int everyXTick = 20;
 
-    public String icon = "";
+    public String icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
     public int iconX = 0, iconY = 0;
     public final boolean isCustom;
 
@@ -55,5 +56,19 @@ public class StatusEffect implements IStatusEffect {
 
     public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
 
+    }
+
+    /**
+     * DO NOT OVERRIDE
+     */
+    public int getWidth() {
+        return 16;
+    }
+
+    /**
+     * DO NOT OVERRIDE
+     */
+    public int getHeight() {
+        return 16;
     }
 }
