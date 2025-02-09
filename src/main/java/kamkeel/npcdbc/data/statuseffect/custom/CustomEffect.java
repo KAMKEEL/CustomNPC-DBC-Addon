@@ -1,7 +1,5 @@
 package kamkeel.npcdbc.data.statuseffect.custom;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.effect.ICustomEffect;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
@@ -12,7 +10,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.controllers.ScriptContainer;
 
 import java.util.function.BiConsumer;
 
@@ -231,9 +228,10 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
 
     }
 
-    public CustomEffect clone() {
+    public CustomEffect cloneEffect() {
         CustomEffect newEffect = new CustomEffect();
         newEffect.readFromNBT(this.writeToNBT(true));
+        newEffect.id = -1;
         return newEffect;
     }
 
