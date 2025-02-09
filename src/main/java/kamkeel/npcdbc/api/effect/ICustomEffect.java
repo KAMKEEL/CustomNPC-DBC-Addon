@@ -24,6 +24,14 @@ public interface ICustomEffect extends IStatusEffect {
 
     void setIconY(int iconY);
 
+    int getWidth();
+
+    void setWidth(int width);
+
+    int getHeight();
+
+    void setHeight(int height);
+
     boolean isLossOnDeath();
 
     void setLossOnDeath(boolean lossOnDeath);

@@ -2,6 +2,8 @@ package kamkeel.npcdbc.client.gui.global.effects;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.request.effect.DBCSaveEffect;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
@@ -13,15 +15,17 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubGuiEffectGeneral extends SubGuiInterface {
+public class SubGuiEffectGeneral extends SubGuiInterface implements ITextfieldListener {
     private final GuiNPCManageEffects parent;
     public CustomEffect effect;
+    private final String originalName;
 
     private List<GuiMenuTopButton> topButtons = new ArrayList<>();
 
     public SubGuiEffectGeneral(GuiNPCManageEffects parent, CustomEffect effect) {
         this.effect = effect;
         this.parent = parent;
+        this.originalName = effect.name;
         this.closeOnEsc = true;
 
         setBackground("menubg.png");
@@ -63,16 +67,33 @@ public class SubGuiEffectGeneral extends SubGuiInterface {
 
         y += 23;
 
-        addTextField(new GuiNpcTextField(3, this, x + 70, y, 83, 20, ""+effect.everyXTick));
-        getTextField(3).setMaxStringLength(15);
+        addTextField(setIntegerOnly(
+            new GuiNpcTextField(3, this, x + 70, y, 83, 20, ""+effect.everyXTick),
+            10,
+            1200,
+            effect.everyXTick
+        ));
+        getTextField(3).setMaxStringLength(6);
         getTextField(3).integersOnly = true;
         addLabel(new GuiNpcLabel(3, "effect.editor.runsEveryX", x, y + 5));
 
         int oldX = x;
-        x += 70 + 83 + 10;
-        addTextField(new GuiNpcTextField(4, this, x + 70, y, 83, 20, ""+effect.length));
-        getTextField(4).setMaxStringLength(15);
-        getTextField(4).integersOnly = true;
+        int xEnd = guiLeft+xSize-10;
+        x = getTextField(3).xPosition + getTextField(3).width;
+        addButton(new GuiNpcButtonYesNo(10, (x+xEnd - 83) / 2, y + 23, 83, 20, effect.lossOnDeath));
+        GuiNpcLabel label = new GuiNpcLabel(10, "effect.editor.lossOnDeath", x, y + 5);
+        label.x = (x+xEnd - fontRendererObj.getStringWidth(label.label))/2;
+        addLabel(label);
+        x = oldX;
+        y += 23;
+
+        addTextField(setIntegerOnly(
+            new GuiNpcTextField(4, this, x + 70, y, 83, 20, ""+effect.length),
+            -100,
+            86400,
+                effect.length
+        ));
+
         addLabel(new GuiNpcLabel(4, "effect.editor.defaultLength", x, y + 5));
 
         x = oldX - 4;
@@ -118,23 +139,48 @@ public class SubGuiEffectGeneral extends SubGuiInterface {
         scrollWindow.addLabel(new GuiNpcLabel(5, "display.texture", x, y, 0xFFFFFF));
         y += 12;
         scrollWindow.addTextField(new GuiNpcTextField(5, this, x, y, scrollWindow.clipWidth-x-10, 20, effect.icon));
+        scrollWindow.getTextField(5).setMaxStringLength(100);
 
         y += 25;
 
-        scrollWindow.addLabel(new GuiNpcLabel(6, "X pos", x, y + 6, 0xFFFFFF));
-        scrollWindow.addTextField(new GuiNpcTextField(6, this, x + 43, y, 60, 20, effect.iconX+""));
-        scrollWindow.addTextField(new GuiNpcTextField(7, this, scrollWindow.clipWidth - 60 - 10, y, 60, 20, effect.iconY+""));
-        scrollWindow.addLabel(new GuiNpcLabel(7, "Y pos", scrollWindow.getTextField(7).xPosition - 43, y + 6, 0xFFFFFF));
+        scrollWindow.addLabel(new GuiNpcLabel(6, "effect.editor.xPos", x, y + 6, 0xFFFFFF));
+        scrollWindow.addTextField(setIntegerOnly(
+            new GuiNpcTextField(6, this, x + 43, y, 60, 20, ""+effect.iconX),
+            0,
+            10240,
+            effect.iconX
+        ));
+        scrollWindow.addTextField(setIntegerOnly(
+            new GuiNpcTextField(7, this, scrollWindow.clipWidth - 60 - 10, y, 60, 20, ""+effect.iconY),
+            0,
+            10240,
+            effect.iconY
+        ));
+        scrollWindow.addLabel(new GuiNpcLabel(7, "effect.editor.yPos", scrollWindow.getTextField(7).xPosition - 43, y + 6, 0xFFFFFF));
         y += 23;
 
-        scrollWindow.addLabel(new GuiNpcLabel(8, "Width", x, y + 6, 0xFFFFFF));
-        scrollWindow.addTextField(new GuiNpcTextField(8, this, x + 43, y, 60, 20, effect.width+""));
-        scrollWindow.addTextField(new GuiNpcTextField(9, this, scrollWindow.clipWidth - 60 - 10, y, 60, 20, effect.height+""));
-        scrollWindow.addLabel(new GuiNpcLabel(9, "Height", scrollWindow.getTextField(9).xPosition - 43, y + 6, 0xFFFFFF));
+        scrollWindow.addLabel(new GuiNpcLabel(8, "effect.editor.width", x, y + 6, 0xFFFFFF));
+        scrollWindow.addTextField(setIntegerOnly(
+            new GuiNpcTextField(8, this, x + 43, y, 60, 20, ""+effect.width),
+            0,
+            10240,
+            effect.width
+        ));
+        scrollWindow.addTextField(setIntegerOnly(
+            new GuiNpcTextField(9, this, scrollWindow.clipWidth - 60 - 10, y, 60, 20, ""+effect.height),
+            0,
+            10240,
+            effect.height
+        ));
+        scrollWindow.addLabel(new GuiNpcLabel(9, "effect.editor.height", scrollWindow.getTextField(9).xPosition - 43, y + 6, 0xFFFFFF));
 
+    }
 
-
-
+    private GuiNpcTextField setIntegerOnly(GuiNpcTextField field, int min, int max, int def) {
+        field.integersOnly = true;
+        field.setMinMaxDefault(min, max, def);
+        field.setMaxStringLength(6);
+        return field;
     }
 
     @Override
@@ -146,10 +192,68 @@ public class SubGuiEffectGeneral extends SubGuiInterface {
             return;
         }
         if (id == -2) {
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), originalName));
             GuiDBCEffectScript scriptGUI = new GuiDBCEffectScript(parent, effect);
             scriptGUI.setWorldAndResolution(mc, width, height);
             scriptGUI.initGui();
             mc.currentScreen = scriptGUI;
         }
+        if (id == 10) {
+            GuiNpcButtonYesNo button = (GuiNpcButtonYesNo) guibutton;
+            effect.lossOnDeath = button.getBoolean();
+        }
+    }
+
+    @Override
+    public void unFocused(GuiNpcTextField guiNpcTextField) {
+        int id = guiNpcTextField.id;
+
+
+        switch (id) {
+            case 1:
+                effect.name = guiNpcTextField.getText();
+                break;
+            case 2:
+                effect.menuName = guiNpcTextField.getText().replaceAll("&", "§");
+                break;
+            case 3:
+                int tickTime = guiNpcTextField.getInteger();
+                int remainder = tickTime % 10;
+                if (remainder >= 5)
+                    tickTime += 10 - remainder;
+                else
+                    tickTime -= remainder;
+                guiNpcTextField.setText(tickTime+"");
+                effect.everyXTick = tickTime;
+                break;
+            case 4:
+                int length = guiNpcTextField.getInteger();
+                if (length < 0)
+                    length = -100;
+                guiNpcTextField.setText(length+"");
+                effect.length = length;
+                break;
+            case 5:
+                effect.icon = guiNpcTextField.getText();
+                break;
+            case 6:
+                effect.iconX = guiNpcTextField.getInteger();
+                break;
+            case 7:
+                effect.iconY = guiNpcTextField.getInteger();
+                break;
+            case 8:
+                effect.width = guiNpcTextField.getInteger();
+                break;
+            case 9:
+                effect.height = guiNpcTextField.getInteger();
+                break;
+        }
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        DBCPacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), originalName));
     }
 }

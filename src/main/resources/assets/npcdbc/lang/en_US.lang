@@ -36,6 +36,11 @@ effect.defaultLength=Default length
 # These are supposed to be shorter
 effect.editor.runsEveryX=Every X tick
 effect.editor.defaultLength=Length
+effect.editor.height=Height
+effect.editor.width=Width
+effect.editor.xPos=X Pos
+effect.editor.yPos=Y Pos
+effect.editor.lossOnDeath=Loss on Death
 
 mastery.maxLevel=Max Level
 mastery.multiFlat=Multi Flat

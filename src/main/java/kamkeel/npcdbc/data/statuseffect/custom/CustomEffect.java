@@ -93,6 +93,26 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
     }
 
     @Override
+    public int getWidth() {
+        return this.width;
+    }
+
+    @Override
+    public int getHeight() {
+        return this.height;
+    }
+
+    @Override
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    @Override
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    @Override
     public boolean isLossOnDeath() {
         return lossOnDeath;
     }
