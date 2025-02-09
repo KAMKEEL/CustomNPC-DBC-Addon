@@ -44,19 +44,37 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
             }
 
         }
-        public static class Ticked extends DBCPlayerEvent.EffectEvent implements IDBCEvent.EffectEvent.Added {
+        public static class Ticked extends DBCPlayerEvent.EffectEvent implements IDBCEvent.EffectEvent.Ticked {
 
             public Ticked(IPlayer player, IPlayerEffect statusEffect) {
                 super(player, statusEffect);
             }
 
         }
-        public static class Removed extends DBCPlayerEvent.EffectEvent implements IDBCEvent.EffectEvent.Added {
+        public static class Removed extends DBCPlayerEvent.EffectEvent implements IDBCEvent.EffectEvent.Removed {
 
-            public Removed(IPlayer player, IPlayerEffect statusEffect) {
+            private final ExpirationType type;
+
+            public Removed(IPlayer player, IPlayerEffect statusEffect, ExpirationType type) {
                 super(player, statusEffect);
+                this.type = type;
             }
 
+            @Override
+            public boolean hasNaturallyRunOut() {
+                return type == ExpirationType.RUN_OUT;
+            }
+
+            @Override
+            public boolean causedByDeath() {
+                return type == ExpirationType.DEATH;
+            }
+        }
+
+        public enum ExpirationType {
+            REMOVED,
+            RUN_OUT,
+            DEATH
         }
     }
 

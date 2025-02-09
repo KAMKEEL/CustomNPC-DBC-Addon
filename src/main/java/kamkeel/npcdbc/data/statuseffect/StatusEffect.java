@@ -5,6 +5,8 @@ import kamkeel.npcdbc.api.effect.IStatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
+import static kamkeel.npcdbc.scripted.DBCPlayerEvent.EffectEvent.ExpirationType;
+
 public class StatusEffect implements IStatusEffect {
     public static final ResourceLocation defaultTexture = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/icons.png");
     public int id = -1;
@@ -56,7 +58,7 @@ public class StatusEffect implements IStatusEffect {
     public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
     }
 
-    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, ExpirationType naturallyExpired) {
 
     }
 

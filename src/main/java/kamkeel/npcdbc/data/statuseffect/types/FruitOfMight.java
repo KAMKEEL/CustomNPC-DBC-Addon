@@ -13,6 +13,8 @@ import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 
+import static kamkeel.npcdbc.scripted.DBCPlayerEvent.EffectEvent.ExpirationType;
+
 public class FruitOfMight extends StatusEffect {
     public static Aura fruitOfMightAura = null;
     public float kiToDrain;
@@ -55,7 +57,7 @@ public class FruitOfMight extends StatusEffect {
     }
 
     @Override
-    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, ExpirationType type) {
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (c.currentAura == fruitOfMightAura.id) {
             c.currentAura = -1;

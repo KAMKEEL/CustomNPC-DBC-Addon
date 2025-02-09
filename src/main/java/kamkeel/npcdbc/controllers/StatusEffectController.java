@@ -16,6 +16,7 @@ import kamkeel.npcdbc.data.statuseffect.types.*;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcdbc.network.NetworkUtility;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import kamkeel.npcs.network.enums.EnumSyncAction;
@@ -34,6 +35,9 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
+
+import static kamkeel.npcdbc.scripted.DBCPlayerEvent.EffectEvent.ExpirationType;
+
 
 public class StatusEffectController implements IStatusEffectHandler {
 
@@ -110,7 +114,7 @@ public class StatusEffectController implements IStatusEffectHandler {
             StatusEffect effect = get(entry.getKey());
             if (effect != null) {
                 if (effect.lossOnDeath) {
-                    effect.onRemoved(player, entry.getValue());
+                    effect.onRemoved(player, entry.getValue(), DBCPlayerEvent.EffectEvent.ExpirationType.DEATH);
                     iterator.remove();
                 }
             } else {
@@ -271,7 +275,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         }
     }
 
-    public void removeEffect(EntityPlayer player, PlayerEffect effect) {
+    public void removeEffect(EntityPlayer player, PlayerEffect effect, ExpirationType type) {
         if (effect == null)
             return;
 
@@ -285,7 +289,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         if (currentEffects.containsKey(effect.id)) {
             StatusEffect parent = get(effect.id);
             if (parent != null) {
-                parent.onRemoved(player, effect);
+                parent.onRemoved(player, effect, type);
             }
             currentEffects.remove(effect.id);
         }
@@ -331,12 +335,12 @@ public class StatusEffectController implements IStatusEffectHandler {
     public void removeEffect(IPlayer player, int id) {
         if (player == null || player.getMCEntity() == null)
             return;
-        removeEffect((EntityPlayer) player.getMCEntity(), id);
+        removeEffect((EntityPlayer) player.getMCEntity(), id, ExpirationType.REMOVED);
     }
 
     @Override
     public void removeEffect(IPlayer player, IStatusEffect effect) {
-        removeEffect(player, effect.getID());
+        removeEffect((EntityPlayer) player.getMCEntity(), (PlayerEffect) effect, ExpirationType.REMOVED);
     }
 
     @Override
@@ -436,7 +440,7 @@ public class StatusEffectController implements IStatusEffectHandler {
         }
     }
 
-    public void removeEffect(EntityPlayer player, int id) {
+    public void removeEffect(EntityPlayer player, int id, ExpirationType type) {
         if (player == null || id <= 0)
             return;
 
@@ -449,12 +453,7 @@ public class StatusEffectController implements IStatusEffectHandler {
 
         if (currentEffects.containsKey(id)) {
             PlayerEffect current = currentEffects.get(id);
-            StatusEffect parent = get(current.id);
-            if (parent != null) {
-                parent.onRemoved(player, current);
-            }
-
-            currentEffects.remove(id);
+            this.removeEffect(player, current, type);
         }
     }
 
@@ -477,7 +476,7 @@ public class StatusEffectController implements IStatusEffectHandler {
             if (effect.duration <= 0) {
                 StatusEffect parent = StatusEffectController.Instance.get(effect.id);
                 if (parent != null) {
-                    parent.onRemoved(player, effect);
+                    parent.onRemoved(player, effect, ExpirationType.RUN_OUT);
                 }
                 iterator.remove();
                 continue;

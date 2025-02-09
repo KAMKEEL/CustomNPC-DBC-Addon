@@ -11,6 +11,8 @@ import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
 
+import static kamkeel.npcdbc.scripted.DBCPlayerEvent.EffectEvent.ExpirationType;
+
 public class HumanSpirit extends StatusEffect {
 
     public HumanSpirit() {
@@ -32,7 +34,7 @@ public class HumanSpirit extends StatusEffect {
     }
 
     @Override
-    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, ExpirationType type) {
         BonusController.getInstance().removeBonus(player, name);
 
         if(ConfigDBCEffects.EXHAUST_HUMANSPIRIT)

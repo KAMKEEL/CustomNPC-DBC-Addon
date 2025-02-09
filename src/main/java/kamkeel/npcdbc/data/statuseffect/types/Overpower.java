@@ -10,6 +10,8 @@ import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.util.ValueUtil;
 
+import static kamkeel.npcdbc.scripted.DBCPlayerEvent.EffectEvent.ExpirationType;
+
 public class Overpower extends StatusEffect {
 
     public Overpower() {
@@ -21,7 +23,7 @@ public class Overpower extends StatusEffect {
     }
 
     @Override
-    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, ExpirationType type) {
         // Ensure Overpower Caps Release back to Default upon Removal
         DBCData dbcData = DBCData.getData(player);
         dbcData.loadCharging();

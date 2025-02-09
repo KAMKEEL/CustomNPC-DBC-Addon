@@ -3,6 +3,7 @@ package kamkeel.npcdbc.command;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcs.command.CommandKamkeelBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -100,7 +101,7 @@ public class EffectCommand extends CommandKamkeelBase {
         }
 
         for (PlayerData playerData : data) {
-            StatusEffectController.getInstance().removeEffect(playerData.player, statusEffect.getID());
+            StatusEffectController.getInstance().removeEffect(playerData.player, statusEffect.getID(), DBCPlayerEvent.EffectEvent.ExpirationType.REMOVED);
             sendResult(sender, String.format("Effect %s removed from %s", statusEffect.getName(), playerData.playername));
         }
     }
@@ -134,7 +135,7 @@ public class EffectCommand extends CommandKamkeelBase {
 
         for (PlayerData playerData : data) {
             int statusEffectId = Integer.parseInt(args[1]);
-            StatusEffectController.getInstance().removeEffect(playerData.player, statusEffectId);
+            StatusEffectController.getInstance().removeEffect(playerData.player, statusEffectId, DBCPlayerEvent.EffectEvent.ExpirationType.REMOVED);
             sendResult(sender, String.format("Effect %d removed from %s", statusEffectId, playerData.playername));
         }
     }

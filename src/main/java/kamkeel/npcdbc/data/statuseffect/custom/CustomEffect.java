@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.statuseffect.custom;
 
 import kamkeel.npcdbc.api.effect.ICustomEffect;
+import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
@@ -11,14 +12,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.api.entity.IPlayer;
 
-import java.util.function.BiConsumer;
+import static kamkeel.npcdbc.scripted.DBCPlayerEvent.EffectEvent.ExpirationType;
+
+import java.util.function.Consumer;
 
 public class CustomEffect extends StatusEffect implements ICustomEffect {
 
     /**
      * Experimental script stuff.
      */
-    public BiConsumer<IPlayer, PlayerEffect> onAddedConsumer, onTickConsumer, onRemovedConsumer;
+    public Consumer<IDBCEvent.EffectEvent.Added> onAddedConsumer;
+    public Consumer<IDBCEvent.EffectEvent.Ticked> onTickConsumer;
+    public Consumer<DBCPlayerEvent.EffectEvent.Removed> onRemovedConsumer;
     public String menuName = "§aNEW EFFECT";
     public int width = 16, height = 16;
 
@@ -133,54 +138,61 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
     }
 
 
-    public void onAdded(BiConsumer<IPlayer, PlayerEffect> function) {
+    public void onAdded(Consumer<IDBCEvent.EffectEvent.Added> function) {
         onAddedConsumer = function;
     }
 
-    public void onTick(BiConsumer<IPlayer, PlayerEffect> function) {
+    public void onTick(Consumer<IDBCEvent.EffectEvent.Ticked> function) {
         onTickConsumer = function;
     }
 
-    public void onRemoved(BiConsumer<IPlayer, PlayerEffect> function) {
+    public void onRemoved(Consumer<DBCPlayerEvent.EffectEvent.Removed> function) {
         onRemovedConsumer = function;
     }
 
     public void onAdded(EntityPlayer player, PlayerEffect playerEffect) {
         IPlayer iPlayer = PlayerDataUtil.getIPlayer(player);
-        if (onAddedConsumer != null)
-            onAddedConsumer.accept(iPlayer, playerEffect);
-
-        EffectScriptHandler script = getScriptHandler();
-        if (script == null)
-            return;
 
         DBCPlayerEvent.EffectEvent.Added event = new DBCPlayerEvent.EffectEvent.Added(iPlayer, playerEffect);
+        if (onAddedConsumer != null) onAddedConsumer.accept(event);
+        EffectScriptHandler script = getScriptHandler();
+        if (script == null) {
+            return;
+        }
+
         script.callScript(EffectScriptHandler.ScriptType.OnAdd, event);
     }
 
     public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
         IPlayer iPlayer = PlayerDataUtil.getIPlayer(player);
-        if (onTickConsumer != null)
-            onTickConsumer.accept(iPlayer, playerEffect);
+        DBCPlayerEvent.EffectEvent.Ticked event = new DBCPlayerEvent.EffectEvent.Ticked(iPlayer, playerEffect);
+
+        if (onTickConsumer != null) {
+            onTickConsumer.accept(event);
+        }
 
         EffectScriptHandler script = getScriptHandler();
-        if (script == null)
+        if (script == null) {
             return;
+        }
 
-        DBCPlayerEvent.EffectEvent.Ticked event = new DBCPlayerEvent.EffectEvent.Ticked(iPlayer, playerEffect);
         script.callScript(EffectScriptHandler.ScriptType.OnTick, event);
     }
 
-    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, ExpirationType type) {
         IPlayer iPlayer = PlayerDataUtil.getIPlayer(player);
-        if (onRemovedConsumer != null)
-            onRemovedConsumer.accept(iPlayer, playerEffect);
+
+        DBCPlayerEvent.EffectEvent.Removed event = new DBCPlayerEvent.EffectEvent.Removed(iPlayer, playerEffect, type);
+
+        if (onRemovedConsumer != null) {
+            onRemovedConsumer.accept(event);
+        }
 
         EffectScriptHandler script = getScriptHandler();
-        if (script == null)
+        if (script == null) {
             return;
+        }
 
-        DBCPlayerEvent.EffectEvent.Removed event = new DBCPlayerEvent.EffectEvent.Removed(iPlayer, playerEffect);
         script.callScript(EffectScriptHandler.ScriptType.OnRemove, event);
     }
 

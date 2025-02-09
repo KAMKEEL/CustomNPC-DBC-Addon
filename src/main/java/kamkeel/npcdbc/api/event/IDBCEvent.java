@@ -18,7 +18,8 @@ public interface IDBCEvent extends IPlayerEvent {
 
         }
         interface Removed extends EffectEvent {
-
+            boolean hasNaturallyRunOut();
+            boolean causedByDeath();
         }
 
     }

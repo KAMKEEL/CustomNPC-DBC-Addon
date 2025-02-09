@@ -7,10 +7,13 @@ import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.ByteBufUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
+import noppes.npcs.config.ConfigScript;
 import noppes.npcs.controllers.ScriptContainer;
 import noppes.npcs.controllers.ScriptController;
 import noppes.npcs.controllers.data.IScriptHandler;
+import noppes.npcs.scripted.NpcAPI;
 
+import javax.script.ScriptEngine;
 import java.io.IOException;
 import java.util.*;
 
@@ -44,10 +47,24 @@ public class EffectScriptHandler implements IScriptHandler {
         callScript(type.function, event);
     }
 
-    @Override
+    public boolean isEnabled() {
+        return this.enabled && ScriptController.HasStart && container != null && ConfigScript.ScriptingEnabled;
+    }
+
+        @Override
     public void callScript(String s, Event event) {
-        if (container != null)
-            container.run(s, event);
+        if (!this.isEnabled()) {
+            return;
+        }
+
+        ScriptEngine engine = container.engine;
+        engine.put("API", NpcAPI.Instance());
+
+        for (Map.Entry<String, Object> engineObjects : NpcAPI.engineObjects.entrySet()) {
+            engine.put(engineObjects.getKey(), engineObjects.getValue());
+        }
+
+        container.run(s, event);
     }
 
     @Override
