@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.client.gui.global.effects;
 
 import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.effect.DBCGetEffect;
@@ -75,21 +77,22 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
             while (data.containsKey(name))
                 name += "_";
             CustomEffect effect = new CustomEffect(-1, name);
-            DBCPacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), effect.id, ""));
-        }
-
-        if (button.id == 1) {
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), ""));
+        } else if (button.id == 1) {
             if (data.containsKey(scrollEffects.getSelected())) {
                 GuiYesNo guiyesno = new GuiYesNo(this, scrollEffects.getSelected(), StatCollector.translateToLocal("gui.delete"), 1);
                 displayGuiScreen(guiyesno);
             }
-        }
-        if (button.id == 2) {
+        } else if (button.id == 2) {
             CustomEffect effect = this.effect.clone();
             while (data.containsKey(effect.name))
                 effect.name += "_";
-            DBCPacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), effect.id, ""));
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), ""));
         }
+
+        if (effect == null)
+            return;
+
         if (button.id == 3) {
             if (data.containsKey(scrollEffects.getSelected()) && effect != null && effect.id >= Effects.CUSTOM_EFFECT) {
                 setSubGui(new SubGuiEffectGeneral(this, effect));
@@ -104,6 +107,12 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
         this.effect = new CustomEffect();
         effect.readFromNBT(compound);
         setSelected(effect.name);
+
+        if (effect.id != -1) {
+            StatusEffectController.getInstance().customEffects.replace(effect.id, effect);
+        }
+
+
 
         initGui();
     }
@@ -201,7 +210,7 @@ public class GuiNPCManageEffects extends GuiNPCInterface2 implements ICustomScro
     @Override
     public void save() {
         if (this.selected != null && this.data.containsKey(this.selected) && this.effect != null) {
-            DBCPacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), effect.id, originalName));
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveEffect(effect.writeToNBT(false), originalName));
         }
     }
 

@@ -46,7 +46,7 @@ public class GuiDBCEffectScript extends GuiNPCInterface implements GuiYesNoCallb
 
         this.parent = parent;
         this.effect = effect;
-        this.scriptHandler = new EffectScriptHandler(effect);
+        this.scriptHandler = new EffectScriptHandler();
 
         for (EffectScriptHandler.ScriptType type : EffectScriptHandler.ScriptType.values()) {
             this.hookList.add(type.function);

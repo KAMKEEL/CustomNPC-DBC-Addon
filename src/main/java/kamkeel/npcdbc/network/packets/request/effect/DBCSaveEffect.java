@@ -24,11 +24,9 @@ public class DBCSaveEffect extends AbstractPacket {
 
     private String prevName;
     private NBTTagCompound effect;
-    private int id;
 
-    public DBCSaveEffect(NBTTagCompound compound, int id, String prev){
+    public DBCSaveEffect(NBTTagCompound compound, String prev){
         this.effect = compound;
-        this.id = id;
         this.prevName = prev;
     }
 
@@ -49,7 +47,6 @@ public class DBCSaveEffect extends AbstractPacket {
     @Override
     public void sendData(ByteBuf out) throws IOException {
         ByteBufUtils.writeString(out, prevName);
-        out.writeInt(id);
         ByteBufUtils.writeNBT(out, effect);
     }
 
@@ -59,17 +56,16 @@ public class DBCSaveEffect extends AbstractPacket {
             return;
 
         String prevName = ByteBufUtils.readString(in);
-        int id = in.readInt();
-        if (id < 200)
-            return;
-        if(!prevName.isEmpty()){
+
+        CustomEffect effect = new CustomEffect();
+        effect.readFromNBT(ByteBufUtils.readNBT(in));
+
+        StatusEffectController.getInstance().saveEffect(effect);
+
+        if(!prevName.isEmpty() && !prevName.equals(effect.name)){
             StatusEffectController.getInstance().deleteEffectFile(prevName);
         }
-        CustomEffect effect = (CustomEffect) StatusEffectController.getInstance().get(id);
-        if (effect == null)
-            effect = new CustomEffect();
-        effect.readFromNBT(ByteBufUtils.readNBT(in));
-        StatusEffectController.getInstance().saveEffect(effect);
+
         NetworkUtility.sendCustomEffectDataAll((EntityPlayerMP) player);
     }
 }

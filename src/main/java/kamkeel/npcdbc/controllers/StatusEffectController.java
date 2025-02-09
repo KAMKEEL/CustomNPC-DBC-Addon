@@ -348,7 +348,7 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     @Override
     public ICustomEffect saveEffect(ICustomEffect customEffect) {
-        if (customEffect.getID() < 0) {
+        if (customEffect.getID() < Effects.CUSTOM_EFFECT) {
             customEffect.setID(getUnusedId());
             while (has(customEffect.getName()))
                 customEffect.setName(customEffect.getName() + "_");
@@ -377,8 +377,7 @@ public class StatusEffectController implements IStatusEffectHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            nbtTagCompound = ((CustomEffect) customEffect).writeToNBT(true);
-            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.CUSTOM_EFFECT, EnumSyncAction.UPDATE, customEffect.getID(), new NBTTagCompound()));
+            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.CUSTOM_EFFECT, EnumSyncAction.UPDATE, -1, new NBTTagCompound()));
         } catch (Exception e) {
             LogWriter.except(e);
         }

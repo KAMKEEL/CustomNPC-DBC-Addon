@@ -210,7 +210,7 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
         lossOnDeath = compound.getBoolean("lossOnDeath");
 
         if (compound.hasKey("ScriptData", Constants.NBT.TAG_COMPOUND)) {
-            EffectScriptHandler handler = new EffectScriptHandler(this);
+            EffectScriptHandler handler = new EffectScriptHandler();
             handler.readFromNBT(compound.getCompoundTag("ScriptData"));
             setScriptHandler(handler);
         }
@@ -233,7 +233,7 @@ public class CustomEffect extends StatusEffect implements ICustomEffect {
     public EffectScriptHandler getOrCreateScriptHandler() {
         EffectScriptHandler data = getScriptHandler();
         if (data == null)
-            setScriptHandler(data =new EffectScriptHandler(this));
+            setScriptHandler(data =new EffectScriptHandler());
         return data;
     }
 }

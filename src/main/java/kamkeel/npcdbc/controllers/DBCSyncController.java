@@ -46,6 +46,7 @@ public class DBCSyncController {
         compound.setTag("Data", list);
         DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.RELOAD, -1, compound), player);
 
+        // Sync All Custom Effects
         list = new NBTTagList();
         compound = new NBTTagCompound();
         for (CustomEffect effect : StatusEffectController.getInstance().customEffects.values()) {
@@ -91,7 +92,7 @@ public class DBCSyncController {
             for (int i = 0; i < list.tagCount(); i++) {
                 CustomEffect effect = new CustomEffect();
                 effect.readFromNBT(list.getCompoundTagAt(i));
-                ClientCacheHandler.getImageData(effect.icon);
+//                ClientCacheHandler.getImageData(effect.icon);
                 StatusEffectController.getInstance().customEffectsSync.put(effect.id, effect);
             }
 

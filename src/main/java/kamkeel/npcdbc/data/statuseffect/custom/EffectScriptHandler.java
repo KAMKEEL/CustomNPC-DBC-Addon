@@ -18,11 +18,7 @@ public class EffectScriptHandler implements IScriptHandler {
     public ScriptContainer container;
     public String scriptLanguage = "ECMAScript";
     public boolean enabled = false;
-    public final CustomEffect effect;
 
-    public EffectScriptHandler(CustomEffect customEffect) {
-        this.effect = customEffect;
-    }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setString("ScriptLanguage", scriptLanguage);
