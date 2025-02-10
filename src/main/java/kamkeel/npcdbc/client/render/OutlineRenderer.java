@@ -253,8 +253,15 @@ public class OutlineRenderer {
         boolean customHair = hairPreset == 12 && dnsH.length() > 3;
 
         Form form = data.getForm();
+        boolean skipHairRendering = hairPreset == 10;
+
+        if (form != null) {
+            if (form.display.hairCode.length() > 5 || form.display.hairType.equals("ssj4"))
+                skipHairRendering = false;
+        }
+
         if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-            if (hairPreset == 10) {//bald LMAO
+            if (skipHairRendering) {//bald LMAO
                 renderer.modelMain.renderHeadwear(0.0625F);
                 return;
             }
