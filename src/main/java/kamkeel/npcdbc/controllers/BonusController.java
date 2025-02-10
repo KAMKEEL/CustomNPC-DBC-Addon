@@ -15,18 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class BonusController implements IBonusHandler {
 
-    public static BonusController Instance;
+    public static BonusController Instance = new BonusController();
     public HashMap<UUID, Map<String, PlayerBonus>> playerBonus = new HashMap<>();
-
-    public static void initialize() {
-        if (Instance == null)
-            Instance = new BonusController();
-        Instance.load();
-    }
-
-    public static void terminate() {
-        Instance = null;
-    }
 
     public static BonusController getInstance() {
         return Instance;

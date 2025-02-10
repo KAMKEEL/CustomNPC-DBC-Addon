@@ -41,7 +41,7 @@ import static kamkeel.npcdbc.scripted.DBCPlayerEvent.EffectEvent.ExpirationType;
 
 public class StatusEffectController implements IStatusEffectHandler {
 
-    public static StatusEffectController Instance;
+    public static StatusEffectController Instance = new StatusEffectController();
 
     public HashMap<Integer, StatusEffect> standardEffects = new HashMap<>();
     // TODO: I will implement later - Kam
@@ -64,16 +64,6 @@ public class StatusEffectController implements IStatusEffectHandler {
 
     public static StatusEffectController getInstance() {
         return Instance;
-    }
-
-    public static void initialize() {
-        if (Instance == null)
-            Instance = new StatusEffectController();
-        Instance.load();
-    }
-
-    public static void terminate() {
-        Instance = null;
     }
 
     public void load() {

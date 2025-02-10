@@ -3,7 +3,10 @@ package kamkeel.npcdbc;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.controllers.*;
@@ -40,26 +43,18 @@ public class CustomNpcPlusDBC {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
+        CapsuleController.getInstance().load();
+        BonusController.getInstance().load();
     }
 
     @Mod.EventHandler
     public void setAboutToStart(FMLServerAboutToStartEvent event) {
-        FormController.initialize();
-        AuraController.initialize();
-        CapsuleController.initialize();
-        StatusEffectController.initialize();
-        BonusController.initialize();
-        OutlineController.initialize();
-    }
-
-    @Mod.EventHandler
-    public void serverClosing(FMLServerStoppingEvent event) {
-        FormController.terminate();
-        AuraController.terminate();
-        CapsuleController.terminate();
-        StatusEffectController.terminate();
-        BonusController.terminate();
-        OutlineController.terminate();
+        FormController.getInstance().load();
+        AuraController.getInstance().load();
+        CapsuleController.getInstance().load();
+        StatusEffectController.getInstance().load();
+        BonusController.getInstance().load();
+        OutlineController.getInstance().load();
     }
 
     @Mod.EventHandler

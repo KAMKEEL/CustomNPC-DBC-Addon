@@ -21,21 +21,11 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 public class FormController implements IFormHandler {
-    public static FormController Instance;
+    public static FormController Instance = new FormController();
     public HashMap<Integer, Form> customFormsSync = new HashMap();
     public HashMap<Integer, Form> customForms;
     private HashMap<Integer, String> bootOrder;
     private int lastUsedID = 0;
-
-    public static void initialize() {
-        if (Instance == null)
-            Instance = new FormController();
-        Instance.load();
-    }
-
-    public static void terminate() {
-        Instance = null;
-    }
 
     public FormController() {
         Instance = this;
