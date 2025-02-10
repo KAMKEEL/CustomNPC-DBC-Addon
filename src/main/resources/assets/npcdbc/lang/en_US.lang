@@ -152,6 +152,7 @@ display.normalEye=Normal
 display.hasEyebrows=Eyebrows
 display.mouth=Mouth
 display.nose=Nose
+display.formCanFormbeCustomized=Player customization
 display.color=Color
 display.modify=Modify
 display.formWidth=Form Width
