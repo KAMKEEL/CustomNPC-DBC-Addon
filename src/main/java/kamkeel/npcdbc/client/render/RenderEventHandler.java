@@ -19,7 +19,6 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.items.ModItems;
@@ -46,6 +45,8 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.client.renderer.RenderCustomNpc;
+import noppes.npcs.controllers.data.PlayerData;
+import noppes.npcs.controllers.data.PlayerEffect;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -78,29 +79,32 @@ public class RenderEventHandler {
             return;
         }
 
-        PlayerEffect potaraFusion = dbcData.stats.getPlayerEffects().get(Effects.POTARA);
-        if (potaraFusion == null) {
-            return;
-        }
-
-        event.result = 1;
-
-        int slot = event.slot + 3;
-        float partialTick = event.partialRenderTick;
-        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(((ItemPotara) ModItems.Potaras).getArmorTextureByMeta(potaraFusion.level)));
-        ModelBiped modelbiped = event.renderer.modelArmorChestplate;
-        modelbiped.bipedHead.showModel = false;
-        modelbiped.bipedHeadwear.showModel = false;
-        modelbiped.bipedBody.showModel = false;
-        modelbiped.bipedRightArm.showModel = false;
-        modelbiped.bipedLeftArm.showModel = false;
-        modelbiped.bipedRightLeg.showModel = false;
-        modelbiped.bipedLeftLeg.showModel = false;
-        modelbiped = ModelPotara.BOTH_EARS;
-        event.renderer.setRenderPassModel(modelbiped);
-        modelbiped.onGround = event.renderer.mainModel.onGround;
-        modelbiped.isRiding = event.renderer.mainModel.isRiding;
-        modelbiped.isChild = event.renderer.mainModel.isChild;
+        // TODO: FIX POTARA FUSION RENDERING
+//        PlayerData playerData = PlayerData.get(event.entityPlayer);
+//
+//        PlayerEffect potaraFusion = dbcData.stats.getPlayerEffects().get(Effects.POTARA);
+//        if (potaraFusion == null) {
+//            return;
+//        }
+//
+//        event.result = 1;
+//
+//        int slot = event.slot + 3;
+//        float partialTick = event.partialRenderTick;
+//        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(((ItemPotara) ModItems.Potaras).getArmorTextureByMeta(potaraFusion.level)));
+//        ModelBiped modelbiped = event.renderer.modelArmorChestplate;
+//        modelbiped.bipedHead.showModel = false;
+//        modelbiped.bipedHeadwear.showModel = false;
+//        modelbiped.bipedBody.showModel = false;
+//        modelbiped.bipedRightArm.showModel = false;
+//        modelbiped.bipedLeftArm.showModel = false;
+//        modelbiped.bipedRightLeg.showModel = false;
+//        modelbiped.bipedLeftLeg.showModel = false;
+//        modelbiped = ModelPotara.BOTH_EARS;
+//        event.renderer.setRenderPassModel(modelbiped);
+//        modelbiped.onGround = event.renderer.mainModel.onGround;
+//        modelbiped.isRiding = event.renderer.mainModel.isRiding;
+//        modelbiped.isChild = event.renderer.mainModel.isChild;
     }
 
     @SubscribeEvent

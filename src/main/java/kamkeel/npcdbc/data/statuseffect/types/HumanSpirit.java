@@ -4,14 +4,14 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.BonusController;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.controllers.data.PlayerEffect;
+import noppes.npcs.scripted.event.PlayerEvent;
 
-import static kamkeel.npcdbc.scripted.DBCPlayerEvent.EffectEvent.ExpirationType;
 
 public class HumanSpirit extends StatusEffect {
 
@@ -34,10 +34,10 @@ public class HumanSpirit extends StatusEffect {
     }
 
     @Override
-    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, ExpirationType type) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, PlayerEvent.EffectEvent.ExpirationType type) {
         BonusController.getInstance().removeBonus(player, name);
 
         if(ConfigDBCEffects.EXHAUST_HUMANSPIRIT)
-            StatusEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED, ConfigDBCEffects.EXHAUST_HUMANSPIRIT_TIME * 60);
+            DBCEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED, ConfigDBCEffects.EXHAUST_HUMANSPIRIT_TIME * 60);
     }
 }

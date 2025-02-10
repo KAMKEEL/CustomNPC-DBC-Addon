@@ -5,14 +5,13 @@ import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.BonusController;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
-
-import static kamkeel.npcdbc.scripted.DBCPlayerEvent.EffectEvent.ExpirationType;
+import noppes.npcs.controllers.data.PlayerEffect;
+import noppes.npcs.scripted.event.PlayerEvent;
 
 public class Zenkai extends StatusEffect {
     public PlayerBonus saiyanZenkai;
@@ -39,7 +38,7 @@ public class Zenkai extends StatusEffect {
     }
 
     @Override
-    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, ExpirationType type) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, PlayerEvent.EffectEvent.ExpirationType type) {
         DBCData dbcData = DBCData.get(player);
         if(dbcData.Race == DBCRace.SAIYAN)
             BonusController.getInstance().removeBonus(player, saiyanZenkai);
@@ -48,6 +47,6 @@ public class Zenkai extends StatusEffect {
 
 
         if(ConfigDBCEffects.EXHAUST_ZENKAI)
-            StatusEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED, ConfigDBCEffects.EXHAUST_ZENKAI_TIME * 60);
+            DBCEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED, ConfigDBCEffects.EXHAUST_ZENKAI_TIME * 60);
     }
 }

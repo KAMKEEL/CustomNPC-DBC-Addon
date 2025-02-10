@@ -3,14 +3,13 @@ package kamkeel.npcdbc.data.statuseffect.types;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.controllers.data.PlayerEffect;
+import noppes.npcs.scripted.event.PlayerEvent;
 import noppes.npcs.util.ValueUtil;
-
-import static kamkeel.npcdbc.scripted.DBCPlayerEvent.EffectEvent.ExpirationType;
 
 public class Overpower extends StatusEffect {
 
@@ -23,7 +22,7 @@ public class Overpower extends StatusEffect {
     }
 
     @Override
-    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, ExpirationType type) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, PlayerEvent.EffectEvent.ExpirationType type) {
         // Ensure Overpower Caps Release back to Default upon Removal
         DBCData dbcData = DBCData.getData(player);
         dbcData.loadCharging();
@@ -35,6 +34,6 @@ public class Overpower extends StatusEffect {
         dbcData.getRawCompound().setByte("jrmcRelease", (byte) newRelease);
 
         if(ConfigDBCEffects.EXHAUST_OVERPOWER)
-            StatusEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED, ConfigDBCEffects.EXHAUST_OVERPOWER_TIME * 60);
+            DBCEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED, ConfigDBCEffects.EXHAUST_OVERPOWER_TIME * 60);
     }
 }

@@ -10,17 +10,17 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.gui.dbc.AbstractJRMCGui;
 import kamkeel.npcdbc.client.gui.dbc.JRMCoreLabel;
-import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
-import kamkeel.npcdbc.data.statuseffect.StatusEffect;
-import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.client.renderer.ImageData;
+import noppes.npcs.controllers.CustomEffectController;
+import noppes.npcs.controllers.data.CustomEffect;
+import noppes.npcs.controllers.data.EffectKey;
+import noppes.npcs.controllers.data.PlayerData;
+import noppes.npcs.controllers.data.PlayerEffect;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Mixin(value = JRMCoreGuiBars.class, remap = false)
@@ -50,19 +50,21 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
         DBCData dbcData = DBCData.getClient();
         if (dbcData == null)
             return;
-        Map<Integer, PlayerEffect> current = dbcData.stats.getPlayerEffects();
+
+        PlayerData playerData = PlayerData.get(dbcData.player);
+        ConcurrentHashMap<EffectKey, PlayerEffect> current = playerData.effectData.getEffects();
         if(current == null)
             return;
-        for (int id : current.keySet()) {
-            StatusEffect effect = StatusEffectController.Instance.get(id);
+        for (EffectKey key : current.keySet()) {
+            CustomEffect effect = CustomEffectController.getInstance().get(key.getId(), key.getIndex());
             if (effect == null)
                 continue;
-            if (effect.icon.length() > 3 || effect.isCustom()) {
+            if (effect.icon.length() > 3) {
                 drawIcon(var51 + i.get(), var61 + j.get(), effect);
-                String text = effect.isCustom() ? ((CustomEffect) effect).getMenuName() : effect.getName();
+                String text = effect.getMenuName();
                 text += JRMCoreH.cldgy;
-                if(dbcData.stats.getPlayerEffects().containsKey(effect.getID())){
-                    PlayerEffect pe = current.get(effect.getID());
+                if(playerData.effectData.hasPlayerEffect(key.getId(), key.getIndex())){
+                    PlayerEffect pe = playerData.effectData.getPlayerEffect(key.getId(), key.getIndex());
                     if(pe.getDuration() != -100)
                         text += "\nTime: " + pe.getDuration() + "s";
                     else
@@ -99,7 +101,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
     }
 
     @Unique
-    private void drawIcon(int x, int y, StatusEffect effect) {
+    private void drawIcon(int x, int y, CustomEffect effect) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         float w = 100f;
         int w2 = (int) (0.16F * (100.0F - w));
@@ -112,8 +114,8 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
             int iconY = effect.iconY;
             int iconWidth = effect.getWidth();
             int iconHeight = effect.getHeight();
-            int width = effect.isCustom() ? data.getTotalWidth() : 256;
-            int height = effect.isCustom() ? data.getTotalWidth() : 256;
+            int width = data.getTotalWidth();
+            int height = data.getTotalWidth();
 
 
             func_152125_a(x + 2 + (JGConfigClientSettings.CLIENT_hud0 > 1 ? 50 : 0), y + w2 + 2, iconX, iconY, iconWidth, iconHeight, 16, 16, width, height);

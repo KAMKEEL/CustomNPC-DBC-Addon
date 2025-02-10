@@ -11,12 +11,12 @@ import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.controllers.StatusEffectController;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.NoppesUtilServer;
+import noppes.npcs.controllers.data.PlayerEffect;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
@@ -32,40 +32,6 @@ public class DBCDataStats {
 
     public DBCDataStats(DBCData dbcData) {
         this.data = dbcData;
-    }
-
-    /**
-     * @return The current player effects or null.
-     */
-    public Map<Integer, PlayerEffect> getPlayerEffects() {
-        if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
-            if (data.currentEffects == null)
-                data.currentEffects = new HashMap<>();
-            return data.currentEffects;
-        }
-
-        return StatusEffectController.getInstance().getPlayerEffects(data.player);
-    }
-
-    /**
-     * Saves status effects to NBT.
-     * Only works on the serverside.
-     * @param nbt Compound in which these should be stored in.
-     */
-    public void saveEffectsNBT(NBTTagCompound nbt) {
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
-            return;
-
-        Map<Integer, PlayerEffect> effects = StatusEffectController.Instance.getPlayerEffects(data.player);
-        if(effects == null)
-            return;
-        NBTTagList nbttaglist = new NBTTagList();
-
-        for (PlayerEffect playerEffect : effects.values()) {
-            nbttaglist.appendTag(playerEffect.writeEffectData(new NBTTagCompound()));
-        }
-
-        nbt.setTag("addonActiveEffects", nbttaglist);
     }
 
     public int[] getAllAttributes() {
@@ -366,8 +332,8 @@ public class DBCDataStats {
             return;
 
         if (getCurrentBodyPercentage() < ConfigDBCGameplay.NamekianRegenMin) {
-            if (!StatusEffectController.getInstance().hasEffect(data.player, Effects.NAMEK_REGEN)) {
-                StatusEffectController.getInstance().applyEffect(data.player, Effects.NAMEK_REGEN, -100);
+            if (!DBCEffectController.getInstance().hasEffect(data.player, Effects.NAMEK_REGEN)) {
+                DBCEffectController.getInstance().applyEffect(data.player, Effects.NAMEK_REGEN, -100);
             }
         }
     }

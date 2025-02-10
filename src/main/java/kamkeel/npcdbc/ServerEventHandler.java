@@ -14,7 +14,7 @@ import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.FusionHandler;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -28,7 +28,6 @@ import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.CapsuleInfo;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcdbc.network.packets.player.LoginInfo;
-import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -43,7 +42,6 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityCustomNpc;
@@ -106,10 +104,7 @@ public class ServerEventHandler {
 
             if(ConfigDBCEffects.AUTO_BLOATED)
                 if (player.ticksExisted % ConfigDBCEffects.DECREASE_TIME == 0)
-                    StatusEffectController.Instance.decreaseSenzuConsumption(player);
-
-            if (player.ticksExisted % ConfigDBCGameplay.CheckEffectsTick == 0)
-                StatusEffectController.Instance.runEffects(player);
+                    DBCEffectController.Instance.decreaseSenzuConsumption(player);
 
             if (ConfigDBCGameplay.WearableEarrings)
                 if (player.ticksExisted % 60 == 0)
@@ -122,10 +117,7 @@ public class ServerEventHandler {
                     dbcData.stats.applyNamekianRegen();
 
                 if (ConfigDBCGameplay.EnableHumanSpirit && dbcData.Race == DBCRace.HUMAN)
-                    StatusEffectController.Instance.checkHumanSpirit(player);
-
-                if (player.ticksExisted % 20 == 0)
-                    StatusEffectController.Instance.decrementEffects(dbcData.player);
+                    DBCEffectController.Instance.checkHumanSpirit(player);
 
                 dbcData.syncTracking();
                 // ChargeKi
@@ -152,7 +144,7 @@ public class ServerEventHandler {
         boolean powerDown = dbcData.isFnPressed;
         byte release = dbcData.Release;
 
-        byte maxRelease = (byte) ((byte) (50 + dbcData.stats.getPotentialUnlockLevel() * 5) + (byte) (StatusEffectController.Instance.hasEffect(player, Effects.OVERPOWER) ? ConfigDBCEffects.OVERPOWER_AMOUNT : 0));
+        byte maxRelease = (byte) ((byte) (50 + dbcData.stats.getPotentialUnlockLevel() * 5) + (byte) (DBCEffectController.Instance.hasEffect(player, Effects.OVERPOWER) ? ConfigDBCEffects.OVERPOWER_AMOUNT : 0));
 
         int newRelease = ValueUtil.clamp(!powerDown ? release + releaseFactor : release - releaseFactor, (byte) releaseFactor, maxRelease);
         dbcData.getRawCompound().setByte("jrmcRelease", (byte) newRelease);
@@ -164,8 +156,6 @@ public class ServerEventHandler {
             return;
 
         if (event.entityLiving.worldObj instanceof WorldServer && event.entityLiving instanceof EntityPlayer) {
-            StatusEffectController.getInstance().killEffects((EntityPlayer) event.entityLiving);
-
             PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo((EntityPlayer) event.entityLiving);
             DBCData dbcData = DBCData.get((EntityPlayer) event.entityLiving);
             dbcData.addonFormID = -1;

@@ -6,11 +6,10 @@ import kamkeel.npcdbc.constants.enums.EnumPotaraTypes;
 import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.entity.player.EntityPlayer;
-
-import static kamkeel.npcdbc.scripted.DBCPlayerEvent.EffectEvent.ExpirationType;
+import noppes.npcs.controllers.data.PlayerEffect;
+import noppes.npcs.scripted.event.PlayerEvent;
 
 public class PotaraFusion extends StatusEffect {
 
@@ -33,7 +32,7 @@ public class PotaraFusion extends StatusEffect {
     }
 
     @Override
-    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, ExpirationType type) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, PlayerEvent.EffectEvent.ExpirationType type) {
         BonusController.getInstance().removeBonus(player, name);
     }
 

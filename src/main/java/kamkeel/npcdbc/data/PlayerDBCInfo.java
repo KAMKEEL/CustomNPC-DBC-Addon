@@ -12,7 +12,6 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormMastery;
 import kamkeel.npcdbc.data.form.FormMasteryLinkData;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -24,6 +23,7 @@ import net.minecraftforge.common.util.Constants;
 import noppes.npcs.NBTTags;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.data.PlayerData;
+import noppes.npcs.controllers.data.PlayerEffect;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
@@ -403,7 +403,7 @@ public class PlayerDBCInfo {
             clearAllAuras();
 
         configuredFormColors.clear();
-        StatusEffectController.getInstance().clearEffects(parent.player);
+        DBCEffectController.getInstance().clearDBCEffects(parent.player);
         BonusController.getInstance().clearBonuses(parent.player);
 
         updateClient();
@@ -435,10 +435,7 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("CurrentAura", currentAura);
         dbcCompound.setInteger("SelectedAura", selectedAura);
         dbcCompound.setTag("UnlockedAuras", NBTTags.nbtIntegerSet(unlockedAuras));
-        saveEffects(dbcCompound);
         saveBonuses(dbcCompound);
-
-
         compound.setTag("DBCInfo", dbcCompound);
     }
 
@@ -472,7 +469,6 @@ public class PlayerDBCInfo {
                 (slot, color) -> FormController.getInstance().has(slot) && !color.isEmpty()
             );
 
-        loadEffects(dbcCompound);
         loadBonuses(dbcCompound);
     }
 
@@ -493,25 +489,6 @@ public class PlayerDBCInfo {
         BonusController.getInstance().playerBonus.put(Utility.getUUID(parent.player), currentBonuses);
     }
 
-    private void loadEffects(NBTTagCompound dbcCompound){
-        if(FMLCommonHandler.instance().getEffectiveSide().isClient() || this.parent.player == null)
-            return;
-
-        ConcurrentHashMap<Integer, PlayerEffect> currentEffects = new ConcurrentHashMap<>();
-        if (dbcCompound.hasKey("addonActiveEffects", 9)) {
-            NBTTagList nbttaglist = dbcCompound.getTagList("addonActiveEffects", 10);
-            for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-                NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-                PlayerEffect playerEffect = PlayerEffect.readEffectData(nbttagcompound1);
-                if (playerEffect != null) {
-                    currentEffects.put(playerEffect.id, playerEffect);
-                }
-            }
-        }
-        StatusEffectController.Instance.playerEffects.put(Utility.getUUID(parent.player), currentEffects);
-
-    }
-
     private void saveBonuses(NBTTagCompound dbcCompound) {
         if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT || parent.player == null)
             return;
@@ -526,22 +503,6 @@ public class PlayerDBCInfo {
             nbttaglist.appendTag(bonus.writeBonusData(new NBTTagCompound()));
         }
         dbcCompound.setTag("addonBonus", nbttaglist);
-    }
-
-    private void saveEffects(NBTTagCompound dbcCompound) {
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT || parent.player == null)
-            return;
-
-        Map<Integer, PlayerEffect> effects = StatusEffectController.Instance.getPlayerEffects(parent.player);
-        if(effects == null)
-            return;
-        NBTTagList nbttaglist = new NBTTagList();
-
-        for (PlayerEffect playerEffect : effects.values()) {
-            nbttaglist.appendTag(playerEffect.writeEffectData(new NBTTagCompound()));
-        }
-
-        dbcCompound.setTag("addonActiveEffects", nbttaglist);
     }
 
     private void handleLinkedFormMastery() {

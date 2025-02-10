@@ -1,19 +1,13 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.client.gui.global.auras.GuiNPCManageAuras;
-import kamkeel.npcdbc.client.gui.global.effects.GuiNPCManageEffects;
 import kamkeel.npcdbc.client.gui.global.form.GuiNPCManageForms;
 import kamkeel.npcdbc.client.gui.global.outline.GuiNPCManageOutlines;
-import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.launchwrapper.Launch;
 import noppes.npcs.client.gui.mainmenu.GuiNPCGlobalMainMenu;
 import noppes.npcs.client.gui.player.inventory.GuiCNPCInventory;
 import noppes.npcs.client.gui.util.GuiNPCInterface2;
-import noppes.npcs.client.gui.util.GuiNpcButton;
 import noppes.npcs.client.gui.util.GuiNpcSquareButton;
 import noppes.npcs.entity.EntityCustomNpc;
 import org.spongepowered.asm.mixin.Mixin;
@@ -58,9 +52,6 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
 
         this.registerButton(this.outlinesButton = new GuiNpcSquareButton(202, 0, 0, 20, "global.customoutlines", -13421773));
         this.outlinesButton.setIconPos(24, 23, 72, 56).setIconTexture(GuiCNPCInventory.specialIcons);
-
-        this.registerButton(this.customEffectsButton = new GuiNpcSquareButton(203, 0, 0, 20, "global.customeffects", -13421773));
-        this.customEffectsButton.setIconPos(16, 16, 160, 0).setIconTexture(StatusEffect.defaultTexture);
     }
 
     @Inject(method = "actionPerformed", at = @At("TAIL"))
@@ -73,8 +64,6 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
             Minecraft.getMinecraft().displayGuiScreen(new GuiNPCManageAuras(npc));
         } else if (id == 202) {
             Minecraft.getMinecraft().displayGuiScreen(new GuiNPCManageOutlines(npc));
-        } else if (id == 203) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiNPCManageEffects(npc));
         }
     }
 

@@ -43,8 +43,6 @@ public abstract class AbstractDBCAPI {
 
     public abstract IOutlineHandler getOutlineHandler();
 
-    public abstract IStatusEffectHandler getStatusEffectHandler();
-
     public abstract IBonusHandler getBonusHandler();
 
     public abstract IForm createForm(String name);

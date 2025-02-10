@@ -62,12 +62,6 @@ public class DBCAPI extends AbstractDBCAPI {
         return OutlineController.Instance;
     }
 
-
-    @Override
-    public IStatusEffectHandler getStatusEffectHandler() {
-        return StatusEffectController.Instance;
-    }
-
     @Override
     public IBonusHandler getBonusHandler() {
         return BonusController.Instance;

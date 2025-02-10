@@ -8,12 +8,11 @@ import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
-
-import static kamkeel.npcdbc.scripted.DBCPlayerEvent.EffectEvent.ExpirationType;
+import noppes.npcs.controllers.data.PlayerEffect;
+import noppes.npcs.scripted.event.PlayerEvent;
 
 public class FruitOfMight extends StatusEffect {
     public static Aura fruitOfMightAura = null;
@@ -57,7 +56,7 @@ public class FruitOfMight extends StatusEffect {
     }
 
     @Override
-    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, ExpirationType type) {
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, PlayerEvent.EffectEvent.ExpirationType type) {
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (c.currentAura == fruitOfMightAura.id) {
             c.currentAura = -1;

@@ -14,7 +14,7 @@ import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -45,18 +45,18 @@ public class MixinDBCPacketHandler {
 
         DBCData dbcData = DBCData.get(p);
 
-        if (StatusEffectController.Instance.hasEffect(p, Effects.EXHAUSTED))
+        if (DBCEffectController.Instance.hasEffect(p, Effects.EXHAUSTED))
             return;
 
         if ((ConfigDBCGameplay.SaiyanZenkai && dbcData.Race == DBCRace.SAIYAN) || (ConfigDBCGameplay.HalfSaiyanZenkai && dbcData.Race == DBCRace.HALFSAIYAN)) {
-            if (ConfigDBCEffects.EXHAUST_ZENKAI && StatusEffectController.getInstance().hasEffect(p, Effects.EXHAUSTED)) {
+            if (ConfigDBCEffects.EXHAUST_ZENKAI && DBCEffectController.getInstance().hasEffect(p, Effects.EXHAUSTED)) {
                 return;
             }
 
             if (dbcData.Race == DBCRace.SAIYAN) {
-                StatusEffectController.getInstance().applyEffect(p, Effects.ZENKAI, ConfigDBCEffects.ZenkaiSaiyanLength);
+                DBCEffectController.getInstance().applyEffect(p, Effects.ZENKAI, ConfigDBCEffects.ZenkaiSaiyanLength);
             } else {
-                StatusEffectController.getInstance().applyEffect(p, Effects.ZENKAI);
+                DBCEffectController.getInstance().applyEffect(p, Effects.ZENKAI);
             }
         }
     }

@@ -110,8 +110,8 @@ public class FusionHandler {
 
                 EnumPotaraTypes potaraType = EnumPotaraTypes.getPotaraFromMeta(tier);
 
-                StatusEffectController.getInstance().applyEffect(sender, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
-                StatusEffectController.getInstance().applyEffect(target, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
+                DBCEffectController.getInstance().applyEffect(sender, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
+                DBCEffectController.getInstance().applyEffect(target, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
 
                 DBCData.fusePlayers(target, sender, potaraType.getLength());
 
@@ -169,8 +169,8 @@ public class FusionHandler {
 
                     EnumPotaraTypes potaraType = EnumPotaraTypes.getPotaraFromMeta(tier);
 
-                    StatusEffectController.getInstance().applyEffect(player, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
-                    StatusEffectController.getInstance().applyEffect(nearbyPlayer, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
+                    DBCEffectController.getInstance().applyEffect(player, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
+                    DBCEffectController.getInstance().applyEffect(nearbyPlayer, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
 
                     destroyPlayerEarring(nearbyPlayer);
                     destroyPlayerEarring(player);

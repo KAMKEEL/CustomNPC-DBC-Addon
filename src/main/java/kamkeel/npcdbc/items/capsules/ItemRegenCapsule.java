@@ -7,7 +7,7 @@ import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.enums.EnumRegenCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -109,7 +109,7 @@ public class ItemRegenCapsule extends Item {
             return itemStack;
 
         // Apply status effect
-        StatusEffectController.getInstance().applyEffect(player, regenCapsules.getStatusEffectId(), regenCapsules.getEffectTime(), (byte) regenCapsules.getStrength());
+        DBCEffectController.getInstance().applyEffect(player, regenCapsules.getStatusEffectId(), regenCapsules.getEffectTime(), (byte) regenCapsules.getStrength());
 
         // Remove 1 item
         itemStack.splitStack(1);
@@ -150,7 +150,7 @@ public class ItemRegenCapsule extends Item {
         HashMap<Integer, Integer> regenCooldown = CapsuleController.Instance.capsuleCooldowns.get(Capsule.REGEN);
         HashMap<Integer, Integer> regenTimes = CapsuleController.Instance.capsuleEffectTimes.get(Capsule.REGEN);
 
-        par3List.add(StatCollector.translateToLocalFormatted("capsule.effect", StatusEffectController.getInstance().get(regenCapsules.getStatusEffectId()).getName(), regenStrength.get(meta), regenTimes.get(meta)));
+        par3List.add(StatCollector.translateToLocalFormatted("capsule.effect", DBCEffectController.getInstance().get(regenCapsules.getStatusEffectId()).getName(), regenStrength.get(meta), regenTimes.get(meta)));
         par3List.add(StatCollector.translateToLocalFormatted("capsule.cooldown", regenCooldown.get(meta)));
     }
 }

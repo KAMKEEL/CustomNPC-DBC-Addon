@@ -23,61 +23,6 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         super(player);
     }
 
-    public static class EffectEvent extends DBCPlayerEvent implements IDBCEvent.EffectEvent {
-
-        public final IPlayerEffect effect;
-
-        public EffectEvent(IPlayer player, IPlayerEffect statusEffect) {
-            super(player);
-            this.effect = statusEffect;
-        }
-
-        @Override
-        public IPlayerEffect getEffect() {
-            return this.effect;
-        }
-
-        public static class Added extends DBCPlayerEvent.EffectEvent implements IDBCEvent.EffectEvent.Added {
-
-            public Added(IPlayer player, IPlayerEffect statusEffect) {
-                super(player, statusEffect);
-            }
-
-        }
-        public static class Ticked extends DBCPlayerEvent.EffectEvent implements IDBCEvent.EffectEvent.Ticked {
-
-            public Ticked(IPlayer player, IPlayerEffect statusEffect) {
-                super(player, statusEffect);
-            }
-
-        }
-        public static class Removed extends DBCPlayerEvent.EffectEvent implements IDBCEvent.EffectEvent.Removed {
-
-            private final ExpirationType type;
-
-            public Removed(IPlayer player, IPlayerEffect statusEffect, ExpirationType type) {
-                super(player, statusEffect);
-                this.type = type;
-            }
-
-            @Override
-            public boolean hasTimerRunOut() {
-                return type == ExpirationType.RUN_OUT;
-            }
-
-            @Override
-            public boolean causedByDeath() {
-                return type == ExpirationType.DEATH;
-            }
-        }
-
-        public enum ExpirationType {
-            REMOVED,
-            RUN_OUT,
-            DEATH
-        }
-    }
-
     /**
      * capsuleUsed
      */
