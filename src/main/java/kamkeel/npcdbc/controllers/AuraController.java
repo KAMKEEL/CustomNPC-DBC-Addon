@@ -36,6 +36,7 @@ public class AuraController implements IAuraHandler {
     public void load() {
         customAuras = new HashMap<>();
         bootOrder = new HashMap<>();
+        lastUsedID = 0;
         LogWriter.info("Loading custom auras...");
         readCustomAuraMap();
         loadAuras();

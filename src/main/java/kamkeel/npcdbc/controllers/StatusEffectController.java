@@ -67,6 +67,7 @@ public class StatusEffectController implements IStatusEffectHandler {
     }
 
     public void load() {
+        lastUsedID = 0;
         playerEffects.clear();
 
         // Global Registration for Effects

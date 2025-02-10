@@ -36,6 +36,7 @@ public class OutlineController implements IOutlineHandler {
     public void load() {
         customOutlines = new HashMap<>();
         bootOrder = new HashMap<>();
+        lastUsedID = 0;
         LogWriter.info("Loading custom outlines...");
         readCustomOutlineMap();
         loadOutlines();
