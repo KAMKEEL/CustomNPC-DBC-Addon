@@ -655,10 +655,19 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         auraTicks++;
 
         // Render Entity
+        GL11.glPushMatrix();
         try {
+            float formWidth = display.formWidth;
+            float formSize = 1;
+            float cr = 100;
+            float diff = (formWidth - 1.0F) * (float)cr * 0.02F + 1.0F;
+            formWidth = formWidth > 1.0F ? diff : formWidth;
+            float formScale = formWidth * formSize;
+            GL11.glScalef(formScale, formSize, formScale);
             RenderManager.instance.renderEntityWithPosYaw(entity, 0.0, 0.0, 0.0, 0.0F, 1F);
         } catch (Exception ignored) {
         }
+        GL11.glPopMatrix();
 
 
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
