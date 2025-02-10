@@ -71,6 +71,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             racePage = (byte) form.race();
         }
         visualDisplay.race = racePage;
+        visualDisplay.setDefaultColors();
+        visualDisplay.setRacialExtras();
+        visualDisplay.setDefaultHair();
     }
 
     public void initGui() {
@@ -82,7 +85,8 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         raceButtons(y);
         controlButtons();
-        updateButtons();
+        visualDisplay.setRacialExtras();
+        visualDisplay.setDefaultColors();
     }
 
     private void raceButtons(int y) {
@@ -91,6 +95,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         if (window == null) {
             window = new GuiScrollWindow(this, guiLeft+4, y - 2, width, height, 0);
         } else {
+            window.initGui();
             window.xPos = guiLeft + 4;
             window.yPos = y-2;
             window.clipWidth = width;
@@ -122,6 +127,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         field.floatsOnly = true;
         field.setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
         window.addTextField(field);
+
+        y += 30;
+
+        window.addLabel(new GuiNpcLabel(5000, "display.formCanFormbeCustomized", x, y, 0xFFFFFF));
+        window.addButton(new GuiNpcButtonYesNo(5000, width-x-40, y - 5, 40, 20, form.display.isCustomizable));
 
         y += 25;
 
@@ -225,7 +235,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         if (visualDisplay.race == DBCRace.ARCOSIAN) {
             y += 30;
             window.addLabel(new GuiNpcLabel(113, "display.arcoMask", x, y, 0xFFFFFF));
-            window.addButton(new GuiNpcButtonYesNo(113, width - x - 75, y - 5, 50, 20, visualDisplay.hasArcoMask));
+            window.addButton(new GuiNpcButtonYesNo(113, width - x - 75, y - 5, 50, 20, display.hasArcoMask));
 
             int index = getArcoForm();
             y += 25;
@@ -274,7 +284,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     }
 
     private int addHairOptions(int x, int y) {
-        y += 25;
+        y += 30;
 
         int width = window.clipWidth - 7;
         GuiNpcButton button;
@@ -344,6 +354,12 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             visualDisplay.setDefaultHair();
             updateButtons();
         }
+
+        // Can player customize this form
+        if (button.id == 5000) {
+            display.isCustomizable = button.getValue() == 1;
+        }
+
         // Aura Color
         if (button.id == 106) {
             lastColorClicked = 0;
@@ -464,6 +480,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Form
         if (button.id == 114) {
             display.bodyType = getArcoString(button.getValue());
+            updateButtons();
         }
 
         // Hair Clear
@@ -505,17 +522,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     }
 
     private void updateButtons() {
-        // Clear existing buttons
-        // Clear only the race-related buttons
-        Iterator<GuiButton> iterator = this.buttonList.iterator();
-        while (iterator.hasNext()) {
-            GuiButton button = iterator.next();
-            if (button.id != 1 && button.id != 668 && button.id != 669) {
-                iterator.remove();
-            }
-        }
-        this.labels.clear();
-        raceButtons(guiTop + 5);
+        initGui();
     }
 
     @Override
@@ -529,6 +536,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     public void unFocused(GuiNpcTextField txtField) {
         if (txtField.id == 200) {
             display.formSize = txtField.getFloat();
+        }
+        if (txtField.id == 300) {
+            display.formWidth = txtField.getFloat();
         }
     }
 
