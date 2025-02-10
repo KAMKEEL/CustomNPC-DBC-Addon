@@ -49,9 +49,6 @@ import java.util.Map;
 public class DBCPacketHandler {
     public static DBCPacketHandler Instance;
 
-//    public Map<String, AbstractPacket> map = new Hashtable<>();
-//    public Map<String, FMLEventChannel> channels = new Hashtable<>();
-
     public Map<EnumChannelType, FMLEventChannel> channels = new Hashtable<>();
 
     public static final PacketChannel REQUEST_PACKETS = new PacketChannel("NPCDBC|REQUEST", EnumChannelType.REQUEST);
