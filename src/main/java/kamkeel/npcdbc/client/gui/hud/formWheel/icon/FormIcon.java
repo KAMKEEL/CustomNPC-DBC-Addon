@@ -74,7 +74,7 @@ public class FormIcon extends Gui {
         boolean isHumanoid = race == DBCRace.HUMAN || race == DBCRace.ALL_SAIYANS || race == DBCRace.HALFSAIYAN || race == DBCRace.SAIYAN;
         if (isHumanoid && isEligible) {
             boolean buff = false;
-            if (display.formSize >= 1.1f)
+            if (display.formWidth >= 1.1f || display.formSize >= 1.1f)
                 buff = true;
 
             if (display.bodyColors.hairColor != -1) {
@@ -125,7 +125,7 @@ public class FormIcon extends Gui {
             body = BodyIconType.NAMEK;
             hairColor = new Color(display.bodyColors.bodyCM == -1 ? 0x6DB43A : display.bodyColors.bodyCM, 1);
         } else if (race == DBCRace.MAJIN && isEligible) {
-            if (display.formSize <= 0.9f) {
+            if (display.formSize <= 0.9f || display.formWidth <= 0.9f) {
                 hair = HairIconType.MAJIN_PURE;
                 body = BodyIconType.MAJIN_PURE;
             } else {
@@ -135,7 +135,7 @@ public class FormIcon extends Gui {
             hairColor = new Color(display.bodyColors.bodyCM == -1 ? 0xfaaacc : display.bodyColors.bodyCM, 1);
         } else {
             hair = HairIconType.NONE;
-            if (display.formSize >= 1.1f)
+            if (display.formSize >= 1.1f || display.formWidth >= 1.1f)
                 body = BodyIconType.BUFF;
         }
 
