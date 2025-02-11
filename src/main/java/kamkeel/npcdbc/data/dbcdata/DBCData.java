@@ -167,14 +167,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setBoolean("DBCFlightEnabled", flightEnabled);
         comp.setBoolean("DBCFlightGravity", flightGravity);
 
-        FormDisplay.BodyColor currentColors = getCurrentFormColorCustomization();
-        if (currentColors != null) {
-            NBTTagCompound colorCompound = new NBTTagCompound();
-            currentColors.writeToNBT(colorCompound);
-            comp.setTag("CustomFormColors", colorCompound);
-        }
-
-
         comp.setBoolean("DBCIsFnPressed", isFnPressed);
         return comp;
     }
@@ -339,6 +331,13 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             dataNeededOnClient.setByte("potaraLevel", potara.level);
         else
             dataNeededOnClient.setByte("potaraLevel", (byte) -1);
+
+        FormDisplay.BodyColor currentColors = getCurrentFormColorCustomization();
+        if (currentColors != null) {
+            NBTTagCompound colorCompound = new NBTTagCompound();
+            currentColors.writeToNBT(colorCompound);
+            dataNeededOnClient.setTag("CustomFormColors", colorCompound);
+        }
 
         DBCPacketHandler.Instance.sendTracking(new PingPacket(this, dataNeededOnClient), player);
 
