@@ -8,6 +8,7 @@ import kamkeel.npcdbc.data.statuseffect.StatusEffect;
 public class Exhausted extends StatusEffect {
     public Exhausted() {
         name = "Exhausted";
+        langName = "effect.exhausted";
         id = Effects.EXHAUSTED;
         iconX = 192;
         iconY = 0;

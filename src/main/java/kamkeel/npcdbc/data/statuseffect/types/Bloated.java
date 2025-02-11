@@ -10,6 +10,7 @@ public class Bloated extends StatusEffect {
 
     public Bloated() {
         name = "Bloated";
+        langName = "effect.bloated";
         id = Effects.BLOATED;
         iconX = 128;
         iconY = 0;

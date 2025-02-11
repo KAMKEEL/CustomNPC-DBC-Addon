@@ -12,6 +12,7 @@ public class RegenKi extends StatusEffect {
 
     public RegenKi() {
         name = "Ki Regeneration";
+        langName = "effect.kiregeneration";
         id = Effects.REGEN_KI;
         iconX = 16;
         iconY = 0;

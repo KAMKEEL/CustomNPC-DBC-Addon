@@ -15,6 +15,7 @@ public class Overpower extends StatusEffect {
 
     public Overpower() {
         name = "Overpower";
+        langName = "effect.overpower";
         id = Effects.OVERPOWER;
         iconX = 80;
         iconY = 0;

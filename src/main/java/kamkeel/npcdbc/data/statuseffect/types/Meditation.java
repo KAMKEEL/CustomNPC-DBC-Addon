@@ -15,6 +15,7 @@ public class Meditation extends StatusEffect {
 
     public Meditation() {
         name = "Meditation";
+        langName = "effect.meditation";
         id = Effects.MEDITATION;
         iconX = 112;
         iconY = 0;

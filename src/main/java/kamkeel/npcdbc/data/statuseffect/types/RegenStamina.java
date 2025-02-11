@@ -12,6 +12,7 @@ public class RegenStamina extends StatusEffect {
 
     public RegenStamina() {
         name = "Stamina Regeneration";
+        langName = "effect.staminaregeneration";
         id = Effects.REGEN_STAMINA;
         iconX = 32;
         iconY = 0;

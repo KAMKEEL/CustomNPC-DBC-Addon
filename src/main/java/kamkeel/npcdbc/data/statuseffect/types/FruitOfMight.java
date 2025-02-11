@@ -21,6 +21,7 @@ public class FruitOfMight extends StatusEffect {
 
     public FruitOfMight() {
         name = "FruitOfMight";
+        langName = "effect.fruitofmight";
         id = Effects.FRUIT_OF_MIGHT;
         iconX = 64;
         iconY = 0;

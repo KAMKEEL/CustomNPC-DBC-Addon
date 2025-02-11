@@ -18,6 +18,7 @@ public class Zenkai extends StatusEffect {
     public PlayerBonus halfSaiyanZenkai;
     public Zenkai() {
         name = "Zenkai";
+        langName = "effect.zenkai";
         id = Effects.ZENKAI;
         iconX = 160;
         iconY = 0;

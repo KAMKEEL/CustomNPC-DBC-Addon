@@ -15,6 +15,7 @@ public class PotaraFusion extends StatusEffect {
 
     public PotaraFusion() {
         name = "Potara";
+        langName = "effect.potara";
         id = Effects.POTARA;
         iconX = 176;
         iconY = 0;

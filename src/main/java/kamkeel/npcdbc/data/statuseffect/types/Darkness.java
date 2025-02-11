@@ -10,6 +10,7 @@ public class Darkness extends StatusEffect {
 
     public Darkness() {
         name = "Darkness";
+        langName = "effect.darkness";
         id = Effects.DARKNESS;
         iconX = 144;
         iconY = 0;

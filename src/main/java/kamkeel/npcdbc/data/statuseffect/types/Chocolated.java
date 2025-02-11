@@ -10,6 +10,7 @@ public class Chocolated extends StatusEffect {
 
     public Chocolated() {
         name = "Chocolated";
+        langName = "effect.chocolated";
         id = Effects.CHOCOLATED;
         iconX = 96;
         iconY = 0;

@@ -13,6 +13,7 @@ public class NamekRegen extends StatusEffect {
 
     public NamekRegen() {
         name = "NamekRegen";
+        langName = "effect.namekianregeneration";
         id = Effects.NAMEK_REGEN;
         iconX = 48;
         iconY = 0;

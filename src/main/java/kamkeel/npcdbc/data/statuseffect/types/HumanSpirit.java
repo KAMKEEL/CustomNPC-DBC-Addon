@@ -17,6 +17,7 @@ public class HumanSpirit extends StatusEffect {
 
     public HumanSpirit() {
         name = "HumanSpirit";
+        langName = "effect.humanspirit";
         id = Effects.HUMAN_SPIRIT;
         iconX = 224;
         iconY = 0;

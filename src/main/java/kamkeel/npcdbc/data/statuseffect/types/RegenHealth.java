@@ -12,6 +12,7 @@ public class RegenHealth extends StatusEffect {
 
     public RegenHealth() {
         name = "Health Regeneration";
+        langName = "effect.healthregeneration";
         id = Effects.REGEN_HEALTH;
         iconX = 0;
         iconY = 0;
