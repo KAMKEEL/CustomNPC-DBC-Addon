@@ -1,12 +1,11 @@
-package kamkeel.npcdbc.data.statuseffect.types;
+package kamkeel.npcdbc.data.effects.types;
 
-import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.data.statuseffect.StatusEffect;
+import kamkeel.npcdbc.data.effects.AddonEffect;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.controllers.data.PlayerEffect;
 
-public class Chocolated extends StatusEffect {
+public class Chocolated extends AddonEffect {
 
     public Chocolated() {
         name = "Chocolated";

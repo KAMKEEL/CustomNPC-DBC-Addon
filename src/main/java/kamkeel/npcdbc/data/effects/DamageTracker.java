@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.data.statuseffect;
+package kamkeel.npcdbc.data.effects;
 
 import java.util.HashMap;
 import java.util.UUID;

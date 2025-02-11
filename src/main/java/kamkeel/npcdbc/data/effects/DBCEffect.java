@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.data.statuseffect;
+package kamkeel.npcdbc.data.effects;
 
 /**
  * This is knowledge base class for

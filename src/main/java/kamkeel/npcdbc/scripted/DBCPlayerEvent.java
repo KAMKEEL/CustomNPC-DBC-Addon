@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.scripted;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
-import kamkeel.npcdbc.api.effect.IPlayerEffect;
 import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.DBCDamageSource;

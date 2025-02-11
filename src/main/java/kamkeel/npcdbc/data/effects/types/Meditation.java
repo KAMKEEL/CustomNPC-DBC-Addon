@@ -1,17 +1,16 @@
-package kamkeel.npcdbc.data.statuseffect.types;
+package kamkeel.npcdbc.data.effects.types;
 
-import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.statuseffect.StatusEffect;
+import kamkeel.npcdbc.data.effects.AddonEffect;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.controllers.data.PlayerEffect;
 import noppes.npcs.scripted.event.PlayerEvent;
 
-public class Meditation extends StatusEffect {
+public class Meditation extends AddonEffect {
 
     public Meditation() {
         name = "Meditation";

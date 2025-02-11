@@ -11,7 +11,7 @@ import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.client.gui.dbc.AbstractJRMCGui;
 import kamkeel.npcdbc.client.gui.dbc.JRMCoreLabel;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.statuseffect.StatusEffect;
+import kamkeel.npcdbc.data.effects.AddonEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
@@ -64,8 +64,8 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
             if (effect.icon.length() > 3) {
                 drawIcon(var51 + i.get(), var61 + j.get(), effect);
                 String text;
-                if(effect instanceof StatusEffect)
-                    text = StatCollector.translateToLocal(((StatusEffect) effect).getLangName());
+                if(effect instanceof AddonEffect)
+                    text = StatCollector.translateToLocal(((AddonEffect) effect).getLangName());
                 else
                     text = effect.getMenuName();
 

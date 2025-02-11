@@ -4,14 +4,13 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.data.statuseffect.DamageTracker;
-import kamkeel.npcdbc.data.statuseffect.SenzuConsumptionData;
-import kamkeel.npcdbc.data.statuseffect.StatusEffect;
-import kamkeel.npcdbc.data.statuseffect.types.*;
+import kamkeel.npcdbc.data.effects.DamageTracker;
+import kamkeel.npcdbc.data.effects.SenzuConsumptionData;
+import kamkeel.npcdbc.data.effects.AddonEffect;
+import kamkeel.npcdbc.data.effects.types.*;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
-import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.CustomEffectController;
 import noppes.npcs.controllers.data.EffectKey;
 import noppes.npcs.controllers.data.PlayerEffect;
@@ -26,7 +25,7 @@ public class DBCEffectController {
     public static int DBC_EFFECT_INDEX = 1;
     public static DBCEffectController Instance = new DBCEffectController();
 
-    public HashMap<Integer, StatusEffect> standardEffects = new HashMap<>();
+    public HashMap<Integer, AddonEffect> standardEffects = new HashMap<>();
 
     // Maps for Status Effects
     private final ConcurrentHashMap<UUID, DamageTracker> damageTrackers = new ConcurrentHashMap<>();
@@ -64,14 +63,14 @@ public class DBCEffectController {
     }
 
     public void applyEffect(EntityPlayer player, int id){
-        StatusEffect statusEffect = standardEffects.get(id);
-        if(statusEffect == null)
+        AddonEffect addonEffect = standardEffects.get(id);
+        if(addonEffect == null)
             return;
 
-        CustomEffectController.getInstance().applyEffect(player, id, statusEffect.length, (byte) 1, DBC_EFFECT_INDEX);
+        CustomEffectController.getInstance().applyEffect(player, id, addonEffect.length, (byte) 1, DBC_EFFECT_INDEX);
     }
 
-    public StatusEffect get(int id){
+    public AddonEffect get(int id){
         return standardEffects.get(id);
     }
 

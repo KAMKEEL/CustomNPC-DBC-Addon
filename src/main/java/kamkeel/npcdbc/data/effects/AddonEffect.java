@@ -1,14 +1,13 @@
-package kamkeel.npcdbc.data.statuseffect;
+package kamkeel.npcdbc.data.effects;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import noppes.npcs.controllers.data.CustomEffect;
-import scala.tools.nsc.doc.model.Public;
 
-public class StatusEffect extends CustomEffect {
+public class AddonEffect extends CustomEffect {
 
     public String langName;
 
-    public StatusEffect() {
+    public AddonEffect() {
         icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
     }
 
