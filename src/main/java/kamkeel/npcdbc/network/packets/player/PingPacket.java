@@ -15,13 +15,17 @@ import java.io.IOException;
 
 public final class PingPacket extends AbstractPacket {
     public static final String packetName = "NPC|Ping";
+
     private DBCData data;
+    private NBTTagCompound clientData;
 
     public PingPacket() {
     }
 
-    public PingPacket(DBCData data) {
-        this.data = data;
+
+    public PingPacket(DBCData dbcData, NBTTagCompound dataNeededOnClient) {
+        this.data = dbcData;
+        this.clientData = dataNeededOnClient;
     }
 
     @Override
@@ -38,6 +42,7 @@ public final class PingPacket extends AbstractPacket {
     public void sendData(ByteBuf out) throws IOException {
         ByteBufUtils.writeUTF8String(out, this.data.player.getCommandSenderName());
         ByteBufUtils.writeNBT(out,this.data.saveFromNBT(new NBTTagCompound()));
+        ByteBufUtils.writeNBT(out, this.clientData);
     }
 
     @Override
@@ -47,6 +52,7 @@ public final class PingPacket extends AbstractPacket {
         if (sendingPlayer != null){
             DBCData dbcData = DBCData.get(sendingPlayer);
             dbcData.loadFromNBT(ByteBufUtils.readNBT(in));
+            dbcData.loadClientSideData(ByteBufUtils.readNBT(in));
         }
     }
 }

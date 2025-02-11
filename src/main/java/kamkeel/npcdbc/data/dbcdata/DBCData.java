@@ -14,10 +14,8 @@ import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.DBCSettings;
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.OutlineController;
-import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.constants.Effects;
+import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -41,12 +39,16 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import noppes.npcs.controllers.CustomEffectController;
+import noppes.npcs.controllers.data.EffectKey;
+import noppes.npcs.controllers.data.PlayerEffect;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.*;
 
 import static kamkeel.npcdbc.constants.DBCForm.*;
+import static kamkeel.npcdbc.controllers.DBCEffectController.DBC_EFFECT_INDEX;
 
 public class DBCData extends DBCDataUniversal implements IAuraData {
 
@@ -71,6 +73,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
      */
     @SideOnly(Side.CLIENT)
     public Map<String, PlayerBonus> currentBonuses;
+
+    @SideOnly(Side.CLIENT)
+    public byte potaraFusionLevel = -1;
 
     @SideOnly(Side.CLIENT)
     public FormDisplay.BodyColor currentCustomizedColors;
@@ -171,7 +176,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
 
         comp.setBoolean("DBCIsFnPressed", isFnPressed);
-        bonus.saveBonusNBT(comp);
         return comp;
     }
 
@@ -260,18 +264,12 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         if (!c.hasKey("DBCIsFnPressed"))
             c.setBoolean("DBCIsFnPressed", isFnPressed);
         isFnPressed = c.getBoolean("DBCIsFnPressed");
-
-
-        // Made StatusEffects/PlayerBonuses only load here if you're on the client for proper display.
-        // isRemote checks if the player is truly on client side. Helpful for Bukkit interactions.
-        boolean isRemote = (player != null && player.worldObj != null && player.worldObj.isRemote);
-        if (isRemote) {
-            loadClientSideData(c);
-        }
     }
 
     @SideOnly(Side.CLIENT)
-    private void loadClientSideData(NBTTagCompound c) {
+    public void loadClientSideData(NBTTagCompound c) {
+        this.potaraFusionLevel = c.getByte("potaraLevel");
+
         if (this.currentBonuses == null)
             this.currentBonuses = new HashMap<>();
         else
@@ -304,7 +302,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         nbt.setInteger("auraID", auraID);
         nbt.setInteger("outlineID", outlineID);
 
-        bonus.saveBonusNBT(nbt);
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 
         // Send to Tracking Only
@@ -334,7 +331,17 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public void syncTracking() {
-        DBCPacketHandler.Instance.sendTracking(new PingPacket(this), player);
+        NBTTagCompound dataNeededOnClient = new NBTTagCompound();
+
+        bonus.saveBonusNBT(dataNeededOnClient);
+        PlayerEffect potara = CustomEffectController.getInstance().getPlayerEffects(this.player).get(new EffectKey(Effects.POTARA, DBC_EFFECT_INDEX));
+        if (potara != null)
+            dataNeededOnClient.setByte("potaraLevel", potara.level);
+        else
+            dataNeededOnClient.setByte("potaraLevel", (byte) -1);
+
+        DBCPacketHandler.Instance.sendTracking(new PingPacket(this, dataNeededOnClient), player);
+
     }
 
     public NBTTagCompound getRawCompound() {

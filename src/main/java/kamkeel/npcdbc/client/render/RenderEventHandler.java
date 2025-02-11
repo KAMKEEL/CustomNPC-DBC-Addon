@@ -83,28 +83,30 @@ public class RenderEventHandler {
 //        PlayerData playerData = PlayerData.get(event.entityPlayer);
 //
 //        PlayerEffect potaraFusion = dbcData.stats.getPlayerEffects().get(Effects.POTARA);
-//        if (potaraFusion == null) {
-//            return;
-//        }
-//
-//        event.result = 1;
-//
-//        int slot = event.slot + 3;
-//        float partialTick = event.partialRenderTick;
-//        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(((ItemPotara) ModItems.Potaras).getArmorTextureByMeta(potaraFusion.level)));
-//        ModelBiped modelbiped = event.renderer.modelArmorChestplate;
-//        modelbiped.bipedHead.showModel = false;
-//        modelbiped.bipedHeadwear.showModel = false;
-//        modelbiped.bipedBody.showModel = false;
-//        modelbiped.bipedRightArm.showModel = false;
-//        modelbiped.bipedLeftArm.showModel = false;
-//        modelbiped.bipedRightLeg.showModel = false;
-//        modelbiped.bipedLeftLeg.showModel = false;
-//        modelbiped = ModelPotara.BOTH_EARS;
-//        event.renderer.setRenderPassModel(modelbiped);
-//        modelbiped.onGround = event.renderer.mainModel.onGround;
-//        modelbiped.isRiding = event.renderer.mainModel.isRiding;
-//        modelbiped.isChild = event.renderer.mainModel.isChild;
+        DBCData data = DBCData.getData(event.entityPlayer);
+        byte potaraFusionLevel = data.potaraFusionLevel;
+        if (potaraFusionLevel == -1) {
+            return;
+        }
+
+        event.result = 1;
+
+        int slot = event.slot + 3;
+        float partialTick = event.partialRenderTick;
+        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(((ItemPotara) ModItems.Potaras).getArmorTextureByMeta(potaraFusionLevel)));
+        ModelBiped modelbiped = event.renderer.modelArmorChestplate;
+        modelbiped.bipedHead.showModel = false;
+        modelbiped.bipedHeadwear.showModel = false;
+        modelbiped.bipedBody.showModel = false;
+        modelbiped.bipedRightArm.showModel = false;
+        modelbiped.bipedLeftArm.showModel = false;
+        modelbiped.bipedRightLeg.showModel = false;
+        modelbiped.bipedLeftLeg.showModel = false;
+        modelbiped = ModelPotara.BOTH_EARS;
+        event.renderer.setRenderPassModel(modelbiped);
+        modelbiped.onGround = event.renderer.mainModel.onGround;
+        modelbiped.isRiding = event.renderer.mainModel.isRiding;
+        modelbiped.isChild = event.renderer.mainModel.isChild;
     }
 
     @SubscribeEvent
