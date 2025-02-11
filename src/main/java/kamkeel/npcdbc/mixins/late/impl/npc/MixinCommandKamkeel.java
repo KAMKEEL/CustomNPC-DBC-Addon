@@ -18,7 +18,6 @@ public abstract class MixinCommandKamkeel {
         registerCommand(new AuraCommand());
         registerCommand(new OutlineCommand());
         registerCommand(new FormMasteryCommand());
-        registerCommand(new EffectCommand());
     }
 
     @Shadow

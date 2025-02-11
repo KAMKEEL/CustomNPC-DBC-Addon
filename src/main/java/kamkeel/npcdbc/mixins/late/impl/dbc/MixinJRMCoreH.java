@@ -21,7 +21,6 @@ import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.StatusEffectController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;

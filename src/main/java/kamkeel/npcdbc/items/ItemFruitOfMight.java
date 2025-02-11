@@ -3,7 +3,7 @@ package kamkeel.npcdbc.items;
 import kamkeel.npcdbc.LocalizationHelper;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemFood;
@@ -34,7 +34,7 @@ public class ItemFruitOfMight extends ItemFood {
 
     protected void onFoodEaten(ItemStack itemStack, World world, EntityPlayer player) {
         if (!world.isRemote) {
-            StatusEffectController.getInstance().applyEffect(player, Effects.FRUIT_OF_MIGHT);
+            DBCEffectController.getInstance().applyEffect(player, Effects.FRUIT_OF_MIGHT);
         }
     }
 

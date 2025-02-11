@@ -45,6 +45,7 @@ public class CustomNpcPlusDBC {
         proxy.init(event);
         CapsuleController.getInstance().load();
         BonusController.getInstance().load();
+        DBCEffectController.getInstance().load();
     }
 
     @Mod.EventHandler
@@ -52,7 +53,6 @@ public class CustomNpcPlusDBC {
         FormController.getInstance().load();
         AuraController.getInstance().load();
         CapsuleController.getInstance().load();
-        StatusEffectController.getInstance().load();
         BonusController.getInstance().load();
         OutlineController.getInstance().load();
     }

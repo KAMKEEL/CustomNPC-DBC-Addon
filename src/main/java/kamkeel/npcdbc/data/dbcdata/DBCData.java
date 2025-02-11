@@ -25,7 +25,6 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.DBCSetFlight;
@@ -65,13 +64,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public int addonFormID = -1, auraID = -1, outlineID = -1;
     public float addonFormLevel = 0, addonCurrentHeat = 0;
 
-    /**
-     * Client-side effect store. Needed for proper rendering of status effects.
-     * <p>
-     * Server-side stores them in StatusEffectHandler.
-     */
-    @SideOnly(Side.CLIENT)
-    public Map<Integer, PlayerEffect> currentEffects;
     /**
      * Client-side bonus store. Needed for proper Battle Power calculations on the client.
      * <p>
@@ -179,7 +171,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
 
         comp.setBoolean("DBCIsFnPressed", isFnPressed);
-        stats.saveEffectsNBT(comp);
         bonus.saveBonusNBT(comp);
         return comp;
     }
@@ -281,22 +272,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     @SideOnly(Side.CLIENT)
     private void loadClientSideData(NBTTagCompound c) {
-        if (this.currentEffects == null)
-            currentEffects = new HashMap<>();
-        else
-            currentEffects.clear();
-
-        if (c.hasKey("addonActiveEffects", 9)) {
-            NBTTagList nbttaglist = c.getTagList("addonActiveEffects", 10);
-            for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-                NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-                PlayerEffect playerEffect = PlayerEffect.readEffectData(nbttagcompound1);
-                if (playerEffect != null) {
-                    this.currentEffects.put(playerEffect.id, playerEffect);
-                }
-            }
-        }
-
         if (this.currentBonuses == null)
             this.currentBonuses = new HashMap<>();
         else
@@ -329,7 +304,6 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         nbt.setInteger("auraID", auraID);
         nbt.setInteger("outlineID", outlineID);
 
-        stats.saveEffectsNBT(nbt);
         bonus.saveBonusNBT(nbt);
         this.player.getEntityData().setTag(DBCPersisted, nbt);
 

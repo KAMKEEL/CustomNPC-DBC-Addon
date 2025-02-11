@@ -1,10 +1,7 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.DragonBC.common.Items.ItemSenzu;
-import JinRyuu.JRMCore.server.JGPlayerMP;
-import kamkeel.npcdbc.constants.Capsule;
-import kamkeel.npcdbc.controllers.StatusEffectController;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -12,7 +9,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,7 +23,7 @@ public class MixinItemSenzu {
         if (DBCEventHooks.onSenzuUsedEvent(new DBCPlayerEvent.SenzuUsedEvent(PlayerDataUtil.getIPlayer(entityPlayer))))
             ci.cancel();
 
-        if(!StatusEffectController.getInstance().allowSenzuConsumption(entityPlayer))
+        if(!DBCEffectController.getInstance().allowSenzuConsumption(entityPlayer))
             ci.cancel();
     }
 

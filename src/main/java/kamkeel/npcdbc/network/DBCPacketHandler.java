@@ -10,14 +10,12 @@ import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.network.packets.get.CapsuleInfo;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcdbc.network.packets.get.aura.DBCGetAura;
-import kamkeel.npcdbc.network.packets.get.effect.DBCGetEffect;
 import kamkeel.npcdbc.network.packets.get.form.DBCGetForm;
 import kamkeel.npcdbc.network.packets.get.outline.DBCGetOutline;
 import kamkeel.npcdbc.network.packets.player.*;
 import kamkeel.npcdbc.network.packets.player.aura.DBCRequestAura;
 import kamkeel.npcdbc.network.packets.player.aura.DBCSelectAura;
 import kamkeel.npcdbc.network.packets.player.aura.DBCSetAura;
-import kamkeel.npcdbc.network.packets.player.effect.DBCRequestEffect;
 import kamkeel.npcdbc.network.packets.player.form.DBCRequestForm;
 import kamkeel.npcdbc.network.packets.player.form.DBCRequestFormWheel;
 import kamkeel.npcdbc.network.packets.player.form.DBCSaveFormWheel;
@@ -25,7 +23,6 @@ import kamkeel.npcdbc.network.packets.player.form.DBCSelectForm;
 import kamkeel.npcdbc.network.packets.player.outline.DBCRequestOutline;
 import kamkeel.npcdbc.network.packets.request.aura.DBCRemoveAura;
 import kamkeel.npcdbc.network.packets.request.aura.DBCSaveAura;
-import kamkeel.npcdbc.network.packets.request.effect.*;
 import kamkeel.npcdbc.network.packets.request.form.DBCRemoveForm;
 import kamkeel.npcdbc.network.packets.request.form.DBCSaveForm;
 import kamkeel.npcdbc.network.packets.request.outline.DBCRemoveOutline;
@@ -75,7 +72,6 @@ public class DBCPacketHandler {
         PLAYER_PACKETS.registerPacket(new DBCRequestForm());
         PLAYER_PACKETS.registerPacket(new DBCSetAura());
         PLAYER_PACKETS.registerPacket(new DBCSelectForm());
-        PLAYER_PACKETS.registerPacket(new DBCRequestEffect());
         PLAYER_PACKETS.registerPacket(new DBCSaveFormWheel());
         PLAYER_PACKETS.registerPacket(new DBCSetFlight());
         PLAYER_PACKETS.registerPacket(new DBCRequestOutline());
@@ -93,7 +89,6 @@ public class DBCPacketHandler {
 
     private void registerGetPackets() {
         GET_PACKETS.registerPacket(new DBCGetAura());
-        GET_PACKETS.registerPacket(new DBCGetEffect());
         GET_PACKETS.registerPacket(new DBCGetForm());
         GET_PACKETS.registerPacket(new DBCGetOutline());
         GET_PACKETS.registerPacket(new CapsuleInfo());
@@ -103,11 +98,6 @@ public class DBCPacketHandler {
     private void registerRequestPackets() {
         REQUEST_PACKETS.registerPacket(new DBCRemoveAura());
         REQUEST_PACKETS.registerPacket(new DBCSaveAura());
-        REQUEST_PACKETS.registerPacket(new DBCReceiveEffectScript());
-        REQUEST_PACKETS.registerPacket(new DBCRemoveEffect());
-        REQUEST_PACKETS.registerPacket(new DBCRequestEffectScript());
-        REQUEST_PACKETS.registerPacket(new DBCSaveEffect());
-        REQUEST_PACKETS.registerPacket(new DBCSaveEffectScript());
         REQUEST_PACKETS.registerPacket(new DBCRemoveForm());
         REQUEST_PACKETS.registerPacket(new DBCSaveForm());
         REQUEST_PACKETS.registerPacket(new DBCRemoveOutline());

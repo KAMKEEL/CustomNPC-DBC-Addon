@@ -3,16 +3,14 @@ package kamkeel.npcdbc.network;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
-import kamkeel.npcdbc.data.statuseffect.custom.CustomEffect;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
 import kamkeel.npcdbc.network.packets.player.SendChat;
-import kamkeel.npcdbc.network.packets.request.effect.DBCReceiveEffectScript;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import kamkeel.npcs.network.packets.data.large.ScrollDataPacket;
@@ -20,10 +18,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.NBTTags;
-import noppes.npcs.Server;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.ScriptContainer;
 import noppes.npcs.controllers.ScriptController;
+import noppes.npcs.controllers.data.CustomEffect;
 import noppes.npcs.controllers.data.IScriptHandler;
 
 import java.util.HashMap;
@@ -53,14 +51,6 @@ public class NetworkUtility {
         Map<String, Integer> map = new HashMap<String, Integer>();
         for (Outline outline : OutlineController.getInstance().customOutlines.values()) {
             map.put(outline.name, outline.id);
-        }
-        ScrollDataPacket.sendScrollData(player, map);
-    }
-
-    public static void sendCustomEffectDataAll(EntityPlayerMP player) {
-        Map<String, Integer> map = new HashMap<String, Integer>();
-        for (CustomEffect effect : StatusEffectController.getInstance().customEffects.values()) {
-            map.put(effect.name, effect.id);
         }
         ScrollDataPacket.sendScrollData(player, map);
     }
@@ -110,23 +100,5 @@ public class NetworkUtility {
 
     public static void sendInfoMessage(EntityPlayer player, Object... message) {
         DBCPacketHandler.Instance.sendToPlayer(new SendChat(true, message), (EntityPlayerMP) player);
-    }
-
-    public static void getScripts(IScriptHandler data, EntityPlayerMP player) {
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setBoolean("ScriptEnabled", data.getEnabled());
-        compound.setString("ScriptLanguage", data.getLanguage());
-        compound.setTag("Languages", ScriptController.Instance.nbtLanguages());
-        compound.setTag("ScriptConsole", NBTTags.NBTLongStringMap(data.getConsoleText()));
-        DBCPacketHandler.Instance.sendToPlayer(new DBCReceiveEffectScript(compound), player);
-        List<ScriptContainer> containers = data.getScripts();
-        for (int i = 0; i < containers.size(); i++) {
-            ScriptContainer container = containers.get(i);
-            NBTTagCompound tabCompound = new NBTTagCompound();
-            tabCompound.setInteger("Tab",i);
-            tabCompound.setTag("Script",container.writeToNBT(new NBTTagCompound()));
-            tabCompound.setInteger("TotalScripts",containers.size());
-            DBCPacketHandler.Instance.sendToPlayer(new DBCReceiveEffectScript(tabCompound), player);
-        }
     }
 }
