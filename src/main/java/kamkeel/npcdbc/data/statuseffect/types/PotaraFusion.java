@@ -16,7 +16,6 @@ public class PotaraFusion extends StatusEffect {
     public PotaraFusion() {
         name = "Potara";
         id = Effects.POTARA;
-        icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
         iconX = 176;
         iconY = 0;
     }

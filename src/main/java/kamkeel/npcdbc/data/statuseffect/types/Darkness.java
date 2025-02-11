@@ -11,7 +11,6 @@ public class Darkness extends StatusEffect {
     public Darkness() {
         name = "Darkness";
         id = Effects.DARKNESS;
-        icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
         iconX = 144;
         iconY = 0;
     }

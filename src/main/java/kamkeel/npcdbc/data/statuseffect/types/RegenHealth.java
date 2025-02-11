@@ -13,7 +13,6 @@ public class RegenHealth extends StatusEffect {
     public RegenHealth() {
         name = "Health Regeneration";
         id = Effects.REGEN_HEALTH;
-        icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
         iconX = 0;
         iconY = 0;
     }

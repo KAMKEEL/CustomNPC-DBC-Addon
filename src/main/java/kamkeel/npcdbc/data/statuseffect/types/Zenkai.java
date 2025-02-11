@@ -19,7 +19,6 @@ public class Zenkai extends StatusEffect {
     public Zenkai() {
         name = "Zenkai";
         id = Effects.ZENKAI;
-        icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
         iconX = 160;
         iconY = 0;
         length = ConfigDBCEffects.ZenkaiHALFLength;

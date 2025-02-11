@@ -18,7 +18,6 @@ public class HumanSpirit extends StatusEffect {
     public HumanSpirit() {
         name = "HumanSpirit";
         id = Effects.HUMAN_SPIRIT;
-        icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
         iconX = 224;
         iconY = 0;
         length = ConfigDBCEffects.HumanSpiritLength;

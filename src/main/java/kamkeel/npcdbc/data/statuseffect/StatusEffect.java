@@ -4,8 +4,9 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import noppes.npcs.controllers.data.CustomEffect;
 
 public class StatusEffect extends CustomEffect {
-    public String icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
-    public StatusEffect() {}
+    public StatusEffect() {
+        icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
+    }
 
     public int getWidth() {
         return 16;

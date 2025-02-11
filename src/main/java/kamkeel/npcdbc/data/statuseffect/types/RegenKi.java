@@ -13,7 +13,6 @@ public class RegenKi extends StatusEffect {
     public RegenKi() {
         name = "Ki Regeneration";
         id = Effects.REGEN_KI;
-        icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
         iconX = 16;
         iconY = 0;
     }
