@@ -230,7 +230,6 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
             float formScale = formWidth * formSize;
             GL11.glScalef(formScale, formSize, formScale);
             RenderManager.instance.renderEntityWithPosYaw(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F);
-            GL11.glPopMatrix();
         } catch (Exception ignored) {
         }
         GL11.glPopMatrix();
