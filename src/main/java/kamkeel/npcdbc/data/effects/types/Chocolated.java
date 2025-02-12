@@ -25,7 +25,9 @@ public PlayerBonus ChocolatedDebuff;
 
     @Override
     public void onAdded(EntityPlayer player, PlayerEffect playerEffect){
-        BonusController.getInstance().applyBonus(player,ChocolatedDebuff);
+        PlayerBonus testBonus =  new PlayerBonus("ChocolateTest", (byte) 0, (float) ConfigDBCEffects.CHOC_Str, (float) ConfigDBCEffects.CHOC_Dex, (float) ConfigDBCEffects.CHOC_Wil);
+        BonusController.getInstance().applyBonus(player,testBonus);
+        // BonusController.getInstance().applyBonus(player,ChocolatedDebuff);
     }
 
     @Override
@@ -33,7 +35,10 @@ public PlayerBonus ChocolatedDebuff;
 
     @Override
     public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, PlayerEvent.EffectEvent.ExpirationType type){
-        BonusController.getInstance().removeBonus(player,ChocolatedDebuff);
+        PlayerBonus testBonus =  new PlayerBonus("ChocolateTest", (byte) 0, (float) ConfigDBCEffects.CHOC_Str, (float) ConfigDBCEffects.CHOC_Dex, (float) ConfigDBCEffects.CHOC_Wil);
+
+        BonusController.getInstance().removeBonus(player,testBonus);
+        // BonusController.getInstance().removeBonus(player,ChocolatedDebuff);
     }
 
 }
