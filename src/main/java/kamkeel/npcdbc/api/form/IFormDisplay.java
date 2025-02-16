@@ -158,7 +158,7 @@ public interface IFormDisplay {
     void setCustomizable(boolean customizable);
 
     /**
-     * @return If the player is customizable by players.
+     * @return If the form is customizable by players.
      */
     boolean isCustomizable();
 }
