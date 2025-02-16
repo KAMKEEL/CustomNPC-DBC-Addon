@@ -429,7 +429,7 @@ public class FormDisplay implements IFormDisplay {
                 case "bodyc3":
                     return race == DBCRace.NAMEKIAN || race == DBCRace.ARCOSIAN;
                 case "hair":
-                    return (isHumanoid || (DBCRace.MAJIN == race && form.display.effectMajinHair)) && (!hairType.equals("oozaru") && !hairType.isEmpty());
+                    return (isHumanoid || (DBCRace.MAJIN == race && form.display.effectMajinHair)) && (!hairType.equals("oozaru"));
                 case "fur":
                     return DBCRace.isSaiyan(race) && (hairType.equals("ssj4") || form.display.hasBodyFur);
             }
