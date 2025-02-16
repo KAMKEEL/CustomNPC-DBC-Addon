@@ -979,17 +979,21 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         long extra = 0;
         if(!dbcData.bonus.getCurrentBonuses().isEmpty()){
             for(PlayerBonus playerBonus : dbcData.bonus.getCurrentBonuses().values()){
-                if(attributeID == DBCAttribute.Strength && playerBonus.strength != 0){
-                    extra += playerBonus.strength;
-                } else if(attributeID == DBCAttribute.Dexterity && playerBonus.dexterity != 0){
-                    extra += playerBonus.dexterity;
-                } else if(attributeID == DBCAttribute.Constitution && playerBonus.constituion != 0){
-                    extra += playerBonus.constituion;
-                } else if(attributeID == DBCAttribute.Willpower && playerBonus.willpower != 0){
-                    extra += playerBonus.willpower;
+                if (playerBonus.type == 0)
+                    continue;
+
+//                if(attributeID == DBCAttribute.Strength && playerBonus.strength != 0){
+//                    extra += playerBonus.strength;
+//                } else if(attributeID == DBCAttribute.Dexterity && playerBonus.dexterity != 0){
+//                    extra += playerBonus.dexterity;
+//                } else
+                if(attributeID == DBCAttribute.Constitution && playerBonus.constituion != 0){
+                    extra += (long) playerBonus.constituion;
                 } else if(attributeID == DBCAttribute.Spirit && playerBonus.spirit != 0){
-                    extra += playerBonus.spirit;
+                    extra += (long) playerBonus.spirit;
                 }
+//                    if(attributeID == DBCAttribute.Willpower && playerBonus.willpower != 0){
+//                    extra += playerBonus.willpower;
             }
         }
         return extra;
