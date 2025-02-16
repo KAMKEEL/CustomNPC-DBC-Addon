@@ -314,7 +314,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
                 float multi = (float) modifiedStatVal / originalStatVal;
                 if(ConfigDBCClient.AdvancedGui){
-                    float formMulti = customForm != null ? customForm.getAttributeMulti(i) : (float) DBCFormMulti(i);
+                    float formMulti = currentForm != null ? currentForm.getAttributeMulti(i) : (float) DBCFormMulti(i);
                     String multiString = "";
                     multiString += "\n> Multi: §4x" +   round(formMulti, 2) + "§8 (Form)";
                     if(JGConfigDBCFormMastery.FM_Enabled){
@@ -322,7 +322,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                         if(masteryMulti > 0)
                             multiString += " * §4x" + masteryMulti + "§8 (Mastery)";
                     }
-                    if(customForm != null && customForm.stackable.vanillaStackable){
+                    if(currentForm != null && currentForm.stackable.vanillaStackable){
                         float dbcMulti = (float) DBCFormMulti(i);
                         float stackMulti = dbcMulti * (JGConfigDBCFormMastery.FM_Enabled ? (float) getFormMasteryAttributeMulti(JRMCoreClient.mc.thePlayer, State, State2, Race, StusEfctsMe(5), StusEfctsMe(13), StusEfctsMe(19), StusEfctsMe(20)) :1);
                         multiString += "\n* §4x" +   round(stackMulti, 2) + "§8 (" + trl("jrmc", getTransformationName(Race, isPowerTypeChakra() ? 0 : State, isRose, isMystic, isUI, isGoD)) + ")";
