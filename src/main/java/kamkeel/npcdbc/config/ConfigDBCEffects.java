@@ -35,6 +35,11 @@ public class ConfigDBCEffects
     public static int FOM_EffectLength = 90;
     public static double FOM_KiDrain = -0.8;
 
+    public final static String CHOCOLATED = "Chocolated";
+    public static double CHOC_Str = -0.2;
+    public static double CHOC_Dex = -0.2;
+    public static double CHOC_Wil = -0.2;
+    public static int CHOC_EffectLength = 90;
 
     public final static String ZENKAI = "Zenkai";
     public static double ZenkaiSaiyanStr = 1.0;
@@ -75,6 +80,7 @@ public class ConfigDBCEffects
 
     public final static String DIVINE = "DIVINE";
     public final static String DIVINE_RACES = "DIVINE RACES";
+
     private static float divineMulti = 1;
     private static final HashMap<Integer, HashMap<String, Boolean>> divineApplicableForms = new HashMap<>();
 
