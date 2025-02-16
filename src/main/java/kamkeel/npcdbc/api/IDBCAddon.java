@@ -617,4 +617,10 @@ public interface IDBCAddon extends IDBCPlayer {
     void setOutline(int outlineID);
 
     IOutline getOutline();
+
+    /**
+     *
+     * @return Name of player that you are fused with
+     */
+    String getFusionPartner();
 }

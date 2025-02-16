@@ -19,9 +19,12 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+
 import noppes.npcs.api.entity.IEntityLivingBase;
+
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.util.ValueUtil;
@@ -29,6 +32,7 @@ import noppes.npcs.util.ValueUtil;
 import java.util.Arrays;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
+import static JinRyuu.JRMCore.JRMCoreH.jrmcDam;
 
 // Implemented by Kam, Ported from Goatee Design
 @SuppressWarnings({"rawtypes", "unused"})
@@ -1146,5 +1150,32 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public IOutline getOutline() {
         return dbcData.getOutline();
+    }
+    @Override
+    public String getFusionPartner() {
+        String fusion =    JRMCoreH.getString(player,"jrmcFuzion");
+        String[] members = fusion.split(",");
+        if(members.length > 2){
+            members[2] = null;
+            String partnerName = null;
+            for (String i : members) {
+                if (i != null) {
+                    EntityPlayer temp = player.worldObj.getPlayerEntityByName(i);
+                    if (temp == null){
+                        continue;
+                    }
+                    if(player == temp){
+                        continue;
+                    }
+                    partnerName = i;
+                }
+            }
+            return partnerName;
+
+        }
+        else
+            throw new CustomNPCsException(player.getDisplayName()+ " is not fused");
+
+
     }
 }
