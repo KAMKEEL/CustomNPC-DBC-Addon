@@ -13,6 +13,9 @@ import noppes.npcs.controllers.data.PlayerData;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import static kamkeel.npcs.util.ColorUtil.sendError;
+import static kamkeel.npcs.util.ColorUtil.sendResult;
+
 public class FormMasteryCommand extends CommandKamkeelBase {
     @Override
     public String getDescription() {

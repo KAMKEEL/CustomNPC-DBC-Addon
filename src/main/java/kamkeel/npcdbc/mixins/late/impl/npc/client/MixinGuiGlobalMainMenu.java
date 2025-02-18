@@ -1,10 +1,12 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
+import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.gui.global.auras.GuiNPCManageAuras;
 import kamkeel.npcdbc.client.gui.global.form.GuiNPCManageForms;
 import kamkeel.npcdbc.client.gui.global.outline.GuiNPCManageOutlines;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.gui.mainmenu.GuiNPCGlobalMainMenu;
 import noppes.npcs.client.gui.player.inventory.GuiCNPCInventory;
 import noppes.npcs.client.gui.util.GuiNPCInterface2;
@@ -19,6 +21,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = GuiNPCGlobalMainMenu.class)
 public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
+
+    @Unique
+    private static final ResourceLocation MENU_ICONS = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/icons.png");
 
 
     public MixinGuiGlobalMainMenu(EntityCustomNpc npc) {
@@ -38,20 +43,18 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
     @Unique
     private GuiNpcSquareButton outlinesButton;
 
-    @Unique
-    private GuiNpcSquareButton customEffectsButton;
 
-    @Inject(method = "initGui", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/gui/mainmenu/GuiNPCGlobalMainMenu;layoutButtons()V", shift = At.Shift.BEFORE))
+    @Inject(method = "initGui", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/gui/mainmenu/GuiNPCGlobalMainMenu;layoutButtons()V", shift = At.Shift.BEFORE, remap = false))
     public void addDBCModelButton(CallbackInfo ci) {
 
         this.registerButton(this.formsButton = new GuiNpcSquareButton(200, 0, 0, 20, "global.customforms", -13421773));
-        this.formsButton.setIconPos(24, 23, 24, 56).setIconTexture(GuiCNPCInventory.specialIcons);
+        this.formsButton.setIconPos(24, 24, 0, 66).setIconTexture(MENU_ICONS);
 
         this.registerButton(this.aurasButton = new GuiNpcSquareButton(201, 0, 0, 20, "global.customauras", -13421773));
-        this.aurasButton.setIconPos(24, 23, 48, 56).setIconTexture(GuiCNPCInventory.specialIcons);
+        this.aurasButton.setIconPos(24, 24, 24, 66).setIconTexture(MENU_ICONS);
 
         this.registerButton(this.outlinesButton = new GuiNpcSquareButton(202, 0, 0, 20, "global.customoutlines", -13421773));
-        this.outlinesButton.setIconPos(24, 23, 72, 56).setIconTexture(GuiCNPCInventory.specialIcons);
+        this.outlinesButton.setIconPos(24, 24, 48, 66).setIconTexture(MENU_ICONS);
     }
 
     @Inject(method = "actionPerformed", at = @At("TAIL"))

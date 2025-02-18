@@ -14,6 +14,9 @@ import noppes.npcs.controllers.data.PlayerData;
 
 import java.util.List;
 
+import static kamkeel.npcs.util.ColorUtil.sendError;
+import static kamkeel.npcs.util.ColorUtil.sendResult;
+
 public class AuraCommand extends CommandKamkeelBase {
 
     @Override

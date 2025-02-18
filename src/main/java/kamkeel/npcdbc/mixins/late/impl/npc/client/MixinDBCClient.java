@@ -77,13 +77,4 @@ public class MixinDBCClient {
      */
     @Overwrite(remap = false)
     public GuiNPCInterface2 manageCustomAuras(EntityNPCInterface npcInterface){ return new GuiNPCManageAuras(npcInterface); }
-
-    /**
-     * @author Kam
-     * @reason Inventory GUI for DBC
-     */
-    @Overwrite(remap = false)
-    public GuiCNPCInventory inventoryGUI() {
-        return new GuiDBC();
-    }
 }
