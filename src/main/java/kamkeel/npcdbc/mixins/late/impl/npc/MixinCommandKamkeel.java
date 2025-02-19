@@ -1,6 +1,9 @@
 package kamkeel.npcdbc.mixins.late.impl.npc;
 
-import kamkeel.npcdbc.command.*;
+import kamkeel.npcdbc.command.AuraCommand;
+import kamkeel.npcdbc.command.FormCommand;
+import kamkeel.npcdbc.command.FormMasteryCommand;
+import kamkeel.npcdbc.command.OutlineCommand;
 import kamkeel.npcs.command.CommandKamkeel;
 import kamkeel.npcs.command.CommandKamkeelBase;
 import org.spongepowered.asm.mixin.Mixin;

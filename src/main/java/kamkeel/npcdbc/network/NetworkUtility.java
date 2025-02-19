@@ -3,7 +3,6 @@ package kamkeel.npcdbc.network;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
-import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -17,15 +16,9 @@ import kamkeel.npcs.network.packets.data.large.ScrollDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.NBTTags;
 import noppes.npcs.controllers.PlayerDataController;
-import noppes.npcs.controllers.ScriptContainer;
-import noppes.npcs.controllers.ScriptController;
-import noppes.npcs.controllers.data.CustomEffect;
-import noppes.npcs.controllers.data.IScriptHandler;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 

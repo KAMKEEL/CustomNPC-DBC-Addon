@@ -5,7 +5,6 @@ import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.FormDisplay;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;

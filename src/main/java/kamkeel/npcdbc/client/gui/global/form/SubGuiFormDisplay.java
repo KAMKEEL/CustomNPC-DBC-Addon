@@ -7,9 +7,7 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -23,9 +21,7 @@ import org.lwjgl.opengl.GL12;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.util.Iterator;
 
-import static JinRyuu.JRMCore.JRMCoreH.cl;
 import static JinRyuu.JRMCore.JRMCoreH.dnsHairG1toG2;
 
 public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener, ClipboardOwner {

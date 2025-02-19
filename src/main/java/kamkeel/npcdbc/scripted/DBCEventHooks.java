@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.scripted;
 
-import kamkeel.npcdbc.api.event.IDBCEvent;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import noppes.npcs.controllers.ScriptController;
 import noppes.npcs.controllers.data.PlayerDataScript;

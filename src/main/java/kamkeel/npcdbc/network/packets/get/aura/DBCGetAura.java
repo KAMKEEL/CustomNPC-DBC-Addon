@@ -3,15 +3,14 @@ package kamkeel.npcdbc.network.packets.get.aura;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.aura.Aura;
-import kamkeel.npcdbc.network.DBCPacketHandler;
-import kamkeel.npcdbc.network.packets.EnumPacketGet;
 import kamkeel.npcdbc.network.AbstractPacket;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.PacketChannel;
+import kamkeel.npcdbc.network.packets.EnumPacketGet;
 import kamkeel.npcs.network.packets.data.large.GuiDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-
-import kamkeel.npcdbc.network.PacketChannel;
 
 import java.io.IOException;
 

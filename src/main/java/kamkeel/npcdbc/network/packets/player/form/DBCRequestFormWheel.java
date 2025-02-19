@@ -1,12 +1,12 @@
 package kamkeel.npcdbc.network.packets.player.form;
 
 import io.netty.buffer.ByteBuf;
-import kamkeel.npcdbc.network.NetworkUtility;
+import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.NetworkUtility;
+import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
 import net.minecraft.entity.player.EntityPlayer;
-import kamkeel.npcdbc.network.AbstractPacket;
-import kamkeel.npcdbc.network.PacketChannel;
 
 import java.io.IOException;
 

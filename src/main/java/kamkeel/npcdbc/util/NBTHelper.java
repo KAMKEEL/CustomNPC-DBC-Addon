@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.util;
 
-import kamkeel.npcdbc.data.form.FormDisplay;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;

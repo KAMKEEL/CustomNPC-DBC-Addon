@@ -2,11 +2,11 @@ package kamkeel.npcdbc.network.packets.get;
 
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.controllers.CapsuleController;
+import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketGet;
 import net.minecraft.entity.player.EntityPlayer;
-import kamkeel.npcdbc.network.AbstractPacket;
-import kamkeel.npcdbc.network.PacketChannel;
 
 import java.io.IOException;
 import java.util.HashMap;

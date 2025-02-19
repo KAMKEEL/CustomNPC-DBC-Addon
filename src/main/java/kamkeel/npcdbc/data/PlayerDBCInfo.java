@@ -23,7 +23,6 @@ import net.minecraftforge.common.util.Constants;
 import noppes.npcs.NBTTags;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.data.PlayerData;
-import noppes.npcs.controllers.data.PlayerEffect;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
