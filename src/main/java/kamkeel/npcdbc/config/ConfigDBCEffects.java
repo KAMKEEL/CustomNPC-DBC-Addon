@@ -40,6 +40,7 @@ public class ConfigDBCEffects
     public static double CHOC_Dex = -0.2;
     public static double CHOC_Wil = -0.2;
     public static int CHOC_EffectLength = 90;
+    public static boolean CHOC_AffectFusion = false;
 
     public final static String ZENKAI = "Zenkai";
     public static double ZenkaiSaiyanStr = 1.0;

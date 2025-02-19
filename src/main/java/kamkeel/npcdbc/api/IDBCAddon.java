@@ -623,4 +623,26 @@ public interface IDBCAddon extends IDBCPlayer {
      * @return Name of player that you are fused with
      */
     String getFusionPartner();
+
+    /**
+     * Fires a Ki Attack in the Head Direction of the NPC
+     * @param type          Type of Ki Attack [0 - 8] "Wave", "Blast", "Disk", "Laser", "Spiral", "BigBlast", "Barrage", "Shield", "Explosion"
+     * @param speed         Speed of Ki Attack [0 - 100]
+     * @param damage        Damage for Ki Attack
+     * @param hasEffect     True for Explosion
+     * @param color         Color of Ki Attack [0 - 30] -&gt; <br>
+     *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", <br>
+     *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", <br>
+     *                      21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
+     * @param density       Density of Ki Attack &gt; 0
+     * @param hasSound      Play Impact Sound of Ki Attack
+     * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
+     */
+    void fireKiAttack(byte type, byte speed, int damage, boolean hasEffect, byte color, byte density, boolean hasSound, byte chargePercent);
+
+    /**
+     * Fires an IKiAttack with its internal params
+     * @param kiAttack ki attack to shoot
+     */
+    void fireKiAttack(IKiAttack kiAttack);
 }
