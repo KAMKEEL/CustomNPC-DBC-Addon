@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcs.controllers.data.EnumProfileOperation;
@@ -55,6 +56,10 @@ public class DBCProfileData implements IProfileData {
         if(dbcData.stats.isFused())
             return ProfileOperation.error("Player is fused");
 
+        // If Player has Legendary
+        if(ConfigDBCGameplay.ProfileSwitchingRemovesLegendary && StusEfcts(14, dbcData.StatusEffects)){
+            dbcData.setSE(14, false);
+        }
         return ProfileOperation.success("");
     }
 

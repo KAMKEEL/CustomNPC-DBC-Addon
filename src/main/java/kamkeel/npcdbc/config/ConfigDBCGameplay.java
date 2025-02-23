@@ -14,7 +14,7 @@ public class ConfigDBCGameplay
     public static Configuration config;
 
     public final static String StatusEffects = "Status_Effects";
-    public static double CheckEffectsTick = 10;
+    public static boolean ProfileSwitchingRemovesLegendary = false;
 
     public final static String Forms = "Forms";
     public static boolean InstantTransform = true;
@@ -62,10 +62,7 @@ public class ConfigDBCGameplay
         try
         {
             config.load();
-
-            CheckEffectsTick = config.get(StatusEffects, "Run Effects Every X Tick", 10, "This will check effects every X ticks. All registered effects must be multiple of 10. [10, 20, 30...] Max: 100").getInt(10);
-            CheckEffectsTick = (CheckEffectsTick % 10 == 0) ? CheckEffectsTick : ((CheckEffectsTick / 10) + 1) * 10;
-            CheckEffectsTick = ValueUtil.clamp(CheckEffectsTick, 10, 100);
+            ProfileSwitchingRemovesLegendary = config.get(StatusEffects, "Remove Legendary on Profile Swap", false).getBoolean(false);
 
             EnableChargingDex = config.get(ChargingDex, "0. Enable Charging Dex", true,
                 "Charging Dex -> Percent of Total Defense Activated while Charging Ki Attacks. " +
