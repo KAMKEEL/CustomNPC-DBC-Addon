@@ -59,6 +59,7 @@ public class DBCProfileData implements IProfileData {
         // If Player has Legendary
         if(ConfigDBCGameplay.ProfileSwitchingRemovesLegendary && StusEfcts(14, dbcData.StatusEffects)){
             dbcData.setSE(14, false);
+            dbcData.saveNBTData(false);
         }
         return ProfileOperation.success("");
     }
