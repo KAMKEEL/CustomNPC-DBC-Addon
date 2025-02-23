@@ -48,5 +48,5 @@ dependencies {
     devOnlyNonPublishable((rfg.deobf(project.files("lib/EDE-Signature-Copy.jar"))))
 //    devOnlyNonPublishable(rfg.deobf(project.files("lib/CustomNPC-Plus-1.9.3.jar")))
 
-    implementation rfg.deobf(name: "CustomNPC-Plus-1.9.4-beta3.2")
+    implementation rfg.deobf(name: "CustomNPC-Plus-1.9.4-beta3.6")
 }

@@ -3,15 +3,14 @@ package kamkeel.npcdbc;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
+import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.LoadConfiguration;
 import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.data.DBCProfileData;
 import kamkeel.npcdbc.items.ModItems;
 import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcs.controllers.ProfileController;
 
 import java.io.File;
 
@@ -55,6 +54,11 @@ public class CustomNpcPlusDBC {
         CapsuleController.getInstance().load();
         BonusController.getInstance().load();
         OutlineController.getInstance().load();
+    }
+
+    @Mod.EventHandler
+    public void setAboutToStart(FMLServerStartingEvent event) {
+        ProfileController.registerProfileType(new DBCProfileData());
     }
 
     @Mod.EventHandler

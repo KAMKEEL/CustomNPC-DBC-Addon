@@ -34,6 +34,7 @@ public class ConfigDBCEffects
     public static double FOM_Will = 0.5;
     public static int FOM_EffectLength = 90;
     public static double FOM_KiDrain = -0.8;
+    public static boolean FOM_Aura = true;
 
     public final static String CHOCOLATED = "Chocolated";
     public static double CHOC_Str = -0.2;
@@ -147,6 +148,7 @@ public class ConfigDBCEffects
             FOM_Will = config.get(FRUITOFMIGHT, "Will Multi", 0.5, "Amount added to Will Multi").getDouble(0.5);
             FOM_EffectLength = config.get(FRUITOFMIGHT, "Effect Time", 90, "Amount of time in seconds the Fruit of Might Effect is applied for").getInt(90);
             FOM_KiDrain = config.get(FRUITOFMIGHT, "Effect Drain", -0.8, "Ki Drain Percent per Second").getDouble(-0.8);
+            FOM_Aura = config.get(FRUITOFMIGHT, "Aura Override", true, "Enables Fruit of Might Aura disabling current Aura").getBoolean(true);
 
             config.addCustomCategoryComment(ZENKAI,
                 "Zenkai will occur when a Saiyan or Half Saiyan dies. This can be disabled in\n" +
