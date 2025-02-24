@@ -662,4 +662,6 @@ public interface IDBCAddon extends IDBCPlayer {
      * @return True if player is dodging/swooping
      */
     boolean isSwooping();
+
+    boolean isInMedicalLiquid();
 }

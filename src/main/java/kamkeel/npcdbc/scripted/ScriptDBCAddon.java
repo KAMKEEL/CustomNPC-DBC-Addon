@@ -23,6 +23,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -1297,6 +1298,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public boolean isSwooping() {
         return (dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[7]));
+    }
+
+    @Override
+    public boolean isInMedicalLiquid() {
+        Block block = player.worldObj.getBlock((int) Math.floor(player.posX),(int)Math.floor(player.posY),(int)Math.floor(player.posZ));
+        return(block == Block.getBlockFromName("jinryuudragonblockc:tile.BlockHealingPods"));
     }
 
 }
