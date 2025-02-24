@@ -1294,7 +1294,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isSuperRegen() {
-        if(dbcData.stats.getCurrentBodyPercentage()<100f && dbcData.getRace() == 5) return isReleasing();
+        if(dbcData.stats.getCurrentBodyPercentage()<100f && dbcData.getRace() == 5 && Integer.parseInt(dbcData.RacialSkills.replace("TR","")) > 0 ) return isReleasing();
         else return false;
     }
 
