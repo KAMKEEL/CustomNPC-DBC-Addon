@@ -125,6 +125,10 @@ public interface IAuraDisplay {
 
     void setLightningIntensity(int lightningIntensity);
 
+    void setLightningColor(int color);
+
+    int getLightningColor();
+
     boolean hasSize();
 
 
