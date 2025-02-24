@@ -28,12 +28,14 @@ public class DBCDataBonus {
     }
 
     public float[] getMultiBonus() {
-        float[] bonuses = new float[3];
+        float[] bonuses = new float[5];
         for(PlayerBonus playerBonus : getCurrentBonuses().values()){
             if(playerBonus.type == 0){
                 bonuses[0] += playerBonus.strength;
                 bonuses[1] += playerBonus.dexterity;
                 bonuses[2] += playerBonus.willpower;
+                bonuses[3] += playerBonus.constituion;
+                bonuses[4] += playerBonus.spirit;
             }
         }
         return bonuses;
@@ -46,7 +48,6 @@ public class DBCDataBonus {
                 bonuses[0] += playerBonus.strength;
                 bonuses[1] += playerBonus.dexterity;
                 bonuses[2] += playerBonus.willpower;
-
                 bonuses[3] += playerBonus.constituion;
                 bonuses[4] += playerBonus.spirit;
             }

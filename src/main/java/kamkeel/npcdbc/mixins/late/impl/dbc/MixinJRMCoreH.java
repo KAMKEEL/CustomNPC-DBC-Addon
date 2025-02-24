@@ -249,14 +249,18 @@ public abstract class MixinJRMCoreH {
             result = (int) (result * (averageMulti * statusMulti));
         }
 
-
         // Add Bonus Multi to Base Attributes
         if (attribute == DBCAttribute.Strength) // STR
-            result += (currAttributes[0] * multiBonus[0]);
+            result += (currAttributes[DBCAttribute.Strength] * multiBonus[0]);
         else if (attribute == DBCAttribute.Dexterity) // DEX
-            result += (currAttributes[1] * multiBonus[1]);
+            result += (currAttributes[DBCAttribute.Dexterity] * multiBonus[1]);
         else if (attribute == DBCAttribute.Willpower) // WIL
-            result += (currAttributes[3] * multiBonus[2]);
+            result += (currAttributes[DBCAttribute.Willpower] * multiBonus[2]);
+        else if (attribute == DBCAttribute.Constitution) // WIL
+            result += (currAttributes[DBCAttribute.Constitution] * multiBonus[3]);
+        else if (attribute == DBCAttribute.Spirit) // WIL
+            result += (currAttributes[DBCAttribute.Spirit] * multiBonus[4]);
+
 
         float[] flatBonus = dbcData.bonus.getFlatBonus();
         // Add Bonus Flat to Base Attributes at the end
