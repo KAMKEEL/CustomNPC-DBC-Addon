@@ -619,10 +619,9 @@ public interface IDBCAddon extends IDBCPlayer {
     IOutline getOutline();
 
     /**
-     * @return Iplayer object of the player you are fused with
+     * @return IPlayer object of the player you are fused with
      */
     IPlayer<?> getFusionPartner();
-
     /**
      * Fires a Ki Attack in the Head Direction of the NPC
      * @param type          Type of Ki Attack [0 - 8] "Wave", "Blast", "Disk", "Laser", "Spiral", "BigBlast", "Barrage", "Shield", "Explosion"
@@ -638,10 +637,29 @@ public interface IDBCAddon extends IDBCPlayer {
      * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
      */
     void fireKiAttack(byte type, byte speed, int damage, boolean hasEffect, byte color, byte density, boolean hasSound, byte chargePercent);
-
     /**
      * Fires an IKiAttack with its internal params
      * @param kiAttack ki attack to shoot
      */
     void fireKiAttack(IKiAttack kiAttack);
+    /**
+     *
+     * @return True if player is releasing ki
+     */
+    boolean isReleasing();
+    /**
+     *
+     * @return True if player is releasing ki and has meditation skill
+     */
+    boolean isMeditating();
+    /**
+     *
+     * @return True if player is using majin super regen
+     */
+    boolean isSuperRegen();
+    /**
+     *
+     * @return True if player is dodging/swooping
+     */
+    boolean isSwooping();
 }

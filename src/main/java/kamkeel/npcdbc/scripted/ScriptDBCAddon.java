@@ -1279,4 +1279,29 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         }
     }
 
+    @Override
+    public boolean isReleasing() {
+        return (dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[4]));
+    }
+
+    @Override
+    public boolean isMeditating() {
+        if(dbcData.Skills.contains("MD")) {
+            return(dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[4]));
+        }
+        else return false;
+    }
+
+    @Override
+    public boolean isSuperRegen() {
+        if(dbcData.stats.getCurrentBodyPercentage()<100f && dbcData.getRace() == 5) return isReleasing();
+        else return false;
+    }
+
+
+    @Override
+    public boolean isSwooping() {
+        return (dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[7]));
+    }
+
 }
