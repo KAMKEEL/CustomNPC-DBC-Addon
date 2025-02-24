@@ -12,6 +12,7 @@ import net.minecraft.command.ICommandSender;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 
+import java.util.Collection;
 import java.util.List;
 
 import static kamkeel.npcs.util.ColorUtil.sendError;
@@ -234,4 +235,28 @@ public class AuraCommand extends CommandKamkeelBase {
         AuraController.Instance.load();
         sendResult(sender, "Auras reloaded!");
     }
+
+    @SubCommand(
+        desc = "Find aura id number by its name",
+        usage = "<auraName>"
+    )
+    public void id(ICommandSender sender, String args[]) throws CommandException {
+        if(args.length == 0){
+            sendError(sender, "Please provide a name for the aura");
+            return;
+        }
+        String auraName = String.join(" ", args).toLowerCase();
+        Collection<Aura> auras = AuraController.getInstance().customAuras.values();
+        int count = 0;
+        for(Aura aura : auras){
+            if(aura.getName().toLowerCase().contains(auraName)){
+                sendResult(sender, String.format("Aura \u00A7e%d\u00A77 - \u00A7c'%s'", aura.id, aura.getName()));
+                count++;
+            }
+        }
+        if(count == 0){
+            sendResult(sender, String.format("No Aura found with name: \u00A7c'%s'", auraName));
+        }
+    }
+
 }

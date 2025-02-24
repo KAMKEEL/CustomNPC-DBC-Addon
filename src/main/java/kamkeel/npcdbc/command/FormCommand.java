@@ -15,6 +15,7 @@ import net.minecraft.command.ICommandSender;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 
+import java.util.Collection;
 import java.util.List;
 
 import static kamkeel.npcs.util.ColorUtil.sendError;
@@ -266,4 +267,28 @@ public class FormCommand extends CommandKamkeelBase {
         FormController.Instance.load();
         sendResult(sender, "Forms reloaded!");
     }
+
+    @SubCommand(
+        desc = "Find form id number by its name",
+        usage = "<formName>"
+    )
+    public void id(ICommandSender sender, String args[]) throws CommandException {
+        if(args.length == 0){
+            sendError(sender, "Please provide a name for the form");
+            return;
+        }
+        String formName = String.join(" ", args).toLowerCase();
+        Collection<Form> forms = FormController.getInstance().customForms.values();
+        int count = 0;
+        for(Form form : forms){
+            if(form.getName().toLowerCase().contains(formName)){
+                sendResult(sender, String.format("Form \u00A7e%d\u00A77 - \u00A7c'%s'", form.id, form.getName()));
+                count++;
+            }
+        }
+        if(count == 0){
+            sendResult(sender, String.format("No Form found with name: \u00A7c'%s'", formName));
+        }
+    }
+
 }
