@@ -1155,7 +1155,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return dbcData.getOutline();
     }
     @Override
-
     public IPlayer<?> getFusionPartner() {
 
         if(!dbcData.stats.isFused()){
