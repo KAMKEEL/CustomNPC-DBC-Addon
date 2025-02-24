@@ -20,7 +20,6 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,9 +27,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.api.entity.IEntityLivingBase;
 import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
+import noppes.npcs.scripted.entity.ScriptPlayer;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.Arrays;
@@ -1155,29 +1154,23 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return dbcData.getOutline();
     }
     @Override
-    public String getFusionPartner() {
-        String fusion =    JRMCoreH.getString(player,"jrmcFuzion");
-        String[] members = fusion.split(",");
-        if(members.length > 2){
-            members[2] = null;
-            String partnerName = null;
-            for (String i : members) {
-                if (i != null) {
-                    EntityPlayer temp = player.worldObj.getPlayerEntityByName(i);
-                    if (temp == null){
-                        continue;
-                    }
-                    if(player == temp){
-                        continue;
-                    }
-                    partnerName = i;
-                }
-            }
-            return partnerName;
 
+    public IPlayer<?> getFusionPartner() {
+
+        if(!player.getEntityData().getCompoundTag("PlayerPersisted").hasKey("jrmcFuzion")){
+            throw new CustomNPCsException(player.getDisplayName()+ " is not fused");
+        }
+
+        String fusion = player.getEntityData().getCompoundTag("PlayerPersisted").getString("jrmcFuzion");
+        String[] members = fusion.split(",");
+        EntityPlayer temp = player.worldObj.getPlayerEntityByName(members[1]);
+        if(temp != null){
+            IPlayer partner = new ScriptPlayer((EntityPlayerMP) temp);
+
+            return partner;
         }
         else
-            throw new CustomNPCsException(player.getDisplayName()+ " is not fused");
+            throw new CustomNPCsException("Error finding fusion partner");
 
 
     }

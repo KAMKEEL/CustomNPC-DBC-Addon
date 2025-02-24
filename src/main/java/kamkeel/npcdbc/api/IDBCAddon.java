@@ -619,10 +619,9 @@ public interface IDBCAddon extends IDBCPlayer {
     IOutline getOutline();
 
     /**
-     *
-     * @return Name of player that you are fused with
+     * @return Iplayer object of the player you are fused with
      */
-    String getFusionPartner();
+    IPlayer<?> getFusionPartner();
 
     /**
      * Fires a Ki Attack in the Head Direction of the NPC
