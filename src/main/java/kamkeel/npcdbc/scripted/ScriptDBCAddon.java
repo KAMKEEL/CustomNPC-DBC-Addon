@@ -28,6 +28,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.api.entity.IEntityLivingBase;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.scripted.CustomNPCsException;
+import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.scripted.entity.ScriptPlayer;
 import noppes.npcs.util.ValueUtil;
@@ -1157,22 +1158,15 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     public IPlayer<?> getFusionPartner() {
 
-        if(!player.getEntityData().getCompoundTag("PlayerPersisted").hasKey("jrmcFuzion")){
+        if(!dbcData.stats.isFused()){
             throw new CustomNPCsException(player.getDisplayName()+ " is not fused");
         }
-
-        String fusion = player.getEntityData().getCompoundTag("PlayerPersisted").getString("jrmcFuzion");
-        String[] members = fusion.split(",");
-        EntityPlayer temp = player.worldObj.getPlayerEntityByName(members[1]);
+        EntityPlayer temp = dbcData.stats.getSpectatorEntity();
         if(temp != null){
-            IPlayer partner = new ScriptPlayer((EntityPlayerMP) temp);
-
-            return partner;
+            return PlayerDataUtil.getIPlayer(temp);
         }
         else
             throw new CustomNPCsException("Error finding fusion partner");
-
-
     }
 
     @Override
