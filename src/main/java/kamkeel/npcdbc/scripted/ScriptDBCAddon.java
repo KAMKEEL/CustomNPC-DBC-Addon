@@ -12,6 +12,7 @@ import kamkeel.npcdbc.api.form.IFormMastery;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
@@ -1287,8 +1288,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isSuperRegen() {
-        if(dbcData.stats.getCurrentBodyPercentage()<100f && dbcData.getRace() == 5 && Integer.parseInt(dbcData.RacialSkills.replace("TR","")) > 0 ) return isReleasing();
-        else return false;
+        if(dbcData.stats.getCurrentBodyPercentage()<100f && dbcData.getRace() == DBCRace.MAJIN && Integer.parseInt(dbcData.RacialSkills.replace("TR","")) > 0 )
+            return isReleasing();
+        return false;
     }
 
 
