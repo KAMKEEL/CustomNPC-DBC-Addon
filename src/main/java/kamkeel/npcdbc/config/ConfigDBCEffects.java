@@ -164,6 +164,13 @@ public class ConfigDBCEffects
             ZenkaiHALFWil = config.get(ZENKAI, "Half Saiyan Will Multi", 1.2f, "Amount added to Will Multi").getDouble(1.0f);
             ZenkaiHALFLength = config.get(ZENKAI, "Half Saiyan Zenkai Length", 180, "Time of Zenkai in Seconds").getInt(180);
 
+            config.addCustomCategoryComment(CHOCOLATED,"Chocolated will occur when [WORK IN PROGRESS]");
+            CHOC_Str = config.get(CHOCOLATED,"Chocolated Strength Multi",-0.2,"debuff amount to Strength multi").getDouble(1.0f);
+            CHOC_Dex = config.get(CHOCOLATED,"Chocolated Dex Multi",-0.2,"debuff amount to Dex multi").getDouble(1.0f);
+            CHOC_Wil = config.get(CHOCOLATED,"Chocolated Will Multi",-0.2,"debuff amount to Will multi").getDouble(1.0f);
+            CHOC_EffectLength = config.get(CHOCOLATED,"Chocolated Effect Length",90,"Amount of time in seconds the Chocolated Effect is applied for").getInt(90);
+            CHOC_AffectFusion = config.get(CHOCOLATED,"Chocolated Affect Fusion",false,"whether fusions will be affected by chocolated or not").getBoolean(false);
+
             config.addCustomCategoryComment(Meditation,
                 "Meditation Spirit Bonus is always added AFTER all other calculations");
             MeditationSpiBoostPercent = config.get(Meditation, "Meditation Boost", 20, "Amount of percent to multiply Base Spirit Stats by").getInt(20);
