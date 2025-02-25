@@ -17,6 +17,7 @@ import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -34,10 +35,12 @@ import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.scripted.entity.ScriptPlayer;
 import noppes.npcs.util.ValueUtil;
+import scala.util.control.Exception;
 
 import java.util.Arrays;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
+import static JinRyuu.JRMCore.JRMCoreH.jrmcDam;
 
 // Implemented by Kam, Ported from Goatee Design
 @SuppressWarnings({"rawtypes", "unused"})
@@ -1304,6 +1307,47 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public boolean isInMedicalLiquid() {
         Block block = player.worldObj.getBlock((int) Math.floor(player.posX),(int)Math.floor(player.posY),(int)Math.floor(player.posZ));
         return(block == Block.getBlockFromName("jinryuudragonblockc:tile.BlockHealingPods"));
+    }
+
+    @Override
+    public IKiAttack getCurrentSelectedAttack() {
+        int slot = JRMCoreH.EnAtSlct;
+
+        String[] tech = new String[0];
+
+        switch (slot){
+            case 0:
+                tech = JRMCoreH.tech1;
+
+                break;
+            case 1:
+                tech = JRMCoreH.tech2;
+                break;
+            case 2:
+                tech = JRMCoreH.tech3;
+                break;
+            case 3:
+                tech = JRMCoreH.tech4;
+        }
+
+        if (tech == null) throw new CustomNPCsException("Selected slot does not have an attack in it");
+
+
+        boolean effect =  Integer.parseInt(tech[6]) == 1;
+
+        IKiAttack kiAttack = new KiAttack(Byte.parseByte(tech[3]),Byte.parseByte(tech[4]),100,effect,Byte.parseByte(tech[10]), (byte) 100,true,Byte.parseByte(tech[5]));
+
+        return kiAttack;
+
+        //Element 0 is name
+
+        //element 2 is creator
+        //element 3 is type
+        //element 4 is speed
+        //element 5 is charge percent
+        //element 6 is the effect
+        //element 10 is color
+
     }
 
 }

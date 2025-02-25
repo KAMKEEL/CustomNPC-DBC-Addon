@@ -664,4 +664,6 @@ public interface IDBCAddon extends IDBCPlayer {
     boolean isSwooping();
 
     boolean isInMedicalLiquid();
+
+    IKiAttack getCurrentSelectedAttack();
 }
