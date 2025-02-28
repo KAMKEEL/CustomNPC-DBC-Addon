@@ -17,7 +17,7 @@ import java.io.File;
 @Mod(
     modid = CustomNpcPlusDBC.ID,
     name = CustomNpcPlusDBC.name,
-    version = Tokens.VERSION, // If this errors out, try refreshing your project entirely
+    version = "Tokens.VERSION", // If this errors out, try refreshing your project entirely
     dependencies = "required-after:customnpcs;required-after:jinryuujrmcore;required-after:jinryuudragonblockc;"
 )
 public class CustomNpcPlusDBC {
