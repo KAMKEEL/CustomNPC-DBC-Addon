@@ -6,6 +6,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.LoadConfiguration;
+import kamkeel.npcdbc.data.DBCItemAttributes;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.DBCProfileData;
 import kamkeel.npcdbc.items.ModItems;
@@ -45,6 +46,8 @@ public class CustomNpcPlusDBC {
         CapsuleController.getInstance().load();
         BonusController.getInstance().load();
         DBCEffectController.getInstance().load();
+
+        new DBCItemAttributes();
     }
 
     @Mod.EventHandler

@@ -10,19 +10,19 @@ public interface IPlayerBonus {
 
     float getStrength();
 
-    void setStrength(byte strength);
+    void setStrength(float strength);
 
     float getDexterity();
 
-    void setDexterity(byte dexterity);
+    void setDexterity(float dexterity);
 
     float getWillpower();
 
-    void setWillpower(byte willpower);
+    void setWillpower(float willpower);
 
-    float getConstituion();
+    float getConstitution();
 
-    void setConstituion(float constituion);
+    void setConstitution(float constitution);
 
     float getSpirit();
 

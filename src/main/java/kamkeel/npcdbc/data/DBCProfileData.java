@@ -20,9 +20,6 @@ import static kamkeel.npcdbc.data.dbcdata.DBCData.DBCPersisted;
 
 public class DBCProfileData implements IProfileData {
 
-    public static String gearFlat = "GearFlat";
-    public static String gearMulti = "GearMulti";
-
     @Override
     public String getTagName() {
         return "DBC";
@@ -40,12 +37,6 @@ public class DBCProfileData implements IProfileData {
         dbcData.loadNBTData(true);
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
         info.updateClient();
-
-
-        if(ConfigMain.AttributesEnabled){
-            PlayerBonus bonus = new PlayerBonus();
-            BonusController.getInstance().applyBonus();
-        }
     }
 
     @Override
