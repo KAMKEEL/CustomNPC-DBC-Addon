@@ -84,6 +84,11 @@ public class DBCItemAttributes {
                 applyGearAttributes(entityPlayer, playerAttributeTracker);
             }
         });
+
+        // TODO:
+        // Level Requirement
+        // Race Requirement
+        // Class Requirement
     }
 
     public static void applyGearAttributes(EntityPlayer entityPlayer, PlayerAttributeTracker playerAttributeTracker){
