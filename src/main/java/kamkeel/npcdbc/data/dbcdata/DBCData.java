@@ -78,7 +78,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     public Map<String, PlayerBonus> currentBonuses;
 
     @SideOnly(Side.CLIENT)
-    public byte potaraFusionLevel = -1;
+    public byte potaraFusionLevel;
 
     @SideOnly(Side.CLIENT)
     public FormDisplay.BodyColor currentCustomizedColors;
@@ -114,6 +114,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         if (side == Side.SERVER)
             loadNBTData(true);
+        else
+            potaraFusionLevel = -1;
     }
 
     public NBTTagCompound saveFromNBT(NBTTagCompound comp) {
