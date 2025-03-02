@@ -266,21 +266,24 @@ public class ServerEventHandler {
         if (event.entity.worldObj.isRemote)
             return;
 
-        if (event.entity instanceof EntityPlayer || event.entity instanceof EntityNPCInterface) {
-            Entity attacker = event.source.getEntity();
+        boolean isNPC = event.entity instanceof EntityNPCInterface;
+        float dodgeChance = 0;
+        if (event.entity instanceof EntityPlayer || isNPC) {
             Form form = PlayerDataUtil.getForm(event.entity);
 
             if (form != null) {
                 float formLevel = PlayerDataUtil.getFormLevel(event.entity);
-
-                if (form.mastery.hasDodge()) {
-                    Random rand = new Random();
-                    float dodgeChance = form.mastery.dodgeChance * form.mastery.calculateMulti("dodge", formLevel);
-                    if (dodgeChance >= rand.nextInt(100)) {
-                        if (Dodge.dodge(event.entity, attacker)) {
-                            event.setCanceled(true);
-                        }
-                    }
+                if (form.mastery.hasDodge())
+                    dodgeChance = form.mastery.dodgeChance * form.mastery.calculateMulti("dodge", formLevel);
+            } else if (isNPC)
+                dodgeChance = PlayerDataUtil.getDBCData((EntityNPCInterface) event.entity).getDodgeChance();
+        }
+        if (dodgeChance > 0) {
+            Random rand = new Random();
+            if (dodgeChance >= rand.nextInt(100)) {
+                Entity attacker = event.source.getEntity();
+                if (Dodge.dodge(event.entity, attacker)) {
+                    event.setCanceled(true);
                 }
             }
         }

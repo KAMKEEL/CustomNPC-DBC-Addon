@@ -11,6 +11,7 @@ import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import noppes.npcs.api.entity.ICustomNpc;
+import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
 
 public abstract class AbstractDBCAPI {
@@ -61,6 +62,13 @@ public abstract class AbstractDBCAPI {
     public abstract IOutline createOutline(String name);
 
     public abstract IOutline getOutline(String name);
+
+    /**
+     * Preferably used in a DamagedEvent/AttackEvent with cancelling the event
+     * @param dodger The entity dodging
+     * @param attacker
+     */
+    public abstract void forceDodge(IEntity dodger, IEntity attacker);
 
     /**
      * @return Fake DBC Data for Simulating Damage

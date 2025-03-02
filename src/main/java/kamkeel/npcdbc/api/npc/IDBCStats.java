@@ -5,6 +5,10 @@ public interface IDBCStats {
 
     byte getRelease();
 
+    void setDodgeChance(float dodge);
+
+    float getDodgeChance();
+
     boolean isEnabled();
 
     void setEnabled(boolean enabled);

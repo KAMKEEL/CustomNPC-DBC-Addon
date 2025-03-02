@@ -13,6 +13,7 @@ public class DBCStats implements IDBCStats {
     public int defensePenetration = 10;
     public int friendlyFistTime = 6;
     public byte release = 100;
+    public float dodgeChance;
 
     private boolean canBeLockedOn = true;
 
@@ -25,7 +26,7 @@ public class DBCStats implements IDBCStats {
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         nbttagcompound.setBoolean("DBCStatsEnabled", enabled);
         nbttagcompound.setBoolean("DBCCanBeLockedOn", canBeLockedOn);
-        if(friendlyFistTime <= 0)
+        if (friendlyFistTime <= 0)
             friendlyFistTime = 6;
 
         if (enabled) {
@@ -41,6 +42,7 @@ public class DBCStats implements IDBCStats {
             dbcStats.setBoolean("DBCIsDefensePen", hasDefensePenetration);
             dbcStats.setInteger("DBCDefensePen", defensePenetration);
             dbcStats.setByte("DBCRelease", release);
+            dbcStats.setFloat("DBCDodgeChance", dodgeChance);
 
             nbttagcompound.setTag("DBCStats", dbcStats);
         } else {
@@ -52,7 +54,7 @@ public class DBCStats implements IDBCStats {
     public void readFromNBT(NBTTagCompound nbttagcompound) {
         enabled = nbttagcompound.getBoolean("DBCStatsEnabled");
 
-        if(nbttagcompound.hasKey("DBCCanBeLockedOn"))
+        if (nbttagcompound.hasKey("DBCCanBeLockedOn"))
             setLockOnState(nbttagcompound.getBoolean("DBCCanBeLockedOn"));
         else
             setLockOnState(true);
@@ -70,11 +72,12 @@ public class DBCStats implements IDBCStats {
             hasDefensePenetration = dbcStats.getBoolean("DBCIsDefensePen");
             defensePenetration = dbcStats.getInteger("DBCDefensePen");
             release = dbcStats.getByte("DBCRelease");
+            dodgeChance = dbcStats.getFloat("DBCDodgeChance");
         } else {
             nbttagcompound.removeTag("DBCStats");
         }
 
-        if(friendlyFistTime <= 0)
+        if (friendlyFistTime <= 0)
             friendlyFistTime = 6;
     }
 
@@ -86,6 +89,16 @@ public class DBCStats implements IDBCStats {
     @Override
     public byte getRelease() {
         return release;
+    }
+
+    @Override
+    public void setDodgeChance(float dodge) {
+        this.dodgeChance = dodge;
+    }
+
+    @Override
+    public float getDodgeChance() {
+        return dodgeChance;
     }
 
     @Override
@@ -190,7 +203,7 @@ public class DBCStats implements IDBCStats {
 
     @Override
     public boolean canBeLockedOn() {
-        if(npc != null)
+        if (npc != null)
             return npc.getDataWatcher().getWatchableObjectInt(31) == 1;
 
         return canBeLockedOn;
@@ -199,7 +212,7 @@ public class DBCStats implements IDBCStats {
     @Override
     public void setLockOnState(boolean canBeLockedOn) {
         this.canBeLockedOn = canBeLockedOn;
-        if(npc != null)
+        if (npc != null)
             npc.getDataWatcher().updateObject(31, Integer.valueOf(canBeLockedOn ? 1 : 0));
     }
 }

@@ -17,6 +17,7 @@ import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
+import kamkeel.npcdbc.combat.Dodge;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.controllers.FormController;
@@ -29,6 +30,7 @@ import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.api.entity.ICustomNpc;
+import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
@@ -104,6 +106,10 @@ public class DBCAPI extends AbstractDBCAPI {
         return OutlineController.getInstance().get(name);
     }
 
+    @Override
+    public void forceDodge(IEntity dodger, IEntity attacker) {
+        Dodge.dodge(dodger.getMCEntity(), attacker.getMCEntity());
+    }
 
     @Override
     public IDBCStats abstractDBCData() {
