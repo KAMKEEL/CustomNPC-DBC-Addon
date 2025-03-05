@@ -16,6 +16,7 @@ import kamkeel.npcs.network.packets.data.large.ScrollDataPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import noppes.npcs.constants.EnumScrollData;
 import noppes.npcs.controllers.PlayerDataController;
 
 import java.util.HashMap;
@@ -29,7 +30,7 @@ public class NetworkUtility {
         for (Form customForm : FormController.getInstance().customForms.values()) {
             map.put(customForm.name, customForm.id);
         }
-        ScrollDataPacket.sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map, EnumScrollData.OPTIONAL);
     }
 
     public static void sendCustomAuraDataAll(EntityPlayerMP player) {
@@ -37,7 +38,7 @@ public class NetworkUtility {
         for (Aura customAura : AuraController.getInstance().customAuras.values()) {
             map.put(customAura.name, customAura.id);
         }
-        ScrollDataPacket.sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map, EnumScrollData.OPTIONAL);
     }
 
     public static void sendCustomOutlineDataAll(EntityPlayerMP player) {
@@ -45,7 +46,7 @@ public class NetworkUtility {
         for (Outline outline : OutlineController.getInstance().customOutlines.values()) {
             map.put(outline.name, outline.id);
         }
-        ScrollDataPacket.sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map, EnumScrollData.OPTIONAL);
     }
 
     public static void sendPlayersForms(EntityPlayer player, boolean useMenuName) {

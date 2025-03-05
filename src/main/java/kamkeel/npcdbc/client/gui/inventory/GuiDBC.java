@@ -24,6 +24,7 @@ import net.minecraft.util.StatCollector;
 import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.gui.player.inventory.GuiCNPCInventory;
 import noppes.npcs.client.gui.util.*;
+import noppes.npcs.constants.EnumScrollData;
 import org.lwjgl.opengl.GL11;
 import tconstruct.client.tabs.AbstractTab;
 
@@ -400,7 +401,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
 
 
     @Override
-    public void setData(Vector<String> list, HashMap<String, Integer> data) {
+    public void setData(Vector<String> list, HashMap<String, Integer> data, EnumScrollData dataType) {
         String name = guiScroll.getSelected();
         this.loadedData = data;
         if (guiScroll != null)

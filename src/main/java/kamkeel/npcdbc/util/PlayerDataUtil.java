@@ -21,6 +21,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.constants.EnumScrollData;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -80,7 +81,7 @@ public class PlayerDataUtil {
                 map.put(useMenuName ? form.menuName : form.name, form.id);
             }
         }
-        ScrollDataPacket.sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map, EnumScrollData.OPTIONAL);
     }
 
     public static void sendAuraDBCInfo(EntityPlayerMP player) {
@@ -93,7 +94,7 @@ public class PlayerDataUtil {
                 map.put(aura.name, aura.id);
             }
         }
-        ScrollDataPacket.sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map, EnumScrollData.OPTIONAL);
     }
 
     /**

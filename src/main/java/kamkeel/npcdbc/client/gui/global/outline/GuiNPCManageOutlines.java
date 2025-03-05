@@ -23,6 +23,7 @@ import net.minecraft.util.StatCollector;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.select.GuiSoundSelection;
 import noppes.npcs.client.gui.util.*;
+import noppes.npcs.constants.EnumScrollData;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.input.Mouse;
@@ -301,7 +302,7 @@ public class GuiNPCManageOutlines extends GuiNPCInterface2 implements ICustomScr
     }
 
     @Override
-    public void setData(Vector<String> list, HashMap<String, Integer> data) {
+    public void setData(Vector<String> list, HashMap<String, Integer> data, EnumScrollData dataType) {
         String name = scrollOutlines.getSelected();
         this.data = data;
         scrollOutlines.setList(getSearchList());
