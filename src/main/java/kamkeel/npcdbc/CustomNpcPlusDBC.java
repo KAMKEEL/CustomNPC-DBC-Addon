@@ -6,7 +6,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.config.LoadConfiguration;
-import kamkeel.npcdbc.data.DBCItemAttributes;
+import kamkeel.npcdbc.data.attribute.DBCItemAttributes;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.DBCProfileData;
 import kamkeel.npcdbc.items.ModItems;
