@@ -1309,6 +1309,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return(block == Block.getBlockFromName("jinryuudragonblockc:tile.BlockHealingPods"));
     }
 
+    // TODO: Fix getCurrentSelectedAttack() from Client Side Data to Server Side Data
     @Override
     public IKiAttack getCurrentSelectedAttack() {
         int slot = JRMCoreH.EnAtSlct;
