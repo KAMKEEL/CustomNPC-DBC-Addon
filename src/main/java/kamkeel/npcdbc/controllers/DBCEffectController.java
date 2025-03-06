@@ -52,8 +52,8 @@ public class DBCEffectController {
         standardEffects.put(Effects.POTARA, new PotaraFusion());
         standardEffects.put(Effects.EXHAUSTED, new Exhausted());
         standardEffects.put(Effects.HUMAN_SPIRIT, new HumanSpirit());
-        standardEffects.put(Effects.COLD_BLOODED, new Exhausted());
-        standardEffects.put(Effects.KI_DEFENSE, new Exhausted());
+//        standardEffects.put(Effects.COLD_BLOODED, new Exhausted());
+//        standardEffects.put(Effects.KI_DEFENSE, new Exhausted());
 
         CustomEffectController.getInstance().registerEffectMap(DBC_EFFECT_INDEX, standardEffects);
     }
