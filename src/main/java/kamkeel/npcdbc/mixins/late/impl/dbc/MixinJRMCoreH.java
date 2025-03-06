@@ -246,8 +246,10 @@ public abstract class MixinJRMCoreH {
             result = (int) (result * (formMulti[2] * statusMulti + multiBonus[2]));
         else if (attribute == DBCAttribute.Constitution) {// CON - for damage reduction
             float averageMulti = (formMulti[0] + formMulti[1] + formMulti[2]) / 3;
-            result = (int) (result * (averageMulti * statusMulti));
+            result = (int) (result * (averageMulti * statusMulti + multiBonus[3]));
         }
+        else if (attribute == DBCAttribute.Spirit) // SPI
+            result = (int) (result * (multiBonus[4]));
 
         // Add Bonus Multi to Base Attributes
         if (attribute == DBCAttribute.Strength) // STR
@@ -256,9 +258,9 @@ public abstract class MixinJRMCoreH {
             result += (currAttributes[DBCAttribute.Dexterity] * multiBonus[1]);
         else if (attribute == DBCAttribute.Willpower) // WIL
             result += (currAttributes[DBCAttribute.Willpower] * multiBonus[2]);
-        else if (attribute == DBCAttribute.Constitution) // WIL
+        else if (attribute == DBCAttribute.Constitution) // CON
             result += (currAttributes[DBCAttribute.Constitution] * multiBonus[3]);
-        else if (attribute == DBCAttribute.Spirit) // WIL
+        else if (attribute == DBCAttribute.Spirit) // SPI
             result += (currAttributes[DBCAttribute.Spirit] * multiBonus[4]);
 
 
