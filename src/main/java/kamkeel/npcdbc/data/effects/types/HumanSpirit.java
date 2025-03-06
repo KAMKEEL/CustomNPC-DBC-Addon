@@ -25,17 +25,15 @@ public class HumanSpirit extends AddonEffect {
 
     @Override
     public void onAdded(EntityPlayer player, PlayerEffect playerEffect){
-        DBCData dbcData = DBCData.get(player);
-        PlayerBonus humanSpiritBonus = new PlayerBonus(name, (byte) 1);
-        humanSpiritBonus.constituion = dbcData.CON * ((float) ConfigDBCEffects.HumanSpiritConBoostPercent / 100);
-        humanSpiritBonus.dexterity = dbcData.DEX * ((float) ConfigDBCEffects.HumanSpiritDexBoostPercent / 100);
+        PlayerBonus humanSpiritBonus = new PlayerBonus(name, (byte) 0);
+        humanSpiritBonus.constituion = ((float) ConfigDBCEffects.HumanSpiritConBoostPercent / 100);
+        humanSpiritBonus.dexterity = ((float) ConfigDBCEffects.HumanSpiritDexBoostPercent / 100);
         BonusController.getInstance().applyBonus(player, humanSpiritBonus);
     }
 
     @Override
     public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, PlayerEvent.EffectEvent.ExpirationType type) {
         BonusController.getInstance().removeBonus(player, name);
-
         if(ConfigDBCEffects.EXHAUST_HUMANSPIRIT)
             DBCEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED, ConfigDBCEffects.EXHAUST_HUMANSPIRIT_TIME * 60);
     }
