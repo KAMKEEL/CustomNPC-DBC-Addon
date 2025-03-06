@@ -56,7 +56,7 @@ public class PlayerDataUtil {
     }
 
     public static PlayerDBCInfo getDBCInfo(EntityPlayer player) {
-        return getDBCInfo(PlayerDataController.Instance.getPlayerData(player));
+        return getDBCInfo(PlayerData.get(player));
     }
 
     public static PlayerDBCInfo getDBCInfo(PlayerData playerData) {
