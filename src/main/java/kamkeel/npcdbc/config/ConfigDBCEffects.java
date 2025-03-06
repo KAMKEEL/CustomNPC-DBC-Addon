@@ -283,6 +283,18 @@ public class ConfigDBCEffects
 
             divineMulti = (float) config.get(DIVINE, "Divine status effect multi", 1.0, "Put the boost in multiplier form. 1.0 is no boost, 1.15 = 15% boost").getDouble(1.0);
 
+            config.addCustomCategoryComment(HumanSpirit,
+                "Human Spirit is a boost in Dex and Con. " +
+                    "It can be auto triggered from within the Gameplay Config.");
+
+            // Effects configuration: these control the buff's potency and duration.
+            HumanSpiritConBoostPercent = config.get(HumanSpirit, "Con Boost Percent", 20,
+                "Additional percent boost to Constitution provided by Human Spirit.").getDouble(20);
+            HumanSpiritDexBoostPercent = config.get(HumanSpirit, "Dex Boost Percent", 20,
+                "Additional percent boost to Dexterity provided by Human Spirit.").getDouble(20);
+            HumanSpiritLength = config.get(HumanSpirit, "Effect Length", 360,
+                "Duration of the Human Spirit effect in seconds.").getInt(360);
+
             String[][] defaultDivineRaces = new String[][]{
                 {"God"},
                 {"SSGod", "SSB", "SSGodR", "SSBE"},
