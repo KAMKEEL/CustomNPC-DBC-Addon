@@ -348,7 +348,10 @@ public abstract class MixinJRMCoreH {
                 resultOriginal += (currAttributes[DBCAttribute.Dexterity] * bonus[1]);
             else if (attribute == DBCAttribute.Willpower && bonus[2] != 0) //will
                 resultOriginal += (currAttributes[DBCAttribute.Willpower] * bonus[2]);
-
+            else if (attribute == DBCAttribute.Constitution && bonus[3] != 0) //con
+                resultOriginal += (currAttributes[DBCAttribute.Constitution] * bonus[3]);
+            else if (attribute == DBCAttribute.Spirit && bonus[4] != 0) //spi
+                resultOriginal += (currAttributes[DBCAttribute.Spirit] * bonus[4]);
 
             float[] flatBonus = dbcData.bonus.getFlatBonus();
             // Add Bonus Flat to Base Attributes at the end

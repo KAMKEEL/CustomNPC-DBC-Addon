@@ -308,14 +308,19 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             }
             statVals[i] = modifiedStatVal;
 
-            String statDisplay = numSep((modifiedStatVal + getAddonBonusStat(i)));
+            if(!isSTRDEXWIL){
+                modifiedStatVal *= (1 + getAddonBonusMulti(i));
+            }
+
+            int flatBonus = (int) getAddonBonusStat(i);
+            String statDisplay = numSep((modifiedStatVal + (!isSTRDEXWIL ? flatBonus : 0)));
             String attributeDesc = "§9" + attrNms(1, i) + "§8: "+ trl("jrmc", attrDsc[1][i]);
             if(originalStatVal != modifiedStatVal){
                 attributeDesc += "\n" + trl("jrmc", "Modified") +": §4" + darkFormColor+statDisplay+"\n§8"
                     + trl("jrmc", "Original") +": §4" + numSep(originalStatVal)+"§8";
 
-                float multi = (float) modifiedStatVal / originalStatVal;
-                if(ConfigDBCClient.AdvancedGui){
+                float multi = (float) (modifiedStatVal - (isSTRDEXWIL ? flatBonus : 0)) / originalStatVal;
+                if(ConfigDBCClient.AdvancedGui && isSTRDEXWIL){
                     float formMulti = currentForm != null ? currentForm.getAttributeMulti(i) : (float) DBCFormMulti(i);
                     String multiString = "";
                     multiString += "\n> Multi: §4x" +   round(formMulti, 2) + "§8 (Form)";
@@ -984,18 +989,41 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 if (playerBonus.type == 0)
                     continue;
 
-//                if(attributeID == DBCAttribute.Strength && playerBonus.strength != 0){
-//                    extra += playerBonus.strength;
-//                } else if(attributeID == DBCAttribute.Dexterity && playerBonus.dexterity != 0){
-//                    extra += playerBonus.dexterity;
-//                } else
-                if(attributeID == DBCAttribute.Constitution && playerBonus.constituion != 0){
+                if(attributeID == DBCAttribute.Strength && playerBonus.strength != 0){
+                    extra += (long) playerBonus.strength;
+                } else if(attributeID == DBCAttribute.Dexterity && playerBonus.dexterity != 0){
+                    extra += (long) playerBonus.dexterity;
+                } else if(attributeID == DBCAttribute.Constitution && playerBonus.constituion != 0){
                     extra += (long) playerBonus.constituion;
                 } else if(attributeID == DBCAttribute.Spirit && playerBonus.spirit != 0){
                     extra += (long) playerBonus.spirit;
+                } else if(attributeID == DBCAttribute.Willpower && playerBonus.willpower != 0) {
+                    extra += (long) playerBonus.willpower;
                 }
-//                    if(attributeID == DBCAttribute.Willpower && playerBonus.willpower != 0){
-//                    extra += playerBonus.willpower;
+            }
+        }
+        return extra;
+    }
+
+    public float getAddonBonusMulti(int attributeID) {
+        DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
+        float extra = 0;
+        if(!dbcData.bonus.getCurrentBonuses().isEmpty()){
+            for(PlayerBonus playerBonus : dbcData.bonus.getCurrentBonuses().values()){
+                if (playerBonus.type == 1)
+                    continue;
+
+                if(attributeID == DBCAttribute.Strength && playerBonus.strength != 0){
+                    extra += playerBonus.strength;
+                } else if(attributeID == DBCAttribute.Dexterity && playerBonus.dexterity != 0){
+                    extra += playerBonus.dexterity;
+                } else if(attributeID == DBCAttribute.Constitution && playerBonus.constituion != 0){
+                    extra += playerBonus.constituion;
+                } else if(attributeID == DBCAttribute.Spirit && playerBonus.spirit != 0){
+                    extra += playerBonus.spirit;
+                } else if(attributeID == DBCAttribute.Willpower && playerBonus.willpower != 0) {
+                    extra += playerBonus.willpower;
+                }
             }
         }
         return extra;
