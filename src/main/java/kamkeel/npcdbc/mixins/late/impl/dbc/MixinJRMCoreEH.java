@@ -27,7 +27,7 @@ public class MixinJRMCoreEH {
         if (targetEntity instanceof EntityNPCInterface) {
 
             if (DBCUtils.npcLastSetDamage != -1) {
-                dam.set(DBCUtils.npcLastSetDamage);
+                dam.set(DBCUtils.npcLastSetDamage); // THIS GETS DEDUCTED FROM NPC HEALTH
                 DBCUtils.npcLastSetDamage = -1;
             }
 
