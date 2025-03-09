@@ -40,9 +40,9 @@ public abstract class MixinResistances implements IKiResistance {
         if(!disableDamage){
             if(source.damageType.equals("EnergyAttack")){
                 damage *= (2 - ki);
+                cir.setReturnValue(damage);
+                cir.cancel();
             }
-            cir.setReturnValue(damage);
-            cir.cancel();
         }
     }
 

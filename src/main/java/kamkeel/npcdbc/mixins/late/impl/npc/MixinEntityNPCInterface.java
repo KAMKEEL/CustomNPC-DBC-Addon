@@ -6,6 +6,8 @@ import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.mixins.late.impl.dbc.MixinJRMCoreEH;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcs.addon.DBCAddon;
+import kamkeel.npcs.util.AttributeAttackUtil;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
@@ -56,7 +58,16 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
             DBCData data = DBCData.get(player);
             if (dbcAltered = data.Powertype == 1) {
                 originalDamage = dam.get();
-                dam.set(DBCUtils.calculateAttackStat(player, dam.get(), damagesource)); // THIS IS WHERE DBC DAMAGE GETS SET
+
+                // Apply Attributes and Resistances to Modified Damage
+                float modifiedDamage = DBCUtils.calculateAttackStat(player, dam.get(), damagesource);
+                // Apply Attributes
+                EntityNPCInterface npcInterface = (EntityNPCInterface) (Object) this;
+                modifiedDamage = AttributeAttackUtil.calculateDamagePlayerToNPC(player, npcInterface, modifiedDamage);
+
+                // Apply Resistances
+                modifiedDamage = npcInterface.stats.resistances.applyResistance(damagesource, modifiedDamage);
+                dam.set(modifiedDamage);
             }
         }
     }
