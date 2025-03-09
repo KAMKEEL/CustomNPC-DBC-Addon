@@ -56,7 +56,7 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
             DBCData data = DBCData.get(player);
             if (dbcAltered = data.Powertype == 1) {
                 originalDamage = dam.get();
-                dam.set(DBCUtils.calculateAttackStat(player, dam.get(), damagesource));
+                dam.set(DBCUtils.calculateAttackStat(player, dam.get(), damagesource)); // THIS IS WHERE DBC DAMAGE GETS SET
             }
         }
     }
