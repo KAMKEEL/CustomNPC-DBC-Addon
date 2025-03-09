@@ -37,6 +37,8 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
             mixins.add("npc.client.MixinInventoryTabCustomNpc");
             mixins.add("npc.client.MixinRenderCustomNpc");
             mixins.add("npc.client.MixinGuiSoundSelection");
+            // mixins.add("npc.client.MixinSubGuiNPCResistanceProperties");
+
 
             mixins.add("dbc.client.ClientMixinEntityEnergyAtt");
 
@@ -81,6 +83,7 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
         mixins.add("npc.MixinDBCAddon");
         mixins.add("npc.MixinDBCDisplay");
         mixins.add("npc.MixinEntityNPCInterface");
+        // mixins.add("npc.MixinResistances");
 
         mixins.add("EDE.MixinEDEFix");
 
