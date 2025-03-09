@@ -4,10 +4,12 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.mixins.late.impl.dbc.MixinJRMCoreEH;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.boss.IBossDisplayData;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,7 +31,7 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
     @Unique
     private float originalDamage;
     @Unique
-    private boolean dbcAltered;
+    private boolean dbcAltered; //if DamagedEvent's damage was altered by a DBC player
 
     private MixinEntityNPCInterface(World p_i1602_1_) {
         super(p_i1602_1_);
@@ -40,6 +42,11 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
         this.dataWatcher.addObject(31, Integer.valueOf(1));
     }
 
+    /**
+     * This method fires on scripting DamagedEvent creation.
+     * If npc attacked by a DBC player (powerType ==1), I set dbcAltered  true,
+     * then I set the DamagedEvent's damage to the player's DBC attack stat (pure damage player would do without any NPC defense calculations)
+     */
     @Inject(method = "attackEntityFrom", at = @At(value = "FIELD", target = "Lnoppes/npcs/entity/EntityNPCInterface;wrappedNPC:Lnoppes/npcs/api/entity/ICustomNpc;", shift = At.Shift.BEFORE))
     public void fixDamagedEventDBCDamage(DamageSource damagesource, float amount, CallbackInfoReturnable<Boolean> cir, @Local(name = "i") LocalFloatRef dam) {
         Entity attackerEntity = NoppesUtilServer.GetDamageSource(damagesource);
@@ -54,6 +61,18 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
         }
     }
 
+    /**
+     *
+     * This method fires after the Npc's scripting DamagedEvent finishes.
+     * If npc was attacked by a DBC player (dbcAltered true):
+     * I fetch the new event.getDamage() in case a scripter edited the event's damaged with event.setDamage(damage)
+     * (i.e their own custom defense calculations, since the event was fed the pure attack stat above)
+     * and store it in npcLastSetDamage.
+     *
+     * Then in  {@link MixinJRMCoreEH#NPCDamaged(EntityLivingBase, DamageSource, float amount, CallbackInfo, LocalFloatRef)}
+     * which always fires after this in the MC LivingHurt, I set the pure damage in the LivingHurtEvent to npcLastSetDamage then I reset it to -1
+     *
+     */
     @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Lnoppes/npcs/scripted/event/NpcEvent$DamagedEvent;getDamage()F"))
     public float fixDamagedEventDBCDamage(NpcEvent.DamagedEvent instance) {
         if (dbcAltered) {
