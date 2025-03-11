@@ -27,16 +27,14 @@ public class Chocolated extends AddonEffect {
 
     @Override
     public void onAdded(EntityPlayer player, PlayerEffect playerEffect){
-        PlayerBonus testBonus =  new PlayerBonus("ChocolateTest", (byte) 0, (float) ConfigDBCEffects.CHOC_Str, (float) ConfigDBCEffects.CHOC_Dex, (float) ConfigDBCEffects.CHOC_Wil);
-        BonusController.getInstance().applyBonus(player,testBonus);
-         DBCData data = DBCData.get(player);
-
-         if( fusionAffect == false && data.stats.isFused() == true){
-             return;
-         }
-         data.sprintSpeed = 0.1F;
-         data.baseFlightSpeed = 0.1F;
-         data.saveNBTData(false);
+        BonusController.getInstance().applyBonus(player, ChocolatedDebuff);
+        DBCData data = DBCData.get(player);
+        if(!fusionAffect && data.stats.isFused()){
+            return;
+        }
+        data.sprintSpeed = 0.1F;
+        data.baseFlightSpeed = 0.1F;
+        data.saveNBTData(false);
         // BonusController.getInstance().applyBonus(player,ChocolatedDebuff);
     }
 
@@ -45,14 +43,10 @@ public class Chocolated extends AddonEffect {
 
     @Override
     public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, PlayerEvent.EffectEvent.ExpirationType type){
-        PlayerBonus testBonus =  new PlayerBonus("ChocolateTest", (byte) 0, (float) ConfigDBCEffects.CHOC_Str, (float) ConfigDBCEffects.CHOC_Dex, (float) ConfigDBCEffects.CHOC_Wil);
-        BonusController.getInstance().clearBonuses(player);
+        BonusController.getInstance().removeBonus(player, ChocolatedDebuff);
         DBCData data = DBCData.get(player);
         data.sprintSpeed = 1.0F;
         data.baseFlightSpeed = 1.0F;
         data.saveNBTData(false);
-        BonusController.getInstance().removeBonus(player,testBonus);
-        // BonusController.getInstance().removeBonus(player,ChocolatedDebuff);
     }
-
 }
