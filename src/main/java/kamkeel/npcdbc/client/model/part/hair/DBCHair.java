@@ -4,6 +4,7 @@ import JinRyuu.JBRA.mod_JBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -755,7 +756,7 @@ public class DBCHair extends ModelHairRenderer {
         ///////////////////////////////////////////////////////
 
         GL11.glPushMatrix();
-        if (kamkeel.npcdbc.client.ClientProxy.renderingOutline) {
+        if (ClientConstants.renderingOutline) {
             GL11.glScalef(1.04f, 1.04f, 1.04f);
             GL11.glTranslatef(0, 0.03f, 0);
         }

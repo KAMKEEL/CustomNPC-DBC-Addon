@@ -4,7 +4,7 @@ import JinRyuu.DragonBC.common.Npcs.EntityAuraRing;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.client.sound.AuraSound;
@@ -301,7 +301,7 @@ public class EntityAura extends Entity {
         if (entity.isInWater() && !isKaioken)
             ((IEntityMC) entity).setRenderPass(renderPass = 0);
         else if (renderPass == 0 && !isKaioken)
-            ((IEntityMC) entity).setRenderPass(renderPass = ClientProxy.MiddleRenderPass);
+            ((IEntityMC) entity).setRenderPass(renderPass = ClientConstants.MiddleRenderPass);
 
         if (isKaioken) {
             if (entity.ticksExisted % 10 == 0)
@@ -455,8 +455,8 @@ public class EntityAura extends Entity {
 
     public EntityAura spawn() {
         if (!isKaioken)
-            renderPass = ClientProxy.MiddleRenderPass;
-        ((IEntityMC) entity).setRenderPass(ClientProxy.MiddleRenderPass);
+            renderPass = ClientConstants.MiddleRenderPass;
+        ((IEntityMC) entity).setRenderPass(ClientConstants.MiddleRenderPass);
 
         entity.ignoreFrustumCheck = true;
 

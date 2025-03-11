@@ -28,11 +28,6 @@ import java.time.Instant;
 
 
 public class ClientProxy extends CommonProxy {
-    public static boolean renderingOutline, renderingGUI, renderingArm, renderingMajinSE;
-    public static final int MiddleRenderPass = 1684;
-    public static Instant startTime;
-    public static boolean renderingWorld;
-
     public static int lastRendererGUIPlayerID = -1;
 
     public static void eventsInit() {
@@ -56,7 +51,7 @@ public class ClientProxy extends CommonProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
         MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
         ShaderHelper.loadShaders(false);
-        startTime = Instant.now();
+        ClientConstants.startTime = Instant.now();
 
 
     }
@@ -67,7 +62,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     public static float getTimeSinceStart() {
-        return Duration.between(startTime, Instant.now()).toMillis() / 1000f;
+        return Duration.between(ClientConstants.startTime, Instant.now()).toMillis() / 1000f;
     }
 
     @Override
@@ -95,11 +90,11 @@ public class ClientProxy extends CommonProxy {
     }
 
     public boolean isRenderingGUI() {
-        return renderingGUI;
+        return ClientConstants.renderingGUI;
     }
 
     public static boolean isRenderingWorld(){
-        return renderingWorld;
+        return ClientConstants.renderingWorld;
     }
 
     private void forceStencilEnable() {

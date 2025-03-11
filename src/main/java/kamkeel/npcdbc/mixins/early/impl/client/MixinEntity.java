@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.mixins.early.impl.client;
 
 
-import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.mixins.early.IEntityMC;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +17,7 @@ public class MixinEntity implements IEntityMC {
     @Unique
     public void setRenderPass(int renderPass) {
         this.renderPass = renderPass;
-        renderPassTampered = renderPass == ClientProxy.MiddleRenderPass;
+        renderPassTampered = renderPass == ClientConstants.MiddleRenderPass;
     }
 
     @Unique

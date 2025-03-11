@@ -6,7 +6,7 @@ import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.*;
-import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.gui.global.auras.SubGuiAuraDisplay;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -278,9 +278,9 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
 
     @Unique
     public void renderParticle(EntityAura2 aura, float partialTicks) {
-        double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - (ClientProxy.renderingGUI ? 0 : RenderManager.renderPosX);
-        double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - (ClientProxy.renderingGUI ? -0.05 : RenderManager.renderPosY);
-        double interPosZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - (ClientProxy.renderingGUI ? 0 : RenderManager.renderPosZ);
+        double interPosX = (aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks) - (ClientConstants.renderingGUI ? 0 : RenderManager.renderPosX);
+        double interPosY = (aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks) - (ClientConstants.renderingGUI ? -0.05 : RenderManager.renderPosY);
+        double interPosZ = (aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks) - (ClientConstants.renderingGUI ? 0 : RenderManager.renderPosZ);
         float interYaw = aura.prevRotationYaw + (aura.rotationYaw - aura.prevRotationYaw) * partialTicks;
 
 

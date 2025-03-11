@@ -2,7 +2,7 @@ package kamkeel.npcdbc.mixins.early.impl.client.optifine;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.OptifineHelper;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
@@ -27,12 +27,12 @@ public class MixinEntityRendererOptifine {
 
     @Inject(method = "renderWorld", at = @At(value = "HEAD"))
     private void startRenderingWorld(float p_78471_1_, long p_78471_2_, CallbackInfo ci){
-        ClientProxy.renderingWorld = true;
+        ClientConstants.renderingWorld = true;
     }
 
     @Inject(method = "renderWorld", at = @At(value = "RETURN"))
     private void endRenderingWorld(float p_78471_1_, long p_78471_2_, CallbackInfo ci){
-        ClientProxy.renderingWorld = false;
+        ClientConstants.renderingWorld = false;
     }
 
     @Inject(method = "renderWorld", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/EntityRenderer;debugViewDirection:I", ordinal = 0, shift = At.Shift.BEFORE))
@@ -44,7 +44,7 @@ public class MixinEntityRendererOptifine {
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderHelper;enableStandardItemLighting()V", ordinal = 1, shift = At.Shift.AFTER))
     private void secondRendPassOptifine(float partialTick, long idk, CallbackInfo info, @Local(name = "var14") LocalRef<Frustrum> frustrum) {
         mc.mcProfiler.endStartSection("NPCDBCEntities");
-        ForgeHooksClient.setRenderPass(ClientProxy.MiddleRenderPass);
+        ForgeHooksClient.setRenderPass(ClientConstants.MiddleRenderPass);
         this.mc.renderGlobal.renderEntities(this.mc.renderViewEntity, frustrum.get(), partialTick);
         ForgeHooksClient.setRenderPass(-1);
     }
@@ -71,21 +71,21 @@ public class MixinEntityRendererOptifine {
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;drawScreen(IIF)V", shift = At.Shift.BEFORE))
     private void preGUIRenderOptifine(float p_78480_1_, CallbackInfo ci) {
-        ClientProxy.renderingGUI = true;
+        ClientConstants.renderingGUI = true;
     }
 
     @Inject(method = "updateCameraAndRender", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiScreen;drawScreen(IIF)V", shift = At.Shift.AFTER))
     private void postGUIRenderOptifine(float p_78480_1_, CallbackInfo ci) {
-        ClientProxy.renderingGUI = false;
+        ClientConstants.renderingGUI = false;
     }
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/EntityRenderer;renderHand(FI)V", shift = At.Shift.BEFORE))
     private void preArmRenderOptifine(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
-        ClientProxy.renderingArm = true;
+        ClientConstants.renderingArm = true;
     }
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/EntityRenderer;renderHand(FI)V", shift = At.Shift.AFTER))
     private void postArmRenderOptifine(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
-        ClientProxy.renderingArm = false;
+        ClientConstants.renderingArm = false;
     }
 }

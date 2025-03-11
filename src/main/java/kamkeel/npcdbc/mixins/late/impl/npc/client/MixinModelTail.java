@@ -2,6 +2,7 @@ package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -56,10 +57,10 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
             if (display == null || !display.enabled)
                 return;
 
-            if (!kamkeel.npcdbc.client.ClientProxy.renderingOutline && display.outlineID != -1)
+            if (!ClientConstants.renderingOutline && display.outlineID != -1)
                 RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
 
-            if (kamkeel.npcdbc.client.ClientProxy.renderingOutline) {
+            if (ClientConstants.renderingOutline) {
                 if (!monkey.monkey_wrapped.isHidden)
                     glTranslatef(0, 0.0375f, 0);
                 else {
@@ -138,10 +139,10 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
     private void after(float par1, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
 
-        if (!kamkeel.npcdbc.client.ClientProxy.renderingOutline && display.outlineID != -1)
+        if (!ClientConstants.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
 
-        if (kamkeel.npcdbc.client.ClientProxy.renderingOutline)
+        if (ClientConstants.renderingOutline)
             disableStencilWriting((entity.getEntityId()) % 256, false);
 
     }

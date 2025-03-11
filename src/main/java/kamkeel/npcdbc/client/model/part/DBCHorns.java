@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.client.model.part;
 
 import JinRyuu.JRMCore.JRMCoreH;
-import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -171,14 +171,14 @@ public class DBCHorns extends ModelDBCPartInterface {
         if (!display.enabled)
             return;
 
-        if (!ClientProxy.renderingOutline && display.outlineID != -1) {
+        if (!ClientConstants.renderingOutline && display.outlineID != -1) {
             int id = !ThirdFormBigHead.isHidden ? 0 : RenderEventHandler.TAIL_STENCIL_ID;
             RenderEventHandler.enableStencilWriting((entity.getEntityId() + id) % 256);
         }
 
         boolean isArco = display.race == DBCRace.ARCOSIAN;
         GL11.glPushMatrix();
-        if (ClientProxy.renderingOutline) {
+        if (ClientConstants.renderingOutline) {
             if (!NamekianAntennas.isHidden) {
                 GL11.glTranslatef(0.00f, 0.07f, 0.023f);
                 GL11.glScaled(0.96, 1.12, 1.02);
@@ -255,10 +255,10 @@ public class DBCHorns extends ModelDBCPartInterface {
                 super.render(par1);
 
             }
-            if (!ClientProxy.renderingOutline && display.outlineID != -1)
+            if (!ClientConstants.renderingOutline && display.outlineID != -1)
                 RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
 
-            if (ClientProxy.renderingOutline) {
+            if (ClientConstants.renderingOutline) {
                 disableStencilWriting((entity.getEntityId()) % 256, false);
             }
         } else {

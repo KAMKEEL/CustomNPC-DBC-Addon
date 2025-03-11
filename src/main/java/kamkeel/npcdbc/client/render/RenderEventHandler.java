@@ -6,6 +6,7 @@ import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelPotara;
 import kamkeel.npcdbc.client.shader.PostProcessing;
@@ -123,7 +124,7 @@ public class RenderEventHandler {
                 if (e.entity.isInWater())
                     ((IEntityMC) e.entity).setRenderPass(0);
                 else
-                    ((IEntityMC) e.entity).setRenderPass(ClientProxy.MiddleRenderPass);
+                    ((IEntityMC) e.entity).setRenderPass(ClientConstants.MiddleRenderPass);
             } else {
                 if (((IEntityMC) e.entity).getRenderPassTampered())
                     ((IEntityMC) e.entity).setRenderPass(0);
@@ -153,7 +154,7 @@ public class RenderEventHandler {
         //Outline
         Outline outline = data.getOutline();
         if (outline != null && ConfigDBCClient.EnableOutlines && !isItem) {
-            startBlooming(ClientProxy.renderingGUI);
+            startBlooming(ClientConstants.renderingGUI);
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
             glStencilMask(0xff);
             OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
@@ -215,7 +216,7 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         postStencilRendering();
-        if (ClientProxy.renderingGUI)
+        if (ClientConstants.renderingGUI)
             PostProcessing.bloom(1.5f, true);
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
     }
@@ -243,7 +244,7 @@ public class RenderEventHandler {
         //Aura
         if (renderAura) {
             glPushMatrix();
-            if (!ClientProxy.renderingGUI)
+            if (!ClientConstants.renderingGUI)
                 glLoadMatrix(DEFAULT_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
             glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
             glStencilMask(0x0);
@@ -309,7 +310,7 @@ public class RenderEventHandler {
         if (renderParticles) {
             mc.entityRenderer.disableLightmap(0);
             glPushMatrix();
-            if (!ClientProxy.renderingGUI)
+            if (!ClientConstants.renderingGUI)
                 glLoadMatrix(DEFAULT_MODELVIEW); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
             IRenderCusPar particleRender = null;
             for (Iterator<EntityCusPar> iter = display.particleRenderQueue.iterator(); iter.hasNext(); ) {
@@ -328,7 +329,7 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         enableStencilWriting(e.entity.getEntityId() % 256);
-        if (ClientProxy.renderingGUI)
+        if (ClientConstants.renderingGUI)
             PostProcessing.bloom(1.5f, true);
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         // postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN

@@ -3,7 +3,7 @@ package kamkeel.npcdbc.client.shader;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CommonProxy;
-import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
@@ -144,7 +144,7 @@ public class PostProcessing {
 
         // Get the current draw buffers
 
-        if (resetGLState && !ClientProxy.renderingGUI && !ClientProxy.renderingArm)
+        if (resetGLState && !ClientConstants.renderingGUI && !ClientConstants.renderingArm)
             glDisable(GL_FOG);
 
         //////////////////////////////////////////////////////////////////
@@ -214,7 +214,7 @@ public class PostProcessing {
             glEnable(GL_LIGHTING);
             glEnable(GL_ALPHA_TEST);
             glColorMask(true, true, true, true);
-            if (!ClientProxy.renderingGUI && !ClientProxy.renderingArm)
+            if (!ClientConstants.renderingGUI && !ClientConstants.renderingArm)
                 glEnable(GL_FOG);
         }
 

@@ -9,7 +9,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
@@ -99,13 +99,13 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
     @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At("TAIL"), cancellable = true)
     public void tailStencil(float par1, String hair, String anim, CallbackInfoReturnable<String> ci) {
-        if (!ClientProxy.renderingOutline && (hair.contains("SJT") || hair.contains("FR") || hair.equals("N")))
+        if (!ClientConstants.renderingOutline && (hair.contains("SJT") || hair.contains("FR") || hair.equals("N")))
             RenderEventHandler.enableStencilWriting(ClientEventHandler.renderingPlayer.getEntityId() % 256);
     }
 
     @Inject(method = "renderHairs(FLjava/lang/String;Ljava/lang/String;)Ljava/lang/String;", at = @At("HEAD"), cancellable = true)
     public void formRendering(float par1, String hair, String anim, CallbackInfoReturnable<String> ci, @Local(ordinal = 0) LocalRef<String> Hair) {
-        if (!ClientProxy.renderingOutline && (hair.contains("SJT") || hair.contains("FR") || hair.equals("N")))
+        if (!ClientConstants.renderingOutline && (hair.contains("SJT") || hair.contains("FR") || hair.equals("N")))
             RenderEventHandler.enableStencilWriting((ClientEventHandler.renderingPlayer.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
 
 
@@ -122,7 +122,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 //eye colors for ALL forms except ssj4
                 if ((hair.contains("EYELEFT") || hair.contains("EYERIGHT"))) {
-                    if (form.display.isBerserk && !ClientProxy.renderingMajinSE)
+                    if (form.display.isBerserk && !ClientConstants.renderingMajinSE)
                         ci.cancel();
 
                     int eyeColor = playerColors.getProperColor(form.display, "eye");
@@ -138,7 +138,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 if (isSaiyan) {
                     //completely disable face rendering when ssj4, so I could render my own on top of a blank slate
                     if (form.display.hairType.equals("ssj4")) {
-                        if (HD && form.display.hasEyebrows && !ClientProxy.renderingMajinSE)
+                        if (HD && form.display.hasEyebrows && !ClientConstants.renderingMajinSE)
                             disableFace(hair, ci);
                         if (isHairPreset(hair))
                             ci.cancel();

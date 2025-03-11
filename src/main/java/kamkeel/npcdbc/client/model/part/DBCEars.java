@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.client.model.part;
 
-import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.data.form.Form;
@@ -50,11 +50,11 @@ public class DBCEars extends ModelDBCPartInterface {
         if (!display.enabled)
             return;
 
-        if (!ClientProxy.renderingOutline && display.outlineID != -1)
+        if (!ClientConstants.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
 
         GL11.glPushMatrix();
-        if (ClientProxy.renderingOutline) {
+        if (ClientConstants.renderingOutline) {
             GL11.glTranslatef(0, 0.0275f,0.005f);
             GL11.glScaled(1.05, 1.05, 1.05);
             disableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
@@ -80,10 +80,10 @@ public class DBCEars extends ModelDBCPartInterface {
             super.render(par1);
         }
         GL11.glPopMatrix();
-        if (!ClientProxy.renderingOutline && display.outlineID != -1)
+        if (!ClientConstants.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
 
-        if (ClientProxy.renderingOutline) {
+        if (ClientConstants.renderingOutline) {
             disableStencilWriting((entity.getEntityId()) % 256, false);
         }
     }
