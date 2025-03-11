@@ -18,7 +18,7 @@ public abstract class MixinSubGuiNPCResistanceProperties extends SubGuiInterface
     @Shadow
     private Resistances resistances;
 
-    @Inject(method = "initGui", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/gui/SubGuiNpcResistanceProperties;getSlider(I)Lnoppes/npcs/client/gui/util/GuiNpcSlider;", shift = At.Shift.AFTER, ordinal = 2, remap = false))
+    @Inject(method = "initGui", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/gui/SubGuiNpcResistanceProperties;getSlider(I)Lnoppes/npcs/client/gui/util/GuiNpcSlider;", shift = At.Shift.AFTER, ordinal = 2, remap = false), remap = true)
     public void addKiResistanceSlider(CallbackInfo ci, @Local(name = "y") LocalIntRef y) {
         int yVal = y.get();
 
