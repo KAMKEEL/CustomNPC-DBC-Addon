@@ -5,6 +5,8 @@ import JinRyuu.DragonBC.common.Npcs.RenderDBC;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelAura;
@@ -31,6 +33,7 @@ import static JinRyuu.DragonBC.common.Npcs.RenderAura2.cf;
 import static JinRyuu.DragonBC.common.Npcs.RenderAura2.glColor4f;
 import static org.lwjgl.opengl.GL11.*;
 
+@SideOnly(Side.CLIENT)
 public class AuraRenderer extends RenderDBC {
     public static AuraRenderer Instance;
     String auraDir = "jinryuudragonbc:";
