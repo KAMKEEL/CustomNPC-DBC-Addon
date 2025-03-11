@@ -2,7 +2,7 @@ package kamkeel.npcdbc.mixins.early.impl.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import kamkeel.npcdbc.client.ClientProxy;
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.client.MinecraftForgeClient;
+import org.apache.logging.log4j.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -57,7 +58,7 @@ public class MixinRenderGlobal {
                 });
                 sorted = true;
             } catch (Exception e) {
-                ClientProxy.LOGGER.error("Failed to sort entities: " + e.getMessage());
+                FMLLog.log(Level.ERROR, "Failed to sort entities: " + e.getMessage());
             }
         }
 

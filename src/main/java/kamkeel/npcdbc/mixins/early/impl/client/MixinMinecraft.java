@@ -3,7 +3,6 @@ package kamkeel.npcdbc.mixins.early.impl.client;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.GameSettings;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
