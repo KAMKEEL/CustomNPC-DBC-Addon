@@ -16,9 +16,7 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
 
 
     @Override
-    public void onLoad(String mixinPackage) {
-
-    }
+    public void onLoad(String mixinPackage) {}
 
     @Override
     public String getRefMapperConfig() {
@@ -56,7 +54,6 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
             }
 
             if(isOptifineLoaded){
-                System.out.println("excuse me is that your girl");
                 mixins.add("client.optifine.MixinEntityRendererOptifine");
                 mixins.add("client.optifine.MixinDynamicLights");
                 mixins.add("client.optifine.MixinShaders");

@@ -2,7 +2,6 @@ package kamkeel.npcdbc.data;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
-import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcs.controllers.data.profile.IProfileData;
@@ -10,7 +9,6 @@ import kamkeel.npcs.controllers.data.profile.ProfileInfoEntry;
 import kamkeel.npcs.controllers.data.profile.ProfileOperation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import noppes.npcs.config.ConfigMain;
 
 import java.util.ArrayList;
 import java.util.List;

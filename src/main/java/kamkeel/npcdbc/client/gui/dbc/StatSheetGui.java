@@ -36,8 +36,6 @@ import java.util.Arrays;
 import static JinRyuu.JRMCore.JRMCoreGuiScreen.kqGW3Z;
 import static JinRyuu.JRMCore.JRMCoreH.*;
 
-import java.lang.Class;
-
 @SideOnly(Side.CLIENT)
 public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 

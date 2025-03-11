@@ -31,16 +31,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.api.entity.IEntityLivingBase;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.scripted.CustomNPCsException;
-import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
-import noppes.npcs.scripted.entity.ScriptPlayer;
 import noppes.npcs.util.ValueUtil;
-import scala.util.control.Exception;
 
 import java.util.Arrays;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
-import static JinRyuu.JRMCore.JRMCoreH.jrmcDam;
 
 // Implemented by Kam, Ported from Goatee Design
 @SuppressWarnings({"rawtypes", "unused"})

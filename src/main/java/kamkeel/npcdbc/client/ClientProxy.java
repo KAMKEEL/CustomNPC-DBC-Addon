@@ -31,7 +31,6 @@ public class ClientProxy extends CommonProxy {
     public static boolean renderingOutline, renderingGUI, renderingArm, renderingMajinSE;
     public static final int MiddleRenderPass = 1684;
     public static Instant startTime;
-    public static boolean isKasaiLoaded;
     public static boolean renderingWorld;
 
     public static int lastRendererGUIPlayerID = -1;

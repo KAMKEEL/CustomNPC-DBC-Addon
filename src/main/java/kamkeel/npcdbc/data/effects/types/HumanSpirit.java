@@ -5,7 +5,6 @@ import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.controllers.BonusController;
 import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.PlayerBonus;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.effects.AddonEffect;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.controllers.data.PlayerEffect;

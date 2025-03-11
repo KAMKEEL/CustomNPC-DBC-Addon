@@ -6,7 +6,6 @@ import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.mixins.late.impl.dbc.MixinJRMCoreEH;
 import kamkeel.npcdbc.util.DBCUtils;
-import kamkeel.npcs.addon.DBCAddon;
 import kamkeel.npcs.util.AttributeAttackUtil;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;

@@ -6,7 +6,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
 import static JinRyuu.JRMCore.JRMCoreH.Races;
-import static JinRyuu.JRMCore.JRMCoreH.getPlayerLevel;
 
 public class DBCRaceRequirement implements IRequirementChecker {
 

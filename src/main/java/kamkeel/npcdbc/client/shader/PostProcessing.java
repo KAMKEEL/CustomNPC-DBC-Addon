@@ -1,5 +1,7 @@
 package kamkeel.npcdbc.client.shader;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
@@ -30,6 +32,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
+@SideOnly(Side.CLIENT)
 public class PostProcessing {
 
     public static Framebuffer MAIN;
