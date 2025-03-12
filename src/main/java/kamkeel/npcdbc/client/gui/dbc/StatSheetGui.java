@@ -1064,11 +1064,10 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
     }
 
     public double getFormMasteryMulti() {
-
         PlayerDBCInfo dataClient = PlayerDataUtil.getClientDBCInfo();
         if (dataClient != null && dataClient.getCurrentForm() != null) {
             Form form = dataClient.getCurrentForm();
-            return form.mastery.calculateMulti("attribute", dataClient.formLevels.get(form.id));
+            return form.mastery.calculateMulti("attribute", dataClient.formLevels.getOrDefault(form.id, 0f));
         }
         return getFormMasteryAttributeMulti(JRMCoreClient.mc.thePlayer, State, State2, Race, StusEfctsMe(5), StusEfctsMe(13), StusEfctsMe(19), StusEfctsMe(20));
     }
