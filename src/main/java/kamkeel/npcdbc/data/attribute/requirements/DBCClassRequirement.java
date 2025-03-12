@@ -5,7 +5,7 @@ import kamkeel.npcs.controllers.data.attribute.requirement.IRequirementChecker;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
-import static JinRyuu.JRMCore.JRMCoreH.Classes;
+import static JinRyuu.JRMCore.JRMCoreH.ClassesDBC;
 
 public class DBCClassRequirement implements IRequirementChecker {
 
@@ -24,7 +24,7 @@ public class DBCClassRequirement implements IRequirementChecker {
         if(nbt.hasKey(getKey())) {
             int classID = nbt.getInteger(getKey());
             try{
-                return Classes[classID];
+                return ClassesDBC[classID];
             } catch (Exception ignored) {}
         }
         return "null";
