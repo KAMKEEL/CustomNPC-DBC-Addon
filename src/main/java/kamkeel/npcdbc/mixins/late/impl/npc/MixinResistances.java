@@ -19,20 +19,20 @@ public abstract class MixinResistances implements IKiResistance {
     public boolean disableDamage;
 
     @Unique
-    public float ki = 1f;
+    public float ki = 1.0f;
 
     @Inject(method = "writeToNBT", at = @At(value = "TAIL"))
     public void writeNBT(CallbackInfoReturnable<NBTTagCompound> cir) {
         NBTTagCompound compound = cir.getReturnValue();
-        if (compound == null) {
-            compound = new NBTTagCompound();
+        if (compound != null) {
+            compound.setFloat("KiRes", ki);
         }
-        compound.setFloat("Ki", ki);
     }
 
     @Inject(method = "readToNBT", at = @At("TAIL"), remap = false)
     public void readNBT(NBTTagCompound compound, CallbackInfo ci) {
-        ki = compound.getFloat("Ki");
+        if(compound.hasKey("KiRes"))
+            ki = compound.getFloat("KiRes");
     }
 
     @Inject(method = "applyResistance", at = @At("HEAD"), cancellable = true)
