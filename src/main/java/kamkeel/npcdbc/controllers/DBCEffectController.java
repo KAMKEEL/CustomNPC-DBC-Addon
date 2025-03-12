@@ -94,6 +94,18 @@ public class DBCEffectController implements IDBCEffectHandler {
         map.keySet().removeIf(key -> key.getIndex() == DBC_EFFECT_INDEX && key.getId() == id);
     }
 
+
+    public int getEffectDuration(EntityPlayer player, int id) {
+        return CustomEffectController.getInstance().getEffectDuration(player, id, DBC_EFFECT_INDEX);
+    }
+
+    public int getEffectLevel(EntityPlayer player, int id) {
+        PlayerEffect effect = CustomEffectController.getInstance().getPlayerEffects(player)
+            .get(new EffectKey(id, DBC_EFFECT_INDEX));
+        return effect != null ? effect.level : -1;
+    }
+
+
     /**
      * Checks if the player is allowed to consume Senzus based on current consumption rate.
      * If the consumption exceeds the rate, apply the "Bloated" effect.
@@ -229,5 +241,19 @@ public class DBCEffectController implements IDBCEffectHandler {
 
         EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
         removeEffect(entityPlayer, id);
+    }
+
+    @Override
+    public int getEffectDuration(IPlayer player, int id) {
+        if (player == null || !(player.getMCEntity() instanceof EntityPlayer))
+            return -1;
+        return getEffectDuration((EntityPlayer) player.getMCEntity(), id);
+    }
+
+    @Override
+    public int getEffectLevel(IPlayer player, int id) {
+        if (player == null || !(player.getMCEntity() instanceof EntityPlayer))
+            return -1;
+        return getEffectLevel((EntityPlayer) player.getMCEntity(), id);
     }
 }

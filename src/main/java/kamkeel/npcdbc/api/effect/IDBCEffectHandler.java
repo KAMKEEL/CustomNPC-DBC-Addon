@@ -62,4 +62,24 @@ public interface IDBCEffectHandler {
      * @param id the effect ID to be removed
      */
     void removeEffect(IPlayer player, int id);
+
+    /**
+     * Retrieves the remaining duration of the effect with the specified ID for the given IPlayer.
+     * Uses the DBC effect index.
+     *
+     * @param player the IPlayer to check
+     * @param id the effect ID
+     * @return the remaining duration in seconds, or -1 if the effect is not active
+     */
+    int getEffectDuration(IPlayer player, int id);
+
+    /**
+     * Retrieves the level of the effect with the specified ID for the given IPlayer.
+     * Uses the DBC effect index.
+     *
+     * @param player the IPlayer to check
+     * @param id the effect ID
+     * @return the effect level, or -1 if the effect is not active
+     */
+    int getEffectLevel(IPlayer player, int id);
 }
