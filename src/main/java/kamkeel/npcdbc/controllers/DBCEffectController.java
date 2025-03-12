@@ -45,17 +45,17 @@ public class DBCEffectController implements IDBCEffectHandler {
         standardEffects.put(Effects.REGEN_STAMINA, new RegenStamina());
         standardEffects.put(Effects.NAMEK_REGEN, new NamekRegen());
         standardEffects.put(Effects.FRUIT_OF_MIGHT, new FruitOfMight());
-        standardEffects.put(Effects.BLOATED, new Bloated());
-        standardEffects.put(Effects.MEDITATION, new Meditation());
         standardEffects.put(Effects.OVERPOWER, new Overpower());
         standardEffects.put(Effects.CHOCOLATED, new Chocolated());
+        standardEffects.put(Effects.MEDITATION, new Meditation());
+        standardEffects.put(Effects.BLOATED, new Bloated());
         standardEffects.put(Effects.DARKNESS, new Darkness());
         standardEffects.put(Effects.ZENKAI, new Zenkai());
         standardEffects.put(Effects.POTARA, new PotaraFusion());
-        standardEffects.put(Effects.EXHAUSTED, new Exhausted());
+        // standardEffects.put(Effects.COLD_BLOODED, new Exhausted()); 192
+        // standardEffects.put(Effects.KI_DEFENSE, new Exhausted()); 208
         standardEffects.put(Effects.HUMAN_SPIRIT, new HumanSpirit());
-//        standardEffects.put(Effects.COLD_BLOODED, new Exhausted());
-//        standardEffects.put(Effects.KI_DEFENSE, new Exhausted());
+        standardEffects.put(Effects.EXHAUSTED, new Exhausted());
 
         CustomEffectController.getInstance().registerEffectMap(DBC_EFFECT_INDEX, standardEffects);
     }

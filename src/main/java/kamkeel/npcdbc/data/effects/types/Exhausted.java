@@ -9,7 +9,7 @@ public class Exhausted extends AddonEffect {
         name = "Exhausted";
         langName = "effect.exhausted";
         id = Effects.EXHAUSTED;
-        iconX = 192;
+        iconX = 240;
         iconY = 0;
         length = ConfigDBCEffects.EXHAUST_TIME * 60;
         lossOnDeath = false;
