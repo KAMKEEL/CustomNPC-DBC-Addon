@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.controllers;
 
-
+import kamkeel.npcdbc.api.effect.IDBCEffectHandler;
 import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -11,6 +11,7 @@ import kamkeel.npcdbc.data.effects.types.*;
 import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.CustomEffectController;
 import noppes.npcs.controllers.data.EffectKey;
 import noppes.npcs.controllers.data.PlayerEffect;
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DBCEffectController {
+public class DBCEffectController implements IDBCEffectHandler {
 
     public static int DBC_EFFECT_INDEX = 1;
     public static DBCEffectController Instance = new DBCEffectController();
@@ -30,6 +31,7 @@ public class DBCEffectController {
     // Maps for Status Effects
     private final ConcurrentHashMap<UUID, DamageTracker> damageTrackers = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, SenzuConsumptionData> playerSenzuConsumption = new ConcurrentHashMap<>();
+
     public DBCEffectController() {}
 
     public static DBCEffectController getInstance() {
@@ -74,16 +76,22 @@ public class DBCEffectController {
         return standardEffects.get(id);
     }
 
+    public void applyEffect(EntityPlayer player, int id, int duration){
+        CustomEffectController.getInstance().applyEffect(player, id, duration, (byte) 1, DBC_EFFECT_INDEX);
+    }
+
+    public void applyEffect(EntityPlayer player, int id, int duration, byte level){
+        CustomEffectController.getInstance().applyEffect(player, id, duration, level, DBC_EFFECT_INDEX);
+    }
+
     public void clearDBCEffects(EntityPlayer player) {
         Map<EffectKey, PlayerEffect> map = CustomEffectController.getInstance().getPlayerEffects(player);
         map.keySet().removeIf(key -> key.getIndex() == DBC_EFFECT_INDEX);
     }
 
-    public void applyEffect(EntityPlayer player, int id, int duration){
-        CustomEffectController.getInstance().applyEffect(player, id, duration, (byte) 1, DBC_EFFECT_INDEX);
-    }
-    public void applyEffect(EntityPlayer player, int id, int duration, byte level){
-        CustomEffectController.getInstance().applyEffect(player, id, duration, level, DBC_EFFECT_INDEX);
+    public void removeEffect(EntityPlayer player, int id) {
+        Map<EffectKey, PlayerEffect> map = CustomEffectController.getInstance().getPlayerEffects(player);
+        map.keySet().removeIf(key -> key.getIndex() == DBC_EFFECT_INDEX && key.getId() == id);
     }
 
     /**
@@ -126,7 +134,6 @@ public class DBCEffectController {
         return true; // Allow consumption.
     }
 
-
     /**
      * Decreases the consumption count for each player in the map at the specified rate.
      * This should be called every DECREASE_TIME ticks in the game.
@@ -135,6 +142,7 @@ public class DBCEffectController {
         SenzuConsumptionData data = getPlayerSenzuData(player);
         data.decreaseConsumption(ConfigDBCEffects.DECREASE_TIME);
     }
+
     private SenzuConsumptionData getPlayerSenzuData(EntityPlayer player) {
         UUID playerId = Utility.getUUID(player);
         return playerSenzuConsumption.computeIfAbsent(playerId, k -> new SenzuConsumptionData());
@@ -166,5 +174,60 @@ public class DBCEffectController {
             NetworkUtility.sendServerMessage(player, "§d", "npcdbc.humanSpiritMessage");
             tracker.cleanOldEntries(System.currentTimeMillis());
         }
+    }
+
+
+    // API VERSIONS
+    @Override
+    public boolean hasEffect(IPlayer player, int id){
+        if(player == null || !(player.getMCEntity() instanceof EntityPlayer))
+            return false;
+
+        return hasEffect((EntityPlayer) player.getMCEntity(), id);
+    }
+
+    @Override
+    public void applyEffect(IPlayer player, int id){
+        if(player == null || !(player.getMCEntity() instanceof EntityPlayer))
+            return;
+
+        EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
+        applyEffect(entityPlayer, id);
+    }
+
+    @Override
+    public void applyEffect(IPlayer player, int id, int duration){
+        if(player == null || !(player.getMCEntity() instanceof EntityPlayer))
+            return;
+
+        EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
+        applyEffect(entityPlayer, id, duration);
+    }
+
+    @Override
+    public void applyEffect(IPlayer player, int id, int duration, byte level){
+        if(player == null || !(player.getMCEntity() instanceof EntityPlayer))
+            return;
+
+        EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
+        applyEffect(entityPlayer, id, duration, level);
+    }
+
+    @Override
+    public void clearDBCEffects(IPlayer player){
+        if(player == null || !(player.getMCEntity() instanceof EntityPlayer))
+            return;
+
+        EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
+        clearDBCEffects(entityPlayer);
+    }
+
+    @Override
+    public void removeEffect(IPlayer player, int id) {
+        if(player == null || !(player.getMCEntity() instanceof EntityPlayer))
+            return;
+
+        EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
+        removeEffect(entityPlayer, id);
     }
 }

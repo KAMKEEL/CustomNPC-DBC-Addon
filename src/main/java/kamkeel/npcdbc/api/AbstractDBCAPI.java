@@ -4,6 +4,7 @@ import cpw.mods.fml.common.Loader;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.aura.IAuraHandler;
 import kamkeel.npcdbc.api.effect.IBonusHandler;
+import kamkeel.npcdbc.api.effect.IDBCEffectHandler;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
@@ -44,6 +45,15 @@ public abstract class AbstractDBCAPI {
     public abstract IOutlineHandler getOutlineHandler();
 
     public abstract IBonusHandler getBonusHandler();
+
+    /**
+     * You can also use the Custom Effect Handler in CNPC+
+     * while using the DBC Addon Index of 1 for controlling
+     * effects as well
+     *
+     * @return DBC Effect Handler
+     */
+    public abstract IDBCEffectHandler getDBCEffectHandler();
 
     public abstract IForm createForm(String name);
 

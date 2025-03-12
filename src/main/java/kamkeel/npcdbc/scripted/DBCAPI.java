@@ -10,6 +10,7 @@ import kamkeel.npcdbc.api.IKiAttack;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.aura.IAuraHandler;
 import kamkeel.npcdbc.api.effect.IBonusHandler;
+import kamkeel.npcdbc.api.effect.IDBCEffectHandler;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.api.form.IFormMastery;
@@ -18,10 +19,7 @@ import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import kamkeel.npcdbc.combat.Dodge;
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.BonusController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.DBCStats;
@@ -69,6 +67,11 @@ public class DBCAPI extends AbstractDBCAPI {
     @Override
     public IBonusHandler getBonusHandler() {
         return BonusController.Instance;
+    }
+
+    @Override
+    public IDBCEffectHandler getDBCEffectHandler() {
+        return DBCEffectController.Instance;
     }
 
     @Override
