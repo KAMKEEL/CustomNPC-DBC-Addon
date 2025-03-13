@@ -52,7 +52,7 @@ import java.text.DecimalFormat;
 
 import static JinRyuu.JRMCore.JRMCoreH.*;
 import static kamkeel.npcdbc.util.DBCUtils.lastSetDamage;
-import static kamkeel.npcdbc.util.DBCUtils.lastSetDamage2;
+import static kamkeel.npcdbc.util.DBCUtils.scriptingLastSetDamage;
 
 @Mixin(value = JRMCoreH.class, remap = false)
 public abstract class MixinJRMCoreH {
@@ -443,11 +443,11 @@ public abstract class MixinJRMCoreH {
                 lastSetDamage = -1;
             }
 
-            if (lastSetDamage2 != -1) {
+            if (scriptingLastSetDamage != -1) {
                 int curBody = getInt(player, "jrmcBdy");
-                int newHealth = curBody - lastSetDamage2;
+                int newHealth = curBody - scriptingLastSetDamage;
                 s = Math.max(0, newHealth);
-                lastSetDamage2 = -1;
+                scriptingLastSetDamage = -1;
             }
         }
 

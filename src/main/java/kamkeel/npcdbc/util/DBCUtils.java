@@ -53,7 +53,7 @@ public class DBCUtils {
     //lastSetDamage works with player's DBCDamagedEvent
     public static int lastSetDamage = -1, npcLastSetDamage = -1;
     //this one is with the scripting player Attack/Attacked events. Separated these into 2 so both can be functional
-    public static int lastSetDamage2 = -1;
+    public static int scriptingLastSetDamage = -1;
 
     public static String[] CONFIG_UI_NAME;
     public static String[] cCONFIG_UI_NAME;
@@ -543,9 +543,9 @@ public class DBCUtils {
             newHP = Math.max(reducedHP, 0);
         }
 
-        if (lastSetDamage2 != -1) {
-            damageToHP = Math.max(lastSetDamage2, 0);
-            lastSetDamage2 = -1;
+        if (scriptingLastSetDamage != -1) {
+            damageToHP = Math.max(scriptingLastSetDamage, 0);
+            scriptingLastSetDamage = -1;
             reducedHP = playerHP - damageToHP;
             newHP = Math.max(reducedHP, 0);
         }

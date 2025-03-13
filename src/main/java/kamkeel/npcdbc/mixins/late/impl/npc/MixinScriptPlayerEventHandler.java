@@ -22,35 +22,35 @@ public abstract class MixinScriptPlayerEventHandler {
     @Unique
     private boolean dbcAltered;
     @Unique
-    private float dam1, dam2;
+    private float attackedEventDamage, attackEventDamage;
 
     @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, remap = true, ordinal = 0))
-    public float test(LivingAttackEvent instance) {
+    public float attackedEvent(LivingAttackEvent instance) {
         if (instance.source.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) instance.source.getEntity();
             DBCData data = DBCData.get(player);
             if (dbcAltered = data.Powertype == 1) {
-                dam1 = DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
+                attackedEventDamage = DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
                 if (instance.entityLiving instanceof EntityPlayer)
-                    return DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, dam1, instance.source);
+                    return DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, attackedEventDamage, instance.source);
                 else
-                    return dam1;
+                    return attackedEventDamage;
             }
         }
         return instance.ammount;
     }
 
     @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, remap = true, ordinal = 1))
-    public float test2(LivingAttackEvent instance) {
+    public float attackEvent(LivingAttackEvent instance) {
         if (instance.source.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) instance.source.getEntity();
             DBCData data = DBCData.get(player);
             if (dbcAltered = data.Powertype == 1) {
-                dam2 = DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
+                attackEventDamage = DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
                 if (instance.entityLiving instanceof EntityPlayer)
-                    return DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, dam1, instance.source);
+                    return DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, attackEventDamage, instance.source);
                 else
-                    return dam2;
+                    return attackEventDamage;
             }
         }
         return instance.ammount;
@@ -58,22 +58,22 @@ public abstract class MixinScriptPlayerEventHandler {
 
     @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "INVOKE", target = "Lnoppes/npcs/EventHooks;onPlayerAttacked(Lnoppes/npcs/controllers/data/PlayerDataScript;Lnoppes/npcs/scripted/event/PlayerEvent$AttackedEvent;)Z", shift = At.Shift.AFTER))
     public void attackedFixDamagedEventDBCDamage(LivingAttackEvent event, CallbackInfo ci, @Local(name = "pevent") PlayerEvent.AttackedEvent ev) {
-        if (dbcAltered && dam1 != ev.getDamage() && !event.isCanceled()) {
-            DBCUtils.lastSetDamage2 = (int) ev.getDamage();
+        if (dbcAltered && attackedEventDamage != ev.getDamage() && !event.isCanceled()) {
+            DBCUtils.scriptingLastSetDamage = (int) ev.getDamage();
             dbcAltered = false;
         }
-        dam1 = 0;
+        attackedEventDamage = 0;
     }
 
     @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "INVOKE", target = "Lnoppes/npcs/EventHooks;onPlayerAttack(Lnoppes/npcs/controllers/data/PlayerDataScript;Lnoppes/npcs/scripted/event/PlayerEvent$AttackEvent;)Z", shift = At.Shift.AFTER))
     public void attackFixDamagedEventDBCDamage2(LivingAttackEvent event, CallbackInfo ci, @Local(name = "pevent1") PlayerEvent.AttackEvent ev) {
-        if (dbcAltered && dam2 != ev.getDamage() && !event.isCanceled()) {
+        if (dbcAltered && attackEventDamage != ev.getDamage() && !event.isCanceled()) {
             if (event.entityLiving instanceof EntityNPCInterface)
                 DBCUtils.npcLastSetDamage = (int) ev.getDamage();
             else if (event.entityLiving instanceof EntityPlayer)
-                DBCUtils.lastSetDamage2 = (int) ev.getDamage();
+                DBCUtils.scriptingLastSetDamage = (int) ev.getDamage();
             dbcAltered = false;
         }
-        dam2 = 0;
+        attackEventDamage = 0;
     }
 }
