@@ -141,6 +141,7 @@ public class DBCUtils {
         return isFM(p, formName, race, 100);
     }
 
+    // Return -100 if KO
     public static int calculateDBCDamageFromSource(Entity Player, float dbcA, DamageSource s) {
         if (!Player.worldObj.isRemote && Player instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) Player;
@@ -330,15 +331,13 @@ public class DBCUtils {
                         int ko = getInt(player, "jrmcHar4va");
                         newHP = all < 20 ? 20 : (int) all;
                         if (ko <= 0 && newHP == 20) {
-                            return 0;
+                            return currentHP - 20;
                         }
                     }
                 }
                 return currentHP - newHP;
             }
         }
-
-
         return (int) dbcA;
     }
 
@@ -521,7 +520,6 @@ public class DBCUtils {
                 return playerHP - newHP;
             }
         }
-        player.addChatComponentMessage(new ChatComponentText(""+damageAmount));
         return damageAmount;
     }
 
