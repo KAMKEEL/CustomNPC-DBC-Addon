@@ -330,15 +330,13 @@ public class DBCUtils {
                         int ko = getInt(player, "jrmcHar4va");
                         newHP = all < 20 ? 20 : (int) all;
                         if (ko <= 0 && newHP == 20) {
-                            return 0;
+                            return currentHP - 20;
                         }
                     }
                 }
                 return currentHP - newHP;
             }
         }
-
-
         return (int) dbcA;
     }
 
@@ -521,7 +519,6 @@ public class DBCUtils {
                 return playerHP - newHP;
             }
         }
-        player.addChatComponentMessage(new ChatComponentText(""+damageAmount));
         return damageAmount;
     }
 
@@ -622,7 +619,6 @@ public class DBCUtils {
             boolean c = JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects);
             int STR = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 0, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
             int cstF = 0;
-            Melee = true;
             if (Melee) {
                 int sklkf = JRMCoreH.SklLvl(12, PlyrSkills);
                 boolean sklkfe = !JRMCoreH.PlyrSettingsB(attacker, DBCSettings.KI_FIST);
