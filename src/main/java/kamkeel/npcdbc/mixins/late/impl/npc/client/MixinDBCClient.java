@@ -1,12 +1,18 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
+import kamkeel.npcdbc.client.CNPCAnimationHelper;
 import kamkeel.npcdbc.client.ParticleFormHandler;
 import kamkeel.npcdbc.client.gui.SubGuiDBCProperties;
 import kamkeel.npcdbc.client.gui.global.auras.GuiNPCManageAuras;
 import kamkeel.npcdbc.client.gui.global.form.GuiNPCManageForms;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcs.addon.client.DBCClient;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.gui.mainmenu.GuiNpcStats;
 import noppes.npcs.client.gui.util.GuiNPCInterface2;
 import noppes.npcs.client.gui.util.GuiNpcButton;
@@ -75,4 +81,22 @@ public class MixinDBCClient {
      */
     @Overwrite(remap = false)
     public GuiNPCInterface2 manageCustomAuras(EntityNPCInterface npcInterface){ return new GuiNPCManageAuras(npcInterface); }
+
+    /**
+     * @author Kam
+     * @reason Manages Animation Mixins
+     */
+    @Overwrite(remap = false)
+    public void applyRenderModel(ModelRenderer renderer){
+        CNPCAnimationHelper.applyValues(renderer);
+    }
+
+    /**
+     * @author Kam
+     * @reason Manages First Animation Mixins
+     */
+    @Overwrite(remap = false)
+    public boolean firstPersonAnimation(float partialRenderTick, EntityPlayer player, ModelBiped model, RenderBlocks renderBlocksIr, ResourceLocation resItemGlint) {
+        return CNPCAnimationHelper.mixin_renderFirstPersonAnimation(partialRenderTick, player, model, renderBlocksIr, resItemGlint);
+    }
 }

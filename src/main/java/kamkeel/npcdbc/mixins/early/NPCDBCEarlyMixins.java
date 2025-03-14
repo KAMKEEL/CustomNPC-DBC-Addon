@@ -45,6 +45,7 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
             mixins.add("client.MixinRenderGlobal");
             mixins.add("client.MixinMinecraft");
             mixins.add("client.MixinEffectRenderer");
+            mixins.add("client.MixinRendererLivingEntity");
 
             boolean isOptifineLoaded = false;
             try {
