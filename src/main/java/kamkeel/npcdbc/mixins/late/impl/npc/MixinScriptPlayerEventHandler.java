@@ -30,11 +30,11 @@ public abstract class MixinScriptPlayerEventHandler {
             EntityPlayer player = (EntityPlayer) instance.source.getEntity();
             DBCData data = DBCData.get(player);
             if (dbcAltered = data.Powertype == 1) {
-                attackedEventDamage = DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
+                float attackStat = DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
                 if (instance.entityLiving instanceof EntityPlayer)
-                    return DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, attackedEventDamage, instance.source);
+                    return this.attackedEventDamage = DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, attackStat, instance.source);
                 else
-                    return attackedEventDamage;
+                    return attackStat;
             }
         }
         return instance.ammount;
@@ -46,11 +46,11 @@ public abstract class MixinScriptPlayerEventHandler {
             EntityPlayer player = (EntityPlayer) instance.source.getEntity();
             DBCData data = DBCData.get(player);
             if (dbcAltered = data.Powertype == 1) {
-                attackEventDamage = DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
+                float attackStat = DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
                 if (instance.entityLiving instanceof EntityPlayer)
-                    return DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, attackEventDamage, instance.source);
+                    return attackEventDamage = DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, attackStat, instance.source);
                 else
-                    return attackEventDamage;
+                    return attackStat;
             }
         }
         return instance.ammount;
@@ -60,8 +60,8 @@ public abstract class MixinScriptPlayerEventHandler {
     public void attackedFixDamagedEventDBCDamage(LivingAttackEvent event, CallbackInfo ci, @Local(name = "pevent") PlayerEvent.AttackedEvent ev) {
         if (dbcAltered && attackedEventDamage != ev.getDamage() && !event.isCanceled()) {
             DBCUtils.scriptingLastSetDamage = (int) ev.getDamage();
-            dbcAltered = false;
         }
+        dbcAltered = false;
         attackedEventDamage = 0;
     }
 
@@ -72,8 +72,8 @@ public abstract class MixinScriptPlayerEventHandler {
                 DBCUtils.npcLastSetDamage = (int) ev.getDamage();
             else if (event.entityLiving instanceof EntityPlayer)
                 DBCUtils.scriptingLastSetDamage = (int) ev.getDamage();
-            dbcAltered = false;
         }
+        dbcAltered = false;
         attackEventDamage = 0;
     }
 }
