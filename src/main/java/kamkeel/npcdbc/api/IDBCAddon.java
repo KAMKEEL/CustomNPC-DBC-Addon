@@ -508,6 +508,10 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     boolean isInCustomForm(int formID);
 
+    void setCustomForm(String formName, boolean ignoreUnlockCheck);
+
+    void setCustomForm(String formName);
+
     /**
      * Sets the mastery of a form if the player has it unlocked, otherwise it won't change anything.
      * @param formID ID of the form to change the mastery of.

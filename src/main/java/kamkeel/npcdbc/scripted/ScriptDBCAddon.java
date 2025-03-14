@@ -847,6 +847,20 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         setCustomForm(id, ignoreUnlockCheck);
     }
 
+    @Override
+    public void setCustomForm(String formName, boolean ignoreUnlockCheck) {
+        IForm form = FormController.getInstance().get(formName);
+        if (form == null) {
+            throw new CustomNPCsException("Form '" + formName + "' does not exist!");
+        }
+        setCustomForm(form, ignoreUnlockCheck);
+    }
+
+    @Override
+    public void setCustomForm(String formName) {
+        setCustomForm(formName, false);
+    }
+
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     // Form Mastery stuff
