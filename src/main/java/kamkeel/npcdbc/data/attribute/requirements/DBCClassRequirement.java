@@ -38,6 +38,14 @@ public class DBCClassRequirement implements IRequirementChecker {
     }
 
     @Override
+    public Object getValue(NBTTagCompound nbtTagCompound) {
+        if(nbtTagCompound.hasKey(getKey())) {
+            return nbtTagCompound.getInteger(getKey());
+        }
+        return null;
+    }
+
+    @Override
     public boolean check(EntityPlayer player, NBTTagCompound nbt) {
         if(nbt.hasKey(getKey())) {
             int classID = nbt.getInteger(getKey());

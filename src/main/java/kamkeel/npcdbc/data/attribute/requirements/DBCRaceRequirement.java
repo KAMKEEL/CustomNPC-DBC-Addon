@@ -38,6 +38,14 @@ public class DBCRaceRequirement implements IRequirementChecker {
     }
 
     @Override
+    public Object getValue(NBTTagCompound nbtTagCompound) {
+        if(nbtTagCompound.hasKey(getKey())) {
+            return nbtTagCompound.getInteger(getKey());
+        }
+        return null;
+    }
+
+    @Override
     public boolean check(EntityPlayer player, NBTTagCompound nbt) {
         if(nbt.hasKey(getKey())) {
             int race = nbt.getInteger(getKey());
