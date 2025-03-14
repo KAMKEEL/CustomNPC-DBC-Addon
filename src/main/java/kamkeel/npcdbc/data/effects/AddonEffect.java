@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.data.effects;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import noppes.npcs.api.handler.data.ICustomEffect;
+import noppes.npcs.controllers.CustomEffectController;
 import noppes.npcs.controllers.data.CustomEffect;
 
 public class AddonEffect extends CustomEffect {
@@ -23,4 +25,6 @@ public class AddonEffect extends CustomEffect {
     }
 
     public String getLangName(){ return this.langName; }
+
+    public ICustomEffect save() { return this; }
 }
