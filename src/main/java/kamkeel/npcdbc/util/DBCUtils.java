@@ -141,7 +141,6 @@ public class DBCUtils {
         return isFM(p, formName, race, 100);
     }
 
-    // Return -100 if KO
     public static int calculateDBCDamageFromSource(Entity Player, float dbcA, DamageSource s) {
         if (!Player.worldObj.isRemote && Player instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) Player;
@@ -620,7 +619,6 @@ public class DBCUtils {
             boolean c = JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects);
             int STR = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 0, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
             int cstF = 0;
-            Melee = true;
             if (Melee) {
                 int sklkf = JRMCoreH.SklLvl(12, PlyrSkills);
                 boolean sklkfe = !JRMCoreH.PlyrSettingsB(attacker, DBCSettings.KI_FIST);
