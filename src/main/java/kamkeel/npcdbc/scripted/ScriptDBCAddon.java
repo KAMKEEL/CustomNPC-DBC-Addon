@@ -34,6 +34,7 @@ import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.util.ValueUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
@@ -706,6 +707,18 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public boolean hasCustomForm(int formID) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         return formData.hasFormUnlocked(formID);
+    }
+
+    @Override
+    public IForm[] getCustomForms() {
+        PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(player);
+        ArrayList<IForm> unlockedForms = new ArrayList<>();
+        for (IForm form : FormController.getInstance().getForms()) {
+            if (dbcInfo.hasFormUnlocked(form.getID())) {
+                unlockedForms.add(form);
+            }
+        }
+        return unlockedForms.toArray(new IForm[0]);
     }
 
     public void giveCustomForm(String formName) {

@@ -331,6 +331,8 @@ public interface IDBCAddon extends IDBCPlayer {
 
     boolean hasCustomForm(int formID);
 
+    IForm[] getCustomForms();
+
     /**
      * Gives a player a custom form by the given name.
      * @param formName Name of the form to give the player.
