@@ -1,7 +1,12 @@
 package kamkeel.npcdbc.client;
 
-import kamkeel.npcs.addon.DBCAddon;
-import kamkeel.npcs.addon.client.DBCClient;
+import JinRyuu.JBRA.JBRAH;
+import JinRyuu.JBRA.RenderPlayerJBRA;
+import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.JRMCoreHDBC;
+import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
+import JinRyuu.JRMCore.i.ExtendedPlayer;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -10,7 +15,6 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.entity.Entity;
@@ -53,9 +57,7 @@ public class CNPCAnimationHelper {
             return false;
         }
 
-        if(DBCAddon.IsAvailable() && noppes.npcs.client.ClientEventHandler.renderingPlayer != null){
-            DBCClient.Instance.applyRenderModel(modelRenderer);
-        } else if (!DBCAddon.IsAvailable() && noppes.npcs.client.ClientEventHandler.renderingPlayer != null) {
+        if (noppes.npcs.client.ClientEventHandler.renderingPlayer != null) {
             noppes.npcs.client.ClientEventHandler.playerModel = (modelRenderer).baseModel;
             if (ClientCacheHandler.playerAnimations.containsKey(noppes.npcs.client.ClientEventHandler.renderingPlayer.getUniqueID())) {
                 AnimationData animData = ClientCacheHandler.playerAnimations.get(noppes.npcs.client.ClientEventHandler.renderingPlayer.getUniqueID());
@@ -86,24 +88,6 @@ public class CNPCAnimationHelper {
                             return true;
                         }
                     }
-                }
-            }
-        } else if (noppes.npcs.client.ClientEventHandler.renderingNpc.display.animationData.isActive()) {
-            AnimationData animData = noppes.npcs.client.ClientEventHandler.renderingNpc.display.animationData;
-            EnumAnimationPart partType = getPartType(modelRenderer);
-            if (partType != null && animData != null) {
-                Frame frame = (Frame) animData.animation.currentFrame();
-                if (frame.frameParts.containsKey(partType)) {
-                    FramePart part = frame.frameParts.get(partType);
-                    part.interpolateOffset();
-                    part.interpolateAngles();
-                    modelRenderer.rotationPointX += part.prevPivots[0];
-                    modelRenderer.rotationPointY += part.prevPivots[1];
-                    modelRenderer.rotationPointZ += part.prevPivots[2];
-                    modelRenderer.rotateAngleX = part.prevRotations[0];
-                    modelRenderer.rotateAngleY = part.prevRotations[1];
-                    modelRenderer.rotateAngleZ = part.prevRotations[2];
-                    return true;
                 }
             }
         }
@@ -205,7 +189,7 @@ public class CNPCAnimationHelper {
     }
 
     public static void playerFullModel_head(Entity p_78088_1_, CallbackInfo callbackInfo) {
-        if (!DBCAddon.IsAvailable() && ClientCacheHandler.playerAnimations.containsKey(p_78088_1_.getUniqueID())) {
+        if (ClientCacheHandler.playerAnimations.containsKey(p_78088_1_.getUniqueID())) {
             AnimationData animData = ClientCacheHandler.playerAnimations.get(p_78088_1_.getUniqueID());
             if (animData != null && animData.isActive()) {
                 Frame frame = (Frame) animData.animation.currentFrame();
@@ -224,10 +208,6 @@ public class CNPCAnimationHelper {
     }
 
     public static boolean mixin_renderFirstPersonAnimation(float partialRenderTick, EntityPlayer player, ModelBiped model, RenderBlocks renderBlocksIr, ResourceLocation resItemGlint) {
-        if (DBCAddon.IsAvailable()) {
-            return DBCClient.Instance.firstPersonAnimation(partialRenderTick, player,model, renderBlocksIr, resItemGlint);
-        }
-
         AnimationData animationData = ClientCacheHandler.playerAnimations.get(player.getUniqueID());
         if (animationData != null && animationData.isActive()) {
             Frame frame = (Frame) animationData.animation.currentFrame();
@@ -263,7 +243,7 @@ public class CNPCAnimationHelper {
             return false;
         }
 
-        if (animationData != null && animationData.isActive()) {
+        if (animationData.isActive()) {
             if (frame.frameParts.containsKey(EnumAnimationPart.FULL_MODEL)) {
                 FramePart part = frame.frameParts.get(EnumAnimationPart.FULL_MODEL);
                 float pi = 180 / (float) Math.PI;
@@ -284,7 +264,7 @@ public class CNPCAnimationHelper {
         GL11.glRotatef((entityclientplayermp.rotationYaw - f4) * 0.1F, 0.0F, 1.0F, 0.0F);
 
         try {
-            dbc_render(player);
+            dbcRender(player);
         } catch (Exception e) {
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             Minecraft.getMinecraft().getTextureManager().bindTexture(entityclientplayermp.getLocationSkin());
@@ -326,7 +306,7 @@ public class CNPCAnimationHelper {
                     f3 = (float) (i >> 8 & 255) / 255.0F;
                     f4 = (float) (i & 255) / 255.0F;
                     GL11.glColor4f(f12, f3, f4, 1.0F);
-                    mixin_renderItem(player, itemstack, k, EQUIPPED_FIRST_PERSON, renderBlocksIr, resItemGlint);
+                    animationRenderItem(player, itemstack, k, EQUIPPED_FIRST_PERSON, renderBlocksIr, resItemGlint);
                 }
             } else {
                 k = itemstack.getItem().getColorFromItemStack(itemstack, 0);
@@ -334,7 +314,7 @@ public class CNPCAnimationHelper {
                 f12 = (float) (k >> 8 & 255) / 255.0F;
                 f3 = (float) (k & 255) / 255.0F;
                 GL11.glColor4f(f11, f12, f3, 1.0F);
-                mixin_renderItem(player, itemstack, 0, EQUIPPED_FIRST_PERSON, renderBlocksIr, resItemGlint);
+                animationRenderItem(player, itemstack, 0, EQUIPPED_FIRST_PERSON, renderBlocksIr, resItemGlint);
             }
 
             GL11.glPopMatrix();
@@ -413,591 +393,411 @@ public class CNPCAnimationHelper {
         }
     }
 
-    private static void dbc_render(EntityPlayer par1EntityPlayer) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
+    /**
+     * Renders the player's custom model with DBC mod-specific textures and animations.
+     *
+     * @param player The player entity to render.
+     */
+    private static void dbcRender(EntityPlayer player) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Minecraft mc = Minecraft.getMinecraft();
+        EntityClientPlayerMP clientPlayer = mc.thePlayer;
 
-        Class<?> JBRAH = Class.forName("JinRyuu.JBRA.JBRAH");
-        Class<?> JRMCoreHDBC = Class.forName("JinRyuu.JRMCore.JRMCoreHDBC");
-        Class<?> JRMCoreH = Class.forName("JinRyuu.JRMCore.JRMCoreH");
-        Class<?> ExtendedPlayer = Class.forName("JinRyuu.JRMCore.i.ExtendedPlayer");
-        Class<?> JGConfigClientSettings = Class.forName("JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings");
-        Class<?> RenderPlayerJBRA = Class.forName("JinRyuu.JBRA.RenderPlayerJBRA");
-        Class<?> JGConfigRaces = Class.forName("JinRyuu.JRMCore.server.config.dbc.JGConfigRaces");
+        // Check if JHDS and DBC features are enabled
+        boolean isJHDS = JBRAH.JHDS();
+        boolean isDBC = JRMCoreH.DBC();
 
-        Method func_aam = RenderPlayerJBRA.getDeclaredMethod("func_aam", int.class, boolean.class, boolean.class);
-        func_aam.setAccessible(true);
+        // Get the custom render player instance and its main model
+        RenderPlayerJBRA renderPlayer = (RenderPlayerJBRA) RenderManager.instance.getEntityRenderObject(player);
+        ModelBiped modelMain = renderPlayer.modelMain;
 
-        boolean jhdsBool = (boolean) JBRAH.getMethod("JHDS").invoke(null);
-        boolean dbcBool = (boolean) JRMCoreH.getMethod("DBC").invoke(null);
+        // Retrieve skin data if JHDS is enabled
+        Object skinData = isJHDS ? JBRAH.skinData(clientPlayer) : null;
 
-        RenderPlayer renderPlayer = (RenderPlayer) RenderManager.instance.getEntityRenderObject(par1EntityPlayer);
-        ModelBiped modelMain = (ModelBiped) RenderPlayerJBRA.getField("modelMain").get(renderPlayer);
-
-        EntityClientPlayerMP acp = mc.thePlayer;
-
-        Object data = null;
-        if (jhdsBool) {
-            data = JBRAH.getMethod("skinData", EntityPlayer.class).invoke(null, acp);
-        }
-
-        float f = 1.0F;
-        GL11.glColor3f(f + getR(), f + getG(), f + getB());
+        // Set initial color with RGB offsets from RenderPlayerJBRA
+        float baseBrightness = 1.0F;
+        GL11.glColor3f(baseBrightness + getR(), baseBrightness + getG(), baseBrightness + getB());
         GL11.glPushMatrix();
-        //modelMain.field_78095_p = 0.0F;
-        modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-        String dns = (String) JRMCoreH.getField("dns").get(null);
+
+        // Apply default rotation angles to the model
+        modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, player);
+
+        // Retrieve player data from JRMCoreH
+        String dns = JRMCoreH.dns;
         if (dns.length() > 3) {
-            int State = (byte) JRMCoreH.getField("State").get(null);
-            int race = (int) JRMCoreH.getMethod("dnsRace", String.class).invoke(null, dns);
-            boolean saiOozar = (boolean) JRMCoreH.getMethod("rSai", int.class).invoke(null, race) && (State == 7 || State == 8);
-            int gen = (int) JRMCoreH.getMethod("dnsGender", String.class).invoke(null, dns);
-            int skintype = (int) JRMCoreH.getMethod("dnsSkinT", String.class).invoke(null, dns);
-            boolean lg = (boolean) JRMCoreH.getMethod("lgndb", EntityPlayer.class, int.class, int.class).invoke(null, par1EntityPlayer, race, State);
-            boolean iau = (boolean) JRMCoreH.getMethod("rc_arc", int.class).invoke(null, race) && State == 6;
-            String dnsau = (String) JRMCoreH.getMethod("data", int.class, String.class).invoke(null, 16, "");
-            dnsau = dnsau.contains(";") ? dnsau.substring(1) : (par1EntityPlayer.getCommandSenderName().equals(mc.thePlayer.getCommandSenderName()) ? dnsau : "");
-            int bodytype = skintype == 0 ? (int) JRMCoreH.getMethod("dnsBodyC1_0", String.class).invoke(null, dns) : (int) JRMCoreH.getMethod("dnsBodyT", String.class).invoke(null, dns);
-            int bodycm = skintype == 0 ? 0 : (iau ? (int) JRMCoreH.getMethod("dnsauCM", String.class).invoke(null, dns) : (int) JRMCoreH.getMethod("dnsBodyCM", String.class).invoke(null, dns));
-            int bodyc1 = skintype == 0 ? 0 : (iau ? (int) JRMCoreH.getMethod("dnsauC1", String.class).invoke(null, dns) : (int) JRMCoreH.getMethod("dnsBodyC1", String.class).invoke(null, dns));
-            int bodyc2 = skintype == 0 ? 0 : (iau ? (int) JRMCoreH.getMethod("dnsauC2", String.class).invoke(null, dns) : (int) JRMCoreH.getMethod("dnsBodyC2", String.class).invoke(null, dns));
-            int bodyc3 = skintype == 0 ? 0 : (iau ? (int) JRMCoreH.getMethod("dnsauC3", String.class).invoke(null, dns) : (int) JRMCoreH.getMethod("dnsBodyC3", String.class).invoke(null, dns));
+            int state = JRMCoreH.State;
+            int race = JRMCoreH.dnsRace(dns);
+            boolean isSaiOozar = JRMCoreH.rSai(race) && (state == 7 || state == 8);
+            int gender = JRMCoreH.dnsGender(dns);
+            int skinType = JRMCoreH.dnsSkinT(dns);
+            boolean isLegendary = JRMCoreH.lgndb(player, race, state);
+            boolean isArcosianUltimate = JRMCoreH.rc_arc(race) && state == 6;
+            String dnsau = JRMCoreH.data(16, "");
+            dnsau = dnsau.contains(";") ? dnsau.substring(1) : (player.getCommandSenderName().equals(mc.thePlayer.getCommandSenderName()) ? dnsau : "");
 
-            int plyrSpc = skintype == 0 ? 0 : (((int[]) JRMCoreH.getField("RaceCustomSkin").get(null))[race] == 0 ? 0 : (bodytype >= ((int[]) JRMCoreH.getField("Specials").get(null))[race] ? ((int[]) JRMCoreH.getField("Specials").get(null))[race] - 1 : bodytype));
-            int[] an = new int[]{1, 0, 2, 0, 0, 3, 0, 1, 1};
+            // Calculate body attributes based on skin type and state
+            int bodyType = skinType == 0 ? JRMCoreH.dnsBodyC1_0(dns) : JRMCoreH.dnsBodyT(dns);
+            int bodyColorMain = skinType == 0 ? 0 : (isArcosianUltimate ? JRMCoreH.dnsauCM(dns) : JRMCoreH.dnsBodyCM(dns));
+            int bodyColor1 = skinType == 0 ? 0 : (isArcosianUltimate ? JRMCoreH.dnsauC1(dns) : JRMCoreH.dnsBodyC1(dns));
+            int bodyColor2 = skinType == 0 ? 0 : (isArcosianUltimate ? JRMCoreH.dnsauC2(dns) : JRMCoreH.dnsBodyC2(dns));
+            int bodyColor3 = skinType == 0 ? 0 : (isArcosianUltimate ? JRMCoreH.dnsauC3(dns) : JRMCoreH.dnsBodyC3(dns));
 
-            Object ep = ExtendedPlayer.getMethod("get", EntityPlayer.class).invoke(null, acp);
-            int animKiShoot = (int) ExtendedPlayer.getMethod("getAnimKiShoot").invoke(ep);
-            int blocking = (int) ExtendedPlayer.getMethod("getBlocking").invoke(ep);
+            int[] raceCustomSkin = JRMCoreH.RaceCustomSkin;
+            int[] specials = JRMCoreH.Specials;
+            int playerSpecial = skinType == 0 || raceCustomSkin[race] == 0 ? 0 : (bodyType >= specials[race] ? specials[race] - 1 : bodyType);
 
+            // Animation state logic
+            ExtendedPlayer extendedPlayer = ExtendedPlayer.get(clientPlayer);
+            int animKiShoot = extendedPlayer.getAnimKiShoot();
+            int blocking = extendedPlayer.getBlocking();
             boolean instantTransmission = blocking == 2;
-            int id = blocking != 0 ? (instantTransmission ? 6 : 0) : (animKiShoot != 0 ? an[animKiShoot - 1] + 2 : -1);
-            if (!(boolean) JGConfigClientSettings.getField("CLIENT_DA4").get(null)) {
-                id = -1;
+            int[] animationIndices = {1, 0, 2, 0, 0, 3, 0, 1, 1};
+            int animationId = blocking != 0 ? (instantTransmission ? 6 : 0) : (animKiShoot != 0 ? animationIndices[animKiShoot - 1] + 2 : -1);
+            if (!JGConfigClientSettings.CLIENT_DA4) {
+                animationId = -1;
             }
 
-            int tailCol;
-
-            int jx;
-            int j;
-            if (dbcBool) {
-                String[] s = ((String) JRMCoreH.getMethod("data", String.class, int.class, String.class).invoke(null, acp.getCommandSenderName(), 1, "0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0")).split(";");
-                tailCol = Integer.parseInt(s[2]);
-                if (tailCol == 1) {
-                    String[] PlyrSkills = (String[]) JRMCoreH.getMethod("PlyrSkills", EntityPlayer.class).invoke(null, acp);
-                    jx = (int) JRMCoreH.getMethod("SklLvl", int.class, String[].class).invoke(null, 12, PlyrSkills);
-                    j = (int) JRMCoreH.getMethod("SklLvl", int.class, String[].class).invoke(null, 15, PlyrSkills);
-                    String ss = s[17];
-                    boolean v = dbcBool && !ss.equals("-1");
+            // Handle tail rendering for Saiyans
+            if (isDBC) {
+                String[] playerData = JRMCoreH.data(clientPlayer.getCommandSenderName(), 1, "0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0").split(";");
+                int tailColor = Integer.parseInt(playerData[2]);
+                if (tailColor == 1) {
+                    String[] playerSkills = JRMCoreH.PlyrSkills(clientPlayer);
+                    int skillLevel12 = JRMCoreH.SklLvl(12, playerSkills);
+                    int skillLevel15 = JRMCoreH.SklLvl(15, playerSkills);
+                    String ss = playerData[17];
+                    boolean hasSkill = isDBC && !ss.equals("-1");
                     GL11.glPushMatrix();
-                    if (v && (jx > 0 || j > 0)) {
-                        if (id > -1) {
-                            func_aam.invoke(renderPlayer, id, false, true);
+                    if (hasSkill && (skillLevel12 > 0 || skillLevel15 > 0)) {
+                        if (animationId > -1) {
+                            dbcFunctionAnimation(animationId, false, true);
                         }
-
                         GL11.glRotatef(6.0F, 0.0F, 0.0F, 1.0F);
                         GL11.glTranslatef(-0.29F, 0.15F, 0.0F);
-                        RenderPlayerJBRA.getMethod("kss", Entity.class, boolean.class, int.class, int.class, int.class).invoke(
-                            null, acp, false, Integer.parseInt(ss), jx, j);
+                        RenderPlayerJBRA.kss(clientPlayer, false, Integer.parseInt(ss), skillLevel12, skillLevel15);
                     }
-
                     GL11.glPopMatrix();
                 }
             }
 
-            float h1 = 1.0F;
-            ResourceLocation bdyskn;
-            boolean ssg;
-            boolean v;
-            if (race == 5 && dbcBool) {
-                v = State == 1;
-                ssg = State == 3 && (boolean) JGConfigRaces.getField("CONFIG_MAJIN_PURE_PINK_SKIN").get(null);
-                if (v) {
-                    bodycm = 12561588;
-                } else if (ssg) {
-                    bodycm = 16757199;
-                }
+            // Render race-specific skins
+            ResourceLocation bodySkin;
+            if (race == 5 && isDBC) { // Majin
+                boolean isBaseMajin = state == 1;
+                boolean isPureMajin = state == 3 && JGConfigRaces.CONFIG_MAJIN_PURE_PINK_SKIN;
+                bodyColorMain = isBaseMajin ? 12561588 : (isPureMajin ? 16757199 : bodyColorMain);
+                bodySkin = new ResourceLocation("jinryuudragonbc:cc/majin/" + (gender == 1 ? "f" : "") + "majin.png");
+                renderBody(mc, modelMain, bodySkin, bodyColorMain, player);
 
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/majin/" + (gen == 1 ? "f" : "") + "majin.png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodycm);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                String[] playerData13 = ((String) JRMCoreH.getMethod("data", String.class, int.class, String.class).invoke(null,
-                    par1EntityPlayer.getCommandSenderName(), 13, "0;0;0;0,0,0+0")).split(";");
-                String[] absorptionData;
-                if (playerData13.length > 3) {
-                    absorptionData = playerData13[3].split(",");
-                } else {
-                    absorptionData = "0;0;0;0,0,0+0".split(",");
-                }
-
-                String[] absorptionVisuals = absorptionData[1].contains("+") ? absorptionData[1].split("\\+") : new String[]{absorptionData[1]};
+                String[] absorptionData = JRMCoreH.data(player.getCommandSenderName(), 13, "0;0;0;0,0,0+0").split(";");
+                String[] absorptionVisuals = absorptionData.length > 3 ? absorptionData[3].split(",")[1].split("\\+") : new String[]{"0"};
                 int absorbedRace = Integer.parseInt(absorptionVisuals[0]);
-                if ((boolean) JRMCoreH.getMethod("isRaceArcosian", int.class).invoke(null, absorbedRace)
-                    || (boolean) JRMCoreH.getMethod("isRaceNamekian", int.class).invoke(null, absorbedRace)) {
-                    bdyskn = new ResourceLocation("jinryuudragonbc:cc/majin/" + (gen == 1 ? "f" : "") + "majin_" + ((boolean) JRMCoreH.getMethod("isRaceArcosian", int.class).invoke(null, absorbedRace) ? "arco" : "namek") + ".png");
-                    mc.getTextureManager().bindTexture(bdyskn);
-                    glColor3f(bodycm);
-                    modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                    renderLimbs();
+                if (JRMCoreH.isRaceArcosian(absorbedRace) || JRMCoreH.isRaceNamekian(absorbedRace)) {
+                    bodySkin = new ResourceLocation("jinryuudragonbc:cc/majin/" + (gender == 1 ? "f" : "") + "majin_" + (JRMCoreH.isRaceArcosian(absorbedRace) ? "arco" : "namek") + ".png");
+                    renderBody(mc, modelMain, bodySkin, bodyColorMain, player);
                 }
-
-                if (!saiOozar) {
-                    if (skintype == 0) {
-                        bdyskn = acp.getLocationSkin().equals(noppes.npcs.client.ClientEventHandler.steveTextures) ? (gen >= 1 ? noppes.npcs.client.ClientEventHandler.fem : noppes.npcs.client.ClientEventHandler.steveTextures) : acp.getLocationSkin();
-                        if (jhdsBool && (boolean) JBRAH.getMethod("getSkinHas", Object.class).invoke(null, data)) {
-                            mc.getTextureManager().bindTexture((ResourceLocation) JBRAH.getMethod("getSkinLoc", Object.class).invoke(null, data));
-                        } else {
-                            mc.getTextureManager().bindTexture(bdyskn);
-                        }
-
-                        GL11.glColor3f(h1 + getR(), h1 + getG(), h1 + getB());
-                        modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                        renderLimbs();
-                    } else if (jhdsBool && (boolean) JBRAH.getMethod("getSkinHas", Object.class).invoke(null, data) && skintype == 0) {
-                        GL11.glColor3f(h1 + getR(), h1 + getG(), h1 + getB());
-                        mc.getTextureManager().bindTexture((ResourceLocation) JBRAH.getMethod("getSkinLoc", Object.class).invoke(null, data));
-                        modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                        renderLimbs();
-                    }
-                }
-            } else if (race == 3 && dbcBool) {
-                v = (boolean) JRMCoreH.getMethod("StusEfctsMe", int.class).invoke(null, 17);
-                ssg = (boolean) JRMCoreHDBC.getMethod("godKiUserBase", int.class, int.class).invoke(null, race, State);
-                if (ssg && v) {
-                    bodycm = 16744999;
-                    bodyc1 = 15524763;
-                    bodyc2 = 12854822;
-                    bodyc3 = 0;
-                }
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodycm);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodyc1);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodyc2);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                GL11.glColor3f(h1 + getR(), h1 + getG(), h1 + getB());
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-            } else if (race == 4 && dbcBool) {
-                v = (boolean) JRMCoreH.getMethod("StusEfctsMe", int.class).invoke(null, 17);
-                ssg = (boolean) JRMCoreHDBC.getMethod("godKiUserBase", int.class, int.class).invoke(null, race, State);
-                if (ssg && v) {
-                    State = 6;
-                    bodycm = 5526612;
-                    bodyc1 = 12829635;
-                    bodyc3 = 1513239;
-                }
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/arc/" + (gen == 1 ? "f" : "m") + "/0A" + ((short[]) JRMCoreH.getField("TransFrSkn").get(null))[State] + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodycm);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/arc/" + (gen == 1 ? "f" : "m") + "/1A" + ((short[]) JRMCoreH.getField("TransFrSkn").get(null))[State] + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodyc1);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/arc/" + (gen == 1 ? "f" : "m") + "/2A" + ((short[]) JRMCoreH.getField("TransFrSkn").get(null))[State] + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodyc2);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/arc/" + (gen == 1 ? "f" : "m") + "/3A" + ((short[]) JRMCoreH.getField("TransFrSkn").get(null))[State] + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodyc3);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/arc/" + (gen == 1 ? "f" : "m") + "/4A" + ((short[]) JRMCoreH.getField("TransFrSkn").get(null))[State] + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                GL11.glColor3f(h1 + getR(), h1 + getG(), h1 + getB());
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
+                renderDefaultSkin(mc, clientPlayer, modelMain, skinData, isJHDS, skinType, isSaiOozar);
+            } else if (race == 3 && isDBC) { // Namekian
+                renderNamekian(mc, modelMain, player, state, playerSpecial, bodyColorMain, bodyColor1, bodyColor2);
+            } else if (race == 4 && isDBC) { // Arcosian
+                renderArcosian(mc, modelMain, player, state, gender, playerSpecial, bodyColorMain, bodyColor1, bodyColor2, bodyColor3);
             } else {
-                if (saiOozar) {
-                    bdyskn = new ResourceLocation("jinryuudragonbc:cc/oozaru1.png");
-                    mc.getTextureManager().bindTexture(bdyskn);
-                    glColor3f(skintype != 0 ? bodycm : 11374471);
-                    modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                    renderLimbs();
-
-                    tailCol = race != 2 && bodytype == 0 ? 6498048 : bodytype;
-                    jx = State != 0 && State != 7 ? (lg ? 10092390 : 16574610) : (skintype == 1 ? bodyc1 : tailCol);
-                    bdyskn = new ResourceLocation("jinryuudragonbc:cc/oozaru2.png");
-                    mc.getTextureManager().bindTexture(bdyskn);
-                    glColor3f(jx);
-                    modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                    renderLimbs();
-                } else if (skintype != 0) {
-                    bdyskn = new ResourceLocation("jinryuumodscore:cc/" + (gen == 1 ? "f" : "") + "hum.png");
-                    mc.getTextureManager().bindTexture(bdyskn);
-                    glColor3f(bodycm);
-                    modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                    renderLimbs();
-                }
-
-                if (!saiOozar) {
-                    if (skintype == 0) {
-                        bdyskn = acp.getLocationSkin().equals(noppes.npcs.client.ClientEventHandler.steveTextures) ? (gen >= 1 ? noppes.npcs.client.ClientEventHandler.fem : noppes.npcs.client.ClientEventHandler.steveTextures) : acp.getLocationSkin();
-                        if (jhdsBool && (boolean) JBRAH.getMethod("getSkinHas", Object.class).invoke(null, data)) {
-                            mc.getTextureManager().bindTexture((ResourceLocation) JBRAH.getMethod("getSkinLoc", Object.class).invoke(null, data));
-                        } else {
-                            mc.getTextureManager().bindTexture(bdyskn);
-                        }
-
-                        GL11.glColor3f(h1 + getR(), h1 + getG(), h1 + getB());
-                        modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                        renderLimbs();
-                    } else if (jhdsBool && (boolean) JBRAH.getMethod("getSkinHas", Object.class).invoke(null, data) && skintype == 0) {
-                        GL11.glColor3f(h1 + getR(), h1 + getG(), h1 + getB());
-                        mc.getTextureManager().bindTexture((ResourceLocation) JBRAH.getMethod("getSkinLoc", Object.class).invoke(null, data));
-                        modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                        renderLimbs();
-                    }
-
-                    if (State == 14) {
-                        tailCol = race != 2 && bodytype == 0 ? 6498048 : bodytype;
-                        tailCol = (boolean) JRMCoreH.getMethod("isAprilFoolsModeOn").invoke(null) ? 13292516 : tailCol;
-                        tailCol = skintype == 1 ? bodyc1 : tailCol;
-                        if ((boolean) JRMCoreH.getMethod("rSai", int.class).invoke(null, race) && tailCol == 6498048 && State == 14) {
-                            if ((boolean) JRMCoreH.getMethod("isAprilFoolsModeOn").invoke(null)) {
-                                tailCol = 13292516;
-                            } else {
-                                tailCol = 14292268;
-                            }
-                        }
-
-                        mc.getTextureManager().bindTexture(new ResourceLocation("jinryuudragonbc:cc/ss4" + (skintype == 0 ? "a" : "b") + ".png"));
-                        glColor3f(tailCol);
-                        modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                        renderLimbs();
-                    }
-                }
+                renderDefaultOrSaiyan(mc, clientPlayer, modelMain, player, skinData, isJHDS, skinType, isSaiOozar, gender, bodyType, state, race, bodyColorMain, bodyColor1, isLegendary);
             }
 
-            if ((boolean) JGConfigClientSettings.getField("CLIENT_DA19").get(null) && (dbcBool || (boolean) JRMCoreH.getMethod("NC").invoke(null))) {
-                GL11.glPushMatrix();
-                GL11.glEnable(3042);
-                GL11.glDisable(2896);
-                GL11.glBlendFunc(770, 771);
-                GL11.glAlphaFunc(516, 0.003921569F);
-                GL11.glDepthMask(false);
-                tailCol = Integer.parseInt((String) JRMCoreH.getMethod("data", String.class, int.class, String.class
-                ).invoke(null, par1EntityPlayer.getCommandSenderName(), 8, "200"));
-                float one = (float) tailCol / 100.0F;
-                j = (int) ((float) tailCol / one);
-                if (j < 70) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    mc.getTextureManager().bindTexture(new ResourceLocation("jinryuumodscore:cc/bruises1.png"));
-                    renderLimbs();
-                }
+            // Render bruises if damage indicators are enabled
+            renderBruises(mc, modelMain, player, isDBC, race);
 
-                if (j < 55) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    mc.getTextureManager().bindTexture(new ResourceLocation("jinryuumodscore:cc/bruises2.png"));
-                    renderLimbs();
-                }
-
-                if (j < 35) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    mc.getTextureManager().bindTexture(new ResourceLocation("jinryuumodscore:cc/bruises3.png"));
-                    renderLimbs();
-                }
-
-                if (j < 20) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    mc.getTextureManager().bindTexture(new ResourceLocation("jinryuumodscore:cc/bruises4.png"));
-                    renderLimbs();
-                }
-
-                GL11.glDepthMask(true);
-                GL11.glEnable(2896);
-                GL11.glDisable(3042);
-                GL11.glPopMatrix();
-            }
-
-            ItemStack itemstack = par1EntityPlayer.inventory.armorItemInSlot(2);
-            String dbcarmor;
-            Item item;
-            ResourceLocation mcarmor;
-            ResourceLocation armor;
-            ItemArmor itemarmor;
-            if (itemstack != null) {
-                item = itemstack.getItem();
-                if (item instanceof ItemArmor) {
-                    itemarmor = (ItemArmor) item;
-                    GL11.glPushMatrix();
-                    dbcarmor = itemarmor.getArmorTexture(itemstack, par1EntityPlayer, 2, null);
-                    mcarmor = RenderBiped.getArmorResource(par1EntityPlayer, itemstack, 1, null);
-                    if (dbcarmor != null) {
-                        dbcarmor = dbcarmor.replace("jbra", "").replace("_dam", "");
-                    }
-
-                    armor = dbcarmor != null ? new ResourceLocation(dbcarmor) : mcarmor;
-                    mc.getTextureManager().bindTexture(armor);
-                    GL11.glPushMatrix();
-                    if (id > -1) {
-                        func_aam.invoke(renderPlayer, id, false, true);
-                    }
-
-                    GL11.glColor3f(1.0F + getR(), 1.0F + getG(), 1.0F + getB());
-                    GL11.glScalef(1.0001F, 1.0001F, 1.0001F);
-                    if (dbcarmor != null) {
-                        modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                        modelMain.textureHeight = 64;
-                        modelMain.textureWidth = 128;
-                        renderLimbs();
-                    } else {
-                        modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                        renderLimbs();
-                    }
-
-                    GL11.glPopMatrix();
-                    GL11.glPopMatrix();
-                }
-            }
-
-            if (race == 3 && dbcBool) {
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodycm);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodyc1);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodyc2);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                GL11.glColor3f(h1 + getR(), h1 + getG(), h1 + getB());
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-            } else if (race == 4 && dbcBool) {
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/arc/" + (gen == 1 ? "f" : "m") + "/0A" + ((short[]) JRMCoreH.getField("TransFrSkn").get(null))[State] + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodycm);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/arc/" + (gen == 1 ? "f" : "m") + "/1A" + ((short[]) JRMCoreH.getField("TransFrSkn").get(null))[State] + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodyc1);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/arc/" + (gen == 1 ? "f" : "m") + "/2A" + ((short[]) JRMCoreH.getField("TransFrSkn").get(null))[State] + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodyc2);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/arc/" + (gen == 1 ? "f" : "m") + "/3A" + ((short[]) JRMCoreH.getField("TransFrSkn").get(null))[State] + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                glColor3f(bodyc3);
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-
-                bdyskn = new ResourceLocation("jinryuudragonbc:cc/arc/" + (gen == 1 ? "f" : "m") + "/4A" + ((short[]) JRMCoreH.getField("TransFrSkn").get(null))[State] + plyrSpc + ".png");
-                mc.getTextureManager().bindTexture(bdyskn);
-                GL11.glColor3f(h1 + getR(), h1 + getG(), h1 + getB());
-                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                renderLimbs();
-            } else {
-                if (saiOozar) {
-                    bdyskn = new ResourceLocation("jinryuudragonbc:cc/oozaru1.png");
-                    mc.getTextureManager().bindTexture(bdyskn);
-                    glColor3f(skintype != 0 ? bodycm : 11374471);
-                    modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                    renderLimbs();
-
-                    jx = race != 2 && bodytype == 0 ? 6498048 : bodytype;
-                    j = State != 0 && State != 7 ? (lg ? 10092390 : 16574610) : (skintype == 1 ? bodyc1 : jx);
-                    bdyskn = new ResourceLocation("jinryuudragonbc:cc/oozaru2.png");
-                    mc.getTextureManager().bindTexture(bdyskn);
-                    glColor3f(j);
-                    modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                    renderLimbs();
-                } else if (skintype != 0) {
-                    bdyskn = new ResourceLocation("jinryuumodscore:cc/" + (gen == 1 ? "f" : "") + "hum.png");
-                    mc.getTextureManager().bindTexture(bdyskn);
-                    glColor3f(bodycm);
-                    modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                    renderLimbs();
-                }
-
-                if (!saiOozar) {
-                    if (skintype == 0) {
-                        bdyskn = acp.getLocationSkin().equals(noppes.npcs.client.ClientEventHandler.steveTextures) ? (gen >= 1 ? noppes.npcs.client.ClientEventHandler.fem : ClientEventHandler.steveTextures) : acp.getLocationSkin();
-                        if (jhdsBool && (boolean) JBRAH.getMethod("getSkinHas", Object.class).invoke(null, data)) {
-                            mc.getTextureManager().bindTexture((ResourceLocation) JBRAH.getMethod("getSkinLoc", Object.class).invoke(null, data));
-                        } else {
-                            mc.getTextureManager().bindTexture(bdyskn);
-                        }
-
-                        GL11.glColor3f(h1 + getR(), h1 + getG(), h1 + getB());
-                        modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                        renderLimbs();
-                    } else if (jhdsBool && (boolean) JBRAH.getMethod("getSkinHas", Object.class).invoke(null, data) && skintype == 0) {
-                        GL11.glColor3f(h1 + getR(), h1 + getG(), h1 + getB());
-                        mc.getTextureManager().bindTexture((ResourceLocation) JBRAH.getMethod("getSkinLoc", Object.class).invoke(null, data));
-
-                        modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                        renderLimbs();
-                    }
-
-                    if (State == 14) {
-                        tailCol = race != 2 && bodytype == 0 ? 6498048 : bodytype;
-                        tailCol = (boolean) JRMCoreH.getMethod("isAprilFoolsModeOn").invoke(null) ? 13292516 : tailCol;
-                        jx = skintype == 1 ? bodyc1 : tailCol;
-                        if ((boolean) JRMCoreH.getMethod("rSai", int.class).invoke(null, race) && jx == 6498048 && State == 14) {
-                            if ((boolean) JRMCoreH.getMethod("isAprilFoolsModeOn").invoke(null)) {
-                                jx = 13292516;
-                            } else {
-                                jx = 14292268;
-                            }
-                        }
-
-                        mc.getTextureManager().bindTexture(new ResourceLocation("jinryuudragonbc:cc/ss4" + (skintype == 0 ? "a" : "b") + ".png"));
-                        glColor3f(jx);
-                        modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                        renderLimbs();
-                    }
-                }
-            }
-
-            if ((boolean) JGConfigClientSettings.getField("CLIENT_DA19").get(null)) {
-                GL11.glPushMatrix();
-                GL11.glEnable(3042);
-                GL11.glDisable(2896);
-                GL11.glBlendFunc(770, 771);
-                GL11.glAlphaFunc(516, 0.003921569F);
-                GL11.glDepthMask(false);
-                tailCol = (int) JRMCoreH.getMethod(
-                    "stat", Entity.class, int.class, int.class, int.class, int.class, int.class, int.class, float.class).invoke(null,
-                    par1EntityPlayer, 2,
-                    JRMCoreH.getField("Pwrtyp").get(null), 2,
-                    ((int[]) JRMCoreH.getField("PlyrAttrbts").get(null))[2], race,
-                    JRMCoreH.getField("Class").get(null), 0.0F);
-                jx = Integer.parseInt((String) JRMCoreH.getMethod("data", String.class, int.class, String.class).invoke(null, par1EntityPlayer.getCommandSenderName(), 8, "200"));
-                float one = (float) tailCol / 100.0F;
-                int perc = (int) ((float) jx / one);
-                if (perc < 70) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    mc.getTextureManager().bindTexture(new ResourceLocation("jinryuumodscore:cc/bruises1.png"));
-                    renderLimbs();
-                }
-
-                if (perc < 55) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    mc.getTextureManager().bindTexture(new ResourceLocation("jinryuumodscore:cc/bruises2.png"));
-                    renderLimbs();
-                }
-
-                if (perc < 35) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    mc.getTextureManager().bindTexture(new ResourceLocation("jinryuumodscore:cc/bruises3.png"));
-                    renderLimbs();
-                }
-
-                if (perc < 20) {
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    mc.getTextureManager().bindTexture(new ResourceLocation("jinryuumodscore:cc/bruises4.png"));
-                    renderLimbs();
-                }
-
-                GL11.glDepthMask(true);
-                GL11.glEnable(2896);
-                GL11.glDisable(3042);
-                GL11.glPopMatrix();
-            }
-
-            if (itemstack != null) {
-                item = itemstack.getItem();
-                if (item instanceof ItemArmor) {
-                    itemarmor = (ItemArmor) item;
-                    GL11.glPushMatrix();
-                    dbcarmor = itemarmor.getArmorTexture(itemstack, par1EntityPlayer, 2, null);
-                    mcarmor = RenderBiped.getArmorResource(par1EntityPlayer, itemstack, 1, null);
-                    if (dbcarmor != null) {
-                        dbcarmor = dbcarmor.replace("jbra", "").replace("_dam", "");
-                    }
-
-                    armor = dbcarmor != null ? new ResourceLocation(dbcarmor) : mcarmor;
-                    mc.getTextureManager().bindTexture(armor);
-                    if (id == 0 || id == 3 || id == 5) {
-                        if (id == 0) {
-                            if ((boolean) JGConfigClientSettings.getField("CLIENT_DA18").get(null)) {
-                                GL11.glPushMatrix();
-                                func_aam.invoke(renderPlayer, id, false, true);
-                                GL11.glColor3f(1.0F + getR(), 1.0F + getG(), 1.0F + getB());
-                                GL11.glScalef(1.0001F, 1.0001F, 1.0001F);
-                                if (dbcarmor != null) {
-                                    modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                                    modelMain.textureHeight = 64;
-                                    modelMain.textureWidth = 128;
-                                    renderLimbs();
-                                } else {
-                                    modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                                    renderLimbs();
-                                }
-
-                                GL11.glPopMatrix();
-                            }
-                        } else {
-                            GL11.glPushMatrix();
-                            func_aam.invoke(renderPlayer, id, false, true);
-                            GL11.glColor3f(1.0F + getR(), 1.0F + getG(), 1.0F + getB());
-                            GL11.glScalef(1.0001F, 1.0001F, 1.0001F);
-                            if (dbcarmor != null) {
-                                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                                modelMain.textureHeight = 64;
-                                modelMain.textureWidth = 128;
-                                renderLimbs();
-                            } else {
-                                modelMain.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, par1EntityPlayer);
-                                renderLimbs();
-                            }
-
-                            GL11.glPopMatrix();
-                        }
-                    }
-
-                    GL11.glPopMatrix();
-                }
-            }
+            // Render armor
+            renderArmor(mc, renderPlayer, modelMain, player, animationId);
         }
 
         GL11.glPopMatrix();
+    }
+
+    /**
+     * Renders the player's body with the specified texture and color.
+     *
+     * @param mc        Minecraft instance.
+     * @param model     The model to render.
+     * @param texture   The texture to apply.
+     * @param color     The color to apply.
+     * @param player    The player entity.
+     */
+    private static void renderBody(Minecraft mc, ModelBiped model, ResourceLocation texture, int color, EntityPlayer player) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        mc.getTextureManager().bindTexture(texture);
+        glColor3f(color);
+        model.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, player);
+        renderLimbs();
+    }
+
+    /**
+     * Renders the default player skin if applicable.
+     *
+     * @param mc        Minecraft instance.
+     * @param player    The client player.
+     * @param model     The model to render.
+     * @param skinData  Skin data from JHDS.
+     * @param isJHDS    Whether JHDS is enabled.
+     * @param skinType  The skin type.
+     * @param isSaiOozar Whether the player is in Oozaru form.
+     */
+    private static void renderDefaultSkin(Minecraft mc, EntityClientPlayerMP player, ModelBiped model, Object skinData, boolean isJHDS, int skinType, boolean isSaiOozar) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        if (!isSaiOozar && skinType == 0) {
+            ResourceLocation skin = player.getLocationSkin().equals(ClientEventHandler.steveTextures) ? ClientEventHandler.steveTextures : player.getLocationSkin();
+            if (isJHDS && JBRAH.getSkinHas(skinData)) {
+                skin = JBRAH.getSkinLoc(skinData);
+            }
+            mc.getTextureManager().bindTexture(skin);
+            GL11.glColor3f(1.0F + getR(), 1.0F + getG(), 1.0F + getB());
+            model.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, player);
+            renderLimbs();
+        }
+    }
+
+    /**
+     * Renders a Namekian player's body parts.
+     *
+     * @param mc         Minecraft instance.
+     * @param model      The model to render.
+     * @param player     The player entity.
+     * @param state      The player's state.
+     * @param playerSpecial Special skin variant.
+     * @param bodyCM     Main body color.
+     * @param bodyC1     Secondary color 1.
+     * @param bodyC2     Secondary color 2.
+     */
+    private static void renderNamekian(Minecraft mc, ModelBiped model, EntityPlayer player, int state, int playerSpecial, int bodyCM, int bodyC1, int bodyC2) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        boolean hasGodKi = JRMCoreH.StusEfctsMe(17) && JRMCoreHDBC.godKiUserBase(3, state);
+        if (hasGodKi) {
+            bodyCM = 16744999;
+            bodyC1 = 15524763;
+            bodyC2 = 12854822;
+        }
+        renderBody(mc, model, new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + playerSpecial + ".png"), bodyCM, player);
+        renderBody(mc, model, new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + playerSpecial + ".png"), bodyC1, player);
+        renderBody(mc, model, new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + playerSpecial + ".png"), bodyC2, player);
+        renderBody(mc, model, new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + playerSpecial + ".png"), getDefaultColor(), player);
+    }
+
+    /**
+     * Renders an Arcosian player's body parts.
+     *
+     * @param mc         Minecraft instance.
+     * @param model      The model to render.
+     * @param player     The player entity.
+     * @param state      The player's state.
+     * @param gender     The player's gender.
+     * @param playerSpecial Special skin variant.
+     * @param bodyCM     Main body color.
+     * @param bodyC1     Secondary color 1.
+     * @param bodyC2     Secondary color 2.
+     * @param bodyC3     Secondary color 3.
+     */
+    private static void renderArcosian(Minecraft mc, ModelBiped model, EntityPlayer player, int state, int gender, int playerSpecial, int bodyCM, int bodyC1, int bodyC2, int bodyC3) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        boolean hasGodKi = JRMCoreH.StusEfctsMe(17) && JRMCoreHDBC.godKiUserBase(4, state);
+        if (hasGodKi) {
+            state = 6;
+            bodyCM = 5526612;
+            bodyC1 = 12829635;
+            bodyC3 = 1513239;
+        }
+        short[] transFrSkn = JRMCoreH.TransFrSkn;
+        String genderPrefix = gender == 1 ? "f" : "m";
+        renderBody(mc, model, new ResourceLocation("jinryuudragonbc:cc/arc/" + genderPrefix + "/0A" + transFrSkn[state] + playerSpecial + ".png"), bodyCM, player);
+        renderBody(mc, model, new ResourceLocation("jinryuudragonbc:cc/arc/" + genderPrefix + "/1A" + transFrSkn[state] + playerSpecial + ".png"), bodyC1, player);
+        renderBody(mc, model, new ResourceLocation("jinryuudragonbc:cc/arc/" + genderPrefix + "/2A" + transFrSkn[state] + playerSpecial + ".png"), bodyC2, player);
+        renderBody(mc, model, new ResourceLocation("jinryuudragonbc:cc/arc/" + genderPrefix + "/3A" + transFrSkn[state] + playerSpecial + ".png"), bodyC3, player);
+        renderBody(mc, model, new ResourceLocation("jinryuudragonbc:cc/arc/" + genderPrefix + "/4A" + transFrSkn[state] + playerSpecial + ".png"), getDefaultColor(), player);
+    }
+
+    /**
+     * Renders default human or Saiyan Oozaru forms.
+     *
+     * @param mc         Minecraft instance.
+     * @param clientPlayer The client player.
+     * @param model      The model to render.
+     * @param player     The player entity.
+     * @param skinData   Skin data from JHDS.
+     * @param isJHDS     Whether JHDS is enabled.
+     * @param skinType   The skin type.
+     * @param isSaiOozar Whether the player is in Oozaru form.
+     * @param gender     The player's gender.
+     * @param bodyType   The body type.
+     * @param state      The player's state.
+     * @param race       The player's race.
+     * @param bodyCM     Main body color.
+     * @param bodyC1     Secondary color 1.
+     * @param isLegendary Whether the player is in a legendary state.
+     */
+    private static void renderDefaultOrSaiyan(Minecraft mc, EntityClientPlayerMP clientPlayer, ModelBiped model, EntityPlayer player, Object skinData, boolean isJHDS, int skinType, boolean isSaiOozar, int gender, int bodyType, int state, int race, int bodyCM, int bodyC1, boolean isLegendary) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        if (isSaiOozar) {
+            renderBody(mc, model, new ResourceLocation("jinryuudragonbc:cc/oozaru1.png"), skinType != 0 ? bodyCM : 11374471, player);
+            int tailColor = race != 2 && bodyType == 0 ? 6498048 : bodyType;
+            int oozaruColor = state != 0 && state != 7 ? (isLegendary ? 10092390 : 16574610) : (skinType == 1 ? bodyC1 : tailColor);
+            renderBody(mc, model, new ResourceLocation("jinryuudragonbc:cc/oozaru2.png"), oozaruColor, player);
+        } else if (skinType != 0) {
+            renderBody(mc, model, new ResourceLocation("jinryuumodscore:cc/" + (gender == 1 ? "f" : "") + "hum.png"), bodyCM, player);
+        }
+        renderDefaultSkin(mc, clientPlayer, model, skinData, isJHDS, skinType, isSaiOozar);
+        if (state == 14) {
+            int tailColor = race != 2 && bodyType == 0 ? 6498048 : bodyType;
+            tailColor = JRMCoreH.isAprilFoolsModeOn() ? 13292516 : tailColor;
+            int finalColor = skinType == 1 ? bodyC1 : tailColor;
+            if (JRMCoreH.rSai(race) && finalColor == 6498048) {
+                finalColor = JRMCoreH.isAprilFoolsModeOn() ? 13292516 : 14292268;
+            }
+            renderBody(mc, model, new ResourceLocation("jinryuudragonbc:cc/ss4" + (skinType == 0 ? "a" : "b") + ".png"), finalColor, player);
+        }
+    }
+
+    /**
+     * Renders bruise overlays based on player health percentage.
+     *
+     * @param mc     Minecraft instance.
+     * @param model  The model to render.
+     * @param player The player entity.
+     * @param isDBC  Whether DBC is enabled.
+     */
+    private static void renderBruises(Minecraft mc, ModelBiped model, EntityPlayer player, boolean isDBC, int race) {
+        if (JGConfigClientSettings.CLIENT_DA19 && (isDBC || JRMCoreH.NC())) {
+            GL11.glPushMatrix();
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
+            GL11.glDepthMask(false);
+
+
+            int maxHealth = JRMCoreH.stat(player, 2, JRMCoreH.Pwrtyp, 2, JRMCoreH.PlyrAttrbts[2], race, JRMCoreH.Class, 0.0F);
+            int currentHealth = Integer.parseInt(JRMCoreH.data(player.getCommandSenderName(), 8, "200"));
+            int healthPercentage = (int) ((float) currentHealth / (maxHealth / 100.0F));
+
+            String[] bruiseTextures = {
+                "jinryuumodscore:cc/bruises1.png",
+                "jinryuumodscore:cc/bruises2.png",
+                "jinryuumodscore:cc/bruises3.png",
+                "jinryuumodscore:cc/bruises4.png"
+            };
+            int[] thresholds = {70, 55, 35, 20};
+            for (int i = 0; i < bruiseTextures.length; i++) {
+                if (healthPercentage < thresholds[i]) {
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    mc.getTextureManager().bindTexture(new ResourceLocation(bruiseTextures[i]));
+                    renderLimbs();
+                }
+            }
+
+            GL11.glDepthMask(true);
+            GL11.glEnable(GL11.GL_LIGHTING);
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glPopMatrix();
+        }
+    }
+
+    /**
+     * Renders the player's armor.
+     *
+     * @param mc          Minecraft instance.
+     * @param renderPlayer The custom render player instance.
+     * @param model       The model to render.
+     * @param player      The player entity.
+     * @param animationId The current animation ID.
+     */
+    private static void renderArmor(Minecraft mc, RenderPlayerJBRA renderPlayer, ModelBiped model, EntityPlayer player, int animationId) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        ItemStack armorStack = player.inventory.armorItemInSlot(2);
+        if (armorStack != null && armorStack.getItem() instanceof ItemArmor) {
+            ItemArmor armorItem = (ItemArmor) armorStack.getItem();
+            GL11.glPushMatrix();
+            String dbcArmorTexture = armorItem.getArmorTexture(armorStack, player, 2, null);
+            ResourceLocation armorTexture = dbcArmorTexture != null ? new ResourceLocation(dbcArmorTexture.replace("jbra", "").replace("_dam", "")) : RenderBiped.getArmorResource(player, armorStack, 1, null);
+            mc.getTextureManager().bindTexture(armorTexture);
+
+            if (animationId > -1) {
+                dbcFunctionAnimation(animationId, false, true);
+            }
+            GL11.glColor3f(1.0F + getR(), 1.0F + getG(), 1.0F + getB());
+            GL11.glScalef(1.0001F, 1.0001F, 1.0001F);
+            if (dbcArmorTexture != null) {
+                model.textureHeight = 64;
+                model.textureWidth = 128;
+            }
+            model.setRotationAngles(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F, player);
+            renderLimbs();
+            GL11.glPopMatrix();
+        }
+    }
+
+    private static void dbcFunctionAnimation(int id, boolean s, boolean fp) {
+        if (s) {
+            if (id != 0 && id != 6) {
+                if (id == 1) {
+                    GL11.glTranslatef(-0.2F, -0.4F, -0.8F);
+                    GL11.glRotatef(50.0F, 1.0F, 0.0F, 1.0F);
+                    GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
+                    GL11.glRotatef(20.0F, 0.0F, 0.0F, 1.0F);
+                } else if (id != 2 && id != 3) {
+                    if (id == 4 || id == 5) {
+                        GL11.glTranslatef(-0.2F, 0.4F, -0.1F);
+                        GL11.glRotatef(10.0F, -1.0F, 0.0F, 0.0F);
+                        GL11.glRotatef(20.0F, 0.0F, 0.0F, -1.0F);
+                        GL11.glRotatef(40.0F, 0.0F, 0.0F, 1.0F);
+                    }
+                } else {
+                    GL11.glTranslatef(-0.2F, 0.0F, -0.1F);
+                    GL11.glRotatef(10.0F, -1.0F, 0.0F, 0.0F);
+                    GL11.glRotatef(20.0F, 0.0F, 0.0F, -1.0F);
+                }
+            } else {
+                if (id == 0) {
+                    if (!JGConfigClientSettings.CLIENT_DA18) {
+                        return;
+                    }
+                } else if (!JGConfigClientSettings.instantTransmissionFirstPerson) {
+                    return;
+                }
+
+                GL11.glEnable(3042);
+                GL11.glBlendFunc(770, 771);
+                GL11.glAlphaFunc(516, 0.003921569F);
+                GL11.glDepthMask(false);
+                GL11.glTranslatef(-0.5F, -0.1F, -0.1F);
+                GL11.glRotatef(40.0F, 0.0F, 0.0F, -1.0F);
+                GL11.glRotatef(80.0F, -1.0F, 0.0F, 0.0F);
+                GL11.glRotatef((float)(id == 0 ? -20 : 30), 0.0F, 0.0F, 1.0F);
+            }
+        } else if (id == 0) {
+            if (JGConfigClientSettings.CLIENT_DA18) {
+                GL11.glTranslatef(-0.2F, -0.4F, -0.8F);
+                GL11.glRotatef(50.0F, 1.0F, 0.0F, 1.0F);
+                GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
+                GL11.glRotatef(20.0F, 0.0F, 0.0F, 1.0F);
+            }
+        } else if (id == 3) {
+            GL11.glTranslatef(0.1F, -0.2F, -0.5F);
+            GL11.glTranslatef(-0.2F, 0.0F, -0.1F);
+            GL11.glRotatef(10.0F, -1.0F, 0.0F, 0.0F);
+            GL11.glRotatef(20.0F, 0.0F, 0.0F, -1.0F);
+            GL11.glRotatef(115.0F, 0.0F, 1.0F, 0.0F);
+        } else if (id == 5) {
+            GL11.glTranslatef(-0.2F, -0.4F, -0.8F);
+            GL11.glTranslatef(-0.4F, 0.1F, -0.1F);
+            GL11.glRotatef(42.0F, -1.0F, 0.0F, 0.0F);
+            GL11.glRotatef(10.0F, 0.0F, 0.0F, 1.0F);
+            GL11.glRotatef(115.0F, 0.0F, 1.0F, 0.0F);
+            GL11.glTranslatef(-0.6F, 0.08F, 0.3F);
+        }
+    }
+
+    /**
+     * Returns the default RGB color adjusted by RenderPlayerJBRA offsets.
+     *
+     * @return The default color as an integer.
+     */
+    private static int getDefaultColor() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        float r = 1.0F + getR();
+        float g = 1.0F + getG();
+        float b = 1.0F + getB();
+        return (int) (r * 255) << 16 | (int) (g * 255) << 8 | (int) (b * 255);
     }
 
     private static float getR() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -1032,7 +832,7 @@ public class CNPCAnimationHelper {
         GL11.glColor3f(r + getR(), g + getG(), b + getB());
     }
 
-    private static void mixin_renderItem(EntityLivingBase p_78443_1_, ItemStack p_78443_2_, int p_78443_3_, IItemRenderer.ItemRenderType type, RenderBlocks renderBlocksIr, ResourceLocation resItemGlint) {
+    private static void animationRenderItem(EntityLivingBase p_78443_1_, ItemStack p_78443_2_, int p_78443_3_, IItemRenderer.ItemRenderType type, RenderBlocks renderBlocksIr, ResourceLocation resItemGlint) {
         GL11.glPushMatrix();
         TextureManager texturemanager = Minecraft.getMinecraft().getTextureManager();
         Item item = p_78443_2_.getItem();
