@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client;
 
 import JinRyuu.JBRA.JBRAH;
+import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHDBC;
@@ -58,7 +59,7 @@ public class CNPCAnimationHelper {
         }
 
         if (noppes.npcs.client.ClientEventHandler.renderingPlayer != null) {
-            noppes.npcs.client.ClientEventHandler.playerModel = (modelRenderer).baseModel;
+            noppes.npcs.client.ClientEventHandler.playerModel = modelRenderer.baseModel;
             if (ClientCacheHandler.playerAnimations.containsKey(noppes.npcs.client.ClientEventHandler.renderingPlayer.getUniqueID())) {
                 AnimationData animData = ClientCacheHandler.playerAnimations.get(noppes.npcs.client.ClientEventHandler.renderingPlayer.getUniqueID());
                 EnumAnimationPart mainPartType = getPlayerPartType(modelRenderer);
@@ -89,6 +90,32 @@ public class CNPCAnimationHelper {
                         }
                     }
                 }
+            }
+            if (modelRenderer.baseModel instanceof ModelBipedDBC) {
+                ModelBipedDBC bipedDBC = (ModelBipedDBC) modelRenderer.baseModel;
+                bipedDBC.face1.rotationPointX = bipedDBC.bipedHead.rotationPointX;
+                bipedDBC.face1.rotationPointY = bipedDBC.bipedHead.rotationPointY;
+                bipedDBC.face1.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+
+                bipedDBC.face2.rotationPointX = bipedDBC.bipedHead.rotationPointX;
+                bipedDBC.face2.rotationPointY = bipedDBC.bipedHead.rotationPointY;
+                bipedDBC.face2.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+
+                bipedDBC.face3.rotationPointX = bipedDBC.bipedHead.rotationPointX;
+                bipedDBC.face3.rotationPointY = bipedDBC.bipedHead.rotationPointY;
+                bipedDBC.face3.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+
+                bipedDBC.face4.rotationPointX = bipedDBC.bipedHead.rotationPointX;
+                bipedDBC.face4.rotationPointY = bipedDBC.bipedHead.rotationPointY;
+                bipedDBC.face4.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+
+                bipedDBC.face5.rotationPointX = bipedDBC.bipedHead.rotationPointX;
+                bipedDBC.face5.rotationPointY = bipedDBC.bipedHead.rotationPointY;
+                bipedDBC.face5.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+
+                bipedDBC.face6.rotationPointX = bipedDBC.bipedHead.rotationPointX;
+                bipedDBC.face6.rotationPointY = bipedDBC.bipedHead.rotationPointY;
+                bipedDBC.face6.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
             }
         }
         return false;
