@@ -31,14 +31,14 @@ public abstract class MixinResistances implements IKiResistance {
 
     @Inject(method = "readToNBT", at = @At("TAIL"), remap = false)
     public void readNBT(NBTTagCompound compound, CallbackInfo ci) {
-        if(compound.hasKey("KiRes"))
+        if (compound.hasKey("KiRes"))
             ki = compound.getFloat("KiRes");
     }
 
     @Inject(method = "applyResistance", at = @At("HEAD"), cancellable = true)
-    public void applyKiRes(DamageSource source, float damage, CallbackInfoReturnable<Float> cir){
-        if(!disableDamage){
-            if(source.damageType.equals("EnergyAttack")){
+    public void applyKiRes(DamageSource source, float damage, CallbackInfoReturnable<Float> cir) {
+        if (!disableDamage) {
+            if (source.damageType.equals("EnergyAttack")) {
                 damage *= (2 - ki);
                 cir.setReturnValue(damage);
                 cir.cancel();
@@ -46,11 +46,13 @@ public abstract class MixinResistances implements IKiResistance {
         }
     }
 
-    public float getKiResistance(){
+    public float getKiResistance() {
         return ki;
     }
 
-    public void setKiResistance(float newKi){
+    public void setKiResistance(float newKi) {
         ki = newKi;
-    };
+    }
+
+    ;
 }

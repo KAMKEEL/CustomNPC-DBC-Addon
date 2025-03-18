@@ -3,7 +3,6 @@ package kamkeel.npcdbc.mixins.early.impl.client;
 import kamkeel.npcdbc.client.CNPCAnimationHelper;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.EntityLivingBase;
-import noppes.npcs.AnimationMixinFunctions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

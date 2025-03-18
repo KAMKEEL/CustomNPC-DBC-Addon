@@ -21,7 +21,7 @@ public abstract class MixinInventoryTabCustomNpc extends AbstractTab {
     @Inject(method = "tabHelper", at = @At(value = "TAIL"), remap = false)
     private static void addTabHelperFunctionality(CallbackInfo ci) {
         int tab = GuiCNPCInventory.activeTab;
-        if(tab == -200){
+        if (tab == -200) {
             Minecraft mc = Minecraft.getMinecraft();
             mc.displayGuiScreen(new GuiDBC());
         }

@@ -39,12 +39,12 @@ public class MixinJRMCoreHDBC {
     }
 
     @Inject(method = "DBCsizeBasedOnRace(IIZ)F", at = @At(value = "TAIL"), cancellable = true)
-    private static void setCustomFormWidth(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir, @Local(name = "f2") float size){
+    private static void setCustomFormWidth(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir, @Local(name = "f2") float size) {
         if (CommonProxy.getCurrentJRMCTickPlayer() != null) {
             float sz = size;
             Form form = DBCData.get(CommonProxy.getCurrentJRMCTickPlayer()).getForm();
 
-            if(form != null) {
+            if (form != null) {
                 if (form.display.keepOriginalSize && form.stackable.vanillaStackable) {
                     cir.setReturnValue(sz *= form.display.formWidth);
                 } else {
@@ -65,7 +65,7 @@ public class MixinJRMCoreHDBC {
             float sz = size;
             Form form = DBCData.get(CommonProxy.getCurrentJRMCTickPlayer()).getForm();
 
-            if(form != null) {
+            if (form != null) {
                 if (form.display.keepOriginalSize && form.stackable.vanillaStackable) {
                     cir.setReturnValue(sz *= form.display.formSize);
                 } else {

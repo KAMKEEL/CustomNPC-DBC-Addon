@@ -22,11 +22,11 @@ public abstract class MixinJRMCExtendedPlayer implements IExtendedEntityProperti
     private EntityPlayer player;
 
     @Inject(method = "getGoDOn", at = @At("HEAD"), remap = false, cancellable = true)
-    public final void setGoDAnimColor(CallbackInfoReturnable<Integer> cir){
+    public final void setGoDAnimColor(CallbackInfoReturnable<Integer> cir) {
         DBCData dbcData = DBCData.get(this.player);
         Form form = dbcData.getForm();
 
-        if(form != null && form.mastery.destroyerEnabled && JGConfigDBCGoD.CONFIG_GOD_ENERGY_ENABLED && JGConfigDBCGoD.CONFIG_GOD_ENABLED){
+        if (form != null && form.mastery.destroyerEnabled && JGConfigDBCGoD.CONFIG_GOD_ENERGY_ENABLED && JGConfigDBCGoD.CONFIG_GOD_ENABLED) {
             cir.setReturnValue(1);
         }
     }

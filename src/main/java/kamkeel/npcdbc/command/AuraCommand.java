@@ -32,7 +32,7 @@ public class AuraCommand extends CommandKamkeelBase {
 
     @SubCommand(desc = "give an aura to a player by name", usage = "<player> <aura_name>")
     public void give(ICommandSender sender, String args[]) throws CommandException {
-        String playername=args[0];
+        String playername = args[0];
         String name = "";
         for (int i = 1; i < args.length; i++)
             name += args[i] + (i != args.length - 1 ? " " : "");
@@ -43,7 +43,7 @@ public class AuraCommand extends CommandKamkeelBase {
         }
         Aura aura = (Aura) DBCAPI.Instance().getAura(name);
 
-        for(PlayerData playerdata : data){
+        for (PlayerData playerdata : data) {
             PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
             if (!info.hasAuraUnlocked(aura.id)) {
                 info.addAura(aura);
@@ -60,7 +60,7 @@ public class AuraCommand extends CommandKamkeelBase {
 
     @SubCommand(desc = "give an aura to a player by numerical ID", usage = "<player> <aura_ID>")
     public void giveid(ICommandSender sender, String args[]) throws CommandException {
-        String playername=args[0];
+        String playername = args[0];
         int id = Integer.parseInt(args[1]);
 
         List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
@@ -75,7 +75,7 @@ public class AuraCommand extends CommandKamkeelBase {
             return;
         }
 
-        for(PlayerData playerdata : data){
+        for (PlayerData playerdata : data) {
             PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(playerdata);
             if (!info.hasAuraUnlocked(aura.id)) {
                 info.addAura(aura);
@@ -91,8 +91,8 @@ public class AuraCommand extends CommandKamkeelBase {
     }
 
     @SubCommand(desc = "remove an aura from a player by name", usage = "<player> <aura_name>")
-    public void remove(ICommandSender sender, String args[]) throws CommandException{
-        String playername=args[0];
+    public void remove(ICommandSender sender, String args[]) throws CommandException {
+        String playername = args[0];
         String name = "";
         for (int i = 1; i < args.length; i++)
             name += args[i] + (i != args.length - 1 ? " " : "");
@@ -109,9 +109,9 @@ public class AuraCommand extends CommandKamkeelBase {
             return;
         }
 
-        for(PlayerData playerdata : data){
+        for (PlayerData playerdata : data) {
             PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
-            if(playerDBCInfo.hasAura(aura)){
+            if (playerDBCInfo.hasAura(aura)) {
                 playerDBCInfo.removeAura(aura);
                 if (playerDBCInfo.selectedAura == aura.id)
                     playerDBCInfo.selectedAura = -1;
@@ -119,7 +119,7 @@ public class AuraCommand extends CommandKamkeelBase {
                     playerDBCInfo.currentAura = -1;
                 playerDBCInfo.updateClient();
                 sendResult(sender, String.format("%s §cremoved from §7'§b%s§7'", aura.getName(), playerdata.playername));
-                if(sender != playerdata.player)
+                if (sender != playerdata.player)
                     sendResult(playerdata.player, String.format("§cForm §7%s §cremoved.", aura.getName()));
 
             } else {
@@ -130,8 +130,8 @@ public class AuraCommand extends CommandKamkeelBase {
     }
 
     @SubCommand(desc = "remove an aura from a player by numerical ID", usage = "<player> <aura_ID>")
-    public void removeid(ICommandSender sender, String args[]) throws CommandException{
-        String playername=args[0];
+    public void removeid(ICommandSender sender, String args[]) throws CommandException {
+        String playername = args[0];
         int id = Integer.parseInt(args[1]);
 
         List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
@@ -146,9 +146,9 @@ public class AuraCommand extends CommandKamkeelBase {
             return;
         }
 
-        for(PlayerData playerdata : data){
+        for (PlayerData playerdata : data) {
             PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
-            if(playerDBCInfo.hasAura(aura)){
+            if (playerDBCInfo.hasAura(aura)) {
                 playerDBCInfo.removeAura(aura);
                 if (playerDBCInfo.selectedAura == aura.id)
                     playerDBCInfo.selectedAura = -1;
@@ -156,7 +156,7 @@ public class AuraCommand extends CommandKamkeelBase {
                     playerDBCInfo.currentAura = -1;
                 playerDBCInfo.updateClient();
                 sendResult(sender, String.format("%s §cremoved from §7'§b%s§7'", aura.getName(), playerdata.playername));
-                if(sender != playerdata.player)
+                if (sender != playerdata.player)
                     sendResult(playerdata.player, String.format("§cForm §7%s §cremoved.", aura.getName()));
 
             } else {
@@ -170,21 +170,21 @@ public class AuraCommand extends CommandKamkeelBase {
         desc = "clears all auras from a player",
         usage = "<player>"
     )
-    public void clear(ICommandSender sender, String args[]) throws CommandException{
-        String playername=args[0];
+    public void clear(ICommandSender sender, String args[]) throws CommandException {
+        String playername = args[0];
         List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
         if (data.isEmpty()) {
             sendError(sender, "Unknown player: " + playername);
             return;
         }
-        for(PlayerData playerdata : data){
+        for (PlayerData playerdata : data) {
             PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
             playerDBCInfo.unlockedAuras.clear();
             playerDBCInfo.currentAura = -1;
             playerDBCInfo.selectedAura = -1;
             playerDBCInfo.updateClient();
             sendResult(sender, String.format("Removed all auras from §7'§b%s§7'", playerdata.playername));
-            if(sender != playerdata.player)
+            if (sender != playerdata.player)
                 sendResult(playerdata.player, String.format("All custom auras removed."));
             return;
         }
@@ -195,21 +195,20 @@ public class AuraCommand extends CommandKamkeelBase {
         usage = "<player>"
     )
     public void info(ICommandSender sender, String args[]) throws CommandException {
-        String playername=args[0];
+        String playername = args[0];
 
         List<PlayerData> data = PlayerDataController.Instance.getPlayersData(sender, playername);
         if (data.isEmpty()) {
             sendError(sender, "Unknown player: " + playername);
             return;
         }
-        for(PlayerData playerdata : data){
+        for (PlayerData playerdata : data) {
             sendResult(sender, "--------------------");
             PlayerDBCInfo playerDBCInfo = PlayerDataUtil.getDBCInfo(playerdata);
-            if(playerDBCInfo.unlockedAuras.isEmpty()){
+            if (playerDBCInfo.unlockedAuras.isEmpty()) {
                 sendResult(sender, String.format("No Auras found for §7'§b%s§7'", playerdata.playername));
-            }
-            else {
-                for(int formID : playerDBCInfo.unlockedAuras){
+            } else {
+                for (int formID : playerDBCInfo.unlockedAuras) {
                     IAura aura = AuraController.getInstance().get(formID);
                     if (aura != null) {
                         sendResult(sender, String.format("%s", aura.getName()));
@@ -241,20 +240,20 @@ public class AuraCommand extends CommandKamkeelBase {
         usage = "<auraName>"
     )
     public void id(ICommandSender sender, String args[]) throws CommandException {
-        if(args.length == 0){
+        if (args.length == 0) {
             sendError(sender, "Please provide a name for the aura");
             return;
         }
         String auraName = String.join(" ", args).toLowerCase();
         Collection<Aura> auras = AuraController.getInstance().customAuras.values();
         int count = 0;
-        for(Aura aura : auras){
-            if(aura.getName().toLowerCase().contains(auraName)){
+        for (Aura aura : auras) {
+            if (aura.getName().toLowerCase().contains(auraName)) {
                 sendResult(sender, String.format("Aura \u00A7e%d\u00A77 - \u00A7c'%s'", aura.id, aura.getName()));
                 count++;
             }
         }
-        if(count == 0){
+        if (count == 0) {
             sendResult(sender, String.format("No Aura found with name: \u00A7c'%s'", auraName));
         }
     }

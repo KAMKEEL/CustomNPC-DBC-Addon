@@ -22,7 +22,8 @@ public final class DBCGetAura extends AbstractPacket {
         this.auraID = auraID;
     }
 
-    public DBCGetAura() {}
+    public DBCGetAura() {
+    }
 
     @Override
     public Enum getType() {
@@ -43,9 +44,9 @@ public final class DBCGetAura extends AbstractPacket {
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         int auraID = in.readInt();
         NBTTagCompound compound = new NBTTagCompound();
-        if (auraID != -1 && AuraController.getInstance().has(auraID)){
+        if (auraID != -1 && AuraController.getInstance().has(auraID)) {
             Aura aura = (Aura) AuraController.getInstance().get(auraID);
-            if(aura != null){
+            if (aura != null) {
                 compound = aura.writeToNBT();
                 compound.setString("Type", "ViewAura");
             }

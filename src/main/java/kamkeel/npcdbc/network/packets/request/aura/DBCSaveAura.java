@@ -24,7 +24,7 @@ public class DBCSaveAura extends AbstractPacket {
     private String prevName;
     private NBTTagCompound aura;
 
-    public DBCSaveAura(NBTTagCompound compound, String prev){
+    public DBCSaveAura(NBTTagCompound compound, String prev) {
         this.aura = compound;
         this.prevName = prev;
     }
@@ -51,7 +51,7 @@ public class DBCSaveAura extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCAURA))
+        if (!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCAURA))
             return;
 
         String prevName = ByteBufUtils.readString(in);
@@ -61,7 +61,7 @@ public class DBCSaveAura extends AbstractPacket {
 
         AuraController.getInstance().saveAura(aura);
 
-        if(!prevName.isEmpty() && !prevName.equals(aura.name)){
+        if (!prevName.isEmpty() && !prevName.equals(aura.name)) {
             AuraController.getInstance().deleteAuraFile(prevName);
         }
 

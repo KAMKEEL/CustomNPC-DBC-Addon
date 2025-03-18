@@ -108,7 +108,7 @@ public enum EnumAuraTypes2D {
         int state = data.getState();
 
         if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-            if (state > 0 && state< DBCForm.SuperSaiyan2)
+            if (state > 0 && state < DBCForm.SuperSaiyan2)
                 return 7;
             if (state == DBCForm.SuperSaiyan2)
                 return 10;
@@ -126,7 +126,7 @@ public enum EnumAuraTypes2D {
         return 5;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 }

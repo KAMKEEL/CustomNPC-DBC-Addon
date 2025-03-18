@@ -30,7 +30,8 @@ public final class DBCInfoSyncPacket extends LargeAbstractPacket {
     private NBTTagCompound syncData;
     private int operationID;
 
-    public DBCInfoSyncPacket() {}
+    public DBCInfoSyncPacket() {
+    }
 
     /**
      * Constructs a new LargeSyncPacket.
@@ -83,13 +84,13 @@ public final class DBCInfoSyncPacket extends LargeAbstractPacket {
         EnumSyncAction action = EnumSyncAction.values()[syncActionOrdinal];
         try {
             NBTTagCompound tag = ByteBufUtils.readBigNBT(data);
-            if(syncType == DBCSyncType.PLAYERDATA){
+            if (syncType == DBCSyncType.PLAYERDATA) {
                 ClientCacheHandler.playerData.setDBCSync(tag);
                 return;
             }
             handleSyncPacketClient(syncType, action, categoryID, tag);
+        } catch (RuntimeException ignored) {
         }
-        catch (RuntimeException ignored){}
     }
 
     private void handleSyncPacketClient(int syncType, EnumSyncAction enumSyncAction, int id, NBTTagCompound data) {

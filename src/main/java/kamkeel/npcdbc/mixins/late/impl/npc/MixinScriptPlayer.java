@@ -13,9 +13,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 @Mixin(value = ScriptPlayer.class, remap = false)
-public class MixinScriptPlayer<T extends EntityPlayerMP>  extends ScriptLivingBase<T> {
+public class MixinScriptPlayer<T extends EntityPlayerMP> extends ScriptLivingBase<T> {
 
-    @Shadow public T player;
+    @Shadow
+    public T player;
 
     public MixinScriptPlayer(T entity) {
         super(entity);
@@ -30,10 +31,9 @@ public class MixinScriptPlayer<T extends EntityPlayerMP>  extends ScriptLivingBa
         Set keySet = player.getEntityData().getCompoundTag("PlayerPersisted").func_150296_c();
         Iterator iterator = keySet.iterator();
 
-        while (iterator.hasNext())
-        {
-            String s = (String)iterator.next();
-            if(s.contains("jrmc"))
+        while (iterator.hasNext()) {
+            String s = (String) iterator.next();
+            if (s.contains("jrmc"))
                 return new ScriptDBCAddon<>(this.player);
         }
         return null;

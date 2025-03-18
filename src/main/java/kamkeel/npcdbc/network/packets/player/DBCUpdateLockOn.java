@@ -25,11 +25,12 @@ public class DBCUpdateLockOn extends AbstractPacket {
     private final boolean remove;
     private final int entityId;
 
-    public DBCUpdateLockOn(){
+    public DBCUpdateLockOn() {
         this.remove = true;
         this.entityId = -1;
     }
-    public DBCUpdateLockOn(int newEntityId){
+
+    public DBCUpdateLockOn(int newEntityId) {
         this.remove = false;
         this.entityId = newEntityId;
     }
@@ -46,21 +47,21 @@ public class DBCUpdateLockOn extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
             return;
 
         out.writeBoolean(remove);
-        if(!remove)
+        if (!remove)
             out.writeInt(entityId);
     }
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
             return;
 
         boolean remove = in.readBoolean();
-        if(remove) {
+        if (remove) {
             JRMCoreCliTicH.lockOn = null;
             return;
         }
@@ -73,15 +74,15 @@ public class DBCUpdateLockOn extends AbstractPacket {
     private void processEntity(int entityId) {
         Entity newEntity = Minecraft.getMinecraft().theWorld.getEntityByID(entityId);
 
-        if(newEntity instanceof EntityLivingBase)
+        if (newEntity instanceof EntityLivingBase)
             setLockOnTarget((EntityLivingBase) newEntity);
     }
 
     @SideOnly(Side.CLIENT)
-    public static void setLockOnTarget(EntityLivingBase newEntity){
-        if(newEntity != JRMCoreCliTicH.lockOn && JRMCoreH.SklLvl(6) > 0 && JRMCoreConfig.lockon) {
+    public static void setLockOnTarget(EntityLivingBase newEntity) {
+        if (newEntity != JRMCoreCliTicH.lockOn && JRMCoreH.SklLvl(6) > 0 && JRMCoreConfig.lockon) {
             EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-            if(player.getDistanceSqToEntity(newEntity) >= 35*35)
+            if (player.getDistanceSqToEntity(newEntity) >= 35 * 35)
                 return;
 
             JRMCoreCliTicH.lockOn = newEntity;

@@ -28,7 +28,8 @@ public final class DBCSelectAura extends AbstractPacket {
         this.auraID = auraID;
     }
 
-    public DBCSelectAura() {}
+    public DBCSelectAura() {
+    }
 
     @Override
     public Enum getType() {
@@ -50,12 +51,12 @@ public final class DBCSelectAura extends AbstractPacket {
         int auraID = in.readInt();
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
         PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(playerData);
-        if(auraID == -1)
+        if (auraID == -1)
             dbcInfo.currentAura = -1;
         dbcInfo.selectedAura = -1;
         NBTTagCompound compound = new NBTTagCompound();
-        if (auraID != -1 && AuraController.getInstance().has(auraID)){
-            if(dbcInfo.hasAuraUnlocked(auraID)){
+        if (auraID != -1 && AuraController.getInstance().has(auraID)) {
+            if (dbcInfo.hasAuraUnlocked(auraID)) {
                 Aura aura = (Aura) AuraController.getInstance().get(auraID);
                 dbcInfo.selectedAura = auraID;
                 NetworkUtility.sendServerMessage(player, "§b", "npcdbc.auraSelect", " ", aura.getMenuName());

@@ -99,7 +99,7 @@ public abstract class MixinEntityAura2 extends Entity implements IEntityAura {
 
 
         boolean isMCPlayer = this.entity == Minecraft.getMinecraft().thePlayer;
-        if(this.entity instanceof EntityPlayer && DBCData.get((EntityPlayer) this.entity).isFusionSpectator()){
+        if (this.entity instanceof EntityPlayer && DBCData.get((EntityPlayer) this.entity).isFusionSpectator()) {
             aura.setDead();
             ci.cancel();
             return;
@@ -107,7 +107,7 @@ public abstract class MixinEntityAura2 extends Entity implements IEntityAura {
 
         this.setSize(2.2f * getSize, 3.5f * getSize);
 
-        if(this.entity != null){
+        if (this.entity != null) {
             float offset = (isMCPlayer ? -1.6F : 0);
             aura.lastTickPosX = this.entity.lastTickPosX;
             aura.lastTickPosY = this.entity.lastTickPosY + offset;
@@ -132,7 +132,7 @@ public abstract class MixinEntityAura2 extends Entity implements IEntityAura {
         }
         if (bol6 == -2) {
             float height = getSize <= 0 ? this.entity.height : (getSize * 1.3f);
-                ParticleFormHandler.spawnAura2D(type2D, color, this.entity, data, height, isGUIAura);
+            ParticleFormHandler.spawnAura2D(type2D, color, this.entity, data, height, isGUIAura);
         }
     }
 
@@ -143,8 +143,8 @@ public abstract class MixinEntityAura2 extends Entity implements IEntityAura {
 //    }
 
     @Redirect(method = "onUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", ordinal = 0, remap = true))
-    private boolean setDamage(World instance, Entity particle){
-        if(particle instanceof IEntityCusPar) {
+    private boolean setDamage(World instance, Entity particle) {
+        if (particle instanceof IEntityCusPar) {
             ((IEntityCusPar) particle).setEntity(this.entity);
         }
         return worldObj.spawnEntityInWorld(particle);

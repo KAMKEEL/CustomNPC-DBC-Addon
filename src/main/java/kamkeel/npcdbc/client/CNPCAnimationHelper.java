@@ -544,11 +544,11 @@ public class CNPCAnimationHelper {
     /**
      * Renders the player's body with the specified texture and color.
      *
-     * @param mc        Minecraft instance.
-     * @param model     The model to render.
-     * @param texture   The texture to apply.
-     * @param color     The color to apply.
-     * @param player    The player entity.
+     * @param mc      Minecraft instance.
+     * @param model   The model to render.
+     * @param texture The texture to apply.
+     * @param color   The color to apply.
+     * @param player  The player entity.
      */
     private static void renderBody(Minecraft mc, ModelBiped model, ResourceLocation texture, int color, EntityPlayer player) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         mc.getTextureManager().bindTexture(texture);
@@ -560,12 +560,12 @@ public class CNPCAnimationHelper {
     /**
      * Renders the default player skin if applicable.
      *
-     * @param mc        Minecraft instance.
-     * @param player    The client player.
-     * @param model     The model to render.
-     * @param skinData  Skin data from JHDS.
-     * @param isJHDS    Whether JHDS is enabled.
-     * @param skinType  The skin type.
+     * @param mc         Minecraft instance.
+     * @param player     The client player.
+     * @param model      The model to render.
+     * @param skinData   Skin data from JHDS.
+     * @param isJHDS     Whether JHDS is enabled.
+     * @param skinType   The skin type.
      * @param isSaiOozar Whether the player is in Oozaru form.
      */
     private static void renderDefaultSkin(Minecraft mc, EntityClientPlayerMP player, ModelBiped model, Object skinData, boolean isJHDS, int skinType, boolean isSaiOozar) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
@@ -584,14 +584,14 @@ public class CNPCAnimationHelper {
     /**
      * Renders a Namekian player's body parts.
      *
-     * @param mc         Minecraft instance.
-     * @param model      The model to render.
-     * @param player     The player entity.
-     * @param state      The player's state.
+     * @param mc            Minecraft instance.
+     * @param model         The model to render.
+     * @param player        The player entity.
+     * @param state         The player's state.
      * @param playerSpecial Special skin variant.
-     * @param bodyCM     Main body color.
-     * @param bodyC1     Secondary color 1.
-     * @param bodyC2     Secondary color 2.
+     * @param bodyCM        Main body color.
+     * @param bodyC1        Secondary color 1.
+     * @param bodyC2        Secondary color 2.
      */
     private static void renderNamekian(Minecraft mc, ModelBiped model, EntityPlayer player, int state, int playerSpecial, int bodyCM, int bodyC1, int bodyC2) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         boolean hasGodKi = JRMCoreH.StusEfctsMe(17) && JRMCoreHDBC.godKiUserBase(3, state);
@@ -609,16 +609,16 @@ public class CNPCAnimationHelper {
     /**
      * Renders an Arcosian player's body parts.
      *
-     * @param mc         Minecraft instance.
-     * @param model      The model to render.
-     * @param player     The player entity.
-     * @param state      The player's state.
-     * @param gender     The player's gender.
+     * @param mc            Minecraft instance.
+     * @param model         The model to render.
+     * @param player        The player entity.
+     * @param state         The player's state.
+     * @param gender        The player's gender.
      * @param playerSpecial Special skin variant.
-     * @param bodyCM     Main body color.
-     * @param bodyC1     Secondary color 1.
-     * @param bodyC2     Secondary color 2.
-     * @param bodyC3     Secondary color 3.
+     * @param bodyCM        Main body color.
+     * @param bodyC1        Secondary color 1.
+     * @param bodyC2        Secondary color 2.
+     * @param bodyC3        Secondary color 3.
      */
     private static void renderArcosian(Minecraft mc, ModelBiped model, EntityPlayer player, int state, int gender, int playerSpecial, int bodyCM, int bodyC1, int bodyC2, int bodyC3) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         boolean hasGodKi = JRMCoreH.StusEfctsMe(17) && JRMCoreHDBC.godKiUserBase(4, state);
@@ -640,21 +640,21 @@ public class CNPCAnimationHelper {
     /**
      * Renders default human or Saiyan Oozaru forms.
      *
-     * @param mc         Minecraft instance.
+     * @param mc           Minecraft instance.
      * @param clientPlayer The client player.
-     * @param model      The model to render.
-     * @param player     The player entity.
-     * @param skinData   Skin data from JHDS.
-     * @param isJHDS     Whether JHDS is enabled.
-     * @param skinType   The skin type.
-     * @param isSaiOozar Whether the player is in Oozaru form.
-     * @param gender     The player's gender.
-     * @param bodyType   The body type.
-     * @param state      The player's state.
-     * @param race       The player's race.
-     * @param bodyCM     Main body color.
-     * @param bodyC1     Secondary color 1.
-     * @param isLegendary Whether the player is in a legendary state.
+     * @param model        The model to render.
+     * @param player       The player entity.
+     * @param skinData     Skin data from JHDS.
+     * @param isJHDS       Whether JHDS is enabled.
+     * @param skinType     The skin type.
+     * @param isSaiOozar   Whether the player is in Oozaru form.
+     * @param gender       The player's gender.
+     * @param bodyType     The body type.
+     * @param state        The player's state.
+     * @param race         The player's race.
+     * @param bodyCM       Main body color.
+     * @param bodyC1       Secondary color 1.
+     * @param isLegendary  Whether the player is in a legendary state.
      */
     private static void renderDefaultOrSaiyan(Minecraft mc, EntityClientPlayerMP clientPlayer, ModelBiped model, EntityPlayer player, Object skinData, boolean isJHDS, int skinType, boolean isSaiOozar, int gender, int bodyType, int state, int race, int bodyCM, int bodyC1, boolean isLegendary) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         if (isSaiOozar) {
@@ -724,11 +724,11 @@ public class CNPCAnimationHelper {
     /**
      * Renders the player's armor.
      *
-     * @param mc          Minecraft instance.
+     * @param mc           Minecraft instance.
      * @param renderPlayer The custom render player instance.
-     * @param model       The model to render.
-     * @param player      The player entity.
-     * @param animationId The current animation ID.
+     * @param model        The model to render.
+     * @param player       The player entity.
+     * @param animationId  The current animation ID.
      */
     private static void renderArmor(Minecraft mc, RenderPlayerJBRA renderPlayer, ModelBiped model, EntityPlayer player, int animationId) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ItemStack armorStack = player.inventory.armorItemInSlot(2);
@@ -790,7 +790,7 @@ public class CNPCAnimationHelper {
                 GL11.glTranslatef(-0.5F, -0.1F, -0.1F);
                 GL11.glRotatef(40.0F, 0.0F, 0.0F, -1.0F);
                 GL11.glRotatef(80.0F, -1.0F, 0.0F, 0.0F);
-                GL11.glRotatef((float)(id == 0 ? -20 : 30), 0.0F, 0.0F, 1.0F);
+                GL11.glRotatef((float) (id == 0 ? -20 : 30), 0.0F, 0.0F, 1.0F);
             }
         } else if (id == 0) {
             if (JGConfigClientSettings.CLIENT_DA18) {

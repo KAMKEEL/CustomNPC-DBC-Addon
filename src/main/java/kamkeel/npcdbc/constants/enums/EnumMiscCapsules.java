@@ -14,24 +14,24 @@ public enum EnumMiscCapsules {
     private final int cooldown;
 
 
-    EnumMiscCapsules(String name, int cooldown){
+    EnumMiscCapsules(String name, int cooldown) {
         this.name = name;
         this.cooldown = cooldown;
     }
 
-    public int getMeta(){
+    public int getMeta() {
         return this.ordinal();
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public int getCooldown(){
+    public int getCooldown() {
         return this.cooldown;
     }
 
-    public static int count(){
+    public static int count() {
         return values().length;
     }
 }

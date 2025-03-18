@@ -78,9 +78,9 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
         return JGConfigClientSettings.CLIENT_DA12 || SubGuiAuraDisplay.useGUIAura;
     }
 
-    @Inject(method = "func_tad", at=@At(value = "INVOKE", target="LJinRyuu/DragonBC/common/Npcs/RenderAura2;glColor4f(IF)V", ordinal = 0, shift = At.Shift.BEFORE))
-    private void adjustFirstPersonOpacity(EntityAura2 par1Entity, double parX, double parY, double parZ, float par8, float par9, CallbackInfo ci, @Local(name="p") LocalFloatRef opacity, @Local(name="plyrSP") boolean isFirstPerson){
-        if(isFirstPerson)
+    @Inject(method = "func_tad", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/RenderAura2;glColor4f(IF)V", ordinal = 0, shift = At.Shift.BEFORE))
+    private void adjustFirstPersonOpacity(EntityAura2 par1Entity, double parX, double parY, double parZ, float par8, float par9, CallbackInfo ci, @Local(name = "p") LocalFloatRef opacity, @Local(name = "plyrSP") boolean isFirstPerson) {
+        if (isFirstPerson)
             opacity.set(opacity.get() * ((float) ConfigDBCClient.FirstPerson3DAuraOpacity / 100));
 
     }
@@ -89,6 +89,7 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
     private void lightning(EntityAura2 e, double par2, double par4, double par6, float par9, float var20, float var13, boolean rot) {
 
     }
+
     @Redirect(method = "lightning", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/Npcs/EntityAura2;getState()F"))
     private float setHasLightning(EntityAura2 instance) {
         IEntityAura aura = (IEntityAura) instance;
@@ -163,7 +164,7 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
 
     }
 
-//    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 0))
+    //    @ModifyArgs(method = "func_tad(LJinRyuu/DragonBC/common/Npcs/EntityAura2;DDDFF)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 0))
 //    private void setAuraSize(Args args, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(name = "cl3b") LocalBooleanRef hasColor3) {
 //        EntityAura2 aur = entityAura.get();
 //        IEntityAura aura = (IEntityAura) aur;
@@ -230,7 +231,7 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
     private void fixAuraRotationOffset_PRE(float x, float y, float z, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(ordinal = 1) LocalDoubleRef parY) {
         IEntityAura aura = (IEntityAura) entityAura.get();
         if (aura.getSize() != 1f) {
-            y = y + ( y * (aura.getSize()-1) * 1.5f * 1.25f);
+            y = y + (y * (aura.getSize() - 1) * 1.5f * 1.25f);
 
         }
         GL11.glTranslatef(x, y, z);
@@ -240,7 +241,7 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
     private void fixAuraRotationOffset_POST(float x, float y, float z, @Local(ordinal = 0) LocalRef<EntityAura2> entityAura, @Local(ordinal = 1) LocalDoubleRef parY) {
         IEntityAura aura = (IEntityAura) entityAura.get();
         if (aura.getSize() != 1f) {
-            y = y + ( y * (aura.getSize()-1) * 1.5f * (aura.getSize() > 1 ? 0.625f : 1.25f));
+            y = y + (y * (aura.getSize() - 1) * 1.5f * (aura.getSize() > 1 ? 0.625f : 1.25f));
         }
         GL11.glTranslatef(x, y, z);
     }
@@ -264,7 +265,7 @@ public class MixinRenderAura2 implements IRenderEntityAura2 {
                 s1.set(8.0f * size);
 
 
-         s.set(s.get() == 0 ? 1 : s.get() * Math.min(dbcData.Release, 100) * 0.01f);
+            s.set(s.get() == 0 ? 1 : s.get() * Math.min(dbcData.Release, 100) * 0.01f);
             return;
         }
     }

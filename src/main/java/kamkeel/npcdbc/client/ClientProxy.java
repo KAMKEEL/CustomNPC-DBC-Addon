@@ -58,7 +58,7 @@ public class ClientProxy extends CommonProxy {
 
     public void postInit(FMLPostInitializationEvent ev) {
         PostProcessing.init(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
-      //  ModernModels.loadModels();
+        //  ModernModels.loadModels();
     }
 
     public static float getTimeSinceStart() {
@@ -93,7 +93,7 @@ public class ClientProxy extends CommonProxy {
         return ClientConstants.renderingGUI;
     }
 
-    public static boolean isRenderingWorld(){
+    public static boolean isRenderingWorld() {
         return ClientConstants.renderingWorld;
     }
 

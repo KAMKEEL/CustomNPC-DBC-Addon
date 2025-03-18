@@ -23,7 +23,8 @@ public final class DBCSetAura extends AbstractPacket {
         this.auraID = auraID;
     }
 
-    public DBCSetAura() {}
+    public DBCSetAura() {
+    }
 
     @Override
     public Enum getType() {
@@ -46,8 +47,8 @@ public final class DBCSetAura extends AbstractPacket {
         PlayerData playerData = PlayerDataController.Instance.getPlayerData(player);
         PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(playerData);
         dbcInfo.currentAura = -1;
-        if (auraID != -1 && AuraController.getInstance().has(auraID)){
-            if(dbcInfo.hasAuraUnlocked(auraID)){
+        if (auraID != -1 && AuraController.getInstance().has(auraID)) {
+            if (dbcInfo.hasAuraUnlocked(auraID)) {
                 dbcInfo.currentAura = auraID;
             }
         }

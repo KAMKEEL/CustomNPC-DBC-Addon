@@ -25,19 +25,20 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(DBCClient.class)
 public class MixinDBCClient {
 
-    @Shadow(remap = false) public boolean supportEnabled;
+    @Shadow(remap = false)
+    public boolean supportEnabled;
 
     /**
      * @author Kam
      * @reason Show DBC Settings Button
      */
     @Overwrite(remap = false)
-    public void showDBCStatButtons(GuiNpcStats stats, EntityLivingBase entity){
-        if(!supportEnabled)
+    public void showDBCStatButtons(GuiNpcStats stats, EntityLivingBase entity) {
+        if (!supportEnabled)
             return;
 
-        stats.addButton(new GuiNpcButton(300, stats.guiLeft + 217, stats.guiTop+54, 56, 20, "selectServer.edit"));
-        stats.addLabel(new GuiNpcLabel(300,"stats.dbcsettings", stats.guiLeft + 140, stats.guiTop+54+5));
+        stats.addButton(new GuiNpcButton(300, stats.guiLeft + 217, stats.guiTop + 54, 56, 20, "selectServer.edit"));
+        stats.addLabel(new GuiNpcLabel(300, "stats.dbcsettings", stats.guiLeft + 140, stats.guiTop + 54 + 5));
     }
 
     /**
@@ -46,10 +47,10 @@ public class MixinDBCClient {
      */
     @Overwrite(remap = false)
     public void showDBCStatActionPerformed(GuiNpcStats stats, GuiNpcButton btn) {
-        if(!supportEnabled)
+        if (!supportEnabled)
             return;
 
-        if(btn.id == 300){
+        if (btn.id == 300) {
             stats.setSubGui(new SubGuiDBCProperties(stats.npc));
         }
     }
@@ -62,7 +63,7 @@ public class MixinDBCClient {
     @Overwrite(remap = false)
     public void renderDBCAuras(EntityNPCInterface npcInterface) {
         INPCDisplay display = (INPCDisplay) npcInterface.display;
-        if(display.hasDBCData())
+        if (display.hasDBCData())
             ParticleFormHandler.spawnAura2D(display.getDBCDisplay());
     }
 
@@ -72,7 +73,9 @@ public class MixinDBCClient {
      * @reason Manages Custom Forms
      */
     @Overwrite(remap = false)
-    public GuiNPCInterface2 manageCustomForms(EntityNPCInterface npcInterface){ return new GuiNPCManageForms(npcInterface); }
+    public GuiNPCInterface2 manageCustomForms(EntityNPCInterface npcInterface) {
+        return new GuiNPCManageForms(npcInterface);
+    }
 
 
     /**
@@ -80,14 +83,16 @@ public class MixinDBCClient {
      * @reason Manages Custom Auras
      */
     @Overwrite(remap = false)
-    public GuiNPCInterface2 manageCustomAuras(EntityNPCInterface npcInterface){ return new GuiNPCManageAuras(npcInterface); }
+    public GuiNPCInterface2 manageCustomAuras(EntityNPCInterface npcInterface) {
+        return new GuiNPCManageAuras(npcInterface);
+    }
 
     /**
      * @author Kam
      * @reason Manages Animation Mixins
      */
     @Overwrite(remap = false)
-    public void applyRenderModel(ModelRenderer renderer){
+    public void applyRenderModel(ModelRenderer renderer) {
         CNPCAnimationHelper.applyValues(renderer);
     }
 

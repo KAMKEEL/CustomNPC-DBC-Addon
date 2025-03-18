@@ -173,20 +173,20 @@ public class OutlineCommand extends CommandKamkeelBase {
         usage = "<outlineName>"
     )
     public void id(ICommandSender sender, String args[]) throws CommandException {
-        if(args.length == 0){
+        if (args.length == 0) {
             sendError(sender, "Please provide a name for the outline");
             return;
         }
         String outlineName = String.join(" ", args).toLowerCase();
         Collection<Outline> outlines = OutlineController.getInstance().customOutlines.values();
         int count = 0;
-        for(Outline outline : outlines){
-            if(outline.getName().toLowerCase().contains(outlineName)){
+        for (Outline outline : outlines) {
+            if (outline.getName().toLowerCase().contains(outlineName)) {
                 sendResult(sender, String.format("Outline \u00A7e%d\u00A77 - \u00A7c'%s'", outline.id, outline.getName()));
                 count++;
             }
         }
-        if(count == 0){
+        if (count == 0) {
             sendResult(sender, String.format("No Outline found with name: \u00A7c'%s'", outlineName));
         }
     }
