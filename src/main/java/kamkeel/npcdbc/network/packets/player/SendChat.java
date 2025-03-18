@@ -47,7 +47,7 @@ public final class SendChat extends AbstractPacket {
     public void sendData(ByteBuf out) throws IOException {
         out.writeBoolean(this.info);
         out.writeInt(this.dataCount);
-        for(Object ob : data){
+        for (Object ob : data) {
             if (ob instanceof String) {
                 ByteBufUtils.writeUTF8String(out, (String) ob);
             } else {
@@ -59,11 +59,11 @@ public final class SendChat extends AbstractPacket {
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         boolean info = in.readBoolean();
-        if(info && ConfigDBCClient.HideInfoMessage)
+        if (info && ConfigDBCClient.HideInfoMessage)
             return;
         int stringAmount = in.readInt();
         StringBuilder message = new StringBuilder();
-        for(int i = 0; i < stringAmount; i++){
+        for (int i = 0; i < stringAmount; i++) {
             message.append(StatCollector.translateToLocal(ByteBufUtils.readUTF8String(in)));
         }
         Utility.sendMessage(player, message.toString());

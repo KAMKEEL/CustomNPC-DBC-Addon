@@ -18,7 +18,7 @@ public class ModelHairRenderer extends ModelRenderer {
     }
 
     public ModelHairRenderer(ModelBase base) {
-        this(base, (String)null);
+        this(base, (String) null);
     }
 
     public ModelHairRenderer(ModelBase base, int p_i1174_2_, int p_i1174_3_) {
@@ -39,8 +39,8 @@ public class ModelHairRenderer extends ModelRenderer {
                 if (this.rotationPointX == 0.0F && this.rotationPointY == 0.0F && this.rotationPointZ == 0.0F) {
                     GL11.glCallList(this.displayList);
                     if (this.childModels != null) {
-                        for(i = 0; i < this.childModels.size(); ++i) {
-                            ((ModelHairRenderer)this.childModels.get(i)).render(p_78785_1_);
+                        for (i = 0; i < this.childModels.size(); ++i) {
+                            ((ModelHairRenderer) this.childModels.get(i)).render(p_78785_1_);
                         }
                     }
                 } else {
@@ -49,8 +49,8 @@ public class ModelHairRenderer extends ModelRenderer {
                     GL11.glCallList(this.displayList);
                     GL11.glScalef(1.0F / this.sizeXZ, 1.0F / this.lengthY, 1.0F / this.sizeXZ);
                     if (this.childModels != null) {
-                        for(i = 0; i < this.childModels.size(); ++i) {
-                            ((ModelHairRenderer)this.childModels.get(i)).render(p_78785_1_);
+                        for (i = 0; i < this.childModels.size(); ++i) {
+                            ((ModelHairRenderer) this.childModels.get(i)).render(p_78785_1_);
                         }
                     }
 
@@ -76,8 +76,8 @@ public class ModelHairRenderer extends ModelRenderer {
                 GL11.glScalef(1.0F / this.sizeXZ, 1.0F / this.lengthY, 1.0F / this.sizeXZ);
                 GL11.glTranslatef(0.0F, this.lengthY * 0.15F - 0.15F, 0.0F);
                 if (this.childModels != null) {
-                    for(i = 0; i < this.childModels.size(); ++i) {
-                        ((ModelHairRenderer)this.childModels.get(i)).render(p_78785_1_);
+                    for (i = 0; i < this.childModels.size(); ++i) {
+                        ((ModelHairRenderer) this.childModels.get(i)).render(p_78785_1_);
                     }
                 }
 

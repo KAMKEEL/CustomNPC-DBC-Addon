@@ -24,12 +24,12 @@ public class MixinEntityRenderer {
     public Minecraft mc;
 
     @Inject(method = "renderWorld", at = @At(value = "HEAD"))
-    private void startRenderingWorld(float p_78471_1_, long p_78471_2_, CallbackInfo ci){
+    private void startRenderingWorld(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
         ClientConstants.renderingWorld = true;
     }
 
     @Inject(method = "renderWorld", at = @At(value = "RETURN"))
-    private void endRenderingWorld(float p_78471_1_, long p_78471_2_, CallbackInfo ci){
+    private void endRenderingWorld(float p_78471_1_, long p_78471_2_, CallbackInfo ci) {
         ClientConstants.renderingWorld = false;
     }
 

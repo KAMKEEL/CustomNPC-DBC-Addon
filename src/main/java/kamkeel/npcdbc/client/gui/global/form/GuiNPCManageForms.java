@@ -74,7 +74,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
 
         this.display = form.display;
 
-        DBCPacketHandler.Instance.sendToServer(new DBCRequestForm(-1, false,false));
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestForm(-1, false, false));
     }
 
     public void initGui() {
@@ -226,7 +226,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
             float formWidth = display.formWidth;
             float formSize = 1;
             float cr = 100;
-            float diff = (formWidth - 1.0F) * (float)cr * 0.02F + 1.0F;
+            float diff = (formWidth - 1.0F) * (float) cr * 0.02F + 1.0F;
             formWidth = formWidth > 1.0F ? diff : formWidth;
             float formScale = formWidth * formSize;
             GL11.glScalef(formScale, formSize, formScale);

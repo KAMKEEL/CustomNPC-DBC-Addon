@@ -75,7 +75,8 @@ public abstract class AbstractDBCAPI {
 
     /**
      * Preferably used in a DamagedEvent/AttackEvent with cancelling the event
-     * @param dodger The entity dodging
+     *
+     * @param dodger   The entity dodging
      * @param attacker
      */
     public abstract void forceDodge(IEntity dodger, IEntity attacker);
@@ -160,7 +161,8 @@ public abstract class AbstractDBCAPI {
 
     /**
      * Fires a Ki Attack in the Head Direction of the NPC
-     * @param npc the NPC firing this attack.
+     *
+     * @param npc           the NPC firing this attack.
      * @param type          Type of Ki Attack [0 - 8] "Wave", "Blast", "Disk", "Laser", "Spiral", "BigBlast", "Barrage", "Shield", "Explosion"
      * @param speed         Speed of Ki Attack [0 - 100]
      * @param damage        Damage for Ki Attack
@@ -177,7 +179,8 @@ public abstract class AbstractDBCAPI {
 
     /**
      * Fires an IKiAttack with its internal params
-     * @param npc NPC shooting this attack
+     *
+     * @param npc      NPC shooting this attack
      * @param kiAttack ki attack to shoot
      */
     public abstract void fireKiAttack(ICustomNpc npc, IKiAttack kiAttack);
@@ -189,55 +192,55 @@ public abstract class AbstractDBCAPI {
      *                  "PotentialUnlock", "KiSense", "Meditation", "Kaioken", "GodForm", <br>
      *                  "OldKaiUnlock", "KiProtection", "KiFist", "KiBoost", "DefensePenetration", <br>
      *                  "KiInfuse", "UltraInstinct", "InstantTransmission", "GodOfDestruction"</code>
-     * @param level Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
+     * @param level     Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
      * @return The TP Cost of said skill at just that level.
      */
     public abstract int getSkillTPCostSingle(String skillName, int level);
 
     /**
      * @param skillName Refer to {@link AbstractDBCAPI#getSkillTPCostSingle(String, int)}
-     * @param level Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
+     * @param level     Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
      * @return The Mind Cost of said skill at just that level.
      */
     public abstract int getSkillMindCostSingle(String skillName, int level);
 
     /**
      * @param skillName Refer to {@link AbstractDBCAPI#getSkillTPCostSingle(String, int)}
-     * @param level Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
+     * @param level     Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
      * @return TheMmind cost to get this skill to given level
      */
     public abstract int getSkillMindCostRecursive(String skillName, int level);
 
     /**
      * @param skillName Refer to {@link AbstractDBCAPI#getSkillTPCostSingle(String, int)}
-     * @param level Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
+     * @param level     Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
      * @return The TP cost to get this skill to given level
      */
     public abstract int getSkillTPCostRecursive(String skillName, int level);
 
     /**
-     * @param race Race ID from 0 to 5
+     * @param race  Race ID from 0 to 5
      * @param level Level of the Super form (uncapped).
      * @return TP cost of this single level
      */
     public abstract int getSkillRacialTPCostSingle(int race, int level);
 
     /**
-     * @param race Race ID from 0 to 5
+     * @param race  Race ID from 0 to 5
      * @param level Level of the Super form (uncapped).
      * @return Mind cost of this single level
      */
     public abstract int getSkillRacialTPMindSingle(int race, int level);
 
     /**
-     * @param race Race ID from 0 to 5
+     * @param race  Race ID from 0 to 5
      * @param level Level of the Super form (uncapped).
      * @return TP Cost to get to this level
      */
     public abstract int getSkillRacialTPCostSingleRecursive(int race, int level);
 
     /**
-     * @param race Race ID from 0 to 5
+     * @param race  Race ID from 0 to 5
      * @param level Level of the Super form (uncapped).
      * @return Mind Cost to get to this level
      */

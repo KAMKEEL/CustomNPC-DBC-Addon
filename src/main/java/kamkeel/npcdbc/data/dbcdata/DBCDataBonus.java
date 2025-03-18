@@ -18,8 +18,8 @@ public class DBCDataBonus {
     }
 
     public Map<String, PlayerBonus> getCurrentBonuses() {
-        if(FMLCommonHandler.instance().getEffectiveSide().isClient()){
-            if(data.currentBonuses == null)
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+            if (data.currentBonuses == null)
                 data.currentBonuses = new HashMap<>();
             return data.currentBonuses;
         }
@@ -29,8 +29,8 @@ public class DBCDataBonus {
 
     public float[] getMultiBonus() {
         float[] bonuses = new float[5];
-        for(PlayerBonus playerBonus : getCurrentBonuses().values()){
-            if(playerBonus.type == 0){
+        for (PlayerBonus playerBonus : getCurrentBonuses().values()) {
+            if (playerBonus.type == 0) {
                 bonuses[0] += playerBonus.strength;
                 bonuses[1] += playerBonus.dexterity;
                 bonuses[2] += playerBonus.willpower;
@@ -43,8 +43,8 @@ public class DBCDataBonus {
 
     public float[] getFlatBonus() {
         float[] bonuses = new float[5];
-        for(PlayerBonus playerBonus : getCurrentBonuses().values()){
-            if(playerBonus.type == 1){
+        for (PlayerBonus playerBonus : getCurrentBonuses().values()) {
+            if (playerBonus.type == 1) {
                 bonuses[0] += playerBonus.strength;
                 bonuses[1] += playerBonus.dexterity;
                 bonuses[2] += playerBonus.willpower;
@@ -56,7 +56,7 @@ public class DBCDataBonus {
     }
 
     public void saveBonusNBT(NBTTagCompound nbt) {
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
             return;
 
         NBTTagList nbttaglist = new NBTTagList();

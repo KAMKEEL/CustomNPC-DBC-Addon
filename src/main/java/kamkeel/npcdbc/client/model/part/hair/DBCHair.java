@@ -760,7 +760,7 @@ public class DBCHair extends ModelHairRenderer {
             GL11.glScalef(1.04f, 1.04f, 1.04f);
             GL11.glTranslatef(0, 0.03f, 0);
         }
-       // display.hasEyebrows = false;
+        // display.hasEyebrows = false;
         int[] hairRightPosZ = new int[]{3, 2, 1, 0, 3, 2, 1, 3, 2, 3};
         int[] hairRightPosY = new int[]{0, 0, 0, 0, 1, 1, 1, 2, 2, 3};
         int[] hairLeftPosZ = new int[]{0, 1, 2, 3, 1, 2, 3, 2, 3, 3};

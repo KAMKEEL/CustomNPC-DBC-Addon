@@ -31,7 +31,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.scripted.CustomNPCsException;
 
@@ -736,7 +735,7 @@ public class DBCUtils {
 
     /**
      * @param skillIndex Numeric ID of the skill
-     * @param level Level you would like to check
+     * @param level      Level you would like to check
      * @return The Mind cost of JUST this level
      */
     public static int calculateDBCSkillMindCost(int skillIndex, int level) {
@@ -750,16 +749,16 @@ public class DBCUtils {
         }
         int[] skillCosts = DBCSkillMindCost[skillIndex];
         float f = 1f;
-        if(skillCosts.length > 0) {
-            f = (float)(skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
+        if (skillCosts.length > 0) {
+            f = (float) (skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
         }
 
-        return (int) (f * JGConfigSkills.GlobalSkillMindMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillMindMultiplierFirst : 1.0F) * (float)(JGConfigSkills.GlobalSkillMindMultiplierWithLevel ? level + 1 : 1));
+        return (int) (f * JGConfigSkills.GlobalSkillMindMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillMindMultiplierFirst : 1.0F) * (float) (JGConfigSkills.GlobalSkillMindMultiplierWithLevel ? level + 1 : 1));
     }
 
     /**
      * @param skillIndex Numeric ID of the skill
-     * @param level Level you would like to check
+     * @param level      Level you would like to check
      * @return The TP cost of JUST this level
      */
     public static int calculateDBCSkillTPCost(int skillIndex, int level) {
@@ -773,35 +772,36 @@ public class DBCUtils {
         }
         int[] skillCosts = DBCSkillTPCost[skillIndex];
         float f = 1f;
-        if(skillCosts.length > 0) {
-            f = (float)(skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
+        if (skillCosts.length > 0) {
+            f = (float) (skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
         }
 
-        return (int) (f * JGConfigSkills.GlobalSkillTPMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillTPMultiplierFirst : 1.0F) * (float)(JGConfigSkills.GlobalSkillTPMultiplierWithLevel ? level + 1 : 1));
+        return (int) (f * JGConfigSkills.GlobalSkillTPMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillTPMultiplierFirst : 1.0F) * (float) (JGConfigSkills.GlobalSkillTPMultiplierWithLevel ? level + 1 : 1));
     }
 
     /**
      * @param skillIndex Numeric ID of the skill
-     * @param level Level you would like to check
+     * @param level      Level you would like to check
      * @return The Mind cost of ALL the levels it took to get to the current level.
      */
     public static int calculateDBCSkillMindCostRecursively(int skillIndex, int level) {
         int cost = 0;
 
-        for(int i = 0; i < level; i++) {
-            cost += calculateDBCSkillMindCost(skillIndex, i+1);
+        for (int i = 0; i < level; i++) {
+            cost += calculateDBCSkillMindCost(skillIndex, i + 1);
         }
         return cost;
     }
+
     /**
      * @param skillIndex Numeric ID of the skill
-     * @param level Level you would like to check
+     * @param level      Level you would like to check
      * @return The TP cost of ALL the levels it took to get to the current level.
      */
     public static int calculateDBCSkillTPCostRecursively(int skillIndex, int level) {
         int cost = 0;
-        for(int i = 0; i < level; i++) {
-            cost += calculateDBCSkillTPCost(skillIndex, i+1);
+        for (int i = 0; i < level; i++) {
+            cost += calculateDBCSkillTPCost(skillIndex, i + 1);
         }
         return cost;
     }
@@ -817,11 +817,11 @@ public class DBCUtils {
         }
         int[] skillCosts = DBCRacialSkillTPCost[race];
         float f = 1f;
-        if(skillCosts.length > 0) {
-            f = (float)(skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
+        if (skillCosts.length > 0) {
+            f = (float) (skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
         }
 
-        return (int) (f * JGConfigSkills.GlobalSkillTPMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillTPMultiplierFirst : 1.0F) * (float)(JGConfigSkills.GlobalSkillTPMultiplierWithLevel ? level + 1 : 1));
+        return (int) (f * JGConfigSkills.GlobalSkillTPMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillTPMultiplierFirst : 1.0F) * (float) (JGConfigSkills.GlobalSkillTPMultiplierWithLevel ? level + 1 : 1));
     }
 
     public static int calculateDBCRacialSkillMindCost(int race, int level) {
@@ -835,24 +835,25 @@ public class DBCUtils {
         }
         int[] skillCosts = DBCRacialSkillMindCost[race];
         float f = 1f;
-        if(skillCosts.length > 0) {
-            f = (float)(skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
+        if (skillCosts.length > 0) {
+            f = (float) (skillCosts.length > level ? skillCosts[level] : skillCosts[skillCosts.length - 1]);
         }
 
-        return (int) (f * JGConfigSkills.GlobalSkillMindMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillMindMultiplierFirst : 1.0F) * (float)(JGConfigSkills.GlobalSkillMindMultiplierWithLevel ? level + 1 : 1));
+        return (int) (f * JGConfigSkills.GlobalSkillMindMultiplier * (level == 0 ? JGConfigSkills.GlobalSkillMindMultiplierFirst : 1.0F) * (float) (JGConfigSkills.GlobalSkillMindMultiplierWithLevel ? level + 1 : 1));
     }
 
     public static int calculateDBCRacialSkillTPCostRecursively(int race, int level) {
         int cost = 0;
-        for(int i = 0; i < level; i++) {
-            cost += calculateDBCRacialSkillTPCost(race, i+1);
+        for (int i = 0; i < level; i++) {
+            cost += calculateDBCRacialSkillTPCost(race, i + 1);
         }
         return cost;
     }
+
     public static int calculateDBCRacialSkillMindCostRecursively(int race, int level) {
         int cost = 0;
-        for(int i = 0; i < level; i++) {
-            cost += calculateDBCRacialSkillMindCost(race, i+1);
+        for (int i = 0; i < level; i++) {
+            cost += calculateDBCRacialSkillMindCost(race, i + 1);
         }
         return cost;
     }

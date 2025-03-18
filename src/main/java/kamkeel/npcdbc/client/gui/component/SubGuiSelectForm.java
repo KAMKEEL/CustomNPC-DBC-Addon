@@ -106,7 +106,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         if (id == 1) {
             this.close();
         }
-        if(id == 2){
+        if (id == 2) {
             this.removeForm = true;
             this.close();
         }

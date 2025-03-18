@@ -51,12 +51,14 @@ public interface IDBCStats {
 
     /**
      * Checks if the NPC can be locked onto
+     *
      * @return True if NPC can be locked onto.
      */
     boolean canBeLockedOn();
 
     /**
      * Changes if the NPC can be locked onto
+     *
      * @param canBeLockedOn true or false
      */
     void setLockOnState(boolean canBeLockedOn);

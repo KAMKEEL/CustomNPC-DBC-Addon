@@ -263,9 +263,9 @@ public class ModelDBC extends ModelBase {
             GL11.glPopMatrix();
 
             if (display.race < 4) {
-                if(display.race != DBCRace.NAMEKIAN)
+                if (display.race != DBCRace.NAMEKIAN)
                     ColorMode.applyModelColor(eyeBrowColor, this.parent.alpha, isHurt);
-                else{
+                else {
                     ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
                 }
                 if (!hasEyebrows && display.race != DBCRace.NAMEKIAN)
@@ -637,8 +637,8 @@ public class ModelDBC extends ModelBase {
 
     private int getKiWeaponColor() {
         Form fakeForm = display.getForm();
-        if(fakeForm != null){
-            if(fakeForm.display.auraColor > -1){
+        if (fakeForm != null) {
+            if (fakeForm.display.auraColor > -1) {
                 return fakeForm.display.auraColor;
             } else if (fakeForm.display.auraID != -1) {
                 Aura aura = (Aura) AuraController.getInstance().get(fakeForm.display.auraID);

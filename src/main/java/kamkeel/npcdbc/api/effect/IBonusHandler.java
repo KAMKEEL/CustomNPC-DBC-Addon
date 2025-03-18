@@ -13,11 +13,11 @@ public interface IBonusHandler {
     /**
      * @param name Name of Bonus
      * @param type 0 - Multi, 1 is Added to Attributes
-     * @param str Strength Amount
-     * @param dex Dex Amount
-     * @param wil Willpower Amount
-     * @param con Constitution Amount
-     * @param spi Spirit Amount
+     * @param str  Strength Amount
+     * @param dex  Dex Amount
+     * @param wil  Willpower Amount
+     * @param con  Constitution Amount
+     * @param spi  Spirit Amount
      * @return The IPlayerBonus Object to apply
      */
     IPlayerBonus createBonus(String name, int type, float str, float dex, float wil, float con, float spi);

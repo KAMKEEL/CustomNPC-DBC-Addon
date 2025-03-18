@@ -55,7 +55,7 @@ public class DBCEars extends ModelDBCPartInterface {
 
         GL11.glPushMatrix();
         if (ClientConstants.renderingOutline) {
-            GL11.glTranslatef(0, 0.0275f,0.005f);
+            GL11.glTranslatef(0, 0.0275f, 0.005f);
             GL11.glScaled(1.05, 1.05, 1.05);
             disableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256, false);
         }

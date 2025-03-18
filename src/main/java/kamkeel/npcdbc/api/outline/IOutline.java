@@ -36,12 +36,12 @@ public interface IOutline {
 
     /**
      * Do not use this unless you know what you are changing. Dangerous to change.
+     *
      * @param newID new ID.
      */
     void setID(int newID);
 
     /**
-     *
      * @return clones this IAura object and returns a new IAura with the same exact properties
      */
     IOutline clone();

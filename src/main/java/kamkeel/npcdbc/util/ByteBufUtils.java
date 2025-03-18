@@ -27,7 +27,7 @@ public class ByteBufUtils extends cpw.mods.fml.common.network.ByteBufUtils {
 
     public static void writeNBT(ByteBuf buffer, NBTTagCompound compound) throws IOException {
         byte[] bytes = CompressedStreamTools.compress(compound);
-        buffer.writeShort((short)bytes.length);
+        buffer.writeShort((short) bytes.length);
         buffer.writeBytes(bytes);
     }
 

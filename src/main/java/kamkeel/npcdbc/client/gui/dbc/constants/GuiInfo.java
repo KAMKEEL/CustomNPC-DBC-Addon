@@ -15,7 +15,7 @@ public class GuiInfo {
     public final static String FAMILY_C_TRANSLATION = "jrmc:Family";
     public final static String YEARS_C_TRANSLATION = "jrmc:Calendar";
 
-    public enum ReferenceIDs{
+    public enum ReferenceIDs {
         NEWS(31, 0, "jrmc:News"),
 
         STAT_SHEET(10, 1, "jrmc:CharSheet"),
@@ -35,20 +35,23 @@ public class GuiInfo {
         private final int guiIDReference;
         private final int iconID;
         private final String translation;
-        ReferenceIDs(int guiID, String translationName){
+
+        ReferenceIDs(int guiID, String translationName) {
             this(guiID, -1, translationName);
         }
-        ReferenceIDs(int guiID, int iconID, String translationName){
+
+        ReferenceIDs(int guiID, int iconID, String translationName) {
             this.guiIDReference = guiID;
             this.iconID = iconID;
             this.translation = translationName;
         }
 
 
-        public int getGuiID(){
+        public int getGuiID() {
             return guiIDReference;
         }
-        public int getIconID(){
+
+        public int getIconID() {
             return iconID;
         }
 
@@ -56,16 +59,16 @@ public class GuiInfo {
             return -reference_offset - this.ordinal();
         }
 
-        public String getTranslation(){
+        public String getTranslation() {
             return GuiInfo.translateButtonLocale(translation);
         }
     }
 
     public static String translateButtonLocale(String translation) {
-        if(translation.contains(":")){
+        if (translation.contains(":")) {
             String[] locale = translation.split(":");
 
-            switch(locale[0]){
+            switch (locale[0]) {
                 case "dbc":
                 case "jrmc":
                     return JRMCoreH.trl(locale[0], locale[1]);

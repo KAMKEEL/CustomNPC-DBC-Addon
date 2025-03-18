@@ -178,9 +178,10 @@ public class GuiRenderPlayer extends GuiScreen {
             JRMCoreH.data2[ClientProxy.lastRendererGUIPlayerID] = data.State + ";" + data.State2;
     }
 
-    private boolean isMouseOverRenderer(int mouseX, int mouseY  ) {
+    private boolean isMouseOverRenderer(int mouseX, int mouseY) {
         return x <= mouseX && x + width > mouseX && y - 1 <= mouseY && y + height > mouseY;
     }
+
     protected void setClip(int x, int y, int width, int height) {
         int scaleFactor = (mc.displayWidth / parent.width);
         x *= scaleFactor;

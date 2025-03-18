@@ -102,7 +102,7 @@ public class ServerEventHandler {
                 }
             }
 
-            if(ConfigDBCEffects.AUTO_BLOATED)
+            if (ConfigDBCEffects.AUTO_BLOATED)
                 if (player.ticksExisted % ConfigDBCEffects.DECREASE_TIME == 0)
                     DBCEffectController.Instance.decreaseSenzuConsumption(player);
 
