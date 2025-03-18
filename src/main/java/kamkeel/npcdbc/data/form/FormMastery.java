@@ -615,7 +615,7 @@ public class FormMastery implements IFormMastery {
     public void readFromNBT(NBTTagCompound compound) {
         NBTTagCompound formMastery = compound.getCompoundTag("formMastery");
 
-        maxLevel = formMastery.getInteger("maxLevel");
+        maxLevel = formMastery.getFloat("maxLevel");
         instantTransformationUnlockLevel = formMastery.getFloat("instantTransformationUnlockLevel");
         kiDrain = formMastery.getFloat("kiDrain");
         kiDrainTimer = formMastery.getInteger("kiDrainTimer");
