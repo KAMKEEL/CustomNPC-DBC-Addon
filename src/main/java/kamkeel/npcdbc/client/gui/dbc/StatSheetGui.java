@@ -607,7 +607,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         stringWidth = fontRendererObj.getStringWidth(dark)+15;
         this.buttonList.add(new JRMCoreGuiButtons00(404040404, guiWidthOffset + 260, height/2 + 12, stringWidth, 20, dark, 0));
 
-        String advan = ConfigDBCClient.AdvancedGui ? "statsheet.advanced" : "statsheet.simple";
+        String advan = ConfigDBCClient.AdvancedGui ? "statsheet.simple" : "statsheet.advanced";
         advan = StatCollector.translateToLocal(advan);
         stringWidth = fontRendererObj.getStringWidth(advan)+15;
         GuiButton button4 = new JRMCoreGuiButtons00(505050505, guiWidthOffset + 260, height/2 + 34, stringWidth, 20, advan, 0);
