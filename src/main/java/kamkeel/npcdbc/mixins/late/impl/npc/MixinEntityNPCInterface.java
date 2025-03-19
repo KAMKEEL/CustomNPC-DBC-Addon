@@ -29,8 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = EntityNPCInterface.class)
 public abstract class MixinEntityNPCInterface extends EntityCreature implements IEntityAdditionalSpawnData, ICommandSender, IRangedAttackMob, IBossDisplayData {
-    @Unique
-    private float originalDamage;
+
     @Unique
     private boolean dbcAltered; //if DamagedEvent's damage was altered by a DBC player
 
@@ -56,8 +55,6 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
             EntityPlayer player = (EntityPlayer) attackerEntity;
             DBCData data = DBCData.get(player);
             if (dbcAltered = data.Powertype == 1) {
-                originalDamage = dam.get();
-
                 // Apply Attributes and Resistances to Modified Damage
                 float modifiedDamage = DBCUtils.calculateAttackStat(player, dam.get(), damagesource);
                 // Apply Attributes
@@ -89,6 +86,6 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
             DBCUtils.npcLastSetDamage = (int) instance.getDamage();
             dbcAltered = false;
         }
-        return originalDamage;
+        return instance.getDamage();
     }
 }
