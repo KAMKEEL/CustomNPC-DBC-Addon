@@ -422,21 +422,21 @@ public interface IDBCAddon extends IDBCPlayer {
     // Aura stuff
 
     /**
-     * Sets the current custom aura <b>if the player has it unlocked.</b>
+     * Sets the selected custom aura <b>if the player has it unlocked.</b>
      *
      * @param auraName Name of the aura to set.
      */
     void setAuraSelection(String auraName);
 
     /**
-     * Sets the current custom aura <b>if the player has it unlocked.</b>
+     * Sets the selected custom aura <b>if the player has it unlocked.</b>
      *
      * @param aura Aura object to set.
      */
     void setAuraSelection(IAura aura);
 
     /**
-     * Sets the current custom aura <b>if the player has it unlocked.</b>
+     * Sets the selected custom aura <b>if the player has it unlocked.</b>
      *
      * @param auraID ID of the aura to set.
      */

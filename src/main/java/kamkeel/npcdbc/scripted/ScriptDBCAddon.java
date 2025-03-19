@@ -1052,7 +1052,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (AuraController.getInstance().has(auraID)) {
-            c.selectedAura = auraID;
+            c.currentAura = auraID;
             c.updateClient();
         } else {
             throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
@@ -1103,7 +1103,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
 
         if (c.hasAuraUnlocked(auraID)) {
-            c.currentAura = auraID;
+            c.selectedAura = auraID;
             c.updateClient();
         } else {
             throw new CustomNPCsException(String.format("Player \"%s\" doesn't have aura \"%s\" (ID: %d) unlocked.", player.getCommandSenderName(), aura.getName(), auraID));
