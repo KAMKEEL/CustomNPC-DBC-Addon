@@ -753,6 +753,15 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
+    public IForm getSelectedForm() {
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        if(c.selectedForm == -1)
+            return null;
+
+        return FormController.getInstance().get(c.selectedForm);
+    }
+
+    @Override
     public void setSelectedForm(IForm form) {
         setSelectedForm(form != null ? form.getID() : -1);
     }
@@ -1152,6 +1161,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     //////////////////////////////////////////////
     //////////////////////////////////////////////
 
+
+    @Override
+    public void removeOutline() {
+        dbcData.setOutline(null);
+    }
+
     @Override
     public void setOutline(IOutline outline) {
         if (outline != null)
@@ -1171,6 +1186,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setOutline(int outlineID) {
+        if(outlineID == -1){
+            dbcData.setOutline(null);
+            return;
+        }
+
         IOutline outline = OutlineController.getInstance().get(outlineID);
         if (outline != null)
             setOutline(outline);

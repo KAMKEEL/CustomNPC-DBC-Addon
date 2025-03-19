@@ -786,7 +786,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     public void setOutline(IOutline outline) {
         int id = outline != null ? outline.getID() : -1;
-        getRawCompound().setInteger("outlineID", id);
+        setOutline(id);
+    }
+
+    public void setOutline(int outlineID) {
+        getRawCompound().setInteger("outlineID", outlineID);
     }
 
     public void setFlight(boolean flightOn) {

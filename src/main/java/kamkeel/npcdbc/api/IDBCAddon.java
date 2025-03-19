@@ -392,6 +392,8 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     void removeCustomForm(IForm form, boolean removesMastery);
 
+    IForm getSelectedForm();
+
     /**
      * Selects a custom form for the player.
      * <br>
@@ -658,6 +660,8 @@ public interface IDBCAddon extends IDBCPlayer {
     boolean isInAura(String auraName);
 
     boolean isInAura(int auraID);
+
+    void removeOutline();
 
     void setOutline(IOutline outline);
 
