@@ -329,7 +329,7 @@ public class DBCUtils {
                         int ko = getInt(player, "jrmcHar4va");
                         newHP = all < 20 ? 20 : (int) all;
                         if (ko <= 0 && newHP == 20) {
-                            return currentHP - 20;
+                            return currentHP > 20 ? currentHP - 20 : 0;
                         }
                     }
                 }
