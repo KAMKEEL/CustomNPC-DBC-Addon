@@ -82,10 +82,10 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
      */
     @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Lnoppes/npcs/scripted/event/NpcEvent$DamagedEvent;getDamage()F"))
     public float fixDamagedEventDBCDamage(NpcEvent.DamagedEvent instance) {
-        if (dbcAltered) {
+        if (dbcAltered && DBCUtils.npcLastSetDamage == -1) {
             DBCUtils.npcLastSetDamage = (int) instance.getDamage();
-            dbcAltered = false;
         }
+        dbcAltered = false;
         return instance.getDamage();
     }
 }
