@@ -37,7 +37,7 @@ public class PlayerDBCInfo {
     public PlayerData parent;
 
     public int currentForm = -1;
-    public int selectedForm = -1, selectedDBCForm = -1,tempSelectedDBCForm = -1;
+    public int selectedForm = -1, selectedDBCForm = -1, tempSelectedDBCForm = -1;
 
     public int currentAura = -1;
     public int selectedAura = -1;
@@ -57,11 +57,11 @@ public class PlayerDBCInfo {
     }
 
     public void addForm(Form form) {
-        if(form == null)
+        if (form == null)
             return;
 
         unlockedForms.add(form.id);
-        if(!formLevels.containsKey(form.id))
+        if (!formLevels.containsKey(form.id))
             formLevels.put(form.id, 0f);
     }
 
@@ -82,8 +82,9 @@ public class PlayerDBCInfo {
     public boolean removeForm(int id) {
         return removeForm(id, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
     }
+
     public boolean removeForm(Form form, boolean removesMastery) {
-        if(form == null)
+        if (form == null)
             return false;
         if (removesMastery)
             formLevels.remove(form.id);
@@ -102,7 +103,6 @@ public class PlayerDBCInfo {
     }
 
 
-
     public Form getForm(int id) {
         if (unlockedForms.contains(id))
             return (Form) FormController.getInstance().get(id);
@@ -116,7 +116,7 @@ public class PlayerDBCInfo {
     }
 
     public boolean hasForm(Form form) {
-        if(form == null)
+        if (form == null)
             return false;
         return unlockedForms.contains(form.id);
     }
@@ -135,14 +135,14 @@ public class PlayerDBCInfo {
     }
 
     public String getColoredName(Form f) {
-        if(f == null)
+        if (f == null)
             return "";
         return getFormColorCode(f) + f.getName();
     }
 
     public boolean isInForm(String formName) {
         Form form = getCurrentForm();
-        if(form == null)
+        if (form == null)
             return false;
         return form.getName().equals(formName);
     }
@@ -170,13 +170,14 @@ public class PlayerDBCInfo {
     public void clearAllForms() {
         resetFormData(true, true);
     }
+
     public void resetFormData(boolean removeForms, boolean removeMasteries) {
         TransformController.handleFormDescend(parent.player, -10);
         currentForm = -1;
         selectedForm = -1;
-        if(removeForms)
+        if (removeForms)
             unlockedForms.clear();
-        if(removeMasteries)
+        if (removeMasteries)
             formLevels.clear();
 
         for (FormWheelData formWheelData : formWheel) formWheelData.reset();
@@ -229,7 +230,7 @@ public class PlayerDBCInfo {
         if (form != null) {
             float updated = ValueUtil.clamp(amount, 0, ((FormMastery) form.getMastery()).maxLevel);
             formLevels.put(formID, updated);
-            if(updateClient)
+            if (updateClient)
                 updateClient();
         }
     }
@@ -247,16 +248,16 @@ public class PlayerDBCInfo {
     }
 
     public float getFormLevel(int formID, boolean checkFusion) {
-        if(formID == -1)
+        if (formID == -1)
             return 0f;
 
 
         float mastery = formLevels.getOrDefault(formID, 0f);
-        if(!checkFusion || parent.player == null)
+        if (!checkFusion || parent.player == null)
             return mastery;
 
         NBTTagCompound compound = parent.player.getEntityData().getCompoundTag("PlayerPersisted");
-        if(isFused(compound)) {
+        if (isFused(compound)) {
             EntityPlayer fusedPlayer = getSpectatorEntity(compound);
             if (fusedPlayer != null) {
                 float otherPlayerMastery = PlayerDataUtil.getDBCInfo(fusedPlayer).formLevels.getOrDefault(formID, 0f);
@@ -315,7 +316,7 @@ public class PlayerDBCInfo {
     // Aura stuff
 
     public void addAura(Aura aura) {
-        if(aura == null)
+        if (aura == null)
             return;
         unlockedAuras.add(aura.id);
     }
@@ -325,7 +326,7 @@ public class PlayerDBCInfo {
     }
 
     public boolean removeAura(Aura aura) {
-        if(aura == null)
+        if (aura == null)
             return false;
         return unlockedAuras.remove(aura.id);
     }
@@ -346,7 +347,7 @@ public class PlayerDBCInfo {
     }
 
     public boolean hasAura(Aura aura) {
-        if(aura == null)
+        if (aura == null)
             return false;
         return unlockedAuras.contains(aura.id);
     }
@@ -357,7 +358,7 @@ public class PlayerDBCInfo {
 
     public boolean isInAura(String AuraName) {
         Aura aura = getCurrentAura();
-        if(aura == null)
+        if (aura == null)
             return false;
         return aura.getName().equals(AuraName);
     }
@@ -398,7 +399,7 @@ public class PlayerDBCInfo {
 
     public void resetChar(boolean removeForms, boolean removeMasteries) {
         resetFormData(removeForms, removeMasteries);
-        if(ConfigDBCGeneral.AURAS_CLEAR_ON_RESET)
+        if (ConfigDBCGeneral.AURAS_CLEAR_ON_RESET)
             clearAllAuras();
 
         configuredFormColors.clear();
@@ -472,7 +473,7 @@ public class PlayerDBCInfo {
     }
 
     private void loadBonuses(NBTTagCompound dbcCompound) {
-        if(FMLCommonHandler.instance().getEffectiveSide().isClient() || this.parent.player == null)
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient() || this.parent.player == null)
             return;
 
         ConcurrentHashMap<String, PlayerBonus> currentBonuses = new ConcurrentHashMap<>();
@@ -489,11 +490,11 @@ public class PlayerDBCInfo {
     }
 
     private void saveBonuses(NBTTagCompound dbcCompound) {
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT || parent.player == null)
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT || parent.player == null)
             return;
 
         Map<String, PlayerBonus> test = BonusController.getInstance().getPlayerBonus(parent.player);
-        if(test == null || test.isEmpty())
+        if (test == null || test.isEmpty())
             return;
 
         NBTTagList nbttaglist = new NBTTagList();
@@ -506,16 +507,16 @@ public class PlayerDBCInfo {
 
     private void handleLinkedFormMastery() {
         Form form = getCurrentForm();
-        if(form == null)
+        if (form == null)
             return;
 
         DBCData data = DBCData.get(parent.player);
 
-        if(!form.mastery.masteryLink.hasLinkData(data.getRace()))
+        if (!form.mastery.masteryLink.hasLinkData(data.getRace()))
             return;
 
         FormMasteryLinkData.LinkData linkData = form.mastery.masteryLink.masteryLinks.get((int) data.Race);
-        if(linkData.isCustomLink) {
+        if (linkData.isCustomLink) {
             handleCustomLinking(data, form, linkData.formID);
         } else {
             handleDBCLinking(data, form, linkData.formID);
@@ -524,7 +525,7 @@ public class PlayerDBCInfo {
 
     private void handleCustomLinking(DBCData data, Form form, int formID) {
         Form otherForm = (Form) FormController.getInstance().get(formID);
-        if(otherForm == null)
+        if (otherForm == null)
             return;
 
         float currentFormMastery = formLevels.getOrDefault(form.id, 0.0f);
@@ -553,7 +554,7 @@ public class PlayerDBCInfo {
     private boolean isFused(NBTTagCompound compound) {
         String statusEffects = compound.getString("jrmcStatusEff");
         String fusionString = compound.getString("jrmcFuzion");
-        if(JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects))
+        if (JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects))
             return true;
         if (fusionString.contains(",")) {
             String[] fusionMembers = fusionString.split(",");
@@ -575,7 +576,7 @@ public class PlayerDBCInfo {
 
     private boolean isFusionSpectator(NBTTagCompound compound) {
         String statusEffects = compound.getString("jrmcStatusEff");
-        if(JRMCoreH.StusEfcts(11, statusEffects)) {
+        if (JRMCoreH.StusEfcts(11, statusEffects)) {
             return true;
         }
         String fusionString = compound.getString("jrmcFuzion");
@@ -589,11 +590,11 @@ public class PlayerDBCInfo {
     }
 
     private EntityPlayer getSpectatorEntity(NBTTagCompound compound) {
-        if(isFused(compound) && !isFusionSpectator(compound)){
+        if (isFused(compound) && !isFusionSpectator(compound)) {
             String spectator = getSpectatorName(compound);
-            if(!spectator.isEmpty()){
+            if (!spectator.isEmpty()) {
                 EntityPlayer specEntity = null;
-                if(parent.player.worldObj.isRemote){
+                if (parent.player.worldObj.isRemote) {
                     specEntity = parent.player.worldObj.getPlayerEntityByName(spectator);
                 } else {
                     specEntity = NoppesUtilServer.getPlayerByName(spectator);

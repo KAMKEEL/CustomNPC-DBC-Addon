@@ -26,7 +26,7 @@ public class ClientCache {
 
     public static String discordURL = null;
 
-    public static DBCData getClientData(EntityPlayer player){
+    public static DBCData getClientData(EntityPlayer player) {
         synchronized (clientDataCache) {
             if (!clientDataCache.containsKey(player.getCommandSenderName()))
                 clientDataCache.put(player.getCommandSenderName(), new CacheHashMap.CachedObject<>(new DBCData(player)));

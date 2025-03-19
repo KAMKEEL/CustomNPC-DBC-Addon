@@ -32,7 +32,8 @@ public class DBCEffectController implements IDBCEffectHandler {
     private final ConcurrentHashMap<UUID, DamageTracker> damageTrackers = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, SenzuConsumptionData> playerSenzuConsumption = new ConcurrentHashMap<>();
 
-    public DBCEffectController() {}
+    public DBCEffectController() {
+    }
 
     public static DBCEffectController getInstance() {
         return Instance;
@@ -60,27 +61,27 @@ public class DBCEffectController implements IDBCEffectHandler {
         CustomEffectController.getInstance().registerEffectMap(DBC_EFFECT_INDEX, standardEffects);
     }
 
-    public boolean hasEffect(EntityPlayer player, int id){
+    public boolean hasEffect(EntityPlayer player, int id) {
         return CustomEffectController.getInstance().hasEffect(player, id, DBC_EFFECT_INDEX);
     }
 
-    public void applyEffect(EntityPlayer player, int id){
+    public void applyEffect(EntityPlayer player, int id) {
         AddonEffect addonEffect = standardEffects.get(id);
-        if(addonEffect == null)
+        if (addonEffect == null)
             return;
 
         CustomEffectController.getInstance().applyEffect(player, id, addonEffect.length, (byte) 1, DBC_EFFECT_INDEX);
     }
 
-    public AddonEffect get(int id){
+    public AddonEffect get(int id) {
         return standardEffects.get(id);
     }
 
-    public void applyEffect(EntityPlayer player, int id, int duration){
+    public void applyEffect(EntityPlayer player, int id, int duration) {
         CustomEffectController.getInstance().applyEffect(player, id, duration, (byte) 1, DBC_EFFECT_INDEX);
     }
 
-    public void applyEffect(EntityPlayer player, int id, int duration, byte level){
+    public void applyEffect(EntityPlayer player, int id, int duration, byte level) {
         CustomEffectController.getInstance().applyEffect(player, id, duration, level, DBC_EFFECT_INDEX);
     }
 
@@ -191,16 +192,16 @@ public class DBCEffectController implements IDBCEffectHandler {
 
     // API VERSIONS
     @Override
-    public boolean hasEffect(IPlayer player, int id){
-        if(player == null || !(player.getMCEntity() instanceof EntityPlayer))
+    public boolean hasEffect(IPlayer player, int id) {
+        if (player == null || !(player.getMCEntity() instanceof EntityPlayer))
             return false;
 
         return hasEffect((EntityPlayer) player.getMCEntity(), id);
     }
 
     @Override
-    public void applyEffect(IPlayer player, int id){
-        if(player == null || !(player.getMCEntity() instanceof EntityPlayer))
+    public void applyEffect(IPlayer player, int id) {
+        if (player == null || !(player.getMCEntity() instanceof EntityPlayer))
             return;
 
         EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
@@ -208,8 +209,8 @@ public class DBCEffectController implements IDBCEffectHandler {
     }
 
     @Override
-    public void applyEffect(IPlayer player, int id, int duration){
-        if(player == null || !(player.getMCEntity() instanceof EntityPlayer))
+    public void applyEffect(IPlayer player, int id, int duration) {
+        if (player == null || !(player.getMCEntity() instanceof EntityPlayer))
             return;
 
         EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
@@ -217,8 +218,8 @@ public class DBCEffectController implements IDBCEffectHandler {
     }
 
     @Override
-    public void applyEffect(IPlayer player, int id, int duration, byte level){
-        if(player == null || !(player.getMCEntity() instanceof EntityPlayer))
+    public void applyEffect(IPlayer player, int id, int duration, byte level) {
+        if (player == null || !(player.getMCEntity() instanceof EntityPlayer))
             return;
 
         EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
@@ -226,8 +227,8 @@ public class DBCEffectController implements IDBCEffectHandler {
     }
 
     @Override
-    public void clearDBCEffects(IPlayer player){
-        if(player == null || !(player.getMCEntity() instanceof EntityPlayer))
+    public void clearDBCEffects(IPlayer player) {
+        if (player == null || !(player.getMCEntity() instanceof EntityPlayer))
             return;
 
         EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
@@ -236,7 +237,7 @@ public class DBCEffectController implements IDBCEffectHandler {
 
     @Override
     public void removeEffect(IPlayer player, int id) {
-        if(player == null || !(player.getMCEntity() instanceof EntityPlayer))
+        if (player == null || !(player.getMCEntity() instanceof EntityPlayer))
             return;
 
         EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();

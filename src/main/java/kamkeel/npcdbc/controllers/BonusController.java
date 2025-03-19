@@ -33,7 +33,7 @@ public class BonusController implements IBonusHandler {
             currentBonus = playerBonus.get(Utility.getUUID(player));
 
         float[] bonuses = new float[5];
-        for(PlayerBonus playerBonus : currentBonus.values()){
+        for (PlayerBonus playerBonus : currentBonus.values()) {
             bonuses[0] += playerBonus.strength;
             bonuses[1] += playerBonus.dexterity;
             bonuses[2] += playerBonus.willpower;
@@ -45,13 +45,13 @@ public class BonusController implements IBonusHandler {
 
     public Map<String, PlayerBonus> getPlayerBonus(EntityPlayer player) {
         UUID playerId = Utility.getUUID(player);
-        if(!playerBonus.containsKey(playerId))
+        if (!playerBonus.containsKey(playerId))
             playerBonus.put(playerId, new ConcurrentHashMap<>());
         return playerBonus.get(Utility.getUUID(player));
     }
 
     public void giveBonus(EntityPlayer player, PlayerBonus bon) {
-        if(bon == null)
+        if (bon == null)
             return;
 
         Map<String, PlayerBonus> currentBonus = new HashMap<>();
@@ -65,7 +65,7 @@ public class BonusController implements IBonusHandler {
     }
 
     public void removeEffect(EntityPlayer player, String bonusName) {
-        if(bonusName == null)
+        if (bonusName == null)
             return;
         Map<String, PlayerBonus> current;
         UUID uuid = Utility.getUUID(player);
@@ -85,7 +85,7 @@ public class BonusController implements IBonusHandler {
     }
 
     public void applyBonus(EntityPlayer player, PlayerBonus bonus) {
-        if(player == null || bonus == null)
+        if (player == null || bonus == null)
             return;
         Map<String, PlayerBonus> currentBonus;
         UUID uuid = Utility.getUUID(player);
@@ -97,7 +97,7 @@ public class BonusController implements IBonusHandler {
     }
 
     public void applyBonus(EntityPlayer player, String name, byte type, float str, float dex, float wil) {
-        if(player == null || name.isEmpty())
+        if (player == null || name.isEmpty())
             return;
 
         Map<String, PlayerBonus> currentbonus;
@@ -107,12 +107,12 @@ public class BonusController implements IBonusHandler {
         else
             playerBonus.put(uuid, currentbonus = new HashMap<>());
 
-        PlayerBonus bonus = new PlayerBonus(name,  type, str, dex, wil);
+        PlayerBonus bonus = new PlayerBonus(name, type, str, dex, wil);
         currentbonus.put(name, bonus);
     }
 
     public void removeBonus(EntityPlayer player, PlayerBonus bonus) {
-        if(player == null || bonus == null)
+        if (player == null || bonus == null)
             return;
         Map<String, PlayerBonus> current;
         UUID uuid = Utility.getUUID(player);
@@ -125,7 +125,7 @@ public class BonusController implements IBonusHandler {
     }
 
     public void removeBonus(EntityPlayer player, String name) {
-        if(player == null || name.isEmpty())
+        if (player == null || name.isEmpty())
             return;
         Map<String, PlayerBonus> current;
         UUID uuid = Utility.getUUID(player);
@@ -138,14 +138,14 @@ public class BonusController implements IBonusHandler {
 
     @Override
     public void clearBonuses(IPlayer player) {
-        if(player == null || player.getMCEntity() == null)
+        if (player == null || player.getMCEntity() == null)
             return;
         clearBonuses(player.getMCEntity());
     }
 
     public void clearBonuses(Entity player) {
         Map<String, PlayerBonus> effects = playerBonus.get(Utility.getUUID(player));
-        if(effects != null){
+        if (effects != null) {
             effects.clear();
         }
     }
@@ -167,7 +167,7 @@ public class BonusController implements IBonusHandler {
 
     @Override
     public boolean hasBonus(IPlayer player, String name) {
-        if(player == null || player.getMCEntity() == null)
+        if (player == null || player.getMCEntity() == null)
             return false;
         return hasBonus((EntityPlayer) player.getMCEntity(), name);
     }
@@ -179,30 +179,30 @@ public class BonusController implements IBonusHandler {
 
     @Override
     public void applyBonus(IPlayer player, String name, float str, float dex, float wil) {
-        if(player == null || player.getMCEntity() == null)
+        if (player == null || player.getMCEntity() == null)
             return;
         applyBonus((EntityPlayer) player.getMCEntity(), name, (byte) 0, str, dex, wil);
     }
 
     @Override
     public void applyBonus(IPlayer player, IPlayerBonus bonus) {
-        if(bonus == null)
+        if (bonus == null)
             return;
-        if(player == null || player.getMCEntity() == null)
+        if (player == null || player.getMCEntity() == null)
             return;
         applyBonus((EntityPlayer) player.getMCEntity(), (PlayerBonus) bonus);
     }
 
     @Override
     public void removeBonus(IPlayer player, String name) {
-        if(player == null || player.getMCEntity() == null)
+        if (player == null || player.getMCEntity() == null)
             return;
         removeBonus((EntityPlayer) player.getMCEntity(), name);
     }
 
     @Override
     public void removeBonus(IPlayer player, IPlayerBonus bonus) {
-        if(player == null || player.getMCEntity() == null)
+        if (player == null || player.getMCEntity() == null)
             return;
         removeBonus((EntityPlayer) player.getMCEntity(), bonus.getName());
     }

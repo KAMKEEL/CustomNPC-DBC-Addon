@@ -283,7 +283,7 @@ public class DBCHorns extends ModelDBCPartInterface {
         Form form = display.getForm();
         if (form != null) {
             if (display.race == DBCRace.ARCOSIAN) {
-                switch(form.display.bodyType) {
+                switch (form.display.bodyType) {
                     case "firstform":
                         config.type = 2;
                         break;

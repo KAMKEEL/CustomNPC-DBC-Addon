@@ -23,7 +23,7 @@ public class DBCRemoveForm extends AbstractPacket {
 
     private int formID;
 
-    public DBCRemoveForm(int formID){
+    public DBCRemoveForm(int formID) {
         this.formID = formID;
     }
 
@@ -48,7 +48,7 @@ public class DBCRemoveForm extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCFORM))
+        if (!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCFORM))
             return;
 
         int formID = in.readInt();

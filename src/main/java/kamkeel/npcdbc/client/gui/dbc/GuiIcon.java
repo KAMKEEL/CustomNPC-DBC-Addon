@@ -14,7 +14,7 @@ public class GuiIcon extends JRMCoreLabel {
     private final int width;
     private final int height;
 
-    public GuiIcon(ResourceLocation texture, int xPosition, int yPosition, int textureX, int textureY, int width, int height){
+    public GuiIcon(ResourceLocation texture, int xPosition, int yPosition, int textureX, int textureY, int width, int height) {
 
         this.texture = texture;
         this.xPosition = xPosition;
@@ -28,11 +28,12 @@ public class GuiIcon extends JRMCoreLabel {
 
     /**
      * The draw function for the label
+     *
      * @param client
      * @param mouseX
      * @param mouseY
      */
-    public void drawLabel(Minecraft client, int mouseX, int mouseY){
+    public void drawLabel(Minecraft client, int mouseX, int mouseY) {
         GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         client.getTextureManager().bindTexture(texture);
         this.drawTexturedModalRect(xPosition, yPosition, textureX, textureY, width, height);
@@ -40,6 +41,7 @@ public class GuiIcon extends JRMCoreLabel {
 
     public static class Button extends GuiButton {
         private final ResourceLocation texture;
+
         public Button(int buttonId, int x, int y, int width, int height, ResourceLocation texture) {
             super(buttonId, x, y, width, height, null);
             this.texture = texture;

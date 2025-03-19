@@ -16,5 +16,6 @@ public class Darkness extends AddonEffect {
     }
 
     @Override
-    public void onTick(EntityPlayer player, PlayerEffect playerEffect){}
+    public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
+    }
 }

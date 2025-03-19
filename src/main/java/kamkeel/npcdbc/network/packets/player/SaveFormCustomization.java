@@ -27,6 +27,7 @@ public class SaveFormCustomization extends AbstractPacket {
     public SaveFormCustomization() {
 
     }
+
     public SaveFormCustomization(Form form, FormDisplay.BodyColor colors) {
         formID = form.id;
         bodyColorsCompound = colors.writeToNBT(new NBTTagCompound());

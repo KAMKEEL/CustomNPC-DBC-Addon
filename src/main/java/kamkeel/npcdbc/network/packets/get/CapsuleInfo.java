@@ -16,13 +16,14 @@ public final class CapsuleInfo extends AbstractPacket {
 
     private InfoType infoType;
 
-    public CapsuleInfo(){}
+    public CapsuleInfo() {
+    }
 
-    public CapsuleInfo(InfoType infoType){
+    public CapsuleInfo(InfoType infoType) {
         this.infoType = infoType;
     }
 
-    public enum InfoType{
+    public enum InfoType {
         STRENGTH,
         COOLDOWN,
         EFFECT_TIME
@@ -44,11 +45,9 @@ public final class CapsuleInfo extends AbstractPacket {
 
         if (this.infoType == InfoType.COOLDOWN) {
             data = CapsuleController.serializeHashMap(CapsuleController.Instance.capsuleCooldowns);
-        }
-        else if(this.infoType == InfoType.STRENGTH){
+        } else if (this.infoType == InfoType.STRENGTH) {
             data = CapsuleController.serializeHashMap(CapsuleController.Instance.capsuleStrength);
-        }
-        else if(this.infoType == InfoType.EFFECT_TIME){
+        } else if (this.infoType == InfoType.EFFECT_TIME) {
             data = CapsuleController.serializeHashMap(CapsuleController.Instance.capsuleEffectTimes);
         }
 
@@ -74,16 +73,14 @@ public final class CapsuleInfo extends AbstractPacket {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-        }
-        else if(this.infoType == InfoType.STRENGTH){
+        } else if (this.infoType == InfoType.STRENGTH) {
             try {
                 HashMap<Integer, HashMap<Integer, Integer>> newMap = CapsuleController.deserializeHashMap(data);
                 CapsuleController.Instance.capsuleStrength = newMap;
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-        }
-        else if(this.infoType == InfoType.EFFECT_TIME){
+        } else if (this.infoType == InfoType.EFFECT_TIME) {
             try {
                 HashMap<Integer, HashMap<Integer, Integer>> newMap = CapsuleController.deserializeHashMap(data);
                 CapsuleController.Instance.capsuleEffectTimes = newMap;

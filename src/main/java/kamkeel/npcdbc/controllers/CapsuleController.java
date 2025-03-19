@@ -33,8 +33,8 @@ public class CapsuleController {
     public HashMap<Integer, HashMap<Integer, Integer>> capsuleCooldowns = new HashMap<>();
     public HashMap<Integer, HashMap<Integer, Integer>> capsuleEffectTimes = new HashMap<>();
 
-    public static void setMiscCapsule(UUID playerUUID, int type){
-        if(ConfigCapsules.EnableCapsuleCooldowns){
+    public static void setMiscCapsule(UUID playerUUID, int type) {
+        if (ConfigCapsules.EnableCapsuleCooldowns) {
             if (type < 0 || type > EnumMiscCapsules.count())
                 type = 0;
 
@@ -50,8 +50,8 @@ public class CapsuleController {
         }
     }
 
-    public static long canUseMiscCapsule(UUID playerUUID, int type){
-        if(ConfigCapsules.EnableCapsuleCooldowns){
+    public static long canUseMiscCapsule(UUID playerUUID, int type) {
+        if (ConfigCapsules.EnableCapsuleCooldowns) {
             if (type < 0 || type > EnumMiscCapsules.count())
                 type = 0;
 
@@ -74,18 +74,17 @@ public class CapsuleController {
         return 0;
     }
 
-    public static void setKiCapsule(UUID playerUUID, int type){
-        if(ConfigCapsules.EnableCapsuleCooldowns){
+    public static void setKiCapsule(UUID playerUUID, int type) {
+        if (ConfigCapsules.EnableCapsuleCooldowns) {
             if (type < 0 || type > EnumKiCapsules.count())
                 type = 0;
 
             EnumKiCapsules kiCapsules = EnumKiCapsules.values()[type];
             long freedomTime = System.currentTimeMillis() + (kiCapsules.getCooldown() * 1000L);
 
-            if(ConfigCapsules.KiCapsuleCooldownType == 0){
+            if (ConfigCapsules.KiCapsuleCooldownType == 0) {
                 CapsuleController.Instance.lastUsedKiCapsule.put(playerUUID, freedomTime);
-            }
-            else {
+            } else {
                 if (!CapsuleController.Instance.lastIndividualKiCapsule.containsKey(playerUUID))
                     CapsuleController.Instance.lastIndividualKiCapsule.put(playerUUID, new HashMap<>());
 
@@ -96,15 +95,15 @@ public class CapsuleController {
         }
     }
 
-    public static long canUseKiCapsule(UUID playerUUID, int type){
-        if(ConfigCapsules.EnableCapsuleCooldowns){
+    public static long canUseKiCapsule(UUID playerUUID, int type) {
+        if (ConfigCapsules.EnableCapsuleCooldowns) {
             if (type < 0 || type > EnumKiCapsules.count())
                 type = 0;
 
             long currentTime = System.currentTimeMillis();
             long freedomTime = 0;
 
-            if(ConfigCapsules.KiCapsuleCooldownType == 0){
+            if (ConfigCapsules.KiCapsuleCooldownType == 0) {
                 if (CapsuleController.Instance.lastUsedKiCapsule.containsKey(playerUUID))
                     freedomTime = CapsuleController.Instance.lastUsedKiCapsule.get(playerUUID);
 
@@ -113,8 +112,7 @@ public class CapsuleController {
 
                 // Return remaining time in seconds
                 return (remainingTimeMillis + 999) / 1000;
-            }
-            else {
+            } else {
                 if (!CapsuleController.Instance.lastIndividualKiCapsule.containsKey(playerUUID))
                     CapsuleController.Instance.lastIndividualKiCapsule.put(playerUUID, new HashMap<>());
 
@@ -133,18 +131,17 @@ public class CapsuleController {
     }
 
 
-    public static void setHealthCapsule(UUID playerUUID, int type){
-        if(ConfigCapsules.EnableCapsuleCooldowns){
+    public static void setHealthCapsule(UUID playerUUID, int type) {
+        if (ConfigCapsules.EnableCapsuleCooldowns) {
             if (type < 0 || type > EnumHealthCapsules.count())
                 type = 0;
 
             EnumHealthCapsules kiCapsules = EnumHealthCapsules.values()[type];
             long freedomTime = System.currentTimeMillis() + (kiCapsules.getCooldown() * 1000L);
 
-            if(ConfigCapsules.HealthCapsuleCooldownType == 0){
+            if (ConfigCapsules.HealthCapsuleCooldownType == 0) {
                 CapsuleController.Instance.lastUsedHealthCapsule.put(playerUUID, freedomTime);
-            }
-            else {
+            } else {
                 if (!CapsuleController.Instance.lastIndividualHealthCapsule.containsKey(playerUUID))
                     CapsuleController.Instance.lastIndividualHealthCapsule.put(playerUUID, new HashMap<>());
 
@@ -155,15 +152,15 @@ public class CapsuleController {
         }
     }
 
-    public static long canUseHealthCapsule(UUID playerUUID, int type){
-        if(ConfigCapsules.EnableCapsuleCooldowns){
+    public static long canUseHealthCapsule(UUID playerUUID, int type) {
+        if (ConfigCapsules.EnableCapsuleCooldowns) {
             if (type < 0 || type > EnumHealthCapsules.count())
                 type = 0;
 
             long currentTime = System.currentTimeMillis();
             long freedomTime = 0;
 
-            if(ConfigCapsules.HealthCapsuleCooldownType == 0){
+            if (ConfigCapsules.HealthCapsuleCooldownType == 0) {
                 if (CapsuleController.Instance.lastUsedHealthCapsule.containsKey(playerUUID))
                     freedomTime = CapsuleController.Instance.lastUsedHealthCapsule.get(playerUUID);
 
@@ -172,8 +169,7 @@ public class CapsuleController {
 
                 // Return remaining time in seconds
                 return (remainingTimeMillis + 999) / 1000;
-            }
-            else {
+            } else {
                 if (!CapsuleController.Instance.lastIndividualHealthCapsule.containsKey(playerUUID))
                     CapsuleController.Instance.lastIndividualHealthCapsule.put(playerUUID, new HashMap<>());
 
@@ -191,18 +187,17 @@ public class CapsuleController {
         return 0;
     }
 
-    public static void setStaminaCapsule(UUID playerUUID, int type){
-        if(ConfigCapsules.EnableCapsuleCooldowns){
+    public static void setStaminaCapsule(UUID playerUUID, int type) {
+        if (ConfigCapsules.EnableCapsuleCooldowns) {
             if (type < 0 || type > EnumStaminaCapsules.count())
                 type = 0;
 
             EnumStaminaCapsules kiCapsules = EnumStaminaCapsules.values()[type];
             long freedomTime = System.currentTimeMillis() + (kiCapsules.getCooldown() * 1000L);
 
-            if(ConfigCapsules.StaminaCapsuleCooldownType == 0){
+            if (ConfigCapsules.StaminaCapsuleCooldownType == 0) {
                 CapsuleController.Instance.lastUsedStaminaCapsule.put(playerUUID, freedomTime);
-            }
-            else {
+            } else {
                 if (!CapsuleController.Instance.lastIndividualStaminaCapsule.containsKey(playerUUID))
                     CapsuleController.Instance.lastIndividualStaminaCapsule.put(playerUUID, new HashMap<>());
 
@@ -213,15 +208,15 @@ public class CapsuleController {
         }
     }
 
-    public static long canUseStaminaCapsule(UUID playerUUID, int type){
-        if(ConfigCapsules.EnableCapsuleCooldowns){
+    public static long canUseStaminaCapsule(UUID playerUUID, int type) {
+        if (ConfigCapsules.EnableCapsuleCooldowns) {
             if (type < 0 || type > EnumStaminaCapsules.count())
                 type = 0;
 
             long currentTime = System.currentTimeMillis();
             long freedomTime = 0;
 
-            if(ConfigCapsules.StaminaCapsuleCooldownType == 0){
+            if (ConfigCapsules.StaminaCapsuleCooldownType == 0) {
                 if (CapsuleController.Instance.lastUsedStaminaCapsule.containsKey(playerUUID))
                     freedomTime = CapsuleController.Instance.lastUsedStaminaCapsule.get(playerUUID);
 
@@ -230,8 +225,7 @@ public class CapsuleController {
 
                 // Return remaining time in seconds
                 return (remainingTimeMillis + 999) / 1000;
-            }
-            else {
+            } else {
                 if (!CapsuleController.Instance.lastIndividualStaminaCapsule.containsKey(playerUUID))
                     CapsuleController.Instance.lastIndividualStaminaCapsule.put(playerUUID, new HashMap<>());
 
@@ -249,26 +243,26 @@ public class CapsuleController {
         return 0;
     }
 
-    public static void setRegenCapsule(UUID playerUUID, int type){
-        if(!ConfigCapsules.EnableCapsuleCooldowns)
+    public static void setRegenCapsule(UUID playerUUID, int type) {
+        if (!ConfigCapsules.EnableCapsuleCooldowns)
             return;
 
-        if(type < 0 || type >= EnumRegenCapsules.count())
+        if (type < 0 || type >= EnumRegenCapsules.count())
             type = 0;
 
         EnumRegenCapsules regenCapsules = EnumRegenCapsules.values()[type];
-        long freedomTime = System.currentTimeMillis() + (regenCapsules.getCooldown()*1000L);
+        long freedomTime = System.currentTimeMillis() + (regenCapsules.getCooldown() * 1000L);
 
-        if(ConfigCapsules.RegenCapsuleCooldownType == 0){
+        if (ConfigCapsules.RegenCapsuleCooldownType == 0) {
             CapsuleController.Instance.lastUsedRegenCapsule.put(playerUUID, freedomTime);
-        }else if(ConfigCapsules.RegenCapsuleCooldownType == 1){
+        } else if (ConfigCapsules.RegenCapsuleCooldownType == 1) {
             if (!CapsuleController.Instance.lastIndividualRegenCapsule.containsKey(playerUUID))
                 CapsuleController.Instance.lastIndividualRegenCapsule.put(playerUUID, new HashMap<>());
 
             HashMap<Integer, Long> tierTime = CapsuleController.Instance.lastIndividualRegenCapsule.get(playerUUID);
             tierTime.put(type, freedomTime);
             CapsuleController.Instance.lastIndividualRegenCapsule.put(playerUUID, tierTime);
-        }else if(ConfigCapsules.RegenCapsuleCooldownType == 2){
+        } else if (ConfigCapsules.RegenCapsuleCooldownType == 2) {
             if (!CapsuleController.Instance.lastRegenTypeCapsule.containsKey(playerUUID))
                 CapsuleController.Instance.lastRegenTypeCapsule.put(playerUUID, new HashMap<>());
 
@@ -280,29 +274,29 @@ public class CapsuleController {
     }
 
     public static long canUseRegenCapsule(UUID playerUUID, int type) {
-        if(!ConfigCapsules.EnableCapsuleCooldowns)
+        if (!ConfigCapsules.EnableCapsuleCooldowns)
             return 0;
 
-        if(type < 0 || type >= EnumRegenCapsules.count())
+        if (type < 0 || type >= EnumRegenCapsules.count())
             type = 0;
 
         EnumRegenCapsules regenCapsules = EnumRegenCapsules.values()[type];
         long currentTime = System.currentTimeMillis();
         long freedomTime = 0;
 
-        if(ConfigCapsules.RegenCapsuleCooldownType == 0){
+        if (ConfigCapsules.RegenCapsuleCooldownType == 0) {
 
             if (CapsuleController.Instance.lastUsedRegenCapsule.containsKey(playerUUID))
                 freedomTime = CapsuleController.Instance.lastUsedRegenCapsule.get(playerUUID);
 
-        }else if(ConfigCapsules.RegenCapsuleCooldownType == 1){
+        } else if (ConfigCapsules.RegenCapsuleCooldownType == 1) {
             if (!CapsuleController.Instance.lastIndividualRegenCapsule.containsKey(playerUUID))
                 CapsuleController.Instance.lastIndividualRegenCapsule.put(playerUUID, new HashMap<>());
 
             HashMap<Integer, Long> tierTime = CapsuleController.Instance.lastIndividualRegenCapsule.get(playerUUID);
             if (tierTime.containsKey(type))
                 freedomTime = tierTime.get(type);
-        }else if(ConfigCapsules.RegenCapsuleCooldownType == 2){
+        } else if (ConfigCapsules.RegenCapsuleCooldownType == 2) {
             if (!CapsuleController.Instance.lastRegenTypeCapsule.containsKey(playerUUID))
                 CapsuleController.Instance.lastRegenTypeCapsule.put(playerUUID, new HashMap<>());
 
@@ -318,7 +312,7 @@ public class CapsuleController {
         return (remainingTimeMillis + 999) / 1000;
     }
 
-    public void load(){
+    public void load() {
         // Clean
         lastUsedKiCapsule.clear();
         lastIndividualKiCapsule.clear();
@@ -359,22 +353,22 @@ public class CapsuleController {
 
         HashMap<Integer, Integer> regenEffectTime = capsuleEffectTimes.get(Capsule.REGEN);
 
-        for(EnumMiscCapsules miscCapsules : EnumMiscCapsules.values()){
+        for (EnumMiscCapsules miscCapsules : EnumMiscCapsules.values()) {
             miscCooldown.put(miscCapsules.getMeta(), miscCapsules.getCooldown());
         }
-        for(EnumHealthCapsules healthCapsules : EnumHealthCapsules.values()){
+        for (EnumHealthCapsules healthCapsules : EnumHealthCapsules.values()) {
             hpCooldown.put(healthCapsules.getMeta(), healthCapsules.getCooldown());
             hpStrength.put(healthCapsules.getMeta(), healthCapsules.getStrength());
         }
-        for(EnumKiCapsules kiCapsule : EnumKiCapsules.values()){
+        for (EnumKiCapsules kiCapsule : EnumKiCapsules.values()) {
             kiCooldown.put(kiCapsule.getMeta(), kiCapsule.getCooldown());
             kiStrength.put(kiCapsule.getMeta(), kiCapsule.getStrength());
         }
-        for(EnumStaminaCapsules staminaCapsule : EnumStaminaCapsules.values()){
+        for (EnumStaminaCapsules staminaCapsule : EnumStaminaCapsules.values()) {
             staminaCooldown.put(staminaCapsule.getMeta(), staminaCapsule.getCooldown());
             staminaStrength.put(staminaCapsule.getMeta(), staminaCapsule.getStrength());
         }
-        for(EnumRegenCapsules regenCapsules : EnumRegenCapsules.values()){
+        for (EnumRegenCapsules regenCapsules : EnumRegenCapsules.values()) {
             regenCooldown.put(regenCapsules.getMeta(), regenCapsules.getCooldown());
             regenStrength.put(regenCapsules.getMeta(), regenCapsules.getStrength());
             regenEffectTime.put(regenCapsules.getMeta(), regenCapsules.getEffectTime());

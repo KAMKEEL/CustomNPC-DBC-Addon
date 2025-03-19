@@ -69,16 +69,14 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
     }
 
     /**
-     *
      * This method fires after the Npc's scripting DamagedEvent finishes.
      * If npc was attacked by a DBC player (dbcAltered true):
      * I fetch the new event.getDamage() in case a scripter edited the event's damaged with event.setDamage(damage)
      * (i.e their own custom defense calculations, since the event was fed the pure attack stat above)
      * and store it in npcLastSetDamage.
-     *
+     * <p>
      * Then in  {@link MixinJRMCoreEH#NPCDamaged(EntityLivingBase, DamageSource, float amount, CallbackInfo, LocalFloatRef)}
      * which always fires after this in the MC LivingHurt, I set the pure damage in the LivingHurtEvent to npcLastSetDamage then I reset it to -1
-     *
      */
     @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Lnoppes/npcs/scripted/event/NpcEvent$DamagedEvent;getDamage()F"))
     public float fixDamagedEventDBCDamage(NpcEvent.DamagedEvent instance) {

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class MixinDBCTalkGui {
 
     // Mind fix
-    @Redirect(method = "drawScreen", at = @At(value = "INVOKE", target ="LJinRyuu/JRMCore/JRMCoreH;statMindC()I", remap = false))
+    @Redirect(method = "drawScreen", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;statMindC()I", remap = false))
     private int drawScreenFix() {
         return JRMCoreH.statMindC() + DBCData.getClient().calculateMindBonuses();
     }

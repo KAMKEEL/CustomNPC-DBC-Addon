@@ -39,9 +39,9 @@ public class FruitOfMight extends AddonEffect {
     }
 
     @Override
-    public void onAdded(EntityPlayer player, PlayerEffect playerEffect){
+    public void onAdded(EntityPlayer player, PlayerEffect playerEffect) {
         BonusController.getInstance().applyBonus(player, fruitOfMightBonus);
-        if(ConfigDBCEffects.FOM_Aura){
+        if (ConfigDBCEffects.FOM_Aura) {
             PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
             c.currentAura = fruitOfMightAura.id;
             c.updateClient();

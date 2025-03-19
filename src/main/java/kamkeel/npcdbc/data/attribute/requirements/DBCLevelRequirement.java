@@ -21,7 +21,7 @@ public class DBCLevelRequirement implements IRequirementChecker {
 
     @Override
     public String getTooltipValue(NBTTagCompound nbt) {
-        if(nbt.hasKey(getKey())) {
+        if (nbt.hasKey(getKey())) {
             int levelRequirement = nbt.getInteger(getKey());
             return levelRequirement + "";
         }
@@ -29,15 +29,23 @@ public class DBCLevelRequirement implements IRequirementChecker {
     }
 
     @Override
+    public Object getValue(NBTTagCompound nbtTagCompound) {
+        if (nbtTagCompound.hasKey(getKey())) {
+            return nbtTagCompound.getInteger(getKey());
+        }
+        return null;
+    }
+
+    @Override
     public void apply(NBTTagCompound nbt, Object value) {
-        if(value instanceof Integer) {
+        if (value instanceof Integer) {
             nbt.setInteger(getKey(), (Integer) value);
         }
     }
 
     @Override
     public boolean check(EntityPlayer player, NBTTagCompound nbt) {
-        if(nbt.hasKey(getKey())) {
+        if (nbt.hasKey(getKey())) {
             int level = nbt.getInteger(getKey());
             DBCData dbcData = DBCData.get(player);
             int calculatedLevel = getPlayerLevel(dbcData.STR + dbcData.DEX + dbcData.CON + dbcData.WIL + dbcData.MND + dbcData.SPI);

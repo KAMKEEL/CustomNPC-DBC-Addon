@@ -207,7 +207,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             ClientProxy.lastRendererGUIPlayerID = pl;
         else
             ClientProxy.lastRendererGUIPlayerID = -1;
-        if(JRMCoreH.data2 != null)
+        if (JRMCoreH.data2 != null)
             JRMCoreH.data2[pl] = data.State + ";" + data.State2;
         return JRMCoreH.data2;
     }
@@ -312,7 +312,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         DBCData data = DBCData.get(par1AbstractClientPlayer);
 
 
-
         /**
          * @INFO: This fixes base hair color.
          */
@@ -404,7 +403,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
             FormDisplay display = form.display;
-
 
 
             if (!form.display.isBerserk) {

@@ -17,7 +17,7 @@ public class TurboPacket extends AbstractPacket {
 
     private final boolean isOn;
 
-    public TurboPacket(){
+    public TurboPacket() {
         this.isOn = false;
     }
 
@@ -42,7 +42,7 @@ public class TurboPacket extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
             return;
 
         DBCData.get(player).setTurboState(in.readBoolean());

@@ -25,7 +25,7 @@ public class MixinMinecraft {
     }
 
     @Inject(method = "toggleFullscreen", at = @At("TAIL"))
-    private void updateDisplayMode(CallbackInfo ci){
+    private void updateDisplayMode(CallbackInfo ci) {
         PostProcessing.delete();
         PostProcessing.init(this.displayWidth, this.displayHeight);
     }

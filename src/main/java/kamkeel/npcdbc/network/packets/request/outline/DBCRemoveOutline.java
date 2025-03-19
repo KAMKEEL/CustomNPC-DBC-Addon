@@ -25,7 +25,7 @@ public class DBCRemoveOutline extends AbstractPacket {
 
     private int outlineID;
 
-    public DBCRemoveOutline(int outlineID){
+    public DBCRemoveOutline(int outlineID) {
         this.outlineID = outlineID;
     }
 
@@ -50,7 +50,7 @@ public class DBCRemoveOutline extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCAURA))
+        if (!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCAURA))
             return;
 
         int outlineID = in.readInt();

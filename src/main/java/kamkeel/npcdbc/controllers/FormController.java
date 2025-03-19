@@ -34,7 +34,7 @@ public class FormController implements IFormHandler {
     }
 
     public void load() {
-       // Instance = new FormController();
+        // Instance = new FormController();
         customForms = new HashMap<>();
         bootOrder = new HashMap<>();
         lastUsedID = 0;

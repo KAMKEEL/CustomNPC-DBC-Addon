@@ -3,6 +3,7 @@ package kamkeel.npcdbc.api.outline;
 public interface IOutlineHandler {
 
     public IOutline createOutline(String name);
+
     public IOutline saveOutline(IOutline outline);
 
     void deleteOutlineFile(String name);

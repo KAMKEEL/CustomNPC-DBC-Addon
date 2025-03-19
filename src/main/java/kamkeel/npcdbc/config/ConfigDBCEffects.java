@@ -15,8 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class ConfigDBCEffects
-{
+public class ConfigDBCEffects {
     public static Configuration config;
 
     public final static String REGEN = "Regen";
@@ -103,36 +102,34 @@ public class ConfigDBCEffects
      *
      * @return Divine multiplier that should be used in the current world (singleplayer or multiplayer).
      */
-    public static float getDivineMulti(){
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+    public static float getDivineMulti() {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
             return divineMulti;
         else
             return ClientCache.divineMulti;
     }
 
-    public static HashMap<Integer, HashMap<String, Boolean>> getDivineApplicableForms(){
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+    public static HashMap<Integer, HashMap<String, Boolean>> getDivineApplicableForms() {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
             return divineApplicableForms;
         return ClientCache.divineApplicableForms;
     }
 
-    public static boolean canDivineBeApplied(int race, String formName){
+    public static boolean canDivineBeApplied(int race, String formName) {
         HashMap<Integer, HashMap<String, Boolean>> raceMap = getDivineApplicableForms();
         HashMap<String, Boolean> formMap = raceMap.get(race);
-        if(formMap == null || formMap.isEmpty())
+        if (formMap == null || formMap.isEmpty())
             return false;
-        if(race >= JRMCoreH.trans.length)
+        if (race >= JRMCoreH.trans.length)
             return false;
         return formMap.getOrDefault(formName, false);
     }
 
 
-    public static void init(File configFile)
-    {
+    public static void init(File configFile) {
         config = new Configuration(configFile);
 
-        try
-        {
+        try {
             config.load();
 
             HealthRegenPercent = config.get(REGEN, "Health Regen", 5, "Amount of Percent to restore per Level of Regen").getInt(5);
@@ -141,7 +138,7 @@ public class ConfigDBCEffects
 
             NamekRegenPercent = config.get(NAMEK_REGEN, "Namek Regen", 3,
                 "Namekian Regen is removed once the player reaches the specified amount in Gameplay Config." +
-                "\nThis value is percent health restored per second.").getInt(3);
+                    "\nThis value is percent health restored per second.").getInt(3);
 
             FOM_Strength = config.get(FRUITOFMIGHT, "Strength Multi", 1.2, "Amount added to Strength Multi [EX: Form is 1.5x and FOM is x0.5. Total is: x2.0]").getDouble(1.2);
             FOM_Dex = config.get(FRUITOFMIGHT, "Dex Multi", 0.5, "Amount added to Dex Multi").getDouble(0.5);
@@ -152,8 +149,8 @@ public class ConfigDBCEffects
 
             config.addCustomCategoryComment(ZENKAI,
                 "Zenkai will occur when a Saiyan or Half Saiyan dies. This can be disabled in\n" +
-                        "the DBC Gameplay Config. If the Zenaki effect is given to a none Saiyan. It will\n" +
-                         "utilitze the Half Saiyan Config values. All multis are ADDED multis.");
+                    "the DBC Gameplay Config. If the Zenaki effect is given to a none Saiyan. It will\n" +
+                    "utilitze the Half Saiyan Config values. All multis are ADDED multis.");
             ZenkaiSaiyanStr = config.get(ZENKAI, "Saiyan Strength Multi", 1.2f, "Amount added to Strength Multi").getDouble(1.0f);
             ZenkaiSaiyanDex = config.get(ZENKAI, "Saiyan Dex Multi", 1.2f, "Amount added to Dex Multi").getDouble(1.0f);
             ZenkaiSaiyanWil = config.get(ZENKAI, "Saiyan Will Multi", 1.2f, "Amount added to Will Multi").getDouble(1.0f);
@@ -164,12 +161,12 @@ public class ConfigDBCEffects
             ZenkaiHALFWil = config.get(ZENKAI, "Half Saiyan Will Multi", 1.2f, "Amount added to Will Multi").getDouble(1.0f);
             ZenkaiHALFLength = config.get(ZENKAI, "Half Saiyan Zenkai Length", 180, "Time of Zenkai in Seconds").getInt(180);
 
-            config.addCustomCategoryComment(CHOCOLATED,"Chocolated will occur when [WORK IN PROGRESS]");
-            CHOC_Str = config.get(CHOCOLATED,"Chocolated Strength Multi",-0.2,"debuff amount to Strength multi").getDouble(1.0f);
-            CHOC_Dex = config.get(CHOCOLATED,"Chocolated Dex Multi",-0.2,"debuff amount to Dex multi").getDouble(1.0f);
-            CHOC_Wil = config.get(CHOCOLATED,"Chocolated Will Multi",-0.2,"debuff amount to Will multi").getDouble(1.0f);
-            CHOC_EffectLength = config.get(CHOCOLATED,"Chocolated Effect Length",90,"Amount of time in seconds the Chocolated Effect is applied for").getInt(90);
-            CHOC_AffectFusion = config.get(CHOCOLATED,"Chocolated Affect Fusion",false,"whether fusions will be affected by chocolated or not").getBoolean(false);
+            config.addCustomCategoryComment(CHOCOLATED, "Chocolated will occur when [WORK IN PROGRESS]");
+            CHOC_Str = config.get(CHOCOLATED, "Chocolated Strength Multi", -0.2, "debuff amount to Strength multi").getDouble(1.0f);
+            CHOC_Dex = config.get(CHOCOLATED, "Chocolated Dex Multi", -0.2, "debuff amount to Dex multi").getDouble(1.0f);
+            CHOC_Wil = config.get(CHOCOLATED, "Chocolated Will Multi", -0.2, "debuff amount to Will multi").getDouble(1.0f);
+            CHOC_EffectLength = config.get(CHOCOLATED, "Chocolated Effect Length", 90, "Amount of time in seconds the Chocolated Effect is applied for").getInt(90);
+            CHOC_AffectFusion = config.get(CHOCOLATED, "Chocolated Affect Fusion", false, "whether fusions will be affected by chocolated or not").getBoolean(false);
 
             config.addCustomCategoryComment(Meditation,
                 "Meditation Spirit Bonus is always added AFTER all other calculations");
@@ -303,37 +300,33 @@ public class ConfigDBCEffects
                 {"Ultimate", "God"},
                 {"Pure", "God"}
             };
-            for(int i = 0; i < JRMCoreH.Races.length; i++){
+            for (int i = 0; i < JRMCoreH.Races.length; i++) {
                 HashMap<String, Boolean> formsAffected = new HashMap<>();
 
-                List<String> result = new ArrayList(JRMCoreH.trans[i].length + JRMCoreH.transNonRacial.length-1);
+                List<String> result = new ArrayList(JRMCoreH.trans[i].length + JRMCoreH.transNonRacial.length - 1);
                 Collections.addAll(result, JRMCoreH.trans[i]);
                 // Skip adding Kaioken.
-                for(int x = 1; x < JRMCoreH.transNonRacial.length; x++){
+                for (int x = 1; x < JRMCoreH.transNonRacial.length; x++) {
                     result.add(JRMCoreH.transNonRacial[x]);
                 }
                 String[] legalValues = result.toArray(new String[0]);
 
                 StringBuilder legalValuesComment = new StringBuilder();
-                for(int y = 0; y < legalValues.length; y++){
-                    if(y != 0)
+                for (int y = 0; y < legalValues.length; y++) {
+                    if (y != 0)
                         legalValuesComment.append(",");
                     legalValuesComment.append(legalValues[y]);
                 }
 
-                String[] formNames = config.getStringList(JRMCoreH.Races[i]+" - Divine affected forms", DIVINE_RACES, defaultDivineRaces[i], "Forms affected by divine multi.\nLegal values: "+legalValuesComment+"\n", legalValues);
-                for(String name : formNames){
+                String[] formNames = config.getStringList(JRMCoreH.Races[i] + " - Divine affected forms", DIVINE_RACES, defaultDivineRaces[i], "Forms affected by divine multi.\nLegal values: " + legalValuesComment + "\n", legalValues);
+                for (String name : formNames) {
                     formsAffected.put(name, true);
                 }
                 divineApplicableForms.put(i, formsAffected);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             FMLLog.log(Level.ERROR, e, "DBC Addon has had a problem loading its status effect configuration");
-        }
-        finally
-        {
+        } finally {
             if (config.hasChanged()) {
                 config.save();
             }

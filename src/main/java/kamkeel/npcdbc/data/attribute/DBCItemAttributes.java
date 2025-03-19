@@ -43,7 +43,7 @@ public class DBCItemAttributes {
     public static AttributeDefinition WILLPOWER_BOOST;
     public static AttributeDefinition SPIRIT_BOOST;
 
-    public DBCItemAttributes(){
+    public DBCItemAttributes() {
         // Flat Attributes
         STRENGTH = new AttributeDefinition(strengthKey, "Strength", '4', AttributeValueType.FLAT, AttributeDefinition.AttributeSection.STATS);
         STRENGTH.setTranslationKey("jinryuujrmcore.Strength");
@@ -90,10 +90,10 @@ public class DBCItemAttributes {
         RequirementCheckerRegistry.registerChecker(new DBCClassRequirement());
     }
 
-    public static void applyGearAttributes(EntityPlayer entityPlayer, PlayerAttributeTracker playerAttributeTracker){
+    public static void applyGearAttributes(EntityPlayer entityPlayer, PlayerAttributeTracker playerAttributeTracker) {
         BonusController.getInstance().removeBonus(entityPlayer, gearFlat);
         BonusController.getInstance().removeBonus(entityPlayer, gearMulti);
-        if(ConfigMain.AttributesEnabled){
+        if (ConfigMain.AttributesEnabled) {
             PlayerBonus flatBonus = new PlayerBonus(gearFlat, (byte) 1);
             flatBonus.setStrength(playerAttributeTracker.getAttributeValue(STRENGTH));
             flatBonus.setDexterity(playerAttributeTracker.getAttributeValue(DEXTERITY));

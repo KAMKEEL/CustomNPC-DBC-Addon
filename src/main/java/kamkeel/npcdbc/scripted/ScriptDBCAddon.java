@@ -34,6 +34,7 @@ import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.util.ValueUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
@@ -708,6 +709,18 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return formData.hasFormUnlocked(formID);
     }
 
+    @Override
+    public IForm[] getCustomForms() {
+        PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(player);
+        ArrayList<IForm> unlockedForms = new ArrayList<>();
+        for (IForm form : FormController.getInstance().getForms()) {
+            if (dbcInfo.hasFormUnlocked(form.getID())) {
+                unlockedForms.add(form);
+            }
+        }
+        return unlockedForms.toArray(new IForm[0]);
+    }
+
     public void giveCustomForm(String formName) {
         IForm form = FormController.Instance.get(formName);
         form.assignToPlayer(this);
@@ -832,6 +845,20 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public void setCustomForm(IForm form, boolean ignoreUnlockCheck) {
         int id = form == null ? -1 : form.getID();
         setCustomForm(id, ignoreUnlockCheck);
+    }
+
+    @Override
+    public void setCustomForm(String formName, boolean ignoreUnlockCheck) {
+        IForm form = FormController.getInstance().get(formName);
+        if (form == null) {
+            throw new CustomNPCsException("Form '" + formName + "' does not exist!");
+        }
+        setCustomForm(form, ignoreUnlockCheck);
+    }
+
+    @Override
+    public void setCustomForm(String formName) {
+        setCustomForm(formName, false);
     }
 
     //////////////////////////////////////////////
@@ -1155,17 +1182,17 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public IOutline getOutline() {
         return dbcData.getOutline();
     }
+
     @Override
     public IPlayer<?> getFusionPartner() {
 
-        if(!dbcData.stats.isFused()){
-            throw new CustomNPCsException(player.getDisplayName()+ " is not fused");
+        if (!dbcData.stats.isFused()) {
+            throw new CustomNPCsException(player.getDisplayName() + " is not fused");
         }
         EntityPlayer temp = dbcData.stats.getSpectatorEntity();
-        if(temp != null){
+        if (temp != null) {
             return PlayerDataUtil.getIPlayer(temp);
-        }
-        else
+        } else
             throw new CustomNPCsException("Error finding fusion partner");
     }
 
@@ -1198,7 +1225,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                     destroyerDmgRed = npcForm.getMastery().getDestroyerEnergyDamage();
                 }
 
-                player.worldObj.playSoundAtEntity(player,"jinryuudragonbc:DBC2.basicbeam_fire", 0.5F, 1.0F);
+                player.worldObj.playSoundAtEntity(player, "jinryuudragonbc:DBC2.basicbeam_fire", 0.5F, 1.0F);
                 entityEnergyAtt = new EntityEnergyAtt(player, type, speed, 50, effect, color, density, (byte) 0, (byte) 0, playSound, chargePercent, damage, 0, sts, (byte) 0);
                 if (enableDestroyer) {
                     entityEnergyAtt.destroyer = true;
@@ -1280,15 +1307,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isMeditating() {
-        if(dbcData.Skills.contains("MD")) {
-            return(dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[4]));
-        }
-        else return false;
+        if (dbcData.Skills.contains("MD")) {
+            return (dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[4]));
+        } else return false;
     }
 
     @Override
     public boolean isSuperRegen() {
-        if(dbcData.stats.getCurrentBodyPercentage()<100f && dbcData.getRace() == DBCRace.MAJIN && Integer.parseInt(dbcData.RacialSkills.replace("TR","")) > 0 )
+        if (dbcData.stats.getCurrentBodyPercentage() < 100f && dbcData.getRace() == DBCRace.MAJIN && Integer.parseInt(dbcData.RacialSkills.replace("TR", "")) > 0)
             return isReleasing();
         return false;
     }
@@ -1301,8 +1327,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isInMedicalLiquid() {
-        Block block = player.worldObj.getBlock((int) Math.floor(player.posX),(int)Math.floor(player.posY),(int)Math.floor(player.posZ));
-        return(block == Block.getBlockFromName("jinryuudragonblockc:tile.BlockHealingPods"));
+        Block block = player.worldObj.getBlock((int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ));
+        return (block == Block.getBlockFromName("jinryuudragonblockc:tile.BlockHealingPods"));
     }
 
     // TODO: Fix getCurrentSelectedAttack() from Client Side Data to Server Side Data
@@ -1312,7 +1338,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
         String[] tech = new String[0];
 
-        switch (slot){
+        switch (slot) {
             case 0:
                 tech = JRMCoreH.tech1;
 
@@ -1330,9 +1356,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         if (tech == null) throw new CustomNPCsException("Selected slot does not have an attack in it");
 
 
-        boolean effect =  Integer.parseInt(tech[6]) == 1;
+        boolean effect = Integer.parseInt(tech[6]) == 1;
 
-        IKiAttack kiAttack = new KiAttack(Byte.parseByte(tech[3]),Byte.parseByte(tech[4]),100,effect,Byte.parseByte(tech[10]), (byte) 100,true,Byte.parseByte(tech[5]));
+        IKiAttack kiAttack = new KiAttack(Byte.parseByte(tech[3]), Byte.parseByte(tech[4]), 100, effect, Byte.parseByte(tech[10]), (byte) 100, true, Byte.parseByte(tech[5]));
 
         return kiAttack;
 

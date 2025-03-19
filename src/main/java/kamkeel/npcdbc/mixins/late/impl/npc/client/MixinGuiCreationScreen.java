@@ -24,8 +24,8 @@ public abstract class MixinGuiCreationScreen extends GuiModelInterface {
     }
 
     @Inject(method = "actionPerformed", at = @At("TAIL"), remap = true)
-    private void doButtonJob(GuiButton btn, CallbackInfo ci){
-        if(btn.id == 500){
+    private void doButtonJob(GuiButton btn, CallbackInfo ci) {
+        if (btn.id == 500) {
             this.mc.displayGuiScreen(new GuiModelDBC(this, npc));
         }
     }

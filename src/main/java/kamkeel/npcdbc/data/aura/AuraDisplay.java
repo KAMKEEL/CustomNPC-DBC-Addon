@@ -424,7 +424,7 @@ public class AuraDisplay implements IAuraDisplay {
 
     @Override
     public void setLightningColor(int color) {
-       lightningColor = color;
+        lightningColor = color;
     }
 
     @Override

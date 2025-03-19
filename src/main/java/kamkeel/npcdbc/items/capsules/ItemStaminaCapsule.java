@@ -81,6 +81,7 @@ public class ItemStaminaCapsule extends Item {
 
         return EnumRarity.epic;
     }
+
     /**
      * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
      */
@@ -103,7 +104,7 @@ public class ItemStaminaCapsule extends Item {
 
         UUID playerUUID = Utility.getUUID(player);
         long remainingTime = CapsuleController.canUseStaminaCapsule(playerUUID, meta);
-        if(remainingTime > 0){
+        if (remainingTime > 0) {
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
@@ -129,8 +130,7 @@ public class ItemStaminaCapsule extends Item {
     }
 
     @Override
-    public EnumAction getItemUseAction(ItemStack stack)
-    {
+    public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.block;
     }
 

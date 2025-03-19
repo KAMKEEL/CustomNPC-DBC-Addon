@@ -87,7 +87,6 @@ public class AuraRenderer extends RenderDBC {
         Random rand = new Random();
 
 
-
         if (aura.type3D == EnumAuraTypes3D.None)
             return;
 
@@ -225,7 +224,7 @@ public class AuraRenderer extends RenderDBC {
     }
 
     private void lightning(EntityAura aura, double par2, double par4, double par6) {
-        if(!JGConfigClientSettings.CLIENT_DA12)
+        if (!JGConfigClientSettings.CLIENT_DA12)
             return;
 
         Random rand = new Random();

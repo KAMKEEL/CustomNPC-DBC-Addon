@@ -23,7 +23,7 @@ public class DBCRemoveAura extends AbstractPacket {
 
     private int auraID;
 
-    public DBCRemoveAura(int auraID){
+    public DBCRemoveAura(int auraID) {
         this.auraID = auraID;
     }
 
@@ -48,7 +48,7 @@ public class DBCRemoveAura extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCAURA))
+        if (!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCAURA))
             return;
 
         int auraID = in.readInt();

@@ -72,7 +72,6 @@ public interface IEntityAura {
     Entity getEntity();
 
 
-
     @Unique
     void setAuraData(IAuraData data);
 

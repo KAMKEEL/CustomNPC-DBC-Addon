@@ -16,7 +16,8 @@ public class KiAttack implements IKiAttack {
     private boolean forceDestroyerMode;
     private boolean respectFormDestroyerMode = true;
 
-    public KiAttack() {}
+    public KiAttack() {
+    }
 
     // Constructor
     public KiAttack(byte type, byte speed, int damage, boolean hasEffect, byte color, byte density, boolean hasSound, byte chargePercent) {
@@ -36,7 +37,7 @@ public class KiAttack implements IKiAttack {
     }
 
     public void setType(byte type) {
-        this.type = ValueUtil.clamp(type, (byte) 0 , (byte) 8);
+        this.type = ValueUtil.clamp(type, (byte) 0, (byte) 8);
     }
 
     public byte getSpeed() {
@@ -44,7 +45,7 @@ public class KiAttack implements IKiAttack {
     }
 
     public void setSpeed(byte speed) {
-        this.speed = ValueUtil.clamp(speed, (byte) 0 , (byte) 100);
+        this.speed = ValueUtil.clamp(speed, (byte) 0, (byte) 100);
     }
 
     public int getDamage() {

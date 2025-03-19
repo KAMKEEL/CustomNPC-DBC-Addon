@@ -25,7 +25,7 @@ public class CommonProxy {
     private static EntityPlayer CurrentJRMCTickPlayerClient;
 
     public static EntityPlayer getCurrentJRMCTickPlayer() {
-        if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             return CurrentJRMCTickPlayerClient;
         } else {
             return CurrentJRMCTickPlayer;
@@ -33,7 +33,7 @@ public class CommonProxy {
     }
 
     public static void setCurrentJRMCTickPlayer(EntityPlayer player) {
-        if(FMLCommonHandler.instance().getEffectiveSide().isClient()) {
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             CurrentJRMCTickPlayerClient = player;
         } else {
             CurrentJRMCTickPlayer = player;
@@ -69,7 +69,8 @@ public class CommonProxy {
         return null;
     }
 
-    public void registerItem(Item item) { }
+    public void registerItem(Item item) {
+    }
 
     public int getNewRenderId() {
         return -1;

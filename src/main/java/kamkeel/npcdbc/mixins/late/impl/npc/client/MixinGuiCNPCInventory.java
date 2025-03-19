@@ -32,7 +32,7 @@ public abstract class MixinGuiCNPCInventory extends GuiNPCInterface {
 
 
     @Inject(method = "initGui", at = @At(value = "FIELD", target = "Lnoppes/npcs/client/ClientCacheHandler;allowProfiles:Z", shift = At.Shift.BEFORE, remap = false))
-    public void addDBCInventory(CallbackInfo ci,  @Local(name = "y") LocalIntRef y) {
+    public void addDBCInventory(CallbackInfo ci, @Local(name = "y") LocalIntRef y) {
         int yVal = y.get();
 
         yVal += 21;

@@ -24,5 +24,6 @@ public abstract class MixinCommandKamkeel {
     }
 
     @Shadow
-    public void registerCommand(CommandKamkeelBase command) {}
+    public void registerCommand(CommandKamkeelBase command) {
+    }
 }

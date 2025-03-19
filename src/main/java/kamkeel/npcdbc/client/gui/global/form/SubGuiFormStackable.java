@@ -9,27 +9,24 @@ import kamkeel.npcdbc.data.form.FormStackable;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.*;
 
-public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener,ITextfieldListener
-{
+public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener {
     private GuiNpcFormMenu menu;
-	public Form form;
+    public Form form;
     public FormStackable stackable;
     public GuiScrollWindow scrollWindow;
 
-	public SubGuiFormStackable(GuiNPCManageForms parent, Form form)
-	{
-		this.form = form;
+    public SubGuiFormStackable(GuiNPCManageForms parent, Form form) {
+        this.form = form;
         this.stackable = form.stackable;
 
-		setBackground("menubg.png");
-		xSize = 360;
-		ySize = 216;
+        setBackground("menubg.png");
+        xSize = 360;
+        ySize = 216;
 
         menu = new GuiNpcFormMenu(parent, this, -4, form);
-	}
+    }
 
-    public void initGui()
-    {
+    public void initGui() {
         super.initGui();
         guiTop += 7;
         menu.initGui(guiLeft, guiTop, xSize);
@@ -38,7 +35,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         if (scrollWindow == null) {
             scrollWindow = new GuiScrollWindow(this, guiLeft + 4, y, xSize - 9, ySize - 7, 0);
-        }else{
+        } else {
             scrollWindow.xPos = guiLeft + 4;
             scrollWindow.yPos = y;
             scrollWindow.clipWidth = xSize - 9;
@@ -59,7 +56,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         scrollWindow.addButton(new GuiNpcButtonYesNo(2, guiLeft + 115, y, 50, 20, stackable.kaiokenStackable));
         scrollWindow.getLabel(2).color = 0xffffff;
 
-        if(stackable.kaiokenStackable){
+        if (stackable.kaiokenStackable) {
             maxScroll += 23;
             y += 23;
 //            scrollWindow.addLabel(new GuiNpcLabel(22, "display.kkRatio", guiLeft + 4, y + 5));
@@ -77,10 +74,10 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 //            scrollWindow.getLabel(23).color = 0xffffff;
 
 
-            scrollWindow.addLabel(new GuiNpcLabel(100, "display.kaiokenDrain", guiLeft+4, y+5, 0xFF5555));
+            scrollWindow.addLabel(new GuiNpcLabel(100, "display.kaiokenDrain", guiLeft + 4, y + 5, 0xFF5555));
             scrollWindow.addButton(new GuiNpcButton(100, guiLeft + 115, y, 50, 20, "gui.edit"));
 
-            scrollWindow.addLabel(new GuiNpcLabel(101, "display.kaiokenMulti", guiLeft+175, y+5, 0xFFFFFF));
+            scrollWindow.addLabel(new GuiNpcLabel(101, "display.kaiokenMulti", guiLeft + 175, y + 5, 0xFFFFFF));
             scrollWindow.addButton(new GuiNpcButton(101, guiLeft + 265, y, 50, 20, "gui.edit"));
         }
 
@@ -89,7 +86,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         scrollWindow.addButton(new GuiNpcButtonYesNo(3, guiLeft + 115, y, 50, 20, stackable.uiStackable));
         scrollWindow.getLabel(3).color = 0xffffff;
 
-        if(stackable.uiStackable){
+        if (stackable.uiStackable) {
             maxScroll += 23;
             y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(32, "display.uiRatio", guiLeft + 4, y + 5));
@@ -112,7 +109,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         scrollWindow.addButton(new GuiNpcButtonYesNo(4, guiLeft + 115, y, 50, 20, stackable.godStackable));
         scrollWindow.getLabel(4).color = 0xffffff;
 
-        if(stackable.godStackable){
+        if (stackable.godStackable) {
             maxScroll += 23;
             y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(42, "display.godRatio", guiLeft + 4, y + 5));
@@ -128,7 +125,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         scrollWindow.addButton(new GuiNpcButtonYesNo(5, guiLeft + 115, y, 50, 20, stackable.mysticStackable));
         scrollWindow.getLabel(5).color = 0xffffff;
 
-        if(stackable.mysticStackable){
+        if (stackable.mysticStackable) {
             maxScroll += 23;
             y += 23;
             scrollWindow.addLabel(new GuiNpcLabel(52, "display.mysticRatio", guiLeft + 4, y + 5));
@@ -224,28 +221,27 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         scrollWindow.maxScrollY = maxScroll;
     }
 
-	public void buttonEvent(GuiButton guibutton)
-    {
-		GuiNpcButton button = (GuiNpcButton) guibutton;
-        if(button.id == 1){
+    public void buttonEvent(GuiButton guibutton) {
+        GuiNpcButton button = (GuiNpcButton) guibutton;
+        if (button.id == 1) {
             stackable.vanillaStackable = button.getValue() == 1;
         }
-        if(button.id == 2){
+        if (button.id == 2) {
             stackable.kaiokenStackable = button.getValue() == 1;
         }
-        if(button.id == 3){
+        if (button.id == 3) {
             stackable.uiStackable = button.getValue() == 1;
         }
-        if(button.id == 4){
+        if (button.id == 4) {
             stackable.godStackable = button.getValue() == 1;
         }
-        if(button.id == 5){
+        if (button.id == 5) {
             stackable.mysticStackable = button.getValue() == 1;
         }
 
 
         if (button.id == 6) {
-            this.setSubGui(new SubGuiSelectForm(6,false, false));
+            this.setSubGui(new SubGuiSelectForm(6, false, false));
         }
         if (button.id == 61) {
             stackable.legendaryID = -1;
@@ -256,7 +252,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
 
         if (button.id == 7) {
-            this.setSubGui(new SubGuiSelectForm(7,false, false));
+            this.setSubGui(new SubGuiSelectForm(7, false, false));
         }
         if (button.id == 71) {
             stackable.divineID = -1;
@@ -267,14 +263,14 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
 
         if (button.id == 8) {
-            this.setSubGui(new SubGuiSelectForm(8,false, false));
+            this.setSubGui(new SubGuiSelectForm(8, false, false));
         }
         if (button.id == 81) {
             stackable.majinID = -1;
             initGui();
         }
         if (button.id == 9) {
-            this.setSubGui(new SubGuiSelectForm(9,false, false));
+            this.setSubGui(new SubGuiSelectForm(9, false, false));
         }
         if (button.id == 91) {
             stackable.fusionID = -1;
@@ -283,18 +279,18 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         if (button.id == 85) {
             stackable.useMajinConfig = button.getValue() == 1;
         }
-        if(button.id == 100){
+        if (button.id == 100) {
             this.setSubGui(new SubGuiKaiokenDrain(form));
         }
-        if(button.id == 101){
+        if (button.id == 101) {
             this.setSubGui(new SubGuiKaiokenMulti(form));
         }
         initGui();
-	}
+    }
 
 
-	@Override
-	public void unFocused(GuiNpcTextField guiNpcTextField) {
+    @Override
+    public void unFocused(GuiNpcTextField guiNpcTextField) {
         if (guiNpcTextField.id == 32) {
             stackable.uiStrength = guiNpcTextField.getFloat();
         }
@@ -318,13 +314,12 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         if (guiNpcTextField.id == 84) {
             stackable.majinStrength = guiNpcTextField.getFloat();
         }
-	}
+    }
 
     @Override
-    public void mouseClicked(int i, int j, int k)
-    {
+    public void mouseClicked(int i, int j, int k) {
         super.mouseClicked(i, j, k);
-        if(!hasSubGui())
+        if (!hasSubGui())
             menu.mouseClicked(i, j, k);
     }
 
@@ -335,7 +330,8 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             menu.close();
 
     }
-	@Override
+
+    @Override
     public void subGuiClosed(SubGuiInterface subgui) {
         if (subgui instanceof SubGuiSelectForm) {
             if (form != null) {
@@ -361,14 +357,16 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
     public void drawScreen(int i, int j, float f) {
         super.drawScreen(i, j, f);
 
-        if(hasSubGui())
+        if (hasSubGui())
             return;
 
         menu.drawElements(fontRendererObj, i, j, mc, f);
     }
 
-	@Override
-	public void selected(int id, String name) {}
+    @Override
+    public void selected(int id, String name) {
+    }
 
-	public void save(){}
+    public void save() {
+    }
 }

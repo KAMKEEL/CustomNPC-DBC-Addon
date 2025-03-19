@@ -19,19 +19,19 @@ public class NamekRegen extends AddonEffect {
     }
 
     @Override
-    public void onTick(EntityPlayer player, PlayerEffect playerEffect){
+    public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
         float currentBodyPercent = dbcData.stats.getCurrentBodyPercentage();
         float percentToRegen = ConfigDBCEffects.NamekRegenPercent * playerEffect.level;
-        if(dbcData.Body != 0){
-            if(currentBodyPercent < ConfigDBCGameplay.NamekianRegenMax){
+        if (dbcData.Body != 0) {
+            if (currentBodyPercent < ConfigDBCGameplay.NamekianRegenMax) {
                 boolean kill = false;
                 if (currentBodyPercent + percentToRegen > ConfigDBCGameplay.NamekianRegenMax) {
                     percentToRegen = ConfigDBCGameplay.NamekianRegenMax - currentBodyPercent;
                     kill = true;
                 }
 
-                if(!ConfigDBCGameplay.OnlyNamekianRegenCharging || dbcData.isChargingKi()) {
+                if (!ConfigDBCGameplay.OnlyNamekianRegenCharging || dbcData.isChargingKi()) {
                     dbcData.stats.restoreHealthPercent(percentToRegen);
                 }
 

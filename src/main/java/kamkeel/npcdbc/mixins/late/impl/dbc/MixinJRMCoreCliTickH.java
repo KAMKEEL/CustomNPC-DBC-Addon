@@ -26,11 +26,11 @@ public class MixinJRMCoreCliTickH {
     public static EntityLivingBase lockOn;
 
     @Redirect(method = "onTickInGame", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;rSai(I)Z"))
-    public boolean fixOozaruCustomFormSize(int r){
+    public boolean fixOozaruCustomFormSize(int r) {
         boolean isSaiyan = JRMCoreH.rSai(r);
 
         // if isn't saiyan, skip useless routine
-        if(!isSaiyan)
+        if (!isSaiyan)
             return false;
 
         // isSaiyan is now confirmed to be true
@@ -40,7 +40,7 @@ public class MixinJRMCoreCliTickH {
         }
 
         Form form = DBCData.getForm(CommonProxy.getCurrentJRMCTickPlayer());
-        if(form == null)
+        if (form == null)
             return true;
 
         return form.stackable.vanillaStackable;
@@ -69,10 +69,10 @@ public class MixinJRMCoreCliTickH {
     }
 
     @Inject(method = "onRenderTick()V", at = @At("HEAD"))
-    private void updateLockOn(CallbackInfo ci){
-        if(lockOn instanceof EntityNPCInterface){
+    private void updateLockOn(CallbackInfo ci) {
+        if (lockOn instanceof EntityNPCInterface) {
             DBCStats stats = ((INPCStats) ((EntityNPCInterface) lockOn).stats).getDBCStats();
-            if(!stats.canBeLockedOn())
+            if (!stats.canBeLockedOn())
                 lockOn = null;
         }
     }

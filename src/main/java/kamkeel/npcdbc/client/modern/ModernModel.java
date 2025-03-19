@@ -39,12 +39,13 @@ public class ModernModel {
             GL11.glDrawElements(GL11.GL_TRIANGLES, indexCount, GL11.GL_UNSIGNED_INT, 0);          //  System.out.println("g3" + GL11.glGetError());
 
             ShaderHelper.releaseShader();
-        unbind();
+            unbind();
         } catch (Exception e) {
             e.printStackTrace();
             ModernGLHelper.drawWorkingQuad();
         }
     }
+
     public void destroy() {
         GL15.glDeleteBuffers(EBO);
         GL15.glDeleteBuffers(VBO);

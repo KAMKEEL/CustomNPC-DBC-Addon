@@ -105,7 +105,7 @@ public class ItemKiCapsule extends Item {
         EnumKiCapsules kiCapsules = EnumKiCapsules.values()[meta];
         UUID playerUUID = Utility.getUUID(player);
         long remainingTime = CapsuleController.canUseKiCapsule(playerUUID, meta);
-        if(remainingTime > 0){
+        if (remainingTime > 0) {
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
@@ -130,8 +130,7 @@ public class ItemKiCapsule extends Item {
     }
 
     @Override
-    public EnumAction getItemUseAction(ItemStack stack)
-    {
+    public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.block;
     }
 

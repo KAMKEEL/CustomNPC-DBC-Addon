@@ -66,9 +66,9 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
     @Shadow
     public static JRMCoreGuiScreen instance;
 
-    @Inject(method = "updateScreen", at=@At("HEAD"), remap = true)
-    private void onUpdateScreen(CallbackInfo ci){
-        if(this.guiID == 10 && (ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching) && DBCData.getClient().Powertype == 1)
+    @Inject(method = "updateScreen", at = @At("HEAD"), remap = true)
+    private void onUpdateScreen(CallbackInfo ci) {
+        if (this.guiID == 10 && (ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching) && DBCData.getClient().Powertype == 1)
             FMLCommonHandler.instance().showGuiScreen(new StatSheetGui());
     }
 
@@ -213,17 +213,16 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
     }
 
 
-    @Inject(method = "initGui", at=@At("RETURN"), remap = true)
-    private void onInitGui(CallbackInfo ci){
-        if(ignoreInit)
+    @Inject(method = "initGui", at = @At("RETURN"), remap = true)
+    private void onInitGui(CallbackInfo ci) {
+        if (ignoreInit)
             this.guiID = newGuiID;
 
-        if(ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching){
-            if(ConfigDBCClient.DarkMode){
+        if (ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching) {
+            if (ConfigDBCClient.DarkMode) {
                 wish = CustomNpcPlusDBC.ID + ":textures/gui/gui_dark.png";
                 button1 = CustomNpcPlusDBC.ID + ":textures/gui/button_dark.png";
-            }
-            else {
+            } else {
                 wish = CustomNpcPlusDBC.ID + ":textures/gui/gui_light.png";
                 button1 = CustomNpcPlusDBC.ID + ":textures/gui/button_light.png";
             }
@@ -231,32 +230,32 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
     }
 
 
-    @Inject(method = "drawScreen", at=@At(value = "INVOKE", target = "Ljava/util/List;clear()V", shift = At.Shift.AFTER), remap = true)
-    private void onDrawScreen(CallbackInfo ci){
-        if(this.guiID != 10)
+    @Inject(method = "drawScreen", at = @At(value = "INVOKE", target = "Ljava/util/List;clear()V", shift = At.Shift.AFTER), remap = true)
+    private void onDrawScreen(CallbackInfo ci) {
+        if (this.guiID != 10)
             return;
-        if(!ConfigDBCClient.EnableDebugStatSheetSwitching)
+        if (!ConfigDBCClient.EnableDebugStatSheetSwitching)
             return;
-        String s = (!ConfigDBCClient.EnhancedGui ? "Old" : "§aModern") +" GUI";
-        int i = this.fontRendererObj.getStringWidth(s)+10;
-        this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width -i)/2 + 154, (this.height-159)/2 + 65, i + 8, 20, s, 0));
+        String s = (!ConfigDBCClient.EnhancedGui ? "Old" : "§aModern") + " GUI";
+        int i = this.fontRendererObj.getStringWidth(s) + 10;
+        this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width - i) / 2 + 154, (this.height - 159) / 2 + 65, i + 8, 20, s, 0));
     }
 
-    @Inject(method="actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", at=@At("HEAD"), remap = true)
-    public void onActionPerformed(GuiButton button, CallbackInfo ci){
-        if(button.id == GUI_CHANGE_BUTTON){
+    @Inject(method = "actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", at = @At("HEAD"), remap = true)
+    public void onActionPerformed(GuiButton button, CallbackInfo ci) {
+        if (button.id == GUI_CHANGE_BUTTON) {
             ConfigDBCClient.EnhancedGui = true;
             ConfigDBCClient.EnhancedGuiProperty.set(true);
             ConfigDBCClient.config.save();
         }
 
-        if(button.id == CLIENT_FIRST_PERSON_3D_OPACITY_ADD){
+        if (button.id == CLIENT_FIRST_PERSON_3D_OPACITY_ADD) {
             int value = Math.min(ConfigDBCClient.FirstPerson3DAuraOpacity + 10, 100);
             ConfigDBCClient.FirstPerson3DAuraOpacity = value;
             ConfigDBCClient.FirstPerson3DAuraOpacityProperty.set(value);
             ConfigDBCClient.config.save();
         }
-        if(button.id == CLIENT_FIRST_PERSON_3D_OPACITY_REMOVE){
+        if (button.id == CLIENT_FIRST_PERSON_3D_OPACITY_REMOVE) {
             int value = Math.max(ConfigDBCClient.FirstPerson3DAuraOpacity - 10, 0);
             ConfigDBCClient.FirstPerson3DAuraOpacity = value;
             ConfigDBCClient.FirstPerson3DAuraOpacityProperty.set(value);
@@ -264,23 +263,23 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
         }
     }
 
-    @Inject(method="drawHUD_clntsett", at=@At("RETURN"), remap=false)
-    public void addClientSettings(int posX, int posY, ScaledResolution var5, int var6, FontRenderer var8, CallbackInfo ci){
+    @Inject(method = "drawHUD_clntsett", at = @At("RETURN"), remap = false)
+    public void addClientSettings(int posX, int posY, ScaledResolution var5, int var6, FontRenderer var8, CallbackInfo ci) {
 
         int xSize = 256;
         int ySize = 159;
         int guiLeft = (this.width - xSize) / 2;
         int guiTop = (this.height - ySize) / 2 + 7;
 
-        if(cs_mode == 0 && cs_page == 3){
-            enhancedGUIdrawString(var8, StatCollector.translateToLocalFormatted("dbc.clientsettings.aura.firstPersonOpacity", ConfigDBCClient.FirstPerson3DAuraOpacity), guiLeft+5, guiTop + 3*15 , 0);
-            this.buttonList.add(new JRMCoreGuiButtonsA2(CLIENT_FIRST_PERSON_3D_OPACITY_REMOVE, guiLeft - 10 - 13, guiTop - 2 + 3*15, "<"));
-            this.buttonList.add(new JRMCoreGuiButtonsA2(CLIENT_FIRST_PERSON_3D_OPACITY_ADD, guiLeft - 10, guiTop - 2 + 3*15, ">"));
+        if (cs_mode == 0 && cs_page == 3) {
+            enhancedGUIdrawString(var8, StatCollector.translateToLocalFormatted("dbc.clientsettings.aura.firstPersonOpacity", ConfigDBCClient.FirstPerson3DAuraOpacity), guiLeft + 5, guiTop + 3 * 15, 0);
+            this.buttonList.add(new JRMCoreGuiButtonsA2(CLIENT_FIRST_PERSON_3D_OPACITY_REMOVE, guiLeft - 10 - 13, guiTop - 2 + 3 * 15, "<"));
+            this.buttonList.add(new JRMCoreGuiButtonsA2(CLIENT_FIRST_PERSON_3D_OPACITY_ADD, guiLeft - 10, guiTop - 2 + 3 * 15, ">"));
         }
     }
 
-    private static int enhancedGUIdrawString(FontRenderer instance, String text, int x, int y, int color){
-        if(ConfigDBCClient.EnhancedGui){
+    private static int enhancedGUIdrawString(FontRenderer instance, String text, int x, int y, int color) {
+        if (ConfigDBCClient.EnhancedGui) {
             return instance.drawString(ColorMode.skimColors(text), x, y, ColorMode.textColor(), ConfigDBCClient.DarkMode);
         }
         return instance.drawString(text, x, y, color);

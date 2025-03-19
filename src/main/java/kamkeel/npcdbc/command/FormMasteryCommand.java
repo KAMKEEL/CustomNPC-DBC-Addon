@@ -116,6 +116,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
             return;
         }
     }
+
     @SubCommand(desc = "Give a player form mastery by numerical id", usage = "<player> <amount> <form_ID>")
     public void giveid(ICommandSender sender, String[] args) throws CommandException {
         String playername = args[0];

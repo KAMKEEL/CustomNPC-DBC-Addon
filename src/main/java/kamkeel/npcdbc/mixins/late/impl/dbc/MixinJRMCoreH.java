@@ -247,8 +247,7 @@ public abstract class MixinJRMCoreH {
         else if (attribute == DBCAttribute.Constitution) {// CON - for damage reduction
             float averageMulti = (formMulti[0] + formMulti[1] + formMulti[2]) / 3;
             result = (int) (result * (averageMulti * statusMulti + multiBonus[3]));
-        }
-        else if (attribute == DBCAttribute.Spirit) // SPI
+        } else if (attribute == DBCAttribute.Spirit) // SPI
             result = (int) (result * (multiBonus[4]));
 
         // Add Bonus Multi to Base Attributes
@@ -589,7 +588,7 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "getKiRegenArcosian", at = @At("HEAD"), cancellable = true)
     private static void fixDivineDrainPreArcosian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
-        if(isDBCFormDrainCancelled()) {
+        if (isDBCFormDrainCancelled()) {
             cir.setReturnValue(0.0);
             return;
         }
@@ -603,7 +602,7 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "getKiRegenHalfSaiyan", at = @At("HEAD"), cancellable = true)
     private static void fixDivineDrainPreHalfSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
-        if(isDBCFormDrainCancelled()) {
+        if (isDBCFormDrainCancelled()) {
             cir.setReturnValue(0.0);
             return;
         }
@@ -617,7 +616,7 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "getKiRegenSaiyan", at = @At("HEAD"), cancellable = true)
     private static void fixDivineDrainPreSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
-        if(isDBCFormDrainCancelled()) {
+        if (isDBCFormDrainCancelled()) {
             cir.setReturnValue(0.0);
             return;
         }
@@ -631,7 +630,7 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "getKiRegenHuman", at = @At("HEAD"), cancellable = true)
     private static void fixDivineDrainPreHuman(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
-        if(isDBCFormDrainCancelled()) {
+        if (isDBCFormDrainCancelled()) {
             cir.setReturnValue(0.0);
             return;
         }
@@ -645,7 +644,7 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "getKiRegenNamekian", at = @At("HEAD"), cancellable = true)
     private static void fixDivineDrainPreNamekian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
-        if(isDBCFormDrainCancelled()) {
+        if (isDBCFormDrainCancelled()) {
             cir.setReturnValue(0.0);
             return;
         }
@@ -659,7 +658,7 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "getKiRegenMajin", at = @At("HEAD"), cancellable = true)
     private static void fixDivineDrainPreMajin(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
-        if(isDBCFormDrainCancelled()) {
+        if (isDBCFormDrainCancelled()) {
             cir.setReturnValue(0.0);
             return;
         }
@@ -840,7 +839,7 @@ public abstract class MixinJRMCoreH {
 
     private static boolean isDBCFormDrainCancelled() {
         EntityPlayer currentJRMCTickPlayer = CommonProxy.getCurrentJRMCTickPlayer();
-        if(currentJRMCTickPlayer == null) {
+        if (currentJRMCTickPlayer == null) {
             return false;
         }
         PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(currentJRMCTickPlayer);

@@ -9,8 +9,7 @@ public class LoadConfiguration {
     public static File effectsConfig;
     public static File generalConfig;
 
-    public static void init(String configpath)
-    {
+    public static void init(String configpath) {
         capsuleConfig = new File(configpath + "capsules.cfg");
         clientConfig = new File(configpath + "client.cfg");
         gameplayConfig = new File(configpath + "gameplay.cfg");

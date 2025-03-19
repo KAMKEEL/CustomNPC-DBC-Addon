@@ -21,10 +21,10 @@ public class PotaraFusion extends AddonEffect {
     }
 
     @Override
-    public void onAdded(EntityPlayer player, PlayerEffect playerEffect){
+    public void onAdded(EntityPlayer player, PlayerEffect playerEffect) {
         EnumPotaraTypes potaraTypes = EnumPotaraTypes.getPotaraFromMeta(playerEffect.level);
         float bonusMulti = potaraTypes.getMulti();
-        if(bonusMulti > 0){
+        if (bonusMulti > 0) {
             PlayerBonus bonus = new PlayerBonus(name, (byte) 0, bonusMulti, bonusMulti, bonusMulti);
             BonusController.getInstance().applyBonus(player, bonus);
         }
@@ -39,7 +39,7 @@ public class PotaraFusion extends AddonEffect {
     public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
         boolean isFused = dbcData.containsSE(10) || dbcData.containsSE(11);
-        if(!isFused){
+        if (!isFused) {
             playerEffect.kill();
             BonusController.getInstance().removeBonus(player, name);
         }

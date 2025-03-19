@@ -150,7 +150,6 @@ public interface IAuraDisplay {
     void setSpeed(int speed);
 
 
-
     /**
      * @param textureType Legal types: texture1, texture2, texture3
      * @return resource location of texture

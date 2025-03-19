@@ -121,7 +121,7 @@ public class DBCPacketHandler {
             .orElse(null);
     }
 
-    public FMLEventChannel getEventChannel(AbstractPacket abstractPacket){
+    public FMLEventChannel getEventChannel(AbstractPacket abstractPacket) {
         PacketChannel packetChannel = getPacketChannel(abstractPacket.getChannel().getChannelType());
         if (packetChannel == null) {
             return null;
@@ -158,20 +158,20 @@ public class DBCPacketHandler {
                 return;
             }
 
-            if(side == Side.SERVER){
-                if(abstractPacket.getChannel() == REQUEST_PACKETS && ConfigMain.OpsOnly && !NoppesUtilServer.isOp(player)){
+            if (side == Side.SERVER) {
+                if (abstractPacket.getChannel() == REQUEST_PACKETS && ConfigMain.OpsOnly && !NoppesUtilServer.isOp(player)) {
                     LogWriter.error(String.format("%s tried to use CNPC+ without being an op", player.getCommandSenderName()));
                     return;
                 }
 
                 // Check if permission is allowed
-                if(abstractPacket.getPermission() != null && !CustomNpcsPermissions.hasPermission(player, abstractPacket.getPermission())){
+                if (abstractPacket.getPermission() != null && !CustomNpcsPermissions.hasPermission(player, abstractPacket.getPermission())) {
                     return;
                 }
 
                 // Check for required NPC
                 EntityNPCInterface npc = NoppesUtilServer.getEditingNpc(player);
-                if(abstractPacket.needsNPC() && npc == null){
+                if (abstractPacket.needsNPC() && npc == null) {
                     return;
                 }
 

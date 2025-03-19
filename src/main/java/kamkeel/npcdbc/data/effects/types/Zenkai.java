@@ -15,6 +15,7 @@ import noppes.npcs.scripted.event.PlayerEvent;
 public class Zenkai extends AddonEffect {
     public PlayerBonus saiyanZenkai;
     public PlayerBonus halfSaiyanZenkai;
+
     public Zenkai() {
         name = "Zenkai";
         langName = "effect.zenkai";
@@ -28,9 +29,9 @@ public class Zenkai extends AddonEffect {
     }
 
     @Override
-    public void onAdded(EntityPlayer player, PlayerEffect playerEffect){
+    public void onAdded(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
-        if(dbcData.Race == DBCRace.SAIYAN)
+        if (dbcData.Race == DBCRace.SAIYAN)
             BonusController.getInstance().applyBonus(player, saiyanZenkai);
         else
             BonusController.getInstance().applyBonus(player, halfSaiyanZenkai);
@@ -39,13 +40,13 @@ public class Zenkai extends AddonEffect {
     @Override
     public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, PlayerEvent.EffectEvent.ExpirationType type) {
         DBCData dbcData = DBCData.get(player);
-        if(dbcData.Race == DBCRace.SAIYAN)
+        if (dbcData.Race == DBCRace.SAIYAN)
             BonusController.getInstance().removeBonus(player, saiyanZenkai);
         else
             BonusController.getInstance().removeBonus(player, halfSaiyanZenkai);
 
 
-        if(ConfigDBCEffects.EXHAUST_ZENKAI)
+        if (ConfigDBCEffects.EXHAUST_ZENKAI)
             DBCEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED, ConfigDBCEffects.EXHAUST_ZENKAI_TIME * 60);
     }
 }

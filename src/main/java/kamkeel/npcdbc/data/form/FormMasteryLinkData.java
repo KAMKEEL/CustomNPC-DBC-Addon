@@ -21,12 +21,12 @@ public class FormMasteryLinkData implements IFormMasteryLinkData {
     public void saveToNBT(NBTTagCompound compound) {
         NBTTagCompound masteryLinksNBT = new NBTTagCompound();
 
-        for(int i = 0; i < JRMCoreH.Races.length; i++) {
+        for (int i = 0; i < JRMCoreH.Races.length; i++) {
             LinkData data = masteryLinks.get(i);
-            if(data == null)
+            if (data == null)
                 continue;
 
-            masteryLinksNBT.setTag(""+i, data.writeCompound());
+            masteryLinksNBT.setTag("" + i, data.writeCompound());
         }
 
         compound.setTag("masteryLinkData", masteryLinksNBT);
@@ -34,14 +34,14 @@ public class FormMasteryLinkData implements IFormMasteryLinkData {
     }
 
     public void loadFromNBT(NBTTagCompound compound) {
-        if(!compound.hasKey("masteryLinkData"))
+        if (!compound.hasKey("masteryLinkData"))
             return;
 
         NBTTagCompound masteryLinksNBT = compound.getCompoundTag("masteryLinkData");
-        for(int i = 0; i < JRMCoreH.Races.length; i++) {
-            if(!masteryLinksNBT.hasKey(""+i))
+        for (int i = 0; i < JRMCoreH.Races.length; i++) {
+            if (!masteryLinksNBT.hasKey("" + i))
                 continue;
-            LinkData data = LinkData.loadFromNBT(masteryLinksNBT.getCompoundTag(""+i));
+            LinkData data = LinkData.loadFromNBT(masteryLinksNBT.getCompoundTag("" + i));
             masteryLinks.put(i, data);
         }
     }
@@ -76,7 +76,7 @@ public class FormMasteryLinkData implements IFormMasteryLinkData {
 
     @Override
     public void setCustomFormLink(IForm form, int race) {
-        if(form == null) {
+        if (form == null) {
             removeLinkData(race);
             return;
         }
@@ -86,7 +86,7 @@ public class FormMasteryLinkData implements IFormMasteryLinkData {
 
     @Override
     public void setDBCFormLink(int formID, int race) {
-        if(formID == -1){
+        if (formID == -1) {
             removeLinkData(race);
             return;
         }
@@ -95,7 +95,7 @@ public class FormMasteryLinkData implements IFormMasteryLinkData {
 
     @Override
     public void setMasteryLink(int formID, int race, boolean isCustomFormLink) {
-        if(formID == -1){
+        if (formID == -1) {
             removeLinkData(race);
             return;
         }

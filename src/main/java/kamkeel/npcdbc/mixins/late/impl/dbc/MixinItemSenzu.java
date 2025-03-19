@@ -23,7 +23,7 @@ public class MixinItemSenzu {
         if (DBCEventHooks.onSenzuUsedEvent(new DBCPlayerEvent.SenzuUsedEvent(PlayerDataUtil.getIPlayer(entityPlayer))))
             ci.cancel();
 
-        if(!DBCEffectController.getInstance().allowSenzuConsumption(entityPlayer))
+        if (!DBCEffectController.getInstance().allowSenzuConsumption(entityPlayer))
             ci.cancel();
     }
 

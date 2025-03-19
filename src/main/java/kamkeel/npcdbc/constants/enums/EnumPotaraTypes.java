@@ -13,35 +13,35 @@ public enum EnumPotaraTypes {
     private final int length;
     private final float multi;
 
-    EnumPotaraTypes(String name, int length, float multi){
+    EnumPotaraTypes(String name, int length, float multi) {
         this.name = name;
         this.length = length;
         this.multi = multi;
     }
 
-    public int getMeta(){
+    public int getMeta() {
         return this.ordinal();
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public int getLength(){
+    public int getLength() {
         return this.length;
     }
 
-    public float getMulti(){
+    public float getMulti() {
         return this.multi;
     }
 
-    public static int count(){
+    public static int count() {
         return values().length;
     }
 
-    public static EnumPotaraTypes getPotaraFromMeta(int meta){
-        for(EnumPotaraTypes potaraTypes : EnumPotaraTypes.values()){
-            if(potaraTypes.getMeta() == meta){
+    public static EnumPotaraTypes getPotaraFromMeta(int meta) {
+        for (EnumPotaraTypes potaraTypes : EnumPotaraTypes.values()) {
+            if (potaraTypes.getMeta() == meta) {
                 return potaraTypes;
             }
         }
