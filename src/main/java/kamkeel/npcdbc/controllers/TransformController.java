@@ -89,7 +89,6 @@ public class TransformController {
         }
         if (rage >= 100) { //transform when rage meter reaches 100 (max)
             DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getID(), true));
-            new ClientSound(new SoundSource(form.getAscendSound(), dbcData.player)).play(true);
             resetTimers();
             cantTransform = true;
             transformed = true;
@@ -243,6 +242,7 @@ public class TransformController {
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, formID)))
                 return;
 
+            PlaySound.play(new SoundSource(form.getAscendSound(), player));
             if (!isInBaseForm(dbcData.Race, dbcData.State)) {
                 if (!form.stackable.vanillaStackable) {
                     if (rc_arc(dbcData.Race) && dbcData.State >= 4)
@@ -293,6 +293,7 @@ public class TransformController {
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, intoParent ? form.getParentID() : -1)))
                 return;
 
+            PlaySound.play(new SoundSource(form.getDescendSound(), player));
             if (form.mastery.hasHeat() && dbcData.addonCurrentHeat > 0) {
                 float heatRatio = dbcData.addonCurrentHeat / form.mastery.maxHeat;
                 dbcData.Pain = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()) * heatRatio);
