@@ -322,7 +322,6 @@ public abstract class MixinDBCKiTech {
 
                 DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false));
             }
-            new ClientSound(new SoundSource(form.getDescendSound(), dbcData.player)).play(true);
             ci.cancel();
 
         }
