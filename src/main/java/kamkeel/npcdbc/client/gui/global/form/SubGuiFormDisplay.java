@@ -160,7 +160,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         button = new GuiNpcButton(124, width - x - 75, y - 5, 50, 20, getColor(display.kiBarColor));
         button.packedFGColour = display.kiBarColor;
-        button.enabled = aura == null;
         window.addButton(button);
 
         button = new GuiNpcButton(1124, width - x - 20, y - 5, 20, 20, "X");
@@ -169,11 +168,10 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
 
         y += 30;
-        window.addLabel(new GuiNpcLabel(107, "display.eye", x, y, 0xFFFFFF));
 
+        window.addLabel(new GuiNpcLabel(107, "display.eye", x, y, 0xFFFFFF));
         button = new GuiNpcButton(107, width - x - 75, y - 5, 50, 20, getColor(display.bodyColors.eyeColor));
         button.packedFGColour = display.bodyColors.eyeColor;
-        button.enabled = aura == null;
         window.addButton(button);
 
         button = new GuiNpcButton(1107, width - x - 20, y - 5, 20, 20, "X");
@@ -181,7 +179,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         window.addButton(button);
 
         window.addButton(new GuiNpcButton(1072, x + 50, y - 5, 54, 20, new String[]{"display.normalEye", "display.isBerserk"}, form.display.isBerserk ? 1 : 0));
-
         if (DBCRace.isSaiyan(visualDisplay.race) || visualDisplay.race == DBCRace.HUMAN) {
             y += 25;
             window.addLabel(new GuiNpcLabel(1082, "display.hasEyebrows", x, y, 0xFFFFFF));
@@ -193,6 +190,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         button = new GuiNpcButton(108, width - x - 75, y - 5, 50, 20, getColor(display.bodyColors.bodyCM));
         button.packedFGColour = display.bodyColors.bodyCM;
         window.addButton(button);
+
         button = new GuiNpcButton(1108, width - x - 20, y - 5, 20, 20, "X");
         button.enabled = display.bodyColors.bodyCM != -1;
         window.addButton(button);
