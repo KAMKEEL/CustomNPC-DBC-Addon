@@ -33,9 +33,8 @@ import static JinRyuu.JRMCore.JRMCoreH.rc_arc;
 
 public class TransformController {
 
-    public static int s, id, time, releaseTime, soundTime;
+    public static int time, releaseTime;
     public static boolean ascending, cantTransform, transformed;
-    public static String ascendSound, descendSound;
     public static float rage, rageValue;
     public static DBCData dbcData;
     public static Form transformedInto;
@@ -57,7 +56,6 @@ public class TransformController {
         float formLevel = PlayerDataUtil.getClientDBCInfo().getFormLevel(form.id);
         time++;
         releaseTime++;
-        soundTime++;
         TransformController.setAscending(true);
         rageValue = getRageMeterIncrementation(form, formLevel);
         rage += rageValue;
@@ -137,7 +135,6 @@ public class TransformController {
     public static void resetTimers() {
         time = 0;
         releaseTime = 0;
-        soundTime = 0;
     }
 
     public static float getRageMeterIncrementation(Form form, float formLevel) {
@@ -265,7 +262,7 @@ public class TransformController {
 
             formData.currentForm = formID;
             if (formData.getForm(formID).hasTimer())
-                formData.addTimer(formID, formData.getForm(id).getTimer());
+                formData.addTimer(formID, formData.getForm(formID).getTimer());
 
             formData.updateClient();
             NetworkUtility.sendInfoMessage(player, "§a", "npcdbc.transform", "§r ", form.getMenuName());
