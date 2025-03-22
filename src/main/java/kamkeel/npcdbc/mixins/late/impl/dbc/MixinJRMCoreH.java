@@ -20,6 +20,7 @@ import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -439,6 +440,7 @@ public abstract class MixinJRMCoreH {
                 int curBody = getInt(player, "jrmcBdy");
                 int newHealth = curBody - lastSetDamage;
                 s = Math.max(0, newHealth);
+                DBCEffectController.getInstance().recordDamage(player, s == 0 ? curBody : lastSetDamage);
                 lastSetDamage = -1;
             }
 
@@ -446,6 +448,7 @@ public abstract class MixinJRMCoreH {
                 int curBody = getInt(player, "jrmcBdy");
                 int newHealth = curBody - scriptingLastSetDamage;
                 s = Math.max(0, newHealth);
+                DBCEffectController.getInstance().recordDamage(player, s == 0 ? curBody : scriptingLastSetDamage);
                 scriptingLastSetDamage = -1;
             }
         }
