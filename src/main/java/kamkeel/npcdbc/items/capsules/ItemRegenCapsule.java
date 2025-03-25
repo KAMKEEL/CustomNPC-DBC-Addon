@@ -72,7 +72,7 @@ public class ItemRegenCapsule extends Item {
     public EnumRarity getRarity(ItemStack item) {
         int rarity = (item.getItemDamage() % 3) + 1;
 
-        if(rarity >= EnumRarity.values().length)
+        if (rarity >= EnumRarity.values().length)
             return EnumRarity.epic;
 
         return EnumRarity.values()[rarity];
@@ -100,7 +100,7 @@ public class ItemRegenCapsule extends Item {
 
         // Check cooldowns
         long remainingTime = CapsuleController.canUseRegenCapsule(playerUUID, meta);
-        if(remainingTime > 0){
+        if (remainingTime > 0) {
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
@@ -123,8 +123,7 @@ public class ItemRegenCapsule extends Item {
     }
 
     @Override
-    public EnumAction getItemUseAction(ItemStack stack)
-    {
+    public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.block;
     }
 

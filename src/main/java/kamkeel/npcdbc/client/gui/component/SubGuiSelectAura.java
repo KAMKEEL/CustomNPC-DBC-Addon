@@ -21,7 +21,7 @@ public class SubGuiSelectAura extends SubGuiInterface implements IScrollData, IC
     public boolean confirmed = false;
     public int selectedAuraID = -1;
 
-    public SubGuiSelectAura(){
+    public SubGuiSelectAura() {
         this.closeOnEsc = true;
         this.drawDefaultBackground = true;
         xSize = 256;
@@ -31,7 +31,7 @@ public class SubGuiSelectAura extends SubGuiInterface implements IScrollData, IC
     }
 
     @Override
-    public void initGui(){
+    public void initGui() {
         super.initGui();
 
         if (scrollAuras == null) {
@@ -48,15 +48,15 @@ public class SubGuiSelectAura extends SubGuiInterface implements IScrollData, IC
     }
 
     @Override
-    public void actionPerformed(GuiButton button){
+    public void actionPerformed(GuiButton button) {
         int id = button.id;
 
-        if(id == 0 && selected != null){
+        if (id == 0 && selected != null) {
             confirmed = true;
             selectedAuraID = data.get(selected);
             this.close();
         }
-        if(id == 1){
+        if (id == 1) {
             this.close();
         }
     }
@@ -82,7 +82,8 @@ public class SubGuiSelectAura extends SubGuiInterface implements IScrollData, IC
     }
 
     @Override
-    public void unFocused(GuiNpcTextField guiNpcTextField) {}
+    public void unFocused(GuiNpcTextField guiNpcTextField) {
+    }
 
     @Override
     public void keyTyped(char c, int i) {

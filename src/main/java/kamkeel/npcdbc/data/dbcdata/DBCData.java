@@ -786,7 +786,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
     public void setOutline(IOutline outline) {
         int id = outline != null ? outline.getID() : -1;
-        getRawCompound().setInteger("outlineID", id);
+        setOutline(id);
+    }
+
+    public void setOutline(int outlineID) {
+        getRawCompound().setInteger("outlineID", outlineID);
     }
 
     public void setFlight(boolean flightOn) {
@@ -977,8 +981,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public int getUsedMind() {
-        int[][] rSklsMR = (int[][])null;
-        int[][] cSklsMR = (int[][])null;
+        int[][] rSklsMR = (int[][]) null;
+        int[][] cSklsMR = (int[][]) null;
         String[] cSkls;
         String[] skls;
         int[][] sklsMR;
@@ -1011,9 +1015,9 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         PlayerDBCInfo formData = getDBCInfo();
         FormController formController = FormController.getInstance();
-        for(int formID : formData.unlockedForms) {
+        for (int formID : formData.unlockedForms) {
             IForm form = formController.get(formID);
-            if(form != null)
+            if (form != null)
                 mindBonus -= form.getMindRequirement();
         }
 

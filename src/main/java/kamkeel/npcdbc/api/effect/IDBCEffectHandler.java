@@ -16,7 +16,7 @@ public interface IDBCEffectHandler {
      * Checks if the specified player currently has the effect with the given ID.
      *
      * @param player the player to check
-     * @param id the effect ID to look for
+     * @param id     the effect ID to look for
      * @return {@code true} if the player has the effect, otherwise {@code false}
      */
     boolean hasEffect(IPlayer player, int id);
@@ -25,15 +25,15 @@ public interface IDBCEffectHandler {
      * Applies the effect with the specified ID to the given player using default duration and level.
      *
      * @param player the player to apply the effect to
-     * @param id the effect ID to be applied
+     * @param id     the effect ID to be applied
      */
     void applyEffect(IPlayer player, int id);
 
     /**
      * Applies the effect with the specified ID to the given player with a custom duration.
      *
-     * @param player the player to apply the effect to
-     * @param id the effect ID to be applied
+     * @param player   the player to apply the effect to
+     * @param id       the effect ID to be applied
      * @param duration the duration for which the effect should last, in ticks
      */
     void applyEffect(IPlayer player, int id, int duration);
@@ -41,10 +41,10 @@ public interface IDBCEffectHandler {
     /**
      * Applies the effect with the specified ID to the given player with a custom duration and level.
      *
-     * @param player the player to apply the effect to
-     * @param id the effect ID to be applied
+     * @param player   the player to apply the effect to
+     * @param id       the effect ID to be applied
      * @param duration the duration for which the effect should last, in ticks
-     * @param level the level or strength of the effect
+     * @param level    the level or strength of the effect
      */
     void applyEffect(IPlayer player, int id, int duration, byte level);
 
@@ -59,7 +59,7 @@ public interface IDBCEffectHandler {
      * Removes the effect with the specified ID from the given player.
      *
      * @param player the player from which the effect should be removed
-     * @param id the effect ID to be removed
+     * @param id     the effect ID to be removed
      */
     void removeEffect(IPlayer player, int id);
 
@@ -68,7 +68,7 @@ public interface IDBCEffectHandler {
      * Uses the DBC effect index.
      *
      * @param player the IPlayer to check
-     * @param id the effect ID
+     * @param id     the effect ID
      * @return the remaining duration in seconds, or -1 if the effect is not active
      */
     int getEffectDuration(IPlayer player, int id);
@@ -78,7 +78,7 @@ public interface IDBCEffectHandler {
      * Uses the DBC effect index.
      *
      * @param player the IPlayer to check
-     * @param id the effect ID
+     * @param id     the effect ID
      * @return the effect level, or -1 if the effect is not active
      */
     int getEffectLevel(IPlayer player, int id);

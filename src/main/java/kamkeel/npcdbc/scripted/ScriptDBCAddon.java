@@ -753,6 +753,15 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
+    public IForm getSelectedForm() {
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        if(c.selectedForm == -1)
+            return null;
+
+        return FormController.getInstance().get(c.selectedForm);
+    }
+
+    @Override
     public void setSelectedForm(IForm form) {
         setSelectedForm(form != null ? form.getID() : -1);
     }
@@ -772,6 +781,28 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public void removeSelectedForm() {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         formData.selectedForm = -1;
+        formData.updateClient();
+    }
+
+
+    @Override
+    public int getSelectedDBCForm() {
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        return c.selectedDBCForm;
+    }
+
+    @Override
+    public void setSelectedDBCForm(int formID) {
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        c.selectedDBCForm = formID;
+        c.updateClient();
+    }
+
+    @Override
+    public void removeSelectedDBCForm() {
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        formData.selectedDBCForm = -1;
+        formData.tempSelectedDBCForm = -1;
         formData.updateClient();
     }
 
@@ -1052,7 +1083,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
         if (AuraController.getInstance().has(auraID)) {
-            c.selectedAura = auraID;
+            c.currentAura = auraID;
             c.updateClient();
         } else {
             throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
@@ -1103,7 +1134,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
 
         if (c.hasAuraUnlocked(auraID)) {
-            c.currentAura = auraID;
+            c.selectedAura = auraID;
             c.updateClient();
         } else {
             throw new CustomNPCsException(String.format("Player \"%s\" doesn't have aura \"%s\" (ID: %d) unlocked.", player.getCommandSenderName(), aura.getName(), auraID));
@@ -1152,6 +1183,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     //////////////////////////////////////////////
     //////////////////////////////////////////////
 
+
+    @Override
+    public void removeOutline() {
+        dbcData.setOutline(null);
+    }
+
     @Override
     public void setOutline(IOutline outline) {
         if (outline != null)
@@ -1171,6 +1208,11 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setOutline(int outlineID) {
+        if(outlineID == -1){
+            dbcData.setOutline(null);
+            return;
+        }
+
         IOutline outline = OutlineController.getInstance().get(outlineID);
         if (outline != null)
             setOutline(outline);
@@ -1182,17 +1224,17 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public IOutline getOutline() {
         return dbcData.getOutline();
     }
+
     @Override
     public IPlayer<?> getFusionPartner() {
 
-        if(!dbcData.stats.isFused()){
-            throw new CustomNPCsException(player.getDisplayName()+ " is not fused");
+        if (!dbcData.stats.isFused()) {
+            throw new CustomNPCsException(player.getDisplayName() + " is not fused");
         }
         EntityPlayer temp = dbcData.stats.getSpectatorEntity();
-        if(temp != null){
+        if (temp != null) {
             return PlayerDataUtil.getIPlayer(temp);
-        }
-        else
+        } else
             throw new CustomNPCsException("Error finding fusion partner");
     }
 
@@ -1225,7 +1267,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                     destroyerDmgRed = npcForm.getMastery().getDestroyerEnergyDamage();
                 }
 
-                player.worldObj.playSoundAtEntity(player,"jinryuudragonbc:DBC2.basicbeam_fire", 0.5F, 1.0F);
+                player.worldObj.playSoundAtEntity(player, "jinryuudragonbc:DBC2.basicbeam_fire", 0.5F, 1.0F);
                 entityEnergyAtt = new EntityEnergyAtt(player, type, speed, 50, effect, color, density, (byte) 0, (byte) 0, playSound, chargePercent, damage, 0, sts, (byte) 0);
                 if (enableDestroyer) {
                     entityEnergyAtt.destroyer = true;
@@ -1307,15 +1349,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isMeditating() {
-        if(dbcData.Skills.contains("MD")) {
-            return(dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[4]));
-        }
-        else return false;
+        if (dbcData.Skills.contains("MD")) {
+            return (dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[4]));
+        } else return false;
     }
 
     @Override
     public boolean isSuperRegen() {
-        if(dbcData.stats.getCurrentBodyPercentage()<100f && dbcData.getRace() == DBCRace.MAJIN && Integer.parseInt(dbcData.RacialSkills.replace("TR","")) > 0 )
+        if (dbcData.stats.getCurrentBodyPercentage() < 100f && dbcData.getRace() == DBCRace.MAJIN && Integer.parseInt(dbcData.RacialSkills.replace("TR", "")) > 0)
             return isReleasing();
         return false;
     }
@@ -1328,8 +1369,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isInMedicalLiquid() {
-        Block block = player.worldObj.getBlock((int) Math.floor(player.posX),(int)Math.floor(player.posY),(int)Math.floor(player.posZ));
-        return(block == Block.getBlockFromName("jinryuudragonblockc:tile.BlockHealingPods"));
+        Block block = player.worldObj.getBlock((int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ));
+        return (block == Block.getBlockFromName("jinryuudragonblockc:tile.BlockHealingPods"));
     }
 
     // TODO: Fix getCurrentSelectedAttack() from Client Side Data to Server Side Data
@@ -1339,7 +1380,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
         String[] tech = new String[0];
 
-        switch (slot){
+        switch (slot) {
             case 0:
                 tech = JRMCoreH.tech1;
 
@@ -1357,9 +1398,9 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         if (tech == null) throw new CustomNPCsException("Selected slot does not have an attack in it");
 
 
-        boolean effect =  Integer.parseInt(tech[6]) == 1;
+        boolean effect = Integer.parseInt(tech[6]) == 1;
 
-        IKiAttack kiAttack = new KiAttack(Byte.parseByte(tech[3]),Byte.parseByte(tech[4]),100,effect,Byte.parseByte(tech[10]), (byte) 100,true,Byte.parseByte(tech[5]));
+        IKiAttack kiAttack = new KiAttack(Byte.parseByte(tech[3]), Byte.parseByte(tech[4]), 100, effect, Byte.parseByte(tech[10]), (byte) 100, true, Byte.parseByte(tech[5]));
 
         return kiAttack;
 

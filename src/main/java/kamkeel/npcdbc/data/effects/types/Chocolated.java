@@ -14,6 +14,7 @@ public class Chocolated extends AddonEffect {
 
     public PlayerBonus ChocolatedDebuff;
     public boolean fusionAffect = ConfigDBCEffects.CHOC_AffectFusion;
+
     public Chocolated() {
         name = "Chocolated";
         langName = "effect.chocolated";
@@ -26,10 +27,10 @@ public class Chocolated extends AddonEffect {
     }
 
     @Override
-    public void onAdded(EntityPlayer player, PlayerEffect playerEffect){
+    public void onAdded(EntityPlayer player, PlayerEffect playerEffect) {
         BonusController.getInstance().applyBonus(player, ChocolatedDebuff);
         DBCData data = DBCData.get(player);
-        if(!fusionAffect && data.stats.isFused()){
+        if (!fusionAffect && data.stats.isFused()) {
             return;
         }
         data.sprintSpeed = 0.1F;
@@ -39,10 +40,11 @@ public class Chocolated extends AddonEffect {
     }
 
     @Override
-    public void onTick(EntityPlayer player, PlayerEffect playerEffect){}
+    public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
+    }
 
     @Override
-    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, PlayerEvent.EffectEvent.ExpirationType type){
+    public void onRemoved(EntityPlayer player, PlayerEffect playerEffect, PlayerEvent.EffectEvent.ExpirationType type) {
         BonusController.getInstance().removeBonus(player, ChocolatedDebuff);
         DBCData data = DBCData.get(player);
         data.sprintSpeed = 1.0F;

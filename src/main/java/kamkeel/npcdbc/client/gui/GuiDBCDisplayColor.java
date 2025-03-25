@@ -154,8 +154,8 @@ public class GuiDBCDisplayColor extends SubGuiInterface implements ITextfieldLis
 
     protected void actionPerformed(GuiButton btn) {
         super.actionPerformed(btn);
-        if(btn instanceof GuiNpcButton){
-            if(((GuiNpcButton) btn).id == 66){
+        if (btn instanceof GuiNpcButton) {
+            if (((GuiNpcButton) btn).id == 66) {
                 close();
             }
         }

@@ -47,6 +47,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
             return 100;
         return (int) JRMCoreHC.smoothReleaseLevel;
     }
+
     @Inject(method = "showSE", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;displayWidth:I", shift = At.Shift.BEFORE, remap = true))
     private void renderStatusEffectIcon(int var51, int var61, int var71, int var81, CallbackInfo ci, @Local(name = "i") LocalIntRef i, @Local(name = "j") LocalIntRef j) {
         DBCData dbcData = DBCData.getClient();
@@ -55,7 +56,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
 
         PlayerData playerData = PlayerData.get(dbcData.player);
         ConcurrentHashMap<EffectKey, PlayerEffect> current = playerData.effectData.getEffects();
-        if(current == null)
+        if (current == null)
             return;
         for (EffectKey key : current.keySet()) {
             CustomEffect effect = CustomEffectController.getInstance().get(key.getId(), key.getIndex());
@@ -64,25 +65,25 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
             if (effect.icon.length() > 3) {
                 drawIcon(var51 + i.get(), var61 + j.get(), effect);
                 String text;
-                if(effect instanceof AddonEffect)
+                if (effect instanceof AddonEffect)
                     text = StatCollector.translateToLocal(((AddonEffect) effect).getLangName());
                 else
                     text = effect.getMenuName();
 
                 text += JRMCoreH.cldgy;
-                if(playerData.effectData.hasPlayerEffect(key.getId(), key.getIndex())){
+                if (playerData.effectData.hasPlayerEffect(key.getId(), key.getIndex())) {
                     PlayerEffect pe = playerData.effectData.getPlayerEffect(key.getId(), key.getIndex());
-                    if(pe.getDuration() != -100)
+                    if (pe.getDuration() != -100)
                         text += "\nTime: " + pe.getDuration() + "s";
                     else
                         text += "\nTime: Infinite";
 
-                    if(pe.level > 1){
+                    if (pe.level > 1) {
                         text += "\nLevel: " + pe.level;
                     }
                 }
 
-                addHoverable(text, (var51 + i.get()+2), (var61 + j.get()+3));
+                addHoverable(text, (var51 + i.get() + 2), (var61 + j.get() + 3));
                 if (var71 == 0) {
                     i.set(i.get() + 18);
                 } else
@@ -94,7 +95,7 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
     @Inject(method = "drawIcon(III)V", at = @At("HEAD"))
     private void onDrawIcon(int var51, int var61, int resourceID, CallbackInfo ci) {
         String name = LocalizationHelper.getLocalizedString(this.statusEffectFromResourceID(resourceID));
-        addHoverable(name, var51+2, var61+3);
+        addHoverable(name, var51 + 2, var61 + 3);
     }
 
     @Unique
@@ -193,7 +194,6 @@ public abstract class MixinJRMCoreGuiBars extends Gui {
                 return "ResourceID " + resourceID;
         }
     }
-
 
 
 }

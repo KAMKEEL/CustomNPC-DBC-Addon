@@ -21,7 +21,7 @@ public class RegenHealth extends AddonEffect {
     public void onTick(EntityPlayer player, PlayerEffect playerEffect) {
         DBCData dbcData = DBCData.get(player);
         int percentToRegen = ConfigDBCEffects.HealthRegenPercent * playerEffect.level;
-        if(dbcData.Body > 0)
+        if (dbcData.Body > 0)
             dbcData.stats.restoreHealthPercent(percentToRegen);
     }
 }

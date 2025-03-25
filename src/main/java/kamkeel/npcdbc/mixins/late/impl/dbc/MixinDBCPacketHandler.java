@@ -323,12 +323,12 @@ public class MixinDBCPacketHandler {
     }
 
     @Redirect(method = "handleDBCenergy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", ordinal = 2, remap = true), remap = false)
-    public boolean addDestroyerConfigsToAttack(World instance, Entity entity){
+    public boolean addDestroyerConfigsToAttack(World instance, Entity entity) {
         EntityEnergyAtt kiAttack = (EntityEnergyAtt) entity;
         DBCData dbcData = DBCData.get(CommonProxy.getCurrentJRMCTickPlayer());
         Form form = dbcData.getForm();
 
-        if(form != null && form.mastery.destroyerEnabled && JGConfigDBCGoD.CONFIG_GOD_ENERGY_ENABLED && JGConfigDBCGoD.CONFIG_GOD_ENABLED){
+        if (form != null && form.mastery.destroyerEnabled && JGConfigDBCGoD.CONFIG_GOD_ENERGY_ENABLED && JGConfigDBCGoD.CONFIG_GOD_ENABLED) {
             kiAttack.destroyer = true;
             kiAttack.DAMAGE_REDUCTION = form.mastery.calculateMulti("destroyerKiDamage", dbcData.addonFormLevel);
         }
@@ -336,22 +336,22 @@ public class MixinDBCPacketHandler {
         return instance.spawnEntityInWorld(kiAttack);
     }
 
-    @Redirect(method = "handleDBCascend", at = @At(value = "INVOKE", target="LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", ordinal = 5))
-    public void adjustKaiokenStrain(int s, EntityPlayer Player, String string, @Local(name = "strainMulti") float strainMulti, @Local(name = "kaiokenSkillLevel") int kaiokenSkillLevel){
+    @Redirect(method = "handleDBCascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", ordinal = 5))
+    public void adjustKaiokenStrain(int s, EntityPlayer Player, String string, @Local(name = "strainMulti") float strainMulti, @Local(name = "kaiokenSkillLevel") int kaiokenSkillLevel) {
         DBCData dbcData = DBCData.get(Player);
-        if(dbcData != null && dbcData.getForm() != null){
+        if (dbcData != null && dbcData.getForm() != null) {
             Form form = dbcData.getForm();
-            if(form.stackable.kaiokenStackable){
+            if (form.stackable.kaiokenStackable) {
                 int oldStrain = JRMCoreH.getInt(Player, string);
                 int strain = (int) ((12 + 20 - kaiokenSkillLevel) * strainMulti);
-                s = strain+oldStrain;
+                s = strain + oldStrain;
             }
         }
 
         JRMCoreH.setInt(s, Player, string);
     }
 
-    @Redirect(method = "handleDBCdescend", at = @At(value = "INVOKE", target="Lnet/minecraft/nbt/NBTTagCompound;setByte(Ljava/lang/String;B)V", remap = true), remap = false)
+    @Redirect(method = "handleDBCdescend", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NBTTagCompound;setByte(Ljava/lang/String;B)V", remap = true), remap = false)
     public void DBCTransformEventDescend(NBTTagCompound instance, String key, byte value, @Local(argsOnly = true) EntityPlayer player) {
         if (key.equals("jrmcState")) {
             int oldForm = DBCData.get(player).State;

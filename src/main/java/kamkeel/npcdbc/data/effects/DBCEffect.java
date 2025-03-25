@@ -16,11 +16,12 @@ public class DBCEffect {
 
     /**
      * Constructs a DBC Effect reference
-     * @param name Name of the status effect
-     * @param langName langfile name
-     * @param id Gameplay ID of the status effect
+     *
+     * @param name       Name of the status effect
+     * @param langName   langfile name
+     * @param id         Gameplay ID of the status effect
      * @param resourceID Texture ID
-     * @param infinite is the status effect timed or not
+     * @param infinite   is the status effect timed or not
      */
     public DBCEffect(String name, String langName, int id, int resourceID, boolean infinite) {
         this.name = name;

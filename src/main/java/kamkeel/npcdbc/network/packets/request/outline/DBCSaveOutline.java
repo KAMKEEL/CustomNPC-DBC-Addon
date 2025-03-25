@@ -24,7 +24,7 @@ public class DBCSaveOutline extends AbstractPacket {
     private String prevName;
     private NBTTagCompound outline;
 
-    public DBCSaveOutline(NBTTagCompound compound, String prev){
+    public DBCSaveOutline(NBTTagCompound compound, String prev) {
         this.outline = compound;
         this.prevName = prev;
     }
@@ -51,7 +51,7 @@ public class DBCSaveOutline extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCAURA))
+        if (!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCAURA))
             return;
 
         String prevName = ByteBufUtils.readString(in);
@@ -61,7 +61,7 @@ public class DBCSaveOutline extends AbstractPacket {
 
         OutlineController.getInstance().saveOutline(outline);
 
-        if(!prevName.isEmpty() && !prevName.equals(outline.name)){
+        if (!prevName.isEmpty() && !prevName.equals(outline.name)) {
             OutlineController.getInstance().deleteOutlineFile(prevName);
         }
 

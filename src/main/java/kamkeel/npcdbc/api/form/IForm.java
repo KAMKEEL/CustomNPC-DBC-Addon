@@ -39,6 +39,7 @@ public interface IForm {
     void setAllMulti(float allMulti);
 
     boolean raceEligible(int race);
+
     boolean raceEligible(IPlayer player);
 
     /**
@@ -65,6 +66,7 @@ public interface IForm {
     void removeFromPlayer(String playerName);
 
     void removeFromPlayer(IPlayer ScriptDBCAddon, boolean removesMastery);
+
     void removeFromPlayer(String playerName, boolean removesMastery);
 
     String getAscendSound();
@@ -85,6 +87,7 @@ public interface IForm {
 
     /**
      * Do not use this unless you know what you are changing. Dangerous to change.
+     *
      * @param newID new ID of the form.
      */
     void setID(int newID);
@@ -181,9 +184,9 @@ public interface IForm {
     int getMindRequirement();
 
     /**
-     *
      * @return clones this IForm object and returns a new IForm with the same exact properties
      */
     IForm clone();
+
     IForm save();
 }

@@ -301,7 +301,7 @@ public class PostProcessing {
         glColorMask(true, true, true, true);
     }
 
-    public static void blurVertical(int textureID, float blurIntensity, float startX, float startY, float width, float height){
+    public static void blurVertical(int textureID, float blurIntensity, float startX, float startY, float width, float height) {
         useShader(blur, () -> {
             uniformVec2("u_resolution", width - startX, height - startY);
             uniform1i("horizontal", 0);
@@ -311,7 +311,7 @@ public class PostProcessing {
 
     }
 
-    public static void blurHorizontal(int textureID, float blurIntensity, float startX, float startY, float width, float height){
+    public static void blurHorizontal(int textureID, float blurIntensity, float startX, float startY, float width, float height) {
         useShader(blur, () -> {
             uniformVec2("u_resolution", width - startX, height - startY);
             uniform1i("horizontal", 1);
@@ -462,7 +462,7 @@ public class PostProcessing {
 
 
     public static void delete() {
-        if(!hasInitialized)
+        if (!hasInitialized)
             return;
         for (int i = 0; i < bloomBuffers.length; i++) {
             if (bloomTextures[i] > 0)

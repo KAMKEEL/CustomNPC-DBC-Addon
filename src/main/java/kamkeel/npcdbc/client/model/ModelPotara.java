@@ -19,17 +19,17 @@ public class ModelPotara extends ModelBipedBody {
 
     /**
      * Creates a model for the Potara.
+     *
      * @param side 0 - right, 1 - left
      */
-    private ModelPotara(int side){
+    private ModelPotara(int side) {
         this();
-        if(side == 0)
+        if (side == 0)
             earringLeft.isHidden = true;
-        if(side == 1)
+        if (side == 1)
             earringRight.isHidden = true;
 
     }
-
 
 
     private ModelPotara() {
@@ -81,7 +81,7 @@ public class ModelPotara extends ModelBipedBody {
         model.rotateAngleZ = z;
     }
 
-    private void copyRotationData(ModelRenderer model, ModelRenderer modelToCopy){
+    private void copyRotationData(ModelRenderer model, ModelRenderer modelToCopy) {
         model.rotationPointX = modelToCopy.rotationPointX;
         model.rotationPointY = modelToCopy.rotationPointY;
         model.rotationPointZ = modelToCopy.rotationPointZ;
@@ -99,7 +99,7 @@ public class ModelPotara extends ModelBipedBody {
         renderHeadpiece(f5);
     }
 
-    private void renderHeadpiece(float scale){
+    private void renderHeadpiece(float scale) {
         float scalar;
 
         if (g <= 1) {
@@ -110,7 +110,7 @@ public class ModelPotara extends ModelBipedBody {
                 GL11.glTranslatef(0.0F, 16.0F * scale, 0.0F);
                 this.bipedHead.render(scale);
                 GL11.glPopMatrix();
-            }else{
+            } else {
                 scalar = f;
                 GL11.glPushMatrix();
                 GL11.glScalef(0.5F + 0.5F / scalar, 0.5F + 0.5F / scalar, 0.5F + 0.5F / scalar);
@@ -119,7 +119,7 @@ public class ModelPotara extends ModelBipedBody {
                 GL11.glPopMatrix();
             }
 
-        }else{
+        } else {
             scalar = f;
             GL11.glPushMatrix();
             GL11.glScalef((0.5F + 0.5F / scalar) * (g <= 1 ? 1.0F : 0.85F), 0.5F + 0.5F / scalar, (0.5F + 0.5F / scalar) * (g <= 1 ? 1.0F : 0.85F));

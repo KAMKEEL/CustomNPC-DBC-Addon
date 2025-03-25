@@ -42,7 +42,7 @@ public class GuiNpcFormMenu {
         GuiMenuTopButton[] var12 = this.topButtons;
         int var13 = var12.length;
 
-        for(int var14 = 0; var14 < var13; ++var14) {
+        for (int var14 = 0; var14 < var13; ++var14) {
             stackable = var12[var14];
             stackable.active = stackable.id == this.activeMenu;
         }
@@ -74,7 +74,7 @@ public class GuiNpcFormMenu {
         Keyboard.enableRepeatEvents(false);
         if (this.parent != null) {
             GuiNpcTextField.unfocus();
-            ((SubGuiInterface)this.parent).close();
+            ((SubGuiInterface) this.parent).close();
             DBCPacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), this.originalName));
         }
     }
@@ -85,7 +85,7 @@ public class GuiNpcFormMenu {
             GuiMenuTopButton[] var5 = this.topButtons;
             int var6 = var5.length;
 
-            for(int var7 = 0; var7 < var6; ++var7) {
+            for (int var7 = 0; var7 < var6; ++var7) {
                 GuiMenuTopButton button = var5[var7];
                 if (button.mousePressed(mc, i, j)) {
                     this.topButtonPressed(button);
@@ -99,7 +99,7 @@ public class GuiNpcFormMenu {
         GuiMenuTopButton[] var6 = this.topButtons;
         int var7 = var6.length;
 
-        for(int var8 = 0; var8 < var7; ++var8) {
+        for (int var8 = 0; var8 < var7; ++var8) {
             GuiMenuTopButton button = var6[var8];
             button.drawButton(mc, i, j);
         }

@@ -29,8 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = EntityNPCInterface.class)
 public abstract class MixinEntityNPCInterface extends EntityCreature implements IEntityAdditionalSpawnData, ICommandSender, IRangedAttackMob, IBossDisplayData {
-    @Unique
-    private float originalDamage;
+
     @Unique
     private boolean dbcAltered; //if DamagedEvent's damage was altered by a DBC player
 
@@ -56,8 +55,6 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
             EntityPlayer player = (EntityPlayer) attackerEntity;
             DBCData data = DBCData.get(player);
             if (dbcAltered = data.Powertype == 1) {
-                originalDamage = dam.get();
-
                 // Apply Attributes and Resistances to Modified Damage
                 float modifiedDamage = DBCUtils.calculateAttackStat(player, dam.get(), damagesource);
                 // Apply Attributes
@@ -72,23 +69,21 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
     }
 
     /**
-     *
      * This method fires after the Npc's scripting DamagedEvent finishes.
      * If npc was attacked by a DBC player (dbcAltered true):
      * I fetch the new event.getDamage() in case a scripter edited the event's damaged with event.setDamage(damage)
      * (i.e their own custom defense calculations, since the event was fed the pure attack stat above)
      * and store it in npcLastSetDamage.
-     *
+     * <p>
      * Then in  {@link MixinJRMCoreEH#NPCDamaged(EntityLivingBase, DamageSource, float amount, CallbackInfo, LocalFloatRef)}
      * which always fires after this in the MC LivingHurt, I set the pure damage in the LivingHurtEvent to npcLastSetDamage then I reset it to -1
-     *
      */
     @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Lnoppes/npcs/scripted/event/NpcEvent$DamagedEvent;getDamage()F"))
     public float fixDamagedEventDBCDamage(NpcEvent.DamagedEvent instance) {
-        if (dbcAltered) {
+        if (dbcAltered && DBCUtils.npcLastSetDamage == -1) {
             DBCUtils.npcLastSetDamage = (int) instance.getDamage();
-            dbcAltered = false;
         }
-        return originalDamage;
+        dbcAltered = false;
+        return instance.getDamage();
     }
 }

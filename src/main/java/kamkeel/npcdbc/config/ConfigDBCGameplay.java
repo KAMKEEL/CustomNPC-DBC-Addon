@@ -9,8 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ConfigDBCGameplay
-{
+public class ConfigDBCGameplay {
     public static Configuration config;
 
     public final static String StatusEffects = "Status_Effects";
@@ -55,19 +54,17 @@ public class ConfigDBCGameplay
     public final static String FruitOfMight = "FruitOfMight";
     public static int FruitOfMightStackSize = 5;
 
-    public static void init(File configFile)
-    {
+    public static void init(File configFile) {
         config = new Configuration(configFile);
 
-        try
-        {
+        try {
             config.load();
             ProfileSwitchingRemovesLegendary = config.get(StatusEffects, "Remove Legendary on Profile Swap", false).getBoolean(false);
 
             EnableChargingDex = config.get(ChargingDex, "0. Enable Charging Dex", true,
                 "Charging Dex -> Percent of Total Defense Activated while Charging Ki Attacks. " +
-                "\nActive Defense [Blocking], Passive [Not Blocking](Takes Percent of Active in JRMCore Configs.) " +
-                "\nCharging Defense [Charging Ki Attack](Percent of Active)[0 - 100]").getBoolean(true);
+                    "\nActive Defense [Blocking], Passive [Not Blocking](Takes Percent of Active in JRMCore Configs.) " +
+                    "\nCharging Defense [Charging Ki Attack](Percent of Active)[0 - 100]").getBoolean(true);
             MartialArtistCharge = config.get(ChargingDex, "1. Martial Artist Percent", 60).getInt(60);
             SpiritualistCharge = config.get(ChargingDex, "2. Spiritualist Percent", 60).getInt(60);
             WarriorCharge = config.get(ChargingDex, "3. Warrior Percent", 60).getInt(60);
@@ -125,13 +122,9 @@ public class ConfigDBCGameplay
             DamageRequiredSeconds = config.get(HumanSpirit, "Time Allotted", 20, "Amount of time to consider the Percent of Damage Required").getInt(50);
 
 
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             FMLLog.log(Level.ERROR, e, "DBC Addon has had a problem loading its gameplay configuration");
-        }
-        finally
-        {
+        } finally {
             if (config.hasChanged()) {
                 config.save();
             }

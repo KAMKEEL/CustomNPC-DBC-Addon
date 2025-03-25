@@ -25,7 +25,7 @@ public class DBCSaveForm extends AbstractPacket {
     private String prevName;
     private NBTTagCompound form;
 
-    public DBCSaveForm(NBTTagCompound compound, String prevName){
+    public DBCSaveForm(NBTTagCompound compound, String prevName) {
         this.form = compound;
         this.prevName = prevName;
     }
@@ -52,7 +52,7 @@ public class DBCSaveForm extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        if(!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCFORM))
+        if (!CustomNpcsPermissions.hasPermission(player, GLOBAL_DBCFORM))
             return;
         String prevName = ByteBufUtils.readString(in);
 
@@ -64,7 +64,7 @@ public class DBCSaveForm extends AbstractPacket {
         int oldChildForm = -1;
 
         IForm original = FormController.getInstance().get(form.id);
-        if(original != null){
+        if (original != null) {
             oldParentForm = original.getParentID();
             oldChildForm = original.getChildID();
         }
@@ -72,13 +72,13 @@ public class DBCSaveForm extends AbstractPacket {
         int newParentForm = form.parentID;
         int newChildForm = form.childID;
 
-        if(newParentForm != oldParentForm || newChildForm != oldChildForm){
+        if (newParentForm != oldParentForm || newChildForm != oldChildForm) {
             form.removeParentForm();
-            if(newParentForm != -1)
+            if (newParentForm != -1)
                 form.linkParent(newParentForm);
 
             form.removeChildForm();
-            if(newChildForm != -1)
+            if (newChildForm != -1)
                 form.linkChild(newChildForm);
 
             IForm parent = FormController.getInstance().get(form.parentID);
@@ -86,21 +86,21 @@ public class DBCSaveForm extends AbstractPacket {
             IForm oldParent = FormController.getInstance().get(oldParentForm);
             IForm oldChild = FormController.getInstance().get(oldChildForm);
 
-            if(parent != null)
+            if (parent != null)
                 parent.save();
 
-            if(child != null)
+            if (child != null)
                 child.save();
 
-            if(oldParent != null)
+            if (oldParent != null)
                 oldParent.save();
 
-            if(oldChild != null)
+            if (oldChild != null)
                 oldChild.save();
         }
 
         FormController.getInstance().saveForm(form);
-        if(!prevName.isEmpty() && !prevName.equals(form.name)){
+        if (!prevName.isEmpty() && !prevName.equals(form.name)) {
             FormController.getInstance().deleteFormFile(prevName);
         }
 

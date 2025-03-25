@@ -26,7 +26,8 @@ public final class DBCRequestAura extends AbstractPacket {
 
     }
 
-    public DBCRequestAura() {}
+    public DBCRequestAura() {
+    }
 
     @Override
     public Enum getType() {
@@ -48,18 +49,16 @@ public final class DBCRequestAura extends AbstractPacket {
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         this.auraID = in.readInt();
         this.onlyPlayers = in.readBoolean();
-        if(auraID != -1){
+        if (auraID != -1) {
             Aura aura = (Aura) AuraController.getInstance().get(auraID);
-            if(aura != null){
+            if (aura != null) {
                 NBTTagCompound compound = aura.writeToNBT();
                 compound.setString("PACKETTYPE", "Aura");
                 GuiDataPacket.sendGuiData((EntityPlayerMP) player, compound);
             }
-        }
-        else if(onlyPlayers){
+        } else if (onlyPlayers) {
             NetworkUtility.sendPlayersAuras((EntityPlayerMP) player);
-        }
-        else {
+        } else {
             NetworkUtility.sendCustomAuraDataAll((EntityPlayerMP) player);
         }
     }

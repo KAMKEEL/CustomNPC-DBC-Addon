@@ -19,7 +19,8 @@ public class Aura implements IAura {
     public int secondaryAuraID = -1;
     public AuraDisplay display = new AuraDisplay(this);
 
-    public Aura(){}
+    public Aura() {
+    }
 
     public Aura(int id, String name) {
         this.id = id;
@@ -169,6 +170,7 @@ public class Aura implements IAura {
         aura.id = AuraController.Instance.getUnusedId();
         return aura;
     }
+
     @Override
     public IAura save() {
         return AuraController.Instance.saveAura(this);

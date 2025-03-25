@@ -32,7 +32,7 @@ public class Overpower extends AddonEffect {
         int newRelease = ValueUtil.clamp(release, (byte) 0, maxRelease);
         dbcData.getRawCompound().setByte("jrmcRelease", (byte) newRelease);
 
-        if(ConfigDBCEffects.EXHAUST_OVERPOWER)
+        if (ConfigDBCEffects.EXHAUST_OVERPOWER)
             DBCEffectController.getInstance().applyEffect(player, Effects.EXHAUSTED, ConfigDBCEffects.EXHAUST_OVERPOWER_TIME * 60);
     }
 }

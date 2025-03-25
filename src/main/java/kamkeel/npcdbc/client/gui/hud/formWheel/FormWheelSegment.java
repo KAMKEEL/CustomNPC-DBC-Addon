@@ -80,7 +80,7 @@ class FormWheelSegment extends WheelSegment {
             }
             if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
                 glScaled(0.7, 0.7, 1);
-                switch(index){
+                switch (index) {
                     case 0:
                         glTranslatef(0, -15f, 0);
                         break;
@@ -107,8 +107,8 @@ class FormWheelSegment extends WheelSegment {
                 if (!parent.dbcInfo.hasFormUnlocked(data.formID))
                     removeForm();
             }
-            if(icon != null){
-                glTranslatef(0, (float) -icon.height /2, 0);
+            if (icon != null) {
+                glTranslatef(0, (float) -icon.height / 2, 0);
                 icon.draw();
                 glTranslatef(0, icon.height, 0);
             }
@@ -119,7 +119,7 @@ class FormWheelSegment extends WheelSegment {
     public String getFormName() {
         DBCData dbcData = DBCData.get(parent.dbcInfo.parent.player);
 
-        if(!data.isDBC)
+        if (!data.isDBC)
             return form != null ? getFormVariant(form, dbcData).menuName : "";
 
         return DBCForm.getMenuName(dbcData.Race, data.formID, dbcData.isForm(DBCForm.Divine));
@@ -135,7 +135,7 @@ class FormWheelSegment extends WheelSegment {
 
         FormController formController = FormController.Instance;
 
-        if(formController.has(stackable.fusionID) && isFused) {
+        if (formController.has(stackable.fusionID) && isFused) {
             form = (Form) formController.get(stackable.fusionID);
             stackable = form.stackable;
         }

@@ -93,7 +93,7 @@ public final class ShaderHelper {
         if (!useShaders())
             return;
 
-        if(!usingDBCShader) {
+        if (!usingDBCShader) {
             lastUsedProgram = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
             usingDBCShader = true;
         }
@@ -177,6 +177,7 @@ public final class ShaderHelper {
     public static void bindAttribute(int attribute, String variableName) {
         GL20.glBindAttribLocation(currentProgram, attribute, variableName);
     }
+
     private static int createShader(String filename, int shaderType) {
         int shader = 0;
         try {
@@ -272,6 +273,7 @@ public final class ShaderHelper {
             //  System.out.println("b");
         }
     }
+
     public static boolean areOptifineShadersLoaded() {
         try {
             Shaders = Class.forName("shadersmod.client.Shaders");
@@ -282,6 +284,7 @@ public final class ShaderHelper {
         }
         return optifineShadersLoaded = false;
     }
+
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
     //Uniform helpers
@@ -294,6 +297,7 @@ public final class ShaderHelper {
         int uniformLocation = ARBShaderObjects.glGetUniformLocationARB(currentProgram, name);
         ARBShaderObjects.glUniform1iARB(uniformLocation, x);
     }
+
     public static void uniformArray(String name, float[] array) {
         FloatBuffer buffer = BufferUtils.createFloatBuffer(array.length);
         buffer.put(array);

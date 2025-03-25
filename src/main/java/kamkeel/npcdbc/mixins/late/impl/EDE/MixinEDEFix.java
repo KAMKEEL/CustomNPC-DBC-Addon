@@ -19,8 +19,8 @@ public class MixinEDEFix {
     private int fixChargingDex(LivingAttackEvent event) {
         EntityPlayer player = (EntityPlayer) event.entity;
         DBCData dbcData = DBCData.getData(player);
-        if(dbcData.stats.isChargingKiAttack()){
-            switch(dbcData.Class){
+        if (dbcData.stats.isChargingKiAttack()) {
+            switch (dbcData.Class) {
                 case 0:
                     return ConfigDBCGameplay.MartialArtistCharge;
                 case 1:
@@ -30,7 +30,7 @@ public class MixinEDEFix {
                 default:
                     return JRMCoreConfig.StatPasDef;
             }
-        }else{
+        } else {
             return JRMCoreConfig.StatPasDef;
         }
     }

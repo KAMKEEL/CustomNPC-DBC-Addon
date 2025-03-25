@@ -36,7 +36,7 @@ public final class LoginInfo extends AbstractPacket {
     private final int maxAbsorptionLevel;
     private final String discordURL;
 
-    public LoginInfo(){
+    public LoginInfo() {
         this.chargeDex = ConfigDBCGameplay.EnableChargingDex;
         this.ma = ConfigDBCGameplay.MartialArtistCharge;
         this.spi = ConfigDBCGameplay.SpiritualistCharge;
@@ -81,12 +81,12 @@ public final class LoginInfo extends AbstractPacket {
         HashMap<Integer, HashMap<String, Boolean>> divineRaces = ConfigDBCEffects.getDivineApplicableForms();
 
         NBTTagList divineApplicableRaces = new NBTTagList();
-        for(int i : divineRaces.keySet()){
+        for (int i : divineRaces.keySet()) {
             HashMap<String, Boolean> divineForms = divineRaces.get(i);
-            if(divineForms == null)
+            if (divineForms == null)
                 continue;
             NBTTagCompound divineApplicableForms = new NBTTagCompound();
-            for(String form : divineForms.keySet()){
+            for (String form : divineForms.keySet()) {
                 divineApplicableForms.setBoolean(form, divineForms.getOrDefault(form, false));
             }
             divineApplicableRaces.appendTag(divineApplicableForms);
@@ -100,7 +100,7 @@ public final class LoginInfo extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        if(player.worldObj.isRemote){
+        if (player.worldObj.isRemote) {
             ClientCache.hasChargingDex = in.readBoolean();
             float martialArtist = in.readFloat();
             float spiritualist = in.readFloat();
@@ -125,11 +125,11 @@ public final class LoginInfo extends AbstractPacket {
             ClientCache.divineApplicableForms.clear();
             NBTTagCompound compound = ByteBufUtils.readNBT(in);
             NBTTagList divineRaces = compound.getTagList("divineRaces", Constants.NBT.TAG_COMPOUND);
-            for(int i = 0; i < divineRaces.tagCount(); i++){
+            for (int i = 0; i < divineRaces.tagCount(); i++) {
                 NBTTagCompound forms = divineRaces.getCompoundTagAt(i);
                 HashMap<String, Boolean> formMap = new HashMap<>();
 
-                for(String key : (Set<String>) forms.func_150296_c()){
+                for (String key : (Set<String>) forms.func_150296_c()) {
                     formMap.put(key, forms.getBoolean(key));
                 }
                 ClientCache.divineApplicableForms.put(i, formMap);

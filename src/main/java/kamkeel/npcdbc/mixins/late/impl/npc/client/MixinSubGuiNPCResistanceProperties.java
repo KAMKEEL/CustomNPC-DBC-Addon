@@ -29,8 +29,8 @@ public abstract class MixinSubGuiNPCResistanceProperties extends SubGuiInterface
 
         IKiResistance kiResistance = (IKiResistance) resistances;
 
-        addLabel(new GuiNpcLabel(50,"stats.ki", guiLeft + 4, yVal + 5));
-        addSlider(new GuiNpcSlider(this, 50, guiLeft + 94, yVal, (int)(kiResistance.getKiResistance() * 100 - 100)  + "%", kiResistance.getKiResistance() / 2));
+        addLabel(new GuiNpcLabel(50, "stats.ki", guiLeft + 4, yVal + 5));
+        addSlider(new GuiNpcSlider(this, 50, guiLeft + 94, yVal, (int) (kiResistance.getKiResistance() * 100 - 100) + "%", kiResistance.getKiResistance() / 2));
         getSlider(50).enabled = !resistances.disableDamage;
 
         y.set(yVal);
@@ -39,7 +39,7 @@ public abstract class MixinSubGuiNPCResistanceProperties extends SubGuiInterface
     @Inject(method = "mouseReleased", at = @At("TAIL"))
     public void mouseReleased(GuiNpcSlider slider, CallbackInfo ci) {
         IKiResistance kiResistance = (IKiResistance) resistances;
-        if(slider.id == 50){
+        if (slider.id == 50) {
             kiResistance.setKiResistance(slider.sliderValue * 2);
         }
     }

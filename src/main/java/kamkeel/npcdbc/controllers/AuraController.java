@@ -103,7 +103,7 @@ public class AuraController implements IAuraHandler {
         return customAuras.get(customAura.getID());
     }
 
-    public void deleteAuraFile(String name){
+    public void deleteAuraFile(String name) {
         File dir = this.getDir();
         if (!dir.exists())
             dir.mkdirs();

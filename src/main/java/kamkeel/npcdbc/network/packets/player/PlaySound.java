@@ -73,7 +73,7 @@ public final class PlaySound extends AbstractPacket {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void playClient(SoundSource sound){
+    public static void playClient(SoundSource sound) {
         new ClientSound(sound).play(false);
     }
 }

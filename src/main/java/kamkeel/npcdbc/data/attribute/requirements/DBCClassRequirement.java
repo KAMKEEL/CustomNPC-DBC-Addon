@@ -21,25 +21,26 @@ public class DBCClassRequirement implements IRequirementChecker {
 
     @Override
     public String getTooltipValue(NBTTagCompound nbt) {
-        if(nbt.hasKey(getKey())) {
+        if (nbt.hasKey(getKey())) {
             int classID = nbt.getInteger(getKey());
-            try{
+            try {
                 return ClassesDBC[classID];
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         return "null";
     }
 
     @Override
     public void apply(NBTTagCompound nbt, Object value) {
-        if(value instanceof Integer) {
+        if (value instanceof Integer) {
             nbt.setInteger(getKey(), (Integer) value);
         }
     }
 
     @Override
     public Object getValue(NBTTagCompound nbtTagCompound) {
-        if(nbtTagCompound.hasKey(getKey())) {
+        if (nbtTagCompound.hasKey(getKey())) {
             return nbtTagCompound.getInteger(getKey());
         }
         return null;
@@ -47,7 +48,7 @@ public class DBCClassRequirement implements IRequirementChecker {
 
     @Override
     public boolean check(EntityPlayer player, NBTTagCompound nbt) {
-        if(nbt.hasKey(getKey())) {
+        if (nbt.hasKey(getKey())) {
             int classID = nbt.getInteger(getKey());
             DBCData dbcData = DBCData.get(player);
             return dbcData.Class == classID;

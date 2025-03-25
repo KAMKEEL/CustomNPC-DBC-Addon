@@ -19,7 +19,6 @@ public interface IFormDisplay {
     void setHairCode(String hairCode);
 
 
-
     /**
      * @param type Legal types: hud, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3
      * @return Decimal color of type
@@ -153,6 +152,7 @@ public interface IFormDisplay {
 
     /**
      * Allows the player to edit their custom form's appearance.
+     *
      * @param customizable true or false.
      */
     void setCustomizable(boolean customizable);

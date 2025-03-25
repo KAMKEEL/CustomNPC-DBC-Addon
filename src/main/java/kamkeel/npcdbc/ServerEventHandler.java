@@ -102,7 +102,7 @@ public class ServerEventHandler {
                 }
             }
 
-            if(ConfigDBCEffects.AUTO_BLOATED)
+            if (ConfigDBCEffects.AUTO_BLOATED)
                 if (player.ticksExisted % ConfigDBCEffects.DECREASE_TIME == 0)
                     DBCEffectController.Instance.decreaseSenzuConsumption(player);
 
@@ -233,10 +233,8 @@ public class ServerEventHandler {
             if (newHeat == form.mastery.maxHeat) {
                 int painTime = (int) (form.mastery.painTime * 60f / 5f * form.mastery.calculateMulti("pain", formData.getCurrentLevel()));
                 dbcData.getRawCompound().setInteger("jrmcGyJ7dp", painTime);
-                formData.currentForm = -1;
-                formData.updateClient();
-
                 newHeat = 0;
+                TransformController.handleFormDescend(player, -10);
             }
 
             dbcData.getRawCompound().setFloat("addonCurrentHeat", newHeat);

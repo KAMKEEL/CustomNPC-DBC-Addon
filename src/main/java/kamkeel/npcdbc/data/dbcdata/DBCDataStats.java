@@ -96,7 +96,7 @@ public class DBCDataStats {
 
     public int getCurrentStat(int attribute) { // gets stat at current release
         float stat = (float) (getMaxStat(attribute) * (data.Release * 0.01D) * JRMCoreH.weightPerc(0, data.player));
-        return stat > Integer.MAX_VALUE? Integer.MAX_VALUE : (int) stat;
+        return stat > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) stat;
     }
 
     public double getCurrentMulti() {
@@ -118,9 +118,9 @@ public class DBCDataStats {
 
     public int getMaxFusionBody() {
         int con = data.CON;
-        if(isFused()){
+        if (isFused()) {
             EntityPlayer spectator = getSpectatorEntity();
-            if(spectator != null){
+            if (spectator != null) {
                 DBCData specData = DBCData.get(spectator);
                 con = Math.min(data.CON, specData.CON) * 2;
             }
@@ -130,9 +130,9 @@ public class DBCDataStats {
 
     public int getMaxFusionStamina() {
         int con = data.CON;
-        if(isFused()){
+        if (isFused()) {
             EntityPlayer spectator = getSpectatorEntity();
-            if(spectator != null){
+            if (spectator != null) {
                 DBCData specData = DBCData.get(spectator);
                 con = Math.min(data.CON, specData.CON) * 2;
             }
@@ -142,9 +142,9 @@ public class DBCDataStats {
 
     public int getMaxFusionKi() {
         int spi = data.SPI;
-        if(isFused()){
+        if (isFused()) {
             EntityPlayer spectator = getSpectatorEntity();
-            if(spectator != null){
+            if (spectator != null) {
                 DBCData specData = DBCData.get(spectator);
                 spi = Math.min(data.SPI, specData.SPI) * 2;
             }
@@ -153,7 +153,7 @@ public class DBCDataStats {
     }
 
     public float getCurrentBodyPercentage() {
-        if(isFused())
+        if (isFused())
             return (data.Body * 100) / (float) getMaxFusionBody();
 
         return (data.Body * 100) / (float) getMaxBody();
@@ -170,7 +170,7 @@ public class DBCDataStats {
 
     public void restoreKiFlat(int amountToRestore) {
         int maxKi = isFused() ? getMaxFusionKi() : getMaxKi();
-        data.Ki = ValueUtil.clamp(data.Ki+amountToRestore, 0, maxKi);
+        data.Ki = ValueUtil.clamp(data.Ki + amountToRestore, 0, maxKi);
         data.getRawCompound().setInteger("jrmcEnrgy", data.Ki);
     }
 
@@ -263,7 +263,7 @@ public class DBCDataStats {
     }
 
     public boolean isFused() {
-        if(data.containsSE(10) || data.containsSE(11))
+        if (data.containsSE(10) || data.containsSE(11))
             return true;
         if (data.Fusion.contains(",")) {
             String[] fusionMembers = data.Fusion.split(",");
@@ -273,7 +273,7 @@ public class DBCDataStats {
     }
 
     public boolean isFusionSpectator() {
-        if(data.containsSE(11))
+        if (data.containsSE(11))
             return true;
         if (data.Fusion.contains(",")) {
             String[] fusionMembers = data.Fusion.split(",");
@@ -294,12 +294,12 @@ public class DBCDataStats {
         return "";
     }
 
-    public EntityPlayer getSpectatorEntity(){
-        if(isFused() && !isFusionSpectator()){
+    public EntityPlayer getSpectatorEntity() {
+        if (isFused() && !isFusionSpectator()) {
             String spectator = getSpectatorName();
-            if(!spectator.isEmpty()){
+            if (!spectator.isEmpty()) {
                 EntityPlayer specEntity = null;
-                if(data.player.worldObj.isRemote){
+                if (data.player.worldObj.isRemote) {
                     specEntity = data.player.worldObj.getPlayerEntityByName(spectator);
                 } else {
                     specEntity = NoppesUtilServer.getPlayerByName(spectator);
@@ -338,17 +338,17 @@ public class DBCDataStats {
 
     public double getDBCMastery(int formID) {
         String formName = DBCForm.getJRMCName(formID, data.Race);
-        if(formName == null) {
+        if (formName == null) {
             return 0f;
         }
         boolean isRacial = formID <= DBCForm.BlueEvo;
         String masteryData = isRacial ? data.FormMasteryRacial : data.FormMasteryNR;
 
 
-        Pattern pattern = Pattern.compile(formName+",([^;]*)");
+        Pattern pattern = Pattern.compile(formName + ",([^;]*)");
         Matcher matcher = pattern.matcher(masteryData);
 
-        if(matcher.find())
+        if (matcher.find())
             return Double.parseDouble(matcher.group(1));
 
         return 0f;
@@ -361,7 +361,7 @@ public class DBCDataStats {
         }
         boolean isRacial = formID <= DBCForm.BlueEvo;
         double maxMasteryLevel = DBCForm.getJRMCMaxFormLevel(formID, data.Race);
-        if(maxMasteryLevel == -1)
+        if (maxMasteryLevel == -1)
             return;
         String masteryData = isRacial ? data.FormMasteryRacial : data.FormMasteryNR;
 
@@ -370,7 +370,7 @@ public class DBCDataStats {
 
         if (masteryData.contains(formName)) {
             masteryData = masteryData.replaceAll("(" + formName + ",)[^;]*", "$1" + level);
-        }else {
+        } else {
             String formData = formName + "," + level;
             masteryData += (masteryData.endsWith(";") ? formData : ";" + formData);
         }
@@ -379,11 +379,11 @@ public class DBCDataStats {
     }
 
     public void addDBCMastery(int formID, float level) {
-        this.setDBCMastery(formID, getDBCMastery(formID)+level);
+        this.setDBCMastery(formID, getDBCMastery(formID) + level);
     }
 
     private void updateMastery(String newMastery, boolean isRacial) {
-        if(isRacial){
+        if (isRacial) {
             data.FormMasteryRacial = newMastery;
             data.getRawCompound().setString("jrmcFormMasteryRacial_" + JRMCoreH.Races[data.Race], newMastery);
         } else {

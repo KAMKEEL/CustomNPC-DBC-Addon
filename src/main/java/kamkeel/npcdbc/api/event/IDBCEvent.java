@@ -28,7 +28,8 @@ public interface IDBCEvent extends IPlayerEvent {
     }
 
     @Cancelable
-    interface SenzuUsedEvent extends IDBCEvent { }
+    interface SenzuUsedEvent extends IDBCEvent {
+    }
 
     @Cancelable
     interface FormChangeEvent extends IDBCEvent {
@@ -91,7 +92,8 @@ public interface IDBCEvent extends IPlayerEvent {
     }
 
     @Cancelable
-    interface DBCReviveEvent extends IDBCEvent { }
+    interface DBCReviveEvent extends IDBCEvent {
+    }
 
     interface DBCKnockout extends IDBCEvent {
         IDamageSource getDamageSource();

@@ -128,7 +128,7 @@ public class FormDisplay implements IFormDisplay {
 
     //internal usage
     public int getHairColor(DBCData data) {
-        if(data.Race == DBCRace.NAMEKIAN)
+        if (data.Race == DBCRace.NAMEKIAN)
             return bodyColors.bodyCM;
         return bodyColors.hairColor;
     }

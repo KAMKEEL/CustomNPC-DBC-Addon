@@ -30,8 +30,7 @@ public class LocalizationHelper {
      * The main function of this class, called by all the others. I don't recommend calling this elsewhere unless you have
      * a single oddball key to use.
      *
-     * @param key
-     *          The key for the localization file.
+     * @param key The key for the localization file.
      * @return The localized String, if there is one. Otherwise, the key is returned. Whitespace is trimmed.
      */
     public static String getLocalizedString(String key) {
@@ -42,8 +41,7 @@ public class LocalizationHelper {
     /**
      * Gets a localization that has the "misc" prefix.
      *
-     * @param key
-     *          The key for the localization. For example, "PressShift" will get "misc.tutorialmod:PressShift".
+     * @param key The key for the localization. For example, "PressShift" will get "misc.tutorialmod:PressShift".
      * @return The localized String, if there is one. Otherwise, the key is returned.
      */
     public static String getMiscText(String key) {
@@ -55,10 +53,8 @@ public class LocalizationHelper {
      * Gets a description key for a block. The actual key will be something like "tile.tutorialmod:blockName.desc", plus a
      * number if index is greater than 0.
      *
-     * @param blockName
-     *          The unlocalized name of the block, preferably straight from the Names class.
-     * @param index
-     *          The description index. If you want the "desc" key, use 0. For "desc1", use 1. For "desc2", use 2, etc.
+     * @param blockName The unlocalized name of the block, preferably straight from the Names class.
+     * @param index     The description index. If you want the "desc" key, use 0. For "desc1", use 1. For "desc2", use 2, etc.
      * @return The localized String, if there is one. Otherwise, the key is returned.
      */
     public static String getBlockDescription(String blockName, int index) {
@@ -70,10 +66,8 @@ public class LocalizationHelper {
     /**
      * Gets a localization for a block subkey. The localization you get will be for "tile.tutorialmod:blockName.key".
      *
-     * @param blockName
-     *          The unlocalized name of the block, preferably straight from the Names class.
-     * @param key
-     *          The subkey to get.
+     * @param blockName The unlocalized name of the block, preferably straight from the Names class.
+     * @param key       The subkey to get.
      * @return The localized String, if there is one. Otherwise, the key is returned.
      */
     public static String getBlockKey(String blockName, String key) {
@@ -86,10 +80,8 @@ public class LocalizationHelper {
      * Gets a description key for an item. The actual key will be something like "item.tutorialmod:itemName.desc", plus a
      * number if index is greater than 0.
      *
-     * @param itemName
-     *          The unlocalized name of the item, preferably straight from the Names class.
-     * @param index
-     *          The description index. If you want the "desc" key, use 0. For "desc1", use 1. For "desc2", use 2, etc.
+     * @param itemName The unlocalized name of the item, preferably straight from the Names class.
+     * @param index    The description index. If you want the "desc" key, use 0. For "desc1", use 1. For "desc2", use 2, etc.
      * @return The localized String, if there is one. Otherwise, the key is returned.
      */
     public static String getItemDescription(String itemName, int index) {
@@ -101,10 +93,8 @@ public class LocalizationHelper {
     /**
      * Gets a localization for an item subkey. The localization you get will be for "item.tutorialmod:itemName.key".
      *
-     * @param itemName
-     *          The unlocalized name of the item, preferably straight from the Names class.
-     * @param key
-     *          The subkey to get.
+     * @param itemName The unlocalized name of the item, preferably straight from the Names class.
+     * @param key      The subkey to get.
      * @return The localized String, if there is one. Otherwise, the key is returned.
      */
     public static String getItemKey(String itemName, String key) {

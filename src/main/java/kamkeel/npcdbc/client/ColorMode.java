@@ -12,22 +12,22 @@ public class ColorMode {
     public static int LIGHTMODE_TEXT = 0x2F2F2F;
     public static int LIGHTMODE_TEXT_ALTERNATE = 0x181818;
 
-    public static int textColor(){
-        if(ConfigDBCClient.DarkMode){
+    public static int textColor() {
+        if (ConfigDBCClient.DarkMode) {
             return DARKMODE_TEXT;
         }
         return LIGHTMODE_TEXT;
     }
 
-    public static int textAlt(){
-        if(ConfigDBCClient.DarkMode){
+    public static int textAlt() {
+        if (ConfigDBCClient.DarkMode) {
             return DARKMODE_TEXT_ALTERNATE;
         }
         return LIGHTMODE_TEXT_ALTERNATE;
     }
 
-    public static String skimColors(String input){
-        if(ConfigDBCClient.DarkMode){
+    public static String skimColors(String input) {
+        if (ConfigDBCClient.DarkMode) {
             return input.replace("§0", "").replace("§8", "§7").replace("&0", "");
         }
         return input.replace("§f", "").replace("§7", "§8").replace("&f", "");

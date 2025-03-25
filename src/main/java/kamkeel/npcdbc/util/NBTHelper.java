@@ -11,26 +11,24 @@ import java.util.function.Function;
 public class NBTHelper {
 
     /**
-     *
-     * @param map Map of objects you would like to save
+     * @param map   Map of objects you would like to save
      * @param toNBT Lambda / callback used to write the object into NBT
+     * @param <T>   Type of the map's values
      * @return Taglist of compounds with this format: <br>
-     *          {Slot: {@link Integer}, Content: {@link NBTTagCompound}}
-     * @param <T> Type of the map's values
+     * {Slot: {@link Integer}, Content: {@link NBTTagCompound}}
      */
     public static <T> NBTTagList nbtIntegerObjectMap(Map<Integer, T> map, Function<T, NBTTagCompound> toNBT) {
         return nbtIntegerObjectMap(map, toNBT, (ignored, ignored2) -> true);
     }
 
     /**
-     *
-     * @param map Map of objects you would like to save
-     * @param toNBT Lambda / callback used to write the object into NBT
+     * @param map           Map of objects you would like to save
+     * @param toNBT         Lambda / callback used to write the object into NBT
      * @param keepCondition Callback that checks if (currentID, newObject) should be kept in the newly created map or not <br>
      *                      For further info refer to {@link KeepConditionCallback}
+     * @param <T>           Type of the map's values
      * @return Taglist of compounds with this format: <br>
-     *          {Slot: {@link Integer}, Content: {@link NBTTagCompound}}
-     * @param <T> Type of the map's values
+     * {Slot: {@link Integer}, Content: {@link NBTTagCompound}}
      */
     public static <T> NBTTagList nbtIntegerObjectMap(Map<Integer, T> map, Function<T, NBTTagCompound> toNBT, KeepConditionCallback<Integer, T> keepCondition) {
         NBTTagList nbttaglist = new NBTTagList();
@@ -52,14 +50,13 @@ public class NBTHelper {
     }
 
     /**
-     *
-     * @param list tag list containing compounds with this format: <br>
-     *            {Slot: {@link Integer}, Content: {@link NBTTagCompound}}
-     * @param fromNBT Lambda / Callback used to read the object from a map from NBT.
+     * @param list          tag list containing compounds with this format: <br>
+     *                      {Slot: {@link Integer}, Content: {@link NBTTagCompound}}
+     * @param fromNBT       Lambda / Callback used to read the object from a map from NBT.
      * @param keepCondition Callback that checks if (currentID, newObject) should be kept in the newly created map or not <br>
      *                      For further info refer to {@link KeepConditionCallback}
+     * @param <T>           Type of the object you'd like to read from NBT
      * @return HashMap of the newly created objects
-     * @param <T> Type of the object you'd like to read from NBT
      */
     public static <T> HashMap<Integer, T> javaIntegerObjectMap(NBTTagList list, Function<NBTTagCompound, T> fromNBT, KeepConditionCallback<Integer, T> keepCondition) {
         HashMap<Integer, T> map = new HashMap<>();
@@ -79,12 +76,11 @@ public class NBTHelper {
     }
 
     /**
-     *
-     * @param list tag list containing compounds with this format: <br>
-     *            {Slot: {@link Integer}, Content: {@link NBTTagCompound}}
+     * @param list    tag list containing compounds with this format: <br>
+     *                {Slot: {@link Integer}, Content: {@link NBTTagCompound}}
      * @param fromNBT Lambda / Callback used to read the object from a map from NBT.
+     * @param <T>     Type of the object you'd like to read from NBT
      * @return HashMap of the newly created objects
-     * @param <T> Type of the object you'd like to read from NBT
      */
     public static <T> HashMap<Integer, T> javaIntegerObjectMap(NBTTagList list, Function<NBTTagCompound, T> fromNBT) {
         return javaIntegerObjectMap(list, fromNBT, (ignore1, ignore2) -> true);
@@ -92,6 +88,7 @@ public class NBTHelper {
 
     /**
      * Callback used to determine if an object should be kept or not while reading the list
+     *
      * @param <Param1> First parameter type of the function
      * @param <Param2> Second parameter type of the function
      */

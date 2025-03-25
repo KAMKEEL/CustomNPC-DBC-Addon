@@ -23,16 +23,18 @@ public interface IKiAttack {
     void setSpeed(byte speed);
 
     int getDamage();
+
     void setDamage(int damage);
 
     boolean hasEffect();
+
     void setHasEffect(boolean hasEffect);
 
     /**
      * @return Color of Ki Attack [0 - 30] <br>
-     *              0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", <br>
-     *              11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", <br>
-     *              21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
+     * 0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", <br>
+     * 11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", <br>
+     * 21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
      **/
     byte getColor();
 
@@ -45,12 +47,15 @@ public interface IKiAttack {
     void setColor(byte color);
 
     byte getDensity();
+
     void setDensity(byte density);
 
     boolean hasSound();
+
     void setHasSound(boolean hasSound);
 
     byte getChargePercent();
+
     void setChargePercent(byte chargePercent);
 
     /**
@@ -78,6 +83,7 @@ public interface IKiAttack {
 
     /**
      * Forcefully set the ki attack to be a Destroyer type
+     *
      * @param isDestroyer true or false
      */
     void setDestroyerAttack(boolean isDestroyer);

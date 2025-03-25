@@ -51,11 +51,11 @@ public class DBCProfileData implements IProfileData {
     @Override
     public ProfileOperation verifySwitch(EntityPlayer entityPlayer) {
         DBCData dbcData = DBCData.get(entityPlayer);
-        if(dbcData.stats.isFused())
+        if (dbcData.stats.isFused())
             return ProfileOperation.error("Player is fused");
 
         // If Player has Legendary
-        if(ConfigDBCGameplay.ProfileSwitchingRemovesLegendary && StusEfcts(14, dbcData.StatusEffects)){
+        if (ConfigDBCGameplay.ProfileSwitchingRemovesLegendary && StusEfcts(14, dbcData.StatusEffects)) {
             dbcData.setSE(14, false);
             dbcData.saveNBTData(false);
         }

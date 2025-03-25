@@ -89,11 +89,11 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         int width = 113 + this.xOffset - 10;
         int height = ySize - (y - guiTop) - 2;
         if (window == null) {
-            window = new GuiScrollWindow(this, guiLeft+4, y - 2, width, height, 0);
+            window = new GuiScrollWindow(this, guiLeft + 4, y - 2, width, height, 0);
         } else {
             window.initGui();
             window.xPos = guiLeft + 4;
-            window.yPos = y-2;
+            window.yPos = y - 2;
             window.clipWidth = width;
             window.clipHeight = height;
             window.maxScrollY = 0;
@@ -110,7 +110,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         GuiNpcButton button;
 
         window.addLabel(new GuiNpcLabel(200, "display.formSize", x, y, 0xFFFFFF));
-        field = new GuiNpcTextField(200, this, width-x-40, y - 5, 40, 20, String.valueOf(display.formSize));
+        field = new GuiNpcTextField(200, this, width - x - 40, y - 5, 40, 20, String.valueOf(display.formSize));
         field.setMaxStringLength(10);
         field.floatsOnly = true;
         field.setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
@@ -118,7 +118,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         y += 25;
 
         window.addLabel(new GuiNpcLabel(300, "display.formWidth", x, y, 0xFFFFFF));
-        field = new GuiNpcTextField(300, this, width-x-40, y - 5, 40, 20, String.valueOf(display.formWidth));
+        field = new GuiNpcTextField(300, this, width - x - 40, y - 5, 40, 20, String.valueOf(display.formWidth));
         field.setMaxStringLength(10);
         field.floatsOnly = true;
         field.setMinMaxDefaultFloat(-10000f, 10000f, 1.0f);
@@ -127,16 +127,16 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         y += 30;
 
         window.addLabel(new GuiNpcLabel(5000, "display.formCanFormbeCustomized", x, y, 0xFFFFFF));
-        window.addButton(new GuiNpcButtonYesNo(5000, width-x-40, y - 5, 40, 20, form.display.isCustomizable));
+        window.addButton(new GuiNpcButtonYesNo(5000, width - x - 40, y - 5, 40, 20, form.display.isCustomizable));
 
         y += 25;
 
-        button = new GuiNpcButton(1306, x, y, width-x-20 - 10, 20, "display.selectAura");
+        button = new GuiNpcButton(1306, x, y, width - x - 20 - 10, 20, "display.selectAura");
         if (aura != null)
             button.setDisplayText(aura.getName());
         window.addButton(button);
 
-        button = new GuiNpcButton(1406, width-x-20, y, 20, 20, "X");
+        button = new GuiNpcButton(1406, width - x - 20, y, 20, 20, "X");
         button.enabled = aura != null;
         window.addButton(button);
 
@@ -160,7 +160,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         button = new GuiNpcButton(124, width - x - 75, y - 5, 50, 20, getColor(display.kiBarColor));
         button.packedFGColour = display.kiBarColor;
-        button.enabled = aura == null;
         window.addButton(button);
 
         button = new GuiNpcButton(1124, width - x - 20, y - 5, 20, 20, "X");
@@ -169,11 +168,10 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
 
         y += 30;
-        window.addLabel(new GuiNpcLabel(107, "display.eye", x, y, 0xFFFFFF));
 
+        window.addLabel(new GuiNpcLabel(107, "display.eye", x, y, 0xFFFFFF));
         button = new GuiNpcButton(107, width - x - 75, y - 5, 50, 20, getColor(display.bodyColors.eyeColor));
         button.packedFGColour = display.bodyColors.eyeColor;
-        button.enabled = aura == null;
         window.addButton(button);
 
         button = new GuiNpcButton(1107, width - x - 20, y - 5, 20, 20, "X");
@@ -181,7 +179,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         window.addButton(button);
 
         window.addButton(new GuiNpcButton(1072, x + 50, y - 5, 54, 20, new String[]{"display.normalEye", "display.isBerserk"}, form.display.isBerserk ? 1 : 0));
-
         if (DBCRace.isSaiyan(visualDisplay.race) || visualDisplay.race == DBCRace.HUMAN) {
             y += 25;
             window.addLabel(new GuiNpcLabel(1082, "display.hasEyebrows", x, y, 0xFFFFFF));
@@ -193,6 +190,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         button = new GuiNpcButton(108, width - x - 75, y - 5, 50, 20, getColor(display.bodyColors.bodyCM));
         button.packedFGColour = display.bodyColors.bodyCM;
         window.addButton(button);
+
         button = new GuiNpcButton(1108, width - x - 20, y - 5, 20, 20, "X");
         button.enabled = display.bodyColors.bodyCM != -1;
         window.addButton(button);
@@ -224,7 +222,6 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         if (visualDisplay.race == DBCRace.HUMAN || DBCRace.isSaiyan(visualDisplay.race) || (visualDisplay.race == DBCRace.MAJIN && display.effectMajinHair)) {
             y = addHairOptions(x, y);
         }
-
 
 
 //
@@ -656,7 +653,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             float formWidth = display.formWidth;
             float formSize = 1;
             float cr = 100;
-            float diff = (formWidth - 1.0F) * (float)cr * 0.02F + 1.0F;
+            float diff = (formWidth - 1.0F) * (float) cr * 0.02F + 1.0F;
             formWidth = formWidth > 1.0F ? diff : formWidth;
             float formScale = formWidth * formSize;
             GL11.glScalef(formScale, formSize, formScale);

@@ -22,33 +22,35 @@ public enum EnumRegenCapsules {
     private final int useTime;
     private final int cooldown;
 
-    EnumRegenCapsules(String name, int statusEffectId, byte strength, int useTime, int cooldown){
+    EnumRegenCapsules(String name, int statusEffectId, byte strength, int useTime, int cooldown) {
         this.name = name;
         this.statusEffectId = statusEffectId;
         this.strength = strength;
         this.useTime = useTime;
         this.cooldown = cooldown;
     }
-    public int getMeta(){
+
+    public int getMeta() {
         return this.ordinal();
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public int getStrength(){
+    public int getStrength() {
         return this.strength;
     }
 
-    public int getCooldown(){
+    public int getCooldown() {
         return this.cooldown;
     }
-    public int getStatusEffectId(){
+
+    public int getStatusEffectId() {
         return statusEffectId;
     }
 
-    public static int count(){
+    public static int count() {
         return values().length;
     }
 

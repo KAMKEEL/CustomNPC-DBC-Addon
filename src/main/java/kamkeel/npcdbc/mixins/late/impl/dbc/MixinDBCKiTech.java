@@ -55,9 +55,9 @@ public abstract class MixinDBCKiTech {
     }
 
     @Redirect(method = "Ascend", at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/EntityClientPlayerMP;rotationPitch:F", remap = true, ordinal = 0))
-    private static float disableOozaruTransformInCustomForm(EntityClientPlayerMP instance){
+    private static float disableOozaruTransformInCustomForm(EntityClientPlayerMP instance) {
         Form form = DBCData.getForm(instance);
-        if(form == null)
+        if (form == null)
             return instance.rotationPitch;
 
         return form.stackable.vanillaStackable ? instance.rotationPitch : 0;
@@ -88,14 +88,14 @@ public abstract class MixinDBCKiTech {
         mv(f4, f5, pitch, speedY);
     }
 
-//    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
+    //    @ModifyArgs(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
 //    private static void changeBaseSpeed(Args args) {
 //        float speed = args.get(3);
 //        args.set(3, speed * DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100);
 //
 //    }
     @Redirect(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;mv(FFLnet/minecraft/entity/player/EntityPlayer;F)V"))
-    private static void changeBaseSpeed(float f4, float f5, EntityPlayer pitch, float speedY){
+    private static void changeBaseSpeed(float f4, float f5, EntityPlayer pitch, float speedY) {
         speedY *= DBCData.getClient().getBaseFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100f;
         mv(f4, f5, pitch, speedY);
     }
@@ -108,7 +108,7 @@ public abstract class MixinDBCKiTech {
 //    }
 
     @Redirect(method = "FloatKi", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCKiTech;setThrowableHeading(Lnet/minecraft/entity/Entity;DDDFF)V"))
-    private static void changeDynamic(Entity e, double par1, double par3, double par5, float par7, float par8){
+    private static void changeDynamic(Entity e, double par1, double par3, double par5, float par7, float par8) {
         par7 *= DBCData.getClient().getDynamicFlightSpeed() * DBCData.getClient().flightSpeedRelease / 100f;
         setThrowableHeading(e, par1, par3, par5, par7, par8);
     }
@@ -151,7 +151,7 @@ public abstract class MixinDBCKiTech {
     private static void cancelAura2(EntityPlayer p, int r, int a, int c, int s, int k, boolean b, String se, CallbackInfo ci) {
         DBCData dbcData = DBCData.get(p);
         Aura aura = dbcData.getAura();
-        if(dbcData.isFusionSpectator()){
+        if (dbcData.isFusionSpectator()) {
             ci.cancel();
             return;
         }
@@ -322,7 +322,6 @@ public abstract class MixinDBCKiTech {
 
                 DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, -1, false));
             }
-            new ClientSound(new SoundSource(form.getDescendSound(), dbcData.player)).play(true);
             ci.cancel();
 
         }

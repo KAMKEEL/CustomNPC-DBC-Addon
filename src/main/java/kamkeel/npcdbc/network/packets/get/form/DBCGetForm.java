@@ -22,7 +22,8 @@ public final class DBCGetForm extends AbstractPacket {
         this.formID = formID;
     }
 
-    public DBCGetForm() {}
+    public DBCGetForm() {
+    }
 
     @Override
     public Enum getType() {
@@ -43,9 +44,9 @@ public final class DBCGetForm extends AbstractPacket {
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
         int formID = in.readInt();
         NBTTagCompound compound = new NBTTagCompound();
-        if (formID != -1 && FormController.getInstance().has(formID)){
+        if (formID != -1 && FormController.getInstance().has(formID)) {
             Form form = (Form) FormController.getInstance().get(formID);
-            if(form != null){
+            if (form != null) {
                 compound = form.writeToNBT();
                 compound.setString("Type", "ViewForm");
             }

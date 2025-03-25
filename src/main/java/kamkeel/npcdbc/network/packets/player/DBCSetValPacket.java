@@ -28,7 +28,8 @@ public final class DBCSetValPacket extends AbstractPacket {
         this.value = value;
     }
 
-    public DBCSetValPacket() {}
+    public DBCSetValPacket() {
+    }
 
     @Override
     public Enum getType() {
@@ -42,13 +43,13 @@ public final class DBCSetValPacket extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        ByteBufUtils.writeUTF8String(out,this.player.getCommandSenderName());
+        ByteBufUtils.writeUTF8String(out, this.player.getCommandSenderName());
         out.writeInt(this.type.ordinal());
-        ByteBufUtils.writeUTF8String(out,this.tag);
+        ByteBufUtils.writeUTF8String(out, this.tag);
         DBCData dbcData = DBCData.get(this.player);
-        switch (this.type){
+        switch (this.type) {
             case STRING:
-                ByteBufUtils.writeUTF8String(out,(String) value);
+                ByteBufUtils.writeUTF8String(out, (String) value);
                 dbcData.getRawCompound().setString(tag, (String) value);
                 break;
             case BYTE:
@@ -85,12 +86,12 @@ public final class DBCSetValPacket extends AbstractPacket {
         EnumNBTType nbtType = EnumNBTType.values()[enumOrdinal];
 
         String tag = ByteBufUtils.readUTF8String(in);
-        if(tag == null || tag.isEmpty())
+        if (tag == null || tag.isEmpty())
             return;
 
         DBCData dbcData = DBCData.get(sendingPlayer);
 
-        switch (nbtType){
+        switch (nbtType) {
             case STRING:
                 String newString = ByteBufUtils.readUTF8String(in);
                 dbcData.getRawCompound().setString(tag, newString);
