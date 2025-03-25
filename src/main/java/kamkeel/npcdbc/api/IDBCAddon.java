@@ -524,6 +524,12 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     void removeAuraSelection();
 
+    int getSelectedDBCForm();
+
+    void setSelectedDBCForm(int formID);
+
+    void removeSelectedDBCForm();
+
     /**
      * @return True if player is in any CNPC+ custom form
      */
