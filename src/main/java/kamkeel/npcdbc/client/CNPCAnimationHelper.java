@@ -54,6 +54,16 @@ import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED_FI
 public class CNPCAnimationHelper {
 
     public static boolean applyValues(ModelRenderer modelRenderer) {
+        if (modelRenderer.baseModel instanceof ModelBipedDBC) {
+            ModelBipedDBC bipedDBC = (ModelBipedDBC) modelRenderer.baseModel;
+            bipedDBC.face1.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+            bipedDBC.face2.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+            bipedDBC.face3.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+            bipedDBC.face4.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+            bipedDBC.face5.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+            bipedDBC.face6.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+        }
+
         if (noppes.npcs.client.ClientEventHandler.renderingPlayer == null && noppes.npcs.client.ClientEventHandler.renderingNpc == null) {
             return false;
         }
@@ -89,32 +99,6 @@ public class CNPCAnimationHelper {
                             return true;
                         }
                     }
-                }
-                if (modelRenderer.baseModel instanceof ModelBipedDBC) {
-                    ModelBipedDBC bipedDBC = (ModelBipedDBC) modelRenderer.baseModel;
-                    bipedDBC.face1.rotationPointX = bipedDBC.bipedHead.rotationPointX;
-                    bipedDBC.face1.rotationPointY = bipedDBC.bipedHead.rotationPointY;
-                    bipedDBC.face1.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
-
-                    bipedDBC.face2.rotationPointX = bipedDBC.bipedHead.rotationPointX;
-                    bipedDBC.face2.rotationPointY = bipedDBC.bipedHead.rotationPointY;
-                    bipedDBC.face2.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
-
-                    bipedDBC.face3.rotationPointX = bipedDBC.bipedHead.rotationPointX;
-                    bipedDBC.face3.rotationPointY = bipedDBC.bipedHead.rotationPointY;
-                    bipedDBC.face3.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
-
-                    bipedDBC.face4.rotationPointX = bipedDBC.bipedHead.rotationPointX;
-                    bipedDBC.face4.rotationPointY = bipedDBC.bipedHead.rotationPointY;
-                    bipedDBC.face4.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
-
-                    bipedDBC.face5.rotationPointX = bipedDBC.bipedHead.rotationPointX;
-                    bipedDBC.face5.rotationPointY = bipedDBC.bipedHead.rotationPointY;
-                    bipedDBC.face5.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
-
-                    bipedDBC.face6.rotationPointX = bipedDBC.bipedHead.rotationPointX;
-                    bipedDBC.face6.rotationPointY = bipedDBC.bipedHead.rotationPointY;
-                    bipedDBC.face6.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
                 }
             }
         }
