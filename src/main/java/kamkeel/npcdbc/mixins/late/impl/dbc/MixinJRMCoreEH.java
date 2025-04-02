@@ -26,9 +26,9 @@ public class MixinJRMCoreEH {
     public void NPCDamaged(EntityLivingBase targetEntity, DamageSource source, float amount, CallbackInfo ci, @Local(ordinal = 0) LocalFloatRef dam) {
         if (targetEntity instanceof EntityNPCInterface) {
 
-            if (DBCUtils.npcLastSetDamage != -1) {
+            if (DBCUtils.npcLastSetDamage != null) {
                 dam.set(DBCUtils.npcLastSetDamage); // THIS GETS DEDUCTED FROM NPC HEALTH
-                DBCUtils.npcLastSetDamage = -1;
+                DBCUtils.npcLastSetDamage = null;
             }
 
             Form form = PlayerDataUtil.getForm(targetEntity);

@@ -72,9 +72,9 @@ public abstract class MixinScriptPlayerEventHandler {
     @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "INVOKE", target = "Lnoppes/npcs/EventHooks;onPlayerAttack(Lnoppes/npcs/controllers/data/PlayerDataScript;Lnoppes/npcs/scripted/event/PlayerEvent$AttackEvent;)Z", shift = At.Shift.AFTER))
     public void fixPlayerAttackEvent(LivingAttackEvent event, CallbackInfo ci, @Local(name = "pevent1") PlayerEvent.AttackEvent ev) {
         if (dbcAltered && attackEventDamage != null && attackEventDamage != ev.getDamage() && !event.isCanceled()) {
-            if (event.entityLiving instanceof EntityNPCInterface && DBCUtils.npcLastSetDamage == -1)
+            if (event.entityLiving instanceof EntityNPCInterface && DBCUtils.npcLastSetDamage == null)
                 DBCUtils.npcLastSetDamage = (int) ev.getDamage();
-            else if (event.entityLiving instanceof EntityPlayer && DBCUtils.scriptingLastSetDamage == -1)
+            else if (event.entityLiving instanceof EntityPlayer && DBCUtils.scriptingLastSetDamage == null)
                 DBCUtils.scriptingLastSetDamage = (int) ev.getDamage();
         }
 
