@@ -50,6 +50,7 @@ public class MixinJRMCoreEH {
         DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damage, damageSource.get(), DBCDamageSource.KIATTACK);
         if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
             ci.cancel();
+            return;
         }
 
         // Last Set Damage
@@ -62,6 +63,7 @@ public class MixinJRMCoreEH {
         DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damage, damageSource.get(), DBCDamageSource.KIATTACK);
         if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
             ci.cancel();
+            return;
         }
 
         // Last Set Damage
