@@ -436,20 +436,20 @@ public abstract class MixinJRMCoreH {
     @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
     private static void setDamage(int s, EntityPlayer player, String type) {
         if (type.equals("jrmcBdy")) {
-            if (lastSetDamage != -1) {
+            if (lastSetDamage != null) {
                 int curBody = getInt(player, "jrmcBdy");
                 int newHealth = curBody - lastSetDamage;
                 s = Math.max(0, newHealth);
                 DBCEffectController.getInstance().recordDamage(player, s == 0 ? curBody : lastSetDamage);
-                lastSetDamage = -1;
+                lastSetDamage = null;
             }
 
-            if (scriptingLastSetDamage != -1) {
+            if (scriptingLastSetDamage != null) {
                 int curBody = getInt(player, "jrmcBdy");
                 int newHealth = curBody - scriptingLastSetDamage;
                 s = Math.max(0, newHealth);
                 DBCEffectController.getInstance().recordDamage(player, s == 0 ? curBody : scriptingLastSetDamage);
-                scriptingLastSetDamage = -1;
+                scriptingLastSetDamage = null;
             }
         }
 
