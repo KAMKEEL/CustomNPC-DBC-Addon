@@ -58,12 +58,25 @@ public class CNPCAnimationHelper {
             return false;
         }
 
+        //
+        String name = getModelRendererName(modelRenderer);
+        //
+
         if (noppes.npcs.client.ClientEventHandler.renderingPlayer != null) {
             noppes.npcs.client.ClientEventHandler.playerModel = modelRenderer.baseModel;
             if (ClientCacheHandler.playerAnimations.containsKey(noppes.npcs.client.ClientEventHandler.renderingPlayer.getUniqueID())) {
                 AnimationData animData = ClientCacheHandler.playerAnimations.get(noppes.npcs.client.ClientEventHandler.renderingPlayer.getUniqueID());
                 EnumAnimationPart mainPartType = getPlayerPartType(modelRenderer);
                 EnumAnimationPart partType = mainPartType != null ? mainPartType : pivotEqualPart(modelRenderer);
+                if (noppes.npcs.client.ClientEventHandler.playerModel instanceof ModelBipedDBC) {
+                    EnumAnimationPart dbcPart = getDBCPartType(modelRenderer);
+                    if (dbcPart != null) {
+                        partType = dbcPart;
+                    }
+                    if (isDBCPartIgnored(modelRenderer)) {
+                        return false;
+                    }
+                }
                 if (partType != null && animData != null && animData.animation != null && animData.isActive()) {
                     if (!noppes.npcs.client.ClientEventHandler.originalValues.containsKey(modelRenderer)) {
                         FramePart part = new FramePart();
@@ -75,7 +88,7 @@ public class CNPCAnimationHelper {
                     Frame frame = (Frame) animData.animation.currentFrame();
                     if (frame != null && frame.frameParts.containsKey(partType)) {
                         FramePart part = frame.frameParts.get(partType);
-                        if (partType == mainPartType) {
+                        if (partType == mainPartType) {//is main limb
                             part.interpolateAngles();
                             part.interpolateOffset();
                             modelRenderer.rotationPointX = originalPart.pivot[0] + part.prevPivots[0];
@@ -85,7 +98,9 @@ public class CNPCAnimationHelper {
                             modelRenderer.rotateAngleY = part.prevRotations[1];
                             modelRenderer.rotateAngleZ = part.prevRotations[2];
                         } else {
-                            modelRenderer.rotateAngleZ += part.prevRotations[2];
+                            if (partType == EnumAnimationPart.HEAD) {
+                                modelRenderer.rotateAngleZ += part.prevRotations[2]/2;
+                            }
                             return true;
                         }
                     }
@@ -182,11 +197,99 @@ public class CNPCAnimationHelper {
         return m1.rotationPointX == m2.rotationPointX && m1.rotationPointY == m2.rotationPointY && m1.rotationPointZ == m2.rotationPointZ;
     }
 
+    private static EnumAnimationPart getDBCPartType(ModelRenderer renderer) {
+        ModelBipedDBC modelBipedDBC = (ModelBipedDBC) noppes.npcs.client.ClientEventHandler.playerModel;
+        if (isDBCHeadPart(renderer, modelBipedDBC)) {
+            return EnumAnimationPart.HEAD;
+        }
+        if (isDBCBodyPart(renderer, modelBipedDBC)) {
+            return EnumAnimationPart.BODY;
+        }
+        if (isDBCRAPart(renderer, modelBipedDBC)) {
+            return EnumAnimationPart.RIGHT_ARM;
+        }
+        if (isDBCLAPart(renderer, modelBipedDBC)) {
+            return EnumAnimationPart.LEFT_ARM;
+        }
+        if (isDBCRLPart(renderer, modelBipedDBC)) {
+            return EnumAnimationPart.RIGHT_LEG;
+        }
+        if (isDBCLLPart(renderer, modelBipedDBC)) {
+            return EnumAnimationPart.LEFT_LEG;
+        }
+        return null;
+    }
+
+    private static boolean isDBCPartIgnored(ModelRenderer renderer) {
+        ModelBipedDBC modelBipedDBC = (ModelBipedDBC) noppes.npcs.client.ClientEventHandler.playerModel;
+        if (renderer == modelBipedDBC.F5spike3 || renderer == modelBipedDBC.F5spike4) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isDBCHeadPart(ModelRenderer renderer, ModelBipedDBC modelBipedDBC) {
+        if (renderer == modelBipedDBC.face1 || renderer == modelBipedDBC.face2
+                || renderer == modelBipedDBC.face3 || renderer == modelBipedDBC.face4
+                || renderer == modelBipedDBC.face5 || renderer == modelBipedDBC.face6) {
+            return true;
+        }
+        if (renderer == modelBipedDBC.F5horn1 || renderer == modelBipedDBC.F5horn2
+            || renderer == modelBipedDBC.F5horn3 || renderer == modelBipedDBC.F5horn4
+            || renderer == modelBipedDBC.F5horn5) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isDBCBodyPart(ModelRenderer renderer, ModelBipedDBC modelBipedDBC) {
+        if (renderer == modelBipedDBC.Fro5b) {
+            return true;
+        }
+        return false;
+    }
+
+
+    private static boolean isDBCRAPart(ModelRenderer renderer, ModelBipedDBC modelBipedDBC) {
+        if (renderer == modelBipedDBC.F5spike1) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isDBCLAPart(ModelRenderer renderer, ModelBipedDBC modelBipedDBC) {
+        if (renderer == modelBipedDBC.F5spike2) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isDBCRLPart(ModelRenderer renderer, ModelBipedDBC modelBipedDBC) {
+        return false;
+    }
+
+    private static boolean isDBCLLPart(ModelRenderer renderer, ModelBipedDBC modelBipedDBC) {
+        return false;
+    }
+
     private static EnumAnimationPart getPartType(ModelRenderer renderer) {
+        String rendererName = getModelRendererName(renderer);
+        Set<Map.Entry<EnumAnimationPart, String[]>> entrySet = noppes.npcs.client.ClientEventHandler.partNames.entrySet();
+        for (Map.Entry<EnumAnimationPart, String[]> entry : entrySet) {
+            String[] names = entry.getValue();
+            for (String partName : names) {
+                if (partName.equals(rendererName)) {
+                    return entry.getKey();
+                }
+            }
+        }
+        return null;
+    }
+
+    private static String getModelRendererName(ModelRenderer renderer) {
         Class<?> RenderClass = renderer.baseModel.getClass();
         Object model = renderer.baseModel;
 
-        Set<Map.Entry<EnumAnimationPart, String[]>> entrySet = noppes.npcs.client.ClientEventHandler.partNames.entrySet();
         while (RenderClass != Object.class) {
             Field[] declared;
             if (noppes.npcs.client.ClientEventHandler.declaredFieldCache.containsKey(RenderClass)) {
@@ -197,21 +300,15 @@ public class CNPCAnimationHelper {
             }
             for (Field f : declared) {
                 f.setAccessible(true);
-                for (Map.Entry<EnumAnimationPart, String[]> entry : entrySet) {
-                    String[] names = entry.getValue();
-                    for (String partName : names) {
-                        try {
-                            if (partName.equals(f.getName()) && renderer == f.get(model)) {
-                                return entry.getKey();
-                            }
-                        } catch (IllegalAccessException ignored) {
-                        }
+                try {
+                    if (renderer == f.get(model)) {
+                        return f.getName();
                     }
+                } catch (IllegalAccessException ignored) {
                 }
             }
             RenderClass = RenderClass.getSuperclass();
         }
-
         return null;
     }
 
