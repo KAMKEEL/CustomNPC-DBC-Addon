@@ -19,6 +19,7 @@ import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.controllers.DBCEffectController;
+import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.items.ItemPotara;
@@ -140,7 +141,9 @@ public class DBCUtils {
         return isFM(p, formName, race, 100);
     }
 
-    public static int calculateDBCDamageFromSource(Entity Player, float dbcA, DamageSource s) {
+    public static DBCDamageCalc calculateDBCDamageFromSource(Entity Player, float dbcA, DamageSource s) {
+        DBCDamageCalc damageCalc = new DBCDamageCalc();
+        damageCalc.entity = Player;
         if (!Player.worldObj.isRemote && Player instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) Player;
             boolean dse = s != null && s.getEntity() != null && s.getEntity() instanceof EntityPlayer;
@@ -238,7 +241,7 @@ public class DBCUtils {
                     int id = (int) (Math.random() * 2.0) + 1;
                     player.worldObj.playSoundAtEntity(player, "jinryuudragonbc:DBC4.block" + id, 0.5F, 0.9F / (player.worldObj.rand.nextFloat() * 0.6F + 0.9F));
                     if (!isInCreativeMode(player)) {
-                        setInt(currStamina - staminaCost < 0 ? 0 : currStamina - staminaCost, player, "jrmcStamina");
+                        damageCalc.setStamina(Math.max(currStamina - staminaCost, 0));
                     }
                 } else if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
                     // Charging Dex
@@ -262,7 +265,7 @@ public class DBCUtils {
 
                 if (currEnergy >= kiProtectionCost) {
                     if (!isInCreativeMode(player)) {
-                        setInt(currEnergy - kiProtectionCost < 0 ? 0 : currEnergy - kiProtectionCost, player, "jrmcEnrgy");
+                        damageCalc.setKi(Math.max(currEnergy - kiProtectionCost, 0));
                     }
                 } else {
                     def -= kiProtection;
@@ -296,18 +299,6 @@ public class DBCUtils {
                     mod_JRMCore.logger.info(player.getCommandSenderName() + " DM: A=" + dbcA + ", DF Div:" + per + ", " + ss);
                 }
 
-                if (DBC()) {
-                    ItemStack stackbody = ExtendedPlayer.get(player).inventory.getStackInSlot(1);
-                    ItemStack stackhead = ExtendedPlayer.get(player).inventory.getStackInSlot(2);
-                    if (stackbody != null) {
-                        stackbody.damageItem(1, player);
-                    }
-
-                    if (stackhead != null) {
-                        stackhead.damageItem(1, player);
-                    }
-                }
-
                 int currentHP = getInt(player, "jrmcBdy");
 
                 // Damage Negation
@@ -329,14 +320,18 @@ public class DBCUtils {
                         int ko = getInt(player, "jrmcHar4va");
                         newHP = all < 20 ? 20 : (int) all;
                         if (ko <= 0 && newHP == 20) {
-                            return currentHP > 20 ? currentHP - 20 : 0;
+                            damageCalc.damage = currentHP > 20 ? currentHP - 20 : 0;
+                            return damageCalc;
                         }
                     }
                 }
-                return currentHP - newHP;
+
+                damageCalc.damage = currentHP - newHP;
+                return damageCalc;
             }
         }
-        return (int) dbcA;
+        damageCalc.setDamage((int) dbcA);
+        return damageCalc;
     }
 
     public static int calculateDBCStatDamage(EntityPlayer player, int damageAmount, IDBCStats dbcStats) {
@@ -542,6 +537,7 @@ public class DBCUtils {
         if (scriptingLastSetDamage != null) {
             damageToHP = Math.max(scriptingLastSetDamage, 0);
             scriptingLastSetDamage = null;
+            DBCEffectController.getInstance().recordDamage(player, damageToHP);
             reducedHP = playerHP - damageToHP;
             newHP = Math.max(reducedHP, 0);
         }
