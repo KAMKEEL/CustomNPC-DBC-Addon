@@ -334,7 +334,9 @@ public class DBCUtils {
         return damageCalc;
     }
 
-    public static int calculateDBCStatDamage(EntityPlayer player, int damageAmount, IDBCStats dbcStats) {
+    public static DBCDamageCalc calculateDBCStatDamage(EntityPlayer player, int damageAmount, IDBCStats dbcStats) {
+        DBCDamageCalc damageCalc = new DBCDamageCalc();
+        damageCalc.entity = player;
         if (!player.worldObj.isRemote && dbcStats != null && damageAmount > 0) {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
@@ -427,7 +429,7 @@ public class DBCUtils {
                 // Reduce Stamina
                 if (block && !dbcStats.isIgnoreBlock() && currStamina >= staminaCost) {
                     if (!isInCreativeMode(player)) {
-                        setInt(Math.max(currStamina - staminaCost, 0), player, "jrmcStamina");
+                        damageCalc.setStamina(Math.max(currStamina - staminaCost, 0));
                     }
                 } else if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
                     // Charging Dex
@@ -456,7 +458,7 @@ public class DBCUtils {
                 // Reduce Energy
                 if (currEnergy >= kiProtectionCost) {
                     if (!isInCreativeMode(player)) {
-                        setInt(Math.max(currEnergy - kiProtectionCost, 0), player, "jrmcEnrgy");
+                        damageCalc.setKi(Math.max(currEnergy - kiProtectionCost, 0));
                     }
                 } else {
                     def -= kiProtection;
@@ -506,41 +508,44 @@ public class DBCUtils {
                 // Consider Stamina Cost or Con on the Damage Amount
                 damageAmount = (int) ((double) damageAmount / formDamageReduction);
                 damageAmount = (int) calculateDamageNegation(player, damageAmount);
-
-                int playerHP = getInt(player, "jrmcBdy");
-                int reducedHP = playerHP - damageAmount;
-                int newHP = Math.max(reducedHP, 0);
-                return playerHP - newHP;
             }
         }
-        return damageAmount;
+        damageCalc.setDamage(damageAmount);
+        return damageCalc;
     }
 
-    public static void doDBCDamage(EntityPlayer player, int damageToHP, IDBCStats dbcStats, DamageSource source) {
+    public static void doDBCDamage(EntityPlayer player, int damage, IDBCStats dbcStats, DamageSource source) {
         NBTTagCompound nbt = nbt(player, "pres");
         byte state = nbt.getByte("jrmcState");
         byte race = nbt.getByte("jrmcRace");
         String statusEffects = getString(player, "jrmcStatusEff");
 
         int playerHP = getInt(player, "jrmcBdy");
-        int reducedHP = playerHP - damageToHP;
+        int reducedHP = playerHP - damage;
         int newHP = Math.max(reducedHP, 0);
 
         if (lastSetDamage != null) {
-            damageToHP = Math.max(lastSetDamage, 0);
+            damage = Math.max(lastSetDamage, 0);
             lastSetDamage = null;
-            DBCEffectController.getInstance().recordDamage(player, damageToHP);
-            reducedHP = playerHP - damageToHP;
+
+            // Record only the effective damage that is possible given the player's HP
+            int effectiveDamage = Math.min(damage, playerHP);
+            DBCEffectController.getInstance().recordDamage(player, effectiveDamage);
+            reducedHP = playerHP - effectiveDamage;
             newHP = Math.max(reducedHP, 0);
         }
 
         if (scriptingLastSetDamage != null) {
-            damageToHP = Math.max(scriptingLastSetDamage, 0);
+            damage = Math.max(scriptingLastSetDamage, 0);
             scriptingLastSetDamage = null;
-            DBCEffectController.getInstance().recordDamage(player, damageToHP);
-            reducedHP = playerHP - damageToHP;
+
+            // Record only the effective damage that is possible given the player's HP
+            int effectiveDamage = Math.min(damage, playerHP);
+            DBCEffectController.getInstance().recordDamage(player, effectiveDamage);
+            reducedHP = playerHP - effectiveDamage;
             newHP = Math.max(reducedHP, 0);
         }
+
         boolean friendlyFist = dbcStats.isFriendlyFist();
 
         if (!isInCreativeMode(player)) {

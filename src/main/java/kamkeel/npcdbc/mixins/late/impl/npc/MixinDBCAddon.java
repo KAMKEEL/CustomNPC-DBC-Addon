@@ -2,6 +2,7 @@ package kamkeel.npcdbc.mixins.late.impl.npc;
 
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.controllers.DBCSyncController;
+import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
@@ -89,14 +90,15 @@ public class MixinDBCAddon {
             DBCStats dbcStats = ((INPCStats) npc.stats).getDBCStats();
 
             // Calculate DBC Damage
-            int damageToHP = DBCUtils.calculateDBCStatDamage(player, (int) attackStrength, dbcStats);
+            DBCDamageCalc damageCalc = DBCUtils.calculateDBCStatDamage(player, (int) attackStrength, dbcStats);
             DamageSource damageSource = new NpcDamageSource("mob", npc);
-            DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(player, damageToHP, damageSource, DBCDamageSource.NPC);
+            DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(player, damageCalc.damage, damageSource, DBCDamageSource.NPC);
             if (DBCEventHooks.onDBCDamageEvent(damagedEvent))
                 return;
 
             DBCUtils.lastSetDamage = (int) damagedEvent.damage;
-            DBCUtils.doDBCDamage(player, damageToHP, dbcStats, damageSource);
+            damageCalc.processExtras();
+            DBCUtils.doDBCDamage(player, damageCalc.damage, dbcStats, damageSource);
         }
     }
 

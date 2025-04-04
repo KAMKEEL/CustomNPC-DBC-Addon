@@ -20,6 +20,7 @@ import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import kamkeel.npcdbc.combat.Dodge;
 import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.DBCStats;
@@ -144,8 +145,8 @@ public class DBCAPI extends AbstractDBCAPI {
             return;
 
         EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
-        int damageToHP = DBCUtils.calculateDBCStatDamage(entityPlayer, (int) damage, stats);
-        DBCUtils.doDBCDamage(entityPlayer, damageToHP, stats, null);
+        DBCDamageCalc damageCalc = DBCUtils.calculateDBCStatDamage(entityPlayer, (int) damage, stats);
+        DBCUtils.doDBCDamage(entityPlayer, damageCalc.damage, stats, null);
     }
 
     /**
