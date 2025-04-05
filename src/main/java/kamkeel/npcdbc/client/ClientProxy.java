@@ -15,6 +15,9 @@ import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ModItems;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
@@ -25,6 +28,7 @@ import net.minecraftforge.common.MinecraftForge;
 import java.lang.reflect.Field;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collection;
 
 
 public class ClientProxy extends CommonProxy {
@@ -59,6 +63,14 @@ public class ClientProxy extends CommonProxy {
     public void postInit(FMLPostInitializationEvent ev) {
         PostProcessing.init(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
         //  ModernModels.loadModels();
+
+        Collection renderManager = RenderManager.instance.entityRenderMap.values();
+        for (Object o : renderManager) {
+            if (o instanceof RendererLivingEntity) {
+                ModelBase mainModel = ((RendererLivingEntity) o).mainModel;
+                CNPCAnimationHelper.setOriginalValues(mainModel);
+            }
+        }
     }
 
     public static float getTimeSinceStart() {

@@ -45,30 +45,50 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED_FIRST_PERSON;
 
 public class CNPCAnimationHelper {
     private static final HashSet<Object> parentParts = new HashSet<>();
     private static final HashSet<Object> childParts = new HashSet<>();
+    private static final HashSet<Object> processedModels = new HashSet<>();
+
+    public static void setOriginalValues(ModelBase mainModel) {
+        if (!processedModels.contains(mainModel)) {
+            processedModels.add(mainModel);
+        } else {
+            return;
+        }
+
+        Class<?> clazz = mainModel.getClass();
+        List<Field> fields = new ArrayList<>();
+        while (clazz != null) {
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                fields.add(field);
+            }
+            clazz = clazz.getSuperclass();
+        }
+
+        for (Field field : fields) {
+            if (field.getType().isAssignableFrom(ModelRenderer.class)) {
+                try {
+                    ModelRenderer modelRenderer = (ModelRenderer) field.get(mainModel);
+                    if (!noppes.npcs.client.ClientEventHandler.originalValues.containsKey(modelRenderer)) {
+                        FramePart part = new FramePart();
+                        part.pivot = new float[]{modelRenderer.rotationPointX, modelRenderer.rotationPointY, modelRenderer.rotationPointZ};
+                        part.rotation = new float[]{modelRenderer.rotateAngleX, modelRenderer.rotateAngleY, modelRenderer.rotateAngleZ};
+                        noppes.npcs.client.ClientEventHandler.originalValues.put(modelRenderer, part);
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        }
+    }
 
     public static boolean applyValues(ModelRenderer modelRenderer) {
         if (noppes.npcs.client.ClientEventHandler.renderingPlayer == null && noppes.npcs.client.ClientEventHandler.renderingNpc == null) {
-            return false;
-        }
-
-        //
-        String name = getModelRendererName(modelRenderer);
-        //
-
-        if (!parentParts.contains(modelRenderer) && modelRenderer.childModels != null && !modelRenderer.childModels.isEmpty()) {
-            childParts.addAll(modelRenderer.childModels);
-            parentParts.add(modelRenderer);
-        }
-        if (childParts.contains(modelRenderer)) {
             return false;
         }
 
@@ -76,38 +96,42 @@ public class CNPCAnimationHelper {
             noppes.npcs.client.ClientEventHandler.playerModel = modelRenderer.baseModel;
             if (ClientCacheHandler.playerAnimations.containsKey(noppes.npcs.client.ClientEventHandler.renderingPlayer.getUniqueID())) {
                 AnimationData animData = ClientCacheHandler.playerAnimations.get(noppes.npcs.client.ClientEventHandler.renderingPlayer.getUniqueID());
-                EnumAnimationPart partType = getDBCPartType(modelRenderer);
-                if (partType == null) {
-                    partType = getPlayerPartType(modelRenderer);
-                    if (partType == null) {
-                        partType = pivotEqualPart(modelRenderer);
+                if (animData != null && animData.animation != null && animData.isActive()) {
+                    if (!parentParts.contains(modelRenderer) && modelRenderer.childModels != null && !modelRenderer.childModels.isEmpty()) {
+                        childParts.addAll(modelRenderer.childModels);
+                        parentParts.add(modelRenderer);
                     }
-                }
+                    if (childParts.contains(modelRenderer) || isPartIgnored(modelRenderer)) {
+                        return false;
+                    }
 
-                if (partType != null && animData != null && animData.animation != null && animData.isActive()) {
-                    if (!noppes.npcs.client.ClientEventHandler.originalValues.containsKey(modelRenderer)) {
-                        FramePart part = new FramePart();
-                        part.pivot = new float[]{modelRenderer.rotationPointX, modelRenderer.rotationPointY, modelRenderer.rotationPointZ};
-                        part.rotation = new float[]{modelRenderer.rotateAngleX, modelRenderer.rotateAngleY, modelRenderer.rotateAngleZ};
-                        noppes.npcs.client.ClientEventHandler.originalValues.put(modelRenderer, part);
+                    EnumAnimationPart partType = getDBCPartType(modelRenderer);
+                    if (partType == null) {
+                        partType = getPlayerPartType(modelRenderer);
+                        if (partType == null) {
+                            partType = pivotEqualPart(modelRenderer);
+                        }
                     }
-                    FramePart originalPart = noppes.npcs.client.ClientEventHandler.originalValues.get(modelRenderer);
-                    Frame frame = (Frame) animData.animation.currentFrame();
-                    if (frame != null && frame.frameParts.containsKey(partType)) {
-                        FramePart part = frame.frameParts.get(partType);
-                        part.interpolateAngles();
-                        part.interpolateOffset();
-                        modelRenderer.rotationPointX = originalPart.pivot[0] + part.prevPivots[0];
-                        modelRenderer.rotationPointY = originalPart.pivot[1] + part.prevPivots[1];
-                        modelRenderer.rotationPointZ = originalPart.pivot[2] + part.prevPivots[2];
-                        if (partType == EnumAnimationPart.BODY) {
-                            modelRenderer.rotateAngleX = originalPart.rotation[0] + part.prevRotations[0];
-                            modelRenderer.rotateAngleY = originalPart.rotation[1] + part.prevRotations[1];
-                            modelRenderer.rotateAngleZ = originalPart.rotation[2] + part.prevRotations[2];
-                        } else {
+
+                    if (partType != null) {
+                        if (!noppes.npcs.client.ClientEventHandler.originalValues.containsKey(modelRenderer)) {
+                            FramePart part = new FramePart();
+                            part.pivot = new float[]{modelRenderer.rotationPointX, modelRenderer.rotationPointY, modelRenderer.rotationPointZ};
+                            part.rotation = new float[]{modelRenderer.rotateAngleX, modelRenderer.rotateAngleY, modelRenderer.rotateAngleZ};
+                            noppes.npcs.client.ClientEventHandler.originalValues.put(modelRenderer, part);
+                        }
+                        FramePart originalPart = noppes.npcs.client.ClientEventHandler.originalValues.get(modelRenderer);
+                        Frame frame = (Frame) animData.animation.currentFrame();
+                        if (frame != null && frame.frameParts.containsKey(partType)) {
+                            FramePart part = frame.frameParts.get(partType);
+                            part.interpolateAngles();
+                            part.interpolateOffset();
                             modelRenderer.rotateAngleX = part.prevRotations[0];
                             modelRenderer.rotateAngleY = part.prevRotations[1];
                             modelRenderer.rotateAngleZ = part.prevRotations[2];
+                            modelRenderer.rotationPointX = originalPart.pivot[0] + part.prevPivots[0];
+                            modelRenderer.rotationPointY = originalPart.pivot[1] + part.prevPivots[1];
+                            modelRenderer.rotationPointZ = originalPart.pivot[2] + part.prevPivots[2];
                         }
                     }
                 }
@@ -177,6 +201,15 @@ public class CNPCAnimationHelper {
         return m1.rotationPointX == m2.rotationPointX && m1.rotationPointY == m2.rotationPointY && m1.rotationPointZ == m2.rotationPointZ;
     }
 
+    private static boolean isPartIgnored(ModelRenderer modelRenderer) {
+        ModelBase model = noppes.npcs.client.ClientEventHandler.playerModel;
+        if (model instanceof ModelBipedDBC) {
+            ModelBipedDBC modelBipedDBC = (ModelBipedDBC) model;
+            return modelRenderer == modelBipedDBC.Fro5r || modelRenderer == modelBipedDBC.Fro5l;
+        }
+        return false;
+    }
+
     private static EnumAnimationPart getDBCPartType(ModelRenderer renderer) {
         ModelBase model = noppes.npcs.client.ClientEventHandler.playerModel;
         if (model instanceof ModelBipedDBC) {
@@ -184,26 +217,18 @@ public class CNPCAnimationHelper {
             if (renderer == modelBipedDBC.face1 || renderer == modelBipedDBC.face2
                 || renderer == modelBipedDBC.face3 || renderer == modelBipedDBC.face4
                 || renderer == modelBipedDBC.face5 || renderer == modelBipedDBC.face6
-                || renderer == modelBipedDBC.F5horn1 || renderer == modelBipedDBC.F5horn2
-                || renderer == modelBipedDBC.F5horn3 || renderer == modelBipedDBC.F5horn4
-                || renderer == modelBipedDBC.F5horn5) {
+                //
+                || renderer == modelBipedDBC.SaiO
+                //
+                || renderer == modelBipedDBC.Nam
+                //
+                || renderer == modelBipedDBC.Fro5 || renderer == modelBipedDBC.Fro
+                || renderer == modelBipedDBC.Fro0 || renderer == modelBipedDBC.Fro1 || renderer == modelBipedDBC.Fro2) {
                 return EnumAnimationPart.HEAD;
             }
-            if (renderer == modelBipedDBC.Fro5b) {
+            if (renderer == modelBipedDBC.Fro5b || renderer == modelBipedDBC.WShell) {
                 return EnumAnimationPart.BODY;
             }
-            if (renderer == modelBipedDBC.F5spike1) {
-                return EnumAnimationPart.RIGHT_ARM;
-            }
-            if (renderer == modelBipedDBC.F5spike2) {
-                return EnumAnimationPart.LEFT_ARM;
-            }
-//            if (true) {
-//                return EnumAnimationPart.RIGHT_LEG;
-//            }
-//            if (true) {
-//                return EnumAnimationPart.LEFT_LEG;
-//            }
         }
         if (model instanceof GiTurtleMdl) {
             GiTurtleMdl giTurtleMdl = (GiTurtleMdl) model;

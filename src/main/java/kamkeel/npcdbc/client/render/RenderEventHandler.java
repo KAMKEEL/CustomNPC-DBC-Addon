@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.render;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
+import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -105,6 +106,19 @@ public class RenderEventHandler {
     @SubscribeEvent
     public void enableEntityStencil(RenderLivingEvent.Pre e) {
         if (mc.theWorld != null && (e.entity instanceof EntityPlayer || e.entity instanceof EntityNPCInterface)) {
+            //fix messed up DBC Z pivots...
+            if (e.renderer.mainModel instanceof ModelBipedDBC) {
+                ModelBipedDBC bipedDBC = (ModelBipedDBC) e.renderer.mainModel;
+                bipedDBC.bipedHeadght.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadg2.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadgt.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadgtt.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadc7.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadc8.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadrad.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadradl.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadradl2.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+            }
 
             if (e.entity instanceof EntityPlayer) {
                 DBCData data = DBCData.get((EntityPlayer) e.entity);

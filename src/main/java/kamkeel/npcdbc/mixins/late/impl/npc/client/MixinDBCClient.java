@@ -92,8 +92,8 @@ public class MixinDBCClient {
      * @reason Manages Animation Mixins
      */
     @Overwrite(remap = false)
-    public void applyRenderModel(ModelRenderer renderer) {
-        CNPCAnimationHelper.applyValues(renderer);
+    public boolean applyRenderModel(ModelRenderer renderer) {
+        return CNPCAnimationHelper.applyValues(renderer);
     }
 
     /**
