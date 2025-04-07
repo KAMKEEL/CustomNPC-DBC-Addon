@@ -65,28 +65,31 @@ public abstract class MixinScriptPlayerEventHandler {
         return instance.ammount;
     }
 
-    @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "INVOKE", target = "Lnoppes/npcs/EventHooks;onPlayerAttacked(Lnoppes/npcs/controllers/data/PlayerDataScript;Lnoppes/npcs/scripted/event/PlayerEvent$AttackedEvent;)Z", shift = At.Shift.AFTER))
-    public void fixPlayerAttackedEvent(LivingAttackEvent event, CallbackInfo ci, @Local(name = "pevent") PlayerEvent.AttackedEvent ev) {
-        if (dbcAltered && attackedEventDamage != null && !event.isCanceled()) {
-            if(attackedEventDamage.getDamage() != ev.getDamage())
-                DBCUtils.scriptingLastSetDamage = (int) ev.getDamage();
-            //attackedEventDamage.processExtras();
-        }
+    // COMMENTED FOR NOW
+    // You should not be allowed to ALTER Attack or Attacked Damages only Damaged Values
 
-        dbcAltered = false;
-        attackedEventDamage = null;
-    }
-
-    @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "INVOKE", target = "Lnoppes/npcs/EventHooks;onPlayerAttack(Lnoppes/npcs/controllers/data/PlayerDataScript;Lnoppes/npcs/scripted/event/PlayerEvent$AttackEvent;)Z", shift = At.Shift.AFTER))
-    public void fixPlayerAttackEvent(LivingAttackEvent event, CallbackInfo ci, @Local(name = "pevent1") PlayerEvent.AttackEvent ev) {
-        if (dbcAltered && attackEventDamage != null && attackEventDamage.getDamage() != ev.getDamage() && !event.isCanceled()) {
-            if (event.entityLiving instanceof EntityNPCInterface && DBCUtils.npcLastSetDamage == null)
-                DBCUtils.npcLastSetDamage = (int) ev.getDamage();
-            else if (event.entityLiving instanceof EntityPlayer && DBCUtils.scriptingLastSetDamage == null)
-                DBCUtils.scriptingLastSetDamage = (int) ev.getDamage();
-        }
-
-        dbcAltered = false;
-        attackEventDamage = null;
-    }
+//    @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "INVOKE", target = "Lnoppes/npcs/EventHooks;onPlayerAttacked(Lnoppes/npcs/controllers/data/PlayerDataScript;Lnoppes/npcs/scripted/event/PlayerEvent$AttackedEvent;)Z", shift = At.Shift.AFTER))
+//    public void fixPlayerAttackedEvent(LivingAttackEvent event, CallbackInfo ci, @Local(name = "pevent") PlayerEvent.AttackedEvent ev) {
+//        if (dbcAltered && attackedEventDamage != null && !event.isCanceled()) {
+//            if(attackedEventDamage.getDamage() != ev.getDamage())
+//                DBCUtils.scriptingLastSetDamage = (int) ev.getDamage();
+//            //attackedEventDamage.processExtras();
+//        }
+//
+//        dbcAltered = false;
+//        attackedEventDamage = null;
+//    }
+//
+//    @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "INVOKE", target = "Lnoppes/npcs/EventHooks;onPlayerAttack(Lnoppes/npcs/controllers/data/PlayerDataScript;Lnoppes/npcs/scripted/event/PlayerEvent$AttackEvent;)Z", shift = At.Shift.AFTER))
+//    public void fixPlayerAttackEvent(LivingAttackEvent event, CallbackInfo ci, @Local(name = "pevent1") PlayerEvent.AttackEvent ev) {
+//        if (dbcAltered && attackEventDamage != null && attackEventDamage.getDamage() != ev.getDamage() && !event.isCanceled()) {
+//            if (event.entityLiving instanceof EntityNPCInterface && DBCUtils.npcLastSetDamage == null)
+//                DBCUtils.npcLastSetDamage = (int) ev.getDamage();
+//            else if (event.entityLiving instanceof EntityPlayer && DBCUtils.scriptingLastSetDamage == null)
+//                DBCUtils.scriptingLastSetDamage = (int) ev.getDamage();
+//        }
+//
+//        dbcAltered = false;
+//        attackEventDamage = null;
+//    }
 }

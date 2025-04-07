@@ -26,6 +26,7 @@ public class MixinJRMCoreEH {
     @Inject(method = "damageEntity(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/DamageSource;F)V", at = @At("HEAD"), cancellable = true)
     public void NPCDamaged(EntityLivingBase targetEntity, DamageSource source, float amount, CallbackInfo ci, @Local(ordinal = 0) LocalFloatRef dam) {
         if (targetEntity instanceof EntityNPCInterface) {
+            DBCUtils.damageEntityCalled = true;
 
             if (DBCUtils.npcLastSetDamage != null) {
                 dam.set(DBCUtils.npcLastSetDamage); // THIS GETS DEDUCTED FROM NPC HEALTH

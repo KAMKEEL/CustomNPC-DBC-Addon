@@ -55,6 +55,8 @@ public class DBCUtils {
     //this one is with the scripting player Attack/Attacked events. Separated these into 2 so both can be functional
     public static Integer scriptingLastSetDamage = null;
 
+    public static boolean damageEntityCalled = false;
+
     public static String[] CONFIG_UI_NAME;
     public static String[] cCONFIG_UI_NAME;
     public static boolean calculatingKiDrain;
@@ -582,18 +584,17 @@ public class DBCUtils {
     }
 
     public static float calculateAttackStat(EntityPlayer attacker, float eventDamage, DamageSource source) {
-        float dam = eventDamage;
+        float dam = 1.0f;
         DBCData data = DBCData.get(attacker);
         if (data.isFusionSpectator())
             return 0;
         if (source.getEntity() != null) {
-            //   attacker = (EntityPlayer) source.getEntity();
             int powerType = data.Powertype;
             if (!JRMCoreH.isPowerTypeKi(powerType))
                 return 0;
 
             boolean ultraInstinctCounter = source.getDamageType().equals("UICounter");
-            boolean Melee = ultraInstinctCounter || source.getSourceOfDamage() == attacker && source.getDamageType().equals("player");
+            boolean Melee = ultraInstinctCounter || (source.getSourceOfDamage() == attacker && source.getDamageType().equals("player"));
             boolean energyAtt = source.getDamageType().equals("EnergyAttack") && source.getSourceOfDamage() instanceof EntityEnergyAtt;
             boolean Projectile = source.getSourceOfDamage() instanceof IProjectile && !energyAtt;
 
@@ -603,6 +604,7 @@ public class DBCUtils {
             int classID = data.Class;
             double release = data.Release;
             int currentEnergy = data.Ki;
+            int currentStamina = data.Stamina;
             String sklx = data.RacialSkills;
             int resrv = data.ArcReserve;
             String absorption = data.MajinAbsorptionData;
@@ -618,11 +620,15 @@ public class DBCUtils {
 
             boolean c = JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects);
             int STR = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 0, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
-            int cstF = 0;
+
             if (Melee) {
+                int ml = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 2, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption); // Assuming 2 is stamina-related
+                int staminaCost = (int) (ml * 0.1f);
+
                 int sklkf = JRMCoreH.SklLvl(12, PlyrSkills);
                 boolean sklkfe = !JRMCoreH.PlyrSettingsB(attacker, DBCSettings.KI_FIST);
                 int sklks = 0;
+                int cstF = 0;
                 if (sklkf > 0 && sklkfe) {
                     int SPI = PlyrAttrbts[5];
                     int statSPI = JRMCoreH.stat(attacker, 5, powerType, 5, SPI, race, classID, JRMCoreH.SklLvl_KiBs(PlyrSkills, powerType));
@@ -631,9 +637,9 @@ public class DBCUtils {
                         cstF = (int) ((double) sklks * DBCConfig.cnfKFc);
                         if (currentEnergy <= cstF) {
                             sklks = 0;
+                        } else {
+                            sklks = (int) ((double) sklks * DBCConfig.cnfKFd);
                         }
-
-                        sklks = (int) ((double) sklks * DBCConfig.cnfKFd);
                     }
                 }
 
@@ -645,7 +651,6 @@ public class DBCUtils {
                 boolean hasKiWeaponEnabled = sklkf > 0 && skf > 0 && sklkfe2;
                 if (hasKiWeaponEnabled) {
                     int WIL = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 3, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
-
 
                     int dmg1 = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
                     float data1 = (float) ((int) (0.005 * (double) dmg1 * release * 0.01 * (sklkfe3 ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5699));
@@ -664,8 +669,10 @@ public class DBCUtils {
                     }
                 }
 
-
                 dam = (float) ((double) dam + curAtr + (double) sklks);
+                if (currentStamina <= staminaCost) {
+                    dam = 0.0f;
+                }
             } else if (Projectile) {
                 int WIL = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 3, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
                 int dmg = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
