@@ -3,6 +3,7 @@ package kamkeel.npcdbc.util;
 import JinRyuu.DragonBC.common.DBCConfig;
 import JinRyuu.DragonBC.common.Items.ItemsDBC;
 import JinRyuu.JRMCore.JRMCoreConfig;
+import JinRyuu.JRMCore.JRMCoreEH;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
@@ -584,14 +585,14 @@ public class DBCUtils {
     }
 
     public static float calculateAttackStat(EntityPlayer attacker, float eventDamage, DamageSource source) {
-        float dam = 0.0f;
+        float dam = eventDamage;
         DBCData data = DBCData.get(attacker);
         if (data.isFusionSpectator())
             return 0;
         if (source.getEntity() != null) {
             int powerType = data.Powertype;
             if (!JRMCoreH.isPowerTypeKi(powerType))
-                return 0;
+                return eventDamage;
 
             boolean ultraInstinctCounter = source.getDamageType().equals("UICounter");
             boolean Melee = ultraInstinctCounter || (source.getSourceOfDamage() == attacker && source.getDamageType().equals("player"));
@@ -621,10 +622,10 @@ public class DBCUtils {
             boolean c = JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects);
             int STR = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 0, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
 
-            if (Melee) {
-                int ml = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 2, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption); // Assuming 2 is stamina-related
-                int staminaCost = (int) (ml * 0.1f);
+            int ml = JRMCoreH.stat(0, attacker, 0, STR, 0.0f);
+            int staminaCost = (int)(ml * 0.1f);
 
+            if (Melee) {
                 // Calculate base Melee damage (curAtr)
                 int dmg = JRMCoreH.stat(attacker, 0, powerType, 0, STR, race, classID, 0.0F);
                 double curAtr = (double) dmg * release * 0.01 * (double) JRMCoreH.weightPerc(0, attacker);
@@ -667,34 +668,54 @@ public class DBCUtils {
                     kiWeaponDamage += (int) ((float) skf * data1);
 
                     if (kiWeaponCost > 0 && currentEnergy < kiWeaponCost) {
-                        kiWeaponDamage = 0; // Reset if energy insufficient
+                        dam += kiWeaponDamage;
                     }
                 }
 
-                dam = eventDamage + (float) curAtr + (float) sklks;
-                if (hasKiWeaponEnabled) {
-                    dam += (float) kiWeaponDamage;
-                }
-
-                // Stamina check: revert to original damage if insufficient
-                if (currentStamina <= staminaCost) {
-                    dam = eventDamage;
-                }
+                dam += (float)(curAtr + sklks);
             } else if (Projectile) {
+                staminaCost = 1;
                 int WIL = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 3, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
-                int dmg = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
+                int dmg3 = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
                 int skf = JRMCoreH.SklLvl(15, PlyrSkills);
-                dam = (float) ((double) eventDamage + (double) dmg * release * 0.005F * (double) skf * (double) JRMCoreH.weightPerc(1, attacker));
+                dam += (float)(dmg3 * release * 0.005F * skf * JRMCoreH.weightPerc(1, attacker));
             }
 
             if (ultraInstinctCounter) {
                 dam *= (float) JGConfigUltraInstinct.CONFIG_UI_ATTACK_DAMAGE_PERCENTAGE[JRMCoreH.state2UltraInstinct(!mn, (byte) state2)] * 0.01F;
             }
 
-            return (int) (dam <= 0.0F ? 1.0F : dam);
+            dam = ((dam <= 0.0f) ? 1.0f : dam);
+            int UI_cost = 0;
+            if (Melee && ultraInstinctCounter) {
+                UI_cost = (int) getUltraInstinctStaminaCost(attacker, (byte)JRMCoreH.state2UltraInstinct(!mn, (byte)state2), (float)JGConfigUltraInstinct.CONFIG_UI_DODGE_STAMINA_COST[state2]);
+            }
+
+            staminaCost = (int)(staminaCost * JRMCoreConfig.cnfPnchc + UI_cost);
+            if(currentStamina <= staminaCost || dam == 1.0f) {
+                dam = eventDamage;
+            }
+        }
+        return dam;
+    }
+
+    private static float getUltraInstinctStaminaCost(EntityPlayer targetPlayer, byte targetState2, float staminaCost) {
+        if (JGConfigUltraInstinct.CONFIG_UI_PERCENTAGE_STAMINA_COST) {
+            byte pwr = JRMCoreH.getByte(targetPlayer, "jrmcPwrtyp");
+            byte rce = JRMCoreH.getByte(targetPlayer, "jrmcRace");
+            byte cls = JRMCoreH.getByte(targetPlayer, "jrmcClass");
+            int[] PlyrAttrbts = JRMCoreH.PlyrAttrbts(targetPlayer);
+            int maxStamina = JRMCoreH.stat(targetPlayer, 2, pwr, 3, PlyrAttrbts[2], rce, cls, 0.0F);
+            if (staminaCost > 100.0F) {
+                staminaCost = (float)maxStamina;
+            } else if (staminaCost == 0.0F) {
+                staminaCost = 0.0F;
+            } else {
+                staminaCost *= (float)maxStamina / 100.0F;
+            }
         }
 
-        return dam;
+        return staminaCost;
     }
 
     public static boolean noBonusEffects = false;
