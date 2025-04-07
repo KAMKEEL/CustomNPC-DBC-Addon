@@ -75,6 +75,29 @@ public interface IDBCEvent extends IPlayerEvent {
          */
         void setDamage(float damage);
 
+
+        /**
+         *
+         * @return the stamina reduction
+         */
+        int getStamina();
+
+        /**
+         * @param stamina The new stamina to reduce
+         */
+        void setStamina(int stamina);
+
+        /**
+         *
+         * @return the ki reduction
+         */
+        int getKi();
+
+        /**
+         * @param ki The new ki to reduce
+         */
+        void setKi(int ki);
+
         /**
          * @return IDamageSource
          */

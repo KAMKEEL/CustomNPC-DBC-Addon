@@ -56,10 +56,10 @@ public class DBCDamageCalc {
     public void processExtras(){
         if (entity != null && entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) entity;
-            if(stamina != -1)
+            if(stamina > 0)
                 setInt(stamina, player, "jrmcStamina");
 
-            if(ki != -1)
+            if(ki > 0)
                 setInt(ki, player, "jrmcEnrgy");
 
             if (DBC()) {

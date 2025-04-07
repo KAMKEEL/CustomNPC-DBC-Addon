@@ -57,6 +57,8 @@ public class MixinJRMCoreEH {
 
         // Last Set Damage
         DBCUtils.lastSetDamage = (int) damagedEvent.damage;
+        damageCalc.setStamina(damagedEvent.getStamina());
+        damageCalc.setKi(damagedEvent.getKi());
         damageCalc.processExtras();
     }
 
@@ -71,6 +73,8 @@ public class MixinJRMCoreEH {
 
         // Last Set Damage
         DBCUtils.lastSetDamage = (int) damagedEvent.damage;
+        damageCalc.setStamina(damagedEvent.getStamina());
+        damageCalc.setKi(damagedEvent.getKi());
         damageCalc.processExtras();
     }
 }

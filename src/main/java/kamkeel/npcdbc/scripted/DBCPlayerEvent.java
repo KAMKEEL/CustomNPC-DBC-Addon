@@ -138,6 +138,8 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         public final IDamageSource damageSource;
         public final int sourceType;
         public float damage;
+        public int stamina;
+        public int ki;
 
         public DamagedEvent(EntityPlayer player, float damage, DamageSource damageSource, int type) {
             super(PlayerDataUtil.getIPlayer(player));
@@ -157,6 +159,26 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         @Override
         public void setDamage(float damage) {
             this.damage = damage;
+        }
+
+        @Override
+        public int getStamina() {
+            return this.stamina;
+        }
+
+        @Override
+        public void setStamina(int stamina) {
+            this.stamina = stamina;
+        }
+
+        @Override
+        public int getKi() {
+            return this.ki;
+        }
+
+        @Override
+        public void setKi(int ki) {
+            this.ki = ki;
         }
 
         @Override

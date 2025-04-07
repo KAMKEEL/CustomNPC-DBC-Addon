@@ -314,13 +314,13 @@ public class DBCUtils {
                 }
 
                 dbcA = calculateDamageNegation(player, dbcA);
-                float all = currentHP - dbcA;
-                int newHP = all < 0 ? 0 : (int) all;
+                float hpRemaining = currentHP - dbcA;
+                int newHP;
                 if (dse) {
                     boolean friendlyFist = PlyrSettingsB((EntityPlayer) s.getEntity(), DBCSettings.FRIENDLY_FIST);
                     if (friendlyFist && !s.getDamageType().equals("MajinAbsorption") && !s.getEntity().equals(Player)) {
                         int ko = getInt(player, "jrmcHar4va");
-                        newHP = all < 20 ? 20 : (int) all;
+                        newHP = (int) (hpRemaining < 20 ? 20 : hpRemaining);
                         if (ko <= 0 && newHP == 20) {
                             damageCalc.damage = currentHP > 20 ? currentHP - 20 : 0;
                             return damageCalc;
@@ -328,7 +328,7 @@ public class DBCUtils {
                     }
                 }
 
-                damageCalc.damage = currentHP - newHP;
+                damageCalc.damage = (int) dbcA;
                 return damageCalc;
             }
         }
