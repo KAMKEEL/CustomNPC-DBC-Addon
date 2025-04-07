@@ -584,7 +584,7 @@ public class DBCUtils {
     }
 
     public static float calculateAttackStat(EntityPlayer attacker, float eventDamage, DamageSource source) {
-        float dam = 1.0f;
+        float dam = 0.0f;
         DBCData data = DBCData.get(attacker);
         if (data.isFusionSpectator())
             return 0;
@@ -625,53 +625,60 @@ public class DBCUtils {
                 int ml = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 2, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption); // Assuming 2 is stamina-related
                 int staminaCost = (int) (ml * 0.1f);
 
+                // Calculate base Melee damage (curAtr)
+                int dmg = JRMCoreH.stat(attacker, 0, powerType, 0, STR, race, classID, 0.0F);
+                double curAtr = (double) dmg * release * 0.01 * (double) JRMCoreH.weightPerc(0, attacker);
+
                 int sklkf = JRMCoreH.SklLvl(12, PlyrSkills);
                 boolean sklkfe = !JRMCoreH.PlyrSettingsB(attacker, DBCSettings.KI_FIST);
                 int sklks = 0;
-                int cstF = 0;
                 if (sklkf > 0 && sklkfe) {
                     int SPI = PlyrAttrbts[5];
                     int statSPI = JRMCoreH.stat(attacker, 5, powerType, 5, SPI, race, classID, JRMCoreH.SklLvl_KiBs(PlyrSkills, powerType));
                     sklks = (int) ((double) sklkf * 0.0025 * (double) statSPI * release * 0.01);
                     if (sklks > 0) {
-                        cstF = (int) ((double) sklks * DBCConfig.cnfKFc);
-                        if (currentEnergy <= cstF) {
-                            sklks = 0;
-                        } else {
+                        int cstF = (int) ((double) sklks * DBCConfig.cnfKFc);
+                        if (currentEnergy > cstF) {
                             sklks = (int) ((double) sklks * DBCConfig.cnfKFd);
+                        } else {
+                            sklks = 0;
                         }
                     }
                 }
 
-                int dmg = JRMCoreH.stat(attacker, 0, powerType, 0, STR, race, classID, 0.0F);
-                double curAtr = (double) dmg * release * 0.01 * (double) JRMCoreH.weightPerc(0, attacker);
+                // Calculate Ki Weapon damage
                 boolean sklkfe2 = JRMCoreH.PlyrSettingsB(attacker, DBCSettings.KI_WEAPON_TOGGLE);
                 boolean sklkfe3 = JRMCoreH.PlyrSettingsI(attacker, DBCSettings.KI_WEAPON_TOGGLE, 1);
                 int skf = JRMCoreH.SklLvl(15, PlyrSkills);
                 boolean hasKiWeaponEnabled = sklkf > 0 && skf > 0 && sklkfe2;
+                int kiWeaponDamage = 0;
                 if (hasKiWeaponEnabled) {
                     int WIL = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 3, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
-
                     int dmg1 = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
                     float data1 = (float) ((int) (0.005 * (double) dmg1 * release * 0.01 * (sklkfe3 ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5699));
                     float data2 = (float) ((int) (0.005 * (double) dmg1 * release * 0.01 * (sklkfe3 ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc)));
                     int kiWeaponCost = (int) (data2 / (sklkf > 1 ? (float) sklkf * 0.3F + 1.0F : 1.0F));
-                    int kiWeaponDamage = (int) ((float) sklkf * data1);
+                    kiWeaponDamage = (int) ((float) sklkf * data1);
 
                     dmg1 = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
                     data1 = (float) ((double) dmg1 * release * 0.01F * (double) JRMCoreH.weightPerc(1, attacker) * (sklkfe3 ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5700);
                     data2 = (float) ((double) dmg1 * release * 0.01F * (double) JRMCoreH.weightPerc(1, attacker) * (sklkfe3 ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc));
-                    kiWeaponCost = (int) ((float) kiWeaponCost + data2 / (skf > 1 ? (float) skf * 0.3F + 1.0F : 1.0F));
-                    kiWeaponDamage = (int) ((float) kiWeaponDamage + (float) skf * data1);
+                    kiWeaponCost += (int) (data2 / (skf > 1 ? (float) skf * 0.3F + 1.0F : 1.0F));
+                    kiWeaponDamage += (int) ((float) skf * data1);
 
-                    if (kiWeaponCost > 0 && currentEnergy >= kiWeaponCost) {
-                        dam = eventDamage + (float) kiWeaponDamage;
+                    if (kiWeaponCost > 0 && currentEnergy < kiWeaponCost) {
+                        kiWeaponDamage = 0; // Reset if energy insufficient
                     }
                 }
 
-                dam = (float) ((double) dam + curAtr + (double) sklks);
+                dam = eventDamage + (float) curAtr + (float) sklks;
+                if (hasKiWeaponEnabled) {
+                    dam += (float) kiWeaponDamage;
+                }
+
+                // Stamina check: revert to original damage if insufficient
                 if (currentStamina <= staminaCost) {
-                    dam = 0.0f;
+                    dam = eventDamage;
                 }
             } else if (Projectile) {
                 int WIL = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 3, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
@@ -679,6 +686,7 @@ public class DBCUtils {
                 int skf = JRMCoreH.SklLvl(15, PlyrSkills);
                 dam = (float) ((double) eventDamage + (double) dmg * release * 0.005F * (double) skf * (double) JRMCoreH.weightPerc(1, attacker));
             }
+
             if (ultraInstinctCounter) {
                 dam *= (float) JGConfigUltraInstinct.CONFIG_UI_ATTACK_DAMAGE_PERCENTAGE[JRMCoreH.state2UltraInstinct(!mn, (byte) state2)] * 0.01F;
             }

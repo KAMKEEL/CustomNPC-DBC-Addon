@@ -52,7 +52,9 @@ public abstract class MixinScriptPlayerEventHandler {
         if (instance.source.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) instance.source.getEntity();
             DBCData data = DBCData.get(player);
-            if (dbcAltered = data.Powertype == 1) {
+            boolean isNPC = instance.entityLiving instanceof EntityNPCInterface;
+            dbcAltered = data.Powertype == 1;
+            if (dbcAltered && !isNPC) {
                 float attackStat = DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
                 if (instance.entityLiving instanceof EntityPlayer){
                     attackEventDamage = DBCUtils.calculateDBCDamageFromSource(instance.entityLiving, attackStat, instance.source);
