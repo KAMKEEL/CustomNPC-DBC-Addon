@@ -654,20 +654,21 @@ public class DBCUtils {
                 boolean hasKiWeaponEnabled = sklkf > 0 && skf > 0 && sklkfe2;
                 int kiWeaponDamage = 0;
                 if (hasKiWeaponEnabled) {
+                    int kiWeaponCost = 0;
                     int WIL = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 3, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
                     int dmg1 = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
                     float data1 = (float) ((int) (0.005 * (double) dmg1 * release * 0.01 * (sklkfe3 ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5699));
                     float data2 = (float) ((int) (0.005 * (double) dmg1 * release * 0.01 * (sklkfe3 ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc)));
-                    int kiWeaponCost = (int) (data2 / (sklkf > 1 ? (float) sklkf * 0.3F + 1.0F : 1.0F));
-                    kiWeaponDamage = (int) ((float) sklkf * data1);
+                    kiWeaponCost += (int)(data2 / ((sklkf > 1) ? (sklkf * 0.3f + 1.0f) : 1.0f));
+                    kiWeaponDamage += (int)(sklkf * data1);
 
-                    dmg1 = (int) ((float) JRMCoreH.stat(attacker, 3, powerType, 4, WIL, race, classID, 0.0F) * 0.01F);
-                    data1 = (float) ((double) dmg1 * release * 0.01F * (double) JRMCoreH.weightPerc(1, attacker) * (sklkfe3 ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5700);
-                    data2 = (float) ((double) dmg1 * release * 0.01F * (double) JRMCoreH.weightPerc(1, attacker) * (sklkfe3 ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc));
-                    kiWeaponCost += (int) (data2 / (skf > 1 ? (float) skf * 0.3F + 1.0F : 1.0F));
-                    kiWeaponDamage += (int) ((float) skf * data1);
+                    dmg1 = (int)(JRMCoreH.stat((Entity)attacker, 3, powerType, 4, WIL, race, classID, 0.0f) * 0.01f);
+                    data1 = (float) (dmg1 * release * 0.01F * JRMCoreH.weightPerc(1, attacker) * (sklkfe3 ? DBCConfig.cnfKCsd : DBCConfig.cnfKBld) * JRMCoreConfig.dat5700);
+                    data2 = (float) (dmg1 * release * 0.01F * JRMCoreH.weightPerc(1, attacker) * (sklkfe3 ? DBCConfig.cnfKCsc : DBCConfig.cnfKBlc));
+                    kiWeaponCost += (int)(data2 / ((skf > 1) ? (skf * 0.3f + 1.0f) : 1.0f));
+                    kiWeaponDamage += (int)(skf * data1);
 
-                    if (kiWeaponCost > 0 && currentEnergy < kiWeaponCost) {
+                    if (kiWeaponCost > 0 && currentEnergy >= kiWeaponCost) {
                         dam += kiWeaponDamage;
                     }
                 }
