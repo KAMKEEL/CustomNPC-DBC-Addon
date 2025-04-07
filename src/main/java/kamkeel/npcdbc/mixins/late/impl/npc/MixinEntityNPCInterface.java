@@ -86,4 +86,16 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
         dbcAltered = false;
         return instance.getDamage();
     }
+
+    @Inject(method = "attackEntityFrom", at = @At("HEAD"))
+    public void resetDamageEntityCalled(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        DBCUtils.damageEntityCalled = false;
+    }
+
+    @Inject(method = "attackEntityFrom", at = @At("RETURN"))
+    public void clearNPCDamageIfNeeded(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if (!DBCUtils.damageEntityCalled) {
+            DBCUtils.npcLastSetDamage = null;
+        }
+    }
 }
