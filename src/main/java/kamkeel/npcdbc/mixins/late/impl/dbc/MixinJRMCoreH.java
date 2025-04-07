@@ -77,6 +77,41 @@ public abstract class MixinJRMCoreH {
         }
     }
 
+    @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;JRMCABonusOn:Z", shift = At.Shift.BEFORE))
+    private static void applyPlayerBonusToStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "value") LocalIntRef value) {
+        if(attributeID > -1 && attributeID <= 5 && player instanceof EntityPlayer){
+            DBCData dbcData = DBCData.get((EntityPlayer) player);
+
+            int modifiedValue = value.get();
+            float[] bonus = dbcData.bonus.getMultiBonus();
+            if (attributeID == DBCAttribute.Strength && bonus[0] != 0) //str
+                modifiedValue *= bonus[0];
+            else if (attributeID == DBCAttribute.Dexterity && bonus[1] != 0) //dex
+                modifiedValue *= bonus[1];
+            else if (attributeID == DBCAttribute.Willpower && bonus[2] != 0) //will
+                modifiedValue *= bonus[2];
+            else if (attributeID == DBCAttribute.Constitution && bonus[3] != 0) //con
+                modifiedValue *= bonus[3];
+            else if (attributeID == DBCAttribute.Spirit && bonus[4] != 0) //spi
+                modifiedValue *= bonus[4];
+
+            float[] flatBonus = dbcData.bonus.getFlatBonus();
+            // Add Bonus Flat to Base Attributes at the end
+            if (attributeID == DBCAttribute.Strength) // STR
+                modifiedValue += flatBonus[0];
+            else if (attributeID == DBCAttribute.Dexterity) // DEX
+                modifiedValue += flatBonus[1];
+            else if (attributeID == DBCAttribute.Willpower) // WIL
+                modifiedValue += flatBonus[2];
+            else if (attributeID == DBCAttribute.Constitution) // CON
+                modifiedValue += flatBonus[3];
+            else if (attributeID == DBCAttribute.Spirit) // SPI
+                modifiedValue += flatBonus[4];
+
+            value.set(modifiedValue);
+        }
+    }
+
     @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
     private static void fix10xKiCost(String[] listOfAttacks, int playerStat, byte[] kiAttackStats, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 0) LocalIntRef stat) {
         calculatingKiAttackCost = true;
