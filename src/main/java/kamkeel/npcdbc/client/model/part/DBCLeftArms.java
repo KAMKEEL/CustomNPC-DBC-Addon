@@ -70,10 +70,6 @@ public class DBCLeftArms extends ModelDBCPartInterface {
             disableStencilWriting((entity.getEntityId() + id) % 256, false);
         }
 
-        this.ArcoLeftShoulder.rotateAngleY = base.bipedLeftArm.rotateAngleY;
-        this.ArcoLeftShoulder.rotateAngleX = base.bipedLeftArm.rotateAngleX;
-        this.ArcoLeftShoulder.rotateAngleZ = base.bipedLeftArm.rotateAngleZ;
-
         if (display.useSkin) {
             bodyCM = display.bodyCM;
             bodyC2 = display.bodyC2;

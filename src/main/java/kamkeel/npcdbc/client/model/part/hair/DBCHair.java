@@ -467,32 +467,31 @@ public class DBCHair extends ModelHairRenderer {
     }
 
     public void renderSSJ3Hair(boolean renderBang) {
-        this.bipedHeadrad.rotateAngleY = base.bipedBody.rotateAngleY;
-        this.bipedHeadrad.rotateAngleX = base.bipedBody.rotateAngleX;
-        this.bipedHeadrad.rotationPointX = base.bipedBody.rotationPointX;
-        this.bipedHeadrad.rotationPointY = base.bipedBody.rotationPointY;
         this.bipedHeadrad.render(0.0625f);
+
+        float headAngleX = base.bipedHead.rotateAngleX;
         this.bipedHeadradl.rotateAngleY = base.bipedBody.rotateAngleY;
-        this.bipedHeadradl.rotateAngleX = base.bipedBody.rotateAngleX / 4.0F;
+        this.bipedHeadradl.rotateAngleX = base.bipedBody.rotateAngleX / 1.2F - headAngleX/1.5F;
         this.bipedHeadradl.rotationPointX = base.bipedBody.rotationPointX;
         this.bipedHeadradl.rotationPointY = base.bipedBody.rotationPointY;
+        this.bipedHeadradl.rotationPointZ = (float) Math.abs(Math.sin(base.bipedBody.rotateAngleX)) * 5;
         this.bipedHeadradl.render(0.0625f);
+
         this.bipedHeadradl2.rotateAngleY = base.bipedBody.rotateAngleY;
-        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 2.0F;
+        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 5.0F - headAngleX/5F;
         this.bipedHeadradl2.rotationPointX = base.bipedBody.rotationPointX;
         this.bipedHeadradl2.rotationPointY = base.bipedBody.rotationPointY;
+        this.bipedHeadradl2.rotationPointZ = 0;
         this.bipedHeadradl2.render(0.0625f);
+
         this.bipedHeadradl2.rotateAngleY = base.bipedBody.rotateAngleY;
-        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 1.2F;
+        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 1.2F - headAngleX/2;
         this.bipedHeadradl2.rotationPointX = base.bipedBody.rotationPointX;
         this.bipedHeadradl2.rotationPointY = base.bipedBody.rotationPointY;
+        this.bipedHeadradl2.rotationPointZ = (float) Math.abs(Math.sin(base.bipedBody.rotateAngleX)) * 2F;
         this.bipedHeadradl2.render(0.0625f);
 
         if (renderBang) {
-            this.ssj3.rotateAngleY = base.bipedBody.rotateAngleY;
-            this.ssj3.rotateAngleX = base.bipedBody.rotateAngleX;
-            this.ssj3.rotationPointX = base.bipedBody.rotationPointX;
-            this.ssj3.rotationPointY = base.bipedBody.rotationPointY;
             this.ssj3.render(0.0625f);
         }
     }

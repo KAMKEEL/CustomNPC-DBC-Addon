@@ -6,6 +6,7 @@ import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
+import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -88,14 +89,19 @@ public class CNPCAnimationHelper {
     }
 
     public static boolean applyValues(ModelRenderer modelRenderer) {
-        if (noppes.npcs.client.ClientEventHandler.renderingPlayer == null) {
+        if (ClientEventHandler.renderingPlayer == null && ClientEventHandler.renderingNpc == null) {
             return false;
         }
 
         AnimationData animData = null;
-        ClientEventHandler.playerModel = modelRenderer.baseModel;
-        if (ClientCacheHandler.playerAnimations.containsKey(ClientEventHandler.renderingPlayer.getUniqueID())) {
-            animData = ClientCacheHandler.playerAnimations.get(ClientEventHandler.renderingPlayer.getUniqueID());
+        if (ClientEventHandler.renderingPlayer != null) {
+            ClientEventHandler.playerModel = modelRenderer.baseModel;
+            if (ClientCacheHandler.playerAnimations.containsKey(ClientEventHandler.renderingPlayer.getUniqueID())) {
+                animData = ClientCacheHandler.playerAnimations.get(ClientEventHandler.renderingPlayer.getUniqueID());
+            }
+        } else if (ClientEventHandler.renderingNpc.display instanceof INPCDisplay) {
+            INPCDisplay inpcDisplay = (INPCDisplay) ClientEventHandler.renderingNpc.display;
+            return inpcDisplay.getDBCDisplay().isEnabled();
         }
 
         ModelBase model = modelRenderer.baseModel;
