@@ -66,7 +66,7 @@ public abstract class MixinScriptPlayerEventHandler {
     }
 
     // COMMENTED FOR NOW
-    // You should not be allowed to ALTER Attack or Attacked Damages only Damaged Values
+    // You should not be allowed to ALTER Attack or Attacked Damage Values
 
 //    @Inject(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "INVOKE", target = "Lnoppes/npcs/EventHooks;onPlayerAttacked(Lnoppes/npcs/controllers/data/PlayerDataScript;Lnoppes/npcs/scripted/event/PlayerEvent$AttackedEvent;)Z", shift = At.Shift.AFTER))
 //    public void fixPlayerAttackedEvent(LivingAttackEvent event, CallbackInfo ci, @Local(name = "pevent") PlayerEvent.AttackedEvent ev) {
