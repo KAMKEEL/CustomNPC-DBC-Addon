@@ -451,10 +451,7 @@ public class Form implements IForm {
 
     @Override
     public void setMindRequirement(int mind) {
-        if (mind <= 0)
-            mindRequirement = 0;
-        else
-            mindRequirement = mind;
+        mindRequirement = Math.max(mind, 0);
     }
 
     @Override
