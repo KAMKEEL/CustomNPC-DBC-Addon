@@ -16,4 +16,6 @@ public interface IFormAdvanced {
     void setStatMulti(int id, float multiplier);
 
     float getStatMulti(int id);
+
+    IFormAdvanced save();
 }

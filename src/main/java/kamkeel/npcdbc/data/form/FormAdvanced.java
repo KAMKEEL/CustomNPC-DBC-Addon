@@ -74,6 +74,13 @@ public class FormAdvanced implements IFormAdvanced {
         return (stat != null) ? stat.getMultiplier() : 1.0f;
     }
 
+    @Override
+    public IFormAdvanced save() {
+        if (parent != null)
+            parent.save();
+        return this;
+    }
+
     // Reads the DBC stats from NBT.
     public void readFromNBT(NBTTagCompound compound) {
         NBTTagCompound formStats = compound.getCompoundTag("formAdvanced");

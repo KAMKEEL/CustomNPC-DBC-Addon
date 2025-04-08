@@ -179,6 +179,8 @@ public interface IForm {
      */
     IFormStackable getStackable();
 
+    IFormAdvanced getAdvanced();
+
     void setMindRequirement(int mind);
 
     int getMindRequirement();
