@@ -728,5 +728,10 @@ public interface IDBCAddon extends IDBCPlayer {
 
     boolean isInMedicalLiquid();
 
-    IKiAttack getCurrentSelectedAttack();
+    /**
+     *
+     * @param slot, integer of the ki attack slot to look in. Accepts values 1-4
+     * @return
+     */
+    IKiAttack getAttackFromSlot(int slot);
 }

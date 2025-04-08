@@ -1375,27 +1375,24 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     // TODO: Fix getCurrentSelectedAttack() from Client Side Data to Server Side Data
     @Override
-    public IKiAttack getCurrentSelectedAttack() {
-        int slot = JRMCoreH.EnAtSlct;
-
+    public IKiAttack getAttackFromSlot(int slot) {
         String[] tech = new String[0];
-
         switch (slot) {
-            case 0:
-                tech = JRMCoreH.tech1;
-
-                break;
             case 1:
-                tech = JRMCoreH.tech2;
+                tech = this.nbt.getString("jrmcTech1").replace(";",",").split(",");
                 break;
             case 2:
-                tech = JRMCoreH.tech3;
+                tech = this.nbt.getString("jrmcTech2").replace(";",",").split(",");
                 break;
             case 3:
-                tech = JRMCoreH.tech4;
+                tech = this.nbt.getString("jrmcTech3").replace(";",",").split(",");
+                break;
+            case 4:
+                tech = this.nbt.getString("jrmcTech4").replace(";",",").split(",");
+                break;
         }
 
-        if (tech == null) throw new CustomNPCsException("Selected slot does not have an attack in it");
+        if (tech == null || tech.length < 10) throw new CustomNPCsException("cannot read attack properly");
 
 
         boolean effect = Integer.parseInt(tech[6]) == 1;
