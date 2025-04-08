@@ -3,7 +3,6 @@ package kamkeel.npcdbc.util;
 import JinRyuu.DragonBC.common.DBCConfig;
 import JinRyuu.DragonBC.common.Items.ItemsDBC;
 import JinRyuu.JRMCore.JRMCoreConfig;
-import JinRyuu.JRMCore.JRMCoreEH;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
@@ -18,6 +17,7 @@ import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.DBCDamageCalc;
@@ -60,7 +60,9 @@ public class DBCUtils {
 
     public static String[] CONFIG_UI_NAME;
     public static String[] cCONFIG_UI_NAME;
+
     public static boolean calculatingKiDrain;
+    public static boolean calculatingCost; // Cost is for Ki or Stamina Drain
 
     public static String getFormattedStateName(int race, int state) {
         String out = "";
@@ -618,13 +620,13 @@ public class DBCUtils {
             boolean mc = JRMCoreH.StusEfcts(13, statusEffects);
             boolean mn = JRMCoreH.StusEfcts(19, statusEffects);
             boolean gd = JRMCoreH.StusEfcts(20, statusEffects);
-
             boolean c = JRMCoreH.StusEfcts(10, statusEffects) || JRMCoreH.StusEfcts(11, statusEffects);
-            int STR = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, 0, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
 
+            int STR = PlyrAttrbts[DBCAttribute.Strength];
             int ml = JRMCoreH.stat(0, attacker, 0, STR, 0.0f);
             int staminaCost = (int)(ml * 0.1f);
 
+            STR = JRMCoreH.getPlayerAttribute(attacker, PlyrAttrbts, DBCAttribute.Strength, state, state2, race, sklx, (int) release, resrv, lg, mj, kk, mc, mn, gd, powerType, PlyrSkills, c, absorption);
             if (Melee) {
                 // Calculate base Melee damage (curAtr)
                 int dmg = JRMCoreH.stat(attacker, 0, powerType, 0, STR, race, classID, 0.0F);

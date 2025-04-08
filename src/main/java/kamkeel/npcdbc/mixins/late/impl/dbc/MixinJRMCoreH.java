@@ -9,6 +9,7 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalDoubleRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
@@ -64,11 +65,23 @@ public abstract class MixinJRMCoreH {
     public static float[][] TransNaStBnP;
     @Shadow
     public static float[][] TransMaStBnP;
-    @Unique
-    private static boolean calculatingKiAttackCost;
 
     @Unique
     private static int currentResult;
+
+
+    @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;round(DII)D"))
+    private static void applyFormStatBonusMulti(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "bs") LocalDoubleRef bs) {
+        if(player instanceof EntityPlayer && powerType == 1){
+            DBCData dbcData = DBCData.get((EntityPlayer) player);
+            Form form = dbcData.getForm();
+            if(form != null && form.stats.isStatEnabled(stat)){
+                double modifiedValue = bs.get();
+                modifiedValue *= form.stats.getStatMulti(stat);
+                bs.set(modifiedValue);
+            }
+        }
+    }
 
     @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At("HEAD"))
     private static void meditationEffectFix(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 3, argsOnly = true) LocalIntRef attr) {
@@ -79,6 +92,16 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;JRMCABonusOn:Z", shift = At.Shift.BEFORE))
     private static void applyPlayerBonusToStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "value") LocalIntRef value) {
+        if(player instanceof EntityPlayer && powerType == 1){
+            DBCData dbcData = DBCData.get((EntityPlayer) player);
+            Form form = dbcData.getForm();
+            if(form != null && form.stats.isStatEnabled(stat)){
+                int modifiedValue = value.get();
+                modifiedValue += form.stats.getStatBonus(stat);
+                value.set(modifiedValue);
+            }
+        }
+
         if(attributeID > -1 && attributeID <= 5 && player instanceof EntityPlayer){
             DBCData dbcData = DBCData.get((EntityPlayer) player);
 
@@ -114,7 +137,7 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
     private static void fix10xKiCost(String[] listOfAttacks, int playerStat, byte[] kiAttackStats, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 0) LocalIntRef stat) {
-        calculatingKiAttackCost = true;
+        DBCUtils.calculatingCost = true;
         DBCUtils.calculatingKiDrain = true;
         EntityPlayer player = Utility.isServer() ? CommonProxy.getCurrentJRMCTickPlayer() : CustomNpcPlusDBC.proxy.getClientPlayer();
 
@@ -127,7 +150,7 @@ public abstract class MixinJRMCoreH {
         int stat2 = JRMCoreH.stat(player, 3, data.Powertype, 4, wil, data.Race, data.Class, 0.0F);
 
         stat.set(stat2);
-        calculatingKiAttackCost = false;
+        DBCUtils.calculatingCost = false;
         DBCUtils.calculatingKiDrain = false;
     }
 
@@ -155,7 +178,7 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onGetPlayerAttribute(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info) {
-        if (calculatingKiAttackCost)
+        if (DBCUtils.calculatingCost)
             return;
 
         if (player == null)
