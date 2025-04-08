@@ -1,22 +1,21 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.form.FormStats;
+import kamkeel.npcdbc.data.form.FormAdvanced;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.util.ValueUtil;
 
-public class SubGuiFormStats extends SubGuiInterface implements ISubGuiListener, ITextfieldListener {
+public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListener, ITextfieldListener {
 
     private GuiNpcFormMenu menu;
     public Form form;
-    public FormStats stats;
+    public FormAdvanced advanced;
     public GuiScrollWindow scrollWindow;
 
-    public SubGuiFormStats(GuiNPCManageForms parent, Form form) {
+    public SubGuiFormAdvanced(GuiNPCManageForms parent, Form form) {
         this.form = form;
-        this.stats = form.stats;
+        this.advanced = form.advanced;
         setBackground("menubg.png");
         xSize = 360;
         ySize = 216;
@@ -45,8 +44,8 @@ public class SubGuiFormStats extends SubGuiInterface implements ISubGuiListener,
         // Loop for each DBC stat (0 to 11)
         for (int i = 0; i < 12; i++){
             // Add the toggle row (stat name and enable/disable button)
-            scrollWindow.addLabel(new GuiNpcLabel(10 + i, FormStats.STAT_NAMES[i], 4, currentY + 5, 0xffffff));
-            boolean isEnabled = stats.getStat(i).isEnabled();
+            scrollWindow.addLabel(new GuiNpcLabel(10 + i, FormAdvanced.STAT_NAMES[i], 4, currentY + 5, 0xffffff));
+            boolean isEnabled = advanced.getStat(i).isEnabled();
             scrollWindow.addButton(new GuiNpcButtonYesNo(100 + i, 150, currentY, 50, 20, isEnabled));
             currentY += rowHeight;
 
@@ -54,22 +53,22 @@ public class SubGuiFormStats extends SubGuiInterface implements ISubGuiListener,
             if(isEnabled) {
                 scrollWindow.addLabel(new GuiNpcLabel(200 + i, "Bonus", 4, currentY + 5, 0xd9d9d9));
                 scrollWindow.addTextField(new GuiNpcTextField(200 + i, this, 50, currentY, 40, 20,
-                    String.valueOf(stats.getStat(i).getBonus())));
+                    String.valueOf(advanced.getStat(i).getBonus())));
                 GuiNpcTextField bonusField = scrollWindow.getTextField(200 + i);
                 if (bonusField != null) {
                     bonusField.setMaxStringLength(10);
                     bonusField.integersOnly = true;
-                    bonusField.setMinMaxDefault(0, 9999999, stats.getStat(i).getBonus());
+                    bonusField.setMinMaxDefault(0, 9999999, advanced.getStat(i).getBonus());
                 }
 
                 scrollWindow.addLabel(new GuiNpcLabel(300 + i, "Multi", 110, currentY + 5, 0xd9d9d9));
                 scrollWindow.addTextField(new GuiNpcTextField(300 + i, this, 150, currentY, 40, 20,
-                    String.valueOf(stats.getStat(i).getMultiplier())));
+                    String.valueOf(advanced.getStat(i).getMultiplier())));
                 GuiNpcTextField multiField = scrollWindow.getTextField(300 + i);
                 if (multiField != null) {
                     multiField.setMaxStringLength(10);
                     multiField.floatsOnly = true;
-                    multiField.setMinMaxDefaultFloat(0, 10000, stats.getStat(i).getMultiplier());
+                    multiField.setMinMaxDefaultFloat(0, 10000, advanced.getStat(i).getMultiplier());
                 }
                 // Increment for the bonus/multi row.
                 currentY += rowHeight;
@@ -84,7 +83,7 @@ public class SubGuiFormStats extends SubGuiInterface implements ISubGuiListener,
         int id = button.id;
         if (id >= 100 && id < 112) {
             int statId = id - 100;
-            stats.getStat(statId).setEnabled(button.getValue() == 1);
+            advanced.getStat(statId).setEnabled(button.getValue() == 1);
         }
 
 
@@ -101,7 +100,7 @@ public class SubGuiFormStats extends SubGuiInterface implements ISubGuiListener,
             int statId = id - 200;
             try {
                 int bonus = textField.getInteger();
-                stats.getStat(statId).setBonus(bonus);
+                advanced.getStat(statId).setBonus(bonus);
             } catch (NumberFormatException e) {
                 // Optionally revert to the last valid value.
             }
@@ -111,7 +110,7 @@ public class SubGuiFormStats extends SubGuiInterface implements ISubGuiListener,
             int statId = id - 300;
             try {
                 float multi = textField.getFloat();
-                stats.getStat(statId).setMultiplier(multi);
+                advanced.getStat(statId).setMultiplier(multi);
             } catch (NumberFormatException e) {
                 // Optionally revert to the last valid value.
             }

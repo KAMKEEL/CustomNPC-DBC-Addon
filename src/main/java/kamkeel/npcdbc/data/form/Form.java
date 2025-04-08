@@ -32,7 +32,7 @@ public class Form implements IForm {
     public FormMastery mastery = new FormMastery(this);
     public FormDisplay display = new FormDisplay(this);
     public FormStackable stackable = new FormStackable(this);
-    public FormStats stats = new FormStats(this);
+    public FormAdvanced advanced = new FormAdvanced(this);
 
     /**
      * ID of parent and child forms of this
@@ -89,7 +89,7 @@ public class Form implements IForm {
         mastery.readFromNBT(compound);
         display.readFromNBT(compound);
         stackable.readFromNBT(compound);
-        stats.readFromNBT(compound);
+        advanced.readFromNBT(compound);
     }
 
     public NBTTagCompound writeToNBT() {
@@ -119,7 +119,7 @@ public class Form implements IForm {
         mastery.writeToNBT(compound);
         display.writeToNBT(compound);
         stackable.writeToNBT(compound);
-        stats.writeToNBT(compound);
+        advanced.writeToNBT(compound);
         return compound;
     }
 

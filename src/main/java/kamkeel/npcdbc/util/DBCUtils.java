@@ -63,6 +63,7 @@ public class DBCUtils {
 
     public static boolean calculatingKiDrain;
     public static boolean calculatingCost; // Cost is for Ki or Stamina Drain
+    public static boolean calculateBaseStats;
 
     public static String getFormattedStateName(int race, int state) {
         String out = "";

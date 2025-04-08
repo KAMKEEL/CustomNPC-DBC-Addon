@@ -13,7 +13,7 @@ import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCAttribute;
-import kamkeel.npcdbc.constants.DBCStats;
+import kamkeel.npcdbc.constants.DBCStatistics;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -386,7 +386,6 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         if (!PlyrSettingsB(9))
             bonusOutput = (int) ((double) SklLvl(12) * 0.0025D * SPI * (double) curRelease * 0.01D * DBCConfig.cnfKFd);
         long longValue = (long) curAtr + bonusOutput;
-
         if (longValue > 2147483647L) {
             longValue = 2147483647L;
         }
@@ -402,7 +401,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                     (bonusOutput > 0 ? numSep(bonusOutput) : null),
                     0,
                     (int) (100.0F - weightPerc(0) * 100.0F)
-                ) + getFormStatBonus(DBCStats.Melee)
+                ) + getFormAdvancedStat(DBCStatistics.Melee)
             );
 
         stat = stat(mc.thePlayer, 1, 1, 1, statVals[1], dbcClient.Race, dbcClient.Class, 0);
@@ -436,7 +435,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             (bonusOutput > 0 ? numSep(bonusOutput) : null),
             0,
             (int) (100.0F - weightPerc(1) * 100.0F)
-        ) +  getFormStatBonus(DBCStats.Defense);
+        ) +  getFormAdvancedStat(DBCStatistics.Defense);
         dynamicLabels.get("defense")
             .updateDisplay(formStatColor + numSep(longValue))
             .setTooltip(defDesc);
@@ -475,7 +474,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                     null,
                     (isReductionWorthDisplaying ? dmgReduction : 0),
                     0
-                ) +  getFormStatBonus(DBCStats.Body)
+                ) +  getFormAdvancedStat(DBCStatistics.Body)
             );
 
         stat = stat(mc.thePlayer, 2, 1, 3, statVals[2], dbcClient.Race, dbcClient.Class, 0);
@@ -493,7 +492,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                     null,
                     0,
                     0
-                ) + getFormStatBonus(DBCStats.Stamina)
+                ) + getFormAdvancedStat(DBCStatistics.Stamina)
             );
 
         stat = stat(mc.thePlayer, 3, 1, 4, statVals[3], dbcClient.Race, dbcClient.Class, 0);
@@ -511,7 +510,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                     null,
                     0,
                     0
-                ) + getFormStatBonus(DBCStats.EnergyPower)
+                ) + getFormAdvancedStat(DBCStatistics.EnergyPower)
             );
 
 
@@ -532,7 +531,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                     (bonusOutput > 0 ? numSep(bonusOutput) : null),
                     0,
                     0
-                ) + getFormStatBonus(DBCStats.EnergyPool)
+                ) + getFormAdvancedStat(DBCStatistics.EnergyPool)
             );
 
         float speedScaling = (customForm == null ? 1 : customForm.mastery.movementSpeed * customForm.mastery.calculateMulti("movementspeed", dbcClient.addonFormLevel));
@@ -954,22 +953,20 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         }
     }
 
-    public String getFormStatBonus(int statID) {
+    public String getFormAdvancedStat(int statID) {
         DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
         Form form = dbcData.getForm();
-        if(form != null && form.stats.isStatEnabled(statID)){
-            String description = "\n";
-            //  + trl("jrmc", "Modified") + ": §4" + darkFormColor + statDisplay + "\n§8"
-            //                + trl("jrmc", "Original") + ": §4" + numSep(originalStatVal) + "§8";
+        if(form != null && form.advanced.isStatEnabled(statID)){
+            String description = "";
             if(ConfigDBCClient.AdvancedGui){
                 description += "\n§8" + Utility.removeColorCodes(form.getMenuName()) + ":";
                 description += "§8\n> ";
-                int bonus = form.stats.getStat(statID).getBonus();
+                int bonus = form.advanced.getStat(statID).getBonus();
                 String sign = bonus > 0 ? "§2+" : "§4";
                 description += sign + bonus;
 
                 description += "§8\n> ";
-                float multi = form.stats.getStat(statID).getMultiplier();
+                float multi = form.advanced.getStat(statID).getMultiplier();
                 String multiplier = String.format("%.2f", multi);
 
                 if(multi > 1.0f)

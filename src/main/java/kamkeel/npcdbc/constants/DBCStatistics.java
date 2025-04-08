@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.constants;
 
-public class DBCStats {
+public class DBCStatistics {
     public static final int Melee = 0;
     public static final int Defense = 1;
     public static final int Body = 2;

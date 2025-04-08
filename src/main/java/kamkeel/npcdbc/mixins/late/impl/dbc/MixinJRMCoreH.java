@@ -9,7 +9,6 @@ import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigRaces;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalDoubleRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
@@ -71,19 +70,22 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;JRMCABonusOn:Z", shift = At.Shift.BEFORE))
     private static void applyPlayerBonusToStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "value") LocalIntRef value, @Local(name = "bs") double bs) {
+        if(DBCUtils.calculateBaseStats)
+            return;
+
         if(player instanceof EntityPlayer && powerType == 1){
             DBCData dbcData = DBCData.get((EntityPlayer) player);
             int modifiedValue = value.get();
 
             Form form = dbcData.getForm();
-            if(form != null && form.stats.isStatEnabled(stat)){
+            if(form != null && form.advanced.isStatEnabled(stat)){
                 // Multi
                 double bsValue = bs;
-                bsValue *= form.stats.getStatMulti(stat);
+                bsValue *= form.advanced.getStatMulti(stat);
 
                 // Bonus
                 modifiedValue = (int)round(bsValue + (double)getStatBonus(powerType, race, classID, stat, false) * 0.01 * bsValue + (double)getStatBonus(powerType, race, classID, stat, true) * 0.01 * bsValue + bsValue * (double)skillBonus, 0, 0);
-                modifiedValue += form.stats.getStatBonus(stat);
+                modifiedValue += form.advanced.getStatBonus(stat);
             }
 
             if(attributeID > -1 && attributeID <= 5){

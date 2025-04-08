@@ -37,9 +37,9 @@ public class GuiNpcFormMenu {
         GuiMenuTopButton display = new GuiMenuTopButton(-2, general.xPosition + general.getWidth(), guiTop - 17, "menu.display");
         GuiMenuTopButton mastery = new GuiMenuTopButton(-3, display.xPosition + display.getWidth(), guiTop - 17, "display.mastery");
         GuiMenuTopButton stackable = new GuiMenuTopButton(-4, mastery.xPosition + mastery.getWidth(), guiTop - 17, "display.stackable");
-        GuiMenuTopButton stats = new GuiMenuTopButton(-6, stackable.xPosition + stackable.getWidth(), guiTop - 17, "menu.stats");
+        GuiMenuTopButton advanced = new GuiMenuTopButton(-6, stackable.xPosition + stackable.getWidth(), guiTop - 17, "menu.advanced");
 
-        this.topButtons = new GuiMenuTopButton[]{general, display, mastery, stackable, stats, close};
+        this.topButtons = new GuiMenuTopButton[]{general, display, mastery, stackable, advanced, close};
         GuiMenuTopButton[] var12 = this.topButtons;
         int var13 = var12.length;
 
@@ -65,7 +65,7 @@ public class GuiNpcFormMenu {
                 } else if (id == -4) {
                     formsParent.setSubGui(new SubGuiFormStackable(formsParent, form));
                 } else if (id == -6) {
-                    formsParent.setSubGui(new SubGuiFormStats(formsParent, form));
+                    formsParent.setSubGui(new SubGuiFormAdvanced(formsParent, form));
                 }
 
                 this.activeMenu = id;

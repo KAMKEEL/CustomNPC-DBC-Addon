@@ -1,8 +1,10 @@
 package kamkeel.npcdbc.data.form;
 
+import kamkeel.npcdbc.api.form.IAdvancedFormStat;
+import kamkeel.npcdbc.api.form.IFormAdvanced;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class FormStats {
+public class FormAdvanced implements IFormAdvanced {
 
     private final Form parent;
 
@@ -14,7 +16,7 @@ public class FormStats {
         "RegenRateBody", "RegenRateStamina", "RegenRateEnergy", "FlySpeed"
     };
 
-    public FormStats(Form parent) {
+    public FormAdvanced(Form parent) {
         this.parent = parent;
         formStats = new AdvancedFormStat[NUM_STATS];
         for (int i = 0; i < NUM_STATS; i++) {
@@ -22,6 +24,7 @@ public class FormStats {
         }
     }
 
+    @Override
     public AdvancedFormStat getStat(int id) {
         if (id < 0 || id >= NUM_STATS) {
             return null;
@@ -29,6 +32,7 @@ public class FormStats {
         return formStats[id];
     }
 
+    @Override
     public void setStatEnabled(int id, boolean enabled) {
         AdvancedFormStat stat = getStat(id);
         if (stat != null) {
@@ -36,11 +40,13 @@ public class FormStats {
         }
     }
 
+    @Override
     public boolean isStatEnabled(int id) {
         AdvancedFormStat stat = getStat(id);
         return stat != null && stat.isEnabled();
     }
 
+    @Override
     public void setStatBonus(int id, int bonus) {
         AdvancedFormStat stat = getStat(id);
         if (stat != null) {
@@ -48,11 +54,13 @@ public class FormStats {
         }
     }
 
+    @Override
     public int getStatBonus(int id) {
         AdvancedFormStat stat = getStat(id);
         return (stat != null) ? stat.getBonus() : 0;
     }
 
+    @Override
     public void setStatMulti(int id, float multiplier) {
         AdvancedFormStat stat = getStat(id);
         if (stat != null) {
@@ -60,6 +68,7 @@ public class FormStats {
         }
     }
 
+    @Override
     public float getStatMulti(int id) {
         AdvancedFormStat stat = getStat(id);
         return (stat != null) ? stat.getMultiplier() : 1.0f;
@@ -67,7 +76,7 @@ public class FormStats {
 
     // Reads the DBC stats from NBT.
     public void readFromNBT(NBTTagCompound compound) {
-        NBTTagCompound formStats = compound.getCompoundTag("formStats");
+        NBTTagCompound formStats = compound.getCompoundTag("formAdvanced");
         for (int i = 0; i < NUM_STATS; i++) {
             if (formStats.hasKey(STAT_NAMES[i])) {
                 NBTTagCompound statCompound = formStats.getCompoundTag(STAT_NAMES[i]);
@@ -93,32 +102,43 @@ public class FormStats {
                 formStats.setTag(STAT_NAMES[i], statCompound);
             }
         }
-        compound.setTag("formStats", formStats);
+        compound.setTag("formAdvanced", formStats);
         return compound;
     }
 
-    public static class AdvancedFormStat {
+    public static class AdvancedFormStat implements IAdvancedFormStat {
         private boolean enabled = false;
         private int bonus = 0;
         private float multiplier = 1.0f;
 
         public AdvancedFormStat() {}
 
+        @Override
         public boolean isEnabled() {
             return enabled;
         }
+
+        @Override
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
         }
+
+        @Override
         public int getBonus() {
             return bonus;
         }
+
+        @Override
         public void setBonus(int bonus) {
             this.bonus = bonus;
         }
+
+        @Override
         public float getMultiplier() {
             return multiplier;
         }
+
+        @Override
         public void setMultiplier(float multiplier) {
             this.multiplier = multiplier;
         }
