@@ -692,7 +692,7 @@ public class DBCUtils {
             dam = ((dam <= 0.0f) ? 1.0f : dam);
             int UI_cost = 0;
             if (Melee && ultraInstinctCounter) {
-                UI_cost = (int) getUltraInstinctStaminaCost(attacker, (byte)JRMCoreH.state2UltraInstinct(!mn, (byte)state2), (float)JGConfigUltraInstinct.CONFIG_UI_DODGE_STAMINA_COST[state2]);
+                UI_cost = (int)getUltraInstinctCounterStaminaCost(attacker, (byte)JRMCoreH.state2UltraInstinct(!mn, (byte)state2));
             }
 
             staminaCost = (int)(staminaCost * JRMCoreConfig.cnfPnchc + UI_cost);
@@ -703,6 +703,9 @@ public class DBCUtils {
         return dam;
     }
 
+    private static float getUltraInstinctCounterStaminaCost(final EntityPlayer targetPlayer, final byte targetState2) {
+        return getUltraInstinctStaminaCost(targetPlayer, targetState2, (float)JGConfigUltraInstinct.CONFIG_UI_DODGE_STAMINA_COST[targetState2]);
+    }
     private static float getUltraInstinctStaminaCost(EntityPlayer targetPlayer, byte targetState2, float staminaCost) {
         if (JGConfigUltraInstinct.CONFIG_UI_PERCENTAGE_STAMINA_COST) {
             byte pwr = JRMCoreH.getByte(targetPlayer, "jrmcPwrtyp");
