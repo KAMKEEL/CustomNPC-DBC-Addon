@@ -91,15 +91,15 @@ public abstract class MixinJRMCoreH {
             if(attributeID > -1 && attributeID <= 5){
                 float[] bonus = dbcData.bonus.getMultiBonus();
                 if (attributeID == DBCAttribute.Strength && bonus[0] != 0) //str
-                    modifiedValue *= bonus[0];
+                    modifiedValue *= (bonus[0] + 1);
                 else if (attributeID == DBCAttribute.Dexterity && bonus[1] != 0) //dex
-                    modifiedValue *= bonus[1];
+                    modifiedValue *= (bonus[1] + 1);
                 else if (attributeID == DBCAttribute.Willpower && bonus[2] != 0) //will
-                    modifiedValue *= bonus[2];
+                    modifiedValue *= (bonus[2] + 1);
                 else if (attributeID == DBCAttribute.Constitution && bonus[3] != 0) //con
-                    modifiedValue *= bonus[3];
+                    modifiedValue *= (bonus[3] + 1);
                 else if (attributeID == DBCAttribute.Spirit && bonus[4] != 0) //spi
-                    modifiedValue *= bonus[4];
+                    modifiedValue *= (bonus[4] + 1);
 
                 float[] flatBonus = dbcData.bonus.getFlatBonus();
                 // Add Bonus Flat to Base Attributes at the end
