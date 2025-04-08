@@ -8,7 +8,7 @@ public class FormStats {
 
     private static final int NUM_STATS = 12;
     private final AdvancedFormStat[] formStats;
-    private static final String[] STAT_NAMES = {
+    public static final String[] STAT_NAMES = {
         "Melee", "Defense", "Body", "Stamina",
         "EnergyPower", "EnergyPool", "MaxSkills", "Speed",
         "RegenRateBody", "RegenRateStamina", "RegenRateEnergy", "FlySpeed"

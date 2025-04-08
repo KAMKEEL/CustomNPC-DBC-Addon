@@ -13,6 +13,7 @@ import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCAttribute;
+import kamkeel.npcdbc.constants.DBCStats;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -401,7 +402,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                     (bonusOutput > 0 ? numSep(bonusOutput) : null),
                     0,
                     (int) (100.0F - weightPerc(0) * 100.0F)
-                )
+                ) + getFormStatBonus(DBCStats.Melee)
             );
 
         stat = stat(mc.thePlayer, 1, 1, 1, statVals[1], dbcClient.Race, dbcClient.Class, 0);
@@ -435,7 +436,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             (bonusOutput > 0 ? numSep(bonusOutput) : null),
             0,
             (int) (100.0F - weightPerc(1) * 100.0F)
-        );
+        ) +  getFormStatBonus(DBCStats.Defense);
         dynamicLabels.get("defense")
             .updateDisplay(formStatColor + numSep(longValue))
             .setTooltip(defDesc);
@@ -474,7 +475,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                     null,
                     (isReductionWorthDisplaying ? dmgReduction : 0),
                     0
-                )
+                ) +  getFormStatBonus(DBCStats.Body)
             );
 
         stat = stat(mc.thePlayer, 2, 1, 3, statVals[2], dbcClient.Race, dbcClient.Class, 0);
@@ -492,7 +493,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                     null,
                     0,
                     0
-                )
+                ) + getFormStatBonus(DBCStats.Stamina)
             );
 
         stat = stat(mc.thePlayer, 3, 1, 4, statVals[3], dbcClient.Race, dbcClient.Class, 0);
@@ -510,7 +511,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                     null,
                     0,
                     0
-                )
+                ) + getFormStatBonus(DBCStats.EnergyPower)
             );
 
 
@@ -531,7 +532,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                     (bonusOutput > 0 ? numSep(bonusOutput) : null),
                     0,
                     0
-                )
+                ) + getFormStatBonus(DBCStats.EnergyPool)
             );
 
         float speedScaling = (customForm == null ? 1 : customForm.mastery.movementSpeed * customForm.mastery.calculateMulti("movementspeed", dbcClient.addonFormLevel));
@@ -951,6 +952,35 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         } else {
             return "";
         }
+    }
+
+    public String getFormStatBonus(int statID) {
+        DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
+        Form form = dbcData.getForm();
+        if(form != null && form.stats.isStatEnabled(statID)){
+            String description = "\n";
+            //  + trl("jrmc", "Modified") + ": §4" + darkFormColor + statDisplay + "\n§8"
+            //                + trl("jrmc", "Original") + ": §4" + numSep(originalStatVal) + "§8";
+            if(ConfigDBCClient.AdvancedGui){
+                description += "\n§8" + Utility.removeColorCodes(form.getMenuName()) + ":";
+                description += "§8\n> ";
+                int bonus = form.stats.getStat(statID).getBonus();
+                String sign = bonus > 0 ? "§2+" : "§4";
+                description += sign + bonus;
+
+                description += "§8\n> ";
+                float multi = form.stats.getStat(statID).getMultiplier();
+                String multiplier = String.format("%.2f", multi);
+
+                if(multi > 1.0f)
+                    description += "§2";
+                else
+                    description += "§4";
+                description += "x" + multiplier;
+            }
+            return description;
+        }
+        return "";
     }
 
     public String getAddonBonus(int attributeID) {

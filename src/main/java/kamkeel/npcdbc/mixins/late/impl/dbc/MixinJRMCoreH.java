@@ -69,67 +69,49 @@ public abstract class MixinJRMCoreH {
     @Unique
     private static int currentResult;
 
-
-    @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;round(DII)D"))
-    private static void applyFormStatBonusMulti(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "bs") LocalDoubleRef bs) {
-        if(player instanceof EntityPlayer && powerType == 1){
-            DBCData dbcData = DBCData.get((EntityPlayer) player);
-            Form form = dbcData.getForm();
-            if(form != null && form.stats.isStatEnabled(stat)){
-                double modifiedValue = bs.get();
-                modifiedValue *= form.stats.getStatMulti(stat);
-                bs.set(modifiedValue);
-            }
-        }
-    }
-
-    @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At("HEAD"))
-    private static void meditationEffectFix(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 3, argsOnly = true) LocalIntRef attr) {
-        if (attributeID == 5 && player instanceof EntityPlayer) {
-            attr.set((int) (attribute + DBCData.get((EntityPlayer) player).bonus.getFlatBonus()[4]));
-        }
-    }
-
     @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;JRMCABonusOn:Z", shift = At.Shift.BEFORE))
-    private static void applyPlayerBonusToStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "value") LocalIntRef value) {
+    private static void applyPlayerBonusToStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "value") LocalIntRef value, @Local(name = "bs") double bs) {
         if(player instanceof EntityPlayer && powerType == 1){
             DBCData dbcData = DBCData.get((EntityPlayer) player);
+            int modifiedValue = value.get();
+
             Form form = dbcData.getForm();
             if(form != null && form.stats.isStatEnabled(stat)){
-                int modifiedValue = value.get();
+                // Multi
+                double bsValue = bs;
+                bsValue *= form.stats.getStatMulti(stat);
+
+                // Bonus
+                modifiedValue = (int)round(bsValue + (double)getStatBonus(powerType, race, classID, stat, false) * 0.01 * bsValue + (double)getStatBonus(powerType, race, classID, stat, true) * 0.01 * bsValue + bsValue * (double)skillBonus, 0, 0);
                 modifiedValue += form.stats.getStatBonus(stat);
-                value.set(modifiedValue);
             }
-        }
 
-        if(attributeID > -1 && attributeID <= 5 && player instanceof EntityPlayer){
-            DBCData dbcData = DBCData.get((EntityPlayer) player);
+            if(attributeID > -1 && attributeID <= 5){
+                float[] bonus = dbcData.bonus.getMultiBonus();
+                if (attributeID == DBCAttribute.Strength && bonus[0] != 0) //str
+                    modifiedValue *= bonus[0];
+                else if (attributeID == DBCAttribute.Dexterity && bonus[1] != 0) //dex
+                    modifiedValue *= bonus[1];
+                else if (attributeID == DBCAttribute.Willpower && bonus[2] != 0) //will
+                    modifiedValue *= bonus[2];
+                else if (attributeID == DBCAttribute.Constitution && bonus[3] != 0) //con
+                    modifiedValue *= bonus[3];
+                else if (attributeID == DBCAttribute.Spirit && bonus[4] != 0) //spi
+                    modifiedValue *= bonus[4];
 
-            int modifiedValue = value.get();
-            float[] bonus = dbcData.bonus.getMultiBonus();
-            if (attributeID == DBCAttribute.Strength && bonus[0] != 0) //str
-                modifiedValue *= bonus[0];
-            else if (attributeID == DBCAttribute.Dexterity && bonus[1] != 0) //dex
-                modifiedValue *= bonus[1];
-            else if (attributeID == DBCAttribute.Willpower && bonus[2] != 0) //will
-                modifiedValue *= bonus[2];
-            else if (attributeID == DBCAttribute.Constitution && bonus[3] != 0) //con
-                modifiedValue *= bonus[3];
-            else if (attributeID == DBCAttribute.Spirit && bonus[4] != 0) //spi
-                modifiedValue *= bonus[4];
-
-            float[] flatBonus = dbcData.bonus.getFlatBonus();
-            // Add Bonus Flat to Base Attributes at the end
-            if (attributeID == DBCAttribute.Strength) // STR
-                modifiedValue += flatBonus[0];
-            else if (attributeID == DBCAttribute.Dexterity) // DEX
-                modifiedValue += flatBonus[1];
-            else if (attributeID == DBCAttribute.Willpower) // WIL
-                modifiedValue += flatBonus[2];
-            else if (attributeID == DBCAttribute.Constitution) // CON
-                modifiedValue += flatBonus[3];
-            else if (attributeID == DBCAttribute.Spirit) // SPI
-                modifiedValue += flatBonus[4];
+                float[] flatBonus = dbcData.bonus.getFlatBonus();
+                // Add Bonus Flat to Base Attributes at the end
+                if (attributeID == DBCAttribute.Strength) // STR
+                    modifiedValue += flatBonus[0];
+                else if (attributeID == DBCAttribute.Dexterity) // DEX
+                    modifiedValue += flatBonus[1];
+                else if (attributeID == DBCAttribute.Willpower) // WIL
+                    modifiedValue += flatBonus[2];
+                else if (attributeID == DBCAttribute.Constitution) // CON
+                    modifiedValue += flatBonus[3];
+                else if (attributeID == DBCAttribute.Spirit) // SPI
+                    modifiedValue += flatBonus[4];
+            }
 
             value.set(modifiedValue);
         }
