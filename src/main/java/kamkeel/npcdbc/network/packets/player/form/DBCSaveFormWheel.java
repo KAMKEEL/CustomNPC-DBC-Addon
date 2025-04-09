@@ -7,8 +7,8 @@ import kamkeel.npcdbc.network.AbstractPacket;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.PacketChannel;
 import kamkeel.npcdbc.network.packets.EnumPacketPlayer;
-import kamkeel.npcs.util.ByteBufUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcs.util.ByteBufUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 

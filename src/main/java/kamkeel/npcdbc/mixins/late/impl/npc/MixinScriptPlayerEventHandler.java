@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.mixins.late.impl.npc;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
@@ -8,14 +7,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import noppes.npcs.ScriptPlayerEventHandler;
 import noppes.npcs.entity.EntityNPCInterface;
-import noppes.npcs.scripted.event.PlayerEvent;
 import org.spongepowered.asm.lib.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = ScriptPlayerEventHandler.class, remap = false)
 public abstract class MixinScriptPlayerEventHandler {
