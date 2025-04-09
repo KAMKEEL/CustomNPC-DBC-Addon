@@ -11,7 +11,7 @@ import kamkeel.npcdbc.data.effects.AddonEffect;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.controllers.data.PlayerEffect;
-import noppes.npcs.scripted.event.PlayerEvent;
+import noppes.npcs.scripted.event.player.PlayerEvent;
 
 public class FruitOfMight extends AddonEffect {
     public static Aura fruitOfMightAura = null;

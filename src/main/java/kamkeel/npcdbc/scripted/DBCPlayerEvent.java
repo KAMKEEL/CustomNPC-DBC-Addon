@@ -14,7 +14,7 @@ import net.minecraftforge.client.event.RenderPlayerEvent;
 import noppes.npcs.api.IDamageSource;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.scripted.NpcAPI;
-import noppes.npcs.scripted.event.PlayerEvent;
+import noppes.npcs.scripted.event.player.PlayerEvent;
 
 public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
 
