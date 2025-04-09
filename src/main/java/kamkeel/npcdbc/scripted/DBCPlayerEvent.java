@@ -141,7 +141,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         public float damage;
         public int stamina;
         public int ki;
-        public boolean ko;
+        public boolean willKo;
 
         public DamagedEvent(EntityPlayer player, float damage, DamageSource damageSource, int type) {
             super(PlayerDataUtil.getIPlayer(player));
@@ -155,7 +155,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
             this.damage = damageCalc.damage;
             this.stamina = damageCalc.stamina;
             this.ki = damageCalc.ki;
-            this.ko = damageCalc.ko;
+            this.willKo = damageCalc.ko;
             this.damageSource = NpcAPI.Instance().getIDamageSource(damageSource);
             this.sourceType = type;
         }
@@ -184,13 +184,8 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         }
 
         @Override
-        public boolean getKo() {
-            return this.ko;
-        }
-
-        @Override
-        public void setKo(boolean ko) {
-            this.ko = ko;
+        public boolean getWillKo() {
+            return this.willKo;
         }
 
         @Override
