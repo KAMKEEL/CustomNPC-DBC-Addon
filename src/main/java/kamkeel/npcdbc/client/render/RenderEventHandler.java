@@ -63,10 +63,7 @@ public class RenderEventHandler {
             return;
         }
 
-        // TODO: FIX POTARA FUSION RENDERING
-//        PlayerData playerData = PlayerData.get(event.entityPlayer);
-//
-//        PlayerEffect potaraFusion = dbcData.stats.getPlayerEffects().get(Effects.POTARA);
+        
         DBCData data = DBCData.getData(event.entityPlayer);
         byte potaraFusionLevel = data.potaraFusionLevel;
         if (potaraFusionLevel == -1) {
