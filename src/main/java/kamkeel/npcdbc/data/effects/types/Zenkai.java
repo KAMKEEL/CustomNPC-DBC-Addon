@@ -10,7 +10,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.effects.AddonEffect;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.controllers.data.PlayerEffect;
-import noppes.npcs.scripted.event.PlayerEvent;
+import noppes.npcs.scripted.event.player.PlayerEvent;
 
 public class Zenkai extends AddonEffect {
     public PlayerBonus saiyanZenkai;

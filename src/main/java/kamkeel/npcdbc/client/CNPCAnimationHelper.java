@@ -100,8 +100,7 @@ public class CNPCAnimationHelper {
                 animData = ClientCacheHandler.playerAnimations.get(ClientEventHandler.renderingPlayer.getUniqueID());
             }
         } else if (ClientEventHandler.renderingNpc.display instanceof INPCDisplay) {
-            INPCDisplay inpcDisplay = (INPCDisplay) ClientEventHandler.renderingNpc.display;
-            return inpcDisplay.getDBCDisplay().isEnabled();
+            return false;
         }
 
         ModelBase model = modelRenderer.baseModel;

@@ -8,7 +8,7 @@ import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.effects.AddonEffect;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.controllers.data.PlayerEffect;
-import noppes.npcs.scripted.event.PlayerEvent;
+import noppes.npcs.scripted.event.player.PlayerEvent;
 
 
 public class HumanSpirit extends AddonEffect {
