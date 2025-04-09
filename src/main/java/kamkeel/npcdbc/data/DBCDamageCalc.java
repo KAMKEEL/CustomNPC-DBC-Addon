@@ -14,6 +14,7 @@ public class DBCDamageCalc {
     public int damage = -1;
     public int stamina = -1;
     public int ki = -1;
+    public boolean ko = false;
 
     public DBCDamageCalc() {}
 
@@ -41,7 +42,7 @@ public class DBCDamageCalc {
         return stamina;
     }
 
-    public void setStamina(int stamina) {
+    public void setStaminaReduction(int stamina) {
         this.stamina = stamina;
     }
 
@@ -49,18 +50,18 @@ public class DBCDamageCalc {
         return ki;
     }
 
-    public void setKi(int ki) {
+    public void setKiReduciton(int ki) {
         this.ki = ki;
     }
 
     public void processExtras(){
         if (entity != null && entity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) entity;
-            if(stamina > 0)
-                setInt(stamina, player, "jrmcStamina");
-
-            if(ki > 0)
-                setInt(ki, player, "jrmcEnrgy");
+//            if(stamina > 0)
+//                setInt(stamina, player, "jrmcStamina");
+//
+//            if(ki > 0)
+//                setInt(ki, player, "jrmcEnrgy");
 
             if (DBC()) {
                 ItemStack stackbody = ExtendedPlayer.get(player).inventory.getStackInSlot(1);

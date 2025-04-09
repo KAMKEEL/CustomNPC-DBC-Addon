@@ -51,8 +51,11 @@ public class DBCUtils {
         {"§7Minimal", "§7First Form", "§7Second Form", "§7Third Form", "§fBase", "§5Fifth Form", "§6Ultimate", "§4God"},
         {"§fBase", "§4Evil", "§cFull Power", "§dPurest", "§4God"}
     };
-    //lastSetDamage works with player's DBCDamagedEvent
-    public static Integer lastSetDamage = null, npcLastSetDamage = null;
+    // lastSetDamage works with player's DBCDamagedEvent
+    public static Integer npcLastSetDamage = null;
+    public static DBCDamageCalc lastSetDamage = null;
+    public static boolean willKo = false;
+
     //this one is with the scripting player Attack/Attacked events. Separated these into 2 so both can be functional
     public static Integer scriptingLastSetDamage = null;
 
@@ -247,7 +250,7 @@ public class DBCUtils {
                     int id = (int) (Math.random() * 2.0) + 1;
                     player.worldObj.playSoundAtEntity(player, "jinryuudragonbc:DBC4.block" + id, 0.5F, 0.9F / (player.worldObj.rand.nextFloat() * 0.6F + 0.9F));
                     if (!isInCreativeMode(player)) {
-                        damageCalc.setStamina(Math.max(currStamina - staminaCost, 0));
+                        damageCalc.setStaminaReduction(staminaCost);
                     }
                 } else if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
                     // Charging Dex
@@ -271,7 +274,7 @@ public class DBCUtils {
 
                 if (currEnergy >= kiProtectionCost) {
                     if (!isInCreativeMode(player)) {
-                        damageCalc.setKi(Math.max(currEnergy - kiProtectionCost, 0));
+                        damageCalc.setKiReduciton(kiProtectionCost);
                     }
                 } else {
                     def -= kiProtection;
@@ -326,6 +329,7 @@ public class DBCUtils {
                         int ko = getInt(player, "jrmcHar4va");
                         newHP = (int) (hpRemaining < 20 ? 20 : hpRemaining);
                         if (ko <= 0 && newHP == 20) {
+                            damageCalc.ko = true;
                             damageCalc.damage = currentHP > 20 ? currentHP - 20 : 0;
                             return damageCalc;
                         }
@@ -435,7 +439,7 @@ public class DBCUtils {
                 // Reduce Stamina
                 if (block && !dbcStats.isIgnoreBlock() && currStamina >= staminaCost) {
                     if (!isInCreativeMode(player)) {
-                        damageCalc.setStamina(Math.max(currStamina - staminaCost, 0));
+                        damageCalc.setStaminaReduction(staminaCost);
                     }
                 } else if (isChargingKi && ConfigDBCGameplay.EnableChargingDex) {
                     // Charging Dex
@@ -464,7 +468,7 @@ public class DBCUtils {
                 // Reduce Energy
                 if (currEnergy >= kiProtectionCost) {
                     if (!isInCreativeMode(player)) {
-                        damageCalc.setKi(Math.max(currEnergy - kiProtectionCost, 0));
+                        damageCalc.setKiReduciton(kiProtectionCost);
                     }
                 } else {
                     def -= kiProtection;
@@ -527,30 +531,17 @@ public class DBCUtils {
         String statusEffects = getString(player, "jrmcStatusEff");
 
         int playerHP = getInt(player, "jrmcBdy");
-        int reducedHP = playerHP - damage;
-        int newHP = Math.max(reducedHP, 0);
 
         if (lastSetDamage != null) {
-            damage = Math.max(lastSetDamage, 0);
+            damage = Math.max(lastSetDamage.damage, 0);
             lastSetDamage = null;
-
-            // Record only the effective damage that is possible given the player's HP
-            int effectiveDamage = Math.min(damage, playerHP);
-            DBCEffectController.getInstance().recordDamage(player, effectiveDamage);
-            reducedHP = playerHP - effectiveDamage;
-            newHP = Math.max(reducedHP, 0);
         }
 
-        if (scriptingLastSetDamage != null) {
-            damage = Math.max(scriptingLastSetDamage, 0);
-            scriptingLastSetDamage = null;
-
-            // Record only the effective damage that is possible given the player's HP
-            int effectiveDamage = Math.min(damage, playerHP);
-            DBCEffectController.getInstance().recordDamage(player, effectiveDamage);
-            reducedHP = playerHP - effectiveDamage;
-            newHP = Math.max(reducedHP, 0);
-        }
+        // Record only the effective damage that is possible given the player's HP
+        int effectiveDamage = Math.min(damage, playerHP);
+        DBCEffectController.getInstance().recordDamage(player, effectiveDamage);
+        int reducedHP = playerHP - effectiveDamage;
+        int newHP = reducedHP;
 
         boolean friendlyFist = dbcStats.isFriendlyFist();
 

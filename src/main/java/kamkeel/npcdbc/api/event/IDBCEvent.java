@@ -80,23 +80,27 @@ public interface IDBCEvent extends IPlayerEvent {
          *
          * @return the stamina reduction
          */
-        int getStamina();
+        int getStaminaReduced();
 
         /**
          * @param stamina The new stamina to reduce
          */
-        void setStamina(int stamina);
+        void setStaminaReduced(int stamina);
+
+        boolean getKo();
+
+        void setKo(boolean ko);
 
         /**
          *
          * @return the ki reduction
          */
-        int getKi();
+        int getKiReduced();
 
         /**
          * @param ki The new ki to reduce
          */
-        void setKi(int ki);
+        void setKiReduced(int ki);
 
         /**
          * @return IDamageSource
@@ -118,6 +122,7 @@ public interface IDBCEvent extends IPlayerEvent {
     interface DBCReviveEvent extends IDBCEvent {
     }
 
+    @Cancelable
     interface DBCKnockout extends IDBCEvent {
         IDamageSource getDamageSource();
 

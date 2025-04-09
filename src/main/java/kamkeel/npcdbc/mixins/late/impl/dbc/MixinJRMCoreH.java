@@ -53,7 +53,6 @@ import java.text.DecimalFormat;
 
 import static JinRyuu.JRMCore.JRMCoreH.*;
 import static kamkeel.npcdbc.util.DBCUtils.lastSetDamage;
-import static kamkeel.npcdbc.util.DBCUtils.scriptingLastSetDamage;
 
 @Mixin(value = JRMCoreH.class, remap = false)
 public abstract class MixinJRMCoreH {
@@ -477,25 +476,33 @@ public abstract class MixinJRMCoreH {
 
     @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
     private static void setDamage(int s, EntityPlayer player, String type) {
+        if (type.equals("jrmcEnrgy")) {
+            if (lastSetDamage != null && lastSetDamage.ki > 0) {
+                int curKi = getInt(player, "jrmcEnrgy");
+                s = Math.max(0, curKi - lastSetDamage.ki);
+            }
+        }
+        if (type.equals("jrmcStamina")) {
+            if (lastSetDamage != null && lastSetDamage.stamina > 0) {
+                int curStamina = getInt(player, "jrmcStamina");
+                s = Math.max(0, curStamina - lastSetDamage.stamina);
+            }
+        }
         if (type.equals("jrmcBdy")) {
             if (lastSetDamage != null) {
                 int curBody = getInt(player, "jrmcBdy");
-                int newHealth = curBody - lastSetDamage;
+                int damage = Math.max(0, lastSetDamage.damage);
+                int newHealth = curBody - damage;
                 s = Math.max(0, newHealth);
-                DBCEffectController.getInstance().recordDamage(player, s == 0 ? curBody : lastSetDamage);
-                lastSetDamage = null;
-            }
-
-            if (scriptingLastSetDamage != null) {
-                int curBody = getInt(player, "jrmcBdy");
-                int newHealth = curBody - scriptingLastSetDamage;
-                s = Math.max(0, newHealth);
-                DBCEffectController.getInstance().recordDamage(player, s == 0 ? curBody : scriptingLastSetDamage);
-                scriptingLastSetDamage = null;
+                DBCEffectController.getInstance().recordDamage(player, s == 0 ? curBody : damage);
             }
         }
-
         setInt(s, player, type);
+    }
+
+    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "TAIL"))
+    private static void resetLastSet(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir) {
+        lastSetDamage = null;
     }
 
     @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;B)I", at = @At("HEAD"), cancellable = true)
@@ -521,9 +528,29 @@ public abstract class MixinJRMCoreH {
         }
     }
 
-    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setByte(BLnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", ordinal = 0, shift = At.Shift.BEFORE))
-    private static void callKOEvent(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir) {
-        DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer((EntityPlayer) Player), s));
+    // Run KO Event
+    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I", ordinal = 4))
+    private static void getKOEvent(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir, @Local(name = "all") int all) {
+        DBCUtils.willKo = false;
+        EntityPlayer player = (EntityPlayer) Player;
+        int ko = getInt(player, "jrmcHar4va");
+        int health = Math.max(all, 20);
+        if(ko <= 0 && health == 20){
+            if(DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer((EntityPlayer) Player), s))){
+                // CANCEL KNOCKOUT
+                DBCUtils.willKo = true;
+            }
+        }
+    }
+
+    // Cancel KO Event
+    @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I", ordinal = 4))
+    private static int setKOCancel(EntityPlayer player, String string, @Local(name = "all") int all) {
+        int ko = getInt(player, "jrmcHar4va");
+        if(DBCUtils.willKo){
+            return 1;
+        }
+        return ko;
     }
 
     @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "FIELD", opcode = Opcodes.GETSTATIC, target = "LJinRyuu/JRMCore/JRMCoreConfig;StatPasDef:I"))

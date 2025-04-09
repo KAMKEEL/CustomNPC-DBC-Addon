@@ -92,11 +92,11 @@ public class MixinDBCAddon {
             // Calculate DBC Damage
             DBCDamageCalc damageCalc = DBCUtils.calculateDBCStatDamage(player, (int) attackStrength, dbcStats);
             DamageSource damageSource = new NpcDamageSource("mob", npc);
-            DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(player, damageCalc.damage, damageSource, DBCDamageSource.NPC);
+            DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(player, damageCalc, damageSource, DBCDamageSource.NPC);
             if (DBCEventHooks.onDBCDamageEvent(damagedEvent))
                 return;
 
-            DBCUtils.lastSetDamage = (int) damagedEvent.damage;
+            DBCUtils.lastSetDamage = damageCalc;
             damageCalc.processExtras();
             DBCUtils.doDBCDamage(player, damageCalc.damage, dbcStats, damageSource);
         }

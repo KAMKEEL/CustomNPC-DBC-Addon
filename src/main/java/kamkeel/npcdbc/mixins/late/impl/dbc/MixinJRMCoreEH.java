@@ -49,32 +49,34 @@ public class MixinJRMCoreEH {
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;a1t3(Lnet/minecraft/entity/player/EntityPlayer;)V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcAttackFromPlayer(LivingHurtEvent event, CallbackInfo ci, @Local(name = "dam") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
         DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), damageSource.get());
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc.damage, damageSource.get(), DBCDamageSource.KIATTACK);
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc, damageSource.get(), DBCDamageSource.KIATTACK);
         if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
             ci.cancel();
             return;
         }
 
-        // Last Set Damage
-        DBCUtils.lastSetDamage = (int) damagedEvent.damage;
-        damageCalc.setStamina(damagedEvent.getStamina());
-        damageCalc.setKi(damagedEvent.getKi());
+        damageCalc.damage = (int) damagedEvent.damage;
+        damageCalc.stamina = damagedEvent.getStaminaReduced();
+        damageCalc.ki = damagedEvent.getKiReduced();
+        damageCalc.ko = damagedEvent.getKo();
+        DBCUtils.lastSetDamage = damageCalc;
         damageCalc.processExtras();
     }
 
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;a1t3(Lnet/minecraft/entity/player/EntityPlayer;)V", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcAttackFromNonPlayer(LivingHurtEvent event, CallbackInfo ci, @Local(name = "amount") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
         DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), damageSource.get());
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc.damage, damageSource.get(), DBCDamageSource.KIATTACK);
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc, damageSource.get(), DBCDamageSource.KIATTACK);
         if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
             ci.cancel();
             return;
         }
 
-        // Last Set Damage
-        DBCUtils.lastSetDamage = (int) damagedEvent.damage;
-        damageCalc.setStamina(damagedEvent.getStamina());
-        damageCalc.setKi(damagedEvent.getKi());
+        damageCalc.damage = (int) damagedEvent.damage;
+        damageCalc.stamina = damagedEvent.getStaminaReduced();
+        damageCalc.ki = damagedEvent.getKiReduced();
+        damageCalc.ko = damagedEvent.getKo();
+        DBCUtils.lastSetDamage = damageCalc;
         damageCalc.processExtras();
     }
 }

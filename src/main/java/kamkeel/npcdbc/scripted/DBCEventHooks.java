@@ -37,9 +37,9 @@ public class DBCEventHooks {
         return NpcAPI.EVENT_BUS.post(reviveEvent);
     }
 
-    public static void onKnockoutEvent(DBCPlayerEvent.KnockoutEvent koEvent) {
+    public static boolean onKnockoutEvent(DBCPlayerEvent.KnockoutEvent koEvent) {
         PlayerDataScript handler = ScriptController.Instance.playerScripts;
         handler.callScript(DBCScriptType.KNOCKOUT.function, koEvent);
-        NpcAPI.EVENT_BUS.post(koEvent);
+        return NpcAPI.EVENT_BUS.post(koEvent);
     }
 }

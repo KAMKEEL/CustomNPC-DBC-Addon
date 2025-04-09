@@ -6,6 +6,7 @@ import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.constants.enums.*;
+import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -140,10 +141,21 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         public float damage;
         public int stamina;
         public int ki;
+        public boolean ko;
 
         public DamagedEvent(EntityPlayer player, float damage, DamageSource damageSource, int type) {
             super(PlayerDataUtil.getIPlayer(player));
             this.damage = damage;
+            this.damageSource = NpcAPI.Instance().getIDamageSource(damageSource);
+            this.sourceType = type;
+        }
+
+        public DamagedEvent(EntityPlayer player, DBCDamageCalc damageCalc, DamageSource damageSource, int type) {
+            super(PlayerDataUtil.getIPlayer(player));
+            this.damage = damageCalc.damage;
+            this.stamina = damageCalc.stamina;
+            this.ki = damageCalc.ki;
+            this.ko = damageCalc.ko;
             this.damageSource = NpcAPI.Instance().getIDamageSource(damageSource);
             this.sourceType = type;
         }
@@ -162,22 +174,32 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         }
 
         @Override
-        public int getStamina() {
+        public int getStaminaReduced() {
             return this.stamina;
         }
 
         @Override
-        public void setStamina(int stamina) {
+        public void setStaminaReduced(int stamina) {
             this.stamina = stamina;
         }
 
         @Override
-        public int getKi() {
+        public boolean getKo() {
+            return this.ko;
+        }
+
+        @Override
+        public void setKo(boolean ko) {
+            this.ko = ko;
+        }
+
+        @Override
+        public int getKiReduced() {
             return this.ki;
         }
 
         @Override
-        public void setKi(int ki) {
+        public void setKiReduced(int ki) {
             this.ki = ki;
         }
 
