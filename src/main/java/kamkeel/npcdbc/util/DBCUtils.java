@@ -329,7 +329,7 @@ public class DBCUtils {
                         int ko = getInt(player, "jrmcHar4va");
                         newHP = (int) (hpRemaining < 20 ? 20 : hpRemaining);
                         if (ko <= 0 && newHP == 20) {
-                            damageCalc.ko = true;
+                            damageCalc.willKo = true;
                             damageCalc.damage = currentHP > 20 ? currentHP - 20 : 0;
                             return damageCalc;
                         }

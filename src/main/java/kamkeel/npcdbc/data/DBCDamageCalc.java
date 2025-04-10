@@ -14,7 +14,7 @@ public class DBCDamageCalc {
     public int damage = -1;
     public int stamina = -1;
     public int ki = -1;
-    public boolean ko = false;
+    public boolean willKo = false;
 
     public DBCDamageCalc() {}
 

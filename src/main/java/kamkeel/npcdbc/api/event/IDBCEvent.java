@@ -87,7 +87,7 @@ public interface IDBCEvent extends IPlayerEvent {
          */
         void setStaminaReduced(int stamina);
 
-        boolean getWillKo();
+        boolean willKo();
 
 
         /**
