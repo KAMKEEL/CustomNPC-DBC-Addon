@@ -508,6 +508,24 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
     }
 
+    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/RenderPlayerJBRA;func_aam2(Lnet/minecraft/client/model/ModelRenderer;Lnet/minecraft/client/model/ModelRenderer;IZ)V", ordinal = 11, shift = At.Shift.AFTER), remap = true)
+    private void fixLeftSaiyanFurArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
+        int idValue = id.get();
+        if(idValue == -1)
+            return;
+
+        if (this.renderManager != null && this.renderManager.renderEngine != null) {
+            Form form = DBCData.getForm(par1EntityPlayer);
+            if (form != null && (race.get() == 1 || race.get() == 2)) {
+                if (form.display.hasBodyFur || form.display.hairType.equals("ssj4")) {
+                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
+                } else if (form.display.hairType.equals("oozaru")) {
+                    renderOozaruArm(form, par1EntityPlayer, id.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
+                }
+            }
+        }
+    }
+
     @Unique
     private void renderSSJ4Arm(Form form, EntityPlayer player, int id, int gender, int bodyCM, DBCData data) {
         if (data.skinType != 0) {
