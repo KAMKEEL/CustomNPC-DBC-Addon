@@ -1,9 +1,16 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
+import kamkeel.npcdbc.constants.DBCStatistics;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormAdvanced;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.gui.util.*;
+import noppes.npcs.client.gui.util.GuiNpcButtonYesNo;
+import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.GuiNpcTextField;
+import noppes.npcs.client.gui.util.GuiScrollWindow;
+import noppes.npcs.client.gui.util.ISubGuiListener;
+import noppes.npcs.client.gui.util.ITextfieldListener;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 import noppes.npcs.util.ValueUtil;
 
 public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListener, ITextfieldListener {
@@ -22,17 +29,17 @@ public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListen
         menu = new GuiNpcFormMenu(parent, this, -6, form);
     }
 
+    @Override
     public void initGui() {
         super.initGui();
         guiTop += 7;
         menu.initGui(guiLeft, guiTop, xSize);
-        // Using the master's approach:
-        int startY = guiTop + 3;
+
         if (scrollWindow == null) {
-            scrollWindow = new GuiScrollWindow(this, guiLeft + 4, startY, xSize - 9, ySize - 7, 0);
+            scrollWindow = new GuiScrollWindow(this, guiLeft + 4, guiTop + 3, xSize - 9, ySize - 7, 0);
         } else {
             scrollWindow.xPos = guiLeft + 4;
-            scrollWindow.yPos = startY;
+            scrollWindow.yPos = guiTop + 3;
             scrollWindow.clipWidth = xSize - 9;
             scrollWindow.clipHeight = ySize - 7;
         }
@@ -41,16 +48,21 @@ public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListen
         int currentY = 5;
         int rowHeight = 23;
 
-        // Loop for each DBC stat (0 to 11)
-        for (int i = 0; i < 12; i++){
-            // Add the toggle row (stat name and enable/disable button)
+        // Loop through each stat, skipping MaxSkills (index 6)
+        for (int i = 0; i < FormAdvanced.STAT_NAMES.length; i++) {
+            if (i == DBCStatistics.MaxSkills) {
+                continue;
+            }
+
+            // Stat label + toggle
             scrollWindow.addLabel(new GuiNpcLabel(10 + i, FormAdvanced.STAT_NAMES[i], 4, currentY + 5, 0xffffff));
             boolean isEnabled = advanced.getStat(i).isEnabled();
             scrollWindow.addButton(new GuiNpcButtonYesNo(100 + i, 150, currentY, 50, 20, isEnabled));
             currentY += rowHeight;
 
-            // If the stat is enabled, add an extra row for bonus and multiplier.
-            if(isEnabled) {
+            // If enabled, show bonus & multiplier inputs
+            if (isEnabled) {
+                // Bonus
                 scrollWindow.addLabel(new GuiNpcLabel(200 + i, "Bonus", 4, currentY + 5, 0xd9d9d9));
                 scrollWindow.addTextField(new GuiNpcTextField(200 + i, this, 50, currentY, 40, 20,
                     String.valueOf(advanced.getStat(i).getBonus())));
@@ -61,6 +73,7 @@ public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListen
                     bonusField.setMinMaxDefault(0, 9999999, advanced.getStat(i).getBonus());
                 }
 
+                // Multiplier
                 scrollWindow.addLabel(new GuiNpcLabel(300 + i, "Multi", 110, currentY + 5, 0xd9d9d9));
                 scrollWindow.addTextField(new GuiNpcTextField(300 + i, this, 150, currentY, 40, 20,
                     String.valueOf(advanced.getStat(i).getMultiplier())));
@@ -70,7 +83,7 @@ public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListen
                     multiField.floatsOnly = true;
                     multiField.setMinMaxDefaultFloat(0, 10000, advanced.getStat(i).getMultiplier());
                 }
-                // Increment for the bonus/multi row.
+
                 currentY += rowHeight;
             }
         }
@@ -78,57 +91,65 @@ public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListen
         scrollWindow.maxScrollY = currentY - (ySize - 7);
     }
 
+    @Override
     public void buttonEvent(GuiButton guibutton) {
-        GuiNpcButton button = (GuiNpcButton) guibutton;
-        int id = button.id;
-        if (id >= 100 && id < 112) {
+        int id = guibutton.id;
+        // Toggle buttons are 100 + statIndex
+        if (id >= 100 && id < 100 + FormAdvanced.STAT_NAMES.length) {
             int statId = id - 100;
-            advanced.getStat(statId).setEnabled(button.getValue() == 1);
+            if (statId != DBCStatistics.MaxSkills) {
+                FormAdvanced.AdvancedFormStat stat = advanced.getStat(statId);
+                if (stat != null) {
+                    boolean newVal = ((noppes.npcs.client.gui.util.GuiNpcButtonYesNo)guibutton).getValue() == 1;
+                    advanced.setStatEnabled(statId, newVal);
+                }
+            }
+
+            // preserve scroll position
+            float prevY = scrollWindow.scrollY;
+            initGui();
+            prevY = ValueUtil.clamp(prevY, 0, scrollWindow.maxScrollY);
+            scrollWindow.nextScrollY = scrollWindow.scrollY = prevY;
         }
-
-
-        float prevY = getScrollableGui(0).scrollY;
-        initGui();
-        prevY = ValueUtil.clamp(prevY, 0, getScrollableGui(0).maxScrollY);
-        getScrollableGui(0).nextScrollY = getScrollableGui(0).scrollY = prevY;
     }
 
     @Override
-    public void unFocused(GuiNpcTextField textField) {
+    public void unFocused(noppes.npcs.client.gui.util.GuiNpcTextField textField) {
         int id = textField.id;
-        if (id >= 200 && id < 212) {
+        // Bonus fields: 200 + statIndex
+        if (id >= 200 && id < 200 + FormAdvanced.STAT_NAMES.length) {
             int statId = id - 200;
-            try {
-                int bonus = textField.getInteger();
-                advanced.getStat(statId).setBonus(bonus);
-            } catch (NumberFormatException e) {
-                // Optionally revert to the last valid value.
+            if (statId != DBCStatistics.MaxSkills) {
+                try {
+                    int bonus = textField.getInteger();
+                    advanced.setStatBonus(statId, bonus);
+                } catch (NumberFormatException ignored) { }
             }
         }
-
-        if (id >= 300 && id < 312) {
+        // Multiplier fields: 300 + statIndex
+        if (id >= 300 && id < 300 + FormAdvanced.STAT_NAMES.length) {
             int statId = id - 300;
-            try {
-                float multi = textField.getFloat();
-                advanced.getStat(statId).setMultiplier(multi);
-            } catch (NumberFormatException e) {
-                // Optionally revert to the last valid value.
+            if (statId != DBCStatistics.MaxSkills) {
+                try {
+                    float multi = textField.getFloat();
+                    advanced.setStatMulti(statId, multi);
+                } catch (NumberFormatException ignored) { }
             }
         }
     }
 
     @Override
-    public void mouseClicked(int i, int j, int k) {
-        super.mouseClicked(i, j, k);
-        if (!hasSubGui())
-            menu.mouseClicked(i, j, k);
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        menu.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
-    public void keyTyped(char c, int i) {
-        super.keyTyped(c, i);
-        if (i == 1)
+    public void keyTyped(char c, int keyCode) {
+        super.keyTyped(c, keyCode);
+        if (keyCode == 1) { // ESC
             menu.close();
+        }
     }
 
     @Override
@@ -137,12 +158,11 @@ public class SubGuiFormAdvanced extends SubGuiInterface implements ISubGuiListen
     }
 
     @Override
-    public void drawScreen(int i, int j, float f) {
-        super.drawScreen(i, j, f);
-        if (hasSubGui())
-            return;
-        menu.drawElements(fontRendererObj, i, j, mc, f);
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        menu.drawElements(fontRendererObj, mouseX, mouseY, mc, partialTicks);
     }
 
+    /** no‑op save; changes are written immediately */
     public void save() {}
 }
