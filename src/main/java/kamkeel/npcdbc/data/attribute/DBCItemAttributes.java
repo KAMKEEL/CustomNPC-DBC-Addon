@@ -5,14 +5,21 @@ import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.attribute.requirements.DBCClassRequirement;
 import kamkeel.npcdbc.data.attribute.requirements.DBCLevelRequirement;
 import kamkeel.npcdbc.data.attribute.requirements.DBCRaceRequirement;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormAttributes;
+import kamkeel.npcs.CustomAttributes;
 import kamkeel.npcs.controllers.AttributeController;
 import kamkeel.npcs.controllers.data.attribute.AttributeDefinition;
 import kamkeel.npcs.controllers.data.attribute.AttributeValueType;
+import kamkeel.npcs.controllers.data.attribute.PlayerAttribute;
 import kamkeel.npcs.controllers.data.attribute.requirement.RequirementCheckerRegistry;
 import kamkeel.npcs.controllers.data.attribute.tracker.AttributeRecalcEvent;
 import kamkeel.npcs.controllers.data.attribute.tracker.PlayerAttributeTracker;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.config.ConfigMain;
+
+import java.util.Map;
 
 public class DBCItemAttributes {
 
@@ -81,8 +88,11 @@ public class DBCItemAttributes {
         AttributeController.registerAttribute(WILLPOWER_BOOST);
         AttributeController.registerAttribute(SPIRIT_BOOST);
 
+        // Add Pre Listener
+        AttributeRecalcEvent.registerPreListener((entityPlayer, playerAttributeTracker) -> preListener(entityPlayer, playerAttributeTracker));
+
         // Add Listener for Bonus
-        AttributeRecalcEvent.registerListener((entityPlayer, playerAttributeTracker) -> applyGearAttributes(entityPlayer, playerAttributeTracker));
+        AttributeRecalcEvent.registerListener((entityPlayer, playerAttributeTracker) -> postListener(entityPlayer, playerAttributeTracker));
 
         // Requirements
         RequirementCheckerRegistry.registerChecker(new DBCLevelRequirement());
@@ -90,7 +100,46 @@ public class DBCItemAttributes {
         RequirementCheckerRegistry.registerChecker(new DBCClassRequirement());
     }
 
-    public static void applyGearAttributes(EntityPlayer entityPlayer, PlayerAttributeTracker playerAttributeTracker) {
+    public static void preListener(EntityPlayer player, PlayerAttributeTracker tracker) {
+        if (ConfigMain.AttributesEnabled) {
+            Form form = DBCData.get(player).getForm();
+            if (form == null) return;
+
+            FormAttributes fa = form.customAttributes;
+
+            // — flat attributes —
+            for (Map.Entry<String,Float> e : fa.getAllAttributes().entrySet()) {
+                AttributeDefinition def = AttributeController.getAttribute(e.getKey());
+                if (def == null) continue;
+                PlayerAttribute inst = tracker.playerAttributes.getAttributeInstance(def);
+                if (inst == null) inst = tracker.playerAttributes.registerAttribute(def, 0f);
+                inst.value += e.getValue();
+            }
+
+            // — magic attributes —
+            for (Map.Entry<String,Map<Integer,Float>> tagEntry : fa.getAllMagic().entrySet()) {
+                String tag = tagEntry.getKey();
+                tagEntry.getValue().forEach((magicId, v) -> {
+                    switch (tag) {
+                        case CustomAttributes.MAGIC_DAMAGE_KEY:
+                            tracker.magicDamage.merge(magicId, v, Float::sum);
+                            break;
+                        case CustomAttributes.MAGIC_BOOST_KEY:
+                            tracker.magicBoost.merge(magicId, v, Float::sum);
+                            break;
+                        case CustomAttributes.MAGIC_DEFENSE_KEY:
+                            tracker.magicDefense.merge(magicId, v, Float::sum);
+                            break;
+                        case CustomAttributes.MAGIC_RESISTANCE_KEY:
+                            tracker.magicResistance.merge(magicId, v, Float::sum);
+                            break;
+                    }
+                });
+            }
+        }
+    }
+
+    public static void postListener(EntityPlayer entityPlayer, PlayerAttributeTracker playerAttributeTracker) {
         BonusController.getInstance().removeBonus(entityPlayer, gearFlat);
         BonusController.getInstance().removeBonus(entityPlayer, gearMulti);
         if (ConfigMain.AttributesEnabled) {
