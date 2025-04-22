@@ -17,7 +17,6 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
 
     public SubGuiFormGeneral(GuiNPCManageForms parent, Form form) {
         this.form = form;
-        ;
         this.parent = parent;
 
         setBackground("menubg.png");
