@@ -12,13 +12,13 @@ public class DBCDamageCalc {
 
     public Entity entity;
     public float damage = -1;
-    public float stamina = -1;
-    public float ki = -1;
+    public int stamina = -1;
+    public int ki = -1;
     public boolean willKo = false;
 
     public DBCDamageCalc() {}
 
-    public DBCDamageCalc(float damage, float stamina, float ki) {
+    public DBCDamageCalc(float damage, int stamina, int ki) {
         this.damage = damage;
         this.stamina = stamina;
         this.ki = ki;
@@ -38,11 +38,11 @@ public class DBCDamageCalc {
         this.damage = damage;
     }
 
-    public float getStamina() {
+    public int getStamina() {
         return stamina;
     }
 
-    public void setStaminaReduction(float stamina) {
+    public void setStaminaReduction(int stamina) {
         this.stamina = stamina;
     }
 
