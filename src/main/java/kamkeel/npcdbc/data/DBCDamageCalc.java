@@ -11,42 +11,42 @@ import static JinRyuu.JRMCore.JRMCoreH.setInt;
 public class DBCDamageCalc {
 
     public Entity entity;
-    public int damage = -1;
-    public int stamina = -1;
-    public int ki = -1;
+    public float damage = -1;
+    public float stamina = -1;
+    public float ki = -1;
     public boolean willKo = false;
 
     public DBCDamageCalc() {}
 
-    public DBCDamageCalc(int damage, int stamina, int ki) {
+    public DBCDamageCalc(float damage, float stamina, float ki) {
         this.damage = damage;
         this.stamina = stamina;
         this.ki = ki;
     }
 
-    public DBCDamageCalc(int damage) {
+    public DBCDamageCalc(float damage) {
         this.damage = damage;
         this.stamina = 0;
         this.ki = 0;
     }
 
-    public int getDamage() {
+    public float getDamage() {
         return damage;
     }
 
-    public void setDamage(int damage) {
+    public void setDamage(float damage) {
         this.damage = damage;
     }
 
-    public int getStamina() {
+    public float getStamina() {
         return stamina;
     }
 
-    public void setStaminaReduction(int stamina) {
+    public void setStaminaReduction(float stamina) {
         this.stamina = stamina;
     }
 
-    public int getKi() {
+    public float getKi() {
         return ki;
     }
 

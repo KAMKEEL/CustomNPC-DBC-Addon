@@ -186,7 +186,7 @@ public class DBCUtils {
                 int CON = PlyrAttrbts[2];
                 String[] ps = PlyrSkills(player);
                 double per = 1.0;
-                int def = 0;
+                float def = 0;
                 String x = getString(player, "jrmcStatusEff");
                 boolean c = StusEfcts(10, x) || StusEfcts(11, x);
                 if (powerType != 3 && powerType > 0) {
@@ -202,7 +202,7 @@ public class DBCUtils {
                     def = stat(player, 1, powerType, 1, DEX, race, classID, 0.0F);
                     int SPI = PlyrAttrbts[5];
                     int energyPool = stat(player, 5, powerType, 5, SPI, race, classID, SklLvl_KiBs(ps, powerType));
-                    def = (int) ((double) def * (double) release * 0.01 * (double) weightPerc(1, player));
+                    def = (float) ((double) def * (double) release * 0.01 * (double) weightPerc(1, player));
                     kiProtectOn = !PlyrSettingsB(player, DBCSettings.KI_PROTECTION);
                     int kiProtectLevel = SklLvl(11, ps);
                     if (kiProtectOn) {
@@ -230,13 +230,13 @@ public class DBCUtils {
                     int ta = SklLvl(0, 2, ps);
                     int cj = SklLvlY(2, getString(player, "jrmcSSltY"));
                     def = stat(player, 1, powerType, 1, DEX, race, classID, (float) ta * 0.04F + (float) state * 0.25F);
-                    def = (int) ((double) (def * release) * 0.01);
+                    def = (float) ((double) (def * release) * 0.01);
                     if (classID == 2) {
                         String StE = nbt.getString("jrmcStatusEff");
                         if (StusEfcts(16, StE)) {
                             int WIL = PlyrAttrbts[3];
                             int statWIL = stat(player, 3, powerType, 5, WIL, race, classID, 0.0F);
-                            def += (int) ((double) statWIL * 0.25 * (double) release * 0.01);
+                            def += (float) ((double) statWIL * 0.25 * (double) release * 0.01);
                         }
                     }
                 } else if (pwr_sa(powerType)) {
@@ -245,7 +245,7 @@ public class DBCUtils {
                     def = stat(player, 1, powerType, 1, DEX, race, classID, 0.0F);
                 }
 
-                int staminaCost = (int) ((float) (def - kiProtection) * 0.05F);
+                int staminaCost = (int) ((def - kiProtection) * 0.05F);
                 if (block && currStamina >= staminaCost) {
                     int id = (int) (Math.random() * 2.0) + 1;
                     player.worldObj.playSoundAtEntity(player, "jinryuudragonbc:DBC4.block" + id, 0.5F, 0.9F / (player.worldObj.rand.nextFloat() * 0.6F + 0.9F));
@@ -256,20 +256,20 @@ public class DBCUtils {
                     // Charging Dex
                     switch (classID) {
                         case 0:
-                            def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.MartialArtistCharge) * 0.01F) + kiProtection;
+                            def = ((float) ((def - kiProtection) * ConfigDBCGameplay.MartialArtistCharge) * 0.01F) + kiProtection;
                             break;
                         case 1:
-                            def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.SpiritualistCharge) * 0.01F) + kiProtection;
+                            def = ((float) ((def - kiProtection) * ConfigDBCGameplay.SpiritualistCharge) * 0.01F) + kiProtection;
                             break;
                         case 2:
-                            def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.WarriorCharge) * 0.01F) + kiProtection;
+                            def = ((float) ((def - kiProtection) * ConfigDBCGameplay.WarriorCharge) * 0.01F) + kiProtection;
                             break;
                         default:
-                            def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
+                            def = ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
                             break;
                     }
                 } else {
-                    def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
+                    def = ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
                 }
 
                 if (currEnergy >= kiProtectionCost) {
@@ -292,17 +292,17 @@ public class DBCUtils {
                     defensePenetration = 10;
                 }
 
-                int defense = lf ? 0 : def;
-                int defensePen2 = (int) ((float) (defense * defensePenetration) * 0.01F);
+                float defense = lf ? 0 : def;
+                float defensePen2 = ((defense * defensePenetration) * 0.01F);
                 double e = (double) (1.0F - 0.03F * (float) t);
                 String ss = "A=" + defense + (defensePen2 > 0 ? "-" + defensePenetration + "%" : "") + ", SEM=" + (1.0F - 0.03F * (float) t);
-                dbcA = (int) ((double) (dbcA - (defense - defensePen2)) * e);
+                dbcA = (float) ((double) (dbcA - (defense - defensePen2)) * e);
                 dbcA = dbcA < 1 ? 1 : dbcA;
                 if ((double) ((float) (dbcA * defensePenetration) * 0.01F) * e > (double) dbcA) {
-                    dbcA = (int) ((double) ((float) (dbcA * defensePenetration) * 0.01F) * e);
+                    dbcA = (float) ((double) ((float) (dbcA * defensePenetration) * 0.01F) * e);
                 }
 
-                dbcA = (int) ((double) dbcA / per);
+                dbcA = (float) ((double) dbcA / per);
 
                 if (JRMCoreConfig.DebugInfo || difp.length() > 0 && player.getCommandSenderName().equalsIgnoreCase(difp)) {
                     mod_JRMCore.logger.info(player.getCommandSenderName() + " DM: A=" + dbcA + ", DF Div:" + per + ", " + ss);
@@ -322,12 +322,12 @@ public class DBCUtils {
 
                 dbcA = calculateDamageNegation(player, dbcA);
                 float hpRemaining = currentHP - dbcA;
-                int newHP;
+                float newHP;
                 if (dse) {
                     boolean friendlyFist = PlyrSettingsB((EntityPlayer) s.getEntity(), DBCSettings.FRIENDLY_FIST);
                     if (friendlyFist && !s.getDamageType().equals("MajinAbsorption") && !s.getEntity().equals(Player)) {
                         int ko = getInt(player, "jrmcHar4va");
-                        newHP = (int) (hpRemaining < 20 ? 20 : hpRemaining);
+                        newHP = (float) (hpRemaining < 20 ? 20 : hpRemaining);
                         if (ko <= 0 && newHP == 20) {
                             damageCalc.willKo = true;
                             damageCalc.damage = currentHP > 20 ? currentHP - 20 : 0;
@@ -336,15 +336,15 @@ public class DBCUtils {
                     }
                 }
 
-                damageCalc.damage = (int) dbcA;
+                damageCalc.damage = dbcA;
                 return damageCalc;
             }
         }
-        damageCalc.setDamage((int) dbcA);
+        damageCalc.setDamage(dbcA);
         return damageCalc;
     }
 
-    public static DBCDamageCalc calculateDBCStatDamage(EntityPlayer player, int damageAmount, IDBCStats dbcStats) {
+    public static DBCDamageCalc calculateDBCStatDamage(EntityPlayer player, float damageAmount, IDBCStats dbcStats) {
         DBCDamageCalc damageCalc = new DBCDamageCalc();
         damageCalc.entity = player;
         if (!player.worldObj.isRemote && dbcStats != null && damageAmount > 0) {
@@ -385,7 +385,7 @@ public class DBCUtils {
                 if (!dbcStats.isIgnoreDex())
                     DEX = getPlayerAttribute(player, attributes, 1, state, state2, race, racialSkill, release, arcoPP, isLegendary, isMajin, isKK, isMystic, isUI, isGoD, powerType, playerSkills, isFused, absorption);
 
-                int def = 0;
+                float def = 0;
                 // KI STUFF
                 boolean kiProtectOn = !PlyrSettingsB((EntityPlayer) player, DBCSettings.KI_PROTECTION);
                 int kiProtection = 0;
@@ -400,7 +400,7 @@ public class DBCUtils {
                 }
 
                 def = stat(player, 1, powerType, 1, DEX, race, classID, 0.0F);
-                def = (int) ((double) def * (double) release * 0.01 * (double) weightPerc(1, player));
+                def = (float) ((double) def * (double) release * 0.01 * (double) weightPerc(1, player));
 
                 if (kiProtectOn) {
                     ////////////////////
@@ -445,21 +445,21 @@ public class DBCUtils {
                     // Charging Dex
                     switch (classID) {
                         case 0:
-                            def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.MartialArtistCharge) * 0.01F) + kiProtection;
+                            def = (float) ((float) ((def - kiProtection) * ConfigDBCGameplay.MartialArtistCharge) * 0.01F) + kiProtection;
                             break;
                         case 1:
-                            def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.SpiritualistCharge) * 0.01F) + kiProtection;
+                            def = (float) ((float) ((def - kiProtection) * ConfigDBCGameplay.SpiritualistCharge) * 0.01F) + kiProtection;
                             break;
                         case 2:
-                            def = (int) ((float) ((def - kiProtection) * ConfigDBCGameplay.WarriorCharge) * 0.01F) + kiProtection;
+                            def = (float) ((float) ((def - kiProtection) * ConfigDBCGameplay.WarriorCharge) * 0.01F) + kiProtection;
                             break;
                         default:
-                            def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
+                            def = (float) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
                             break;
                     }
                 } else {
                     // Passive Dex
-                    def = (int) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
+                    def = (float) ((float) ((def - kiProtection) * JRMCoreConfig.StatPasDef) * 0.01F) + kiProtection;
                 }
                 ////////////////////
 
@@ -476,10 +476,10 @@ public class DBCUtils {
                 ////////////////////
 
                 // Damage Amount before any calculations modify it
-                int rawDamage = damageAmount;
+                float rawDamage = damageAmount;
 
                 // Defense after Ki Protection / Dex calculations
-                int rawDefense = def;
+                float rawDefense = def;
 
                 double enduranceReduction = 1;
                 if (!dbcStats.isIgnoreEndurance()) {
@@ -489,7 +489,7 @@ public class DBCUtils {
                     enduranceReduction = (double) (1.0F - 0.03F * (float) enduranceLevel);
                 }
 
-                int defensePenetrated = 0;
+                float defensePenetrated = 0;
                 // Default Penetration of the NPC
                 // By default all entities are 10. Players have their own
                 // default penetration skill. Based on if they are in Legendary
@@ -499,11 +499,11 @@ public class DBCUtils {
                     // Defense Pen of 10 --> RawDefense * 0.1 -- 10% Penetrated
                     // Defense Pen of 50 --> RawDefense * 0.5 -- 50% Penetrated
                     // Defense Pen of 100 --> RawDefense * 1 -- 100% Penetrated
-                    defensePenetrated = (int) ((float) (rawDefense * npcDefensePenetration) * 0.01F);
+                    defensePenetrated = ((float) (rawDefense * npcDefensePenetration) * 0.01F);
                 }
 
                 // Damage after Reduction
-                damageAmount = (int) ((damageAmount - rawDefense - defensePenetrated) * enduranceReduction);
+                damageAmount = (float) ((damageAmount - rawDefense - defensePenetrated) * enduranceReduction);
 
                 // Prevents Negative Damages
                 damageAmount = Math.max(damageAmount, 1);
@@ -511,20 +511,20 @@ public class DBCUtils {
                 if (dbcStats.hasDefensePenetration()) {
                     // Guarantee Damage is dealt with Defense Penetration
                     if ((double) ((float) (rawDamage * npcDefensePenetration) * 0.01F) * enduranceReduction > (double) damageAmount) {
-                        damageAmount = (int) ((double) ((float) (rawDamage * npcDefensePenetration) * 0.01F) * enduranceReduction);
+                        damageAmount = (float) ((double) ((float) (rawDamage * npcDefensePenetration) * 0.01F) * enduranceReduction);
                     }
                 }
 
                 // Consider Stamina Cost or Con on the Damage Amount
-                damageAmount = (int) ((double) damageAmount / formDamageReduction);
-                damageAmount = (int) calculateDamageNegation(player, damageAmount);
+                damageAmount = (float) ((double) damageAmount / formDamageReduction);
+                damageAmount = calculateDamageNegation(player, damageAmount);
             }
         }
         damageCalc.setDamage(damageAmount);
         return damageCalc;
     }
 
-    public static void doDBCDamage(EntityPlayer player, int damage, IDBCStats dbcStats, DamageSource source) {
+    public static void doDBCDamage(EntityPlayer player, float damage, IDBCStats dbcStats, DamageSource source) {
         NBTTagCompound nbt = nbt(player, "pres");
         byte state = nbt.getByte("jrmcState");
         byte race = nbt.getByte("jrmcRace");
@@ -538,10 +538,10 @@ public class DBCUtils {
         }
 
         // Record only the effective damage that is possible given the player's HP
-        int effectiveDamage = Math.min(damage, playerHP);
+        float effectiveDamage = Math.min(damage, playerHP);
         DBCEffectController.getInstance().recordDamage(player, effectiveDamage);
-        int reducedHP = playerHP - effectiveDamage;
-        int newHP = reducedHP;
+        float reducedHP = playerHP - effectiveDamage;
+        float newHP = reducedHP;
 
         boolean friendlyFist = dbcStats.isFriendlyFist();
 
