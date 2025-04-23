@@ -1,6 +1,10 @@
 package kamkeel.npcdbc.scripted;
 
 import kamkeel.npcdbc.constants.DBCScriptType;
+import kamkeel.npcs.controllers.AttributeController;
+import kamkeel.npcs.controllers.data.attribute.tracker.PlayerAttributeTracker;
+import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.config.ConfigMain;
 import noppes.npcs.controllers.ScriptController;
 import noppes.npcs.controllers.data.PlayerDataScript;
 import noppes.npcs.scripted.NpcAPI;
@@ -10,6 +14,13 @@ public class DBCEventHooks {
     public static boolean onFormChangeEvent(DBCPlayerEvent.FormChangeEvent formChangeEvent) {
         PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(formChangeEvent.getPlayer());
         handler.callScript(DBCScriptType.FORMCHANGE.function, formChangeEvent);
+
+        if(ConfigMain.AttributesEnabled && !formChangeEvent.isCancelled()
+            && formChangeEvent.getPlayer() != null && formChangeEvent.getPlayer().getMCEntity() instanceof EntityPlayer){
+            EntityPlayer entityPlayer = (EntityPlayer) (formChangeEvent.getPlayer().getMCEntity());
+            PlayerAttributeTracker tracker = AttributeController.getTracker(entityPlayer);
+            tracker.recalcAttributes(entityPlayer);
+        }
         return NpcAPI.EVENT_BUS.post(formChangeEvent);
     }
 
