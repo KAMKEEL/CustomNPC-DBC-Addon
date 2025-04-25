@@ -86,7 +86,7 @@ public class PostProcessing {
     public static void postProcess() {
         PostProcessing.bloom(1.5f, false);
 
-        if (mc.currentScreen instanceof HUDFormWheel) {
+        if (ShaderHelper.shadersEnabled() && mc.currentScreen instanceof HUDFormWheel) {
             Framebuffer buff = getMainBuffer();
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
