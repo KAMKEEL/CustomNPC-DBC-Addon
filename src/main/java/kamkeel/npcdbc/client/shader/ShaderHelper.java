@@ -59,7 +59,7 @@ public final class ShaderHelper {
 
 
     public static void loadShaders(boolean reload) {
-        if (!useShaders())
+        if (!shadersEnabled())
             return;
 
         if (reload)
@@ -90,7 +90,7 @@ public final class ShaderHelper {
 
 
     public static void useShader(int shader, IShaderUniform uniforms) {
-        if (!useShaders())
+        if (!shadersEnabled())
             return;
 
         if (!usingDBCShader) {
@@ -127,7 +127,7 @@ public final class ShaderHelper {
 //            useShader(0);
     }
 
-    public static boolean useShaders() {
+    public static boolean shadersEnabled() {
         return ConfigDBCClient.EnableShaders && OpenGlHelper.shadersSupported;
     }
 
