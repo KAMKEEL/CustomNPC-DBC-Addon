@@ -45,6 +45,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
 
     public static float BLUR_INTENSITY = 0;
     public static float MAX_BLUR = 4;
+    public static boolean BLUR_ENABLED = true;
 
     ScaledResolution scaledResolution;
     public FormWheelSegment[] wheelSlot = new FormWheelSegment[6];
@@ -325,6 +326,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
                 if (singleClick) {
                     selectSlot(-1);
                 } else if (!hasSubGui()) {
+                    BLUR_ENABLED = false;
                     mc.inGameHasFocus = true;
                     mc.mouseHelper.grabMouseCursor();
                 }
@@ -338,6 +340,7 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
             if (!isClosing && mc.inGameHasFocus) {
                 mc.inGameHasFocus = false;
                 Mouse.setGrabbed(false);
+                BLUR_ENABLED = true;
             }
         }
 
@@ -360,7 +363,6 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-
         if (!hasSubGui()) {
             int mouseScrolled = Mouse.getDWheel();
 
