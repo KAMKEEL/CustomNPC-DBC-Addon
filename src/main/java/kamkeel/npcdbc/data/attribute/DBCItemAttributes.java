@@ -151,11 +151,11 @@ public class DBCItemAttributes {
             flatBonus.setSpirit(playerAttributeTracker.getAttributeValue(SPIRIT));
 
             PlayerBonus multiBonus = new PlayerBonus(gearMulti, (byte) 0);
-            multiBonus.setStrength(playerAttributeTracker.getAttributeValue(STRENGTH_BOOST) / 100);
-            multiBonus.setDexterity(playerAttributeTracker.getAttributeValue(DEXTERITY_BOOST) / 100);
-            multiBonus.setConstitution(playerAttributeTracker.getAttributeValue(CONSTITUTION_BOOST) / 100);
-            multiBonus.setWillpower(playerAttributeTracker.getAttributeValue(WILLPOWER_BOOST) / 100);
-            multiBonus.setSpirit(playerAttributeTracker.getAttributeValue(SPIRIT_BOOST) / 100);
+            multiBonus.setStrength(playerAttributeTracker.getAttributeValue(STRENGTH_BOOST) / 100f);
+            multiBonus.setDexterity(playerAttributeTracker.getAttributeValue(DEXTERITY_BOOST) / 100f);
+            multiBonus.setConstitution(playerAttributeTracker.getAttributeValue(CONSTITUTION_BOOST) / 100f);
+            multiBonus.setWillpower(playerAttributeTracker.getAttributeValue(WILLPOWER_BOOST) / 100f);
+            multiBonus.setSpirit(playerAttributeTracker.getAttributeValue(SPIRIT_BOOST) / 100f);
 
             // Check if Bonus Exists
             boolean hasFlatBonus = flatBonus.getStrength() != 0.0f ||
