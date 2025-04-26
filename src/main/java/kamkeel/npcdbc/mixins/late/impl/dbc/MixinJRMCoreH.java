@@ -273,50 +273,20 @@ public abstract class MixinJRMCoreH {
 
 
         float currentFormLevel = dbcData.addonFormLevel;
-
-        float[] multiBonus = dbcData.bonus.getMultiBonus();
-
         if (attribute == 0 || attribute == 1 || attribute == 2 || attribute == 3) {
             result *= (stackableMulti * ((FormMastery) dbcData.getForm().getMastery()).calculateMulti("attribute", currentFormLevel));
         }
 
         if (attribute == DBCAttribute.Strength) // STR
-            result = (int) (result * (formMulti[0] * statusMulti + multiBonus[0]));
+            result = (int) (result * (formMulti[0] * statusMulti));
         else if (attribute == DBCAttribute.Dexterity) // DEX
-            result = (int) (result * (formMulti[1] * statusMulti + multiBonus[1]));
+            result = (int) (result * (formMulti[1] * statusMulti));
         else if (attribute == DBCAttribute.Willpower) // WIL
-            result = (int) (result * (formMulti[2] * statusMulti + multiBonus[2]));
+            result = (int) (result * (formMulti[2] * statusMulti));
         else if (attribute == DBCAttribute.Constitution) {// CON - for damage reduction
             float averageMulti = (formMulti[0] + formMulti[1] + formMulti[2]) / 3;
-            result = (int) (result * (averageMulti * statusMulti + multiBonus[3]));
-        } else if (attribute == DBCAttribute.Spirit) // SPI
-            result = (int) (result * (multiBonus[4]));
-
-        // Add Bonus Multi to Base Attributes
-        if (attribute == DBCAttribute.Strength) // STR
-            result += (currAttributes[DBCAttribute.Strength] * multiBonus[0]);
-        else if (attribute == DBCAttribute.Dexterity) // DEX
-            result += (currAttributes[DBCAttribute.Dexterity] * multiBonus[1]);
-        else if (attribute == DBCAttribute.Willpower) // WIL
-            result += (currAttributes[DBCAttribute.Willpower] * multiBonus[2]);
-        else if (attribute == DBCAttribute.Constitution) // CON
-            result += (currAttributes[DBCAttribute.Constitution] * multiBonus[3]);
-        else if (attribute == DBCAttribute.Spirit) // SPI
-            result += (currAttributes[DBCAttribute.Spirit] * multiBonus[4]);
-
-
-        float[] flatBonus = dbcData.bonus.getFlatBonus();
-        // Add Bonus Flat to Base Attributes at the end
-        if (attribute == DBCAttribute.Strength) // STR
-            result += flatBonus[0];
-        else if (attribute == DBCAttribute.Dexterity) // DEX
-            result += flatBonus[1];
-        else if (attribute == DBCAttribute.Willpower) // WIL
-            result += flatBonus[2];
-        else if (attribute == DBCAttribute.Constitution) // CON
-            result += flatBonus[3];
-        else if (attribute == DBCAttribute.Spirit) // SPI
-            result += flatBonus[4];
+            result = (int) (result * (averageMulti * statusMulti));
+        }
 
         result = ValueUtil.clamp(result, 0, Integer.MAX_VALUE);
         info.setReturnValue(result);
