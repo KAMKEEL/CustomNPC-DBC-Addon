@@ -7,8 +7,7 @@ import org.apache.logging.log4j.Level;
 
 import java.io.File;
 
-public class ConfigCapsules
-{
+public class ConfigCapsules {
     public static Configuration config;
 
     public final static String CAPSULES = "Capsules";
@@ -20,7 +19,7 @@ public class ConfigCapsules
     public final static String REGEN = "Regen";
 
     /**
-     *  General Properties
+     * General Properties
      **/
     public static boolean EnableCapsules = true;
     public static boolean EnableCapsuleCooldowns = true;
@@ -46,7 +45,7 @@ public class ConfigCapsules
 
 
     /**
-     *  Ki Properties
+     * Ki Properties
      **/
     public static int KiBaseStrength = 5;
     public static int KiBaseCooldown = 10;
@@ -67,7 +66,7 @@ public class ConfigCapsules
     public static int KiMasterCooldown = 10;
 
     /**
-     *  Health Properties
+     * Health Properties
      **/
     public static int HealthBaseStrength = 5;
     public static int HealthBaseCooldown = 10;
@@ -88,7 +87,7 @@ public class ConfigCapsules
     public static int HealthMasterCooldown = 10;
 
     /**
-     *  Stamina Properties
+     * Stamina Properties
      **/
     public static int StaminaBaseStrength = 5;
     public static int StaminaBaseCooldown = 10;
@@ -109,7 +108,7 @@ public class ConfigCapsules
     public static int StaminaMasterCooldown = 10;
 
     /**
-     *  Regen properties
+     * Regen properties
      */
     public static byte RegenHPBaseStrength = 1;
     public static int RegenHPBaseUseTime = 10;
@@ -148,9 +147,8 @@ public class ConfigCapsules
     public static int RegenStaminaMegaCooldown = 30;
 
 
-
     /**
-     *  Misc Properties
+     * Misc Properties
      **/
     public static int KOCooldown = 10;
     public static int ReviveCooldown = 10;
@@ -158,12 +156,10 @@ public class ConfigCapsules
     public static int PowerPointCooldown = 10;
     public static int AbsorptionCooldown = 10;
 
-    public static void init(File configFile)
-    {
+    public static void init(File configFile) {
         config = new Configuration(configFile);
 
-        try
-        {
+        try {
             config.load();
 
             config.setCategoryComment(CAPSULES, "All Capsule Strength configs are in PERCENT Restored. All cooldowns are in seconds.");
@@ -194,8 +190,8 @@ public class ConfigCapsules
             EnableRegenCapsules = config.get(CAPSULES, "Regen Capsules", true, "Enable Regen Capsules").getBoolean(true);
             RegenCapsuleCooldownType = config.get(CAPSULES, "Regen Capsule Cooldown", 2,
                 "0 - Cooldowns are per Type [All Regen Capsules], " +
-                "\n1 - Cooldowns are per Tier [Individual Regen Capsule Type and Tier], " +
-                "\n2 - Cooldowns are per Regen Type [HP, Ki and Stamina regens have separate cooldowns]").getInt(2);
+                    "\n1 - Cooldowns are per Tier [Individual Regen Capsule Type and Tier], " +
+                    "\n2 - Cooldowns are per Regen Type [HP, Ki and Stamina regens have separate cooldowns]").getInt(2);
             RegenCapsuleMaxStack = config.get(CAPSULES, "Regen Capsule Max Stack Size", 16, "Max Stack Size per Regen Capsule").getInt(16);
 
             KiCapsuleCooldownType = ValueUtil.clamp(KiCapsuleCooldownType, 0, 1);
@@ -316,13 +312,9 @@ public class ConfigCapsules
             PowerPointCooldown = config.get(MISC, "PowerPoint Cooldown", 10, "Only usable by Arcosians to restore PP Value").getInt(10);
             AbsorptionCooldown = config.get(MISC, "Absorption Cooldown", 10, "Only usable by Majins to restore absorption").getInt(10);
 
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             FMLLog.log(Level.ERROR, e, "DBC Addon has had a problem loading its capsule configuration");
-        }
-        finally
-        {
+        } finally {
             if (config.hasChanged()) {
                 config.save();
             }

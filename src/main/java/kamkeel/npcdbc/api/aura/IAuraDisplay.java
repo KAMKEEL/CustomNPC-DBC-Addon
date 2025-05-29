@@ -1,7 +1,7 @@
 package kamkeel.npcdbc.api.aura;
 
-import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.data.aura.Aura;
 
 public interface IAuraDisplay {
 
@@ -125,6 +125,10 @@ public interface IAuraDisplay {
 
     void setLightningIntensity(int lightningIntensity);
 
+    void setLightningColor(int color);
+
+    int getLightningColor();
+
     boolean hasSize();
 
 
@@ -144,7 +148,6 @@ public interface IAuraDisplay {
      * @param speed How fast aura should go through its lifecycle in ticks. DBC Default is 40 ticks. The lower, the faster
      */
     void setSpeed(int speed);
-
 
 
     /**

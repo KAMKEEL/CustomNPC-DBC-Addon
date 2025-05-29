@@ -18,15 +18,16 @@ public interface IFormDisplay {
      */
     void setHairCode(String hairCode);
 
+
     /**
-     * @param type Legal types: hud, aura, hair, eye, bodycm, body1, body2, body3
+     * @param type Legal types: hud, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3
      * @return Decimal color of type
      */
     int getColor(String type);
 
     /**
-     * @param type  Legal types: hud, aura, hair, eye, bodycm, body1, body2, body3, fur
-     * @param color Decimal color to set type as
+     * @param type  Legal types: hud, aura, hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur
+     * @param color Decimal or hexadecimal color (i.e. 0xffffff for white) to set type as
      */
     void setColor(String type, int color);
 
@@ -37,11 +38,8 @@ public interface IFormDisplay {
     void setHairType(String type);
 
 
-    /**
-     * @param type Legal types: "base", "raditz", "ssj", "ssj2", "ssj3", "ssj4", "oozaru", "" for no type
-     * @return hair type
-     */
-    String getHairType(String type);
+    String getHairType();
+
 
     /**
      * @param type Legal types: hud, aura, hair, eye, bodycm, body1, body2, body3
@@ -79,6 +77,16 @@ public interface IFormDisplay {
      *                         Disabling it overrides vanilla DBC sizes this way a formSize of 2.0 will always be 2.0x steve size
      */
     void setKeepOriginalSize(boolean keepOriginalSize);
+
+    /**
+     * @return form's width, default is 1.0f of player's current size
+     */
+    float getWidth();
+
+    /**
+     * @param width size to set form to. 2.0f sets the player to 2x their normal size. Min: 0.2, Max: 3.0
+     */
+    void setWidth(float width);
 
     boolean hasSize();
 
@@ -141,4 +149,16 @@ public interface IFormDisplay {
      * @return IFormDisplay self object
      */
     IFormDisplay save();
+
+    /**
+     * Allows the player to edit their custom form's appearance.
+     *
+     * @param customizable true or false.
+     */
+    void setCustomizable(boolean customizable);
+
+    /**
+     * @return If the form colors are customizable by players.
+     */
+    boolean isCustomizable();
 }

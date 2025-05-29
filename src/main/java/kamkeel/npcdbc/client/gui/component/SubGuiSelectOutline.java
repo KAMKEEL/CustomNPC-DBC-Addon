@@ -1,9 +1,10 @@
 package kamkeel.npcdbc.client.gui.component;
 
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.outline.DBCRequestOutline;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.outline.DBCRequestOutline;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.*;
+import noppes.npcs.constants.EnumScrollData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public class SubGuiSelectOutline extends SubGuiInterface implements IScrollData,
         xSize = 256;
         this.setBackground("menubg.png");
 
-        PacketHandler.Instance.sendToServer(new DBCRequestOutline(-1).generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestOutline(-1));
     }
 
     @Override
@@ -61,7 +62,7 @@ public class SubGuiSelectOutline extends SubGuiInterface implements IScrollData,
     }
 
     @Override
-    public void setData(Vector<String> list, HashMap<String, Integer> data) {
+    public void setData(Vector<String> list, HashMap<String, Integer> data, EnumScrollData dataType) {
         String name = scrollOutlines.getSelected();
         this.data = data;
         scrollOutlines.setList(getSearchList());

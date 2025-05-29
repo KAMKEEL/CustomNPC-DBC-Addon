@@ -53,25 +53,25 @@ public class SubGuiFormMasteryLink extends SubGuiInterface implements ICustomScr
 //        customFormList = ((List<String>) (Object) Arrays.asList(((GuiNPCManageForms) parent.getParent()).data.keySet().toArray()));
 
         customFormList = new ArrayList<>();
-        for(Map.Entry<Integer, Form> entry : FormController.getInstance().customForms.entrySet()) {
+        for (Map.Entry<Integer, Form> entry : FormController.getInstance().customForms.entrySet()) {
             customFormList.add(entry.getValue().name);
         }
 
 //        List<String> test = Arrays.asList("Test", "TestForm2");
         for (int i = 0; i < JRMCoreH.Races.length; i++) {
-            raceNames.add(JRMCoreH.trl("jrmc",JRMCoreH.Races[i]));
+            raceNames.add(JRMCoreH.trl("jrmc", JRMCoreH.Races[i]));
             ArrayList<String> forms = new ArrayList<>();
 
             HashMap<String, Integer> formNameID = new HashMap<>();
-            for(int y = 0; y < JRMCoreH.TransNms[i].length; y++){
-                if(y == 12 || y == 13)
+            for (int y = 0; y < JRMCoreH.TransNms[i].length; y++) {
+                if (y == 12 || y == 13)
                     continue;
                 String formName = JRMCoreH.trl("jrmc", JRMCoreH.TransNms[i][y]);
                 forms.add(formName);
                 formNameID.put(formName, y);
             }
 
-            for(int x = 0; x < 4; x++){
+            for (int x = 0; x < 4; x++) {
                 String nonRacialName = JRMCoreH.transNonRacial[x];
                 forms.add(nonRacialName);
                 formNameID.put(nonRacialName, PROPER_NON_RACIAL_IDS[x]);
@@ -87,8 +87,8 @@ public class SubGuiFormMasteryLink extends SubGuiInterface implements ICustomScr
         super.initGui();
         this.addButton(new GuiNpcButton(1, this.guiLeft + this.xSize - 70, this.guiTop + 4, 60, 20, "gui.done"));
         this.addButton(new GuiNpcButton(2, this.guiLeft + this.xSize - 70, this.guiTop + 4 + 23, 60, 20, new String[]{"DBC", "Custom"}, this.checkCustomForms ? 1 : 0));
-        this.addButton(new GuiNpcButton(3, this.guiLeft + this.xSize - 70, this.guiTop + 4 + 23*3-12, 60, 20, "Remove"));
-        this.addButton(new GuiNpcButton(4, this.guiLeft + this.xSize - 70, this.guiTop + 4 + 23*4-12, 60, 20, "Remove All"));
+        this.addButton(new GuiNpcButton(3, this.guiLeft + this.xSize - 70, this.guiTop + 4 + 23 * 3 - 12, 60, 20, "Remove"));
+        this.addButton(new GuiNpcButton(4, this.guiLeft + this.xSize - 70, this.guiTop + 4 + 23 * 4 - 12, 60, 20, "Remove All"));
 
         if (this.scrollRaces == null) {
             this.scrollRaces = new GuiCustomScroll(this, 0, 0);
@@ -123,7 +123,7 @@ public class SubGuiFormMasteryLink extends SubGuiInterface implements ICustomScr
             this.close();
         }
 
-        if(guibutton.id == 2) {
+        if (guibutton.id == 2) {
             checkCustomForms = !checkCustomForms;
 
             this.scrollForms.selected = -1;
@@ -136,14 +136,14 @@ public class SubGuiFormMasteryLink extends SubGuiInterface implements ICustomScr
             this.formSearch = "";
         }
 
-        if(guibutton.id == 3) {
+        if (guibutton.id == 3) {
             formMastery.masteryLink.removeLinkData(selectedRace);
             formSearch = "";
             selectedFormString = null;
             this.scrollForms.setSelected(null);
         }
 
-        if(guibutton.id == 4) {
+        if (guibutton.id == 4) {
             formMastery.masteryLink.removeAllLinkData();
             this.selectedRace = -1;
             formSearch = "";
@@ -183,12 +183,12 @@ public class SubGuiFormMasteryLink extends SubGuiInterface implements ICustomScr
             int formID = -1;
             if (checkCustomForms) {
                 Form form = (Form) FormController.getInstance().get(guiCustomScroll.getSelected());
-                if(form != null)
+                if (form != null)
                     formID = form.id;
             } else {
                 formID = raceFormIDLookUp.get(selectedRace).getOrDefault(guiCustomScroll.getSelected(), -1);
             }
-            if(formID >= 0)
+            if (formID >= 0)
                 formMastery.masteryLink.setMasteryLink(formID, selectedRace, checkCustomForms);
             else
                 formMastery.masteryLink.removeLinkData(selectedRace);
@@ -198,7 +198,7 @@ public class SubGuiFormMasteryLink extends SubGuiInterface implements ICustomScr
     }
 
     private String getNameFromLinkData() {
-        if(!formMastery.masteryLink.hasLinkData(this.selectedRace))
+        if (!formMastery.masteryLink.hasLinkData(this.selectedRace))
             return null;
 
 //        if(selectedRace == -1)
@@ -206,11 +206,11 @@ public class SubGuiFormMasteryLink extends SubGuiInterface implements ICustomScr
 
         FormMasteryLinkData.LinkData linkData = formMastery.masteryLink.masteryLinks.get(this.selectedRace);
         if (linkData.isCustomLink) {
-           IForm form = FormController.Instance.get(linkData.formID);
-           if(form != null)
-               return form.getName();
-           else
-               return null;
+            IForm form = FormController.Instance.get(linkData.formID);
+            if (form != null)
+                return form.getName();
+            else
+                return null;
         } else {
             int formID = DBCForm.getJRMCFormID(linkData.formID, this.selectedRace);
             if (formID < 0)
@@ -248,8 +248,8 @@ public class SubGuiFormMasteryLink extends SubGuiInterface implements ICustomScr
             List<String> list = new ArrayList();
             Iterator var2 = (this.getCorrectFormList()).iterator();
 
-            while(var2.hasNext()) {
-                String name = (String)var2.next();
+            while (var2.hasNext()) {
+                String name = (String) var2.next();
                 if (name.toLowerCase().contains(this.formSearch)) {
                     list.add(name);
                 }
@@ -260,7 +260,7 @@ public class SubGuiFormMasteryLink extends SubGuiInterface implements ICustomScr
     }
 
     private List<String> getCorrectFormList() {
-        if(checkCustomForms)
+        if (checkCustomForms)
             return customFormList;
         return raceForms.get(selectedRace);
     }

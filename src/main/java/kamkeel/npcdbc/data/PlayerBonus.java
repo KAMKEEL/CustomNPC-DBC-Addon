@@ -60,7 +60,7 @@ public class PlayerBonus implements IPlayerBonus {
     }
 
     @Override
-    public void setStrength(byte strength) {
+    public void setStrength(float strength) {
         this.strength = strength;
     }
 
@@ -70,7 +70,7 @@ public class PlayerBonus implements IPlayerBonus {
     }
 
     @Override
-    public void setDexterity(byte dexterity) {
+    public void setDexterity(float dexterity) {
         this.dexterity = dexterity;
     }
 
@@ -80,18 +80,18 @@ public class PlayerBonus implements IPlayerBonus {
     }
 
     @Override
-    public void setWillpower(byte willpower) {
+    public void setWillpower(float willpower) {
         this.willpower = willpower;
     }
 
     @Override
-    public float getConstituion() {
+    public float getConstitution() {
         return constituion;
     }
 
     @Override
-    public void setConstituion(float constituion) {
-        this.constituion = constituion;
+    public void setConstitution(float constitution) {
+        this.constituion = constitution;
     }
 
     @Override

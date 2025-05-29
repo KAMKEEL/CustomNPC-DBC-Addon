@@ -5,7 +5,6 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormKaiokenStackableData;
 import kamkeel.npcdbc.data.form.FormStackable;
 import net.minecraft.client.gui.GuiButton;
-import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.gui.util.*;
 
 public class SubGuiKaiokenMulti extends SubGuiInterface implements ITextfieldListener {
@@ -24,31 +23,31 @@ public class SubGuiKaiokenMulti extends SubGuiInterface implements ITextfieldLis
 
 
     @Override
-    public void initGui(){
+    public void initGui() {
         super.initGui();
 
         int y = guiTop + 5;
 
-        addLabel(new GuiNpcLabel(1, "Multi scaling: ", guiLeft+8, y + 5));
-        addTextField(new GuiNpcTextField(1, this, guiLeft+150, y, 50, 20, ""+kaioStackable.attributeMultiScalar));
+        addLabel(new GuiNpcLabel(1, "Multi scaling: ", guiLeft + 8, y + 5));
+        addTextField(new GuiNpcTextField(1, this, guiLeft + 150, y, 50, 20, "" + kaioStackable.attributeMultiScalar));
         getTextField(1).setMaxStringLength(22);
         getTextField(1).floatsOnly = true;
         getTextField(1).setMinMaxDefaultFloat(0, 50, 1);
         addButton(new GuiNpcButton(10, guiLeft + 240, y, 50, 20, "gui.close"));
 
         y += 23;
-        addLabel(new GuiNpcLabel(11, "Use Global Multi:", guiLeft+8, y+5));
-        addButton(new GuiNpcButtonYesNo(11, guiLeft+150, y, kaioStackable.isUsingGlobalAttributeMultis));
-        if(kaioStackable.isUsingGlobalAttributeMultis)
+        addLabel(new GuiNpcLabel(11, "Use Global Multi:", guiLeft + 8, y + 5));
+        addButton(new GuiNpcButtonYesNo(11, guiLeft + 150, y, kaioStackable.isUsingGlobalAttributeMultis));
+        if (kaioStackable.isUsingGlobalAttributeMultis)
             return;
         y += 23;
         y += 23;
-        for(int i = 0; i < 6; i++){
-            addLabel(new GuiNpcLabel(3+i, "Kaioken " + JRMCoreH.TransKaiNms[i+1] + " Multi: ", guiLeft+8, y+5));
-            addTextField(new GuiNpcTextField(3+i, this, fontRendererObj, guiLeft+150, y, 50, 20, ""+kaioStackable.getKaiokenAttributeMulti(i)));
-            getTextField(3+i).setMaxStringLength(22);
-            getTextField(3+i).floatsOnly = true;
-            getTextField(3+i).setMinMaxDefaultFloat(0, 50, 1);
+        for (int i = 0; i < 6; i++) {
+            addLabel(new GuiNpcLabel(3 + i, "Kaioken " + JRMCoreH.TransKaiNms[i + 1] + " Multi: ", guiLeft + 8, y + 5));
+            addTextField(new GuiNpcTextField(3 + i, this, fontRendererObj, guiLeft + 150, y, 50, 20, "" + kaioStackable.getKaiokenAttributeMulti(i)));
+            getTextField(3 + i).setMaxStringLength(22);
+            getTextField(3 + i).floatsOnly = true;
+            getTextField(3 + i).setMinMaxDefaultFloat(0, 50, 1);
             y += 23;
         }
 
@@ -57,21 +56,21 @@ public class SubGuiKaiokenMulti extends SubGuiInterface implements ITextfieldLis
     @Override
     public void unFocused(GuiNpcTextField guiNpcTextField) {
         int id = guiNpcTextField.id;
-        if(id == 1){
+        if (id == 1) {
             kaioStackable.setKaiokenMultiScalar(guiNpcTextField.getFloat());
         }
-        if(id >= 3 && id <= 8){
-            kaioStackable.setKaiokenAttributeMulti(id-3, guiNpcTextField.getFloat());
+        if (id >= 3 && id <= 8) {
+            kaioStackable.setKaiokenAttributeMulti(id - 3, guiNpcTextField.getFloat());
         }
     }
 
     @Override
-    public void actionPerformed(GuiButton button){
-        if(button.id == 11){
+    public void actionPerformed(GuiButton button) {
+        if (button.id == 11) {
             kaioStackable.isUsingGlobalAttributeMultis = !kaioStackable.isUsingGlobalAttributeMultis;
             initGui();
         }
-        if(button.id == 10){
+        if (button.id == 10) {
             close();
         }
     }

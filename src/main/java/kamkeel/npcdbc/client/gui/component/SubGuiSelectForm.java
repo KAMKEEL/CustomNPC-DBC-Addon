@@ -1,10 +1,11 @@
 package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.data.dbcdata.DBCData;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.form.DBCRequestForm;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.form.DBCRequestForm;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.*;
+import noppes.npcs.constants.EnumScrollData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         this.setBackground("menubg.png");
 
         this.useMenuName = useMenuName;
-        PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, playerFormsOnly, this.useMenuName).generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestForm(-1, playerFormsOnly, this.useMenuName));
     }
 
     @Override
@@ -105,7 +106,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
         if (id == 1) {
             this.close();
         }
-        if(id == 2){
+        if (id == 2) {
             this.removeForm = true;
             this.close();
         }
@@ -117,7 +118,7 @@ public class SubGuiSelectForm extends SubGuiInterface implements IScrollData, IC
     }
 
     @Override
-    public void setData(Vector<String> list, HashMap<String, Integer> data) {
+    public void setData(Vector<String> list, HashMap<String, Integer> data, EnumScrollData dataType) {
         String name = scrollForms.getSelected();
         this.data = data;
         scrollForms.setList(getSearchList());

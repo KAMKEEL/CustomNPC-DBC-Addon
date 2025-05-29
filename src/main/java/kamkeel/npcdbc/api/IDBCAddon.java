@@ -9,28 +9,90 @@ import noppes.npcs.api.entity.IPlayer;
 
 /**
  * This interface acts as a replacement for {@link IPlayer#getDBCPlayer()}
- *
+ * <p>
  * It extends features of the base IDBCPlayer as well adds
  * functionality to integrate it with the various CNPC+ DBC Addon frameworks such as custom forms and auras.
  */
 @SuppressWarnings({"rawtypes", "unused"})
 public interface IDBCAddon extends IDBCPlayer {
+    /**
+     * @return Refer to {@link IDBCAddon#getAllAttributes()} and {@link IDBCAddon#getFullAttribute(int)}
+     */
     int[] getAllFullAttributes();
 
     /**
+     * @return The mind a player is currently using for their skills
+     */
+    int getUsedMind();
+
+    /**
+     * @return The mind the player has currently available.
+     */
+    int getAvailableMind();
+
+    /**
      * Set a players lock on state!
+     *
      * @param lockOnTarget Reference to new target Entity or null to remove lock on.
      */
     void setLockOnTarget(IEntityLivingBase lockOnTarget);
 
     /**
+     * This will only work if the player has the ki fist skill
+     *
+     * @param on Should ki fist be enabled
+     */
+    void setKiFistOn(boolean on);
+
+    /**
+     * This will only work if the player has the ki protection skill
+     *
+     * @param on Should ki protection be enabled
+     */
+    void setKiProtectionOn(boolean on);
+
+    /**
+     * This will only work if the player has Ki Fist & Ki Infuse skills <br>
+     * <br>
+     * 0 - No ki weapons <br>
+     * 1 - Ki Blade <br>
+     * 2 - Ki Scythe <br>
+     *
+     * @param type ki weapon type
+     */
+    void setKiWeaponType(int type);
+
+    /**
+     * @return True if ki fist is enabled
+     */
+    boolean kiFistOn();
+
+    /**
+     * @return True if ki protection is enabled
+     */
+    boolean kiProtectionOn();
+
+    /**
+     * Checks what ki weapon the player has enabled <br>
+     * <br>
+     * 0 - No ki weapons <br>
+     * 1 - Ki Blade <br>
+     * 2 - Ki Scythe <br>
+     *
+     * @return The ki weapon type
+     */
+    int getKiWeaponType();
+
+    /**
      * Checks if player has turbo on.
+     *
      * @return True or false
      */
     boolean isTurboOn();
 
     /**
      * Sets the turbo state for the player
+     *
      * @param on true turns turbo on, false turns it off.
      */
     void setTurboState(boolean on);
@@ -149,8 +211,12 @@ public interface IDBCAddon extends IDBCPlayer {
     boolean isChargingKi();
 
     /**
-     * @param skillname Check JRMCoreH.DBCSkillNames
-     * @return skill level from 1 to 10
+     * @param skillname Acceptable skill names:
+     *                  <code>"Fusion", "Jump", "Dash", "Fly", "Endurance", <br>
+     *                  "PotentialUnlock", "KiSense", "Meditation", "Kaioken", "GodForm", <br>
+     *                  "OldKaiUnlock", "KiProtection", "KiFist", "KiBoost", "DefensePenetration", <br>
+     *                  "KiInfuse", "UltraInstinct", "InstantTransmission", "GodOfDestruction"</code>
+     * @return skill level from 1 to 10. Or 0 if the player doesn't have that skill
      */
     int getSkillLevel(String skillname);
 
@@ -226,15 +292,33 @@ public interface IDBCAddon extends IDBCPlayer {
 
     /**
      * If the player has a given form, it forces them to transform to that form.
+     *
      * @param formID Form ID of the custom form you want to force the player into
      */
     void setCustomForm(int formID);
 
     /**
      * If the player has a given form, it forces them to transform to that form.
+     *
      * @param form Form object of the custom form you want to force the player into
      */
     void setCustomForm(IForm form);
+
+    /**
+     * If the player has a given form or <code>ignoreUnlockCheck</code> is true, it forces them to transform to that form.
+     *
+     * @param formID            Form ID of the custom form you want to force the player into
+     * @param ignoreUnlockCheck Should this ignore checking if a player has a form unlocked
+     */
+    void setCustomForm(int formID, boolean ignoreUnlockCheck);
+
+    /**
+     * If the player has a given form or <code>ignoreUnlockCheck</code> is true, it forces them to transform to that form.
+     *
+     * @param form              Form object of the custom form you want to force the player into
+     * @param ignoreUnlockCheck Should this ignore checking if a player has a form unlocked
+     */
+    void setCustomForm(IForm form, boolean ignoreUnlockCheck);
 
     void setFlight(boolean flightOn);
 
@@ -254,35 +338,68 @@ public interface IDBCAddon extends IDBCPlayer {
 
     void setSprintSpeed(float speed);
 
+    boolean hasCustomForm(String formName);
+
+    boolean hasCustomForm(int formID);
+
+    IForm[] getCustomForms();
+
     /**
      * Gives a player a custom form by the given name.
+     *
      * @param formName Name of the form to give the player.
      */
     void giveCustomForm(String formName);
 
     /**
      * Gives a player a custom form.
+     *
      * @param form Form object to give the player.
      */
     void giveCustomForm(IForm form);
 
     /**
      * Removes the given form by name.
+     * <br><br>
+     * Removing mastery is dependent on configs
+     *
      * @param formName Name of the form to remove.
      */
     void removeCustomForm(String formName);
 
     /**
      * Removes the given form.
+     * <br><br>
+     * Removing mastery is dependent on configs
+     *
      * @param form Form object to remove.
      */
     void removeCustomForm(IForm form);
+
+    /**
+     * Removes the given form by name.
+     *
+     * @param formName       Name of the form to remove.
+     * @param removesMastery does removing this form remove mastery
+     */
+    void removeCustomForm(String formName, boolean removesMastery);
+
+    /**
+     * Removes the given form.
+     *
+     * @param form           Form object to remove
+     * @param removesMastery does removing this form remove mastery
+     */
+    void removeCustomForm(IForm form, boolean removesMastery);
+
+    IForm getSelectedForm();
 
     /**
      * Selects a custom form for the player.
      * <br>
      * This does not force a transformation. <br>
      * It only selects the form they will transform into whenever they choose to transform.
+     *
      * @param form Form object.
      */
     void setSelectedForm(IForm form);
@@ -292,6 +409,7 @@ public interface IDBCAddon extends IDBCPlayer {
      * <br>
      * This does not force a transformation. <br>
      * It only selects the form they will transform into whenever they choose to transform.
+     *
      * @param formID Form ID.
      */
     void setSelectedForm(int formID);
@@ -306,55 +424,68 @@ public interface IDBCAddon extends IDBCPlayer {
     // Aura stuff
 
     /**
-     * Sets the current custom aura <b>if the player has it unlocked.</b>
+     * Sets the selected custom aura <b>if the player has it unlocked.</b>
+     *
      * @param auraName Name of the aura to set.
      */
     void setAuraSelection(String auraName);
 
     /**
-     * Sets the current custom aura <b>if the player has it unlocked.</b>
+     * Sets the selected custom aura <b>if the player has it unlocked.</b>
+     *
      * @param aura Aura object to set.
      */
     void setAuraSelection(IAura aura);
 
     /**
-     * Sets the current custom aura <b>if the player has it unlocked.</b>
+     * Sets the selected custom aura <b>if the player has it unlocked.</b>
+     *
      * @param auraID ID of the aura to set.
      */
     void setAuraSelection(int auraID);
 
     /**
      * Unlocks the given aura for the player.
+     *
      * @param auraName Name of the aura to unlock.
      */
     void giveAura(String auraName);
 
+    boolean hasAura(String auraName);
+
+    boolean hasAura(int auraId);
+
     /**
      * Unlocks the given aura for the player.
+     *
      * @param aura Aura object to unlock for the player.
      */
     void giveAura(IAura aura);
 
     /**
      * Unlocks the given aura for the player.
+     *
      * @param auraID ID of the aura to unlock for the player.
      */
     void giveAura(int auraID);
 
     /**
      * Removes an aura from the player.
+     *
      * @param auraName Name of the aura to remove.
      */
     void removeAura(String auraName);
 
     /**
      * Remove an aura from the player.
+     *
      * @param aura Aura object to remove.
      */
     void removeAura(IAura aura);
 
     /**
      * Remove an aura from the player.
+     *
      * @param auraID ID of the aura to remove.
      */
     void removeAura(int auraID);
@@ -362,6 +493,7 @@ public interface IDBCAddon extends IDBCPlayer {
     /**
      * Sets the custom aura for the player <br>
      * <h2>THE PLAYER DOESN'T NEED TO HAVE THIS AURA UNLOCKED</h2>
+     *
      * @param auraName ID of the aura.
      */
     void setAura(String auraName);
@@ -369,6 +501,7 @@ public interface IDBCAddon extends IDBCPlayer {
     /**
      * Sets the custom aura for the player <br>
      * <h2>THE PLAYER DOESN'T NEED TO HAVE THIS AURA UNLOCKED</h2>
+     *
      * @param aura Aura object
      */
     void setAura(IAura aura);
@@ -376,14 +509,26 @@ public interface IDBCAddon extends IDBCPlayer {
     /**
      * Sets the custom aura for the player <br>
      * <h2>THE PLAYER DOESN'T NEED TO HAVE THIS AURA UNLOCKED</h2>
+     *
      * @param auraID ID of the aura.
      */
     void setAura(int auraID);
 
     /**
+     * Removes a custom aura selection and current aura running for the player.
+     */
+    void removeCurrentAura();
+
+    /**
      * Removes a custom aura selection for the player.
      */
     void removeAuraSelection();
+
+    int getSelectedDBCForm();
+
+    void setSelectedDBCForm(int formID);
+
+    void removeSelectedDBCForm();
 
     /**
      * @return True if player is in any CNPC+ custom form
@@ -402,68 +547,81 @@ public interface IDBCAddon extends IDBCPlayer {
      */
     boolean isInCustomForm(int formID);
 
+    void setCustomForm(String formName, boolean ignoreUnlockCheck);
+
+    void setCustomForm(String formName);
+
     /**
      * Sets the mastery of a form if the player has it unlocked, otherwise it won't change anything.
+     *
      * @param formID ID of the form to change the mastery of.
-     * @param value New mastery value.
+     * @param value  New mastery value.
      */
     void setCustomMastery(int formID, float value);
 
     /**
      * Sets the mastery of a form if the player has it unlocked, otherwise it won't change anything.
-     * @param form The form you want to change the mastery of.
+     *
+     * @param form  The form you want to change the mastery of.
      * @param value New mastery value.
      */
     void setCustomMastery(IForm form, float value);
 
     /**
      * Sets the mastery of a form.
-     * @param formID ID of the form to change the mastery of.
-     * @param value New mastery value.
+     *
+     * @param formID            ID of the form to change the mastery of.
+     * @param value             New mastery value.
      * @param ignoreUnlockCheck If set to true, it will adjust the form mastery even if the player doesn't have the form unlocked.
      */
     void setCustomMastery(int formID, float value, boolean ignoreUnlockCheck);
 
     /**
      * Sets the mastery of a form.
-     * @param form The form you want to change the mastery of.
-     * @param value New mastery value.
+     *
+     * @param form              The form you want to change the mastery of.
+     * @param value             New mastery value.
      * @param ignoreUnlockCheck If set to true, it will adjust the form mastery even if the player doesn't have the form unlocked.
      */
     void setCustomMastery(IForm form, float value, boolean ignoreUnlockCheck);
 
     /**
      * Modifies the mastery of a form ONLY if the player has the form unlocked.
+     *
      * @param formID ID of the form to change the mastery of.
-     * @param value Amount of mastery to add.
+     * @param value  Amount of mastery to add.
      */
     void addCustomMastery(int formID, float value);
 
     /**
      * Modifies the mastery of a form ONLY if the player has the form unlocked.
-     * @param form The form you want to change the mastery of.
+     *
+     * @param form  The form you want to change the mastery of.
      * @param value Amount of mastery to add.
      */
     void addCustomMastery(IForm form, float value);
 
     /**
      * Modifies the mastery of a form.
-     * @param formID ID of the form to change the mastery of.
-     * @param value Amount of mastery to add.
+     *
+     * @param formID            ID of the form to change the mastery of.
+     * @param value             Amount of mastery to add.
      * @param ignoreUnlockCheck If set to true, it will adjust the form mastery even if the player doesn't have the form unlocked.
      */
     void addCustomMastery(int formID, float value, boolean ignoreUnlockCheck);
 
     /**
      * Modifies the mastery of a form.
-     * @param form The form you want to change the mastery of.
-     * @param value Amount of mastery to add.
+     *
+     * @param form              The form you want to change the mastery of.
+     * @param value             Amount of mastery to add.
      * @param ignoreUnlockCheck If set to true, it will adjust the form mastery even if the player doesn't have the form unlocked.
      */
     void addCustomMastery(IForm form, float value, boolean ignoreUnlockCheck);
 
     /**
      * Check the form mastery. If the player is fused, it sums masteries of both players.
+     *
      * @param formID Form ID to check.
      * @return Mastery of the given form.
      */
@@ -471,6 +629,7 @@ public interface IDBCAddon extends IDBCPlayer {
 
     /**
      * Check the form mastery. If the player is fused, it sums masteries of both players.
+     *
      * @param form Form to check.
      * @return Mastery of the given form.
      */
@@ -478,7 +637,8 @@ public interface IDBCAddon extends IDBCPlayer {
 
     /**
      * Check the form mastery.
-     * @param formID Form ID to check.
+     *
+     * @param formID      Form ID to check.
      * @param checkFusion Should it perform a fusion check? If the player is fused, it sums masteries of both players.
      * @return Mastery of the given form.
      */
@@ -486,7 +646,8 @@ public interface IDBCAddon extends IDBCPlayer {
 
     /**
      * Check the form mastery.
-     * @param form Form to check.
+     *
+     * @param form        Form to check.
      * @param checkFusion Should it perform a fusion check? If the player is fused, it sums masteries of both players.
      * @return Mastery of the given form.
      */
@@ -506,6 +667,8 @@ public interface IDBCAddon extends IDBCPlayer {
 
     boolean isInAura(int auraID);
 
+    void removeOutline();
+
     void setOutline(IOutline outline);
 
     void setOutline(String outlineName);
@@ -513,4 +676,62 @@ public interface IDBCAddon extends IDBCPlayer {
     void setOutline(int outlineID);
 
     IOutline getOutline();
+
+    /**
+     * @return IPlayer object of the player you are fused with
+     */
+    IPlayer<?> getFusionPartner();
+
+    /**
+     * Fires a Ki Attack in the Head Direction of the NPC
+     *
+     * @param type          Type of Ki Attack [0 - 8] "Wave", "Blast", "Disk", "Laser", "Spiral", "BigBlast", "Barrage", "Shield", "Explosion"
+     * @param speed         Speed of Ki Attack [0 - 100]
+     * @param damage        Damage for Ki Attack
+     * @param hasEffect     True for Explosion
+     * @param color         Color of Ki Attack [0 - 30] -&gt; <br>
+     *                      0: "AlignmentBased", "white", "blue", "purple", "red", "black", "green", "yellow", "orange", "pink", "magenta", <br>
+     *                      11: "lightPink", "cyan", "darkCyan", "lightCyan", "darkGray", "gray", "darkBlue", "lightBlue", "darkPurple", "lightPurple", <br>
+     *                      21: "darkRed", "lightRed", "darkGreen", "lime", "darkYellow", "lightYellow", "gold", "lightOrange", "darkBrown", "lightBrown"
+     * @param density       Density of Ki Attack &gt; 0
+     * @param hasSound      Play Impact Sound of Ki Attack
+     * @param chargePercent Charge Percentage of Ki Attack [0 - 100]
+     */
+    void fireKiAttack(byte type, byte speed, int damage, boolean hasEffect, byte color, byte density, boolean hasSound, byte chargePercent);
+
+    /**
+     * Fires an IKiAttack with its internal params
+     *
+     * @param kiAttack ki attack to shoot
+     */
+    void fireKiAttack(IKiAttack kiAttack);
+
+    /**
+     * @return True if player is releasing ki
+     */
+    boolean isReleasing();
+
+    /**
+     * @return True if player is releasing ki and has meditation skill
+     */
+    boolean isMeditating();
+
+    /**
+     * @return True if player is using majin super regen
+     */
+    boolean isSuperRegen();
+
+    /**
+     * @return True if player is dodging/swooping
+     */
+    boolean isSwooping();
+
+    boolean isInMedicalLiquid();
+
+    /**
+     *
+     * @param slot, integer of the ki attack slot to look in. Accepts values 1-4
+     * @return
+     */
+    IKiAttack getAttackFromSlot(int slot);
 }

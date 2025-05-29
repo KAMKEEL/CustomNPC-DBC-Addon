@@ -13,6 +13,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -97,9 +98,9 @@ public class ItemMiscCapsule extends Item {
         if (meta < 0 || meta >= EnumMiscCapsules.count())
             meta = 0;
 
-        UUID playerUUID = player.getUniqueID();
+        UUID playerUUID = Utility.getUUID(player);
         long remainingTime = CapsuleController.canUseMiscCapsule(playerUUID, meta);
-        if(remainingTime > 0){
+        if (remainingTime > 0) {
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
@@ -107,7 +108,7 @@ public class ItemMiscCapsule extends Item {
         if (DBCEventHooks.onCapsuleUsedEvent(new DBCPlayerEvent.CapsuleUsedEvent(PlayerDataUtil.getIPlayer(player), Capsule.MISC, meta)))
             return itemStack;
 
-        if(meta == EnumMiscCapsules.KO.getMeta()){
+        if (meta == EnumMiscCapsules.KO.getMeta()) {
             int currentKO = getInt(player, "jrmcHar4va");
             if (currentKO <= 0) {
                 player.addChatComponentMessage(new ChatComponentText("§cYou are not ko'd"));
@@ -115,8 +116,7 @@ public class ItemMiscCapsule extends Item {
             }
             JRMCoreH.setInt(0, player, "jrmcHar4va");
             player.addChatComponentMessage(new ChatComponentText("§aYou are no longer ko'd!"));
-        }
-        else if(meta == EnumMiscCapsules.Revive.getMeta()){
+        } else if (meta == EnumMiscCapsules.Revive.getMeta()) {
             int playerTime = JRMCoreH.getInt(player, "jrmcReviveTmer");
             if (playerTime <= 0) {
                 player.addChatComponentMessage(new ChatComponentText("§cYou are not dead"));
@@ -125,25 +125,24 @@ public class ItemMiscCapsule extends Item {
 
             JRMCoreH.setInt(0, player, "jrmcReviveTmer");
             player.addChatComponentMessage(new ChatComponentText("§eYou are now able to revive!"));
-        }
-        else if(meta == EnumMiscCapsules.Heat.getMeta()){
+        } else if (meta == EnumMiscCapsules.Heat.getMeta()) {
             // Restore 100 Amount of Heat
             DBCData.get(player).stats.restoreUIHeat(100);
             player.addChatComponentMessage(new ChatComponentText("§7UI Heat Restored"));
-        }
-        else if(meta == EnumMiscCapsules.PowerPoint.getMeta()){
+        } else if (meta == EnumMiscCapsules.PowerPoint.getMeta()) {
             DBCData dbcData = DBCData.get(player);
-            if(dbcData.Race != DBCRace.ARCOSIAN){
+            if (dbcData.Race != DBCRace.ARCOSIAN) {
                 player.addChatComponentMessage(new ChatComponentText("§7Only Arcosians can use this capsule"));
                 return itemStack;
             } else {
                 dbcData.stats.restoreArcPP(100);
                 player.addChatComponentMessage(new ChatComponentText("§5Power Points Restored"));
             }
-        }else if(meta == EnumMiscCapsules.Absorption.getMeta()){
+        } else if (meta == EnumMiscCapsules.Absorption.getMeta()) {
             DBCData dbcData = DBCData.get(player);
-            if(dbcData.Race != DBCRace.MAJIN){
-                player.addChatComponentMessage(new ChatComponentText("§7Only Majins can use this capsule"));;
+            if (dbcData.Race != DBCRace.MAJIN) {
+                player.addChatComponentMessage(new ChatComponentText("§7Only Majins can use this capsule"));
+                ;
                 return itemStack;
             } else {
                 dbcData.stats.restoreAbsorption(100);
@@ -160,8 +159,7 @@ public class ItemMiscCapsule extends Item {
     }
 
     @Override
-    public EnumAction getItemUseAction(ItemStack stack)
-    {
+    public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.block;
     }
 

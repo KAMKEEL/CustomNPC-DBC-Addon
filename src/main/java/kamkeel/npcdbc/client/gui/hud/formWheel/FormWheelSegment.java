@@ -9,14 +9,14 @@ import kamkeel.npcdbc.data.FormWheelData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormStackable;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.form.DBCSaveFormWheel;
-import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.form.DBCSaveFormWheel;
+import kamkeel.npcdbc.network.packets.player.form.DBCSelectForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import org.lwjgl.opengl.GL11;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glScaled;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 
 class FormWheelSegment extends WheelSegment {
     public HUDFormWheel parent;
@@ -38,7 +38,7 @@ class FormWheelSegment extends WheelSegment {
     }
 
     public void selectForm() {
-        PacketHandler.Instance.sendToServer(new DBCSelectForm(data.formID, data.isDBC).generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(data.formID, data.isDBC));
     }
 
     public void setForm(int formID, boolean isDBC, boolean updateServer) {
@@ -46,7 +46,7 @@ class FormWheelSegment extends WheelSegment {
         data.isDBC = isDBC;
         form = !data.isDBC ? (Form) FormController.getInstance().get(data.formID) : null;
         if (updateServer)
-            PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
         icon = form != null ? new FormIcon(parent, form) : new FormIcon(parent, data.formID);
     }
 
@@ -54,14 +54,14 @@ class FormWheelSegment extends WheelSegment {
         this.data = data;
         form = !data.isDBC ? (Form) FormController.getInstance().get(data.formID) : null;
         if (updateServer)
-            PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
         icon = form != null ? new FormIcon(parent, form) : new FormIcon(parent, data.formID);
     }
 
     public void removeForm() {
         data.reset();
         form = null;
-        PacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data).generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCSaveFormWheel(index, data));
         if (parent.hoveredSlot == index)
             parent.selectSlot(-1);
 
@@ -80,7 +80,7 @@ class FormWheelSegment extends WheelSegment {
             }
             if (ConfigDBCClient.AlteranteSelectionWheelTexture) {
                 glScaled(0.7, 0.7, 1);
-                switch(index){
+                switch (index) {
                     case 0:
                         glTranslatef(0, -15f, 0);
                         break;
@@ -107,8 +107,8 @@ class FormWheelSegment extends WheelSegment {
                 if (!parent.dbcInfo.hasFormUnlocked(data.formID))
                     removeForm();
             }
-            if(icon != null){
-                glTranslatef(0, (float) -icon.height /2, 0);
+            if (icon != null) {
+                glTranslatef(0, (float) -icon.height / 2, 0);
                 icon.draw();
                 glTranslatef(0, icon.height, 0);
             }
@@ -119,7 +119,7 @@ class FormWheelSegment extends WheelSegment {
     public String getFormName() {
         DBCData dbcData = DBCData.get(parent.dbcInfo.parent.player);
 
-        if(!data.isDBC)
+        if (!data.isDBC)
             return form != null ? getFormVariant(form, dbcData).menuName : "";
 
         return DBCForm.getMenuName(dbcData.Race, data.formID, dbcData.isForm(DBCForm.Divine));
@@ -135,7 +135,7 @@ class FormWheelSegment extends WheelSegment {
 
         FormController formController = FormController.Instance;
 
-        if(formController.has(stackable.fusionID) && isFused) {
+        if (formController.has(stackable.fusionID) && isFused) {
             form = (Form) formController.get(stackable.fusionID);
             stackable = form.stackable;
         }

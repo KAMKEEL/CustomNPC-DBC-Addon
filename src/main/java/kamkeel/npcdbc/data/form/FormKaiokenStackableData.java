@@ -31,32 +31,32 @@ public class FormKaiokenStackableData implements IFormKaiokenStackables {
         this.kaiokenMultis = Arrays.copyOfRange(JRMCoreH.TransKaiDmg, 1, JRMCoreH.TransKaiDmg.length);
     }
 
-    public void readFromNBT(NBTTagCompound stack){
-        if(stack.hasKey("kaiokenDrainData")){
+    public void readFromNBT(NBTTagCompound stack) {
+        if (stack.hasKey("kaiokenDrainData")) {
             NBTTagCompound kaioDrain = stack.getCompoundTag("kaiokenDrainData");
             kaiokenDrainMulti = kaioDrain.getFloat("multi");
 
             NBTTagCompound balanceNormal = kaioDrain.getCompoundTag("balanceNormal");
-            for(int i = 0; i < 6; i++){
-                kaiokenBalanceValue[i] = balanceNormal.getFloat(i+"");
+            for (int i = 0; i < 6; i++) {
+                kaiokenBalanceValue[i] = balanceNormal.getFloat(i + "");
             }
             NBTTagCompound balanceStrained = kaioDrain.getCompoundTag("balanceStrained");
-            for(int i = 0; i < 6; i++){
-                kaiokenStrainedBalanceValue[i] = balanceStrained.getFloat(i+"");
+            for (int i = 0; i < 6; i++) {
+                kaiokenStrainedBalanceValue[i] = balanceStrained.getFloat(i + "");
             }
             kaiokenMultipliesCurrentFormDrain = kaioDrain.getBoolean("multipliesCurrentFormDrain");
 
-        }else{
+        } else {
             kaiokenMultipliesCurrentFormDrain = true;
         }
-        if(stack.hasKey("kaiokenMultiData")) {
+        if (stack.hasKey("kaiokenMultiData")) {
             NBTTagCompound kaioMulti = stack.getCompoundTag("kaiokenMultiData");
 
             isUsingGlobalAttributeMultis = kaioMulti.getBoolean("isUsingGlobal");
             attributeMultiScalar = kaioMulti.getFloat("attributeScalar");
             NBTTagCompound multis = kaioMulti.getCompoundTag("multis");
-            for(int i = 0; i < 6; i++){
-                kaiokenMultis[i] = multis.getFloat(i+"");
+            for (int i = 0; i < 6; i++) {
+                kaiokenMultis[i] = multis.getFloat(i + "");
             }
         } else {
             isUsingGlobalAttributeMultis = true;
@@ -64,16 +64,16 @@ public class FormKaiokenStackableData implements IFormKaiokenStackables {
         }
     }
 
-    public void saveToNBT(NBTTagCompound stack){
+    public void saveToNBT(NBTTagCompound stack) {
         NBTTagCompound kaioDrainData = new NBTTagCompound();
         kaioDrainData.setFloat("multi", kaiokenDrainMulti);
         NBTTagCompound kaioBalanceNormal = new NBTTagCompound();
-        for(int i = 0; i < 6; i++){
-            kaioBalanceNormal.setFloat(i+"", kaiokenBalanceValue[i]);
+        for (int i = 0; i < 6; i++) {
+            kaioBalanceNormal.setFloat(i + "", kaiokenBalanceValue[i]);
         }
         NBTTagCompound kaioBalanceStrained = new NBTTagCompound();
-        for(int i = 0; i < 6; i++){
-            kaioBalanceStrained.setFloat(i+"", kaiokenStrainedBalanceValue[i]);
+        for (int i = 0; i < 6; i++) {
+            kaioBalanceStrained.setFloat(i + "", kaiokenStrainedBalanceValue[i]);
         }
 
         kaioDrainData.setTag("balanceNormal", kaioBalanceNormal);
@@ -86,8 +86,8 @@ public class FormKaiokenStackableData implements IFormKaiokenStackables {
         kaioMulti.setFloat("attributeScalar", attributeMultiScalar);
 
         NBTTagCompound multiData = new NBTTagCompound();
-        for(int i = 0; i < 6; i++){
-            multiData.setFloat(i+"", kaiokenMultis[i]);
+        for (int i = 0; i < 6; i++) {
+            multiData.setFloat(i + "", kaiokenMultis[i]);
         }
         kaioMulti.setTag("multis", multiData);
         stack.setTag("kaiokenMultiData", kaioMulti);
@@ -116,13 +116,13 @@ public class FormKaiokenStackableData implements IFormKaiokenStackables {
     }
 
     @Override
-    public void setKaioState2Balance(int state2, boolean strained, float value){
-        if(state2 < 0)
+    public void setKaioState2Balance(int state2, boolean strained, float value) {
+        if (state2 < 0)
             state2 = 0;
-        if(state2 > 5)
+        if (state2 > 5)
             state2 = 5;
 
-        if(strained)
+        if (strained)
             this.kaiokenStrainedBalanceValue[state2] = value;
         else
             this.kaiokenBalanceValue[state2] = value;
@@ -130,9 +130,9 @@ public class FormKaiokenStackableData implements IFormKaiokenStackables {
 
     @Override
     public float getKaioState2Balance(int state2, boolean strained) {
-        if(state2 < 0)
+        if (state2 < 0)
             state2 = 0;
-        if(state2 > 5)
+        if (state2 > 5)
             state2 = 5;
 
         return (strained ? kaiokenStrainedBalanceValue[state2] : kaiokenBalanceValue[state2]);
@@ -140,9 +140,9 @@ public class FormKaiokenStackableData implements IFormKaiokenStackables {
 
     @Override
     public float getKaiokenAttributeMulti(int state2) {
-        if(state2 < 0)
+        if (state2 < 0)
             return 1;
-        if(state2 >= kaiokenMultis.length)
+        if (state2 >= kaiokenMultis.length)
             return 1;
 
         return kaiokenMultis[state2];
@@ -155,16 +155,16 @@ public class FormKaiokenStackableData implements IFormKaiokenStackables {
 
     @Override
     public void setKaiokenAttributeMulti(int state2, float multi) {
-        if(state2 < 0)
+        if (state2 < 0)
             return;
-        if(state2 >= kaiokenMultis.length)
+        if (state2 >= kaiokenMultis.length)
             return;
         kaiokenMultis[state2] = multi;
     }
 
     @Override
     public void setKaiokenMultiScalar(float scalar) {
-        if(scalar < 0)
+        if (scalar < 0)
             scalar = 0;
         this.attributeMultiScalar = scalar;
     }
@@ -183,13 +183,13 @@ public class FormKaiokenStackableData implements IFormKaiokenStackables {
      * @param state2 0 - Lowest kaioken state (Ex. Kaioken x2), 5 - highest kaioken state
      */
     public float getCurrentFormMulti(int state2) {
-        if(state2 < 0)
+        if (state2 < 0)
             return 1;
-        if(state2 >= kaiokenMultis.length)
+        if (state2 >= kaiokenMultis.length)
             return 1;
 
-        if(isUsingGlobalAttributeMultis){
-            return JRMCoreH.TransKaiDmg[state2+1] * attributeMultiScalar;
+        if (isUsingGlobalAttributeMultis) {
+            return JRMCoreH.TransKaiDmg[state2 + 1] * attributeMultiScalar;
         } else {
             return kaiokenMultis[state2] * attributeMultiScalar;
         }

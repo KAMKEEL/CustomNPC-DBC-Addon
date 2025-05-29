@@ -58,16 +58,6 @@ public class ClientEventHandler {
                     TransformController.decrementRage();
                 }
             }
-            //            if (Mouse.isButtonDown(3) || Mouse.isButtonDown(2)) {
-            //                Minecraft.getMinecraft().refreshResources();
-            //                ShaderHelper.loadShaders(true);
-            //            }
-            //            if (Keyboard.isKeyDown(Keyboard.KEY_F10)) {
-            //                for (int i : PostProcessing.bloomTextures) {
-            //                    if (i > 0)
-            //                        PostProcessing.saveTextureToPNG(i);
-            //                }
-            //            }
         }
     }
 
@@ -109,10 +99,6 @@ public class ClientEventHandler {
         if (formData == null)
             return false;
 
-        boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ClientCache.allowTransformBypass;
-        if (allowBypass)
-            return true;
-
         DBCData dbcData = DBCData.getClient();
 
         if (!form.raceEligible(dbcData.Race))
@@ -130,14 +116,28 @@ public class ClientEventHandler {
             return false;
 
 
+        boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ClientCache.allowTransformBypass;
+
         if (form.requiredForm.containsKey((int) dbcData.Race)) {
-            return form.requiredForm.get((int) dbcData.Race) == dbcData.State;
+            return allowBypass || form.requiredForm.get((int) dbcData.Race) == dbcData.State;
         } else {
-            if (form.parentID != -1 && form.isFromParentOnly()) {
-                return form.parentID == formData.currentForm;
+            if (form.hasParent() && form.isFromParentOnly()) {
+                return allowBypass || form.parentID == formData.currentForm;
             }
         }
         return true;
+    }
+
+    @SubscribeEvent
+    public void onMousePress(InputEvent.MouseInputEvent e) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.currentScreen != null)
+            return;
+
+        if (KeyHandler.FormWheelKey.isPressed()) {
+            if (PlayerDataUtil.getClientDBCInfo() != null)
+                mc.displayGuiScreen(new HUDFormWheel());
+        }
     }
 
     @SubscribeEvent
@@ -163,7 +163,7 @@ public class ClientEventHandler {
                             return;
                         }
 
-                        if (form.hasChild()) {
+                        if (form != null && form.hasChild()) {
                             form = (Form) form.getChild();
                             if (!formData.hasFormUnlocked(form.getID())) {
                                 Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.nextUnlocked"));
@@ -184,14 +184,15 @@ public class ClientEventHandler {
                                 return;
                             }
 
+                            boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ClientCache.allowTransformBypass;
                             if (form.requiredForm.containsKey((int) dbcData.Race)) {
-                                if (form.requiredForm.get((int) dbcData.Race) != dbcData.State) {
+                                if (!allowBypass && form.requiredForm.get((int) dbcData.Race) != dbcData.State) {
                                     Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.wrongDBC"));
                                     return;
                                 }
                             } else {
                                 // Must be in Parent Form to Transform
-                                if (form.parentID != -1 && form.isFromParentOnly()) {
+                                if (form.parentID != -1 && form.isFromParentOnly() && !allowBypass) {
                                     if (form.parentID != formData.currentForm) {
                                         Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.transformFromParent"));
                                         return;
@@ -210,7 +211,7 @@ public class ClientEventHandler {
                             float healthReq = (form.mastery.healthRequirement >= 100f || form.mastery.healthRequirement <= 0f) ? 150 : form.mastery.healthRequirement * form.mastery.calculateMulti("healthRequirement", formData.getFormLevel(form.id));
 
                             if (dbcData.stats.getCurrentBodyPercentage() > healthReq) {
-                                Utility.sendMessage(mc.thePlayer, "§c" + StatCollector.translateToLocalFormatted("npcdbc.healthRequirement", healthReq));
+                                Utility.sendMessage(mc.thePlayer, "§c" + StatCollector.translateToLocalFormatted("npcdbc.healthRequirement", healthReq, "§c"));
                                 return;
                             }
 
@@ -218,10 +219,6 @@ public class ClientEventHandler {
                                 Utility.sendMessage(mc.thePlayer, translate("§c", "npcdbc.pain"));
                                 return;
                             }
-
-                            boolean allowBypass = form.mastery.canInstantTransform(formData.getFormLevel(form.id)) && ClientCache.allowTransformBypass;
-                            if (allowBypass)
-                                return;
                         }
                     }
                 }

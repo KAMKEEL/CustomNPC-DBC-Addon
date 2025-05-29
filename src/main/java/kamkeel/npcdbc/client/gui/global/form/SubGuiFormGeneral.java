@@ -17,7 +17,6 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
 
     public SubGuiFormGeneral(GuiNPCManageForms parent, Form form) {
         this.form = form;
-        ;
         this.parent = parent;
 
         setBackground("menubg.png");
@@ -122,14 +121,14 @@ public class SubGuiFormGeneral extends SubGuiInterface implements ISubGuiListene
             form.fromParentOnly = button.getValue() == 1;
         }
         if (button.id == 11) {
-            this.setSubGui(new SubGuiSelectForm(11,false, false));
+            this.setSubGui(new SubGuiSelectForm(11, false, false));
         }
         if (button.id == 12) {
             form.parentID = -1;
             initGui();
         }
         if (button.id == 13) {
-            this.setSubGui(new SubGuiSelectForm(13,false, false));
+            this.setSubGui(new SubGuiSelectForm(13, false, false));
         }
         if (button.id == 14) {
             form.childID = -1;

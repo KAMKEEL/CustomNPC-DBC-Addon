@@ -1,17 +1,17 @@
 package kamkeel.npcdbc.controllers;
 
+import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
-import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.data.outline.Outline;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.DBCInfoSync;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
+import kamkeel.npcs.network.enums.EnumSyncAction;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import noppes.npcs.CustomNpcs;
 import noppes.npcs.LogWriter;
-import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.*;
@@ -36,6 +36,7 @@ public class OutlineController implements IOutlineHandler {
     public void load() {
         customOutlines = new HashMap<>();
         bootOrder = new HashMap<>();
+        lastUsedID = 0;
         LogWriter.info("Loading custom outlines...");
         readCustomOutlineMap();
         loadOutlines();
@@ -97,7 +98,7 @@ public class OutlineController implements IOutlineHandler {
             if (file2.exists())
                 file2.delete();
             file.renameTo(file2);
-            PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_UPDATE, nbtTagCompound, -1).generatePacket());
+            DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.UPDATE, -1, nbtTagCompound));
         } catch (Exception e) {
             LogWriter.except(e);
         }
@@ -202,7 +203,7 @@ public class OutlineController implements IOutlineHandler {
                     continue;
                 if (file.getName().equals(foundOutline.name + ".json")) {
                     file.delete();
-                    PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundOutline.getID()).generatePacket());
+                    DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.REMOVE, foundOutline.getID(), new NBTTagCompound()));
                     break;
                 }
             }
@@ -222,7 +223,7 @@ public class OutlineController implements IOutlineHandler {
                         continue;
                     if (file.getName().equals(foundOutline.name + ".json")) {
                         file.delete();
-                        PacketHandler.Instance.sendToAll(new DBCInfoSync(DBCSyncType.OUTLINE, EnumPacketClient.SYNC_REMOVE, new NBTTagCompound(), foundOutline.getID()).generatePacket());
+                        DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.REMOVE, foundOutline.getID(), new NBTTagCompound()));
                         break;
                     }
                 }

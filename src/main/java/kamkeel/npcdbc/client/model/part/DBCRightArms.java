@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.client.model.part;
 
-import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -55,13 +55,13 @@ public class DBCRightArms extends ModelDBCPartInterface {
         if (!display.enabled)
             return;
 
-        if (!ClientProxy.renderingOutline && display.outlineID != -1) {
+        if (!ClientConstants.renderingOutline && display.outlineID != -1) {
             int id = !ArcoRightShoulder.isHidden ? 0 : RenderEventHandler.TAIL_STENCIL_ID;
             RenderEventHandler.enableStencilWriting((entity.getEntityId() + id) % 256);
         }
 
         GL11.glPushMatrix();
-        if (ClientProxy.renderingOutline) {
+        if (ClientConstants.renderingOutline) {
             if (!RightArmSpike.isHidden) {
                 GL11.glTranslatef(.0525f, -0.045f, 0);
                 GL11.glScaled(1.15, 1.15, 1.15);
@@ -69,10 +69,6 @@ public class DBCRightArms extends ModelDBCPartInterface {
             int id = !ArcoRightShoulder.isHidden ? 0 : RenderEventHandler.TAIL_STENCIL_ID;
             disableStencilWriting((entity.getEntityId() + id) % 256, false);
         }
-
-        this.ArcoRightShoulder.rotateAngleY = base.bipedRightArm.rotateAngleY;
-        this.ArcoRightShoulder.rotateAngleX = base.bipedRightArm.rotateAngleX;
-        this.ArcoRightShoulder.rotateAngleZ = base.bipedRightArm.rotateAngleZ;
 
         if (display.useSkin) {
             bodyCM = display.bodyCM;
@@ -84,9 +80,9 @@ public class DBCRightArms extends ModelDBCPartInterface {
             if (form != null) {
                 FormDisplay d = form.display;
                 if (d.hasColor("bodycm"))
-                    bodyCM = d.bodyCM;
+                    bodyCM = d.bodyColors.bodyCM;
                 if (d.hasColor("bodyc2"))
-                    bodyC2 = d.bodyC2;
+                    bodyC2 = d.bodyColors.bodyC2;
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
@@ -104,10 +100,10 @@ public class DBCRightArms extends ModelDBCPartInterface {
             super.render(par1);
         }
         GL11.glPopMatrix();
-        if (!ClientProxy.renderingOutline && display.outlineID != -1)
+        if (!ClientConstants.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
 
-        if (ClientProxy.renderingOutline) {
+        if (ClientConstants.renderingOutline) {
             disableStencilWriting((entity.getEntityId()) % 256, false);
         }
     }

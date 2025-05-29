@@ -246,7 +246,7 @@ public class FormMastery implements IFormMastery {
                         return tailCutChanceMultiMinOrMax;
                 }
             case "ppcost":
-                switch (type1.toLowerCase()){
+                switch (type1.toLowerCase()) {
                     case "flat":
                         return powerPointCostMultiFlat;
                     case "perlevel":
@@ -255,7 +255,7 @@ public class FormMastery implements IFormMastery {
                         return powerPointCostMinOrMax;
                 }
             case "destroyerkidamage":
-                switch(type1.toLowerCase()){
+                switch (type1.toLowerCase()) {
                     case "flat":
                         return destroyerKiDamageMultiFlat;
                     case "perlevel":
@@ -384,7 +384,7 @@ public class FormMastery implements IFormMastery {
                         break;
                 }
             case "ppcost":
-                switch (type1.toLowerCase()){
+                switch (type1.toLowerCase()) {
                     case "flat":
                         powerPointCostMultiFlat = value;
                     case "perlevel":
@@ -393,7 +393,7 @@ public class FormMastery implements IFormMastery {
                         powerPointCostMinOrMax = value;
                 }
             case "destroyerkidamage":
-                switch(type1.toLowerCase()){
+                switch (type1.toLowerCase()) {
                     case "flat":
                         destroyerKiDamageMultiFlat = value;
                     case "perlevel":
@@ -615,7 +615,7 @@ public class FormMastery implements IFormMastery {
     public void readFromNBT(NBTTagCompound compound) {
         NBTTagCompound formMastery = compound.getCompoundTag("formMastery");
 
-        maxLevel = formMastery.getInteger("maxLevel");
+        maxLevel = formMastery.getFloat("maxLevel");
         instantTransformationUnlockLevel = formMastery.getFloat("instantTransformationUnlockLevel");
         kiDrain = formMastery.getFloat("kiDrain");
         kiDrainTimer = formMastery.getInteger("kiDrainTimer");
@@ -672,7 +672,7 @@ public class FormMastery implements IFormMastery {
         tailCutChanceMultiPerLevel = tailCutChanceMulti.getFloat("perLevel");
         tailCutChanceMultiMinOrMax = tailCutChanceMulti.getFloat("minOrMax");
 
-        if(formMastery.hasKey("racialBonuses")){
+        if (formMastery.hasKey("racialBonuses")) {
             NBTTagCompound racialBonuses = formMastery.getCompoundTag("racialBonuses");
 
             absorptionEnabled = racialBonuses.getBoolean("absorptionEnabled");
@@ -692,7 +692,7 @@ public class FormMastery implements IFormMastery {
             powerPointCostMinOrMax = powerPointMastery.getFloat("minOrMax");
         }
 
-        if(formMastery.hasKey("destroyerConfigs")){
+        if (formMastery.hasKey("destroyerConfigs")) {
             NBTTagCompound destroyerConfigs = formMastery.getCompoundTag("destroyerConfigs");
             destroyerEnabled = destroyerConfigs.getBoolean("enabled");
             destroyerKiDamageMultiFlat = destroyerConfigs.getFloat("flat");
@@ -803,30 +803,30 @@ public class FormMastery implements IFormMastery {
         formMastery.setTag("tailCutMulti", tailCutChanceMulti);
 
         NBTTagCompound racialBonuses = new NBTTagCompound();
-            racialBonuses.setBoolean("powerPointEnabled", powerPointEnabled);
-            racialBonuses.setInteger("powerPointCost", powerPointCost);
-            racialBonuses.setInteger("powerPointGrowth", powerPointGrowth);
+        racialBonuses.setBoolean("powerPointEnabled", powerPointEnabled);
+        racialBonuses.setInteger("powerPointCost", powerPointCost);
+        racialBonuses.setInteger("powerPointGrowth", powerPointGrowth);
 
-            racialBonuses.setFloat("powerPointMultiNormal", powerPointMultiNormal);
-            racialBonuses.setFloat("powerPointMultiBasedOnPoints", powerPointMultiBasedOnPoints);
+        racialBonuses.setFloat("powerPointMultiNormal", powerPointMultiNormal);
+        racialBonuses.setFloat("powerPointMultiBasedOnPoints", powerPointMultiBasedOnPoints);
 
-            racialBonuses.setBoolean("absorptionEnabled", absorptionEnabled);
-            racialBonuses.setFloat("absorptionMulti", absorptionMulti);
+        racialBonuses.setBoolean("absorptionEnabled", absorptionEnabled);
+        racialBonuses.setFloat("absorptionMulti", absorptionMulti);
 
-            NBTTagCompound powerPointMastery = new NBTTagCompound();
-                powerPointMastery.setFloat("flat", powerPointCostMultiFlat);
-                powerPointMastery.setFloat("perLevel", powerPointCostPerLevel);
-                powerPointMastery.setFloat("minOrMax", powerPointCostMinOrMax);
-            racialBonuses.setTag("powerPointMastery", powerPointMastery);
+        NBTTagCompound powerPointMastery = new NBTTagCompound();
+        powerPointMastery.setFloat("flat", powerPointCostMultiFlat);
+        powerPointMastery.setFloat("perLevel", powerPointCostPerLevel);
+        powerPointMastery.setFloat("minOrMax", powerPointCostMinOrMax);
+        racialBonuses.setTag("powerPointMastery", powerPointMastery);
 
         formMastery.setTag("racialBonuses", racialBonuses);
 
         NBTTagCompound destroyerConfigs = new NBTTagCompound();
-            destroyerConfigs.setBoolean("enabled", destroyerEnabled);
-            destroyerConfigs.setFloat("flat", destroyerKiDamageMultiFlat);
-            destroyerConfigs.setFloat("perLevel", destroyerKiDamageMultiPerLevel);
-            destroyerConfigs.setFloat("minOrMax", destroyerKiDamageMultiMinOrMax);
-            destroyerConfigs.setFloat("damage", destroyerKiDamage);
+        destroyerConfigs.setBoolean("enabled", destroyerEnabled);
+        destroyerConfigs.setFloat("flat", destroyerKiDamageMultiFlat);
+        destroyerConfigs.setFloat("perLevel", destroyerKiDamageMultiPerLevel);
+        destroyerConfigs.setFloat("minOrMax", destroyerKiDamageMultiMinOrMax);
+        destroyerConfigs.setFloat("damage", destroyerKiDamage);
         formMastery.setTag("destroyerConfigs", destroyerConfigs);
 
         NBTTagCompound update = new NBTTagCompound();
@@ -875,35 +875,35 @@ public class FormMastery implements IFormMastery {
 
     @Override
     public void setPowerPointCost(int cost) {
-        if(cost < 0)
+        if (cost < 0)
             cost = 0;
         this.powerPointCost = cost;
     }
 
     @Override
     public void setPowerPointGrowth(int growth) {
-        if(growth < 0)
+        if (growth < 0)
             growth = 0;
         this.powerPointGrowth = growth;
     }
 
     @Override
     public void setPowerPointMultiNormal(float multi) {
-        if(multi < 0)
+        if (multi < 0)
             multi = 0;
         this.powerPointMultiNormal = multi;
     }
 
     @Override
     public void setPowerPointMultiBasedOnPoints(float multi) {
-        if(multi < 0)
+        if (multi < 0)
             multi = 0;
         this.powerPointMultiBasedOnPoints = multi;
     }
 
     @Override
     public void setAbsorptionMulti(float multi) {
-        if(multi < 0)
+        if (multi < 0)
             multi = 0;
         this.absorptionMulti = multi;
     }

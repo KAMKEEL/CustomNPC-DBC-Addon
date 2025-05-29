@@ -1,10 +1,8 @@
 package kamkeel.npcdbc.data.form;
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.api.form.IForm;
-import kamkeel.npcdbc.api.form.IFormDisplay;
-import kamkeel.npcdbc.api.form.IFormMastery;
-import kamkeel.npcdbc.api.form.IFormStackable;
+import kamkeel.npcdbc.api.form.*;
+import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -31,6 +29,9 @@ public class Form implements IForm {
     public FormMastery mastery = new FormMastery(this);
     public FormDisplay display = new FormDisplay(this);
     public FormStackable stackable = new FormStackable(this);
+    public FormAdvanced advanced = new FormAdvanced(this);
+    public FormAttributes customAttributes = new FormAttributes(this);
+    public FormMagicData magicData = new FormMagicData(this);
 
     /**
      * ID of parent and child forms of this
@@ -46,6 +47,8 @@ public class Form implements IForm {
     public float strengthMulti = 1.0f;
     public float dexMulti = 1.0f;
     public float willMulti = 1.0f;
+
+    public int mindRequirement = 0;
 
     public String ascendSound = "jinryuudragonbc:1610.sss", descendSound = CustomNpcPlusDBC.ID + ":transformationSounds.GodDescend";
 
@@ -71,6 +74,7 @@ public class Form implements IForm {
         parentID = compound.getInteger("parentID");
         fromParentOnly = compound.getBoolean("fromParentOnly");
         requiredForm = NBTTags.getIntegerByteMap(compound.getTagList("requiredForm", 10));
+        mindRequirement = compound.getInteger("mindRequirement");
 
         NBTTagCompound attributes = compound.getCompoundTag("attributes");
         strengthMulti = attributes.getFloat("strMulti");
@@ -84,6 +88,9 @@ public class Form implements IForm {
         mastery.readFromNBT(compound);
         display.readFromNBT(compound);
         stackable.readFromNBT(compound);
+        advanced.readFromNBT(compound);
+        customAttributes.readFromNBT(compound);
+        magicData.readFromNBT(compound);
     }
 
     public NBTTagCompound writeToNBT() {
@@ -96,6 +103,7 @@ public class Form implements IForm {
         compound.setInteger("childID", childID);
         compound.setInteger("parentID", parentID);
         compound.setBoolean("fromParentOnly", fromParentOnly);
+        compound.setInteger("mindRequirement", mindRequirement);
         compound.setTag("requiredForm", NBTTags.nbtIntegerByteMap(requiredForm));
 
         NBTTagCompound attributes = new NBTTagCompound();
@@ -112,6 +120,9 @@ public class Form implements IForm {
         mastery.writeToNBT(compound);
         display.writeToNBT(compound);
         stackable.writeToNBT(compound);
+        advanced.writeToNBT(compound);
+        customAttributes.writeToNBT(compound);
+        magicData.writeToNBT(compound);
         return compound;
     }
 
@@ -230,16 +241,26 @@ public class Form implements IForm {
 
     @Override
     public void removeFromPlayer(IPlayer player) {
+        removeFromPlayer(player, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
+    }
+
+    public void removeFromPlayer(String playerName) {
+        removeFromPlayer(playerName, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
+    }
+
+    @Override
+    public void removeFromPlayer(IPlayer player, boolean removesMastery) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo((EntityPlayer) player.getMCEntity());
-        formData.removeForm(this);
+        formData.removeForm(this, removesMastery);
         if (formData.selectedForm == this.id)
             formData.selectedForm = -1;
 
         formData.updateClient();
     }
 
-    public void removeFromPlayer(String playerName) {
-        removeFromPlayer(NpcAPI.Instance().getPlayer(playerName));
+    @Override
+    public void removeFromPlayer(String playerName, boolean removesMastery) {
+        removeFromPlayer(NpcAPI.Instance().getPlayer(playerName), removesMastery);
     }
 
     @Override
@@ -364,7 +385,7 @@ public class Form implements IForm {
 
     @Override
     public boolean hasChild() {
-        return childID != -1;
+        return childID != -1 && FormController.getInstance().has(childID);
     }
 
     public void removeChildForm() {
@@ -402,7 +423,7 @@ public class Form implements IForm {
 
     @Override
     public boolean hasParent() {
-        return parentID != -1;
+        return parentID != -1 && FormController.getInstance().has(parentID);
     }
 
     public void removeParentForm() {
@@ -427,6 +448,21 @@ public class Form implements IForm {
     @Override
     public IFormStackable getStackable() {
         return stackable;
+    }
+
+    @Override
+    public IFormAdvanced getAdvanced() {
+        return advanced;
+    }
+
+    @Override
+    public void setMindRequirement(int mind) {
+        mindRequirement = Math.max(mind, 0);
+    }
+
+    @Override
+    public int getMindRequirement() {
+        return mindRequirement;
     }
 
     @Override

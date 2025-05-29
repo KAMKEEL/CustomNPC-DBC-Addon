@@ -5,8 +5,10 @@ import JinRyuu.DragonBC.common.Npcs.RenderDBC;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.model.ModelAura;
 import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -31,6 +33,7 @@ import static JinRyuu.DragonBC.common.Npcs.RenderAura2.cf;
 import static JinRyuu.DragonBC.common.Npcs.RenderAura2.glColor4f;
 import static org.lwjgl.opengl.GL11.*;
 
+@SideOnly(Side.CLIENT)
 public class AuraRenderer extends RenderDBC {
     public static AuraRenderer Instance;
     String auraDir = "jinryuudragonbc:";
@@ -53,7 +56,7 @@ public class AuraRenderer extends RenderDBC {
 
     public void animatePulsing() {
         if (!DBCClient.mc.isGamePaused()) {
-            if (System.currentTimeMillis() - animationStartTime > 200 / 2 / pulseMax) {
+            if (System.currentTimeMillis() - animationStartTime > 400 / 2 / pulseMax) {
                 if (this.throbOut) {
                     if (pulseAnimation >= pulseMax)
                         this.throbOut = false;
@@ -76,20 +79,12 @@ public class AuraRenderer extends RenderDBC {
         double interPosX = aura.lastTickPosX + (aura.posX - aura.lastTickPosX) * (double) partialTicks - RenderManager.renderPosX;
         double interPosY = aura.lastTickPosY + (aura.posY - aura.lastTickPosY) * (double) partialTicks - RenderManager.renderPosY;
         double interPosZ = aura.lastTickPosZ + (aura.posZ - aura.lastTickPosZ) * (double) partialTicks - RenderManager.renderPosZ;
-        if (ClientProxy.renderingGUI)
+        if (ClientConstants.renderingGUI)
             interPosX = interPosY = interPosZ = 0;
 
         int speed = aura.speed;
         int age = Math.max(1, aura.ticksExisted % speed);
         Random rand = new Random();
-
-        glStencilFunc(GL_ALWAYS, aura.entity.getEntityId() % 256, 0xFF);
-        glStencilMask(0xFF);
-        float r = rand.nextInt(50);
-        if (aura.hasLightning && r < 10 && age < 10)
-            lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
-        glStencilFunc(GL_GREATER, aura.entity.getEntityId() % 256, 0xFF);
-        glStencilMask(0x0);
 
 
         if (aura.type3D == EnumAuraTypes3D.None)
@@ -103,13 +98,13 @@ public class AuraRenderer extends RenderDBC {
         // alpha = 1f;
         aura.setTexture(1, CustomNpcPlusDBC.ID + ":textures/aura/auraalpha.png");
 
-        pulseMax = 5;
+        pulseMax = 4;
         if (pulseMax > 0)
             animatePulsing();
         else
             pulseAnimation = 0;
 
-        float pulsingSize = pulseAnimation * 0.03f;
+        float pulsingSize = pulseAnimation * 0.05f;
         float kaiokenSize = 0;
 
         boolean isKaioken = aura.isKaioken || aura.aura.display.overrideDBCAura && aura.isInKaioken;
@@ -128,14 +123,22 @@ public class AuraRenderer extends RenderDBC {
             yOffset -= 0.4 - (sizeStateReleaseFactor / 5) * 0.4;
         glDisable(GL_LIGHTING);
         glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         //   if (aura.isKaioken)
         //   glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         glAlphaFunc(GL_GREATER, 0);
         glDepthMask(false);
         glPushMatrix();
 
+        glStencilFunc(GL_ALWAYS, aura.entity.getEntityId() % 256, 0xFF);
+        glStencilMask(0xFF);
+        float r = rand.nextInt(50);
+        if (aura.hasLightning && r < 5 && age < 10)
+            lightning(aura, interPosX, interPosY + aura.getYOffset(), interPosZ);
+        glStencilFunc(GL_GREATER, aura.entity.getEntityId() % 256, 0xFF);
+        glStencilMask(0x0);
 
+
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glPushMatrix();
         glTranslated(interPosX, interPosY + yOffset, interPosZ);
         glRotatef(180, 0, 0, 1);
@@ -221,7 +224,7 @@ public class AuraRenderer extends RenderDBC {
     }
 
     private void lightning(EntityAura aura, double par2, double par4, double par6) {
-        if(!JGConfigClientSettings.CLIENT_DA12)
+        if (!JGConfigClientSettings.CLIENT_DA12)
             return;
 
         Random rand = new Random();
@@ -239,8 +242,7 @@ public class AuraRenderer extends RenderDBC {
         boolean client = Minecraft.getMinecraft().thePlayer == aura.entity;
         float clientOffset = !client ? 1.62f : 0;
         glTranslated(par2, par4 + clientOffset, par6);
-        glScalef(0.75f, 1f, 0.75f);
-
+        glScalef(0.85f, 1f, 0.85f);
 
         double[] adouble = new double[8];
         double[] adouble1 = new double[8];
@@ -330,7 +332,7 @@ public class AuraRenderer extends RenderDBC {
                 }
             }
         }
-        if (rand.nextInt(100) < 50) {
+        if (rand.nextInt(100) < 5) {
             if (aura.isGUIAura)
                 Minecraft.getMinecraft().thePlayer.playSound("jinryuudragonbc:1610.spark", 0.0375F, 00.90f + rand.nextInt(3) * 0.05f);
             else
@@ -462,16 +464,22 @@ public class AuraRenderer extends RenderDBC {
 //            float effectiveSize = size * release* 0.025f;//(float) (size * ValueUtil.clamp(release, 15, 25) *(1) );
             //   float factor = effectiveSize / size * 10;
             //   return effectiveSize ;
-            if (data.getFormID() > -1) {
-                Form form = PlayerDataUtil.getForm(data.getAuraEntity().entity);
-                if (form.display.hairType.equals("ssj"))
-                    sizeFactor = 1;
-                else if (form.display.hairType.equals("ssj2"))
-                    sizeFactor = 1.5f;
-                else if (form.display.hairType.equals("ssj3"))
-                    sizeFactor = 2;
-                else if (form.display.hairType.equals("ssj4"))
-                    sizeFactor = 2.5f;
+            Form form = PlayerDataUtil.getForm(data.getAuraEntity().entity);
+            if (form != null) {
+                switch (form.display.hairType) {
+                    case "ssj":
+                        sizeFactor = 1;
+                        break;
+                    case "ssj2":
+                        sizeFactor = 1.5f;
+                        break;
+                    case "ssj3":
+                        sizeFactor = 2;
+                        break;
+                    case "ssj4":
+                        sizeFactor = 2.5f;
+                        break;
+                }
             }
             int release = data.getRelease();
             float size = (float) ValueUtil.clamp(npc.display.modelSize, 1, 20) / 5;

@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(JRMCoreGui.class)
 public class MixinJRMCoreGui {
 
-    @Redirect(method = "renderActionMenu", at=@At(value="INVOKE", target = "Lorg/lwjgl/input/Keyboard;getKeyName(I)Ljava/lang/String;"), remap = false)
-    private String fixWrongKeyCodeCrash(int key){
+    @Redirect(method = "renderActionMenu", at = @At(value = "INVOKE", target = "Lorg/lwjgl/input/Keyboard;getKeyName(I)Ljava/lang/String;"), remap = false)
+    private String fixWrongKeyCodeCrash(int key) {
         return GameSettings.getKeyDisplayString(key);
     }
 }

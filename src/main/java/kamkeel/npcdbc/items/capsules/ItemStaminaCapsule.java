@@ -11,6 +11,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -80,6 +81,7 @@ public class ItemStaminaCapsule extends Item {
 
         return EnumRarity.epic;
     }
+
     /**
      * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
      */
@@ -100,9 +102,9 @@ public class ItemStaminaCapsule extends Item {
         if (meta < 0 || meta >= EnumStaminaCapsules.count())
             meta = 0;
 
-        UUID playerUUID = player.getUniqueID();
+        UUID playerUUID = Utility.getUUID(player);
         long remainingTime = CapsuleController.canUseStaminaCapsule(playerUUID, meta);
-        if(remainingTime > 0){
+        if (remainingTime > 0) {
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
@@ -128,8 +130,7 @@ public class ItemStaminaCapsule extends Item {
     }
 
     @Override
-    public EnumAction getItemUseAction(ItemStack stack)
-    {
+    public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.block;
     }
 

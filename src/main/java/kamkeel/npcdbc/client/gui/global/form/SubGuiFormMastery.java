@@ -143,7 +143,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.addTextField(new GuiNpcTextField(201, this, 135, y, 40, 20, String.valueOf(mastery.kiDrain)));
             scrollWindow.getTextField(201).setMaxStringLength(10);
             scrollWindow.getTextField(201).floatsOnly = true;
-            scrollWindow.getTextField(201).setMinMaxDefaultFloat(0, 100, 1);
+            scrollWindow.getTextField(201).setMinMaxDefaultFloat(-100, 100, 1);
             scrollWindow.getLabel(201).color = 0xffffff;
 
             y += 23;
@@ -179,25 +179,25 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
 
         y += 23;
         maxScroll += 23;
-        scrollWindow.addLabel(new GuiNpcLabel(900, "mastery.powerPointSettings", 4, y+5));
+        scrollWindow.addLabel(new GuiNpcLabel(900, "mastery.powerPointSettings", 4, y + 5));
         scrollWindow.getLabel(900).color = 0xffffff;
         scrollWindow.addButton(new GuiNpcButton(900, 200, y, 120, 20, new String[]{"display.hide", "display.show"}, showPowerPoint ? 1 : 0));
         if (showPowerPoint) {
             y += 23;
-            maxScroll += (int) (23*5.5);
-            scrollWindow.addLabel(new GuiNpcLabel(901, "gui.enabled", 4, y+5));
+            maxScroll += (int) (23 * 5.5);
+            scrollWindow.addLabel(new GuiNpcLabel(901, "gui.enabled", 4, y + 5));
             scrollWindow.getLabel(901).color = 0xffffff;
             scrollWindow.addButton(new GuiNpcButtonYesNo(901, 135, y, 40, 20, mastery.powerPointEnabled));
 
             y += 23;
-            scrollWindow.addLabel(new GuiNpcLabel(902, "mastery.powerPointNormalMulti", 4, y+5));
+            scrollWindow.addLabel(new GuiNpcLabel(902, "mastery.powerPointNormalMulti", 4, y + 5));
             scrollWindow.getLabel(902).color = 0xffffff;
             scrollWindow.addTextField(new GuiNpcTextField(902, this, 135, y, 40, 20, String.valueOf(mastery.powerPointMultiNormal)));
             scrollWindow.getTextField(902).floatsOnly = true;
             scrollWindow.getTextField(902).setMaxStringLength(10);
             scrollWindow.getTextField(902).setMinMaxDefaultFloat(0, 10000, 1);
 
-            scrollWindow.addLabel(new GuiNpcLabel(903, "mastery.powerPointMultiOnPoints", 180, y+5));
+            scrollWindow.addLabel(new GuiNpcLabel(903, "mastery.powerPointMultiOnPoints", 180, y + 5));
             scrollWindow.getLabel(903).color = 0xffffff;
             scrollWindow.addTextField(new GuiNpcTextField(903, this, 295, y, 40, 20, String.valueOf(mastery.powerPointMultiBasedOnPoints)));
             scrollWindow.getTextField(903).floatsOnly = true;
@@ -212,7 +212,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             scrollWindow.getTextField(904).setMinMaxDefault(0, 10000, 0);
             scrollWindow.getLabel(904).color = 0xffffff;
 
-            y += (int) (23*1.5);
+            y += (int) (23 * 1.5);
             scrollWindow.addLabel(new GuiNpcLabel(905, "mastery.powerPointCost", 4, y + 5));
             scrollWindow.addTextField(new GuiNpcTextField(905, this, 135, y, 40, 20, String.valueOf(mastery.powerPointCost)));
             scrollWindow.getTextField(905).setMaxStringLength(10);
@@ -246,18 +246,18 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
 
         y += 23;
         maxScroll += 23;
-        scrollWindow.addLabel(new GuiNpcLabel(1000, "mastery.absorptionSettings", 4, y+5));
+        scrollWindow.addLabel(new GuiNpcLabel(1000, "mastery.absorptionSettings", 4, y + 5));
         scrollWindow.getLabel(1000).color = 0xffffff;
         scrollWindow.addButton(new GuiNpcButton(1000, 200, y, 120, 20, new String[]{"display.hide", "display.show"}, showAbsorption ? 1 : 0));
         if (showAbsorption) {
             y += 23;
-            maxScroll += 23*2;
-            scrollWindow.addLabel(new GuiNpcLabel(1001, "gui.enabled", 4, y+5));
+            maxScroll += 23 * 2;
+            scrollWindow.addLabel(new GuiNpcLabel(1001, "gui.enabled", 4, y + 5));
             scrollWindow.getLabel(1001).color = 0xffffff;
             scrollWindow.addButton(new GuiNpcButtonYesNo(1001, 135, y, 40, 20, mastery.absorptionEnabled));
 
             y += 23;
-            scrollWindow.addLabel(new GuiNpcLabel(1002, "mastery.absorptionMulti", 4, y+5));
+            scrollWindow.addLabel(new GuiNpcLabel(1002, "mastery.absorptionMulti", 4, y + 5));
             scrollWindow.getLabel(1002).color = 0xffffff;
             scrollWindow.addTextField(new GuiNpcTextField(1002, this, 135, y, 40, 20, String.valueOf(mastery.absorptionMulti)));
             scrollWindow.getTextField(1002).floatsOnly = true;
@@ -267,13 +267,13 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
 
         y += 23;
         maxScroll += 23;
-        scrollWindow.addLabel(new GuiNpcLabel(2000, "mastery.destroyerSettings", 4, y+5));
+        scrollWindow.addLabel(new GuiNpcLabel(2000, "mastery.destroyerSettings", 4, y + 5));
         scrollWindow.getLabel(2000).color = 0xffffff;
         scrollWindow.addButton(new GuiNpcButton(2000, 200, y, 120, 20, new String[]{"display.hide", "display.show"}, showDestroyer ? 1 : 0));
         if (showDestroyer) {
             y += 23;
-            maxScroll += 23*3;
-            scrollWindow.addLabel(new GuiNpcLabel(2001, "gui.enabled", 4, y+5));
+            maxScroll += 23 * 3;
+            scrollWindow.addLabel(new GuiNpcLabel(2001, "gui.enabled", 4, y + 5));
             scrollWindow.getLabel(2001).color = 0xffffff;
             scrollWindow.addButton(new GuiNpcButtonYesNo(2001, 135, y, 40, 20, mastery.destroyerEnabled));
 
@@ -785,23 +785,23 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
             showTailCutChance = !showTailCutChance;
         }
 
-        if(button.id == 900){
+        if (button.id == 900) {
             showPowerPoint = !showPowerPoint;
         }
-        if(button.id == 901){
+        if (button.id == 901) {
             mastery.powerPointEnabled = !mastery.powerPointEnabled;
         }
 
-        if(button.id == 1000){
+        if (button.id == 1000) {
             showAbsorption = !showAbsorption;
         }
-        if(button.id == 1001){
+        if (button.id == 1001) {
             mastery.absorptionEnabled = !mastery.absorptionEnabled;
         }
 
-        if(button.id == 2000)
+        if (button.id == 2000)
             showDestroyer = !showDestroyer;
-        if(button.id == 2001)
+        if (button.id == 2001)
             mastery.destroyerEnabled = !mastery.destroyerEnabled;
 
         initGui();
@@ -969,7 +969,7 @@ public class SubGuiFormMastery extends SubGuiInterface implements ISubGuiListene
 
     public void drawScreen(int i, int j, float f) {
         super.drawScreen(i, j, f);
-        if(!hasSubGui())
+        if (!hasSubGui())
             menu.drawElements(fontRendererObj, i, j, mc, f);
     }
 

@@ -9,12 +9,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ConfigDBCGameplay
-{
+public class ConfigDBCGameplay {
     public static Configuration config;
 
     public final static String StatusEffects = "Status_Effects";
-    public static double CheckEffectsTick = 10;
+    public static boolean ProfileSwitchingRemovesLegendary = false;
 
     public final static String Forms = "Forms";
     public static boolean InstantTransform = true;
@@ -27,6 +26,7 @@ public class ConfigDBCGameplay
 
     public final static String NamekianRegeneration = "Namek_Regen";
     public static boolean EnableNamekianRegen = true;
+    public static boolean OnlyNamekianRegenCharging = false;
     public static int NamekianRegenMin = 20;
     public static int NamekianRegenMax = 50;
 
@@ -45,22 +45,26 @@ public class ConfigDBCGameplay
     public static boolean RevampKiCharging = true;
     public static boolean KiPotentialUnlock = true;
     public static int KiChargeRate = 1;
-    public static void init(File configFile)
-    {
+
+    public final static String HumanSpirit = "Human_Spirit";
+    public static boolean EnableHumanSpirit = true;
+    public static int PercentDamageRequired = 400;
+    public static int DamageRequiredSeconds = 20;
+
+    public final static String FruitOfMight = "FruitOfMight";
+    public static int FruitOfMightStackSize = 5;
+
+    public static void init(File configFile) {
         config = new Configuration(configFile);
 
-        try
-        {
+        try {
             config.load();
-
-            CheckEffectsTick = config.get(StatusEffects, "Run Effects Every X Tick", 10, "This will check effects every X ticks. All registered effects must be multiple of 10. [10, 20, 30...] Max: 100").getInt(10);
-            CheckEffectsTick = (CheckEffectsTick % 10 == 0) ? CheckEffectsTick : ((CheckEffectsTick / 10) + 1) * 10;
-            CheckEffectsTick = ValueUtil.clamp(CheckEffectsTick, 10, 100);
+            ProfileSwitchingRemovesLegendary = config.get(StatusEffects, "Remove Legendary on Profile Swap", false).getBoolean(false);
 
             EnableChargingDex = config.get(ChargingDex, "0. Enable Charging Dex", true,
                 "Charging Dex -> Percent of Total Defense Activated while Charging Ki Attacks. " +
-                "\nActive Defense [Blocking], Passive [Not Blocking](Takes Percent of Active in JRMCore Configs.) " +
-                "\nCharging Defense [Charging Ki Attack](Percent of Active)[0 - 100]").getBoolean(true);
+                    "\nActive Defense [Blocking], Passive [Not Blocking](Takes Percent of Active in JRMCore Configs.) " +
+                    "\nCharging Defense [Charging Ki Attack](Percent of Active)[0 - 100]").getBoolean(true);
             MartialArtistCharge = config.get(ChargingDex, "1. Martial Artist Percent", 60).getInt(60);
             SpiritualistCharge = config.get(ChargingDex, "2. Spiritualist Percent", 60).getInt(60);
             WarriorCharge = config.get(ChargingDex, "3. Warrior Percent", 60).getInt(60);
@@ -72,15 +76,16 @@ public class ConfigDBCGameplay
             EnableNamekianRegen = config.get(NamekianRegeneration, "Enable Namekian Regeneration", true,
                 "Namekian Regeneration will automatically apply the Namek Regen Effect (dbc/effects.cfg), " +
                     "\nwhen the Player falls below MIN Health and will stop continue to MAX Health.").getBoolean(true);
+            OnlyNamekianRegenCharging = config.get(NamekianRegeneration, "Only Regen during Charging", false).getBoolean(false);
             NamekianRegenMin = config.get(NamekianRegeneration, "Min Namekian Regen", 20).getInt(20);
             NamekianRegenMax = config.get(NamekianRegeneration, "Max Namekian Regen", 50).getInt(50);
 
             SaiyanZenkai = config.get(Zenkai, "Enable Saiyan Zenkai", true, "Enables Zenkai for Saiyans after Revive").getBoolean(true);
             HalfSaiyanZenkai = config.get(Zenkai, "Enable Half Saiyan Zenkai", true, "Enables Zenkai for Half Saiyans after Revive").getBoolean(true);
 
-            InstantTransform = config.get(Forms, "Instant Transform Bypass Parent", false,
+            InstantTransform = config.get(Forms, "Instant Transform Bypass Parent", true,
                 "Allows Instant Transform to Bypass the Parent Only Check\n" +
-                    "[If the player has Instant Transform Unlocked in Mastery, they can go to the form directly]").getBoolean(false);
+                    "[If the player has Instant Transform Unlocked in Mastery, they can go to the form directly]").getBoolean(true);
 
             config.setCategoryComment(PotaraFusion, "Potara Fusion comes with a Bonus Multi applied by the Potara Status Effect. This can be modified within the DBC Addon Effect Config");
             config.setCategoryPropertyOrder(PotaraFusion, new ArrayList<>(Arrays.asList("Unique Earrings", "Wearable Earrings", "Tier 1 Time", "Tier 2 Time", "Tier 3 Time")));
@@ -107,14 +112,19 @@ public class ConfigDBCGameplay
                 "Tweaking this number will allow for more precise ki charging. Default for DBC is 5.").getInt(1);
             KiChargeRate = ValueUtil.clamp(KiChargeRate, 1, 50);
 
+            FruitOfMightStackSize = config.get(FruitOfMight, "Fruit of Might Stack Size", 5).getInt(5);
+            FruitOfMightStackSize = ValueUtil.clamp(FruitOfMightStackSize, 1, 64);
 
-        }
-        catch (Exception e)
-        {
+            EnableHumanSpirit = config.get(HumanSpirit, "Enable Human Spirit", true,
+                "Human Spirit will automatically apply the Human Spirit Effect (dbc/effects.cfg), " +
+                    "\nwhen the Player reaches a specific threshold of damage").getBoolean(true);
+            PercentDamageRequired = config.get(HumanSpirit, "Percent Damage Required", 400).getInt(400);
+            DamageRequiredSeconds = config.get(HumanSpirit, "Time Allotted", 20, "Amount of time to consider the Percent of Damage Required").getInt(50);
+
+
+        } catch (Exception e) {
             FMLLog.log(Level.ERROR, e, "DBC Addon has had a problem loading its gameplay configuration");
-        }
-        finally
-        {
+        } finally {
             if (config.hasChanged()) {
                 config.save();
             }

@@ -4,7 +4,7 @@ import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.client.config.jrmc.JGConfigClientSettings;
 import JinRyuu.JRMCore.i.ExtendedPlayer;
-import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.client.shader.ShaderResources;
@@ -28,7 +28,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class OutlineRenderer {
     public static void renderOutline(RenderPlayerJBRA render, Outline outline, EntityPlayer player, float partialTicks, boolean isArm) {
-        ClientProxy.renderingOutline = true;
+        ClientConstants.renderingOutline = true;
         DBCData data = DBCData.get(player);
 
         glEnable(GL_BLEND);
@@ -152,12 +152,12 @@ public class OutlineRenderer {
         GL11.glEnable(GL_LIGHTING);
         GL11.glDisable(GL_BLEND);
         GL11.glEnable(GL_TEXTURE_2D);
-        ClientProxy.renderingOutline = false;
+        ClientConstants.renderingOutline = false;
     }
 
     public static void renderOutlineNPC(ModelMPM model, Outline outline, EntityCustomNpc npc, DBCDisplay display, float partialTicks) {
 
-        ClientProxy.renderingOutline = true;
+        ClientConstants.renderingOutline = true;
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDisable(GL_LIGHTING);
@@ -237,7 +237,7 @@ public class OutlineRenderer {
         GL11.glEnable(GL_LIGHTING);
         GL11.glDisable(GL_BLEND);
         GL11.glEnable(GL_TEXTURE_2D);
-        ClientProxy.renderingOutline = false;
+        ClientConstants.renderingOutline = false;
     }
 
     public static void renderHair(EntityPlayer player, RenderPlayerJBRA renderer) {
@@ -253,8 +253,15 @@ public class OutlineRenderer {
         boolean customHair = hairPreset == 12 && dnsH.length() > 3;
 
         Form form = data.getForm();
+        boolean skipHairRendering = hairPreset == 10;
+
+        if (form != null) {
+            if (form.display.hairCode.length() > 5 || form.display.hairType.equals("ssj4"))
+                skipHairRendering = false;
+        }
+
         if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
-            if (hairPreset == 10) {//bald LMAO
+            if (skipHairRendering) {//bald LMAO
                 renderer.modelMain.renderHeadwear(0.0625F);
                 return;
             }

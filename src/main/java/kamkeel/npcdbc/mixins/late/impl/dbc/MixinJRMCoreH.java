@@ -1,6 +1,5 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
-
 import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.p.DBC.DBCPacketHandlerServer;
@@ -21,6 +20,7 @@ import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCAttribute;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -34,7 +34,6 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
@@ -46,11 +45,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.text.DecimalFormat;
 
@@ -66,73 +63,105 @@ public abstract class MixinJRMCoreH {
     public static float[][] TransNaStBnP;
     @Shadow
     public static float[][] TransMaStBnP;
-    @Unique
-    private static boolean calculatingKiAttackCost;
 
     @Unique
     private static int currentResult;
 
-    @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At("HEAD"))
-    private static void meditationEffectFix(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 3, argsOnly = true) LocalIntRef attr) {
-        if(attributeID == 5 && player instanceof EntityPlayer){
-            attr.set((int) (attribute + DBCData.get((EntityPlayer) player).bonus.getFlatBonus()[4]));
+    @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;JRMCABonusOn:Z", shift = At.Shift.BEFORE))
+    private static void applyPlayerBonusToStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "value") LocalIntRef value, @Local(name = "bs") double bs) {
+        if(DBCUtils.calculateBaseStats)
+            return;
+
+        if(player instanceof EntityPlayer && powerType == 1){
+            DBCData dbcData = DBCData.get((EntityPlayer) player);
+            int modifiedValue = value.get();
+
+            Form form = dbcData.getForm();
+            if(form != null && form.advanced.isStatEnabled(stat)){
+                // Multi
+                double bsValue = bs;
+                bsValue *= form.advanced.getStatMulti(stat);
+
+                // Bonus
+                modifiedValue = (int)round(bsValue + (double)getStatBonus(powerType, race, classID, stat, false) * 0.01 * bsValue + (double)getStatBonus(powerType, race, classID, stat, true) * 0.01 * bsValue + bsValue * (double)skillBonus, 0, 0);
+                modifiedValue += form.advanced.getStatBonus(stat);
+            }
+
+            if(attributeID > -1 && attributeID <= 5){
+                float[] bonus = dbcData.bonus.getMultiBonus();
+                if (attributeID == DBCAttribute.Strength && bonus[0] != 0) //str
+                    modifiedValue *= (bonus[0] + 1);
+                else if (attributeID == DBCAttribute.Dexterity && bonus[1] != 0) //dex
+                    modifiedValue *= (bonus[1] + 1);
+                else if (attributeID == DBCAttribute.Willpower && bonus[2] != 0) //will
+                    modifiedValue *= (bonus[2] + 1);
+                else if (attributeID == DBCAttribute.Constitution && bonus[3] != 0) //con
+                    modifiedValue *= (bonus[3] + 1);
+                else if (attributeID == DBCAttribute.Spirit && bonus[4] != 0) //spi
+                    modifiedValue *= (bonus[4] + 1);
+
+                float[] flatBonus = dbcData.bonus.getFlatBonus();
+                // Add Bonus Flat to Base Attributes at the end
+                if (attributeID == DBCAttribute.Strength) // STR
+                    modifiedValue += flatBonus[0];
+                else if (attributeID == DBCAttribute.Dexterity) // DEX
+                    modifiedValue += flatBonus[1];
+                else if (attributeID == DBCAttribute.Willpower) // WIL
+                    modifiedValue += flatBonus[2];
+                else if (attributeID == DBCAttribute.Constitution) // CON
+                    modifiedValue += flatBonus[3];
+                else if (attributeID == DBCAttribute.Spirit) // SPI
+                    modifiedValue += flatBonus[4];
+            }
+
+            value.set(modifiedValue);
         }
-
     }
-
 
     @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
     private static void fix10xKiCost(String[] listOfAttacks, int playerStat, byte[] kiAttackStats, CallbackInfoReturnable<Integer> cir, @Local(ordinal = 0) LocalIntRef stat) {
-        calculatingKiAttackCost = true;
+        DBCUtils.calculatingCost = true;
         DBCUtils.calculatingKiDrain = true;
-        EntityPlayer player = Utility.isServer() ? CommonProxy.CurrentJRMCTickPlayer : CustomNpcPlusDBC.proxy.getClientPlayer();
+        EntityPlayer player = Utility.isServer() ? CommonProxy.getCurrentJRMCTickPlayer() : CustomNpcPlusDBC.proxy.getClientPlayer();
 
         DBCData data = DBCData.get(player);
         boolean majin = JRMCoreH.StusEfcts(12, data.StatusEffects);
         boolean fusion = (JRMCoreH.StusEfcts(10, data.StatusEffects) || JRMCoreH.StusEfcts(11, data.StatusEffects));
         boolean legendary = JRMCoreH.StusEfcts(14, data.StatusEffects);
-        boolean kaioken = JRMCoreH.StusEfcts(5, data.StatusEffects);
-        boolean mystic = JRMCoreH.StusEfcts(13, data.StatusEffects);
-        boolean ui = JRMCoreH.StusEfcts(19, data.StatusEffects);
-        boolean GoD = JRMCoreH.StusEfcts(20, data.StatusEffects);
 
-        int wil = JRMCoreH.getPlayerAttribute(data.player, data.stats.getAllAttributes(), 3, 0, 0, data.Race, data.RacialSkills, data.Release, data.ArcReserve, legendary, majin, kaioken, mystic, ui, GoD, data.Powertype, data.Skills.split(","), fusion, data.MajinAbsorptionData);
+        int wil = JRMCoreH.getPlayerAttribute(data.player, data.stats.getAllAttributes(), 3, 0, 0, data.Race, data.RacialSkills, data.Release, data.ArcReserve, legendary, majin, false, false, false, false, data.Powertype, data.Skills.split(","), fusion, data.MajinAbsorptionData);
         int stat2 = JRMCoreH.stat(player, 3, data.Powertype, 4, wil, data.Race, data.Class, 0.0F);
 
         stat.set(stat2);
-        calculatingKiAttackCost = false;
+        DBCUtils.calculatingCost = false;
         DBCUtils.calculatingKiDrain = false;
-
-
     }
 
-    @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at=@At(value = "FIELD", opcode = Opcodes.GETSTATIC, target="LJinRyuu/JRMCore/JRMCoreH;TransKaiDmg:[F", ordinal = 1, shift = At.Shift.BEFORE))
-    private static void applyDivineToNormalFormsPre(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> cir, @Local(name = "result") int result){
-        if(attribute == 0 || attribute == 1 || attribute == 3){
+    @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At(value = "FIELD", opcode = Opcodes.GETSTATIC, target = "LJinRyuu/JRMCore/JRMCoreH;TransKaiDmg:[F", ordinal = 1, shift = At.Shift.BEFORE))
+    private static void applyDivineToNormalFormsPre(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> cir, @Local(name = "result") int result) {
+        if (attribute == 0 || attribute == 1 || attribute == 3) {
             currentResult = result;
         }
     }
 
-    @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at=@At("RETURN"), cancellable = true)
-    private static void applyDivineToNormalFormsPost(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> cir){
-        if(DBCUtils.calculatingKiDrain)
+    @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At("RETURN"), cancellable = true)
+    private static void applyDivineToNormalFormsPost(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> cir) {
+        if (DBCUtils.calculatingKiDrain)
             return;
-        if(attribute == 0 || attribute == 1 || attribute == 3){
-            if(player == null)
+        if (attribute == 0 || attribute == 1 || attribute == 3) {
+            if (player == null)
                 return;
-            if(!DBCData.get(player).isForm(DBCForm.Divine))
+            if (!DBCData.get(player).isForm(DBCForm.Divine))
                 return;
-            if(ConfigDBCEffects.canDivineBeApplied(race, getCurrentFormName(race, st, st2, false, mysticOn, uiOn, GoDOn)))
+            if (ConfigDBCEffects.canDivineBeApplied(race, getCurrentFormName(race, st, st2, false, mysticOn, uiOn, GoDOn)))
                 cir.setReturnValue((int) (cir.getReturnValue() + ((uiOn ? cir.getReturnValue() : currentResult) * (ConfigDBCEffects.getDivineMulti() - 1))));
             currentResult = 0;
         }
-
     }
-
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At("HEAD"), remap = false, cancellable = true)
     private static void onGetPlayerAttribute(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info) {
-        if (calculatingKiAttackCost)
+        if (DBCUtils.calculatingCost)
             return;
 
         if (player == null)
@@ -159,7 +188,7 @@ public abstract class MixinJRMCoreH {
 
         float absorptionMulti = 1;
 
-        if(!form.stackable.vanillaStackable){
+        if (!form.stackable.vanillaStackable) {
             oldValue = replaceOldMulti(race, attribute);
         }
 
@@ -185,7 +214,7 @@ public abstract class MixinJRMCoreH {
             default:
                 result = currAttributes[attribute];
         }
-        if(!form.stackable.vanillaStackable && oldValue > 0){
+        if (!form.stackable.vanillaStackable && oldValue > 0) {
             resetOldMulti(race, attribute, oldValue);
         }
 
@@ -193,13 +222,13 @@ public abstract class MixinJRMCoreH {
         JGConfigDBCFormMastery.FM_Enabled = masteryCalc;
 
         if (race == DBCRace.ARCOSIAN) {
-            if(powerType == 1 && currRelease >= 100 && arcRel > 0){
+            if (powerType == 1 && currRelease >= 100 && arcRel > 0) {
                 result = customNPC_DBC_Addon$calculateArcosianPowerPoint(result, form, arcRel);
             }
         }
 
         if (race == DBCRace.MAJIN) {
-            if(powerType == 1 && majinAbs.length() > 0 && JGConfigRaces.CONFIG_MAJIN_ENABLED && JGConfigRaces.CONFIG_MAJIN_ABSORPTION_ENABLED && form.mastery.absorptionEnabled){
+            if (powerType == 1 && majinAbs.length() > 0 && JGConfigRaces.CONFIG_MAJIN_ENABLED && JGConfigRaces.CONFIG_MAJIN_ABSORPTION_ENABLED && form.mastery.absorptionEnabled) {
                 absorptionMulti = customNPC_DBC_Addon$calculateMajnAbsorption(form, majinAbs);
             }
         }
@@ -221,7 +250,7 @@ public abstract class MixinJRMCoreH {
 
         stackableMulti *= (float) fmvalue;
 
-        if(race == DBCRace.MAJIN && absorptionMulti >= 0){
+        if (race == DBCRace.MAJIN && absorptionMulti >= 0) {
             if (JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MULTIPLIES_BONUS_ATTRIBUTE_MULTIPLIERS) {
                 stackableMulti *= absorptionMulti;
             } else {
@@ -233,7 +262,7 @@ public abstract class MixinJRMCoreH {
 
         if (kaiokenOn && d.State2 > 0) {
             fmvalue = JRMCoreH.getFormMasteryAttributeMulti(player, "Kaioken", st, st2, race, kaiokenOn, mysticOn, uiOn, GoDOn);
-            statusMulti += (float) ((((FormKaiokenStackableData)form.stackable.getKaiokenConfigs()).getCurrentFormMulti(st2-1) * fmvalue)) - 1;
+            statusMulti += (float) ((((FormKaiokenStackableData) form.stackable.getKaiokenConfigs()).getCurrentFormMulti(st2 - 1) * fmvalue)) - 1;
         }
         if (majinOn)
             statusMulti += form.stackable.useConfigMulti(DBCForm.Majin) ? JRMCoreConfig.mjn * 0.01F : form.stackable.majinStrength - 1;
@@ -244,52 +273,27 @@ public abstract class MixinJRMCoreH {
 
 
         float currentFormLevel = dbcData.addonFormLevel;
-
-        float[] multiBonus = dbcData.bonus.getMultiBonus();
-
         if (attribute == 0 || attribute == 1 || attribute == 2 || attribute == 3) {
             result *= (stackableMulti * ((FormMastery) dbcData.getForm().getMastery()).calculateMulti("attribute", currentFormLevel));
         }
 
         if (attribute == DBCAttribute.Strength) // STR
-            result = (int) (result * (formMulti[0] * statusMulti + multiBonus[0]));
+            result = (int) (result * (formMulti[0] * statusMulti));
         else if (attribute == DBCAttribute.Dexterity) // DEX
-            result = (int) (result * (formMulti[1] * statusMulti + multiBonus[1]));
+            result = (int) (result * (formMulti[1] * statusMulti));
         else if (attribute == DBCAttribute.Willpower) // WIL
-            result = (int) (result * (formMulti[2] * statusMulti + multiBonus[2]));
+            result = (int) (result * (formMulti[2] * statusMulti));
         else if (attribute == DBCAttribute.Constitution) {// CON - for damage reduction
             float averageMulti = (formMulti[0] + formMulti[1] + formMulti[2]) / 3;
             result = (int) (result * (averageMulti * statusMulti));
         }
 
-
-        // Add Bonus Multi to Base Attributes
-        if (attribute == DBCAttribute.Strength) // STR
-            result += (currAttributes[0] * multiBonus[0]);
-        else if (attribute == DBCAttribute.Dexterity) // DEX
-            result += (currAttributes[1] * multiBonus[1]);
-        else if (attribute == DBCAttribute.Willpower) // WIL
-            result += (currAttributes[3] * multiBonus[2]);
-
-        float[] flatBonus = dbcData.bonus.getFlatBonus();
-        // Add Bonus Flat to Base Attributes at the end
-        if (attribute == DBCAttribute.Strength) // STR
-            result += flatBonus[0];
-        else if (attribute == DBCAttribute.Dexterity) // DEX
-            result += flatBonus[1];
-        else if (attribute == DBCAttribute.Willpower) // WIL
-            result += flatBonus[2];
-        else if (attribute == DBCAttribute.Constitution) // CON
-            result += flatBonus[3];
-        else if (attribute == DBCAttribute.Spirit) // SPI
-            result += flatBonus[4];
-
         result = ValueUtil.clamp(result, 0, Integer.MAX_VALUE);
         info.setReturnValue(result);
     }
 
-    private static float[][] getRightMultiArray(int race){
-        switch(race){
+    private static float[][] getRightMultiArray(int race) {
+        switch (race) {
             case 0:
                 return TransHmStBnP;
             case 1:
@@ -309,9 +313,9 @@ public abstract class MixinJRMCoreH {
 
     private static void resetOldMulti(int race, int attribute, float oldValue) {
         float[] array = getRightMultiArray(race)[0];
-        if(attribute < 0)
+        if (attribute < 0)
             attribute = 0;
-        if(attribute >= array.length)
+        if (attribute >= array.length)
             attribute = array.length - 1;
 
         array[attribute] = oldValue;
@@ -319,9 +323,9 @@ public abstract class MixinJRMCoreH {
 
     private static float replaceOldMulti(int race, int attribute) {
         float[] array = getRightMultiArray(race)[0];
-        if(attribute < 0)
+        if (attribute < 0)
             attribute = 0;
-        if(attribute >= array.length)
+        if (attribute >= array.length)
             attribute = array.length - 1;
 
         float oldValue = array[attribute];
@@ -337,7 +341,7 @@ public abstract class MixinJRMCoreH {
 
     @Unique
     private static float customNPC_DBC_Addon$calculateMajnAbsorption(Form form, String majinAbs) {
-        return 1f + (form.mastery.absorptionMulti - 1f) * Math.min(Math.max(0f, ((float)getMajinAbsorptionValueS(majinAbs) / DBCUtils.getMaxAbsorptionLevel())), 1f);
+        return 1f + (form.mastery.absorptionMulti - 1f) * Math.min(Math.max(0f, ((float) getMajinAbsorptionValueS(majinAbs) / DBCUtils.getMaxAbsorptionLevel())), 1f);
     }
 
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;OverAtrLimit:Z"), remap = false, cancellable = true)
@@ -349,13 +353,16 @@ public abstract class MixinJRMCoreH {
 
         if (!DBCUtils.noBonusEffects) {
             float[] bonus = dbcData.bonus.getMultiBonus();
-            if (attribute == 0 && bonus[0] != 0) //str
-                resultOriginal += (currAttributes[0] * bonus[0]);
-            else if (attribute == 1 && bonus[0] != 0) //dex
-                resultOriginal += (currAttributes[1] * bonus[1]);
-            else if (attribute == 3 && bonus[0] != 0) //will
-                resultOriginal += (currAttributes[3] * bonus[2]);
-
+            if (attribute == DBCAttribute.Strength && bonus[0] != 0) //str
+                resultOriginal += (currAttributes[DBCAttribute.Strength] * bonus[0]);
+            else if (attribute == DBCAttribute.Dexterity && bonus[1] != 0) //dex
+                resultOriginal += (currAttributes[DBCAttribute.Dexterity] * bonus[1]);
+            else if (attribute == DBCAttribute.Willpower && bonus[2] != 0) //will
+                resultOriginal += (currAttributes[DBCAttribute.Willpower] * bonus[2]);
+            else if (attribute == DBCAttribute.Constitution && bonus[3] != 0) //con
+                resultOriginal += (currAttributes[DBCAttribute.Constitution] * bonus[3]);
+            else if (attribute == DBCAttribute.Spirit && bonus[4] != 0) //spi
+                resultOriginal += (currAttributes[DBCAttribute.Spirit] * bonus[4]);
 
             float[] flatBonus = dbcData.bonus.getFlatBonus();
             // Add Bonus Flat to Base Attributes at the end
@@ -396,16 +403,15 @@ public abstract class MixinJRMCoreH {
 
             if (PlayerPersisted.hasKey("jrmcFormMasteryNonRacial"))
                 PlayerPersisted.removeTag("jrmcFormMasteryNonRacial");
-
         }
     }
 
     //if release becomes 0%, force descend player from CF on server side
     @Inject(method = "setByte(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
-    private static void descendOn0Release(int s, EntityPlayer Player, String string, CallbackInfo ci) {
+    private static void descendOn0Release(int s, EntityPlayer player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcRelease")) {
-            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(Player);
-            Form form = DBCData.getForm(Player);
+            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+            Form form = DBCData.getForm(player);
             if (form != null) {
                 formData.currentForm = -1;
                 formData.updateClient();
@@ -415,10 +421,10 @@ public abstract class MixinJRMCoreH {
 
     //if ki becomes 0, force descend player from CF on server side
     @Inject(method = "setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
-    private static void descendOn0Ki(int s, EntityPlayer Player, String string, CallbackInfo ci) {
+    private static void descendOn0Ki(int s, EntityPlayer player, String string, CallbackInfo ci) {
         if (s == 0 && string.equals("jrmcEnrgy")) {
-            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(Player);
-            Form form = DBCData.getForm(Player);
+            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+            Form form = DBCData.getForm(player);
             if (form != null) {
                 formData.currentForm = -1;
                 formData.updateClient();
@@ -438,29 +444,36 @@ public abstract class MixinJRMCoreH {
             PlayerDataUtil.getDBCInfo(player).updateCurrentFormMastery("fireki");
     }
 
-//    @ModifyArgs(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
-//    private static void setDamage(Args args) {
-//        String type = args.get(2);
-//        if (lastSetDamage != -1 && type.equals("jrmcBdy")) {
-//            int curBody = getInt(args.get(1), "jrmcBdy");
-//            int newHealth = curBody - lastSetDamage;
-//            args.set(0, Math.max(0, newHealth));
-//            lastSetDamage = -1;
-//        }
-//    }
-
     @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V"))
-    private static void setDamage(int s, EntityPlayer Player, String type) {
-        if (lastSetDamage != -1 && type.equals("jrmcBdy")) {
-            int curBody = getInt(Player, "jrmcBdy");
-            int newHealth = curBody - lastSetDamage;
-//            setInt(Math.max(0, newHealth), Player, type);
-            s = Math.max(0, newHealth);
-            lastSetDamage = -1;
+    private static void setDamage(int s, EntityPlayer player, String type) {
+        if (type.equals("jrmcEnrgy")) {
+            if (lastSetDamage != null && lastSetDamage.ki > 0) {
+                int curKi = getInt(player, "jrmcEnrgy");
+                s = Math.max(0, curKi - lastSetDamage.ki);
+            }
         }
-        setInt(s, Player, type);
+        if (type.equals("jrmcStamina")) {
+            if (lastSetDamage != null && lastSetDamage.stamina > 0) {
+                int curStamina = getInt(player, "jrmcStamina");
+                s = Math.max(0, curStamina - lastSetDamage.stamina);
+            }
+        }
+        if (type.equals("jrmcBdy")) {
+            if (lastSetDamage != null) {
+                int curBody = getInt(player, "jrmcBdy");
+                float damage = Math.max(0, lastSetDamage.damage);
+                float newHealth = curBody - damage;
+                s = (int) Math.max(0, newHealth);
+                DBCEffectController.getInstance().recordDamage(player, s == 0 ? curBody : damage);
+            }
+        }
+        setInt(s, player, type);
     }
 
+    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "TAIL"))
+    private static void resetLastSet(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir) {
+        lastSetDamage = null;
+    }
 
     @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;B)I", at = @At("HEAD"), cancellable = true)
     private static void tailCutMastery(Entity Player, int dbcA, DamageSource s, byte t, CallbackInfoReturnable<Integer> cir) {
@@ -485,16 +498,36 @@ public abstract class MixinJRMCoreH {
         }
     }
 
-    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setByte(BLnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", ordinal = 0, shift = At.Shift.BEFORE))
-    private static void callKOEvent(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir) {
-        DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer((EntityPlayer) Player), s));
+    // Run KO Event
+    @Inject(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I", ordinal = 4))
+    private static void getKOEvent(Entity Player, int dbcA, DamageSource s, CallbackInfoReturnable<Integer> cir, @Local(name = "all") int all) {
+        DBCUtils.willKo = false;
+        EntityPlayer player = (EntityPlayer) Player;
+        int ko = getInt(player, "jrmcHar4va");
+        int health = Math.max(all, 20);
+        if(ko <= 0 && health == 20){
+            if(DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer((EntityPlayer) Player), s))){
+                // CANCEL KNOCKOUT
+                DBCUtils.willKo = true;
+            }
+        }
     }
 
-    @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "FIELD", opcode = Opcodes.GETSTATIC, target="LJinRyuu/JRMCore/JRMCoreConfig;StatPasDef:I"))
-    private static int applyChargingDex(@Local(ordinal = 0) Entity player){
+    // Cancel KO Event
+    @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;getInt(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)I", ordinal = 4))
+    private static int setKOCancel(EntityPlayer player, String string, @Local(name = "all") int all) {
+        int ko = getInt(player, "jrmcHar4va");
+        if(DBCUtils.willKo){
+            return 1;
+        }
+        return ko;
+    }
+
+    @Redirect(method = "jrmcDam(Lnet/minecraft/entity/Entity;ILnet/minecraft/util/DamageSource;)I", at = @At(value = "FIELD", opcode = Opcodes.GETSTATIC, target = "LJinRyuu/JRMCore/JRMCoreConfig;StatPasDef:I"))
+    private static int applyChargingDex(@Local(ordinal = 0) Entity player) {
         DBCData dbcData = DBCData.get((EntityPlayer) player);
-        if(dbcData.stats.isChargingKiAttack()){
-            switch(dbcData.Class){
+        if (dbcData.stats.isChargingKiAttack()) {
+            switch (dbcData.Class) {
                 case 0:
                     return ConfigDBCGameplay.MartialArtistCharge;
                 case 1:
@@ -504,7 +537,7 @@ public abstract class MixinJRMCoreH {
                 default:
                     return JRMCoreConfig.StatPasDef;
             }
-        }else{
+        } else {
             return JRMCoreConfig.StatPasDef;
         }
     }
@@ -520,7 +553,6 @@ public abstract class MixinJRMCoreH {
             float currentHeat = ValueUtil.clamp(dbcData.addonCurrentHeat, 0, form.mastery.maxHeat);
             cir.setReturnValue(currentHeat / form.mastery.maxHeat * 100);
         }
-
     }
 
     /**
@@ -528,14 +560,14 @@ public abstract class MixinJRMCoreH {
      * @reason Fixes Mixin issues with <code>@At(value = "FIELD")</code> crashing one server for no reason whatsoever.
      */
     @Overwrite
-    public static double KaiKCost(EntityPlayer p){
+    public static double KaiKCost(EntityPlayer p) {
         int[] attributes = PlyrAttrbts(p);
         int skl = SklLvlX(1, getString(p, "jrmcSSltX"));
         int race = getByte(p, "jrmcRace");
         int state = getByte(p, "jrmcState");
         int state2 = getByte(p, "jrmcState2");
         // Fixes Index out of Bound for UI DBC Bug Fix
-        if(state2 >= 7){
+        if (state2 >= 7) {
             return 0.0;
         }
         int strnTmp = getInt(p, "jrmcStrainTemp");
@@ -543,28 +575,28 @@ public abstract class MixinJRMCoreH {
         boolean mystic = StusEfcts(13, getString(p, "jrmcStatusEff"));
         int might = attributes[0] / 2 + attributes[3] / 2;
         int cons = attributes[2];
-        double c = (double)(10 - SklLvl(8, (EntityPlayer)p) + state2) * 0.01;
+        double c = (double) (10 - SklLvl(8, (EntityPlayer) p) + state2) * 0.01;
         float kc = KaiKFBal(race, state, state2, skl, strn);
-        c += (double)(JRMCoreConfig.sskai ? 0.0F : kc);
+        c += (double) (JRMCoreConfig.sskai ? 0.0F : kc);
         int kaiokenState = !DBC() ? 0 : (mystic ? JRMCoreConfig.KaiokenFormHealthCost[race].length - 1 : state);
-        double cost = 1.0 / (double)cons * (double)might * c * (double)TransKaiDrainRace[race] * (double)TransKaiDrainLevel[state2] * (double)(DBC() ? getFormDrain(p, race, kaiokenState) : 1.0F);
+        double cost = 1.0 / (double) cons * (double) might * c * (double) TransKaiDrainRace[race] * (double) TransKaiDrainLevel[state2] * (double) (DBC() ? getFormKaiokenDrain(p, race, kaiokenState) : 1.0F);
         if (JGConfigDBCFormMastery.FM_Enabled) {
             int kkID = getFormID("Kaioken", race);
             double kkMasteryLevel = getFormMasteryValue(p, kkID);
-            float costMulti = (float)JGConfigDBCFormMastery.getCostMulti(kkMasteryLevel, race, kkID, JGConfigDBCFormMastery.DATA_ID_KAIOKEN_HEALTH_COST_MULTI);
-            cost *= (double)costMulti;
+            float costMulti = (float) JGConfigDBCFormMastery.getCostMulti(kkMasteryLevel, race, kkID, JGConfigDBCFormMastery.DATA_ID_KAIOKEN_HEALTH_COST_MULTI);
+            cost *= (double) costMulti;
         }
 
         return cost;
     }
 
     @Unique
-    private static float getFormDrain(EntityPlayer player, int race, int kaiokenState) {
+    private static float getFormKaiokenDrain(EntityPlayer player, int race, int kaiokenState) {
         DBCData dbcData = DBCData.get(player);
-        if(dbcData != null){
+        if (dbcData != null) {
             Form form = dbcData.getForm();
-            if(form != null){
-                if(form.stackable.kaiokenData.isMultiplyingCurrentFormDrain())
+            if (form != null) {
+                if (form.stackable.kaiokenData.isMultiplyingCurrentFormDrain())
                     return form.stackable.kaiokenData.getKaioDrain() * JRMCoreConfig.KaiokenFormHealthCost[race][kaiokenState];
                 else
                     return form.stackable.kaiokenData.getKaioDrain();
@@ -573,85 +605,110 @@ public abstract class MixinJRMCoreH {
         return JRMCoreConfig.KaiokenFormHealthCost[race][kaiokenState];
     }
 
-
     @Inject(method = "KaiKFBal", at = @At("HEAD"), cancellable = true)
-    private static void kaiokenBalanceValue(int rc, int st, int st2, int skl, int strn, CallbackInfoReturnable<Float> cir){
-        if(CommonProxy.CurrentJRMCTickPlayer != null){
-            Form form = DBCData.get(CommonProxy.CurrentJRMCTickPlayer).getForm();
-            if(form == null)
+    private static void kaiokenBalanceValue(int rc, int st, int st2, int skl, int strn, CallbackInfoReturnable<Float> cir) {
+        if (CommonProxy.getCurrentJRMCTickPlayer() != null) {
+            Form form = DBCData.get(CommonProxy.getCurrentJRMCTickPlayer()).getForm();
+            if (form == null)
                 return;
-            if(form.stackable.kaiokenData.kaiokenMultipliesCurrentFormDrain)
+            if (form.stackable.kaiokenData.kaiokenMultipliesCurrentFormDrain)
                 return;
 
             cir.setReturnValue(kaiokenBalanceValue(form, st2, strn > 1));
         }
     }
 
-    private static float kaiokenBalanceValue(Form form, int state2, boolean strained){
-        return form.stackable.kaiokenData.getKaioState2Balance(state2-1, strained);
+    private static float kaiokenBalanceValue(Form form, int state2, boolean strained) {
+        return form.stackable.kaiokenData.getKaioState2Balance(state2 - 1, strained);
     }
 
     @Inject(method = "configToClient(Lio/netty/buffer/ByteBuf;)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/server/config/dbc/JGConfigUltraInstinct;cCONFIG_UI_HEAT_DURATION:[I", shift = At.Shift.BEFORE))
     private static void configPacket(ByteBuf b, CallbackInfo ci, @Local(name = "i") LocalIntRef i) {
         ByteBufUtils.writeUTF8String(b, DBCUtils.cCONFIG_UI_NAME[i.get()]);
         b.writeBoolean(JGConfigUltraInstinct.cCONFIG_UI_SKIP[i.get()]);
-
     }
 
-    @Inject(method = "getKiRegenArcosian", at = @At("HEAD"))
-    private static void fixDivineDrainPreArcosian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+    @Inject(method = "getKiRegenArcosian", at = @At("HEAD"), cancellable = true)
+    private static void fixDivineDrainPreArcosian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
+        if (isDBCFormDrainCancelled()) {
+            cir.setReturnValue(0.0);
+            return;
+        }
         DBCUtils.calculatingKiDrain = true;
     }
 
     @Inject(method = "getKiRegenArcosian", at = @At("RETURN"))
-    private static void fixDivineDrainPostArcosian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+    private static void fixDivineDrainPostArcosian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
         DBCUtils.calculatingKiDrain = false;
     }
-    @Inject(method = "getKiRegenHalfSaiyan", at = @At("HEAD"))
-    private static void fixDivineDrainPreHalfSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+
+    @Inject(method = "getKiRegenHalfSaiyan", at = @At("HEAD"), cancellable = true)
+    private static void fixDivineDrainPreHalfSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
+        if (isDBCFormDrainCancelled()) {
+            cir.setReturnValue(0.0);
+            return;
+        }
         DBCUtils.calculatingKiDrain = true;
     }
 
     @Inject(method = "getKiRegenHalfSaiyan", at = @At("RETURN"))
-    private static void fixDivineDrainPostHalfSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+    private static void fixDivineDrainPostHalfSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
         DBCUtils.calculatingKiDrain = false;
     }
-    @Inject(method = "getKiRegenSaiyan", at = @At("HEAD"))
-    private static void fixDivineDrainPreSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+
+    @Inject(method = "getKiRegenSaiyan", at = @At("HEAD"), cancellable = true)
+    private static void fixDivineDrainPreSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
+        if (isDBCFormDrainCancelled()) {
+            cir.setReturnValue(0.0);
+            return;
+        }
         DBCUtils.calculatingKiDrain = true;
     }
 
     @Inject(method = "getKiRegenSaiyan", at = @At("RETURN"))
-    private static void fixDivineDrainPostSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+    private static void fixDivineDrainPostSaiyan(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
         DBCUtils.calculatingKiDrain = false;
     }
-    @Inject(method = "getKiRegenHuman", at = @At("HEAD"))
-    private static void fixDivineDrainPreHuman(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+
+    @Inject(method = "getKiRegenHuman", at = @At("HEAD"), cancellable = true)
+    private static void fixDivineDrainPreHuman(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
+        if (isDBCFormDrainCancelled()) {
+            cir.setReturnValue(0.0);
+            return;
+        }
         DBCUtils.calculatingKiDrain = true;
     }
 
     @Inject(method = "getKiRegenHuman", at = @At("RETURN"))
-    private static void fixDivineDrainPostHuman(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+    private static void fixDivineDrainPostHuman(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
         DBCUtils.calculatingKiDrain = false;
     }
 
-    @Inject(method = "getKiRegenNamekian", at = @At("HEAD"))
-    private static void fixDivineDrainPreNamekian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+    @Inject(method = "getKiRegenNamekian", at = @At("HEAD"), cancellable = true)
+    private static void fixDivineDrainPreNamekian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
+        if (isDBCFormDrainCancelled()) {
+            cir.setReturnValue(0.0);
+            return;
+        }
         DBCUtils.calculatingKiDrain = true;
     }
 
     @Inject(method = "getKiRegenNamekian", at = @At("RETURN"))
-    private static void fixDivineDrainPostNamekian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+    private static void fixDivineDrainPostNamekian(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
         DBCUtils.calculatingKiDrain = false;
     }
 
-    @Inject(method = "getKiRegenMajin", at = @At("HEAD"))
-    private static void fixDivineDrainPreMajin(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+    @Inject(method = "getKiRegenMajin", at = @At("HEAD"), cancellable = true)
+    private static void fixDivineDrainPreMajin(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
+        if (isDBCFormDrainCancelled()) {
+            cir.setReturnValue(0.0);
+            return;
+        }
         DBCUtils.calculatingKiDrain = true;
     }
 
     @Inject(method = "getKiRegenMajin", at = @At("RETURN"))
-    private static void fixDivineDrainPostMajin(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir){
+    private static void fixDivineDrainPostMajin(int[] curAtr, double r, int st, String SklX, int cr, int resrv, boolean ultraInstinct, boolean godOfDestruction, CallbackInfoReturnable<Double> cir) {
         DBCUtils.calculatingKiDrain = false;
     }
 
@@ -665,18 +722,17 @@ public abstract class MixinJRMCoreH {
         String[] data = formMastery.split(";");
         String newFormMastery = "";
 
-        for(int i = 0; i < data.length; ++i) {
+        for (int i = 0; i < data.length; ++i) {
             String[] values = data[i].split(",");
-            if(values.length < 2){
+            if (values.length < 2) {
                 continue;
             }
             double value = Double.parseDouble(format.format(Double.parseDouble(values[1])).replace(",", "."));
-            newFormMastery = newFormMastery + values[0] + "," + (value == (double)((int)value) ? (int)value + "" : value) + (i + 1 < data.length ? ";" : "");
+            newFormMastery = newFormMastery + values[0] + "," + (value == (double) ((int) value) ? (int) value + "" : value) + (i + 1 < data.length ? ";" : "");
         }
 
         return newFormMastery;
     }
-
 
     /**
      * @author somehussar
@@ -691,10 +747,10 @@ public abstract class MixinJRMCoreH {
                 String[] var4 = data;
                 int var5 = data.length;
 
-                for(int var6 = 0; var6 < var5; ++var6) {
+                for (int var6 = 0; var6 < var5; ++var6) {
                     String mastery = var4[var6];
                     String[] values = mastery.split(",");
-                    if(values.length < 2)
+                    if (values.length < 2)
                         continue;
                     double value = Double.parseDouble(values[1]);
                     String FM_AutoLearnOnLevel = JGConfigDBCFormMastery.getString(race, formID, JGConfigDBCFormMastery.DATA_ID_AUTO_LEARN_ON_LEVEL, 0);
@@ -703,7 +759,7 @@ public abstract class MixinJRMCoreH {
                         String[] var13 = autoUnlocks;
                         int var14 = autoUnlocks.length;
 
-                        for(int var15 = 0; var15 < var14; ++var15) {
+                        for (int var15 = 0; var15 < var14; ++var15) {
                             String autoUnlock = var13[var15];
                             String[] valuesUnlock = autoUnlock.split(",");
                             double valueUnlock = Double.parseDouble(valuesUnlock[2]);
@@ -723,7 +779,7 @@ public abstract class MixinJRMCoreH {
                                 if (nameUnlockID.equals("Racial")) {
                                     nameFullUnlock = nbt.getString("jrmcSSltX");
                                     id = SklLvlX(1, nameFullUnlock);
-                                    int maxLevel = JGRaceHelper.getMaxRacialSkillLevel(DBC(), NC(), (byte)race);
+                                    int maxLevel = JGRaceHelper.getMaxRacialSkillLevel(DBC(), NC(), (byte) race);
                                     if (levelID > maxLevel) {
                                         levelID = maxLevel;
                                     }
@@ -744,7 +800,7 @@ public abstract class MixinJRMCoreH {
                                     String[] var27 = DBCSkillsIDs;
                                     int maxLevel = var27.length;
 
-                                    for(int var29 = 0; var29 < maxLevel; ++var29) {
+                                    for (int var29 = 0; var29 < maxLevel; ++var29) {
                                         String ids = var27[var29];
                                         if (ids.equals(nameUnlockID)) {
                                             nameFullUnlock = DBCSkillNames[id];
@@ -769,7 +825,7 @@ public abstract class MixinJRMCoreH {
 
                                     int var34;
                                     String name;
-                                    for(var34 = 0; var34 < var33; ++var34) {
+                                    for (var34 = 0; var34 < var33; ++var34) {
                                         String skill = var32[var34];
                                         if (skill.length() > 2) {
                                             name = skill.substring(0, 2);
@@ -791,7 +847,7 @@ public abstract class MixinJRMCoreH {
                                     String[] var44 = s1;
                                     var34 = s1.length;
 
-                                    for(int var45 = 0; var45 < var34; ++var45) {
+                                    for (int var45 = 0; var45 < var34; ++var45) {
                                         name = var44[var45];
                                         if (s1.length > 0) {
                                             skills = skills + name + ",";
@@ -814,12 +870,26 @@ public abstract class MixinJRMCoreH {
 
                     ++formID;
                 }
-
             }
         }
     }
 
+    @Inject(method = "skillSlot_MindUsed", at = @At("RETURN"), cancellable = true)
+    private static void applyMindFromBonuses(CallbackInfoReturnable<Integer> cir) {
+        cir.setReturnValue(cir.getReturnValue() - DBCData.getClient().calculateMindBonuses());
+    }
 
+    private static boolean isDBCFormDrainCancelled() {
+        EntityPlayer currentJRMCTickPlayer = CommonProxy.getCurrentJRMCTickPlayer();
+        if (currentJRMCTickPlayer == null) {
+            return false;
+        }
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(currentJRMCTickPlayer);
+        if (!info.isInCustomForm()) {
+            return false;
+        }
 
+        return !info.getCurrentForm().stackable.isVanillaStackable();
+    }
 }
 

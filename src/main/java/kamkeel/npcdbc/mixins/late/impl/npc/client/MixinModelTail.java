@@ -2,6 +2,7 @@ package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
 
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -56,10 +57,10 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
             if (display == null || !display.enabled)
                 return;
 
-            if (!kamkeel.npcdbc.client.ClientProxy.renderingOutline && display.outlineID != -1)
+            if (!ClientConstants.renderingOutline && display.outlineID != -1)
                 RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
 
-            if (kamkeel.npcdbc.client.ClientProxy.renderingOutline) {
+            if (ClientConstants.renderingOutline) {
                 if (!monkey.monkey_wrapped.isHidden)
                     glTranslatef(0, 0.0375f, 0);
                 else {
@@ -87,9 +88,9 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
                 Form form = display.getForm();
                 if (form != null) {
                     if (form.display.hasColor("hair"))
-                        tailColor = form.display.hairColor;
+                        tailColor = form.display.bodyColors.hairColor;
                     if (form.display.hasColor("fur"))
-                        furColor = form.display.furColor;
+                        furColor = form.display.bodyColors.furColor;
 
                     hasFur = form.display.hasBodyFur;
 
@@ -109,7 +110,7 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
 
 
             } else if (display.race == DBCRace.ARCOSIAN) {
-                if (!monkey.monkey_large.isHidden)
+                if (!monkey.monkey_large.isHidden && display.arcoState < 4)
                     ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/m/3B00.png"));
 
                 int arcoState = display.getArco();
@@ -122,9 +123,9 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
                 if (form != null) {
                     if ((form.display.bodyType.contains("first") || form.display.bodyType.contains("second") || form.display.bodyType.contains("third"))) {
                         if (form.display.hasColor("bodyc3"))
-                            tailColor = form.display.bodyC3;
+                            tailColor = form.display.bodyColors.bodyC3;
                     } else if (form.display.hasColor("bodycm"))
-                        tailColor = form.display.bodyCM;
+                        tailColor = form.display.bodyColors.bodyCM;
 
                 }
 
@@ -138,10 +139,10 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
     private void after(float par1, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
 
-        if (!kamkeel.npcdbc.client.ClientProxy.renderingOutline && display.outlineID != -1)
+        if (!ClientConstants.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
 
-        if (kamkeel.npcdbc.client.ClientProxy.renderingOutline)
+        if (ClientConstants.renderingOutline)
             disableStencilWriting((entity.getEntityId()) % 256, false);
 
     }

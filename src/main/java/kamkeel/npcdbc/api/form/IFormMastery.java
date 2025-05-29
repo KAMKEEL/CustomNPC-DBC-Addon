@@ -23,7 +23,7 @@ public interface IFormMastery {
     void setHealthRequirement(float healthRequirementInPercent);
 
     /**
-     * @param type Legal: "attribute","kidrain","heat","pain","healthrequirement,"damageNegation","dodge","tailcutchance"
+     * @param type  Legal: "attribute","kidrain","heat","pain","healthrequirement,"damageNegation","dodge","tailcutchance"
      * @param type1 3 Legal: "flat", "perlevel", "minormax"
      * @return value of specified type
      */
@@ -161,26 +161,35 @@ public interface IFormMastery {
 
 
     boolean isAbsorptionBoostEnabled();
+
     boolean isPowerPointBoostEnabled();
+
     void setPowerPointCost(int cost);
+
     void setPowerPointGrowth(int growth);
 
     int getPowerPointCost();
+
     int getPowerPointGrowth();
 
     void setPowerPointMultiNormal(float multi);
+
     void setPowerPointMultiBasedOnPoints(float multi);
 
     float getPowerPointMultiNormal();
+
     float getPowerPointMultiBasedOnPoints();
 
     void setAbsorptionMulti(float multi);
+
     float getAbsorptionMulti();
 
     void setDestroyerOn(boolean isOn);
+
     boolean isDestroyerOn();
 
     void setDestroyerEnergyDamage(float energyDamage);
+
     float getDestroyerEnergyDamage();
 
     IFormMasteryLinkData getMasteryLinks();

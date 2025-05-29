@@ -2,7 +2,6 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreHDBC;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
@@ -39,18 +38,34 @@ public class MixinJRMCoreHDBC {
         }
     }
 
-    @Inject(method = "DBCsizeBasedOnRace(IIZ)F", at = @At(value = "HEAD"), cancellable = true)
-    private static void setCustomFormWidth(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir){
-        // TODO: Add form width code
+    @Inject(method = "DBCsizeBasedOnRace(IIZ)F", at = @At(value = "TAIL"), cancellable = true)
+    private static void setCustomFormWidth(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir, @Local(name = "f2") float size) {
+        if (CommonProxy.getCurrentJRMCTickPlayer() != null) {
+            float sz = size;
+            Form form = DBCData.get(CommonProxy.getCurrentJRMCTickPlayer()).getForm();
+
+            if (form != null) {
+                if (form.display.keepOriginalSize && form.stackable.vanillaStackable) {
+                    cir.setReturnValue(sz *= form.display.formWidth);
+                } else {
+                    cir.setReturnValue(sz = form.display.formWidth);
+                }
+            }
+
+            if (CustomNpcPlusDBC.proxy.isRenderingGUI()) {
+                if (sz > 1.35f)
+                    cir.setReturnValue(1.35f);
+            }
+        }
     }
 
     @Inject(method = "DBCsizeBasedOnRace2(IIZ)F", at = @At(value = "TAIL"), cancellable = true)
-    private static void setCustomFormSize(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir, @Local(name = "f3") LocalFloatRef size) {
-        if (CommonProxy.CurrentJRMCTickPlayer != null) {
-            float sz = size.get();
-            Form form = DBCData.get(CommonProxy.CurrentJRMCTickPlayer).getForm();
+    private static void setCustomFormSize(int race, int state, boolean divine, CallbackInfoReturnable<Float> cir, @Local(name = "f3") float size) {
+        if (CommonProxy.getCurrentJRMCTickPlayer() != null) {
+            float sz = size;
+            Form form = DBCData.get(CommonProxy.getCurrentJRMCTickPlayer()).getForm();
 
-            if(form != null) {
+            if (form != null) {
                 if (form.display.keepOriginalSize && form.stackable.vanillaStackable) {
                     cir.setReturnValue(sz *= form.display.formSize);
                 } else {

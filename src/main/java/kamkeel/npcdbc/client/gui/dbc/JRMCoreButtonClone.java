@@ -33,9 +33,9 @@ public class JRMCoreButtonClone extends GuiButton {
             this.field_146123_n = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
             int var5 = this.getHoverState(this.field_146123_n);
             int j = this.col == 0 ? 16449280 : this.col;
-            float h2 = (float)(j >> 16 & 255) / 255.0F;
-            float h3 = (float)(j >> 8 & 255) / 255.0F;
-            float h4 = (float)(j & 255) / 255.0F;
+            float h2 = (float) (j >> 16 & 255) / 255.0F;
+            float h3 = (float) (j >> 8 & 255) / 255.0F;
+            float h4 = (float) (j & 255) / 255.0F;
             float h1 = 2.0F;
             int var6;
             int r;
@@ -44,16 +44,16 @@ public class JRMCoreButtonClone extends GuiButton {
             float saturation;
             int bonusY;
             if (var5 == 2) {
-                var6 = (int)(h2 * 254.0F);
-                r = (int)(h3 * 254.0F);
-                g = (int)(h4 * 254.0F);
-                float[] hsb = Color.RGBtoHSB(var6, r, g, (float[])null);
+                var6 = (int) (h2 * 254.0F);
+                r = (int) (h3 * 254.0F);
+                g = (int) (h4 * 254.0F);
+                float[] hsb = Color.RGBtoHSB(var6, r, g, (float[]) null);
                 hue = 0.33F;
                 saturation = hsb[2];
                 bonusY = Color.HSBtoRGB(hue, hue, saturation);
-                h2 = (float)(bonusY >> 16 & 255) / 255.0F;
-                h3 = (float)(bonusY >> 8 & 255) / 255.0F;
-                h4 = (float)(bonusY & 255) / 255.0F;
+                h2 = (float) (bonusY >> 16 & 255) / 255.0F;
+                h3 = (float) (bonusY >> 8 & 255) / 255.0F;
+                h4 = (float) (bonusY & 255) / 255.0F;
             }
 
             GL11.glColor3f(h1 * h2, h1 * h3, h1 * h4);
@@ -64,8 +64,8 @@ public class JRMCoreButtonClone extends GuiButton {
             txx = new ResourceLocation(icons);
             par1Minecraft.getTextureManager().bindTexture(txx);
             GL11.glPushMatrix();
-            GL11.glTranslatef((float)(this.xPosition + 2), (float)(this.yPosition + 2), 0.0F);
-            this.func_152125_a(0, 0, 0, 48,18, 18, 16, 16, 256, 256); // Render the cropped 18x18 texture within the 16x16 area
+            GL11.glTranslatef((float) (this.xPosition + 2), (float) (this.yPosition + 2), 0.0F);
+            this.func_152125_a(0, 0, 0, 48, 18, 18, 16, 16, 256, 256); // Render the cropped 18x18 texture within the 16x16 area
             GL11.glPopMatrix();
         }
     }

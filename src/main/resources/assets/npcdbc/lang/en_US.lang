@@ -12,8 +12,10 @@ dbc.clientsettings.aura.firstPersonOpacity=First person 3D Aura Opacity: %s%%
 global.customforms=Forms
 global.customauras=Auras
 global.customoutlines=Outlines
+global.customeffects=Effects
 
 stats.dbcsettings=DBC Settings
+inventory.extras=Extras
 
 gui.clone=Clone
 
@@ -27,6 +29,18 @@ stats.ignoreKiDamage=Ignore Ki Protection
 stats.ignoreFormDefense=Ignore Form Defense
 stats.hasDefensePenetration=Has Defense Penetration
 stats.defensePenetration=Defense Penetration
+
+effect.runsEveryX=Runs every X tick
+effect.defaultLength=Default length
+
+# These are supposed to be shorter
+effect.editor.runsEveryX=Every X tick
+effect.editor.defaultLength=Length
+effect.editor.height=Height
+effect.editor.width=Width
+effect.editor.xPos=X Pos
+effect.editor.yPos=Y Pos
+effect.editor.lossOnDeath=Loss on Death
 
 mastery.maxLevel=Max Level
 mastery.multiFlat=Multi Flat
@@ -77,6 +91,8 @@ mastery.destroyerSettings=Destroyer Settings
 mastery.destroyerKiDamage=Ki Damage Multi
 mastery.linkedMastery=Linked Mastery
 
+display.attri=Attri
+display.adv=Adv
 display.human=Human
 display.saiyan=Saiyan
 display.halfsaiyan=Half-Saiyan
@@ -134,11 +150,14 @@ display.raditz=Raditz
 display.kiBarColor=Ki Bar
 display.eye=Eye
 display.isBerserk=Berserk
+display.normalEye=Normal
 display.hasEyebrows=Eyebrows
 display.mouth=Mouth
 display.nose=Nose
+display.formCanFormbeCustomized=Player customization
 display.color=Color
 display.modify=Modify
+display.formWidth=Form Width
 display.formSize=Form Size
 display.aura=Aura
 display.auraOn=Aura On
@@ -147,7 +166,7 @@ display.hair=Hair
 display.hairType=Hair Type
 display.majinHair=Majin Hair
 display.arcoMask=Arco Mask
-display.bodyFur=Body Fur
+display.bodyFur=Has Fur
 display.form=Form
 display.mastery=Mastery
 display.stackable=Stackable
@@ -226,6 +245,10 @@ display.kettleOnly=Kettle only
 display.kettlePlusAura=Kettle + Aura
 display.revampAura=Revamped
 display.dbcAura=DBC
+display.bloom=Bloom
+display.outlines=Outlines
+display.shaders=Shaders
+display.firstPersonAura=1st Person Aura Opacity
 
 outline.noiseSize=Noise Size
 outline.colorSmoothness=Color Smoothness
@@ -293,6 +316,8 @@ npcdbc.inventory.willpower=Will Power
 npcdbc.inventory.mastery=Mastery
 npcdbc.inventory.selected=Selected
 npcdbc.inventory.noauraselected=No Aura Selected
+npcdbc.inventory.tweaks=Tweaks
+npcdbc.inventory.revampAura=Revamped Aura
 
 npcdbc.inventory.stackable.dbc=DBC
 npcdbc.inventory.stackable.kk=KK
@@ -337,7 +362,7 @@ npcdbc.noTail=Transformation requires a grown tail
 npcdbc.nextUnlocked=You do not have the next transformation unlocked
 npcdbc.spectator=You cannot transform as a spectator
 npcdbc.raceIneligible=Your race is ineligible for this form
-npcdbc.healthRequirement=You need to be below %d percent health to access the selected form
+npcdbc.healthRequirement=You need to be below %d percent health to access the %dselected form
 npcdbc.pain=Cannot transform while in pain
 npcdbc.wrongDBC=You are in the wrong DBC Form
 npcdbc.transformFromParent=Must transfrom from Parent
@@ -361,6 +386,9 @@ npcdbc.transform=Transformed to
 npcdbc.descend=Descended to
 npcdbc.descendFrom=Descended from
 npcdbc.timeExpired=Timer has run out!
+npcdbc.full=You are beginning to bloat!
+npcdbc.bloated=You are now bloated
+npcdbc.humanSpiritMessage=You feel your body empower with your Human Spirit!
 
 ############################
 ## ITEMS
@@ -421,3 +449,20 @@ item.npcdbc:fruitofmight.name=Fruit of Might
 item.npcdbc:one_potara.name=Potara Earring
 item.npcdbc:two_potara.name=Grand Potara Earring
 item.npcdbc:three_potara.name=Supreme Potara Earring
+
+effect.healthregeneration=Health Regeneration
+effect.exhausted=Exhausted
+effect.darkness=Darkness
+effect.chocolated=Chocolated
+effect.bloated=Bloated
+effect.fruitofmight=Fruit of Might
+effect.humanspirit=Human Spirit
+effect.meditation=Meditation
+effect.namekianregeneration=Namekian Regeneration
+effect.overpower=Overpower
+effect.potara=Potara
+effect.kiregeneration=Ki Regeneration
+effect.staminaregeneration=Stamina Regeneration
+effect.zenkai=Zenkai
+
+stats.ki=Ki

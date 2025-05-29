@@ -7,49 +7,46 @@ import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.select.GuiSoundSelection;
 import noppes.npcs.client.gui.util.*;
 
-public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener,ITextfieldListener
-{
+public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, GuiSelectionListener, ITextfieldListener {
 
     private final GuiNPCManageForms parent;
 
-	public Form form;
+    public Form form;
     boolean setAscendSound = true;
     public int parentForm = -1;
     public int childForm = -1;
 
 
-	public SubGuiNpcForms(GuiNPCManageForms parent, Form form)
-	{
-		this.parent = parent;
-		this.form = form;
+    public SubGuiNpcForms(GuiNPCManageForms parent, Form form) {
+        this.parent = parent;
+        this.form = form;
         this.parentForm = form.parentID;
         this.childForm = form.childID;
 
-		setBackground("menubg.png");
-		xSize = 360;
-		ySize = 216;
-	}
+        setBackground("menubg.png");
+        xSize = 360;
+        ySize = 216;
+    }
 
-    public void initGui()
-    {
+    public void initGui() {
         super.initGui();
         guiTop += 7;
         int y = guiTop + 3;
 
         addTextField(new GuiNpcTextField(1, this, this.fontRendererObj, guiLeft + 36, y, 200, 20, form.name));
-        addLabel(new GuiNpcLabel(1,"gui.name", guiLeft + 4, y + 5));
+        addLabel(new GuiNpcLabel(1, "gui.name", guiLeft + 4, y + 5));
         addButton(new GuiNpcButton(3, guiLeft + 260, y, 95, 20, new String[]{"All Races", "Human", "Saiyan", "Half Saiyan", "Namekian", "Arcosian", "Majin"}, getRaceIndex(form.getRace())));
 
-        addLabel(new GuiNpcLabel(0,"ID", guiLeft + 238, y + 1));
-        addLabel(new GuiNpcLabel(2,	form.id + "", guiLeft + 238, y + 11));
+        addLabel(new GuiNpcLabel(0, "ID", guiLeft + 238, y + 1));
+        addLabel(new GuiNpcLabel(2, form.id + "", guiLeft + 238, y + 11));
 
         y += 23;
 
         addTextField(new GuiNpcTextField(4, this, guiLeft + 70, y, 166, 20, form.menuName.replaceAll("§", "&")));
         getTextField(4).setMaxStringLength(20);
-        addLabel(new GuiNpcLabel(4, "Menu Name", guiLeft + 4, y+5));
+        addLabel(new GuiNpcLabel(4, "Menu Name", guiLeft + 4, y + 5));
 
-        addLabel(new GuiNpcLabel(19,"Strength", guiLeft + 239, y + 5));
+        addLabel(new GuiNpcLabel(19, "Strength", guiLeft + 239, y + 5));
         addTextField(new GuiNpcTextField(19, this, guiLeft + 295, y, 60, 20, String.valueOf(form.strengthMulti)));
         getTextField(19).setMaxStringLength(15);
         getTextField(19).floatsOnly = true;
@@ -60,7 +57,7 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
         addButton(new GuiNpcButton(7, guiLeft + 84, y, 70, 20, "MASTERY"));
         addButton(new GuiNpcButton(8, guiLeft + 166, y, 70, 20, "STACKABLE"));
 
-        addLabel(new GuiNpcLabel(20,"Dexterity", guiLeft + 239, y + 5));
+        addLabel(new GuiNpcLabel(20, "Dexterity", guiLeft + 239, y + 5));
         addTextField(new GuiNpcTextField(20, this, guiLeft + 295, y, 60, 20, String.valueOf(form.dexMulti)));
         getTextField(20).setMaxStringLength(15);
         getTextField(20).floatsOnly = true;
@@ -68,20 +65,20 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
 
         y += 23;
 
-        addLabel(new GuiNpcLabel(21,"Willpower", guiLeft + 239, y + 5));
+        addLabel(new GuiNpcLabel(21, "Willpower", guiLeft + 239, y + 5));
         addTextField(new GuiNpcTextField(21, this, guiLeft + 295, y, 60, 20, String.valueOf(form.willMulti)));
         getTextField(21).setMaxStringLength(15);
         getTextField(21).floatsOnly = true;
         getTextField(21).setMinMaxDefaultFloat(-10000, 10000, 1);
 
         addButton(new GuiNpcButton(10, guiLeft + 192, y, 45, 20, new String[]{"gui.no", "gui.yes"}, form.fromParentOnly ? 1 : 0));
-        addLabel(new GuiNpcLabel(10, "Transform from Only Parent Form", guiLeft+8, y + 5));
+        addLabel(new GuiNpcLabel(10, "Transform from Only Parent Form", guiLeft + 8, y + 5));
 
         y += 23;
 
         addButton(new GuiNpcButton(11, guiLeft + 74, y, 140, 20, "No Parent"));
-        if(parentForm != -1){
-            if(FormController.getInstance().has(parentForm))
+        if (parentForm != -1) {
+            if (FormController.getInstance().has(parentForm))
                 getButton(11).setDisplayText(FormController.getInstance().get(parentForm).getName());
         }
 
@@ -92,8 +89,8 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
         y += 23;
 
         addButton(new GuiNpcButton(13, guiLeft + 74, y, 140, 20, "No Child"));
-        if(childForm != -1){
-            if(FormController.getInstance().has(childForm))
+        if (childForm != -1) {
+            if (FormController.getInstance().has(childForm))
                 getButton(13).setDisplayText(FormController.getInstance().get(childForm).getName());
         }
         addButton(new GuiNpcButton(14, guiLeft + 216, y, 20, 20, "X"));
@@ -113,65 +110,63 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
         addButton(new GuiNpcButton(31, guiLeft + 293, y, 60, 20, "gui.select"));
     }
 
-	public void buttonEvent(GuiButton guibutton)
-    {
-		GuiNpcButton button = (GuiNpcButton) guibutton;
-        if(button.id == 3){
+    public void buttonEvent(GuiButton guibutton) {
+        GuiNpcButton button = (GuiNpcButton) guibutton;
+        if (button.id == 3) {
             form.setRace(getRaceButton(button.getValue()));
         }
-        if(button.id == 11){
-            this.setSubGui(new SubGuiSelectForm(11,false, false));
+        if (button.id == 11) {
+            this.setSubGui(new SubGuiSelectForm(11, false, false));
         }
-        if(button.id == 12){
+        if (button.id == 12) {
             parentForm = -1;
             initGui();
         }
-        if(button.id == 13){
-            this.setSubGui(new SubGuiSelectForm(13,false, false));
+        if (button.id == 13) {
+            this.setSubGui(new SubGuiSelectForm(13, false, false));
         }
-        if(button.id == 14){
+        if (button.id == 14) {
             childForm = -1;
             initGui();
         }
-        if(button.id == 30){
+        if (button.id == 30) {
             setAscendSound = true;
             setSubGui(new GuiSoundSelection((getTextField(30).getText())));
         }
-        if(button.id == 31){
+        if (button.id == 31) {
             setAscendSound = false;
             setSubGui(new GuiSoundSelection((getTextField(31).getText())));
         }
-        if(button.id == 1010101){
+        if (button.id == 1010101) {
             initGui();
         }
-	}
+    }
 
 
-	@Override
-	public void unFocused(GuiNpcTextField guiNpcTextField) {
-		if(guiNpcTextField.id == 1) {
-			if(form.id < 0)
-				guiNpcTextField.setText("");
-			else{
-				String name = guiNpcTextField.getText();
-				if(name.isEmpty() || this.parent.data.containsKey(name)){
-					guiNpcTextField.setText(form.name);
-				}
-				else if(form.id >= 0){
-					String old = form.name;
-					this.parent.data.remove(old);
-					form.name = name;
-					this.parent.data.put(form.name, form.id);
-					this.parent.scrollForms.replace(old, form.name);
-				}
-			}
-		}
-		if(guiNpcTextField.id == 4){
+    @Override
+    public void unFocused(GuiNpcTextField guiNpcTextField) {
+        if (guiNpcTextField.id == 1) {
+            if (form.id < 0)
+                guiNpcTextField.setText("");
+            else {
+                String name = guiNpcTextField.getText();
+                if (name.isEmpty() || this.parent.data.containsKey(name)) {
+                    guiNpcTextField.setText(form.name);
+                } else if (form.id >= 0) {
+                    String old = form.name;
+                    this.parent.data.remove(old);
+                    form.name = name;
+                    this.parent.data.put(form.name, form.id);
+                    this.parent.scrollForms.replace(old, form.name);
+                }
+            }
+        }
+        if (guiNpcTextField.id == 4) {
             String menuName = guiNpcTextField.getText();
-            if(!menuName.isEmpty()){
+            if (!menuName.isEmpty()) {
                 form.menuName = menuName.replaceAll("&", "§");
             }
-		}
+        }
         if (guiNpcTextField.id == 19) {
             form.strengthMulti = guiNpcTextField.getFloat();
         }
@@ -187,44 +182,42 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
         if (guiNpcTextField.id == 31) {
             form.descendSound = guiNpcTextField.getText();
         }
-	}
+    }
 
-	@Override
-	public void subGuiClosed(SubGuiInterface subgui){
+    @Override
+    public void subGuiClosed(SubGuiInterface subgui) {
         if (subgui instanceof SubGuiSelectForm) {
-            if(form != null){
-                SubGuiSelectForm guiSelectForm = ((SubGuiSelectForm)subgui);
-                if(guiSelectForm.confirmed){
-                    if(guiSelectForm.selectedFormID == form.id)
+            if (form != null) {
+                SubGuiSelectForm guiSelectForm = ((SubGuiSelectForm) subgui);
+                if (guiSelectForm.confirmed) {
+                    if (guiSelectForm.selectedFormID == form.id)
                         return;
                     if (guiSelectForm.buttonID == 13) {
                         childForm = guiSelectForm.selectedFormID;
-                        if(parentForm == childForm)
+                        if (parentForm == childForm)
                             parentForm = -1;
                     } else if (guiSelectForm.buttonID == 11) {
                         parentForm = guiSelectForm.selectedFormID;
-                        if(parentForm == childForm)
+                        if (parentForm == childForm)
                             childForm = -1;
                     }
                 }
             }
             initGui();
-        }
-        else if (subgui instanceof GuiSoundSelection){
+        } else if (subgui instanceof GuiSoundSelection) {
             GuiSoundSelection gss = (GuiSoundSelection) subgui;
-            if(gss.selectedResource != null) {
-                if(setAscendSound){
+            if (gss.selectedResource != null) {
+                if (setAscendSound) {
                     getTextField(30).setText(gss.selectedResource.toString());
                     unFocused(getTextField(30));
-                }
-                else {
+                } else {
                     getTextField(31).setText(gss.selectedResource.toString());
                     unFocused(getTextField(31));
                 }
                 initGui();
             }
         }
-	}
+    }
 
     private int getRaceButton(int button) {
         switch (button) {
@@ -269,8 +262,10 @@ public class SubGuiNpcForms extends SubGuiInterface implements ISubGuiListener, 
         }
     }
 
-	@Override
-	public void selected(int id, String name) {}
+    @Override
+    public void selected(int id, String name) {
+    }
 
-	public void save(){}
+    public void save() {
+    }
 }

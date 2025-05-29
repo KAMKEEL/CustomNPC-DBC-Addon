@@ -55,7 +55,7 @@ public class ItemPotara extends ItemArmor {
             icons[potaraTypes.getMeta()] = reg.registerIcon(prefix + potaraTypes.getName().toLowerCase());
         }
 
-        for(int i = EnumPotaraTypes.count(); i < EnumPotaraTypes.count() * 2; i++){
+        for (int i = EnumPotaraTypes.count(); i < EnumPotaraTypes.count() * 2; i++) {
             icons[i] = reg.registerIcon(prefix + EnumPotaraTypes.values()[i - EnumPotaraTypes.count()].getName().toLowerCase() + "_pair");
         }
     }
@@ -65,7 +65,7 @@ public class ItemPotara extends ItemArmor {
         if (meta >= 0 && meta < EnumMiscCapsules.count()) {
             return icons[meta];
         }
-        if(meta >= EnumMiscCapsules.count() && meta < EnumMiscCapsules.count() * 2){
+        if (meta >= EnumMiscCapsules.count() && meta < EnumMiscCapsules.count() * 2) {
             return icons[meta];
         }
         return icons[0];
@@ -91,13 +91,13 @@ public class ItemPotara extends ItemArmor {
         if (world.isRemote)
             return itemStack;
 
-        if(itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("Side"))
+        if (itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("Side"))
             return itemStack;
 
         // Check if the player has at least 2 open slots in their inventory
         int openSlots = 0;
         for (ItemStack stack : player.inventory.mainInventory) {
-            if(stack == null) {
+            if (stack == null) {
                 openSlots++;
                 if (openSlots >= 2) {
                     break;
@@ -116,14 +116,14 @@ public class ItemPotara extends ItemArmor {
             // Add NBT data to each ItemStack
             NBTTagCompound leftNBT = leftPotara.getTagCompound();
             NBTTagCompound rightNBT = rightPotara.getTagCompound();
-            if(leftNBT == null){
+            if (leftNBT == null) {
                 leftNBT = new NBTTagCompound();
             }
-            if(rightNBT == null){
+            if (rightNBT == null) {
                 rightNBT = new NBTTagCompound();
             }
 
-            if(ConfigDBCGameplay.UniqueEarrings){
+            if (ConfigDBCGameplay.UniqueEarrings) {
                 String uniqueCode = generateUniqueCode();
                 leftNBT.setString("Hash", uniqueCode);
                 rightNBT.setString("Hash", uniqueCode);
@@ -143,15 +143,14 @@ public class ItemPotara extends ItemArmor {
         return itemStack;
     }
 
-    public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase target)
-    {
+    public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase target) {
         if (player.worldObj.isRemote)
             return false;
 
-        if(!(target instanceof EntityPlayer))
+        if (!(target instanceof EntityPlayer))
             return false;
 
-        if(stack.getTagCompound() == null || !stack.getTagCompound().hasKey("Side"))
+        if (stack.getTagCompound() == null || !stack.getTagCompound().hasKey("Side"))
             return false;
 
         NBTTagCompound potara = stack.getTagCompound();
@@ -172,25 +171,25 @@ public class ItemPotara extends ItemArmor {
         return uniqueCode.toString();
     }
 
-    public static String getHash(ItemStack stack){
+    public static String getHash(ItemStack stack) {
         NBTTagCompound potara = stack.getTagCompound();
         return potara.hasKey("Hash") ? potara.getString("Hash") : "";
     }
 
-    public static boolean isRightSide(ItemStack itemStack){
+    public static boolean isRightSide(ItemStack itemStack) {
         return itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("Side") && itemStack.getTagCompound().getString("Side").equals("RIGHT");
     }
 
-    public static boolean isSplit(ItemStack itemStack){
+    public static boolean isSplit(ItemStack itemStack) {
         return itemStack.getTagCompound() != null && itemStack.getTagCompound().hasKey("Side");
     }
 
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
         NBTTagCompound compound = itemStack.getTagCompound();
-        if(compound != null && compound.hasKey("Side")){
+        if (compound != null && compound.hasKey("Side")) {
             par3List.add(StatCollector.translateToLocalFormatted("§eSide: §6" + compound.getString("Side")));
-            if(compound.hasKey("Hash")){
+            if (compound.hasKey("Hash")) {
                 par3List.add(StatCollector.translateToLocalFormatted("§7Hash: §8" + compound.getString("Hash")));
             }
         } else {
@@ -205,17 +204,17 @@ public class ItemPotara extends ItemArmor {
     }
 
     public String getArmorTextureByMeta(int meta) {
-        return "npcdbc:textures/armor/dbcvanity/potara_"+meta+".png";
+        return "npcdbc:textures/armor/dbcvanity/potara_" + meta + ".png";
     }
 
 
     @Override
     @SideOnly(Side.CLIENT)
-    public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int par3){
-        if(!isSplit(itemStack))
+    public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, int par3) {
+        if (!isSplit(itemStack))
             return ModelPotara.BOTH_EARS;
 
-        if(isRightSide(itemStack))
+        if (isRightSide(itemStack))
             return ModelPotara.RIGHT_EAR;
 
         return ModelPotara.LEFT_EAR;

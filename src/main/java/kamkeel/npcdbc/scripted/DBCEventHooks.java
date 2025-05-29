@@ -1,6 +1,10 @@
 package kamkeel.npcdbc.scripted;
 
 import kamkeel.npcdbc.constants.DBCScriptType;
+import kamkeel.npcs.controllers.AttributeController;
+import kamkeel.npcs.controllers.data.attribute.tracker.PlayerAttributeTracker;
+import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.config.ConfigMain;
 import noppes.npcs.controllers.ScriptController;
 import noppes.npcs.controllers.data.PlayerDataScript;
 import noppes.npcs.scripted.NpcAPI;
@@ -8,32 +12,45 @@ import noppes.npcs.scripted.NpcAPI;
 public class DBCEventHooks {
 
     public static boolean onFormChangeEvent(DBCPlayerEvent.FormChangeEvent formChangeEvent) {
-        PlayerDataScript handler = ScriptController.Instance.playerScripts;
+        PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(formChangeEvent.getPlayer());
         handler.callScript(DBCScriptType.FORMCHANGE.function, formChangeEvent);
+
+        if(ConfigMain.AttributesEnabled && !formChangeEvent.isCancelled()
+            && formChangeEvent.getPlayer() != null && formChangeEvent.getPlayer().getMCEntity() instanceof EntityPlayer){
+            EntityPlayer entityPlayer = (EntityPlayer) (formChangeEvent.getPlayer().getMCEntity());
+            PlayerAttributeTracker tracker = AttributeController.getTracker(entityPlayer);
+            tracker.recalcAttributes(entityPlayer);
+        }
         return NpcAPI.EVENT_BUS.post(formChangeEvent);
     }
 
     public static boolean onDBCDamageEvent(DBCPlayerEvent.DamagedEvent damagedEvent) {
-        PlayerDataScript handler = ScriptController.Instance.playerScripts;
+        PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(damagedEvent.getPlayer());
         handler.callScript(DBCScriptType.DAMAGED.function, damagedEvent);
         return NpcAPI.EVENT_BUS.post(damagedEvent);
     }
 
     public static boolean onCapsuleUsedEvent(DBCPlayerEvent.CapsuleUsedEvent capsuleUsedEvent) {
-        PlayerDataScript handler = ScriptController.Instance.playerScripts;
+        PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(capsuleUsedEvent.getPlayer());
         handler.callScript(DBCScriptType.CAPSULEUSED.function, capsuleUsedEvent);
         return NpcAPI.EVENT_BUS.post(capsuleUsedEvent);
     }
 
+    public static boolean onSenzuUsedEvent(DBCPlayerEvent.SenzuUsedEvent senzuUsedEvent) {
+        PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(senzuUsedEvent.getPlayer());
+        handler.callScript(DBCScriptType.SENZUUSED.function, senzuUsedEvent);
+        return NpcAPI.EVENT_BUS.post(senzuUsedEvent);
+    }
+
     public static boolean onReviveEvent(DBCPlayerEvent.ReviveEvent reviveEvent) {
-        PlayerDataScript handler = ScriptController.Instance.playerScripts;
+        PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(reviveEvent.getPlayer());
         handler.callScript(DBCScriptType.REVIVED.function, reviveEvent);
         return NpcAPI.EVENT_BUS.post(reviveEvent);
     }
 
-    public static void onKnockoutEvent(DBCPlayerEvent.KnockoutEvent koEvent) {
-        PlayerDataScript handler = ScriptController.Instance.playerScripts;
+    public static boolean onKnockoutEvent(DBCPlayerEvent.KnockoutEvent koEvent) {
+        PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(koEvent.getPlayer());
         handler.callScript(DBCScriptType.KNOCKOUT.function, koEvent);
-        NpcAPI.EVENT_BUS.post(koEvent);
+        return NpcAPI.EVENT_BUS.post(koEvent);
     }
 }

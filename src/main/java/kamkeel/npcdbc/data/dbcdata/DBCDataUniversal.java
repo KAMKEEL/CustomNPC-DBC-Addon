@@ -43,7 +43,7 @@ public class DBCDataUniversal {
             data = getData(player);
             data.loadNBTData(false);
         }
-        if(data != null)
+        if (data != null)
             data.player = player;
         return data;
     }

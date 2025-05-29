@@ -45,7 +45,7 @@ public abstract class ModelDBCPartInterface extends ModelRenderer {
     public void setData(ModelData data, EntityCustomNpc entity, DBCDisplay display) {
         this.data = data;
         this.entity = entity;
-        this.initData(data,display);
+        this.initData(data, display);
     }
 
     public void render(float par1) {

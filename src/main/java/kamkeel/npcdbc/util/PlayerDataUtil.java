@@ -11,13 +11,17 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
+import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
+import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
+import kamkeel.npcs.network.packets.data.large.ScrollDataPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import noppes.npcs.api.entity.IPlayer;
+import noppes.npcs.constants.EnumScrollData;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -25,8 +29,6 @@ import noppes.npcs.scripted.NpcAPI;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static noppes.npcs.NoppesUtilServer.sendScrollData;
 
 public class PlayerDataUtil {
 
@@ -54,13 +56,16 @@ public class PlayerDataUtil {
     }
 
     public static PlayerDBCInfo getDBCInfo(EntityPlayer player) {
-        return getDBCInfo(PlayerDataController.Instance.getPlayerData(player));
+        return getDBCInfo(PlayerData.get(player));
     }
 
     public static PlayerDBCInfo getDBCInfo(PlayerData playerData) {
         return ((IPlayerDBCInfo) playerData).getPlayerDBCInfo();
     }
 
+    public static DBCStats getDBCData(EntityNPCInterface npc) {
+        return ((INPCStats) npc.stats).getDBCStats();
+    }
 
     /**
      * Compress Player information intpo CNPC+ Pre-Built
@@ -76,7 +81,7 @@ public class PlayerDataUtil {
                 map.put(useMenuName ? form.menuName : form.name, form.id);
             }
         }
-        sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map, EnumScrollData.OPTIONAL);
     }
 
     public static void sendAuraDBCInfo(EntityPlayerMP player) {
@@ -89,7 +94,7 @@ public class PlayerDataUtil {
                 map.put(aura.name, aura.id);
             }
         }
-        sendScrollData(player, map);
+        ScrollDataPacket.sendScrollData(player, map, EnumScrollData.OPTIONAL);
     }
 
     /**
@@ -116,7 +121,6 @@ public class PlayerDataUtil {
 
         return 0;
     }
-
 
     public static Aura getToggledAura(Entity entity) {
         if (entity instanceof EntityPlayer)
@@ -153,14 +157,12 @@ public class PlayerDataUtil {
             outlineOn = data.getOutline() != null;
             particlesOn = !data.particleRenderQueue.isEmpty();
             use = auraOn || outlineOn || particlesOn;
-
         } else if (entity instanceof EntityNPCInterface) {
             DBCDisplay data = (DBCDisplay) dat;
             auraOn = data.auraEntity != null;
             outlineOn = data.getOutline() != null;
             particlesOn = !data.particleRenderQueue.isEmpty();
             use = auraOn || outlineOn || particlesOn || !data.dbcSecondaryAuraQueue.isEmpty() || !data.dbcAuraQueue.isEmpty();
-
         }
 
         if (use && OptifineHelper.shaderPackLoaded && !OptifineHelper.isQueued(entity)) {

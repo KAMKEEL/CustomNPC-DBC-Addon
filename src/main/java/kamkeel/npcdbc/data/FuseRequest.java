@@ -53,30 +53,30 @@ public class FuseRequest {
         this.tier = tier;
     }
 
-    public boolean checkRequest(FuseRequest target){
-        if(this.rightSide == target.rightSide)
+    public boolean checkRequest(FuseRequest target) {
+        if (this.rightSide == target.rightSide)
             return false;
-        if(!this.hash.equals(target.hash))
+        if (!this.hash.equals(target.hash))
             return false;
-        if(this.tier != target.tier)
+        if (this.tier != target.tier)
             return false;
-        if(!target.target.equals(this.requester))
+        if (!target.target.equals(this.requester))
             return false;
-        if(!target.requester.equals(this.target))
+        if (!target.requester.equals(this.target))
             return false;
         return System.currentTimeMillis() < target.getRequestTime() + 5000L;
     }
 
-    public boolean newRequest(FuseRequest old){
-        if(this.rightSide != old.rightSide)
+    public boolean newRequest(FuseRequest old) {
+        if (this.rightSide != old.rightSide)
             return true;
-        if(!this.hash.equals(old.hash))
+        if (!this.hash.equals(old.hash))
             return true;
-        if(this.tier != old.tier)
+        if (this.tier != old.tier)
             return true;
-        if(!old.requester.equals(this.requester))
+        if (!old.requester.equals(this.requester))
             return true;
-        if(!old.target.equals(this.target))
+        if (!old.target.equals(this.target))
             return true;
         return System.currentTimeMillis() > old.getRequestTime() + 5000L;
     }

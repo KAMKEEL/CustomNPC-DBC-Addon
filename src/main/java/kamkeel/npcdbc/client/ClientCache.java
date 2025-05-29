@@ -24,7 +24,9 @@ public class ClientCache {
     public static HashMap<Integer, HashMap<String, Boolean>> divineApplicableForms = new HashMap<>();
     public static int maxAbsorptionLevel = JGConfigRaces.CONFIG_MAJIN_ABSORPTON_MAX_LEVEL;
 
-    public static DBCData getClientData(EntityPlayer player){
+    public static String discordURL = null;
+
+    public static DBCData getClientData(EntityPlayer player) {
         synchronized (clientDataCache) {
             if (!clientDataCache.containsKey(player.getCommandSenderName()))
                 clientDataCache.put(player.getCommandSenderName(), new CacheHashMap.CachedObject<>(new DBCData(player)));

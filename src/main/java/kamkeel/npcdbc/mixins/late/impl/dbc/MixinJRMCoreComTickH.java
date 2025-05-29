@@ -41,41 +41,42 @@ public abstract class MixinJRMCoreComTickH {
     @Unique
     private static int[] customNPC_DBC_Addon$emptyPowerPointCostArray;
 
-    @Inject(method = "serverStart", at=@At("HEAD"))
-    public void initializeEmptyArrays(MinecraftServer server, CallbackInfo ci){
-        if(start){
+    @Inject(method = "serverStart", at = @At("HEAD"))
+    public void initializeEmptyArrays(MinecraftServer server, CallbackInfo ci) {
+        if (start) {
             customNPC_DBC_Addon$emptyPowerPointGrowthArray = new int[JRMCoreConfig.ArcosianPPGrowth.length];
             customNPC_DBC_Addon$emptyPowerPointCostArray = new int[JRMCoreConfig.ArcosianPPCost.length];
         }
     }
 
-    @Redirect(method = "serverTick", at=@At(value = "INVOKE", target="LJinRyuu/JRMCore/JRMCoreH;getPlayerForUsername(Lnet/minecraft/server/MinecraftServer;Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayerMP;"))
-    public EntityPlayerMP setCurrentTickPlayerServerPRE(MinecraftServer server, String s){
+    @Redirect(method = "serverTick", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;getPlayerForUsername(Lnet/minecraft/server/MinecraftServer;Ljava/lang/String;)Lnet/minecraft/entity/player/EntityPlayerMP;"))
+    public EntityPlayerMP setCurrentTickPlayerServerPRE(MinecraftServer server, String s) {
         EntityPlayerMP player = JRMCoreH.getPlayerForUsername(server, s);
-        CommonProxy.CurrentJRMCTickPlayer = player;
+        CommonProxy.setCurrentJRMCTickPlayer(player);
         return player;
     }
-    @Inject(method = "serverTick", at=@At("RETURN"))
-    public void setCurrentTickPlayerServerPOST(MinecraftServer server, CallbackInfo ci){
-        CommonProxy.CurrentJRMCTickPlayer = null;
+
+    @Inject(method = "serverTick", at = @At("RETURN"))
+    public void setCurrentTickPlayerServerPOST(MinecraftServer server, CallbackInfo ci) {
+        CommonProxy.setCurrentJRMCTickPlayer(null);
     }
 
     @Redirect(method = "updatePlayersData", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;rSai(I)Z"))
-    public boolean fixOozaruCustomFormSize(int r){
+    public boolean fixOozaruCustomFormSize(int r) {
         boolean isSaiyan = JRMCoreH.rSai(r);
 
         // if isn't saiyan, skip useless routine
-        if(!isSaiyan)
+        if (!isSaiyan)
             return false;
 
         // isSaiyan is now confirmed to be true
         // If there isn't a JRMCTickPlayer stored, just return isSaiyan (true)
-        if (CommonProxy.CurrentJRMCTickPlayer == null) {
+        if (CommonProxy.getCurrentJRMCTickPlayer() == null) {
             return true;
         }
 
-        Form form = DBCData.getForm(CommonProxy.CurrentJRMCTickPlayer);
-        if(form == null)
+        Form form = DBCData.getForm(CommonProxy.getCurrentJRMCTickPlayer());
+        if (form == null)
             return true;
 
         return form.stackable.vanillaStackable;
@@ -92,37 +93,37 @@ public abstract class MixinJRMCoreComTickH {
                                    @Local(name = "nbt") NBTTagCompound nbtTagCompound) {
         try {
             this.updatePlayersData(server, playerID, player, jgPlayer, nbtTagCompound);
-        }
-        catch (NullPointerException ok){
+        } catch (NullPointerException ok) {
             LogWriter.except(ok);
         }
     }
 
-    @Redirect(method = "serverTick", at = @At(value = "FIELD", target="LJinRyuu/JRMCore/JRMCoreConfig;ArcosianPPGrowth:[I", ordinal = 0, opcode = Opcodes.GETSTATIC))
-    public int[] stopNormalPPRegenOnCustoms(@Local(name = "player") EntityPlayerMP player){
+    @Redirect(method = "serverTick", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;ArcosianPPGrowth:[I", ordinal = 0, opcode = Opcodes.GETSTATIC))
+    public int[] stopNormalPPRegenOnCustoms(@Local(name = "player") EntityPlayerMP player) {
         DBCData dbcData = DBCData.get(player);
-        if(dbcData == null)
+        if (dbcData == null)
             return JRMCoreConfig.ArcosianPPGrowth;
         Form form = dbcData.getForm();
-        if(form == null || (!form.mastery.powerPointEnabled && form.stackable.vanillaStackable))
+        if (form == null || (!form.mastery.powerPointEnabled && form.stackable.vanillaStackable))
             return JRMCoreConfig.ArcosianPPGrowth;
 
-        if(form.mastery.powerPointGrowth > 0 || !form.stackable.vanillaStackable){
+        if (form.mastery.powerPointGrowth > 0 || !form.stackable.vanillaStackable) {
             return customNPC_DBC_Addon$emptyPowerPointGrowthArray;
         }
         return JRMCoreConfig.ArcosianPPGrowth;
     }
-    @Redirect(method = "serverTick", at = @At(value = "FIELD", target="LJinRyuu/JRMCore/JRMCoreConfig;ArcosianPPCost:[I", ordinal = 0, opcode = Opcodes.GETSTATIC))
-    public int[] stopNormalPPCost(@Local(name = "player") EntityPlayerMP player){
+
+    @Redirect(method = "serverTick", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;ArcosianPPCost:[I", ordinal = 0, opcode = Opcodes.GETSTATIC))
+    public int[] stopNormalPPCost(@Local(name = "player") EntityPlayerMP player) {
         DBCData dbcData = DBCData.get(player);
-        if(dbcData == null)
+        if (dbcData == null)
             return JRMCoreConfig.ArcosianPPCost;
 
         Form form = dbcData.getForm();
-        if(form == null || (!form.mastery.powerPointEnabled && form.stackable.vanillaStackable))
+        if (form == null || (!form.mastery.powerPointEnabled && form.stackable.vanillaStackable))
             return JRMCoreConfig.ArcosianPPCost;
 
-        if(form.mastery.powerPointCost > 0 || !form.stackable.vanillaStackable){
+        if (form.mastery.powerPointCost > 0 || !form.stackable.vanillaStackable) {
 
             return customNPC_DBC_Addon$emptyPowerPointCostArray;
         }
@@ -130,21 +131,21 @@ public abstract class MixinJRMCoreComTickH {
         return JRMCoreConfig.ArcosianPPCost;
     }
 
-    @Inject(method = "serverTick", at = @At(value = "INVOKE", target="LJinRyuu/JRMCore/JRMCoreH;getArcosianFormID(IZZZ)I", shift = At.Shift.AFTER))
-    public void customFormPowerPoints(MinecraftServer server, CallbackInfo ci, @Local(name = "player") EntityPlayerMP player){
+    @Inject(method = "serverTick", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;getArcosianFormID(IZZZ)I", shift = At.Shift.AFTER))
+    public void customFormPowerPoints(MinecraftServer server, CallbackInfo ci, @Local(name = "player") EntityPlayerMP player) {
         DBCData dbcData = DBCData.get(player);
-        if(dbcData == null)
+        if (dbcData == null)
             return;
         Form form = dbcData.getForm();
-        if(form == null)
+        if (form == null)
             return;
 
-        if(!form.mastery.powerPointEnabled)
+        if (!form.mastery.powerPointEnabled)
             return;
 
-        if(form.mastery.powerPointCost > 0 && dbcData.Release >= 100){
+        if (form.mastery.powerPointCost > 0 && dbcData.Release >= 100) {
             updatePowerPointCost(dbcData, form);
-        }else if(form.mastery.powerPointGrowth > 0 && dbcData.Release < 50){
+        } else if (form.mastery.powerPointGrowth > 0 && dbcData.Release < 50) {
             updatePowerPointRegen(dbcData, form);
         }
 
@@ -152,12 +153,12 @@ public abstract class MixinJRMCoreComTickH {
 
     private void updatePowerPointRegen(DBCData dbcData, Form form) {
         int racialSkill = JRMCoreH.SklLvlX(1, dbcData.RacialSkills) - 1;
-        if(racialSkill < 0)
+        if (racialSkill < 0)
             racialSkill = 0;
         int pointGain = (int) (form.mastery.powerPointGrowth * JRMCoreConfig.appm);
 
         int newPowerPoints = dbcData.ArcReserve + pointGain;
-        if(newPowerPoints > JRMCoreConfig.ArcosianPPMax[racialSkill])
+        if (newPowerPoints > JRMCoreConfig.ArcosianPPMax[racialSkill])
             newPowerPoints = JRMCoreConfig.ArcosianPPMax[racialSkill];
         dbcData.ArcReserve = newPowerPoints;
         dbcData.saveNBTData(false);
@@ -167,17 +168,18 @@ public abstract class MixinJRMCoreComTickH {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(dbcData.player);
         int racialSkill = JRMCoreH.SklLvlX(1, dbcData.RacialSkills) - 1;
         float ppCost = form.mastery.powerPointCost;
-        if(JGConfigDBCFormMastery.FM_Enabled && ppCost != 0){
+        if (JGConfigDBCFormMastery.FM_Enabled && ppCost != 0) {
             ppCost *= form.mastery.calculateMulti("ppcost", formData.getCurrentLevel());
         }
         dbcData.ArcReserve -= (int) ppCost;
-        if(dbcData.ArcReserve < 0)
+        if (dbcData.ArcReserve < 0)
             dbcData.ArcReserve = 0;
-        if(dbcData.ArcReserve > JRMCoreConfig.ArcosianPPMax[racialSkill])
+        if (dbcData.ArcReserve > JRMCoreConfig.ArcosianPPMax[racialSkill])
             dbcData.ArcReserve = JRMCoreConfig.ArcosianPPMax[racialSkill];
         dbcData.saveNBTData(false);
     }
 
     @Shadow
-    public void updatePlayersData(MinecraftServer server, int playerID, EntityPlayerMP player, JGPlayerMP jgPlayer, NBTTagCompound nbt){}
+    public void updatePlayersData(MinecraftServer server, int playerID, EntityPlayerMP player, JGPlayerMP jgPlayer, NBTTagCompound nbt) {
+    }
 }

@@ -26,21 +26,21 @@ public class MixinJRMCoreCliTickH {
     public static EntityLivingBase lockOn;
 
     @Redirect(method = "onTickInGame", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;rSai(I)Z"))
-    public boolean fixOozaruCustomFormSize(int r){
+    public boolean fixOozaruCustomFormSize(int r) {
         boolean isSaiyan = JRMCoreH.rSai(r);
 
         // if isn't saiyan, skip useless routine
-        if(!isSaiyan)
+        if (!isSaiyan)
             return false;
 
         // isSaiyan is now confirmed to be true
         // If there isn't a JRMCTickPlayer stored, just return isSaiyan (true)
-        if (CommonProxy.CurrentJRMCTickPlayer == null) {
+        if (CommonProxy.getCurrentJRMCTickPlayer() == null) {
             return true;
         }
 
-        Form form = DBCData.getForm(CommonProxy.CurrentJRMCTickPlayer);
-        if(form == null)
+        Form form = DBCData.getForm(CommonProxy.getCurrentJRMCTickPlayer());
+        if (form == null)
             return true;
 
         return form.stackable.vanillaStackable;
@@ -48,13 +48,13 @@ public class MixinJRMCoreCliTickH {
 
     @Inject(method = "onTickInGame", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data1:[Ljava/lang/String;", ordinal = 0, shift = At.Shift.BEFORE))
     public void setCurrentTickPlayerClientMain(CallbackInfo ci, @Local(name = "plyr") EntityPlayer plyr) {
-        CommonProxy.CurrentJRMCTickPlayer = plyr;
+        CommonProxy.setCurrentJRMCTickPlayer(plyr);
 
     }
 
     @Inject(method = "onTickInGame", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;data(Ljava/lang/String;ILjava/lang/String;)Ljava/lang/String;", ordinal = 0, shift = At.Shift.BEFORE))
     public void setCurrentTickPlayerClientOthers(CallbackInfo ci, @Local(name = "plyr1") EntityPlayer plyr1) {
-        CommonProxy.CurrentJRMCTickPlayer = plyr1;
+        CommonProxy.setCurrentJRMCTickPlayer(plyr1);
 
     }
 
@@ -69,10 +69,10 @@ public class MixinJRMCoreCliTickH {
     }
 
     @Inject(method = "onRenderTick()V", at = @At("HEAD"))
-    private void updateLockOn(CallbackInfo ci){
-        if(lockOn instanceof EntityNPCInterface){
+    private void updateLockOn(CallbackInfo ci) {
+        if (lockOn instanceof EntityNPCInterface) {
             DBCStats stats = ((INPCStats) ((EntityNPCInterface) lockOn).stats).getDBCStats();
-            if(!stats.canBeLockedOn())
+            if (!stats.canBeLockedOn())
                 lockOn = null;
         }
     }

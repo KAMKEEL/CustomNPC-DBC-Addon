@@ -1,26 +1,40 @@
 package kamkeel.npcdbc.scripted;
 
+import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.server.JGPlayerMP;
 import kamkeel.npcdbc.api.IDBCAddon;
+import kamkeel.npcdbc.api.IKiAttack;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
+import kamkeel.npcdbc.api.form.IFormMastery;
+import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
+import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.api.entity.IEntityLivingBase;
+import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.entity.ScriptDBCPlayer;
 import noppes.npcs.util.ValueUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
@@ -39,13 +53,68 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         dbcData = DBCData.get(player);
     }
 
-
     /**
      * Set a players lock on state!
+     *
      * @param lockOnTarget Reference to new target Entity or null to remove lock on.
      */
-    public void setLockOnTarget(IEntityLivingBase lockOnTarget){
+    public void setLockOnTarget(IEntityLivingBase lockOnTarget) {
         this.dbcData.setLockOnTarget(lockOnTarget == null ? null : lockOnTarget.getMCEntity());
+    }
+
+    @Override
+    public void setKiFistOn(boolean on) {
+        if (dbcData.Skills.contains("KF")) {
+            if (!on)
+                JRMCoreH.PlyrSettingsOn(dbcData.player, DBCSettings.KI_FIST);
+            else
+                JRMCoreH.PlyrSettingsRem(dbcData.player, DBCSettings.KI_FIST);
+        }
+    }
+
+    @Override
+    public void setKiProtectionOn(boolean on) {
+        if (dbcData.Skills.contains("KP")) {
+            if (!on)
+                JRMCoreH.PlyrSettingsOn(dbcData.player, DBCSettings.KI_PROTECTION);
+            else
+                JRMCoreH.PlyrSettingsRem(dbcData.player, DBCSettings.KI_PROTECTION);
+        }
+    }
+
+    @Override
+    public void setKiWeaponType(int type) {
+        if (type < 0)
+            type = 0;
+        if (type > 2)
+            type = 2;
+        if (dbcData.Skills.contains("KI") && dbcData.Skills.contains("KF")) {
+            JRMCoreH.PlyrSettingsSet(dbcData.player, DBCSettings.KI_WEAPON_TOGGLE, type - 1);
+        }
+    }
+
+    @Override
+    public boolean kiFistOn() {
+        if (dbcData.Skills.contains("KF")) {
+            return !JRMCoreH.PlyrSettingsB(dbcData.player, DBCSettings.KI_FIST);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean kiProtectionOn() {
+        if (dbcData.Skills.contains("KP")) {
+            return !JRMCoreH.PlyrSettingsB(dbcData.player, DBCSettings.KI_PROTECTION);
+        }
+        return false;
+    }
+
+    @Override
+    public int getKiWeaponType() {
+        if (dbcData.Skills.contains("KI") && dbcData.Skills.contains("KF")) {
+            return JRMCoreH.PlyrSettings(dbcData.player, DBCSettings.KI_WEAPON_TOGGLE) + 1;
+        }
+        return 0;
     }
 
     @Override
@@ -54,7 +123,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     @Override
-    public void setTurboState(boolean on){
+    public void setTurboState(boolean on) {
         dbcData.setTurboState(on);
     }
 
@@ -125,8 +194,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
             for (int i = 0; i < stats.length; i++) {
                 newstats[i] = (int) ((double) (stats[i] + attri[i]) * multi);
                 nbt.setInteger(JRMCoreH.AttrbtNbtI[i], newstats[i]);
-
             }
+
             this.setBody(getMaxBody());
             this.setKi(getMaxKi());
             this.setStamina(getMaxStamina());
@@ -239,6 +308,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         return dbcData.stats.getAllFullAttributes();
     }
 
+    @Override
+    public int getUsedMind() {
+        return dbcData.getUsedMind();
+    }
+
+    @Override
+    public int getAvailableMind() {
+        return dbcData.getAvailableMind();
+    }
+
     /**
      * @return Player's race name
      */
@@ -346,10 +425,6 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                 }
             }
         }
-
-        if (!found) {
-            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getformName(int race, int form) or getCurrentformName()", new Object[2]);
-        }
     }
 
     /**
@@ -397,17 +472,12 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
                 if (mastery.toLowerCase().contains(formName.toLowerCase())) {
                     String[] masteryvalues = mastery.split(",");
                     double masteryvalue = Double.parseDouble(masteryvalues[1]);
-                    found = true;
-
                     valuetoreturn = masteryvalue;
                     return valuetoreturn;
                 }
             }
         }
-        if (!found) {
-            throw new CustomNPCsException("Invalid \nform name. For non racial form names, use Kaioken, Mystic, UltraInstict and GodOfDestruction. For racial \nform names, check getformName(int race, int form) or getCurrentformName()", new Object[2]);
-        }
-        throw new CustomNPCsException("Form Mastery value is -1.0", new Object[3]);
+        return -1;
     }
 
     /**
@@ -437,29 +507,13 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
      */
     @Override
     public int getSkillLevel(String skillname) {
-        int i;
-        String[] playerskills = nbt.getString("jrmcSSlts").split(",");
-        String[] skillids = JRMCoreH.DBCSkillsIDs;
-        String[] skillnames = JRMCoreH.DBCSkillNames;
-        boolean skillFound = false;
-        boolean playerHasSkill = false;
-        for (i = 0; i < skillnames.length; i++) {
-            if (skillname.equals(skillnames[i])) {
-                skillFound = true;
-                for (String playerskill : playerskills) {
-                    if (playerskill.contains(skillids[i])) {
-                        return JRMCoreH.SklLvl(i, playerskills);
-                    }
-                }
-            }
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillname);
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
         }
-        if (!skillFound) {
-            throw new CustomNPCsException("\nInvalid Skill ID :" + skillname + ". Please re-enter the skill name \nwithout any spaces in between. \ni.e: GodOfDestruction, KiProtection, \nDefensePenetration");
-        }
-        if (!playerHasSkill) {
-            throw new CustomNPCsException("\nPlayer doesn't have skill " + skillname + "!", new Object[1]);
-        }
-        return 0;
+        String playerSkillString = nbt.getString("jrmcSSlts");
+
+        return JRMCoreH.SklLvl(skillIndex, playerSkillString.split(","));
     }
 
     /**
@@ -638,6 +692,35 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     //////////////////////////////////////////////
     // Form stuff
 
+    @Override
+    public boolean hasCustomForm(String formName) {
+        Form form = FormController.getInstance().getFormFromName(formName);
+        if (form == null)
+            throw new CustomNPCsException("No form found!");
+
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        int formID = form.getID();
+        return formData.hasFormUnlocked(formID);
+    }
+
+    @Override
+    public boolean hasCustomForm(int formID) {
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        return formData.hasFormUnlocked(formID);
+    }
+
+    @Override
+    public IForm[] getCustomForms() {
+        PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(player);
+        ArrayList<IForm> unlockedForms = new ArrayList<>();
+        for (IForm form : FormController.getInstance().getForms()) {
+            if (dbcInfo.hasFormUnlocked(form.getID())) {
+                unlockedForms.add(form);
+            }
+        }
+        return unlockedForms.toArray(new IForm[0]);
+    }
+
     public void giveCustomForm(String formName) {
         IForm form = FormController.Instance.get(formName);
         form.assignToPlayer(this);
@@ -650,12 +733,32 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     public void removeCustomForm(String formName) {
         IForm f = FormController.Instance.get(formName);
-        f.removeFromPlayer(this);
+        removeCustomForm(f, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
     }
 
     @Override
     public void removeCustomForm(IForm form) {
-        removeCustomForm(form.getName());
+        removeCustomForm(form, ConfigDBCGeneral.FORM_MASTERIES_CLEAR_ON_REMOVE);
+    }
+
+    @Override
+    public void removeCustomForm(String formName, boolean removesMastery) {
+        IForm f = FormController.Instance.get(formName);
+        removeCustomForm(f, removesMastery);
+    }
+
+    @Override
+    public void removeCustomForm(IForm form, boolean removesMastery) {
+        form.removeFromPlayer(this, removesMastery);
+    }
+
+    @Override
+    public IForm getSelectedForm() {
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        if(c.selectedForm == -1)
+            return null;
+
+        return FormController.getInstance().get(c.selectedForm);
     }
 
     @Override
@@ -681,6 +784,28 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         formData.updateClient();
     }
 
+
+    @Override
+    public int getSelectedDBCForm() {
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        return c.selectedDBCForm;
+    }
+
+    @Override
+    public void setSelectedDBCForm(int formID) {
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        c.selectedDBCForm = formID;
+        c.updateClient();
+    }
+
+    @Override
+    public void removeSelectedDBCForm() {
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        formData.selectedDBCForm = -1;
+        formData.tempSelectedDBCForm = -1;
+        formData.updateClient();
+    }
+
     public boolean isInCustomForm() {
         return PlayerDataUtil.getDBCInfo(player).isInCustomForm();
     }
@@ -699,12 +824,29 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     public void setCustomForm(int formID) {
+        setCustomForm(formID, false);
+    }
+
+    @Override
+    public void setCustomForm(IForm form) {
+        setCustomForm(form, false);
+    }
+
+    @Override
+    public void setCustomForm(int formID, boolean ignoreUnlockCheck) {
+        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
+        if (formID == -1) {
+            c.currentForm = -1;
+            c.updateClient();
+            return;
+        }
+
         Form f = (Form) FormController.Instance.get(formID);
         if (f == null)
             throw new CustomNPCsException("Form does not exist!");
 
-        PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
-        if (c.hasForm(f)) {
+
+        if (ignoreUnlockCheck || c.hasForm(f)) {
             DBCData d = DBCData.get(player);
             d.State = 0;
             if (!f.stackable.isFormStackable(DBCForm.Kaioken) && d.isForm(DBCForm.Kaioken)) {
@@ -725,13 +867,29 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
             c.currentForm = f.id;
             c.updateClient();
-        } else
+        } else {
             throw new CustomNPCsException("Player doesn't have form " + f.name + " unlocked!");
+        }
     }
 
     @Override
-    public void setCustomForm(IForm form) {
-        setCustomForm(form.getID());
+    public void setCustomForm(IForm form, boolean ignoreUnlockCheck) {
+        int id = form == null ? -1 : form.getID();
+        setCustomForm(id, ignoreUnlockCheck);
+    }
+
+    @Override
+    public void setCustomForm(String formName, boolean ignoreUnlockCheck) {
+        IForm form = FormController.getInstance().get(formName);
+        if (form == null) {
+            throw new CustomNPCsException("Form '" + formName + "' does not exist!");
+        }
+        setCustomForm(form, ignoreUnlockCheck);
+    }
+
+    @Override
+    public void setCustomForm(String formName) {
+        setCustomForm(formName, false);
     }
 
     //////////////////////////////////////////////
@@ -828,9 +986,27 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     // Aura stuff
+
+    @Override
+    public boolean hasAura(String auraName) {
+        Aura aura = AuraController.getInstance().getAuraFromName(auraName);
+        if (aura == null)
+            throw new CustomNPCsException("No aura found!");
+
+        PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(player);
+        int auraID = aura.getID();
+        return dbcInfo.hasAuraUnlocked(auraID);
+    }
+
+    @Override
+    public boolean hasAura(int auraId) {
+        PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo(player);
+        return dbcInfo.hasAuraUnlocked(auraId);
+    }
+
     @Override
     public void giveAura(IAura aura) {
-        if(aura != null)
+        if (aura != null)
             aura.assignToPlayer(this);
         else
             throw new CustomNPCsException("This aura doesn't exist");
@@ -839,7 +1015,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void giveAura(int auraID) {
         IAura aura = AuraController.getInstance().get(auraID);
-        if(aura != null)
+        if (aura != null)
             giveAura(aura);
         else
             throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
@@ -848,7 +1024,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void giveAura(String auraName) {
         IAura aura = AuraController.Instance.get(auraName);
-        if(aura != null)
+        if (aura != null)
             giveAura(aura);
         else
             throw new CustomNPCsException(String.format("There is no aura with given name (name: \"%s\")", auraName));
@@ -857,7 +1033,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void removeAura(String auraName) {
         IAura aura = AuraController.Instance.get(auraName);
-        if(aura != null)
+        if (aura != null)
             removeAura(aura);
         else
             throw new CustomNPCsException(String.format("There is no aura with given name (name: \"%s\")", auraName));
@@ -865,15 +1041,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void removeAura(IAura aura) {
-        if(aura != null)
+        if (aura != null)
             aura.removeFromPlayer(this);
         else
             throw new CustomNPCsException("This aura doesn't exist");
     }
+
     @Override
     public void removeAura(int auraID) {
         IAura aura = AuraController.getInstance().get(auraID);
-        if(aura != null)
+        if (aura != null)
             removeAura(aura);
         else
             throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
@@ -881,17 +1058,16 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setAura(String auraName) {
-        if(auraName == null) {
+        if (auraName == null) {
             removeAuraSelection();
             return;
         }
 
         IAura aura = AuraController.Instance.get(auraName);
-        if(aura == null)
+        if (aura == null)
             throw new CustomNPCsException(String.format("There is no aura with given name (name: \"%s\")", auraName));
         setAura(aura);
     }
-
 
     @Override
     public void setAura(IAura aura) {
@@ -900,14 +1076,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setAura(int auraID) {
-        if (auraID == -1){
+        if (auraID == -1) {
             removeAuraSelection();
             return;
         }
 
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
-        if (AuraController.getInstance().has(auraID)){
-            c.selectedAura = auraID;
+        if (AuraController.getInstance().has(auraID)) {
+            c.currentAura = auraID;
             c.updateClient();
         } else {
             throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
@@ -921,19 +1097,27 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         AuraData.updateClient();
     }
 
+    @Override
+    public void removeCurrentAura() {
+        PlayerDBCInfo AuraData = PlayerDataUtil.getDBCInfo(player);
+        AuraData.currentAura = -1;
+        AuraData.selectedAura = -1;
+        AuraData.updateClient();
+    }
+
     public IAura getAura() {
         return dbcData.getAura();
     }
 
     @Override
     public void setAuraSelection(String auraName) {
-        if(auraName == null) {
+        if (auraName == null) {
             removeAuraSelection();
             return;
         }
 
         IAura aura = AuraController.Instance.get(auraName);
-        if(aura == null)
+        if (aura == null)
             throw new CustomNPCsException(String.format("There is no aura with given name (name: \"%s\")", auraName));
 
         setAuraSelection(aura);
@@ -941,7 +1125,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setAuraSelection(IAura aura) {
-        if(aura == null) {
+        if (aura == null) {
             removeAuraSelection();
             return;
         }
@@ -949,23 +1133,23 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         final int auraID = aura.getID();
         PlayerDBCInfo c = PlayerDataUtil.getDBCInfo(player);
 
-        if(c.hasAuraUnlocked(auraID)){
-            c.currentAura = auraID;
+        if (c.hasAuraUnlocked(auraID)) {
+            c.selectedAura = auraID;
             c.updateClient();
-        }else{
+        } else {
             throw new CustomNPCsException(String.format("Player \"%s\" doesn't have aura \"%s\" (ID: %d) unlocked.", player.getCommandSenderName(), aura.getName(), auraID));
         }
     }
 
     @Override
     public void setAuraSelection(int auraID) {
-        if(auraID == -1){
+        if (auraID == -1) {
             removeAuraSelection();
             return;
         }
 
         IAura aura = AuraController.Instance.get(auraID);
-        if(aura == null)
+        if (aura == null)
             throw new CustomNPCsException(String.format("There is no aura with given ID (ID: %d)", auraID));
 
         setAuraSelection(aura);
@@ -982,7 +1166,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public boolean isInAura(IAura aura) {
-        if(aura == null)
+        if (aura == null)
             return dbcData.auraID == -1;
         return aura.getID() == dbcData.auraID;
     }
@@ -991,6 +1175,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     public boolean isInAura(String auraName) {
         return isInAura(AuraController.getInstance().get(auraName));
     }
+
     @Override
     public boolean isInAura(int auraID) {
         return auraID == dbcData.auraID;
@@ -998,9 +1183,15 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     //////////////////////////////////////////////
     //////////////////////////////////////////////
 
+
+    @Override
+    public void removeOutline() {
+        dbcData.setOutline(null);
+    }
+
     @Override
     public void setOutline(IOutline outline) {
-        if(outline != null)
+        if (outline != null)
             dbcData.setOutline(outline);
         else
             throw new CustomNPCsException("This outline doesn't exist!");
@@ -1009,7 +1200,7 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     @Override
     public void setOutline(String outlineName) {
         IOutline outline = OutlineController.getInstance().getOutlineFromName(outlineName);
-        if(outline != null)
+        if (outline != null)
             setOutline(outline);
         else
             throw new CustomNPCsException(String.format("There is no outline with given name (name: \"%s\")", outlineName));
@@ -1017,18 +1208,207 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     @Override
     public void setOutline(int outlineID) {
+        if(outlineID == -1){
+            dbcData.setOutline(null);
+            return;
+        }
+
         IOutline outline = OutlineController.getInstance().get(outlineID);
-        if(outline != null)
+        if (outline != null)
             setOutline(outline);
         else
             throw new CustomNPCsException(String.format("There is no outline with given ID (ID: \"%s\")", outline));
     }
-
 
     @Override
     public IOutline getOutline() {
         return dbcData.getOutline();
     }
 
+    @Override
+    public IPlayer<?> getFusionPartner() {
+
+        if (!dbcData.stats.isFused()) {
+            throw new CustomNPCsException(player.getDisplayName() + " is not fused");
+        }
+        EntityPlayer temp = dbcData.stats.getSpectatorEntity();
+        if (temp != null) {
+            return PlayerDataUtil.getIPlayer(temp);
+        } else
+            throw new CustomNPCsException("Error finding fusion partner");
+    }
+
+    @Override
+    public void fireKiAttack(byte type, byte speed, int damage, boolean hasEffect, byte color, byte density, boolean hasSound, byte chargePercent) {
+        if (player == null) return;
+        EntityEnergyAtt entityEnergyAtt = null;
+        try {
+            if (JRMCoreConfig.dat5695[type]) {
+                type = ValueUtil.clamp(type, (byte) 0, (byte) 8);
+                speed = ValueUtil.clamp(speed, (byte) 0, (byte) 100);
+                if (damage < 0) {
+                    damage = 0;
+                }
+                byte effect = hasEffect ? (byte) 1 : (byte) 0;
+                color = ValueUtil.clamp(color, (byte) 0, (byte) (JRMCoreH.techCol.length - 1));
+                if (density < 0) {
+                    density = 0;
+                }
+                byte playSound = hasSound ? (byte) 1 : (byte) 0;
+                chargePercent = ValueUtil.clamp(chargePercent, (byte) 0, (byte) 100);
+                byte[] sts = JRMCoreH.techDBCstatsDefault;
+
+
+                IForm npcForm = getCurrentForm();
+                float destroyerDmgRed = -1;
+                boolean enableDestroyer = false;
+                if (npcForm != null) {
+                    enableDestroyer = npcForm.getMastery().isDestroyerOn();
+                    destroyerDmgRed = npcForm.getMastery().getDestroyerEnergyDamage();
+                }
+
+                player.worldObj.playSoundAtEntity(player, "jinryuudragonbc:DBC2.basicbeam_fire", 0.5F, 1.0F);
+                entityEnergyAtt = new EntityEnergyAtt(player, type, speed, 50, effect, color, density, (byte) 0, (byte) 0, playSound, chargePercent, damage, 0, sts, (byte) 0);
+                if (enableDestroyer) {
+                    entityEnergyAtt.destroyer = true;
+                    entityEnergyAtt.DAMAGE_REDUCTION = destroyerDmgRed;
+                }
+                player.worldObj.spawnEntityInWorld(entityEnergyAtt);
+            }
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+    }
+
+    @Override
+    public void fireKiAttack(IKiAttack kiAttack) {
+        if (player == null || kiAttack == null)
+            return;
+
+        EntityEnergyAtt entityEnergyAtt = null;
+        try {
+            byte type = kiAttack.getType();
+            byte speed = kiAttack.getSpeed();
+            int damage = kiAttack.getDamage();
+            boolean hasEffect = kiAttack.hasEffect();
+            byte color = kiAttack.getColor();
+            byte density = kiAttack.getDensity();
+            boolean hasSound = kiAttack.hasSound();
+            byte chargePercent = kiAttack.getChargePercent();
+
+            if (JRMCoreConfig.dat5695[type]) {
+                // Clamping and Verification
+                type = ValueUtil.clamp(type, (byte) 0, (byte) 8);
+                speed = ValueUtil.clamp(speed, (byte) 0, (byte) 8);
+                if (damage < 0) {
+                    damage = 0;
+                }
+                byte effect = hasEffect ? (byte) 1 : (byte) 0;
+                color = ValueUtil.clamp(color, (byte) 0, (byte) (JRMCoreH.techCol.length - 1));
+                if (density < 0) {
+                    density = 0;
+                }
+                byte playSound = hasSound ? (byte) 1 : (byte) 0;
+                chargePercent = ValueUtil.clamp(chargePercent, (byte) 0, (byte) 100);
+                byte[] sts = JRMCoreH.techDBCstatsDefault;
+
+
+                IForm npcForm = getCurrentForm();
+                boolean useFormConfig = false;
+                boolean enableDestroyer = false;
+                float destroyerDmgRed = -1;
+                if (kiAttack.isDestroyerAttack()) {
+                    enableDestroyer = true;
+                }
+                if (npcForm != null && (enableDestroyer || kiAttack.respectFormDestoryerConfig())) {
+                    IFormMastery formMasteryConfig = npcForm.getMastery();
+                    if (formMasteryConfig.isDestroyerOn()) {
+                        enableDestroyer = true;
+                        useFormConfig = true;
+                        destroyerDmgRed = formMasteryConfig.getDestroyerEnergyDamage();
+                    }
+                }
+                player.worldObj.playSoundAtEntity(player, "jinryuudragonbc:DBC2.basicbeam_fire", 0.5F, 1.0F);
+                entityEnergyAtt = new EntityEnergyAtt(player, type, speed, 50, effect, color, density, (byte) 0, (byte) 0, playSound, chargePercent, damage, 0, sts, (byte) 0);
+                if (enableDestroyer) {
+                    entityEnergyAtt.destroyer = true;
+
+                    if (useFormConfig) {
+                        entityEnergyAtt.DAMAGE_REDUCTION = destroyerDmgRed;
+                    }
+                }
+                player.worldObj.spawnEntityInWorld(entityEnergyAtt);
+            }
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+    }
+
+    @Override
+    public boolean isReleasing() {
+        return (dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[4]));
+    }
+
+    @Override
+    public boolean isMeditating() {
+        if (dbcData.Skills.contains("MD")) {
+            return (dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[4]));
+        } else return false;
+    }
+
+    @Override
+    public boolean isSuperRegen() {
+        if (dbcData.stats.getCurrentBodyPercentage() < 100f && dbcData.getRace() == DBCRace.MAJIN && Integer.parseInt(dbcData.RacialSkills.replace("TR", "")) > 0)
+            return isReleasing();
+        return false;
+    }
+
+
+    @Override
+    public boolean isSwooping() {
+        return (dbcData.StatusEffects.contains(JRMCoreH.StusEfcts[7]));
+    }
+
+    @Override
+    public boolean isInMedicalLiquid() {
+        Block block = player.worldObj.getBlock((int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ));
+        return (block == Block.getBlockFromName("jinryuudragonblockc:tile.BlockHealingPods"));
+    }
+
+    @Override
+    public IKiAttack getAttackFromSlot(int slot) {
+        String[] tech = new String[0];
+        switch (slot) {
+            case 1:
+                tech = this.nbt.getString("jrmcTech1").replace(";",",").split(",");
+                break;
+            case 2:
+                tech = this.nbt.getString("jrmcTech2").replace(";",",").split(",");
+                break;
+            case 3:
+                tech = this.nbt.getString("jrmcTech3").replace(";",",").split(",");
+                break;
+            case 4:
+                tech = this.nbt.getString("jrmcTech4").replace(";",",").split(",");
+                break;
+        }
+
+        if (tech == null || tech.length < 10) throw new CustomNPCsException("cannot read attack properly");
+
+
+        boolean effect = Integer.parseInt(tech[6]) == 1;
+
+        IKiAttack kiAttack = new KiAttack(Byte.parseByte(tech[3]), Byte.parseByte(tech[4]), 100, effect, Byte.parseByte(tech[10]), (byte) 100, true, Byte.parseByte(tech[5]));
+
+        return kiAttack;
+
+        //Element 0 is name
+
+        //element 2 is creator
+        //element 3 is type
+        //element 4 is speed
+        //element 5 is charge percent
+        //element 6 is the effect
+        //element 10 is color
+
+    }
 
 }

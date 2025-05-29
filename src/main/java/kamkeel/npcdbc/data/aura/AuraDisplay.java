@@ -423,6 +423,17 @@ public class AuraDisplay implements IAuraDisplay {
     }
 
     @Override
+    public void setLightningColor(int color) {
+        lightningColor = color;
+    }
+
+    @Override
+    public int getLightningColor() {
+
+        return lightningColor;
+    }
+
+    @Override
     public boolean hasSize() {
         return size != 1f;
     }

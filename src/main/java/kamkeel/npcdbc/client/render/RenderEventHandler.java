@@ -1,20 +1,22 @@
 package kamkeel.npcdbc.client.render;
 
 import JinRyuu.DragonBC.common.Npcs.EntityAura2;
+import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.entity.EntityCusPar;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.model.ModelPotara;
 import kamkeel.npcdbc.client.shader.PostProcessing;
 import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
-import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
-import kamkeel.npcdbc.data.statuseffect.PlayerEffect;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.items.ModItems;
@@ -43,31 +45,36 @@ import static kamkeel.npcdbc.client.shader.PostProcessing.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderEventHandler {
+
+    @SideOnly(Side.CLIENT)
+    public static boolean renderingPlayerInGUI = false;
     public static final int TAIL_STENCIL_ID = 2;
 
 
     @SubscribeEvent
-    public void renderPotaraWhenFused(RenderPlayerEvent.SetArmorModel event){
-        if(event.slot != 3 || event.stack != null)
+    public void renderPotaraWhenFused(RenderPlayerEvent.SetArmorModel event) {
+        if (event.slot != 3 || event.stack != null)
             return;
 
 
         DBCData dbcData = DBCData.get(event.entityPlayer);
 
-        if(!dbcData.stats.isFused()) {
+        if (!dbcData.stats.isFused()) {
             return;
         }
 
-        PlayerEffect potaraFusion = dbcData.stats.getPlayerEffects().get(Effects.POTARA);
-        if(potaraFusion == null) {
+        
+        DBCData data = DBCData.getData(event.entityPlayer);
+        byte potaraFusionLevel = data.potaraFusionLevel;
+        if (potaraFusionLevel == -1) {
             return;
         }
 
         event.result = 1;
 
-        int slot = event.slot+3;
+        int slot = event.slot + 3;
         float partialTick = event.partialRenderTick;
-        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(((ItemPotara) ModItems.Potaras).getArmorTextureByMeta(potaraFusion.level)));
+        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(((ItemPotara) ModItems.Potaras).getArmorTextureByMeta(potaraFusionLevel)));
         ModelBiped modelbiped = event.renderer.modelArmorChestplate;
         modelbiped.bipedHead.showModel = false;
         modelbiped.bipedHeadwear.showModel = false;
@@ -81,7 +88,6 @@ public class RenderEventHandler {
         modelbiped.onGround = event.renderer.mainModel.onGround;
         modelbiped.isRiding = event.renderer.mainModel.isRiding;
         modelbiped.isChild = event.renderer.mainModel.isChild;
-
     }
 
     @SubscribeEvent
@@ -97,14 +103,26 @@ public class RenderEventHandler {
     @SubscribeEvent
     public void enableEntityStencil(RenderLivingEvent.Pre e) {
         if (mc.theWorld != null && (e.entity instanceof EntityPlayer || e.entity instanceof EntityNPCInterface)) {
+            //fix messed up DBC Z pivots...
+            if (e.renderer.mainModel instanceof ModelBipedDBC) {
+                ModelBipedDBC bipedDBC = (ModelBipedDBC) e.renderer.mainModel;
+                bipedDBC.bipedHeadght.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadg2.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadgt.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadgtt.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadc7.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadc8.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadrad.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadradl.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+                bipedDBC.bipedHeadradl2.rotationPointZ = bipedDBC.bipedHead.rotationPointZ;
+            }
 
-            if(e.entity instanceof EntityPlayer){
+            if (e.entity instanceof EntityPlayer) {
                 DBCData data = DBCData.get((EntityPlayer) e.entity);
-                if(ClientProxy.isRenderingWorld() && data.isFusionSpectator()) {
+                if (ClientProxy.isRenderingWorld() && data.isFusionSpectator()) {
                     e.setCanceled(true);
                     return;
                 }
-
             }
 
             if (PlayerDataUtil.useStencilBuffer(e.entity)) {
@@ -117,7 +135,7 @@ public class RenderEventHandler {
                 if (e.entity.isInWater())
                     ((IEntityMC) e.entity).setRenderPass(0);
                 else
-                    ((IEntityMC) e.entity).setRenderPass(ClientProxy.MiddleRenderPass);
+                    ((IEntityMC) e.entity).setRenderPass(ClientConstants.MiddleRenderPass);
             } else {
                 if (((IEntityMC) e.entity).getRenderPassTampered())
                     ((IEntityMC) e.entity).setRenderPass(0);
@@ -147,7 +165,7 @@ public class RenderEventHandler {
         //Outline
         Outline outline = data.getOutline();
         if (outline != null && ConfigDBCClient.EnableOutlines && !isItem) {
-            startBlooming(ClientProxy.renderingGUI);
+            startBlooming(ClientConstants.renderingGUI);
             glStencilFunc(GL_GREATER, player.getEntityId() % 256, 0xFF);  // Test stencil value
             glStencilMask(0xff);
             OutlineRenderer.renderOutline(render, outline, player, partialTicks, isArm);
@@ -209,7 +227,7 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         postStencilRendering();
-        if (ClientProxy.renderingGUI)
+        if (ClientConstants.renderingGUI)
             PostProcessing.bloom(1.5f, true);
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
     }
@@ -231,19 +249,22 @@ public class RenderEventHandler {
         disableStencilWriting(entity.getEntityId() % 256, false);
         mc.entityRenderer.disableLightmap(0);
 
-        boolean renderAura = aura != null && aura.shouldRender(), renderParticles = !display.particleRenderQueue.isEmpty();
+        boolean renderAura = aura != null, renderParticles = !display.particleRenderQueue.isEmpty();
         ////////////////////////////////////////
         ////////////////////////////////////////
         //Aura
-        if (renderAura && aura.shouldRender()) {
+        if (renderAura) {
             glPushMatrix();
-            if (!ClientProxy.renderingGUI)
+            if (!ClientConstants.renderingGUI)
                 glLoadMatrix(DEFAULT_MODELVIEW); //RESETS TRANSFORMATIONS DONE TO CURRENT MATRIX TO PRE-ENTITY RENDERING STATE
             glStencilFunc(GL_GREATER, entity.getEntityId() % 256, 0xFF);
             glStencilMask(0x0);
             for (EntityAura child : aura.children.values())
-                AuraRenderer.Instance.renderAura(child, partialTicks);
-            AuraRenderer.Instance.renderAura(aura, partialTicks);
+                if (child.shouldRender())
+                    AuraRenderer.Instance.renderAura(child, partialTicks);
+
+            if (aura.shouldRender())
+                AuraRenderer.Instance.renderAura(aura, partialTicks);
 
             //  NewAura.renderAura(aura, partialTicks);
             glPopMatrix();
@@ -300,7 +321,7 @@ public class RenderEventHandler {
         if (renderParticles) {
             mc.entityRenderer.disableLightmap(0);
             glPushMatrix();
-            if (!ClientProxy.renderingGUI)
+            if (!ClientConstants.renderingGUI)
                 glLoadMatrix(DEFAULT_MODELVIEW); //IMPORTANT, PARTICLES WONT ROTATE PROPERLY WITHOUT THIS
             IRenderCusPar particleRender = null;
             for (Iterator<EntityCusPar> iter = display.particleRenderQueue.iterator(); iter.hasNext(); ) {
@@ -319,7 +340,7 @@ public class RenderEventHandler {
         ////////////////////////////////////////
         ////////////////////////////////////////
         enableStencilWriting(e.entity.getEntityId() % 256);
-        if (ClientProxy.renderingGUI)
+        if (ClientConstants.renderingGUI)
             PostProcessing.bloom(1.5f, true);
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
         // postStencilRendering();//LETS YOU DRAW TO THE COLOR BUFFER AGAIN

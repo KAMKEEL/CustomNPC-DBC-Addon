@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.controllers;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.constants.Effects;
 import kamkeel.npcdbc.constants.enums.EnumPotaraTypes;
 import kamkeel.npcdbc.data.FuseRequest;
@@ -21,28 +22,28 @@ public class FusionHandler {
 
     public static HashMap<UUID, FuseRequest> fuseRequest = new HashMap<>();
 
-    public static boolean requestFusion(EntityPlayer sender, EntityPlayer target, boolean rightSide, String hash, int tier){
-        boolean senderFusion = JRMCoreH.PlyrSettingsB(sender, 4);
-        boolean targetFusion = JRMCoreH.PlyrSettingsB(target, 4);
+    public static boolean requestFusion(EntityPlayer sender, EntityPlayer target, boolean rightSide, String hash, int tier) {
+        boolean senderFusion = JRMCoreH.PlyrSettingsB(sender, DBCSettings.FUSION_ENABLED);
+        boolean targetFusion = JRMCoreH.PlyrSettingsB(target, DBCSettings.FUSION_ENABLED);
 
-        if(!senderFusion){
+        if (!senderFusion) {
             // Fusion is not on- Inform Sender
             NetworkUtility.sendServerMessage(sender, "§c", sender.getCommandSenderName(), " ", "npcdbc.fusionSkillFusion");
             return false;
         }
-        if(!targetFusion){
+        if (!targetFusion) {
             // Target Fusion is not on- Inform Sender
             NetworkUtility.sendServerMessage(sender, "§c", target.getCommandSenderName(), " ", "npcdbc.fusionSkillFusion");
             return false;
         }
 
 
-        if(hasNoFuse(sender)){
+        if (hasNoFuse(sender)) {
             NetworkUtility.sendServerMessage(sender, "§c", sender.getCommandSenderName(), " ", "npcdbc.noFuse");
             return false;
         }
 
-        if(hasNoFuse(target)){
+        if (hasNoFuse(target)) {
             NetworkUtility.sendServerMessage(sender, "§c", target.getCommandSenderName(), " ", "npcdbc.noFuse");
             return false;
         }
@@ -52,44 +53,44 @@ public class FusionHandler {
 
         FuseRequest senderRequest = new FuseRequest(sender.getCommandSenderName(), target.getCommandSenderName(), rightSide, hash, tier);
         FuseRequest targetRequest = null;
-        if(fuseRequest.containsKey(uuidTarget)){
+        if (fuseRequest.containsKey(uuidTarget)) {
             targetRequest = fuseRequest.get(uuidTarget);
-            if(senderRequest.checkRequest(targetRequest)){
-                if(sender.getHeldItem() == null || !(sender.getHeldItem().getItem() instanceof ItemPotara)){
+            if (senderRequest.checkRequest(targetRequest)) {
+                if (sender.getHeldItem() == null || !(sender.getHeldItem().getItem() instanceof ItemPotara)) {
                     NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.holdPotara");
                     return false;
                 }
-                if(target.getHeldItem() == null || !(target.getHeldItem().getItem() instanceof ItemPotara)){
+                if (target.getHeldItem() == null || !(target.getHeldItem().getItem() instanceof ItemPotara)) {
                     NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.holdPotara");
                     return false;
                 }
                 ItemStack sendPotara = sender.getHeldItem();
                 ItemStack targetPotara = target.getHeldItem();
 
-                if(sendPotara.getItemDamage() != targetPotara.getItemDamage()) {
+                if (sendPotara.getItemDamage() != targetPotara.getItemDamage()) {
                     NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.potaraTier");
                     return false;
                 }
 
                 NBTTagCompound sendNBT = sendPotara.getTagCompound();
                 NBTTagCompound targetNBT = targetPotara.getTagCompound();
-                if(sendNBT == null || targetNBT == null) {
+                if (sendNBT == null || targetNBT == null) {
                     NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.potaraSpit");
                     return false;
                 }
-                if(!sendNBT.hasKey("Side") || !targetNBT.hasKey("Side")){
+                if (!sendNBT.hasKey("Side") || !targetNBT.hasKey("Side")) {
                     NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.potaraSpit");
                     return false;
                 }
 
-                if(sendNBT.getString("Side").equals(targetNBT.getString("Side"))){
+                if (sendNBT.getString("Side").equals(targetNBT.getString("Side"))) {
                     NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.potaraSides");
                     return false;
                 }
 
                 String sendHash = sendNBT.hasKey("Hash") ? sendNBT.getString("Hash") : "";
                 String targetHash = sendNBT.hasKey("Hash") ? sendNBT.getString("Hash") : "";
-                if(!sendHash.equals(targetHash)) {
+                if (!sendHash.equals(targetHash)) {
                     NetworkUtility.sendServerMessage(sender, "§c", "npcdbc.potaraHash");
                     return false;
                 }
@@ -98,10 +99,10 @@ public class FusionHandler {
                 fuseRequest.remove(uuidTarget);
                 sendPotara.splitStack(1);
                 targetPotara.splitStack(1);
-                if(sendPotara.stackSize <= 0)
+                if (sendPotara.stackSize <= 0)
                     sender.destroyCurrentEquippedItem();
 
-                if(targetPotara.stackSize <= 0)
+                if (targetPotara.stackSize <= 0)
                     target.destroyCurrentEquippedItem();
 
                 NetworkUtility.sendServerMessage(sender, "§a", "npcdbc.potaraFusion", " §e", target.getCommandSenderName());
@@ -109,8 +110,8 @@ public class FusionHandler {
 
                 EnumPotaraTypes potaraType = EnumPotaraTypes.getPotaraFromMeta(tier);
 
-                StatusEffectController.getInstance().applyEffect(sender, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
-                StatusEffectController.getInstance().applyEffect(target, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
+                DBCEffectController.getInstance().applyEffect(sender, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
+                DBCEffectController.getInstance().applyEffect(target, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
 
                 DBCData.fusePlayers(target, sender, potaraType.getLength());
 
@@ -119,31 +120,31 @@ public class FusionHandler {
         }
 
         FuseRequest existing = null;
-        if(fuseRequest.containsKey(uuidSender))
+        if (fuseRequest.containsKey(uuidSender))
             existing = fuseRequest.get(uuidSender);
 
-        if(existing == null || senderRequest.newRequest(existing)){
+        if (existing == null || senderRequest.newRequest(existing)) {
             NetworkUtility.sendServerMessage(target, "§e", "npcdbc.potaraRequest", " §a", sender.getCommandSenderName());
             fuseRequest.put(uuidSender, senderRequest);
         }
         return false;
     }
 
-    public static void checkNearbyPlayers(EntityPlayer player){
+    public static void checkNearbyPlayers(EntityPlayer player) {
         ItemStack potara = player.getCurrentArmor(3);
-        if(potara == null)
+        if (potara == null)
             return;
-        if(!(potara.getItem() instanceof ItemPotara))
-            return;
-
-        if(!ItemPotara.isSplit(potara))
+        if (!(potara.getItem() instanceof ItemPotara))
             return;
 
-        if(!JRMCoreH.PlyrSettingsB(player, 4))
+        if (!ItemPotara.isSplit(potara))
             return;
 
-        if(hasNoFuse(player)) {
-            JRMCoreH.PlyrSettingsRem(player, 4);
+        if (!JRMCoreH.PlyrSettingsB(player, DBCSettings.FUSION_ENABLED))
+            return;
+
+        if (hasNoFuse(player)) {
+            JRMCoreH.PlyrSettingsRem(player, DBCSettings.FUSION_ENABLED);
             NetworkUtility.sendServerMessage(player, "§c", player.getCommandSenderName(), " ", "npcdbc.noFuse");
             NetworkUtility.sendServerMessage(player, "§e", "npcdbc.disableFuse");
             return;
@@ -156,27 +157,26 @@ public class FusionHandler {
 
         List<EntityPlayer> nearbyPlayers = player.worldObj.getEntitiesWithinAABB(EntityPlayer.class, player.boundingBox.expand(range, range, range));
 
-        for(EntityPlayer nearbyPlayer : nearbyPlayers){
-            if(nearbyPlayer == player)
+        for (EntityPlayer nearbyPlayer : nearbyPlayers) {
+            if (nearbyPlayer == player)
                 continue;
 
-            if(doesPlayerHaveEarring(nearbyPlayer, tier, !isRight, hash)){
-                if(nearbyPlayer.isSneaking()){
+            if (doesPlayerHaveEarring(nearbyPlayer, tier, !isRight, hash)) {
+                if (nearbyPlayer.isSneaking()) {
                     NetworkUtility.sendServerMessage(nearbyPlayer, "§a", "npcdbc.potaraFusion", " §e", player.getCommandSenderName());
                     NetworkUtility.sendServerMessage(player, "§a", "npcdbc.potaraFusion", " §e", nearbyPlayer.getCommandSenderName());
 
 
                     EnumPotaraTypes potaraType = EnumPotaraTypes.getPotaraFromMeta(tier);
 
-                    StatusEffectController.getInstance().applyEffect(player, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
-                    StatusEffectController.getInstance().applyEffect(nearbyPlayer, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
+                    DBCEffectController.getInstance().applyEffect(player, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
+                    DBCEffectController.getInstance().applyEffect(nearbyPlayer, Effects.POTARA, potaraType.getLength() * 60, (byte) potaraType.getMeta());
 
                     destroyPlayerEarring(nearbyPlayer);
                     destroyPlayerEarring(player);
 
                     DBCData.fusePlayers(player, nearbyPlayer, potaraType.getLength());
-                }
-                else {
+                } else {
                     NetworkUtility.sendServerMessage(player, "§a", "npcdbc.fusionFound");
                 }
                 return;
@@ -185,10 +185,10 @@ public class FusionHandler {
 
     }
 
-    private static boolean hasNoFuse(EntityPlayer player){
+    private static boolean hasNoFuse(EntityPlayer player) {
         DBCData data = DBCData.get(player);
         String fusionString = data.getRawCompound().getString("jrmcFuzion");
-        if(fusionString == null)
+        if (fusionString == null)
             return false;
 
         fusionString = fusionString.replace(" ", "");
@@ -197,22 +197,22 @@ public class FusionHandler {
 
         try {
             return Integer.parseInt(fusionString) > 0;
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
             return true;
         }
     }
 
-    private static boolean doesPlayerHaveEarring(EntityPlayer player, int tier, boolean isRight, String hashToCheck){
+    private static boolean doesPlayerHaveEarring(EntityPlayer player, int tier, boolean isRight, String hashToCheck) {
         ItemStack potara = player.getCurrentArmor(3);
-        if(potara == null)
+        if (potara == null)
             return false;
-        if(!(potara.getItem() instanceof ItemPotara))
-            return false;
-
-        if(!ItemPotara.isSplit(potara))
+        if (!(potara.getItem() instanceof ItemPotara))
             return false;
 
-        if(!JRMCoreH.PlyrSettingsB(player, 4))
+        if (!ItemPotara.isSplit(potara))
+            return false;
+
+        if (!JRMCoreH.PlyrSettingsB(player, DBCSettings.FUSION_ENABLED))
             return false;
 
         int wornTier = potara.getItemDamage();
@@ -221,12 +221,12 @@ public class FusionHandler {
         return tier == wornTier && wornHash.equals(hashToCheck) && wearingRight == isRight;
     }
 
-    private static void destroyPlayerEarring(EntityPlayer player){
+    private static void destroyPlayerEarring(EntityPlayer player) {
         ItemStack potara = player.getCurrentArmor(3);
-        if(potara == null)
+        if (potara == null)
             return;
 
-        if(!(potara.getItem() instanceof ItemPotara))
+        if (!(potara.getItem() instanceof ItemPotara))
             return;
 
         // Remove the helmet

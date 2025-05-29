@@ -1,7 +1,5 @@
 package kamkeel.npcdbc.mixins.late.impl.npc.client;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import kamkeel.npcdbc.client.gui.GuiModelDBC;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.model.GuiCreationScreen;
@@ -26,8 +24,8 @@ public abstract class MixinGuiCreationScreen extends GuiModelInterface {
     }
 
     @Inject(method = "actionPerformed", at = @At("TAIL"), remap = true)
-    private void doButtonJob(GuiButton btn, CallbackInfo ci){
-        if(btn.id == 500){
+    private void doButtonJob(GuiButton btn, CallbackInfo ci) {
+        if (btn.id == 500) {
             this.mc.displayGuiScreen(new GuiModelDBC(this, npc));
         }
     }

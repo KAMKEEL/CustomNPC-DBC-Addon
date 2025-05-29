@@ -11,25 +11,31 @@ import org.spongepowered.asm.mixin.Unique;
 public abstract class MixinPlayerData implements IPlayerDBCInfo {
 
     @Unique
-    public PlayerDBCInfo formData = new PlayerDBCInfo((PlayerData)(Object)this);
+    public PlayerDBCInfo formData = new PlayerDBCInfo((PlayerData) (Object) this);
 
     @Unique
     public boolean formUpdate = false;
 
     @Unique
-    public PlayerDBCInfo getPlayerDBCInfo(){
+    public PlayerDBCInfo getPlayerDBCInfo() {
         return formData;
     }
 
     @Unique
     @Override
-    public boolean getDBCInfoUpdate(){ return formUpdate;}
+    public boolean getDBCInfoUpdate() {
+        return formUpdate;
+    }
 
     @Unique
     @Override
-    public void updateDBCInfo(){ formUpdate = true;}
+    public void updateDBCInfo() {
+        formUpdate = true;
+    }
 
     @Unique
     @Override
-    public void endDBCInfo(){ formUpdate = false;}
+    public void endDBCInfo() {
+        formUpdate = false;
+    }
 }

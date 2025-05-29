@@ -1,7 +1,9 @@
 package kamkeel.npcdbc.client.shader;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CommonProxy;
-import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.gui.hud.formWheel.HUDFormWheel;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import net.minecraft.client.Minecraft;
@@ -30,6 +32,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 
+@SideOnly(Side.CLIENT)
 public class PostProcessing {
 
     public static Framebuffer MAIN;
@@ -55,8 +58,10 @@ public class PostProcessing {
 
     public static boolean hasInitialized;
 
+    private static boolean isScissorEnabled;
+
     public static void startBlooming(boolean clearBloomBuffer) {
-        if (!ConfigDBCClient.EnableBloom || !ShaderHelper.useShaders())
+        if (!ConfigDBCClient.EnableBloom || !ShaderHelper.shadersEnabled())
             return;
 
         PREVIOUS_BUFFER = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
@@ -81,7 +86,7 @@ public class PostProcessing {
     public static void postProcess() {
         PostProcessing.bloom(1.5f, false);
 
-        if (mc.currentScreen instanceof HUDFormWheel) {
+        if (ShaderHelper.shadersEnabled() && mc.currentScreen instanceof HUDFormWheel && HUDFormWheel.BLUR_ENABLED) {
             Framebuffer buff = getMainBuffer();
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
@@ -105,9 +110,14 @@ public class PostProcessing {
             glEnable(GL_TEXTURE_2D);
             glEnable(GL_COLOR_MATERIAL);
         }
+
+        if (isScissorEnabled)
+            GL11.glEnable(GL_SCISSOR_TEST);
     }
 
     public static void bloom(float lightExposure, boolean resetGLState) {
+        isScissorEnabled = GL11.glIsEnabled(GL_SCISSOR_TEST);
+        GL11.glDisable(GL_SCISSOR_TEST);
         if (!processBloom)
             return;
 
@@ -134,7 +144,7 @@ public class PostProcessing {
 
         // Get the current draw buffers
 
-        if (resetGLState && !ClientProxy.renderingGUI && !ClientProxy.renderingArm)
+        if (resetGLState && !ClientConstants.renderingGUI && !ClientConstants.renderingArm)
             glDisable(GL_FOG);
 
         //////////////////////////////////////////////////////////////////
@@ -204,7 +214,7 @@ public class PostProcessing {
             glEnable(GL_LIGHTING);
             glEnable(GL_ALPHA_TEST);
             glColorMask(true, true, true, true);
-            if (!ClientProxy.renderingGUI && !ClientProxy.renderingArm)
+            if (!ClientConstants.renderingGUI && !ClientConstants.renderingArm)
                 glEnable(GL_FOG);
         }
 
@@ -291,7 +301,7 @@ public class PostProcessing {
         glColorMask(true, true, true, true);
     }
 
-    public static void blurVertical(int textureID, float blurIntensity, float startX, float startY, float width, float height){
+    public static void blurVertical(int textureID, float blurIntensity, float startX, float startY, float width, float height) {
         useShader(blur, () -> {
             uniformVec2("u_resolution", width - startX, height - startY);
             uniform1i("horizontal", 0);
@@ -301,7 +311,7 @@ public class PostProcessing {
 
     }
 
-    public static void blurHorizontal(int textureID, float blurIntensity, float startX, float startY, float width, float height){
+    public static void blurHorizontal(int textureID, float blurIntensity, float startX, float startY, float width, float height) {
         useShader(blur, () -> {
             uniformVec2("u_resolution", width - startX, height - startY);
             uniform1i("horizontal", 1);
@@ -330,7 +340,7 @@ public class PostProcessing {
     }
 
     public static void init(int width, int height) {
-        System.out.println("width height " + width + " " + height);
+        // System.out.println("width height " + width + " " + height);
         hasInitialized = true;
         int previousBuffer = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
         MAIN = getMainBuffer();
@@ -452,7 +462,7 @@ public class PostProcessing {
 
 
     public static void delete() {
-        if(!hasInitialized)
+        if (!hasInitialized)
             return;
         for (int i = 0; i < bloomBuffers.length; i++) {
             if (bloomTextures[i] > 0)

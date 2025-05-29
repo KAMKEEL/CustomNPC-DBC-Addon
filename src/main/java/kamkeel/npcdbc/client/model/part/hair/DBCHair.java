@@ -4,9 +4,9 @@ import JinRyuu.JBRA.mod_JBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.ModelDBC;
-import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
@@ -467,32 +467,31 @@ public class DBCHair extends ModelHairRenderer {
     }
 
     public void renderSSJ3Hair(boolean renderBang) {
-        this.bipedHeadrad.rotateAngleY = base.bipedBody.rotateAngleY;
-        this.bipedHeadrad.rotateAngleX = base.bipedBody.rotateAngleX;
-        this.bipedHeadrad.rotationPointX = base.bipedBody.rotationPointX;
-        this.bipedHeadrad.rotationPointY = base.bipedBody.rotationPointY;
         this.bipedHeadrad.render(0.0625f);
+
+        float headAngleX = base.bipedHead.rotateAngleX;
         this.bipedHeadradl.rotateAngleY = base.bipedBody.rotateAngleY;
-        this.bipedHeadradl.rotateAngleX = base.bipedBody.rotateAngleX / 4.0F;
+        this.bipedHeadradl.rotateAngleX = base.bipedBody.rotateAngleX / 1.2F - headAngleX/1.5F;
         this.bipedHeadradl.rotationPointX = base.bipedBody.rotationPointX;
         this.bipedHeadradl.rotationPointY = base.bipedBody.rotationPointY;
+        this.bipedHeadradl.rotationPointZ = (float) Math.abs(Math.sin(base.bipedBody.rotateAngleX)) * 5;
         this.bipedHeadradl.render(0.0625f);
+
         this.bipedHeadradl2.rotateAngleY = base.bipedBody.rotateAngleY;
-        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 2.0F;
+        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 5.0F - headAngleX/5F;
         this.bipedHeadradl2.rotationPointX = base.bipedBody.rotationPointX;
         this.bipedHeadradl2.rotationPointY = base.bipedBody.rotationPointY;
+        this.bipedHeadradl2.rotationPointZ = 0;
         this.bipedHeadradl2.render(0.0625f);
+
         this.bipedHeadradl2.rotateAngleY = base.bipedBody.rotateAngleY;
-        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 1.2F;
+        this.bipedHeadradl2.rotateAngleX = base.bipedBody.rotateAngleX / 1.2F - headAngleX/2;
         this.bipedHeadradl2.rotationPointX = base.bipedBody.rotationPointX;
         this.bipedHeadradl2.rotationPointY = base.bipedBody.rotationPointY;
+        this.bipedHeadradl2.rotationPointZ = (float) Math.abs(Math.sin(base.bipedBody.rotateAngleX)) * 2F;
         this.bipedHeadradl2.render(0.0625f);
 
         if (renderBang) {
-            this.ssj3.rotateAngleY = base.bipedBody.rotateAngleY;
-            this.ssj3.rotateAngleX = base.bipedBody.rotateAngleX;
-            this.ssj3.rotationPointX = base.bipedBody.rotationPointX;
-            this.ssj3.rotationPointY = base.bipedBody.rotationPointY;
             this.ssj3.render(0.0625f);
         }
     }
@@ -551,7 +550,6 @@ public class DBCHair extends ModelHairRenderer {
         if (display.hairColor == -1 && display.race == 5)
             hairColor = display.bodyCM;
 
-
         //////////////////////////////////////////////////////
         //////////////////////////////////////////////////////
         //Forms
@@ -561,8 +559,8 @@ public class DBCHair extends ModelHairRenderer {
             if (race == 5 && !form.display.effectMajinHair) {
                 effectMajinHair = false;
                 hairCode = MAJIN_HAIR;
-                if (form.display.bodyCM != -1)
-                    hairColor = form.display.bodyCM;
+                if (form.display.bodyColors.bodyCM != -1)
+                    hairColor = form.display.bodyColors.bodyCM;
             } else {
                 if ((d.hairCode.equalsIgnoreCase("bald") || d.hairType.equals("oozaru")) && isSaiyan)
                     return;
@@ -571,7 +569,10 @@ public class DBCHair extends ModelHairRenderer {
 
 
                 if (d.hasColor("hair"))
-                    hairColor = d.hairColor;
+                    hairColor = d.bodyColors.hairColor;
+                else if (display.race == 5 && d.hasColor("bodycm")) {
+                    hairColor = d.bodyColors.bodyCM;
+                }
 
                 if (d.hairType.equals("base"))
                     state = 0;
@@ -754,11 +755,11 @@ public class DBCHair extends ModelHairRenderer {
         ///////////////////////////////////////////////////////
 
         GL11.glPushMatrix();
-        if (kamkeel.npcdbc.client.ClientProxy.renderingOutline) {
+        if (ClientConstants.renderingOutline) {
             GL11.glScalef(1.04f, 1.04f, 1.04f);
             GL11.glTranslatef(0, 0.03f, 0);
         }
-       // display.hasEyebrows = false;
+        // display.hasEyebrows = false;
         int[] hairRightPosZ = new int[]{3, 2, 1, 0, 3, 2, 1, 3, 2, 3};
         int[] hairRightPosY = new int[]{0, 0, 0, 0, 1, 1, 1, 2, 2, 3};
         int[] hairLeftPosZ = new int[]{0, 1, 2, 3, 1, 2, 3, 2, 3, 3};

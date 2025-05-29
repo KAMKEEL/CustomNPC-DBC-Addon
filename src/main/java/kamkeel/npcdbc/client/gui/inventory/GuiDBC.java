@@ -6,14 +6,14 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.aura.DBCGetAura;
-import kamkeel.npcdbc.network.packets.aura.DBCSelectAura;
-import kamkeel.npcdbc.network.packets.aura.DBCSetAura;
-import kamkeel.npcdbc.network.packets.aura.DBCRequestAura;
-import kamkeel.npcdbc.network.packets.form.DBCGetForm;
-import kamkeel.npcdbc.network.packets.form.DBCSelectForm;
-import kamkeel.npcdbc.network.packets.form.DBCRequestForm;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.get.aura.DBCGetAura;
+import kamkeel.npcdbc.network.packets.get.form.DBCGetForm;
+import kamkeel.npcdbc.network.packets.player.aura.DBCRequestAura;
+import kamkeel.npcdbc.network.packets.player.aura.DBCSelectAura;
+import kamkeel.npcdbc.network.packets.player.aura.DBCSetAura;
+import kamkeel.npcdbc.network.packets.player.form.DBCRequestForm;
+import kamkeel.npcdbc.network.packets.player.form.DBCSelectForm;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -24,6 +24,7 @@ import net.minecraft.util.StatCollector;
 import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.gui.player.inventory.GuiCNPCInventory;
 import noppes.npcs.client.gui.util.*;
+import noppes.npcs.constants.EnumScrollData;
 import org.lwjgl.opengl.GL11;
 import tconstruct.client.tabs.AbstractTab;
 
@@ -33,7 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollListener, IScrollData {
+public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollListener, IScrollData, ITextfieldListener {
     public static int activePage = 0;
     private final ResourceLocation resource = new ResourceLocation("customnpcs", "textures/gui/standardbg.png");
     public int prevAura = 0;
@@ -60,9 +61,9 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         this.drawDefaultBackground = false;
         title = "";
         if (activePage == 0)
-            PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, true,false).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCRequestForm(-1, true, false));
         else
-            PacketHandler.Instance.sendToServer(new DBCRequestAura(-1, true).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCRequestAura(-1, true));
 
         this.dbcInfo = PlayerDataUtil.getClientDBCInfo();
         if (dbcInfo != null) {
@@ -86,16 +87,14 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         formsButton.packedFGColour = 0xffc626;
         this.addButton(formsButton);
 
-        GuiNpcButton auras = new GuiNpcButton(41, guiLeft + 75, guiTop + 4, "global.customauras");
-        auras.packedFGColour = 0xf04fff;
-        auras.enabled = activePage != 1;
-        auras.width = 65;
-        this.addButton(auras);
+        GuiNpcButton extras = new GuiNpcButton(41, guiLeft + 75, guiTop + 4, "inventory.extras");
+        extras.packedFGColour = 0xf04fff;
+        extras.enabled = activePage != 1;
+        extras.width = 65;
+        this.addButton(extras);
 
         guiScroll.guiLeft = guiLeft + 4;
         guiScroll.guiTop = guiTop + 26;
-        this.addScroll(guiScroll);
-        addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 5, guiTop + ySize - 34, 134, 20, search));
 
         GuiNpcButton selectButton = new GuiNpcButton(1, guiLeft + 5, guiTop + ySize - 11, "form.select");
         selectButton.width = 65;
@@ -105,15 +104,38 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         clearButton.width = 65;
         this.addButton(clearButton);
 
-        if (activePage == 1) {
-            addLabel(new GuiNpcLabel(1,"Revamp Aura", guiLeft + 170, guiTop + ySize - 11 - 24 + 5));
-            GuiNpcButton revampAura = new GuiNpcButtonYesNo(5, guiLeft + 250, guiTop + ySize - 11 - 24, ConfigDBCClient.RevampAura);
-            revampAura.width = 65;
-            this.addButton(revampAura);
+        this.addScroll(guiScroll);
+        addTextField(new GuiNpcTextField(55, this, fontRendererObj, guiLeft + 5, guiTop + ySize - 34, 134, 20, search));
 
+        if (activePage == 1) {
             GuiNpcButton hideAura = new GuiNpcButton(3, guiLeft + 250, guiTop + ySize - 11, new String[]{"aura.shown", "aura.hidden"}, showingAura);
             hideAura.width = 65;
             this.addButton(hideAura);
+
+            int y = guiTop + 34;
+            addLabel(new GuiNpcLabel(1, "npcdbc.inventory.revampAura", guiLeft + 144, y, 0xFFFFFF));
+            GuiNpcButton revampAura = new GuiNpcButton(5, guiLeft + 265, y - 5, 50, 20, new String[]{"gui.enabled", "gui.disabled"}, ConfigDBCClient.RevampAura ? 0 : 1);
+            this.addButton(revampAura);
+
+            y += 24;
+            addLabel(new GuiNpcLabel(10, "display.bloom", guiLeft + 144, y, 0xFFFFFF));
+            GuiNpcButton button = new GuiNpcButton(10, guiLeft + 265, y - 5, 50, 20, new String[]{"gui.enabled", "gui.disabled"}, ConfigDBCClient.EnableBloom ? 0 : 1);
+            this.addButton(button);
+
+            y += 24;
+            addLabel(new GuiNpcLabel(11, "display.outlines", guiLeft + 144, y, 0xFFFFFF));
+            button = new GuiNpcButton(11, guiLeft + 265, y - 5, 50, 20, new String[]{"gui.enabled", "gui.disabled"}, ConfigDBCClient.EnableOutlines ? 0 : 1);
+            this.addButton(button);
+
+            y += 24;
+            addLabel(new GuiNpcLabel(12, "display.shaders", guiLeft + 144, y, 0xFFFFFF));
+            button = new GuiNpcButton(12, guiLeft + 265, y - 5, 50, 20, new String[]{"gui.enabled", "gui.disabled"}, ConfigDBCClient.EnableShaders ? 0 : 1);
+            this.addButton(button);
+
+            y += 24;
+            addLabel(new GuiNpcLabel(13, "display.firstPersonAura", guiLeft + 144, y, 0xFFFFFF));
+            addTextField(new GuiNpcTextField(66, this, fontRendererObj, guiLeft + 279, y - 5, 35, 20, ConfigDBCClient.FirstPerson3DAuraOpacity + ""));
+            getTextField(66).integersOnly = true;
         }
     }
 
@@ -125,7 +147,6 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, 252, 195);
         drawTexturedModalRect(guiLeft + 252, guiTop, 188, 0, 67, 195);
         renderScreen();
-
         super.drawScreen(i, j, f);
     }
 
@@ -217,16 +238,10 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 fontRendererObj.drawString(drawSelected, guiLeft + 145, guiTop + ySize - 5, CustomNpcResourceListener.DefaultTextColor, true);
             }
         } else if (loaded) {
-            String drawString = "§f" + StatCollector.translateToLocal("npcdbc.inventory.noauraselected");
-            if (viewingAura != null) {
-                drawString = viewingAura.getMenuName();
-            }
+            String drawString = "§f" + StatCollector.translateToLocal("npcdbc.inventory.tweaks");
             int textWidth = getStringWidthWithoutColor(drawString);
             int centerX = guiLeft + 140 + ((xSize - textWidth + 30 - 140) / 2);
             fontRendererObj.drawString(drawString, centerX, guiTop + 10, CustomNpcResourceListener.DefaultTextColor, true);
-            if (viewingAura != null) {
-
-            }
             if (selectedAura != null) {
                 String drawSelected = selectedAura.getMenuName();
                 fontRendererObj.drawString(drawSelected, guiLeft + 145, guiTop + ySize - 5, CustomNpcResourceListener.DefaultTextColor, true);
@@ -257,18 +272,18 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         if (guibutton instanceof AbstractTab)
             return;
 
-        if (guibutton.id >= 100 && guibutton.id <= 105) {
+        if (guibutton.id <= -100) {
             super.actionPerformed(guibutton);
             return;
         }
         if (guibutton.id == 40 && activePage != 0) {
             activePage = 0;
-            PacketHandler.Instance.sendToServer(new DBCRequestForm(-1, true,false).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCRequestForm(-1, true, false));
             loaded = false;
         }
         if (guibutton.id == 41 && activePage != 1) {
             activePage = 1;
-            PacketHandler.Instance.sendToServer(new DBCRequestAura(-1, true).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCRequestAura(-1, true));
             loaded = false;
         }
 
@@ -277,12 +292,12 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 if (selected != null) {
                     if (loadedData.containsKey(selected)) {
                         int formID = loadedData.get(selected);
-                        PacketHandler.Instance.sendToServer(new DBCSelectForm(formID, false).generatePacket());
+                        DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(formID, false));
                         loaded = false;
                     }
                 }
             } else if (guibutton.id == 2) {
-                PacketHandler.Instance.sendToServer(new DBCSelectForm(-1, false).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new DBCSelectForm(-1, false));
                 selected = null;
                 guiScroll.selected = -1;
                 loaded = false;
@@ -292,14 +307,14 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                 if (selected != null) {
                     if (loadedData.containsKey(selected)) {
                         int auraID = loadedData.get(selected);
-                        PacketHandler.Instance.sendToServer(new DBCSelectAura(auraID).generatePacket());
+                        DBCPacketHandler.Instance.sendToServer(new DBCSelectAura(auraID));
                         currentAura = auraID;
                         showingAura = 0;
                         loaded = false;
                     }
                 }
             } else if (guibutton.id == 2) {
-                PacketHandler.Instance.sendToServer(new DBCSelectAura(-1).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new DBCSelectAura(-1));
                 selected = null;
                 guiScroll.selected = -1;
                 currentAura = -1;
@@ -316,10 +331,21 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                     // Hide
                     currentAura = -1;
                 }
-            }
-            else if (guibutton.id == 5) {
-                ConfigDBCClient.RevampAura = ((GuiNpcButton) guibutton).getValue() == 1;
+            } else if (guibutton.id == 5) {
+                ConfigDBCClient.RevampAura = ((GuiNpcButton) guibutton).getValue() == 0;
                 ConfigDBCClient.RevampAuraProperty.set(ConfigDBCClient.RevampAura);
+                ConfigDBCClient.config.save();
+            } else if (guibutton.id == 10) {
+                ConfigDBCClient.EnableBloom = ((GuiNpcButton) guibutton).getValue() == 0;
+                ConfigDBCClient.EnableBloomProperty.set(ConfigDBCClient.EnableBloom);
+                ConfigDBCClient.config.save();
+            } else if (guibutton.id == 11) {
+                ConfigDBCClient.EnableOutlines = ((GuiNpcButton) guibutton).getValue() == 0;
+                ConfigDBCClient.EnableOutlinesProperty.set(ConfigDBCClient.EnableOutlines);
+                ConfigDBCClient.config.save();
+            } else if (guibutton.id == 12) {
+                ConfigDBCClient.EnableShaders = ((GuiNpcButton) guibutton).getValue() == 0;
+                ConfigDBCClient.EnableShadersProperty.set(ConfigDBCClient.EnableShaders);
                 ConfigDBCClient.config.save();
             }
         }
@@ -371,7 +397,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
 
 
     @Override
-    public void setData(Vector<String> list, HashMap<String, Integer> data) {
+    public void setData(Vector<String> list, HashMap<String, Integer> data, EnumScrollData dataType) {
         String name = guiScroll.getSelected();
         this.loadedData = data;
         if (guiScroll != null)
@@ -438,7 +464,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                     return;
                 }
                 selected = guiScroll.getSelected();
-                PacketHandler.Instance.sendToServer(new DBCGetForm(loadedData.get(selected)).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new DBCGetForm(loadedData.get(selected)));
             } else {
                 if (selected != null && selected.equals(guiScroll.getSelected())) {
                     selected = "";
@@ -447,7 +473,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
                     return;
                 }
                 selected = guiScroll.getSelected();
-                PacketHandler.Instance.sendToServer(new DBCGetAura(loadedData.get(selected)).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new DBCGetAura(loadedData.get(selected)));
             }
         }
     }
@@ -458,7 +484,7 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
 
     public void close() {
         if (prevAura != currentAura)
-            PacketHandler.Instance.sendToServer(new DBCSetAura(currentAura).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSetAura(currentAura));
         super.close();
     }
 
@@ -466,20 +492,29 @@ public class GuiDBC extends GuiCNPCInventory implements IGuiData, ICustomScrollL
         stackables.clear();
         if (viewingForm != null) {
             if (viewingForm.stackable.vanillaStackable) {
-                stackables.add("§e"+StatCollector.translateToLocal("npcdbc.inventory.stackable.dbc"));
+                stackables.add("§e" + StatCollector.translateToLocal("npcdbc.inventory.stackable.dbc"));
             }
             if (viewingForm.stackable.kaiokenStackable) {
-                stackables.add("§c"+StatCollector.translateToLocal("npcdbc.inventory.stackable.kk"));
+                stackables.add("§c" + StatCollector.translateToLocal("npcdbc.inventory.stackable.kk"));
             }
             if (viewingForm.stackable.uiStackable) {
-                stackables.add("§7"+StatCollector.translateToLocal("npcdbc.inventory.stackable.ui"));
+                stackables.add("§7" + StatCollector.translateToLocal("npcdbc.inventory.stackable.ui"));
             }
             if (viewingForm.stackable.godStackable) {
-                stackables.add("§5"+StatCollector.translateToLocal("npcdbc.inventory.stackable.godofdestruction"));
+                stackables.add("§5" + StatCollector.translateToLocal("npcdbc.inventory.stackable.godofdestruction"));
             }
             if (viewingForm.stackable.mysticStackable) {
-                stackables.add("§d"+StatCollector.translateToLocal("npcdbc.inventory.stackable.mystic"));
+                stackables.add("§d" + StatCollector.translateToLocal("npcdbc.inventory.stackable.mystic"));
             }
+        }
+    }
+
+    @Override
+    public void unFocused(GuiNpcTextField textfield) {
+        if (textfield.id == 66) {
+            ConfigDBCClient.FirstPerson3DAuraOpacity = textfield.getInteger();
+            ConfigDBCClient.FirstPerson3DAuraOpacityProperty.set(ConfigDBCClient.FirstPerson3DAuraOpacity);
+            ConfigDBCClient.config.save();
         }
     }
 }

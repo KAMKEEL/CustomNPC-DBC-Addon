@@ -1,20 +1,16 @@
 package kamkeel.npcdbc.mixins.late.impl.npc;
 
-import io.netty.buffer.ByteBuf;
-import kamkeel.addon.DBCAddon;
 import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.controllers.DBCSyncController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
-import kamkeel.npcdbc.network.NetworkUtility;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
-import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcs.addon.DBCAddon;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,15 +18,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import noppes.npcs.NpcDamageSource;
-import noppes.npcs.Server;
-import noppes.npcs.constants.EnumPacketClient;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-
-import java.io.IOException;
 
 import static JinRyuu.JRMCore.JRMCoreH.getInt;
 
@@ -63,7 +55,6 @@ public class MixinDBCAddon {
             receiverStats.getDBCStats().readFromNBT(dbcStats);
 
             receiverDisplay.getDBCDisplay().setEnabled(display.getDBCDisplay().isEnabled());
-            receiverDisplay.getDBCDisplay().setFormAuraTypes(display.getDBCDisplay().getFormAuraTypes());
         }
     }
 
@@ -99,14 +90,15 @@ public class MixinDBCAddon {
             DBCStats dbcStats = ((INPCStats) npc.stats).getDBCStats();
 
             // Calculate DBC Damage
-            int damageToHP = DBCUtils.calculateDBCStatDamage(player, (int) attackStrength, dbcStats);
+            DBCDamageCalc damageCalc = DBCUtils.calculateDBCStatDamage(player, (int) attackStrength, dbcStats);
             DamageSource damageSource = new NpcDamageSource("mob", npc);
-            DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(player, damageToHP, damageSource, DBCDamageSource.NPC);
+            DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(player, damageCalc, damageSource, DBCDamageSource.NPC);
             if (DBCEventHooks.onDBCDamageEvent(damagedEvent))
                 return;
 
-            DBCUtils.lastSetDamage = (int) damagedEvent.damage;
-            DBCUtils.doDBCDamage(player, damageToHP, dbcStats, damageSource);
+            DBCUtils.lastSetDamage = damageCalc;
+            damageCalc.processExtras();
+            DBCUtils.doDBCDamage(player, damageCalc.damage, dbcStats, damageSource);
         }
     }
 

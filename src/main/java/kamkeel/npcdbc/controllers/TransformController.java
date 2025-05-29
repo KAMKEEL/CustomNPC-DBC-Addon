@@ -4,7 +4,6 @@ import JinRyuu.JRMCore.JRMCoreH;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
-import kamkeel.npcdbc.client.sound.ClientSound;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.enums.EnumNBTType;
@@ -14,11 +13,11 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
+import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.NetworkUtility;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.DBCSetValPacket;
-import kamkeel.npcdbc.network.packets.PlaySound;
-import kamkeel.npcdbc.network.packets.TransformPacket;
+import kamkeel.npcdbc.network.packets.player.DBCSetValPacket;
+import kamkeel.npcdbc.network.packets.player.PlaySound;
+import kamkeel.npcdbc.network.packets.player.TransformPacket;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
@@ -33,9 +32,8 @@ import static JinRyuu.JRMCore.JRMCoreH.rc_arc;
 
 public class TransformController {
 
-    public static int s, id, time, releaseTime, soundTime;
+    public static int time, releaseTime;
     public static boolean ascending, cantTransform, transformed;
-    public static String ascendSound, descendSound;
     public static float rage, rageValue;
     public static DBCData dbcData;
     public static Form transformedInto;
@@ -57,12 +55,11 @@ public class TransformController {
         float formLevel = PlayerDataUtil.getClientDBCInfo().getFormLevel(form.id);
         time++;
         releaseTime++;
-        soundTime++;
         TransformController.setAscending(true);
         rageValue = getRageMeterIncrementation(form, formLevel);
         rage += rageValue;
         JRMCoreH.TransSaiCurRg = (byte) rage;
-        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage));
 
         if (time >= 6) { //increments rage meter and drain ki cost every 6 ticks
             time = 0;
@@ -75,7 +72,7 @@ public class TransformController {
         //            float toDrain = form.mastery.kiDrain * form.mastery.calculateMulti("kiDrain", formLevel);
         //
         //            dbcData.stats.restoreKiPercent(-toDrain / form.mastery.kiDrainTimer * 10);
-        //            PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcEnrgy", (int) dbcData.Ki).generatePacket());
+        //            PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcEnrgy", (int) dbcData.Ki));
         //
         //
         //        }
@@ -88,8 +85,7 @@ public class TransformController {
             releaseTime = 0;
         }
         if (rage >= 100) { //transform when rage meter reaches 100 (max)
-            PacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getID(), true).generatePacket());
-            new ClientSound(new SoundSource(form.getAscendSound(), dbcData.player)).play(true);
+            DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getID(), true));
             resetTimers();
             cantTransform = true;
             transformed = true;
@@ -119,7 +115,7 @@ public class TransformController {
             setAscending(false);
 
         JRMCoreH.TransSaiCurRg = (byte) rage;
-        PacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage).generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCSetValPacket(CustomNpcPlusDBC.proxy.getClientPlayer(), EnumNBTType.INT, "jrmcSaiRg", (int) rage));
     }
 
     @SideOnly(Side.CLIENT)
@@ -138,7 +134,6 @@ public class TransformController {
     public static void resetTimers() {
         time = 0;
         releaseTime = 0;
-        soundTime = 0;
     }
 
     public static float getRageMeterIncrementation(Form form, float formLevel) {
@@ -243,6 +238,7 @@ public class TransformController {
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, formID)))
                 return;
 
+            PlaySound.play(new SoundSource(form.getAscendSound(), player));
             if (!isInBaseForm(dbcData.Race, dbcData.State)) {
                 if (!form.stackable.vanillaStackable) {
                     if (rc_arc(dbcData.Race) && dbcData.State >= 4)
@@ -265,7 +261,7 @@ public class TransformController {
 
             formData.currentForm = formID;
             if (formData.getForm(formID).hasTimer())
-                formData.addTimer(formID, formData.getForm(id).getTimer());
+                formData.addTimer(formID, formData.getForm(formID).getTimer());
 
             formData.updateClient();
             NetworkUtility.sendInfoMessage(player, "§a", "npcdbc.transform", "§r ", form.getMenuName());
@@ -293,6 +289,7 @@ public class TransformController {
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, intoParent ? form.getParentID() : -1)))
                 return;
 
+            PlaySound.play(new SoundSource(form.getDescendSound(), player));
             if (form.mastery.hasHeat() && dbcData.addonCurrentHeat > 0) {
                 float heatRatio = dbcData.addonCurrentHeat / form.mastery.maxHeat;
                 dbcData.Pain = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()) * heatRatio);

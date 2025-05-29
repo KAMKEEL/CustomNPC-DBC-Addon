@@ -1,9 +1,9 @@
 package kamkeel.npcdbc.client.sound;
 
 import kamkeel.npcdbc.data.SoundSource;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.PlaySound;
-import kamkeel.npcdbc.network.packets.StopSound;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.PlaySound;
+import kamkeel.npcdbc.network.packets.player.StopSound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSound;
 import net.minecraft.client.audio.SoundCategory;
@@ -70,7 +70,7 @@ public class ClientSound extends MovingSound {
 
     public void play(boolean forOthers) {
         if (forOthers)
-            PacketHandler.Instance.sendToServer(new PlaySound(this.soundSource).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new PlaySound(this.soundSource));
         else {
             PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, soundSource.soundDir, volume, getPitch());
 
@@ -86,7 +86,7 @@ public class ClientSound extends MovingSound {
         donePlaying = true; // this is all we need, let game and verifySounds handle rest
 
         if (forOthers)
-            PacketHandler.Instance.sendToServer(new StopSound(this.soundSource).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new StopSound(this.soundSource));
     }
 
     public boolean isPlaying() {

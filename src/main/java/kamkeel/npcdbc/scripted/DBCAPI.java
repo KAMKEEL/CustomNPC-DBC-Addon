@@ -4,28 +4,32 @@ import JinRyuu.JRMCore.JRMCoreConfig;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigDBCFormMastery;
+import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
 import kamkeel.npcdbc.api.AbstractDBCAPI;
 import kamkeel.npcdbc.api.IKiAttack;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.aura.IAuraHandler;
 import kamkeel.npcdbc.api.effect.IBonusHandler;
-import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
+import kamkeel.npcdbc.api.effect.IDBCEffectHandler;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.api.form.IFormMastery;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
+import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
+import kamkeel.npcdbc.combat.Dodge;
 import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.DBCStats;
-import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.api.entity.ICustomNpc;
+import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
@@ -61,15 +65,14 @@ public class DBCAPI extends AbstractDBCAPI {
         return OutlineController.Instance;
     }
 
-
-    @Override
-    public IStatusEffectHandler getStatusEffectHandler() {
-        return StatusEffectController.Instance;
-    }
-
     @Override
     public IBonusHandler getBonusHandler() {
         return BonusController.Instance;
+    }
+
+    @Override
+    public IDBCEffectHandler getDBCEffectHandler() {
+        return DBCEffectController.Instance;
     }
 
     @Override
@@ -107,6 +110,10 @@ public class DBCAPI extends AbstractDBCAPI {
         return OutlineController.getInstance().get(name);
     }
 
+    @Override
+    public void forceDodge(IEntity dodger, IEntity attacker) {
+        Dodge.dodge(dodger.getMCEntity(), attacker.getMCEntity());
+    }
 
     @Override
     public IDBCStats abstractDBCData() {
@@ -138,8 +145,9 @@ public class DBCAPI extends AbstractDBCAPI {
             return;
 
         EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
-        int damageToHP = DBCUtils.calculateDBCStatDamage(entityPlayer, (int) damage, stats);
-        DBCUtils.doDBCDamage(entityPlayer, damageToHP, stats, null);
+        DBCDamageCalc damageCalc = DBCUtils.calculateDBCStatDamage(entityPlayer, (int) damage, stats);
+        damageCalc.processExtras();
+        DBCUtils.doDBCDamage(entityPlayer, damageCalc.damage, stats, null);
     }
 
     /**
@@ -403,4 +411,70 @@ public class DBCAPI extends AbstractDBCAPI {
         } catch (IndexOutOfBoundsException ignored) {
         }
     }
+
+    @Override
+    public int getSkillTPCostSingle(String skillName, int level) {
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
+        }
+        return DBCUtils.calculateDBCSkillTPCost(skillIndex, level);
+    }
+
+    @Override
+    public int getSkillMindCostSingle(String skillName, int level) {
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
+        }
+
+        return DBCUtils.calculateDBCSkillMindCost(skillIndex, level);
+    }
+
+    @Override
+    public int getSkillMindCostRecursive(String skillName, int level) {
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
+        }
+
+        return DBCUtils.calculateDBCSkillMindCostRecursively(skillIndex, level);
+    }
+
+    @Override
+    public int getSkillTPCostRecursive(String skillName, int level) {
+        int skillIndex = DBCUtils.getDBCSkillIndex(skillName);
+        if (skillIndex == -1) {
+            throw new CustomNPCsException("Skill name not recognized");
+        }
+
+        return DBCUtils.calculateDBCSkillTPCostRecursively(skillIndex, level);
+    }
+
+    @Override
+    public int getSkillRacialTPCostSingle(int race, int level) {
+        return DBCUtils.calculateDBCRacialSkillTPCost(race, level);
+    }
+
+    @Override
+    public int getSkillRacialTPMindSingle(int race, int level) {
+        return DBCUtils.calculateDBCRacialSkillMindCost(race, level);
+    }
+
+    @Override
+    public int getSkillRacialTPCostSingleRecursive(int race, int level) {
+        return DBCUtils.calculateDBCRacialSkillTPCostRecursively(race, level);
+    }
+
+    @Override
+    public int getSkillRacialTPMindSingleRecursive(int race, int level) {
+        return DBCUtils.calculateDBCRacialSkillMindCostRecursively(race, level);
+    }
+
+    @Override
+    public int getUltraInstinctMaxLevel() {
+        return JGConfigUltraInstinct.CONFIG_UI_LEVELS;
+    }
+
+
 }

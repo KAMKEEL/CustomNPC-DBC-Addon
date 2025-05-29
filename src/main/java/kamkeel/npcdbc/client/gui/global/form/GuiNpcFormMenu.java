@@ -1,8 +1,8 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.form.DBCSaveForm;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.request.form.DBCSaveForm;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import noppes.npcs.client.NoppesUtil;
@@ -17,6 +17,7 @@ public class GuiNpcFormMenu {
     public final SubGuiInterface parent;
     private GuiMenuTopButton[] topButtons;
     private int activeMenu;
+    private final String originalName;
     private Form form;
 
     public GuiNpcFormMenu(GuiNPCManageForms formsParent, SubGuiInterface parent, int activeMenu, Form form) {
@@ -24,6 +25,7 @@ public class GuiNpcFormMenu {
         this.parent = parent;
         this.activeMenu = activeMenu;
         this.form = form;
+        this.originalName = form.name;
     }
 
 
@@ -35,12 +37,14 @@ public class GuiNpcFormMenu {
         GuiMenuTopButton display = new GuiMenuTopButton(-2, general.xPosition + general.getWidth(), guiTop - 17, "menu.display");
         GuiMenuTopButton mastery = new GuiMenuTopButton(-3, display.xPosition + display.getWidth(), guiTop - 17, "display.mastery");
         GuiMenuTopButton stackable = new GuiMenuTopButton(-4, mastery.xPosition + mastery.getWidth(), guiTop - 17, "display.stackable");
+        GuiMenuTopButton advanced   = new GuiMenuTopButton(-6, stackable.xPosition + stackable.getWidth(), guiTop - 17, "display.adv");
+        GuiMenuTopButton attributes = new GuiMenuTopButton(-7, advanced.xPosition + advanced.getWidth(), guiTop - 17, "display.attri");
 
-        this.topButtons = new GuiMenuTopButton[]{general, display, mastery, stackable, close};
+        this.topButtons = new GuiMenuTopButton[]{ general, display, mastery, stackable, advanced, attributes, close };
         GuiMenuTopButton[] var12 = this.topButtons;
         int var13 = var12.length;
 
-        for(int var14 = 0; var14 < var13; ++var14) {
+        for (int var14 = 0; var14 < var13; ++var14) {
             stackable = var12[var14];
             stackable.active = stackable.id == this.activeMenu;
         }
@@ -61,6 +65,10 @@ public class GuiNpcFormMenu {
                     formsParent.setSubGui(new SubGuiFormMastery(formsParent, form));
                 } else if (id == -4) {
                     formsParent.setSubGui(new SubGuiFormStackable(formsParent, form));
+                } else if (id == -6) {
+                    formsParent.setSubGui(new SubGuiFormAdvanced(formsParent, form));
+                } else if (id == -7) {
+                    formsParent.setSubGui(new SubGuiFormAttributes(formsParent, form));
                 }
 
                 this.activeMenu = id;
@@ -72,8 +80,8 @@ public class GuiNpcFormMenu {
         Keyboard.enableRepeatEvents(false);
         if (this.parent != null) {
             GuiNpcTextField.unfocus();
-            ((SubGuiInterface)this.parent).close();
-            PacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT()).generatePacket());
+            ((SubGuiInterface) this.parent).close();
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveForm(form.writeToNBT(), this.originalName));
         }
     }
 
@@ -83,7 +91,7 @@ public class GuiNpcFormMenu {
             GuiMenuTopButton[] var5 = this.topButtons;
             int var6 = var5.length;
 
-            for(int var7 = 0; var7 < var6; ++var7) {
+            for (int var7 = 0; var7 < var6; ++var7) {
                 GuiMenuTopButton button = var5[var7];
                 if (button.mousePressed(mc, i, j)) {
                     this.topButtonPressed(button);
@@ -97,7 +105,7 @@ public class GuiNpcFormMenu {
         GuiMenuTopButton[] var6 = this.topButtons;
         int var7 = var6.length;
 
-        for(int var8 = 0; var8 < var7; ++var8) {
+        for (int var8 = 0; var8 < var7; ++var8) {
             GuiMenuTopButton button = var6[var8];
             button.drawButton(mc, i, j);
         }

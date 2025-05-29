@@ -52,7 +52,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     @Override
     public void initGui() {
         super.initGui();
-        int y = tab == 0 ? guiTop - 30 : guiTop + 5;
+        int y = guiTop + 2;
         addButton(new GuiNpcButtonYesNo(0, guiLeft + 64, y, 60, 20, display.enabled));
         addLabel(new GuiNpcLabel(0, "gui.enabled", guiLeft, y + 5, 0xFFFFFF));
         if (!display.enabled)
@@ -65,14 +65,14 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
         getButton(51).enabled = tab != 1;
 
         if (tab == 0) {
-            y += 33;
+            y += 28;
             if (cosmeticsScrollWindow == null) {
-                cosmeticsScrollWindow = new GuiScrollWindow(this, guiLeft - 4, y - 5, 170, 255, 0);
+                cosmeticsScrollWindow = new GuiScrollWindow(this, guiLeft - 4, y - 5, 170, 190, 0);
             } else {
                 cosmeticsScrollWindow.xPos = guiLeft - 4;
                 cosmeticsScrollWindow.yPos = y - 5;
                 cosmeticsScrollWindow.clipWidth = 170;
-                cosmeticsScrollWindow.clipHeight = 255;
+                cosmeticsScrollWindow.clipHeight = 190;
             }
             cosmeticsScrollWindow.scrollSpeed = 3.5f;
             cosmeticsScrollWindow.drawDefaultBackground = false;
@@ -164,8 +164,8 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
                 cosmeticsScrollWindow.addButton(new GuiNpcButton(15, guiLeft + 151, y, 35, 20, dbcArms.getColor()));
                 cosmeticsScrollWindow.getButton(15).packedFGColour = dbcArms.color != 0 ? dbcArms.color : 1;
             }
-            maxScroll += 34;
-            maxScroll+=22;
+            maxScroll += 40;
+            maxScroll += 22 * 4;
             cosmeticsScrollWindow.maxScrollY = maxScroll;
         } else {
             //  addButton(new GuiNpcButton(1, guiLeft + 64, y += 22, 60, 20, arrRace, display.race+1));
@@ -302,7 +302,7 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             setClipboardContents(display.hairCode);
         }
         if (button.id == 103) {
-            display.setDefaultHair();
+            display.clearHairCode(false);
             initGui();
         }
         if (button.id == 104) {

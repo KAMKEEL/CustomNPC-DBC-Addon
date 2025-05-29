@@ -29,21 +29,20 @@ public abstract class MixinJRMCoreGuiButtons extends GuiButton {
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     private void onConstructorComplete(CallbackInfo info) {
-        if(ConfigDBCClient.EnhancedGui){
-            if(col == 0)
+        if (ConfigDBCClient.EnhancedGui) {
+            if (col == 0)
                 col = 16777215;
         }
     }
 
     @Redirect(method = "drawButton", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreGuiButtons00;drawCenteredString(Lnet/minecraft/client/gui/FontRenderer;Ljava/lang/String;III)V"), remap = true)
-    public void changeButtonText(JRMCoreGuiButtons00 instance, FontRenderer fontRenderer, String s, int x, int y, int originalColor){
-        if(originalColor == 14737632 && ConfigDBCClient.EnhancedGui && !ConfigDBCClient.DarkMode){
+    public void changeButtonText(JRMCoreGuiButtons00 instance, FontRenderer fontRenderer, String s, int x, int y, int originalColor) {
+        if (originalColor == 14737632 && ConfigDBCClient.EnhancedGui && !ConfigDBCClient.DarkMode) {
             fontRenderer.drawString(s, x - fontRenderer.getStringWidth(s) / 2, y, ColorMode.LIGHTMODE_TEXT_ALTERNATE, false);
         } else {
-            if(ConfigDBCClient.EnhancedGui){
+            if (ConfigDBCClient.EnhancedGui) {
                 fontRenderer.drawString(s, x - fontRenderer.getStringWidth(s) / 2, y, originalColor, false);
-            }
-            else {
+            } else {
                 fontRenderer.drawString(s, x - fontRenderer.getStringWidth(s) / 2, y, originalColor, true);
             }
         }

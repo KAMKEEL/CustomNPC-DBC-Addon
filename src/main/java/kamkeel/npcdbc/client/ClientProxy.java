@@ -15,6 +15,9 @@ import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.items.ModItems;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
@@ -25,15 +28,10 @@ import net.minecraftforge.common.MinecraftForge;
 import java.lang.reflect.Field;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collection;
 
 
 public class ClientProxy extends CommonProxy {
-    public static boolean renderingOutline, renderingGUI, renderingArm, renderingMajinSE;
-    public static final int MiddleRenderPass = 1684;
-    public static Instant startTime;
-    public static boolean isKasaiLoaded;
-    public static boolean renderingWorld;
-
     public static int lastRendererGUIPlayerID = -1;
 
     public static void eventsInit() {
@@ -57,18 +55,26 @@ public class ClientProxy extends CommonProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntityAura.class, new AuraRenderer());
         MinecraftForgeClient.registerItemRenderer(ModItems.Potaras, new PotaraItemRenderer());
         ShaderHelper.loadShaders(false);
-        startTime = Instant.now();
+        ClientConstants.startTime = Instant.now();
 
 
     }
 
     public void postInit(FMLPostInitializationEvent ev) {
         PostProcessing.init(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
-      //  ModernModels.loadModels();
+        //  ModernModels.loadModels();
+
+        Collection renderManager = RenderManager.instance.entityRenderMap.values();
+        for (Object o : renderManager) {
+            if (o instanceof RendererLivingEntity) {
+                ModelBase mainModel = ((RendererLivingEntity) o).mainModel;
+                CNPCAnimationHelper.setOriginalValues(mainModel);
+            }
+        }
     }
 
     public static float getTimeSinceStart() {
-        return Duration.between(startTime, Instant.now()).toMillis() / 1000f;
+        return Duration.between(ClientConstants.startTime, Instant.now()).toMillis() / 1000f;
     }
 
     @Override
@@ -96,11 +102,11 @@ public class ClientProxy extends CommonProxy {
     }
 
     public boolean isRenderingGUI() {
-        return renderingGUI;
+        return ClientConstants.renderingGUI;
     }
 
-    public static boolean isRenderingWorld(){
-        return renderingWorld;
+    public static boolean isRenderingWorld() {
+        return ClientConstants.renderingWorld;
     }
 
     private void forceStencilEnable() {

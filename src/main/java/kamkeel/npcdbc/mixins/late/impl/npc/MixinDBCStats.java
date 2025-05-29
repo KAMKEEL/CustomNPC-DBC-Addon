@@ -16,31 +16,31 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(DataStats.class)
 public class MixinDBCStats implements INPCStats {
 
-    @Shadow(remap = false) public EntityNPCInterface npc;
+    @Shadow(remap = false)
+    public EntityNPCInterface npc;
 
     @Unique
     private DBCStats customNPC_DBCAddon$dbcStats;
 
-    @Inject(method="<init>", at=@At("RETURN"))
-    public void injectStats(EntityNPCInterface npc, CallbackInfo ci){
+    @Inject(method = "<init>", at = @At("RETURN"))
+    public void injectStats(EntityNPCInterface npc, CallbackInfo ci) {
         customNPC_DBCAddon$dbcStats = new DBCStats(npc);
     }
 
 
-
     @Inject(method = "writeToNBT", at = @At("HEAD"), remap = false)
     public void writeToNBT(NBTTagCompound nbttagcompound, CallbackInfoReturnable<NBTTagCompound> cir) {
-        if(hasDBCData())
+        if (hasDBCData())
             customNPC_DBCAddon$dbcStats.writeToNBT(nbttagcompound);
     }
 
     @Inject(method = "readToNBT", at = @At("HEAD"), remap = false)
-    public void readFromNBT(NBTTagCompound nbttagcompound, CallbackInfo ci){
+    public void readFromNBT(NBTTagCompound nbttagcompound, CallbackInfo ci) {
         customNPC_DBCAddon$dbcStats.readFromNBT(nbttagcompound);
     }
 
     @Unique
-    public DBCStats getDBCStats(){
+    public DBCStats getDBCStats() {
         return customNPC_DBCAddon$dbcStats;
     }
 

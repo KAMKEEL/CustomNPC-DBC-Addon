@@ -2,8 +2,8 @@ package kamkeel.npcdbc.constants;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.server.config.dbc.JGConfigUltraInstinct;
+import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
-import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -17,7 +17,6 @@ public class DBCForm {
     public static final int HumanFullRelease = 1;
     public static final int HumanBuffed = 2;
     public static final int HumanGod = 3;
-
 
     ////////////////////////////////
     ////////////////////////////////
@@ -34,7 +33,6 @@ public class DBCForm {
     public static final int SuperSaiyanGod = 9;
     public static final int SuperSaiyanBlue = 10;
     public static final int BlueEvo = 15; // SSJ Blue Evolved
-
 
     ////////////////////////////////
     ////////////////////////////////
@@ -82,7 +80,6 @@ public class DBCForm {
     public static final int MasteredUltraInstinct = 40;
     public static final int UltraInstinct = 41;
 
-
     public static boolean isMonke(int race, int state) {
         return DBCRace.isSaiyan(race) && (state == GreatApe || state == SuperGreatApe);
     }
@@ -109,6 +106,162 @@ public class DBCForm {
                 return true;
         }
         return false;
+    }
+
+    public static int getParent(int race, int form, DBCData data) {
+
+        int racialSkill = JRMCoreH.SklLvlX(1, data.RacialSkills) - 1;
+        boolean shiftDown = data.player.isSneaking();
+
+        if (form > Kaioken && form <= Kaioken6) {
+            return form - 1;
+        }
+
+        if (form > UltraInstinct && form <= UltraInstinct + JGConfigUltraInstinct.CONFIG_UI_LEVELS) {
+            int uiSkill = JRMCoreH.SklLvl(16);
+            for (int i = 0; i < JGConfigUltraInstinct.CONFIG_UI_LEVELS; i++) {
+                if (form - i < form && uiSkill >= form - i - UltraInstinct + 1 && !JGConfigUltraInstinct.CONFIG_UI_SKIP[form - i - UltraInstinct]) {
+                    return form - i;
+                }
+            }
+        }
+
+        if (race == DBCRace.HUMAN) {
+            if (form == HumanFullRelease)
+                return HumanBuffed;
+
+            else if (form == HumanGod && shiftDown)
+                return data.hasForm(HumanFullRelease) ? HumanFullRelease : HumanBuffed;
+        } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            if (form == SuperSaiyanG2)
+                return racialSkill < 4 ? SuperSaiyan : MasteredSuperSaiyan;
+            else if (form == SuperSaiyanG3)
+                return SuperSaiyanG2;
+            else if (form == SuperSaiyan2)
+                return shiftDown ? SuperSaiyanG3 : MasteredSuperSaiyan;
+            else if (form == SuperSaiyan3)
+                return SuperSaiyan2;
+            else if (form == SuperSaiyan4)
+                return SuperSaiyan3;
+
+            else if (form == SuperSaiyanGod && shiftDown)
+                return data.hasForm(SuperSaiyan4) ? SuperSaiyan4 : data.hasForm(SuperSaiyan3) ? SuperSaiyan3 : data.hasForm(SuperSaiyan2) ? SuperSaiyan2 : data.hasForm(MasteredSuperSaiyan) ? MasteredSuperSaiyan : SuperSaiyan;
+
+            else if (form == SuperSaiyanBlue)
+                return SuperSaiyanGod;
+            else if (form == BlueEvo)
+                return SuperSaiyanBlue;
+        } else if (race == DBCRace.NAMEKIAN) {
+            if (form == NamekFullRelease)
+                return NamekGiant;
+
+            else if (form == NamekGod && shiftDown)
+                return data.hasForm(NamekFullRelease) ? NamekFullRelease : NamekGiant;
+        } else if (race == DBCRace.ARCOSIAN) {
+            if (form == FirstForm)
+                return Minimal;
+            else if (form == SecondForm)
+                return FirstForm;
+            else if (form == ThirdForm)
+                return SecondForm;
+
+            else if (form == FinalForm && shiftDown)
+                return ThirdForm;
+            else if (form == SuperForm)
+                return FinalForm;
+            else if (form == UltimateForm)
+                return SuperForm;
+
+            else if (form == ArcoGod && shiftDown)
+                return FinalForm;
+        } else if (race == DBCRace.MAJIN) {
+            if (form == MajinFullPower)
+                return MajinEvil;
+            else if (form == MajinPure)
+                return MajinFullPower;
+
+            else if (form == MajinGod && shiftDown)
+                return data.hasForm(MajinPure) ? MajinPure : data.hasForm(MajinFullPower) ? MajinFullPower : MajinEvil;
+        }
+        return -1;
+    }
+
+    public static int getChild(int race, int form, DBCData data) {
+
+        int racialSkill = JRMCoreH.SklLvlX(1, data.RacialSkills) - 1;
+        boolean shiftDown = data.player.isSneaking();
+
+        if (form >= Kaioken && form < Kaioken6)
+            return form + 1;
+
+        if (form >= UltraInstinct && form < UltraInstinct + JGConfigUltraInstinct.CONFIG_UI_LEVELS) {
+            int uiSkill = JRMCoreH.SklLvl(16);
+            for (int i = 1; form + i - UltraInstinct < JGConfigUltraInstinct.CONFIG_UI_LEVELS; i++) {
+                int higherLvl = form + i;
+                if (uiSkill >= higherLvl - UltraInstinct + 1 && !JGConfigUltraInstinct.CONFIG_UI_SKIP[higherLvl - UltraInstinct]) {
+                    return higherLvl;
+                }
+            }
+        }
+
+        if (race == DBCRace.HUMAN) {
+            if (form == HumanBuffed)
+                return !shiftDown ? HumanFullRelease : HumanGod;
+            else if (form == HumanFullRelease && shiftDown)
+                return HumanGod;
+        } else if (race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN) {
+            boolean hasGod = data.hasForm(SuperSaiyanGod);
+            if (form == SuperSaiyan)
+                return SuperSaiyanG2;
+            else if (form == SuperSaiyanG2)
+                return SuperSaiyanG3;
+            else if (form == SuperSaiyanG3)
+                return SuperSaiyan2;
+
+            else if (form == MasteredSuperSaiyan)
+                return shiftDown ? SuperSaiyanG2 : data.hasForm(SuperSaiyan2) ? SuperSaiyan2 : SuperSaiyanGod;
+            else if (form == SuperSaiyan2)
+                return !shiftDown ? SuperSaiyan3 : SuperSaiyanGod;
+            else if (form == SuperSaiyan3)
+                return !shiftDown ? SuperSaiyan4 : SuperSaiyanGod;
+
+            else if (form == SuperSaiyan4 && shiftDown)
+                return SuperSaiyanGod;
+
+            else if (form == SuperSaiyanGod)
+                return SuperSaiyanBlue;
+            else if (form == SuperSaiyanBlue)
+                return BlueEvo;
+        } else if (race == DBCRace.NAMEKIAN) {
+            if (form == NamekGiant)
+                return NamekFullRelease;
+            else if (form == NamekFullRelease && shiftDown)
+                return NamekGod;
+        } else if (race == DBCRace.ARCOSIAN) {
+            if (form == Minimal)
+                return FirstForm;
+            else if (form == FirstForm)
+                return SecondForm;
+            else if (form == SecondForm)
+                return ThirdForm;
+            else if (form == ThirdForm)
+                return FinalForm;
+
+            else if (form == FinalForm)
+                return !shiftDown ? SuperForm : ArcoGod;
+            else if (form == SuperForm)
+                return !shiftDown ? UltimateForm : ArcoGod;
+            else if (form == UltimateForm && shiftDown)
+                return ArcoGod;
+        } else if (race == DBCRace.MAJIN) {
+            if (form == MajinEvil)
+                return !shiftDown ? MajinFullPower : MajinGod;
+            else if (form == MajinFullPower)
+                return !shiftDown ? MajinPure : MajinGod;
+            else if (form == MajinPure && shiftDown)
+                return MajinGod;
+        }
+        return -1;
     }
 
     public static String getMenuName(int race, int form, boolean isDivine) {
@@ -142,11 +295,9 @@ public class DBCForm {
             else if (form == SuperSaiyanGod)
                 name = "§cSuper Saiyan God";
             else if (form == SuperSaiyanBlue)
-                name = !isDivine ? "§bSuper Saiyan Blue" :  "§5Super Saiyan Rosé";
+                name = !isDivine ? "§bSuper Saiyan Blue" : "§5Super Saiyan Rosé";
             else if (form == BlueEvo)
                 name = !isDivine ? "§1Super Saiyan Blue Evo" : "§dSuper Saiyan Rosé Evo";
-
-
         } else if (race == DBCRace.NAMEKIAN) {
             if (form == NamekGiant)
                 name = "§2Giant";
@@ -180,7 +331,6 @@ public class DBCForm {
                 name = "§dPure";
             else if (form == MajinGod)
                 name = "§cGod";
-
         }
 
         if (form == Mystic)
@@ -248,12 +398,11 @@ public class DBCForm {
         return forms;
     }
 
-
     public static String getJRMCName(int formID, int race) {
-        if(JRMCoreH.trans.length > race && formID < JRMCoreH.trans[race].length)
+        if (JRMCoreH.trans.length > race && formID < JRMCoreH.trans[race].length)
             return JRMCoreH.trans[race][formID];
 
-        switch(formID){
+        switch (formID) {
             case Kaioken:
             case Kaioken2:
             case Kaioken3:
@@ -273,7 +422,7 @@ public class DBCForm {
         }
     }
 
-    public static int getJRMCFormID(int formID, int race){
+    public static int getJRMCFormID(int formID, int race) {
 
         boolean isMysticOn = formID == Mystic;
         boolean isGoDOn = formID == GodOfDestruction;
@@ -290,7 +439,7 @@ public class DBCForm {
         } else if (isUltraInstinctOn) {
             currentFormID = JRMCoreH.trans[race].length + 2;
         } else {
-            if(formID < 0 || formID > JRMCoreH.trans[race].length-1)
+            if (formID < 0 || formID > JRMCoreH.trans[race].length - 1)
                 formID = -1;
             currentFormID = formID;
         }
@@ -300,7 +449,7 @@ public class DBCForm {
 
     public static double getJRMCMaxFormLevel(int formID, int race) {
         int properFormID = DBCForm.getJRMCFormID(formID, race);
-        if(properFormID < 0)
+        if (properFormID < 0)
             return -1;
         return DBCUtils.getMaxFormMasteryLvl(properFormID, race);
     }

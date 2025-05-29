@@ -1,6 +1,6 @@
 package kamkeel.npcdbc.client.model.part;
 
-import kamkeel.npcdbc.client.ClientProxy;
+import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.model.ModelDBCPartInterface;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -60,12 +60,12 @@ public class DBCBody extends ModelDBCPartInterface {
         if (!display.enabled)
             return;
 
-        if (!ClientProxy.renderingOutline && display.outlineID != -1)
+        if (!ClientConstants.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting((entity.getEntityId() + RenderEventHandler.TAIL_STENCIL_ID) % 256);
 
         GL11.glPushMatrix();
         float spike1RotX = 0;
-        if (ClientProxy.renderingOutline) {
+        if (ClientConstants.renderingOutline) {
             spike1RotX = backSpike1.rotationPointX;
             GL11.glTranslatef(0.015f, -0.02f, 0);
             GL11.glScaled(1.02, 1.02, 0.95);
@@ -83,7 +83,7 @@ public class DBCBody extends ModelDBCPartInterface {
             if (form != null) {
                 FormDisplay d = form.display;
                 if (d.hasColor("bodycm"))
-                    bodyCM = d.bodyCM;
+                    bodyCM = d.bodyColors.bodyCM;
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
@@ -93,10 +93,10 @@ public class DBCBody extends ModelDBCPartInterface {
             super.render(par1);
         }
         GL11.glPopMatrix();
-        if (!ClientProxy.renderingOutline && display.outlineID != -1)
+        if (!ClientConstants.renderingOutline && display.outlineID != -1)
             RenderEventHandler.enableStencilWriting(entity.getEntityId() % 256);
 
-        if (ClientProxy.renderingOutline) {
+        if (ClientConstants.renderingOutline) {
             disableStencilWriting((entity.getEntityId()) % 256, false);
             backSpike1.rotationPointX = spike1RotX;
         }

@@ -1,9 +1,10 @@
 package kamkeel.npcdbc.client.gui.component;
 
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.aura.DBCRequestAura;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.aura.DBCRequestAura;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.*;
+import noppes.npcs.constants.EnumScrollData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,17 +21,17 @@ public class SubGuiSelectAura extends SubGuiInterface implements IScrollData, IC
     public boolean confirmed = false;
     public int selectedAuraID = -1;
 
-    public SubGuiSelectAura(){
+    public SubGuiSelectAura() {
         this.closeOnEsc = true;
         this.drawDefaultBackground = true;
         xSize = 256;
         this.setBackground("menubg.png");
 
-        PacketHandler.Instance.sendToServer(new DBCRequestAura(-1, false).generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestAura(-1, false));
     }
 
     @Override
-    public void initGui(){
+    public void initGui() {
         super.initGui();
 
         if (scrollAuras == null) {
@@ -47,21 +48,21 @@ public class SubGuiSelectAura extends SubGuiInterface implements IScrollData, IC
     }
 
     @Override
-    public void actionPerformed(GuiButton button){
+    public void actionPerformed(GuiButton button) {
         int id = button.id;
 
-        if(id == 0 && selected != null){
+        if (id == 0 && selected != null) {
             confirmed = true;
             selectedAuraID = data.get(selected);
             this.close();
         }
-        if(id == 1){
+        if (id == 1) {
             this.close();
         }
     }
 
     @Override
-    public void setData(Vector<String> list, HashMap<String, Integer> data) {
+    public void setData(Vector<String> list, HashMap<String, Integer> data, EnumScrollData dataType) {
         String name = scrollAuras.getSelected();
         this.data = data;
         scrollAuras.setList(getSearchList());
@@ -81,7 +82,8 @@ public class SubGuiSelectAura extends SubGuiInterface implements IScrollData, IC
     }
 
     @Override
-    public void unFocused(GuiNpcTextField guiNpcTextField) {}
+    public void unFocused(GuiNpcTextField guiNpcTextField) {
+    }
 
     @Override
     public void keyTyped(char c, int i) {

@@ -5,11 +5,13 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kamkeel.npcdbc.constants.DBCDamageSource;
+import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -21,12 +23,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = JRMCoreEH.class, remap = false)
 public class MixinJRMCoreEH {
-    @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreEH;damageEntity(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/DamageSource;F)V", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
-    public void NPCDamaged(LivingHurtEvent event, CallbackInfo ci, @Local(name = "dam") LocalFloatRef dam) {
-        if (event.entity instanceof EntityNPCInterface) {
-            Form form = PlayerDataUtil.getForm(event.entity);
+    @Inject(method = "damageEntity(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/util/DamageSource;F)V", at = @At("HEAD"), cancellable = true)
+    public void NPCDamaged(EntityLivingBase targetEntity, DamageSource source, float amount, CallbackInfo ci, @Local(ordinal = 0) LocalFloatRef dam) {
+        if (targetEntity instanceof EntityNPCInterface) {
+            DBCUtils.damageEntityCalled = true;
+
+            if (DBCUtils.npcLastSetDamage != null) {
+                dam.set(DBCUtils.npcLastSetDamage); // THIS GETS DEDUCTED FROM NPC HEALTH
+                DBCUtils.npcLastSetDamage = null;
+            }
+
+            Form form = PlayerDataUtil.getForm(targetEntity);
             if (form != null) {
-                float formLevel = PlayerDataUtil.getFormLevel(event.entity);
+                float formLevel = PlayerDataUtil.getFormLevel(targetEntity);
                 if (form.mastery.hasDamageNegation()) {
                     float damage = dam.get();
                     float damageNegation = form.mastery.damageNegation * form.mastery.calculateMulti("damageNegation", formLevel);
@@ -39,27 +48,35 @@ public class MixinJRMCoreEH {
 
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;a1t3(Lnet/minecraft/entity/player/EntityPlayer;)V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcAttackFromPlayer(LivingHurtEvent event, CallbackInfo ci, @Local(name = "dam") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
-        int damage = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), damageSource.get());
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damage, damageSource.get(), DBCDamageSource.KIATTACK);
+        DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), damageSource.get());
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc, damageSource.get(), DBCDamageSource.KIATTACK);
         if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
             ci.cancel();
+            return;
         }
 
-        // Last Set Damage
-        DBCUtils.lastSetDamage = (int) damagedEvent.damage;
+        damageCalc.damage = (int) damagedEvent.damage;
+        damageCalc.stamina = damagedEvent.getStaminaReduced();
+        damageCalc.ki = damagedEvent.getKiReduced();
+        damageCalc.willKo = damagedEvent.willKo();
+        DBCUtils.lastSetDamage = damageCalc;
+        damageCalc.processExtras();
     }
 
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;a1t3(Lnet/minecraft/entity/player/EntityPlayer;)V", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcAttackFromNonPlayer(LivingHurtEvent event, CallbackInfo ci, @Local(name = "amount") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
-        int damage = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), damageSource.get());
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damage, damageSource.get(), DBCDamageSource.KIATTACK);
+        DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), damageSource.get());
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc, damageSource.get(), DBCDamageSource.KIATTACK);
         if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
             ci.cancel();
+            return;
         }
 
-        // Last Set Damage
-        DBCUtils.lastSetDamage = (int) damagedEvent.damage;
+        damageCalc.damage = (int) damagedEvent.damage;
+        damageCalc.stamina = damagedEvent.getStaminaReduced();
+        damageCalc.ki = damagedEvent.getKiReduced();
+        damageCalc.willKo = damagedEvent.willKo();
+        DBCUtils.lastSetDamage = damageCalc;
+        damageCalc.processExtras();
     }
-
-
 }

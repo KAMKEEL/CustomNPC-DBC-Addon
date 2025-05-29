@@ -21,25 +21,25 @@ public class ModItems {
      * Declare and register items. Do NOT add recipes here!
      */
     public static void init() {
-        if(ConfigCapsules.EnableCapsules){
-            if(ConfigCapsules.EnableKiCapsule){
+        if (ConfigCapsules.EnableCapsules) {
+            if (ConfigCapsules.EnableKiCapsule) {
                 KiCapsules = new ItemKiCapsule();
                 GameRegistry.registerItem(KiCapsules, "kicapsule");
             }
-            if(ConfigCapsules.EnableHealthCapsule){
+            if (ConfigCapsules.EnableHealthCapsule) {
                 HealthCapsules = new ItemHealthCapsule();
                 GameRegistry.registerItem(HealthCapsules, "healthcapsule");
             }
-            if(ConfigCapsules.EnableStaminaCapsule){
+            if (ConfigCapsules.EnableStaminaCapsule) {
                 StaminaCapsules = new ItemStaminaCapsule();
                 GameRegistry.registerItem(StaminaCapsules, "staminacapsule");
             }
-            if(ConfigCapsules.EnableMiscCapsule){
+            if (ConfigCapsules.EnableMiscCapsule) {
                 MiscCapsules = new ItemMiscCapsule();
                 GameRegistry.registerItem(MiscCapsules, "misccapsule");
             }
 
-            if(ConfigCapsules.EnableRegenCapsules){
+            if (ConfigCapsules.EnableRegenCapsules) {
                 RegenCapsules = new ItemRegenCapsule();
                 GameRegistry.registerItem(RegenCapsules, "regencapsule");
             }

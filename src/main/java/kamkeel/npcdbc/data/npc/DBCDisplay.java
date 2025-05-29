@@ -13,7 +13,6 @@ import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.constants.enums.EnumAuraTypes2D;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
@@ -39,7 +38,6 @@ import noppes.npcs.util.ValueUtil;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 public class DBCDisplay implements IDBCDisplay, IAuraData {
 
@@ -83,7 +81,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public List<EntityCusPar> particleRenderQueue = new LinkedList<>();
     public HashMap<Integer, EntityAura2> dbcAuraQueue = new HashMap<>();
     public HashMap<Integer, EntityAura2> dbcSecondaryAuraQueue = new HashMap<>();
-    private EnumAuraTypes2D enumAuraTypes = EnumAuraTypes2D.None;
 
     public KiWeaponData kiWeaponRight = new KiWeaponData();
     public KiWeaponData kiWeaponLeft = new KiWeaponData();
@@ -130,7 +127,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
             dbcDisplay.setInteger("DBCAuraID", auraID);
             dbcDisplay.setBoolean("DBCAuraOn", auraOn);
-            dbcDisplay.setInteger("DBCDisplayAura", enumAuraTypes.ordinal());
 
             dbcDisplay.setInteger("DBCOutlineID", outlineID);
 
@@ -179,7 +175,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             hasEyebrows = !dbcDisplay.hasKey("DBCHasEyebrows") || dbcDisplay.getBoolean("DBCHasEyebrows");
 
             auraID = dbcDisplay.getInteger("DBCAuraID");
-            enumAuraTypes = EnumAuraTypes2D.values()[dbcDisplay.getInteger("DBCDisplayAura") % EnumAuraTypes2D.values().length];
 
             outlineID = dbcDisplay.getInteger("DBCOutlineID");
 
@@ -232,19 +227,19 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         boolean inF = form != null;
         switch (type.toLowerCase()) {
             case "hair":
-                return (inF ? form.display.hairColor : hairColor) != -1;
+                return (inF ? form.display.bodyColors.hairColor : hairColor) != -1;
             case "eye":
-                return (inF ? form.display.eyeColor : eyeColor) != -1;
+                return (inF ? form.display.bodyColors.eyeColor : eyeColor) != -1;
             case "bodycm":
-                return (inF ? form.display.bodyCM : bodyCM) != -1;
+                return (inF ? form.display.bodyColors.bodyCM : bodyCM) != -1;
             case "bodyc1":
-                return (inF ? form.display.bodyC1 : bodyC1) != -1;
+                return (inF ? form.display.bodyColors.bodyC1 : bodyC1) != -1;
             case "bodyc2":
-                return (inF ? form.display.bodyC2 : bodyC2) != -1;
+                return (inF ? form.display.bodyColors.bodyC2 : bodyC2) != -1;
             case "bodyc3":
-                return (inF ? form.display.bodyC3 : bodyC3) != -1;
+                return (inF ? form.display.bodyColors.bodyC3 : bodyC3) != -1;
             case "fur":
-                return (inF ? form.display.furColor : furColor) != -1;
+                return (inF ? form.display.bodyColors.furColor : furColor) != -1;
         }
         throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
@@ -255,19 +250,19 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         boolean inF = form != null;
         switch (type.toLowerCase()) {
             case "hair":
-                return inF ? form.display.hairColor : hairColor;
+                return inF ? form.display.bodyColors.hairColor : hairColor;
             case "eye":
-                return inF ? form.display.eyeColor : eyeColor;
+                return inF ? form.display.bodyColors.eyeColor : eyeColor;
             case "bodycm":
-                return inF ? form.display.bodyCM : bodyCM;
+                return inF ? form.display.bodyColors.bodyCM : bodyCM;
             case "bodyc1":
-                return inF ? form.display.bodyC1 : bodyC1;
+                return inF ? form.display.bodyColors.bodyC1 : bodyC1;
             case "bodyc2":
-                return inF ? form.display.bodyC2 : bodyC2;
+                return inF ? form.display.bodyColors.bodyC2 : bodyC2;
             case "bodyc3":
-                return inF ? form.display.bodyC3 : bodyC3;
+                return inF ? form.display.bodyColors.bodyC3 : bodyC3;
             case "fur":
-                return inF ? form.display.furColor : furColor;
+                return inF ? form.display.bodyColors.furColor : furColor;
         }
         throw new CustomNPCsException("Invalid type! Legal types: hair, eye, bodycm, bodyc1, bodyc2, bodyc3, fur");
     }
@@ -311,20 +306,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public EnumAuraTypes2D getFormAuraTypes() {
-        return enumAuraTypes;
-    }
-
-    public void setFormAuraTypes(EnumAuraTypes2D enumAuraTypes) {
-        this.enumAuraTypes = enumAuraTypes;
-    }
-
-    @Override
-    public void setFormAuraTypes(String type) {
-        this.enumAuraTypes = EnumAuraTypes2D.valueOf(type);
-    }
-
-    @Override
     public String getHairCode() {
         return hairCode;
     }
@@ -353,13 +334,12 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         this.race = ValueUtil.clamp(race, (byte) 0, (byte) 5);
     }
 
-    @Override
-    public int setBodyType() {
+    public int getBodyType() {
         return bodyType;
     }
 
     @Override
-    public void getBodyType(int bodyType) {
+    public void setBodyType(int bodyType) {
         this.bodyType = ValueUtil.clamp(bodyType, 0, 2);
     }
 
@@ -378,10 +358,13 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         String s = type.toLowerCase();
         if (s.equals("base") || s.equals("ssj") || s.equals("ssj2") || s.equals("ssj3") || s.equals("ssj4") || s.equals("oozaru") || s.equals("raditz") || s.equals("")) {
             hairType = s;
-        } else {
-            hairType = "";
-            throw new CustomNPCsException("Invalid type!");
-        }
+        } else
+            throw new CustomNPCsException("Invalid type! Legal types: base, raditz, ssj, ssj2, ssj3, ssj4, oozaru");
+    }
+
+    @Override
+    public String getHairType() {
+        return hairType;
     }
 
     @Override
@@ -390,7 +373,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public void hasCoolerMask(boolean has) {
+    public void setHasCoolerMask(boolean has) {
         hasArcoMask = has;
     }
 
@@ -400,17 +383,18 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     @Override
-    public void hasEyebrows(boolean has) {
+    public void setHasEyebrows(boolean has) {
         hasEyebrows = has;
     }
 
     @Override
-    public String getHairType(String type) {
-        String s = type.toLowerCase();
-        if (s.equals("base") || s.equals("ssj") || s.equals("ssj2") || s.equals("ssj3") || s.equals("ssj4") || s.equals("oozaru") || s.equals("raditz") || s.equals(""))
-            return hairType;
-        else
-            throw new CustomNPCsException("Invalid type!");
+    public boolean hasBodyFur() {
+        return hasFur;
+    }
+
+    @Override
+    public void setHasBodyFur(boolean hasFur) {
+        this.hasFur = hasFur;
     }
 
     /////////////////////////////////////////////
@@ -504,6 +488,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     /////////////////////////////////////////////
     // Forms
 
+    @Override
     public void transform(int id) {
         if (FormController.Instance.has(id)) {
             isTransforming = true;
@@ -512,24 +497,29 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             throw new CustomNPCsException("Form " + id + " does not exist!");
     }
 
+    @Override
     public void transform(IForm form) {
         transform(form.getID());
     }
 
-    public void cancelTransform() {
+    @Override
+    public void cancelTransformation() {
         selectedForm = -1;
         isTransforming = false;
     }
 
+    @Override
     public void descend(int id) {
         TransformController.npcDescend(npc, id);
     }
 
-    public IForm getCurrentForm() {
-        return getForm();
+    @Override
+    public void descend(IForm form) {
+        TransformController.npcDescend(npc, form == null ? -1 : form.getID());
     }
 
-    public Outline getOutline() {
+    @Override
+    public IOutline getOutline() {
         Aura aura = getToggledAura();
         OutlineController OC = OutlineController.getInstance();
 
@@ -543,24 +533,34 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
         IAura formAura = form != null ? form.display.getAura() : null;
 
-        if(formAura != null) {
+        if (formAura != null) {
             aura = (Aura) formAura;
-            if (aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)){
+            if (aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)) {
                 return (Outline) OC.get(aura.display.outlineID);
             }
         }
 
         aura = (Aura) AuraController.Instance.get(auraID);
-        if (aura != null && aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)){
+        if (aura != null && aura.display.outlineAlwaysOn && OC.has(aura.display.outlineID)) {
             return (Outline) OC.get(aura.display.outlineID);
         }
 
 
-        return (Outline) OutlineController.getInstance().get(outlineID);
+        return OutlineController.getInstance().get(outlineID);
     }
 
+    @Override
+    public void setOutline(int id) {
+        if (OutlineController.Instance.has(id))
+            this.outlineID = id;
+        else
+            outlineID = -1;
+    }
+
+    @Override
     public void setOutline(IOutline outline) {
-        outlineID = outline != null ? outline.getID() : -1;
+        int id = outline != null ? outline.getID() : -1;
+        setOutline(id);
     }
 
     public Form getForm() {
@@ -574,35 +574,39 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return null;
     }
 
-    public void setForm(IForm form) {
-        if (form != null)
-            formID = form.getID();
-    }
-
+    @Override
     public void setForm(int id) {
         Form f = (Form) FormController.Instance.get(id);
         if (f != null)
             formID = f.id;
     }
 
-    public void setForm(String formName) {
-        Form f = (Form) FormController.Instance.get(formName);
-        if (f != null)
-            formID = f.id;
+    @Override
+    public void setForm(IForm form) {
+        int id = form != null ? form.getID() : -1;
+        setForm(id);
     }
 
     public boolean isInForm() {
         return formID > -1 && getForm() != null;
     }
 
+    @Override
+    public IForm getCurrentForm() {
+        return getForm();
+    }
+
+    @Override
     public boolean isInForm(IForm form) {
         return formID == form.getID();
     }
 
+    @Override
     public void setFormLevel(float amount) {
         formLevel = amount;
     }
 
+    @Override
     public float getFormLevel(int formID) {
         if (formID != -1)
             return formLevel;
@@ -639,18 +643,23 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         }
     }
 
-    public void setDefaultHair() {
+    public void clearHairCode(boolean forceDefaultHair) {
         hairColor = 0x0;
+        boolean useDefaultHair = (forceDefaultHair || hairCode == null || hairCode.isEmpty());
         if (race < 3)
-            hairCode = DBCHair.GOKU_HAIR;
+            hairCode = useDefaultHair ? DBCHair.GOKU_HAIR : "";
         else if (race < 5)
             hairCode = "";
         else if (race == DBCRace.MAJIN) {
-            hairCode = DBCHair.MAJIN_HAIR;
+            hairCode = useDefaultHair ? DBCHair.MAJIN_HAIR : "";
             hairColor = bodyCM;
         }
 
         hairType = "base";
+    }
+
+    public void setDefaultHair() {
+        clearHairCode(true);
     }
 
     @Override

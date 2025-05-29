@@ -7,10 +7,11 @@ import kamkeel.npcdbc.config.ConfigCapsules;
 import kamkeel.npcdbc.constants.Capsule;
 import kamkeel.npcdbc.constants.enums.EnumRegenCapsules;
 import kamkeel.npcdbc.controllers.CapsuleController;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -71,7 +72,7 @@ public class ItemRegenCapsule extends Item {
     public EnumRarity getRarity(ItemStack item) {
         int rarity = (item.getItemDamage() % 3) + 1;
 
-        if(rarity >= EnumRarity.values().length)
+        if (rarity >= EnumRarity.values().length)
             return EnumRarity.epic;
 
         return EnumRarity.values()[rarity];
@@ -95,11 +96,11 @@ public class ItemRegenCapsule extends Item {
             meta = 0;
 
         EnumRegenCapsules regenCapsules = EnumRegenCapsules.values()[meta];
-        UUID playerUUID = player.getUniqueID();
+        UUID playerUUID = Utility.getUUID(player);
 
         // Check cooldowns
         long remainingTime = CapsuleController.canUseRegenCapsule(playerUUID, meta);
-        if(remainingTime > 0){
+        if (remainingTime > 0) {
             player.addChatComponentMessage(new ChatComponentText("§fCapsule is on cooldown for " + remainingTime + " seconds"));
             return itemStack;
         }
@@ -108,7 +109,7 @@ public class ItemRegenCapsule extends Item {
             return itemStack;
 
         // Apply status effect
-        StatusEffectController.getInstance().applyEffect(player, regenCapsules.getStatusEffectId(), regenCapsules.getEffectTime(), (byte) regenCapsules.getStrength());
+        DBCEffectController.getInstance().applyEffect(player, regenCapsules.getStatusEffectId(), regenCapsules.getEffectTime(), (byte) regenCapsules.getStrength());
 
         // Remove 1 item
         itemStack.splitStack(1);
@@ -122,8 +123,7 @@ public class ItemRegenCapsule extends Item {
     }
 
     @Override
-    public EnumAction getItemUseAction(ItemStack stack)
-    {
+    public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.block;
     }
 
@@ -149,7 +149,7 @@ public class ItemRegenCapsule extends Item {
         HashMap<Integer, Integer> regenCooldown = CapsuleController.Instance.capsuleCooldowns.get(Capsule.REGEN);
         HashMap<Integer, Integer> regenTimes = CapsuleController.Instance.capsuleEffectTimes.get(Capsule.REGEN);
 
-        par3List.add(StatCollector.translateToLocalFormatted("capsule.effect", StatusEffectController.getInstance().get(regenCapsules.getStatusEffectId()).getName(), regenStrength.get(meta), regenTimes.get(meta)));
+        par3List.add(StatCollector.translateToLocalFormatted("capsule.effect", DBCEffectController.getInstance().get(regenCapsules.getStatusEffectId()).getName(), regenStrength.get(meta), regenTimes.get(meta)));
         par3List.add(StatCollector.translateToLocalFormatted("capsule.cooldown", regenCooldown.get(meta)));
     }
 }

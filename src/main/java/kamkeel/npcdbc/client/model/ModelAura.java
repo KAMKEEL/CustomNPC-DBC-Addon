@@ -13,6 +13,6 @@ public class ModelAura extends ModelBase {
         auraModel.addBox(-10.0F, -17.0F, -8.0F, 20, 20, 0);
         auraModel.setRotationPoint(0.0F, 20.0F, 0.0F);
     }
-    
+
 
 }

@@ -19,11 +19,12 @@ import org.lwjgl.opengl.GL12;
 public class PotaraItemRenderer implements IItemRenderer {
     private static final ResourceLocation enchant = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
-    public PotaraItemRenderer() {}
+    public PotaraItemRenderer() {
+    }
 
     @Override
     public boolean handleRenderType(ItemStack item, ItemRenderType type) {
-       return type == ItemRenderType.ENTITY || type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON || type == ItemRenderType.INVENTORY;
+        return type == ItemRenderType.ENTITY || type == ItemRenderType.EQUIPPED || type == ItemRenderType.EQUIPPED_FIRST_PERSON || type == ItemRenderType.INVENTORY;
     }
 
     @Override
@@ -33,13 +34,13 @@ public class PotaraItemRenderer implements IItemRenderer {
 
     @Override
     public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
-        if(item == null || !(item.getItem() instanceof ItemPotara))
+        if (item == null || !(item.getItem() instanceof ItemPotara))
             return;
         boolean isSplit = ItemPotara.isSplit(item);
         if (type == ItemRenderType.EQUIPPED_FIRST_PERSON || type == ItemRenderType.EQUIPPED) {
             IIcon icon;
-            if(isSplit){
-                icon = ((EntityLivingBase)data[1]).getItemIcon(item, 0);
+            if (isSplit) {
+                icon = ((EntityLivingBase) data[1]).getItemIcon(item, 0);
             } else {
                 icon = item.getItem().getIconFromDamage(item.getItemDamage() + EnumPotaraTypes.count());
             }
@@ -103,7 +104,7 @@ public class PotaraItemRenderer implements IItemRenderer {
     }
 
     public void renderDroppedItem(ItemStack item, boolean isSplit) {
-        if(item == null || item.getItem() == null)
+        if (item == null || item.getItem() == null)
             return;
 
         Tessellator tessellator = Tessellator.instance;
@@ -121,7 +122,7 @@ public class PotaraItemRenderer implements IItemRenderer {
 
         texturemanager.bindTexture(TextureMap.locationItemsTexture);
         IIcon par2Icon;
-        if(isSplit){
+        if (isSplit) {
             par2Icon = item.getIconIndex();
         } else {
             par2Icon = item.getItem().getIconFromDamage(item.getItemDamage() + EnumPotaraTypes.count());
@@ -132,11 +133,11 @@ public class PotaraItemRenderer implements IItemRenderer {
 
 
     public void renderInventoryItem(ItemStack itemStack, boolean isSplit) {
-        if(itemStack == null || itemStack.getItem() == null)
+        if (itemStack == null || itemStack.getItem() == null)
             return;
 
         IIcon iicon;
-        if(isSplit){
+        if (isSplit) {
             iicon = itemStack.getIconIndex();
         } else {
             iicon = itemStack.getItem().getIconFromDamage(itemStack.getItemDamage() + EnumPotaraTypes.count());
@@ -151,8 +152,7 @@ public class PotaraItemRenderer implements IItemRenderer {
         GL11.glDisable(GL11.GL_ALPHA_TEST);
         GL11.glEnable(GL11.GL_LIGHTING);
 
-        if (itemStack.hasEffect(0))
-        {
+        if (itemStack.hasEffect(0)) {
             RenderItem.getInstance().renderEffect(texturemanager, 0, 0);
         }
         GL11.glEnable(GL11.GL_LIGHTING);

@@ -1,9 +1,6 @@
 package kamkeel.npcdbc.client.gui.global.outline;
 
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectOutline;
-import kamkeel.npcdbc.client.model.part.hair.DBCHair;
-import kamkeel.npcdbc.constants.DBCRace;
-import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -53,22 +50,6 @@ public class SubGuiOutlineDisplay extends GuiNPCInterface implements ISubGuiList
         npc.width = 0.43f;
         visualDisplay = ((INPCDisplay) npc.display).getDBCDisplay();
 
-
-    }
-
-    public void updateDisplay() {
-        DBCData data = DBCData.getClient();
-        boolean isSaiyan = DBCRace.isSaiyan(visualDisplay.race);
-        if (isSaiyan) {
-            visualDisplay.tailState = (data.Tail == 0 || data.Tail == 1) ? data.Tail : (byte) (data.Tail == -1 ? 0 : 1);
-        }
-
-        if (visualDisplay.race == DBCRace.ARCOSIAN || visualDisplay.race == DBCRace.NAMEKIAN) {
-            visualDisplay.hairCode = "";
-        } else if (visualDisplay.race == DBCRace.MAJIN) {
-            visualDisplay.hairCode = DBCHair.MAJIN_HAIR;
-            visualDisplay.hairColor = visualDisplay.bodyCM;
-        }
 
     }
 

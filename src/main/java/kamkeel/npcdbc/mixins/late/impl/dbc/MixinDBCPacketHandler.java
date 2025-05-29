@@ -14,7 +14,7 @@ import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.controllers.StatusEffectController;
+import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
@@ -45,15 +45,18 @@ public class MixinDBCPacketHandler {
 
         DBCData dbcData = DBCData.get(p);
 
-        if (StatusEffectController.Instance.hasEffect(p, Effects.EXHAUSTED))
+        if (DBCEffectController.Instance.hasEffect(p, Effects.EXHAUSTED))
             return;
 
         if ((ConfigDBCGameplay.SaiyanZenkai && dbcData.Race == DBCRace.SAIYAN) || (ConfigDBCGameplay.HalfSaiyanZenkai && dbcData.Race == DBCRace.HALFSAIYAN)) {
+            if (ConfigDBCEffects.EXHAUST_ZENKAI && DBCEffectController.getInstance().hasEffect(p, Effects.EXHAUSTED)) {
+                return;
+            }
 
             if (dbcData.Race == DBCRace.SAIYAN) {
-                StatusEffectController.getInstance().applyEffect(p, Effects.ZENKAI, ConfigDBCEffects.ZenkaiSaiyanLength);
+                DBCEffectController.getInstance().applyEffect(p, Effects.ZENKAI, ConfigDBCEffects.ZenkaiSaiyanLength);
             } else {
-                StatusEffectController.getInstance().applyEffect(p, Effects.ZENKAI);
+                DBCEffectController.getInstance().applyEffect(p, Effects.ZENKAI);
             }
         }
     }
@@ -301,31 +304,31 @@ public class MixinDBCPacketHandler {
 
     @Inject(method = "handleDBCenergy", at = @At("HEAD"), cancellable = true)
     public void fixEnergy10xKi(byte b, byte p, EntityPlayer pl, CallbackInfo ci) {
-        CommonProxy.CurrentJRMCTickPlayer = pl;
+        CommonProxy.setCurrentJRMCTickPlayer(pl);
     }
 
     @Inject(method = "handleDBCenergy", at = @At("TAIL"), cancellable = true)
     public void fixEnergy10xKi2(byte b, byte p, EntityPlayer pl, CallbackInfo ci) {
-        CommonProxy.CurrentJRMCTickPlayer = null;
+        CommonProxy.setCurrentJRMCTickPlayer(null);
     }
 
     @Inject(method = "handleDBCascend", at = @At("HEAD"), cancellable = true)
     public void setCurrentPlayer(byte dbcascend, EntityPlayer p, CallbackInfo ci) {
-        CommonProxy.CurrentJRMCTickPlayer = p;
+        CommonProxy.setCurrentJRMCTickPlayer(p);
     }
 
     @Inject(method = "handleDBCascend", at = @At("TAIL"), cancellable = true)
     public void setCurrentPlayerPOST(byte dbcascend, EntityPlayer p, CallbackInfo ci) {
-        CommonProxy.CurrentJRMCTickPlayer = null;
+        CommonProxy.setCurrentJRMCTickPlayer(null);
     }
 
     @Redirect(method = "handleDBCenergy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntityInWorld(Lnet/minecraft/entity/Entity;)Z", ordinal = 2, remap = true), remap = false)
-    public boolean addDestroyerConfigsToAttack(World instance, Entity entity){
+    public boolean addDestroyerConfigsToAttack(World instance, Entity entity) {
         EntityEnergyAtt kiAttack = (EntityEnergyAtt) entity;
-        DBCData dbcData = DBCData.get(CommonProxy.CurrentJRMCTickPlayer);
+        DBCData dbcData = DBCData.get(CommonProxy.getCurrentJRMCTickPlayer());
         Form form = dbcData.getForm();
 
-        if(form != null && form.mastery.destroyerEnabled && JGConfigDBCGoD.CONFIG_GOD_ENERGY_ENABLED && JGConfigDBCGoD.CONFIG_GOD_ENABLED){
+        if (form != null && form.mastery.destroyerEnabled && JGConfigDBCGoD.CONFIG_GOD_ENERGY_ENABLED && JGConfigDBCGoD.CONFIG_GOD_ENABLED) {
             kiAttack.destroyer = true;
             kiAttack.DAMAGE_REDUCTION = form.mastery.calculateMulti("destroyerKiDamage", dbcData.addonFormLevel);
         }
@@ -333,22 +336,22 @@ public class MixinDBCPacketHandler {
         return instance.spawnEntityInWorld(kiAttack);
     }
 
-    @Redirect(method = "handleDBCascend", at = @At(value = "INVOKE", target="LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", ordinal = 5))
-    public void adjustKaiokenStrain(int s, EntityPlayer Player, String string, @Local(name = "strainMulti") float strainMulti, @Local(name = "kaiokenSkillLevel") int kaiokenSkillLevel){
+    @Redirect(method = "handleDBCascend", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;setInt(ILnet/minecraft/entity/player/EntityPlayer;Ljava/lang/String;)V", ordinal = 5))
+    public void adjustKaiokenStrain(int s, EntityPlayer Player, String string, @Local(name = "strainMulti") float strainMulti, @Local(name = "kaiokenSkillLevel") int kaiokenSkillLevel) {
         DBCData dbcData = DBCData.get(Player);
-        if(dbcData != null && dbcData.getForm() != null){
+        if (dbcData != null && dbcData.getForm() != null) {
             Form form = dbcData.getForm();
-            if(form.stackable.kaiokenStackable){
+            if (form.stackable.kaiokenStackable) {
                 int oldStrain = JRMCoreH.getInt(Player, string);
                 int strain = (int) ((12 + 20 - kaiokenSkillLevel) * strainMulti);
-                s = strain+oldStrain;
+                s = strain + oldStrain;
             }
         }
 
         JRMCoreH.setInt(s, Player, string);
     }
 
-    @Redirect(method = "handleDBCdescend", at = @At(value = "INVOKE", target="Lnet/minecraft/nbt/NBTTagCompound;setByte(Ljava/lang/String;B)V", remap = true), remap = false)
+    @Redirect(method = "handleDBCdescend", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/NBTTagCompound;setByte(Ljava/lang/String;B)V", remap = true), remap = false)
     public void DBCTransformEventDescend(NBTTagCompound instance, String key, byte value, @Local(argsOnly = true) EntityPlayer player) {
         if (key.equals("jrmcState")) {
             int oldForm = DBCData.get(player).State;

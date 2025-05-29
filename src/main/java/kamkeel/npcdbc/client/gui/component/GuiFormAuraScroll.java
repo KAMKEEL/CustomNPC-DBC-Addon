@@ -5,7 +5,7 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.util.TextSplitter;
+import kamkeel.npcs.util.TextSplitter;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.StatCollector;
 import noppes.npcs.client.gui.util.GuiCustomScroll;
@@ -24,10 +24,10 @@ public class GuiFormAuraScroll extends GuiCustomScroll {
         super(parent, id);
         visible = true;
         multipleSelection = false;
-        for(Form allForms : FormController.getInstance().customForms.values()){
+        for (Form allForms : FormController.getInstance().customForms.values()) {
             formDisplays.put(allForms.getName(), allForms.getMenuName());
         }
-        for(Aura allAuras : AuraController.getInstance().customAuras.values()){
+        for (Aura allAuras : AuraController.getInstance().customAuras.values()) {
             auraDisplays.put(allAuras.getName(), allAuras.getMenuName());
         }
     }
@@ -41,11 +41,11 @@ public class GuiFormAuraScroll extends GuiCustomScroll {
                 int xOffset = scrollHeight < ySize - 8 ? 0 : 10;
                 String rawName = list.get(i);
                 String menuName = "";
-                if(GuiDBC.activePage == 0)
+                if (GuiDBC.activePage == 0)
                     menuName = formDisplays.get(list.get(i));
-                if(GuiDBC.activePage == 1)
+                if (GuiDBC.activePage == 1)
                     menuName = auraDisplays.get(list.get(i));
-                if(menuName == null || menuName.isEmpty())
+                if (menuName == null || menuName.isEmpty())
                     menuName = "";
                 String displayString = StatCollector.translateToLocal(menuName);
                 String text = "";
@@ -88,7 +88,7 @@ public class GuiFormAuraScroll extends GuiCustomScroll {
     public void drawHover(int i, int j) {
         if (this.visible) {
             GL11.glPushMatrix();
-            GL11.glTranslatef((float)this.guiLeft, (float)this.guiTop, 0.0F);
+            GL11.glTranslatef((float) this.guiLeft, (float) this.guiTop, 0.0F);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             if (this.oldHover != this.hover) {
                 this.oldHover = this.hover;
@@ -99,11 +99,11 @@ public class GuiFormAuraScroll extends GuiCustomScroll {
 
             if (this.hover != -1 && this.hoverCount > 100) {
                 String menuName = "";
-                if(GuiDBC.activePage == 0)
+                if (GuiDBC.activePage == 0)
                     menuName = formDisplays.get(this.list.get(this.hover));
-                if(GuiDBC.activePage == 1)
+                if (GuiDBC.activePage == 1)
                     menuName = auraDisplays.get(this.list.get(this.hover));
-                if(menuName == null || menuName.isEmpty())
+                if (menuName == null || menuName.isEmpty())
                     menuName = "";
                 String displayString = StatCollector.translateToLocal(menuName);
                 GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

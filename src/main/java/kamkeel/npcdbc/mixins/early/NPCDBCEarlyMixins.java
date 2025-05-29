@@ -17,7 +17,6 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
-
     }
 
     @Override
@@ -47,6 +46,8 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
             mixins.add("client.MixinRenderGlobal");
             mixins.add("client.MixinMinecraft");
             mixins.add("client.MixinEffectRenderer");
+            mixins.add("client.MixinRendererLivingEntity");
+            mixins.add("client.MixinRenderManager");
 
             boolean isOptifineLoaded = false;
             try {
@@ -55,12 +56,11 @@ public class NPCDBCEarlyMixins implements IMixinConfigPlugin {
             } catch (Exception ignored) {
             }
 
-            if(isOptifineLoaded){
-                System.out.println("excuse me is that your girl");
+            if (isOptifineLoaded) {
                 mixins.add("client.optifine.MixinEntityRendererOptifine");
                 mixins.add("client.optifine.MixinDynamicLights");
                 mixins.add("client.optifine.MixinShaders");
-            }else{
+            } else {
                 mixins.add("client.MixinEntityRenderer");
             }
 

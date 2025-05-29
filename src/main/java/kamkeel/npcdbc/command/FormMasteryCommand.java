@@ -1,10 +1,10 @@
 package kamkeel.npcdbc.command;
 
-import kamkeel.command.CommandKamkeelBase;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.scripted.DBCAPI;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcs.command.CommandKamkeelBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import noppes.npcs.controllers.PlayerDataController;
@@ -12,6 +12,9 @@ import noppes.npcs.controllers.data.PlayerData;
 
 import java.text.DecimalFormat;
 import java.util.List;
+
+import static kamkeel.npcs.util.ColorUtil.sendError;
+import static kamkeel.npcs.util.ColorUtil.sendResult;
 
 public class FormMasteryCommand extends CommandKamkeelBase {
     @Override
@@ -113,6 +116,7 @@ public class FormMasteryCommand extends CommandKamkeelBase {
             return;
         }
     }
+
     @SubCommand(desc = "Give a player form mastery by numerical id", usage = "<player> <amount> <form_ID>")
     public void giveid(ICommandSender sender, String[] args) throws CommandException {
         String playername = args[0];

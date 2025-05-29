@@ -4,7 +4,7 @@ import cpw.mods.fml.common.Loader;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.aura.IAuraHandler;
 import kamkeel.npcdbc.api.effect.IBonusHandler;
-import kamkeel.npcdbc.api.effect.IStatusEffectHandler;
+import kamkeel.npcdbc.api.effect.IDBCEffectHandler;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormHandler;
 import kamkeel.npcdbc.api.npc.IDBCDisplay;
@@ -12,8 +12,8 @@ import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
 import noppes.npcs.api.entity.ICustomNpc;
+import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
-import noppes.npcs.entity.EntityNPCInterface;
 
 public abstract class AbstractDBCAPI {
     private static AbstractDBCAPI instance = null;
@@ -44,9 +44,16 @@ public abstract class AbstractDBCAPI {
 
     public abstract IOutlineHandler getOutlineHandler();
 
-    public abstract IStatusEffectHandler getStatusEffectHandler();
-
     public abstract IBonusHandler getBonusHandler();
+
+    /**
+     * You can also use the Custom Effect Handler in CNPC+
+     * while using the DBC Addon Index of 1 for controlling
+     * effects as well
+     *
+     * @return DBC Effect Handler
+     */
+    public abstract IDBCEffectHandler getDBCEffectHandler();
 
     public abstract IForm createForm(String name);
 
@@ -65,6 +72,14 @@ public abstract class AbstractDBCAPI {
     public abstract IOutline createOutline(String name);
 
     public abstract IOutline getOutline(String name);
+
+    /**
+     * Preferably used in a DamagedEvent/AttackEvent with cancelling the event
+     *
+     * @param dodger   The entity dodging
+     * @param attacker
+     */
+    public abstract void forceDodge(IEntity dodger, IEntity attacker);
 
     /**
      * @return Fake DBC Data for Simulating Damage
@@ -146,7 +161,8 @@ public abstract class AbstractDBCAPI {
 
     /**
      * Fires a Ki Attack in the Head Direction of the NPC
-     * @param npc the NPC firing this attack.
+     *
+     * @param npc           the NPC firing this attack.
      * @param type          Type of Ki Attack [0 - 8] "Wave", "Blast", "Disk", "Laser", "Spiral", "BigBlast", "Barrage", "Shield", "Explosion"
      * @param speed         Speed of Ki Attack [0 - 100]
      * @param damage        Damage for Ki Attack
@@ -163,8 +179,76 @@ public abstract class AbstractDBCAPI {
 
     /**
      * Fires an IKiAttack with its internal params
-     * @param npc NPC shooting this attack
+     *
+     * @param npc      NPC shooting this attack
      * @param kiAttack ki attack to shoot
      */
     public abstract void fireKiAttack(ICustomNpc npc, IKiAttack kiAttack);
+
+
+    /**
+     * @param skillName Acceptable skill names:
+     *                  <code>"Fusion", "Jump", "Dash", "Fly", "Endurance", <br>
+     *                  "PotentialUnlock", "KiSense", "Meditation", "Kaioken", "GodForm", <br>
+     *                  "OldKaiUnlock", "KiProtection", "KiFist", "KiBoost", "DefensePenetration", <br>
+     *                  "KiInfuse", "UltraInstinct", "InstantTransmission", "GodOfDestruction"</code>
+     * @param level     Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
+     * @return The TP Cost of said skill at just that level.
+     */
+    public abstract int getSkillTPCostSingle(String skillName, int level);
+
+    /**
+     * @param skillName Refer to {@link AbstractDBCAPI#getSkillTPCostSingle(String, int)}
+     * @param level     Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
+     * @return The Mind Cost of said skill at just that level.
+     */
+    public abstract int getSkillMindCostSingle(String skillName, int level);
+
+    /**
+     * @param skillName Refer to {@link AbstractDBCAPI#getSkillTPCostSingle(String, int)}
+     * @param level     Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
+     * @return TheMmind cost to get this skill to given level
+     */
+    public abstract int getSkillMindCostRecursive(String skillName, int level);
+
+    /**
+     * @param skillName Refer to {@link AbstractDBCAPI#getSkillTPCostSingle(String, int)}
+     * @param level     Level, starting from 1. <br> Levels can be forcefully set to exceed level 10, so it's only capped to be a minimum of 1.
+     * @return The TP cost to get this skill to given level
+     */
+    public abstract int getSkillTPCostRecursive(String skillName, int level);
+
+    /**
+     * @param race  Race ID from 0 to 5
+     * @param level Level of the Super form (uncapped).
+     * @return TP cost of this single level
+     */
+    public abstract int getSkillRacialTPCostSingle(int race, int level);
+
+    /**
+     * @param race  Race ID from 0 to 5
+     * @param level Level of the Super form (uncapped).
+     * @return Mind cost of this single level
+     */
+    public abstract int getSkillRacialTPMindSingle(int race, int level);
+
+    /**
+     * @param race  Race ID from 0 to 5
+     * @param level Level of the Super form (uncapped).
+     * @return TP Cost to get to this level
+     */
+    public abstract int getSkillRacialTPCostSingleRecursive(int race, int level);
+
+    /**
+     * @param race  Race ID from 0 to 5
+     * @param level Level of the Super form (uncapped).
+     * @return Mind Cost to get to this level
+     */
+    public abstract int getSkillRacialTPMindSingleRecursive(int race, int level);
+
+    /**
+     * @return Max level of UI
+     */
+    public abstract int getUltraInstinctMaxLevel();
+
 }

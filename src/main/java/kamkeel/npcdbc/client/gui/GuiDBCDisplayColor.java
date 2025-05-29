@@ -60,6 +60,7 @@ public class GuiDBCDisplayColor extends SubGuiInterface implements ITextfieldLis
         this.addTextField(this.textfield = new GuiNpcTextField(0, this, this.guiLeft + xOffset + 25, this.guiTop + yOffset + 20, 70, 20, getColor(color)));
         this.textfield.setTextColor(color);
 
+        this.addButton(new GuiNpcButton(66, guiLeft + ySize - 25, this.guiTop + 5, 20, 20, "X"));
     }
 
     public GuiDBCDisplayColor setColor(MutableInt col) {
@@ -153,6 +154,11 @@ public class GuiDBCDisplayColor extends SubGuiInterface implements ITextfieldLis
 
     protected void actionPerformed(GuiButton btn) {
         super.actionPerformed(btn);
+        if (btn instanceof GuiNpcButton) {
+            if (((GuiNpcButton) btn).id == 66) {
+                close();
+            }
+        }
     }
 
     public void close() {

@@ -9,11 +9,11 @@ import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.aura.DBCGetAura;
-import kamkeel.npcdbc.network.packets.aura.DBCRemoveAura;
-import kamkeel.npcdbc.network.packets.aura.DBCRequestAura;
-import kamkeel.npcdbc.network.packets.aura.DBCSaveAura;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.get.aura.DBCGetAura;
+import kamkeel.npcdbc.network.packets.player.aura.DBCRequestAura;
+import kamkeel.npcdbc.network.packets.request.aura.DBCRemoveAura;
+import kamkeel.npcdbc.network.packets.request.aura.DBCSaveAura;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiYesNo;
@@ -27,6 +27,7 @@ import net.minecraft.util.StatCollector;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.select.GuiSoundSelection;
 import noppes.npcs.client.gui.util.*;
+import noppes.npcs.constants.EnumScrollData;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.lwjgl.input.Mouse;
@@ -72,7 +73,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
 
         this.display = aura.display;
 
-        PacketHandler.Instance.sendToServer(new DBCRequestAura(-1, false).generatePacket());
+        DBCPacketHandler.Instance.sendToServer(new DBCRequestAura(-1, false));
     }
 
     public void initGui() {
@@ -194,7 +195,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
             while (data.containsKey(name))
                 name += "_";
             Aura aura = new Aura(-1, name);
-            PacketHandler.Instance.sendToServer(new DBCSaveAura(aura.writeToNBT(), "").generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveAura(aura.writeToNBT(), ""));
         } else if (button.id == 1) {
             if (data.containsKey(scrollAuras.getSelected())) {
                 GuiYesNo guiyesno = new GuiYesNo(this, scrollAuras.getSelected(), StatCollector.translateToLocal("gui.delete"), 1);
@@ -204,7 +205,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
             Aura aura = (Aura) this.aura.clone();
             while (data.containsKey(aura.name))
                 aura.name += "_";
-            PacketHandler.Instance.sendToServer(new DBCSaveAura(aura.writeToNBT(), "").generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveAura(aura.writeToNBT(), ""));
         }
 
         if (aura == null)
@@ -411,7 +412,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
     }
 
     @Override
-    public void setData(Vector<String> list, HashMap<String, Integer> data) {
+    public void setData(Vector<String> list, HashMap<String, Integer> data, EnumScrollData dataType) {
         String name = scrollAuras.getSelected();
         this.data = data;
         scrollAuras.setList(getSearchList());
@@ -434,7 +435,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
             selected = scrollAuras.getSelected();
             originalName = scrollAuras.getSelected();
             if (selected != null && !selected.isEmpty()) {
-                PacketHandler.Instance.sendToServer(new DBCGetAura(data.get(selected)).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new DBCGetAura(data.get(selected)));
             }
         }
     }
@@ -462,7 +463,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
     @Override
     public void save() {
         if (this.selected != null && this.data.containsKey(this.selected) && this.aura != null) {
-            PacketHandler.Instance.sendToServer(new DBCSaveAura(aura.writeToNBT(), originalName).generatePacket());
+            DBCPacketHandler.Instance.sendToServer(new DBCSaveAura(aura.writeToNBT(), originalName));
         }
     }
 
@@ -499,7 +500,7 @@ public class GuiNPCManageAuras extends GuiNPCInterface2 implements ICustomScroll
             return;
         if (id == 1) {
             if (data.containsKey(scrollAuras.getSelected())) {
-                PacketHandler.Instance.sendToServer(new DBCRemoveAura(data.get(scrollAuras.getSelected())).generatePacket());
+                DBCPacketHandler.Instance.sendToServer(new DBCRemoveAura(data.get(scrollAuras.getSelected())));
                 scrollAuras.clear();
                 aura = new Aura();
 

@@ -10,8 +10,12 @@ import kamkeel.npcdbc.config.ConfigDBCEffects;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
+import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.controllers.*;
+import kamkeel.npcdbc.controllers.DBCEffectController;
+import kamkeel.npcdbc.controllers.FormController;
+import kamkeel.npcdbc.controllers.FusionHandler;
+import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -20,12 +24,14 @@ import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.IPlayerDBCInfo;
-import kamkeel.npcdbc.network.PacketHandler;
-import kamkeel.npcdbc.network.packets.CapsuleInfo;
-import kamkeel.npcdbc.network.packets.LoginInfo;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.get.CapsuleInfo;
+import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
+import kamkeel.npcdbc.network.packets.player.LoginInfo;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcs.network.enums.EnumSyncAction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -36,7 +42,6 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.controllers.PlayerDataController;
 import noppes.npcs.controllers.data.PlayerData;
 import noppes.npcs.entity.EntityCustomNpc;
@@ -54,10 +59,10 @@ public class ServerEventHandler {
             return;
         DBCData dbcData = DBCData.get(event.player);
         dbcData.loadNBTData(true);
-        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.COOLDOWN).generatePacket(), (EntityPlayerMP) event.player);
-        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.STRENGTH).generatePacket(), (EntityPlayerMP) event.player);
-        PacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.EFFECT_TIME).generatePacket(), (EntityPlayerMP) event.player);
-        PacketHandler.Instance.sendToPlayer(new LoginInfo().generatePacket(), (EntityPlayerMP) event.player);
+        DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.COOLDOWN), (EntityPlayerMP) event.player);
+        DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.STRENGTH), (EntityPlayerMP) event.player);
+        DBCPacketHandler.Instance.sendToPlayer(new CapsuleInfo(CapsuleInfo.InfoType.EFFECT_TIME), (EntityPlayerMP) event.player);
+        DBCPacketHandler.Instance.sendToPlayer(new LoginInfo(), (EntityPlayerMP) event.player);
     }
 
     @SubscribeEvent
@@ -92,13 +97,14 @@ public class ServerEventHandler {
                 if (((IPlayerDBCInfo) playerData).getDBCInfoUpdate()) {
                     NBTTagCompound formCompound = new NBTTagCompound();
                     playerData.getDBCSync(formCompound);
-                    NoppesUtilServer.sendDBCCompound((EntityPlayerMP) player, formCompound);
+                    DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.PLAYERDATA, EnumSyncAction.RELOAD, -1, formCompound), (EntityPlayerMP) player);
                     ((IPlayerDBCInfo) playerData).endDBCInfo();
                 }
             }
 
-            if (player.ticksExisted % ConfigDBCGameplay.CheckEffectsTick == 0)
-                StatusEffectController.Instance.runEffects(player);
+            if (ConfigDBCEffects.AUTO_BLOATED)
+                if (player.ticksExisted % ConfigDBCEffects.DECREASE_TIME == 0)
+                    DBCEffectController.Instance.decreaseSenzuConsumption(player);
 
             if (ConfigDBCGameplay.WearableEarrings)
                 if (player.ticksExisted % 60 == 0)
@@ -110,8 +116,8 @@ public class ServerEventHandler {
                 if (ConfigDBCGameplay.EnableNamekianRegen && dbcData.Race == DBCRace.NAMEKIAN)
                     dbcData.stats.applyNamekianRegen();
 
-                if (player.ticksExisted % 20 == 0)
-                    StatusEffectController.Instance.decrementEffects(dbcData.player);
+                if (ConfigDBCGameplay.EnableHumanSpirit && dbcData.Race == DBCRace.HUMAN)
+                    DBCEffectController.Instance.checkHumanSpirit(player);
 
                 dbcData.syncTracking();
                 // ChargeKi
@@ -138,7 +144,7 @@ public class ServerEventHandler {
         boolean powerDown = dbcData.isFnPressed;
         byte release = dbcData.Release;
 
-        byte maxRelease = (byte) ((byte) (50 + dbcData.stats.getPotentialUnlockLevel() * 5) + (byte) (StatusEffectController.Instance.hasEffect(player, Effects.OVERPOWER) ? ConfigDBCEffects.OVERPOWER_AMOUNT : 0));
+        byte maxRelease = (byte) ((byte) (50 + dbcData.stats.getPotentialUnlockLevel() * 5) + (byte) (DBCEffectController.Instance.hasEffect(player, Effects.OVERPOWER) ? ConfigDBCEffects.OVERPOWER_AMOUNT : 0));
 
         int newRelease = ValueUtil.clamp(!powerDown ? release + releaseFactor : release - releaseFactor, (byte) releaseFactor, maxRelease);
         dbcData.getRawCompound().setByte("jrmcRelease", (byte) newRelease);
@@ -150,8 +156,6 @@ public class ServerEventHandler {
             return;
 
         if (event.entityLiving.worldObj instanceof WorldServer && event.entityLiving instanceof EntityPlayer) {
-            StatusEffectController.getInstance().killEffects((EntityPlayer) event.entityLiving);
-
             PlayerDBCInfo dbcInfo = PlayerDataUtil.getDBCInfo((EntityPlayer) event.entityLiving);
             DBCData dbcData = DBCData.get((EntityPlayer) event.entityLiving);
             dbcData.addonFormID = -1;
@@ -163,69 +167,81 @@ public class ServerEventHandler {
     public void handleFormProcesses(EntityPlayer player) {
         DBCData dbcData = DBCData.get(player);
         Form form = dbcData.getForm();
-        if (form != null) {
-            boolean isInSurvival = !player.capabilities.isCreativeMode;
-            PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
-            // Reverts player from form when ki or release are 0
-            if (dbcData.Release <= 0 || dbcData.Ki <= 0) {
-                formData.currentForm = -1;
+
+        if (form == null) {
+            return;
+        }
+
+        if (dbcData.lastTicked == player.ticksExisted) {
+            return;
+        }
+        dbcData.lastTicked = player.ticksExisted;
+
+        boolean isInSurvival = !player.capabilities.isCreativeMode;
+        PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        // Reverts player from form when ki or release are 0
+        if (dbcData.Release <= 0 || dbcData.Ki <= 0) {
+            formData.currentForm = -1;
+            formData.updateClient();
+            dbcData.loadNBTData(true);
+        }
+
+        if (!form.stackable.godStackable && dbcData.isForm(DBCForm.GodOfDestruction)) {
+            dbcData.setForm(DBCForm.GodOfDestruction, false);
+        }
+
+        if (!form.stackable.mysticStackable && dbcData.isForm(DBCForm.Mystic)) {
+            dbcData.setForm(DBCForm.Mystic, false);
+        }
+
+        if (!form.stackable.uiStackable && dbcData.isForm(DBCForm.UltraInstinct)) {
+            dbcData.setForm(DBCForm.UltraInstinct, false);
+        }
+
+        if (!form.stackable.kaiokenStackable && dbcData.isForm(DBCForm.Kaioken)) {
+            dbcData.setForm(DBCForm.Kaioken, false);
+        }
+
+
+        // Updates form Timer
+        if (formData.hasTimer(form.id)) {
+            formData.decrementTimer(form.id);
+            if (player.ticksExisted % 20 == 0)
                 formData.updateClient();
-                dbcData.loadNBTData(true);
-            }
+        }
 
-            if (!form.stackable.godStackable && dbcData.isForm(DBCForm.GodOfDestruction))
-                dbcData.setForm(DBCForm.GodOfDestruction, false);
+        if (form.mastery.hasKiDrain() && isInSurvival) {
+            if (player.ticksExisted % 10 == 0) {
+                double might = DBCUtils.calculateKiDrainMight(dbcData, player);
 
-            if (!form.stackable.mysticStackable && dbcData.isForm(DBCForm.Mystic))
-                dbcData.setForm(DBCForm.Mystic, false);
+                double cost = might * form.mastery.getKiDrain();
 
-            if (!form.stackable.uiStackable && dbcData.isForm(DBCForm.UltraInstinct))
-                dbcData.setForm(DBCForm.UltraInstinct, false);
-
-            if (!form.stackable.kaiokenStackable && dbcData.isForm(DBCForm.Kaioken))
-                dbcData.setForm(DBCForm.Kaioken, false);
-
-
-            // Updates form Timer
-            if (formData.hasTimer(form.id)) {
-                formData.decrementTimer(form.id);
-                if (player.ticksExisted % 20 == 0)
-                    formData.updateClient();
-            }
-            if (form.mastery.hasKiDrain() && isInSurvival) {
-                if (player.ticksExisted % 10 == 0) {
-
-                    int might = DBCUtils.calculateKiDrainMight(dbcData, player);
-
-                    double cost = might * form.mastery.getKiDrain();
-                    cost *= ((double) dbcData.Release / 100);
-
-                    if (JGConfigDBCFormMastery.FM_Enabled)
-                        cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
-
-                    dbcData.stats.restoreKiFlat((int) (-cost / form.mastery.kiDrainTimer * 10));
-                }
-            }
-
-            if (form.mastery.hasHeat() && player.ticksExisted % 20 == 0) {
-                float heatToAdd = form.mastery.calculateMulti("heat", formData.getCurrentLevel());
-                float newHeat = ValueUtil.clamp(dbcData.addonCurrentHeat + heatToAdd, 0, form.mastery.maxHeat);
-
-                if (newHeat == form.mastery.maxHeat) {
-                    int painTime = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()));
-                    dbcData.getRawCompound().setInteger("jrmcGyJ7dp", painTime);
-                    formData.currentForm = -1;
-                    formData.updateClient();
-
-                    newHeat = 0;
+                if (JGConfigDBCFormMastery.FM_Enabled) {
+                    cost *= form.mastery.calculateMulti("kiDrain", formData.getCurrentLevel());
                 }
 
-                dbcData.getRawCompound().setFloat("addonCurrentHeat", newHeat);
-            }
+                int actualCost = (int) Math.floor((-cost / form.mastery.kiDrainTimer) * 10);
 
-            if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail()) {
+                dbcData.stats.restoreKiFlat(actualCost);
+            }
+        }
+
+        if (form.mastery.hasHeat() && player.ticksExisted % 20 == 0) {
+            float heatToAdd = form.mastery.calculateMulti("heat", formData.getCurrentLevel());
+            float newHeat = ValueUtil.clamp(dbcData.addonCurrentHeat + heatToAdd, 0, form.mastery.maxHeat);
+
+            if (newHeat == form.mastery.maxHeat) {
+                int painTime = (int) (form.mastery.painTime * 60f / 5f * form.mastery.calculateMulti("pain", formData.getCurrentLevel()));
+                dbcData.getRawCompound().setInteger("jrmcGyJ7dp", painTime);
+                newHeat = 0;
                 TransformController.handleFormDescend(player, -10);
             }
+
+            dbcData.getRawCompound().setFloat("addonCurrentHeat", newHeat);
+        }
+
+        if ((form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru")) && DBCRace.isSaiyan(dbcData.Race) && !dbcData.hasTail()) {
+            TransformController.handleFormDescend(player, -10);
         }
     }
 
@@ -248,21 +264,24 @@ public class ServerEventHandler {
         if (event.entity.worldObj.isRemote)
             return;
 
-        if (event.entity instanceof EntityPlayer || event.entity instanceof EntityNPCInterface) {
-            Entity attacker = event.source.getEntity();
+        boolean isNPC = event.entity instanceof EntityNPCInterface;
+        float dodgeChance = 0;
+        if (event.entity instanceof EntityPlayer || isNPC) {
             Form form = PlayerDataUtil.getForm(event.entity);
 
             if (form != null) {
                 float formLevel = PlayerDataUtil.getFormLevel(event.entity);
-
-                if (form.mastery.hasDodge()) {
-                    Random rand = new Random();
-                    float dodgeChance = form.mastery.dodgeChance * form.mastery.calculateMulti("dodge", formLevel);
-                    if (dodgeChance >= rand.nextInt(100)) {
-                        if (Dodge.dodge(event.entity, attacker)) {
-                            event.setCanceled(true);
-                        }
-                    }
+                if (form.mastery.hasDodge())
+                    dodgeChance = form.mastery.dodgeChance * form.mastery.calculateMulti("dodge", formLevel);
+            } else if (isNPC)
+                dodgeChance = PlayerDataUtil.getDBCData((EntityNPCInterface) event.entity).getDodgeChance();
+        }
+        if (dodgeChance > 0) {
+            Random rand = new Random();
+            if (dodgeChance >= rand.nextInt(100)) {
+                Entity attacker = event.source.getEntity();
+                if (Dodge.dodge(event.entity, attacker)) {
+                    event.setCanceled(true);
                 }
             }
         }
