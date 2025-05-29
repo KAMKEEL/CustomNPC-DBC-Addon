@@ -10,6 +10,7 @@ public class AddonEffect extends CustomEffect {
 
     public AddonEffect() {
         icon = CustomNpcPlusDBC.ID + ":textures/gui/icons.png";
+        index = 1;
     }
 
     public int getWidth() {
