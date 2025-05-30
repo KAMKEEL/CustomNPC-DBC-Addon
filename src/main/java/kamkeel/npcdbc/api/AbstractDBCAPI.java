@@ -77,7 +77,7 @@ public abstract class AbstractDBCAPI {
      * Preferably used in a DamagedEvent/AttackEvent with cancelling the event
      *
      * @param dodger   The entity dodging
-     * @param attacker
+     * @param attacker Attacker Entity
      */
     public abstract void forceDodge(IEntity dodger, IEntity attacker);
 
