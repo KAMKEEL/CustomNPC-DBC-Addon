@@ -5,6 +5,7 @@ import kamkeel.npcdbc.client.ClientProxy;
 import kamkeel.npcdbc.client.KeyHandler;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
+import kamkeel.npcdbc.client.shader.ShaderHelper;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.FormWheelData;
@@ -361,6 +362,23 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         return KeyHandler.FormWheelKey.getKeyCode() < 0;
     }
 
+    protected void drawGradientRectWithFade(int left, int top, int right, int bottom, int startColor, int endColor, float fade) {
+        int red = (startColor >> 16) & 0xFF;
+        int green = (startColor >> 8) & 0xFF;
+        int blue = (startColor) & 0xFF;
+        int alpha = (startColor >> 24 & 255);
+        int newAlpha = Math.min(255, Math.max(0, (int) (alpha * fade)));
+        int newStart = (newAlpha << 24) | (red << 16) | (green << 8) | blue;
+
+        red = (endColor >> 16) & 0xFF;
+        green = (endColor >> 8) & 0xFF;
+        blue = (endColor) & 0xFF;
+        alpha = (endColor >> 24 & 255);
+        newAlpha = Math.min(255, Math.max(0, (int) (alpha * fade)));
+        int newEnd = (newAlpha << 24) | (red << 16) | (green << 8) | blue;
+
+        drawGradientRect(left, top, right, bottom, newStart, newEnd);
+    }
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         if (!hasSubGui()) {
@@ -411,6 +429,10 @@ public class HUDFormWheel extends GuiNPCInterface implements ISubGuiListener {
         this.
 
             drawGradientRect(0, 0, this.width, this.height, gradientColor, gradientColor);
+
+        if (!ShaderHelper.shadersEnabled())
+            drawGradientRectWithFade(0, 0, width, height, 0x88000000, 0xfa000000, guiAnimationScale);
+
 
         glPushMatrix();
         final float HALF_WIDTH = (float) this.width / 2;
