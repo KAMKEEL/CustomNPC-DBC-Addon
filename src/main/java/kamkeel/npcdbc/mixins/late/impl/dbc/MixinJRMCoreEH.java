@@ -55,7 +55,7 @@ public class MixinJRMCoreEH {
             return;
         }
 
-        damageCalc.damage = (int) damagedEvent.damage;
+        damageCalc.damage = damagedEvent.damage;
         damageCalc.stamina = damagedEvent.getStaminaReduced();
         damageCalc.ki = damagedEvent.getKiReduced();
         damageCalc.willKo = damagedEvent.willKo();
@@ -72,7 +72,7 @@ public class MixinJRMCoreEH {
             return;
         }
 
-        damageCalc.damage = (int) damagedEvent.damage;
+        damageCalc.damage = damagedEvent.damage;
         damageCalc.stamina = damagedEvent.getStaminaReduced();
         damageCalc.ki = damagedEvent.getKiReduced();
         damageCalc.willKo = damagedEvent.willKo();
