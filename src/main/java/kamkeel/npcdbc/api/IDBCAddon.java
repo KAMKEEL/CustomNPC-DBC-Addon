@@ -52,7 +52,7 @@ public interface IDBCAddon extends IDBCPlayer {
     void setKiProtectionOn(boolean on);
 
     /**
-     * This will only work if the player has Ki Fist & Ki Infuse skills <br>
+     * This will only work if the player has Ki Fist &amp; Ki Infuse skills <br>
      * <br>
      * 0 - No ki weapons <br>
      * 1 - Ki Blade <br>
@@ -731,7 +731,7 @@ public interface IDBCAddon extends IDBCPlayer {
     /**
      *
      * @param slot, integer of the ki attack slot to look in. Accepts values 1-4
-     * @return
+     * @return Ki Attack data
      */
     IKiAttack getAttackFromSlot(int slot);
 }

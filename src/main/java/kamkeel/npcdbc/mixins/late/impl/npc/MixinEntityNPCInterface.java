@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.late.impl.npc;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
+import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.mixins.late.impl.dbc.MixinJRMCoreEH;
 import kamkeel.npcdbc.util.DBCUtils;
@@ -62,7 +63,9 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
                 modifiedDamage = AttributeAttackUtil.calculateDamagePlayerToNPC(player, npcInterface, modifiedDamage);
 
                 // Apply Resistances
-                modifiedDamage = npcInterface.stats.resistances.applyResistance(damagesource, modifiedDamage);
+                if(ConfigDBCGeneral.ALLOW_DBC_DAMAGE_RESISTANCE){
+                    modifiedDamage = npcInterface.stats.resistances.applyResistance(damagesource, modifiedDamage);
+                }
                 dam.set(modifiedDamage);
             }
         }
@@ -81,7 +84,7 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
     @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Lnoppes/npcs/scripted/event/NpcEvent$DamagedEvent;getDamage()F"))
     public float fixDamagedEventDBCDamage(NpcEvent.DamagedEvent instance) {
         if (dbcAltered && DBCUtils.npcLastSetDamage == null && !instance.isCancelled()) {
-            DBCUtils.npcLastSetDamage = (int) instance.getDamage();
+            DBCUtils.npcLastSetDamage = instance.getDamage();
         }
         dbcAltered = false;
         return instance.getDamage();

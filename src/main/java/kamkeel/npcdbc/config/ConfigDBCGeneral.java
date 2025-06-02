@@ -22,6 +22,8 @@ public class ConfigDBCGeneral {
     public static boolean FORM_MASTERIES_CLEAR_ON_RESET = true;
     public static boolean FORM_MASTERIES_CLEAR_ON_REMOVE = true;
 
+    public static boolean ALLOW_DBC_DAMAGE_RESISTANCE = true;
+
     private final static String defaultDiscordURL = "https://discord.com/invite/pQqRTvFeJ5";
     public static String discordURL = null;
 
@@ -34,12 +36,14 @@ public class ConfigDBCGeneral {
 
             DISPLAY_BY_DEFAULT = config.get(NPC, "DBC Display Enabled by Default", false).getBoolean(false);
             STATS_BY_DEFAULT = config.get(NPC, "DBC Stats Enabled by Default", false).getBoolean(false);
+            ALLOW_DBC_DAMAGE_RESISTANCE = config.get(NPC, "Should the melee resistance on NPCs work against DBC Damage?", true, "Turning this off could break Ki Resistance on NPCs").getBoolean(true);
 
             AURAS_CLEAR_ON_RESET = config.get(CHARACTER_RESET, "Should Custom Auras be removed on character reset?", true).getBoolean(true);
             FORMS_CLEAR_ON_RESET = config.get(CHARACTER_RESET, "Should Custom Forms be removed on character reset?", true).getBoolean(true);
             FORM_MASTERIES_CLEAR_ON_RESET = config.get(CHARACTER_RESET, "Should CF Masteries be removed on character reset?", true).getBoolean(true);
 
             FORM_MASTERIES_CLEAR_ON_REMOVE = config.get(FORM_REMOVAL, "Should custom form mastery be removed on form removal unless specified otherwise in a script?", true).getBoolean(true);
+
 
             discordURL = config.getString("URL", DISCORD_BUTTON, defaultDiscordURL, "Discord URL for the button in the stat sheet. If it's empty it will show the Addon's discord");
         } catch (Exception e) {

@@ -52,12 +52,9 @@ public class DBCUtils {
         {"§fBase", "§4Evil", "§cFull Power", "§dPurest", "§4God"}
     };
     // lastSetDamage works with player's DBCDamagedEvent
-    public static Integer npcLastSetDamage = null;
+    public static Float npcLastSetDamage = null;
     public static DBCDamageCalc lastSetDamage = null;
     public static boolean willKo = false;
-
-    //this one is with the scripting player Attack/Attacked events. Separated these into 2 so both can be functional
-    public static Integer scriptingLastSetDamage = null;
 
     public static boolean damageEntityCalled = false;
 
@@ -66,7 +63,6 @@ public class DBCUtils {
 
     public static boolean calculatingKiDrain;
     public static boolean calculatingCost; // Cost is for Ki or Stamina Drain
-    public static boolean calculateBaseStats;
 
     public static String getFormattedStateName(int race, int state) {
         String out = "";
