@@ -69,7 +69,7 @@ public abstract class MixinJRMCoreH {
 
     @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;JRMCABonusOn:Z", shift = At.Shift.BEFORE))
     private static void applyPlayerBonusToStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "value") LocalIntRef value, @Local(name = "bs") double bs) {
-        if(DBCUtils.calculateBaseStats)
+        if(DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain)
             return;
 
         if(player instanceof EntityPlayer && powerType == 1){
@@ -113,7 +113,6 @@ public abstract class MixinJRMCoreH {
                 else if (attributeID == DBCAttribute.Spirit) // SPI
                     modifiedValue += flatBonus[4];
             }
-
             value.set(modifiedValue);
         }
     }
