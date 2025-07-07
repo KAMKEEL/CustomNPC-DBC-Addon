@@ -21,10 +21,13 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcs.controllers.AttributeController;
+import kamkeel.npcs.controllers.data.attribute.tracker.PlayerAttributeTracker;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import noppes.npcs.config.ConfigMain;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -361,5 +364,10 @@ public class MixinDBCPacketHandler {
         }
 
         instance.setByte(key, value);
+
+        if(ConfigMain.AttributesEnabled){
+            PlayerAttributeTracker tracker = AttributeController.getTracker(player);
+            tracker.recalcAttributes(player);
+        }
     }
 }
