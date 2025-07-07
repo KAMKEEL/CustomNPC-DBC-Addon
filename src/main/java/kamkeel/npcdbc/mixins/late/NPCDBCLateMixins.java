@@ -83,6 +83,9 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
         mixins.add("npc.MixinEntityNPCInterface");
         mixins.add("npc.MixinResistances");
 
+        // Prevent crashes from recursive biome decoration in DBC worlds
+        mixins.add("dbc.MixinBiomeDecoratorDBC");
+
         mixins.add("EDE.MixinEDEFix");
 
         return mixins;
