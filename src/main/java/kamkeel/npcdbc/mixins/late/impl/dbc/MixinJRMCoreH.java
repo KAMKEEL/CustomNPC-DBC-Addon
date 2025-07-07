@@ -350,7 +350,7 @@ public abstract class MixinJRMCoreH {
         DBCData dbcData = DBCData.get(player);
         int resultOriginal = result.get();
 
-        if (!DBCUtils.noBonusEffects) {
+        if (!DBCUtils.noBonusEffects && !DBCUtils.calculatingKiDrain && !DBCUtils.calculatingCost) {
             float[] bonus = dbcData.bonus.getMultiBonus();
             if (attribute == DBCAttribute.Strength && bonus[0] != 0) //str
                 resultOriginal += (currAttributes[DBCAttribute.Strength] * bonus[0]);
