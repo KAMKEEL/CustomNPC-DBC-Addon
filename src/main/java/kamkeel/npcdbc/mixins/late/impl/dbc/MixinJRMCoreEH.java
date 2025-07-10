@@ -58,7 +58,7 @@ public class MixinJRMCoreEH {
         damageCalc.damage = damagedEvent.damage;
         damageCalc.stamina = damagedEvent.getStaminaReduced();
         damageCalc.ki = damagedEvent.getKiReduced();
-        damageCalc.willKo = DBCUtils.checkKnockout(targetPlayer.get(), damageSource.get(), damageCalc.damage);
+        damageCalc.ko = DBCUtils.checkKnockout(targetPlayer.get(), damageSource.get(), damageCalc.damage);
         DBCUtils.lastSetDamage = damageCalc;
         damageCalc.processExtras();
     }
@@ -75,7 +75,7 @@ public class MixinJRMCoreEH {
         damageCalc.damage = damagedEvent.damage;
         damageCalc.stamina = damagedEvent.getStaminaReduced();
         damageCalc.ki = damagedEvent.getKiReduced();
-        damageCalc.willKo = DBCUtils.checkKnockout(targetPlayer.get(), damageSource.get(), damageCalc.damage);
+        damageCalc.ko = DBCUtils.checkKnockout(targetPlayer.get(), damageSource.get(), damageCalc.damage);
         DBCUtils.lastSetDamage = damageCalc;
         damageCalc.processExtras();
     }

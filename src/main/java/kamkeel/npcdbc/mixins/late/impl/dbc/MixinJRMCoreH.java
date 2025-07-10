@@ -462,6 +462,9 @@ public abstract class MixinJRMCoreH {
                 int curBody = getInt(player, "jrmcBdy");
                 float damage = Math.max(0, lastSetDamage.damage);
                 float newHealth = curBody - damage;
+                if(lastSetDamage.ko){
+                    newHealth = newHealth < 20 ? 20 : newHealth;
+                }
                 s = (int) Math.max(0, newHealth);
                 DBCEffectController.getInstance().recordDamage(player, s == 0 ? curBody : damage);
             }
