@@ -7,6 +7,7 @@ import kamkeel.npcdbc.constants.DBCDamageSource;
 import kamkeel.npcdbc.constants.DBCScriptType;
 import kamkeel.npcdbc.constants.enums.*;
 import kamkeel.npcdbc.data.DBCDamageCalc;
+import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -141,7 +142,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         public float damage;
         public int stamina;
         public int ki;
-        public boolean willKo;
+        public boolean ko;
 
         public DamagedEvent(EntityPlayer player, float damage, DamageSource damageSource, int type) {
             super(PlayerDataUtil.getIPlayer(player));
@@ -154,8 +155,8 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
             super(PlayerDataUtil.getIPlayer(player));
             this.damage = damageCalc.damage;
             this.stamina = damageCalc.stamina;
+            this.ko = DBCUtils.checkKnockout(player, damageSource, this.damage);
             this.ki = damageCalc.ki;
-            this.willKo = damageCalc.ko;
             this.damageSource = NpcAPI.Instance().getIDamageSource(damageSource);
             this.sourceType = type;
         }
@@ -166,11 +167,14 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         }
 
         /**
-         * @param damage The new damage value
+         * @param damage The new damage value, this will recalculate the KO status
          */
         @Override
         public void setDamage(float damage) {
             this.damage = damage;
+            if(player != null && player.getMCEntity() instanceof EntityPlayer && damageSource != null && damageSource.getMCDamageSource() != null) {
+                this.ko = DBCUtils.checkKnockout((EntityPlayer) player.getMCEntity(), damageSource.getMCDamageSource(), this.damage);
+            }
         }
 
         @Override
@@ -184,8 +188,13 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         }
 
         @Override
-        public boolean willKo() {
-            return this.willKo;
+        public boolean getKO() {
+            return this.ko;
+        }
+
+        @Override
+        public void setKo(boolean ko) {
+            this.ko = ko;
         }
 
         @Override

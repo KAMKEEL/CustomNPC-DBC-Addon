@@ -87,8 +87,15 @@ public interface IDBCEvent extends IPlayerEvent {
          */
         void setStaminaReduced(int stamina);
 
-        boolean willKo();
+        boolean getKO();
 
+        /**
+         *
+         * Doing setDamage will automatically reset the KO calculation, so setKO modifications must be performed after setDamage.
+         *
+         * @return If KO will occur
+         */
+        void setKo(boolean ko);
 
         /**
          *

@@ -57,7 +57,6 @@ public class DBCUtils {
     // lastSetDamage works with player's DBCDamagedEvent
     public static Float npcLastSetDamage = null;
     public static DBCDamageCalc lastSetDamage = null;
-    public static boolean willKo = false;
 
     public static boolean damageEntityCalled = false;
 
@@ -151,6 +150,7 @@ public class DBCUtils {
 
     public static DBCDamageCalc calculateDBCDamageFromSource(Entity Player, float dbcA, DamageSource s) {
         DBCDamageCalc damageCalc = new DBCDamageCalc();
+        damageCalc.source = s;
         damageCalc.entity = Player;
         if (!Player.worldObj.isRemote && Player instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) Player;
@@ -343,9 +343,10 @@ public class DBCUtils {
         return damageCalc;
     }
 
-    public static DBCDamageCalc calculateDBCStatDamage(EntityPlayer player, float damageAmount, IDBCStats dbcStats) {
+    public static DBCDamageCalc calculateDBCStatDamage(EntityPlayer player, float damageAmount, IDBCStats dbcStats, DamageSource source) {
         DBCDamageCalc damageCalc = new DBCDamageCalc();
         damageCalc.entity = player;
+        damageCalc.source = source;
         if (!player.worldObj.isRemote && dbcStats != null && damageAmount > 0) {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
@@ -549,7 +550,7 @@ public class DBCUtils {
                 int ko = getInt(player, "jrmcHar4va");
                 newHP = Math.max(reducedHP, 20);
                 if (ko <= 0 && newHP == 20) {
-                    if(DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), source))){
+                    if(!DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), source))){
                         setInt((int) dbcStats.getFriendlyFistAmount(), player, "jrmcHar4va");
                         setByte(race == 4 ? (state < 4 ? state : 4) : 0, player, "jrmcState");
                         setByte((int) 0, player, "jrmcState2");
