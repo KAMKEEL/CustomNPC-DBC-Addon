@@ -23,7 +23,9 @@ import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.items.ItemPotara;
+import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.entity.Entity;
@@ -34,6 +36,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
 
 import java.util.Arrays;
@@ -556,7 +559,6 @@ public class DBCUtils {
                     }
                 }
             }
-
             setInt(newHP, player, "jrmcBdy");
         }
     }
@@ -888,6 +890,35 @@ public class DBCUtils {
             cost += calculateDBCRacialSkillMindCost(race, i + 1);
         }
         return cost;
+    }
+
+    /**
+     * Determines if incoming damage will knock the player out using Friendly Fist logic.
+     *
+     * @param player  Player receiving damage
+     * @param source  Source of the damage
+     * @param damage  Final damage that will be applied to the player
+     * @return {@code true} if the damage should result in a knock out
+     */
+    public static boolean checkKnockout(EntityPlayer player, DamageSource source, float damage) {
+        if (source != null && (source.getEntity() instanceof EntityPlayer || source.getEntity() instanceof EntityNPCInterface)) {
+            boolean friendlyFist = false;
+            Entity attacker = source.getEntity();
+            if (source.getEntity() instanceof EntityPlayer) {
+                friendlyFist = PlyrSettingsB((EntityPlayer) attacker, DBCSettings.FRIENDLY_FIST);
+            } else if (source.getEntity() instanceof EntityNPCInterface) {
+                EntityNPCInterface npc = (EntityNPCInterface) source.getEntity();
+                DBCStats dbcStats = ((INPCStats) npc.stats).getDBCStats();
+                friendlyFist = dbcStats.enabled && dbcStats.isFriendlyFist();
+            }
+            if (friendlyFist && !source.getDamageType().equals("MajinAbsorption") && attacker != player) {
+                int ko = getInt(player, "jrmcHar4va");
+                float hpRemaining = getInt(player, "jrmcBdy") - damage;
+                float newHP = hpRemaining < 20 ? 20 : hpRemaining;
+                return ko <= 0 && newHP == 20;
+            }
+        }
+        return false;
     }
 
 }

@@ -503,7 +503,16 @@ public abstract class MixinJRMCoreH {
         DBCUtils.willKo = false;
         EntityPlayer player = (EntityPlayer) Player;
         int ko = getInt(player, "jrmcHar4va");
-        int health = Math.max(all, 20);
+        int health;
+
+        if (lastSetDamage != null) {
+            int curBody = getInt(player, "jrmcBdy");
+            float dmg = Math.max(0, lastSetDamage.damage);
+            health = Math.max((int) (curBody - dmg), 20);
+        } else {
+            health = Math.max(all, 20);
+        }
+
         if(ko <= 0 && health == 20){
             if(DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer((EntityPlayer) Player), s))){
                 // CANCEL KNOCKOUT
