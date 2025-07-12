@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Random;
 
-@Mixin(value = BiomeDecoratorDBC.class, remap = false)
+@Mixin(value = BiomeDecoratorDBC.class)
 public class MixinBiomeDecoratorDBC {
 
     /**
