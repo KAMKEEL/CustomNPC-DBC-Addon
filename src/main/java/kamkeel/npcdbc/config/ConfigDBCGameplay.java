@@ -54,6 +54,11 @@ public class ConfigDBCGameplay {
     public final static String FruitOfMight = "FruitOfMight";
     public static int FruitOfMightStackSize = 5;
 
+    public final static String AnticheatOptions = "Anticheat_Options_(Server_sided)";
+    public static boolean ValidateKiCasting = false;
+    public static float WarnWhenAboveDeviationFactor = 0.15f;
+    public static float InvalidateWhenAboveDeviationFactor = 0.25f;
+
     public static void init(File configFile) {
         config = new Configuration(configFile);
 
@@ -120,6 +125,16 @@ public class ConfigDBCGameplay {
                     "\nwhen the Player reaches a specific threshold of damage").getBoolean(true);
             PercentDamageRequired = config.get(HumanSpirit, "Percent Damage Required", 400).getInt(400);
             DamageRequiredSeconds = config.get(HumanSpirit, "Time Allotted", 20, "Amount of time to consider the Percent of Damage Required").getInt(50);
+
+            ValidateKiCasting = config.get(AnticheatOptions, "Ki Casting Validation Enabled", false,
+                    "EXPERIMENTAL!!!! Employ server-side validation of ki attack cast times.").getBoolean(false);
+            WarnWhenAboveDeviationFactor = (float) config.get(AnticheatOptions, "Warn When Above Deviation Factor", 0.15,
+                "(KI CAST VALIDATION CONFIG) Warns the player if their actual cast time deviates too much from the expected cast time.\n" +
+                    "Deviation Factor = (Expected - Actual Cast Time) / Expected Cast Time — expressed as a percentage.").getDouble(0.15);
+            InvalidateWhenAboveDeviationFactor = (float) config.get(AnticheatOptions, "Invalidate When Above Deviation Factor", 0.25,
+                "(KI CAST VALIDATION CONFIG) Invalidates the action if the actual cast time deviates too much from the expected cast time.\n" +
+                    "Deviation Factor = (Expected - Actual Cast Time) / Expected Cast Time — expressed as a percentage.").getDouble(0.25);
+
 
 
         } catch (Exception e) {

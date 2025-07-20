@@ -104,6 +104,8 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
     // Some servers tend to repeat one tick multiple times (up to 3-4 times in under a second)
     public int lastTicked = -1;
 
+    public final DBCDataKiAttackValidator kiAttackValidator = new DBCDataKiAttackValidator(this);
+
     public DBCData() {
         this.side = Side.SERVER;
     }
