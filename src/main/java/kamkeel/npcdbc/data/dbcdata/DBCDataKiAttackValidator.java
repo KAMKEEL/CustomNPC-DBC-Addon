@@ -1,7 +1,10 @@
 package kamkeel.npcdbc.data.dbcdata;
 
+import JinRyuu.JRMCore.JRMCoreH;
+import com.typesafe.config.ConfigException;
 import kamkeel.npcdbc.CommonProxy;
 import kamkeel.npcdbc.config.ConfigDBCGameplay;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Arrays;
 
@@ -17,12 +20,52 @@ public class DBCDataKiAttackValidator {
     }
 
     private int calculateExpectedCastTimeTicks(int kiAttackSelection, int chargePercent) {
-        // TODO: ADD THE TIME MATH FOR CHARGE PERCENT
-        return 0;
+        float attackCastTimeFactor = getCastTimeFactor(kiAttackSelection);
+
+        float timeInverse = (50f / attackCastTimeFactor) / (float) chargePercent;
+        return (int) (1f / timeInverse);
     }
+
+    private float getCastTimeFactor(int kiAttackSelection) {
+        String[] techniqueData = getTechniqueData(kiAttackSelection);
+        byte[] techniqueStats = JRMCoreH.tech_statmods(techniqueData[19]);
+
+        return JRMCoreH.techDBCctWc(techniqueData, techniqueStats);
+    }
+
+    private String[] getTechniqueData(int kiAttackSelection) {
+        String[] technique = null;
+
+        NBTTagCompound dbc = dbcData.player.getEntityData().getCompoundTag(DBCData.DBCPersisted);
+        String techString = dbc.getString("jrmcTech" + (1+kiAttackSelection)).trim();
+        if (techString.isEmpty())
+            return null;
+
+        if (kiAttackSelection >= 0 && kiAttackSelection < 4) {
+            technique = techString.split(";");
+        } else {
+            try {
+                int ID = Integer.parseInt(techString);
+                if (ID >= 0 && ID < JRMCoreH.pmdbc.length) {
+                    technique = JRMCoreH.pmdbc[ID];
+                }
+
+            } catch (ConfigException.Parse ignored) {
+            }
+
+        }
+
+        return JRMCoreH.tech_conv(technique);
+    }
+
 
     public boolean isCastTimeValid(int kiAttackSelection, int chargePercent, long worldTicks) {
         if (kiAttackSelection >= arrayCastStartTime.length)
+            return false;
+        if (kiAttackSelection < 0)
+            return false;
+
+        if (getTechniqueData(kiAttackSelection) == null)
             return false;
 
         if (!ConfigDBCGameplay.ValidateKiCasting)
