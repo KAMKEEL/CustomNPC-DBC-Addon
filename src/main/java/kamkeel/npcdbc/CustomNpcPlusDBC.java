@@ -19,12 +19,13 @@ import java.io.File;
     modid = CustomNpcPlusDBC.ID,
     name = CustomNpcPlusDBC.name,
     version = CustomNpcPlusDBC.version,
-    dependencies = "required-after:customnpcs;required-after:jinryuujrmcore;required-after:jinryuudragonblockc;"
+    dependencies = "required-after:customnpcs;required-after:jinryuujrmcore;required-after:jinryuudragonblockc;",
+    acceptableRemoteVersions = "[1.1, 1.1.1]"
 )
 public class CustomNpcPlusDBC {
 
     public static final String name = "CustomNPC+ DBC Addon";
-    public static final String version = "1.1";
+    public static final String version = "1.1.1";
     public static final String ID = "npcdbc";
     @SidedProxy(clientSide = "kamkeel.npcdbc.client.ClientProxy", serverSide = "kamkeel.npcdbc.CommonProxy")
     public static CommonProxy proxy;
