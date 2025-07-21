@@ -11,10 +11,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(DBCPenergy.Handler.class)
+@Mixin(value = DBCPenergy.Handler.class, remap = false)
 public abstract class MixinDBCPEnergyHandler extends BAmh<DBCPenergy> {
 
-    @Redirect(method = "handleServerMessage(Lnet/minecraft/entity/player/EntityPlayer;LJinRyuu/JRMCore/p/DBC/DBCPenergy;Lcpw/mods/fml/common/network/simpleimpl/MessageContext;)Lcpw/mods/fml/common/network/simpleimpl/IMessage;", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/p/DBC/DBCPacketHandlerServer;handleDBCenergy(BBLnet/minecraft/entity/player/EntityPlayer;)V"))
+    @Redirect(method = "handleServerMessage(Lnet/minecraft/entity/player/EntityPlayer;LJinRyuu/JRMCore/p/DBC/DBCPenergy;Lcpw/mods/fml/common/network/simpleimpl/MessageContext;)Lcpw/mods/fml/common/network/simpleimpl/IMessage;", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/p/DBC/DBCPacketHandlerServer;handleDBCenergy(BBLnet/minecraft/entity/player/EntityPlayer;)V", remap = false), remap = false)
     private void snoopKiAttackCastState(DBCPacketHandlerServer instance, byte kiSelection, byte chargePercent, EntityPlayer p) {
         boolean isCastableAttack = kiSelection >= 0 && kiSelection < 8;
 
