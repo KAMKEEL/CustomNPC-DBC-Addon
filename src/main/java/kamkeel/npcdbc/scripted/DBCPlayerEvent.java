@@ -142,13 +142,22 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         public float damage;
         public int stamina;
         public int ki;
+        /**
+         * True if the incoming damage would knock the player out when no overrides are applied.
+         */
         public boolean ko;
+        /**
+         * Optional override applied by scripts. If null the {@code ko} value is used.
+         */
+        public Boolean koOverride;
 
         public DamagedEvent(EntityPlayer player, float damage, DamageSource damageSource, int type) {
             super(PlayerDataUtil.getIPlayer(player));
             this.damage = damage;
             this.damageSource = NpcAPI.Instance().getIDamageSource(damageSource);
             this.sourceType = type;
+            this.ko = DBCUtils.checkKnockout(player, damageSource, this.damage);
+            this.koOverride = null;
         }
 
         public DamagedEvent(EntityPlayer player, DBCDamageCalc damageCalc, DamageSource damageSource, int type) {
@@ -156,6 +165,7 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
             this.damage = damageCalc.damage;
             this.stamina = damageCalc.stamina;
             this.ko = DBCUtils.checkKnockout(player, damageSource, this.damage);
+            this.koOverride = null;
             this.ki = damageCalc.ki;
             this.damageSource = NpcAPI.Instance().getIDamageSource(damageSource);
             this.sourceType = type;
@@ -188,13 +198,24 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         }
 
         @Override
+        /**
+         * Base KO state calculated from the player's stats and current damage
+         * without considering any overrides.
+         */
         public boolean getKO() {
             return this.ko;
         }
 
         @Override
         public void setKo(boolean ko) {
-            this.ko = ko;
+            this.koOverride = ko;
+        }
+
+        /**
+         * Returns the KO value that should be applied after taking any overrides into account.
+         */
+        public boolean getFinalKO() {
+            return this.koOverride != null ? this.koOverride : this.ko;
         }
 
         @Override

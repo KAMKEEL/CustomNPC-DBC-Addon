@@ -99,7 +99,7 @@ public class MixinDBCAddon {
             damageCalc.damage = damagedEvent.damage;
             damageCalc.stamina = damagedEvent.getStaminaReduced();
             damageCalc.ki = damagedEvent.getKiReduced();
-            damageCalc.ko = damagedEvent.getKO();
+            damageCalc.ko = damagedEvent.getFinalKO();
             DBCUtils.lastSetDamage = damageCalc;
             damageCalc.processExtras();
             DBCUtils.doDBCDamage(player, damageCalc.damage, dbcStats, damageSource);
