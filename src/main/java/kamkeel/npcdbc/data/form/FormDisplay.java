@@ -419,7 +419,7 @@ public class FormDisplay implements IFormDisplay {
         public static boolean canBeCustomized(String type, int race, Form form) {
             String hairType = form.display.hairType;
             boolean isHumanoid = (DBCRace.isSaiyan(race) || race == DBCRace.HUMAN);
-            switch (type) {
+            switch (type.toLowerCase()) {
                 case "bodycm":
                     return !isHumanoid;
                 case "eye":
@@ -492,7 +492,7 @@ public class FormDisplay implements IFormDisplay {
         }
 
         public boolean hasColor(String type) {
-            switch (type) {
+            switch (type.toLowerCase()) {
                 case "hair":
                     return this.hairColor != -1;
                 case "eye":
