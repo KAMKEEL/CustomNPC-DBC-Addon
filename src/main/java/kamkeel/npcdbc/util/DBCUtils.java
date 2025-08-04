@@ -329,7 +329,11 @@ public class DBCUtils {
                         newHP = (float) (hpRemaining < 20 ? 20 : hpRemaining);
                         if (ko <= 0 && newHP == 20) {
                             damageCalc.ko = true;
-                            damageCalc.damage = currentHP > 20 ? currentHP - 20 : 0;
+                            // Preserve the full incoming damage so reflection and
+                            // scripting hooks use the actual amount dealt rather than
+                            // the victim's remaining HP. The KO handler will still
+                            // clamp the player's HP to 20.
+                            damageCalc.damage = dbcA;
                             return damageCalc;
                         }
                     }
