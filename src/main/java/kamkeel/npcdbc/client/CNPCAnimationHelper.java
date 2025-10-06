@@ -56,6 +56,9 @@ public class CNPCAnimationHelper {
     private static final HashSet<Object> processedModels = new HashSet<>();
 
     public static void setOriginalValues(ModelBase mainModel) {
+        if(mainModel == null)
+            return;
+
         if (!processedModels.contains(mainModel)) {
             processedModels.add(mainModel);
         } else {

@@ -4,6 +4,7 @@ import JinRyuu.JRMCore.i.ExtendedPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 
 import static JinRyuu.JRMCore.JRMCoreH.DBC;
 import static JinRyuu.JRMCore.JRMCoreH.setInt;
@@ -14,7 +15,8 @@ public class DBCDamageCalc {
     public float damage = -1;
     public int stamina = -1;
     public int ki = -1;
-    public boolean willKo = false;
+    public DamageSource source;
+    public boolean ko = false;
 
     public DBCDamageCalc() {}
 

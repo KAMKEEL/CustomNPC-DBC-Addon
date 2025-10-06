@@ -23,7 +23,9 @@ import kamkeel.npcdbc.controllers.DBCEffectController;
 import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.npc.DBCStats;
 import kamkeel.npcdbc.items.ItemPotara;
+import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.entity.Entity;
@@ -34,6 +36,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
 
 import java.util.Arrays;
@@ -54,7 +57,6 @@ public class DBCUtils {
     // lastSetDamage works with player's DBCDamagedEvent
     public static Float npcLastSetDamage = null;
     public static DBCDamageCalc lastSetDamage = null;
-    public static boolean willKo = false;
 
     public static boolean damageEntityCalled = false;
 
@@ -148,6 +150,7 @@ public class DBCUtils {
 
     public static DBCDamageCalc calculateDBCDamageFromSource(Entity Player, float dbcA, DamageSource s) {
         DBCDamageCalc damageCalc = new DBCDamageCalc();
+        damageCalc.source = s;
         damageCalc.entity = Player;
         if (!Player.worldObj.isRemote && Player instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) Player;
@@ -325,8 +328,12 @@ public class DBCUtils {
                         int ko = getInt(player, "jrmcHar4va");
                         newHP = (float) (hpRemaining < 20 ? 20 : hpRemaining);
                         if (ko <= 0 && newHP == 20) {
-                            damageCalc.willKo = true;
-                            damageCalc.damage = currentHP > 20 ? currentHP - 20 : 0;
+                            damageCalc.ko = true;
+                            // Preserve the full incoming damage so reflection and
+                            // scripting hooks use the actual amount dealt rather than
+                            // the victim's remaining HP. The KO handler will still
+                            // clamp the player's HP to 20.
+                            damageCalc.damage = dbcA;
                             return damageCalc;
                         }
                     }
@@ -340,9 +347,10 @@ public class DBCUtils {
         return damageCalc;
     }
 
-    public static DBCDamageCalc calculateDBCStatDamage(EntityPlayer player, float damageAmount, IDBCStats dbcStats) {
+    public static DBCDamageCalc calculateDBCStatDamage(EntityPlayer player, float damageAmount, IDBCStats dbcStats, DamageSource source) {
         DBCDamageCalc damageCalc = new DBCDamageCalc();
         damageCalc.entity = player;
+        damageCalc.source = source;
         if (!player.worldObj.isRemote && dbcStats != null && damageAmount > 0) {
             if (!player.capabilities.isCreativeMode) {
                 ExtendedPlayer props = ExtendedPlayer.get(player);
@@ -546,7 +554,7 @@ public class DBCUtils {
                 int ko = getInt(player, "jrmcHar4va");
                 newHP = Math.max(reducedHP, 20);
                 if (ko <= 0 && newHP == 20) {
-                    if(DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), source))){
+                    if(!DBCEventHooks.onKnockoutEvent(new DBCPlayerEvent.KnockoutEvent(PlayerDataUtil.getIPlayer(player), source))){
                         setInt((int) dbcStats.getFriendlyFistAmount(), player, "jrmcHar4va");
                         setByte(race == 4 ? (state < 4 ? state : 4) : 0, player, "jrmcState");
                         setByte((int) 0, player, "jrmcState2");
@@ -556,7 +564,6 @@ public class DBCUtils {
                     }
                 }
             }
-
             setInt(newHP, player, "jrmcBdy");
         }
     }
@@ -888,6 +895,35 @@ public class DBCUtils {
             cost += calculateDBCRacialSkillMindCost(race, i + 1);
         }
         return cost;
+    }
+
+    /**
+     * Determines if incoming damage will knock the player out using Friendly Fist logic.
+     *
+     * @param player  Player receiving damage
+     * @param source  Source of the damage
+     * @param damage  Final damage that will be applied to the player
+     * @return {@code true} if the damage should result in a knock out
+     */
+    public static boolean checkKnockout(EntityPlayer player, DamageSource source, float damage) {
+        if (source != null && (source.getEntity() instanceof EntityPlayer || source.getEntity() instanceof EntityNPCInterface)) {
+            boolean friendlyFist = false;
+            Entity attacker = source.getEntity();
+            if (source.getEntity() instanceof EntityPlayer) {
+                friendlyFist = PlyrSettingsB((EntityPlayer) attacker, DBCSettings.FRIENDLY_FIST);
+            } else if (source.getEntity() instanceof EntityNPCInterface) {
+                EntityNPCInterface npc = (EntityNPCInterface) source.getEntity();
+                DBCStats dbcStats = ((INPCStats) npc.stats).getDBCStats();
+                friendlyFist = dbcStats.enabled && dbcStats.isFriendlyFist();
+            }
+            if (friendlyFist && !source.getDamageType().equals("MajinAbsorption") && attacker != player) {
+                int ko = getInt(player, "jrmcHar4va");
+                float hpRemaining = getInt(player, "jrmcBdy") - damage;
+                float newHP = hpRemaining < 20 ? 20 : hpRemaining;
+                return ko <= 0 && newHP == 20;
+            }
+        }
+        return false;
     }
 
 }

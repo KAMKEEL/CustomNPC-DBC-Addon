@@ -180,7 +180,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
             rage = dbcDisplay.getInteger("DBCRage");
             isTransforming = dbcDisplay.getBoolean("DBCIsTransforming");
-            isKaioken = dbcDisplay.getBoolean("DBCIsisKaioken");
+            isKaioken = dbcDisplay.getBoolean("DBCIsKaioken");
             formID = dbcDisplay.getInteger("DBCFormID");
             selectedForm = dbcDisplay.getInteger("DBCSelectedForm");
 

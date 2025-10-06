@@ -135,6 +135,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setInteger("jrmcAuraColor", AuraColor);
         comp.setInteger("jrmcArcRsrv", ArcReserve);
         comp.setInteger("jrmcAfGFtStFT", hasSSJ4);
+        comp.setInteger("jrmcTpint", TP);
 
         comp.setByte("jrmcState", State);
         comp.setByte("jrmcState2", State2);
@@ -194,6 +195,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         hasSSJ4 = c.getInteger("jrmcAfGFtStFT");
         AuraColor = c.getInteger("jrmcAuraColor");
         ArcReserve = c.getInteger("jrmcArcRsrv");
+        TP = c.getInteger("jrmcTpint");
 
         State = c.getByte("jrmcState");
         State2 = c.getByte("jrmcState2");

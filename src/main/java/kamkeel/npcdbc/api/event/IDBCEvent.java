@@ -87,8 +87,25 @@ public interface IDBCEvent extends IPlayerEvent {
          */
         void setStaminaReduced(int stamina);
 
-        boolean willKo();
+        /**
+         * Returns the unmodified KO result based on the current damage and
+         * attacker before any overrides are applied.
+         */
+        boolean getKO();
 
+        /**
+         *
+         * Doing setDamage will automatically reset the KO calculation, so setKO modifications must be performed after setDamage.
+         *
+         * @return If KO will occur
+         */
+        void setKo(boolean ko);
+
+        /**
+         * @return true if a knockout will ultimately occur after applying any
+         * overrides set via {@link #setKo(boolean)}
+         */
+        boolean getFinalKO();
 
         /**
          *

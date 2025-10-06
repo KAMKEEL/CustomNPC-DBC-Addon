@@ -28,6 +28,8 @@ import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.util.DBCUtils;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
+import noppes.npcs.NpcDamageSource;
 import noppes.npcs.api.entity.ICustomNpc;
 import noppes.npcs.api.entity.IEntity;
 import noppes.npcs.api.entity.IPlayer;
@@ -145,7 +147,8 @@ public class DBCAPI extends AbstractDBCAPI {
             return;
 
         EntityPlayer entityPlayer = (EntityPlayer) player.getMCEntity();
-        DBCDamageCalc damageCalc = DBCUtils.calculateDBCStatDamage(entityPlayer, (int) damage, stats);
+        DamageSource damageSource = DamageSource.outOfWorld;
+        DBCDamageCalc damageCalc = DBCUtils.calculateDBCStatDamage(entityPlayer, (int) damage, stats, damageSource);
         damageCalc.processExtras();
         DBCUtils.doDBCDamage(entityPlayer, damageCalc.damage, stats, null);
     }

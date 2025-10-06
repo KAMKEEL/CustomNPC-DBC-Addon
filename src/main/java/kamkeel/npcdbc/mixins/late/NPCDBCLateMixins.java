@@ -67,6 +67,7 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
         mixins.add("dbc.MixinDBCPacketHandler");
         mixins.add("dbc.MixinEntityCusPar");
         mixins.add("dbc.MixinEntityEnergyAtt");
+        mixins.add("dbc.MixinEntityEnergyAttNaN");
         mixins.add("dbc.MixinJGPlayerMP");
         mixins.add("dbc.MixinJRMCoreComTickH");
         mixins.add("dbc.MixinJRMCoreEH");
@@ -82,6 +83,9 @@ public class NPCDBCLateMixins implements ILateMixinLoader {
         mixins.add("npc.MixinDBCDisplay");
         mixins.add("npc.MixinEntityNPCInterface");
         mixins.add("npc.MixinResistances");
+
+        // Prevent crashes from recursive biome decoration in DBC worlds
+        mixins.add("dbc.MixinBiomeDecoratorDBC");
 
         mixins.add("EDE.MixinEDEFix");
 

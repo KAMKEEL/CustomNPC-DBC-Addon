@@ -22,8 +22,11 @@ import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
+import kamkeel.npcs.controllers.AttributeController;
+import kamkeel.npcs.controllers.data.attribute.tracker.PlayerAttributeTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.config.ConfigMain;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
 
@@ -266,6 +269,11 @@ public class TransformController {
             formData.updateClient();
             NetworkUtility.sendInfoMessage(player, "§a", "npcdbc.transform", "§r ", form.getMenuName());
             dbcData.saveNBTData(true);
+
+            if(ConfigMain.AttributesEnabled){
+                PlayerAttributeTracker tracker = AttributeController.getTracker(player);
+                tracker.recalcAttributes(player);
+            }
         }
     }
 
@@ -316,6 +324,11 @@ public class TransformController {
             formData.updateClient();
             JRMCoreH.setByte(0, player, "jrmcSaiRg");
             dbcData.saveNBTData(true);
+
+            if(ConfigMain.AttributesEnabled){
+                PlayerAttributeTracker tracker = AttributeController.getTracker(player);
+                tracker.recalcAttributes(player);
+            }
         }
     }
 }

@@ -14,13 +14,6 @@ public class DBCEventHooks {
     public static boolean onFormChangeEvent(DBCPlayerEvent.FormChangeEvent formChangeEvent) {
         PlayerDataScript handler = ScriptController.Instance.getPlayerScripts(formChangeEvent.getPlayer());
         handler.callScript(DBCScriptType.FORMCHANGE.function, formChangeEvent);
-
-        if(ConfigMain.AttributesEnabled && !formChangeEvent.isCancelled()
-            && formChangeEvent.getPlayer() != null && formChangeEvent.getPlayer().getMCEntity() instanceof EntityPlayer){
-            EntityPlayer entityPlayer = (EntityPlayer) (formChangeEvent.getPlayer().getMCEntity());
-            PlayerAttributeTracker tracker = AttributeController.getTracker(entityPlayer);
-            tracker.recalcAttributes(entityPlayer);
-        }
         return NpcAPI.EVENT_BUS.post(formChangeEvent);
     }
 
