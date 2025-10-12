@@ -306,11 +306,20 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             }
             statVals[i] = modifiedStatVal;
 
+            boolean isModified = false;
             if (!isSTRDEXWIL) {
-                modifiedStatVal *= (1 + getAddonBonusMulti(i));
+                float multiBonus = getAddonBonusMulti(i);
+                if(multiBonus != 0){
+                    modifiedStatVal *= (1 + multiBonus);
+                    isModified = true;
+                }
             }
 
             int flatBonus = (int) getAddonBonusStat(i);
+            if(flatBonus != 0){
+                isModified = true;
+            }
+
             String statDisplay = numSep((modifiedStatVal + (!isSTRDEXWIL ? flatBonus : 0)));
             String attributeDesc = "§9" + attrNms(1, i) + "§8: " + trl("jrmc", attrDsc[1][i]);
             if (originalStatVal != modifiedStatVal) {
@@ -348,8 +357,11 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
 
             attributeDesc += getAttributeBonusDescription(i);
 
+            String modifiedColor = isModified ? "§6" : "";
+            modifiedColor = isSTRDEXWIL ? formStatColor : modifiedColor;
+
             dynamicLabels.get("attr_" + i)
-                .updateDisplay((isSTRDEXWIL ? formStatColor : "") + statDisplay)
+                .updateDisplay(modifiedColor + statDisplay)
                 .updateTooltip(attributeDesc);
 
 
