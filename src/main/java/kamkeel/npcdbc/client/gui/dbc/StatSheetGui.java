@@ -317,7 +317,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 attributeDesc += "\n" + trl("jrmc", "Modified") + ": §4" + darkFormColor + statDisplay + "\n§8"
                     + trl("jrmc", "Original") + ": §4" + numSep(originalStatVal) + "§8";
 
-                float multi = (float) (modifiedStatVal - (isSTRDEXWIL ? flatBonus : 0)) / originalStatVal;
+                float multi = (float) (modifiedStatVal + (isSTRDEXWIL ? flatBonus : 0)) / originalStatVal;
                 if (ConfigDBCClient.AdvancedGui && isSTRDEXWIL) {
                     float formMulti = currentForm != null ? currentForm.getAttributeMulti(i) : (float) DBCFormMulti(i);
                     String multiString = "";
