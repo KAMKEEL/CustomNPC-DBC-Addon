@@ -926,41 +926,4 @@ public class DBCUtils {
         return false;
     }
 
-    public static int applyBonus(Entity player, int attributeID, int powerType, int baseAttribute){
-        // Modify only attribute bases
-        if(player instanceof EntityPlayer && powerType == 1){
-            DBCData dbcData = DBCData.get((EntityPlayer) player);
-            int modifiedValue = baseAttribute;
-            if(attributeID > -1 && attributeID <= 5){
-                float[] bonus = dbcData.bonus.getMultiBonus();
-                if (attributeID == DBCAttribute.Strength && bonus[0] != 0) //str
-                    modifiedValue *= (bonus[0] + 1);
-                else if (attributeID == DBCAttribute.Dexterity && bonus[1] != 0) //dex
-                    modifiedValue *= (bonus[1] + 1);
-                else if (attributeID == DBCAttribute.Willpower && bonus[2] != 0) //will
-                    modifiedValue *= (bonus[2] + 1);
-                else if (attributeID == DBCAttribute.Constitution && bonus[3] != 0) //con
-                    modifiedValue *= (bonus[3] + 1);
-                else if (attributeID == DBCAttribute.Spirit && bonus[4] != 0) //spi
-                    modifiedValue *= (bonus[4] + 1);
-
-                float[] flatBonus = dbcData.bonus.getFlatBonus();
-                // Add Bonus Flat to Base Attributes at the end
-                if (attributeID == DBCAttribute.Strength) // STR
-                    modifiedValue += flatBonus[0];
-                else if (attributeID == DBCAttribute.Dexterity) // DEX
-                    modifiedValue += flatBonus[1];
-                else if (attributeID == DBCAttribute.Willpower) // WIL
-                    modifiedValue += flatBonus[2];
-                else if (attributeID == DBCAttribute.Constitution) // CON
-                    modifiedValue += flatBonus[3];
-                else if (attributeID == DBCAttribute.Spirit) // SPI
-                    modifiedValue += flatBonus[4];
-            }
-            baseAttribute = modifiedValue;
-        }
-
-        return baseAttribute;
-    }
-
 }
