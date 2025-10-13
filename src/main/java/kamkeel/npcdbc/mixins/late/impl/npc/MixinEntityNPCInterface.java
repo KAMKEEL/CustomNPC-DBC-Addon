@@ -34,6 +34,9 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
     @Unique
     private boolean dbcAltered; //if DamagedEvent's damage was altered by a DBC player
 
+    @Unique
+    private boolean npcdbc$shouldResetHurtTime;
+
     private MixinEntityNPCInterface(World p_i1602_1_) {
         super(p_i1602_1_);
     }
@@ -92,6 +95,15 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
 
     @Inject(method = "attackEntityFrom", at = @At("HEAD"))
     public void resetDamageEntityCalled(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        npcdbc$shouldResetHurtTime = false;
+        Entity attackerEntity = NoppesUtilServer.GetDamageSource(source);
+        if (attackerEntity instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) attackerEntity;
+            DBCData data = DBCData.get(player);
+            if (data.Powertype == 1 && source.getSourceOfDamage() == attackerEntity && "player".equals(source.getDamageType())) {
+                npcdbc$shouldResetHurtTime = true;
+            }
+        }
         DBCUtils.damageEntityCalled = false;
     }
 
@@ -99,6 +111,13 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
     public void clearNPCDamageIfNeeded(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (!DBCUtils.damageEntityCalled) {
             DBCUtils.npcLastSetDamage = null;
+        }
+        if (npcdbc$shouldResetHurtTime && cir.getReturnValueZ()) {
+            // Base DBC applies melee damage through JRMCoreEH#damageEntity instead of attackEntityFrom,
+            // leaving hurtTime and hurtResistantTime at zero so players can combo rapidly (see JRMCoreEH.java L1380-L1433).
+            this.hurtTime = 0;
+            this.maxHurtTime = 0;
+            this.hurtResistantTime = 0;
         }
     }
 }
