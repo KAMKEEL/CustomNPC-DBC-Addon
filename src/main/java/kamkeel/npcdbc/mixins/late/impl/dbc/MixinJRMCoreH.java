@@ -48,7 +48,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -71,20 +70,6 @@ public abstract class MixinJRMCoreH {
     @Unique
     private static int currentResult;
 
-    @ModifyVariable(
-        method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I",
-        at = @At("HEAD"),
-        argsOnly = true,
-        ordinal = 3,             // attributeID=0, powerType=1, stat=2, attribute=3
-        remap = false
-    )
-    private static int applyBonusToCustom(int attribute, Entity player, int attributeID, int powerType, int stat, int _attribute, int race, int classID, float skillBonus) {
-        if(DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain)
-            return attribute;
-
-        return DBCUtils.applyBonus(player, attributeID, powerType, attribute);
-    }
-
     @Inject(method = "getPlayerAttribute(Lnet/minecraft/entity/player/EntityPlayer;[IIIIILjava/lang/String;IIZZZZZZI[Ljava/lang/String;ZLjava/lang/String;)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;OverAtrLimit:Z"), remap = false, cancellable = true)
     private static void applyBonusToDBC(EntityPlayer player, int[] currAttributes, int attribute, int st, int st2, int race, String SklX, int currRelease, int arcRel, boolean legendOn, boolean majinOn, boolean kaiokenOn, boolean mysticOn, boolean uiOn, boolean GoDOn, int powerType, String[] Skls, boolean isFused, String majinAbs, CallbackInfoReturnable<Integer> info, @Local(name = "result") LocalIntRef result) {
         if (player == null)
@@ -92,7 +77,8 @@ public abstract class MixinJRMCoreH {
 
         int resultOriginal = result.get();
         if (!DBCUtils.noBonusEffects && !DBCUtils.calculatingKiDrain && !DBCUtils.calculatingCost) {
-            resultOriginal = DBCUtils.applyBonus(player, attribute, powerType, resultOriginal);
+            int baseAttribute = DBCUtils.getBaseAttributeValue(currAttributes, attribute);
+            resultOriginal = DBCUtils.applyAttributeBonuses(player, attribute, powerType, baseAttribute, resultOriginal);
         }
 
         result.set(resultOriginal);
@@ -118,6 +104,20 @@ public abstract class MixinJRMCoreH {
             }
             value.set(modifiedValue);
         }
+    }
+
+    @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At("RETURN"), cancellable = true, remap = false)
+    private static void applyBonusesAfterStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir) {
+        if (!(player instanceof EntityPlayer))
+            return;
+
+        if (DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain || DBCUtils.noBonusEffects)
+            return;
+
+        int vanillaValue = cir.getReturnValue();
+        // Apply bonuses after every multiplier has finished so multi and flat bonuses respect the intended order.
+        int adjustedValue = DBCUtils.applyAttributeBonuses(player, attributeID, powerType, attribute, vanillaValue);
+        cir.setReturnValue(adjustedValue);
     }
 
     @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
@@ -291,6 +291,11 @@ public abstract class MixinJRMCoreH {
         }
 
         result = ValueUtil.clamp(result, 0, Integer.MAX_VALUE);
+
+        int baseAttribute = DBCUtils.getBaseAttributeValue(currAttributes, attribute);
+        // Custom forms run their own multiplier stack above; finish by applying addon bonuses through DBCUtils.
+        result = DBCUtils.applyAttributeBonuses(player, attribute, powerType, baseAttribute, result);
+
         info.setReturnValue(result);
     }
 

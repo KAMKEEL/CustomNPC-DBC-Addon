@@ -926,41 +926,90 @@ public class DBCUtils {
         return false;
     }
 
-    public static int applyBonus(Entity player, int attributeID, int powerType, int baseAttribute){
-        // Modify only attribute bases
-        if(player instanceof EntityPlayer && powerType == 1){
-            DBCData dbcData = DBCData.get((EntityPlayer) player);
-            int modifiedValue = baseAttribute;
-            if(attributeID > -1 && attributeID <= 5){
-                float[] bonus = dbcData.bonus.getMultiBonus();
-                if (attributeID == DBCAttribute.Strength && bonus[0] != 0) //str
-                    modifiedValue *= (bonus[0] + 1);
-                else if (attributeID == DBCAttribute.Dexterity && bonus[1] != 0) //dex
-                    modifiedValue *= (bonus[1] + 1);
-                else if (attributeID == DBCAttribute.Willpower && bonus[2] != 0) //will
-                    modifiedValue *= (bonus[2] + 1);
-                else if (attributeID == DBCAttribute.Constitution && bonus[3] != 0) //con
-                    modifiedValue *= (bonus[3] + 1);
-                else if (attributeID == DBCAttribute.Spirit && bonus[4] != 0) //spi
-                    modifiedValue *= (bonus[4] + 1);
+    /**
+     * Applies the configured multi and flat bonuses to a value that already passed through vanilla multipliers.
+     * <p>
+     * Multi bonuses are added directly to the multiplier that was used against the player's base attribute.
+     * Afterwards flat bonuses are added so they are never scaled by any multiplier. Keeping the operations in
+     * this order prevents situations where custom forms or stacked vanilla multipliers exaggerate the flat bonus
+     * values.
+     *
+     * @param entity           The entity whose attribute is being resolved.
+     * @param attributeID      The attribute slot that is being queried.
+     * @param powerType        The player's power type. We only modify Ki based attributes (powerType == 1).
+     * @param baseAttribute    The player's base attribute before any multipliers were applied.
+     * @param vanillaAttribute The attribute value calculated by vanilla logic before addon bonuses are applied.
+     * @return The attribute with multi and flat bonuses applied in the correct order of operations.
+     */
+    public static int applyAttributeBonuses(Entity entity, int attributeID, int powerType, int baseAttribute, int vanillaAttribute) {
+        if (!(entity instanceof EntityPlayer))
+            return vanillaAttribute;
 
-                float[] flatBonus = dbcData.bonus.getFlatBonus();
-                // Add Bonus Flat to Base Attributes at the end
-                if (attributeID == DBCAttribute.Strength) // STR
-                    modifiedValue += flatBonus[0];
-                else if (attributeID == DBCAttribute.Dexterity) // DEX
-                    modifiedValue += flatBonus[1];
-                else if (attributeID == DBCAttribute.Willpower) // WIL
-                    modifiedValue += flatBonus[2];
-                else if (attributeID == DBCAttribute.Constitution) // CON
-                    modifiedValue += flatBonus[3];
-                else if (attributeID == DBCAttribute.Spirit) // SPI
-                    modifiedValue += flatBonus[4];
-            }
-            baseAttribute = modifiedValue;
+        if (powerType != 1 || noBonusEffects || calculatingCost || calculatingKiDrain)
+            return vanillaAttribute;
+
+        EntityPlayer player = (EntityPlayer) entity;
+        DBCData dbcData = DBCData.get(player);
+        if (dbcData == null)
+            return vanillaAttribute;
+
+        int bonusIndex = getBonusArrayIndex(attributeID);
+        if (bonusIndex == -1)
+            return vanillaAttribute;
+
+        float[] multiBonuses = dbcData.bonus.getMultiBonus();
+        float[] flatBonuses = dbcData.bonus.getFlatBonus();
+
+        float multiBonus = multiBonuses[bonusIndex];
+        float flatBonus = flatBonuses[bonusIndex];
+
+        if (multiBonus == 0 && flatBonus == 0)
+            return vanillaAttribute;
+
+        float baseForMath = baseAttribute;
+        if (baseForMath <= 0) {
+            // When the base attribute is zero we cannot reconstruct the vanilla multiplier.
+            // Fall back to the vanilla result so we can still add the flat bonus correctly.
+            baseForMath = vanillaAttribute;
         }
 
-        return baseAttribute;
+        float vanillaMultiplier = baseForMath == 0 ? 0 : (float) vanillaAttribute / baseForMath;
+
+        // Multi bonuses add directly on top of the vanilla multiplier.
+        float finalMultiplier = vanillaMultiplier + multiBonus;
+        float valueAfterMultiplier = baseForMath * finalMultiplier;
+
+        // Flat bonuses are applied after all multipliers so they are not scaled further.
+        float finalValue = valueAfterMultiplier + flatBonus;
+
+        return (int) Math.max(0, Math.round(finalValue));
+    }
+
+    /**
+     * Safely retrieves the player's unmodified attribute value.
+     */
+    public static int getBaseAttributeValue(int[] attributes, int attributeIndex) {
+        if (attributes == null || attributeIndex < 0 || attributeIndex >= attributes.length)
+            return 0;
+
+        return attributes[attributeIndex];
+    }
+
+    private static int getBonusArrayIndex(int attributeID) {
+        switch (attributeID) {
+            case DBCAttribute.Strength:
+                return 0;
+            case DBCAttribute.Dexterity:
+                return 1;
+            case DBCAttribute.Willpower:
+                return 2;
+            case DBCAttribute.Constitution:
+                return 3;
+            case DBCAttribute.Spirit:
+                return 4;
+            default:
+                return -1;
+        }
     }
 
 }
