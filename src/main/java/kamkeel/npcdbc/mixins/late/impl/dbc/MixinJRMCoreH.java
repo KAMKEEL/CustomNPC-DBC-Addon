@@ -48,7 +48,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -71,21 +70,26 @@ public abstract class MixinJRMCoreH {
     @Unique
     private static int currentResult;
 
-    @ModifyVariable(
-        method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I",
-        at = @At("HEAD"),
-        argsOnly = true,
-        ordinal = 3,             // attributeID=0, powerType=1, stat=2, attribute=3
-        remap = false
-    )
-    private static int mutateAttribute(int attribute, Entity player, int attributeID, int powerType, int stat, int _attribute, int race, int classID, float skillBonus) {
+    @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;JRMCABonusOn:Z", shift = At.Shift.BEFORE))
+    private static void applyPlayerBonusToStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "value") LocalIntRef value, @Local(name = "bs") double bs) {
         if(DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain)
-            return attribute;
+            return;
 
-        // Modify only attribute bases
         if(player instanceof EntityPlayer && powerType == 1){
             DBCData dbcData = DBCData.get((EntityPlayer) player);
-            int modifiedValue = attribute;
+            int modifiedValue = value.get();
+
+            Form form = dbcData.getForm();
+            if(form != null && form.advanced.isStatEnabled(stat)){
+                // Multi
+                double bsValue = bs;
+                bsValue *= form.advanced.getStatMulti(stat);
+
+                // Bonus
+                modifiedValue = (int)round(bsValue + (double)getStatBonus(powerType, race, classID, stat, false) * 0.01 * bsValue + (double)getStatBonus(powerType, race, classID, stat, true) * 0.01 * bsValue + bsValue * (double)skillBonus, 0, 0);
+                modifiedValue += form.advanced.getStatBonus(stat);
+            }
+
             if(attributeID > -1 && attributeID <= 5){
                 float[] bonus = dbcData.bonus.getMultiBonus();
                 if (attributeID == DBCAttribute.Strength && bonus[0] != 0) //str
@@ -111,28 +115,6 @@ public abstract class MixinJRMCoreH {
                     modifiedValue += flatBonus[3];
                 else if (attributeID == DBCAttribute.Spirit) // SPI
                     modifiedValue += flatBonus[4];
-            }
-            attribute = modifiedValue;
-        }
-        return attribute;
-    }
-
-    @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;JRMCABonusOn:Z", shift = At.Shift.BEFORE))
-    private static void applyPlayerBonusToStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir, @Local(name = "value") LocalIntRef value, @Local(name = "bs") double bs) { if(DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain)
-            return;
-
-        if(player instanceof EntityPlayer && powerType == 1){
-            DBCData dbcData = DBCData.get((EntityPlayer) player);
-            int modifiedValue = value.get();
-            Form form = dbcData.getForm();
-            if(form != null && form.advanced.isStatEnabled(stat)){
-                // Multi
-                double bsValue = bs;
-                bsValue *= form.advanced.getStatMulti(stat);
-
-                // Bonus
-                modifiedValue = (int)round(bsValue + (double)getStatBonus(powerType, race, classID, stat, false) * 0.01 * bsValue + (double)getStatBonus(powerType, race, classID, stat, true) * 0.01 * bsValue + bsValue * (double)skillBonus, 0, 0);
-                modifiedValue += form.advanced.getStatBonus(stat);
             }
             value.set(modifiedValue);
         }
