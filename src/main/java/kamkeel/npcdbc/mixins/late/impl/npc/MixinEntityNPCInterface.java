@@ -98,11 +98,7 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
         npcdbc$shouldResetHurtTime = false;
         Entity attackerEntity = NoppesUtilServer.GetDamageSource(source);
         if (attackerEntity instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) attackerEntity;
-            DBCData data = DBCData.get(player);
-            if (data.Powertype == 1 && source.getSourceOfDamage() == attackerEntity && "player".equals(source.getDamageType())) {
-                npcdbc$shouldResetHurtTime = true;
-            }
+            npcdbc$shouldResetHurtTime = true;
         }
         DBCUtils.damageEntityCalled = false;
     }
@@ -112,12 +108,13 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
         if (!DBCUtils.damageEntityCalled) {
             DBCUtils.npcLastSetDamage = null;
         }
-        if (npcdbc$shouldResetHurtTime && cir.getReturnValueZ()) {
+        if (ConfigDBCGeneral.MODIFIED_DAMAGE_SPEED && npcdbc$shouldResetHurtTime && cir.getReturnValueZ()) {
             // Base DBC applies melee damage through JRMCoreEH#damageEntity instead of attackEntityFrom,
-            // leaving hurtTime and hurtResistantTime at zero so players can combo rapidly (see JRMCoreEH.java L1380-L1433).
-            this.hurtTime = 0;
-            this.maxHurtTime = 0;
-            this.hurtResistantTime = 0;
+            // leaving hurtResistantTime at zero so players can combo rapidly
+            if(this.hurtResistantTime > ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE){
+                this.hurtResistantTime = ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE;
+            }
         }
+        npcdbc$shouldResetHurtTime = false;
     }
 }
