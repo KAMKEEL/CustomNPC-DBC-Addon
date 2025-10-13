@@ -34,6 +34,9 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
     @Unique
     private boolean dbcAltered; //if DamagedEvent's damage was altered by a DBC player
 
+    @Unique
+    private boolean npcdbc$shouldResetHurtTime;
+
     private MixinEntityNPCInterface(World p_i1602_1_) {
         super(p_i1602_1_);
     }
@@ -92,6 +95,11 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
 
     @Inject(method = "attackEntityFrom", at = @At("HEAD"))
     public void resetDamageEntityCalled(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        npcdbc$shouldResetHurtTime = false;
+        Entity attackerEntity = NoppesUtilServer.GetDamageSource(source);
+        if (attackerEntity instanceof EntityPlayer) {
+            npcdbc$shouldResetHurtTime = true;
+        }
         DBCUtils.damageEntityCalled = false;
     }
 
@@ -100,5 +108,13 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
         if (!DBCUtils.damageEntityCalled) {
             DBCUtils.npcLastSetDamage = null;
         }
+        if (ConfigDBCGeneral.MODIFIED_DAMAGE_SPEED && npcdbc$shouldResetHurtTime && cir.getReturnValueZ()) {
+            // Base DBC applies melee damage through JRMCoreEH#damageEntity instead of attackEntityFrom,
+            // leaving hurtResistantTime at zero so players can combo rapidly
+            if(this.hurtResistantTime > ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE){
+                this.hurtResistantTime = ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE;
+            }
+        }
+        npcdbc$shouldResetHurtTime = false;
     }
 }
