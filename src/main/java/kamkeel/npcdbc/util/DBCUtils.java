@@ -966,21 +966,12 @@ public class DBCUtils {
         if (multiBonus == 0 && flatBonus == 0)
             return vanillaAttribute;
 
-        float baseForMath = baseAttribute;
-        if (baseForMath <= 0) {
-            // When the base attribute is zero we cannot reconstruct the vanilla multiplier.
-            // Fall back to the vanilla result so we can still add the flat bonus correctly.
-            baseForMath = vanillaAttribute;
-        }
+        // Multi bonuses scale only the player's base attribute and are then added on top of the
+        // vanilla attribute that already contains every vanilla multiplier (release, forms, etc.).
+        double scaledByMulti = baseAttribute * (double) multiBonus;
 
-        float vanillaMultiplier = baseForMath == 0 ? 0 : (float) vanillaAttribute / baseForMath;
-
-        // Multi bonuses add directly on top of the vanilla multiplier.
-        float finalMultiplier = vanillaMultiplier + multiBonus;
-        float valueAfterMultiplier = baseForMath * finalMultiplier;
-
-        // Flat bonuses are applied after all multipliers so they are not scaled further.
-        float finalValue = valueAfterMultiplier + flatBonus;
+        // Flat bonuses are summed last so they are never affected by any multiplier.
+        double finalValue = vanillaAttribute + scaledByMulti + flatBonus;
 
         return (int) Math.max(0, Math.round(finalValue));
     }
@@ -993,6 +984,21 @@ public class DBCUtils {
             return 0;
 
         return attributes[attributeIndex];
+    }
+
+    /**
+     * Looks up the base attribute for the given player. Falls back to {@code fallbackValue}
+     * when the player's attribute array cannot be accessed.
+     */
+    public static int getBaseAttributeValue(EntityPlayer player, int attributeIndex, int fallbackValue) {
+        if (player == null)
+            return fallbackValue;
+
+        int[] attributes = JRMCoreH.PlyrAttrbts(player);
+        if (attributes == null)
+            return fallbackValue;
+
+        return getBaseAttributeValue(attributes, attributeIndex);
     }
 
     private static int getBonusArrayIndex(int attributeID) {

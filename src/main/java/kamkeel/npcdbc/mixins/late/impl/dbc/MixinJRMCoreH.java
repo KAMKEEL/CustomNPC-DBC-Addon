@@ -115,8 +115,10 @@ public abstract class MixinJRMCoreH {
             return;
 
         int vanillaValue = cir.getReturnValue();
+
+        int baseAttribute = DBCUtils.getBaseAttributeValue((EntityPlayer) player, attributeID, attribute);
         // Apply bonuses after every multiplier has finished so multi and flat bonuses respect the intended order.
-        int adjustedValue = DBCUtils.applyAttributeBonuses(player, attributeID, powerType, attribute, vanillaValue);
+        int adjustedValue = DBCUtils.applyAttributeBonuses(player, attributeID, powerType, baseAttribute, vanillaValue);
         cir.setReturnValue(adjustedValue);
     }
 

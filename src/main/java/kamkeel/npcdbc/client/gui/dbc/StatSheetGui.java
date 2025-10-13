@@ -300,52 +300,46 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             boolean isSTRDEXWIL = (i < 2 || i == 3);
 
             int originalStatVal = PlyrAttrbts[i];
-            int modifiedStatVal = originalStatVal;
-            if (isSTRDEXWIL) {
-                modifiedStatVal = getPlayerAttribute(JRMCoreClient.mc.thePlayer, PlyrAttrbts, i, State, State2, Race, PlyrSkillX, curRelease, getArcRsrv(), StusEfctsMe(14), StusEfctsMe(12), StusEfctsMe(5), StusEfctsMe(13), StusEfctsMe(19), StusEfctsMe(20), 1, PlyrSkills, isFused, getMajinAbsorption());
+            int displayedStatVal = originalStatVal;
+            if (i <= DBCAttribute.Spirit) {
+                displayedStatVal = getPlayerAttribute(JRMCoreClient.mc.thePlayer, PlyrAttrbts, i, State, State2, Race, PlyrSkillX, curRelease, getArcRsrv(), StusEfctsMe(14), StusEfctsMe(12), StusEfctsMe(5), StusEfctsMe(13), StusEfctsMe(19), StusEfctsMe(20), 1, PlyrSkills, isFused, getMajinAbsorption());
             }
-            statVals[i] = modifiedStatVal;
+            statVals[i] = displayedStatVal;
 
-            boolean isModified = false;
-            if (!isSTRDEXWIL) {
-                float multiBonus = getAddonBonusMulti(i);
-                if(multiBonus != 0){
-                    modifiedStatVal *= (1 + multiBonus);
-                    isModified = true;
-                }
-            }
+            float multiBonus = getAddonBonusMulti(i);
+            long flatBonus = getAddonBonusStat(i);
+            boolean hasAddonBonus = multiBonus != 0 || flatBonus != 0;
 
-            int flatBonus = (int) getAddonBonusStat(i);
-            if(flatBonus != 0){
-                isModified = true;
-            }
+            boolean isModified = displayedStatVal != originalStatVal || hasAddonBonus;
 
-            String statDisplay = numSep((modifiedStatVal + (!isSTRDEXWIL ? flatBonus : 0)));
+            String statDisplay = numSep(displayedStatVal);
             String attributeDesc = "§9" + attrNms(1, i) + "§8: " + trl("jrmc", attrDsc[1][i]);
-            if (originalStatVal != modifiedStatVal) {
+            if (isModified) {
                 attributeDesc += "\n" + trl("jrmc", "Modified") + ": §4" + darkFormColor + statDisplay + "\n§8"
                     + trl("jrmc", "Original") + ": §4" + numSep(originalStatVal) + "§8";
 
-                float multi = (float) (modifiedStatVal + (isSTRDEXWIL ? flatBonus : 0)) / originalStatVal;
-                if (ConfigDBCClient.AdvancedGui && isSTRDEXWIL) {
-                    float formMulti = currentForm != null ? currentForm.getAttributeMulti(i) : (float) DBCFormMulti(i);
-                    String multiString = "";
-                    multiString += "\n> Multi: §4x" + round(formMulti, 2) + "§8 (Form)";
-                    if (JGConfigDBCFormMastery.FM_Enabled) {
-                        float masteryMulti = round((float) getFormMasteryMulti(), 2);
-                        if (masteryMulti > 0)
-                            multiString += " * §4x" + masteryMulti + "§8 (Mastery)";
+                if (originalStatVal > 0) {
+                    float multi = (float) displayedStatVal / originalStatVal;
+                    if (ConfigDBCClient.AdvancedGui && isSTRDEXWIL) {
+                        float formMulti = currentForm != null ? currentForm.getAttributeMulti(i) : (float) DBCFormMulti(i);
+                        String multiString = "";
+                        multiString += "\n> Multi: §4x" + round(formMulti, 2) + "§8 (Form)";
+                        if (JGConfigDBCFormMastery.FM_Enabled) {
+                            float masteryMulti = round((float) getFormMasteryMulti(), 2);
+                            if (masteryMulti > 0)
+                                multiString += " * §4x" + masteryMulti + "§8 (Mastery)";
+                        }
+                        if (currentForm != null && currentForm.stackable.vanillaStackable) {
+                            float dbcMulti = (float) DBCFormMulti(i);
+                            float stackMulti = dbcMulti * (JGConfigDBCFormMastery.FM_Enabled ? (float) getFormMasteryAttributeMulti(JRMCoreClient.mc.thePlayer, State, State2, Race, StusEfctsMe(5), StusEfctsMe(13), StusEfctsMe(19), StusEfctsMe(20)) : 1);
+                            multiString += "\n* §4x" + round(stackMulti, 2) + "§8 (" + trl("jrmc", getTransformationName(Race, isPowerTypeChakra() ? 0 : State, isRose, isMystic, isUI, isGoD)) + ")";
+                        }
+                        attributeDesc += multiString;
                     }
-                    if (currentForm != null && currentForm.stackable.vanillaStackable) {
-                        float dbcMulti = (float) DBCFormMulti(i);
-                        float stackMulti = dbcMulti * (JGConfigDBCFormMastery.FM_Enabled ? (float) getFormMasteryAttributeMulti(JRMCoreClient.mc.thePlayer, State, State2, Race, StusEfctsMe(5), StusEfctsMe(13), StusEfctsMe(19), StusEfctsMe(20)) : 1);
-                        multiString += "\n* §4x" + round(stackMulti, 2) + "§8 (" + trl("jrmc", getTransformationName(Race, isPowerTypeChakra() ? 0 : State, isRose, isMystic, isUI, isGoD)) + ")";
-                    }
-                    attributeDesc += multiString;
-                }
 
-                if ((round(multi, 2) != 1))
-                    statDisplay += " §4x" + round(multi, 2);
+                    if (round(multi, 2) != 1)
+                        statDisplay += " §4x" + round(multi, 2);
+                }
             }
             if (i == DBCAttribute.Strength || i == DBCAttribute.Dexterity)
                 attributeDesc += (hasWeight ? "\n" + trl("jrmc", "trainingweightworn") + ": §c" + (int) WeightOn + "§8" : "");
@@ -392,8 +386,8 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             .updateDisplay(dbcClient.Release);
 
 
-        int SPI = stat(JRMCoreClient.mc.thePlayer, 5, 1, 5, statVals[5], dbcClient.Race, dbcClient.Class, SklLvl_KiBs(PlyrSkills, 1));
-        int stat = stat(mc.thePlayer, 0, 1, 0, statVals[0], dbcClient.Race, dbcClient.Class, 0);
+        int SPI = stat(JRMCoreClient.mc.thePlayer, 5, 1, 5, PlyrAttrbts[5], dbcClient.Race, dbcClient.Class, SklLvl_KiBs(PlyrSkills, 1));
+        int stat = stat(mc.thePlayer, 0, 1, 0, PlyrAttrbts[0], dbcClient.Race, dbcClient.Class, 0);
         float incrementVal = statInc(1, 0, 1, Race, JRMCoreH.Class, 0.0F);
         int curAtr = (int) ((double) stat * 0.01D * (double) curRelease * (double) weightPerc(0));
         int bonusOutput = 0;
@@ -418,7 +412,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 ) + getFormAdvancedStat(DBCStatistics.Melee)
             );
 
-        stat = stat(mc.thePlayer, 1, 1, 1, statVals[1], dbcClient.Race, dbcClient.Class, 0);
+        stat = stat(mc.thePlayer, 1, 1, 1, PlyrAttrbts[1], dbcClient.Race, dbcClient.Class, 0);
         incrementVal = statInc(1, 1, 1, Race, JRMCoreH.Class, 0.0F);
         curAtr = (int) ((double) stat * 0.01D * (double) curRelease * (double) weightPerc(1));
         // Ki Protection Amount
@@ -467,7 +461,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         }
 
 
-        stat = stat(mc.thePlayer, 2, 1, 2, statVals[2], dbcClient.Race, dbcClient.Class, 0);
+        stat = stat(mc.thePlayer, 2, 1, 2, PlyrAttrbts[2], dbcClient.Race, dbcClient.Class, 0);
         incrementVal = statInc(1, 2, 1, Race, JRMCoreH.Class, 0.0F);
 
         int scaling = getPlayerAttribute(JRMCoreClient.mc.thePlayer, PlyrAttrbts, 2, State, State2, Race, PlyrSkillX, curRelease, getArcRsrv(), StusEfctsMe(14), StusEfctsMe(12), StusEfctsMe(5), StusEfctsMe(13), StusEfctsMe(19), StusEfctsMe(20), 1, PlyrSkills, isFused, getMajinAbsorption());
@@ -491,7 +485,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 ) +  getFormAdvancedStat(DBCStatistics.Body)
             );
 
-        stat = stat(mc.thePlayer, 2, 1, 3, statVals[2], dbcClient.Race, dbcClient.Class, 0);
+        stat = stat(mc.thePlayer, 2, 1, 3, PlyrAttrbts[2], dbcClient.Race, dbcClient.Class, 0);
         incrementVal = statInc(1, 3, 1, Race, JRMCoreH.Class, 0.0F);
 
         dynamicLabels.get("actionTime")
@@ -509,7 +503,7 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                 ) + getFormAdvancedStat(DBCStatistics.Stamina)
             );
 
-        stat = stat(mc.thePlayer, 3, 1, 4, statVals[3], dbcClient.Race, dbcClient.Class, 0);
+        stat = stat(mc.thePlayer, 3, 1, 4, PlyrAttrbts[3], dbcClient.Race, dbcClient.Class, 0);
         incrementVal = statInc(1, 4, 1, Race, JRMCoreH.Class, 0.0F);
         curAtr = (int) (stat * 0.01 * dbcClient.Release);
         dynamicLabels.get("kiPower")
@@ -528,9 +522,9 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             );
 
 
-        stat = stat(mc.thePlayer, 5, 1, 5, statVals[5], dbcClient.Race, dbcClient.Class, SklLvl_KiBs(1));
+        stat = stat(mc.thePlayer, 5, 1, 5, PlyrAttrbts[5], dbcClient.Race, dbcClient.Class, SklLvl_KiBs(1));
         incrementVal = statInc(1, 5, 1, Race, JRMCoreH.Class, 0.0F);
-        bonusOutput = stat - stat(mc.thePlayer, 5, 1, 5, statVals[5], dbcClient.Race, dbcClient.Class, 0);
+        bonusOutput = stat - stat(mc.thePlayer, 5, 1, 5, PlyrAttrbts[5], dbcClient.Race, dbcClient.Class, 0);
 
 
         dynamicLabels.get("maxKi")
