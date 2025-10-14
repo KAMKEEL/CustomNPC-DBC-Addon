@@ -820,6 +820,14 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
     }
 
     public IForm getCurrentForm() {
+        PlayerDBCInfo info = PlayerDataUtil.getDBCInfo(player);
+        if (info != null) {
+            Form current = info.getCurrentForm();
+            if (current != null) {
+                return current;
+            }
+        }
+
         return dbcData.getForm();
     }
 
