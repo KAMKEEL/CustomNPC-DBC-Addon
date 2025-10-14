@@ -33,6 +33,7 @@ import org.lwjgl.opengl.GL11;
 import java.net.URI;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Locale;
 
 import static JinRyuu.JRMCore.JRMCoreGuiScreen.kqGW3Z;
 import static JinRyuu.JRMCore.JRMCoreH.*;
@@ -309,24 +310,25 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
             boolean isModified = false;
             if (!isSTRDEXWIL) {
                 float multiBonus = getAddonBonusMulti(i);
-                if(multiBonus != 0){
-                    modifiedStatVal *= (1 + multiBonus);
+                if (multiBonus != 0) {
+                    modifiedStatVal += Math.round(originalStatVal * multiBonus);
                     isModified = true;
                 }
             }
 
             int flatBonus = (int) getAddonBonusStat(i);
-            if(flatBonus != 0){
+            if (flatBonus != 0) {
                 isModified = true;
             }
 
-            String statDisplay = numSep((modifiedStatVal + (!isSTRDEXWIL ? flatBonus : 0)));
+            int displayedValue = modifiedStatVal + (!isSTRDEXWIL ? flatBonus : 0);
+            String statDisplay = numSep(displayedValue);
             String attributeDesc = "§9" + attrNms(1, i) + "§8: " + trl("jrmc", attrDsc[1][i]);
             if (originalStatVal != modifiedStatVal) {
                 attributeDesc += "\n" + trl("jrmc", "Modified") + ": §4" + darkFormColor + statDisplay + "\n§8"
                     + trl("jrmc", "Original") + ": §4" + numSep(originalStatVal) + "§8";
 
-                float multi = (float) (modifiedStatVal + (isSTRDEXWIL ? flatBonus : 0)) / originalStatVal;
+                float multi = (float) displayedValue / originalStatVal;
                 if (ConfigDBCClient.AdvancedGui && isSTRDEXWIL) {
                     float formMulti = currentForm != null ? currentForm.getAttributeMulti(i) : (float) DBCFormMulti(i);
                     String multiString = "";
@@ -340,6 +342,11 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
                         float dbcMulti = (float) DBCFormMulti(i);
                         float stackMulti = dbcMulti * (JGConfigDBCFormMastery.FM_Enabled ? (float) getFormMasteryAttributeMulti(JRMCoreClient.mc.thePlayer, State, State2, Race, StusEfctsMe(5), StusEfctsMe(13), StusEfctsMe(19), StusEfctsMe(20)) : 1);
                         multiString += "\n* §4x" + round(stackMulti, 2) + "§8 (" + trl("jrmc", getTransformationName(Race, isPowerTypeChakra() ? 0 : State, isRose, isMystic, isUI, isGoD)) + ")";
+                    }
+                    float addonMulti = getAddonBonusMulti(i);
+                    if (addonMulti != 0) {
+                        String color = addonMulti > 0 ? "§2" : "§4";
+                        multiString += "\n> " + color + String.format(Locale.US, "%+.2f", addonMulti) + "§8 (Addon Bonus)";
                     }
                     attributeDesc += multiString;
                 }
@@ -1000,68 +1007,46 @@ public class StatSheetGui extends AbstractJRMCGui implements GuiYesNoCallback {
         if (!dbcData.bonus.getCurrentBonuses().isEmpty()) {
             description += "\nBonus Stats:";
             for (PlayerBonus playerBonus : dbcData.bonus.getCurrentBonuses().values()) {
-                if (attributeID == DBCAttribute.Strength && playerBonus.strength != 0) {
-                    description += "\n>> " + playerBonus.name + ": " + (playerBonus.type == 1 ? " " : "x ") + playerBonus.strength;
-                } else if (attributeID == DBCAttribute.Dexterity && playerBonus.dexterity != 0) {
-                    description += "\n>> " + playerBonus.name + ": " + (playerBonus.type == 1 ? " " : "x ") + playerBonus.dexterity;
-                } else if (attributeID == DBCAttribute.Constitution && playerBonus.constituion != 0) {
-                    description += "\n>> " + playerBonus.name + ": " + (playerBonus.type == 1 ? " " : "x ") + playerBonus.constituion;
-                } else if (attributeID == DBCAttribute.Willpower && playerBonus.willpower != 0) {
-                    description += "\n>> " + playerBonus.name + ": " + (playerBonus.type == 1 ? " " : "x ") + playerBonus.willpower;
-                } else if (attributeID == DBCAttribute.Spirit && playerBonus.spirit != 0) {
-                    description += "\n>> " + playerBonus.name + ": " + (playerBonus.type == 1 ? " " : "x ") + playerBonus.spirit;
-                }
+                float value = getBonusValue(playerBonus, attributeID);
+                if (value == 0)
+                    continue;
+
+                boolean isFlat = playerBonus.type == 1;
+                String formatted = isFlat
+                    ? String.format(Locale.US, "%+.0f Flat", value)
+                    : String.format(Locale.US, "%+.2f Multi", value);
+
+                description += "\n>> " + playerBonus.name + ": " + formatted;
             }
         }
         return description;
     }
 
+    private float getBonusValue(PlayerBonus playerBonus, int attributeID) {
+        switch (attributeID) {
+            case DBCAttribute.Strength:
+                return playerBonus.strength;
+            case DBCAttribute.Dexterity:
+                return playerBonus.dexterity;
+            case DBCAttribute.Constitution:
+                return playerBonus.constituion;
+            case DBCAttribute.Willpower:
+                return playerBonus.willpower;
+            case DBCAttribute.Spirit:
+                return playerBonus.spirit;
+            default:
+                return 0;
+        }
+    }
+
     public long getAddonBonusStat(int attributeID) {
         DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
-        long extra = 0;
-        if (!dbcData.bonus.getCurrentBonuses().isEmpty()) {
-            for (PlayerBonus playerBonus : dbcData.bonus.getCurrentBonuses().values()) {
-                if (playerBonus.type == 0)
-                    continue;
-
-                if (attributeID == DBCAttribute.Strength && playerBonus.strength != 0) {
-                    extra += (long) playerBonus.strength;
-                } else if (attributeID == DBCAttribute.Dexterity && playerBonus.dexterity != 0) {
-                    extra += (long) playerBonus.dexterity;
-                } else if (attributeID == DBCAttribute.Constitution && playerBonus.constituion != 0) {
-                    extra += (long) playerBonus.constituion;
-                } else if (attributeID == DBCAttribute.Spirit && playerBonus.spirit != 0) {
-                    extra += (long) playerBonus.spirit;
-                } else if (attributeID == DBCAttribute.Willpower && playerBonus.willpower != 0) {
-                    extra += (long) playerBonus.willpower;
-                }
-            }
-        }
-        return extra;
+        return Math.round(dbcData.bonus.getFlatBonusForAttribute(attributeID));
     }
 
     public float getAddonBonusMulti(int attributeID) {
         DBCData dbcData = DBCData.get(Minecraft.getMinecraft().thePlayer);
-        float extra = 0;
-        if (!dbcData.bonus.getCurrentBonuses().isEmpty()) {
-            for (PlayerBonus playerBonus : dbcData.bonus.getCurrentBonuses().values()) {
-                if (playerBonus.type == 1)
-                    continue;
-
-                if (attributeID == DBCAttribute.Strength && playerBonus.strength != 0) {
-                    extra += playerBonus.strength;
-                } else if (attributeID == DBCAttribute.Dexterity && playerBonus.dexterity != 0) {
-                    extra += playerBonus.dexterity;
-                } else if (attributeID == DBCAttribute.Constitution && playerBonus.constituion != 0) {
-                    extra += playerBonus.constituion;
-                } else if (attributeID == DBCAttribute.Spirit && playerBonus.spirit != 0) {
-                    extra += playerBonus.spirit;
-                } else if (attributeID == DBCAttribute.Willpower && playerBonus.willpower != 0) {
-                    extra += playerBonus.willpower;
-                }
-            }
-        }
-        return extra;
+        return dbcData.bonus.getMultiBonusForAttribute(attributeID);
     }
 
     public double DBCFormMulti(int atr) {
