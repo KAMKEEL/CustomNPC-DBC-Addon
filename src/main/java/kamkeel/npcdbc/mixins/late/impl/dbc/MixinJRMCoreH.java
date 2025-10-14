@@ -90,6 +90,7 @@ public abstract class MixinJRMCoreH {
         return currentValue;
     }
 
+    // Correct
     @ModifyVariable(
         method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I",
         at = @At("HEAD"),
@@ -98,7 +99,18 @@ public abstract class MixinJRMCoreH {
         remap = false
     )
     private static int mutateAttribute(int attribute, Entity player, int attributeID, int powerType, int stat, int _attribute, int race, int classID, float skillBonus) {
-        return attribute;
+        if(DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain || DBCUtils.noBonusEffects)
+            return attribute;
+
+        if(!(player instanceof EntityPlayer) || powerType != 1)
+            return attribute;
+
+        if(attributeID != DBCAttribute.Constitution && attributeID != DBCAttribute.Spirit)
+            return attribute;
+
+        DBCData dbcData = DBCData.get((EntityPlayer) player);
+        DBCDataBonus.BonusTotals totals = dbcData.bonus.calculateTotals();
+        return applyAddonBonuses(dbcData, totals, attributeID, attribute, attribute);
     }
 
     @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;JRMCABonusOn:Z", shift = At.Shift.BEFORE))
@@ -120,23 +132,6 @@ public abstract class MixinJRMCoreH {
             }
             value.set(modifiedValue);
         }
-    }
-
-    @Inject(method = "stat(Lnet/minecraft/entity/Entity;IIIIIIF)I", at = @At("RETURN"), cancellable = true)
-    private static void applyAddonBonusesToStat(Entity player, int attributeID, int powerType, int stat, int attribute, int race, int classID, float skillBonus, CallbackInfoReturnable<Integer> cir) {
-        if (DBCUtils.calculatingCost || DBCUtils.calculatingKiDrain || DBCUtils.noBonusEffects)
-            return;
-
-        if (!(player instanceof EntityPlayer) || powerType != 1)
-            return;
-
-        DBCData dbcData = DBCData.get((EntityPlayer) player);
-        if (dbcData == null)
-            return;
-
-        DBCDataBonus.BonusTotals totals = dbcData.bonus.calculateTotals();
-        int adjustedValue = applyAddonBonuses(dbcData, totals, attributeID, attribute, cir.getReturnValue());
-        cir.setReturnValue(adjustedValue);
     }
 
     @Inject(method = "techDBCkic([Ljava/lang/String;I[B)I", at = @At("HEAD"))
