@@ -3,7 +3,10 @@ package kamkeel.npcdbc.mixins.late.impl.npc;
 import kamkeel.npcdbc.data.DBCDamageCalc;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.util.DBCUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import noppes.npcs.ScriptPlayerEventHandler;
 import noppes.npcs.entity.EntityNPCInterface;
@@ -27,8 +30,8 @@ public abstract class MixinScriptPlayerEventHandler {
 
     @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, remap = true, ordinal = 0))
     public float attackedEvent(LivingAttackEvent instance) {
-        if (instance.source.getEntity() instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) instance.source.getEntity();
+        EntityPlayer player = npcdbc$getAttackingPlayer(instance.source);
+        if (player != null) {
             DBCData data = DBCData.get(player);
             if (dbcAltered = data.Powertype == 1) {
                 float attackStat = DBCUtils.calculateAttackStat(player, instance.ammount, instance.source);
@@ -45,8 +48,8 @@ public abstract class MixinScriptPlayerEventHandler {
 
     @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, remap = true, ordinal = 1))
     public float attackEvent(LivingAttackEvent instance) {
-        if (instance.source.getEntity() instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) instance.source.getEntity();
+        EntityPlayer player = npcdbc$getAttackingPlayer(instance.source);
+        if (player != null) {
             DBCData data = DBCData.get(player);
             boolean isNPC = instance.entityLiving instanceof EntityNPCInterface;
             dbcAltered = data.Powertype == 1;
@@ -61,6 +64,21 @@ public abstract class MixinScriptPlayerEventHandler {
             }
         }
         return instance.ammount;
+    }
+
+    @Unique
+    private EntityPlayer npcdbc$getAttackingPlayer(DamageSource source) {
+        if (!(source instanceof EntityDamageSource) || source.isFireDamage() || source.isMagicDamage()) {
+            return null;
+        }
+
+        Entity direct = source.getEntity();
+        if (direct instanceof EntityPlayer) {
+            return (EntityPlayer) direct;
+        }
+
+        Entity owner = source.getSourceOfDamage();
+        return owner instanceof EntityPlayer ? (EntityPlayer) owner : null;
     }
 
     // COMMENTED FOR NOW
