@@ -28,6 +28,7 @@ import kamkeel.npcdbc.items.ItemPotara;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcs.util.AttributeAttackUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IProjectile;
@@ -36,6 +37,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import noppes.npcs.config.ConfigMain;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.scripted.CustomNPCsException;
 
@@ -320,6 +322,15 @@ public class DBCUtils {
                 }
 
                 dbcA = calculateDamageNegation(player, dbcA);
+
+                if(ConfigMain.AttributesEnabled){
+                    if(dse){
+                        EntityPlayer attackingPlayer = (EntityPlayer) s.getEntity();
+                        EntityPlayer defendingPlayer = (EntityPlayer) Player;
+                        dbcA = AttributeAttackUtil.calculateDamagePlayerToPlayer(attackingPlayer, defendingPlayer, dbcA);
+                    }
+                }
+                
                 float hpRemaining = currentHP - dbcA;
                 float newHP;
                 if (dse) {

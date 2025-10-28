@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreEH;
+import JinRyuu.JRMCore.entity.EntityEnergyAtt;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
@@ -11,10 +12,14 @@ import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
+import kamkeel.npcs.addon.DBCAddon;
+import kamkeel.npcs.util.AttributeAttackUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import noppes.npcs.config.ConfigMain;
 import noppes.npcs.entity.EntityNPCInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -48,8 +53,17 @@ public class MixinJRMCoreEH {
 
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;a1t3(Lnet/minecraft/entity/player/EntityPlayer;)V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcAttackFromPlayer(LivingHurtEvent event, CallbackInfo ci, @Local(name = "dam") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
-        DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), damageSource.get());
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc, damageSource.get(), DBCDamageSource.KIATTACK);
+        // Check for Damage Source Type
+        DamageSource source = damageSource.get();
+        int dbcDamageSource = DBCDamageSource.UNKNOWN;
+        if(source.getEntity() instanceof EntityPlayer){
+            dbcDamageSource = DBCDamageSource.PLAYER;
+        } else if (source.getEntity() instanceof EntityEnergyAtt){
+            dbcDamageSource = DBCDamageSource.KIATTACK;
+        }
+
+        DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), source);
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc, source, dbcDamageSource);
         if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
             ci.cancel();
             return;
@@ -65,8 +79,17 @@ public class MixinJRMCoreEH {
 
     @Inject(method = "Sd35MR", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;a1t3(Lnet/minecraft/entity/player/EntityPlayer;)V", ordinal = 1, shift = At.Shift.BEFORE), cancellable = true)
     public void dbcAttackFromNonPlayer(LivingHurtEvent event, CallbackInfo ci, @Local(name = "amount") LocalFloatRef dam, @Local(name = "targetPlayer") LocalRef<EntityPlayer> targetPlayer, @Local(name = "source") LocalRef<DamageSource> damageSource) {
-        DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), damageSource.get());
-        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc, damageSource.get(), DBCDamageSource.KIATTACK);
+        // Check for Damage Source Type
+        DamageSource source = damageSource.get();
+        int dbcDamageSource = DBCDamageSource.UNKNOWN;
+        if(source.getEntity() instanceof EntityPlayer){
+            dbcDamageSource = DBCDamageSource.PLAYER;
+        } else if (source.getEntity() instanceof EntityEnergyAtt){
+            dbcDamageSource = DBCDamageSource.KIATTACK;
+        }
+
+        DBCDamageCalc damageCalc = DBCUtils.calculateDBCDamageFromSource(targetPlayer.get(), dam.get(), source);
+        DBCPlayerEvent.DamagedEvent damagedEvent = new DBCPlayerEvent.DamagedEvent(targetPlayer.get(), damageCalc, source, dbcDamageSource);
         if (DBCEventHooks.onDBCDamageEvent(damagedEvent)) {
             ci.cancel();
             return;
