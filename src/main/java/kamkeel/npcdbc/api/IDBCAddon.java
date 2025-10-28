@@ -734,4 +734,10 @@ public interface IDBCAddon extends IDBCPlayer {
      * @return Ki Attack data
      */
     IKiAttack getAttackFromSlot(int slot);
+
+    /**
+     * Sets dbcPlayer to a Koed state
+     * @param KoTime integer for player Ko time, 1=5 sec
+     */
+    void setKo(int KoTime);
 }
