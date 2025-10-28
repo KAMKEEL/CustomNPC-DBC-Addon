@@ -1419,4 +1419,8 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
 
     }
 
+    @Override
+    public void setKo(int KoTime) {
+        nbt.setInteger("jrmcHar4va",KoTime);
+    }
 }
