@@ -8,7 +8,15 @@ public enum EnumMiscCapsules {
     Revive("Revive", ReviveCooldown),
     Heat("Heat", HeatCooldown),
     PowerPoint("PowerPoint", PowerPointCooldown),
-    Absorption("Absorption", AbsorptionCooldown);
+    Absorption("Absorption", AbsorptionCooldown),
+    Strain("Strain", StrainCooldown),
+    NoFuse("NoFuse",NoFuseCooldown),
+    Exhausted("Exhausted",ExhaustedCooldown);
+
+
+
+
+
 
     private final String name;
     private final int cooldown;
