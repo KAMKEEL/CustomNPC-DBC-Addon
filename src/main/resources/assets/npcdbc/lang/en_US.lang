@@ -444,6 +444,9 @@ item.npcdbc:revive_misccapsule.name=Revive Capsule
 item.npcdbc:heat_misccapsule.name=Heat Capsule
 item.npcdbc:powerpoint_misccapsule.name=Power Point Capsule
 item.npcdbc:absorption_misccapsule.name=Absorption Capsule
+item.npcdbc:strain_misccapsule.name=Strain Capsule
+item.npcdbc:nofuse_misccapsule.name=NoFuse Capsule
+item.npcdbc:exhausted_misccapsule.name=Exhausted Capsule
 
 item.npcdbc:fruitofmight.name=Fruit of Might
 item.npcdbc:one_potara.name=Potara Earring
