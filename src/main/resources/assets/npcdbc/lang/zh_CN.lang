@@ -417,6 +417,9 @@ item.npcdbc:revive_misccapsule.name=复活胶囊
 item.npcdbc:heat_misccapsule.name=热量胶囊
 item.npcdbc:powerpoint_misccapsule.name=能量点胶囊
 item.npcdbc:absorption_misccapsule.name=吸收胶囊
+item.npcdbc:strain_misccapsule.name=應變膠囊
+item.npcdbc:nofuse_misccapsule.name=諾夫塞膠囊
+item.npcdbc:exhausted_misccapsule.name=耗尽的胶囊
 
 item.npcdbc:fruitofmight.name=精神树果实
 item.npcdbc:one_potara.name=波塔拉耳环
