@@ -562,6 +562,10 @@ public abstract class MixinJRMCoreH {
             float currentHeat = ValueUtil.clamp(dbcData.addonCurrentHeat, 0, form.mastery.maxHeat);
             cir.setReturnValue(currentHeat / form.mastery.maxHeat * 100);
         }
+        if(form == null && dbcData.addonCurrentHeat >0){
+            float currentHeat = dbcData.addonCurrentHeat;
+            cir.setReturnValue(currentHeat);
+        }
     }
 
     /**

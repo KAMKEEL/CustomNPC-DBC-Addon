@@ -237,6 +237,11 @@ public class TransformController {
                 }
             }
 
+            if (form.mastery.hasHeat() && dbcData.addonCurrentHeat > 0){
+                float newHeat = dbcData.addonCurrentHeat*form.mastery.maxHeat/100;
+                dbcData.addonCurrentHeat = newHeat;
+            }
+
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
             if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, formID)))
                 return;
@@ -299,9 +304,10 @@ public class TransformController {
 
             PlaySound.play(new SoundSource(form.getDescendSound(), player));
             if (form.mastery.hasHeat() && dbcData.addonCurrentHeat > 0) {
-                float heatRatio = dbcData.addonCurrentHeat / form.mastery.maxHeat;
-                dbcData.Pain = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()) * heatRatio);
-                dbcData.addonCurrentHeat = 0;
+                float heatRatio = dbcData.addonCurrentHeat / form.mastery.maxHeat * 100;
+                //dbcData.Pain = (int) (form.mastery.painTime * 60 / 5 * form.mastery.calculateMulti("pain", formData.getCurrentLevel()) * heatRatio);
+                dbcData.addonCurrentHeat = heatRatio;
+
             }
             if (formID == -10) {
                 formData.currentForm = -1;

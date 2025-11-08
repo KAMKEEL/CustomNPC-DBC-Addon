@@ -169,6 +169,11 @@ public class ServerEventHandler {
         Form form = dbcData.getForm();
 
         if (form == null) {
+            if(dbcData.addonCurrentHeat > 0 && player.ticksExisted % 20 == 0) {
+                float newHeat = Math.max(dbcData.addonCurrentHeat -5, 0);
+                dbcData.getRawCompound().setFloat("addonCurrentHeat", newHeat);
+            }
+
             return;
         }
 
