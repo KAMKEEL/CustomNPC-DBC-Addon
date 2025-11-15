@@ -15,6 +15,7 @@ public enum EnumPacketPlayer {
     LockOn,
     LoginInfo,
     PingPacket,
+    PingFormColorPacket,
     PlaySound,
     FormSaveCustiomization,
     SendChat,
