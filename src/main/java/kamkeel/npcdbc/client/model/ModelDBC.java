@@ -158,13 +158,14 @@ public class ModelDBC extends ModelBase {
             Form form = display.getForm();
             if (form != null) {
                 FormDisplay d = form.display;
+                FormDisplay.BodyColor customClr = display.formColor;
 
-                if (d.hasColor("eye"))
-                    eyeColor = d.bodyColors.eyeColor;
-                if (d.hasColor("hair"))
-                    eyeBrowColor = d.bodyColors.hairColor;
-                if (d.hasColor("bodycm"))
-                    bodyCM = d.bodyColors.bodyCM;
+                if (customClr.hasAnyColor(d, "eye"))
+                    eyeColor = customClr.getProperColor(d, "eye");
+                if (customClr.hasAnyColor(d, "hair"))
+                    eyeBrowColor = customClr.getProperColor(d, "hair");
+                if (customClr.hasAnyColor(d, "bodycm"))
+                    bodyCM = customClr.getProperColor(d, "bodyCM");
 
                 if (d.hasArcoMask)
                     hasArcoMask = true;
@@ -176,7 +177,7 @@ public class ModelDBC extends ModelBase {
                     isSSJ4 = true;
                 else if (d.hairType.equals("oozaru")) {
                     isOozaru = true;
-                    if (d.bodyColors.eyeColor == -1)
+                    if (customClr.getProperColor(d, "eye") == -1)
                         eyeColor = 0xFF0000;
                 }
 
@@ -385,25 +386,27 @@ public class ModelDBC extends ModelBase {
             Form form = display.getForm();
             if (form != null) {
                 FormDisplay d = form.display;
-                if (d.hasColor("eye"))
-                    eyeColor = d.bodyColors.eyeColor;
-                if (d.hasColor("hair"))
-                    hairColor = d.bodyColors.hairColor;
-                if (d.hasColor("bodycm"))
-                    bodyCM = d.bodyColors.bodyCM;
-                if (d.hasColor("bodyc1"))
-                    bodyC1 = d.bodyColors.bodyC1;
-                if (d.hasColor("bodyc2"))
-                    bodyC2 = d.bodyColors.bodyC2;
-                if (d.hasColor("bodyc3"))
-                    bodyC3 = d.bodyColors.bodyC3;
-                if (d.hasColor("fur"))
-                    furColor = d.bodyColors.furColor;
+                FormDisplay.BodyColor customClr = display.formColor;
+
+                if (customClr.hasAnyColor(d, "eye"))
+                    eyeColor = customClr.getProperColor(d, "eye");
+                if (customClr.hasAnyColor(d, "hair"))
+                    hairColor = customClr.getProperColor(d, "hair");
+                if (customClr.hasAnyColor(d, "bodycm"))
+                    bodyCM = customClr.getProperColor(d, "bodycm");
+                if (customClr.hasAnyColor(d, "bodyc1"))
+                    bodyC1 = customClr.getProperColor(d, "bodyc1");
+                if (customClr.hasAnyColor(d, "bodyc2"))
+                    bodyC2 = customClr.getProperColor(d, "bodyc2");
+                if (customClr.hasAnyColor(d, "bodyc3"))
+                    bodyC3 = customClr.getProperColor(d, "bodyc3");
+                if (customClr.hasAnyColor(d, "fur"))
+                    furColor = customClr.getProperColor(d, "fur");
 
                 hasFur = d.hasBodyFur;
                 if (d.hairType.equals("ssj4")) {
                     isSSJ4 = true;
-                    if (d.bodyColors.eyeColor == -1)
+                    if (customClr.getProperColor(d, "eye") == -1)
                         eyeColor = 0xF3C807;
                 } else if (d.hairType.equals("oozaru")) {
                     isOozaru = true;

@@ -205,14 +205,17 @@ public class DBCHorns extends ModelDBCPartInterface {
             Form form = display.getForm();
             if (form != null) {
                 FormDisplay d = form.display;
-                if (d.hasColor("bodycm"))
-                    bodyCM = d.bodyColors.bodyCM;
-                if (d.hasColor("bodyc1"))
-                    bodyC1 = d.bodyColors.bodyC1;
-                if (d.hasColor("bodyc2"))
-                    bodyC2 = d.bodyColors.bodyC2;
-                if (d.hasColor("bodyc3"))
-                    bodyC3 = d.bodyColors.bodyC3;
+                FormDisplay.BodyColor customClr = display.formColor;
+
+                if (customClr.hasAnyColor(d, "bodycm"))
+                    bodyCM = customClr.getProperColor(d, "bodycm");
+                if (customClr.hasAnyColor(d, "bodyc1"))
+                    bodyC1 = customClr.getProperColor(d, "bodyc1");
+                if (customClr.hasAnyColor(d, "bodyc2"))
+                    bodyC2 = customClr.getProperColor(d, "bodyc2");
+                if (customClr.hasAnyColor(d, "bodyc3"))
+                    bodyC3 = customClr.getProperColor(d, "bodyc3");
+
 
                 if (isArco) {
                     if (form.display.bodyType.equals("firstform")) {

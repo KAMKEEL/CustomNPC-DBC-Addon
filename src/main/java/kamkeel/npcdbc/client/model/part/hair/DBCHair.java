@@ -556,6 +556,8 @@ public class DBCHair extends ModelHairRenderer {
         Form form = display.getForm();
         if (form != null) {
             FormDisplay d = form.display;
+            FormDisplay.BodyColor customClr = display.formColor;
+
             if (race == 5 && !form.display.effectMajinHair) {
                 effectMajinHair = false;
                 hairCode = MAJIN_HAIR;
@@ -567,12 +569,10 @@ public class DBCHair extends ModelHairRenderer {
                 else if (d.hairCode.length() > 3)
                     hairCode = d.hairCode;
 
-
-                if (d.hasColor("hair"))
-                    hairColor = d.bodyColors.hairColor;
-                else if (display.race == 5 && d.hasColor("bodycm")) {
-                    hairColor = d.bodyColors.bodyCM;
-                }
+                if (customClr.hasAnyColor(d, "hair"))
+                    hairColor = customClr.getProperColor(d, "hair");
+                else if (display.race == 5 && customClr.hasAnyColor(d, "bodycm"))
+                    hairColor = customClr.getProperColor(d, "bodycm");
 
                 if (d.hairType.equals("base"))
                     state = 0;

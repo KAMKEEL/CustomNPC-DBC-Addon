@@ -83,6 +83,7 @@ public class DBCPacketHandler {
         PLAYER_PACKETS.registerPacket(new PlaySound());
         PLAYER_PACKETS.registerPacket(new PingPacket());
         PLAYER_PACKETS.registerPacket(new PingFormColorPacket());
+        PLAYER_PACKETS.registerPacket(new NPCUpdateForcedColors());
         PLAYER_PACKETS.registerPacket(new LoginInfo());
         PLAYER_PACKETS.registerPacket(new DBCUpdateLockOn());
         PLAYER_PACKETS.registerPacket(new DBCSetValPacket());

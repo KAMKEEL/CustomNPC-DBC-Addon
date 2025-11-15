@@ -82,8 +82,11 @@ public class DBCBody extends ModelDBCPartInterface {
             Form form = display.getForm();
             if (form != null) {
                 FormDisplay d = form.display;
-                if (d.hasColor("bodycm"))
-                    bodyCM = d.bodyColors.bodyCM;
+                FormDisplay.BodyColor customClr = display.formColor;
+
+                if (customClr.hasAnyColor(d, "bodycm"))
+                    bodyCM = customClr.getProperColor(d, "bodycm");
+
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
