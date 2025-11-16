@@ -28,10 +28,7 @@ import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.DBCPacketHandler;
-import kamkeel.npcdbc.network.packets.player.DBCSetFlight;
-import kamkeel.npcdbc.network.packets.player.DBCUpdateLockOn;
-import kamkeel.npcdbc.network.packets.player.PingPacket;
-import kamkeel.npcdbc.network.packets.player.TurboPacket;
+import kamkeel.npcdbc.network.packets.player.*;
 import kamkeel.npcdbc.util.DBCUtils;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
@@ -53,7 +50,7 @@ import java.util.*;
 import static kamkeel.npcdbc.constants.DBCForm.*;
 import static kamkeel.npcdbc.controllers.DBCEffectController.DBC_EFFECT_INDEX;
 
-public class DBCData extends DBCDataUniversal implements IAuraData {
+public class    DBCData extends DBCDataUniversal implements IAuraData {
 
     public static String DBCPersisted = "PlayerPersisted";
     public final Side side;
@@ -283,6 +280,11 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
             }
         }
 
+        loadClientSideFormColorData(c);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void loadClientSideFormColorData(NBTTagCompound c) {
         currentCustomizedColors = new FormDisplay.BodyColor();
         if (c.hasKey("CustomFormColors", Constants.NBT.TAG_COMPOUND)) {
             currentCustomizedColors.readFromNBT(c.getCompoundTag("CustomFormColors"));
@@ -1040,5 +1042,18 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         PlayerDBCInfo info = getDBCInfo();
         return info.configuredFormColors.get(form.id);
+    }
+
+    public void sendCurrentFormColorData() {
+        FormDisplay.BodyColor currentColors = getCurrentFormColorCustomization();
+        NBTTagCompound dataNeededOnClient = new NBTTagCompound();
+
+        if (currentColors != null) {
+            NBTTagCompound colorCompound = new NBTTagCompound();
+            currentColors.writeToNBT(colorCompound);
+            dataNeededOnClient.setTag("CustomFormColors", colorCompound);
+        }
+
+        DBCPacketHandler.Instance.sendTracking(new PingFormColorPacket(this, dataNeededOnClient), player);
     }
 }

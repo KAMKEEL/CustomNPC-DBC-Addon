@@ -21,19 +21,25 @@ import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.NPCUpdateForcedColors;
+import kamkeel.npcdbc.network.packets.player.PingFormColorPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.Constants;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.entity.data.ModelData;
 import noppes.npcs.entity.data.ModelPartData;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
+import org.lwjgl.opencl.CL;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -88,6 +94,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;
     }
+
+    public FormDisplay.BodyColor formColor = new FormDisplay.BodyColor();
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
         comp.setBoolean("DBCDisplayEnabled", enabled);
@@ -865,5 +873,26 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             visualDisplay.setRacialExtras();
         }
         return npc;
+    }
+
+    public void sendCurrentFormColorData() {
+        FormDisplay.BodyColor currentColors = formColor;
+        NBTTagCompound dataNeededOnClient = new NBTTagCompound();
+
+        if (currentColors != null) {
+            NBTTagCompound colorCompound = new NBTTagCompound();
+            currentColors.writeToNBT(colorCompound);
+            dataNeededOnClient.setTag("CustomFormColors", colorCompound);
+        }
+
+        DBCPacketHandler.Instance.sendTracking(new NPCUpdateForcedColors(npc, dataNeededOnClient), npc);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void loadClientSideFormColorData(NBTTagCompound c) {
+        formColor = new FormDisplay.BodyColor();
+        if (c.hasKey("CustomFormColors", Constants.NBT.TAG_COMPOUND)) {
+            formColor.readFromNBT(c.getCompoundTag("CustomFormColors"));
+        }
     }
 }

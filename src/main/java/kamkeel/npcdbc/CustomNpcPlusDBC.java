@@ -18,14 +18,15 @@ import java.io.File;
 @Mod(
     modid = CustomNpcPlusDBC.ID,
     name = CustomNpcPlusDBC.name,
-    version = CustomNpcPlusDBC.version, // If this errors out, try refreshing your project entirely
+    version = CustomNpcPlusDBC.version,
     dependencies = "required-after:customnpcs;required-after:jinryuujrmcore;required-after:jinryuudragonblockc;"
 )
 public class CustomNpcPlusDBC {
 
     public static final String name = "CustomNPC+ DBC Addon";
     public static final String ID = "npcdbc";
-    public static final String version = "1.1.2";
+    public static final String version = "1.1.3";
+
     @SidedProxy(clientSide = "kamkeel.npcdbc.client.ClientProxy", serverSide = "kamkeel.npcdbc.CommonProxy")
     public static CommonProxy proxy;
     @Mod.Instance
