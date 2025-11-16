@@ -8,9 +8,11 @@ import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;
@@ -40,6 +42,9 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
 
     @Shadow
     private int color;
+
+    @Shadow
+    public ModelRenderer tail;
 
     public MixinModelTail(ModelBase par1ModelBase) {
         super(par1ModelBase);
@@ -87,10 +92,12 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
 
                 Form form = display.getForm();
                 if (form != null) {
-                    if (form.display.hasColor("hair"))
-                        tailColor = form.display.bodyColors.hairColor;
-                    if (form.display.hasColor("fur"))
-                        furColor = form.display.bodyColors.furColor;
+                    FormDisplay d = form.display;
+                    FormDisplay.BodyColor customClr = display.formColor;
+                    if (customClr.hasAnyColor(d, "hair"))
+                        tailColor = customClr.getProperColor(d, "hair");
+                    if (customClr.hasAnyColor(d, "fur"))
+                        furColor = customClr.getProperColor(d, "fur");
 
                     hasFur = form.display.hasBodyFur;
 
@@ -121,11 +128,14 @@ public abstract class MixinModelTail extends ModelScaleRenderer {
 
                 Form form = display.getForm();
                 if (form != null) {
+                    FormDisplay d = form.display;
+                    FormDisplay.BodyColor customClr = display.formColor;
+
                     if ((form.display.bodyType.contains("first") || form.display.bodyType.contains("second") || form.display.bodyType.contains("third"))) {
-                        if (form.display.hasColor("bodyc3"))
-                            tailColor = form.display.bodyColors.bodyC3;
-                    } else if (form.display.hasColor("bodycm"))
-                        tailColor = form.display.bodyColors.bodyCM;
+                        if (customClr.hasAnyColor(d, "bodyc3"))
+                            tailColor = customClr.getProperColor(d, "bodyc3");
+                    } else if (customClr.hasAnyColor(d, "bodycm"))
+                        tailColor = customClr.getProperColor(d, "bodycm");
 
                 }
 
