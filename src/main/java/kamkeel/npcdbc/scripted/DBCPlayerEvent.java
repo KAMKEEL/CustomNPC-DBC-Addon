@@ -280,6 +280,91 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
         }
     }
 
+    @Cancelable
+    public static class SkillEvent extends DBCPlayerEvent implements IDBCEvent.SkillEvent {
+
+        public final int type, id;
+        protected SkillEvent(IPlayer player, int type, int id) {
+            super(player);
+            this.type = type;
+            this.id = id;
+        }
+
+        @Override
+        public int getEventType() {
+            if (this instanceof IDBCEvent.SkillEvent.Learn)
+                return 0;
+            if (this instanceof IDBCEvent.SkillEvent.Unlearn)
+                return 1;
+            if (this instanceof IDBCEvent.SkillEvent.Upgrade)
+                return 2;
+
+            return -1;
+        }
+
+        @Override
+        public int getSkillType() {
+            return type;
+        }
+
+        @Override
+        public int getSkillID() {
+            return id;
+        }
+
+        @Cancelable
+        public static class Learn extends DBCPlayerEvent.SkillEvent implements IDBCEvent.SkillEvent.Learn {
+            public int cost;
+
+            public Learn(IPlayer player, int type, int id, int cost) {
+                super(player, type, id);
+            }
+
+            @Override
+            public int getCost() {
+                return this.cost;
+            }
+
+            @Override
+            public void setCost(int cost) {
+                this.cost = cost;
+            }
+        }
+        @Cancelable
+        public static class Unlearn extends DBCPlayerEvent.SkillEvent implements IDBCEvent.SkillEvent.Unlearn {
+            public Unlearn(IPlayer player, int type, int id) {
+                super(player, type, id);
+            }
+        }
+
+        @Cancelable
+        public static class Upgrade extends DBCPlayerEvent.SkillEvent implements IDBCEvent.SkillEvent.Upgrade {
+            public final int level;
+            public int cost;
+
+            public Upgrade(IPlayer player, int type, int id, int cost, int level) {
+                super(player, type, id);
+                this.level = level;
+            }
+
+            @Override
+            public int getCost() {
+                return this.cost;
+            }
+
+            @Override
+            public void setCost(int cost) {
+                this.cost = cost;
+            }
+
+            @Override
+            public int getNewLevel() {
+                return this.level;
+            }
+        }
+
+    }
+
     public static class RenderEvent extends RenderPlayerEvent {
 
         public RenderEvent(EntityPlayer player, RenderPlayer renderer, float partialRenderTick) {

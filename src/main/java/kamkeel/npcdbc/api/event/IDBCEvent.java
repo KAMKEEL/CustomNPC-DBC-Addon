@@ -143,4 +143,42 @@ public interface IDBCEvent extends IPlayerEvent {
         IDamageSource getDamageSource();
 
     }
+
+    @Cancelable
+    interface SkillEvent extends IDBCEvent {
+
+        /**
+         * Event types:
+         *  0 - Learn
+         *  1 - Unlearn
+         *  2 - Upgrade
+         *  <br>
+         *  if it returns -1, something has gone horribly wrong.
+         * @return event type;
+         */
+        int getEventType();
+
+        /**
+         * Check the skill type
+         * @return 0 for racial, 1 for normal skills, 2 for custom skills
+         */
+        int getSkillType();
+
+        /**
+         * Only works for normal & custom skills
+         * @return numeric ID of a skill.
+         */
+        int getSkillID();
+
+        interface Learn extends SkillEvent {
+            void setCost(int cost);
+            int getCost();
+        }
+        interface Unlearn extends SkillEvent {}
+        interface Upgrade extends SkillEvent {
+            void setCost(int cost);
+            int getCost();
+            int getNewLevel();
+        }
+    }
 }
