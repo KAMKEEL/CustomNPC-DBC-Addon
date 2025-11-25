@@ -26,10 +26,13 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcdbc.data.skill.CustomSkill;
+import kamkeel.npcdbc.data.skill.SkillContainer;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.*;
 import kamkeel.npcdbc.util.DBCUtils;
+import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -101,6 +104,8 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
     // Some servers tend to repeat one tick multiple times (up to 3-4 times in under a second)
     public int lastTicked = -1;
 
+    public Map<Integer, SkillContainer> customSkills = new HashMap<>();
+
     public DBCData() {
         this.side = Side.SERVER;
     }
@@ -171,6 +176,10 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
         comp.setBoolean("DBCFlightGravity", flightGravity);
 
         comp.setBoolean("DBCIsFnPressed", isFnPressed);
+
+
+        NBTTagList skillList = NBTHelper.nbtIntegerObjectMap(this.customSkills, skill -> skill.writeToNBT(new NBTTagCompound()));
+        comp.setTag("customSkills", skillList);
         return comp;
     }
 
@@ -260,6 +269,9 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
         if (!c.hasKey("DBCIsFnPressed"))
             c.setBoolean("DBCIsFnPressed", isFnPressed);
         isFnPressed = c.getBoolean("DBCIsFnPressed");
+
+        if (c.hasKey("customSkills"))
+            this.customSkills = NBTHelper.javaIntegerObjectMap(c.getTagList("customSkills", Constants.NBT.TAG_COMPOUND), tag -> SkillContainer.fromNBT(player, tag));
     }
 
     @SideOnly(Side.CLIENT)

@@ -4,6 +4,8 @@ import kamkeel.npcdbc.constants.DBCSyncType;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcdbc.data.skill.CustomSkill;
+import kamkeel.npcdbc.data.skill.SkillContainer;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
 import kamkeel.npcs.network.enums.EnumSyncAction;
@@ -75,7 +77,18 @@ public class DBCSyncController {
 
             OutlineController.getInstance().customOutlines = OutlineController.getInstance().customOutlinesSync;
             OutlineController.getInstance().customOutlinesSync = new HashMap<>();
+        } else if (synctype == DBCSyncType.SKILL) {
+            NBTTagList list = compound.getTagList("Data", 10);
+            for (int i = 0; i < list.tagCount(); i++) {
+                CustomSkill skill = new CustomSkill();
+                skill.readFromNBT(compound);
+                SkillController.Instance.customSkillsSync.put(skill.id, skill);
+            }
+
         }
+
+        SkillController.Instance.customSkills = SkillController.Instance.customSkillsSync;
+        SkillController.Instance.customSkillsSync = new HashMap<>();
     }
 
     public static void clientSyncUpdate(int synctype, NBTTagCompound compound) {
@@ -91,6 +104,10 @@ public class DBCSyncController {
             Outline outline = new Outline();
             outline.readFromNBT(compound);
             OutlineController.getInstance().customOutlines.put(outline.id, outline);
+        } else if (synctype == DBCSyncType.SKILL) {
+            CustomSkill skill = new CustomSkill();
+            skill.readFromNBT(compound);
+            SkillController.Instance.customSkills.put(skill.id, skill);
         }
     }
 
@@ -101,6 +118,8 @@ public class DBCSyncController {
             Aura aura = AuraController.Instance.customAuras.remove(id);
         } else if (synctype == DBCSyncType.OUTLINE) {
             Outline outline = OutlineController.Instance.customOutlines.remove(id);
+        } else if (synctype == DBCSyncType.SKILL) {
+            SkillController.Instance.customSkills.remove(id);
         }
     }
 }

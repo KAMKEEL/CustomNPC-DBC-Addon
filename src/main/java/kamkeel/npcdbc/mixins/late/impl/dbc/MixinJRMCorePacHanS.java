@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.JRMCore.JRMCorePacHanS;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import jdk.internal.org.objectweb.asm.Opcodes;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.entity.player.EntityPlayer;

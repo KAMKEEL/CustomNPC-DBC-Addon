@@ -2,6 +2,7 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JRMCore.*;
 import cpw.mods.fml.common.FMLCommonHandler;
+import jdk.internal.org.objectweb.asm.Opcodes;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
@@ -23,6 +24,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.text.DecimalFormat;
@@ -229,7 +232,10 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
         }
     }
 
-
+    @ModifyVariable(method = "drawScreen", at = @At(value = "STORE", ordinal = 0))
+    private int modifySkillCount(int sw) {
+        return 0;
+    }
     @Inject(method = "drawScreen", at = @At(value = "INVOKE", target = "Ljava/util/List;clear()V", shift = At.Shift.AFTER), remap = true)
     private void onDrawScreen(CallbackInfo ci) {
         if (this.guiID != 10)

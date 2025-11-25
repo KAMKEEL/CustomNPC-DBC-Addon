@@ -18,6 +18,7 @@ import kamkeel.npcdbc.api.npc.IDBCDisplay;
 import kamkeel.npcdbc.api.npc.IDBCStats;
 import kamkeel.npcdbc.api.outline.IOutline;
 import kamkeel.npcdbc.api.outline.IOutlineHandler;
+import kamkeel.npcdbc.api.skill.ISkillHandler;
 import kamkeel.npcdbc.combat.Dodge;
 import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.DBCDamageCalc;
@@ -50,6 +51,11 @@ public class DBCAPI extends AbstractDBCAPI {
             Instance = new DBCAPI();
         }
         return Instance;
+    }
+
+    @Override
+    public ISkillHandler getSkillHandler() {
+        return SkillController.Instance;
     }
 
     @Override

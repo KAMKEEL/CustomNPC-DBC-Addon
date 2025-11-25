@@ -59,6 +59,7 @@ public class CustomNpcPlusDBC {
         CapsuleController.getInstance().load();
         BonusController.getInstance().load();
         OutlineController.getInstance().load();
+        SkillController.Instance.load();
     }
 
     @Mod.EventHandler
