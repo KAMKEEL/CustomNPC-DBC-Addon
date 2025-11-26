@@ -312,6 +312,10 @@ public abstract class DBCPlayerEvent extends PlayerEvent implements IDBCEvent {
             return id;
         }
 
+        public String getHookName() {
+            return DBCScriptType.SKILL_EVENT.function;
+        }
+
         @Cancelable
         public static class Learn extends DBCPlayerEvent.SkillEvent implements IDBCEvent.SkillEvent.Learn {
             public int cost;
