@@ -3,7 +3,6 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.api.skill.ISkillHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
-import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.skill.CustomSkill;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
@@ -40,11 +39,35 @@ public class SkillController implements ISkillHandler {
         readCustomSkillMap();
         loadSkills();
         LogWriter.info("Done loading custom forms.");
+
+//        CustomSkill skill = new CustomSkill(1, "test", 10, null, null);
+//        delete(1);
+//        skill.save();
+    }
+
+    public void delete(int id) {
+        if (!this.customSkills.containsKey(id))
+            return;
+
+        CustomSkill skill = this.customSkills.remove(id);
+        if (skill != null && skill.stringLiteralId != null) {
+            File dir = this.getDir();
+            for (File file : dir.listFiles()) {
+                if (!file.isFile() || !file.getName().endsWith(".json"))
+                    continue;
+                if (file.getName().equals(skill.stringLiteralId + ".json")) {
+                    file.delete();
+                    DBCPacketHandler.Instance.sendToAll(new DBCInfoSyncPacket(DBCSyncType.SKILL, EnumSyncAction.REMOVE, skill.getId(), new NBTTagCompound()));
+                    break;
+                }
+            }
+            saveSkillLoadMap();
+        }
     }
 
     @Override
     public ICustomSkill getSkill(int id) {
-        return null;
+        return this.customSkills.get(id);
     }
 
     @Override
@@ -241,9 +264,9 @@ public class SkillController implements ISkillHandler {
     public void saveSkillLoadMap() {
         try {
             File saveDir = getMapDir();
-            File file = new File(saveDir, "customforms.dat_new");
-            File file1 = new File(saveDir, "customforms.dat_old");
-            File file2 = new File(saveDir, "customforms.dat");
+            File file = new File(saveDir, "customskills.dat_new");
+            File file1 = new File(saveDir, "customskills.dat_old");
+            File file2 = new File(saveDir, "customskills.dat");
             CompressedStreamTools.writeCompressed(this.writeMapNBT(), new FileOutputStream(file));
             if (file1.exists()) {
                 file1.delete();

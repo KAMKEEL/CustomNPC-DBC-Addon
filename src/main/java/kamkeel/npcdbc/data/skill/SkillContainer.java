@@ -1,10 +1,13 @@
 package kamkeel.npcdbc.data.skill;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.api.skill.ISkillContainer;
+import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.api.entity.IPlayer;
@@ -25,14 +28,13 @@ public class SkillContainer implements ISkillContainer {
 
     private SkillContainer(IPlayer player) {
         this.player = player;
-        this.data = DBCData.get((EntityPlayer) player.getMCEntity());
+        this.data = DBCData.getClient();
     }
 
     public static SkillContainer fromNBT(EntityPlayer player, NBTTagCompound comp) {
-        IPlayer iPlayer = (IPlayer) NpcAPI.Instance().getIEntity(player);
-        SkillContainer container = new SkillContainer(iPlayer);
+        SkillContainer container = new SkillContainer(null);
+        container.skill = SkillController.Instance.getSkill(comp.getInteger("id"));
         container.setLevel(comp.getInteger("lvl"));
-//        container.skill = @TODO
         return container;
     }
 

@@ -8,6 +8,7 @@ import kamkeel.npcdbc.data.skill.CustomSkill;
 import kamkeel.npcdbc.data.skill.SkillContainer;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
+import kamkeel.npcdbc.util.NBTHelper;
 import kamkeel.npcs.network.enums.EnumSyncAction;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -44,6 +45,11 @@ public class DBCSyncController {
         }
         compound.setTag("Data", list);
         DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.OUTLINE, EnumSyncAction.RELOAD, -1, compound), player);
+
+        list = NBTHelper.nbtIntegerObjectMap(SkillController.Instance.customSkills, s -> s.writeToNBT());
+        compound = new NBTTagCompound();
+        compound.setTag("Data", list);
+        DBCPacketHandler.Instance.sendToPlayer(new DBCInfoSyncPacket(DBCSyncType.SKILL, EnumSyncAction.RELOAD, -1, compound), player);
     }
 
     public static void clientSync(int synctype, NBTTagCompound compound) {
@@ -79,16 +85,16 @@ public class DBCSyncController {
             OutlineController.getInstance().customOutlinesSync = new HashMap<>();
         } else if (synctype == DBCSyncType.SKILL) {
             NBTTagList list = compound.getTagList("Data", 10);
-            for (int i = 0; i < list.tagCount(); i++) {
+            SkillController.Instance.customSkillsSync = NBTHelper.javaIntegerObjectMap(list, t -> {
                 CustomSkill skill = new CustomSkill();
-                skill.readFromNBT(compound);
-                SkillController.Instance.customSkillsSync.put(skill.id, skill);
-            }
+                skill.readFromNBT(t);
+                return skill;
+            });
 
+            SkillController.Instance.customSkills = SkillController.Instance.customSkillsSync;
+            SkillController.Instance.customSkillsSync = new HashMap<>();
         }
 
-        SkillController.Instance.customSkills = SkillController.Instance.customSkillsSync;
-        SkillController.Instance.customSkillsSync = new HashMap<>();
     }
 
     public static void clientSyncUpdate(int synctype, NBTTagCompound compound) {

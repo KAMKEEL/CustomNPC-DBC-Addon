@@ -11,14 +11,13 @@ import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.api.skill.ICustomSkill;
+import kamkeel.npcdbc.api.skill.ISkillHandler;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.constants.Effects;
-import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.controllers.FormController;
-import kamkeel.npcdbc.controllers.OutlineController;
-import kamkeel.npcdbc.controllers.TransformController;
+import kamkeel.npcdbc.controllers.*;
 import kamkeel.npcdbc.data.IAuraData;
 import kamkeel.npcdbc.data.PlayerBonus;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -42,10 +41,12 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.controllers.CustomEffectController;
 import noppes.npcs.controllers.data.EffectKey;
 import noppes.npcs.controllers.data.PlayerEffect;
 import noppes.npcs.scripted.CustomNPCsException;
+import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.*;
@@ -53,7 +54,7 @@ import java.util.*;
 import static kamkeel.npcdbc.constants.DBCForm.*;
 import static kamkeel.npcdbc.controllers.DBCEffectController.DBC_EFFECT_INDEX;
 
-public class    DBCData extends DBCDataUniversal implements IAuraData {
+public class DBCData extends DBCDataUniversal implements IAuraData {
 
     public static String DBCPersisted = "PlayerPersisted";
     public final Side side;
@@ -121,6 +122,8 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public NBTTagCompound saveFromNBT(NBTTagCompound comp) {
+//        SkillController.Instance.getSkill(1).teachPlayerSkill(PlayerDataUtil.getIPlayer(player));
+
         comp.setInteger("jrmcStrI", STR);
         comp.setInteger("jrmcDexI", DEX);
         comp.setInteger("jrmcCnsI", CON);
@@ -1035,6 +1038,12 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
             IForm form = formController.get(formID);
             if (form != null)
                 mindBonus -= form.getMindRequirement();
+        }
+
+        for (SkillContainer container : customSkills.values()) {
+            ICustomSkill skill = SkillController.Instance.getSkill(container.getSkillID());
+            if (skill != null)
+                mindBonus -= skill.getTotalMindCost(container.getLevel());
         }
 
         return mindBonus;

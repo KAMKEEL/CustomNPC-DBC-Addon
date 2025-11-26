@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import jdk.internal.org.objectweb.asm.Opcodes;
 import kamkeel.npcdbc.scripted.DBCEventHooks;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
+import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.api.entity.IPlayer;
 import noppes.npcs.scripted.NpcAPI;
@@ -23,7 +24,7 @@ public abstract class MixinJRMCorePacHanS {
         if (b != 3)
             return;
 
-        IPlayer player = (IPlayer) NpcAPI.Instance().getIEntity(p);
+        IPlayer player = PlayerDataUtil.getIPlayer(p);
         DBCPlayerEvent.SkillEvent.Upgrade event = new DBCPlayerEvent.SkillEvent.Upgrade(player, b2 == 100 ? 0 : 1, b2, tpCost.get(), skillLvl);
         if (DBCEventHooks.onSkillEvent(event)) {
             ci.cancel();
@@ -42,7 +43,7 @@ public abstract class MixinJRMCorePacHanS {
         if (b != 1)
             return;
 
-        IPlayer player = (IPlayer) NpcAPI.Instance().getIEntity(p);
+        IPlayer player = PlayerDataUtil.getIPlayer(p);
         DBCPlayerEvent.SkillEvent.Learn event = new DBCPlayerEvent.SkillEvent.Learn(player, 1, b2, tpCost.get());
         if (DBCEventHooks.onSkillEvent(event)) {
             ci.cancel();
@@ -61,7 +62,7 @@ public abstract class MixinJRMCorePacHanS {
         if (b != 2)
             return;
 
-        IPlayer player = (IPlayer) NpcAPI.Instance().getIEntity(p);
+        IPlayer player = PlayerDataUtil.getIPlayer(p);
         DBCPlayerEvent.SkillEvent.Unlearn event = new DBCPlayerEvent.SkillEvent.Unlearn(player, 1, b2);
         if (DBCEventHooks.onSkillEvent(event)) {
             ci.cancel();

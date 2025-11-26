@@ -20,7 +20,7 @@ public class CustomSkill implements ICustomSkill {
 
     }
 
-    private CustomSkill(int ID, String stringID, int maxLevel, int[] tpCosts, int[] mindCosts) {
+    public CustomSkill(int ID, String stringID, int maxLevel, int[] tpCosts, int[] mindCosts) {
         this.id = ID;
         this.stringLiteralId = stringID;
         this.maxLevel = Math.min(Math.max(maxLevel, 1), 10);
@@ -166,14 +166,15 @@ public class CustomSkill implements ICustomSkill {
         SkillController.Instance.saveSkill(this);
     }
 
-    private DBCData dataForIPlayer(IPlayer player) {
-        return DBCData.get((EntityPlayer) player.getMCEntity());
+    public static DBCData dataForIPlayer(IPlayer player) {
+        return DBCData.getData((EntityPlayer) player.getMCEntity());
     }
 
     public void readFromNBT(NBTTagCompound tag) {
         id = tag.getInteger("id");
         stringLiteralId = tag.getString("s_id");
-        displayName = tag.getString("name");
+        if (tag.hasKey("name"))
+            displayName = tag.getString("name");
         maxLevel = tag.getInteger("maxLevel");
         tpCosts = tag.getIntArray("tpCosts");
         mindCosts = tag.getIntArray("mindCosts");
@@ -183,7 +184,8 @@ public class CustomSkill implements ICustomSkill {
         NBTTagCompound comp = new NBTTagCompound();
         comp.setInteger("id", id);
         comp.setString("s_id", stringLiteralId);
-        comp.setString("name", displayName);
+        if (displayName != null)
+            comp.setString("name", displayName);
         comp.setInteger("maxLevel", maxLevel);
         comp.setIntArray("tpCosts", tpCosts);
         comp.setIntArray("mindCosts", mindCosts);

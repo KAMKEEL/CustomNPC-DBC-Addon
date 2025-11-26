@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JRMCore.*;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import cpw.mods.fml.common.FMLCommonHandler;
 import jdk.internal.org.objectweb.asm.Opcodes;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
@@ -8,9 +10,11 @@ import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
+import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.skill.SkillContainer;
 import kamkeel.npcdbc.mixins.late.IDBCGuiScreen;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -24,8 +28,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.text.DecimalFormat;
@@ -33,7 +35,7 @@ import java.util.List;
 
 @Mixin(value = JRMCoreGuiScreen.class, remap = false)
 
-public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
+public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
 
     private static final int GUI_CHANGE_BUTTON = 303030303;
     private static final int CLIENT_FIRST_PERSON_3D_OPACITY_ADD = GUI_CHANGE_BUTTON + 1;
@@ -67,7 +69,110 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
     private int hei;
 
     @Shadow
+    public int scrollMouseJump;
+    @Shadow
+    public int scroll;
+    @Shadow
+    public boolean mousePressed;
+    @Shadow
+    public static float scrollSide;
+
+    @Shadow
     public static JRMCoreGuiScreen instance;
+    @Shadow
+    public int guiLeft;
+    @Shadow
+    public int guiTop;
+    @Shadow
+    public int ySize;
+    @Shadow
+    public int xSize;
+
+    @Shadow
+    protected abstract String textLevel(int lvl);
+    @Unique
+    private int skillsDrawnAlready = 0;
+
+    @Inject(method = "drawScreen", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreGuiScreen;scrollMouseJump:I", opcode = Opcodes.PUTFIELD, shift = At.Shift.BEFORE, remap = false, ordinal = 3), remap = true)
+    private void modifySkillCountForScrollSize(int x, int y, float f, CallbackInfo ci, @Local(index = 36) LocalIntRef sw) {
+        DBCData data = DBCData.getClient();
+        sw.set(sw.get() + data.customSkills.size());
+        skillsDrawnAlready = 0;
+    }
+
+    @Inject(method = "drawScreen", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;canAffordSkill(II)Z", ordinal = 2, remap = false), remap = true)
+    private void incrementDrawnSkills(int x, int y, float f, CallbackInfo ci) {
+        skillsDrawnAlready++;
+    }
+
+    @Inject(method = "drawScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/FontRenderer;drawString(Ljava/lang/String;III)I", remap = true, ordinal = 81))
+    private void drawCustomSkills(int x, int y, float f, CallbackInfo ci) {
+        if (JRMCoreH.PlyrSkills == null)
+            customNPC_DBC_Addon$drawSliderIfNoSkills();
+
+        DBCData data = DBCData.getClient();
+        SkillContainer[] customSkills = data.customSkills.values().toArray(new SkillContainer[0]);
+        for(int i = 0; i < Math.min(customSkills.length, 10 - skillsDrawnAlready); ++i) {
+            SkillContainer skill = customSkills[i];
+            skillsDrawnAlready++;
+            int offset = skillsDrawnAlready + 1;
+            String skillDescription = "";
+            int level = skill.getLevel();
+            String skillName =  "§0" + skill.getSkill().getDisplayName() + " " + this.textLevel(level);
+            FontRenderer fontRender = fontRendererObj;
+            enhancedGUIdrawString(fontRender, skillName, guiLeft + 5, guiTop + 20 + offset * 10, 0);
+//            drawDetails(); // SKILL DESCRIPTION
+            this.buttonList.add(new JRMCoreGuiButtonsA3(1000000 + skill.getSkillID(), guiLeft + 243, guiTop + 20 + offset * 10 - 2, 10, 3));
+
+            int tpReq = skill.getSkill().getTPCost(level+1);
+            int mindReq = skill.getSkill().getMindCost(level+1);
+            boolean canAffordMind = data.getAvailableMind() >= mindReq;
+            boolean canAffordTP = data.TP >= tpReq;
+            if (level < skill.getSkill().getMaxLevel() && tpReq != -1) {
+                this.buttonList.add(new JRMCoreGuiButtonsA3(2000000 + skill.getSkillID(), guiLeft - 10, guiTop + 18 + offset * 10, 10, 2, canAffordMind));
+            }
+            String sideMessage = level < skill.getSkill().getMaxLevel() ? (tpReq == -1 ? JRMCoreH.trl("jrmc", "UpgradeLocked") : "TP: " + JRMCoreH.numSep(tpReq) + " M: " + JRMCoreH.numSep(mindReq)) : JRMCoreH.trl("jrmc", "Maxed");
+            enhancedGUIdrawString(fontRender, sideMessage, guiLeft + 240 - fontRender.getStringWidth(sideMessage), guiTop + 20 + offset * 10, 0);
+
+
+        }
+    }
+
+    @Unique
+    private void customNPC_DBC_Addon$drawSliderIfNoSkills() {
+        System.out.println("Chuj ci w pizde");
+        int sw = DBCData.getClient().customSkills.size();
+        float cool = 5.0F;
+        int wpy = 10;
+        this.scrollMouseJump = 1;
+        if (sw > wpy) {
+            if ((float)sw - cool < (float)this.scroll) {
+                this.scroll = (int)((float)sw - cool);
+            } else if (this.scroll < 0) {
+                this.scroll = 0;
+            }
+
+            if (this.mousePressed && !JRMCoreGuiButtonsA1.clicked) {
+                this.scroll = (int)(((float)sw - cool) * scrollSide);
+            } else {
+                scrollSide = JRMCoreGuiSliderX00.sliderValue = (float)this.scroll / ((float)sw - cool);
+            }
+        } else {
+            this.scroll = 0;
+        }
+
+        if (sw > wpy) {
+            if (scrollSide > 0.0F) {
+                this.buttonList.add(new JRMCoreGuiButtonsA1(43, guiLeft + xSize / 2 + 110 + 18, guiTop + 80 - 70, "i"));
+            }
+
+            if (scrollSide < 1.0F) {
+                this.buttonList.add(new JRMCoreGuiButtonsA1(44, guiLeft + xSize / 2 + 110 + 18, guiTop + 80 + 60, "v"));
+            }
+
+            this.buttonList.add(new JRMCoreGuiSliderX00(1000000, guiLeft + xSize / 2 + 110 + 18, guiTop + 25, this.mousePressed, scrollSide, 1.0F));
+        }
+    }
 
     @Inject(method = "updateScreen", at = @At("HEAD"), remap = true)
     private void onUpdateScreen(CallbackInfo ci) {
@@ -232,10 +337,6 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
         }
     }
 
-    @ModifyVariable(method = "drawScreen", at = @At(value = "STORE", ordinal = 0))
-    private int modifySkillCount(int sw) {
-        return 0;
-    }
     @Inject(method = "drawScreen", at = @At(value = "INVOKE", target = "Ljava/util/List;clear()V", shift = At.Shift.AFTER), remap = true)
     private void onDrawScreen(CallbackInfo ci) {
         if (this.guiID != 10)
