@@ -77,13 +77,13 @@ public class CustomSkill implements ICustomSkill {
 
     @Override
     public int getTPCost(int level) {
-        level = Math.max(Math.min(1, level), getMaxLevel());
+        level = Math.min(Math.max(1, level), getMaxLevel());
         return tpCosts[level-1];
     }
 
     @Override
     public int getMindCost(int level) {
-        level = Math.max(Math.min(1, level), getMaxLevel());
+        level = Math.min(Math.max(1, level), getMaxLevel());
         return mindCosts[level-1];
     }
 
@@ -99,8 +99,9 @@ public class CustomSkill implements ICustomSkill {
 
     @Override
     public int getTotalTPCost(int level) {
+        int cap = Math.min(Math.max(level, 1), getMaxLevel());
         int sum = 0;
-        for (int i = 1; i <= this.getMaxLevel(); i++) {
+        for (int i = 1; i <= cap; i++) {
             sum += getTPCost(i);
         }
         return sum;
@@ -108,8 +109,9 @@ public class CustomSkill implements ICustomSkill {
 
     @Override
     public int getTotalMindCost(int level) {
+        int cap = Math.min(Math.max(level, 1), getMaxLevel());
         int sum = 0;
-        for (int i = 1; i <= this.getMaxLevel(); i++) {
+        for (int i = 1; i <= cap; i++) {
             sum += getMindCost(i);
         }
         return sum;
