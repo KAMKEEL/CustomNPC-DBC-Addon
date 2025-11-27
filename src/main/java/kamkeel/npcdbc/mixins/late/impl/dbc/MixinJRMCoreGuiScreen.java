@@ -16,6 +16,9 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.skill.SkillContainer;
 import kamkeel.npcdbc.mixins.late.IDBCGuiScreen;
+import kamkeel.npcdbc.network.DBCPacketClient;
+import kamkeel.npcdbc.network.DBCPacketHandler;
+import kamkeel.npcdbc.network.packets.player.skill.CustomSkillPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.gui.FontRenderer;
@@ -90,6 +93,10 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
     @Shadow
     protected abstract String textLevel(int lvl);
+
+    @Shadow
+    public abstract boolean isGUIOpen(int id);
+
     @Unique
     private int skillsDrawnAlready = 0;
 
@@ -122,14 +129,14 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
             FontRenderer fontRender = fontRendererObj;
             enhancedGUIdrawString(fontRender, skillName, guiLeft + 5, guiTop + 20 + offset * 10, 0);
 //            drawDetails(); // SKILL DESCRIPTION
-            this.buttonList.add(new JRMCoreGuiButtonsA3(1000000 + skill.getSkillID(), guiLeft + 243, guiTop + 20 + offset * 10 - 2, 10, 3));
+                this.buttonList.add(new JRMCoreGuiButtonsA3(2000000 + skill.getSkillID(), guiLeft + 243, guiTop + 20 + offset * 10 - 2, 10, 3));
 
             int tpReq = skill.getSkill().getTPCost(level+1);
             int mindReq = skill.getSkill().getMindCost(level+1);
             boolean canAffordMind = data.getAvailableMind() >= mindReq;
             boolean canAffordTP = data.TP >= tpReq;
             if (level < skill.getSkill().getMaxLevel() && tpReq != -1) {
-                this.buttonList.add(new JRMCoreGuiButtonsA3(2000000 + skill.getSkillID(), guiLeft - 10, guiTop + 18 + offset * 10, 10, 2, canAffordMind));
+                this.buttonList.add(new JRMCoreGuiButtonsA3(3000000 + skill.getSkillID(), guiLeft - 10, guiTop + 18 + offset * 10, 10, 2, canAffordMind && canAffordTP));
             }
             String sideMessage = level < skill.getSkill().getMaxLevel() ? (tpReq == -1 ? JRMCoreH.trl("jrmc", "UpgradeLocked") : "TP: " + JRMCoreH.numSep(tpReq) + " M: " + JRMCoreH.numSep(mindReq)) : JRMCoreH.trl("jrmc", "Maxed");
             enhancedGUIdrawString(fontRender, sideMessage, guiLeft + 240 - fontRender.getStringWidth(sideMessage), guiTop + 20 + offset * 10, 0);
@@ -350,6 +357,17 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
 
     @Inject(method = "actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", at = @At("HEAD"), remap = true)
     public void onActionPerformed(GuiButton button, CallbackInfo ci) {
+        if (this.isGUIOpen(11)) {
+            if (button.id >= 2000000 && button.id < 3000000) {
+                int skillID = button.id - 2000000;
+                DBCPacketClient.sendClient(new CustomSkillPacket(skillID, CustomSkillPacket.Action.UNLEARN));
+            }
+            if (button.id >= 3000000 && button.id < 4000000) {
+                int skillID = button.id - 3000000;
+                DBCPacketClient.sendClient(new CustomSkillPacket(skillID, CustomSkillPacket.Action.UPGRADE));
+            }
+        }
+
         if (button.id == GUI_CHANGE_BUTTON) {
             ConfigDBCClient.EnhancedGui = true;
             ConfigDBCClient.EnhancedGuiProperty.set(true);
