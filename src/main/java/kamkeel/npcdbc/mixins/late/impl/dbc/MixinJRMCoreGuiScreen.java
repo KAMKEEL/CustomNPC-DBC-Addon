@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import cpw.mods.fml.common.FMLCommonHandler;
 import jdk.internal.org.objectweb.asm.Opcodes;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
+import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -14,10 +15,10 @@ import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.skill.CustomSkill;
 import kamkeel.npcdbc.data.skill.SkillContainer;
 import kamkeel.npcdbc.mixins.late.IDBCGuiScreen;
 import kamkeel.npcdbc.network.DBCPacketClient;
-import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.skill.CustomSkillPacket;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import kamkeel.npcdbc.util.Utility;
@@ -25,12 +26,15 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.text.DecimalFormat;
@@ -91,12 +95,19 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
     @Shadow
     public int xSize;
 
+    @Unique
+    private boolean dealingWithCustomSkills;
+
     @Shadow
     protected abstract String textLevel(int lvl);
 
     @Shadow
     public abstract boolean isGUIOpen(int id);
 
+    @Shadow
+    private boolean confirmationWindow;
+    @Shadow
+    private int IDtoProcessConfirmFor;
     @Unique
     private int skillsDrawnAlready = 0;
 
@@ -105,6 +116,31 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
         DBCData data = DBCData.getClient();
         sw.set(sw.get() + data.customSkills.size());
         skillsDrawnAlready = 0;
+    }
+
+    @Redirect(method = "drawScreen", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreGuiScreen;confirmationWindow:Z"))
+    private boolean hijackSkillDeleteConfirmation(JRMCoreGuiScreen instance) {
+        if (!dealingWithCustomSkills)
+            return confirmationWindow;
+        int xSize = 140;
+        int ySize = 71;
+        int wpx = 60;
+        int wpy = 50;
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        ResourceLocation loc = new ResourceLocation(wish);
+        JRMCoreClient.mc.getTextureManager().bindTexture(loc);
+        this.drawTexturedModalRect(guiLeft + wpx, guiTop + wpy, 0, 159, xSize, ySize);
+
+        ICustomSkill skill = SkillController.Instance.getSkill(IDtoProcessConfirmFor - 2000000);
+        if (skill != null) {
+            String skillName = skill.getDisplayName();
+            JRMCoreH.txt(JRMCoreH.trl("jrmc", "delskillconfirm", skillName), JRMCoreH.cldr, 0, true, guiLeft + wpx + 5, guiTop + wpy + 5, xSize - 10);
+            this.buttonList.add(new JRMCoreGuiButtons00(this.IDtoProcessConfirmFor, guiLeft + 5 + wpx, guiTop + 45 + wpy, 40, 20, JRMCoreH.trl("jrmc", "Yes"), 0));
+        }
+
+        this.buttonList.add(new JRMCoreGuiButtons00(399, guiLeft + 95 + wpx, guiTop + 45 + wpy, 40, 20, JRMCoreH.trl("jrmc", "No"), 0));
+
+        return false;
     }
 
     @Inject(method = "drawScreen", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;canAffordSkill(II)Z", ordinal = 2, remap = false), remap = true)
@@ -355,12 +391,24 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
         this.buttonList.add(new JRMCoreGuiButtons00(303030303, (this.width - i) / 2 + 154, (this.height - 159) / 2 + 65, i + 8, 20, s, 0));
     }
 
-    @Inject(method = "actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", at = @At("HEAD"), remap = true)
+    @Inject(method = "actionPerformed(Lnet/minecraft/client/gui/GuiButton;)V", at = @At("HEAD"), remap = true, cancellable = true)
     public void onActionPerformed(GuiButton button, CallbackInfo ci) {
-        if (this.isGUIOpen(11)) {
+        if (this.isGUIOpen(11) && !JRMCoreH.isFused()) {
+            if (button.id >= 360 && button.id <= 399) {
+                dealingWithCustomSkills = false;
+            }
             if (button.id >= 2000000 && button.id < 3000000) {
-                int skillID = button.id - 2000000;
-                DBCPacketClient.sendClient(new CustomSkillPacket(skillID, CustomSkillPacket.Action.UNLEARN));
+                if (dealingWithCustomSkills) {
+                    ci.cancel();
+                    this.confirmationWindow = false;
+                    this.dealingWithCustomSkills = false;
+                    int skillID = IDtoProcessConfirmFor - 2000000;
+                    DBCPacketClient.sendClient(new CustomSkillPacket(skillID, CustomSkillPacket.Action.UNLEARN));
+                    return;
+                }
+                this.confirmationWindow = true;
+                this.IDtoProcessConfirmFor = button.id;
+                this.dealingWithCustomSkills = true;
             }
             if (button.id >= 3000000 && button.id < 4000000) {
                 int skillID = button.id - 3000000;

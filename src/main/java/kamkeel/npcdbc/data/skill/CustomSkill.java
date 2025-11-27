@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.data.skill;
 
+import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -155,8 +156,10 @@ public class CustomSkill implements ICustomSkill {
                 return;
             }
 
-            container = new SkillContainer(player, this, level);
+            container = new SkillContainer(data, this, level);
             data.customSkills.put(id, container);
+            if (data.side == Side.SERVER)
+                data.saveNBTData(false);
         } else {
             container.setLevel(level);
         }

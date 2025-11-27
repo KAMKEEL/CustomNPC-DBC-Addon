@@ -40,7 +40,7 @@ public class SkillController implements ISkillHandler {
         LogWriter.info("Loading custom skills...");
         readCustomSkillMap();
         loadSkills();
-        LogWriter.info("Done loading custom forms.");
+        LogWriter.info("Done loading custom skills.");
 
 //        CustomSkill skill = new CustomSkill(1, "test", 10, null, null);
 //        delete(1);

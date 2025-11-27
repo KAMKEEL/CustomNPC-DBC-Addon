@@ -48,6 +48,8 @@ import noppes.npcs.controllers.data.PlayerEffect;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.scripted.NpcAPI;
 import noppes.npcs.util.ValueUtil;
+import org.lwjgl.Sys;
+import org.lwjgl.opencl.CL;
 
 import java.util.*;
 
@@ -180,8 +182,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
 
         comp.setBoolean("DBCIsFnPressed", isFnPressed);
 
-
-        NBTTagList skillList = NBTHelper.nbtIntegerObjectMap(this.customSkills, skill -> skill.writeToNBT(new NBTTagCompound()), (i, tag) -> SkillController.Instance.getSkill(i) != null);
+        NBTTagList skillList = NBTHelper.nbtIntegerObjectMap(this.customSkills, skill -> skill.writeToNBT(new NBTTagCompound()), (i, skill) -> SkillController.Instance.getSkill(i) != null);
         comp.setTag("customSkills", skillList);
         return comp;
     }
@@ -274,7 +275,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         isFnPressed = c.getBoolean("DBCIsFnPressed");
 
         if (c.hasKey("customSkills"))
-            this.customSkills = NBTHelper.javaIntegerObjectMap(c.getTagList("customSkills", Constants.NBT.TAG_COMPOUND), tag -> SkillContainer.fromNBT(player, tag));
+            this.customSkills = NBTHelper.javaIntegerObjectMap(c.getTagList("customSkills", Constants.NBT.TAG_COMPOUND), tag -> SkillContainer.fromNBT(this, tag));
     }
 
     @SideOnly(Side.CLIENT)

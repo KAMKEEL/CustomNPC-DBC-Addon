@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.data.skill;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.api.skill.ISkillContainer;
 import kamkeel.npcdbc.controllers.SkillController;
@@ -16,25 +17,25 @@ import noppes.npcs.scripted.NpcAPI;
 public class SkillContainer implements ISkillContainer {
 
     private final DBCData data;
-    public final IPlayer player;
     private ICustomSkill skill;
     private int level;
+    private boolean finishedSettingUp;
 
-    public SkillContainer(IPlayer player, ICustomSkill skill, int level) {
-        this(player);
+    public SkillContainer(DBCData data, ICustomSkill skill, int level) {
+        this(data);
         this.skill = skill;
         setLevel(level);
     }
 
-    private SkillContainer(IPlayer player) {
-        this.player = player;
-        this.data = DBCData.getClient();
+    private SkillContainer(DBCData data) {
+        this.data = data;
     }
 
-    public static SkillContainer fromNBT(EntityPlayer player, NBTTagCompound comp) {
-        SkillContainer container = new SkillContainer(null);
+    public static SkillContainer fromNBT(DBCData data, NBTTagCompound comp) {
+        SkillContainer container = new SkillContainer(data);
         container.skill = SkillController.Instance.getSkill(comp.getInteger("id"));
         container.setLevel(comp.getInteger("lvl"));
+        container.finishedSettingUp = true;
         return container;
     }
 
@@ -47,7 +48,7 @@ public class SkillContainer implements ISkillContainer {
 
     @Override
     public IPlayer getPlayer() {
-        return this.player;
+        return PlayerDataUtil.getIPlayer(data.player);
     }
 
     @Override
@@ -64,6 +65,8 @@ public class SkillContainer implements ISkillContainer {
     public void setLevel(int level) {
         level = Math.min(Math.max(level, 1), skill.getMaxLevel());
         this.level = level;
+        if (finishedSettingUp)
+            data.saveNBTData(false);
     }
 
     @Override
@@ -90,7 +93,7 @@ public class SkillContainer implements ISkillContainer {
         if (data.TP < tpCost || mindCost < data.getAvailableMind())
             return false;
 
-        DBCPlayerEvent.SkillEvent.Upgrade event = new DBCPlayerEvent.SkillEvent.Upgrade(player, 2, getSkillID(), tpCost, newLevel);
+        DBCPlayerEvent.SkillEvent.Upgrade event = new DBCPlayerEvent.SkillEvent.Upgrade(getPlayer(), 2, getSkillID(), tpCost, newLevel);
         if (postEvent && DBCEventHooks.onSkillEvent(event))
             return false;
 
@@ -106,7 +109,7 @@ public class SkillContainer implements ISkillContainer {
 
     @Override
     public void unlearnSkill(boolean postEvent) {
-        DBCPlayerEvent.SkillEvent.Unlearn event = new DBCPlayerEvent.SkillEvent.Unlearn(player, 2, getSkillID());
+        DBCPlayerEvent.SkillEvent.Unlearn event = new DBCPlayerEvent.SkillEvent.Unlearn(getPlayer(), 2, getSkillID());
         if (postEvent && DBCEventHooks.onSkillEvent(event))
             return;
         data.customSkills.remove(getSkillID());

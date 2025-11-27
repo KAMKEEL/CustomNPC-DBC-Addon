@@ -1,6 +1,8 @@
 package kamkeel.npcdbc.network.packets.player.skill;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.constants.DBCForm;
@@ -71,6 +73,9 @@ public final class CustomSkillPacket extends AbstractPacket {
         int skillID = in.readInt();
         Action action = Action.values()[in.readInt()];
 
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+            return;
+
         ICustomSkill skill = SkillController.Instance.getSkill(skillID);
         if (skill == null)
             return;
@@ -114,6 +119,6 @@ public final class CustomSkillPacket extends AbstractPacket {
                 break;
         }
 
-        DBCData.get(player).saveNBTData(true);
+        data.saveNBTData(true);
     }
 }
