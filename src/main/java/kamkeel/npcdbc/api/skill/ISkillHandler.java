@@ -5,6 +5,9 @@ public interface ISkillHandler {
     ICustomSkill getSkill(int id);
     ICustomSkill getSkill(String stringLiteralId);
 
+    void delete(int id);
+    void delete(ICustomSkill skill);
+
     /**
      * Calls {@linkplain ISkillHandler#createSkill(String, int) createSkill(stringLiteralId, 1)}
      */
@@ -16,7 +19,8 @@ public interface ISkillHandler {
     ICustomSkill createSkill(String stringLiteralId, int maxLevel);
 
     /**
-     * Creates a new skill.
+     * Creates a new skill or returns an existing one with the given ID. <br>
+     * If skill existed, no changes happen to it.
      * @param stringLiteralId String ID which can be used to look up the skill with.
      * @param maxLevel Max level of a skill. Minimum 1, Max 10.
      * @param tpCosts Array of TP costs. Refer to {@linkplain ICustomSkill#setTPCostsArray(int[])}.

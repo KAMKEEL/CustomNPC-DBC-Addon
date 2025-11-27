@@ -181,7 +181,7 @@ public class DBCData extends DBCDataUniversal implements IAuraData {
         comp.setBoolean("DBCIsFnPressed", isFnPressed);
 
 
-        NBTTagList skillList = NBTHelper.nbtIntegerObjectMap(this.customSkills, skill -> skill.writeToNBT(new NBTTagCompound()));
+        NBTTagList skillList = NBTHelper.nbtIntegerObjectMap(this.customSkills, skill -> skill.writeToNBT(new NBTTagCompound()), (i, tag) -> SkillController.Instance.getSkill(i) != null);
         comp.setTag("customSkills", skillList);
         return comp;
     }

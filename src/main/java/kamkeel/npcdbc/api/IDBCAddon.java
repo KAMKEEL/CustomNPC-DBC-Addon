@@ -3,6 +3,8 @@ package kamkeel.npcdbc.api;
 import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.api.skill.ICustomSkill;
+import kamkeel.npcdbc.api.skill.ISkillContainer;
 import noppes.npcs.api.entity.IDBCPlayer;
 import noppes.npcs.api.entity.IEntityLivingBase;
 import noppes.npcs.api.entity.IPlayer;
@@ -734,4 +736,16 @@ public interface IDBCAddon extends IDBCPlayer {
      * @return Ki Attack data
      */
     IKiAttack getAttackFromSlot(int slot);
+
+    /**
+     * @param skillID ID of the skill
+     * @return Data of the custom skill progression or <code>null</code> if player doesn't have it.
+     */
+    ISkillContainer getCustomSkillData(int skillID);
+
+    /**
+     * @param skill Skill object
+     * @return Data of the custom skill progression or <code>null</code> if player doesn't have it
+     */
+    ISkillContainer getCustomSkillData(ICustomSkill skill);
 }

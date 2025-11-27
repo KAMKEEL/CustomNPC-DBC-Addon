@@ -3,6 +3,7 @@ package kamkeel.npcdbc.controllers;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.api.skill.ISkillHandler;
 import kamkeel.npcdbc.constants.DBCSyncType;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.skill.CustomSkill;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.get.DBCInfoSyncPacket;
@@ -16,6 +17,7 @@ import noppes.npcs.util.NBTJsonUtil;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 public class SkillController implements ISkillHandler {
@@ -66,28 +68,54 @@ public class SkillController implements ISkillHandler {
     }
 
     @Override
+    public void delete(ICustomSkill skill) {
+        if (skill != null)
+            delete(skill.getId());
+    }
+
+    @Override
     public ICustomSkill getSkill(int id) {
         return this.customSkills.get(id);
     }
 
     @Override
     public ICustomSkill getSkill(String stringLiteralId) {
+        for (Map.Entry<Integer, CustomSkill> entrySkill : SkillController.Instance.customSkills.entrySet()) {
+            if (entrySkill.getValue().stringLiteralId.equalsIgnoreCase(stringLiteralId)) {
+                return entrySkill.getValue();
+            }
+        }
         return null;
     }
 
     @Override
     public ICustomSkill createSkill(String stringLiteralId) {
-        return null;
+        return createSkill(stringLiteralId, 1);
     }
 
     @Override
     public ICustomSkill createSkill(String stringLiteralId, int maxLevel) {
-        return null;
+        return createSkill(stringLiteralId, maxLevel, null, null);
     }
 
     @Override
     public ICustomSkill createSkill(String stringLiteralId, int maxLevel, int[] tpCosts, int[] mindCosts) {
-        return null;
+        if (hasName(stringLiteralId))
+            return getSkill(stringLiteralId);
+
+        CustomSkill skill = new CustomSkill(getUnusedId(), stringLiteralId, maxLevel, tpCosts, mindCosts);
+        int setID = skill.id;
+        while (bootOrder.containsKey(setID) || customSkills.containsKey(setID)) {
+            if (bootOrder.containsKey(setID))
+                if (bootOrder.get(setID).equals(skill.stringLiteralId))
+                    break;
+
+            setID++;
+        }
+        skill.id = setID;
+        customSkills.put(skill.id, skill);
+        skill.save();
+        return skill;
     }
 
     //////////////////////////////////////////

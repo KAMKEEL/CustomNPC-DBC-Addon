@@ -10,6 +10,8 @@ import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.api.form.IForm;
 import kamkeel.npcdbc.api.form.IFormMastery;
 import kamkeel.npcdbc.api.outline.IOutline;
+import kamkeel.npcdbc.api.skill.ICustomSkill;
+import kamkeel.npcdbc.api.skill.ISkillContainer;
 import kamkeel.npcdbc.config.ConfigDBCGeneral;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -17,6 +19,7 @@ import kamkeel.npcdbc.constants.DBCSettings;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.controllers.OutlineController;
+import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.KiAttack;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.aura.Aura;
@@ -1409,6 +1412,18 @@ public class ScriptDBCAddon<T extends EntityPlayerMP> extends ScriptDBCPlayer<T>
         //element 6 is the effect
         //element 10 is color
 
+    }
+
+    @Override
+    public ISkillContainer getCustomSkillData(int skillID) {
+        return getCustomSkillData(SkillController.Instance.getSkill(skillID));
+    }
+
+    @Override
+    public ISkillContainer getCustomSkillData(ICustomSkill skill) {
+        if (skill == null)
+            return null;
+        return dbcData.customSkills.get(skill.getId());
     }
 
 }

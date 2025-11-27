@@ -69,19 +69,52 @@ public interface ICustomSkill {
     boolean doesPlayerHaveSkill(IPlayer player, int level);
 
     /**
-     * Teaches the player a skill if he doesn't have it unlocked. <br>
-     * Does not take TP, only mind.
+     * Teaches the player this skill if they don't already have it unlocked. <br>
+     * Does not take TP, only mind. <br>
+     * Does not check if the player has enough mind. <br>
+     * The event is posted only if {@code postEvent == true} **and** the player does not already have the skill. <br>
+     * Equivalent of calling {@linkplain ICustomSkill#teachPlayerSkill(IPlayer, int, boolean)
+     * teachPlayerSkill(player, 1, postEvent)}
+     *
+     * @param player player to teach
+     * @param postEvent whether the event should be posted to scripts (only posted if the player doesn't have the skill already)
+     */
+    void teachPlayerSkill(IPlayer player, boolean postEvent);
+
+    /**
+     * Teaches the player this skill if they don't already have it unlocked. <br>
+     * Does not take TP, only mind. <br>
+     * The event is not posted. <br>
+     * Equivalent of calling {@linkplain ICustomSkill#teachPlayerSkill(IPlayer, int, boolean) teachPlayerSkill(player, 1, false)}
+     *
      * @param player player to teach
      */
     void teachPlayerSkill(IPlayer player);
 
     /**
-     * If the player doesn't have this skill or their level is below the one provided, it sets it to the new level. <br>
-     * Does not take TP, only mind.
+     * If the player doesn't have this skill or their current level is below the one provided,
+     * their level is set to the new level. <br>
+     * Does not take TP, only mind. <br>
+     * The event is posted only if {@code postEvent == true} **and** the skill is newly learned.
+     *
+     * @param player player to teach
+     * @param level level to set (if <code>level > #getMaxLevel()</code>, level is treated as max level)
+     * @param postEvent whether the event should be posted to scripts (only posted if the skill is newly learned)
+     */
+    void teachPlayerSkill(IPlayer player, int level, boolean postEvent);
+
+    /**
+     * If the player doesn't have this skill or their current level is below the one provided,
+     * their level is set to the new level. <br>
+     * Does not take TP, only mind. <br>
+     * The event is not posted. <br>
+     * Equivalent of calling {@linkplain ICustomSkill#teachPlayerSkill(IPlayer, int, boolean) teachPlayerSkill(player, level, false)}
+     *
      * @param player player to teach
      * @param level level to set (if <code>level > #getMaxLevel()</code>, level is treated as max level)
      */
     void teachPlayerSkill(IPlayer player, int level);
+
 
     /**
      * Specifies upgrade TP costs for each level.<br><br>

@@ -3,6 +3,8 @@ package kamkeel.npcdbc.data.skill;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.scripted.DBCEventHooks;
+import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import noppes.npcs.api.entity.IPlayer;
@@ -133,22 +135,36 @@ public class CustomSkill implements ICustomSkill {
     }
 
     @Override
-    public void teachPlayerSkill(IPlayer player) {
-        teachPlayerSkill(player, 1);
+    public void teachPlayerSkill(IPlayer player, boolean postEvent) {
+        teachPlayerSkill(player, 1, postEvent);
     }
 
     @Override
-    public void teachPlayerSkill(IPlayer player, int level) {
+    public void teachPlayerSkill(IPlayer player) {
+        teachPlayerSkill(player, 1, false);
+    }
+
+    @Override
+    public void teachPlayerSkill(IPlayer player, int level, boolean postEvent) {
         DBCData data = dataForIPlayer(player);
         SkillContainer container = data.customSkills.get(id);
 
         if (container == null) {
+            if (DBCEventHooks.onSkillEvent(
+                new DBCPlayerEvent.SkillEvent.Learn(player, 2, getId(), 0))) {
+                return;
+            }
+
             container = new SkillContainer(player, this, level);
             data.customSkills.put(id, container);
         } else {
             container.setLevel(level);
         }
+    }
 
+    @Override
+    public void teachPlayerSkill(IPlayer player, int level) {
+        teachPlayerSkill(player, level, false);
     }
 
     @Override

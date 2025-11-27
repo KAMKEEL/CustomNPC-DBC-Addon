@@ -99,7 +99,7 @@ public final class CustomSkillPacket extends AbstractPacket {
                 int cost = skill.getTPCost(newLevel);
                 int mindCost = skill.getMindCost(newLevel);
 
-                if (cost > data.TP || data.getAvailableMind() < mindCost)
+                if (cost < 0 || cost > data.TP || data.getAvailableMind() < mindCost)
                     return;
 
                 DBCPlayerEvent.SkillEvent.Upgrade upgradeEvent = new DBCPlayerEvent.SkillEvent.Upgrade(iplayer, 2, skillID, cost, newLevel);
@@ -109,6 +109,7 @@ public final class CustomSkillPacket extends AbstractPacket {
                 cost = upgradeEvent.getCost();
                 if (cost > data.TP)
                     return;
+                data.TP -= Math.max(0, cost);
                 container.setLevel(newLevel);
                 break;
         }

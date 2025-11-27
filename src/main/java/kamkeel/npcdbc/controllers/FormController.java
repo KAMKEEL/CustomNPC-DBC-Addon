@@ -61,6 +61,7 @@ public class FormController implements IFormHandler {
 
                 setID++;
             }
+            form.id = setID;
             customForms.put(form.id, form);
             form.save();
             return form;
