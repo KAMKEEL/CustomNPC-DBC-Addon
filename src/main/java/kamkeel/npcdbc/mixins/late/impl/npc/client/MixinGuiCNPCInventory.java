@@ -23,7 +23,7 @@ public abstract class MixinGuiCNPCInventory extends GuiNPCInterface {
     @Unique
     private static final ResourceLocation MENU_ICONS = new ResourceLocation(CustomNpcPlusDBC.ID + ":textures/gui/icons.png");
 
-    @Shadow
+    @Shadow(remap = false)
     public static int activeTab;
 
     public MixinGuiCNPCInventory(EntityCustomNpc npc) {

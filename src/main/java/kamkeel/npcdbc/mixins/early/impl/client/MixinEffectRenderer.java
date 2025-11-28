@@ -12,7 +12,7 @@ public abstract class MixinEffectRenderer {
      * @author jss2a98aj
      * @reason Makes most particles render with the expected depth.
      */
-    @Redirect(method = "renderParticles", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glDepthMask(Z)V", ordinal = 0))
+    @Redirect(method = "renderParticles", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glDepthMask(Z)V", ordinal = 0, remap=false))
     private void skipGlDepthMask(boolean flag) {
     }
 

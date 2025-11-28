@@ -25,7 +25,7 @@ public abstract class MixinScriptPlayerEventHandler {
     @Unique
     private DBCDamageCalc attackEventDamage;
 
-    @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, remap = true, ordinal = 0))
+    @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, ordinal = 0))
     public float attackedEvent(LivingAttackEvent instance) {
         if (instance.source.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) instance.source.getEntity();
@@ -43,7 +43,7 @@ public abstract class MixinScriptPlayerEventHandler {
         return instance.ammount;
     }
 
-    @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, remap = true, ordinal = 1))
+    @Redirect(method = "invoke(Lnet/minecraftforge/event/entity/living/LivingAttackEvent;)V", at = @At(value = "FIELD", target = "Lnet/minecraftforge/event/entity/living/LivingAttackEvent;ammount:F", opcode = Opcodes.GETFIELD, ordinal = 1))
     public float attackEvent(LivingAttackEvent instance) {
         if (instance.source.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) instance.source.getEntity();

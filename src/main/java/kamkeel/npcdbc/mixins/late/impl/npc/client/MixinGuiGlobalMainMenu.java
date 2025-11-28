@@ -29,7 +29,7 @@ public abstract class MixinGuiGlobalMainMenu extends GuiNPCInterface2 {
         super(npc);
     }
 
-    @Shadow
+    @Shadow(remap = false)
     public void registerButton(GuiNpcSquareButton button) {
     }
 

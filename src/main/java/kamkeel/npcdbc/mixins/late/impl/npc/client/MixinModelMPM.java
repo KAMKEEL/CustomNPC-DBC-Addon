@@ -76,7 +76,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         NPCDBCModel.rot6 = p6;
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER), remap = true)
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER, remap=false), remap = true)
     private void outline(Entity entity, float p1, float p2, float p3, float p4, float p5, float p6, CallbackInfo ci) {
 
         EntityCustomNpc npc = (EntityCustomNpc) entity;
@@ -150,7 +150,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         }
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER, remap = true))
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER, remap=false), remap = true)
     public void renderKiWeapon(Entity par1Entity, float par2, float par3, float par4, float par5, float par6, float par7, CallbackInfo ci) {
         if (this.isArmor) {
             return;

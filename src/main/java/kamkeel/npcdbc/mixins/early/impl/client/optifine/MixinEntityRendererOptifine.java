@@ -58,7 +58,7 @@ public class MixinEntityRendererOptifine {
         PostProcessing.bloom(1.5f, true);
     }
 
-    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lshadersmod/client/Shaders;endRender()V", shift = At.Shift.AFTER))
+    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lshadersmod/client/Shaders;endRender()V", shift = At.Shift.AFTER, remap=false))
     private void processEntities(float partialTick, long idk, CallbackInfo info) {
         OptifineHelper.process();
     }

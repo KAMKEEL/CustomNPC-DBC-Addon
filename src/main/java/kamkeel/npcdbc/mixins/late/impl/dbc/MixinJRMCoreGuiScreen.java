@@ -4,7 +4,7 @@ import JinRyuu.JRMCore.*;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import cpw.mods.fml.common.FMLCommonHandler;
-import jdk.internal.org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Opcodes;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.api.skill.ICustomSkill;
 import kamkeel.npcdbc.client.ColorMode;

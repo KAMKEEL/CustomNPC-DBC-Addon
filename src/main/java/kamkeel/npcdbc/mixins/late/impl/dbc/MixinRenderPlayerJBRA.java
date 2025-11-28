@@ -111,7 +111,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderArmEvent.Post(par1EntityPlayer, (RenderPlayerJBRA) (Object) this, Minecraft.getMinecraft().timer.renderPartialTicks));
     }
 
-    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 1), remap = true)
+    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 1, remap=false), remap = true)
     protected void setDamage(float x, float y, float z, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
         if (mc.theWorld == null)
             return;
@@ -195,7 +195,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         return instance.isSneaking();
     }
 
-    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data2:[Ljava/lang/String;"), remap = true)
+    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data2:[Ljava/lang/String;", remap=false), remap = true)
     private String[] changeFormDAata(@Local(name = "pl") int pl, @Local(ordinal = 0) AbstractClientPlayer player) {
         DBCData data = DBCData.get(player);
         if (data.State > 0) {
@@ -450,7 +450,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         this.modelMain.renderHairs(0.0625F, "OOZARU");
     }
 
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER), remap = true)
+    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER, remap = false), remap = true)
     private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "State") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3) {
         Form form = DBCData.getForm(par1EntityPlayer);
         ClientEventHandler.renderingPlayer = par1EntityPlayer;
@@ -493,7 +493,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
     }
 
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 0, shift = At.Shift.BEFORE), remap = true)
+    @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 0, shift = At.Shift.BEFORE, remap = false), remap = true)
     private void renderSaiyanArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
 
         Form form = DBCData.getForm(par1EntityPlayer);
@@ -508,7 +508,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
     }
 
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/RenderPlayerJBRA;func_aam2(Lnet/minecraft/client/model/ModelRenderer;Lnet/minecraft/client/model/ModelRenderer;IZ)V", ordinal = 11, shift = At.Shift.AFTER), remap = true)
+    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/RenderPlayerJBRA;func_aam2(Lnet/minecraft/client/model/ModelRenderer;Lnet/minecraft/client/model/ModelRenderer;IZ)V", ordinal = 11, shift = At.Shift.AFTER, remap=false), remap = true)
     private void fixLeftSaiyanFurArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
         int idValue = id.get();
         if(idValue == -1)
@@ -625,7 +625,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         ClientCache.fromRenderPlayerJBRA = false;
     }
 
-    @Inject(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE), remap = true)
+    @Inject(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE, remap=false), remap = true)
     public void setCurrentlyRenderedJRMCTickPlayer(AbstractClientPlayer p, float p_77041_2_, CallbackInfo ci) {
         CommonProxy.setCurrentJRMCTickPlayer(p);
     }

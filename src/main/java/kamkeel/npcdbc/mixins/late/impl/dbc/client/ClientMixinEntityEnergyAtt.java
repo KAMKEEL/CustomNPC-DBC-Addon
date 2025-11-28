@@ -17,28 +17,28 @@ public abstract class ClientMixinEntityEnergyAtt extends EntityEnAttacks {
         super(par1World);
     }
 
-    @Redirect(method = "onUpdate", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCClientTickHandler;nuller()V"))
+    @Redirect(method = "onUpdate", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCClientTickHandler;nuller()V", remap=false))
     private void fixKiChargeReset_onUpdate() {
         if (this.shootingEntity == Minecraft.getMinecraft().thePlayer) {
             DBCClientTickHandler.nuller();
         }
     }
 
-    @Redirect(method = "onUpdate", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;isShtng:Z", opcode = Opcodes.PUTSTATIC), remap = true)
+    @Redirect(method = "onUpdate", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;isShtng:Z", opcode = Opcodes.PUTSTATIC, remap=false), remap = true)
     private void fixNonShootingReset_onUpdate(boolean value) {
         if (this.shootingEntity == Minecraft.getMinecraft().thePlayer) {
             JRMCoreH.isShtng = value;
         }
     }
 
-    @Redirect(method = "setDead", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCClientTickHandler;nuller()V"))
+    @Redirect(method = "setDead", at = @At(value = "INVOKE", target = "LJinRyuu/DragonBC/common/DBCClientTickHandler;nuller()V", remap=false))
     private void fixKiChargeReset_setDead() {
         if (this.shootingEntity == Minecraft.getMinecraft().thePlayer) {
             DBCClientTickHandler.nuller();
         }
     }
 
-    @Redirect(method = "setDead", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;isShtng:Z", opcode = Opcodes.PUTSTATIC), remap = true)
+    @Redirect(method = "setDead", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;isShtng:Z", opcode = Opcodes.PUTSTATIC, remap=false), remap = true)
     private void fixNonShootingReset_setDead(boolean value) {
         if (this.shootingEntity == Minecraft.getMinecraft().thePlayer) {
             JRMCoreH.isShtng = value;

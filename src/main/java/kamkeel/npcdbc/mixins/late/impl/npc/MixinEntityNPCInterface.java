@@ -48,7 +48,7 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
      * If npc attacked by a DBC player (powerType ==1), I set dbcAltered  true,
      * then I set the DamagedEvent's damage to the player's DBC attack stat (pure damage player would do without any NPC defense calculations)
      */
-    @Inject(method = "attackEntityFrom", at = @At(value = "FIELD", target = "Lnoppes/npcs/entity/EntityNPCInterface;wrappedNPC:Lnoppes/npcs/api/entity/ICustomNpc;", shift = At.Shift.BEFORE))
+    @Inject(method = "attackEntityFrom", at = @At(value = "FIELD", target = "Lnoppes/npcs/entity/EntityNPCInterface;wrappedNPC:Lnoppes/npcs/api/entity/ICustomNpc;", shift = At.Shift.BEFORE, remap=false))
     public void fixDamagedEventDBCDamage(DamageSource damagesource, float amount, CallbackInfoReturnable<Boolean> cir, @Local(name = "i") LocalFloatRef dam) {
         Entity attackerEntity = NoppesUtilServer.GetDamageSource(damagesource);
 
@@ -81,7 +81,7 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
      * Then in  {@link MixinJRMCoreEH#NPCDamaged(EntityLivingBase, DamageSource, float amount, CallbackInfo, LocalFloatRef)}
      * which always fires after this in the MC LivingHurt, I set the pure damage in the LivingHurtEvent to npcLastSetDamage then I reset it to -1
      */
-    @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Lnoppes/npcs/scripted/event/NpcEvent$DamagedEvent;getDamage()F"))
+    @Redirect(method = "attackEntityFrom", at = @At(value = "INVOKE", target = "Lnoppes/npcs/scripted/event/NpcEvent$DamagedEvent;getDamage()F", remap=false))
     public float fixDamagedEventDBCDamage(NpcEvent.DamagedEvent instance) {
         if (dbcAltered && DBCUtils.npcLastSetDamage == null && !instance.isCancelled()) {
             DBCUtils.npcLastSetDamage = instance.getDamage();

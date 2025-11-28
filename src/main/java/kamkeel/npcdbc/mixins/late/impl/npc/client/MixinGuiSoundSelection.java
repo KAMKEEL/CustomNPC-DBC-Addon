@@ -18,7 +18,7 @@ public abstract class MixinGuiSoundSelection {
             instance.stopAllSounds();
     }
 
-    @Redirect(method = "actionPerformed", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/controllers/MusicController;stopMusic()V"), remap = true)
+    @Redirect(method = "actionPerformed", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/controllers/MusicController;stopMusic()V", remap=false), remap = true)
     public void fixSound2(MusicController instance) {
         if (SubGuiAuraDisplay.aura != null) {
 
