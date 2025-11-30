@@ -169,6 +169,8 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             cosmeticsScrollWindow.maxScrollY = maxScroll;
         } else {
             //  addButton(new GuiNpcButton(1, guiLeft + 64, y += 22, 60, 20, arrRace, display.race+1));
+            addButton(new GuiNpcButtonYesNo(-100, guiLeft + 64, y+=22, 60, 20, display.isFemale()));
+            addLabel(new GuiNpcLabel(-100, "display.femaleModel", guiLeft, y + 5, 0xFFFFFF));
             addButton(new GuiButtonBiDirectional(1, guiLeft + 46, y += 22, 94, 20, arrRace, display.race + 1));
             addLabel(new GuiNpcLabel(1, "display.race", guiLeft, y + 5, 0xFFFFFF));
             if (display.race > -1) {
@@ -260,6 +262,10 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     protected void actionPerformed(GuiButton btn) {
         super.actionPerformed(btn);
         GuiNpcButton button = (GuiNpcButton) btn;
+        if (button.id == -100) {
+            display.setFemale(button.getValue() == 1);
+            initGui();
+        }
         if (button.id == 50) {
             tab = 0;
             initGui();

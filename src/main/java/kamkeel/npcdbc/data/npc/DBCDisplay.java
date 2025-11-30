@@ -79,9 +79,11 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
     public boolean isFemaleInternal() {
         boolean isFormOozaru = false;
-        if (fakeForm != null) {
-            isFormOozaru = fakeForm.display.hairType.equals("oozaru");
+        Form form = getForm();
+        if (form != null) {
+            isFormOozaru = form.display.hairType.equals("oozaru");
         }
+        isFormOozaru = isFormOozaru && DBCRace.isSaiyan(race);
         return isFemale && !isFormOozaru;
     }
     public void setFemale(boolean isFemale) {
