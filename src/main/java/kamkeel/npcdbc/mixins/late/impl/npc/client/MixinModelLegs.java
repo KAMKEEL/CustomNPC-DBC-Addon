@@ -37,10 +37,9 @@ public abstract class MixinModelLegs extends ModelScaleRenderer {
         if(isFemale) {
             GL11.glScalef(0.85F, 1.0F, 0.775F);
             if (this.base.isSneak) {
-                GL11.glTranslatef(-0.015F, 0, -0.0F);
-            } else {
-                GL11.glTranslatef(-0.015F, 0, -0.015F);
+                GL11.glTranslatef(0, 0, -0.005f);
             }
+            GL11.glTranslatef(-0.02F, 0, -0.01F);
         }
         instance.render(v);
         GL11.glPopMatrix();
@@ -52,10 +51,9 @@ public abstract class MixinModelLegs extends ModelScaleRenderer {
         if (isFemale) {
             GL11.glScalef(0.85F, 1.0F, 0.775F);
             if (this.base.isSneak) {
-                GL11.glTranslatef(0.015F, 0, -0.0F);
-            } else {
-                GL11.glTranslatef(0.015F, 0, -0.015F);
+                GL11.glTranslatef(0, 0, -0.005f);
             }
+            GL11.glTranslatef(0.02F, 0, -0.01F);
         }
         instance.render(v);
         GL11.glPopMatrix();

@@ -156,12 +156,12 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         glPushMatrix();
         if (!isArmor && display.enabled) {
             if (display.isFemaleInternal()) {
-//                GL11.glScalef(0.7F, 1F, 0.7F);
+    //                GL11.glScalef(0.7F, 1F, 0.7F);
             }
             NPCDBCModel.renderBodySkin(display, legs);
         }
-        glPopMatrix();
         instance.render(green);
+        glPopMatrix();
     }
 
     @Redirect(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0, remap = true))
@@ -170,7 +170,8 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         glPushMatrix();
         if (display.isFemaleInternal()) {
             GL11.glScalef(0.7F, 1F, 0.7F);
-            glRotatef(-7, 0, 0, 1);
+            glTranslatef(-0.0125f, 0.035f, 0);
+            glRotatef(-7, 0, 0, 0.1f);
         }
         if (!isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, bipedLeftArm);
@@ -184,7 +185,8 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         GL11.glPushMatrix();
         if (display.isFemaleInternal()) {
             GL11.glScalef(0.7F, 1F, 0.7F);
-            glRotatef(7, 0, 0, 1);
+            glTranslatef(0.0125f, 0.035f, 0);
+            glRotatef(7, 0, 0, 0.1f);
         }
         if (!isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, bipedRightArm);

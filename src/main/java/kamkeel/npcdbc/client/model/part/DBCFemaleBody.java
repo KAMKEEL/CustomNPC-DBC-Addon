@@ -45,7 +45,6 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
 
     @Override
     public void setRotationAngles(float par1, float par2, float par3, float par4, float par5, float par6, Entity entity) {
-
         this.rot1 = par1;
         this.rot2 = par2;
         this.rot3 = par3;
@@ -201,7 +200,7 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
 // ------------------------------------------------
 
 // BREAST LOGIC PRECALC
-        int breastSize = display.breastSize;  // replace with your actual getter if needed
+        int breastSize = display.breastSize - 1;  // replace with your actual getter if needed
 
         float scale = breastSize * 0.03F;
         float br = 0.4235988F + scale;
@@ -209,8 +208,8 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
         float bsY = 0.85F + scale * 0.5F;
         float bt = 0.1F * scale;
 
-        boolean bounce = base.onGround != 0;
-        float bspeed = false ? 1.5F : (base.isSneak ? 0.5F : 1.0F);
+        boolean bounce = entity.onGround || entity.isInWater();
+        float bspeed = entity.isSprinting() ? 1.5F : (base.isSneak ? 0.5F : 1.0F);
 
         float bbY = bounce
             ? MathHelper.sin(this.rot1 * 0.6662F * bspeed * 1.5F + (float)Math.PI)
@@ -278,7 +277,7 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
 
         GL11.glScalef(0.75F, 1.0F, 0.75F);
 
-        float hipZ = base.isSneak ? 0.0F : (-0.02F);
+        float hipZ = (-0.02F);
         GL11.glTranslatef(0.0F, 0.0F, hipZ);
 
         this.hip.render(par1);
@@ -293,7 +292,7 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
 
         GL11.glScalef(0.65F, 1.0F, 0.65F);
 
-        float waistZ = base.isSneak ? 0.0F : (-0.04F);
+        float waistZ = (-0.04F);
         GL11.glTranslatef(0.0F, 0.0F, waistZ);
 
         this.waist.render(par1);

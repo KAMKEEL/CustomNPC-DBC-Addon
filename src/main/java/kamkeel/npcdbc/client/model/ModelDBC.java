@@ -692,7 +692,7 @@ public class ModelDBC extends ModelBase {
     }
 
     public void renderFemaleBodySkin(DBCDisplay display, ModelRenderer bipedBody, boolean isArmor, ModelScalePart config) {
-        DBCFemaleBody.rotateAngleX = bipedBody.rotateAngleX;
+        DBCFemaleBody.rotateAngleX = bipedBody.rotateAngleX - (parent.isSneak ? 0.5f : 0f);
         DBCFemaleBody.rotateAngleY = bipedBody.rotateAngleY;
         DBCFemaleBody.rotateAngleZ = bipedBody.rotateAngleZ;
         DBCFemaleBody.rotationPointX = bipedBody.rotationPointX;
