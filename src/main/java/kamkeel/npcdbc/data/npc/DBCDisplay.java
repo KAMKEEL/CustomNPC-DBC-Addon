@@ -28,7 +28,6 @@ import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.NPCUpdateForcedColors;
-import kamkeel.npcdbc.network.packets.player.PingFormColorPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,7 +38,6 @@ import noppes.npcs.entity.data.ModelData;
 import noppes.npcs.entity.data.ModelPartData;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
-import org.lwjgl.opencl.CL;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -72,6 +70,23 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public int formID = -1, selectedForm = -1, rage;
     public float formLevel = 0;
     public boolean isTransforming, isKaioken;
+    private boolean isFemale = false;
+    public int breastSize = 1;
+
+
+    public boolean isFemale() {
+        return isFemale;
+    }
+    public boolean isFemaleInternal() {
+        boolean isFormOozaru = false;
+        if (fakeForm != null) {
+            isFormOozaru = fakeForm.display.hairType.equals("oozaru");
+        }
+        return isFemale && !isFormOozaru;
+    }
+    public void setFemale(boolean isFemale) {
+        this.isFemale = isFemale;
+    }
 
     // Outline
     public int outlineID;
@@ -101,7 +116,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         comp.setBoolean("DBCDisplayEnabled", enabled);
         if (enabled) {
             NBTTagCompound dbcDisplay = new NBTTagCompound();
-
+            dbcDisplay.setBoolean("DBCFemale", isFemale);
             dbcDisplay.setString("DBCHair", hairCode);
             dbcDisplay.setInteger("DBCHairColor", hairColor);
             dbcDisplay.setInteger("DBCEyeColor", eyeColor);
@@ -153,7 +168,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         enabled = comp.getBoolean("DBCDisplayEnabled");
         if (enabled) {
             NBTTagCompound dbcDisplay = comp.getCompoundTag("DBCDisplay");
-
+            isFemale = dbcDisplay.getBoolean("DBCFemale");
 
             race = dbcDisplay.getByte("DBCRace");
             auraID = dbcDisplay.getInteger("DBCAuraID");

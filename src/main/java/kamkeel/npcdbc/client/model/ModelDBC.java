@@ -49,6 +49,7 @@ public class ModelDBC extends ModelBase {
     public DBCBody DBCBody;
     public DBCRightArms DBCRightArms;
     public DBCLeftArms DBCLeftArms;
+    public DBCFemaleBody DBCFemaleBody;
 
     // Face
     public ModelRenderer nose;
@@ -105,6 +106,7 @@ public class ModelDBC extends ModelBase {
         this.parent.bipedHead.addChild(DBCHorns = new DBCHorns(mpm));
         this.parent.bipedHead.addChild(DBCEars = new DBCEars(mpm));
         this.parent.bipedBody.addChild(DBCBody = new DBCBody(mpm));
+        DBCFemaleBody = new DBCFemaleBody(mpm);
 
         this.parent.bipedRightArm.addChild(this.DBCRightArms = new DBCRightArms(mpm));
         this.parent.bipedLeftArm.addChild(this.DBCLeftArms = new DBCLeftArms(mpm));
@@ -118,6 +120,7 @@ public class ModelDBC extends ModelBase {
         this.DBCBody.setData(entity.modelData, entity, display);
         this.DBCRightArms.setData(entity.modelData, entity, display);
         this.DBCLeftArms.setData(entity.modelData, entity, display);
+        this.DBCFemaleBody.setData(entity.modelData, entity, display);
 
     }
 
@@ -218,7 +221,7 @@ public class ModelDBC extends ModelBase {
             }
             ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
             if (renderSSJ4Face)
-                ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + "humn" + display.noseType + ".png"));
+                ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + (display.isFemaleInternal() ? "f" : "") +"humn" + display.noseType + ".png"));
             else
                 ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
@@ -240,7 +243,7 @@ public class ModelDBC extends ModelBase {
 
             String mouthDir = "";
             if (display.race == 4 && hasArcoMask)
-                mouthDir = "jinryuudragonbc:cc/arc/m/0A" + 2 + display.bodyType + "a.png";
+                mouthDir = "jinryuudragonbc:cc/arc/f/0A" + 2 + display.bodyType + "a.png";
             else
                 mouthDir = getFaceTexture(display, "m" + display.mouthType);
 
@@ -280,7 +283,7 @@ public class ModelDBC extends ModelBase {
                     ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
                 }
                 if (!hasEyebrows && display.race != DBCRace.NAMEKIAN)
-                    ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + "humw" + display.eyeType + ".png"));
+                    ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (display.isFemaleInternal() ? "f" : "")  + "humw" + display.eyeType + ".png"));
                 else
                     ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
                 this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
@@ -419,7 +422,7 @@ public class ModelDBC extends ModelBase {
 
             int race = display.race;
             if (race == DBCRace.HUMAN || DBCRace.isSaiyan(race)) {
-                ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/hum.png"));
+                ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/" + "hum.png"));
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
 
                 if (DBCRace.isSaiyan(race)) {
@@ -492,6 +495,7 @@ public class ModelDBC extends ModelBase {
 
 
     public void setRotationAngles(float par1, float par2, float par3, float par4, float par5, float par6, Entity entity) {
+        DBCFemaleBody.setRotationAngles(par1, par2, par3, par4, par5, par6, entity);
     }
 
     public String getFaceTexture(DBCDisplay display, String t) {
@@ -500,13 +504,13 @@ public class ModelDBC extends ModelBase {
         int arcoState = display.getArco();
 
         if (race == DBCRace.HUMAN || race == DBCRace.SAIYAN || race == DBCRace.HALFSAIYAN)
-            tex = "jinryuumodscore:cc/hum" + t + ".png";
+            tex = "jinryuumodscore:cc/" + (display.isFemaleInternal() ? "f" : "")  + "hum" + t + ".png";
         else if (race == DBCRace.NAMEKIAN)
             tex = "jinryuudragonbc:cc/nam/4nam" + t + ".png";
         else if (race == DBCRace.ARCOSIAN)
-            tex = "jinryuudragonbc:cc/arc/m/4A" + JRMCoreH.TransFrSkn[arcoState] + display.bodyType + t + ".png";
+            tex = "jinryuudragonbc:cc/arc/" + (display.isFemaleInternal() ? "f" : "m")  + "/4A" + JRMCoreH.TransFrSkn[arcoState] + display.bodyType + t + ".png";
         else if (race == DBCRace.MAJIN)
-            tex = "jinryuudragonbc:cc/majin/majin" + t + ".png";
+            tex = "jinryuudragonbc:cc/majin/" + (display.isFemaleInternal() ? "f" : "")  + "majin" + t + ".png";
         return tex;
     }
 
@@ -548,6 +552,10 @@ public class ModelDBC extends ModelBase {
         }
 
 //        ((ModelScaleRenderer)this.bipedLeftArm).setConfig(arms, -x, y, z);
+
+        if (display.isFemaleInternal()) {
+            GL11.glScalef(0.7F, 1, 0.7F);
+        }
         byte hideArms = entity.modelData.hideArms;
 
         KiWeaponData leftArm = display.kiWeaponLeft;
@@ -566,7 +574,7 @@ public class ModelDBC extends ModelBase {
             if (arms != null) {
                 GL11.glScalef(arms.scaleX, arms.scaleY, arms.scaleZ);
             }
-            renderKiWeapon(entity, leftArm);
+            renderKiWeapon(entity, leftArm, false);
             GL11.glPopMatrix();
         }
 
@@ -586,14 +594,14 @@ public class ModelDBC extends ModelBase {
             if (arms != null) {
                 GL11.glScalef(arms.scaleX, arms.scaleY, arms.scaleZ);
             }
-            renderKiWeapon(entity, rightArm);
+            renderKiWeapon(entity, rightArm, true);
             GL11.glPopMatrix();
         }
 
         GL11.glPopMatrix();
     }
 
-    private void renderKiWeapon(Entity entity, KiWeaponData weaponData) {
+    private void renderKiWeapon(Entity entity, KiWeaponData weaponData, boolean isRightArm) {
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_LIGHTING);
@@ -615,7 +623,15 @@ public class ModelDBC extends ModelBase {
 //        }
 
 
+//        if (display.isFemale) {
+//            GL11.glScalef(0.7F, 1, 0.7F);
+//        }
         GL11.glTranslatef(-0.06F, -0.05F, 0.0F);
+
+
+        if (display.isFemaleInternal()) {
+            GL11.glRotatef(isRightArm ? 7.0F : -7.0F, 0.0F, 0.0F, 1.0F);
+        }
         JRMCoreClient.mc.renderEngine.bindTexture(new ResourceLocation(JRMCoreH.tjjrmc + ":allw.png"));
 
         if (weaponData.weaponType == 1) {
@@ -671,6 +687,147 @@ public class ModelDBC extends ModelBase {
             return KiWeaponData.getColorByAuraType(auraDisplay);
         } else {
             return KiWeaponData.getColorByAuraTypeName("");
+        }
+    }
+
+    public void renderFemaleBodySkin(DBCDisplay display, ModelRenderer bipedBody) {
+        DBCFemaleBody.rotateAngleX = bipedBody.rotateAngleX;
+        DBCFemaleBody.rotateAngleY = bipedBody.rotateAngleY;
+        DBCFemaleBody.rotateAngleZ = bipedBody.rotateAngleZ;
+        DBCFemaleBody.rotationPointX = bipedBody.rotationPointX;
+        DBCFemaleBody.rotationPointY = bipedBody.rotationPointY;
+        DBCFemaleBody.rotationPointZ = bipedBody.rotationPointZ;
+
+        transRot(1, DBCFemaleBody);
+
+        if (display.useSkin) {
+
+            int eyeColor = display.eyeColor;
+            int hairColor = display.hairColor;
+
+            int bodyCM = display.bodyCM;
+            int bodyC1 = display.bodyC1;
+            int bodyC2 = display.bodyC2;
+            int bodyC3 = display.bodyC3;
+            int furColor = display.furColor;
+            boolean hasFur = display.hasFur;
+            boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru"), hasEyebrows = display.hasEyebrows, isBerserk = false;
+            //  ModelPartData tailData = ((EntityCustomNpc) display.npc).modelData.getOrCreatePart("tail");
+
+            boolean HD = ConfigDBCClient.EnableHDTextures;
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+            //Forms
+            Form form = display.getForm();
+            if (form != null) {
+                FormDisplay d = form.display;
+                FormDisplay.BodyColor customClr = display.formColor;
+
+                if (customClr.hasAnyColor(d, "eye"))
+                    eyeColor = customClr.getProperColor(d, "eye");
+                if (customClr.hasAnyColor(d, "hair"))
+                    hairColor = customClr.getProperColor(d, "hair");
+                if (customClr.hasAnyColor(d, "bodycm"))
+                    bodyCM = customClr.getProperColor(d, "bodycm");
+                if (customClr.hasAnyColor(d, "bodyc1"))
+                    bodyC1 = customClr.getProperColor(d, "bodyc1");
+                if (customClr.hasAnyColor(d, "bodyc2"))
+                    bodyC2 = customClr.getProperColor(d, "bodyc2");
+                if (customClr.hasAnyColor(d, "bodyc3"))
+                    bodyC3 = customClr.getProperColor(d, "bodyc3");
+                if (customClr.hasAnyColor(d, "fur"))
+                    furColor = customClr.getProperColor(d, "fur");
+
+                hasFur = d.hasBodyFur;
+                if (d.hairType.equals("ssj4")) {
+                    isSSJ4 = true;
+                    if (customClr.getProperColor(d, "eye") == -1)
+                        eyeColor = 0xF3C807;
+                } else if (d.hairType.equals("oozaru")) {
+                    isOozaru = true;
+                }
+                hasEyebrows = d.hasEyebrows;
+                isBerserk = d.isBerserk;
+            }
+            //////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////
+
+            int race = display.race;
+            if (race == DBCRace.HUMAN || DBCRace.isSaiyan(race)) {
+                ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore:cc/fhum.png"));
+                ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
+
+                if (DBCRace.isSaiyan(race)) {
+                    if (hasFur || isSSJ4 || isOozaru) {
+                        ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + "fhum.png"));
+                        DBCFemaleBody.render(0.0625F); //important
+                        if (isSSJ4) {
+                            if (furColor == -1)
+                                furColor = 0xDA152C;
+                            if (HD && hasEyebrows)
+                                renderSSJ4Face(eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType);
+                        }
+
+                        if (isOozaru) {
+                            if (furColor == -1)
+                                furColor = 6498048;
+                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png")); //oozaru hairless body
+                            ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
+                            DBCFemaleBody.render(0.0625F);
+
+                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
+                        } else {
+                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
+                        }
+                        ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
+                    }
+                }
+                DBCFemaleBody.render(0.0625F);
+
+            } else if (race == DBCRace.NAMEKIAN) {
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
+                ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
+                DBCFemaleBody.render(0.0625F);
+
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/1nam" + display.bodyType + ".png"));
+                ColorMode.applyModelColor(bodyC1, this.parent.alpha, isHurt);
+                DBCFemaleBody.render(0.0625F);
+
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/2nam" + display.bodyType + ".png"));
+                ColorMode.applyModelColor(bodyC2, this.parent.alpha, isHurt);
+                DBCFemaleBody.render(0.0625F);
+
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/3nam" + display.bodyType + ".png"));
+                GL11.glColor4f(1f, 1f, 1f, this.parent.alpha);
+                DBCFemaleBody.render(0.0625F);
+            } else if (race == DBCRace.ARCOSIAN) {
+                int st = display.getCurrentArcoState();
+                ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/f/0A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                DBCFemaleBody.render(0.0625F);
+
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/f/1A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                ColorMode.applyModelColor(bodyC1, this.parent.alpha, isHurt);
+                DBCFemaleBody.render(0.0625F);
+
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/f/2A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                ColorMode.applyModelColor(bodyC2, this.parent.alpha, isHurt);
+                DBCFemaleBody.render(0.0625F);
+
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/f/3A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                ColorMode.applyModelColor(bodyC3, this.parent.alpha, isHurt);
+                DBCFemaleBody.render(0.0625F);
+
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/arc/f/4A" + JRMCoreH.TransFrSkn[st] + display.bodyType + ".png"));
+                GL11.glColor4f(1f, 1f, 1f, this.parent.alpha);
+                DBCFemaleBody.render(0.0625F);
+            } else if (race == DBCRace.MAJIN) {
+                ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/fmajin.png"));
+                ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
+                DBCFemaleBody.render(0.0625F);
+            }
+        } else {
+            DBCFemaleBody.render(0.0625F);
         }
     }
 }
