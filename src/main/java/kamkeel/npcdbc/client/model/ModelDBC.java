@@ -26,6 +26,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;
+import noppes.npcs.client.model.util.ModelScaleRenderer;
 import noppes.npcs.constants.EnumAnimation;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelScalePart;
@@ -690,7 +691,7 @@ public class ModelDBC extends ModelBase {
         }
     }
 
-    public void renderFemaleBodySkin(DBCDisplay display, ModelRenderer bipedBody) {
+    public void renderFemaleBodySkin(DBCDisplay display, ModelRenderer bipedBody, boolean isArmor, ModelScalePart config) {
         DBCFemaleBody.rotateAngleX = bipedBody.rotateAngleX;
         DBCFemaleBody.rotateAngleY = bipedBody.rotateAngleY;
         DBCFemaleBody.rotateAngleZ = bipedBody.rotateAngleZ;
@@ -698,9 +699,16 @@ public class ModelDBC extends ModelBase {
         DBCFemaleBody.rotationPointY = bipedBody.rotationPointY;
         DBCFemaleBody.rotationPointZ = bipedBody.rotationPointZ;
 
-        transRot(1, DBCFemaleBody);
+        ModelScaleRenderer scaleRenderer = (ModelScaleRenderer) bipedBody;
 
-        if (display.useSkin) {
+        GL11.glTranslatef(scaleRenderer.x, scaleRenderer.y, scaleRenderer.z);
+        transRot(1, DBCFemaleBody);
+        if (config != null) {
+            GL11.glScalef(config.scaleX, config.scaleY, config.scaleZ);
+        }
+
+
+        if (display.useSkin && !isArmor) {
 
             int eyeColor = display.eyeColor;
             int hairColor = display.hairColor;

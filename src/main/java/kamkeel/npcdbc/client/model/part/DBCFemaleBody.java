@@ -201,7 +201,7 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
 // ------------------------------------------------
 
 // BREAST LOGIC PRECALC
-        int breastSize = this.breastSize;  // replace with your actual getter if needed
+        int breastSize = display.breastSize;  // replace with your actual getter if needed
 
         float scale = breastSize * 0.03F;
         float br = 0.4235988F + scale;
@@ -340,7 +340,6 @@ public class DBCFemaleBody extends ModelDBCPartInterface {
             isHidden = true;
             return;
         }
-        breastSize = display.breastSize;
         bodyCM = config.color;
         isHidden = false;
 

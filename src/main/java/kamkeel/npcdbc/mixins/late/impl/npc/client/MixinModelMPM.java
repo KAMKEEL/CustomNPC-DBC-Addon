@@ -19,6 +19,7 @@ import noppes.npcs.client.model.ModelNPCMale;
 import noppes.npcs.client.model.part.ModelLegs;
 import noppes.npcs.client.model.util.ModelScaleRenderer;
 import noppes.npcs.entity.EntityCustomNpc;
+import noppes.npcs.entity.data.ModelScalePart;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -127,7 +128,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     }
 
     @Redirect(method = "renderBody", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", remap = true))
-    private void renderDBCBody(ModelScaleRenderer instance, float v, @Local(argsOnly = true) EntityCustomNpc entity) {
+    private void renderDBCBody(ModelScaleRenderer instance, float v, @Local(argsOnly = true) EntityCustomNpc entity, @Local(argsOnly = false) ModelScalePart part) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         glPushMatrix();
 
@@ -139,7 +140,8 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         } else if (!display.enabled) {
             instance.render(v);
         } else {
-            NPCDBCModel.renderFemaleBodySkin(display, instance);
+
+            NPCDBCModel.renderFemaleBodySkin(display, instance, isArmor, part);
 //            instance.render(v);
         }
 

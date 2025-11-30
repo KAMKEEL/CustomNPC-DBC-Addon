@@ -37,6 +37,8 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
     private int tab = 1;
     private int raceTab = 0;
 
+    private final String[] breastSizes = new String[]{"1","2","3","4","5","6","7","8","9","10"};
+
     public GuiScrollWindow cosmeticsScrollWindow;
 
     public GuiModelDBC(GuiScreen parent, EntityCustomNpc npc) {
@@ -171,6 +173,11 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
             //  addButton(new GuiNpcButton(1, guiLeft + 64, y += 22, 60, 20, arrRace, display.race+1));
             addButton(new GuiNpcButtonYesNo(-100, guiLeft + 64, y+=22, 60, 20, display.isFemale()));
             addLabel(new GuiNpcLabel(-100, "display.femaleModel", guiLeft, y + 5, 0xFFFFFF));
+            if (display.isFemale()) {
+                addButton(new GuiButtonBiDirectional(-101, guiLeft + 69, y += 22, 50, 20, breastSizes, display.breastSize - 1));
+                addLabel(new GuiNpcLabel(-101, "display.breastSize", guiLeft, y + 5, 0xFFFFFF));
+                y += 10;
+            }
             addButton(new GuiButtonBiDirectional(1, guiLeft + 46, y += 22, 94, 20, arrRace, display.race + 1));
             addLabel(new GuiNpcLabel(1, "display.race", guiLeft, y + 5, 0xFFFFFF));
             if (display.race > -1) {
@@ -264,6 +271,11 @@ public class GuiModelDBC extends GuiModelInterface implements ClipboardOwner, IS
         GuiNpcButton button = (GuiNpcButton) btn;
         if (button.id == -100) {
             display.setFemale(button.getValue() == 1);
+            initGui();
+        }
+        if (button.id == -101) {
+            int value = button.getValue();
+            display.breastSize = value + 1;
             initGui();
         }
         if (button.id == 50) {
