@@ -113,7 +113,7 @@ public class TransformController {
                 stackedFrom = -1;
             }
 
-            DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, definitiveId, true, stackedFrom));
+            DBCPacketHandler.Instance.sendToServer(new TransformPacket(definitiveId, true, stackedFrom));
             resetTimers();
             cantTransform = true;
             transformed = true;
@@ -258,6 +258,10 @@ public class TransformController {
             return;
 
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+
+        if (!formData.hasForm(form))
+            return;
+
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
 

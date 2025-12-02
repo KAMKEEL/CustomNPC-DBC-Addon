@@ -15,13 +15,11 @@ import static noppes.npcs.NoppesUtilServer.getPlayerByName;
 
 public final class TransformPacket extends AbstractPacket {
     public static final String packetName = "NPC|Transform";
-    private EntityPlayer player;
     private int state;
     private boolean ascend;
     private int stackedFrom;
 
-    public TransformPacket(EntityPlayer player, int state, boolean ascend, int stackedFrom) {
-        this.player = player;
+    public TransformPacket(int state, boolean ascend, int stackedFrom) {
         this.state = state;
         this.ascend = ascend;
         this.stackedFrom = stackedFrom;
@@ -42,7 +40,6 @@ public final class TransformPacket extends AbstractPacket {
 
     @Override
     public void sendData(ByteBuf out) throws IOException {
-        ByteBufUtils.writeUTF8String(out, this.player.getCommandSenderName());
         out.writeInt(this.state);
         out.writeBoolean(ascend);
         out.writeInt(this.stackedFrom);
@@ -50,18 +47,16 @@ public final class TransformPacket extends AbstractPacket {
 
     @Override
     public void receiveData(ByteBuf in, EntityPlayer player) throws IOException {
-        String playerName = ByteBufUtils.readUTF8String(in);
-        EntityPlayer sendingPlayer = getPlayerByName(playerName);
-        if (sendingPlayer == null)
+        if (player == null)
             return;
 
         int state = in.readInt();
         boolean ascend = in.readBoolean();
         int stackedFrom = in.readInt();
         if (ascend)
-            TransformController.handleFormAscend(sendingPlayer, state, stackedFrom);
+            TransformController.handleFormAscend(player, state, stackedFrom);
         else
-            TransformController.handleFormDescend(sendingPlayer, state, stackedFrom);
+            TransformController.handleFormDescend(player, state, stackedFrom);
 
     }
 }
