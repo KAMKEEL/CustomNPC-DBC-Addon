@@ -210,6 +210,12 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             window.addButton(button);
 
             window.addButton(new GuiNpcButtonYesNo(123, x + 50, y - 5, 54, 20, form.display.hasBodyFur));
+
+            if (display.hasBodyFur) {
+                y += 25;
+                window.addLabel(new GuiNpcLabel(1113, "Type", x, y, 0xFFFFFF));
+                window.addButton(new GuiNpcButton(11132, width - x - 75, y - 5, 50, 20, new String[]{"GT", "Daima", "Absalon"}, display.furType));
+            }
         }
 
 
@@ -224,7 +230,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
 
 
-//
+        //
         if (visualDisplay.race == DBCRace.ARCOSIAN) {
             y += 30;
             window.addLabel(new GuiNpcLabel(113, "display.arcoMask", x, y, 0xFFFFFF));
@@ -308,7 +314,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         window.addButton(button);
 
 
-//        y += 25;
+        //        y += 25;
 
 
         int index = getHairType();
@@ -473,6 +479,15 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Form
         if (button.id == 114) {
             display.bodyType = getArcoString(button.getValue());
+            updateButtons();
+        }
+
+        if (button.id == 11132) {
+            if (display.furType == 2) {
+                display.furType = 0;
+            } else {
+                display.furType = Math.min(2, display.furType + 1);
+            }
             updateButtons();
         }
 

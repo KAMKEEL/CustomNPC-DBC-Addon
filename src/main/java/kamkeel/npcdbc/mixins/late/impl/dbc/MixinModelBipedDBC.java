@@ -148,20 +148,33 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                             ci.cancel();
                     }
                 }
+
                 boolean isSSJ3 = false;
                 if (form.display.hairType.equals("ssj3") || form.display.hairType.equals("raditz")) {
+                    isSSJ3 = form.display.hairType.equals("ssj3") ? true : false;
+
                     if (isHairPreset(hair) && !hair.startsWith("D")) {
-                        String hair1 = form.display.hairType.equals("raditz") ? "D" : "D01";
+                        String hair1 = !isSSJ3 ? "D" : "D01";
                         Hair.set(hair1);
                     }
-                    isSSJ3 = form.display.hairType.equals("ssj3") ? true : false;
                 }
+
+                // disable face for hd ssj3 brows
+                if ((isSSJ3 || !form.display.hasEyebrows) && HD) {
+                    disableFace(hair, ci);
+                }
+
+                if (form.display.furType == 2) {
+                    disableFace(hair, ci);
+                }
+
                 //render brows
-                if (hair.contains("EYEBROW") && dbcData.Race != 3 && (isSSJ3 || !form.display.hasEyebrows)) { //bind ssj3 eyebrow texture to ssj3 hair type
+                if (hair.contains("EYEBROW") && dbcData.Race != 3 && (isSSJ3 || !form.display.hasEyebrows) && !HD) { //bind ssj3 eyebrow texture to ssj3 hair type
                     int gen = JRMCoreH.dnsGender(dbcData.DNS);
                     int eyes = JRMCoreH.dnsEyes(dbcData.DNS);
                     Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + (gen == 1 ? "f" : "") + "humw" + eyes + ".png"));
                 }
+
                 //hair color for all forms
                 if ((isHairPreset(hair) || hair.contains("EYEBROW"))) {
                     if (!playerColors.hasHairColor(dbcData, form.display)) {
@@ -305,8 +318,14 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
     @Unique
     public void disableFace(String faceType, CallbackInfoReturnable<String> ci) {
-        if ((faceType.contains("FACENOSE") && !Utility.stackTraceContains("renderSSJ4Face")) || faceType.contains("FACEMOUTH") || faceType.contains("EYEBROW") || (faceType.contains("EYEBASE") && !Utility.stackTraceContains("renderOozaru")) || faceType.contains("EYELEFT") || faceType.contains("EYERIGHT"))
-            ci.setReturnValue("");
+        if (
+            (faceType.contains("FACENOSE") && !Utility.stackTraceContains("renderSSJ4Face") && !Utility.stackTraceContains("renderSSJ3Face")) ||
+            (faceType.contains("FACEMOUTH") && !Utility.stackTraceContains("renderSSJ4Face") && !Utility.stackTraceContains("renderSSJ3Face")) ||
+            faceType.contains("EYEBROW") ||
+            (faceType.contains("EYEBASE") && !Utility.stackTraceContains("renderOozaru")) ||
+            faceType.contains("EYELEFT") ||
+            faceType.contains("EYERIGHT")
+        ) ci.setReturnValue("");
     }
 
     @Unique

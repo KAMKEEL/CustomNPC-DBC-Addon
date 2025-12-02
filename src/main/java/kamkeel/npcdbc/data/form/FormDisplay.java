@@ -30,6 +30,7 @@ public class FormDisplay implements IFormDisplay {
     public int auraColor = -1;
     public int kiBarColor = -1;
     public String bodyType = "";
+    public int furType = 0;
 
     public boolean hasBodyFur = false;
     public boolean hasArcoMask = false;
@@ -63,6 +64,7 @@ public class FormDisplay implements IFormDisplay {
         hasArcoMask = rendering.getBoolean("hasArcoMask");
         effectMajinHair = rendering.getBoolean("effectMajinHair");
         hasBodyFur = rendering.getBoolean("hasBodyFur");
+        furType = rendering.getInteger("furType");
         isBerserk = rendering.getBoolean("isBerserk");
         hasEyebrows = !rendering.hasKey("hasEyebrows") ? true : rendering.getBoolean("hasEyebrows");
 
@@ -81,6 +83,7 @@ public class FormDisplay implements IFormDisplay {
         NBTTagCompound rendering = new NBTTagCompound();
         rendering.setInteger("auraColor", auraColor);
         rendering.setInteger("kiBarColor", kiBarColor);
+        rendering.setInteger("furType", furType);
 
         rendering.setString("hairCode", hairCode);
         rendering.setString("hairType", hairType);
@@ -338,6 +341,10 @@ public class FormDisplay implements IFormDisplay {
     @Override
     public void hasBodyFur(boolean hasFur) {
         this.hasBodyFur = hasFur;
+    }
+
+    public void setFurType(int type) {
+        this.furType = Math.max(0, Math.min(2, type));
     }
 
     @Override
