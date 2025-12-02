@@ -26,6 +26,7 @@ import kamkeel.npcs.controllers.AttributeController;
 import kamkeel.npcs.controllers.data.attribute.tracker.PlayerAttributeTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.LogWriter;
 import noppes.npcs.config.ConfigMain;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
@@ -221,8 +222,11 @@ public class TransformController {
 
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
 
-        if (!formData.hasForm(form))
+        if (!formData.hasForm(form)) {
+            LogWriter.error(String.format("Potential exploiting: %s tried to transform into a form they don't have unlocked (\"%s\" - ID: %d)",
+                player.getCommandSenderName(), form.getName(), formID));
             return;
+        }
 
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
