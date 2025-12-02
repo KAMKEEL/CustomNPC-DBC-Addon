@@ -18,11 +18,13 @@ public final class TransformPacket extends AbstractPacket {
     private EntityPlayer player;
     private int state;
     private boolean ascend;
+    private int stackedFrom;
 
-    public TransformPacket(EntityPlayer player, int state, boolean ascend) {
+    public TransformPacket(EntityPlayer player, int state, boolean ascend, int stackedFrom) {
         this.player = player;
         this.state = state;
         this.ascend = ascend;
+        this.stackedFrom = stackedFrom;
     }
 
     public TransformPacket() {
@@ -43,6 +45,7 @@ public final class TransformPacket extends AbstractPacket {
         ByteBufUtils.writeUTF8String(out, this.player.getCommandSenderName());
         out.writeInt(this.state);
         out.writeBoolean(ascend);
+        out.writeInt(this.stackedFrom);
     }
 
     @Override
@@ -54,10 +57,11 @@ public final class TransformPacket extends AbstractPacket {
 
         int state = in.readInt();
         boolean ascend = in.readBoolean();
+        int stackedFrom = in.readInt();
         if (ascend)
-            TransformController.handleFormAscend(sendingPlayer, state);
+            TransformController.handleFormAscend(sendingPlayer, state, stackedFrom);
         else
-            TransformController.handleFormDescend(sendingPlayer, state);
+            TransformController.handleFormDescend(sendingPlayer, state, stackedFrom);
 
     }
 }
