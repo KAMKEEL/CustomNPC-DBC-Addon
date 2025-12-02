@@ -38,6 +38,7 @@ public class PlayerDBCInfo {
 
     public int currentForm = -1;
     public int selectedForm = -1, selectedDBCForm = -1, tempSelectedDBCForm = -1;
+    public int lastFormBeforeStack = -1;
 
     public int currentAura = -1;
     public int selectedAura = -1;
@@ -172,7 +173,7 @@ public class PlayerDBCInfo {
     }
 
     public void resetFormData(boolean removeForms, boolean removeMasteries) {
-        TransformController.handleFormDescend(parent.player, -10);
+        TransformController.handleFormDescend(parent.player, -10, -1);
         currentForm = -1;
         selectedForm = -1;
         if (removeForms)
@@ -290,7 +291,7 @@ public class PlayerDBCInfo {
             if (currentTime > 0)
                 formTimers.replace(formid, currentTime - 1);
             else if (currentTime == 0) {
-                TransformController.handleFormDescend(parent.player, 0);
+                TransformController.handleFormDescend(parent.player, 0, -1);
                 formTimers.remove(formid);
             }
         }
@@ -309,7 +310,6 @@ public class PlayerDBCInfo {
         return false;
 
     }
-
 
     ///////////////////////////////////////////
     ///////////////////////////////////////////
@@ -419,6 +419,7 @@ public class PlayerDBCInfo {
         dbcCompound.setInteger("CurrentForm", currentForm);
         dbcCompound.setInteger("SelectedForm", selectedForm);
         dbcCompound.setInteger("SelectedDBCForm", selectedDBCForm);
+        dbcCompound.setInteger("LastFormBeforeStack", lastFormBeforeStack);
         dbcCompound.setTag("UnlockedForms", NBTTags.nbtIntegerSet(unlockedForms));
         dbcCompound.setTag("FormMastery", NBTTags.nbtIntegerFloatMap(formLevels));
         dbcCompound.setTag("FormTimers", NBTTags.nbtIntegerIntegerMap(formTimers));
@@ -445,6 +446,7 @@ public class PlayerDBCInfo {
         currentForm = dbcCompound.getInteger("CurrentForm");
         selectedForm = dbcCompound.hasKey("SelectedForm") ? dbcCompound.getInteger("SelectedForm") : -1;
         selectedDBCForm = dbcCompound.hasKey("SelectedDBCForm") ? dbcCompound.getInteger("SelectedDBCForm") : -1;
+        lastFormBeforeStack = dbcCompound.hasKey("LastFormBeforeStack") ? dbcCompound.getInteger("LastFormBeforeStack") : -1;
         unlockedForms = NBTTags.getIntegerSet(dbcCompound.getTagList("UnlockedForms", 10));
         formLevels = NBTTags.getIntegerFloatMap(dbcCompound.getTagList("FormMastery", 10));
         formTimers = NBTTags.getIntegerIntegerMap(dbcCompound.getTagList("FormTimers", 10));
