@@ -82,7 +82,7 @@ public class SubGuiFormCustomStackable extends SubGuiInterface implements ISubGu
 
         y += 115;
 
-        addButton(new GuiNpcButton(10, guiLeft + 240, y, 50, 20, "gui.close")); // todo
+        addButton(new GuiNpcButton(10, guiLeft + 240, y, 50, 20, "gui.close"));
     }
 
     private void addButtonFromFormText(FormStack stack, int buttonID) {
