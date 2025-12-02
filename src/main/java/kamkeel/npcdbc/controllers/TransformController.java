@@ -88,7 +88,7 @@ public class TransformController {
             releaseTime = 0;
         }
         if (rage >= 100) { //transform when rage meter reaches 100 (max)
-            DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getID(), true));
+            DBCPacketHandler.Instance.sendToServer(new TransformPacket(form.getID(), true));
             resetTimers();
             cantTransform = true;
             transformed = true;
@@ -220,6 +220,10 @@ public class TransformController {
             return;
 
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+
+        if (!formData.hasForm(form))
+            return;
+
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
 
