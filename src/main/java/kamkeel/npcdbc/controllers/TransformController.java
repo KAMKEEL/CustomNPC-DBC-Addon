@@ -220,6 +220,10 @@ public class TransformController {
             return;
 
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+
+        if (!formData.hasForm(form))
+            return;
+
         if (formData.currentForm != formID) {
             DBCData dbcData = DBCData.get(player);
 
