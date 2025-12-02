@@ -1,10 +1,12 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
+import kamkeel.npcdbc.client.gui.component.SubGuiFormCustomStackable;
 import kamkeel.npcdbc.client.gui.component.SubGuiKaiokenDrain;
 import kamkeel.npcdbc.client.gui.component.SubGuiKaiokenMulti;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectForm;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormCustomStackable;
 import kamkeel.npcdbc.data.form.FormStackable;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.*;
@@ -13,11 +15,13 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
     private GuiNpcFormMenu menu;
     public Form form;
     public FormStackable stackable;
+    public FormCustomStackable customStackable;
     public GuiScrollWindow scrollWindow;
 
     public SubGuiFormStackable(GuiNPCManageForms parent, Form form) {
         this.form = form;
         this.stackable = form.stackable;
+        this.customStackable = form.customStackable;
 
         setBackground("menubg.png");
         xSize = 360;
@@ -136,6 +140,19 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
             scrollWindow.getLabel(52).color = 0xffffff;
         }
 
+        y += 23;
+        scrollWindow.addLabel(new GuiNpcLabel(12, "display.customStackable", guiLeft + 4, y + 5));
+        scrollWindow.addButton(new GuiNpcButtonYesNo(12, guiLeft + 115, y, 50, 20, customStackable.customStackable));
+        scrollWindow.getLabel(12).color = 0xffffff;
+
+        if (customStackable.customStackable) {
+            maxScroll += 23;
+            y += 23;
+
+            scrollWindow.addLabel(new GuiNpcLabel(122, "display.formStacks", guiLeft + 4, y + 5, 0xffffff));
+            scrollWindow.addButton(new GuiNpcButton(122, guiLeft + 115, y, 50, 20, "gui.edit"));
+        }
+
         y += 46;
         maxScroll += 46;
 
@@ -238,6 +255,9 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         if (button.id == 5) {
             stackable.mysticStackable = button.getValue() == 1;
         }
+        if (button.id == 12) {
+            customStackable.customStackable = button.getValue() == 1;
+        }
 
 
         if (button.id == 6) {
@@ -284,6 +304,9 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
         }
         if (button.id == 101) {
             this.setSubGui(new SubGuiKaiokenMulti(form));
+        }
+        if (button.id == 122) {
+            this.setSubGui(new SubGuiFormCustomStackable(form));
         }
         initGui();
     }
