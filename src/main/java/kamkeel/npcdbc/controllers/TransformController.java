@@ -11,6 +11,8 @@ import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.SoundSource;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormCustomStackable;
+import kamkeel.npcdbc.data.form.FormStack;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.network.DBCPacketHandler;
@@ -26,6 +28,7 @@ import kamkeel.npcs.controllers.AttributeController;
 import kamkeel.npcs.controllers.data.attribute.tracker.PlayerAttributeTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.LogWriter;
 import noppes.npcs.config.ConfigMain;
 import noppes.npcs.entity.EntityNPCInterface;
 import noppes.npcs.util.ValueUtil;
@@ -88,7 +91,29 @@ public class TransformController {
             releaseTime = 0;
         }
         if (rage >= 100) { //transform when rage meter reaches 100 (max)
-            DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, form.getID(), true));
+            int selectedId = PlayerDataUtil.getClientDBCInfo() != null ?
+                PlayerDataUtil.getClientDBCInfo().selectedForm :
+                -1;
+
+            int definitiveId;
+            int stackedFrom;
+
+            if (form.customStackable.customStackable && currentForm != null && FormController.Instance.has(selectedId)) {
+                Form stackForm = getStackForm(currentForm, (Form) FormController.Instance.get(selectedId));
+
+                if (stackForm != null) {
+                    definitiveId = stackForm.getID();
+                    stackedFrom = currentForm.getID();
+                } else {
+                    definitiveId = form.getID();
+                    stackedFrom = -1;
+                }
+            } else {
+                definitiveId = form.getID();
+                stackedFrom = -1;
+            }
+
+            DBCPacketHandler.Instance.sendToServer(new TransformPacket(Minecraft.getMinecraft().thePlayer, definitiveId, true, stackedFrom));
             resetTimers();
             cantTransform = true;
             transformed = true;
@@ -154,6 +179,19 @@ public class TransformController {
         return 0;
     }
 
+    private static Form getStackForm(Form current, Form selected) {
+        FormCustomStackable stackable = current.customStackable;
+        int selectedId = selected.id;
+
+        for (FormStack stack : stackable.formStacks.values()) {
+            if (stack.fromForm.id == selectedId) {
+                return stack.toForm;
+            }
+        }
+
+        return null;
+    }
+
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
     // NPC transformation handling
@@ -214,7 +252,7 @@ public class TransformController {
     //////////////////////////////////////////////////
     // Server side handling
 
-    public static void handleFormAscend(EntityPlayer player, int formID) {
+    public static void handleFormAscend(EntityPlayer player, int formID, int stackedFrom) {
         Form form = (Form) FormController.getInstance().get(formID);
         if (form == null)
             return;
@@ -262,11 +300,21 @@ public class TransformController {
             if (!form.stackable.kaiokenStackable && dbcData.isForm(DBCForm.Kaioken))
                 dbcData.setForm(DBCForm.Kaioken, false);
 
+            if (stackedFrom == -1) {
+                formData.lastFormBeforeStack = -1;
+            }
+
+            if (stackedFrom != -1) {
+                formData.lastFormBeforeStack = stackedFrom;
+            }
+
             formData.currentForm = formID;
-            if (formData.getForm(formID).hasTimer())
+
+            if (formData.getForm(formID) != null && formData.getForm(formID).hasTimer())
                 formData.addTimer(formID, formData.getForm(formID).getTimer());
 
             formData.updateClient();
+            LogWriter.info(form.getMenuName());
             NetworkUtility.sendInfoMessage(player, "§a", "npcdbc.transform", "§r ", form.getMenuName());
             dbcData.saveNBTData(true);
 
@@ -277,12 +325,11 @@ public class TransformController {
         }
     }
 
-    public static void handleFormDescend(EntityPlayer player, int formID) {
+    public static void handleFormDescend(EntityPlayer player, int formID, int stackedFrom) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         if (formData.isInCustomForm()) {
             Form form = formData.getCurrentForm();
             DBCData dbcData = DBCData.get(player);
-
 
             Form parent = (Form) form.getParent();
             boolean intoParent = parent != null && formData.hasFormUnlocked(form.getParentID());
@@ -310,7 +357,15 @@ public class TransformController {
                 NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getMenuName());
                 dbcData.State = form.requiredForm.get((int) dbcData.Race);
             } else {
-                if (intoParent) {
+                int realStackedFrom = stackedFrom != -1 ? stackedFrom : formData.lastFormBeforeStack;
+
+                if (realStackedFrom != -1) {
+                    Form previousForm = (Form) FormController.Instance.get(realStackedFrom);
+                    NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", previousForm.getMenuName());
+                    formData.currentForm = realStackedFrom;
+
+                    formData.lastFormBeforeStack = -1;
+                } else if (intoParent) {
                     NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getParent().getMenuName());
                     formData.currentForm = form.getParentID();
                 } else if (formData.getTimer(form.id) == 0) {
