@@ -48,7 +48,7 @@ public class SubGuiFormStackable extends SubGuiInterface implements ISubGuiListe
 
         addScrollableGui(0, scrollWindow);
 
-        int maxScroll = -20;
+        int maxScroll = 0;
         int guiLeft = 0;
         y = 2;
         scrollWindow.addLabel(new GuiNpcLabel(1, "display.vanillaStackable", 4, y + 5));
