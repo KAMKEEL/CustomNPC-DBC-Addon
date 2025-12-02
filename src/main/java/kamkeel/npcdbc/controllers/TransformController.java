@@ -264,13 +264,14 @@ public class TransformController {
 
 
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
+        DBCData data = DBCData.getData(player);
 
         int originalForm = formData.currentForm;
         if (!formData.hasForm(form)) {
             return;
         }
 
-        Form stackedForm = getStackForm(formData.getCurrentForm(), form);
+        Form stackedForm = getStackForm(data.getForm(), form);
         if (stackedForm != null)
             form = stackedForm;
 
