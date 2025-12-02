@@ -173,7 +173,7 @@ public class PlayerDBCInfo {
     }
 
     public void resetFormData(boolean removeForms, boolean removeMasteries) {
-        TransformController.handleFormDescend(parent.player, -10, -1);
+        TransformController.handleFormDescend(parent.player, -10);
         currentForm = -1;
         selectedForm = -1;
         if (removeForms)
@@ -291,7 +291,7 @@ public class PlayerDBCInfo {
             if (currentTime > 0)
                 formTimers.replace(formid, currentTime - 1);
             else if (currentTime == 0) {
-                TransformController.handleFormDescend(parent.player, 0, -1);
+                TransformController.handleFormDescend(parent.player, 0);
                 formTimers.remove(formid);
             }
         }

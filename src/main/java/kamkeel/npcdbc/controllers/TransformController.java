@@ -91,29 +91,31 @@ public class TransformController {
             releaseTime = 0;
         }
         if (rage >= 100) { //transform when rage meter reaches 100 (max)
-            int selectedId = PlayerDataUtil.getClientDBCInfo() != null ?
-                PlayerDataUtil.getClientDBCInfo().selectedForm :
-                -1;
+//            int selectedId = PlayerDataUtil.getClientDBCInfo() != null ?
+//                PlayerDataUtil.getClientDBCInfo().selectedForm :
+//                -1;
+//
+//            int definitiveId;
+//            int stackedFrom;
 
-            int definitiveId;
-            int stackedFrom;
+//            definitiveId = form.getID();
+//            stackedFrom = -1;
+//
+//            boolean canStack =
+//                form.customStackable.customStackable
+//                    && currentForm != null
+//                    && FormController.Instance.has(selectedId);
+//
+//            if (canStack) {
+//                Form stackForm = getStackForm(currentForm,
+//                    (Form) FormController.Instance.get(selectedId));
+//
+//                if (stackForm != null) {
+//                    stackedFrom = currentForm.getID();
+//                }
+//            }
 
-            if (form.customStackable.customStackable && currentForm != null && FormController.Instance.has(selectedId)) {
-                Form stackForm = getStackForm(currentForm, (Form) FormController.Instance.get(selectedId));
-
-                if (stackForm != null) {
-                    definitiveId = stackForm.getID();
-                    stackedFrom = currentForm.getID();
-                } else {
-                    definitiveId = form.getID();
-                    stackedFrom = -1;
-                }
-            } else {
-                definitiveId = form.getID();
-                stackedFrom = -1;
-            }
-
-            DBCPacketHandler.Instance.sendToServer(new TransformPacket(definitiveId, true, stackedFrom));
+            DBCPacketHandler.Instance.sendToServer(new TransformPacket(form.getID(), true));
             resetTimers();
             cantTransform = true;
             transformed = true;
@@ -180,6 +182,8 @@ public class TransformController {
     }
 
     private static Form getStackForm(Form current, Form selected) {
+        if (selected == null || current == null)
+            return null;
         FormCustomStackable stackable = current.customStackable;
         int selectedId = selected.id;
 
@@ -252,17 +256,25 @@ public class TransformController {
     //////////////////////////////////////////////////
     // Server side handling
 
-    public static void handleFormAscend(EntityPlayer player, int formID, int stackedFrom) {
+    public static void handleFormAscend(EntityPlayer player, int formID) {
         Form form = (Form) FormController.getInstance().get(formID);
         if (form == null)
             return;
 
+
+
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
 
-        if (!formData.hasForm(form))
+        int originalForm = formData.currentForm;
+        if (!formData.hasForm(form)) {
             return;
+        }
 
-        if (formData.currentForm != formID) {
+        Form stackedForm = getStackForm(formData.getCurrentForm(), form);
+        if (stackedForm != null)
+            form = stackedForm;
+
+        if (formData.currentForm != form.id) {
             DBCData dbcData = DBCData.get(player);
 
 
@@ -280,7 +292,7 @@ public class TransformController {
             }
 
             int prevID = formData.currentForm != 1 ? formData.currentForm : dbcData.State;
-            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, formID)))
+            if (DBCEventHooks.onFormChangeEvent(new DBCPlayerEvent.FormChangeEvent(PlayerDataUtil.getIPlayer(player), formData.currentForm != 1, prevID, true, form.id)))
                 return;
 
             PlaySound.play(new SoundSource(form.getAscendSound(), player));
@@ -304,18 +316,12 @@ public class TransformController {
             if (!form.stackable.kaiokenStackable && dbcData.isForm(DBCForm.Kaioken))
                 dbcData.setForm(DBCForm.Kaioken, false);
 
-            if (stackedFrom == -1) {
-                formData.lastFormBeforeStack = -1;
-            }
+            formData.lastFormBeforeStack = originalForm;
 
-            if (stackedFrom != -1) {
-                formData.lastFormBeforeStack = stackedFrom;
-            }
+            formData.currentForm = form.id;
 
-            formData.currentForm = formID;
-
-            if (formData.getForm(formID) != null && formData.getForm(formID).hasTimer())
-                formData.addTimer(formID, formData.getForm(formID).getTimer());
+            if (form.hasTimer())
+                formData.addTimer(form.id, form.getTimer());
 
             formData.updateClient();
             LogWriter.info(form.getMenuName());
@@ -329,7 +335,7 @@ public class TransformController {
         }
     }
 
-    public static void handleFormDescend(EntityPlayer player, int formID, int stackedFrom) {
+    public static void handleFormDescend(EntityPlayer player, int formID) {
         PlayerDBCInfo formData = PlayerDataUtil.getDBCInfo(player);
         if (formData.isInCustomForm()) {
             Form form = formData.getCurrentForm();
@@ -361,7 +367,7 @@ public class TransformController {
                 NetworkUtility.sendInfoMessage(player, "§c", "npcdbc.descend", "§r ", form.getMenuName());
                 dbcData.State = form.requiredForm.get((int) dbcData.Race);
             } else {
-                int realStackedFrom = stackedFrom != -1 ? stackedFrom : formData.lastFormBeforeStack;
+                int realStackedFrom = formData.lastFormBeforeStack;
 
                 if (realStackedFrom != -1) {
                     Form previousForm = (Form) FormController.Instance.get(realStackedFrom);

@@ -17,12 +17,10 @@ public final class TransformPacket extends AbstractPacket {
     public static final String packetName = "NPC|Transform";
     private int state;
     private boolean ascend;
-    private int stackedFrom;
 
-    public TransformPacket(int state, boolean ascend, int stackedFrom) {
+    public TransformPacket(int state, boolean ascend) {
         this.state = state;
         this.ascend = ascend;
-        this.stackedFrom = stackedFrom;
     }
 
     public TransformPacket() {
@@ -42,7 +40,6 @@ public final class TransformPacket extends AbstractPacket {
     public void sendData(ByteBuf out) throws IOException {
         out.writeInt(this.state);
         out.writeBoolean(ascend);
-        out.writeInt(this.stackedFrom);
     }
 
     @Override
@@ -52,11 +49,10 @@ public final class TransformPacket extends AbstractPacket {
 
         int state = in.readInt();
         boolean ascend = in.readBoolean();
-        int stackedFrom = in.readInt();
         if (ascend)
-            TransformController.handleFormAscend(player, state, stackedFrom);
+            TransformController.handleFormAscend(player, state);
         else
-            TransformController.handleFormDescend(player, state, stackedFrom);
+            TransformController.handleFormDescend(player, state);
 
     }
 }
