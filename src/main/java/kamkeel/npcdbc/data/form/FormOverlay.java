@@ -3,6 +3,7 @@ package kamkeel.npcdbc.data.form;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class FormOverlay {
 
@@ -109,6 +110,9 @@ public class FormOverlay {
         getFace(face).setColor(color);
     }
 
+    public void setFaceColorType(int face, int color) {
+        getFace(face).setColorType(color);
+    }
 
     public void setBodyTexture(int body, String texture) {
         getBody(body).setTexture(texture);
@@ -116,6 +120,10 @@ public class FormOverlay {
 
     public void setBodyColor(int body, int color) {
         getBody(body).setColor(color);
+    }
+
+    public void setBodyColorType(int body, int color) {
+        getBody(body).setColorType(color);
     }
 
     public String getFaceTexture(int face) {
@@ -134,6 +142,10 @@ public class FormOverlay {
         return getFace(face).isMatchingPlayerFace();
     }
 
+    public int getFaceColorType(int face) {
+        return getFace(face).getColorType();
+    }
+
     public int getFaceColor(int face) {
         return getFace(face).getColor();
     }
@@ -144,6 +156,10 @@ public class FormOverlay {
 
     public String getBodyTexture(int body) {
         return getBody(body).getTexture();
+    }
+
+    public int getBodyColorType(int body) {
+        return getBody(body).getColorType();
     }
 
     public int getBodyColor(int body) {
@@ -165,14 +181,12 @@ public class FormOverlay {
 
         public String texture = "";
         public String[] faceTextures = new String[]{"", "", "", "", "", ""};
+        public ColorType colorType = ColorType.Custom;
         public int color = 0xffffff;
         public float alpha = 1;
 
         public boolean disableFace = false;
         public boolean matchPlayerFace = false;
-        public boolean usesHairColor = false;
-        public boolean usesEyeColor = false;
-        public boolean usesBodyColor = false;
 
         public boolean enabled = true;
 
@@ -185,11 +199,10 @@ public class FormOverlay {
 
             disableFace = compound.getBoolean("disableFace");
             matchPlayerFace = compound.getBoolean("matchPlayerFace");
-            usesHairColor = compound.getBoolean("usesHairColor");
-            usesEyeColor = compound.getBoolean("usesEyeColor");
-            usesBodyColor = compound.getBoolean("usesBodyColor");
 
-            if (usesHairColor || usesBodyColor) {
+            colorType = ColorType.byId(compound.getInteger("colorType"));
+
+            if (colorType != ColorType.Custom) {
                 color = 0xffffff;
             } else {
                 color = compound.hasKey("color") ? compound.getInteger("color") : 0xffffff;
@@ -222,9 +235,8 @@ public class FormOverlay {
 
             compound.setBoolean("disableFace", disableFace);
             compound.setBoolean("matchPlayerFace", matchPlayerFace);
-            compound.setBoolean("usesHairColor", usesHairColor);
-            compound.setBoolean("usesEyeColor", usesEyeColor);
-            compound.setBoolean("usesBodyColor", usesBodyColor);
+
+            compound.setInteger("colorType", colorType.getId());
 
             compound.setInteger("color", color);
             compound.setFloat("alpha", alpha);
@@ -288,28 +300,12 @@ public class FormOverlay {
             this.matchPlayerFace = matchPlayerFace;
         }
 
-        public boolean isUsingHairColor() {
-            return this.usesHairColor;
+        public int getColorType() {
+            return this.colorType.getId();
         }
 
-        public void setUsingHairColor(boolean uses) {
-            this.usesHairColor = uses;
-        }
-
-        public boolean isUsingEyeColor() {
-            return this.usesEyeColor;
-        }
-
-        public void setUsingEyeColor(boolean uses) {
-            this.usesEyeColor = uses;
-        }
-
-        public boolean isUsingBodyColor() {
-            return this.usesBodyColor;
-        }
-
-        public void setUsingBodyColor(boolean uses) {
-            this.usesBodyColor = uses;
+        public void setColorType(int id) {
+            this.colorType = ColorType.byId(id);
         }
 
         public int getColor() {
@@ -341,12 +337,9 @@ public class FormOverlay {
         private final Form parent;
 
         public String texture = "";
+        public ColorType colorType = ColorType.Custom;
         public int color = 0xffffff;
         public float alpha = 1;
-
-        public boolean usesFurColor = false;
-        public boolean usesHairColor = false;
-        public boolean usesBodyColor = false;
 
         public boolean enabled = true;
 
@@ -357,13 +350,11 @@ public class FormOverlay {
         public void readFromNBT(NBTTagCompound compound) {
             enabled = compound.getBoolean("enabled");
 
-            usesFurColor = compound.getBoolean("usesFurColor");
-            usesHairColor = compound.getBoolean("usesHairColor");
-            usesBodyColor = compound.getBoolean("usesBodyColor");
-
             texture = compound.getString("texture");
 
-            if (usesHairColor || usesBodyColor || usesFurColor) {
+            colorType = ColorType.byId(compound.getInteger("colorType"));
+
+            if (colorType != ColorType.Custom) {
                 color = 0xffffff;
             } else {
                 color = compound.hasKey("color") ? compound.getInteger("color") : 0xffffff;
@@ -377,9 +368,7 @@ public class FormOverlay {
 
             compound.setBoolean("enabled", enabled);
 
-            compound.setBoolean("usesFurColor", usesFurColor);
-            compound.setBoolean("usesHairColor", usesHairColor);
-            compound.setBoolean("usesBodyColor", usesBodyColor);
+            compound.setInteger("colorType", colorType.getId());
 
             compound.setString("texture", texture);
             compound.setInteger("color", color);
@@ -394,6 +383,14 @@ public class FormOverlay {
 
         public void setTexture(String texture) {
             this.texture = texture;
+        }
+
+        public int getColorType() {
+            return this.colorType.getId();
+        }
+
+        public void setColorType(int id) {
+            this.colorType = ColorType.byId(id);
         }
 
         public int getColor() {
@@ -412,36 +409,38 @@ public class FormOverlay {
             this.alpha = alpha;
         }
 
-        public boolean isUsingFurColor() {
-            return this.usesFurColor;
-        }
-
-        public boolean isUsingHairColor() {
-            return this.usesHairColor;
-        }
-
-        public boolean isUsingBodyColor() {
-            return this.usesBodyColor;
-        }
-
-        public void setUsingFurColor(boolean uses) {
-            this.usesFurColor = uses;
-        }
-
-        public void setUsingHairColor(boolean uses) {
-            this.usesHairColor = uses;
-        }
-
-        public void setUsingBodyColor(boolean uses) {
-            this.usesBodyColor = uses;
-        }
-
         public boolean isEnabled() {
             return this.enabled;
         }
 
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
+        }
+    }
+
+    public enum ColorType {
+        Custom(0),
+        Body(1),
+        Eye(2),
+        Hair(3),
+        Fur(4);
+
+        private static final ColorType[] BY_ID = Arrays.stream(values()).sorted(
+                Comparator.comparing(ColorType::getId)
+        ).toArray(ColorType[]::new);
+
+        private final int id;
+
+        ColorType(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return this.id;
+        }
+
+        public static ColorType byId(int id) {
+            return BY_ID[Math.floorMod(id, BY_ID.length)];
         }
     }
 }

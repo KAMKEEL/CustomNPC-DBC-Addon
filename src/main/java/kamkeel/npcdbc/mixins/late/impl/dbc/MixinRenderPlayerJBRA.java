@@ -465,10 +465,12 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
                 int furColor = data.currentCustomizedColors.getProperColor(displayData.getFurColor(data), "fur");
                 int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
+                int eyeColor = data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
 
-                int color = bodyData.isUsingBodyColor() ?
-                    bodyCM : bodyData.isUsingHairColor() ?
-                    (hairColor < 0 ? defaultHairColor : hairColor) : bodyData.isUsingFurColor() ?
+                int color = bodyData.getColorType() == FormOverlay.ColorType.Body.getId() ?
+                    bodyCM : bodyData.getColorType() == FormOverlay.ColorType.Eye.getId() ?
+                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : bodyData.getColorType() == FormOverlay.ColorType.Hair.getId() ?
+                    (hairColor < 0 ? defaultHairColor : hairColor) : bodyData.getColorType() == FormOverlay.ColorType.Fur.getId() ?
                     furColor : bodyData.getColor();
 
                 if (!bindImageDataTexture(imageData, color))
@@ -492,12 +494,15 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 if (imageData == null || !imageData.imageLoaded())
                     continue;
 
+                int furColor = data.currentCustomizedColors.getProperColor(displayData.getFurColor(data), "fur");
                 int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
                 int eyeColor = data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
-                int color = faceData.isUsingBodyColor() ?
-                    bodyCM : faceData.isUsingHairColor() ?
-                    (hairColor < 0 ? defaultHairColor : hairColor) : faceData.isUsingEyeColor() ?
-                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : faceData.getColor();
+
+                int color = faceData.getColorType() == FormOverlay.ColorType.Body.getId() ?
+                    bodyCM : faceData.getColorType() == FormOverlay.ColorType.Eye.getId() ?
+                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : faceData.getColorType() == FormOverlay.ColorType.Hair.getId() ?
+                    (hairColor < 0 ? defaultHairColor : hairColor) : faceData.getColorType() == FormOverlay.ColorType.Fur.getId() ?
+                    furColor : faceData.getColor();
 
                 if (!bindImageDataTexture(imageData, color))
                     continue;

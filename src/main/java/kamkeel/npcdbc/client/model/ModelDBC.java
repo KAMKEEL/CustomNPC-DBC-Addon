@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.model;
 
+import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreClient;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHJBRA;
@@ -219,6 +220,9 @@ public class ModelDBC extends ModelBase {
             }
             ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
 
+            if (isSaiyan && (display.hasFur || isSSJ4) && display.furType == 2)
+                return;
+
             ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
             this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
@@ -359,7 +363,27 @@ public class ModelDBC extends ModelBase {
         DBCHair.isHidden = isHidden;
     }
 
-    public void renderSSJ3Face(int eyeColor, int hairColor, int bodyCM, boolean isBerserk, boolean hasEyebrows, int eyeType) {
+    public void renderSaviorFace(int eyeColor) {
+        boolean isHidden = DBCHair.isHidden;
+        DBCHair.isHidden = true;
+
+        String eyeDir = "savior/";
+        ColorMode.applyModelColor(0xffffff, this.parent.alpha, isHurt);
+        ClientProxy.bindTexture(new ResourceLocation((ConfigDBCClient.EnableHDTextures ? HDDir : SDDir) + eyeDir + "saviormouth.png"));
+        parent.bipedHead.render(1F / 16F);
+
+        ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
+        ClientProxy.bindTexture(new ResourceLocation((ConfigDBCClient.EnableHDTextures ? HDDir : SDDir) + eyeDir + "savioreyes.png"));
+        parent.bipedHead.render(0.0625F);
+
+        ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
+        ClientProxy.bindTexture(new ResourceLocation((ConfigDBCClient.EnableHDTextures ? HDDir : SDDir) + eyeDir + "saviorchest.png"));
+        parent.bipedBody.render(0.0625F);
+
+        DBCHair.isHidden = isHidden;
+    }
+
+    public void renderSSJ3Face(int eyeColor, int hairColor, int bodyCM, boolean isBerserk, int eyeType) {
         boolean isHidden = DBCHair.isHidden;
         DBCHair.isHidden = true;
 
@@ -453,9 +477,10 @@ public class ModelDBC extends ModelBase {
                                 furColor = 0xDA152C;
                             if (HD && hasEyebrows && display.furType != 2)
                                 renderSSJ4Face(eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType);
-                            else if (HD && hasEyebrows && display.furType == 2)
-                                renderSSJ4Face(eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType);
+                        }
 
+                        if (!isOozaru && furType == 2) {
+                            renderSaviorFace(eyeColor);
                         }
 
                         if (isOozaru) {
@@ -466,13 +491,13 @@ public class ModelDBC extends ModelBase {
                             model.render(0.0625F);
 
                             ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
+                            ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
                         } else {
                             ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b" + furType + ".png" : "jinryuudragonbc:cc/ss4b"));
                         }
                         ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
                     }
                 }
-
             } else if (race == DBCRace.NAMEKIAN) {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/nam/0nam" + display.bodyType + ".png"));
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
