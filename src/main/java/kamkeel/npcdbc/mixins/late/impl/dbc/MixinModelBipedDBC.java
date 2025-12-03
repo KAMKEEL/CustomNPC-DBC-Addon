@@ -19,6 +19,7 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.form.FormOverlay;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -120,8 +121,12 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 FormDisplay.BodyColor playerColors = dbcData.currentCustomizedColors;
 
+                if (doesFaceOverlayDisableDBCFace(form.overlays)) {
+                    disableFace(hair, ci);
+                }
+
                 //eye colors for ALL forms except ssj4
-                if ((hair.contains("EYELEFT") || hair.contains("EYERIGHT"))) {
+                if ((hair.contains("EYELEFT") || hair.contains("EYERIGHT")) && !doesFaceOverlayDisableDBCFace(form.overlays)) {
                     if (form.display.isBerserk && !ClientConstants.renderingMajinSE)
                         ci.cancel();
 
@@ -238,6 +243,19 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             kken.set(false);
             trty.set(false);
         }
+    }
+
+    @Unique
+    private boolean doesFaceOverlayDisableDBCFace(FormOverlay overlays) {
+        if (!overlays.hasFaceOverlays) return false;
+
+        for (FormOverlay.Face face : overlays.getFaces()) {
+            if (face.isEnabled() && face.isFaceDisabled()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Inject(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At("HEAD"), cancellable = true)
