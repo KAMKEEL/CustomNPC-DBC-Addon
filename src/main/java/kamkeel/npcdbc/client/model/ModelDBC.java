@@ -24,6 +24,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import noppes.npcs.LogWriter;
 import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.constants.EnumAnimation;
@@ -217,10 +218,8 @@ public class ModelDBC extends ModelBase {
                 return;
             }
             ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-            if (renderSSJ4Face)
-                ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + "humn" + display.noseType + ".png"));
-            else
-                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
+
+            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
             this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
             this.nose.rotateAngleX = parent.bipedHead.rotateAngleX;
@@ -234,9 +233,6 @@ public class ModelDBC extends ModelBase {
             GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
             this.nose.render(0.0625F);
             GL11.glPopMatrix();
-
-            if (renderSSJ4Face)
-                return;
 
             String mouthDir = "";
             if (display.race == 4 && hasArcoMask)
@@ -257,6 +253,9 @@ public class ModelDBC extends ModelBase {
             GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
             this.mouth.render(0.0625F);
             GL11.glPopMatrix();
+
+            if (renderSSJ4Face)
+                return;
 
             GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
             ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
@@ -334,31 +333,53 @@ public class ModelDBC extends ModelBase {
         boolean isHidden = DBCHair.isHidden;
         DBCHair.isHidden = true;
 
+        String eyeDir = "ssj4/face_" + eyeType + "/";
         ColorMode.applyModelColor(0xffffff, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4eyewhite.png"));
+        ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyewhite.png"));
         parent.bipedHead.render(1F / 16F);
 
         if (!isBerserk) {
             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-            ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4pupils.png"));
+            ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4pupils.png"));
             parent.bipedHead.render(0.0625F);
         }
 
         ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows.png"));
+        ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4brows.png"));
         parent.bipedHead.render(1F / 16F);
 
         ColorMode.applyModelColor(hairColor, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4brows2.png"));
-        parent.bipedHead.render(1F / 16F);
-
-
-        ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4mouth0.png"));
+        ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4brows2.png"));
         parent.bipedHead.render(1F / 16F);
 
         ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-        ClientProxy.bindTexture(new ResourceLocation(HDDir + "ssj4/ssj4shade.png"));
+        ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4shade.png"));
+        parent.bipedHead.render(1F / 16F);
+
+        DBCHair.isHidden = isHidden;
+    }
+
+    public void renderSSJ3Face(int eyeColor, int hairColor, int bodyCM, boolean isBerserk, boolean hasEyebrows, int eyeType) {
+        boolean isHidden = DBCHair.isHidden;
+        DBCHair.isHidden = true;
+
+        String eyeDir = "ssj3/face_" + eyeType + "/";
+        ColorMode.applyModelColor(0xffffff, this.parent.alpha, isHurt);
+        ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyewhite.png"));
+        parent.bipedHead.render(1F / 16F);
+
+        if (!isBerserk) {
+            ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
+            ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3pupils.png"));
+            parent.bipedHead.render(0.0625F);
+        }
+
+        ColorMode.applyModelColor(hairColor, this.parent.alpha, isHurt);
+        ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3brows.png"));
+        parent.bipedHead.render(1F / 16F);
+
+        ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
+        ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3shade.png"));
         parent.bipedHead.render(1F / 16F);
 
         DBCHair.isHidden = isHidden;
@@ -375,8 +396,9 @@ public class ModelDBC extends ModelBase {
             int bodyC2 = display.bodyC2;
             int bodyC3 = display.bodyC3;
             int furColor = display.furColor;
+            int furType = display.furType;
             boolean hasFur = display.hasFur;
-            boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru"), hasEyebrows = display.hasEyebrows, isBerserk = false;
+            boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru"), isSSJ3 = display.hairType.equals("ssj3"), hasEyebrows = display.hasEyebrows, isBerserk = false;
             //  ModelPartData tailData = ((EntityCustomNpc) display.npc).modelData.getOrCreatePart("tail");
 
             boolean HD = ConfigDBCClient.EnableHDTextures;
@@ -429,8 +451,11 @@ public class ModelDBC extends ModelBase {
                         if (isSSJ4) {
                             if (furColor == -1)
                                 furColor = 0xDA152C;
-                            if (HD && hasEyebrows)
+                            if (HD && hasEyebrows && display.furType != 2)
                                 renderSSJ4Face(eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType);
+                            else if (HD && hasEyebrows && display.furType == 2)
+                                renderSSJ4Face(eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType);
+
                         }
 
                         if (isOozaru) {
@@ -442,7 +467,7 @@ public class ModelDBC extends ModelBase {
 
                             ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
                         } else {
-                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b.png" : "jinryuudragonbc:cc/ss4b.png"));
+                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b" + furType + ".png" : "jinryuudragonbc:cc/ss4b"));
                         }
                         ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
                     }
@@ -547,7 +572,7 @@ public class ModelDBC extends ModelBase {
             GL11.glTranslatef((float) Math.sin((double) dancing) * 0.025F, (float) Math.abs(Math.cos((double) dancing)) * 0.125F - 0.02F, 0.0F);
         }
 
-//        ((ModelScaleRenderer)this.bipedLeftArm).setConfig(arms, -x, y, z);
+        //        ((ModelScaleRenderer)this.bipedLeftArm).setConfig(arms, -x, y, z);
         byte hideArms = entity.modelData.hideArms;
 
         KiWeaponData leftArm = display.kiWeaponLeft;
@@ -608,11 +633,11 @@ public class ModelDBC extends ModelBase {
         }
 
 
-//        if (weaponData.syncAuraColor) {
-//            Aura aura = display.getToggledAura();
-//            if (aura != null)
-//                col.color = display.activeAuraColor;
-//        }
+        //        if (weaponData.syncAuraColor) {
+        //            Aura aura = display.getToggledAura();
+        //            if (aura != null)
+        //                col.color = display.activeAuraColor;
+        //        }
 
 
         GL11.glTranslatef(-0.06F, -0.05F, 0.0F);

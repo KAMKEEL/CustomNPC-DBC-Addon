@@ -61,6 +61,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public boolean hasArcoMask = false, hasEyebrows = true;
     public int furColor = -1;
     public boolean hasFur = false;
+    public int furType = 0;
     public byte tailState;
     // Face Display //
     public int eyeColor = 0;
@@ -112,6 +113,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             dbcDisplay.setInteger("DBCNoseType", noseType);
             dbcDisplay.setInteger("DBCBodyType", bodyType);
             dbcDisplay.setByte("DBCTailState", tailState);
+            dbcDisplay.setInteger("DBCFurType", furType);
 
             dbcDisplay.setInteger("DBCRace", race);
             dbcDisplay.setBoolean("DBCUseSkin", useSkin);
@@ -168,6 +170,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             noseType = dbcDisplay.getInteger("DBCNoseType");
             bodyType = dbcDisplay.getInteger("DBCBodyType");
             tailState = dbcDisplay.getByte("DBCTailState");
+            furType = dbcDisplay.getInteger("DBCFurType");
 
             hairColor = dbcDisplay.getInteger("DBCHairColor");
             eyeColor = dbcDisplay.getInteger("DBCEyeColor");
@@ -375,6 +378,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
         return hairType;
     }
 
+    public int getFurType() {
+        return furType;
+    }
+
     @Override
     public boolean hasCoolerMask() {
         return hasArcoMask;
@@ -403,6 +410,10 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     @Override
     public void setHasBodyFur(boolean hasFur) {
         this.hasFur = hasFur;
+    }
+
+    public void setFurType(int furType) {
+        this.furType = Math.max(0, Math.min(2, furType));
     }
 
     /////////////////////////////////////////////
