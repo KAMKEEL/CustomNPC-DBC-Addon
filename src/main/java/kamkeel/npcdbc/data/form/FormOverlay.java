@@ -17,8 +17,8 @@ public class FormOverlay {
 
     public FormOverlay(Form parent) {
         this.parent = parent;
-        this.faceOverlays = new Face[]{new Face(parent), new Face(parent)};
-        this.bodyOverlays = new Body[]{new Body(parent), new Body(parent)};
+        this.faceOverlays = new Face[]{new Face(parent), new Face(parent), new Face(parent)};
+        this.bodyOverlays = new Body[]{new Body(parent), new Body(parent), new Body(parent)};
     }
 
     public void readFromNBT(NBTTagCompound compound) {
@@ -29,7 +29,7 @@ public class FormOverlay {
         NBTTagCompound face = rendering.getCompoundTag("faceData");
         NBTTagCompound body = rendering.getCompoundTag("bodyData");
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             NBTTagCompound bodyCompound = body.getCompoundTag("body" + i);
             NBTTagCompound faceCompound = face.getCompoundTag("face" + i);
 
@@ -46,7 +46,7 @@ public class FormOverlay {
         NBTTagCompound face = new NBTTagCompound();
         NBTTagCompound body = new NBTTagCompound();
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             face.setTag("face" + i, faceOverlays[i].writeToNBT());
             body.setTag("body" + i, bodyOverlays[i].writeToNBT());
         }
@@ -59,11 +59,11 @@ public class FormOverlay {
     }
 
     public Face getFace(int face) {
-        return this.faceOverlays[Math.max(0, Math.min(1, face))];
+        return this.faceOverlays[Math.max(0, Math.min(2, face))];
     }
 
     public Body getBody(int body) {
-        return this.bodyOverlays[Math.max(0, Math.min(1, body))];
+        return this.bodyOverlays[Math.max(0, Math.min(2, body))];
     }
 
     public Face[] getFaces() {
