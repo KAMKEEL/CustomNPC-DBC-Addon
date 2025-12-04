@@ -16,6 +16,7 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.form.FormOverlay;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -26,12 +27,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.LogWriter;
+import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;
+import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.constants.EnumAnimation;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelScalePart;
 import org.lwjgl.opengl.GL11;
+import org.spongepowered.asm.mixin.Unique;
 
 public class ModelDBC extends ModelBase {
 
@@ -139,7 +143,7 @@ public class ModelDBC extends ModelBase {
         isHurt = false;
     }
 
-    public void renderFace(EntityCustomNpc entity, DBCDisplay display) {
+    public void renderFace(EntityCustomNpc entity, DBCDisplay display, ModelRenderer bipeadHead) {
         if (display.useSkin) {
             float y = entity.modelData.getBodyY();
             ModelScalePart head = entity.modelData.modelScale.head;
@@ -330,7 +334,57 @@ public class ModelDBC extends ModelBase {
                 this.eyeright.render(0.0625F);
                 GL11.glPopMatrix();
             }
+
+
+            if (form.overlays.hasFaceOverlays) {
+                renderFaceOverlays(form, display, bipeadHead);
+            }
         }
+    }
+
+    private void renderFaceOverlays(Form form, DBCDisplay display, ModelRenderer bipeadHead) {
+        FormOverlay overlayData = form.overlays;
+
+        for (FormOverlay.Face faceData : overlayData.getFaces()) {
+            if (faceData.isEnabled()) {
+                String faceTexture = faceData.getTexture(display.eyeType);
+                ImageData imageData = ClientCacheHandler.getImageData(faceTexture);
+                if (imageData == null || !imageData.imageLoaded())
+                    continue;
+
+                int furColor = display.furColor;//data.currentCustomizedColors.getProperColor(displayData.getFurColor(data), "fur");
+                int hairColor = display.hairColor;// data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
+                int eyeColor = display.eyeColor;// data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
+
+                int color = faceData.getColorType() == FormOverlay.ColorType.Body.getId() ? display.bodyCM : faceData.getColorType() == FormOverlay.ColorType.Eye.getId() ? (eyeColor < 0 ? display.eyeColor : eyeColor) : faceData.getColorType() == FormOverlay.ColorType.Hair.getId() ? (hairColor < 0 ? display.hairColor : hairColor) : faceData.getColorType() == FormOverlay.ColorType.Fur.getId() ? furColor : faceData.getColor();
+
+                bipeadHead.render(0.0625F); //render MAIN skin (by this point its texture is only bound, not rendered yet)
+
+                if (!bindImageDataTexture(imageData, color))
+                    continue;
+
+                GL11.glPushMatrix();
+                float scale = 1.01f;
+                GL11.glScalef(scale, scale, scale);
+                bipeadHead.render(0.0625F);
+                GL11.glPopMatrix();
+            }
+        }
+    }
+
+    private boolean bindImageDataTexture(ImageData data, int color) {
+        ResourceLocation location = data.getLocation();
+        if (location != null && !data.invalid()) {
+            try {
+                RenderPlayerJBRA.glColor3f(color);
+                ClientProxy.bindTexture(location);
+                return true;
+            } catch (Exception exception) {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     public void renderSSJ4Face(int eyeColor, int furColor, int hairColor, int bodyCM, boolean isBerserk, boolean hasEyebrows, int eyeType) {
@@ -537,10 +591,38 @@ public class ModelDBC extends ModelBase {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
             }
+            if (form.overlays.hasBodyOverlays) {
+                renderBodyOverlays(form, display, model);
+            }
         }
     }
 
+    @Unique
+    private void renderBodyOverlays(Form form, DBCDisplay display, ModelRenderer model) {
+        FormOverlay overlayData = form.overlays;
 
+        for (FormOverlay.Body bodyData : overlayData.getBodies()) {
+            if (bodyData.isEnabled()) {
+                String bodyTexture = bodyData.getTexture();
+                ImageData imageData = ClientCacheHandler.getImageData(bodyTexture);
+                if (imageData == null || !imageData.imageLoaded())
+                    continue;
+
+                int furColor = display.furColor;//data.currentCustomizedColors.getProperColor(displayData.getFurColor(data), "fur");
+                int hairColor = display.hairColor;// data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
+                int eyeColor = display.eyeColor;// data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
+
+                int color = bodyData.getColorType() == FormOverlay.ColorType.Body.getId() ? display.bodyCM : bodyData.getColorType() == FormOverlay.ColorType.Eye.getId() ? (eyeColor < 0 ? eyeColor : eyeColor) : bodyData.getColorType() == FormOverlay.ColorType.Hair.getId() ? (hairColor < 0 ? hairColor : hairColor) : bodyData.getColorType() == FormOverlay.ColorType.Fur.getId() ? furColor : bodyData.getColor();
+
+                model.render(0.0625F); //render MAIN skin (by this point its texture is only bound, not rendered yet)
+                if (!bindImageDataTexture(imageData, color))
+                    continue;
+
+
+                //   model.render(0.0625F); //Don't need to render this as the main method after the mixins renders the body anyway
+            }
+        }
+    }
     public void setRotationAngles(float par1, float par2, float par3, float par4, float par5, float par6, Entity entity) {
     }
 

@@ -109,7 +109,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     private void renderDBCHead(EntityCustomNpc entity, float f, CallbackInfo ci) {
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled) {
-            NPCDBCModel.renderFace(entity, display);
+            NPCDBCModel.renderFace(entity, display, bipedHead);
             NPCDBCModel.renderBodySkin(display, bipedHead);
         }
     }
