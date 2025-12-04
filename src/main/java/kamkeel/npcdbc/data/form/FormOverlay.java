@@ -95,7 +95,10 @@ public class FormOverlay {
     }
 
     public void setFaceTexture(int face, String texture, int faceType) {
-        getFace(face).setTexture(texture, faceType);
+        if (faceType == -1)
+            getFace(face).setTexture(texture);
+        else
+            getFace(face).setTexture(texture, faceType);
     }
 
     public void setDisableFace(int face, boolean disable) {

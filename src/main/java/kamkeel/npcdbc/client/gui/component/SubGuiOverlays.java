@@ -4,6 +4,7 @@ import kamkeel.npcdbc.client.gui.global.form.SubGuiFormDisplay;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormOverlay;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.select.GuiTextureSelection;
@@ -12,13 +13,13 @@ import noppes.npcs.controllers.data.SkinOverlay;
 import noppes.npcs.entity.EntityNPCInterface;
 
 public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, ITextfieldListener  {
-    public SubGuiFormDisplay parent;
+    public static SubGuiFormDisplay parent;
     public Form form;
-    public FormOverlay overlay;
-    public int mode;
-    public int[] selectedFaces = new int[]{0, 0, 0};
+    public static FormOverlay overlay;
+    public static int mode;
+    public static int[] selectedFaces = new int[]{0, 0, 0};
     public int lastColorClicked = 0;
-    public int lastTextureClicked = 0;
+    public static int lastTextureClicked = 0;
 
     public SubGuiOverlays(SubGuiFormDisplay parent, int mode) {
         this.parent = parent;
@@ -142,17 +143,21 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             return;
         }
 
+        if (button.id >= 1 && button.id <= 3) {//buttons 1,2,3 are identical to clicked indices
+            lastTextureClicked = button.id - 1;
+        }
+
         if (mode == 0) {
             if (button.id == 1) {
-                lastTextureClicked = 0;
+                // lastTextureClicked = 0;
                 setSubGui(new GuiOverlaySelection(npc, getTextField(1).getText()));
             }
             if (button.id == 2) {
-                lastTextureClicked = 1;
+                // lastTextureClicked = 1;
                 setSubGui(new GuiOverlaySelection(npc, getTextField(2).getText()));
             }
             if (button.id == 3) {
-                lastTextureClicked = 2;
+                // lastTextureClicked = 2;
                 setSubGui(new GuiOverlaySelection(npc, getTextField(3).getText()));
             }
 
@@ -193,15 +198,15 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             }
         } else if (mode == 1) {
             if (button.id == 1) {
-                lastTextureClicked = 3;
+                // lastTextureClicked = 3;
                 setSubGui(new GuiOverlaySelection(npc, getTextField(1).getText()));
             }
             if (button.id == 2) {
-                lastTextureClicked = 4;
+                // lastTextureClicked = 4;
                 setSubGui(new GuiOverlaySelection(npc, getTextField(2).getText()));
             }
             if (button.id == 3) {
-                lastTextureClicked = 5;
+                // lastTextureClicked = 5;
                 setSubGui(new GuiOverlaySelection(npc, getTextField(3).getText()));
             }
 
@@ -308,34 +313,52 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         } else if (subGuiInterface instanceof GuiOverlaySelection) {
             GuiOverlaySelection gts = (GuiOverlaySelection) subGuiInterface;
             if (gts.selectedResource != null) {
-                if (lastTextureClicked == 0) {
-                    overlay.setBodyTexture(0, gts.selectedResource.toString());
-                } else if (lastTextureClicked == 1) {
-                    overlay.setBodyTexture(1, gts.selectedResource.toString());
-                } else if (lastTextureClicked == 2) {
-                    overlay.setBodyTexture(2, gts.selectedResource.toString());
-                } else if (lastTextureClicked == 3) {
-                    if (overlay.isFaceMatchingPlayer(0)) {
-                        overlay.setFaceTexture(0, gts.selectedResource.toString(), selectedFaces[0]);
-                    } else {
-                        overlay.setFaceTexture(0, gts.selectedResource.toString());
-                    }
-                } else if (lastTextureClicked == 4) {
-                    if (overlay.isFaceMatchingPlayer(1)) {
-                        overlay.setFaceTexture(1, gts.selectedResource.toString(), selectedFaces[1]);
-                    } else {
-                        overlay.setFaceTexture(1, gts.selectedResource.toString());
-                    }
-                } else if (lastTextureClicked == 5) {
-                    if (overlay.isFaceMatchingPlayer(2)) {
-                        overlay.setFaceTexture(2, gts.selectedResource.toString(), selectedFaces[2]);
-                    } else {
-                        overlay.setFaceTexture(2, gts.selectedResource.toString());
-                    }
-                }
+                setOverlay(gts.selectedResource, false);
                 initGui();
             }
         }
+    }
+
+    private static void setOverlay(ResourceLocation resource, boolean enable) {
+        boolean isFace = mode == 1; //else is body
+
+        int clickedTex = lastTextureClicked;
+        if (isFace) {
+            overlay.setFaceTexture(clickedTex, resource.toString(), overlay.isFaceMatchingPlayer(clickedTex) ? selectedFaces[clickedTex] : -1);
+            if (enable)
+                overlay.getFace(clickedTex).setEnabled(true);
+        } else {
+            overlay.setBodyTexture(clickedTex, resource.toString());
+            if (enable)
+                overlay.getBody(clickedTex).setEnabled(true);
+        }
+
+
+        //        if (lastTextureClicked == 0) {
+        //            overlay.setBodyTexture(0, resource.toString());
+        //        } else if (lastTextureClicked == 1) {
+        //            overlay.setBodyTexture(1, resource.toString());
+        //        } else if (lastTextureClicked == 2) {
+        //            overlay.setBodyTexture(2, resource.toString());
+        //        } else if (lastTextureClicked == 3) {
+        //            if (overlay.isFaceMatchingPlayer(0)) {
+        //                overlay.setFaceTexture(0, resource.toString(), selectedFaces[0]);
+        //            } else {
+        //                overlay.setFaceTexture(0, resource.toString());
+        //            }
+        //        } else if (lastTextureClicked == 4) {
+        //            if (overlay.isFaceMatchingPlayer(1)) {
+        //                overlay.setFaceTexture(1, resource.toString(), selectedFaces[1]);
+        //            } else {
+        //                overlay.setFaceTexture(1, resource.toString());
+        //            }
+        //        } else if (lastTextureClicked == 5) {
+        //            if (overlay.isFaceMatchingPlayer(2)) {
+        //                overlay.setFaceTexture(2, resource.toString(), selectedFaces[2]);
+        //            } else {
+        //                overlay.setFaceTexture(2, resource.toString());
+        //            }
+        //        }
     }
 
     @Override
@@ -391,12 +414,21 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         protected void actionPerformed(GuiButton guibutton) {
             super.actionPerformed(guibutton);
             if (guibutton.id == 2) {
-                this.npc.display.skinOverlayData.overlayList.put(0, new SkinOverlay(this.selectedResource.toString()));
+                //  this.npc.display.skinOverlayData.overlayList.put(0, new SkinOverlay(this.selectedResource.toString()));
             }
 
             this.npc.textureLocation = null;
             this.close();
             this.parent.initGui();
+        }
+
+        public void customScrollClicked(int i, int j, int k, GuiCustomScroll scroll) {
+            super.customScrollClicked(i, j, k, scroll);
+
+            if (scroll.id == 1) {
+                // this.npc.display.skinOverlayData.overlayList.put(0, new SkinOverlay(this.selectedResource.toString()));
+                setOverlay(selectedResource, true);
+            }
         }
     }
 }
