@@ -56,8 +56,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = RenderPlayerJBRA.class, remap = false)
 public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
-    @Shadow
-    private static float age;
+//    @Shadow
+//    private static float age;
     @Shadow
     public ModelBipedDBC modelMain;
     @Unique
@@ -69,27 +69,27 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     private String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
 
-    @Shadow
-    public static float r;
-
-    @Shadow
-    public static float b;
-
-    @Shadow
-    public static float g;
+//    @Shadow
+//    private static float r;
+//
+//    @Shadow
+//    private static float b;
+//
+//    @Shadow
+//    private static float g;
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE))
     public void customKaiokenTint(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
         DBCData data = DBCData.get(par1AbstractClientPlayer);
-        if (JRMCoreH.DBC() && kk2) {
-            Aura aura = data.getAura();
-            if (aura != null && aura.display.kaiokenColor != -1) {
-                Color tint = new Color(aura.display.kaiokenColor);
-                r = tint.getRedF() * kk / 15.0F;
-                g = tint.getGreenF() * kk / 15.0F;
-                b = tint.getBlueF() * kk / 15.0F;
-            }
-        }
+//        if (JRMCoreH.DBC() && kk2) {
+//            Aura aura = data.getAura();
+//            if (aura != null && aura.display.kaiokenColor != -1) {
+//                Color tint = new Color(aura.display.kaiokenColor);
+//                r = tint.getRedF() * kk / 15.0F;
+//                g = tint.getGreenF() * kk / 15.0F;
+//                b = tint.getBlueF() * kk / 15.0F;
+//            }
+//        }
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
@@ -114,19 +114,19 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderArmEvent.Post(par1EntityPlayer, (RenderPlayerJBRA) (Object) this, Minecraft.getMinecraft().timer.renderPartialTicks));
     }
 
-    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 1), remap = true)
-    protected void setDamage(float x, float y, float z, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
-        if (mc.theWorld == null)
-            return;
-        DBCData.get(player.get()).XZSize = x;
-        DBCData.get(player.get()).YSize = y;
-        if (RenderEventHandler.renderingPlayerInGUI && y > 0.8f) {
-            float f = ConfigDBCClient.AlteranteSelectionWheelTexture ? 6f : 4f;
-            GL11.glTranslatef(0, y / f, 0);
-        }
-
-        GL11.glScalef(x, y, z);
-    }
+//    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glScalef(FFF)V", ordinal = 1), remap = true)
+//    protected void setDamage(float x, float y, float z, @Local(ordinal = 0) LocalRef<AbstractClientPlayer> player) {
+//        if (mc.theWorld == null)
+//            return;
+//        DBCData.get(player.get()).XZSize = x;
+//        DBCData.get(player.get()).YSize = y;
+//        if (RenderEventHandler.renderingPlayerInGUI && y > 0.8f) {
+//            float f = ConfigDBCClient.AlteranteSelectionWheelTexture ? 6f : 4f;
+//            GL11.glTranslatef(0, y / f, 0);
+//        }
+//
+//        GL11.glScalef(x, y, z);
+//    }
 
     @Inject(method = "glColor3f(I)V", at = @At("HEAD"), cancellable = true)
     private static void mixAuraColor(int c, CallbackInfo ci) {
@@ -139,14 +139,14 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         if (data == null)
             return;
 
-        if (JRMCoreH.DBC() && kk2) {
-            Aura aura = data.getAura();
-            if (aura != null && aura.display.kaiokenColor != -1) {
-                Color.lerpRGB(c, aura.display.kaiokenColor, kk / 15f).glColor();
-                ci.cancel();
-                return;
-            }
-        }
+//        if (JRMCoreH.DBC() && kk2) {
+//            Aura aura = data.getAura();
+//            if (aura != null && aura.display.kaiokenColor != -1) {
+//                Color.lerpRGB(c, aura.display.kaiokenColor, kk / 15f).glColor();
+//                ci.cancel();
+//                return;
+//            }
+//        }
 
         EntityAura aura = data.auraEntity;
         if (!RenderEventHandler.renderingPlayerInGUI && aura != null && aura.color1 != -1 && aura.shouldRender()) {
@@ -179,47 +179,48 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         if (data == null)
             return;
 
+//        System.out.println();
 
-        if (JRMCoreH.DBC() && kk2) {
-            Aura aura = data.getAura();
-            if (aura != null && aura.display.kaiokenColor != -1) {
-                Color col = new Color(r.get(), g.get(), b.get(), -1);
-                col.lerpRGB(aura.display.kaiokenColor, kk / 40f).glColor();
-                ci.cancel();
-                return;
-            }
-        }
+//        if (JRMCoreH.DBC() && kk2) {
+//            Aura aura = data.getAura();
+//            if (aura != null && aura.display.kaiokenColor != -1) {
+//                Color col = new Color(r.get(), g.get(), b.get(), -1);
+//                col.lerpRGB(aura.display.kaiokenColor, kk / 40f).glColor();
+//                ci.cancel();
+//                return;
+//            }
+//        }
     }
+//
+//    @Redirect(method = "func_130009_a", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;isSneaking()Z"))
+//    private boolean isSneaking(AbstractClientPlayer instance) {
+//        if (RenderEventHandler.renderingPlayerInGUI)
+//            return false;
+//        return instance.isSneaking();
+//    }
 
-    @Redirect(method = "func_130009_a", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;isSneaking()Z"))
-    private boolean isSneaking(AbstractClientPlayer instance) {
-        if (RenderEventHandler.renderingPlayerInGUI)
-            return false;
-        return instance.isSneaking();
-    }
-
-    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data2:[Ljava/lang/String;"), remap = true)
-    private String[] changeFormDAata(@Local(name = "pl") int pl, @Local(ordinal = 0) AbstractClientPlayer player) {
-        DBCData data = DBCData.get(player);
-        if (data.State > 0) {
-            Form form = data.getForm();
-            if (form != null && !form.stackable.vanillaStackable)
-                data.State = 0;
-        }
-        if (!ClientProxy.isRenderingWorld() || CustomNpcPlusDBC.proxy.isRenderingGUI())
-            ClientProxy.lastRendererGUIPlayerID = pl;
-        else
-            ClientProxy.lastRendererGUIPlayerID = -1;
-        if (JRMCoreH.data2 != null)
-            JRMCoreH.data2[pl] = data.State + ";" + data.State2;
-        return JRMCoreH.data2;
-    }
+//    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreH;data2:[Ljava/lang/String;"), remap = true)
+//    private String[] changeFormDAata(@Local(name = "pl") int pl, @Local(ordinal = 0) AbstractClientPlayer player) {
+//        DBCData data = DBCData.get(player);
+//        if (data.State > 0) {
+//            Form form = data.getForm();
+//            if (form != null && !form.stackable.vanillaStackable)
+//                data.State = 0;
+//        }
+//        if (!ClientProxy.isRenderingWorld() || CustomNpcPlusDBC.proxy.isRenderingGUI())
+//            ClientProxy.lastRendererGUIPlayerID = pl;
+//        else
+//            ClientProxy.lastRendererGUIPlayerID = -1;
+//        if (JRMCoreH.data2 != null)
+//            JRMCoreH.data2[pl] = data.State + ";" + data.State2;
+//        return JRMCoreH.data2;
+//    }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JBRA/RenderPlayerJBRA;kk2:Z", ordinal = 1))
     private void changeFormDAata4(AbstractClientPlayer p, float p_77041_2_, CallbackInfo ci) {
         DBCData data = DBCData.get(p);
         if (RenderEventHandler.renderingPlayerInGUI) {
-            kk2 = data.renderKK;
+//            kk2 = data.renderKK;
         }
     }
 
@@ -340,7 +341,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
             FormDisplay display = form.display;
 
-            HD = ConfigDBCClient.EnableHDTextures;
+            HD = ConfigDBCClient.EnableHDTextures;                        int age = 10;
+
             //only saiyans
             if (race.get() == 1 || race.get() == 2) {
                 boolean isSSJ4 = form.display.hairType.equals("ssj4");
@@ -389,22 +391,22 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
     }
 
-    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;onGround:Z", remap = true), remap = true)
-    public boolean fixP2otaraHair(AbstractClientPlayer instance) {
-        if (RenderEventHandler.renderingPlayerInGUI)
-            return true;
-        return instance.onGround;
-    }
+//    @Redirect(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/entity/AbstractClientPlayer;onGround:Z", remap = true), remap = true)
+//    public boolean fixP2otaraHair(AbstractClientPlayer instance) {
+//        if (RenderEventHandler.renderingPlayerInGUI)
+//            return true;
+//        return instance.onGround;
+//    }
 
-    @Redirect(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", opcode = Opcodes.GETSTATIC))
-    public boolean fixPotaraHair(@Local(name = "abstractClientPlayer") AbstractClientPlayer abstractClientPlayer) {
-        ItemStack item = abstractClientPlayer.getCurrentArmor(3);
-
-        if (item != null && item.getItem() instanceof ItemPotara)
-            return false;
-
-        return JRMCoreConfig.HHWHO;
-    }
+//    @Redirect(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", opcode = Opcodes.GETSTATIC))
+//    public boolean fixPotaraHair(@Local(name = "abstractClientPlayer") AbstractClientPlayer abstractClientPlayer) {
+//        ItemStack item = abstractClientPlayer.getCurrentArmor(3);
+//
+//        if (item != null && item.getItem() instanceof ItemPotara)
+//            return false;
+//
+//        return JRMCoreConfig.HHWHO;
+//    }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/ModelBipedDBC;renderHairs(FLjava/lang/String;)V", ordinal = 34, shift = At.Shift.BEFORE))
     public void beforeMajinSE(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
@@ -657,80 +659,80 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         this.modelMain.bipedHead.render(0.0625F);
     }
 
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER), remap = true)
-    private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "State") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3, @Local(name = "id") LocalIntRef id) {
-        Form form = DBCData.getForm(par1EntityPlayer);
-        ClientEventHandler.renderingPlayer = par1EntityPlayer;
-        if (form != null) {
+//    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER), remap = true)
+//    private void changeFormArmData(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "State") LocalIntRef st, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "bodyc1") LocalIntRef bodyC1, @Local(name = "bodyc2") LocalIntRef bodyC2, @Local(name = "bodyc3") LocalIntRef bodyC3, @Local(name = "id") LocalIntRef id) {
+//        Form form = DBCData.getForm(par1EntityPlayer);
+//        ClientEventHandler.renderingPlayer = par1EntityPlayer;
+//        if (form != null) {
+//
+//            FormDisplay.BodyColor playerColors = DBCData.get(par1EntityPlayer).currentCustomizedColors;
+//            FormDisplay display = form.display;
+//            if (playerColors.hasAnyColor(display, "bodycm"))
+//                bodyCM.set(playerColors.getProperColor(display, "bodycm"));
+//            if (playerColors.hasAnyColor(form.display, "bodyC1"))
+//                bodyC1.set(playerColors.getProperColor(form.display, "bodyC1"));
+//            if (playerColors.hasAnyColor(form.display, "bodyC2"))
+//                bodyC2.set(playerColors.getProperColor(form.display, "bodyC2"));
+//            if (playerColors.hasAnyColor(form.display, "bodyC3"))
+//                bodyC3.set(playerColors.getProperColor(form.display, "bodyC3"));
+//
+//            //arm bodytype for arcosian
+//            if (race.get() == 4) {
+//                if (form.display.bodyType.equals("firstform"))
+//                    st.set(0);
+//                else if (form.display.bodyType.equals("secondform"))
+//                    st.set(2);
+//                else if (form.display.bodyType.equals("thirdform"))
+//                    st.set(3);
+//                else if (form.display.bodyType.equals("finalform") || form.display.bodyType.equals("golden"))
+//                    st.set(4);
+//                else if (form.display.bodyType.equals("ultimatecooler"))
+//                    st.set(5);
+//            }
+//        }
+//    }
 
-            FormDisplay.BodyColor playerColors = DBCData.get(par1EntityPlayer).currentCustomizedColors;
-            FormDisplay display = form.display;
-            if (playerColors.hasAnyColor(display, "bodycm"))
-                bodyCM.set(playerColors.getProperColor(display, "bodycm"));
-            if (playerColors.hasAnyColor(form.display, "bodyC1"))
-                bodyC1.set(playerColors.getProperColor(form.display, "bodyC1"));
-            if (playerColors.hasAnyColor(form.display, "bodyC2"))
-                bodyC2.set(playerColors.getProperColor(form.display, "bodyC2"));
-            if (playerColors.hasAnyColor(form.display, "bodyC3"))
-                bodyC3.set(playerColors.getProperColor(form.display, "bodyC3"));
+//    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;dnsGender(Ljava/lang/String;)I", ordinal = 0, shift = At.Shift.BEFORE, remap = false), remap = true)
+//    private void stopMonkeeArmInWrongForm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "saiOozar") LocalBooleanRef isOozaru, @Local(name = "race") int race) {
+//        Form form = DBCData.getForm(par1EntityPlayer);
+//
+//        if (form != null && (race == 1 || race == 2)) {
+//            if (!form.stackable.vanillaStackable)
+//                isOozaru.set(false);
+//        }
+//    }
+//
+//    @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 0, shift = At.Shift.BEFORE), remap = true)
+//    private void renderSaiyanArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
+//        Form form = DBCData.getForm(par1EntityPlayer);
+//        if (form != null && (race.get() == 1 || race.get() == 2)) {
+//            if (this.renderManager != null && this.renderManager.renderEngine != null) {
+//                if (form.display.hasBodyFur || form.display.hairType.equals("ssj4")) {
+//                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
+//                } else if (form.display.hairType.equals("oozaru")) {
+//                    renderOozaruArm(form, par1EntityPlayer, id.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
+//                }
+//            }
+//        }
+//    }
 
-            //arm bodytype for arcosian
-            if (race.get() == 4) {
-                if (form.display.bodyType.equals("firstform"))
-                    st.set(0);
-                else if (form.display.bodyType.equals("secondform"))
-                    st.set(2);
-                else if (form.display.bodyType.equals("thirdform"))
-                    st.set(3);
-                else if (form.display.bodyType.equals("finalform") || form.display.bodyType.equals("golden"))
-                    st.set(4);
-                else if (form.display.bodyType.equals("ultimatecooler"))
-                    st.set(5);
-            }
-        }
-    }
-
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;dnsGender(Ljava/lang/String;)I", ordinal = 0, shift = At.Shift.BEFORE, remap = false), remap = true)
-    private void stopMonkeeArmInWrongForm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "saiOozar") LocalBooleanRef isOozaru, @Local(name = "race") int race) {
-        Form form = DBCData.getForm(par1EntityPlayer);
-
-        if (form != null && (race == 1 || race == 2)) {
-            if (!form.stackable.vanillaStackable)
-                isOozaru.set(false);
-        }
-    }
-
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", ordinal = 0, shift = At.Shift.BEFORE), remap = true)
-    private void renderSaiyanArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
-        Form form = DBCData.getForm(par1EntityPlayer);
-        if (form != null && (race.get() == 1 || race.get() == 2)) {
-            if (this.renderManager != null && this.renderManager.renderEngine != null) {
-                if (form.display.hasBodyFur || form.display.hairType.equals("ssj4")) {
-                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
-                } else if (form.display.hairType.equals("oozaru")) {
-                    renderOozaruArm(form, par1EntityPlayer, id.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
-                }
-            }
-        }
-    }
-
-    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/RenderPlayerJBRA;func_aam2(Lnet/minecraft/client/model/ModelRenderer;Lnet/minecraft/client/model/ModelRenderer;IZ)V", ordinal = 11, shift = At.Shift.AFTER), remap = true)
-    private void fixLeftSaiyanFurArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
-        int idValue = id.get();
-        if(idValue == -1)
-            return;
-
-        if (this.renderManager != null && this.renderManager.renderEngine != null) {
-            Form form = DBCData.getForm(par1EntityPlayer);
-            if (form != null && (race.get() == 1 || race.get() == 2)) {
-                if (form.display.hasBodyFur || form.display.hairType.equals("ssj4")) {
-                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
-                } else if (form.display.hairType.equals("oozaru")) {
-                    renderOozaruArm(form, par1EntityPlayer, id.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
-                }
-            }
-        }
-    }
+//    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JBRA/RenderPlayerJBRA;func_aam2(Lnet/minecraft/client/model/ModelRenderer;Lnet/minecraft/client/model/ModelRenderer;IZ)V", ordinal = 11, shift = At.Shift.AFTER), remap = true)
+//    private void fixLeftSaiyanFurArm(EntityPlayer par1EntityPlayer, CallbackInfo ci, @Local(name = "race") LocalIntRef race, @Local(name = "id") LocalIntRef id, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "gen") LocalIntRef gender) {
+//        int idValue = id.get();
+//        if(idValue == -1)
+//            return;
+//
+//        if (this.renderManager != null && this.renderManager.renderEngine != null) {
+//            Form form = DBCData.getForm(par1EntityPlayer);
+//            if (form != null && (race.get() == 1 || race.get() == 2)) {
+//                if (form.display.hasBodyFur || form.display.hairType.equals("ssj4")) {
+//                    renderSSJ4Arm(form, par1EntityPlayer, id.get(), gender.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
+//                } else if (form.display.hairType.equals("oozaru")) {
+//                    renderOozaruArm(form, par1EntityPlayer, id.get(), bodyCM.get(), DBCData.get(par1EntityPlayer));
+//                }
+//            }
+//        }
+//    }
 
     @Unique
     private void renderSSJ4Arm(Form form, EntityPlayer player, int id, int gender, int bodyCM, DBCData data) {
@@ -802,11 +804,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Shadow
     abstract int i(String n);
 
-    @Shadow
-    private static boolean kk2;
-
-    @Shadow
-    public static int kk;
+//    @Shadow
+//    private static boolean kk2;
+//
+//    @Shadow
+//    private static int kk;
 
     /**
      * Methods Below so we don't need
@@ -832,10 +834,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         ClientCache.fromRenderPlayerJBRA = false;
     }
 
-    @Inject(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE), remap = true)
-    public void setCurrentlyRenderedJRMCTickPlayer(AbstractClientPlayer p, float p_77041_2_, CallbackInfo ci) {
-        CommonProxy.setCurrentJRMCTickPlayer(p);
-    }
+//    @Inject(method = "preRenderCallback(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;DBCsizeBasedOnRace(IIZ)F", shift = At.Shift.BEFORE), remap = true)
+//    public void setCurrentlyRenderedJRMCTickPlayer(AbstractClientPlayer p, float p_77041_2_, CallbackInfo ci) {
+//        CommonProxy.setCurrentJRMCTickPlayer(p);
+//    }
 
     @Inject(method = "kss", at = @At("HEAD"), remap = false)
     private static void disableLightMapForKiBlade(Entity e, boolean b, int id, int kf, int ki, CallbackInfo ci) {
@@ -847,31 +849,31 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
     }
 
-    @Redirect(method = "kss", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;getPlayerColor2(IIIIIZZZZ)I"))
-    private static int fixKiBladeColor(int t, int d, int p, int r, int s, boolean v, boolean y, boolean ui, boolean gd, @Local(name = "e") Entity entity) {
-        if (!(entity instanceof EntityPlayer))
-            return JRMCoreHDBC.getPlayerColor2(t, d, p, r, s, v, y, ui, gd);
-
-        DBCData dbcData = DBCData.get((EntityPlayer) entity);
-        if (dbcData.getForm() != null) {
-            FormDisplay formDisplay = dbcData.getForm().display;
-            if (formDisplay.auraColor != -1) {
-                return formDisplay.auraColor;
-            }
-            if (formDisplay.getAura() != null) {
-                AuraDisplay formAuraDisplay = ((AuraDisplay) formDisplay.getAura().getDisplay());
-                if (formAuraDisplay.color1 != -1)
-                    return formAuraDisplay.color1;
-            }
-        }
-        if (dbcData.getAura() != null) {
-            AuraDisplay auraDisplay = dbcData.getAura().display;
-            boolean overrideDBC = (auraDisplay.overrideDBCAura && !auraDisplay.copyDBCSuperformColors) || (dbcData.getRace() == 4 ? dbcData.State <= 4 : dbcData.State == 0);
-            if (overrideDBC) {
-                return KiWeaponData.getColorByAuraType(auraDisplay);
-            }
-        }
-
-        return JRMCoreHDBC.getPlayerColor2(t, d, p, r, s, v, y, ui, gd);
-    }
+//    @Redirect(method = "kss", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreHDBC;getPlayerColor2(IIIIIZZZZ)I"))
+//    private static int fixKiBladeColor(int t, int d, int p, int r, int s, boolean v, boolean y, boolean ui, boolean gd, @Local(name = "e") Entity entity) {
+//        if (!(entity instanceof EntityPlayer))
+//            return JRMCoreHDBC.getPlayerColor2(t, d, p, r, s, v, y, ui, gd);
+//
+//        DBCData dbcData = DBCData.get((EntityPlayer) entity);
+//        if (dbcData.getForm() != null) {
+//            FormDisplay formDisplay = dbcData.getForm().display;
+//            if (formDisplay.auraColor != -1) {
+//                return formDisplay.auraColor;
+//            }
+//            if (formDisplay.getAura() != null) {
+//                AuraDisplay formAuraDisplay = ((AuraDisplay) formDisplay.getAura().getDisplay());
+//                if (formAuraDisplay.color1 != -1)
+//                    return formAuraDisplay.color1;
+//            }
+//        }
+//        if (dbcData.getAura() != null) {
+//            AuraDisplay auraDisplay = dbcData.getAura().display;
+//            boolean overrideDBC = (auraDisplay.overrideDBCAura && !auraDisplay.copyDBCSuperformColors) || (dbcData.getRace() == 4 ? dbcData.State <= 4 : dbcData.State == 0);
+//            if (overrideDBC) {
+//                return KiWeaponData.getColorByAuraType(auraDisplay);
+//            }
+//        }
+//
+//        return JRMCoreHDBC.getPlayerColor2(t, d, p, r, s, v, y, ui, gd);
+//    }
 }
