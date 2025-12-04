@@ -524,7 +524,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
 
         if (button.id == 117) {
-            setSubGui(new SubGuiOverlays(form, 1));
+            setSubGui(new SubGuiOverlays(this, 1));
             updateButtons();
         }
 
@@ -535,7 +535,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
 
         if (button.id == 119) {
-            setSubGui(new SubGuiOverlays(form, 0));
+            setSubGui(new SubGuiOverlays(this, 0));
             updateButtons();
         }
 

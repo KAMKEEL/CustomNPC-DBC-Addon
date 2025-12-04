@@ -309,22 +309,18 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
     }
 
-    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
-    private void renderFormOverlays(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "hc") LocalIntRef hairCol, @Local(name = "pl") LocalIntRef pl, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "hairback") LocalIntRef hairback, @Local(name = "race") LocalIntRef race, @Local(name = "gen") LocalIntRef gender, @Local(name = "facen") LocalIntRef nose, @Local(name = "eyes") LocalIntRef eyes) {
+    @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", shift = At.Shift.BEFORE))
+    private void renderFormOverlays(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "eyes") LocalIntRef eyes) {
         Form form = DBCData.getForm(par1AbstractClientPlayer);
         DBCData data = DBCData.get(par1AbstractClientPlayer);
 
         if (form == null) return;
 
-        boolean isSSJ4 = form.display.hairType.equals("ssj4") && HD;
-        boolean isSSJ3 = (form.display.hairType.equals("ssj3") || !form.display.hasEyebrows) && HD;
-        boolean shouldRender = !isSSJ4 && !isSSJ3;
-
-        if (form.overlays.hasFaceOverlays && shouldRender) {
+        if (form.overlays.hasFaceOverlays) {
             renderFaceOverlays(form, eyes.get(), bodyCM.get(), data.renderingHairColor, data);
         }
 
-        if (form.overlays.hasBodyOverlays && shouldRender) {
+        if (form.overlays.hasBodyOverlays) {
             renderBodyOverlays(form, bodyCM.get(), data.renderingHairColor, data);
         }
     }
@@ -357,11 +353,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                         if (form.display.furType != 2)
                             renderSSJ4Face(form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
                         else
-                            renderSaviorFace(form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
-
-                        if (form.overlays.hasFaceOverlays) {
-                            renderFaceOverlays(form, eyes.get(), bodyCM.get(), data.renderingHairColor, data);
-                        }
+                            renderSaviorFace(form, data);
                     }
                     if (hairback.get() != 12)
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
@@ -384,7 +376,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             }
 
             if (form.display.hasBodyFur && form.display.furType == 2) {
-                renderSaviorFace(form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
+                renderSaviorFace(form, data);
             }
 
             if (form.overlays.hasFaceOverlays) {
@@ -649,7 +641,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Unique
-    private void renderSaviorFace(Form form, int gender, int nose, int eyes, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
+    private void renderSaviorFace(Form form, DBCData data) {
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
         String eyeDir = "savior/";
         this.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + eyeDir + "saviormouth.png"));
