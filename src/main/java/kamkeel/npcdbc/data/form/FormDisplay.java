@@ -32,6 +32,7 @@ public class FormDisplay implements IFormDisplay {
     public String bodyType = "";
     public int furType = 0;
 
+    public boolean disableFace;
     public boolean hasBodyFur = false;
     public boolean hasArcoMask = false;
     public boolean effectMajinHair = false;
@@ -83,6 +84,7 @@ public class FormDisplay implements IFormDisplay {
         outlineID = rendering.hasKey("outlineID") ? rendering.getInteger("outlineID") : -1;
 
         isCustomizable = rendering.getBoolean("isCustomizable");
+        disableFace = rendering.getBoolean("disableFace");
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -113,6 +115,7 @@ public class FormDisplay implements IFormDisplay {
         rendering.setInteger("outlineID", outlineID);
 
         rendering.setBoolean("isCustomizable", isCustomizable);
+        rendering.setBoolean("disableFace", disableFace);
 
         compound.setTag("rendering", rendering);
         return compound;
@@ -348,6 +351,16 @@ public class FormDisplay implements IFormDisplay {
     @Override
     public void hasBodyFur(boolean hasFur) {
         this.hasBodyFur = hasFur;
+    }
+
+    @Override
+    public boolean isDisableFace() {
+        return disableFace;
+    }
+
+    @Override
+    public void setDisableFace(boolean disableFace) {
+        this.disableFace = disableFace;
     }
 
     public void setFurType(int type) {

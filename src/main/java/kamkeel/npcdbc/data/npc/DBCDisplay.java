@@ -28,7 +28,6 @@ import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.NPCUpdateForcedColors;
-import kamkeel.npcdbc.network.packets.player.PingFormColorPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,7 +38,6 @@ import noppes.npcs.entity.data.ModelData;
 import noppes.npcs.entity.data.ModelPartData;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
-import org.lwjgl.opencl.CL;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -66,6 +64,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     // Face Display //
     public int eyeColor = 0;
     public int noseType = 0, mouthType = 0, eyeType = 0, arcoState;
+    public boolean disableFace = false;
     // Aura Display //
     public boolean auraOn = false;
     public int auraID = -1;
@@ -112,6 +111,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             dbcDisplay.setInteger("DBCMouthType", mouthType);
             dbcDisplay.setInteger("DBCNoseType", noseType);
             dbcDisplay.setInteger("DBCBodyType", bodyType);
+            dbcDisplay.setBoolean("DBCDisableFace", disableFace);
             dbcDisplay.setByte("DBCTailState", tailState);
             dbcDisplay.setInteger("DBCFurType", furType);
 
@@ -168,6 +168,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             eyeType = dbcDisplay.getInteger("DBCEyeType");
             mouthType = dbcDisplay.getInteger("DBCMouthType");
             noseType = dbcDisplay.getInteger("DBCNoseType");
+            disableFace = dbcDisplay.getBoolean("DBCDisableFace");
             bodyType = dbcDisplay.getInteger("DBCBodyType");
             tailState = dbcDisplay.getByte("DBCTailState");
             furType = dbcDisplay.getInteger("DBCFurType");
