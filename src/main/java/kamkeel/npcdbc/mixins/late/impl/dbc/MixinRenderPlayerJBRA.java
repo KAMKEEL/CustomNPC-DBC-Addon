@@ -501,7 +501,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 if (!bindImageDataTexture(imageData, color))
                     continue;
 
+                GL11.glPushMatrix();
+                float scale = 1.01f;
+                GL11.glScalef(scale,scale,scale);
                 this.modelMain.bipedHead.render(1F / 16F);
+                GL11.glPopMatrix();
             }
         }
     }
