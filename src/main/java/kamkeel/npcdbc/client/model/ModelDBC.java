@@ -340,7 +340,7 @@ public class ModelDBC extends ModelBase {
             }
 
 
-            if (form.overlays.hasFaceOverlays) {
+            if (form != null &&form.overlays.hasFaceOverlays) {
                 renderFaceOverlays(form, display, bipeadHead);
             }
         }
@@ -596,7 +596,7 @@ public class ModelDBC extends ModelBase {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
             }
-            if (form.overlays.hasBodyOverlays) {
+            if (form != null &&form.overlays.hasBodyOverlays) {
                 renderBodyOverlays(form, display, model);
             }
         }
