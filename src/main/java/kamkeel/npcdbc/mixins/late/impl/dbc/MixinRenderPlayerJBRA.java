@@ -381,13 +381,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 renderSaviorFace(form, data);
             }
 
-            if (form.overlays.hasFaceOverlays) {
-                renderFaceOverlays(form, eyes.get(), bodyCM.get(), data.renderingHairColor, data);
-            }
-
-            if (form.overlays.hasBodyOverlays) {
-                renderBodyOverlays(form, bodyCM.get(), data.renderingHairColor, data);
-            }
         }
     }
 
