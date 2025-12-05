@@ -5,6 +5,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.gui.dbc.StatSheetGui;
+import kamkeel.npcdbc.client.gui.dbc.constants.GuiInfo;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCForm;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
@@ -215,8 +216,12 @@ public class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGuiScreen {
 
     @Inject(method = "initGui", at = @At("RETURN"), remap = true)
     private void onInitGui(CallbackInfo ci) {
-        if (ignoreInit)
+        if (ignoreInit) {
             this.guiID = newGuiID;
+            if (guiID == GuiInfo.ReferenceIDs.SERVER_SHOP.getGuiID()) {
+                JRMCoreH.jrmcDataFC(80, "q");
+            }
+        }
 
         if (ConfigDBCClient.EnhancedGui || !ConfigDBCClient.EnableDebugStatSheetSwitching) {
             if (ConfigDBCClient.DarkMode) {
