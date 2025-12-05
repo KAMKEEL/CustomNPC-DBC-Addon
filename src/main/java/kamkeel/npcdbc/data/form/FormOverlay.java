@@ -1,24 +1,27 @@
 package kamkeel.npcdbc.data.form;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.client.model.obj.Face;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 
 public class FormOverlay {
 
-    private final Form parent;
+    private final FormDisplay parent;
 
-    public final Face[] faceOverlays;
-    public final Body[] bodyOverlays;
+    public final ArrayList<Face> faceOverlays;
+    public final ArrayList<Body> bodyOverlays;
 
     public boolean hasFaceOverlays = false;
     public boolean hasBodyOverlays = false;
 
-    public FormOverlay(Form parent) {
+    public FormOverlay(FormDisplay parent) {
         this.parent = parent;
-        this.faceOverlays = new Face[]{new Face(parent), new Face(parent), new Face(parent)};
-        this.bodyOverlays = new Body[]{new Body(parent), new Body(parent), new Body(parent)};
+        this.faceOverlays = new ArrayList<>();
+        this.bodyOverlays = new ArrayList<>();
     }
 
     public void readFromNBT(NBTTagCompound compound) {
@@ -26,16 +29,29 @@ public class FormOverlay {
         hasBodyOverlays = compound.getBoolean("hasBodyOverlays");
 
         NBTTagCompound rendering = compound.getCompoundTag("overlayData");
-        NBTTagCompound face = rendering.getCompoundTag("faceData");
+
         NBTTagCompound body = rendering.getCompoundTag("bodyData");
-
-        for (int i = 0; i < 3; i++) {
+        int i = 0;
+        while (body.hasKey("body" + i)) {
             NBTTagCompound bodyCompound = body.getCompoundTag("body" + i);
-            NBTTagCompound faceCompound = face.getCompoundTag("face" + i);
 
-            bodyOverlays[i].readFromNBT(bodyCompound);
-            faceOverlays[i].readFromNBT(faceCompound);
+            bodyOverlays.add(i, new Body());
+            bodyOverlays.get(i).readFromNBT(bodyCompound);
+            i++;
         }
+
+
+
+        NBTTagCompound face = rendering.getCompoundTag("faceData");
+        int j = 0;
+        while (face.hasKey("face" + j)) {
+            NBTTagCompound faceCompound = face.getCompoundTag("face" + j);
+
+            faceOverlays.add(j, new Face());
+            faceOverlays.get(j).readFromNBT(faceCompound);
+            j++;
+        }
+
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -43,34 +59,42 @@ public class FormOverlay {
         compound.setBoolean("hasBodyOverlays", hasBodyOverlays);
 
         NBTTagCompound rendering = new NBTTagCompound();
-        NBTTagCompound face = new NBTTagCompound();
+
         NBTTagCompound body = new NBTTagCompound();
 
-        for (int i = 0; i < 3; i++) {
-            face.setTag("face" + i, faceOverlays[i].writeToNBT());
-            body.setTag("body" + i, bodyOverlays[i].writeToNBT());
+        for (int i = 0; i < bodyOverlays.size(); i++) {
+            body.setTag("body" + i, bodyOverlays.get(i).writeToNBT());
+        }
+
+        rendering.setTag("bodyData", body);
+
+
+        NBTTagCompound face = new NBTTagCompound();
+
+        for (int i = 0; i < faceOverlays.size(); i++) {
+            face.setTag("face" + i, faceOverlays.get(i).writeToNBT());
         }
 
         rendering.setTag("faceData", face);
-        rendering.setTag("bodyData", body);
+
 
         compound.setTag("overlayData", rendering);
         return compound;
     }
 
     public Face getFace(int face) {
-        return this.faceOverlays[Math.max(0, Math.min(2, face))];
+        return this.faceOverlays.get(Math.max(0, Math.min(this.faceOverlays.size() - 1, face)));
     }
 
     public Body getBody(int body) {
-        return this.bodyOverlays[Math.max(0, Math.min(2, body))];
+        return this.bodyOverlays.get(Math.max(0, Math.min(this.bodyOverlays.size() - 1, body)));
     }
 
-    public Face[] getFaces() {
+    public ArrayList<Face> getFaces() {
         return this.faceOverlays;
     }
 
-    public Body[] getBodies() {
+    public ArrayList<Body> getBodies() {
         return this.bodyOverlays;
     }
 
@@ -101,10 +125,6 @@ public class FormOverlay {
             getFace(face).setTexture(texture, faceType);
     }
 
-    public void setDisableFace(int face, boolean disable) {
-        getFace(face).setDisableFace(disable);
-    }
-
     public void setMatchPlayerFace(int face, boolean match) {
         getFace(face).setMatchPlayerFace(match);
     }
@@ -115,6 +135,14 @@ public class FormOverlay {
 
     public void setFaceColorType(int face, int color) {
         getFace(face).setColorType(color);
+    }
+
+    public void setFaceAlpha(int face, float alpha) {
+        getFace(face).setAlpha(alpha);
+    }
+
+    public void setFaceGlow(int face, boolean glow) {
+        getFace(face).setGlow(glow);
     }
 
     public void setBodyTexture(int body, String texture) {
@@ -137,10 +165,6 @@ public class FormOverlay {
         return getFace(face).getTexture(faceType);
     }
 
-    public boolean isFaceDisabled(int face) {
-        return getFace(face).isFaceDisabled();
-    }
-
     public boolean isFaceMatchingPlayer(int face) {
         return getFace(face).isMatchingPlayerFace();
     }
@@ -155,6 +179,10 @@ public class FormOverlay {
 
     public float getFaceAlpha(int face) {
         return getFace(face).getAlpha();
+    }
+
+    public boolean doesFaceGlow(int face) {
+        return getFace(face).isGlow();
     }
 
     public String getBodyTexture(int body) {
@@ -173,6 +201,34 @@ public class FormOverlay {
         return getBody(body).getAlpha();
     }
 
+    public boolean doesBodyGlow(int body) {
+        return getBody(body).isGlow();
+    }
+
+    public void addFaceOverlay() {
+        this.faceOverlays.add(new Face());
+    }
+
+    public void addBodyOverlay() {
+        this.bodyOverlays.add(new Body());
+    }
+
+    public void deleteFaceOverlay(int id) {
+        if (id >= this.faceOverlays.size())
+            return;
+
+        this.faceOverlays.remove(id);
+        save();
+    }
+
+    public void deleteBodyOverlay(int id) {
+        if (id >= this.bodyOverlays.size())
+            return;
+
+        this.bodyOverlays.remove(id);
+        save();
+    }
+
     public FormOverlay save() {
         if (parent != null)
             parent.save();
@@ -180,27 +236,23 @@ public class FormOverlay {
     }
 
     public static class Face  {
-        private final Form parent;
-
         public String texture = "";
         public String[] faceTextures = new String[]{"", "", "", "", "", ""};
         public ColorType colorType = ColorType.Custom;
         public int color = 0xffffff;
         public float alpha = 1;
+        public boolean glow = false;
 
-        public boolean disableFace = false;
         public boolean matchPlayerFace = false;
 
         public boolean enabled = true;
 
-        public Face(Form parent) {
-            this.parent = parent;
+        public Face() {
         }
 
         public void readFromNBT(NBTTagCompound compound) {
             enabled = compound.getBoolean("enabled");
 
-            disableFace = compound.getBoolean("disableFace");
             matchPlayerFace = compound.getBoolean("matchPlayerFace");
 
             colorType = ColorType.byId(compound.getInteger("colorType"));
@@ -212,6 +264,7 @@ public class FormOverlay {
             }
 
             alpha = compound.hasKey("alpha") ? compound.getFloat("alpha") : 1;
+            glow = compound.hasKey("glow") && compound.getBoolean("glow");
 
             if (matchPlayerFace) {
                 texture = "";
@@ -235,14 +288,12 @@ public class FormOverlay {
             NBTTagCompound compound = new NBTTagCompound();
 
             compound.setBoolean("enabled", enabled);
-
-            compound.setBoolean("disableFace", disableFace);
             compound.setBoolean("matchPlayerFace", matchPlayerFace);
 
             compound.setInteger("colorType", colorType.getId());
-
             compound.setInteger("color", color);
             compound.setFloat("alpha", alpha);
+            compound.setBoolean("glow", glow);
 
             if (matchPlayerFace) {
                 NBTTagCompound faceTypes = new NBTTagCompound();
@@ -287,14 +338,6 @@ public class FormOverlay {
             faceTextures[faceType] = texture;
         }
 
-        public boolean isFaceDisabled() {
-            return disableFace;
-        }
-
-        public void setDisableFace(boolean disableFace) {
-            this.disableFace = disableFace;
-        }
-
         public boolean isMatchingPlayerFace() {
             return matchPlayerFace;
         }
@@ -327,6 +370,14 @@ public class FormOverlay {
             this.alpha = alpha;
         }
 
+        public boolean isGlow() {
+            return glow;
+        }
+
+        public void setGlow(boolean glow) {
+            this.glow = glow;
+        }
+
         public boolean isEnabled() {
             return this.enabled;
         }
@@ -337,17 +388,15 @@ public class FormOverlay {
     }
 
     public static class Body {
-        private final Form parent;
-
         public String texture = "";
         public ColorType colorType = ColorType.Custom;
         public int color = 0xffffff;
         public float alpha = 1;
+        public boolean glow = false;
 
         public boolean enabled = true;
 
-        public Body(Form parent) {
-            this.parent = parent;
+        public Body() {
         }
 
         public void readFromNBT(NBTTagCompound compound) {
@@ -364,6 +413,7 @@ public class FormOverlay {
             }
 
             alpha = compound.hasKey("alpha") ? compound.getFloat("alpha") : 1;
+            glow = compound.hasKey("glow") && compound.getBoolean("glow");
         }
 
         public NBTTagCompound writeToNBT() {
@@ -376,6 +426,7 @@ public class FormOverlay {
             compound.setString("texture", texture);
             compound.setInteger("color", color);
             compound.setFloat("alpha", alpha);
+            compound.setBoolean("glow", glow);
 
             return compound;
         }
@@ -398,6 +449,14 @@ public class FormOverlay {
 
         public int getColor() {
             return this.color;
+        }
+
+        public boolean isGlow() {
+            return glow;
+        }
+
+        public void setGlow(boolean glow) {
+            this.glow = glow;
         }
 
         public void setColor(int color) {

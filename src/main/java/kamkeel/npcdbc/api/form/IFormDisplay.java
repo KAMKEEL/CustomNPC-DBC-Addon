@@ -115,10 +115,6 @@ public interface IFormDisplay {
      */
     void hasBodyFur(boolean hasFur);
 
-    boolean isDisableFace();
-
-    void setDisableFace(boolean disableFace);
-
     boolean effectMajinHair();
 
     /**

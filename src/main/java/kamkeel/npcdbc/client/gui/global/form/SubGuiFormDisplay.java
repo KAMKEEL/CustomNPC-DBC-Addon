@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import kamkeel.npcdbc.api.aura.IAura;
+import kamkeel.npcdbc.client.gui.component.SubGuiFormFaceParts;
 import kamkeel.npcdbc.client.gui.component.SubGuiOverlays;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -57,7 +58,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         this.npc = (EntityCustomNpc) parent.npc;
         this.form = parent.form;
         this.display = parent.display;
-        this.overlay = parent.form.overlays;
+        this.overlay = display.overlays;
         this.visualDisplay = parent.visualDisplay;
 
         setBackground("menubg.png");
@@ -248,24 +249,29 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         y += 30;
 
-        window.addLabel(new GuiNpcLabel(116, "display.faceOverlays", x, y, 0xFFFFFF));
-        window.addButton(new GuiNpcButtonYesNo(116, width - x - 75, y - 5, 50, 20, overlay.hasFaceOverlays));
+        window.addLabel(new GuiNpcLabel(116, "Face Parts", x, y, 0xFFFFFF)); // put translation here
+        window.addButton(new GuiNpcButton(116, width - x - 75, y - 5, 50, 20, "Edit"));
+
+        y += 30;
+
+        window.addLabel(new GuiNpcLabel(117, "display.faceOverlays", x, y, 0xFFFFFF));
+        window.addButton(new GuiNpcButtonYesNo(117, width - x - 75, y - 5, 50, 20, overlay.hasFaceOverlays));
 
         if (overlay.hasFaceOverlays) {
             y+= 25;
 
-            window.addButton(new GuiNpcButton(117, width - x - 75, y - 5, 50, 20, "Edit"));
+            window.addButton(new GuiNpcButton(118, width - x - 75, y - 5, 50, 20, "Edit"));
         }
 
         y += 30;
 
-        window.addLabel(new GuiNpcLabel(118, "display.bodyOverlays", x, y, 0xFFFFFF));
-        window.addButton(new GuiNpcButtonYesNo(118, width - x - 75, y - 5, 50, 20, overlay.hasBodyOverlays));
+        window.addLabel(new GuiNpcLabel(119, "display.bodyOverlays", x, y, 0xFFFFFF));
+        window.addButton(new GuiNpcButtonYesNo(119, width - x - 75, y - 5, 50, 20, overlay.hasBodyOverlays));
 
         if (overlay.hasBodyOverlays) {
             y+= 25;
 
-            window.addButton(new GuiNpcButton(119, width - x - 75, y - 5, 50, 20, "Edit"));
+            window.addButton(new GuiNpcButton(120, width - x - 75, y - 5, 50, 20, "Edit"));
         }
 
         window.maxScrollY = (y - height) + 20 + 5;
@@ -499,6 +505,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         // Body Fur
         if (button.id == 123) {
             display.hasBodyFur = !display.hasBodyFur;
+            display.furType = 0;
             updateButtons();
         }
 
@@ -509,32 +516,34 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
 
         if (button.id == 11132) {
-            if (display.furType == 2) {
-                display.furType = 0;
-            } else {
-                display.furType = Math.min(2, display.furType + 1);
-            }
+            display.furType = (display.furType + 1) % 3;
+            updateButtons();
+        }
+
+        // Disable Face
+        if (button.id == 116) {
+            setSubGui(new SubGuiFormFaceParts(this));
             updateButtons();
         }
 
         // Face Overlays
-        if (button.id == 116) {
+        if (button.id == 117) {
             overlay.hasFaceOverlays = button.getValue() == 1;
             updateButtons();
         }
 
-        if (button.id == 117) {
+        if (button.id == 118) {
             setSubGui(new SubGuiOverlays(this, 1));
             updateButtons();
         }
 
         // Body Overlays
-        if (button.id == 118) {
+        if (button.id == 119) {
             overlay.hasBodyOverlays = button.getValue() == 1;
             updateButtons();
         }
 
-        if (button.id == 119) {
+        if (button.id == 120) {
             setSubGui(new SubGuiOverlays(this, 0));
             updateButtons();
         }

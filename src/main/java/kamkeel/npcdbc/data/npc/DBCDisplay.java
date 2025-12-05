@@ -40,6 +40,7 @@ import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -64,7 +65,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     // Face Display //
     public int eyeColor = 0;
     public int noseType = 0, mouthType = 0, eyeType = 0, arcoState;
-    public boolean disableFace = false;
     // Aura Display //
     public boolean auraOn = false;
     public int auraID = -1;
@@ -96,6 +96,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     public FormDisplay.BodyColor formColor = new FormDisplay.BodyColor();
+    public FormDisplay.FaceData faceData = new FormDisplay.FaceData();
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
         comp.setBoolean("DBCDisplayEnabled", enabled);
@@ -111,7 +112,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             dbcDisplay.setInteger("DBCMouthType", mouthType);
             dbcDisplay.setInteger("DBCNoseType", noseType);
             dbcDisplay.setInteger("DBCBodyType", bodyType);
-            dbcDisplay.setBoolean("DBCDisableFace", disableFace);
             dbcDisplay.setByte("DBCTailState", tailState);
             dbcDisplay.setInteger("DBCFurType", furType);
 
@@ -144,6 +144,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             kiWeaponLeft.saveToNBT(dbcDisplay, "kiWeaponLeft");
             kiWeaponRight.saveToNBT(dbcDisplay, "kiWeaponRight");
 
+            faceData.writeToNBT(dbcDisplay, true);
+
             comp.setTag("DBCDisplay", dbcDisplay);
         } else {
             comp.removeTag("DBCDisplay");
@@ -168,7 +170,6 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             eyeType = dbcDisplay.getInteger("DBCEyeType");
             mouthType = dbcDisplay.getInteger("DBCMouthType");
             noseType = dbcDisplay.getInteger("DBCNoseType");
-            disableFace = dbcDisplay.getBoolean("DBCDisableFace");
             bodyType = dbcDisplay.getInteger("DBCBodyType");
             tailState = dbcDisplay.getByte("DBCTailState");
             furType = dbcDisplay.getInteger("DBCFurType");
@@ -200,6 +201,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
                 kiWeaponLeft.readFromNBT(dbcDisplay, "kiWeaponLeft");
             if (dbcDisplay.hasKey("kiWeaponRight"))
                 kiWeaponRight.readFromNBT(dbcDisplay, "kiWeaponRight");
+
+            faceData.readFromNBT(dbcDisplay, true);
         } else {
             comp.removeTag("DBCDisplay");
         }

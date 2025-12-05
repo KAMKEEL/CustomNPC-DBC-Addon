@@ -36,6 +36,8 @@ import noppes.npcs.entity.data.ModelScalePart;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Unique;
 
+import java.util.HashSet;
+
 public class ModelDBC extends ModelBase {
 
     private final ModelMPM parent;
@@ -150,11 +152,12 @@ public class ModelDBC extends ModelBase {
             int eyeColor = display.eyeColor;
             int eyeBrowColor = display.race == DBCRace.NAMEKIAN ? display.bodyCM : display.hairColor;
             int bodyCM = display.bodyCM;
-            boolean disableFace = display.disableFace;
+            FormDisplay.FaceData faceData = display.faceData;
 
             boolean isSaiyan = DBCRace.isSaiyan(display.race);
             boolean hasArcoMask = display.hasArcoMask, isBerserk = false, hasEyebrows = display.hasEyebrows;
             boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru");
+            boolean isSfH = isSaiyan && display.hasFur && display.furType == 2;
 
             boolean HD = ConfigDBCClient.EnableHDTextures;
 
@@ -172,8 +175,9 @@ public class ModelDBC extends ModelBase {
                     eyeBrowColor = customClr.getProperColor(d, "hair");
                 if (customClr.hasAnyColor(d, "bodycm"))
                     bodyCM = customClr.getProperColor(d, "bodyCM");
-                if (d.disableFace)
-                    disableFace = true;
+
+                if (d.hasBodyFur && d.furType == 2)
+                    isSfH = true;
 
                 if (d.hasArcoMask)
                     hasArcoMask = true;
@@ -190,6 +194,7 @@ public class ModelDBC extends ModelBase {
                 }
 
                 isBerserk = d.isBerserk;
+                faceData = d.faceData;
             }
             //////////////////////////////////////////////////////
             //////////////////////////////////////////////////////
@@ -226,149 +231,151 @@ public class ModelDBC extends ModelBase {
             }
             ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
 
-            if (isSaiyan && (display.hasFur || isSSJ4) && display.furType == 2)
-                return;
+            if (!isSfH) {
+                if (!faceData.hasNose()) {
+                    ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
-            if (!disableFace) {
-                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
-
-                this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
-                this.nose.rotateAngleX = parent.bipedHead.rotateAngleX;
-                this.nose.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                this.nose.rotationPointX = parent.bipedHead.rotationPointX;
-                this.nose.rotationPointY = parent.bipedHead.rotationPointY;
-                this.nose.rotationPointZ = parent.bipedHead.rotationPointZ;
-
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                this.nose.render(0.0625F);
-                GL11.glPopMatrix();
-
-                String mouthDir = "";
-                if (display.race == 4 && hasArcoMask)
-                    mouthDir = "jinryuudragonbc:cc/arc/m/0A" + 2 + display.bodyType + "a.png";
-                else
-                    mouthDir = getFaceTexture(display, "m" + display.mouthType);
-
-                ClientProxy.bindTexture(new ResourceLocation(mouthDir));
-                this.mouth.rotateAngleY = parent.bipedHead.rotateAngleY;
-                this.mouth.rotateAngleX = parent.bipedHead.rotateAngleX;
-                this.mouth.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                this.mouth.rotationPointX = parent.bipedHead.rotationPointX;
-                this.mouth.rotationPointY = parent.bipedHead.rotationPointY;
-                this.mouth.rotationPointZ = parent.bipedHead.rotationPointZ;
-
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                this.mouth.render(0.0625F);
-                GL11.glPopMatrix();
-
-                if (renderSSJ4Face)
-                    return;
-
-                GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
-                ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
-                this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
-                this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
-                this.eyebase.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
-                this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
-                this.eyebase.rotationPointZ = parent.bipedHead.rotationPointZ;
-
-                GL11.glPushMatrix();
-                GL11.glTranslatef(0, y, 0);
-                GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                this.eyebase.render(0.0625F);
-                GL11.glPopMatrix();
-
-                if (display.race < 4) {
-                    if (display.race != DBCRace.NAMEKIAN)
-                        ColorMode.applyModelColor(eyeBrowColor, this.parent.alpha, isHurt);
-                    else {
-                        ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-                    }
-                    if (!hasEyebrows && display.race != DBCRace.NAMEKIAN)
-                        ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + "humw" + display.eyeType + ".png"));
-                    else
-                        ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
-                    this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
-                    this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
-                    this.eyebrow.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                    this.eyebrow.rotationPointX = parent.bipedHead.rotationPointX;
-                    this.eyebrow.rotationPointY = parent.bipedHead.rotationPointY;
-                    this.eyebrow.rotationPointZ = parent.bipedHead.rotationPointZ;
+                    this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
+                    this.nose.rotateAngleX = parent.bipedHead.rotateAngleX;
+                    this.nose.rotateAngleZ = parent.bipedHead.rotateAngleZ;
+                    this.nose.rotationPointX = parent.bipedHead.rotationPointX;
+                    this.nose.rotationPointY = parent.bipedHead.rotationPointY;
+                    this.nose.rotationPointZ = parent.bipedHead.rotationPointZ;
 
                     GL11.glPushMatrix();
                     GL11.glTranslatef(0, y, 0);
                     GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                    this.eyebrow.render(0.0625F);
+                    this.nose.render(0.0625F);
                     GL11.glPopMatrix();
                 }
 
+                if (!faceData.hasMouth()) {
+                    String mouthDir = "";
+                    if (display.race == 4 && hasArcoMask)
+                        mouthDir = "jinryuudragonbc:cc/arc/m/0A" + 2 + display.bodyType + "a.png";
+                    else
+                        mouthDir = getFaceTexture(display, "m" + display.mouthType);
 
-                if (!isBerserk) {
-                    ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                    ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
-                    this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
-                    this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
-                    this.eyeleft.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                    this.eyeleft.rotationPointX = parent.bipedHead.rotationPointX;
-                    this.eyeleft.rotationPointY = parent.bipedHead.rotationPointY;
-                    this.eyeleft.rotationPointZ = parent.bipedHead.rotationPointZ;
+                    ClientProxy.bindTexture(new ResourceLocation(mouthDir));
+                    this.mouth.rotateAngleY = parent.bipedHead.rotateAngleY;
+                    this.mouth.rotateAngleX = parent.bipedHead.rotateAngleX;
+                    this.mouth.rotateAngleZ = parent.bipedHead.rotateAngleZ;
+                    this.mouth.rotationPointX = parent.bipedHead.rotationPointX;
+                    this.mouth.rotationPointY = parent.bipedHead.rotationPointY;
+                    this.mouth.rotationPointZ = parent.bipedHead.rotationPointZ;
 
                     GL11.glPushMatrix();
                     GL11.glTranslatef(0, y, 0);
                     GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                    this.eyeleft.render(0.0625F);
+                    this.mouth.render(0.0625F);
                     GL11.glPopMatrix();
+                }
 
-                    ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "r" + display.eyeType)));
-                    this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
-                    this.eyeright.rotateAngleX = parent.bipedHead.rotateAngleX;
-                    this.eyeright.rotateAngleZ = parent.bipedHead.rotateAngleZ;
-                    this.eyeright.rotationPointX = parent.bipedHead.rotationPointX;
-                    this.eyeright.rotationPointY = parent.bipedHead.rotationPointY;
-                    this.eyeright.rotationPointZ = parent.bipedHead.rotationPointZ;
-                    GL11.glPushMatrix();
-                    GL11.glTranslatef(0, y, 0);
-                    GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
-                    this.eyeright.render(0.0625F);
-                    GL11.glPopMatrix();
+                if (!renderSSJ4Face) {
+                    if (!faceData.hasWhite()) {
+                        GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
+                        ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
+                        this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
+                        this.eyebase.rotateAngleX = parent.bipedHead.rotateAngleX;
+                        this.eyebase.rotateAngleZ = parent.bipedHead.rotateAngleZ;
+                        this.eyebase.rotationPointX = parent.bipedHead.rotationPointX;
+                        this.eyebase.rotationPointY = parent.bipedHead.rotationPointY;
+                        this.eyebase.rotationPointZ = parent.bipedHead.rotationPointZ;
+
+                        GL11.glPushMatrix();
+                        GL11.glTranslatef(0, y, 0);
+                        GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                        this.eyebase.render(0.0625F);
+                        GL11.glPopMatrix();
+                    }
+
+                    if (display.race < 4 && !faceData.hasEyebrows()) {
+                        if (display.race != DBCRace.NAMEKIAN)
+                            ColorMode.applyModelColor(eyeBrowColor, this.parent.alpha, isHurt);
+                        else {
+                            ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
+                        }
+                        if (!hasEyebrows && display.race != DBCRace.NAMEKIAN)
+                            ClientProxy.bindTexture(new ResourceLocation("jinryuumodscore", "cc/ssj3eyebrow/" + "humw" + display.eyeType + ".png"));
+                        else
+                            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "w" + display.eyeType)));
+                        this.eyebrow.rotateAngleY = parent.bipedHead.rotateAngleY;
+                        this.eyebrow.rotateAngleX = parent.bipedHead.rotateAngleX;
+                        this.eyebrow.rotateAngleZ = parent.bipedHead.rotateAngleZ;
+                        this.eyebrow.rotationPointX = parent.bipedHead.rotationPointX;
+                        this.eyebrow.rotationPointY = parent.bipedHead.rotationPointY;
+                        this.eyebrow.rotationPointZ = parent.bipedHead.rotationPointZ;
+
+                        GL11.glPushMatrix();
+                        GL11.glTranslatef(0, y, 0);
+                        GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                        this.eyebrow.render(0.0625F);
+                        GL11.glPopMatrix();
+                    }
+
+
+                    if (!isBerserk) {
+                        if (!faceData.hasLeftEye()) {
+                            ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
+                            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
+                            this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
+                            this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
+                            this.eyeleft.rotateAngleZ = parent.bipedHead.rotateAngleZ;
+                            this.eyeleft.rotationPointX = parent.bipedHead.rotationPointX;
+                            this.eyeleft.rotationPointY = parent.bipedHead.rotationPointY;
+                            this.eyeleft.rotationPointZ = parent.bipedHead.rotationPointZ;
+
+                            GL11.glPushMatrix();
+                            GL11.glTranslatef(0, y, 0);
+                            GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                            this.eyeleft.render(0.0625F);
+                            GL11.glPopMatrix();
+                        }
+
+                        if (!faceData.hasRightEye()) {
+                            ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
+                            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "r" + display.eyeType)));
+                            this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
+                            this.eyeright.rotateAngleX = parent.bipedHead.rotateAngleX;
+                            this.eyeright.rotateAngleZ = parent.bipedHead.rotateAngleZ;
+                            this.eyeright.rotationPointX = parent.bipedHead.rotationPointX;
+                            this.eyeright.rotationPointY = parent.bipedHead.rotationPointY;
+                            this.eyeright.rotationPointZ = parent.bipedHead.rotationPointZ;
+                            GL11.glPushMatrix();
+                            GL11.glTranslatef(0, y, 0);
+                            GL11.glScalef(head.scaleX, head.scaleY, head.scaleZ);
+                            this.eyeright.render(0.0625F);
+                            GL11.glPopMatrix();
+                        }
+                    }
                 }
             }
 
-
-            if (form != null &&form.overlays.hasFaceOverlays) {
+            if (form != null &&form.display.overlays.hasFaceOverlays) {
                 renderFaceOverlays(form, display, bipeadHead);
             }
         }
     }
 
     private void renderFaceOverlays(Form form, DBCDisplay display, ModelRenderer bipeadHead) {
-        FormOverlay overlayData = form.overlays;
+        FormOverlay overlayData = form.display.overlays;
 
-        for (FormOverlay.Face faceData : overlayData.getFaces()) {
+        for (FormOverlay.Face faceData : overlayData.getFaces().toArray(new FormOverlay.Face[0])) {
             if (faceData.isEnabled()) {
                 String faceTexture = faceData.getTexture(display.eyeType);
                 ImageData imageData = ClientCacheHandler.getImageData(faceTexture);
                 if (imageData == null || !imageData.imageLoaded())
                     continue;
 
-                int furColor = display.furColor;//data.currentCustomizedColors.getProperColor(displayData.getFurColor(data), "fur");
-                int hairColor = display.hairColor;// data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
-                int eyeColor = display.eyeColor;// data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
-
-                int color = faceData.getColorType() == FormOverlay.ColorType.Body.getId() ? display.bodyCM : faceData.getColorType() == FormOverlay.ColorType.Eye.getId() ? (eyeColor < 0 ? display.eyeColor : eyeColor) : faceData.getColorType() == FormOverlay.ColorType.Hair.getId() ? (hairColor < 0 ? display.hairColor : hairColor) : faceData.getColorType() == FormOverlay.ColorType.Fur.getId() ? furColor : faceData.getColor();
+                int color = getProperColor(form.display, display, faceData.getColor(), faceData.colorType);
 
                 bipeadHead.render(0.0625F); //render MAIN skin (by this point its texture is only bound, not rendered yet)
 
-                if (!bindImageDataTexture(imageData, color))
+                if (!bindImageDataTexture(imageData, color, faceData.getAlpha()))
                     continue;
 
                 GL11.glPushMatrix();
-                float scale = 1.01f;
+                float scale = 1.002511f;
                 GL11.glScalef(scale, scale, scale);
                 bipeadHead.render(0.0625F);
                 GL11.glPopMatrix();
@@ -376,11 +383,23 @@ public class ModelDBC extends ModelBase {
         }
     }
 
-    private boolean bindImageDataTexture(ImageData data, int color) {
+    private static int getProperColor(FormDisplay display, DBCDisplay npcDisplay, int customColor, FormOverlay.ColorType colorType) {
+        int furColor = display.bodyColors.furColor;
+        int hairColor = display.bodyColors.hairColor;
+        int eyeColor = display.bodyColors.eyeColor;
+
+        return colorType == FormOverlay.ColorType.Body ?
+            npcDisplay.bodyCM : colorType == FormOverlay.ColorType.Eye ?
+            eyeColor : colorType == FormOverlay.ColorType.Hair ?
+            hairColor : colorType == FormOverlay.ColorType.Fur ?
+            furColor : customColor;
+    }
+
+    private boolean bindImageDataTexture(ImageData data, int color, float alpha) {
         ResourceLocation location = data.getLocation();
         if (location != null && !data.invalid()) {
             try {
-                RenderPlayerJBRA.glColor3f(color);
+                ColorMode.glColorInt(color, alpha);
                 ClientProxy.bindTexture(location);
                 return true;
             } catch (Exception exception) {
@@ -596,7 +615,8 @@ public class ModelDBC extends ModelBase {
                 ClientProxy.bindTexture(new ResourceLocation("jinryuudragonbc:cc/majin/majin.png"));
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
             }
-            if (form != null &&form.overlays.hasBodyOverlays) {
+
+            if (form != null && form.display.overlays.hasBodyOverlays) {
                 renderBodyOverlays(form, display, model);
             }
         }
@@ -604,25 +624,19 @@ public class ModelDBC extends ModelBase {
 
     @Unique
     private void renderBodyOverlays(Form form, DBCDisplay display, ModelRenderer model) {
-        FormOverlay overlayData = form.overlays;
+        FormOverlay overlayData = form.display.overlays;
 
-        for (FormOverlay.Body bodyData : overlayData.getBodies()) {
+        for (FormOverlay.Body bodyData : overlayData.getBodies().toArray(new FormOverlay.Body[0])) {
             if (bodyData.isEnabled()) {
                 String bodyTexture = bodyData.getTexture();
                 ImageData imageData = ClientCacheHandler.getImageData(bodyTexture);
                 if (imageData == null || !imageData.imageLoaded())
                     continue;
 
-                int furColor = display.furColor;//data.currentCustomizedColors.getProperColor(displayData.getFurColor(data), "fur");
-                int hairColor = display.hairColor;// data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
-                int eyeColor = display.eyeColor;// data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
-
-                int color = bodyData.getColorType() == FormOverlay.ColorType.Body.getId() ? display.bodyCM : bodyData.getColorType() == FormOverlay.ColorType.Eye.getId() ? (eyeColor < 0 ? eyeColor : eyeColor) : bodyData.getColorType() == FormOverlay.ColorType.Hair.getId() ? (hairColor < 0 ? hairColor : hairColor) : bodyData.getColorType() == FormOverlay.ColorType.Fur.getId() ? furColor : bodyData.getColor();
+                int color = getProperColor(form.display, display, bodyData.getColor(), bodyData.colorType);
 
                 model.render(0.0625F); //render MAIN skin (by this point its texture is only bound, not rendered yet)
-                if (!bindImageDataTexture(imageData, color))
-                    continue;
-
+                bindImageDataTexture(imageData, color, bodyData.getAlpha());
 
                 //   model.render(0.0625F); //Don't need to render this as the main method after the mixins renders the body anyway
             }

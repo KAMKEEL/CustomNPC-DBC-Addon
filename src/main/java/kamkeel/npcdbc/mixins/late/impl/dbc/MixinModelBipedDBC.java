@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.mixins.late.impl.dbc;
 
+import JinRyuu.DragonBC.common.Render.hair;
 import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
@@ -19,7 +20,6 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
-import kamkeel.npcdbc.data.form.FormOverlay;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -36,6 +36,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.HashSet;
 
 @Mixin(value = ModelBipedDBC.class, remap = false)
 public class MixinModelBipedDBC extends ModelBipedBody {
@@ -121,12 +123,14 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 FormDisplay.BodyColor playerColors = dbcData.currentCustomizedColors;
 
-                if (doesFaceOverlayDisableDBCFace(form.overlays)) {
-                    disableFace(hair, ci);
+                HashSet<Integer> facePartsRemoved = form.display.faceData.facePartsRemoved;
+                for (int i = 0; i < FormDisplay.FacePartRemoved.values().length; i++) {
+                    if (facePartsRemoved.contains(i))
+                        disableFacePart(hair, FormDisplay.FacePartRemoved.byId(i).getPartId(), ci);
                 }
 
                 //eye colors for ALL forms except ssj4
-                if ((hair.contains("EYELEFT") || hair.contains("EYERIGHT")) && !doesFaceOverlayDisableDBCFace(form.overlays)) {
+                if ((hair.contains("EYELEFT") || hair.contains("EYERIGHT"))) {
                     if (form.display.isBerserk && !ClientConstants.renderingMajinSE)
                         ci.cancel();
 
@@ -169,7 +173,7 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                     disableFace(hair, ci);
                 }
 
-                if (form.display.furType == 2) {
+                if (isSaiyan && form.display.furType == 2) {
                     disableFace(hair, ci);
                 }
 
@@ -243,19 +247,6 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             kken.set(false);
             trty.set(false);
         }
-    }
-
-    @Unique
-    private boolean doesFaceOverlayDisableDBCFace(FormOverlay overlays) {
-        if (!overlays.hasFaceOverlays) return false;
-
-        for (FormOverlay.Face face : overlays.getFaces()) {
-            if (face.isEnabled() && face.isFaceDisabled()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Inject(method = "renderHairsV2(FLjava/lang/String;FIIIILJinRyuu/JBRA/RenderPlayerJBRA;Lnet/minecraft/client/entity/AbstractClientPlayer;)V", at = @At("HEAD"), cancellable = true)
@@ -344,6 +335,12 @@ public class MixinModelBipedDBC extends ModelBipedBody {
             faceType.contains("EYELEFT") ||
             faceType.contains("EYERIGHT")
         ) ci.setReturnValue("");
+    }
+
+    @Unique
+    public void disableFacePart(String faceType, String facePart, CallbackInfoReturnable<String> ci) {
+        if (faceType.contains(facePart))
+            ci.setReturnValue("");
     }
 
     @Unique
