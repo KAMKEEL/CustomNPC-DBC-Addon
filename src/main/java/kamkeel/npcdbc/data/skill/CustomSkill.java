@@ -12,7 +12,7 @@ import noppes.npcs.api.entity.IPlayer;
 
 public class CustomSkill implements ICustomSkill {
     public int id;
-    public String stringLiteralId, displayName;
+    public String stringLiteralId, displayName, description;
 
     private int maxLevel;
 
@@ -76,6 +76,16 @@ public class CustomSkill implements ICustomSkill {
     @Override
     public void setDisplayName(String name) {
         this.displayName = name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -196,6 +206,8 @@ public class CustomSkill implements ICustomSkill {
         stringLiteralId = tag.getString("s_id");
         if (tag.hasKey("name"))
             displayName = tag.getString("name");
+        if (tag.hasKey("description"))
+            description = tag.getString("description");
         maxLevel = tag.getInteger("maxLevel");
         tpCosts = tag.getIntArray("tpCosts");
         mindCosts = tag.getIntArray("mindCosts");
@@ -207,6 +219,8 @@ public class CustomSkill implements ICustomSkill {
         comp.setString("s_id", stringLiteralId);
         if (displayName != null)
             comp.setString("name", displayName);
+        if(description != null)
+            comp.setString("description", description);
         comp.setInteger("maxLevel", maxLevel);
         comp.setIntArray("tpCosts", tpCosts);
         comp.setIntArray("mindCosts", mindCosts);

@@ -25,6 +25,17 @@ public interface ICustomSkill {
     void setDisplayName(String name);
 
     /**
+     * @return Skill's description that shows in the menu
+     */
+    String getDescription();
+
+    /**
+     * Set a new description for a skill
+     * @param description new description
+     */
+    void setDescription(String description);
+
+    /**
      * @param level Level to check for (if <code>level > #getMaxLevel()</code>, level is treated as max level)
      * @return Upgrade cost for a given level
      */

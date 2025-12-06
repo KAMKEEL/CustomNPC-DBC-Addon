@@ -15,7 +15,6 @@ import kamkeel.npcdbc.controllers.SkillController;
 import kamkeel.npcdbc.data.PlayerDBCInfo;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.skill.CustomSkill;
 import kamkeel.npcdbc.data.skill.SkillContainer;
 import kamkeel.npcdbc.mixins.late.IDBCGuiScreen;
 import kamkeel.npcdbc.network.DBCPacketClient;
@@ -39,6 +38,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.text.DecimalFormat;
 import java.util.List;
+
+import static JinRyuu.JRMCore.JRMCoreGuiScreen.drawDetails;
 
 @Mixin(value = JRMCoreGuiScreen.class, remap = false)
 
@@ -159,13 +160,17 @@ public abstract class MixinJRMCoreGuiScreen extends GuiScreen implements IDBCGui
             SkillContainer skill = customSkills[i];
             skillsDrawnAlready++;
             int offset = skillsDrawnAlready + 1;
-            String skillDescription = "";
+            String skillDescription = skill.getSkill().getDescription();
             int level = skill.getLevel();
-            String skillName =  "§0" + skill.getSkill().getDisplayName() + " " + this.textLevel(level);
+            String skillName =  "§0" + skill.getSkill().getDisplayName();
+            int skillNameWidth = fontRendererObj.getStringWidth(skillName);
+            skillName += " " + this.textLevel(level);
             FontRenderer fontRender = fontRendererObj;
             enhancedGUIdrawString(fontRender, skillName, guiLeft + 5, guiTop + 20 + offset * 10, 0);
 //            drawDetails(); // SKILL DESCRIPTION
-                this.buttonList.add(new JRMCoreGuiButtonsA3(2000000 + skill.getSkillID(), guiLeft + 243, guiTop + 20 + offset * 10 - 2, 10, 3));
+            if (skillDescription != null)
+                drawDetails(skillDescription, guiLeft + 5, guiTop + 20 + offset * 10 + 2, skillNameWidth, 6, x, y, fontRender);
+            this.buttonList.add(new JRMCoreGuiButtonsA3(2000000 + skill.getSkillID(), guiLeft + 243, guiTop + 20 + offset * 10 - 2, 10, 3));
 
             int tpReq = skill.getSkill().getTPCost(level+1);
             int mindReq = skill.getSkill().getMindCost(level+1);
