@@ -6,6 +6,22 @@ plugins {
 
 group= "kamkeel.npcdbc"
 
+
+def findJarBySubstring = { part ->
+    def matches = configurations.runtimeClasspath.filter { it.name.contains(part) }
+
+    if (matches.isEmpty()) {
+        throw new GradleException("Cannot find JAR containing '${part}' in runtimeClasspath")
+    }
+
+    return matches.first()
+}
+
+tasks.named("runClient").configure {
+    def agent = findJarBySubstring("unimixins")
+    extraJvmArgs.addAll("-javaagent:${agent.absolutePath}")
+}
+
 tasks.runServer { setWorkingDir(file("run/server")) }
 
 version = "1.1.3"

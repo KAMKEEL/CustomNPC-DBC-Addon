@@ -38,6 +38,8 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
 
     public boolean addDefaultButtons = true;
 
+    private final JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
+
     /**
      * @param guiReplacementID ID of the JRMC Gui this object is replacing
      */
@@ -138,7 +140,6 @@ public abstract class AbstractJRMCGui extends GuiScreen implements GuiYesNoCallb
 
         for (GuiInfo.ReferenceIDs ref : GuiInfo.ReferenceIDs.values()) {
             if (ref.getButtonId() == id) {
-                JRMCoreGuiScreen DBCScreen = new JRMCoreGuiScreen(0);
                 ((IDBCGuiScreen) DBCScreen).setGuiIDPostInit(ref.getGuiID());
                 FMLCommonHandler.instance().showGuiScreen(DBCScreen);
                 return;
