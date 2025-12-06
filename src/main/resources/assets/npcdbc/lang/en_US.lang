@@ -152,6 +152,7 @@ display.eye=Eye
 display.isBerserk=Berserk
 display.normalEye=Normal
 display.hasEyebrows=Eyebrows
+display.hasPupils=Pupils
 display.mouth=Mouth
 display.nose=Nose
 display.formCanFormbeCustomized=Player customization

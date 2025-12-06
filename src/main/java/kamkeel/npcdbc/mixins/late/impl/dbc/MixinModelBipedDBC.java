@@ -121,14 +121,12 @@ public class MixinModelBipedDBC extends ModelBipedBody {
                 boolean isMonke = form.display.hasBodyFur || form.display.hairType.equals("ssj4") || form.display.hairType.equals("oozaru");
                 HD = ConfigDBCClient.EnableHDTextures;
                 boolean isSaiyan = dbcData.Race == 1 || dbcData.Race == 2;
+                boolean usesHumanBody = isSaiyan || dbcData.Race == 0;
 
                 FormDisplay.BodyColor playerColors = dbcData.currentCustomizedColors;
 
                 HashMap<Integer, HashSet<Integer>> facePartsRemoved = form.display.faceData.facePartsRemoved;
-                for (int i = 0; i < 6; i++) {
-                    if (!facePartsRemoved.containsKey(i))
-                        continue;
-
+                for (int i = 0; i < 7; i++) {
                     for (int j = 0; j < FormDisplay.FacePartRemoved.values().length; j++) {
                         if (facePartsRemoved.get(i).contains(j))
                             disableFacePart(hair, FormDisplay.FacePartRemoved.byId(j).getPartId(), ci);
@@ -182,6 +180,10 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 if (isSaiyan && form.display.furType == 2) {
                     disableFace(hair, ci);
+                }
+
+                if (HD && usesHumanBody && !isSSJ3 && !isMonke && form.display.hasPupils) {
+                    disableFacePart(hair, "EYES", ci);
                 }
 
                 //render brows
@@ -346,8 +348,15 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
     @Unique
     public void disableFacePart(String faceType, String facePart, CallbackInfoReturnable<String> ci) {
-        if (faceType.contains(facePart))
+        if (
+            facePart.equals("EYES") &&
+            (faceType.contains(FormDisplay.FacePartRemoved.RightEye.getPartId()) ||
+            faceType.contains(FormDisplay.FacePartRemoved.LeftEye.getPartId()))
+        ) {
             ci.setReturnValue("");
+        } else if (faceType.contains(facePart)){
+            ci.setReturnValue("");
+        }
     }
 
     @Unique

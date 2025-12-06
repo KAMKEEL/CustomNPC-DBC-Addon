@@ -4,6 +4,7 @@ import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.client.gui.component.SubGuiFormFaceParts;
 import kamkeel.npcdbc.client.gui.component.SubGuiOverlays;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
+import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.form.Form;
@@ -183,7 +184,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         button.enabled = display.bodyColors.eyeColor != -1;
         window.addButton(button);
 
-        window.addButton(new GuiNpcButton(1072, x + 50, y - 5, 54, 20, new String[]{"display.normalEye", "display.isBerserk"}, form.display.isBerserk ? 1 : 0));
+        boolean addPupilOption = ConfigDBCClient.EnableHDTextures && (DBCRace.isSaiyan(visualDisplay.race) || visualDisplay.race == DBCRace.HUMAN);
+        int currentIndex = ConfigDBCClient.EnableHDTextures && form.display.hasPupils ? 2 : form.display.isBerserk ? 1 : 0;
+        String[] eyeSettingString = addPupilOption ?
+            new String[]{"display.normalEye", "display.isBerserk", "display.hasPupils"} :
+            new String[]{"display.normalEye", "display.isBerserk"};
+
+        window.addButton(new GuiNpcButton(1072, x + 50, y - 5, 54, 20, eyeSettingString, currentIndex));
         if (DBCRace.isSaiyan(visualDisplay.race) || visualDisplay.race == DBCRace.HUMAN) {
             y += 25;
             window.addLabel(new GuiNpcLabel(1082, "display.hasEyebrows", x, y, 0xFFFFFF));
@@ -437,6 +444,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         //Berserk
         if (button.id == 1072) {
             display.isBerserk = button.getValue() == 1;
+            display.hasPupils = ConfigDBCClient.EnableHDTextures && button.getValue() == 2;
         }
         // Body
         if (button.id == 108) {

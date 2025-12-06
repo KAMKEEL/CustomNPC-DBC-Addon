@@ -21,6 +21,7 @@ import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
@@ -152,7 +153,7 @@ public class ModelDBC extends ModelBase {
             FormDisplay.FaceData faceData = display.faceData;
 
             boolean isSaiyan = DBCRace.isSaiyan(display.race);
-            boolean hasArcoMask = display.hasArcoMask, isBerserk = false, hasEyebrows = display.hasEyebrows;
+            boolean hasArcoMask = display.hasArcoMask, isBerserk = false, hasEyebrows = display.hasEyebrows, hasPupils = display.hasPupils;
             boolean isSSJ4 = display.hairType.equals("ssj4"), isOozaru = display.hairType.equals("oozaru");
             boolean isSfH = isSaiyan && display.hasFur && display.furType == 2;
 
@@ -191,6 +192,7 @@ public class ModelDBC extends ModelBase {
                 }
 
                 isBerserk = d.isBerserk;
+                hasPupils = d.hasPupils;
                 faceData = d.faceData;
             }
             //////////////////////////////////////////////////////
@@ -314,13 +316,21 @@ public class ModelDBC extends ModelBase {
                     if (!isBerserk) {
                         if (!faceData.hasLeftEyeRemoved(display.eyeType) && !faceData.hasLeftEyeRemoved(6)) {
                             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "l" + display.eyeType)));
+                            String texture = "";
+
+                            if (HD && hasPupils)
+                                texture = HDDir + "base/eyes/pupils/eyeleft" + display.eyeType + ".png";
+                            else
+                                texture = getFaceTexture(display, "l" + display.eyeType);
+
+                            ClientProxy.bindTexture(new ResourceLocation(texture));
                             this.eyeleft.rotateAngleY = parent.bipedHead.rotateAngleY;
                             this.eyeleft.rotateAngleX = parent.bipedHead.rotateAngleX;
                             this.eyeleft.rotateAngleZ = parent.bipedHead.rotateAngleZ;
                             this.eyeleft.rotationPointX = parent.bipedHead.rotationPointX;
                             this.eyeleft.rotationPointY = parent.bipedHead.rotationPointY;
                             this.eyeleft.rotationPointZ = parent.bipedHead.rotationPointZ;
+
 
                             GL11.glPushMatrix();
                             GL11.glTranslatef(0, y, 0);
@@ -331,7 +341,13 @@ public class ModelDBC extends ModelBase {
 
                         if (!faceData.hasRightEyeRemoved(display.eyeType) && !faceData.hasRightEyeRemoved(6)) {
                             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
-                            ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "r" + display.eyeType)));
+                            String texture = "";
+                            if (HD && hasPupils)
+                                texture = HDDir + "base/eyes/pupils/eyeright" + display.eyeType + ".png";
+                            else
+                                texture = getFaceTexture(display, "r" + display.eyeType);
+
+                            ClientProxy.bindTexture(new ResourceLocation(texture));
                             this.eyeright.rotateAngleY = parent.bipedHead.rotateAngleY;
                             this.eyeright.rotateAngleX = parent.bipedHead.rotateAngleX;
                             this.eyeright.rotateAngleZ = parent.bipedHead.rotateAngleZ;
@@ -372,7 +388,7 @@ public class ModelDBC extends ModelBase {
                     continue;
 
                 GL11.glPushMatrix();
-                float scale = 1.002511f;
+                float scale = 1.0025f;
                 GL11.glScalef(scale, scale, scale);
                 bipeadHead.render(0.0625F);
                 GL11.glPopMatrix();

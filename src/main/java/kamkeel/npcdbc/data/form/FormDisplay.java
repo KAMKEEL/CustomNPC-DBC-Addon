@@ -37,6 +37,7 @@ public class FormDisplay implements IFormDisplay {
     public boolean hasBodyFur = false;
     public boolean hasArcoMask = false;
     public boolean effectMajinHair = false;
+    public boolean hasPupils = false;
     public boolean isBerserk, hasEyebrows = true;
 
     public boolean isCustomizable = false;
@@ -71,6 +72,7 @@ public class FormDisplay implements IFormDisplay {
         hasBodyFur = rendering.getBoolean("hasBodyFur");
         furType = rendering.getInteger("furType");
         isBerserk = rendering.getBoolean("isBerserk");
+        hasPupils = rendering.getBoolean("hasPupils");
         hasEyebrows = !rendering.hasKey("hasEyebrows") ? true : rendering.getBoolean("hasEyebrows");
 
         formSize = rendering.getFloat("formSize");
@@ -102,6 +104,7 @@ public class FormDisplay implements IFormDisplay {
         rendering.setBoolean("effectMajinHair", effectMajinHair);
         rendering.setBoolean("hasBodyFur", hasBodyFur);
         rendering.setBoolean("isBerserk", isBerserk);
+        rendering.setBoolean("hasPupils", hasPupils);
         rendering.setBoolean("hasEyebrows", hasEyebrows);
 
         rendering.setFloat("formSize", formSize);
