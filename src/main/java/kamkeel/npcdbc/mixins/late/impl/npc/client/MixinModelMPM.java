@@ -129,6 +129,8 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
 
     @Redirect(method = "renderBody", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", remap = true))
     private void renderDBCBody(ModelScaleRenderer instance, float v, @Local(argsOnly = true) EntityCustomNpc entity, @Local(argsOnly = false) ModelScalePart part) {
+        if (instance.isHidden || !instance.showModel)
+            return;
         DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
         glPushMatrix();
 
@@ -141,7 +143,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
             instance.render(v);
         } else {
 
-            NPCDBCModel.renderFemaleBodySkin(display, instance, isArmor, part);
+            NPCDBCModel.renderFemaleBodySkin(display, instance, isArmor, part, v);
 //            instance.render(v);
         }
 

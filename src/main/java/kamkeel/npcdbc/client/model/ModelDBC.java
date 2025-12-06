@@ -691,7 +691,7 @@ public class ModelDBC extends ModelBase {
         }
     }
 
-    public void renderFemaleBodySkin(DBCDisplay display, ModelRenderer bipedBody, boolean isArmor, ModelScalePart config) {
+    public void renderFemaleBodySkin(DBCDisplay display, ModelRenderer bipedBody, boolean isArmor, ModelScalePart config, float v) {
         DBCFemaleBody.rotateAngleX = bipedBody.rotateAngleX - (parent.isSneak ? 0.5f : 0f);
         DBCFemaleBody.rotateAngleY = bipedBody.rotateAngleY;
         DBCFemaleBody.rotateAngleZ = bipedBody.rotateAngleZ;
@@ -837,5 +837,13 @@ public class ModelDBC extends ModelBase {
         } else {
             DBCFemaleBody.render(0.0625F);
         }
+//        GL11.glCallList(scaleRenderer.displayListModel);
+        GL11.glScalef(0.6f, 0.8f, 0.6f);
+        if (scaleRenderer.childModels != null) {
+            for(int i = 0; i < scaleRenderer.childModels.size(); ++i) {
+                ((ModelRenderer)scaleRenderer.childModels.get(i)).render(v);
+            }
+        }
+
     }
 }
