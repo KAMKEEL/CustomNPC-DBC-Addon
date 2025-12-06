@@ -13,6 +13,7 @@ public class SubGuiFormFaceParts extends SubGuiInterface {
     public Form form;
     public FormDisplay display;
     public FormDisplay.FaceData faceData;
+    public int faceType = 0;
 
     public SubGuiFormFaceParts(SubGuiFormDisplay parent) {
         super();
@@ -29,30 +30,30 @@ public class SubGuiFormFaceParts extends SubGuiInterface {
     @Override
     public void initGui() {
         super.initGui();
-        int y = guiTop + 13;
+        int y = guiTop + 27;
+        String[] labelNames = new String[]{"Eyebrows", "Eye White", "Eye Left", "Eye Right", "Nose", "Mouth"};
 
         addButton(new GuiNpcButton(6, guiLeft + xSize + 3, guiTop, 20, 20, "X"));
 
-        addLabel(new GuiNpcLabel(0, "Eyebrows", guiLeft + 8, y + 5));
-        addButton(new GuiNpcButton(0, guiLeft + xSize - 50 - 8, y, 50, 20, new String[]{"Enabled", "Disabled"}, faceData.hasEyebrows() ? 1 : 0));
-        y += 35;
-        addLabel(new GuiNpcLabel(1, "Eye White", guiLeft + 8, y + 5));
-        addButton(new GuiNpcButton(1, guiLeft + xSize - 50 - 8, y, 50, 20, new String[]{"Enabled", "Disabled"}, faceData.hasWhite() ? 1 : 0));
-        y += 35;
-        addLabel(new GuiNpcLabel(2, "Eye Left", guiLeft + 8, y + 5));
-        addButton(new GuiNpcButton(2, guiLeft + xSize - 50 - 8, y, 50, 20, new String[]{"Enabled", "Disabled"}, faceData.hasLeftEye() || display.isBerserk ? 1 : 0));
-        getButton(2).setEnabled(!display.isBerserk);
-        y += 35;
-        addLabel(new GuiNpcLabel(3, "Eye Right", guiLeft + 8, y + 5));
-        addButton(new GuiNpcButton(3, guiLeft + xSize - 50 - 8, y, 50, 20, new String[]{"Enabled", "Disabled"}, faceData.hasRightEye() || display.isBerserk ? 1 : 0));
-        getButton(3).setEnabled(!display.isBerserk);
-        y += 35;
-        addLabel(new GuiNpcLabel(4, "Nose", guiLeft + 8, y + 5));
-        addButton(new GuiNpcButton(4, guiLeft + xSize - 50 - 8, y, 50, 20, new String[]{"Enabled", "Disabled"}, faceData.hasNose() ? 1 : 0));
-        y += 35;
-        addLabel(new GuiNpcLabel(5, "Mouth", guiLeft + 8, y + 5));
-        addButton(new GuiNpcButton(5, guiLeft + xSize - 50 - 8, y, 50, 20, new String[]{"Enabled", "Disabled"}, faceData.hasMouth() ? 1 : 0));
-        y += 35;
+        addLabel(new GuiNpcLabel(7, "Face Type", guiLeft + 8, y + 5));
+        addButton(new GuiNpcButton(7, guiLeft + xSize - 50 - 8, y, 50, 20, new String[]{"1", "2", "3", "4", "5", "6", "All"}, faceType));
+        y += 25;
+
+        for (int i = 0; i < 6; i++) {
+            int partId = FormDisplay.FacePartRemoved.byId(i).getId();
+            boolean isBerserk = (
+                partId == FormDisplay.FacePartRemoved.LeftEye.getId() ||
+                partId == FormDisplay.FacePartRemoved.RightEye.getId()
+            ) && display.isBerserk;
+            boolean isAllRemoved = faceData.isPartRemoved(6, partId);
+            boolean isRemoved = faceData.isPartRemoved(faceType, partId);
+
+            addLabel(new GuiNpcLabel(i, labelNames[i], guiLeft + 8, y + 5));
+            addButton(new GuiNpcButton(i, guiLeft + xSize - 50 - 8, y, 50, 20, new String[]{"Enabled", "Disabled"}, isRemoved || isAllRemoved || isBerserk ? 1 : 0));
+            getButton(i).setEnabled(!isBerserk && !(isAllRemoved && faceType != 6));
+
+            y += 25;
+        }
     }
 
     @Override
@@ -64,6 +65,12 @@ public class SubGuiFormFaceParts extends SubGuiInterface {
             return;
         }
 
-        faceData.toggleFacePart(button.id);
+        if (button.id == 7) {
+            faceType = (faceType + 1) % 7;
+            initGui();
+            return;
+        }
+
+        faceData.toggleFacePart(faceType, button.id);
     }
 }

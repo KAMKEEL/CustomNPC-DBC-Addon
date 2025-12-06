@@ -16,10 +16,7 @@ import net.minecraftforge.common.util.Constants;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
+import java.util.*;
 
 public class FormDisplay implements IFormDisplay {
 
@@ -408,12 +405,12 @@ public class FormDisplay implements IFormDisplay {
         setOutline(id);
     }
 
-    public Integer[] getFacePartsRemoved() {
-        return faceData.getFacePartsRemoved();
+    public Integer[] getFacePartsRemoved(int faceType) {
+        return faceData.getFacePartsRemoved(faceType);
     }
 
-    public void setFacePartRemoved(int part, boolean remove) {
-        faceData.setFacePartRemoved(part, remove);
+    public void setFacePartRemoved(int faceType, int part, boolean enable) {
+        faceData.setFacePartRemoved(faceType, part, enable);
     }
 
     public IFormDisplay save() {
@@ -590,122 +587,138 @@ public class FormDisplay implements IFormDisplay {
     }
 
     public static class FaceData {
-        public HashSet<Integer> facePartsRemoved = new HashSet<>();
+        public HashMap<Integer, HashSet<Integer>> facePartsRemoved;
 
         public FaceData() {
+            facePartsRemoved = new HashMap<>();
+            for (int i = 0; i < 7; i++) {
+                facePartsRemoved.put(i, new HashSet<>());
+            }
         }
 
         public void readFromNBT(NBTTagCompound compound, boolean isDBCDisplay) {
             NBTTagCompound faceData = compound.getCompoundTag(isDBCDisplay ? "DBCFaceData" : "faceData");
-            for (int i = 0; i < FacePartRemoved.values().length; i++) {
-                String name = FacePartRemoved.byId(i).getName();
-                if (faceData.hasKey(name) && faceData.getBoolean(name))
-                    facePartsRemoved.add(i);
+            for (int i = 0; i < 7; i++) {
+                String appendix = i == 6 ? "All" : i + "";
+                String faceName = isDBCDisplay ? "Face_" + appendix : "face" + appendix;
+
+                if (!faceData.hasKey(faceName)) {
+                    facePartsRemoved.get(i).clear();
+                    continue;
+                }
+
+                NBTTagCompound faceCompound = faceData.getCompoundTag(faceName);
+                HashSet<Integer> removed = facePartsRemoved.get(i);
+                removed.clear();
+
+                for (int j = 0; j < FacePartRemoved.values().length; j++) {
+                    String name = FacePartRemoved.byId(j).getName();
+                    if (faceCompound.getBoolean(name)) {
+                        removed.add(j);
+                    }
+                }
             }
         }
 
         public NBTTagCompound writeToNBT(NBTTagCompound compound, boolean isDBCDisplay) {
             NBTTagCompound faceData = new NBTTagCompound();
-            for (int i = 0; i < FacePartRemoved.values().length; i++) {
-                faceData.setBoolean(FacePartRemoved.byId(i).getName(), facePartsRemoved.contains(i));
+            for (int i = 0; i < 7; i++) {
+                HashSet<Integer> removed = facePartsRemoved.get(i);
+
+                if (removed == null || removed.isEmpty())
+                    continue;
+
+                String appendix = i == 6 ? "All" : i + "";
+                NBTTagCompound faceCompound = new NBTTagCompound();
+                for (int j = 0; j < FacePartRemoved.values().length; j++) {
+                    boolean isRemoved = removed.contains(j);
+                    faceCompound.setBoolean(FacePartRemoved.byId(j).getName(), isRemoved);
+                }
+
+                faceData.setTag(isDBCDisplay ? "Face_" + appendix : "face" + appendix, faceCompound);
             }
 
             compound.setTag(isDBCDisplay ? "DBCFaceData" : "faceData", faceData);
             return compound;
         }
 
-        public Integer[] getFacePartsRemoved() {
+        public Integer[] getFacePartsRemoved(int faceType) {
             ArrayList<Integer> list = new ArrayList<>();
             for (int i = 0; i < FacePartRemoved.values().length; i++) {
-                if (facePartsRemoved.contains(i))
+                if (facePartsRemoved.get(faceType).contains(i))
                     list.add(i);
             }
 
             return list.toArray(new Integer[0]);
         }
 
-        public void setFacePartRemoved(int part, boolean remove) {
-            if (remove)
-                facePartsRemoved.remove(part);
-            else
-                facePartsRemoved.add(part);
+        public void setFacePartRemoved(int faceType, int part, boolean enable) {
+            if (enable) {
+                facePartsRemoved.get(faceType).remove(part);
+            } else {
+                facePartsRemoved.get(faceType).add(part);
+            }
         }
 
-        public boolean isPartRemoved(int part) {
-            return facePartsRemoved.contains(part);
+        public void setFacePartRemoved(int faceType, int part) {
+            setFacePartRemoved(faceType, part, false);
         }
 
-        public void toggleFacePart(int part) {
-            if (isPartRemoved(part))
-                facePartsRemoved.remove(part);
-            else
-                facePartsRemoved.add(part);
+        public boolean isPartRemoved(int faceType, int part) {
+            return facePartsRemoved.get(faceType).contains(part);
         }
 
-        public boolean hasEyebrows() {
-            return this.facePartsRemoved.contains(FacePartRemoved.Eyebrows.getId());
+        public void toggleFacePart(int faceType, int part) {
+            boolean isRemoved = isPartRemoved(faceType, part);
+            setFacePartRemoved(faceType, part, isRemoved);
         }
 
-        public boolean hasWhite() {
-            return this.facePartsRemoved.contains(FacePartRemoved.White.getId());
+        public boolean hasEyebrowsRemoved(int faceType) {
+            return isPartRemoved(faceType, FacePartRemoved.Eyebrows.getId());
         }
 
-        public boolean hasLeftEye() {
-            return this.facePartsRemoved.contains(FacePartRemoved.LeftEye.getId());
+        public boolean hasWhiteRemoved(int faceType) {
+            return isPartRemoved(faceType, FacePartRemoved.White.getId());
         }
 
-        public boolean hasRightEye() {
-            return this.facePartsRemoved.contains(FacePartRemoved.RightEye.getId());
+        public boolean hasLeftEyeRemoved(int faceType) {
+            return isPartRemoved(faceType, FacePartRemoved.LeftEye.getId());
         }
 
-        public boolean hasNose() {
-            return this.facePartsRemoved.contains(FacePartRemoved.Nose.getId());
+        public boolean hasRightEyeRemoved(int faceType) {
+            return isPartRemoved(faceType, FacePartRemoved.RightEye.getId());
         }
 
-        public boolean hasMouth() {
-            return this.facePartsRemoved.contains(FacePartRemoved.Mouth.getId());
+        public boolean hasNoseRemoved(int faceType) {
+            return isPartRemoved(faceType, FacePartRemoved.Nose.getId());
         }
 
-        public void setEyebrows(boolean enabled) {
-            if (enabled)
-                facePartsRemoved.remove(FacePartRemoved.Eyebrows.getId());
-            else
-                facePartsRemoved.add(FacePartRemoved.Eyebrows.getId());
+        public boolean hasMouthRemoved(int faceType) {
+            return isPartRemoved(faceType, FacePartRemoved.Mouth.getId());
         }
 
-        public void setWhite(boolean enabled) {
-            if (enabled)
-                facePartsRemoved.remove(FacePartRemoved.White.getId());
-            else
-                facePartsRemoved.add(FacePartRemoved.White.getId());
+        public void setEyebrowsRemoved(int faceType, boolean enable) {
+            setFacePartRemoved(faceType, FacePartRemoved.Eyebrows.getId(), enable);
         }
 
-        public void setLeftEye(boolean enabled) {
-            if (enabled)
-                facePartsRemoved.remove(FacePartRemoved.LeftEye.getId());
-            else
-                facePartsRemoved.add(FacePartRemoved.LeftEye.getId());
+        public void setWhiteRemoved(int faceType, boolean enable) {
+            setFacePartRemoved(faceType, FacePartRemoved.White.getId(), enable);
         }
 
-        public void setRightEye(boolean enabled) {
-            if (enabled)
-                facePartsRemoved.remove(FacePartRemoved.RightEye.getId());
-            else
-                facePartsRemoved.add(FacePartRemoved.RightEye.getId());
+        public void setLeftEyeRemoved(int faceType, boolean enable) {
+            setFacePartRemoved(faceType, FacePartRemoved.LeftEye.getId(), enable);
         }
 
-        public void setNose(boolean enabled) {
-            if (enabled)
-                facePartsRemoved.remove(FacePartRemoved.Nose.getId());
-            else
-                facePartsRemoved.add(FacePartRemoved.Nose.getId());
+        public void setRightEyeRemoved(int faceType, boolean enable) {
+            setFacePartRemoved(faceType, FacePartRemoved.RightEye.getId(), enable);
         }
 
-        public void setMouth(boolean enabled) {
-            if (enabled)
-                facePartsRemoved.remove(FacePartRemoved.Mouth.getId());
-            else
-                facePartsRemoved.add(FacePartRemoved.Mouth.getId());
+        public void setNoseRemoved(int faceType, boolean enable) {
+            setFacePartRemoved(faceType, FacePartRemoved.Nose.getId(), enable);
+        }
+
+        public void setMouthRemoved(int faceType, boolean enable) {
+            setFacePartRemoved(faceType, FacePartRemoved.Mouth.getId(), enable);
         }
     }
 

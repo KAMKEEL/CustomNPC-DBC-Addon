@@ -20,7 +20,6 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormOverlay;
-import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.client.Minecraft;
@@ -433,9 +432,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         FormDisplay displayData = form.display;
         FormOverlay overlayData = displayData.overlays;
 
-        for (FormOverlay.Body bodyData : overlayData.getBodies().toArray(new FormOverlay.Body[0])) {
-            if (bodyData.isEnabled()) {
-                String bodyTexture = bodyData.getTexture();
+        for (FormOverlay.Body bodyOverlayData : overlayData.getBodies().toArray(new FormOverlay.Body[0])) {
+            if (bodyOverlayData.isEnabled()) {
+                String bodyTexture = bodyOverlayData.getTexture();
                 ImageData imageData = ClientCacheHandler.getImageData(bodyTexture);
                 if (imageData == null || !imageData.imageLoaded())
                     continue;
@@ -444,11 +443,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
                 int eyeColor = data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
 
-                int color = bodyData.getColorType() == FormOverlay.ColorType.Body.getId() ?
-                    bodyCM : bodyData.getColorType() == FormOverlay.ColorType.Eye.getId() ?
-                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : bodyData.getColorType() == FormOverlay.ColorType.Hair.getId() ?
-                    (hairColor < 0 ? defaultHairColor : hairColor) : bodyData.getColorType() == FormOverlay.ColorType.Fur.getId() ?
-                    furColor : bodyData.getColor();
+                int color = bodyOverlayData.getColorType() == FormOverlay.ColorType.Body.getId() ?
+                    bodyCM : bodyOverlayData.getColorType() == FormOverlay.ColorType.Eye.getId() ?
+                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : bodyOverlayData.getColorType() == FormOverlay.ColorType.Hair.getId() ?
+                    (hairColor < 0 ? defaultHairColor : hairColor) : bodyOverlayData.getColorType() == FormOverlay.ColorType.Fur.getId() ?
+                    furColor : bodyOverlayData.getColor();
 
                 if (!bindImageDataTexture(imageData, color))
                     continue;
@@ -464,9 +463,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         FormDisplay displayData = form.display;
         FormOverlay overlayData = displayData.overlays;
 
-        for (FormOverlay.Face faceData : overlayData.getFaces().toArray(new FormOverlay.Face[0])) {
-            if (faceData.isEnabled()) {
-                String faceTexture = faceData.getTexture(eyes);
+        for (FormOverlay.Face faceOverlayData : overlayData.getFaces().toArray(new FormOverlay.Face[0])) {
+            if (faceOverlayData.isEnabled()) {
+                String faceTexture = faceOverlayData.getTexture(eyes);
                 ImageData imageData = ClientCacheHandler.getImageData(faceTexture);
                 if (imageData == null || !imageData.imageLoaded())
                     continue;
@@ -475,11 +474,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
                 int eyeColor = data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
 
-                int color = faceData.getColorType() == FormOverlay.ColorType.Body.getId() ?
-                    bodyCM : faceData.getColorType() == FormOverlay.ColorType.Eye.getId() ?
-                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : faceData.getColorType() == FormOverlay.ColorType.Hair.getId() ?
-                    (hairColor < 0 ? defaultHairColor : hairColor) : faceData.getColorType() == FormOverlay.ColorType.Fur.getId() ?
-                    furColor : faceData.getColor();
+                int color = faceOverlayData.getColorType() == FormOverlay.ColorType.Body.getId() ?
+                    bodyCM : faceOverlayData.getColorType() == FormOverlay.ColorType.Eye.getId() ?
+                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : faceOverlayData.getColorType() == FormOverlay.ColorType.Hair.getId() ?
+                    (hairColor < 0 ? defaultHairColor : hairColor) : faceOverlayData.getColorType() == FormOverlay.ColorType.Fur.getId() ?
+                    furColor : faceOverlayData.getColor();
 
                 if (!bindImageDataTexture(imageData, color))
                     continue;
@@ -517,20 +516,39 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
             String eyeDir = (form.display.furType == 1 ? "ssj4d" : "ssj4") + "/face_" + eyes + "/";
 
-            if (!faceData.hasWhite()) {
+            if (!faceData.hasWhiteRemoved(eyes) && !faceData.hasWhiteRemoved(6)) {
                 GL11.glColor3f(1.0f, 1.0f, 1.0f);
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyewhite.png"));
                 this.modelMain.bipedHead.render(1F / 16F);
             }
 
-            if (!form.display.isBerserk && !(faceData.hasRightEye() || faceData.hasLeftEye())) {
+            if (!form.display.isBerserk && !(faceData.hasRightEyeRemoved(eyes) || faceData.hasRightEyeRemoved(6))) {
                 int eyeColor = playerColors.getProperColor(display, "eye");
                 RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
-                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4pupils.png"));
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeright.png"));
                 this.modelMain.bipedHead.render(0.0625F);
+
+                if (form.display.furType == 1) {
+                    GL11.glColor3f(1.0f, 1.0f, 1.0f);
+                    this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4glowright.png"));
+                    this.modelMain.bipedHead.render(0.0625F);
+                }
             }
 
-            if (!faceData.hasEyebrows()) {
+            if (!form.display.isBerserk && !(faceData.hasLeftEyeRemoved(eyes) || faceData.hasLeftEyeRemoved(6))) {
+                int eyeColor = playerColors.getProperColor(display, "eye");
+                RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeleft.png"));
+                this.modelMain.bipedHead.render(0.0625F);
+
+                if (form.display.furType == 1) {
+                    GL11.glColor3f(1.0f, 1.0f, 1.0f);
+                    this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4glowleft.png"));
+                    this.modelMain.bipedHead.render(0.0625F);
+                }
+            }
+
+            if (!faceData.hasEyebrowsRemoved(eyes) && !faceData.hasEyebrowsRemoved(6)) {
                 RenderPlayerJBRA.glColor3f(playerColors.getFurColor(form.display, data));
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4brows.png"));
                 this.modelMain.bipedHead.render(1F / 16F);
@@ -544,22 +562,16 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4shade.png"));
                 this.modelMain.bipedHead.render(0.0625F);
             }
-
-            if (display.furType == 1 && !form.display.isBerserk && !(faceData.hasRightEye() || faceData.hasLeftEye())) {
-                GL11.glColor3f(1.0f, 1.0f, 1.0f);
-                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4glow.png"));
-                this.modelMain.bipedHead.render(0.0625F);
-            }
         }
 
-        if (!faceData.hasMouth()) {
+        if (!faceData.hasMouthRemoved(eyes) && !faceData.hasMouthRemoved(6)) {
             RenderPlayerJBRA.glColor3f(bodyCM);
             String noseTexture = (gender == 1 ? "f" : "") + "humn" + nose + ".png";
             this.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + noseTexture));
             this.modelMain.renderHairs(0.0625F, "FACENOSE");
         }
 
-        if (!faceData.hasNose()) {
+        if (!faceData.hasNoseRemoved(eyes) && !faceData.hasNoseRemoved(6)) {
             RenderPlayerJBRA.glColor3f(bodyCM);
             String mouthTexture = (gender == 1 ? "f" : "") + "humm" + JRMCoreH.dnsFaceM(dns) + ".png";
             this.bindTexture(new ResourceLocation((HD ? HDDir + "base/mouth/" : "jinryuumodscore:cc/") + mouthTexture));
@@ -592,20 +604,27 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
             String eyeDir = "ssj3/face_" + eyes + "/";
 
-            if (!faceData.hasWhite()) {
+            if (!faceData.hasWhiteRemoved(eyes) && !faceData.hasWhiteRemoved(6)) {
                 GL11.glColor3f(1.0f, 1.0f, 1.0f);
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyewhite.png"));
                 this.modelMain.bipedHead.render(0.0625F);
             }
 
-            if (!form.display.isBerserk && !(faceData.hasRightEye() || faceData.hasLeftEye())) {
+            if (!form.display.isBerserk && !(faceData.hasRightEyeRemoved(eyes) || faceData.hasRightEyeRemoved(6))) {
                 int eyeColor = playerColors.getProperColor(display, "eye");
                 RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
-                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3pupils.png"));
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyeright.png"));
                 this.modelMain.bipedHead.render(0.0625F);
             }
 
-            if (!faceData.hasEyebrows()) {
+            if (!form.display.isBerserk && !(faceData.hasLeftEyeRemoved(eyes) || faceData.hasLeftEyeRemoved(6))) {
+                int eyeColor = playerColors.getProperColor(display, "eye");
+                RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
+                this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyeleft.png"));
+                this.modelMain.bipedHead.render(0.0625F);
+            }
+
+            if (!faceData.hasEyebrowsRemoved(eyes) && !faceData.hasEyebrowsRemoved(6)) {
                 int hairColor = playerColors.getProperColor(form.display.getHairColor(data), "hair");
                 RenderPlayerJBRA.glColor3f(hairColor < 0 ? defaultHairColor : hairColor, age);
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3brows.png"));
@@ -617,14 +636,14 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             }
         }
 
-        if (!faceData.hasNose()) {
+        if (!faceData.hasNoseRemoved(eyes) && !faceData.hasNoseRemoved(6)) {
             RenderPlayerJBRA.glColor3f(bodyCM);
             String noseTexture = (gender == 1 ? "f" : "") + "humn" + nose + ".png";
             this.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + noseTexture));
             this.modelMain.renderHairs(0.0625F, "FACENOSE");
         }
 
-        if (!faceData.hasMouth()) {
+        if (!faceData.hasMouthRemoved(eyes) && !faceData.hasNoseRemoved(6)) {
             RenderPlayerJBRA.glColor3f(bodyCM);
             String mouthTexture = (gender == 1 ? "f" : "") + "humm" + JRMCoreH.dnsFaceM(dns) + ".png";
             this.bindTexture(new ResourceLocation((HD ? HDDir + "base/mouth/" : "jinryuumodscore:cc/") + mouthTexture));

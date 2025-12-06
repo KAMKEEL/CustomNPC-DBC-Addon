@@ -37,6 +37,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 @Mixin(value = ModelBipedDBC.class, remap = false)
@@ -123,11 +124,17 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 FormDisplay.BodyColor playerColors = dbcData.currentCustomizedColors;
 
-                HashSet<Integer> facePartsRemoved = form.display.faceData.facePartsRemoved;
-                for (int i = 0; i < FormDisplay.FacePartRemoved.values().length; i++) {
-                    if (facePartsRemoved.contains(i))
-                        disableFacePart(hair, FormDisplay.FacePartRemoved.byId(i).getPartId(), ci);
+                HashMap<Integer, HashSet<Integer>> facePartsRemoved = form.display.faceData.facePartsRemoved;
+                for (int i = 0; i < 6; i++) {
+                    if (!facePartsRemoved.containsKey(i))
+                        continue;
+
+                    for (int j = 0; j < FormDisplay.FacePartRemoved.values().length; j++) {
+                        if (facePartsRemoved.get(i).contains(j))
+                            disableFacePart(hair, FormDisplay.FacePartRemoved.byId(j).getPartId(), ci);
+                    }
                 }
+
 
                 //eye colors for ALL forms except ssj4
                 if ((hair.contains("EYELEFT") || hair.contains("EYERIGHT"))) {
