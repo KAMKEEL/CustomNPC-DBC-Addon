@@ -3,6 +3,7 @@ package kamkeel.npcdbc.client.gui.component;
 import kamkeel.npcdbc.client.gui.global.form.SubGuiFormDisplay;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.form.FormFaceData;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.GuiNpcButton;
 import noppes.npcs.client.gui.util.GuiNpcLabel;
@@ -12,7 +13,7 @@ public class SubGuiFormFaceParts extends SubGuiInterface {
     public SubGuiFormDisplay parent;
     public Form form;
     public FormDisplay display;
-    public FormDisplay.FaceData faceData;
+    public FormFaceData faceData;
     public int faceType = 0;
 
     public SubGuiFormFaceParts(SubGuiFormDisplay parent) {
@@ -40,13 +41,13 @@ public class SubGuiFormFaceParts extends SubGuiInterface {
         y += 25;
 
         for (int i = 0; i < 6; i++) {
-            int partId = FormDisplay.FacePartRemoved.byId(i).getId();
+            int partId = FormFaceData.Part.values()[i].ordinal();
             boolean isBerserk = (
-                partId == FormDisplay.FacePartRemoved.LeftEye.getId() ||
-                partId == FormDisplay.FacePartRemoved.RightEye.getId()
+                partId == FormFaceData.Part.LeftEye.ordinal() ||
+                partId == FormFaceData.Part.RightEye.ordinal()
             ) && display.isBerserk;
-            boolean isAllRemoved = faceData.isPartRemoved(6, partId);
-            boolean isRemoved = faceData.isPartRemoved(faceType, partId);
+            boolean isAllRemoved = faceData.hasRemoved(6, partId);
+            boolean isRemoved = faceData.hasRemoved(faceType, partId);
 
             addLabel(new GuiNpcLabel(i, labelNames[i], guiLeft + 8, y + 5));
             addButton(new GuiNpcButton(i, guiLeft + xSize - 50 - 8, y, 50, 20, new String[]{"Enabled", "Disabled"}, isRemoved || isAllRemoved || isBerserk ? 1 : 0));

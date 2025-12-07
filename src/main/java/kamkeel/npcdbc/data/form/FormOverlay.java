@@ -290,7 +290,7 @@ public class FormOverlay {
             compound.setBoolean("enabled", enabled);
             compound.setBoolean("matchPlayerFace", matchPlayerFace);
 
-            compound.setInteger("colorType", colorType.getId());
+            compound.setInteger("colorType", colorType.ordinal());
             compound.setInteger("color", color);
             compound.setFloat("alpha", alpha);
             compound.setBoolean("glow", glow);
@@ -347,7 +347,7 @@ public class FormOverlay {
         }
 
         public int getColorType() {
-            return this.colorType.getId();
+            return this.colorType.ordinal();
         }
 
         public void setColorType(int id) {
@@ -421,7 +421,7 @@ public class FormOverlay {
 
             compound.setBoolean("enabled", enabled);
 
-            compound.setInteger("colorType", colorType.getId());
+            compound.setInteger("colorType", colorType.ordinal());
 
             compound.setString("texture", texture);
             compound.setInteger("color", color);
@@ -440,7 +440,7 @@ public class FormOverlay {
         }
 
         public int getColorType() {
-            return this.colorType.getId();
+            return this.colorType.ordinal();
         }
 
         public void setColorType(int id) {
@@ -481,25 +481,15 @@ public class FormOverlay {
     }
 
     public enum ColorType {
-        Custom(0),
-        Body(1),
-        Eye(2),
-        Hair(3),
-        Fur(4);
+        Custom(),
+        Body(),
+        Eye(),
+        Hair(),
+        Fur();
 
         private static final ColorType[] BY_ID = Arrays.stream(values()).sorted(
-                Comparator.comparing(ColorType::getId)
+                Comparator.comparing(ColorType::ordinal)
         ).toArray(ColorType[]::new);
-
-        private final int id;
-
-        ColorType(int id) {
-            this.id = id;
-        }
-
-        public int getId() {
-            return this.id;
-        }
 
         public static ColorType byId(int id) {
             return BY_ID[Math.floorMod(id, BY_ID.length)];

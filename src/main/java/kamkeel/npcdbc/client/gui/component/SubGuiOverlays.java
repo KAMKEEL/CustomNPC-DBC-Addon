@@ -102,7 +102,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
                 y += 23;
 
                 if (overlay.getBody(i).isEnabled()) {
-                    if (overlay.getBodyColorType(i) == FormOverlay.ColorType.Custom.getId()) {
+                    if (overlay.getBodyColorType(i) == FormOverlay.ColorType.Custom.ordinal()) {
                         button = new GuiNpcButton(id(3, i), 90, y, 50, 20, getColor(overlay.getBodyColor(i)));
                         button.packedFGColour = overlay.getBodyColor(i);
                         window.addButton(button); // id 3
@@ -153,7 +153,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
                 window.addButton(button); // id 8
 
                 if (overlay.getFace(i).isEnabled()) {
-                    if (overlay.getFaceColorType(i) == FormOverlay.ColorType.Custom.getId()) {
+                    if (overlay.getFaceColorType(i) == FormOverlay.ColorType.Custom.ordinal()) {
                         button = new GuiNpcButton(id(3, i), 90, y, 50, 20, getColor(overlay.getFaceColor(i)));
                         button.packedFGColour = overlay.getFaceColor(i);
                         window.addButton(button); // id 3

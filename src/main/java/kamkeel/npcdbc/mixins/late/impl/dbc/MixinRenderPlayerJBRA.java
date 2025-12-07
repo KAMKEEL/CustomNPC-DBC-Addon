@@ -13,12 +13,14 @@ import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
+import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.form.FormFaceData;
 import kamkeel.npcdbc.data.form.FormOverlay;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
@@ -448,16 +450,21 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
                 int eyeColor = data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
 
-                int color = bodyOverlayData.getColorType() == FormOverlay.ColorType.Body.getId() ?
-                    bodyCM : bodyOverlayData.getColorType() == FormOverlay.ColorType.Eye.getId() ?
-                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : bodyOverlayData.getColorType() == FormOverlay.ColorType.Hair.getId() ?
-                    (hairColor < 0 ? defaultHairColor : hairColor) : bodyOverlayData.getColorType() == FormOverlay.ColorType.Fur.getId() ?
+                int color = bodyOverlayData.getColorType() == FormOverlay.ColorType.Body.ordinal() ?
+                    bodyCM : bodyOverlayData.getColorType() == FormOverlay.ColorType.Eye.ordinal() ?
+                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : bodyOverlayData.getColorType() == FormOverlay.ColorType.Hair.ordinal() ?
+                    (hairColor < 0 ? defaultHairColor : hairColor) : bodyOverlayData.getColorType() == FormOverlay.ColorType.Fur.ordinal() ?
                     furColor : bodyOverlayData.getColor();
 
                 if (!bindImageDataTexture(imageData, color))
                     continue;
 
-                this.modelMain.renderBody(0.0625F);
+                GL11.glPushMatrix();
+                GL11.glEnable(GL11.GL_BLEND);
+                new Color(color, bodyOverlayData.alpha).glColor();
+                this.modelMain.bipedHead.render(1F / 16F);
+                GL11.glDisable(GL11.GL_BLEND);
+                GL11.glPopMatrix();
             }
         }
     }
@@ -479,19 +486,22 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
                 int eyeColor = data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
 
-                int color = faceOverlayData.getColorType() == FormOverlay.ColorType.Body.getId() ?
-                    bodyCM : faceOverlayData.getColorType() == FormOverlay.ColorType.Eye.getId() ?
-                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : faceOverlayData.getColorType() == FormOverlay.ColorType.Hair.getId() ?
-                    (hairColor < 0 ? defaultHairColor : hairColor) : faceOverlayData.getColorType() == FormOverlay.ColorType.Fur.getId() ?
+                int color = faceOverlayData.getColorType() == FormOverlay.ColorType.Body.ordinal() ?
+                    bodyCM : faceOverlayData.getColorType() == FormOverlay.ColorType.Eye.ordinal() ?
+                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : faceOverlayData.getColorType() == FormOverlay.ColorType.Hair.ordinal() ?
+                    (hairColor < 0 ? defaultHairColor : hairColor) : faceOverlayData.getColorType() == FormOverlay.ColorType.Fur.ordinal() ?
                     furColor : faceOverlayData.getColor();
 
                 if (!bindImageDataTexture(imageData, color))
                     continue;
 
                 GL11.glPushMatrix();
+                GL11.glEnable(GL11.GL_BLEND);
                 float scale = 1.0025f;
                 GL11.glScalef(scale, scale, scale);
+                new Color(color, faceOverlayData.alpha);
                 this.modelMain.bipedHead.render(1F / 16F);
+                GL11.glDisable(GL11.GL_BLEND);
                 GL11.glPopMatrix();
             }
         }
@@ -502,7 +512,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         ResourceLocation location = data.getLocation();
         if (location != null && !data.invalid()) {
             try {
-                RenderPlayerJBRA.glColor3f(color);
                 this.bindTexture(location);
                 return true;
             } catch (Exception exception) {
@@ -517,7 +526,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private void renderPupils(Form form, int gender, int eyes, DBCData data) {
         if (ConfigDBCClient.EnableHDTextures) {
             FormDisplay display = form.display;
-            FormDisplay.FaceData faceData = display.faceData;
+            FormFaceData faceData = display.faceData;
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
 
             String eyeDir = "base/eyes/pupils/";
@@ -551,10 +560,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     private void renderSSJ4Face(Form form, int gender, int nose, int eyes, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
         FormDisplay display = form.display;
-        FormDisplay.FaceData faceData = display.faceData;
+        FormFaceData faceData = display.faceData;
         if (ConfigDBCClient.EnableHDTextures) {
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
-            String eyeDir = (form.display.furType == 1 ? "ssj4d" : "ssj4") + "/face_" + eyes + "/";
+            String eyeDir = (form.display.furType == 1 ? "ssj4d" : "ssj4") + (gender == 1 ? "/female" : "/male") + "/face_" + eyes + "/";
 
             if (!faceData.hasWhiteRemoved(eyes) && !faceData.hasWhiteRemoved(6)) {
                 GL11.glColor3f(1.0f, 1.0f, 1.0f);
@@ -639,7 +648,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     private void renderSSJ3Face(Form form, int gender, int nose, int eyes, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
         FormDisplay display = form.display;
-        FormDisplay.FaceData faceData = display.faceData;
+        FormFaceData faceData = display.faceData;
         if (ConfigDBCClient.EnableHDTextures) {
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
             String eyeDir = "ssj3/face_" + eyes + "/";

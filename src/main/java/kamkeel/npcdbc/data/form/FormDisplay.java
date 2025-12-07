@@ -16,8 +16,6 @@ import net.minecraftforge.common.util.Constants;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
-import java.util.*;
-
 public class FormDisplay implements IFormDisplay {
 
     private final Form parent;
@@ -44,7 +42,7 @@ public class FormDisplay implements IFormDisplay {
 
     public BodyColor bodyColors = new BodyColor();
     public FormOverlay overlays = new FormOverlay(this);
-    public FaceData faceData = new FaceData();
+    public FormFaceData faceData = new FormFaceData();
 
     public int auraID = -1, outlineID = -1;
 
@@ -408,12 +406,8 @@ public class FormDisplay implements IFormDisplay {
         setOutline(id);
     }
 
-    public Integer[] getFacePartsRemoved(int faceType) {
-        return faceData.getFacePartsRemoved(faceType);
-    }
-
-    public void setFacePartRemoved(int faceType, int part, boolean enable) {
-        faceData.setFacePartRemoved(faceType, part, enable);
+    public FormFaceData getFaceData() {
+        return faceData;
     }
 
     public IFormDisplay save() {
@@ -586,192 +580,6 @@ public class FormDisplay implements IFormDisplay {
         public boolean isEmpty() {
             return bodyCM == -1 && bodyC1 == -1 && bodyC2 == -1 && bodyC3 == -1 &&
                 furColor == -1 && hairColor == -1 && eyeColor == -1;
-        }
-    }
-
-    public static class FaceData {
-        public HashMap<Integer, HashSet<Integer>> facePartsRemoved;
-
-        public FaceData() {
-            facePartsRemoved = new HashMap<>();
-            for (int i = 0; i < 7; i++) {
-                facePartsRemoved.put(i, new HashSet<>());
-            }
-        }
-
-        public void readFromNBT(NBTTagCompound compound, boolean isDBCDisplay) {
-            NBTTagCompound faceData = compound.getCompoundTag(isDBCDisplay ? "DBCFaceData" : "faceData");
-            for (int i = 0; i < 7; i++) {
-                String appendix = i == 6 ? "All" : i + "";
-                String faceName = isDBCDisplay ? "Face_" + appendix : "face" + appendix;
-
-                if (!faceData.hasKey(faceName)) {
-                    facePartsRemoved.get(i).clear();
-                    continue;
-                }
-
-                NBTTagCompound faceCompound = faceData.getCompoundTag(faceName);
-                HashSet<Integer> removed = facePartsRemoved.get(i);
-                removed.clear();
-
-                for (int j = 0; j < FacePartRemoved.values().length; j++) {
-                    String name = FacePartRemoved.byId(j).getName();
-                    if (faceCompound.getBoolean(name)) {
-                        removed.add(j);
-                    }
-                }
-            }
-        }
-
-        public NBTTagCompound writeToNBT(NBTTagCompound compound, boolean isDBCDisplay) {
-            NBTTagCompound faceData = new NBTTagCompound();
-            for (int i = 0; i < 7; i++) {
-                HashSet<Integer> removed = facePartsRemoved.get(i);
-
-                if (removed == null || removed.isEmpty())
-                    continue;
-
-                String appendix = i == 6 ? "All" : i + "";
-                NBTTagCompound faceCompound = new NBTTagCompound();
-                for (int j = 0; j < FacePartRemoved.values().length; j++) {
-                    boolean isRemoved = removed.contains(j);
-                    faceCompound.setBoolean(FacePartRemoved.byId(j).getName(), isRemoved);
-                }
-
-                faceData.setTag(isDBCDisplay ? "Face_" + appendix : "face" + appendix, faceCompound);
-            }
-
-            compound.setTag(isDBCDisplay ? "DBCFaceData" : "faceData", faceData);
-            return compound;
-        }
-
-        public Integer[] getFacePartsRemoved(int faceType) {
-            ArrayList<Integer> list = new ArrayList<>();
-            for (int i = 0; i < FacePartRemoved.values().length; i++) {
-                if (facePartsRemoved.get(faceType).contains(i))
-                    list.add(i);
-            }
-
-            return list.toArray(new Integer[0]);
-        }
-
-        public void setFacePartRemoved(int faceType, int part, boolean enable) {
-            if (enable) {
-                facePartsRemoved.get(faceType).remove(part);
-            } else {
-                facePartsRemoved.get(faceType).add(part);
-            }
-        }
-
-        public void setFacePartRemoved(int faceType, int part) {
-            setFacePartRemoved(faceType, part, false);
-        }
-
-        public boolean isPartRemoved(int faceType, int part) {
-            return facePartsRemoved.get(faceType).contains(part);
-        }
-
-        public void toggleFacePart(int faceType, int part) {
-            boolean isRemoved = isPartRemoved(faceType, part);
-            setFacePartRemoved(faceType, part, isRemoved);
-        }
-
-        public boolean hasEyebrowsRemoved(int faceType) {
-            return isPartRemoved(faceType, FacePartRemoved.Eyebrows.getId());
-        }
-
-        public boolean hasWhiteRemoved(int faceType) {
-            return isPartRemoved(faceType, FacePartRemoved.White.getId());
-        }
-
-        public boolean hasLeftEyeRemoved(int faceType) {
-            return isPartRemoved(faceType, FacePartRemoved.LeftEye.getId());
-        }
-
-        public boolean hasRightEyeRemoved(int faceType) {
-            return isPartRemoved(faceType, FacePartRemoved.RightEye.getId());
-        }
-
-        public boolean hasNoseRemoved(int faceType) {
-            return isPartRemoved(faceType, FacePartRemoved.Nose.getId());
-        }
-
-        public boolean hasMouthRemoved(int faceType) {
-            return isPartRemoved(faceType, FacePartRemoved.Mouth.getId());
-        }
-
-        public void setEyebrowsRemoved(int faceType, boolean enable) {
-            setFacePartRemoved(faceType, FacePartRemoved.Eyebrows.getId(), enable);
-        }
-
-        public void setWhiteRemoved(int faceType, boolean enable) {
-            setFacePartRemoved(faceType, FacePartRemoved.White.getId(), enable);
-        }
-
-        public void setLeftEyeRemoved(int faceType, boolean enable) {
-            setFacePartRemoved(faceType, FacePartRemoved.LeftEye.getId(), enable);
-        }
-
-        public void setRightEyeRemoved(int faceType, boolean enable) {
-            setFacePartRemoved(faceType, FacePartRemoved.RightEye.getId(), enable);
-        }
-
-        public void setNoseRemoved(int faceType, boolean enable) {
-            setFacePartRemoved(faceType, FacePartRemoved.Nose.getId(), enable);
-        }
-
-        public void setMouthRemoved(int faceType, boolean enable) {
-            setFacePartRemoved(faceType, FacePartRemoved.Mouth.getId(), enable);
-        }
-    }
-
-    public enum FacePartRemoved {
-        Eyebrows(0, "Eyebrows", "EYEBROW"),
-        White(1, "White", "EYEBASE"),
-        LeftEye(2, "LeftEye", "EYELEFT"),
-        RightEye(3, "RightEye", "EYERIGHT"),
-        Nose(4, "Nose", "FACENOSE"),
-        Mouth(5, "Mouth", "FACEMOUTH");
-
-        private static final FacePartRemoved[] BY_ID = Arrays.stream(values()).sorted(
-            Comparator.comparing(FacePartRemoved::getId)
-        ).toArray(FacePartRemoved[]::new);
-
-        private static final FacePartRemoved[] BY_NAME = Arrays.stream(values()).sorted(
-            Comparator.comparing(e -> e.getName().toLowerCase())
-        ).toArray(FacePartRemoved[]::new);
-
-        private final int id;
-        private final String name;
-        private final String partId;
-
-        FacePartRemoved(int id, String name, String partId) {
-            this.id = id;
-            this.name = name;
-            this.partId = partId;
-        }
-
-        public int getId() {
-            return this.id;
-        }
-
-        public String getName() {
-            return this.name;
-        }
-
-        public String getPartId() {
-            return this.partId;
-        }
-
-        public static FacePartRemoved byId(int id) {
-            return BY_ID[Math.floorMod(id, BY_ID.length)];
-        }
-
-        public static FacePartRemoved byName(String name) {
-            return Arrays.stream(BY_NAME)
-                .filter(e -> e.name().equalsIgnoreCase(name))
-                .findFirst()
-                .orElse(null);
         }
     }
 }

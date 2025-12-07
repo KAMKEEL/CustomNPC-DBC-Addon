@@ -22,6 +22,7 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
+import kamkeel.npcdbc.data.form.FormFaceData;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -40,7 +41,6 @@ import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -96,7 +96,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     }
 
     public FormDisplay.BodyColor formColor = new FormDisplay.BodyColor();
-    public FormDisplay.FaceData faceData = new FormDisplay.FaceData();
+    public FormFaceData faceData = new FormFaceData();
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
         comp.setBoolean("DBCDisplayEnabled", enabled);
