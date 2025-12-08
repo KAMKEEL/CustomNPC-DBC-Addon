@@ -461,8 +461,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
                 GL11.glPushMatrix();
                 GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
+                GL11.glEnable(GL11.GL_ALPHA_TEST);
+
                 new Color(color, bodyOverlayData.alpha).glColor();
-                this.modelMain.bipedHead.render(1F / 16F);
+                this.modelMain.renderBody(0.0625F);
+
                 GL11.glDisable(GL11.GL_BLEND);
                 GL11.glPopMatrix();
             }
