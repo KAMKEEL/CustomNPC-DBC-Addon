@@ -3,6 +3,7 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.JRMCoreHJYC;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
@@ -344,7 +345,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 if (isSSJ4) {
                     if (form.display.hasEyebrows && data.skinType != 0) {
                         if (form.display.furType != 2)
-                            renderSSJ4Face(form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
+                            renderSSJ4Face(par1AbstractClientPlayer, form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
                         else
                             renderSaviorFace(form, data);
                     }
@@ -562,10 +563,25 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         }
     }
 
+    /*
+     * Used mostly for rendering bipeadHead correctly on female/younger than adult ages.
+     * No need in modelMain.renderBody() as it already applies these in its calculations.
+     */
     @Unique
-    private void renderSSJ4Face(Form form, int gender, int nose, int eyes, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
+    private void applyAgeGenderTransformations(AbstractClientPlayer player, int gender) {
+        int g = gender + 1;
+        float ageFactor = 3.0F - JRMCoreHJYC.JYCsizeBasedOnAge(player) * 2.0F; //from 0-1 where 0 is child and 1 is full adult
+        GL11.glScalef((0.5F + 0.5F / ageFactor) * (g <= 1 ? 1.0F : 0.85F), 0.5F + 0.5F / ageFactor, (0.5F + 0.5F / ageFactor) * (g <= 1 ? 1.0F : 0.85F));
+        GL11.glTranslatef(0.0F, (ageFactor - 1.0F) / ageFactor * (2.0F - (ageFactor >= 1.5F && ageFactor <= 2.0F ? (2.0F - ageFactor) / 2.5F : (ageFactor < 1.5F && ageFactor >= 1.0F ? (ageFactor * 2.0F - 2.0F) * 0.2F : 0.0F))), 0.0F);
+    }
+    @Unique
+    private void renderSSJ4Face(AbstractClientPlayer player, Form form, int gender, int nose, int eyes, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
         FormDisplay display = form.display;
         FormFaceData faceData = display.faceData;
+
+        GL11.glPushMatrix();
+        applyAgeGenderTransformations(player, gender);
+
         if (ConfigDBCClient.EnableHDTextures) {
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
             String eyeDir = (form.display.furType == 1 ? "ssj4d" : "ssj4") + (gender == 1 ? "/female" : "/male") + "/face_" + eyes + "/";
@@ -617,6 +633,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 this.modelMain.bipedHead.render(0.0625F);
             }
         }
+        GL11.glPopMatrix(); //Pop the age/gender transformations here as finished rendering bipeadHead
+
 
         if (!faceData.hasNoseRemoved(eyes)) {
             RenderPlayerJBRA.glColor3f(bodyCM);
