@@ -427,7 +427,8 @@ public class ModelDBC extends ModelBase {
         boolean isHidden = DBCHair.isHidden;
         DBCHair.isHidden = true;
 
-        String eyeDir = (furType == 1 ? "ssj4d" : "ssj4") + "/face_" + eyeType + "/";
+        // TODO for now all the faces are male, gotta wait for hussar
+        String eyeDir = (furType == 1 ? "ssj4d" : "ssj4") + "/male/face_" + eyeType + "/";
 
         if (!data.hasWhiteRemoved(eyeType) && !data.hasWhiteRemoved(6)) {
             ColorMode.applyModelColor(0xffffff, this.parent.alpha, isHurt);

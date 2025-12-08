@@ -116,7 +116,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             }
         } else if (mode == 1) {
             for (int i = 0; i < overlay.getFaces().size(); i++) {
-                maxScroll += 23;
+                maxScroll += 23 * i - (5 * i);
 
                 window.addLabel(new GuiNpcLabel(id(1, i), "Face Overlay " + (i + 1) + ":", 5, y + 5, 0xffffff));
                 window.addTextField(new GuiNpcTextField(id(1, i), this, 90, y, 150, 20, "")); // id 1
