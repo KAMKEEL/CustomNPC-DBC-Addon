@@ -1,6 +1,7 @@
 package kamkeel.npcdbc.client.gui.global.form;
 
 import JinRyuu.JRMCore.JRMCoreH;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.FormController;
 import kamkeel.npcdbc.data.form.Form;
@@ -219,7 +220,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
         GL11.glTranslatef(0.0F, entity.yOffset, 1F);
         RenderManager.instance.playerViewY = 180F;
 
-
+        RenderEventHandler.renderingNPCInGUI=true;
         // Render Entity
         GL11.glPushMatrix();
         try {
@@ -234,6 +235,8 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
         } catch (Exception ignored) {
         }
         GL11.glPopMatrix();
+
+        RenderEventHandler.renderingNPCInGUI=false;
 
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
         entity.prevRotationYaw = entity.rotationYaw = f3;

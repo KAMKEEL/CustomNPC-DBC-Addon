@@ -48,6 +48,7 @@ public class RenderEventHandler {
 
     @SideOnly(Side.CLIENT)
     public static boolean renderingPlayerInGUI = false;
+    public static boolean renderingNPCInGUI = false;
     public static final int TAIL_STENCIL_ID = 2;
 
 
@@ -63,7 +64,7 @@ public class RenderEventHandler {
             return;
         }
 
-        
+
         DBCData data = DBCData.getData(event.entityPlayer);
         byte potaraFusionLevel = data.potaraFusionLevel;
         if (potaraFusionLevel == -1) {

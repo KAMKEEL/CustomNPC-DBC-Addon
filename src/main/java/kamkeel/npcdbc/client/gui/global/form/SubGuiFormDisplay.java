@@ -4,6 +4,7 @@ import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.client.gui.component.SubGuiFormFaceParts;
 import kamkeel.npcdbc.client.gui.component.SubGuiOverlays;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
@@ -726,6 +727,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         RenderManager.instance.playerViewY = 180F;
 
         auraTicks++;
+        RenderEventHandler.renderingNPCInGUI=true;
 
         // Render Entity
         GL11.glPushMatrix();
@@ -742,6 +744,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         GL11.glPopMatrix();
 
+        RenderEventHandler.renderingNPCInGUI=false;
 
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
         entity.prevRotationYaw = entity.rotationYaw = f3;

@@ -1,5 +1,6 @@
 package kamkeel.npcdbc.client.gui.component;
 
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -176,9 +177,10 @@ public class SubGuiModelInterface extends SubGuiInterface {
 
     public void preRender(EntityLivingBase entity) {
         EntityUtil.Copy(npc, entity);
+        RenderEventHandler.renderingNPCInGUI = true;
     }
 
     public void postRender(EntityLivingBase entity) {
-
+        RenderEventHandler.renderingNPCInGUI = false;
     }
 }
