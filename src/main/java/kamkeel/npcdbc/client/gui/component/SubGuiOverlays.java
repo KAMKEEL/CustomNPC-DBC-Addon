@@ -13,7 +13,7 @@ import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.ArrayList;
 
-public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, ITextfieldListener  {
+public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListener, ITextfieldListener {
     public SubGuiFormDisplay parent;
     public Form form;
     public static FormOverlay overlay;
@@ -27,6 +27,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
     private GuiScrollWindow window;
 
     public SubGuiOverlays(SubGuiFormDisplay parent, int mode) {
+        super(parent.npc);
         this.parent = parent;
         this.form = parent.form;
         overlay = form.display.overlays;
@@ -41,8 +42,16 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             selectedFaces.add(0);
         }
 
-        //setBackground("menubg.png");
         xSize = 300;
+
+        //setBackground("menubg.png");
+        drawXButton = false;
+        xOffsetNpc = 110;
+        yOffsetNpc = 30;
+        xMouseRange = 50;
+        yMouseRange=200;
+        zoomed=85;
+        maxZoom=150;
     }
 
     @Override
