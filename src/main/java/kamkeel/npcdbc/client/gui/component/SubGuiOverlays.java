@@ -65,16 +65,16 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
             window = new GuiScrollWindow(this, guiLeft, guiTop, width, height, 0);
         } else {
             window.initGui();
-            window.xPos = guiLeft;
-            window.yPos = guiTop;
-            window.clipWidth = width;
-            window.clipHeight = height - 50;
+            window.xPos = parent.guiLeft;
+            window.yPos = parent.guiTop;
+            window.clipWidth = width - 20;
+            window.clipHeight = parent.ySize;
             window.maxScrollY = 0;
 
         }
 
         addScrollableGui(3, window);
-        addButton(new GuiNpcButton(2, guiLeft + 303, guiTop, 20, 20, "X"));
+        addButton(new GuiNpcButton(2, guiLeft + 220, guiTop - 10, 20, 20, "X"));
 
         y = 10;
         int maxScroll = 0;
@@ -83,12 +83,12 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
             for (int i = 0; i < overlay.getBodies().size(); i++) {
                 maxScroll += 23 * i - (5 * i);
 
-                window.addLabel(new GuiNpcLabel(id(1, i), "Body Overlay " + (i + 1) + ":", 5, y + 5, 0xffffff));
-                window.addTextField(new GuiNpcTextField(id(1, i), this, 90, y, 150, 20, "")); // id 1
+                window.addLabel(new GuiNpcLabel(id(1, i), "Overlay " + (i + 1) + ":", 5, y + 5, 0xffffff));
+                window.addTextField(new GuiNpcTextField(id(1, i), this, 65, y, 150, 20, "")); // id 1
                 window.getTextField(id(1, i)).setText(overlay.getBodyTexture(i));
                 GuiNpcButton button;
 
-                button = new GuiNpcButton(id(1, i), 243, y, 50, 20, "form.select");
+                button = new GuiNpcButton(id(1, i), 217, y, 50, 20, "form.select");
                 window.addButton(button);  // id 1
 
                 y += 23;
@@ -120,12 +120,10 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
 
                 button = new GuiNpcButton(id(8, i), 5, y, 50, 20, "Delete");
                 window.addButton(button); // id 8
-
                 y += 35;
             }
         } else if (mode == 1) {
             for (int i = 0; i < overlay.getFaces().size(); i++) {
-                maxScroll += 23 * i - (5 * i);
 
                 window.addLabel(new GuiNpcLabel(id(1, i), "Face Overlay " + (i + 1) + ":", 5, y + 5, 0xffffff));
                 window.addTextField(new GuiNpcTextField(id(1, i), this, 90, y, 150, 20, "")); // id 1
