@@ -396,6 +396,11 @@ public class ModelDBC extends ModelBase {
         int hairColor = display.bodyColors.hairColor;
         int eyeColor = display.bodyColors.eyeColor;
 
+        /**
+         * #TODO: These colors do not account for Form colors.
+         * Check how it's done in renderFaceSkin:166 within the if (form != null) block
+         */
+
         return colorType == FormOverlay.ColorType.Body ?
             npcDisplay.bodyCM : colorType == FormOverlay.ColorType.Eye ?
             eyeColor : colorType == FormOverlay.ColorType.Hair ?
