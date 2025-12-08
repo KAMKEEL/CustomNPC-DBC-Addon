@@ -695,8 +695,20 @@ public class ModelDBC extends ModelBase {
                 int color = getProperColor(form.display, display, bodyData.getColor(), bodyData.colorType);
 
                 bindImageDataTexture(imageData, color, bodyData.getAlpha());
+                boolean glow = bodyData.isGlow();
+                if (glow) {
+                    GL11.glDisable(GL11.GL_LIGHTING);
+                    if (!RenderEventHandler.renderingNPCInGUI) //in-game not in GUI, as lightmap is disabled in GUIs so cant enable it again
+                        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+                }
 
-                //   model.render(0.0625F); //Don't need to render this as the main method after the mixins renders the body anyway
+                model.render(0.0625F);
+
+                if (glow) {
+                    GL11.glEnable(GL11.GL_LIGHTING);
+                    if (!RenderEventHandler.renderingNPCInGUI) //in-game not in GUI
+                        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+                }
             }
         }
     }
