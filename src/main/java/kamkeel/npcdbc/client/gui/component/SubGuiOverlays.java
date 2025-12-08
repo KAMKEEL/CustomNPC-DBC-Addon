@@ -77,11 +77,10 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         addButton(new GuiNpcButton(2, guiLeft + 220, guiTop - 10, 20, 20, "X"));
 
         y = 10;
-        int maxScroll = 0;
 
         if (mode == 0) {
             for (int i = 0; i < overlay.getBodies().size(); i++) {
-                maxScroll += 23 * i - (5 * i);
+                // maxScroll += 23 * i - (5 * i);
 
                 window.addLabel(new GuiNpcLabel(id(1, i), "Overlay " + (i + 1) + ":", 5, y + 5, 0xffffff));
                 window.addTextField(new GuiNpcTextField(id(1, i), this, 65, y, 150, 20, "")); // id 1
@@ -186,7 +185,13 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         }
 
         window.addButton(new GuiNpcButton(1, 8, y, 20, 20, "+"));
-        window.maxScrollY = maxScroll;
+        y+=23; //Don't forget the extra 3 pixels after the +
+        /**
+         * y is the TOTAL height of all elements, even outside the scroll window height
+         */
+        if (y > window.clipHeight) //120 - 100
+            window.maxScrollY = y - window.clipHeight;
+
     }
 
     public String getColor(int input) {
