@@ -5,6 +5,7 @@ import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.render.OutlineRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
 import kamkeel.npcdbc.mixins.late.IModelMPM;
@@ -105,43 +106,100 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
 
     }
 
+    @Unique
+    private DBCDisplay display;
+    @Unique
+    private Form form;
     @Inject(method = "renderHead", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 2, shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCHead(EntityCustomNpc entity, float f, CallbackInfo ci) {
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled) {
+            //#TODO:Both lead to face and body overlays, only choose one
             NPCDBCModel.renderFace(entity, display, bipedHead);
             NPCDBCModel.renderBodySkin(display, bipedHead);
         }
     }
 
+    @Inject(method = "renderHead", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 2, shift = At.Shift.AFTER, remap = true))
+    private void postRenderDBCHead(EntityCustomNpc entity, float f, CallbackInfo ci) {
+        if (!isArmor && display.enabled) {
+            form = display.getForm();
+            if (form != null && form.display.overlays.hasBodyOverlays) {
+                NPCDBCModel.DBCHair.isHidden = true; //Hair renders by default with head, so not needed in overlay
+                NPCDBCModel.renderBodyOverlays(form, display, bipedHead);
+                NPCDBCModel.DBCHair.isHidden = false;
+            }
+        }
+    }
+
     @Inject(method = "renderBody", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCBody(EntityCustomNpc entity, float f, CallbackInfo ci) {
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled) {
             NPCDBCModel.renderBodySkin(display, bipedBody);
         }
     }
 
+    @Inject(method = "renderBody", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.AFTER, remap = true))
+    private void postRenderDBCBody(EntityCustomNpc entity, float f, CallbackInfo ci) {
+        if (!isArmor && display.enabled) {
+            if (form != null && form.display.overlays.hasBodyOverlays) {
+                NPCDBCModel.renderBodyOverlays(form, display, bipedBody);
+            }
+        }
+    }
+
+
     @Inject(method = "renderLegs", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/part/ModelLegs;render(F)V", shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCLegs(EntityCustomNpc entity, float f, CallbackInfo ci) {
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, legs);
     }
 
+    @Inject(method = "renderLegs", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/part/ModelLegs;render(F)V", shift = At.Shift.AFTER, remap = true))
+    private void postRenderDBCLegs(EntityCustomNpc entity, float f, CallbackInfo ci) {
+        if (!isArmor && display.enabled) {
+            if (form != null && form.display.overlays.hasBodyOverlays) {
+                NPCDBCModel.renderBodyOverlays(form, display, legs);
+            }
+        }
+    }
+
+
     @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0, shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCLeftArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, bipedLeftArm);
     }
 
+    @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0, shift = At.Shift.AFTER, remap = true))
+    private void postRenderDBCLeftArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
+        if (!isArmor && display.enabled) {
+            if (form != null && form.display.overlays.hasBodyOverlays) {
+                NPCDBCModel.renderBodyOverlays(form, display, bipedLeftArm);
+            }
+        }
+    }
+
+
     @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 1, shift = At.Shift.BEFORE, remap = true), cancellable = true)
     private void renderDBCRightArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
-        DBCDisplay display = ((INPCDisplay) entity.display).getDBCDisplay();
+        display = ((INPCDisplay) entity.display).getDBCDisplay();
         if (!isArmor && display.enabled)
             NPCDBCModel.renderBodySkin(display, bipedRightArm);
     }
+
+    @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 1, shift = At.Shift.AFTER, remap = true))
+    private void postRenderDBCRightArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
+        if (!isArmor && display.enabled) {
+            if (form != null && form.display.overlays.hasBodyOverlays) {
+                NPCDBCModel.renderBodyOverlays(form, display, bipedRightArm);
+            }
+        }
+    }
+
 
     @Inject(method = "setRotationAngles", at = @At("TAIL"))
     public void rotationAndAngle(float par1, float par2, float par3, float par4, float par5, float par6, Entity entity, CallbackInfo ci) {

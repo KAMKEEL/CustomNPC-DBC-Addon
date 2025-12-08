@@ -7,6 +7,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
+import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -676,14 +677,12 @@ public class ModelDBC extends ModelBase {
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
             }
 
-            if (form != null && form.display.overlays.hasBodyOverlays) {
-                renderBodyOverlays(form, display, model);
-            }
+
         }
     }
 
     @Unique
-    private void renderBodyOverlays(Form form, DBCDisplay display, ModelRenderer model) {
+    public void renderBodyOverlays(Form form, DBCDisplay display, ModelRenderer model) {
         FormOverlay overlayData = form.display.overlays;
 
         for (FormOverlay.Body bodyData : overlayData.getBodies().toArray(new FormOverlay.Body[0])) {
@@ -695,7 +694,6 @@ public class ModelDBC extends ModelBase {
 
                 int color = getProperColor(form.display, display, bodyData.getColor(), bodyData.colorType);
 
-                model.render(0.0625F); //render MAIN skin (by this point its texture is only bound, not rendered yet)
                 bindImageDataTexture(imageData, color, bodyData.getAlpha());
 
                 //   model.render(0.0625F); //Don't need to render this as the main method after the mixins renders the body anyway
