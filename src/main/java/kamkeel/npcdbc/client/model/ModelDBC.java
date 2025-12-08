@@ -359,36 +359,6 @@ public class ModelDBC extends ModelBase {
                     }
                 }
             }
-
-            if (form != null && form.display.overlays.hasFaceOverlays) {
-                renderFaceOverlays(form, display, bipeadHead);
-            }
-        }
-    }
-
-    private void renderFaceOverlays(Form form, DBCDisplay display, ModelRenderer bipeadHead) {
-        FormOverlay overlayData = form.display.overlays;
-
-        for (FormOverlay.Face faceData : overlayData.getFaces().toArray(new FormOverlay.Face[0])) {
-            if (faceData.isEnabled()) {
-                String faceTexture = faceData.getTexture(display.eyeType);
-                ImageData imageData = ClientCacheHandler.getImageData(faceTexture);
-                if (imageData == null || !imageData.imageLoaded())
-                    continue;
-
-                int color = getProperColor(form.display, display, faceData.getColor(), faceData.colorType);
-
-                bipeadHead.render(0.0625F); //render MAIN skin (by this point its texture is only bound, not rendered yet)
-
-                if (!bindImageDataTexture(imageData, color, faceData.getAlpha()))
-                    continue;
-
-                GL11.glPushMatrix();
-                float scale = 1.0025f;
-                GL11.glScalef(scale, scale, scale);
-                bipeadHead.render(0.0625F);
-                GL11.glPopMatrix();
-            }
         }
     }
 
@@ -682,20 +652,30 @@ public class ModelDBC extends ModelBase {
     }
 
     @Unique
-    public void renderBodyOverlays(Form form, DBCDisplay display, ModelRenderer model) {
+    public void renderFormOverlays(Form form, DBCDisplay display, ModelRenderer model) {
         FormOverlay overlayData = form.display.overlays;
 
-        for (FormOverlay.Body bodyData : overlayData.getBodies().toArray(new FormOverlay.Body[0])) {
-            if (bodyData.isEnabled()) {
-                String bodyTexture = bodyData.getTexture();
-                ImageData imageData = ClientCacheHandler.getImageData(bodyTexture);
+        for (FormOverlay.Overlay overlay : overlayData.getOverlays().toArray(new FormOverlay.Overlay[0])) {
+            if (overlay.isEnabled()) {
+                boolean isFace = overlay.getType() == FormOverlay.Type.Face;
+                String texture;
+
+                if (isFace) {
+                    texture = ((FormOverlay.Face) overlay).getTexture(display.eyeType);
+                } else {
+                    texture = overlay.getTexture();
+                }
+
+                ImageData imageData = ClientCacheHandler.getImageData(texture);
                 if (imageData == null || !imageData.imageLoaded())
                     continue;
 
-                int color = getProperColor(form.display, display, bodyData.getColor(), bodyData.colorType);
+                int color = getProperColor(form.display, display, overlay.getColor(), overlay.colorType);
 
-                bindImageDataTexture(imageData, color, bodyData.getAlpha());
-                boolean glow = bodyData.isGlow();
+                if (!bindImageDataTexture(imageData, color, overlay.getAlpha()))
+                    continue;
+
+                boolean glow = overlay.isGlow();
                 if (glow) {
                     GL11.glDisable(GL11.GL_LIGHTING);
                     if (!RenderEventHandler.renderingNPCInGUI) //in-game not in GUI, as lightmap is disabled in GUIs so cant enable it again
@@ -703,7 +683,6 @@ public class ModelDBC extends ModelBase {
                 }
 
                 model.render(0.0625F);
-
                 if (glow) {
                     GL11.glEnable(GL11.GL_LIGHTING);
                     if (!RenderEventHandler.renderingNPCInGUI) //in-game not in GUI

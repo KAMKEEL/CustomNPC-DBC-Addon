@@ -308,12 +308,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
         if (form == null) return;
 
-        if (form.display.overlays.hasFaceOverlays) {
-            renderFaceOverlays(par1AbstractClientPlayer, form, gender.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, data);
-        }
-
-        if (form.display.overlays.hasBodyOverlays) {
-            renderBodyOverlays(par1AbstractClientPlayer, form, gender.get(), bodyCM.get(), data.renderingHairColor, data);
+        if (form.display.overlays.hasOverlays) {
+            renderOverlays(par1AbstractClientPlayer, form, gender.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, data);
         }
     }
 
@@ -436,14 +432,22 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     // TODO render alpha
     @Unique
-    private void renderBodyOverlays(AbstractClientPlayer player, Form form, int gender, int bodyCM, int defaultHairColor, DBCData data) {
+    private void renderOverlays(AbstractClientPlayer player, Form form, int gender, int eyes, int bodyCM, int defaultHairColor, DBCData data) {
         FormDisplay displayData = form.display;
         FormOverlay overlayData = displayData.overlays;
 
-        for (FormOverlay.Body bodyOverlayData : overlayData.getBodies().toArray(new FormOverlay.Body[0])) {
-            if (bodyOverlayData.isEnabled()) {
-                String bodyTexture = bodyOverlayData.getTexture();
-                ImageData imageData = ClientCacheHandler.getImageData(bodyTexture);
+        for (FormOverlay.Overlay overlay : overlayData.getOverlays().toArray(new FormOverlay.Overlay[0])) {
+            if (overlay.isEnabled()) {
+                boolean isFace = overlay.getType() == FormOverlay.Type.Face;
+                String texture;
+
+                if (isFace) {
+                    texture = ((FormOverlay.Face) overlay).getTexture(eyes);
+                } else {
+                    texture = overlay.getTexture();
+                }
+
+                ImageData imageData = ClientCacheHandler.getImageData(texture);
                 if (imageData == null || !imageData.imageLoaded())
                     continue;
 
@@ -451,65 +455,42 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
                 int eyeColor = data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
 
-                int color = bodyOverlayData.getColorType() == FormOverlay.ColorType.Body.ordinal() ?
-                    bodyCM : bodyOverlayData.getColorType() == FormOverlay.ColorType.Eye.ordinal() ?
-                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : bodyOverlayData.getColorType() == FormOverlay.ColorType.Hair.ordinal() ?
-                    (hairColor < 0 ? defaultHairColor : hairColor) : bodyOverlayData.getColorType() == FormOverlay.ColorType.Fur.ordinal() ?
-                    furColor : bodyOverlayData.getColor();
+                int color = overlay.getColorType() == FormOverlay.ColorType.Body.ordinal() ?
+                    bodyCM : overlay.getColorType() == FormOverlay.ColorType.Eye.ordinal() ?
+                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : overlay.getColorType() == FormOverlay.ColorType.Hair.ordinal() ?
+                    (hairColor < 0 ? defaultHairColor : hairColor) : overlay.getColorType() == FormOverlay.ColorType.Fur.ordinal() ?
+                    furColor : overlay.getColor();
 
                 if (!bindImageDataTexture(imageData, color))
                     continue;
 
                 GL11.glPushMatrix();
+                boolean glow = overlay.isGlow();
+                if (glow) {
+                    GL11.glDisable(GL11.GL_LIGHTING);
+                    if (!RenderEventHandler.renderingPlayerInGUI) //in-game not in GUI, as lightmap is disabled in GUIs so cant enable it again
+                        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+                }
+
                 applyAgeGenderTransformations(player, gender);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
                 GL11.glEnable(GL11.GL_ALPHA_TEST);
 
-                new Color(color, bodyOverlayData.alpha).glColor();
-                this.modelMain.renderBody(0.0625F);
+                new Color(color, overlay.alpha).glColor();
 
-                GL11.glDisable(GL11.GL_BLEND);
-                GL11.glPopMatrix();
-            }
-        }
-    }
+                if (isFace) {
+                    this.modelMain.bipedHead.render(1F / 16F);
+                } else {
+                    this.modelMain.renderBody(0.0625F);
+                }
 
-    // TODO render alpha
-    @Unique
-    private void renderFaceOverlays(AbstractClientPlayer player, Form form, int gender, int eyes, int bodyCM, int defaultHairColor, DBCData data) {
-        FormDisplay displayData = form.display;
-        FormOverlay overlayData = displayData.overlays;
-
-        for (FormOverlay.Face faceOverlayData : overlayData.getFaces().toArray(new FormOverlay.Face[0])) {
-            if (faceOverlayData.isEnabled()) {
-                String faceTexture = faceOverlayData.getTexture(eyes);
-                ImageData imageData = ClientCacheHandler.getImageData(faceTexture);
-                if (imageData == null || !imageData.imageLoaded())
-                    continue;
-
-                int furColor = data.currentCustomizedColors.getProperColor(displayData.getFurColor(data), "fur");
-                int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
-                int eyeColor = data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
-
-                int color = faceOverlayData.getColorType() == FormOverlay.ColorType.Body.ordinal() ?
-                    bodyCM : faceOverlayData.getColorType() == FormOverlay.ColorType.Eye.ordinal() ?
-                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : faceOverlayData.getColorType() == FormOverlay.ColorType.Hair.ordinal() ?
-                    (hairColor < 0 ? defaultHairColor : hairColor) : faceOverlayData.getColorType() == FormOverlay.ColorType.Fur.ordinal() ?
-                    furColor : faceOverlayData.getColor();
-
-                if (!bindImageDataTexture(imageData, color))
-                    continue;
-
-                GL11.glPushMatrix();
-                applyAgeGenderTransformations(player, gender);
-                GL11.glEnable(GL11.GL_BLEND);
-                float scale = 1.0025f;
-                GL11.glScalef(scale, scale, scale);
-
-                new Color(color, faceOverlayData.alpha);
-                this.modelMain.bipedHead.render(1F / 16F);
+                if (glow) {
+                    GL11.glEnable(GL11.GL_LIGHTING);
+                    if (!RenderEventHandler.renderingPlayerInGUI) //in-game not in GUI
+                        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+                }
 
                 GL11.glDisable(GL11.GL_BLEND);
                 GL11.glPopMatrix();

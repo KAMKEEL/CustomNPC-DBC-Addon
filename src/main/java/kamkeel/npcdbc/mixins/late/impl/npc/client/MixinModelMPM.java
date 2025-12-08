@@ -124,9 +124,9 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     private void postRenderDBCHead(EntityCustomNpc entity, float f, CallbackInfo ci) {
         if (!isArmor && display.enabled) {
             form = display.getForm();
-            if (form != null && form.display.overlays.hasBodyOverlays) {
+            if (form != null && form.display.overlays.hasOverlays) {
                 NPCDBCModel.DBCHair.isHidden = true; //Hair renders by default with head, so not needed in overlay
-                NPCDBCModel.renderBodyOverlays(form, display, bipedHead);
+                NPCDBCModel.renderFormOverlays(form, display, bipedHead);
                 NPCDBCModel.DBCHair.isHidden = false;
             }
         }
@@ -143,8 +143,8 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     @Inject(method = "renderBody", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", shift = At.Shift.AFTER, remap = true))
     private void postRenderDBCBody(EntityCustomNpc entity, float f, CallbackInfo ci) {
         if (!isArmor && display.enabled) {
-            if (form != null && form.display.overlays.hasBodyOverlays) {
-                NPCDBCModel.renderBodyOverlays(form, display, bipedBody);
+            if (form != null && form.display.overlays.hasOverlays) {
+                NPCDBCModel.renderFormOverlays(form, display, bipedBody);
             }
         }
     }
@@ -160,8 +160,8 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     @Inject(method = "renderLegs", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/part/ModelLegs;render(F)V", shift = At.Shift.AFTER, remap = true))
     private void postRenderDBCLegs(EntityCustomNpc entity, float f, CallbackInfo ci) {
         if (!isArmor && display.enabled) {
-            if (form != null && form.display.overlays.hasBodyOverlays) {
-                NPCDBCModel.renderBodyOverlays(form, display, legs);
+            if (form != null && form.display.overlays.hasOverlays) {
+                NPCDBCModel.renderFormOverlays(form, display, legs);
             }
         }
     }
@@ -177,8 +177,8 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 0, shift = At.Shift.AFTER, remap = true))
     private void postRenderDBCLeftArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
         if (!isArmor && display.enabled) {
-            if (form != null && form.display.overlays.hasBodyOverlays) {
-                NPCDBCModel.renderBodyOverlays(form, display, bipedLeftArm);
+            if (form != null && form.display.overlays.hasOverlays) {
+                NPCDBCModel.renderFormOverlays(form, display, bipedLeftArm);
             }
         }
     }
@@ -194,8 +194,8 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     @Inject(method = "renderArms", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/util/ModelScaleRenderer;render(F)V", ordinal = 1, shift = At.Shift.AFTER, remap = true))
     private void postRenderDBCRightArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
         if (!isArmor && display.enabled) {
-            if (form != null && form.display.overlays.hasBodyOverlays) {
-                NPCDBCModel.renderBodyOverlays(form, display, bipedRightArm);
+            if (form != null && form.display.overlays.hasOverlays) {
+                NPCDBCModel.renderFormOverlays(form, display, bipedRightArm);
             }
         }
     }
