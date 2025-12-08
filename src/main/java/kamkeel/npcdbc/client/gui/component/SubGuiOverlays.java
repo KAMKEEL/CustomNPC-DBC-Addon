@@ -2,6 +2,7 @@ package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.client.gui.global.form.SubGuiFormDisplay;
 import kamkeel.npcdbc.data.form.Form;
+import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormOverlay;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -17,7 +18,6 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
     public SubGuiFormDisplay parent;
     public Form form;
     public static FormOverlay overlay;
-    public static int mode;
     public static ArrayList<Integer> selectedFaces = new ArrayList<>();
     public int lastColorClicked = 0;
     public static int lastTextureClicked = 0;
@@ -26,16 +26,15 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
 
     private GuiScrollWindow window;
 
-    public SubGuiOverlays(SubGuiFormDisplay parent, int mode) {
+    public SubGuiOverlays(SubGuiFormDisplay parent) {
         super(parent.npc);
         this.parent = parent;
         this.form = parent.form;
         overlay = form.display.overlays;
-        SubGuiOverlays.mode = mode;
         this.npc = parent.npc;
 
-        if (overlay.hasFaceOverlays) {
-            for (int i = 0; i < overlay.faceOverlays.size(); i++) {
+        if (overlay.hasOverlays) {
+            for (int i = 0; i < overlay.overlays.size(); i++) {
                 selectedFaces.add(0);
             }
         } else {
@@ -78,120 +77,100 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
 
         y = 10;
 
-        if (mode == 0) {
-            for (int i = 0; i < overlay.getBodies().size(); i++) {
-                // maxScroll += 23 * i - (5 * i);
+        for (int i = 0; i < overlay.overlays.size(); i++) {
+            FormOverlay.Overlay currentOverlay = overlay.getOverlay(i);
+            FormOverlay.Face faceOverlay = null;
+            GuiNpcButton button;
+            GuiNpcTextField textField;
+            boolean isFaceOverlay = currentOverlay.getType() == FormOverlay.Type.Face;
 
-                window.addLabel(new GuiNpcLabel(id(1, i), "Overlay " + (i + 1) + ":", 5, y + 5, 0xffffff));
-                window.addTextField(new GuiNpcTextField(id(1, i), this, 65, y, 150, 20, "")); // id 1
-                window.getTextField(id(1, i)).setText(overlay.getBodyTexture(i));
-                GuiNpcButton button;
-
-                button = new GuiNpcButton(id(1, i), 217, y, 50, 20, "form.select");
-                window.addButton(button);  // id 1
-
-                y += 23;
-
-                button = new GuiNpcButton(id(5, i), 5, y, 50, 20, new String[]
-                    {"Disabled", "Enabled"}, overlay.getBody(i).isEnabled() ? 1 : 0);
-                window.addButton(button); // id 5
-
-                if (overlay.getBody(i).isEnabled()) {
-                    window.addLabel(new GuiNpcLabel(id(2, i), "Color:", 58, y + 5, 0xffffff));
-                    button = new GuiNpcButton(id(2, i), 90, y, 50, 20, new String[]{
-                        "display.custom", "display.body", "display.eye", "display.hair", "display.fur"}, overlay.getBodyColorType(i));
-                    window.addButton(button); // id 2
-
-                    window.addLabel(new GuiNpcLabel(id(4, i), "Glow:", 143, y + 5, 0xffffff));
-                    button = new GuiNpcButtonYesNo(id(4, i), 170, y, 50, 20, overlay.doesBodyGlow(i));
-                    window.addButton(button); // id 4
-                }
-
-                y += 23;
-
-                if (overlay.getBody(i).isEnabled()) {
-                    if (overlay.getBodyColorType(i) == FormOverlay.ColorType.Custom.ordinal()) {
-                        button = new GuiNpcButton(id(3, i), 90, y, 50, 20, getColor(overlay.getBodyColor(i)));
-                        button.packedFGColour = overlay.getBodyColor(i);
-                        window.addButton(button); // id 3
-                    }
-                }
-
-                button = new GuiNpcButton(id(8, i), 5, y, 50, 20, "Delete");
-                window.addButton(button); // id 8
-                y += 35;
+            if (isFaceOverlay) {
+                faceOverlay = (FormOverlay.Face) currentOverlay;
             }
-        } else if (mode == 1) {
-            for (int i = 0; i < overlay.getFaces().size(); i++) {
 
-                window.addLabel(new GuiNpcLabel(id(1, i), "Face Overlay " + (i + 1) + ":", 5, y + 5, 0xffffff));
-                window.addTextField(new GuiNpcTextField(id(1, i), this, 90, y, 150, 20, "")); // id 1
-                if (overlay.isFaceMatchingPlayer(i)) {
-                    window.getTextField(id(1, i)).setText(overlay.getFaceTexture(i, selectedFaces.get(i)));
-                } else {
-                    window.getTextField(id(1, i)).setText(overlay.getFaceTexture(i));
+            window.addLabel(new GuiNpcLabel(id(1, i), "Overlay " + (i + 1) + ":", 5, y + 5, 0xffffff));
+            textField = new GuiNpcTextField(id(1, i), this, 65, y, 150, 20, ""); // id 1
+            window.addTextField(textField);
+
+            if (isFaceOverlay && faceOverlay.isMatchingPlayerFace()) {
+                window.getTextField(id(1, i)).setText(faceOverlay.getTexture(selectedFaces.get(i)));
+            } else {
+                window.getTextField(id(1, i)).setText(currentOverlay.getTexture());
+            }
+
+
+            button = new GuiNpcButton(id(1, i), 217, y, 50, 20, "form.select");
+            window.addButton(button);  // id 1
+
+            y += 23;
+
+            button = new GuiNpcButton(id(5, i), 5, y, 50, 20, new String[]
+                {"Disabled", "Enabled"}, currentOverlay.isEnabled() ? 1 : 0);
+            window.addButton(button); // id 5
+
+            if (currentOverlay.isEnabled()) {
+                window.addLabel(new GuiNpcLabel(id(2, i), "Color:", 58, y + 5, 0xffffff));
+                button = new GuiNpcButton(id(2, i), 90, y, 50, 20, new String[]{
+                    "display.custom", "display.body", "display.eye", "display.hair", "display.fur"}, currentOverlay.getColorType());
+                window.addButton(button); // id 2
+
+                window.addLabel(new GuiNpcLabel(id(4, i), "Glow:", 143, y + 5, 0xffffff));
+                button = new GuiNpcButtonYesNo(id(4, i), 170, y, 50, 20, currentOverlay.isGlow());
+                window.addButton(button); // id 4
+            }
+
+            y += 23;
+
+            if (currentOverlay.isEnabled()) {
+                if (currentOverlay.getColorType() == FormOverlay.ColorType.Custom.ordinal()) {
+                    button = new GuiNpcButton(id(3, i), 90, y, 50, 20, getColor(currentOverlay.getColor()));
+                    button.packedFGColour = currentOverlay.getColor();
+                    window.addButton(button); // id 3
                 }
 
-                GuiNpcButton button;
-                button = new GuiNpcButton(id(1, i), 243, y, 50, 20, "form.select");
-                window.addButton(button); // id 1
-
-                y += 23;
-
-                button = new GuiNpcButton(id(5, i), 5, y, 50, 20, new String[]
-                    {"Disabled", "Enabled"}, overlay.getFace(i).isEnabled() ? 1 : 0);
-                window.addButton(button); // id 5
-
-                if (overlay.getFace(i).isEnabled()) {
-                    window.addLabel(new GuiNpcLabel(id(2, i), "Color:", 58, y + 5, 0xffffff));
-                    button = new GuiNpcButton(id(2, i), 90, y, 50, 20, new String[]{
-                        "display.custom", "display.body", "display.eye", "display.hair", "display.fur"}, overlay.getFaceColorType(i));
-                    window.addButton(button); // id 2
-
-                    window.addLabel(new GuiNpcLabel(id(4, i), "Glow:", 143, y + 5, 0xffffff));
-                    button = new GuiNpcButtonYesNo(id(4, i), 170, y, 50, 20, overlay.doesFaceGlow(i));
-                    window.addButton(button); // 4
-                }
-
-                y += 23;
-
-                button = new GuiNpcButton(id(8, i), 5, y, 50, 20, "Delete");
-                window.addButton(button); // id 8
-
-                if (overlay.getFace(i).isEnabled()) {
-                    if (overlay.getFaceColorType(i) == FormOverlay.ColorType.Custom.ordinal()) {
-                        button = new GuiNpcButton(id(3, i), 90, y, 50, 20, getColor(overlay.getFaceColor(i)));
-                        button.packedFGColour = overlay.getFaceColor(i);
-                        window.addButton(button); // id 3
-                    }
-
+                if (isFaceOverlay) {
                     window.addLabel(new GuiNpcLabel(id(6, i), "Match Face:", 143, y + 5, 0xffffff));
-                    button = new GuiNpcButtonYesNo(id(6, i), 205, y, 50, 20, overlay.isFaceMatchingPlayer(i));
+                    button = new GuiNpcButtonYesNo(id(6, i), 205, y, 50, 20, faceOverlay.isMatchingPlayerFace());
                     window.addButton(button); // id 6
 
-                    if (overlay.isFaceMatchingPlayer(i)) {
+                    if (faceOverlay.isMatchingPlayerFace()) {
                         button = new GuiNpcButton(id(7, i), 263, y, 20, 20, new String[]{
                             "1", "2", "3", "4", "5", "6"}, selectedFaces.get(i)); // id 7
                         window.addButton(button);
                     }
                 }
 
-                y += 25;
+
+                button = new GuiNpcButton(id(8, i), 5, y, 50, 20, new String[]{"Body", "Face"}, currentOverlay.getType().ordinal());
+                window.addButton(button); // id 8
+
+                int tempY = currentOverlay.getColorType() == FormOverlay.ColorType.Custom.ordinal() ? y + 23 : y;
+
+                window.addLabel(new GuiNpcLabel(id(9, i), "Alpha:", 58, tempY + 5, 0xffffff));
+                textField = new GuiNpcTextField(id(9, i), this, 90, tempY, 30, 20, currentOverlay.getAlpha() + "");
+                textField.setFloatsOnly();
+                textField.setMinMaxDefaultFloat(0.0f, 1.0f, 1.0f);
+                window.addTextField(textField); // id 1
             }
+
+            y += 23;
+
+            button = new GuiNpcButton(id(10, i), 5, y, 50, 20, "Delete");
+            window.addButton(button); // id 9
+            y += 35;
         }
 
-        if ((mode == 0 ? overlay.bodyOverlays : overlay.faceOverlays).size() >= 10) {
+        if (overlay.overlays.size() >= 10) {
             addLabel(new GuiNpcLabel(1, "WARNING: Too many overlays may cause lag or file deletion", guiLeft, guiTop - 26, 0xFF0000));
         }
 
         window.addButton(new GuiNpcButton(1, 8, y, 20, 20, "+"));
-        y+=23; //Don't forget the extra 3 pixels after the +
+        y += 23; //Don't forget the extra 3 pixels after the +
         /**
          * y is the TOTAL height of all elements, even outside the scroll window height
          */
         if (y > window.clipHeight) //120 - 100
             window.maxScrollY = y - window.clipHeight;
-
     }
 
     public String getColor(int input) {
@@ -216,8 +195,11 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
     private void rebuildSelectedFaces() {
         selectedFaces.clear();
 
-        if (overlay.hasFaceOverlays) {
-            for (int i = 0; i < overlay.faceOverlays.size(); i++) {
+        if (overlay.hasOverlays) {
+            for (int i = 0; i < overlay.overlays.size(); i++) {
+                if (overlay.overlays.get(i).getType() != FormOverlay.Type.Face)
+                    continue;
+
                 selectedFaces.add(0);
             }
         } else {
@@ -234,25 +216,17 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         overlayID = extractId(id);
 
         if (id == 1) {
-            if (mode == 0) {
-                overlay.addBodyOverlay();
-            } else if (mode == 1) {
-                overlay.addFaceOverlay();
-            }
-
-
+            overlay.addOverlay();
             rebuildSelectedFaces();
             initGui();
         }
 
-        if (buttonType == 8) {
+        if (buttonType == 10) {
+            FormOverlay.Overlay foundOverlay = overlay.getOverlay(overlayID);
+            overlay.deleteOverlay(overlayID);
 
-            if (mode == 0) {
-                overlay.deleteBodyOverlay(overlayID);
-            } else if (mode == 1) {
-                overlay.deleteFaceOverlay(overlayID);
+            if (foundOverlay.getType() == FormOverlay.Type.Face)
                 selectedFaces.remove(overlayID);
-            }
 
             rebuildSelectedFaces();
             initGui();
@@ -267,64 +241,52 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
             lastTextureClicked = overlayID;
         }
 
-        if (mode == 0) {
-            if (buttonType == 1) {
-                setSubGui(new GuiOverlaySelection(npc, window.getTextField(id).getText()));
-            }
+        if (buttonType == 1) {
+            setSubGui(new GuiOverlaySelection(npc, window.getTextField(id).getText()));
+        }
 
-            if (buttonType == 2) {
-                overlay.setBodyColorType(overlayID, (overlay.getBodyColorType(overlayID) + 1) % FormOverlay.ColorType.values().length);
+        if (buttonType == 2) {
+            overlay.getOverlay(overlayID).setColorType((overlay.getOverlay(overlayID).getColorType() + 1) % FormOverlay.ColorType.values().length);
+            initGui();
+        }
+
+        if (buttonType == 3) {
+            lastColorClicked = overlayID;
+            setSubGui(new SubGuiColorSelector(overlay.getOverlay(overlayID).getColor()));
+        }
+
+        if (buttonType == 4) {
+            overlay.getOverlay(overlayID).setGlow(button.getValue() == 1);
+        }
+
+        if (buttonType == 5) {
+            overlay.getOverlay(overlayID).setEnabled(button.getValue() == 1);
+            initGui();
+        }
+
+        if (buttonType == 6) {
+            if (overlay.getOverlay(overlayID).getType() == FormOverlay.Type.Face) {
+                ((FormOverlay.Face) overlay.getOverlay(overlayID)).setMatchPlayerFace(button.getValue() == 1);
                 initGui();
             }
+        }
 
-            if (buttonType == 3) {
-                lastColorClicked = overlayID;
-                setSubGui(new SubGuiColorSelector(overlay.getBodyColor(overlayID)));
-            }
-
-            if (buttonType == 4) {
-                overlay.getBody(overlayID).setGlow(button.getValue() == 1);
-            }
-
-            if (buttonType == 5) {
-                overlay.getBody(overlayID).setEnabled(button.getValue() == 1);
-                initGui();
-            }
-        } else if (mode == 1) {
-            if (buttonType == 1) {
-                setSubGui(new GuiOverlaySelection(npc, window.getTextField(id).getText()));
-            }
-
-            if (buttonType == 2) {
-                overlay.setFaceColorType(overlayID, (overlay.getFaceColorType(overlayID) + 1) % FormOverlay.ColorType.values().length);
-                initGui();
-            }
-
-            if (buttonType == 3) {
-                lastColorClicked = overlayID;
-                setSubGui(new SubGuiColorSelector(overlay.getFaceColor(overlayID)));
-            }
-
-            if (buttonType == 4) {
-                overlay.setFaceGlow(overlayID, button.getValue() == 1);
-            }
-
-            if (buttonType == 5) {
-                overlay.getFace(overlayID).setEnabled(button.getValue() == 1);
-                initGui();
-            }
-
-            if (buttonType == 6) {
-                overlay.setMatchPlayerFace(overlayID, button.getValue() == 1);
-                initGui();
-            }
-
-            if (buttonType == 7) {
+        if (buttonType == 7) {
+            if (overlay.getOverlay(overlayID).getType() == FormOverlay.Type.Face) {
                 selectedFaces.set(overlayID, (selectedFaces.get(overlayID) + 1) % 6);
                 GuiTextField field = window.getTextField(id(1, overlayID));
-                String texture = overlay.getFaceTexture(overlayID, selectedFaces.get(overlayID));
+                String texture = ((FormOverlay.Face) overlay.getOverlay(overlayID)).getTexture(selectedFaces.get(overlayID));
                 field.setText(texture);
+                initGui();
             }
+        }
+
+        if (buttonType == 8) {
+            /*
+                TODO fix this issue, right now it's crashing
+             */
+            overlay.getOverlay(overlayID).setType(button.getValue());
+            initGui();
         }
     }
 
@@ -332,13 +294,7 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
     public void subGuiClosed(SubGuiInterface subGuiInterface) {
         if (subGuiInterface instanceof SubGuiColorSelector) {
             int color = ((SubGuiColorSelector) subGuiInterface).color;
-
-            if (mode == 0) {
-                overlay.setBodyColor(overlayID, color);
-            } else if (mode == 1) {
-                overlay.setFaceColor(overlayID, color);
-            }
-
+            overlay.getOverlay(overlayID).setColor(color);
             initGui();
         } else if (subGuiInterface instanceof GuiOverlaySelection) {
             GuiOverlaySelection gts = (GuiOverlaySelection) subGuiInterface;
@@ -350,30 +306,46 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
     }
 
     private static void setOverlay(ResourceLocation resource, boolean enable) {
-        boolean isFace = mode == 1; //else is body
+        FormOverlay.Overlay ov = overlay.getOverlay(overlayID);
+        boolean isFace = ov.getType() == FormOverlay.Type.Face;
 
         int clickedTex = lastTextureClicked;
         if (isFace) {
-            overlay.setFaceTexture(clickedTex, resource.toString(), overlay.isFaceMatchingPlayer(clickedTex) ? selectedFaces.get(clickedTex) : -1);
-            if (enable)
-                overlay.getFace(clickedTex).setEnabled(true);
+            ((FormOverlay.Face) ov)
+                .setTexture(resource.toString(), ((FormOverlay.Face) ov).isMatchingPlayerFace() ? selectedFaces.get(clickedTex) : -1);
         } else {
-            overlay.setBodyTexture(clickedTex, resource.toString());
-            if (enable)
-                overlay.getBody(clickedTex).setEnabled(true);
+            ov.setTexture(resource.toString());
         }
+
+
+        if (enable)
+            ov.setEnabled(true);
     }
 
     @Override
     public void unFocused(GuiNpcTextField textField) {
         int id = textField.id;
+        int fieldType = extractButtonId(id);
         overlayID = extractId(id);
+        FormOverlay.Overlay ov = overlay.getOverlay(overlayID);
+        boolean isFace = ov.getType() == FormOverlay.Type.Face;
         String text = textField.getText();
 
-        if (mode == 0) {
-            overlay.setBodyTexture(overlayID, text);
-        } else if (mode == 1) {
-            overlay.setFaceTexture(overlayID, text, overlay.isFaceMatchingPlayer(overlayID) ? selectedFaces.get(overlayID) : -1);
+        if (fieldType == 1) {
+            if (isFace) {
+                ((FormOverlay.Face) ov)
+                    .setTexture(text, ((FormOverlay.Face) ov).isMatchingPlayerFace() ? selectedFaces.get(overlayID) : -1);
+            } else {
+                ov.setTexture(text);
+            }
+        }
+
+        if (fieldType == 9) {
+            try {
+                ov.setAlpha(Float.parseFloat(text));
+            } catch (NumberFormatException ignored) {
+                textField.setText("1");
+            }
         }
     }
 

@@ -262,24 +262,13 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         y += 30;
 
-        window.addLabel(new GuiNpcLabel(117, "display.faceOverlays", x, y, 0xFFFFFF));
-        window.addButton(new GuiNpcButtonYesNo(117, width - x - 75, y - 5, 50, 20, overlay.hasFaceOverlays));
+        window.addLabel(new GuiNpcLabel(117, "display.overlays", x, y, 0xFFFFFF));
+        window.addButton(new GuiNpcButtonYesNo(117, width - x - 75, y - 5, 50, 20, overlay.hasOverlays));
 
-        if (overlay.hasFaceOverlays) {
+        if (overlay.hasOverlays) {
             y+= 25;
 
             window.addButton(new GuiNpcButton(118, width - x - 75, y - 5, 50, 20, "Edit"));
-        }
-
-        y += 30;
-
-        window.addLabel(new GuiNpcLabel(119, "display.bodyOverlays", x, y, 0xFFFFFF));
-        window.addButton(new GuiNpcButtonYesNo(119, width - x - 75, y - 5, 50, 20, overlay.hasBodyOverlays));
-
-        if (overlay.hasBodyOverlays) {
-            y+= 25;
-
-            window.addButton(new GuiNpcButton(120, width - x - 75, y - 5, 50, 20, "Edit"));
         }
 
         window.maxScrollY = (y - height) + 20 + 5;
@@ -535,25 +524,14 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             updateButtons();
         }
 
-        // Face Overlays
+        // Form Overlays
         if (button.id == 117) {
-            overlay.hasFaceOverlays = button.getValue() == 1;
+            overlay.hasOverlays = button.getValue() == 1;
             updateButtons();
         }
 
         if (button.id == 118) {
-            setSubGui(new SubGuiOverlays(this, 1));
-            updateButtons();
-        }
-
-        // Body Overlays
-        if (button.id == 119) {
-            overlay.hasBodyOverlays = button.getValue() == 1;
-            updateButtons();
-        }
-
-        if (button.id == 120) {
-            setSubGui(new SubGuiOverlays(this, 0));
+            setSubGui(new SubGuiOverlays(this));
             updateButtons();
         }
 
