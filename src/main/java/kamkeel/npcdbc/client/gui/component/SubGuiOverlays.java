@@ -283,7 +283,7 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
             }
 
             if (buttonType == 4) {
-                overlay.setFaceGlow(overlayID, button.getValue() == 1);
+                overlay.getBody(overlayID).setGlow(button.getValue() == 1);
             }
 
             if (buttonType == 5) {
