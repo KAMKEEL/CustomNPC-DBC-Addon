@@ -347,7 +347,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                         if (form.display.furType != 2)
                             renderSSJ4Face(par1AbstractClientPlayer, form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
                         else
-                            renderSaviorFace(form, data);
+                            renderSaviorFace(par1AbstractClientPlayer, gender.get(), form, data);
                     }
                     if (hairback.get() != 12)
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
@@ -370,7 +370,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             }
 
             if (form.display.hasBodyFur && form.display.furType == 2) {
-                renderSaviorFace(form, data);
+                renderSaviorFace(par1AbstractClientPlayer, gender.get(), form, data);
             }
 
             boolean hasInvalidHair = form.display.hairType.equals("ssj4") || form.display.hairType.equals("ssj3") || form.display.hairType.equals("oozaru");
@@ -734,7 +734,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Unique
-    private void renderSaviorFace(Form form, DBCData data) {
+    private void renderSaviorFace(AbstractClientPlayer player, int gender, Form form, DBCData data) {
+        GL11.glPushMatrix();
+        applyAgeGenderTransformations(player, gender);
+
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
         String eyeDir = "savior/";
         this.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + eyeDir + "saviormouth.png"));
@@ -748,6 +751,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xFFFF55 : eyeColor);
         this.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + eyeDir + "savioreyes.png"));
         this.modelMain.bipedHead.render(0.0625F);
+
+        GL11.glPopMatrix();
     }
 
 //    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER), remap = true)
