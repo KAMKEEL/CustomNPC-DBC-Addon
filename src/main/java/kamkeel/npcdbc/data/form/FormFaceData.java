@@ -72,7 +72,7 @@ public class FormFaceData {
         return list.toArray(new Integer[0]);
     }
 
-    public void setFacePartsRemoved(int faceType, Part part, boolean enable) {
+    public void setFacePartRemoved(int faceType, Part part, boolean enable) {
         setFacePartRemoved(faceType, part.ordinal(), enable);
     }
 
@@ -102,51 +102,51 @@ public class FormFaceData {
     }
 
     public boolean hasEyebrowsRemoved(int faceType) {
-        return hasRemoved(faceType, Part.Eyebrows.ordinal());
+        return hasRemoved(faceType, Part.Eyebrows);
     }
 
     public boolean hasWhiteRemoved(int faceType) {
-        return hasRemoved(faceType, Part.White.ordinal());
+        return hasRemoved(faceType, Part.White);
     }
 
     public boolean hasLeftEyeRemoved(int faceType) {
-        return hasRemoved(faceType, Part.LeftEye.ordinal());
+        return hasRemoved(faceType, Part.LeftEye);
     }
 
     public boolean hasRightEyeRemoved(int faceType) {
-        return hasRemoved(faceType, Part.RightEye.ordinal());
+        return hasRemoved(faceType, Part.RightEye);
     }
 
     public boolean hasNoseRemoved(int faceType) {
-        return hasRemoved(faceType, Part.Nose.ordinal());
+        return hasRemoved(faceType, Part.Nose);
     }
 
     public boolean hasMouthRemoved(int faceType) {
-        return hasRemoved(faceType, Part.Mouth.ordinal());
+        return hasRemoved(faceType, Part.Mouth);
     }
 
     public void setEyebrowsRemoved(int faceType, boolean enable) {
-        setFacePartRemoved(faceType, Part.Eyebrows.ordinal(), enable);
+        setFacePartRemoved(faceType, Part.Eyebrows, enable);
     }
 
     public void setWhiteRemoved(int faceType, boolean enable) {
-        setFacePartRemoved(faceType, Part.White.ordinal(), enable);
+        setFacePartRemoved(faceType, Part.White, enable);
     }
 
     public void setLeftEyeRemoved(int faceType, boolean enable) {
-        setFacePartRemoved(faceType, Part.LeftEye.ordinal(), enable);
+        setFacePartRemoved(faceType, Part.LeftEye, enable);
     }
 
     public void setRightEyeRemoved(int faceType, boolean enable) {
-        setFacePartRemoved(faceType, Part.RightEye.ordinal(), enable);
+        setFacePartRemoved(faceType, Part.RightEye, enable);
     }
 
     public void setNoseRemoved(int faceType, boolean enable) {
-        setFacePartRemoved(faceType, Part.Nose.ordinal(), enable);
+        setFacePartRemoved(faceType, Part.Nose, enable);
     }
 
     public void setMouthRemoved(int faceType, boolean enable) {
-        setFacePartRemoved(faceType, Part.Mouth.ordinal(), enable);
+        setFacePartRemoved(faceType, Part.Mouth, enable);
     }
 
     public enum Part {
