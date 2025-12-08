@@ -531,7 +531,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
             String eyeDir = "base/eyes/pupils/";
 
-            if (!form.display.isBerserk && !(faceData.hasLeftEyeRemoved(eyes) || faceData.hasLeftEyeRemoved(6))) {
+            if (!form.display.isBerserk && !faceData.hasLeftEyeRemoved(eyes)) {
                 int eyeColor = playerColors.getProperColor(display, "eye");
                 RenderPlayerJBRA.glColor3f(eyeColor == -1 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor);
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "eyeleft" + eyes + ".png"));
@@ -543,7 +543,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 GL11.glPopMatrix();
             }
 
-            if (!form.display.isBerserk && !(faceData.hasRightEyeRemoved(eyes) || faceData.hasRightEyeRemoved(6))) {
+            if (!form.display.isBerserk && !faceData.hasRightEyeRemoved(eyes)) {
                 int eyeColor = playerColors.getProperColor(display, "eye");
                 RenderPlayerJBRA.glColor3f(eyeColor == -1 ? JRMCoreH.dnsEyeC2(data.DNS) : eyeColor);
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "eyeright" + eyes + ".png"));
@@ -565,13 +565,13 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
             String eyeDir = (form.display.furType == 1 ? "ssj4d" : "ssj4") + (gender == 1 ? "/female" : "/male") + "/face_" + eyes + "/";
 
-            if (!faceData.hasWhiteRemoved(eyes) && !faceData.hasWhiteRemoved(6)) {
+            if (!faceData.hasWhiteRemoved(eyes)) {
                 GL11.glColor3f(1.0f, 1.0f, 1.0f);
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyewhite.png"));
                 this.modelMain.bipedHead.render(1F / 16F);
             }
 
-            if (!form.display.isBerserk && !(faceData.hasRightEyeRemoved(eyes) || faceData.hasRightEyeRemoved(6))) {
+            if (!form.display.isBerserk && !faceData.hasRightEyeRemoved(eyes)) {
                 int eyeColor = playerColors.getProperColor(display, "eye");
                 RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeright.png"));
@@ -584,7 +584,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 }
             }
 
-            if (!form.display.isBerserk && !(faceData.hasLeftEyeRemoved(eyes) || faceData.hasLeftEyeRemoved(6))) {
+            if (!form.display.isBerserk && !faceData.hasLeftEyeRemoved(eyes)) {
                 int eyeColor = playerColors.getProperColor(display, "eye");
                 RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeleft.png"));
@@ -597,7 +597,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 }
             }
 
-            if (!faceData.hasEyebrowsRemoved(eyes) && !faceData.hasEyebrowsRemoved(6)) {
+            if (!faceData.hasEyebrowsRemoved(eyes)) {
                 RenderPlayerJBRA.glColor3f(playerColors.getFurColor(form.display, data));
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4brows.png"));
                 this.modelMain.bipedHead.render(1F / 16F);
@@ -613,14 +613,14 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             }
         }
 
-        if (!faceData.hasNoseRemoved(eyes) && !faceData.hasNoseRemoved(6)) {
+        if (!faceData.hasNoseRemoved(eyes)) {
             RenderPlayerJBRA.glColor3f(bodyCM);
             String noseTexture = (gender == 1 ? "f" : "") + "humn" + nose + ".png";
             this.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + noseTexture));
             this.modelMain.renderHairs(0.0625F, "FACENOSE");
         }
 
-        if (!faceData.hasMouthRemoved(eyes) && !faceData.hasMouthRemoved(6)) {
+        if (!faceData.hasMouthRemoved(eyes)) {
             RenderPlayerJBRA.glColor3f(bodyCM);
             String mouthTexture = (gender == 1 ? "f" : "") + "humm" + JRMCoreH.dnsFaceM(dns) + ".png";
             this.bindTexture(new ResourceLocation((HD ? HDDir + "base/mouth/" : "jinryuumodscore:cc/") + mouthTexture));
@@ -653,27 +653,27 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
             String eyeDir = "ssj3/face_" + eyes + "/";
 
-            if (!faceData.hasWhiteRemoved(eyes) && !faceData.hasWhiteRemoved(6)) {
+            if (!faceData.hasWhiteRemoved(eyes)) {
                 GL11.glColor3f(1.0f, 1.0f, 1.0f);
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyewhite.png"));
                 this.modelMain.bipedHead.render(0.0625F);
             }
 
-            if (!form.display.isBerserk && !(faceData.hasRightEyeRemoved(eyes) || faceData.hasRightEyeRemoved(6))) {
+            if (!form.display.isBerserk && !faceData.hasRightEyeRemoved(eyes)) {
                 int eyeColor = playerColors.getProperColor(display, "eye");
                 RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyeright.png"));
                 this.modelMain.bipedHead.render(0.0625F);
             }
 
-            if (!form.display.isBerserk && !(faceData.hasLeftEyeRemoved(eyes) || faceData.hasLeftEyeRemoved(6))) {
+            if (!form.display.isBerserk && !faceData.hasLeftEyeRemoved(eyes)) {
                 int eyeColor = playerColors.getProperColor(display, "eye");
                 RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xF3C807 : eyeColor);
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3eyeleft.png"));
                 this.modelMain.bipedHead.render(0.0625F);
             }
 
-            if (!faceData.hasEyebrowsRemoved(eyes) && !faceData.hasEyebrowsRemoved(6)) {
+            if (!faceData.hasEyebrowsRemoved(eyes)) {
                 int hairColor = playerColors.getProperColor(form.display.getHairColor(data), "hair");
                 RenderPlayerJBRA.glColor3f(hairColor < 0 ? defaultHairColor : hairColor, age);
                 this.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj3brows.png"));
@@ -685,14 +685,14 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             }
         }
 
-        if (!faceData.hasNoseRemoved(eyes) && !faceData.hasNoseRemoved(6)) {
+        if (!faceData.hasNoseRemoved(eyes)) {
             RenderPlayerJBRA.glColor3f(bodyCM);
             String noseTexture = (gender == 1 ? "f" : "") + "humn" + nose + ".png";
             this.bindTexture(new ResourceLocation((HD ? HDDir + "base/nose/" : "jinryuumodscore:cc/") + noseTexture));
             this.modelMain.renderHairs(0.0625F, "FACENOSE");
         }
 
-        if (!faceData.hasMouthRemoved(eyes) && !faceData.hasMouthRemoved(6)) {
+        if (!faceData.hasMouthRemoved(eyes)) {
             RenderPlayerJBRA.glColor3f(bodyCM);
             String mouthTexture = (gender == 1 ? "f" : "") + "humm" + JRMCoreH.dnsFaceM(dns) + ".png";
             this.bindTexture(new ResourceLocation((HD ? HDDir + "base/mouth/" : "jinryuumodscore:cc/") + mouthTexture));

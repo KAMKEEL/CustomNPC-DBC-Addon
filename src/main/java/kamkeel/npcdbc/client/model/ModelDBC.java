@@ -430,14 +430,14 @@ public class ModelDBC extends ModelBase {
         // TODO for now all the faces are male, gotta wait for hussar
         String eyeDir = (furType == 1 ? "ssj4d" : "ssj4") + "/male/face_" + eyeType + "/";
 
-        if (!data.hasWhiteRemoved(eyeType) && !data.hasWhiteRemoved(6)) {
+        if (!data.hasWhiteRemoved(eyeType)) {
             ColorMode.applyModelColor(0xffffff, this.parent.alpha, isHurt);
             ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyewhite.png"));
             parent.bipedHead.render(1F / 16F);
         }
 
         if (!isBerserk) {
-            if (!data.hasRightEyeRemoved(eyeType) && !data.hasRightEyeRemoved(6)) {
+            if (!data.hasRightEyeRemoved(eyeType)) {
                 ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                 ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeright.png"));
                 parent.bipedHead.render(0.0625F);
@@ -449,7 +449,7 @@ public class ModelDBC extends ModelBase {
                 }
             }
 
-            if (!data.hasLeftEyeRemoved(eyeType) && !data.hasLeftEyeRemoved(6)) {
+            if (!data.hasLeftEyeRemoved(eyeType)) {
                 ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                 ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeleft.png"));
                 parent.bipedHead.render(0.0625F);
@@ -462,7 +462,7 @@ public class ModelDBC extends ModelBase {
             }
         }
 
-        if (!data.hasEyebrowsRemoved(eyeType) && !data.hasEyebrowsRemoved(6)) {
+        if (!data.hasEyebrowsRemoved(eyeType) ) {
             ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
             ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4brows.png"));
             parent.bipedHead.render(1F / 16F);
