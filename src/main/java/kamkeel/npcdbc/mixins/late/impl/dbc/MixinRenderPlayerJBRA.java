@@ -302,18 +302,18 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", shift = At.Shift.BEFORE))
-    private void renderFormOverlays(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "eyes") LocalIntRef eyes) {
+    private void renderFormOverlays(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "eyes") LocalIntRef eyes, @Local(name = "gen") LocalIntRef gender) {
         Form form = DBCData.getForm(par1AbstractClientPlayer);
         DBCData data = DBCData.get(par1AbstractClientPlayer);
 
         if (form == null) return;
 
         if (form.display.overlays.hasFaceOverlays) {
-            renderFaceOverlays(form, eyes.get(), bodyCM.get(), data.renderingHairColor, data);
+            renderFaceOverlays(par1AbstractClientPlayer, form, gender.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, data);
         }
 
         if (form.display.overlays.hasBodyOverlays) {
-            renderBodyOverlays(form, bodyCM.get(), data.renderingHairColor, data);
+            renderBodyOverlays(par1AbstractClientPlayer, form, gender.get(), bodyCM.get(), data.renderingHairColor, data);
         }
     }
 
@@ -347,7 +347,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                         if (form.display.furType != 2)
                             renderSSJ4Face(par1AbstractClientPlayer, form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
                         else
-                            renderSaviorFace(form, data);
+                            renderSaviorFace(par1AbstractClientPlayer, gender.get(), form, data);
                     }
                     if (hairback.get() != 12)
                         this.modelMain.renderHairsV2(0.0625F, "", 0.0F, 0, 0, pl.get(), race.get(), (RenderPlayerJBRA) (Object) this, par1AbstractClientPlayer);
@@ -366,11 +366,11 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
             }
 
             if (usesHumanBody && (form.display.hairType.equals("ssj3") || !form.display.hasEyebrows) && data.skinType != 0 && display.furType != 2 && HD) {
-                renderSSJ3Face(form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
+                renderSSJ3Face(par1AbstractClientPlayer, form, gender.get(), nose.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, age, data.DNS, data);
             }
 
             if (form.display.hasBodyFur && form.display.furType == 2) {
-                renderSaviorFace(form, data);
+                renderSaviorFace(par1AbstractClientPlayer, gender.get(), form, data);
             }
 
             boolean hasInvalidHair = form.display.hairType.equals("ssj4") || form.display.hairType.equals("ssj3") || form.display.hairType.equals("oozaru");
@@ -436,7 +436,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     // TODO render alpha
     @Unique
-    private void renderBodyOverlays(Form form, int bodyCM, int defaultHairColor, DBCData data) {
+    private void renderBodyOverlays(AbstractClientPlayer player, Form form, int gender, int bodyCM, int defaultHairColor, DBCData data) {
         FormDisplay displayData = form.display;
         FormOverlay overlayData = displayData.overlays;
 
@@ -461,6 +461,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                     continue;
 
                 GL11.glPushMatrix();
+                applyAgeGenderTransformations(player, gender);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
@@ -477,7 +478,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     // TODO render alpha
     @Unique
-    private void renderFaceOverlays(Form form, int eyes, int bodyCM, int defaultHairColor, DBCData data) {
+    private void renderFaceOverlays(AbstractClientPlayer player, Form form, int gender, int eyes, int bodyCM, int defaultHairColor, DBCData data) {
         FormDisplay displayData = form.display;
         FormOverlay overlayData = displayData.overlays;
 
@@ -502,11 +503,14 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                     continue;
 
                 GL11.glPushMatrix();
+                applyAgeGenderTransformations(player, gender);
                 GL11.glEnable(GL11.GL_BLEND);
                 float scale = 1.0025f;
                 GL11.glScalef(scale, scale, scale);
+
                 new Color(color, faceOverlayData.alpha);
                 this.modelMain.bipedHead.render(1F / 16F);
+
                 GL11.glDisable(GL11.GL_BLEND);
                 GL11.glPopMatrix();
             }
@@ -574,6 +578,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         GL11.glScalef((0.5F + 0.5F / ageFactor) * (g <= 1 ? 1.0F : 0.85F), 0.5F + 0.5F / ageFactor, (0.5F + 0.5F / ageFactor) * (g <= 1 ? 1.0F : 0.85F));
         GL11.glTranslatef(0.0F, (ageFactor - 1.0F) / ageFactor * (2.0F - (ageFactor >= 1.5F && ageFactor <= 2.0F ? (2.0F - ageFactor) / 2.5F : (ageFactor < 1.5F && ageFactor >= 1.0F ? (ageFactor * 2.0F - 2.0F) * 0.2F : 0.0F))), 0.0F);
     }
+
     @Unique
     private void renderSSJ4Face(AbstractClientPlayer player, Form form, int gender, int nose, int eyes, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
         FormDisplay display = form.display;
@@ -669,12 +674,16 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Unique
-    private void renderSSJ3Face(Form form, int gender, int nose, int eyes, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
+    private void renderSSJ3Face(AbstractClientPlayer player, Form form, int gender, int nose, int eyes, int bodyCM, int defaultHairColor, float age, String dns, DBCData data) {
         FormDisplay display = form.display;
         FormFaceData faceData = display.faceData;
+
+        GL11.glPushMatrix();
+        applyAgeGenderTransformations(player, gender);
+
         if (ConfigDBCClient.EnableHDTextures) {
             FormDisplay.BodyColor playerColors = data.currentCustomizedColors;
-            String eyeDir = "ssj3/face_" + eyes + "/";
+            String eyeDir = "ssj3/" + (gender == 1 ? "female" : "male") + "/face_" + eyes + "/";
 
             if (!faceData.hasWhiteRemoved(eyes)) {
                 GL11.glColor3f(1.0f, 1.0f, 1.0f);
@@ -707,6 +716,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 this.modelMain.bipedHead.render(0.0625F);
             }
         }
+        GL11.glPopMatrix(); //Pop the age/gender transformations here as finished rendering bipeadHead
 
         if (!faceData.hasNoseRemoved(eyes)) {
             RenderPlayerJBRA.glColor3f(bodyCM);
@@ -724,7 +734,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Unique
-    private void renderSaviorFace(Form form, DBCData data) {
+    private void renderSaviorFace(AbstractClientPlayer player, int gender, Form form, DBCData data) {
+        GL11.glPushMatrix();
+        applyAgeGenderTransformations(player, gender);
+
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
         String eyeDir = "savior/";
         this.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + eyeDir + "saviormouth.png"));
@@ -738,6 +751,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         RenderPlayerJBRA.glColor3f(eyeColor == -1 ? 0xFFFF55 : eyeColor);
         this.bindTexture(new ResourceLocation((HD ? HDDir : SDDir) + eyeDir + "savioreyes.png"));
         this.modelMain.bipedHead.render(0.0625F);
+
+        GL11.glPopMatrix();
     }
 
 //    @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "LJinRyuu/JRMCore/JRMCoreH;DBC()Z", ordinal = 0, shift = At.Shift.AFTER), remap = true)
@@ -890,6 +905,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 //
 //    @Shadow
 //    private static int kk;
+
+    @Shadow
+    public static float g;
 
     /**
      * Methods Below so we don't need
