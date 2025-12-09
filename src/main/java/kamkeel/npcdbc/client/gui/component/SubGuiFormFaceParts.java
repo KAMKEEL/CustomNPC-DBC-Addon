@@ -7,8 +7,9 @@ import kamkeel.npcdbc.data.form.FormFaceData;
 import net.minecraft.client.gui.GuiButton;
 import noppes.npcs.client.gui.util.GuiNpcButton;
 import noppes.npcs.client.gui.util.GuiNpcLabel;
+import noppes.npcs.client.gui.util.SubGuiInterface;
 
-public class SubGuiFormFaceParts extends SubGuiModelInterface {
+public class SubGuiFormFaceParts extends SubGuiInterface {
     public SubGuiFormDisplay parent;
     public Form form;
     public FormDisplay display;
@@ -16,7 +17,7 @@ public class SubGuiFormFaceParts extends SubGuiModelInterface {
     public int faceType = 0;
 
     public SubGuiFormFaceParts(SubGuiFormDisplay parent) {
-        super(parent.npc);
+        this.npc = parent.npc;
         this.parent = parent;
         this.form = parent.form;
         this.display = parent.display;
@@ -26,13 +27,15 @@ public class SubGuiFormFaceParts extends SubGuiModelInterface {
         this.ySize = 222;
         setBackground("smallbg.png");
 
-
-        drawXButton = false;
-        xOffsetNpc = 35;
-        yOffsetNpc = 30;
-        xMouseRange = 50;
-        yMouseRange=200;
-        zoomed=85;
+        drawNpc = true;
+        xOffsetNpc = 230;
+        yOffsetNpc = 200;
+        xOffsetButton = -43;
+        yOffsetButton = 5;
+        yMouseRange = 200;
+        defaultZoom = zoom = 2.8f;
+        maxZoom = 4;
+        drawRenderButtons = true;
     }
 
     @Override

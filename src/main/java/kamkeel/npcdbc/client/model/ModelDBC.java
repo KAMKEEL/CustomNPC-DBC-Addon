@@ -28,6 +28,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.ClientCacheHandler;
+import noppes.npcs.client.ClientEventHandler;
 import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.client.renderer.ImageData;
@@ -680,14 +681,14 @@ public class ModelDBC extends ModelBase {
                 boolean glow = overlay.isGlow();
                 if (glow) {
                     GL11.glDisable(GL11.GL_LIGHTING);
-                    if (!RenderEventHandler.renderingNPCInGUI) //in-game not in GUI, as lightmap is disabled in GUIs so cant enable it again
+                    if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI, as lightmap is disabled in GUIs so cant enable it again
                         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
                 }
 
                 model.render(0.0625F);
                 if (glow) {
                     GL11.glEnable(GL11.GL_LIGHTING);
-                    if (!RenderEventHandler.renderingNPCInGUI) //in-game not in GUI
+                    if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI
                         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
                 }
             }

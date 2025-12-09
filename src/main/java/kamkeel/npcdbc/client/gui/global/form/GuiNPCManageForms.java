@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
+import noppes.npcs.client.ClientEventHandler;
 import noppes.npcs.client.CustomNpcResourceListener;
 import noppes.npcs.client.NoppesUtil;
 import noppes.npcs.client.gui.util.*;
@@ -220,7 +221,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
         GL11.glTranslatef(0.0F, entity.yOffset, 1F);
         RenderManager.instance.playerViewY = 180F;
 
-        RenderEventHandler.renderingNPCInGUI=true;
+        ClientEventHandler.renderingEntityInGUI = true;
         // Render Entity
         GL11.glPushMatrix();
         try {
@@ -236,7 +237,7 @@ public class GuiNPCManageForms extends GuiNPCInterface2 implements ICustomScroll
         }
         GL11.glPopMatrix();
 
-        RenderEventHandler.renderingNPCInGUI=false;
+        ClientEventHandler.renderingEntityInGUI = false;
 
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
         entity.prevRotationYaw = entity.rotationYaw = f3;

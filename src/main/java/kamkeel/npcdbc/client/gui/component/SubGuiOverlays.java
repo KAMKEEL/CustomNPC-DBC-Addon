@@ -17,8 +17,7 @@ import java.util.ArrayList;
 
 import static kamkeel.npcdbc.data.form.FormOverlay.Type.Face;
 
-
-public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListener, ITextfieldListener {
+public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, ITextfieldListener {
     public SubGuiFormDisplay parent;
     public Form form;
     public static FormOverlay overlay;
@@ -46,14 +45,15 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
 
         xSize = 300;
 
-        //setBackground("menubg.png");
-        drawXButton = false;
-        xOffsetNpc = 110;
-        yOffsetNpc = 30;
-        xMouseRange = 50;
-        yMouseRange=200;
-        zoomed=85;
-        maxZoom=150;
+        drawNpc = true;
+        xOffsetNpc = 300;
+        yOffsetNpc = 200;
+        xOffsetButton = -43;
+        yOffsetButton = 10;
+        yMouseRange = 200;
+        defaultZoom = zoom = 2.9f;
+        maxZoom = 4;
+        drawRenderButtons = true;
     }
 
     @Override
@@ -375,10 +375,14 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
     private class GuiOverlaySelection extends GuiTextureSelection {
         public GuiOverlaySelection(EntityNPCInterface npc, String texture) {
             super(npc, texture);
-            setLocation("npcdbc","textures/");
             if (selectedResource == null)
                 setLocation("npcdbc", "textures/");
             originalTexture = get(overlayID).texture;
+
+            yOffsetNpc += 15;
+            defaultZoom = zoom = 2.25f;
+            setNPCSkin = false;
+            drawDefaultBackground = true;
         }
 
         private String originalTexture;

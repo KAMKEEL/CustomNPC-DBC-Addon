@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
+import noppes.npcs.client.ClientEventHandler;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityCustomNpc;
@@ -703,7 +704,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         RenderManager.instance.playerViewY = 180F;
 
         auraTicks++;
-        RenderEventHandler.renderingNPCInGUI=true;
+        ClientEventHandler.renderingEntityInGUI = true;
 
         // Render Entity
         GL11.glPushMatrix();
@@ -720,7 +721,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         }
         GL11.glPopMatrix();
 
-        RenderEventHandler.renderingNPCInGUI=false;
+        ClientEventHandler.renderingEntityInGUI = false;
 
         entity.prevRenderYawOffset = entity.renderYawOffset = f2;
         entity.prevRotationYaw = entity.rotationYaw = f3;
