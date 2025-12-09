@@ -384,6 +384,7 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
     private class GuiOverlaySelection extends GuiTextureSelection {
         public GuiOverlaySelection(EntityNPCInterface npc, String texture) {
             super(npc, texture);
+            setLocation("npcdbc","textures/");
         }
 
         @Override
