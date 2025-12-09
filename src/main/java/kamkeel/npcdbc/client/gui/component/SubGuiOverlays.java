@@ -8,7 +8,6 @@ import kamkeel.npcdbc.data.form.FormOverlay.Face;
 import kamkeel.npcdbc.data.form.FormOverlay.Overlay;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.util.ResourceLocation;
 import noppes.npcs.client.gui.SubGuiColorSelector;
 import noppes.npcs.client.gui.select.GuiTextureSelection;
 import noppes.npcs.client.gui.util.*;
@@ -32,7 +31,6 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
     private GuiScrollWindow window;
 
     public SubGuiOverlays(SubGuiFormDisplay parent) {
-        super(parent.npc);
         this.parent = parent;
         this.form = parent.form;
         overlay = form.display.overlays;
@@ -318,7 +316,6 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
             updateButtons = false;
             initGui();
         }
-
         super.drawScreen(mouseX, mouseY, partialTick);
     }
 
@@ -328,12 +325,6 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
             int color = ((SubGuiColorSelector) subGuiInterface).color;
             get(overlayID).setColor(color);
             initGui();
-        } else if (subGuiInterface instanceof GuiOverlaySelection) {
-            GuiOverlaySelection gts = (GuiOverlaySelection) subGuiInterface;
-            if (gts.selectedResource != null) {
-                setOverlay(gts.selectedResource, false);
-                initGui();
-            }
         }
     }
 
@@ -341,15 +332,15 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         return overlay.getOverlay(id);
     }
 
-    private void setOverlay(ResourceLocation resource, boolean enable) {
+    private void setTexture(String texture, boolean enable) {
         Overlay ov = get(overlayID);
         int clickedTex = lastTextureClicked;
 
         if (ov.getType() == Face) {
             //TODO why -1 if not matching? the math max/min in the method still sets it to 0. also if -1, face.setTexture only sets faceTextures, not the main texture, is that fine?
-            ((Face) ov).setTexture(resource.toString(), ((Face) ov).isMatchingPlayerFace() ? selectedFaces.get(clickedTex) : -1);
+            ((Face) ov).setTexture(texture, ((Face) ov).isMatchingPlayerFace() ? selectedFaces.get(clickedTex) : -1);
         } else {
-            ov.setTexture(resource.toString());
+            ov.setTexture(texture);
         }
 
         if (enable)
@@ -385,13 +376,23 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         public GuiOverlaySelection(EntityNPCInterface npc, String texture) {
             super(npc, texture);
             setLocation("npcdbc","textures/");
+            if (selectedResource == null)
+                setLocation("npcdbc", "textures/");
+            originalTexture = get(overlayID).texture;
         }
+
+        private String originalTexture;
 
         @Override
         protected void actionPerformed(GuiButton guibutton) {
-            if (this.selectedResource != null) //crashes if Done pressed when no texture selected
-                super.actionPerformed(guibutton);
-            this.npc.textureLocation = null;
+            super.actionPerformed(guibutton);
+
+            if (guibutton.id == 2 && selectedResource != null)
+                /*
+                Setting original to selected means tex change is confirmed (not just viewing it)
+                 */
+                originalTexture = selectedResource.toString();
+
             this.close();
             this.parent.initGui();
         }
@@ -399,7 +400,21 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         public void customScrollClicked(int i, int j, int k, GuiCustomScroll scroll) {
             super.customScrollClicked(i, j, k, scroll);
             if (scroll.id == 1)
-                setOverlay(selectedResource, true);
+                setTexture(selectedResource.toString(), true);
+        }
+
+        public void customScrollDoubleClicked(String selection, GuiCustomScroll scroll) {
+            if (scroll.id == 1) {
+                originalTexture = selectedResource.toString();
+                this.close();
+                this.parent.initGui();
+            } else
+                super.customScrollDoubleClicked(selection, scroll);
+        }
+
+        public void close() {
+            setTexture(originalTexture, false);
+            super.close();
         }
     }
 }
