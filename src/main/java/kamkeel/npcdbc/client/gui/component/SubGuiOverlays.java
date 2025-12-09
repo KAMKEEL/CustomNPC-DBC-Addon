@@ -284,10 +284,37 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         if (buttonType == 8) {
             /*
                 TODO fix this issue, right now it's crashing
+
+                FIXED
              */
-            overlay.getOverlay(overlayID).setType(button.getValue());
+
+            FormOverlay.Overlay old = overlay.getOverlay(overlayID);
+            if (old != null)
+                overlay.replaceOverlay(old, old.setType(button.getValue()));
+
+            /*
+            This bugs out with calling initGui() right after
+            as method double fires (Eye -> Body -> Eye).
+            Must be init in next tick.
+             */
+            update();
+
+        }
+    }
+
+    private boolean updateButtons;
+
+    public void update() { //basically initGui just in the next tick
+        updateButtons = true;
+    }
+
+    public void drawScreen(int mouseX, int mouseY, float partialTick) {
+        if (updateButtons) {
+            updateButtons = false;
             initGui();
         }
+
+        super.drawScreen(mouseX, mouseY, partialTick);
     }
 
     @Override

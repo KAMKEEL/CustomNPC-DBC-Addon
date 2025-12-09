@@ -5,6 +5,7 @@ import net.minecraftforge.client.model.obj.Face;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class FormOverlay {
 
@@ -74,6 +75,12 @@ public class FormOverlay {
 
         this.overlays.remove(id);
         save();
+    }
+
+    public void replaceOverlay(Overlay oldOverlay, Overlay newOverlay) {
+        int index = overlays.indexOf(oldOverlay);
+        if (index != -1)
+            overlays.set(index, newOverlay);
     }
 
     public void addOverlay() {
@@ -154,9 +161,23 @@ public class FormOverlay {
             return this.type;
         }
 
-        public void setType(int type) {
-            if (type < Type.values().length)
-                this.type = Type.values()[type];
+        /*
+        This returns the new Overlay object, which you gotta
+        manually replace in the overlays list.
+         */
+        public Overlay setType(Type type) {
+            if (this.type != type)
+                return convertTo(type);
+
+            return this;
+        }
+
+        public Overlay setType(int type) {
+            if (type < Type.values().length) {
+                return setType(Type.values()[type]);
+            }
+
+            return this;
         }
 
         public int getColorType() {
@@ -199,6 +220,17 @@ public class FormOverlay {
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
         }
+
+        public Overlay convertTo(Type type) {
+            if (type != this.type) {
+                Overlay newO = type.create();
+                newO.readFromNBT(this.writeToNBT());
+
+                return newO;
+            }
+            return this;
+        }
+
     }
 
     public static class Face extends Overlay {
@@ -311,18 +343,24 @@ public class FormOverlay {
     }
 
     public enum Type {
-        Body(),
-        Face();
+        Body(Overlay::new),
+        Face(Face::new);
+
+        Supplier<Overlay> factory;
+
+        Type(Supplier<Overlay> factory) {
+            this.factory = factory;
+        }
+
+        public Overlay create() {
+            return factory.get();
+        }
 
         public static Overlay getOverlayByType(int type) {
-            switch(type) {
-                case 0:
-                    return new Overlay();
-                case 1:
-                    return new Face();
-                default:
-                    return null;
-            }
+            if (type <= Type.values().length)
+                return Type.values()[type].create();
+
+            return null;
         }
     }
 }
