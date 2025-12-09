@@ -16,6 +16,23 @@ public class RenderingData {
     public EntityPlayer player;
     public DBCData dbcData; //for players
 
+    public static RenderingData from(DBCDisplay display) {
+        RenderingData data = new RenderingData();
+        data.isNPC = true;
+        data.npc = display.npc;
+        data.display = display;
+        return data;
+    }
+
+    public static RenderingData from(DBCData dbcData) {
+        RenderingData data = new RenderingData();
+        data.isNPC = false;
+        data.player = dbcData.player;
+        data.dbcData = dbcData;
+        return data;
+    }
+
+
     public int eyeType() {
         return isNPC ? display.eyeType : JRMCoreH.dnsEyes(dbcData.DNS);
     }
