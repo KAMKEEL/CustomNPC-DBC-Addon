@@ -144,7 +144,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
                 }
 
 
-                button = new GuiNpcButton(id(8, i), 5, y, 50, 20, new String[]{"All", "Face", "Chest", "Legs", "RightArm", "LeftArm"}, currentOverlay.getType().ordinal());
+                button = new GuiNpcButton(id(8, i), 5, y, 50, 20, new String[]{"All", "Face", "Chest", "Legs", "Arms", "RightArm", "LeftArm"}, currentOverlay.getType().ordinal());
                 window.addButton(button); // id 8
 
                 int tempY = currentOverlay.getColorType() == ColorType.Custom.ordinal() ? y + 23 : y;

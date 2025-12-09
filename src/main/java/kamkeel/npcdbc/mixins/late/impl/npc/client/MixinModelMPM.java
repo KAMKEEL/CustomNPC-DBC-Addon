@@ -181,7 +181,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     private void postRenderDBCLeftArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
         if (!isArmor && display.enabled) {
             if (form != null && form.display.overlays.hasOverlays) {
-                NPCDBCModel.renderFormOverlays(form, display, bipedLeftArm, EnumSet.of(ALL, LeftArm));
+                NPCDBCModel.renderFormOverlays(form, display, bipedLeftArm, EnumSet.of(ALL, Arms, LeftArm));
             }
         }
     }
@@ -198,7 +198,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     private void postRenderDBCRightArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
         if (!isArmor && display.enabled) {
             if (form != null && form.display.overlays.hasOverlays) {
-                NPCDBCModel.renderFormOverlays(form, display, bipedRightArm, EnumSet.of(ALL, RightArm));
+                NPCDBCModel.renderFormOverlays(form, display, bipedRightArm, EnumSet.of(ALL, Arms, RightArm));
             }
         }
     }

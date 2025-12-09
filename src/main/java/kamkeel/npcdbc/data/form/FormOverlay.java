@@ -347,6 +347,7 @@ public class FormOverlay {
         Face(Face::new),
         Chest(Overlay::new),
         Legs(Overlay::new),
+        Arms(Overlay::new),
         RightArm(Overlay::new),
         LeftArm(Overlay::new);
 
