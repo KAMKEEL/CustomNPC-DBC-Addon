@@ -273,7 +273,7 @@ public class FormOverlay {
                     }
                 }
             } else {
-                texture = compound.getString("baseTexture");
+                texture = compound.getString("texture");
                 Arrays.fill(faceTextures, "");
             }
         }
@@ -299,7 +299,7 @@ public class FormOverlay {
 
                 compound.setTag("faceTextures", faceTypes);
             } else {
-                compound.setString("baseTexture", texture);
+                compound.setString("texture", texture);
             }
 
             return compound;
