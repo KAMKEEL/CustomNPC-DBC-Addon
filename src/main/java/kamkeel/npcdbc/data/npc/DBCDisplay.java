@@ -155,6 +155,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
             dbcDisplay.setInteger("DBCOutlineID", outlineID);
 
+            dbcDisplay.setInteger("DBCFemaleBreastSize", breastSize);
+
 
             kiWeaponLeft.saveToNBT(dbcDisplay, "kiWeaponLeft");
             kiWeaponRight.saveToNBT(dbcDisplay, "kiWeaponRight");
@@ -208,6 +210,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             isKaioken = dbcDisplay.getBoolean("DBCIsKaioken");
             formID = dbcDisplay.getInteger("DBCFormID");
             selectedForm = dbcDisplay.getInteger("DBCSelectedForm");
+
+            if (dbcDisplay.hasKey("DBCFemaleBreastSize"))
+                breastSize = dbcDisplay.getInteger("DBCFemaleBreastSize");
 
             if (dbcDisplay.hasKey("kiWeaponLeft"))
                 kiWeaponLeft.readFromNBT(dbcDisplay, "kiWeaponLeft");
