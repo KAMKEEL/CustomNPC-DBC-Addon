@@ -2,8 +2,10 @@ package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.client.gui.global.form.SubGuiFormDisplay;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormOverlay;
+import kamkeel.npcdbc.data.form.FormOverlay.ColorType;
+import kamkeel.npcdbc.data.form.FormOverlay.Face;
+import kamkeel.npcdbc.data.form.FormOverlay.Overlay;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.ResourceLocation;
@@ -13,6 +15,9 @@ import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.ArrayList;
+
+import static kamkeel.npcdbc.data.form.FormOverlay.Type.Face;
+
 
 public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListener, ITextfieldListener {
     public SubGuiFormDisplay parent;
@@ -73,26 +78,26 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         }
 
         addScrollableGui(3, window);
-        addButton(new GuiNpcButton(2, guiLeft + 220, guiTop - 10, 20, 20, "X"));
+        addButton(new GuiNpcButton(2, guiLeft + 230, guiTop - 10, 20, 20, "X"));
 
         y = 10;
 
         for (int i = 0; i < overlay.overlays.size(); i++) {
-            FormOverlay.Overlay currentOverlay = overlay.getOverlay(i);
-            FormOverlay.Face faceOverlay = null;
+            Overlay currentOverlay = get(i);
+            Face faceOverlay = null;
             GuiNpcButton button;
             GuiNpcTextField textField;
-            boolean isFaceOverlay = currentOverlay.getType() == FormOverlay.Type.Face;
+            boolean isFace = currentOverlay.getType() == Face;
 
-            if (isFaceOverlay) {
-                faceOverlay = (FormOverlay.Face) currentOverlay;
+            if (isFace) {
+                faceOverlay = (Face) currentOverlay;
             }
 
             window.addLabel(new GuiNpcLabel(id(1, i), "Overlay " + (i + 1) + ":", 5, y + 5, 0xffffff));
             textField = new GuiNpcTextField(id(1, i), this, 65, y, 150, 20, ""); // id 1
             window.addTextField(textField);
 
-            if (isFaceOverlay && faceOverlay.isMatchingPlayerFace()) {
+            if (isFace && faceOverlay.isMatchingPlayerFace()) {
                 window.getTextField(id(1, i)).setText(faceOverlay.getTexture(selectedFaces.get(i)));
             } else {
                 window.getTextField(id(1, i)).setText(currentOverlay.getTexture());
@@ -122,13 +127,13 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
             y += 23;
 
             if (currentOverlay.isEnabled()) {
-                if (currentOverlay.getColorType() == FormOverlay.ColorType.Custom.ordinal()) {
+                if (currentOverlay.getColorType() == ColorType.Custom.ordinal()) {
                     button = new GuiNpcButton(id(3, i), 90, y, 50, 20, getColor(currentOverlay.getColor()));
                     button.packedFGColour = currentOverlay.getColor();
                     window.addButton(button); // id 3
                 }
 
-                if (isFaceOverlay) {
+                if (isFace) {
                     window.addLabel(new GuiNpcLabel(id(6, i), "Match Face:", 143, y + 5, 0xffffff));
                     button = new GuiNpcButtonYesNo(id(6, i), 205, y, 50, 20, faceOverlay.isMatchingPlayerFace());
                     window.addButton(button); // id 6
@@ -144,7 +149,7 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
                 button = new GuiNpcButton(id(8, i), 5, y, 50, 20, new String[]{"All", "Face", "Chest", "Legs", "RightArm", "LeftArm"}, currentOverlay.getType().ordinal());
                 window.addButton(button); // id 8
 
-                int tempY = currentOverlay.getColorType() == FormOverlay.ColorType.Custom.ordinal() ? y + 23 : y;
+                int tempY = currentOverlay.getColorType() == ColorType.Custom.ordinal() ? y + 23 : y;
 
                 window.addLabel(new GuiNpcLabel(id(9, i), "Alpha:", 58, tempY + 5, 0xffffff));
                 textField = new GuiNpcTextField(id(9, i), this, 90, tempY, 30, 20, currentOverlay.getAlpha() + "");
@@ -161,7 +166,7 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         }
 
         if (overlay.overlays.size() >= 10) {
-            addLabel(new GuiNpcLabel(1, "WARNING: Too many overlays may cause lag or file deletion", guiLeft, guiTop - 26, 0xFF0000));
+            addLabel(new GuiNpcLabel(1, "WARNING: Too many overlays may cause lag or file deletion!",parent.guiLeft+5, guiTop - 26, 0xFF0000));
         }
 
         window.addButton(new GuiNpcButton(1, 8, y, 20, 20, "+"));
@@ -197,7 +202,7 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
 
         if (overlay.hasOverlays) {
             for (int i = 0; i < overlay.overlays.size(); i++) {
-                if (overlay.overlays.get(i).getType() != FormOverlay.Type.Face)
+                if (overlay.overlays.get(i).getType() != Face)
                     continue;
 
                 selectedFaces.add(0);
@@ -222,10 +227,10 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         }
 
         if (buttonType == 10) {
-            FormOverlay.Overlay foundOverlay = overlay.getOverlay(overlayID);
+            Overlay foundOverlay = get(overlayID);
             overlay.deleteOverlay(overlayID);
 
-            if (foundOverlay.getType() == FormOverlay.Type.Face)
+            if (foundOverlay.getType() == Face)
                 selectedFaces.remove(overlayID);
 
             rebuildSelectedFaces();
@@ -246,36 +251,36 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         }
 
         if (buttonType == 2) {
-            overlay.getOverlay(overlayID).setColorType((overlay.getOverlay(overlayID).getColorType() + 1) % FormOverlay.ColorType.values().length);
+            get(overlayID).setColorType((get(overlayID).getColorType() + 1) % ColorType.values().length);
             initGui();
         }
 
         if (buttonType == 3) {
             lastColorClicked = overlayID;
-            setSubGui(new SubGuiColorSelector(overlay.getOverlay(overlayID).getColor()));
+            setSubGui(new SubGuiColorSelector(get(overlayID).getColor()));
         }
 
         if (buttonType == 4) {
-            overlay.getOverlay(overlayID).setGlow(button.getValue() == 1);
+            get(overlayID).setGlow(button.getValue() == 1);
         }
 
         if (buttonType == 5) {
-            overlay.getOverlay(overlayID).setEnabled(button.getValue() == 1);
+            get(overlayID).setEnabled(button.getValue() == 1);
             initGui();
         }
 
         if (buttonType == 6) {
-            if (overlay.getOverlay(overlayID).getType() == FormOverlay.Type.Face) {
-                ((FormOverlay.Face) overlay.getOverlay(overlayID)).setMatchPlayerFace(button.getValue() == 1);
+            if (get(overlayID).getType() == Face) {
+                ((Face) get(overlayID)).setMatchPlayerFace(button.getValue() == 1);
                 initGui();
             }
         }
 
         if (buttonType == 7) {
-            if (overlay.getOverlay(overlayID).getType() == FormOverlay.Type.Face) {
+            if (get(overlayID).getType() == Face) {
                 selectedFaces.set(overlayID, (selectedFaces.get(overlayID) + 1) % 6);
                 GuiTextField field = window.getTextField(id(1, overlayID));
-                String texture = ((FormOverlay.Face) overlay.getOverlay(overlayID)).getTexture(selectedFaces.get(overlayID));
+                String texture = ((Face) get(overlayID)).getTexture(selectedFaces.get(overlayID));
                 field.setText(texture);
                 initGui();
             }
@@ -288,7 +293,7 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
                 FIXED
              */
 
-            FormOverlay.Overlay old = overlay.getOverlay(overlayID);
+            Overlay old = get(overlayID);
             if (old != null)
                 overlay.replaceOverlay(old, old.setType(button.getValue()));
 
@@ -321,7 +326,7 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
     public void subGuiClosed(SubGuiInterface subGuiInterface) {
         if (subGuiInterface instanceof SubGuiColorSelector) {
             int color = ((SubGuiColorSelector) subGuiInterface).color;
-            overlay.getOverlay(overlayID).setColor(color);
+            get(overlayID).setColor(color);
             initGui();
         } else if (subGuiInterface instanceof GuiOverlaySelection) {
             GuiOverlaySelection gts = (GuiOverlaySelection) subGuiInterface;
@@ -332,18 +337,20 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         }
     }
 
-    private static void setOverlay(ResourceLocation resource, boolean enable) {
-        FormOverlay.Overlay ov = overlay.getOverlay(overlayID);
-        boolean isFace = ov.getType() == FormOverlay.Type.Face;
+    private Overlay get(int id) {
+        return overlay.getOverlay(id);
+    }
 
+    private void setOverlay(ResourceLocation resource, boolean enable) {
+        Overlay ov = get(overlayID);
         int clickedTex = lastTextureClicked;
-        if (isFace) {
-            ((FormOverlay.Face) ov)
-                .setTexture(resource.toString(), ((FormOverlay.Face) ov).isMatchingPlayerFace() ? selectedFaces.get(clickedTex) : -1);
+
+        if (ov.getType() == Face) {
+            //TODO why -1 if not matching? the math max/min in the method still sets it to 0. also if -1, face.setTexture only sets faceTextures, not the main texture, is that fine?
+            ((Face) ov).setTexture(resource.toString(), ((Face) ov).isMatchingPlayerFace() ? selectedFaces.get(clickedTex) : -1);
         } else {
             ov.setTexture(resource.toString());
         }
-
 
         if (enable)
             ov.setEnabled(true);
@@ -354,14 +361,12 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         int id = textField.id;
         int fieldType = extractButtonId(id);
         overlayID = extractId(id);
-        FormOverlay.Overlay ov = overlay.getOverlay(overlayID);
-        boolean isFace = ov.getType() == FormOverlay.Type.Face;
+        Overlay ov = get(overlayID);
         String text = textField.getText();
 
         if (fieldType == 1) {
-            if (isFace) {
-                ((FormOverlay.Face) ov)
-                    .setTexture(text, ((FormOverlay.Face) ov).isMatchingPlayerFace() ? selectedFaces.get(overlayID) : -1);
+            if (ov.getType() == Face) {
+                ((Face) ov).setTexture(text, ((Face) ov).isMatchingPlayerFace() ? selectedFaces.get(overlayID) : -1);
             } else {
                 ov.setTexture(text);
             }
@@ -376,18 +381,15 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
         }
     }
 
-    private static class GuiOverlaySelection extends GuiTextureSelection {
+    private class GuiOverlaySelection extends GuiTextureSelection {
         public GuiOverlaySelection(EntityNPCInterface npc, String texture) {
             super(npc, texture);
         }
 
         @Override
         protected void actionPerformed(GuiButton guibutton) {
-            super.actionPerformed(guibutton);
-            if (guibutton.id == 2) {
-                //  this.npc.display.skinOverlayData.overlayList.put(0, new SkinOverlay(this.selectedResource.toString()));
-            }
-
+            if (this.selectedResource != null) //crashes if Done pressed when no texture selected
+                super.actionPerformed(guibutton);
             this.npc.textureLocation = null;
             this.close();
             this.parent.initGui();
@@ -395,11 +397,8 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
 
         public void customScrollClicked(int i, int j, int k, GuiCustomScroll scroll) {
             super.customScrollClicked(i, j, k, scroll);
-
-            if (scroll.id == 1) {
-                // this.npc.display.skinOverlayData.overlayList.put(0, new SkinOverlay(this.selectedResource.toString()));
+            if (scroll.id == 1)
                 setOverlay(selectedResource, true);
-            }
         }
     }
 }
