@@ -61,7 +61,6 @@ public class FormOverlay {
     public void setOverlay(Overlay overlay) {
         if (overlay != null)
             this.overlays.add(overlay);
-        save();
     }
 
     public boolean hasOverlay(int id) {
@@ -73,7 +72,6 @@ public class FormOverlay {
             return;
 
         this.overlays.remove(id);
-        save();
     }
 
     public void replaceOverlay(Overlay oldOverlay, Overlay newOverlay) {
@@ -89,19 +87,12 @@ public class FormOverlay {
     public void addOverlay(int type) {
         if (type < Type.values().length)
             this.overlays.add(Type.getOverlayByType(type));
-
-        save();
     }
 
     public List<Overlay> getOverlays() {
         return this.overlays;
     }
 
-    public FormOverlay save() {
-        if (parent != null)
-            parent.save();
-        return this;
-    }
 
     public static class Overlay {
         public String texture = "";
