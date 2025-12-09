@@ -38,7 +38,11 @@ import noppes.npcs.entity.data.ModelScalePart;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Unique;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+
+import static kamkeel.npcdbc.data.form.OverlayManager.Type.*;
 
 public class ModelDBC extends ModelBase {
 
@@ -67,8 +71,10 @@ public class ModelDBC extends ModelBase {
     public ModelRenderer eyebase;
     public ModelRenderer eyebrow;
 
-    private String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
-    private String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+    public static boolean HD = ConfigDBCClient.EnableHDTextures;
+    private static String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
+    private static String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
+    public static String PATH = HD ? HDDir : SDDir;
     public DBCDisplay display;
 
     public final boolean alexArms;
@@ -656,9 +662,19 @@ public class ModelDBC extends ModelBase {
     public RenderingData currentRenderingData;
     @Unique
     public void renderFormOverlays(Form form, DBCDisplay display, ModelRenderer model, Set<OverlayManager.Type> allowedTypes) {
-        OverlayManager overlayData = form.display.overlays;
+        List<OverlayManager> managers = new ArrayList<>();
+        display.furType = 2;
+        OverlayManager Savior = new OverlayManager();
+        Savior.add(ALL).texture((texture, data, overlay) -> PATH + "ssj4/ss4b" + data.display.furType + ".png").colorType(OverlayManager.ColorType.Hair);
+        Savior.add(Face).texture(PATH + "savior/savioreyes.png").colorType(OverlayManager.ColorType.Fur);
+        Savior.add(Face).texture(PATH + "savior/saviormouth.png").color(0Xffffff);
+        Savior.add(Chest).texture(PATH + "savior/saviorchest.png").colorType(OverlayManager.ColorType.Hair);
 
-        for (OverlayManager.Overlay overlay : overlayData.getOverlays().toArray(new OverlayManager.Overlay[0])) {
+        managers.add(form.display.overlays);
+        managers.add(Savior);
+
+        for (OverlayManager manager : managers) {
+            for (OverlayManager.Overlay overlay : manager.overlays) {//overlayData.getOverlays()
             if (overlay.isEnabled() && allowedTypes.contains(overlay.getType())) {
                 boolean isFace = overlay.getType() == OverlayManager.Type.Face;
                 String texture;
@@ -670,15 +686,17 @@ public class ModelDBC extends ModelBase {
                 }
 
                 if (overlay.applyTexture != null)
-                    texture = overlay.applyTexture(texture, currentRenderingData);
+                    texture = overlay.texture(texture, currentRenderingData);
 
                 ImageData imageData = ClientCacheHandler.getImageData(texture);
                 if (imageData == null || !imageData.imageLoaded())
                     continue;
 
                 int color = getProperColor(form.display, display, overlay.getColor(), overlay.colorType);
+                Color finalColor = new Color(color, overlay.alpha);
 
-                Color finalColor = overlay.applyColor(color, overlay.alpha, currentRenderingData);
+                if (overlay.applyColor != null)
+                    finalColor = overlay.color(color, overlay.alpha, currentRenderingData);
 
                 if (!bindImageDataTexture(imageData))
                     continue;
@@ -698,6 +716,7 @@ public class ModelDBC extends ModelBase {
                     if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI
                         Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
                 }
+            }
             }
         }
     }
