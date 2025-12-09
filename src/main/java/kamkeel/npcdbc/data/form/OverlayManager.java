@@ -1,5 +1,10 @@
 package kamkeel.npcdbc.data.form;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.utils.Color;
+import kamkeel.npcdbc.data.RenderingData;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 
@@ -15,28 +20,24 @@ public class OverlayManager {
         this.overlays = new ArrayList<>();
     }
 
-    public Overlay add(Type type) {
-        Overlay o = type.create().manager(this);
-        this.overlays.add(o);
-        return o;
+    public OverlayManager add(Type type) {
+        this.overlays.add(type.create().manager(this));
+        return this;
     }
 
-    public Overlay add(Type type, String texture) {
-        Overlay o = type.create().manager(this).texture(texture);
-        this.overlays.add(o);
-        return o;
+    public OverlayManager add(Type type, String texture) {
+        this.overlays.add(type.create().manager(this).texture(texture));
+        return this;
     }
 
-    public Overlay add(Type type, String texture, ColorType colorType) {
-        Overlay o = type.create().manager(this).texture(texture).colorType(colorType);
-        this.overlays.add(o);
-        return o;
+    public OverlayManager add(Type type, String texture, ColorType colorType) {
+        this.overlays.add(type.create().manager(this).texture(texture).colorType(colorType));
+        return this;
     }
 
-    public Overlay add(Type type, String texture, ColorType colorType, boolean glow) {
-        Overlay o = type.create().manager(this).texture(texture).colorType(colorType).glow(glow);
-        this.overlays.add(o);
-        return o.color(0xffffff);
+    public OverlayManager add(Type type, String texture, ColorType colorType, boolean glow) {
+        this.overlays.add(type.create().manager(this).texture(texture).colorType(colorType).glow(glow));
+        return this;
     }
 
     public Overlay get(int id) {
@@ -105,30 +106,71 @@ public class OverlayManager {
         public boolean glow = false;
         public boolean enabled = true;
 
+        public TextureFunction applyTexture;
+        public ColorFunction applyColor;
         public Overlay(){}
 
-        public Overlay add(Type type) {
-            Overlay o = type.create().manager(manager);
-            manager.overlays.add(o);
-            return o;
+        /*
+        public Overlay(String texture) {
+            this.texture = texture;
         }
 
-        public Overlay add(Type type, String texture) {
-            Overlay o = type.create().manager(manager).texture(texture);
-            manager.overlays.add(o);
-            return o;
+        public Overlay(String texture, ColorType colorType) {
+            this.texture = texture;
+            this.colorType = colorType;
         }
 
-        public Overlay add(Type type, String texture, ColorType colorType) {
-            Overlay o = type.create().manager(manager).texture(texture).colorType(colorType);
-            manager.overlays.add(o);
-            return o;
+        public Overlay(String texture, ColorType colorType, int color) {
+            this.texture = texture;
+            this.colorType = colorType;
+            this.color = color;
         }
 
-        public Overlay add(Type type, String texture, ColorType colorType, boolean glow) {
-            Overlay o = type.create().manager(manager).texture(texture).colorType(colorType).glow(glow);
-            manager.overlays.add(o);
-            return o;
+        public Overlay(String texture, ColorType colorType, boolean glow) {
+            this.texture = texture;
+            this.colorType = colorType;
+            this.glow = glow;
+        }
+        */
+
+        public Overlay applyTexture(TextureFunction function) {
+            applyTexture = function;
+            return this;
+        }
+
+        @SideOnly(Side.CLIENT)
+        public String applyTexture(String texture,  RenderingData data) {
+            return applyTexture.invoke(texture,data, this);
+        }
+
+        public Overlay applyColor(ColorFunction function) {
+            applyColor = function;
+            return this;
+        }
+
+        @SideOnly(Side.CLIENT)
+        public Color applyColor(int color, float alpha,RenderingData data) {
+            return applyColor.invoke(color, alpha, data, this);
+        }
+
+        public OverlayManager add(Type type) {
+            manager.overlays.add(type.create().manager(manager));
+            return manager;
+        }
+
+        public OverlayManager add(Type type, String texture) {
+            manager.overlays.add(type.create().manager(manager).texture(texture));
+            return manager;
+        }
+
+        public OverlayManager add(Type type, String texture, ColorType colorType) {
+            manager.overlays.add(type.create().manager(manager).texture(texture).colorType(colorType));
+            return manager;
+        }
+
+        public OverlayManager add(Type type, String texture, ColorType colorType, boolean glow) {
+            manager.overlays.add(type.create().manager(manager).texture(texture).colorType(colorType).glow(glow));
+            return manager;
         }
 
         public OverlayManager getManager() {
@@ -406,5 +448,13 @@ public class OverlayManager {
 
             return null;
         }
+    }
+
+    public interface TextureFunction {
+        String invoke(String texture, RenderingData data, Overlay overlay);
+    }
+
+    public interface ColorFunction {
+        Color invoke(int color, float alpha, RenderingData data, Overlay overlay);
     }
 }

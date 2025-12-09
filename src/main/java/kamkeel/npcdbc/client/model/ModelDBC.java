@@ -11,6 +11,7 @@ import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
+import kamkeel.npcdbc.data.RenderingData;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.form.Form;
@@ -381,11 +382,10 @@ public class ModelDBC extends ModelBase {
             furColor : customColor;
     }
 
-    private boolean bindImageDataTexture(ImageData data, int color, float alpha) {
+    private boolean bindImageDataTexture(ImageData data) {
         ResourceLocation location = data.getLocation();
         if (location != null && !data.invalid()) {
             try {
-                ColorMode.applyModelColor(color,alpha,isHurt);
                 ClientProxy.bindTexture(location);
                 return true;
             } catch (Exception exception) {
@@ -653,6 +653,7 @@ public class ModelDBC extends ModelBase {
         }
     }
 
+    public RenderingData currentRenderingData;
     @Unique
     public void renderFormOverlays(Form form, DBCDisplay display, ModelRenderer model, Set<OverlayManager.Type> allowedTypes) {
         OverlayManager overlayData = form.display.overlays;
@@ -668,14 +669,21 @@ public class ModelDBC extends ModelBase {
                     texture = overlay.getTexture();
                 }
 
+                if (overlay.applyTexture != null)
+                    texture = overlay.applyTexture(texture, currentRenderingData);
+
                 ImageData imageData = ClientCacheHandler.getImageData(texture);
                 if (imageData == null || !imageData.imageLoaded())
                     continue;
 
                 int color = getProperColor(form.display, display, overlay.getColor(), overlay.colorType);
 
-                if (!bindImageDataTexture(imageData, color, overlay.getAlpha()))
+                Color finalColor = overlay.applyColor(color, overlay.alpha, currentRenderingData);
+
+                if (!bindImageDataTexture(imageData))
                     continue;
+
+                ColorMode.applyModelColor(finalColor.color, finalColor.alpha, isHurt);
 
                 boolean glow = overlay.isGlow();
                 if (glow) {

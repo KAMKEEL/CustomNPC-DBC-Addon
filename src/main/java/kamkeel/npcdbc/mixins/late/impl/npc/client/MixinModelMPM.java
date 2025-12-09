@@ -5,6 +5,7 @@ import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.render.OutlineRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
+import kamkeel.npcdbc.data.RenderingData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -128,6 +129,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
         if (!isArmor && display.enabled) {
             form = display.getForm();
             if (form != null && form.display.overlays.enabled) {
+                NPCDBCModel.currentRenderingData = RenderingData.from(display);
                 NPCDBCModel.DBCHair.isHidden = true; //Hair renders by default with head, so not needed in overlay
                 NPCDBCModel.renderFormOverlays(form, display, bipedHead, EnumSet.of(ALL, Face));
                 NPCDBCModel.DBCHair.isHidden = false;
