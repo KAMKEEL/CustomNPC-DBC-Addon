@@ -37,6 +37,8 @@ import noppes.npcs.entity.data.ModelScalePart;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Unique;
 
+import java.util.Set;
+
 public class ModelDBC extends ModelBase {
 
     private final ModelMPM parent;
@@ -652,11 +654,11 @@ public class ModelDBC extends ModelBase {
     }
 
     @Unique
-    public void renderFormOverlays(Form form, DBCDisplay display, ModelRenderer model) {
+    public void renderFormOverlays(Form form, DBCDisplay display, ModelRenderer model, Set<FormOverlay.Type> allowedTypes) {
         FormOverlay overlayData = form.display.overlays;
 
         for (FormOverlay.Overlay overlay : overlayData.getOverlays().toArray(new FormOverlay.Overlay[0])) {
-            if (overlay.isEnabled()) {
+            if (overlay.isEnabled() && allowedTypes.contains(overlay.getType())) {
                 boolean isFace = overlay.getType() == FormOverlay.Type.Face;
                 String texture;
 

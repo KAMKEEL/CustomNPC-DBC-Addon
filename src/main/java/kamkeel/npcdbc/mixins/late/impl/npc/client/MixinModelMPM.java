@@ -24,8 +24,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.EnumSet;
+
 import static kamkeel.npcdbc.client.shader.PostProcessing.*;
 import static org.lwjgl.opengl.GL11.*;
+import static kamkeel.npcdbc.data.form.FormOverlay.Type.*;
 
 @Mixin(value = ModelMPM.class, remap = false)
 public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
@@ -126,7 +129,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
             form = display.getForm();
             if (form != null && form.display.overlays.hasOverlays) {
                 NPCDBCModel.DBCHair.isHidden = true; //Hair renders by default with head, so not needed in overlay
-                NPCDBCModel.renderFormOverlays(form, display, bipedHead);
+                NPCDBCModel.renderFormOverlays(form, display, bipedHead, EnumSet.of(Face));
                 NPCDBCModel.DBCHair.isHidden = false;
             }
         }
@@ -144,7 +147,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     private void postRenderDBCBody(EntityCustomNpc entity, float f, CallbackInfo ci) {
         if (!isArmor && display.enabled) {
             if (form != null && form.display.overlays.hasOverlays) {
-                NPCDBCModel.renderFormOverlays(form, display, bipedBody);
+                NPCDBCModel.renderFormOverlays(form, display, bipedBody, EnumSet.of(Body));
             }
         }
     }
@@ -161,7 +164,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     private void postRenderDBCLegs(EntityCustomNpc entity, float f, CallbackInfo ci) {
         if (!isArmor && display.enabled) {
             if (form != null && form.display.overlays.hasOverlays) {
-                NPCDBCModel.renderFormOverlays(form, display, legs);
+                NPCDBCModel.renderFormOverlays(form, display, legs, EnumSet.of(Body));
             }
         }
     }
@@ -178,7 +181,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     private void postRenderDBCLeftArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
         if (!isArmor && display.enabled) {
             if (form != null && form.display.overlays.hasOverlays) {
-                NPCDBCModel.renderFormOverlays(form, display, bipedLeftArm);
+                NPCDBCModel.renderFormOverlays(form, display, bipedLeftArm, EnumSet.of(Body));
             }
         }
     }
@@ -195,7 +198,7 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     private void postRenderDBCRightArm(EntityCustomNpc entity, float f, boolean bo, CallbackInfo ci) {
         if (!isArmor && display.enabled) {
             if (form != null && form.display.overlays.hasOverlays) {
-                NPCDBCModel.renderFormOverlays(form, display, bipedRightArm);
+                NPCDBCModel.renderFormOverlays(form, display, bipedRightArm, EnumSet.of(Body));
             }
         }
     }
