@@ -4,13 +4,12 @@ import kamkeel.npcdbc.api.aura.IAura;
 import kamkeel.npcdbc.client.gui.component.SubGuiFormFaceParts;
 import kamkeel.npcdbc.client.gui.component.SubGuiOverlays;
 import kamkeel.npcdbc.client.gui.component.SubGuiSelectAura;
-import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
-import kamkeel.npcdbc.data.form.FormOverlay;
+import kamkeel.npcdbc.data.form.OverlayManager;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -37,7 +36,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     private final GuiNpcFormMenu menu;
     public Form form;
     public FormDisplay display;
-    public FormOverlay overlay;
+    public OverlayManager overlays;
     private final DBCDisplay visualDisplay;
     public EntityCustomNpc npc;
 
@@ -61,7 +60,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         this.npc = (EntityCustomNpc) parent.npc;
         this.form = parent.form;
         this.display = parent.display;
-        this.overlay = display.overlays;
+        this.overlays = display.overlays;
         this.visualDisplay = parent.visualDisplay;
 
         setBackground("menubg.png");
@@ -264,9 +263,9 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         y += 30;
 
         window.addLabel(new GuiNpcLabel(117, "display.overlays", x, y, 0xFFFFFF));
-        window.addButton(new GuiNpcButtonYesNo(117, width - x - 75, y - 5, 50, 20, overlay.hasOverlays));
+        window.addButton(new GuiNpcButtonYesNo(117, width - x - 75, y - 5, 50, 20, overlays.enabled));
 
-        if (overlay.hasOverlays) {
+        if (overlays.enabled) {
             y+= 25;
 
             window.addButton(new GuiNpcButton(118, width - x - 75, y - 5, 50, 20, "Edit"));
@@ -527,7 +526,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         // Form Overlays
         if (button.id == 117) {
-            overlay.hasOverlays = button.getValue() == 1;
+            overlays.enabled = button.getValue() == 1;
             updateButtons();
         }
 

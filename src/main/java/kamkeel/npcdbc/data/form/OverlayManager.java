@@ -6,21 +6,46 @@ import net.minecraftforge.common.util.Constants;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class FormOverlay {
-
-    private final FormDisplay parent;
+public class OverlayManager {
 
     public final ArrayList<Overlay> overlays;
 
-    public boolean hasOverlays = false;
+    public boolean enabled = false;
 
-    public FormOverlay(FormDisplay parent) {
-        this.parent = parent;
+    public OverlayManager() {
         this.overlays = new ArrayList<>();
     }
 
+    public OverlayManager add(Type type) {
+        this.overlays.add(type.create());
+        return this;
+    }
+
+    public Overlay get(int id) {
+        if (id < this.overlays.size())
+            return this.overlays.get(id);
+        return null;
+    }
+
+    public Overlay deleteOverlay(int id) {
+        if (id >= this.overlays.size())
+            return null;
+
+        return this.overlays.remove(id);
+    }
+
+    public void replaceOverlay(Overlay oldOverlay, Overlay newOverlay) {
+        int index = overlays.indexOf(oldOverlay);
+        if (index != -1)
+            overlays.set(index, newOverlay);
+    }
+
+    public List<Overlay> getOverlays() {
+        return this.overlays;
+    }
+
     public void readFromNBT(NBTTagCompound compound) {
-        hasOverlays = compound.getBoolean("hasOverlays");
+        enabled = compound.getBoolean("hasOverlays");
 
         NBTTagCompound rendering = compound.getCompoundTag("overlayData");
 
@@ -29,7 +54,7 @@ public class FormOverlay {
             NBTTagCompound overlayCompound = rendering.getCompoundTag("overlay" + i);
 
             int type = overlayCompound.hasKey("type", Constants.NBT.TAG_INT) ? overlayCompound.getInteger("type") : 0;
-            Overlay overlay = Type.getOverlayByType(type);
+            Overlay overlay = Type.create(type);
 
             if (overlay != null) {
                 overlay.readFromNBT(overlayCompound);
@@ -40,7 +65,7 @@ public class FormOverlay {
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setBoolean("hasOverlays", hasOverlays);
+        compound.setBoolean("hasOverlays", enabled);
 
         NBTTagCompound rendering = new NBTTagCompound();
 
@@ -51,48 +76,6 @@ public class FormOverlay {
         compound.setTag("overlayData", rendering);
         return compound;
     }
-
-    public Overlay getOverlay(int id) {
-        if (id < this.overlays.size())
-            return this.overlays.get(id);
-        return null;
-    }
-
-    public void setOverlay(Overlay overlay) {
-        if (overlay != null)
-            this.overlays.add(overlay);
-    }
-
-    public boolean hasOverlay(int id) {
-        return id < this.overlays.size() && this.overlays.get(id) != null;
-    }
-
-    public void deleteOverlay(int id) {
-        if (id >= this.overlays.size())
-            return;
-
-        this.overlays.remove(id);
-    }
-
-    public void replaceOverlay(Overlay oldOverlay, Overlay newOverlay) {
-        int index = overlays.indexOf(oldOverlay);
-        if (index != -1)
-            overlays.set(index, newOverlay);
-    }
-
-    public void addOverlay() {
-        addOverlay(0);
-    }
-
-    public void addOverlay(int type) {
-        if (type < Type.values().length)
-            this.overlays.add(Type.getOverlayByType(type));
-    }
-
-    public List<Overlay> getOverlays() {
-        return this.overlays;
-    }
-
 
     public static class Overlay {
         public String texture = "";
@@ -220,6 +203,41 @@ public class FormOverlay {
             }
             return this;
         }
+
+        public void readFromNBT(NBTTagCompound compound) {
+            enabled = compound.getBoolean("enabled");
+
+            texture = compound.getString("texture");
+
+            colorType = ColorType.values()[compound.getInteger("colorType")];
+            type = Type.values()[compound.getInteger("type")];
+
+            if (colorType != ColorType.Custom) {
+                color = 0xffffff;
+            } else {
+                color = compound.hasKey("color") ? compound.getInteger("color") : 0xffffff;
+            }
+
+            alpha = compound.hasKey("alpha") ? compound.getFloat("alpha") : 1;
+            glow = compound.hasKey("glow") && compound.getBoolean("glow");
+        }
+
+        public NBTTagCompound writeToNBT() {
+            NBTTagCompound compound = new NBTTagCompound();
+
+            compound.setBoolean("enabled", enabled);
+
+            compound.setInteger("colorType", colorType.ordinal());
+            compound.setInteger("type", type.ordinal());
+
+            compound.setString("texture", texture);
+            compound.setInteger("color", color);
+            compound.setFloat("alpha", alpha);
+            compound.setBoolean("glow", glow);
+
+            return compound;
+        }
+
 
     }
 
@@ -353,7 +371,7 @@ public class FormOverlay {
             return factory.get();
         }
 
-        public static Overlay getOverlayByType(int type) {
+        public static Overlay create(int type) {
             if (type <= Type.values().length)
                 return Type.values()[type].create();
 

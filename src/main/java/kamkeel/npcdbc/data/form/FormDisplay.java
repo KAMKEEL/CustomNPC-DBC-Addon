@@ -41,7 +41,7 @@ public class FormDisplay implements IFormDisplay {
     public boolean isCustomizable = false;
 
     public BodyColor bodyColors = new BodyColor();
-    public FormOverlay overlays = new FormOverlay(this);
+    public OverlayManager overlays = new OverlayManager();
     public FormFaceData faceData = new FormFaceData();
 
     public int auraID = -1, outlineID = -1;

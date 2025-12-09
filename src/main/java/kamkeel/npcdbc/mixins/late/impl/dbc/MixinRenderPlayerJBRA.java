@@ -22,7 +22,7 @@ import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormFaceData;
-import kamkeel.npcdbc.data.form.FormOverlay;
+import kamkeel.npcdbc.data.form.OverlayManager;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.client.Minecraft;
@@ -308,7 +308,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
         if (form == null) return;
 
-        if (form.display.overlays.hasOverlays) {
+        if (form.display.overlays.enabled) {
             renderOverlays(par1AbstractClientPlayer, form, gender.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, data);
         }
     }
@@ -434,15 +434,15 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     private void renderOverlays(AbstractClientPlayer player, Form form, int gender, int eyes, int bodyCM, int defaultHairColor, DBCData data) {
         FormDisplay displayData = form.display;
-        FormOverlay overlayData = displayData.overlays;
+        OverlayManager overlayData = displayData.overlays;
 
-        for (FormOverlay.Overlay overlay : overlayData.getOverlays().toArray(new FormOverlay.Overlay[0])) {
+        for (OverlayManager.Overlay overlay : overlayData.getOverlays().toArray(new OverlayManager.Overlay[0])) {
             if (overlay.isEnabled()) {
-                boolean isFace = overlay.getType() == FormOverlay.Type.Face;
+                boolean isFace = overlay.getType() == OverlayManager.Type.Face;
                 String texture;
 
                 if (isFace) {
-                    texture = ((FormOverlay.Face) overlay).getTexture(eyes);
+                    texture = ((OverlayManager.Face) overlay).getTexture(eyes);
                 } else {
                     texture = overlay.getTexture();
                 }
@@ -455,10 +455,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
                 int eyeColor = data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
 
-                int color = overlay.getColorType() == FormOverlay.ColorType.Body.ordinal() ?
-                    bodyCM : overlay.getColorType() == FormOverlay.ColorType.Eye.ordinal() ?
-                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : overlay.getColorType() == FormOverlay.ColorType.Hair.ordinal() ?
-                    (hairColor < 0 ? defaultHairColor : hairColor) : overlay.getColorType() == FormOverlay.ColorType.Fur.ordinal() ?
+                int color = overlay.getColorType() == OverlayManager.ColorType.Body.ordinal() ?
+                    bodyCM : overlay.getColorType() == OverlayManager.ColorType.Eye.ordinal() ?
+                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : overlay.getColorType() == OverlayManager.ColorType.Hair.ordinal() ?
+                    (hairColor < 0 ? defaultHairColor : hairColor) : overlay.getColorType() == OverlayManager.ColorType.Fur.ordinal() ?
                     furColor : overlay.getColor();
 
                 if (!bindImageDataTexture(imageData, color))

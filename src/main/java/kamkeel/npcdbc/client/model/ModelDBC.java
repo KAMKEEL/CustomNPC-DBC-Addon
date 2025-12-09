@@ -7,7 +7,6 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
-import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -17,7 +16,7 @@ import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormFaceData;
-import kamkeel.npcdbc.data.form.FormOverlay;
+import kamkeel.npcdbc.data.form.OverlayManager;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -365,7 +364,7 @@ public class ModelDBC extends ModelBase {
         }
     }
 
-    private static int getProperColor(FormDisplay display, DBCDisplay npcDisplay, int customColor, FormOverlay.ColorType colorType) {
+    private static int getProperColor(FormDisplay display, DBCDisplay npcDisplay, int customColor, OverlayManager.ColorType colorType) {
         int furColor = display.bodyColors.furColor;
         int hairColor = display.bodyColors.hairColor;
         int eyeColor = display.bodyColors.eyeColor;
@@ -375,10 +374,10 @@ public class ModelDBC extends ModelBase {
          * Check how it's done in renderFaceSkin:166 within the if (form != null) block
          */
 
-        return colorType == FormOverlay.ColorType.Body ?
-            npcDisplay.bodyCM : colorType == FormOverlay.ColorType.Eye ?
-            eyeColor : colorType == FormOverlay.ColorType.Hair ?
-            hairColor : colorType == FormOverlay.ColorType.Fur ?
+        return colorType == OverlayManager.ColorType.Body ?
+            npcDisplay.bodyCM : colorType == OverlayManager.ColorType.Eye ?
+            eyeColor : colorType == OverlayManager.ColorType.Hair ?
+            hairColor : colorType == OverlayManager.ColorType.Fur ?
             furColor : customColor;
     }
 
@@ -386,7 +385,7 @@ public class ModelDBC extends ModelBase {
         ResourceLocation location = data.getLocation();
         if (location != null && !data.invalid()) {
             try {
-                ColorMode.glColorInt(color, alpha);
+                ColorMode.applyModelColor(color,alpha,isHurt);
                 ClientProxy.bindTexture(location);
                 return true;
             } catch (Exception exception) {
@@ -655,16 +654,16 @@ public class ModelDBC extends ModelBase {
     }
 
     @Unique
-    public void renderFormOverlays(Form form, DBCDisplay display, ModelRenderer model, Set<FormOverlay.Type> allowedTypes) {
-        FormOverlay overlayData = form.display.overlays;
+    public void renderFormOverlays(Form form, DBCDisplay display, ModelRenderer model, Set<OverlayManager.Type> allowedTypes) {
+        OverlayManager overlayData = form.display.overlays;
 
-        for (FormOverlay.Overlay overlay : overlayData.getOverlays().toArray(new FormOverlay.Overlay[0])) {
+        for (OverlayManager.Overlay overlay : overlayData.getOverlays().toArray(new OverlayManager.Overlay[0])) {
             if (overlay.isEnabled() && allowedTypes.contains(overlay.getType())) {
-                boolean isFace = overlay.getType() == FormOverlay.Type.Face;
+                boolean isFace = overlay.getType() == OverlayManager.Type.Face;
                 String texture;
 
                 if (isFace) {
-                    texture = ((FormOverlay.Face) overlay).getTexture(display.eyeType);
+                    texture = ((OverlayManager.Face) overlay).getTexture(display.eyeType);
                 } else {
                     texture = overlay.getTexture();
                 }

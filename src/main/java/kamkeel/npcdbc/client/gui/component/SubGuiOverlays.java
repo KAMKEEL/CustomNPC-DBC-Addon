@@ -2,10 +2,10 @@ package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.client.gui.global.form.SubGuiFormDisplay;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.form.FormOverlay;
-import kamkeel.npcdbc.data.form.FormOverlay.ColorType;
-import kamkeel.npcdbc.data.form.FormOverlay.Face;
-import kamkeel.npcdbc.data.form.FormOverlay.Overlay;
+import kamkeel.npcdbc.data.form.OverlayManager;
+import kamkeel.npcdbc.data.form.OverlayManager.ColorType;
+import kamkeel.npcdbc.data.form.OverlayManager.Face;
+import kamkeel.npcdbc.data.form.OverlayManager.Overlay;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import noppes.npcs.client.gui.SubGuiColorSelector;
@@ -15,12 +15,13 @@ import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.ArrayList;
 
-import static kamkeel.npcdbc.data.form.FormOverlay.Type.Face;
+import static kamkeel.npcdbc.data.form.OverlayManager.Type.ALL;
+import static kamkeel.npcdbc.data.form.OverlayManager.Type.Face;
 
 public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, ITextfieldListener {
     public SubGuiFormDisplay parent;
     public Form form;
-    public static FormOverlay overlay;
+    public static OverlayManager overlays;
     public static ArrayList<Integer> selectedFaces = new ArrayList<>();
     public int lastColorClicked = 0;
     public static int lastTextureClicked = 0;
@@ -32,11 +33,11 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
     public SubGuiOverlays(SubGuiFormDisplay parent) {
         this.parent = parent;
         this.form = parent.form;
-        overlay = form.display.overlays;
+        overlays = form.display.overlays;
         this.npc = parent.npc;
 
-        if (overlay.hasOverlays) {
-            for (int i = 0; i < overlay.overlays.size(); i++) {
+        if (overlays.enabled) {
+            for (int i = 0; i < overlays.overlays.size(); i++) {
                 selectedFaces.add(0);
             }
         } else {
@@ -80,7 +81,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
         y = 10;
 
-        for (int i = 0; i < overlay.overlays.size(); i++) {
+        for (int i = 0; i < overlays.overlays.size(); i++) {
             Overlay currentOverlay = get(i);
             Face faceOverlay = null;
             GuiNpcButton button;
@@ -163,7 +164,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             y += 35;
         }
 
-        if (overlay.overlays.size() >= 10) {
+        if (overlays.overlays.size() >= 10) {
             addLabel(new GuiNpcLabel(1, "WARNING: Too many overlays may cause lag or file deletion!",parent.guiLeft+5, guiTop - 26, 0xFF0000));
         }
 
@@ -198,9 +199,9 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
     private void rebuildSelectedFaces() {
         selectedFaces.clear();
 
-        if (overlay.hasOverlays) {
-            for (int i = 0; i < overlay.overlays.size(); i++) {
-                if (overlay.overlays.get(i).getType() != Face)
+        if (overlays.enabled) {
+            for (int i = 0; i < overlays.overlays.size(); i++) {
+                if (overlays.overlays.get(i).getType() != Face)
                     continue;
 
                 selectedFaces.add(0);
@@ -219,14 +220,14 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         overlayID = extractId(id);
 
         if (id == 1) {
-            overlay.addOverlay();
+            overlays.add(ALL);
             rebuildSelectedFaces();
             initGui();
         }
 
         if (buttonType == 10) {
             Overlay foundOverlay = get(overlayID);
-            overlay.deleteOverlay(overlayID);
+            overlays.deleteOverlay(overlayID);
 
             if (foundOverlay.getType() == Face)
                 selectedFaces.remove(overlayID);
@@ -293,7 +294,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
             Overlay old = get(overlayID);
             if (old != null)
-                overlay.replaceOverlay(old, old.setType(button.getValue()));
+                overlays.replaceOverlay(old, old.setType(button.getValue()));
 
             /*
             This bugs out with calling initGui() right after
@@ -329,7 +330,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
     }
 
     private Overlay get(int id) {
-        return overlay.getOverlay(id);
+        return overlays.get(id);
     }
 
     private void setTexture(String texture, boolean enable) {
