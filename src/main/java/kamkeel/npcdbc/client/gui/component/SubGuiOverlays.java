@@ -339,6 +339,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         if (ov.getType() == Face) {
             //TODO why -1 if not matching? the math max/min in the method still sets it to 0. also if -1, face.setTexture only sets faceTextures, not the main texture, is that fine?
             ((Face) ov).setTexture(texture, ((Face) ov).isMatchingPlayerFace() ? selectedFaces.get(clickedTex) : -1);
+            ov.setTexture(texture);
         } else {
             ov.setTexture(texture);
         }
