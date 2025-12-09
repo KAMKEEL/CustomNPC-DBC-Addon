@@ -9,16 +9,34 @@ import java.util.function.Supplier;
 public class OverlayManager {
 
     public final ArrayList<Overlay> overlays;
-
     public boolean enabled = false;
 
     public OverlayManager() {
         this.overlays = new ArrayList<>();
     }
 
-    public OverlayManager add(Type type) {
-        this.overlays.add(type.create());
-        return this;
+    public Overlay add(Type type) {
+        Overlay o = type.create().manager(this);
+        this.overlays.add(o);
+        return o;
+    }
+
+    public Overlay add(Type type, String texture) {
+        Overlay o = type.create().manager(this).texture(texture);
+        this.overlays.add(o);
+        return o;
+    }
+
+    public Overlay add(Type type, String texture, ColorType colorType) {
+        Overlay o = type.create().manager(this).texture(texture).colorType(colorType);
+        this.overlays.add(o);
+        return o;
+    }
+
+    public Overlay add(Type type, String texture, ColorType colorType, boolean glow) {
+        Overlay o = type.create().manager(this).texture(texture).colorType(colorType).glow(glow);
+        this.overlays.add(o);
+        return o.color(0xffffff);
     }
 
     public Overlay get(int id) {
@@ -78,6 +96,7 @@ public class OverlayManager {
     }
 
     public static class Overlay {
+        public OverlayManager manager;
         public String texture = "";
         public ColorType colorType = ColorType.Custom;
         public Type type = Type.ALL;
@@ -88,66 +107,62 @@ public class OverlayManager {
 
         public Overlay(){}
 
-        public void readFromNBT(NBTTagCompound compound) {
-            enabled = compound.getBoolean("enabled");
-
-            texture = compound.getString("texture");
-
-            colorType = ColorType.values()[compound.getInteger("colorType")];
-            type = Type.values()[compound.getInteger("type")];
-
-            if (colorType != ColorType.Custom) {
-                color = 0xffffff;
-            } else {
-                color = compound.hasKey("color") ? compound.getInteger("color") : 0xffffff;
-            }
-
-            alpha = compound.hasKey("alpha") ? compound.getFloat("alpha") : 1;
-            glow = compound.hasKey("glow") && compound.getBoolean("glow");
+        public Overlay add(Type type) {
+            Overlay o = type.create().manager(manager);
+            manager.overlays.add(o);
+            return o;
         }
 
-        public NBTTagCompound writeToNBT() {
-            NBTTagCompound compound = new NBTTagCompound();
+        public Overlay add(Type type, String texture) {
+            Overlay o = type.create().manager(manager).texture(texture);
+            manager.overlays.add(o);
+            return o;
+        }
 
-            compound.setBoolean("enabled", enabled);
+        public Overlay add(Type type, String texture, ColorType colorType) {
+            Overlay o = type.create().manager(manager).texture(texture).colorType(colorType);
+            manager.overlays.add(o);
+            return o;
+        }
 
-            compound.setInteger("colorType", colorType.ordinal());
-            compound.setInteger("type", type.ordinal());
+        public Overlay add(Type type, String texture, ColorType colorType, boolean glow) {
+            Overlay o = type.create().manager(manager).texture(texture).colorType(colorType).glow(glow);
+            manager.overlays.add(o);
+            return o;
+        }
 
-            compound.setString("texture", texture);
-            compound.setInteger("color", color);
-            compound.setFloat("alpha", alpha);
-            compound.setBoolean("glow", glow);
+        public OverlayManager getManager() {
+            return manager;
+        }
 
-            return compound;
+        public Overlay manager(OverlayManager manager) {
+            this.manager = manager;
+            return this;
         }
 
         public String getTexture() {
             return texture;
         }
 
-        public void setTexture(String texture) {
+        public Overlay texture(String texture) {
             this.texture = texture;
+            return this;
         }
 
         public Type getType() {
             return this.type;
         }
 
-        /*
-        This returns the new Overlay object, which you gotta
-        manually replace in the overlays list.
-         */
-        public Overlay setType(Type type) {
+        public Overlay asType(Type type) {
             if (this.type != type)
                 return convertTo(type);
 
             return this;
         }
 
-        public Overlay setType(int type) {
+        public Overlay asType(int type) {
             if (type < Type.values().length) {
-                return setType(Type.values()[type]);
+                return asType(Type.values()[type]);
             }
 
             return this;
@@ -157,9 +172,15 @@ public class OverlayManager {
             return this.colorType.ordinal();
         }
 
-        public void setColorType(int id) {
+        public Overlay colorType(int id) {
             if (id < ColorType.values().length)
-                this.colorType = ColorType.values()[id];
+                colorType(ColorType.values()[id]);
+            return this;
+        }
+
+        public Overlay colorType(ColorType type) {
+            this.colorType = type;
+            return this;
         }
 
         public int getColor() {
@@ -170,30 +191,38 @@ public class OverlayManager {
             return glow;
         }
 
-        public void setGlow(boolean glow) {
+        public Overlay glow(boolean glow) {
             this.glow = glow;
+            return this;
         }
 
-        public void setColor(int color) {
+        public Overlay color(int color) {
             this.color = color;
+            return this;
         }
 
         public float getAlpha() {
             return this.alpha;
         }
 
-        public void setAlpha(float alpha) {
+        public Overlay alpha(float alpha) {
             this.alpha = alpha;
+            return this;
         }
 
         public boolean isEnabled() {
             return this.enabled;
         }
 
-        public void setEnabled(boolean enabled) {
+        public Overlay enabled(boolean enabled) {
             this.enabled = enabled;
+            return this;
         }
 
+        /*
+               This returns the new Overlay object, which you gotta
+               manually replace in the overlays list.
+        */
         public Overlay convertTo(Type type) {
             if (type != this.type) {
                 Overlay newO = type.create();

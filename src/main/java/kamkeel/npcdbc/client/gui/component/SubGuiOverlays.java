@@ -250,7 +250,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         }
 
         if (buttonType == 2) {
-            get(overlayID).setColorType((get(overlayID).getColorType() + 1) % ColorType.values().length);
+            get(overlayID).colorType((get(overlayID).getColorType() + 1) % ColorType.values().length);
             initGui();
         }
 
@@ -260,11 +260,11 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         }
 
         if (buttonType == 4) {
-            get(overlayID).setGlow(button.getValue() == 1);
+            get(overlayID).glow(button.getValue() == 1);
         }
 
         if (buttonType == 5) {
-            get(overlayID).setEnabled(button.getValue() == 1);
+            get(overlayID).enabled(button.getValue() == 1);
             initGui();
         }
 
@@ -294,7 +294,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
             Overlay old = get(overlayID);
             if (old != null)
-                overlays.replaceOverlay(old, old.setType(button.getValue()));
+                overlays.replaceOverlay(old, old.asType(button.getValue()));
 
             /*
             This bugs out with calling initGui() right after
@@ -324,7 +324,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
     public void subGuiClosed(SubGuiInterface subGuiInterface) {
         if (subGuiInterface instanceof SubGuiColorSelector) {
             int color = ((SubGuiColorSelector) subGuiInterface).color;
-            get(overlayID).setColor(color);
+            get(overlayID).color(color);
             initGui();
         }
     }
@@ -340,13 +340,13 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         if (ov.getType() == Face) {
             //TODO why -1 if not matching? the math max/min in the method still sets it to 0. also if -1, face.setTexture only sets faceTextures, not the main texture, is that fine?
             ((Face) ov).setTexture(texture, ((Face) ov).isMatchingPlayerFace() ? selectedFaces.get(clickedTex) : -1);
-            ov.setTexture(texture);
+            ov.texture(texture);
         } else {
-            ov.setTexture(texture);
+            ov.texture(texture);
         }
 
         if (enable)
-            ov.setEnabled(true);
+            ov.enabled(true);
     }
 
     @Override
@@ -361,13 +361,13 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             if (ov.getType() == Face) {
                 ((Face) ov).setTexture(text, ((Face) ov).isMatchingPlayerFace() ? selectedFaces.get(overlayID) : -1);
             } else {
-                ov.setTexture(text);
+                ov.texture(text);
             }
         }
 
         if (fieldType == 9) {
             try {
-                ov.setAlpha(Float.parseFloat(text));
+                ov.alpha(Float.parseFloat(text));
             } catch (NumberFormatException ignored) {
                 textField.setText("1");
             }
