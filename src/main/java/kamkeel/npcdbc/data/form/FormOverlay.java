@@ -1,7 +1,6 @@
 package kamkeel.npcdbc.data.form;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.client.model.obj.Face;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
@@ -107,7 +106,7 @@ public class FormOverlay {
     public static class Overlay {
         public String texture = "";
         public ColorType colorType = ColorType.Custom;
-        public Type type = Type.Body;
+        public Type type = Type.ALL;
         public int color = 0xffffff;
         public float alpha = 1;
         public boolean glow = false;
@@ -225,7 +224,7 @@ public class FormOverlay {
             if (type != this.type) {
                 Overlay newO = type.create();
                 newO.readFromNBT(this.writeToNBT());
-
+                newO.type = type;
                 return newO;
             }
             return this;
@@ -343,8 +342,14 @@ public class FormOverlay {
     }
 
     public enum Type {
-        Body(Overlay::new),
-        Face(Face::new);
+
+        ALL(Overlay::new),
+        Face(Face::new),
+        Chest(Overlay::new),
+        Legs(Overlay::new),
+        RightArm(Overlay::new),
+        LeftArm(Overlay::new);
+
 
         Supplier<Overlay> factory;
 

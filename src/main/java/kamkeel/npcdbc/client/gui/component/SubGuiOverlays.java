@@ -141,7 +141,7 @@ public class SubGuiOverlays extends SubGuiModelInterface implements ISubGuiListe
                 }
 
 
-                button = new GuiNpcButton(id(8, i), 5, y, 50, 20, new String[]{"Body", "Face"}, currentOverlay.getType().ordinal());
+                button = new GuiNpcButton(id(8, i), 5, y, 50, 20, new String[]{"All", "Face", "Chest", "Legs", "RightArm", "LeftArm"}, currentOverlay.getType().ordinal());
                 window.addButton(button); // id 8
 
                 int tempY = currentOverlay.getColorType() == FormOverlay.ColorType.Custom.ordinal() ? y + 23 : y;
