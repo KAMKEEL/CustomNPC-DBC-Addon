@@ -120,10 +120,16 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
             Entity attackerEntity = NoppesUtilServer.GetDamageSource(source);
             if (attackerEntity instanceof EntityPlayerMP) {
                 EntityPlayerMP ep = (EntityPlayerMP) attackerEntity;
+
                 if(ep.getHeldItem() != null && ep.getHeldItem().getItem() instanceof ItemLinked){
-                    int time = ep.getHeldItem().stackTagCompound.getCompoundTag("ItemData").getCompoundTag("LinkedData").getInteger("AttackSpeed");
-                    this.hurtResistantTime = time;
-                    this.hurtTime = time;
+                    if(ep.getHeldItem().stackTagCompound.getCompoundTag("ItemData").getCompoundTag("LinkedData").hasKey("AttackSpeed")) {
+                        int time = ep.getHeldItem().stackTagCompound.getCompoundTag("ItemData").getCompoundTag("LinkedData").getInteger("AttackSpeed");
+
+                            this.hurtResistantTime = time;
+                            this.hurtTime = time;
+                            npcdbc$shouldResetHurtTime = false;
+                            return;
+                    }
                 }
             }
             if(this.hurtResistantTime > ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE){
