@@ -1,16 +1,21 @@
 package kamkeel.npcdbc.data.overlay;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class OverlayChain {
 
     public final ArrayList<Overlay> overlays = new ArrayList<>();
 
     public String name = "";
-    public boolean enabled = false;
+    public boolean enabled = true;
+
+    public Function<OverlayContext, Boolean> condition;
 
     public OverlayChain() {
     }
@@ -22,6 +27,17 @@ public class OverlayChain {
     public static OverlayChain create(String name) {
         return new OverlayChain(name);
     }
+
+    public OverlayChain condition(Function<OverlayContext, Boolean> condition) {
+        this.condition = condition;
+        return this;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean checkCondition(OverlayContext ctx) {
+        return condition.apply(ctx);
+    }
+
 
     public Overlay add(Overlay.Type type) {
         Overlay o = type.create().chain(this);
@@ -91,6 +107,10 @@ public class OverlayChain {
 
     public List<Overlay> getOverlays() {
         return this.overlays;
+    }
+
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
     public void readFromNBT(NBTTagCompound compound) {

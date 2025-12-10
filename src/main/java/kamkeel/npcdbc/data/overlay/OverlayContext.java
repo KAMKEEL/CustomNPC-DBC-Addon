@@ -15,6 +15,7 @@ import noppes.npcs.entity.EntityNPCInterface;
 @SideOnly(Side.CLIENT)
 public class OverlayContext {
     public Overlay overlay;
+    public OverlayChain chain;
 
     public boolean isNPC;
     public EntityNPCInterface npc;
@@ -60,6 +61,10 @@ public class OverlayContext {
         return ModelBipedDBC.p;
     }
 
+    public String genderDirectory() {
+        return female() ? "/female" : "/male";
+    }
+
 
     public int eyeType() {
         return isNPC ? display.eyeType : JRMCoreH.dnsEyes(dbcData.DNS);
@@ -71,6 +76,10 @@ public class OverlayContext {
             return form.display.furType;
 
         return isNPC ? display.furType : 0;
+    }
+
+    public boolean furDaima() {
+        return furType() == 1;
     }
 
     public boolean hasFur() {

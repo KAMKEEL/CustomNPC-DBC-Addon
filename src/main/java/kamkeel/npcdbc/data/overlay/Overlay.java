@@ -6,6 +6,7 @@ import kamkeel.npcdbc.client.utils.Color;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Arrays;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Overlay {
@@ -20,6 +21,7 @@ public class Overlay {
 
     public TextureFunction applyTexture;
     public ColorFunction applyColor;
+    public Function<OverlayContext, Boolean> condition;
 
     public Overlay() {
     }
@@ -42,6 +44,16 @@ public class Overlay {
     @SideOnly(Side.CLIENT)
     public Color applyColor(int color, float alpha, OverlayContext ctx) {
         return applyColor.invoke(color, alpha, ctx);
+    }
+
+    public Overlay condition(Function<OverlayContext, Boolean> condition) {
+        this.condition = condition;
+        return this;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean checkCondition(OverlayContext ctx) {
+        return condition.apply(ctx);
     }
 
     public Overlay add(Type type) {

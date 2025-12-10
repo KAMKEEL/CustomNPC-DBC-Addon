@@ -449,11 +449,15 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
         List<OverlayChain> chains = ModelDBC.applyOverlayChains(data.getOverlayChains(), ctx);
 
         for (OverlayChain chain : chains) {
+            ctx.chain = chain;
+            if (!chain.isEnabled() || chain.condition != null && !chain.checkCondition(ctx))
+                continue;
+
             for (Overlay overlay : chain.overlays) {
-                if (!overlay.isEnabled())
+                ctx.overlay = overlay;
+                if (!overlay.isEnabled() || overlay.condition != null && !overlay.checkCondition(ctx))
                     continue;
 
-                ctx.overlay = overlay;
                 Type type = overlay.getType();
                 String texture;
 

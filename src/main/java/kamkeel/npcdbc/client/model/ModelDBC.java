@@ -7,7 +7,6 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
-import kamkeel.npcdbc.client.render.DBCOverlays;
 import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -707,11 +706,15 @@ public class ModelDBC extends ModelBase {
         List<OverlayChain> chains = applyOverlayChains(display.getOverlayChains(), ctx);
 
         for (OverlayChain chain : chains) {
+            ctx.chain = chain;
+            if (!chain.isEnabled() || chain.condition != null && !chain.checkCondition(ctx))
+                continue;
+
             for (Overlay overlay : chain.overlays) {
-                if (!overlay.isEnabled())
+                ctx.overlay = overlay;
+                if (!overlay.isEnabled() || overlay.condition != null && !overlay.checkCondition(ctx))
                     continue;
 
-                ctx.overlay = overlay;
                 Overlay.Type type = overlay.getType();
                 String texture;
 
