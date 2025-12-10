@@ -717,6 +717,7 @@ public class ModelDBC extends ModelBase {
                     }
 
                     ColorMode.applyModelColor(finalColor.color, finalColor.alpha, isHurt);
+                    //OverlayModelRenderer.render(type, parent);
                     OverlayModelRenderer.render(type, parent);
 
                     if (glow) {

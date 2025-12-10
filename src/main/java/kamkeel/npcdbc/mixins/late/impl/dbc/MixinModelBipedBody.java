@@ -2,7 +2,6 @@ package kamkeel.npcdbc.mixins.late.impl.dbc;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
-import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -62,11 +61,11 @@ public abstract class MixinModelBipedBody extends ModelBiped {
      * @author
      * @reason
      */
-    @Overwrite
-    public void renderBody(float par7) {
-        int g = OverlayModelRenderer.gender();
-        float f = OverlayModelRenderer.age();
-        int p = OverlayModelRenderer.pregnant();
+  //  @Overwrite
+    public void render2Body(float par7) {
+        int g =1;
+        float f =1;
+        int p = 0;
 
         if (g <= 1) {
             if (this.isChild) {
