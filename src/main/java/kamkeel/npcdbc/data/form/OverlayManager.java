@@ -31,14 +31,37 @@ public class OverlayManager {
         return o;
     }
 
+    public Overlay add(Type type, ColorType colorType) {
+        Overlay o = type.create().manager(this).colorType(colorType);
+        this.overlays.add(o);
+        return o;
+    }
+
+    public Overlay add(Type type, int color) {
+        Overlay o = type.create().manager(this).colorType(ColorType.Custom).color(color);
+        this.overlays.add(o);
+        return o;
+    }
     public Overlay add(Type type, String texture, ColorType colorType) {
         Overlay o = type.create().manager(this).texture(texture).colorType(colorType);
         this.overlays.add(o);
         return o;
     }
 
+    public Overlay add(Type type, String texture, int color) {
+        Overlay o = type.create().manager(this).texture(texture).colorType(ColorType.Custom).color(color);
+        this.overlays.add(o);
+        return o;
+    }
+
     public Overlay add(Type type, String texture, ColorType colorType, boolean glow) {
         Overlay o = type.create().manager(this).texture(texture).colorType(colorType).glow(glow);
+        this.overlays.add(o);
+        return o.color(0xffffff);
+    }
+
+    public Overlay add(Type type, String texture, int color, boolean glow) {
+        Overlay o = type.create().manager(this).texture(texture).colorType(ColorType.Custom).color(color).glow(glow);
         this.overlays.add(o);
         return o.color(0xffffff);
     }
@@ -113,29 +136,6 @@ public class OverlayManager {
         public ColorFunction applyColor;
         public Overlay(){}
 
-        /*
-        public Overlay(String texture) {
-            this.texture = texture;
-        }
-
-        public Overlay(String texture, ColorType colorType) {
-            this.texture = texture;
-            this.colorType = colorType;
-        }
-
-        public Overlay(String texture, ColorType colorType, int color) {
-            this.texture = texture;
-            this.colorType = colorType;
-            this.color = color;
-        }
-
-        public Overlay(String texture, ColorType colorType, boolean glow) {
-            this.texture = texture;
-            this.colorType = colorType;
-            this.glow = glow;
-        }
-        */
-
         public Overlay texture(TextureFunction function) {
             applyTexture = function;
             return this;
@@ -168,8 +168,25 @@ public class OverlayManager {
             return o;
         }
 
+        public Overlay add(Type type, ColorType colorType) {
+            Overlay o = type.create().manager(manager).colorType(colorType);
+            manager.overlays.add(o);
+            return o;
+        }
+
+        public Overlay add(Type type, int color) {
+            Overlay o = type.create().manager(manager).colorType(ColorType.Custom).color(color);
+            manager.overlays.add(o);
+            return o;
+        }
         public Overlay add(Type type, String texture, ColorType colorType) {
             Overlay o = type.create().manager(manager).texture(texture).colorType(colorType);
+            manager.overlays.add(o);
+            return o;
+        }
+
+        public Overlay add(Type type, String texture, int color) {
+            Overlay o = type.create().manager(manager).texture(texture).colorType(ColorType.Custom).color(color);
             manager.overlays.add(o);
             return o;
         }
@@ -178,6 +195,12 @@ public class OverlayManager {
             Overlay o = type.create().manager(manager).texture(texture).colorType(colorType).glow(glow);
             manager.overlays.add(o);
             return o;
+        }
+
+        public Overlay add(Type type, String texture, int color, boolean glow) {
+            Overlay o = type.create().manager(manager).texture(texture).colorType(ColorType.Custom).color(color).glow(glow);
+            manager.overlays.add(o);
+            return o.color(0xffffff);
         }
 
         public OverlayManager getManager() {
@@ -321,8 +344,6 @@ public class OverlayManager {
 
             return compound;
         }
-
-
     }
 
     public static class Face extends Overlay {
