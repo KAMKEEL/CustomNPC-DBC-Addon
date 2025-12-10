@@ -704,61 +704,60 @@ public class ModelDBC extends ModelBase {
         List<OverlayChain> chains = applyOverlayChains(form);
 
         currentRenderingData = RenderingData.from(display);
-        for (OverlayChain manager : chains) {
-            for (Overlay overlay : manager.overlays) {
-                if (overlay.isEnabled()) {
-                    Overlay.Type type = overlay.getType();
-                    String texture;
+        for (OverlayChain chain : chains) {
+            for (Overlay overlay : chain.overlays) {
+                if (!overlay.isEnabled())
+                    continue;
 
-                    if (type == Face) {
-                        texture = ((Overlay.Face) overlay).getTexture(display.eyeType);
-                    } else {
-                        texture = overlay.getTexture();
-                    }
+                Overlay.Type type = overlay.getType();
+                String texture;
 
-                    if (overlay.applyTexture != null)
-                        texture = overlay.applyTexture(texture, currentRenderingData);
+                if (type == Face)
+                    texture = ((Overlay.Face) overlay).getTexture(display.eyeType);
+                else
+                    texture = overlay.getTexture();
 
-                    ImageData imageData = ClientCacheHandler.getImageData(texture);
-                    if (imageData == null || !imageData.imageLoaded())
-                        continue;
+                if (overlay.applyTexture != null)
+                    texture = overlay.applyTexture(texture, currentRenderingData);
 
-                    int color = getProperColor(form, display, overlay.getColor(), overlay.colorType);
-                    Color finalColor = new Color(color, overlay.alpha);
+                ImageData imageData = ClientCacheHandler.getImageData(texture);
+                if (imageData == null || !imageData.imageLoaded())
+                    continue;
 
-                    if (overlay.applyColor != null)
-                        finalColor = overlay.applyColor(color, overlay.alpha, currentRenderingData);
+                int color = getProperColor(form, display, overlay.getColor(), overlay.colorType);
+                Color finalColor = new Color(color, overlay.alpha);
 
-                    if (!bindImageDataTexture(imageData))
-                        continue;
+                if (overlay.applyColor != null)
+                    finalColor = overlay.applyColor(color, overlay.alpha, currentRenderingData);
+
+                if (!bindImageDataTexture(imageData))
+                    continue;
 
 
-                    boolean oldArmor = parent.isArmor; //disables NPC skin binding
-                    parent.isArmor = true;
-                    if (type == Face)
-                        DBCHair.isHidden = true; //Hair renders by default with head, not needed here
+                boolean oldArmor = parent.isArmor; //disables NPC skin binding
+                parent.isArmor = true;
+                if (type == Face)
+                    DBCHair.isHidden = true; //Hair renders by default with head, not needed here
 
-                    boolean glow = overlay.isGlow();
-                    if (glow) {
-                        GL11.glDisable(GL11.GL_LIGHTING);
-                        if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI, as lightmap is disabled in GUIs so cant enable it again
-                            Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
-                    }
-
-                    ColorMode.applyModelColor(finalColor.color, finalColor.alpha, isHurt);
-                    //OverlayModelRenderer.render(type, parent);
-                    OverlayModelRenderer.render(type, parent);
-
-                    if (glow) {
-                        GL11.glEnable(GL11.GL_LIGHTING);
-                        if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI
-                            Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
-                    }
-
-                    if (type == Face)
-                        DBCHair.isHidden = false;
-                    parent.isArmor = oldArmor;
+                boolean glow = overlay.isGlow();
+                if (glow) {
+                    GL11.glDisable(GL11.GL_LIGHTING);
+                    if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI, as lightmap is disabled in GUIs so cant enable it again
+                        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
                 }
+
+                ColorMode.applyModelColor(finalColor.color, finalColor.alpha, isHurt);
+                OverlayModelRenderer.render(type, parent);
+
+                if (glow) {
+                    GL11.glEnable(GL11.GL_LIGHTING);
+                    if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI
+                        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+                }
+
+                if (type == Face)
+                    DBCHair.isHidden = false;
+                parent.isArmor = oldArmor;
             }
         }
     }
