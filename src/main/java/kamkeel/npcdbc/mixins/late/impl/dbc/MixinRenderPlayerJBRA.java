@@ -13,6 +13,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.ColorMode;
+import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.utils.Color;
@@ -26,6 +27,7 @@ import kamkeel.npcdbc.data.form.FormFaceData;
 import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.overlay.Overlay.Type;
+import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.scripted.DBCPlayerEvent;
 import net.minecraft.client.Minecraft;
@@ -47,6 +49,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
 
 @Mixin(value = RenderPlayerJBRA.class, remap = false)
 public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
@@ -305,15 +309,9 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", shift = At.Shift.BEFORE))
-    private void renderFormOverlays(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "eyes") LocalIntRef eyes, @Local(name = "gen") LocalIntRef gender) {
-        Form form = DBCData.getForm(par1AbstractClientPlayer);
-        DBCData data = DBCData.get(par1AbstractClientPlayer);
+    private void renderOverlays(AbstractClientPlayer pl, float par2, CallbackInfo ci, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "eyes") LocalIntRef eyes, @Local(name = "gen") LocalIntRef gender) {
+        renderOverlays(DBCData.get(pl));
 
-        if (form == null) return;
-
-        if (form.display.overlays.enabled) {
-            renderOverlays(par1AbstractClientPlayer, form, gender.get(), eyes.get(), bodyCM.get(), data.renderingHairColor, data);
-        }
     }
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/JRMCoreConfig;HHWHO:Z", ordinal = 1, shift = At.Shift.BEFORE))
@@ -443,18 +441,24 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     private static int preg; //pregnant
 
     @Unique
-    private void renderOverlays(AbstractClientPlayer player, Form form, int gene, int eyes, int bodyCM, int defaultHairColor, DBCData data) {
-        FormDisplay displayData = form.display;
-        OverlayChain overlayData = displayData.overlays;
-        OverlayModelRenderer.Context ctx = new OverlayModelRenderer.Context(modelMain, gen, childScl, preg);
+    private void renderOverlays(DBCData data) {
 
-        for (Overlay overlay : overlayData.getOverlays().toArray(new Overlay[0])) {
-            if (overlay.isEnabled()) {
+        OverlayModelRenderer.Context renderCtx = new OverlayModelRenderer.Context(modelMain, gen, childScl, preg);
+        OverlayContext ctx = OverlayContext.from(data);
+
+        List<OverlayChain> chains = ModelDBC.applyOverlayChains(data.getOverlayChains(), ctx);
+
+        for (OverlayChain chain : chains) {
+            for (Overlay overlay : chain.overlays) {
+                if (!overlay.isEnabled())
+                    continue;
+
+                ctx.overlay = overlay;
                 Type type = overlay.getType();
                 String texture;
 
                 if (type == Overlay.Type.Face) {
-                    texture = ((Overlay.Face) overlay).getTexture(eyes);
+                    texture = ((Overlay.Face) overlay).getTexture(ctx.eyeType());
                 } else {
                     texture = overlay.getTexture();
                 }
@@ -463,16 +467,14 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 if (imageData == null || !imageData.imageLoaded())
                     continue;
 
-                int furColor = data.currentCustomizedColors.getProperColor(displayData.getFurColor(data), "fur");
-                int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
-                int eyeColor = data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
+                //TODO this stuff needs a method
+                //int furColor = data.currentCustomizedColors.getProperColor(displayData.getFurColor(data), "fur");
+                //int hairColor = data.currentCustomizedColors.getProperColor(displayData.getHairColor(data), "hair");
+                //int eyeColor = data.currentCustomizedColors.getProperColor(displayData.getColor("eye"), "eye");
 
-                int color = overlay.getColorType() == Overlay.ColorType.Body.ordinal() ?
-                    bodyCM : overlay.getColorType() == Overlay.ColorType.Eye.ordinal() ?
-                    (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : overlay.getColorType() == Overlay.ColorType.Hair.ordinal() ?
-                    (hairColor < 0 ? defaultHairColor : hairColor) : overlay.getColorType() == Overlay.ColorType.Fur.ordinal() ?
-                    furColor : overlay.getColor();
+                //int color = overlay.getColorType() == Overlay.ColorType.Body.ordinal() ? bodyCM : overlay.getColorType() == Overlay.ColorType.Eye.ordinal() ? (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : overlay.getColorType() == Overlay.ColorType.Hair.ordinal() ? (hairColor < 0 ? defaultHairColor : hairColor) : overlay.getColorType() == Overlay.ColorType.Fur.ordinal() ? furColor : overlay.getColor();
 
+                int color = 0xffffff;
                 if (!bindImageDataTexture(imageData, color))
                     continue;
 
@@ -490,7 +492,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 GL11.glEnable(GL11.GL_ALPHA_TEST);
 
                 new Color(color, overlay.alpha).glColor();
-                OverlayModelRenderer.render(type, ctx);
+                OverlayModelRenderer.render(type, renderCtx);
 
                 if (glow) {
                     GL11.glEnable(GL11.GL_LIGHTING);

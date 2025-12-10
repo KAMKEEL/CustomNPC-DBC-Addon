@@ -655,12 +655,12 @@ public class ModelDBC extends ModelBase {
         }
     }
 
-    public OverlayContext overlayContent;
 
-    public List<OverlayChain> applyOverlayChains(Form form) {
+    public static List<OverlayChain> applyOverlayChains(List<OverlayChain> uniqueChains, OverlayContext ctx) {
         ArrayList<OverlayChain> chains = new ArrayList<>();
+
         /*
-            display.getOverlayChains contains all entity-unique overlays.
+            uniqueChains contains all entity-unique overlays.
             Whatever you add before the below addAll gets rendered below them all.
 
             Usually scars or whatever player unique customizations,
@@ -671,17 +671,18 @@ public class ModelDBC extends ModelBase {
 
          */
 
-        if (display.hasFur)
+        if (ctx.hasFur())
             chains.add(DBCOverlays.SSJ4_FUR);
 
-        chains.addAll(display.getOverlayChains());
+        if (uniqueChains != null)
+            chains.addAll(uniqueChains);
 
          /*
             Whatever you add after gets rendered on top of the above.
          */
 
         OverlayChain Savior = new OverlayChain();
-        Savior.add(ALL, Fur).texture((tex, ctx) -> path("ssj4/ss4b" + ctx.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
+        Savior.add(ALL, Fur).texture((tex, ctx1) -> path("ssj4/ss4b" + ctx1.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
         Savior.add(Face, path("savior/savioreyes.png"), Fur);
         Savior.add(Face, path("savior/saviormouth.png"), 0XFFFFFF);
         Savior.add(Chest, path("savior/saviorchest.png"), Hair);
@@ -692,6 +693,7 @@ public class ModelDBC extends ModelBase {
          * They take precedence like form colors do.
          * So add them at the very end, unless something else goes on top.
          */
+        Form form = ctx.form();
         if (form != null && form.display.overlays.enabled)
             chains.add(form.display.overlays);
 
@@ -700,15 +702,16 @@ public class ModelDBC extends ModelBase {
 
     public void renderOverlays() {
         Form form = display.getForm();
-        List<OverlayChain> chains = applyOverlayChains(form);
+       OverlayContext ctx = OverlayContext.from(display);
 
-        overlayContent = OverlayContext.from(display);
+        List<OverlayChain> chains = applyOverlayChains(display.getOverlayChains(), ctx);
+
         for (OverlayChain chain : chains) {
             for (Overlay overlay : chain.overlays) {
                 if (!overlay.isEnabled())
                     continue;
 
-                overlayContent.overlay = overlay;
+                ctx.overlay = overlay;
                 Overlay.Type type = overlay.getType();
                 String texture;
 
@@ -718,7 +721,7 @@ public class ModelDBC extends ModelBase {
                     texture = overlay.getTexture();
 
                 if (overlay.applyTexture != null)
-                    texture = overlay.applyTexture(texture, overlayContent);
+                    texture = overlay.applyTexture(texture, ctx);
 
                 ImageData imageData = ClientCacheHandler.getImageData(texture);
                 if (imageData == null || !imageData.imageLoaded())
@@ -728,7 +731,7 @@ public class ModelDBC extends ModelBase {
                 Color finalColor = new Color(color, overlay.alpha);
 
                 if (overlay.applyColor != null)
-                    finalColor = overlay.applyColor(color, overlay.alpha, overlayContent);
+                    finalColor = overlay.applyColor(color, overlay.alpha, ctx);
 
                 if (!bindImageDataTexture(imageData))
                     continue;

@@ -47,6 +47,14 @@ public class OverlayContext {
         return isNPC ? display.furType : 0;
     }
 
+    public boolean hasFur() {
+        Form form = form();
+        if (form != null)
+            return form.display.hasBodyFur;
+
+        return isNPC ? display.hasFur : false;
+    }
+
     public Form form() {
         return PlayerDataUtil.getForm(isNPC ? npc : player);
     }
