@@ -11,6 +11,7 @@ public class DBCOverlays {
 
     public static OverlayChain Savior = OverlayChain.create("Savior");
     public static OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4_Fur");
+    public static OverlayChain OOZARU = OverlayChain.create("Oozaru");
     public static OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4_Face");
 
     static {
@@ -18,8 +19,10 @@ public class DBCOverlays {
         Savior.add(Face, path("savior/saviormouth.png"), 0XFFFFFF);
         Savior.add(Chest, path("savior/saviorchest.png"), Hair);
 
-
         SSJ4_FUR.add(ALL, Fur).texture((tex, ctx) -> path("ssj4/ss4b" + ctx.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
+
+        OOZARU.add(ALL, path("oozaru/oozaru1.png", "jinryuudragonbc:cc/oozaru1.png"), Body);
+        OOZARU.add(ALL, path("oozaru/oozaru2.png", "jinryuudragonbc:cc/oozaru2.png"), Fur);
 
         SSJ4_FACE.add(Face, Body).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4shade.png")));
         SSJ4_FACE.add(Face, 0xFFFFFF).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyewhite.png")));

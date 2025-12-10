@@ -25,6 +25,8 @@ public class OverlayContext {
     public DBCData dbcData; //for players
     public ModelBipedBody model;
 
+    public Form form;
+
     public static OverlayContext from(DBCDisplay display) {
         OverlayContext data = new OverlayContext();
         data.isNPC = true;
@@ -90,7 +92,18 @@ public class OverlayContext {
         return isNPC ? display.hasFur : false;
     }
 
+    public boolean oozaru() {
+        Form form = form();
+        if (form != null)
+            return form.display.hairType.equals("oozaru");
+
+        return isNPC ? display.hairType.equals("oozaru") : false;
+    }
+
     public Form form() {
-        return PlayerDataUtil.getForm(isNPC ? npc : player);
+        if (form == null)
+            form = PlayerDataUtil.getForm(isNPC ? npc : player);
+
+        return form;
     }
 }

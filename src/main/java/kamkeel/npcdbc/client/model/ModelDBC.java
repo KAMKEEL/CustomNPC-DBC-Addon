@@ -7,6 +7,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
+import kamkeel.npcdbc.client.render.DBCOverlays;
 import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -673,10 +674,13 @@ public class ModelDBC extends ModelBase {
         OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4_Fur");
         SSJ4_FUR.add(ALL, Fur).texture((tex, ctx1) -> path("ssj4/ss4b" + ctx1.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
 
+        if (ctx.oozaru())
+            chains.add(DBCOverlays.OOZARU);
+
         if (ctx.hasFur())
             chains.add(SSJ4_FUR);
 
-
+        // Create the overlays here to test them (easy to hotswap here), then when finished drop them in DBCOverlays
         OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4_Face");
         SSJ4_FACE.add(Face, Body).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4shade.png")));
         SSJ4_FACE.add(Face, 0xFFFFFF).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyewhite.png")));
@@ -685,7 +689,7 @@ public class ModelDBC extends ModelBase {
         SSJ4_FACE.add(Face, Eye).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyeleft.png")));
         SSJ4_FACE.add(Face, Eye).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyeright.png")));
         SSJ4_FACE.enabled = true;
-        chains.add(SSJ4_FACE);
+       // chains.add(SSJ4_FACE);
 
         if (uniqueChains != null)
             chains.addAll(uniqueChains);
@@ -714,8 +718,8 @@ public class ModelDBC extends ModelBase {
     }
 
     public void renderOverlays() {
-        Form form = display.getForm();
-       OverlayContext ctx = OverlayContext.from(display);
+        OverlayContext ctx = OverlayContext.from(display);
+        Form form = ctx.form = display.getForm();
 
         List<OverlayChain> chains = applyOverlayChains(display.getOverlayChains(), ctx);
 

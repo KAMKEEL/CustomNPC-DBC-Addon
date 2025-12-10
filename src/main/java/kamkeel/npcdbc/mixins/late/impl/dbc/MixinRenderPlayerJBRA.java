@@ -442,7 +442,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Unique
     private void renderOverlays(DBCData data) {
-
         OverlayContext ctx = OverlayContext.from(data);
         ctx.model = modelMain;
 
