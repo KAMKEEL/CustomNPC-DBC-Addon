@@ -113,12 +113,12 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     @Unique
     private DBCDisplay display;
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER, remap = true))
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER), remap = true)
     private void renderDBCOverlays(Entity entity, float par2, float par3, float par4, float par5, float par6, float par7, CallbackInfo ci) {
         if (!isArmor && display.enabled) {
             Form form = display.getForm();
             if (form != null && form.display.overlays.enabled) {
-                NPCDBCModel.renderFormOverlays((EntityCustomNpc) entity, form, display, bipedLeftArm, EnumSet.of(ALL, Arms, LeftArm));
+                NPCDBCModel.renderFormOverlays(form, display);
             }
         }
     }

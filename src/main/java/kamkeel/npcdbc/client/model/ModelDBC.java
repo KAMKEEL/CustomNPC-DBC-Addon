@@ -662,7 +662,7 @@ public class ModelDBC extends ModelBase {
 
     public RenderingData currentRenderingData;
     @Unique
-    public void renderFormOverlays(EntityCustomNpc npc, Form form, DBCDisplay display, ModelRenderer model, Set<OverlayManager.Type> allowedTypes) {
+    public void renderFormOverlays(Form form, DBCDisplay display) {
         List<OverlayManager> managers = new ArrayList<>();
         display.furType = 2;
 
