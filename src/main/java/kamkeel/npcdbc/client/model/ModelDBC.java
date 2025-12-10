@@ -7,7 +7,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
-import kamkeel.npcdbc.client.render.OverlayModel;
+import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -717,7 +717,7 @@ public class ModelDBC extends ModelBase {
                     }
 
                     ColorMode.applyModelColor(finalColor.color, finalColor.alpha, isHurt);
-                    OverlayModel.render(type, parent);
+                    OverlayModelRenderer.render(type, parent);
 
                     if (glow) {
                         GL11.glEnable(GL11.GL_LIGHTING);

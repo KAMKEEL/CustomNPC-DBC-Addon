@@ -12,14 +12,14 @@ import org.lwjgl.opengl.GL11;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class OverlayModel {
-    private static final Map<OverlayManager.Type, RenderFunction> OVERLAY_MAP = new EnumMap<>(Type.class);
+public class OverlayModelRenderer {
+    private static final Map<OverlayManager.Type, RenderFunction> PLAYER_MAP = new EnumMap<>(Type.class);
     private static final Map<OverlayManager.Type, RenderFunctionMPM> NPC_MAP = new EnumMap<>(Type.class);
 
     public static ModelBipedBody model;
     public static float par = 0.0625f;
 
-    public static RenderFunction HEAD = (g, a, p, par) -> {
+    public static RenderFunction HEAD = (g, a, p) -> {
         float genderRatio = g <= 1 ? 1.0F : 0.85F;
         float scale = 0.5F + 0.5F / a;
         GL11.glPushMatrix();
@@ -29,7 +29,7 @@ public class OverlayModel {
         GL11.glPopMatrix();
     };
 
-    public static RenderFunction RIGHT_ARM = (g, a, p, par) -> {
+    public static RenderFunction RIGHT_ARM = (g, a, p) -> {
         GL11.glPushMatrix();
         GL11.glScalef(1.0F / a * (g <= 1 ? 1.0F : 0.7F), 1.0F / a, 1.0F / a * (g <= 1 ? 1.0F : 0.7F));
         GL11.glTranslatef(0.0F, (a - 1.0F) * 1.5F, 0.0F);
@@ -40,7 +40,7 @@ public class OverlayModel {
         GL11.glPopMatrix();
     };
 
-    public static RenderFunction LEFT_ARM = (g, a, p, par) -> {
+    public static RenderFunction LEFT_ARM = (g, a, p) -> {
         GL11.glPushMatrix();
         GL11.glScalef(1.0F / a * (g <= 1 ? 1.0F : 0.7F), 1.0F / a, 1.0F / a * (g <= 1 ? 1.0F : 0.7F));
         GL11.glTranslatef(0.0F, (a - 1.0F) * 1.5F, 0.0F);
@@ -51,12 +51,12 @@ public class OverlayModel {
         GL11.glPopMatrix();
     };
 
-    public static RenderFunction ARMS = (g, a, p, par) -> {
-        RIGHT_ARM.render(g, a, p, par);
-        LEFT_ARM.render(g, a, p, par);
+    public static RenderFunction ARMS = (g, a, p) -> {
+        RIGHT_ARM.render(g, a, p);
+        LEFT_ARM.render(g, a, p);
     };
 
-    public static RenderFunction RIGHT_LEG = (g, a, p, par) -> {
+    public static RenderFunction RIGHT_LEG = (g, a, p) -> {
         GL11.glPushMatrix();
         GL11.glScalef(1.0F / a * (g <= 1 ? 1.0F : 0.85F), 1.0F / a, 1.0F / a * (g <= 1 ? 1.0F : 0.775F));
         GL11.glTranslatef(g <= 1 ? 0.0F : -0.015F, (a - 1.0F) * 1.5F, g <= 1 ? 0 : model.isSneak ? -0.0F : -0.015F);
@@ -68,7 +68,7 @@ public class OverlayModel {
         GL11.glPopMatrix();
     };
 
-    public static RenderFunction LEFT_LEG = (g, a, p, par) -> {
+    public static RenderFunction LEFT_LEG = (g, a, p) -> {
         GL11.glPushMatrix();
         GL11.glScalef(1.0F / a * (g <= 1 ? 1.0F : 0.85F), 1.0F / a, 1.0F / a * (g <= 1 ? 1.0F : 0.775F));
         GL11.glTranslatef(g <= 1 ? 0.0F : 0.015f, (a - 1.0F) * 1.5F, g <= 1 ? 0 : model.isSneak ? -0.0F : -0.015F);
@@ -81,11 +81,11 @@ public class OverlayModel {
         GL11.glPopMatrix();
     };
 
-    public static RenderFunction LEGS = (g, a, p, par) -> {
-        RIGHT_LEG.render(g, a, p, par);
-        LEFT_LEG.render(g, a, p, par);
+    public static RenderFunction LEGS = (g, a, p) -> {
+        RIGHT_LEG.render(g, a, p);
+        LEFT_LEG.render(g, a, p);
     };
-    public static RenderFunction BODY = (g, a, p, par) -> {
+    public static RenderFunction BODY = (g, a, p) -> {
         if (g <= 1) {
             GL11.glPushMatrix();
             GL11.glScalef(1.0F / a, 1.0F / a, 1.0F / a);
@@ -160,23 +160,23 @@ public class OverlayModel {
         GL11.glPopMatrix();
     };
 
-    public static RenderFunction ALL = (g, a, p, par) -> {
-        HEAD.render(g, a, p, par);
-        ARMS.render(g, a, p, par);
-        BODY.render(g, a, p, par);
-        LEGS.render(g, a, p, par);
+    public static RenderFunction ALL = (g, a, p) -> {
+        HEAD.render(g, a, p);
+        ARMS.render(g, a, p);
+        BODY.render(g, a, p);
+        LEGS.render(g, a, p);
     };
 
     static {
-        OVERLAY_MAP.put(Type.ALL, ALL);
-        OVERLAY_MAP.put(Type.Face, HEAD);
-        OVERLAY_MAP.put(Type.Arms, ARMS);
-        OVERLAY_MAP.put(Type.RightArm, RIGHT_ARM);
-        OVERLAY_MAP.put(Type.LeftArm, LEFT_ARM);
-        OVERLAY_MAP.put(Type.Chest, BODY);
-        OVERLAY_MAP.put(Type.Legs, LEGS);
-        OVERLAY_MAP.put(Type.RightLeg, RIGHT_LEG);
-        OVERLAY_MAP.put(Type.LeftLeg, LEFT_LEG);
+        PLAYER_MAP.put(Type.ALL, ALL);
+        PLAYER_MAP.put(Type.Face, HEAD);
+        PLAYER_MAP.put(Type.Arms, ARMS);
+        PLAYER_MAP.put(Type.RightArm, RIGHT_ARM);
+        PLAYER_MAP.put(Type.LeftArm, LEFT_ARM);
+        PLAYER_MAP.put(Type.Chest, BODY);
+        PLAYER_MAP.put(Type.Legs, LEGS);
+        PLAYER_MAP.put(Type.RightLeg, RIGHT_LEG);
+        PLAYER_MAP.put(Type.LeftLeg, LEFT_LEG);
 
 
         NPC_MAP.put(Type.Face, (m) -> m.renderHead(m.npc, par));
@@ -198,12 +198,8 @@ public class OverlayModel {
 
     }
 
-    public static RenderFunction get(Type type) {
-        return OVERLAY_MAP.get(type);
-    }
-
     public static void render(Type type) {
-        get(type).render(gender(), age(), pregnant(), 0.0625f);
+        PLAYER_MAP.get(type).render(gender(), age(), pregnant());
     }
 
     public static void render(Type type, ModelMPM model) {
@@ -224,7 +220,7 @@ public class OverlayModel {
     }
 
     public interface RenderFunction {
-        void render(int gender, float age, int pregnant, float scale);
+        void render(int gender, float age, int pregnant);
     }
 
     public interface RenderFunctionMPM {
