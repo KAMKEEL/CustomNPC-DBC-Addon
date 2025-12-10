@@ -1,4 +1,4 @@
-package kamkeel.npcdbc.data;
+package kamkeel.npcdbc.data.overlay;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
@@ -8,7 +8,9 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
 
-public class RenderingData {
+public class OverlayContext {
+    public Overlay overlay;
+
     public boolean isNPC;
     public EntityNPCInterface npc;
     public DBCDisplay display; //for NPCs
@@ -16,16 +18,16 @@ public class RenderingData {
     public EntityPlayer player;
     public DBCData dbcData; //for players
 
-    public static RenderingData from(DBCDisplay display) {
-        RenderingData data = new RenderingData();
+    public static OverlayContext from(DBCDisplay display) {
+        OverlayContext data = new OverlayContext();
         data.isNPC = true;
         data.npc = display.npc;
         data.display = display;
         return data;
     }
 
-    public static RenderingData from(DBCData dbcData) {
-        RenderingData data = new RenderingData();
+    public static OverlayContext from(DBCData dbcData) {
+        OverlayContext data = new OverlayContext();
         data.isNPC = false;
         data.player = dbcData.player;
         data.dbcData = dbcData;

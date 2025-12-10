@@ -18,6 +18,6 @@ public class DBCOverlays {
         Savior.add(Chest, path("savior/saviorchest.png"), Hair);
 
 
-        SSJ4_FUR.add(ALL, Fur).texture((tex, data, o) -> path("ssj4/ss4b" + data.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
+        SSJ4_FUR.add(ALL, Fur).texture((tex, ctx) -> path("ssj4/ss4b" + ctx.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
     }
 }

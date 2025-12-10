@@ -13,7 +13,7 @@ import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.data.RenderingData;
+import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.form.Form;
@@ -655,7 +655,7 @@ public class ModelDBC extends ModelBase {
         }
     }
 
-    public RenderingData currentRenderingData;
+    public OverlayContext overlayContent;
 
     public List<OverlayChain> applyOverlayChains(Form form) {
         ArrayList<OverlayChain> chains = new ArrayList<>();
@@ -671,7 +671,6 @@ public class ModelDBC extends ModelBase {
 
          */
 
-
         if (display.hasFur)
             chains.add(DBCOverlays.SSJ4_FUR);
 
@@ -682,11 +681,11 @@ public class ModelDBC extends ModelBase {
          */
 
         OverlayChain Savior = new OverlayChain();
-        Savior.add(ALL, Fur).texture((tex, data, o) -> path("ssj4/ss4b" + data.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
+        Savior.add(ALL, Fur).texture((tex, ctx) -> path("ssj4/ss4b" + ctx.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
         Savior.add(Face, path("savior/savioreyes.png"), Fur);
         Savior.add(Face, path("savior/saviormouth.png"), 0XFFFFFF);
         Savior.add(Chest, path("savior/saviorchest.png"), Hair);
-        chains.add(Savior);
+        // chains.add(Savior);
 
         /**
          * You usually want form overlays on top of everything else.
@@ -703,12 +702,13 @@ public class ModelDBC extends ModelBase {
         Form form = display.getForm();
         List<OverlayChain> chains = applyOverlayChains(form);
 
-        currentRenderingData = RenderingData.from(display);
+        overlayContent = OverlayContext.from(display);
         for (OverlayChain chain : chains) {
             for (Overlay overlay : chain.overlays) {
                 if (!overlay.isEnabled())
                     continue;
 
+                overlayContent.overlay = overlay;
                 Overlay.Type type = overlay.getType();
                 String texture;
 
@@ -718,7 +718,7 @@ public class ModelDBC extends ModelBase {
                     texture = overlay.getTexture();
 
                 if (overlay.applyTexture != null)
-                    texture = overlay.applyTexture(texture, currentRenderingData);
+                    texture = overlay.applyTexture(texture, overlayContent);
 
                 ImageData imageData = ClientCacheHandler.getImageData(texture);
                 if (imageData == null || !imageData.imageLoaded())
@@ -728,7 +728,7 @@ public class ModelDBC extends ModelBase {
                 Color finalColor = new Color(color, overlay.alpha);
 
                 if (overlay.applyColor != null)
-                    finalColor = overlay.applyColor(color, overlay.alpha, currentRenderingData);
+                    finalColor = overlay.applyColor(color, overlay.alpha, overlayContent);
 
                 if (!bindImageDataTexture(imageData))
                     continue;

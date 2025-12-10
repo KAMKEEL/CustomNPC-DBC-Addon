@@ -3,7 +3,6 @@ package kamkeel.npcdbc.data.overlay;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.client.utils.Color;
-import kamkeel.npcdbc.data.RenderingData;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Arrays;
@@ -31,8 +30,8 @@ public class Overlay {
     }
 
     @SideOnly(Side.CLIENT)
-    public String applyTexture(String texture, RenderingData data) {
-        return applyTexture.invoke(texture, data, this);
+    public String applyTexture(String texture, OverlayContext ctx) {
+        return applyTexture.invoke(texture, ctx);
     }
 
     public Overlay color(ColorFunction function) {
@@ -41,8 +40,8 @@ public class Overlay {
     }
 
     @SideOnly(Side.CLIENT)
-    public Color applyColor(int color, float alpha, RenderingData data) {
-        return applyColor.invoke(color, alpha, data, this);
+    public Color applyColor(int color, float alpha, OverlayContext ctx) {
+        return applyColor.invoke(color, alpha, ctx);
     }
 
     public Overlay add(Type type) {
@@ -378,10 +377,10 @@ public class Overlay {
     }
 
     public interface TextureFunction {
-        String invoke(String tex, RenderingData data, Overlay o);
+        String invoke(String tex, OverlayContext ctx);
     }
 
     public interface ColorFunction {
-        Color invoke(int col, float a, RenderingData data, Overlay o);
+        Color invoke(int col, float a, OverlayContext ctx);
     }
 }
