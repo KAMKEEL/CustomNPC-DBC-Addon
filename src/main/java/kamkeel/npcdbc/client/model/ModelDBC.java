@@ -663,8 +663,17 @@ public class ModelDBC extends ModelBase {
     public RenderingData currentRenderingData;
     @Unique
     public void renderFormOverlays(Form form, DBCDisplay display) {
-        List<OverlayChain> managers = new ArrayList<>();
-        display.furType = 2;
+        ArrayList<OverlayChain> chains = new ArrayList<>();
+
+        /*
+            display.getOverlayChains contains all Form and entity-unique overlays.
+            Whatever you add before the below addAll gets rendered below them all.
+         */
+        chains.addAll(display.getOverlayChains());
+
+         /*
+            Whatever you add after gets rendered on top of all.
+         */
 
         OverlayChain Savior = new OverlayChain();
         Savior.add(ALL, Fur).texture((tex, data, o) -> path("ssj4/ss4b" + data.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
@@ -672,10 +681,9 @@ public class ModelDBC extends ModelBase {
         Savior.add(Face, path("savior/saviormouth.png"), 0XFFFFFF);
         Savior.add(Chest, path("savior/saviorchest.png"), Hair);
 
-        managers.add(form.display.overlays);
-        // managers.add(Savior);
+        //chains.add(Savior);
 
-        for (OverlayChain manager : managers) {
+        for (OverlayChain manager : chains) {
             for (Overlay overlay : manager.overlays) {//overlayData.getOverlays()
                 if (overlay.isEnabled()) { //&& allowedTypes.contains(overlay.getType())
                     Overlay.Type type = overlay.getType();

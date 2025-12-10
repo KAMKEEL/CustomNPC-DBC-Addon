@@ -24,6 +24,8 @@ import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormFaceData;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import kamkeel.npcdbc.mixins.late.INPCStats;
@@ -40,6 +42,7 @@ import noppes.npcs.entity.data.ModelPartData;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -90,6 +93,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
 
     public KiWeaponData kiWeaponRight = new KiWeaponData();
     public KiWeaponData kiWeaponLeft = new KiWeaponData();
+
+    public OverlayManager overlayManager = new OverlayManager();
 
     public DBCDisplay(EntityNPCInterface npc) {
         this.npc = npc;
@@ -146,6 +151,8 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
             kiWeaponRight.saveToNBT(dbcDisplay, "kiWeaponRight");
 
             faceData.writeToNBT(dbcDisplay, true);
+
+            comp.setTag("DBCOverlayManager", overlayManager.writeToNBT());
 
             comp.setTag("DBCDisplay", dbcDisplay);
         } else {
@@ -205,6 +212,9 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
                 kiWeaponRight.readFromNBT(dbcDisplay, "kiWeaponRight");
 
             faceData.readFromNBT(dbcDisplay, true);
+
+            if (dbcDisplay.hasKey("DBCOverlayManager"))
+                overlayManager.readFromNBT(dbcDisplay.getCompoundTag("DBCOverlayManager"));
         } else {
             comp.removeTag("DBCDisplay");
         }
@@ -421,6 +431,20 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     public void setFurType(int furType) {
         this.furType = Math.max(0, Math.min(2, furType));
     }
+
+    /// //////////////////////////////////////////
+    /// //////////////////////////////////////////
+    // Overlays
+    public List<OverlayChain> getOverlayChains() {
+        List<OverlayChain> chains = new ArrayList<>(overlayManager.getChains());
+
+        Form form = getForm();
+        if (form != null && form.display.overlays.enabled)
+            chains.add(form.display.overlays);
+
+        return chains;
+    }
+
 
     /////////////////////////////////////////////
     /////////////////////////////////////////////

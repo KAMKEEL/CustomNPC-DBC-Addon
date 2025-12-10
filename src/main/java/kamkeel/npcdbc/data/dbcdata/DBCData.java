@@ -26,6 +26,8 @@ import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.overlay.OverlayManager;
 import kamkeel.npcdbc.entity.EntityAura;
 import kamkeel.npcdbc.network.DBCPacketHandler;
 import kamkeel.npcdbc.network.packets.player.*;
@@ -88,6 +90,7 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
 
     public DBCDataStats stats = new DBCDataStats(this);
     public DBCDataBonus bonus = new DBCDataBonus(this);
+
 
     //RENDERING DATA
     public float XZSize, YSize, age;
@@ -171,6 +174,7 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
         comp.setBoolean("DBCFlightGravity", flightGravity);
 
         comp.setBoolean("DBCIsFnPressed", isFnPressed);
+
         return comp;
     }
 
@@ -260,6 +264,16 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
         if (!c.hasKey("DBCIsFnPressed"))
             c.setBoolean("DBCIsFnPressed", isFnPressed);
         isFnPressed = c.getBoolean("DBCIsFnPressed");
+    }
+
+    public List<OverlayChain> getOverlayChains() {
+        List<OverlayChain> chains = new ArrayList<>(getDBCInfo().overlayManager.getChains());
+
+        Form form = getForm();
+        if (form != null && form.display.overlays.enabled)
+            chains.add(form.display.overlays);
+
+        return chains;
     }
 
     @SideOnly(Side.CLIENT)
