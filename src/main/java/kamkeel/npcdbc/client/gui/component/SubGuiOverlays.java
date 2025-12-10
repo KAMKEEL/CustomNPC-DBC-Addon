@@ -14,9 +14,9 @@ import noppes.npcs.client.gui.util.*;
 import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
-import static kamkeel.npcdbc.data.form.OverlayManager.Type.ALL;
-import static kamkeel.npcdbc.data.form.OverlayManager.Type.Face;
+import static kamkeel.npcdbc.data.form.OverlayManager.Type.*;
 
 public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, ITextfieldListener {
     public SubGuiFormDisplay parent;
@@ -145,7 +145,8 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
                 }
 
 
-                button = new GuiNpcButton(id(8, i), 5, y, 50, 20, new String[]{"All", "Face", "Chest", "Legs", "Arms", "RightArm", "LeftArm"}, currentOverlay.getType().ordinal());
+                String[] names = Arrays.stream(OverlayManager.Type.values()).map(Enum::name).toArray(String[]::new);
+                button = new GuiNpcButton(id(8, i), 5, y, 50, 20, names, currentOverlay.getType().ordinal());
                 window.addButton(button); // id 8
 
                 int tempY = currentOverlay.getColorType() == ColorType.Custom.ordinal() ? y + 23 : y;

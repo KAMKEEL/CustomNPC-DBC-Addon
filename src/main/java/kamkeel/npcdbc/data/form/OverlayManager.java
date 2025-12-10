@@ -456,17 +456,21 @@ public class OverlayManager {
     }
 
     public enum Type {
-
-        ALL(Overlay::new),
+        ALL(),
         Face(Face::new),
-        Chest(Overlay::new),
-        Legs(Overlay::new),
-        Arms(Overlay::new),
-        RightArm(Overlay::new),
-        LeftArm(Overlay::new);
-
+        Chest(),
+        Arms(),
+        RightArm(),
+        LeftArm(),
+        Legs(),
+        RightLeg(),
+        LeftLeg();
 
         Supplier<Overlay> factory;
+
+        Type() {
+            this.factory = Overlay::new;
+        }
 
         Type(Supplier<Overlay> factory) {
             this.factory = factory;
