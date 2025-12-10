@@ -690,7 +690,7 @@ public class ModelDBC extends ModelBase {
 
         /**
          * You usually want form overlays on top of everything else.
-         * They take precedence like form colors does.
+         * They take precedence like form colors do.
          * So add them at the very end, unless something else goes on top.
          */
         if (form != null && form.display.overlays.enabled)

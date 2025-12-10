@@ -267,7 +267,13 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
     }
 
     public List<OverlayChain> getOverlayChains() {
-        return new ArrayList<>(getDBCInfo().overlayManager.getChains());
+        List<OverlayChain> chains = new ArrayList<>();
+
+        OverlayManager overlays = getDBCInfo().overlayManager;
+        if (overlays.enabled)
+            chains.addAll(overlays.getChains());
+
+        return chains;
     }
 
     @SideOnly(Side.CLIENT)
