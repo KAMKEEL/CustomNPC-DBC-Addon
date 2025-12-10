@@ -7,6 +7,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
+import kamkeel.npcdbc.client.render.OverlayModel;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
@@ -661,7 +662,7 @@ public class ModelDBC extends ModelBase {
 
     public RenderingData currentRenderingData;
     @Unique
-    public void renderFormOverlays(Form form, DBCDisplay display, ModelRenderer model, Set<OverlayManager.Type> allowedTypes) {
+    public void renderFormOverlays(EntityCustomNpc npc, Form form, DBCDisplay display, ModelRenderer model, Set<OverlayManager.Type> allowedTypes) {
         List<OverlayManager> managers = new ArrayList<>();
         display.furType = 2;
 
@@ -672,52 +673,62 @@ public class ModelDBC extends ModelBase {
         Savior.add(Chest, path("savior/saviorchest.png"), Hair);
 
         managers.add(form.display.overlays);
-        managers.add(Savior);
+        // managers.add(Savior);
 
         for (OverlayManager manager : managers) {
             for (OverlayManager.Overlay overlay : manager.overlays) {//overlayData.getOverlays()
-            if (overlay.isEnabled() && allowedTypes.contains(overlay.getType())) {
-                boolean isFace = overlay.getType() == OverlayManager.Type.Face;
-                String texture;
+                if (overlay.isEnabled()) { //&& allowedTypes.contains(overlay.getType())
+                    OverlayManager.Type type = overlay.getType();
+                    String texture;
 
-                if (isFace) {
-                    texture = ((OverlayManager.Face) overlay).getTexture(display.eyeType);
-                } else {
-                    texture = overlay.getTexture();
+                    if (type == Face) {
+                        texture = ((OverlayManager.Face) overlay).getTexture(display.eyeType);
+                    } else {
+                        texture = overlay.getTexture();
+                    }
+
+                    if (overlay.applyTexture != null)
+                        texture = overlay.texture(texture, currentRenderingData);
+
+                    ImageData imageData = ClientCacheHandler.getImageData(texture);
+                    if (imageData == null || !imageData.imageLoaded())
+                        continue;
+
+                    int color = getProperColor(form.display, display, overlay.getColor(), overlay.colorType);
+                    Color finalColor = new Color(color, overlay.alpha);
+
+                    if (overlay.applyColor != null)
+                        finalColor = overlay.color(color, overlay.alpha, currentRenderingData);
+
+                    if (!bindImageDataTexture(imageData))
+                        continue;
+
+
+                    boolean oldArmor = parent.isArmor; //disables NPC skin binding
+                    parent.isArmor = true;
+                    if (type == Face)
+                        DBCHair.isHidden = true; //Hair renders by default with head, not needed here
+
+                    boolean glow = overlay.isGlow();
+                    if (glow) {
+                        GL11.glDisable(GL11.GL_LIGHTING);
+                        if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI, as lightmap is disabled in GUIs so cant enable it again
+                            Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+                    }
+
+                    ColorMode.applyModelColor(finalColor.color, finalColor.alpha, isHurt);
+                    OverlayModel.render(type, parent);
+
+                    if (glow) {
+                        GL11.glEnable(GL11.GL_LIGHTING);
+                        if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI
+                            Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+                    }
+
+                    if (type == Face)
+                        DBCHair.isHidden = false;
+                    parent.isArmor = oldArmor;
                 }
-
-                if (overlay.applyTexture != null)
-                    texture = overlay.texture(texture, currentRenderingData);
-
-                ImageData imageData = ClientCacheHandler.getImageData(texture);
-                if (imageData == null || !imageData.imageLoaded())
-                    continue;
-
-                int color = getProperColor(form.display, display, overlay.getColor(), overlay.colorType);
-                Color finalColor = new Color(color, overlay.alpha);
-
-                if (overlay.applyColor != null)
-                    finalColor = overlay.color(color, overlay.alpha, currentRenderingData);
-
-                if (!bindImageDataTexture(imageData))
-                    continue;
-
-                ColorMode.applyModelColor(finalColor.color, finalColor.alpha, isHurt);
-
-                boolean glow = overlay.isGlow();
-                if (glow) {
-                    GL11.glDisable(GL11.GL_LIGHTING);
-                    if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI, as lightmap is disabled in GUIs so cant enable it again
-                        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
-                }
-
-                model.render(0.0625F);
-                if (glow) {
-                    GL11.glEnable(GL11.GL_LIGHTING);
-                    if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI
-                        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
-                }
-            }
             }
         }
     }

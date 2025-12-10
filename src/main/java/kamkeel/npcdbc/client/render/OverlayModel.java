@@ -6,16 +6,18 @@ import JinRyuu.JRMCore.entity.ModelBipedBody;
 import kamkeel.npcdbc.data.form.OverlayManager;
 import kamkeel.npcdbc.data.form.OverlayManager.Type;
 import net.minecraft.util.MathHelper;
+import noppes.npcs.client.model.ModelMPM;
 import org.lwjgl.opengl.GL11;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 public class OverlayModel {
+    private static final Map<OverlayManager.Type, RenderFunction> OVERLAY_MAP = new EnumMap<>(Type.class);
+    private static final Map<OverlayManager.Type, RenderFunctionMPM> NPC_MAP = new EnumMap<>(Type.class);
 
     public static ModelBipedBody model;
-
-    private static final Map<OverlayManager.Type, RenderFunction> OVERLAY_MAP = new EnumMap<>(Type.class);
+    public static float par = 0.0625f;
 
     public static RenderFunction HEAD = (g, a, p, par) -> {
         float genderRatio = g <= 1 ? 1.0F : 0.85F;
@@ -173,6 +175,34 @@ public class OverlayModel {
         OVERLAY_MAP.put(Type.LeftArm, LEFT_ARM);
         OVERLAY_MAP.put(Type.Chest, BODY);
         OVERLAY_MAP.put(Type.Legs, LEGS);
+        OVERLAY_MAP.put(Type.RightLeg, RIGHT_LEG);
+        OVERLAY_MAP.put(Type.LeftLeg, LEFT_LEG);
+
+
+        NPC_MAP.put(Type.Face, (m) -> m.bipedHead.render(par));
+        NPC_MAP.put(Type.RightArm, (m) -> m.bipedRightArm.render(par));
+        NPC_MAP.put(Type.LeftArm, (m) -> m.bipedLeftArm.render(par));
+        NPC_MAP.put(Type.Chest, (m) -> m.bipedBody.render(par));
+        NPC_MAP.put(Type.RightLeg, (m) -> m.legs.leg1.render(par));
+        NPC_MAP.put(Type.LeftLeg, (m) -> m.legs.leg2.render(par));
+
+        NPC_MAP.put(Type.Arms, (m) -> {
+            render(Type.LeftArm, m);
+            render(Type.RightArm, m);
+        });
+
+        NPC_MAP.put(Type.Legs, (m) -> {
+            render(Type.RightLeg, m);
+            render(Type.LeftLeg, m);
+        });
+
+        NPC_MAP.put(Type.ALL, (m) -> {
+            render(Type.Face, m);
+            render(Type.Arms, m);
+            render(Type.Legs, m);
+            render(Type.Chest, m);
+        });
+
     }
 
     public static RenderFunction get(Type type) {
@@ -181,6 +211,10 @@ public class OverlayModel {
 
     public static void render(Type type) {
         get(type).render(gender(), age(), pregnant(), 0.0625f);
+    }
+
+    public static void render(Type type, ModelMPM model) {
+        NPC_MAP.get(type).render(model);
     }
 
     //THESE CRASH HOT SWAPPING: beware of static ModelBipedDBC calls
@@ -198,5 +232,9 @@ public class OverlayModel {
 
     public interface RenderFunction {
         void render(int gender, float age, int pregnant, float scale);
+    }
+
+    public interface RenderFunctionMPM {
+        void render(ModelMPM model);
     }
 }
