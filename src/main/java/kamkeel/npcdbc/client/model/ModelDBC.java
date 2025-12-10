@@ -18,10 +18,10 @@ import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormFaceData;
-import kamkeel.npcdbc.data.overlay.Overlay;
-import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
+import kamkeel.npcdbc.data.overlay.Overlay;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
@@ -38,10 +38,8 @@ import noppes.npcs.constants.EnumAnimation;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelScalePart;
 import org.lwjgl.opengl.GL11;
-import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Fur;
 import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Hair;
@@ -372,15 +370,10 @@ public class ModelDBC extends ModelBase {
         }
     }
 
-    private static int getProperColor(FormDisplay display, DBCDisplay npcDisplay, int customColor, Overlay.ColorType colorType) {
-        int furColor = display.bodyColors.furColor;
-        int hairColor = display.bodyColors.hairColor;
-        int eyeColor = display.bodyColors.eyeColor;
-
-        /**
-         * #TODO: These colors do not account for Form colors.
-         * Check how it's done in renderFaceSkin:166 within the if (form != null) block
-         */
+    private static int getProperColor(Form form, DBCDisplay npcDisplay, int customColor, Overlay.ColorType colorType) {
+        int furColor = form != null ? form.display.bodyColors.furColor : npcDisplay.furColor;
+        int hairColor = form != null ? form.display.bodyColors.hairColor : npcDisplay.hairColor;
+        int eyeColor = form != null ? form.display.bodyColors.eyeColor : npcDisplay.eyeColor;
 
         return colorType == Overlay.ColorType.Body ?
             npcDisplay.bodyCM : colorType == Overlay.ColorType.Eye ?
@@ -661,10 +654,9 @@ public class ModelDBC extends ModelBase {
     }
 
     public RenderingData currentRenderingData;
-    @Unique
-    public void renderFormOverlays(Form form, DBCDisplay display) {
-        ArrayList<OverlayChain> chains = new ArrayList<>();
 
+    public void renderOverlays() {
+        ArrayList<OverlayChain> chains = new ArrayList<>();
         /*
             display.getOverlayChains contains all Form and entity-unique overlays.
             Whatever you add before the below addAll gets rendered below them all.
@@ -682,6 +674,8 @@ public class ModelDBC extends ModelBase {
         Savior.add(Chest, path("savior/saviorchest.png"), Hair);
 
         //chains.add(Savior);
+
+        Form form = display.getForm();
 
         for (OverlayChain manager : chains) {
             for (Overlay overlay : manager.overlays) {//overlayData.getOverlays()
@@ -702,7 +696,7 @@ public class ModelDBC extends ModelBase {
                     if (imageData == null || !imageData.imageLoaded())
                         continue;
 
-                    int color = getProperColor(form.display, display, overlay.getColor(), overlay.colorType);
+                    int color = getProperColor(form, display, overlay.getColor(), overlay.colorType);
                     Color finalColor = new Color(color, overlay.alpha);
 
                     if (overlay.applyColor != null)
