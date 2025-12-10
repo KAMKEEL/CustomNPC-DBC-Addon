@@ -443,8 +443,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     @Unique
     private void renderOverlays(DBCData data) {
 
-        OverlayModelRenderer.Context renderCtx = new OverlayModelRenderer.Context(modelMain, gen, childScl, preg);
         OverlayContext ctx = OverlayContext.from(data);
+        ctx.model = modelMain;
 
         List<OverlayChain> chains = ModelDBC.applyOverlayChains(data.getOverlayChains(), ctx);
 
@@ -492,7 +492,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 GL11.glEnable(GL11.GL_ALPHA_TEST);
 
                 new Color(color, overlay.alpha).glColor();
-                OverlayModelRenderer.render(type, renderCtx);
+                OverlayModelRenderer.render(type, ctx);
 
                 if (glow) {
                     GL11.glEnable(GL11.GL_LIGHTING);

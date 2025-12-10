@@ -33,6 +33,10 @@ public class OverlayManager {
         return this.chains.remove(id);
     }
 
+    public boolean remove(OverlayChain chain) {
+        return this.chains.remove(chain);
+    }
+
     public List<OverlayChain> getChains() {
         return this.chains;
     }

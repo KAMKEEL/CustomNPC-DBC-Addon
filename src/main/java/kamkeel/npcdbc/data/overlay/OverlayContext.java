@@ -1,6 +1,10 @@
 package kamkeel.npcdbc.data.overlay;
 
+import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JRMCore.JRMCoreH;
+import JinRyuu.JRMCore.entity.ModelBipedBody;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -8,6 +12,7 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.entity.EntityNPCInterface;
 
+@SideOnly(Side.CLIENT)
 public class OverlayContext {
     public Overlay overlay;
 
@@ -17,6 +22,7 @@ public class OverlayContext {
 
     public EntityPlayer player;
     public DBCData dbcData; //for players
+    public ModelBipedBody model;
 
     public static OverlayContext from(DBCDisplay display) {
         OverlayContext data = new OverlayContext();
@@ -32,6 +38,26 @@ public class OverlayContext {
         data.player = dbcData.player;
         data.dbcData = dbcData;
         return data;
+    }
+
+    public int gender() {
+        return ModelBipedDBC.g;
+    }
+
+    public boolean female() {
+        return gender() > 1;
+    }
+
+    public float age() {
+        return ModelBipedDBC.f;
+    }
+
+    public float invAge() {
+        return 1.0F / age();
+    }
+
+    public int pregnant() {
+        return ModelBipedDBC.p;
     }
 
 

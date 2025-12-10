@@ -4,6 +4,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
 import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.Overlay.Type;
+import kamkeel.npcdbc.data.overlay.OverlayContext;
 import net.minecraft.util.MathHelper;
 import noppes.npcs.client.model.ModelMPM;
 import org.lwjgl.opengl.GL11;
@@ -21,8 +22,8 @@ public final class OverlayModelRenderer {
     /* ─────────────────────────────
      * HEAD
      * ───────────────────────────── */
-    private static void renderHead(Context ctx) {
-        float a = ctx.age;
+    private static void renderHead(OverlayContext ctx) {
+        float a = ctx.age();
         float scaleXZ = (0.5F + 0.5F / a) * (ctx.female() ? 0.85F : 1.0F);
 
         float adjust;
@@ -45,12 +46,12 @@ public final class OverlayModelRenderer {
     /* ─────────────────────────────
      * ARMS
      * ───────────────────────────── */
-    private static void renderArm(Context ctx, boolean right) {
+    private static void renderArm(OverlayContext ctx, boolean right) {
         float scaleXZ = ctx.invAge() * (ctx.female() ? 0.7F : 1.0F);
 
         GL11.glPushMatrix();
         GL11.glScalef(scaleXZ, ctx.invAge(), scaleXZ);
-        GL11.glTranslatef(0.0F, (ctx.age - 1.0F) * 1.5F, 0.0F);
+        GL11.glTranslatef(0.0F, (ctx.age() - 1.0F) * 1.5F, 0.0F);
 
         if (ctx.female()) {
             if (right)
@@ -70,7 +71,7 @@ public final class OverlayModelRenderer {
     /* ─────────────────────────────
      * LEGS
      * ───────────────────────────── */
-    private static void renderLeg(Context ctx, boolean right) {
+    private static void renderLeg(OverlayContext ctx, boolean right) {
         float scaleX = ctx.invAge() * (ctx.female() ? 0.85F : 1.0F);
         float scaleZ = ctx.invAge() * (ctx.female() ? 0.775F : 1.0F);
         float translateX = ctx.female() ? right ? -0.015F : 0.015F : 0;
@@ -78,7 +79,7 @@ public final class OverlayModelRenderer {
 
         GL11.glPushMatrix();
         GL11.glScalef(scaleX, ctx.invAge(), scaleZ);
-        GL11.glTranslatef(translateX, (ctx.age - 1.0F) * 1.5F, translateY);
+        GL11.glTranslatef(translateX, (ctx.age() - 1.0F) * 1.5F, translateY);
 
         if (ctx.female()) {
             if (right)
@@ -98,27 +99,27 @@ public final class OverlayModelRenderer {
     /* ─────────────────────────────
      * BODY
      * ───────────────────────────── */
-    private static void renderBody(Context ctx) {
+    private static void renderBody(OverlayContext ctx) {
         if (!ctx.female())
             renderMaleBody(ctx);
         else
             renderFemaleBody(ctx);
     }
 
-    private static void renderMaleBody(Context ctx) {
+    private static void renderMaleBody(OverlayContext ctx) {
         GL11.glPushMatrix();
         GL11.glScalef(ctx.invAge(), ctx.invAge(), ctx.invAge());
-        GL11.glTranslatef(0.0F, (ctx.age - 1.0F) * 1.5F, 0.0F);
+        GL11.glTranslatef(0.0F, (ctx.age() - 1.0F) * 1.5F, 0.0F);
         ctx.model.bipedBody.render(SCALE);
         GL11.glPopMatrix();
     }
 
-    private static void renderFemaleBody(Context ctx) {
+    private static void renderFemaleBody(OverlayContext ctx) {
         ModelBipedBody model = ctx.model;
 
-        float a = ctx.age;
-        int g = ctx.gender;
-        int p = ctx.pregnant;
+        float a = ctx.age();
+        int g = ctx.gender();
+        int p = ctx.pregnant();
 
         float invA = 1.0F / a;
         boolean female = g > 1;
@@ -203,36 +204,11 @@ public final class OverlayModelRenderer {
     }
 
     /* ─────────────────────────────
-     * Player Context
-     * ───────────────────────────── */
-    public static final class Context {
-        public final ModelBipedBody model;
-        public final int gender;
-        public final float age;
-        public final int pregnant;
-
-        public Context(ModelBipedBody model, int gender, float age, int pregnant) {
-            this.model = model;
-            this.gender = gender;
-            this.age = age;
-            this.pregnant = pregnant;
-        }
-
-        public boolean female() {
-            return gender > 1;
-        }
-
-        public float invAge() {
-            return 1.0F / age;
-        }
-    }
-
-    /* ─────────────────────────────
      * Registry
      * ───────────────────────────── */
     static {
         /* ───────── Player Functions ───────── */
-        PLAYER_MAP.put(Overlay.Type.Face, OverlayModelRenderer::renderHead);
+        PLAYER_MAP.put(Overlay.Type.Face, ctx1 -> renderHead(ctx1));
 
         PLAYER_MAP.put(Overlay.Type.RightArm, ctx -> renderArm(ctx, true));
         PLAYER_MAP.put(Overlay.Type.LeftArm, ctx -> renderArm(ctx, false));
@@ -248,7 +224,7 @@ public final class OverlayModelRenderer {
             renderLeg(ctx, false);
         });
 
-        PLAYER_MAP.put(Overlay.Type.Chest, OverlayModelRenderer::renderBody);
+        PLAYER_MAP.put(Overlay.Type.Chest, ctx1 -> renderBody(ctx1));
 
         PLAYER_MAP.put(Overlay.Type.ALL, ctx -> {
             render(Overlay.Type.Face, ctx);
@@ -279,7 +255,7 @@ public final class OverlayModelRenderer {
         });
     }
 
-    public static void render(Type type, Context ctx) {
+    public static void render(Type type, OverlayContext ctx) {
         RenderFunction fn = PLAYER_MAP.get(type);
         if (fn != null)
             fn.render(ctx);
@@ -293,7 +269,7 @@ public final class OverlayModelRenderer {
 
     @FunctionalInterface
     public interface RenderFunction {
-        void render(Context ctx);
+        void render(OverlayContext ctx);
     }
 
     @FunctionalInterface
