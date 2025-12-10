@@ -179,22 +179,15 @@ public class OverlayModel {
         OVERLAY_MAP.put(Type.LeftLeg, LEFT_LEG);
 
 
-        NPC_MAP.put(Type.Face, (m) -> m.bipedHead.render(par));
+        NPC_MAP.put(Type.Face, (m) -> m.renderHead(m.npc, par));
+        NPC_MAP.put(Type.Arms, (m) -> m.renderArms(m.npc, par, false));
         NPC_MAP.put(Type.RightArm, (m) -> m.bipedRightArm.render(par));
         NPC_MAP.put(Type.LeftArm, (m) -> m.bipedLeftArm.render(par));
-        NPC_MAP.put(Type.Chest, (m) -> m.bipedBody.render(par));
+        NPC_MAP.put(Type.Chest, (m) -> m.renderBody(m.npc, par));
+        NPC_MAP.put(Type.Legs, (m) -> m.renderLegs(m.npc, par));
         NPC_MAP.put(Type.RightLeg, (m) -> m.legs.leg1.render(par));
         NPC_MAP.put(Type.LeftLeg, (m) -> m.legs.leg2.render(par));
 
-        NPC_MAP.put(Type.Arms, (m) -> {
-            render(Type.LeftArm, m);
-            render(Type.RightArm, m);
-        });
-
-        NPC_MAP.put(Type.Legs, (m) -> {
-            render(Type.RightLeg, m);
-            render(Type.LeftLeg, m);
-        });
 
         NPC_MAP.put(Type.ALL, (m) -> {
             render(Type.Face, m);
