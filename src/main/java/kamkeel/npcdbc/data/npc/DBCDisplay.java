@@ -436,13 +436,7 @@ public class DBCDisplay implements IDBCDisplay, IAuraData {
     /// //////////////////////////////////////////
     // Overlays
     public List<OverlayChain> getOverlayChains() {
-        List<OverlayChain> chains = new ArrayList<>(overlayManager.getChains());
-
-        Form form = getForm();
-        if (form != null && form.display.overlays.enabled)
-            chains.add(form.display.overlays);
-
-        return chains;
+        return new ArrayList<>(overlayManager.getChains());
     }
 
 

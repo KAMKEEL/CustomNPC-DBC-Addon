@@ -7,6 +7,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ColorMode;
 import kamkeel.npcdbc.client.model.part.*;
 import kamkeel.npcdbc.client.model.part.hair.DBCHair;
+import kamkeel.npcdbc.client.render.DBCOverlays;
 import kamkeel.npcdbc.client.render.OverlayModelRenderer;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -40,6 +41,7 @@ import noppes.npcs.entity.data.ModelScalePart;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Fur;
 import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Hair;
@@ -655,16 +657,28 @@ public class ModelDBC extends ModelBase {
 
     public RenderingData currentRenderingData;
 
-    public void renderOverlays() {
+    public List<OverlayChain> applyOverlayChains(Form form) {
         ArrayList<OverlayChain> chains = new ArrayList<>();
         /*
-            display.getOverlayChains contains all Form and entity-unique overlays.
+            display.getOverlayChains contains all entity-unique overlays.
             Whatever you add before the below addAll gets rendered below them all.
+
+            Usually scars or whatever player unique customizations,
+            so a lot of the built-in chains in DBCOverlays will
+            probably be applied before.
+
+            i.e SSJ4_Fur goes here, as you usually want it below most other overlays, as it's basically the skin
+
          */
+
+
+        if (display.hasFur)
+            chains.add(DBCOverlays.SSJ4_FUR);
+
         chains.addAll(display.getOverlayChains());
 
          /*
-            Whatever you add after gets rendered on top of all.
+            Whatever you add after gets rendered on top of the above.
          */
 
         OverlayChain Savior = new OverlayChain();
@@ -672,10 +686,23 @@ public class ModelDBC extends ModelBase {
         Savior.add(Face, path("savior/savioreyes.png"), Fur);
         Savior.add(Face, path("savior/saviormouth.png"), 0XFFFFFF);
         Savior.add(Chest, path("savior/saviorchest.png"), Hair);
+        chains.add(Savior);
 
-        //chains.add(Savior);
+        /**
+         * You usually want form overlays on top of everything else.
+         * They take precedence like form colors does.
+         * So add them at the very end, unless something else goes on top.
+         */
+        if (form != null && form.display.overlays.enabled)
+            chains.add(form.display.overlays);
 
+        return chains;
+    }
+
+    public void renderOverlays() {
         Form form = display.getForm();
+        List<OverlayChain> chains = applyOverlayChains(form);
+
 
         for (OverlayChain manager : chains) {
             for (Overlay overlay : manager.overlays) {//overlayData.getOverlays()
