@@ -4,6 +4,7 @@ import JinRyuu.JBRA.ModelBipedDBC;
 import JinRyuu.JBRA.RenderPlayerJBRA;
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.JRMCoreHJYC;
+import JinRyuu.JRMCore.entity.ModelBipedBody;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
@@ -13,6 +14,7 @@ import kamkeel.npcdbc.CustomNpcPlusDBC;
 import kamkeel.npcdbc.client.ClientCache;
 import kamkeel.npcdbc.client.ClientConstants;
 import kamkeel.npcdbc.client.ColorMode;
+import kamkeel.npcdbc.client.render.OverlayModel;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
@@ -85,6 +87,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     public void preRender(AbstractClientPlayer par1AbstractClientPlayer, float par2, CallbackInfo ci) {
+        OverlayModel.model = (ModelBipedBody) mainModel;
         if (MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderEvent.Pre(par1AbstractClientPlayer, (RenderPlayerJBRA) (Object) this, par2)))
             ci.cancel();
     }
@@ -96,6 +99,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Inject(method = "renderFirstPersonArm", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glPushMatrix()V", ordinal = 0, shift = At.Shift.BEFORE), cancellable = true)
     public void preRenderArm(EntityPlayer par1EntityPlayer, CallbackInfo ci) {
+        OverlayModel.model = (ModelBipedBody) mainModel;
         if (MinecraftForge.EVENT_BUS.post(new DBCPlayerEvent.RenderArmEvent.Pre(par1EntityPlayer, (RenderPlayerJBRA) (Object) this, Minecraft.getMinecraft().timer.renderPartialTicks)))
             ci.cancel();
     }
@@ -432,7 +436,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     // TODO render alpha
     @Unique
-    private void renderOverlays(AbstractClientPlayer player, Form form, int gender, int eyes, int bodyCM, int defaultHairColor, DBCData data) {
+    private void renderOverlays(AbstractClientPlayer player, Form form, int gen, int eyes, int bodyCM, int defaultHairColor, DBCData data) {
         FormDisplay displayData = form.display;
         OverlayManager overlayData = displayData.overlays;
 
@@ -472,19 +476,14 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
                 }
 
-                applyAgeGenderTransformations(player, gender);
+                //  applyAgeGenderTransformations(player, gen);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
                 GL11.glEnable(GL11.GL_ALPHA_TEST);
 
                 new Color(color, overlay.alpha).glColor();
-
-                if (isFace) {
-                    this.modelMain.bipedHead.render(1F / 16F);
-                } else {
-                    this.modelMain.renderBody(0.0625F);
-                }
+                OverlayModel.render(overlay.getType());
 
                 if (glow) {
                     GL11.glEnable(GL11.GL_LIGHTING);
@@ -886,9 +885,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 //
 //    @Shadow
 //    private static int kk;
-
-    @Shadow
-    public static float g;
 
     /**
      * Methods Below so we don't need
