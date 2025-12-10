@@ -22,11 +22,22 @@ public final class OverlayModelRenderer {
      * HEAD
      * ───────────────────────────── */
     private static void renderHead(Context ctx) {
-        float scaleXZ = (0.5F + 0.5F / ctx.age) * (ctx.female() ? 0.85F : 1.0F);
+        float a = ctx.age;
+        float scaleXZ = (0.5F + 0.5F / a) * (ctx.female() ? 0.85F : 1.0F);
+
+        float adjust;
+        if (a >= 1.5F && a <= 2.0F) {
+            adjust = (2.0F - a) / 2.5F;
+        } else if (a < 1.5F && a >= 1.0F) {
+            adjust = (a * 2.0F - 2.0F) * 0.2F;
+        } else {
+            adjust = 0.0F;
+        }
+        float translateY = (a - 1.0F) / a * (2.0F - adjust);
 
         GL11.glPushMatrix();
-        GL11.glScalef(scaleXZ, 0.5F + 0.5F / ctx.age, scaleXZ);
-        GL11.glTranslatef(0.0F, (ctx.age - 1.0F) / ctx.age * 2.0F, 0.0F);
+        GL11.glScalef(scaleXZ, 0.5F + 0.5F / a, scaleXZ);
+        GL11.glTranslatef(0.0F, translateY, 0.0F);
         ctx.model.bipedHead.render(SCALE);
         GL11.glPopMatrix();
     }
