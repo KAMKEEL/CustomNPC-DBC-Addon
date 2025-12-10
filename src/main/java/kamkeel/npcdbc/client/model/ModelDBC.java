@@ -71,10 +71,8 @@ public class ModelDBC extends ModelBase {
     public ModelRenderer eyebase;
     public ModelRenderer eyebrow;
 
-    public static boolean HD = ConfigDBCClient.EnableHDTextures;
     private static String SDDir = CustomNpcPlusDBC.ID + ":textures/sd/";
     private static String HDDir = CustomNpcPlusDBC.ID + ":textures/hd/";
-    public static String PATH = HD ? HDDir : SDDir;
     public DBCDisplay display;
 
     public final boolean alexArms;
@@ -665,10 +663,10 @@ public class ModelDBC extends ModelBase {
         List<OverlayManager> managers = new ArrayList<>();
         display.furType = 2;
         OverlayManager Savior = new OverlayManager();
-        Savior.add(ALL).texture((texture, data, overlay) -> PATH + "ssj4/ss4b" + data.display.furType + ".png").colorType(OverlayManager.ColorType.Hair);
-        Savior.add(Face).texture(PATH + "savior/savioreyes.png").colorType(OverlayManager.ColorType.Fur);
-        Savior.add(Face).texture(PATH + "savior/saviormouth.png").color(0Xffffff);
-        Savior.add(Chest).texture(PATH + "savior/saviorchest.png").colorType(OverlayManager.ColorType.Hair);
+        Savior.add(ALL).texture((texture, data, overlay) -> path("ssj4/ss4b" + data.display.furType + ".png")).colorType(OverlayManager.ColorType.Hair);
+        Savior.add(Face).texture(path("savior/savioreyes.png")).colorType(OverlayManager.ColorType.Fur);
+        Savior.add(Face).texture(path("savior/saviormouth.png")).color(0Xffffff);
+        Savior.add(Chest).texture(path("savior/saviorchest.png")).colorType(OverlayManager.ColorType.Hair);
 
         managers.add(form.display.overlays);
         managers.add(Savior);
@@ -901,5 +899,13 @@ public class ModelDBC extends ModelBase {
         } else {
             return KiWeaponData.getColorByAuraTypeName("");
         }
+    }
+
+    public static String path(String texHD, String texSD) {
+        return ConfigDBCClient.EnableHDTextures ? HDDir + texHD : texSD; //for SD textures outside of "textures/sd/"
+    }
+
+    public static String path(String tex) {
+        return ConfigDBCClient.EnableHDTextures ? HDDir + tex : SDDir + tex;
     }
 }
