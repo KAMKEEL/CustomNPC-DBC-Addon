@@ -483,7 +483,6 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                         Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
                 }
 
-                //  applyAgeGenderTransformations(player, gen);
                 GL11.glEnable(GL11.GL_BLEND);
                 GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
@@ -555,6 +554,8 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
     }
 
     /*
+     * OVERLAYS NOW HAVE THIS CALCULATION BAKED IN SO NO LONGER NEEDED!
+     *
      * Used mostly for rendering bipeadHead correctly on female/younger than adult ages.
      * No need in modelMain.renderBody() as it already applies these in its calculations.
      */
