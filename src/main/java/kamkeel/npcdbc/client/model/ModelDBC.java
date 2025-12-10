@@ -703,10 +703,10 @@ public class ModelDBC extends ModelBase {
         Form form = display.getForm();
         List<OverlayChain> chains = applyOverlayChains(form);
 
-
+        currentRenderingData = RenderingData.from(display);
         for (OverlayChain manager : chains) {
-            for (Overlay overlay : manager.overlays) {//overlayData.getOverlays()
-                if (overlay.isEnabled()) { //&& allowedTypes.contains(overlay.getType())
+            for (Overlay overlay : manager.overlays) {
+                if (overlay.isEnabled()) {
                     Overlay.Type type = overlay.getType();
                     String texture;
 
