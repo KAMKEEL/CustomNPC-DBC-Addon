@@ -15,10 +15,11 @@ public enum EnumPacketPlayer {
     LockOn,
     LoginInfo,
     PingPacket,
+    PingFormColorPacket,
     PlaySound,
     FormSaveCustiomization,
     SendChat,
     StopSound,
     Transform,
-    Turbo
+    NPCPingForm, Turbo
 }

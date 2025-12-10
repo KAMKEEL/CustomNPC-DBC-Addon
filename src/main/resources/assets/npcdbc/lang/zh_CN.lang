@@ -12,8 +12,10 @@ dbc.clientsettings.aura.firstPersonOpacity=第一人称3D气焰不透明度: %s%
 global.customforms=形态
 global.customauras=气焰
 global.customoutlines=气轮廓
+global.customeffects=状态
 
 stats.dbcsettings=DBC 设置
+inventory.extras=气焰
 
 gui.clone=复制
 
@@ -28,9 +30,21 @@ stats.ignoreFormDefense=忽略形态减伤
 stats.hasDefensePenetration=有防御穿透
 stats.defensePenetration=防御穿透
 
+effect.runsEveryX=每X个tick运行一次
+effect.defaultLength=默认长度
+
+# These are supposed to be shorter
+effect.editor.runsEveryX=每个X点
+effect.editor.defaultLength=长度
+effect.editor.height=高度
+effect.editor.width=宽度
+effect.editor.xPos=X Pos
+effect.editor.yPos=Y Pos
+effect.editor.lossOnDeath=死亡损失
+
 mastery.maxLevel=最大形态等级
-mastery.multiFlat=固定加成
-mastery.multiMinMax=最小/最大增幅范围
+mastery.multiFlat=固定倍率加成
+mastery.multiMinMax=最小/最大等级范围
 mastery.multiPerLevel=每升一级增加
 mastery.instantTransform=瞬间变身等级需求
 mastery.healthReqSettings=血量要求设置
@@ -77,7 +91,8 @@ mastery.destroyerSettings=破坏能量设置
 mastery.destroyerKiDamage=破坏能量气功伤害倍率
 mastery.linkedMastery=关联等级
 
-
+display.attri=属性设置
+display.adv=龙珠属性加成
 display.human=人类
 display.saiyan=赛亚人
 display.halfsaiyan=混血赛亚人
@@ -135,15 +150,18 @@ display.raditz=拉帝兹
 display.kiBarColor=气条颜色
 display.eye=眼睛
 display.isBerserk=狂暴状态
+display.normalEye=正常
 display.hasEyebrows=眉毛
 display.mouth=嘴巴
 display.nose=鼻子
+display.formCanFormbeCustomized=玩家自定义
 display.color=颜色
 display.modify=修改
+display.formWidth=形态宽度
 display.formSize=形态大小
 display.aura=气焰
 display.auraOn=气焰开
-isplay.fur=毛发
+display.fur=毛发
 display.hair=头发
 display.hairType=发型
 display.majinHair=魔人发型
@@ -180,7 +198,7 @@ display.outline=气轮廓
 display.selectOutline=无气轮廓
 display.extra=额外
 display.size=大小
-display.speed=速度
+display.speed=流动速度
 display.overrideDBC=覆盖DBC形态
 display.color1=颜色1
 display.color2=颜色2
@@ -227,8 +245,12 @@ display.kettleOnly=仅魔人气焰
 display.kettlePlusAura=魔人气焰 + 气焰
 display.revampAura=重塑气焰
 display.dbcAura=DBC气焰
+display.bloom=泛光
+display.outlines=气轮廓
+display.shaders=着色器
+display.firstPersonAura=第一人称气轮廓透明度
 
-outline.noiseSize=声音大小
+outline.noiseSize=轮廓光效粗糙度
 outline.colorSmoothness=颜色平滑度
 outline.colorInterpolation=颜色过渡
 outline.pulsingSpeed=闪烁速度
@@ -294,8 +316,10 @@ npcdbc.inventory.willpower=意志
 npcdbc.inventory.mastery=形态等级
 npcdbc.inventory.selected=已选择
 npcdbc.inventory.noauraselected=未选择气焰
+npcdbc.inventory.tweaks=调整
+npcdbc.inventory.revampAura=修改气焰
 
-npcdbc.inventory.stackable.dbc=DBC
+npcdbc.inventory.stackable.dbc=龙块C
 npcdbc.inventory.stackable.kk=界王拳
 npcdbc.inventory.stackable.ui=自在
 npcdbc.inventory.stackable.godofdestruction=自我
@@ -340,7 +364,7 @@ npcdbc.spectator=作为副体无法变身
 npcdbc.raceIneligible=您的种族不符合此形态要求
 npcdbc.healthRequirement=您需要在 %d 百分之以下的生命值才能变身所选形态
 npcdbc.pain=无法在痛苦状态中变身
-npcdbc.wrongDBC=您处于错误的 DBC 形态
+npcdbc.wrongDBC=您处于错误的形态
 npcdbc.transformFromParent=必须从前置形态变身
 npcdbc.fusionSkillFusion=没有启用融合技能
 npcdbc.holdPotara=双方玩家必须各带波塔拉耳环
@@ -362,6 +386,9 @@ npcdbc.transform=变身为
 npcdbc.descend=降级至
 npcdbc.descendFrom=已解除
 npcdbc.timeExpired=计时器已到期！
+npcdbc.full=你感觉有点吃不下了
+npcdbc.bloated=你已经完成吃不下去了。
+npcdbc.humanSpiritMessage=你感觉到人类的精神。
 
 ############################
 ## ITEMS
@@ -379,9 +406,9 @@ capsule.stamina=耐力
 # (1) - Status effect name
 # (2) - Status effect level
 # (3) - Effect time
-capsule.effect=在等级 %2s 时，给予 "%1s" 效果，持续 %3s 秒
+capsule.effect=使用胶囊会得到 %2s 状态，根据 "%1s" 等级给与 %3s 秒状态
 
-tem.npcdbc:base_healthcapsule.name=基础生命胶囊
+item.npcdbc:base_healthcapsule.name=基础生命胶囊
 item.npcdbc:super_healthcapsule.name=初级生命胶囊
 item.npcdbc:mega_healthcapsule.name=中级生命胶囊
 item.npcdbc:giga_healthcapsule.name=高级生命胶囊
@@ -425,3 +452,20 @@ item.npcdbc:fruitofmight.name=精神树果实
 item.npcdbc:one_potara.name=波塔拉耳环
 item.npcdbc:two_potara.name=波塔拉耳环[金]
 item.npcdbc:three_potara.name=波塔拉耳环[豪华]
+
+effect.healthregeneration=生命回复
+effect.exhausted=疲惫
+effect.darkness=黑暗
+effect.chocolated=有点吃不下
+effect.bloated=吃不下了
+effect.fruitofmight=精神树果实
+effect.humanspirit=人类精神
+effect.meditation=冥想
+effect.namekianregeneration=那美克星人再生
+effect.overpower=压倒
+effect.potara=波塔拉
+effect.kiregeneration=气回复
+effect.staminaregeneration=耐力回复
+effect.zenkai=濒死复活强化
+
+stats.ki=气
