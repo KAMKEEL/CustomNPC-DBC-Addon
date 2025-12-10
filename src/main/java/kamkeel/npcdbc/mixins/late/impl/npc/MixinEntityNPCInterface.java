@@ -15,12 +15,16 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.boss.IBossDisplayData;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import noppes.npcs.DataInventory;
 import noppes.npcs.NoppesUtilServer;
 import noppes.npcs.entity.EntityNPCInterface;
+import noppes.npcs.items.ItemLinked;
 import noppes.npcs.scripted.event.NpcEvent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -31,6 +35,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = EntityNPCInterface.class)
 public abstract class MixinEntityNPCInterface extends EntityCreature implements IEntityAdditionalSpawnData, ICommandSender, IRangedAttackMob, IBossDisplayData {
 
+    @Shadow
+    public DataInventory inventory;
     @Unique
     private boolean dbcAltered; //if DamagedEvent's damage was altered by a DBC player
 
@@ -111,6 +117,15 @@ public abstract class MixinEntityNPCInterface extends EntityCreature implements 
         if (ConfigDBCGeneral.MODIFIED_DAMAGE_SPEED && npcdbc$shouldResetHurtTime && cir.getReturnValueZ()) {
             // Base DBC applies melee damage through JRMCoreEH#damageEntity instead of attackEntityFrom,
             // leaving hurtResistantTime at zero so players can combo rapidly
+            Entity attackerEntity = NoppesUtilServer.GetDamageSource(source);
+            if (attackerEntity instanceof EntityPlayerMP) {
+                EntityPlayerMP ep = (EntityPlayerMP) attackerEntity;
+                if(ep.getHeldItem() != null && ep.getHeldItem().getItem() instanceof ItemLinked){
+                    int time = ep.getHeldItem().stackTagCompound.getCompoundTag("ItemData").getCompoundTag("LinkedData").getInteger("AttackSpeed");
+                    this.hurtResistantTime = time;
+                    this.hurtTime = time;
+                }
+            }
             if(this.hurtResistantTime > ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE){
                 this.hurtResistantTime = ConfigDBCGeneral.NPC_MAX_HURT_RESISTANCE;
             }
