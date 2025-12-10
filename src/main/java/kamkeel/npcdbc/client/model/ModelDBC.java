@@ -42,8 +42,8 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 
-import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Fur;
-import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Hair;
+import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.*;
+import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Eye;
 import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 
 public class ModelDBC extends ModelBase {
@@ -565,34 +565,34 @@ public class ModelDBC extends ModelBase {
                 ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
 
                 if (DBCRace.isSaiyan(race)) {
-                    if (hasFur || isSSJ4 || isOozaru) {
-                        ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + "hum.png"));
-                        model.render(0.0625F); //important
-                        if (isSSJ4) {
-                            if (furColor == -1)
-                                furColor = 0xDA152C;
-                            if (HD && hasEyebrows && display.furType != 2 && !hasPupils)
-                                renderSSJ4Face(faceData, eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType, furType);
-                        }
-
-                        if (!isOozaru && furType == 2) {
-                            renderSaviorFace(eyeColor);
-                        }
-
-                        if (isOozaru) {
-                            if (furColor == -1)
-                                furColor = 6498048;
-                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png")); //oozaru hairless body
-                            ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
-                            model.render(0.0625F);
-
-                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
-                            ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
-                        } else {
-                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b" + furType + ".png" : "jinryuudragonbc:cc/ss4b"));
-                        }
-                        ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
-                    }
+                    //                    if (hasFur || isSSJ4 || isOozaru) {
+                    //                        ClientProxy.bindTexture(new ResourceLocation((HD ? HDDir + "base/" : "jinryuumodscore:cc/") + "hum.png"));
+                    //                       model.render(0.0625F); //important
+                    //                        if (isSSJ4) {
+                    //                            if (furColor == -1)
+                    //                                furColor = 0xDA152C;
+                    //                            if (HD && hasEyebrows && display.furType != 2 && !hasPupils)
+                    //                                renderSSJ4Face(faceData, eyeColor, furColor, hairColor, bodyCM, isBerserk, hasEyebrows, display.eyeType, furType);
+                    //                        }
+                    //
+                    //                        if (!isOozaru && furType == 2) {
+                    //                            renderSaviorFace(eyeColor);
+                    //                        }
+                    //
+                    //                        if (isOozaru) {
+                    //                            if (furColor == -1)
+                    //                                furColor = 6498048;
+                    //                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru1.png" : "jinryuudragonbc:cc/oozaru1.png")); //oozaru hairless body
+                    //                            ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
+                    //                            model.render(0.0625F);
+                    //
+                    //                            ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "oozaru/oozaru2.png" : "jinryuudragonbc:cc/oozaru2.png"));  //the fur
+                    //                            ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
+                    //                        } else {
+                    //                          //  ClientProxy.bindTexture(new ResourceLocation(HD ? HDDir + "ssj4/ss4b" + furType + ".png" : "jinryuudragonbc:cc/ss4b"));
+                    //                        }
+                    //                        ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
+                    //                    }
                 }
 
                 // what the fuck man sure
@@ -670,8 +670,22 @@ public class ModelDBC extends ModelBase {
 
          */
 
+        OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4_Fur");
+        SSJ4_FUR.add(ALL, Fur).texture((tex, ctx1) -> path("ssj4/ss4b" + ctx1.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
+
         if (ctx.hasFur())
-            chains.add(DBCOverlays.SSJ4_FUR);
+            chains.add(SSJ4_FUR);
+
+
+        OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4_Face");
+        SSJ4_FACE.add(Face, Body).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4shade.png")));
+        SSJ4_FACE.add(Face, 0xFFFFFF).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyewhite.png")));
+        SSJ4_FACE.add(Face, Fur).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4brows.png")));
+        SSJ4_FACE.add(Face, Hair).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4brows2.png")));
+        SSJ4_FACE.add(Face, Eye).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyeleft.png")));
+        SSJ4_FACE.add(Face, Eye).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyeright.png")));
+        SSJ4_FACE.enabled = true;
+        chains.add(SSJ4_FACE);
 
         if (uniqueChains != null)
             chains.addAll(uniqueChains);
@@ -959,5 +973,9 @@ public class ModelDBC extends ModelBase {
 
     public static String path(String texHD, String texSD) {
         return ConfigDBCClient.EnableHDTextures ? HDDir + texHD : texSD; //for SD textures outside of "textures/sd/"
+    }
+
+    public static String HD(String texHD) {
+        return HDDir + texHD;
     }
 }
