@@ -11,6 +11,7 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.scripted.CustomNPCsException;
@@ -41,7 +42,7 @@ public class FormDisplay implements IFormDisplay {
     public boolean isCustomizable = false;
 
     public BodyColor bodyColors = new BodyColor();
-    public OverlayManager overlays = new OverlayManager();
+    public OverlayChain overlays = new OverlayChain();
     public FormFaceData faceData = new FormFaceData();
 
     public int auraID = -1, outlineID = -1;

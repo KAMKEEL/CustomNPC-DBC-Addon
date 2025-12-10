@@ -1,16 +1,16 @@
 package kamkeel.npcdbc.client.render;
 
-import kamkeel.npcdbc.data.form.OverlayManager;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
 
 import static kamkeel.npcdbc.client.model.ModelDBC.*;
-import static kamkeel.npcdbc.data.form.OverlayManager.ColorType.Fur;
-import static kamkeel.npcdbc.data.form.OverlayManager.ColorType.Hair;
-import static kamkeel.npcdbc.data.form.OverlayManager.Type.*;
+import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Fur;
+import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Hair;
+import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 
 public class DBCOverlays {
 
-    public static OverlayManager Savior = new OverlayManager();
-    public static OverlayManager SSJ4_FUR = new OverlayManager();
+    public static OverlayChain Savior = new OverlayChain();
+    public static OverlayChain SSJ4_FUR = new OverlayChain();
 
     static {
         Savior.add(Face, path("savior/savioreyes.png"), Fur);

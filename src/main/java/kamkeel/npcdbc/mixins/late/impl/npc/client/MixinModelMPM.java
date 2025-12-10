@@ -5,7 +5,6 @@ import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.render.OutlineRenderer;
 import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
-import kamkeel.npcdbc.data.RenderingData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
@@ -25,11 +24,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.EnumSet;
-
 import static kamkeel.npcdbc.client.shader.PostProcessing.*;
 import static org.lwjgl.opengl.GL11.*;
-import static kamkeel.npcdbc.data.form.OverlayManager.Type.*;
 
 @Mixin(value = ModelMPM.class, remap = false)
 public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {

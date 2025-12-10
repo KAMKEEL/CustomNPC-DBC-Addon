@@ -9,7 +9,7 @@ import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
-import kamkeel.npcdbc.data.form.OverlayManager;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -36,7 +36,7 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
     private final GuiNpcFormMenu menu;
     public Form form;
     public FormDisplay display;
-    public OverlayManager overlays;
+    public OverlayChain overlays;
     private final DBCDisplay visualDisplay;
     public EntityCustomNpc npc;
 

@@ -18,7 +18,8 @@ import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 import kamkeel.npcdbc.data.form.FormFaceData;
-import kamkeel.npcdbc.data.form.OverlayManager;
+import kamkeel.npcdbc.data.overlay.Overlay;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
@@ -41,11 +42,10 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import static kamkeel.npcdbc.data.form.OverlayManager.ColorType.Fur;
-import static kamkeel.npcdbc.data.form.OverlayManager.ColorType.Hair;
-import static kamkeel.npcdbc.data.form.OverlayManager.Type.*;
+import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Fur;
+import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Hair;
+import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 
 public class ModelDBC extends ModelBase {
 
@@ -372,7 +372,7 @@ public class ModelDBC extends ModelBase {
         }
     }
 
-    private static int getProperColor(FormDisplay display, DBCDisplay npcDisplay, int customColor, OverlayManager.ColorType colorType) {
+    private static int getProperColor(FormDisplay display, DBCDisplay npcDisplay, int customColor, Overlay.ColorType colorType) {
         int furColor = display.bodyColors.furColor;
         int hairColor = display.bodyColors.hairColor;
         int eyeColor = display.bodyColors.eyeColor;
@@ -382,10 +382,10 @@ public class ModelDBC extends ModelBase {
          * Check how it's done in renderFaceSkin:166 within the if (form != null) block
          */
 
-        return colorType == OverlayManager.ColorType.Body ?
-            npcDisplay.bodyCM : colorType == OverlayManager.ColorType.Eye ?
-            eyeColor : colorType == OverlayManager.ColorType.Hair ?
-            hairColor : colorType == OverlayManager.ColorType.Fur ?
+        return colorType == Overlay.ColorType.Body ?
+            npcDisplay.bodyCM : colorType == Overlay.ColorType.Eye ?
+            eyeColor : colorType == Overlay.ColorType.Hair ?
+            hairColor : colorType == Overlay.ColorType.Fur ?
             furColor : customColor;
     }
 
@@ -663,10 +663,10 @@ public class ModelDBC extends ModelBase {
     public RenderingData currentRenderingData;
     @Unique
     public void renderFormOverlays(Form form, DBCDisplay display) {
-        List<OverlayManager> managers = new ArrayList<>();
+        List<OverlayChain> managers = new ArrayList<>();
         display.furType = 2;
 
-        OverlayManager Savior = new OverlayManager();
+        OverlayChain Savior = new OverlayChain();
         Savior.add(ALL, Fur).texture((tex, data, o) -> path("ssj4/ss4b" + data.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
         Savior.add(Face, path("savior/savioreyes.png"), Fur);
         Savior.add(Face, path("savior/saviormouth.png"), 0XFFFFFF);
@@ -675,20 +675,20 @@ public class ModelDBC extends ModelBase {
         managers.add(form.display.overlays);
         // managers.add(Savior);
 
-        for (OverlayManager manager : managers) {
-            for (OverlayManager.Overlay overlay : manager.overlays) {//overlayData.getOverlays()
+        for (OverlayChain manager : managers) {
+            for (Overlay overlay : manager.overlays) {//overlayData.getOverlays()
                 if (overlay.isEnabled()) { //&& allowedTypes.contains(overlay.getType())
-                    OverlayManager.Type type = overlay.getType();
+                    Overlay.Type type = overlay.getType();
                     String texture;
 
                     if (type == Face) {
-                        texture = ((OverlayManager.Face) overlay).getTexture(display.eyeType);
+                        texture = ((Overlay.Face) overlay).getTexture(display.eyeType);
                     } else {
                         texture = overlay.getTexture();
                     }
 
                     if (overlay.applyTexture != null)
-                        texture = overlay.texture(texture, currentRenderingData);
+                        texture = overlay.applyTexture(texture, currentRenderingData);
 
                     ImageData imageData = ClientCacheHandler.getImageData(texture);
                     if (imageData == null || !imageData.imageLoaded())
@@ -698,7 +698,7 @@ public class ModelDBC extends ModelBase {
                     Color finalColor = new Color(color, overlay.alpha);
 
                     if (overlay.applyColor != null)
-                        finalColor = overlay.color(color, overlay.alpha, currentRenderingData);
+                        finalColor = overlay.applyColor(color, overlay.alpha, currentRenderingData);
 
                     if (!bindImageDataTexture(imageData))
                         continue;

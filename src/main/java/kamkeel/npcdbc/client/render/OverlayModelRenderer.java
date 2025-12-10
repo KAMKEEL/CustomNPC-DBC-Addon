@@ -2,8 +2,8 @@ package kamkeel.npcdbc.client.render;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
-import kamkeel.npcdbc.data.form.OverlayManager;
-import kamkeel.npcdbc.data.form.OverlayManager.Type;
+import kamkeel.npcdbc.data.overlay.Overlay;
+import kamkeel.npcdbc.data.overlay.Overlay.Type;
 import net.minecraft.util.MathHelper;
 import noppes.npcs.client.model.ModelMPM;
 import org.lwjgl.opengl.GL11;
@@ -232,50 +232,50 @@ public final class OverlayModelRenderer {
      * ───────────────────────────── */
     static {
         /* ───────── Player Functions ───────── */
-        PLAYER_MAP.put(Type.Face, OverlayModelRenderer::renderHead);
+        PLAYER_MAP.put(Overlay.Type.Face, OverlayModelRenderer::renderHead);
 
-        PLAYER_MAP.put(Type.RightArm, ctx -> renderArm(ctx, true));
-        PLAYER_MAP.put(Type.LeftArm, ctx -> renderArm(ctx, false));
-        PLAYER_MAP.put(Type.Arms, ctx -> {
+        PLAYER_MAP.put(Overlay.Type.RightArm, ctx -> renderArm(ctx, true));
+        PLAYER_MAP.put(Overlay.Type.LeftArm, ctx -> renderArm(ctx, false));
+        PLAYER_MAP.put(Overlay.Type.Arms, ctx -> {
             renderArm(ctx, true);
             renderArm(ctx, false);
         });
 
-        PLAYER_MAP.put(Type.RightLeg, ctx -> renderLeg(ctx, true));
-        PLAYER_MAP.put(Type.LeftLeg, ctx -> renderLeg(ctx, false));
-        PLAYER_MAP.put(Type.Legs, ctx -> {
+        PLAYER_MAP.put(Overlay.Type.RightLeg, ctx -> renderLeg(ctx, true));
+        PLAYER_MAP.put(Overlay.Type.LeftLeg, ctx -> renderLeg(ctx, false));
+        PLAYER_MAP.put(Overlay.Type.Legs, ctx -> {
             renderLeg(ctx, true);
             renderLeg(ctx, false);
         });
 
-        PLAYER_MAP.put(Type.Chest, OverlayModelRenderer::renderBody);
+        PLAYER_MAP.put(Overlay.Type.Chest, OverlayModelRenderer::renderBody);
 
-        PLAYER_MAP.put(Type.ALL, ctx -> {
-            render(Type.Face, ctx);
-            render(Type.Arms, ctx);
-            render(Type.Chest, ctx);
-            render(Type.Legs, ctx);
+        PLAYER_MAP.put(Overlay.Type.ALL, ctx -> {
+            render(Overlay.Type.Face, ctx);
+            render(Overlay.Type.Arms, ctx);
+            render(Overlay.Type.Chest, ctx);
+            render(Overlay.Type.Legs, ctx);
         });
 
 
         /* ───────── NPC Functions ───────── */
-        NPC_MAP.put(Type.Face, (m) -> m.renderHead(m.npc, SCALE));
+        NPC_MAP.put(Overlay.Type.Face, (m) -> m.renderHead(m.npc, SCALE));
 
-        NPC_MAP.put(Type.RightArm, (m) -> m.bipedRightArm.render(SCALE));
-        NPC_MAP.put(Type.LeftArm, (m) -> m.bipedLeftArm.render(SCALE));
-        NPC_MAP.put(Type.Arms, (m) -> m.renderArms(m.npc, SCALE, false));
+        NPC_MAP.put(Overlay.Type.RightArm, (m) -> m.bipedRightArm.render(SCALE));
+        NPC_MAP.put(Overlay.Type.LeftArm, (m) -> m.bipedLeftArm.render(SCALE));
+        NPC_MAP.put(Overlay.Type.Arms, (m) -> m.renderArms(m.npc, SCALE, false));
 
-        NPC_MAP.put(Type.RightLeg, (m) -> m.legs.leg1.render(SCALE));
-        NPC_MAP.put(Type.LeftLeg, (m) -> m.legs.leg2.render(SCALE));
-        NPC_MAP.put(Type.Legs, (m) -> m.renderLegs(m.npc, SCALE));
+        NPC_MAP.put(Overlay.Type.RightLeg, (m) -> m.legs.leg1.render(SCALE));
+        NPC_MAP.put(Overlay.Type.LeftLeg, (m) -> m.legs.leg2.render(SCALE));
+        NPC_MAP.put(Overlay.Type.Legs, (m) -> m.renderLegs(m.npc, SCALE));
 
-        NPC_MAP.put(Type.Chest, (m) -> m.renderBody(m.npc, SCALE));
+        NPC_MAP.put(Overlay.Type.Chest, (m) -> m.renderBody(m.npc, SCALE));
 
-        NPC_MAP.put(Type.ALL, (m) -> {
-            render(Type.Face, m);
-            render(Type.Arms, m);
-            render(Type.Legs, m);
-            render(Type.Chest, m);
+        NPC_MAP.put(Overlay.Type.ALL, (m) -> {
+            render(Overlay.Type.Face, m);
+            render(Overlay.Type.Arms, m);
+            render(Overlay.Type.Legs, m);
+            render(Overlay.Type.Chest, m);
         });
     }
 

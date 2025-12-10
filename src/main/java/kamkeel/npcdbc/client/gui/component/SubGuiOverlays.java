@@ -2,10 +2,9 @@ package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.client.gui.global.form.SubGuiFormDisplay;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.form.OverlayManager;
-import kamkeel.npcdbc.data.form.OverlayManager.ColorType;
-import kamkeel.npcdbc.data.form.OverlayManager.Face;
-import kamkeel.npcdbc.data.form.OverlayManager.Overlay;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.overlay.Overlay.Face;
+import kamkeel.npcdbc.data.overlay.Overlay;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import noppes.npcs.client.gui.SubGuiColorSelector;
@@ -16,12 +15,12 @@ import noppes.npcs.entity.EntityNPCInterface;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static kamkeel.npcdbc.data.form.OverlayManager.Type.*;
+import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 
 public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, ITextfieldListener {
     public SubGuiFormDisplay parent;
     public Form form;
-    public static OverlayManager overlays;
+    public static OverlayChain overlays;
     public static ArrayList<Integer> selectedFaces = new ArrayList<>();
     public int lastColorClicked = 0;
     public static int lastTextureClicked = 0;
@@ -126,7 +125,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
             y += 23;
 
             if (currentOverlay.isEnabled()) {
-                if (currentOverlay.getColorType() == ColorType.Custom.ordinal()) {
+                if (currentOverlay.getColorType() == Overlay.ColorType.Custom.ordinal()) {
                     button = new GuiNpcButton(id(3, i), 90, y, 50, 20, getColor(currentOverlay.getColor()));
                     button.packedFGColour = currentOverlay.getColor();
                     window.addButton(button); // id 3
@@ -145,11 +144,11 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
                 }
 
 
-                String[] names = Arrays.stream(OverlayManager.Type.values()).map(Enum::name).toArray(String[]::new);
+                String[] names = Arrays.stream(Overlay.Type.values()).map(Enum::name).toArray(String[]::new);
                 button = new GuiNpcButton(id(8, i), 5, y, 50, 20, names, currentOverlay.getType().ordinal());
                 window.addButton(button); // id 8
 
-                int tempY = currentOverlay.getColorType() == ColorType.Custom.ordinal() ? y + 23 : y;
+                int tempY = currentOverlay.getColorType() == Overlay.ColorType.Custom.ordinal() ? y + 23 : y;
 
                 window.addLabel(new GuiNpcLabel(id(9, i), "Alpha:", 58, tempY + 5, 0xffffff));
                 textField = new GuiNpcTextField(id(9, i), this, 90, tempY, 30, 20, currentOverlay.getAlpha() + "");
@@ -251,7 +250,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         }
 
         if (buttonType == 2) {
-            get(overlayID).colorType((get(overlayID).getColorType() + 1) % ColorType.values().length);
+            get(overlayID).colorType((get(overlayID).getColorType() + 1) % Overlay.ColorType.values().length);
             initGui();
         }
 
