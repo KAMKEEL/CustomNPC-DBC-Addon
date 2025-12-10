@@ -42,6 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static kamkeel.npcdbc.data.form.OverlayManager.ColorType.Fur;
+import static kamkeel.npcdbc.data.form.OverlayManager.ColorType.Hair;
 import static kamkeel.npcdbc.data.form.OverlayManager.Type.*;
 
 public class ModelDBC extends ModelBase {
@@ -662,11 +664,12 @@ public class ModelDBC extends ModelBase {
     public void renderFormOverlays(Form form, DBCDisplay display, ModelRenderer model, Set<OverlayManager.Type> allowedTypes) {
         List<OverlayManager> managers = new ArrayList<>();
         display.furType = 2;
+
         OverlayManager Savior = new OverlayManager();
-        Savior.add(ALL).texture((texture, data, overlay) -> path("ssj4/ss4b" + data.display.furType + ".png")).colorType(OverlayManager.ColorType.Hair);
-        Savior.add(Face).texture(path("savior/savioreyes.png")).colorType(OverlayManager.ColorType.Fur);
-        Savior.add(Face).texture(path("savior/saviormouth.png")).color(0Xffffff);
-        Savior.add(Chest).texture(path("savior/saviorchest.png")).colorType(OverlayManager.ColorType.Hair);
+        Savior.add(ALL, Fur).texture((tex, data, o) -> path("ssj4/ss4b" + data.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
+        Savior.add(Face, path("savior/savioreyes.png"), Fur);
+        Savior.add(Face, path("savior/saviormouth.png"), 0XFFFFFF);
+        Savior.add(Chest, path("savior/saviorchest.png"), Hair);
 
         managers.add(form.display.overlays);
         managers.add(Savior);
@@ -901,11 +904,14 @@ public class ModelDBC extends ModelBase {
         }
     }
 
-    public static String path(String texHD, String texSD) {
-        return ConfigDBCClient.EnableHDTextures ? HDDir + texHD : texSD; //for SD textures outside of "textures/sd/"
-    }
-
+    /*
+       apply HD/SD paths
+     */
     public static String path(String tex) {
         return ConfigDBCClient.EnableHDTextures ? HDDir + tex : SDDir + tex;
+    }
+
+    public static String path(String texHD, String texSD) {
+        return ConfigDBCClient.EnableHDTextures ? HDDir + texHD : texSD; //for SD textures outside of "textures/sd/"
     }
 }

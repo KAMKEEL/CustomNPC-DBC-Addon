@@ -13,11 +13,11 @@ public class DBCOverlays {
     public static OverlayManager SSJ4_FUR = new OverlayManager();
 
     static {
-        Savior.add(Face).texture(path("savior/savioreyes.png")).colorType(Fur);
-        Savior.add(Face).texture(path("savior/saviormouth.png")).color(0Xffffff);
-        Savior.add(Chest).texture(path("savior/saviorchest.png")).colorType(Hair);
+        Savior.add(Face, path("savior/savioreyes.png"), Fur);
+        Savior.add(Face, path("savior/saviormouth.png"), 0XFFFFFF);
+        Savior.add(Chest, path("savior/saviorchest.png"), Hair);
 
 
-        SSJ4_FUR.add(ALL).texture((tex, data, o) -> path("ssj4/ss4b" + data.furType() + ".png", "jinryuudragonbc:cc/ss4b")).colorType(Fur);
+        SSJ4_FUR.add(ALL, Fur).texture((tex, data, o) -> path("ssj4/ss4b" + data.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
     }
 }
