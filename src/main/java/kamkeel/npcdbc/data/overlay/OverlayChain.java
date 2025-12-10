@@ -7,11 +7,20 @@ import java.util.*;
 
 public class OverlayChain {
 
-    public final ArrayList<Overlay> overlays;
+    public final ArrayList<Overlay> overlays = new ArrayList<>();
+
+    public String name = "";
     public boolean enabled = false;
 
     public OverlayChain() {
-        this.overlays = new ArrayList<>();
+    }
+
+    public OverlayChain(String name) {
+        this.name = name;
+    }
+
+    public static OverlayChain create(String name) {
+        return new OverlayChain(name);
     }
 
     public Overlay add(Overlay.Type type) {

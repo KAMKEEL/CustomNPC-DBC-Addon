@@ -9,8 +9,8 @@ import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 
 public class DBCOverlays {
 
-    public static OverlayChain Savior = new OverlayChain();
-    public static OverlayChain SSJ4_FUR = new OverlayChain();
+    public static OverlayChain Savior = OverlayChain.create("Savior");
+    public static OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4_Fur");
 
     static {
         Savior.add(Face, path("savior/savioreyes.png"), Fur);
