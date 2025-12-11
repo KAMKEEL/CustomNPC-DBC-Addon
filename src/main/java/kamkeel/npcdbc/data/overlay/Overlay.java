@@ -390,7 +390,15 @@ public class Overlay {
 
     public enum Type {
         ALL(),
+
         Face(Face::new),
+        Eyebrows(),
+        EyeWhite(),
+        LeftEye(),
+        RightEye(),
+        Nose(),
+        Mouth(),
+
         Chest(),
         Arms(),
         RightArm(),

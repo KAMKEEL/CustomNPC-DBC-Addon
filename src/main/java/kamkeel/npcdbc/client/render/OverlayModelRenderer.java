@@ -234,7 +234,20 @@ public final class OverlayModelRenderer {
      * ───────────────────────────── */
     static {
         /* ───────── Overlay Type -> Render Functions ───────── */
-        MODEL_MAP.put(Type.Face, ctx1 -> renderHead(ctx1));
+        MODEL_MAP.put(Type.Eyebrows, ctx -> renderHead(ctx));
+        MODEL_MAP.put(Type.EyeWhite, ctx -> renderHead(ctx));
+        MODEL_MAP.put(Type.LeftEye, ctx -> renderHead(ctx));
+        MODEL_MAP.put(Type.RightEye, ctx -> renderHead(ctx));
+        MODEL_MAP.put(Type.Nose, ctx -> renderHead(ctx));
+        MODEL_MAP.put(Type.Mouth, ctx -> renderHead(ctx));
+        MODEL_MAP.put(Type.Face, ctx -> {
+            render(Type.Eyebrows, ctx);
+            render(Type.EyeWhite, ctx);
+            render(Type.LeftEye, ctx);
+            render(Type.RightEye, ctx);
+            render(Type.Nose, ctx);
+            render(Type.Mouth, ctx);
+        });
 
         MODEL_MAP.put(Type.RightArm, ctx -> renderArm(ctx, true));
         MODEL_MAP.put(Type.LeftArm, ctx -> renderArm(ctx, false));

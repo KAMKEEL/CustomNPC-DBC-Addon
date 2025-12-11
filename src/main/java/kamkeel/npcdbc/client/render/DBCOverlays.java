@@ -26,11 +26,11 @@ public class DBCOverlays {
         OOZARU.add(ALL, Fur, path("oozaru/oozaru2.png", "jinryuudragonbc:cc/oozaru2.png"));
 
         SSJ4_FACE.add(Face, BodyCM, (ctx) -> format(HD("%s/%s/face_%s/ssj4shade.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
-        SSJ4_FACE.add(Face, 0xFFFFFF, (ctx) -> format(HD("%s/%s/face_%s/ssj4eyewhite.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
-        SSJ4_FACE.add(Face, Fur, (ctx) -> format(HD("%s/%s/face_%s/ssj4brows.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
-        SSJ4_FACE.add(Face, Hair, (ctx) -> format(HD("%s/%s/face_%s/ssj4brows2.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
-        SSJ4_FACE.add(Face, Eye, (ctx) -> format(HD("%s/%s/face_%s/ssj4eyeleft.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
-        SSJ4_FACE.add(Face, Eye, (ctx) -> format(HD("%s/%s/face_%s/ssj4eyeright.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
+        SSJ4_FACE.add(EyeWhite, 0xFFFFFF, (ctx) -> format(HD("%s/%s/face_%s/ssj4eyewhite.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
+        SSJ4_FACE.add(Eyebrows, Fur, (ctx) -> format(HD("%s/%s/face_%s/ssj4brows.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
+        SSJ4_FACE.add(Eyebrows, Hair, (ctx) -> format(HD("%s/%s/face_%s/ssj4brows2.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
+        SSJ4_FACE.add(LeftEye, Eye, (ctx) -> format(HD("%s/%s/face_%s/ssj4eyeleft.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
+        SSJ4_FACE.add(RightEye, Eye, (ctx) -> format(HD("%s/%s/face_%s/ssj4eyeright.png"), ctx.furDir(), ctx.genderDir(), ctx.eyeType()));
     }
 }
 /*
