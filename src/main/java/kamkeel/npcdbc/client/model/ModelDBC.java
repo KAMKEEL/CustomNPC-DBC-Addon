@@ -19,7 +19,6 @@ import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
 
-import static kamkeel.npcdbc.data.form.FacePartData.Part.*;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.data.overlay.Overlay;
@@ -44,6 +43,8 @@ import java.util.List;
 import java.util.Set;
 
 import static java.lang.String.format;
+
+import static kamkeel.npcdbc.data.form.FacePartData.Part;
 import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.*;
 import static kamkeel.npcdbc.data.overlay.Overlay.Type;
 import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
@@ -243,7 +244,7 @@ public class ModelDBC extends ModelBase {
             ColorMode.applyModelColor(bodyCM, this.parent.alpha, isHurt);
 
             if (!isSfH) {
-                if (!faceData.disabled(Nose, display.eyeType)) {
+                if (!faceData.disabled(Part.Nose, display.eyeType)) {
                     ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "n" + display.noseType)));
 
                     this.nose.rotateAngleY = parent.bipedHead.rotateAngleY;
@@ -260,7 +261,7 @@ public class ModelDBC extends ModelBase {
                     GL11.glPopMatrix();
                 }
 
-                if (!faceData.disabled(Mouth, display.eyeType)) {
+                if (!faceData.disabled(Part.Mouth, display.eyeType)) {
                     String mouthDir = "";
                     if (display.race == 4 && hasArcoMask)
                         mouthDir = "jinryuudragonbc:cc/arc/m/0A" + 2 + display.bodyType + "a.png";
@@ -283,7 +284,7 @@ public class ModelDBC extends ModelBase {
                 }
 
                 if (!renderSSJ4Face) {
-                    if (!faceData.disabled(EyeWhite, display.eyeType)) {
+                    if (!faceData.disabled(Part.EyeWhite, display.eyeType)) {
                         GL11.glColor4f(1.0f, 1.0f, 1.0f, this.parent.alpha);
                         ClientProxy.bindTexture(new ResourceLocation(getFaceTexture(display, "b" + display.eyeType)));
                         this.eyebase.rotateAngleY = parent.bipedHead.rotateAngleY;
@@ -300,7 +301,7 @@ public class ModelDBC extends ModelBase {
                         GL11.glPopMatrix();
                     }
 
-                    if (display.race < 4 && !faceData.disabled(Eyebrows, display.eyeType)) {
+                    if (display.race < 4 && !faceData.disabled(Part.Eyebrows, display.eyeType)) {
                         if (display.race != DBCRace.NAMEKIAN)
                             ColorMode.applyModelColor(eyeBrowColor, this.parent.alpha, isHurt);
                         else {
@@ -326,7 +327,7 @@ public class ModelDBC extends ModelBase {
 
 
                     if (!isBerserk && !hasPupils) {
-                        if (!faceData.disabled(LeftEye, display.eyeType)) {
+                        if (!faceData.disabled(Part.LeftEye, display.eyeType)) {
                             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                             String texture = getFaceTexture(display, "l" + display.eyeType);
 
@@ -346,7 +347,7 @@ public class ModelDBC extends ModelBase {
                             GL11.glPopMatrix();
                         }
 
-                        if (!faceData.disabled(RightEye, display.eyeType)) {
+                        if (!faceData.disabled(Part.RightEye, display.eyeType)) {
                             ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                             String texture = "";
                             if (HD && hasPupils)
@@ -404,14 +405,14 @@ public class ModelDBC extends ModelBase {
         // TODO for now all the faces are male, gotta wait for hussar
         String eyeDir = (furType == 1 ? "ssj4d" : "ssj4") + "/male/face_" + eyeType + "/";
 
-        if (!data.disabled(EyeWhite, eyeType)) {
+        if (!data.disabled(Part.EyeWhite, eyeType)) {
             ColorMode.applyModelColor(0xffffff, this.parent.alpha, isHurt);
             ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyewhite.png"));
             parent.bipedHead.render(1F / 16F);
         }
 
         if (!isBerserk) {
-            if (!data.disabled(RightEye, eyeType)) {
+            if (!data.disabled(Part.RightEye, eyeType)) {
                 ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                 ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeright.png"));
                 parent.bipedHead.render(0.0625F);
@@ -423,7 +424,7 @@ public class ModelDBC extends ModelBase {
                 }
             }
 
-            if (!data.disabled(LeftEye, eyeType)) {
+            if (!data.disabled(Part.LeftEye, eyeType)) {
                 ColorMode.applyModelColor(eyeColor, this.parent.alpha, isHurt);
                 ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4eyeleft.png"));
                 parent.bipedHead.render(0.0625F);
@@ -436,7 +437,7 @@ public class ModelDBC extends ModelBase {
             }
         }
 
-        if (!data.disabled(Eyebrows, eyeType)) {
+        if (!data.disabled(Part.Eyebrows, eyeType)) {
             ColorMode.applyModelColor(furColor, this.parent.alpha, isHurt);
             ClientProxy.bindTexture(new ResourceLocation(HDDir + eyeDir + "ssj4brows.png"));
             parent.bipedHead.render(1F / 16F);
