@@ -43,6 +43,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.String.format;
 import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.*;
 import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Eye;
 import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
@@ -682,12 +683,12 @@ public class ModelDBC extends ModelBase {
 
         // Create the overlays here to test them (easy to hotswap here), then when finished drop them in DBCOverlays
         OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4_Face");
-        SSJ4_FACE.add(Face, Body).texture(((ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4shade.png")));
-        SSJ4_FACE.add(Face, 0xFFFFFF).texture(((ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyewhite.png")));
-        SSJ4_FACE.add(Face, Fur).texture(((ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4brows.png")));
-        SSJ4_FACE.add(Face, Hair).texture(((ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4brows2.png")));
-        SSJ4_FACE.add(Face, Eye).texture(((ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyeleft.png")));
-        SSJ4_FACE.add(Face, Eye).texture(((ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyeright.png")));
+        SSJ4_FACE.add(Face, Body, (ctx1) -> format(HD("%s/%s/face_%s/ssj4shade.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
+        SSJ4_FACE.add(Face, 0xFFFFFF, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyewhite.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
+        SSJ4_FACE.add(Face, Fur, (ctx1) -> format(HD("%s/%s/face_%s/ssj4brows.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
+        SSJ4_FACE.add(Face, Hair, (ctx1) -> format(HD("%s/%s/face_%s/ssj4brows2.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
+        SSJ4_FACE.add(Face, Eye, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyeleft.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
+        SSJ4_FACE.add(Face, Eye, (ctx1) -> format(HD("%s/%s/face_%s/ssj4eyeright.png"), ctx1.furDir(), ctx1.genderDir(), ctx1.eyeType()));
         SSJ4_FACE.enabled = true;
        // chains.add(SSJ4_FACE);
 

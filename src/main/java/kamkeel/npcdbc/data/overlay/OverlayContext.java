@@ -18,7 +18,7 @@ public class OverlayContext {
     public Overlay overlay;
     public OverlayChain chain;
 
-    public String finalTex; // for usage in TextureFunction
+    public String finalTex; // Fully baked texture before TextureFunction is applied
     public Color finalCol; // same for ColorFunction
 
     public boolean isNPC;
@@ -67,8 +67,8 @@ public class OverlayContext {
         return ModelBipedDBC.p;
     }
 
-    public String genderDirectory() {
-        return female() ? "/female" : "/male";
+    public String genderDir() {
+        return female() ? "female" : "male";
     }
 
 
@@ -77,8 +77,7 @@ public class OverlayContext {
     }
 
     public int furType() {
-        Form form = form();
-        if (form != null)
+        if (form() != null)
             return form.display.furType;
 
         return isNPC ? display.furType : 0;
@@ -88,17 +87,19 @@ public class OverlayContext {
         return furType() == 1;
     }
 
+    public String furDir() {
+        return furDaima() ? "ssj4d" : "ssj4";
+    }
+
     public boolean hasFur() {
-        Form form = form();
-        if (form != null)
+        if (form() != null)
             return form.display.hasBodyFur;
 
         return isNPC ? display.hasFur : false;
     }
 
     public boolean oozaru() {
-        Form form = form();
-        if (form != null)
+        if (form() != null)
             return form.display.hairType.equals("oozaru");
 
         return isNPC ? display.hairType.equals("oozaru") : false;
