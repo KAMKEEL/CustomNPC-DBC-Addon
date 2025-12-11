@@ -257,24 +257,18 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
 
         y += 30;
 
-        window.addLabel(new GuiNpcLabel(116, "Face Parts", x, y, 0xFFFFFF)); // put translation here
-
-        window.addButton(new GuiNpcButtonYesNo(1161, width - x - 75, y - 5, 50, 20, display.faceData.enabled));
-        if (display.faceData.enabled) {
-            y += 25;
-            window.addButton(new GuiNpcButton(116, width - x - 75, y - 5, 50, 20, "Edit"));
-        }
+        window.addLabel(new GuiNpcLabel(116, "Face Data", x, y, 0xFFFFFF)); // put translation here
+        window.addButton(new GuiNpcButtonYesNo(1161, x + 64, y - 5, 40, 20, display.faceData.enabled));
+        window.addButton(new GuiNpcButton(116, width - x - 75, y - 5, 50, 20, "Edit"));
+        window.getButton(116).enabled = display.faceData.enabled;
 
         y += 30;
 
         window.addLabel(new GuiNpcLabel(117, "display.overlays", x, y, 0xFFFFFF));
-        window.addButton(new GuiNpcButtonYesNo(117, width - x - 75, y - 5, 50, 20, overlays.enabled));
+        window.addButton(new GuiNpcButtonYesNo(117, x + 64, y - 5, 40, 20, overlays.enabled));
+        window.addButton(new GuiNpcButton(118, width - x - 75, y - 5, 50, 20, "Edit"));
+        window.getButton(118).enabled = overlays.enabled;
 
-        if (overlays.enabled) {
-            y+= 25;
-
-            window.addButton(new GuiNpcButton(118, width - x - 75, y - 5, 50, 20, "Edit"));
-        }
 
         window.maxScrollY = (y - height) + 20 + 5;
     }
