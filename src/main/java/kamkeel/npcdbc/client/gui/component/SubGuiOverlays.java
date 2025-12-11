@@ -113,8 +113,9 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
             if (currentOverlay.isEnabled()) {
                 window.addLabel(new GuiNpcLabel(id(2, i), "Color:", 58, y + 5, 0xffffff));
-                button = new GuiNpcButton(id(2, i), 90, y, 50, 20, new String[]{
-                    "display.custom", "display.body", "display.eye", "display.hair", "display.fur"}, currentOverlay.getColorType());
+
+                String[] names = Arrays.stream(Overlay.ColorType.values()).map(Enum::name).toArray(String[]::new);
+                button = new GuiNpcButton(id(2, i), 90, y, 50, 20, names, currentOverlay.getColorType());
                 window.addButton(button); // id 2
 
                 window.addLabel(new GuiNpcLabel(id(4, i), "Glow:", 143, y + 5, 0xffffff));
