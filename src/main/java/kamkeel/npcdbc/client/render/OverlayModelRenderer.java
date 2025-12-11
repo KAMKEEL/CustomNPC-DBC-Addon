@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.entity.ModelBipedBody;
 import kamkeel.npcdbc.data.overlay.Overlay.Type;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 import net.minecraft.util.MathHelper;
+import noppes.npcs.constants.EnumAnimation;
 import org.lwjgl.opengl.GL11;
 
 import java.util.EnumMap;
@@ -48,10 +49,17 @@ public final class OverlayModelRenderer {
      * ───────────────────────────── */
     private static void renderArm(OverlayContext ctx, boolean right) {
         if (ctx.isNPC) {
+            GL11.glPushMatrix();
+            if (ctx.npc.currentAnimation == EnumAnimation.DANCING) {
+                float dancing = (float) ctx.npc.ticksExisted / 4.0F;
+                GL11.glTranslatef((float) Math.sin(dancing) * 0.025F, (float) Math.abs(Math.cos(dancing)) * 0.125F - 0.02F, 0.0F);
+            }
+
             if (right)
                 ctx.mpm().bipedRightArm.render(SCALE);
             else
                 ctx.mpm().bipedLeftArm.render(SCALE);
+            GL11.glPopMatrix();
         } else {
             float scaleXZ = ctx.invAge() * (ctx.female() ? 0.7F : 1.0F);
 
