@@ -43,7 +43,7 @@ public class FormDisplay implements IFormDisplay {
 
     public BodyColor bodyColors = new BodyColor();
     public OverlayChain overlays = new OverlayChain();
-    public FormFaceData faceData = new FormFaceData();
+    public FacePartData faceData = new FacePartData();
 
     public int auraID = -1, outlineID = -1;
 
@@ -407,7 +407,7 @@ public class FormDisplay implements IFormDisplay {
         setOutline(id);
     }
 
-    public FormFaceData getFaceData() {
+    public FacePartData getFaceData() {
         return faceData;
     }
 

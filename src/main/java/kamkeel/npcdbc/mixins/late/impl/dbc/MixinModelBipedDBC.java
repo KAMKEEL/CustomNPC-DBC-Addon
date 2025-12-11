@@ -19,7 +19,7 @@ import kamkeel.npcdbc.controllers.TransformController;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.form.FormDisplay;
-import kamkeel.npcdbc.data.form.FormFaceData;
+import kamkeel.npcdbc.data.form.FacePartData;
 import kamkeel.npcdbc.util.Utility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -125,11 +125,11 @@ public class MixinModelBipedDBC extends ModelBipedBody {
 
                 FormDisplay.BodyColor playerColors = dbcData.currentCustomizedColors;
 
-                HashMap<Integer, HashSet<Integer>> facePartsRemoved = form.display.faceData.facePartsRemoved;
+                HashMap<Integer, HashSet<Integer>> facePartsRemoved = form.display.faceData.disabledParts;
                 for (int i = 0; i < 7; i++) {
-                    for (int j = 0; j < FormFaceData.Part.values().length; j++) {
+                    for (int j = 0; j < FacePartData.Part.values().length; j++) {
                         if (facePartsRemoved.get(i).contains(j))
-                            disableFacePart(hair, FormFaceData.Part.values()[j].getPartId(), ci);
+                            disableFacePart(hair, FacePartData.Part.values()[j].getPartId(), ci);
                     }
                 }
 
@@ -350,8 +350,8 @@ public class MixinModelBipedDBC extends ModelBipedBody {
     public void disableFacePart(String faceType, String facePart, CallbackInfoReturnable<String> ci) {
         if (
             facePart.equals("EYES") &&
-            (faceType.contains(FormFaceData.Part.RightEye.getPartId()) ||
-            faceType.contains(FormFaceData.Part.LeftEye.getPartId()))
+            (faceType.contains(FacePartData.Part.RightEye.getPartId()) ||
+            faceType.contains(FacePartData.Part.LeftEye.getPartId()))
         ) {
             ci.setReturnValue("");
         } else if (faceType.contains(facePart)){
