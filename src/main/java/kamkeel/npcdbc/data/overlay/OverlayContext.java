@@ -24,8 +24,19 @@ public class OverlayContext {
     public Overlay overlay;
     public OverlayChain chain;
 
-    public String finalTex; // Fully baked texture before TextureFunction is applied
-    public Color finalCol; // same for ColorFunction
+    /*
+     The texture of the current Overlay before it gets bound.
+     Can call it in TextureFunction (ctx.texture) to see
+     what it is before the function is applied.
+     */
+    public String texture;
+
+    /*
+    The color of the current Overlay after all ColorType logic is applied.
+    Can call it in ColorFunction (ctx.color) to see
+    what it is before the function is applied.
+    */
+    public Color color; // same for ColorFunction
 
     public boolean isNPC;
     public EntityCustomNpc npc;

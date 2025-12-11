@@ -726,25 +726,23 @@ public class ModelDBC extends ModelBase {
                 Type type = overlay.getType();
 
                 /* ───────── Texture ───────── */
-                String texture;
                 if (type == Face)
-                    texture = ((Overlay.Face) overlay).getTexture(ctx.eyeType());
+                    ctx.texture = ((Overlay.Face) overlay).getTexture(ctx.eyeType());
                 else
-                    texture = overlay.getTexture();
+                    ctx.texture = overlay.getTexture();
 
-                ctx.finalTex = texture;
                 if (overlay.applyTexture != null)
-                    texture = overlay.applyTexture(ctx);
+                    ctx.texture = overlay.applyTexture(ctx);
 
-                if (!bindTexture(texture))
+                if (!bindTexture(ctx.texture))
                     continue;
 
                 /* ───────── Colors ───────── */
                 int col = overlay.colorType == Custom ? overlay.color : ctx.color(overlay.colorType);
-                ctx.finalCol = new Color(col, overlay.alpha);
+                ctx.color = new Color(col, overlay.alpha);
 
                 if (overlay.applyColor != null)
-                    ctx.finalCol = overlay.applyColor(ctx);
+                    ctx.color = overlay.applyColor(ctx);
 
                 /* ───────── Glow ───────── */
                 boolean glow = overlay.isGlow();
@@ -780,9 +778,9 @@ public class ModelDBC extends ModelBase {
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
 
                 if (ctx.isNPC)
-                    ColorMode.applyModelColor(ctx.finalCol.color, ctx.finalCol.alpha, isHurt);
+                    ColorMode.applyModelColor(ctx.color.color, ctx.color.alpha, isHurt);
                 else
-                    ctx.finalCol.glColor();
+                    ctx.color.glColor();
 
                 OverlayModelRenderer.render(type, ctx);
 

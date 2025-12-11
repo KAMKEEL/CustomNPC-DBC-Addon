@@ -39,9 +39,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.client.ClientEventHandler;
-import noppes.npcs.client.renderer.ImageData;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -470,7 +468,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 else
                     texture = overlay.getTexture();
 
-                ctx.finalTex = texture;
+                ctx.texture = texture;
                 if (overlay.applyTexture != null)
                     texture = overlay.applyTexture(ctx);
 
@@ -486,7 +484,7 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
                 //int color = overlay.getColorType() == Overlay.ColorType.Body.ordinal() ? bodyCM : overlay.getColorType() == Overlay.ColorType.Eye.ordinal() ? (eyeColor < 0 ? JRMCoreH.dnsEyeC1(data.DNS) : eyeColor) : overlay.getColorType() == Overlay.ColorType.Hair.ordinal() ? (hairColor < 0 ? defaultHairColor : hairColor) : overlay.getColorType() == Overlay.ColorType.Fur.ordinal() ? furColor : overlay.getColor();
 
                 int color = 0xffffff;
-                Color finalColor = ctx.finalCol = new Color(color, overlay.alpha);
+                Color finalColor = ctx.color = new Color(color, overlay.alpha);
 
                 if (overlay.applyColor != null)
                     finalColor = overlay.applyColor(ctx);
