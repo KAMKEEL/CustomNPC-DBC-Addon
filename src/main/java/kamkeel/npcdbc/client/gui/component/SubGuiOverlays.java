@@ -2,9 +2,9 @@ package kamkeel.npcdbc.client.gui.component;
 
 import kamkeel.npcdbc.client.gui.global.form.SubGuiFormDisplay;
 import kamkeel.npcdbc.data.form.Form;
-import kamkeel.npcdbc.data.overlay.OverlayChain;
-import kamkeel.npcdbc.data.overlay.Overlay.Face;
 import kamkeel.npcdbc.data.overlay.Overlay;
+import kamkeel.npcdbc.data.overlay.Overlay.Face;
+import kamkeel.npcdbc.data.overlay.OverlayChain;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import noppes.npcs.client.gui.SubGuiColorSelector;
@@ -14,8 +14,11 @@ import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
+import static kamkeel.npcdbc.data.overlay.Overlay.Type.ALL;
+import static kamkeel.npcdbc.data.overlay.Overlay.Type.Face;
 
 public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, ITextfieldListener {
     public SubGuiFormDisplay parent;
@@ -162,7 +165,7 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
 
             button = new GuiNpcButton(id(10, i), 5, y, 50, 20, "Delete");
             window.addButton(button); // id 9
-            y += 35;
+            y += 45;
         }
 
         if (overlays.overlays.size() >= 10) {
@@ -170,7 +173,12 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         }
 
         window.addButton(new GuiNpcButton(1, 8, y, 20, 20, "+"));
-        y += 23; //Don't forget the extra 3 pixels after the +
+        y += 45; //Don't forget the extra 3 pixels after the +
+
+        window.addLabel(new GuiNpcLabel(1171, "Disable Other Overlays", 5, y, 0xFFFFFF));
+        window.addButton(new GuiNpcButton(4, 155, y - 5, 100, 20, "Select Types"));
+        y += 23;
+
         /**
          * y is the TOTAL height of all elements, even outside the scroll window height
          */
@@ -223,6 +231,13 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
         if (id == 1) {
             overlays.add(ALL);
             rebuildSelectedFaces();
+            initGui();
+        }
+
+        if (id == 4) {
+            List<String> all = Arrays.stream(Overlay.Type.values()).map(Enum::name).collect(Collectors.toList());
+            List<String> selected = form.display.disabledOverlayTypes.stream().map(Enum::name).collect(Collectors.toList());
+            setSubGui(new SubGuiSelectList(all, selected, "All Types", "Selected Types"));
             initGui();
         }
 
@@ -322,11 +337,14 @@ public class SubGuiOverlays extends SubGuiInterface implements ISubGuiListener, 
     }
 
     @Override
-    public void subGuiClosed(SubGuiInterface subGuiInterface) {
-        if (subGuiInterface instanceof SubGuiColorSelector) {
-            int color = ((SubGuiColorSelector) subGuiInterface).color;
+    public void subGuiClosed(SubGuiInterface sub) {
+        if (sub instanceof SubGuiColorSelector) {
+            int color = ((SubGuiColorSelector) sub).color;
             get(overlayID).color(color);
             initGui();
+        } else if (sub instanceof SubGuiSelectList) {
+            List<String> selected = ((SubGuiSelectList) sub).selected;
+            form.display.disabledOverlayTypes = selected.stream().map(Overlay.Type::valueOf).collect(Collectors.toSet());
         }
     }
 

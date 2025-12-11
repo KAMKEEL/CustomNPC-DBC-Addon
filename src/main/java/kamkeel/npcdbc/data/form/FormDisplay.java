@@ -11,11 +11,15 @@ import kamkeel.npcdbc.controllers.AuraController;
 import kamkeel.npcdbc.controllers.OutlineController;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
+import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import noppes.npcs.scripted.CustomNPCsException;
 import noppes.npcs.util.ValueUtil;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 public class FormDisplay implements IFormDisplay {
 
@@ -45,6 +49,8 @@ public class FormDisplay implements IFormDisplay {
     public boolean isCustomizable = false;
 
     public OverlayChain overlays = new OverlayChain().enable(false);
+    public Set<Overlay.Type> disabledOverlayTypes = EnumSet.noneOf(Overlay.Type.class);
+
     public FacePartData faceData = new FacePartData();
 
     public int auraID = -1, outlineID = -1;
@@ -68,6 +74,7 @@ public class FormDisplay implements IFormDisplay {
         overlays.readFromNBT(rendering);
         faceData.readFromNBT(rendering, false);
 
+
         hasArcoMask = rendering.getBoolean("hasArcoMask");
         effectMajinHair = rendering.getBoolean("effectMajinHair");
         hasBodyFur = rendering.getBoolean("hasBodyFur");
@@ -85,6 +92,17 @@ public class FormDisplay implements IFormDisplay {
         outlineID = rendering.hasKey("outlineID") ? rendering.getInteger("outlineID") : -1;
 
         isCustomizable = rendering.getBoolean("isCustomizable");
+
+
+        if (compound.hasKey("overlayTypes")) {
+            disabledOverlayTypes.clear();
+            byte[] arr = compound.getByteArray("overlayTypes");
+            Overlay.Type[] values = Overlay.Type.values();
+            for (byte ordinal : arr) {
+                if (ordinal >= 0 && ordinal < values.length)
+                    disabledOverlayTypes.add(values[ordinal]);
+            }
+        }
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -116,6 +134,15 @@ public class FormDisplay implements IFormDisplay {
         rendering.setInteger("outlineID", outlineID);
 
         rendering.setBoolean("isCustomizable", isCustomizable);
+
+
+        if (!disabledOverlayTypes.isEmpty()) {
+            byte[] arr = new byte[disabledOverlayTypes.size()];
+            int i = 0;
+            for (Overlay.Type t : disabledOverlayTypes)
+                arr[i++] = (byte) t.ordinal();
+            compound.setByteArray("overlayTypes", arr);
+        }
 
         compound.setTag("rendering", rendering);
         return compound;
