@@ -310,7 +310,10 @@ public abstract class MixinRenderPlayerJBRA extends RenderPlayer {
 
     @Inject(method = "renderEquippedItemsJBRA", at = @At(value = "FIELD", target = "LJinRyuu/JRMCore/client/config/jrmc/JGConfigClientSettings;CLIENT_DA19:Z", shift = At.Shift.BEFORE))
     private void renderOverlays(AbstractClientPlayer pl, float par2, CallbackInfo ci, @Local(name = "bodycm") LocalIntRef bodyCM, @Local(name = "eyes") LocalIntRef eyes, @Local(name = "gen") LocalIntRef gender) {
-        renderOverlays(DBCData.get(pl));
+        //renderOverlays(DBCData.get(pl));
+        OverlayContext ctx = OverlayContext.from(DBCData.get(pl));
+        ctx.model = modelMain;
+        ModelDBC.renderOverlays(ctx);
 
     }
 

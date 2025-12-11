@@ -16,6 +16,8 @@ import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 
+import java.util.List;
+
 @SideOnly(Side.CLIENT)
 public class OverlayContext {
     public Overlay overlay;
@@ -111,6 +113,10 @@ public class OverlayContext {
             return form.display.hairType.equals("oozaru");
 
         return isNPC ? display.hairType.equals("oozaru") : false;
+    }
+
+    public List<OverlayChain> getOverlayChains() {
+        return isNPC ? display.getOverlayChains() : dbcData.getOverlayChains();
     }
 
     public Form form() {

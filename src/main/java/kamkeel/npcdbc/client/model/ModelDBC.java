@@ -13,7 +13,6 @@ import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.constants.DBCRace;
 import kamkeel.npcdbc.controllers.AuraController;
-import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.data.aura.Aura;
 import kamkeel.npcdbc.data.aura.AuraDisplay;
 import kamkeel.npcdbc.data.form.Form;
@@ -23,6 +22,7 @@ import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.npc.KiWeaponData;
 import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.OverlayChain;
+import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
@@ -30,11 +30,9 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import noppes.npcs.client.ClientCacheHandler;
 import noppes.npcs.client.ClientEventHandler;
 import noppes.npcs.client.ClientProxy;
 import noppes.npcs.client.model.ModelMPM;
-import noppes.npcs.client.renderer.ImageData;
 import noppes.npcs.constants.EnumAnimation;
 import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.data.ModelScalePart;
@@ -45,9 +43,8 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.*;
-import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Eye;
-import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 import static kamkeel.npcdbc.data.overlay.Overlay.Type;
+import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 
 public class ModelDBC extends ModelBase {
 
@@ -391,7 +388,7 @@ public class ModelDBC extends ModelBase {
             return false;
 
         try {
-            ClientProxy.bindTexture(new ResourceLocation(texture));
+            Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(texture));
             return true;
         } catch (Exception exception) {
             return false;
@@ -714,12 +711,8 @@ public class ModelDBC extends ModelBase {
         return chains;
     }
 
-    public void renderOverlays() {
-        OverlayContext ctx = OverlayContext.from(display);
-        ctx.form = display.getForm();
-        ctx.modelNpc = this;
-
-        List<OverlayChain> chains = applyOverlayChains(display.getOverlayChains(), ctx);
+    public static void renderOverlays(OverlayContext ctx) {
+        List<OverlayChain> chains = applyOverlayChains(ctx.getOverlayChains(), ctx);
 
         for (OverlayChain chain : chains) {
             ctx.chain = chain;
@@ -736,7 +729,7 @@ public class ModelDBC extends ModelBase {
                 /* ───────── Texture ───────── */
                 String texture;
                 if (type == Face)
-                    texture = ((Overlay.Face) overlay).getTexture(display.eyeType);
+                    texture = ((Overlay.Face) overlay).getTexture(ctx.eyeType());
                 else
                     texture = overlay.getTexture();
 
@@ -748,7 +741,7 @@ public class ModelDBC extends ModelBase {
                     continue;
 
                 /* ───────── Colors ───────── */
-                int color = getProperColor(ctx.form, display, overlay.getColor(), overlay.colorType);
+                int color = getProperColor(ctx.form, ctx.display, overlay.getColor(), overlay.colorType);
                 Color finalColor = ctx.finalCol = new Color(color, overlay.alpha);
 
                 if (overlay.applyColor != null)
@@ -758,28 +751,64 @@ public class ModelDBC extends ModelBase {
                 boolean glow = overlay.isGlow();
                 if (glow) {
                     GL11.glDisable(GL11.GL_LIGHTING);
-                    if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI, as lightmap is disabled in GUIs so cant enable it again
-                        Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+
+                    /*
+                        The lightmap (the effect of light sources/sun on texture brightness)
+                        is disabled in GUIs by default, but enabled in the world
+                     */
+                     if (!ClientEventHandler.renderingEntityInGUI)
+                    Minecraft.getMinecraft().entityRenderer.disableLightmap(0);
+                }
+
+                /* ───────── Pre-Render ───────── */
+                boolean oldArmor = false, oldHairHidden = false;
+                if (ctx.isNPC) {
+                      /*
+                        NPCs bind their skin texture in the ModelBox.render,
+                        like in model.bipedBody.render(), so that screws up
+                        the overlay texture.
+
+                        isArmor = false disables that binding.
+                     */
+                    oldArmor = ctx.mpm().isArmor;
+                    ctx.mpm().isArmor = true;
+
+                    //Hair renders by default with head, not needed here
+                    if (type == Face) {
+                        oldHairHidden = ctx.modelNpc.DBCHair.isHidden;
+                        ctx.modelNpc.DBCHair.isHidden = true;
+                    }
                 }
 
                 /* ───────── Rendering ───────── */
-                boolean oldArmor = parent.isArmor; //disables NPC skin binding
-                parent.isArmor = true;
-                if (type == Face)
-                    DBCHair.isHidden = true; //Hair renders by default with head, not needed here
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GL11.glEnable(GL11.GL_ALPHA_TEST);
+                GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
 
-                ColorMode.applyModelColor(finalColor.color, finalColor.alpha, isHurt);
+                if (ctx.isNPC)
+                    ColorMode.applyModelColor(finalColor.color, finalColor.alpha, isHurt);
+                else
+                    finalColor.glColor();
+
                 OverlayModelRenderer.render(type, ctx);
 
-                if (type == Face)
-                    DBCHair.isHidden = false;
-                parent.isArmor = oldArmor;
+                /* ───────── Post-Rendering ───────── */
+                if (ctx.isNPC) {
+
+                    //Set DBCHair.isHidden to original value
+                    if (type == Face)
+                        ctx.modelNpc.DBCHair.isHidden = oldHairHidden;
+
+                    //Set isArmor to original value
+                    ctx.mpm().isArmor = oldArmor;
+                }
 
                 /* ───────── Disable Glow ───────── */
                 if (glow) {
                     GL11.glEnable(GL11.GL_LIGHTING);
-                    if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI
-                        Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
+                     if (!ClientEventHandler.renderingEntityInGUI) //in-game not in GUI
+                    Minecraft.getMinecraft().entityRenderer.enableLightmap(0);
                 }
             }
         }

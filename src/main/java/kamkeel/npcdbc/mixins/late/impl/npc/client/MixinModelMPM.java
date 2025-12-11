@@ -7,6 +7,7 @@ import kamkeel.npcdbc.client.render.RenderEventHandler;
 import kamkeel.npcdbc.config.ConfigDBCClient;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.data.outline.Outline;
+import kamkeel.npcdbc.data.overlay.OverlayContext;
 import kamkeel.npcdbc.mixins.late.IModelMPM;
 import kamkeel.npcdbc.mixins.late.INPCDisplay;
 import net.minecraft.client.Minecraft;
@@ -111,7 +112,9 @@ public abstract class MixinModelMPM extends ModelNPCMale implements IModelMPM {
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnoppes/npcs/client/model/ModelMPM;renderCloak(Lnoppes/npcs/entity/EntityCustomNpc;F)V", shift = At.Shift.AFTER), remap = true)
     private void renderDBCOverlays(Entity entity, float par2, float par3, float par4, float par5, float par6, float par7, CallbackInfo ci) {
         if (!isArmor && display.enabled) {
-                NPCDBCModel.renderOverlays();
+            OverlayContext ctx = OverlayContext.from(display);
+            ctx.modelNpc = NPCDBCModel;
+            NPCDBCModel.renderOverlays(ctx);
         }
     }
 
