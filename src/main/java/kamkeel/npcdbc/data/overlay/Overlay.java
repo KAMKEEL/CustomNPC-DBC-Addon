@@ -32,8 +32,8 @@ public class Overlay {
     }
 
     @SideOnly(Side.CLIENT)
-    public String applyTexture(String texture, OverlayContext ctx) {
-        return applyTexture.invoke(texture, ctx);
+    public String applyTexture(OverlayContext ctx) {
+        return applyTexture.invoke(ctx);
     }
 
     public Overlay color(ColorFunction function) {
@@ -42,8 +42,8 @@ public class Overlay {
     }
 
     @SideOnly(Side.CLIENT)
-    public Color applyColor(int color, float alpha, OverlayContext ctx) {
-        return applyColor.invoke(color, alpha, ctx);
+    public Color applyColor(OverlayContext ctx) {
+        return applyColor.invoke(ctx);
     }
 
     public Overlay condition(Function<OverlayContext, Boolean> condition) {
@@ -419,10 +419,10 @@ public class Overlay {
     }
 
     public interface TextureFunction {
-        String invoke(String tex, OverlayContext ctx);
+        String invoke(OverlayContext ctx);
     }
 
     public interface ColorFunction {
-        Color invoke(int col, float a, OverlayContext ctx);
+        Color invoke(OverlayContext ctx);
     }
 }

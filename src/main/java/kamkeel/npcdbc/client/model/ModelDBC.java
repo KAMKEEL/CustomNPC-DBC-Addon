@@ -672,7 +672,7 @@ public class ModelDBC extends ModelBase {
          */
 
         OverlayChain SSJ4_FUR = OverlayChain.create("SSJ4_Fur");
-        SSJ4_FUR.add(ALL, Fur).texture((tex, ctx1) -> path("ssj4/ss4b" + ctx1.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
+        SSJ4_FUR.add(ALL, Fur).texture((ctx1) -> path("ssj4/ss4b" + ctx1.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
 
         if (ctx.oozaru())
             chains.add(DBCOverlays.OOZARU);
@@ -682,12 +682,12 @@ public class ModelDBC extends ModelBase {
 
         // Create the overlays here to test them (easy to hotswap here), then when finished drop them in DBCOverlays
         OverlayChain SSJ4_FACE = OverlayChain.create("SSJ4_Face");
-        SSJ4_FACE.add(Face, Body).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4shade.png")));
-        SSJ4_FACE.add(Face, 0xFFFFFF).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyewhite.png")));
-        SSJ4_FACE.add(Face, Fur).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4brows.png")));
-        SSJ4_FACE.add(Face, Hair).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4brows2.png")));
-        SSJ4_FACE.add(Face, Eye).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyeleft.png")));
-        SSJ4_FACE.add(Face, Eye).texture(((tex, ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyeright.png")));
+        SSJ4_FACE.add(Face, Body).texture(((ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4shade.png")));
+        SSJ4_FACE.add(Face, 0xFFFFFF).texture(((ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyewhite.png")));
+        SSJ4_FACE.add(Face, Fur).texture(((ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4brows.png")));
+        SSJ4_FACE.add(Face, Hair).texture(((ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4brows2.png")));
+        SSJ4_FACE.add(Face, Eye).texture(((ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyeleft.png")));
+        SSJ4_FACE.add(Face, Eye).texture(((ctx1) -> HD(ctx1.furDaima() ? "ssj4d" : "ssj4" + ctx1.genderDirectory() + "/face_" + ctx1.eyeType() + "/ssj4eyeright.png")));
         SSJ4_FACE.enabled = true;
        // chains.add(SSJ4_FACE);
 
@@ -699,7 +699,7 @@ public class ModelDBC extends ModelBase {
          */
 
         OverlayChain Savior = new OverlayChain();
-        Savior.add(ALL, Fur,(tex, ctx1) -> path("ssj4/ss4b" + ctx1.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
+        Savior.add(ALL, Fur, (ctx1) -> path("ssj4/ss4b" + ctx1.furType() + ".png", "jinryuudragonbc:cc/ss4b"));
         Savior.add(Face, Fur, path("savior/savioreyes.png"));
         Savior.add(Face, 0XFFFFFF, path("savior/saviormouth.png"));
         Savior.add(Chest, Hair, path("savior/saviorchest.png"));
@@ -741,18 +741,19 @@ public class ModelDBC extends ModelBase {
                 else
                     texture = overlay.getTexture();
 
+                ctx.finalTex = texture;
                 if (overlay.applyTexture != null)
-                    texture = overlay.applyTexture(texture, ctx);
+                    texture = overlay.applyTexture(ctx);
 
                 ImageData imageData = ClientCacheHandler.getImageData(texture);
                 if (imageData == null || !imageData.imageLoaded())
                     continue;
 
                 int color = getProperColor(form, display, overlay.getColor(), overlay.colorType);
-                Color finalColor = new Color(color, overlay.alpha);
+                Color finalColor = ctx.finalCol = new Color(color, overlay.alpha);
 
                 if (overlay.applyColor != null)
-                    finalColor = overlay.applyColor(color, overlay.alpha, ctx);
+                    finalColor = overlay.applyColor(ctx);
 
                 if (!bindImageDataTexture(imageData))
                     continue;

@@ -5,6 +5,7 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
@@ -16,6 +17,9 @@ import noppes.npcs.entity.EntityNPCInterface;
 public class OverlayContext {
     public Overlay overlay;
     public OverlayChain chain;
+
+    public String finalTex; // for usage in TextureFunction
+    public Color finalCol; // same for ColorFunction
 
     public boolean isNPC;
     public EntityNPCInterface npc;
