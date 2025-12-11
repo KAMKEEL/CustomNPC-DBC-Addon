@@ -14,9 +14,10 @@ import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import noppes.npcs.client.model.ModelMPM;
 import noppes.npcs.entity.EntityCustomNpc;
-import noppes.npcs.entity.EntityNPCInterface;
 
 import java.util.List;
+
+import static kamkeel.npcdbc.data.overlay.Overlay.ColorType.Body;
 
 @SideOnly(Side.CLIENT)
 public class OverlayContext {
@@ -91,6 +92,14 @@ public class OverlayContext {
             return form.display.furType;
 
         return isNPC ? display.furType : 0;
+    }
+
+    public int color(Overlay.ColorType colorType) {
+        return color(colorType == Body ? "bodycm" : colorType.name());
+    }
+
+    public int color(String type) {
+        return isNPC ? display.getColor(type) : dbcData.getColor(type);
     }
 
     public boolean furDaima() {

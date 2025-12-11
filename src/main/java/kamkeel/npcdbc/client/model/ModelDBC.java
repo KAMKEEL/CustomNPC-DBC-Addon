@@ -740,11 +740,11 @@ public class ModelDBC extends ModelBase {
                     continue;
 
                 /* ───────── Colors ───────── */
-                int color = getProperColor(ctx.form, ctx.display, overlay.getColor(), overlay.colorType);
-                Color finalColor = ctx.finalCol = new Color(color, overlay.alpha);
+                int col = overlay.colorType == Custom ? overlay.color : ctx.color(overlay.colorType);
+                ctx.finalCol = new Color(col, overlay.alpha);
 
                 if (overlay.applyColor != null)
-                    finalColor = overlay.applyColor(ctx);
+                    ctx.finalCol = overlay.applyColor(ctx);
 
                 /* ───────── Glow ───────── */
                 boolean glow = overlay.isGlow();
@@ -780,9 +780,9 @@ public class ModelDBC extends ModelBase {
                 GL11.glAlphaFunc(GL11.GL_GREATER, 0.001f);
 
                 if (ctx.isNPC)
-                    ColorMode.applyModelColor(finalColor.color, finalColor.alpha, isHurt);
+                    ColorMode.applyModelColor(ctx.finalCol.color, ctx.finalCol.alpha, isHurt);
                 else
-                    finalColor.glColor();
+                    ctx.finalCol.glColor();
 
                 OverlayModelRenderer.render(type, ctx);
 

@@ -1058,6 +1058,40 @@ public class    DBCData extends DBCDataUniversal implements IAuraData {
         return info.configuredFormColors.get(form.id);
     }
 
+    public int getColor(String type) {
+        int customCol = currentCustomizedColors.getColor(type);
+        if (customCol != -1)
+            return customCol;
+
+        Form form = getForm();
+        if (form != null) {
+            int formCol = form.display.getColor(type);
+            if (formCol != -1)
+                return formCol;
+        }
+
+        switch (type.toLowerCase()) {
+            case "hair":
+                return JRMCoreH.dnsHairC(DNS);
+            case "eye":
+                return JRMCoreH.dnsEyeC1(DNS);
+            case "bodycm":
+                return JRMCoreH.dnsBodyCM(DNS);
+            case "bodyc1":
+                return JRMCoreH.dnsBodyC1(DNS);
+            case "bodyc2":
+                return JRMCoreH.dnsBodyC2(DNS);
+            case "bodyc3":
+                return JRMCoreH.dnsBodyC3(DNS);
+            case "fur":
+                int oozaruFur = skinType == 1 ? JRMCoreH.dnsBodyC1(DNS) : JRMCoreH.dnsBodyC1_0(DNS);
+                if (oozaruFur != 0x632700) // 0x632700 is oozaru brown, this means is half saiyan and has custom hair/fur color
+                    return oozaruFur;
+                return 0xDA152C; //ssj4 red
+        }
+        return -1;
+    }
+
     public void sendCurrentFormColorData() {
         FormDisplay.BodyColor currentColors = getCurrentFormColorCustomization();
         NBTTagCompound dataNeededOnClient = new NBTTagCompound();
