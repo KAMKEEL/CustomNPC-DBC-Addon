@@ -2,11 +2,9 @@ package kamkeel.npcdbc.client.render;
 
 import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
-import kamkeel.npcdbc.data.overlay.Overlay;
 import kamkeel.npcdbc.data.overlay.Overlay.Type;
 import kamkeel.npcdbc.data.overlay.OverlayContext;
 import net.minecraft.util.MathHelper;
-import noppes.npcs.client.model.ModelMPM;
 import org.lwjgl.opengl.GL11;
 
 import java.util.EnumMap;
@@ -14,96 +12,116 @@ import java.util.Map;
 
 public final class OverlayModelRenderer {
 
+    private static final Map<Type, RenderFunction> MODEL_MAP = new EnumMap<>(Type.class);
+
     public static final float SCALE = 0.0625f;
-
-    private static final Map<Type, RenderFunction> PLAYER_MAP = new EnumMap<>(Type.class);
-    private static final Map<Type, RenderFunctionMPM> NPC_MAP = new EnumMap<>(Type.class);
-
     /* ─────────────────────────────
      * HEAD
      * ───────────────────────────── */
     private static void renderHead(OverlayContext ctx) {
-        float a = ctx.age();
-        float scaleXZ = (0.5F + 0.5F / a) * (ctx.female() ? 0.85F : 1.0F);
-
-        float adjust;
-        if (a >= 1.5F && a <= 2.0F) {
-            adjust = (2.0F - a) / 2.5F;
-        } else if (a < 1.5F && a >= 1.0F) {
-            adjust = (a * 2.0F - 2.0F) * 0.2F;
+        if (ctx.isNPC) {
+            ctx.mpm().renderHead(ctx.npc, SCALE);
         } else {
-            adjust = 0.0F;
-        }
-        float translateY = (a - 1.0F) / a * (2.0F - adjust);
+            float a = ctx.age();
+            float scaleXZ = (0.5F + 0.5F / a) * (ctx.female() ? 0.85F : 1.0F);
 
-        GL11.glPushMatrix();
-        GL11.glScalef(scaleXZ, 0.5F + 0.5F / a, scaleXZ);
-        GL11.glTranslatef(0.0F, translateY, 0.0F);
-        ctx.model.bipedHead.render(SCALE);
-        GL11.glPopMatrix();
+            float adjust;
+            if (a >= 1.5F && a <= 2.0F) {
+                adjust = (2.0F - a) / 2.5F;
+            } else if (a < 1.5F && a >= 1.0F) {
+                adjust = (a * 2.0F - 2.0F) * 0.2F;
+            } else {
+                adjust = 0.0F;
+            }
+            float translateY = (a - 1.0F) / a * (2.0F - adjust);
+
+            GL11.glPushMatrix();
+            GL11.glScalef(scaleXZ, 0.5F + 0.5F / a, scaleXZ);
+            GL11.glTranslatef(0.0F, translateY, 0.0F);
+            ctx.model.bipedHead.render(SCALE);
+            GL11.glPopMatrix();
+        }
     }
 
     /* ─────────────────────────────
      * ARMS
      * ───────────────────────────── */
     private static void renderArm(OverlayContext ctx, boolean right) {
-        float scaleXZ = ctx.invAge() * (ctx.female() ? 0.7F : 1.0F);
-
-        GL11.glPushMatrix();
-        GL11.glScalef(scaleXZ, ctx.invAge(), scaleXZ);
-        GL11.glTranslatef(0.0F, (ctx.age() - 1.0F) * 1.5F, 0.0F);
-
-        if (ctx.female()) {
+        if (ctx.isNPC) {
             if (right)
-                ctx.model.Brightarm.render(SCALE);
+                ctx.mpm().bipedRightArm.render(SCALE);
             else
-                ctx.model.Bleftarm.render(SCALE);
+                ctx.mpm().bipedLeftArm.render(SCALE);
         } else {
-            if (right)
-                ctx.model.bipedRightArm.render(SCALE);
-            else
-                ctx.model.bipedLeftArm.render(SCALE);
-        }
+            float scaleXZ = ctx.invAge() * (ctx.female() ? 0.7F : 1.0F);
 
-        GL11.glPopMatrix();
+            GL11.glPushMatrix();
+            GL11.glScalef(scaleXZ, ctx.invAge(), scaleXZ);
+            GL11.glTranslatef(0.0F, (ctx.age() - 1.0F) * 1.5F, 0.0F);
+
+            if (ctx.female()) {
+                if (right)
+                    ctx.model.Brightarm.render(SCALE);
+                else
+                    ctx.model.Bleftarm.render(SCALE);
+            } else {
+                if (right)
+                    ctx.model.bipedRightArm.render(SCALE);
+                else
+                    ctx.model.bipedLeftArm.render(SCALE);
+            }
+
+            GL11.glPopMatrix();
+        }
     }
 
     /* ─────────────────────────────
      * LEGS
      * ───────────────────────────── */
     private static void renderLeg(OverlayContext ctx, boolean right) {
-        float scaleX = ctx.invAge() * (ctx.female() ? 0.85F : 1.0F);
-        float scaleZ = ctx.invAge() * (ctx.female() ? 0.775F : 1.0F);
-        float translateX = ctx.female() ? right ? -0.015F : 0.015F : 0;
-        float translateY = ctx.female() ? ctx.model.isSneak ? 0 : -0.015F : 0;
-
-        GL11.glPushMatrix();
-        GL11.glScalef(scaleX, ctx.invAge(), scaleZ);
-        GL11.glTranslatef(translateX, (ctx.age() - 1.0F) * 1.5F, translateY);
-
-        if (ctx.female()) {
+        if (ctx.isNPC) {
             if (right)
-                ctx.model.rightleg.render(SCALE);
+                ctx.mpm().bipedRightLeg.render(SCALE);
             else
-                ctx.model.leftleg.render(SCALE);
+                ctx.mpm().bipedLeftLeg.render(SCALE);
         } else {
-            if (right)
-                ctx.model.bipedRightLeg.render(SCALE);
-            else
-                ctx.model.bipedLeftLeg.render(SCALE);
-        }
+            float scaleX = ctx.invAge() * (ctx.female() ? 0.85F : 1.0F);
+            float scaleZ = ctx.invAge() * (ctx.female() ? 0.775F : 1.0F);
+            float translateX = ctx.female() ? right ? -0.015F : 0.015F : 0;
+            float translateY = ctx.female() ? ctx.model.isSneak ? 0 : -0.015F : 0;
 
-        GL11.glPopMatrix();
+            GL11.glPushMatrix();
+            GL11.glScalef(scaleX, ctx.invAge(), scaleZ);
+            GL11.glTranslatef(translateX, (ctx.age() - 1.0F) * 1.5F, translateY);
+
+            if (ctx.female()) {
+                if (right)
+                    ctx.model.rightleg.render(SCALE);
+                else
+                    ctx.model.leftleg.render(SCALE);
+            } else {
+                if (right)
+                    ctx.model.bipedRightLeg.render(SCALE);
+                else
+                    ctx.model.bipedLeftLeg.render(SCALE);
+            }
+
+            GL11.glPopMatrix();
+        }
     }
 
     /* ─────────────────────────────
      * BODY
      * ───────────────────────────── */
     private static void renderBody(OverlayContext ctx) {
-        if (!ctx.female())
-            renderMaleBody(ctx);
-        else
-            renderFemaleBody(ctx);
+        if (ctx.isNPC) {
+            ctx.mpm().renderBody(ctx.npc, SCALE);
+        } else {
+            if (!ctx.female())
+                renderMaleBody(ctx);
+            else
+                renderFemaleBody(ctx);
+        }
     }
 
     private static void renderMaleBody(OverlayContext ctx) {
@@ -207,64 +225,37 @@ public final class OverlayModelRenderer {
      * Registry
      * ───────────────────────────── */
     static {
-        /* ───────── Player Functions ───────── */
-        PLAYER_MAP.put(Overlay.Type.Face, ctx1 -> renderHead(ctx1));
+        /* ───────── Overlay Type -> Render Functions ───────── */
+        MODEL_MAP.put(Type.Face, ctx1 -> renderHead(ctx1));
 
-        PLAYER_MAP.put(Overlay.Type.RightArm, ctx -> renderArm(ctx, true));
-        PLAYER_MAP.put(Overlay.Type.LeftArm, ctx -> renderArm(ctx, false));
-        PLAYER_MAP.put(Overlay.Type.Arms, ctx -> {
+        MODEL_MAP.put(Type.RightArm, ctx -> renderArm(ctx, true));
+        MODEL_MAP.put(Type.LeftArm, ctx -> renderArm(ctx, false));
+        MODEL_MAP.put(Type.Arms, ctx -> {
             renderArm(ctx, true);
             renderArm(ctx, false);
         });
 
-        PLAYER_MAP.put(Overlay.Type.RightLeg, ctx -> renderLeg(ctx, true));
-        PLAYER_MAP.put(Overlay.Type.LeftLeg, ctx -> renderLeg(ctx, false));
-        PLAYER_MAP.put(Overlay.Type.Legs, ctx -> {
+        MODEL_MAP.put(Type.RightLeg, ctx -> renderLeg(ctx, true));
+        MODEL_MAP.put(Type.LeftLeg, ctx -> renderLeg(ctx, false));
+        MODEL_MAP.put(Type.Legs, ctx -> {
             renderLeg(ctx, true);
             renderLeg(ctx, false);
         });
 
-        PLAYER_MAP.put(Overlay.Type.Chest, ctx1 -> renderBody(ctx1));
+        MODEL_MAP.put(Type.Chest, ctx1 -> renderBody(ctx1));
 
-        PLAYER_MAP.put(Overlay.Type.ALL, ctx -> {
-            render(Overlay.Type.Face, ctx);
-            render(Overlay.Type.Arms, ctx);
-            render(Overlay.Type.Chest, ctx);
-            render(Overlay.Type.Legs, ctx);
-        });
-
-
-        /* ───────── NPC Functions ───────── */
-        NPC_MAP.put(Overlay.Type.Face, (m) -> m.renderHead(m.npc, SCALE));
-
-        NPC_MAP.put(Overlay.Type.RightArm, (m) -> m.bipedRightArm.render(SCALE));
-        NPC_MAP.put(Overlay.Type.LeftArm, (m) -> m.bipedLeftArm.render(SCALE));
-        NPC_MAP.put(Overlay.Type.Arms, (m) -> m.renderArms(m.npc, SCALE, false));
-
-        NPC_MAP.put(Overlay.Type.RightLeg, (m) -> m.legs.leg1.render(SCALE));
-        NPC_MAP.put(Overlay.Type.LeftLeg, (m) -> m.legs.leg2.render(SCALE));
-        NPC_MAP.put(Overlay.Type.Legs, (m) -> m.renderLegs(m.npc, SCALE));
-
-        NPC_MAP.put(Overlay.Type.Chest, (m) -> m.renderBody(m.npc, SCALE));
-
-        NPC_MAP.put(Overlay.Type.ALL, (m) -> {
-            render(Overlay.Type.Face, m);
-            render(Overlay.Type.Arms, m);
-            render(Overlay.Type.Legs, m);
-            render(Overlay.Type.Chest, m);
+        MODEL_MAP.put(Type.ALL, ctx -> {
+            render(Type.Face, ctx);
+            render(Type.Arms, ctx);
+            render(Type.Legs, ctx);
+            render(Type.Chest, ctx);
         });
     }
 
     public static void render(Type type, OverlayContext ctx) {
-        RenderFunction fn = PLAYER_MAP.get(type);
+        RenderFunction fn = MODEL_MAP.get(type);
         if (fn != null)
             fn.render(ctx);
-    }
-
-    public static void render(Type type, ModelMPM model) {
-        RenderFunctionMPM fn = NPC_MAP.get(type);
-        if (fn != null)
-            fn.render(model);
     }
 
     @FunctionalInterface
@@ -272,8 +263,4 @@ public final class OverlayModelRenderer {
         void render(OverlayContext ctx);
     }
 
-    @FunctionalInterface
-    public interface RenderFunctionMPM {
-        void render(ModelMPM model);
-    }
 }

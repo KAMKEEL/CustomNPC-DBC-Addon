@@ -50,7 +50,7 @@ import static kamkeel.npcdbc.data.overlay.Overlay.Type.*;
 
 public class ModelDBC extends ModelBase {
 
-    private final ModelMPM parent;
+    public final ModelMPM parent;
     public static boolean isHurt = false;
     public float rot1;
     public float rot2;
@@ -721,6 +721,7 @@ public class ModelDBC extends ModelBase {
     public void renderOverlays() {
         OverlayContext ctx = OverlayContext.from(display);
         Form form = ctx.form = display.getForm();
+        ctx.modelNpc = this;
 
         List<OverlayChain> chains = applyOverlayChains(display.getOverlayChains(), ctx);
 
@@ -773,7 +774,7 @@ public class ModelDBC extends ModelBase {
                 }
 
                 ColorMode.applyModelColor(finalColor.color, finalColor.alpha, isHurt);
-                OverlayModelRenderer.render(type, parent);
+                OverlayModelRenderer.render(type, ctx);
 
                 if (glow) {
                     GL11.glEnable(GL11.GL_LIGHTING);

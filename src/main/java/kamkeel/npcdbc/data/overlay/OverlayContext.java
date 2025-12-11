@@ -5,12 +5,15 @@ import JinRyuu.JRMCore.JRMCoreH;
 import JinRyuu.JRMCore.entity.ModelBipedBody;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import kamkeel.npcdbc.client.model.ModelDBC;
 import kamkeel.npcdbc.client.utils.Color;
 import kamkeel.npcdbc.data.dbcdata.DBCData;
 import kamkeel.npcdbc.data.form.Form;
 import kamkeel.npcdbc.data.npc.DBCDisplay;
 import kamkeel.npcdbc.util.PlayerDataUtil;
 import net.minecraft.entity.player.EntityPlayer;
+import noppes.npcs.client.model.ModelMPM;
+import noppes.npcs.entity.EntityCustomNpc;
 import noppes.npcs.entity.EntityNPCInterface;
 
 @SideOnly(Side.CLIENT)
@@ -22,8 +25,9 @@ public class OverlayContext {
     public Color finalCol; // same for ColorFunction
 
     public boolean isNPC;
-    public EntityNPCInterface npc;
+    public EntityCustomNpc npc;
     public DBCDisplay display; //for NPCs
+    public ModelDBC modelNpc;
 
     public EntityPlayer player;
     public DBCData dbcData; //for players
@@ -34,7 +38,7 @@ public class OverlayContext {
     public static OverlayContext from(DBCDisplay display) {
         OverlayContext data = new OverlayContext();
         data.isNPC = true;
-        data.npc = display.npc;
+        data.npc = (EntityCustomNpc) display.npc;
         data.display = display;
         return data;
     }
@@ -45,6 +49,10 @@ public class OverlayContext {
         data.player = dbcData.player;
         data.dbcData = dbcData;
         return data;
+    }
+
+    public ModelMPM mpm() {
+        return modelNpc.parent;
     }
 
     public int gender() {
