@@ -113,6 +113,8 @@ public class FacePartData {
 
     public void readFromNBT(NBTTagCompound compound, boolean isDBCDisplay) {
         NBTTagCompound faceData = compound.getCompoundTag(isDBCDisplay ? "DBCFaceData" : "faceData");
+        enabled = compound.getBoolean("enabled");
+
         for (int i = 0; i < 7; i++) {
             String appendix = i == 6 ? "All" : i + "";
             String faceName = isDBCDisplay ? "Face_" + appendix : "face" + appendix;
@@ -137,6 +139,8 @@ public class FacePartData {
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound, boolean isDBCDisplay) {
         NBTTagCompound faceData = new NBTTagCompound();
+        compound.setBoolean("enabled", enabled);
+
         for (int i = 0; i < 7; i++) {
             HashSet<Integer> removed = disabledParts.get(i);
 
