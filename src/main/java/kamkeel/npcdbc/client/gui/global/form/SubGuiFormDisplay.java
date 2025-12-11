@@ -258,7 +258,12 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
         y += 30;
 
         window.addLabel(new GuiNpcLabel(116, "Face Parts", x, y, 0xFFFFFF)); // put translation here
-        window.addButton(new GuiNpcButton(116, width - x - 75, y - 5, 50, 20, "Edit"));
+
+        window.addButton(new GuiNpcButtonYesNo(1161, width - x - 75, y - 5, 50, 20, display.faceData.enabled));
+        if (display.faceData.enabled) {
+            y += 25;
+            window.addButton(new GuiNpcButton(116, width - x - 75, y - 5, 50, 20, "Edit"));
+        }
 
         y += 30;
 
@@ -518,7 +523,12 @@ public class SubGuiFormDisplay extends SubGuiInterface implements ISubGuiListene
             updateButtons();
         }
 
-        // Disable Face
+        // Face Data
+        if (button.id == 1161) {
+            display.faceData.enabled = button.getValue() == 1;
+            updateButtons();
+        }
+
         if (button.id == 116) {
             setSubGui(new SubGuiFormFaceParts(this));
             updateButtons();

@@ -9,11 +9,21 @@ import java.util.HashSet;
 import static kamkeel.npcdbc.data.form.FacePartData.Part.*;
 
 public class FacePartData {
+
     public final HashMap<Integer, HashSet<Integer>> disabledParts = new HashMap<>();
+    public boolean enabled;
 
     public FacePartData() {
         for (int i = 0; i < 7; i++)
             disabledParts.put(i, new HashSet<>());
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void disable(Part part, int faceType, boolean disable) {
@@ -32,6 +42,9 @@ public class FacePartData {
     }
 
     public boolean disabled(int faceType, int part) {
+        if (!enabled)
+            return false;
+
         return disabledParts.get(faceType).contains(part) || disabledParts.get(6).contains(part);
     }
 
